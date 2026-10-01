@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../effect.c ../monsterpool.c ../dungeongrid.c ../movement.c ../party.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../item.c && ./test_combat
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_combat test_combat.c ../combat.c ../effect.c ../monsterpool.c ../dungeongrid.c ../movement.c ../party.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c ../bcd4.c ../globalflags.c ../item.c ../spellrecord.c && ./test_combat
  */
 #include <stdio.h>
 #include <string.h>
@@ -1000,6 +1000,200 @@ static void testApplyTargetResistances(void) {
     checkU32("...the lower-priority field is untouched", monsterGetU16(target, MonsterFieldDamage), 40);
 }
 
+static void setSpellU16(uint8_t *record, unsigned offset, uint16_t value) {
+    record[offset] = (uint8_t)(value & 0xFF);
+    record[offset + 1] = (uint8_t)(value >> 8);
+}
+
+static void testResolveSpellAttackTypeRestrictionBlocksMismatch(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldUnknown4E, 5);
+    setSpellU16(spell, SpellFieldResistFlags, SpellResistTypeRestricted);
+    setSpellU16(spell, SpellFieldTargetTypeId, 9);
+    setSpellU16(spell, SpellFieldAttackMagnitude, 50);
+
+    randomStart(&rng, 1, 1);
+    CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, true, &rng);
+    check("a type-restricted attack against a mismatched target has no effect at all", !result.hasEffect);
+    checkU32("...damage is 0", result.damage, 0);
+}
+
+static void testResolveSpellAttackTypeRestrictionAllowsMatch(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldUnknown4E, 9);
+    setSpellU16(spell, SpellFieldResistFlags, SpellResistTypeRestricted);
+    setSpellU16(spell, SpellFieldTargetTypeId, 9);
+    setSpellU16(spell, SpellFieldAttackMagnitude, 50);
+
+    randomStart(&rng, 1, 1);
+    CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, true, &rng);
+    check("a matching restricted type proceeds normally", result.hasEffect);
+    checkU32("...using the preset magnitude directly", result.damage, 50);
+}
+
+static void testResolveSpellAttackAlreadyResolvedSkipsTheRoll(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldAttackMagnitude, 30);
+
+    /* A power-0 roll would always miss, but alreadyResolved bypasses combatResolveAttack entirely. */
+    randomStart(&rng, 1, 1);
+    CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, true, &rng);
+    check("already-resolved attacks don't roll at all", result.hasEffect);
+    checkU32("...damage is the record's own magnitude verbatim", result.damage, 30);
+}
+
+static void testResolveSpellAttackNormalRollMissSkipsResistancesEntirely(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    /* power 0 (SpellFieldAttackMagnitude left at 0) always misses in combatResolveAttack. */
+    monsterSetU16(target, MonsterFieldDamage, 50);
+    setSpellU16(spell, SpellFieldAttackFlags, 0x0020); /* would drain MonsterFieldDamage if resistances ran at all */
+    setSpellU16(spell, SpellFieldDrainAmount, 5);
+
+    randomStart(&rng, 1, 1);
+    CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, false, &rng);
+    check("a missed roll has no effect", !result.hasEffect);
+    checkU32("...and resistances/drain are never even consulted on a miss",
+             monsterGetU16(target, MonsterFieldDamage), 50);
+}
+
+static void testResolveSpellAttackNormalRollHitUsesCasterAccuracyAndTargetAbsorption(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldAbsorption, 0);
+    partySetStat(caster, PartyStatCasting, 100);
+    setSpellU16(spell, SpellFieldAttackMagnitude, 20);
+
+    /* diff = 100 guarantees a hit for any roll in 0..55 (see testResolveAttackDamageFormula). */
+    randomStart(&rng, 3, 3);
+    CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, false, &rng);
+    check("a guaranteed-hit roll produces an effect", result.hasEffect);
+    checkU32("...with (power*diff+50)/100 damage", result.damage, 20);
+}
+
+static void testApplySpellAttackIsNoOpWithoutEffect(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldHealth, 100);
+
+    CombatSpellAttackResult result = {0, 0, false};
+    combatApplySpellAttack(target, spell, result);
+    checkU32("no effect: health untouched", monsterGetU16(target, MonsterFieldHealth), 100);
+    checkU32("no effect: state untouched", monsterGetU16(target, MonsterFieldState), 0);
+}
+
+static void testApplySpellAttackCommitsDamageAndWakesTarget(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldHealth, 100);
+
+    CombatSpellAttackResult result = {15, 0, true};
+    combatApplySpellAttack(target, spell, result);
+    checkU32("damage is subtracted from health", monsterGetU16(target, MonsterFieldHealth), 85);
+    check("the target becomes Aware", monsterGetU16(target, MonsterFieldState) & MonsterStateAware);
+    check("...and gets a hit-flash cue", monsterGetU16(target, MonsterFieldState) & MonsterStateHitFlashPending);
+}
+
+static void testApplySpellAttackStatusArmsTickTimerRegardlessOfPersistBit(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldTickAmount, 7);
+    setSpellU16(spell, SpellFieldTickCountdown, 3);
+    /* SpellFlagsAPersistAffliction deliberately left clear. */
+
+    CombatSpellAttackResult result = {0, 0x0400 /* Cursing */, true};
+    combatApplySpellAttack(target, spell, result);
+    checkU32("tick amount is armed even without the persist-affliction bit",
+             monsterGetU16(target, MonsterFieldTickAmount), 7);
+    checkU32("...so is tick countdown", monsterGetU16(target, MonsterFieldTickCountdown), 3);
+    checkU32("without the persist bit, immunities are not marked", monsterGetU16(target, MonsterFieldImmunities), 0);
+    check("surviving status bits are OR'd into state, disabling the special attack (shared bit with Cursing)",
+          monsterGetU16(target, MonsterFieldState) & MonsterStateSpecialAttackDisabled);
+}
+
+static void testApplySpellAttackPersistBitAlsoMarksImmunitiesAfflicted(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldFlagsA, SpellFlagsAPersistAffliction);
+
+    CombatSpellAttackResult result = {0, 0x0800 /* Hexing */, true};
+    combatApplySpellAttack(target, spell, result);
+    checkU32("the persist bit also marks the target as currently afflicted",
+             monsterGetU16(target, MonsterFieldImmunities), 0x0800);
+    check("hexing also marks the target busy (shared bit)", monsterGetU16(target, MonsterFieldState) & MonsterStateBusy);
+}
+
+static void testApplySpellAttackHalfTargetDamageOverridesEvenAZeroResult(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    monsterSetU16(target, MonsterFieldHealth, 100);
+    monsterSetU16(target, MonsterFieldDamage, 11);
+    setSpellU16(spell, SpellFieldResistFlags, SpellResistHalfTargetDamage);
+
+    /* damage is 0 in the result, but a status survived, so hasEffect is still true -- the half-damage override applies. */
+    CombatSpellAttackResult result = {0, 0x0001, true};
+    combatApplySpellAttack(target, spell, result);
+    checkU32("half the target's own damage overrides the result's damage value, even when that was 0",
+             monsterGetU16(target, MonsterFieldHealth), 100 - 5);
+}
+
+static void testApplySpellAttackClearAwareBit(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldResistFlags, SpellResistClearAware);
+
+    CombatSpellAttackResult result = {5, 0, true};
+    combatApplySpellAttack(target, spell, result);
+    check("MonsterStateAware is cleared again at the end when the record asks for it",
+          !(monsterGetU16(target, MonsterFieldState) & MonsterStateAware));
+    check("the hit-flash cue is unaffected", monsterGetU16(target, MonsterFieldState) & MonsterStateHitFlashPending);
+}
+
 static void testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling(void) {
     RandomState rng;
     randomStart(&rng, 3, 7);
@@ -1134,6 +1328,17 @@ int main(void) {
     testResolveAttackerActionCorrosionEmptySlotOrUnclassifiable();
     testApplyCorrosion();
     testApplyTargetResistances();
+    testResolveSpellAttackTypeRestrictionBlocksMismatch();
+    testResolveSpellAttackTypeRestrictionAllowsMatch();
+    testResolveSpellAttackAlreadyResolvedSkipsTheRoll();
+    testResolveSpellAttackNormalRollMissSkipsResistancesEntirely();
+    testResolveSpellAttackNormalRollHitUsesCasterAccuracyAndTargetAbsorption();
+    testApplySpellAttackIsNoOpWithoutEffect();
+    testApplySpellAttackCommitsDamageAndWakesTarget();
+    testApplySpellAttackStatusArmsTickTimerRegardlessOfPersistBit();
+    testApplySpellAttackPersistBitAlsoMarksImmunitiesAfflicted();
+    testApplySpellAttackHalfTargetDamageOverridesEvenAZeroResult();
+    testApplySpellAttackClearAwareBit();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

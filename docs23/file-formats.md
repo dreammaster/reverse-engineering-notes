@@ -2862,15 +2862,102 @@ whichever spell/ability record was most recently loaded by index, the
 same "already-resolved value, not rolled" pattern this project has
 found repeatedly elsewhere (`combatApplyEncodedItemEffectSingle`'s own
 inflicted-status/magnitude parameters, for instance). The remaining
-work is no longer "find the write site" — it's the more ordinary,
-bounded task of decoding the rest of the 80-byte record's own field
-layout (only a handful of offsets are confirmed so far: name at `+0`,
-MP/NUORE/MAGIC ORE cost at `+0x18`/`+0x1A`/`+0x1C`) and cross-referencing
-each remaining consumer (`ApplyEncodedItemEffect`'s corridor-attack
-branches, `ApplyAttackToTarget`, `TryResolveAttackAgainstTarget`,
-`ShowClueBookSpellDetail`'s own further display fields) against it. A
-good candidate for its own dedicated pass — see `roadmap.md` candidate
-8's updated status.
+work at the time was "find the write site" only — the full field
+layout is now decoded too, see the next section.
+
+### The spell/ability catalog: full field layout decoded, the attack-resolution family reimplemented (2026-10-01)
+
+Picked back up where the previous section left off, now that the
+record's identity (whichever 80-byte entry `LoadClueBookSpellEntry`
+loaded by index) was settled. Traced every reader of the record —
+`ShowClueBookSpellDetail`'s own UI (`CLASS:`/`LEVEL:`/`MP:`/`NUORE:`/
+`ORE:`/`AFFECTS:`/`WHEN:`/`EFFECT:`), `ApplyEncodedItemEffect`'s
+icon-bar branches, and the `ApplyAttackToTarget`/
+`TryResolveAttackAgainstTarget`/`ApplyTargetResistancesToAttack` family
+— back to a record-relative offset, then cross-checked every field
+against real byte statistics from both games' actual `WORLD.DAT`
+tables (every bit named below is set by at least one real record in
+both games, except one explicitly noted as unreachable). New module
+`src23/spellrecord.c`/`.h` has the full enum and both games' confirmed
+layout (`0x1AA5DD`/125 records Chapter 2, `0x41B5BF`/107 records
+Chapter 3 — the record count for each game is itself a confirmed named
+engine constant, `word_3330C` in Chapter 2's `InitGlobals`/`ds:0x5DF8`
+in Chapter 3's, the exact same value `party.h`'s
+`partyKnownAbilityIdMax` already used without the connection to this
+table being made).
+
+**Three real, previously-unexplained quirks resolved as a side effect
+of this trace**:
+
+- `MonsterFieldUnknown4E` (monster.h, "1-13 in real data, not
+  identified") turns out to be matched directly against this record's
+  own `SpellFieldTargetTypeId` by the attack-resolution family — a
+  type-restricted attack is a complete no-op against any monster whose
+  own value here doesn't match. What the values themselves group
+  (element? creature family?) still isn't identified, but the
+  mechanism is.
+- `MonsterFieldImmunities` (monster.h) is catalog data everywhere
+  except one write: `ApplyAttackToTarget` ORs a landed attack's
+  surviving status bits into this same field to mark the target as
+  *currently afflicted*, reusing the identical bit positions as
+  "permanently immune" — safe because the field is never re-read as
+  immunity data after spawn. This is the "unless already afflicted"
+  gate an earlier session's comment on a different function had
+  already named without making the connection.
+- `MonsterStateSpecialAttackDisabled`/`MonsterStateBusy` (monster.h,
+  both "exact trigger not confirmed") share their bit positions with
+  `MonsterImmuneCursing`/`MonsterImmuneHexing` — successfully cursing
+  or hexing a monster via a player attack sets these state bits as a
+  side effect of the shared bit position, not a separate mechanism.
+  Also named a new bit, `MonsterStateHitFlashPending` (`0x2`, set
+  alongside `MonsterStateAware` on every landed attack, cleared the
+  next time `DrawMonsterAndUpdateAttackState` renders a one-shot hit
+  flash sprite frame).
+
+**Reimplemented**: `combatResolveSpellAttack`/`combatApplySpellAttack`
+(`src23/combat.c`/`.h`) compose the whole family — the type-restriction
+gate, the already-resolved/rolled magnitude split
+(`g_uiScratchFlags4` bit `0x80`, still an untraced caller-context input,
+but its own effect is now fully clear), `combatResolveAttack`'s roll
+using the target's own `MonsterFieldAbsorption` as defense and the
+caster's `PartyStatCasting` as accuracy, filtering through the
+already-existing `combatApplyTargetResistances`, and the commit tail
+(state bits, health, the tick-timer arm, the afflicted-immunities mark,
+the half-target-damage override, the clear-aware quirk). One confirmed
+genuinely unreachable branch, reproduced for fidelity anyway:
+`SpellResistClearAware` (word_33306 bit `0x20`, clears the target's own
+`MonsterStateAware` after the attack) is never set by any real record
+in either game. `TickMonsterTimer`'s own gate bits (`MonsterFieldState`
+mask `0xFC10`) still aren't armed by this same write, though — what
+actually triggers the tick-timer mechanism this feeds remains a
+separate, unfound write (monster.h's own long-open note).
+
+**What this resolves in `ApplyEncodedItemEffect`'s own dispatch
+(roadmap.md candidate 8)**: `word_33300`/`word_33302`/`word_33306`
+(this record's `SpellFieldFlagsA`/`FlagsB`/`ResistFlags`) are confirmed
+to be genuine record fields, not per-call caller state as every earlier
+round assumed — the ~19-branch dispatch is simply data-driven from
+whichever spell/ability id an item encodes, cross-checked against real
+data: every record with `SpellFlagsBAttackPath` (`0x2000`) set is a
+plain damage/status attack spell in both games (`MAGIC ATTACK`,
+`COLD SLASH`, `FEET OF LEAD`, `INSECT REPELLENT`, `ELECTRIC BURST`,
+...), confirming it really does route into the attack family above
+rather than the icon-bar path. The exact gating between
+`SpellFlagsAIconBarGate1`/`Gate2` (`word_33300` bits `0x800`/`0x1000`)
+and `SpellFlagsBSingleTarget`/`WholeParty` wasn't reread this round —
+still open, see `roadmap.md`.
+
+Tests in `test_spellrecord.c` (22nd suite, new) cover the catalog parse,
+bounds, field access, and real-data spot checks (`HEAL`/`MAGIC ATTACK`/
+`INSECT REPELLENT`'s exact costs, flags and type restriction, both
+games' record counts/offsets, and a sweep confirming every record name
+is printable, every cost is plausible, `SpellResistClearAware` is
+never set, and at least one record uses the attack path). Tests for
+the composed attack family are in `test_combat.c` (type-restriction
+block/match, already-resolved vs. rolled magnitude, a missed roll
+skipping resistances entirely, the commit tail's every branch including
+the Cursing/Hexing shared-bit quirk and the half-target-damage
+override). All 22 suites pass.
 
 ### `ApplyMapTriggerEffect`: dispatch structure and real table data resolved, C reimplementation still pending (2026-09-30)
 

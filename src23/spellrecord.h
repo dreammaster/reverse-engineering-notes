@@ -1,0 +1,250 @@
+#ifndef YENDOR23_SPELLRECORD_H
+#define YENDOR23_SPELLRECORD_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include "game.h"
+
+/*
+ * The spell/ability catalog LoadClueBookSpellEntry (yendor2.asm:23355,
+ * instruction-identical in Chapter 3) loads by 1-based index: 80-byte
+ * records, immediately following the monster catalog's type-lookup table in
+ * WORLD.DAT (monster.h's MonsterCatalogLayout -- block5+block6 end exactly
+ * where this catalog starts in both games, confirmed by address arithmetic).
+ *
+ * This is the table behind the long-open "word_332D8-33306 encoded effect
+ * descriptor cluster" mystery (file-formats.md): those globals are simply
+ * named offsets into whichever record was most recently loaded by index,
+ * addressed via real-mode segment arithmetic (es:0x5A5A, es = seg129) that
+ * nothing in the disassembly visually connects to the record's own absolute
+ * addresses. The record count for each game is a confirmed, named engine
+ * constant (word_3330C in Chapter 2's InitGlobals, its Chapter 3 equivalent
+ * at ds:0x5DF8) -- the same value party.h's partyKnownAbilityIdMax already
+ * used without the connection to this table being made.
+ *
+ * Field offsets and the handful of bit meanings below were confirmed two
+ * ways: tracing every reader (ShowClueBookSpellDetail's clue-book UI,
+ * ApplyEncodedItemEffect's icon-bar branches, and the ApplyAttackToTarget/
+ * TryResolveAttackAgainstTarget/ApplyTargetResistancesToAttack
+ * attack-resolution family combat.h already covers) back to a record-
+ * relative offset, and cross-checking against real byte statistics from
+ * both games' actual WORLD.DAT files -- every bit this header names is set
+ * by at least one real record in both games except SpellResistClearAware
+ * (0x20 of SpellFieldResistFlags), which no real record in either game ever
+ * sets; the original still reads it, so combat.h reproduces it anyway for
+ * fidelity rather than dropping it as unreachable.
+ */
+
+enum {
+    SpellRecordSize = 80,
+    SpellRecordCountYendor2 = 125, /* word_3330C, InitGlobals */
+    SpellRecordCountYendor3 = 107, /* ds:0x5DF8, InitGlobals */
+    SpellRecordCountMax = 125,
+    SpellNameFieldSize = 22 /* space/NUL-terminated, not guaranteed NUL-terminated on disk */
+};
+
+typedef struct {
+    uint32_t recordsOffset; /* WORLD.DAT offset */
+    uint16_t recordCount;
+} SpellCatalogLayout;
+
+const SpellCatalogLayout *spellCatalogLayout(GameKind game);
+
+typedef struct {
+    GameKind game;
+    uint16_t recordCount;
+    uint8_t records[SpellRecordCountMax * SpellRecordSize];
+} SpellCatalog;
+
+bool spellCatalogParse(SpellCatalog *catalog, GameKind game, const uint8_t *region, size_t size);
+bool spellCatalogParseWorldDat(SpellCatalog *catalog, GameKind game, const uint8_t *worldDat, size_t size);
+
+/* 1-based id, matching the original's own indexing; NULL if out of range. */
+const uint8_t *spellRecord(const SpellCatalog *catalog, unsigned id);
+
+uint16_t spellGetU16(const uint8_t *record, unsigned offset);
+
+/* Trimmed name (space/NUL run at the end stripped); out must hold SpellNameFieldSize + 1 bytes. */
+void spellGetName(const uint8_t *record, char *out);
+
+typedef enum {
+    SpellFieldName = 0x00, /* SpellNameFieldSize bytes */
+
+    /*
+     * word_332D0: drawn as a labeled number in ShowClueBookSpellDetail, but
+     * only for a class already confirmed eligible-and-leveled, gated on a
+     * SpellFieldClassEligibility bit -- not identified beyond that; climbs
+     * slowly and roughly monotonically with record id in both games (1, 1,
+     * 1, 2, 2, 3, 4, 4, 4, 4, 4, 5, ... for Chapter 2's first 12 records),
+     * suggesting a tier/grouping id rather than a per-class value, but not
+     * confirmed.
+     */
+    SpellFieldGroup = 0x16,
+
+    SpellFieldMpCost = 0x18,   /* word_332D2; compared against the caster's own PartyFieldMp */
+    SpellFieldNuoreCost = 0x1A, /* word_332D4; checked via IsBCDCounterAtLeast against SaveHeaderOreCounter2 */
+    SpellFieldOreCost = 0x1C,  /* word_332D6; checked the same way against SaveHeaderOreCounter1 */
+
+    /*
+     * word_332D8: 0 in the large majority of real records (119/125 Chapter
+     * 2, 99/107 Chapter 3); where nonzero (9 or 13 in every real record
+     * found), matched directly against monster.h's MonsterFieldUnknown4E by
+     * combatApplySpellAttack, but only when SpellResistTypeRestricted
+     * (SpellFieldResistFlags bit 0x100) is set -- an attack that doesn't
+     * match the target's own value is a complete no-op, no roll attempted
+     * at all. Also drives two of ShowClueBookSpellDetail's own "WHEN:" text
+     * choices (compared against literal 9 and 13).
+     */
+    SpellFieldTargetTypeId = 0x1E,
+
+    /*
+     * word_332DC/word_332DE: an already-resolved inflicted-status/magnitude
+     * pair, used verbatim (never rolled) by ApplyEncodedItemEffect's
+     * single-target and whole-party icon-bar branches -- see combat.h's
+     * combatResolveEncodedItemEffectValue.
+     */
+    SpellFieldInflictedStatus = 0x22,
+    SpellFieldInflictedMagnitude = 0x24,
+
+    /*
+     * word_332E0: the stat-drain amount ApplyTargetResistancesToAttack
+     * subtracts (floored at 0) from one of the target's own combat-stat
+     * fields when SpellFieldAttackFlags requests a drain category -- see
+     * combat.h's combatApplyTargetResistances.
+     */
+    SpellFieldDrainAmount = 0x26,
+
+    /*
+     * word_332E2: ResetOrCopyTargetPositionFields's own bit-0x40 gate
+     * (yendor2.asm:53238) -- whether a cursed acting character zeroes a
+     * target's position fields instead of copying word_332DC/word_332DE
+     * (note: a DIFFERENT pair of globals at the same numeric distance as
+     * SpellFieldInflictedStatus/Magnitude's offsets but a separate call
+     * path -- not cross-checked against those two fields' own values).
+     */
+    SpellFieldPositionResetFlags = 0x28,
+
+    /* 0x2A-0x2D: referenced by nothing traced so far. */
+
+    /*
+     * word_332E8: ResolveAttack's "power" input (combat.h's
+     * combatResolveAttack) for a normal roll, and the direct-hit fallback
+     * damage (ApplyAttackToTarget's "already resolved" path, bypassing the
+     * roll entirely) when SpellFieldResistFlags bit 0x100 either isn't set
+     * or matches the target's SpellFieldTargetTypeId gate.
+     */
+    SpellFieldAttackMagnitude = 0x2E,
+
+    /* 0x30-0x33: referenced by nothing traced so far. */
+
+    /*
+     * word_332EE: written verbatim into MonsterFieldTickAmount (monster.h)
+     * by combatApplySpellAttack whenever ANY inflicted status survives
+     * resistances, regardless of SpellFlagsAPersistAffliction -- that bit
+     * only gates the separate MonsterFieldImmunities "mark afflicted" OR,
+     * not this write. TickMonsterTimer's own gate bits (MonsterFieldState
+     * mask 0xFC10) aren't set by this same write, though -- what arms the
+     * actual countdown mechanism this value feeds is still a separate,
+     * unfound write (monster.h's own long-open note on monsterTickTimer).
+     */
+    SpellFieldTickAmount = 0x34,
+
+    /* 0x36-0x41: referenced by nothing traced so far (12 bytes -- plausibly
+     * a description-block id for ShowClueBookSpellDetail's own "EFFECT:"/
+     * "WHEN:" text via LookupSpellDescriptionBlockOffset, not confirmed). */
+
+    SpellFieldTickCountdown = 0x42, /* word_332FC; -> MonsterFieldTickCountdown, same gate as SpellFieldTickAmount above */
+
+    /*
+     * word_332FE: a 6-bit class-eligibility mask (ShowClueBookSpellDetail's
+     * per-class eligibility/level row, tested highest-bit-first against a
+     * 6-iteration class loop -- which of the 6 class bases each bit maps to
+     * isn't individually confirmed here, only that it's a 6-slot mask).
+     */
+    SpellFieldClassEligibility = 0x44,
+
+    SpellFieldFlagsA = 0x46,     /* word_33300; see SpellFlagsA */
+    SpellFieldFlagsB = 0x48,     /* word_33302; see SpellFlagsB -- ApplyEncodedItemEffect's own dispatch key */
+    SpellFieldAttackFlags = 0x4A, /* word_33304; combat.h's combatApplyTargetResistances attackFlags parameter */
+    SpellFieldResistFlags = 0x4C  /* word_33306; combatApplyTargetResistances resistanceFlags parameter, plus 3 more bits combatApplySpellAttack itself reads -- see SpellResistFlag */
+} SpellField;
+
+/*
+ * SpellFieldFlagsA (word_33300) bits actually tested anywhere traced.
+ * Real-data counts, Chapter 2 / Chapter 3 out of 125 / 107 records:
+ * 0x200 (3/2), 0x400 (42/41), 0x800 (4/4), 0x1000 (19/19), 0x4000 (13/13),
+ * 0x8000 (16/16).
+ */
+typedef enum {
+    /*
+     * Gates whether a surviving inflicted status also gets OR'd into the
+     * target's own MonsterFieldImmunities (marking it "currently afflicted",
+     * monster.h's own note on that field) by combatApplySpellAttack --
+     * MonsterFieldTickAmount/TickCountdown get armed either way whenever any
+     * status survives, this bit only controls the affliction-tracking mark.
+     */
+    SpellFlagsAPersistAffliction = 0x0200,
+    /*
+     * Bit 0x400 selects one of ShowClueBookSpellDetail's "EFFECT:" message
+     * variants (yendor2.asm:6380). Bits 0x800/0x1000 are read by
+     * ApplyEncodedItemEffect's own surrounding dispatch (roadmap.md
+     * candidate 8) -- confirmed this round to be genuine record fields, not
+     * untraced caller-context globals as earlier rounds assumed, but the
+     * exact gating logic against SpellFieldFlagsB's own bits wasn't reread
+     * this round; still open.
+     */
+    SpellFlagsAEffectTextVariant = 0x0400,
+    SpellFlagsAIconBarGate1 = 0x0800,
+    SpellFlagsAIconBarGate2 = 0x1000,
+    /* ApplyEncodedItemEffect's own whole-party/single-target branches -- combat.h's combatApplyEncodedItemEffectParty/Single. */
+    SpellFlagsAWholeParty = 0x4000,
+    SpellFlagsASingleTarget = 0x8000
+} SpellFlagsA;
+
+/*
+ * SpellFieldFlagsB (word_33302): ApplyEncodedItemEffect's own ~19-branch
+ * dispatch key (roadmap.md candidate 8), now confirmed to be this record's
+ * own field rather than per-call caller state. Only the bits this project
+ * has traced a concrete consumer for are named; the rest of the ~19 are
+ * still open (candidate 8's own remaining scope).
+ */
+typedef enum {
+    SpellFlagsBWholeParty = 0x4000,  /* alias of SpellFlagsAWholeParty's role, same bit position as word_33300's -- different word, same name pattern kept distinct on purpose */
+    SpellFlagsBSingleTarget = 0x8000,
+    /*
+     * Routes into the corridor/ranged-attack family
+     * (ApplyAttackToTarget/TryResolveAttackAgainstTarget, this header's own
+     * SpellField attack fields) rather than the icon-bar status-effect
+     * path -- confirmed against real data: every Chapter 2/3 record with
+     * this bit set is a plain damage/status attack spell (MAGIC ATTACK,
+     * COLD SLASH, FEET OF LEAD, INSECT REPELLENT, ELECTRIC BURST, ...).
+     */
+    SpellFlagsBAttackPath = 0x2000
+} SpellFlagsB;
+
+/*
+ * SpellFieldResistFlags (word_33306) bits beyond the
+ * combatApplyTargetResistances resistanceFlags role (MonsterResistMagicMask/
+ * PhysicalMask, 0x200-0x8000) that combatApplySpellAttack itself reads
+ * directly.
+ */
+typedef enum {
+    /*
+     * combatApplySpellAttack: "already resolved" direct-hit path uses half
+     * of the TARGET's own MonsterFieldDamage as the fallback damage instead
+     * of word_332E8, when set. Exactly 1 real record in each game.
+     */
+    SpellResistHalfTargetDamage = 0x0010,
+    /*
+     * Clears the target's own MonsterStateAware bit after the attack
+     * resolves (ApplyAttackToTarget's tail) -- reproduced for fidelity, but
+     * genuinely unreachable: no real record in either game sets this bit.
+     */
+    SpellResistClearAware = 0x0020,
+    /* Gates SpellFieldTargetTypeId's match requirement (see that field's own doc comment). */
+    SpellResistTypeRestricted = 0x0100
+} SpellResistFlag;
+
+#endif

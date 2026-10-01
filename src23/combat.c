@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "party.h"
+#include "spellrecord.h"
 
 static bool partySlotIsUsable(SaveGame *save, unsigned slot, uint8_t **outRecord) {
     uint16_t id = saveGetPartySlot(save, slot);
@@ -332,6 +333,77 @@ CombatTargetAttackResult combatApplyTargetResistances(uint8_t *targetRecord, uin
         monsterSetU16(targetRecord, fieldOffset, (uint16_t)value);
     }
     return result;
+}
+
+CombatSpellAttackResult combatResolveSpellAttack(const uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                   const uint8_t *spellRecord, bool alreadyResolved, RandomState *rng) {
+    CombatSpellAttackResult result;
+    result.damage = 0;
+    result.statusFlags = 0;
+    result.hasEffect = false;
+
+    uint16_t resistFlags = spellGetU16(spellRecord, SpellFieldResistFlags);
+    if (resistFlags & SpellResistTypeRestricted) {
+        uint16_t wantedType = spellGetU16(spellRecord, SpellFieldTargetTypeId);
+        if (monsterGetU16(targetRecord, MonsterFieldUnknown4E) != wantedType) {
+            return result;
+        }
+    }
+
+    uint16_t damage;
+    if (alreadyResolved) {
+        damage = spellGetU16(spellRecord, SpellFieldAttackMagnitude);
+    } else {
+        uint16_t defense = monsterGetU16(targetRecord, MonsterFieldAbsorption);
+        uint16_t accuracy = partyGetStat(casterRecord, PartyStatCasting);
+        uint16_t power = spellGetU16(spellRecord, SpellFieldAttackMagnitude);
+        damage = combatResolveAttack(defense, accuracy, power, rng);
+        if (damage == 0) {
+            return result;
+        }
+    }
+
+    uint16_t attackFlags = spellGetU16(spellRecord, SpellFieldAttackFlags);
+    uint16_t drainAmount = spellGetU16(spellRecord, SpellFieldDrainAmount);
+    /* combatApplyTargetResistances mutates targetRecord directly for its own drain effect -- see its own doc comment. */
+    CombatTargetAttackResult filtered =
+        combatApplyTargetResistances((uint8_t *)targetRecord, damage, attackFlags, resistFlags, drainAmount);
+
+    result.damage = filtered.damage;
+    result.statusFlags = filtered.statusFlags;
+    result.hasEffect = filtered.damage != 0 || filtered.statusFlags != 0;
+    return result;
+}
+
+void combatApplySpellAttack(uint8_t *targetRecord, const uint8_t *spellRecord, CombatSpellAttackResult result) {
+    if (!result.hasEffect) {
+        return;
+    }
+    uint16_t resistFlags = spellGetU16(spellRecord, SpellFieldResistFlags);
+    uint16_t damage = result.damage;
+    if (resistFlags & SpellResistHalfTargetDamage) {
+        damage = (uint16_t)(monsterGetU16(targetRecord, MonsterFieldDamage) >> 1);
+    }
+
+    monsterSetU16(targetRecord, MonsterFieldState,
+                  (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) | MonsterStateAware | MonsterStateHitFlashPending));
+    monsterSetU16(targetRecord, MonsterFieldHealth, (uint16_t)(monsterGetU16(targetRecord, MonsterFieldHealth) - damage));
+
+    if (result.statusFlags != 0) {
+        monsterSetU16(targetRecord, MonsterFieldState,
+                      (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) | result.statusFlags));
+        if (spellGetU16(spellRecord, SpellFieldFlagsA) & SpellFlagsAPersistAffliction) {
+            monsterSetU16(targetRecord, MonsterFieldImmunities,
+                          (uint16_t)(monsterGetU16(targetRecord, MonsterFieldImmunities) | result.statusFlags));
+        }
+        monsterSetU16(targetRecord, MonsterFieldTickAmount, spellGetU16(spellRecord, SpellFieldTickAmount));
+        monsterSetU16(targetRecord, MonsterFieldTickCountdown, spellGetU16(spellRecord, SpellFieldTickCountdown));
+    }
+
+    if (resistFlags & SpellResistClearAware) {
+        monsterSetU16(targetRecord, MonsterFieldState,
+                      (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) & (uint16_t)~MonsterStateAware));
+    }
 }
 
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,

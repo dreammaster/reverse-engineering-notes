@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_maptrigger test_maptrigger.c ../maptrigger.c ../combat.c ../effect.c ../party.c ../item.c ../bcd4.c ../random.c ../savegame.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../globalflags.c && ./test_maptrigger
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_maptrigger test_maptrigger.c ../maptrigger.c ../combat.c ../effect.c ../party.c ../item.c ../bcd4.c ../random.c ../savegame.c ../monsterpool.c ../dungeongrid.c ../movement.c ../monster.c ../monster_stdio.c ../worldmap.c ../worldmap_stdio.c ../globalflags.c ../spellrecord.c && ./test_maptrigger
  */
 #include <stdio.h>
 #include <string.h>

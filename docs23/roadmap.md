@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-09-30, resolved: the "region/town password" mechanism -- party teleport/fast-travel destinations, a new WorldObjectFlagUnknown2000 consumer -- the wall/door trap creation mystery (no separate mechanism; it's monsterApproachParty), and the "R rest" command's own decision logic (gameclock.c, new, including two real shared original bugs) -- plus TickEquippedItemDurability, ApplyTargetResistancesToAttack, the equipment-corrosion write-back, and ApplyEffectAndDrawIconBar's full 3-way dispatch from prior rounds)
+## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new) and the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack) -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -928,12 +928,40 @@ consumers, if any.
    ATTACK/SLING SHOT/COLD SLASH/MINOR WOUNDS/MINER'S LIGHT I,
    byte-identical in both games. See `file-formats.md`'s own dedicated
    section for the complete writeup. This closes the "which caller
-   populates this" side of the mystery; what's left is the more
-   ordinary task of decoding the rest of the record's own field layout
-   (only name/MP-cost/NUORE-cost/ore-cost are confirmed so far) and
-   wiring `ApplyAttackToTarget`/`TryResolveAttackAgainstTarget`/these
-   two dispatch branches against it -- a good candidate for its own
-   pass, no longer blocked on an unknown write site.
+   populates this" side of the mystery.
+
+   **The record's full field layout decoded, and the attack-resolution
+   family composed, 2026-10-01**: new module `src23/spellrecord.c`/`.h`
+   names every field this project has a confirmed consumer for (name,
+   costs, the type-restriction gate, the preset inflicted-status/
+   magnitude pair, drain amount, attack magnitude, the tick-timer arm,
+   class eligibility, and the 3 flag words `word_33300`/`33302`/`33306`),
+   cross-checked against real byte statistics from both games' full
+   tables (125 records Chapter 2, 107 Chapter 3 -- both counts confirmed
+   named engine constants, not estimates). Resolved three real
+   previously-unexplained quirks along the way: `MonsterFieldUnknown4E`
+   is the type-restriction match target; `MonsterFieldImmunities` is
+   reused at runtime to mark "currently afflicted" via the exact same
+   bits as "permanently immune"; and `MonsterStateSpecialAttackDisabled`/
+   `MonsterStateBusy` share bit positions with `MonsterImmuneCursing`/
+   `MonsterImmuneHexing`, so landing those statuses sets those state bits
+   as a side effect, not a separate mechanism (a new bit,
+   `MonsterStateHitFlashPending`, was also named). `ApplyAttackToTarget`/
+   `TryResolveAttackAgainstTarget`/`ApplyTargetResistancesToAttack` are
+   now fully composed as `combatResolveSpellAttack`/
+   `combatApplySpellAttack` (`src23/combat.c`/`.h`). This also confirms
+   `word_33300`/`33302`/`33306` are genuine record fields (not per-call
+   caller state as every earlier round assumed) -- `ApplyEncodedItemEffect`'s
+   ~19-branch dispatch is simply data-driven from whichever spell/ability
+   id an item encodes. Tests in `test_spellrecord.c` (22nd suite, new)
+   and extended `test_combat.c`; all 22 suites pass. **Still open**: the
+   exact gating between `word_33300`'s `0x800`/`0x1000` bits and
+   `word_33302`'s single-target/whole-party bits (the surrounding
+   dispatch decision itself) wasn't reread this round; a dozen bytes in
+   the record's own middle (offsets `0x36`-`0x41`) have no confirmed
+   consumer, plausibly a description-block id; and `TickMonsterTimer`'s
+   own gate bits still have no confirmed setter even though this round
+   found its tick-amount/countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark

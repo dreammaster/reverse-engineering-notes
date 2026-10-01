@@ -13,6 +13,7 @@
 #include "monsterpool.h"
 #include "random.h"
 #include "savegame.h"
+#include "spellrecord.h"
 
 /*
  * Turn-based combat: a genuinely separate subsystem from the
@@ -425,19 +426,13 @@ void combatApplyCorrosion(uint8_t *defenderRecord, const ItemCatalog *catalog, G
  * different code path than) ordinary HP damage; mutates targetRecord
  * directly rather than being reflected in the returned result.
  *
- * **Not yet composed with its own callers**: `ApplyAttackToTarget`
- * (base damage via `combatResolveAttack`, using the target's own
- * `MonsterFieldAbsorption` as defense and the acting party member's
- * own `PartyStatCasting` as accuracy -- confirmed directly from
- * `TryResolveAttackAgainstTarget`'s own register sourcing) and
- * `ApplyDamageToMapMonster` (adds death/reward handling, already fully
- * reimplemented elsewhere as `monsterGrantRewards`/`monsterPoolRemove`)
- * both still depend on more of these same untraced caller-context
- * globals (`word_33300`, tick-timer amount/countdown sources, etc.)
- * that `ApplyEncodedItemEffect`'s own bits `0x4`/`0x2000` haven't been
- * traced far enough to supply -- left for a future pass once those
- * branches are picked up, rather than composed against unconfirmed
- * inputs.
+ * Composed with its own callers as combatResolveSpellAttack/
+ * combatApplySpellAttack below, now that spellrecord.h has resolved
+ * where attackFlags/resistanceFlags/drainAmount and the base magnitude
+ * actually come from (the word_332D8-33306 cluster, file-formats.md).
+ * `ApplyDamageToMapMonster` (adds death/reward handling on top, already
+ * fully reimplemented elsewhere as `monsterGrantRewards`/
+ * `monsterPoolRemove`) is still a separate, not-yet-composed step.
  */
 typedef struct {
     uint16_t damage;
@@ -446,6 +441,87 @@ typedef struct {
 
 CombatTargetAttackResult combatApplyTargetResistances(uint8_t *targetRecord, uint16_t damage, uint16_t attackFlags,
                                                         uint16_t resistanceFlags, uint16_t drainAmount);
+
+/*
+ * ApplyAttackToTarget/TryResolveAttackAgainstTarget (yendor2.asm:53164/
+ * 52756, instruction-identical in Chapter 3): the composed attack a
+ * player-triggered spell/item effect makes against a map monster
+ * (`g_levelMonsters`), now that spellrecord.h has resolved the
+ * "word_332D8-33306 cluster" these two functions read as a genuine
+ * 80-byte spell/ability catalog record rather than untraced caller
+ * state.
+ *
+ * alreadyResolved is the caller's own `g_uiScratchFlags4` bit `0x80` --
+ * still an untraced caller-context input (which of
+ * `ApplyEncodedItemEffect`'s call sites sets it isn't pinned down), but
+ * its own effect here is fully clear: true skips `combatResolveAttack`'s
+ * roll entirely and uses `SpellFieldAttackMagnitude` directly as the
+ * damage.
+ *
+ * Both paths share the same gate first: if the spell record's
+ * `SpellResistTypeRestricted` bit is set, the target's own
+ * `MonsterFieldUnknown4E` must equal `SpellFieldTargetTypeId` or the
+ * whole attack is a no-op (`hasEffect = false`, no roll attempted at
+ * all -- this is `TryResolveAttackAgainstTarget`'s own gate, reproduced
+ * once here since both callers apply the identical condition to the
+ * identical fields). Otherwise: alreadyResolved short-circuits straight
+ * to `SpellFieldAttackMagnitude`; the normal path rolls
+ * `combatResolveAttack(target's MonsterFieldAbsorption, caster's
+ * PartyStatCasting, SpellFieldAttackMagnitude, rng)` and bails on a
+ * roll of 0 (resistances are never even consulted -- a clean miss, not
+ * a 0-damage hit) -- `alreadyResolved` skips this zero-check too, so a
+ * direct hit with magnitude 0 still reaches resistances/drain.
+ *
+ * Either way, the resulting damage is filtered through
+ * `combatApplyTargetResistances` using the record's own
+ * `SpellFieldAttackFlags`/`SpellFieldResistFlags`/`SpellFieldDrainAmount`.
+ * `hasEffect` is false (no commit at all) if nothing survives that --
+ * no damage and no status.
+ */
+typedef struct {
+    uint16_t damage;
+    uint16_t statusFlags;
+    bool hasEffect;
+} CombatSpellAttackResult;
+
+CombatSpellAttackResult combatResolveSpellAttack(const uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                   const uint8_t *spellRecord, bool alreadyResolved, RandomState *rng);
+
+/*
+ * The commit half of the pair above (`ApplyAttackToTarget`'s own tail,
+ * past its call to `ApplyTargetResistancesToAttack`). A no-op if
+ * `!result.hasEffect`. Otherwise, in the original's exact order:
+ *
+ *  1. If the spell record's `SpellResistHalfTargetDamage` bit is set,
+ *     damage is unconditionally replaced by half the TARGET's own
+ *     `MonsterFieldDamage` (even if `result.damage` was 0) -- a
+ *     genuinely separate "reflect part of its own attack back" damage
+ *     source, not a modifier on the rolled/preset value. Exactly one
+ *     real record in each game sets this bit.
+ *  2. `MonsterFieldState` unconditionally gains `MonsterStateAware`
+ *     and `MonsterStateHitFlashPending` (the latter a one-shot render
+ *     cue, see monster.h), then `MonsterFieldHealth` is reduced by the
+ *     (possibly just-replaced) damage.
+ *  3. If any status survived: those bits are OR'd into
+ *     `MonsterFieldState` itself (this is how a landed Cursing/Hexing
+ *     status also happens to set `MonsterStateSpecialAttackDisabled`/
+ *     `MonsterStateBusy` -- same bit positions, not a separate
+ *     mechanism -- see monster.h), and `SpellFieldTickAmount`/
+ *     `TickCountdown` are copied into the target's own
+ *     `MonsterFieldTickAmount`/`TickCountdown` unconditionally.
+ *     Additionally, if the record's `SpellFlagsAPersistAffliction` bit
+ *     is set, the same surviving status bits are *also* OR'd into
+ *     `MonsterFieldImmunities` to mark the target as currently
+ *     afflicted (monster.h's own note on that field's dual role) --
+ *     without this bit, the tick-timer fields still get armed, but the
+ *     target isn't marked as already-afflicted for a future
+ *     reapplication to skip.
+ *  4. If the spell record's `SpellResistClearAware` bit is set,
+ *     `MonsterStateAware` is cleared again -- reproduced for fidelity,
+ *     though no real record in either game ever sets this bit (see
+ *     spellrecord.h).
+ */
+void combatApplySpellAttack(uint8_t *targetRecord, const uint8_t *spellRecord, CombatSpellAttackResult result);
 
 /*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in

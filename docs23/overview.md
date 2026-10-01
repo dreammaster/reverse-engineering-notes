@@ -10683,6 +10683,54 @@ mysteries don't resolve often, and this one did because re-reading an
 old, carefully-reasoned "unresolved" conclusion with slightly different
 arithmetic turned out to be enough.
 
+### Session update (continued, 2026-10-01): the spell/ability catalog's full field layout decoded, the attack family composed
+
+Picked up exactly where the previous round left off: with the
+word_332D8 cluster's identity settled, the rest of its 80-byte record
+was "ordinary, bounded work." Traced every reader back to a
+record-relative offset — `ShowClueBookSpellDetail`'s own UI,
+`ApplyEncodedItemEffect`'s icon-bar branches, and the
+`ApplyAttackToTarget`/`TryResolveAttackAgainstTarget`/
+`ApplyTargetResistancesToAttack` family — then confirmed the whole
+layout against real byte statistics pulled directly from both games'
+actual `WORLD.DAT` tables (125 records Chapter 2, 107 Chapter 3, both
+counts themselves confirmed named engine constants rather than
+estimates). New module `src23/spellrecord.c`/`.h`.
+
+Three real, previously-unexplained quirks fell out of this trace for
+free: `monster.h`'s long-unidentified `MonsterFieldUnknown4E` is simply
+what a type-restricted attack matches against; `MonsterFieldImmunities`
+turns out to double as "currently afflicted" at runtime, reusing its
+own bit positions rather than needing a separate field; and
+`MonsterStateSpecialAttackDisabled`/`MonsterStateBusy` share bit
+positions with the Cursing/Hexing immunity bits, so landing those two
+statuses on a monster sets those state bits as a pure side effect of
+the shared position — not a separate mechanism, and not what either
+field's name would suggest on its own. A new state bit,
+`MonsterStateHitFlashPending`, was named along the way too.
+
+With the record's layout confirmed, composed the whole
+`ApplyAttackToTarget` family at last — `combatResolveSpellAttack`/
+`combatApplySpellAttack` in `src23/combat.c`/`.h`, reusing the
+already-existing `combatApplyTargetResistances` rather than
+re-deriving it. This also lands a genuinely nice payoff for
+`roadmap.md` candidate 8's biggest remaining question: `word_33300`/
+`33302`/`33306` are confirmed to be fields of this same record, not
+untraced per-call caller state the way every earlier round (including
+last round's own cluster-resolution writeup) assumed — the
+`ApplyEncodedItemEffect` dispatch really is just "look up whichever
+spell/ability id this item encodes and read its own flags," which is a
+satisfying, simple answer to a question this project had been
+carrying since that function was first named.
+
+Tests in a new `test_spellrecord.c` (22nd suite) and an extended
+`test_combat.c`; all 22 suites pass. Still open, flagged rather than
+guessed at: the exact gating between the icon-bar-path bits and the
+single/whole-party bits, a dozen unidentified bytes in the record's own
+middle, and `TickMonsterTimer`'s own still-unfound gate-bit setter
+(this round found where its tick-amount/countdown *value* comes from,
+not what arms it).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

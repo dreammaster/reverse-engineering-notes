@@ -61,7 +61,16 @@ typedef enum {
     MonsterFieldName1 = 0x32,     /* 13-byte text lines, 12 characters + NUL */
     MonsterFieldName2 = 0x3F,
     MonsterFieldSpriteBase = 0x4C, /* u16 first picture id of its sprite */
-    MonsterFieldUnknown4E = 0x4E, /* u16, 1-13 in real data; not identified */
+    /*
+     * u16, 0 or 9-13 in real data. Matched directly against a spell/ability
+     * record's own SpellFieldTargetTypeId (spellrecord.h) by
+     * combatApplySpellAttack when that record's SpellResistTypeRestricted
+     * flag is set -- a type-restricted attack is a no-op entirely against
+     * any monster whose own value here doesn't match. What the handful of
+     * distinct nonzero values actually group (element? creature family?)
+     * isn't identified; kept descriptive rather than guessed.
+     */
+    MonsterFieldUnknown4E = 0x4E,
     MonsterFieldMaxHealth = 0x50, /* u16 ("HEALTH-") */
     MonsterFieldSaveDifficulty = 0x52, /* u16 saving-throw DC for its effects */
     MonsterFieldAccuracy = 0x54,  /* u16 ("ACCURACY-") */
@@ -97,15 +106,52 @@ typedef enum {
     MonsterFieldGoldTheftAmount = 0x8E,
     MonsterFieldFlags = 0x92,     /* u16, MonsterFlag bits */
     MonsterFieldAwareness = 0x94, /* u16, MonsterAwareness bits */
-    MonsterFieldImmunities = 0x96, /* u16, MonsterImmunity bits */
+    /*
+     * u16, MonsterImmunity bits -- catalog data (innate/permanent immunity)
+     * for every reader except one: ApplyAttackToTarget (combat.h's
+     * combatApplySpellAttack) ORs a player-triggered attack's surviving
+     * inflicted-status bits into this same field to mark the monster as
+     * *currently afflicted*, reusing the identical bit positions (the
+     * record is never otherwise re-read as "permanently immune" after
+     * spawn, so the overload is safe) -- the "unless already afflicted"
+     * gate an earlier session's comment on a different function already
+     * named without making this connection.
+     */
+    MonsterFieldImmunities = 0x96,
     MonsterFieldResistances = 0x98 /* u16, MonsterResistance bits */
 } MonsterField;
 
 /* MonsterFieldState bits. */
 typedef enum {
     MonsterStateAware = 0x0001, /* it has noticed the party (TryActivateMonsterByDistance); gates ProcessLevelMonsters */
-    MonsterStateSpecialAttackDisabled = 0x0400, /* SelectTrapEffectVariant (combat.h) always uses the ordinary attack effect, never rolls for the special one, while this is set */
-    MonsterStateBusy = 0x0800   /* skips ProcessLevelMonsters' approach/ambush check this tick; exact trigger not confirmed */
+    /*
+     * Set alongside MonsterStateAware whenever a player-triggered spell/item
+     * attack lands any damage or status on this monster (ApplyAttackToTarget,
+     * combat.h's combatApplySpellAttack) -- cleared the next time
+     * DrawMonsterAndUpdateAttackState renders it, after showing one "hit
+     * flash" sprite frame (MonsterFieldSpriteBase + 9). A one-shot render cue,
+     * not persistent state.
+     */
+    MonsterStateHitFlashPending = 0x0002,
+    /*
+     * SelectTrapEffectVariant (combat.h) always uses the ordinary attack
+     * effect, never rolls for the special one, while this is set. Confirmed
+     * 2026-10-01: also one of the bits ApplyAttackToTarget can OR into this
+     * same field as a surviving inflicted-status flag (MonsterImmuneCursing,
+     * same bit position) -- successfully cursing a monster via a player
+     * spell/item attack disables its special attack as a side effect of the
+     * two concepts sharing a bit, not a separate mechanism.
+     */
+    MonsterStateSpecialAttackDisabled = 0x0400,
+    /*
+     * Skips ProcessLevelMonsters' approach/ambush check this tick; exact
+     * trigger not confirmed from that side. Shares a bit with
+     * MonsterImmuneHexing for the same reason as
+     * MonsterStateSpecialAttackDisabled/MonsterImmuneCursing above --
+     * successfully hexing a monster via ApplyAttackToTarget also marks it
+     * busy.
+     */
+    MonsterStateBusy = 0x0800
 } MonsterState;
 
 /*
