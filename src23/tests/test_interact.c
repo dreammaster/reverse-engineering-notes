@@ -212,6 +212,45 @@ static void testKnock(void) {
     check("no object at all: knock fails", !interactKnock(&save, GameYendor2, NULL, NULL, false, 0, false, false));
 }
 
+static void testTriggerFacingCurgameEvent(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+
+    WorldObjectRecord curgame;
+    curgame.flags = WorldObjectFlagCurgameRecord;
+    curgame.value = 9;
+
+    check("a curgame record with flag 0x10: triggers",
+          interactTriggerFacingCurgameEvent(&save, GameYendor2, &curgame, NULL, false, 0x10, false, false));
+    check("...and marks that curgame id's own bit", interactBitmapTest(&save, interactCurgameBitIndex(GameYendor2, 9)));
+
+    saveGameInit(&save, GameYendor2);
+    check("a curgame record with flag 0x8: triggers",
+          interactTriggerFacingCurgameEvent(&save, GameYendor2, &curgame, NULL, false, 0x8, false, false));
+
+    saveGameInit(&save, GameYendor2);
+    check("a curgame record with flag 0x20 (fallback B, Knock's own set): does not trigger",
+          !interactTriggerFacingCurgameEvent(&save, GameYendor2, &curgame, NULL, false, 0x20, false, false));
+
+    saveGameInit(&save, GameYendor2);
+    check("a curgame record with flag 0x40 (bit 0x40's own set): does not trigger",
+          !interactTriggerFacingCurgameEvent(&save, GameYendor2, &curgame, NULL, false, 0x40, false, false));
+
+    saveGameInit(&save, GameYendor2);
+    check("an already-triggered curgame record: does not fire again",
+          !interactTriggerFacingCurgameEvent(&save, GameYendor2, &curgame, NULL, false, 0x10, true, false));
+
+    WorldObjectRecord door;
+    door.flags = WorldObjectFlagDoor;
+    door.value = 12;
+    LockRecord lock;
+    memset(&lock, 0, sizeof(lock));
+    lock.flags = LockFlagMagical;
+    saveGameInit(&save, GameYendor2);
+    check("a magical door (a lock outcome): never qualifies for this wrapper",
+          !interactTriggerFacingCurgameEvent(&save, GameYendor2, &door, &lock, false, 0, false, false));
+}
+
 /* ApplyEncodedItemEffect's word_33302 bit 0x40 sibling's own qualifying set, exercised via
  * interactResolveIfOutcome directly rather than a dedicated wrapper (see interact.h). */
 static void testResolveIfOutcomeBit0x40QualifyingSet(void) {
@@ -267,6 +306,7 @@ int main(void) {
     testFullDispatch();
     testWorldObjectBitIndex();
     testKnock();
+    testTriggerFacingCurgameEvent();
     testResolveIfOutcomeBit0x40QualifyingSet();
 
     if (g_failureCount == 0) {

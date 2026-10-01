@@ -2972,22 +2972,25 @@ a future pass, not confirmed to be the same mechanism), `0x10`
 (`loc_2C2F9`), `0x4` (`loc_2C344` — the teleport-then-engage branch,
 corrected below), `0x20` (`loc_2C5D9` — a position-bookmark
 save/restore mechanic, new this round, also below), `0x8`
-(`loc_2C674`), `0x2` (`loc_2C703`), `0x1` (`loc_2C71D` —
-`interactKnock`'s own trigger, already reimplemented), `0x40`
-(`loc_2C7BD` — its sibling, also already reimplemented), `0x2000`
-(`loc_2C87F` — confirmed by direct read this round to call
-`ApplyAttackToTarget` against `g_activeCombatMonster`, now
-reimplemented, see below), `0x1000` (`loc_2C8CC` — the same attack
-looped over all 3 `g_monsterSlots` entries, also reimplemented),
-`0x100` (`loc_2C92A`), `0x200` (`loc_2CEE7`); falling through all of
-`word_33302` drops to 4 more `word_33306` bits — `0x8` (`loc_2CCEE`),
-`0x2` (`loc_2CE62`), `0x4` (`loc_2D04D`), `0x1` (`loc_2D137`) — and
-finally a true no-op (`loc_2C1C9`, just clears `g_lastKeyChar`). 19
-branches plus the no-op, matching the "~19" estimate exactly. Only the
-bits named above have a reimplemented consumer; the rest
-(`0x80`/`0x10`/`0x8`/`0x2`/`0x100`/`0x200` of `word_33302`, all 4 of
-`word_33306`) are recorded here as a precise map for whoever picks up
-the remaining branches, rather than traced this round.
+(`loc_2C674` — a third `interactResolveIfOutcome` user, now
+reimplemented as `interactTriggerFacingCurgameEvent`, see below), `0x2`
+(`loc_2C703` — a thin `RestPartyAndAdvanceClock` wrapper, already
+scoped in an earlier round as "rest here"; this round just confirmed
+the exact address), `0x1` (`loc_2C71D` — `interactKnock`'s own
+trigger, already reimplemented), `0x40` (`loc_2C7BD` — its sibling,
+also already reimplemented), `0x2000` (`loc_2C87F` — confirmed by
+direct read this round to call `ApplyAttackToTarget` against
+`g_activeCombatMonster`, now reimplemented, see below), `0x1000`
+(`loc_2C8CC` — the same attack looped over all 3 `g_monsterSlots`
+entries, also reimplemented), `0x100` (`loc_2C92A`), `0x200`
+(`loc_2CEE7`); falling through all of `word_33302` drops to 4 more
+`word_33306` bits — `0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4`
+(`loc_2D04D`), `0x1` (`loc_2D137`) — and finally a true no-op
+(`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
+matching the "~19" estimate exactly. Only the bits named above have a
+reimplemented consumer; the rest (`0x80`/`0x10`/`0x100`/`0x200` of
+`word_33302`, all 4 of `word_33306`) are recorded here as a precise map
+for whoever picks up the remaining branches.
 
 **Self-correction, same round**: this list's own first draft (written
 earlier today) attributed the already-documented "teleport-then-engage"
@@ -3061,6 +3064,56 @@ completely different, untraced branch (`loc_2CF51`) instead; a future
 composing dispatcher needs to check this before calling. Tests in
 `test_combat.c` cover the marker write, the per-slot skip conditions
 (empty, already-dead), and every-slot-hit; all 22 suites pass.
+
+**A third `interactResolveIfOutcome` user found, same day**: `loc_2C674`
+(bit `0x8`) turned out to be the exact same probe-then-classify-then-mark
+shape as `interactKnock` (bit `0x1`) and bit `0x40`'s own unwrapped
+usage — `worldObjectProbeFacingTile`, `interactClassify`, then
+`interactBitmapSet` on a match — just with its own qualifying set:
+`{InteractOutcomeCurgameFlag10, InteractOutcomeCurgameFlag8}`, the two
+*highest*-priority curgame flags (`TryInteractAtPosition`'s own
+`0x10`/`0x8`/`0x40`/`0x20` test order, `interact.h`'s top-of-file note)
+and, unlike `interactKnock`/bit `0x40`, no lock outcome in its set at
+all — this branch can never resolve a door, only a curgame record.
+Given its own name, `interactTriggerFacingCurgameEvent`, since its set
+is at least internally consistent (both qualifying outcomes are "a
+curgame flag fired"), unlike bit `0x40`'s own mixed lock/curgame set
+which still has no confident unifying narrative. Tests in
+`test_interact.c` cover both qualifying flags, both non-qualifying
+flags (bit `0x40`'s and `interactKnock`'s own sets), the
+already-triggered no-op, and a lock outcome never qualifying; all 22
+suites pass. **Bit `0x2` confirmed, not newly reimplemented**: `loc_2C703`
+is exactly the already-scoped "rest here" thin wrapper around
+`RestPartyAndAdvanceClock` this project documented in an earlier round
+(`gameclock.c`'s own section) — this round just pins down its exact
+dispatch address for the map above, no new behavior.
+
+**One branch investigated and deliberately left for its own pass,
+same day**: `loc_2CF51`, the diversion bit `0x2000` takes when
+`SpellFieldResistFlags` has bit `0x40` or `0x80` set. It's a real,
+distinct mechanic — not a dead end — built around the already-named
+`ResolveAttackAndLatchFirstHit` (a sibling of `ResolveAttack` that
+falls back to the spell record's own `SpellFieldAttackMagnitude` as a
+guaranteed minimum hit when a roll comes up a miss) against
+`g_activeCombatMonster`, with two distinct tails depending on which of
+`ResolveAttackAndLatchFirstHit`'s own two outcomes fired: one *adds*
+the rolled damage back to the target's health (a graze/backlash-style
+outcome, not yet understood), the other subtracts it normally and
+writes the hit marker exactly like the two branches just reimplemented
+above. Both tails then feed into a shared icon-bar population step
+that reads two more spell-record fields this project hadn't connected
+to a consumer before (`word_332E4`/`word_332E6`, record offsets
+`0x2A`/`0x2C`, fed to `PrepareTrapEffectSlots` as effect ids) and, in
+one sub-path, treats `SpellFieldPositionResetFlags` (`word_332E2`) as a
+plain magnitude value rather than the flags word
+`ResetOrCopyTargetPositionFields` elsewhere treats it as — yet another
+instance of this record's fields being reused differently per dispatch
+branch, but one this project doesn't yet have a confident enough read
+on to implement without guessing. Recorded here rather than rushed:
+`word_332E4`/`word_332E6`'s own role as effect-id sources is confirmed
+field-offset information worth keeping, but the branch as a whole is a
+better-scoped candidate for its own dedicated pass than something to
+finish in the same sitting as three cleaner branches.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:

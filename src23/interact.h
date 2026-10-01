@@ -185,4 +185,23 @@ bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *objec
                     bool lockAlreadyUnlocked, uint16_t curgameFlags, bool curgameAlreadyTriggered,
                     bool monsterAlreadySpawned);
 
+/*
+ * ApplyEncodedItemEffect's word_33302 bit 0x8 branch (yendor2.asm:51741,
+ * instruction-identical in Chapter 3) -- the same probe-then-classify-
+ * then-mark shape as interactKnock (worldObjectProbeFacingTile, then
+ * interactClassify), but a third qualifying set:
+ * {InteractOutcomeCurgameFlag10, InteractOutcomeCurgameFlag8} -- the two
+ * *highest*-priority curgame flags (see TryInteractAtPosition's own
+ * 0x10/0x8/0x40/0x20 test order, this header's top-of-file note), and
+ * no lock outcome at all -- unlike Knock/bit 0x40, this branch can
+ * never resolve a door, only a curgame record. Given its own name
+ * rather than left anonymous since, unlike bit 0x40, its qualifying set
+ * is at least internally consistent (both members are "a curgame flag
+ * fired"); what the two flags themselves represent narratively still
+ * isn't confirmed.
+ */
+bool interactTriggerFacingCurgameEvent(SaveGame *save, GameKind game, const WorldObjectRecord *object,
+                                        const LockRecord *lock, bool lockAlreadyUnlocked, uint16_t curgameFlags,
+                                        bool curgameAlreadyTriggered, bool monsterAlreadySpawned);
+
 #endif

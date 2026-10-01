@@ -126,7 +126,14 @@ typedef enum {
      */
     SpellFieldPositionResetFlags = 0x28,
 
-    /* 0x2A-0x2D: referenced by nothing traced so far. */
+    /*
+     * 0x2A/0x2C (word_332E4/word_332E6): read as effect ids (fed to
+     * PrepareTrapEffectSlots) by ApplyEncodedItemEffect's loc_2CF51
+     * diversion (file-formats.md's own section on it) -- a real,
+     * confirmed consumer, but that branch's overall shape isn't
+     * understood well enough yet to give these two offsets their own
+     * named SpellField constants without guessing at their exact role.
+     */
 
     /*
      * word_332E8: ResolveAttack's "power" input (combat.h's

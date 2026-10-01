@@ -1005,15 +1005,34 @@ consumers, if any.
    (`src23/combat.c`/`.h`); tests cover the full round-trip and the
    "never saved" failure case; all 22 suites pass.
 
+   **Two more branches picked off, same day**: bit `0x8`
+   (`interactTriggerFacingCurgameEvent`, a third user of the existing
+   `interactResolveIfOutcome` primitive, qualifying set
+   `{InteractOutcomeCurgameFlag10, InteractOutcomeCurgameFlag8}` --
+   never resolves a door, only a curgame record) and bit `0x2`
+   (`loc_2C703`, confirmed to be the already-scoped "rest here" wrapper
+   from an earlier round, no new behavior, just the dispatch address
+   pinned down). Tests in `test_interact.c`; all 22 suites pass.
+
+   **One branch investigated, deliberately deferred rather than
+   rushed, same day**: bit `0x2000`'s own `loc_2CF51` diversion
+   (triggered by `SpellFieldResistFlags` bits `0x40`/`0x80`) is a real,
+   distinct mechanic built around the already-named
+   `ResolveAttackAndLatchFirstHit`, but its two outcome tails (one
+   *adds* damage back to the target, one subtracts it normally) and a
+   shared icon-bar step reading two more record fields
+   (`word_332E4`/`word_332E6`, now at least confirmed as effect-id
+   sources) aren't understood well enough yet to implement without
+   guessing -- recorded in `file-formats.md` as a better-scoped
+   candidate for its own pass.
+
    **Still open**: most of the 19 branches still don't have a
    reimplemented consumer (see `file-formats.md` for the full address
-   map); bit `0x2000`'s own `loc_2CF51` diversion (triggered by
-   `SpellFieldResistFlags` bits `0x40`/`0x80`) is untraced; a dozen
-   bytes in the record's own middle (offsets `0x36`-`0x3F`, 10 bytes
-   now that `0x40`-`0x41` is named) have no confirmed consumer; and
-   `TickMonsterTimer`'s own gate bits still have no confirmed setter
-   even though an earlier round this same day found its tick-amount/
-   countdown *value* source.
+   map); `loc_2CF51` itself (just above); a dozen bytes in the record's
+   own middle (offsets `0x36`-`0x3F`, 10 bytes now that `0x40`-`0x41` is
+   named) have no confirmed consumer; and `TickMonsterTimer`'s own gate
+   bits still have no confirmed setter even though an earlier round
+   this same day found its tick-amount/countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark

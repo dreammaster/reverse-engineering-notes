@@ -10815,6 +10815,28 @@ deferred, same as every other prompt this project hasn't built a
 rendering layer for yet, but the actual game mechanic — save your
 position, recall to it later — is done. All 22 suites pass.
 
+### Session update (continued, same day): one more clean branch, one deliberately left alone
+
+Kept working down the dispatch list. Bit `0x8` turned out to be a third
+user of the shared `interactResolveIfOutcome` primitive this project
+already built for "Knock" and its sibling — same shape, its own
+qualifying set, reimplemented as `interactTriggerFacingCurgameEvent`.
+Bit `0x2` turned out to be the "rest here" wrapper this project had
+already scoped in an much earlier round; nothing new to implement,
+just the exact dispatch address now pinned down for the record.
+
+Then looked at bit `0x2000`'s own diversion branch (`loc_2CF51`) and
+made a deliberate call to stop rather than push through it. It's a
+real mechanic, not a dead end — built around `ResolveAttackAndLatchFirstHit`
+with two genuinely different outcome tails, one of which *adds* damage
+back to the target rather than subtracting it, which doesn't fit
+cleanly into any pattern this project has seen yet. Rather than guess
+at a plausible-sounding interpretation and risk it being wrong, wrote
+down exactly what's confirmed (two more record fields now have a known
+consumer) and left the rest for a dedicated pass. Three clean branches
+and one honest "not yet" is a better day's balance than four branches
+where one might be wrong.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

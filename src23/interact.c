@@ -134,3 +134,11 @@ bool interactKnock(SaveGame *save, GameKind game, const WorldObjectRecord *objec
     return interactResolveIfOutcome(save, game, object, lock, lockAlreadyUnlocked, curgameFlags,
                                      curgameAlreadyTriggered, monsterAlreadySpawned, qualifying, 2);
 }
+
+bool interactTriggerFacingCurgameEvent(SaveGame *save, GameKind game, const WorldObjectRecord *object,
+                                        const LockRecord *lock, bool lockAlreadyUnlocked, uint16_t curgameFlags,
+                                        bool curgameAlreadyTriggered, bool monsterAlreadySpawned) {
+    static const InteractOutcome qualifying[] = {InteractOutcomeCurgameFlag10, InteractOutcomeCurgameFlag8};
+    return interactResolveIfOutcome(save, game, object, lock, lockAlreadyUnlocked, curgameFlags,
+                                     curgameAlreadyTriggered, monsterAlreadySpawned, qualifying, 2);
+}
