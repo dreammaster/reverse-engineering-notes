@@ -14,3 +14,4 @@ Game directory defaults to `D:\GOG Games\Might and Magic 2` (`mm2_layout.DEFAULT
 | `gen_spell_table.py` | joins `SPELLS.DAT` with the manual text to produce docs/spells.md |
 | `condense_asm.py` | shrinks an IDA `.asm` export for reading |
 - `mm2_view.py` — software renderer of the indoor first-person view (verifies docs/view.md): `python mm2_view.py MAP X Y N out.png [town|cave|castle]`
+- `mm2_maps.py` — top-down map renderer (walls, doors, event cells): `python mm2_maps.py MAP out.png [scale]`
