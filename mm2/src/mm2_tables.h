@@ -33,6 +33,8 @@ extern const uint8_t MM2_SMITH_D_ID[30], MM2_SMITH_D_CHARGES[30], MM2_SMITH_DAY_
 extern const uint8_t MM2_TEMPLE_SPELL[20], MM2_TEMPLE_PRICE[20], MM2_GUILD_SPELL[20], MM2_GUILD_PRICE[20];
 extern const uint16_t MM2_TEMPLE_MULT[5];
 
+extern const uint8_t MM2_LEARN_SORCERER[32], MM2_LEARN_CLERIC[32];
+
 enum { MM2_KNIGHT, MM2_PALADIN, MM2_ARCHER, MM2_CLERIC, MM2_SORCERER, MM2_ROBBER, MM2_NINJA, MM2_BARBARIAN };
 
 /* Experience needed to reach `level` (>= 2) for a class. */

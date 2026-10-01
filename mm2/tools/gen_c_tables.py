@@ -60,5 +60,7 @@ out.append(arr("const uint8_t", "MM2_TEMPLE_PRICE", u8(0x46C6, 20), 4))
 out.append(arr("const uint8_t", "MM2_GUILD_SPELL", u8(0x46DA, 20), 4) + "  /* [town][4] sorcerer spells */")
 out.append(arr("const uint8_t", "MM2_GUILD_PRICE", u8(0x46EE, 20), 4))
 out.append(arr("const uint16_t", "MM2_TEMPLE_MULT", u16(0x46A8, 5)))
+out.append(arr("const uint8_t", "MM2_LEARN_SORCERER", u8(0x2F30, 32), 4) + "  /* [spell level 1..8][4]: spell codes learned on reaching that spell level; 128 = none */")
+out.append(arr("const uint8_t", "MM2_LEARN_CLERIC", u8(0x2F50, 32), 4) + "  /* same for the cleric list (absolute codes, 30h based) */")
 print("\n".join(out))
 

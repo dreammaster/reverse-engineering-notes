@@ -181,3 +181,23 @@ const uint8_t MM2_GUILD_PRICE[20] = {
 const uint16_t MM2_TEMPLE_MULT[5] = {
 	1, 5, 2, 3, 2,
 };
+const uint8_t MM2_LEARN_SORCERER[32] = {
+	1, 3, 4, 5,
+	8, 10, 11, 128,
+	15, 16, 18, 128,
+	23, 24, 25, 128,
+	29, 30, 128, 128,
+	32, 34, 128, 128,
+	38, 39, 128, 128,
+	40, 43, 128, 128,
+};  /* [spell level 1..8][4]: spell codes learned on reaching that spell level; 128 = none */
+const uint8_t MM2_LEARN_CLERIC[32] = {
+	50, 51, 52, 54,
+	55, 58, 60, 128,
+	63, 64, 65, 128,
+	68, 70, 72, 128,
+	75, 77, 128, 128,
+	80, 81, 128, 128,
+	86, 87, 128, 128,
+	91, 128, 128, 128,
+};  /* same for the cleric list (absolute codes, 30h based) */

@@ -18,6 +18,8 @@
 typedef struct {
 	Mm2Roster roster;
 	int inInn, innTown;
+	int inTrain, inSheet, sheetSlot;
+	Mm2Item items[MM2_ITEMS];
 	Mm2GameSession s;
 	Mm2View view;
 	int viewMap, viewLoaded, outdoors;
@@ -85,6 +87,7 @@ int main(int argc, char **argv) {
 	uint32_t pixels[MM2_SCREEN_W * MM2_SCREEN_H];
 	int running = 1, dirty = 1, i;
 	const char *innMsg = NULL;
+	char trainMsg[64] = "";
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
 	if (!mm2_font_load(&g, &font)) {
@@ -92,6 +95,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	memset(&a, 0, sizeof(a));
+	mm2_load_items(&g, a.items);
 	if (!mm2_load_roster(&g, &a.roster)) fprintf(stderr, "warning: cannot load ROSTER.DAT\n");
 	if (!start_map(&a, &g, 0, 8, 8, 'N')) {
 		fprintf(stderr, "cannot load game data from %s\n", g.dir);
@@ -127,9 +131,42 @@ int main(int argc, char **argv) {
 				dirty = 1;
 				continue;
 			}
+			if (a.inTrain) {
+				int k = e.key.keysym.sym;
+				trainMsg[0] = 0;
+				if (k == SDLK_ESCAPE) {
+					a.inTrain = 0;
+				} else if (k >= SDLK_1 && k <= SDLK_8 && k - SDLK_1 < mm2_party_size(&a.roster)) {
+					Mm2Char *c = &a.roster.chars[mm2_party_member(&a.roster, k - SDLK_1)];
+					Mm2TrainResult r = mm2_train_check(c, a.innTown);
+					if (r == MM2_TRAIN_OK) {
+						Mm2LevelUp lu = mm2_level_up(c, a.innTown);
+						snprintf(trainMsg, sizeof(trainMsg), "You gained %d hit points%s", lu.hpGained, lu.newSpells ? " and new spells" : "");
+					} else {
+						snprintf(trainMsg, sizeof(trainMsg), "%s", r == MM2_TRAIN_DISABLED ? "Sorry - not in condition." :
+								 r == MM2_TRAIN_NEED_EXP ? "Sorry - not enough experience." : "Sorry - you need more gold.");
+					}
+				}
+				dirty = 1;
+				continue;
+			}
+			if (a.inSheet) {
+				int k = e.key.keysym.sym;
+				if (k >= SDLK_1 && k <= SDLK_8 && k - SDLK_1 < mm2_party_size(&a.roster)) a.sheetSlot = k - SDLK_1;
+				else a.inSheet = 0;
+				dirty = 1;
+				continue;
+			}
 			a.s.nMessages = a.s.nLocations = 0;
 			a.s.fightRequested = 0;
 			switch (e.key.keysym.sym) {
+			case SDLK_c:
+				if (mm2_party_size(&a.roster)) {
+					a.inSheet = 1;
+					a.sheetSlot = 0;
+					dirty = 1;
+				}
+				break;
 			case SDLK_ESCAPE: running = 0; break;
 			case SDLK_LEFT: mm2_session_turn(&a.s, -1); dirty = 1; break;
 			case SDLK_RIGHT: mm2_session_turn(&a.s, 1); dirty = 1; break;
@@ -140,6 +177,10 @@ int main(int argc, char **argv) {
 					dirty = 1;
 					if (a.s.nLocations && a.s.locations[0] == 1 && a.s.map <= 4) {
 						a.inInn = 1;
+						a.innTown = a.s.map;
+					}
+					if (a.s.nLocations && a.s.locations[0] == 2 && a.s.map <= 4) {
+						a.inTrain = 1;
 						a.innTown = a.s.map;
 					}
 				}
@@ -157,7 +198,12 @@ int main(int argc, char **argv) {
 		}
 		if (dirty) {
 			char line[48];
-			if (a.inInn) {
+			if (a.inTrain) {
+				mm2_ui_draw_training(canvas, &font, &a.roster, a.innTown, trainMsg[0] ? trainMsg : NULL);
+			} else if (a.inSheet) {
+				mm2_ui_draw_sheet(canvas, &font, &a.roster.chars[mm2_party_member(&a.roster, a.sheetSlot)], a.items);
+				mm2_draw_text(canvas, &font, 0, 24, "1-8: other member   any other key: back", 7, -1);
+			} else if (a.inInn) {
 				mm2_ui_draw_inn(canvas, &font, &a.roster, a.innTown);
 				if (innMsg) mm2_draw_text(canvas, &font, 0, 21, innMsg, 12, -1);
 				innMsg = NULL;
@@ -165,7 +211,7 @@ int main(int argc, char **argv) {
 				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
-			if (!a.inInn) {
+			if (!a.inInn && !a.inTrain && !a.inSheet) {
 				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
 						 a.s.yesNo ? 'Y' : 'N');
 				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);

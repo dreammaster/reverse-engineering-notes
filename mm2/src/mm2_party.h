@@ -19,4 +19,25 @@ int mm2_race_stat_adjust(int race, int stat);
 /* First free roster slot (no name) or -1. */
 int mm2_roster_find_free(const Mm2Roster *r);
 
+/* ---- training hall (2MISC2 training_hall 1CE30; docs/classes.md) ---- */
+typedef enum { MM2_TRAIN_OK, MM2_TRAIN_DISABLED, MM2_TRAIN_NEED_EXP, MM2_TRAIN_NEED_GOLD } Mm2TrainResult;
+
+/* Level the character would reach (base level + 1, unchanged at 255). */
+int mm2_train_target_level(const Mm2Char *c);
+uint32_t mm2_train_cost(const Mm2Char *c, int town);
+uint32_t mm2_train_exp_needed(const Mm2Char *c);
+Mm2TrainResult mm2_train_check(const Mm2Char *c, int town);
+
+typedef struct {
+	int hpGained;
+	int newSpells;   /* a new spell level was reached and its spells added to the book */
+} Mm2LevelUp;
+
+/* Pays the cost, raises the level and applies hit points, thievery and spells.  Call only after mm2_train_check
+ * returned MM2_TRAIN_OK.  Cost 0 (free training) instead gives gold/2 more gold, capped at 50000. */
+Mm2LevelUp mm2_level_up(Mm2Char *c, int town);
+
+/* Spell level progression for the classes with spells (loc_1C6CC): returns 1 if a new spell level was reached. */
+int mm2_update_spell_level(Mm2Char *c);
+
 #endif

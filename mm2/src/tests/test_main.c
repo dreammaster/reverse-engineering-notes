@@ -574,6 +574,44 @@ static void test_inn(const Mm2Game *g) {
 	CHECK(r.chars[0].raw[MC_TOWN] == 4 && r.chars[25].raw[MC_TOWN] == 4 && r.chars[2].raw[MC_TOWN] == 2);
 }
 
+static void test_training(const Mm2Game *g) {
+	static Mm2Roster r;
+	Mm2Char *c;
+	Mm2LevelUp lu;
+	int endBr;
+	CHECK(mm2_load_roster(g, &r));
+	c = &r.chars[4];                                           /* Cassandra, level 1 Sorcerer, spell level 1 */
+	CHECK(mm2_train_target_level(c) == 2 && mm2_train_cost(c, 0) == 100 && mm2_train_cost(c, 1) == 500);
+	CHECK(mm2_train_exp_needed(c) == 2000 && mm2_train_check(c, 0) == MM2_TRAIN_NEED_EXP);
+	c->raw[MC_EXP] = (uint8_t)(2000 & 0xFF); c->raw[MC_EXP + 1] = (uint8_t)(2000 >> 8);
+	c->raw[MC_GOLD] = 50; c->raw[MC_GOLD + 1] = 0;
+	CHECK(mm2_train_check(c, 0) == MM2_TRAIN_NEED_GOLD);
+	c->raw[MC_GOLD] = 200;
+	CHECK(mm2_train_check(c, 0) == MM2_TRAIN_OK);
+	c->raw[MC_CONDITION] = 0x08;
+	CHECK(mm2_train_check(c, 0) == MM2_TRAIN_DISABLED);
+	c->raw[MC_CONDITION] = 0;
+	endBr = mm2_bracket((int)c->raw[MC_BASE_ENDURANCE]);
+	endBr = (uint8_t)endBr >= 0xF0 ? 0 : endBr;
+	{
+		unsigned hp0 = mm2_c16(c, MC_HP_MAX);
+		lu = mm2_level_up(c, 0);
+		CHECK(lu.hpGained == 6 / 2 + endBr && mm2_c16(c, MC_HP_MAX) == hp0 + (unsigned)lu.hpGained);
+	}
+	CHECK(c->raw[MC_BASE_LEVEL] == 2 && c->raw[MC_LEVEL] == 2 && mm2_c32(c, MC_GOLD) == 100 && !lu.newSpells);
+	c->raw[MC_EXP] = (uint8_t)(mm2_exp_for_level(4, 3) & 0xFF);
+	c->raw[MC_EXP + 1] = (uint8_t)(mm2_exp_for_level(4, 3) >> 8);
+	c->raw[MC_GOLD] = 255;
+	lu = mm2_level_up(c, 0);                                   /* level 3: spell level 2, learns codes 8, 10, 11 */
+	CHECK(lu.newSpells == 1 && c->raw[MC_BASE_SPELL_LEVEL] == 2 && c->raw[MC_SPELL_LEVEL] == 2);
+	CHECK(c->raw[MC_SPELL_BITS + 1] == 0x0D && c->raw[MC_SPELL_BITS] == 0x3A);   /* level 1 spells kept */
+	CHECK(mm2_c16(c, MC_SP_MAX) == 2u * 7 && mm2_c16(c, MC_SP) == mm2_c16(c, MC_SP_MAX));
+	/* a Paladin below level 6 has no spell progression */
+	c = &r.chars[1];
+	mm2_update_spell_level(c);
+	CHECK(c->raw[MC_BASE_SPELL_LEVEL] == 0);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -590,6 +628,7 @@ int main(void) {
 	test_smith(&g);
 	test_town();
 	test_inn(&g);
+	test_training(&g);
 	test_spells(&g);
 	test_text(&g);
 	test_banks(&g);
