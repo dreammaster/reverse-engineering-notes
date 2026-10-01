@@ -1,0 +1,23 @@
+# MM2 in C (intermediate goal toward a ScummVM engine)
+
+Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`), plus a small SDL2 viewer.
+
+| File | Port of |
+|---|---|
+| `mm2_lzw.c` | `tools/mm2_lzw.py` |
+| `mm2_files.c` | `tools/mm2_data.py` (MAP, ATTRIB, EVENTS, generic LZW files) |
+| `mm2_gfx.c` | `tools/mm2_gfx.py` (image banks, masks, EGA palette) |
+| `mm2_view.c` | `tools/mm2_view.py` (indoor and outdoor first-person views) |
+| `mm2_map.c` | map styles, movement blocking (docs/file-formats.md, docs/view.md) |
+| `main_sdl.c` | SDL2 viewer: arrows move/turn, PgUp/PgDn change map |
+| `tests/test_main.c` | data + render regression tests; render hashes come from the Python renderer |
+
+```
+set PATH=C:\mingw32\bin;%PATH%
+mingw32-make test        # builds and runs the tests (no SDL needed)
+mingw32-make check-sdl   # syntax-checks main_sdl.c against the SDL2 headers
+mingw32-make mm2         # links the viewer (needs the SDL2 MinGW libraries; set SDL_CFLAGS / SDL_LIBS)
+```
+
+The game directory is `$MM2_DIR` or `D:/GOG Games/Might and Magic 2`.  No SDL2 runtime for MinGW was installed
+when this was written, so `mm2.exe` has not been linked or run yet; everything else is exercised by the tests.
