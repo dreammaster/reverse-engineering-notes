@@ -1193,6 +1193,85 @@ static void testItemRangeAvailableNothingFoundAnywhere(void) {
     check("nothing anywhere: not found", !itemRangeAvailable(globalSlots, &save, 1, 5).found);
 }
 
+static void testConsumeItemChargeSingleUseItemIsDiscardedAndDeductsWeight(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 1;
+    catalog.consumableCount = 1;
+
+    /* Item 1: a single-use consumable (target slot-flags bit 0x1 clear), weight 9 -- matches real food items exactly. */
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setU16At(item1, ItemFieldWeight, 9);
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 0);
+
+    memset(g_record, 0, PartyRecordSize);
+    uint8_t *mainGroup = partyInventoryGroup(g_record, PartyGroupMain);
+    inventoryGroupSetWeight(mainGroup, 20);
+    uint8_t *slot = inventoryGroupSlot(mainGroup, 1);
+    itemSlotSet(slot, 1, 0);
+
+    partyConsumeItemCharge(g_record, &catalog, slot);
+
+    checkU32("a single-use item's slot is cleared entirely", itemSlotId(slot), 0);
+    checkU32("...extra too", itemSlotExtra(slot), 0);
+    checkU32("the main group's own weight drops by the item's weight (20 - 9)", inventoryGroupWeight(mainGroup), 11);
+}
+
+static void testConsumeItemChargeMultiUseItemDecrementsWithoutDiscarding(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 1;
+    catalog.consumableCount = 1;
+
+    /* Item 1: a multi-use consumable (target slot-flags bit 0x1 set). */
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setU16At(item1, ItemFieldWeight, 9);
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 1);
+
+    memset(g_record, 0, PartyRecordSize);
+    uint8_t *mainGroup = partyInventoryGroup(g_record, PartyGroupMain);
+    inventoryGroupSetWeight(mainGroup, 20);
+    uint8_t *slot = inventoryGroupSlot(mainGroup, 1);
+    itemSlotSet(slot, 1, 3);
+
+    partyConsumeItemCharge(g_record, &catalog, slot);
+
+    checkU32("a multi-use item with charges left keeps its own id", itemSlotId(slot), 1);
+    checkU32("...and its charge count decrements by 1", itemSlotExtra(slot), 2);
+    checkU32("the group's own weight is untouched while charges remain", inventoryGroupWeight(mainGroup), 20);
+}
+
+static void testConsumeItemChargeMultiUseItemDiscardsOnLastCharge(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 1;
+    catalog.consumableCount = 1;
+
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setU16At(item1, ItemFieldWeight, 4);
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 1);
+
+    memset(g_record, 0, PartyRecordSize);
+    uint8_t *mainGroup = partyInventoryGroup(g_record, PartyGroupMain);
+    inventoryGroupSetWeight(mainGroup, 10);
+    uint8_t *slot = inventoryGroupSlot(mainGroup, 1);
+    itemSlotSet(slot, 1, 1); /* last charge */
+
+    partyConsumeItemCharge(g_record, &catalog, slot);
+
+    checkU32("the last charge being spent discards the whole slot", itemSlotId(slot), 0);
+    checkU32("the group's own weight drops by the item's weight (10 - 4)", inventoryGroupWeight(mainGroup), 6);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -1227,6 +1306,9 @@ int main(void) {
     testItemRangeAvailableFallsBackToPartyInventory();
     testItemRangeAvailableStopsDeadAtFirstUnoccupiedSlot();
     testItemRangeAvailableNothingFoundAnywhere();
+    testConsumeItemChargeSingleUseItemIsDiscardedAndDeductsWeight();
+    testConsumeItemChargeMultiUseItemDecrementsWithoutDiscarding();
+    testConsumeItemChargeMultiUseItemDiscardsOnLastCharge();
     testRealCharacters();
 
     if (g_failureCount == 0) {

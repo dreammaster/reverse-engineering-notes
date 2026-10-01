@@ -859,4 +859,44 @@ typedef struct {
 /* globalSlots: 24 bytes, 6 x 4-byte item slots (itemSlotId/itemSlotExtra shape), matching DS:0x9519. */
 ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *save, uint16_t lowId, uint16_t highId);
 
+/*
+ * ConsumeItemChargeResource (yendor2.asm:41546, instruction-identical in
+ * Chapter 3) -- a shared, ~21-call-site "spend one use of an item-based
+ * resource" engine with 4 consumption modes selected by a caller-context
+ * flag (`g_uiScratchFlags3` bits `0x8000`/`0x4000`/`0x2000`). Only the
+ * *default* mode (none of those 3 bits set) is reimplemented here --
+ * confirmed to be what every caller except `RepairItemCommand`
+ * (`yendor2.asm:51046`) gets: that's the only site in either game's
+ * disassembly that ever sets any of the 3 bits, and it always clears
+ * them again immediately after its own single `ConsumeItemChargeResource`
+ * call -- no other caller (including `RestPartyAndAdvanceClock`,
+ * which drives this function's own first real use, the "R rest"
+ * regen-rate food consumption) ever touches them.
+ *
+ * Also only the party-inventory case is covered (matching
+ * `itemRangeAvailable`'s own `!inGlobalTable` output) -- `slot` must be
+ * a 4-byte item slot inside `partyRecord`'s own main inventory group.
+ * The 6-entry global-table case (`itemRangeAvailable`'s
+ * `.inGlobalTable == true`) is not reimplemented, nor is container
+ * recursion or the 3 special modes' own equipment-slot write-back
+ * (`partyHandleIconBarItemExpiry` already covers conceptually similar
+ * ground for a different caller).
+ *
+ * In this mode: if the item's own target-entry flags
+ * (`itemTargetWord(entry, 1)` bit `0x1` -- "has multiple uses," not
+ * otherwise named; real food items in both games all have it clear)
+ * are set, decrements the slot's own `itemSlotExtra`; if that stays
+ * above 0, nothing else happens -- the item remains, with one fewer
+ * use. Otherwise (the bit is clear, or the decrement reached 0): the
+ * whole slot is cleared (`itemSlotSet(slot, 0, 0)`) and the item's own
+ * `ItemFieldWeight` is subtracted from the *main* inventory group's own
+ * weight total -- unconditionally the main group, matching the
+ * original's own hardcoded offset (`[partyRecord+0x118]`) regardless of
+ * which group `slot` actually belongs to; not clamped at 0, matching
+ * the original's own plain `sub` (this project's standing practice of
+ * reproducing confirmed original behavior rather than silently
+ * correcting it).
+ */
+void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot);
+
 #endif

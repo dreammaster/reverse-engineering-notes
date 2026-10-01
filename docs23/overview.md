@@ -11032,6 +11032,31 @@ documented, the dependency this project has been quoting since an old
 round is resolved, and the one remaining piece is accurately scoped as
 its own future thing rather than squeezed in under time pressure.
 
+### Session update (continued, same day): the stopping point from an hour ago turned out to have an easy way through after all
+
+The honest boundary from the last entry was "which of
+`ConsumeItemChargeResource`'s 4 modes applies here isn't pinned down."
+Went back and actually answered that instead of leaving it as the
+reason to stop: grepped every site in both games that ever sets the 3
+mode-selector bits, and found exactly one — `RepairItemCommand`, which
+arms one bit, makes its own single call, and clears the bit again
+immediately after. Nothing else in either game's disassembly ever
+touches those bits at all. That means every *other* caller, including
+`RestPartyAndAdvanceClock`, always gets the default mode by simple
+elimination — not a guess, a search with a definitive answer.
+
+That turned the "too big to finish" piece into a normal-sized one.
+Reimplemented the default mode's party-inventory half: decrement a
+multi-use item's charge count, or discard the item and deduct its
+weight for a single-use one — confirmed against real data that every
+food item in both games is the single-use kind, matching how a food
+item behaves in-game (eat it, it's gone). The regen-rate dependency
+chain that started several commits ago — `IsItemRangeAvailable`, then
+the formula itself, now the consume step — is about as closed as it
+can get without building container support or the four-mode engine's
+other three branches, neither of which this specific call path
+actually needs.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

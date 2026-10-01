@@ -949,3 +949,25 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
     }
     return result;
 }
+
+void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot) {
+    uint16_t id = itemSlotId(slot);
+    const uint8_t *record = itemCatalogRecord(catalog, id);
+    const uint8_t *entry = record ? itemTargetEntry(catalog, record) : NULL;
+
+    if (entry && (itemTargetWord(entry, 1) & 1)) {
+        uint16_t extra = itemSlotExtra(slot);
+        if (extra > 0) {
+            extra--;
+        }
+        if (extra > 0) {
+            itemSlotSet(slot, id, extra);
+            return;
+        }
+    }
+
+    itemSlotSet(slot, 0, 0);
+    uint8_t *mainGroup = partyInventoryGroup(partyRecord, PartyGroupMain);
+    uint16_t weight = record ? itemGetU16(record, ItemFieldWeight) : 0;
+    inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
+}

@@ -661,6 +661,30 @@ single-target or whole-party icon-bar status effect
 (`ApplyEffectAndDrawIconBar`); the rest (world-state timers, etc.)
 weren't individually traced given the function's size.
 
+**`ConsumeItemChargeResource`'s default mode partially reimplemented,
+2026-10-01**: confirmed the "default decrement-with-auto-discard" mode
+is what every caller except `RepairItemCommand` gets -- it's the only
+site in either game that ever sets any of the 3 special mode bits, and
+it always clears them again immediately after its own one call, so
+`RestPartyAndAdvanceClock` (the caller this round actually needed --
+see the "R rest" regen-rate section below) and every other caller
+always hit this mode. Reimplemented the party-inventory half as
+`partyConsumeItemCharge` (`src23/party.c`/`.h`): if the item's own
+target-entry flags (`itemTargetWord(entry, 1)` bit `0x1`, not
+previously named -- real food items in both games all have it clear)
+are set, decrements the slot's own `itemSlotExtra`, keeping the item
+if charges remain; otherwise clears the whole slot and subtracts the
+item's `ItemFieldWeight` from the *main* inventory group's weight
+total -- unconditionally the main group, matching the original's own
+hardcoded offset regardless of which group the slot actually belongs
+to. Not reimplemented: the 6-entry global-table case, the 3 special
+modes (recharge/discard/swap -- `TickEquippedItemDurability`'s own
+equipped-item durability write-back, `SwapItemMultiStatEffect`), and
+the portrait-redraw/bag-sync UI side effects. Tests in `test_party.c`
+cover a single-use item (discarded immediately, weight deducted), a
+multi-use item losing one charge without discarding, and a multi-use
+item discarding on its last charge; all 23 suites pass.
+
 **Both status-effect branches reimplemented, 2026-09-26**: unlike the
 search/lockpicking trap's own `ApplySavingThrowEffect`, neither branch
 here rolls anything — the caller supplies an already-resolved
@@ -2745,23 +2769,23 @@ degen paths below still apply regardless).
 
 **Reimplemented**: `itemRangeAvailable`'s own half (`partyFindItemInRange`/
 `itemRangeAvailable`, `src23/party.c`/`.h`, 2026-10-01, see "Quest-item
-and party-inventory range checks" above). **Still not reimplemented**:
-`ConsumeItemChargeResource` itself (`yendor2.asm:41546`) — a shared,
-~21-call-site "spend one use of an item-based resource" engine (equipment
-wear, spell/ability charges, food, and more all funnel through it) with
-4 distinct consumption modes selected by a caller-context flag
-(`g_uiScratchFlags3` bits `0x8000`/`0x4000`/`0x2000`) that
-`RestPartyAndAdvanceClock` itself never sets — so even which of the 4
-modes applies on this specific call path isn't pinned down without
-tracing further back through whatever UI state precedes the 'R rest'
-command. Also still open: `IsItemRangeAvailable`'s own container-recursion
-half (`FindItemInsideContainer`{,`Level2`,`Level3`}), which this project
-hasn't built yet. `partyApplyRestEffects` (`party.c`/`.h`) takes the
-resulting percentage as an already-resolved parameter instead, matching
+and party-inventory range checks" above) and `ConsumeItemChargeResource`'s
+own default-mode party-inventory half (`partyConsumeItemCharge`,
+same file, see the "shared scratch buffer at `0xAFA8`" section above for
+the full writeup) — confirmed to be the only mode `RestPartyAndAdvanceClock`
+(and every caller except `RepairItemCommand`) ever reaches. **Still not
+reimplemented**: `IsItemRangeAvailable`'s own container-recursion half
+(`FindItemInsideContainer`{,`Level2`,`Level3`}, a genuinely separate
+CURGAME-backed subsystem this project has no reader for), the 3 special
+`ConsumeItemChargeResource` modes, and the actual per-active-member
+consume *loop* composing these two pieces together into the final
+`regenPercent` value — `partyApplyRestEffects` (`party.c`/`.h`) still
+takes the resulting percentage as an already-resolved parameter, matching
 this project's established "decide, don't apply against unconfirmed
 inputs" discipline (the same pattern
 `combatApplyEncodedItemEffectSingle` already uses for its own resolved
-value).
+value) — composing the loop itself is small enough to be a reasonable
+next step whenever this gets picked back up.
 
 The status-effect-gated part of `ApplyRestEffectsToCharacter` — fully
 decoded — is genuinely richer than a simple "diseased/cursed drain

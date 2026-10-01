@@ -1082,21 +1082,32 @@ consumers, if any.
    dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation
    has been waiting on since a much earlier round.
 
-   **The regen-rate formula itself fully traced, same day (not yet
-   composed)**: active member count, up to that many
+   **The regen-rate formula itself fully traced, and
+   `ConsumeItemChargeResource`'s own default mode reimplemented, same
+   day**: active member count, up to that many
    `IsItemRangeAvailable(0x36, 0x40)` + `ConsumeItemChargeResource`
    attempts (breaking at the first miss), `regenPercent = (100 /
    activeCount) * consumedCount`. The item range is confirmed against
    real `WORLD.DAT` data in both games -- literal food items (MEAT,
-   BREAD, FOOD, CHEESE, ALE), not a guess. **Still not done**:
-   `ConsumeItemChargeResource` itself -- a shared, ~21-call-site
-   resource-consumption engine with 4 modes selected by a caller-context
-   flag `RestPartyAndAdvanceClock` never sets itself, so even which mode
-   applies here needs more tracing -- container recursion (a separate,
-   genuinely large CURGAME-backed subsystem this project has no reader
-   for), and the item-slot-level transition this mechanic's items go
-   through (unlit -> lit -> used, `TickAilmentDuration`'s own job,
-   confirmed distinct from the 3 light-source counters above). A second
+   BREAD, FOOD, CHEESE, ALE), not a guess. Confirmed
+   `ConsumeItemChargeResource`'s "default decrement-with-auto-discard"
+   mode is the only one `RestPartyAndAdvanceClock` (and every caller
+   except `RepairItemCommand`) ever reaches, and reimplemented its
+   party-inventory half as `partyConsumeItemCharge`
+   (`src23/party.c`/`.h`) -- decrements a multi-use item's own charge
+   count, or discards the slot and deducts its weight for a single-use
+   one (confirmed via a previously-unnamed target-entry flag bit, real
+   food items in both games all have it clear). Tests in `test_party.c`
+   cover both cases plus discarding on the last charge; all 23 suites
+   pass. **Still not done**: the per-active-member consume *loop*
+   composing `itemRangeAvailable`/`partyConsumeItemCharge` into the
+   final `regenPercent` (small, a reasonable next step), the 6-entry
+   global-table case, the 3 special `ConsumeItemChargeResource` modes,
+   container recursion (a separate, genuinely large CURGAME-backed
+   subsystem this project has no reader for), and the item-slot-level
+   transition the light-source mechanic's items go through (unlit ->
+   lit -> used, `TickAilmentDuration`'s own job, confirmed distinct from
+   the 3 light-source counters above). A second
    6-counter timer array (`TickWorldAilmentTimers`) also still has bit
    ranges that overlap bit `0x80`'s own 6 fields in a way not yet
    reconciled. See `file-formats.md`'s own dedicated "world ailments"
