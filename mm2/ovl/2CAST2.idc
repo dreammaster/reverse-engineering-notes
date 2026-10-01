@@ -28,7 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
-	set_name	(0X1C130,	"cast2_common_helper");
+	set_name	(0X1C130,	"spell_cb_Energy_Blast");
 	create_insn	(x=0X1C133);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C139);
@@ -1094,6 +1094,7 @@ static Functions_0(void) {
 
 	add_func    (0X1C130,0X1C16A);
 	set_func_flags(0X1C130,0x5410);
+	set_func_cmt(0X1C130,	"Energy Blast (jump table case 2): level x (1d5+1), 1 target", 0);
 	set_frame_size(0X1C130, 0X2, 2, 0);
 	add_func    (0X1C16A,0X1C1AB);
 	set_func_flags(0X1C16A,0x5410);

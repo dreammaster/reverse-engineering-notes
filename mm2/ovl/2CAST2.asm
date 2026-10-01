@@ -8,9 +8,10 @@ ovl_2CAST2      segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; Energy Blast (jump table case 2): level x (1d5+1), 1 target
 ; Attributes: bp-based frame
 
-cast2_common_helper proc near           ; CODE XREF: seg002:0615↑J
+spell_cb_Energy_Blast proc near         ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
 
 var_2           = byte ptr -2
@@ -39,11 +40,11 @@ var_2           = byte ptr -2
                 add     sp, 6
                 mov     byte_1DC78, 1
 
-loc_1C166:                              ; CODE XREF: cast2_common_helper+E↑j
+loc_1C166:                              ; CODE XREF: spell_cb_Energy_Blast+E↑j
                 mov     sp, bp
                 pop     bp
                 retn
-cast2_common_helper endp
+spell_cb_Energy_Blast endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2356,7 +2357,7 @@ loc_1CF3D:                              ; CODE XREF: cast_spell_dispatch+C↑j
 
 loc_1CF46:                              ; CODE XREF: cast_spell_dispatch+14↑j
                                         ; DATA XREF: cast_spell_dispatch:jpt_1CF40↓o
-                call    cast2_common_helper ; jumptable 0001CF40 case 2
+                call    spell_cb_Energy_Blast ; jumptable 0001CF40 case 2
                 jmp     def_1CF40       ; jumptable 0001CF40 default case, cases 4,5,7,10-13,15,19,23,29,30
 ; ---------------------------------------------------------------------------
 
@@ -2950,7 +2951,7 @@ cast2_prompt_return endp
 
 ; Attributes: bp-based frame
 
-cast2_show_text proc near               ; CODE XREF: cast2_common_helper+6↑p
+cast2_show_text proc near               ; CODE XREF: spell_cb_Energy_Blast+6↑p
                                         ; spell_cb_Flame_Arrow+6↑p ...
 
 var_6           = byte ptr -6

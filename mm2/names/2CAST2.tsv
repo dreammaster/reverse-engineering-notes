@@ -1,5 +1,5 @@
 # 2CAST2.OVL: spell effects / monster inspection
-1C130	cast2_common_helper
+1C130	spell_cb_Energy_Blast	Energy Blast (jump table case 2): level x (1d5+1), 1 target
 1C22C	spell_view_monster	"HP =", "AC =", "Undead (", "Special Power (", "Bonus on Touch (", "Magic Resistance ("
 1CF2C	cast_spell_dispatch	(spell index) jump to the per-spell handler
 1D1A6	cast2_return_prompt
