@@ -412,6 +412,27 @@ static void test_battle(const Mm2Game *g) {
 	CHECK(seq == 5);
 	mm2_battle_remove_monster(&bt, 0);
 	CHECK(bt.count == 2 && bt.id[0] == 1 && bt.speed[0] == 15 && mm2_battle_visible(&bt) == 2);
+	/* monster decisions */
+	bt.frontMonsters = 1;
+	mm2_battle_init(&bt, table, ids, 3, party, 2, 0, MM2_SURPRISE_NONE, &lo);
+	bt.frontMonsters = 1;
+	table[1].castChancePct = 0;
+	table[2].castChancePct = 0;
+	CHECK(mm2_monster_decide(&bt, 0, 0, 0, 0) == MM2_MON_MELEE);
+	CHECK(mm2_monster_decide(&bt, 1, 0, 0, 0) == MM2_MON_ADVANCE);   /* back rank, not ranged */
+	table[1].ranged = 1;
+	CHECK(mm2_monster_decide(&bt, 1, 0, 0, 0) == MM2_MON_RANGED);   /* rng_lo: roll 1 <= 80 */
+	bt.status[0] = MS_ASLEEP;
+	CHECK(mm2_monster_decide(&bt, 0, 0, 0, 0) == MM2_MON_IDLE);
+	bt.status[0] = 0;
+	table[0].verb = 0;
+	CHECK(mm2_monster_decide(&bt, 0, 9, 0, 0) == MM2_MON_FLEE);     /* strength 9 > tier table[verb] and roll 1 <= 50 */
+	CHECK(mm2_monster_decide(&bt, 0, 9, 0, 1) == MM2_MON_MELEE);    /* summoned monsters never flee */
+	table[0].castChancePct = 50;
+	table[0].spell = 0x10;
+	CHECK(mm2_monster_decide(&bt, 0, 0, 0, 0) == MM2_MON_CAST && bt.usesLeft[0] == table[0].specialUses - 1);
+	bt.usesLeft[0] = 5;
+	CHECK(mm2_monster_decide(&bt, 0, 0, 1, 0) == MM2_MON_CAST_FAILED);
 	/* surprise: party surprised -> monsters double their front rank */
 	mm2_battle_init(&bt, table, ids, 3, party, 2, 0, MM2_SURPRISE_PARTY, &lo);
 	CHECK(bt.frontParty == 2 && bt.frontMonsters == 3);

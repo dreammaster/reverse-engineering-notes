@@ -54,4 +54,18 @@ void mm2_battle_remove_monster(Mm2Battle *b, int slot);
 /* Number of monsters currently in the visible list (min(count, 10)). */
 int mm2_battle_visible(const Mm2Battle *b);
 
+typedef enum {
+	MM2_MON_IDLE,          /* asleep, held or encased: no action */
+	MM2_MON_FLEE,          /* an outclassed monster runs away (combat_monster_gone_text) */
+	MM2_MON_MELEE,
+	MM2_MON_RANGED,
+	MM2_MON_ADVANCE,       /* moves up to the front rank */
+	MM2_MON_CAST,
+	MM2_MON_CAST_FAILED    /* silenced, or the cell blocks magic */
+} Mm2MonsterAction;
+
+/* Decision part of combat_monster_turn (184FE) for the monster in `slot`.  partyStrength = byte_1E812 (highest
+ * character level / 2); cellNoMagic = map flag 02h; summonedFlag = byte_27814. */
+Mm2MonsterAction mm2_monster_decide(const Mm2Battle *b, int slot, int partyStrength, int cellNoMagic, int summonedFlag);
+
 #endif

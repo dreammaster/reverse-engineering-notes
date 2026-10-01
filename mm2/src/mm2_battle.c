@@ -123,3 +123,29 @@ void mm2_battle_remove_monster(Mm2Battle *b, int slot) {
 	if (b->count >= 11) init_slot(b, 10);   /* a waiting monster steps into the spare slot */
 	if (b->frontMonsters > b->count) b->frontMonsters = b->count;
 }
+
+static const uint8_t FLEE_TIER[4] = {3, 9, 24, 255};   /* DGROUP:1036, indexed by the record's verb field */
+
+Mm2MonsterAction mm2_monster_decide(const Mm2Battle *b, int slot, int partyStrength, int cellNoMagic, int summonedFlag) {
+	const Mm2Monster *m = &b->table[b->id[slot]];
+	int st = b->status[slot];
+	int cast = 0;
+	if (st & (MS_ENCASED | MS_HELD | MS_ASLEEP)) return MM2_MON_IDLE;
+	if (!summonedFlag && FLEE_TIER[m->verb] < partyStrength && rnd(b, 1, 100) <= 50) return MM2_MON_FLEE;
+	/* combat_monster_spell_roll (1847E): not mindless, uses left, d100 <= cast chance; uses a charge */
+	{
+		int r = rnd(b, 1, 100);
+		if (!(st & MS_MINDLESS) && ((Mm2Battle *)b)->usesLeft[slot] && r <= m->castChancePct) {
+			((Mm2Battle *)b)->usesLeft[slot]--;
+			cast = 1;
+		}
+	}
+	if (!cast) {
+		if (slot < b->frontMonsters) return MM2_MON_MELEE;
+		if (m->ranged && rnd(b, 1, 100) <= 80) return MM2_MON_RANGED;
+		return MM2_MON_ADVANCE;
+	}
+	if (m->spell >= 0x0F && m->spell != 0x1D && m->spell < 0x1F && ((st & MS_SILENCED) || cellNoMagic))
+		return MM2_MON_CAST_FAILED;
+	return MM2_MON_CAST;
+}
