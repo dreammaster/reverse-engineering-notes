@@ -1,0 +1,257 @@
+id name hp exp ac speed blows dmgdie group picture magic-res% touch spell
+  0 Creepy Crawler hp5     exp150     ac4   spd20  x2 d6   grp6   pic1   mr0   touch:poison spell:0
+  1 Giant Beetle   hp10    exp200     ac7   spd15  x1 d10  grp6   pic2   mr0   touch:- spell:0
+  2 Sewer Rat      hp8     exp150     ac2   spd12  x1 d12  grp8   pic4   mr0   touch:disease spell:0
+  3 Kobold         hp8     exp200     ac6   spd15  x2 d6   grp10  pic5   mr0   touch:- spell:0
+  4 Old Miser      hp1     exp60      ac4   spd12  x1 d4   grp4   pic7   mr0   touch:- spell:2
+  5 Goblin         hp6     exp200     ac6   spd15  x1 d12  grp12  pic8   mr0   touch:- spell:0
+  6 Cripple        hp1     exp60      ac1   spd5   x2 d4   grp10  pic12  mr0   touch:disease spell:0
+  7 Hungry Plant   hp10    exp300     ac4   spd12  x1 d15  grp6   pic27  mr10  touch:poison spell:0
+  8 Merchant       hp6     exp120     ac5   spd13  x1 d8   grp4   pic34  mr0   touch:- spell:0
+  9 Mugger         hp10    exp300     ac6   spd16  x2 d6   grp8   pic39  mr0   touch:lost gold spell:0
+ 10 Skeleton       hp6     exp200     ac5   spd14  x1 d8   grp12  pic45  mr0   touch:- spell:0
+ 11 Flesh Eater    hp6     exp200     ac4   spd22  x2 d6   grp8   pic53  mr0   touch:disease spell:0
+ 12 Poltergeist    hp8     exp250     ac6   spd25  x3 d4   grp10  pic51  mr20  touch:- spell:0
+ 13 Fool           hp6     exp150     ac4   spd16  x1 d6   grp6   pic60  mr0   touch:- spell:16
+ 14 Witch's Cat    hp4     exp150     ac3   spd18  x1 d6   grp6   pic19  mr0   touch:- spell:0
+ 15 Mini Rex       hp10    exp250     ac6   spd12  x1 d12  grp4   pic26  mr0   touch:- spell:0
+ 16 Greedy Snitch  hp12    exp150     ac4   spd16  x1 d8   grp8   pic8   mr0   touch:lost food spell:0
+ 17 Orc            hp20    exp250     ac6   spd16  x1 d15  grp8   pic11  mr0   touch:- spell:0
+ 18 Beggar         hp10    exp250     ac4   spd10  x2 d6   grp12  pic12  mr0   touch:lost gems spell:0
+ 19 Sludge Beast   hp20    exp400     ac4   spd18  x2 d6   grp6   pic14  mr10  touch:poison spell:1
+ 20 Blood Sucker   hp1     exp300     ac10  spd22  x1 d4   grp10  pic16  mr0   touch:lose stat spell:0
+ 21 Venomous Snake hp12    exp300     ac3   spd19  x1 d10  grp4   pic20  mr0   touch:poison spell:0
+ 22 Screaming Pods hp15    exp400     ac4   spd12  x2 d8   grp4   pic27  mr0   touch:paralysis spell:0
+ 23 Man-at-arms    hp20    exp400     ac9   spd14  x1 d16  grp5   pic29  mr0   touch:- spell:0
+ 24 Conjurer       hp12    exp250     ac3   spd16  x1 d5   grp5   pic36  mr0   touch:- spell:15
+ 25 Neophyte Thief hp14    exp250     ac6   spd16  x1 d6   grp6   pic38  mr0   touch:lost gold spell:0
+ 26 Zombie         hp20    exp400     ac7   spd2   x2 d8   grp8   pic47  mr10  touch:disease spell:0
+ 27 Brain Eater    hp10    exp300     ac5   spd18  x1 d10  grp4   pic54  mr20  touch:sleep spell:16
+ 28 Inept Wizard   hp2     exp200     ac2   spd10  x1 d6   grp4   pic37  mr0   touch:- spell:17
+ 29 Phantasm       hp12    exp400     ac7   spd20  x1 d20  grp6   pic10  mr0   touch:- spell:0
+ 30 Sprite         hp12    exp300     ac8   spd19  x1 d6   grp6   pic57  mr0   touch:- spell:2
+ 31 Thug Trainee   hp18    exp300     ac7   spd16  x2 d9   grp8   pic39  mr0   touch:- spell:0
+ 32 Hypnobeetle    hp20    exp600     ac8   spd21  x2 d10  grp6   pic2   mr0   touch:poison spell:16
+ 33 Rabid Rodent   hp20    exp400     ac3   spd16  x2 d10  grp6   pic4   mr0   touch:disease spell:0
+ 34 Gnome Elder    hp20    exp700     ac4   spd19  x1 d8   grp3   pic7   mr20  touch:- spell:27
+ 35 Winged Steed   hp30    exp800     ac6   spd18  x3 d8   grp8   pic21  mr35  touch:- spell:3
+ 36 Giant Lizard   hp40    exp800     ac8   spd18  x1 d25  grp12  pic26  mr0   touch:- spell:0
+ 37 Foot Soldier   hp35    exp500     ac10  spd15  x2 d12  grp10  pic29  mr0   touch:- spell:0
+ 38 Ranger         hp28    exp600     ac7   spd17  x4 d6   grp8   pic32  mr10  touch:- spell:0
+ 39 Soldier        hp25    exp400     ac8   spd15  x2 d10  grp12  pic33  mr0   touch:- spell:0
+ 40 Friar          hp20    exp400     ac3   spd13  x2 d8   grp6   pic34  mr0   touch:- spell:15
+ 41 Burglar        hp22    exp600     ac5   spd22  x2 d7   grp4   pic38  mr0   touch:lost all gold spell:0
+ 42 Killer Cadaver hp30    exp700     ac6   spd13  x2 d6   grp6   pic50  mr0   touch:disease spell:9
+ 43 Ghoul          hp25    exp700     ac7   spd15  x2 d8   grp12  pic53  mr0   touch:paralysis spell:0
+ 44 Juggler        hp20    exp1500    ac4   spd26  x3 d6   grp6   pic60  mr50  touch:- spell:14
+ 45 Carnage Spirit hp25    exp1000    ac8   spd17  x3 d8   grp5   pic52  mr10  touch:lose stat spell:0
+ 46 Kobold Captain hp28    exp600     ac8   spd19  x2 d10  grp6   pic5   mr0   touch:- spell:0
+ 47 Brainless One  hp20    exp500     ac6   spd15  x2 d8   grp8   pic48  mr0   touch:- spell:0
+ 48 Arachnoid      hp45    exp700     ac8   spd22  x2 d15  grp6   pic1   mr0   touch:poison spell:0
+ 49 Insect Plague  hp35    exp700     ac5   spd17  x16 d2   grp4   pic3   mr0   touch:- spell:31
+ 50 Crazed Dwarf   hp45    exp1200    ac7   spd16  x2 d20  grp8   pic6   mr0   touch:- spell:29
+ 51 Hermit         hp30    exp500     ac9   spd14  x1 d15  grp3   pic7   mr0   touch:lost item spell:0
+ 52 Mutant Swine   hp50    exp800     ac8   spd18  x2 d15  grp10  pic11  mr0   touch:- spell:0
+ 53 Swamp Dog      hp40    exp600     ac7   spd18  x1 d20  grp10  pic18  mr0   touch:disease spell:0
+ 54 Deadly Rattler hp40    exp600     ac5   spd20  x1 d30  grp4   pic20  mr0   touch:poison spell:0
+ 55 Woodsman       hp50    exp1000    ac10  spd18  x2 d20  grp20  pic32  mr20  touch:- spell:0
+ 56 Ninja          hp35    exp1200    ac15  spd27  x3 d12  grp4   pic40  mr35  touch:assassinate spell:0
+ 57 Squire         hp40    exp900     ac10  spd22  x2 d15  grp4   pic44  mr0   touch:- spell:0
+ 58 Dancing Bones  hp35    exp500     ac4   spd18  x2 d10  grp10  pic45  mr10  touch:- spell:0
+ 59 Dancing Dead   hp45    exp700     ac6   spd12  x1 d16  grp6   pic49  mr20  touch:disease spell:0
+ 60 Cursed Corpse  hp60    exp1200    ac8   spd16  x2 d10  grp8   pic50  mr10  touch:curse spell:0
+ 61 Nasty Witch    hp38    exp800     ac7   spd22  x2 d12  grp2   pic58  mr35  touch:- spell:27
+ 62 Super Sprite   hp40    exp1000    ac10  spd22  x2 d15  grp6   pic57  mr20  touch:curse spell:2
+ 63 Cat Corpse     hp40    exp600     ac10  spd20  x2 d18  grp6   pic19  mr10  touch:- spell:0
+ 64 Giant Scorpion hp60    exp1300    ac11  spd22  x3 d20  grp10  pic2   mr0   touch:poison spell:0
+ 65 Killer Bees    hp40    exp1300    ac9   spd20  x16 d4   grp4   pic3   mr0   touch:poison spell:31
+ 66 Minor Demon    hp50    exp1200    ac13  spd18  x2 d20  grp8   pic9   mr20  touch:- spell:15
+ 67 Hunchback      hp35    exp900     ac3   spd10  x2 d12  grp20  pic12  mr0   touch:- spell:0
+ 68 Giant Ogre     hp70    exp1500    ac8   spd17  x2 d50  grp6   pic15  mr10  touch:- spell:0
+ 69 Werebat        hp35    exp800     ac13  spd24  x3 d10  grp15  pic16  mr20  touch:disease spell:0
+ 70 Wind Mare      hp50    exp1000    ac15  spd28  x3 d12  grp4   pic21  mr35  touch:sleep spell:0
+ 71 Werebull       hp62    exp1100    ac10  spd18  x1 d50  grp4   pic22  mr20  touch:disease spell:0
+ 72 Snapping Spore hp40    exp900     ac6   spd16  x2 d25  grp4   pic27  mr0   touch:- spell:9
+ 73 Cavalier       hp70    exp1400    ac17  spd21  x3 d20  grp3   pic31  mr10  touch:- spell:0
+ 74 Druid          hp40    exp800     ac9   spd22  x2 d12  grp4   pic36  mr35  touch:- spell:28
+ 75 Crazed Native  hp30    exp1000    ac8   spd20  x4 d15  grp30  pic42  mr50  touch:- spell:29
+ 76 Coffin Creep   hp50    exp1100    ac6   spd6   x2 d10  grp10  pic49  mr35  touch:- spell:11
+ 77 Gargoyle       hp50    exp1200    ac10  spd20  x3 d13  grp12  pic53  mr20  touch:paralysis spell:0
+ 78 Vampiric Rat   hp45    exp1100    ac9   spd22  x2 d14  grp10  pic4   mr0   touch:- spell:0
+ 79 Cursed Slayer  hp50    exp1200    ac13  spd24  x3 d18  grp6   pic22  mr20  touch:curse spell:0
+ 80 Viking         hp80    exp2100    ac14  spd20  x3 d30  grp6   pic6   mr0   touch:- spell:0
+ 81 Gnome          hp40    exp1300    ac10  spd18  x2 d12  grp20  pic7   mr35  touch:lost gold spell:0
+ 82 Minor Devil    hp60    exp2400    ac16  spd19  x2 d40  grp8   pic10  mr20  touch:- spell:18
+ 83 Warrior Boar   hp60    exp1900    ac11  spd21  x2 d30  grp6   pic11  mr0   touch:- spell:0
+ 84 Cockatrice     hp50    exp2200    ac10  spd18  x3 d20  grp4   pic17  mr0   touch:stone spell:0
+ 85 Killer Canine  hp50    exp2000    ac13  spd20  x2 d50  grp10  pic18  mr0   touch:- spell:0
+ 86 Killer Cobra   hp50    exp1600    ac10  spd19  x1 d80  grp3   pic20  mr0   touch:poison spell:0
+ 87 Champion       hp80    exp2700    ac20  spd22  x3 d30  grp4   pic28  mr20  touch:- spell:0
+ 88 Gate Keeper    hp60    exp2100    ac15  spd13  x1 d40  grp4   pic29  mr20  touch:- spell:0
+ 89 Shaman         hp45    exp1800    ac8   spd17  x1 d12  grp4   pic34  mr35  touch:- spell:30
+ 90 Illusionist    hp45    exp2100    ac11  spd21  x1 d10  grp8   pic37  mr10  touch:lost gems spell:12
+ 91 Mounted Patrol hp70    exp2800    ac22  spd19  x4 d25  grp12  pic44  mr0   touch:- spell:0
+ 92 Night Stalker  hp60    exp1900    ac14  spd15  x2 d30  grp6   pic46  mr0   touch:lose stat spell:0
+ 93 Wraith         hp50    exp3000    ac10  spd23  x5 d18  grp10  pic51  mr20  touch:lose stat x3 spell:0
+ 94 Mad Peasant    hp60    exp2500    ac13  spd19  x2 d30  grp12  pic12  mr0   touch:- spell:29
+ 95 Canine Creep   hp64    exp2400    ac15  spd24  x3 d20  grp6   pic5   mr0   touch:- spell:0
+ 96 Dinobug        hp100   exp2000    ac10  spd18  x1 d80  grp2   pic2   mr0   touch:- spell:0
+ 97 Swarming Wasps hp50    exp3000    ac15  spd21  x16 d5   grp5   pic3   mr0   touch:poison spell:31
+ 98 Leprechaun     hp40    exp4000    ac28  spd22  x1 d20  grp2   pic8   mr90  touch:lost all gold spell:13
+ 99 Flaming Fear   hp70    exp3200    ac18  spd18  x2 d20  grp8   pic9   mr10  touch:- spell:3
+100 Leper          hp40    exp1500    ac5   spd8   x1 d10  grp100 pic12  mr0   touch:disease spell:0
+101 Troll          hp70    exp4000    ac13  spd18  x4 d30  grp10  pic13  mr0   touch:- spell:0
+102 Acidic Blob    hp60    exp2100    ac15  spd7   x2 d30  grp6   pic14  mr0   touch:- spell:1
+103 Werewolf       hp70    exp3200    ac17  spd21  x3 d25  grp4   pic18  mr10  touch:disease spell:0
+104 Pyro Hydra     hp80    exp5000    ac15  spd20  x3 d50  grp2   pic25  mr10  touch:- spell:3
+105 Castle Guard   hp70    exp2600    ac17  spd19  x2 d32  grp15  pic33  mr0   touch:- spell:0
+106 Thief          hp50    exp2800    ac16  spd26  x3 d16  grp6   pic39  mr0   touch:lost all gems spell:0
+107 Warrior Maiden hp50    exp5000    ac19  spd21  x3 d20  grp15  pic42  mr50  touch:- spell:0
+108 Swamp Thing    hp70    exp4000    ac11  spd17  x2 d40  grp4   pic50  mr0   touch:disease spell:0
+109 Iron Wizard    hp80    exp5000    ac21  spd20  x2 d30  grp3   pic59  mr0   touch:- spell:18
+110 Mutant         hp70    exp3200    ac16  spd16  x2 d30  grp8   pic47  mr35  touch:- spell:15
+111 Strangler      hp80    exp4000    ac18  spd25  x3 d25  grp4   pic48  mr0   touch:collapse spell:30
+112 Dwarven Knight hp100   exp5000    ac23  spd24  x4 d30  grp4   pic6   mr35  touch:- spell:0
+113 Horned Fiend   hp80    exp6000    ac18  spd19  x3 d20  grp8   pic10  mr10  touch:lose stat x2 spell:10
+114 Swamp Beast    hp100   exp5000    ac11  spd17  x4 d19  grp4   pic13  mr0   touch:- spell:1
+115 Hill Giant     hp120   exp5000    ac17  spd21  x2 d70  grp6   pic15  mr0   touch:- spell:0
+116 Wyvern         hp100   exp5000    ac15  spd21  x3 d40  grp12  pic23  mr0   touch:poison spell:0
+117 Earth Wyrm     hp130   exp7000    ac19  spd23  x3 d60  grp4   pic24  mr20  touch:- spell:3
+118 White Knight   hp100   exp8000    ac18  spd27  x4 d32  grp3   pic31  mr75  touch:- spell:0
+119 Necromancer    hp60    exp5000    ac13  spd31  x1 d15  grp3   pic36  mr35  touch:- spell:19
+120 Mountain Man   hp90    exp4000    ac11  spd21  x3 d23  grp20  pic43  mr0   touch:- spell:0
+121 Gravewalker    hp70    exp5000    ac15  spd23  x2 d20  grp6   pic50  mr20  touch:lose level spell:0
+122 Phantom        hp64    exp6000    ac19  spd21  x2 d30  grp4   pic51  mr20  touch:lose spell points spell:11
+123 Lost Soul      hp80    exp6000    ac18  spd25  x2 d25  grp2   pic52  mr20  touch:age spell:12
+124 Slasher        hp60    exp6000    ac11  spd20  x4 d20  grp8   pic53  mr0   touch:assassinate spell:0
+125 Guardian       hp150   exp8000    ac13  spd15  x1 d50  grp4   pic54  mr50  touch:- spell:7
+126 Seductress     hp60    exp8000    ac9   spd26  x1 d10  grp2   pic58  mr35  touch:paralysis spell:30
+127 Pixie          hp90    exp6000    ac20  spd24  x2 d30  grp6   pic57  mr35  touch:lost all gems spell:2
+128 Lightning Bugs hp80    exp9000    ac19  spd25  x10 d10  grp4   pic3   mr0   touch:- spell:4
+129 Trickster      hp90    exp7000    ac19  spd21  x3 d20  grp3   pic8   mr0   touch:lost all gems spell:0
+130 Griffin        hp150   exp13000   ac20  spd22  x5 d25  grp4   pic17  mr35  touch:stone spell:0
+131 Pegasus        hp120   exp11000   ac26  spd29  x3 d40  grp8   pic21  mr75  touch:- spell:0
+132 Gorgon         hp150   exp13000   ac14  spd23  x3 d30  grp10  pic22  mr20  touch:- spell:10
+133 Cloud Dragon   hp160   exp13000   ac19  spd26  x5 d30  grp3   pic23  mr20  touch:- spell:5
+134 Troubadour     hp120   exp7000    ac16  spd18  x2 d30  grp3   pic28  mr0   touch:- spell:0
+135 Paladin        hp120   exp11000   ac24  spd26  x5 d30  grp4   pic30  mr20  touch:- spell:0
+136 Elf Warrior    hp120   exp6000    ac22  spd32  x4 d20  grp12  pic32  mr0   touch:- spell:0
+137 Priest         hp100   exp6000    ac20  spd21  x2 d12  grp4   pic34  mr0   touch:- spell:30
+138 Assassin       hp100   exp10000   ac22  spd28  x2 d80  grp3   pic40  mr0   touch:assassinate spell:0
+139 Amazon         hp90    exp5000    ac12  spd24  x2 d30  grp10  pic42  mr0   touch:- spell:0
+140 Grim Reaper    hp70    exp10000   ac16  spd14  x2 d25  grp4   pic46  mr50  touch:die spell:19
+141 Mummy          hp150   exp8000    ac11  spd10  x2 d50  grp6   pic49  mr35  touch:disease spell:0
+142 Bonehead       hp90    exp7000    ac20  spd16  x3 d30  grp6   pic45  mr35  touch:curse spell:9
+143 Melting Man    hp130   exp9000    ac22  spd20  x3 d30  grp6   pic47  mr0   touch:paralysis spell:0
+144 Demon Soldier  hp200   exp18000   ac22  spd19  x5 d50  grp30  pic5   mr20  touch:- spell:0
+145 Fire Devil     hp150   exp18000   ac22  spd19  x3 d60  grp6   pic9   mr35  touch:- spell:18
+146 Apparition     hp100   exp11000   ac20  spd21  x3 d30  grp4   pic10  mr75  touch:age spell:0
+147 Vampire        hp250   exp25000   ac24  spd16  x3 d60  grp6   pic16  mr50  touch:lose stat x3 spell:17
+148 Frost Dragon   hp250   exp22000   ac22  spd16  x5 d40  grp3   pic23  mr20  touch:- spell:5
+149 Dinosaur       hp250   exp16000   ac16  spd21  x2 d100 grp6   pic26  mr0   touch:- spell:0
+150 Avenger        hp160   exp15000   ac23  spd23  x4 d25  grp2   pic31  mr20  touch:- spell:0
+151 Court Bowman   hp150   exp20000   ac25  spd23  x6 d40  grp12  pic33  mr0   touch:- spell:0
+152 Holy Man       hp100   exp20000   ac20  spd22  x2 d15  grp2   pic35  mr20  touch:- spell:24
+153 Court Mage     hp100   exp22000   ac19  spd40  x1 d20  grp4   pic37  mr20  touch:- spell:21
+154 Warlock        hp90    exp21000   ac20  spd32  x2 d19  grp6   pic37  mr75  touch:- spell:20
+155 Barbarian      hp200   exp16000   ac16  spd23  x5 d30  grp30  pic42  mr20  touch:- spell:0
+156 Royal Horseman hp250   exp24000   ac32  spd23  x6 d40  grp6   pic44  mr0   touch:- spell:0
+157 Court Jester   hp80    exp25000   ac17  spd24  x3 d20  grp2   pic60  mr90  touch:scramble items spell:14
+158 Fire Faery     hp230   exp20000   ac22  spd28  x3 d40  grp6   pic57  mr35  touch:lost all gems spell:3
+159 Thug Leader    hp220   exp20000   ac22  spd23  x4 d30  grp8   pic39  mr0   touch:collapse spell:0
+160 Dino Spider    hp250   exp20000   ac20  spd20  x2 d100 grp4   pic1   mr0   touch:poison spell:0
+161 Plant Golem    hp250   exp30000   ac30  spd14  x2 d60  grp4   pic13  mr50  touch:- spell:0
+162 Stone Golem    hp250   exp4000    ac30  spd18  x2 d70  grp2   pic15  mr75  touch:- spell:0
+163 War Eagle      hp300   exp25000   ac21  spd28  x3 d70  grp3   pic17  mr0   touch:- spell:0
+164 Guardian Hound hp200   exp20000   ac15  spd32  x2 d80  grp6   pic18  mr20  touch:- spell:8
+165 Minotaur       hp150   exp30000   ac30  spd40  x2 d80  grp2   pic22  mr35  touch:lose stat x2 spell:18
+166 Fire Dragon    hp300   exp4000    ac25  spd40  x5 d50  grp3   pic24  mr35  touch:- spell:3
+167 Shadow Rogue   hp150   exp25000   ac23  spd32  x6 d30  grp4   pic38  mr0   touch:lost all gold spell:0
+168 Crusader       hp200   exp20000   ac29  spd40  x5 d40  grp5   pic30  mr50  touch:- spell:0
+169 Chancellor     hp90    exp30000   ac20  spd28  x1 d20  grp2   pic35  mr75  touch:- spell:21
+170 Ghost          hp200   exp4000    ac17  spd40  x2 d30  grp4   pic51  mr10  touch:age x2 spell:0
+171 Dead Head      hp250   exp25000   ac15  spd23  x2 d50  grp4   pic54  mr0   touch:lose experience spell:0
+172 Enchantress    hp100   exp25000   ac13  spd50  x1 d25  grp2   pic58  mr75  touch:lose spell points spell:22
+173 Warbot         hp300   exp4000    ac25  spd50  x3 d60  grp8   pic59  mr35  touch:- spell:20
+174 Stalker        hp140   exp30000   ac24  spd40  x3 d40  grp8   pic19  mr0   touch:- spell:0
+175 Hatchet Man    hp200   exp23000   ac25  spd40  x5 d32  grp4   pic43  mr0   touch:assassinate spell:0
+176 Dwarven Elder  hp300   exp7000    ac24  spd32  x4 d80  grp2   pic6   mr35  touch:- spell:0
+177 Ooze Warrior   hp350   exp6000    ac22  spd24  x3 d70  grp6   pic14  mr0   touch:lose stat x3 spell:1
+178 Roc            hp400   exp7000    ac21  spd60  x3 d100 grp2   pic17  mr0   touch:- spell:0
+179 Dagger Jaw     hp300   exp6000    ac22  spd40  x2 d150 grp2   pic20  mr0   touch:poison spell:0
+180 Armored Dragon hp400   exp8000    ac31  spd40  x5 d80  grp2   pic23  mr50  touch:- spell:7
+181 Tyrannosaurus  hp500   exp7000    ac24  spd24  x3 d90  grp4   pic26  mr0   touch:- spell:0
+182 Valiant Knight hp300   exp8000    ac32  spd60  x6 d50  grp4   pic28  mr50  touch:- spell:0
+183 Endless Knight hp300   exp8000    ac50  spd50  x8 d50  grp10  pic29  mr0   touch:- spell:0
+184 Archer         hp250   exp8000    ac31  spd50  x6 d50  grp6   pic33  mr20  touch:- spell:17
+185 Wizard         hp150   exp7000    ac22  spd60  x1 d25  grp3   pic37  mr50  touch:- spell:23
+186 Crypt Fiend    hp150   exp8000    ac32  spd24  x3 d40  grp12  pic49  mr35  touch:lose stat spell:19
+187 Phase Spirit   hp200   exp6000    ac60  spd40  x4 d40  grp20  pic52  mr35  touch:lose spell points spell:11
+188 Sorceress      hp150   exp7000    ac18  spd50  x1 d25  grp3   pic58  mr35  touch:- spell:23
+189 Mystic Clown   hp100   exp12000   ac16  spd32  x3 d30  grp4   pic60  mr90  touch:poison spray spell:14
+190 Spido Bug      hp300   exp7000    ac22  spd40  x3 d70  grp6   pic1   mr0   touch:poison spell:0
+191 Living Dead    hp180   exp6000    ac50  spd32  x4 d70  grp8   pic47  mr50  touch:die spell:19
+192 Devil's Mouse  hp500   exp18000   ac31  spd32  x3 d120 grp1   pic4   mr50  touch:collapse spell:0
+193 Fire Elemental hp250   exp18000   ac26  spd30  x6 d50  grp2   pic9   mr50  touch:- spell:3
+194 Air Elemental  hp250   exp18000   ac26  spd30  x6 d50  grp2   pic52  mr50  touch:- spell:5
+195 Mist Rider     hp350   exp23000   ac50  spd70  x8 d30  grp4   pic21  mr35  touch:- spell:5
+196 Magic Serpent  hp800   exp25000   ac40  spd70  x2 d120 grp2   pic24  mr50  touch:- spell:7
+197 Cron Man Trap  hp400   exp23000   ac21  spd30  x4 d40  grp4   pic27  mr0   touch:- spell:9
+198 Dark Knight    hp700   exp25000   ac60  spd80  x10 d40  grp6   pic28  mr35  touch:lose level x2 spell:0
+199 Sorcerer       hp300   exp15000   ac24  spd70  x2 d30  grp4   pic36  mr35  touch:- spell:26
+200 Kensai         hp500   exp19000   ac40  spd60  x8 d32  grp6   pic40  mr0   touch:- spell:0
+201 Jouster        hp500   exp21000   ac50  spd40  x4 d80  grp2   pic44  mr10  touch:- spell:0
+202 Devil's Envoy  hp500   exp22000   ac40  spd32  x5 d50  grp4   pic46  mr50  touch:lose stat spell:18
+203 Ethereal Being hp250   exp24000   ac70  spd100 x10 d30  grp3   pic52  mr10  touch:lose level x2 spell:0
+204 Death's Agent  hp600   exp23000   ac40  spd32  x9 d50  grp4   pic54  mr20  touch:age spell:17
+205 Alien Probe    hp500   exp23000   ac31  spd40  x4 d50  grp4   pic59  mr50  touch:- spell:23
+206 Element Hydra  hp600   exp23000   ac40  spd50  x8 d40  grp4   pic25  mr35  touch:- spell:6
+207 Monster Masher hp500   exp25000   ac40  spd50  x6 d60  grp4   pic48  mr0   touch:die spell:20
+208 Devil King     hp5000  exp30000   ac60  spd110 x6 d250 grp1   pic10  mr100 touch:eradicate spell:25
+209 Titan          hp2000  exp15000   ac40  spd60  x4 d120 grp1   pic15  mr90  touch:collapse spell:22
+210 Ancient Dragon hp5000  exp20000   ac50  spd70  x8 d200 grp1   pic24  mr75  touch:- spell:6
+211 Reptoid        hp2500  exp1000    ac32  spd40  x10 d50  grp3   pic26  mr10  touch:- spell:0
+212 Cuisinart      hp1000  exp20000   ac60  spd160 x16 d250 grp4   pic28  mr20  touch:- spell:29
+213 Holy Warrior   hp1000  exp3000    ac80  spd80  x12 d60  grp2   pic30  mr35  touch:- spell:0
+214 Elven Archer   hp1000  exp15000   ac40  spd90  x14 d40  grp3   pic32  mr35  touch:- spell:0
+215 High Priest    hp1000  exp3000    ac32  spd40  x4 d30  grp2   pic35  mr50  touch:- spell:24
+216 Master Robber  hp1000  exp2000    ac40  spd70  x8 d40  grp4   pic38  mr35  touch:lost valuables spell:13
+217 Master Ninja   hp1000  exp2000    ac60  spd110 x12 d40  grp3   pic40  mr50  touch:assassinate spell:0
+218 Lich Lord      hp2000  exp6000    ac40  spd50  x4 d50  grp1   pic46  mr90  touch:eradicate spell:25
+219 Time Lord      hp3000  exp15000   ac110 spd210 x12 d150 grp2   pic52  mr100 touch:poison spray spell:24
+220 Orc God        hp50000 exp15000   ac40  spd70  x4 d200 grp1   pic11  mr0   touch:- spell:0
+221 Death in a Box hp2000  exp9000    ac40  spd60  x8 d100 grp1   pic59  mr35  touch:eradicate spell:20
+222 Mega Troll     hp2500  exp4000    ac50  spd60  x8 d170 grp2   pic13  mr20  touch:- spell:0
+223 Cat from Hell  hp2000  exp10000   ac40  spd70  x6 d100 grp3   pic19  mr75  touch:lose experience spell:24
+224 Earth Elementl hp250   exp18000   ac26  spd30  x6 d50  grp2   pic54  mr50  touch:- spell:8
+225 Water Elementl hp250   exp18000   ac26  spd30  x6 d50  grp2   pic14  mr50  touch:- spell:5
+226 Gnasher        hp25    exp700     ac8   spd22  x2 d10  grp12  pic55  mr0   touch:- spell:0
+227 Chomper        hp50    exp1200    ac15  spd26  x4 d8   grp12  pic55  mr0   touch:- spell:29
+228 Mutant Fish    hp6     exp200     ac6   spd20  x1 d12  grp14  pic55  mr0   touch:poison spell:0
+229 Sea Monster    hp70    exp4000    ac16  spd18  x3 d30  grp3   pic55  mr0   touch:- spell:10
+230 Aquasaurus     hp160   exp9000    ac25  spd20  x2 d70  grp40  pic55  mr0   touch:- spell:0
+231 Cosmic Sludge  hp130   exp11000   ac25  spd20  x3 d30  grp6   pic14  mr0   touch:disease spell:0
+232 Sarakin        hp250   exp15000   ac25  spd40  x2 d40  grp1   pic51  mr35  touch:age x2 spell:10
+233 The Long One   hp300   exp4000    ac30  spd50  x3 d70  grp1   pic24  mr10  touch:lose stat x2 spell:24
+234 Spaz Twit      hp50    exp12000   ac200 spd40  x4 d40  grp1   pic28  mr35  touch:- spell:20
+235 The Snowbeast  hp60    exp3000    ac16  spd21  x4 d25  grp1   pic53  mr0   touch:- spell:0
+236 Bozorc the Orc hp200   exp20000   ac25  spd28  x4 d40  grp1   pic11  mr0   touch:lost gold spell:0
+237 Brutal Bruno   hp300   exp6000    ac30  spd40  x6 d50  grp1   pic43  mr20  touch:- spell:0
+238 Death Spider   hp90    exp10000   ac19  spd23  x4 d23  grp1   pic1   mr0   touch:poison spell:0
+239 Dread Knight   hp300   exp8000    ac28  spd50  x4 d70  grp1   pic44  mr0   touch:- spell:0
+240 Baron Wilfrey  hp300   exp9000    ac50  spd50  x5 d60  grp1   pic31  mr0   touch:- spell:0
+241 Mist Warrior   hp350   exp16000   ac30  spd50  x6 d60  grp1   pic28  mr35  touch:- spell:22
+242 Queen Beetle   hp350   exp23000   ac50  spd30  x4 d80  grp1   pic2   mr0   touch:paralysis spell:7
+243 Serpent King   hp400   exp24000   ac60  spd31  x2 d200 grp1   pic24  mr50  touch:poison spell:8
+244 Dragon Lord    hp340   exp26000   ac40  spd25  x6 d50  grp1   pic23  mr50  touch:stone spell:4
+245 Mandagual      hp100   exp10000   ac20  spd21  x4 d25  grp1   pic29  mr0   touch:poison spell:0
+246 Lucky Dog      hp70    exp5000    ac20  spd22  x2 d32  grp7   pic18  mr35  touch:poison spray spell:14
+247 The Horvath    hp400   exp23000   ac50  spd28  x4 d90  grp1   pic10  mr20  touch:stone spell:10
+248 Orb Guardian   hp300   exp8000    ac32  spd50  x6 d100 grp1   pic15  mr50  touch:lose spell points spell:0
+249 Dawn           hp300   exp20000   ac25  spd40  x4 d70  grp1   pic58  mr20  touch:assassinate spell:7
+250 Mega Dragon    hp64000 exp32000   ac250 spd250 x16 d250 grp1   pic26  mr100 touch:eradicate spell:6
+251 Shalwend       hp1000  exp5000    ac70  spd60  x16 d80  grp1   pic52  mr75  touch:eradicate spell:24
+252 Pyrannaste     hp1500  exp6000    ac60  spd50  x16 d80  grp1   pic9   mr50  touch:eradicate spell:3
+253 Acwalandar     hp2000  exp8000    ac80  spd70  x16 d100 grp1   pic14  mr90  touch:eradicate spell:5
+254 Gralkor        hp1700  exp7000    ac70  spd60  x10 d80  grp1   pic54  mr50  touch:eradicate spell:8
+255 Sheltem        hp500   exp5000    ac60  spd40  x8 d60  grp1   pic10  mr10  touch:collapse spell:0

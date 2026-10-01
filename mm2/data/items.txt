@@ -1,0 +1,257 @@
+id name class-restriction bonus use price
+  0 BLANK        cannot:- bonus:not equippable use:0 value:0 price:0
+  1 Small Club   cannot:- bonus:- use:0 value:2 price:1
+  2 Small Knife  cannot:Cleric bonus:- use:0 value:3 price:5
+  3 Large Club   cannot:- bonus:- use:0 value:4 price:4
+  4 Dagger       cannot:Cleric bonus:- use:0 value:4 price:8
+  5 Large Knife  cannot:Cleric bonus:- use:0 value:5 price:10
+  6 Hand Axe     cannot:Cleric,Sorcerer bonus:- use:0 value:5 price:10
+  7 Cudgel       cannot:Sorcerer,Ninja bonus:- use:0 value:5 price:15
+  8 Spiked Club  cannot:Cleric bonus:- use:0 value:6 price:15
+  9 Bull Whip    cannot:Paladin,Archer bonus:- use:0 value:6 price:25
+ 10 Long Dagger  cannot:Cleric bonus:- use:0 value:6 price:20
+ 11 Maul         cannot:Sorcerer,Ninja bonus:- use:0 value:6 price:30
+ 12 Short Sword  cannot:Cleric,Sorcerer,Barbarian bonus:- use:0 value:6 price:15
+ 13 Nunchakas    cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:6 price:30
+ 14 Mace         cannot:Sorcerer,Ninja bonus:- use:0 value:7 price:50
+ 15 Spear        cannot:Cleric,Sorcerer bonus:- use:0 value:7 price:15
+ 16 Cutlass      cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:0 value:7 price:40
+ 17 Flail        cannot:Sorcerer,Ninja,Barbarian bonus:- use:0 value:8 price:100
+ 18 Sabre        cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:0 value:8 price:60
+ 19 Long Sword   cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:0 value:8 price:50
+ 20 Wakizashi    cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:8 price:60
+ 21 Scimitar     cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:0 value:9 price:80
+ 22 Battle Axe   cannot:Cleric,Sorcerer,Ninja bonus:- use:0 value:10 price:60
+ 23 Broad Sword  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:0 value:10 price:100
+ 24 Katana       cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:10 price:150
+ 25 Slumber Club cannot:- bonus:- use:135 value:4 price:100
+ 26 Power Club   cannot:- bonus:Might +3 use:0 value:6 price:200
+ 27 Lucky Knife  cannot:Cleric bonus:Luck +10 use:0 value:5 price:250
+ 28 Looter Knife cannot:Cleric bonus:- use:0 value:6 price:400
+ 29 Power Cudgel cannot:Sorcerer,Ninja bonus:Might +3 use:0 value:5 price:300
+ 30 Energy Whip  cannot:Paladin,Archer bonus:- use:131 value:6 price:500
+ 31 Sonic Whip   cannot:Paladin,Archer bonus:- use:187 value:6 price:500
+ 32 Mighty Whip  cannot:Paladin,Archer bonus:Might +3 use:0 value:6 price:400
+ 33 Scorch Maul  cannot:Sorcerer,Ninja bonus:- use:0 value:6 price:400
+ 34 Mauler Mace  cannot:Sorcerer,Ninja bonus:Might +6 use:0 value:7 price:600
+ 35 Exacto Spear cannot:Cleric,Sorcerer bonus:Accuracy +6 use:0 value:7 price:800
+ 36 Fiery Spear  cannot:Cleric,Sorcerer bonus:- use:151 value:7 price:1200
+ 37 Fast Cutlass cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Speed +4 use:0 value:7 price:1000
+ 38 Quick Flail  cannot:Sorcerer,Ninja,Barbarian bonus:Speed +5 use:0 value:8 price:1200
+ 39 Shock Flail  cannot:Sorcerer,Ninja,Barbarian bonus:- use:137 value:8 price:1200
+ 40 Sharp Sabre  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Accuracy +5 use:0 value:8 price:1500
+ 41 Ego Scimitar cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Personality +12 use:0 value:9 price:2000
+ 42 True Axe     cannot:Cleric,Sorcerer,Ninja bonus:Accuracy +5 use:0 value:10 price:1800
+ 43 Blazing Axe  cannot:Cleric,Sorcerer,Ninja bonus:- use:0 value:10 price:1500
+ 44 Electric Axe cannot:Cleric,Sorcerer,Ninja bonus:- use:146 value:10 price:2500
+ 45 Rapid Katana cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:Speed +6 use:0 value:10 price:3000
+ 46 Accurate Swd cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Accuracy +10 use:0 value:10 price:4000
+ 47 Chance Sword cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Luck +15 use:0 value:10 price:4000
+ 48 Speedy Sword cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Speed +10 use:0 value:10 price:4000
+ 49 Flash Sword  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:146 value:10 price:4000
+ 50 Flaming Swd  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:151 value:10 price:4000
+ 51 Electric Swd cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:164 value:10 price:4000
+ 52 Acidic Sword cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:143 value:10 price:4000
+ 53 Cold Blade   cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:149 value:10 price:4000
+ 54 Sage Dagger  cannot:Knight,Paladin,Cleric,Robber,Ninja,Barbarian bonus:Intellect +15 use:95 value:8 price:20000
+ 55 Holy Cudgel  cannot:Knight,Archer,Sorcerer,Robber,Ninja,Barbarian bonus:Personality +15 use:222 value:10 price:20000
+ 56 Divine Mace  cannot:Sorcerer,Ninja bonus:- use:221 value:14 price:30000
+ 57 Ice Scimitar cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:162 value:18 price:20000
+ 58 Grand Axe    cannot:Cleric,Sorcerer,Ninja bonus:Might +15 use:31 value:20 price:20000
+ 59 Swift Axe    cannot:Cleric,Sorcerer,Ninja bonus:Speed +15 use:47 value:20 price:20000
+ 60 Dyno Katana  cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:95 value:20 price:20000
+ 61 Force Sword  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Might +15 use:31 value:20 price:30000
+ 62 Magic Sword  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:95 value:20 price:30000
+ 63 Thunder Swd  cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:Might +15 use:146 value:20 price:30000
+ 64 Energy Blade cannot:Cleric,Sorcerer,Ninja,Barbarian bonus:- use:160 value:20 price:30000
+ 65 Photon Blade cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Might +15 use:173 value:25 price:50000
+ 66 Staff        cannot:Robber bonus:- use:0 value:8 price:40
+ 67 Sickle       cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:8 price:30
+ 68 Scythe       cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:9 price:50
+ 69 Glaive       cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:10 price:80
+ 70 War Hammer   cannot:Sorcerer,Robber,Ninja bonus:- use:0 value:10 price:120
+ 71 Trident      cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:11 price:100
+ 72 Pike         cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:12 price:150
+ 73 Naginata     cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:12 price:300
+ 74 Bardiche     cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:13 price:200
+ 75 Great Hammer cannot:Sorcerer,Robber,Ninja bonus:- use:0 value:14 price:300
+ 76 Halberd      cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:14 price:250
+ 77 Great Axe    cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:15 price:300
+ 78 Flamberge    cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:16 price:400
+ 79 Wind Staff   cannot:Robber bonus:Speed +5 use:203 value:8 price:1500
+ 80 Tri-Sickle   cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:24 price:2000
+ 81 Ice Sickle   cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:149 value:16 price:3000
+ 82 Fire Glaive  cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:151 value:10 price:3000
+ 83 Harsh Hammer cannot:Sorcerer,Robber,Ninja bonus:Might +3 use:0 value:15 price:1500
+ 84 Stone Hammer cannot:Sorcerer,Robber,Ninja bonus:- use:0 value:18 price:3000
+ 85 Genius Staff cannot:Robber,Barbarian bonus:Intellect +10 use:95 value:16 price:30000
+ 86 Wizard Staff cannot:Knight,Paladin,Archer,Cleric,Robber,Ninja,Barbarian bonus:Intellect +15 use:168 value:16 price:30000
+ 87 Soul Scythe  cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:156 value:18 price:40000
+ 88 Dark Trident cannot:Cleric,Sorcerer,Robber,Ninja bonus:- use:0 value:30 price:50000
+ 89 Titan's Pike cannot:Cleric,Sorcerer,Robber,Ninja bonus:Might +15 use:31 value:40 price:50000
+ 90 Moon Halberd cannot:Cleric,Sorcerer,Robber,Ninja bonus:Luck +15 use:215 value:30 price:50000
+ 91 Sun Naginata cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:- use:95 value:25 price:40000
+ 92 Blowpipe     cannot:Cleric bonus:- use:0 value:4 price:10
+ 93 Sling        cannot:Cleric,Sorcerer bonus:- use:0 value:5 price:15
+ 94 Short Bow    cannot:Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:6 price:25
+ 95 Crossbow     cannot:Cleric,Sorcerer,Barbarian bonus:- use:0 value:8 price:50
+ 96 Long Bow     cannot:Cleric,Sorcerer,Robber,Barbarian bonus:- use:0 value:10 price:100
+ 97 Great Bow    cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:12 price:200
+ 98 Shaman Pipe  cannot:Cleric bonus:- use:97 value:4 price:1500
+ 99 Cinder Pipe  cannot:Cleric bonus:- use:151 value:4 price:2500
+100 Quiet Sling  cannot:Cleric,Sorcerer bonus:- use:189 value:5 price:1500
+101 Pirates xBow cannot:Cleric,Sorcerer,Barbarian bonus:- use:63 value:8 price:3000
+102 Burning xBow cannot:Cleric,Sorcerer,Barbarian bonus:- use:195 value:8 price:2500
+103 Fireball Bow cannot:Cleric,Sorcerer,Robber,Barbarian bonus:- use:151 value:10 price:4000
+104 Voltage Bow  cannot:Cleric,Sorcerer,Robber,Barbarian bonus:- use:146 value:10 price:4000
+105 Giant Sling  cannot:Cleric,Sorcerer bonus:- use:31 value:15 price:20000
+106 Energy Sling cannot:Cleric,Sorcerer bonus:- use:131 value:10 price:15000
+107 Death Bow    cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Luck +15 use:95 value:24 price:40000
+108 Star Bow     cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:175 value:24 price:34464
+109 Meteor Bow   cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:171 value:24 price:34464
+110 Ancient Bow  cannot:Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Accuracy +15 use:63 value:35 price:3392
+111 Green Key    cannot:- bonus:not equippable use:0 value:0 price:100
+112 Yellow Key   cannot:- bonus:not equippable use:0 value:0 price:200
+113 Red Key      cannot:- bonus:not equippable use:0 value:0 price:500
+114 Black Key    cannot:- bonus:not equippable use:0 value:0 price:1000
+115 Small Shield cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:1 price:15
+116 Large Shield cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:2 price:60
+117 Great Shield cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:150
+118 Fire Shield  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+119 Electric Shd cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+120 Acid Shield  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+121 Cold Shield  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+122 Silver Shld  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+123 Bronze Shld  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+124 Iron Shield  cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:3 price:2000
+125 Magic Shield cannot:Archer,Sorcerer,Ninja bonus:- use:0 value:5 price:5000
+126 Gold Shield  cannot:Archer,Sorcerer,Ninja bonus:Luck +15 use:0 value:7 price:10000
+127 Padded Armor cannot:- bonus:- use:0 value:2 price:20
+128 Leather Suit cannot:Sorcerer bonus:- use:0 value:3 price:40
+129 Scale Armor  cannot:Sorcerer bonus:- use:0 value:4 price:100
+130 Ring Mail    cannot:Sorcerer,Barbarian bonus:- use:0 value:5 price:200
+131 Chain Mail   cannot:Sorcerer,Ninja,Barbarian bonus:- use:0 value:6 price:400
+132 Splint Mail  cannot:Archer,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:7 price:600
+133 Plate Mail   cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:8 price:1000
+134 Plate Armor  cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:10 price:2000
+135 I Scale Mail cannot:Sorcerer bonus:- use:0 value:4 price:3000
+136 B Scale Mail cannot:Sorcerer bonus:- use:0 value:4 price:4000
+137 S Scale Mail cannot:Sorcerer bonus:- use:0 value:4 price:5000
+138 I Ring Mail  cannot:Sorcerer,Barbarian bonus:- use:0 value:5 price:4000
+139 B Ring Mail  cannot:Sorcerer,Barbarian bonus:- use:0 value:5 price:5000
+140 S Ring Mail  cannot:Sorcerer,Barbarian bonus:- use:0 value:5 price:6000
+141 I Chain Mail cannot:Sorcerer,Ninja,Barbarian bonus:- use:0 value:6 price:6000
+142 B Chain Mail cannot:Sorcerer,Ninja,Barbarian bonus:- use:0 value:6 price:7000
+143 S Chain Mail cannot:Sorcerer,Ninja,Barbarian bonus:- use:0 value:6 price:8000
+144 I Splintmail cannot:Archer,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:7 price:8000
+145 B Splintmail cannot:Archer,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:7 price:9000
+146 S Splintmail cannot:Archer,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:7 price:10000
+147 I Plate Mail cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:8 price:12000
+148 B Plate Mail cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:8 price:13000
+149 S Plate Mail cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:- use:0 value:8 price:14000
+150 G Scale Mail cannot:Sorcerer bonus:Luck +15 use:90 value:6 price:10000
+151 G Ring Mail  cannot:Sorcerer,Barbarian bonus:Luck +15 use:90 value:7 price:20000
+152 G Chain Mail cannot:Sorcerer,Ninja,Barbarian bonus:Luck +15 use:90 value:8 price:40000
+153 G Splintmail cannot:Archer,Sorcerer,Robber,Ninja,Barbarian bonus:Luck +15 use:92 value:9 price:60000
+154 G Plate Mail cannot:Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Luck +15 use:95 value:12 price:3392
+155 Helm         cannot:Archer,Sorcerer,Robber,Ninja bonus:- use:0 value:2 price:30
+156 Iron Helm    cannot:Archer,Sorcerer,Robber,Ninja bonus:- use:0 value:2 price:1000
+157 Bronze Helm  cannot:Archer,Sorcerer,Robber,Ninja bonus:- use:0 value:2 price:2000
+158 Silver Helm  cannot:Archer,Sorcerer,Robber,Ninja bonus:- use:0 value:3 price:5000
+159 Gold Helm    cannot:Archer,Sorcerer,Robber,Ninja bonus:Luck +15 use:85 value:4 price:20000
+160 Magic Herbs  cannot:- bonus:not equippable use:180 value:0 price:50
+161 Torch        cannot:- bonus:not equippable use:133 value:0 price:1
+162 Lantern      cannot:- bonus:not equippable use:133 value:0 price:20
+163 Thief's Pick cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Barbarian bonus:- use:0 value:0 price:200
+164 Rope'n'Hooks cannot:- bonus:not equippable use:139 value:0 price:10
+165 Wakeup Horn  cannot:- bonus:not equippable use:129 value:0 price:50
+166 Compass      cannot:- bonus:not equippable use:134 value:0 price:200
+167 Sextant      cannot:- bonus:not equippable use:134 value:0 price:500
+168 Force Potion cannot:- bonus:not equippable use:26 value:0 price:100
+169 Skill Potion cannot:- bonus:not equippable use:85 value:0 price:500
+170 MaxHP Potion cannot:- bonus:not equippable use:2 value:0 price:4000
+171 Holy Charm   cannot:- bonus:not equippable use:183 value:0 price:200
+172 Herbal Patch cannot:- bonus:not equippable use:184 value:0 price:400
+173 Hero Medal   cannot:- bonus:Personality +4 use:185 value:0 price:800
+174 Silent Horn  cannot:- bonus:- use:189 value:0 price:800
+175 Magic Meal   cannot:- bonus:not equippable use:192 value:0 price:1000
+176 Antidote Ale cannot:- bonus:not equippable use:193 value:0 price:1000
+177 Super Flare  cannot:- bonus:not equippable use:195 value:0 price:1000
+178 Dove's Blood cannot:- bonus:not equippable use:199 value:0 price:2000
+179 Ray Gun      cannot:- bonus:Accuracy +5 use:131 value:0 price:400
+180 Magic Charm  cannot:- bonus:- use:142 value:0 price:800
+181 Witch Broom  cannot:- bonus:not equippable use:144 value:0 price:1000
+182 Invisocloak  cannot:- bonus:- use:145 value:0 price:2000
+183 Storm Wand   cannot:- bonus:- use:146 value:0 price:2000
+184 Lava Grenade cannot:- bonus:not equippable use:151 value:0 price:2000
+185 Hourglass    cannot:- bonus:not equippable use:154 value:0 price:2000
+186 Instant Keep cannot:- bonus:not equippable use:158 value:0 price:5000
+187 Teleport Orb cannot:- bonus:not equippable use:159 value:0 price:5000
+188 Skeleton Key cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Barbarian bonus:- use:0 value:0 price:800
+189 Defense Ring cannot:- bonus:- use:153 value:0 price:4000
+190 Mgt Gauntlet cannot:Sorcerer,Ninja bonus:Might +6 use:26 value:0 price:4000
+191 Acy Gauntlet cannot:Sorcerer bonus:Accuracy +6 use:58 value:0 price:4000
+192 Stealth Cape cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Barbarian bonus:- use:47 value:0 price:4000
+193 Admit 8 Pass cannot:- bonus:not equippable use:0 value:0 price:200
+194 Speed Boots  cannot:- bonus:Speed +15 use:205 value:0 price:15000
+195 Cureall Wand cannot:- bonus:- use:207 value:0 price:15000
+196 Moon Rock    cannot:- bonus:not equippable use:215 value:0 price:12000
+197 Ruby Ankh    cannot:- bonus:Luck +10 use:216 value:0 price:30000
+198 Disruptor    cannot:- bonus:- use:155 value:0 price:20000
+199 Lich Hand    cannot:Paladin,Archer,Cleric,Ninja,Barbarian bonus:not equippable use:156 value:0 price:10000
+200 Phaser       cannot:- bonus:Accuracy +5 use:160 value:0 price:20000
+201 Freeze Wand  cannot:- bonus:- use:162 value:0 price:25000
+202 Energizer    cannot:- bonus:not equippable use:163 value:0 price:10000
+203 Magic Mirror cannot:- bonus:not equippable use:166 value:0 price:30000
+204 Elven Cloak  cannot:Knight,Paladin,Cleric,Sorcerer,Ninja,Barbarian bonus:- use:145 value:0 price:15000
+205 Elven Boots  cannot:Knight,Paladin,Cleric,Sorcerer,Ninja,Barbarian bonus:Speed +5 use:0 value:0 price:10000
+206 Sage Robe    cannot:Knight,Paladin,Archer,Cleric,Robber,Ninja,Barbarian bonus:Intellect +6 use:90 value:0 price:25000
+207 Enchanted Id cannot:- bonus:Personality +15 use:95 value:0 price:25000
+208 Green Ticket cannot:- bonus:not equippable use:0 value:0 price:10
+209 Yellow Tickt cannot:- bonus:not equippable use:0 value:0 price:50
+210 Red Ticket   cannot:- bonus:not equippable use:0 value:0 price:250
+211 Black Ticket cannot:- bonus:not equippable use:0 value:0 price:1000
+212 Fe Farthing  cannot:- bonus:not equippable use:0 value:0 price:10
+213 Castle Key   cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Barbarian bonus:- use:0 value:0 price:200
+214 Mark's Keys  cannot:- bonus:not equippable use:0 value:0 price:1
+215 Dog Whistle  cannot:- bonus:Luck +1 use:152 value:0 price:50
+216 Web Caster   cannot:- bonus:- use:147 value:0 price:100
+217 Monster Tome cannot:- bonus:not equippable use:138 value:0 price:2000
+218 Cupie Doll   cannot:- bonus:not equippable use:0 value:0 price:1
+219 Water Talon  cannot:- bonus:not equippable use:211 value:0 price:50000
+220 Air Talon    cannot:- bonus:not equippable use:203 value:0 price:50000
+221 Fire Talon   cannot:- bonus:not equippable use:217 value:0 price:50000
+222 Earth Talon  cannot:- bonus:not equippable use:213 value:0 price:50000
+223 Element Orb  cannot:- bonus:not equippable use:175 value:0 price:34464
+224 Gold Goblet  cannot:- bonus:not equippable use:0 value:0 price:250
+225 +7 Loincloth cannot:- bonus:Personality +10 use:0 value:0 price:5000
+226 Valor Sword  cannot:- bonus:not equippable use:0 value:0 price:10000
+227 Honor Sword  cannot:- bonus:not equippable use:0 value:0 price:5000
+228 Noble Sword  cannot:- bonus:not equippable use:0 value:0 price:5000
+229 Corak's Soul cannot:- bonus:not equippable use:0 value:0 price:1
+230 Emerald Ring cannot:- bonus:- use:0 value:0 price:1000
+231 Water Disc   cannot:- bonus:not equippable use:212 value:0 price:10000
+232 Air Disc     cannot:- bonus:not equippable use:198 value:0 price:10000
+233 Fire Disc    cannot:- bonus:not equippable use:218 value:0 price:10000
+234 Earth Disc   cannot:- bonus:not equippable use:208 value:0 price:10000
+235 Sapphire Pin cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Ninja,Barbarian bonus:Luck +15 use:0 value:0 price:10000
+236 Amethyst Box cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Ninja,Barbarian bonus:Luck +15 use:0 value:0 price:10000
+237 Coral Broach cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Robber,Ninja bonus:Might +15 use:0 value:0 price:10000
+238 Lapis Scarab cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Robber,Ninja bonus:Might +15 use:0 value:0 price:10000
+239 Amber Skull  cannot:Knight,Paladin,Archer,Cleric,Robber,Ninja,Barbarian bonus:Intellect +15 use:0 value:0 price:10000
+240 Quartz Skull cannot:Knight,Paladin,Archer,Cleric,Robber,Ninja,Barbarian bonus:Intellect +15 use:0 value:0 price:10000
+241 Agate Grail  cannot:Knight,Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Personality +15 use:0 value:0 price:10000
+242 Opal Pendant cannot:Knight,Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Might +15 use:0 value:0 price:10000
+243 Crystal Vial cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:Speed +15 use:0 value:0 price:10000
+244 Ruby Amulet  cannot:Knight,Paladin,Archer,Cleric,Sorcerer,Robber,Barbarian bonus:Luck +15 use:0 value:0 price:10000
+245 Ivory Cameo  cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Might +15 use:0 value:0 price:10000
+246 Ruby Tiara   cannot:Paladin,Archer,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Accuracy +15 use:0 value:0 price:10000
+247 Onyx Effigy  cannot:Knight,Paladin,Archer,Sorcerer,Robber,Ninja,Barbarian bonus:Personality +15 use:0 value:0 price:10000
+248 Pearl Choker cannot:Knight,Paladin,Archer,Sorcerer,Robber,Ninja,Barbarian bonus:Personality +15 use:0 value:0 price:10000
+249 Topaz Shard  cannot:Knight,Paladin,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Accuracy +15 use:0 value:0 price:10000
+250 Sun Crown    cannot:Knight,Paladin,Cleric,Sorcerer,Robber,Ninja,Barbarian bonus:Intellect +15 use:0 value:0 price:10000
+251 J-26 Fluxer  cannot:- bonus:not equippable use:0 value:0 price:1
+252 M-27 Radicon cannot:- bonus:not equippable use:0 value:0 price:1
+253 A-1 Todilor  cannot:- bonus:not equippable use:0 value:0 price:1
+254 N-19 Capitor cannot:- bonus:not equippable use:0 value:0 price:1
+255 Useless Item cannot:- bonus:not equippable use:0 value:0 price:1
