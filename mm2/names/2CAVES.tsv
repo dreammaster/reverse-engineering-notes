@@ -12,3 +12,11 @@
 1C5AC	caves_donate_gems	event 14/CDh
 1C66E	caves_pick_character	event 14/CEh
 1C73A	caves_time_travel	event 14/CFh: choose an era (1-8)
+1D3C4	caves_lord_quests	Lord Hoardall (arg 0) / Lord Slayer (arg 1): quest menu A-D, rewards
+1D094	caves_quest_rewards	checks finished quests and gives 100000 / 1000000 experience
+1D252	caves_quest_status	"Begone until you have completed your quest!" when unfinished
+1CDB0	caves_assign_quest	(level) picks targets (+78/+7C) for each character, shows the quest text
+1CC8A	caves_pick_hoard_item	(level) weighted item id for Hoardall quests
+1CD1C	caves_pick_slayer_monster	(level) random monster id for Slayer quests
+1CD4C	caves_three_swords_check	has all three swords (items E2h-E4h)? removes them
+1CEB2	caves_lords_quest	level D: three swords / three beasts

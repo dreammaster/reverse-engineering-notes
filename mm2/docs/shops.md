@@ -76,3 +76,22 @@ Item record price `P` = word at `+12h`, bonus `b`:
 
 A failed theft (`smith_robbery_fight` `1CEC8`, reached from the event `FDh` robbery trap) starts a fight with the
 guards (monsters `FFh, E1h, C2h, C1h, E0h`, surprise flag `83h`).
+
+## Lord Hoardall and Lord Slayer (2CAVES `caves_event_c9` / `caves_event_ca` -> `1D3C4`)
+
+Two special locations (event 14 arguments `C9h` = Hoardall, `CAh` = Slayer; `byte_22E14` = 0 / 1) give the party
+repeatable **quests** for experience.  Per character the state is in the record: `+78` = target (item id for
+Hoardall, monster id for Slayer), `+7C` bit 0 = quest kind, bit 2 = quest active, bit 3 / bit 4 = Hoardall /
+Slayer reward already taken, top 3 bits = number of completed rewards.
+
+1. The lord asks "Will you gather more items / trophies (y/n)?"; "At what level of difficulty do you wish to aid Lord
+   X?" -- **A) Page's, B) Squire's, C) Knight's, D) Lord's quest** (`DGROUP:3E00`).
+2. A, B, C pick a random target for every living character: Hoardall draws an item from weighted bands
+   (`DGROUP:3E0C` start ids per level, `3E1E` weights; level A = clubs/staffs/blowpipes/shields/armour/helms of the plain
+   kind, B = the magical kind, C = the best kind); Slayer picks monster id `rand(1, 3E36[level]) + 3E3A[level]`, i.e. ids
+   32-79, 80-143, 144-191.  **D** is the final quest: the three swords (items E2h-E4h: Valor, Honor and Noble Sword) or the
+   three beasts (three fixed monsters).
+3. When the party returns with the item (`sub_1CB4A`/`1CBCA` remove it) or has killed the target, the lord says "You have done
+   everyone a great service and you shall be rewarded" and gives **100 000 experience (Hoardall) or 1 000 000 (Slayer)**
+   per completed character; "Begone until you have completed your quest!" otherwise.  Esc: "Then begone, knave!" and the
+   party is moved to a fixed cell of the map (9,10 / 3,5).

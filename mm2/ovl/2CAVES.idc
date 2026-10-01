@@ -770,6 +770,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CC7F);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CC8A);
+	set_name	(0X1CC8A,	"caves_pick_hoard_item");
 	create_insn	(x=0X1CC8D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC92);
@@ -817,6 +818,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CD0E);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CD1C);
+	set_name	(0X1CD1C,	"caves_pick_slayer_monster");
 	create_insn	(x=0X1CD1F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CD22);
@@ -830,6 +832,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CD40);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CD4C);
+	set_name	(0X1CD4C,	"caves_three_swords_check");
 	create_insn	(x=0X1CD4F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CD54);
@@ -853,6 +856,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CDA6);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CDB0);
+	set_name	(0X1CDB0,	"caves_assign_quest");
 	create_insn	(x=0X1CDB3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CDB8);
@@ -925,6 +929,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CEA9);
 	op_stkvar	(x,	0);
 	create_insn	(0X1CEB2);
+	set_name	(0X1CEB2,	"caves_lords_quest");
 	create_insn	(x=0X1CEB5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CEBA);
@@ -1027,6 +1032,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D08F);
 	op_hex		(x,	1);
 	create_insn	(0X1D094);
+	set_name	(0X1D094,	"caves_quest_rewards");
 	create_insn	(x=0X1D097);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D09E);
@@ -1155,6 +1161,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D248);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D252);
+	set_name	(0X1D252,	"caves_quest_status");
 	create_insn	(x=0X1D255);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D25A);
@@ -1246,6 +1253,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1D3BC);
 	create_insn	(0X1D3C4);
+	set_name	(0X1D3C4,	"caves_lord_quests");
 	create_insn	(x=0X1D3C7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3CC);
@@ -1428,18 +1436,23 @@ static Functions_0(void) {
 	set_frame_size(0X1CBCA, 0XE, 2, 0);
 	add_func    (0X1CC8A,0X1CD1C);
 	set_func_flags(0X1CC8A,0x5410);
+	set_func_cmt(0X1CC8A,	"(level) weighted item id for Hoardall quests", 0);
 	set_frame_size(0X1CC8A, 0X10, 2, 0);
 	add_func    (0X1CD1C,0X1CD4C);
 	set_func_flags(0X1CD1C,0x5410);
+	set_func_cmt(0X1CD1C,	"(level) random monster id for Slayer quests", 0);
 	set_frame_size(0X1CD1C, 0X2, 2, 0);
 	add_func    (0X1CD4C,0X1CDAF);
 	set_func_flags(0X1CD4C,0x5410);
+	set_func_cmt(0X1CD4C,	"has all three swords (items E2h-E4h)? removes them", 0);
 	set_frame_size(0X1CD4C, 0X10, 2, 0);
 	add_func    (0X1CDB0,0X1CEB2);
 	set_func_flags(0X1CDB0,0x5410);
+	set_func_cmt(0X1CDB0,	"(level) picks targets (+78/+7C) for each character, shows the quest text", 0);
 	set_frame_size(0X1CDB0, 0X10, 2, 0);
 	add_func    (0X1CEB2,0X1CF7B);
 	set_func_flags(0X1CEB2,0x5410);
+	set_func_cmt(0X1CEB2,	"level D: three swords / three beasts", 0);
 	set_frame_size(0X1CEB2, 0X12, 2, 0);
 	add_func    (0X1CF7C,0X1D00C);
 	set_func_flags(0X1CF7C,0x5400);
@@ -1449,15 +1462,18 @@ static Functions_0(void) {
 	set_frame_size(0X1D00C, 0, 0, 0);
 	add_func    (0X1D094,0X1D251);
 	set_func_flags(0X1D094,0x5410);
+	set_func_cmt(0X1D094,	"checks finished quests and gives 100000 / 1000000 experience", 0);
 	set_frame_size(0X1D094, 0X16, 2, 0);
 	add_func    (0X1D252,0X1D38D);
 	set_func_flags(0X1D252,0x5410);
+	set_func_cmt(0X1D252,	"\"Begone until you have completed your quest!\" when unfinished", 0);
 	set_frame_size(0X1D252, 0XE, 2, 0);
 	add_func    (0X1D38E,0X1D3C3);
 	set_func_flags(0X1D38E,0x5410);
 	set_frame_size(0X1D38E, 0X4, 2, 0);
 	add_func    (0X1D3C4,0X1D5DE);
 	set_func_flags(0X1D3C4,0x5410);
+	set_func_cmt(0X1D3C4,	"Lord Hoardall (arg 0) / Lord Slayer (arg 1): quest menu A-D, rewards", 0);
 	set_frame_size(0X1D3C4, 0XE, 2, 0);
 	add_func    (0X1D5DE,0X1D5E8);
 	set_func_flags(0X1D5DE,0x5400);
