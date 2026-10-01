@@ -138,6 +138,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C330);
 	op_hex		(x,	1);
 	create_insn	(0X1C338);
+	set_name	(0X1C338,	"trap_damage_char");
 	create_insn	(x=0X1C33B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C33E);
@@ -169,6 +170,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C385);
 	op_hex		(x,	1);
 	create_insn	(0X1C390);
+	set_name	(0X1C390,	"trap_explosion_effect");
 	create_insn	(x=0X1C393);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C398);
@@ -437,6 +439,7 @@ static Bytes_0(void) {
 	create_insn	(0X1C79C);
 	create_insn	(0X1C7A4);
 	create_insn	(0X1C7AA);
+	set_name	(0X1C7AA,	"chest_pick_character");
 	create_insn	(x=0X1C7AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C7C8);
@@ -453,6 +456,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C816);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C824);
+	set_name	(0X1C824,	"chest_open_attempt");
 	create_insn	(x=0X1C827);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C82A);
@@ -898,9 +902,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C242, 0X8, 2, 0);
 	add_func    (0X1C338,0X1C390);
 	set_func_flags(0X1C338,0x5410);
+	set_func_cmt(0X1C338,	"(char) damage from a trap/explosion via char_apply_damage", 0);
 	set_frame_size(0X1C338, 0X8, 2, 0);
 	add_func    (0X1C390,0X1C462);
 	set_func_flags(0X1C390,0x5410);
+	set_func_cmt(0X1C390,	"\"Explosion\" damage to the party", 0);
 	set_frame_size(0X1C390, 0XA, 2, 0);
 	add_func    (0X1C4A6,0X1C538);
 	set_func_flags(0X1C4A6,0x5410);
@@ -915,9 +921,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C64A, 0X14, 2, 0);
 	add_func    (0X1C7AA,0X1C824);
 	set_func_flags(0X1C7AA,0x5410);
+	set_func_cmt(0X1C7AA,	"prompt for the character who handles the chest", 0);
 	set_frame_size(0X1C7AA, 0X8, 2, 0);
 	add_func    (0X1C824,0X1C8AE);
 	set_func_flags(0X1C824,0x5410);
+	set_func_cmt(0X1C824,	"random check, may set off trap_or_explosion", 0);
 	set_frame_size(0X1C824, 0X6, 2, 0);
 	add_func    (0X1CA52,0X1CE30);
 	set_func_flags(0X1CA52,0x5410);

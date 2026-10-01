@@ -472,7 +472,7 @@ loc_1817C:                              ; CODE XREF: game_main_loop+2C2↑j
 
 loc_18186:                              ; CODE XREF: game_main_loop+2CA↑j
                 call    thk_res_3FE2
-                call    sub_1BB4E
+                call    show_location_map
                 jmp     loc_1825C
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1419,7 +1419,7 @@ loc_187A0:                              ; CODE XREF: draw_view_indoors+51↑j
                 mov     byte_27831, al
                 mov     byte_27830, al
                 mov     byte_2782F, al
-                call    sub_1BEBA
+                call    view_collect_walls
                 cmp     byte_27826, 0
                 jz      short loc_187F8
                 mov     ax, 4
@@ -1653,9 +1653,10 @@ draw_view_indoors endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; terrain class 4 strips (desert/ocean/swamp/tundra bank)
 ; Attributes: bp-based frame
 
-sub_189B8       proc near               ; CODE XREF: draw_view_outdoors:loc_18DB6↓p
+outdoor_draw_horizon proc near          ; CODE XREF: draw_view_outdoors:loc_18DB6↓p
 
 var_E           = word ptr -0Eh
 var_C           = word ptr -0Ch
@@ -1674,7 +1675,7 @@ var_2           = word ptr -2
                 mov     [bp+var_C], 159Eh
                 mov     [bp+var_E], 1596h
 
-loc_189CC:                              ; CODE XREF: sub_189B8+109↓j
+loc_189CC:                              ; CODE XREF: outdoor_draw_horizon+109↓j
                 mov     bx, [bp+var_C]
                 mov     ax, 80h
                 sub     ax, [bx]
@@ -1685,10 +1686,10 @@ loc_189CC:                              ; CODE XREF: sub_189B8+109↓j
                 jmp     short loc_189E4
 ; ---------------------------------------------------------------------------
 
-loc_189E2:                              ; CODE XREF: sub_189B8+23↑j
+loc_189E2:                              ; CODE XREF: outdoor_draw_horizon+23↑j
                 sub     ax, ax
 
-loc_189E4:                              ; CODE XREF: sub_189B8+28↑j
+loc_189E4:                              ; CODE XREF: outdoor_draw_horizon+28↑j
                 mov     [bp+var_A], ax
                 cmp     byte ptr [si+5FDCh], 3
                 jbe     short loc_189F4
@@ -1697,10 +1698,10 @@ loc_189E4:                              ; CODE XREF: sub_189B8+28↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_189F4:                              ; CODE XREF: sub_189B8+34↑j
+loc_189F4:                              ; CODE XREF: outdoor_draw_horizon+34↑j
                 sub     ax, ax
 
-loc_189F6:                              ; CODE XREF: sub_189B8+39↑j
+loc_189F6:                              ; CODE XREF: outdoor_draw_horizon+39↑j
                 mov     [bp+var_2], ax
                 cmp     byte ptr [si+5FE0h], 3
                 jbe     short loc_18A06
@@ -1709,10 +1710,10 @@ loc_189F6:                              ; CODE XREF: sub_189B8+39↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18A06:                              ; CODE XREF: sub_189B8+46↑j
+loc_18A06:                              ; CODE XREF: outdoor_draw_horizon+46↑j
                 sub     ax, ax
 
-loc_18A08:                              ; CODE XREF: sub_189B8+4B↑j
+loc_18A08:                              ; CODE XREF: outdoor_draw_horizon+4B↑j
                 mov     [bp+var_6], ax
                 cmp     [bp+var_A], 0
                 jz      short loc_18A58
@@ -1737,7 +1738,7 @@ loc_18A08:                              ; CODE XREF: sub_189B8+4B↑j
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18A47:                              ; CODE XREF: sub_189B8+76↑j
+loc_18A47:                              ; CODE XREF: outdoor_draw_horizon+76↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_18A92
                 push    di
@@ -1747,7 +1748,7 @@ loc_18A47:                              ; CODE XREF: sub_189B8+76↑j
                 jmp     short loc_18A83
 ; ---------------------------------------------------------------------------
 
-loc_18A58:                              ; CODE XREF: sub_189B8+57↑j
+loc_18A58:                              ; CODE XREF: outdoor_draw_horizon+57↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_18A75
                 push    di
@@ -1760,7 +1761,7 @@ loc_18A58:                              ; CODE XREF: sub_189B8+57↑j
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18A75:                              ; CODE XREF: sub_189B8+A4↑j
+loc_18A75:                              ; CODE XREF: outdoor_draw_horizon+A4↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_18A92
                 push    di
@@ -1768,30 +1769,30 @@ loc_18A75:                              ; CODE XREF: sub_189B8+A4↑j
                 push    ax
                 lea     ax, [si+8]
 
-loc_18A83:                              ; CODE XREF: sub_189B8+9E↑j
+loc_18A83:                              ; CODE XREF: outdoor_draw_horizon+9E↑j
                 push    ax
                 push    word_1DBCC
                 push    word_1DBCA
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18A92:                              ; CODE XREF: sub_189B8+93↑j
-                                        ; sub_189B8+C1↑j
+loc_18A92:                              ; CODE XREF: outdoor_draw_horizon+93↑j
+                                        ; outdoor_draw_horizon+C1↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_18A9D
                 mov     byte ptr [si+5FD8h], 0
 
-loc_18A9D:                              ; CODE XREF: sub_189B8+DE↑j
+loc_18A9D:                              ; CODE XREF: outdoor_draw_horizon+DE↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_18AA8
                 mov     byte ptr [si+5FDCh], 0
 
-loc_18AA8:                              ; CODE XREF: sub_189B8+E9↑j
+loc_18AA8:                              ; CODE XREF: outdoor_draw_horizon+E9↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_18AB3
                 mov     byte ptr [si+5FE0h], 0
 
-loc_18AB3:                              ; CODE XREF: sub_189B8+F4↑j
+loc_18AB3:                              ; CODE XREF: outdoor_draw_horizon+F4↑j
                 add     [bp+var_C], 2
                 add     [bp+var_E], 2
                 inc     si
@@ -1800,7 +1801,7 @@ loc_18AB3:                              ; CODE XREF: sub_189B8+F4↑j
                 jmp     loc_189CC
 ; ---------------------------------------------------------------------------
 
-loc_18AC4:                              ; CODE XREF: sub_189B8+107↑j
+loc_18AC4:                              ; CODE XREF: outdoor_draw_horizon+107↑j
                 mov     [bp+var_4], di
                 mov     [bp+var_8], si
                 pop     si
@@ -1808,14 +1809,15 @@ loc_18AC4:                              ; CODE XREF: sub_189B8+107↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_189B8       endp
+outdoor_draw_horizon endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; nearest centre terrain tile
 ; Attributes: bp-based frame
 
-sub_18AD0       proc near               ; CODE XREF: sub_18CC6+61↓p
+outdoor_draw_centre_tile proc near      ; CODE XREF: outdoor_draw_tiles+61↓p
 
 arg_0           = word ptr  4
 
@@ -1841,18 +1843,19 @@ arg_0           = word ptr  4
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18B09:                              ; CODE XREF: sub_18AD0+C↑j
+loc_18B09:                              ; CODE XREF: outdoor_draw_centre_tile+C↑j
                 pop     si
                 pop     bp
                 retn
-sub_18AD0       endp
+outdoor_draw_centre_tile endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (depth, nearest)
 ; Attributes: bp-based frame
 
-sub_18B0C       proc near               ; CODE XREF: sub_18CC6+77↓p
+outdoor_draw_left_tile proc near        ; CODE XREF: outdoor_draw_tiles+77↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -1877,11 +1880,11 @@ arg_2           = word ptr  6
                 jmp     short loc_18B32
 ; ---------------------------------------------------------------------------
 
-loc_18B30:                              ; CODE XREF: sub_18B0C+B↑j
-                                        ; sub_18B0C+13↑j ...
+loc_18B30:                              ; CODE XREF: outdoor_draw_left_tile+B↑j
+                                        ; outdoor_draw_left_tile+13↑j ...
                 sub     ax, ax
 
-loc_18B32:                              ; CODE XREF: sub_18B0C+22↑j
+loc_18B32:                              ; CODE XREF: outdoor_draw_left_tile+22↑j
                 mov     [bp+var_8], ax
                 or      ax, ax
                 jz      short loc_18B48
@@ -1890,15 +1893,15 @@ loc_18B32:                              ; CODE XREF: sub_18B0C+22↑j
                 jz      short loc_18B48
                 mov     byte ptr [bx+54B4h], 0FFh
 
-loc_18B48:                              ; CODE XREF: sub_18B0C+2B↑j
-                                        ; sub_18B0C+35↑j
+loc_18B48:                              ; CODE XREF: outdoor_draw_left_tile+2B↑j
+                                        ; outdoor_draw_left_tile+35↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+54B4h], 0FFh
                 jnz     short loc_18B55
                 jmp     loc_18BE6
 ; ---------------------------------------------------------------------------
 
-loc_18B55:                              ; CODE XREF: sub_18B0C+44↑j
+loc_18B55:                              ; CODE XREF: outdoor_draw_left_tile+44↑j
                 mov     si, bx
                 shl     si, 1
                 mov     ax, [si+15BAh]
@@ -1921,16 +1924,16 @@ loc_18B55:                              ; CODE XREF: sub_18B0C+44↑j
                 mov     ax, [si+15B2h]
                 mov     [bp+var_6], ax
 
-loc_18B97:                              ; CODE XREF: sub_18B0C+66↑j
-                                        ; sub_18B0C+70↑j
+loc_18B97:                              ; CODE XREF: outdoor_draw_left_tile+66↑j
+                                        ; outdoor_draw_left_tile+70↑j
                 cmp     [bp+arg_0], 1
                 jnz     short loc_18BA9
                 cmp     byte_22D04, 0FFh
                 jnz     short loc_18BA9
                 mov     [bp+var_4], 8
 
-loc_18BA9:                              ; CODE XREF: sub_18B0C+8F↑j
-                                        ; sub_18B0C+96↑j
+loc_18BA9:                              ; CODE XREF: outdoor_draw_left_tile+8F↑j
+                                        ; outdoor_draw_left_tile+96↑j
                 cmp     [bp+arg_0], 1
                 jz      short loc_18BBD
                 cmp     [bp+arg_0], 2
@@ -1939,11 +1942,11 @@ loc_18BA9:                              ; CODE XREF: sub_18B0C+8F↑j
                 cmp     [bp+arg_0], ax
                 jnz     short loc_18BC2
 
-loc_18BBD:                              ; CODE XREF: sub_18B0C+A1↑j
+loc_18BBD:                              ; CODE XREF: outdoor_draw_left_tile+A1↑j
                 mov     [bp+var_4], 8
 
-loc_18BC2:                              ; CODE XREF: sub_18B0C+A7↑j
-                                        ; sub_18B0C+AF↑j
+loc_18BC2:                              ; CODE XREF: outdoor_draw_left_tile+A7↑j
+                                        ; outdoor_draw_left_tile+AF↑j
                 push    [bp+var_6]
                 push    [bp+var_4]
                 push    [bp+var_2]
@@ -1957,21 +1960,22 @@ loc_18BC2:                              ; CODE XREF: sub_18B0C+A7↑j
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18BE6:                              ; CODE XREF: sub_18B0C+46↑j
+loc_18BE6:                              ; CODE XREF: outdoor_draw_left_tile+46↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_18B0C       endp
+outdoor_draw_left_tile endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; (depth, nearest)
 ; Attributes: bp-based frame
 
-sub_18BEC       proc near               ; CODE XREF: sub_18CC6+93↓p
+outdoor_draw_right_tile proc near       ; CODE XREF: outdoor_draw_tiles+93↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -1996,11 +2000,11 @@ arg_2           = word ptr  6
                 jmp     short loc_18C12
 ; ---------------------------------------------------------------------------
 
-loc_18C10:                              ; CODE XREF: sub_18BEC+B↑j
-                                        ; sub_18BEC+13↑j ...
+loc_18C10:                              ; CODE XREF: outdoor_draw_right_tile+B↑j
+                                        ; outdoor_draw_right_tile+13↑j ...
                 sub     ax, ax
 
-loc_18C12:                              ; CODE XREF: sub_18BEC+22↑j
+loc_18C12:                              ; CODE XREF: outdoor_draw_right_tile+22↑j
                 mov     [bp+var_8], ax
                 or      ax, ax
                 jz      short loc_18C28
@@ -2009,15 +2013,15 @@ loc_18C12:                              ; CODE XREF: sub_18BEC+22↑j
                 jz      short loc_18C28
                 mov     byte ptr [bx+54B8h], 0FFh
 
-loc_18C28:                              ; CODE XREF: sub_18BEC+2B↑j
-                                        ; sub_18BEC+35↑j
+loc_18C28:                              ; CODE XREF: outdoor_draw_right_tile+2B↑j
+                                        ; outdoor_draw_right_tile+35↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+54B8h], 0FFh
                 jnz     short loc_18C35
                 jmp     loc_18CC1
 ; ---------------------------------------------------------------------------
 
-loc_18C35:                              ; CODE XREF: sub_18BEC+44↑j
+loc_18C35:                              ; CODE XREF: outdoor_draw_right_tile+44↑j
                 mov     al, [bx+15D2h]
                 sub     ah, ah
                 mov     [bp+var_2], ax
@@ -2042,8 +2046,8 @@ loc_18C35:                              ; CODE XREF: sub_18BEC+44↑j
                 mov     ax, [si+15B2h]
                 mov     [bp+var_6], ax
 
-loc_18C7B:                              ; CODE XREF: sub_18BEC+68↑j
-                                        ; sub_18BEC+72↑j
+loc_18C7B:                              ; CODE XREF: outdoor_draw_right_tile+68↑j
+                                        ; outdoor_draw_right_tile+72↑j
                 cmp     [bp+arg_0], 1
                 jnz     short loc_18C9D
                 cmp     byte_22D08, 0FFh
@@ -2056,11 +2060,11 @@ loc_18C7B:                              ; CODE XREF: sub_18BEC+68↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18C98:                              ; CODE XREF: sub_18BEC+A2↑j
+loc_18C98:                              ; CODE XREF: outdoor_draw_right_tile+A2↑j
                 mov     [bp+var_4], 98h
 
-loc_18C9D:                              ; CODE XREF: sub_18BEC+93↑j
-                                        ; sub_18BEC+9A↑j ...
+loc_18C9D:                              ; CODE XREF: outdoor_draw_right_tile+93↑j
+                                        ; outdoor_draw_right_tile+9A↑j ...
                 push    [bp+var_6]
                 push    [bp+var_4]
                 push    [bp+var_2]
@@ -2074,19 +2078,20 @@ loc_18C9D:                              ; CODE XREF: sub_18BEC+93↑j
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_18CC1:                              ; CODE XREF: sub_18BEC+46↑j
+loc_18CC1:                              ; CODE XREF: outdoor_draw_right_tile+46↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_18BEC       endp
+outdoor_draw_right_tile endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; builds 54B0/54B4/54B8 and draws all tiles
 ; Attributes: bp-based frame
 
-sub_18CC6       proc near               ; CODE XREF: draw_view_outdoors+4D↓p
+outdoor_draw_tiles proc near            ; CODE XREF: draw_view_outdoors+4D↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -2099,7 +2104,7 @@ var_2           = word ptr -2
                 push    si
                 sub     si, si
 
-loc_18CD0:                              ; CODE XREF: sub_18CC6+2C↓j
+loc_18CD0:                              ; CODE XREF: outdoor_draw_tiles+2C↓j
                 mov     al, [si+5FDCh]
                 dec     al
                 mov     [si+54B4h], al
@@ -2115,38 +2120,38 @@ loc_18CD0:                              ; CODE XREF: sub_18CC6+2C↓j
                 mov     [bp+var_4], si
                 sub     si, si
 
-loc_18CF9:                              ; CODE XREF: sub_18CC6+46↓j
+loc_18CF9:                              ; CODE XREF: outdoor_draw_tiles+46↓j
                 cmp     byte ptr [si+54B0h], 0FFh
                 jz      short loc_18D06
 
-loc_18D00:                              ; CODE XREF: sub_18CC6+44↓j
+loc_18D00:                              ; CODE XREF: outdoor_draw_tiles+44↓j
                 mov     [bp+var_4], si
                 jmp     short loc_18D0E
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18D06:                              ; CODE XREF: sub_18CC6+38↑j
+loc_18D06:                              ; CODE XREF: outdoor_draw_tiles+38↑j
                 inc     si
                 cmp     si, 4
                 jge     short loc_18D00
                 jmp     short loc_18CF9
 ; ---------------------------------------------------------------------------
 
-loc_18D0E:                              ; CODE XREF: sub_18CC6+3D↑j
+loc_18D0E:                              ; CODE XREF: outdoor_draw_tiles+3D↑j
                 mov     ax, [bp+var_4]
                 mov     [bp+var_2], ax
                 cmp     ax, 4
                 jnz     short loc_18D1E
                 mov     [bp+var_4], 3
 
-loc_18D1E:                              ; CODE XREF: sub_18CC6+51↑j
+loc_18D1E:                              ; CODE XREF: outdoor_draw_tiles+51↑j
                 cmp     [bp+var_2], 4
                 jz      short loc_18D2D
                 push    [bp+var_2]
-                call    sub_18AD0
+                call    outdoor_draw_centre_tile
                 add     sp, 2
 
-loc_18D2D:                              ; CODE XREF: sub_18CC6+5C↑j
+loc_18D2D:                              ; CODE XREF: outdoor_draw_tiles+5C↑j
                 mov     ax, [bp+var_4]
                 mov     [bp+var_6], ax
                 or      ax, ax
@@ -2154,16 +2159,16 @@ loc_18D2D:                              ; CODE XREF: sub_18CC6+5C↑j
                 mov     di, ax
                 mov     si, ax
 
-loc_18D3B:                              ; CODE XREF: sub_18CC6+7E↓j
+loc_18D3B:                              ; CODE XREF: outdoor_draw_tiles+7E↓j
                 push    di
                 push    si
-                call    sub_18B0C
+                call    outdoor_draw_left_tile
                 add     sp, 4
                 dec     si
                 jns     short loc_18D3B
                 mov     [bp+var_6], si
 
-loc_18D49:                              ; CODE XREF: sub_18CC6+6F↑j
+loc_18D49:                              ; CODE XREF: outdoor_draw_tiles+6F↑j
                 mov     ax, [bp+var_4]
                 mov     [bp+var_6], ax
                 or      ax, ax
@@ -2171,22 +2176,22 @@ loc_18D49:                              ; CODE XREF: sub_18CC6+6F↑j
                 mov     di, ax
                 mov     si, ax
 
-loc_18D57:                              ; CODE XREF: sub_18CC6+9A↓j
+loc_18D57:                              ; CODE XREF: outdoor_draw_tiles+9A↓j
                 push    di
                 push    si
-                call    sub_18BEC
+                call    outdoor_draw_right_tile
                 add     sp, 4
                 dec     si
                 jns     short loc_18D57
                 mov     [bp+var_6], si
 
-loc_18D65:                              ; CODE XREF: sub_18CC6+8B↑j
+loc_18D65:                              ; CODE XREF: outdoor_draw_tiles+8B↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_18CC6       endp
+outdoor_draw_tiles endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2230,8 +2235,8 @@ loc_18DA0:                              ; CODE XREF: draw_view_outdoors+2C↑j
                 add     sp, 0Ah
 
 loc_18DB6:                              ; CODE XREF: draw_view_outdoors+31↑j
-                call    sub_189B8
-                call    sub_18CC6
+                call    outdoor_draw_horizon
+                call    outdoor_draw_tiles
                 mov     ax, 1
                 push    ax
                 call    thk_gfx_select_page
@@ -9345,7 +9350,7 @@ draw_minimap    endp
 
 ; Attributes: bp-based frame
 
-sub_1BAC0       proc near               ; CODE XREF: sub_1BB4E+C1↓p
+sub_1BAC0       proc near               ; CODE XREF: show_location_map+C1↓p
 
 var_2           = byte ptr -2
 arg_0           = word ptr  4
@@ -9423,9 +9428,10 @@ sub_1BAC0       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Location spell: map with party marker
 ; Attributes: bp-based frame
 
-sub_1BB4E       proc near               ; CODE XREF: seg002:06C9↑J
+show_location_map proc near             ; CODE XREF: seg002:06C9↑J
                                         ; game_main_loop+379↑p
 
 var_112         = word ptr -112h
@@ -9451,7 +9457,7 @@ var_100         = byte ptr -100h
                 call    thk_gfx_select_page
                 add     sp, 2
 
-loc_1BB6D:                              ; CODE XREF: sub_1BB4E+13↑j
+loc_1BB6D:                              ; CODE XREF: show_location_map+13↑j
                 mov     ax, 4
                 push    ax
                 call    thk_clear_text_preset
@@ -9513,10 +9519,10 @@ loc_1BB6D:                              ; CODE XREF: sub_1BB4E+13↑j
                 jmp     short loc_1BC2C
 ; ---------------------------------------------------------------------------
 
-loc_1BBFC:                              ; CODE XREF: sub_1BB4E+D7↓j
+loc_1BBFC:                              ; CODE XREF: show_location_map+D7↓j
                 inc     [bp+var_10A]
 
-loc_1BC00:                              ; CODE XREF: sub_1BB4E+EB↓j
+loc_1BC00:                              ; CODE XREF: show_location_map+EB↓j
                 cmp     [bp+var_10A], 10h
                 jge     short loc_1BC28
                 push    [bp+var_10C]
@@ -9532,10 +9538,10 @@ loc_1BC00:                              ; CODE XREF: sub_1BB4E+EB↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BC28:                              ; CODE XREF: sub_1BB4E+B7↑j
+loc_1BC28:                              ; CODE XREF: show_location_map+B7↑j
                 inc     [bp+var_10C]
 
-loc_1BC2C:                              ; CODE XREF: sub_1BB4E+AC↑j
+loc_1BC2C:                              ; CODE XREF: show_location_map+AC↑j
                 cmp     [bp+var_10C], 10h
                 jge     short loc_1BC3C
                 mov     [bp+var_10A], 0
@@ -9543,15 +9549,15 @@ loc_1BC2C:                              ; CODE XREF: sub_1BB4E+AC↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BC3C:                              ; CODE XREF: sub_1BB4E+E3↑j
+loc_1BC3C:                              ; CODE XREF: show_location_map+E3↑j
                 mov     [bp+var_108], 0ACh
                 mov     [bp+var_10C], 0
 
-loc_1BC48:                              ; CODE XREF: sub_1BB4E+192↓j
+loc_1BC48:                              ; CODE XREF: show_location_map+192↓j
                 mov     [bp+var_106], 110h
                 mov     [bp+var_10A], 0Fh
 
-loc_1BC54:                              ; CODE XREF: sub_1BB4E+180↓j
+loc_1BC54:                              ; CODE XREF: show_location_map+180↓j
                 mov     si, [bp+var_10C]
                 mov     cl, 4
                 shl     si, cl
@@ -9590,8 +9596,8 @@ loc_1BC54:                              ; CODE XREF: sub_1BB4E+180↓j
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_1BCC5:                              ; CODE XREF: sub_1BB4E+11C↑j
-                                        ; sub_1BB4E+143↑j ...
+loc_1BCC5:                              ; CODE XREF: show_location_map+11C↑j
+                                        ; show_location_map+143↑j ...
                 sub     [bp+var_106], 10h
                 dec     [bp+var_10A]
                 jns     short loc_1BC54
@@ -9602,7 +9608,7 @@ loc_1BCC5:                              ; CODE XREF: sub_1BB4E+11C↑j
                 jmp     loc_1BC48
 ; ---------------------------------------------------------------------------
 
-loc_1BCE3:                              ; CODE XREF: sub_1BB4E+190↑j
+loc_1BCE3:                              ; CODE XREF: show_location_map+190↑j
                 mov     si, g_party_y
                 and     si, 0FFh
                 mov     cl, 4
@@ -9619,7 +9625,7 @@ loc_1BCE3:                              ; CODE XREF: sub_1BB4E+190↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BD0E:                              ; CODE XREF: sub_1BB4E+1B5↑j
+loc_1BD0E:                              ; CODE XREF: show_location_map+1B5↑j
                 cmp     g_facing, 53h ; 'S'
                 jnz     short loc_1BD1E
                 mov     [bp+var_10E], 21h ; '!'
@@ -9627,7 +9633,7 @@ loc_1BD0E:                              ; CODE XREF: sub_1BB4E+1B5↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BD1E:                              ; CODE XREF: sub_1BB4E+1C5↑j
+loc_1BD1E:                              ; CODE XREF: show_location_map+1C5↑j
                 cmp     g_facing, 45h ; 'E'
                 jnz     short loc_1BD2E
                 mov     [bp+var_10E], 22h ; '"'
@@ -9635,13 +9641,13 @@ loc_1BD1E:                              ; CODE XREF: sub_1BB4E+1C5↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BD2E:                              ; CODE XREF: sub_1BB4E+1D5↑j
+loc_1BD2E:                              ; CODE XREF: show_location_map+1D5↑j
                 cmp     g_facing, 57h ; 'W'
                 jnz     short loc_1BD3B
                 mov     [bp+var_10E], 23h ; '#'
 
-loc_1BD3B:                              ; CODE XREF: sub_1BB4E+1BD↑j
-                                        ; sub_1BB4E+1CD↑j ...
+loc_1BD3B:                              ; CODE XREF: show_location_map+1BD↑j
+                                        ; show_location_map+1CD↑j ...
                 cmp     byte_1DBE6, 0
                 jnz     short loc_1BD58
                 mov     ax, 1
@@ -9655,7 +9661,7 @@ loc_1BD3B:                              ; CODE XREF: sub_1BB4E+1BD↑j
                 call    thk_gfx_select_page
                 add     sp, 2
 
-loc_1BD58:                              ; CODE XREF: sub_1BB4E+1F2↑j
+loc_1BD58:                              ; CODE XREF: show_location_map+1F2↑j
                 mov     al, g_party_x
                 sub     ah, ah
                 mov     cl, 4
@@ -9674,7 +9680,7 @@ loc_1BD58:                              ; CODE XREF: sub_1BB4E+1F2↑j
                 neg     ax
                 mov     [bp+var_10C], ax
 
-loc_1BD82:                              ; CODE XREF: sub_1BB4E+2B0↓j
+loc_1BD82:                              ; CODE XREF: show_location_map+2B0↓j
                 cmp     [bp+var_112], 0
                 jz      short loc_1BD98
                 push    [bp+var_10C]
@@ -9684,7 +9690,7 @@ loc_1BD82:                              ; CODE XREF: sub_1BB4E+2B0↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1BD98:                              ; CODE XREF: sub_1BB4E+239↑j
+loc_1BD98:                              ; CODE XREF: show_location_map+239↑j
                 cmp     [bp+var_102], 0FFh
                 jnz     short loc_1BDC8
                 sub     ax, ax
@@ -9704,20 +9710,20 @@ loc_1BD98:                              ; CODE XREF: sub_1BB4E+239↑j
                 jmp     short loc_1BDE5
 ; ---------------------------------------------------------------------------
 
-loc_1BDC8:                              ; CODE XREF: sub_1BB4E+24F↑j
+loc_1BDC8:                              ; CODE XREF: show_location_map+24F↑j
                 push    [bp+var_10C]
                 push    [bp+var_10A]
                 mov     al, [bp+var_102]
                 sub     ah, ah
                 push    ax
 
-loc_1BDD7:                              ; CODE XREF: sub_1BB4E+247↑j
+loc_1BDD7:                              ; CODE XREF: show_location_map+247↑j
                 push    word_1DBBC
                 push    word_1DBBA
                 call    thk_gfx_draw_op13
                 add     sp, 0Ah
 
-loc_1BDE5:                              ; CODE XREF: sub_1BB4E+278↑j
+loc_1BDE5:                              ; CODE XREF: show_location_map+278↑j
                 xor     byte ptr [bp+var_112], 1
                 mov     ax, 0FAh
                 push    ax
@@ -9740,12 +9746,12 @@ loc_1BDE5:                              ; CODE XREF: sub_1BB4E+278↑j
                 call    thk_gfx_copy_page
                 add     sp, 4
 
-loc_1BE1E:                              ; CODE XREF: sub_1BB4E+2B7↑j
+loc_1BE1E:                              ; CODE XREF: show_location_map+2B7↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1BB4E       endp
+show_location_map endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -9834,8 +9840,9 @@ sub_1BE92       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; fills the 20 wall variables 27826..27839 for the indoor view
 
-sub_1BEBA       proc near               ; CODE XREF: draw_view_indoors+9A↑p
+view_collect_walls proc near            ; CODE XREF: draw_view_indoors+9A↑p
                 push    si
                 push    di
                 mov     cl, 2
@@ -9846,7 +9853,7 @@ sub_1BEBA       proc near               ; CODE XREF: draw_view_indoors+9A↑p
                 mov     al, ah
                 shr     al, cl
 
-loc_1BECD:                              ; CODE XREF: sub_1BEBA+D↑j
+loc_1BECD:                              ; CODE XREF: view_collect_walls+D↑j
                 mov     byte_1EFF5, al
                 mov     al, 3
                 cmp     ah, 0C0h
@@ -9854,7 +9861,7 @@ loc_1BECD:                              ; CODE XREF: sub_1BEBA+D↑j
                 mov     al, ah
                 shl     al, cl
 
-loc_1BEDB:                              ; CODE XREF: sub_1BEBA+1B↑j
+loc_1BEDB:                              ; CODE XREF: view_collect_walls+1B↑j
                 mov     byte_1EFF4, al
                 mov     al, byte_23217
                 mov     ah, al
@@ -9867,7 +9874,7 @@ loc_1BEDB:                              ; CODE XREF: sub_1BEBA+1B↑j
                 mov     ah, al
                 sub     ah, 2
 
-loc_1BEF8:                              ; CODE XREF: sub_1BEBA+37↑j
+loc_1BEF8:                              ; CODE XREF: view_collect_walls+37↑j
                 mov     byte_1EFF7, ah
                 mov     dl, byte_1EFF4
                 mov     dh, byte_1EFF5
@@ -9881,7 +9888,7 @@ loc_1BEF8:                              ; CODE XREF: sub_1BEBA+37↑j
                 jmp     short loc_1BF2A
 ; ---------------------------------------------------------------------------
 
-loc_1BF1A:                              ; CODE XREF: sub_1BEBA+53↑j
+loc_1BF1A:                              ; CODE XREF: view_collect_walls+53↑j
                 mov     al, byte_2321E
                 and     al, ch
                 jz      short loc_1BF2A
@@ -9889,8 +9896,8 @@ loc_1BF1A:                              ; CODE XREF: sub_1BEBA+53↑j
                 shr     al, cl
                 mov     byte_27833, al
 
-loc_1BF2A:                              ; CODE XREF: sub_1BEBA+5E↑j
-                                        ; sub_1BEBA+65↑j
+loc_1BF2A:                              ; CODE XREF: view_collect_walls+5E↑j
+                                        ; view_collect_walls+65↑j
                 mov     al, byte_2321A
                 and     al, dh
                 jz      short loc_1BF3C
@@ -9900,7 +9907,7 @@ loc_1BF2A:                              ; CODE XREF: sub_1BEBA+5E↑j
                 jmp     short loc_1BF4C
 ; ---------------------------------------------------------------------------
 
-loc_1BF3C:                              ; CODE XREF: sub_1BEBA+75↑j
+loc_1BF3C:                              ; CODE XREF: view_collect_walls+75↑j
                 mov     al, byte_23222
                 and     al, ch
                 jz      short loc_1BF4C
@@ -9908,8 +9915,8 @@ loc_1BF3C:                              ; CODE XREF: sub_1BEBA+75↑j
                 shr     al, cl
                 mov     byte_2782F, al
 
-loc_1BF4C:                              ; CODE XREF: sub_1BEBA+80↑j
-                                        ; sub_1BEBA+87↑j
+loc_1BF4C:                              ; CODE XREF: view_collect_walls+80↑j
+                                        ; view_collect_walls+87↑j
                 mov     al, byte_2321A
                 and     al, ch
                 jz      short loc_1BF97
@@ -9926,8 +9933,8 @@ loc_1BF4C:                              ; CODE XREF: sub_1BEBA+80↑j
                 shr     al, cl
                 mov     byte_27834, al
 
-loc_1BF76:                              ; CODE XREF: sub_1BEBA+A7↑j
-                                        ; sub_1BEBA+AE↑j ...
+loc_1BF76:                              ; CODE XREF: view_collect_walls+A7↑j
+                                        ; view_collect_walls+AE↑j ...
                 cmp     byte_27827, 0
                 jnz     short loc_1BF94
                 cmp     byte_2782F, 0
@@ -9939,12 +9946,12 @@ loc_1BF76:                              ; CODE XREF: sub_1BEBA+A7↑j
                 shr     al, cl
                 mov     byte_27830, al
 
-loc_1BF94:                              ; CODE XREF: sub_1BEBA+C1↑j
-                                        ; sub_1BEBA+C8↑j ...
+loc_1BF94:                              ; CODE XREF: view_collect_walls+C1↑j
+                                        ; view_collect_walls+C8↑j ...
                 jmp     loc_1C0D4
 ; ---------------------------------------------------------------------------
 
-loc_1BF97:                              ; CODE XREF: sub_1BEBA+97↑j
+loc_1BF97:                              ; CODE XREF: view_collect_walls+97↑j
                 mov     al, byte_2321B
                 and     al, dl
                 jz      short loc_1BFA9
@@ -9954,7 +9961,7 @@ loc_1BF97:                              ; CODE XREF: sub_1BEBA+97↑j
                 jmp     short loc_1BFB9
 ; ---------------------------------------------------------------------------
 
-loc_1BFA9:                              ; CODE XREF: sub_1BEBA+E2↑j
+loc_1BFA9:                              ; CODE XREF: view_collect_walls+E2↑j
                 mov     al, byte_2321F
                 and     al, ch
                 jz      short loc_1BFB9
@@ -9962,8 +9969,8 @@ loc_1BFA9:                              ; CODE XREF: sub_1BEBA+E2↑j
                 shr     al, cl
                 mov     byte_27834, al
 
-loc_1BFB9:                              ; CODE XREF: sub_1BEBA+ED↑j
-                                        ; sub_1BEBA+F4↑j
+loc_1BFB9:                              ; CODE XREF: view_collect_walls+ED↑j
+                                        ; view_collect_walls+F4↑j
                 mov     al, byte_2321B
                 and     al, dh
                 jz      short loc_1BFCB
@@ -9973,7 +9980,7 @@ loc_1BFB9:                              ; CODE XREF: sub_1BEBA+ED↑j
                 jmp     short loc_1BFDB
 ; ---------------------------------------------------------------------------
 
-loc_1BFCB:                              ; CODE XREF: sub_1BEBA+104↑j
+loc_1BFCB:                              ; CODE XREF: view_collect_walls+104↑j
                 mov     al, byte_23223
                 and     al, ch
                 jz      short loc_1BFDB
@@ -9981,8 +9988,8 @@ loc_1BFCB:                              ; CODE XREF: sub_1BEBA+104↑j
                 shr     al, cl
                 mov     byte_27830, al
 
-loc_1BFDB:                              ; CODE XREF: sub_1BEBA+10F↑j
-                                        ; sub_1BEBA+116↑j
+loc_1BFDB:                              ; CODE XREF: view_collect_walls+10F↑j
+                                        ; view_collect_walls+116↑j
                 mov     al, byte_2321B
                 and     al, ch
                 jz      short loc_1C02A
@@ -10000,8 +10007,8 @@ loc_1BFDB:                              ; CODE XREF: sub_1BEBA+10F↑j
                 shr     al, cl
                 mov     byte_27835, al
 
-loc_1C009:                              ; CODE XREF: sub_1BEBA+136↑j
-                                        ; sub_1BEBA+13D↑j ...
+loc_1C009:                              ; CODE XREF: view_collect_walls+136↑j
+                                        ; view_collect_walls+13D↑j ...
                 cmp     byte_27828, 0
                 jnz     short loc_1C027
                 cmp     byte_27830, 0
@@ -10013,12 +10020,12 @@ loc_1C009:                              ; CODE XREF: sub_1BEBA+136↑j
                 shr     al, cl
                 mov     byte_27831, al
 
-loc_1C027:                              ; CODE XREF: sub_1BEBA+154↑j
-                                        ; sub_1BEBA+15B↑j ...
+loc_1C027:                              ; CODE XREF: view_collect_walls+154↑j
+                                        ; view_collect_walls+15B↑j ...
                 jmp     loc_1C0D4
 ; ---------------------------------------------------------------------------
 
-loc_1C02A:                              ; CODE XREF: sub_1BEBA+126↑j
+loc_1C02A:                              ; CODE XREF: view_collect_walls+126↑j
                 mov     al, byte_2321C
                 and     al, dl
                 jz      short loc_1C03C
@@ -10028,7 +10035,7 @@ loc_1C02A:                              ; CODE XREF: sub_1BEBA+126↑j
                 jmp     short loc_1C04C
 ; ---------------------------------------------------------------------------
 
-loc_1C03C:                              ; CODE XREF: sub_1BEBA+175↑j
+loc_1C03C:                              ; CODE XREF: view_collect_walls+175↑j
                 mov     al, byte_23220
                 and     al, ch
                 jz      short loc_1C04C
@@ -10036,8 +10043,8 @@ loc_1C03C:                              ; CODE XREF: sub_1BEBA+175↑j
                 shr     al, cl
                 mov     byte_27835, al
 
-loc_1C04C:                              ; CODE XREF: sub_1BEBA+180↑j
-                                        ; sub_1BEBA+187↑j
+loc_1C04C:                              ; CODE XREF: view_collect_walls+180↑j
+                                        ; view_collect_walls+187↑j
                 mov     al, byte_2321C
                 and     al, dh
                 jz      short loc_1C05E
@@ -10047,7 +10054,7 @@ loc_1C04C:                              ; CODE XREF: sub_1BEBA+180↑j
                 jmp     short loc_1C06E
 ; ---------------------------------------------------------------------------
 
-loc_1C05E:                              ; CODE XREF: sub_1BEBA+197↑j
+loc_1C05E:                              ; CODE XREF: view_collect_walls+197↑j
                 mov     al, byte_23224
                 and     al, ch
                 jz      short loc_1C06E
@@ -10055,8 +10062,8 @@ loc_1C05E:                              ; CODE XREF: sub_1BEBA+197↑j
                 shr     al, cl
                 mov     byte_27831, al
 
-loc_1C06E:                              ; CODE XREF: sub_1BEBA+1A2↑j
-                                        ; sub_1BEBA+1A9↑j
+loc_1C06E:                              ; CODE XREF: view_collect_walls+1A2↑j
+                                        ; view_collect_walls+1A9↑j
                 mov     al, byte_2321C
                 and     al, ch
                 jz      short loc_1C080
@@ -10066,7 +10073,7 @@ loc_1C06E:                              ; CODE XREF: sub_1BEBA+1A2↑j
                 jmp     short loc_1C0D4
 ; ---------------------------------------------------------------------------
 
-loc_1C080:                              ; CODE XREF: sub_1BEBA+1B9↑j
+loc_1C080:                              ; CODE XREF: view_collect_walls+1B9↑j
                 mov     al, byte_2321D
                 and     al, dl
                 jz      short loc_1C092
@@ -10076,7 +10083,7 @@ loc_1C080:                              ; CODE XREF: sub_1BEBA+1B9↑j
                 jmp     short loc_1C0A2
 ; ---------------------------------------------------------------------------
 
-loc_1C092:                              ; CODE XREF: sub_1BEBA+1CB↑j
+loc_1C092:                              ; CODE XREF: view_collect_walls+1CB↑j
                 mov     al, byte_23221
                 and     al, ch
                 jz      short loc_1C0A2
@@ -10084,8 +10091,8 @@ loc_1C092:                              ; CODE XREF: sub_1BEBA+1CB↑j
                 shr     al, cl
                 mov     byte_27836, al
 
-loc_1C0A2:                              ; CODE XREF: sub_1BEBA+1D6↑j
-                                        ; sub_1BEBA+1DD↑j
+loc_1C0A2:                              ; CODE XREF: view_collect_walls+1D6↑j
+                                        ; view_collect_walls+1DD↑j
                 mov     al, byte_2321D
                 and     al, dh
                 jz      short loc_1C0B4
@@ -10095,7 +10102,7 @@ loc_1C0A2:                              ; CODE XREF: sub_1BEBA+1D6↑j
                 jmp     short loc_1C0C4
 ; ---------------------------------------------------------------------------
 
-loc_1C0B4:                              ; CODE XREF: sub_1BEBA+1ED↑j
+loc_1C0B4:                              ; CODE XREF: view_collect_walls+1ED↑j
                 mov     al, byte_23225
                 and     al, ch
                 jz      short loc_1C0C4
@@ -10103,8 +10110,8 @@ loc_1C0B4:                              ; CODE XREF: sub_1BEBA+1ED↑j
                 shr     al, cl
                 mov     byte_27832, al
 
-loc_1C0C4:                              ; CODE XREF: sub_1BEBA+1F8↑j
-                                        ; sub_1BEBA+1FF↑j
+loc_1C0C4:                              ; CODE XREF: view_collect_walls+1F8↑j
+                                        ; view_collect_walls+1FF↑j
                 mov     al, byte_2321D
                 and     al, ch
                 jz      short loc_1C0D4
@@ -10112,44 +10119,44 @@ loc_1C0C4:                              ; CODE XREF: sub_1BEBA+1F8↑j
                 shr     al, cl
                 mov     byte_2782E, al
 
-loc_1C0D4:                              ; CODE XREF: sub_1BEBA:loc_1BF94↑j
-                                        ; sub_1BEBA:loc_1C027↑j ...
+loc_1C0D4:                              ; CODE XREF: view_collect_walls:loc_1BF94↑j
+                                        ; view_collect_walls:loc_1C027↑j ...
                 cmp     byte_27837, 0
                 jz      short loc_1C0E7
                 cmp     byte_27834, 3
                 jnz     short loc_1C0E7
                 mov     byte_27834, 1
 
-loc_1C0E7:                              ; CODE XREF: sub_1BEBA+21F↑j
-                                        ; sub_1BEBA+226↑j
+loc_1C0E7:                              ; CODE XREF: view_collect_walls+21F↑j
+                                        ; view_collect_walls+226↑j
                 cmp     byte_27827, 0
                 jz      short loc_1C0FA
                 cmp     byte_27830, 3
                 jnz     short loc_1C0FA
                 mov     byte_27830, 1
 
-loc_1C0FA:                              ; CODE XREF: sub_1BEBA+232↑j
-                                        ; sub_1BEBA+239↑j
+loc_1C0FA:                              ; CODE XREF: view_collect_walls+232↑j
+                                        ; view_collect_walls+239↑j
                 cmp     byte_27838, 0
                 jz      short loc_1C10D
                 cmp     byte_27835, 3
                 jnz     short loc_1C10D
                 mov     byte_27835, 1
 
-loc_1C10D:                              ; CODE XREF: sub_1BEBA+245↑j
-                                        ; sub_1BEBA+24C↑j
+loc_1C10D:                              ; CODE XREF: view_collect_walls+245↑j
+                                        ; view_collect_walls+24C↑j
                 cmp     byte_27828, 0
                 jz      short loc_1C120
                 cmp     byte_27831, 3
                 jnz     short loc_1C120
                 mov     byte_27831, 1
 
-loc_1C120:                              ; CODE XREF: sub_1BEBA+258↑j
-                                        ; sub_1BEBA+25F↑j
+loc_1C120:                              ; CODE XREF: view_collect_walls+258↑j
+                                        ; view_collect_walls+25F↑j
                 pop     di
                 pop     si
                 retn
-sub_1BEBA       endp
+view_collect_walls endp
 
 ; ---------------------------------------------------------------------------
                 db    0

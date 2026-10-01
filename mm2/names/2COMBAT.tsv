@@ -81,3 +81,6 @@
 1AFBC	effect_assassinate	id 30
 1AB6A	effect_saving_throw	(resist byte index) -> word_22CFA = 1 if the effect lands: d100 >= the character resistance byte at char[+idx]; idx 0 = always
 1ABB4	effect_set_condition	(condition bit, resist idx): saving throw then cond |= bit unless already out of action
+1A7D8	combat_pause	flush keyboard, short wait
+1A7EA	combat_spell_target_count	number of monsters a Sleep/Web/Silence spell affects (level+4 below level 7, else up to 10)
+1A82C	combat_spell_damage_roll	(dice, bonus): word_27816 = sum over caster level of rand(1,dice)+bonus

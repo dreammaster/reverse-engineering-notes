@@ -2440,9 +2440,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A7CF);
 	op_stkvar	(x,	1);
 	create_insn	(0X1A7D8);
+	set_name	(0X1A7D8,	"combat_pause");
 	create_insn	(x=0X1A7E6);
 	op_hex		(x,	1);
 	create_insn	(0X1A7EA);
+	set_name	(0X1A7EA,	"combat_spell_target_count");
 	create_insn	(x=0X1A7ED);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A7F0);
@@ -2464,6 +2466,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A823);
 	op_stkvar	(x,	1);
 	create_insn	(0X1A82C);
+	set_name	(0X1A82C,	"combat_spell_damage_roll");
 	create_insn	(x=0X1A82F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A83F);
@@ -3421,12 +3424,15 @@ static Functions_0(void) {
 	set_frame_size(0X1A2A6, 0X10, 2, 0);
 	add_func    (0X1A7D8,0X1A7EA);
 	set_func_flags(0X1A7D8,0x5400);
+	set_func_cmt(0X1A7D8,	"flush keyboard, short wait", 0);
 	set_frame_size(0X1A7D8, 0, 0, 0);
 	add_func    (0X1A7EA,0X1A82C);
 	set_func_flags(0X1A7EA,0x5410);
+	set_func_cmt(0X1A7EA,	"number of monsters a Sleep/Web/Silence spell affects (level+4 below level 7, else up to 10)", 0);
 	set_frame_size(0X1A7EA, 0X6, 2, 0);
 	add_func    (0X1A82C,0X1A881);
 	set_func_flags(0X1A82C,0x5410);
+	set_func_cmt(0X1A82C,	"(dice, bonus): word_27816 = sum over caster level of rand(1,dice)+bonus", 0);
 	set_frame_size(0X1A82C, 0X6, 2, 0);
 	add_func    (0X1A882,0X1A9E1);
 	set_func_flags(0X1A882,0x5410);

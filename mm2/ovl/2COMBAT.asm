@@ -223,7 +223,7 @@ loc_17F9A:                              ; CODE XREF: combat_after_hit+111↑j
 loc_17FA7:                              ; CODE XREF: combat_after_hit+72↑j
                                         ; combat_after_hit+7C↑j ...
                 call    combat_draw_party_hp
-                call    sub_1A7D8
+                call    combat_pause
                 mov     sp, bp
                 pop     bp
                 retn
@@ -311,7 +311,7 @@ loc_1800C:                              ; CODE XREF: combat_monster_hits+42↑j
 ; ---------------------------------------------------------------------------
 
 loc_1804E:                              ; CODE XREF: combat_monster_hits+7B↑j
-                call    sub_1A7D8
+                call    combat_pause
 
 loc_18051:                              ; CODE XREF: combat_monster_hits+9A↑j
                 mov     sp, bp
@@ -606,7 +606,7 @@ loc_18282:                              ; CODE XREF: seg002:0609↑J
                 call    combat_monster_waits
 
 loc_18287:                              ; CODE XREF: combat_monster_advances:loc_18282↑j
-                call    sub_1A7D8
+                call    combat_pause
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -739,7 +739,7 @@ combat_spell_failed:                    ; CODE XREF: ovl_2COMBAT:loc_18648↓p
                 push    ax
                 call    thk_play_sound_effect
                 add     sp, 2
-                call    sub_1A7D8
+                call    combat_pause
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1011,7 +1011,7 @@ loc_185BB:                              ; CODE XREF: ovl_2COMBAT:8590↑j
                 call    combat_monster_gone_text
                 call    combat_remove_monster
                 mov     byte_22CF6, 0
-                call    sub_1A7D8
+                call    combat_pause
                 jmp     short loc_18651
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -1418,7 +1418,7 @@ loc_188D8:                              ; CODE XREF: combat_party_spell_hits+23D
                 inc     [bp+var_8]
 
 loc_188E3:                              ; CODE XREF: combat_party_spell_hits+248↑j
-                call    sub_1A7D8
+                call    combat_pause
                 cmp     [bp+var_8], 0
                 jnz     short loc_188EF
                 jmp     loc_186F1
@@ -2063,7 +2063,7 @@ loc_18D66:                              ; CODE XREF: combat_party_attack_result+
 
 loc_18D73:                              ; CODE XREF: combat_party_attack_result+EC↑j
                                         ; combat_party_attack_result+F6↑j
-                call    sub_1A7D8
+                call    combat_pause
                 mov     sp, bp
                 pop     bp
                 retn
@@ -5584,8 +5584,9 @@ combat_encounter endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; flush keyboard, short wait
 
-sub_1A7D8       proc near               ; CODE XREF: seg002:0495↑J
+combat_pause    proc near               ; CODE XREF: seg002:0495↑J
                                         ; combat_after_hit+158↑p ...
                 call    thk_kbd_flush
                 mov     al, 19h
@@ -5595,14 +5596,15 @@ sub_1A7D8       proc near               ; CODE XREF: seg002:0495↑J
                 call    thk_wait_key_timeout
                 add     sp, 2
                 retn
-sub_1A7D8       endp
+combat_pause    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; number of monsters a Sleep/Web/Silence spell affects (level+4 below level 7, else up to 10)
 ; Attributes: bp-based frame
 
-sub_1A7EA       proc near               ; CODE XREF: seg002:05B5↑J
+combat_spell_target_count proc near     ; CODE XREF: seg002:05B5↑J
 
 var_6           = byte ptr -6
 var_4           = byte ptr -4
@@ -5618,7 +5620,7 @@ var_2           = byte ptr -2
                 jbe     short loc_1A802
                 mov     [bp+var_2], 0Ah
 
-loc_1A802:                              ; CODE XREF: sub_1A7EA+12↑j
+loc_1A802:                              ; CODE XREF: combat_spell_target_count+12↑j
                 mov     bx, word_23626
                 mov     al, [bx+71h]
                 mov     [bp+var_4], al
@@ -5630,27 +5632,28 @@ loc_1A802:                              ; CODE XREF: sub_1A7EA+12↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1A818:                              ; CODE XREF: sub_1A7EA+24↑j
+loc_1A818:                              ; CODE XREF: combat_spell_target_count+24↑j
                 mov     al, [bp+var_2]
                 cmp     [bp+var_4], al
                 jb      short loc_1A823
                 inc     [bp+var_6]
 
-loc_1A823:                              ; CODE XREF: sub_1A7EA+2B↑j
-                                        ; sub_1A7EA+34↑j
+loc_1A823:                              ; CODE XREF: combat_spell_target_count+2B↑j
+                                        ; combat_spell_target_count+34↑j
                 mov     al, [bp+var_6]
                 sub     ah, ah
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1A7EA       endp
+combat_spell_target_count endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (dice, bonus): word_27816 = sum over caster level of rand(1,dice)+bonus
 ; Attributes: bp-based frame
 
-sub_1A82C       proc near               ; CODE XREF: seg002:05C1↑J
+combat_spell_damage_roll proc near      ; CODE XREF: seg002:05C1↑J
 
 var_6           = byte ptr -6
 var_4           = byte ptr -4
@@ -5669,7 +5672,7 @@ arg_2           = byte ptr  6
                 jmp     short loc_1A875
 ; ---------------------------------------------------------------------------
 
-loc_1A848:                              ; CODE XREF: sub_1A82C+4F↓j
+loc_1A848:                              ; CODE XREF: combat_spell_damage_roll+4F↓j
                 mov     al, [bp+arg_0]
                 mov     [bp+var_4], al
                 or      al, al
@@ -5682,7 +5685,7 @@ loc_1A848:                              ; CODE XREF: sub_1A82C+4F↓j
                 add     sp, 4
                 mov     [bp+var_4], al
 
-loc_1A862:                              ; CODE XREF: sub_1A82C+24↑j
+loc_1A862:                              ; CODE XREF: combat_spell_damage_roll+24↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 mov     cl, [bp+arg_2]
@@ -5691,14 +5694,14 @@ loc_1A862:                              ; CODE XREF: sub_1A82C+24↑j
                 add     word_27816, ax
                 inc     [bp+var_6]
 
-loc_1A875:                              ; CODE XREF: sub_1A82C+1A↑j
+loc_1A875:                              ; CODE XREF: combat_spell_damage_roll+1A↑j
                 mov     al, [bp+var_2]
                 cmp     [bp+var_6], al
                 jb      short loc_1A848
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1A82C       endp
+combat_spell_damage_roll endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -7325,7 +7328,7 @@ loc_1B1C9:                              ; CODE XREF: combat_apply_touch_effect+1
 
 loc_1B1D0:                              ; CODE XREF: combat_apply_touch_effect+221↓j
                                         ; combat_apply_touch_effect+232↓j
-                call    sub_1A7D8
+                call    combat_pause
 
 loc_1B1D3:                              ; CODE XREF: combat_apply_touch_effect+237↓j
                                         ; seg002:0921↑J
@@ -7716,7 +7719,7 @@ loc_1B4B5:                              ; CODE XREF: combat_spell_effect+91↑j
 
 loc_1B4BE:                              ; CODE XREF: combat_spell_effect+55↑j
                 call    combat_draw_party_hp
-                call    sub_1A7D8
+                call    combat_pause
                 pop     si
                 mov     sp, bp
                 pop     bp

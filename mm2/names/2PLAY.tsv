@@ -83,3 +83,10 @@
 1B7C8	map_cell_at_offset
 1B862	draw_minimap
 1BE24	view_load_current_map
+189B8	outdoor_draw_horizon	terrain class 4 strips (desert/ocean/swamp/tundra bank)
+18AD0	outdoor_draw_centre_tile	nearest centre terrain tile
+18B0C	outdoor_draw_left_tile	(depth, nearest)
+18BEC	outdoor_draw_right_tile	(depth, nearest)
+18CC6	outdoor_draw_tiles	builds 54B0/54B4/54B8 and draws all tiles
+1BB4E	show_location_map	Location spell: map with party marker
+1BEBA	view_collect_walls	fills the 20 wall variables 27826..27839 for the indoor view

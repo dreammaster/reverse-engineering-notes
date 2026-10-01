@@ -148,7 +148,7 @@ loc_1C216:                              ; CODE XREF: bash_door+DD↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
-                call    sub_1C390
+                call    trap_explosion_effect
                 add     sp, 4
                 mov     byte_1DC80, 3
                 call    thk_2PLAY_A580
@@ -219,7 +219,7 @@ loc_1C289:                              ; CODE XREF: unlock_door+42↑j
 ; ---------------------------------------------------------------------------
 
 loc_1C2A0:                              ; CODE XREF: unlock_door+56↑j
-                call    sub_1C7AA
+                call    chest_pick_character
                 mov     [bp+var_6], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C2B2
@@ -276,7 +276,7 @@ loc_1C306:                              ; CODE XREF: unlock_door+BD↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 push    ax
-                call    sub_1C390
+                call    trap_explosion_effect
                 add     sp, 4
                 mov     byte_1DC80, 3
                 call    thk_2PLAY_A580
@@ -305,10 +305,11 @@ unlock_door     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char) damage from a trap/explosion via char_apply_damage
 ; Attributes: bp-based frame
 
-sub_1C338       proc near               ; CODE XREF: sub_1C390+3B↓p
-                                        ; sub_1C390+59↓p
+trap_damage_char proc near              ; CODE XREF: trap_explosion_effect+3B↓p
+                                        ; trap_explosion_effect+59↓p
 
 var_8           = word ptr -8
 var_6           = byte ptr -6
@@ -335,10 +336,10 @@ arg_2           = byte ptr  6
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C362:                              ; CODE XREF: sub_1C338+32↓j
+loc_1C362:                              ; CODE XREF: trap_damage_char+32↓j
                 shl     dx, 1
 
-loc_1C364:                              ; CODE XREF: sub_1C338+27↑j
+loc_1C364:                              ; CODE XREF: trap_damage_char+27↑j
                 mov     al, cl
                 dec     cl
                 or      al, al
@@ -360,14 +361,15 @@ loc_1C364:                              ; CODE XREF: sub_1C338+27↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C338       endp
+trap_damage_char endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Explosion" damage to the party
 ; Attributes: bp-based frame
 
-sub_1C390       proc near               ; CODE XREF: bash_door+FE↑p
+trap_explosion_effect proc near         ; CODE XREF: bash_door+FE↑p
                                         ; unlock_door+D3↑p ...
 
 var_4           = word ptr -4
@@ -396,15 +398,15 @@ arg_2           = word ptr  6
                 cmp     byte ptr [bx+0Fh], 5
                 jnz     short loc_1C3D1
 
-loc_1C3C2:                              ; CODE XREF: sub_1C390+2A↑j
+loc_1C3C2:                              ; CODE XREF: trap_explosion_effect+2A↑j
                 mov     al, [bp+arg_0]
                 sub     ah, ah
                 push    ax
                 push    [bp+arg_2]
-                call    sub_1C338
+                call    trap_damage_char
                 add     sp, 4
 
-loc_1C3D1:                              ; CODE XREF: sub_1C390+30↑j
+loc_1C3D1:                              ; CODE XREF: trap_explosion_effect+30↑j
                 mov     [bp+var_4], 0
                 cmp     g_party_size, 0
                 jle     short loc_1C3F9
@@ -413,10 +415,10 @@ loc_1C3D1:                              ; CODE XREF: sub_1C390+30↑j
                 mov     di, ax
                 mov     si, [bp+var_4]
 
-loc_1C3E7:                              ; CODE XREF: sub_1C390+64↓j
+loc_1C3E7:                              ; CODE XREF: trap_explosion_effect+64↓j
                 push    di
                 push    si
-                call    sub_1C338
+                call    trap_damage_char
                 add     sp, 4
                 inc     si
                 cmp     si, g_party_size
@@ -425,7 +427,7 @@ loc_1C3E7:                              ; CODE XREF: sub_1C390+64↓j
 loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 mov     [bp+var_4], si
 
-loc_1C3F9:                              ; CODE XREF: sub_1C390+4B↑j
+loc_1C3F9:                              ; CODE XREF: trap_explosion_effect+4B↑j
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -434,7 +436,7 @@ loc_1C3F9:                              ; CODE XREF: sub_1C390+4B↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C400:                              ; CODE XREF: sub_1C390+B↑p
+loc_1C400:                              ; CODE XREF: trap_explosion_effect+B↑p
                                         ; ovl_2MISC:C49A↓p
                 sub     ax, ax
                 push    ax
@@ -483,7 +485,7 @@ loc_1C41E:                              ; CODE XREF: bash_door+EF↑p
                 push    ax
                 call    thk_text_goto_xy
                 add     sp, 4
-sub_1C390       endp
+trap_explosion_effect endp
 
 
 loc_1C462:                              ; CODE XREF: seg002:086D↑J
@@ -523,7 +525,7 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
 
 ; Attributes: bp-based frame
 
-trap_or_explosion proc near             ; CODE XREF: sub_1C824+61↓p
+trap_or_explosion proc near             ; CODE XREF: chest_open_attempt+61↓p
                                         ; ovl_2MISC:C903↓p
 
 var_C           = word ptr -0Ch
@@ -595,7 +597,7 @@ loc_1C4D1:                              ; CODE XREF: trap_or_explosion+7B↓j
                 push    ax
 
 loc_1C52C:                              ; CODE XREF: seg002:0879↑J
-                call    sub_1C390
+                call    trap_explosion_effect
                 add     sp, 4
                 pop     si
                 pop     di
@@ -758,7 +760,7 @@ treasure_give_item endp
 ; "Each share = ", " Gold", " Gems"
 ; Attributes: bp-based frame
 
-treasure_share  proc near               ; CODE XREF: sub_1C824+78↓p
+treasure_share  proc near               ; CODE XREF: chest_open_attempt+78↓p
                                         ; party_search+2BE↓p
 
 var_10          = word ptr -10h
@@ -934,10 +936,11 @@ treasure_share  endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; prompt for the character who handles the chest
 ; Attributes: bp-based frame
 
-sub_1C7AA       proc near               ; CODE XREF: unlock_door:loc_1C2A0↑p
-                                        ; sub_1C824+11↓p ...
+chest_pick_character proc near          ; CODE XREF: unlock_door:loc_1C2A0↑p
+                                        ; chest_open_attempt+11↓p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -956,7 +959,7 @@ var_2           = word ptr -2
                 call    thk_print_message_line
                 add     sp, 2
 
-loc_1C7CB:                              ; CODE XREF: sub_1C7AA+67↓j
+loc_1C7CB:                              ; CODE XREF: chest_pick_character+67↓j
                 mov     ax, 38h ; '8'
                 push    ax
                 mov     ax, 31h ; '1'
@@ -975,10 +978,10 @@ loc_1C7E2:                              ; CODE XREF: seg002:0849↑J
                 align 2
 
 loc_1C7E8:                              ; CODE XREF: seg002:0B0D↑J
-                                        ; sub_1C7AA+36↑j
+                                        ; chest_pick_character+36↑j
                 sub     ax, ax
 
-loc_1C7EA:                              ; CODE XREF: sub_1C7AA+3B↑j
+loc_1C7EA:                              ; CODE XREF: chest_pick_character+3B↑j
                 mov     di, ax
                 or      di, di
                 jnz     short loc_1C80F
@@ -996,8 +999,8 @@ loc_1C7EA:                              ; CODE XREF: sub_1C7AA+3B↑j
                 neg     cx
                 mov     di, cx
 
-loc_1C80F:                              ; CODE XREF: sub_1C7AA+44↑j
-                                        ; sub_1C7AA+4D↑j
+loc_1C80F:                              ; CODE XREF: chest_pick_character+44↑j
+                                        ; chest_pick_character+4D↑j
                 or      di, di
                 jz      short loc_1C7CB
                 mov     [bp+var_2], di
@@ -1009,14 +1012,15 @@ loc_1C80F:                              ; CODE XREF: sub_1C7AA+44↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C7AA       endp
+chest_pick_character endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; random check, may set off trap_or_explosion
 ; Attributes: bp-based frame
 
-sub_1C824       proc near               ; CODE XREF: ovl_2MISC:C90D↓p
+chest_open_attempt proc near            ; CODE XREF: ovl_2MISC:C90D↓p
                                         ; party_search+238↓p
 
 var_6           = byte ptr -6
@@ -1030,7 +1034,7 @@ arg_0           = byte ptr  4
                 mov     [bp+var_4], 1
                 cmp     [bp+arg_0], 0FFh
                 jz      short loc_1C88B
-                call    sub_1C7AA
+                call    chest_pick_character
                 mov     [bp+var_4], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C848
@@ -1040,7 +1044,7 @@ arg_0           = byte ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C848:                              ; CODE XREF: sub_1C824+1A↑j
+loc_1C848:                              ; CODE XREF: chest_open_attempt+1A↑j
                 push    [bp+var_4]
                 call    thk_char_ptr
                 add     sp, 2
@@ -1060,7 +1064,7 @@ loc_1C848:                              ; CODE XREF: sub_1C824+1A↑j
                 cmp     [bp+var_2], al
                 jbe     short loc_1C88B
 
-loc_1C876:                              ; CODE XREF: sub_1C824+48↑j
+loc_1C876:                              ; CODE XREF: chest_open_attempt+48↑j
                 cmp     [bp+arg_0], 0
                 jz      short loc_1C88B
                 push    [bp+var_4]
@@ -1070,8 +1074,8 @@ loc_1C876:                              ; CODE XREF: sub_1C824+48↑j
                 call    trap_or_explosion
                 add     sp, 4
 
-loc_1C88B:                              ; CODE XREF: sub_1C824+F↑j
-                                        ; sub_1C824+50↑j ...
+loc_1C88B:                              ; CODE XREF: chest_open_attempt+F↑j
+                                        ; chest_open_attempt+50↑j ...
                 call    thk_party_count_able
                 or      ax, ax
                 jz      short loc_1C8A7
@@ -1083,20 +1087,20 @@ loc_1C88B:                              ; CODE XREF: sub_1C824+F↑j
                 mov     byte_2294F, 0FDh
                 call    thk_monster_anim_step
 
-loc_1C8A7:                              ; CODE XREF: sub_1C824+6C↑j
+loc_1C8A7:                              ; CODE XREF: chest_open_attempt+6C↑j
                 mov     ax, 1
 
-loc_1C8AA:                              ; CODE XREF: sub_1C824+21↑j
+loc_1C8AA:                              ; CODE XREF: chest_open_attempt+21↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C824       endp
+chest_open_attempt endp
 
 ; ---------------------------------------------------------------------------
                 push    bp              ; CODE XREF: party_search+24C↓p
                 mov     bp, sp
                 sub     sp, 6
-                call    sub_1C7AA
+                call    chest_pick_character
                 mov     [bp-4], ax
                 cmp     ax, 1Bh
                 jnz     short loc_1C8C6
@@ -1139,7 +1143,7 @@ loc_1C909:                              ; CODE XREF: ovl_2MISC:C8F2↑j
                                         ; ovl_2MISC:C8F8↑j
                 mov     ax, 0FFh
                 push    ax
-                call    sub_1C824
+                call    chest_open_attempt
                 add     sp, 2
                 mov     ax, 1
 
@@ -1289,8 +1293,8 @@ def_1C9BD:                              ; CODE XREF: ovl_2MISC:C9B8↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CA00:                              ; CODE XREF: sub_1C338+14↑p
-                                        ; sub_1C390+BE↑p ...
+loc_1CA00:                              ; CODE XREF: trap_damage_char+14↑p
+                                        ; trap_explosion_effect+BE↑p ...
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
@@ -1618,7 +1622,7 @@ loc_1CC70:                              ; CODE XREF: party_search+26E↓j
                 cmp     ax, 31h ; '1'
                 jnz     short loc_1CC94
                 push    [bp+var_18]
-                call    sub_1C824
+                call    chest_open_attempt
 
 loc_1CC8D:                              ; CODE XREF: party_search+24F↓j
                                         ; party_search+25F↓j

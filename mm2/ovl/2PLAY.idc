@@ -593,6 +593,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X189AA);
 	op_hex		(x,	1);
 	create_insn	(0X189B8);
+	set_name	(0X189B8,	"outdoor_draw_horizon");
 	create_insn	(x=0X189BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X189C2);
@@ -645,6 +646,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18AC7);
 	op_stkvar	(x,	0);
 	create_insn	(0X18AD0);
+	set_name	(0X18AD0,	"outdoor_draw_centre_tile");
 	create_insn	(x=0X18AD4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X18AE0);
@@ -656,6 +658,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18B06);
 	op_hex		(x,	1);
 	create_insn	(0X18B0C);
+	set_name	(0X18B0C,	"outdoor_draw_left_tile");
 	create_insn	(x=0X18B0F);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B13);
@@ -723,6 +726,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18BE3);
 	op_hex		(x,	1);
 	create_insn	(0X18BEC);
+	set_name	(0X18BEC,	"outdoor_draw_right_tile");
 	create_insn	(x=0X18BEF);
 	op_hex		(x,	1);
 	create_insn	(x=0X18BF3);
@@ -786,6 +790,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18CBE);
 	op_hex		(x,	1);
 	create_insn	(0X18CC6);
+	set_name	(0X18CC6,	"outdoor_draw_tiles");
 	create_insn	(x=0X18CC9);
 	op_hex		(x,	1);
 	create_insn	(x=0X18CF4);
@@ -3744,6 +3749,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BB44);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BB4E);
+	set_name	(0X1BB4E,	"show_location_map");
 	create_insn	(x=0X1BB51);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BB56);
@@ -3935,6 +3941,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BEB1);
 	op_hex		(x,	1);
 	create_insn	(0X1BEBA);
+	set_name	(0X1BEBA,	"view_collect_walls");
 	create_insn	(x=0X1BEE6);
 	op_hex		(x,	1);
 	create_insn	(0X1BF1A);
@@ -3998,18 +4005,23 @@ static Functions_0(void) {
 	set_frame_size(0X18744, 0X2, 2, 0);
 	add_func    (0X189B8,0X18AD0);
 	set_func_flags(0X189B8,0x5410);
+	set_func_cmt(0X189B8,	"terrain class 4 strips (desert/ocean/swamp/tundra bank)", 0);
 	set_frame_size(0X189B8, 0X12, 2, 0);
 	add_func    (0X18AD0,0X18B0C);
 	set_func_flags(0X18AD0,0x5410);
+	set_func_cmt(0X18AD0,	"nearest centre terrain tile", 0);
 	set_frame_size(0X18AD0, 0X2, 2, 0);
 	add_func    (0X18B0C,0X18BEB);
 	set_func_flags(0X18B0C,0x5410);
+	set_func_cmt(0X18B0C,	"(depth, nearest)", 0);
 	set_frame_size(0X18B0C, 0XA, 2, 0);
 	add_func    (0X18BEC,0X18CC6);
 	set_func_flags(0X18BEC,0x5410);
+	set_func_cmt(0X18BEC,	"(depth, nearest)", 0);
 	set_frame_size(0X18BEC, 0XA, 2, 0);
 	add_func    (0X18CC6,0X18D6B);
 	set_func_flags(0X18CC6,0x5410);
+	set_func_cmt(0X18CC6,	"builds 54B0/54B4/54B8 and draws all tiles", 0);
 	set_frame_size(0X18CC6, 0XA, 2, 0);
 	add_func    (0X18D6C,0X18DC7);
 	set_func_flags(0X18D6C,0x5400);
@@ -4246,6 +4258,7 @@ static Functions_0(void) {
 	set_frame_size(0X1BAC0, 0X4, 2, 0);
 	add_func    (0X1BB4E,0X1BE23);
 	set_func_flags(0X1BB4E,0x5410);
+	set_func_cmt(0X1BB4E,	"Location spell: map with party marker", 0);
 	set_frame_size(0X1BB4E, 0X114, 2, 0);
 	add_func    (0X1BE24,0X1BE91);
 	set_func_flags(0X1BE24,0x5400);
@@ -4255,6 +4268,7 @@ static Functions_0(void) {
 	set_frame_size(0X1BE92, 0X2, 0, 0);
 	add_func    (0X1BEBA,0X1C123);
 	set_func_flags(0X1BEBA,0x5400);
+	set_func_cmt(0X1BEBA,	"fills the 20 wall variables 27826..27839 for the indoor view", 0);
 	set_frame_size(0X1BEBA, 0X4, 0, 0);
 	append_func_tail(0X17C58,0X10036,0X100D9);
 	append_func_tail(0X10182,0X100D9,0X100E8);
