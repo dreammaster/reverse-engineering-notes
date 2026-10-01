@@ -211,6 +211,21 @@ the numbers were checked against the data (256 records, names are plain ASCII).
 | 10 | 2 | main value: weapon damage / armour class bonus |
 | 12 | 2 | price in gold (`Sun Crown` 10000) |
 
+**Item categories by id** (range tests in `2CMDS` `1CFDE..1D056`, used by `item_effect_dispatch` `1C8AA` when equipping):
+
+| Ids | Category | Slot rule |
+|---|---|---|
+| 1-65 (`01-41h`) | one-handed melee weapons (Small Club ... Photon Blade) | weapon slot |
+| 66-91 (`42-5Bh`) | two-handed melee weapons (Staff ... Sun Naginata) | weapon slot; cannot be combined with a shield |
+| 92-114 (`5C-72h`) | missile weapons (Blowpipe, Sling, bows ...) and key-like items at the end | missile slot (used by **S**hoot) |
+| 115-126 (`73-7Eh`) | shields | shield slot |
+| 127-154 (`7F-9Ah`) | body armour | armour slot |
+| 155-159 (`9B-9Fh`) | helmets | helm slot |
+| 160-255 | accessories, potions, tickets, ... (`F0h` bonus byte = cannot be equipped) | misc / use only |
+
+The conflict handlers `1D11C`, `1D162`, `1D1A8`, `1D1EE`, `1D234` pick which already-equipped item has to give way and print
+the error codes 6-0Dh through `sub_1C180`.
+
 Equipping checks, in order: free equipped slot (error 2), class mask (error 4), alignment
 (instance flag top 2 bits mapped through `DGROUP:3404` = {0,2,0,1} must equal the character's alignment,
 error 5), `F0h` (error 0Eh); a flag byte of `FFh` marks a cursed item that sticks (`char_equip_item`
