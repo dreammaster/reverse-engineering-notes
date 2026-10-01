@@ -28,6 +28,29 @@ int mm2_session_message(const Mm2GameSession *s, int n, char *out, size_t cap) {
 	return (int)len;
 }
 
+const char *mm2_location_name(int c) {
+	switch (c) {
+	case 1: return "Inn";
+	case 2: return "Training hall";
+	case 3: case 7: case 8: return "Tavern";
+	case 4: return "Temple";
+	case 5: return "Mage guild";
+	case 6: return "Blacksmith";
+	case 0x64: return "Quest";
+	case 0x7E: return "Slide";
+	case 0x7F: return "Ambush";
+	case 0x80: return "Teleport trap";
+	case 0x81: case 0x82: case 0x83: return "Found item";
+	case 0xC9: return "Lord Hoardall";
+	case 0xCA: return "Lord Slayer";
+	case 0xCB: case 0xCC: case 0xCD: case 0xCE: return "Donation hall";
+	case 0xCF: return "Time travel";
+	case 0xE2: return "Town crier";
+	case 0xFD: return "Blacksmith robbery";
+	default: return "Entrance";
+	}
+}
+
 static int host_exec(void *ud, Mm2Vm *vm, int op, const uint8_t *args) {
 	Mm2GameSession *s = (Mm2GameSession *)ud;
 	switch (op) {

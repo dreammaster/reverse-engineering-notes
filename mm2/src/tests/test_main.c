@@ -368,6 +368,7 @@ static void test_session(const Mm2Game *g) {
 	CHECK(mm2_session_step(&s, 0));
 	CHECK(s.x == 5 && s.y == 4);
 	CHECK(s.nMessages == 1 && strcmp(s.messages[0].text, "Middlegate Inn") == 0 && s.messages[0].opcode == EV_TITLE);
+	CHECK(strcmp(mm2_location_name(1), "Inn") == 0 && strcmp(mm2_location_name(6), "Blacksmith") == 0 && strcmp(mm2_location_name(0x11), "Entrance") == 0);
 	/* turning and the wall rule */
 	mm2_session_turn(&s, 1);
 	CHECK(s.facing == 'N');

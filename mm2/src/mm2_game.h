@@ -36,6 +36,9 @@ typedef struct {
 	int pendingMap, pendingX, pendingY; /* teleport target (pendingMap < 0: none) */
 } Mm2GameSession;
 
+/* Human-readable name of an opcode 14 location code ("Inn", "Blacksmith" ...; "Entrance" for a map entrance). */
+const char *mm2_location_name(int code);
+
 /* Starts a session on `map` at (x, y).  Returns 0 on failure. */
 int mm2_session_start(Mm2GameSession *s, const Mm2Game *files, int map, int x, int y, char facing);
 void mm2_session_end(Mm2GameSession *s);

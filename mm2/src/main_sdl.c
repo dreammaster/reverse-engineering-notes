@@ -64,7 +64,7 @@ static void draw_messages(uint8_t *canvas, const Mm2Font *font, const Mm2GameSes
 	}
 	for (i = 0; i < s->nLocations && row < 25; i++) {
 		char line[41];
-		snprintf(line, sizeof(line), "[location %d]", s->locations[i]);
+		snprintf(line, sizeof(line), "[%s - not implemented yet]", mm2_location_name(s->locations[i]));
 		mm2_draw_text(canvas, font, 0, row++, line, 11, -1);
 	}
 	if (s->fightRequested && row < 25) mm2_draw_text(canvas, font, 0, row, "[a fight starts here]", 12, -1);
