@@ -8,9 +8,10 @@ ovl_2SMITH      segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; (price lo, hi) adds to the character's gold (sell)
 ; Attributes: bp-based frame
 
-smith_common_helper proc near           ; CODE XREF: seg002:0615↑J
+smith_credit_gold proc near             ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
 
 arg_0           = word ptr  4
@@ -26,20 +27,21 @@ arg_2           = word ptr  6
                 sub     ax, ax
                 push    ax
                 push    ax
-                call    sub_1C6FC
+                call    smith_pay_gold
                 add     sp, 4
                 pop     bp
                 retn
-smith_common_helper endp
+smith_credit_gold endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; sell mode: copies the character's 6 backpack items (+3A/+40/+46) into the shop slot arrays
 ; Attributes: bp-based frame
 
-sub_1C150       proc near               ; CODE XREF: sub_1C8E0:loc_1C90B↓p
+smith_load_char_stock proc near         ; CODE XREF: smith_load_stock:loc_1C90B↓p
 
 var_2           = word ptr -2
 
@@ -75,7 +77,7 @@ var_2           = word ptr -2
                 mov     di, bx
                 mov     cx, [bp+var_2]
 
-loc_1C192:                              ; CODE XREF: sub_1C150+55↓j
+loc_1C192:                              ; CODE XREF: smith_load_char_stock+55↓j
                 mov     bx, cx
                 mov     al, 14h
                 mul     byte ptr [bx+di+3Ah]
@@ -91,14 +93,15 @@ loc_1C192:                              ; CODE XREF: sub_1C150+55↓j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C150       endp
+smith_load_char_stock endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (slot) identify: shows class/alignment/bonus/charges/damage-or-armour; costs gold
 ; Attributes: bp-based frame
 
-sub_1C1B0       proc near               ; CODE XREF: smith_action_prompt+88↓p
+smith_identify_item proc near           ; CODE XREF: smith_action_prompt+88↓p
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -118,15 +121,15 @@ arg_0           = word ptr  4
                 jz      short loc_1C1D4
                 mov     ax, 8
 
-loc_1C1CA:                              ; CODE XREF: sub_1C1B0+31↓j
-                                        ; sub_1C1B0+4D↓j
+loc_1C1CA:                              ; CODE XREF: smith_identify_item+31↓j
+                                        ; smith_identify_item+4D↓j
                 push    ax
-                call    loc_1CBE8
+                call    smith_show_message
                 add     sp, 2
                 jmp     loc_1C59C
 ; ---------------------------------------------------------------------------
 
-loc_1C1D4:                              ; CODE XREF: sub_1C1B0+15↑j
+loc_1C1D4:                              ; CODE XREF: smith_identify_item+15↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+57BAh], 0
                                         ; CODE XREF: seg002:08CD↑J
@@ -136,12 +139,12 @@ loc_1C1D4:                              ; CODE XREF: sub_1C1B0+15↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C1E4:                              ; CODE XREF: sub_1C1B0+2C↑j
+loc_1C1E4:                              ; CODE XREF: smith_identify_item+2C↑j
                 shl     bx, 1
                 shl     bx, 1
                 push    word ptr [bx+57C2h] ; CODE XREF: seg002:07F5↑J
                 push    word ptr [bx+57C0h]
-                call    sub_1C6FC
+                call    smith_pay_gold
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_1C200
@@ -150,7 +153,7 @@ loc_1C1E4:                              ; CODE XREF: sub_1C1B0+2C↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C200:                              ; CODE XREF: sub_1C1B0+48↑j
+loc_1C200:                              ; CODE XREF: smith_identify_item+48↑j
                 mov     ax, 2
                 push    ax
                 call    thk_clear_text_preset
@@ -158,7 +161,7 @@ loc_1C200:                              ; CODE XREF: sub_1C1B0+48↑j
                 sub     si, si
                 mov     di, 44C6h
 
-loc_1C20F:                              ; CODE XREF: sub_1C1B0+7C↓j
+loc_1C20F:                              ; CODE XREF: smith_identify_item+7C↓j
                 lea     ax, [si+11h]
                 push    ax
                 mov     ax, 2
@@ -208,7 +211,7 @@ loc_1C242:                              ; CODE XREF: seg002:0639↑J
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C27C:                              ; CODE XREF: sub_1C1B0+AC↑j
+loc_1C27C:                              ; CODE XREF: smith_identify_item+AC↑j
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+580Eh]
                 sub     ah, ah
@@ -229,7 +232,7 @@ loc_1C27C:                              ; CODE XREF: sub_1C1B0+AC↑j
                 call    thk_text_puts
                 add     sp, 2
 
-loc_1C2AC:                              ; CODE XREF: sub_1C1B0+DE↑j
+loc_1C2AC:                              ; CODE XREF: smith_identify_item+DE↑j
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+5838h]
                 mov     [bp+var_2], al
@@ -248,14 +251,14 @@ loc_1C2AC:                              ; CODE XREF: sub_1C1B0+DE↑j
                 jmp     short loc_1C318
 ; ---------------------------------------------------------------------------
 
-loc_1C2D6:                              ; CODE XREF: sub_1C1B0+118↑j
+loc_1C2D6:                              ; CODE XREF: smith_identify_item+118↑j
                 sub     si, si
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 mov     [bp+var_A], ax
                 mov     di, [bp+var_8]
 
-loc_1C2E3:                              ; CODE XREF: sub_1C1B0+160↓j
+loc_1C2E3:                              ; CODE XREF: smith_identify_item+160↓j
                 mov     al, [si+44BEh]
                 sub     ah, ah
                 test    [bp+var_A], ax
@@ -267,7 +270,7 @@ loc_1C2E3:                              ; CODE XREF: sub_1C1B0+160↓j
                 call    thk_text_putc   ; CODE XREF: seg002:0651↑J
                 add     sp, 2
 
-loc_1C2FC:                              ; CODE XREF: sub_1C1B0+140↑j
+loc_1C2FC:                              ; CODE XREF: smith_identify_item+140↑j
                 mov     al, [si+44D6h]
                 sub     ah, ah
                 push    ax
@@ -275,14 +278,14 @@ loc_1C2FC:                              ; CODE XREF: sub_1C1B0+140↑j
                 add     sp, 2           ; CODE XREF: seg002:08F1↑J
                 mov     di, 1
 
-loc_1C30C:                              ; CODE XREF: sub_1C1B0+13C↑j
+loc_1C30C:                              ; CODE XREF: smith_identify_item+13C↑j
                 inc     si
                 cmp     si, 8
                 jl      short loc_1C2E3
                 mov     [bp+var_8], di
                 mov     [bp+var_6], si
 
-loc_1C318:                              ; CODE XREF: sub_1C1B0+124↑j
+loc_1C318:                              ; CODE XREF: smith_identify_item+124↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 mov     bx, [bx+5802h]
@@ -303,7 +306,7 @@ loc_1C318:                              ; CODE XREF: sub_1C1B0+124↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C348:                              ; CODE XREF: sub_1C1B0+189↑j
+loc_1C348:                              ; CODE XREF: smith_identify_item+189↑j
                 push    word_21D30
                 call    thk_text_puts
                 add     sp, 2
@@ -346,8 +349,8 @@ loc_1C348:                              ; CODE XREF: sub_1C1B0+189↑j
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C3B0:                              ; CODE XREF: sub_1C1B0+195↑j
-                                        ; sub_1C1B0+1B2↑j
+loc_1C3B0:                              ; CODE XREF: smith_identify_item+195↑j
+                                        ; smith_identify_item+1B2↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 mov     bx, [bx+5802h]
@@ -364,12 +367,12 @@ loc_1C3B0:                              ; CODE XREF: sub_1C1B0+195↑j
                 push    word_21D2E
                 call    thk_text_puts
 
-loc_1C3DA:                              ; CODE XREF: sub_1C1B0+2BB↓j
+loc_1C3DA:                              ; CODE XREF: smith_identify_item+2BB↓j
                 add     sp, 2
                 jmp     loc_1C4D0
 ; ---------------------------------------------------------------------------
 
-loc_1C3E0:                              ; CODE XREF: sub_1C1B0+221↑j
+loc_1C3E0:                              ; CODE XREF: smith_identify_item+221↑j
                 push    word_21D30
                 call    thk_text_puts
                 add     sp, 2
@@ -392,7 +395,7 @@ loc_1C3E0:                              ; CODE XREF: sub_1C1B0+221↑j
                 mov     [bp+var_4], 43h ; 'C'
                 sub     [bp+var_2], 30h ; '0'
 
-loc_1C41E:                              ; CODE XREF: sub_1C1B0+264↑j
+loc_1C41E:                              ; CODE XREF: smith_identify_item+264↑j
                 mov     al, [bp+var_4]
                 sub     ah, ah
                 push    ax
@@ -430,7 +433,7 @@ loc_1C462:                              ; CODE XREF: seg002:086D↑J
                 jmp     loc_1C3DA
 ; ---------------------------------------------------------------------------
 
-loc_1C46E:                              ; CODE XREF: sub_1C1B0+23E↑j
+loc_1C46E:                              ; CODE XREF: smith_identify_item+23E↑j
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+580Eh]
                 and     al, 3Fh
@@ -440,7 +443,7 @@ loc_1C46E:                              ; CODE XREF: sub_1C1B0+23E↑j
                 test    [bp+var_2], 0Fh
                 jz      short loc_1C4D0
 
-loc_1C484:                              ; CODE XREF: sub_1C1B0+2CC↑j
+loc_1C484:                              ; CODE XREF: smith_identify_item+2CC↑j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 14h
@@ -473,8 +476,8 @@ loc_1C484:                              ; CODE XREF: sub_1C1B0+2CC↑j
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C4D0:                              ; CODE XREF: sub_1C1B0+22D↑j
-                                        ; sub_1C1B0+2D2↑j
+loc_1C4D0:                              ; CODE XREF: smith_identify_item+22D↑j
+                                        ; smith_identify_item+2D2↑j
                 mov     ax, 15h
                 push    ax
                 mov     ax, 0Ch
@@ -530,7 +533,7 @@ loc_1C52C:                              ; CODE XREF: seg002:0879↑J
                 jmp     short loc_1C57A
 ; ---------------------------------------------------------------------------
 
-loc_1C550:                              ; CODE XREF: sub_1C1B0+365↑j
+loc_1C550:                              ; CODE XREF: smith_identify_item+365↑j
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr [bx+57BAh], 0A0h
                 jnb     short loc_1C58E
@@ -546,7 +549,7 @@ loc_1C550:                              ; CODE XREF: sub_1C1B0+365↑j
                 mov     al, [bx+10h]
                 add     [bp+var_2], al
 
-loc_1C57A:                              ; CODE XREF: sub_1C1B0+39E↑j
+loc_1C57A:                              ; CODE XREF: smith_identify_item+39E↑j
                 mov     ax, 20h ; ' '
                 push    ax
                 mov     ax, 1
@@ -557,15 +560,15 @@ loc_1C57A:                              ; CODE XREF: sub_1C1B0+39E↑j
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C58E:                              ; CODE XREF: sub_1C1B0+392↑j
-                                        ; sub_1C1B0+3A8↑j ...
+loc_1C58E:                              ; CODE XREF: smith_identify_item+392↑j
+                                        ; smith_identify_item+3A8↑j ...
                 call    thk_monster_anim_step
                 cmp     ax, 1Bh
                 jnz     short loc_1C58E
-                call    loc_1CC38
+                call    smith_draw_frame
                 call    loc_1CB9A
 
-loc_1C59C:                              ; CODE XREF: sub_1C1B0+21↑j
+loc_1C59C:                              ; CODE XREF: smith_identify_item+21↑j
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -573,19 +576,19 @@ loc_1C59C:                              ; CODE XREF: sub_1C1B0+21↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1C5A2:                              ; CODE XREF: smith_action_prompt+78↓p
-                push    bp
+smith_sell_item:                        ; CODE XREF: smith_action_prompt+78↓p
+                push    bp              ; (slot) pays the sell price, removes the item from the backpack
                 mov     bp, sp
                 mov     bx, word_2308E
                 cmp     byte ptr [bx+26h], 0 ; CODE XREF: seg002:0885↑J
-sub_1C1B0       endp
+smith_identify_item endp
 
                 jz      short loc_1C5BC
                 mov     ax, 8
 
 loc_1C5B2:                              ; CODE XREF: ovl_2SMITH:C5C9↓j
                 push    ax
-                call    loc_1CBE8
+                call    smith_show_message
                 add     sp, 2
                 jmp     short loc_1C5F4
 ; ---------------------------------------------------------------------------
@@ -608,11 +611,11 @@ loc_1C5CC:                              ; CODE XREF: ovl_2SMITH:C5C4↑j
                 push    word ptr [bx+57C0h]
 
 loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
-                call    smith_common_helper
+                call    smith_credit_gold
                 add     sp, 4
                 sub     ax, ax
                 push    ax
-                call    loc_1CBE8
+                call    smith_show_message
                 add     sp, 2
                 push    word ptr [bp+4]
                 push    word_2308E
@@ -625,9 +628,10 @@ loc_1C5F4:                              ; CODE XREF: ovl_2SMITH:C5B9↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; 6 rows A-F: name, +bonus, price; '-' marks items this class cannot use
 ; Attributes: bp-based frame
 
-sub_1C5F6       proc near               ; CODE XREF: smith_action_prompt+51↓p
+smith_draw_item_list proc near          ; CODE XREF: smith_action_prompt+51↓p
 
 var_8           = word ptr -8
 var_4           = word ptr -4
@@ -646,7 +650,7 @@ var_2           = byte ptr -2
                 mov     di, 5802h
                 mov     [bp+var_8], 57C0h
 
-loc_1C612:                              ; CODE XREF: sub_1C5F6+F9↓j
+loc_1C612:                              ; CODE XREF: smith_draw_item_list+F9↓j
                 mov     [bp+var_2], 20h ; ' '
                 lea     ax, [si+11h]
                 push    ax
@@ -667,8 +671,8 @@ loc_1C612:                              ; CODE XREF: sub_1C5F6+F9↓j
                 jz      short loc_1C648
                 mov     [bp+var_2], 2Dh ; '-'
 
-loc_1C648:                              ; CODE XREF: sub_1C5F6+33↑j
-                                        ; sub_1C5F6+4C↑j
+loc_1C648:                              ; CODE XREF: smith_draw_item_list+33↑j
+                                        ; smith_draw_item_list+4C↑j
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 push    ax
@@ -719,7 +723,7 @@ loc_1C66E:                              ; CODE XREF: seg002:0891↑J
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C6BC:                              ; CODE XREF: sub_1C5F6+98↑j
+loc_1C6BC:                              ; CODE XREF: smith_draw_item_list+98↑j
                 lea     ax, [si+11h]
                 push    ax
                 mov     ax, 22h ; '"'
@@ -736,7 +740,7 @@ loc_1C6BC:                              ; CODE XREF: sub_1C5F6+98↑j
                 call    thk_res_53D0
                 add     sp, 4
 
-loc_1C6E2:                              ; CODE XREF: sub_1C5F6+83↑j
+loc_1C6E2:                              ; CODE XREF: smith_draw_item_list+83↑j
                 add     di, 2
                 add     [bp+var_8], 4
                 inc     si
@@ -746,24 +750,25 @@ loc_1C6E2:                              ; CODE XREF: sub_1C5F6+83↑j
 ; ---------------------------------------------------------------------------
 
 loc_1C6F2:                              ; CODE XREF: seg002:0B19↑J
-                                        ; sub_1C5F6+F7↑j
+                                        ; smith_draw_item_list+F7↑j
                 mov     [bp+var_4], si
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C5F6       endp
+smith_draw_item_list endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; (price lo, hi): 1 and gold deducted if the character can afford it, else 0
 ; Attributes: bp-based frame
 
-sub_1C6FC       proc near               ; CODE XREF: smith_common_helper+17↑p
-                                        ; sub_1C1B0+40↑p ...
+smith_pay_gold  proc near               ; CODE XREF: smith_credit_gold+17↑p
+                                        ; smith_identify_item+40↑p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -781,17 +786,17 @@ arg_2           = word ptr  6
                 cmp     [bx+66h], ax
                 jb      short loc_1C71E
 
-loc_1C718:                              ; CODE XREF: sub_1C6FC+15↑j
+loc_1C718:                              ; CODE XREF: smith_pay_gold+15↑j
                 mov     ax, 1
                 jmp     short loc_1C720
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C71E:                              ; CODE XREF: sub_1C6FC+13↑j
-                                        ; sub_1C6FC+1A↑j
+loc_1C71E:                              ; CODE XREF: smith_pay_gold+13↑j
+                                        ; smith_pay_gold+1A↑j
                 sub     ax, ax
 
-loc_1C720:                              ; CODE XREF: sub_1C6FC+1F↑j
+loc_1C720:                              ; CODE XREF: smith_pay_gold+1F↑j
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jz      short loc_1C76F
@@ -827,19 +832,20 @@ loc_1C73A:                              ; CODE XREF: seg002:089D↑J
                 call    thk_text_put_number
                 add     sp, 8
 
-loc_1C76F:                              ; CODE XREF: sub_1C6FC+29↑j
+loc_1C76F:                              ; CODE XREF: smith_pay_gold+29↑j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C6FC       endp
+smith_pay_gold  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (slot) buy into the first free backpack slot
 ; Attributes: bp-based frame
 
-sub_1C776       proc near               ; CODE XREF: smith_action_prompt+8F↓p
+smith_buy_item  proc near               ; CODE XREF: smith_action_prompt+8F↓p
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -855,17 +861,17 @@ arg_0           = word ptr  4
                 jmp     short loc_1C7EF
 ; ---------------------------------------------------------------------------
 
-loc_1C78C:                              ; CODE XREF: sub_1C776+F↑j
+loc_1C78C:                              ; CODE XREF: smith_buy_item+F↑j
                 sub     cx, cx
                 mov     dx, bx
 
-loc_1C790:                              ; CODE XREF: sub_1C776+38↓j
+loc_1C790:                              ; CODE XREF: smith_buy_item+38↓j
                 mov     si, cx
                 mov     bx, dx
                 cmp     byte ptr [bx+si+3Ah], 0
                 jnz     short loc_1C7A8
 
-loc_1C79A:                              ; CODE XREF: sub_1C776+36↓j
+loc_1C79A:                              ; CODE XREF: smith_buy_item+36↓j
                 mov     [bp+var_2], cx
                 cmp     cx, 6
                 jnz     short loc_1C7B0
@@ -874,20 +880,20 @@ loc_1C79A:                              ; CODE XREF: sub_1C776+36↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C7A8:                              ; CODE XREF: sub_1C776+22↑j
+loc_1C7A8:                              ; CODE XREF: smith_buy_item+22↑j
                 inc     cx
                 cmp     cx, 6
                 jge     short loc_1C79A
                 jmp     short loc_1C790
 ; ---------------------------------------------------------------------------
 
-loc_1C7B0:                              ; CODE XREF: sub_1C776+2A↑j
+loc_1C7B0:                              ; CODE XREF: smith_buy_item+2A↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 shl     bx, 1
                 push    word ptr [bx+57C2h]
                 push    word ptr [bx+57C0h]
-                call    sub_1C6FC
+                call    smith_pay_gold
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_1C7CE
@@ -895,7 +901,7 @@ loc_1C7B0:                              ; CODE XREF: sub_1C776+2A↑j
                 jmp     short loc_1C7EF
 ; ---------------------------------------------------------------------------
 
-loc_1C7CE:                              ; CODE XREF: sub_1C776+51↑j
+loc_1C7CE:                              ; CODE XREF: smith_buy_item+51↑j
                 mov     si, [bp+var_2]
                 add     si, word_2308E
                 mov     bx, [bp+arg_0]
@@ -907,25 +913,26 @@ loc_1C7CE:                              ; CODE XREF: sub_1C776+51↑j
                 mov     [si+46h], al
                 sub     ax, ax
 
-loc_1C7EF:                              ; CODE XREF: sub_1C776+14↑j
-                                        ; sub_1C776+2F↑j ...
+loc_1C7EF:                              ; CODE XREF: smith_buy_item+14↑j
+                                        ; smith_buy_item+2F↑j ...
                 push    ax
-                call    loc_1CBE8
+                call    smith_show_message
                 add     sp, 2
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C776       endp
+smith_buy_item  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; (slot) price for the current mode (identify/sell/buy), Merchant skill adjusts
 ; Attributes: bp-based frame
 
-sub_1C7FC       proc near               ; CODE XREF: sub_1C8E0+17B↓p
+smith_item_price proc near              ; CODE XREF: smith_load_stock+17B↓p
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -946,7 +953,7 @@ arg_0           = word ptr  4
                 jmp     loc_1C8D6
 ; ---------------------------------------------------------------------------
 
-loc_1C817:                              ; CODE XREF: sub_1C7FC+16↑j
+loc_1C817:                              ; CODE XREF: smith_item_price+16↑j
                 mov     al, [bx+580Eh]
                 and     al, 3Fh
                 mov     [bp+var_2], al
@@ -959,7 +966,7 @@ loc_1C817:                              ; CODE XREF: sub_1C7FC+16↑j
                 jmp     loc_1C8D6
 ; ---------------------------------------------------------------------------
 
-loc_1C838:                              ; CODE XREF: sub_1C7FC+2D↑j
+loc_1C838:                              ; CODE XREF: smith_item_price+2D↑j
                 mov     ax, 64h ; 'd'
                 cwd
                 push    dx
@@ -976,7 +983,7 @@ loc_1C838:                              ; CODE XREF: sub_1C7FC+2D↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C854:                              ; CODE XREF: sub_1C7FC+29↑j
+loc_1C854:                              ; CODE XREF: smith_item_price+29↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 mov     bx, [bx+5802h]
@@ -989,7 +996,7 @@ loc_1C854:                              ; CODE XREF: sub_1C7FC+29↑j
                 rcl     [bp+var_6], 1
                 dec     [bp+var_2]
 
-loc_1C877:                              ; CODE XREF: sub_1C7FC+70↑j
+loc_1C877:                              ; CODE XREF: smith_item_price+70↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C8A5
                 mov     al, [bp+var_2]
@@ -1012,7 +1019,7 @@ loc_1C877:                              ; CODE XREF: sub_1C7FC+70↑j
                 neg     ax
                 add     [bp+var_2], al
 
-loc_1C8A5:                              ; CODE XREF: sub_1C7FC+7F↑j
+loc_1C8A5:                              ; CODE XREF: smith_item_price+7F↑j
                 mov     ax, 0Ah
                 push    ax
                 push    word_2308E
@@ -1029,29 +1036,30 @@ loc_1C8A5:                              ; CODE XREF: sub_1C7FC+7F↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C8CA:                              ; CODE XREF: sub_1C7FC+BF↑j
+loc_1C8CA:                              ; CODE XREF: smith_item_price+BF↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_1C8D6
 
-loc_1C8D0:                              ; CODE XREF: sub_1C7FC+CB↑j
+loc_1C8D0:                              ; CODE XREF: smith_item_price+CB↑j
                 shr     [bp+var_6], 1
                 rcr     [bp+var_8], 1
 
-loc_1C8D6:                              ; CODE XREF: sub_1C7FC+18↑j
-                                        ; sub_1C7FC+39↑j ...
+loc_1C8D6:                              ; CODE XREF: smith_item_price+18↑j
+                                        ; smith_item_price+39↑j ...
                 mov     ax, [bp+var_8]
                 mov     dx, [bp+var_6]
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C7FC       endp
+smith_item_price endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; fills the 6 slots for the mode: item ids 57BA, records 5802, bonus 580E, charges 5840, prices 57C0
 ; Attributes: bp-based frame
 
-sub_1C8E0       proc near               ; CODE XREF: smith_action_prompt+4E↓p
+smith_load_stock proc near              ; CODE XREF: smith_action_prompt+4E↓p
 
 var_16          = word ptr -16h
 var_14          = word ptr -14h
@@ -1071,7 +1079,7 @@ var_2           = word ptr -2
                 push    si
                 sub     si, si
 
-loc_1C8EA:                              ; CODE XREF: sub_1C8E0+18↓j
+loc_1C8EA:                              ; CODE XREF: smith_load_stock+18↓j
                 sub     al, al
                 mov     [si+580Eh], al
                 mov     [si+5840h], al
@@ -1084,13 +1092,13 @@ loc_1C8EA:                              ; CODE XREF: sub_1C8E0+18↓j
                 cmp     word_2307A, 6
                 jnz     short loc_1C912
 
-loc_1C90B:                              ; CODE XREF: sub_1C8E0+22↑j
-                call    sub_1C150
+loc_1C90B:                              ; CODE XREF: smith_load_stock+22↑j
+                call    smith_load_char_stock
                 jmp     loc_1CA50
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C912:                              ; CODE XREF: sub_1C8E0+29↑j
+loc_1C912:                              ; CODE XREF: smith_load_stock+29↑j
                 mov     ax, word_2307A
                 cmp     ax, 1
                 jz      short loc_1C934
@@ -1099,28 +1107,28 @@ loc_1C912:                              ; CODE XREF: sub_1C8E0+29↑j
                 jmp     loc_1C9A2
 ; ---------------------------------------------------------------------------
 
-loc_1C922:                              ; CODE XREF: sub_1C8E0+3D↑j
+loc_1C922:                              ; CODE XREF: smith_load_stock+3D↑j
                 cmp     ax, 3
                 jnz     short loc_1C92A
                 jmp     loc_1C9AE
 ; ---------------------------------------------------------------------------
 
-loc_1C92A:                              ; CODE XREF: sub_1C8E0+45↑j
+loc_1C92A:                              ; CODE XREF: smith_load_stock+45↑j
                 cmp     ax, 4
                 jnz     short loc_1C932
                 jmp     loc_1C9BA
 ; ---------------------------------------------------------------------------
 
-loc_1C932:                              ; CODE XREF: sub_1C8E0+4D↑j
+loc_1C932:                              ; CODE XREF: smith_load_stock+4D↑j
                 jmp     short loc_1C93E
 ; ---------------------------------------------------------------------------
 
-loc_1C934:                              ; CODE XREF: sub_1C8E0+38↑j
+loc_1C934:                              ; CODE XREF: smith_load_stock+38↑j
                 mov     [bp+var_4], 43C8h
                 mov     [bp+var_8], 43E6h
 
-loc_1C93E:                              ; CODE XREF: sub_1C8E0:loc_1C932↑j
-                                        ; sub_1C8E0+CB↓j ...
+loc_1C93E:                              ; CODE XREF: smith_load_stock:loc_1C932↑j
+                                        ; smith_load_stock+CB↓j ...
                 mov     al, g_map_id
                 sub     ah, ah
                 mov     cx, ax
@@ -1154,7 +1162,7 @@ loc_1C93E:                              ; CODE XREF: sub_1C8E0:loc_1C932↑j
                 mov     di, [bp+var_4]
                 mov     cx, [bp+var_10]
 
-loc_1C98F:                              ; CODE XREF: sub_1C8E0+BF↓j
+loc_1C98F:                              ; CODE XREF: smith_load_stock+BF↓j
                 mov     al, 14h
                 mul     byte ptr [di]
                 add     ax, 6960h
@@ -1167,7 +1175,7 @@ loc_1C98F:                              ; CODE XREF: sub_1C8E0+BF↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C9A2:                              ; CODE XREF: sub_1C8E0+3F↑j
+loc_1C9A2:                              ; CODE XREF: smith_load_stock+3F↑j
                 mov     ax, 447Ch
                 mov     [bp+var_8], ax
                 mov     [bp+var_4], ax
@@ -1175,20 +1183,20 @@ loc_1C9A2:                              ; CODE XREF: sub_1C8E0+3F↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C9AE:                              ; CODE XREF: sub_1C8E0+47↑j
+loc_1C9AE:                              ; CODE XREF: smith_load_stock+47↑j
                 mov     [bp+var_4], 4404h
                 mov     [bp+var_8], 4422h
                 jmp     short loc_1C93E
 ; ---------------------------------------------------------------------------
 
-loc_1C9BA:                              ; CODE XREF: sub_1C8E0+4F↑j
+loc_1C9BA:                              ; CODE XREF: smith_load_stock+4F↑j
                 mov     [bp+var_4], 4440h
                 mov     [bp+var_8], 445Eh
                 jmp     loc_1C93E
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1C9C8:                              ; CODE XREF: sub_1C8E0+BD↑j
+loc_1C9C8:                              ; CODE XREF: smith_load_stock+BD↑j
                 mov     [bp+var_4], di
                 cmp     word_2307A, 2
                 jnz     short loc_1CA20
@@ -1214,15 +1222,15 @@ loc_1C9E6:                              ; CODE XREF: seg002:0B01↑J
                 jmp     short loc_1CA0B
 ; ---------------------------------------------------------------------------
 
-loc_1CA04:                              ; CODE XREF: sub_1C8E0+11A↑j
+loc_1CA04:                              ; CODE XREF: smith_load_stock+11A↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx+44A0h]
 
-loc_1CA0B:                              ; CODE XREF: sub_1C8E0+122↑j
+loc_1CA0B:                              ; CODE XREF: smith_load_stock+122↑j
                 mov     [bp+var_6], al
                 sub     si, si
 
-loc_1CA10:                              ; CODE XREF: sub_1C8E0+13B↓j
+loc_1CA10:                              ; CODE XREF: smith_load_stock+13B↓j
                 mov     al, [bp+var_6]
                 mov     [si+580Eh], al
                 inc     si
@@ -1230,12 +1238,12 @@ loc_1CA10:                              ; CODE XREF: sub_1C8E0+13B↓j
                 jl      short loc_1CA10
                 mov     [bp+var_A], si
 
-loc_1CA20:                              ; CODE XREF: sub_1C8E0+F0↑j
+loc_1CA20:                              ; CODE XREF: smith_load_stock+F0↑j
                 cmp     word_2307A, 4
                 jnz     short loc_1CA50
                 sub     si, si
 
-loc_1CA29:                              ; CODE XREF: sub_1C8E0+15A↓j
+loc_1CA29:                              ; CODE XREF: smith_load_stock+15A↓j
                 mov     al, [si+580Eh]
                 mov     [si+5840h], al
                 mov     byte ptr [si+580Eh], 0
@@ -1248,17 +1256,17 @@ loc_1CA29:                              ; CODE XREF: sub_1C8E0+15A↓j
                 mov     byte_23060, 5
                 mov     byte_23062, 2
 
-loc_1CA50:                              ; CODE XREF: sub_1C8E0+2E↑j
-                                        ; sub_1C8E0+145↑j ...
+loc_1CA50:                              ; CODE XREF: smith_load_stock+2E↑j
+                                        ; smith_load_stock+145↑j ...
                 sub     si, si
 
 loc_1CA52:                              ; CODE XREF: seg002:0A89↑J
                 mov     di, 57C0h
                 mov     [bp+var_12], 5802h
 
-loc_1CA5A:                              ; CODE XREF: sub_1C8E0+19D↓j
+loc_1CA5A:                              ; CODE XREF: smith_load_stock+19D↓j
                 push    si
-                call    sub_1C7FC
+                call    smith_item_price
                 add     sp, 2
                 mov     [di], ax
                 mov     [di+2], dx
@@ -1277,7 +1285,7 @@ loc_1CA5A:                              ; CODE XREF: sub_1C8E0+19D↓j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C8E0       endp
+smith_load_stock endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1336,8 +1344,8 @@ loc_1CAC5:                              ; CODE XREF: smith_action_prompt+2C↑j
                 push    ax
                 call    thk_clear_text_preset
                 add     sp, 2
-                call    sub_1C8E0
-                call    sub_1C5F6
+                call    smith_load_stock
+                call    smith_draw_item_list
 
 loc_1CADC:                              ; CODE XREF: smith_action_prompt+13↑j
                 mov     di, 1
@@ -1354,7 +1362,7 @@ loc_1CADC:                              ; CODE XREF: smith_action_prompt+13↑j
                 cmp     word_2307A, 5
                 jnz     short loc_1CB08
                 push    si
-                call    loc_1C5A2
+                call    smith_sell_item
 
 loc_1CB03:                              ; CODE XREF: smith_action_prompt+8B↓j
                                         ; smith_action_prompt+92↓j
@@ -1366,14 +1374,14 @@ loc_1CB08:                              ; CODE XREF: smith_action_prompt+75↑j
                 cmp     word_2307A, 6
                 jnz     short loc_1CB16
                 push    si
-                call    sub_1C1B0
+                call    smith_identify_item
                 jmp     short loc_1CB03
 ; ---------------------------------------------------------------------------
                 align 2
 
 loc_1CB16:                              ; CODE XREF: smith_action_prompt+85↑j
                 push    si
-                call    sub_1C776
+                call    smith_buy_item
                 jmp     short loc_1CB03
 ; ---------------------------------------------------------------------------
 
@@ -1388,7 +1396,7 @@ loc_1CB1C:                              ; CODE XREF: smith_action_prompt+66↑j
                 sub     ax, ax
                 push    ax
                 push    ax
-                call    sub_1C6FC
+                call    smith_pay_gold
                 add     sp, 4
                 jmp     short loc_1CB52
 ; ---------------------------------------------------------------------------
@@ -1469,7 +1477,7 @@ loc_1CB98:                              ; CODE XREF: smith_draw+2C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CB9A:                              ; CODE XREF: sub_1C1B0+3E9↑p
+loc_1CB9A:                              ; CODE XREF: smith_identify_item+3E9↑p
                                         ; smith_action_prompt+C5↑p ...
                 push    word_23028
                 call    thk_char_ptr
@@ -1496,16 +1504,16 @@ loc_1CB9A:                              ; CODE XREF: sub_1C1B0+3E9↑p
                 sub     ax, ax
                 push    ax
                 push    ax
-                call    sub_1C6FC       ; CODE XREF: seg002:01AD↑J
+                call    smith_pay_gold  ; CODE XREF: seg002:01AD↑J
                 add     sp, 4
                 mov     word_23078, 0
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CBE8:                              ; CODE XREF: sub_1C1B0+1B↑p
+smith_show_message:                     ; CODE XREF: smith_identify_item+1B↑p
                                         ; ovl_2SMITH:C5B3↑p ...
-                push    bp
+                push    bp              ; (index) one of the 10 texts at 5814
                 mov     bp, sp
                 mov     ax, 7
                 push    ax
@@ -1540,9 +1548,9 @@ loc_1CBE8:                              ; CODE XREF: sub_1C1B0+1B↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CC38:                              ; CODE XREF: sub_1C1B0+3E6↑p
+smith_draw_frame:                       ; CODE XREF: smith_identify_item+3E6↑p
                                         ; blacksmith_menu+EF↓p
-                mov     ax, 2
+                mov     ax, 2           ; " Blacksmith ", Gold=, G-Gather Gold, #-Other Char
                 push    ax
                 call    thk_clear_text_preset
                 add     sp, 2
@@ -1716,7 +1724,7 @@ loc_1CD66:                              ; CODE XREF: blacksmith_menu+D5↓j
 loc_1CDA1:                              ; CODE XREF: blacksmith_menu+E2↑j
                 or      byte_1DC80, 1
                 call    thk_draw_screen_rows
-                call    loc_1CC38
+                call    smith_draw_frame
                 mov     word_23078, 1
 
 loc_1CDB2:                              ; CODE XREF: blacksmith_menu+1FE↓j
@@ -1845,7 +1853,7 @@ loc_1CE6C:                              ; CODE XREF: blacksmith_menu+174↑j
                 sub     ax, ax
                 push    ax
                 push    ax
-                call    sub_1C6FC
+                call    smith_pay_gold
                 add     sp, 4
 
 loc_1CE80:                              ; CODE XREF: blacksmith_menu+1DC↓j
@@ -1901,9 +1909,10 @@ blacksmith_menu endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; guard fight after a failed theft
 ; Attributes: bp-based frame
 
-sub_1CEC8       proc near               ; CODE XREF: seg002:07AD↑J
+smith_robbery_fight proc near           ; CODE XREF: seg002:07AD↑J
 
 var_2           = word ptr -2
 
@@ -1929,7 +1938,7 @@ var_2           = word ptr -2
                 sub     si, si
                 mov     di, 58B8h
 
-loc_1CEF9:                              ; CODE XREF: sub_1CEC8+4E↓j
+loc_1CEF9:                              ; CODE XREF: smith_robbery_fight+4E↓j
                 lea     ax, [si+13h]
                 push    ax
                 mov     ax, 1
@@ -1972,16 +1981,16 @@ loc_1CEF9:                              ; CODE XREF: sub_1CEC8+4E↓j
                 jmp     short loc_1CF71
 ; ---------------------------------------------------------------------------
 
-loc_1CF6C:                              ; CODE XREF: sub_1CEC8+91↑j
+loc_1CF6C:                              ; CODE XREF: smith_robbery_fight+91↑j
                 mov     byte_1DBE5, 1
 
-loc_1CF71:                              ; CODE XREF: sub_1CEC8+A2↑j
+loc_1CF71:                              ; CODE XREF: smith_robbery_fight+A2↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CEC8       endp
+smith_robbery_fight endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2471,7 +2480,7 @@ sub_1D262       endp
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D2A4:                              ; CODE XREF: sub_1CEC8+9F↑p
+loc_1D2A4:                              ; CODE XREF: smith_robbery_fight+9F↑p
                 push    bp
                 mov     bp, sp
                 sub     sp, 24h

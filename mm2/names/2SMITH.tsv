@@ -3,3 +3,15 @@
 1CA88	smith_action_prompt	Identify / Sell / Buy (A-F)
 1CB68	smith_draw	" Blacksmith ", "Gold=", G-Gather Gold, #-Other Char
 1CCBA	blacksmith_menu
+1C130	smith_credit_gold	(price lo, hi) adds to the character's gold (sell)
+1C150	smith_load_char_stock	sell mode: copies the character's 6 backpack items (+3A/+40/+46) into the shop slot arrays
+1C1B0	smith_identify_item	(slot) identify: shows class/alignment/bonus/charges/damage-or-armour; costs gold
+1C5A2	smith_sell_item	(slot) pays the sell price, removes the item from the backpack
+1C5F6	smith_draw_item_list	6 rows A-F: name, +bonus, price; '-' marks items this class cannot use
+1C6FC	smith_pay_gold	(price lo, hi): 1 and gold deducted if the character can afford it, else 0
+1C776	smith_buy_item	(slot) buy into the first free backpack slot
+1C7FC	smith_item_price	(slot) price for the current mode (identify/sell/buy), Merchant skill adjusts
+1C8E0	smith_load_stock	fills the 6 slots for the mode: item ids 57BA, records 5802, bonus 580E, charges 5840, prices 57C0
+1CBE8	smith_show_message	(index) one of the 10 texts at 5814
+1CC38	smith_draw_frame	" Blacksmith ", Gold=, G-Gather Gold, #-Other Char
+1CEC8	smith_robbery_fight	guard fight after a failed theft

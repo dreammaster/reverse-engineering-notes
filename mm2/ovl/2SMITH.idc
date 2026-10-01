@@ -28,7 +28,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
-	set_name	(0X1C130,	"smith_common_helper");
+	set_name	(0X1C130,	"smith_credit_gold");
 	create_insn	(x=0X1C137);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C13A);
@@ -36,6 +36,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C14A);
 	op_hex		(x,	1);
 	create_insn	(0X1C150);
+	set_name	(0X1C150,	"smith_load_char_stock");
 	create_insn	(x=0X1C153);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C158);
@@ -45,6 +46,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C1A7);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C1B0);
+	set_name	(0X1C1B0,	"smith_identify_item");
 	create_insn	(x=0X1C1B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1B8);
@@ -295,7 +297,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1C58B);
 	op_hex		(x,	1);
+	set_cmt	(0X1C5A2,	"(slot) pays the sell price, removes the item from the backpack",	0);
 	create_insn	(0X1C5A2);
+	set_name	(0X1C5A2,	"smith_sell_item");
 	create_insn	(x=0X1C5B6);
 	op_hex		(x,	1);
 	create_insn	(0X1C5BC);
@@ -310,6 +314,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C5F1);
 	op_hex		(x,	1);
 	create_insn	(0X1C5F6);
+	set_name	(0X1C5F6,	"smith_draw_item_list");
 	create_insn	(x=0X1C5F9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C605);
@@ -359,6 +364,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C6F2);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C6FC);
+	set_name	(0X1C6FC,	"smith_pay_gold");
 	create_insn	(x=0X1C6FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C706);
@@ -381,6 +387,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C76F);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C776);
+	set_name	(0X1C776,	"smith_buy_item");
 	create_insn	(x=0X1C779);
 	op_hex		(x,	1);
 	create_insn	(0X1C78C);
@@ -402,6 +409,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C7F3);
 	op_hex		(x,	1);
 	create_insn	(0X1C7FC);
+	set_name	(0X1C7FC,	"smith_item_price");
 	create_insn	(x=0X1C7FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C804);
@@ -483,6 +491,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C8D9);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C8E0);
+	set_name	(0X1C8E0,	"smith_load_stock");
 	create_insn	(x=0X1C8E3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C8FA);
@@ -644,7 +653,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CBDD);
 	op_hex		(x,	1);
+	set_cmt	(0X1CBE8,	"(index) one of the 10 texts at 5814",	0);
 	create_insn	(0X1CBE8);
+	set_name	(0X1CBE8,	"smith_show_message");
 	create_insn	(x=0X1CBF2);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC00);
@@ -665,7 +676,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC2F);
 	op_hex		(x,	1);
+	set_cmt	(0X1CC38,	"\" Blacksmith \", Gold=, G-Gather Gold, #-Other Char",	0);
 	create_insn	(0X1CC38);
+	set_name	(0X1CC38,	"smith_draw_frame");
 	create_insn	(x=0X1CC3F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC4C);
@@ -824,6 +837,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1CEBB);
 	create_insn	(0X1CEC8);
+	set_name	(0X1CEC8,	"smith_robbery_fight");
 	create_insn	(x=0X1CECB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CEDB);
@@ -1216,27 +1230,35 @@ static Functions_0(void) {
 
 	add_func    (0X1C130,0X1C14F);
 	set_func_flags(0X1C130,0x5410);
+	set_func_cmt(0X1C130,	"(price lo, hi) adds to the character's gold (sell)", 0);
 	set_frame_size(0X1C130, 0, 2, 0);
 	add_func    (0X1C150,0X1C1B0);
 	set_func_flags(0X1C150,0x5410);
+	set_func_cmt(0X1C150,	"sell mode: copies the character's 6 backpack items (+3A/+40/+46) into the shop slot arrays", 0);
 	set_frame_size(0X1C150, 0X8, 2, 0);
 	add_func    (0X1C1B0,0X1C5AD);
 	set_func_flags(0X1C1B0,0x5410);
+	set_func_cmt(0X1C1B0,	"(slot) identify: shows class/alignment/bonus/charges/damage-or-armour; costs gold", 0);
 	set_frame_size(0X1C1B0, 0XE, 2, 0);
 	add_func    (0X1C5F6,0X1C6FB);
 	set_func_flags(0X1C5F6,0x5410);
+	set_func_cmt(0X1C5F6,	"6 rows A-F: name, +bonus, price; '-' marks items this class cannot use", 0);
 	set_frame_size(0X1C5F6, 0XC, 2, 0);
 	add_func    (0X1C6FC,0X1C776);
 	set_func_flags(0X1C6FC,0x5410);
+	set_func_cmt(0X1C6FC,	"(price lo, hi): 1 and gold deducted if the character can afford it, else 0", 0);
 	set_frame_size(0X1C6FC, 0X2, 2, 0);
 	add_func    (0X1C776,0X1C7FB);
 	set_func_flags(0X1C776,0x5410);
+	set_func_cmt(0X1C776,	"(slot) buy into the first free backpack slot", 0);
 	set_frame_size(0X1C776, 0X4, 2, 0);
 	add_func    (0X1C7FC,0X1C8E0);
 	set_func_flags(0X1C7FC,0x5410);
+	set_func_cmt(0X1C7FC,	"(slot) price for the current mode (identify/sell/buy), Merchant skill adjusts", 0);
 	set_frame_size(0X1C7FC, 0XA, 2, 0);
 	add_func    (0X1C8E0,0X1CA88);
 	set_func_flags(0X1C8E0,0x5410);
+	set_func_cmt(0X1C8E0,	"fills the 6 slots for the mode: item ids 57BA, records 5802, bonus 580E, charges 5840, prices 57C0", 0);
 	set_frame_size(0X1C8E0, 0X1A, 2, 0);
 	add_func    (0X1CA88,0X1CB68);
 	set_func_flags(0X1CA88,0x5410);
@@ -1251,6 +1273,7 @@ static Functions_0(void) {
 	set_frame_size(0X1CCBA, 0X12, 2, 0);
 	add_func    (0X1CEC8,0X1CF77);
 	set_func_flags(0X1CEC8,0x5410);
+	set_func_cmt(0X1CEC8,	"guard fight after a failed theft", 0);
 	set_frame_size(0X1CEC8, 0X8, 2, 0);
 	add_func    (0X1CF78,0X1D098);
 	set_func_flags(0X1CF78,0x5410);
