@@ -971,3 +971,32 @@ void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, ui
     uint16_t weight = record ? itemGetU16(record, ItemFieldWeight) : 0;
     inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
 }
+
+uint16_t partyDeriveRestRegenPercent(const uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog) {
+    unsigned activeCount = 0;
+    for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
+        uint16_t id = saveGetPartySlot(save, member);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (record && !(partyGetU16(record, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            activeCount++;
+        }
+    }
+    if (activeCount == 0) {
+        return 0;
+    }
+
+    unsigned consumed = 0;
+    for (unsigned i = 0; i < activeCount; i++) {
+        ItemRangeAvailability avail = itemRangeAvailable(globalSlots, save, 0x36, 0x40);
+        if (!avail.found || avail.inGlobalTable) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, avail.partyRecordId);
+        partyConsumeItemCharge(record, catalog, record + avail.slotOffset);
+        consumed++;
+    }
+    return (uint16_t)((100 / activeCount) * consumed);
+}

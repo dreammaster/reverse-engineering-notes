@@ -1099,15 +1099,27 @@ consumers, if any.
    one (confirmed via a previously-unnamed target-entry flag bit, real
    food items in both games all have it clear). Tests in `test_party.c`
    cover both cases plus discarding on the last charge; all 23 suites
-   pass. **Still not done**: the per-active-member consume *loop*
-   composing `itemRangeAvailable`/`partyConsumeItemCharge` into the
-   final `regenPercent` (small, a reasonable next step), the 6-entry
-   global-table case, the 3 special `ConsumeItemChargeResource` modes,
-   container recursion (a separate, genuinely large CURGAME-backed
-   subsystem this project has no reader for), and the item-slot-level
-   transition the light-source mechanic's items go through (unlit ->
-   lit -> used, `TickAilmentDuration`'s own job, confirmed distinct from
-   the 3 light-source counters above). A second
+   pass.
+
+   **The full derivation composed, same day**: `partyDeriveRestRegenPercent`
+   (`src23/party.c`/`.h`) ties the active-member count, the consume
+   loop, and the truncation-order formula together exactly as
+   `RestPartyAndAdvanceClock` does -- including reproducing its own
+   integer-truncation quirk (`(100/activeCount)*consumedCount`, not the
+   more natural `(100*consumedCount)/activeCount` -- 3 active members
+   all fed yields 99%, not 100%) and the stop-dead-at-first-unoccupied-slot
+   quirk for the active-member count itself. A global-table match is
+   treated as a miss rather than consumed, a conservative
+   under-approximation given the global-table case isn't reimplemented.
+   This closes the regen-rate dependency chain `party.h` has been
+   flagging since a genuinely old round. Tests in `test_party.c`; all 23
+   suites pass. **Still not done**: the 6-entry global-table case, the 3
+   special `ConsumeItemChargeResource` modes, container recursion (a
+   separate, genuinely large CURGAME-backed subsystem this project has
+   no reader for), and the item-slot-level transition the light-source
+   mechanic's items go through (unlit -> lit -> used,
+   `TickAilmentDuration`'s own job, confirmed distinct from the 3
+   light-source counters above). A second
    6-counter timer array (`TickWorldAilmentTimers`) also still has bit
    ranges that overlap bit `0x80`'s own 6 fields in a way not yet
    reconciled. See `file-formats.md`'s own dedicated "world ailments"

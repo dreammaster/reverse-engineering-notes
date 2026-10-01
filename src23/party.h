@@ -778,22 +778,20 @@ void partyResetDailyAbilityCharges(uint8_t *record);
  *
  * `regenPercent` is the original's own `word_328C2`
  * (`RestPartyAndAdvanceClock`, `yendor2.asm:25855`-`25870`), now fully
- * traced: `activeCount` = non-incapacitated `SaveHeaderPartySlots`
- * members; then, up to `activeCount` times, `itemRangeAvailable(0x36,
- * 0x40, ...)` (a confirmed item range -- real `WORLD.DAT` data in both
- * games: MEAT, BREAD, FOOD, CHEESE, ALE, plain FOOD -- literal camping
- * provisions, not a guess) and `ConsumeItemChargeResource` on a hit,
- * breaking early the first time nothing more is found;
- * `regenPercent = (100 / activeCount) * consumedCount`. `itemRangeAvailable`
- * itself is reimplemented (above); still missing: `ConsumeItemChargeResource`
- * itself -- a shared, ~21-call-site "spend one use of an item-based
- * resource" engine with 4 distinct consumption modes selected by a
- * caller-context flag (`g_uiScratchFlags3` bits `0x8000`/`0x4000`/
- * `0x2000`) that `RestPartyAndAdvanceClock` never sets itself, so even
- * which of the 4 modes applies here isn't pinned down yet -- and
- * container recursion (`itemRangeAvailable`'s own doc comment). Given
- * those, `regenPercent` is still supplied here as an already-resolved
- * input rather than composed end to end.
+ * composed as `partyDeriveRestRegenPercent` (below): `activeCount` =
+ * non-incapacitated `SaveHeaderPartySlots` members; then, up to
+ * `activeCount` times, `itemRangeAvailable(0x36, 0x40, ...)` (a
+ * confirmed item range -- real `WORLD.DAT` data in both games: MEAT,
+ * BREAD, FOOD, CHEESE, ALE, plain FOOD -- literal camping provisions,
+ * not a guess) and `partyConsumeItemCharge` on a hit, breaking early
+ * the first time nothing more is found;
+ * `regenPercent = (100 / activeCount) * consumedCount`. Still missing
+ * from that composition: `IsItemRangeAvailable`'s own container
+ * recursion and `ConsumeItemChargeResource`'s 3 special modes (see
+ * `partyDeriveRestRegenPercent`'s own doc comment). `partyApplyRestEffects`
+ * itself still takes `regenPercent` as an explicit parameter rather
+ * than calling that composition internally, keeping this function pure
+ * and independently testable.
  */
 typedef struct {
     bool wasSkipped; /* incapacitated -- no change made at all */
@@ -898,5 +896,33 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
  * correcting it).
  */
 void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot);
+
+/*
+ * RestPartyAndAdvanceClock's own regen-rate derivation
+ * (yendor2.asm:25832-25870, instruction-identical in Chapter 3), now
+ * fully composed: counts active (non-incapacitated) `SaveHeaderPartySlots`
+ * members -- stopping dead at the first *unoccupied* slot, the same
+ * whole-party quirk `itemRangeAvailable`'s own fallback scan has --
+ * then attempts up to that many camping-supply consumptions (item id
+ * range `0x36`-`0x40`, confirmed real food items -- MEAT, BREAD, FOOD,
+ * CHEESE, ALE -- in both games' real `WORLD.DAT` data), stopping at the
+ * first miss. `regenPercent = (100 / activeCount) * consumedCount` --
+ * the *original's own* truncation order, not `(100 * consumedCount) /
+ * activeCount`: with 3 active members and all 3 fed, that's `(100/3)*3
+ * = 33*3 = 99`, not 100, reproduced exactly rather than "fixed."
+ *
+ * A match in the 6-entry global table (`itemRangeAvailable`'s own
+ * `.inGlobalTable == true`) is treated the same as "nothing found" --
+ * `partyConsumeItemCharge` only covers the party-inventory case (see
+ * its own doc comment), so this stops the loop early rather than
+ * silently miscounting. A conservative under-approximation in the rare
+ * case food sits in the resource panel instead of a party member's own
+ * inventory, not a wrong answer.
+ *
+ * Returns 0 if there are no active members at all -- the original's
+ * own `div` by that count would fault; not reproduced as a crash since
+ * this shouldn't be reachable with real save data.
+ */
+uint16_t partyDeriveRestRegenPercent(const uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
 
 #endif

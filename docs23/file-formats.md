@@ -2773,19 +2773,33 @@ and party-inventory range checks" above) and `ConsumeItemChargeResource`'s
 own default-mode party-inventory half (`partyConsumeItemCharge`,
 same file, see the "shared scratch buffer at `0xAFA8`" section above for
 the full writeup) — confirmed to be the only mode `RestPartyAndAdvanceClock`
-(and every caller except `RepairItemCommand`) ever reaches. **Still not
-reimplemented**: `IsItemRangeAvailable`'s own container-recursion half
-(`FindItemInsideContainer`{,`Level2`,`Level3`}, a genuinely separate
-CURGAME-backed subsystem this project has no reader for), the 3 special
-`ConsumeItemChargeResource` modes, and the actual per-active-member
-consume *loop* composing these two pieces together into the final
-`regenPercent` value — `partyApplyRestEffects` (`party.c`/`.h`) still
-takes the resulting percentage as an already-resolved parameter, matching
-this project's established "decide, don't apply against unconfirmed
-inputs" discipline (the same pattern
-`combatApplyEncodedItemEffectSingle` already uses for its own resolved
-value) — composing the loop itself is small enough to be a reasonable
-next step whenever this gets picked back up.
+(and every caller except `RepairItemCommand`) ever reaches.
+
+**The full derivation composed, 2026-10-01**: `partyDeriveRestRegenPercent`
+(`src23/party.c`/`.h`) ties `itemRangeAvailable`/`partyConsumeItemCharge`
+together exactly as `RestPartyAndAdvanceClock` does — count active
+members (stopping dead at the first unoccupied party slot, same quirk
+as the fallback-inventory scan), then up to that many consume attempts,
+`regenPercent = (100 / activeCount) * consumedCount` using the
+*original's own* truncation order (divide first, then multiply) rather
+than the more natural `(100 * consumedCount) / activeCount` — with 3
+active members all fed, that's `(100/3)*3 = 33*3 = 99`, not 100,
+reproduced exactly. A match in the 6-entry global table is treated as a
+miss (stopping the loop early) rather than consumed, since
+`partyConsumeItemCharge` only covers the party-inventory case — a
+conservative under-approximation in that rare case, not a silently
+wrong answer. `partyApplyRestEffects` (`party.c`/`.h`) still takes
+`regenPercent` as an explicit parameter rather than calling this
+internally, matching this project's established "decide, don't apply"
+split elsewhere. Tests in `test_party.c` cover the truncation quirk,
+partial feeding, no food at all, an incapacitated member not counting,
+the stop-dead quirk, and the global-table-match-is-a-miss case; all 23
+suites pass.
+
+**Still not reimplemented**: `IsItemRangeAvailable`'s own
+container-recursion half (`FindItemInsideContainer`{,`Level2`,`Level3`},
+a genuinely separate CURGAME-backed subsystem this project has no
+reader for) and `ConsumeItemChargeResource`'s 3 special modes.
 
 The status-effect-gated part of `ApplyRestEffectsToCharacter` — fully
 decoded — is genuinely richer than a simple "diseased/cursed drain

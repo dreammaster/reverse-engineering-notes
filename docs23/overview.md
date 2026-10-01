@@ -11057,6 +11057,26 @@ can get without building container support or the four-mode engine's
 other three branches, neither of which this specific call path
 actually needs.
 
+### Session update (continued, same day): closed the loop — `partyDeriveRestRegenPercent`
+
+Wired the last piece together: `partyDeriveRestRegenPercent` composes
+the active-member count, the consume loop, and the percentage formula
+into one function that matches `RestPartyAndAdvanceClock` exactly,
+truncation quirk and all (three fully-fed active members yield 99%,
+not 100% — the original divides before it multiplies). A dependency
+this project's own `party.h` has been flagging since a genuinely old
+round — "needs the not-yet-reimplemented `IsItemRangeAvailable`" — is
+now just gone, replaced by a tested function with a known, honestly
+documented boundary (the 6-entry resource-panel case and container
+recursion still aren't covered, and are treated as conservative misses
+rather than silently wrong answers).
+
+Six commits sit behind this one small composing function today —
+`IsItemRangeAvailable` itself, the formula read directly out of the
+disassembly, the consumption-mode question resolved by elimination,
+`ConsumeItemChargeResource`'s default mode reimplemented — and this is
+what all of that was for. A good note to close the "R rest" thread on.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

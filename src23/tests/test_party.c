@@ -1272,6 +1272,137 @@ static void testConsumeItemChargeMultiUseItemDiscardsOnLastCharge(void) {
     checkU32("the group's own weight drops by the item's weight (10 - 4)", inventoryGroupWeight(mainGroup), 6);
 }
 
+/* A single-use "food" item at id 0x36 (matching real MEAT), for the regen-percent tests below. */
+static void setUpFoodCatalog(ItemCatalog *catalog) {
+    memset(catalog, 0, sizeof(*catalog));
+    catalog->game = GameYendor2;
+    catalog->itemCount = 0x36;
+    catalog->consumableCount = 1;
+    uint8_t *food = catalog->items + (0x36 - 1) * ItemRecordSize;
+    setU16At(food, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(food, ItemFieldTargetOffset, 0);
+    setU16At(food, ItemFieldWeight, 9);
+    setWord(catalog->consumables, 0, ItemTargetSlotFlags, 0); /* single-use */
+}
+
+static uint8_t *setUpFedMember(SaveGame *save, unsigned slot, uint16_t id) {
+    saveHeaderSetU16(save, SaveHeaderPartySlots + slot * 2, id);
+    uint8_t *record = saveGamePartyRecordById(save, id);
+    memset(record, 0, PartyRecordSize);
+    uint8_t *mainGroup = partyInventoryGroup(record, PartyGroupMain);
+    inventoryGroupSetWeight(mainGroup, 100);
+    itemSlotSet(inventoryGroupSlot(mainGroup, 1), 0x36, 0);
+    return record;
+}
+
+static void testDeriveRestRegenPercentTruncatesLikeTheOriginal(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    setUpFedMember(&save, 0, 1);
+    setUpFedMember(&save, 1, 2);
+    setUpFedMember(&save, 2, 3);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    /* 3 active members, all 3 fed: (100/3)*3 = 33*3 = 99, not 100 -- the original's own truncation order. */
+    checkU32("fully feeding 3 active members yields 99%, not 100%, matching the original's own integer truncation",
+             partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 99);
+}
+
+static void testDeriveRestRegenPercentPartialFeedingStopsAtFirstMiss(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    setUpFedMember(&save, 0, 1);
+    setUpFedMember(&save, 1, 2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 3);
+    uint8_t *unfed = saveGamePartyRecordById(&save, 3);
+    memset(unfed, 0, PartyRecordSize); /* no food at all */
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    /* 3 active members, only 2 fed: (100/3)*2 = 33*2 = 66. */
+    checkU32("feeding 2 of 3 active members yields 66%",
+             partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 66);
+}
+
+static void testDeriveRestRegenPercentNoFoodAtAllIsZero(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *record = saveGamePartyRecordById(&save, 1);
+    memset(record, 0, PartyRecordSize);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    checkU32("no food anywhere: 0% regen", partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 0);
+}
+
+static void testDeriveRestRegenPercentIncapacitatedMembersDoNotCount(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    setUpFedMember(&save, 0, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *incapacitated = saveGamePartyRecordById(&save, 2);
+    memset(incapacitated, 0, PartyRecordSize);
+    partySetU16(incapacitated, PartyFieldStatusFlags, PartyStatusDead);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    /* 1 active member (the incapacitated one doesn't count), fully fed: (100/1)*1 = 100. */
+    checkU32("an incapacitated member doesn't count toward activeCount, so 1 fed member yields 100%",
+             partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 100);
+}
+
+static void testDeriveRestRegenPercentStopsDeadAtFirstUnoccupiedSlot(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 0); /* unoccupied: the active-count scan stops dead here */
+    setUpFedMember(&save, 1, 1);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    checkU32("the second slot's own member is never reached, matching the original's stop-dead quirk",
+             partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 0);
+}
+
+static void testDeriveRestRegenPercentGlobalTableMatchIsTreatedAsAMiss(void) {
+    static ItemCatalog catalog;
+    setUpFoodCatalog(&catalog);
+
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *record = saveGamePartyRecordById(&save, 1);
+    memset(record, 0, PartyRecordSize); /* no food in this member's own inventory */
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+    itemSlotSet(globalSlots + 0, 0x36, 0); /* food sits in the global resource panel instead */
+
+    check("a global-table match isn't consumed (not reimplemented) -- treated conservatively as a miss",
+          partyDeriveRestRegenPercent(globalSlots, &save, &catalog) == 0);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -1309,6 +1440,12 @@ int main(void) {
     testConsumeItemChargeSingleUseItemIsDiscardedAndDeductsWeight();
     testConsumeItemChargeMultiUseItemDecrementsWithoutDiscarding();
     testConsumeItemChargeMultiUseItemDiscardsOnLastCharge();
+    testDeriveRestRegenPercentTruncatesLikeTheOriginal();
+    testDeriveRestRegenPercentPartialFeedingStopsAtFirstMiss();
+    testDeriveRestRegenPercentNoFoodAtAllIsZero();
+    testDeriveRestRegenPercentIncapacitatedMembersDoNotCount();
+    testDeriveRestRegenPercentStopsDeadAtFirstUnoccupiedSlot();
+    testDeriveRestRegenPercentGlobalTableMatchIsTreatedAsAMiss();
     testRealCharacters();
 
     if (g_failureCount == 0) {
