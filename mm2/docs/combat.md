@@ -62,7 +62,7 @@ Each swing (`target` AC = `byte_2767C`, the decoded monster record):
    a party/monster modifier byte) and `x >= AC` to hit.
 3. A hit does `rand(1, D) + B` (a result above 250 becomes 1); hits accumulate in `word_27824`.
 
-After the swings, if anything hit, `byte_1DC37` is added once.  Melee only: `r = rand(1, 100 + min(+72, 100))`;
+After the swings, if anything hit, `byte_1DC37` is added once.  Melee only: `r = rand(1, 100 + min(+72, 100))` (`+72` is the current spell level, so for Robbers and Ninjas it is just d100: an original quirk);
 **Robber** (class 5): `r > 90` or `r < 5` -> damage x2 (" back stabs"); **Ninja** (class 6): `r > 94` or `r < 5` ->
 damage x4 (" criticals").  Immune monsters print " is not affected!".  Class ids are the character `+0F` byte.
 * `combat_damage_monster` (`18B3E`) subtracts from the monster's HP (word `DGROUP:9FAA[i]`); at 0 ->

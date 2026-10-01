@@ -9,11 +9,12 @@ the driver's "draw image" function (`gfx_draw_op13(bank, image, x, y)`), then `g
 * Current 16x16 map: walls `DGROUP:59D6` (256 bytes) and flags `5AD6`; the four outdoor neighbours
   are staged at `5BD6/5CD6/5DD8/5ED8` so coordinates 0-15 wrap into the adjacent map
   (`view_sample_row` `1B44E`, `map_cell_at_offset` `1B7C8`).
-* A wall byte holds 2 bits per side: N = bits 0-1, E = bits 2-3, S = 4-5, W = 6-7 (masks 03h, 0Ch,
-  30h, C0h; `set_facing_masks` `1423E` stores the mask of the side the party faces in `byte_23216`
-  and its shift in `byte_23217`).  Values per side: 0 open, 1 wall, 2 door, 3 special/secret.
-  Wall-value translation table `DGROUP:52B2` (`15F40`) maps the low 5 bits of the flag/terrain byte to
-  a wall style.
+* A wall byte holds 2 bits per side: **N = bits 6-7, E = 4-5, S = 2-3, W = 0-1** (masks C0h, 30h, 0Ch, 03h;
+  `set_facing_masks` `1423E` stores the mask of the side the party faces in `byte_23216` and its shift in
+  `byte_23217`: N = C0h/6, E = 30h/4, S = 0Ch/2, W = 03h/0).  Values per side: 0 open, 1 wall, 2 door,
+  3 wall with an object/sprite on it (drawn as a wall, plus a queued sprite except at the farthest depth).
+  **y grows to the north** (facing N steps `y + 1`).  Wall-value translation table `DGROUP:52B2` (`15F40`)
+  maps the low 5 bits of the flag/terrain byte to a wall style.
 
 ## Building the visible cell set (`view_prepare_visible_cells` `1B4E0`)
 
@@ -24,18 +25,45 @@ facing masks into 20 wall variables `byte_27826..27839`: for each depth 1-4 a **
 **left/right side wall**, and for each outer lane a wall seen edge-on.  Doors that would be hidden behind
 a wall (`3` beside `1`) are normalised to `1`.
 
-## Drawing order (`draw_view_indoors`)
+## Collecting walls (`wall_collect` `1BEBA`, reproduced by `tools/mm2_view.py`)
 
-1. background: sky/ceiling/floor pieces (image 0-3 of the style bank) via `gfx_draw_op13`;
-2. for depth 4 down to 1 (far to near): side walls (`view_draw_wall_b`/`_c`) then the front wall
-   (`view_draw_wall_a`); the second argument selects the left (`80h` + depth) or right variant;
-3. queued sprites (`view_queue_sprite_*`, arrays `DGROUP:6014/6028/603C` = x/y/image; up to 20) such as
-   doors' contents and monsters/objects in view, drawn by `view_draw_sprite_list`.
+Samples: depth 1 = the party's own cell, depth 2-4 = the cells ahead.  Facing masks: `F` = the facing side,
+`L`/`R` = the side to the left/right (N: L = W bits, R = E bits).  Step/lane offsets per facing (`DGROUP:16F8`
+N, `16FE` S, `1704` E, `170A` W): N step (0,+1), left lane (-1,0), right lane (+1,0); S the opposite;
+E step (+1,0), left (0,+1), right (0,-1); W the opposite.  For depth *n* = 1..4:
 
-Wall images come from the style banks (`TOWN.16`, `CAVE.16`, `CASTLE.16`; see file-formats.md):
-piece index = wall value - 1, +10h for the door variants; x/y positions per depth are in the tables at
-`DGROUP:1516..15D6` (`sub_18558/185B4/1867C` add the perspective offsets) -- these tables are the
-scaffolding of the perspective and are easiest read from the data in `mm2.idb`.
+* **L(n)** = centre cell `& L`; if zero, **LO(n)** = left-lane cell `& F` (its front wall, visible because the
+  side is open).  Same on the right: **R(n)**, **RO(n)**.
+* **F(n)** = centre cell `& F`.  If it is non-zero it ends the scan (nothing behind it is visible) after one more
+  look: when the left side of depth *n* has neither L nor LO, **LO(n+1)** = left-lane front wall of the next
+  cell (same on the right), for *n* = 1..3.
+* Fix-up: a `3` in LO(n+1) beside an existing L(n) becomes 1 (n = 1, 2; same right).
+
+## Drawing (`draw_view_indoors`)
+
+Everything is drawn with `gfx_draw_op13(bank, image, x, y)` into page 1 (view area 208x120 at (8,8)):
+
+1. sky (`SKY.16` image chosen by `view_indoor_daylight`, 208x60) at (8, 8), then the floor (`<style>F.16`
+   image 0, 208x60) at (8, 68).  At night (`g_day_fraction >= 80h`) with the sky image 0, `sub_14FB2` adds stars.
+2. for depth 4 down to 1: L, LO, R, RO, then F (this exact order; the images below are in the style bank
+   `TOWN/CAVE/CASTLE.16`, 32 images: 0-15 plain, +10h the door variant of each):
+
+| Piece | Depth index *i* = n-1 | Image | x | y |
+|---|---|---|---|---|
+| F front | 0..3 | `i` | 32, 64, 88, 104 | 22, 40, 54, 62 |
+| L side | 0..3 | `4 + i` | 8, 32, 64, 88 | 8, 22, 40, 54 |
+| LO left-lane front | 0..3 | 12, 14, 2, 3 | 8, 8, 40, 88 | 22, 40, 54, 62 |
+| R side | 0..3 | `8 + i` | 192, 160, 136, 120 | 8, 22, 40, 54 |
+| RO right-lane front | 0..3 | 13, 15, 2, 3 | 192, 160, 136, 120 | 22, 40, 54, 62 |
+
+   (a door, value 2, adds 10h to the image index.)  Image sizes: F 160x92, 96x56, 48x28, 16x10; L/R sides
+   24x120, 32x94, 24x56, 16x28; outer pieces 24x92, 24x92, 56x56, 56x56.
+3. queued sprites (`view_queue_sprite_a..e`, arrays `DGROUP:6014/6028/603C` = x/y/image; up to 20) from the
+   `<style>T.16` (36 images) bank for the value-3 walls, drawn by `view_draw_sprite_list`.  `<style>B.16` holds 16x11
+   pieces used for the same purpose (not traced further).
+
+`python tools/mm2_view.py MAP X Y N|E|S|W out.png [town|cave|castle]` renders a view this way (walls, floor and sky
+only, no sprites); the output shows plausible streets/corridors, which is how the layout above was checked.
 
 Outdoors (`draw_view_outdoors`): `sub_189B8` draws the sky/horizon strips per depth; `sub_18CC6` then
 draws terrain tiles from `outdoor1-3.16`, `outb/outf.16` and the terrain-type banks (`desert/ocean/

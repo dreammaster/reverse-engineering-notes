@@ -58,7 +58,7 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 
 ### Map cell layers (in memory: `DGROUP:59D6` walls, `DGROUP:5AD6` flags; index `y*16+x`)
 
-* Walls byte: 2 bits per side, N/E/S/W (`view_prepare_visible_cells` `1B4E0`).
+* Walls byte: 2 bits per side, **N = bits 6-7, E = 4-5, S = 2-3, W = 0-1**; 0 open, 1 wall, 2 door, 3 wall with sprite; y grows northward (see view.md).
 * Flags byte: bit 7 = an event trigger is armed for this cell (`evt_op20_clear_trigger` clears it).
 * Outdoor maps wrap into neighbouring maps: the four neighbour ids are in `byte_231DB..231DE`
   (N, S, E, W order not yet verified) and their cells are staged at `5BD6/5CD6/5DD8/5ED8`.
