@@ -10898,6 +10898,35 @@ real data the way today's other corrections were — but flagged it
 plainly rather than letting two contradictory claims sit in the docs
 without either one being marked as the one in question.
 
+### Session update (continued, same day): chased that flagged discrepancy down, and it's exactly the system an earlier round predicted would be tangled
+
+Went back to resolve the "day/night music vs. world-state timers"
+question from the last entry rather than leave it sitting. It resolved
+cleanly in one direction: bit `0x80` arms the exact flag
+`MaybeForceTickWorldAilments` tests before calling `TickWorldAilments`
+— the older round's "world-state timers" framing was right, today's
+own first guess was wrong. Corrected that.
+
+Then kept pulling the thread into `TickWorldAilments` itself, since it
+was finally reachable with real context after today's whole spell-record
+and dispatch-chain arc. It's genuinely tangled — three separate counter
+families (a 6-entry ailment table shared with party inventory slots, a
+second 6-counter timer array with overlapping bit ranges, and a
+12-field family whose sum gates the entire mechanism) that read
+clearly enough individually but don't yet add up to one coherent
+picture. Exactly the "not-yet-scoped" system an earlier round flagged
+and deliberately left alone rather than guess at — this project's
+honesty about what it doesn't know yet, holding up under direct
+pressure to just implement something.
+
+Wrote up the full confirmed address/field map rather than either
+rushing a C module on an unconfirmed data model or leaving the earlier
+round's one-line flag as the only record of it. No code this round —
+a scoping pass, same shape as the side-trap/ambush investigation and
+`ApplyMapTriggerEffect` both got before either was actually
+reimplemented. A good, well-bounded next module whenever someone picks
+it up.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

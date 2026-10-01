@@ -2997,14 +2997,11 @@ matching the "~19" estimate exactly, and every one of them now
 accounted for: only `0x80`/`0x10` of `word_33302` and `word_33306`'s
 own `0x4` are genuinely unimplemented gameplay logic (`0x10` is the
 held-item cursor, blocked on its own not-yet-built prerequisite system,
-confirmed by this round's own direct read; `0x80` is still only a sound
-cue plus 4 globals this round's own read (`word_36C93`/`95`/`97`/`99`)
-looks more like day/night music-track selection than the "world-state
-timers" an *older*, pre-this-session round's comment called it —
-flagged here as a discrepancy worth re-checking directly rather than
-silently repeated, not corrected outright since neither reading has
-been fully verified against real data the way this session's other
-corrections were); everything else is either reimplemented or
+confirmed by this round's own direct read; `0x80` is the world-ailments
+system's own timer-arming branch — see the dedicated section below,
+which resolves the "day/night music vs. world-state timers" discrepancy
+this same document flagged a few hours ago in favor of "world-state
+timers," now fully confirmed); everything else is either reimplemented or
 confirmed to be UI/rendering layered on an
 already-reimplemented primitive. See below for the full picture on
 `0x200`/`word_33306`'s `0x8`/`0x2`/`0x1`.
@@ -3191,6 +3188,99 @@ right after bit `0x1`'s own branch (`yendor2.asm:52748`), confirming
 the dispatch chain this file documents is now completely accounted
 for, branch by branch, even where a given branch's full UI
 orchestration isn't reimplemented.
+
+### The "world ailments" system: scoped, not yet reimplemented (2026-10-01, same day)
+
+Followed `word_33302` bit `0x80` (`loc_2C287`) the rest of the way,
+since it was the one dispatch branch left with a genuine semantic
+question mark rather than a clean "blocked on a UI prerequisite"
+answer. It fully resolves the discrepancy flagged a few paragraphs
+up — this branch, and the wider mechanism it belongs to, really is
+the "world-state timers" an older round's comment called it, not
+day/night music selection as this round's own first guess had it.
+
+**The branch itself**: `bx = spellGetU16(record, 0x2A)`
+(`spellrecord.h`'s own still-unnamed `word_332E4` offset) selects 1 of
+6 slots (`word_36C93`/`95`/`97`/`99`/`9B`/`9D`, set to the record's own
+`SpellFieldAttackMagnitude`-adjacent field), each paired with a
+`word_36C79` bit (`0x8100`/`0x8080`/`0x8040`/`0x8020`/`0x8010`/`0x8008`
+— note every one of these also carries `word_36C79`'s own `0x8000`
+"something is pending" bit, OR'd in via the same immediate rather than
+as a separate step) and, critically, sets `word_3295A` bit `0x800` —
+the exact flag `MaybeForceTickWorldAilments` (`yendor2.asm:27680`,
+called from `ApplyMapTriggerEffect`'s already-documented ailment-tick
+branch and from `RestPartyAndAdvanceClock`) tests before calling
+`TickWorldAilments` at all. This is the arming write this project
+didn't have before — `ApplyMapTriggerEffect`'s own ailment-tick branch
+and the "R rest" command's own `MaybeForceTickWorldAilments` call were
+both already reimplemented as *readers* of this gate without this
+project knowing what, besides the natural 5-minute clock tick, could
+set it.
+
+**`TickWorldAilments`** (`yendor2.asm:27799`, called every 5 game-minutes
+from `AdvanceGameClock` as well as forced via the gate above) turns out
+to manage at least three genuinely separate counter families, confirmed
+by direct read but not yet reconciled into one coherent narrative:
+
+1. A 6-entry table at `DS:0x9519` (4 bytes/entry: a code byte matching
+   `TickAilmentDuration`'s own `9`/`0xF`/`0xC` test, then a 2-byte
+   duration), ticked by `TickAilmentDuration` and, on expiry,
+   decrementing one of 3 global per-type counters (`0x9425`/`0x9429`/
+   `0x942B`) and clearing a `word_36C79` bit (`0x2000`/`0x800`/`0x400`
+   via masks `0xDFFF`/`0xF7FF`/`0xFBFF`).
+2. The *same* `TickAilmentDuration` function also sweeps every party
+   member's 8 main inventory slots (`PartyFieldInventory`-adjacent,
+   `[+0x11A]`) with the same 3 codes -- ailments apparently occupy the
+   same slot storage as real inventory items, not a separate per-member
+   field. Not cross-checked against `item.h`'s own inventory-slot
+   layout yet.
+3. `TickWorldAilmentTimers` (`yendor2.asm:27925`), gated on
+   `word_36C79` bit `0x8000`, ticks 6 *more* counters at `DS:0x9433`,
+   each paired with a `word_36C79` bit in the `0x8`-`0x100` range --
+   note these bit positions overlap numerically with the `0x8008`-`0x8100`
+   constants bit `0x80`'s own branch (above) writes, but the counter
+   *array* (`0x9433`) is a different address from that branch's own
+   targets (`word_36C93`-`9D`). Whether `0x9433`'s 6 entries and
+   `word_36C93`-`9D`'s 6 globals are the same data accessed two ways, or
+   two genuinely parallel 6-slot systems, isn't resolved.
+
+`TickWorldAilments` finishes by summing a *third* family of 12 fields
+(`word_36C83` through `word_36C9D`) and clearing `word_3295A` bit
+`0x800` (disarming its own gate) only when the sum is 0 -- confirming
+all 12 really do belong to one "is anything world-ailment-related still
+active" accounting, even though they're written by at least 3
+unrelated-looking code paths:
+
+- `word_36C85`/`89`/`8B`: 3 timed per-ability-effect counters, set by
+  `ApplyStatusEffect` (`yendor2.asm:29214`, a `HandleGameCommand`
+  top-level handler -- `g_currentActionId`/`word_32974` `== 8`/`0xE`/`0xB`
+  arms the matching counter, icon-bar slot, and `word_36C79` bit
+  `0x2000`/`0x800`/`0x400`) and decremented by `TickStatusEffects`
+  (`yendor2.asm:29153`, same action-id family shifted by 1:
+  `9`/`0xF`/`0xC` -- the exact codes `TickAilmentDuration`'s own
+  6-entry table tests, suggesting these 3 scalars and 3 of that table's
+  6 slots may be the same concept represented two ways, not confirmed).
+- `word_36C83`/`87`/`8D`: unconditionally zeroed by both of the
+  functions just above whenever their own selector doesn't match --
+  no write setting them to anything *else* found yet, so either dead
+  weight kept for the sum's sake or written by a caller not yet traced.
+- `word_36C93`/`95`/`97`/`99`/`9B`/`9D`: bit `0x80`'s own 6 slots,
+  above.
+
+**Deliberately not reimplemented.** This is a real, tangled subsystem
+exactly matching an earlier round's own "not-yet-scoped" flag on it --
+three counter families with overlapping bit ranges and an unconfirmed
+relationship between them, two unidentified ability-id pairs (`8`/`9`,
+`0xE`/`0xF`, `0xB`/`0xC` -- plausibly food/water/light-source resource
+depletion, matching an existing comment on the unrelated-but-similarly-
+shaped `TickTravelResourceAilments`, but not confirmed), and an
+inventory-slot-reuse detail not cross-checked against `item.h`. Recording
+the full confirmed address/field map here is the honest, useful
+contribution for this round; implementing a C module on top of an
+unconfirmed data model risks baking in a wrong structure. A genuinely
+good candidate for its own dedicated multi-round pass, the same way
+the side-trap/ambush pipeline and `ApplyMapTriggerEffect` each got one
+before being reimplemented.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:

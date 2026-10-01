@@ -1058,21 +1058,38 @@ consumers, if any.
    four branches' gameplay logic; what remains for each is animation/
    orchestration only.
 
-   **Still open**: `word_33302` bits `0x80`/`0x10` still don't have a
-   reimplemented consumer -- `0x10` (held-item cursor) is blocked on its
-   own prerequisite system; `0x80` is only a sound cue plus 4 globals
-   that look more like day/night music-track selection than the
-   "world-state timers" an older, pre-this-session round called them --
-   flagged as a discrepancy worth checking directly, not yet corrected
-   outright (see `file-formats.md`). `loc_2CF51` (the bit `0x2000`
-   diversion) is still deferred to its own pass; bit `0x200`/`word_33306`'s
-   own surrounding scan-loop *shape* (which of the two targeting modes
-   fires, and the viewport-depth bookkeeping around it) is orchestration,
-   not yet composed, even though the per-target attack itself is done; a
-   dozen bytes in the record's own middle (offsets `0x36`-`0x3F`) have
-   no confirmed consumer; and `TickMonsterTimer`'s own gate bits still
-   have no confirmed setter even though an earlier round this same day
-   found its tick-amount/countdown *value* source.
+   **Bit `0x80` scoped (not reimplemented), same day, resolving the
+   discrepancy above**: it's the arming write for `word_3295A` bit
+   `0x800`, the gate `MaybeForceTickWorldAilments` tests before calling
+   `TickWorldAilments` -- the older round's "world-state timers"
+   description was right; this round's own first guess (day/night
+   music) was wrong, now corrected rather than left standing. Tracing
+   `TickWorldAilments` found a genuinely tangled subsystem: a 6-entry
+   ailment table shared between a global slot array and every party
+   member's own inventory slots, a second 6-counter timer array with
+   overlapping bit ranges, and a third 12-field family whose sum gates
+   the whole thing -- three counter families, confirmed individually by
+   direct read but not yet reconciled into one data model. See
+   `file-formats.md`'s own dedicated "world ailments" section for the
+   full confirmed address/field map. **Deliberately not reimplemented**
+   -- exactly the "not-yet-scoped... world ailments/weather/lighting
+   system" this candidate already flagged a round ago, now properly
+   scoped rather than guessed at; a good candidate for its own
+   dedicated multi-round pass, same as the side-trap/ambush pipeline
+   and `ApplyMapTriggerEffect` each got before being reimplemented.
+
+   **Still open**: `word_33302` bit `0x10` (held-item cursor, blocked
+   on its own prerequisite system) and bit `0x80` (the world-ailments
+   system just scoped above, not yet reimplemented); `loc_2CF51` (the
+   bit `0x2000` diversion) is still deferred to its own pass; bit
+   `0x200`/`word_33306`'s own surrounding scan-loop *shape* (which of
+   the two targeting modes fires, and the viewport-depth bookkeeping
+   around it) is orchestration, not yet composed, even though the
+   per-target attack itself is done; a dozen bytes in the record's own
+   middle (offsets `0x36`-`0x3F`) have no confirmed consumer; and
+   `TickMonsterTimer`'s own gate bits still have no confirmed setter
+   even though an earlier round this same day found its tick-amount/
+   countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark
