@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "party.h"
+
 /*
  * The party's light-source burn-down mechanic. `ApplyStatusEffect`
  * (yendor2.asm:29214, a `HandleGameCommand` top-level handler -- lighting
@@ -18,12 +20,13 @@
  *   TORCH (item 0xE)      -> LIT TORCH (item 0xF)
  *
  * (A third item id per family -- 10/0xD/0x10, USED CANDLE/LIGHT/TORCH --
- * also exists in the real catalog, but neither of these two functions
- * writes it; that transition belongs to a separate, not-yet-reimplemented
- * mechanic that ticks the item slot itself, see file-formats.md's "world
- * ailments" section. lightSourceApply/Tick only manage the 3 standalone
- * duration counters and their own "currently lit" flag bits -- the exact
- * scope of the original two functions, confirmed by direct read.)
+ * also exists in the real catalog; that transition belongs to a
+ * genuinely separate mechanic, `TickAilmentDuration`, that ticks a real
+ * item slot rather than a standalone counter -- see
+ * `lightSourceTickItemSlot` below. lightSourceApply/Tick only manage the
+ * 3 standalone duration counters and their own "currently lit" flag
+ * bits -- the exact scope of the original two functions, confirmed by
+ * direct read.)
  *
  * Lighting one (`g_currentActionId` == 8/0xE/0xB in the original) arms
  * its own duration counter and sets its own "lit" flag bit.
@@ -47,6 +50,7 @@ typedef enum { LightSourceCandle = 0, LightSourceTorch = 1, LightSourceGeneric =
 typedef struct {
     uint16_t duration[LightSourceCount]; /* word_36C85/36C89/36C8B, in that order (candle/torch/generic) */
     uint16_t litFlags;                   /* word_36C79 bits 0x2000/0x800/0x400 (candle/torch/generic) */
+    uint16_t instanceCount[LightSourceCount]; /* word_9425/9429/942B -- see lightSourceTickItemSlot */
 } LightSourceState;
 
 /*
@@ -72,5 +76,36 @@ bool lightSourceApply(LightSourceState *state, unsigned actionId);
  * matching litFlags bit (the light burns out).
  */
 bool lightSourceTick(LightSourceState *state, unsigned actionId);
+
+/*
+ * TickAilmentDuration (yendor2.asm:27869, instruction-identical in
+ * Chapter 3) -- the item-slot-level half of the light-source system,
+ * genuinely separate from lightSourceApply/Tick's own standalone
+ * duration counters above (both happen to clear the same `litFlags`
+ * bits when their own tracking reaches 0, but the exact relationship
+ * between "the currently lit item instance(s) in inventory" this
+ * function tracks and the single active duration lightSourceTick
+ * manages isn't resolved -- reimplemented faithfully as two
+ * independent mechanisms, since that's what the disassembly does, not
+ * forced into one model). Shares `src23/party.h`'s generic 4-byte item
+ * slot shape (`itemSlotId`/`itemSlotExtra`) -- `TickWorldAilments`
+ * calls the original both over a fixed 6-entry global table and over
+ * every party member's own 8 main inventory slots, so `slot` can be
+ * either.
+ *
+ * A no-op (false) unless the slot's own id is one of the 3 "lit"
+ * light-source item ids (9 candle, 0xF torch, 0xC generic -- the exact
+ * same ids lightSourceTick's own actionId dispatches on). On a match:
+ * decrements the slot's own itemSlotExtra by elapsedMinutes (a real
+ * elapsed-time parameter here, unlike lightSourceTick's fixed
+ * decrement-by-1). If that would reach 0 or below: the slot's own id
+ * is incremented (9->10, 0xC->0xD, 0xF->0x10 -- confirmed against real
+ * `WORLD.DAT` data: USED CANDLE/LIGHT/TORCH), `instanceCount` for that
+ * light source is decremented, and only once *that* count itself
+ * reaches 0 is the matching `litFlags` bit cleared -- so several lit
+ * instances of the same light-source type can coexist, and the UI
+ * "currently lit" flag only clears once the last one burns out.
+ */
+bool lightSourceTickItemSlot(LightSourceState *state, uint8_t *slot, uint16_t elapsedMinutes);
 
 #endif

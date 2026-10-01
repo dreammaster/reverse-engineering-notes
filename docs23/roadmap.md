@@ -1113,20 +1113,29 @@ consumers, if any.
    under-approximation given the global-table case isn't reimplemented.
    This closes the regen-rate dependency chain `party.h` has been
    flagging since a genuinely old round. Tests in `test_party.c`; all 23
-   suites pass. **Still not done**: the 6-entry global-table case, the 3
-   special `ConsumeItemChargeResource` modes, container recursion (a
-   separate, genuinely large CURGAME-backed subsystem this project has
-   no reader for), and the item-slot-level transition the light-source
-   mechanic's items go through (unlit -> lit -> used,
-   `TickAilmentDuration`'s own job, confirmed distinct from the 3
-   light-source counters above). A second
-   6-counter timer array (`TickWorldAilmentTimers`) also still has bit
-   ranges that overlap bit `0x80`'s own 6 fields in a way not yet
-   reconciled. See `file-formats.md`'s own dedicated "world ailments"
-   and "Quest-item and party-inventory range checks" sections for the
-   full confirmed address/field map of what's left -- still a
-   reasonable candidate for a future pass, just smaller than it was
-   this morning.
+   suites pass.
+
+   **The item-slot-level light-source transition reimplemented too,
+   same day**: `TickAilmentDuration` -- confirmed genuinely separate
+   from `lightSourceApply`/`Tick`'s own standalone counters (see
+   `file-formats.md`'s "world ailments" section) -- as
+   `lightSourceTickItemSlot` (`src23/lightsource.c`/`.h`, extending
+   `LightSourceState` with a new `instanceCount[3]` field for
+   `word_9425`/`9429`/`942B`). On expiry a lit item's own id advances
+   by 1 (confirmed against real data: 9->10 LIT CANDLE->USED CANDLE,
+   etc.) rather than being zeroed, and the shared `litFlags` bit only
+   clears once every coexisting lit instance of that light source has
+   burned out. Tests in `test_lightsource.c`; all 23 suites pass.
+
+   **Still not done**: the 6-entry global-table case for item
+   consumption, the 3 special `ConsumeItemChargeResource` modes,
+   container recursion (a separate, genuinely large CURGAME-backed
+   subsystem this project has no reader for), and a second 6-counter
+   timer array (`TickWorldAilmentTimers`) whose bit ranges overlap bit
+   `0x80`'s own 6 fields in a way not yet reconciled. See
+   `file-formats.md`'s own dedicated "world ailments" and "Quest-item
+   and party-inventory range checks" sections for the full confirmed
+   address/field map of what's left -- genuinely small now.
 
    **Bit `0x100` corrected and `TickMonsterTimer`'s gate-bit setter
    found, same day**: an earlier pass this same day misclassified

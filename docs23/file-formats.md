@@ -3364,23 +3364,39 @@ and `word_36C79`.
 and party-inventory range checks" above for the full writeup
 (`partyFindItemInRange`/`itemRangeAvailable`, `src23/party.c`/`.h`,
 tests in `test_party.c`). This is the exact "item-availability"
-dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation has
-been waiting on since a much earlier round -- composing that derivation
-itself (which item-id range counts as "camping supplies," and how a
-count converts to a percentage) is still a separate step, not done
-here.
+dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation
+waited on -- that derivation is now fully composed too
+(`partyDeriveRestRegenPercent`, `src23/party.c`/`.h`, see the "R rest"
+section above for the complete writeup).
 
-What's left in this whole system: the item-slot tick/transition logic
-(`TickAilmentDuration`'s own job, items 1 and 2 above), the regen-rate
-percentage derivation itself, container recursion, and `word_36C93`-`9D`'s
-own relationship (if any) to the separate `0x9433` timer array
-`TickWorldAilmentTimers` manages. Recording the full confirmed
-address/field map here is the honest contribution for the parts not
-yet done; implementing a C module on top of an unconfirmed data model
-risks baking in a wrong structure. A genuinely good candidate for its
-own dedicated multi-round pass, the same way the side-trap/ambush
-pipeline and `ApplyMapTriggerEffect` each got one
-before being reimplemented.
+**The item-slot tick/transition logic reimplemented too, 2026-10-01**
+(`TickAilmentDuration`, item 1/2 above): confirmed genuinely separate
+from `lightSourceApply`/`Tick`'s own standalone duration counters (both
+happen to clear the same `word_36C79` bits, but neither function
+touches the other's state) -- reimplemented as `lightSourceTickItemSlot`
+(`src23/lightsource.c`/`.h`, extending `LightSourceState` with a new
+`instanceCount[3]` field for the 3 global per-type counters,
+`word_9425`/`9429`/`942B`). Operates on the same generic 4-byte item
+slot shape `TickWorldAilments` sweeps both the global table and party
+inventory with: on expiry, the slot's own id advances by 1 (9->10,
+0xC->0xD, 0xF->0x10 -- confirmed against real `WORLD.DAT` data: USED
+CANDLE/LIGHT/TORCH) rather than being zeroed outright, `instanceCount`
+for that light source decrements, and only once that count itself
+reaches 0 does the shared `litFlags` bit clear -- so multiple lit
+instances of the same light source can coexist, with the UI "currently
+lit" indicator staying on until the last one burns out. Tests in
+`test_lightsource.c` cover an unrelated item being a no-op, a normal
+decrement, expiry advancing the item id and decrementing the instance
+count, multiple coexisting instances keeping the flag lit until the
+last expires, and the exact-boundary elapsed-time case; all 23 suites
+pass.
+
+What's left in this whole system: container recursion and
+`word_36C93`-`9D`'s own relationship (if any) to the separate `0x9433`
+timer array `TickWorldAilmentTimers` manages. Recording the full
+confirmed address/field map here is the honest contribution for the
+parts not yet done; implementing a C module on top of an unconfirmed
+data model risks baking in a wrong structure for what's left.
 
 ### A self-correction, and `TickMonsterTimer`'s gate-bit setter found (2026-10-01, same day)
 

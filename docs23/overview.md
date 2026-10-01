@@ -11077,6 +11077,30 @@ disassembly, the consumption-mode question resolved by elimination,
 `ConsumeItemChargeResource`'s default mode reimplemented — and this is
 what all of that was for. A good note to close the "R rest" thread on.
 
+### Session update (continued, same day): went back and finished the light-source mechanic's other half
+
+With the "R rest" thread closed, circled back to something flagged
+earlier today and left alone — the item-slot-level half of the
+light-source system, `TickAilmentDuration`. It's a genuinely separate
+mechanism from the standalone duration counters reimplemented a few
+commits ago: it operates on real item slots (the same ones
+`partyConsumeItemCharge` and `partyFindItemInRange` already know how to
+read), advancing a lit item's own id by one step on expiry — LIT CANDLE
+becomes USED CANDLE, not an empty slot — rather than clearing it
+outright, confirmed against real `WORLD.DAT` data for all three light
+sources.
+
+The more interesting piece: this mechanism tracks *how many* lit
+instances of a given light source exist at once, and the shared "is
+this light source currently lit" flag only turns off once the last one
+burns out. Lighting two torches and letting one run out doesn't
+darken anything — reimplemented that multi-instance behavior
+specifically, since it's a real behavioral detail, not a simplification
+to skip. Added as `lightSourceTickItemSlot`, extending the existing
+`LightSourceState` struct rather than introducing a separate one, since
+it shares the exact same `litFlags` field the standalone counters
+already manage. All 23 suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_lightsource test_lightsource.c ../lightsource.c && ./test_lightsource
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_lightsource test_lightsource.c ../lightsource.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../random.c && ./test_lightsource
  */
 #include <stdio.h>
 #include <string.h>
@@ -123,6 +123,71 @@ static void testTickingOneSourceDoesNotAffectTheOthers(void) {
           (state.litFlags & (0x2000 | 0x0800 | 0x0400)) == (0x2000 | 0x0800 | 0x0400));
 }
 
+static void testTickItemSlotRejectsUnrelatedIds(void) {
+    LightSourceState state;
+    memset(&state, 0, sizeof(state));
+    uint8_t slot[4];
+    itemSlotSet(slot, 1 /* plain CANDLE, not lit */, 50);
+
+    check("an unlit item is a no-op", !lightSourceTickItemSlot(&state, slot, 5));
+    checkU32("...and its own extra is untouched", itemSlotExtra(slot), 50);
+}
+
+static void testTickItemSlotDecrementsWithoutExpiring(void) {
+    LightSourceState state;
+    memset(&state, 0, sizeof(state));
+    state.instanceCount[LightSourceCandle] = 1;
+    state.litFlags = 0x2000;
+    uint8_t slot[4];
+    itemSlotSet(slot, 9 /* LIT CANDLE */, 20);
+
+    check("ticking a lit candle with time remaining succeeds", lightSourceTickItemSlot(&state, slot, 7));
+    checkU32("its own id is unchanged (still lit)", itemSlotId(slot), 9);
+    checkU32("its own extra decrements by the elapsed time", itemSlotExtra(slot), 13);
+    check("it's still lit", state.litFlags & 0x2000);
+    checkU32("the instance count is untouched", state.instanceCount[LightSourceCandle], 1);
+}
+
+static void testTickItemSlotExpiresAdvancesIdAndDecrementsInstanceCount(void) {
+    LightSourceState state;
+    memset(&state, 0, sizeof(state));
+    state.instanceCount[LightSourceTorch] = 1;
+    state.litFlags = 0x0800;
+    uint8_t slot[4];
+    itemSlotSet(slot, 0xF /* LIT TORCH */, 4);
+
+    check("ticking a lit torch past its remaining time succeeds", lightSourceTickItemSlot(&state, slot, 10));
+    checkU32("its own id advances to the 'used' item (0xF -> 0x10, real USED TORCH)", itemSlotId(slot), 0x10);
+    checkU32("its own extra is zeroed", itemSlotExtra(slot), 0);
+    checkU32("the instance count drops to 0", state.instanceCount[LightSourceTorch], 0);
+    check("...and the last instance burning out clears the lit flag", !(state.litFlags & 0x0800));
+}
+
+static void testTickItemSlotMultipleInstancesKeepFlagLitUntilTheLastOneExpires(void) {
+    LightSourceState state;
+    memset(&state, 0, sizeof(state));
+    state.instanceCount[LightSourceGeneric] = 2; /* two lit instances carried at once */
+    state.litFlags = 0x0400;
+    uint8_t slot[4];
+    itemSlotSet(slot, 0xC /* LIT LIGHT */, 1);
+
+    check("the first of two lit instances expiring succeeds", lightSourceTickItemSlot(&state, slot, 5));
+    checkU32("its own id advances (0xC -> 0xD, real USED LIGHT)", itemSlotId(slot), 0xD);
+    checkU32("the instance count drops to 1, not 0", state.instanceCount[LightSourceGeneric], 1);
+    check("the flag stays lit -- another instance is still burning", state.litFlags & 0x0400);
+}
+
+static void testTickItemSlotExactlyOnTimeExpires(void) {
+    LightSourceState state;
+    memset(&state, 0, sizeof(state));
+    state.instanceCount[LightSourceCandle] = 1;
+    uint8_t slot[4];
+    itemSlotSet(slot, 9, 5);
+
+    lightSourceTickItemSlot(&state, slot, 5); /* elapsed exactly equals remaining */
+    checkU32("an elapsed time exactly equal to the remaining duration still expires it", itemSlotId(slot), 10);
+}
+
 int main(void) {
     testApplyRejectsUnrelatedActionIds();
     testApplyCandle();
@@ -134,6 +199,11 @@ int main(void) {
     testTickExpiresAndClearsTheFlag();
     testTickOnAnAlreadyExpiredSourceStaysExpired();
     testTickingOneSourceDoesNotAffectTheOthers();
+    testTickItemSlotRejectsUnrelatedIds();
+    testTickItemSlotDecrementsWithoutExpiring();
+    testTickItemSlotExpiresAdvancesIdAndDecrementsInstanceCount();
+    testTickItemSlotMultipleInstancesKeepFlagLitUntilTheLastOneExpires();
+    testTickItemSlotExactlyOnTimeExpires();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
