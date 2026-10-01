@@ -1194,6 +1194,77 @@ static void testApplySpellAttackClearAwareBit(void) {
     check("the hit-flash cue is unaffected", monsterGetU16(target, MonsterFieldState) & MonsterStateHitFlashPending);
 }
 
+static void testMarkSpellAttackHitWritesTheInflictedMagnitudeField(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t spell[SpellRecordSize];
+    memset(target, 0, sizeof(target));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldInflictedMagnitude, 42);
+
+    combatMarkSpellAttackHit(target, spell);
+    checkU32("the marker field gets the spell record's own inflicted-magnitude value",
+             monsterGetU16(target, MonsterFieldLastAttackMarker), 42);
+}
+
+static void testApplySpellAttackToActiveSlotsSkipsEmptyAndDeadSlots(void) {
+    uint8_t slots[MonsterActiveSlots * MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(slots, 0, sizeof(slots));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldAttackMagnitude, 10);
+
+    /* Slot 0: empty (MonsterFieldType == 0) -- skipped. */
+    /* Slot 1: occupied but already dead (MonsterFieldHealth == 0) -- skipped. */
+    monsterSetU16(slots + 1 * MonsterRecordSize, MonsterFieldType, 7);
+    monsterSetU16(slots + 1 * MonsterRecordSize, MonsterFieldHealth, 0);
+    /* Slot 2: occupied and alive -- attacked. */
+    monsterSetU16(slots + 2 * MonsterRecordSize, MonsterFieldType, 9);
+    monsterSetU16(slots + 2 * MonsterRecordSize, MonsterFieldHealth, 100);
+
+    randomStart(&rng, 1, 1);
+    CombatSpellAreaAttackOutcome outcome =
+        combatApplySpellAttackToActiveSlots(slots, caster, spell, true /* alreadyResolved */, &rng);
+
+    check("slot 0 (empty) is skipped", !outcome.hit[0]);
+    check("slot 1 (dead) is skipped", !outcome.hit[1]);
+    check("slot 2 (alive) is attacked", outcome.hit[2]);
+    checkU32("the attacked slot takes the preset damage", monsterGetU16(slots + 2 * MonsterRecordSize, MonsterFieldHealth),
+             90);
+    checkU32("untouched slots are unaffected", monsterGetU16(slots + 1 * MonsterRecordSize, MonsterFieldHealth), 0);
+}
+
+static void testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot(void) {
+    uint8_t slots[MonsterActiveSlots * MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    RandomState rng;
+
+    memset(slots, 0, sizeof(slots));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    setSpellU16(spell, SpellFieldAttackMagnitude, 5);
+    setSpellU16(spell, SpellFieldInflictedMagnitude, 99);
+
+    for (unsigned slot = 0; slot < MonsterActiveSlots; slot++) {
+        monsterSetU16(slots + slot * MonsterRecordSize, MonsterFieldType, slot + 1);
+        monsterSetU16(slots + slot * MonsterRecordSize, MonsterFieldHealth, 50);
+    }
+
+    randomStart(&rng, 1, 1);
+    CombatSpellAreaAttackOutcome outcome = combatApplySpellAttackToActiveSlots(slots, caster, spell, true, &rng);
+
+    for (unsigned slot = 0; slot < MonsterActiveSlots; slot++) {
+        check("every eligible slot is attacked", outcome.hit[slot]);
+        checkU32("...and takes the preset damage", monsterGetU16(slots + slot * MonsterRecordSize, MonsterFieldHealth), 45);
+        checkU32("...and gets the hit marker written", monsterGetU16(slots + slot * MonsterRecordSize, MonsterFieldLastAttackMarker),
+                 99);
+    }
+}
+
 static void testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling(void) {
     RandomState rng;
     randomStart(&rng, 3, 7);
@@ -1339,6 +1410,9 @@ int main(void) {
     testApplySpellAttackPersistBitAlsoMarksImmunitiesAfflicted();
     testApplySpellAttackHalfTargetDamageOverridesEvenAZeroResult();
     testApplySpellAttackClearAwareBit();
+    testMarkSpellAttackHitWritesTheInflictedMagnitudeField();
+    testApplySpellAttackToActiveSlotsSkipsEmptyAndDeadSlots();
+    testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

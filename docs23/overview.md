@@ -10764,6 +10764,36 @@ a valuable one: two questions this project had been quietly carrying
 forward round after round are now actually answered. All 22 suites
 still pass (no logic touched).
 
+### Session update (continued, same day): the attack family finally gets a real caller — and a self-caught correction along the way
+
+Went back to the dispatch map from an hour ago to pick off two more
+branches: `word_33302` bits `0x2000`/`0x1000`, the "corridor/ranged
+attack" family this project has suspected for a while routes into
+`ApplyAttackToTarget`. Reading `loc_2C87F` directly confirmed it: it
+calls `ApplyAttackToTarget` against `g_activeCombatMonster`, and its
+sibling loops the same attack over all 3 `g_monsterSlots` entries. This
+is genuinely satisfying — `combatResolveSpellAttack`/
+`combatApplySpellAttack` were composed two rounds ago with a doc
+comment anticipating exactly this kind of caller and no actual one to
+point at; now they have one. Added `combatMarkSpellAttackHit`/
+`combatApplySpellAttackToActiveSlots`, and along the way finally named
+`monster.h`'s long-standing `+0x18` field (write-only, no reader found
+yet, but at least no longer anonymous).
+
+While tracing this, caught a real mistake in this same day's own
+earlier work: the dispatch-chain list from an hour ago had attributed
+the already-known "teleport-then-engage" mechanic to bit `0x20`. It's
+actually bit `0x4`'s own fall-through tail — bit `0x20` turns out to be
+something this project had never documented at all, a position
+bookmark (save the party's current spot, recall back to it later), now
+written up properly instead of left under the wrong label. Not the
+first time this project has caught its own same-session claim and
+fixed it before it could calcify into "established" fact for a future
+round to inherit uncritically — worth the extra few minutes every time.
+
+All 22 suites pass; tests cover the marker write and the area attack's
+skip conditions (empty slot, already-dead slot) and full-hit case.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

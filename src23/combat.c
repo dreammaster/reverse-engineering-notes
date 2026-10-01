@@ -406,6 +406,30 @@ void combatApplySpellAttack(uint8_t *targetRecord, const uint8_t *spellRecord, C
     }
 }
 
+void combatMarkSpellAttackHit(uint8_t *targetRecord, const uint8_t *spellRecord) {
+    monsterSetU16(targetRecord, MonsterFieldLastAttackMarker, spellGetU16(spellRecord, SpellFieldInflictedMagnitude));
+}
+
+CombatSpellAreaAttackOutcome combatApplySpellAttackToActiveSlots(uint8_t *monsterSlots, const uint8_t *casterRecord,
+                                                                    const uint8_t *spellRecord, bool alreadyResolved,
+                                                                    RandomState *rng) {
+    CombatSpellAreaAttackOutcome outcome;
+    for (unsigned slot = 0; slot < MonsterActiveSlots; slot++) {
+        uint8_t *record = monsterSlots + (size_t)slot * MonsterRecordSize;
+        outcome.hit[slot] = false;
+        if (monsterGetU16(record, MonsterFieldType) == 0 || (int16_t)monsterGetU16(record, MonsterFieldHealth) <= 0) {
+            continue;
+        }
+        CombatSpellAttackResult result = combatResolveSpellAttack(record, casterRecord, spellRecord, alreadyResolved, rng);
+        combatApplySpellAttack(record, spellRecord, result);
+        if (result.hasEffect) {
+            combatMarkSpellAttackHit(record, spellRecord);
+            outcome.hit[slot] = true;
+        }
+    }
+    return outcome;
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);

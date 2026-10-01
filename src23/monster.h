@@ -52,7 +52,15 @@ typedef enum {
     MonsterFieldTarget = 0x12,    /* runtime pointer to the party member being attacked; meaningless on disk */
     MonsterFieldFlagOnDeath = 0x14, /* i16 global flag index set (>0) or cleared (<0) when it dies */
     MonsterFieldFlagOnDeath2 = 0x16, /* i16 second such flag */
-    /* +0x18: referenced by nothing traced so far. */
+    /*
+     * u16, written (never read anywhere traced so far) by
+     * ApplyEncodedItemEffect's two combat-slot attack branches
+     * (combat.h's combatMarkSpellAttackHit) from a spell/ability
+     * record's own SpellFieldInflictedMagnitude whenever a player-
+     * triggered attack lands. Kept descriptive rather than guessed at,
+     * since nothing reads it back.
+     */
+    MonsterFieldLastAttackMarker = 0x18,
     MonsterFieldTickTarget = 0x1A,   /* u16; zeroed by monsterTickTimer's reset step, not otherwise traced */
     MonsterFieldTickAmount = 0x1C,   /* u16 subtracted from MonsterFieldHealth once or twice per monsterTickTimer call */
     MonsterFieldTickCountdown = 0x1E, /* u16 ticks remaining until monsterTickTimer's state-machine reset fires */

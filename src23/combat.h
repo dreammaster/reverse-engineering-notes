@@ -529,6 +529,56 @@ CombatSpellAttackResult combatResolveSpellAttack(const uint8_t *targetRecord, co
 void combatApplySpellAttack(uint8_t *targetRecord, const uint8_t *spellRecord, CombatSpellAttackResult result);
 
 /*
+ * ApplyEncodedItemEffect's two "attack an already-engaged monster"
+ * branches (word_33302 bits 0x2000/0x1000, yendor2.asm:51922/51953,
+ * instruction-identical in Chapter 3) -- the real, confirmed callers of
+ * combatResolveSpellAttack/combatApplySpellAttack this project built
+ * two rounds ago without yet having a caller to wire them to. Both
+ * attack combat-slot monsters (`g_monsterSlots`, the same 3-slot staging
+ * array combat.c's turn-order machinery already uses), not
+ * `g_levelMonsters` directly.
+ *
+ * Bit `0x2000` attacks `g_activeCombatMonster` alone (the single slot
+ * `combatSelectActiveMonster` already identifies) -- callable directly
+ * as `combatResolveSpellAttack`/`combatApplySpellAttack` against that one
+ * record, then `combatMarkSpellAttackHit` on a landed hit. **A
+ * precondition the caller must check first, not modeled here**: the
+ * original only reaches this attack at all when the spell record's own
+ * `SpellFieldResistFlags` doesn't have bit `0x40` or `0x80` set -- either
+ * bit diverts to a completely different, untraced branch
+ * (`yendor2.asm:loc_2CF51`) instead of attacking.
+ *
+ * Bit `0x1000` is the same attack applied to every occupied, still-alive
+ * `g_monsterSlots` entry (skips a slot whose `MonsterFieldType` is 0 or
+ * whose `MonsterFieldHealth` is already <= 0) -- composed here as
+ * combatApplySpellAttackToActiveSlots, mirroring
+ * combatApplyEncodedItemEffectParty's own "resolve and apply in one
+ * call, per recipient" shape rather than combatResolveSpellAttack's
+ * separate decide/apply split, since every slot's own result is
+ * consumed immediately and there's no intermediate value worth exposing.
+ *
+ * Both branches share one more real mechanic on a landed hit (any
+ * damage or status surviving resistances): `combatMarkSpellAttackHit`
+ * writes `SpellFieldInflictedMagnitude` into the target's own
+ * `MonsterFieldLastAttackMarker` (monster.h's own new field, `+0x18`,
+ * write-only so far -- nothing reads it back in either branch). The
+ * original also plays a sound event keyed by `SpellFieldInflictedStatus`
+ * here -- reused as a sound-event id in this branch, not a status
+ * bitmask, the same "same bytes, different role per dispatch branch"
+ * pattern this project keeps finding in this record -- not modeled, no
+ * audio layer exists yet.
+ */
+void combatMarkSpellAttackHit(uint8_t *targetRecord, const uint8_t *spellRecord);
+
+typedef struct {
+    bool hit[MonsterActiveSlots];
+} CombatSpellAreaAttackOutcome;
+
+CombatSpellAreaAttackOutcome combatApplySpellAttackToActiveSlots(uint8_t *monsterSlots, const uint8_t *casterRecord,
+                                                                    const uint8_t *spellRecord, bool alreadyResolved,
+                                                                    RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

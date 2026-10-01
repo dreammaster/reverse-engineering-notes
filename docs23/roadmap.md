@@ -971,12 +971,36 @@ consumers, if any.
    `SpellFlagsAPositionReset`/`IconBarPresetAmount`) is confirmed
    all-or-nothing for the single-target branch only (nothing happens at
    all with neither bit set) but never gates the whole-party branch's
-   own icon-bar call. **Still open**: most of the 19 branches still
-   don't have a reimplemented consumer (see `file-formats.md` for the
-   full address map); a dozen bytes in the record's own middle (offsets
-   `0x36`-`0x41`) have no confirmed consumer; and `TickMonsterTimer`'s
-   own gate bits still have no confirmed setter even though this round
-   found its tick-amount/countdown *value* source.
+   own icon-bar call.
+
+   **Two more branches reimplemented, caught and fixed a same-round
+   self-introduced error, same day**: bits `0x2000`/`0x1000` (the
+   corridor/ranged-attack family) confirmed by direct read to call
+   `ApplyAttackToTarget` against `g_activeCombatMonster` alone or every
+   occupied `g_monsterSlots` entry respectively -- the real caller
+   `combatResolveSpellAttack`/`combatApplySpellAttack` had been built
+   for two rounds ago without yet having one. Reimplemented as
+   `combatMarkSpellAttackHit`/`combatApplySpellAttackToActiveSlots`
+   (`src23/combat.c`/`.h`), also finally naming `monster.h`'s
+   long-standing unidentified `+0x18` field (`MonsterFieldLastAttackMarker`
+   -- a confirmed writer, still no confirmed reader). While doing this,
+   caught and corrected a mistake in this very round's own earlier
+   dispatch-chain writeup: bit `0x4`, not bit `0x20`, is the
+   already-documented teleport-then-engage mechanic; bit `0x20` is
+   actually a never-before-documented position bookmark
+   (save/restore the party's own world position, facing, and render
+   state) -- see `file-formats.md` for the full correction. Tests in
+   `test_combat.c`; all 22 suites pass. **Still open**: most of the 19
+   branches still don't have a reimplemented consumer (see
+   `file-formats.md` for the full address map); bit `0x20`'s own
+   save/restore mechanic needs its `g_uiScratchFlags1` bit `0x80` gate
+   traced to a setter before it can be reimplemented; bit `0x2000`'s own
+   `loc_2CF51` diversion (triggered by `SpellFieldResistFlags` bits
+   `0x40`/`0x80`) is untraced; a dozen bytes in the record's own middle
+   (offsets `0x36`-`0x41`) have no confirmed consumer; and
+   `TickMonsterTimer`'s own gate bits still have no confirmed setter
+   even though an earlier round this same day found its tick-amount/
+   countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark

@@ -2969,21 +2969,77 @@ combined conditions): `0x8000` (single-target, `loc_2C1CF`), `0x4000`
 `word_36C93`/`95`/`97`/`99`, a field family close enough to `travel.c`'s
 own still-undecoded `word_36CB1` group to be worth checking together in
 a future pass, not confirmed to be the same mechanism), `0x10`
-(`loc_2C2F9`), `0x4` (`loc_2C344`), `0x20` (`loc_2C5D9` — the
-teleport-then-engage branch, already documented), `0x8` (`loc_2C674`),
-`0x2` (`loc_2C703`), `0x1` (`loc_2C71D` — `interactKnock`'s own trigger,
-already reimplemented), `0x40` (`loc_2C7BD` — its sibling, also already
-reimplemented), `0x2000` (`loc_2C87F` — the attack-resolution family
-above), `0x1000` (`loc_2C8CC`), `0x100` (`loc_2C92A`), `0x200`
-(`loc_2CEE7`); falling through all of `word_33302` drops to 4 more
-`word_33306` bits — `0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4`
-(`loc_2D04D`), `0x1` (`loc_2D137`) — and finally a true no-op
-(`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
-matching the "~19" estimate exactly. Only the bits already named above
-have a reimplemented consumer; the rest (`0x80`/`0x10`/`0x4`/`0x8`/`0x2`/
-`0x1000`/`0x100`/`0x200` of `word_33302`, all 4 of `word_33306`) are
-recorded here as a precise map for whoever picks up the remaining
-branches, rather than re-traced this round.
+(`loc_2C2F9`), `0x4` (`loc_2C344` — the teleport-then-engage branch,
+corrected below), `0x20` (`loc_2C5D9` — a position-bookmark
+save/restore mechanic, new this round, also below), `0x8`
+(`loc_2C674`), `0x2` (`loc_2C703`), `0x1` (`loc_2C71D` —
+`interactKnock`'s own trigger, already reimplemented), `0x40`
+(`loc_2C7BD` — its sibling, also already reimplemented), `0x2000`
+(`loc_2C87F` — confirmed by direct read this round to call
+`ApplyAttackToTarget` against `g_activeCombatMonster`, now
+reimplemented, see below), `0x1000` (`loc_2C8CC` — the same attack
+looped over all 3 `g_monsterSlots` entries, also reimplemented),
+`0x100` (`loc_2C92A`), `0x200` (`loc_2CEE7`); falling through all of
+`word_33302` drops to 4 more `word_33306` bits — `0x8` (`loc_2CCEE`),
+`0x2` (`loc_2CE62`), `0x4` (`loc_2D04D`), `0x1` (`loc_2D137`) — and
+finally a true no-op (`loc_2C1C9`, just clears `g_lastKeyChar`). 19
+branches plus the no-op, matching the "~19" estimate exactly. Only the
+bits named above have a reimplemented consumer; the rest
+(`0x80`/`0x10`/`0x8`/`0x2`/`0x100`/`0x200` of `word_33302`, all 4 of
+`word_33306`) are recorded here as a precise map for whoever picks up
+the remaining branches, rather than traced this round.
+
+**Self-correction, same round**: this list's own first draft (written
+earlier today) attributed the already-documented "teleport-then-engage"
+mechanic (`yendor2.asm:51586`, the `g_wipeEffectX/Y` relocation that
+copies a waiting monster into `g_monsterSlots` slot 1) to bit `0x20`.
+Rereading both branches end to end to implement the attack family below
+found that's wrong: `yendor2.asm:51586` is reached from bit `0x4`'s own
+fall-through tail (`loc_2C344`'s direction-counting line-walk, past
+`loc_2C4B4`/`loc_2C4D1`), not from bit `0x20` (`loc_2C5D9`) at all.
+Bit `0x20`'s own branch does something this project hadn't documented
+before: it reads/writes a small bookmark at `g_currentPartyRecord +
+word_332FA` — `g_uiScratchFlags1` bit `0x80` set saves the party's
+current world position, facing, and 4 more fields (`word_36CAF`/
+`word_36CB1`/`word_36CB3`/`word_36C79 & 7`, all UI/rendering-mode
+state) into that bookmark; clear restores from it (failing cleanly,
+same "can't do that" message as other branches, if nothing was ever
+saved). A "mark location" / "recall to it" pair of spell behaviors
+sharing one branch, gated by a caller-context flag this project hasn't
+traced the setter of yet — plausibly two separate spell/ability ids
+both routing here, one for each direction. Not reimplemented (needs
+that caller-context flag's own source traced first); corrected rather
+than left standing, per this project's own established practice of
+fixing a wrong claim the moment it's caught rather than letting it
+stand until a future round stumbles on it.
+
+**The attack-resolution family finally gets a real caller, same
+round**: reading `loc_2C87F` (bit `0x2000`) directly confirmed it calls
+`ApplyAttackToTarget` against `g_activeCombatMonster` — exactly the
+caller `combat.h`'s own `combatResolveSpellAttack`/`combatApplySpellAttack`
+doc comments had been written two rounds ago to anticipate but didn't
+yet have. `loc_2C8CC` (bit `0x1000`) is the identical attack applied to
+every occupied, still-alive `g_monsterSlots` entry (`MonsterFieldType
+!= 0`, `MonsterFieldHealth > 0`) — an area-attack variant. Both
+branches share one more real mechanic on a landed hit: a sound event
+(keyed by `SpellFieldInflictedStatus`, reused here as a sound-event id,
+not a status bitmask — the same "same bytes, different role per
+dispatch branch" pattern this project keeps finding in this record) and
+a write of `SpellFieldInflictedMagnitude` into the target's own
+`MonsterFieldLastAttackMarker` — `monster.h`'s own long-standing
+`+0x18`, "referenced by nothing traced so far," finally has a confirmed
+writer (still no confirmed reader). Reimplemented as
+`combatMarkSpellAttackHit`/`combatApplySpellAttackToActiveSlots`
+(`src23/combat.c`/`.h`); the single-slot case needs no new function at
+all, just `combatResolveSpellAttack`/`combatApplySpellAttack` against
+`g_activeCombatMonster` directly, then `combatMarkSpellAttackHit` on a
+hit. **One precondition not modeled**: bit `0x2000`'s own branch only
+reaches this attack when the spell record's `SpellFieldResistFlags`
+doesn't have bit `0x40` or `0x80` set — either one diverts to a
+completely different, untraced branch (`loc_2CF51`) instead; a future
+composing dispatcher needs to check this before calling. Tests in
+`test_combat.c` cover the marker write, the per-slot skip conditions
+(empty, already-dead), and every-slot-hit; all 22 suites pass.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:
