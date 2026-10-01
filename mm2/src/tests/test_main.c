@@ -8,6 +8,7 @@
 #include "../mm2_party.h"
 #include "../mm2_reward.h"
 #include "../mm2_smith.h"
+#include "../mm2_town.h"
 #include "../mm2_text.h"
 #include "../mm2_battle.h"
 #include "../mm2_combat.h"
@@ -495,6 +496,31 @@ static void test_smith(const Mm2Game *g) {
 	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_IDENTIFY, 0) == 10 && mm2_smith_price(&items[4], 4, MM2_SMITH_IDENTIFY, 0) == 400);
 }
 
+static void test_town(void) {
+	int sp[4], n;
+	uint32_t pr[4];
+	Mm2Char c;
+	CHECK(mm2_price_decode(10) == 10 && mm2_price_decode(129) == 1000 && mm2_price_decode(37) == 50 && mm2_price_decode(65) == 100);
+	CHECK(mm2_price_decode(148) == 20000 && mm2_price_decode(165) == 50000 && mm2_price_decode(170) == 100000);
+	n = mm2_temple_stock(0, sp, pr);                    /* Apparition 10, Awaken 10, Power Cure 1000 */
+	CHECK(n == 3 && sp[0] == 48 && sp[2] == 53 && pr[0] == 10 && pr[2] == 1000);
+	n = mm2_temple_stock(1, sp, pr);                    /* Mass Distortion 20000, Resurrection 50000, Uncurse Item 100000 */
+	CHECK(n == 3 && sp[0] == 90 && pr[0] == 20000 && pr[1] == 50000 && pr[2] == 100000);
+	n = mm2_guild_stock(0, sp, pr);                     /* Awaken 10, Energy Blast 1000, Sleep 50, Identify Monster 100 */
+	CHECK(n == 4 && sp[1] == 2 && pr[1] == 1000 && pr[2] == 50 && pr[3] == 100);
+	memset(&c, 0, sizeof(c));
+	c.raw[MC_LEVEL] = 4;
+	CHECK(mm2_temple_restore_cost(&c, 0) == 0);
+	c.raw[MC_HP_MAX] = 20; c.raw[MC_HP] = 5;
+	CHECK(mm2_temple_restore_cost(&c, 1) == 10u * 4 * 5);
+	c.raw[MC_CONDITION] = 0x81;
+	CHECK(mm2_temple_restore_cost(&c, 2) == 100u * 4 * 2);
+	c.raw[MC_CONDITION] = 0xFF;
+	CHECK(mm2_temple_restore_cost(&c, 0) == 4000u);
+	c.raw[MC_ALIGN] = 2; c.raw[MC_ORIG_ALIGN] = 0;
+	CHECK(mm2_temple_alignment_cost(&c, 3) == 100u * 4 * 3 && mm2_temple_donation_cost(1) == 500);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -509,6 +535,7 @@ int main(void) {
 	test_battle(&g);
 	test_rewards(&g);
 	test_smith(&g);
+	test_town();
 	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);

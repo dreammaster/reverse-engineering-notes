@@ -55,4 +55,10 @@ out.append(arr("const uint8_t", "MM2_SMITH_D_ID", u8(0x4440, 30), 6) + "  /* mag
 out.append(arr("const uint8_t", "MM2_SMITH_D_CHARGES", u8(0x445E, 30), 6))
 out.append(arr("const uint8_t", "MM2_SMITH_DAY_BONUS_SPECIAL", u8(0x449A, 6)))
 out.append(arr("const uint8_t", "MM2_SMITH_DAY_BONUS", u8(0x44A0, 30)))
+out.append(arr("const uint8_t", "MM2_TEMPLE_SPELL", u8(0x46B2, 20), 4) + "  /* [town][4]: 3 cleric spells (absolute index) + 128 */")
+out.append(arr("const uint8_t", "MM2_TEMPLE_PRICE", u8(0x46C6, 20), 4))
+out.append(arr("const uint8_t", "MM2_GUILD_SPELL", u8(0x46DA, 20), 4) + "  /* [town][4] sorcerer spells */")
+out.append(arr("const uint8_t", "MM2_GUILD_PRICE", u8(0x46EE, 20), 4))
+out.append(arr("const uint16_t", "MM2_TEMPLE_MULT", u16(0x46A8, 5)))
 print("\n".join(out))
+
