@@ -1086,6 +1086,113 @@ static void testApplyRestEffectsPoisonedAloneBlocksRegenWithNoExplicitDrain(void
              partyGetStat(g_record, PartyStatHitPoints), 50);
 }
 
+static void testFindItemInRangeFindsAMatch(void) {
+    memset(g_record, 0, sizeof(g_record));
+    uint8_t *main = partyInventoryGroup(g_record, PartyGroupMain);
+    itemSlotSet(inventoryGroupSlot(main, 1), 5, 0);
+    itemSlotSet(inventoryGroupSlot(main, 4), 0x100, 3);
+
+    unsigned offset = 0;
+    uint16_t found = partyFindItemInRange(g_record, 0x100, 0x110, &offset);
+    checkU32("finds the item whose id falls in range", found, 0x100);
+    check("...and reports the matching slot's own record offset", g_record + offset == inventoryGroupSlot(main, 4));
+}
+
+static void testFindItemInRangeSkipsEmptySlotsAndOutOfRangeIds(void) {
+    memset(g_record, 0, sizeof(g_record));
+    uint8_t *main = partyInventoryGroup(g_record, PartyGroupMain);
+    itemSlotSet(inventoryGroupSlot(main, 2), 5, 0); /* below the range */
+    itemSlotSet(inventoryGroupSlot(main, 5), 999, 0); /* above the range */
+
+    checkU32("no slot in range: nothing found", partyFindItemInRange(g_record, 0x100, 0x110, NULL), 0);
+}
+
+static void testFindItemInRangeOutSlotOffsetIsOptional(void) {
+    memset(g_record, 0, sizeof(g_record));
+    uint8_t *main = partyInventoryGroup(g_record, PartyGroupMain);
+    itemSlotSet(inventoryGroupSlot(main, 1), 50, 0);
+    checkU32("a NULL outSlotOffset is accepted", partyFindItemInRange(g_record, 50, 50, NULL), 50);
+}
+
+static void testItemRangeAvailableRejectsInvalidRanges(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    check("lowId == 0 is a no-op", !itemRangeAvailable(globalSlots, &save, 0, 10).found);
+    check("lowId > highId is a no-op", !itemRangeAvailable(globalSlots, &save, 20, 10).found);
+}
+
+static void testItemRangeAvailableFindsItInTheGlobalTableFirst(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    memset(saveGamePartyRecordById(&save, 1), 0, PartyRecordSize);
+    /* The party member also happens to carry a matching item, but the global table wins since it's checked first. */
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(saveGamePartyRecordById(&save, 1), PartyGroupMain), 1), 9, 0);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+    itemSlotSet(globalSlots + 2 * 4, 9, 5);
+
+    ItemRangeAvailability result = itemRangeAvailable(globalSlots, &save, 8, 10);
+    check("found", result.found);
+    checkU32("the matched item id", result.itemId, 9);
+    check("reported as coming from the global table", result.inGlobalTable);
+    checkU32("the matching slot's own byte offset into globalSlots", result.slotOffset, 8);
+}
+
+static void testItemRangeAvailableFallsBackToPartyInventory(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *record1 = saveGamePartyRecordById(&save, 1);
+    uint8_t *record2 = saveGamePartyRecordById(&save, 2);
+    memset(record1, 0, PartyRecordSize);
+    memset(record2, 0, PartyRecordSize);
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(record2, PartyGroupMain), 3), 15, 2);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    ItemRangeAvailability result = itemRangeAvailable(globalSlots, &save, 14, 16);
+    check("found in the second party member's own inventory", result.found);
+    checkU32("the matched item id", result.itemId, 15);
+    check("reported as not from the global table", !result.inGlobalTable);
+    checkU32("the owning party record id", result.partyRecordId, 2);
+}
+
+static void testItemRangeAvailableStopsDeadAtFirstUnoccupiedSlot(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 0); /* unoccupied: the scan stops dead here */
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 1);
+    uint8_t *record = saveGamePartyRecordById(&save, 1);
+    memset(record, 0, PartyRecordSize);
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), 1), 20, 0);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    check("the second slot's item is never reached, matching the original's stop-dead quirk",
+          !itemRangeAvailable(globalSlots, &save, 20, 20).found);
+}
+
+static void testItemRangeAvailableNothingFoundAnywhere(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *record = saveGamePartyRecordById(&save, 1);
+    memset(record, 0, PartyRecordSize);
+
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+
+    check("nothing anywhere: not found", !itemRangeAvailable(globalSlots, &save, 1, 5).found);
+}
+
 int main(void) {
     testLayoutRelations();
     testStats();
@@ -1112,6 +1219,14 @@ int main(void) {
     testApplyRestEffectsDiseasedCanKillAndSkipsCursedDrain();
     testApplyRestEffectsCursedDrainsMp();
     testApplyRestEffectsPoisonedAloneBlocksRegenWithNoExplicitDrain();
+    testFindItemInRangeFindsAMatch();
+    testFindItemInRangeSkipsEmptySlotsAndOutOfRangeIds();
+    testFindItemInRangeOutSlotOffsetIsOptional();
+    testItemRangeAvailableRejectsInvalidRanges();
+    testItemRangeAvailableFindsItInTheGlobalTableFirst();
+    testItemRangeAvailableFallsBackToPartyInventory();
+    testItemRangeAvailableStopsDeadAtFirstUnoccupiedSlot();
+    testItemRangeAvailableNothingFoundAnywhere();
     testRealCharacters();
 
     if (g_failureCount == 0) {

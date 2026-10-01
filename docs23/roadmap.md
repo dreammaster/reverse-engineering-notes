@@ -1073,19 +1073,28 @@ consumers, if any.
    `lightSourceApply`/`lightSourceTick` (new `src23/lightsource.c`/`.h`);
    tests in `test_lightsource.c` (23rd suite); all 23 suites pass.
 
-   **Still deliberately not reimplemented**: the item-slot-level
-   transition this same mechanic's items go through (unlit -> lit ->
-   used, a separate job belonging to `TickAilmentDuration`, confirmed
-   distinct from the 3 counters above) and `IsItemRangeAvailable`
-   (`yendor2.asm:22764`) -- which turns out to be exactly the
-   "item-availability" dependency `RestPartyAndAdvanceClock`'s own
-   regen-rate derivation has been waiting on since a much earlier round;
-   a second 6-counter timer array (`TickWorldAilmentTimers`) with bit
+   **`IsItemRangeAvailable` reimplemented too, same day**
+   (`yendor2.asm:22764`, already correctly named by an earlier session
+   -- "CORRECTED from `CheckTransportAvailability` -- too specific a
+   guess"): the 6-entry-table-then-party-inventory half, as
+   `partyFindItemInRange`/`itemRangeAvailable` (`src23/party.c`/`.h`,
+   tests in `test_party.c`) -- exactly the "item-availability"
+   dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation
+   has been waiting on since a much earlier round. **Still not done**:
+   the derivation itself built on top of it (which item-id range counts
+   as camping supplies, the per-member consume loop, the
+   percentage-from-count formula), container recursion (a separate,
+   genuinely large CURGAME-backed subsystem this project has no reader
+   for), and the item-slot-level transition this mechanic's items go
+   through (unlit -> lit -> used, `TickAilmentDuration`'s own job,
+   confirmed distinct from the 3 light-source counters above). A second
+   6-counter timer array (`TickWorldAilmentTimers`) also still has bit
    ranges that overlap bit `0x80`'s own 6 fields in a way not yet
    reconciled. See `file-formats.md`'s own dedicated "world ailments"
-   section for the full confirmed address/field map of what's left --
-   still a reasonable candidate for a future pass, just smaller than it
-   was this morning.
+   and "Quest-item and party-inventory range checks" sections for the
+   full confirmed address/field map of what's left -- still a
+   reasonable candidate for a future pass, just smaller than it was
+   this morning.
 
    **Bit `0x100` corrected and `TickMonsterTimer`'s gate-bit setter
    found, same day**: an earlier pass this same day misclassified

@@ -1526,7 +1526,25 @@ strings (`THE POTION WORKED SUCCESSFULLY` there, `YOU CAN NOT USE THAT
 HERE!` elsewhere). Using it there sets global quest flag `0x48`. The
 adjacency to the completion-check range (`0x254`-`0x258` consecutive,
 plus `0x2C8`) strongly suggests these 5-6 items are one themed quest
-item set. **Also part of this cluster**: item `0x253` (immediately
+item set.
+
+**`IsItemRangeAvailable` partially reimplemented, 2026-10-01**: the
+6-entry-table-then-party-inventory half (`partyFindItemInRange`/
+`itemRangeAvailable`, `src23/party.c`/`.h`) -- the global table check
+and the fallback 8-slot main-inventory scan across
+`SaveHeaderPartySlots`, including the already-documented-elsewhere
+"stops dead at the first unoccupied slot" whole-party quirk. **The
+3-level container recursion described above is deliberately not
+included** -- it's a genuine, separate, CURGAME-backed "ground item
+container" subsystem (`FindItemInsideContainer`/`Level2`/`Level3`) this
+project has no reader for yet; a slot holding a container-type item is
+simply reported as not matching rather than partially modeled. This
+reimplementation is what unblocks `ApplyRestEffectsToCharacter`'s own
+regen-rate dependency, documented further down this file -- composing
+that derivation itself (converting an item-availability count into a
+percentage) is a separate, still-open step. Tests in `test_party.c`.
+
+**Also part of this cluster**: item `0x253` (immediately
 before the range) is `ShowVisionAtLocation` — saves the current view,
 jumps it to a fixed coordinate (340,99) using the same redraw sequence
 `ApplyMapTriggerEffect` uses for teleports, shows it briefly, then
@@ -2719,14 +2737,18 @@ supplying every active member with a camping item yields a full 100%
 regen tick, partially supplying them yields a proportionally smaller
 one, and having none at all yields 0% (no regen, though the status-
 effect-gated degen paths below still apply regardless). **This
-specific derivation is not reimplemented** — it needs
-`IsItemRangeAvailable`'s own inventory/container-search subsystem
-(`FindItemInInventoryRange`/`FindItemInsideContainer`{,`Level2`,`Level3`},
-see "Quest-item and party-inventory range checks" above), which this
-project hasn't built yet. `partyApplyRestEffects` (`party.c`/`.h`)
-takes the resulting percentage as an already-resolved parameter
-instead, matching this project's established "decide, don't apply
-against unconfirmed inputs" discipline (the same pattern
+specific derivation is not fully reimplemented** — `IsItemRangeAvailable`
+itself is now reimplemented (`partyFindItemInRange`/`itemRangeAvailable`,
+2026-10-01, see "Quest-item and party-inventory range checks" above),
+but the derivation built on top of it still needs: the specific
+camping-supply item-id range, the per-active-member consume loop
+(`ConsumeItemChargeResource`), the percentage-from-count formula, and
+`IsItemRangeAvailable`'s own container-recursion half
+(`FindItemInsideContainer`{,`Level2`,`Level3`}), which this project
+hasn't built yet. `partyApplyRestEffects` (`party.c`/`.h`) takes the
+resulting percentage as an already-resolved parameter instead, matching
+this project's established "decide, don't apply against unconfirmed
+inputs" discipline (the same pattern
 `combatApplyEncodedItemEffectSingle` already uses for its own resolved
 value).
 
@@ -3287,21 +3309,28 @@ used, `TickAilmentDuration`'s own job, items 1 and 2 above) is a
 *separate* mechanic from the 3 standalone counters just reimplemented
 -- confirmed by direct read that neither `ApplyStatusEffect` nor
 `TickStatusEffects` touches an item slot at all, only these 3 scalars
-and `word_36C79`. `IsItemRangeAvailable` (`yendor2.asm:22764`, already
-correctly named and partially commented by an earlier session) checks
-this same 6-entry table first, falling back to scanning every party
-member's own inventory via `FindItemInInventoryRange` -- this is the
-exact "item-availability" dependency `RestPartyAndAdvanceClock`'s own
-regen-rate derivation has been waiting on since a much earlier round.
-Both of these remain open: the item-slot tick/transition logic and
-`IsItemRangeAvailable` itself, plus `word_36C93`-`9D`'s own relationship
-(if any) to the separate `0x9433` timer array `TickWorldAilmentTimers`
-manages. Recording the full confirmed address/field map here is the
-honest contribution for the parts not yet done; implementing a C module
-on top of an
-unconfirmed data model risks baking in a wrong structure. A genuinely
-good candidate for its own dedicated multi-round pass, the same way
-the side-trap/ambush pipeline and `ApplyMapTriggerEffect` each got one
+and `word_36C79`.
+
+**`IsItemRangeAvailable` reimplemented too, same day** -- see "Quest-item
+and party-inventory range checks" above for the full writeup
+(`partyFindItemInRange`/`itemRangeAvailable`, `src23/party.c`/`.h`,
+tests in `test_party.c`). This is the exact "item-availability"
+dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation has
+been waiting on since a much earlier round -- composing that derivation
+itself (which item-id range counts as "camping supplies," and how a
+count converts to a percentage) is still a separate step, not done
+here.
+
+What's left in this whole system: the item-slot tick/transition logic
+(`TickAilmentDuration`'s own job, items 1 and 2 above), the regen-rate
+percentage derivation itself, container recursion, and `word_36C93`-`9D`'s
+own relationship (if any) to the separate `0x9433` timer array
+`TickWorldAilmentTimers` manages. Recording the full confirmed
+address/field map here is the honest contribution for the parts not
+yet done; implementing a C module on top of an unconfirmed data model
+risks baking in a wrong structure. A genuinely good candidate for its
+own dedicated multi-round pass, the same way the side-trap/ambush
+pipeline and `ApplyMapTriggerEffect` each got one
 before being reimplemented.
 
 ### A self-correction, and `TickMonsterTimer`'s gate-bit setter found (2026-10-01, same day)

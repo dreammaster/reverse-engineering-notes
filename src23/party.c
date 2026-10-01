@@ -890,3 +890,62 @@ PartyRestOutcome partyApplyRestEffects(uint8_t *record, uint16_t regenPercent) {
     }
     return outcome;
 }
+
+uint16_t partyFindItemInRange(const uint8_t *record, uint16_t lowId, uint16_t highId, unsigned *outSlotOffset) {
+    for (unsigned slot = 1; slot <= 8; slot++) {
+        unsigned offset = PartyFieldInventory + 2 + (slot - 1) * ItemSlotSize;
+        uint16_t id = itemSlotId(record + offset);
+        if (id == 0) {
+            continue;
+        }
+        if (id >= lowId && id <= highId) {
+            if (outSlotOffset) {
+                *outSlotOffset = offset;
+            }
+            return id;
+        }
+    }
+    return 0;
+}
+
+ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *save, uint16_t lowId, uint16_t highId) {
+    ItemRangeAvailability result;
+    memset(&result, 0, sizeof(result));
+    if (lowId == 0 || lowId > highId) {
+        return result;
+    }
+
+    for (unsigned slot = 0; slot < 6; slot++) {
+        const uint8_t *entry = globalSlots + slot * 4;
+        uint16_t id = itemSlotId(entry);
+        if (id >= lowId && id <= highId) {
+            result.found = true;
+            result.itemId = id;
+            result.inGlobalTable = true;
+            result.slotOffset = slot * 4;
+            return result;
+        }
+    }
+
+    for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
+        uint16_t id = saveGetPartySlot(save, member);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record) {
+            continue;
+        }
+        unsigned offset;
+        uint16_t found = partyFindItemInRange(record, lowId, highId, &offset);
+        if (found != 0) {
+            result.found = true;
+            result.itemId = found;
+            result.inGlobalTable = false;
+            result.slotOffset = offset;
+            result.partyRecordId = id;
+            return result;
+        }
+    }
+    return result;
+}

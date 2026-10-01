@@ -10980,6 +10980,33 @@ A good shape for today in general: when a "too tangled to touch" system
 turns out to have one clean, checkable thread running through it,
 pulling that thread doesn't require solving the whole tangle first.
 
+### Session update (continued, same day): `IsItemRangeAvailable`, and a pleasant surprise in an earlier session's own old notes
+
+Picked the "stays open" thread from the last entry back up —
+`IsItemRangeAvailable` itself. Turned out an earlier session had
+already done excellent groundwork on this exact function, under
+"Quest-item and party-inventory range checks" in `file-formats.md` —
+full container-recursion chain traced, the dual transport-gate/
+quest-completion usage identified, even a whole cluster of relic-tier
+quest items found nearby. That earlier work made today's job easier:
+the function's own shape was already completely clear, so the only
+real decision was how much of it to take on.
+
+Container recursion is its own genuinely separate subsystem — it reads
+records from CURGAME this project has no reader for at all, three
+levels deep. Rather than build that just to finish this one function,
+reimplemented the part that doesn't need it: the 6-entry resource-panel
+check and the fallback scan across each party member's own main
+inventory, as `partyFindItemInRange`/`itemRangeAvailable`. A slot
+holding a container just reports as "not found" instead of being
+chased into — a safe, honest simplification, not a silent gap.
+
+This is the exact dependency the "R rest" command's own regen-rate
+math has been waiting on since a genuinely old round. Still not fully
+closed — the regen-percentage formula itself sits on top of this, not
+inside it — but the wall this project kept bumping into every time that
+dependency came up is down.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

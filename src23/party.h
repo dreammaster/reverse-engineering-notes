@@ -778,10 +778,13 @@ void partyResetDailyAbilityCharges(uint8_t *record);
  * `regenPercent` is the original's own `word_328C2` -- derived from how
  * many camping-supply items (item catalog range, consumed via
  * ConsumeItemChargeResource) the party had on hand relative to its
- * active member count; that derivation needs the not-yet-reimplemented
- * IsItemRangeAvailable/container-recursion item-search system, so it's
- * supplied here as an already-resolved input rather than composed
- * against an unconfirmed subsystem.
+ * active member count. `itemRangeAvailable` (below) now covers the
+ * "does the party have one" half of that derivation; still missing:
+ * the specific camping-supply item-id range itself, the per-member
+ * consume loop, the percentage-from-count formula, and container
+ * recursion (`itemRangeAvailable`'s own doc comment) -- so
+ * `regenPercent` is still supplied here as an already-resolved input
+ * rather than composed end to end.
  */
 typedef struct {
     bool wasSkipped; /* incapacitated -- no change made at all */
@@ -789,5 +792,62 @@ typedef struct {
 } PartyRestOutcome;
 
 PartyRestOutcome partyApplyRestEffects(uint8_t *record, uint16_t regenPercent);
+
+/*
+ * FindItemInInventoryRange (yendor2.asm:22854, instruction-identical in
+ * Chapter 3): searches one party member's 8 main inventory slots
+ * (PartyFieldInventory + 2 + slot*ItemSlotSize, the same layout
+ * inventoryGroupSlot already uses) for an item id within
+ * [lowId, highId] inclusive. Returns the id found (0 if none) and, via
+ * outSlotOffset, the matching slot's own record-relative byte offset.
+ *
+ * NOT reimplemented: recursing into a container-type item's own
+ * contents when a slot's own id doesn't match directly (ItemFlag bit
+ * 0x2000) -- the original reads a CURGAME-backed "ground item
+ * container" record for this (FindItemInsideContainer,
+ * yendor2.asm:22911), a genuinely separate, not-yet-built subsystem
+ * (see file-formats.md's "world ailments" section for where this
+ * surfaced). Also omitted: the original's own extra check of equipment
+ * slot 0xB (record +0x13E) -- that slot is *only* ever consulted as a
+ * possible container, never range-matched directly, so without
+ * container support it can never contribute a match and is safely left
+ * out rather than partially modeled.
+ */
+uint16_t partyFindItemInRange(const uint8_t *record, uint16_t lowId, uint16_t highId, unsigned *outSlotOffset);
+
+/*
+ * IsItemRangeAvailable (yendor2.asm:22764, instruction-identical in
+ * Chapter 3; "CORRECTED from 'CheckTransportAvailability' -- too
+ * specific a guess" per an earlier session's own comment) -- a generic
+ * "does the party have an item in this id range" check, used both for
+ * a boat/horse-style transport gate and, via `CheckQuestItemsCompleted`
+ * (not reimplemented), a quest-item-completion check.
+ *
+ * A no-op (`.found == false`) if lowId is 0 or lowId > highId, matching
+ * the original's own two early-exit guards. Otherwise: checks
+ * globalSlots (the original's own fixed 6-entry table at `DS:0x9519`,
+ * the "resource panel" -- see file-formats.md's "world ailments"
+ * section) for a direct id match first; if none, scans each occupied
+ * `SaveHeaderPartySlots` member's own inventory via
+ * partyFindItemInRange, stopping dead at the first *unoccupied* slot
+ * instead of skipping past it -- the same quirk already found in
+ * `combatApplySavingThrowTrap`/`combatApplyEncodedItemEffectParty`'s
+ * own whole-party loops.
+ *
+ * NOT reimplemented: container recursion (see partyFindItemInRange's
+ * own doc comment) and the original's own `SyncAllContainers` call
+ * (flushes any open container UI state back to its CURGAME record --
+ * moot without container support).
+ */
+typedef struct {
+    bool found;
+    uint16_t itemId;
+    bool inGlobalTable;      /* true: globalSlots; false: a party member's own inventory */
+    unsigned slotOffset;     /* inGlobalTable: byte offset into globalSlots (0, 4, ..., 20); else: byte offset into the owning party record */
+    uint16_t partyRecordId;  /* only meaningful when !inGlobalTable */
+} ItemRangeAvailability;
+
+/* globalSlots: 24 bytes, 6 x 4-byte item slots (itemSlotId/itemSlotExtra shape), matching DS:0x9519. */
+ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *save, uint16_t lowId, uint16_t highId);
 
 #endif
