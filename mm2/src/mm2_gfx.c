@@ -58,7 +58,7 @@ const Mm2Image *mm2_bank_image(Mm2Bank *b, int idx) {
 		im->mask = (uint8_t *)malloc((size_t)w * h);
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)
-				im->mask[y * w + x] = (d[mo + y * mrow + x / 8] >> (7 - x % 8)) & 1;
+				im->mask[y * w + x] = !((d[mo + y * mrow + x / 8] >> (7 - x % 8)) & 1);   /* file: 1 = transparent */
 	}
 	return im;
 }

@@ -104,9 +104,9 @@ typedef struct {
 
 static void test_indoor_render(const Mm2Game *g) {
 	static const IndoorCase cases[] = {
-		{0, 8, 8, 'N', "TOWN", 0x8148cf60u},   {0, 13, 8, 'N', "TOWN", 0xe4e91d3du},
-		{33, 8, 8, 'E', "CASTLE", 0x878f51fcu}, {17, 8, 8, 'N', "CAVE", 0x46784c1du},
-		{0, 11, 2, 'N', "TOWN", 0x59814abeu},
+		{0, 8, 8, 'N', "TOWN", 0xc9106f11u},   {0, 13, 8, 'N', "TOWN", 0xe9566955u},
+		{33, 8, 8, 'E', "CASTLE", 0x5c7aa316u}, {17, 8, 8, 'N', "CAVE", 0x46784c1du},
+		{0, 11, 2, 'N', "TOWN", 0x0fe3dc77u},
 	};
 	static uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
 	size_t i;
@@ -125,7 +125,7 @@ static void test_indoor_render(const Mm2Game *g) {
 
 static void test_outdoor_render(const Mm2Game *g) {
 	static const struct { int x, y; char f; uint32_t hash; } cases[] = {
-		{8, 8, 'N', 0x9964da3cu}, {4, 10, 'E', 0xca8dace9u}, {12, 5, 'S', 0x8345ed1du}};
+		{8, 8, 'N', 0x64594d6fu}, {4, 10, 'E', 0x2e516abfu}, {12, 5, 'S', 0xa9625e22u}};
 	static uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
 	uint8_t map[512];
 	Mm2View v;

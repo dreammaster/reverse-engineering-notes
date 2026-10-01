@@ -165,7 +165,8 @@ LZW   (see above)  ->  bank:
 image (at image_offset):  u16 width, u16 height, then height rows of
       ceil(width/2) bytes (16 colours; ceil(width/4) for 2 bpp), rows byte aligned (every shipped image has a
       row length that is a multiple of 4 anyway), left pixel in the high bits; palette = default IBM EGA colours
-mask  (at mask_offset):   no header, 1 bit per pixel, ceil(width/8) bytes per row
+mask  (at mask_offset):   no header, 1 bit per pixel, ceil(width/8) bytes per row; a set bit = TRANSPARENT
+                          (the image has filler colour 8 under it); draw only where the mask bit is 0
 ```
 
 Contents seen: `town/cave/castle.16` = 32 wall/door pieces of the first-person maze view (full

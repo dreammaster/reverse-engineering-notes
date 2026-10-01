@@ -92,7 +92,7 @@ def render(game_dir, map_id, x, y, facing, style="TOWN"):
         m = g.mask(b, mo, w, h) if mo else None
         for j in range(h):
             for i in range(w):
-                if (m is None or m[j][i]) and 0 <= py + j < 200 and 0 <= px + i < 320:
+                if (m is None or not m[j][i]) and 0 <= py + j < 200 and 0 <= px + i < 320:
                     canvas[py + j][px + i] = pix[j][i]
     blit(sky, 1, 8, 8)
     blit(fl, 0, 8, 0x44)
@@ -146,7 +146,7 @@ def render_outdoors(map_id, x, y, facing, special="OCEAN"):
         m = g.mask(b, mo, w, h) if mo else None
         for j in range(h):
             for i in range(w):
-                if (m is None or m[j][i]) and 0 <= py + j < 200 and 0 <= px + i < 320:
+                if (m is None or not m[j][i]) and 0 <= py + j < 200 and 0 <= px + i < 320:
                     canvas[py + j][px + i] = pix[j][i]
     blit(bank("SKY"), 0, 8, 8)
     blit(bank("OUTF"), 0, 8, 0x44)
