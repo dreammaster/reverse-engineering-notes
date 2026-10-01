@@ -25,8 +25,8 @@ Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`
 set PATH=C:\mingw32\bin;%PATH%
 mingw32-make test        # builds and runs the tests (no SDL needed)
 mingw32-make check-sdl   # syntax-checks main_sdl.c against the SDL2 headers
-mingw32-make mm2         # links the viewer (needs the SDL2 MinGW libraries; set SDL_CFLAGS / SDL_LIBS)
+mingw32-make mm2         # links build/mm2.exe against SDL2 (SDL_PREFIX, default C:/dev/SDL2/SDL2-2.32.10/i686-w64-mingw32) and copies SDL2.dll
 ```
 
-The game directory is `$MM2_DIR` or `D:/GOG Games/Might and Magic 2`.  No SDL2 runtime for MinGW was installed
-when this was written, so `mm2.exe` has not been linked or run yet; everything else is exercised by the tests.
+The game directory is `$MM2_DIR` or `D:/GOG Games/Might and Magic 2`.  SDL2 2.32.10 (MinGW development package from libsdl.org) is unpacked in `C:\dev\SDL2`; `mm2.exe` links and runs
+(smoke-tested with `SDL_VIDEODRIVER=dummy`).

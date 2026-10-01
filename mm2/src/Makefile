@@ -7,8 +7,9 @@ BUILD   := build
 CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_game.c mm2_map.c mm2_monpic.c mm2_png.c mm2_text.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_battle.c mm2_combat.c mm2_party.c mm2_reward.c mm2_rules.c mm2_smith.c mm2_spell_names_gen.c mm2_spells.c mm2_town.c mm2_tables_gen.c
 CORE_O  := $(CORE:%.c=$(BUILD)/%.o)
 
-SDL_CFLAGS ?= -IC:/dev/scummvm_libs_2015/include/SDL2 -Dmain=SDL_main
-SDL_LIBS   ?= -lmingw32 -lSDL2main -lSDL2
+SDL_PREFIX ?= C:/dev/SDL2/SDL2-2.32.10/i686-w64-mingw32
+SDL_CFLAGS ?= -I$(SDL_PREFIX)/include/SDL2
+SDL_LIBS   ?= -L$(SDL_PREFIX)/lib -lmingw32 -lSDL2main -lSDL2
 
 all: $(BUILD)/test_main.exe
 
@@ -35,6 +36,7 @@ $(BUILD)/main_sdl.o: main_sdl.c | $(BUILD)
 
 mm2: $(BUILD)/main_sdl.o $(CORE_O)
 	$(CC) $^ -o $(BUILD)/mm2.exe $(SDL_LIBS)
+	cp $(SDL_PREFIX)/bin/SDL2.dll $(BUILD)/
 
 check-sdl: main_sdl.c
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) -fsyntax-only main_sdl.c
