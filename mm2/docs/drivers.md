@@ -56,5 +56,5 @@ entries are named `entry_NN`, their targets `drv_fnNN_<role>` with the roles of 
 them: function `10h` is not a loader but a **bank pre-processor** (it walks the bank's image table and converts every
 image into the adapter's native layout, e.g. EGA planar rows padded to 4 bytes); the real drawing function `13h` then
 reads that converted data (`word_BC6` = mask flag, `word_BC8` = row length).  Video-memory row offsets come from the
-table at offset `72h`; the video segment is stored at `328h`.  The number of jump table entries differs by driver (EGA 36,
-CGA 24 ...), unused entries jump to a `retf`.
+table at offset `72h`; the video segment is stored at `328h`.  The number of jump table entries differs by driver (EGA 36, MCGA and Tandy 32, CGA and Hercules 24, TIMER 2;
+unused ones jump to a `retf`).
