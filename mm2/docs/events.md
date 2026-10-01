@@ -69,6 +69,6 @@ Semantics are from reading the handlers; names in the IDA databases: `evt_opNN_*
 | 47 | 1 | `1A404` | read a string from the player (10 chars) |
 | 48 | 11 | `1A45A` | compare typed string with 10 encoded bytes (password puzzle) → `cond` |
 | 49 | 4 | `1A4BC` | award experience |
-| 50 | 2 | `1A570` | (not traced) |
+| 50 | 2 | `1A570` | `cond` = number of party skill slots equal to skill *n* (`party_skill_count`; e.g. Cartographer, Mountaineer) |
 
 Opcode usage across the shipped maps: see `tools/mm2_data.py` (`python -c` with `split_scripts`).

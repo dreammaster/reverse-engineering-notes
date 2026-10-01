@@ -6096,8 +6096,8 @@ loc_1A56B:                              ; CODE XREF: evt_op45_check_char_class+3
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A570:                              ; CODE XREF: evt_run_script:loc_1A7BA↓p
-                call    evt_read_byte
+evt_op50_party_skill:                   ; CODE XREF: evt_run_script:loc_1A7BA↓p
+                call    evt_read_byte   ; cond = party_skill_count(arg)
                 sub     ah, ah
                 push    ax
                 call    thk_party_skill_count
@@ -6540,7 +6540,7 @@ loc_1A7B4:                              ; DATA XREF: evt_run_script+222↓o
                 align 2
 
 loc_1A7BA:                              ; DATA XREF: evt_run_script+224↓o
-                call    loc_1A570
+                call    evt_op50_party_skill
                 jmp     short loc_1A82C
 ; ---------------------------------------------------------------------------
                 align 2

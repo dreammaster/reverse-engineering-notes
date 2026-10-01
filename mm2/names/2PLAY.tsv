@@ -90,3 +90,4 @@
 18CC6	outdoor_draw_tiles	builds 54B0/54B4/54B8 and draws all tiles
 1BB4E	show_location_map	Location spell: map with party marker
 1BEBA	view_collect_walls	fills the 20 wall variables 27826..27839 for the indoor view
+1A570	evt_op50_party_skill	cond = party_skill_count(arg)

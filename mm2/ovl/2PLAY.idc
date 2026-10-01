@@ -2337,7 +2337,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1A558);
 	op_stkvar	(x,	0);
+	set_cmt	(0X1A570,	"cond = party_skill_count(arg)",	0);
 	create_insn	(0X1A570);
+	set_name	(0X1A570,	"evt_op50_party_skill");
 	create_insn	(x=0X1A579);
 	op_hex		(x,	1);
 	create_insn	(0X1A580);
