@@ -1272,6 +1272,49 @@ static void testConsumeItemChargeMultiUseItemDiscardsOnLastCharge(void) {
     checkU32("the group's own weight drops by the item's weight (10 - 4)", inventoryGroupWeight(mainGroup), 6);
 }
 
+static void testConsumeGlobalChargeDiscardsASingleUseItemWithNoWeightDeduction(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 1;
+    catalog.consumableCount = 1;
+
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setU16At(item1, ItemFieldWeight, 9); /* must NOT be deducted anywhere -- the global table isn't weighed */
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 0);
+
+    uint8_t globalSlot[4];
+    itemSlotSet(globalSlot, 1, 0);
+
+    itemSlotConsumeGlobalCharge(&catalog, globalSlot);
+
+    checkU32("a single-use item in the global table is discarded entirely", itemSlotId(globalSlot), 0);
+    checkU32("...extra too", itemSlotExtra(globalSlot), 0);
+}
+
+static void testConsumeGlobalChargeMultiUseItemDecrementsWithoutDiscarding(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 1;
+    catalog.consumableCount = 1;
+
+    uint8_t *item1 = catalog.items + 0 * ItemRecordSize;
+    setU16At(item1, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(item1, ItemFieldTargetOffset, 0);
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 1);
+
+    uint8_t globalSlot[4];
+    itemSlotSet(globalSlot, 1, 5);
+
+    itemSlotConsumeGlobalCharge(&catalog, globalSlot);
+
+    checkU32("a multi-use item keeps its own id", itemSlotId(globalSlot), 1);
+    checkU32("...and its charge count decrements by 1", itemSlotExtra(globalSlot), 4);
+}
+
 /* A single-use "food" item at id 0x36 (matching real MEAT), for the regen-percent tests below. */
 static void setUpFoodCatalog(ItemCatalog *catalog) {
     memset(catalog, 0, sizeof(*catalog));
@@ -1385,7 +1428,7 @@ static void testDeriveRestRegenPercentStopsDeadAtFirstUnoccupiedSlot(void) {
              partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 0);
 }
 
-static void testDeriveRestRegenPercentGlobalTableMatchIsTreatedAsAMiss(void) {
+static void testDeriveRestRegenPercentConsumesFromTheGlobalTableToo(void) {
     static ItemCatalog catalog;
     setUpFoodCatalog(&catalog);
 
@@ -1399,8 +1442,9 @@ static void testDeriveRestRegenPercentGlobalTableMatchIsTreatedAsAMiss(void) {
     memset(globalSlots, 0, sizeof(globalSlots));
     itemSlotSet(globalSlots + 0, 0x36, 0); /* food sits in the global resource panel instead */
 
-    check("a global-table match isn't consumed (not reimplemented) -- treated conservatively as a miss",
-          partyDeriveRestRegenPercent(globalSlots, &save, &catalog) == 0);
+    checkU32("a global-table match is consumed too: 1 active member, 1 fed -> 100%",
+             partyDeriveRestRegenPercent(globalSlots, &save, &catalog), 100);
+    checkU32("the global slot itself is discarded (single-use food)", itemSlotId(globalSlots + 0), 0);
 }
 
 int main(void) {
@@ -1440,12 +1484,14 @@ int main(void) {
     testConsumeItemChargeSingleUseItemIsDiscardedAndDeductsWeight();
     testConsumeItemChargeMultiUseItemDecrementsWithoutDiscarding();
     testConsumeItemChargeMultiUseItemDiscardsOnLastCharge();
+    testConsumeGlobalChargeDiscardsASingleUseItemWithNoWeightDeduction();
+    testConsumeGlobalChargeMultiUseItemDecrementsWithoutDiscarding();
     testDeriveRestRegenPercentTruncatesLikeTheOriginal();
     testDeriveRestRegenPercentPartialFeedingStopsAtFirstMiss();
     testDeriveRestRegenPercentNoFoodAtAllIsZero();
     testDeriveRestRegenPercentIncapacitatedMembersDoNotCount();
     testDeriveRestRegenPercentStopsDeadAtFirstUnoccupiedSlot();
-    testDeriveRestRegenPercentGlobalTableMatchIsTreatedAsAMiss();
+    testDeriveRestRegenPercentConsumesFromTheGlobalTableToo();
     testRealCharacters();
 
     if (g_failureCount == 0) {

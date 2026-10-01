@@ -871,14 +871,14 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
  * which drives this function's own first real use, the "R rest"
  * regen-rate food consumption) ever touches them.
  *
- * Also only the party-inventory case is covered (matching
+ * This function is the party-inventory case (matching
  * `itemRangeAvailable`'s own `!inGlobalTable` output) -- `slot` must be
  * a 4-byte item slot inside `partyRecord`'s own main inventory group.
- * The 6-entry global-table case (`itemRangeAvailable`'s
- * `.inGlobalTable == true`) is not reimplemented, nor is container
- * recursion or the 3 special modes' own equipment-slot write-back
- * (`partyHandleIconBarItemExpiry` already covers conceptually similar
- * ground for a different caller).
+ * `itemSlotConsumeGlobalCharge` (below) is the sibling 6-entry
+ * global-table case. Container recursion and the 3 special modes' own
+ * equipment-slot write-back (`partyHandleIconBarItemExpiry` already
+ * covers conceptually similar ground for a different caller) are not
+ * reimplemented.
  *
  * In this mode: if the item's own target-entry flags
  * (`itemTargetWord(entry, 1)` bit `0x1` -- "has multiple uses," not
@@ -898,6 +898,19 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
 void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot);
 
 /*
+ * ConsumeItemChargeResource's own global-table branch (`word_3297A !=
+ * 0`, `yendor2.asm:41557`) -- the exact same decrement-or-discard logic
+ * as `partyConsumeItemCharge`, for a `slot` taken from
+ * `itemRangeAvailable`'s own 6-entry `globalSlots` table instead
+ * (`.inGlobalTable == true`). There's no owning inventory group to
+ * deduct weight from here -- the resource panel isn't weighed -- so
+ * discarding the slot is the only state change; the original's own
+ * extra step on discard, a conditional `ShowResourceDepletedOverlay`
+ * UI call gated on `word_36C7F` bit `0x1000`, isn't modeled.
+ */
+void itemSlotConsumeGlobalCharge(const ItemCatalog *catalog, uint8_t *slot);
+
+/*
  * RestPartyAndAdvanceClock's own regen-rate derivation
  * (yendor2.asm:25832-25870, instruction-identical in Chapter 3), now
  * fully composed: counts active (non-incapacitated) `SaveHeaderPartySlots`
@@ -912,17 +925,14 @@ void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, ui
  * = 33*3 = 99`, not 100, reproduced exactly rather than "fixed."
  *
  * A match in the 6-entry global table (`itemRangeAvailable`'s own
- * `.inGlobalTable == true`) is treated the same as "nothing found" --
- * `partyConsumeItemCharge` only covers the party-inventory case (see
- * its own doc comment), so this stops the loop early rather than
- * silently miscounting. A conservative under-approximation in the rare
- * case food sits in the resource panel instead of a party member's own
- * inventory, not a wrong answer.
+ * `.inGlobalTable == true`) is consumed via `itemSlotConsumeGlobalCharge`
+ * -- `globalSlots` is mutated in place, same as a party member's own
+ * inventory would be.
  *
  * Returns 0 if there are no active members at all -- the original's
  * own `div` by that count would fault; not reproduced as a crash since
  * this shouldn't be reachable with real save data.
  */
-uint16_t partyDeriveRestRegenPercent(const uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
+uint16_t partyDeriveRestRegenPercent(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
 
 #endif

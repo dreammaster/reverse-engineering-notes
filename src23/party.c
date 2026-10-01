@@ -950,7 +950,13 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
     return result;
 }
 
-void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot) {
+/*
+ * The "decrement-or-discard" step both of ConsumeItemChargeResource's
+ * default-mode branches share. Returns the item's own id (now cleared
+ * from the slot) if it was just discarded, or 0 if a charge was merely
+ * spent and the item remains.
+ */
+static uint16_t itemSlotSpendCharge(const ItemCatalog *catalog, uint8_t *slot) {
     uint16_t id = itemSlotId(slot);
     const uint8_t *record = itemCatalogRecord(catalog, id);
     const uint8_t *entry = record ? itemTargetEntry(catalog, record) : NULL;
@@ -962,17 +968,30 @@ void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, ui
         }
         if (extra > 0) {
             itemSlotSet(slot, id, extra);
-            return;
+            return 0;
         }
     }
 
     itemSlotSet(slot, 0, 0);
+    return id;
+}
+
+void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot) {
+    uint16_t discardedId = itemSlotSpendCharge(catalog, slot);
+    if (discardedId == 0) {
+        return;
+    }
+    const uint8_t *record = itemCatalogRecord(catalog, discardedId);
     uint8_t *mainGroup = partyInventoryGroup(partyRecord, PartyGroupMain);
     uint16_t weight = record ? itemGetU16(record, ItemFieldWeight) : 0;
     inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
 }
 
-uint16_t partyDeriveRestRegenPercent(const uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog) {
+void itemSlotConsumeGlobalCharge(const ItemCatalog *catalog, uint8_t *slot) {
+    itemSlotSpendCharge(catalog, slot);
+}
+
+uint16_t partyDeriveRestRegenPercent(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog) {
     unsigned activeCount = 0;
     for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
         uint16_t id = saveGetPartySlot(save, member);
@@ -991,11 +1010,15 @@ uint16_t partyDeriveRestRegenPercent(const uint8_t *globalSlots, SaveGame *save,
     unsigned consumed = 0;
     for (unsigned i = 0; i < activeCount; i++) {
         ItemRangeAvailability avail = itemRangeAvailable(globalSlots, save, 0x36, 0x40);
-        if (!avail.found || avail.inGlobalTable) {
+        if (!avail.found) {
             break;
         }
-        uint8_t *record = saveGamePartyRecordById(save, avail.partyRecordId);
-        partyConsumeItemCharge(record, catalog, record + avail.slotOffset);
+        if (avail.inGlobalTable) {
+            itemSlotConsumeGlobalCharge(catalog, globalSlots + avail.slotOffset);
+        } else {
+            uint8_t *record = saveGamePartyRecordById(save, avail.partyRecordId);
+            partyConsumeItemCharge(record, catalog, record + avail.slotOffset);
+        }
         consumed++;
     }
     return (uint16_t)((100 / activeCount) * consumed);

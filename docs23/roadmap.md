@@ -1127,8 +1127,16 @@ consumers, if any.
    clears once every coexisting lit instance of that light source has
    burned out. Tests in `test_lightsource.c`; all 23 suites pass.
 
-   **Still not done**: the 6-entry global-table case for item
-   consumption, the 3 special `ConsumeItemChargeResource` modes,
+   **The 6-entry global-table consumption case reimplemented too, same
+   day**: `itemSlotConsumeGlobalCharge` (`src23/party.c`/`.h`) -- the
+   same decrement-or-discard logic as `partyConsumeItemCharge` (now
+   sharing a `static itemSlotSpendCharge` helper), minus the weight
+   deduction since the resource panel isn't weighed.
+   `partyDeriveRestRegenPercent` now consumes a global-table match
+   instead of treating it as a conservative miss. Tests in
+   `test_party.c`; all 23 suites pass.
+
+   **Still not done**: the 3 special `ConsumeItemChargeResource` modes,
    container recursion (a separate, genuinely large CURGAME-backed
    subsystem this project has no reader for), and a second 6-counter
    timer array (`TickWorldAilmentTimers`) whose bit ranges overlap bit

@@ -11101,6 +11101,26 @@ to skip. Added as `lightSourceTickItemSlot`, extending the existing
 it shares the exact same `litFlags` field the standalone counters
 already manage. All 23 suites pass.
 
+### Session update (continued, same day): closed the last gap in the "R rest" consumption path too
+
+One more small piece left from earlier: `partyDeriveRestRegenPercent`
+was treating a match in the 6-entry resource-panel table as a
+conservative miss, since only the party-inventory consumption case was
+built. Looked at that branch of `ConsumeItemChargeResource` directly —
+it's actually *simpler* than the party-inventory one, since the
+resource panel isn't weighed, so there's no weight deduction to work
+out. Refactored the shared decrement-or-discard logic into one small
+helper both branches call, and added `itemSlotConsumeGlobalCharge` for
+the panel case. `partyDeriveRestRegenPercent` now consumes from either
+location exactly like the original does, instead of under-counting
+food that happens to sit in the resource panel rather than someone's
+pack.
+
+That's the regen-rate chain about as finished as it reasonably gets —
+what's left (container recursion, three UI-heavy consumption modes, one
+unreconciled timer array) is the genuinely large or genuinely murky
+remainder, not more low-hanging fruit.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -668,17 +668,19 @@ site in either game that ever sets any of the 3 special mode bits, and
 it always clears them again immediately after its own one call, so
 `RestPartyAndAdvanceClock` (the caller this round actually needed --
 see the "R rest" regen-rate section below) and every other caller
-always hit this mode. Reimplemented the party-inventory half as
-`partyConsumeItemCharge` (`src23/party.c`/`.h`): if the item's own
-target-entry flags (`itemTargetWord(entry, 1)` bit `0x1`, not
-previously named -- real food items in both games all have it clear)
-are set, decrements the slot's own `itemSlotExtra`, keeping the item
-if charges remain; otherwise clears the whole slot and subtracts the
-item's `ItemFieldWeight` from the *main* inventory group's weight
-total -- unconditionally the main group, matching the original's own
-hardcoded offset regardless of which group the slot actually belongs
-to. Not reimplemented: the 6-entry global-table case, the 3 special
-modes (recharge/discard/swap -- `TickEquippedItemDurability`'s own
+always hit this mode. Reimplemented both of its branches: the
+party-inventory case as `partyConsumeItemCharge` (`src23/party.c`/`.h`):
+if the item's own target-entry flags (`itemTargetWord(entry, 1)` bit
+`0x1`, not previously named -- real food items in both games all have
+it clear) are set, decrements the slot's own `itemSlotExtra`, keeping
+the item if charges remain; otherwise clears the whole slot and
+subtracts the item's `ItemFieldWeight` from the *main* inventory
+group's weight total -- unconditionally the main group, matching the
+original's own hardcoded offset regardless of which group the slot
+actually belongs to. The 6-entry global-table case (the same decrement-
+or-discard logic, no weight to deduct) is `itemSlotConsumeGlobalCharge`,
+reimplemented the same day. Not reimplemented: the 3 special modes
+(recharge/discard/swap -- `TickEquippedItemDurability`'s own
 equipped-item durability write-back, `SwapItemMultiStatEffect`), and
 the portrait-redraw/bag-sync UI side effects. Tests in `test_party.c`
 cover a single-use item (discarded immediately, weight deducted), a
@@ -2784,17 +2786,32 @@ as the fallback-inventory scan), then up to that many consume attempts,
 *original's own* truncation order (divide first, then multiply) rather
 than the more natural `(100 * consumedCount) / activeCount` — with 3
 active members all fed, that's `(100/3)*3 = 33*3 = 99`, not 100,
-reproduced exactly. A match in the 6-entry global table is treated as a
-miss (stopping the loop early) rather than consumed, since
-`partyConsumeItemCharge` only covers the party-inventory case — a
-conservative under-approximation in that rare case, not a silently
-wrong answer. `partyApplyRestEffects` (`party.c`/`.h`) still takes
+reproduced exactly. A match in the 6-entry global table is consumed via
+`itemSlotConsumeGlobalCharge` (reimplemented the same day, see the
+"shared scratch buffer at `0xAFA8`" section above), so food sitting in
+the resource panel counts exactly the same as food in a party member's
+own inventory. `partyApplyRestEffects` (`party.c`/`.h`) still takes
 `regenPercent` as an explicit parameter rather than calling this
 internally, matching this project's established "decide, don't apply"
 split elsewhere. Tests in `test_party.c` cover the truncation quirk,
 partial feeding, no food at all, an incapacitated member not counting,
-the stop-dead quirk, and the global-table-match-is-a-miss case; all 23
-suites pass.
+the stop-dead quirk, and the global table actually being consumed; all
+23 suites pass.
+
+**The 6-entry global-table consumption case reimplemented too,
+2026-10-01**: `itemSlotConsumeGlobalCharge` (`src23/party.c`/`.h`) --
+ConsumeItemChargeResource's own global-table branch, the exact same
+decrement-or-discard logic as `partyConsumeItemCharge` but with no
+owning inventory group to deduct weight from (the resource panel isn't
+weighed, so discarding the slot is the only state change). Shares a new
+`static itemSlotSpendCharge` helper with `partyConsumeItemCharge` rather
+than duplicating the decrement/discard logic. `partyDeriveRestRegenPercent`
+now consumes a global-table match instead of treating it as a
+conservative miss -- the regen-rate derivation no longer under-counts
+food sitting in the resource panel. Tests in `test_party.c` cover the
+global-table consume function directly (single-use discard, multi-use
+decrement) and the composed derivation actually consuming from it; all
+23 suites pass.
 
 **Still not reimplemented**: `IsItemRangeAvailable`'s own
 container-recursion half (`FindItemInsideContainer`{,`Level2`,`Level3`},
