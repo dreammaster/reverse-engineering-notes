@@ -63,7 +63,7 @@ Everything is drawn with `gfx_draw_op13(bank, image, x, y)` into page 1 (view ar
    pieces used for the same purpose (not traced further).
 
 `python tools/mm2_view.py MAP X Y N|E|S|W out.png [town|cave|castle]` renders a view this way (walls, floor and sky
-only, no sprites); the output shows plausible streets/corridors, which is how the layout above was checked.
+only, no sprites); town streets, cave corridors and a castle door (map 33, 8,8 facing E, door image `+10h` drawn at depth 1 with plain wall pieces either side) all render plausibly, which is how the layout above was checked.
 
 ## Outdoors (`draw_view_outdoors` `18D6C`)
 
