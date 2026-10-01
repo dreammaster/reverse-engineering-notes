@@ -10731,6 +10731,39 @@ middle, and `TickMonsterTimer`'s own still-unfound gate-bit setter
 (this round found where its tick-amount/countdown *value* comes from,
 not what arms it).
 
+### Session update (continued, same day): `ApplyEncodedItemEffect`'s full dispatch chain read, closing out two of the questions from an hour ago
+
+Immediately picked up the "exact gating... wasn't reread this round"
+flag from the paragraph above and went and reread it. Turned out
+straightforward once actually looked at directly: the dispatch isn't
+some elaborate combined-bit decoder, just a flat sequential chain of 19
+single-bit tests, each one falling through to the next if clear. Read
+the whole thing top to bottom and recorded every branch's target
+address — most still don't have a reimplemented consumer, but now
+there's a precise map instead of a vague "~19 branches" estimate for
+whoever picks one up next.
+
+That same read closed out two genuinely nice caller-context questions
+this project had been carrying as "untraced" for a while. First: which
+caller sets `g_uiScratchFlags4` bit `0x80` (the flag
+`combatResolveSpellAttack` uses to skip rolling and use a preset
+magnitude instead)? Answer: both of `ApplyEncodedItemEffect`'s callers
+touch it, in opposite directions — `RunAlchemyScreen` clears it before
+every call (a player casting a spell always rolls), `InteractWithContainer`
+sets it (a container or trap always uses a preset value). A clean,
+satisfying answer once the two call sites were actually sitting next to
+each other. Second: the single-target/whole-party gate bits
+(`word_33300`'s `0x800`/`0x1000`) — confirmed the single-target branch
+is genuinely all-or-nothing on these two bits (do nothing at all with
+neither set), while the whole-party branch always fires regardless,
+using the same two bits only to decide whether each recipient's
+icon-slot fields get refreshed. Renamed the two enum constants
+(`SpellFlagsAPositionReset`/`IconBarPresetAmount`) to match. No code
+behavior changed — this was a pure documentation/naming correction, but
+a valuable one: two questions this project had been quietly carrying
+forward round after round are now actually answered. All 22 suites
+still pass (no logic touched).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

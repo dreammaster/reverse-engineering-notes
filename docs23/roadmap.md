@@ -6,7 +6,7 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new) and the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack) -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
+## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new), the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack), ApplyEncodedItemEffect's full dispatch chain (all 19 branch addresses recorded), and two previously-untraced caller-context questions -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
 
 **Disassembly-level analysis is essentially done.** This is the
 important thing to know before starting the C reimplementation: you
@@ -954,12 +954,27 @@ consumers, if any.
    caller state as every earlier round assumed) -- `ApplyEncodedItemEffect`'s
    ~19-branch dispatch is simply data-driven from whichever spell/ability
    id an item encodes. Tests in `test_spellrecord.c` (22nd suite, new)
-   and extended `test_combat.c`; all 22 suites pass. **Still open**: the
-   exact gating between `word_33300`'s `0x800`/`0x1000` bits and
-   `word_33302`'s single-target/whole-party bits (the surrounding
-   dispatch decision itself) wasn't reread this round; a dozen bytes in
-   the record's own middle (offsets `0x36`-`0x41`) have no confirmed
-   consumer, plausibly a description-block id; and `TickMonsterTimer`'s
+   and extended `test_combat.c`; all 22 suites pass.
+
+   **The full dispatch chain read and two caller-context mysteries
+   closed, same day**: `ApplyEncodedItemEffect`'s dispatch is a flat
+   sequential chain (not a jump table), all 19 branch targets now
+   recorded by address in `file-formats.md` for whoever picks up the
+   remaining ones. This read resolved two things this project had
+   flagged as untraced: `g_uiScratchFlags4` bit `0x80`
+   (`combatResolveSpellAttack`'s `alreadyResolved`) is simply which of
+   `ApplyEncodedItemEffect`'s two callers invoked it --
+   `RunAlchemyScreen` always clears it (a normal roll, for player-cast
+   spells), `InteractWithContainer` always sets it (a preset value, for
+   container/trap effects); and the single-target/whole-party gate
+   (`SpellFieldFlagsA` bits `0x800`/`0x1000`, renamed
+   `SpellFlagsAPositionReset`/`IconBarPresetAmount`) is confirmed
+   all-or-nothing for the single-target branch only (nothing happens at
+   all with neither bit set) but never gates the whole-party branch's
+   own icon-bar call. **Still open**: most of the 19 branches still
+   don't have a reimplemented consumer (see `file-formats.md` for the
+   full address map); a dozen bytes in the record's own middle (offsets
+   `0x36`-`0x41`) have no confirmed consumer; and `TickMonsterTimer`'s
    own gate bits still have no confirmed setter even though this round
    found its tick-amount/countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the

@@ -188,16 +188,49 @@ typedef enum {
     SpellFlagsAPersistAffliction = 0x0200,
     /*
      * Bit 0x400 selects one of ShowClueBookSpellDetail's "EFFECT:" message
-     * variants (yendor2.asm:6380). Bits 0x800/0x1000 are read by
-     * ApplyEncodedItemEffect's own surrounding dispatch (roadmap.md
-     * candidate 8) -- confirmed this round to be genuine record fields, not
-     * untraced caller-context globals as earlier rounds assumed, but the
-     * exact gating logic against SpellFieldFlagsB's own bits wasn't reread
-     * this round; still open.
+     * variants (yendor2.asm:6380).
      */
     SpellFlagsAEffectTextVariant = 0x0400,
-    SpellFlagsAIconBarGate1 = 0x0800,
-    SpellFlagsAIconBarGate2 = 0x1000,
+    /*
+     * Read directly inside ApplyEncodedItemEffect's own single-target
+     * (word_33302 bit 0x8000, yendor2.asm:51241) and whole-party (bit
+     * 0x4000, yendor2.asm:51292) branches -- confirmed by direct read this
+     * round, not inferred: in the single-target branch, if NEITHER this bit
+     * nor SpellFlagsAIconBarPresetAmount is set, the branch does nothing at
+     * all (no icon-bar call, no effect) -- combatApplyEncodedItemEffectSingle
+     * should only be called by a future composing dispatcher when
+     * `(flagsA & (SpellFlagsAPositionReset|SpellFlagsAIconBarPresetAmount))
+     * != 0`. In the whole-party branch this same bit instead only gates
+     * whether `ResetOrCopyTargetPositionFields` runs for each individual
+     * recipient (yendor2.asm:51292-51298) -- the icon-bar call itself
+     * (combatApplyEncodedItemEffectParty's own role) always happens once
+     * after the loop regardless, matching the existing, already-correct
+     * implementation; the per-recipient gate controls only whether that
+     * recipient's `+0xE`/`+0x10` (inflicted-status/magnitude) icon-slot
+     * fields get overwritten from SpellFieldInflictedStatus/Magnitude or
+     * left stale -- a "genuine loose end" this reimplementation doesn't
+     * model (no persistent icon-slot memory exists to leave stale).
+     */
+    SpellFlagsAPositionReset = 0x0800,
+    /*
+     * When set (word_33302 bit 0x1000, yendor2.asm:51224/51284), the icon
+     * slot's own `+0x12` word is pre-set directly from
+     * SpellFieldDrainAmount instead of running SpellFlagsAPositionReset's
+     * usual logic -- in the single-target branch this ALSO still falls
+     * through into running SpellFlagsAPositionReset's own copy afterward
+     * (yendor2.asm:51252's unconditional jmp lands past that bit's own
+     * check), so `+0xE`/`+0x10` get the usual preset pair while `+0x12`
+     * additionally gets this field -- together, for a gold/ore-cost
+     * effect, SpellFieldInflictedMagnitude/DrainAmount would form the same
+     * two-word packed-BCD amount `ApplyEffectCost`'s material-spend branch
+     * reads elsewhere (file-formats.md's "staged combat event" section).
+     * Not reimplemented: constructing that Bcd4 here would need
+     * word_332DA's own source traced first (the effect id
+     * `PrepareTrapEffectSlots` resolves at the top of both branches, still
+     * an untraced caller-context global, distinct from anything in this
+     * record).
+     */
+    SpellFlagsAIconBarPresetAmount = 0x1000,
     /* ApplyEncodedItemEffect's own whole-party/single-target branches -- combat.h's combatApplyEncodedItemEffectParty/Single. */
     SpellFlagsAWholeParty = 0x4000,
     SpellFlagsASingleTarget = 0x8000

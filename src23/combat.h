@@ -452,9 +452,14 @@ CombatTargetAttackResult combatApplyTargetResistances(uint8_t *targetRecord, uin
  * state.
  *
  * alreadyResolved is the caller's own `g_uiScratchFlags4` bit `0x80` --
- * still an untraced caller-context input (which of
- * `ApplyEncodedItemEffect`'s call sites sets it isn't pinned down), but
- * its own effect here is fully clear: true skips `combatResolveAttack`'s
+ * confirmed, not just effect-traced: `RunAlchemyScreen` explicitly
+ * clears it (`yendor2.asm:25055`) immediately before calling
+ * `ApplyEncodedItemEffect` for a player-cast alchemy spell, while
+ * `InteractWithContainer` explicitly sets it (`yendor2.asm:53515`,
+ * restoring it right after) for a container/trap effect -- a clean,
+ * complete answer: player-cast spells always roll; container/trap
+ * effects always use a preset value. Its own effect here is fully
+ * clear either way: true skips `combatResolveAttack`'s
  * roll entirely and uses `SpellFieldAttackMagnitude` directly as the
  * damage.
  *
@@ -595,6 +600,19 @@ CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, ui
  * RunAlchemyScreen's own ingredient-mixing preview computes those two
  * words; that computation isn't traced.
  *
+ * **Whether either branch does anything at all, confirmed by direct
+ * read (yendor2.asm:51241-51305)**: `combatApplyEncodedItemEffectSingle`
+ * should only be called when the spell record's own `spellrecord.h`
+ * `SpellFieldFlagsA` has `SpellFlagsAPositionReset` (`0x800`) or
+ * `SpellFlagsAIconBarPresetAmount` (`0x1000`) set -- with neither, the
+ * original's single-target branch does nothing at all (no icon-bar
+ * call). `combatApplyEncodedItemEffectParty` has no such all-or-nothing
+ * gate -- it always calls the icon-bar machinery once; those same two
+ * bits there only control whether `ResetOrCopyTargetPositionFields`
+ * runs per recipient (see `SpellFlagsAPositionReset`'s own doc comment
+ * for the asymmetry), which this reimplementation doesn't model since
+ * there's no persistent icon-slot memory to leave stale.
+ *
  * A gate confirmed via ResetOrCopyTargetPositionFields
  * (yendor2.asm:53238, instruction-identical in Chapter 3): if a global
  * flag is set AND the *acting* character (g_currentPartyRecord, not
@@ -626,11 +644,12 @@ CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, ui
  * recipients (Chapter 3 only) -- two unrelated checks that happen to
  * both key off PartyStatusCursed.
  *
- * Both functions are the confirmed, reusable core; the surrounding
- * dispatch decision (which of word_33302's ~19 bits fires, and
- * whether word_33300's own 0x800/0x1000 bits -- read from an untraced
- * caller context -- select this path at all, versus skipping the
- * icon-bar entirely) is not reimplemented. See roadmap.md candidate 8
+ * Both functions are the confirmed, reusable core; the gate just above
+ * is now resolved, but the surrounding dispatch decision itself (which
+ * of word_33302's ~19 bits fires at all -- the full sequential test
+ * chain is read and recorded in file-formats.md, but only a handful of
+ * its ~19 targets have a reimplemented consumer so far) is not
+ * reimplemented. See roadmap.md candidate 8
  * for the rest of ApplyEncodedItemEffect.
  */
 typedef struct {

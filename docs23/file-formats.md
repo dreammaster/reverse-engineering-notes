@@ -2942,10 +2942,8 @@ data: every record with `SpellFlagsBAttackPath` (`0x2000`) set is a
 plain damage/status attack spell in both games (`MAGIC ATTACK`,
 `COLD SLASH`, `FEET OF LEAD`, `INSECT REPELLENT`, `ELECTRIC BURST`,
 ...), confirming it really does route into the attack family above
-rather than the icon-bar path. The exact gating between
-`SpellFlagsAIconBarGate1`/`Gate2` (`word_33300` bits `0x800`/`0x1000`)
-and `SpellFlagsBSingleTarget`/`WholeParty` wasn't reread this round —
-still open, see `roadmap.md`.
+rather than the icon-bar path. The full dispatch order and the
+single/whole-party gate are now resolved too — see the next section.
 
 Tests in `test_spellrecord.c` (22nd suite, new) cover the catalog parse,
 bounds, field access, and real-data spot checks (`HEAL`/`MAGIC ATTACK`/
@@ -2958,6 +2956,70 @@ block/match, already-resolved vs. rolled magnitude, a missed roll
 skipping resistances entirely, the commit tail's every branch including
 the Cursing/Hexing shared-bit quirk and the half-target-damage
 override). All 22 suites pass.
+
+### `ApplyEncodedItemEffect`'s full dispatch chain read, two open caller-context questions resolved (2026-10-01, same day)
+
+Read `ApplyEncodedItemEffect`'s own dispatch top-to-bottom
+(`yendor2.asm:51106`-`51217`) rather than spot-checking individual
+branches as previous rounds did. It is a flat, sequential
+if-clear-fall-through chain, not a jump table — each `word_33302` bit
+is tested in this exact order, and the first one found set wins (no
+combined conditions): `0x8000` (single-target, `loc_2C1CF`), `0x4000`
+(whole-party, `loc_2C231`), `0x80` (`loc_2C287` — a sound cue plus
+`word_36C93`/`95`/`97`/`99`, a field family close enough to `travel.c`'s
+own still-undecoded `word_36CB1` group to be worth checking together in
+a future pass, not confirmed to be the same mechanism), `0x10`
+(`loc_2C2F9`), `0x4` (`loc_2C344`), `0x20` (`loc_2C5D9` — the
+teleport-then-engage branch, already documented), `0x8` (`loc_2C674`),
+`0x2` (`loc_2C703`), `0x1` (`loc_2C71D` — `interactKnock`'s own trigger,
+already reimplemented), `0x40` (`loc_2C7BD` — its sibling, also already
+reimplemented), `0x2000` (`loc_2C87F` — the attack-resolution family
+above), `0x1000` (`loc_2C8CC`), `0x100` (`loc_2C92A`), `0x200`
+(`loc_2CEE7`); falling through all of `word_33302` drops to 4 more
+`word_33306` bits — `0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4`
+(`loc_2D04D`), `0x1` (`loc_2D137`) — and finally a true no-op
+(`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
+matching the "~19" estimate exactly. Only the bits already named above
+have a reimplemented consumer; the rest (`0x80`/`0x10`/`0x4`/`0x8`/`0x2`/
+`0x1000`/`0x100`/`0x200` of `word_33302`, all 4 of `word_33306`) are
+recorded here as a precise map for whoever picks up the remaining
+branches, rather than re-traced this round.
+
+**Two real caller-context questions this project had flagged as
+"untraced" are resolved by this same read**:
+
+- **`g_uiScratchFlags4` bit `0x80`** (`combatResolveSpellAttack`'s own
+  `alreadyResolved` parameter): its two setters are
+  `ApplyEncodedItemEffect`'s only two callers, and they disagree on
+  purpose. `RunAlchemyScreen` explicitly *clears* it
+  (`yendor2.asm:25055`) right before the call, for a player-cast
+  alchemy spell. `InteractWithContainer` explicitly *sets* it
+  (`yendor2.asm:53515`, restored right after), for a container/trap
+  effect. A clean, complete answer: player-cast spells always roll;
+  container/trap effects always use the record's own preset magnitude.
+  Neither caller is reimplemented (both are UI-heavy top-level command
+  handlers), but the input itself is no longer a mystery.
+- **The single-target/whole-party gate** (`SpellFieldFlagsA` bits
+  `0x800`/`0x1000`, `spellrecord.h`'s `SpellFlagsAPositionReset`/
+  `IconBarPresetAmount`): confirmed by direct read
+  (`yendor2.asm:51241`-`51305`) rather than inferred. In the
+  single-target branch, if *neither* bit is set, the branch does
+  nothing at all — no icon-bar call, no effect of any kind. In the
+  whole-party branch there's no such all-or-nothing gate: the icon-bar
+  call always happens once after the loop; these same two bits there
+  only control whether each individual recipient's icon-slot position
+  fields get freshly populated or left as whatever a prior call left
+  behind (a "genuine loose end" this project already knew about from
+  the other side, now explained from this side too). `combat.h`'s own
+  doc comments for `combatApplyEncodedItemEffectSingle`/`Party` spell
+  out exactly when a future composing dispatcher should call each one.
+
+No code changes beyond the documentation/naming corrections this
+finding implied (`spellrecord.h`'s `SpellFlagsAIconBarGate1`/`Gate2`
+renamed to `SpellFlagsAPositionReset`/`IconBarPresetAmount` with the
+precise mechanics above); the dispatch itself and its remaining
+untraced branches are still not reimplemented. See `roadmap.md`
+candidate 8 for the updated status.
 
 ### `ApplyMapTriggerEffect`: dispatch structure and real table data resolved, C reimplementation still pending (2026-09-30)
 
