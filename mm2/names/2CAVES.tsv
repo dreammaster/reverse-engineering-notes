@@ -20,3 +20,8 @@
 1CD1C	caves_pick_slayer_monster	(level) random monster id for Slayer quests
 1CD4C	caves_three_swords_check	has all three swords (items E2h-E4h)? removes them
 1CEB2	caves_lords_quest	level D: three swords / three beasts
+1CB4A	caves_slayer_reward	(char) kill reward for a Slayer target by monster id band
+1CBCA	caves_hoardall_reward	(char) hands in a Hoardall item, 8 x price experience
+1CF7C	caves_show_slayer_result	text of a completed Slayer target
+1D00C	caves_show_hoardall_result	text of a completed Hoardall item
+1D38E	caves_wait_yes_no	key prompt

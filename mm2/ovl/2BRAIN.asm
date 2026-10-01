@@ -352,9 +352,10 @@ tavern_common_helper endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; guild spell list for the chosen class (Magic/Energy/Fire ...)
 ; Attributes: bp-based frame
 
-sub_1C3DC       proc near               ; CODE XREF: tavern_retrain_skills+14↓p
+brain_show_spell_menu proc near         ; CODE XREF: tavern_retrain_skills+14↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -389,7 +390,7 @@ loc_1C3F6:                              ; CODE XREF: seg002:047D↑J
                 jmp     loc_1C5C2
 ; ---------------------------------------------------------------------------
 
-loc_1C421:                              ; CODE XREF: sub_1C3DC+40↑j
+loc_1C421:                              ; CODE XREF: brain_show_spell_menu+40↑j
                 push    ax
                 call    thk_text_putc
                 add     sp, 2
@@ -568,14 +569,14 @@ loc_1C5AC:                              ; CODE XREF: seg002:0885↑J
                 call    thk_text_put_number_pad
                 add     sp, 6
 
-loc_1C5BB:                              ; CODE XREF: sub_1C3DC:loc_1C5C0↓j
+loc_1C5BB:                              ; CODE XREF: brain_show_spell_menu:loc_1C5C0↓j
                 call    thk_2PLAY_8282
                 or      ax, ax
 
 loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
                 jz      short loc_1C5BB
 
-loc_1C5C2:                              ; CODE XREF: sub_1C3DC+42↑j
+loc_1C5C2:                              ; CODE XREF: brain_show_spell_menu+42↑j
                 call    thk_text_clear_prompt_line
                 mov     sp, bp
                 pop     bp
@@ -591,7 +592,7 @@ loc_1C5CA:                              ; CODE XREF: tavern_retrain_skills+131�
                 sub     ah, ah
                 sub     ax, 1           ; switch 15 cases
                 cmp     ax, 0Eh
-sub_1C3DC       endp
+brain_show_spell_menu endp
 
 
 loc_1C5D8:                              ; CODE XREF: seg002:01A1↑J
@@ -891,7 +892,7 @@ loc_1C7E8:                              ; CODE XREF: seg002:0B0D↑J
                 mov     [bp+var_6], 1
                 cmp     g_map_id, 0
                 jz      short loc_1C7FC
-                call    sub_1C3DC
+                call    brain_show_spell_menu
                 jmp     loc_1C945
 ; ---------------------------------------------------------------------------
 

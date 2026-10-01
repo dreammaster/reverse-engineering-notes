@@ -222,6 +222,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C3D0);
 	op_hex		(x,	1);
 	create_insn	(0X1C3DC);
+	set_name	(0X1C3DC,	"brain_show_spell_menu");
 	create_insn	(x=0X1C3DF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C3E2);
@@ -1118,6 +1119,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C130, 0X1E, 2, 0);
 	add_func    (0X1C3DC,0X1C5D8);
 	set_func_flags(0X1C3DC,0x5410);
+	set_func_cmt(0X1C3DC,	"guild spell list for the chosen class (Magic/Energy/Fire ...)", 0);
 	set_frame_size(0X1C3DC, 0X4, 2, 0);
 	add_func    (0X1C7E2,0X1C99B);
 	set_func_flags(0X1C7E2,0x5410);

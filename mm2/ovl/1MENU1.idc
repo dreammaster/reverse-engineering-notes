@@ -39,6 +39,7 @@ static Bytes_0(void) {
 #define id x
 
 	create_insn	(0X1C130);
+	set_name	(0X1C130,	"menu1_startup_banner");
 	create_insn	(x=0X1C137);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C141);
@@ -107,6 +108,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C1F5);
 	op_hex		(x,	1);
 	create_insn	(0X1C1FA);
+	set_name	(0X1C1FA,	"menu1_show_title");
 	create_insn	(x=0X1C1FD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C20B);
@@ -138,6 +140,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C28F);
 	op_hex		(x,	1);
 	create_insn	(0X1C298);
+	set_name	(0X1C298,	"menu1_show_intro_pictures");
 	create_insn	(x=0X1C29F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C2BD);
@@ -155,6 +158,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C316);
 	op_hex		(x,	1);
 	create_insn	(0X1C322);
+	set_name	(0X1C322,	"menu1_disk_copy_check");
 	create_insn	(x=0X1C325);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C32A);
@@ -245,6 +249,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1C563);
 	op_hex		(x,	1);
 	create_insn	(0X1C56C);
+	set_name	(0X1C56C,	"menu1_exit_to_dos");
 	create_insn	(x=0X1C56F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C572);
@@ -675,18 +680,23 @@ static Functions_0(void) {
 
 	add_func    (0X1C130,0X1C1F9);
 	set_func_flags(0X1C130,0x5400);
+	set_func_cmt(0X1C130,	"copyright / IBM version / \"Valid arguments\" command-line handling text", 0);
 	set_frame_size(0X1C130, 0, 0, 0);
 	add_func    (0X1C1FA,0X1C298);
 	set_func_flags(0X1C1FA,0x5410);
+	set_func_cmt(0X1C1FA,	"draws the title picture and waits for a key", 0);
 	set_frame_size(0X1C1FA, 0XC, 2, 0);
 	add_func    (0X1C298,0X1C322);
 	set_func_flags(0X1C298,0x5400);
+	set_func_cmt(0X1C298,	"loads and draws the intro images with delays", 0);
 	set_frame_size(0X1C298, 0, 0, 0);
 	add_func    (0X1C322,0X1C462);
 	set_func_flags(0X1C322,0x5410);
+	set_func_cmt(0X1C322,	"wrapper around disk_copy_routine (original-disk check)", 0);
 	set_frame_size(0X1C322, 0XE, 2, 0);
 	add_func    (0X1C56C,0X1C5D8);
 	set_func_flags(0X1C56C,0x5410);
+	set_func_cmt(0X1C56C,	"prints the exit message and quits", 0);
 	set_frame_size(0X1C56C, 0X2, 2, 0);
 	add_func    (0X1C5D8,0X1C7E2);
 	set_func_flags(0X1C5D8,0x5410);

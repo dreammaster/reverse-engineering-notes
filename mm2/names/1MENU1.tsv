@@ -5,3 +5,8 @@
 1C9CE	init_helper_c
 1CBDC	title_screen	"Copyright 1989 New World Computing" + OPTIONS (S start game, C copy player disk, A about Book Two)
 1CDE6	disk_copy_routine	int 13h based; unreferenced
+1C130	menu1_startup_banner	copyright / IBM version / "Valid arguments" command-line handling text
+1C1FA	menu1_show_title	draws the title picture and waits for a key
+1C298	menu1_show_intro_pictures	loads and draws the intro images with delays
+1C322	menu1_disk_copy_check	wrapper around disk_copy_routine (original-disk check)
+1C56C	menu1_exit_to_dos	prints the exit message and quits

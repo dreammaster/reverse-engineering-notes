@@ -8,8 +8,9 @@ ovl_1MENU1      segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; copyright / IBM version / "Valid arguments" command-line handling text
 
-sub_1C130       proc near               ; CODE XREF: seg002:0615↑J
+menu1_startup_banner proc near          ; CODE XREF: seg002:0615↑J
                                         ; seg002:0645↑J ...
                 push    word_1F126
                 call    thk_res_02F2
@@ -85,16 +86,17 @@ loc_1C1DA:                              ; CODE XREF: seg002:08CD↑J
                 call    thk_exit
                 add     sp, 2
                 retn
-sub_1C130       endp
+menu1_startup_banner endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws the title picture and waits for a key
 ; Attributes: bp-based frame
 
-sub_1C1FA       proc near               ; CODE XREF: sub_1C298+66↓p
+menu1_show_title proc near              ; CODE XREF: menu1_show_intro_pictures+66↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -114,7 +116,7 @@ var_2           = word ptr -2
                 sub     di, di
                 mov     [bp+var_6], 18D8h
 
-loc_1C215:                              ; CODE XREF: sub_1C1FA+86↓j
+loc_1C215:                              ; CODE XREF: menu1_show_title+86↓j
                 mov     bx, [bp+var_6]
                 mov     si, [bx]
                 mov     ax, si
@@ -147,24 +149,24 @@ loc_1C23C:                              ; CODE XREF: seg002:08E5↑J
                 jmp     short loc_1C26A
 ; ---------------------------------------------------------------------------
 
-loc_1C25E:                              ; CODE XREF: sub_1C1FA:loc_1C23C↑j
+loc_1C25E:                              ; CODE XREF: menu1_show_title:loc_1C23C↑j
                 mov     ax, 46h ; 'F'
                 push    ax
                 call    thk_wait_key_timeout
                 add     sp, 2
                 mov     si, ax
 
-loc_1C26A:                              ; CODE XREF: sub_1C1FA+62↑j
+loc_1C26A:                              ; CODE XREF: menu1_show_title+62↑j
                 or      si, si
                 jz      short loc_1C276
 
-loc_1C26E:                              ; CODE XREF: sub_1C1FA+84↓j
+loc_1C26E:                              ; CODE XREF: menu1_show_title+84↓j
                 mov     [bp+var_4], di
                 mov     [bp+var_2], si
                 jmp     short loc_1C282
 ; ---------------------------------------------------------------------------
 
-loc_1C276:                              ; CODE XREF: sub_1C1FA+72↑j
+loc_1C276:                              ; CODE XREF: menu1_show_title+72↑j
                 add     [bp+var_6], 2
                 inc     di
                 cmp     di, 2Fh ; '/'
@@ -172,7 +174,7 @@ loc_1C276:                              ; CODE XREF: sub_1C1FA+72↑j
                 jmp     short loc_1C215
 ; ---------------------------------------------------------------------------
 
-loc_1C282:                              ; CODE XREF: sub_1C1FA+7A↑j
+loc_1C282:                              ; CODE XREF: menu1_show_title+7A↑j
                 mov     word_22266, 0FFFEh
                 mov     ax, 1
                 push    ax
@@ -183,13 +185,14 @@ loc_1C282:                              ; CODE XREF: sub_1C1FA+7A↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C1FA       endp
+menu1_show_title endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; loads and draws the intro images with delays
 
-sub_1C298       proc near               ; CODE XREF: sub_1C298+13↓j
+menu1_show_intro_pictures proc near     ; CODE XREF: menu1_show_intro_pictures+13↓j
                                         ; game_init+16C↓p
                 push    word_1DD22
                 call    thk_gfx_load_image
@@ -197,7 +200,7 @@ sub_1C298       proc near               ; CODE XREF: sub_1C298+13↓j
                 mov     word_1F11C, ax
                 mov     word_1F11E, dx
                 or      ax, dx
-                jz      short sub_1C298
+                jz      short menu1_show_intro_pictures
                 mov     ax, 3Ch ; '<'
                 push    ax
                 sub     ax, ax
@@ -214,7 +217,7 @@ loc_1C2C0:                              ; CODE XREF: seg002:026D↑J
                 call    thk_free_far_block
                 add     sp, 4
 
-loc_1C2CE:                              ; CODE XREF: sub_1C298+49↓j
+loc_1C2CE:                              ; CODE XREF: menu1_show_intro_pictures+49↓j
                 push    word_1DD24
                 call    thk_gfx_load_image
                 add     sp, 2
@@ -233,9 +236,9 @@ loc_1C2CE:                              ; CODE XREF: sub_1C298+49↓j
                 call    thk_kbd_poll    ; CODE XREF: seg002:0651↑J
                 or      ax, ax
                 jnz     short loc_1C301
-                call    sub_1C1FA
+                call    menu1_show_title
 
-loc_1C301:                              ; CODE XREF: sub_1C298+64↑j
+loc_1C301:                              ; CODE XREF: menu1_show_intro_pictures+64↑j
                 push    word_1F11E
                 push    word_1F11C      ; CODE XREF: seg002:08F1↑J
                 call    thk_free_far_block
@@ -248,14 +251,15 @@ loc_1C301:                              ; CODE XREF: sub_1C298+64↑j
                 mov     word_1F11E, ax
                 mov     word_1F11C, ax
                 retn
-sub_1C298       endp
+menu1_show_intro_pictures endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; wrapper around disk_copy_routine (original-disk check)
 ; Attributes: bp-based frame
 
-sub_1C322       proc near               ; CODE XREF: game_init+8F↓p
+menu1_disk_copy_check proc near         ; CODE XREF: game_init+8F↓p
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -275,7 +279,7 @@ var_2           = word ptr -2
                 mov     [bp+var_8], 520h
                 mov     [bp+var_A], 1Fh
 
-loc_1C339:                              ; CODE XREF: sub_1C322+45↓j
+loc_1C339:                              ; CODE XREF: menu1_disk_copy_check+45↓j
                 mov     bx, [bp+var_8]
                 mov     di, [bx]
                 push    di
@@ -387,7 +391,7 @@ loc_1C432:                              ; CODE XREF: game_init:loc_1C626↓p
                 mov     word_1DC82, 1
                 sub     si, si
 
-loc_1C441:                              ; CODE XREF: sub_1C322+134↓j
+loc_1C441:                              ; CODE XREF: menu1_disk_copy_check+134↓j
                 cmp     word_1DC82, 0
                 jnz     short loc_1C452
                 push    si
@@ -395,14 +399,14 @@ loc_1C441:                              ; CODE XREF: sub_1C322+134↓j
                 add     sp, 2
                 mov     word_1DC82, ax
 
-loc_1C452:                              ; CODE XREF: sub_1C322+124↑j
+loc_1C452:                              ; CODE XREF: menu1_disk_copy_check+124↑j
                 inc     si
                 cmp     si, 2
                 jl      short loc_1C441
                 mov     [bp+var_2], si
                 cmp     word_1DC82, 0
                 jnz     short loc_1C4D8
-sub_1C322       endp ; sp-analysis failed
+menu1_disk_copy_check endp ; sp-analysis failed
 
 
 loc_1C462:                              ; CODE XREF: seg002:086D↑J
@@ -453,9 +457,9 @@ loc_1C4CF:                              ; CODE XREF: ovl_1MENU1:C4C3↑j
                 cmp     si, 2
                 jl      short loc_1C4BE
                 mov     [bp-2], si
-; START OF FUNCTION CHUNK FOR sub_1C322
+; START OF FUNCTION CHUNK FOR menu1_disk_copy_check
 
-loc_1C4D8:                              ; CODE XREF: sub_1C322+13E↑j
+loc_1C4D8:                              ; CODE XREF: menu1_disk_copy_check+13E↑j
                 push    word_1F126
                 call    thk_res_02F2
                 add     sp, 2
@@ -474,12 +478,12 @@ loc_1C4D8:                              ; CODE XREF: sub_1C322+13E↑j
                 mov     ax, offset aRosterWillNotB ; "Roster will not be saved during game pl"...
                 push    ax
                 jmp     short loc_1C556
-; END OF FUNCTION CHUNK FOR sub_1C322
+; END OF FUNCTION CHUNK FOR menu1_disk_copy_check
 ; ---------------------------------------------------------------------------
                 align 2
-; START OF FUNCTION CHUNK FOR sub_1C322
+; START OF FUNCTION CHUNK FOR menu1_disk_copy_check
 
-loc_1C50E:                              ; CODE XREF: sub_1C322+1C5↑j
+loc_1C50E:                              ; CODE XREF: menu1_disk_copy_check+1C5↑j
                 call    thk_get_drive
                 cmp     ax, 2
                 jg      short loc_1C566
@@ -505,7 +509,7 @@ loc_1C50E:                              ; CODE XREF: sub_1C322+1C5↑j
                 add     sp, 2
                 push    word_1F124
 
-loc_1C556:                              ; CODE XREF: sub_1C322+1E9↑j
+loc_1C556:                              ; CODE XREF: menu1_disk_copy_check+1E9↑j
                 call    thk_res_02F2
                 add     sp, 2
                 mov     ax, 0Dh
@@ -513,20 +517,21 @@ loc_1C556:                              ; CODE XREF: sub_1C322+1E9↑j
                 call    thk_wait_for_key
                 add     sp, 2
 
-loc_1C566:                              ; CODE XREF: sub_1C322+1F2↑j
+loc_1C566:                              ; CODE XREF: menu1_disk_copy_check+1F2↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-; END OF FUNCTION CHUNK FOR sub_1C322
+; END OF FUNCTION CHUNK FOR menu1_disk_copy_check
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; prints the exit message and quits
 ; Attributes: bp-based frame
 
-sub_1C56C       proc near               ; CODE XREF: game_init:loc_1C66A↓p
+menu1_exit_to_dos proc near             ; CODE XREF: game_init:loc_1C66A↓p
 
 var_2           = word ptr -2
 
@@ -541,16 +546,16 @@ var_2           = word ptr -2
                 jge     short loc_1C58D
                 mov     [bp+var_2], 1
 
-loc_1C58D:                              ; CODE XREF: sub_1C56C+13↑j
-                                        ; sub_1C56C+1A↑j
+loc_1C58D:                              ; CODE XREF: menu1_exit_to_dos+13↑j
+                                        ; menu1_exit_to_dos+1A↑j
                 cmp     byte_1DB96, 0Fh
                 jnz     short loc_1C5A1
                 cmp     word_221AC, 0C8h
                 jge     short loc_1C5A1
                 mov     [bp+var_2], 2
 
-loc_1C5A1:                              ; CODE XREF: sub_1C56C+26↑j
-                                        ; sub_1C56C+2E↑j
+loc_1C5A1:                              ; CODE XREF: menu1_exit_to_dos+26↑j
+                                        ; menu1_exit_to_dos+2E↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1C5D4
                 push    word_1F2AC
@@ -571,11 +576,11 @@ loc_1C5C0:                              ; CODE XREF: seg002:029D↑J
                 call    thk_exit
                 add     sp, 2
 
-loc_1C5D4:                              ; CODE XREF: sub_1C56C+39↑j
+loc_1C5D4:                              ; CODE XREF: menu1_exit_to_dos+39↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1C56C       endp
+menu1_exit_to_dos endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -627,7 +632,7 @@ loc_1C60F:                              ; CODE XREF: game_init+32↑j
 loc_1C617:                              ; CODE XREF: game_init+3A↑j
                 cmp     al, 20h ; ' '
                 jz      short loc_1C626
-                call    sub_1C130
+                call    menu1_startup_banner
                 jmp     short loc_1C626
 ; ---------------------------------------------------------------------------
 
@@ -653,10 +658,10 @@ loc_1C63A:                              ; CODE XREF: game_init+59↑j
                 mov     byte_1DB94, 0
                 mov     byte_1DB95, 3
                 mov     byte_1DB96, 3
-                call    sub_1C322
+                call    menu1_disk_copy_check
 
 loc_1C66A:                              ; CODE XREF: game_init+60↑j
-                call    sub_1C56C
+                call    menu1_exit_to_dos
                 call    thk_res_1DFA    ; CODE XREF: seg002:0891↑J
                 mov     ax, 75BEh
                 mov     dx, 1000h
@@ -759,7 +764,7 @@ loc_1C6F2:                              ; CODE XREF: seg002:0B19↑J
                 mov     word_277D2, ax  ; CODE XREF: seg002:089D↑J
                 mov     word_277D0, ax
                 mov     g_disk_needed, 1
-                call    sub_1C298
+                call    menu1_show_intro_pictures
 
 loc_1C747:                              ; CODE XREF: game_init+186↓j
                 mov     ax, 1400h
@@ -1601,7 +1606,7 @@ title_screen    endp
 ; int 13h based; unreferenced
 ; Attributes: bp-based frame
 
-disk_copy_routine proc near             ; CODE XREF: sub_1C322+127↑p
+disk_copy_routine proc near             ; CODE XREF: menu1_disk_copy_check+127↑p
                                         ; ovl_1MENU1:C4C6↑p
 
 arg_0           = word ptr  4

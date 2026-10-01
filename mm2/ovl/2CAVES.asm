@@ -1440,7 +1440,7 @@ loc_1CAEE:                              ; CODE XREF: caves_quest_prompt+14D↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB00:                              ; CODE XREF: sub_1CBCA+5B↓p
+loc_1CB00:                              ; CODE XREF: caves_hoardall_reward+5B↓p
                                         ; caves_three_swords_check+1A↓p
                 push    bp
                 mov     bp, sp
@@ -1459,7 +1459,7 @@ loc_1CB00:                              ; CODE XREF: sub_1CBCA+5B↓p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB1C:                              ; CODE XREF: sub_1CBCA+72↓p
+loc_1CB1C:                              ; CODE XREF: caves_hoardall_reward+72↓p
                                         ; caves_three_swords_check+4B↓p
                 push    bp
                 mov     bp, sp
@@ -1493,9 +1493,10 @@ loc_1CB45:                              ; CODE XREF: caves_quest_prompt+19F↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char) kill reward for a Slayer target by monster id band
 ; Attributes: bp-based frame
 
-sub_1CB4A       proc near               ; CODE XREF: caves_quest_rewards+135↓p
+caves_slayer_reward proc near           ; CODE XREF: caves_quest_rewards+135↓p
                                         ; caves_quest_rewards+169↓p
 
 var_6           = byte ptr -6
@@ -1517,7 +1518,7 @@ arg_0           = word ptr  4
                 jnz     short loc_1CB6E
                 mov     byte_22E12, al
 
-loc_1CB6E:                              ; CODE XREF: sub_1CB4A+1F↑j
+loc_1CB6E:                              ; CODE XREF: caves_slayer_reward+1F↑j
                 mov     al, byte_22E12
                 cmp     [bp+var_6], al
                 jnz     short loc_1CBBF
@@ -1527,25 +1528,25 @@ loc_1CB6E:                              ; CODE XREF: sub_1CB4A+1F↑j
                 sub     si, si
                 mov     cl, [bp+var_6]
 
-loc_1CB84:                              ; CODE XREF: sub_1CB4A+4C↓j
+loc_1CB84:                              ; CODE XREF: caves_slayer_reward+4C↓j
                 cmp     [si+3E3Eh], cl
                 jbe     short loc_1CB90
 
 loc_1CB8A:                              ; CODE XREF: seg002:0AF5↑J
-                                        ; sub_1CB4A+4A↓j
+                                        ; caves_slayer_reward+4A↓j
                 mov     [bp+var_4], si
                 jmp     short loc_1CB98
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1CB90:                              ; CODE XREF: sub_1CB4A+3E↑j
+loc_1CB90:                              ; CODE XREF: caves_slayer_reward+3E↑j
                 inc     si
                 cmp     si, 0Ah
                 jge     short loc_1CB8A
                 jmp     short loc_1CB84
 ; ---------------------------------------------------------------------------
 
-loc_1CB98:                              ; CODE XREF: sub_1CB4A+43↑j
+loc_1CB98:                              ; CODE XREF: caves_slayer_reward+43↑j
                 mov     bx, [bp+var_4]
                 shl     bx, 1           ; CODE XREF: seg002:080D↑J
                 shl     bx, 1
@@ -1559,24 +1560,25 @@ loc_1CB98:                              ; CODE XREF: sub_1CB4A+43↑j
                 mov     byte ptr [bx+78h], 0
                 and     byte ptr [bx+7Ch], 0FDh
 
-loc_1CBBF:                              ; CODE XREF: sub_1CB4A+12↑j
-                                        ; sub_1CB4A+2A↑j ...
+loc_1CBBF:                              ; CODE XREF: caves_slayer_reward+12↑j
+                                        ; caves_slayer_reward+2A↑j ...
                 mov     al, [bp+var_2]
                 sub     ah, ah
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CB4A       endp
+caves_slayer_reward endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; (char) hands in a Hoardall item, 8 x price experience
 ; Attributes: bp-based frame
 
-sub_1CBCA       proc near               ; CODE XREF: caves_quest_rewards+14B↓p
+caves_hoardall_reward proc near         ; CODE XREF: caves_quest_rewards+14B↓p
                                         ; caves_quest_rewards+1AE↓p
 
 var_C           = byte ptr -0Ch
@@ -1602,29 +1604,29 @@ arg_0           = word ptr  4
                 or      al, al
                 jnz     short loc_1CBF8
 
-loc_1CBF3:                              ; CODE XREF: sub_1CBCA+42↓j
+loc_1CBF3:                              ; CODE XREF: caves_hoardall_reward+42↓j
                 sub     ax, ax
                 jmp     loc_1CC84
 ; ---------------------------------------------------------------------------
 
-loc_1CBF8:                              ; CODE XREF: sub_1CBCA+27↑j
+loc_1CBF8:                              ; CODE XREF: caves_hoardall_reward+27↑j
                 cmp     byte_22E13, 0
                 jnz     short loc_1CC02
                 inc     [bp+var_C]
 
-loc_1CC02:                              ; CODE XREF: sub_1CBCA+33↑j
+loc_1CC02:                              ; CODE XREF: caves_hoardall_reward+33↑j
                 mov     al, byte_22E13
                 cmp     [bp+var_A], al
                 jz      short loc_1CC0E
                 or      al, al
                 jnz     short loc_1CBF3
 
-loc_1CC0E:                              ; CODE XREF: sub_1CBCA+3E↑j
+loc_1CC0E:                              ; CODE XREF: caves_hoardall_reward+3E↑j
                 cmp     [bp+var_C], 0
                 jnz     short loc_1CC17
                 inc     [bp+var_2]
 
-loc_1CC17:                              ; CODE XREF: sub_1CBCA+48↑j
+loc_1CC17:                              ; CODE XREF: caves_hoardall_reward+48↑j
                 cmp     [bp+var_C], 0
                 jz      short loc_1CC42
                 mov     al, [bp+var_A]
@@ -1643,8 +1645,8 @@ loc_1CC17:                              ; CODE XREF: sub_1CBCA+48↑j
                 call    loc_1CB1C
                 add     sp, 2
 
-loc_1CC42:                              ; CODE XREF: sub_1CBCA+51↑j
-                                        ; sub_1CBCA+66↑j
+loc_1CC42:                              ; CODE XREF: caves_hoardall_reward+51↑j
+                                        ; caves_hoardall_reward+66↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_1CC7F
                 mov     bx, [bp+arg_0]
@@ -1659,7 +1661,7 @@ loc_1CC42:                              ; CODE XREF: sub_1CBCA+51↑j
                 sub     dx, dx
                 mov     cl, 3
 
-loc_1CC67:                              ; CODE XREF: sub_1CBCA+A3↓j
+loc_1CC67:                              ; CODE XREF: caves_hoardall_reward+A3↓j
                 shl     ax, 1
                 rcl     dx, 1
                 dec     cl
@@ -1670,17 +1672,17 @@ loc_1CC67:                              ; CODE XREF: sub_1CBCA+A3↓j
                 add     [bx+62h], ax
                 adc     [bx+64h], dx
 
-loc_1CC7F:                              ; CODE XREF: sub_1CBCA+7C↑j
-                                        ; sub_1CBCA+85↑j
+loc_1CC7F:                              ; CODE XREF: caves_hoardall_reward+7C↑j
+                                        ; caves_hoardall_reward+85↑j
                 mov     al, [bp+var_6]
                 sub     ah, ah
 
-loc_1CC84:                              ; CODE XREF: sub_1CBCA+2B↑j
+loc_1CC84:                              ; CODE XREF: caves_hoardall_reward+2B↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1CBCA       endp
+caves_hoardall_reward endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2130,8 +2132,9 @@ caves_lords_quest endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; text of a completed Slayer target
 
-sub_1CF7C       proc near               ; CODE XREF: caves_quest_rewards:loc_1D214↓p
+caves_show_slayer_result proc near      ; CODE XREF: caves_quest_rewards:loc_1D214↓p
                 mov     ax, 12h
                 push    ax
                 mov     ax, 2
@@ -2189,13 +2192,14 @@ loc_1CF84:                              ; CODE XREF: seg002:062D↑J
                 call    thk_text_put_number
                 add     sp, 8
                 retn
-sub_1CF7C       endp
+caves_show_slayer_result endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; text of a completed Hoardall item
 
-sub_1D00C       proc near               ; CODE XREF: caves_quest_rewards+17B↓p
+caves_show_hoardall_result proc near    ; CODE XREF: caves_quest_rewards+17B↓p
                 mov     ax, 12h
                 push    ax
                 mov     ax, 2
@@ -2247,7 +2251,7 @@ sub_1D00C       proc near               ; CODE XREF: caves_quest_rewards+17B↓p
                 call    thk_text_put_number
                 add     sp, 8
                 retn
-sub_1D00C       endp
+caves_show_hoardall_result endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2421,7 +2425,7 @@ loc_1D1BE:                              ; CODE XREF: caves_quest_rewards+CC↑j
 
 loc_1D1C6:                              ; CODE XREF: caves_quest_rewards+1A9↓j
                 push    [bp+var_4]
-                call    sub_1CB4A
+                call    caves_slayer_reward
 
 loc_1D1CC:                              ; CODE XREF: caves_quest_rewards+1B1↓j
                 add     sp, 2
@@ -2436,7 +2440,7 @@ loc_1D1CC:                              ; CODE XREF: caves_quest_rewards+1B1↓j
 
 loc_1D1DE:                              ; CODE XREF: caves_quest_rewards+166↓j
                 push    di
-                call    sub_1CBCA
+                call    caves_hoardall_reward
 
 loc_1D1E2:                              ; CODE XREF: caves_quest_rewards+16C↓j
                 add     sp, 2
@@ -2452,7 +2456,7 @@ loc_1D1E6:                              ; CODE XREF: caves_quest_rewards+147↑j
                 cmp     byte_22E14, 1
                 jnz     short loc_1D1DE
                 push    di
-                call    sub_1CB4A
+                call    caves_slayer_reward
                 jmp     short loc_1D1E2
 ; ---------------------------------------------------------------------------
 
@@ -2461,12 +2465,12 @@ loc_1D202:                              ; CODE XREF: caves_quest_rewards+156↑j
                 mov     [bp+var_C], si
                 cmp     byte_22E14, 0
                 jnz     short loc_1D214
-                call    sub_1D00C
+                call    caves_show_hoardall_result
                 jmp     short loc_1D217
 ; ---------------------------------------------------------------------------
 
 loc_1D214:                              ; CODE XREF: caves_quest_rewards+179↑j
-                call    sub_1CF7C
+                call    caves_show_slayer_result
 
 loc_1D217:                              ; CODE XREF: caves_quest_rewards+17E↑j
                 inc     [bp+var_A]
@@ -2488,7 +2492,7 @@ loc_1D21D:                              ; CODE XREF: caves_quest_rewards+12F↑j
                 cmp     byte_22E14, al
                 jnz     short loc_1D1C6
                 push    [bp+var_4]
-                call    sub_1CBCA
+                call    caves_hoardall_reward
                 jmp     short loc_1D1CC
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2683,9 +2687,10 @@ caves_quest_status endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; key prompt
 ; Attributes: bp-based frame
 
-sub_1D38E       proc near               ; CODE XREF: caves_lord_quests+8B↓p
+caves_wait_yes_no proc near             ; CODE XREF: caves_lord_quests+8B↓p
 
 var_2           = word ptr -2
 
@@ -2698,11 +2703,11 @@ var_2           = word ptr -2
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1D398:                              ; CODE XREF: sub_1D38E+1E↓j
+loc_1D398:                              ; CODE XREF: caves_wait_yes_no+1E↓j
                 cmp     ax, 4Eh ; 'N'
                 jz      short loc_1D3AE
 
-loc_1D39D:                              ; CODE XREF: sub_1D38E+7↑j
+loc_1D39D:                              ; CODE XREF: caves_wait_yes_no+7↑j
                 call    thk_monster_anim_step
                 push    ax
                 call    thk_toupper
@@ -2711,7 +2716,7 @@ loc_1D39D:                              ; CODE XREF: sub_1D38E+7↑j
                 cmp     ax, 59h ; 'Y'
                 jnz     short loc_1D398
 
-loc_1D3AE:                              ; CODE XREF: sub_1D38E+D↑j
+loc_1D3AE:                              ; CODE XREF: caves_wait_yes_no+D↑j
                 mov     [bp+var_2], si
                 cmp     si, 59h ; 'Y'
                 jnz     short loc_1D3BC
@@ -2721,15 +2726,15 @@ loc_1D3AE:                              ; CODE XREF: sub_1D38E+D↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1D3BC:                              ; CODE XREF: sub_1D38E+26↑j
+loc_1D3BC:                              ; CODE XREF: caves_wait_yes_no+26↑j
                 sub     ax, ax
 
-loc_1D3BE:                              ; CODE XREF: sub_1D38E+2B↑j
+loc_1D3BE:                              ; CODE XREF: caves_wait_yes_no+2B↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1D38E       endp
+caves_wait_yes_no endp
 
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -2812,7 +2817,7 @@ loc_1D42D:                              ; CODE XREF: caves_lord_quests+86↓j
                 cmp     si, 4
                 jl      short loc_1D42D
                 mov     [bp+var_6], si
-                call    sub_1D38E
+                call    caves_wait_yes_no
                 mov     [bp+var_6], ax
                 or      ax, ax
                 jnz     short loc_1D460

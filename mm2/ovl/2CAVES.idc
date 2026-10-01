@@ -682,6 +682,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CB42);
 	op_hex		(x,	1);
 	create_insn	(0X1CB4A);
+	set_name	(0X1CB4A,	"caves_slayer_reward");
 	create_insn	(x=0X1CB4D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB51);
@@ -714,6 +715,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CBBF);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CBCA);
+	set_name	(0X1CBCA,	"caves_hoardall_reward");
 	create_insn	(x=0X1CBCD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CBD1);
@@ -988,6 +990,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1CF72);
 	create_insn	(0X1CF7C);
+	set_name	(0X1CF7C,	"caves_show_slayer_result");
 	create_insn	(x=0X1CF87);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF91);
@@ -1011,6 +1014,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D008);
 	op_hex		(x,	1);
 	create_insn	(0X1D00C);
+	set_name	(0X1D00C,	"caves_show_hoardall_result");
 	create_insn	(x=0X1D017);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D021);
@@ -1244,6 +1248,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D384);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D38E);
+	set_name	(0X1D38E,	"caves_wait_yes_no");
 	create_insn	(x=0X1D391);
 	op_hex		(x,	1);
 	create_insn	(0X1D398);
@@ -1430,9 +1435,11 @@ static Functions_0(void) {
 	set_frame_size(0X1C99A, 0XC, 2, 0);
 	add_func    (0X1CB4A,0X1CBC9);
 	set_func_flags(0X1CB4A,0x5410);
+	set_func_cmt(0X1CB4A,	"(char) kill reward for a Slayer target by monster id band", 0);
 	set_frame_size(0X1CB4A, 0X8, 2, 0);
 	add_func    (0X1CBCA,0X1CC89);
 	set_func_flags(0X1CBCA,0x5410);
+	set_func_cmt(0X1CBCA,	"(char) hands in a Hoardall item, 8 x price experience", 0);
 	set_frame_size(0X1CBCA, 0XE, 2, 0);
 	add_func    (0X1CC8A,0X1CD1C);
 	set_func_flags(0X1CC8A,0x5410);
@@ -1456,9 +1463,11 @@ static Functions_0(void) {
 	set_frame_size(0X1CEB2, 0X12, 2, 0);
 	add_func    (0X1CF7C,0X1D00C);
 	set_func_flags(0X1CF7C,0x5400);
+	set_func_cmt(0X1CF7C,	"text of a completed Slayer target", 0);
 	set_frame_size(0X1CF7C, 0, 0, 0);
 	add_func    (0X1D00C,0X1D093);
 	set_func_flags(0X1D00C,0x5400);
+	set_func_cmt(0X1D00C,	"text of a completed Hoardall item", 0);
 	set_frame_size(0X1D00C, 0, 0, 0);
 	add_func    (0X1D094,0X1D251);
 	set_func_flags(0X1D094,0x5410);
@@ -1470,6 +1479,7 @@ static Functions_0(void) {
 	set_frame_size(0X1D252, 0XE, 2, 0);
 	add_func    (0X1D38E,0X1D3C3);
 	set_func_flags(0X1D38E,0x5410);
+	set_func_cmt(0X1D38E,	"key prompt", 0);
 	set_frame_size(0X1D38E, 0X4, 2, 0);
 	add_func    (0X1D3C4,0X1D5DE);
 	set_func_flags(0X1D3C4,0x5410);
