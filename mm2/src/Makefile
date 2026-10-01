@@ -4,7 +4,7 @@
 CC       = gcc
 CFLAGS  ?= -std=c99 -O2 -Wall -Wextra -pedantic
 BUILD   := build
-CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_game.c mm2_map.c mm2_monpic.c mm2_png.c mm2_text.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_battle.c mm2_combat.c mm2_party.c mm2_reward.c mm2_rules.c mm2_smith.c mm2_spell_names_gen.c mm2_spells.c mm2_town.c mm2_tables_gen.c
+CORE    := mm2_lzw.c mm2_files.c mm2_gfx.c mm2_game.c mm2_map.c mm2_monpic.c mm2_png.c mm2_text.c mm2_view.c mm2_data.c mm2_state.c mm2_events.c mm2_inn.c mm2_battle.c mm2_combat.c mm2_party.c mm2_reward.c mm2_rules.c mm2_smith.c mm2_spell_names_gen.c mm2_spells.c mm2_town.c mm2_ui.c mm2_tables_gen.c
 CORE_O  := $(CORE:%.c=$(BUILD)/%.o)
 
 SDL_PREFIX ?= C:/dev/SDL2/SDL2-2.32.10/i686-w64-mingw32

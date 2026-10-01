@@ -16,6 +16,7 @@
 #include "../mm2_data.h"
 #include "../mm2_events.h"
 #include "../mm2_game.h"
+#include "../mm2_inn.h"
 #include "../mm2_tables.h"
 #include "../mm2_view.h"
 
@@ -547,6 +548,32 @@ static void test_spells(const Mm2Game *g) {
 	CHECK(mm2_heal_amount(53, 4, &lo) == 4 && mm2_heal_amount(55, 1, &lo) == 15);
 }
 
+static void test_inn(const Mm2Game *g) {
+	static Mm2Roster r;
+	int list[MM2_ROSTER_CHARS], i, n;
+	CHECK(mm2_load_roster(g, &r));
+	CHECK(mm2_party_size(&r) == 0 && mm2_party_member(&r, 0) == -1);
+	n = mm2_inn_list(&r, 0, list);                          /* the six starting characters live in Middlegate */
+	CHECK(n == 6 && list[0] == 0 && list[5] == 5);
+	CHECK(mm2_inn_list(&r, 1, list) == 0);
+	for (i = 0; i < 6; i++)
+		CHECK(mm2_inn_add(&r, i) == MM2_INN_OK);
+	CHECK(mm2_party_size(&r) == 6 && mm2_party_member(&r, 5) == 5);
+	CHECK(mm2_inn_add(&r, 3) == MM2_INN_ALREADY);
+	CHECK(mm2_inn_add(&r, 24) == MM2_INN_UNAVAILABLE);      /* hireling quest not done */
+	*mm2_state_ptr((Mm2State *)r.state, mm2_event_var_dgroup(0)) = 1;
+	*mm2_state_ptr((Mm2State *)r.state, mm2_event_var_dgroup(1)) = 1;
+	*mm2_state_ptr((Mm2State *)r.state, mm2_event_var_dgroup(2)) = 1;
+	CHECK(mm2_inn_add(&r, 24) == MM2_INN_OK && mm2_inn_add(&r, 25) == MM2_INN_OK);
+	CHECK(mm2_inn_add(&r, 26) == MM2_INN_FULL && mm2_party_size(&r) == 8);
+	CHECK(mm2_inn_remove(&r, 2) == MM2_INN_OK && mm2_party_size(&r) == 7 && mm2_party_member(&r, 2) == 3 && mm2_party_member(&r, 6) == 25);
+	CHECK(mm2_inn_remove(&r, 2) == MM2_INN_NOT_FOUND);
+	CHECK(mm2_inn_move(&r, 3, 1) == MM2_INN_ALREADY);
+	CHECK(mm2_inn_move(&r, 2, 1) == MM2_INN_OK && mm2_inn_list(&r, 1, list) >= 1 && list[0] == 2);
+	mm2_inn_leave(&r, 3);
+	CHECK(r.chars[0].raw[MC_TOWN] == 4 && r.chars[25].raw[MC_TOWN] == 4 && r.chars[2].raw[MC_TOWN] == 2);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -562,6 +589,7 @@ int main(void) {
 	test_rewards(&g);
 	test_smith(&g);
 	test_town();
+	test_inn(&g);
 	test_spells(&g);
 	test_text(&g);
 	test_banks(&g);

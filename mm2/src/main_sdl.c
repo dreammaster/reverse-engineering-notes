@@ -3,8 +3,10 @@
  * Messages from event scripts are shown under the view; teleports change the map.
  * Usage: mm2 [game dir]   (default: $MM2_DIR or the GOG install path) */
 #include "mm2_game.h"
+#include "mm2_inn.h"
 #include "mm2_map.h"
 #include "mm2_text.h"
+#include "mm2_ui.h"
 #include "mm2_view.h"
 
 #include <SDL.h>
@@ -14,6 +16,8 @@
 #define SCALE 3
 
 typedef struct {
+	Mm2Roster roster;
+	int inInn, innTown;
 	Mm2GameSession s;
 	Mm2View view;
 	int viewMap, viewLoaded, outdoors;
@@ -80,6 +84,7 @@ int main(int argc, char **argv) {
 	uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
 	uint32_t pixels[MM2_SCREEN_W * MM2_SCREEN_H];
 	int running = 1, dirty = 1, i;
+	const char *innMsg = NULL;
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
 	if (!mm2_font_load(&g, &font)) {
@@ -87,6 +92,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	memset(&a, 0, sizeof(a));
+	if (!mm2_load_roster(&g, &a.roster)) fprintf(stderr, "warning: cannot load ROSTER.DAT\n");
 	if (!start_map(&a, &g, 0, 8, 8, 'N')) {
 		fprintf(stderr, "cannot load game data from %s\n", g.dir);
 		return 1;
@@ -105,6 +111,22 @@ int main(int argc, char **argv) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) running = 0;
 			if (e.type != SDL_KEYDOWN) continue;
+			if (a.inInn) {
+				int k = e.key.keysym.sym;
+				if (k == SDLK_ESCAPE || k == SDLK_z) {
+					mm2_inn_leave(&a.roster, a.innTown);
+					a.inInn = 0;
+				} else if (k >= SDLK_a && k <= SDLK_x) {
+					int list[MM2_ROSTER_CHARS], n = mm2_inn_list(&a.roster, a.innTown, list), idx = k - SDLK_a;
+					if (idx < n) {
+						Mm2InnResult r = mm2_inn_add(&a.roster, list[idx]);
+						if (r == MM2_INN_ALREADY) mm2_inn_remove(&a.roster, list[idx]);
+						else if (r == MM2_INN_FULL) innMsg = "*** Party is Full ***";
+					}
+				}
+				dirty = 1;
+				continue;
+			}
 			a.s.nMessages = a.s.nLocations = 0;
 			a.s.fightRequested = 0;
 			switch (e.key.keysym.sym) {
@@ -116,6 +138,10 @@ int main(int argc, char **argv) {
 				if (mm2_session_step(&a.s, e.key.keysym.sym == SDLK_DOWN)) {
 					sync_view(&a, &g);   /* a teleport may have changed the map */
 					dirty = 1;
+					if (a.s.nLocations && a.s.locations[0] == 1 && a.s.map <= 4) {
+						a.inInn = 1;
+						a.innTown = a.s.map;
+					}
 				}
 				break;
 			case SDLK_y: a.s.yesNo = 1; dirty = 1; break;
@@ -131,14 +157,20 @@ int main(int argc, char **argv) {
 		}
 		if (dirty) {
 			char line[48];
-			if (a.outdoors)
+			if (a.inInn) {
+				mm2_ui_draw_inn(canvas, &font, &a.roster, a.innTown);
+				if (innMsg) mm2_draw_text(canvas, &font, 0, 21, innMsg, 12, -1);
+				innMsg = NULL;
+			} else if (a.outdoors)
 				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
-			snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
-					 a.s.yesNo ? 'Y' : 'N');
-			mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);
-			draw_messages(canvas, &font, &a.s);
+			if (!a.inInn) {
+				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
+						 a.s.yesNo ? 'Y' : 'N');
+				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);
+				draw_messages(canvas, &font, &a.s);
+			}
 			for (i = 0; i < MM2_SCREEN_W * MM2_SCREEN_H; i++)
 				pixels[i] = 0xFF000000u | MM2_EGA_PALETTE[canvas[i] & 15];
 			SDL_UpdateTexture(tex, NULL, pixels, MM2_SCREEN_W * 4);
