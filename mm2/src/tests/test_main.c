@@ -8,6 +8,7 @@
 #include "../mm2_party.h"
 #include "../mm2_reward.h"
 #include "../mm2_smith.h"
+#include "../mm2_spells.h"
 #include "../mm2_town.h"
 #include "../mm2_text.h"
 #include "../mm2_battle.h"
@@ -521,6 +522,30 @@ static void test_town(void) {
 	CHECK(mm2_temple_alignment_cost(&c, 3) == 100u * 4 * 3 && mm2_temple_donation_cost(1) == 500);
 }
 
+static void test_spells(const Mm2Game *g) {
+	static Mm2Spell spells[MM2_SPELLS];
+	Mm2Rng lo = {rng_lo, 0};
+	Mm2CombatSpell cs;
+	Mm2Char c;
+	CHECK(mm2_load_spells(g, spells));
+	CHECK(strcmp(MM2_SPELL_NAMES[2], "Energy Blast") == 0 && strcmp(MM2_SPELL_NAMES[95], "Uncurse Item") == 0 && MM2_SPELL_LEVEL[95] == 9);
+	CHECK(mm2_spell_sp_cost(spells, 0, 5, 3) == 1);                 /* Awaken: 1 SP */
+	CHECK(mm2_spell_sp_cost(spells, 2, 7, 3) == 7);                 /* Energy Blast: 1 x caster level */
+	CHECK(mm2_spell_sp_cost(spells, 42, 12, 15) == 8 + 15);         /* Meteor Shower: 8 + one per monster */
+	CHECK(mm2_spell_sp_cost(spells, 46, 12, 4) == 10 + 4);          /* Star Burst: 10 + one per monster */
+	CHECK(mm2_combat_spell(17, &cs) && cs.targets == 4 && cs.element == 2);
+	CHECK(mm2_combat_spell_damage(&cs, 6, &lo) == 6 * 2);           /* rand low: 1 + 1 per level */
+	CHECK(mm2_combat_spell(44, &cs) && mm2_combat_spell_damage(&cs, 9, &lo) == 1000);
+	CHECK(!mm2_combat_spell(0, &cs));
+	memset(&c, 0, sizeof(c));
+	c.raw[MC_HP] = 3; c.raw[MC_HP_MAX] = 10; c.raw[MC_CONDITION] = 0x50;   /* unconscious + asleep */
+	CHECK(mm2_heal_character(&c, mm2_heal_amount(51, 5, &lo)));            /* First Aid: 8 */
+	CHECK(mm2_c16(&c, MC_HP) == 10 && c.raw[MC_CONDITION] == 0);
+	c.raw[MC_CONDITION] = 0x81;
+	CHECK(!mm2_heal_character(&c, 5));
+	CHECK(mm2_heal_amount(53, 4, &lo) == 4 && mm2_heal_amount(55, 1, &lo) == 15);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -536,6 +561,7 @@ int main(void) {
 	test_rewards(&g);
 	test_smith(&g);
 	test_town();
+	test_spells(&g);
 	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);
