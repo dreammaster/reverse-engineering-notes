@@ -2987,12 +2987,27 @@ a weapon-select icon redraw, not a gameplay mechanic), `0x200`
 (`loc_2CEE7` — the real "straight-line multi-target attack," per-target
 primitive reimplemented as `combatApplyDamageToMapMonster`, see below);
 falling through all of `word_33302` drops to 4 more `word_33306` bits —
-`0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4` (`loc_2D04D` — also
-pure UI/rendering), `0x1` (`loc_2D137`) — and finally a true no-op
+`0x8` (`loc_2CCEE` — a projectile-animation variant of the exact same
+attack, see below), `0x2` (`loc_2CE62` — a screen-shake animation that
+falls straight into bit `0x200`'s own scan tail), `0x4` (`loc_2D04D` —
+pure UI/rendering), `0x1` (`loc_2D137` — a fade animation that also
+falls into bit `0x200`'s scan tail) — and finally a true no-op
 (`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
-matching the "~19" estimate exactly. Only the bits named above have a
-reimplemented consumer; the rest (`0x80`/`0x10` of `word_33302`, 3 of
-`word_33306`'s 4) are recorded here as a precise map for whoever picks
+matching the "~19" estimate exactly, and every one of them now
+accounted for: only `0x80`/`0x10` of `word_33302` and `word_33306`'s
+own `0x4` are genuinely unimplemented gameplay logic (`0x10` is the
+held-item cursor, blocked on its own not-yet-built prerequisite system,
+confirmed by this round's own direct read; `0x80` is still only a sound
+cue plus 4 globals this round's own read (`word_36C93`/`95`/`97`/`99`)
+looks more like day/night music-track selection than the "world-state
+timers" an *older*, pre-this-session round's comment called it —
+flagged here as a discrepancy worth re-checking directly rather than
+silently repeated, not corrected outright since neither reading has
+been fully verified against real data the way this session's other
+corrections were); everything else is either reimplemented or
+confirmed to be UI/rendering layered on an
+already-reimplemented primitive. See below for the full picture on
+`0x200`/`word_33306`'s `0x8`/`0x2`/`0x1`.
 up the remaining branches.
 
 **Self-correction, same round**: this list's own first draft (written
@@ -3151,6 +3166,31 @@ surrounding scan shape is left for whoever picks up bit `0x200`'s own
 dispatch wiring. Tests in `test_combat.c` cover the survive/die/miss
 cases, including the reward-staging and record-zeroing on death; all 22
 suites pass.
+
+**The remaining three `word_33306` bits checked too, same day — all
+reduce to the same primitive**: `0x2` (`loc_2CE62`) and `0x1`
+(`loc_2D137`) both turn out to be pure animation wrappers (a
+screen-shake scroll effect and a fade-to-black dim effect,
+respectively) that, once the animation finishes, `jmp` straight into
+`loc_2CEED` — the *exact same* `g_monsterSlots`/`GetMonsterAtViewportRow`
+scan tail bit `0x200` itself starts at. These two bits don't reach a
+different mechanic at all, just a different screen effect before the
+identical attack. `0x8` (`loc_2CCEE`) is its own thing — a projectile
+sprite flown across up to 5 viewport rows via `ClassifyObstacleAtViewportRow`,
+stopping at the first wall or monster it hits (`errorCode == 3` or
+`4`) — but its own hit-resolution tail (`loc_2CDD1`) is, field for
+field, identical to `ApplyDamageToMapMonster`: `ApplyAttackToTarget`,
+then the hit marker write, then the same health-check-gated
+`GrantMonsterRewards`/`RemoveMonsterFromMap`. So all four of these
+branches — `word_33302`'s `0x200` and `word_33306`'s `0x8`/`0x2`/`0x1`
+— share the one already-reimplemented `combatApplyDamageToMapMonster`
+primitive this round built; what's left for every one of them is
+orchestration and animation (screen-shake, fade, a flying sprite, a
+scan loop), not gameplay logic. `ApplyEncodedItemEffect` itself ends
+right after bit `0x1`'s own branch (`yendor2.asm:52748`), confirming
+the dispatch chain this file documents is now completely accounted
+for, branch by branch, even where a given branch's full UI
+orchestration isn't reimplemented.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:

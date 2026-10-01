@@ -10864,6 +10864,40 @@ throughline of today's work.
 All 22 suites pass; tests cover the survive/die/miss outcomes for the
 new function, including reward staging and record zeroing on a kill.
 
+### Session update (continued, same day): the last 3 attack-ish branches turned out to be the same branch wearing different animations
+
+Checked `word_33306`'s remaining 3 bits out of curiosity more than
+expectation, since the pattern so far had been "each bit is its own
+thing." It wasn't, this time, in a good way: `0x2` and `0x1` are both
+pure screen effects — a shake, a fade-to-black — that, once they
+finish playing, jump straight into the exact same scan code bit `0x200`
+itself starts at. Not a different mechanic with a similar shape; the
+literal same code path. `0x8` has its own targeting (a flying
+projectile sprite that stops at the first wall or monster it hits) but
+its hit-resolution tail is, field for field, identical to
+`ApplyDamageToMapMonster`. `ApplyEncodedItemEffect` itself ends right
+after this branch, which means the entire 19-branch dispatch this
+project mapped out earlier today is now fully read, start to finish.
+
+The nice part: none of this needed new code. `combatApplyDamageToMapMonster`,
+written earlier today for bit `0x200`, already covers all four
+branches' actual gameplay logic — what's left for each is animation
+wiring (a shake, a fade, a flying sprite) that belongs to the
+rendering layer this project hasn't built yet, not combat logic. A
+good note to end the day's dispatch-chain work on: four branches that
+looked like four separate things to reimplement turned out to be one
+already-finished piece of work wearing different costumes.
+
+Also, while writing this up, noticed a discrepancy worth flagging
+rather than quietly inheriting: an older round's comment (predating
+this session) described `word_33302` bit `0x80` as "world-state
+timers." Today's own direct read of that branch showed a sound cue
+plus four globals that look more like day/night music-track selection.
+Didn't correct it outright — neither reading has been checked against
+real data the way today's other corrections were — but flagged it
+plainly rather than letting two contradictory claims sit in the docs
+without either one being marked as the one in question.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

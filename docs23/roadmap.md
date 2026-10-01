@@ -1044,16 +1044,35 @@ consumers, if any.
    logic worth reimplementing. Tests in `test_combat.c` cover the
    survive/die/miss cases; all 22 suites pass.
 
-   **Still open**: `word_33302` bits `0x80`/`0x10` and `word_33306`
-   bits `0x8`/`0x2`/`0x1` still don't have a reimplemented consumer (see
-   `file-formats.md` for the full address map); `loc_2CF51` itself
-   (just above); bit `0x200`'s own surrounding scan loop (the
-   `g_monsterSlots` vs. `GetMonsterAtViewportRow` shape selection) is
-   orchestration, not yet composed; a dozen bytes in the record's own
-   middle (offsets `0x36`-`0x3F`, 10 bytes now that `0x40`-`0x41` is
-   named) have no confirmed consumer; and `TickMonsterTimer`'s own gate
-   bits still have no confirmed setter even though an earlier round
-   this same day found its tick-amount/countdown *value* source.
+   **`word_33306`'s remaining 3 bits checked too, same day -- all three
+   reduce to the one primitive just reimplemented**: `0x2`/`0x1` are
+   pure animation (a screen-shake and a fade-to-black respectively)
+   that, once finished, jump straight into bit `0x200`'s own scan tail
+   -- not a different mechanic at all. `0x8` is a projectile-sprite
+   variant with its own targeting (`ClassifyObstacleAtViewportRow`
+   along up to 5 viewport rows) but an identical hit-resolution tail,
+   field for field, to `ApplyDamageToMapMonster`. `ApplyEncodedItemEffect`
+   itself ends right after this branch (`yendor2.asm:52748`), confirming
+   the full 19-branch dispatch is now completely accounted for. No new
+   code needed -- `combatApplyDamageToMapMonster` already covers all
+   four branches' gameplay logic; what remains for each is animation/
+   orchestration only.
+
+   **Still open**: `word_33302` bits `0x80`/`0x10` still don't have a
+   reimplemented consumer -- `0x10` (held-item cursor) is blocked on its
+   own prerequisite system; `0x80` is only a sound cue plus 4 globals
+   that look more like day/night music-track selection than the
+   "world-state timers" an older, pre-this-session round called them --
+   flagged as a discrepancy worth checking directly, not yet corrected
+   outright (see `file-formats.md`). `loc_2CF51` (the bit `0x2000`
+   diversion) is still deferred to its own pass; bit `0x200`/`word_33306`'s
+   own surrounding scan-loop *shape* (which of the two targeting modes
+   fires, and the viewport-depth bookkeeping around it) is orchestration,
+   not yet composed, even though the per-target attack itself is done; a
+   dozen bytes in the record's own middle (offsets `0x36`-`0x3F`) have
+   no confirmed consumer; and `TickMonsterTimer`'s own gate bits still
+   have no confirmed setter even though an earlier round this same day
+   found its tick-amount/countdown *value* source.
    **A fourth branch reimplemented, same round**: bit `0x40`, the
    sibling of bit `0x1` flagged above -- confirmed instruction-identical
    in Chapter 3 and shares bit `0x1`'s exact probe-then-classify-then-mark
