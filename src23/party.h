@@ -775,16 +775,25 @@ void partyResetDailyAbilityCharges(uint8_t *record);
  * With none of those 6 bits set: normal regen, `round(max * regenPercent
  * / 100)` added to current HP (always) and MP (only if the character
  * has a nonzero max MP at all), each clamped at its own max.
- * `regenPercent` is the original's own `word_328C2` -- derived from how
- * many camping-supply items (item catalog range, consumed via
- * ConsumeItemChargeResource) the party had on hand relative to its
- * active member count. `itemRangeAvailable` (below) now covers the
- * "does the party have one" half of that derivation; still missing:
- * the specific camping-supply item-id range itself, the per-member
- * consume loop, the percentage-from-count formula, and container
- * recursion (`itemRangeAvailable`'s own doc comment) -- so
- * `regenPercent` is still supplied here as an already-resolved input
- * rather than composed end to end.
+ *
+ * `regenPercent` is the original's own `word_328C2`
+ * (`RestPartyAndAdvanceClock`, `yendor2.asm:25855`-`25870`), now fully
+ * traced: `activeCount` = non-incapacitated `SaveHeaderPartySlots`
+ * members; then, up to `activeCount` times, `itemRangeAvailable(0x36,
+ * 0x40, ...)` (a confirmed item range -- real `WORLD.DAT` data in both
+ * games: MEAT, BREAD, FOOD, CHEESE, ALE, plain FOOD -- literal camping
+ * provisions, not a guess) and `ConsumeItemChargeResource` on a hit,
+ * breaking early the first time nothing more is found;
+ * `regenPercent = (100 / activeCount) * consumedCount`. `itemRangeAvailable`
+ * itself is reimplemented (above); still missing: `ConsumeItemChargeResource`
+ * itself -- a shared, ~21-call-site "spend one use of an item-based
+ * resource" engine with 4 distinct consumption modes selected by a
+ * caller-context flag (`g_uiScratchFlags3` bits `0x8000`/`0x4000`/
+ * `0x2000`) that `RestPartyAndAdvanceClock` never sets itself, so even
+ * which of the 4 modes applies here isn't pinned down yet -- and
+ * container recursion (`itemRangeAvailable`'s own doc comment). Given
+ * those, `regenPercent` is still supplied here as an already-resolved
+ * input rather than composed end to end.
  */
 typedef struct {
     bool wasSkipped; /* incapacitated -- no change made at all */

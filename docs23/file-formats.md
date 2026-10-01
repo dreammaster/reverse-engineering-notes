@@ -2727,24 +2727,35 @@ ordinary rollover path), plus `gameClockRestAllowed`'s simplified gate.
 `ApplyRestEffectsToCharacter`'s regen-rate mechanic goes deeper than
 "normal percentage-based HP/MP regeneration" — that phrase was true but
 incomplete. The percentage itself (`word_328C2`) is computed once per
-`RestPartyAndAdvanceClock` call, *before* the hourly loop: count active
-(non-incapacitated) party members, then try to consume one
-"camping supply"-range item (via `IsItemRangeAvailable`/
-`ConsumeItemChargeResource`) per active member — each successfully
-consumed item contributes `100 / activeMemberCount` percent, so
-resting is a *resource-consumed* mechanic, not a free action: fully
-supplying every active member with a camping item yields a full 100%
-regen tick, partially supplying them yields a proportionally smaller
-one, and having none at all yields 0% (no regen, though the status-
-effect-gated degen paths below still apply regardless). **This
-specific derivation is not fully reimplemented** — `IsItemRangeAvailable`
-itself is now reimplemented (`partyFindItemInRange`/`itemRangeAvailable`,
-2026-10-01, see "Quest-item and party-inventory range checks" above),
-but the derivation built on top of it still needs: the specific
-camping-supply item-id range, the per-active-member consume loop
-(`ConsumeItemChargeResource`), the percentage-from-count formula, and
-`IsItemRangeAvailable`'s own container-recursion half
-(`FindItemInsideContainer`{,`Level2`,`Level3`}), which this project
+`RestPartyAndAdvanceClock` call, *before* the hourly loop (full read,
+2026-10-01, `yendor2.asm:25832`-`25870`): count active (non-incapacitated)
+party members (`activeCount`), then try to consume one
+"camping supply"-range item per active member — up to `activeCount`
+times, call `IsItemRangeAvailable(0x36, 0x40)` and, on a hit,
+`ConsumeItemChargeResource`, breaking out the first time nothing more
+is found; `regenPercent = (100 / activeCount) * consumedCount`. The
+item range itself is **confirmed, not guessed**: real `WORLD.DAT` data
+in both games shows ids `0x36`-`0x40` are MEAT, BREAD, FOOD, CHEESE,
+ALE, and five more plain FOOD entries — literal camping provisions. So
+resting really is a *resource-consumed* mechanic, not a free action:
+fully supplying every active member with food yields a full 100% regen
+tick, partially supplying them yields a proportionally smaller one, and
+having none at all yields 0% (no regen, though the status-effect-gated
+degen paths below still apply regardless).
+
+**Reimplemented**: `itemRangeAvailable`'s own half (`partyFindItemInRange`/
+`itemRangeAvailable`, `src23/party.c`/`.h`, 2026-10-01, see "Quest-item
+and party-inventory range checks" above). **Still not reimplemented**:
+`ConsumeItemChargeResource` itself (`yendor2.asm:41546`) — a shared,
+~21-call-site "spend one use of an item-based resource" engine (equipment
+wear, spell/ability charges, food, and more all funnel through it) with
+4 distinct consumption modes selected by a caller-context flag
+(`g_uiScratchFlags3` bits `0x8000`/`0x4000`/`0x2000`) that
+`RestPartyAndAdvanceClock` itself never sets — so even which of the 4
+modes applies on this specific call path isn't pinned down without
+tracing further back through whatever UI state precedes the 'R rest'
+command. Also still open: `IsItemRangeAvailable`'s own container-recursion
+half (`FindItemInsideContainer`{,`Level2`,`Level3`}), which this project
 hasn't built yet. `partyApplyRestEffects` (`party.c`/`.h`) takes the
 resulting percentage as an already-resolved parameter instead, matching
 this project's established "decide, don't apply against unconfirmed

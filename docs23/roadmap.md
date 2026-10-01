@@ -1080,10 +1080,19 @@ consumers, if any.
    `partyFindItemInRange`/`itemRangeAvailable` (`src23/party.c`/`.h`,
    tests in `test_party.c`) -- exactly the "item-availability"
    dependency `RestPartyAndAdvanceClock`'s own regen-rate derivation
-   has been waiting on since a much earlier round. **Still not done**:
-   the derivation itself built on top of it (which item-id range counts
-   as camping supplies, the per-member consume loop, the
-   percentage-from-count formula), container recursion (a separate,
+   has been waiting on since a much earlier round.
+
+   **The regen-rate formula itself fully traced, same day (not yet
+   composed)**: active member count, up to that many
+   `IsItemRangeAvailable(0x36, 0x40)` + `ConsumeItemChargeResource`
+   attempts (breaking at the first miss), `regenPercent = (100 /
+   activeCount) * consumedCount`. The item range is confirmed against
+   real `WORLD.DAT` data in both games -- literal food items (MEAT,
+   BREAD, FOOD, CHEESE, ALE), not a guess. **Still not done**:
+   `ConsumeItemChargeResource` itself -- a shared, ~21-call-site
+   resource-consumption engine with 4 modes selected by a caller-context
+   flag `RestPartyAndAdvanceClock` never sets itself, so even which mode
+   applies here needs more tracing -- container recursion (a separate,
    genuinely large CURGAME-backed subsystem this project has no reader
    for), and the item-slot-level transition this mechanic's items go
    through (unlit -> lit -> used, `TickAilmentDuration`'s own job,

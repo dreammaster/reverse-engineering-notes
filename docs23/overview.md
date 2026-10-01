@@ -11007,6 +11007,31 @@ closed — the regen-percentage formula itself sits on top of this, not
 inside it — but the wall this project kept bumping into every time that
 dependency came up is down.
 
+### Session update (continued, same day): traced the regen-rate formula itself, found what the "camping supplies" really are
+
+Kept pulling on the same thread: read `RestPartyAndAdvanceClock`'s own
+percentage-derivation loop directly instead of leaving it as "needs
+`IsItemRangeAvailable`." It's a clean, fully confirmed formula now —
+active member count, up to that many consume attempts against a
+specific item-id range, `100% × (successful consumes / active
+members)`. Checked the item range against real `WORLD.DAT` data rather
+than calling it "camping supplies" and moving on: it's MEAT, BREAD,
+FOOD, CHEESE, ALE — literally food. "Resting consumes food" is the
+actual mechanic, not an abstraction.
+
+Didn't compose it end to end, though. The last piece,
+`ConsumeItemChargeResource`, turned out to be a much bigger thing than
+its one call site here suggested — a shared engine with ~21 call sites
+across the whole game (equipment wear, spell charges, food, more) and 4
+different consumption modes, selected by a flag that this specific
+caller never sets itself. Implementing it properly means either
+building all 4 modes or tracing further back to find out which one
+actually applies here, and neither of those is a "finish it off"
+amount of work. Stopped at the honest boundary: the formula is fully
+documented, the dependency this project has been quoting since an old
+round is resolved, and the one remaining piece is accurately scoped as
+its own future thing rather than squeezed in under time pressure.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
