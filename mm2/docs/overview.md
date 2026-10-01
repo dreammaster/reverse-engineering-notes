@@ -28,25 +28,23 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 * Names given inside an overlay database (functions the resident code reaches through a thunk)
   are not yet fed back to `mm2.idb`; the thunks there are `thk_<overlay>_<offset>`.
 
-## State (2026-09-30)
+## State (2026-10-01)
 
-* Layout fully understood; all 14 overlays load and analyse.  Resident library and 2PLAY (event VM,
-  map loading, 3D view) named; every overlay's top-level functions named from their strings.
-* Documented: [exe-layout.md](exe-layout.md), [file-formats.md](file-formats.md) (LZW, MAP/EVENTS/STR/
-  MONSTERS, character record, image banks), [events.md](events.md) (50-opcode script VM),
-  [game-library.md](game-library.md) (windows, video-driver ABI, state globals).
-* [drivers.md](drivers.md) (video driver ABI), [party-commands.md](party-commands.md) (rest, search, treasure), [classes.md](classes.md) (creation, levelling, experience), [shops.md](shops.md) (temple, guilds, blacksmith outline), [view.md](view.md) (3D maze view), [spells.md](spells.md), [save-format.md](save-format.md).
-* [combat.md](combat.md): combat flow, party/monster turns, tables.  Monster pictures decoded (`mm2_monsters.py`).
-* Tools: `mm2_lzw.py`, `mm2_data.py` (maps/events/strings/monsters), `mm2_gfx.py` (renders `*.16`
-  image banks to PNG), `plink_info.py`.
+* Layout fully understood; all 14 overlays load and analyse; every overlay's top-level functions are named.
+* Documented: [exe-layout.md](exe-layout.md), [file-formats.md](file-formats.md), [events.md](events.md),
+  [game-library.md](game-library.md), [drivers.md](drivers.md), [party-commands.md](party-commands.md),
+  [classes.md](classes.md), [shops.md](shops.md) (temple, guilds, blacksmith with prices), [view.md](view.md)
+  (indoor view verified with `tools/mm2_view.py`; outdoor outlined), [spells.md](spells.md),
+  [combat.md](combat.md) (formulas re-read), [save-format.md](save-format.md).
+* For an engine author: [scummvm-notes.md](scummvm-notes.md) maps all of it onto a suggested module layout.
+* Tools (`tools/README.md`): LZW, data readers, image/monster/view renderers, layout dump.
 
 ## Open / next
 
-1. Graphics: all EGA/CGA banks and monster pictures decode; still to check: the exact CGA/Tandy/Hercules palettes and the 3-4 unused monster animation entries.
-3. Combat is documented ([combat.md](combat.md)); still to verify: to-hit formula details `(check)`, the
-   remaining monster record fields' exact meaning, touch-effect implementation (`1AFE2`), spell effects (2CAST1/2).
-4. `ITEMS.DAT` fields (20 bytes: 12-byte name, class/type flags, three words), `SPELLS.DAT`, `ATTRIB.DAT`.
-5. Save format done ([save-format.md](save-format.md)); open: where the current map/position are stored.
-6. Driver ABI documented ([drivers.md](drivers.md)); the driver code itself is not disassembled in IDA.
-7. Shops (2SMITH/2TEMPLE/2BRAIN), inn (1RETINN), caves specials (2CAVES): read and name internals.
-8. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.
+1. Graphics: exact CGA/Tandy/Hercules palettes; the 3-4 unused monster animation entries; outdoor view
+   needs a renderer to confirm the tile tables.
+2. Remaining monster record fields' exact meaning; spell effect internals (2CAST1/2) beyond the summaries.
+3. Driver code itself (`*.DRV`) is not disassembled in IDA (ABI is documented).
+4. Remaining unnamed functions (about 60 resident, about 50 in overlays) are small helpers.
+5. `import_names.py` to refresh names of *existing* overlay databases without a rebuild.
+6. Where the party position is restored from after loading (only `g_inn_town` is saved).
