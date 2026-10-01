@@ -990,14 +990,27 @@ consumers, if any.
    actually a never-before-documented position bookmark
    (save/restore the party's own world position, facing, and render
    state) -- see `file-formats.md` for the full correction. Tests in
-   `test_combat.c`; all 22 suites pass. **Still open**: most of the 19
-   branches still don't have a reimplemented consumer (see
-   `file-formats.md` for the full address map); bit `0x20`'s own
-   save/restore mechanic needs its `g_uiScratchFlags1` bit `0x80` gate
-   traced to a setter before it can be reimplemented; bit `0x2000`'s own
-   `loc_2CF51` diversion (triggered by `SpellFieldResistFlags` bits
-   `0x40`/`0x80`) is untraced; a dozen bytes in the record's own middle
-   (offsets `0x36`-`0x41`) have no confirmed consumer; and
+   `test_combat.c`; all 22 suites pass.
+
+   **Bit `0x20` fully resolved and reimplemented, same day**: traced
+   `g_uiScratchFlags1` bit `0x80`'s only setter to `RunAlchemyScreen`
+   itself, which shows its own confirm prompt before dispatch even
+   runs, picking Mark vs. Return. Real data removes all ambiguity --
+   exactly one record in each game's catalog uses this branch, and it's
+   literally named **"MARK OR RETURN"**. Its own bookmark-offset field
+   (`spellrecord.h`'s new `SpellFieldBookmarkOffset`) lands at `0xF0` in
+   `party.h`'s one genuinely unused field-map gap in both games,
+   confirming it's real reserved space. Reimplemented as
+   `combatSaveLocationBookmark`/`combatRestoreLocationBookmark`
+   (`src23/combat.c`/`.h`); tests cover the full round-trip and the
+   "never saved" failure case; all 22 suites pass.
+
+   **Still open**: most of the 19 branches still don't have a
+   reimplemented consumer (see `file-formats.md` for the full address
+   map); bit `0x2000`'s own `loc_2CF51` diversion (triggered by
+   `SpellFieldResistFlags` bits `0x40`/`0x80`) is untraced; a dozen
+   bytes in the record's own middle (offsets `0x36`-`0x3F`, 10 bytes
+   now that `0x40`-`0x41` is named) have no confirmed consumer; and
    `TickMonsterTimer`'s own gate bits still have no confirmed setter
    even though an earlier round this same day found its tick-amount/
    countdown *value* source.

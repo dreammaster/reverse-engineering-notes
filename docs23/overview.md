@@ -10794,6 +10794,27 @@ round to inherit uncritically — worth the extra few minutes every time.
 All 22 suites pass; tests cover the marker write and the area attack's
 skip conditions (empty slot, already-dead slot) and full-hit case.
 
+### Session update (continued, same day): "MARK OR RETURN" — the position bookmark spell, fully resolved
+
+Closed the loop on the bit `0x20` mechanic from an hour ago by tracing
+its one caller-context flag (`g_uiScratchFlags1` bit `0x80`) to its
+only setter: `RunAlchemyScreen` itself, which shows a confirm prompt
+*before* the main dispatch even runs and picks Mark or Return from the
+response. Checked real data rather than stopping at the code read —
+and the ambiguity evaporated entirely: exactly one spell in each game's
+catalog uses this branch, and it's literally named "MARK OR RETURN" in
+the actual game data. Its own bookmark-offset field pointed at `0xF0`
+in both games, which turned out to land exactly in the one genuinely
+unused gap in this project's own `party.h` field map — a nice, small
+confirmation that this is real reserved space, not an accidental
+collision with something already named.
+
+Reimplemented the whole thing as `combatSaveLocationBookmark`/
+`combatRestoreLocationBookmark`. The confirm-prompt UI itself stays
+deferred, same as every other prompt this project hasn't built a
+rendering layer for yet, but the actual game mechanic — save your
+position, recall to it later — is done. All 22 suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -151,9 +151,23 @@ typedef enum {
      */
     SpellFieldTickAmount = 0x34,
 
-    /* 0x36-0x41: referenced by nothing traced so far (12 bytes -- plausibly
+    /* 0x36-0x3F: referenced by nothing traced so far (10 bytes -- plausibly
      * a description-block id for ShowClueBookSpellDetail's own "EFFECT:"/
      * "WHEN:" text via LookupSpellDescriptionBlockOffset, not confirmed). */
+
+    /*
+     * word_332FA: a byte offset into `g_currentPartyRecord` where
+     * ApplyEncodedItemEffect's `SpellFlagsBLocationBookmark` branch
+     * reads/writes a small position bookmark (combat.h's
+     * `combatSaveLocationBookmark`/`combatRestoreLocationBookmark`).
+     * Exactly one real record in each game has this branch's own bit set
+     * -- "MARK OR RETURN" (id 29 both games) -- and its own value here,
+     * `0xF0`, lands in the one real gap in `party.h`'s own field map
+     * (`PartyFieldFlagBankCA`'s own 32 bytes end at `0xEA`,
+     * `PartyFieldFlagBank10C` starts at `0x10C`) -- confirming this
+     * isn't collision-prone reserved padding being reused, not a guess.
+     */
+    SpellFieldBookmarkOffset = 0x40,
 
     SpellFieldTickCountdown = 0x42, /* word_332FC; -> MonsterFieldTickCountdown, same gate as SpellFieldTickAmount above */
 
@@ -254,7 +268,15 @@ typedef enum {
      * this bit set is a plain damage/status attack spell (MAGIC ATTACK,
      * COLD SLASH, FEET OF LEAD, INSECT REPELLENT, ELECTRIC BURST, ...).
      */
-    SpellFlagsBAttackPath = 0x2000
+    SpellFlagsBAttackPath = 0x2000,
+    /*
+     * Routes to ApplyEncodedItemEffect's own "MARK OR RETURN" branch
+     * (yendor2.asm:51685, combat.h's combatSaveLocationBookmark/
+     * RestoreLocationBookmark) -- exactly one real record in each game
+     * sets this bit, named literally "MARK OR RETURN" in both games'
+     * real `WORLD.DAT` data.
+     */
+    SpellFlagsBLocationBookmark = 0x0020
 } SpellFlagsB;
 
 /*

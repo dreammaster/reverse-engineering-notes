@@ -579,6 +579,49 @@ CombatSpellAreaAttackOutcome combatApplySpellAttackToActiveSlots(uint8_t *monste
                                                                     RandomState *rng);
 
 /*
+ * ApplyEncodedItemEffect's "MARK OR RETURN" branch (word_33302 bit
+ * 0x20, yendor2.asm:51685, instruction-identical in Chapter 3) -- the
+ * one real spell in each game's catalog that uses a party-record
+ * bookmark rather than any roll or monster interaction at all. The
+ * bookmark lives at `partyRecord + spellGetU16(spellRecord,
+ * SpellFieldBookmarkOffset)` (`0xF0` for the one real record that uses
+ * this, inside the one genuinely unused gap in `party.h`'s own field
+ * map).
+ *
+ * The caller context (confirmed by reading `RunAlchemyScreen` directly,
+ * `yendor2.asm:24997`-`25020`): before even reaching
+ * `ApplyEncodedItemEffect`, the alchemy screen itself tests this same
+ * bit and shows a confirm prompt (message id `0x22`, not yet
+ * extracted) whose response selects Mark (`ax == 5`, sets
+ * `g_uiScratchFlags1` bit `0x80`) or
+ * Return (`ax == 7`, leaves it clear) -- a cancel response (`ax == 0`)
+ * aborts the whole spell-cast before any cost is even deducted. Neither
+ * `combatSaveLocationBookmark` nor `combatRestoreLocationBookmark`
+ * models that prompt; the caller (not yet composed, since it needs
+ * `ShowConfirmPrompt`) decides which one to call.
+ *
+ * `combatSaveLocationBookmark` writes 7 words verbatim: world X/Y,
+ * facing, and 4 more fields this project hasn't otherwise modeled
+ * (`word_36CAF`/`word_36CB1`/`word_36CB3`, plus `word_36C79`'s own low
+ * 3 bits) -- render/UI-mode state, not gameplay state, kept as opaque
+ * `uint16_t`s rather than guessed at individually.
+ *
+ * `combatRestoreLocationBookmark` returns false (matching the
+ * original's own "can't do that" bail, `ax == 0` test on the bookmark's
+ * own world-X word) if nothing was ever saved -- a real record is never
+ * all-zero in practice, so a 0 world-X is a safe "never saved" sentinel
+ * exactly as the original treats it.
+ */
+typedef struct {
+    int16_t worldX, worldY;
+    uint16_t facing;
+    uint16_t renderA, renderB, renderC, renderDLow3;
+} CombatLocationBookmark;
+
+void combatSaveLocationBookmark(uint8_t *partyRecord, unsigned bookmarkOffset, CombatLocationBookmark bookmark);
+bool combatRestoreLocationBookmark(const uint8_t *partyRecord, unsigned bookmarkOffset, CombatLocationBookmark *out);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

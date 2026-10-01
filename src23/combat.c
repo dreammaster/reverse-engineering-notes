@@ -430,6 +430,32 @@ CombatSpellAreaAttackOutcome combatApplySpellAttackToActiveSlots(uint8_t *monste
     return outcome;
 }
 
+void combatSaveLocationBookmark(uint8_t *partyRecord, unsigned bookmarkOffset, CombatLocationBookmark bookmark) {
+    uint8_t *slot = partyRecord + bookmarkOffset;
+    partySetU16(slot, 0x0, (uint16_t)bookmark.worldX);
+    partySetU16(slot, 0x2, (uint16_t)bookmark.worldY);
+    partySetU16(slot, 0x4, bookmark.facing);
+    partySetU16(slot, 0x6, bookmark.renderA);
+    partySetU16(slot, 0x8, bookmark.renderB);
+    partySetU16(slot, 0xA, bookmark.renderC);
+    partySetU16(slot, 0xC, bookmark.renderDLow3);
+}
+
+bool combatRestoreLocationBookmark(const uint8_t *partyRecord, unsigned bookmarkOffset, CombatLocationBookmark *out) {
+    const uint8_t *slot = partyRecord + bookmarkOffset;
+    if (partyGetU16(slot, 0x0) == 0) {
+        return false;
+    }
+    out->worldX = (int16_t)partyGetU16(slot, 0x0);
+    out->worldY = (int16_t)partyGetU16(slot, 0x2);
+    out->facing = partyGetU16(slot, 0x4);
+    out->renderA = partyGetU16(slot, 0x6);
+    out->renderB = partyGetU16(slot, 0x8);
+    out->renderC = partyGetU16(slot, 0xA);
+    out->renderDLow3 = partyGetU16(slot, 0xC);
+    return true;
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);

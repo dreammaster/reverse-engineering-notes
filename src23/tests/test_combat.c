@@ -1265,6 +1265,34 @@ static void testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot(void) {
     }
 }
 
+static void testSaveLocationBookmarkWritesAllSevenFields(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+
+    CombatLocationBookmark bookmark = {123, 456, 7, 11, 22, 33, 5};
+    combatSaveLocationBookmark(record, 0xF0, bookmark);
+
+    CombatLocationBookmark out;
+    check("a freshly-saved bookmark restores successfully",
+          combatRestoreLocationBookmark(record, 0xF0, &out));
+    checkU32("world X round-trips", (uint16_t)out.worldX, 123);
+    checkU32("world Y round-trips", (uint16_t)out.worldY, 456);
+    checkU32("facing round-trips", out.facing, 7);
+    checkU32("renderA round-trips", out.renderA, 11);
+    checkU32("renderB round-trips", out.renderB, 22);
+    checkU32("renderC round-trips", out.renderC, 33);
+    checkU32("renderDLow3 round-trips", out.renderDLow3, 5);
+}
+
+static void testRestoreLocationBookmarkFailsWhenNeverSaved(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+
+    CombatLocationBookmark out;
+    check("a never-saved bookmark (world X == 0) fails to restore",
+          !combatRestoreLocationBookmark(record, 0xF0, &out));
+}
+
 static void testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling(void) {
     RandomState rng;
     randomStart(&rng, 3, 7);
@@ -1413,6 +1441,8 @@ int main(void) {
     testMarkSpellAttackHitWritesTheInflictedMagnitudeField();
     testApplySpellAttackToActiveSlotsSkipsEmptyAndDeadSlots();
     testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot();
+    testSaveLocationBookmarkWritesAllSevenFields();
+    testRestoreLocationBookmarkFailsWhenNeverSaved();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

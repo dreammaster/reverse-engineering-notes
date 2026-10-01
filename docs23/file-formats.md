@@ -3005,13 +3005,34 @@ current world position, facing, and 4 more fields (`word_36CAF`/
 state) into that bookmark; clear restores from it (failing cleanly,
 same "can't do that" message as other branches, if nothing was ever
 saved). A "mark location" / "recall to it" pair of spell behaviors
-sharing one branch, gated by a caller-context flag this project hasn't
-traced the setter of yet — plausibly two separate spell/ability ids
-both routing here, one for each direction. Not reimplemented (needs
-that caller-context flag's own source traced first); corrected rather
-than left standing, per this project's own established practice of
-fixing a wrong claim the moment it's caught rather than letting it
-stand until a future round stumbles on it.
+sharing one branch, gated by a caller-context flag — resolved the same
+round, see below. Corrected rather than left standing, per this
+project's own established practice of fixing a wrong claim the moment
+it's caught rather than letting it stand until a future round stumbles
+on it.
+
+**The caller-context flag traced, and the mechanic named, same round**:
+`g_uiScratchFlags1` bit `0x80`'s only setter is `RunAlchemyScreen`
+itself (`yendor2.asm:24997`-`25020`), reached *before*
+`ApplyEncodedItemEffect` even runs: for a spell with this bit set, the
+alchemy screen shows its own confirm prompt (message id `0x22`, not yet
+extracted) whose response picks Mark (`ax == 5`) or Return (`ax == 7`)
+— a cancel (`ax == 0`) aborts the cast before any cost is deducted.
+Real data makes this completely unambiguous: exactly one record in
+each game's catalog sets this bit, and it's named, literally, **"MARK
+OR RETURN"** — not a hypothesis, the actual in-game spell name. Its own
+bookmark-offset field (`word_332FA`, `spellrecord.h`'s new
+`SpellFieldBookmarkOffset`, record offset `0x40`) is `0xF0` in both
+games — landing exactly in the one genuinely unused gap in `party.h`'s
+own field map (`PartyFieldFlagBankCA`'s 32 bytes end at `0xEA`,
+`PartyFieldFlagBank10C` starts at `0x10C`), confirming it's real
+reserved space being reused, not a collision with anything already
+named. Reimplemented as `combatSaveLocationBookmark`/
+`combatRestoreLocationBookmark` (`src23/combat.c`/`.h`); the
+`ShowConfirmPrompt` call that picks which one to invoke is left to the
+eventual UI layer, same as every other confirm-prompt gate this project
+has deferred. Tests in `test_combat.c` cover the full 7-field
+round-trip and the "never saved" failure case; all 22 suites pass.
 
 **The attack-resolution family finally gets a real caller, same
 round**: reading `loc_2C87F` (bit `0x2000`) directly confirmed it calls
