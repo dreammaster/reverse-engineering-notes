@@ -7,6 +7,7 @@
 #include "../mm2_monpic.h"
 #include "../mm2_party.h"
 #include "../mm2_reward.h"
+#include "../mm2_smith.h"
 #include "../mm2_text.h"
 #include "../mm2_battle.h"
 #include "../mm2_combat.h"
@@ -468,6 +469,32 @@ static void test_rewards(const Mm2Game *g) {
 	CHECK(mons[0].exp == 150);
 }
 
+static void test_smith(const Mm2Game *g) {
+	static Mm2Item items[MM2_ITEMS];
+	Mm2SmithSlot st[6];
+	CHECK(mm2_load_items(g, items));
+	/* stock tables checked against the dump in docs/shops.md */
+	mm2_smith_stock(0, 1, 1, st);
+	CHECK(st[0].item == 4 && st[1].item == 6 && st[5].item == 13 && st[0].bonus == 0);
+	mm2_smith_stock(1, 1, 1, st);
+	CHECK(st[0].item == 15 && st[0].bonus == 3 && st[5].bonus == 5);
+	mm2_smith_stock(1, 3, 1, st);
+	CHECK(st[0].item == 155 && st[0].bonus == 4 && st[1].item == 117);
+	mm2_smith_stock(0, 4, 1, st);
+	CHECK(st[0].item == 161 && st[0].charges == 1 && st[1].charges == 20 && st[0].bonus == 0);
+	mm2_smith_stock(2, 2, 1, st);     /* day-dependent bonus: day 1 -> DAY_BONUS[1] */
+	CHECK(st[0].item == 96 && st[0].bonus == 1);
+	mm2_smith_stock(2, 2, 29, st);    /* day 29 mod 30 = 29 -> special table[0] */
+	CHECK(st[0].bonus == 5);
+	/* prices (docs/shops.md): Dagger costs 8, a +1 item costs 2P, a +3 item 2P + 2000 */
+	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_BUY_A, 0) == 8);
+	CHECK(mm2_smith_price(&items[4], 1, MM2_SMITH_BUY_A, 0) == 16);
+	CHECK(mm2_smith_price(&items[4], 3, MM2_SMITH_BUY_A, 0) == 16 + 2000);
+	CHECK(mm2_smith_price(&items[4], 3, MM2_SMITH_BUY_A, 1) == (16 + 2000) / 2);
+	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_SELL, 0) == 2 && mm2_smith_price(&items[4], 0, MM2_SMITH_SELL, 1) == 4);
+	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_IDENTIFY, 0) == 10 && mm2_smith_price(&items[4], 4, MM2_SMITH_IDENTIFY, 0) == 400);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -481,6 +508,7 @@ int main(void) {
 	test_combat();
 	test_battle(&g);
 	test_rewards(&g);
+	test_smith(&g);
 	test_text(&g);
 	test_banks(&g);
 	test_indoor_render(&g);

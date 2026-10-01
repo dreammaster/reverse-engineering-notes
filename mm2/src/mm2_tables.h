@@ -27,6 +27,9 @@ extern const uint8_t MM2_TREASURE_THRESHOLD[7];
 extern const uint8_t MM2_TREASURE_ROWS[28];
 extern const uint8_t MM2_TREASURE_CHARGES[4];
 
+extern const uint8_t MM2_SMITH_A_ID[30], MM2_SMITH_A_BONUS[30], MM2_SMITH_B_ID[30], MM2_SMITH_C_ID[30], MM2_SMITH_C_BONUS[30];
+extern const uint8_t MM2_SMITH_D_ID[30], MM2_SMITH_D_CHARGES[30], MM2_SMITH_DAY_BONUS_SPECIAL[6], MM2_SMITH_DAY_BONUS[30];
+
 enum { MM2_KNIGHT, MM2_PALADIN, MM2_ARCHER, MM2_CLERIC, MM2_SORCERER, MM2_ROBBER, MM2_NINJA, MM2_BARBARIAN };
 
 /* Experience needed to reach `level` (>= 2) for a class. */
