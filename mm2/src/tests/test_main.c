@@ -4,6 +4,8 @@
 #include "../mm2_files.h"
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
+#include "../mm2_data.h"
+#include "../mm2_tables.h"
 #include "../mm2_view.h"
 
 #include <stdio.h>
@@ -147,12 +149,44 @@ static void test_map_rules(const Mm2Game *g) {
 	CHECK(blocked == 260);
 }
 
+static void test_tables_and_rules(const Mm2Game *g) {
+	static Mm2Item items[MM2_ITEMS];
+	static Mm2Monster mons[MM2_MONSTERS];
+	static Mm2Spell spells[MM2_SPELLS];
+	static Mm2Roster roster;
+	int i;
+	CHECK(mm2_load_items(g, items));
+	CHECK(strcmp(items[4].name, "Dagger") == 0 && items[4].price == 8 && items[4].value == 4);
+	CHECK(strcmp(items[99].name, "Cinder Pipe") == 0 && items[99].useEffect == 151 && items[99].price == 2500);
+	CHECK(mm2_item_kind(1) == MM2_ITEM_ONEHAND && mm2_item_kind(66) == MM2_ITEM_TWOHAND && mm2_item_kind(120) == MM2_ITEM_SHIELD &&
+		  mm2_item_kind(160) == MM2_ITEM_MISC);
+	CHECK(mm2_load_monsters(g, mons));
+	CHECK(strcmp(mons[0].name, "Creepy Crawler") == 0 && mons[0].hp == 5 && mons[0].exp == 150 && mons[0].ac == 4);
+	CHECK(mons[0].speed == 20 && mons[0].blows == 2 && mons[0].damageDie == 6 && mons[0].groupSize == 6 && mons[0].picture == 1);
+	CHECK(mons[0].touch == 3 /* poison */ && mons[7].magicResistPct == 10 && mons[7].picture == 27);
+	CHECK(mm2_load_spells(g, spells));
+	CHECK(spells[1].usage == 2 && spells[2].usage == 1 && spells[2].gems == 1);   /* Detect Magic non-combat, Energy Blast combat */
+	CHECK(mm2_load_roster(g, &roster));
+	for (i = 0; i < MM2_ROSTER_CHARS; i++)
+		if (roster.chars[i].raw[MC_NAME]) {
+			CHECK(mm2_c8(&roster.chars[i], MC_CLASS) < 8 && mm2_c8(&roster.chars[i], MC_RACE) < 5);
+			CHECK(mm2_c16(&roster.chars[i], MC_HP_MAX) >= mm2_c16(&roster.chars[i], MC_HP) || mm2_c8(&roster.chars[i], MC_CONDITION) != 0);
+		}
+	/* rules: values from tools/mm2_rules.py */
+	CHECK(mm2_exp_for_level(0, 2) == 1500 && mm2_exp_for_level(0, 5) == 12000 && mm2_exp_for_level(0, 10) == 384000);
+	CHECK(mm2_exp_for_level(0, 11) == 576000 && mm2_exp_for_level(0, 25) == 13248000 && mm2_exp_for_level(0, 80) == 154048000u);
+	CHECK(mm2_exp_for_level(1, 2) == 2000 && mm2_exp_for_level(1, 60) == 98880000u && mm2_exp_for_level(3, 16) == 2496000);
+	CHECK(mm2_training_cost(0, 5) == 250 && mm2_training_cost(1, 5) == 1250 && mm2_training_cost(3, 5) == 750);
+	CHECK(mm2_bracket(1) == -3 && mm2_bracket(15) == 1 && mm2_bracket(255) >= 18);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
 	test_lzw_files(&g);
 	test_maps_and_events(&g);
 	test_map_rules(&g);
+	test_tables_and_rules(&g);
 	test_banks(&g);
 	test_indoor_render(&g);
 	test_outdoor_render(&g);
