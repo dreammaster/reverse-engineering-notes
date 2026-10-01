@@ -207,7 +207,7 @@ TShaderConstantBuffer	todo	24	699721	704218
 TGraphicsOGL	todo	63	707141	719135
 TPictureJPG	stub	6	720924	739561
 jpgd	todo	2	721319	733241
-TPictureFormat	stub	7	739426	771446
+TPictureFormat	in-progress	7	739426	771446
 jpgd::Row<2>	todo	1	739851	739851
 jpgd::Row<3>	todo	1	739910	739910
 jpgd::Row<4>	todo	1	739975	739975

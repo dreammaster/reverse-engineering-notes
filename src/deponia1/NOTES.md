@@ -1795,6 +1795,23 @@ as an honest gap for a dedicated future pass rather than guessed at -
 this is a case where "keep going" surfaced more work than it resolved, and
 that's fine to record plainly.
 
+## TPictureFormat (base class only)
+
+Confirmed the base class's own 4 methods in full (Deponia_Linux.asm lines
+771397-771454): a vtable pointer plus one int format code, default 0,
+read directly by `GetFormat()`. `ReadHeader()`/`ReadData()`/`Write()` are
+genuinely abstract in the original (only ever reached through a subclass
+override, never given a body of their own at this level) - declared pure
+virtual here with their confirmed signatures (asm lines 739426-739476) so
+a future decoder pass has the right shape to implement against. Gave each
+of the 5 format subclasses (PNG/WebP/JPG/GIF/PCX) trivial failing overrides
+so they stay instantiable (matching `TPictureIO::GetFormat()`'s existing
+`new TPictureWebP()`-style usage) - none of the actual decode logic is
+reversed, since that wraps the real vendored libpng/libwebp/jpgd libraries
+(`manifest/vendor_libraries.tsv`) rather than anything worth reimplementing
+by hand; linking those directly is a separate build-system decision, the
+same kind as the zlib one flagged for `TMemoryBuffer::Compress()`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
