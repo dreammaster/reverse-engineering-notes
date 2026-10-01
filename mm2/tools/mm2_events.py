@@ -54,5 +54,5 @@ def dump(g, m):
 
 if __name__ == "__main__":
     g = Game()
-    for m in (int(x) for x in sys.argv[1:]) or range(60):
+    for m in [int(x) for x in sys.argv[1:]] or range(60):
         dump(g, m)
