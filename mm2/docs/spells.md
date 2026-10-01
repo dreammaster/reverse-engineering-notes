@@ -163,3 +163,23 @@ group size).  Party buffs (Shield, Power Shield, Bless, Invisibility, Heroism: +
 `1DC33..1DC36` described in save-format.md.  Monster resistance: `byte_27681` (magic resistance %) is rolled first
 (`rand(caster level, 90) < n` resists), then the flag bits of the record.  Damage in `combat_party_spell_hits` is halved when
 the monster resists ("resisted and").
+
+## Non-combat spell parameters (read from `2CAST1`)
+
+* **Healing** (`sub_1CE46(amount)`): picks a character; fails ("Spell Failed") if the condition byte (`+26`) is >= 80h (dead,
+  stone, eradicated); otherwise clears *asleep* and *unconscious* (`cond &= 2Fh`), adds `amount` to current HP (`+5E`) capped at max HP
+  (`+74`).  **First Aid** = 8, **Cure Wounds** = 15, **Power Cure** = sum over the caster's level of `1d10`.
+* **Remove Condition** clears the whole condition byte unless dead; **Stone to Flesh** only works on stone (82h); **Cure Poison / Cure Disease**
+  clear their bit; **Awaken** clears asleep for the whole party.
+* **Resurrection** (dead 80h) and **Raise Dead** (81h): the character ages 1+5 / 1+1 years; Raise Dead has a 10 % chance of
+  eradicating (`FFh`) instead; the character returns with 1 HP.  **Rejuvenate** takes `1d10` years off (50 % chance), not below 18.
+* **Create Food**: +8 food (cap 40, `+25`).  **Light** / **Lasting Light**: `g_fx_light` + 1 / + 20 (capped near 255); **Wizard Eye**: +5
+  (`byte_1DC31`); **Protection from Magic** sets its effect to `level + 10`, **Protection from Elements** to `level + 20`;
+  **Guard Dog**, **Shelter** set their effect byte to FFh-capped values; **Walk on Water**, **Levitate**, **Fly** etc. set the effect byte
+  shown in the status panel (save-format.md).
+* **Recharge Item**: `+1d6` charges (`+40`) of a chosen backpack item; **Uncurse Item**: charges byte FFh (cursed) -> 1; **Enchant
+  Item**: costs 50 SP per plus; **Duplication** copies an item (id, charges, bonus) to a free slot.
+* **Jump**, **Teleport**, **Etherealize**: move the party up to 2 / chosen / 1 cells through walls (`facing_delta`), subject to
+  the wall/flag bits of the destination; **Town Portal** (1-5 = town), **Nature's Gate** (outdoor cells by era), **Surface** (last
+  surface position `byte_231EC`), **Location** (shows the map position, `2PLAY:BB4E`) ; the four **Transmutations** set the
+  terrain-change bytes `1DC2C..1DC2F`.
