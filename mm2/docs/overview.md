@@ -36,6 +36,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
   [classes.md](classes.md), [shops.md](shops.md) (temple, guilds, blacksmith with prices), [view.md](view.md)
   (indoor view verified with `tools/mm2_view.py`; outdoor outlined), [spells.md](spells.md),
   [combat.md](combat.md) (formulas re-read), [save-format.md](save-format.md).
+* `src/` holds C ports of the verified tools (data, views, events, combat formulas, character creation) with a test suite and an SDL2 viewer; see `src/README.md`.
 * For an engine author: [scummvm-notes.md](scummvm-notes.md) maps all of it onto a suggested module layout.
 * Tools (`tools/README.md`): LZW, data readers, image/monster/view renderers, layout dump.
 

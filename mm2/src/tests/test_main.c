@@ -10,6 +10,7 @@
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
+#include "../mm2_game.h"
 #include "../mm2_tables.h"
 #include "../mm2_view.h"
 
@@ -355,6 +356,33 @@ static void test_monster_pictures(const Mm2Game *g) {
 	}
 }
 
+static void test_session(const Mm2Game *g) {
+	Mm2GameSession s;
+	/* walking onto the inn door of Middlegate runs script 2 ("Middlegate Inn") */
+	CHECK(mm2_session_start(&s, g, 0, 6, 4, 'W'));
+	CHECK(mm2_session_step(&s, 0));
+	CHECK(s.x == 5 && s.y == 4);
+	CHECK(s.nMessages == 1 && strcmp(s.messages[0].text, "Middlegate Inn") == 0 && s.messages[0].opcode == EV_TITLE);
+	/* turning and the wall rule */
+	mm2_session_turn(&s, 1);
+	CHECK(s.facing == 'N');
+	mm2_session_turn(&s, -1);
+	mm2_session_turn(&s, -1);
+	CHECK(s.facing == 'S');
+	mm2_session_end(&s);
+	/* a yes/no script that teleports out of town (script 20 at 5,15 facing N) */
+	CHECK(mm2_session_start(&s, g, 0, 5, 15, 'N'));
+	s.yesNo = 1;
+	CHECK(mm2_session_run_trigger(&s));
+	CHECK(s.map == 11 && s.x == 7 && s.y == 3);
+	mm2_session_end(&s);
+	CHECK(mm2_session_start(&s, g, 0, 5, 15, 'N'));
+	s.yesNo = 0;
+	CHECK(mm2_session_run_trigger(&s));
+	CHECK(s.map == 0 && s.x == 5 && s.y == 15);
+	mm2_session_end(&s);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -363,6 +391,7 @@ int main(void) {
 	test_map_rules(&g);
 	test_tables_and_rules(&g);
 	test_event_vm(&g);
+	test_session(&g);
 	test_monster_pictures(&g);
 	test_combat();
 	test_text(&g);
