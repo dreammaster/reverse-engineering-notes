@@ -129,7 +129,7 @@ spells (Energy Blast, Flame Arrow, Fire Ball, Lightning Bolt, ...) are resolved 
 Every combat handler prepares `word_27816` (damage) and/or `byte_27812/27813` (status kind) and calls
 `2COMBAT:combat_party_spell_hits(count, first_target, element)` (`18696`).  `count` = number of monsters hit
 (10 = the whole group, clamped to the monsters present; 1 = the chosen one), `element` is the damage/resistance class
-(1 fire, 2 electricity, 3 cold, 4 acid/poison, 6 mental/magic, 0 = none/special) used for the monster's resistance tests.
+(1 fire, 2 electricity, 3 cold, 4 acid, 5 and 6 other/magic classes, 0 = none; these index the monster's immunity flags, see file-formats.md) used for the monster's resistance tests.
 Damage helper `sub_1A82C(dice, bonus)` = **sum over the caster's level of `rand(1, dice) + bonus`** (`dice = 0` = just
 `bonus` per level).
 

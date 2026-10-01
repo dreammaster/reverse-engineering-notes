@@ -92,9 +92,9 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 | 19 | bits 0, 1, 2 -> flags `2768B / 2768A / 2768C`; bits 3-5 -> `27680`; bits 5-7 -> percent table `4DC0` -> `27681`: **magic resistance %** (a spell fails when `rand(caster level, 90) < n`) |
 
 Hit points = byte 0E dice (see above), experience = byte 0F.  "Know Monster" (2CAST2) prints HP, AC, Undead,
-Special Power (`27676`), Bonus on Touch (`27677`) and Magic Resistance (`27681`).  The remaining flag bits
-(`27684-2768C`) are the element resistances/immunities tested against the monster-spell/damage kind; their exact
-element mapping was not traced.
+Special Power (`27676`), Bonus on Touch (`27677`) and Magic Resistance (`27681`).  The element **immunity** flags are the bytes `DGROUP:27686..2768C` (`combat_target_flag(element-1)` indexes them): element 1
+fire = byte 17 bit 6, 2 electricity = byte 17 bit 7, 3 cold = byte 18 bit 6, 4 acid = byte 18 bit 7, 5 = byte 19 bit 1,
+6 = byte 19 bit 0 (magic/mind), 7 = byte 19 bit 2.  A hit with an element the monster is immune to does half damage / no status change.
 
 Monster spell / breath names (`DGROUP:10AA`, id 0-31): sprays poison, sprays acid, casts a curse,
 breathes fire/lightning/cold/energy/gas/acid, explodes, gazes, drains magic, drains spell level,
