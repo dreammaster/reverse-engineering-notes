@@ -4,6 +4,7 @@
 #include "../mm2_files.h"
 #include "../mm2_gfx.h"
 #include "../mm2_map.h"
+#include "../mm2_monpic.h"
 #include "../mm2_party.h"
 #include "../mm2_text.h"
 #include "../mm2_combat.h"
@@ -331,6 +332,29 @@ static void test_text(const Mm2Game *g) {
 	CHECK(canvas[(3 * 8) * MM2_SCREEN_W + 2 * 8 + 0] == 0);
 }
 
+static void test_monster_pictures(const Mm2Game *g) {
+	static const struct { int id, cga, frames; uint32_t hash; } cases[] = {
+		{1, 0, 12, 0xd3e78801u}, {5, 0, 7, 0x87985a6cu}, {44, 0, 8, 0x3afbb894u}, {1, 1, 12, 0x93dce801u}};
+	size_t i;
+	for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+		Mm2MonPic p;
+		uint32_t h = 2166136261u;
+		int k;
+		CHECK(mm2_monpic_load(g, cases[i].id, cases[i].cga, &p));
+		CHECK(p.frames == cases[i].frames);
+		for (k = 0; k < p.frames; k++) {
+			uint8_t f[MM2_MONPIC_W * MM2_MONPIC_H];
+			size_t j;
+			mm2_monpic_frame(&p, k, 0, f);
+			for (j = 0; j < sizeof(f); j++)
+				h = (h ^ f[j]) * 16777619u;
+		}
+		if (h != cases[i].hash) printf("  monpic %d: got %08x\n", (int)i, h);
+		CHECK(h == cases[i].hash);
+		mm2_monpic_free(&p);
+	}
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -339,6 +363,7 @@ int main(void) {
 	test_map_rules(&g);
 	test_tables_and_rules(&g);
 	test_event_vm(&g);
+	test_monster_pictures(&g);
 	test_combat();
 	test_text(&g);
 	test_banks(&g);
