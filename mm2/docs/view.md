@@ -65,9 +65,25 @@ Everything is drawn with `gfx_draw_op13(bank, image, x, y)` into page 1 (view ar
 `python tools/mm2_view.py MAP X Y N|E|S|W out.png [town|cave|castle]` renders a view this way (walls, floor and sky
 only, no sprites); the output shows plausible streets/corridors, which is how the layout above was checked.
 
-Outdoors (`draw_view_outdoors`): `sub_189B8` draws the sky/horizon strips per depth; `sub_18CC6` then
-draws terrain tiles from `outdoor1-3.16`, `outb/outf.16` and the terrain-type banks (`desert/ocean/
-swamp/tundra.16`) for the four depths using the per-cell terrain byte (`byte_54B0..54B8`).
+## Outdoors (`draw_view_outdoors` `18D6C`)
+
+The outdoor view is built from **terrain tiles**, not walls.  `sub_15F54` samples the same 3 lanes x 4 depths
+(`59CA/59CE/59D2`, centre/left/right) and turns each map byte into a terrain class with
+`sub_15F40` (`DGROUP:52B2[byte & 1Fh]`): 0 = nothing (empty), 1 = values 1-2, 2 = 3, 3 = 4, 4 = values 5-12 and 28;
+the results go to `5FD8` (centre), `5FDC` (left), `5FE0` (right).  `sub_18CC6` then stores `class - 1` (FFh =
+empty) in `54B0[4]` / `54B4[4]` / `54B8[4]`.  The class selects the image bank: classes 1-3 -> the three
+`OUTDOOR1-3.16` banks (`word_1DBBE/BC2/BC6`), class 4 -> the terrain bank `word_1DBCA` loaded by `view_load_sky`
+from the map attribute byte (`231DA & 0Fh`: 9 desert, 0Ah tundra?, 0Bh swamp?, 0Ch ocean; the names are in the file
+list `DGROUP:04CE...`).  `OUTF.16` (floor, `word_1DBB2`) and `OUTB.16` (`word_1DBBA`) supply the ground and the
+horizon; the sky is `SKY.16` (`word_1DBD2`), replaced by stars at night (`g_day_fraction >= 80h`).
+
+Drawing order: sky and ground; `sub_189B8` draws the horizon strips (the 4 depth columns at x = `DGROUP:1596[]` =
+184,160,136,112 and y = `159E[]` = 20,35,50,60, for the cells that are empty); then for the nearest
+non-empty centre tile `sub_18AD0` (tile image `15A6[]` = 0,0,1,2 at x = `15AA[]` = 40,40,64,88,
+y = `15B2[]` = 21,21,42,50), and for depths 3..0 the left tiles (`sub_18B0C`: image `15BA[]`, x `15C2[]` = 8,16,32,88,
+y `15CA[]` = 36,46,50,58) and the right tiles (`sub_18BEC`: images `15D2[]`, x `15D6[]` = 176,152,136,120,
+y `15DE[]` = 36,46,50,58), far to near.  Tiles that are adjacent to an empty/blocked neighbour use alternative
+images and x/y tables (`15B8..15D4`).  This part was read, not tested with a renderer; use it as an outline.
 
 `view_free_resources` (`1B0F6`), `view_load_style_graphics` (`1B288`) and `enter_map` (`1B5EA`) load and
 release the style banks; `map_style_for_id` (`1B410`) chooses the style from the map number.
