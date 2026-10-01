@@ -77,13 +77,21 @@ from the map attribute byte (`231DA & 0Fh`: 9 desert, 0Ah tundra?, 0Bh swamp?, 0
 list `DGROUP:04CE...`).  `OUTF.16` (floor, `word_1DBB2`) and `OUTB.16` (`word_1DBBA`) supply the ground and the
 horizon; the sky is `SKY.16` (`word_1DBD2`), replaced by stars at night (`g_day_fraction >= 80h`).
 
-Drawing order: sky and ground; `sub_189B8` draws the horizon strips (the 4 depth columns at x = `DGROUP:1596[]` =
-184,160,136,112 and y = `159E[]` = 20,35,50,60, for the cells that are empty); then for the nearest
-non-empty centre tile `sub_18AD0` (tile image `15A6[]` = 0,0,1,2 at x = `15AA[]` = 40,40,64,88,
-y = `15B2[]` = 21,21,42,50), and for depths 3..0 the left tiles (`sub_18B0C`: image `15BA[]`, x `15C2[]` = 8,16,32,88,
-y `15CA[]` = 36,46,50,58) and the right tiles (`sub_18BEC`: images `15D2[]`, x `15D6[]` = 176,152,136,120,
-y `15DE[]` = 36,46,50,58), far to near.  Tiles that are adjacent to an empty/blocked neighbour use alternative
-images and x/y tables (`15B8..15D4`).  This part was read, not tested with a renderer; use it as an outline.
+Drawing order (reproduced by `render_outdoors` in `tools/mm2_view.py`; the output shows sky, cobbled ground and grey mountain
+tiles as expected, but could not be compared with the real game):
+
+1. `SKY.16` image 0 at (8, 8) (stars at night), `OUTF.16` image 0 (208x60 ground) at (8, 68).
+2. **Horizon strips** (`sub_189B8`, terrain class 4 cells, depth `d` = 0..3, `y = 80h - DGROUP:159E[d]` = 108, 93, 78, 68, bank = the
+   terrain bank, 20 images: 0-3 full width 208 px, 4-7 left half, 8-11 right half, 12-15 / 16-19 corner pieces 32/56/80/104 px):
+   centre cell -> image `d` at x = 8; left cell -> `d + 4` at x = 8 (or `d + 12` when the centre is also class 4); right cell ->
+   `d + 8` at x = 70h (or `d + 16` at x = `1596[d]` = 184, 160, 136, 112).  The drawn cells are then cleared so they are not drawn as tiles.
+3. **Tiles** (classes 1-3 = `OUTDOOR1/2/3.16`, 8 images each: 0-3 front faces 160x92, 96x54, 64x35, 32x17, 4-7 side faces):
+   the **nearest** centre tile `n` (first depth with a tile) is drawn once: image `15A6[n]` = 0, 0, 1, 2 at x = `15AA[n]` = 40, 40, 64, 88,
+   y = `15B2[n]` = 21, 21, 42, 50.  Then for depth `d` = n (or 3 if none) down to 0 the left tile (image `15BA[d]` = 4, 5, 2, 3, x `15C2[d]` =
+   8, 16, 32, 88, y `15CA[d]` = 36, 46, 50, 58) and the right tile (images `15D2[d]` = 6, 7, 2, 3, x `15D6[d]` = 176, 152, 136, 120, same y).
+   A side tile behind the nearest centre tile (`d == n`, `d != 0`) is skipped when the side cell one step nearer is also a tile, otherwise
+   it uses the alternate images 4, 5, 2 / 6, 7, 2 at the tables `15C0`, `15D4` with y from `15B2`.  At depth 1, and at depth 2 when `n == 2`, the
+   left tile is moved to x = 8.  *(Two extra x overrides keyed on `byte_22D04/22D08` were not decoded.)*
 
 `view_free_resources` (`1B0F6`), `view_load_style_graphics` (`1B288`) and `enter_map` (`1B5EA`) load and
 release the style banks; `map_style_for_id` (`1B410`) chooses the style from the map number.

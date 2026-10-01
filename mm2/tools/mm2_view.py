@@ -118,3 +118,90 @@ if __name__ == "__main__":
     st = (sys.argv[6] if len(sys.argv) > 6 else "town").upper()
     c = render(GAME, m, x, y, f, st)
     g.write_png(out, 320, 200, c, g.EGA)
+
+
+# ---- outdoors (draw_view_outdoors; see docs/view.md) -------------------------------------------------
+TERRAIN = [0, 1, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0]  # DGROUP:52B2
+H_Y = [20, 35, 50, 60]            # DGROUP:159E
+H_RX = [184, 160, 136, 112]       # DGROUP:1596
+C_IMG, C_X, C_Y = [0, 0, 1, 2], [40, 40, 64, 88], [21, 21, 42, 50]
+L_IMG, L_X, L_Y = [4, 5, 2, 3], [8, 16, 32, 88], [36, 46, 50, 58]
+L_ALT_IMG, L_ALT_X = [4, 5, 2], [8, 16, 32]
+R_IMG, R_X, R_Y = [6, 7, 2, 3], [176, 152, 136, 120], [36, 46, 50, 58]
+R_ALT_IMG, R_ALT_X = [6, 7, 2], [176, 152, 136]
+ALT_Y = [21, 21, 42, 50]
+SPECIAL = {9: "DESERT", 10: "TUNDRA", 11: "SWAMP", 12: "OCEAN"}   # attribute byte 04 low nibble (assumed names)
+
+
+def render_outdoors(map_id, x, y, facing, special="OCEAN"):
+    walls = Game(GAME.rstrip("\\")).map(map_id)[:256]
+    bank = lambda n: g.bank(open(GAME + n + ".16", "rb").read())   # noqa: E731
+    tiles = [bank("OUTDOOR1"), bank("OUTDOOR2"), bank("OUTDOOR3")]
+    sp = bank(special)
+    canvas = [[0] * 320 for _ in range(200)]
+
+    def blit(b, idx, px, py):
+        io, mo = g.entries(b)[idx]
+        w, h, pix = g.image(b, io, 4)
+        m = g.mask(b, mo, w, h) if mo else None
+        for j in range(h):
+            for i in range(w):
+                if (m is None or m[j][i]) and 0 <= py + j < 200 and 0 <= px + i < 320:
+                    canvas[py + j][px + i] = pix[j][i]
+    blit(bank("SKY"), 0, 8, 8)
+    blit(bank("OUTF"), 0, 8, 0x44)
+    (sx, sy), (lx, ly), (rx, ry) = STEP[facing]
+
+    def cls(cx, cy):
+        return TERRAIN[walls[((cy & 15) << 4) | (cx & 15)] & 0x1F]
+    cen = [cls(x + sx * d, y + sy * d) for d in range(4)]
+    lef = [cls(x + lx + sx * d, y + ly + sy * d) for d in range(4)]
+    rig = [cls(x + rx + sx * d, y + ry + sy * d) for d in range(4)]
+    # horizon strips for terrain class 4
+    for d in range(4):
+        yy = 0x80 - H_Y[d]
+        c4, l4, r4 = cen[d] > 3, lef[d] > 3, rig[d] > 3
+        if c4:
+            blit(sp, d, 8, yy)
+            if l4:
+                blit(sp, d + 12, 8, yy)
+            if r4:
+                blit(sp, d + 16, H_RX[d], yy)
+        else:
+            if l4:
+                blit(sp, d + 4, 8, yy)
+            if r4:
+                blit(sp, d + 8, 0x70, yy)
+        if c4:
+            cen[d] = 0
+        if l4:
+            lef[d] = 0
+        if r4:
+            rig[d] = 0
+    cen = [c - 1 for c in cen]
+    lef = [c - 1 for c in lef]
+    rig = [c - 1 for c in rig]          # -1 = empty
+    n = next((d for d in range(4) if cen[d] >= 0), 4)
+    near = 3 if n == 4 else n
+    if n != 4:
+        blit(tiles[cen[n]], C_IMG[n], C_X[n], C_Y[n])
+    for d in range(near, -1, -1):
+        for side in "LR":
+            arr = lef if side == "L" else rig
+            hide = d != 0 and d == near and cen[d] >= 0
+            if hide and arr[d - 1] >= 0:
+                arr[d] = -1
+            if arr[d] < 0:
+                continue
+            if side == "L":
+                img, px, py = L_IMG[d], L_X[d], L_Y[d]
+                if hide:
+                    img, px, py = L_ALT_IMG[d - 1], L_ALT_X[d - 1], ALT_Y[d]
+                if d == 1 or (d == 2 and near == 2):
+                    px = 8
+            else:
+                img, px, py = R_IMG[d], R_X[d], R_Y[d]
+                if hide:
+                    img, px, py = R_ALT_IMG[d - 1], R_ALT_X[d - 1], ALT_Y[d]
+            blit(tiles[arr[d]], img, px, py)
+    return canvas
