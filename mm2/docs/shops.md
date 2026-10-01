@@ -90,7 +90,7 @@ Slayer reward already taken, top 3 bits = number of completed rewards.
    (`DGROUP:3E0C` start ids per level, `3E1E` weights; level A = clubs/staffs/blowpipes/shields/armour/helms of the plain
    kind, B = the magical kind, C = the best kind); Slayer picks monster id `rand(1, 3E36[level]) + 3E3A[level]`, i.e. ids
    32-79, 80-143, 144-191.  **D** is the final quest: the three swords (items E2h-E4h: Valor, Honor and Noble Sword) or the
-   three beasts (three fixed monsters).
+   three beasts *(level D not traced beyond `caves_lords_quest`)*.
 3. When the party returns with the item (`sub_1CB4A`/`1CBCA` remove it) or has killed the target, the lord says "You have done
    everyone a great service and you shall be rewarded" and gives **100 000 experience (Hoardall) or 1 000 000 (Slayer)**
    per completed character; "Begone until you have completed your quest!" otherwise.  Esc: "Then begone, knave!" and the
