@@ -41,7 +41,7 @@ Game: *Might and Magic II: Gates to Another World* (DOS, v1.01, GOG copy at
 
 ## Open / next
 
-1. Graphics: exact CGA/Tandy/Hercules palettes; the 3-4 unused monster animation entries; outdoor view
+1. Graphics: the 3-4 unused monster animation entries; outdoor view
    needs a renderer to confirm the tile tables.
 2. Remaining monster record fields' exact meaning; spell effect internals (2CAST1/2) beyond the summaries.
 3. Driver code (`drv/*.asm`) is disassembled but its internal helpers are unnamed.

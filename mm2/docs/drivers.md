@@ -58,3 +58,14 @@ image into the adapter's native layout, e.g. EGA planar rows padded to 4 bytes);
 reads that converted data (`word_BC6` = mask flag, `word_BC8` = row length).  Video-memory row offsets come from the
 table at offset `72h`; the video segment is stored at `328h`.  The number of jump table entries differs by driver (EGA 36, MCGA and Tandy 32, CGA and Hercules 24, TIMER 2;
 unused ones jump to a `retf`).
+
+## Palettes (read from the drivers)
+
+* **EGA** (`EGA.DRV`): 16 colours, default IBM EGA palette (no palette programming).
+* **CGA** (`CGA.DRV`): BIOS mode 4 (320x200), palette 1 (`int 10h/0Bh`, BH=1 BL=1: black, cyan, magenta, white) with the
+  default intensity the BIOS sets for mode 4 -- the tools use (0,0,0), (85,255,255), (255,85,255), (255,255,255).
+  Image code 0-3 is the palette index.
+* **Tandy** (`TGA.DRV`): BIOS mode 9 (320x200x16), default 16-colour Tandy palette (same colour order as EGA).
+* **MCGA** (`MCGA.DRV`): mode 13h; the default VGA palette for colours 0-15 plus two extra DAC entries (`10h` = RGB(42,26,16),
+  `11h` = RGB(63,44,32), 6-bit values, i.e. two skin/brown tones) programmed from a table at offset `37Ch`.
+* **Hercules** (`HGA.DRV`): 720x348 monochrome, set up by programming the 6845 directly (no colours).
