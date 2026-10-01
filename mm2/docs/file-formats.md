@@ -72,16 +72,21 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 | 0-13 | name, each byte `& 7Fh` (high bit set in the file), space padded |
 | 0E | bits 0-5: dice count - 1; bits 6-7: die index into `DGROUP:4DB8` = {1, 10, 100, 1000}; hit points = count x die |
 | 0F | bits 0-4: multiplier - 1; bits 5-6: index into `4DB8`; bit 7: x1000; experience reward = multiplier x that |
-| 10 | flag bits: 7, 6, 5, 2 -> flags (`27670`, `2766F`, `2766E`, `27672`); bits 0-1 -> `27673`; bits 3-4 -> `27671` |
+| 10 | bits 0-1 -> `27673`: **item drop class** (0 none; the best class among the killed monsters picks the treasure roll); bit 2 -> `27672`: **drops gems** (`rand(1,10)`); bits 3-4 -> `27671`: **gold class** (0 none, 1 = flat `rand(6,55)`, 2-3 = scaled by the monster's tier `id >> 4`); bits 5, 6, 7 -> `2766E / 2766F / 27670`: **bribable** with food / gold / gems (pre-fight menu **B**) |
 | 11 | bits 0-4: monster spell / breath id -> `27674` (see table below); bits 5-7: index into percent table `4DC0` = {0,10,20,35,50,75,90,100} -> `27675` (cast chance) |
-| 12 | bits 7,6,5: flags `27683/27682/27678`; bits 0-4: touch effect id -> `27677` (table `106C`) |
-| 13 | bit 7 flag `2768F`; bits 0-3 + 1 (x10 if bit 4): `27679` (attack damage dice count); bits 5-6: `2767A` (damage kind/attack verb) |
-| 14 | low nibble + 1 -> `2767E` (number of attacks); high nibble + 1 -> `27676` |
-| 15 | bits 0-6 -> `2767B` (speed?); bit 7 unused |
-| 16 | bits 7,6 flags `27684/27685`; bits 0-4 + 1 (x10 if bit 5) -> `2767C` (damage dice size / resistance?) |
-| 17 | bits 7,6 flags `27687/27686`; bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767D` |
-| 18 | bits 7,6 flags `27689/27688`; bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767F` |
-| 19 | bits 0,1,2 -> flags `2768B/2768A/2768C`; bits 3-5 -> `27680`; bits 5-7 -> percent table `4DC0` -> `27681` |
+| 12 | bits 0-4: touch effect id -> `27677` (table `106C`); bit 5 -> `27678` (blocks the thievery/steal check); bit 6 -> `27682`: **ranged attacker** (shoots from the back rank, 80 %); bit 7 -> `27683`: **undead** (shown by "Know Monster", special-cased by some spells) |
+| 13 | bits 0-3 + 1 (x10 if bit 4) -> `27679`: **group size** (`rand(1, n)` monsters appear); bits 5-6 -> `2767A` (index of the melee verb); bit 7 -> `2768F`: **may summon friends** (" adds friends!") |
+| 14 | low nibble + 1 -> `2767E` (number of melee blows); high nibble + 1 -> `27676` (ability/spell uses per battle, copied to `9F9E[i]`) |
+| 15 | bits 0-6 -> `2767B`: **picture id** (`monster_gfx_load`, index into MONSTERS.16/.4); bit 7 unused |
+| 16 | bits 0-4 + 1 (x10 if bit 5) -> `2767C`: **armour class**; bits 7, 6 -> flags `27684 / 27685` (resistance flags; `27685` also gates `combat_monster_casts`) |
+| 17 | bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767D`: **melee damage die** (`rand(1, n)` per blow); bits 7, 6 -> flags `27687 / 27686` |
+| 18 | bits 0-4 + 1 (x10 if bit 5, capped 250) -> `2767F`: **speed** (copied to `9F92[i]`); bits 7, 6 -> flags `27689 / 27688` |
+| 19 | bits 0, 1, 2 -> flags `2768B / 2768A / 2768C`; bits 3-5 -> `27680`; bits 5-7 -> percent table `4DC0` -> `27681`: **magic resistance %** (a spell fails when `rand(caster level, 90) < n`) |
+
+Hit points = byte 0E dice (see above), experience = byte 0F.  "Know Monster" (2CAST2) prints HP, AC, Undead,
+Special Power (`27676`), Bonus on Touch (`27677`) and Magic Resistance (`27681`).  The remaining flag bits
+(`27684-2768C`) are the element resistances/immunities tested against the monster-spell/damage kind; their exact
+element mapping was not traced.
 
 Monster spell / breath names (`DGROUP:10AA`, id 0-31): sprays poison, sprays acid, casts a curse,
 breathes fire/lightning/cold/energy/gas/acid, explodes, gazes, drains magic, drains spell level,
