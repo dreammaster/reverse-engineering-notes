@@ -10837,6 +10837,33 @@ consumer) and left the rest for a dedicated pass. Three clean branches
 and one honest "not yet" is a better day's balance than four branches
 where one might be wrong.
 
+### Session update (continued, same day): `ApplyDamageToMapMonster` traced, and an older misattribution (not from today) corrected too
+
+Still had `ApplyDamageToMapMonster` on the open list — a function named
+in an *earlier* session with a comment flagging its own two callees as
+"not traced." Read it directly: both callees are just
+`ApplyAttackToTarget` again. This function turned out to be exactly
+the same `combatResolveSpellAttack`/`combatApplySpellAttack`/
+`combatMarkSpellAttackHit` sequence already built for combat-slot
+targets, with one more genuinely new step on top — a death check that
+calls into `monsterGrantRewards`/`monsterPoolRemove`, both already
+sitting there finished from a much earlier round. A clean composition,
+reimplemented as `combatApplyDamageToMapMonster`.
+
+Tracing this function's actual caller turned up something worth
+fixing that predates this whole session: an old comment (not
+introduced today) had the "straight-line multi-target attack" mechanic
+attributed to the wrong dispatch bit. The real one is `word_33302` bit
+`0x200`; bit `0x4` is the teleport-then-engage branch this project
+already corrected earlier today. Two misattributions caught and fixed
+in one day — one from an hour ago, one from months back — both found
+the same way: by actually reading the code at the address being cited
+rather than trusting a prior summary of it. That's really the whole
+throughline of today's work.
+
+All 22 suites pass; tests cover the survive/die/miss outcomes for the
+new function, including reward staging and record zeroing on a kill.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1293,6 +1293,75 @@ static void testRestoreLocationBookmarkFailsWhenNeverSaved(void) {
           !combatRestoreLocationBookmark(record, 0xF0, &out));
 }
 
+static void testApplyDamageToMapMonsterSurvivesHit(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    memset(&staging, 0, sizeof(staging));
+    monsterSetU16(target, MonsterFieldHealth, 100);
+    setSpellU16(spell, SpellFieldAttackMagnitude, 15);
+
+    CombatMapMonsterAttackOutcome outcome =
+        combatApplyDamageToMapMonster(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    check("the attack landed", outcome.attack.hasEffect);
+    check("the monster survives a non-lethal hit", !outcome.monsterDied);
+    checkU32("health is reduced by the attack", monsterGetU16(target, MonsterFieldHealth), 85);
+}
+
+static void testApplyDamageToMapMonsterGrantsRewardsAndRemovesOnDeath(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    memset(&staging, 0, sizeof(staging));
+    monsterSetU16(target, MonsterFieldHealth, 10);
+    monsterSetU16(target, MonsterFieldType, 7); /* occupied */
+    setSpellU16(spell, SpellFieldAttackMagnitude, 15);
+
+    CombatMapMonsterAttackOutcome outcome =
+        combatApplyDamageToMapMonster(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    check("a lethal hit reports the monster died", outcome.monsterDied);
+    checkU32("the record is zeroed by monsterPoolRemove", monsterGetU16(target, MonsterFieldType), 0);
+}
+
+static void testApplyDamageToMapMonsterMissDoesNothing(void) {
+    uint8_t target[MonsterRecordSize];
+    uint8_t caster[PartyRecordSize];
+    uint8_t spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+
+    memset(target, 0, sizeof(target));
+    memset(caster, 0, sizeof(caster));
+    memset(spell, 0, sizeof(spell));
+    memset(&staging, 0, sizeof(staging));
+    monsterSetU16(target, MonsterFieldHealth, 100);
+    monsterSetU16(target, MonsterFieldType, 7);
+    /* SpellFieldAttackMagnitude left at 0 -- power 0 always misses on the normal roll path. */
+
+    randomStart(&rng, 1, 1);
+    CombatMapMonsterAttackOutcome outcome =
+        combatApplyDamageToMapMonster(target, caster, spell, false, &staging, NULL, 0, NULL, &rng);
+
+    check("a miss has no effect", !outcome.attack.hasEffect);
+    check("...and definitely doesn't count as a kill", !outcome.monsterDied);
+    checkU32("health is untouched", monsterGetU16(target, MonsterFieldHealth), 100);
+    checkU32("the record is untouched, not removed", monsterGetU16(target, MonsterFieldType), 7);
+}
+
 static void testRollTrapAvoidanceMagnitudeNegativeMarginAvoidsWithoutRolling(void) {
     RandomState rng;
     randomStart(&rng, 3, 7);
@@ -1443,6 +1512,9 @@ int main(void) {
     testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
+    testApplyDamageToMapMonsterSurvivesHit();
+    testApplyDamageToMapMonsterGrantsRewardsAndRemovesOnDeath();
+    testApplyDamageToMapMonsterMissDoesNothing();
     testSavingThrowTrapNoneWhenPackedValueZero();
     testSavingThrowTrapAvoidedByHighSkill();
     testSavingThrowTrapSingleTargetAppliesEffect();

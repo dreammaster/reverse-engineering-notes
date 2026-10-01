@@ -456,6 +456,27 @@ bool combatRestoreLocationBookmark(const uint8_t *partyRecord, unsigned bookmark
     return true;
 }
 
+CombatMapMonsterAttackOutcome combatApplyDamageToMapMonster(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                              const uint8_t *spellRecord, bool alreadyResolved,
+                                                              MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                                              size_t globalFlagsSize, DungeonGrid *grid,
+                                                              RandomState *rng) {
+    CombatMapMonsterAttackOutcome outcome;
+    outcome.attack = combatResolveSpellAttack(targetRecord, casterRecord, spellRecord, alreadyResolved, rng);
+    combatApplySpellAttack(targetRecord, spellRecord, outcome.attack);
+    outcome.monsterDied = false;
+    if (!outcome.attack.hasEffect) {
+        return outcome;
+    }
+    combatMarkSpellAttackHit(targetRecord, spellRecord);
+    if ((int16_t)monsterGetU16(targetRecord, MonsterFieldHealth) <= 0) {
+        monsterGrantRewards(staging, targetRecord, globalFlags, globalFlagsSize);
+        monsterPoolRemove(targetRecord, grid);
+        outcome.monsterDied = true;
+    }
+    return outcome;
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);

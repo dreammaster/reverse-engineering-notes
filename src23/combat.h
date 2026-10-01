@@ -622,6 +622,47 @@ void combatSaveLocationBookmark(uint8_t *partyRecord, unsigned bookmarkOffset, C
 bool combatRestoreLocationBookmark(const uint8_t *partyRecord, unsigned bookmarkOffset, CombatLocationBookmark *out);
 
 /*
+ * ApplyDamageToMapMonster (yendor2.asm:52979, instruction-identical in
+ * Chapter 3) -- the map-monster (`g_levelMonsters`) counterpart to
+ * `combatApplySpellAttack`/`combatMarkSpellAttackHit`'s own
+ * combat-slot targets, finally traced directly (closing a gap
+ * `combat.h`'s own doc comments had left open since the
+ * equipment-corrosion-write-back round: "`ApplyDamageToMapMonster`
+ * ... still depends on more untraced caller-context globals").
+ * Confirmed by direct read to be exactly the same
+ * `combatResolveSpellAttack`/`combatApplySpellAttack`/
+ * `combatMarkSpellAttackHit` sequence this project already built for
+ * combat-slot targets, plus one more real step neither of those two
+ * reaches on their own: if the target's `MonsterFieldHealth` is <= 0
+ * after the attack commits, `monsterGrantRewards`/`monsterPoolRemove`
+ * (monsterpool.h, both already reimplemented) finish the kill exactly
+ * as `ProcessLevelMonsters`' own death handling does elsewhere.
+ *
+ * The caller -- `ApplyEncodedItemEffect`'s word_33302 bit `0x200`
+ * branch (`loc_2CEE7`, confirmed by direct read, correcting an
+ * *earlier* round's own misattribution of this "straight-line
+ * multi-target attack" mechanic to bit `0x4`, which is actually the
+ * unrelated teleport-then-engage branch -- see this file's own section
+ * on that correction) -- either loops the 3 `g_monsterSlots` entries
+ * (when `g_uiScratchFlags4` bit `0x1000` is set, an untraced
+ * caller-context input) or walks up to 3-plus-30 consecutive viewport
+ * depth rows via `GetMonsterAtViewportRow`, applying this to whatever
+ * `g_levelMonsters` record occupies each one. Neither loop shape is
+ * composed here -- the per-target primitive is the bounded, reusable
+ * piece; the surrounding scan is orchestration for a future pass.
+ */
+typedef struct {
+    CombatSpellAttackResult attack;
+    bool monsterDied;
+} CombatMapMonsterAttackOutcome;
+
+CombatMapMonsterAttackOutcome combatApplyDamageToMapMonster(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                              const uint8_t *spellRecord, bool alreadyResolved,
+                                                              MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                                              size_t globalFlagsSize, DungeonGrid *grid,
+                                                              RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

@@ -2982,15 +2982,18 @@ also already reimplemented), `0x2000` (`loc_2C87F` — confirmed by
 direct read this round to call `ApplyAttackToTarget` against
 `g_activeCombatMonster`, now reimplemented, see below), `0x1000`
 (`loc_2C8CC` — the same attack looped over all 3 `g_monsterSlots`
-entries, also reimplemented), `0x100` (`loc_2C92A`), `0x200`
-(`loc_2CEE7`); falling through all of `word_33302` drops to 4 more
-`word_33306` bits — `0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4`
-(`loc_2D04D`), `0x1` (`loc_2D137`) — and finally a true no-op
+entries, also reimplemented), `0x100` (`loc_2C92A` — pure UI/rendering,
+a weapon-select icon redraw, not a gameplay mechanic), `0x200`
+(`loc_2CEE7` — the real "straight-line multi-target attack," per-target
+primitive reimplemented as `combatApplyDamageToMapMonster`, see below);
+falling through all of `word_33302` drops to 4 more `word_33306` bits —
+`0x8` (`loc_2CCEE`), `0x2` (`loc_2CE62`), `0x4` (`loc_2D04D` — also
+pure UI/rendering), `0x1` (`loc_2D137`) — and finally a true no-op
 (`loc_2C1C9`, just clears `g_lastKeyChar`). 19 branches plus the no-op,
 matching the "~19" estimate exactly. Only the bits named above have a
-reimplemented consumer; the rest (`0x80`/`0x10`/`0x100`/`0x200` of
-`word_33302`, all 4 of `word_33306`) are recorded here as a precise map
-for whoever picks up the remaining branches.
+reimplemented consumer; the rest (`0x80`/`0x10` of `word_33302`, 3 of
+`word_33306`'s 4) are recorded here as a precise map for whoever picks
+up the remaining branches.
 
 **Self-correction, same round**: this list's own first draft (written
 earlier today) attributed the already-documented "teleport-then-engage"
@@ -3114,6 +3117,40 @@ on to implement without guessing. Recorded here rather than rushed:
 field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
+
+**`ApplyDamageToMapMonster` finally traced, closing a gap left open
+since an earlier round, same day**: this function (`yendor2.asm:52979`,
+instruction-identical in Chapter 3) was already named and had a
+one-line summary comment from an earlier session ("applies damage...
+to a dungeon-corridor monster... via sub_2D498/sub_2D4B6, not traced"),
+but a direct read shows those two unnamed callees are simply
+`ApplyAttackToTarget` itself — this function is exactly
+`combatResolveSpellAttack`/`combatApplySpellAttack`/
+`combatMarkSpellAttackHit`, the same sequence this project already
+built for combat-slot targets, plus one real step those don't reach:
+if the target's health is <= 0 afterward, `GrantMonsterRewards`/
+`RemoveMonsterFromMap` (`monsterGrantRewards`/`monsterPoolRemove`, both
+already reimplemented) finish the kill. Reimplemented as
+`combatApplyDamageToMapMonster` (`src23/combat.c`/`.h`).
+
+**A second, older misattribution corrected along the way**: tracing
+this function's own caller (`ApplyEncodedItemEffect`'s word_33302 bit
+`0x200`, `loc_2CEE7`) confirmed it — not bit `0x4` — is the
+"straight-line multi-target attack" mechanic an *earlier* round's
+comment (on `GetMonsterAtViewportRow`, predating this session) had
+flagged matching `ShowClueBookSpellDetail`'s "IN A STRAIGHT LINE"
+targeting text. Bit `0x4` is the teleport-then-engage branch (see this
+file's own correction above); bit `0x200` is the real corridor-attack
+entry point, confirmed by direct read: it either loops the 3
+`g_monsterSlots` entries (when `g_uiScratchFlags4` bit `0x1000` is set)
+or scans up to 3-plus-30 consecutive viewport depth rows via
+`GetMonsterAtViewportRow`, applying `ApplyDamageToMapMonster` to
+whatever's found at each. Neither loop is composed here -- the per-target
+primitive is the bounded, reusable piece reimplemented this round; the
+surrounding scan shape is left for whoever picks up bit `0x200`'s own
+dispatch wiring. Tests in `test_combat.c` cover the survive/die/miss
+cases, including the reward-staging and record-zeroing on death; all 22
+suites pass.
 
 **Two real caller-context questions this project had flagged as
 "untraced" are resolved by this same read**:

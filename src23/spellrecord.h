@@ -268,12 +268,17 @@ typedef enum {
     SpellFlagsBWholeParty = 0x4000,  /* alias of SpellFlagsAWholeParty's role, same bit position as word_33300's -- different word, same name pattern kept distinct on purpose */
     SpellFlagsBSingleTarget = 0x8000,
     /*
-     * Routes into the corridor/ranged-attack family
-     * (ApplyAttackToTarget/TryResolveAttackAgainstTarget, this header's own
-     * SpellField attack fields) rather than the icon-bar status-effect
-     * path -- confirmed against real data: every Chapter 2/3 record with
-     * this bit set is a plain damage/status attack spell (MAGIC ATTACK,
-     * COLD SLASH, FEET OF LEAD, INSECT REPELLENT, ELECTRIC BURST, ...).
+     * Routes into the ApplyAttackToTarget family (this header's own
+     * SpellField attack fields) against g_activeCombatMonster, a single
+     * already-engaged combat slot -- rather than the icon-bar
+     * status-effect path. Confirmed against real data: every Chapter
+     * 2/3 record with this bit set is a plain damage/status attack
+     * spell (MAGIC ATTACK, COLD SLASH, FEET OF LEAD, INSECT REPELLENT,
+     * ELECTRIC BURST, ...). Not the same mechanism as
+     * ApplyEncodedItemEffect's own word_33302 bit 0x200 -- a different
+     * dispatch bit entirely, reaching the straight-line map-monster
+     * attack (combat.h's combatApplyDamageToMapMonster) instead of this
+     * combat-slot one.
      */
     SpellFlagsBAttackPath = 0x2000,
     /*

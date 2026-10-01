@@ -1026,10 +1026,31 @@ consumers, if any.
    guessing -- recorded in `file-formats.md` as a better-scoped
    candidate for its own pass.
 
-   **Still open**: most of the 19 branches still don't have a
-   reimplemented consumer (see `file-formats.md` for the full address
-   map); `loc_2CF51` itself (just above); a dozen bytes in the record's
-   own middle (offsets `0x36`-`0x3F`, 10 bytes now that `0x40`-`0x41` is
+   **`ApplyDamageToMapMonster` traced and reimplemented, closing a gap
+   open since an earlier round, same day**: a direct read showed its
+   own two unnamed callees (flagged "not traced" in an old comment) are
+   simply `ApplyAttackToTarget` -- this function is exactly
+   `combatResolveSpellAttack`/`combatApplySpellAttack`/
+   `combatMarkSpellAttackHit` plus a death check
+   (`monsterGrantRewards`/`monsterPoolRemove`, both already
+   reimplemented). Reimplemented as `combatApplyDamageToMapMonster`
+   (`src23/combat.c`/`.h`). Tracing its caller also corrected a
+   **second, older misattribution** (predating this session): the
+   "straight-line multi-target attack" mechanic belongs to word_33302
+   bit `0x200` (`loc_2CEE7`), not bit `0x4` (the teleport-then-engage
+   branch). Bits `0x100`/`word_33306`'s `0x4` were also checked and
+   confirmed to be pure UI/rendering (a weapon-select icon redraw, a
+   corridor-background animation setup respectively), not gameplay
+   logic worth reimplementing. Tests in `test_combat.c` cover the
+   survive/die/miss cases; all 22 suites pass.
+
+   **Still open**: `word_33302` bits `0x80`/`0x10` and `word_33306`
+   bits `0x8`/`0x2`/`0x1` still don't have a reimplemented consumer (see
+   `file-formats.md` for the full address map); `loc_2CF51` itself
+   (just above); bit `0x200`'s own surrounding scan loop (the
+   `g_monsterSlots` vs. `GetMonsterAtViewportRow` shape selection) is
+   orchestration, not yet composed; a dozen bytes in the record's own
+   middle (offsets `0x36`-`0x3F`, 10 bytes now that `0x40`-`0x41` is
    named) have no confirmed consumer; and `TickMonsterTimer`'s own gate
    bits still have no confirmed setter even though an earlier round
    this same day found its tick-amount/countdown *value* source.
