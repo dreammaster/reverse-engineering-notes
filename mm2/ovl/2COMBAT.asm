@@ -166,7 +166,7 @@ loc_17F19:                              ; CODE XREF: combat_after_hit+C2↑j
 
 loc_17F23:                              ; CODE XREF: combat_after_hit+CC↑j
                 push    [bp+var_4]
-                call    thk_res_38A8
+                call    thk_char_thievery_roll
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_17FA7
@@ -2325,14 +2325,14 @@ loc_18F27:                              ; CODE XREF: combat_party_attack+146↑j
                 mov     al, [bx+6Bh]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 add     byte_22CF1, al
                 mov     bx, [bp+var_8]
                 mov     al, [bx+6Fh]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 add     byte_22CF3, al
                 mov     al, byte_1DC33
@@ -5044,7 +5044,7 @@ loc_1A367:                              ; CODE XREF: combat_encounter+A8↑j
                 mov     [bp+var_2], 0Ah
 
 loc_1A375:                              ; CODE XREF: combat_encounter+C9↑j
-                call    thk_res_3A9E
+                call    thk_party_avg_thievery
                 mov     byte_22CEE, al
                 sub     ax, ax
                 push    ax
@@ -7505,7 +7505,7 @@ loc_1B312:                              ; CODE XREF: sub_1B2DE+1D↑j
                 cmp     byte_22CFC, 0
                 jz      short loc_1B32E
                 push    [bp+arg_0]
-                call    thk_res_38A8
+                call    thk_char_thievery_roll
                 add     sp, 2
                 mov     byte_22CFC, al
                 or      al, al
@@ -8072,7 +8072,7 @@ loc_1BB4E:                              ; CODE XREF: seg002:06C9↑J
                 or      ax, ax
                 jz      short loc_1BBA8
                 push    word ptr [bp-2]
-                call    thk_res_54AE
+                call    thk_spell_location_ok
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1BBA8

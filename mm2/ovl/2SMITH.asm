@@ -1023,7 +1023,7 @@ loc_1C8A5:                              ; CODE XREF: smith_item_price+7F↑j
                 mov     ax, 0Ah
                 push    ax
                 push    word_2308E
-                call    thk_res_3664
+                call    thk_char_skill_count
                 add     sp, 4
                 mov     [bp+var_4], ax
                 cmp     word_2307A, 5

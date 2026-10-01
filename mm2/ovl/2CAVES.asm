@@ -818,7 +818,7 @@ loc_1C6D6:                              ; CODE XREF: caves_pick_character+5F↑j
                 mov     al, [bx+27h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 mov     [bp+var_4], al  ; CODE XREF: seg002:0B19↑J
                 mov     bx, [bp+var_6]

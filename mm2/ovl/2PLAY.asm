@@ -230,7 +230,7 @@ loc_17FA4:                              ; CODE XREF: game_main_loop+18F↑j
                 jnz     short loc_1802B
                 mov     ax, 0Ch
                 push    ax
-                call    thk_res_36A6
+                call    thk_party_skill_count
                 add     sp, 2
                 mov     [bp+var_C], ax
                 or      ax, ax
@@ -6095,7 +6095,7 @@ loc_1A570:                              ; CODE XREF: evt_run_script:loc_1A7BA↓
                 call    evt_read_byte
                 sub     ah, ah
                 push    ax
-                call    thk_res_36A6
+                call    thk_party_skill_count
                 add     sp, 2
                 mov     byte_1DC7F, al
                 retn

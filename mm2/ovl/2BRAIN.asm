@@ -1573,7 +1573,7 @@ loc_1CC99:                              ; CODE XREF: ovl_2BRAIN:CC87↑j
                 mov     al, [bx+73h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 sub     ah, ah
                 add     ax, 0Ah
@@ -1830,7 +1830,7 @@ loc_1CEB0:                              ; CODE XREF: ovl_2BRAIN:CEA0↑j
                 mov     al, [bx+73h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 sub     ah, ah
                 add     ax, 5
@@ -1963,7 +1963,7 @@ loc_1CFAA:                              ; CODE XREF: ovl_2BRAIN:CFA3↑j
                 mov     al, [bx+73h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 sub     ah, ah
                 add     ax, 5

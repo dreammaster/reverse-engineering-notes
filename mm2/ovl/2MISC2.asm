@@ -949,7 +949,7 @@ loc_1C82A:                              ; CODE XREF: ovl_2MISC2:C822↑j
                 mov     al, [bp-2]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 mov     [bp-2], al
                 cmp     al, 0F2h
@@ -1178,7 +1178,7 @@ loc_1CA1D:                              ; CODE XREF: ovl_2MISC2:CA18↑j
                 mov     al, [bx+27h]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 mov     [bp-0Ch], al
                 cmp     al, 0F0h

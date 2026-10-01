@@ -217,3 +217,19 @@
 14F3A	party_recalc_ac
 13FC4	quit_to_dos	restores text mode, timer driver and vectors, exits
 1DC24	g_inn_town	town map id of the inn that last saved (restored on load)
+1354A	lookup_bracket	(stat) -> bracket index from the threshold table at DGROUP:4D84 (minus 3)
+13664	char_skill_count	(char, skill) number of the character's two skill nibbles (+50) equal to skill
+136A6	party_skill_count	(skill) sum of char_skill_count over living party members
+13A9E	party_avg_thievery	average of char +1E over the party (cap FFh)
+138A8	char_thievery_roll	(char) d100 check: <=5 fail, >=95 pass, else rand(1, +20 + 20) <= +20 + bracket(+15)
+13700	tick_effect_timers	decrement the walk-time effect counters (DGROUP:3E0/3E1) and redraw the effects panel
+14478	show_message_beep	(n) message from the table at 4E4C on the message line plus a beep
+14CD0	show_error_box	(n) centred message from the table at 5070 (cannot cast here, not enough gems/SP ...), wait
+1545A	spell_usable_here	spell bit 6-7 usage vs combat/non-combat
+154AE	spell_location_ok	spell extra location restriction
+154EE	spell_check_gems	spell gem cost (low 6 bits, max 100) <= char +5C gems
+15528	spell_check_sp	spell point cost word_2765C <= char +58
+1618E	party_share_gold	(char) average gold (+66 dword) over non-hirelings, remainder to char
+16296	party_share_gems	(char) average gems (+5C)
+16330	party_share_food	(char) average food (+25)
+165C8	party_gather_gems	(char) all gems to char

@@ -2016,12 +2016,12 @@ loc_1CED8:                              ; CODE XREF: ovl_2CMDS:C672↑p
                 add     ax, 7D60h
                 mov     [bp-2], ax
                 push    ax
-                call    thk_res_545A
+                call    thk_spell_usable_here
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CF2E
                 push    word ptr [bp-2]
-                call    thk_res_54AE
+                call    thk_spell_location_ok
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1CF2E

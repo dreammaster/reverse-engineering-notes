@@ -3608,6 +3608,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13546);
 	op_hex		(x,	1);
 	create_insn	(0X1354A);
+	set_name	(0X1354A,	"lookup_bracket");
 	create_insn	(x=0X1354D);
 	op_hex		(x,	1);
 	create_insn	(x=0X13555);
@@ -3673,6 +3674,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1365C);
 	create_insn	(0X13664);
+	set_name	(0X13664,	"char_skill_count");
 	create_insn	(x=0X13667);
 	op_hex		(x,	1);
 	create_insn	(x=0X1366A);
@@ -3702,6 +3704,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1369E);
 	op_stkvar	(x,	1);
 	create_insn	(0X136A6);
+	set_name	(0X136A6,	"party_skill_count");
 	create_insn	(x=0X136A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X136AE);
@@ -3731,6 +3734,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X136F6);
 	op_stkvar	(x,	1);
 	create_insn	(0X13700);
+	set_name	(0X13700,	"tick_effect_timers");
 	create_insn	(x=0X13703);
 	op_hex		(x,	1);
 	create_insn	(x=0X13711);
@@ -3826,6 +3830,7 @@ static Bytes_0(void) {
 	create_insn	(0X13898);
 	create_insn	(0X138A0);
 	create_insn	(0X138A8);
+	set_name	(0X138A8,	"char_thievery_roll");
 	create_insn	(x=0X138AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X138AE);
@@ -3969,6 +3974,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13A8F);
 	op_stkvar	(x,	1);
 	create_insn	(0X13A9E);
+	set_name	(0X13A9E,	"party_avg_thievery");
 	create_insn	(x=0X13AA1);
 	op_hex		(x,	1);
 	create_insn	(0X13AAC);
@@ -4496,6 +4502,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1446A);
 	op_hex		(x,	1);
 	create_insn	(0X14478);
+	set_name	(0X14478,	"show_message_beep");
 	create_insn	(x=0X14481);
 	op_hex		(x,	1);
 	create_insn	(x=0X14484);
@@ -4945,6 +4952,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14CC5);
 	op_stkvar	(x,	1);
 	create_insn	(0X14CD0);
+	set_name	(0X14CD0,	"show_error_box");
 	create_insn	(x=0X14CD3);
 	op_hex		(x,	1);
 	create_insn	(x=0X14CD8);
@@ -5409,6 +5417,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15455);
 	op_hex		(x,	1);
 	create_insn	(0X1545A);
+	set_name	(0X1545A,	"spell_usable_here");
 	create_insn	(x=0X1545D);
 	op_hex		(x,	1);
 	create_insn	(x=0X15460);
@@ -5426,6 +5435,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X154A5);
 	op_hex		(x,	1);
 	create_insn	(0X154AE);
+	set_name	(0X154AE,	"spell_location_ok");
 	create_insn	(x=0X154B1);
 	op_hex		(x,	1);
 	create_insn	(x=0X154B4);
@@ -5440,6 +5450,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X154E5);
 	op_hex		(x,	1);
 	create_insn	(0X154EE);
+	set_name	(0X154EE,	"spell_check_gems");
 	create_insn	(x=0X154F1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X154F8);
@@ -5450,6 +5461,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X15522);
 	create_insn	(0X15528);
+	set_name	(0X15528,	"spell_check_sp");
 	create_insn	(x=0X1552B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1553D);
@@ -5877,6 +5889,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X15CA9);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X15CB5);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15CBA);
@@ -5914,15 +5935,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15DBC);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X15DC2);
 	op_hex		(x,	1);
 	create_insn	(x=0X15DDA);
@@ -6149,6 +6161,7 @@ static Bytes_1(void) {
 	create_insn	(0X16164);
 	create_insn	(0X16171);
 	create_insn	(0X1618E);
+	set_name	(0X1618E,	"party_share_gold");
 	create_insn	(x=0X16191);
 	op_hex		(x,	1);
 	create_insn	(x=0X16196);
@@ -6231,6 +6244,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1628C);
 	op_stkvar	(x,	1);
 	create_insn	(0X16296);
+	set_name	(0X16296,	"party_share_gems");
 	create_insn	(x=0X16299);
 	op_hex		(x,	1);
 	create_insn	(x=0X162A0);
@@ -6279,6 +6293,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16320);
 	op_stkvar	(x,	1);
 	create_insn	(0X16330);
+	set_name	(0X16330,	"party_share_food");
 	create_insn	(x=0X16333);
 	op_hex		(x,	1);
 	create_insn	(0X1633E);
@@ -6423,6 +6438,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X165BE);
 	op_stkvar	(x,	1);
 	create_insn	(0X165C8);
+	set_name	(0X165C8,	"party_gather_gems");
 	create_insn	(x=0X165CB);
 	op_hex		(x,	1);
 	create_insn	(0X165D6);
@@ -7160,7 +7176,7 @@ static Bytes_1(void) {
 	create_word	(0X16FC3);
 	create_insn	(0X16FC5);
 	create_insn	(0X16FCA);
-	set_name	(0X16FCA,	"thk_res_38A8");
+	set_name	(0X16FCA,	"thk_char_thievery_roll");
 	set_cmt	(0X16FCF,	"thunk index 0x8000: resident",	0);
 	create_word	(0X16FCF);
 	create_insn	(0X16FD1);
@@ -7185,7 +7201,7 @@ static Bytes_1(void) {
 	create_word	(0X16FFF);
 	create_insn	(0X17001);
 	create_insn	(0X17006);
-	set_name	(0X17006,	"thk_res_3A9E");
+	set_name	(0X17006,	"thk_party_avg_thievery");
 	set_cmt	(0X1700B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1700B);
 	create_insn	(0X1700D);
@@ -7295,7 +7311,7 @@ static Bytes_1(void) {
 	create_word	(0X17107);
 	create_insn	(0X17109);
 	create_insn	(0X1710E);
-	set_name	(0X1710E,	"thk_res_354A");
+	set_name	(0X1710E,	"thk_lookup_bracket");
 	set_cmt	(0X17113,	"thunk index 0x8000: resident",	0);
 	create_word	(0X17113);
 	create_insn	(0X17115);
@@ -7370,7 +7386,7 @@ static Bytes_1(void) {
 	create_word	(0X171BB);
 	create_insn	(0X171BD);
 	create_insn	(0X171C2);
-	set_name	(0X171C2,	"thk_res_54AE");
+	set_name	(0X171C2,	"thk_spell_location_ok");
 	set_cmt	(0X171C7,	"thunk index 0x8000: resident",	0);
 	create_word	(0X171C7);
 	create_insn	(0X171C9);
@@ -7380,7 +7396,7 @@ static Bytes_1(void) {
 	create_word	(0X171D3);
 	create_insn	(0X171D5);
 	create_insn	(0X171DA);
-	set_name	(0X171DA,	"thk_res_545A");
+	set_name	(0X171DA,	"thk_spell_usable_here");
 	set_cmt	(0X171DF,	"thunk index 0x8000: resident",	0);
 	create_word	(0X171DF);
 	create_insn	(0X171E1);
@@ -7500,7 +7516,7 @@ static Bytes_1(void) {
 	create_word	(0X172F3);
 	create_insn	(0X172F5);
 	create_insn	(0X172FA);
-	set_name	(0X172FA,	"thk_res_36A6");
+	set_name	(0X172FA,	"thk_party_skill_count");
 	set_cmt	(0X172FF,	"thunk index 0x8000: resident",	0);
 	create_word	(0X172FF);
 	create_insn	(0X17301);
@@ -7865,7 +7881,7 @@ static Bytes_1(void) {
 	create_word	(0X1765F);
 	create_insn	(0X17661);
 	create_insn	(0X17666);
-	set_name	(0X17666,	"thk_res_4478");
+	set_name	(0X17666,	"thk_show_message_beep");
 	set_cmt	(0X1766B,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1766B);
 	create_insn	(0X1766D);
@@ -7960,7 +7976,7 @@ static Bytes_1(void) {
 	create_word	(0X17743);
 	create_insn	(0X17745);
 	create_insn	(0X1774A);
-	set_name	(0X1774A,	"thk_res_3664");
+	set_name	(0X1774A,	"thk_char_skill_count");
 	set_cmt	(0X1774F,	"thunk index 0x8000: resident",	0);
 	create_word	(0X1774F);
 	create_insn	(0X17751);
@@ -9387,6 +9403,15 @@ static Bytes_1(void) {
 	set_name	(0X1FD95,	"aTheParty");
 	create_strlit	(0X1FDA0,	0X23);
 	set_name	(0X1FDA0,	"aNoxiousGasAsph");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X1FDC4,	0X25);
 	set_name	(0X1FDC4,	"aABarrageOfSpik");
 	create_strlit	(0X1FDE9,	0X7);
@@ -9413,15 +9438,6 @@ static Bytes_1(void) {
 	set_name	(0X1FF12,	"aTheTrapSendsRa");
 	create_strlit	(0X1FF33,	0X18);
 	set_name	(0X1FF33,	"aSliversIntoThe");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X1FF4B,	0X21);
 	set_name	(0X1FF4B,	"aForksOfLightni");
 	create_strlit	(0X1FF6C,	0X15);
@@ -10929,6 +10945,7 @@ static Functions_0(void) {
 	set_frame_size(0X134BA, 0, 0, 0);
 	add_func    (0X1354A,0X13572);
 	set_func_flags(0X1354A,0x5410);
+	set_func_cmt(0X1354A,	"(stat) -> bracket index from the threshold table at DGROUP:4D84 (minus 3)", 0);
 	set_frame_size(0X1354A, 0X6, 2, 0);
 	add_func    (0X13572,0X135A8);
 	set_func_flags(0X13572,0x5410);
@@ -10951,12 +10968,15 @@ static Functions_0(void) {
 	set_frame_size(0X1362C, 0X32, 2, 0);
 	add_func    (0X13664,0X136A5);
 	set_func_flags(0X13664,0x5410);
+	set_func_cmt(0X13664,	"(char, skill) number of the character's two skill nibbles (+50) equal to skill", 0);
 	set_frame_size(0X13664, 0X4, 2, 0);
 	add_func    (0X136A6,0X136FF);
 	set_func_flags(0X136A6,0x5410);
+	set_func_cmt(0X136A6,	"(skill) sum of char_skill_count over living party members", 0);
 	set_frame_size(0X136A6, 0XE, 2, 0);
 	add_func    (0X13700,0X13766);
 	set_func_flags(0X13700,0x5410);
+	set_func_cmt(0X13700,	"decrement the walk-time effect counters (DGROUP:3E0/3E1) and redraw the effects panel", 0);
 	set_frame_size(0X13700, 0X4, 2, 0);
 	add_func    (0X13766,0X137B6);
 	set_func_flags(0X13766,0x5410);
@@ -10978,6 +10998,7 @@ static Functions_0(void) {
 	set_frame_size(0X13814, 0X4, 2, 0);
 	add_func    (0X138A8,0X13928);
 	set_func_flags(0X138A8,0x5410);
+	set_func_cmt(0X138A8,	"(char) d100 check: <=5 fail, >=95 pass, else rand(1, +20 + 20) <= +20 + bracket(+15)", 0);
 	set_frame_size(0X138A8, 0X6, 2, 0);
 	add_func    (0X13928,0X13A64);
 	set_func_flags(0X13928,0x5410);
@@ -10989,6 +11010,7 @@ static Functions_0(void) {
 	set_frame_size(0X13A64, 0X4, 2, 0);
 	add_func    (0X13A9E,0X13AE9);
 	set_func_flags(0X13A9E,0x5410);
+	set_func_cmt(0X13A9E,	"average of char +1E over the party (cap FFh)", 0);
 	set_frame_size(0X13A9E, 0X8, 2, 0);
 	add_func    (0X13AEA,0X13B68);
 	set_func_flags(0X13AEA,0x5410);
@@ -11068,6 +11090,7 @@ static Functions_0(void) {
 	set_frame_size(0X143F2, 0, 2, 0);
 	add_func    (0X14478,0X144AE);
 	set_func_flags(0X14478,0x5410);
+	set_func_cmt(0X14478,	"(n) message from the table at 4E4C on the message line plus a beep", 0);
 	set_frame_size(0X14478, 0, 2, 0);
 	add_func    (0X144AE,0X1471E);
 	set_func_flags(0X144AE,0x5410);
@@ -11105,6 +11128,7 @@ static Functions_0(void) {
 	set_frame_size(0X14CA8, 0X2, 2, 0);
 	add_func    (0X14CD0,0X14D5C);
 	set_func_flags(0X14CD0,0x5410);
+	set_func_cmt(0X14CD0,	"(n) centred message from the table at 5070 (cannot cast here, not enough gems/SP ...), wait", 0);
 	set_frame_size(0X14CD0, 0X6, 2, 0);
 	add_func    (0X14D5C,0X14DA9);
 	set_func_flags(0X14D5C,0x5410);
@@ -11154,15 +11178,19 @@ static Functions_0(void) {
 	set_frame_size(0X15440, 0, 0, 0);
 	add_func    (0X1545A,0X154AE);
 	set_func_flags(0X1545A,0x5410);
+	set_func_cmt(0X1545A,	"spell bit 6-7 usage vs combat/non-combat", 0);
 	set_frame_size(0X1545A, 0X2, 2, 0);
 	add_func    (0X154AE,0X154EE);
 	set_func_flags(0X154AE,0x5410);
+	set_func_cmt(0X154AE,	"spell extra location restriction", 0);
 	set_frame_size(0X154AE, 0X2, 2, 0);
 	add_func    (0X154EE,0X15527);
 	set_func_flags(0X154EE,0x5410);
+	set_func_cmt(0X154EE,	"spell gem cost (low 6 bits, max 100) <= char +5C gems", 0);
 	set_frame_size(0X154EE, 0, 2, 0);
 	add_func    (0X15528,0X15549);
 	set_func_flags(0X15528,0x5410);
+	set_func_cmt(0X15528,	"spell point cost word_2765C <= char +58", 0);
 	set_frame_size(0X15528, 0, 2, 0);
 	add_func    (0X1554A,0X156C5);
 	set_func_flags(0X1554A,0x5410);
@@ -11230,12 +11258,15 @@ static Functions_0(void) {
 	set_frame_size(0X16171, 0, 0, 0);
 	add_func    (0X1618E,0X16295);
 	set_func_flags(0X1618E,0x5410);
+	set_func_cmt(0X1618E,	"(char) average gold (+66 dword) over non-hirelings, remainder to char", 0);
 	set_frame_size(0X1618E, 0X26, 2, 0);
 	add_func    (0X16296,0X1632F);
 	set_func_flags(0X16296,0x5410);
+	set_func_cmt(0X16296,	"(char) average gems (+5C)", 0);
 	set_frame_size(0X16296, 0X10, 2, 0);
 	add_func    (0X16330,0X163B3);
 	set_func_flags(0X16330,0x5410);
+	set_func_cmt(0X16330,	"(char) average food (+25)", 0);
 	set_frame_size(0X16330, 0XC, 2, 0);
 	add_func    (0X163B4,0X16531);
 	set_func_flags(0X163B4,0x5410);
@@ -11246,6 +11277,7 @@ static Functions_0(void) {
 	set_frame_size(0X16532, 0XE, 2, 0);
 	add_func    (0X165C8,0X16616);
 	set_func_flags(0X165C8,0x5410);
+	set_func_cmt(0X165C8,	"(char) all gems to char", 0);
 	set_frame_size(0X165C8, 0X8, 2, 0);
 	add_func    (0X16616,0X1670A);
 	set_func_flags(0X16616,0x5410);

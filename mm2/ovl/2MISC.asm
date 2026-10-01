@@ -66,7 +66,7 @@ loc_1C18C:                              ; CODE XREF: bash_door+43↑j
 
 loc_1C195:                              ; CODE XREF: bash_door+C8↓j
                 push    ax
-                call    thk_res_4478
+                call    thk_show_message_beep
                 jmp     short loc_1C186
 ; ---------------------------------------------------------------------------
                 align 2
@@ -291,7 +291,7 @@ loc_1C326:                              ; CODE XREF: unlock_door+9E↑j
 loc_1C32C:                              ; CODE XREF: unlock_door+5B↑j
                                         ; unlock_door+C2↑j
                 push    ax
-                call    thk_res_4478
+                call    thk_show_message_beep
                 add     sp, 2
 
 loc_1C333:                              ; CODE XREF: unlock_door+17↑j
@@ -1813,7 +1813,7 @@ loc_1CDFD:                              ; CODE XREF: party_search+3A3↑j
                 mov     al, byte ptr [bp+var_2]
                 sub     ah, ah
                 push    ax
-                call    thk_res_354A
+                call    thk_lookup_bracket
                 add     sp, 2
                 mov     byte ptr [bp+var_2], al
                 cmp     al, 0F2h
