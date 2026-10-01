@@ -11228,7 +11228,7 @@ static Functions_0(void) {
 	set_frame_size(0X15D44, 0X8, 2, 0);
 	add_func    (0X15E68,0X15F40);
 	set_func_flags(0X15E68,0x5410);
-	set_func_cmt(0X15E68,	"returns direction blocked/special or FFFF", 0);
+	set_func_cmt(0X15E68,	"(returns FFFF = free, else a message index for show_message_beep: tests the cell flag bits for the facing side)", 0);
 	set_frame_size(0X15E68, 0XC, 2, 0);
 	add_func    (0X15F40,0X15F54);
 	set_func_flags(0X15F40,0x5410);

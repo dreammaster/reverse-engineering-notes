@@ -59,7 +59,15 @@ free code reaches `1 << width` (up to 12 bits).  Python: `tools/mm2_lzw.py`.
 ### Map cell layers (in memory: `DGROUP:59D6` walls, `DGROUP:5AD6` flags; index `y*16+x`)
 
 * Walls byte: 2 bits per side, **N = bits 6-7, E = 4-5, S = 2-3, W = 0-1**; 0 open, 1 wall, 2 door, 3 wall with sprite; y grows northward (see view.md).
-* Flags byte: bit 7 = an event trigger is armed for this cell (`evt_op20_clear_trigger` clears it).
+* Flag byte (layer 2; `byte_23218` is the flag byte of the party's cell).  Low bit of each side pair = **movement is blocked
+  on that side**: N = 40h, E = 10h, S = 04h, W = 01h (`check_move_blocked` `15E68` tests `flags & facing_mask & 55h`; a wall
+  that is merely drawn does not stop the party unless this bit is set).  The other four bits are cell attributes:
+  **80h** event trigger armed (`evt_op20_clear_trigger` clears it), **20h** dark (needs the Light effect, which is used up
+  per step), **08h** "Too dangerous!" (cannot rest/camp here), **02h** no magic (spells fail: "*** Spell Failed ***").
+  (Town map 0: of 273 drawn walls 260 are blocked, the other 13 are walk-through illusions; 45 of 52 doors are open, 7 locked; 112 of 115 "3" sides are blocked.)  When a blocked side is hit, the message is chosen by the wall value of that side: 0 "Barrier!", 1/3 "Solid!", 2 "Locked!"
+  (`DGROUP:4E4C`: also "Not Locked!", "Success!", "Impassable!", "Can't swim!").  Outdoors the check looks at the terrain
+  class (`DGROUP:52B2`): class 1 needs two party Mountaineer skills (`party_skill_count(0Bh)` >= 2), class 3 two Pathfinder
+  (`0Dh`), otherwise "Impassable!"; class 4 on a map with terrain style 0Ah needs the Walk on Water effect, else "Can't swim!".
 * Outdoor maps wrap into neighbouring maps: the four neighbour ids are in `byte_231DB..231DE`
   (N, S, E, W order not yet verified) and their cells are staged at `5BD6/5CD6/5DD8/5ED8`.
 

@@ -154,7 +154,7 @@
 158B0	character_actions_menu	single character: C cast D drop E equip R remove S T trade U use V view
 15B8A	party_status_loop
 15D44	cast_from_menu
-15E68	check_move_blocked	returns direction blocked/special or FFFF
+15E68	check_move_blocked	(returns FFFF = free, else a message index for show_message_beep: tests the cell flag bits for the facing side)
 16008	load_map_events	EVENTSI/EVENTSO.DAT chunk for current map -> DGROUP:6052
 160B4	load_map_a
 160D0	load_map_b

@@ -15063,7 +15063,7 @@ cast_from_menu  endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; returns direction blocked/special or FFFF
+; (returns FFFF = free, else a message index for show_message_beep: tests the cell flag bits for the facing side)
 ; Attributes: bp-based frame
 
 check_move_blocked proc near            ; CODE XREF: party_step_forward+6↑p
