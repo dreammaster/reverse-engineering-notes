@@ -2,7 +2,7 @@
 
 Overlay entry point (through a thunk): `combat_encounter` (`1A2A6`), called by the resident
 `start_combat` (`13EB2`).  Everything else is internal.  Names are in `names/2COMBAT.tsv`.  This
-was read from the code; numeric details marked *(check)* were only skimmed.
+was read from the code; the party-attack and monster-melee sections were re-read in full.
 
 ## Flow
 
@@ -42,19 +42,33 @@ was read from the code; numeric details marked *(check)* were only skimmed.
 | V / Q / 1-8 | view a character |
 | R | run: the character may leave the battle line (`combat_char_runs` `1914A`, chance `byte_231E3` %) |
 
-## Party attack (`combat_party_attack` `18DAA`)
+## Party attack (`combat_party_attack` `18DAA`, re-read in full)
 
-* Attacks per round = `level(+71) / D + 1`, `D` from the class table `DGROUP:1012` = {1,1,1,3,4,2,2,1}
-  (Knight, Paladin, Archer, Cleric, Sorcerer, Robber, Ninja, Barbarian); for shooting the divisor table is
-  `DGROUP:101A` = {4,4,5,7,10,5,5,4}.
-* Each swing: d100 roll; below 6 is a hit *(check)*; otherwise `rand(1, min(250, 25 + bonus)) + accuracy
-  bonus` is compared with the monster's AC (`byte_2767C`); a hit does `rand(1, weapon dice) + damage
-  bonus` (Might bracket from `lookup_bracket` `1354A`); each hit also adds `byte_1DC37`.
-* Robber (class 5): back-stab chance -> damage x2; Ninja (class 6): critical -> damage x4 (`byte_22CE6`
-  1/2 -> " back stabs" / " criticals").  Immune monsters print " is not affected!".
+Setup (`byte_22CF4` = 0 melee, 1 shoot; weapon bytes are in the character record, `+4C..+4F`):
+
+* **Swings** `= level(+71) / S[class] + 1`, `S` = `DGROUP:101A` = {4,4,5,7,10,5,5,4} (Knight, Paladin, Archer, Cleric,
+  Sorcerer, Robber, Ninja, Barbarian) -- used for melee *and* shooting.
+* **To-hit class bonus** `H = level / T[class]`, `T` = `DGROUP:1012` = {1,1,1,3,4,2,2,1}.
+* Melee: damage dice `D = +4C`, weapon bonus `W = +4D`.  Shoot: `W = +4F`, `D = +4E` (not Archers; an Archer
+  keeps `+4C` and instead adds `rand(1, min(level,100))` to the damage bonus).
+* Damage bonus `B = W + bracket(Might +6B)` (`res_354A`, the Might bracket).
+* To-hit bonus `A = W + bracket(Accuracy +6F) + byte_1DC33` (the party accuracy spell bonus).
+
+Each swing (`target` AC = `byte_2767C`, the decoded monster record):
+
+1. `r = d100`.  `r < 6` always hits; `6 <= r < 9` always misses.
+2. Otherwise `n = rand(1, min(250, base + H))` with `base = 25` (3 if the character is cursed, condition bit 1),
+   `x = n + A`.  `x > 255` hits; `x <= 10` misses; `x - byte_1DC2B` must be `< 128` (i.e. `x >= byte_1DC2B`,
+   a party/monster modifier byte) and `x >= AC` to hit.
+3. A hit does `rand(1, D) + B` (a result above 250 becomes 1); hits accumulate in `word_27824`.
+
+After the swings, if anything hit, `byte_1DC37` is added once.  Melee only: `r = rand(1, 100 + min(+72, 100))`;
+**Robber** (class 5): `r > 90` or `r < 5` -> damage x2 (" back stabs"); **Ninja** (class 6): `r > 94` or `r < 5` ->
+damage x4 (" criticals").  Immune monsters print " is not affected!".  Class ids are the character `+0F` byte.
 * `combat_damage_monster` (`18B3E`) subtracts from the monster's HP (word `DGROUP:9FAA[i]`); at 0 ->
   `combat_kill_monster` (`18AF4`): rewards (`combat_monster_rewards` `188FC`: experience from the record,
   gold/gems by monster flags), removal and array shift (`18A22`), " goes down!".
+* The target is a letter A.. (the monster list); Esc cancels; with a single front-rank target the prompt is skipped.
 
 ## Monster turn (`combat_monster_turn` `184FE`)
 
@@ -67,11 +81,15 @@ HP word `9FAA[i]`.  Status bits (`DGROUP:1022`, names at `0FEA`): 1 hurt/awake, 
 2. chance to **summon friends** (" adds friends!") from `DGROUP:1036` by tier vs `byte_1E812`.
 3. `combat_monster_spell_roll` (`1847E`): not silenced, uses left, d100 <= the record's cast chance ->
    cast (`combat_monster_casts` `18056`), else
-4. front-rank monsters (`i < byte_27815`) melee (`18398`): `record[14].low + 1` blows; a blow hits with
-   probability about `max(5, ToHit[tier] - character AC)` % where `ToHit` = `DGROUP:103A` =
-   {40,45,50,55,60,65,70,75,80,90,100,120,150,250,100,200}; damage `rand(1, record damage dice)`;
-   halved for weakened monsters / protection spells.  Back-rank monsters with the ranged flag shoot (80 %),
-   the others advance (`combat_monster_advances` `1814A`, " advances!").
+4. front-rank monsters (`i < byte_27815`) melee (`combat_monster_melee` `18398`): let `T = ToHit[id >> 4]`,
+   `DGROUP:103A` = {40,45,50,55,60,65,70,75,80,90,100,120,150,250,100,200}, and `AC` = the target character's
+   AC (`+24`).  Hit chance `P = T - AC` if `AC <= T`, else 5 (percent); halved while the monster is **frightened**
+   (status 8).  The monster makes `byte_2767E` blows (the record's attack count); each blow rolls d100 and hits
+   when `roll <= P`, doing `rand(1, byte_2767D)` (record damage dice); the total is halved when the monster is
+   **weakened** (status 4).  The target is the first living front-rank character (`combat_next_front_rank_target`);
+   ranged attackers (`combat_monster_ranged_attack`) pick a random one and say "shoots" instead of a random verb of
+   `DGROUP:1058`.  Back-rank monsters with the ranged flag shoot (80 %), the others advance
+   (`combat_monster_advances` `1814A`, " advances!").
 5. Hit effects (`combat_after_hit` `17E52`): HP <= 0 -> unconscious (`40h`), more negative -> dead
    (`81h`); " goes down!"; then possibly the **touch effect** (`record[12].low5`, table `DGROUP:106C`)
    through `combat_apply_touch_effect` (`1AFE2`), gated by a saving throw (below).
