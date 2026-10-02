@@ -6,6 +6,7 @@
 
 #include "mm2_events.h"
 #include "mm2_files.h"
+#include "mm2_treasure.h"
 
 #define MM2_GAME_MAX_MSGS 16
 
@@ -30,6 +31,8 @@ typedef struct {
 	int nMessages;
 	int locations[MM2_GAME_MAX_MSGS];   /* opcode 14 arguments */
 	int nLocations;
+	Mm2Treasure treasure;                /* placed by opcode 42 on the current spot */
+	int treasureHere;
 	int yesNo;                          /* answer given to Y/N prompts (opcodes 9, 10); default 1 */
 	int fightRequested;                 /* opcode 18/19 seen */
 	uint8_t fightMonsters[10];

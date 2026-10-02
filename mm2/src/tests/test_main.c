@@ -11,6 +11,7 @@
 #include "../mm2_spells.h"
 #include "../mm2_town.h"
 #include "../mm2_tavern.h"
+#include "../mm2_treasure.h"
 #include "../mm2_text.h"
 #include "../mm2_time.h"
 #include "../mm2_battle.h"
@@ -775,6 +776,48 @@ static void test_fight(const Mm2Game *g) {
 	}
 }
 
+static void test_treasure(const Mm2Game *g) {
+	static Mm2Roster r;
+	Mm2GameSession s;
+	Mm2Treasure t;
+	Mm2ShareResult sr;
+	int i;
+	uint32_t gold24;
+	CHECK(mm2_load_roster(g, &r));
+	for (i = 0; i < 3; i++) mm2_inn_add(&r, i);
+	*mm2_state_ptr((Mm2State *)r.state, mm2_event_var_dgroup(0)) = 1;
+	mm2_inn_add(&r, 24);                                       /* a hireling takes part in gems but not in gold */
+	gold24 = mm2_c32(&r.chars[24], MC_GOLD);
+	memset(&t, 0, sizeof(t));
+	t.gold = 1000; t.gems = 9;
+	t.items[0].item = 4; t.items[0].charges = 2; t.items[0].flags = 3;
+	for (i = 0; i < 6; i++) r.chars[0].raw[MC_PACK_ID + i] = 1;  /* the first backpack is full */
+	sr = mm2_treasure_share(&r, &t);
+	CHECK(sr.goldShare == 333 && sr.gemShare == 2 && sr.foundBy[0] == 1 && !sr.backpacksFull && t.gold == 0 && t.items[0].item == 0);
+	{
+		int slot = 0;
+		while (slot < 6 && r.chars[1].raw[MC_PACK_ID + slot] != 4) slot++;   /* after the character's starting item */
+		CHECK(slot < 6 && r.chars[1].raw[0x40 + slot] == 2 && r.chars[1].raw[MC_PACK_FLAGS + slot] == 3);
+	}
+	CHECK(mm2_c16(&r.chars[24], MC_GEMS) >= 2 && mm2_c32(&r.chars[24], MC_GOLD) == gold24);
+	for (i = 0; i < 4; i++) {
+		int s2;
+		for (s2 = 0; s2 < 6; s2++) r.chars[i == 3 ? 24 : i].raw[MC_PACK_ID + s2] = 1;
+	}
+	t.items[1].item = 7;
+	CHECK(mm2_treasure_share(&r, &t).backpacksFull == 1);
+	/* opcode 42 on map 2 (15,8) places 10000 gold and the trigger is one-shot (opcode 20 clears the flag) */
+	CHECK(mm2_session_start(&s, g, 2, 15, 8, 'E'));
+	CHECK((s.data[256 + (8 << 4 | 15)] & 0x80) != 0);
+	CHECK(mm2_session_run_trigger(&s));
+	CHECK(s.treasureHere && s.treasure.gold == 10000 && s.treasure.gems == 0);
+	CHECK((s.data[256 + (8 << 4 | 15)] & 0x80) == 0);
+	mm2_session_end(&s);
+	CHECK(mm2_session_start(&s, g, 6, 9, 9, 'N'));
+	CHECK(mm2_session_run_trigger(&s) && s.treasureHere && s.treasure.gold == 100000);
+	mm2_session_end(&s);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -789,6 +832,7 @@ int main(void) {
 	test_battle(&g);
 	test_rewards(&g);
 	test_fight(&g);
+	test_treasure(&g);
 	test_smith(&g);
 	test_town();
 	test_shops();

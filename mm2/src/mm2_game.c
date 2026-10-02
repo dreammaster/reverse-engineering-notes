@@ -84,8 +84,22 @@ static int host_exec(void *ud, Mm2Vm *vm, int op, const uint8_t *args) {
 	case EV_ASK_YN2:
 		vm->cond = s->yesNo;
 		break;
-	case EV_CLEAR_TRIGGER:
+	case EV_CLEAR_TRIGGER:   /* one-shot events: clear the cell's trigger flag (bit 7) */
+		s->data[256 + ((s->y & 15) << 4 | (s->x & 15))] &= 0x7F;
 		break;
+	case EV_PLACE_TREASURE: {   /* gold (3 bytes), gems (word), then 3 x {item id, charges, flags}; docs/events.md */
+		int k;
+		memset(&s->treasure, 0, sizeof(s->treasure));
+		s->treasure.gold = (uint32_t)(args[0] | (args[1] << 8) | (args[2] << 16));
+		s->treasure.gems = args[3] | (args[4] << 8);
+		for (k = 0; k < 3; k++) {
+			s->treasure.items[k].item = args[5 + 3 * k];
+			s->treasure.items[k].charges = args[6 + 3 * k];
+			s->treasure.items[k].flags = args[7 + 3 * k];
+		}
+		s->treasureHere = 1;
+		break;
+	}
 	default:
 		break;
 	}

@@ -8,11 +8,13 @@
 #include "mm2_map.h"
 #include "mm2_monpic.h"
 #include "mm2_text.h"
+#include "mm2_treasure.h"
 #include "mm2_time.h"
 #include "mm2_ui.h"
 #include "mm2_view.h"
 
 #include <SDL.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,6 +72,30 @@ static int start_map(App *a, const Mm2Game *g, int map, int x, int y, char facin
 static int shop_rand(void *ud, int lo, int hi) {
 	(void)ud;
 	return hi <= lo ? lo : lo + rand() % (hi - lo + 1);
+}
+
+static void add_msg(App *a, const char *fmt, ...) {
+	va_list ap;
+	if (a->s.nMessages >= MM2_GAME_MAX_MSGS) return;
+	a->s.messages[a->s.nMessages].opcode = EV_MSG;
+	va_start(ap, fmt);
+	vsnprintf(a->s.messages[a->s.nMessages].text, sizeof(a->s.messages[0].text), fmt, ap);
+	va_end(ap);
+	a->s.nMessages++;
+}
+
+/* Shares a treasure among the party and reports it in the message area. */
+static void share_treasure(App *a, Mm2Treasure *t) {
+	Mm2ShareResult r = mm2_treasure_share(&a->roster, t == NULL ? &a->s.treasure : t);
+	int k;
+	add_msg(a, "Each share = %u Gold%s", (unsigned)r.goldShare, r.gemShare ? "" : "");
+	if (r.gemShare) add_msg(a, "and %d Gems", r.gemShare);
+	for (k = 0; k < 3; k++)
+		if (r.foundBy[k] >= 0) {
+			const Mm2Char *c = &a->roster.chars[mm2_party_member(&a->roster, r.foundBy[k])];
+			add_msg(a, "%.11s found an item", (const char *)c->raw);
+		}
+	if (r.backpacksFull) add_msg(a, "Backpacks full!");
 }
 
 static void battle_advance(App *a, const Mm2Game *g) {
@@ -180,6 +206,16 @@ int main(int argc, char **argv) {
 				int k = e.key.keysym.sym;
 				if (a.fight.state != MM2_FIGHT_RUNNING || a.battleActor < 0) {
 					a.inBattle = 0;   /* any key after the fight */
+					a.s.nMessages = 0;
+					if (a.fight.state == MM2_FIGHT_VICTORY) {
+						Mm2Treasure t;
+						int j;
+						memset(&t, 0, sizeof(t));
+						t.gold = a.fight.gold;
+						t.gems = a.fight.loot.gems;
+						for (j = 0; j < a.fight.nTreasure && j < 3; j++) t.items[j] = a.fight.treasure[j];
+						share_treasure(&a, &t);
+					}
 					dirty = 1;
 					continue;
 				}
@@ -377,6 +413,15 @@ int main(int argc, char **argv) {
 					battle_advance(&a, &g);
 					dirty = 1;
 				}
+				break;
+			case SDLK_s:   /* search the spot: hand out placed treasure */
+				if (mm2_party_size(&a.roster) && a.s.treasureHere) {
+					share_treasure(&a, NULL);
+					a.s.treasureHere = 0;
+				} else {
+					add_msg(&a, "Nothing here.");
+				}
+				dirty = 1;
 				break;
 			case SDLK_c:
 				if (mm2_party_size(&a.roster)) {
