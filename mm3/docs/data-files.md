@@ -24,8 +24,8 @@ name + party + the highest level of the characters in the party (for the load me
 
 | Offset | Field |
 |---|---|
-| `000h` | party size |
-| `001h`.. | roster indexes of the party members (`ff` = empty) |
+| `000h` | party size (`Party_count`) |
+| `001h`.. | roster indexes of the party members (`ff` = empty); `+0Ah` facing, `+0Bh` x, `+0Ch` y, `+0Dh` map id |
 | `34Bh` | day (0-99) |
 | `34Ch` | year (word); new games start at 500 |
 | `358h` | minutes into the day (word, `1E0h` = 8:00) |
@@ -95,3 +95,50 @@ The map is a 32x32 world made of up to four 16x16 pages (`.DAT` blocks) held in 
 * x > 15 -> the page east of the current one, y > 15 -> the page to the south; their maze ids are bytes `308h`/`309h`
   of the current page's header, and `mazeNeighbourSlot` maps an id to a loaded slot (`1111h` = not loaded),
 * wall word at `slot*340h + (y&15)*32 + (x&15)*2`, flag byte at `slot*340h + 200h + (y&15)*16 + (x&15)`.
+
+## `MAZEnn.BIN` (decoded from `Map_load`, `43698`)
+
+* Monster records, 3 bytes each, until a record starting with `FFh`: `x`, `y`, `b` where `b & 3` picks one of the map's 3
+  monster picture ids (`MAP_MONSTER_PICS`, 3 bytes per map) and, if `b >> 2` is non-zero, the monster id is `(b >> 2) + 28h`
+  instead.  A monster gets random hit points..., `MONHP[id]` as its maximum.
+* Then 5 bytes: the picture slots (`2Ah` = unused) of the objects used on the map (`%s.pic` via a name table at DGROUP `58D4h`).
+* Then object records, 3 bytes each (`x`, `y`, picture slot), at most 80 (`50h`).
+
+## `MAZEnn.EVT` -- the event scripts
+
+Same engine as Xeen's `Scripts` class.  The file is a sequence of records:
+
+| Byte | Meaning |
+|---|---|
+| 0 | length `n` of the rest of the record (the next record starts `n + 1` bytes later) |
+| 1, 2 | x, y of the square |
+| 3 | facing it triggers on (0-3, 4 = any) |
+| 4 | line number: lines of the same (x, y, facing) run in order |
+| 5 | opcode |
+| 6.. | `n - 5` operand bytes |
+
+`indexEvents` (`3BCF6`) turns this into a 10-byte table (x, y, facing, line, offset) and `runMazeEvent` (`19608`) walks it
+whenever the party moves.  The opcode numbering is exactly the one of ScummVM's `Scripts::_cmdList` (opcode 0 does nothing),
+operand counts in the shipped data:
+
+| Op | Xeen name | Operand bytes | Op | Xeen name | Operand bytes |
+|---|---|---|---|---|---|
+| 1 | Display1 (message) | 1 (text index) | 17 | DoTownEvent | 1 |
+| 2 | DoorTextSml | 1 | 18 | Exit | 0 |
+| 3 | DoorTextLrg | 1 | 19 | AlterMap | 4 |
+| 4 | SignText | 1 | 20 | GiveMulti | 6-12 |
+| 5 | NPC | 5 | 21 | ConfirmWord | 4 |
+| 6 | PlayFX | 1 | 22 | Damage | 3 |
+| 7 | Teleport (map, x, y) | 3 | 23 | JumpRnd | 3 |
+| 8, 9, 10 | If (width-coded operands) | 3-4 | 24 | AlterEvent | 2 |
+| 11 | MoveObj | 3 | 25 | CallEvent / goto | 3 |
+| 12 | TakeOrGive | 4-10 | 26 | Return | 0 |
+| 14 | Remove | 0 | 27 | SetVar | 2 |
+| 15 | SetChar | 1 | 28, 29 | TakeOrGive variants | 4-7 / 6 |
+| 16 | Spawn | 4 | 30 | cutscene end | 0 |
+| | | | 31 | Teleport (variant) | 3 |
+| | | | 32 | WhoWill | 1 |
+| | | | 33 | RndDamage | 4 |
+
+The names are inferred from the handler shapes (same jump table order and operand counts); the operand encodings of the `If`
+family (value widths 1-4 bytes selected by a type byte) are not yet written down.
