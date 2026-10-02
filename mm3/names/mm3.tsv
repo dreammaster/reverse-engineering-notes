@@ -99,6 +99,7 @@
 129BE	_eof
 12A26	_findfirst
 12A59	_findnext
+12A86	__xfflush	(BinDiff sim .89 conf .92, unverified)
 12B08	__fgetc
 12B1A	__Nfgetc
 12B1D	_fgetc
@@ -198,14 +199,18 @@
 16DF4	statBonus
 16E14	getAge
 16E4A	worstCondition
+16E6B	itemScan	(BinDiff sim .50 conf .97, unverified)
 16FB1	getStat
 1705D	def_16FCD
 170E9	jpt_16FCD
+1741A	MemFree	(BinDiff sim .66 conf .95, unverified)
 190C9	highlightChar
 1913E	getElementalCategory
+19159	getAttributeCategory	(BinDiff sim .89 conf .92, unverified)
 1918F	conditionMod
 193C7	def_193A8
 193D0	jpt_193A8
+19608	runMazeEvent	6.7 KB event interpreter: "What's the Password?", "picks the lock", Hologram sequences (name from strings, unverified)
 1A625	def_1A5D6
 1AEEC	def_1984B
 1B0A7	jpt_1A5D6
@@ -308,17 +313,25 @@
 224B2	jpt_21E2F
 224C8	jpt_21AEC
 224DE	jpt_216CF
+24F8D	Events_updateGameCounter	(BinDiff sim .65 conf .95, unverified)
 24FA1	Music_deinit
 24FAB	Music_playSong
+24FB5	Window_update	(BinDiff sim .67 conf .95, unverified)
 24FBF	Music_playFX
 24FD3	Sound_playVOC
 24FFB	Sound_deinit
 25068	Resources_openFile
 25117	currentTime
+251C8	timeToString	(BinDiff sim .69 conf .97, unverified)
+25238	setStartTime	(BinDiff sim .68 conf .97, unverified)
+2524D	getElapsedTime	(BinDiff sim .68 conf .97, unverified)
+25279	timeText	(BinDiff sim .67 conf .95, unverified)
 253C2	def_252EF
 253C5	jpt_252EF
 2562C	def_25621
 25C22	jpt_25621
+25E20	ipause_5	(BinDiff sim .88 conf .92, unverified)
+26665	fileExists	(BinDiff sim .69 conf .97, unverified)
 266AB	getFiles
 2699E	__OVRGROUP
 269A0	__DGROUP
@@ -326,6 +339,8 @@
 26B2C	__OVREXIT
 26C34	__InitModules
 26E5F	__ReadOvrDisk
+2704A	mouseErase	(BinDiff sim .88 conf .92, unverified)
+270F8	monsterOvercome	(BinDiff sim .86 conf .90, unverified)
 2715E	__ISOVERLAYMOD
 27194	__CHECKSTACK
 2722C	__CHECKOVERLAY
@@ -340,39 +355,84 @@
 27A16	__INITEXTMEM
 27AEE	__EXITEXT
 27B42	__EXTCOPY
+27F59	j_getDiskFree
+27F68	j_monstersAttack
+27F81	j_getEquipSlotName
+27F90	j_equipItem
+27F9F	j_openMm3Cc
+27FAE	j_stopAttack
+27FB3	j_introSequence
 27FB8	j_protectionHandler
 28057	j_subPartyTime
+28080	j_GiveBankInterest
+28085	j_death
 2808A	j_Spells_moonRay
+2808F	j_showJoke
+28094	j_arenaEvent
 280F9	j_sortParty
 28112	j_copyPartyToRoster
+28121	j_Awards_show
+28126	j_rosterMenu
 2813A	j_setSoundAddress
 2818F	j_getCurrentExperience
+281B7	j_controlPanel
 281C1	j_nextExperienceLevel
+281C6	j_rest
 281F8	j_experienceToNextLevel
+2823A	j_giveCharDamage
+2823F	j_Map_load
 28271	j__strcoll
+28276	j_dismissCharacter
+282C0	j_createCharacter
+28306	j_checkClasses
+28335	j_trainingNeedsExperience
+2833F	j_townInn
+2834E	j_townBank
+28358	j_townGuild
+2836C	j_townTavern
+28371	j_townTraining
+28376	j_townSmithy
+28380	j_loadHireFaces
 283B5	j_setSpeedTable
+283BF	j_getWeaponDamage
+283C9	j_block
 283CE	j_getMonsterDescriptions
+283D3	j_attack
+283E2	j_doMonsterTurn
 283E7	j_run
 283F1	j_nextChar
 283F6	j_charsCantAct
 283FB	j_allHaveGone
+28400	j_sortCombatParty
 2840A	j_quickFight
 28414	j_monsterSavingThrow
 28464	j_Spells_subSpellCost
 28509	j_Spells_divineIntervention
 28545	j_Screen_saveBackground
+28572	j_spellLloydsBeacon
+28644	j_itemsDialog
+28662	j_specialsDialog
 28667	j_getThievery
 286AE	j_statColor
 286BD	j_getMaxSP
 286C2	j_getMaxHP
 286CC	j_getArmorClass
+286E0	j_identifyOrFix
+286E5	j_getNumSkills
 28780	segx
 30FA0	__ctype
+379F2	monstersAttack	(BinDiff sim .69 conf .93, unverified)
 37B31	def_37B2C
 37B49	jpt_37B2C
 37E41	def_37D55
 37E4A	jpt_37D55
+37EB2	openMm3Cc	opens mm3.cc, "Alert!" error box (from strings)
+380FE	getDiskFree	(BinDiff sim .69 conf .97, unverified)
+38425	stopAttack	(BinDiff sim .62 conf .95, unverified)
+388A9	introSequence	mm3theme.m, itit0-8.vga, comet.vga, itxt.vga, talk.vga, s%d.s, cr%d.vga (from strings)
 39437	protectionHandler
+394A9	getEquipSlotName	"ring"/"medal" (from strings)
+3956E	equipItem	"You must remove %s to equip %s", "cannot equip two of the same items" (by string order, unverified)
 3BC30	subPartyTime
 3BFD6	def_3BF95
 3C0D2	def_3C0C1
@@ -392,7 +452,11 @@
 3D6A6	def_3D353
 3D6FE	jpt_3D402
 3D710	jpt_3D353
+3DF79	GiveBankInterest	(BinDiff sim .69 conf .97, unverified)
+3E0A0	showJoke	jester.bin "Joke of the Day"
+3E113	arenaEvent	combat.m "The Arena"
 3E8AC	Spells_moonRay
+3E982	death	death.vga, mm3theme.m (from strings)
 3EA70	def_3EA36
 3EC7F	def_3EC64
 3EC8E	def_3F05F
@@ -407,20 +471,26 @@
 3F3DC	jpt_3EC64
 3F3E4	jpt_3EA56
 3F3EC	jpt_3EA36
+3F490	Awards_show	award.bin
 40036	def_3F4CF
 4008C	jpt_3F4CF
 403C9	setSoundAddress
 403E6	sortParty
 40A6D	copyPartyToRoster
+40AAC	rosterMenu	delete character/hireling, "Your Roster is full!"
 41500	nextExperienceLevel
 41565	experienceToNextLevel
 415A9	getCurrentExperience
 41674	def_4164F
 41679	jpt_4164F
+416FF	rest	"Too dangerous to rest here!" ... "8 hours pass.  Rest complete."
+41F5D	controlPanel	cpanel.icn, load/save "*.mm3", quit confirmation, Mr. Wizard's help
 42BF1	def_42BC4
 42C9F	def_42C72
 42E8D	jpt_42C72
 42E9B	jpt_42BC4
+43698	Map_load	text%02u.maz, %s.pic, %s.mon, "Max Monsters Exceeded"
+43AF1	giveCharDamage	(BinDiff sim .78 conf .98, unverified)
 43B58	def_43B53
 43C30	def_43BB7
 43D03	jpt_43BB7
@@ -431,6 +501,7 @@
 4483B	jpt_445EB
 44A7F	def_449A1
 44AAA	jpt_449A1
+44ABA	dismissCharacter	"Too dangerous to dismiss here!"
 44BE5	def_44B0E
 44C04	jpt_44B0E
 44DAC	_strcoll
@@ -446,16 +517,27 @@
 466B6	jpt_46671
 46A80	def_46A48
 46B1B	jpt_46A48
+46B2D	checkClasses	(BinDiff sim .59 conf .93, unverified)
 46C00	def_46B49
 46C0D	jpt_46B49
 46D34	def_46CF5
 46DD0	jpt_46CF5
+46E49	createCharacter	dice.vga, create.raw, create.icn
 477F2	def_474F8
 4781B	jpt_474F8
+4816C	townBank	bank.m, bank.icn, bank2.icn
+48466	townGuild	guild.m, spldesc.bin
+486AB	townInn	towninn.m
+487B4	townTavern	honky.m, tavern.bin
+492B1	trainingNeedsExperience	"%s needs %lu experience for level %u."
+49368	townTraining	grounds.m, train.icn
+49730	townSmithy	dungeon.m ("Sorry, the Smithy's closed")
+49915	loadHireFaces	hire%u.fac, eface%02u.out
 49F6C	def_49F15
 49F8B	jpt_49F15
 4A100	def_4A09E
 4A122	jpt_4A09E
+4A130	attack	(BinDiff sim .54 conf .91, unverified)
 4A175	def_4A14F
 4A507	def_4A2E5
 4A51E	jpt_4A2E5
@@ -463,12 +545,14 @@
 4A546	allHaveGone
 4A5BA	def_4A5B5
 4A5D3	jpt_4A5B5
+4A5DD	sortCombatParty	(BinDiff sim .81 conf .90, unverified)
 4A74B	def_4A67A
 4A76D	jpt_4A67A
 4A856	def_4A7F5
 4AB1C	def_4A8EE
 4AB3C	jpt_4A8EE
 4AB5C	jpt_4A7F5
+4AB68	doMonsterTurn	(BinDiff sim .77 conf .96, unverified)
 4AC48	def_4AC43
 4AC9E	def_4AC5F
 4AD36	def_4ACBA
@@ -490,8 +574,10 @@
 4B18C	jpt_4B15C
 4B1F2	def_4B1DB
 4B26F	jpt_4B1DB
+4B283	getWeaponDamage	(BinDiff sim .72 conf .94, unverified)
 4B3AB	monsterSavingThrow
 4B3D1	run
+4B422	block	(BinDiff sim .64 conf .90, unverified)
 4B478	getMonsterDescriptions
 4B5AF	setSpeedTable
 4B94B	def_4B911
@@ -505,9 +591,11 @@
 4C237	Spells_subSpellCost
 4C6C6	def_4C6AB
 4C6D8	jpt_4C6AB
+4CCA1	spellLloydsBeacon	lloyds.icn
 4D4E1	def_4D3BB
 4D50C	jpt_4D3BB
 4DD99	Spells_divineIntervention
+4DE30	itemsDialog	"%s is not equippable!", "To use an item in Combat...", "Permanently discard %s?"
 4E06D	def_4E051
 4E680	def_4E67B
 4E783	def_4DFB5
@@ -515,6 +603,7 @@
 4E81C	jpt_4E051
 4E82C	jpt_4DFD3
 4E834	jpt_4DFB5
+4E846	specialsDialog	None/All/+5 Might... list
 4EC37	getThievery
 4F002	def_4EFFD
 4F20B	def_4F1DB
@@ -526,12 +615,14 @@
 50238	jpt_4FF71
 50C07	def_50950
 51199	jpt_50950
+5120A	getNumSkills	(BinDiff sim .83 conf .93, unverified)
 51250	getMaxSP
 513F4	getMaxHP
 514D1	getArmorClass
 519A8	statColor
 51C85	def_51C61
 51D1D	jpt_51C61
+51D31	identifyOrFix	"Identify" / "Fix" (from strings)
 51F16	def_51EC7
 52004	def_51F95
 5201C	jpt_51F95
