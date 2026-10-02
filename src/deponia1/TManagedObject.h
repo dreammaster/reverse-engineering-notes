@@ -423,6 +423,31 @@ protected:
 		return _position;
 	}
 
+	// Confirmed a bool field at a fixed offset distinct from every field
+	// below (GetActionsToTest()/ExecuteEvent()/ExecuteMatchingAction(),
+	// Deponia_Linux.asm lines 55EC79, 55F3FA, 55E027) - when set,
+	// GetActionsToTest() treats this object as reached without actually
+	// calling IsReached(), and ExecuteEvent()/ExecuteMatchingAction() skip
+	// the auto-facing-angle update they'd otherwise apply to the event's
+	// own character; real meaning/intent not resolved (plausibly "this
+	// kind of object doesn't participate in reach-distance mechanics at
+	// all," e.g. a UI button rather than a scene object), named for its
+	// observed effect rather than recovered. Confirmed set true by
+	// TMSavegameArea's own constructor, independently of this class.
+	bool _bypassReachCheck = false;
+	// Confirmed a second, separate bool field (ExecuteEvent(),
+	// Deponia_Linux.asm line 55F640) - when set, skips ExecuteEvent()'s own
+	// trailing HandlePostExecution() call entirely; named for its observed
+	// effect, not recovered. Also confirmed set true by TMSavegameArea's
+	// own constructor.
+	bool _skipFinalPostExecution = false;
+	// Confirmed a third, separate bool field (ExecuteEvent(),
+	// Deponia_Linux.asm line 55F7E3) - gates a hardcoded fallback retry
+	// (expanding the original candidate types and trying a different
+	// action list, field 0xAC) when nothing else matched; named for its
+	// observed effect, not recovered.
+	bool _hasActionTypeFallback = false;
+
 private:
 	wxPoint _position;
 	int _center = -1;
@@ -440,26 +465,4 @@ private:
 	int _alphaDurationMs = 0;
 	TTimer _timer;
 	TPolygonList _polygons;
-	// Confirmed a bool field at a fixed offset distinct from every field
-	// above (GetActionsToTest()/ExecuteEvent()/ExecuteMatchingAction(),
-	// Deponia_Linux.asm lines 55EC79, 55F3FA, 55E027) - when set,
-	// GetActionsToTest() treats this object as reached without actually
-	// calling IsReached(), and ExecuteEvent()/ExecuteMatchingAction() skip
-	// the auto-facing-angle update they'd otherwise apply to the event's
-	// own character; real meaning/intent not resolved (plausibly "this
-	// kind of object doesn't participate in reach-distance mechanics at
-	// all," e.g. a UI button rather than a scene object), named for its
-	// observed effect rather than recovered.
-	bool _bypassReachCheck = false;
-	// Confirmed a third, separate bool field (ExecuteEvent(),
-	// Deponia_Linux.asm line 55F640) - when set, skips ExecuteEvent()'s own
-	// trailing HandlePostExecution() call entirely; named for its observed
-	// effect, not recovered.
-	bool _skipFinalPostExecution = false;
-	// Confirmed a fourth, separate bool field (ExecuteEvent(),
-	// Deponia_Linux.asm line 55F7E3) - gates a hardcoded fallback retry
-	// (expanding the original candidate types and trying a different
-	// action list, field 0xAC) when nothing else matched; named for its
-	// observed effect, not recovered.
-	bool _hasActionTypeFallback = false;
 };

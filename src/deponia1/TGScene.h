@@ -33,6 +33,11 @@ public:
 	}
 
 	bool IsMenu() const;
+	// Confirmed call shape only (TGScene::SetScene, Deponia_Linux.asm line
+	// 172599, ~740 bytes) - builds this scene's savegame-slot click areas
+	// (constructs one TMSavegameArea per slot rect, per that class's own
+	// confirmed ctor call site); not reversed beyond that one call site.
+	void SetScene();
 	// Confirmed TManagedObject* (TGameControl::ReattachSceneObjectTexts
 	// calls TManagedObject::SetText() directly on the result, asm lines
 	// 461599-461666) - the manifest's void* was a placeholder guess.

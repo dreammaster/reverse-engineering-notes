@@ -1,10 +1,13 @@
 #include "TGScene.h"
 
-#include "TManagedObject.h"
 #include "TMSavegame.h"
+#include "TMSavegameArea.h"
 
 bool TGScene::IsMenu() const {
 	return false;
+}
+
+void TGScene::SetScene() {
 }
 
 TManagedObject *TGScene::GetObject(const TVisObjRef &/*object*/) const {

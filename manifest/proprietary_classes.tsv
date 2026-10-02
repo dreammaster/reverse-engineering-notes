@@ -30,7 +30,7 @@ TDiagnostic	todo	11	144499	148293
 Geni::mslocale_t	todo	2	148405	479251
 TGAnimation	todo	51	148778	158721
 TCAnimation	todo	40	158833	1384914
-TMSavegameArea	todo	6	159199	159295
+TMSavegameArea	done	6	159199	159295
 TMSavegame	todo	22	159356	164367
 HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
 TMButton	todo	9	165577	166172

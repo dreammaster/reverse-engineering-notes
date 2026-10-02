@@ -2280,6 +2280,44 @@ it).
 `TManagedObject` and `TGEventInfo` are now `done` in the manifest;
 `TTAction` moved from `todo` to `stub` (only the one method above).
 
+## TMSavegameArea
+
+A small, clean win while scouting for the next class to tackle: most of
+the remaining small `TG*`/`TT*` classes turned out to be UI buttons
+(`TGScrollButton`, `TGCommand`, `TGPlaceHolder`, ...) that derive from
+`THButton`, which itself pulls in an event-handler-interface bridge
+(`TVisObjRef::RegisterEventHandler()`, a `TEventHandlerInterface`, a
+`_ZThn648_`-style thunk) - the same kind of standing, deliberately-
+unreversed gap as this project's Lua bridge, just a different one. Rather
+than start down that hole, found `TMSavegameArea` instead: a
+`TManagedObject` directly, no intermediate class, confirmed in full (all
+6 manifest-listed methods) - a clickable rectangle over one savegame
+slot, with `GetActionList()`/`ExecuteEvent()` both no-ops (it doesn't
+participate in the action-execution engine at all) and `IsInside()` doing
+a plain rect test instead of the base's polygon one.
+
+Its constructor independently *confirms* two of the three opaque
+`TManagedObject` bool fields found during the action-execution-subsystem
+pass - it sets `_bypassReachCheck`/`_skipFinalPostExecution` both true
+(sensible: a UI slot needs no walking/reach check, and its own
+`ExecuteEvent()` is a no-op anyway) - good cross-validation from a
+completely independent call site. Both fields moved from `private` to
+`protected` on `TManagedObject` so this subclass (and any other direct
+subclass that needs them) can set them directly, matching the real
+binary's own constructor-time field pokes.
+
+One honest gap of its own: `IsInside()` is gated by a bool (`_active`)
+that's never written anywhere in this class's own 6 methods, including
+the constructor - presumably set by `TGScene`'s own savegame-slot-picker
+methods once an area is actually shown, but no confirmed call site for
+that turned up. Defaults to `false` rather than guessing a setter into
+existence. Added a matching confirmed-call-shape-only `TGScene::SetScene()`
+(the one method that constructs these areas, ~740 bytes, not itself
+reversed) so the new class has a real, if still unimplemented, caller
+rather than sitting unused.
+
+`TMSavegameArea` is `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
