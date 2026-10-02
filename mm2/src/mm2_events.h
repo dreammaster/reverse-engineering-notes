@@ -5,6 +5,7 @@
 #define MM2_EVENTS_H
 
 #include "mm2_files.h"
+#include "mm2_inn.h"
 #include "mm2_state.h"
 
 enum {
@@ -37,6 +38,10 @@ struct Mm2Vm {
 	int cond;               /* byte_1DC7F: result of the last check */
 	unsigned counter;       /* word_1DC18, increased by opcode 44 */
 	int night;              /* byte_1DD59: tested by opcode 43 */
+	Mm2Roster *roster;      /* party and characters for the character opcodes (21-25, 31, 32, 36, 37, 40, 50) */
+	uint8_t *map;           /* current map, 512 bytes (opcode 33); may be NULL */
+	int sel;                /* byte_22D0E: party slot (1-8) picked by opcodes 38/39 */
+	int prevCond;           /* byte_22D12: cond before the last character check */
 	const uint8_t *code;    /* script area */
 	size_t len, pc;
 	int steps;

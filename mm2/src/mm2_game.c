@@ -133,6 +133,12 @@ int mm2_session_start(Mm2GameSession *s, const Mm2Game *files, int map, int x, i
 	return 1;
 }
 
+void mm2_session_attach(Mm2GameSession *s, Mm2Roster *roster) {
+	s->vm.roster = roster;
+	s->vm.state = (Mm2State *)roster->state;
+	s->vm.map = s->data;
+}
+
 void mm2_session_end(Mm2GameSession *s) {
 	mm2_blob_free(&s->eventBlob);
 }

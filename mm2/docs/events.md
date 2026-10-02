@@ -74,3 +74,26 @@ Semantics are from reading the handlers; names in the IDA databases: `evt_opNN_*
 Opcode usage across the shipped maps: see `tools/mm2_data.py` (`python -c` with `split_scripts`).
 
 `tools/mm2_events.py MAP` prints the trigger table, the scripts with opcode names and the message texts of a map.
+
+## Character opcodes (decoded in detail)
+
+The character-related commands (`evt_op21/24/31/32`, `ovl/2PLAY.asm` 0x19A02, 0x19B38, 0x19E40, 0x19F38 with the field reader at
+0x1AA00 and `sub_19CB8` at 0x19CB8) use **field ids**: id -> byte of the 82h-byte character record (jump table at 0x1AA56, extracted
+into `src/mm2_evfields_gen.inc`); ids 20h/28h/35h/38h/3Ah/3Ch address a word, 31h and 3Eh (experience, gold) a dword, the ids that
+follow them address the higher bytes (+1, +2, +3).  Ids 0/1 return the roster id.  "who": 0 = whole party, 1-8 = that member, 9 =
+the member picked by opcode 38/39 (else the previous `cond`), +80h on the operand = use the previous `cond` as the value.
+
+| Op | Operands | Meaning |
+|---|---|---|
+| 21 | who, field, mask | `cond` = OR over the addressed members of (field byte & mask) (mask 0 = no masking) |
+| 24 | who, field, mask, value | field byte = (field byte & mask) \| value |
+| 31 | who, field, nbytes, amount(3) | **add** amount to the field (8-bit saturates at 255, 32-bit saturates, 16-bit wraps to 0) |
+| 32 | same | **subtract**; if the field is smaller, `cond = 0` and nothing is written |
+| 22 | x, item | `cond` = number of matching slots (equipped + backpack) of the first member that has the item |
+| 25 | x, item, charges, bonus | give the item to the first member with a free slot (`cond` = 1), else it goes to the floor |
+| 40 | x, item | remove the item from the first member's backpack (`cond` = 1) |
+| 36 / 37 | amount (word) | pay gold / gems from the party pool (non-hirelings), then re-share; `cond` = success |
+| 34 | lo, hi | `cond` = (lo <= **era** <= hi) -- the disassembly's "check hour" actually tests the era |
+| 35 | lo, hi | day of year in range; lo = B5h: odd day, B6h: even day |
+| 33 | cell, wall, flag | set the map cell's wall and flag bytes |
+| 38 / 39 | - | pick a party member (key 1-8 or Esc, which ends the script); `cond` = slot |

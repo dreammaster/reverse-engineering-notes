@@ -66,6 +66,7 @@ static int start_map(App *a, const Mm2Game *g, int map, int x, int y, char facin
 	if (a->s.files) mm2_session_end(&a->s);
 	if (!mm2_session_start(&a->s, g, map, x, y, facing)) return 0;
 	a->s.yesNo = yes;
+	mm2_session_attach(&a->s, &a->roster);
 	return sync_view(a, g);
 }
 

@@ -261,6 +261,29 @@ static void test_event_vm(const Mm2Game *g) {
 	CHECK(mm2_vm_run(&vm, script, sizeof(script), 2) == -1);
 	CHECK(mm2_event_op_len(EV_FIGHT) == 13 && mm2_event_op_len(EV_PLACE_TREASURE) == 15 && mm2_event_op_len(0) == 0);
 	CHECK(mm2_event_var_dgroup(0x84) == 0x3CA && mm2_event_var_dgroup(0x23) == 0x3D8 && mm2_event_var_dgroup(0x50) == 0);
+	{
+		/* the same with the party attached: no script may crash the character opcodes */
+		static Mm2Roster rr;
+		static uint8_t map[512];
+		int mp;
+		Mm2Vm v2 = {0};
+		CHECK(mm2_load_roster(g, &rr));
+		for (mp = 0; mp < 6; mp++) mm2_inn_add(&rr, mp);
+		v2.roster = &rr; v2.state = (Mm2State *)rr.state; v2.map = map; v2.host = &host;
+		for (mp = 0; mp < MM2_MAPS; mp++) {
+			Mm2Blob e = mm2_load_events(g, mp);
+			Mm2EventChunk cc;
+			if (e.data && mm2_parse_events(&e, &cc)) {
+				int sc, cnt = 0;
+				size_t q = 0;
+				while (q < cc.scriptsLen) {
+					if (cc.scripts[q] == 0xFF) { cnt++; q++; } else q += (size_t)mm2_event_op_len(cc.scripts[q]);
+				}
+				for (sc = 0; sc < cnt; sc++) CHECK(mm2_vm_run(&v2, cc.scripts, cc.scriptsLen, sc) >= 0);
+			}
+			mm2_blob_free(&e);
+		}
+	}
 	/* every shipped script runs to its end with a do-nothing host */
 	for (m = 0; m < MM2_MAPS; m++) {
 		ev = mm2_load_events(g, m);
@@ -818,6 +841,91 @@ static void test_treasure(const Mm2Game *g) {
 	mm2_session_end(&s);
 }
 
+static void test_event_chars(const Mm2Game *g) {
+	static Mm2Roster r;
+	Mm2Vm vm;
+	uint8_t map[512];
+	int i;
+	CHECK(mm2_load_roster(g, &r));
+	for (i = 0; i < 3; i++) mm2_inn_add(&r, i);
+	memset(&vm, 0, sizeof(vm));
+	memset(map, 0, sizeof(map));
+	vm.roster = &r;
+	vm.state = (Mm2State *)r.state;
+	vm.map = map;
+	/* 31: add 1000 gold to character 2 (field id 62 = gold dword at +66h) */
+	{
+		static const uint8_t s[] = {EV_MODIFY_CHAR, 2, 62, 4, 0xE8, 0x03, 0x00, EV_END, 0xFF};
+		uint32_t before = mm2_c32(&r.chars[1], MC_GOLD);
+		CHECK(mm2_vm_run(&vm, s, sizeof(s), 0) == 2 && mm2_c32(&r.chars[1], MC_GOLD) == before + 1000 && vm.cond == 1);
+	}
+	/* 32: subtract more than the character has: cond 0 and nothing written */
+	{
+		static const uint8_t s[] = {EV_MODIFY_PARTY, 2, 62, 4, 0xFF, 0xFF, 0x00, EV_END, 0xFF};
+		uint32_t before = mm2_c32(&r.chars[1], MC_GOLD);
+		mm2_vm_run(&vm, s, sizeof(s), 0);
+		CHECK(vm.cond == 0 && mm2_c32(&r.chars[1], MC_GOLD) == before);
+	}
+	/* 32 on the whole party (who = 0): take 1 experience point from everyone who has it */
+	{
+		static const uint8_t s[] = {EV_MODIFY_PARTY, 0, 98, 1, 0x00, 0x00, 0x00, EV_END, 0xFF};   /* amount 0 is harmless */
+		mm2_vm_run(&vm, s, sizeof(s), 0);
+		CHECK(vm.cond == 1);
+	}
+	/* 21: OR of (current Might & FFh) over the party; 24: write the condition byte of character 1 */
+	{
+		static const uint8_t s[] = {EV_CHAR_CHECK, 0, 34, 0xFF, EV_END, 0xFF};
+		unsigned any = r.chars[0].raw[0x6B] | r.chars[1].raw[0x6B] | r.chars[2].raw[0x6B];
+		mm2_vm_run(&vm, s, sizeof(s), 0);
+		CHECK(vm.cond == (int)any);
+		static const uint8_t s2[] = {EV_CHAR_MODIFY, 1, 67, 0x00, 0x08, EV_END, 0xFF};      /* +26h = (old & 0) | 08h */
+		mm2_vm_run(&vm, s2, sizeof(s2), 0);
+		CHECK(r.chars[0].raw[MC_CONDITION] == 0x08);
+	}
+	/* items: has / take / give */
+	{
+		static const uint8_t give[] = {EV_GIVE_ITEM, 0, 77, 5, 2, EV_END, 0xFF}, has[] = {EV_HAS_ITEM, 0, 77, EV_END, 0xFF};
+		static const uint8_t take[] = {EV_REMOVE_ITEM, 0, 77, EV_END, 0xFF};
+		mm2_vm_run(&vm, has, sizeof(has), 0);
+		CHECK(vm.cond == 0);
+		mm2_vm_run(&vm, give, sizeof(give), 0);
+		CHECK(vm.cond == 1);
+		mm2_vm_run(&vm, has, sizeof(has), 0);
+		CHECK(vm.cond == 1);
+		mm2_vm_run(&vm, take, sizeof(take), 0);
+		CHECK(vm.cond == 1);
+		mm2_vm_run(&vm, has, sizeof(has), 0);
+		CHECK(vm.cond == 0);
+	}
+	/* paying gold pools the party's gold, then shares it out evenly */
+	{
+		uint32_t total = mm2_c32(&r.chars[0], MC_GOLD) + mm2_c32(&r.chars[1], MC_GOLD) + mm2_c32(&r.chars[2], MC_GOLD);
+		static const uint8_t pay[] = {EV_PAY_GOLD, 10, 0, EV_END, 0xFF};
+		uint32_t after;
+		mm2_vm_run(&vm, pay, sizeof(pay), 0);
+		after = mm2_c32(&r.chars[0], MC_GOLD) + mm2_c32(&r.chars[1], MC_GOLD) + mm2_c32(&r.chars[2], MC_GOLD);
+		CHECK(vm.cond == (total >= 10) && after == total - 10);
+		{
+			static const uint8_t big[] = {EV_PAY_GOLD, 0xFF, 0xFF, EV_END, 0xFF};
+			mm2_vm_run(&vm, big, sizeof(big), 0);
+			CHECK(vm.cond == 0);
+		}
+	}
+	/* era / date / set cell / skills */
+	{
+		static const uint8_t era[] = {EV_TIME_CHECK, 9, 9, EV_END, 0xFF}, date[] = {EV_DATE_CHECK, 1, 180, EV_END, 0xFF};
+		static const uint8_t cell[] = {EV_SET_CELL, 0x23, 0x55, 0xA0, EV_END, 0xFF}, skill[] = {EV_PARTY_SKILL, 99, EV_END, 0xFF};
+		mm2_vm_run(&vm, era, sizeof(era), 0);
+		CHECK(vm.cond == 1);                                      /* the shipped state is in era 9 */
+		mm2_vm_run(&vm, date, sizeof(date), 0);
+		CHECK(vm.cond == 1);
+		mm2_vm_run(&vm, cell, sizeof(cell), 0);
+		CHECK(map[0x23] == 0x55 && map[256 + 0x23] == 0xA0);
+		mm2_vm_run(&vm, skill, sizeof(skill), 0);
+		CHECK(vm.cond == 0);
+	}
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -827,6 +935,7 @@ int main(void) {
 	test_tables_and_rules(&g);
 	test_event_vm(&g);
 	test_session(&g);
+	test_event_chars(&g);
 	test_monster_pictures(&g);
 	test_combat();
 	test_battle(&g);

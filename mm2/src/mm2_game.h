@@ -46,6 +46,10 @@ const char *mm2_location_name(int code);
 int mm2_session_start(Mm2GameSession *s, const Mm2Game *files, int map, int x, int y, char facing);
 void mm2_session_end(Mm2GameSession *s);
 
+/* Connects the event interpreter to the party: character opcodes act on `roster` and the event variables live in its state
+ * block (as in the saved game); opcode 33 edits the session's map. */
+void mm2_session_attach(Mm2GameSession *s, Mm2Roster *roster);
+
 /* Text of event message n (1-based) of the current map into out (cap bytes); returns its length or -1. */
 int mm2_session_message(const Mm2GameSession *s, int n, char *out, size_t cap);
 
