@@ -85,3 +85,13 @@ in `MM3.CC`.)  `TEXTnn.MAZ` (text blocks per map, 64) and the graphics are in `M
 Monster list: records of 4 bytes (`x`, `y`, `type<<2 | direction`, ...) ended by `FFh`; the monster's hit points are taken
 from `MONHP`; then 5 bytes (picture slots, `2Ah` = no picture) and finally object records of 4 bytes.
 (Only read from `Map_load`; the exact field meanings still need confirming.)
+
+### How the engine addresses the maze (from `mazeGetWordRel`, `mazeGetFlagsRel`, `mazeSetBits`)
+
+The map is a 32x32 world made of up to four 16x16 pages (`.DAT` blocks) held in four slots at DGROUP `C554h`, stride
+`340h`; `Maze_curSlot` (`34C2E`) is the slot the party is in and `MAZE_SLOT_X/Y` (DGROUP `2600h`/`2604h`, `00 10 00 10` /
+`00 00 10 10`) give each slot's origin.  A cell at world (x, y), 0-31:
+
+* x > 15 -> the page east of the current one, y > 15 -> the page to the south; their maze ids are bytes `308h`/`309h`
+  of the current page's header, and `mazeNeighbourSlot` maps an id to a loaded slot (`1111h` = not loaded),
+* wall word at `slot*340h + (y&15)*32 + (x&15)*2`, flag byte at `slot*340h + 200h + (y&15)*16 + (x&15)`.

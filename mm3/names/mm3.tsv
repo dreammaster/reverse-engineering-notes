@@ -219,8 +219,12 @@
 1AEEC	def_1984B
 1B0A7	jpt_1A5D6
 1B129	jpt_1984B
+1B99E	mazeNeighbourSlot	maps a neighbour maze id to its loaded slot (1111h if not loaded)
+1BC15	mazeGetWordRel	args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
 1BD2A	def_1BCE9
 1BD57	jpt_1BCE9
+1BD67	mazeGetFlagsRel	same addressing, returns the cell flag byte (maze .DAT +200h) & mask
+1BE3E	mazeSetBits	args (x, y, field, value): clear the field's mask (table 16F8h) in the cell word, or in value << shift (88-byte field records at 159Ch)
 1C2E5	def_1C2AA
 1C352	def_1C343
 1C3EB	def_1C3B0
@@ -371,74 +375,75 @@
 27A16	__INITEXTMEM
 27AEE	__EXITEXT
 27B42	__EXTCOPY
-27F54	j_j_j_j_resetBlacksmithWares
-27F59	j_j_j_j_j_getDiskFree
-27F68	j_j_j_j_j_monstersAttack
-27F81	j_j_j_j_j_getEquipSlotName
-27F90	j_j_j_j_j_equipItem
-27F9F	j_j_j_j_j_openMm3Cc
-27FAE	j_j_j_j_j_stopAttack
-27FB3	j_j_j_j_j_introSequence
-27FB8	j_j_j_j_j_protectionHandler
-28057	j_j_j_j_j_subPartyTime
-28080	j_j_j_j_j_GiveBankInterest
-28085	j_j_j_j_j_death
-2808A	j_j_j_j_j_Spells_moonRay
-2808F	j_j_j_j_j_showJoke
-28094	j_j_j_j_j_arenaEvent
-280A8	j_j_j_j_resetTemps
-280F9	j_j_j_j_j_sortParty
-28112	j_j_j_j_j_copyPartyToRoster
-28121	j_j_j_j_j_Awards_show
-28126	j_j_j_j_j_rosterMenu
-2813A	j_j_j_j_j_setSoundAddress
-2818F	j_j_j_j_j_getCurrentExperience
-281B7	j_j_j_j_j_controlPanel
-281C1	j_j_j_j_j_nextExperienceLevel
-281C6	j_j_j_j_j_rest
-281F8	j_j_j_j_j_experienceToNextLevel
-2823A	j_j_j_j_j_giveCharDamage
-2823F	j_j_j_j_j_Map_load
-28271	j_j_j_j_j__strcoll
-28276	j_j_j_j_j_dismissCharacter
-282C0	j_j_j_j_j_createCharacter
-28306	j_j_j_j_j_checkClasses
-28335	j_j_j_j_j_trainingNeedsExperience
-2833F	j_j_j_j_j_townInn
-2834E	j_j_j_j_j_townBank
-28358	j_j_j_j_j_townGuild
-2836C	j_j_j_j_j_townTavern
-28371	j_j_j_j_j_townTraining
-28376	j_j_j_j_j_townSmithy
-28380	j_j_j_j_j_loadHireFaces
-283B5	j_j_j_j_j_setSpeedTable
-283BF	j_j_j_j_j_getWeaponDamage
-283C9	j_j_j_j_j_block
-283CE	j_j_j_j_j_getMonsterDescriptions
-283D3	j_j_j_j_j_attack
-283E2	j_j_j_j_j_doMonsterTurn
-283E7	j_j_j_j_j_run
-283F1	j_j_j_j_j_nextChar
-283F6	j_j_j_j_j_charsCantAct
-283FB	j_j_j_j_j_allHaveGone
-28400	j_j_j_j_j_sortCombatParty
-2840A	j_j_j_j_j_quickFight
-28414	j_j_j_j_j_monsterSavingThrow
-28464	j_j_j_j_j_Spells_subSpellCost
-28509	j_j_j_j_j_Spells_divineIntervention
-28545	j_j_j_j_j_Screen_saveBackground
-28572	j_j_j_j_j_spellLloydsBeacon
-28644	j_j_j_j_j_itemsDialog
-28662	j_j_j_j_j_specialsDialog
-28667	j_j_j_j_j_getThievery
-286AE	j_j_j_j_j_statColor
-286BD	j_j_j_j_j_getMaxSP
-286C2	j_j_j_j_j_getMaxHP
-286CC	j_j_j_j_j_getArmorClass
-286E0	j_j_j_j_j_identifyOrFix
-286E5	j_j_j_j_j_getNumSkills
+27F54	j_j_j_j_j_j_j_resetBlacksmithWares
+27F59	j_j_j_j_j_j_j_j_getDiskFree
+27F68	j_j_j_j_j_j_j_j_monstersAttack
+27F81	j_j_j_j_j_j_j_j_getEquipSlotName
+27F90	j_j_j_j_j_j_j_j_equipItem
+27F9F	j_j_j_j_j_j_j_j_openMm3Cc
+27FAE	j_j_j_j_j_j_j_j_stopAttack
+27FB3	j_j_j_j_j_j_j_j_introSequence
+27FB8	j_j_j_j_j_j_j_j_protectionHandler
+28057	j_j_j_j_j_j_j_j_subPartyTime
+28080	j_j_j_j_j_j_j_j_GiveBankInterest
+28085	j_j_j_j_j_j_j_j_death
+2808A	j_j_j_j_j_j_j_j_Spells_moonRay
+2808F	j_j_j_j_j_j_j_j_showJoke
+28094	j_j_j_j_j_j_j_j_arenaEvent
+280A8	j_j_j_j_j_j_j_resetTemps
+280F9	j_j_j_j_j_j_j_j_sortParty
+28112	j_j_j_j_j_j_j_j_copyPartyToRoster
+28121	j_j_j_j_j_j_j_j_Awards_show
+28126	j_j_j_j_j_j_j_j_rosterMenu
+2813A	j_j_j_j_j_j_j_j_setSoundAddress
+2818F	j_j_j_j_j_j_j_j_getCurrentExperience
+281B7	j_j_j_j_j_j_j_j_controlPanel
+281C1	j_j_j_j_j_j_j_j_nextExperienceLevel
+281C6	j_j_j_j_j_j_j_j_rest
+281F8	j_j_j_j_j_j_j_j_experienceToNextLevel
+2823A	j_j_j_j_j_j_j_j_giveCharDamage
+2823F	j_j_j_j_j_j_j_j_Map_load
+28271	j_j_j_j_j_j_j_j__strcoll
+28276	j_j_j_j_j_j_j_j_dismissCharacter
+282C0	j_j_j_j_j_j_j_j_createCharacter
+28306	j_j_j_j_j_j_j_j_checkClasses
+28335	j_j_j_j_j_j_j_j_trainingNeedsExperience
+2833F	j_j_j_j_j_j_j_j_townInn
+2834E	j_j_j_j_j_j_j_j_townBank
+28358	j_j_j_j_j_j_j_j_townGuild
+2836C	j_j_j_j_j_j_j_j_townTavern
+28371	j_j_j_j_j_j_j_j_townTraining
+28376	j_j_j_j_j_j_j_j_townSmithy
+28380	j_j_j_j_j_j_j_j_loadHireFaces
+283B5	j_j_j_j_j_j_j_j_setSpeedTable
+283BF	j_j_j_j_j_j_j_j_getWeaponDamage
+283C9	j_j_j_j_j_j_j_j_block
+283CE	j_j_j_j_j_j_j_j_getMonsterDescriptions
+283D3	j_j_j_j_j_j_j_j_attack
+283E2	j_j_j_j_j_j_j_j_doMonsterTurn
+283E7	j_j_j_j_j_j_j_j_run
+283F1	j_j_j_j_j_j_j_j_nextChar
+283F6	j_j_j_j_j_j_j_j_charsCantAct
+283FB	j_j_j_j_j_j_j_j_allHaveGone
+28400	j_j_j_j_j_j_j_j_sortCombatParty
+2840A	j_j_j_j_j_j_j_j_quickFight
+28414	j_j_j_j_j_j_j_j_monsterSavingThrow
+28464	j_j_j_j_j_j_j_j_Spells_subSpellCost
+28509	j_j_j_j_j_j_j_j_Spells_divineIntervention
+28545	j_j_j_j_j_j_j_j_Screen_saveBackground
+28572	j_j_j_j_j_j_j_j_spellLloydsBeacon
+28644	j_j_j_j_j_j_j_j_itemsDialog
+28662	j_j_j_j_j_j_j_j_specialsDialog
+28667	j_j_j_j_j_j_j_j_getThievery
+286AE	j_j_j_j_j_j_j_j_statColor
+286BD	j_j_j_j_j_j_j_j_getMaxSP
+286C2	j_j_j_j_j_j_j_j_getMaxHP
+286CC	j_j_j_j_j_j_j_j_getArmorClass
+286E0	j_j_j_j_j_j_j_j_identifyOrFix
+286E5	j_j_j_j_j_j_j_j_getNumSkills
 28780	segx
 2879E	Party_newDay	byte
+2884B	Maze_wrapMode	byte; non-zero = off-map cells wrap/return 0 instead of 1111h
 29117	ELEMENTAL_RESISTANCES	indexed by elemental material (0A3h slot byte)
 2918F	METAL_LAC	indexed by item material (0B6h slot byte)
 291BD	ATTRIBUTE_BONUSES	indexed by attribute material (0C9h slot byte)
@@ -449,11 +454,16 @@
 296AC	ATTRIBUTE_CATEGORIES	10 bytes thresholds for getAttributeCategory
 296C2	AGE_RANGES_ADJUST	2 modes x 10 words, added to might/endurance/speed/accuracy (mode 0) or intellect/personality (mode 1)
 296EA	AGE_RANGES	words, age thresholds for getStat
+2ACF0	MAZE_SLOT_X	x origin (0 or 16) of each page slot, added to the party's x
+2ACF4	MAZE_SLOT_Y	y origin (0 or 16) of each page slot
+2AE3E	Maze_slotIds	4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats
+2AE42	MAP_MONSTER_PICS	3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)
 2E199	RACE_SP_BONUSES	[race*2 + attrib]
 2E1A4	RACE_HP_BONUSES	indexed by race
 30FA0	__ctype
 340C6	Party_chars	active party records, stride 12Fh (303 bytes); +120h = Dead condition
 34C10	Engine_mode	byte; 9 skips the daily rest/reset handling (script in progress)
+34C2E	Maze_curSlot	byte 0-3: which of the 4 loaded 16x16 pages (2x2 world) the party is in
 36FBA	Save_name	31 bytes, MAZE.NAM ("Default Characters")
 370DA	Party_state	918-byte party block (MAZE.PTY), loaded by sub_26447
 37325	Party_day	byte, 0-99

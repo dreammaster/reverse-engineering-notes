@@ -1768,7 +1768,7 @@ loc_14CAC:                              ; CODE XREF: seg001:0099↑j
                 pop     cx
 
 loc_14CD4:                              ; CODE XREF: seg001:00D8↑j
-                call    j_j_j_j_j_openMm3Cc
+                call    j_j_j_j_j_j_j_j_openMm3Cc
                 call    sub_250A8
                 call    setStartTime
                 mov     byte_37380, 0
@@ -1873,8 +1873,8 @@ loc_14D6F:                              ; CODE XREF: seg001:01AC↓j
                 mov     word ptr [bp-6], 1
 
 loc_14D7D:                              ; CODE XREF: seg001:loc_14D8A↓j
-                call    j_j_j_j_j_rosterMenu
-                call    j_j_j_j_j_death
+                call    j_j_j_j_j_j_j_j_rosterMenu
+                call    j_j_j_j_j_j_j_j_death
                 cmp     ax, 2
 
 loc_14D8A:                              ; DATA XREF: seg001:loc_15211↓w
@@ -2022,7 +2022,7 @@ loc_14E72:                              ; CODE XREF: seg001:026C↑j
                 mov     al, 1
                 mov     byte_36FE8, al
                 mov     byte_36FE9, al
-                call    j_j_j_j_j_introSequence
+                call    j_j_j_j_j_j_j_j_introSequence
                 cmp     byte_333AD, 4
                 jnz     short loc_14E9D
                 push    ds
@@ -2423,7 +2423,7 @@ loc_1523D:                              ; CODE XREF: sub_15235+37↓j
                 mov     bx, si
                 shl     bx, 1
                 push    word ptr [bx-4944h]
-                call    j_j_j_j_j_monsterSavingThrow
+                call    j_j_j_j_j_j_j_j_monsterSavingThrow
                 pop     cx
                 or      ax, ax
                 jz      short loc_15264
@@ -2652,8 +2652,8 @@ loc_1538B:                              ; CODE XREF: addTime+64↑j
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jz      short loc_1539F
-                call    j_j_j_j_resetBlacksmithWares
-                call    j_j_j_j_j_GiveBankInterest
+                call    j_j_j_j_j_j_j_resetBlacksmithWares
+                call    j_j_j_j_j_j_j_j_GiveBankInterest
 
 loc_1539F:                              ; CODE XREF: addTime+6A↑j
                                         ; addTime+74↑j
@@ -2670,7 +2670,7 @@ loc_153AE:                              ; CODE XREF: addTime+88↑j
                 jb      short loc_153E4
                 cmp     Engine_mode, 9
                 jz      short loc_153DF
-                call    j_j_j_j_resetTemps
+                call    j_j_j_j_j_j_j_resetTemps
                 mov     ax, 1
                 push    ax
                 call    sub_281E9
@@ -2893,7 +2893,7 @@ loc_154D8:                              ; CODE XREF: sub_154B0+1E5↓j
                 mov     cl, 4
                 sar     ax, cl
                 mov     [bp+var_A], ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     di, ax
                 mov     al, byte_36FE5
@@ -2984,7 +2984,7 @@ loc_1557F:                              ; CODE XREF: sub_154B0+CB↑j
                 mov     [bp+var_A], ax
                 cmp     [bp+var_A], 0
                 jz      short loc_1562D
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     di, ax
                 mov     al, byte_36FE5
@@ -3287,7 +3287,7 @@ loc_157D6:                              ; CODE XREF: sub_15736+95↑j
                 mov     dx, word_3407A
                 mov     word_35D62, ax
                 mov     word_35D60, dx
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1580B
                 push    cs
                 call    near ptr sub_154B0
@@ -6045,7 +6045,7 @@ chargeStep      proc far                ; CODE XREF: death+302↓P
                 push    si
                 cmp     byte_28841, 0
                 jnz     short loc_16DF1
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_16DD7
                 mov     si, 0Ah
                 jmp     short loc_16DDA
@@ -6942,7 +6942,7 @@ loc_17375:                              ; CODE XREF: sub_170F7+27A↑j
                 mov     [bp+var_18], ax
                 push    ds
                 push    [bp+var_18]
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], ax
@@ -10828,7 +10828,7 @@ loc_19057:                              ; CODE XREF: subtractHitPoints+1B↑j
                 jge     short loc_190C3
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     dx, [si+125h]
@@ -11328,7 +11328,7 @@ loc_193EE:                              ; CODE XREF: sub_193DC+D↑j
                 mov     [bp+var_2], ax
                 cmp     byte_36FE5, 8
                 jnb     short loc_19421
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 test    ax, 1
                 jnz     short loc_19421
@@ -11340,7 +11340,7 @@ loc_193EE:                              ; CODE XREF: sub_193DC+D↑j
                 push    ax              ; format
                 call    sub_28180
                 pop     cx
-                or      byte_34C2E, 1
+                or      Maze_curSlot, 1
                 jmp     short loc_19441
 ; ---------------------------------------------------------------------------
 
@@ -11348,7 +11348,7 @@ loc_19421:                              ; CODE XREF: sub_193DC+1F↑j
                                         ; sub_193DC+28↑j
                 cmp     byte_36FE5, 7
                 jle     short loc_19451
-                test    byte_34C2E, 1
+                test    Maze_curSlot, 1
                 jz      short loc_19451
                 mov     al, byte_352A3
                 mov     ah, 0
@@ -11356,10 +11356,10 @@ loc_19421:                              ; CODE XREF: sub_193DC+1F↑j
                 push    ax              ; format
                 call    sub_28180
                 pop     cx
-                xor     byte_34C2E, 1
+                xor     Maze_curSlot, 1
 
 loc_19441:                              ; CODE XREF: sub_193DC+43↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+274Eh]
@@ -11370,7 +11370,7 @@ loc_19451:                              ; CODE XREF: sub_193DC+2F↑j
                                         ; sub_193DC+4A↑j ...
                 cmp     byte_36FE6, 8
                 jnb     short loc_1947A
-                cmp     byte_34C2E, 2
+                cmp     Maze_curSlot, 2
                 jge     short loc_1947A
                 cmp     byte_34F4E, 0
                 jz      short loc_194AA
@@ -11380,7 +11380,7 @@ loc_19451:                              ; CODE XREF: sub_193DC+2F↑j
                 push    ax              ; format
                 call    sub_28180
                 pop     cx
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 add     al, 2
                 jmp     short loc_1949A
 ; ---------------------------------------------------------------------------
@@ -11389,7 +11389,7 @@ loc_1947A:                              ; CODE XREF: sub_193DC+7A↑j
                                         ; sub_193DC+81↑j
                 cmp     byte_36FE6, 7
                 jle     short loc_194AA
-                cmp     byte_34C2E, 1
+                cmp     Maze_curSlot, 1
                 jle     short loc_194AA
                 mov     al, byte_355E3
                 mov     ah, 0
@@ -11397,11 +11397,11 @@ loc_1947A:                              ; CODE XREF: sub_193DC+7A↑j
                 push    ax              ; format
                 call    sub_28180
                 pop     cx
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 add     al, 0FEh
 
 loc_1949A:                              ; CODE XREF: sub_193DC+9C↑j
-                mov     byte_34C2E, al
+                mov     Maze_curSlot, al
                 cbw
                 mov     bx, ax
                 mov     al, [bx+274Eh]
@@ -11412,14 +11412,14 @@ loc_194AA:                              ; CODE XREF: sub_193DC+88↑j
                                         ; sub_193DC+A3↑j ...
                 cmp     byte_36FE5, 0
                 jge     short loc_194DA
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
                 mov     bx, ax
                 cmp     byte ptr [bx-37A1h], 0
                 jz      short loc_194CF
-                dec     byte_34C2E
+                dec     Maze_curSlot
                 and     byte_36FE5, 0Fh
                 jmp     loc_19565
 ; ---------------------------------------------------------------------------
@@ -11434,14 +11434,14 @@ loc_194CF:                              ; CODE XREF: sub_193DC+E5↑j
 loc_194DA:                              ; CODE XREF: sub_193DC+D3↑j
                 cmp     byte_36FE5, 0Fh
                 jle     short loc_19507
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
                 mov     bx, ax
                 cmp     byte ptr [bx-37A3h], 0
                 jz      short loc_194FE
-                inc     byte_34C2E
+                inc     Maze_curSlot
                 and     byte_36FE5, 0Fh
                 jmp     short loc_19565
 ; ---------------------------------------------------------------------------
@@ -11456,16 +11456,16 @@ loc_194FE:                              ; CODE XREF: sub_193DC+115↑j
 loc_19507:                              ; CODE XREF: sub_193DC+103↑j
                 cmp     byte_36FE6, 0
                 jge     short loc_19538
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
                 mov     bx, ax
                 cmp     byte ptr [bx-37A2h], 0
                 jz      short loc_1952F
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 add     al, 0FEh
-                mov     byte_34C2E, al
+                mov     Maze_curSlot, al
                 and     byte_36FE6, 0Fh
                 jmp     short loc_19565
 ; ---------------------------------------------------------------------------
@@ -11480,16 +11480,16 @@ loc_1952F:                              ; CODE XREF: sub_193DC+142↑j
 loc_19538:                              ; CODE XREF: sub_193DC+130↑j
                 cmp     byte_36FE6, 0Fh
                 jle     short loc_19572
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
                 mov     bx, ax
                 cmp     byte ptr [bx-37A4h], 0
                 jz      short loc_19560
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 add     al, 2
-                mov     byte_34C2E, al
+                mov     Maze_curSlot, al
                 and     byte_36FE6, 0Fh
                 jmp     short loc_19565
 ; ---------------------------------------------------------------------------
@@ -11499,7 +11499,7 @@ loc_19560:                              ; CODE XREF: sub_193DC+173↑j
 
 loc_19565:                              ; CODE XREF: sub_193DC+F0↑j
                                         ; sub_193DC+F8↑j ...
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+274Eh]
@@ -11530,7 +11530,7 @@ loc_1958D:                              ; CODE XREF: sub_193DC+207↓j
 ; ---------------------------------------------------------------------------
 
 loc_1959C:                              ; CODE XREF: sub_193DC+201↓j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -11577,7 +11577,7 @@ loc_195E5:                              ; CODE XREF: sub_193DC+1FB↑j
                 mov     ah, 0
                 dec     ax
                 push    ax              ; format
-                call    j_j_j_j_j_Map_load
+                call    j_j_j_j_j_j_j_j_Map_load
                 pop     cx
                 mov     al, byte_36FE7
                 mov     byte_34C1D, al
@@ -12106,7 +12106,7 @@ loc_199AA:                              ; CODE XREF: runMazeEvent+387↑j
                 mov     al, es:[bx+si+8]
                 cbw
                 push    ax              ; format
-                call    j_j_j_j_j_loadHireFaces
+                call    j_j_j_j_j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 or      ax, ax
                 jz      short loc_19A0A
@@ -13351,7 +13351,7 @@ loc_1A435:                              ; CODE XREF: runMazeEvent+E24↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1A458
@@ -13372,7 +13372,7 @@ loc_1A45D:                              ; CODE XREF: runMazeEvent+E4E↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
                 push    word_373A4
                 call    Music_playSong
@@ -13534,25 +13534,25 @@ loc_1A5C4:                              ; CODE XREF: runMazeEvent+243↑j
 
 loc_1A5DB:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townBank ; jumptable 0001A5D6 case 0
+                call    j_j_j_j_j_j_j_j_townBank ; jumptable 0001A5D6 case 0
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5E2:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townSmithy ; jumptable 0001A5D6 case 1
+                call    j_j_j_j_j_j_j_j_townSmithy ; jumptable 0001A5D6 case 1
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5E9:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townGuild ; jumptable 0001A5D6 case 2
+                call    j_j_j_j_j_j_j_j_townGuild ; jumptable 0001A5D6 case 2
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5F0:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townInn ; jumptable 0001A5D6 case 3
+                call    j_j_j_j_j_j_j_j_townInn ; jumptable 0001A5D6 case 3
                 or      ax, ax
                 jz      short def_1A5D6 ; jumptable 0001A5D6 default case
                 mov     [bp+var_8], 2
@@ -13561,7 +13561,7 @@ loc_1A5F0:                              ; CODE XREF: runMazeEvent+FCE↑j
 
 loc_1A601:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townTavern ; jumptable 0001A5D6 case 4
+                call    j_j_j_j_j_j_j_j_townTavern ; jumptable 0001A5D6 case 4
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
@@ -13573,19 +13573,19 @@ loc_1A608:                              ; CODE XREF: runMazeEvent+FCE↑j
 
 loc_1A60F:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_townTraining ; jumptable 0001A5D6 case 6
+                call    j_j_j_j_j_j_j_j_townTraining ; jumptable 0001A5D6 case 6
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A616:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_arenaEvent ; jumptable 0001A5D6 case 7
+                call    j_j_j_j_j_j_j_j_arenaEvent ; jumptable 0001A5D6 case 7
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A61D:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_j_j_j_j_showJoke ; jumptable 0001A5D6 case 8
+                call    j_j_j_j_j_j_j_j_showJoke ; jumptable 0001A5D6 case 8
                 jmp     loc_1AF03       ; jumptable 0001984B case 18
 ; ---------------------------------------------------------------------------
 
@@ -13617,7 +13617,7 @@ loc_1A644:                              ; CODE XREF: runMazeEvent+1064↓j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
                 inc     [bp+var_4]
 
@@ -13641,7 +13641,7 @@ loc_1A671:                              ; CODE XREF: runMazeEvent+1033↑j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
-                call    sub_1BE3E
+                call    mazeSetBits
                 jmp     loc_1ADB9
 ; ---------------------------------------------------------------------------
 
@@ -14171,7 +14171,7 @@ loc_1AB1E:                              ; CODE XREF: runMazeEvent+1504↑j
                 mov     dh, 0
                 add     ax, dx
                 push    ax
-                call    j_j_j_j_j_giveCharDamage
+                call    j_j_j_j_j_j_j_j_giveCharDamage
 
 loc_1AB45:                              ; CODE XREF: runMazeEvent+368↑j
                 add     sp, 6
@@ -14517,7 +14517,7 @@ loc_1AE05:                              ; CODE XREF: runMazeEvent+1820↓j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_j_j_j_j_getCurrentExperience
+                call    j_j_j_j_j_j_j_j_getCurrentExperience
                 pop     cx
                 add     [bp+var_42], ax
                 adc     [bp+var_40], dx
@@ -15362,7 +15362,7 @@ loc_1B553:                              ; CODE XREF: sub_1B358+1F1↑j
                 push    word ptr [bx+165h]
                 push    [bp+var_6]
                 push    di
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1B574
@@ -15377,7 +15377,7 @@ loc_1B574:                              ; CODE XREF: sub_1B358+217↑j
                 push    word ptr [bx+165h]
                 push    [bp+var_6]
                 push    di
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1B595
@@ -15413,7 +15413,7 @@ loc_1B5B1:                              ; CODE XREF: sub_1B358+1F6↑j
                 push    word ptr [bx+165h]
                 push    [bp+var_6]
                 push    di
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1B5EB
@@ -15445,7 +15445,7 @@ loc_1B5EB:                              ; CODE XREF: sub_1B358+275↑j
                 push    word ptr [bx+165h]
                 push    [bp+var_6]
                 push    di
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_1B623
@@ -15507,7 +15507,7 @@ loc_1B64E:                              ; CODE XREF: sub_1B358+F0↑j
 loc_1B657:                              ; CODE XREF: sub_1B358+2FA↑j
                 cmp     byte_2879C, 0
                 jz      short loc_1B663
-                call    j_j_j_j_j_monstersAttack
+                call    j_j_j_j_j_j_j_j_monstersAttack
 
 loc_1B663:                              ; CODE XREF: sub_1B358+19↑j
                                         ; sub_1B358+304↑j
@@ -15536,7 +15536,7 @@ sub_1B669       proc far                ; CODE XREF: sub_15736:loc_15783↑P
                                         ; sub_15736+62↑P ...
                 push    bp
                 mov     bp, sp
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1B67A
                 call    sub_203FE
                 jmp     short loc_1B684
@@ -15993,9 +15993,10 @@ sub_1B925       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; maps a neighbour maze id to its loaded slot (1111h if not loaded)
 ; Attributes: bp-based frame
 
-sub_1B99E       proc far                ; CODE XREF: sub_1B9C5+5A↓p
+mazeNeighbourSlot proc far              ; CODE XREF: sub_1B9C5+5A↓p
                                         ; sub_1B9C5+7F↓p ...
 
 arg_0           = word ptr  6
@@ -16009,7 +16010,7 @@ arg_0           = word ptr  6
                 jmp     short loc_1B9B9
 ; ---------------------------------------------------------------------------
 
-loc_1B9AA:                              ; CODE XREF: sub_1B99E+1E↓j
+loc_1B9AA:                              ; CODE XREF: mazeNeighbourSlot+1E↓j
                 mov     al, [si+274Eh]
                 mov     ah, 0
                 cmp     ax, di
@@ -16018,20 +16019,20 @@ loc_1B9AA:                              ; CODE XREF: sub_1B99E+1E↓j
                 jmp     short loc_1B9C1
 ; ---------------------------------------------------------------------------
 
-loc_1B9B8:                              ; CODE XREF: sub_1B99E+14↑j
+loc_1B9B8:                              ; CODE XREF: mazeNeighbourSlot+14↑j
                 inc     si
 
-loc_1B9B9:                              ; CODE XREF: sub_1B99E+A↑j
+loc_1B9B9:                              ; CODE XREF: mazeNeighbourSlot+A↑j
                 cmp     si, 4
                 jl      short loc_1B9AA
                 mov     ax, 1111h
 
-loc_1B9C1:                              ; CODE XREF: sub_1B99E+18↑j
+loc_1B9C1:                              ; CODE XREF: mazeNeighbourSlot+18↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_1B99E       endp
+mazeNeighbourSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16053,13 +16054,13 @@ arg_2           = word ptr  8
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 mov     [bp+var_2], 0
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2600h]
                 mov     ah, 0
                 add     si, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2604h]
@@ -16089,7 +16090,7 @@ loc_1B9FA:                              ; CODE XREF: sub_1B9C5+30↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
@@ -16106,7 +16107,7 @@ loc_1BA2D:                              ; CODE XREF: sub_1B9C5+46↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
@@ -16161,13 +16162,13 @@ arg_2           = word ptr  8
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 mov     [bp+var_2], 0
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2600h]
                 mov     ah, 0
                 add     si, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2604h]
@@ -16195,7 +16196,7 @@ loc_1BABE:                              ; CODE XREF: sub_1BA82+36↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     ax, 1111h
@@ -16215,7 +16216,7 @@ loc_1BAE3:                              ; CODE XREF: sub_1BA82+3F↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     ax, 1111h
@@ -16272,13 +16273,13 @@ arg_4           = word ptr  0Ah
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 mov     [bp+var_2], 0
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2600h]
                 mov     ah, 0
                 add     si, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2604h]
@@ -16295,7 +16296,7 @@ arg_4           = word ptr  0Ah
 
 loc_1BB73:                              ; CODE XREF: sub_1BB33+30↑j
                                         ; sub_1BB33+34↑j ...
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BB7C
                 jmp     short loc_1BBE0
 ; ---------------------------------------------------------------------------
@@ -16320,12 +16321,12 @@ loc_1BB82:                              ; CODE XREF: sub_1BB33+3E↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
                 jnz     short loc_1BBB4
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BBB0
                 jmp     short loc_1BBE0
 ; ---------------------------------------------------------------------------
@@ -16348,12 +16349,12 @@ loc_1BBB4:                              ; CODE XREF: sub_1BB33+52↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
                 jnz     short loc_1BBE8
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BBE4
 
 loc_1BBE0:                              ; CODE XREF: sub_1BB33+47↑j
@@ -16397,9 +16398,10 @@ sub_1BB33       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
 ; Attributes: bp-based frame
 
-sub_1BC15       proc far                ; CODE XREF: runMazeEvent+E3D↑P
+mazeGetWordRel  proc far                ; CODE XREF: runMazeEvent+E3D↑P
                                         ; sub_1B358+20D↑P ...
 
 var_2           = word ptr -2
@@ -16416,13 +16418,13 @@ arg_4           = word ptr  0Ah
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 mov     [bp+var_2], 0
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2600h]
                 mov     ah, 0
                 add     si, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2604h]
@@ -16437,23 +16439,23 @@ arg_4           = word ptr  0Ah
                 cmp     di, 1Fh
                 jle     short loc_1BC65
 
-loc_1BC55:                              ; CODE XREF: sub_1BC15+30↑j
-                                        ; sub_1BC15+34↑j ...
-                cmp     byte_2884B, 0
+loc_1BC55:                              ; CODE XREF: mazeGetWordRel+30↑j
+                                        ; mazeGetWordRel+34↑j ...
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BC5F
                 jmp     loc_1BD1F
 ; ---------------------------------------------------------------------------
 
-loc_1BC5F:                              ; CODE XREF: sub_1BC15+45↑j
-                                        ; sub_1BC15:loc_1BC94↓j ...
+loc_1BC5F:                              ; CODE XREF: mazeGetWordRel+45↑j
+                                        ; mazeGetWordRel:loc_1BC94↓j ...
                 mov     ax, 1111h
 
-loc_1BC62:                              ; CODE XREF: sub_1BC15+81↓j
-                                        ; sub_1BC15+B3↓j ...
+loc_1BC62:                              ; CODE XREF: mazeGetWordRel+81↓j
+                                        ; mazeGetWordRel+B3↓j ...
                 jmp     loc_1BD51
 ; ---------------------------------------------------------------------------
 
-loc_1BC65:                              ; CODE XREF: sub_1BC15+3E↑j
+loc_1BC65:                              ; CODE XREF: mazeGetWordRel+3E↑j
                 cmp     di, 0Fh
                 jle     short loc_1BC98
                 mov     ax, [bp+var_2]
@@ -16464,24 +16466,24 @@ loc_1BC65:                              ; CODE XREF: sub_1BC15+3E↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
                 jnz     short loc_1BC98
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BC94
                 jmp     loc_1BD1F
 ; ---------------------------------------------------------------------------
 
-loc_1BC94:                              ; CODE XREF: sub_1BC15+7A↑j
+loc_1BC94:                              ; CODE XREF: mazeGetWordRel+7A↑j
                 jmp     short loc_1BC5F
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BC62
 ; ---------------------------------------------------------------------------
 
-loc_1BC98:                              ; CODE XREF: sub_1BC15+53↑j
-                                        ; sub_1BC15+73↑j
+loc_1BC98:                              ; CODE XREF: mazeGetWordRel+53↑j
+                                        ; mazeGetWordRel+73↑j
                 cmp     si, 0Fh
                 jle     short loc_1BCCA
                 mov     ax, [bp+var_2]
@@ -16492,27 +16494,27 @@ loc_1BC98:                              ; CODE XREF: sub_1BC15+53↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 1111h
                 jnz     short loc_1BCCA
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BCC6
                 jmp     short loc_1BD1F
 ; ---------------------------------------------------------------------------
 
-loc_1BCC6:                              ; CODE XREF: sub_1BC15+AD↑j
+loc_1BCC6:                              ; CODE XREF: mazeGetWordRel+AD↑j
                 jmp     short loc_1BC5F
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BC62
 ; ---------------------------------------------------------------------------
 
-loc_1BCCA:                              ; CODE XREF: sub_1BC15+86↑j
-                                        ; sub_1BC15+A6↑j
-                cmp     byte_2884B, 0
+loc_1BCCA:                              ; CODE XREF: mazeGetWordRel+86↑j
+                                        ; mazeGetWordRel+A6↑j
+                cmp     Maze_wrapMode, 0
                 jz      short def_1BCE9 ; jumptable 0001BCE9 default case
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+274Eh]
@@ -16525,46 +16527,46 @@ loc_1BCCA:                              ; CODE XREF: sub_1BC15+86↑j
                 jmp     cs:jpt_1BCE9[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1BCEE:                              ; CODE XREF: sub_1BC15+D4↑j
+loc_1BCEE:                              ; CODE XREF: mazeGetWordRel+D4↑j
                                         ; DATA XREF: seg004:jpt_1BCE9↓o
                 mov     bx, [bp+var_2]  ; jumptable 0001BCE9 cases 45-48
                 cmp     byte ptr [bx+274Eh], 31h ; '1'
                 jb      short def_1BCE9 ; jumptable 0001BCE9 default case
                 cmp     byte ptr [bx+274Eh], 34h ; '4'
                 ja      short def_1BCE9 ; jumptable 0001BCE9 default case
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BD08
                 jmp     short loc_1BD1F
 ; ---------------------------------------------------------------------------
 
-loc_1BD08:                              ; CODE XREF: sub_1BC15+EF↑j
+loc_1BD08:                              ; CODE XREF: mazeGetWordRel+EF↑j
                 jmp     loc_1BC5F
 ; ---------------------------------------------------------------------------
                 jmp     loc_1BC62
 ; ---------------------------------------------------------------------------
 
-loc_1BD0E:                              ; CODE XREF: sub_1BC15+D4↑j
+loc_1BD0E:                              ; CODE XREF: mazeGetWordRel+D4↑j
                                         ; DATA XREF: seg004:jpt_1BCE9↓o
                 mov     bx, [bp+var_2]  ; jumptable 0001BCE9 cases 49-52
                 cmp     byte ptr [bx+274Eh], 30h ; '0'
                 ja      short def_1BCE9 ; jumptable 0001BCE9 default case
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BD24
 
-loc_1BD1F:                              ; CODE XREF: sub_1BC15+47↑j
-                                        ; sub_1BC15+7C↑j ...
+loc_1BD1F:                              ; CODE XREF: mazeGetWordRel+47↑j
+                                        ; mazeGetWordRel+7C↑j ...
                 xor     ax, ax
                 jmp     loc_1BC62
 ; ---------------------------------------------------------------------------
 
-loc_1BD24:                              ; CODE XREF: sub_1BC15+108↑j
+loc_1BD24:                              ; CODE XREF: mazeGetWordRel+108↑j
                 jmp     loc_1BC5F
 ; ---------------------------------------------------------------------------
                 jmp     loc_1BC62
 ; ---------------------------------------------------------------------------
 
-def_1BCE9:                              ; CODE XREF: sub_1BC15+BA↑j
-                                        ; sub_1BC15+D0↑j ...
+def_1BCE9:                              ; CODE XREF: mazeGetWordRel+BA↑j
+                                        ; mazeGetWordRel+D0↑j ...
                 mov     ax, [bp+var_2]  ; jumptable 0001BCE9 default case
                 mov     dx, 340h
                 imul    dx
@@ -16581,16 +16583,16 @@ def_1BCE9:                              ; CODE XREF: sub_1BC15+BA↑j
                 mov     ax, [bx-3AACh]
                 and     ax, [bp+arg_4]
 
-loc_1BD51:                              ; CODE XREF: sub_1BC15:loc_1BC62↑j
+loc_1BD51:                              ; CODE XREF: mazeGetWordRel:loc_1BC62↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1BC15       endp
+mazeGetWordRel  endp
 
 ; ---------------------------------------------------------------------------
-jpt_1BCE9       dw offset loc_1BCEE     ; DATA XREF: sub_1BC15+D4↑r
+jpt_1BCE9       dw offset loc_1BCEE     ; DATA XREF: mazeGetWordRel+D4↑r
                 dw offset loc_1BCEE     ; jump table for switch statement
                 dw offset loc_1BCEE
                 dw offset loc_1BCEE
@@ -16601,9 +16603,10 @@ jpt_1BCE9       dw offset loc_1BCEE     ; DATA XREF: sub_1BC15+D4↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; same addressing, returns the cell flag byte (maze .DAT +200h) & mask
 ; Attributes: bp-based frame
 
-sub_1BD67       proc far                ; CODE XREF: sub_1C13C+1D↓p
+mazeGetFlagsRel proc far                ; CODE XREF: sub_1C13C+1D↓p
                                         ; rest+18↓P
 
 arg_0           = word ptr  6
@@ -16616,13 +16619,13 @@ arg_4           = word ptr  0Ah
                 push    di
                 mov     di, [bp+arg_0]
                 xor     si, si
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2600h]
                 mov     ah, 0
                 add     di, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, ax
                 mov     al, [bx+2604h]
@@ -16637,23 +16640,23 @@ arg_4           = word ptr  0Ah
                 cmp     [bp+arg_2], 1Fh
                 jle     short loc_1BDB2
 
-loc_1BDA3:                              ; CODE XREF: sub_1BD67+29↑j
-                                        ; sub_1BD67+2F↑j ...
-                cmp     byte_2884B, 0
+loc_1BDA3:                              ; CODE XREF: mazeGetFlagsRel+29↑j
+                                        ; mazeGetFlagsRel+2F↑j ...
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BDAC
                 jmp     short loc_1BE0B
 ; ---------------------------------------------------------------------------
 
-loc_1BDAC:                              ; CODE XREF: sub_1BD67+41↑j
-                                        ; sub_1BD67:loc_1BDDE↓j ...
+loc_1BDAC:                              ; CODE XREF: mazeGetFlagsRel+41↑j
+                                        ; mazeGetFlagsRel:loc_1BDDE↓j ...
                 mov     ax, 1111h
 
-loc_1BDAF:                              ; CODE XREF: sub_1BD67+79↓j
-                                        ; sub_1BD67+A6↓j ...
+loc_1BDAF:                              ; CODE XREF: mazeGetFlagsRel+79↓j
+                                        ; mazeGetFlagsRel+A6↓j ...
                 jmp     loc_1BE3A
 ; ---------------------------------------------------------------------------
 
-loc_1BDB2:                              ; CODE XREF: sub_1BD67+3A↑j
+loc_1BDB2:                              ; CODE XREF: mazeGetFlagsRel+3A↑j
                 cmp     [bp+arg_2], 0Fh
                 jle     short loc_1BDE2
                 mov     ax, si
@@ -16664,24 +16667,24 @@ loc_1BDB2:                              ; CODE XREF: sub_1BD67+3A↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     si, ax
                 cmp     si, 1111h
                 jnz     short loc_1BDE2
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BDDE
                 jmp     short loc_1BE0B
 ; ---------------------------------------------------------------------------
 
-loc_1BDDE:                              ; CODE XREF: sub_1BD67+73↑j
+loc_1BDDE:                              ; CODE XREF: mazeGetFlagsRel+73↑j
                 jmp     short loc_1BDAC
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BDAF
 ; ---------------------------------------------------------------------------
 
-loc_1BDE2:                              ; CODE XREF: sub_1BD67+4F↑j
-                                        ; sub_1BD67+6C↑j
+loc_1BDE2:                              ; CODE XREF: mazeGetFlagsRel+4F↑j
+                                        ; mazeGetFlagsRel+6C↑j
                 cmp     di, 0Fh
                 jle     short loc_1BE13
                 mov     ax, si
@@ -16692,28 +16695,28 @@ loc_1BDE2:                              ; CODE XREF: sub_1BD67+4F↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     si, ax
                 cmp     si, 1111h
                 jnz     short loc_1BE13
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_1BE0F
 
-loc_1BE0B:                              ; CODE XREF: sub_1BD67+43↑j
-                                        ; sub_1BD67+75↑j
+loc_1BE0B:                              ; CODE XREF: mazeGetFlagsRel+43↑j
+                                        ; mazeGetFlagsRel+75↑j
                 xor     ax, ax
                 jmp     short loc_1BDAF
 ; ---------------------------------------------------------------------------
 
-loc_1BE0F:                              ; CODE XREF: sub_1BD67+A2↑j
+loc_1BE0F:                              ; CODE XREF: mazeGetFlagsRel+A2↑j
                 jmp     short loc_1BDAC
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BDAF
 ; ---------------------------------------------------------------------------
 
-loc_1BE13:                              ; CODE XREF: sub_1BD67+7E↑j
-                                        ; sub_1BD67+9B↑j
+loc_1BE13:                              ; CODE XREF: mazeGetFlagsRel+7E↑j
+                                        ; mazeGetFlagsRel+9B↑j
                 mov     ax, si
                 mov     dx, 340h
                 imul    dx
@@ -16730,19 +16733,20 @@ loc_1BE13:                              ; CODE XREF: sub_1BD67+7E↑j
                 mov     ah, 0
                 and     ax, [bp+arg_4]
 
-loc_1BE3A:                              ; CODE XREF: sub_1BD67:loc_1BDAF↑j
+loc_1BE3A:                              ; CODE XREF: mazeGetFlagsRel:loc_1BDAF↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_1BD67       endp
+mazeGetFlagsRel endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; args (x, y, field, value): clear the field's mask (table 16F8h) in the cell word, or in value << shift (88-byte field records at 159Ch)
 ; Attributes: bp-based frame
 
-sub_1BE3E       proc far                ; CODE XREF: runMazeEvent+E68↑P
+mazeSetBits     proc far                ; CODE XREF: runMazeEvent+E68↑P
                                         ; runMazeEvent+1055↑P ...
 
 arg_0           = word ptr  6
@@ -16755,7 +16759,7 @@ arg_6           = word ptr  0Ch
                 push    si
                 push    di
                 mov     di, [bp+arg_0]
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     si, ax
                 cmp     [bp+arg_2], 0Fh
@@ -16767,11 +16771,11 @@ arg_6           = word ptr  0Ch
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     si, ax
 
-loc_1BE67:                              ; CODE XREF: sub_1BE3E+12↑j
+loc_1BE67:                              ; CODE XREF: mazeSetBits+12↑j
                 cmp     di, 0Fh
                 jle     short loc_1BE83
                 mov     ax, si
@@ -16782,11 +16786,11 @@ loc_1BE67:                              ; CODE XREF: sub_1BE3E+12↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1B99E
+                call    near ptr mazeNeighbourSlot
                 pop     cx
                 mov     si, ax
 
-loc_1BE83:                              ; CODE XREF: sub_1BE3E+2C↑j
+loc_1BE83:                              ; CODE XREF: mazeSetBits+2C↑j
                 mov     ax, si
                 mov     dx, 340h
                 imul    dx
@@ -16829,7 +16833,7 @@ loc_1BE83:                              ; CODE XREF: sub_1BE3E+2C↑j
                 pop     si
                 pop     bp
                 retf
-sub_1BE3E       endp
+mazeSetBits     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17066,7 +17070,7 @@ sub_1C13C       proc far                ; CODE XREF: sub_15736+34↑P
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_1BD67
+                call    near ptr mazeGetFlagsRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1C16E
@@ -17078,7 +17082,7 @@ loc_1C16E:                              ; CODE XREF: sub_1C13C+25↑j
                                         ; sub_1C13C+2C↑j
                 cmp     word_37328, 0
                 jnz     short loc_1C187
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -17151,7 +17155,7 @@ var_2           = word ptr -2
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17189,7 +17193,7 @@ loc_1C213:                              ; CODE XREF: sub_1C195+75↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 cmp     ax, 1111h
                 jz      short loc_1C24C
@@ -17222,7 +17226,7 @@ loc_1C24C:                              ; CODE XREF: sub_1C195+7C↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17316,7 +17320,7 @@ def_1C2AA:                              ; CODE XREF: sub_1C195+111↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17374,7 +17378,7 @@ def_1C343:                              ; CODE XREF: sub_1C195+1AA↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17468,7 +17472,7 @@ def_1C3B0:                              ; CODE XREF: sub_1C195+217↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17526,7 +17530,7 @@ def_1C449:                              ; CODE XREF: sub_1C195+2B0↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17620,7 +17624,7 @@ def_1C4B6:                              ; CODE XREF: sub_1C195+31D↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17714,7 +17718,7 @@ def_1C54F:                              ; CODE XREF: sub_1C195+3B6↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17772,7 +17776,7 @@ def_1C5E8:                              ; CODE XREF: sub_1C195+44F↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17866,7 +17870,7 @@ def_1C655:                              ; CODE XREF: sub_1C195+4BC↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -17924,7 +17928,7 @@ def_1C6EE:                              ; CODE XREF: sub_1C195+555↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18018,7 +18022,7 @@ def_1C75B:                              ; CODE XREF: sub_1C195+5C2↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18112,7 +18116,7 @@ def_1C7F4:                              ; CODE XREF: sub_1C195+65B↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18170,7 +18174,7 @@ def_1C88D:                              ; CODE XREF: sub_1C195+6F4↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18264,7 +18268,7 @@ def_1C8FA:                              ; CODE XREF: sub_1C195+761↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18322,7 +18326,7 @@ def_1C993:                              ; CODE XREF: sub_1C195+7FA↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18416,7 +18420,7 @@ def_1CA00:                              ; CODE XREF: sub_1C195+867↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18474,7 +18478,7 @@ def_1CA99:                              ; CODE XREF: sub_1C195+900↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18568,7 +18572,7 @@ def_1CB06:                              ; CODE XREF: sub_1C195+96D↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18626,7 +18630,7 @@ def_1CB9F:                              ; CODE XREF: sub_1C195+A06↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18720,7 +18724,7 @@ def_1CC0C:                              ; CODE XREF: sub_1C195+A73↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18814,7 +18818,7 @@ def_1CCA5:                              ; CODE XREF: sub_1C195+B0C↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18872,7 +18876,7 @@ def_1CD3E:                              ; CODE XREF: sub_1C195+BA5↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -18966,7 +18970,7 @@ def_1CDAB:                              ; CODE XREF: sub_1C195+C12↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19024,7 +19028,7 @@ def_1CE44:                              ; CODE XREF: sub_1C195+CAB↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19118,7 +19122,7 @@ def_1CEB1:                              ; CODE XREF: sub_1C195+D18↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19176,7 +19180,7 @@ def_1CF4A:                              ; CODE XREF: sub_1C195+DB1↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19270,7 +19274,7 @@ def_1CFB7:                              ; CODE XREF: sub_1C195+E1E↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19328,7 +19332,7 @@ def_1D050:                              ; CODE XREF: sub_1C195+EB7↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19422,7 +19426,7 @@ def_1D0BD:                              ; CODE XREF: sub_1C195+F24↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19480,7 +19484,7 @@ def_1D156:                              ; CODE XREF: sub_1C195+FBD↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19574,7 +19578,7 @@ def_1D1C3:                              ; CODE XREF: sub_1C195+102A↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19632,7 +19636,7 @@ def_1D25C:                              ; CODE XREF: sub_1C195+10C3↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19726,7 +19730,7 @@ def_1D2C9:                              ; CODE XREF: sub_1C195+1130↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19784,7 +19788,7 @@ def_1D362:                              ; CODE XREF: sub_1C195+11C9↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19878,7 +19882,7 @@ def_1D3CF:                              ; CODE XREF: sub_1C195+1236↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -19936,7 +19940,7 @@ def_1D468:                              ; CODE XREF: sub_1C195+12CF↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20030,7 +20034,7 @@ def_1D4D5:                              ; CODE XREF: sub_1C195+133C↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20088,7 +20092,7 @@ def_1D56E:                              ; CODE XREF: sub_1C195+13D5↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20146,7 +20150,7 @@ def_1D5DB:                              ; CODE XREF: sub_1C195+1442↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20204,7 +20208,7 @@ def_1D648:                              ; CODE XREF: sub_1C195+14AF↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20262,7 +20266,7 @@ def_1D6B5:                              ; CODE XREF: sub_1C195+151C↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20320,7 +20324,7 @@ def_1D722:                              ; CODE XREF: sub_1C195+1589↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20378,7 +20382,7 @@ def_1D78F:                              ; CODE XREF: sub_1C195+15F6↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -20436,7 +20440,7 @@ def_1D7FC:                              ; CODE XREF: sub_1C195+1663↑j
                 add     ax, [bp+var_2]
                 push    ax
                 push    cs
-                call    near ptr sub_1BC15
+                call    near ptr mazeGetWordRel
                 add     sp, 6
                 push    ax
                 mov     ax, di
@@ -26665,7 +26669,7 @@ loc_20592:                              ; CODE XREF: sub_2045A+E3↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -26725,7 +26729,7 @@ loc_20677:                              ; CODE XREF: sub_2045A+1D8↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -26785,7 +26789,7 @@ loc_206F6:                              ; CODE XREF: sub_2045A+257↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -26845,7 +26849,7 @@ loc_20775:                              ; CODE XREF: sub_2045A+2D6↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -26905,7 +26909,7 @@ loc_207F4:                              ; CODE XREF: sub_2045A+355↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -26968,7 +26972,7 @@ loc_20878:                              ; CODE XREF: sub_2045A+3D4↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27031,7 +27035,7 @@ loc_208FC:                              ; CODE XREF: sub_2045A+458↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27094,7 +27098,7 @@ loc_20980:                              ; CODE XREF: sub_2045A+4DC↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27157,7 +27161,7 @@ loc_20A04:                              ; CODE XREF: sub_2045A+560↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27212,7 +27216,7 @@ loc_20A78:                              ; CODE XREF: sub_2045A+5E4↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27272,7 +27276,7 @@ loc_20AF7:                              ; CODE XREF: sub_2045A+658↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27332,7 +27336,7 @@ loc_20B76:                              ; CODE XREF: sub_2045A+6D7↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27395,7 +27399,7 @@ loc_20BFA:                              ; CODE XREF: sub_2045A+756↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27458,7 +27462,7 @@ loc_20C7E:                              ; CODE XREF: sub_2045A+7DA↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27513,7 +27517,7 @@ loc_20CF2:                              ; CODE XREF: sub_2045A+85E↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27573,7 +27577,7 @@ loc_20D71:                              ; CODE XREF: sub_2045A+8D2↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27633,7 +27637,7 @@ loc_20DF0:                              ; CODE XREF: sub_2045A+951↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27696,7 +27700,7 @@ loc_20E74:                              ; CODE XREF: sub_2045A+9D0↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27759,7 +27763,7 @@ loc_20EF8:                              ; CODE XREF: sub_2045A+A54↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27814,7 +27818,7 @@ loc_20F6C:                              ; CODE XREF: sub_2045A+AD8↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27874,7 +27878,7 @@ loc_20FEB:                              ; CODE XREF: sub_2045A+B4C↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27937,7 +27941,7 @@ loc_2106F:                              ; CODE XREF: sub_2045A+BCB↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -27992,7 +27996,7 @@ loc_210E3:                              ; CODE XREF: sub_2045A+C4F↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -28052,7 +28056,7 @@ loc_21162:                              ; CODE XREF: sub_2045A+CC3↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -28115,7 +28119,7 @@ loc_211E6:                              ; CODE XREF: sub_2045A+D42↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -28170,7 +28174,7 @@ loc_2125A:                              ; CODE XREF: sub_2045A+DC6↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28221,7 +28225,7 @@ loc_212C7:                              ; CODE XREF: sub_2045A+E36↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28272,7 +28276,7 @@ loc_21334:                              ; CODE XREF: sub_2045A+EA3↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28323,7 +28327,7 @@ loc_213A1:                              ; CODE XREF: sub_2045A+F10↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28374,7 +28378,7 @@ loc_2140E:                              ; CODE XREF: sub_2045A+F7D↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28425,7 +28429,7 @@ loc_2147B:                              ; CODE XREF: sub_2045A+FEA↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28476,7 +28480,7 @@ loc_214E8:                              ; CODE XREF: sub_2045A+1057↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28527,7 +28531,7 @@ loc_21555:                              ; CODE XREF: sub_2045A+10C4↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28578,7 +28582,7 @@ loc_215C2:                              ; CODE XREF: sub_2045A+1131↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28681,7 +28685,7 @@ loc_2168F:                              ; CODE XREF: sub_2045A+1230↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 dec     ax              ; switch 11 cases
                 mov     bx, ax
@@ -28714,7 +28718,7 @@ def_216CF:                              ; CODE XREF: sub_2045A+1271↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_2171A
@@ -28747,7 +28751,7 @@ loc_2171A:                              ; CODE XREF: sub_2045A+12B2↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_217A7
@@ -28771,7 +28775,7 @@ loc_2171A:                              ; CODE XREF: sub_2045A+12B2↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_217A7
@@ -28875,7 +28879,7 @@ loc_2182B:                              ; CODE XREF: sub_2045A+13CC↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28926,7 +28930,7 @@ loc_21898:                              ; CODE XREF: sub_2045A+1407↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -28977,7 +28981,7 @@ loc_21905:                              ; CODE XREF: sub_2045A+1474↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29028,7 +29032,7 @@ loc_21972:                              ; CODE XREF: sub_2045A+14E1↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29079,7 +29083,7 @@ loc_219DF:                              ; CODE XREF: sub_2045A+154E↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29182,7 +29186,7 @@ loc_21AAC:                              ; CODE XREF: sub_2045A+164D↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 dec     ax              ; switch 11 cases
                 mov     bx, ax
@@ -29215,7 +29219,7 @@ def_21AEC:                              ; CODE XREF: sub_2045A+168E↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21B37
@@ -29248,7 +29252,7 @@ loc_21B37:                              ; CODE XREF: sub_2045A+16CF↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21BC4
@@ -29272,7 +29276,7 @@ loc_21B37:                              ; CODE XREF: sub_2045A+16CF↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21BC4
@@ -29376,7 +29380,7 @@ loc_21C48:                              ; CODE XREF: sub_2045A+17E9↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29427,7 +29431,7 @@ loc_21CB5:                              ; CODE XREF: sub_2045A+1824↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29478,7 +29482,7 @@ loc_21D22:                              ; CODE XREF: sub_2045A+1891↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29581,7 +29585,7 @@ loc_21DEF:                              ; CODE XREF: sub_2045A+1990↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 dec     ax              ; switch 11 cases
                 mov     bx, ax
@@ -29614,7 +29618,7 @@ def_21E2F:                              ; CODE XREF: sub_2045A+19D1↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21E7A
@@ -29647,7 +29651,7 @@ loc_21E7A:                              ; CODE XREF: sub_2045A+1A12↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21F07
@@ -29671,7 +29675,7 @@ loc_21E7A:                              ; CODE XREF: sub_2045A+1A12↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_21F07
@@ -29775,7 +29779,7 @@ loc_21F8B:                              ; CODE XREF: sub_2045A+1B2C↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29826,7 +29830,7 @@ loc_21FF8:                              ; CODE XREF: sub_2045A+1B67↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29877,7 +29881,7 @@ loc_22065:                              ; CODE XREF: sub_2045A+1BD4↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29928,7 +29932,7 @@ loc_220D2:                              ; CODE XREF: sub_2045A+1C41↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -29979,7 +29983,7 @@ loc_2213F:                              ; CODE XREF: sub_2045A+1CAE↑j
                 cbw
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -30016,7 +30020,7 @@ loc_221AC:                              ; CODE XREF: sub_2045A+1D1B↑j
                 push    ax
                 push    [bp+var_A]
                 push    [bp+var_8]
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     di, ax
                 or      di, di
@@ -30127,7 +30131,7 @@ loc_22288:                              ; CODE XREF: sub_2045A+1E29↑j
                 push    ax
                 push    [bp+var_A]
                 push    [bp+var_8]
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 dec     ax              ; switch 11 cases
                 mov     bx, ax
@@ -30160,7 +30164,7 @@ def_222A4:                              ; CODE XREF: sub_2045A+1E46↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_222EE
@@ -30177,7 +30181,7 @@ loc_222EE:                              ; CODE XREF: sub_2045A+1E87↑j
                 push    word ptr [bx+165h]
                 push    [bp+var_A]
                 push    [bp+var_8]
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_22357
@@ -30201,7 +30205,7 @@ loc_222EE:                              ; CODE XREF: sub_2045A+1E87↑j
                 mov     dx, [bp+var_8]
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_22357
@@ -36153,8 +36157,8 @@ sub_27F4F       proc far                ; CODE XREF: sub_254BA+6A2↑P
                 jmp     sub_378C0
 sub_27F4F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_resetBlacksmithWares. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getDiskFree. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_resetBlacksmithWares. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getDiskFree. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36174,7 +36178,7 @@ sub_27F63       proc far                ; CODE XREF: sub_4B7B5+C↓P
                 jmp     sub_37BA7
 sub_27F63       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_monstersAttack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_monstersAttack. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36213,7 +36217,7 @@ sub_27F7C       proc far                ; CODE XREF: sub_43E0C+288↓P
                 jmp     sub_3886C
 sub_27F7C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getEquipSlotName. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getEquipSlotName. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36234,7 +36238,7 @@ sub_27F8B       proc far                ; CODE XREF: sub_254BA+22↑P
                 jmp     sub_387C6
 sub_27F8B       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_equipItem. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_equipItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36253,7 +36257,7 @@ sub_27F9A       proc far                ; CODE XREF: sub_49B8B+A6↓P
                 jmp     sub_37B7D
 sub_27F9A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_openMm3Cc. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_openMm3Cc. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36274,9 +36278,9 @@ sub_27FA9       proc far
                 jmp     sub_383CB
 sub_27FA9       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_stopAttack. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_introSequence. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_protectionHandler. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_stopAttack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_introSequence. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_protectionHandler. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36455,7 +36459,7 @@ sub_28052       proc far
                 jmp     sub_3BC65
 sub_28052       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_subPartyTime. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_subPartyTime. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -36470,11 +36474,11 @@ stub04          segment para public 'CODE' use16
                 dw 11                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_GiveBankInterest. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_death. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Spells_moonRay. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_showJoke. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_arenaEvent. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_GiveBankInterest. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_death. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Spells_moonRay. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_showJoke. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_arenaEvent. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36502,7 +36506,7 @@ sub_280A3       proc far                ; CODE XREF: runMazeEvent+17D1↑P
                 jmp     sub_3E729
 sub_280A3       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_resetTemps. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_resetTemps. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36586,7 +36590,7 @@ sub_280F4       proc far                ; CODE XREF: sub_3C282+1DF↓P
                 jmp     sub_40506
 sub_280F4       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_sortParty. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_sortParty. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36625,7 +36629,7 @@ sub_2810D       proc far                ; CODE XREF: sub_3C282+1D6↓P
                 jmp     sub_404D5
 sub_2810D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_copyPartyToRoster. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_copyPartyToRoster. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36646,8 +36650,8 @@ sub_2811C       proc far                ; CODE XREF: resetTemps+17F↓P
                 jmp     sub_40465
 sub_2811C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Awards_show. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_rosterMenu. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Awards_show. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_rosterMenu. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36677,7 +36681,7 @@ sub_28135       proc far                ; CODE XREF: sub_416F1+7↓P
                 jmp     sub_403A6
 sub_28135       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_setSoundAddress. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_setSoundAddress. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36766,7 +36770,7 @@ sub_2818A       proc far                ; CODE XREF: death+85B↓P
                 jmp     sub_424AB
 sub_2818A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36835,7 +36839,7 @@ sub_281B2       proc far                ; CODE XREF: runMazeEvent+55D↑P
                 jmp     sub_434D6
 sub_281B2       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_controlPanel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_controlPanel. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36846,8 +36850,8 @@ sub_281BC       proc far
                 jmp     sub_4231C
 sub_281BC       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_nextExperienceLevel. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_rest. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_nextExperienceLevel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_rest. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36937,7 +36941,7 @@ sub_281F3       proc far                ; CODE XREF: death:loc_3F22A↓P
                 jmp     sub_416F1
 sub_281F3       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_experienceToNextLevel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_experienceToNextLevel. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37000,8 +37004,8 @@ sub_28235       proc far
                 jmp     sub_44921
 sub_28235       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_giveCharDamage. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Map_load. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_giveCharDamage. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Map_load. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37091,8 +37095,8 @@ sub_2826C       proc far                ; CODE XREF: resetBlacksmithWares+121↓
                 jmp     sub_4432C
 sub_2826C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j__strcoll. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_dismissCharacter. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j__strcoll. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_dismissCharacter. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37155,7 +37159,7 @@ stub08          segment para public 'CODE' use16
                 dw 15                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_createCharacter. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_createCharacter. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37280,7 +37284,7 @@ sub_28301       proc far
                 jmp     sub_46847
 sub_28301       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_checkClasses. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_checkClasses. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -37305,7 +37309,7 @@ sub_28330       proc far
                 jmp     sub_483FB
 sub_28330       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_trainingNeedsExperience. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_trainingNeedsExperience. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37315,7 +37319,7 @@ sub_2833A       proc far
                 jmp     sub_496FA
 sub_2833A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townInn. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townInn. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37335,7 +37339,7 @@ sub_28349       proc far
                 jmp     sub_48CF7
 sub_28349       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townBank. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townBank. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37346,7 +37350,7 @@ sub_28353       proc far                ; CODE XREF: sub_3CE7A+BC↓P
                 jmp     sub_47A33
 sub_28353       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townGuild. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townGuild. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37375,9 +37379,9 @@ sub_28367       proc far                ; CODE XREF: runMazeEvent:loc_1A608↑P
                 jmp     sub_48D4B
 sub_28367       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townTavern. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townTraining. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_townSmithy. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townTavern. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townTraining. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_townSmithy. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37387,7 +37391,7 @@ sub_2837B       proc far
                 jmp     sub_47ECE
 sub_2837B       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_loadHireFaces. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_loadHireFaces. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37423,7 +37427,7 @@ sub_283B0       proc far                ; CODE XREF: sub_1B669+55↑P
                 jmp     sub_4B7B5
 sub_283B0       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_setSpeedTable. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_setSpeedTable. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37433,7 +37437,7 @@ sub_283BA       proc far
                 jmp     sub_49B60
 sub_283BA       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getWeaponDamage. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getWeaponDamage. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37443,9 +37447,9 @@ sub_283C4       proc far
                 jmp     sub_4B432
 sub_283C4       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_block. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getMonsterDescriptions. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_attack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_block. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getMonsterDescriptions. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_attack. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37464,8 +37468,8 @@ sub_283DD       proc far
                 jmp     sub_4A779
 sub_283DD       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_doMonsterTurn. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_run. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_doMonsterTurn. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_run. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37475,10 +37479,10 @@ sub_283EC       proc far
                 jmp     sub_4B194
 sub_283EC       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_nextChar. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_charsCantAct. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_allHaveGone. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_sortCombatParty. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_nextChar. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_charsCantAct. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_allHaveGone. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_sortCombatParty. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37488,7 +37492,7 @@ sub_28405       proc far
                 jmp     sub_49FA3
 sub_28405       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_quickFight. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_quickFight. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37498,7 +37502,7 @@ sub_2840F       proc far
                 jmp     sub_4A02A
 sub_2840F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_monsterSavingThrow. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_monsterSavingThrow. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37574,7 +37578,7 @@ sub_2845F       proc far                ; CODE XREF: sub_4F74F:loc_4F961↓P
                 jmp     sub_4C326
 sub_2845F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Spells_subSpellCost. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Spells_subSpellCost. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37889,7 +37893,7 @@ sub_28504       proc far                ; CODE XREF: sub_4F74F:loc_4FA77↓P
                 jmp     sub_4CA6E
 sub_28504       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Spells_divineIntervention. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Spells_divineIntervention. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38000,7 +38004,7 @@ sub_28540       proc far                ; CODE XREF: sub_4F74F+54F↓P
                 jmp     sub_4C106
 sub_28540       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_Screen_saveBackground. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_Screen_saveBackground. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38080,7 +38084,7 @@ sub_2856D       proc far                ; CODE XREF: sub_4F74F:loc_4FAFA↓P
                 jmp     sub_4CED6
 sub_2856D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_spellLloydsBeacon. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_spellLloydsBeacon. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38424,7 +38428,7 @@ sub_2863F       proc far                ; CODE XREF: death+837↓P
                 jmp     sub_4EFB6
 sub_2863F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_itemsDialog. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_itemsDialog. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38475,8 +38479,8 @@ sub_2865D       proc far                ; CODE XREF: sub_19174+13↑P
                 jmp     sub_4F24E
 sub_2865D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_specialsDialog. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getThievery. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_specialsDialog. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getThievery. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -38550,7 +38554,7 @@ sub_286A9       proc far
                 jmp     sub_51DAB
 sub_286A9       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_statColor. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_statColor. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38571,8 +38575,8 @@ sub_286B8       proc far                ; CODE XREF: death+896↓P
                 jmp     sub_502D2
 sub_286B8       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getMaxSP. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getMaxHP. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getMaxSP. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getMaxHP. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38584,7 +38588,7 @@ sub_286C7       proc far                ; CODE XREF: itemsDialog+376↓P
                 jmp     sub_52030
 sub_286C7       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getArmorClass. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getArmorClass. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38612,8 +38616,8 @@ sub_286DB       proc far
                 jmp     sub_5122D
 sub_286DB       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_identifyOrFix. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_getNumSkills. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_identifyOrFix. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_getNumSkills. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure data
@@ -38805,8 +38809,9 @@ byte_28848      db 0                    ; DATA XREF: seg001:loc_14D9C↑w
 byte_28849      db 0                    ; DATA XREF: seg001:loc_14E3D↑w
                                         ; seg001:0267↑w ...
                 db 1
-byte_2884B      db 0                    ; DATA XREF: sub_15736+C7↑r
+Maze_wrapMode   db 0                    ; DATA XREF: sub_15736+C7↑r
                                         ; chargeStep+B↑r ...
+                                        ; byte; non-zero = off-map cells wrap/return 0 instead of 1111h
 byte_2884C      db 1                    ; DATA XREF: sub_1B2A3+4F↑r
 byte_2884D      db 0                    ; DATA XREF: sub_1DB3D+12E↑r
                                         ; sub_1DB3D+265↑r ...
@@ -40667,10 +40672,54 @@ word_2A961      dw 4D00h                ; DATA XREF: seg001:05A3↑r
                 db 72h, 6Eh, 74h, 2Eh, 76h, 67h, 61h, 0, 73h, 63h, 6Fh
                 db 72h, 2Eh, 76h, 67h, 61h, 0, 73h, 63h, 6Fh, 6Eh, 2Eh
                 db 76h, 67h, 61h, 0, 73h, 65h, 6Eh, 64h, 2Eh, 76h, 67h
-                db 61h, 3 dup(0), 10h, 0, 10h, 2 dup(0), 2 dup(10h), 1
-                db 2, 3, 4, 5, 6Ah, 69h, 32h, 3Bh, 3Ch, 3Dh, 0Eh, 25h
-                db 7 dup(0), 0Ch, 7, 3, 0, 7, 0Eh, 8 dup(0), 0Ah, 3, 0Ch
-                db 0Ah, 7
+                db 61h, 2 dup(0)
+MAZE_SLOT_X     db    0                 ; x origin (0 or 16) of each page slot, added to the party's x
+                db  10h
+                db    0
+                db  10h
+MAZE_SLOT_Y     db    0                 ; y origin (0 or 16) of each page slot
+                db    0
+                db  10h
+                db  10h
+                db    1
+                db    2
+                db    3
+                db    4
+                db    5
+                db  6Ah ; j
+                db  69h ; i
+                db  32h ; 2
+                db  3Bh ; ;
+                db  3Ch ; <
+                db  3Dh ; =
+                db  0Eh
+                db  25h ; %
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    7
+                db    3
+                db    0
+                db    7
+                db  0Eh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  0Ah
+                db    3
+                db  0Ch
+                db  0Ah
+                db    7
 aC_5            db 3,'c'                ; DATA XREF: sub_3BC65+3B↓o
                 db  45h ; E
                 db  72h ; r
@@ -40857,29 +40906,271 @@ aC_8            db 3,'c'                ; DATA XREF: sub_3D8C9+1F2↓o
                 db  79h ; y
                 db  2Eh ; .
                 db    0
-byte_2AE34      db 9, 0Ah, 0Dh, 18h, 19h, 23h, 33h, 34h, 35h, 36h, 4 dup(0FFh)
-                db 1, 7, 0FFh, 4, 1Bh, 9, 0Bh, 2Eh, 0Ch, 1Bh, 2Ch, 0Ch
-                db 18h, 38h, 29h, 2, 7, 0, 1, 5, 1Dh, 10h, 0Eh, 22h, 33h
-                db 15h, 1Dh, 2Ah, 42h, 15h, 0Fh, 8, 41h, 3Fh, 11h, 13h
-                db 3Bh, 22h, 1Ah, 2Dh, 50h, 43h, 35h, 34h, 30h, 4, 28h
-                db 9, 1Fh, 14h, 0Ah, 19h, 3Dh, 1Ah, 18h, 2Fh, 26h, 0Bh
-                db 1Fh, 44h, 3Eh, 28h, 2Bh, 4, 1Bh, 9, 4Dh, 4Eh, 0FFh
-                db 3Bh, 31h, 1Ch, 37h, 1Ch, 34h, 45h, 1Ch, 32h, 29h, 39h
-                db 5, 39h, 26h, 1Eh, 38h, 42h, 1Fh, 2Dh, 40h, 2Eh, 2Ch
-                db 22h, 36h, 4Ah, 46h, 4 dup(0FFh), 30h, 3Ah, 0FFh, 3Ah
-                db 36h, 0FFh, 30h, 3Ah, 0FFh, 23h, 26h, 3Ah, 23h, 3Ch
-                db 49h, 10h, 23h, 0FFh, 3Ah, 23h, 49h, 2, 3, 0FFh, 2, 3
-                db 0FFh, 5, 0, 0FFh, 0Dh, 11h, 0FFh, 8, 6, 0FFh, 0Eh, 12h
-                db 0FFh, 1Bh, 0Fh, 0FFh, 0Dh, 6, 0FFh, 41h, 12h, 48h, 42h
-                db 40h, 0FFh, 4Ah, 4Ch, 0FFh, 27h, 13h, 0FFh, 16h, 0Ah
-                db 0FFh, 2Ah, 29h, 0FFh, 4Fh, 38h, 0FFh, 19h, 14h, 0FFh
-                db 1Fh, 25h, 0FFh, 24h, 20h, 0FFh, 17h, 21h, 0FFh, 24h
-                db 27h, 4Bh, 17h, 25h, 0FFh, 4Eh, 21h, 20h, 37h, 2Bh, 0FFh
-                db 24h, 27h, 4Bh, 1, 1Ah, 10h, 3 dup(4), 6, 2 dup(1), 4
-                db 2 dup(1), 2, 4, 2 dup(1), 4, 1, 2 dup(2), 4, 1, 2, 1
-                db 4, 2, 1, 6, 1, 2 dup(4), 1, 4, 2 dup(1), 4, 1, 4, 1
-                db 4, 2, 1, 4, 1, 2 dup(4), 8 dup(1), 6, 3 dup(4), 1, 3 dup(4)
-                db 1, 4, 2 dup(1), 2 dup(0FFh)
+                db 9, 0Ah, 0Dh, 18h, 19h, 23h, 33h, 34h, 35h, 36h
+Maze_slotIds    db 0FFh                 ; 4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats
+                db 0FFh
+                db 0FFh
+                db 0FFh
+MAP_MONSTER_PICS db    1                ; 3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)
+                db    7
+                db 0FFh
+                db    4
+                db  1Bh
+                db    9
+                db  0Bh
+                db  2Eh ; .
+                db  0Ch
+                db  1Bh
+                db  2Ch ; ,
+                db  0Ch
+                db  18h
+                db  38h ; 8
+                db  29h ; )
+                db    2
+                db    7
+                db    0
+                db    1
+                db    5
+                db  1Dh
+                db  10h
+                db  0Eh
+                db  22h ; "
+                db  33h ; 3
+                db  15h
+                db  1Dh
+                db  2Ah ; *
+                db  42h ; B
+                db  15h
+                db  0Fh
+                db    8
+                db  41h ; A
+                db  3Fh ; ?
+                db  11h
+                db  13h
+                db  3Bh ; ;
+                db  22h ; "
+                db  1Ah
+                db  2Dh ; -
+                db  50h ; P
+                db  43h ; C
+                db  35h ; 5
+                db  34h ; 4
+                db  30h ; 0
+                db    4
+                db  28h ; (
+                db    9
+                db  1Fh
+                db  14h
+                db  0Ah
+                db  19h
+                db  3Dh ; =
+                db  1Ah
+                db  18h
+                db  2Fh ; /
+                db  26h ; &
+                db  0Bh
+                db  1Fh
+                db  44h ; D
+                db  3Eh ; >
+                db  28h ; (
+                db  2Bh ; +
+                db    4
+                db  1Bh
+                db    9
+                db  4Dh ; M
+                db  4Eh ; N
+                db 0FFh
+                db  3Bh ; ;
+                db  31h ; 1
+                db  1Ch
+                db  37h ; 7
+                db  1Ch
+                db  34h ; 4
+                db  45h ; E
+                db  1Ch
+                db  32h ; 2
+                db  29h ; )
+                db  39h ; 9
+                db    5
+                db  39h ; 9
+                db  26h ; &
+                db  1Eh
+                db  38h ; 8
+                db  42h ; B
+                db  1Fh
+                db  2Dh ; -
+                db  40h ; @
+                db  2Eh ; .
+                db  2Ch ; ,
+                db  22h ; "
+                db  36h ; 6
+                db  4Ah ; J
+                db  46h ; F
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db  30h ; 0
+                db  3Ah ; :
+                db 0FFh
+                db  3Ah ; :
+                db  36h ; 6
+                db 0FFh
+                db  30h ; 0
+                db  3Ah ; :
+                db 0FFh
+                db  23h ; #
+                db  26h ; &
+                db  3Ah ; :
+                db  23h ; #
+                db  3Ch ; <
+                db  49h ; I
+                db  10h
+                db  23h ; #
+                db 0FFh
+                db  3Ah ; :
+                db  23h ; #
+                db  49h ; I
+                db    2
+                db    3
+                db 0FFh
+                db    2
+                db    3
+                db 0FFh
+                db    5
+                db    0
+                db 0FFh
+                db  0Dh
+                db  11h
+                db 0FFh
+                db    8
+                db    6
+                db 0FFh
+                db  0Eh
+                db  12h
+                db 0FFh
+                db  1Bh
+                db  0Fh
+                db 0FFh
+                db  0Dh
+                db    6
+                db 0FFh
+                db  41h ; A
+                db  12h
+                db  48h ; H
+                db  42h ; B
+                db  40h ; @
+                db 0FFh
+                db  4Ah ; J
+                db  4Ch ; L
+                db 0FFh
+                db  27h ; '
+                db  13h
+                db 0FFh
+                db  16h
+                db  0Ah
+                db 0FFh
+                db  2Ah ; *
+                db  29h ; )
+                db 0FFh
+                db  4Fh ; O
+                db  38h ; 8
+                db 0FFh
+                db  19h
+                db  14h
+                db 0FFh
+                db  1Fh
+                db  25h ; %
+                db 0FFh
+                db  24h ; $
+                db  20h
+                db 0FFh
+unk_2AEF0       db  17h                 ; DATA XREF: ovl03:20D3↓w
+                db  21h ; !
+                db 0FFh
+                db  24h ; $
+                db  27h ; '
+                db  4Bh ; K
+                db  17h
+                db  25h ; %
+                db 0FFh
+                db  4Eh ; N
+                db  21h ; !
+                db  20h
+                db  37h ; 7
+                db  2Bh ; +
+                db 0FFh
+                db  24h ; $
+                db  27h ; '
+                db  4Bh ; K
+                db    1
+                db  1Ah
+                db  10h
+                db    4
+                db    4
+                db    4
+                db    6
+                db    1
+                db    1
+                db    4
+                db    1
+                db    1
+                db    2
+                db    4
+                db    1
+                db    1
+                db    4
+                db    1
+                db    2
+                db    2
+                db    4
+                db    1
+                db    2
+                db    1
+                db    4
+                db    2
+                db    1
+                db    6
+                db    1
+                db    4
+                db    4
+                db    1
+                db    4
+                db    1
+                db    1
+                db    4
+                db    1
+                db    4
+                db    1
+                db    4
+                db    2
+                db    1
+                db    4
+                db    1
+                db    4
+                db    4
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    6
+                db    4
+                db    4
+                db    4
+                db    1
+                db    4
+                db    4
+                db    4
+                db    1
+                db    4
+                db    1
+                db    1
+                db 0FFh
+                db 0FFh
 word_2AF46      dw 0                    ; DATA XREF: death+935↓w
 word_2AF48      dw 0                    ; DATA XREF: death+932↓w
                 align 4
@@ -44734,8 +45025,9 @@ byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
                                         ; sub_161AD+5FF↑r ...
 byte_34C2D      db 0                    ; DATA XREF: sub_15B50+62D↑r
                                         ; sub_161AD+75D↑r ...
-byte_34C2E      db 0                    ; DATA XREF: sub_154B0+50↑r
+Maze_curSlot    db 0                    ; DATA XREF: sub_154B0+50↑r
                                         ; sub_154B0+FF↑r ...
+                                        ; byte 0-3: which of the 4 loaded 16x16 pages (2x2 world) the party is in
                 db 31Fh dup(0)
 byte_34F4E      db 0                    ; DATA XREF: sub_193DC+83↑r
                                         ; sub_193DC+8A↑r
@@ -46055,7 +46347,7 @@ sub_378C0       endp
 ; (BinDiff sim .69 conf .93, unverified)
 ; Attributes: bp-based frame
 
-monstersAttack  proc far                ; CODE XREF: j_j_j_j_j_monstersAttack↑J
+monstersAttack  proc far                ; CODE XREF: j_j_j_j_j_j_j_j_monstersAttack↑J
 
 format          = dword ptr -4
 
@@ -46170,7 +46462,7 @@ loc_37AD1:                              ; CODE XREF: monstersAttack+FD↓j
                 mov     al, [bx-3B28h]
                 mov     ah, 0
                 push    ax
-                call    j_j_j_j_j_doMonsterTurn
+                call    j_j_j_j_j_j_j_j_doMonsterTurn
                 pop     cx
 
 loc_37AE8:                              ; CODE XREF: monstersAttack+E7↑j
@@ -46358,7 +46650,7 @@ sub_37BF1       proc far                ; CODE XREF: sub_27F95↑J
                 push    bp
                 mov     bp, sp
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 12Ch
                 push    ax              ; maxlen
                 mov     al, byte_36FE7
@@ -46767,7 +47059,7 @@ sub_37E7A       endp
 ; opens mm3.cc, "Alert!" error box (from strings)
 ; Attributes: bp-based frame
 
-openMm3Cc       proc far                ; CODE XREF: j_j_j_j_j_openMm3Cc↑J
+openMm3Cc       proc far                ; CODE XREF: j_j_j_j_j_j_j_j_openMm3Cc↑J
 
 format          = dword ptr -6
 buf             = word ptr -2
@@ -47057,7 +47349,7 @@ openMm3Cc       endp
 ; (BinDiff sim .69 conf .97, unverified)
 ; Attributes: bp-based frame
 
-getDiskFree     proc far                ; CODE XREF: j_j_j_j_j_getDiskFree↑J
+getDiskFree     proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getDiskFree↑J
                                         ; openMm3Cc+87↑p
 
 var_E           = word ptr -0Eh
@@ -47547,7 +47839,7 @@ sub_383CB       endp
 ; (BinDiff sim .62 conf .95, unverified)
 ; Attributes: bp-based frame
 
-stopAttack      proc far                ; CODE XREF: j_j_j_j_j_stopAttack↑J
+stopAttack      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_stopAttack↑J
                                         ; sub_3853A+34↓p
 
 arg_0           = word ptr  6
@@ -47580,7 +47872,7 @@ loc_3843D:                              ; CODE XREF: stopAttack+3E↓j
                 mov     ah, 0
                 add     ax, si
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_38460
@@ -47628,7 +47920,7 @@ loc_3847C:                              ; CODE XREF: stopAttack+7A↓j
                 mov     ah, 0
                 add     ax, si
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_3849C
@@ -47672,7 +47964,7 @@ loc_384BE:                              ; CODE XREF: stopAttack+BE↓j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_384DF
@@ -47712,7 +48004,7 @@ loc_384FB:                              ; CODE XREF: stopAttack+FA↓j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_3851C
@@ -47843,7 +48135,7 @@ sub_3853A       endp
 
 ; Attributes: bp-based frame
 
-resetBlacksmithWares proc far           ; CODE XREF: j_j_j_j_resetBlacksmithWares↑J
+resetBlacksmithWares proc far           ; CODE XREF: j_j_j_j_j_j_j_resetBlacksmithWares↑J
 
 var_2           = word ptr -2
 
@@ -48259,7 +48551,7 @@ sub_3886C       endp
 ; mm3theme.m, itit0-8.vga, comet.vga, itxt.vga, talk.vga, s%d.s, cr%d.vga (from strings)
 ; Attributes: bp-based frame
 
-introSequence   proc far                ; CODE XREF: j_j_j_j_j_introSequence↑J
+introSequence   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_introSequence↑J
 
 var_2           = word ptr -2
 
@@ -49800,7 +50092,7 @@ introSequence   endp
 
 ; Attributes: bp-based frame
 
-protectionHandler proc far              ; CODE XREF: j_j_j_j_j_protectionHandler↑J
+protectionHandler proc far              ; CODE XREF: j_j_j_j_j_j_j_j_protectionHandler↑J
                                         ; introSequence+134↑p ...
 
 arg_0           = word ptr  6
@@ -49898,7 +50190,7 @@ sub_3946E       endp
 ; "ring"/"medal" (from strings)
 ; Attributes: bp-based frame
 
-getEquipSlotName proc far               ; CODE XREF: j_j_j_j_j_getEquipSlotName↑J
+getEquipSlotName proc far               ; CODE XREF: j_j_j_j_j_j_j_j_getEquipSlotName↑J
                                         ; equipItem+377↓p
 
 buffer          = byte ptr -64h
@@ -49920,7 +50212,7 @@ arg_4           = word ptr  0Ah
 
 loc_394BF:                              ; CODE XREF: getEquipSlotName+11↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 or      si, si
                 jge     short loc_394ED
                 cmp     si, 0FFFFh
@@ -50008,7 +50300,7 @@ getEquipSlotName endp
 ; "You must remove %s to equip %s", "cannot equip two of the same items" (by string order, unverified)
 ; Attributes: bp-based frame
 
-equipItem       proc far                ; CODE XREF: j_j_j_j_j_equipItem↑J
+equipItem       proc far                ; CODE XREF: j_j_j_j_j_j_j_j_equipItem↑J
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -54664,7 +54956,7 @@ ovl03           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-subPartyTime    proc far                ; CODE XREF: j_j_j_j_j_subPartyTime↑J
+subPartyTime    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_subPartyTime↑J
                                         ; sub_3C282+440↓p ...
 
 arg_0           = word ptr  6
@@ -54974,7 +55266,7 @@ loc_3BE5B:                              ; CODE XREF: sub_3BE18+3F↑j
 
 loc_3BE5E:                              ; CODE XREF: sub_3BE18+34↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, byte_36FDA
                 mov     ah, 0
                 push    ax
@@ -55102,7 +55394,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 8
                 push    ax              ; c
                 xor     ax, ax
@@ -55492,7 +55784,7 @@ var_2           = word ptr -2
                 mov     [bp+var_2], ax
                 mov     Engine_mode, 6
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 26BEh
                 push    ax
@@ -55653,7 +55945,7 @@ loc_3C33A:                              ; CODE XREF: sub_3C282+B3↑j
                 mov     ah, 0
                 push    ax
                 push    [bp+arg_2]
-                call    j_j_j_j_j_giveCharDamage
+                call    j_j_j_j_j_j_j_j_giveCharDamage
 
 loc_3C34B:                              ; CODE XREF: sub_3C282+1B8↓j
                 add     sp, 6
@@ -57186,7 +57478,7 @@ loc_3CCC4:                              ; CODE XREF: sub_3C282+478↑j
                 mov     ah, 0
                 push    ax
                 push    [bp+arg_8]
-                call    j_j_j_j_j_giveCharDamage
+                call    j_j_j_j_j_j_j_j_giveCharDamage
 
 loc_3CCD5:                              ; CODE XREF: sub_3C282+5EE↑j
                 add     sp, 6
@@ -57369,7 +57661,7 @@ loc_3CE9F:                              ; CODE XREF: sub_3CE7A+21↑j
 ; ---------------------------------------------------------------------------
 
 loc_3CF06:                              ; CODE XREF: sub_3CE7A+2A↑j
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
 
 loc_3CF0B:                              ; CODE XREF: sub_3CE7A+8A↑j
                 push    word_36FB4
@@ -58096,7 +58388,7 @@ loc_3D385:                              ; CODE XREF: sub_3D32E+25↑j
                 xor     ax, ax          ; jumptable 0003D353 case 10
                 push    ax
                 push    si
-                call    j_j_j_j_j_getArmorClass
+                call    j_j_j_j_j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 jmp     short loc_3D35D
@@ -58580,7 +58872,7 @@ loc_3D5F8:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 push    ds              ; jumptable 0003D353 case 78
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+125h]
@@ -58607,7 +58899,7 @@ loc_3D614:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 push    ds              ; jumptable 0003D353 case 81
                 push    si
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+127h]
@@ -59122,7 +59414,7 @@ loc_3D97A:                              ; CODE XREF: sub_3D8C9+A4↑j
                 pop     cx
                 pop     cx
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -59130,7 +59422,7 @@ loc_3D97A:                              ; CODE XREF: sub_3D8C9+A4↑j
                 mov     al, [bx-378Eh]
                 mov     ah, 0
                 push    ax
-                call    j_j_j_j_j_giveCharDamage
+                call    j_j_j_j_j_j_j_j_giveCharDamage
                 add     sp, 6
 
 loc_3D9BA:                              ; CODE XREF: sub_3D8C9+C3↑j
@@ -59139,7 +59431,7 @@ loc_3D9BA:                              ; CODE XREF: sub_3D8C9+C3↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_j_j_j_j_getThievery
+                call    j_j_j_j_j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     ax, 14h
@@ -59151,7 +59443,7 @@ loc_3D9BA:                              ; CODE XREF: sub_3D8C9+C3↑j
                 pop     cx
                 pop     dx
                 add     dx, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, 340h
                 push    dx
@@ -59176,7 +59468,7 @@ loc_3D9F9:                              ; CODE XREF: sub_3D8C9+12B↑j
                 pop     cx
                 pop     cx
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -59609,7 +59901,7 @@ sub_3D8C9       endp
                 add     [si], dl
                 add     [bx], dl
                 add     [bx+di], ah
-                add     byte_2AE34+0BCh, ah
+                add     byte ptr unk_2AEF0, ah
                 add     dl, ch
                 sbb     al, 0F1h
                 sbb     al, 0F3h
@@ -59631,7 +59923,7 @@ ovl04           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-resetTemps      proc far                ; CODE XREF: j_j_j_j_resetTemps↑J
+resetTemps      proc far                ; CODE XREF: j_j_j_j_j_j_j_resetTemps↑J
 
 var_1A0         = byte ptr -1A0h
 s               = byte ptr -16Eh
@@ -59655,7 +59947,7 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 15Eh
                 push    ax              ; c
                 xor     ax, ax
@@ -59847,7 +60139,7 @@ loc_3DE53:                              ; CODE XREF: resetTemps+117↑j
                 call    sub_26685
                 pop     cx
                 call    sub_2811C
-                call    j_j_j_j_j_sortParty
+                call    j_j_j_j_j_j_j_j_sortParty
                 mov     ax, 12Fh
                 push    ax              ; n
                 push    word ptr [bp+dest+2]
@@ -59952,7 +60244,7 @@ resetTemps      endp
 ; (BinDiff sim .69 conf .97, unverified)
 ; Attributes: bp-based frame
 
-GiveBankInterest proc far               ; CODE XREF: j_j_j_j_j_GiveBankInterest↑J
+GiveBankInterest proc far               ; CODE XREF: j_j_j_j_j_j_j_j_GiveBankInterest↑J
                 push    bp
                 mov     bp, sp
                 xor     ax, ax
@@ -59989,7 +60281,7 @@ sub_3DFB6       proc far                ; CODE XREF: sub_28099↑J
 
 loc_3DFBA:                              ; CODE XREF: sub_3DFB6+B3↓j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, byte_34C1D
                 mov     ah, 0
                 push    ax              ; format
@@ -60109,7 +60401,7 @@ sub_3E08F       endp
 ; jester.bin "Joke of the Day"
 ; Attributes: bp-based frame
 
-showJoke        proc far                ; CODE XREF: j_j_j_j_j_showJoke↑J
+showJoke        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_showJoke↑J
                 push    bp
                 mov     bp, sp
                 call    sub_1B669
@@ -60147,7 +60439,7 @@ showJoke        proc far                ; CODE XREF: j_j_j_j_j_showJoke↑J
                 push    ax
                 mov     ax, 5
                 push    ax              ; format
-                call    j_j_j_j_j_loadHireFaces
+                call    j_j_j_j_j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     ax, 1
                 push    ax
@@ -60167,7 +60459,7 @@ showJoke        endp
 ; combat.m "The Arena"
 ; Attributes: bp-based frame
 
-arenaEvent      proc far                ; CODE XREF: j_j_j_j_j_arenaEvent↑J
+arenaEvent      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_arenaEvent↑J
 
 var_12          = word ptr -12h
 format          = dword ptr -2
@@ -60226,7 +60518,7 @@ loc_3E13F:                              ; CODE XREF: arenaEvent+A3↓j
                 push    ax
                 mov     ax, 8
                 push    ax              ; format
-                call    j_j_j_j_j_loadHireFaces
+                call    j_j_j_j_j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     al, 7
                 mov     byte_36FE6, al
@@ -60323,7 +60615,7 @@ loc_3E219:                              ; CODE XREF: arenaEvent+C7↑j
                 push    ax
                 mov     ax, 8
                 push    ax              ; format
-                call    j_j_j_j_j_loadHireFaces
+                call    j_j_j_j_j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     byte_36FE7, 1
                 mov     Party_size, 0
@@ -60426,7 +60718,7 @@ loc_3E301:                              ; CODE XREF: arenaEvent+1D6↑j
                 add     sp, 8
                 mov     word ptr [bp+format], ax
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 12Ch
                 push    ax              ; maxlen
                 mov     bx, word ptr [bp+format]
@@ -60865,7 +61157,7 @@ arg_0           = word ptr  6
                 call    sub_281E4
                 call    sub_280E5
                 mov     al, 0
-                mov     byte_2884B, al
+                mov     Maze_wrapMode, al
                 mov     byte_28841, al
                 call    sub_2819E
                 mov     ax, 0ABDAh
@@ -61025,7 +61317,7 @@ sub_3E729       endp
 
 ; Attributes: bp-based frame
 
-Spells_moonRay  proc far                ; CODE XREF: j_j_j_j_j_Spells_moonRay↑J
+Spells_moonRay  proc far                ; CODE XREF: j_j_j_j_j_j_j_j_Spells_moonRay↑J
                 push    bp
                 mov     bp, sp
                 push    si              ; n
@@ -61169,7 +61461,7 @@ sub_3E8E2       endp
 ; death.vga, mm3theme.m (from strings)
 ; Attributes: bp-based frame
 
-death           proc far                ; CODE XREF: j_j_j_j_j_death↑J
+death           proc far                ; CODE XREF: j_j_j_j_j_j_j_j_death↑J
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -61317,7 +61609,7 @@ def_3EA36:                              ; CODE XREF: death+B0↑j
                 call    near ptr sub_3E6F1
                 cmp     byte_2886D, 0
                 jz      short loc_3EA89
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jnz     short loc_3EA89
                 cmp     byte_2886D, 3
                 jnz     short loc_3EA8E
@@ -61349,7 +61641,7 @@ loc_3EA98:                              ; CODE XREF: death+111↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_3EAC8
@@ -61605,7 +61897,7 @@ def_3F05F:                              ; CODE XREF: death+196↑j
                 cmp     byte_2886D, 0   ; jumptable 0003F05F default case
                 jz      short def_3F0D5 ; jumptable 0003F0D5 default case
                                         ; jumptable 0003F153 default case
-                mov     al, byte_2884B
+                mov     al, Maze_wrapMode
                 mov     ah, 0
                 or      ax, ax
                 jnz     short def_3F0D5 ; jumptable 0003F0D5 default case
@@ -61630,7 +61922,7 @@ def_3F0D5:                              ; CODE XREF: death+113↑j
                 call    _memset
                 add     sp, 6
                 xor     byte_28875, 1
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_3ECFA
                 mov     ax, 70h ; 'p'
                 push    ax
@@ -61640,7 +61932,7 @@ def_3F0D5:                              ; CODE XREF: death+113↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3ECFA
@@ -61676,7 +61968,7 @@ loc_3ED09:                              ; CODE XREF: death+143↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     dl, byte_36FE4
                 mov     dh, 0
@@ -61694,7 +61986,7 @@ loc_3ED09:                              ; CODE XREF: death+143↑j
 ; ---------------------------------------------------------------------------
 
 loc_3ED4C:                              ; CODE XREF: death+3C5↑j
-                mov     al, byte_2884B
+                mov     al, Maze_wrapMode
                 mov     ah, 0
                 or      ax, ax
                 jz      short loc_3ED58
@@ -61728,7 +62020,7 @@ loc_3ED67:                              ; CODE XREF: death+3E0↑j
                 pop     cx
                 pop     cx
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -61736,7 +62028,7 @@ loc_3ED67:                              ; CODE XREF: death+3E0↑j
                 mov     al, [bx-378Eh]
                 mov     ah, 0
                 push    ax
-                call    j_j_j_j_j_giveCharDamage
+                call    j_j_j_j_j_j_j_j_giveCharDamage
                 add     sp, 6
 
 loc_3EDA5:                              ; CODE XREF: death+3F7↑j
@@ -61745,7 +62037,7 @@ loc_3EDA5:                              ; CODE XREF: death+3F7↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_j_j_j_j_getThievery
+                call    j_j_j_j_j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     ax, 14h
@@ -61757,7 +62049,7 @@ loc_3EDA5:                              ; CODE XREF: death+3F7↑j
                 pop     cx
                 pop     dx
                 add     dx, ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     bx, 340h
                 push    dx
@@ -61782,7 +62074,7 @@ loc_3EDE3:                              ; CODE XREF: death+45C↑j
                 pop     cx
                 pop     cx
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -61813,7 +62105,7 @@ loc_3EDE3:                              ; CODE XREF: death+45C↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
                 mov     al, byte_36FE5
                 mov     ah, 0
@@ -61863,7 +62155,7 @@ def_3EE62:                              ; CODE XREF: death+4DC↑j
                 push    si
                 push    word_333BC
                 push    word_32E66
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
                 mov     ax, 2Ah ; '*'
                 push    ax
@@ -61874,7 +62166,7 @@ def_3EE62:                              ; CODE XREF: death+4DC↑j
 
 loc_3EEAA:                              ; CODE XREF: death+3C7↑j
                                         ; death+3D3↑j
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jnz     short loc_3EEB4
                 jmp     loc_3F014
 ; ---------------------------------------------------------------------------
@@ -61904,7 +62196,7 @@ loc_3EEB4:                              ; CODE XREF: death+52D↑j
                 mov     dh, 0
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3EF5D
@@ -61938,7 +62230,7 @@ loc_3EF02:                              ; CODE XREF: death+57B↑j
                 mov     dh, 0
                 add     dx, ax
                 push    dx
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3EF49
@@ -61986,12 +62278,12 @@ loc_3EF5D:                              ; CODE XREF: death+574↑j
                 add     ax, dx
                 mov     [bp+var_2], ax
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     si, ax
                 or      si, si
                 jz      short def_3EFEA ; jumptable 0003EFEA default case, cases 4,9
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     di, ax
                 cmp     [bp+var_2], 0Fh
@@ -62080,7 +62372,7 @@ loc_3F014:                              ; CODE XREF: death+52F↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3F080
@@ -62147,7 +62439,7 @@ loc_3F094:                              ; CODE XREF: death+70D↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3F0E5
@@ -62205,7 +62497,7 @@ loc_3F0F8:                              ; CODE XREF: death+706↑j
                 call    chargeStep
                 jmp     loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    j_j_j_j_j_rest
+                call    j_j_j_j_j_j_j_j_rest
                 jmp     loc_3F22F
 ; ---------------------------------------------------------------------------
                 cmp     word_28CED, 0
@@ -62225,7 +62517,7 @@ loc_3F112:                              ; CODE XREF: death+78B↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3F174
@@ -62295,7 +62587,7 @@ loc_3F174:                              ; CODE XREF: death:def_3EFEA↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3F1A7
@@ -62317,7 +62609,7 @@ loc_3F1A7:                              ; CODE XREF: death+820↑j
                 jmp     short loc_3F1E9
 ; ---------------------------------------------------------------------------
                 call    chargeStep
-                call    j_j_j_j_j_dismissCharacter
+                call    j_j_j_j_j_j_j_j_dismissCharacter
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
                 call    sub_282CA
@@ -62339,7 +62631,7 @@ loc_3F1E9:                              ; CODE XREF: death+525↑j
                 call    sub_286B3
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    j_j_j_j_j_controlPanel
+                call    j_j_j_j_j_j_j_j_controlPanel
                 or      ax, ax
                 jz      short loc_3F22F
                 mov     [bp+var_6], 2
@@ -62500,7 +62792,7 @@ loc_3F337:                              ; CODE XREF: death+99E↑j
                 call    sub_24FF2
                 pop     cx
                 pop     cx
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 1Eh
                 push    ax
                 call    sub_25E9E
@@ -62608,7 +62900,7 @@ ovl05           segment para public 'OVERLAY' use16
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Awards_show(int, int)
-Awards_show     proc far                ; CODE XREF: j_j_j_j_j_Awards_show↑J
+Awards_show     proc far                ; CODE XREF: j_j_j_j_j_j_j_j_Awards_show↑J
 
 dest            = byte ptr -270h
 var_252         = byte ptr -252h
@@ -62821,7 +63113,7 @@ loc_3F617:                              ; CODE XREF: Awards_show+3F↑j
                 xor     ax, ax          ; jumptable 0003F4CF case 9
                 push    ax
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getArmorClass
+                call    j_j_j_j_j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 mov     [bp+var_E], 0
@@ -62829,7 +63121,7 @@ loc_3F617:                              ; CODE XREF: Awards_show+3F↑j
                 mov     ax, 1
                 push    ax
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getArmorClass
+                call    j_j_j_j_j_j_j_j_getArmorClass
                 jmp     short loc_3F682
 ; ---------------------------------------------------------------------------
 
@@ -62837,7 +63129,7 @@ loc_3F63A:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    ds              ; jumptable 0003F4CF case 10
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 xor     dx, dx
@@ -62866,7 +63158,7 @@ loc_3F66B:                              ; CODE XREF: Awards_show+3F↑j
                 mov     [bp+var_10], ax
                 push    ds
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
 
 loc_3F682:                              ; CODE XREF: Awards_show+1A8↑j
                 pop     cx
@@ -62994,7 +63286,7 @@ loc_3F6B7:                              ; CODE XREF: Awards_show+3F↑j
 loc_3F7AE:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    [bp+arg_2]      ; jumptable 0003F4CF case 13
-                call    j_j_j_j_j_getNumSkills
+                call    j_j_j_j_j_j_j_j_getNumSkills
                 pop     cx
                 mov     [bp+var_8], ax
                 cmp     [bp+var_8], 0
@@ -63014,7 +63306,7 @@ loc_3F7C7:                              ; CODE XREF: Awards_show+3B3↓j
                 or      si, si
                 jnz     short loc_3F802
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getThievery
+                call    j_j_j_j_j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     bx, si
@@ -63687,7 +63979,7 @@ loc_3FCB1:                              ; CODE XREF: Awards_show+81C↑j
 loc_3FD13:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    [bp+arg_2]      ; jumptable 0003F4CF case 15
-                call    j_j_j_j_j_experienceToNextLevel
+                call    j_j_j_j_j_j_j_j_experienceToNextLevel
                 pop     cx
                 mov     word ptr [bp+value+2], dx
                 mov     word ptr [bp+value], ax
@@ -63717,7 +64009,7 @@ loc_3FD4D:                              ; CODE XREF: Awards_show+8A5↑j
                 mov     ax, 0E73Ch
                 push    ax
                 push    [bp+arg_2]
-                call    j_j_j_j_j_getCurrentExperience
+                call    j_j_j_j_j_j_j_j_getCurrentExperience
                 pop     cx
                 push    dx
                 push    ax
@@ -64622,7 +64914,7 @@ sub_403A6       endp
 
 ; Attributes: bp-based frame
 
-setSoundAddress proc far                ; CODE XREF: j_j_j_j_j_setSoundAddress↑J
+setSoundAddress proc far                ; CODE XREF: j_j_j_j_j_j_j_j_setSoundAddress↑J
                                         ; Awards_show+BCE↑p ...
                 push    bp
                 mov     bp, sp
@@ -64639,7 +64931,7 @@ setSoundAddress endp
 
 ; Attributes: bp-based frame
 
-sortParty       proc far                ; CODE XREF: j_j_j_j_j_sortParty↑J
+sortParty       proc far                ; CODE XREF: j_j_j_j_j_j_j_j_sortParty↑J
                                         ; rosterMenu+660↓p ...
                 push    bp
                 mov     bp, sp
@@ -65508,7 +65800,7 @@ sub_4087E       endp
 
 ; Attributes: bp-based frame
 
-copyPartyToRoster proc far              ; CODE XREF: j_j_j_j_j_copyPartyToRoster↑J
+copyPartyToRoster proc far              ; CODE XREF: j_j_j_j_j_j_j_j_copyPartyToRoster↑J
                                         ; rosterMenu+672↓p ...
                 push    bp
                 mov     bp, sp
@@ -65552,7 +65844,7 @@ copyPartyToRoster endp
 ; delete character/hireling, "Your Roster is full!"
 ; Attributes: bp-based frame
 
-rosterMenu      proc far                ; CODE XREF: j_j_j_j_j_rosterMenu↑J
+rosterMenu      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_rosterMenu↑J
 
 var_5F          = byte ptr -5Fh
 var_35          = byte ptr -35h
@@ -66359,7 +66651,7 @@ loc_4115F:                              ; CODE XREF: rosterMenu+6AE↑j
                 call    Music_playSong
                 pop     cx
                 mov     byte_34B8C, 0
-                call    j_j_j_j_j_createCharacter
+                call    j_j_j_j_j_j_j_j_createCharacter
                 push    cs
                 call    near ptr copyPartyToRoster
                 call    sub_25F71
@@ -66747,7 +67039,7 @@ ovl06           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-nextExperienceLevel proc far            ; CODE XREF: j_j_j_j_j_nextExperienceLevel↑J
+nextExperienceLevel proc far            ; CODE XREF: j_j_j_j_j_j_j_j_nextExperienceLevel↑J
                                         ; experienceToNextLevel+C↓p
 
 var_2           = word ptr -2
@@ -66816,7 +67108,7 @@ nextExperienceLevel endp
 
 ; Attributes: bp-based frame
 
-experienceToNextLevel proc far          ; CODE XREF: j_j_j_j_j_experienceToNextLevel↑J
+experienceToNextLevel proc far          ; CODE XREF: j_j_j_j_j_j_j_j_experienceToNextLevel↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -66873,7 +67165,7 @@ experienceToNextLevel endp
 
 ; Attributes: bp-based frame
 
-getCurrentExperience proc far           ; CODE XREF: j_j_j_j_j_getCurrentExperience↑J
+getCurrentExperience proc far           ; CODE XREF: j_j_j_j_j_j_j_j_getCurrentExperience↑J
                                         ; experienceToNextLevel+15↑p
 
 var_6           = word ptr -6
@@ -67102,7 +67394,7 @@ sub_416F1       endp
 ; "Too dangerous to rest here!" ... "8 hours pass.  Rest complete."
 ; Attributes: bp-based frame
 
-rest            proc far                ; CODE XREF: j_j_j_j_j_rest↑J
+rest            proc far                ; CODE XREF: j_j_j_j_j_j_j_j_rest↑J
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -67123,11 +67415,11 @@ var_2           = word ptr -2
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BD67
+                call    mazeGetFlagsRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_41738
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -67246,7 +67538,7 @@ loc_417E3:                              ; CODE XREF: rest+D9↑j
 loc_417E4:                              ; CODE XREF: rest+C8↑j
                 cmp     si, 0Ah
                 jl      short loc_417C9
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_417F5
                 mov     ax, 17Ch
                 jmp     short loc_417F8
@@ -67311,14 +67603,14 @@ loc_4184F:                              ; CODE XREF: rest+148↑j
                 mov     [bx+11Fh], al
                 push    ds
                 push    [bp+var_A]
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     bx, [bp+var_A]
                 mov     [bx+125h], ax
                 push    ds
                 push    [bp+var_A]
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 mov     bx, [bp+var_A]
@@ -67477,7 +67769,7 @@ arg_4           = word ptr  0Ah
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 cmp     [bp+arg_4], 0
                 jnz     short loc_419C1
                 mov     bx, di
@@ -67774,7 +68066,7 @@ format          = dword ptr  6
                 call    _strcpy
                 pop     cx
                 pop     cx
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
 
 loc_41BB8:                              ; CODE XREF: sub_41B2B+77↑j
                 mov     word_290D5, 25h ; '%'
@@ -67930,7 +68222,7 @@ arg_0           = word ptr  6
                 mov     [bp+var_2], 0
                 or      di, di
                 jnz     short loc_41D63
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -68217,7 +68509,7 @@ sub_41EF1       endp
 ; cpanel.icn, load/save "*.mm3", quit confirmation, Mr. Wizard's help
 ; Attributes: bp-based frame
 
-controlPanel    proc far                ; CODE XREF: j_j_j_j_j_controlPanel↑J
+controlPanel    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_controlPanel↑J
 
 s               = word ptr -24h
 var_22          = word ptr -22h
@@ -68914,7 +69206,7 @@ var_2           = word ptr -2
                 call    sub_24F83
                 add     sp, 6
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, Party_minutes
                 mov     bx, 3Ch ; '<'
                 xor     dx, dx
@@ -69050,7 +69342,7 @@ arg_2           = word ptr  8
                 mov     di, [bp+arg_2]
                 mov     byte ptr [si], 0F8h
                 mov     byte ptr [di], 8
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -69068,7 +69360,7 @@ arg_2           = word ptr  8
 
 loc_425DF:                              ; CODE XREF: sub_425AB+24↑j
                                         ; sub_425AB+2B↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -69091,7 +69383,7 @@ loc_42603:                              ; CODE XREF: sub_425AB+32↑j
 
 loc_4260D:                              ; CODE XREF: sub_425AB+47↑j
                                         ; sub_425AB+4E↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -69109,7 +69401,7 @@ loc_4260D:                              ; CODE XREF: sub_425AB+47↑j
 
 loc_42631:                              ; CODE XREF: sub_425AB+75↑j
                                         ; sub_425AB+7C↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -69169,7 +69461,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_24F83
                 add     sp, 6
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     ax, 6
                 push    ax
                 call    sub_153EA
@@ -69242,7 +69534,7 @@ loc_426D2:                              ; CODE XREF: sub_4265B+6F↑j
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jnz     short loc_42734
                 jmp     loc_42A7F
 ; ---------------------------------------------------------------------------
@@ -69305,7 +69597,7 @@ loc_42772:                              ; CODE XREF: sub_4265B+112↑j
                 mov     cl, 4
                 sar     ax, cl
                 mov     [bp+var_2], ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     [bp+var_4], ax
                 mov     al, byte_36FE5
@@ -69449,7 +69741,7 @@ loc_42889:                              ; CODE XREF: sub_4265B+229↑j
 ; ---------------------------------------------------------------------------
 
 loc_428B3:                              ; CODE XREF: sub_4265B+253↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     [bp+var_4], ax
                 mov     al, byte_36FE5
@@ -70694,14 +70986,14 @@ loc_43187:                              ; CODE XREF: sub_430A8+80↑j
 ; ---------------------------------------------------------------------------
 
 loc_4318B:                              ; CODE XREF: sub_430A8+146↓j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
                 mov     bx, ax
                 cmp     byte ptr [bx+si-37ACh], 0
                 jz      short loc_431EA
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -71189,20 +71481,20 @@ arg_0           = word ptr  6
                 jz      short loc_434F4
                 cmp     si, 68h ; 'h'
                 jz      short loc_434F4
-                mov     byte_2884B, 1
+                mov     Maze_wrapMode, 1
                 jmp     short loc_434F9
 ; ---------------------------------------------------------------------------
 
 loc_434F4:                              ; CODE XREF: sub_434D6+B↑j
                                         ; sub_434D6+10↑j ...
-                mov     byte_2884B, 0
+                mov     Maze_wrapMode, 0
 
 loc_434F9:                              ; CODE XREF: sub_434D6+1C↑j
                 push    cs
                 call    near ptr sub_434A6
                 push    cs
                 call    near ptr sub_416F1
-                mov     byte_34C2E, 0
+                mov     Maze_curSlot, 0
                 push    si              ; format
                 push    cs
                 call    near ptr sub_432B9
@@ -71212,7 +71504,7 @@ loc_434F9:                              ; CODE XREF: sub_434D6+1C↑j
                 call    near ptr sub_430A8
                 pop     cx
                 push    si              ; format
-                call    j_j_j_j_j_Map_load
+                call    j_j_j_j_j_j_j_j_Map_load
                 pop     cx
                 call    sub_1B6D1
                 cmp     Engine_mode, 0
@@ -71418,7 +71710,7 @@ sub_435A0       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Map_load(char *format)
-Map_load        proc far                ; CODE XREF: j_j_j_j_j_Map_load↑J
+Map_load        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_Map_load↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -71951,7 +72243,7 @@ Map_load        endp
 ; (BinDiff sim .78 conf .98, unverified)
 ; Attributes: bp-based frame
 
-giveCharDamage  proc far                ; CODE XREF: j_j_j_j_j_giveCharDamage↑J
+giveCharDamage  proc far                ; CODE XREF: j_j_j_j_j_j_j_j_giveCharDamage↑J
 
 var_10          = word ptr -10h
 var_E           = word ptr -0Eh
@@ -72687,7 +72979,7 @@ loc_43F45:                              ; CODE XREF: sub_43E0C+32↑j
 
 loc_43F7E:                              ; CODE XREF: sub_43E0C+166↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 call    sub_25DFE
                 push    word_36FB4
                 push    word_36FB2
@@ -74176,7 +74468,7 @@ jpt_449A1       dw offset loc_449A6     ; DATA XREF: sub_4495A+47↑r
 ; "Too dangerous to dismiss here!"
 ; Attributes: bp-based frame
 
-dismissCharacter proc far               ; CODE XREF: j_j_j_j_j_dismissCharacter↑J
+dismissCharacter proc far               ; CODE XREF: j_j_j_j_j_j_j_j_dismissCharacter↑J
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -74188,7 +74480,7 @@ dest            = dword ptr -4
                 sub     sp, 0Ah
                 push    si
                 push    di
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -74295,7 +74587,7 @@ loc_44B4F:                              ; CODE XREF: dismissCharacter+85↑j
                 call    sub_26685
                 pop     cx
                 call    sub_2811C
-                call    j_j_j_j_j_sortParty
+                call    j_j_j_j_j_j_j_j_sortParty
                 mov     ax, 12Fh
                 push    ax              ; n
                 push    word ptr [bp+dest+2]
@@ -75552,7 +75844,7 @@ loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
                 push    ax              ; buffer
                 call    _sprintf
                 add     sp, 6
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     byte_29116, 0
                 or      di, di
                 jz      short loc_45502
@@ -75738,7 +76030,7 @@ loc_4563C:                              ; CODE XREF: ovl07:2095↑j
                 call    _strcpy
                 pop     cx
                 pop     cx
-                call    j_j_j_j_resetBlacksmithWares
+                call    j_j_j_j_j_j_j_resetBlacksmithWares
                 mov     Party_day, 1
                 mov     Party_year, 1F4h
                 call    sub_25F71
@@ -75812,7 +76104,7 @@ loc_456B8:                              ; CODE XREF: ovl07:20E1↑j
                 call    Music_deinit
                 add     sp, 14h
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 call    sub_254BA
                 call    sub_280EA
                 mov     ax, 1
@@ -75857,7 +76149,7 @@ loc_4573C:                              ; CODE XREF: ovl07:2115↑j
                 call    sub_22632
 
 loc_45758:                              ; CODE XREF: ovl07:21B1↑j
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 cmp     si, 1Bh
                 jnz     short loc_45767
                 call    far ptr sub_27F86
@@ -75899,7 +76191,7 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, Engine_mode
                 mov     [bp+var_7], al
                 mov     Engine_mode, 0FFh
@@ -76732,7 +77024,7 @@ def_45C8F:                              ; CODE XREF: sub_45C21+69↑j
                                         ; sub_45C21+6E↑j ...
                 push    ds              ; jumptable 00045C8F default case, cases 5-7
                 push    [bp+arg_0]
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -76778,7 +77070,7 @@ def_45DD9:                              ; CODE XREF: sub_45C21+1B4↑j
                                         ; sub_45C21+1B8↑j ...
                 push    ds              ; jumptable 00045DD9 default case, cases 5-7
                 push    [bp+arg_0]
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -78086,7 +78378,7 @@ s               = dword ptr  10h
 
 loc_4685E:                              ; CODE XREF: sub_46847+F↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 3FDFh
                 push    ax
@@ -78373,14 +78665,14 @@ loc_46AC8:                              ; CODE XREF: sub_46847+274↑j
 loc_46AE8:                              ; CODE XREF: sub_46847+294↑j
                 push    word ptr [bp+s+2]
                 push    word ptr [bp+s]
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 les     bx, [bp+s]
                 mov     es:[bx+125h], ax
                 push    word ptr [bp+s+2]
                 push    word ptr [bp+s]
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 les     bx, [bp+s]
@@ -78411,7 +78703,7 @@ jpt_46A48       dw offset loc_46A71     ; DATA XREF: sub_46847+201↑r
 ; (BinDiff sim .59 conf .93, unverified)
 ; Attributes: bp-based frame
 
-checkClasses    proc far                ; CODE XREF: j_j_j_j_j_checkClasses↑J
+checkClasses    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_checkClasses↑J
                                         ; sub_46C21+70↓p ...
 
 arg_0           = word ptr  6
@@ -79008,7 +79300,7 @@ sub_46DE4       endp
 ; dice.vga, create.raw, create.icn
 ; Attributes: bp-based frame
 
-createCharacter proc far                ; CODE XREF: j_j_j_j_j_createCharacter↑J
+createCharacter proc far                ; CODE XREF: j_j_j_j_j_j_j_j_createCharacter↑J
 
 buffer          = byte ptr -200h
 var_70          = byte ptr -70h
@@ -81413,7 +81705,7 @@ sub_47ECE       endp
 ; bank.m, bank.icn, bank2.icn
 ; Attributes: bp-based frame
 
-townBank        proc far                ; CODE XREF: j_j_j_j_j_townBank↑J
+townBank        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townBank↑J
 
 var_32          = word ptr -32h
 buffer          = byte ptr -30h
@@ -81769,7 +82061,7 @@ sub_483FB       endp
 ; guild.m, spldesc.bin
 ; Attributes: bp-based frame
 
-townGuild       proc far                ; CODE XREF: j_j_j_j_j_townGuild↑J
+townGuild       proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townGuild↑J
 
 var_2           = word ptr -2
 
@@ -82035,7 +82327,7 @@ townGuild       endp ; sp-analysis failed
 ; towninn.m
 ; Attributes: bp-based frame
 
-townInn         proc far                ; CODE XREF: j_j_j_j_j_townInn↑J
+townInn         proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townInn↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -82175,7 +82467,7 @@ sub_4877A       endp
 ; honky.m, tavern.bin
 ; Attributes: bp-based frame
 
-townTavern      proc far                ; CODE XREF: j_j_j_j_j_townTavern↑J
+townTavern      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townTavern↑J
 
 buffer          = byte ptr -1Eh
 var_A           = word ptr -0Ah
@@ -82545,7 +82837,7 @@ loc_48AA2:                              ; CODE XREF: townTavern+2D1↑j
 loc_48ABA:                              ; CODE XREF: townTavern+301↑j
                 mov     ax, 0C7h
                 push    ax              ; maxlen
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -82569,7 +82861,7 @@ loc_48ABA:                              ; CODE XREF: townTavern+301↑j
                 push    ax              ; dest
                 call    _strncpy_0
                 add     sp, 0Ah
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -82577,7 +82869,7 @@ loc_48ABA:                              ; CODE XREF: townTavern+301↑j
                 mov     al, [bx-379Ch]
                 inc     al
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -82599,7 +82891,7 @@ loc_48ABA:                              ; CODE XREF: townTavern+301↑j
                 dec     dx
                 cmp     ax, dx
                 jle     short loc_48B53
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -82954,7 +83246,7 @@ loc_48DED:                              ; CODE XREF: sub_48D4B+46C↓j
                 mov     [bp+var_1E], ax
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+125h]
@@ -83276,7 +83568,7 @@ loc_49095:                              ; CODE XREF: sub_48D4B+345↑j
                 mov     [si+15h], al
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
@@ -83491,7 +83783,7 @@ sub_48D4B       endp ; sp-analysis failed
 ; Attributes: bp-based frame
 
 ; int __cdecl __far trainingNeedsExperience(char *format)
-trainingNeedsExperience proc far        ; CODE XREF: j_j_j_j_j_trainingNeedsExperience↑J
+trainingNeedsExperience proc far        ; CODE XREF: j_j_j_j_j_j_j_j_trainingNeedsExperience↑J
                                         ; townTraining+11F↓p
 
 var_4           = word ptr -4
@@ -83504,7 +83796,7 @@ format          = dword ptr  6
                 push    si
                 mov     si, word ptr [bp+format]
                 push    si
-                call    j_j_j_j_j_experienceToNextLevel
+                call    j_j_j_j_j_j_j_j_experienceToNextLevel
                 pop     cx
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
@@ -83596,7 +83888,7 @@ trainingNeedsExperience endp
 ; grounds.m, train.icn
 ; Attributes: bp-based frame
 
-townTraining    proc far                ; CODE XREF: j_j_j_j_j_townTraining↑J
+townTraining    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townTraining↑J
 
 buffer          = byte ptr -3Ah
 var_12          = word ptr -12h
@@ -83853,12 +84145,12 @@ loc_49543:                              ; CODE XREF: townTraining+1D6↑j
 
 loc_4957E:                              ; CODE XREF: townTraining+211↑j
                 push    si
-                call    j_j_j_j_j_nextExperienceLevel
+                call    j_j_j_j_j_j_j_j_nextExperienceLevel
                 pop     cx
                 push    ax
                 push    dx
                 push    si
-                call    j_j_j_j_j_getCurrentExperience
+                call    j_j_j_j_j_j_j_j_getCurrentExperience
                 pop     cx
                 sub     ax, [si+12Bh]
                 sbb     dx, [si+12Dh]
@@ -83892,13 +84184,13 @@ loc_495CB:                              ; CODE XREF: townTraining+24C↑j
                 pop     cx
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxSP
+                call    j_j_j_j_j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 mov     [si+127h], ax
@@ -84059,7 +84351,7 @@ sub_496FA       endp
 ; dungeon.m ("Sorry, the Smithy's closed")
 ; Attributes: bp-based frame
 
-townSmithy      proc far                ; CODE XREF: j_j_j_j_j_townSmithy↑J
+townSmithy      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_townSmithy↑J
 
 format          = byte ptr -10h
 var_4           = word ptr -4
@@ -84287,7 +84579,7 @@ townSmithy      endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far loadHireFaces(char *format, int, int, int)
-loadHireFaces   proc far                ; CODE XREF: j_j_j_j_j_loadHireFaces↑J
+loadHireFaces   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_loadHireFaces↑J
 
 var_12          = byte ptr -12h
 var_2           = word ptr -2
@@ -84326,7 +84618,7 @@ loc_49943:                              ; CODE XREF: loadHireFaces+20↑j
                 call    sub_28144
                 or      di, di
                 jz      short loc_49958
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 jmp     short loc_49970
 ; ---------------------------------------------------------------------------
 
@@ -85449,7 +85741,7 @@ jpt_4A09E       dw offset loc_4A0A3     ; DATA XREF: sub_4A02A+74↑r
 ; Attributes: bp-based frame
 
 ; int __cdecl __far attack(int, int)
-attack          proc far                ; CODE XREF: j_j_j_j_j_attack↑J
+attack          proc far                ; CODE XREF: j_j_j_j_j_j_j_j_attack↑J
                                         ; quickFight+32↓p ...
 
 var_7           = byte ptr -7
@@ -86064,7 +86356,7 @@ jpt_4A14F       dw offset loc_4A15B     ; DATA XREF: attack+1F↑r
 
 ; Attributes: bp-based frame
 
-allHaveGone     proc far                ; CODE XREF: j_j_j_j_j_allHaveGone↑J
+allHaveGone     proc far                ; CODE XREF: j_j_j_j_j_j_j_j_allHaveGone↑J
                                         ; nextChar+38↓p ...
                 push    bp
                 mov     bp, sp
@@ -86175,7 +86467,7 @@ jpt_4A5B5       dw offset loc_4A5C0     ; DATA XREF: allHaveGone+6F↑r
 ; (BinDiff sim .81 conf .90, unverified)
 ; Attributes: bp-based frame
 
-sortCombatParty proc far                ; CODE XREF: j_j_j_j_j_sortCombatParty↑J
+sortCombatParty proc far                ; CODE XREF: j_j_j_j_j_j_j_j_sortCombatParty↑J
                                         ; run+39↓p
                 push    bp
                 mov     bp, sp
@@ -86992,7 +87284,7 @@ jpt_4A7F5       dw offset loc_4A7FA     ; DATA XREF: sub_4A779+7C↑r
 ; (BinDiff sim .77 conf .96, unverified)
 ; Attributes: bp-based frame
 
-doMonsterTurn   proc far                ; CODE XREF: j_j_j_j_j_doMonsterTurn↑J
+doMonsterTurn   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_doMonsterTurn↑J
                                         ; nextChar+142↓p
 
 s               = byte ptr -1Ch
@@ -87512,7 +87804,7 @@ loc_4AE8A:                              ; CODE XREF: doMonsterTurn+31B↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+var_C]
-                call    j_j_j_j_j_getArmorClass
+                call    j_j_j_j_j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 push    ax
@@ -87612,7 +87904,7 @@ jpt_4AC43       dw offset def_4AC5F     ; DATA XREF: doMonsterTurn+DB↑r
 
 ; Attributes: bp-based frame
 
-charsCantAct    proc far                ; CODE XREF: j_j_j_j_j_charsCantAct↑J
+charsCantAct    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_charsCantAct↑J
                                         ; nextChar+C2↓p
                 push    bp
                 mov     bp, sp
@@ -87677,7 +87969,7 @@ jpt_4AF82       dw offset loc_4AF8B     ; DATA XREF: charsCantAct+2B↑r
 
 ; Attributes: bp-based frame
 
-nextChar        proc far                ; CODE XREF: j_j_j_j_j_nextChar↑J
+nextChar        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_nextChar↑J
                                         ; sub_4B7B5+9F↓p ...
 
 var_2           = word ptr -2
@@ -87921,7 +88213,7 @@ jpt_4B0CC       dw offset loc_4B0D1     ; DATA XREF: nextChar+121↑r
 
 ; Attributes: bp-based frame
 
-quickFight      proc far                ; CODE XREF: j_j_j_j_j_quickFight↑J
+quickFight      proc far                ; CODE XREF: j_j_j_j_j_j_j_j_quickFight↑J
                                         ; sub_4B7B5+1CA↓p
                 push    bp
                 mov     bp, sp
@@ -88149,7 +88441,7 @@ jpt_4B1DB       dw offset loc_4B1E0     ; DATA XREF: sub_4B194+47↑r
 ; (BinDiff sim .72 conf .94, unverified)
 ; Attributes: bp-based frame
 
-getWeaponDamage proc far                ; CODE XREF: j_j_j_j_j_getWeaponDamage↑J
+getWeaponDamage proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getWeaponDamage↑J
                                         ; sub_4B194+F↑p
 
 var_2           = word ptr -2
@@ -88337,7 +88629,7 @@ sub_4B37C       endp
 
 ; Attributes: bp-based frame
 
-monsterSavingThrow proc far             ; CODE XREF: j_j_j_j_j_monsterSavingThrow↑J
+monsterSavingThrow proc far             ; CODE XREF: j_j_j_j_j_j_j_j_monsterSavingThrow↑J
                                         ; sub_49B8B+15F↑p ...
 
 arg_0           = word ptr  6
@@ -88374,7 +88666,7 @@ monsterSavingThrow endp
 
 ; Attributes: bp-based frame
 
-run             proc far                ; CODE XREF: j_j_j_j_j_run↑J
+run             proc far                ; CODE XREF: j_j_j_j_j_j_j_j_run↑J
                                         ; quickFight+52↑p ...
                 push    bp              ; max
                 mov     bp, sp
@@ -88386,7 +88678,7 @@ run             proc far                ; CODE XREF: j_j_j_j_j_run↑J
                 pop     cx
                 pop     cx
                 push    ax
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -88421,7 +88713,7 @@ run             endp
 ; (BinDiff sim .64 conf .90, unverified)
 ; Attributes: bp-based frame
 
-block           proc far                ; CODE XREF: j_j_j_j_j_block↑J
+block           proc far                ; CODE XREF: j_j_j_j_j_j_j_j_block↑J
                                         ; quickFight+4B↑p ...
                 push    bp
                 mov     bp, sp
@@ -88491,7 +88783,7 @@ sub_4B432       endp
 
 ; Attributes: bp-based frame
 
-getMonsterDescriptions proc far         ; CODE XREF: j_j_j_j_j_getMonsterDescriptions↑J
+getMonsterDescriptions proc far         ; CODE XREF: j_j_j_j_j_j_j_j_getMonsterDescriptions↑J
                                         ; sub_4B7B5+C9↓p ...
 
 var_7A          = byte ptr -7Ah
@@ -88650,7 +88942,7 @@ getMonsterDescriptions endp
 
 ; Attributes: bp-based frame
 
-setSpeedTable   proc far                ; CODE XREF: j_j_j_j_j_setSpeedTable↑J
+setSpeedTable   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_setSpeedTable↑J
                                         ; attack+3E5↑p ...
 
 s               = byte ptr -20h
@@ -89162,7 +89454,7 @@ def_4B911:                              ; CODE XREF: sub_4B7B5+158↑j
                 cmp     byte_2886D, 0   ; jumptable 0004B911 default case
                                         ; jumptable 0004B931 default case
                 jz      short loc_4B960
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jnz     short loc_4B960
                 cmp     byte_2886D, 3
                 jnz     short loc_4B965
@@ -89297,7 +89589,7 @@ loc_4BA34:                              ; CODE XREF: sub_4B7B5+1CD↑j
                 call    sub_286B3
                 jmp     short loc_4BA6B
 ; ---------------------------------------------------------------------------
-                call    j_j_j_j_j_controlPanel
+                call    j_j_j_j_j_j_j_j_controlPanel
 
 loc_4BA6B:                              ; CODE XREF: sub_4B7B5+2A1↑j
                                         ; sub_4B7B5+2A8↑j ...
@@ -89628,7 +89920,7 @@ sub_4BD90       endp
 
 ; Attributes: bp-based frame
 
-Screen_saveBackground proc far          ; CODE XREF: j_j_j_j_j_Screen_saveBackground↑J
+Screen_saveBackground proc far          ; CODE XREF: j_j_j_j_j_j_j_j_Screen_saveBackground↑J
                                         ; sub_4C358+3D↓p ...
                 push    bp
                 mov     bp, sp
@@ -89799,7 +90091,7 @@ loc_4BE54:                              ; CODE XREF: sub_4BE23:loc_4BE52↑j
                 mov     [bp+var_8], ax
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -90028,7 +90320,7 @@ var_2           = word ptr -2
                 sub     sp, 6
                 push    si
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, byte_34B8C
                 mov     ah, 0
                 mov     [bp+var_4], ax
@@ -90132,7 +90424,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 sub     sp, 66h
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
@@ -90202,7 +90494,7 @@ arg_2           = word ptr  8
                 mov     bp, sp
                 sub     sp, 66h
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
@@ -90264,7 +90556,7 @@ sub_4C19A       endp
 
 ; Attributes: bp-based frame
 
-Spells_subSpellCost proc far            ; CODE XREF: j_j_j_j_j_Spells_subSpellCost↑J
+Spells_subSpellCost proc far            ; CODE XREF: j_j_j_j_j_j_j_j_Spells_subSpellCost↑J
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -91091,7 +91383,7 @@ var_2           = word ptr -2
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_4C7D6
@@ -91102,7 +91394,7 @@ var_2           = word ptr -2
                 push    word ptr [bx+165h]
                 push    [bp+var_4]
                 push    [bp+var_2]
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_4C7D6
@@ -91876,7 +92168,7 @@ sub_4CC76       endp
 ; lloyds.icn
 ; Attributes: bp-based frame
 
-spellLloydsBeacon proc far              ; CODE XREF: j_j_j_j_j_spellLloydsBeacon↑J
+spellLloydsBeacon proc far              ; CODE XREF: j_j_j_j_j_j_j_j_spellLloydsBeacon↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -91884,7 +92176,7 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -92204,7 +92496,7 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 4DA3h
                 push    ax
@@ -92555,7 +92847,7 @@ sub_4D19C       endp
 sub_4D1E4       proc far                ; CODE XREF: sub_28603↑J
                 push    bp
                 mov     bp, sp
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -92622,7 +92914,7 @@ sub_4D1E4       endp
 sub_4D269       proc far                ; CODE XREF: sub_284AA↑J
                 push    bp
                 mov     bp, sp
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -92709,7 +93001,7 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -92728,7 +93020,7 @@ loc_4D313:                              ; CODE XREF: sub_4D2F8+103↓j
 
 loc_4D31A:                              ; CODE XREF: sub_4D2F8+19↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_4], ax
@@ -92801,7 +93093,7 @@ loc_4D3B9:                              ; CODE XREF: sub_4D2F8+BC↑j
 
 loc_4D3C0:                              ; CODE XREF: sub_4D2F8+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
-                cmp     byte_2884B, 0   ; jumptable 0004D3BB case 0
+                cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 0
                 jz      short loc_4D3CC
                 mov     ax, 70h ; 'p'
                 jmp     short loc_4D3CF
@@ -92819,10 +93111,10 @@ loc_4D3CF:                              ; CODE XREF: sub_4D2F8+D2↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 push    ax
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_4D3F3
                 xor     ax, ax
                 jmp     short loc_4D3F6
@@ -92847,7 +93139,7 @@ loc_4D3FE:                              ; CODE XREF: sub_4D2F8+101↑j
 
 loc_4D40A:                              ; CODE XREF: sub_4D2F8+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
-                cmp     byte_2884B, 0   ; jumptable 0004D3BB case 1
+                cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 1
                 jz      short loc_4D416
                 mov     ax, 70h ; 'p'
                 jmp     short loc_4D419
@@ -92865,10 +93157,10 @@ loc_4D419:                              ; CODE XREF: sub_4D2F8+11C↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 push    ax
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_4D43D
                 xor     ax, ax
                 jmp     short loc_4D440
@@ -92893,7 +93185,7 @@ loc_4D448:                              ; CODE XREF: sub_4D2F8+14B↑j
 
 loc_4D454:                              ; CODE XREF: sub_4D2F8+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
-                cmp     byte_2884B, 0   ; jumptable 0004D3BB case 3
+                cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 3
                 jz      short loc_4D460
                 mov     ax, 70h ; 'p'
                 jmp     short loc_4D463
@@ -92911,10 +93203,10 @@ loc_4D463:                              ; CODE XREF: sub_4D2F8+166↑j
                 mov     ah, 0
                 sub     ax, [bp+var_2]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 push    ax
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_4D487
                 xor     ax, ax
                 jmp     short loc_4D48A
@@ -92938,7 +93230,7 @@ loc_4D492:                              ; CODE XREF: sub_4D2F8+195↑j
 
 loc_4D49A:                              ; CODE XREF: sub_4D2F8+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
-                cmp     byte_2884B, 0   ; jumptable 0004D3BB case 2
+                cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 2
                 jz      short loc_4D4A6
                 mov     ax, 70h ; 'p'
                 jmp     short loc_4D4A9
@@ -92956,10 +93248,10 @@ loc_4D4A9:                              ; CODE XREF: sub_4D2F8+1AC↑j
                 mov     ah, 0
                 add     ax, [bp+var_2]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 push    ax
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_4D4CD
                 xor     ax, ax
                 jmp     short loc_4D4D0
@@ -93162,7 +93454,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 dec     sp
                 dec     sp
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -93185,7 +93477,7 @@ loc_4D628:                              ; CODE XREF: sub_4D608+18↑j
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                call    j_j_j_j_j_rest
+                call    j_j_j_j_j_j_j_j_rest
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
@@ -93251,7 +93543,7 @@ var_2           = word ptr -2
                 dec     sp
                 dec     sp
                 push    si              ; format
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -93267,7 +93559,7 @@ var_2           = word ptr -2
 
 loc_4D6B3:                              ; CODE XREF: sub_4D691+19↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
@@ -93644,7 +93936,7 @@ loc_4D94B:                              ; CODE XREF: sub_4D901+3C↑j
                                         ; sub_4D901+42↑j
                 push    ds
                 push    si
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -93690,7 +93982,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 4
                 push    si
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -93730,7 +94022,7 @@ loc_4D9A4:                              ; CODE XREF: sub_4D985+1A↑j
                 cbw
                 add     ax, [bp+var_2]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 cmp     ax, 1111h
                 jz      short loc_4DA3B
@@ -94258,7 +94550,7 @@ sub_4DD6E       endp
 
 ; Attributes: bp-based frame
 
-Spells_divineIntervention proc far      ; CODE XREF: j_j_j_j_j_Spells_divineIntervention↑J
+Spells_divineIntervention proc far      ; CODE XREF: j_j_j_j_j_j_j_j_Spells_divineIntervention↑J
 
 var_2           = word ptr -2
 
@@ -94313,7 +94605,7 @@ loc_4DDC7:                              ; CODE XREF: Spells_divineIntervention+7
                 jnz     short loc_4DE0B
                 push    ds
                 push    si              ; ps
-                call    j_j_j_j_j_getMaxHP
+                call    j_j_j_j_j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
@@ -94353,7 +94645,7 @@ ovl12           segment para public 'OVERLAY' use16
 ; Attributes: bp-based frame
 
 ; int __cdecl __far itemsDialog(char *format, int, int, int)
-itemsDialog     proc far                ; CODE XREF: j_j_j_j_j_itemsDialog↑J
+itemsDialog     proc far                ; CODE XREF: j_j_j_j_j_j_j_j_itemsDialog↑J
 
 s               = word ptr -28h
 var_26          = word ptr -26h
@@ -94605,7 +94897,7 @@ loc_4E002:                              ; CODE XREF: itemsDialog+1F3↓j
 loc_4E00B:                              ; CODE XREF: itemsDialog+1AF↑j
                 push    di
                 push    si
-                call    j_j_j_j_j_equipItem
+                call    j_j_j_j_j_j_j_j_equipItem
                 pop     cx
                 pop     cx
                 jmp     def_4DFB5       ; jumptable 0004DFB5 default case, cases 3,7
@@ -95102,7 +95394,7 @@ loc_4E387:                              ; CODE XREF: itemsDialog+54F↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    j_j_j_j_j_identifyOrFix
+                call    j_j_j_j_j_j_j_j_identifyOrFix
                 add     sp, 0Ah
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -95147,7 +95439,7 @@ loc_4E3D8:                              ; CODE XREF: itemsDialog+477↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    j_j_j_j_j_identifyOrFix
+                call    j_j_j_j_j_j_j_j_identifyOrFix
                 add     sp, 0Ah
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -95225,7 +95517,7 @@ loc_4E420:                              ; CODE XREF: itemsDialog+5EB↑j
                 call    Music_deinit
                 add     sp, 14h
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 call    sub_254BA
                 call    sub_280EA
                 mov     ax, 1
@@ -95671,7 +95963,7 @@ jpt_4DFB5       dw offset loc_4DFBA     ; DATA XREF: itemsDialog+185↑r
 ; Attributes: bp-based frame
 
 ; int __cdecl __far specialsDialog(int, int)
-specialsDialog  proc far                ; CODE XREF: j_j_j_j_j_specialsDialog↑J
+specialsDialog  proc far                ; CODE XREF: j_j_j_j_j_j_j_j_specialsDialog↑J
                                         ; itemsDialog+5F4↑p
 
 var_D0          = byte ptr -0D0h
@@ -96212,7 +96504,7 @@ sub_4EC06       endp
 
 ; Attributes: bp-based frame
 
-getThievery     proc far                ; CODE XREF: j_j_j_j_j_getThievery↑J
+getThievery     proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getThievery↑J
 
 arg_0           = word ptr  6
 
@@ -96785,7 +97077,7 @@ arg_4           = word ptr  0Ah
                 sub     sp, 8
                 push    si
                 push    di
-                cmp     byte_2884B, 0
+                cmp     Maze_wrapMode, 0
                 jz      short loc_4EFC8
                 jmp     loc_4F230
 ; ---------------------------------------------------------------------------
@@ -96923,7 +97215,7 @@ loc_4F0A4:                              ; CODE XREF: sub_4EFB6+AE↑j
                 cbw
                 add     ax, [bp+arg_0]
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 cmp     ax, 1111h
                 jnz     short loc_4F0DE
@@ -96986,7 +97278,7 @@ loc_4F11B:                              ; CODE XREF: sub_4EFB6+161↑j
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 mov     dl, byte_36FE4
                 mov     dh, 0
@@ -97006,7 +97298,7 @@ loc_4F11B:                              ; CODE XREF: sub_4EFB6+161↑j
 ; ---------------------------------------------------------------------------
 
 loc_4F178:                              ; CODE XREF: sub_4EFB6+1BE↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -97016,7 +97308,7 @@ loc_4F178:                              ; CODE XREF: sub_4EFB6+1BE↑j
 ; ---------------------------------------------------------------------------
 
 loc_4F189:                              ; CODE XREF: sub_4EFB6+1B9↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -97026,7 +97318,7 @@ loc_4F189:                              ; CODE XREF: sub_4EFB6+1B9↑j
 ; ---------------------------------------------------------------------------
 
 loc_4F19A:                              ; CODE XREF: sub_4EFB6+1C0↑j
-                mov     al, byte_34C2E
+                mov     al, Maze_curSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -97044,7 +97336,7 @@ loc_4F1A9:                              ; CODE XREF: sub_4EFB6+1D1↑j
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    [bp+arg_0]
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
                 mov     si, [bp+arg_0]
                 mov     ax, [bp+arg_2]
@@ -97097,7 +97389,7 @@ def_4F1DB:                              ; CODE XREF: sub_4EFB6+221↑j
                 push    di
                 push    [bp+var_2]
                 push    si
-                call    sub_1BE3E
+                call    mazeSetBits
                 add     sp, 8
 
 loc_4F21C:                              ; CODE XREF: sub_4EFB6+125↑j
@@ -97158,7 +97450,7 @@ format          = dword ptr  6
                 mov     al, byte_36FE5
                 mov     ah, 0
                 push    ax
-                call    sub_1BC15
+                call    mazeGetWordRel
                 add     sp, 6
                 neg     ax
                 sbb     ax, ax
@@ -97365,7 +97657,7 @@ loc_4F3F5:                              ; CODE XREF: sub_4F24E+20A↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_j_j_j_j_attack
+                call    j_j_j_j_j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97475,7 +97767,7 @@ loc_4F4E5:                              ; CODE XREF: sub_4F24E+2F7↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_j_j_j_j_attack
+                call    j_j_j_j_j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97589,7 +97881,7 @@ loc_4F5D5:                              ; CODE XREF: sub_4F24E+3E7↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_j_j_j_j_attack
+                call    j_j_j_j_j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97703,7 +97995,7 @@ loc_4F6C5:                              ; CODE XREF: sub_4F24E+4D6↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_j_j_j_j_attack
+                call    j_j_j_j_j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97986,7 +98278,7 @@ loc_4F913:                              ; CODE XREF: sub_4F74F+44↑j
                 mov     ah, 0
                 push    ax
                 push    word ptr [bp+format]
-                call    j_j_j_j_j_Spells_subSpellCost
+                call    j_j_j_j_j_j_j_j_Spells_subSpellCost
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -98278,7 +98570,7 @@ loc_4FADF:                              ; CODE XREF: sub_4F74F+38B↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FAE2:                              ; CODE XREF: sub_4F74F+36C↑j
-                call    j_j_j_j_j_spellLloydsBeacon
+                call    j_j_j_j_j_j_j_j_spellLloydsBeacon
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -98648,7 +98940,7 @@ loc_4FD17:                              ; CODE XREF: sub_4F74F+205↑j
 
 loc_4FD1F:                              ; CODE XREF: sub_4F74F+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    j_j_j_j_j_Spells_divineIntervention ; jumptable 0004F954 case 76
+                call    j_j_j_j_j_j_j_j_Spells_divineIntervention ; jumptable 0004F954 case 76
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -99069,7 +99361,7 @@ loc_50068:                              ; CODE XREF: sub_4FF60+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_50075:                              ; CODE XREF: sub_4FF60+10D↑j
-                call    j_j_j_j_j_spellLloydsBeacon
+                call    j_j_j_j_j_j_j_j_spellLloydsBeacon
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -99392,7 +99684,7 @@ loc_5021C:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_50223:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    j_j_j_j_j_Spells_divineIntervention ; jumptable 0004FF71 case 75
+                call    j_j_j_j_j_j_j_j_Spells_divineIntervention ; jumptable 0004FF71 case 75
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -99601,7 +99893,7 @@ loc_503FB:                              ; CODE XREF: sub_502D2+120↑j
                 mov     Engine_mode, al
                 push    word ptr [bp+format] ; int
                 push    si              ; int
-                call    j_j_j_j_j_Awards_show
+                call    j_j_j_j_j_j_j_j_Awards_show
                 pop     cx
                 pop     cx
 
@@ -100818,7 +101110,7 @@ loc_50DCC:                              ; CODE XREF: sub_505DF+7E3↑j
                 push    [bp+var_4]      ; int
                 push    di
                 push    word ptr [bp+format] ; format
-                call    j_j_j_j_j_itemsDialog
+                call    j_j_j_j_j_j_j_j_itemsDialog
                 add     sp, 0Ah
                 cmp     ax, 1
                 jz      short loc_50DEE
@@ -101284,7 +101576,7 @@ sub_511C8       endp
 ; (BinDiff sim .83 conf .93, unverified)
 ; Attributes: bp-based frame
 
-getNumSkills    proc far                ; CODE XREF: j_j_j_j_j_getNumSkills↑J
+getNumSkills    proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getNumSkills↑J
                                         ; sub_5152B+114↓p
 
 arg_0           = word ptr  6
@@ -101362,7 +101654,7 @@ sub_5122D       endp
 
 ; Attributes: bp-based frame
 
-getMaxSP        proc far                ; CODE XREF: j_j_j_j_j_getMaxSP↑J
+getMaxSP        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getMaxSP↑J
                                         ; sub_5152B+2F4↓p ...
 
 var_B           = byte ptr -0Bh
@@ -101562,7 +101854,7 @@ getMaxSP        endp
 
 ; Attributes: bp-based frame
 
-getMaxHP        proc far                ; CODE XREF: j_j_j_j_j_getMaxHP↑J
+getMaxHP        proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getMaxHP↑J
                                         ; sub_5152B+391↓p ...
 
 var_4           = word ptr -4
@@ -101666,7 +101958,7 @@ getMaxHP        endp
 
 ; Attributes: bp-based frame
 
-getArmorClass   proc far                ; CODE XREF: j_j_j_j_j_getArmorClass↑J
+getArmorClass   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_getArmorClass↑J
                                         ; sub_5152B+9C↓p ...
 
 arg_0           = word ptr  6
@@ -102218,7 +102510,7 @@ loc_51816:                              ; CODE XREF: sub_5152B+2CE↑j
                 pop     cx
                 push    ax
                 push    si
-                call    j_j_j_j_j_getCurrentExperience
+                call    j_j_j_j_j_j_j_j_getCurrentExperience
                 pop     cx
                 push    dx
                 push    ax
@@ -102353,7 +102645,7 @@ sub_5152B       endp
 
 ; Attributes: bp-based frame
 
-statColor       proc far                ; CODE XREF: j_j_j_j_j_statColor↑J
+statColor       proc far                ; CODE XREF: j_j_j_j_j_j_j_j_statColor↑J
                                         ; sub_5152B+BB↑p ...
 
 arg_0           = word ptr  6
@@ -102444,7 +102736,7 @@ var_2           = word ptr -2
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 mov     word_32E66, 0
                 jmp     loc_51B83
 ; ---------------------------------------------------------------------------
@@ -102766,7 +103058,7 @@ def_51C61:                              ; CODE XREF: sub_51C4A+13↑j
 
 loc_51C8E:                              ; CODE XREF: sub_51C4A+3F↑j
                 call    sub_28144
-                call    j_j_j_j_j_setSoundAddress
+                call    j_j_j_j_j_j_j_j_setSoundAddress
                 cmp     si, 22h ; '"'
                 jl      short loc_51CA2
                 cmp     si, 29h ; ')'
@@ -102852,7 +103144,7 @@ jpt_51C61       dw offset loc_51C66     ; DATA XREF: sub_51C4A+17↑r
 ; "Identify" / "Fix" (from strings)
 ; Attributes: bp-based frame
 
-identifyOrFix   proc far                ; CODE XREF: j_j_j_j_j_identifyOrFix↑J
+identifyOrFix   proc far                ; CODE XREF: j_j_j_j_j_j_j_j_identifyOrFix↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
