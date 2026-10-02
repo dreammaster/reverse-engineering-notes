@@ -216,8 +216,34 @@
 193D0	jpt_193A8
 193DC	mazeUpdateSlot	re-evaluates Maze_curSlot when the party's x/y leaves the 16x16 page, loading/saving neighbour pages and calling Map_load when the map id changes
 19608	runMazeEvent	6.7 KB event interpreter: "What's the Password?", "picks the lock", Hologram sequences (name from strings, unverified)
+19850	evt_op32	event opcode 32: WhoWill (name from the Xeen opcode of the same number; unverified)
+198C2	evt_op01	event opcode 1: Display1 (name from the Xeen opcode of the same number; unverified)
+19939	evt_op02	event opcode 2: DoorTextSml (name from the Xeen opcode of the same number; unverified)
+1995F	evt_op03	event opcode 3: DoorTextLrg (name from the Xeen opcode of the same number; unverified)
+19973	evt_op04	event opcode 4: SignText (name from the Xeen opcode of the same number; unverified)
+1997C	evt_op05	event opcode 5: NPC (name from the Xeen opcode of the same number; unverified)
+19A21	evt_op06	event opcode 6: PlayFX (name from the Xeen opcode of the same number; unverified)
+19A33	evt_op07	event opcode 7: Teleport (also op 31) (name from the Xeen opcode of the same number; unverified)
+19BC7	evt_op08	event opcode 8: If (ops 8-10) (name from the Xeen opcode of the same number; unverified)
+19D2B	evt_op11	event opcode 11: MoveObj (name from the Xeen opcode of the same number; unverified)
+19DB3	evt_op12	event opcode 12: TakeOrGive (ops 12, 28, 29, 33) (name from the Xeen opcode of the same number; unverified)
+1A388	evt_op14	event opcode 14: Remove (name from the Xeen opcode of the same number; unverified)
+1A49F	evt_op15	event opcode 15: SetChar (name from the Xeen opcode of the same number; unverified)
+1A505	evt_op16	event opcode 16: Spawn (name from the Xeen opcode of the same number; unverified)
+1A5C4	evt_op17	event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; unverified)
 1A625	def_1A5D6
-1AEEC	def_1984B
+1A632	evt_op19	event opcode 19: AlterMap (name from the Xeen opcode of the same number; unverified)
+1A695	evt_op20	event opcode 20: GiveMulti (name from the Xeen opcode of the same number; unverified)
+1AA2A	evt_op21	event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; unverified)
+1AAF9	evt_op22	event opcode 22: Damage (name from the Xeen opcode of the same number; unverified)
+1AB4B	evt_op23	event opcode 23: JumpRnd (name from the Xeen opcode of the same number; unverified)
+1AB75	evt_op24	event opcode 24: AlterEvent (name from the Xeen opcode of the same number; unverified)
+1AC1F	evt_op25	event opcode 25: CallEvent (name from the Xeen opcode of the same number; unverified)
+1AC73	evt_op26	event opcode 26: Return (name from the Xeen opcode of the same number; unverified)
+1ACA6	evt_op27	event opcode 27: SetVar (name from the Xeen opcode of the same number; unverified)
+1ADBF	evt_op30	event opcode 30: cutscene end (name from the Xeen opcode of the same number; unverified)
+1AEEC	evt_op13	event opcode 13: ? (name from the Xeen opcode of the same number; unverified)
+1AF03	evt_op18	event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)
 1B0A7	jpt_1A5D6
 1B129	jpt_1984B
 1B99E	mazeNeighbourSlot	maps a neighbour maze id to its loaded slot (1111h if not loaded)
@@ -376,74 +402,74 @@
 27A16	__INITEXTMEM
 27AEE	__EXITEXT
 27B42	__EXTCOPY
-27F54	j_j_j_j_j_j_j_j_resetBlacksmithWares
-27F59	j_j_j_j_j_j_j_j_j_getDiskFree
-27F68	j_j_j_j_j_j_j_j_j_monstersAttack
-27F81	j_j_j_j_j_j_j_j_j_getEquipSlotName
-27F90	j_j_j_j_j_j_j_j_j_equipItem
-27F9F	j_j_j_j_j_j_j_j_j_openMm3Cc
-27FAE	j_j_j_j_j_j_j_j_j_stopAttack
-27FB3	j_j_j_j_j_j_j_j_j_introSequence
-27FB8	j_j_j_j_j_j_j_j_j_protectionHandler
-2802A	j_indexEvents
-28057	j_j_j_j_j_j_j_j_j_subPartyTime
-28080	j_j_j_j_j_j_j_j_j_GiveBankInterest
-28085	j_j_j_j_j_j_j_j_j_death
-2808A	j_j_j_j_j_j_j_j_j_Spells_moonRay
-2808F	j_j_j_j_j_j_j_j_j_showJoke
-28094	j_j_j_j_j_j_j_j_j_arenaEvent
-280A8	j_j_j_j_j_j_j_j_resetTemps
-280F9	j_j_j_j_j_j_j_j_j_sortParty
-28112	j_j_j_j_j_j_j_j_j_copyPartyToRoster
-28121	j_j_j_j_j_j_j_j_j_Awards_show
-28126	j_j_j_j_j_j_j_j_j_rosterMenu
-2813A	j_j_j_j_j_j_j_j_j_setSoundAddress
-2818F	j_j_j_j_j_j_j_j_j_getCurrentExperience
-281B7	j_j_j_j_j_j_j_j_j_controlPanel
-281C1	j_j_j_j_j_j_j_j_j_nextExperienceLevel
-281C6	j_j_j_j_j_j_j_j_j_rest
-281F8	j_j_j_j_j_j_j_j_j_experienceToNextLevel
-2823A	j_j_j_j_j_j_j_j_j_giveCharDamage
-2823F	j_j_j_j_j_j_j_j_j_Map_load
-28244	j_saveMazeState
-28271	j_j_j_j_j_j_j_j_j__strcoll
-28276	j_j_j_j_j_j_j_j_j_dismissCharacter
-282C0	j_j_j_j_j_j_j_j_j_createCharacter
-28306	j_j_j_j_j_j_j_j_j_checkClasses
-28335	j_j_j_j_j_j_j_j_j_trainingNeedsExperience
-2833F	j_j_j_j_j_j_j_j_j_townInn
-2834E	j_j_j_j_j_j_j_j_j_townBank
-28358	j_j_j_j_j_j_j_j_j_townGuild
-2836C	j_j_j_j_j_j_j_j_j_townTavern
-28371	j_j_j_j_j_j_j_j_j_townTraining
-28376	j_j_j_j_j_j_j_j_j_townSmithy
-28380	j_j_j_j_j_j_j_j_j_loadHireFaces
-283B5	j_j_j_j_j_j_j_j_j_setSpeedTable
-283BF	j_j_j_j_j_j_j_j_j_getWeaponDamage
-283C9	j_j_j_j_j_j_j_j_j_block
-283CE	j_j_j_j_j_j_j_j_j_getMonsterDescriptions
-283D3	j_j_j_j_j_j_j_j_j_attack
-283E2	j_j_j_j_j_j_j_j_j_doMonsterTurn
-283E7	j_j_j_j_j_j_j_j_j_run
-283F1	j_j_j_j_j_j_j_j_j_nextChar
-283F6	j_j_j_j_j_j_j_j_j_charsCantAct
-283FB	j_j_j_j_j_j_j_j_j_allHaveGone
-28400	j_j_j_j_j_j_j_j_j_sortCombatParty
-2840A	j_j_j_j_j_j_j_j_j_quickFight
-28414	j_j_j_j_j_j_j_j_j_monsterSavingThrow
-28464	j_j_j_j_j_j_j_j_j_Spells_subSpellCost
-28509	j_j_j_j_j_j_j_j_j_Spells_divineIntervention
-28545	j_j_j_j_j_j_j_j_j_Screen_saveBackground
-28572	j_j_j_j_j_j_j_j_j_spellLloydsBeacon
-28644	j_j_j_j_j_j_j_j_j_itemsDialog
-28662	j_j_j_j_j_j_j_j_j_specialsDialog
-28667	j_j_j_j_j_j_j_j_j_getThievery
-286AE	j_j_j_j_j_j_j_j_j_statColor
-286BD	j_j_j_j_j_j_j_j_j_getMaxSP
-286C2	j_j_j_j_j_j_j_j_j_getMaxHP
-286CC	j_j_j_j_j_j_j_j_j_getArmorClass
-286E0	j_j_j_j_j_j_j_j_j_identifyOrFix
-286E5	j_j_j_j_j_j_j_j_j_getNumSkills
+27F54	j_j_j_j_j_j_j_j_j_resetBlacksmithWares
+27F59	j_j_j_j_j_j_j_j_j_j_getDiskFree
+27F68	j_j_j_j_j_j_j_j_j_j_monstersAttack
+27F81	j_j_j_j_j_j_j_j_j_j_getEquipSlotName
+27F90	j_j_j_j_j_j_j_j_j_j_equipItem
+27F9F	j_j_j_j_j_j_j_j_j_j_openMm3Cc
+27FAE	j_j_j_j_j_j_j_j_j_j_stopAttack
+27FB3	j_j_j_j_j_j_j_j_j_j_introSequence
+27FB8	j_j_j_j_j_j_j_j_j_j_protectionHandler
+2802A	j_j_indexEvents
+28057	j_j_j_j_j_j_j_j_j_j_subPartyTime
+28080	j_j_j_j_j_j_j_j_j_j_GiveBankInterest
+28085	j_j_j_j_j_j_j_j_j_j_death
+2808A	j_j_j_j_j_j_j_j_j_j_Spells_moonRay
+2808F	j_j_j_j_j_j_j_j_j_j_showJoke
+28094	j_j_j_j_j_j_j_j_j_j_arenaEvent
+280A8	j_j_j_j_j_j_j_j_j_resetTemps
+280F9	j_j_j_j_j_j_j_j_j_j_sortParty
+28112	j_j_j_j_j_j_j_j_j_j_copyPartyToRoster
+28121	j_j_j_j_j_j_j_j_j_j_Awards_show
+28126	j_j_j_j_j_j_j_j_j_j_rosterMenu
+2813A	j_j_j_j_j_j_j_j_j_j_setSoundAddress
+2818F	j_j_j_j_j_j_j_j_j_j_getCurrentExperience
+281B7	j_j_j_j_j_j_j_j_j_j_controlPanel
+281C1	j_j_j_j_j_j_j_j_j_j_nextExperienceLevel
+281C6	j_j_j_j_j_j_j_j_j_j_rest
+281F8	j_j_j_j_j_j_j_j_j_j_experienceToNextLevel
+2823A	j_j_j_j_j_j_j_j_j_j_giveCharDamage
+2823F	j_j_j_j_j_j_j_j_j_j_Map_load
+28244	j_j_saveMazeState
+28271	j_j_j_j_j_j_j_j_j_j__strcoll
+28276	j_j_j_j_j_j_j_j_j_j_dismissCharacter
+282C0	j_j_j_j_j_j_j_j_j_j_createCharacter
+28306	j_j_j_j_j_j_j_j_j_j_checkClasses
+28335	j_j_j_j_j_j_j_j_j_j_trainingNeedsExperience
+2833F	j_j_j_j_j_j_j_j_j_j_townInn
+2834E	j_j_j_j_j_j_j_j_j_j_townBank
+28358	j_j_j_j_j_j_j_j_j_j_townGuild
+2836C	j_j_j_j_j_j_j_j_j_j_townTavern
+28371	j_j_j_j_j_j_j_j_j_j_townTraining
+28376	j_j_j_j_j_j_j_j_j_j_townSmithy
+28380	j_j_j_j_j_j_j_j_j_j_loadHireFaces
+283B5	j_j_j_j_j_j_j_j_j_j_setSpeedTable
+283BF	j_j_j_j_j_j_j_j_j_j_getWeaponDamage
+283C9	j_j_j_j_j_j_j_j_j_j_block
+283CE	j_j_j_j_j_j_j_j_j_j_getMonsterDescriptions
+283D3	j_j_j_j_j_j_j_j_j_j_attack
+283E2	j_j_j_j_j_j_j_j_j_j_doMonsterTurn
+283E7	j_j_j_j_j_j_j_j_j_j_run
+283F1	j_j_j_j_j_j_j_j_j_j_nextChar
+283F6	j_j_j_j_j_j_j_j_j_j_charsCantAct
+283FB	j_j_j_j_j_j_j_j_j_j_allHaveGone
+28400	j_j_j_j_j_j_j_j_j_j_sortCombatParty
+2840A	j_j_j_j_j_j_j_j_j_j_quickFight
+28414	j_j_j_j_j_j_j_j_j_j_monsterSavingThrow
+28464	j_j_j_j_j_j_j_j_j_j_Spells_subSpellCost
+28509	j_j_j_j_j_j_j_j_j_j_Spells_divineIntervention
+28545	j_j_j_j_j_j_j_j_j_j_Screen_saveBackground
+28572	j_j_j_j_j_j_j_j_j_j_spellLloydsBeacon
+28644	j_j_j_j_j_j_j_j_j_j_itemsDialog
+28662	j_j_j_j_j_j_j_j_j_j_specialsDialog
+28667	j_j_j_j_j_j_j_j_j_j_getThievery
+286AE	j_j_j_j_j_j_j_j_j_j_statColor
+286BD	j_j_j_j_j_j_j_j_j_j_getMaxSP
+286C2	j_j_j_j_j_j_j_j_j_j_getMaxHP
+286CC	j_j_j_j_j_j_j_j_j_j_getArmorClass
+286E0	j_j_j_j_j_j_j_j_j_j_identifyOrFix
+286E5	j_j_j_j_j_j_j_j_j_j_getNumSkills
 28780	segx
 2879E	Party_newDay	byte
 2884B	Maze_wrapMode	byte; non-zero = off-map cells wrap/return 0 instead of 1111h

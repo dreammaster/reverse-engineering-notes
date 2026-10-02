@@ -138,7 +138,7 @@ operand counts in the shipped data:
 | 16 | Spawn | 4 | 30 | cutscene end | 0 |
 | | | | 31 | Teleport (variant) | 3 |
 | | | | 32 | WhoWill | 1 |
-| | | | 33 | RndDamage | 4 |
+| | | | 33 | TakeOrGive variant (shares the handler of 12, 28, 29; Xeen's 33 is RndDamage) | 4 |
 
 The names are inferred from the handler shapes (same jump table order and operand counts); the operand encodings of the `If`
 family (value widths 1-4 bytes selected by a type byte) are not yet written down.
