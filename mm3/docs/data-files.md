@@ -61,3 +61,27 @@ Monsters are stored as one file per field, each a column array indexed by monste
 
 (Field meanings other than the obvious ones are inferred from the names and values; `python tools/mm3_monsters.py DIR`
 prints the table.)
+
+## Where the maps are
+
+`MM3.CC` does **not** contain the dungeon data.  The world lives in `MM3.CUR` (the same `.CC` container, all members
+stored): `MAZEnn.DAT` (nn = 01..99), `MAZEnn.BIN` (64) and `MAZEnn.EVT` (63) plus the save-state members above; a new game
+starts from a copy of it, `*.mm3` saves are modified copies.  (Only `MAZE72.DAT`, `MAZE73.DAT` and `MAZE96.EVT` also exist
+in `MM3.CC`.)  `TEXTnn.MAZ` (text blocks per map, 64) and the graphics are in `MM3.CC`.
+
+`Map_load` (`43698`) builds the names `maze%02u.bin`, `maze%02u.evt`, `text%02u.maz`, `%s.pic` and `%s.mon`;
+`loadMazeDats` (`263C3`) loads up to four `maze%02u.dat` cell blocks (the current map and its neighbours).
+
+### `MAZEnn.DAT` (832 bytes) -- same idea as Xeen's `MazeData`
+
+| Offset | Size | Content |
+|---|---|---|
+| `000h` | 512 | 16x16 cells, one `u16` each: four wall nibbles (N/E/S/W as in Xeen's `_wallData`) |
+| `200h` | 256 | 16x16 cell flags / surface byte |
+| `300h` | 64 | header: map number, neighbour maps, flags, 16 wall types, 16 surface types, ... (not yet decoded) |
+
+### `MAZEnn.BIN`
+
+Monster list: records of 4 bytes (`x`, `y`, `type<<2 | direction`, ...) ended by `FFh`; the monster's hit points are taken
+from `MONHP`; then 5 bytes (picture slots, `2Ah` = no picture) and finally object records of 4 bytes.
+(Only read from `Map_load`; the exact field meanings still need confirming.)
