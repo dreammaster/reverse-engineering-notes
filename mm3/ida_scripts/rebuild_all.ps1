@@ -1,6 +1,6 @@
 # Rebuilds mm3\mm3.idb from the installed game:
 #   1. unpack MM3.EXE (NWC LZW + EXEPACK) with tools\unpack_mm3.py,
-#   2. let IDA load it (its MZ loader maps the Microsoft LINK overlays),
+#   2. let IDA load it (its MZ loader maps the Borland overlays),
 #   3. run ida_scripts\build_idb.py (names, ds, function seeds) and export mm3.asm / mm3.idc.
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File mm3\ida_scripts\rebuild_all.ps1 [-Exe "D:\GOG Games\Might and Magic 3\MM3.EXE"]
 param([string]$Exe = "D:\GOG Games\Might and Magic 3\MM3.EXE")
@@ -14,3 +14,4 @@ Remove-Item (Join-Path $Build "mm3.exe.idb"), (Join-Path $Build "mm3.exe.asm") -
 & $Idat -B -A -c (Join-Path $Build "mm3.exe") | Out-Null
 Copy-Item (Join-Path $Build "mm3.exe.idb") (Join-Path $Mm3 "mm3.idb") -Force
 & (Join-Path $Root "ida_scripts\run_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scripts\build_idb.py")
+& (Join-Path $Root "ida_scriptsun_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scriptspply_names.py")

@@ -18,14 +18,14 @@ The shipped `MM3.EXE` (280,032 bytes) has three layers (the outer one is describ
    relocations are stored after the text `Packed file is corrupt`: 16 groups (segment `n*1000h`),
    each `u16 count` + `count` × `u16 offset`.
 3. The rebuilt MZ header (`0xE0` paragraphs = 3,584 bytes, 794 relocs) declares 165,568 bytes
-   (`0x286C0`); the Microsoft LINK overlay block (**`FBOV`**) follows at that offset, 114,464 bytes,
+   (`0x286C0`); the Borland overlay block (**`FBOV`**) follows at that offset, 114,464 bytes,
    verbatim from the packed file.  The reconstructed file is again 280,032 bytes.
 
-## Overlays (Microsoft LINK `/OVERLAY`, int 3Fh)
+## Overlays (Borland TLINK VROOMM overlays, int 3Fh)
 
 * Root image = 9 code segments + the overlay manager (`seg010`, `__OVRINIT`, `__SwapOverlay`, ...) +
   segment table + stubs + `dseg` (DGROUP, selector `286Fh`) + stack.  The C runtime and the overlay
-  manager are the Microsoft C 5.x/6 ones (IDA's FLIRT names `__OVRINIT`, `__ReadOvrDisk`, ...).
+  manager are Borland C++ 1991 ones (the string `91 Borland Intl.` is in DGROUP; IDA names `__OVRINIT`, `__ReadOvrDisk`, ...).
 * `FBOV` block: `"FBOV"`, `u32 size (0x1BF10)`, `u32 0x18BA0`, `u32 0x2E`, then the 13 overlay
   bodies.  Each body is code (`size` bytes) followed by its relocation table (`u16` offsets).
 * Every overlay has a **stub segment** in the root (`0x27F20` ...; IDA names `stub01..13`):
@@ -58,3 +58,12 @@ Segments after the build:
 | `27F20-286EA` | stub01..13 | overlay stubs (descriptor + thunks) |
 | `286F0-37840` | dseg | DGROUP |
 | `378C0-52165` | ovl01..13 | the overlays |
+
+## Compiler and names
+
+The program is Borland C++ (1991) code, not Microsoft: the thunk/overlay scheme is Borland's VROOMM
+(`int 3Fh`, `FBOV`), and BinDiff against the Xeen database matched the Borland runtime library
+(`_textmode`, `__VPRINTER`, `__scanner`, `_setvbuf`, ...) at similarity 1.00.  Names that came from
+that BinDiff run (>= 0.90 similarity) are kept in `names/mm3.tsv`; `rebuild_all.ps1` re-applies them
+(`ida_scripts/apply_names.py`) after a rebuild, and `ida_scripts/export_names.py` writes the names
+of the open database back to that file.

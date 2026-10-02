@@ -2,7 +2,7 @@
 Post-load fix-up of a freshly created MM3 database (idat -B -A -c mm3.exe on the unpacked EXE, see
 tools/unpack_mm3.py and docs/exe-layout.md).
 
-IDA's MZ loader already understands the Microsoft LINK overlays: it maps the 13 overlays as segments
+IDA's MZ loader already understands the Borland overlays: it maps the 13 overlays as segments
 above the resident image (ovr022..ovr034), turns the overlay stubs in the root (CD 3F thunks) into
 `jmp far` thunks (stub022..stub034) and applies the overlay relocations.  What it does not do is find
 the code: most routines are only reached through far pointers / the thunks, so almost nothing is
