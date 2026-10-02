@@ -13,7 +13,12 @@ for line in open(path, encoding="utf-8"):
     if name != "-":
         if ida_bytes.is_code(ida_bytes.get_flags(ea)) and not ida_funcs.get_func(ea):
             ida_funcs.add_func(ea)
-        if idc.set_name(ea, name, idc.SN_NOCHECK | idc.SN_NOWARN):
+        ok = idc.set_name(ea, name, idc.SN_NOCHECK | idc.SN_NOWARN)
+        if not ok and not ida_bytes.is_code(ida_bytes.get_flags(ea)):
+            # inside a larger data item: split it so the address becomes an item head
+            ida_bytes.del_items(ea, ida_bytes.DELIT_SIMPLE, 1)
+            ok = idc.set_name(ea, name, idc.SN_NOCHECK | idc.SN_NOWARN)
+        if ok:
             n += 1
         else:
             print("name failed:", hex(ea), name)

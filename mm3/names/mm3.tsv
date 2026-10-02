@@ -200,10 +200,12 @@
 16E14	getAge
 16E4A	worstCondition
 16E6B	itemScan	(BinDiff sim .50 conf .97, unverified)
+16F89	getCurrentLevel	max(level+tempLevel,0) from +23h/+24h (identical to Xeen Character::getCurrentLevel)
 16FB1	getStat
 1705D	def_16FCD
 170E9	jpt_16FCD
 1741A	MemFree	(BinDiff sim .66 conf .95, unverified)
+19038	subtractHitPoints	hp at +125h; sets conditions +11Fh (unconscious) / +120h (dead), breaks armour (item ids 21h..29h, flag 80h)
 190C9	highlightChar
 1913E	getElementalCategory
 19159	getAttributeCategory	(BinDiff sim .89 conf .92, unverified)
@@ -420,6 +422,18 @@
 286E0	j_identifyOrFix
 286E5	j_getNumSkills
 28780	segx
+29117	ELEMENTAL_RESISTANCES	indexed by elemental material (0A3h slot byte)
+2918F	METAL_LAC	indexed by item material (0B6h slot byte)
+291BD	ATTRIBUTE_BONUSES	indexed by attribute material (0C9h slot byte)
+29377	ARMOR_STRENGTHS	indexed by item id
+29551	BASE_HP_BY_CLASS	10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)
+29650	STAT_VALUES	24 words, statBonus thresholds
+29680	STAT_BONUSES	24 signed bytes
+296AC	ATTRIBUTE_CATEGORIES	10 bytes thresholds for getAttributeCategory
+296C2	AGE_RANGES_ADJUST	2 modes x 10 words, added to might/endurance/speed/accuracy (mode 0) or intellect/personality (mode 1)
+296EA	AGE_RANGES	words, age thresholds for getStat
+2E199	RACE_SP_BONUSES	[race*2 + attrib]
+2E1A4	RACE_HP_BONUSES	indexed by race
 30FA0	__ctype
 379F2	monstersAttack	(BinDiff sim .69 conf .93, unverified)
 37B31	def_37B2C

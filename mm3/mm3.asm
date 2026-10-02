@@ -6339,9 +6339,10 @@ itemScan        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; max(level+tempLevel,0) from +23h/+24h (identical to Xeen Character::getCurrentLevel)
 ; Attributes: bp-based frame
 
-sub_16F89       proc far                ; CODE XREF: sub_264ED+13C↓P
+getCurrentLevel proc far                ; CODE XREF: sub_264ED+13C↓P
                                         ; sub_3D8C9+13D↓P ...
 
 var_2           = word ptr -2
@@ -6364,14 +6365,14 @@ arg_0           = dword ptr  6
                 jmp     short loc_16FAD
 ; ---------------------------------------------------------------------------
 
-loc_16FAA:                              ; CODE XREF: sub_16F89+1B↑j
+loc_16FAA:                              ; CODE XREF: getCurrentLevel+1B↑j
                 mov     ax, [bp+var_2]
 
-loc_16FAD:                              ; CODE XREF: sub_16F89+1F↑j
+loc_16FAD:                              ; CODE XREF: getCurrentLevel+1F↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_16F89       endp
+getCurrentLevel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10791,9 +10792,10 @@ seg003          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; hp at +125h; sets conditions +11Fh (unconscious) / +120h (dead), breaks armour (item ids 21h..29h, flag 80h)
 ; Attributes: bp-based frame
 
-sub_19038       proc far                ; CODE XREF: giveCharDamage+1B8↓P
+subtractHitPoints proc far              ; CODE XREF: giveCharDamage+1B8↓P
                                         ; sub_4A779+3A7↓P ...
 
 var_2           = word ptr -2
@@ -10815,10 +10817,10 @@ arg_2           = word ptr  8
                 jmp     short loc_19057
 ; ---------------------------------------------------------------------------
 
-loc_19055:                              ; CODE XREF: sub_19038+16↑j
+loc_19055:                              ; CODE XREF: subtractHitPoints+16↑j
                 xor     ax, ax
 
-loc_19057:                              ; CODE XREF: sub_19038+1B↑j
+loc_19057:                              ; CODE XREF: subtractHitPoints+1B↑j
                 mov     [bp+var_2], ax
                 cmp     word ptr [si+125h], 1
                 jge     short loc_190C3
@@ -10842,18 +10844,18 @@ loc_19057:                              ; CODE XREF: sub_19038+1B↑j
                 jmp     short loc_19096
 ; ---------------------------------------------------------------------------
 
-loc_19091:                              ; CODE XREF: sub_19038+3D↑j
+loc_19091:                              ; CODE XREF: subtractHitPoints+3D↑j
                 mov     byte ptr [si+11Fh], 1
 
-loc_19096:                              ; CODE XREF: sub_19038+4F↑j
-                                        ; sub_19038+57↑j
+loc_19096:                              ; CODE XREF: subtractHitPoints+4F↑j
+                                        ; subtractHitPoints+57↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_190C3
                 xor     di, di
                 jmp     short loc_190BE
 ; ---------------------------------------------------------------------------
 
-loc_190A0:                              ; CODE XREF: sub_19038+89↓j
+loc_190A0:                              ; CODE XREF: subtractHitPoints+89↓j
                 mov     bx, di
                 cmp     byte ptr [bx+si+0DCh], 21h ; '!'
                 jbe     short loc_190BD
@@ -10865,22 +10867,22 @@ loc_190A0:                              ; CODE XREF: sub_19038+89↓j
                 jmp     short loc_190C3
 ; ---------------------------------------------------------------------------
 
-loc_190BD:                              ; CODE XREF: sub_19038+6F↑j
-                                        ; sub_19038+76↑j ...
+loc_190BD:                              ; CODE XREF: subtractHitPoints+6F↑j
+                                        ; subtractHitPoints+76↑j ...
                 inc     di
 
-loc_190BE:                              ; CODE XREF: sub_19038+66↑j
+loc_190BE:                              ; CODE XREF: subtractHitPoints+66↑j
                 cmp     di, 12h
                 jl      short loc_190A0
 
-loc_190C3:                              ; CODE XREF: sub_19038+27↑j
-                                        ; sub_19038+62↑j ...
+loc_190C3:                              ; CODE XREF: subtractHitPoints+27↑j
+                                        ; subtractHitPoints+62↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_19038       endp
+subtractHitPoints endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34864,7 +34866,7 @@ loc_26608:                              ; CODE XREF: sub_264ED+166↓j
                 mov     word ptr [bp+var_A], bx
                 push    word ptr [bp+var_A+2]
                 push    word ptr [bp+var_A]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     [bp+var_4], ax
@@ -39143,6 +39145,7 @@ byte_29115      db 0                    ; DATA XREF: getFiles+7↑w
                                         ; getFiles+37↑r ...
 byte_29116      db 0FFh                 ; DATA XREF: sub_260ED+59↑r
                                         ; sub_2621D+18↑r ...
+ELEMENTAL_RESISTANCES:                  ; indexed by elemental material (0A3h slot byte)
                 align 2
                 db 5, 7, 9, 0Ch, 0Fh, 14h, 19h, 1Eh, 5, 7, 9, 0Ch, 0Fh
                 db 14h, 19h, 5, 0Ah, 0Fh, 14h, 19h, 0Ah, 0Fh, 14h, 19h
@@ -39153,39 +39156,665 @@ byte_29116      db 0FFh                 ; DATA XREF: sub_260ED+59↑r
                 db 3, 2, 1, 2, 3, 4, 6, 0, 2 dup(1), 2 dup(2), 3, 4, 5
                 db 6, 7, 8, 9, 0Ah, 0, 0FDh, 0FAh, 0FCh, 0FEh, 2, 4, 6
                 db 8, 0Ah, 0, 2 dup(1), 2 dup(2), 3, 4, 5, 0Ch, 0Fh, 14h
-                db 1Eh, 32h, 0, 0FDh, 0, 0FEh, 0FFh, 1, 2, 4, 6, 8, 0
-                db 2 dup(1), 2 dup(2), 3, 4, 5, 0Ah, 0Ch, 0Eh, 10h, 14h
-                db 1, 0Ah, 19h, 5, 4Bh, 2, 5, 0Ah, 14h, 32h, 2, 3, 5, 0Ah
-                db 14h, 1Eh, 28h, 32h, 3Ch, 46h, 50h, 5Ah, 64h, 0, 2, 3
-                db 5, 8, 0Ch, 11h, 17h, 1Eh, 26h, 2Fh, 2, 3, 5, 8, 0Ch
-                db 11h, 17h, 1Eh, 2, 3, 5, 8, 0Ch, 11h, 17h, 1Eh, 2, 3
-                db 5, 8, 0Ch, 11h, 17h, 1Eh, 3, 5, 0Ah, 0Fh, 14h, 1Eh
-                db 5, 0Ah, 0Fh, 14h, 19h, 1Eh, 4, 6, 0Ah, 14h, 32h, 4
-                db 8, 0Ch, 10h, 14h, 19h, 2, 4, 6, 0Ah, 10h, 4, 6, 8, 0Ah
-                db 0Ch, 0Eh, 10h, 12h, 14h, 19h, 2 dup(0), 32h, 0, 0Fh
-                db 0, 64h, 0, 50h, 0, 28h, 0, 3Ch, 0, 1, 0, 0Ah, 0, 96h
-                db 0, 1Eh, 0, 3Ch, 0, 8, 0, 32h, 0, 64h, 0, 0Fh, 0, 1Eh
-                db 0, 0Fh, 0, 0C8h, 0, 50h, 0, 0FAh, 0, 96h, 0, 90h, 1
-                db 64h, 0, 28h, 0, 78h, 0, 2Ch, 1, 64h, 0, 0C8h, 0, 2Ch
-                db 1, 19h, 0, 64h, 0, 32h, 0, 0Fh, 0, 14h, 0, 28h, 0, 64h
-                db 0, 0C8h, 0, 90h, 1, 58h, 2, 0E8h, 3, 0D0h, 7, 64h, 0
-                db 3Ch, 0, 0E8h, 3, 0C8h, 0, 64h, 0, 64h, 0, 28h, 0, 0FAh
-                db 0, 96h, 0, 0C8h, 0, 64h, 0, 0FAh, 0, 64h, 0, 32h, 0
-                db 2Ch, 1, 0C8h, 0, 0F4h, 1, 0E8h, 3, 0D0h, 7, 32h, 0
-                db 0E8h, 3, 0F4h, 1, 0Ah, 0, 64h, 0, 14h, 0, 0Ah, 0, 32h
-                db 0, 0Ah, 0, 0Ah, 0, 64h, 0, 5, 0, 5, 4 dup(0), 3, 2
-                db 3, 2 dup(2), 4, 1, 2, 4, 2, 3, 2 dup(2), 4 dup(1), 2 dup(4)
-                db 3, 2, 4, 3 dup(2), 5, 4 dup(3), 5, 4, 2, 27h dup(1)
-                db 0, 2 dup(3), 4, 5, 4, 2, 5 dup(3), 2, 4, 0Ah, 6, 8
-                db 9, 4, 3, 6, 8, 5, 6, 4, 5, 3, 5, 6, 7, 5 dup(2), 3
-                db 4, 5, 6, 7, 8, 0Ah, 4, 2, 2 dup(0), 1, 0, 4 dup(1)
-                db 16h dup(0), 1Dh dup(1), 4 dup(4), 8 dup(3), 2, 3 dup(5)
-                db 6, 8, 9, 3 dup(0Ah), 0Ch, 5 dup(7), 3 dup(0Bh), 9 dup(2)
-                db 25h dup(0), 2, 3, 4, 5, 6, 7, 8, 0Ah, 4, 2, 2 dup(0)
-                db 1, 0, 4 dup(1), 16h dup(0), 3, 2, 3, 2 dup(2), 4, 1
-                db 2, 4, 2, 3, 2 dup(2), 4 dup(1), 2 dup(4), 3, 2, 4, 3 dup(2)
-                db 5, 4 dup(3), 5, 4, 2, 28h dup(0), 2 dup(3), 4, 5, 4
-                db 2, 5 dup(3), 2, 4, 0Ah, 6, 8, 9, 4, 3, 6, 8, 5, 6
+                db 1Eh, 32h
+METAL_LAC       db    0                 ; indexed by item material (0B6h slot byte)
+                db 0FDh
+                db    0
+                db 0FEh
+                db 0FFh
+                db    1
+                db    2
+                db    4
+                db    6
+                db    8
+                db    0
+                db    1
+                db    1
+                db    2
+                db    2
+                db    3
+                db    4
+                db    5
+                db  0Ah
+                db  0Ch
+                db  0Eh
+                db  10h
+                db  14h
+                db    1
+                db  0Ah
+                db  19h
+                db    5
+                db  4Bh ; K
+                db    2
+                db    5
+                db  0Ah
+                db  14h
+                db  32h ; 2
+                db    2
+                db    3
+                db    5
+                db  0Ah
+                db  14h
+                db  1Eh
+                db  28h ; (
+                db  32h ; 2
+                db  3Ch ; <
+                db  46h ; F
+                db  50h ; P
+                db  5Ah ; Z
+                db  64h ; d
+ATTRIBUTE_BONUSES db    0               ; indexed by attribute material (0C9h slot byte)
+                db    2
+                db    3
+                db    5
+                db    8
+                db  0Ch
+                db  11h
+                db  17h
+                db  1Eh
+                db  26h ; &
+                db  2Fh ; /
+                db    2
+                db    3
+                db    5
+                db    8
+                db  0Ch
+                db  11h
+                db  17h
+                db  1Eh
+                db    2
+                db    3
+                db    5
+                db    8
+                db  0Ch
+                db  11h
+                db  17h
+                db  1Eh
+                db    2
+                db    3
+                db    5
+                db    8
+                db  0Ch
+                db  11h
+                db  17h
+                db  1Eh
+                db    3
+                db    5
+                db  0Ah
+                db  0Fh
+                db  14h
+                db  1Eh
+                db    5
+                db  0Ah
+                db  0Fh
+                db  14h
+                db  19h
+                db  1Eh
+                db    4
+                db    6
+                db  0Ah
+                db  14h
+                db  32h ; 2
+                db    4
+                db    8
+                db  0Ch
+                db  10h
+                db  14h
+                db  19h
+                db    2
+                db    4
+                db    6
+                db  0Ah
+                db  10h
+                db    4
+                db    6
+                db    8
+                db  0Ah
+                db  0Ch
+                db  0Eh
+                db  10h
+                db  12h
+                db  14h
+                db  19h
+                db    0
+                db    0
+                db  32h ; 2
+                db    0
+                db  0Fh
+                db    0
+                db  64h ; d
+                db    0
+                db  50h ; P
+                db    0
+                db  28h ; (
+                db    0
+                db  3Ch ; <
+                db    0
+                db    1
+                db    0
+                db  0Ah
+                db    0
+                db  96h
+                db    0
+                db  1Eh
+                db    0
+                db  3Ch ; <
+                db    0
+                db    8
+                db    0
+                db  32h ; 2
+                db    0
+                db  64h ; d
+                db    0
+                db  0Fh
+                db    0
+                db  1Eh
+                db    0
+                db  0Fh
+                db    0
+                db 0C8h
+                db    0
+                db  50h ; P
+                db    0
+                db 0FAh
+                db    0
+                db  96h
+                db    0
+                db  90h
+                db    1
+                db  64h ; d
+                db    0
+                db  28h ; (
+                db    0
+                db  78h ; x
+                db    0
+                db  2Ch ; ,
+                db    1
+                db  64h ; d
+                db    0
+                db 0C8h
+                db    0
+                db  2Ch ; ,
+                db    1
+                db  19h
+                db    0
+                db  64h ; d
+                db    0
+                db  32h ; 2
+                db    0
+                db  0Fh
+                db    0
+                db  14h
+                db    0
+                db  28h ; (
+                db    0
+                db  64h ; d
+                db    0
+                db 0C8h
+                db    0
+                db  90h
+                db    1
+                db  58h ; X
+                db    2
+                db 0E8h
+                db    3
+                db 0D0h
+                db    7
+                db  64h ; d
+                db    0
+                db  3Ch ; <
+                db    0
+                db 0E8h
+                db    3
+                db 0C8h
+                db    0
+                db  64h ; d
+                db    0
+                db  64h ; d
+                db    0
+                db  28h ; (
+                db    0
+                db 0FAh
+                db    0
+                db  96h
+                db    0
+                db 0C8h
+                db    0
+                db  64h ; d
+                db    0
+                db 0FAh
+                db    0
+                db  64h ; d
+                db    0
+                db  32h ; 2
+                db    0
+                db  2Ch ; ,
+                db    1
+                db 0C8h
+                db    0
+                db 0F4h
+                db    1
+                db 0E8h
+                db    3
+                db 0D0h
+                db    7
+                db  32h ; 2
+                db    0
+                db 0E8h
+                db    3
+                db 0F4h
+                db    1
+                db  0Ah
+                db    0
+                db  64h ; d
+                db    0
+                db  14h
+                db    0
+                db  0Ah
+                db    0
+                db  32h ; 2
+                db    0
+                db  0Ah
+                db    0
+                db  0Ah
+                db    0
+                db  64h ; d
+                db    0
+                db    5
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    3
+                db    2
+                db    3
+                db    2
+                db    2
+                db    4
+                db    1
+                db    2
+                db    4
+                db    2
+                db    3
+                db    2
+                db    2
+                db    1
+                db    1
+                db    1
+                db    1
+                db    4
+                db    4
+                db    3
+                db    2
+                db    4
+                db    2
+                db    2
+                db    2
+                db    5
+                db    3
+                db    3
+                db    3
+                db    3
+                db    5
+                db    4
+                db    2
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    0
+                db    3
+                db    3
+                db    4
+                db    5
+                db    4
+                db    2
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    2
+                db    4
+                db  0Ah
+                db    6
+                db    8
+                db    9
+                db    4
+                db    3
+                db    6
+                db    8
+                db    5
+                db    6
+                db    4
+                db    5
+                db    3
+                db    5
+                db    6
+                db    7
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    3
+                db    4
+                db    5
+                db    6
+                db    7
+                db    8
+                db  0Ah
+                db    4
+                db    2
+                db    0
+                db    0
+                db    1
+                db    0
+                db    1
+                db    1
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    4
+                db    4
+                db    4
+                db    4
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    2
+                db    5
+                db    5
+                db    5
+                db    6
+                db    8
+                db    9
+                db  0Ah
+                db  0Ah
+                db  0Ah
+                db  0Ch
+                db    7
+                db    7
+                db    7
+                db    7
+                db    7
+                db  0Bh
+                db  0Bh
+                db  0Bh
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    0
+                db    0
+                db    0
+ARMOR_STRENGTHS db    0                 ; indexed by item id
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    2
+                db    3
+                db    4
+                db    5
+                db    6
+                db    7
+                db    8
+                db  0Ah
+                db    4
+                db    2
+                db    0
+                db    0
+                db    1
+                db    0
+                db    1
+                db    1
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    3
+                db    2
+                db    3
+                db    2
+                db    2
+                db    4
+                db    1
+                db    2
+                db    4
+                db    2
+                db    3
+                db    2
+                db    2
+                db    1
+                db    1
+                db    1
+                db    1
+                db    4
+                db    4
+                db    3
+                db    2
+                db    4
+                db    2
+                db    2
+                db    2
+                db    5
+                db    3
+                db    3
+                db    3
+                db    3
+                db    5
+                db    4
+                db    2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    3
+                db    3
+                db    4
+                db    5
+                db    4
+                db    2
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    2
+                db    4
+                db  0Ah
+                db    6
+                db    8
+                db    9
+                db    4
+                db    3
+                db    6
+                db    8
+                db    5
+                db    6
                 db 4, 5, 3, 5, 6, 7, 4 dup(2), 28h dup(0), 6 dup(76h)
                 db 0, 6, 3 dup(0EFh), 2, 4 dup(4), 6, 4 dup(46h), 7Eh
                 db 46h, 0, 4, 0EFh, 3 dup(56h), 4 dup(46h), 0, 4, 44h
@@ -39203,9 +39832,37 @@ byte_29116      db 0FFh                 ; DATA XREF: sub_260ED+59↑r
                 db 2, 58h, 2, 58h, 2, 58h, 2, 58h, 2, 58h, 2, 58h, 2, 58h
                 db 2, 58h, 2, 58h, 2, 7, 5, 14h, 2 dup(0), 7, 0, 2, 5
                 db 0Ah, 7, 0, 2, 5, 0Ah, 7, 0, 2, 5, 0Ah, 7, 5, 2, 5, 0
-                db 7, 0, 2, 14h, 0, 0Ah, 8, 7, 5, 4, 8, 7, 0Ch, 6, 9, 6
-                db 7, 4, 5, 4, 5, 4, 5, 4, 5, 0Bh, 0Ch, 0Bh, 2 dup(0Ch)
-                db 0Dh, 13h, 14h, 15h, 16h
+                db 7, 0, 2, 14h, 0
+BASE_HP_BY_CLASS db  0Ah                ; 10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)
+                db    8
+                db    7
+                db    5
+                db    4
+                db    8
+                db    7
+                db  0Ch
+                db    6
+                db    9
+                db    6
+                db    7
+                db    4
+                db    5
+                db    4
+                db    5
+                db    4
+                db    5
+                db    4
+                db    5
+                db  0Bh
+                db  0Ch
+                db  0Bh
+                db  0Ch
+                db  0Ch
+                db  0Dh
+                db  13h
+                db  14h
+                db  15h
+                db  16h
 word_2956F      dw 0C00h                ; DATA XREF: start+5A↑r
                                         ; start+67↑w ...
 word_29571      dw 260h                 ; DATA XREF: __OvrPrepare+19↑r
@@ -39227,22 +39884,191 @@ aMm3themeM      db 'mm3theme.m',0       ; DATA XREF: sub_15006+E↑o
                 db 3 dup(0), 8, 0, 10h, 0, 18h, 0, 20h, 0, 28h, 0, 30h
                 db 0, 5 dup(3Dh), 5 dup(70h), 5 dup(0B1h), 5 dup(22h)
                 db 18h, 2Fh, 46h, 5Dh, 74h, 18h, 2Fh, 46h, 5Dh, 74h, 18h
-                db 2Fh, 46h, 5Dh, 74h, 18h, 2Fh, 46h, 5Dh, 74h, 3, 0, 5
-                db 0, 7, 0, 9, 0, 0Bh, 0, 0Dh, 0, 0Fh, 0, 11h, 0, 13h
-                db 0, 15h, 0, 19h, 0, 1Eh, 0, 23h, 0, 28h, 0, 32h, 0, 4Bh
-                db 0, 64h, 0, 7Dh, 0, 96h, 0, 0AFh, 0, 0C8h, 0, 0E1h, 0
-                db 0FAh, 0, 2 dup(0FFh), 0FBh, 0FCh, 0FDh, 0FEh, 0FFh
-                db 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0Ah, 0Bh, 0Ch, 0Dh, 0Eh
-                db 0Fh, 10h, 11h, 14h, 5, 2 dup(6), 7, 8, 6, 5, 4, 7, 6
-                db 1, 0Bh, 13h, 1Bh, 23h, 29h, 2Fh, 34h, 3Ah, 3Fh, 0Ah
-                db 12h, 1Ah, 22h, 28h, 2Eh, 33h, 39h, 3Eh, 48h, 1, 9, 10h
-                db 15h, 1Ah, 22h, 8, 0Fh, 14h, 19h, 21h, 24h, 6, 0FFh
-                db 0CEh, 0FFh, 0ECh, 0FFh, 0F6h, 0FFh, 2 dup(0), 0FEh
-                db 0FFh, 0FBh, 0FFh, 0F6h, 0FFh, 0ECh, 0FFh, 0CEh, 0FFh
-                db 6, 0FFh, 0CEh, 0FFh, 0ECh, 0FFh, 0F6h, 0FFh, 2 dup(0)
-                db 2, 0, 5, 0, 0Ah, 0, 14h, 0, 32h, 0, 1, 0, 6, 0, 0Bh
-                db 0, 12h, 0, 24h, 0, 33h, 0, 4Ch, 0, 65h, 0, 0C9h, 0
-                db 2 dup(0FFh), 5, 25h, 70h, 0, 3, 6Bh, 5, 25h, 70h, 0
+                db 2Fh, 46h, 5Dh, 74h, 18h, 2Fh, 46h, 5Dh, 74h
+STAT_VALUES     db    3                 ; 24 words, statBonus thresholds
+                db    0
+                db    5
+                db    0
+                db    7
+                db    0
+                db    9
+                db    0
+                db  0Bh
+                db    0
+                db  0Dh
+                db    0
+                db  0Fh
+                db    0
+                db  11h
+                db    0
+                db  13h
+                db    0
+                db  15h
+                db    0
+                db  19h
+                db    0
+                db  1Eh
+                db    0
+                db  23h ; #
+                db    0
+                db  28h ; (
+                db    0
+                db  32h ; 2
+                db    0
+                db  4Bh ; K
+                db    0
+                db  64h ; d
+                db    0
+                db  7Dh ; }
+                db    0
+                db  96h
+                db    0
+                db 0AFh
+                db    0
+                db 0C8h
+                db    0
+                db 0E1h
+                db    0
+                db 0FAh
+                db    0
+                db 0FFh
+                db 0FFh
+STAT_BONUSES    db 0FBh                 ; 24 signed bytes
+                db 0FCh
+                db 0FDh
+                db 0FEh
+                db 0FFh
+                db    0
+                db    1
+                db    2
+                db    3
+                db    4
+                db    5
+                db    6
+                db    7
+                db    8
+                db    9
+                db  0Ah
+                db  0Bh
+                db  0Ch
+                db  0Dh
+                db  0Eh
+                db  0Fh
+                db  10h
+                db  11h
+                db  14h
+                db    5
+                db    6
+                db    6
+                db    7
+                db    8
+                db    6
+                db    5
+                db    4
+                db    7
+                db    6
+                db    1
+                db  0Bh
+                db  13h
+                db  1Bh
+                db  23h ; #
+                db  29h ; )
+                db  2Fh ; /
+                db  34h ; 4
+                db  3Ah ; :
+                db  3Fh ; ?
+ATTRIBUTE_CATEGORIES db  0Ah            ; 10 bytes thresholds for getAttributeCategory
+                db  12h
+                db  1Ah
+                db  22h ; "
+                db  28h ; (
+                db  2Eh ; .
+                db  33h ; 3
+                db  39h ; 9
+                db  3Eh ; >
+                db  48h ; H
+                db    1
+                db    9
+                db  10h
+                db  15h
+                db  1Ah
+                db  22h ; "
+                db    8
+                db  0Fh
+                db  14h
+                db  19h
+                db  21h ; !
+                db  24h ; $
+AGE_RANGES_ADJUST db    6               ; 2 modes x 10 words, added to might/endurance/speed/accuracy (mode 0) or intellect/personality (mode 1)
+                db 0FFh
+                db 0CEh
+                db 0FFh
+                db 0ECh
+                db 0FFh
+                db 0F6h
+                db 0FFh
+                db    0
+                db    0
+                db 0FEh
+                db 0FFh
+                db 0FBh
+                db 0FFh
+                db 0F6h
+                db 0FFh
+                db 0ECh
+                db 0FFh
+                db 0CEh
+                db 0FFh
+                db    6
+                db 0FFh
+                db 0CEh
+                db 0FFh
+                db 0ECh
+                db 0FFh
+                db 0F6h
+                db 0FFh
+                db    0
+                db    0
+                db    2
+                db    0
+                db    5
+                db    0
+                db  0Ah
+                db    0
+                db  14h
+                db    0
+                db  32h ; 2
+                db    0
+AGE_RANGES      db    1                 ; words, age thresholds for getStat
+                db    0
+                db    6
+                db    0
+                db  0Bh
+                db    0
+                db  12h
+                db    0
+                db  24h ; $
+                db    0
+                db  33h ; 3
+                db    0
+                db  4Ch ; L
+                db    0
+                db  65h ; e
+                db    0
+                db 0C9h
+                db    0
+                db 0FFh
+                db 0FFh
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db    3
+                db  6Bh ; k
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
 word_29708      dw 0                    ; DATA XREF: sub_1B198+24↑r
                                         ; sub_1B198+2A↑w
 word_2970A      dw 0                    ; DATA XREF: sub_1B223+19↑r
@@ -41840,16 +42666,117 @@ word_2E174      dw 7E9Ch                ; DATA XREF: sub_4877A+26↓r
                 db 0EAh, 7Eh, 0F7h, 7Eh, 2, 7Fh, 7, 7Fh, 0Ch, 7Fh, 11h
                 db 7Fh, 1Dh, 7Fh, 0A0h, 6Eh, 21h, 76h, 27h, 76h, 31h, 76h
                 db 47h, 76h, 4Dh, 76h, 56h, 76h, 71h, 76h, 7Ch, 76h, 65h
-                db 76h, 24h, 7Fh, 2 dup(0), 2, 0, 2 dup(1), 2 dup(0FFh)
-                db 2 dup(0FEh), 0, 0FEh, 0FFh, 1, 2, 1, 0, 2, 0, 4, 0
-                db 8, 0, 10h, 0, 20h, 0, 40h, 0, 80h, 0, 4Eh, 0, 1, 4
-                db 5, 2, 3, 9, 0Ah, 6, 7, 8, 0Ch, 0Dh, 0Fh, 0Bh, 11h, 12h
-                db 10h, 16h, 17h, 14h, 15h, 18h, 1Ch, 19h, 1Ah, 1Bh, 21h
-                db 22h, 1Eh, 1Dh, 1Fh, 20h, 25h, 24h, 27h, 23h, 26h, 2Ah
-                db 2Bh, 28h, 29h, 2Dh, 2Eh, 2Fh, 30h, 2Ch, 32h, 31h, 34h
-                db 33h, 37h, 38h, 35h, 36h, 39h, 3Ah, 3Ch, 3Bh, 3Dh, 3Eh
-                db 40h, 41h, 3Fh, 42h, 43h, 45h, 46h, 44h, 47h, 48h, 49h
-                db 4Ah, 4Bh, 4Ch, 1, 2
+                db 76h, 24h
+RACE_SP_BONUSES db  7Fh ;              ; [race*2 + attrib]
+                db    0
+                db    0
+                db    2
+                db    0
+                db    1
+                db    1
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db 0FEh
+RACE_HP_BONUSES db    0                 ; indexed by race
+                db 0FEh
+                db 0FFh
+                db    1
+                db    2
+                db    1
+                db    0
+                db    2
+                db    0
+                db    4
+                db    0
+                db    8
+                db    0
+                db  10h
+                db    0
+                db  20h
+                db    0
+                db  40h ; @
+                db    0
+                db  80h
+                db    0
+                db  4Eh ; N
+                db    0
+                db    1
+                db    4
+                db    5
+                db    2
+                db    3
+                db    9
+                db  0Ah
+                db    6
+                db    7
+                db    8
+                db  0Ch
+                db  0Dh
+                db  0Fh
+                db  0Bh
+                db  11h
+                db  12h
+                db  10h
+                db  16h
+                db  17h
+                db  14h
+                db  15h
+                db  18h
+                db  1Ch
+                db  19h
+                db  1Ah
+                db  1Bh
+                db  21h ; !
+                db  22h ; "
+                db  1Eh
+                db  1Dh
+                db  1Fh
+                db  20h
+                db  25h ; %
+                db  24h ; $
+                db  27h ; '
+                db  23h ; #
+                db  26h ; &
+                db  2Ah ; *
+                db  2Bh ; +
+                db  28h ; (
+                db  29h ; )
+                db  2Dh ; -
+                db  2Eh ; .
+                db  2Fh ; /
+                db  30h ; 0
+                db  2Ch ; ,
+                db  32h ; 2
+                db  31h ; 1
+                db  34h ; 4
+                db  33h ; 3
+                db  37h ; 7
+                db  38h ; 8
+                db  35h ; 5
+                db  36h ; 6
+                db  39h ; 9
+                db  3Ah ; :
+                db  3Ch ; <
+                db  3Bh ; ;
+                db  3Dh ; =
+                db  3Eh ; >
+                db  40h ; @
+                db  41h ; A
+                db  3Fh ; ?
+                db  42h ; B
+                db  43h ; C
+                db  45h ; E
+                db  46h ; F
+                db  44h ; D
+                db  47h ; G
+                db  48h ; H
+                db  49h ; I
+                db  4Ah ; J
+                db  4Bh ; K
+                db  4Ch ; L
+                db    1
+                db    2
 a007SIsNotInAny db 0Ah
                 db 0Bh,'007%s is not in any condition to perform actions!',0
 aSpellFailed    db 'Spell Failed!',0    ; DATA XREF: dseg:off_2D9C4↑o
@@ -57631,7 +58558,7 @@ loc_3D9F9:                              ; CODE XREF: sub_3D8C9+12B↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -60237,7 +61164,7 @@ loc_3EDE3:                              ; CODE XREF: death+45C↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -61228,7 +62155,7 @@ loc_3F5AF:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    ds              ; jumptable 0003F4CF case 8
                 push    [bp+arg_2]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     bx, [bp+arg_2]
@@ -61258,7 +62185,7 @@ loc_3F5DF:                              ; CODE XREF: Awards_show+148↑j
                 push    ax
                 push    ds
                 push    [bp+arg_2]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -64938,7 +65865,7 @@ loc_41254:                              ; CODE XREF: rosterMenu+798↑j
                 add     dx, ax
                 push    word ptr dword_37398+2
                 push    dx
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     [bp+var_8], 0
@@ -70655,7 +71582,7 @@ loc_43C93:                              ; CODE XREF: giveCharDamage+19E↑j
 loc_43CA5:                              ; CODE XREF: giveCharDamage+1A6↑j
                 push    si
                 push    [bp+var_10]
-                call    sub_19038
+                call    subtractHitPoints
                 pop     cx
                 pop     cx
                 cmp     [bp+var_8], 0
@@ -74975,7 +75902,7 @@ arg_2           = word ptr  8
                 mov     di, ax
                 push    ds
                 push    [bp+arg_0]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     [bp+var_A], ax
@@ -81406,7 +82333,7 @@ loc_48DED:                              ; CODE XREF: sub_48D4B+46C↓j
                 mov     [bp+var_A], dx
                 push    ds
                 push    si
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     [bp+var_1C], 0
@@ -83967,7 +84894,7 @@ def_4A14F:                              ; CODE XREF: attack+1B↑j
                                         ; attack+29↑j ...
                 push    ds              ; jumptable 0004A14F default case
                 push    di
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 xor     dx, dx
@@ -84115,7 +85042,7 @@ loc_4A268:                              ; CODE XREF: attack+8D↑j
                 jz      short loc_4A2BC
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 add     ax, 64h ; 'd'
@@ -84705,7 +85632,7 @@ arg_2           = word ptr  8
                 jnz     short loc_4A66C
                 push    ds
                 push    [bp+arg_0]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -85407,7 +86334,7 @@ def_4A8EE:                              ; CODE XREF: sub_4A779+136↑j
                                         ; sub_4A779+146↑j ...
                 push    di              ; jumptable 0004A8EE default case
                 push    [bp+arg_0]
-                call    sub_19038
+                call    subtractHitPoints
                 pop     cx
                 pop     cx
                 mov     ax, 2
@@ -85979,7 +86906,7 @@ loc_4AE8A:                              ; CODE XREF: doMonsterTurn+31B↑j
                 jz      short loc_4AEDD
                 push    ds
                 push    [bp+var_C]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 shr     ax, 1
@@ -86529,7 +87456,7 @@ def_4B1DB:                              ; CODE XREF: sub_4B194+43↑j
                                         ; sub_4B194+4F↑j ...
                 push    ds              ; jumptable 0004B1DB default case
                 push    [bp+arg_0]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 xor     dx, dx
@@ -88747,7 +89674,7 @@ arg_2           = word ptr  8
                 jge     short loc_4C273
                 push    ds
                 push    si
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax              ; pChar
@@ -88828,7 +89755,7 @@ arg_2           = word ptr  8
                 jge     short loc_4C2E9
                 push    ds
                 push    di
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -89194,7 +90121,7 @@ sub_4C4FE       proc far                ; CODE XREF: sub_284FF↑J
                 mov     bp, sp
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 shl     ax, 1
@@ -89231,7 +90158,7 @@ sub_4C534       proc far                ; CODE XREF: sub_284B9↑J
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -89412,7 +90339,7 @@ sub_4C678       proc far                ; CODE XREF: sub_28531↑J
                 push    si
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 shl     ax, 1
@@ -89742,7 +90669,7 @@ sub_4C895       proc far                ; CODE XREF: sub_284FA↑J
                 pop     cx
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -90016,7 +90943,7 @@ sub_4CA6E       proc far                ; CODE XREF: sub_28504↑J
                 pop     cx
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -90091,7 +91018,7 @@ loc_4CB05:                              ; CODE XREF: sub_4CAC3+34↑j
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -90193,7 +91120,7 @@ sub_4CB99       proc far                ; CODE XREF: sub_28469↑J
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -90271,7 +91198,7 @@ sub_4CC0D       proc far                ; CODE XREF: sub_28568↑J
                 pop     cx
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -90540,7 +91467,7 @@ sub_4CE39       proc far                ; CODE XREF: sub_2850E↑J
                 pop     cx
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -90621,7 +91548,7 @@ sub_4CED6       proc far                ; CODE XREF: sub_2856D↑J
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -90940,7 +91867,7 @@ sub_4D153       proc far                ; CODE XREF: sub_2846E↑J
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -91571,7 +92498,7 @@ sub_4D5B2       proc far                ; CODE XREF: sub_284E6↑J
                 mov     bp, sp
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, 5
@@ -92111,7 +93038,7 @@ loc_4D94B:                              ; CODE XREF: sub_4D901+3C↑j
                 sar     ax, 1
                 push    ax
                 push    word_32E3E
-                call    sub_19038
+                call    subtractHitPoints
                 pop     cx
                 pop     cx
                 mov     ax, 14h
@@ -92250,7 +93177,7 @@ sub_4DA44       proc far                ; CODE XREF: sub_2845A↑J
                 push    ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     dx, ax
@@ -94009,7 +94936,7 @@ loc_4E728:                              ; CODE XREF: itemsDialog+8D2↑j
                 mov     [bp+var_6], ax
                 push    ds
                 push    word_32E3E
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 mov     bx, 0Ah
@@ -94682,7 +95609,7 @@ arg_0           = word ptr  6
                 mov     si, [bp+arg_0]
                 push    ds
                 push    si              ; pChar
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 shl     ax, 1
@@ -95315,7 +96242,7 @@ loc_4F022:                              ; CODE XREF: sub_4EFB6+60↑j
                 imul    dx
                 add     ax, 0B8A7h
                 push    ax
-                call    sub_19038
+                call    subtractHitPoints
                 pop     cx
                 pop     cx
                 xor     ax, ax
@@ -95359,7 +96286,7 @@ loc_4F022:                              ; CODE XREF: sub_4EFB6+60↑j
                 imul    dx
                 add     ax, 0B8A7h
                 push    ax
-                call    sub_19038
+                call    subtractHitPoints
                 pop     cx
                 pop     cx
 
@@ -96354,7 +97281,7 @@ loc_4F85A:                              ; CODE XREF: sub_4F74F+101↑j
                 push    word ptr [bx+1C16h]
                 push    ds
                 push    word ptr [bp+format]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -97197,7 +98124,7 @@ loc_4FDC3:                              ; CODE XREF: sub_4F74F+66A↑j
                 push    word ptr [bx+1C16h]
                 push    ds
                 push    word ptr [bp+format]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -99927,7 +100854,7 @@ loc_5131F:                              ; CODE XREF: getMaxSP+BB↑j
                                         ; getMaxSP+C3↑j
                 push    word ptr [bp+arg_0+2]
                 push    word ptr [bp+arg_0] ; pChar
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 xor     cx, cx
@@ -100083,7 +101010,7 @@ loc_51477:                              ; CODE XREF: getMaxHP+6F↑j
                                         ; getMaxHP+77↑j
                 push    word ptr [bp+arg_0+2]
                 push    word ptr [bp+arg_0] ; pChar
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 xor     cx, cx
@@ -100368,7 +101295,7 @@ loc_51639:                              ; CODE XREF: sub_5152B+109↑j
                 push    ax
                 push    ds
                 push    si
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -100377,7 +101304,7 @@ loc_51639:                              ; CODE XREF: sub_5152B+109↑j
                 push    ax
                 push    ds
                 push    si
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -101009,7 +101936,7 @@ loc_51A28:                              ; CODE XREF: sub_519E5+1A9↓j
                 push    ax
                 push    ds
                 push    [bp+var_2]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax
@@ -101019,7 +101946,7 @@ loc_51A28:                              ; CODE XREF: sub_519E5+1A9↓j
                 push    ax
                 push    ds
                 push    [bp+var_2]
-                call    sub_16F89
+                call    getCurrentLevel
                 pop     cx
                 pop     cx
                 push    ax

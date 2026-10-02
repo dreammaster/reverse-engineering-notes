@@ -5923,6 +5923,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X16F81);
 	create_insn	(0X16F89);
+	set_name	(0X16F89,	"getCurrentLevel");
 	create_insn	(x=0X16F8E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X16F9F);
@@ -6686,6 +6687,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1901F);
 	op_hex		(x,	1);
 	create_insn	(0X19038);
+	set_name	(0X19038,	"subtractHitPoints");
 	create_insn	(x=0X1903F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19042);
@@ -10226,11 +10228,6 @@ static Bytes_1(void) {
 	create_insn	(0X1F0E8);
 	create_insn	(0X1F10D);
 	create_insn	(0X1F133);
-	create_insn	(0X1F154);
-	create_insn	(0X1F175);
-	create_insn	(0X1F196);
-	create_insn	(0X1F1C1);
-	create_insn	(0X1F1CD);
 }
 
 //------------------------------------------------------------------------
@@ -10240,6 +10237,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1F154);
+	create_insn	(0X1F175);
+	create_insn	(0X1F196);
+	create_insn	(0X1F1C1);
+	create_insn	(0X1F1CD);
 	create_insn	(0X1F1DE);
 	create_insn	(0X1F1EF);
 	create_insn	(0X1F200);
@@ -14452,10 +14454,20 @@ static Bytes_2(void) {
 	make_array	(0X290FF,	0X16);
 	create_byte	(0X29115);
 	create_byte	(0X29116);
+	set_cmt	(0X29117,	"indexed by elemental material (0A3h slot byte)",	0);
+	set_name	(0X29117,	"ELEMENTAL_RESISTANCES");
 	create_byte	(0X29118);
-	make_array	(0X29118,	0X309);
+	make_array	(0X29118,	0X77);
+	set_cmt	(0X2918F,	"indexed by item material (0B6h slot byte)",	0);
+	set_name	(0X2918F,	"METAL_LAC");
+	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
+	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
+	set_cmt	(0X29377,	"indexed by item id",	0);
+	set_name	(0X29377,	"ARMOR_STRENGTHS");
 	create_byte	(0X29421);
-	make_array	(0X29421,	0X14E);
+	make_array	(0X29421,	0X130);
+	set_cmt	(0X29551,	"10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)",	0);
+	set_name	(0X29551,	"BASE_HP_BY_CLASS");
 	create_word	(0X2956F);
 	create_word	(0X29571);
 	create_strlit	(0X29573,	0X1A);
@@ -14477,7 +14489,17 @@ static Bytes_2(void) {
 	create_strlit	(0X29600,	0XB);
 	set_name	(0X29600,	"aMm3themeM");
 	create_byte	(0X2960B);
-	make_array	(0X2960B,	0XFD);
+	make_array	(0X2960B,	0X45);
+	set_cmt	(0X29650,	"24 words, statBonus thresholds",	0);
+	set_name	(0X29650,	"STAT_VALUES");
+	set_cmt	(0X29680,	"24 signed bytes",	0);
+	set_name	(0X29680,	"STAT_BONUSES");
+	set_cmt	(0X296AC,	"10 bytes thresholds for getAttributeCategory",	0);
+	set_name	(0X296AC,	"ATTRIBUTE_CATEGORIES");
+	set_cmt	(0X296C2,	"2 modes x 10 words, added to might/endurance/speed/accuracy (mode 0) or intellect/personality (mode 1)",	0);
+	set_name	(0X296C2,	"AGE_RANGES_ADJUST");
+	set_cmt	(0X296EA,	"words, age thresholds for getStat",	0);
+	set_name	(0X296EA,	"AGE_RANGES");
 	create_word	(0X29708);
 	create_word	(0X2970A);
 	create_word	(0X2970C);
@@ -15028,6 +15050,15 @@ static Bytes_2(void) {
 	set_name	(0X2D78F,	"aC_23");
 	create_strlit	(0X2D7A7,	0X2);
 	set_name	(0X2D7A7,	"aC_24");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2D7BC,	0X2);
 	set_name	(0X2D7BC,	"aC_25");
 	create_strlit	(0X2D7D5,	0X2);
@@ -15094,15 +15125,6 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
 	set_name	(0X2DFC2,	"path");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X2DFC4);
 	make_array	(0X2DFC4,	0X13C);
 	create_word	(0X2E100);
@@ -15110,7 +15132,11 @@ static Bytes_3(void) {
 	make_array	(0X2E102,	0X72);
 	create_word	(0X2E174);
 	create_byte	(0X2E176);
-	make_array	(0X2E176,	0X91);
+	make_array	(0X2E176,	0X23);
+	set_cmt	(0X2E199,	"[race*2 + attrib]",	0);
+	set_name	(0X2E199,	"RACE_SP_BONUSES");
+	set_cmt	(0X2E1A4,	"indexed by race",	0);
+	set_name	(0X2E1A4,	"RACE_HP_BONUSES");
 	create_strlit	(0X2E207,	0X34);
 	set_name	(0X2E207,	"a007SIsNotInAny");
 	create_strlit	(0X2E23B,	0XE);
@@ -19371,6 +19397,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3C2A4);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3C2AA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3C2AD);
@@ -19455,15 +19490,6 @@ static Bytes_3(void) {
 	create_insn	(0X3C387);
 	create_insn	(x=0X3C38A);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3C393,	"jumptable 0003C335 case 13",	1);
 	create_insn	(x=0X3C393);
 	op_stkvar	(x,	1);
@@ -24294,6 +24320,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4290A);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4290F);
 	op_hex		(x,	1);
 	create_insn	(x=0X42911);
@@ -24406,15 +24441,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42A8B);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X42A8E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42A92);
@@ -29805,6 +29831,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X4A175,	"jumptable 0004A14F default case",	1);
 	set_name	(0X4A175,	"def_4A14F");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A180);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A184);
@@ -29897,15 +29932,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A371);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4A37A,	"jumptable 0004A2E5 case 9",	1);
 	create_insn	(x=0X4A37A);
 	op_stkvar	(x,	0);
@@ -34706,6 +34732,15 @@ static Bytes_6(void) {
 	create_insn	(x=0X5198B);
 	op_hex		(x,	1);
 	set_cmt	(0X5198F,	"format",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X51997,	"buffer",	0);
 	create_insn	(x=0X51997);
 	op_stkvar	(x,	0);
@@ -34808,15 +34843,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X51BE4);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X51BE9);
 	op_stkvar	(x,	1);
 	set_cmt	(0X51BED,	"format",	0);
@@ -36100,6 +36126,7 @@ static Functions_0(void) {
 	set_frame_size(0X16E6B, 0X2, 2, 0);
 	add_func    (0X16F89,0X16FB1);
 	set_func_flags(0X16F89,0x5412);
+	set_func_cmt(0X16F89,	"max(level+tempLevel,0) from +23h/+24h (identical to Xeen Character::getCurrentLevel)", 0);
 	set_frame_size(0X16F89, 0X2, 2, 0);
 	add_func    (0X16FB1,0X170E9);
 	set_func_flags(0X16FB1,0x5412);
@@ -36127,6 +36154,7 @@ static Functions_0(void) {
 	set_frame_size(0X18BF1, 0X2, 2, 0);
 	add_func    (0X19038,0X190C9);
 	set_func_flags(0X19038,0x5412);
+	set_func_cmt(0X19038,	"hp at +125h; sets conditions +11Fh (unconscious) / +120h (dead), breaks armour (item ids 21h..29h, flag 80h)", 0);
 	set_frame_size(0X19038, 0X2, 2, 0);
 	add_func    (0X190C9,0X1913E);
 	set_func_flags(0X190C9,0x5412);
@@ -38241,6 +38269,10 @@ static Functions_0(void) {
 	add_func    (0X4BE23,0X4BF12);
 	set_func_flags(0X4BE23,0x5412);
 	set_frame_size(0X4BE23, 0XC, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4BF12,0X4BFBD);
 	set_func_flags(0X4BF12,0x1410);
 	set_frame_size(0X4BF12, 0X6A, 2, 0);
@@ -38252,10 +38284,6 @@ static Functions_0(void) {
 	set_func_flags(0X4C106,0x5412);
 	set_frame_size(0X4C106, 0X66, 2, 0);
 	define_local_var(0X4C106, 0X4C19A, "[bp-0X66]", "buffer");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4C19A,0X4C237);
 	set_func_flags(0X4C19A,0x5412);
 	set_frame_size(0X4C19A, 0X66, 2, 0);
