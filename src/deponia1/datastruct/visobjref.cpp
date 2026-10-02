@@ -93,3 +93,7 @@ void TVisObjRef::GetList(int /*fieldId*/, TVList &/*outList*/) const {
 const std::uint8_t *TVisObjRef::GetId() const {
 	return _id;
 }
+
+TVisionaire *TVisObjRef::GetVisionaire() const {
+	return nullptr;
+}

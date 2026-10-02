@@ -582,12 +582,12 @@ TGInterface *TGameControl::GetInterface(const TVisObjRef &interfaceObj) const {
 	return nullptr;
 }
 
-void *TGameControl::GetObject(const TVisObjRef &object) const {
+TManagedObject *TGameControl::GetObject(const TVisObjRef &object) const {
 	// Confirmed (asm lines 456656-456737): scene lookup first; then, only
 	// when the id's 4th byte is zero (meaning unconfirmed - some kind of
 	// "is a character" type tag), a character lookup; either way, falls
 	// back to searching the active interfaces last.
-	if (void *obj = _ownedSceneControl.GetScene()->GetObject(object))
+	if (TManagedObject *obj = _ownedSceneControl.GetScene()->GetObject(object))
 		return obj;
 
 	if (object.GetId()[3] == 0) {
@@ -596,7 +596,7 @@ void *TGameControl::GetObject(const TVisObjRef &object) const {
 	}
 
 	for (TGInterface *interface : _activeInterfaces) {
-		if (void *obj = interface->GetObject(object))
+		if (TManagedObject *obj = interface->GetObject(object))
 			return obj;
 	}
 	return nullptr;

@@ -96,7 +96,14 @@ public:
 	// Confirmed TGInterface* (asm lines 456603-456648: the list holds
 	// TGInterface*, and the found node's payload is returned directly).
 	TGInterface *GetInterface(const TVisObjRef &interfaceObj) const;
-	void *GetObject(const TVisObjRef &object) const;
+	// Confirmed TManagedObject* (TGObjectManager::SavedObjectChanged assigns
+	// the result straight into its own TManagedObject* _savedObject field,
+	// Deponia_Linux.asm lines 189027-189113) - every internal path here
+	// (TGScene::GetObject, GetCharacterPointerEx, TGInterface::GetObject)
+	// already returns a TManagedObject*-compatible pointer, so the
+	// manifest's void* was the same kind of placeholder guess TGScene::
+	// GetObject's own comment already corrected.
+	TManagedObject *GetObject(const TVisObjRef &object) const;
 	TGObjectManager *GetObjectManager();
 	void SkipCurrentText();
 	void UpdateCurrentObject();

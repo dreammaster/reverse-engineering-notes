@@ -1969,6 +1969,110 @@ show `TGItem`/`TGObject` also override at least `HandlePostExecution()`/
 needs its own dedicated future pass, starting from naming `TGEventInfo`'s
 and `TGActionInfo`'s own fields.
 
+## TGObjectManager, and two TManagedObject corrections found along the way
+
+Implemented 22 of `TGObjectManager`'s 25 manifest-listed methods for real
+(the manager that tracks which `TManagedObject` the mouse is hovering -
+`_currentObject` - and a separately-saved one used once a character finishes
+walking up to something clicked out of reach - `_savedObject`); the other 3
+(`HandleEvent()`, `ObjectReached(TManagedObject*)`, and `GetActionText()`)
+are confirmed-signature stubs, for two different reasons explained below.
+This class was one of three (`TCursorControl`, `TSceneControl` are the
+others) explicitly deferred at the end of the `TManagedObject` pass as
+needing their own dedicated look once `TManagedObject` itself was done.
+
+**The action-execution gap shows up here too.** `HandleEvent()` and
+`ObjectReached(TManagedObject*)` each build a `TGEventInfo` from the game's
+own saved click/hover state and dispatch it virtually through
+`TManagedObject::ExecuteEvent()` (vtable slot `0x30`) - the exact same
+unreversed action-execution subsystem flagged on `TManagedObject` itself.
+`MouseMove()` and `ExecuteSavedObject()` each fire that same dispatch as
+*one step* among several; for those two, the dispatch step is called out
+with a comment and skipped, while the rest of their real bookkeeping
+(updating `_currentObject`/`_savedObject` and the matching game-data links)
+is implemented in full.
+
+**`GetActionText()`** (asm lines 189563-190177 - by itself longer than every
+other method in this class combined) is a stub for a different reason: when
+no hook name is registered, it falls back to formatting `"<button's
+language name> <object's display text>"`, where "object's display text"
+comes from an unidentified `TManagedObject` virtual at vtable slot `0xB0`
+(itself ambiguous - see below); when a hook name *is* registered, it calls
+`LuaExecuteFunction()` directly, this project's standing, deliberately-
+unreversed Lua-bridge-contract gap. Neither path is worth transcribing
+without first resolving what it depends on.
+
+**Two errors in `TManagedObject`'s original pass, found while cross-
+checking its real vtable layout** (needed here to confirm which slot
+`ExecuteEvent()` lives at, since `TGObjectManager` dispatches through it by
+raw `this`-pointer vtable call, not a named method call):
+- A genuinely missing method, `GetDirection()` (vtable slot `0xE8`, called
+  from `Draw()` for the primary animation's per-frame override) - the
+  original pass's own `GetAnimationFrameOverride()` name for this was an
+  invented placeholder for an "unnamed hook slot" that turned out to have a
+  real, recovered name and symbol all along. Fixed - same confirmed `-1`
+  default, correct name.
+- An outright invented method, `OnAlphaChanged()` - the original pass
+  guessed a separate protected hook lived at vtable slot `0xE0` (called from
+  `SetDestAlpha()`/`UpdateAlpha()` whenever alpha actually changes), but
+  that slot is just `SetAlpha()` itself - a real, public, already-modeled
+  virtual (confirmed no-op in the base). Fixed by deleting `OnAlphaChanged()`
+  and calling `SetAlpha()` directly; this matters for any future subclass
+  that overrides `SetAlpha()` expecting it to fire on alpha changes, which
+  the old, fabricated hook would never have reached.
+
+The same cross-check also *confirmed* (rather than corrected) the class's
+two secondary mixin interfaces by name, straight from their own vtables/RTTI
+sitting right after `TManagedObject`'s own in the binary: `TAnimationOwner`
+(3 pure virtuals) and `TTextOwner` (1 pure virtual, `TextFinished()`) - both
+already guessed informally in the original pass, now hard evidence rather
+than a guess. One vtable slot (`0xB0`, between `RemoveSprites()` and
+`SetAnimation()`) remains unidentified: IDA resolves it to
+`no_check_checker_t::to_string()`, almost certainly identical-code-folding
+with an unrelated trivial method rather than that method's real name/owner.
+
+**New shallow leaf dependencies**, matching this project's usual "just
+enough surface to compile and behave correctly" treatment for a class
+that isn't getting its own full pass yet:
+- `TGDetectInfo` (new, `TGDetectInfo.h`): two flag bytes plus a character
+  link, named by position (`flagA`/`flagB`) rather than guessed meaning,
+  like `TypeOrder`/`eVisionaireTable` - only 3 of their 4 possible
+  combinations are ever written by `GetDetectInfo()`.
+- `TTButton` (new, `TTButton.h`): confirmed a zero-overhead `TVisObjRef`
+  subclass (every ctor seen is a tail call straight into the matching
+  `TVisObjRef` ctor) - modeled as `: public TVisObjRef` directly rather than
+  introducing an unneeded `TTObject` base. Only `IsStandardCommand()` is
+  implemented (confirmed in full); the manifest's other 11 methods aren't
+  touched.
+- `TCursorControl::SetMoveObject()`/`ReleaseMoveObject()`: confirmed call
+  shapes only - `TCursorControl` itself hasn't had a dedicated pass yet.
+- `TVisObjRef::GetVisionaire()`: confirmed call shape only - the real body
+  reads a `TVisionaireObject*` field this project's `TVisObjRef` stub
+  doesn't model.
+- `TVisionaireGame::GetGame()`/`GetEmptyObject()`: both repeatedly confirmed
+  called directly on whatever `TGameControl::GetGameSystem()`/
+  `GetVisionaire()` returns, with the exact same call shape `TVisionaire`'s
+  own methods of the same name already use everywhere else - another data
+  point for the standing "`TVisionaire`/`TVisionaireGame` may really be the
+  same underlying object" gap (see `visionaireGame.h`'s own comments),
+  rather than genuinely new behavior.
+- `TGameControl::GetObject()`'s return type corrected from `void *` to
+  `TManagedObject *` - the same kind of placeholder the manifest originally
+  guessed for `TGScene::GetObject()` too (already fixed, in an earlier
+  pass); every internal path here already produces a `TManagedObject*`-
+  compatible pointer.
+- `TGCharacter::SetActionCharacter`'s own confirmed caller, `TGObjectManager
+  ::SaveEventInfo()`, needed no new surface - but it, and several other
+  `TGObjectManager` methods, rely on a repeated idiom confirmed across half
+  a dozen call sites: "does this character's own field `0x1F7` link match
+  the current scene's own `GetRef()`?" (i.e. is this character actually the
+  one active in the current scene). Modeled as plain inline comparisons
+  rather than a named helper, to keep each method's own confirmed shape
+  visible.
+
+`TGObjectManager` is now `in-progress` in the manifest (not `done`, given
+the 3 stubs above); `TTButton` moved from `todo` to `stub`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

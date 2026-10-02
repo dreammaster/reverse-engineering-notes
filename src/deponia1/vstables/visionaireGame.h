@@ -4,9 +4,22 @@
 // exposed via GetVisionaire()/GetGameSystem().
 #pragma once
 
+#include "datastruct/visobjref.h"
+
 class TVisionaireGame {
 public:
 	TVisionaireGame() = default;
+
+	// Confirmed called directly on whatever GetGameSystem()/GetVisionaire()
+	// returns, with the exact same call shape TVisionaire::GetGame()/
+	// GetEmptyObject() use everywhere else in this codebase (e.g.
+	// TGObjectManager::ResetEventInfo/GetCurrentObject, Deponia_Linux.asm
+	// lines 187267-187315, 189315-189352) - another data point for the
+	// standing "may really be the same underlying object" gap noted above
+	// (see LoadDataGame/LoadSaveGame's own comments on TVisionaire),
+	// rather than behavior genuinely new to this class.
+	TVisObjRef GetGame() const;
+	TVisObjRef GetEmptyObject() const;
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line

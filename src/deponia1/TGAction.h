@@ -14,10 +14,12 @@ enum class TMouseMessageEnum;
 
 // Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.asm
 // lines 472809-472810 and elsewhere in the same function) - the opaque event
-// type TGObjectManager::HandleEvent() takes; no individual value has been
-// observed/reversed, only that ConvertToEvent() produces one from a
-// TMouseMessageEnum.
-enum class TMouseEventEnum {};
+// type TGObjectManager::HandleEvent() takes; ConvertToEvent() produces one
+// from a TMouseMessageEnum, and TGObjectManager::ExecuteSavedObject() passes
+// one literal value, 1 (Deponia_Linux.asm line 188894) - neither resolved to
+// a real meaning, so named by raw value like this project's TypeOrder/
+// eVisionaireTable enums.
+enum class TMouseEventEnum { kValue1 = 1 };
 
 class TGAction {
 public:

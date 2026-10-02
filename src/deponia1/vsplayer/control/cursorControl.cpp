@@ -26,6 +26,12 @@ bool TCursorControl::IsActiveMoveObject() const {
 	return false;
 }
 
+void TCursorControl::SetMoveObject(const TVisObjRef &/*object*/) {
+}
+
+void TCursorControl::ReleaseMoveObject() {
+}
+
 void TCursorControl::SetInactiveCursor() {
 }
 

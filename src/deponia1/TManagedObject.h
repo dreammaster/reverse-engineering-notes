@@ -2,7 +2,9 @@
 //
 // Confirmed in full except ExecuteMatchingAction()/HandlePostExecution()/
 // GetActionsToTest()/ExecuteEvent() (Deponia_Linux.asm lines 114890-194554,
-// reaching all 50 manifest-listed methods): the shared base for every
+// reaching all 50 manifest-listed methods, including GetDirection() - found
+// late, while cross-checking this class's real vtable layout during the
+// TGObjectManager pass, and added here): the shared base for every
 // interactive scene object (TGCharacter already derives from it; TGObject/
 // TGItem and others are referenced as doing so too, from other classes'
 // call sites, but aren't modeled in this codebase yet). Owns a game-data
@@ -11,22 +13,28 @@
 // picture and text, a fade-alpha system driven by a TTimer, and an
 // active/lifetime pair.
 //
-// The real class is polymorphic through TWO separate vtables (confirmed:
-// the constructor writes a second vtable pointer at +0x10, right after the
-// primary one at +0x00, with the TVisObjRef data member sandwiched between
-// the END of the primary vtable's contribution and this second one) -
-// almost certainly two small mixin interfaces the original multiply
-// inherits from (one that TGAnimation::HideAnimation() calls through -
-// AnimationStopped()/GetOwnerId()/GetOwnerName() are reached via a
-// `_ZThn72_`-style this-adjusting thunk from TCursorControl, consistent
-// with a primary-base interface; TextFinished() is reached via a smaller,
-// constant `_ZThn16_` adjustment regardless of the outer class, consistent
-// with TManagedObject's OWN secondary mixin, informally named TTextOwner
-// after TGText::SetOwner()'s parameter). Modeled here as a single ordinary
-// class with virtual methods instead of replicating the two-vtable ABI
-// trick - nothing in this codebase casts a TManagedObject* through a
-// narrower TAnimationOwner*/TTextOwner* pointer obtained some other way, so
-// there's no behavioral difference.
+// The real class multiply-inherits two small pure-abstract mixins, both
+// confirmed by name from their own recovered vtables/RTTI sitting right
+// after this class's own in the binary: TAnimationOwner (3 pure virtuals -
+// AnimationStopped()/GetOwnerName()/GetOwnerId(), the first 3 slots of this
+// class's own primary vtable; TCursorControl reaches them through a
+// `_ZThn72_`-style this-adjusting thunk, consistent with holding a
+// TAnimationOwner* interface pointer into a larger composite object) and
+// TTextOwner (1 pure virtual - TextFinished(), reached from a secondary
+// vtable fragment at this object's +0x10 via a constant `_ZThn16_`
+// adjustment). Modeled here as a single ordinary class with virtual
+// methods instead of replicating the two-vtable ABI trick - nothing in
+// this codebase casts a TManagedObject* through a narrower
+// TAnimationOwner*/TTextOwner* pointer obtained some other way, so there's
+// no behavioral difference.
+//
+// The vtable cross-check also caught two errors from this class's original
+// pass: an invented "OnAlphaChanged()" hook that doesn't exist - the real
+// vtable slot SetDestAlpha()/UpdateAlpha() call through (+0xE0) is just
+// SetAlpha() itself, already a real, public, confirmed-no-op virtual here;
+// and an invented "GetAnimationFrameOverride()" name for what is actually
+// the recovered GetDirection() (+0xE8) - same confirmed -1 default, just
+// under its real name. Both are fixed in this version.
 //
 // ExecuteMatchingAction()/HandlePostExecution()/GetActionsToTest()/
 // ExecuteEvent() form the actual condition/action-matching engine behind
@@ -99,6 +107,14 @@ public:
 	wxPoint GetPosition() const {
 		return _position;
 	}
+	// Confirmed accessed directly as a private field from TGObjectManager
+	// (e.g. IsCurrentObjectEmpty/IsCurrentObjectDetectable/GetCurrentObject,
+	// Deponia_Linux.asm lines 189114-189460) - modeled as a public accessor
+	// instead of a cross-class friendship, matching TGCharacter::GetRef()'s
+	// own already-established pattern for the same field.
+	const TVisObjRef &GetRef() const {
+		return _objRef;
+	}
 	// Confirmed virtual (called polymorphically by CompObjectCenter below;
 	// this class's own body is a plain field read either way).
 	virtual int GetCenter() const {
@@ -111,6 +127,12 @@ public:
 	virtual void SetAlpha() {
 	}
 	virtual void ShowSnoopAnimation(bool /*show*/) {
+	}
+	// Confirmed (asm line 190356-190364): the base always returns -1; Draw()
+	// below passes this through as the primary animation's per-frame
+	// override.
+	virtual int GetDirection() const {
+		return -1;
 	}
 
 	// Confirmed (asm lines 191134-191171): active, inside the bounding
@@ -284,7 +306,7 @@ public:
 		_alphaTarget = static_cast<float>(clamped) / 100.0f;
 		if (durationMs == 0 && _alphaFrom != _alphaTarget) {
 			_alpha = _alphaTarget;
-			OnAlphaChanged();
+			SetAlpha();
 		}
 		_timer.SetTime();
 	}
@@ -299,7 +321,7 @@ public:
 		         ? _alphaTarget
 		         : _alphaFrom + (_alphaTarget - _alphaFrom) * (static_cast<float>(elapsed) /
 		             static_cast<float>(_alphaDurationMs));
-		OnAlphaChanged();
+		SetAlpha();
 	}
 	float GetAlpha() const {
 		return _alpha;
@@ -388,18 +410,6 @@ protected:
 	// recovered evidence).
 	virtual wxPoint GetScreenPosition() const {
 		return _position;
-	}
-	// Two unnamed virtual hooks (vtable slots 0xE0/0xE8) - SetDestAlpha()/
-	// UpdateAlpha() call the first whenever _alpha actually changes;
-	// Draw() calls the second (only for a non-bones primary animation) to
-	// get a per-frame value passed on as TGAnimation::Draw()'s int
-	// argument. Neither has a confirmed TManagedObject-level body or name;
-	// these defaults (no-op; -1, matching the secondary-animation loop's
-	// own literal -1) are reasonable guesses, not recovered evidence.
-	virtual void OnAlphaChanged() {
-	}
-	virtual int GetAnimationFrameOverride() const {
-		return -1;
 	}
 
 private:

@@ -32,6 +32,13 @@ public:
 	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
 	// asm line 472904) - not reversed beyond that.
 	bool IsActiveMoveObject() const;
+	// Confirmed call shapes only (TGObjectManager::SetItem/ResetEventInfo/
+	// RemoveItem(bool)/RemoveItem(TVisObjRef const&), Deponia_Linux.asm
+	// lines 187267-187628) - picks up/drops whatever object the cursor is
+	// currently "holding" (dragging); not reversed beyond that call shape -
+	// TCursorControl itself hasn't had its own dedicated pass yet.
+	void SetMoveObject(const TVisObjRef &object);
+	void ReleaseMoveObject();
 	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
 	// lines 469674, 470075) - switches the cursor's appearance depending on
 	// whether something detectable is under it; not reversed beyond that.

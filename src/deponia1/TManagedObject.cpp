@@ -93,7 +93,7 @@ void TManagedObject::Draw() {
 			if (_currentAnimation->IsBonesAnimation())
 				_currentAnimation->DrawMixed(_alpha, _color, _animations);
 			else
-				_currentAnimation->Draw(_alpha, _color, GetAnimationFrameOverride());
+				_currentAnimation->Draw(_alpha, _color, GetDirection());
 		}
 	} else if (_picture) {
 		_picture->Draw(_alpha, _color);

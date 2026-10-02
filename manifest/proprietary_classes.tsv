@@ -38,9 +38,9 @@ TGScene	todo	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	stub	76	175318	185835
 THAction	todo	5	187010	187127
-TGObjectManager	stub	25	187194	189565
+TGObjectManager	in-progress	25	187194	189565
 TTObject	todo	9	190187	1468584
-TTButton	todo	12	190202	1526063
+TTButton	stub	12	190202	1526063
 TGEventInfo	todo	1	190217	190217
 no_check_checker_t	todo	4	191182	1570709
 t_SkipCutsceneInfo	todo	1	194735	194735

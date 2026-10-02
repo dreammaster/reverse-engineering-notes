@@ -31,6 +31,7 @@ enum class TSendEventEnum { kSendEvent = 2 };
 enum class TypeOrder { kValue0 = 0, kValue1 = 1 };
 
 class TVisionaireObject;
+class TVisionaire;
 class TVList;
 
 class TVisObjRef {
@@ -117,6 +118,13 @@ public:
 	// treats as 3-4 individual bytes (see TMasterControl::PlayAVI packing
 	// it into a 32-bit value) - exact meaning not resolved.
 	const std::uint8_t *GetId() const;
+
+	// Confirmed call shape only (TGObjectManager::MouseMove, Deponia_Linux.
+	// asm lines 600326-600356): the real body reads a TVisionaireObject*
+	// this project's own stub doesn't model, then forwards to its own
+	// GetVisionaire() (x_assert on a non-null result skipped, per this
+	// project's usual treatment); not reversed beyond that call shape.
+	TVisionaire *GetVisionaire() const;
 
 private:
 	wxPoint _point{};
