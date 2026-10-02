@@ -25,6 +25,12 @@ public:
 	const TVisObjRef &GetRef() const {
 		return _ref;
 	}
+	// Confirmed accessed directly as a private field from TSceneControl::Set
+	// (Deponia_Linux.asm line 60F910) - modeled as a public accessor
+	// instead of a cross-class friendship, matching GetRef() above.
+	void SetRef(const TVisObjRef &ref) {
+		_ref = ref;
+	}
 
 	bool IsMenu() const;
 	// Confirmed TManagedObject* (TGameControl::ReattachSceneObjectTexts

@@ -64,6 +64,14 @@ public:
 		return _objRef;
 	}
 
+	// Confirmed static (no implicit `this` - Deponia_Linux.asm lines
+	// 178297-178307) and confirmed in full: `direction` is a 0-359 compass
+	// value, and the result wraps the same way.
+	static int GetOppositeDirection(int direction) {
+		int sum = direction + 180;
+		return sum >= 360 ? direction - 180 : sum;
+	}
+
 	// Confirmed called for every character (TGameControl::
 	// SetCharacterInterfaces, Deponia_Linux.asm lines 458260-458285) - not
 	// reversed beyond that call shape.

@@ -2144,6 +2144,46 @@ exposed) are modeled; `TCAnimation::SetPosition()`/`GetCurrentSprite()`
 `TCursorControl` is now `in-progress` in the manifest; `TGItem` and
 `SCursor` both moved from `todo` to `stub`.
 
+## TSceneControl
+
+Implemented 14 of `TSceneControl`'s 15 manifest-listed methods for real -
+the last of the three classes flagged at the end of the `TManagedObject`
+pass. Only `ToScene()` - the actual scene-transition implementation
+(sound handling, swapping the current/old scene, registering the new
+scene's events, by itself longer than every other method here combined)
+stays a confirmed-signature stub; every other method is implemented in
+full around it, since their own logic doesn't depend on what it actually
+does internally.
+
+**Corrects another manifest placeholder guess:** the real class holds two
+heap-allocated `THScene` instances (a concrete `TGScene` subclass, by the
+same `operator new` + default-ctor shape as `THCharacter`'s own
+relationship to `TGCharacter`) - a *current* scene and, during a cross-
+fade transition, the one being faded *out* - not a single `TGScene` by
+value as the manifest's original guess had it. Modeled as plain
+`TGScene *_currentScene`/`_oldScene` rather than introducing a near-empty
+`THScene` subclass, since nothing here needs anything beyond `TGScene`'s
+own already-confirmed interface.
+
+**Three separate confirmed bool flags**, not one reused three ways:
+`_fadingToNewScene` (set by `ToScene()`, read by `FadingToNewScene()`),
+`_hasOldScene` (gates whether `Draw()` draws the old scene at all), and
+`_drawingOldScene` (set only for the duration of the old scene's own
+`Draw()` call, read by `GetScene()`'s const overload and
+`GetLastPlayableSceneParams()` so that code running synchronously during
+that one draw call still resolves "the scene" to the one actually being
+drawn). `GetScene()` turned out to have two genuinely different bodies,
+not a const/non-const pair over the same logic - the non-const overload
+always returns the current scene outright, skipping that redirect.
+
+New: `TGScene::SetRef()` (`Set()` was already confirmed to mutate `_ref`
+directly - mirrors the already-existing `GetRef()`) and
+`TGCharacter::GetOppositeDirection()` (confirmed static - no implicit
+`this` - and simple enough to implement in full: wraps a 0-359 compass
+value by 180).
+
+`TSceneControl` is now `in-progress` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

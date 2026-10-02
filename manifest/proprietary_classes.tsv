@@ -124,7 +124,7 @@ TArgParser	todo	8	426919	1434417
 SimplexNoise1234	todo	4	434064	434207
 Noise1234	todo	12	434500	437359
 TGameController	done	20	450097	453534
-TSceneControl	stub	15	453942	455632
+TSceneControl	in-progress	15	453942	455632
 TGameControl	done	98	455671	478479
 SGameAction	todo	1	456169	456169
 SLoadingScreen	todo	2	479291	479330
