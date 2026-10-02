@@ -4,6 +4,7 @@
  * windows with the 8x8 font from fixed text cells that I did not copy. */
 #include "mm2_ui.h"
 #include "mm2_gfx.h"
+#include "mm2_tables.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -175,4 +176,37 @@ void mm2_ui_draw_smith(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *ro
 	mm2_draw_text(canvas, font, 0, 13, "5 sell   6 identify (prices only)", 7, -1);
 	if (message) mm2_draw_text(canvas, font, 0, 20, message, 12, -1);
 	mm2_draw_text(canvas, font, 0, 23, "A-F item  Tab: next char  Esc: leave", 7, -1);
+}
+
+void mm2_ui_draw_tavern(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *roster, int town, int slot, int submenu,
+						const Mm2BuildingText *text, const char *const lines[3]) {
+	char line[64];
+	int k, row = 4;
+	Mm2TavernText L;
+	const Mm2Char *c = &roster->chars[mm2_party_member(roster, slot)];
+	mm2_tavern_text_layout(&L);
+	memset(canvas, 0, MM2_SCREEN_W * MM2_SCREEN_H);
+	mm2_draw_text(canvas, font, 14, 0, " Tavern ", 14, -1);
+	snprintf(line, sizeof(line), "%d) %.11s  Gold=%u", slot + 1, (const char *)c->raw, mm2_c32(c, MC_GOLD));
+	mm2_draw_text(canvas, font, 0, 2, line, 15, -1);
+	if (submenu == 0) {
+		for (k = 0; k < 6; k++)
+			mm2_draw_text(canvas, font, 0, row++, mm2_btext_str(text, L.menu[k]), 15, -1);
+		snprintf(line, sizeof(line), "Feeding frenzy costs %u gold", (unsigned)MM2_TAVERN_FOOD_PRICE[town]);
+		mm2_draw_text(canvas, font, 0, row + 1, line, 7, -1);
+	} else if (submenu == 1) {
+		for (k = 0; k < 6; k++) {
+			snprintf(line, sizeof(line), "%s%u", mm2_btext_str(text, L.drink[k]), (unsigned)mm2_tavern_drink_price(k));
+			mm2_draw_text(canvas, font, 0, row++, line, 15, -1);
+		}
+	} else {
+		for (k = 0; k < 3; k++) {
+			snprintf(line, sizeof(line), "%s%s  %uG", mm2_btext_str(text, L.special[town][k * 2]),
+					 mm2_btext_str(text, L.special[town][k * 2 + 1]), (unsigned)mm2_tavern_specialty_price(town, k));
+			mm2_draw_text(canvas, font, 0, row++, line, 15, -1);
+		}
+	}
+	for (k = 0; k < 3; k++)
+		if (lines && lines[k]) mm2_draw_text(canvas, font, 0, 18 + k, lines[k], 14, -1);
+	mm2_draw_text(canvas, font, 0, 23, submenu ? "letter: buy   Esc: back" : "letter: choose  1-8: char  Esc: leave", 7, -1);
 }

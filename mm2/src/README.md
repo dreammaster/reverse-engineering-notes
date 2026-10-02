@@ -20,6 +20,7 @@ Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`
 | `mm2_party.c` (training), `mm2_inn.c`, `mm2_ui.c` | level-up (hit points, thievery, spell levels and spells), the inn rules, and the inn / training hall / character sheet screens (`mm2_shot inn|sheet|train ...`); in the explorer: **C** = character sheet, training hall door = train with 1-8 |
 | (inn) | inn rules (party of 6 + 2 hirelings, towns, hireling gating) and its text screen; `mm2_shot inn TOWN out.png [ids]` renders it |
 | `mm2_time.c` | calendar (day fraction, days, years, eras), aging, and the rest command; in the explorer **R** rests |
+| `mm2_tavern.c`, `mm2_strings.c` | tavern (feeding, drinks, specialties, tips, rumours) and the STR.DAT building texts (real tavern text is shown); `mm2_shot tavern TOWN SUBMENU out.png` |
 | `mm2_monpic.c` | monster pictures (EGA/CGA) |
 | `main_sdl.c` | SDL2 explorer: arrows move/turn, PgUp/PgDn change map, Y/N answer prompts; runs the event scripts (messages, teleports) |
 | `tests/test_main.c` | data + render regression tests; render hashes come from the Python renderer |

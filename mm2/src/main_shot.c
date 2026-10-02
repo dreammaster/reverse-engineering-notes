@@ -55,6 +55,17 @@ int main(int argc, char **argv) {
 		else mm2_ui_draw_temple(canvas, &font, &roster, town, 3, argv[2][0] == 'g', NULL);
 		return mm2_write_png(argv[4], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
 	}
+	if (argc >= 5 && strcmp(argv[1], "tavern") == 0) {   /* mm2_shot tavern TOWN SUBMENU out.png */
+		static Mm2Roster roster;
+		static Mm2BuildingText text;
+		uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
+		int i;
+		mm2_game_init(&g, NULL);
+		if (!mm2_load_roster(&g, &roster) || !mm2_font_load(&g, &font) || !mm2_btext_load(&g, 1, &text)) return 1;
+		for (i = 0; i < 3; i++) mm2_inn_add(&roster, i);
+		mm2_ui_draw_tavern(canvas, &font, &roster, atoi(argv[2]), 0, atoi(argv[3]), &text, NULL);
+		return mm2_write_png(argv[4], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
+	}
 	if (argc < 6) {
 		fprintf(stderr, "usage: %s MAP X Y N|E|S|W out.png [game dir]\n", argv[0]);
 		return 2;

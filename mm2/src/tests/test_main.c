@@ -10,6 +10,7 @@
 #include "../mm2_smith.h"
 #include "../mm2_spells.h"
 #include "../mm2_town.h"
+#include "../mm2_tavern.h"
 #include "../mm2_text.h"
 #include "../mm2_time.h"
 #include "../mm2_battle.h"
@@ -696,6 +697,38 @@ static void test_time(const Mm2Game *g) {
 	CHECK(mm2_party_rest(&r, &lo) == 0);                        /* already in era 9 */
 }
 
+static void test_tavern(const Mm2Game *g) {
+	static Mm2Roster r;
+	Mm2Rng lo = {rng_lo, 0}, hi = {rng_hi, 0};
+	Mm2TavernVisit v;
+	Mm2Char *c;
+	int heard = 0, rumour = -1, i;
+	CHECK(mm2_load_roster(g, &r));
+	for (i = 0; i < 3; i++) mm2_inn_add(&r, i);
+	c = &r.chars[0];
+	c->raw[MC_GOLD] = 255; c->raw[MC_GOLD + 1] = 1;               /* 511 gold */
+	c->raw[MC_ENDURANCE] = 15;                                   /* bracket 1 */
+	r.chars[1].raw[MC_FOOD] = 3; r.chars[2].raw[MC_FOOD] = 50;
+	CHECK(mm2_tavern_feed(&r, c, 0) == MM2_TAVERN_OK && mm2_c32(c, MC_GOLD) == 511 - 20);
+	CHECK(r.chars[1].raw[MC_FOOD] == 40 && r.chars[2].raw[MC_FOOD] == 50 && c->raw[MC_FOOD] == 40);
+	memset(&v, 0, sizeof(v));
+	c->raw[0x6B] = 10; c->raw[0x6E] = 12;
+	CHECK(mm2_tavern_drink(c, 0, &v, &hi) == MM2_TAVERN_OK && v.drinks[0] == 1 && c->raw[0x6B] == 10);   /* within the free allotment */
+	CHECK(mm2_tavern_drink(c, 0, &v, &hi) == MM2_TAVERN_OK && v.drinks[0] == 2 && c->raw[0x6B] == 10);
+	CHECK(mm2_tavern_drink(c, 0, &v, &hi) == MM2_TAVERN_OK && c->raw[0x6B] == 15 && c->raw[0x6E] == 10);  /* third: +5 Might, -2 Speed */
+	CHECK(mm2_c32(c, MC_GOLD) == 511 - 20 - 15);
+	CHECK(mm2_tavern_specialty(c, 0, 1, &hi) == MM2_TAVERN_OK && c->raw[0x76] == 2 && mm2_tavern_specialty_price(0, 1) == 50);
+	CHECK(mm2_tavern_specialty(c, 0, 0, &lo) == MM2_TAVERN_SICK && (c->raw[MC_CONDITION] & 4));
+	CHECK(mm2_tavern_drink(c, 0, &v, &hi) == MM2_TAVERN_DISABLED);
+	c->raw[MC_CONDITION] = 0;
+	CHECK(mm2_tavern_tip(c, &heard, &rumour, 61, &lo) == MM2_TAVERN_OK && heard == 1 && rumour == 0);
+	CHECK(mm2_tavern_tip(c, &heard, &rumour, 60, &lo) == MM2_TAVERN_OK && heard == 1 && rumour == 2);
+	CHECK(mm2_tavern_tip(c, &heard, &rumour, 62, &hi) == MM2_TAVERN_OK && !heard);
+	CHECK(mm2_tavern_rumour_index(180) == 3 && mm2_tavern_rumour_index(30) == 1 && mm2_tavern_rumour_index(33) == 0);
+	r.chars[1].raw[MC_GOLD] = 0;
+	CHECK(mm2_tavern_feed(&r, &r.chars[1], 1) == MM2_TAVERN_NO_GOLD);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -714,6 +747,7 @@ int main(void) {
 	test_shops();
 	test_inn(&g);
 	test_time(&g);
+	test_tavern(&g);
 	test_training(&g);
 	test_spells(&g);
 	test_text(&g);

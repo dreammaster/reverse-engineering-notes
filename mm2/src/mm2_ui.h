@@ -7,6 +7,8 @@
 #include "mm2_party.h"
 #include "mm2_smith.h"
 #include "mm2_spells.h"
+#include "mm2_strings.h"
+#include "mm2_tavern.h"
 #include "mm2_text.h"
 #include "mm2_town.h"
 
@@ -23,6 +25,10 @@ void mm2_ui_draw_temple(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *r
 /* Blacksmith: mode 1-4 buy categories, 5 sell, 6 identify. */
 void mm2_ui_draw_smith(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *roster, int town, int slot, int mode, int day,
 					   const Mm2Item *items, const char *message);
+
+/* Tavern: submenu 0 = main menu, 1 = drinks, 2 = specialties; `lines` = up to 3 free message lines shown at the bottom. */
+void mm2_ui_draw_tavern(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *roster, int town, int slot, int submenu,
+						const Mm2BuildingText *text, const char *const lines[3]);
 
 const char *mm2_ui_class_name(int cls);
 const char *mm2_ui_race_name(int race);

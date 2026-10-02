@@ -21,6 +21,9 @@ typedef struct {
 	Mm2Roster roster;
 	int inInn, innTown;
 	int inTrain, inSheet, sheetSlot;
+	int inTavern, tavernSub, tavernSlot;
+	Mm2TavernVisit visit;
+	Mm2BuildingText tavernText;
 	int shop, shopSlot, smithMode;   /* shop: 0 none, 1 temple, 2 guild, 3 blacksmith */
 	Mm2Item items[MM2_ITEMS];
 	Mm2GameSession s;
@@ -97,6 +100,7 @@ int main(int argc, char **argv) {
 	const char *innMsg = NULL;
 	char trainMsg[64] = "";
 	char shopMsg[64] = "";
+	const char *tavernLines[3] = {NULL, NULL, NULL};
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
 	if (!mm2_font_load(&g, &font)) {
@@ -136,6 +140,51 @@ int main(int argc, char **argv) {
 						if (r == MM2_INN_ALREADY) mm2_inn_remove(&a.roster, list[idx]);
 						else if (r == MM2_INN_FULL) innMsg = "*** Party is Full ***";
 					}
+				}
+				dirty = 1;
+				continue;
+			}
+			if (a.inTavern) {
+				int k = e.key.keysym.sym;
+				Mm2Char *c = &a.roster.chars[mm2_party_member(&a.roster, a.tavernSlot)];
+				Mm2Rng rr = {shop_rand, NULL};
+				Mm2TavernText L;
+				mm2_tavern_text_layout(&L);
+				tavernLines[0] = tavernLines[1] = tavernLines[2] = NULL;
+				if (k == SDLK_ESCAPE) {
+					if (a.tavernSub) a.tavernSub = 0;
+					else a.inTavern = 0;
+				} else if (k >= SDLK_1 && k <= SDLK_8 && k - SDLK_1 < mm2_party_size(&a.roster) && !a.tavernSub) {
+					a.tavernSlot = k - SDLK_1;
+				} else if (a.tavernSub == 0) {
+					if (k == SDLK_a) {
+						Mm2TavernResult r = mm2_tavern_feed(&a.roster, c, a.innTown);
+						tavernLines[0] = r == MM2_TAVERN_OK ? "Thank you - everyone is fed." : "You don't have enough gold.";
+					} else if (k == SDLK_b) a.tavernSub = 1;
+					else if (k == SDLK_c) a.tavernSub = 2;
+					else if (k == SDLK_d) {
+						int heard, rumour = 0;
+						Mm2TavernResult r = mm2_tavern_tip(c, &heard, &rumour, mm2_day_of_year(&a.roster), &rr);
+						if (r == MM2_TAVERN_NO_GOLD) tavernLines[0] = "You don't have enough gold.";
+						else if (r == MM2_TAVERN_DISABLED) tavernLines[0] = "You are in no condition.";
+						else if (!heard) tavernLines[0] = "The bartender just nods.";
+						else {
+							tavernLines[0] = mm2_btext_str(&a.tavernText, L.rumourD[a.innTown][rumour * 2]);
+							tavernLines[1] = mm2_btext_str(&a.tavernText, L.rumourD[a.innTown][rumour * 2 + 1]);
+						}
+					} else if (k == SDLK_e) {
+						int idx = mm2_tavern_rumour_index(mm2_day_of_year(&a.roster));
+						tavernLines[0] = mm2_btext_str(&a.tavernText, L.rumourE[a.innTown][idx * 2]);
+						tavernLines[1] = mm2_btext_str(&a.tavernText, L.rumourE[a.innTown][idx * 2 + 1]);
+					}
+				} else if (a.tavernSub == 1 && k >= SDLK_a && k <= SDLK_f) {
+					Mm2TavernResult r = mm2_tavern_drink(c, k - SDLK_a, &a.visit, &rr);
+					tavernLines[0] = r == MM2_TAVERN_OK ? " ++ Great Stuff! ++" : r == MM2_TAVERN_SICK ? "Yuck - that was poisoned!" :
+									 r == MM2_TAVERN_NO_GOLD ? "You don't have enough gold." : "You are in no condition.";
+				} else if (a.tavernSub == 2 && k >= SDLK_a && k <= SDLK_c) {
+					Mm2TavernResult r = mm2_tavern_specialty(c, a.innTown, k - SDLK_a, &rr);
+					tavernLines[0] = r == MM2_TAVERN_OK ? "An incredible meal!" : r == MM2_TAVERN_SICK ? "Ugh - you feel ill." :
+									 r == MM2_TAVERN_NO_GOLD ? "You don't have enough gold." : "You are in no condition.";
 				}
 				dirty = 1;
 				continue;
@@ -261,6 +310,14 @@ int main(int argc, char **argv) {
 						a.inTrain = 1;
 						a.innTown = a.s.map;
 					}
+					if (a.s.nLocations && a.s.locations[0] == 3 && a.s.map <= 4 && mm2_party_size(&a.roster) &&
+						mm2_btext_load(&g, 1, &a.tavernText)) {
+						a.inTavern = 1;
+						a.tavernSub = 0;
+						a.tavernSlot = 0;
+						memset(&a.visit, 0, sizeof(a.visit));
+						a.innTown = a.s.map;
+					}
 					if (a.s.nLocations && a.s.map <= 4 && mm2_party_size(&a.roster) &&
 						(a.s.locations[0] == 4 || a.s.locations[0] == 5 || a.s.locations[0] == 6)) {
 						a.shop = a.s.locations[0] == 4 ? 1 : a.s.locations[0] == 5 ? 2 : 3;
@@ -283,7 +340,9 @@ int main(int argc, char **argv) {
 		}
 		if (dirty) {
 			char line[48];
-			if (a.shop == 3) {
+			if (a.inTavern) {
+				mm2_ui_draw_tavern(canvas, &font, &a.roster, a.innTown, a.tavernSlot, a.tavernSub, &a.tavernText, tavernLines);
+			} else if (a.shop == 3) {
 				mm2_ui_draw_smith(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.smithMode, mm2_day_of_year(&a.roster), a.items, shopMsg[0] ? shopMsg : NULL);
 			} else if (a.shop) {
 				mm2_ui_draw_temple(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.shop == 2, shopMsg[0] ? shopMsg : NULL);
@@ -300,7 +359,7 @@ int main(int argc, char **argv) {
 				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
-			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop) {
+			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop && !a.inTavern) {
 				snprintf(line, sizeof(line), "Map %d x=%d y=%d %c  ans:%c  Era%d Y%d D%d", a.s.map, a.s.x, a.s.y, a.s.facing,
 						 a.s.yesNo ? 'Y' : 'N', mm2_era(&a.roster), mm2_year(&a.roster), mm2_day_of_year(&a.roster));
 				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);

@@ -201,3 +201,32 @@ const uint8_t MM2_LEARN_CLERIC[32] = {
 	86, 87, 128, 128,
 	91, 128, 128, 128,
 };  /* same for the cleric list (absolute codes, 30h based) */
+const uint16_t MM2_TAVERN_FOOD_PRICE[5] = {
+	20, 250, 40, 120, 40,
+};
+const uint16_t MM2_TAVERN_DRINK_PRICE[6] = {
+	5, 5, 20, 20, 50, 100,
+};
+const uint16_t MM2_TAVERN_DRINK_LIMIT[6] = {
+	2, 3, 3, 3, 3, 5,
+};
+const uint8_t MM2_TAVERN_DRINK_INC[6] = {
+	5, 20, 10, 10, 3, 1,
+};
+const uint8_t MM2_TAVERN_DRINK_CAP[6] = {
+	100, 100, 100, 100, 50, 9,
+};
+const uint16_t MM2_TAVERN_SPECIAL_PRICE[15] = {
+	10, 50, 100,
+	1000, 2000, 3000,
+	200, 100, 1000,
+	5000, 500, 1000,
+	20, 50, 250,
+};
+const uint16_t MM2_TAVERN_SPECIAL_FLAG[15] = {
+	1, 2, 4,
+	4096, 8192, 16384,
+	64, 128, 256,
+	512, 1024, 2048,
+	8, 16, 32,
+};

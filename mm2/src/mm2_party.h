@@ -45,4 +45,8 @@ int mm2_update_spell_level(Mm2Char *c);
 int mm2_char_skill_count(const Mm2Char *c, int skill);
 #define MM2_SKILL_MERCHANT 10
 
+/* char_reset_current_stats (mm2.asm 0x13572): current Might/Intellect/Personality/Speed/Accuracy, level and spell level
+ * are copied back from the base values. */
+void mm2_char_reset_current_stats(Mm2Char *c);
+
 #endif

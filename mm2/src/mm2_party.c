@@ -192,3 +192,9 @@ int mm2_char_skill_count(const Mm2Char *c, int skill) {
 	unsigned b = mm2_c8(c, MC_SKILLS);
 	return ((int)(b & 15) == skill) + ((int)(b >> 4) == skill);
 }
+
+void mm2_char_reset_current_stats(Mm2Char *c) {
+	uint8_t *x = c->raw;
+	x[0x6B] = x[0x10]; x[0x6F] = x[0x14]; x[0x6D] = x[0x12]; x[0x6C] = x[0x11];
+	x[0x71] = x[0x20]; x[0x72] = x[0x23]; x[0x6E] = x[0x13];
+}

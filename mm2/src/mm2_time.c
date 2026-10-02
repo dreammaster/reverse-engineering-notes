@@ -104,8 +104,7 @@ int mm2_party_rest(Mm2Roster *r, const Mm2Rng *rng) {
 			x[MC_SP_MAX + 1] = (uint8_t)(sp >> 8);
 		}
 		/* char_reset_current_stats (mm2.asm 0x13572) */
-		x[0x6B] = x[0x10]; x[0x6F] = x[0x14]; x[0x6D] = x[0x12]; x[0x6C] = x[0x11];
-		x[0x71] = x[0x20]; x[0x72] = x[0x23]; x[0x6E] = x[0x13];
+		mm2_char_reset_current_stats(c);
 		x[MC_ENDURANCE] = x[MC_BASE_ENDURANCE];
 		x[0x70] = x[0x15];
 		x[MC_SP] = x[MC_SP_MAX];
