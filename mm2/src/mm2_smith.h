@@ -18,4 +18,11 @@ void mm2_smith_stock(int town, int category, int dayOfYear, Mm2SmithSlot out[6])
 /* Price in gold.  merchant = the character has the Merchant skill. */
 uint32_t mm2_smith_price(const Mm2Item *item, int bonus, Mm2SmithMode mode, int merchant);
 
+typedef enum { MM2_SMITH_DONE, MM2_SMITH_NO_GOLD, MM2_SMITH_PACK_FULL, MM2_SMITH_NO_ITEM, MM2_SMITH_DISABLED } Mm2SmithResult;
+
+/* Buys the slot's item into the first free backpack slot (item id +3Ah, charges +40h, bonus +46h). */
+Mm2SmithResult mm2_smith_buy(Mm2Char *c, const Mm2SmithSlot *slot, const Mm2Item *items, int merchant);
+/* Sells backpack item `packSlot` (0-5) for the sell price. */
+Mm2SmithResult mm2_smith_sell(Mm2Char *c, int packSlot, const Mm2Item *items, int merchant);
+
 #endif

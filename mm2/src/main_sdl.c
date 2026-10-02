@@ -11,6 +11,7 @@
 
 #include <SDL.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define SCALE 3
@@ -19,6 +20,7 @@ typedef struct {
 	Mm2Roster roster;
 	int inInn, innTown;
 	int inTrain, inSheet, sheetSlot;
+	int shop, shopSlot, smithMode;   /* shop: 0 none, 1 temple, 2 guild, 3 blacksmith */
 	Mm2Item items[MM2_ITEMS];
 	Mm2GameSession s;
 	Mm2View view;
@@ -52,6 +54,11 @@ static int start_map(App *a, const Mm2Game *g, int map, int x, int y, char facin
 	if (!mm2_session_start(&a->s, g, map, x, y, facing)) return 0;
 	a->s.yesNo = yes;
 	return sync_view(a, g);
+}
+
+static int shop_rand(void *ud, int lo, int hi) {
+	(void)ud;
+	return hi <= lo ? lo : lo + rand() % (hi - lo + 1);
 }
 
 static void draw_messages(uint8_t *canvas, const Mm2Font *font, const Mm2GameSession *s) {
@@ -88,6 +95,7 @@ int main(int argc, char **argv) {
 	int running = 1, dirty = 1, i;
 	const char *innMsg = NULL;
 	char trainMsg[64] = "";
+	char shopMsg[64] = "";
 
 	mm2_game_init(&g, argc > 1 ? argv[1] : NULL);
 	if (!mm2_font_load(&g, &font)) {
@@ -127,6 +135,60 @@ int main(int argc, char **argv) {
 						if (r == MM2_INN_ALREADY) mm2_inn_remove(&a.roster, list[idx]);
 						else if (r == MM2_INN_FULL) innMsg = "*** Party is Full ***";
 					}
+				}
+				dirty = 1;
+				continue;
+			}
+			if (a.shop) {
+				int k = e.key.keysym.sym;
+				Mm2Char *c = &a.roster.chars[mm2_party_member(&a.roster, a.shopSlot)];
+				static const Mm2Rng rng = {NULL, NULL};
+				(void)rng;
+				shopMsg[0] = 0;
+				if (k == SDLK_ESCAPE) {
+					a.shop = 0;
+				} else if (k >= SDLK_1 && k <= SDLK_8 && a.shop != 3 && k - SDLK_1 < mm2_party_size(&a.roster)) {
+					a.shopSlot = k - SDLK_1;
+				} else if (k == SDLK_TAB && mm2_party_size(&a.roster)) {
+					a.shopSlot = (a.shopSlot + 1) % mm2_party_size(&a.roster);
+				} else if (a.shop == 3) {
+					int merchant = mm2_char_skill_count(c, MM2_SKILL_MERCHANT) > 0;
+					if (k >= SDLK_1 && k <= SDLK_6) {
+						a.smithMode = k - SDLK_1 + 1;
+					} else if (k >= SDLK_a && k <= SDLK_f && a.smithMode <= 5) {
+						Mm2SmithResult r;
+						if (a.smithMode <= 4) {
+							Mm2SmithSlot st[6];
+							mm2_smith_stock(a.innTown, a.smithMode, 1, st);
+							r = mm2_smith_buy(c, &st[k - SDLK_a], a.items, merchant);
+						} else {
+							r = mm2_smith_sell(c, k - SDLK_a, a.items, merchant);
+						}
+						snprintf(shopMsg, sizeof(shopMsg), "%s", r == MM2_SMITH_DONE ? "Done." : r == MM2_SMITH_NO_GOLD ? "Not enough gold." :
+								 r == MM2_SMITH_PACK_FULL ? "Backpack full!" : r == MM2_SMITH_NO_ITEM ? "Nothing there." : "Not in condition.");
+					}
+				} else {
+					Mm2ShopResult r = MM2_SHOP_NOTHING_TO_DO;
+					int sp[4], n;
+					uint32_t pr[4];
+					int isSpell = 0, idx = 0;
+					if (a.shop == 1 && k == SDLK_a) r = mm2_temple_restore(c, a.innTown);
+					else if (a.shop == 1 && k == SDLK_b) r = mm2_temple_restore_alignment(c, a.innTown);
+					else if (a.shop == 1 && k == SDLK_c) {
+						int blessed;
+						Mm2Rng rr = {shop_rand, NULL};
+						r = mm2_temple_donate(c, (Mm2State *)a.roster.state, a.innTown, &blessed, &rr);
+						if (r == MM2_SHOP_OK) snprintf(shopMsg, sizeof(shopMsg), "%s", blessed ? "Today you are blessed!" : "Thank you.");
+					} else if (a.shop == 1 && k >= SDLK_d && k <= SDLK_f) { isSpell = 1; idx = k - SDLK_d; }
+					else if (a.shop == 2 && k >= SDLK_a && k <= SDLK_d) { isSpell = 1; idx = k - SDLK_a; }
+					if (isSpell) {
+						n = a.shop == 1 ? mm2_temple_stock(a.innTown, sp, pr) : mm2_guild_stock(a.innTown, sp, pr);
+						r = idx < n ? mm2_buy_spell(c, sp[idx], pr[idx]) : MM2_SHOP_NOTHING_TO_DO;
+					}
+					if (!shopMsg[0])
+						snprintf(shopMsg, sizeof(shopMsg), "%s", r == MM2_SHOP_OK ? "Done." : r == MM2_SHOP_NO_GOLD ? "Not enough gold." :
+								 r == MM2_SHOP_WRONG_CLASS ? "Your class cannot learn that." : r == MM2_SHOP_LEVEL_TOO_LOW ? "Spell level too high." :
+								 r == MM2_SHOP_KNOWN ? "Already known." : "");
 				}
 				dirty = 1;
 				continue;
@@ -183,6 +245,13 @@ int main(int argc, char **argv) {
 						a.inTrain = 1;
 						a.innTown = a.s.map;
 					}
+					if (a.s.nLocations && a.s.map <= 4 && mm2_party_size(&a.roster) &&
+						(a.s.locations[0] == 4 || a.s.locations[0] == 5 || a.s.locations[0] == 6)) {
+						a.shop = a.s.locations[0] == 4 ? 1 : a.s.locations[0] == 5 ? 2 : 3;
+						a.shopSlot = 0;
+						a.smithMode = 1;
+						a.innTown = a.s.map;
+					}
 				}
 				break;
 			case SDLK_y: a.s.yesNo = 1; dirty = 1; break;
@@ -198,7 +267,11 @@ int main(int argc, char **argv) {
 		}
 		if (dirty) {
 			char line[48];
-			if (a.inTrain) {
+			if (a.shop == 3) {
+				mm2_ui_draw_smith(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.smithMode, 1, a.items, shopMsg[0] ? shopMsg : NULL);
+			} else if (a.shop) {
+				mm2_ui_draw_temple(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.shop == 2, shopMsg[0] ? shopMsg : NULL);
+			} else if (a.inTrain) {
 				mm2_ui_draw_training(canvas, &font, &a.roster, a.innTown, trainMsg[0] ? trainMsg : NULL);
 			} else if (a.inSheet) {
 				mm2_ui_draw_sheet(canvas, &font, &a.roster.chars[mm2_party_member(&a.roster, a.sheetSlot)], a.items);
@@ -211,7 +284,7 @@ int main(int argc, char **argv) {
 				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
-			if (!a.inInn && !a.inTrain && !a.inSheet) {
+			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop) {
 				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
 						 a.s.yesNo ? 'Y' : 'N');
 				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);

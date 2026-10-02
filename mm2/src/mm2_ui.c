@@ -110,3 +110,69 @@ void mm2_ui_draw_training(uint8_t *canvas, const Mm2Font *font, const Mm2Roster 
 	if (message) mm2_draw_text(canvas, font, 0, 20, message, 12, -1);
 	mm2_draw_text(canvas, font, 0, 23, "1-8: train that character   Esc: leave", 7, -1);
 }
+
+void mm2_ui_draw_temple(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *roster, int town, int slot, int guild, const char *message) {
+	char line[64];
+	int sp[4], i, n;
+	uint32_t pr[4];
+	const Mm2Char *c = &roster->chars[mm2_party_member(roster, slot)];
+	memset(canvas, 0, MM2_SCREEN_W * MM2_SCREEN_H);
+	mm2_draw_text(canvas, font, guild ? 13 : 15, 0, guild ? " Mage Guild " : " Temple ", 14, -1);
+	snprintf(line, sizeof(line), "%d) %.11s  %s  Gold=%u", slot + 1, (const char *)c->raw, CLASS_NAME[c->raw[MC_CLASS] & 7], mm2_c32(c, MC_GOLD));
+	mm2_draw_text(canvas, font, 0, 2, line, 15, -1);
+	i = 4;
+	if (!guild) {
+		snprintf(line, sizeof(line), "A) Restore condition   %u gold", mm2_temple_restore_cost(c, town));
+		mm2_draw_text(canvas, font, 0, i++, line, 15, -1);
+		snprintf(line, sizeof(line), "B) Restore alignment   %u gold", mm2_temple_alignment_cost(c, town));
+		mm2_draw_text(canvas, font, 0, i++, line, 15, -1);
+		snprintf(line, sizeof(line), "C) Donation            %u gold", mm2_temple_donation_cost(town));
+		mm2_draw_text(canvas, font, 0, i++, line, 15, -1);
+	}
+	n = guild ? mm2_guild_stock(town, sp, pr) : mm2_temple_stock(town, sp, pr);
+	for (int k = 0; k < n; k++) {
+		snprintf(line, sizeof(line), "%c) %-22.22s %u gold", (guild ? 'A' : 'D') + k, MM2_SPELL_NAMES[sp[k]], pr[k]);
+		mm2_draw_text(canvas, font, 0, i++, line, 11, -1);
+	}
+	if (message) mm2_draw_text(canvas, font, 0, 20, message, 12, -1);
+	mm2_draw_text(canvas, font, 0, 23, "letter: buy  1-8: char  Esc: leave", 7, -1);
+}
+
+void mm2_ui_draw_smith(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *roster, int town, int slot, int mode, int day,
+					   const Mm2Item *items, const char *message) {
+	char line[64];
+	int k;
+	const Mm2Char *c = &roster->chars[mm2_party_member(roster, slot)];
+	static const char *const TITLE[7] = {"", "Weapons", "Heavy weapons", "Armour", "Magic items", "Sell", "Identify"};
+	memset(canvas, 0, MM2_SCREEN_W * MM2_SCREEN_H);
+	mm2_draw_text(canvas, font, 12, 0, " Blacksmith ", 14, -1);
+	snprintf(line, sizeof(line), "%d) %.11s  Gold=%u   [%s]", slot + 1, (const char *)c->raw, mm2_c32(c, MC_GOLD), TITLE[mode]);
+	mm2_draw_text(canvas, font, 0, 2, line, 15, -1);
+	{
+		Mm2SmithSlot st[6];
+		int merchant = mm2_char_skill_count(c, MM2_SKILL_MERCHANT) > 0;
+		if (mode <= 4) {
+			mm2_smith_stock(town, mode, day, st);
+		} else {
+			for (k = 0; k < 6; k++) {
+				st[k].item = (uint8_t)mm2_c8(c, MC_PACK_ID + k);
+				st[k].bonus = (uint8_t)(mm2_c8(c, MC_PACK_FLAGS + k) & 0x3F);
+				st[k].charges = (uint8_t)mm2_c8(c, 0x40 + k);
+			}
+		}
+		for (k = 0; k < 6; k++) {
+			if (!st[k].item) {
+				snprintf(line, sizeof(line), "%c)", 'A' + k);
+			} else {
+				const Mm2Item *it = &items[st[k].item];
+				snprintf(line, sizeof(line), "%c) %-12.12s %s%-2d %7u gold", 'A' + k, it->name, st[k].bonus ? "+" : " ", st[k].bonus,
+						 mm2_smith_price(it, st[k].bonus, (Mm2SmithMode)mode, merchant));
+			}
+			mm2_draw_text(canvas, font, 0, 4 + k, line, 15, -1);
+		}
+	}
+	mm2_draw_text(canvas, font, 0, 12, "1-4 buy: weapons heavy armour magic", 7, -1);
+	mm2_draw_text(canvas, font, 0, 13, "5 sell   6 identify (prices only)", 7, -1);
+	if (message) mm2_draw_text(canvas, font, 0, 20, message, 12, -1);
+	mm2_draw_text(canvas, font, 0, 23, "A-F item  Tab: next char  Esc: leave", 7, -1);
+}

@@ -496,6 +496,21 @@ static void test_smith(const Mm2Game *g) {
 	CHECK(mm2_smith_price(&items[4], 3, MM2_SMITH_BUY_A, 0) == 16 + 2000);
 	CHECK(mm2_smith_price(&items[4], 3, MM2_SMITH_BUY_A, 1) == (16 + 2000) / 2);
 	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_SELL, 0) == 2 && mm2_smith_price(&items[4], 0, MM2_SMITH_SELL, 1) == 4);
+	{
+		Mm2Char c;
+		Mm2SmithSlot s;
+		memset(&c, 0, sizeof(c));
+		c.raw[MC_GOLD] = 100;
+		s.item = 4; s.bonus = 0; s.charges = 0;
+		CHECK(mm2_smith_buy(&c, &s, items, 0) == MM2_SMITH_DONE && c.raw[MC_PACK_ID] == 4 && mm2_c32(&c, MC_GOLD) == 92);
+		s.item = 15; s.bonus = 3;
+		CHECK(mm2_smith_buy(&c, &s, items, 0) == MM2_SMITH_NO_GOLD);
+		c.raw[MC_PACK_ID + 1] = 6; c.raw[MC_PACK_FLAGS + 1] = 2;
+		CHECK(mm2_smith_sell(&c, 0, items, 0) == MM2_SMITH_DONE && c.raw[MC_PACK_ID] == 6 && c.raw[MC_PACK_FLAGS] == 2 && c.raw[MC_PACK_ID + 1] == 0);
+		CHECK(mm2_c32(&c, MC_GOLD) == 92 + 2);                  /* Dagger sells for 8 / 4 */
+		c.raw[MC_CONDITION] = 1;
+		CHECK(mm2_smith_sell(&c, 0, items, 0) == MM2_SMITH_DISABLED);
+	}
 	CHECK(mm2_smith_price(&items[4], 0, MM2_SMITH_IDENTIFY, 0) == 10 && mm2_smith_price(&items[4], 4, MM2_SMITH_IDENTIFY, 0) == 400);
 }
 
@@ -612,6 +627,33 @@ static void test_training(const Mm2Game *g) {
 	CHECK(c->raw[MC_BASE_SPELL_LEVEL] == 0);
 }
 
+static void test_shops(void) {
+	Mm2Rng lo = {rng_lo, 0}, hi = {rng_hi, 0};
+	Mm2Char c;
+	Mm2State st;
+	int blessed;
+	memset(&c, 0, sizeof(c));
+	memset(&st, 0, sizeof(st));
+	c.raw[MC_CLASS] = MM2_CLERIC; c.raw[MC_LEVEL] = 3; c.raw[MC_SPELL_LEVEL] = 1;
+	c.raw[MC_GOLD] = 0x88; c.raw[MC_GOLD + 1] = 0x13;                    /* 5000 gold */
+	CHECK(mm2_buy_spell(&c, 2, 100) == MM2_SHOP_WRONG_CLASS);            /* Energy Blast is a sorcerer spell */
+	CHECK(mm2_buy_spell(&c, 62, 400) == MM2_SHOP_LEVEL_TOO_LOW);         /* Cold Ray needs spell level 3 */
+	CHECK(mm2_buy_spell(&c, 53, 1000) == MM2_SHOP_OK && mm2_c32(&c, MC_GOLD) == 4000 && (c.raw[MC_SPELL_BITS] & (1 << 5)));
+	CHECK(mm2_buy_spell(&c, 53, 1000) == MM2_SHOP_KNOWN && mm2_c32(&c, MC_GOLD) == 4000);
+	CHECK(mm2_buy_spell(&c, 49, 100000) == MM2_SHOP_NO_GOLD);
+	/* temple */
+	c.raw[MC_HP_MAX] = 30; c.raw[MC_HP] = 3; c.raw[MC_CONDITION] = 0x81;
+	CHECK(mm2_temple_restore(&c, 1) == MM2_SHOP_OK);                    /* 100 x level 3 x multiplier 5 = 1500 */
+	CHECK(mm2_c32(&c, MC_GOLD) == 2500 && c.raw[MC_CONDITION] == 0 && mm2_c16(&c, MC_HP) == 30);
+	CHECK(mm2_temple_restore(&c, 1) == MM2_SHOP_NOTHING_TO_DO);
+	c.raw[MC_ALIGN] = 2; c.raw[MC_ORIG_ALIGN] = 1;
+	CHECK(mm2_temple_restore_alignment(&c, 0) == MM2_SHOP_OK && c.raw[MC_ALIGN] == 1 && mm2_c32(&c, MC_GOLD) == 2200);
+	CHECK(mm2_temple_donate(&c, &st, 0, &blessed, &hi) == MM2_SHOP_OK && !blessed && mm2_c32(&c, MC_GOLD) == 2100);
+	CHECK(*mm2_state_ptr(&st, 0x3D5) == 0);
+	CHECK(mm2_temple_donate(&c, &st, 0, &blessed, &lo) == MM2_SHOP_OK && blessed && *mm2_state_ptr(&st, 0x3D5) == 200);
+	CHECK(*mm2_state_ptr(&st, 0x3DA) == 1 && mm2_c32(&c, MC_GOLD) == 2000);
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -627,6 +669,7 @@ int main(void) {
 	test_rewards(&g);
 	test_smith(&g);
 	test_town();
+	test_shops();
 	test_inn(&g);
 	test_training(&g);
 	test_spells(&g);

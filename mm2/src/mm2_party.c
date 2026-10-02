@@ -190,3 +190,8 @@ Mm2LevelUp mm2_level_up(Mm2Char *c, int town) {
 		r.newSpells = mm2_update_spell_level(c);
 	return r;
 }
+
+int mm2_char_skill_count(const Mm2Char *c, int skill) {
+	unsigned b = mm2_c8(c, MC_SKILLS);
+	return ((int)(b & 15) == skill) + ((int)(b >> 4) == skill);
+}

@@ -16,7 +16,7 @@ Plain C99 ports of the verified Python tools, built with MinGW (`C:\mingw32\bin`
 | `main_shot.c` | `mm2_shot MAP X Y N|E|S|W out.png`: renders a view without SDL (`mingw32-make shot`) |
 | `mm2_game.c` | game session: map, movement, triggers, event host (messages, teleports, fights) |
 | `mm2_battle.c`, `mm2_reward.c` | battle state (ranks, initiative, status wear-off), monster loot and victory treasure |
-| `mm2_smith.c`, `mm2_town.c`, `mm2_spells.c` | blacksmith stock/prices, temple and guild costs, spell names/costs/damage/healing |
+| `mm2_smith.c`, `mm2_town.c`, `mm2_spells.c` (+ screens in `mm2_ui.c`: `mm2_shot shop temple|guild|smith TOWN out.png`) | blacksmith stock/prices, temple and guild costs, spell names/costs/damage/healing |
 | `mm2_party.c` (training), `mm2_inn.c`, `mm2_ui.c` | level-up (hit points, thievery, spell levels and spells), the inn rules, and the inn / training hall / character sheet screens (`mm2_shot inn|sheet|train ...`); in the explorer: **C** = character sheet, training hall door = train with 1-8 |
 | (inn) | inn rules (party of 6 + 2 hirelings, towns, hireling gating) and its text screen; `mm2_shot inn TOWN out.png [ids]` renders it |
 | `mm2_monpic.c` | monster pictures (EGA/CGA) |

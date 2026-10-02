@@ -40,4 +40,9 @@ Mm2LevelUp mm2_level_up(Mm2Char *c, int town);
 /* Spell level progression for the classes with spells (loc_1C6CC): returns 1 if a new spell level was reached. */
 int mm2_update_spell_level(Mm2Char *c);
 
+/* Number of the character's two skill slots (char +50h nibbles) equal to `skill` (resident char_skill_count, mm2.asm 0x13664).
+ * Skill ids: 1 Arms Master ... 10 Merchant ... (DGROUP:046A). */
+int mm2_char_skill_count(const Mm2Char *c, int skill);
+#define MM2_SKILL_MERCHANT 10
+
 #endif

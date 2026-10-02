@@ -43,6 +43,18 @@ int main(int argc, char **argv) {
 		}
 		return mm2_write_png(argv[3], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
 	}
+	if (argc >= 5 && strcmp(argv[1], "shop") == 0) {   /* mm2_shot shop temple|guild|smith TOWN out.png */
+		static Mm2Roster roster;
+		static Mm2Item items[MM2_ITEMS];
+		uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H];
+		int i, town = atoi(argv[3]);
+		mm2_game_init(&g, NULL);
+		if (!mm2_load_roster(&g, &roster) || !mm2_font_load(&g, &font) || !mm2_load_items(&g, items)) return 1;
+		for (i = 0; i < 6; i++) mm2_inn_add(&roster, i);
+		if (argv[2][0] == 's') mm2_ui_draw_smith(canvas, &font, &roster, town, 0, 1, 1, items, NULL);
+		else mm2_ui_draw_temple(canvas, &font, &roster, town, 3, argv[2][0] == 'g', NULL);
+		return mm2_write_png(argv[4], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
+	}
 	if (argc < 6) {
 		fprintf(stderr, "usage: %s MAP X Y N|E|S|W out.png [game dir]\n", argv[0]);
 		return 2;
