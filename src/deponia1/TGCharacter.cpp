@@ -53,3 +53,9 @@ void TGCharacter::Init() {
 
 void TGCharacter::AssignToScene(const TVisObjRef &/*scene*/, const wxPoint &/*pos*/, int /*walkSpeed*/) {
 }
+
+void TGCharacter::ShowComment(const TVisObjRef &/*comment*/) {
+}
+
+void TGCharacter::StopWalking(bool /*flag*/) {
+}

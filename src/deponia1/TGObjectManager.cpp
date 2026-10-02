@@ -62,10 +62,34 @@ void TGObjectManager::SetItem(const TVisObjRef &item, bool held) {
 		g_pGameControl->GetCursorControl()->ReleaseMoveObject();
 }
 
-void TGObjectManager::HandleEvent(TMouseEventEnum /*event*/) {
+void TGObjectManager::HandleEvent(TMouseEventEnum event) {
+	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
+
+	TGEventInfo info;
+	info.action = game.GetLink(0x2AE);
+	info.command = TTButton(game.GetLink(0x262));
+	info.flag8 = game.GetBool(0x2DA);
+	info.mouseEvent = static_cast<int>(event);
+	info.character = GetEventCharacter();
+
+	if (_currentObject)
+		_currentObject->ExecuteEvent(info);
 }
 
-void TGObjectManager::ObjectReached(TManagedObject */*object*/) {
+void TGObjectManager::ObjectReached(TManagedObject *object) {
+	if (!object)
+		return;
+
+	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
+
+	TGEventInfo info;
+	info.flag8 = game.GetBool(0x1E5);
+	info.action = game.GetLink(0x1E4);
+	info.command = TTButton(game.GetLink(0x1E3));
+	info.mouseEvent = game.GetInt(0x267);
+	info.character = GetEventCharacter();
+
+	object->ExecuteEvent(info);
 }
 
 void TGObjectManager::ObjectReached(TGCharacter &character, TVisObjRef &target) {
@@ -93,20 +117,33 @@ void TGObjectManager::MouseMove(TManagedObject *object) {
 	if (_currentObject == object)
 		return;
 
-	// Confirmed call shape only, skipped here: before updating the hover
-	// object below, the real method fires TManagedObject::ExecuteEvent()
-	// on the old object being left (if any) and the new one being entered
-	// (if any) - a "mouse left"/"mouse entered" notification, each with a
-	// freshly-built TGEventInfo. Same action-execution-subsystem gap
-	// flagged on TManagedObject and HandleEvent()/ObjectReached() above.
-
-	_currentObject = object;
-	if (!object) {
-		gameControl()->GetGameSystem()->GetGame().ClearLink(0x2AF, true);
-		return;
+	// Confirmed (asm lines 188427-188451): a "mouse left" notification to
+	// the object being replaced, with an empty action/command and no held
+	// flag - only fired if its own game-data reference resolves to a real
+	// TVisionaire (GetVisionaire() non-null).
+	if (_currentObject && _currentObject->GetRef().GetVisionaire()) {
+		TGEventInfo info;
+		info.mouseEvent = 6;
+		info.character = GetEventCharacter();
+		_currentObject->ExecuteEvent(info);
 	}
-	if (!object->GetRef().IsEmpty())
-		gameControl()->GetGameSystem()->GetGame().SetLink(0x2AF, object->GetRef(), true);
+
+	if (object) {
+		// Confirmed (asm lines 188500-188524): the "mouse entered"
+		// counterpart, fired on the new object before it becomes
+		// _currentObject.
+		TGEventInfo info;
+		info.mouseEvent = 5;
+		info.character = GetEventCharacter();
+		object->ExecuteEvent(info);
+
+		_currentObject = object;
+		if (!object->GetRef().IsEmpty())
+			gameControl()->GetGameSystem()->GetGame().SetLink(0x2AF, object->GetRef(), true);
+	} else {
+		_currentObject = nullptr;
+		gameControl()->GetGameSystem()->GetGame().ClearLink(0x2AF, true);
+	}
 }
 
 void TGObjectManager::NotifyObjectRemoved(const TVisObjRef &item) {
@@ -131,10 +168,12 @@ void TGObjectManager::SaveCurrentObject() {
 
 void TGObjectManager::ExecuteSavedObject() {
 	if (_currentObject && (!_savedObject || !(_currentObject->GetRef() == _savedObject->GetRef()))) {
-		// Confirmed call shape only, skipped here: fires TManagedObject::
-		// ExecuteEvent() on the object we're about to replace, with a
-		// freshly-built TGEventInfo - same action-execution-subsystem gap
-		// as MouseMove()/HandleEvent()/ObjectReached() above.
+		// Confirmed (asm lines 188924-188980): the same "mouse left"
+		// notification MouseMove() fires on the object being replaced.
+		TGEventInfo info;
+		info.mouseEvent = 6;
+		info.character = GetEventCharacter();
+		_currentObject->ExecuteEvent(info);
 	}
 	_currentObject = _savedObject;
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();

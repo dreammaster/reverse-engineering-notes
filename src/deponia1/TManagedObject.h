@@ -38,22 +38,25 @@
 //
 // ExecuteMatchingAction()/HandlePostExecution()/GetActionsToTest()/
 // ExecuteEvent() form the actual condition/action-matching engine behind
-// Visionaire's scripted events - each one branches extensively on opaque
-// byte-offset boolean flags inside TGEventInfo/TGActionInfo and a 26-value
-// TypeActionExecution switch, none of which have had their fields named or
-// understood yet. Transcribing the branches byte-for-byte without knowing
-// what they mean would just be moving bytes around under invented names,
-// so these four are left as confirmed-signature stubs - the "action
-// execution" subsystem is a large, mostly self-contained unit that needs
-// its own dedicated pass (established call sites confirm TGItem/TGObject
-// override at least HandlePostExecution()/AnimationStopped(), so other
-// subclasses are already known to participate in it too).
+// Visionaire's scripted events. Implemented in full (Deponia_Linux.asm
+// lines 190613-194544) after a dedicated follow-up pass named
+// TGEventInfo/TGActionInfo's own fields and TypeActionExecution's 29
+// confirmed values (see TGEventInfo.h/TGActionInfo.h) - most fields are
+// named by position rather than guessed meaning, the same convention this
+// project already used for TGDetectInfo/TypeOrder, since their underlying
+// semantics are still opaque even though their structural role in the
+// control flow is now fully confirmed. (Established call sites confirm
+// TGItem/TGObject override at least HandlePostExecution()/
+// AnimationStopped(), so other subclasses are already known to
+// participate in this engine too.)
 #pragma once
 
 #include <algorithm>
 #include <vector>
 
 #include "TGAnimation.h"
+#include "TGActionInfo.h"
+#include "TGEventInfo.h"
 #include "TTimer.h"
 #include "WxStub.h"
 #include "datastruct/visionaireobject.h"
@@ -64,11 +67,15 @@ class TGCharacter;
 class TGText;
 class TPictureIO;
 class TVList;
-class TGEventInfo;
-class TGActionInfo;
 class TGDetectInfo;
 enum class TMouseEventEnum;
-enum class TypeActionExecution;
+
+// Confirmed call shape only (TManagedObject::ExecuteMatchingAction,
+// Deponia_Linux.asm line 55E1E8) - computes some kind of facing angle from
+// two screen-space deltas; not reversed beyond that call shape. Returns
+// int (the real callee's result lands in a plain integer register, not
+// xmm0, despite taking float arguments).
+int GetAngle(float dx, float dy);
 
 // Confirmed present (TManagedObject::SetPolygon/IsInside, Deponia_Linux.asm
 // lines 191660-191767, 191159-191170) as a 3-qword (begin/end/capacity)
@@ -186,28 +193,32 @@ public:
 			_animations.erase(it);
 	}
 
-	// Not reversed - see this class's own header comment (the action-
-	// execution subsystem).
-	virtual void HandlePostExecution(TGEventInfo &info, const TGActionInfo &actionInfo) {
-		(void)info;
-		(void)actionInfo;
-	}
+	// Confirmed in full (Deponia_Linux.asm lines 190613-190825) - see this
+	// class's own header comment and TGActionInfo.h for the flag names
+	// used below. (Needs TGCharacter's full definition, so implemented in
+	// the .cpp.)
+	virtual void HandlePostExecution(TGEventInfo &info, const TGActionInfo &actionInfo);
+	// Confirmed in full (Deponia_Linux.asm lines 191775-192289). (Needs
+	// TGCharacter's/TTAction's full definitions, so implemented in the
+	// .cpp.)
 	virtual void ExecuteMatchingAction(TVList &candidates, std::vector<TypeActionExecution> &types,
-	                                   const TGEventInfo &info, TGActionInfo &outAction) {
-		(void)candidates;
-		(void)types;
-		(void)info;
-		(void)outAction;
-	}
+	                                   const TGEventInfo &info, TGActionInfo &outAction);
+	// Confirmed in full (Deponia_Linux.asm lines 193086-193740) - a switch
+	// on `info.mouseEvent` that fills `outTypes` with the
+	// TypeActionExecution candidates worth testing for this event. (Needs
+	// TGCharacter's full definition, so implemented in the .cpp.)
 	virtual void GetActionsToTest(TGEventInfo &info, std::vector<TypeActionExecution> &outTypes,
-	                              TGActionInfo &outAction) {
-		(void)info;
-		(void)outTypes;
-		(void)outAction;
-	}
-	virtual void ExecuteEvent(TGEventInfo &info) {
-		(void)info;
-	}
+	                              TGActionInfo &outAction);
+	// Confirmed in full (Deponia_Linux.asm lines 193750-194544): calls
+	// HandlePreExecution(), gets the candidates to test, optionally aligns
+	// the event's own character towards this object, then tries
+	// ExecuteMatchingAction() against this object's own action list - with
+	// a mouse-event-3/4 retry (forcing info.flag8 true) and, if
+	// `_hasActionTypeFallback` is set, a second retry against a hardcoded
+	// expansion of the original candidate types and a different action
+	// list (field 0xAC) when the first two attempts found nothing. (Needs
+	// TGCharacter's full definition, so implemented in the .cpp.)
+	virtual void ExecuteEvent(TGEventInfo &info);
 
 	// Confirmed (asm lines 190835-190852): records this object as the
 	// "clicked without being in reach" target and forwards the mouse event
@@ -429,4 +440,26 @@ private:
 	int _alphaDurationMs = 0;
 	TTimer _timer;
 	TPolygonList _polygons;
+	// Confirmed a bool field at a fixed offset distinct from every field
+	// above (GetActionsToTest()/ExecuteEvent()/ExecuteMatchingAction(),
+	// Deponia_Linux.asm lines 55EC79, 55F3FA, 55E027) - when set,
+	// GetActionsToTest() treats this object as reached without actually
+	// calling IsReached(), and ExecuteEvent()/ExecuteMatchingAction() skip
+	// the auto-facing-angle update they'd otherwise apply to the event's
+	// own character; real meaning/intent not resolved (plausibly "this
+	// kind of object doesn't participate in reach-distance mechanics at
+	// all," e.g. a UI button rather than a scene object), named for its
+	// observed effect rather than recovered.
+	bool _bypassReachCheck = false;
+	// Confirmed a third, separate bool field (ExecuteEvent(),
+	// Deponia_Linux.asm line 55F640) - when set, skips ExecuteEvent()'s own
+	// trailing HandlePostExecution() call entirely; named for its observed
+	// effect, not recovered.
+	bool _skipFinalPostExecution = false;
+	// Confirmed a fourth, separate bool field (ExecuteEvent(),
+	// Deponia_Linux.asm line 55F7E3) - gates a hardcoded fallback retry
+	// (expanding the original candidate types and trying a different
+	// action list, field 0xAC) when nothing else matched; named for its
+	// observed effect, not recovered.
+	bool _hasActionTypeFallback = false;
 };

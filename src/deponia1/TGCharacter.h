@@ -118,4 +118,11 @@ public:
 	// this order, right after construction.
 	void Init();
 	void AssignToScene(const TVisObjRef &scene, const wxPoint &pos, int walkSpeed);
+
+	// Confirmed call shape only (TManagedObject::HandlePostExecution,
+	// Deponia_Linux.asm line 190824) - not reversed beyond that.
+	void ShowComment(const TVisObjRef &comment);
+	// Confirmed call shape only (TManagedObject::ExecuteMatchingAction,
+	// Deponia_Linux.asm line 55E1C5) - not reversed beyond that.
+	void StopWalking(bool flag);
 };

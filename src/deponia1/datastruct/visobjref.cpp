@@ -97,3 +97,7 @@ const std::uint8_t *TVisObjRef::GetId() const {
 TVisionaire *TVisObjRef::GetVisionaire() const {
 	return nullptr;
 }
+
+bool TVisObjRef::IsAnyObject() const {
+	return false;
+}

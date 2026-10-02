@@ -26,4 +26,11 @@ public:
 	bool IsStandardCommand() const {
 		return GetParent().GetLink(0x12A) == *this;
 	}
+	// Confirmed in full (Deponia_Linux.asm lines 1525911-1525926): its own
+	// "type" field (0x129) is one of two specific values - real meaning of
+	// 3/6 not resolved.
+	bool IsCommand() const {
+		int type = GetInt(0x129);
+		return type == 6 || type == 3;
+	}
 };

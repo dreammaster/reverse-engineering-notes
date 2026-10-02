@@ -126,6 +126,13 @@ public:
 	// project's usual treatment); not reversed beyond that call shape.
 	TVisionaire *GetVisionaire() const;
 
+	// Confirmed call shape only (TManagedObject::ExecuteMatchingAction,
+	// Deponia_Linux.asm lines 598006-598021): the real body reads the same
+	// TVisionaireObject* field GetVisionaire() does, then forwards to
+	// TVisionaireObject::IsAnyObject() - not reversed beyond that, and this
+	// project's own TVisObjRef stub has no such field to forward from.
+	bool IsAnyObject() const;
+
 private:
 	wxPoint _point{};
 	wxRect _rect{};

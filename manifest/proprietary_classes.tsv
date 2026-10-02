@@ -5,7 +5,7 @@ Supplier<OT::IntType<unsigned short, 2u> >	todo	1	109688	109688
 ExceptionSwallower<aiReturn>	todo	1	111476	111476
 THObject	todo	7	113495	114721
 TGPlaceHolder	todo	3	114826	114867
-TManagedObject	in-progress	50	114890	194554
+TManagedObject	done	50	114890	194554
 THButton	todo	7	114929	116008
 TMObject	todo	7	116072	116424
 TCPDebuggerServer	todo	9	120400	123408
@@ -41,7 +41,7 @@ THAction	todo	5	187010	187127
 TGObjectManager	in-progress	25	187194	189565
 TTObject	todo	9	190187	1468584
 TTButton	stub	12	190202	1526063
-TGEventInfo	todo	1	190217	190217
+TGEventInfo	done	1	190217	190217
 no_check_checker_t	todo	4	191182	1570709
 t_SkipCutsceneInfo	todo	1	194735	194735
 TGAction	todo	33	194786	211541
@@ -372,7 +372,7 @@ TSAnimation	todo	6	1471678	1472940
 TTCursor	todo	6	1473394	1473515
 TTCharacter	todo	10	1473680	1475646
 TTValue	todo	8	1476496	1476802
-TTAction	todo	11	1477394	1478245
+TTAction	stub	11	1477394	1478245
 TSAction	todo	6	1477410	1478347
 TTOutfit	todo	6	1478597	1479233
 TVisionaireGame	stub	14	1480066	1523439

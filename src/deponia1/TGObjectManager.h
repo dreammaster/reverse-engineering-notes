@@ -1,23 +1,20 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except HandleEvent()/ObjectReached(TManagedObject*) (and
-// the TGEventInfo-dispatching portion of MouseMove()/ExecuteSavedObject()) -
-// reaching all 25 manifest-listed methods (Deponia_Linux.asm lines
-// 187194-190177): tracks which TManagedObject the mouse is currently
-// hovering (_currentObject) and a separate "saved" one
-// (SaveCurrentObject()/ExecuteSavedObject(), used once a character has
-// finished walking up to something that was clicked out of reach), plus a
-// registered hook name for GetActionText().
+// Confirmed in full except GetActionText() - reaching all 25 manifest-
+// listed methods (Deponia_Linux.asm lines 187194-190177): tracks which
+// TManagedObject the mouse is currently hovering (_currentObject) and a
+// separate "saved" one (SaveCurrentObject()/ExecuteSavedObject(), used
+// once a character has finished walking up to something that was clicked
+// out of reach), plus a registered hook name for GetActionText().
 //
 // HandleEvent()/ObjectReached(TManagedObject*) each build a TGEventInfo
 // from the game's own saved click/hover state and dispatch it virtually
-// through TManagedObject::ExecuteEvent() (vtable slot 0x30) - the exact
-// same action-execution-subsystem gap already flagged on TManagedObject
-// itself (TGEventInfo's own fields aren't named yet, so transcribing the
-// construction would just be moving bytes around under invented names).
-// MouseMove() and ExecuteSavedObject() fire the same dispatch as one step
-// among several - their other, real bookkeeping is implemented in full,
-// with just that one step left as a documented no-op.
+// through TManagedObject::ExecuteEvent() (vtable slot 0x30); MouseMove()/
+// ExecuteSavedObject() each fire the same dispatch as one step among
+// several. All four were originally left with that one step as a
+// documented no-op, pending the action-execution subsystem's own
+// dedicated pass on TManagedObject (TGEventInfo.h/TGActionInfo.h) - now
+// done, so all four are implemented in full here too.
 //
 // GetActionText() (asm lines 189563-190177, by far the largest method here)
 // is left as a confirmed-call-shape stub for a different reason: when the
@@ -71,12 +68,14 @@ public:
 	// whatever it was holding accordingly.
 	void SetItem(const TVisObjRef &item, bool held);
 
-	// Confirmed call shape only (asm lines 187629-188249) - see this
-	// class's own header comment (the action-execution-subsystem gap).
+	// Confirmed in full (asm lines 187629-188249): builds a TGEventInfo
+	// from the game's own current action (0x262)/reached object (0x2AE)/
+	// held (0x2DA) state plus `event`, and dispatches it to _currentObject.
 	void HandleEvent(TMouseEventEnum event);
 
-	// Confirmed call shape only (asm lines 187906-188165) - see this
-	// class's own header comment.
+	// Confirmed in full (asm lines 187906-188165) - the same dispatch as
+	// HandleEvent() above, but replaying the state SaveEventInfo() saved
+	// (0x1E3/0x1E4/0x1E5/0x267) against `object` instead of _currentObject.
 	void ObjectReached(TManagedObject *object);
 	// Confirmed (asm lines 188166-188249): only forwards to the
 	// TManagedObject* overload above when the current character is both in
@@ -90,9 +89,11 @@ public:
 	// mouse event that triggered it (0x267).
 	void SaveEventInfo(TMouseEventEnum event);
 
-	// Confirmed in full apart from the TGEventInfo-dispatching step (asm
-	// lines 188374-188648) - see this class's own header comment; updates
-	// _currentObject and the game's "reached object" link (0x2AF).
+	// Confirmed in full (asm lines 188374-188648): fires a "mouse left"
+	// TGEventInfo dispatch on the old _currentObject (if its own game-data
+	// reference resolves to a real TVisionaire) and a "mouse entered" one
+	// on `object`, then updates _currentObject and the game's "reached
+	// object" link (0x2AF).
 	void MouseMove(TManagedObject *object);
 
 	// Confirmed (asm lines 188649-188753): clears whichever of
@@ -108,10 +109,11 @@ public:
 	// object.
 	void SaveCurrentObject();
 
-	// Confirmed in full apart from the TGEventInfo-dispatching step (asm
-	// lines 188829-189026) - see this class's own header comment; makes
-	// _savedObject the new _currentObject, mirrors it into the game's
-	// "reached object" link (0x2AF), and fires HandleEvent() to replay it.
+	// Confirmed in full (asm lines 188829-189026): fires the same "mouse
+	// left" dispatch as MouseMove() on _currentObject when it's about to
+	// be replaced by a different object, then makes _savedObject the new
+	// _currentObject, mirrors it into the game's "reached object" link
+	// (0x2AF), and fires HandleEvent() to replay it.
 	void ExecuteSavedObject();
 
 	// Confirmed (asm lines 189027-189113): resolves the game's "saved

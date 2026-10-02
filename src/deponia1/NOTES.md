@@ -2184,6 +2184,102 @@ value by 180).
 
 `TSceneControl` is now `in-progress` in the manifest.
 
+## The action-execution subsystem
+
+Implemented `TManagedObject::HandlePostExecution()`/`ExecuteMatchingAction()`/
+`GetActionsToTest()`/`ExecuteEvent()` in full - the condition/action-matching
+engine behind Visionaire's scripted events, left as confirmed-signature
+stubs at the end of the original `TManagedObject` pass and explicitly
+flagged ever since as needing its own dedicated pass. It took one: this is
+~2200 lines of disassembly across the four methods, plus follow-on work in
+`TGObjectManager` (see below).
+
+**The core insight that made this tractable**: `TGEventInfo` and
+`TGActionInfo`'s own *fields* don't need resolved real-world meaning to be
+transcribed faithfully - only their structural *role* in the control flow
+does, and that's fully confirmed. Both are modeled with positionally-named
+fields (`flag4`, `flagA`, etc.), exactly the same convention this project
+already uses for `TGDetectInfo`/`TypeOrder`/`eVisionaireTable` when a
+value's byte-level behavior is certain but its design intent isn't. This
+is what unblocked the "honest gap over confidently wrong transcription"
+concern the original stub comments raised - the gap was never really about
+the *names*, it was about not yet knowing the fields existed at all.
+
+**New real classes**: `TGEventInfo` (`TGEventInfo.h`) - two TVisObjRef-
+shaped slots (`action`, `command`; the first built via a `TTObject` ctor,
+the second via `TTButton`'s, at every confirmed call site), a bool, an
+int (`mouseEvent`), and a `TGCharacter*`. `TGActionInfo` (`TGActionInfo.h`)
+- an int (`matchedType`) plus 8 bools. `TypeActionExecution`
+(`TGActionInfo.h`) - confirmed individually-significant values 3-28 (26
+cases, `ExecuteMatchingAction()`'s own switch computes `value - 3` and
+jump-tables up to 25) plus 0-2 and 34-36 (confirmed via
+`GetActionsToTest()`/`IsImmediateExecutionType()`), all named by raw value
+per the convention above. `TTAction` (`TTAction.h`, new) -
+`IsImmediateExecutionType()` only, confirmed in full: true for exactly 16
+literal values.
+
+**Two more TManagedObject fields turned up** while tracing these methods'
+own use of `this` (distinct from the 4 found during the TGObjectManager/
+TCursorControl/TSceneControl passes): `_bypassReachCheck` (make
+`GetActionsToTest()` treat this object as always-reached, and skip the
+auto-facing-angle update in `ExecuteEvent()`/`ExecuteMatchingAction()`) and
+`_skipFinalPostExecution`/`_hasActionTypeFallback` (gate `ExecuteEvent()`'s
+own trailing `HandlePostExecution()` call and a hardcoded candidate-type-
+expansion retry respectively). All three are named for their observed
+effect, not recovered.
+
+**`GetActionsToTest()`** is a pure `info.mouseEvent`-keyed dispatcher:
+depending on the event type (1-9) and a couple of game-data int fields
+(0x30D/0x30E, read from this object's own game-data reference), it fills a
+candidate list of `TypeActionExecution` values and sets a handful of
+`TGActionInfo` flags describing *how* reached/matched this attempt already
+looks, before any actual action has been considered.
+
+**`ExecuteMatchingAction()`** then walks the candidate action list,
+computing for each one a TVisObjRef-based "required command" and comparing
+it against `info.command`/`info.action` and the candidate's own "linked
+items" list (field 0x248); the winning combination's own switch (keyed by
+each candidate `TypeActionExecution` value) decides whether a match
+counts as "reached" (`flag4`) or an "any-object fallback" (`flag5`), and -
+only when a character is involved and a confirmed set of 7 specific types
+and a game flag (0x246) line up - computes a facing angle via a `GetAngle()`
+free function (confirmed call shape only; the real callee's own math isn't
+reversed) and calls `TGCharacter::StopWalking()`.
+
+**`ExecuteEvent()`** ties it together: `HandlePreExecution()`, then
+`GetActionsToTest()`, an `AlignCharacter()` step when reached, then
+`ExecuteMatchingAction()` against this object's own action list - with a
+mouse-event-3/4 retry (forcing `TGEventInfo::flag8` true) and, if still
+unmatched and `_hasActionTypeFallback` is set, a second retry against a
+hardcoded expansion of the original candidate types (3→{27,25}, 20→
+{28,26}, 11→{23,21}, 19→{24,22}) and a different action list (field
+0xAC). One dead computation was found and deliberately dropped: the
+original snapshots the game's "current action" link (0x262) before and
+after the main attempt and stores whether it changed, but that value is
+never read again anywhere in the function - omitted here as having no
+observable effect, not as an oversight.
+
+**`HandlePostExecution()`** decides, once an action attempt is over,
+whether to call `TGCharacter::ShowComment()`/`ReceiveItem()` (the "nothing
+matched, say something about it" path) or to tag the matched command's
+parent object (field 0x25F ← 0x12A) and tell `TGObjectManager::RemoveItem()`
+to drop whatever's held - gated by a small bitmask check on the game's own
+field 0xF4 whose exact bit meanings aren't resolved beyond "bit 1 is
+ignored when `flag4` is set."
+
+**Follow-on in `TGObjectManager`**: now that `TGEventInfo` is real,
+`HandleEvent()`/`ObjectReached(TManagedObject*)`/the dispatching steps of
+`MouseMove()`/`ExecuteSavedObject()` - all four left as documented no-ops
+during the `TGObjectManager` pass pending exactly this - are implemented
+in full too. This also pinned down which of `TGEventInfo`'s two TVisObjRef
+slots comes from which game-data link: `action` ← field 0x2AE ("reached
+object"), `command` ← field 0x262 ("current action"), the *opposite* of
+this pass's own first guess (corrected before anything else depended on
+it).
+
+`TManagedObject` and `TGEventInfo` are now `done` in the manifest;
+`TTAction` moved from `todo` to `stub` (only the one method above).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
