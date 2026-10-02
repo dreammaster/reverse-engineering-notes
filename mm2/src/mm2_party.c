@@ -103,16 +103,14 @@ static int bracket_or_zero(int stat) {
 	return (uint8_t)b >= 0xF0 ? 0 : b;   /* negative brackets count as 0 (cmp al, F0h) */
 }
 
-/* TODO(review): assumptions here, compare with ovl/2MISC2.asm, the routine at loc_1C6CC (IDA 0x1C6CC..0x1C85C, called from
- * the training hall's level-up code at ~0x1CA66):
- *  - casting stat: the original reads char +12h (Personality) by default and +11h (Intellect) when var_14 is set, which
- *    it sets for classes 1 and 2 only (Paladin, Archer).  Taken literally that gives Sorcerers Personality, contradicting
- *    character creation (Intellect) and the shipped Sorcerers.  I used Cleric/Paladin = Personality, Sorcerer/Archer =
- *    Intellect instead; the original's choice is unverified.
- *  - maximum SP = spellLevel * (bracket(stat) + 3) as in the multiply at ~0x1C85C.  The premade characters in ROSTER.DAT
- *    do NOT follow this (they look like baseLevel * (bracket + 3)), so the formula is unconfirmed.
- *  - the "cap reached" branch at loc_1C7F4 sets the spell level used for SP to the character level (+20); copied as is, odd.
- *  - hybrids (Paladin/Archer) use level-6 and stop advancing at spell level 8: from the compares at 0x1C6F4..0x1C767. */
+/* TODO(review): ovl/2MISC2.asm, the routine at loc_1C6CC (IDA 0x1C6CC..0x1C85C, called from the training hall's level-up code at
+ * ~0x1CA66).  Spell level progression and spells learned were read from it.  For the maximum spell points I now use the rest
+ * code's formula (ovl/2MISC.asm party_do_rest, 0x1CDDF..0x1CE26: baseLevel * (bracket(stat) + 3), stat = Intellect for
+ * Sorcerer/Archer, else Personality), which matches the premade characters in ROSTER.DAT.  The level-up routine itself
+ * multiplies a variable (var_12: the new spell level, or the character level in the "cap reached" branch at loc_1C7F4) and
+ * picks the stat with var_14 set for classes 1 and 2 only (Paladin/Archer) - taken literally that differs from the rest
+ * formula for Sorcerers and Paladins, so the exact level-up result is unconfirmed (the next rest recomputes it anyway).
+ * Hybrids (Paladin/Archer) use level-6 and stop advancing at spell level 8 (compares at 0x1C6F4..0x1C767). */
 int mm2_update_spell_level(Mm2Char *c) {
 	int cls = (int)mm2_c8(c, MC_CLASS);
 	int hybrid = cls == MM2_PALADIN || cls == MM2_ARCHER;
@@ -144,12 +142,11 @@ int mm2_update_spell_level(Mm2Char *c) {
 		int cap = hybrid ? 8 : 9;
 		if (cur >= cap) newLevel = level;   /* as in the original: the maximum uses the character level */
 	}
-	/* maximum spell points = spell level x (bracket of the casting stat + 3); Cleric/Paladin use Personality,
-	 * Sorcerer/Archer Intellect */
-	stat = (int)mm2_c8(c, (cls == MM2_CLERIC || cls == MM2_PALADIN) ? MC_BASE_STATS + 2 : MC_BASE_STATS + 1);
+	/* maximum spell points = base level x (bracket of the casting stat + 3), as party_do_rest computes it */
+	stat = (int)mm2_c8(c, (cls == MM2_SORCERER || cls == MM2_ARCHER) ? MC_BASE_STATS + 1 : MC_BASE_STATS + 2);
 	mult = bracket_or_zero(stat) + 3;
 	{
-		unsigned sp = (unsigned)(newLevel * mult);
+		unsigned sp = (unsigned)(level * mult);
 		c->raw[MC_SP_MAX] = c->raw[MC_SP] = (uint8_t)sp;
 		c->raw[MC_SP_MAX + 1] = c->raw[MC_SP + 1] = (uint8_t)(sp >> 8);
 	}

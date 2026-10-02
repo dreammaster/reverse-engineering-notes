@@ -6,6 +6,7 @@
 #include "mm2_inn.h"
 #include "mm2_map.h"
 #include "mm2_text.h"
+#include "mm2_time.h"
 #include "mm2_ui.h"
 #include "mm2_view.h"
 
@@ -159,7 +160,7 @@ int main(int argc, char **argv) {
 						Mm2SmithResult r;
 						if (a.smithMode <= 4) {
 							Mm2SmithSlot st[6];
-							mm2_smith_stock(a.innTown, a.smithMode, 1, st);
+							mm2_smith_stock(a.innTown, a.smithMode, mm2_day_of_year(&a.roster), st);
 							r = mm2_smith_buy(c, &st[k - SDLK_a], a.items, merchant);
 						} else {
 							r = mm2_smith_sell(c, k - SDLK_a, a.items, merchant);
@@ -222,6 +223,21 @@ int main(int argc, char **argv) {
 			a.s.nMessages = a.s.nLocations = 0;
 			a.s.fightRequested = 0;
 			switch (e.key.keysym.sym) {
+			case SDLK_r:
+				if (!mm2_party_size(&a.roster)) break;
+				if (a.s.data[256 + (a.s.y << 4 | a.s.x)] & 0x08) {
+					a.s.nMessages = 1;
+					a.s.messages[0].opcode = EV_MSG;
+					snprintf(a.s.messages[0].text, sizeof(a.s.messages[0].text), "Too dangerous!");
+				} else {
+					Mm2Rng rr = {shop_rand, NULL};
+					int jumped = mm2_party_rest(&a.roster, &rr);
+					a.s.nMessages = 1;
+					a.s.messages[0].opcode = EV_MSG;
+					snprintf(a.s.messages[0].text, sizeof(a.s.messages[0].text), "%s", jumped ? "The party is thrown into another era!" : "The party rests.");
+				}
+				dirty = 1;
+				break;
 			case SDLK_c:
 				if (mm2_party_size(&a.roster)) {
 					a.inSheet = 1;
@@ -268,7 +284,7 @@ int main(int argc, char **argv) {
 		if (dirty) {
 			char line[48];
 			if (a.shop == 3) {
-				mm2_ui_draw_smith(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.smithMode, 1, a.items, shopMsg[0] ? shopMsg : NULL);
+				mm2_ui_draw_smith(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.smithMode, mm2_day_of_year(&a.roster), a.items, shopMsg[0] ? shopMsg : NULL);
 			} else if (a.shop) {
 				mm2_ui_draw_temple(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.shop == 2, shopMsg[0] ? shopMsg : NULL);
 			} else if (a.inTrain) {
@@ -285,8 +301,8 @@ int main(int argc, char **argv) {
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop) {
-				snprintf(line, sizeof(line), "Map %d  x=%d y=%d facing %c  answer:%c", a.s.map, a.s.x, a.s.y, a.s.facing,
-						 a.s.yesNo ? 'Y' : 'N');
+				snprintf(line, sizeof(line), "Map %d x=%d y=%d %c  ans:%c  Era%d Y%d D%d", a.s.map, a.s.x, a.s.y, a.s.facing,
+						 a.s.yesNo ? 'Y' : 'N', mm2_era(&a.roster), mm2_year(&a.roster), mm2_day_of_year(&a.roster));
 				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);
 				draw_messages(canvas, &font, &a.s);
 			}

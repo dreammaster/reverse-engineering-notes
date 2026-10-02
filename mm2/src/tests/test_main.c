@@ -11,6 +11,7 @@
 #include "../mm2_spells.h"
 #include "../mm2_town.h"
 #include "../mm2_text.h"
+#include "../mm2_time.h"
 #include "../mm2_battle.h"
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
@@ -620,7 +621,7 @@ static void test_training(const Mm2Game *g) {
 	lu = mm2_level_up(c, 0);                                   /* level 3: spell level 2, learns codes 8, 10, 11 */
 	CHECK(lu.newSpells == 1 && c->raw[MC_BASE_SPELL_LEVEL] == 2 && c->raw[MC_SPELL_LEVEL] == 2);
 	CHECK(c->raw[MC_SPELL_BITS + 1] == 0x0D && c->raw[MC_SPELL_BITS] == 0x3A);   /* level 1 spells kept */
-	CHECK(mm2_c16(c, MC_SP_MAX) == 2u * 7 && mm2_c16(c, MC_SP) == mm2_c16(c, MC_SP_MAX));
+	CHECK(mm2_c16(c, MC_SP_MAX) == 3u * 7 && mm2_c16(c, MC_SP) == mm2_c16(c, MC_SP_MAX));
 	/* a Paladin below level 6 has no spell progression */
 	c = &r.chars[1];
 	mm2_update_spell_level(c);
@@ -654,6 +655,47 @@ static void test_shops(void) {
 	CHECK(*mm2_state_ptr(&st, 0x3DA) == 1 && mm2_c32(&c, MC_GOLD) == 2000);
 }
 
+static void test_time(const Mm2Game *g) {
+	static Mm2Roster r;
+	Mm2Rng lo = {rng_lo, 0}, hi = {rng_hi, 0};
+	Mm2Char *c;
+	int i, d0, y0;
+	CHECK(mm2_load_roster(g, &r));
+	for (i = 0; i < 3; i++) mm2_inn_add(&r, i);
+	CHECK(mm2_era(&r) == 9);                                   /* the shipped state starts in era 9 */
+	mm2_state_ptr((Mm2State *)r.state, 0x3CA)[0] = 2;         /* era 2 for the tests below */
+	mm2_state_ptr((Mm2State *)r.state, 0x3A2 + 4)[0] = 20;    /* day 20 */
+	d0 = mm2_day_of_year(&r); y0 = mm2_year(&r);
+	CHECK(mm2_era(&r) >= 0 && d0 >= 1 && d0 <= 180);
+	/* a day passes after 256 units and everyone ages by one day */
+	r.chars[0].raw[0x22] = 10;
+	mm2_advance_time(&r, 200, 0);
+	CHECK(mm2_day_of_year(&r) == d0 && mm2_day_fraction(&r) >= 200);
+	mm2_advance_time(&r, 100, 0);
+	CHECK(mm2_day_of_year(&r) == d0 + 1);
+	CHECK(r.chars[0].raw[0x22] == 11);
+	/* year roll after day 180 */
+	{
+		uint8_t *day = mm2_state_ptr((Mm2State *)r.state, 0x3A2u + 2u * (unsigned)mm2_era(&r));
+		day[0] = 180; day[1] = 0;
+		mm2_advance_time(&r, 256, 0);
+		CHECK(mm2_day_of_year(&r) == 1 && mm2_year(&r) == y0 + 1);
+	}
+	/* resting restores HP/SP of characters that have food and advances time by 85 units */
+	c = &r.chars[3 - 3];
+	c->raw[MC_HP] = 1; c->raw[MC_HP + 1] = 0; c->raw[MC_FOOD] = 5; c->raw[MC_CONDITION] = 0x40 | 0x01;
+	c->raw[MC_AGE] = 20;
+	i = mm2_day_fraction(&r);
+	mm2_party_rest(&r, &hi);                                   /* hi: no era jump, no old-age death */
+	CHECK(c->raw[MC_CONDITION] == 0x01 && c->raw[MC_FOOD] == 4 && mm2_c16(c, MC_HP) == mm2_c16(c, MC_HP_MAX));
+	CHECK(mm2_day_fraction(&r) == (i + 85) % 256);
+	c->raw[MC_FOOD] = 0; c->raw[MC_HP] = 1;
+	mm2_party_rest(&r, &hi);
+	CHECK(mm2_c16(c, MC_HP) == 1);                              /* no food: no healing */
+	CHECK(mm2_party_rest(&r, &lo) == 1 && mm2_era(&r) == 9);   /* lo: era jump */
+	CHECK(mm2_party_rest(&r, &lo) == 0);                        /* already in era 9 */
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -671,6 +713,7 @@ int main(void) {
 	test_town();
 	test_shops();
 	test_inn(&g);
+	test_time(&g);
 	test_training(&g);
 	test_spells(&g);
 	test_text(&g);
