@@ -3408,9 +3408,28 @@ count, multiple coexisting instances keeping the flag lit until the
 last expires, and the exact-boundary elapsed-time case; all 23 suites
 pass.
 
-What's left in this whole system: container recursion and
-`word_36C93`-`9D`'s own relationship (if any) to the separate `0x9433`
-timer array `TickWorldAilmentTimers` manages. Recording the full
+**The "unreconciled timer array" and the "three counter families" were
+one segment-offset alias (2026-10-02)**: IDA's `word_36C93`..`9D`,
+`word_36C85`/`89`/`8B` and `word_36C79` are the very same words as
+`DS:0x9433`.., `DS:0x9425`/`9429`/`942B` and `DS:0x9419` (`0x36C93 -
+0x2D860 = 0x9433`, etc.) -- the same linear-vs-offset trap that hid the
+spell-record cluster. So `TickWorldAilmentTimers`' 6-timer array **is**
+bit `0x80`'s 6 slots, and `TickAilmentDuration`'s "global per-type
+counters" **are** `word_36C85`/`89`/`8B` -- one field, not two. They're
+a *count of lit light sources* per kind (incremented by
+`ApplyStatusEffect`, decremented by `TickStatusEffects` and by item
+expiry), not a duration; `LightSourceState`'s separate `duration` and
+`instanceCount` fields were merged into one `litCount` (a correction to
+this session's own earlier model). Real data pins bit `0x80`'s meaning
+too: the only records in either game that set it are MINER'S LIGHT I,
+MINER'S LIGHT II and INFINITE ILLUMINATION -- it arms one of 6 light
+timers (`SpellFieldTimerSlot`/`TimerDuration`, record offsets `0x2A`/
+`0x2C`; slot/duration 3/15, 5/21, 6/48 in Chapter 2, 4/15 for LIGHT I in
+Chapter 3). Reimplemented as `lightSourceArmSpellTimer`/
+`lightSourceTickTimers` (`lightsource.c`); the whole "world ailments"
+system is a *lighting* system. Tests in `test_lightsource.c`.
+
+What's left in this whole system: container recursion. Recording the full
 confirmed address/field map here is the honest contribution for the
 parts not yet done; implementing a C module on top of an unconfirmed
 data model risks baking in a wrong structure for what's left.

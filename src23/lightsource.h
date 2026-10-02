@@ -38,7 +38,7 @@
  * effects, not modeled here.
  */
 
-enum { LightSourceCount = 3 };
+enum { LightSourceCount = 3, LightSpellTimerCount = 6 };
 
 /*
  * Index into LightSourceState's own arrays -- not the real item ids, just
@@ -48,9 +48,18 @@ enum { LightSourceCount = 3 };
 typedef enum { LightSourceCandle = 0, LightSourceTorch = 1, LightSourceGeneric = 2 } LightSourceKind;
 
 typedef struct {
-    uint16_t duration[LightSourceCount]; /* word_36C85/36C89/36C8B, in that order (candle/torch/generic) */
-    uint16_t litFlags;                   /* word_36C79 bits 0x2000/0x800/0x400 (candle/torch/generic) */
-    uint16_t instanceCount[LightSourceCount]; /* word_9425/9429/942B -- see lightSourceTickItemSlot */
+    /*
+     * word_36C85/36C89/36C8B (== DS:0x9425/0x9429/0x942B, the same
+     * physical words under two IDA names -- the segment-offset aliasing
+     * this project keeps hitting): a *count of lit light sources* per
+     * kind, not a duration. lightSourceApply increments it,
+     * lightSourceTick/lightSourceTickItemSlot decrement it, and the
+     * matching litFlags bit clears when it reaches 0.
+     */
+    uint16_t litCount[LightSourceCount];
+    uint16_t litFlags; /* word_36C79 (DS:0x9419): 0x2000/0x800/0x400 (candle/torch/generic), 0x8000 "timers pending", 0x100..0x8 spell timers */
+    /* word_36C93..36C9D == DS:0x9433.. (the same array TickWorldAilmentTimers walks): 6 light-spell duration timers. */
+    uint16_t timers[LightSpellTimerCount];
 } LightSourceState;
 
 /*
@@ -100,12 +109,35 @@ bool lightSourceTick(LightSourceState *state, unsigned actionId);
  * elapsed-time parameter here, unlike lightSourceTick's fixed
  * decrement-by-1). If that would reach 0 or below: the slot's own id
  * is incremented (9->10, 0xC->0xD, 0xF->0x10 -- confirmed against real
- * `WORLD.DAT` data: USED CANDLE/LIGHT/TORCH), `instanceCount` for that
+ * `WORLD.DAT` data: USED CANDLE/LIGHT/TORCH), `litCount` for that
  * light source is decremented, and only once *that* count itself
  * reaches 0 is the matching `litFlags` bit cleared -- so several lit
  * instances of the same light-source type can coexist, and the UI
  * "currently lit" flag only clears once the last one burns out.
  */
 bool lightSourceTickItemSlot(LightSourceState *state, uint8_t *slot, uint16_t elapsedMinutes);
+
+/*
+ * ApplyEncodedItemEffect's word_33302 bit 0x80 branch (yendor2.asm:51308,
+ * "MINER'S LIGHT I"/"MINER'S LIGHT II"/"INFINITE ILLUMINATION" -- the only
+ * records in either game that set it, confirmed against real WORLD.DAT):
+ * the spell record's own offset 0x2A word (1-6, `SpellFieldTimerSlot`
+ * in spellrecord.h) selects one of 6 timers and offset 0x2C
+ * (`SpellFieldTimerDuration`) is its duration. Sets timers[slot-1] and
+ * its litFlags bits (0x8000 "timers pending" | 0x100 >> (slot-1)).
+ * Returns false for a slot outside 1-6 (the original loops forever there;
+ * not reproduced).
+ */
+bool lightSourceArmSpellTimer(LightSourceState *state, unsigned slot, uint16_t duration);
+
+/*
+ * TickWorldAilmentTimers (yendor2.asm:27925, instruction-identical in
+ * Chapter 3). A no-op unless litFlags bit 0x8000 is set; otherwise clears
+ * it and counts every running timer down by elapsedMinutes -- a timer that
+ * reaches 0 or below is zeroed and its own bit (0x100>>i) cleared, one
+ * still running re-arms 0x8000 so the next tick runs again. A zero timer
+ * just gets its bit cleared.
+ */
+void lightSourceTickTimers(LightSourceState *state, uint16_t elapsedMinutes);
 
 #endif

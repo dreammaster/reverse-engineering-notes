@@ -11121,6 +11121,22 @@ what's left (container recursion, three UI-heavy consumption modes, one
 unreconciled timer array) is the genuinely large or genuinely murky
 remainder, not more low-hanging fruit.
 
+### Session update (2026-10-02): the "tangled" world-ailments system was one aliased field array, and it's a lighting system
+
+Picked `TickWorldAilmentTimers` up to reconcile it with bit `0x80`'s six
+fields. Subtracting the data-segment base (`0x36C93 - 0x2D860 =
+0x9433`) showed they were the same array under two IDA names -- and the
+"3 global per-type counters" `TickAilmentDuration` decrements were the
+same words as the 3 light counters already reimplemented. Three
+supposedly separate counter families were one. Real spell data finished
+the picture: bit `0x80` appears only on MINER'S LIGHT I/II and INFINITE
+ILLUMINATION. The whole system is lighting: candles/torches/light
+sources burn down, and light spells arm 6 timers. Merged the duplicate
+`LightSourceState` fields (my own earlier model had them separate),
+added the arm/tick functions, named the spell fields. Same trap as the
+spell-record cluster; worth checking *first* whenever two names look
+like unrelated neighbours.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

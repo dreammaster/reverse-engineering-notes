@@ -127,13 +127,15 @@ typedef enum {
     SpellFieldPositionResetFlags = 0x28,
 
     /*
-     * 0x2A/0x2C (word_332E4/word_332E6): read as effect ids (fed to
-     * PrepareTrapEffectSlots) by ApplyEncodedItemEffect's loc_2CF51
-     * diversion (file-formats.md's own section on it) -- a real,
-     * confirmed consumer, but that branch's overall shape isn't
-     * understood well enough yet to give these two offsets their own
-     * named SpellField constants without guessing at their exact role.
+     * 0x2A/0x2C (word_332E4/word_332E6): for the 3 light spells (MINER'S
+     * LIGHT I/II, INFINITE ILLUMINATION -- exactly the records with
+     * SpellFlagsBLightTimer set, both games), which of 6 light timers to
+     * arm and its duration. Consumed by ApplyEncodedItemEffect's
+     * word_33302 bit 0x80 branch (lightsource.h's lightSourceArmSpellTimer).
+     * Also read, as effect ids, by the deferred loc_2CF51 branch.
      */
+    SpellFieldTimerSlot = 0x2A,
+    SpellFieldTimerDuration = 0x2C,
 
     /*
      * word_332E8: ResolveAttack's "power" input (combat.h's
@@ -296,7 +298,9 @@ typedef enum {
      * sets this bit, named literally "MARK OR RETURN" in both games'
      * real `WORLD.DAT` data.
      */
-    SpellFlagsBLocationBookmark = 0x0020
+    SpellFlagsBLocationBookmark = 0x0020,
+    /* word_33302 bit 0x80 (yendor2.asm:51308): arms a light-spell timer; MINER'S LIGHT I/II and INFINITE ILLUMINATION only. */
+    SpellFlagsBLightTimer = 0x0080
 } SpellFlagsB;
 
 /*

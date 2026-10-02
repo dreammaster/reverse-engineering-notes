@@ -18,7 +18,7 @@ bool lightSourceApply(LightSourceState *state, unsigned actionId) {
         return false;
     }
     state->litFlags = (uint16_t)(state->litFlags | kLitFlagBits[kind]);
-    state->duration[kind]++;
+    state->litCount[kind]++;
     return true;
 }
 
@@ -37,10 +37,10 @@ bool lightSourceTick(LightSourceState *state, unsigned actionId) {
     default:
         return false;
     }
-    if (state->duration[kind] > 0) {
-        state->duration[kind]--;
+    if (state->litCount[kind] > 0) {
+        state->litCount[kind]--;
     }
-    if (state->duration[kind] == 0) {
+    if (state->litCount[kind] == 0) {
         state->litFlags = (uint16_t)(state->litFlags & ~kLitFlagBits[kind]);
     }
     return true;
@@ -70,11 +70,39 @@ bool lightSourceTickItemSlot(LightSourceState *state, uint8_t *slot, uint16_t el
     }
 
     itemSlotSet(slot, (uint16_t)(id + 1), 0);
-    if (state->instanceCount[kind] > 0) {
-        state->instanceCount[kind]--;
+    if (state->litCount[kind] > 0) {
+        state->litCount[kind]--;
     }
-    if (state->instanceCount[kind] == 0) {
+    if (state->litCount[kind] == 0) {
         state->litFlags = (uint16_t)(state->litFlags & ~kLitFlagBits[kind]);
     }
     return true;
+}
+
+bool lightSourceArmSpellTimer(LightSourceState *state, unsigned slot, uint16_t duration) {
+    if (slot < 1 || slot > LightSpellTimerCount) {
+        return false;
+    }
+    state->timers[slot - 1] = duration;
+    state->litFlags = (uint16_t)(state->litFlags | 0x8000u | (0x100u >> (slot - 1)));
+    return true;
+}
+
+void lightSourceTickTimers(LightSourceState *state, uint16_t elapsedMinutes) {
+    if (!(state->litFlags & 0x8000u)) {
+        return;
+    }
+    state->litFlags = (uint16_t)(state->litFlags & 0x7FFFu);
+    for (unsigned i = 0; i < LightSpellTimerCount; i++) {
+        uint16_t bit = (uint16_t)(0x100u >> i);
+        if ((int16_t)state->timers[i] > 0) {
+            if ((int32_t)(int16_t)state->timers[i] - (int32_t)(int16_t)elapsedMinutes > 0) {
+                state->timers[i] = (uint16_t)(state->timers[i] - elapsedMinutes);
+                state->litFlags = (uint16_t)(state->litFlags | 0x8000u);
+                continue;
+            }
+        }
+        state->timers[i] = 0;
+        state->litFlags = (uint16_t)(state->litFlags & ~bit);
+    }
 }

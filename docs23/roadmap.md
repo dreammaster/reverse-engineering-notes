@@ -1136,11 +1136,16 @@ consumers, if any.
    instead of treating it as a conservative miss. Tests in
    `test_party.c`; all 23 suites pass.
 
-   **Still not done**: the 3 special `ConsumeItemChargeResource` modes,
-   container recursion (a separate, genuinely large CURGAME-backed
-   subsystem this project has no reader for), and a second 6-counter
-   timer array (`TickWorldAilmentTimers`) whose bit ranges overlap bit
-   `0x80`'s own 6 fields in a way not yet reconciled. See
+   **The "second timer array" resolved, 2026-10-02**: it was a
+   segment-offset alias -- `TickWorldAilmentTimers`' 6 timers at
+   `DS:0x9433` *are* bit `0x80`'s `word_36C93`..`9D`, and the light
+   counters `0x9425`.. are `word_36C85`.. (one field, merged in
+   `LightSourceState`). Bit `0x80` is the light spells (MINER'S LIGHT
+   I/II, INFINITE ILLUMINATION), reimplemented as
+   `lightSourceArmSpellTimer`/`lightSourceTickTimers`. **Still not
+   done**: the 3 special `ConsumeItemChargeResource` modes and container
+   recursion (a separate, genuinely large CURGAME-backed subsystem this
+   project has no reader for). See
    `file-formats.md`'s own dedicated "world ailments" and "Quest-item
    and party-inventory range checks" sections for the full confirmed
    address/field map of what's left -- genuinely small now.
