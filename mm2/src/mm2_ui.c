@@ -210,3 +210,47 @@ void mm2_ui_draw_tavern(uint8_t *canvas, const Mm2Font *font, const Mm2Roster *r
 		if (lines && lines[k]) mm2_draw_text(canvas, font, 0, 18 + k, lines[k], 14, -1);
 	mm2_draw_text(canvas, font, 0, 23, submenu ? "letter: buy   Esc: back" : "letter: choose  1-8: char  Esc: leave", 7, -1);
 }
+
+static const char *status_abbrev(int st) {
+	if (st & MS_ENCASED) return "Enca";
+	if (st & MS_MINDLESS) return "Mdls";
+	if (st & MS_HELD) return "Held";
+	if (st & MS_ASLEEP) return "Aslp";
+	if (st & MS_FRIGHTENED) return "Afrd";
+	if (st & MS_WEAKENED) return "Weak";
+	if (st & MS_SILENCED) return "Siln";
+	if (st & MS_HURT) return "Hurt";
+	return "";
+}
+
+void mm2_ui_draw_battle(uint8_t *canvas, const Mm2Font *font, const Mm2Fight *f, const uint8_t *picture, int actorSlot, const char *prompt) {
+	char line[64];
+	int i, y, x, vis = mm2_battle_visible(&f->b);
+	memset(canvas, 0, MM2_SCREEN_W * MM2_SCREEN_H);
+	if (picture) {
+		for (y = 0; y < 96; y++)
+			for (x = 0; x < 96; x++)
+				canvas[(8 + y) * MM2_SCREEN_W + 8 + x] = picture[y * 96 + x];
+	}
+	for (i = 0; i < vis; i++) {
+		snprintf(line, sizeof(line), "%c) %-13.13s %s", 'A' + i, f->b.table[f->b.id[i]].name, status_abbrev(f->b.status[i]));
+		mm2_draw_text(canvas, font, 14, 1 + i, line, i < f->b.frontMonsters ? 15 : 7, -1);
+	}
+	if (f->b.count > vis) {
+		snprintf(line, sizeof(line), "+%d more", f->b.count - vis);
+		mm2_draw_text(canvas, font, 14, 12, line, 7, -1);
+	}
+	for (i = 0; i < f->b.partySize; i++) {
+		const Mm2Char *c = f->b.party[i];
+		unsigned cond = mm2_c8(c, MC_CONDITION);
+		snprintf(line, sizeof(line), "%d) %-9.9s %4u/%-4u %s", i + 1, (const char *)c->raw, mm2_c16(c, MC_HP), mm2_c16(c, MC_HP_MAX),
+				 cond >= 0x80 ? "Dead" : cond >= 0x40 ? "Down" : cond & 0x10 ? "Aslp" : cond & 0x08 ? "Pois" : "");
+		mm2_draw_text(canvas, font, 0, 13 + i, line, i == actorSlot ? 14 : (cond >= 0x40 ? 8 : 10), -1);
+	}
+	{
+		int first = f->logCount > 3 ? f->logCount - 3 : 0;
+		for (i = first; i < f->logCount; i++)
+			mm2_draw_text(canvas, font, 0, 21 + (i - first), f->log[i], 11, -1);
+	}
+	if (prompt) mm2_draw_text(canvas, font, 0, 24, prompt, 14, -1);
+}

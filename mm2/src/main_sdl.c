@@ -2,9 +2,11 @@
  *   arrows: move / turn   PgUp/PgDn: previous/next map   Y / N: answer for yes/no prompts   Esc: quit
  * Messages from event scripts are shown under the view; teleports change the map.
  * Usage: mm2 [game dir]   (default: $MM2_DIR or the GOG install path) */
+#include "mm2_fight.h"
 #include "mm2_game.h"
 #include "mm2_inn.h"
 #include "mm2_map.h"
+#include "mm2_monpic.h"
 #include "mm2_text.h"
 #include "mm2_time.h"
 #include "mm2_ui.h"
@@ -22,6 +24,11 @@ typedef struct {
 	int inInn, innTown;
 	int inTrain, inSheet, sheetSlot;
 	int inTavern, tavernSub, tavernSlot;
+	int inBattle, battleTarget, battleActor, battleCast;
+	Mm2Fight fight;
+	Mm2Monster monsters[MM2_MONSTERS];
+	uint8_t picture[96 * 96];
+	int pictureId;
 	Mm2TavernVisit visit;
 	Mm2BuildingText tavernText;
 	int shop, shopSlot, smithMode;   /* shop: 0 none, 1 temple, 2 guild, 3 blacksmith */
@@ -63,6 +70,30 @@ static int start_map(App *a, const Mm2Game *g, int map, int x, int y, char facin
 static int shop_rand(void *ud, int lo, int hi) {
 	(void)ud;
 	return hi <= lo ? lo : lo + rand() % (hi - lo + 1);
+}
+
+static void battle_advance(App *a, const Mm2Game *g) {
+	int idx;
+	Mm2ActorKind k = mm2_fight_next(&a->fight, &idx);
+	if (k == MM2_ACTOR_PARTY) {
+		a->battleActor = idx;
+	} else {
+		a->battleActor = -1;   /* fight over */
+	}
+	if (a->battleTarget >= mm2_battle_visible(&a->fight.b)) a->battleTarget = 0;
+	{
+		int id = a->fight.b.count ? a->fight.b.table[a->fight.b.id[a->battleTarget]].picture : -1;
+		if (id >= 0 && id != a->pictureId) {
+			Mm2MonPic p;
+			a->pictureId = id;
+			if (mm2_monpic_load(g, id, 0, &p)) {
+				mm2_monpic_frame(&p, 0, 0, a->picture);
+				mm2_monpic_free(&p);
+			} else {
+				memset(a->picture, 0, sizeof(a->picture));
+			}
+		}
+	}
 }
 
 static void draw_messages(uint8_t *canvas, const Mm2Font *font, const Mm2GameSession *s) {
@@ -109,6 +140,7 @@ int main(int argc, char **argv) {
 	}
 	memset(&a, 0, sizeof(a));
 	mm2_load_items(&g, a.items);
+	mm2_load_monsters(&g, a.monsters);
 	if (!mm2_load_roster(&g, &a.roster)) fprintf(stderr, "warning: cannot load ROSTER.DAT\n");
 	if (!start_map(&a, &g, 0, 8, 8, 'N')) {
 		fprintf(stderr, "cannot load game data from %s\n", g.dir);
@@ -140,6 +172,52 @@ int main(int argc, char **argv) {
 						if (r == MM2_INN_ALREADY) mm2_inn_remove(&a.roster, list[idx]);
 						else if (r == MM2_INN_FULL) innMsg = "*** Party is Full ***";
 					}
+				}
+				dirty = 1;
+				continue;
+			}
+			if (a.inBattle) {
+				int k = e.key.keysym.sym;
+				if (a.fight.state != MM2_FIGHT_RUNNING || a.battleActor < 0) {
+					a.inBattle = 0;   /* any key after the fight */
+					dirty = 1;
+					continue;
+				}
+				if (a.battleCast) {
+					int n = 0, spell = -1, sp;
+					Mm2Char *c = &a.roster.chars[mm2_party_member(&a.roster, a.battleActor)];
+					for (sp = 0; sp < MM2_SPELLS; sp++) {
+						Mm2CombatSpell cs;
+						int bit = sp >= 48 ? sp - 48 : sp;
+						if (!mm2_combat_spell(sp, &cs) || !(c->raw[MC_SPELL_BITS + (bit >> 3)] & (1 << (bit & 7)))) continue;
+						if (k - SDLK_a == n) spell = sp;
+						n++;
+					}
+					a.battleCast = 0;
+					if (spell >= 0) {
+						mm2_fight_party_cast(&a.fight, a.battleActor, spell, a.battleTarget);
+						battle_advance(&a, &g);
+					}
+					dirty = 1;
+					continue;
+				}
+				if (k >= SDLK_1 && k <= SDLK_9 && k - SDLK_1 < mm2_battle_visible(&a.fight.b)) {
+					a.battleTarget = k - SDLK_1;
+					battle_advance(&a, &g);
+				} else if (k == SDLK_a || k == SDLK_RETURN) {
+					mm2_fight_party_attack(&a.fight, a.battleActor, a.battleTarget, 0);
+					battle_advance(&a, &g);
+				} else if (k == SDLK_s) {
+					mm2_fight_party_attack(&a.fight, a.battleActor, a.battleTarget, 1);
+					battle_advance(&a, &g);
+				} else if (k == SDLK_b) {
+					mm2_fight_party_block(&a.fight, a.battleActor);
+					battle_advance(&a, &g);
+				} else if (k == SDLK_r) {
+					mm2_fight_party_run(&a.fight, a.battleActor);
+					battle_advance(&a, &g);
+				} else if (k == SDLK_c) {
+					a.battleCast = 1;
 				}
 				dirty = 1;
 				continue;
@@ -287,6 +365,19 @@ int main(int argc, char **argv) {
 				}
 				dirty = 1;
 				break;
+			case SDLK_f:   /* debug: a test fight against a few monsters */
+				if (mm2_party_size(&a.roster)) {
+					static const uint8_t ids[6] = {1, 2, 3, 3, 5, 7};
+					Mm2Rng rr = {shop_rand, NULL};
+					mm2_fight_start(&a.fight, &a.roster, a.monsters, a.items, ids, 6, MM2_SURPRISE_NONE, &rr);
+					a.inBattle = 1;
+					a.battleTarget = 0;
+					a.battleCast = 0;
+					a.pictureId = -1;
+					battle_advance(&a, &g);
+					dirty = 1;
+				}
+				break;
 			case SDLK_c:
 				if (mm2_party_size(&a.roster)) {
 					a.inSheet = 1;
@@ -309,6 +400,17 @@ int main(int argc, char **argv) {
 					if (a.s.nLocations && a.s.locations[0] == 2 && a.s.map <= 4) {
 						a.inTrain = 1;
 						a.innTown = a.s.map;
+					}
+					if (a.s.fightRequested && mm2_party_size(&a.roster)) {
+						Mm2Rng rr = {shop_rand, NULL};
+						mm2_fight_start(&a.fight, &a.roster, a.monsters, a.items, a.s.fightMonsters, 10, MM2_SURPRISE_NONE, &rr);
+						if (a.fight.state == MM2_FIGHT_RUNNING) {
+							a.inBattle = 1;
+							a.battleTarget = 0;
+							a.battleCast = 0;
+							a.pictureId = -1;
+							battle_advance(&a, &g);
+						}
 					}
 					if (a.s.nLocations && a.s.locations[0] == 3 && a.s.map <= 4 && mm2_party_size(&a.roster) &&
 						mm2_btext_load(&g, 1, &a.tavernText)) {
@@ -340,7 +442,16 @@ int main(int argc, char **argv) {
 		}
 		if (dirty) {
 			char line[48];
-			if (a.inTavern) {
+			if (a.inBattle) {
+				char prompt[48];
+				if (a.fight.state != MM2_FIGHT_RUNNING || a.battleActor < 0)
+					snprintf(prompt, sizeof(prompt), "Press a key");
+				else if (a.battleCast)
+					snprintf(prompt, sizeof(prompt), "Cast which spell? (letter)");
+				else
+					snprintf(prompt, sizeof(prompt), "A-Attack S-Shoot C-Cast B-Block R-Run  1-9 target");
+				mm2_ui_draw_battle(canvas, &font, &a.fight, a.pictureId >= 0 ? a.picture : NULL, a.battleActor, prompt);
+			} else if (a.inTavern) {
 				mm2_ui_draw_tavern(canvas, &font, &a.roster, a.innTown, a.tavernSlot, a.tavernSub, &a.tavernText, tavernLines);
 			} else if (a.shop == 3) {
 				mm2_ui_draw_smith(canvas, &font, &a.roster, a.innTown, a.shopSlot, a.smithMode, mm2_day_of_year(&a.roster), a.items, shopMsg[0] ? shopMsg : NULL);
@@ -359,7 +470,7 @@ int main(int argc, char **argv) {
 				mm2_view_render_outdoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
 			else
 				mm2_view_render_indoor(&a.view, canvas, a.s.data, a.s.x, a.s.y, a.s.facing);
-			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop && !a.inTavern) {
+			if (!a.inInn && !a.inTrain && !a.inSheet && !a.shop && !a.inTavern && !a.inBattle) {
 				snprintf(line, sizeof(line), "Map %d x=%d y=%d %c  ans:%c  Era%d Y%d D%d", a.s.map, a.s.x, a.s.y, a.s.facing,
 						 a.s.yesNo ? 'Y' : 'N', mm2_era(&a.roster), mm2_year(&a.roster), mm2_day_of_year(&a.roster));
 				mm2_draw_text(canvas, &font, 0, 17, line, 15, -1);

@@ -3,12 +3,21 @@
 #include "mm2_map.h"
 #include "mm2_png.h"
 #include "mm2_text.h"
+#include "mm2_fight.h"
+#include "mm2_monpic.h"
 #include "mm2_ui.h"
 #include "mm2_view.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+static int shot_state = 7;
+static int shot_rng(void *ud, int lo, int hi) {
+	(void)ud;
+	shot_state = shot_state * 1103515245 + 12345;
+	return hi <= lo ? lo : lo + (int)(((unsigned)shot_state >> 8) % (unsigned)(hi - lo + 1));
+}
 
 int main(int argc, char **argv) {
 	Mm2Game g;
@@ -65,6 +74,28 @@ int main(int argc, char **argv) {
 		for (i = 0; i < 3; i++) mm2_inn_add(&roster, i);
 		mm2_ui_draw_tavern(canvas, &font, &roster, atoi(argv[2]), 0, atoi(argv[3]), &text, NULL);
 		return mm2_write_png(argv[4], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
+	}
+	if (argc >= 3 && strcmp(argv[1], "battle") == 0) {   /* mm2_shot battle out.png [rounds] */
+		static Mm2Roster roster;
+		static Mm2Item items[MM2_ITEMS];
+		static Mm2Monster table[MM2_MONSTERS];
+		static Mm2Fight f;
+		static const uint8_t ids[6] = {1, 2, 3, 3, 5, 7};
+		uint8_t canvas[MM2_SCREEN_W * MM2_SCREEN_H], pic[96 * 96];
+		Mm2Rng rng = {shot_rng, NULL};
+		Mm2MonPic mp;
+		int i, idx, steps = argc > 3 ? atoi(argv[3]) : 4;
+		mm2_game_init(&g, NULL);
+		if (!mm2_load_roster(&g, &roster) || !mm2_font_load(&g, &font) || !mm2_load_items(&g, items) || !mm2_load_monsters(&g, table)) return 1;
+		for (i = 0; i < 6; i++) mm2_inn_add(&roster, i);
+		mm2_fight_start(&f, &roster, table, items, ids, 6, MM2_SURPRISE_NONE, &rng);
+		for (i = 0; i < steps && mm2_fight_next(&f, &idx) == MM2_ACTOR_PARTY; i++)
+			mm2_fight_party_attack(&f, idx, 0, 0);
+		mm2_fight_next(&f, &idx);
+		memset(pic, 0, sizeof(pic));
+		if (mm2_monpic_load(&g, table[f.b.id[0]].picture, 0, &mp)) { mm2_monpic_frame(&mp, 0, 0, pic); mm2_monpic_free(&mp); }
+		mm2_ui_draw_battle(canvas, &font, &f, pic, idx, "A-Attack S-Shoot C-Cast B-Block R-Run");
+		return mm2_write_png(argv[2], canvas, MM2_SCREEN_W, MM2_SCREEN_H, MM2_EGA_PALETTE, 16) ? 0 : 1;
 	}
 	if (argc < 6) {
 		fprintf(stderr, "usage: %s MAP X Y N|E|S|W out.png [game dir]\n", argv[0]);

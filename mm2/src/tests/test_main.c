@@ -17,6 +17,7 @@
 #include "../mm2_combat.h"
 #include "../mm2_data.h"
 #include "../mm2_events.h"
+#include "../mm2_fight.h"
 #include "../mm2_game.h"
 #include "../mm2_inn.h"
 #include "../mm2_tables.h"
@@ -729,6 +730,51 @@ static void test_tavern(const Mm2Game *g) {
 	CHECK(mm2_tavern_feed(&r, &r.chars[1], 1) == MM2_TAVERN_NO_GOLD);
 }
 
+static int lcg_state = 12345;
+static int rng_lcg(void *ud, int lo, int hi) {
+	(void)ud;
+	lcg_state = lcg_state * 1103515245 + 12345;
+	return hi <= lo ? lo : lo + (int)(((unsigned)lcg_state >> 8) % (unsigned)(hi - lo + 1));
+}
+
+static void test_fight(const Mm2Game *g) {
+	static Mm2Roster r;
+	static Mm2Item items[MM2_ITEMS];
+	static Mm2Monster table[MM2_MONSTERS];
+	static Mm2Fight f;
+	Mm2Rng rng = {rng_lcg, 0};
+	static const uint8_t ids[4] = {0, 1, 2, 3};   /* id 0 is ignored: three monsters (ids 1-3) */
+	Mm2Char c;
+	Mm2ActorKind k;
+	int idx, i, rounds = 0;
+	uint32_t exp0[6];
+	CHECK(mm2_load_roster(g, &r) && mm2_load_items(g, items) && mm2_load_monsters(g, table));
+	/* physical damage rules (char_apply_damage) */
+	memset(&c, 0, sizeof(c));
+	c.raw[MC_HP] = 10; c.raw[MC_CONDITION] = 0x10;
+	CHECK(mm2_char_take_damage(&c, 4) == 0 && mm2_c16(&c, MC_HP) == 6 && c.raw[MC_CONDITION] == 0);       /* wakes the sleeper */
+	CHECK(mm2_char_take_damage(&c, 6) == 1 && c.raw[MC_CONDITION] == 0x40 && mm2_c16(&c, MC_HP) == 0);    /* 0 HP: unconscious */
+	CHECK(mm2_char_take_damage(&c, 1) == 1 && c.raw[MC_CONDITION] == 0x81);                              /* hit while down: dead */
+	CHECK(mm2_char_take_damage(&c, 100) == 1 && c.raw[MC_CONDITION] == 0x81);
+	/* a whole fight: the party always attacks the first monster */
+	for (i = 0; i < 6; i++) { mm2_inn_add(&r, i); exp0[i] = mm2_c32(&r.chars[i], MC_EXP); }
+	mm2_fight_start(&f, &r, table, items, ids, 4, MM2_SURPRISE_NONE, &rng);
+	CHECK(f.b.count == 3 && f.state == MM2_FIGHT_RUNNING);
+	while ((k = mm2_fight_next(&f, &idx)) != MM2_ACTOR_NONE && rounds < 500) {
+		CHECK(k == MM2_ACTOR_PARTY && idx >= 0 && idx < 6);
+		mm2_fight_party_attack(&f, idx, 0, 0);
+		rounds++;
+	}
+	CHECK(rounds > 0 && rounds < 500);
+	CHECK(f.state == MM2_FIGHT_VICTORY || f.state == MM2_FIGHT_DEFEAT);
+	CHECK(f.logCount > 0);
+	if (f.state == MM2_FIGHT_VICTORY) {
+		CHECK(f.b.count == 0 && f.expEach > 0 && f.loot.exp == (uint32_t)(table[1].exp + table[2].exp + table[3].exp));
+		for (i = 0; i < 6; i++)
+			CHECK(mm2_c32(&r.chars[i], MC_EXP) >= exp0[i]);
+	}
+}
+
 int main(void) {
 	Mm2Game g;
 	mm2_game_init(&g, NULL);
@@ -742,6 +788,7 @@ int main(void) {
 	test_combat();
 	test_battle(&g);
 	test_rewards(&g);
+	test_fight(&g);
 	test_smith(&g);
 	test_town();
 	test_shops();
