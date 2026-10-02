@@ -189,12 +189,14 @@
 15271	checkPartyDead
 152BE	def_152B2
 152DA	jpt_152B2
+1531F	addTime	minutes +1440/day, day wrap at 100 -> year (Xeen Party::addTime); resets blacksmith wares + bank interest on day change
 15434	def_15418
 15444	jpt_15418
 15927	def_15906
 159BD	def_1599C
 15B34	jpt_1599C
 15B42	jpt_15906
+16973	changeTime	per 480 minutes: condition ticks (poison/disease/insane...), then addTime (Xeen Party::changeTime)
 16DC0	chargeStep
 16DF4	statBonus
 16E14	getAge
@@ -315,13 +317,19 @@
 224B2	jpt_21E2F
 224C8	jpt_21AEC
 224DE	jpt_216CF
+24ECC	rnd	rnd(lo, hi)
 24F8D	Events_updateGameCounter	(BinDiff sim .65 conf .95, unverified)
 24FA1	Music_deinit
 24FAB	Music_playSong
 24FB5	Window_update	(BinDiff sim .67 conf .95, unverified)
 24FBF	Music_playFX
 24FD3	Sound_playVOC
+24FDD	loadResourceByName	takes a name (DGROUP near ptr), returns far pointer to the loaded cc member (dx:ax)
 24FFB	Sound_deinit
+2500F	ccOpen	(by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure
+25024	ccClose	(by use)
+25032	ccSeek	(by use) seek in the open cc file
+2504B	ccRead	(by use) read len bytes to far buffer; non-zero = failure
 25068	Resources_openFile
 25117	currentTime
 251C8	timeToString	(BinDiff sim .69 conf .97, unverified)
@@ -333,8 +341,14 @@
 2562C	def_25621
 25C22	jpt_25621
 25E20	ipause_5	(BinDiff sim .88 conf .92, unverified)
+2634D	openCcFile	creates the file if missing, opens it as a cc (ccOpen + Resources_openFile + ccClose) (by use)
+263C3	loadPartyFaces	sprintf + load for the 4 face slots (by use, unverified)
+2640B	readFileBytes	open, read n bytes, close
+26447	loadSavedGame	copies MAZE.NAM -> Save_name, MAZE.CHR -> Roster_buffer, MAZE.PTY -> Party_state from the open .cc
+264ED	readSaveHeader	opens a save .cc, reads TOC, MAZE.NAM (31 bytes), MAZE.PTY (918 bytes) and MAZE.CHR; returns highest level among the party's roster slots
 26665	fileExists	(BinDiff sim .69 conf .97, unverified)
 266AB	getFiles
+26716	loadMonsterData	loads the 22 mon*.dat column files of mm3.cc into the Mon_* far pointers
 2699E	__OVRGROUP
 269A0	__DGROUP
 269A9	__OVRINIT
@@ -357,71 +371,74 @@
 27A16	__INITEXTMEM
 27AEE	__EXITEXT
 27B42	__EXTCOPY
-27F59	j_getDiskFree
-27F68	j_monstersAttack
-27F81	j_getEquipSlotName
-27F90	j_equipItem
-27F9F	j_openMm3Cc
-27FAE	j_stopAttack
-27FB3	j_introSequence
-27FB8	j_protectionHandler
-28057	j_subPartyTime
-28080	j_GiveBankInterest
-28085	j_death
-2808A	j_Spells_moonRay
-2808F	j_showJoke
-28094	j_arenaEvent
-280F9	j_sortParty
-28112	j_copyPartyToRoster
-28121	j_Awards_show
-28126	j_rosterMenu
-2813A	j_setSoundAddress
-2818F	j_getCurrentExperience
-281B7	j_controlPanel
-281C1	j_nextExperienceLevel
-281C6	j_rest
-281F8	j_experienceToNextLevel
-2823A	j_giveCharDamage
-2823F	j_Map_load
-28271	j__strcoll
-28276	j_dismissCharacter
-282C0	j_createCharacter
-28306	j_checkClasses
-28335	j_trainingNeedsExperience
-2833F	j_townInn
-2834E	j_townBank
-28358	j_townGuild
-2836C	j_townTavern
-28371	j_townTraining
-28376	j_townSmithy
-28380	j_loadHireFaces
-283B5	j_setSpeedTable
-283BF	j_getWeaponDamage
-283C9	j_block
-283CE	j_getMonsterDescriptions
-283D3	j_attack
-283E2	j_doMonsterTurn
-283E7	j_run
-283F1	j_nextChar
-283F6	j_charsCantAct
-283FB	j_allHaveGone
-28400	j_sortCombatParty
-2840A	j_quickFight
-28414	j_monsterSavingThrow
-28464	j_Spells_subSpellCost
-28509	j_Spells_divineIntervention
-28545	j_Screen_saveBackground
-28572	j_spellLloydsBeacon
-28644	j_itemsDialog
-28662	j_specialsDialog
-28667	j_getThievery
-286AE	j_statColor
-286BD	j_getMaxSP
-286C2	j_getMaxHP
-286CC	j_getArmorClass
-286E0	j_identifyOrFix
-286E5	j_getNumSkills
+27F54	j_j_j_resetBlacksmithWares
+27F59	j_j_j_j_getDiskFree
+27F68	j_j_j_j_monstersAttack
+27F81	j_j_j_j_getEquipSlotName
+27F90	j_j_j_j_equipItem
+27F9F	j_j_j_j_openMm3Cc
+27FAE	j_j_j_j_stopAttack
+27FB3	j_j_j_j_introSequence
+27FB8	j_j_j_j_protectionHandler
+28057	j_j_j_j_subPartyTime
+28080	j_j_j_j_GiveBankInterest
+28085	j_j_j_j_death
+2808A	j_j_j_j_Spells_moonRay
+2808F	j_j_j_j_showJoke
+28094	j_j_j_j_arenaEvent
+280A8	j_j_j_resetTemps
+280F9	j_j_j_j_sortParty
+28112	j_j_j_j_copyPartyToRoster
+28121	j_j_j_j_Awards_show
+28126	j_j_j_j_rosterMenu
+2813A	j_j_j_j_setSoundAddress
+2818F	j_j_j_j_getCurrentExperience
+281B7	j_j_j_j_controlPanel
+281C1	j_j_j_j_nextExperienceLevel
+281C6	j_j_j_j_rest
+281F8	j_j_j_j_experienceToNextLevel
+2823A	j_j_j_j_giveCharDamage
+2823F	j_j_j_j_Map_load
+28271	j_j_j_j__strcoll
+28276	j_j_j_j_dismissCharacter
+282C0	j_j_j_j_createCharacter
+28306	j_j_j_j_checkClasses
+28335	j_j_j_j_trainingNeedsExperience
+2833F	j_j_j_j_townInn
+2834E	j_j_j_j_townBank
+28358	j_j_j_j_townGuild
+2836C	j_j_j_j_townTavern
+28371	j_j_j_j_townTraining
+28376	j_j_j_j_townSmithy
+28380	j_j_j_j_loadHireFaces
+283B5	j_j_j_j_setSpeedTable
+283BF	j_j_j_j_getWeaponDamage
+283C9	j_j_j_j_block
+283CE	j_j_j_j_getMonsterDescriptions
+283D3	j_j_j_j_attack
+283E2	j_j_j_j_doMonsterTurn
+283E7	j_j_j_j_run
+283F1	j_j_j_j_nextChar
+283F6	j_j_j_j_charsCantAct
+283FB	j_j_j_j_allHaveGone
+28400	j_j_j_j_sortCombatParty
+2840A	j_j_j_j_quickFight
+28414	j_j_j_j_monsterSavingThrow
+28464	j_j_j_j_Spells_subSpellCost
+28509	j_j_j_j_Spells_divineIntervention
+28545	j_j_j_j_Screen_saveBackground
+28572	j_j_j_j_spellLloydsBeacon
+28644	j_j_j_j_itemsDialog
+28662	j_j_j_j_specialsDialog
+28667	j_j_j_j_getThievery
+286AE	j_j_j_j_statColor
+286BD	j_j_j_j_getMaxSP
+286C2	j_j_j_j_getMaxHP
+286CC	j_j_j_j_getArmorClass
+286E0	j_j_j_j_identifyOrFix
+286E5	j_j_j_j_getNumSkills
 28780	segx
+2879E	Party_newDay	byte
 29117	ELEMENTAL_RESISTANCES	indexed by elemental material (0A3h slot byte)
 2918F	METAL_LAC	indexed by item material (0B6h slot byte)
 291BD	ATTRIBUTE_BONUSES	indexed by attribute material (0C9h slot byte)
@@ -435,6 +452,42 @@
 2E199	RACE_SP_BONUSES	[race*2 + attrib]
 2E1A4	RACE_HP_BONUSES	indexed by race
 30FA0	__ctype
+340C6	Party_chars	active party records, stride 12Fh (303 bytes); +120h = Dead condition
+34C10	Engine_mode	byte; 9 skips the daily rest/reset handling (script in progress)
+36FBA	Save_name	31 bytes, MAZE.NAM ("Default Characters")
+370DA	Party_state	918-byte party block (MAZE.PTY), loaded by sub_26447
+37325	Party_day	byte, 0-99
+37326	Party_year	word
+37332	Party_minutes	word, minutes into the day
+37334	Party_food	word (+35Ah in MAZE.PTY); rest decrements it
+3733C	Party_bankGold	dword (+362h); GiveBankInterest adds 1% (same as Xeen Party::giveBankInterest)
+37340	Party_bankGems	dword (+366h)
+37344	Party_gold	dword (+36Ah) (by use: spent in shops, shared by awards)
+37348	Party_gems	dword (+36Eh) (by use: spell gem costs)
+37398	Roster_buffer	far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
+37462	Party_size	byte, number of active characters
+3771E	Mon_spd	far pointer to the monspd.dat column (90 entries), loaded by loadMonsterData
+37722	Mon_gold	far pointer to the mongold.dat column (90 entries), loaded by loadMonsterData
+37726	Mon_gems	far pointer to the mongems.dat column (90 entries), loaded by loadMonsterData
+3772A	Mon_rang	far pointer to the monrang.dat column (90 entries), loaded by loadMonsterData
+3772E	Mon_spec	far pointer to the monspec.dat column (90 entries), loaded by loadMonsterData
+37732	Mon_attp	far pointer to the monattp.dat column (90 entries), loaded by loadMonsterData
+37736	Mon_fire	far pointer to the monfire.dat column (90 entries), loaded by loadMonsterData
+3773A	Mon_elec	far pointer to the monelec.dat column (90 entries), loaded by loadMonsterData
+3773E	Mon_cold	far pointer to the moncold.dat column (90 entries), loaded by loadMonsterData
+37742	Mon_acid	far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData
+37746	Mon_numa	far pointer to the monnuma.dat column (90 entries), loaded by loadMonsterData
+3774A	Mon_magi	far pointer to the monmagi.dat column (90 entries), loaded by loadMonsterData
+3774E	Mon_dmgt	far pointer to the mondmgt.dat column (90 entries), loaded by loadMonsterData
+37752	Mon_ener	far pointer to the monener.dat column (90 entries), loaded by loadMonsterData
+37756	Mon_trea	far pointer to the montrea.dat column (90 entries), loaded by loadMonsterData
+3775A	Mon_dmgn	far pointer to the mondmgn.dat column (90 entries), loaded by loadMonsterData
+3775E	Mon_exp	far pointer to the monexp.dat column (90 entries), loaded by loadMonsterData
+37762	Mon_hitb	far pointer to the monhitb.dat column (90 entries), loaded by loadMonsterData
+37766	Mon_dmgs	far pointer to the mondmgs.dat column (90 entries), loaded by loadMonsterData
+3776A	Mon_phys	far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData
+3776E	Mon_ac	far pointer to the monac.dat column (90 entries), loaded by loadMonsterData
+37772	Mon_hp	far pointer to the monhp.dat column (90 entries), loaded by loadMonsterData
 379F2	monstersAttack	(BinDiff sim .69 conf .93, unverified)
 37B31	def_37B2C
 37B49	jpt_37B2C
@@ -443,6 +496,7 @@
 37EB2	openMm3Cc	opens mm3.cc, "Alert!" error box (from strings)
 380FE	getDiskFree	(BinDiff sim .69 conf .97, unverified)
 38425	stopAttack	(BinDiff sim .62 conf .95, unverified)
+385BD	resetBlacksmithWares
 388A9	introSequence	mm3theme.m, itit0-8.vga, comet.vga, itxt.vga, talk.vga, s%d.s, cr%d.vga (from strings)
 39437	protectionHandler
 394A9	getEquipSlotName	"ring"/"medal" (from strings)
@@ -466,6 +520,7 @@
 3D6A6	def_3D353
 3D6FE	jpt_3D402
 3D710	jpt_3D353
+3DD20	resetTemps
 3DF79	GiveBankInterest	(BinDiff sim .69 conf .97, unverified)
 3E0A0	showJoke	jester.bin "Joke of the Day"
 3E113	arenaEvent	combat.m "The Arena"

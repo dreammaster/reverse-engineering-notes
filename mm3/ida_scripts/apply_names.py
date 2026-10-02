@@ -10,6 +10,12 @@ for line in open(path, encoding="utf-8"):
         continue
     p = line.split("\t")
     ea, name, cmt = int(p[0], 16), p[1] if len(p) > 1 else "-", p[2] if len(p) > 2 else ""
+    thunk = None
+    if name != "-" and idc.get_segm_name(ea).startswith("stub") and idc.print_insn_mnem(ea) == "jmp":
+        # overlay thunk (jmp far sel:off): the name belongs to the real routine, the thunk becomes j_<name>
+        thunk = ea
+        ea = (idc.get_wide_word(ea + 3) << 4) + idc.get_wide_word(ea + 1)
+        idc.set_name(thunk, "j_" + name, idc.SN_NOCHECK | idc.SN_NOWARN)
     if name != "-":
         if ida_bytes.is_code(ida_bytes.get_flags(ea)) and not ida_funcs.get_func(ea):
             ida_funcs.add_func(ea)

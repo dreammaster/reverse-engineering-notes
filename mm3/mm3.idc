@@ -5109,6 +5109,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15313);
 	op_hex		(x,	1);
 	create_insn	(0X1531F);
+	set_name	(0X1531F,	"addTime");
 	create_insn	(x=0X15326);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1532E);
@@ -5273,10 +5274,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1565B);
 	op_hex		(x,	1);
-	create_insn	(x=0X15663);
-	op_hex		(x,	1);
-	create_insn	(x=0X1566A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5286,6 +5283,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15663);
+	op_hex		(x,	1);
+	create_insn	(x=0X1566A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X1566D);
 	op_hex		(x,	1);
 	create_insn	(x=0X15675);
@@ -5834,6 +5835,7 @@ static Bytes_1(void) {
 	create_insn	(0X1693D);
 	create_insn	(0X1696F);
 	create_insn	(0X16973);
+	set_name	(0X16973,	"changeTime");
 	create_insn	(x=0X1697B);
 	op_stkvar	(x,	1);
 	create_insn	(0X16995);
@@ -10222,12 +10224,6 @@ static Bytes_1(void) {
 	create_insn	(0X1F07B);
 	create_insn	(0X1F08C);
 	create_insn	(0X1F09D);
-	create_insn	(0X1F0AE);
-	create_insn	(0X1F0BA);
-	create_insn	(0X1F0C6);
-	create_insn	(0X1F0E8);
-	create_insn	(0X1F10D);
-	create_insn	(0X1F133);
 }
 
 //------------------------------------------------------------------------
@@ -10237,6 +10233,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1F0AE);
+	create_insn	(0X1F0BA);
+	create_insn	(0X1F0C6);
+	create_insn	(0X1F0E8);
+	create_insn	(0X1F10D);
+	create_insn	(0X1F133);
 	create_insn	(0X1F154);
 	create_insn	(0X1F175);
 	create_insn	(0X1F196);
@@ -11834,6 +11836,7 @@ static Bytes_2(void) {
 	create_byte	(0X24CCC);
 	make_array	(0X24CCC,	0X200);
 	create_insn	(0X24ECC);
+	set_name	(0X24ECC,	"rnd");
 	create_insn	(x=0X24ECF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24ED2);
@@ -11887,6 +11890,7 @@ static Bytes_2(void) {
 	create_insn	(0X24FD3);
 	set_name	(0X24FD3,	"Sound_playVOC");
 	create_insn	(0X24FDD);
+	set_name	(0X24FDD,	"loadResourceByName");
 	create_insn	(x=0X24FE0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24FE3);
@@ -11896,6 +11900,7 @@ static Bytes_2(void) {
 	set_name	(0X24FFB,	"Sound_deinit");
 	create_insn	(0X25005);
 	create_insn	(0X2500F);
+	set_name	(0X2500F,	"ccOpen");
 	create_insn	(x=0X25012);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X25015);
@@ -11904,12 +11909,14 @@ static Bytes_2(void) {
 	create_insn	(x=0X25018);
 	op_hex		(x,	0);
 	create_insn	(0X25024);
+	set_name	(0X25024,	"ccClose");
 	create_insn	(x=0X25029);
 	op_hex		(x,	1);
 	set_cmt	(0X2502B,	"DOS - 2+ - CLOSE A FILE WITH HANDLE\nBX = file handle",	0);
 	create_insn	(x=0X2502B);
 	op_hex		(x,	0);
 	create_insn	(0X25032);
+	set_name	(0X25032,	"ccSeek");
 	create_insn	(x=0X25035);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X25038);
@@ -11920,6 +11927,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X25043);
 	op_hex		(x,	0);
 	create_insn	(0X2504B);
+	set_name	(0X2504B,	"ccRead");
 	create_insn	(x=0X2504F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X25052);
@@ -12613,6 +12621,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X26334,	"stream",	0);
 	create_insn	(0X2634D);
+	set_name	(0X2634D,	"openCcFile");
 	create_insn	(x=0X26350);
 	op_hex		(x,	1);
 	create_insn	(x=0X26354);
@@ -12641,6 +12650,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X263BB);
 	op_stkvar	(x,	1);
 	create_insn	(0X263C3);
+	set_name	(0X263C3,	"loadPartyFaces");
 	create_insn	(0X263CB);
 	set_cmt	(0X263D8,	"format",	0);
 	set_cmt	(0X263E0,	"buffer",	0);
@@ -12649,6 +12659,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X263FF);
 	op_hex		(x,	1);
 	create_insn	(0X2640B);
+	set_name	(0X2640B,	"readFileBytes");
 	set_cmt	(0X26410,	"len",	0);
 	set_cmt	(0X26414,	"access",	0);
 	set_cmt	(0X26419,	"path",	0);
@@ -12670,6 +12681,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X2643F);
 	op_stkvar	(x,	1);
 	create_insn	(0X26447);
+	set_name	(0X26447,	"loadSavedGame");
 	create_insn	(x=0X2644A);
 	op_hex		(x,	1);
 	create_insn	(x=0X26459);
@@ -12718,6 +12730,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X264DF);
 	op_stkvar	(x,	1);
 	create_insn	(0X264ED);
+	set_name	(0X264ED,	"readSaveHeader");
 	create_insn	(x=0X264F0);
 	op_hex		(x,	1);
 	set_cmt	(0X264F5,	"len",	0);
@@ -12829,6 +12842,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X266FD,	"ffblk",	0);
 	create_insn	(0X26716);
+	set_name	(0X26716,	"loadMonsterData");
 	create_insn	(0X268BE);
 	create_insn	(x=0X268C5);
 	op_stkvar	(x,	1);
@@ -13767,34 +13781,35 @@ static Bytes_2(void) {
 	create_insn	(0X27F4A);
 	create_insn	(0X27F4F);
 	create_insn	(0X27F54);
+	set_name	(0X27F54,	"j_j_j_resetBlacksmithWares");
 	create_insn	(0X27F59);
-	set_name	(0X27F59,	"j_getDiskFree");
+	set_name	(0X27F59,	"j_j_j_j_getDiskFree");
 	create_insn	(0X27F5E);
 	create_insn	(0X27F63);
 	create_insn	(0X27F68);
-	set_name	(0X27F68,	"j_monstersAttack");
+	set_name	(0X27F68,	"j_j_j_j_monstersAttack");
 	create_insn	(0X27F6D);
 	create_insn	(0X27F72);
 	create_insn	(0X27F77);
 	create_insn	(0X27F7C);
 	create_insn	(0X27F81);
-	set_name	(0X27F81,	"j_getEquipSlotName");
+	set_name	(0X27F81,	"j_j_j_j_getEquipSlotName");
 	create_insn	(0X27F86);
 	create_insn	(0X27F8B);
 	create_insn	(0X27F90);
-	set_name	(0X27F90,	"j_equipItem");
+	set_name	(0X27F90,	"j_j_j_j_equipItem");
 	create_insn	(0X27F95);
 	create_insn	(0X27F9A);
 	create_insn	(0X27F9F);
-	set_name	(0X27F9F,	"j_openMm3Cc");
+	set_name	(0X27F9F,	"j_j_j_j_openMm3Cc");
 	create_insn	(0X27FA4);
 	create_insn	(0X27FA9);
 	create_insn	(0X27FAE);
-	set_name	(0X27FAE,	"j_stopAttack");
+	set_name	(0X27FAE,	"j_j_j_j_stopAttack");
 	create_insn	(0X27FB3);
-	set_name	(0X27FB3,	"j_introSequence");
+	set_name	(0X27FB3,	"j_j_j_j_introSequence");
 	create_insn	(0X27FB8);
-	set_name	(0X27FB8,	"j_protectionHandler");
+	set_name	(0X27FB8,	"j_j_j_j_protectionHandler");
 	create_insn	(0X27FBD);
 	create_insn	(0X27FC2);
 	MakeStruct	(0X27FD0,	"_stub_descr");
@@ -13813,22 +13828,23 @@ static Bytes_2(void) {
 	create_insn	(0X2804D);
 	create_insn	(0X28052);
 	create_insn	(0X28057);
-	set_name	(0X28057,	"j_subPartyTime");
+	set_name	(0X28057,	"j_j_j_j_subPartyTime");
 	MakeStruct	(0X28060,	"_stub_descr");
 	create_insn	(0X28080);
-	set_name	(0X28080,	"j_GiveBankInterest");
+	set_name	(0X28080,	"j_j_j_j_GiveBankInterest");
 	create_insn	(0X28085);
-	set_name	(0X28085,	"j_death");
+	set_name	(0X28085,	"j_j_j_j_death");
 	create_insn	(0X2808A);
-	set_name	(0X2808A,	"j_Spells_moonRay");
+	set_name	(0X2808A,	"j_j_j_j_Spells_moonRay");
 	create_insn	(0X2808F);
-	set_name	(0X2808F,	"j_showJoke");
+	set_name	(0X2808F,	"j_j_j_j_showJoke");
 	create_insn	(0X28094);
-	set_name	(0X28094,	"j_arenaEvent");
+	set_name	(0X28094,	"j_j_j_j_arenaEvent");
 	create_insn	(0X28099);
 	create_insn	(0X2809E);
 	create_insn	(0X280A3);
 	create_insn	(0X280A8);
+	set_name	(0X280A8,	"j_j_j_resetTemps");
 	create_insn	(0X280AD);
 	create_insn	(0X280B2);
 	MakeStruct	(0X280C0,	"_stub_descr");
@@ -13838,24 +13854,24 @@ static Bytes_2(void) {
 	create_insn	(0X280EF);
 	create_insn	(0X280F4);
 	create_insn	(0X280F9);
-	set_name	(0X280F9,	"j_sortParty");
+	set_name	(0X280F9,	"j_j_j_j_sortParty");
 	create_insn	(0X280FE);
 	create_insn	(0X28103);
 	create_insn	(0X28108);
 	create_insn	(0X2810D);
 	create_insn	(0X28112);
-	set_name	(0X28112,	"j_copyPartyToRoster");
+	set_name	(0X28112,	"j_j_j_j_copyPartyToRoster");
 	create_insn	(0X28117);
 	create_insn	(0X2811C);
 	create_insn	(0X28121);
-	set_name	(0X28121,	"j_Awards_show");
+	set_name	(0X28121,	"j_j_j_j_Awards_show");
 	create_insn	(0X28126);
-	set_name	(0X28126,	"j_rosterMenu");
+	set_name	(0X28126,	"j_j_j_j_rosterMenu");
 	create_insn	(0X2812B);
 	create_insn	(0X28130);
 	create_insn	(0X28135);
 	create_insn	(0X2813A);
-	set_name	(0X2813A,	"j_setSoundAddress");
+	set_name	(0X2813A,	"j_j_j_j_setSoundAddress");
 	create_insn	(0X2813F);
 	create_insn	(0X28144);
 	create_insn	(0X28149);
@@ -13865,7 +13881,7 @@ static Bytes_2(void) {
 	create_insn	(0X28185);
 	create_insn	(0X2818A);
 	create_insn	(0X2818F);
-	set_name	(0X2818F,	"j_getCurrentExperience");
+	set_name	(0X2818F,	"j_j_j_j_getCurrentExperience");
 	create_insn	(0X28194);
 	create_insn	(0X28199);
 	create_insn	(0X2819E);
@@ -13874,12 +13890,12 @@ static Bytes_2(void) {
 	create_insn	(0X281AD);
 	create_insn	(0X281B2);
 	create_insn	(0X281B7);
-	set_name	(0X281B7,	"j_controlPanel");
+	set_name	(0X281B7,	"j_j_j_j_controlPanel");
 	create_insn	(0X281BC);
 	create_insn	(0X281C1);
-	set_name	(0X281C1,	"j_nextExperienceLevel");
+	set_name	(0X281C1,	"j_j_j_j_nextExperienceLevel");
 	create_insn	(0X281C6);
-	set_name	(0X281C6,	"j_rest");
+	set_name	(0X281C6,	"j_j_j_j_rest");
 	create_insn	(0X281CB);
 	create_insn	(0X281D0);
 	create_insn	(0X281D5);
@@ -13890,7 +13906,7 @@ static Bytes_2(void) {
 	create_insn	(0X281EE);
 	create_insn	(0X281F3);
 	create_insn	(0X281F8);
-	set_name	(0X281F8,	"j_experienceToNextLevel");
+	set_name	(0X281F8,	"j_j_j_j_experienceToNextLevel");
 	create_insn	(0X281FD);
 	create_insn	(0X28202);
 	create_insn	(0X28207);
@@ -13898,9 +13914,9 @@ static Bytes_2(void) {
 	create_insn	(0X28230);
 	create_insn	(0X28235);
 	create_insn	(0X2823A);
-	set_name	(0X2823A,	"j_giveCharDamage");
+	set_name	(0X2823A,	"j_j_j_j_giveCharDamage");
 	create_insn	(0X2823F);
-	set_name	(0X2823F,	"j_Map_load");
+	set_name	(0X2823F,	"j_j_j_j_Map_load");
 	create_insn	(0X28244);
 	create_insn	(0X28249);
 	create_insn	(0X2824E);
@@ -13911,9 +13927,9 @@ static Bytes_2(void) {
 	create_insn	(0X28267);
 	create_insn	(0X2826C);
 	create_insn	(0X28271);
-	set_name	(0X28271,	"j__strcoll");
+	set_name	(0X28271,	"j_j_j_j__strcoll");
 	create_insn	(0X28276);
-	set_name	(0X28276,	"j_dismissCharacter");
+	set_name	(0X28276,	"j_j_j_j_dismissCharacter");
 	create_insn	(0X2827B);
 	create_insn	(0X28280);
 	create_insn	(0X28285);
@@ -13921,7 +13937,7 @@ static Bytes_2(void) {
 	create_insn	(0X2828F);
 	MakeStruct	(0X282A0,	"_stub_descr");
 	create_insn	(0X282C0);
-	set_name	(0X282C0,	"j_createCharacter");
+	set_name	(0X282C0,	"j_j_j_j_createCharacter");
 	create_insn	(0X282C5);
 	create_insn	(0X282CA);
 	create_insn	(0X282CF);
@@ -13936,69 +13952,69 @@ static Bytes_2(void) {
 	create_insn	(0X282FC);
 	create_insn	(0X28301);
 	create_insn	(0X28306);
-	set_name	(0X28306,	"j_checkClasses");
+	set_name	(0X28306,	"j_j_j_j_checkClasses");
 	MakeStruct	(0X28310,	"_stub_descr");
 	create_insn	(0X28330);
 	create_insn	(0X28335);
-	set_name	(0X28335,	"j_trainingNeedsExperience");
+	set_name	(0X28335,	"j_j_j_j_trainingNeedsExperience");
 	create_insn	(0X2833A);
 	create_insn	(0X2833F);
-	set_name	(0X2833F,	"j_townInn");
+	set_name	(0X2833F,	"j_j_j_j_townInn");
 	create_insn	(0X28344);
 	create_insn	(0X28349);
 	create_insn	(0X2834E);
-	set_name	(0X2834E,	"j_townBank");
+	set_name	(0X2834E,	"j_j_j_j_townBank");
 	create_insn	(0X28353);
 	create_insn	(0X28358);
-	set_name	(0X28358,	"j_townGuild");
+	set_name	(0X28358,	"j_j_j_j_townGuild");
 	create_insn	(0X2835D);
 	create_insn	(0X28362);
 	create_insn	(0X28367);
 	create_insn	(0X2836C);
-	set_name	(0X2836C,	"j_townTavern");
+	set_name	(0X2836C,	"j_j_j_j_townTavern");
 	create_insn	(0X28371);
-	set_name	(0X28371,	"j_townTraining");
+	set_name	(0X28371,	"j_j_j_j_townTraining");
 	create_insn	(0X28376);
-	set_name	(0X28376,	"j_townSmithy");
+	set_name	(0X28376,	"j_j_j_j_townSmithy");
 	create_insn	(0X2837B);
 	create_insn	(0X28380);
-	set_name	(0X28380,	"j_loadHireFaces");
+	set_name	(0X28380,	"j_j_j_j_loadHireFaces");
 	create_insn	(0X28385);
 	MakeStruct	(0X28390,	"_stub_descr");
 	create_insn	(0X283B0);
 	create_insn	(0X283B5);
-	set_name	(0X283B5,	"j_setSpeedTable");
+	set_name	(0X283B5,	"j_j_j_j_setSpeedTable");
 	create_insn	(0X283BA);
 	create_insn	(0X283BF);
-	set_name	(0X283BF,	"j_getWeaponDamage");
+	set_name	(0X283BF,	"j_j_j_j_getWeaponDamage");
 	create_insn	(0X283C4);
 	create_insn	(0X283C9);
-	set_name	(0X283C9,	"j_block");
+	set_name	(0X283C9,	"j_j_j_j_block");
 	create_insn	(0X283CE);
-	set_name	(0X283CE,	"j_getMonsterDescriptions");
+	set_name	(0X283CE,	"j_j_j_j_getMonsterDescriptions");
 	create_insn	(0X283D3);
-	set_name	(0X283D3,	"j_attack");
+	set_name	(0X283D3,	"j_j_j_j_attack");
 	create_insn	(0X283D8);
 	create_insn	(0X283DD);
 	create_insn	(0X283E2);
-	set_name	(0X283E2,	"j_doMonsterTurn");
+	set_name	(0X283E2,	"j_j_j_j_doMonsterTurn");
 	create_insn	(0X283E7);
-	set_name	(0X283E7,	"j_run");
+	set_name	(0X283E7,	"j_j_j_j_run");
 	create_insn	(0X283EC);
 	create_insn	(0X283F1);
-	set_name	(0X283F1,	"j_nextChar");
+	set_name	(0X283F1,	"j_j_j_j_nextChar");
 	create_insn	(0X283F6);
-	set_name	(0X283F6,	"j_charsCantAct");
+	set_name	(0X283F6,	"j_j_j_j_charsCantAct");
 	create_insn	(0X283FB);
-	set_name	(0X283FB,	"j_allHaveGone");
+	set_name	(0X283FB,	"j_j_j_j_allHaveGone");
 	create_insn	(0X28400);
-	set_name	(0X28400,	"j_sortCombatParty");
+	set_name	(0X28400,	"j_j_j_j_sortCombatParty");
 	create_insn	(0X28405);
 	create_insn	(0X2840A);
-	set_name	(0X2840A,	"j_quickFight");
+	set_name	(0X2840A,	"j_j_j_j_quickFight");
 	create_insn	(0X2840F);
 	create_insn	(0X28414);
-	set_name	(0X28414,	"j_monsterSavingThrow");
+	set_name	(0X28414,	"j_j_j_j_monsterSavingThrow");
 	create_insn	(0X28419);
 	create_insn	(0X2841E);
 	MakeStruct	(0X28430,	"_stub_descr");
@@ -14007,7 +14023,7 @@ static Bytes_2(void) {
 	create_insn	(0X2845A);
 	create_insn	(0X2845F);
 	create_insn	(0X28464);
-	set_name	(0X28464,	"j_Spells_subSpellCost");
+	set_name	(0X28464,	"j_j_j_j_Spells_subSpellCost");
 	create_insn	(0X28469);
 	create_insn	(0X2846E);
 	create_insn	(0X28473);
@@ -14041,7 +14057,7 @@ static Bytes_2(void) {
 	create_insn	(0X284FF);
 	create_insn	(0X28504);
 	create_insn	(0X28509);
-	set_name	(0X28509,	"j_Spells_divineIntervention");
+	set_name	(0X28509,	"j_j_j_j_Spells_divineIntervention");
 	create_insn	(0X2850E);
 	create_insn	(0X28513);
 	create_insn	(0X28518);
@@ -14054,7 +14070,7 @@ static Bytes_2(void) {
 	create_insn	(0X2853B);
 	create_insn	(0X28540);
 	create_insn	(0X28545);
-	set_name	(0X28545,	"j_Screen_saveBackground");
+	set_name	(0X28545,	"j_j_j_j_Screen_saveBackground");
 	create_insn	(0X2854A);
 	create_insn	(0X2854F);
 	create_insn	(0X28554);
@@ -14064,7 +14080,7 @@ static Bytes_2(void) {
 	create_insn	(0X28568);
 	create_insn	(0X2856D);
 	create_insn	(0X28572);
-	set_name	(0X28572,	"j_spellLloydsBeacon");
+	set_name	(0X28572,	"j_j_j_j_spellLloydsBeacon");
 	create_insn	(0X28577);
 	create_insn	(0X2857C);
 	create_insn	(0X28581);
@@ -14100,16 +14116,16 @@ static Bytes_2(void) {
 	create_insn	(0X2863A);
 	create_insn	(0X2863F);
 	create_insn	(0X28644);
-	set_name	(0X28644,	"j_itemsDialog");
+	set_name	(0X28644,	"j_j_j_j_itemsDialog");
 	create_insn	(0X28649);
 	create_insn	(0X2864E);
 	create_insn	(0X28653);
 	create_insn	(0X28658);
 	create_insn	(0X2865D);
 	create_insn	(0X28662);
-	set_name	(0X28662,	"j_specialsDialog");
+	set_name	(0X28662,	"j_j_j_j_specialsDialog");
 	create_insn	(0X28667);
-	set_name	(0X28667,	"j_getThievery");
+	set_name	(0X28667,	"j_j_j_j_getThievery");
 	MakeStruct	(0X28670,	"_stub_descr");
 	create_insn	(0X28690);
 	create_insn	(0X28695);
@@ -14118,23 +14134,23 @@ static Bytes_2(void) {
 	create_insn	(0X286A4);
 	create_insn	(0X286A9);
 	create_insn	(0X286AE);
-	set_name	(0X286AE,	"j_statColor");
+	set_name	(0X286AE,	"j_j_j_j_statColor");
 	create_insn	(0X286B3);
 	create_insn	(0X286B8);
 	create_insn	(0X286BD);
-	set_name	(0X286BD,	"j_getMaxSP");
+	set_name	(0X286BD,	"j_j_j_j_getMaxSP");
 	create_insn	(0X286C2);
-	set_name	(0X286C2,	"j_getMaxHP");
+	set_name	(0X286C2,	"j_j_j_j_getMaxHP");
 	create_insn	(0X286C7);
 	create_insn	(0X286CC);
-	set_name	(0X286CC,	"j_getArmorClass");
+	set_name	(0X286CC,	"j_j_j_j_getArmorClass");
 	create_insn	(0X286D1);
 	create_insn	(0X286D6);
 	create_insn	(0X286DB);
 	create_insn	(0X286E0);
-	set_name	(0X286E0,	"j_identifyOrFix");
+	set_name	(0X286E0,	"j_j_j_j_identifyOrFix");
 	create_insn	(0X286E5);
-	set_name	(0X286E5,	"j_getNumSkills");
+	set_name	(0X286E5,	"j_j_j_j_getNumSkills");
 	create_word	(0X286F0);
 	create_word	(0X286F2);
 	create_word	(0X286F4);
@@ -14200,7 +14216,9 @@ static Bytes_2(void) {
 	create_byte	(0X2879B);
 	create_byte	(0X2879C);
 	create_byte	(0X2879D);
+	set_cmt	(0X2879E,	"byte",	0);
 	create_byte	(0X2879E);
+	set_name	(0X2879E,	"Party_newDay");
 	create_byte	(0X2879F);
 	create_byte	(0X287A0);
 	create_byte	(0X287A1);
@@ -15006,6 +15024,15 @@ static Bytes_2(void) {
 	set_name	(0X2D420,	"aLloydsIcn");
 	create_byte	(0X2D42B);
 	make_array	(0X2D42B,	0X8A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2D4B5,	0X2);
 	set_name	(0X2D4B5,	"aC_19");
 	create_byte	(0X2D4DB);
@@ -15050,15 +15077,6 @@ static Bytes_2(void) {
 	set_name	(0X2D78F,	"aC_23");
 	create_strlit	(0X2D7A7,	0X2);
 	set_name	(0X2D7A7,	"aC_24");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X2D7BC,	0X2);
 	set_name	(0X2D7BC,	"aC_25");
 	create_strlit	(0X2D7D5,	0X2);
@@ -17234,8 +17252,10 @@ static Bytes_3(void) {
 	create_byte	(0X340B9);
 	make_array	(0X340B9,	0XC);
 	create_byte	(0X340C5);
+	set_cmt	(0X340C6,	"active party records, stride 12Fh (303 bytes); +120h = Dead condition",	0);
 	create_byte	(0X340C6);
 	make_array	(0X340C6,	0X4E);
+	set_name	(0X340C6,	"Party_chars");
 	create_byte	(0X34114);
 	create_byte	(0X34115);
 	make_array	(0X34115,	0X9B9);
@@ -17322,7 +17342,9 @@ static Bytes_3(void) {
 	create_byte	(0X34C06);
 	make_array	(0X34C06,	0X8);
 	create_word	(0X34C0E);
+	set_cmt	(0X34C10,	"byte; 9 skips the daily rest/reset handling (script in progress)",	0);
 	create_byte	(0X34C10);
+	set_name	(0X34C10,	"Engine_mode");
 	create_word	(0X34C12);
 	create_word	(0X34C14);
 	create_word	(0X34C16);
@@ -17402,8 +17424,10 @@ static Bytes_3(void) {
 	create_word	(0X36FB4);
 	create_word	(0X36FB6);
 	create_word	(0X36FB8);
+	set_cmt	(0X36FBA,	"31 bytes, MAZE.NAM (\"Default Characters\")",	0);
 	create_byte	(0X36FBA);
 	make_array	(0X36FBA,	0X20);
+	set_name	(0X36FBA,	"Save_name");
 	create_byte	(0X36FDA);
 	create_byte	(0X36FDB);
 	create_byte	(0X36FDC);
@@ -17420,25 +17444,43 @@ static Bytes_3(void) {
 	create_byte	(0X36FEE);
 	create_byte	(0X36FEF);
 	create_byte	(0X36FF0);
-	make_array	(0X36FF0,	0X335);
+	make_array	(0X36FF0,	0XEA);
+	set_cmt	(0X370DA,	"918-byte party block (MAZE.PTY), loaded by sub_26447",	0);
+	set_name	(0X370DA,	"Party_state");
+	set_cmt	(0X37325,	"byte, 0-99",	0);
 	create_byte	(0X37325);
+	set_name	(0X37325,	"Party_day");
+	set_cmt	(0X37326,	"word",	0);
 	create_word	(0X37326);
+	set_name	(0X37326,	"Party_year");
 	create_word	(0X37328);
 	create_word	(0X3732A);
 	create_word	(0X3732C);
 	create_word	(0X3732E);
 	create_word	(0X37330);
+	set_cmt	(0X37332,	"word, minutes into the day",	0);
 	create_word	(0X37332);
+	set_name	(0X37332,	"Party_minutes");
+	set_cmt	(0X37334,	"word (+35Ah in MAZE.PTY); rest decrements it",	0);
 	create_word	(0X37334);
+	set_name	(0X37334,	"Party_food");
 	create_byte	(0X37336);
 	make_array	(0X37336,	0X6);
+	set_cmt	(0X3733C,	"dword (+362h); GiveBankInterest adds 1% (same as Xeen Party::giveBankInterest)",	0);
 	create_word	(0X3733C);
+	set_name	(0X3733C,	"Party_bankGold");
 	create_word	(0X3733E);
+	set_cmt	(0X37340,	"dword (+366h)",	0);
 	create_word	(0X37340);
+	set_name	(0X37340,	"Party_bankGems");
 	create_word	(0X37342);
+	set_cmt	(0X37344,	"dword (+36Ah) (by use: spent in shops, shared by awards)",	0);
 	create_word	(0X37344);
+	set_name	(0X37344,	"Party_gold");
 	create_word	(0X37346);
+	set_cmt	(0X37348,	"dword (+36Eh) (by use: spell gem costs)",	0);
 	create_word	(0X37348);
+	set_name	(0X37348,	"Party_gems");
 	create_word	(0X3734A);
 	create_word	(0X3734C);
 	create_word	(0X3734E);
@@ -17476,7 +17518,9 @@ static Bytes_3(void) {
 	create_word	(0X37394);
 	set_name	(0X37394,	"format");
 	create_byte	(0X37396);
+	set_cmt	(0X37398,	"far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)",	0);
 	create_dword	(0X37398);
+	set_name	(0X37398,	"Roster_buffer");
 	create_byte	(0X3739C);
 	create_byte	(0X3739D);
 	create_byte	(0X3739E);
@@ -17520,7 +17564,9 @@ static Bytes_3(void) {
 	create_word	(0X373EC);
 	create_byte	(0X373EE);
 	make_array	(0X373EE,	0X74);
+	set_cmt	(0X37462,	"byte, number of active characters",	0);
 	create_byte	(0X37462);
+	set_name	(0X37462,	"Party_size");
 	create_byte	(0X37463);
 	create_byte	(0X37464);
 	make_array	(0X37464,	0X168);
@@ -17619,28 +17665,72 @@ static Bytes_3(void) {
 	make_array	(0X37711,	0XA);
 	create_byte	(0X3771B);
 	create_byte	(0X3771C);
+	set_cmt	(0X3771E,	"far pointer to the monspd.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3771E);
+	set_name	(0X3771E,	"Mon_spd");
+	set_cmt	(0X37722,	"far pointer to the mongold.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37722);
+	set_name	(0X37722,	"Mon_gold");
+	set_cmt	(0X37726,	"far pointer to the mongems.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37726);
+	set_name	(0X37726,	"Mon_gems");
+	set_cmt	(0X3772A,	"far pointer to the monrang.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3772A);
+	set_name	(0X3772A,	"Mon_rang");
+	set_cmt	(0X3772E,	"far pointer to the monspec.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3772E);
+	set_name	(0X3772E,	"Mon_spec");
+	set_cmt	(0X37732,	"far pointer to the monattp.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37732);
+	set_name	(0X37732,	"Mon_attp");
+	set_cmt	(0X37736,	"far pointer to the monfire.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37736);
+	set_name	(0X37736,	"Mon_fire");
+	set_cmt	(0X3773A,	"far pointer to the monelec.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3773A);
+	set_name	(0X3773A,	"Mon_elec");
+	set_cmt	(0X3773E,	"far pointer to the moncold.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3773E);
+	set_name	(0X3773E,	"Mon_cold");
+	set_cmt	(0X37742,	"far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37742);
+	set_name	(0X37742,	"Mon_acid");
+	set_cmt	(0X37746,	"far pointer to the monnuma.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37746);
+	set_name	(0X37746,	"Mon_numa");
+	set_cmt	(0X3774A,	"far pointer to the monmagi.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3774A);
+	set_name	(0X3774A,	"Mon_magi");
+	set_cmt	(0X3774E,	"far pointer to the mondmgt.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3774E);
+	set_name	(0X3774E,	"Mon_dmgt");
+	set_cmt	(0X37752,	"far pointer to the monener.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37752);
+	set_name	(0X37752,	"Mon_ener");
+	set_cmt	(0X37756,	"far pointer to the montrea.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37756);
+	set_name	(0X37756,	"Mon_trea");
+	set_cmt	(0X3775A,	"far pointer to the mondmgn.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3775A);
+	set_name	(0X3775A,	"Mon_dmgn");
+	set_cmt	(0X3775E,	"far pointer to the monexp.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3775E);
+	set_name	(0X3775E,	"Mon_exp");
+	set_cmt	(0X37762,	"far pointer to the monhitb.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37762);
+	set_name	(0X37762,	"Mon_hitb");
+	set_cmt	(0X37766,	"far pointer to the mondmgs.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37766);
+	set_name	(0X37766,	"Mon_dmgs");
+	set_cmt	(0X3776A,	"far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776A);
+	set_name	(0X3776A,	"Mon_phys");
+	set_cmt	(0X3776E,	"far pointer to the monac.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776E);
+	set_name	(0X3776E,	"Mon_ac");
+	set_cmt	(0X37772,	"far pointer to the monhp.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37772);
+	set_name	(0X37772,	"Mon_hp");
 	create_word	(0X37776);
 	set_name	(0X37776,	"n");
 	create_byte	(0X37778);
@@ -18252,6 +18342,7 @@ static Bytes_3(void) {
 	create_insn	(0X385A9);
 	create_insn	(0X385B1);
 	create_insn	(0X385BD);
+	set_name	(0X385BD,	"resetBlacksmithWares");
 	set_cmt	(0X385C3,	"n",	0);
 	set_cmt	(0X385C7,	"c",	0);
 	set_cmt	(0X385CE,	"s",	0);
@@ -18994,6 +19085,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3B2AC);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3B2B4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3B2C5);
@@ -19397,15 +19497,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3C2A4);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3C2AA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3C2AD);
@@ -20924,6 +21015,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X3DCF0);
 	op_hex		(x,	1);
 	create_insn	(0X3DD20);
+	set_name	(0X3DD20,	"resetTemps");
 	create_insn	(x=0X3DD23);
 	op_hex		(x,	1);
 	set_cmt	(0X3DD28,	"n",	0);
@@ -23885,6 +23977,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(0X41F5D);
 	set_name	(0X41F5D,	"controlPanel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X41F60);
 	op_hex		(x,	1);
 	set_cmt	(0X41F64,	"n",	0);
@@ -24320,15 +24421,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4290A);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4290F);
 	op_hex		(x,	1);
 	create_insn	(x=0X42911);
@@ -29478,6 +29570,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X49848);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X49853);
 	create_insn	(x=0X49857);
 	op_stkvar	(x,	0);
@@ -29831,15 +29932,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X4A175,	"jumptable 0004A14F default case",	1);
 	set_name	(0X4A175,	"def_4A14F");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A180);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A184);
@@ -34286,6 +34378,15 @@ static Bytes_6(void) {
 	create_insn	(0X50F12);
 	create_insn	(x=0X50F21);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X50F27);
 	op_stkvar	(x,	0);
 	create_insn	(0X50F3E);
@@ -34732,15 +34833,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X5198B);
 	op_hex		(x,	1);
 	set_cmt	(0X5198F,	"format",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X51997,	"buffer",	0);
 	create_insn	(x=0X51997);
 	op_stkvar	(x,	0);
@@ -36081,6 +36173,7 @@ static Functions_0(void) {
 	set_frame_size(0X152FC, 0, 2, 0);
 	add_func    (0X1531F,0X153EA);
 	set_func_flags(0X1531F,0x5412);
+	set_func_cmt(0X1531F,	"minutes +1440/day, day wrap at 100 -> year (Xeen Party::addTime); resets blacksmith wares + bank interest on day change", 0);
 	set_frame_size(0X1531F, 0X2, 2, 0);
 	add_func    (0X153EA,0X15444);
 	set_func_flags(0X153EA,0x5412);
@@ -36107,6 +36200,7 @@ static Functions_0(void) {
 	set_frame_size(0X1693D, 0, 2, 0);
 	add_func    (0X16973,0X16DC0);
 	set_func_flags(0X16973,0x5412);
+	set_func_cmt(0X16973,	"per 480 minutes: condition ticks (poison/disease/insane...), then addTime (Xeen Party::changeTime)", 0);
 	set_frame_size(0X16973, 0X4, 2, 0);
 	add_func    (0X16DC0,0X16DF4);
 	set_func_flags(0X16DC0,0x5412);
@@ -36268,6 +36362,7 @@ static Functions_0(void) {
 	set_frame_size(0X22740, 0X2, 0, 0);
 	add_func    (0X24ECC,0X24F12);
 	set_func_flags(0X24ECC,0x5412);
+	set_func_cmt(0X24ECC,	"rnd(lo, hi)", 0);
 	set_frame_size(0X24ECC, 0, 2, 0);
 	add_func    (0X24F1A,0X24F53);
 	set_func_flags(0X24F1A,0x5412);
@@ -36315,6 +36410,7 @@ static Functions_0(void) {
 	set_frame_size(0X24FD3, 0, 0, 0);
 	add_func    (0X24FDD,0X24FF2);
 	set_func_flags(0X24FDD,0x5412);
+	set_func_cmt(0X24FDD,	"takes a name (DGROUP near ptr), returns far pointer to the loaded cc member (dx:ax)", 0);
 	set_frame_size(0X24FDD, 0, 2, 0);
 	add_func    (0X24FF2,0X24FFB);
 	set_func_flags(0X24FF2,0x5402);
@@ -36324,15 +36420,19 @@ static Functions_0(void) {
 	set_frame_size(0X24FFB, 0, 0, 0);
 	add_func    (0X2500F,0X25024);
 	set_func_flags(0X2500F,0x5412);
+	set_func_cmt(0X2500F,	"(by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure", 0);
 	set_frame_size(0X2500F, 0, 2, 0);
 	add_func    (0X25024,0X25032);
 	set_func_flags(0X25024,0x5402);
+	set_func_cmt(0X25024,	"(by use)", 0);
 	set_frame_size(0X25024, 0, 0, 0);
 	add_func    (0X25032,0X2504B);
 	set_func_flags(0X25032,0x5412);
+	set_func_cmt(0X25032,	"(by use) seek in the open cc file", 0);
 	set_frame_size(0X25032, 0, 2, 0);
 	add_func    (0X2504B,0X25068);
 	set_func_flags(0X2504B,0x5412);
+	set_func_cmt(0X2504B,	"(by use) read len bytes to far buffer; non-zero = failure", 0);
 	set_frame_size(0X2504B, 0, 2, 0);
 	add_func    (0X25068,0X25085);
 	set_func_flags(0X25068,0x5412);
@@ -36424,23 +36524,28 @@ static Functions_0(void) {
 	define_local_var(0X2621D, 0X2634D, "[bp-0XC]", "size");
 	add_func    (0X2634D,0X263C3);
 	set_func_flags(0X2634D,0x5412);
+	set_func_cmt(0X2634D,	"creates the file if missing, opens it as a cc (ccOpen + Resources_openFile + ccClose) (by use)", 0);
 	set_frame_size(0X2634D, 0X6, 2, 0);
 	define_local_var(0X2634D, 0X263C3, "[bp-0X2]", "handle");
 	define_local_var(0X2634D, 0X263C3, "[bp+0X6]", "path");
 	add_func    (0X263C3,0X2640B);
 	set_func_flags(0X263C3,0x5412);
+	set_func_cmt(0X263C3,	"sprintf + load for the 4 face slots (by use, unverified)", 0);
 	set_frame_size(0X263C3, 0X2, 2, 0);
 	add_func    (0X2640B,0X26447);
 	set_func_flags(0X2640B,0x5412);
+	set_func_cmt(0X2640B,	"open, read n bytes, close", 0);
 	set_frame_size(0X2640B, 0X2, 2, 0);
 	define_local_var(0X2640B, 0X26447, "[bp+0X6]", "path");
 	add_func    (0X26447,0X264ED);
 	set_func_flags(0X26447,0x5412);
+	set_func_cmt(0X26447,	"copies MAZE.NAM -> Save_name, MAZE.CHR -> Roster_buffer, MAZE.PTY -> Party_state from the open .cc", 0);
 	set_frame_size(0X26447, 0X4, 2, 0);
 	define_local_var(0X26447, 0X264ED, "[bp-0X4]", "src");
 	add_func    (0X264ED,0X26665);
 	set_func_flags(0X264ED,0x5412);
-	SetType(0X264ED, "int __cdecl __far sub_264ED(int, int, int);");
+	SetType(0X264ED, "int __cdecl __far readSaveHeader(int, int, int);");
+	set_func_cmt(0X264ED,	"opens a save .cc, reads TOC, MAZE.NAM (31 bytes), MAZE.PTY (918 bytes) and MAZE.CHR; returns highest level among the party's roster slots", 0);
 	set_frame_size(0X264ED, 0X3A4, 2, 0);
 	define_local_var(0X264ED, 0X26665, "[bp-0X6]", "buf");
 	define_local_var(0X264ED, 0X26665, "[bp-0X2]", "handle");
@@ -36461,6 +36566,7 @@ static Functions_0(void) {
 	define_local_var(0X266AB, 0X26716, "[bp+0X6]", "path");
 	add_func    (0X26716,0X268BD);
 	set_func_flags(0X26716,0x5412);
+	set_func_cmt(0X26716,	"loads the 22 mon*.dat column files of mm3.cc into the Mon_* far pointers", 0);
 	set_frame_size(0X26716, 0, 2, 0);
 	add_func    (0X268BE,0X268E7);
 	set_func_flags(0X268BE,0x5412);
@@ -36649,7 +36755,7 @@ static Functions_0(void) {
 	set_func_flags(0X27F4F,0x5482);
 	set_frame_size(0X27F4F, 0, 0, 0);
 	add_func    (0X27F54,0X27F59);
-	set_func_flags(0X27F54,0x5482);
+	set_func_flags(0X27F54,0x54c2);
 	set_frame_size(0X27F54, 0, 0, 0);
 	add_func    (0X27F59,0X27F5E);
 	set_func_flags(0X27F59,0x54c2);
@@ -36790,7 +36896,7 @@ static Functions_0(void) {
 	set_func_flags(0X280A3,0x5482);
 	set_frame_size(0X280A3, 0, 0, 0);
 	add_func    (0X280A8,0X280AD);
-	set_func_flags(0X280A8,0x5482);
+	set_func_flags(0X280A8,0x54c2);
 	set_frame_size(0X280A8, 0, 0, 0);
 	add_func    (0X280AD,0X280B2);
 	set_func_flags(0X280AD,0x5482);
@@ -36839,7 +36945,7 @@ static Functions_0(void) {
 	set_frame_size(0X2811C, 0, 0, 0);
 	add_func    (0X28121,0X28126);
 	set_func_flags(0X28121,0x54c2);
-	SetType(0X28121, "int __cdecl __far j_Awards_show(int, int);");
+	SetType(0X28121, "int __cdecl __far j_j_j_j_Awards_show(int, int);");
 	set_frame_size(0X28121, 0, 0, 0);
 	add_func    (0X28126,0X2812B);
 	set_func_flags(0X28126,0x54c2);
@@ -36970,7 +37076,7 @@ static Functions_0(void) {
 	set_frame_size(0X2823A, 0, 0, 0);
 	add_func    (0X2823F,0X28244);
 	set_func_flags(0X2823F,0x54c2);
-	SetType(0X2823F, "int __cdecl __far j_Map_load(char *format);");
+	SetType(0X2823F, "int __cdecl __far j_j_j_j_Map_load(char *format);");
 	set_frame_size(0X2823F, 0, 0, 0);
 	add_func    (0X28244,0X28249);
 	set_func_flags(0X28244,0x5482);
@@ -37004,7 +37110,7 @@ static Functions_0(void) {
 	set_frame_size(0X2826C, 0, 0, 0);
 	add_func    (0X28271,0X28276);
 	set_func_flags(0X28271,0x54c2);
-	SetType(0X28271, "int __cdecl j__strcoll(const char *s1, const char *s2);");
+	SetType(0X28271, "int __cdecl j_j_j_j__strcoll(const char *s1, const char *s2);");
 	set_frame_size(0X28271, 0, 0, 0);
 	add_func    (0X28276,0X2827B);
 	set_func_flags(0X28276,0x54c2);
@@ -37079,7 +37185,7 @@ static Functions_0(void) {
 	set_frame_size(0X28330, 0, 0, 0);
 	add_func    (0X28335,0X2833A);
 	set_func_flags(0X28335,0x54c2);
-	SetType(0X28335, "int __cdecl __far j_trainingNeedsExperience(char *format);");
+	SetType(0X28335, "int __cdecl __far j_j_j_j_trainingNeedsExperience(char *format);");
 	set_frame_size(0X28335, 0, 0, 0);
 	add_func    (0X2833A,0X2833F);
 	set_func_flags(0X2833A,0x5482);
@@ -37127,7 +37233,7 @@ static Functions_0(void) {
 	set_frame_size(0X2837B, 0, 0, 0);
 	add_func    (0X28380,0X28385);
 	set_func_flags(0X28380,0x54c2);
-	SetType(0X28380, "int __cdecl __far j_loadHireFaces(char *format, int, int, int);");
+	SetType(0X28380, "int __cdecl __far j_j_j_j_loadHireFaces(char *format, int, int, int);");
 	set_frame_size(0X28380, 0, 0, 0);
 	add_func    (0X28385,0X2838A);
 	set_func_flags(0X28385,0x5482);
@@ -37156,7 +37262,7 @@ static Functions_0(void) {
 	set_frame_size(0X283CE, 0, 0, 0);
 	add_func    (0X283D3,0X283D8);
 	set_func_flags(0X283D3,0x54c2);
-	SetType(0X283D3, "int __cdecl __far j_attack(int, int);");
+	SetType(0X283D3, "int __cdecl __far j_j_j_j_attack(int, int);");
 	set_frame_size(0X283D3, 0, 0, 0);
 	add_func    (0X283D8,0X283DD);
 	set_func_flags(0X283D8,0x5482);
@@ -37479,7 +37585,7 @@ static Functions_0(void) {
 	set_frame_size(0X2863F, 0, 0, 0);
 	add_func    (0X28644,0X28649);
 	set_func_flags(0X28644,0x54c2);
-	SetType(0X28644, "int __cdecl __far j_itemsDialog(char *format, int, int, int);");
+	SetType(0X28644, "int __cdecl __far j_j_j_j_itemsDialog(char *format, int, int, int);");
 	set_frame_size(0X28644, 0, 0, 0);
 	add_func    (0X28649,0X2864E);
 	set_func_flags(0X28649,0x5482);
@@ -37499,7 +37605,7 @@ static Functions_0(void) {
 	set_frame_size(0X2865D, 0, 0, 0);
 	add_func    (0X28662,0X28667);
 	set_func_flags(0X28662,0x54c2);
-	SetType(0X28662, "int __cdecl __far j_specialsDialog(int, int);");
+	SetType(0X28662, "int __cdecl __far j_j_j_j_specialsDialog(int, int);");
 	set_frame_size(0X28662, 0, 0, 0);
 	add_func    (0X28667,0X2866C);
 	set_func_flags(0X28667,0x54c2);
@@ -38211,6 +38317,10 @@ static Functions_0(void) {
 	set_func_cmt(0X4AB68,	"(BinDiff sim .77 conf .96, unverified)", 0);
 	set_frame_size(0X4AB68, 0X20, 2, 0);
 	define_local_var(0X4AB68, 0X4AF1F, "[bp-0X1C]", "s");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4AF57,0X4AF9B);
 	set_func_flags(0X4AF57,0x5412);
 	set_frame_size(0X4AF57, 0X2, 2, 0);
@@ -38269,10 +38379,6 @@ static Functions_0(void) {
 	add_func    (0X4BE23,0X4BF12);
 	set_func_flags(0X4BE23,0x5412);
 	set_frame_size(0X4BE23, 0XC, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4BF12,0X4BFBD);
 	set_func_flags(0X4BF12,0x1410);
 	set_frame_size(0X4BF12, 0X6A, 2, 0);

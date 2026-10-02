@@ -1768,7 +1768,7 @@ loc_14CAC:                              ; CODE XREF: seg001:0099↑j
                 pop     cx
 
 loc_14CD4:                              ; CODE XREF: seg001:00D8↑j
-                call    j_openMm3Cc
+                call    j_j_j_j_openMm3Cc
                 call    sub_250A8
                 call    setStartTime
                 mov     byte_37380, 0
@@ -1873,8 +1873,8 @@ loc_14D6F:                              ; CODE XREF: seg001:01AC↓j
                 mov     word ptr [bp-6], 1
 
 loc_14D7D:                              ; CODE XREF: seg001:loc_14D8A↓j
-                call    j_rosterMenu
-                call    j_death
+                call    j_j_j_j_rosterMenu
+                call    j_j_j_j_death
                 cmp     ax, 2
 
 loc_14D8A:                              ; DATA XREF: seg001:loc_15211↓w
@@ -1937,7 +1937,7 @@ loc_14DB3:                              ; CODE XREF: seg001:0167↑j
                 push    ds
                 mov     ax, offset aTimerDrv ; "timer.drv"
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     [bp-2], dx
@@ -2022,7 +2022,7 @@ loc_14E72:                              ; CODE XREF: seg001:026C↑j
                 mov     al, 1
                 mov     byte_36FE8, al
                 mov     byte_36FE9, al
-                call    j_introSequence
+                call    j_j_j_j_introSequence
                 cmp     byte_333AD, 4
                 jnz     short loc_14E9D
                 push    ds
@@ -2077,7 +2077,7 @@ loc_14EA1:                              ; CODE XREF: seg001:02BB↑j
                 push    ds
                 mov     ax, offset aCopyBin ; "copy.bin"
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr dword_32E5A+2, dx
@@ -2187,8 +2187,8 @@ loc_14FB2:                              ; CODE XREF: seg001:03E8↓j
                 assume es:nothing
                 pop     ds
                 assume ds:dseg
-                mov     word ptr dword_37398+2, 0
-                mov     word ptr dword_37398, 0
+                mov     word ptr Roster_buffer+2, 0
+                mov     word ptr Roster_buffer, 0
                 push    cs
                 xor     ax, ax
                 xor     dx, dx
@@ -2222,7 +2222,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 mov     word ptr [bp+2], 2Ch ; ','
                 pop     bp
-                call    sub_26716
+                call    loadMonsterData
                 mov     ax, offset aMm3themeM ; "mm3theme.m"
                 push    ax
                 mov     ax, 0ECE8h
@@ -2423,7 +2423,7 @@ loc_1523D:                              ; CODE XREF: sub_15235+37↓j
                 mov     bx, si
                 shl     bx, 1
                 push    word ptr [bx-4944h]
-                call    j_monsterSavingThrow
+                call    j_j_j_j_monsterSavingThrow
                 pop     cx
                 or      ax, ax
                 jz      short loc_15264
@@ -2436,7 +2436,7 @@ loc_15264:                              ; CODE XREF: sub_15235+11↑j
                 inc     si
 
 loc_15265:                              ; CODE XREF: sub_15235+6↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_1523D
@@ -2456,7 +2456,7 @@ checkPartyDead  proc far                ; CODE XREF: runMazeEvent:loc_1AF28↓P
                 mov     bp, sp
                 push    si
                 push    di
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_15282
                 mov     ax, 1
                 jmp     short loc_15284
@@ -2582,9 +2582,10 @@ sub_152FC       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; minutes +1440/day, day wrap at 100 -> year (Xeen Party::addTime); resets blacksmith wares + bank interest on day change
 ; Attributes: bp-based frame
 
-sub_1531F       proc far                ; CODE XREF: sub_16973+373↓p
+addTime         proc far                ; CODE XREF: changeTime+373↓p
                                         ; sub_3C282+A28↓P ...
 
 var_2           = word ptr -2
@@ -2597,28 +2598,28 @@ arg_0           = word ptr  6
                 push    si
                 push    di
                 mov     di, [bp+arg_0]
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                add     word_37332, di
+                add     Party_minutes, di
                 jmp     short loc_1536D
 ; ---------------------------------------------------------------------------
 
-loc_15337:                              ; CODE XREF: sub_1531F+54↓j
-                sub     word_37332, 5A0h
-                mov     al, byte_37325
+loc_15337:                              ; CODE XREF: addTime+54↓j
+                sub     Party_minutes, 5A0h
+                mov     al, Party_day
                 inc     al
-                mov     byte_37325, al
+                mov     Party_day, al
                 cmp     al, 64h ; 'd'
                 jb      short loc_1536D
                 add     al, 9Ch
-                mov     byte_37325, al
-                inc     word_37326
+                mov     Party_day, al
+                inc     Party_year
                 mov     si, 6Fh ; 'o'
                 jmp     short loc_15368
 ; ---------------------------------------------------------------------------
 
-loc_15357:                              ; CODE XREF: sub_1531F+4C↓j
+loc_15357:                              ; CODE XREF: addTime+4C↓j
                 xor     ax, ax
                 push    ax
                 push    si
@@ -2628,15 +2629,15 @@ loc_15357:                              ; CODE XREF: sub_1531F+4C↓j
                 add     sp, 6
                 inc     si
 
-loc_15368:                              ; CODE XREF: sub_1531F+36↑j
+loc_15368:                              ; CODE XREF: addTime+36↑j
                 cmp     si, 76h ; 'v'
                 jl      short loc_15357
 
-loc_1536D:                              ; CODE XREF: sub_1531F+16↑j
-                                        ; sub_1531F+28↑j
-                cmp     word_37332, 5A0h
+loc_1536D:                              ; CODE XREF: addTime+16↑j
+                                        ; addTime+28↑j
+                cmp     Party_minutes, 5A0h
                 jnb     short loc_15337
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -2646,30 +2647,30 @@ loc_1536D:                              ; CODE XREF: sub_1531F+16↑j
                 cmp     di, 5A0h
                 jle     short loc_1539F
 
-loc_1538B:                              ; CODE XREF: sub_1531F+64↑j
-                mov     al, byte_37325
+loc_1538B:                              ; CODE XREF: addTime+64↑j
+                mov     al, Party_day
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jz      short loc_1539F
-                call    sub_27F54
-                call    j_GiveBankInterest
+                call    j_j_j_resetBlacksmithWares
+                call    j_j_j_j_GiveBankInterest
 
-loc_1539F:                              ; CODE XREF: sub_1531F+6A↑j
-                                        ; sub_1531F+74↑j
-                mov     al, byte_37325
+loc_1539F:                              ; CODE XREF: addTime+6A↑j
+                                        ; addTime+74↑j
+                mov     al, Party_day
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jz      short loc_153AE
-                mov     byte_2879E, 1
+                mov     Party_newDay, 1
 
-loc_153AE:                              ; CODE XREF: sub_1531F+88↑j
-                cmp     byte_2879E, 0
+loc_153AE:                              ; CODE XREF: addTime+88↑j
+                cmp     Party_newDay, 0
                 jz      short loc_153E4
-                cmp     word_37332, 12Ch
+                cmp     Party_minutes, 12Ch
                 jb      short loc_153E4
-                cmp     byte_34C10, 9
+                cmp     Engine_mode, 9
                 jz      short loc_153DF
-                call    sub_280A8
+                call    j_j_j_resetTemps
                 mov     ax, 1
                 push    ax
                 call    sub_281E9
@@ -2678,18 +2679,18 @@ loc_153AE:                              ; CODE XREF: sub_1531F+88↑j
                 jnz     short loc_153DF
                 call    sub_170F7
 
-loc_153DF:                              ; CODE XREF: sub_1531F+A3↑j
-                                        ; sub_1531F+B9↑j
-                mov     byte_2879E, 0
+loc_153DF:                              ; CODE XREF: addTime+A3↑j
+                                        ; addTime+B9↑j
+                mov     Party_newDay, 0
 
-loc_153E4:                              ; CODE XREF: sub_1531F+94↑j
-                                        ; sub_1531F+9C↑j
+loc_153E4:                              ; CODE XREF: addTime+94↑j
+                                        ; addTime+9C↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1531F       endp
+addTime         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2793,7 +2794,7 @@ jpt_15418       dw offset loc_1541D     ; DATA XREF: sub_153EA+2E↑r
 
 ; Attributes: bp-based frame
 
-sub_15468       proc far                ; CODE XREF: sub_1531F+40↑P
+sub_15468       proc far                ; CODE XREF: addTime+40↑P
                                         ; sub_1B9C5+AF↓P ...
 
 var_2           = word ptr -2
@@ -5421,7 +5422,7 @@ loc_1692A:                              ; CODE XREF: sub_161AD+6F7↑j
                 inc     cx
 
 loc_1692B:                              ; CODE XREF: sub_161AD+70↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, cx
                 jle     short loc_16937
@@ -5441,7 +5442,7 @@ sub_161AD       endp
 
 ; Attributes: bp-based frame
 
-sub_1693D       proc far                ; CODE XREF: sub_16973+415↓p
+sub_1693D       proc far                ; CODE XREF: changeTime+415↓p
                                         ; sub_43034+11↓P
                 push    bp
                 mov     bp, sp
@@ -5478,9 +5479,10 @@ sub_1693D       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; per 480 minutes: condition ticks (poison/disease/insane...), then addTime (Xeen Party::changeTime)
 ; Attributes: bp-based frame
 
-sub_16973       proc far                ; CODE XREF: chargeStep+1C↓p
+changeTime      proc far                ; CODE XREF: chargeStep+1C↓p
                                         ; sub_3C282+1FE↓P ...
 
 arg_0           = word ptr  6
@@ -5489,13 +5491,13 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    si
                 push    di
-                mov     ax, word_37332
+                mov     ax, Party_minutes
                 add     ax, [bp+arg_0]
                 mov     bx, 1E0h
                 xor     dx, dx
                 div     bx
                 push    ax
-                mov     ax, word_37332
+                mov     ax, Party_minutes
                 xor     dx, dx
                 div     bx
                 pop     dx
@@ -5504,12 +5506,12 @@ arg_0           = word ptr  6
                 jmp     loc_16CE2
 ; ---------------------------------------------------------------------------
 
-loc_16995:                              ; CODE XREF: sub_16973+1D↑j
+loc_16995:                              ; CODE XREF: changeTime+1D↑j
                 xor     si, si
                 jmp     loc_16CD6
 ; ---------------------------------------------------------------------------
 
-loc_1699A:                              ; CODE XREF: sub_16973+36C↓j
+loc_1699A:                              ; CODE XREF: changeTime+36C↓j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5536,7 +5538,7 @@ loc_1699A:                              ; CODE XREF: sub_16973+36C↓j
                 jmp     short loc_169FB
 ; ---------------------------------------------------------------------------
 
-loc_169CF:                              ; CODE XREF: sub_16973+8B↓j
+loc_169CF:                              ; CODE XREF: changeTime+8B↓j
                 xor     ax, ax
                 push    ax
                 push    di
@@ -5556,14 +5558,14 @@ loc_169CF:                              ; CODE XREF: sub_16973+8B↓j
                 mov     bx, ax
                 mov     byte ptr [bx-450Ah], 1
 
-loc_169FA:                              ; CODE XREF: sub_16973+77↑j
+loc_169FA:                              ; CODE XREF: changeTime+77↑j
                 inc     di
 
-loc_169FB:                              ; CODE XREF: sub_16973+5A↑j
+loc_169FB:                              ; CODE XREF: changeTime+5A↑j
                 cmp     di, 7
                 jl      short loc_169CF
 
-loc_16A00:                              ; CODE XREF: sub_16973+56↑j
+loc_16A00:                              ; CODE XREF: changeTime+56↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5592,8 +5594,8 @@ loc_16A00:                              ; CODE XREF: sub_16973+56↑j
                 mov     bx, ax
                 mov     byte ptr [bx-450Eh], 1
 
-loc_16A49:                              ; CODE XREF: sub_16973+9B↑j
-                                        ; sub_16973+B8↑j
+loc_16A49:                              ; CODE XREF: changeTime+9B↑j
+                                        ; changeTime+B8↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5632,7 +5634,7 @@ loc_16A49:                              ; CODE XREF: sub_16973+9B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -5657,20 +5659,20 @@ loc_16A49:                              ; CODE XREF: sub_16973+9B↑j
                 jmp     short loc_16AE4
 ; ---------------------------------------------------------------------------
 
-loc_16AD5:                              ; CODE XREF: sub_16973+150↑j
+loc_16AD5:                              ; CODE XREF: changeTime+150↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_16AD7:                              ; CODE XREF: sub_16973+136↑j
-                                        ; sub_16973:loc_16AD5↑j
+loc_16AD7:                              ; CODE XREF: changeTime+136↑j
+                                        ; changeTime:loc_16AD5↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
                 mov     bx, ax
                 shl     byte ptr [bx-4514h], 1
 
-loc_16AE4:                              ; CODE XREF: sub_16973+122↑j
-                                        ; sub_16973+160↑j
+loc_16AE4:                              ; CODE XREF: changeTime+122↑j
+                                        ; changeTime+160↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5681,7 +5683,7 @@ loc_16AE4:                              ; CODE XREF: sub_16973+122↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -5706,20 +5708,20 @@ loc_16AE4:                              ; CODE XREF: sub_16973+122↑j
                 jmp     short loc_16B41
 ; ---------------------------------------------------------------------------
 
-loc_16B32:                              ; CODE XREF: sub_16973+1AD↑j
+loc_16B32:                              ; CODE XREF: changeTime+1AD↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_16B34:                              ; CODE XREF: sub_16973+193↑j
-                                        ; sub_16973:loc_16B32↑j
+loc_16B34:                              ; CODE XREF: changeTime+193↑j
+                                        ; changeTime:loc_16B32↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
                 mov     bx, ax
                 shl     byte ptr [bx-4513h], 1
 
-loc_16B41:                              ; CODE XREF: sub_16973+17F↑j
-                                        ; sub_16973+1BD↑j
+loc_16B41:                              ; CODE XREF: changeTime+17F↑j
+                                        ; changeTime+1BD↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5732,7 +5734,7 @@ loc_16B41:                              ; CODE XREF: sub_16973+17F↑j
                 mov     bx, ax
                 inc     byte ptr [bx-4512h]
 
-loc_16B5E:                              ; CODE XREF: sub_16973+1DC↑j
+loc_16B5E:                              ; CODE XREF: changeTime+1DC↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5758,8 +5760,8 @@ loc_16B5E:                              ; CODE XREF: sub_16973+1DC↑j
                 mov     bx, ax
                 mov     byte ptr [bx-450Ah], 0FFh
 
-loc_16B9C:                              ; CODE XREF: sub_16973+1F9↑j
-                                        ; sub_16973+219↑j
+loc_16B9C:                              ; CODE XREF: changeTime+1F9↑j
+                                        ; changeTime+219↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5785,8 +5787,8 @@ loc_16B9C:                              ; CODE XREF: sub_16973+1F9↑j
                 mov     bx, ax
                 mov     byte ptr [bx-4509h], 0FFh
 
-loc_16BDA:                              ; CODE XREF: sub_16973+237↑j
-                                        ; sub_16973+257↑j
+loc_16BDA:                              ; CODE XREF: changeTime+237↑j
+                                        ; changeTime+257↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5812,8 +5814,8 @@ loc_16BDA:                              ; CODE XREF: sub_16973+237↑j
                 mov     bx, ax
                 mov     byte ptr [bx-4508h], 0FFh
 
-loc_16C18:                              ; CODE XREF: sub_16973+275↑j
-                                        ; sub_16973+295↑j
+loc_16C18:                              ; CODE XREF: changeTime+275↑j
+                                        ; changeTime+295↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5846,8 +5848,8 @@ loc_16C18:                              ; CODE XREF: sub_16973+275↑j
                 mov     bx, ax
                 mov     byte ptr [bx-4516h], 1
 
-loc_16C66:                              ; CODE XREF: sub_16973+2B3↑j
-                                        ; sub_16973+2D5↑j
+loc_16C66:                              ; CODE XREF: changeTime+2B3↑j
+                                        ; changeTime+2D5↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5896,10 +5898,10 @@ loc_16C66:                              ; CODE XREF: sub_16973+2B3↑j
                 pop     ax
                 mov     [bx-450Eh], al
 
-loc_16CD5:                              ; CODE XREF: sub_16973+32B↑j
+loc_16CD5:                              ; CODE XREF: changeTime+32B↑j
                 inc     si
 
-loc_16CD6:                              ; CODE XREF: sub_16973+24↑j
+loc_16CD6:                              ; CODE XREF: changeTime+24↑j
                 mov     al, byte_36FDA
                 mov     ah, 0
                 cmp     ax, si
@@ -5907,17 +5909,17 @@ loc_16CD6:                              ; CODE XREF: sub_16973+24↑j
                 jmp     loc_1699A
 ; ---------------------------------------------------------------------------
 
-loc_16CE2:                              ; CODE XREF: sub_16973+1F↑j
-                                        ; sub_16973+36A↑j
+loc_16CE2:                              ; CODE XREF: changeTime+1F↑j
+                                        ; changeTime+36A↑j
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1531F
+                call    near ptr addTime
                 pop     cx
                 xor     si, si
                 jmp     loc_16D7B
 ; ---------------------------------------------------------------------------
 
-loc_16CEF:                              ; CODE XREF: sub_16973+411↓j
+loc_16CEF:                              ; CODE XREF: changeTime+411↓j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5928,7 +5930,7 @@ loc_16CEF:                              ; CODE XREF: sub_16973+411↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -5953,15 +5955,15 @@ loc_16CEF:                              ; CODE XREF: sub_16973+411↓j
                 jmp     short loc_16D49
 ; ---------------------------------------------------------------------------
 
-loc_16D3C:                              ; CODE XREF: sub_16973+3B7↑j
+loc_16D3C:                              ; CODE XREF: changeTime+3B7↑j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
                 mov     bx, ax
                 dec     byte ptr [bx-450Dh]
 
-loc_16D49:                              ; CODE XREF: sub_16973+38A↑j
-                                        ; sub_16973+39E↑j ...
+loc_16D49:                              ; CODE XREF: changeTime+38A↑j
+                                        ; changeTime+39E↑j ...
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -5972,7 +5974,7 @@ loc_16D49:                              ; CODE XREF: sub_16973+38A↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -5983,11 +5985,11 @@ loc_16D49:                              ; CODE XREF: sub_16973+38A↑j
                 mov     bx, ax
                 dec     byte ptr [bx-450Ch]
 
-loc_16D7A:                              ; CODE XREF: sub_16973+3E4↑j
-                                        ; sub_16973+3F8↑j
+loc_16D7A:                              ; CODE XREF: changeTime+3E4↑j
+                                        ; changeTime+3F8↑j
                 inc     si
 
-loc_16D7B:                              ; CODE XREF: sub_16973+379↑j
+loc_16D7B:                              ; CODE XREF: changeTime+379↑j
                 mov     al, byte_36FDA
                 mov     ah, 0
                 cmp     ax, si
@@ -5995,24 +5997,24 @@ loc_16D7B:                              ; CODE XREF: sub_16973+379↑j
                 jmp     loc_16CEF
 ; ---------------------------------------------------------------------------
 
-loc_16D87:                              ; CODE XREF: sub_16973+40F↑j
+loc_16D87:                              ; CODE XREF: changeTime+40F↑j
                 push    cs
                 call    near ptr sub_1693D
                 or      ax, ax
                 jz      short loc_16DBC
-                cmp     word_37332, 12Ch
+                cmp     Party_minutes, 12Ch
                 jb      short loc_16DA3
-                cmp     word_37332, 4ECh
+                cmp     Party_minutes, 4ECh
                 jnb     short loc_16DA3
                 xor     ax, ax
                 jmp     short loc_16DA6
 ; ---------------------------------------------------------------------------
 
-loc_16DA3:                              ; CODE XREF: sub_16973+422↑j
-                                        ; sub_16973+42A↑j
+loc_16DA3:                              ; CODE XREF: changeTime+422↑j
+                                        ; changeTime+42A↑j
                 mov     ax, 1
 
-loc_16DA6:                              ; CODE XREF: sub_16973+42E↑j
+loc_16DA6:                              ; CODE XREF: changeTime+42E↑j
                 mov     dl, byte_32E68
                 mov     dh, 0
                 cmp     ax, dx
@@ -6023,13 +6025,13 @@ loc_16DA6:                              ; CODE XREF: sub_16973+42E↑j
                 call    sub_28194
                 pop     cx
 
-loc_16DBC:                              ; CODE XREF: sub_16973+41A↑j
-                                        ; sub_16973+43B↑j
+loc_16DBC:                              ; CODE XREF: changeTime+41A↑j
+                                        ; changeTime+43B↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_16973       endp
+changeTime      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6055,7 +6057,7 @@ loc_16DD7:                              ; CODE XREF: chargeStep+10↑j
 loc_16DDA:                              ; CODE XREF: chargeStep+15↑j
                 push    si
                 push    cs
-                call    near ptr sub_16973
+                call    near ptr changeTime
                 pop     cx
                 cmp     byte_2886F, 0
                 jz      short loc_16DEC
@@ -6119,7 +6121,7 @@ arg_4           = word ptr  0Ah
                 mov     bp, sp
                 push    si
                 les     bx, [bp+arg_0]
-                mov     ax, word_37326
+                mov     ax, Party_year
                 sub     ax, es:[bx+129h]
                 mov     si, ax
                 cmp     si, 0FEh
@@ -6342,7 +6344,7 @@ itemScan        endp
 ; max(level+tempLevel,0) from +23h/+24h (identical to Xeen Character::getCurrentLevel)
 ; Attributes: bp-based frame
 
-getCurrentLevel proc far                ; CODE XREF: sub_264ED+13C↓P
+getCurrentLevel proc far                ; CODE XREF: readSaveHeader+13C↓P
                                         ; sub_3D8C9+13D↓P ...
 
 var_2           = word ptr -2
@@ -6379,7 +6381,7 @@ getCurrentLevel endp
 
 ; Attributes: bp-based frame
 
-getStat         proc far                ; CODE XREF: sub_16973+6C↑P
+getStat         proc far                ; CODE XREF: changeTime+6C↑P
                                         ; sub_3D32E+316↓P ...
 
 var_6           = word ptr -6
@@ -6575,7 +6577,7 @@ jpt_16FCD       dw offset loc_16FD2     ; DATA XREF: getStat+1C↑r
 
 ; Attributes: bp-based frame
 
-sub_170F7       proc far                ; CODE XREF: sub_1531F+BB↑P
+sub_170F7       proc far                ; CODE XREF: addTime+BB↑P
                                         ; runMazeEvent+191B↓P ...
 
 var_18          = word ptr -18h
@@ -6592,7 +6594,7 @@ var_2           = word ptr -2
                 sub     sp, 18h
                 push    si
                 push    di
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_1710B
                 mov     ax, 1
                 jmp     short loc_1710D
@@ -6940,7 +6942,7 @@ loc_17375:                              ; CODE XREF: sub_170F7+27A↑j
                 mov     [bp+var_18], ax
                 push    ds
                 push    [bp+var_18]
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], ax
@@ -10826,7 +10828,7 @@ loc_19057:                              ; CODE XREF: subtractHitPoints+1B↑j
                 jge     short loc_190C3
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     dx, [si+125h]
@@ -11575,7 +11577,7 @@ loc_195E5:                              ; CODE XREF: sub_193DC+1FB↑j
                 mov     ah, 0
                 dec     ax
                 push    ax              ; format
-                call    j_Map_load
+                call    j_j_j_j_Map_load
                 pop     cx
                 mov     al, byte_36FE7
                 mov     byte_34C1D, al
@@ -11652,7 +11654,7 @@ var_2           = word ptr -2
                 call    near ptr sub_193DC
                 mov     [bp+var_16], 0
                 call    sub_161AD
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     [bp+var_4F], al
                 mov     ax, word_376EC
                 mov     dx, word_376EA
@@ -11853,14 +11855,14 @@ loc_197DC:                              ; CODE XREF: runMazeEvent+1AE↑j
                 mov     al, byte_35D5C
                 cmp     al, byte_36FE4
                 jz      short loc_197F8
-                cmp     byte_34C10, 9
+                cmp     Engine_mode, 9
                 jz      short loc_197F8
                 jmp     loc_1AEF9
 ; ---------------------------------------------------------------------------
 
 loc_197F8:                              ; CODE XREF: runMazeEvent+1DB↑j
                                         ; runMazeEvent+1E4↑j ...
-                mov     byte_34C10, 9
+                mov     Engine_mode, 9
                 mov     ax, di
                 mov     dx, 0Ah
                 imul    dx
@@ -12104,7 +12106,7 @@ loc_199AA:                              ; CODE XREF: runMazeEvent+387↑j
                 mov     al, es:[bx+si+8]
                 cbw
                 push    ax              ; format
-                call    j_loadHireFaces
+                call    j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 or      ax, ax
                 jz      short loc_19A0A
@@ -13470,7 +13472,7 @@ loc_1A505:                              ; CODE XREF: runMazeEvent+243↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, dword_32E5A
@@ -13504,7 +13506,7 @@ loc_1A505:                              ; CODE XREF: runMazeEvent+243↑j
                 mov     bx, ax
                 mov     ax, [bx-4944h]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 les     bx, dword_32E5A
@@ -13532,25 +13534,25 @@ loc_1A5C4:                              ; CODE XREF: runMazeEvent+243↑j
 
 loc_1A5DB:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townBank      ; jumptable 0001A5D6 case 0
+                call    j_j_j_j_townBank ; jumptable 0001A5D6 case 0
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5E2:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townSmithy    ; jumptable 0001A5D6 case 1
+                call    j_j_j_j_townSmithy ; jumptable 0001A5D6 case 1
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5E9:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townGuild     ; jumptable 0001A5D6 case 2
+                call    j_j_j_j_townGuild ; jumptable 0001A5D6 case 2
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A5F0:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townInn       ; jumptable 0001A5D6 case 3
+                call    j_j_j_j_townInn ; jumptable 0001A5D6 case 3
                 or      ax, ax
                 jz      short def_1A5D6 ; jumptable 0001A5D6 default case
                 mov     [bp+var_8], 2
@@ -13559,7 +13561,7 @@ loc_1A5F0:                              ; CODE XREF: runMazeEvent+FCE↑j
 
 loc_1A601:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townTavern    ; jumptable 0001A5D6 case 4
+                call    j_j_j_j_townTavern ; jumptable 0001A5D6 case 4
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
@@ -13571,19 +13573,19 @@ loc_1A608:                              ; CODE XREF: runMazeEvent+FCE↑j
 
 loc_1A60F:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_townTraining  ; jumptable 0001A5D6 case 6
+                call    j_j_j_j_townTraining ; jumptable 0001A5D6 case 6
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A616:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_arenaEvent    ; jumptable 0001A5D6 case 7
+                call    j_j_j_j_arenaEvent ; jumptable 0001A5D6 case 7
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
 loc_1A61D:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    j_showJoke      ; jumptable 0001A5D6 case 8
+                call    j_j_j_j_showJoke ; jumptable 0001A5D6 case 8
                 jmp     loc_1AF03       ; jumptable 0001984B case 18
 ; ---------------------------------------------------------------------------
 
@@ -14169,7 +14171,7 @@ loc_1AB1E:                              ; CODE XREF: runMazeEvent+1504↑j
                 mov     dh, 0
                 add     ax, dx
                 push    ax
-                call    j_giveCharDamage
+                call    j_j_j_j_giveCharDamage
 
 loc_1AB45:                              ; CODE XREF: runMazeEvent+368↑j
                 add     sp, 6
@@ -14184,7 +14186,7 @@ loc_1AB4B:                              ; CODE XREF: runMazeEvent+243↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, dword_32E5A
@@ -14515,7 +14517,7 @@ loc_1AE05:                              ; CODE XREF: runMazeEvent+1820↓j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_getCurrentExperience
+                call    j_j_j_j_getCurrentExperience
                 pop     cx
                 add     [bp+var_42], ax
                 adc     [bp+var_40], dx
@@ -14688,7 +14690,7 @@ loc_1AF66:                              ; CODE XREF: runMazeEvent+192A↑j
 
 loc_1AF90:                              ; CODE XREF: runMazeEvent+1981↑j
                 mov     al, [bp+var_4F]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 lea     ax, [bp+var_4E]
                 push    ax
                 call    sub_26685
@@ -15219,7 +15221,7 @@ loc_1B439:                              ; CODE XREF: sub_1B358+B9↑j
                 inc     si
 
 loc_1B43A:                              ; CODE XREF: sub_1B358+AE↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_1B408
@@ -15272,7 +15274,7 @@ loc_1B497:                              ; CODE XREF: sub_1B358+13A↑j
                 shl     bx, 1
                 cmp     word ptr [bx-4D40h], 0
                 jnz     short loc_1B4AD
-                cmp     byte_34C10, 5
+                cmp     Engine_mode, 5
                 jz      short loc_1B4AD
                 jmp     loc_1B623
 ; ---------------------------------------------------------------------------
@@ -15300,7 +15302,7 @@ loc_1B4BD:                              ; CODE XREF: sub_1B358+160↑j
 loc_1B4D0:                              ; CODE XREF: sub_1B358+16C↑j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
-                les     ax, dword_3772A
+                les     ax, Mon_rang
                 add     ax, [bx-4944h]
                 mov     bx, ax
                 cmp     byte ptr es:[bx], 0
@@ -15468,7 +15470,7 @@ loc_1B623:                              ; CODE XREF: sub_1B358+12E↑j
                 inc     [bp+var_2]
 
 loc_1B626:                              ; CODE XREF: sub_1B358+11D↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jle     short loc_1B633
@@ -15505,7 +15507,7 @@ loc_1B64E:                              ; CODE XREF: sub_1B358+F0↑j
 loc_1B657:                              ; CODE XREF: sub_1B358+2FA↑j
                 cmp     byte_2879C, 0
                 jz      short loc_1B663
-                call    j_monstersAttack
+                call    j_j_j_j_monstersAttack
 
 loc_1B663:                              ; CODE XREF: sub_1B358+19↑j
                                         ; sub_1B358+304↑j
@@ -15555,9 +15557,9 @@ loc_1B684:                              ; CODE XREF: sub_1B669+F↑j
 
 loc_1B69E:                              ; CODE XREF: sub_1B669+25↑j
                                         ; sub_1B669+2C↑j
-                cmp     byte_34C10, 1
+                cmp     Engine_mode, 1
                 jz      short loc_1B6AC
-                cmp     byte_34C10, 5
+                cmp     Engine_mode, 5
                 jnz     short loc_1B6CF
 
 loc_1B6AC:                              ; CODE XREF: sub_1B669+3A↑j
@@ -20477,9 +20479,9 @@ def_1D869:                              ; CODE XREF: sub_1C195+16D0↑j
                 call    sub_15B50
                 cmp     byte_2886F, 0
                 jz      short loc_1D8CA
-                cmp     byte_34C10, 1
+                cmp     Engine_mode, 1
                 jz      short loc_1D8A5
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_1D8CA
 
 loc_1D8A5:                              ; CODE XREF: sub_1C195+1707↑j
@@ -22131,7 +22133,7 @@ loc_1E4B6:                              ; CODE XREF: sub_1E407+80↑j
                 inc     [bp+var_2]
 
 loc_1E4B9:                              ; CODE XREF: sub_1E407+74↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_1E47D
@@ -22140,7 +22142,7 @@ loc_1E4B9:                              ; CODE XREF: sub_1E407+74↑j
 ; ---------------------------------------------------------------------------
 
 loc_1E4CA:                              ; CODE XREF: sub_1E407+11E↓j
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_1E4DC
                 mov     al, byte_34BB6
                 mov     ah, 0
@@ -26381,7 +26383,7 @@ loc_203B9:                              ; CODE XREF: sub_1E407+1F9E↑j
 
 loc_203DD:                              ; CODE XREF: sub_1E407+1FBF↑j
                                         ; sub_1E407+1FC5↑j
-                cmp     byte_34C10, 0
+                cmp     Engine_mode, 0
                 jnz     short loc_203F8
                 mov     ax, 4
                 push    ax
@@ -26390,7 +26392,7 @@ loc_203DD:                              ; CODE XREF: sub_1E407+1FBF↑j
                 call    Music_playFX
                 pop     cx
                 pop     cx
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
 
 loc_203F8:                              ; CODE XREF: sub_1E407+1FDB↑j
                 pop     di
@@ -26424,9 +26426,9 @@ sub_203FE       proc far                ; CODE XREF: sub_1B669+A↑P
                 call    sub_15B50
                 cmp     byte_2886F, 0
                 jz      short loc_2044C
-                cmp     byte_34C10, 1
+                cmp     Engine_mode, 1
                 jz      short loc_20427
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_2044C
 
 loc_20427:                              ; CODE XREF: sub_203FE+20↑j
@@ -26564,7 +26566,7 @@ loc_2052B:                              ; CODE XREF: sub_2045A+A2↑j
                 inc     [bp+var_2]
 
 loc_2052E:                              ; CODE XREF: sub_2045A+96↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_204F2
@@ -26573,7 +26575,7 @@ loc_2052E:                              ; CODE XREF: sub_2045A+96↑j
 ; ---------------------------------------------------------------------------
 
 loc_2053F:                              ; CODE XREF: sub_2045A+140↓j
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_20551
                 mov     al, byte_34BB6
                 mov     ah, 0
@@ -30360,7 +30362,7 @@ loc_22457:                              ; CODE XREF: sub_2045A+1FE9↑j
 
 loc_2247B:                              ; CODE XREF: sub_2045A+200A↑j
                                         ; sub_2045A+2010↑j
-                cmp     byte_34C10, 0
+                cmp     Engine_mode, 0
                 jnz     short loc_22496
                 mov     ax, 4
                 push    ax
@@ -30369,7 +30371,7 @@ loc_2247B:                              ; CODE XREF: sub_2045A+200A↑j
                 call    Music_playFX
                 pop     cx
                 pop     cx
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
 
 loc_22496:                              ; CODE XREF: sub_2045A+2026↑j
                 pop     di
@@ -30465,7 +30467,7 @@ seg007          segment byte public 'CODE' use16
 ; Attributes: bp-based frame
 
 sub_22524       proc far                ; CODE XREF: seg001:0296↑P
-                                        ; sub_264ED+59↓P ...
+                                        ; readSaveHeader+59↓P ...
 
 arg_0           = word ptr  6
 
@@ -30612,8 +30614,8 @@ word_2262C      dw 0                    ; DATA XREF: sub_22534+58↑w
                                         ; sub_22534+78↑r ...
 word_2262E      dw 0                    ; DATA XREF: sub_22534+5D↑w
                                         ; sub_22534+7D↑r ...
-word_22630      dw 0                    ; DATA XREF: sub_2500F+D↓w
-                                        ; sub_25024↓r ...
+word_22630      dw 0                    ; DATA XREF: ccOpen+D↓w
+                                        ; ccClose↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -30817,7 +30819,7 @@ sub_226C6       endp ; sp-analysis failed
 
 
 sub_22740       proc far                ; CODE XREF: sub_24F1A+F↓p
-                                        ; sub_24FDD+C↓p ...
+                                        ; loadResourceByName+C↓p ...
                 push    bp
                 push    ds
                 push    es
@@ -31389,10 +31391,11 @@ word_24CCA      dw 0                    ; DATA XREF: sub_22740+1B2↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; rnd(lo, hi)
 ; Attributes: bp-based frame
 
-sub_24ECC       proc far                ; CODE XREF: sub_16973+12C↑P
-                                        ; sub_16973+189↑P ...
+rnd             proc far                ; CODE XREF: changeTime+12C↑P
+                                        ; changeTime+189↑P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -31429,20 +31432,16 @@ arg_2           = word ptr  8
                 pop     ds
                 assume ds:dseg
 
-loc_24F10:                              ; CODE XREF: sub_24ECC+9↑j
+loc_24F10:                              ; CODE XREF: rnd+9↑j
                 pop     bp
                 retf
-sub_24ECC       endp
+rnd             endp
 
 ; ---------------------------------------------------------------------------
-word_24F12      dw 4E7Bh                ; DATA XREF: sub_24ECC+12↑r
-                                        ; sub_24ECC+19↑w
-word_24F14      dw 0A109h               ; DATA XREF: sub_24ECC+16↑r
-                                        ; sub_24ECC+20↑w
-word_24F16      dw 0FC62h               ; DATA XREF: sub_24ECC+1D↑r
-                                        ; sub_24ECC+27↑w ...
-word_24F18      dw 83D5h                ; DATA XREF: sub_24ECC+24↑r
-                                        ; sub_24ECC+2B↑w
+word_24F12      dw 4E7Bh                ; DATA XREF: rnd+12↑r rnd+19↑w
+word_24F14      dw 0A109h               ; DATA XREF: rnd+16↑r rnd+20↑w
+word_24F16      dw 0FC62h               ; DATA XREF: rnd+1D↑r rnd+27↑w ...
+word_24F18      dw 83D5h                ; DATA XREF: rnd+24↑r rnd+2B↑w
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -31645,9 +31644,10 @@ Sound_playVOC   endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; takes a name (DGROUP near ptr), returns far pointer to the loaded cc member (dx:ax)
 ; Attributes: bp-based frame
 
-sub_24FDD       proc far                ; CODE XREF: seg001:01EF↑P
+loadResourceByName proc far             ; CODE XREF: seg001:01EF↑P
                                         ; seg001:0319↑P ...
 
 arg_0           = word ptr  6
@@ -31664,7 +31664,7 @@ arg_2           = word ptr  8
                 sub     ax, ax
                 pop     bp
                 retf
-sub_24FDD       endp
+loadResourceByName endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31698,10 +31698,11 @@ Sound_deinit    endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; (by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure
 ; Attributes: bp-based frame
 
-sub_2500F       proc far                ; CODE XREF: sub_25FC3+31↓P
-                                        ; sub_2634D+28↓P ...
+ccOpen          proc far                ; CODE XREF: sub_25FC3+31↓P
+                                        ; openCcFile+28↓P ...
 
 arg_0           = word ptr  6
 
@@ -31717,17 +31718,18 @@ arg_0           = word ptr  6
                 mov     cs:word_22630, ax
                 sub     ax, ax
 
-loc_25022:                              ; CODE XREF: sub_2500F+B↑j
+loc_25022:                              ; CODE XREF: ccOpen+B↑j
                 pop     bp
                 retf
-sub_2500F       endp
+ccOpen          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (by use)
 
-sub_25024       proc far                ; CODE XREF: sub_25FC3+10E↓P
-                                        ; sub_2634D+65↓P ...
+ccClose         proc far                ; CODE XREF: sub_25FC3+10E↓P
+                                        ; openCcFile+65↓P ...
                 mov     bx, cs:word_22630
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
@@ -31735,17 +31737,18 @@ sub_25024       proc far                ; CODE XREF: sub_25FC3+10E↓P
                 jb      short locret_25031
                 sub     ax, ax
 
-locret_25031:                           ; CODE XREF: sub_25024+9↑j
+locret_25031:                           ; CODE XREF: ccClose+9↑j
                 retf
-sub_25024       endp
+ccClose         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (by use) seek in the open cc file
 ; Attributes: bp-based frame
 
-sub_25032       proc far                ; CODE XREF: sub_264ED+A0↓P
-                                        ; sub_264ED+C9↓P ...
+ccSeek          proc far                ; CODE XREF: readSaveHeader+A0↓P
+                                        ; readSaveHeader+C9↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -31761,18 +31764,19 @@ arg_2           = word ptr  8
                 jb      short loc_25049
                 sub     ax, ax
 
-loc_25049:                              ; CODE XREF: sub_25032+13↑j
+loc_25049:                              ; CODE XREF: ccSeek+13↑j
                 pop     bp
                 retf
-sub_25032       endp
+ccSeek          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (by use) read len bytes to far buffer; non-zero = failure
 ; Attributes: bp-based frame
 
-sub_2504B       proc far                ; CODE XREF: sub_264ED+B3↓P
-                                        ; sub_264ED+E0↓P ...
+ccRead          proc far                ; CODE XREF: readSaveHeader+B3↓P
+                                        ; readSaveHeader+E0↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -31792,11 +31796,11 @@ arg_4           = word ptr  0Ah
                 jb      short loc_25065
                 sub     ax, ax
 
-loc_25065:                              ; CODE XREF: sub_2504B+16↑j
+loc_25065:                              ; CODE XREF: ccRead+16↑j
                 pop     ds
                 pop     bp
                 retf
-sub_2504B       endp
+ccRead          endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32313,7 +32317,7 @@ loc_25339:                              ; CODE XREF: sub_252CF+65↑j
 ; ---------------------------------------------------------------------------
 
 loc_25353:                              ; CODE XREF: sub_252CF+D↑j
-                cmp     byte_34C10, 0Ah
+                cmp     Engine_mode, 0Ah
                 jnz     short loc_25379
                 cmp     [bp+arg_0], 14h
                 jge     short loc_25379
@@ -32553,7 +32557,7 @@ loc_254E1:                              ; CODE XREF: sub_254BA+D↑j
                 pop     cx
 
 loc_254F5:                              ; CODE XREF: sub_254BA+2C↑j
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_25565
                 cmp     byte_34BB6, 0
                 jz      short loc_25565
@@ -32609,15 +32613,15 @@ loc_25565:                              ; CODE XREF: sub_254BA+40↑j
                                         ; sub_254BA+47↑j ...
                 cmp     word_34C12, 224h
                 jz      short loc_25598
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jz      short loc_25598
-                cmp     byte_34C10, 6
+                cmp     Engine_mode, 6
                 jz      short loc_25598
-                cmp     byte_34C10, 8
+                cmp     Engine_mode, 8
                 jz      short loc_25598
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jz      short loc_25598
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_255BE
                 cmp     word_34C12, 29Ch
                 jnz     short loc_255BE
@@ -32642,14 +32646,14 @@ loc_255B7:                              ; CODE XREF: sub_254BA+EA↑j
 
 loc_255BE:                              ; CODE XREF: sub_254BA+D4↑j
                                         ; sub_254BA+DC↑j
-                cmp     byte_34C10, 4
+                cmp     Engine_mode, 4
                 jnz     short loc_255CC
                 call    sub_282ED
                 jmp     short loc_255DD
 ; ---------------------------------------------------------------------------
 
 loc_255CC:                              ; CODE XREF: sub_254BA+109↑j
-                cmp     byte_34C10, 0Ah
+                cmp     Engine_mode, 0Ah
                 jnz     short loc_255DD
                 mov     ax, 1
                 push    ax
@@ -32667,7 +32671,7 @@ loc_255E4:                              ; CODE XREF: sub_254BA+29E↓j
 ; ---------------------------------------------------------------------------
 
 loc_255EA:                              ; CODE XREF: sub_254BA+128↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short def_25621 ; jumptable 00025621 default case, cases 9,10
                 cmp     byte_2883F, 0FFh
                 jz      short def_25621 ; jumptable 00025621 default case, cases 9,10
@@ -32726,7 +32730,7 @@ loc_2564B:                              ; CODE XREF: sub_254BA+18C↑j
 ; ---------------------------------------------------------------------------
 
 loc_25667:                              ; CODE XREF: sub_254BA+1A8↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_25671
                 jmp     loc_25731
 ; ---------------------------------------------------------------------------
@@ -32824,7 +32828,7 @@ loc_25731:                              ; CODE XREF: sub_254BA+1AA↑j
 loc_25749:                              ; CODE XREF: sub_254BA+280↑j
                 cmp     word_34C12, 41Dh
                 jnz     short loc_2575B
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jz      short loc_2575B
                 jmp     loc_255E4
 ; ---------------------------------------------------------------------------
@@ -32849,7 +32853,7 @@ loc_2576D:                              ; CODE XREF: sub_254BA+2AB↑j
 
 loc_2577C:                              ; CODE XREF: sub_254BA+2B9↑j
                                         ; sub_254BA+2BE↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_2578E
                 cmp     si, 0Ah
                 jle     short loc_2578E
@@ -32885,7 +32889,7 @@ loc_257A4:                              ; CODE XREF: sub_254BA+2E5↑j
                 call    near ptr sub_252CF
                 pop     cx
                 pop     cx
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_257C9
                 or      si, si
                 jnz     short loc_257C9
@@ -32944,13 +32948,13 @@ loc_25818:                              ; CODE XREF: sub_254BA+335↑j
                 jnz     short loc_25841
 
 loc_25825:                              ; CODE XREF: sub_254BA+364↑j
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jz      short loc_25841
-                cmp     byte_34C10, 6
+                cmp     Engine_mode, 6
                 jz      short loc_25841
-                cmp     byte_34C10, 8
+                cmp     Engine_mode, 8
                 jz      short loc_25841
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_25848
 
 loc_25841:                              ; CODE XREF: sub_254BA+369↑j
@@ -32960,7 +32964,7 @@ loc_25841:                              ; CODE XREF: sub_254BA+369↑j
 ; ---------------------------------------------------------------------------
 
 loc_25848:                              ; CODE XREF: sub_254BA+385↑j
-                cmp     byte_34C10, 4
+                cmp     Engine_mode, 4
                 jnz     short loc_25854
                 call    sub_282ED
 
@@ -33022,7 +33026,7 @@ loc_258B4:                              ; CODE XREF: sub_254BA+18E↑j
                 cmp     byte_373B2, 0
                 jz      short loc_258EE
                 mov     byte_373B2, 0
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_258EE
                 cmp     word_34C12, 224h
                 jnz     short loc_258EE
@@ -33048,7 +33052,7 @@ loc_258EE:                              ; CODE XREF: sub_254BA+3FF↑j
 ; ---------------------------------------------------------------------------
 
 loc_258FB:                              ; CODE XREF: sub_254BA+43C↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_25905
                 jmp     loc_25AD9
 ; ---------------------------------------------------------------------------
@@ -33276,9 +33280,9 @@ loc_25AD9:                              ; CODE XREF: sub_254BA+43E↑j
 loc_25AF0:                              ; CODE XREF: sub_254BA+621↑j
                 cmp     byte_34054, 0
                 jz      short loc_25B2B
-                cmp     byte_34C10, 56h ; 'V'
+                cmp     Engine_mode, 56h ; 'V'
                 jz      short loc_25B05
-                cmp     byte_34C10, 4
+                cmp     Engine_mode, 4
                 jnz     short loc_25B0B
 
 loc_25B05:                              ; CODE XREF: sub_254BA+642↑j
@@ -33334,7 +33338,7 @@ loc_25B43:                              ; CODE XREF: sub_254BA+67D↑j
 
 loc_25B64:                              ; CODE XREF: sub_254BA+698↑j
                                         ; sub_254BA+6A0↑j
-                cmp     byte_34C10, 0Ah
+                cmp     Engine_mode, 0Ah
                 jz      short loc_25B6E
                 jmp     loc_25C06
 ; ---------------------------------------------------------------------------
@@ -33570,7 +33574,7 @@ loc_25D22:                              ; CODE XREF: sub_25C52+8F↑j
                 jnz     short loc_25CD8
 
 loc_25D2E:                              ; CODE XREF: sub_25C52+82↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_25D88
                 cmp     byte_34B93, 0
                 jz      short loc_25D4A
@@ -33813,7 +33817,7 @@ loc_25E6D:                              ; CODE XREF: sub_25E66+33↓j
                 add     sp, 8
                 cmp     word_34C12, 224h
                 jz      short loc_25E8E
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jnz     short loc_25E98
 
 loc_25E8E:                              ; CODE XREF: sub_25E66+1F↑j
@@ -33859,7 +33863,7 @@ loc_25EA7:                              ; CODE XREF: sub_25E9E+4E↓j
                 dec     si
                 cmp     word_34C12, 224h
                 jz      short loc_25ECC
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jnz     short loc_25ED6
 
 loc_25ECC:                              ; CODE XREF: sub_25E9E+25↑j
@@ -33988,8 +33992,8 @@ sub_25F71       proc far                ; CODE XREF: rosterMenu+675↓P
                 push    ax
                 call    sub_226C6
                 add     sp, 8
-                push    word ptr dword_37398+2
-                push    word ptr dword_37398
+                push    word ptr Roster_buffer+2
+                push    word ptr Roster_buffer
                 push    ds
                 mov     ax, 85BFh
                 push    ax
@@ -34039,7 +34043,7 @@ loc_25FD5:                              ; CODE XREF: sub_25FC3+B↑j
                 call    _close
                 pop     cx
                 push    path
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 or      ax, ax
                 jz      short loc_26003
@@ -34053,7 +34057,7 @@ loc_26003:                              ; CODE XREF: sub_25FC3+39↑j
                 push    ds
                 mov     ax, 85D1h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     [bp+var_2], dx
@@ -34072,7 +34076,7 @@ loc_26003:                              ; CODE XREF: sub_25FC3+39↑j
                 push    ds
                 mov     ax, 85DAh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     [bp+var_2], dx
@@ -34091,7 +34095,7 @@ loc_26003:                              ; CODE XREF: sub_25FC3+39↑j
                 push    ds
                 mov     ax, 85E3h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     [bp+var_2], dx
@@ -34114,7 +34118,7 @@ loc_26092:                              ; CODE XREF: sub_25FC3+CA↑j
                 push    ds
                 mov     ax, 85ECh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     [bp+var_2], dx
@@ -34134,7 +34138,7 @@ loc_260C7:                              ; CODE XREF: sub_25FC3+FF↑j
                 push    ax
                 call    sub_26685
                 pop     cx
-                call    sub_25024
+                call    ccClose
                 or      ax, ax
                 jz      short loc_260DD
                 jmp     loc_25FFE
@@ -34473,9 +34477,10 @@ sub_2621D       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; creates the file if missing, opens it as a cc (ccOpen + Resources_openFile + ccClose) (by use)
 ; Attributes: bp-based frame
 
-sub_2634D       proc far
+openCcFile      proc far
 
 var_4           = word ptr -4
 handle          = word ptr -2
@@ -34500,13 +34505,13 @@ arg_6           = word ptr  0Ch
                 call    _close
                 pop     cx
                 push    si
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 or      ax, ax
                 jz      short loc_2639D
 
-loc_2637F:                              ; CODE XREF: sub_2634D+63↓j
-                                        ; sub_2634D+6C↓j
+loc_2637F:                              ; CODE XREF: openCcFile+63↓j
+                                        ; openCcFile+6C↓j
                 mov     ax, 0FFFFh
                 push    ax              ; newmode
                 call    _textmode
@@ -34520,7 +34525,7 @@ loc_2637F:                              ; CODE XREF: sub_2634D+63↓j
 ; ---------------------------------------------------------------------------
                 pop     cx
 
-loc_2639D:                              ; CODE XREF: sub_2634D+30↑j
+loc_2639D:                              ; CODE XREF: openCcFile+30↑j
                 push    [bp+arg_6]
                 push    [bp+arg_4]
                 push    word ptr [bp+path+2]
@@ -34528,7 +34533,7 @@ loc_2639D:                              ; CODE XREF: sub_2634D+30↑j
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_2637F
-                call    sub_25024
+                call    ccClose
                 or      ax, ax
                 jnz     short loc_2637F
                 mov     ax, [bp+var_4]
@@ -34536,14 +34541,15 @@ loc_2639D:                              ; CODE XREF: sub_2634D+30↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2634D       endp
+openCcFile      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; sprintf + load for the 4 face slots (by use, unverified)
 ; Attributes: bp-based frame
 
-sub_263C3       proc far                ; CODE XREF: sub_432B9+7↓P
+loadPartyFaces  proc far                ; CODE XREF: sub_432B9+7↓P
                                         ; sub_435A0+3F↓P ...
                 push    bp
                 mov     bp, sp
@@ -34552,7 +34558,7 @@ sub_263C3       proc far                ; CODE XREF: sub_432B9+7↓P
                 jmp     short loc_26403
 ; ---------------------------------------------------------------------------
 
-loc_263CB:                              ; CODE XREF: sub_263C3+43↓j
+loc_263CB:                              ; CODE XREF: loadPartyFaces+43↓j
                 cmp     byte ptr [si+274Eh], 0FFh
                 jz      short loc_26402
                 mov     al, [si+274Eh]
@@ -34576,23 +34582,24 @@ loc_263CB:                              ; CODE XREF: sub_263C3+43↓j
                 call    sub_226C6
                 add     sp, 8
 
-loc_26402:                              ; CODE XREF: sub_263C3+D↑j
+loc_26402:                              ; CODE XREF: loadPartyFaces+D↑j
                 inc     si
 
-loc_26403:                              ; CODE XREF: sub_263C3+6↑j
+loc_26403:                              ; CODE XREF: loadPartyFaces+6↑j
                 cmp     si, 4
                 jl      short loc_263CB
                 pop     si
                 pop     bp
                 retf
-sub_263C3       endp
+loadPartyFaces  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; open, read n bytes, close
 ; Attributes: bp-based frame
 
-sub_2640B       proc far
+readFileBytes   proc far
 
 var_2           = word ptr -2
 path            = dword ptr  6
@@ -34625,14 +34632,15 @@ arg_4           = word ptr  0Ah
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2640B       endp
+readFileBytes   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; copies MAZE.NAM -> Save_name, MAZE.CHR -> Roster_buffer, MAZE.PTY -> Party_state from the open .cc
 ; Attributes: bp-based frame
 
-sub_26447       proc far                ; CODE XREF: rosterMenu:loc_40C3F↓P
+loadSavedGame   proc far                ; CODE XREF: rosterMenu:loc_40C3F↓P
                                         ; sub_41CED+D7↓P ...
 
 src             = dword ptr -4
@@ -34643,7 +34651,7 @@ src             = dword ptr -4
                 push    ds
                 mov     ax, 85B6h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+src+2], dx
@@ -34664,7 +34672,7 @@ src             = dword ptr -4
                 push    ds
                 mov     ax, 85BFh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+src+2], dx
@@ -34673,8 +34681,8 @@ src             = dword ptr -4
                 push    ax              ; n
                 push    word ptr [bp+src+2]
                 push    word ptr [bp+src] ; src
-                push    word ptr dword_37398+2
-                push    word ptr dword_37398 ; dest
+                push    word ptr Roster_buffer+2
+                push    word ptr Roster_buffer ; dest
                 call    _memcpy_0
                 add     sp, 0Ah
                 lea     ax, [bp+src]
@@ -34684,7 +34692,7 @@ src             = dword ptr -4
                 push    ds
                 mov     ax, 85C8h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+src+2], dx
@@ -34705,15 +34713,16 @@ src             = dword ptr -4
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26447       endp
+loadSavedGame   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; opens a save .cc, reads TOC, MAZE.NAM (31 bytes), MAZE.PTY (918 bytes) and MAZE.CHR; returns highest level among the party's roster slots
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_264ED(int, int, int)
-sub_264ED       proc far                ; CODE XREF: sub_44DBE+BD↓P
+; int __cdecl __far readSaveHeader(int, int, int)
+readSaveHeader  proc far                ; CODE XREF: sub_44DBE+BD↓P
 
 var_3A0         = byte ptr -3A0h
 var_39E         = byte ptr -39Eh
@@ -34764,20 +34773,20 @@ arg_4           = word ptr  0Ah
                 push    ax
                 call    sub_22524
                 pop     cx
-                mov     word ptr dword_37398+2, dx
-                mov     word ptr dword_37398, ax
+                mov     word ptr Roster_buffer+2, dx
+                mov     word ptr Roster_buffer, ax
                 mov     ax, [bp+arg_0]
                 mov     dx, 0Dh
                 imul    dx
                 add     ax, 0E836h
                 push    ax
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 or      ax, ax
                 jz      short loc_26587
 
-loc_26569:                              ; CODE XREF: sub_264ED+A9↓j
-                                        ; sub_264ED+BD↓j ...
+loc_26569:                              ; CODE XREF: readSaveHeader+A9↓j
+                                        ; readSaveHeader+BD↓j ...
                 mov     ax, 0FFFFh
                 push    ax              ; newmode
                 call    _textmode
@@ -34792,11 +34801,11 @@ loc_26569:                              ; CODE XREF: sub_264ED+A9↓j
 ; ---------------------------------------------------------------------------
                 pop     cx
 
-loc_26587:                              ; CODE XREF: sub_264ED+7A↑j
+loc_26587:                              ; CODE XREF: readSaveHeader+7A↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+buf]
-                call    sub_25032
+                call    ccSeek
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -34805,7 +34814,7 @@ loc_26587:                              ; CODE XREF: sub_264ED+7A↑j
                 push    ax
                 push    ds
                 push    [bp+arg_2]
-                call    sub_2504B
+                call    ccRead
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_26569
@@ -34814,16 +34823,16 @@ loc_26587:                              ; CODE XREF: sub_264ED+7A↑j
                 xor     dx, dx
                 push    dx
                 push    ax
-                call    sub_25032
+                call    ccSeek
                 pop     cx
                 pop     cx
                 or      ax, ax
                 jnz     short loc_26569
                 mov     ax, 2382h
                 push    ax
-                push    word ptr dword_37398+2
-                push    word ptr dword_37398
-                call    sub_2504B
+                push    word ptr Roster_buffer+2
+                push    word ptr Roster_buffer
+                call    ccRead
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_26569
@@ -34832,21 +34841,21 @@ loc_26587:                              ; CODE XREF: sub_264ED+7A↑j
                 push    ss
                 lea     ax, [bp+var_3A0]
                 push    ax
-                call    sub_2504B
+                call    ccRead
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_265F2
                 jmp     loc_26569
 ; ---------------------------------------------------------------------------
 
-loc_265F2:                              ; CODE XREF: sub_264ED+100↑j
-                call    sub_25024
+loc_265F2:                              ; CODE XREF: readSaveHeader+100↑j
+                call    ccClose
                 or      ax, ax
                 jz      short loc_265FE
                 jmp     loc_26569
 ; ---------------------------------------------------------------------------
 
-loc_265FE:                              ; CODE XREF: sub_264ED+10C↑j
+loc_265FE:                              ; CODE XREF: readSaveHeader+10C↑j
                 mov     al, 0
                 mov     [si], al
                 mov     ah, 0
@@ -34854,13 +34863,13 @@ loc_265FE:                              ; CODE XREF: sub_264ED+10C↑j
                 jmp     short loc_2664B
 ; ---------------------------------------------------------------------------
 
-loc_26608:                              ; CODE XREF: sub_264ED+166↓j
+loc_26608:                              ; CODE XREF: readSaveHeader+166↓j
                 mov     al, [bp+di+var_39E]
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398+2
-                mov     bx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer+2
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     word ptr [bp+var_A+2], dx
                 mov     word ptr [bp+var_A], bx
@@ -34880,11 +34889,11 @@ loc_26608:                              ; CODE XREF: sub_264ED+166↓j
                 mov     al, byte ptr [bp+var_4]
                 mov     [si], al
 
-loc_2664A:                              ; CODE XREF: sub_264ED+14D↑j
-                                        ; sub_264ED+156↑j
+loc_2664A:                              ; CODE XREF: readSaveHeader+14D↑j
+                                        ; readSaveHeader+156↑j
                 inc     di
 
-loc_2664B:                              ; CODE XREF: sub_264ED+119↑j
+loc_2664B:                              ; CODE XREF: readSaveHeader+119↑j
                 mov     al, [bp+var_3A0]
                 mov     ah, 0
                 cmp     ax, di
@@ -34898,7 +34907,7 @@ loc_2664B:                              ; CODE XREF: sub_264ED+119↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_264ED       endp
+readSaveHeader  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35032,191 +35041,192 @@ getFiles        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; loads the 22 mon*.dat column files of mm3.cc into the Mon_* far pointers
 ; Attributes: bp-based frame
 
-sub_26716       proc far                ; CODE XREF: sub_15006+9↑P
+loadMonsterData proc far                ; CODE XREF: sub_15006+9↑P
                                         ; sub_45431+15↓P
                 push    bp
                 mov     bp, sp
                 push    ds
                 mov     ax, 8622h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37772+2, dx
-                mov     word ptr dword_37772, ax
+                mov     word ptr Mon_hp+2, dx
+                mov     word ptr Mon_hp, ax
                 push    ds
                 mov     ax, 862Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3776E+2, dx
-                mov     word ptr dword_3776E, ax
+                mov     word ptr Mon_ac+2, dx
+                mov     word ptr Mon_ac, ax
                 push    ds
                 mov     ax, 8636h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3771E+2, dx
-                mov     word ptr dword_3771E, ax
+                mov     word ptr Mon_spd+2, dx
+                mov     word ptr Mon_spd, ax
                 push    ds
                 mov     ax, 8641h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3775A+2, dx
-                mov     word ptr dword_3775A, ax
+                mov     word ptr Mon_dmgn+2, dx
+                mov     word ptr Mon_dmgn, ax
                 push    ds
                 mov     ax, 864Dh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37766+2, dx
-                mov     word ptr dword_37766, ax
+                mov     word ptr Mon_dmgs+2, dx
+                mov     word ptr Mon_dmgs, ax
                 push    ds
                 mov     ax, 8659h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37746+2, dx
-                mov     word ptr dword_37746, ax
+                mov     word ptr Mon_numa+2, dx
+                mov     word ptr Mon_numa, ax
                 push    ds
                 mov     ax, 8665h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3775E+2, dx
-                mov     word ptr dword_3775E, ax
+                mov     word ptr Mon_exp+2, dx
+                mov     word ptr Mon_exp, ax
                 push    ds
                 mov     ax, 8670h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3774E+2, dx
-                mov     word ptr dword_3774E, ax
+                mov     word ptr Mon_dmgt+2, dx
+                mov     word ptr Mon_dmgt, ax
                 push    ds
                 mov     ax, 867Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37732+2, dx
-                mov     word ptr dword_37732, ax
+                mov     word ptr Mon_attp+2, dx
+                mov     word ptr Mon_attp, ax
                 push    ds
                 mov     ax, 8688h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3772E+2, dx
-                mov     word ptr dword_3772E, ax
+                mov     word ptr Mon_spec+2, dx
+                mov     word ptr Mon_spec, ax
                 push    ds
                 mov     ax, 8694h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3772A+2, dx
-                mov     word ptr dword_3772A, ax
+                mov     word ptr Mon_rang+2, dx
+                mov     word ptr Mon_rang, ax
                 push    ds
                 mov     ax, 86A0h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37762+2, dx
-                mov     word ptr dword_37762, ax
+                mov     word ptr Mon_hitb+2, dx
+                mov     word ptr Mon_hitb, ax
                 push    ds
                 mov     ax, 86ACh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37756+2, dx
-                mov     word ptr dword_37756, ax
+                mov     word ptr Mon_trea+2, dx
+                mov     word ptr Mon_trea, ax
                 push    ds
                 mov     ax, 86B8h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37722+2, dx
-                mov     word ptr dword_37722, ax
+                mov     word ptr Mon_gold+2, dx
+                mov     word ptr Mon_gold, ax
                 push    ds
                 mov     ax, 86C4h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37726+2, dx
-                mov     word ptr dword_37726, ax
+                mov     word ptr Mon_gems+2, dx
+                mov     word ptr Mon_gems, ax
                 push    ds
                 mov     ax, 86D0h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3774A+2, dx
-                mov     word ptr dword_3774A, ax
+                mov     word ptr Mon_magi+2, dx
+                mov     word ptr Mon_magi, ax
                 push    ds
                 mov     ax, 86DCh
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37736+2, dx
-                mov     word ptr dword_37736, ax
+                mov     word ptr Mon_fire+2, dx
+                mov     word ptr Mon_fire, ax
                 push    ds
                 mov     ax, 86E8h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3773A+2, dx
-                mov     word ptr dword_3773A, ax
+                mov     word ptr Mon_elec+2, dx
+                mov     word ptr Mon_elec, ax
                 push    ds
                 mov     ax, 86F4h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3773E+2, dx
-                mov     word ptr dword_3773E, ax
+                mov     word ptr Mon_cold+2, dx
+                mov     word ptr Mon_cold, ax
                 push    ds
                 mov     ax, 8700h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37742+2, dx
-                mov     word ptr dword_37742, ax
+                mov     word ptr Mon_acid+2, dx
+                mov     word ptr Mon_acid, ax
                 push    ds
                 mov     ax, 870Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_37752+2, dx
-                mov     word ptr dword_37752, ax
+                mov     word ptr Mon_ener+2, dx
+                mov     word ptr Mon_ener, ax
                 push    ds
                 mov     ax, 8718h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
-                mov     word ptr dword_3776A+2, dx
-                mov     word ptr dword_3776A, ax
+                mov     word ptr Mon_phys+2, dx
+                mov     word ptr Mon_phys, ax
                 pop     bp
                 retf
-sub_26716       endp
+loadMonsterData endp
 
 seg008          ends
 
@@ -36143,17 +36153,8 @@ sub_27F4F       proc far                ; CODE XREF: sub_254BA+6A2↑P
                 jmp     sub_378C0
 sub_27F4F       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_27F54       proc far                ; CODE XREF: sub_1531F+76↑P
-                                        ; ovl07:20B0↓P
-                jmp     sub_385BD
-sub_27F54       endp
-
-; [00000005 BYTES: COLLAPSED FUNCTION j_getDiskFree. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_resetBlacksmithWares. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getDiskFree. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36173,7 +36174,7 @@ sub_27F63       proc far                ; CODE XREF: sub_4B7B5+C↓P
                 jmp     sub_37BA7
 sub_27F63       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_monstersAttack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_monstersAttack. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36212,7 +36213,7 @@ sub_27F7C       proc far                ; CODE XREF: sub_43E0C+288↓P
                 jmp     sub_3886C
 sub_27F7C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_getEquipSlotName. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getEquipSlotName. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36233,7 +36234,7 @@ sub_27F8B       proc far                ; CODE XREF: sub_254BA+22↑P
                 jmp     sub_387C6
 sub_27F8B       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_equipItem. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_equipItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36252,7 +36253,7 @@ sub_27F9A       proc far                ; CODE XREF: sub_49B8B+A6↓P
                 jmp     sub_37B7D
 sub_27F9A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_openMm3Cc. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_openMm3Cc. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36273,9 +36274,9 @@ sub_27FA9       proc far
                 jmp     sub_383CB
 sub_27FA9       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_stopAttack. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_introSequence. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_protectionHandler. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_stopAttack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_introSequence. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_protectionHandler. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36454,7 +36455,7 @@ sub_28052       proc far
                 jmp     sub_3BC65
 sub_28052       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_subPartyTime. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_subPartyTime. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -36469,11 +36470,11 @@ stub04          segment para public 'CODE' use16
                 dw 11                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-; [00000005 BYTES: COLLAPSED FUNCTION j_GiveBankInterest. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_death. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_Spells_moonRay. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_showJoke. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_arenaEvent. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_GiveBankInterest. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_death. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Spells_moonRay. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_showJoke. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_arenaEvent. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36501,15 +36502,7 @@ sub_280A3       proc far                ; CODE XREF: runMazeEvent+17D1↑P
                 jmp     sub_3E729
 sub_280A3       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_280A8       proc far                ; CODE XREF: sub_1531F+A5↑P
-                jmp     sub_3DD20
-sub_280A8       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_resetTemps. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36593,7 +36586,7 @@ sub_280F4       proc far                ; CODE XREF: sub_3C282+1DF↓P
                 jmp     sub_40506
 sub_280F4       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_sortParty. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_sortParty. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36632,7 +36625,7 @@ sub_2810D       proc far                ; CODE XREF: sub_3C282+1D6↓P
                 jmp     sub_404D5
 sub_2810D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_copyPartyToRoster. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_copyPartyToRoster. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36648,13 +36641,13 @@ sub_28117       endp
 
 ; Attributes: thunk
 
-sub_2811C       proc far                ; CODE XREF: sub_3DD20+17F↓P
+sub_2811C       proc far                ; CODE XREF: resetTemps+17F↓P
                                         ; dismissCharacter+E1↓P
                 jmp     sub_40465
 sub_2811C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_Awards_show. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_rosterMenu. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Awards_show. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_rosterMenu. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36684,7 +36677,7 @@ sub_28135       proc far                ; CODE XREF: sub_416F1+7↓P
                 jmp     sub_403A6
 sub_28135       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_setSoundAddress. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_setSoundAddress. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36773,13 +36766,13 @@ sub_2818A       proc far                ; CODE XREF: death+85B↓P
                 jmp     sub_424AB
 sub_2818A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: thunk
 
-sub_28194       proc far                ; CODE XREF: sub_16973+443↑P
+sub_28194       proc far                ; CODE XREF: changeTime+443↑P
                 jmp     sub_43034
 sub_28194       endp
 
@@ -36842,7 +36835,7 @@ sub_281B2       proc far                ; CODE XREF: runMazeEvent+55D↑P
                 jmp     sub_434D6
 sub_281B2       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_controlPanel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_controlPanel. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36853,8 +36846,8 @@ sub_281BC       proc far
                 jmp     sub_4231C
 sub_281BC       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_nextExperienceLevel. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_rest. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_nextExperienceLevel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_rest. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36920,7 +36913,7 @@ sub_281E4       endp
 
 ; Attributes: thunk
 
-sub_281E9       proc far                ; CODE XREF: sub_1531F+AE↑P
+sub_281E9       proc far                ; CODE XREF: addTime+AE↑P
                                         ; townTraining+267↓P
                 jmp     sub_418F3
 sub_281E9       endp
@@ -36944,7 +36937,7 @@ sub_281F3       proc far                ; CODE XREF: death:loc_3F22A↓P
                 jmp     sub_416F1
 sub_281F3       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_experienceToNextLevel. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_experienceToNextLevel. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37007,8 +37000,8 @@ sub_28235       proc far
                 jmp     sub_44921
 sub_28235       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_giveCharDamage. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_Map_load. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_giveCharDamage. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Map_load. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37093,13 +37086,13 @@ sub_28267       endp
 ; Attributes: thunk
 
 ; int __cdecl __far sub_2826C(char, __int32, int)
-sub_2826C       proc far                ; CODE XREF: sub_385BD+121↓P
+sub_2826C       proc far                ; CODE XREF: resetBlacksmithWares+121↓P
                                         ; sub_3C282+979↓P ...
                 jmp     sub_4432C
 sub_2826C       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j__strcoll. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_dismissCharacter. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j__strcoll. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_dismissCharacter. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37162,7 +37155,7 @@ stub08          segment para public 'CODE' use16
                 dw 15                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-; [00000005 BYTES: COLLAPSED FUNCTION j_createCharacter. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_createCharacter. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37287,7 +37280,7 @@ sub_28301       proc far
                 jmp     sub_46847
 sub_28301       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_checkClasses. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_checkClasses. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -37312,7 +37305,7 @@ sub_28330       proc far
                 jmp     sub_483FB
 sub_28330       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_trainingNeedsExperience. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_trainingNeedsExperience. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37322,7 +37315,7 @@ sub_2833A       proc far
                 jmp     sub_496FA
 sub_2833A       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_townInn. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townInn. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37342,7 +37335,7 @@ sub_28349       proc far
                 jmp     sub_48CF7
 sub_28349       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_townBank. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townBank. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37353,7 +37346,7 @@ sub_28353       proc far                ; CODE XREF: sub_3CE7A+BC↓P
                 jmp     sub_47A33
 sub_28353       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_townGuild. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townGuild. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37382,9 +37375,9 @@ sub_28367       proc far                ; CODE XREF: runMazeEvent:loc_1A608↑P
                 jmp     sub_48D4B
 sub_28367       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_townTavern. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_townTraining. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_townSmithy. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townTavern. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townTraining. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_townSmithy. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37394,7 +37387,7 @@ sub_2837B       proc far
                 jmp     sub_47ECE
 sub_2837B       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_loadHireFaces. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_loadHireFaces. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37430,7 +37423,7 @@ sub_283B0       proc far                ; CODE XREF: sub_1B669+55↑P
                 jmp     sub_4B7B5
 sub_283B0       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_setSpeedTable. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_setSpeedTable. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37440,7 +37433,7 @@ sub_283BA       proc far
                 jmp     sub_49B60
 sub_283BA       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_getWeaponDamage. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getWeaponDamage. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37450,9 +37443,9 @@ sub_283C4       proc far
                 jmp     sub_4B432
 sub_283C4       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_block. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_getMonsterDescriptions. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_attack. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_block. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getMonsterDescriptions. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_attack. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37471,8 +37464,8 @@ sub_283DD       proc far
                 jmp     sub_4A779
 sub_283DD       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_doMonsterTurn. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_run. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_doMonsterTurn. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_run. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37482,10 +37475,10 @@ sub_283EC       proc far
                 jmp     sub_4B194
 sub_283EC       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_nextChar. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_charsCantAct. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_allHaveGone. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_sortCombatParty. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_nextChar. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_charsCantAct. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_allHaveGone. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_sortCombatParty. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37495,7 +37488,7 @@ sub_28405       proc far
                 jmp     sub_49FA3
 sub_28405       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_quickFight. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_quickFight. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37505,14 +37498,14 @@ sub_2840F       proc far
                 jmp     sub_4A02A
 sub_2840F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_monsterSavingThrow. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_monsterSavingThrow. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: thunk
 
-sub_28419       proc far                ; CODE XREF: sub_16973+147↑P
-                                        ; sub_16973+1A4↑P ...
+sub_28419       proc far                ; CODE XREF: changeTime+147↑P
+                                        ; changeTime+1A4↑P ...
                 jmp     sub_4A62C
 sub_28419       endp
 
@@ -37581,7 +37574,7 @@ sub_2845F       proc far                ; CODE XREF: sub_4F74F:loc_4F961↓P
                 jmp     sub_4C326
 sub_2845F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_Spells_subSpellCost. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Spells_subSpellCost. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37896,7 +37889,7 @@ sub_28504       proc far                ; CODE XREF: sub_4F74F:loc_4FA77↓P
                 jmp     sub_4CA6E
 sub_28504       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_Spells_divineIntervention. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Spells_divineIntervention. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38007,7 +38000,7 @@ sub_28540       proc far                ; CODE XREF: sub_4F74F+54F↓P
                 jmp     sub_4C106
 sub_28540       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_Screen_saveBackground. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_Screen_saveBackground. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38087,7 +38080,7 @@ sub_2856D       proc far                ; CODE XREF: sub_4F74F:loc_4FAFA↓P
                 jmp     sub_4CED6
 sub_2856D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_spellLloydsBeacon. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_spellLloydsBeacon. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38431,7 +38424,7 @@ sub_2863F       proc far                ; CODE XREF: death+837↓P
                 jmp     sub_4EFB6
 sub_2863F       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_itemsDialog. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_itemsDialog. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38482,8 +38475,8 @@ sub_2865D       proc far                ; CODE XREF: sub_19174+13↑P
                 jmp     sub_4F24E
 sub_2865D       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_specialsDialog. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_getThievery. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_specialsDialog. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getThievery. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -38557,7 +38550,7 @@ sub_286A9       proc far
                 jmp     sub_51DAB
 sub_286A9       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_statColor. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_statColor. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38578,8 +38571,8 @@ sub_286B8       proc far                ; CODE XREF: death+896↓P
                 jmp     sub_502D2
 sub_286B8       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_getMaxSP. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_getMaxHP. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getMaxSP. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getMaxHP. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38591,7 +38584,7 @@ sub_286C7       proc far                ; CODE XREF: itemsDialog+376↓P
                 jmp     sub_52030
 sub_286C7       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_getArmorClass. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getArmorClass. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38619,8 +38612,8 @@ sub_286DB       proc far
                 jmp     sub_5122D
 sub_286DB       endp
 
-; [00000005 BYTES: COLLAPSED FUNCTION j_identifyOrFix. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_getNumSkills. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_identifyOrFix. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_j_j_j_getNumSkills. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure data
@@ -38722,8 +38715,9 @@ byte_2879C      db 0                    ; DATA XREF: sub_1B358:loc_1B657↑r
                                         ; sub_1B669:loc_1B6AC↑r ...
 byte_2879D      db 0                    ; DATA XREF: runMazeEvent:loc_1AF66↑w
                                         ; sub_3D32E+154↓r ...
-byte_2879E      db 0                    ; DATA XREF: sub_1531F+8A↑w
-                                        ; sub_1531F:loc_153AE↑r ...
+Party_newDay    db 0                    ; DATA XREF: addTime+8A↑w
+                                        ; addTime:loc_153AE↑r ...
+                                        ; byte
 byte_2879F      db 0                    ; DATA XREF: sub_2045A+12B4↑r
                                         ; sub_2045A+16D1↑r ...
 byte_287A0      db 0                    ; DATA XREF: itemsDialog:def_4E051↓r
@@ -42527,7 +42521,7 @@ off_2DC7A       dw offset aMm3Cfg       ; DATA XREF: openMm3Cc+28↓r
 off_2DC7C       dw offset aMm3Cc        ; DATA XREF: openMm3Cc+63↓r
                                         ; "MM3.CC"
 ; char *str
-str             dw offset aErrorInAllocat ; DATA XREF: sub_2634D+3C↑r
+str             dw offset aErrorInAllocat ; DATA XREF: openCcFile+3C↑r
                                         ; "Error in Allocating Memory Buffers"
                 db 0A8h, 68h, 0ACh, 68h, 0B4h, 68h, 0BBh, 68h, 0BFh, 68h
                 db 0C4h, 68h, 0C9h, 68h, 0CEh, 68h, 0D2h, 68h, 0D9h, 68h
@@ -44215,7 +44209,7 @@ byte_32E64      db 0                    ; DATA XREF: sub_161AD+23↑w
 ; int word_32E66
 word_32E66      dw 0                    ; DATA XREF: sub_254BA:loc_25671↑r
                                         ; sub_254BA+1BE↑r ...
-byte_32E68      db 0                    ; DATA XREF: sub_16973:loc_16DA6↑r
+byte_32E68      db 0                    ; DATA XREF: changeTime:loc_16DA6↑r
                                         ; sub_43034:loc_43064↓w ...
                 align 2
 word_32E6A      dw 0                    ; DATA XREF: sub_1B6D1+1A1↑r
@@ -44571,19 +44565,19 @@ byte_340B8      db 0                    ; DATA XREF: sub_1BEE9+DA↑w
                 db 0Ch dup(0)
 byte_340C5      db 0                    ; DATA XREF: sub_1B6D1+FA↑r
                                         ; sub_1BEE9+24E↑w ...
-                db 4Eh dup(0)
+Party_chars     db 4Eh dup(0)           ; active party records, stride 12Fh (303 bytes); +120h = Dead condition
 byte_34114      db 0                    ; DATA XREF: arenaEvent+110↓r
                                         ; arenaEvent+125↓r ...
                 db 9B9h dup(0)
-byte_34ACE      db 0                    ; DATA XREF: sub_385BD+1DE↓r
+byte_34ACE      db 0                    ; DATA XREF: resetBlacksmithWares+1DE↓r
                 db 12h dup(0)
-byte_34AE1      db 0                    ; DATA XREF: sub_385BD+1A6↓r
+byte_34AE1      db 0                    ; DATA XREF: resetBlacksmithWares+1A6↓r
                 db 12h dup(0)
-byte_34AF4      db 0                    ; DATA XREF: sub_385BD+16E↓r
+byte_34AF4      db 0                    ; DATA XREF: resetBlacksmithWares+16E↓r
                 db 12h dup(0)
-byte_34B07      db 0                    ; DATA XREF: sub_385BD+1C2↓r
+byte_34B07      db 0                    ; DATA XREF: resetBlacksmithWares+1C2↓r
                 db 25h dup(0)
-byte_34B2D      db 0                    ; DATA XREF: sub_385BD+18A↓r
+byte_34B2D      db 0                    ; DATA XREF: resetBlacksmithWares+18A↓r
                 db 3Fh dup(0)
 byte_34B6D      db 0                    ; DATA XREF: sub_1BEE9+43↑w
                                         ; sub_1C195:loc_1D801↑w ...
@@ -44700,8 +44694,9 @@ byte_34C05      db 0                    ; DATA XREF: sub_1BEE9+1CF↑w
                 db 8 dup(0)
 word_34C0E      dw 0                    ; DATA XREF: seg001:loc_14CFB↑w
                                         ; seg001:loc_14D03↑w ...
-byte_34C10      db 0                    ; DATA XREF: checkPartyDead+5↑r
-                                        ; sub_1531F+9E↑r ...
+Engine_mode     db 0                    ; DATA XREF: checkPartyDead+5↑r
+                                        ; addTime+9E↑r ...
+                                        ; byte; 9 skips the daily rest/reset handling (script in progress)
                 align 2
 word_34C12      dw 0                    ; DATA XREF: sub_1B198+7↑r
                                         ; sub_1B198+D↑w ...
@@ -44835,7 +44830,7 @@ word_36FB6      dw 0                    ; DATA XREF: sub_1B6D1+DD↑r
                                         ; rosterMenu+A7↓w
 word_36FB8      dw 0                    ; DATA XREF: sub_1B6D1+DA↑r
                                         ; rosterMenu+A3↓w
-                db 20h dup(0)
+Save_name       db 20h dup(0)           ; 31 bytes, MAZE.NAM ("Default Characters")
 byte_36FDA      db 0                    ; DATA XREF: checkPartyDead:loc_152C8↑r
                                         ; sub_153EA:loc_15429↑r ...
 byte_36FDB      db 0                    ; DATA XREF: rosterMenu+727↓w
@@ -44864,11 +44859,600 @@ byte_36FEE      db 0                    ; DATA XREF: sub_15736:loc_1579D↑r
                                         ; sub_15736:loc_157BC↑r ...
 byte_36FEF      db 0                    ; DATA XREF: sub_3C282:loc_3C6E5↓w
                                         ; sub_3C282:loc_3CCE5↓w ...
-                db 335h dup(0)
-byte_37325      db 0                    ; DATA XREF: sub_1531F+A↑r
-                                        ; sub_1531F+1E↑r ...
-word_37326      dw 0                    ; DATA XREF: sub_1531F+2F↑w
+                db 0EAh dup(0)
+Party_state     db    0                 ; 918-byte party block (MAZE.PTY), loaded by sub_26447
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+Party_day       db 0                    ; DATA XREF: addTime+A↑r
+                                        ; addTime+1E↑r ...
+                                        ; byte, 0-99
+Party_year      dw 0                    ; DATA XREF: addTime+2F↑w
                                         ; getAge+7↑r ...
+                                        ; word
 ; char *word_37328
 word_37328      dw 0                    ; DATA XREF: sub_1C13C+27↑r
                                         ; sub_1C13C+2E↑w ...
@@ -44880,29 +45464,35 @@ word_3732E      dw 0                    ; DATA XREF: sub_1B6D1+209↑r
                                         ; sub_3C282:loc_3C66D↓r ...
 word_37330      dw 0                    ; DATA XREF: sub_1B6D1+22E↑r
                                         ; sub_3C282:loc_3C3B8↓r ...
-word_37332      dw 0                    ; DATA XREF: sub_1531F+12↑w
-                                        ; sub_1531F:loc_15337↑w ...
-word_37334      dw 0                    ; DATA XREF: sub_3C282:loc_3CBD6↓r
+Party_minutes   dw 0                    ; DATA XREF: addTime+12↑w
+                                        ; addTime:loc_15337↑w ...
+                                        ; word, minutes into the day
+Party_food      dw 0                    ; DATA XREF: sub_3C282:loc_3CBD6↓r
                                         ; sub_3C282+95A↓w ...
+                                        ; word (+35Ah in MAZE.PTY); rest decrements it
                 db 6 dup(0)
-; char *word_3733C
-word_3733C      dw 0                    ; DATA XREF: GiveBankInterest+E↓r
+; char *Party_bankGold
+Party_bankGold  dw 0                    ; DATA XREF: GiveBankInterest+E↓r
                                         ; GiveBankInterest+17↓w ...
+                                        ; dword (+362h); GiveBankInterest adds 1% (same as Xeen Party::giveBankInterest)
 word_3733E      dw 0                    ; DATA XREF: GiveBankInterest+A↓r
                                         ; GiveBankInterest+1B↓w ...
-; char *word_37340
-word_37340      dw 0                    ; DATA XREF: GiveBankInterest+2A↓r
+; char *Party_bankGems
+Party_bankGems  dw 0                    ; DATA XREF: GiveBankInterest+2A↓r
                                         ; GiveBankInterest+33↓w ...
+                                        ; dword (+366h)
 word_37342      dw 0                    ; DATA XREF: GiveBankInterest+26↓r
                                         ; GiveBankInterest+37↓w ...
-; char *word_37344
-word_37344      dw 0                    ; DATA XREF: sub_3C282+638↓w
+; char *Party_gold
+Party_gold      dw 0                    ; DATA XREF: sub_3C282+638↓w
                                         ; sub_3CFAD+11A↓w ...
+                                        ; dword (+36Ah) (by use: spent in shops, shared by awards)
 word_37346      dw 0                    ; DATA XREF: sub_3C282+63C↓w
                                         ; sub_3CFAD+117↓w ...
-; char *word_37348
-word_37348      dw 0                    ; DATA XREF: sub_3C282+649↓w
+; char *Party_gems
+Party_gems      dw 0                    ; DATA XREF: sub_3C282+649↓w
                                         ; sub_3CFAD+12A↓w ...
+                                        ; dword (+36Eh) (by use: spell gem costs)
 word_3734A      dw 0                    ; DATA XREF: sub_3C282+64D↓w
                                         ; sub_3CFAD+127↓w ...
 word_3734C      dw 0                    ; DATA XREF: getElapsedTime+20↑r
@@ -44975,9 +45565,10 @@ format          dw 0                    ; DATA XREF: runMazeEvent+DD4↑r
 byte_37396      db 0                    ; DATA XREF: sub_1BEE9+189↑w
                                         ; sub_1C195:loc_1CDCF↑w ...
                 align 2
-; void *dword_37398
-dword_37398     dd 0                    ; DATA XREF: seg001:03F6↑w
+; void *Roster_buffer
+Roster_buffer   dd 0                    ; DATA XREF: seg001:03F6↑w
                                         ; sub_25F71+24↑r ...
+                                        ; far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
 byte_3739C      db 0                    ; DATA XREF: sub_1BEE9+B4↑w
                                         ; sub_1C195:loc_1CFEE↑w ...
 byte_3739D      db 0                    ; DATA XREF: sub_1BEE9+AB↑w
@@ -44994,7 +45585,7 @@ byte_373A2      db 0                    ; DATA XREF: sub_1BEE9+C5↑w
                                         ; sub_1C195:loc_1D79A↑w ...
                 align 2
 ; int word_373A4
-word_373A4      dw 0                    ; DATA XREF: sub_1531F+B4↑r
+word_373A4      dw 0                    ; DATA XREF: addTime+B4↑r
                                         ; runMazeEvent+CC↑w ...
                 db 8 dup(0)
 dword_373AE     dd 0                    ; DATA XREF: sub_37BF1+18↓r
@@ -45056,8 +45647,9 @@ word_373EA      dw 0                    ; DATA XREF: sub_170F7+77↑r
 word_373EC      dw 0                    ; DATA XREF: sub_170F7+7A↑r
                                         ; rosterMenu+219↓r
                 db 74h dup(0)
-byte_37462      db 0                    ; DATA XREF: sub_15235:loc_15265↑r
+Party_size      db 0                    ; DATA XREF: sub_15235:loc_15265↑r
                                         ; sub_161AD:loc_1692B↑r ...
+                                        ; byte, number of active characters
 byte_37463      db 0                    ; DATA XREF: sub_1BEE9+17D↑w
                                         ; sub_1C195:loc_1D4F9↑w ...
                 db 168h dup(0)
@@ -45206,50 +45798,72 @@ byte_3771B      db 0                    ; DATA XREF: sub_49B8B+40↓r
 byte_3771C      db 0                    ; DATA XREF: run+4A↓w
                                         ; sub_4B7B5+5E↓w ...
                 align 2
-dword_3771E     dd 0                    ; DATA XREF: sub_26716+39↑w
+Mon_spd         dd 0                    ; DATA XREF: loadMonsterData+39↑w
                                         ; setSpeedTable+B8↓r ...
-dword_37722     dd 0                    ; DATA XREF: sub_26716+10A↑w
+                                        ; far pointer to the monspd.dat column (90 entries), loaded by loadMonsterData
+Mon_gold        dd 0                    ; DATA XREF: loadMonsterData+10A↑w
                                         ; sub_49B8B+23A↓r ...
-dword_37726     dd 0                    ; DATA XREF: sub_26716+11D↑w
+                                        ; far pointer to the mongold.dat column (90 entries), loaded by loadMonsterData
+Mon_gems        dd 0                    ; DATA XREF: loadMonsterData+11D↑w
                                         ; sub_49B8B+25E↓r ...
-dword_3772A     dd 0                    ; DATA XREF: sub_1B358+17D↑r
-                                        ; sub_26716+D1↑w ...
-dword_3772E     dd 0                    ; DATA XREF: sub_26716+BE↑w
+                                        ; far pointer to the mongems.dat column (90 entries), loaded by loadMonsterData
+Mon_rang        dd 0                    ; DATA XREF: sub_1B358+17D↑r
+                                        ; loadMonsterData+D1↑w ...
+                                        ; far pointer to the monrang.dat column (90 entries), loaded by loadMonsterData
+Mon_spec        dd 0                    ; DATA XREF: loadMonsterData+BE↑w
                                         ; sub_4A779:loc_4A8B2↓r ...
-dword_37732     dd 0                    ; DATA XREF: sub_26716+AB↑w
+                                        ; far pointer to the monspec.dat column (90 entries), loaded by loadMonsterData
+Mon_attp        dd 0                    ; DATA XREF: loadMonsterData+AB↑w
                                         ; doMonsterTurn+77↓r ...
-dword_37736     dd 0                    ; DATA XREF: sub_26716+143↑w
+                                        ; far pointer to the monattp.dat column (90 entries), loaded by loadMonsterData
+Mon_fire        dd 0                    ; DATA XREF: loadMonsterData+143↑w
                                         ; sub_4A02A+3A↓r ...
-dword_3773A     dd 0                    ; DATA XREF: sub_26716+156↑w
+                                        ; far pointer to the monfire.dat column (90 entries), loaded by loadMonsterData
+Mon_elec        dd 0                    ; DATA XREF: loadMonsterData+156↑w
                                         ; sub_4A02A+9C↓r ...
-dword_3773E     dd 0                    ; DATA XREF: sub_26716+169↑w
+                                        ; far pointer to the monelec.dat column (90 entries), loaded by loadMonsterData
+Mon_cold        dd 0                    ; DATA XREF: loadMonsterData+169↑w
                                         ; sub_4A02A+A9↓r ...
-dword_37742     dd 0                    ; DATA XREF: sub_26716+17C↑w
+                                        ; far pointer to the moncold.dat column (90 entries), loaded by loadMonsterData
+Mon_acid        dd 0                    ; DATA XREF: loadMonsterData+17C↑w
                                         ; sub_4A02A+B6↓r ...
-dword_37746     dd 0                    ; DATA XREF: sub_26716+72↑w
+                                        ; far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData
+Mon_numa        dd 0                    ; DATA XREF: loadMonsterData+72↑w
                                         ; doMonsterTurn:loc_4AF00↓r ...
-dword_3774A     dd 0                    ; DATA XREF: sub_26716+130↑w
+                                        ; far pointer to the monnuma.dat column (90 entries), loaded by loadMonsterData
+Mon_magi        dd 0                    ; DATA XREF: loadMonsterData+130↑w
                                         ; sub_4A02A+8D↓r ...
-dword_3774E     dd 0                    ; DATA XREF: sub_26716+98↑w
+                                        ; far pointer to the monmagi.dat column (90 entries), loaded by loadMonsterData
+Mon_dmgt        dd 0                    ; DATA XREF: loadMonsterData+98↑w
                                         ; monstersAttack+1D↓r ...
-dword_37752     dd 0                    ; DATA XREF: sub_26716+18F↑w
+                                        ; far pointer to the mondmgt.dat column (90 entries), loaded by loadMonsterData
+Mon_ener        dd 0                    ; DATA XREF: loadMonsterData+18F↑w
                                         ; sub_4A02A+C3↓r ...
-dword_37756     dd 0                    ; DATA XREF: sub_26716+F7↑w
+                                        ; far pointer to the monener.dat column (90 entries), loaded by loadMonsterData
+Mon_trea        dd 0                    ; DATA XREF: loadMonsterData+F7↑w
                                         ; sub_49B8B+277↓r ...
-dword_3775A     dd 0                    ; DATA XREF: sub_26716+4C↑w
+                                        ; far pointer to the montrea.dat column (90 entries), loaded by loadMonsterData
+Mon_dmgn        dd 0                    ; DATA XREF: loadMonsterData+4C↑w
                                         ; sub_4A779:loc_4A7AF↓r ...
-dword_3775E     dd 0                    ; DATA XREF: sub_26716+85↑w
+                                        ; far pointer to the mondmgn.dat column (90 entries), loaded by loadMonsterData
+Mon_exp         dd 0                    ; DATA XREF: loadMonsterData+85↑w
                                         ; sub_49B8B+20B↓r ...
-dword_37762     dd 0                    ; DATA XREF: sub_26716+E4↑w
+                                        ; far pointer to the monexp.dat column (90 entries), loaded by loadMonsterData
+Mon_hitb        dd 0                    ; DATA XREF: loadMonsterData+E4↑w
                                         ; doMonsterTurn:loc_4AE8A↓r ...
-dword_37766     dd 0                    ; DATA XREF: sub_26716+5F↑w
+                                        ; far pointer to the monhitb.dat column (90 entries), loaded by loadMonsterData
+Mon_dmgs        dd 0                    ; DATA XREF: loadMonsterData+5F↑w
                                         ; sub_4A779:loc_4A794↓r ...
-dword_3776A     dd 0                    ; DATA XREF: sub_26716+1A2↑w
+                                        ; far pointer to the mondmgs.dat column (90 entries), loaded by loadMonsterData
+Mon_phys        dd 0                    ; DATA XREF: loadMonsterData+1A2↑w
                                         ; sub_49B8B+C0↓r ...
-dword_3776E     dd 0                    ; DATA XREF: sub_26716+26↑w
+                                        ; far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData
+Mon_ac          dd 0                    ; DATA XREF: loadMonsterData+26↑w
                                         ; sub_4B194+B5↓r ...
-dword_37772     dd 0                    ; DATA XREF: runMazeEvent+F9D↑r
-                                        ; sub_26716+13↑w ...
+                                        ; far pointer to the monac.dat column (90 entries), loaded by loadMonsterData
+Mon_hp          dd 0                    ; DATA XREF: runMazeEvent+F9D↑r
+                                        ; loadMonsterData+13↑w ...
+                                        ; far pointer to the monhp.dat column (90 entries), loaded by loadMonsterData
 ; size_t n
 n               dw 0                    ; DATA XREF: sub_22740+96↑w
                                         ; sub_22740+EB↑w ...
@@ -45345,7 +45959,7 @@ loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
                 call    _close
                 pop     cx
                 push    off_2DC72       ; "boss.$$$"
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 mov     ax, 0FA00h
                 push    ax
@@ -45355,7 +45969,7 @@ loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
                 push    dx
                 call    Resources_openFile
                 add     sp, 6
-                call    sub_25024
+                call    ccClose
                 call    sub_24F97
                 call    sub_25DFE
                 mov     ax, 3
@@ -45401,7 +46015,7 @@ loc_3798F:                              ; CODE XREF: sub_378C0+B7↑j
                 pop     cx
                 pop     cx
                 push    off_2DC72       ; "boss.$$$"
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 mov     ax, 0FA00h
                 push    ax
@@ -45409,9 +46023,9 @@ loc_3798F:                              ; CODE XREF: sub_378C0+B7↑j
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_2504B
+                call    ccRead
                 add     sp, 6
-                call    sub_25024
+                call    ccClose
                 mov     ax, 4
                 push    ax
                 mov     ax, 1
@@ -45441,7 +46055,7 @@ sub_378C0       endp
 ; (BinDiff sim .69 conf .93, unverified)
 ; Attributes: bp-based frame
 
-monstersAttack  proc far                ; CODE XREF: j_monstersAttack↑J
+monstersAttack  proc far                ; CODE XREF: j_j_j_j_monstersAttack↑J
 
 format          = dword ptr -4
 
@@ -45458,7 +46072,7 @@ loc_379FF:                              ; CODE XREF: monstersAttack+3F↓j
                 jz      short loc_37A2A
                 mov     al, [bx-3B28h]
                 mov     ah, 0
-                les     bx, dword_3774E
+                les     bx, Mon_dmgt
                 add     bx, ax
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -45504,7 +46118,7 @@ loc_37A59:                              ; CODE XREF: monstersAttack+5B↑j
                 mov     bx, word ptr [bp+format+2]
                 mov     al, [bx-3B28h]
                 mov     ah, 0
-                les     bx, dword_3774E
+                les     bx, Mon_dmgt
                 add     bx, ax
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -45524,7 +46138,7 @@ loc_37A96:                              ; CODE XREF: monstersAttack+9D↑j
                 mov     ax, word_32E32
                 or      ax, word_32E34
                 jnz     short loc_37A91
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jz      short loc_37ACA
                 mov     word ptr [bp+format+2], 0
                 jmp     short loc_37ABA
@@ -45556,7 +46170,7 @@ loc_37AD1:                              ; CODE XREF: monstersAttack+FD↓j
                 mov     al, [bx-3B28h]
                 mov     ah, 0
                 push    ax
-                call    j_doMonsterTurn
+                call    j_j_j_j_doMonsterTurn
                 pop     cx
 
 loc_37AE8:                              ; CODE XREF: monstersAttack+E7↑j
@@ -45569,7 +46183,7 @@ loc_37AEB:                              ; CODE XREF: monstersAttack+DD↑j
                 mov     byte_2879C, al
                 mov     byte_2879B, al
                 call    checkPartyDead
-                cmp     byte_34C10, 5
+                cmp     Engine_mode, 5
                 jnz     short loc_37B45
                 mov     word ptr [bp+format+2], 0
                 jmp     short loc_37B3B
@@ -45595,7 +46209,7 @@ loc_37B0C:                              ; CODE XREF: monstersAttack+151↓j
 def_37B2C:                              ; CODE XREF: monstersAttack+136↑j
                                         ; monstersAttack+13A↑j
                                         ; DATA XREF: ...
-                mov     byte_34C10, 1   ; jumptable 00037B2C default case, cases 9,10
+                mov     Engine_mode, 1  ; jumptable 00037B2C default case, cases 9,10
                 jmp     short loc_37B45
 ; ---------------------------------------------------------------------------
 
@@ -45744,7 +46358,7 @@ sub_37BF1       proc far                ; CODE XREF: sub_27F95↑J
                 push    bp
                 mov     bp, sp
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 12Ch
                 push    ax              ; maxlen
                 mov     al, byte_36FE7
@@ -46153,7 +46767,7 @@ sub_37E7A       endp
 ; opens mm3.cc, "Alert!" error box (from strings)
 ; Attributes: bp-based frame
 
-openMm3Cc       proc far                ; CODE XREF: j_openMm3Cc↑J
+openMm3Cc       proc far                ; CODE XREF: j_j_j_j_openMm3Cc↑J
 
 format          = dword ptr -6
 buf             = word ptr -2
@@ -46263,7 +46877,7 @@ loc_37F67:                              ; CODE XREF: openMm3Cc+AA↑j
                 mov     [bp+buf], ax
                 mov     ax, offset aMm3Cc_0 ; "mm3.cc"
                 push    ax
-                call    sub_2500F
+                call    ccOpen
                 pop     cx
                 or      ax, ax
                 jz      short loc_37FA4
@@ -46281,7 +46895,7 @@ loc_37FA4:                              ; CODE XREF: openMm3Cc+E7↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+buf]
-                call    sub_25032
+                call    ccSeek
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -46291,7 +46905,7 @@ loc_37FA4:                              ; CODE XREF: openMm3Cc+E7↑j
                 push    ds
                 mov     ax, 0E610h
                 push    ax
-                call    sub_2504B
+                call    ccRead
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_37F9B
@@ -46300,11 +46914,11 @@ loc_37FA4:                              ; CODE XREF: openMm3Cc+E7↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_2504B
+                call    ccRead
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_37F9B
-                call    sub_25024
+                call    ccClose
                 or      ax, ax
                 jnz     short loc_37F9B
                 cmp     word ptr [bp+format+2], 1
@@ -46443,7 +47057,7 @@ openMm3Cc       endp
 ; (BinDiff sim .69 conf .97, unverified)
 ; Attributes: bp-based frame
 
-getDiskFree     proc far                ; CODE XREF: j_getDiskFree↑J
+getDiskFree     proc far                ; CODE XREF: j_j_j_j_getDiskFree↑J
                                         ; openMm3Cc+87↑p
 
 var_E           = word ptr -0Eh
@@ -46933,7 +47547,7 @@ sub_383CB       endp
 ; (BinDiff sim .62 conf .95, unverified)
 ; Attributes: bp-based frame
 
-stopAttack      proc far                ; CODE XREF: j_stopAttack↑J
+stopAttack      proc far                ; CODE XREF: j_j_j_j_stopAttack↑J
                                         ; sub_3853A+34↓p
 
 arg_0           = word ptr  6
@@ -47229,7 +47843,7 @@ sub_3853A       endp
 
 ; Attributes: bp-based frame
 
-sub_385BD       proc far                ; CODE XREF: sub_27F54↑J
+resetBlacksmithWares proc far           ; CODE XREF: j_j_j_resetBlacksmithWares↑J
 
 var_2           = word ptr -2
 
@@ -47251,17 +47865,17 @@ var_2           = word ptr -2
                 jmp     loc_387B8
 ; ---------------------------------------------------------------------------
 
-loc_385DC:                              ; CODE XREF: sub_385BD+200↓j
+loc_385DC:                              ; CODE XREF: resetBlacksmithWares+200↓j
                 xor     si, si
                 jmp     loc_387AF
 ; ---------------------------------------------------------------------------
 
-loc_385E1:                              ; CODE XREF: sub_385BD+1F7↓j
+loc_385E1:                              ; CODE XREF: resetBlacksmithWares+1F7↓j
                 mov     [bp+var_2], 0
                 jmp     loc_387A5
 ; ---------------------------------------------------------------------------
 
-loc_385E9:                              ; CODE XREF: sub_385BD+1EE↓j
+loc_385E9:                              ; CODE XREF: resetBlacksmithWares+1EE↓j
                 mov     ax, di
                 mov     dx, 1Bh
                 imul    dx
@@ -47277,7 +47891,7 @@ loc_385E9:                              ; CODE XREF: sub_385BD+1EE↓j
                 jmp     loc_386D1
 ; ---------------------------------------------------------------------------
 
-loc_38608:                              ; CODE XREF: sub_385BD+46↑j
+loc_38608:                              ; CODE XREF: resetBlacksmithWares+46↑j
                 mov     ax, di
                 mov     dx, 1Bh
                 imul    dx
@@ -47331,7 +47945,7 @@ loc_38608:                              ; CODE XREF: sub_385BD+46↑j
                 jmp     loc_387A2
 ; ---------------------------------------------------------------------------
 
-loc_38678:                              ; CODE XREF: sub_385BD+B6↑j
+loc_38678:                              ; CODE XREF: resetBlacksmithWares+B6↑j
                 mov     ax, di
                 mov     dx, 1Bh
                 imul    dx
@@ -47373,7 +47987,7 @@ loc_38678:                              ; CODE XREF: sub_385BD+B6↑j
                 jmp     loc_387A2
 ; ---------------------------------------------------------------------------
 
-loc_386D1:                              ; CODE XREF: sub_385BD+48↑j
+loc_386D1:                              ; CODE XREF: resetBlacksmithWares+48↑j
                 xor     ax, ax
                 push    ax              ; int
                 push    ds
@@ -47389,7 +48003,7 @@ loc_386D1:                              ; CODE XREF: sub_385BD+48↑j
                 mov     al, [si+17ADh]
                 mov     ah, 0
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -47466,41 +48080,41 @@ loc_386D1:                              ; CODE XREF: sub_385BD+48↑j
                 mov     al, byte_34ACE
                 mov     [bx-16FFh], al
 
-loc_387A2:                              ; CODE XREF: sub_385BD+B8↑j
-                                        ; sub_385BD+111↑j
+loc_387A2:                              ; CODE XREF: resetBlacksmithWares+B8↑j
+                                        ; resetBlacksmithWares+111↑j
                 inc     [bp+var_2]
 
-loc_387A5:                              ; CODE XREF: sub_385BD+29↑j
+loc_387A5:                              ; CODE XREF: resetBlacksmithWares+29↑j
                 cmp     [bp+var_2], 9
                 jge     short loc_387AE
                 jmp     loc_385E9
 ; ---------------------------------------------------------------------------
 
-loc_387AE:                              ; CODE XREF: sub_385BD+1EC↑j
+loc_387AE:                              ; CODE XREF: resetBlacksmithWares+1EC↑j
                 inc     si
 
-loc_387AF:                              ; CODE XREF: sub_385BD+21↑j
+loc_387AF:                              ; CODE XREF: resetBlacksmithWares+21↑j
                 cmp     si, 3
                 jge     short loc_387B7
                 jmp     loc_385E1
 ; ---------------------------------------------------------------------------
 
-loc_387B7:                              ; CODE XREF: sub_385BD+1F5↑j
+loc_387B7:                              ; CODE XREF: resetBlacksmithWares+1F5↑j
                 inc     di
 
-loc_387B8:                              ; CODE XREF: sub_385BD+1C↑j
+loc_387B8:                              ; CODE XREF: resetBlacksmithWares+1C↑j
                 cmp     di, 5
                 jge     short loc_387C0
                 jmp     loc_385DC
 ; ---------------------------------------------------------------------------
 
-loc_387C0:                              ; CODE XREF: sub_385BD+1FE↑j
+loc_387C0:                              ; CODE XREF: resetBlacksmithWares+1FE↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_385BD       endp
+resetBlacksmithWares endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -47518,7 +48132,7 @@ src             = dword ptr -4
                 push    ds
                 mov     ax, 0ECE8h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+src+2], dx
@@ -47645,7 +48259,7 @@ sub_3886C       endp
 ; mm3theme.m, itit0-8.vga, comet.vga, itxt.vga, talk.vga, s%d.s, cr%d.vga (from strings)
 ; Attributes: bp-based frame
 
-introSequence   proc far                ; CODE XREF: j_introSequence↑J
+introSequence   proc far                ; CODE XREF: j_j_j_j_introSequence↑J
 
 var_2           = word ptr -2
 
@@ -48622,7 +49236,7 @@ loc_39022:                              ; CODE XREF: introSequence+7C2↓j
                 push    ds
                 mov     ax, 0EF52h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     bx, si
@@ -49186,7 +49800,7 @@ introSequence   endp
 
 ; Attributes: bp-based frame
 
-protectionHandler proc far              ; CODE XREF: j_protectionHandler↑J
+protectionHandler proc far              ; CODE XREF: j_j_j_j_protectionHandler↑J
                                         ; introSequence+134↑p ...
 
 arg_0           = word ptr  6
@@ -49284,7 +49898,7 @@ sub_3946E       endp
 ; "ring"/"medal" (from strings)
 ; Attributes: bp-based frame
 
-getEquipSlotName proc far               ; CODE XREF: j_getEquipSlotName↑J
+getEquipSlotName proc far               ; CODE XREF: j_j_j_j_getEquipSlotName↑J
                                         ; equipItem+377↓p
 
 buffer          = byte ptr -64h
@@ -49306,7 +49920,7 @@ arg_4           = word ptr  0Ah
 
 loc_394BF:                              ; CODE XREF: getEquipSlotName+11↑j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 or      si, si
                 jge     short loc_394ED
                 cmp     si, 0FFFFh
@@ -49394,7 +50008,7 @@ getEquipSlotName endp
 ; "You must remove %s to equip %s", "cannot equip two of the same items" (by string order, unverified)
 ; Attributes: bp-based frame
 
-equipItem       proc far                ; CODE XREF: j_equipItem↑J
+equipItem       proc far                ; CODE XREF: j_j_j_j_equipItem↑J
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -50006,7 +50620,7 @@ loc_39939:                              ; CODE XREF: sub_39930+50↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50643,7 +51257,7 @@ loc_39E3F:                              ; CODE XREF: sub_3998B+4D9↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50672,7 +51286,7 @@ loc_39E78:                              ; CODE XREF: sub_3998B+512↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50701,7 +51315,7 @@ loc_39EB1:                              ; CODE XREF: sub_3998B+54B↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50742,7 +51356,7 @@ loc_39F08:                              ; CODE XREF: sub_3998B+5A2↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50766,7 +51380,7 @@ loc_39F2A:                              ; CODE XREF: sub_3998B+57B↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50785,7 +51399,7 @@ loc_39F64:                              ; CODE XREF: sub_3998B+633↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50807,7 +51421,7 @@ loc_39F64:                              ; CODE XREF: sub_3998B+633↓j
                 push    ds
                 mov     ax, 0EF52h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     bx, si
@@ -50864,7 +51478,7 @@ loc_3A02D:                              ; CODE XREF: sub_3998B+71B↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50920,7 +51534,7 @@ loc_3A094:                              ; CODE XREF: sub_3998B+701↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50943,7 +51557,7 @@ loc_3A0E6:                              ; CODE XREF: sub_3998B+78B↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -50998,7 +51612,7 @@ loc_3A15D:                              ; CODE XREF: sub_3998B+81C↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51013,7 +51627,7 @@ loc_3A15D:                              ; CODE XREF: sub_3998B+81C↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51054,7 +51668,7 @@ loc_3A1CE:                              ; CODE XREF: sub_3998B+869↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51078,7 +51692,7 @@ loc_3A1FA:                              ; CODE XREF: sub_3998B+890↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51103,7 +51717,7 @@ loc_3A221:                              ; CODE XREF: sub_3998B+8BB↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51150,7 +51764,7 @@ loc_3A2A0:                              ; CODE XREF: sub_3998B+98E↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51244,7 +51858,7 @@ loc_3A386:                              ; CODE XREF: sub_3998B+A74↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51307,7 +51921,7 @@ loc_3A416:                              ; CODE XREF: sub_3998B+AAC↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51413,7 +52027,7 @@ loc_3A4E7:                              ; CODE XREF: sub_3998B+BF6↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51489,7 +52103,7 @@ loc_3A59D:                              ; CODE XREF: sub_3998B+C36↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51530,7 +52144,7 @@ loc_3A5E5:                              ; CODE XREF: sub_3998B+C80↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51571,7 +52185,7 @@ loc_3A62B:                              ; CODE XREF: sub_3998B+CFC↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51593,7 +52207,7 @@ loc_3A62B:                              ; CODE XREF: sub_3998B+CFC↓j
                 push    ds
                 mov     ax, 0EF52h
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     bx, si
@@ -51620,7 +52234,7 @@ loc_3A68D:                              ; CODE XREF: sub_3998B+D27↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51662,7 +52276,7 @@ loc_3A6F8:                              ; CODE XREF: sub_3998B+DE6↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51719,7 +52333,7 @@ loc_3A75F:                              ; CODE XREF: sub_3998B+DCC↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51751,7 +52365,7 @@ loc_3A7C7:                              ; CODE XREF: sub_3998B+E61↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51835,7 +52449,7 @@ loc_3A882:                              ; CODE XREF: sub_3998B+F22↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51871,7 +52485,7 @@ loc_3A8D6:                              ; CODE XREF: sub_3998B+F7B↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51908,7 +52522,7 @@ loc_3A920:                              ; CODE XREF: sub_3998B+FC0↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -51977,7 +52591,7 @@ loc_3A9A7:                              ; CODE XREF: sub_3998B+1043↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -52005,7 +52619,7 @@ loc_3A9CB:                              ; CODE XREF: sub_3998B+101A↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -52051,7 +52665,7 @@ loc_3AA76:                              ; CODE XREF: sub_3998B+1164↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -52107,7 +52721,7 @@ loc_3AADD:                              ; CODE XREF: sub_3998B+114A↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_2A726, ax
@@ -53835,7 +54449,7 @@ loc_3BA8B:                              ; CODE XREF: sub_3998B+2123↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -53884,7 +54498,7 @@ loc_3BAE4:                              ; CODE XREF: sub_3998B+217B↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -54050,7 +54664,7 @@ ovl03           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-subPartyTime    proc far                ; CODE XREF: j_subPartyTime↑J
+subPartyTime    proc far                ; CODE XREF: j_j_j_j_subPartyTime↑J
                                         ; sub_3C282+440↓p ...
 
 arg_0           = word ptr  6
@@ -54058,26 +54672,26 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, [bp+arg_0]
-                sub     word_37332, ax
+                sub     Party_minutes, ax
                 jmp     short loc_3BC5C
 ; ---------------------------------------------------------------------------
 
 loc_3BC3C:                              ; CODE XREF: subPartyTime+31↓j
-                add     word_37332, 5A0h
-                mov     al, byte_37325
+                add     Party_minutes, 5A0h
+                mov     al, Party_day
                 add     al, 0FFh
-                mov     byte_37325, al
+                mov     Party_day, al
                 mov     ah, 0
                 or      ax, ax
                 jge     short loc_3BC5C
-                mov     al, byte_37325
+                mov     al, Party_day
                 add     al, 64h ; 'd'
-                mov     byte_37325, al
-                dec     word_37326
+                mov     Party_day, al
+                dec     Party_year
 
 loc_3BC5C:                              ; CODE XREF: subPartyTime+A↑j
                                         ; subPartyTime+1E↑j
-                cmp     word_37332, 0
+                cmp     Party_minutes, 0
                 jl      short loc_3BC3C
                 pop     bp
                 retf
@@ -54336,17 +54950,17 @@ loc_3BE2B:                              ; CODE XREF: sub_3BE18+C↑j
                 mov     ah, 0
                 mov     [bp+var_4], ax
                 mov     byte_34B8C, 1
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
                 cmp     byte_332D3, 0
                 jz      short loc_3BE4E
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 jmp     short loc_3BE5E
 ; ---------------------------------------------------------------------------
 
 loc_3BE4E:                              ; CODE XREF: sub_3BE18+2D↑j
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_3BE59
                 mov     al, 7
                 jmp     short loc_3BE5B
@@ -54356,11 +54970,11 @@ loc_3BE59:                              ; CODE XREF: sub_3BE18+3B↑j
                 mov     al, 6
 
 loc_3BE5B:                              ; CODE XREF: sub_3BE18+3F↑j
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_3BE5E:                              ; CODE XREF: sub_3BE18+34↑j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     al, byte_36FDA
                 mov     ah, 0
                 push    ax
@@ -54447,7 +55061,7 @@ loc_3BF05:                              ; CODE XREF: sub_3BE18+C6↑j
                 mov     al, byte ptr [bp+var_4]
                 mov     byte_34B8C, al
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 call    sub_280EA
                 mov     ax, 1
                 push    ax
@@ -54488,7 +55102,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 8
                 push    ax              ; c
                 xor     ax, ax
@@ -54873,12 +55487,12 @@ var_2           = word ptr -2
                 mov     ah, 0
                 mov     [bp+var_4], ax
                 mov     byte_34B8C, 1
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 6
+                mov     Engine_mode, 6
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 26BEh
                 push    ax
@@ -54912,7 +55526,7 @@ var_2           = word ptr -2
                 mov     al, byte ptr [bp+var_4]
                 mov     byte_34B8C, al
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 call    sub_280EA
                 mov     ax, 1
                 push    ax
@@ -55005,7 +55619,7 @@ loc_3C2E3:                              ; CODE XREF: sub_3C282+26↑j
                 push    [bp+arg_8]
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cwd
@@ -55039,7 +55653,7 @@ loc_3C33A:                              ; CODE XREF: sub_3C282+B3↑j
                 mov     ah, 0
                 push    ax
                 push    [bp+arg_2]
-                call    j_giveCharDamage
+                call    j_j_j_j_giveCharDamage
 
 loc_3C34B:                              ; CODE XREF: sub_3C282+1B8↓j
                 add     sp, 6
@@ -55243,7 +55857,7 @@ loc_3C472:                              ; CODE XREF: sub_3C282+B3↑j
 loc_3C47D:                              ; CODE XREF: sub_3C282+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 push    [bp+arg_2]      ; jumptable 0003C335 case 25
-                call    sub_16973
+                call    changeTime
                 jmp     loc_3C6C5
 ; ---------------------------------------------------------------------------
 
@@ -55616,9 +56230,9 @@ loc_3C6D3:                              ; CODE XREF: sub_3C282+B3↑j
 
 loc_3C6DA:                              ; CODE XREF: sub_3C282+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_37326  ; jumptable 0003C335 case 85
+                mov     ax, Party_year  ; jumptable 0003C335 case 85
                 sub     ax, [bp+arg_2]
-                mov     word_37326, ax
+                mov     Party_year, ax
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -55933,7 +56547,7 @@ loc_3C8B4:                              ; CODE XREF: sub_3C282+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [bp+arg_A]  ; jumptable 0003C6FA case 34
                 mov     dx, [bp+arg_8]
-                add     word_37344, dx
+                add     Party_gold, dx
                 adc     word_37346, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
@@ -55942,7 +56556,7 @@ loc_3C8C5:                              ; CODE XREF: sub_3C282+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [bp+arg_A]  ; jumptable 0003C6FA case 35
                 mov     dx, [bp+arg_8]
-                add     word_37348, dx
+                add     Party_gems, dx
                 adc     word_3734A, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
@@ -56417,9 +57031,9 @@ loc_3CBCA:                              ; CODE XREF: sub_3C282+478↑j
 
 loc_3CBD6:                              ; CODE XREF: sub_3C282+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_37334  ; jumptable 0003C6FA case 65
+                mov     ax, Party_food  ; jumptable 0003C6FA case 65
                 add     ax, [bp+arg_8]
-                mov     word_37334, ax
+                mov     Party_food, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -56542,7 +57156,7 @@ loc_3CC99:                              ; CODE XREF: sub_3C282+478↑j
                 mov     ax, 5A0h
                 call    LXMUL@
                 push    ax
-                call    sub_1531F
+                call    addTime
 
 loc_3CCAF:                              ; CODE XREF: sub_3C282+60D↑j
                                         ; sub_3C282+62F↑j
@@ -56572,7 +57186,7 @@ loc_3CCC4:                              ; CODE XREF: sub_3C282+478↑j
                 mov     ah, 0
                 push    ax
                 push    [bp+arg_8]
-                call    j_giveCharDamage
+                call    j_j_j_j_giveCharDamage
 
 loc_3CCD5:                              ; CODE XREF: sub_3C282+5EE↑j
                 add     sp, 6
@@ -56581,9 +57195,9 @@ loc_3CCD5:                              ; CODE XREF: sub_3C282+5EE↑j
 
 loc_3CCDA:                              ; CODE XREF: sub_3C282+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_37326  ; jumptable 0003C6FA case 85
+                mov     ax, Party_year  ; jumptable 0003C6FA case 85
                 add     ax, [bp+arg_8]
-                mov     word_37326, ax
+                mov     Party_year, ax
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -56705,10 +57319,10 @@ arg_0           = word ptr  6
                 push    di
                 mov     si, [bp+arg_0]
                 call    sub_28144
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_6], ax
-                cmp     byte_34C10, 7
+                cmp     Engine_mode, 7
                 jnz     short loc_3CE9D
                 mov     al, 7
                 jmp     short loc_3CE9F
@@ -56718,7 +57332,7 @@ loc_3CE9D:                              ; CODE XREF: sub_3CE7A+1D↑j
                 mov     al, 8
 
 loc_3CE9F:                              ; CODE XREF: sub_3CE7A+21↑j
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 or      si, si
                 jnz     short loc_3CF06
                 mov     ax, 26CBh
@@ -56755,7 +57369,7 @@ loc_3CE9F:                              ; CODE XREF: sub_3CE7A+21↑j
 ; ---------------------------------------------------------------------------
 
 loc_3CF06:                              ; CODE XREF: sub_3CE7A+2A↑j
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
 
 loc_3CF0B:                              ; CODE XREF: sub_3CE7A+8A↑j
                 push    word_36FB4
@@ -56821,7 +57435,7 @@ loc_3CF72:                              ; CODE XREF: sub_3CE7A+D2↑j
                 mov     al, byte ptr [bp+var_4]
                 mov     byte_34B8C, al
                 mov     al, byte ptr [bp+var_6]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 or      si, si
                 jnz     short loc_3CF91
                 call    sub_28117
@@ -57026,7 +57640,7 @@ loc_3D0AC:                              ; CODE XREF: sub_3CFAD+FA↑j
 loc_3D0B5:                              ; CODE XREF: sub_3CFAD+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 25
-                mov     word_37332, ax
+                mov     Party_minutes, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57035,7 +57649,7 @@ loc_3D0BE:                              ; CODE XREF: sub_3CFAD+21↑j
                 mov     ax, [bp+arg_4]  ; jumptable 0003CFCE case 34
                 mov     dx, [bp+arg_2]
                 mov     word_37346, ax
-                mov     word_37344, dx
+                mov     Party_gold, dx
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57044,7 +57658,7 @@ loc_3D0CE:                              ; CODE XREF: sub_3CFAD+21↑j
                 mov     ax, [bp+arg_4]  ; jumptable 0003CFCE case 35
                 mov     dx, [bp+arg_2]
                 mov     word_3734A, ax
-                mov     word_37348, dx
+                mov     Party_gems, dx
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57240,7 +57854,7 @@ loc_3D1D4:                              ; CODE XREF: sub_3CFAD+21↑j
 loc_3D1DD:                              ; CODE XREF: sub_3CFAD+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 65
-                mov     word_37334, ax
+                mov     Party_food, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57299,7 +57913,7 @@ loc_3D228:                              ; CODE XREF: sub_3CFAD+23C↑j
 loc_3D22D:                              ; CODE XREF: sub_3CFAD+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 76
-                mov     byte_37325, al
+                mov     Party_day, al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57340,7 +57954,7 @@ loc_3D24C:                              ; CODE XREF: sub_3CFAD+21↑j
 loc_3D265:                              ; CODE XREF: sub_3CFAD+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 85
-                mov     word_37326, ax
+                mov     Party_year, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -57482,7 +58096,7 @@ loc_3D385:                              ; CODE XREF: sub_3D32E+25↑j
                 xor     ax, ax          ; jumptable 0003D353 case 10
                 push    ax
                 push    si
-                call    j_getArmorClass
+                call    j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 jmp     short loc_3D35D
@@ -57703,21 +58317,21 @@ loc_3D4C6:                              ; CODE XREF: sub_3D32E+193↑j
 
 loc_3D4C9:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_37332  ; jumptable 0003D353 case 25
+                mov     ax, Party_minutes ; jumptable 0003D353 case 25
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
 loc_3D4CF:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 mov     ax, word_37346  ; jumptable 0003D353 case 34
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 jmp     loc_3D694
 ; ---------------------------------------------------------------------------
 
 loc_3D4D9:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 mov     ax, word_3734A  ; jumptable 0003D353 case 35
-                mov     dx, word_37348
+                mov     dx, Party_gems
                 jmp     loc_3D694
 ; ---------------------------------------------------------------------------
 
@@ -57916,7 +58530,7 @@ loc_3D5C2:                              ; CODE XREF: sub_3D32E+25↑j
 
 loc_3D5C8:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_37334  ; jumptable 0003D353 case 65
+                mov     ax, Party_food  ; jumptable 0003D353 case 65
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
@@ -57952,7 +58566,7 @@ loc_3D5E6:                              ; CODE XREF: sub_3D32E+25↑j
 
 loc_3D5EC:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     al, byte_37325  ; jumptable 0003D353 case 76
+                mov     al, Party_day   ; jumptable 0003D353 case 76
                 jmp     loc_3D35B
 ; ---------------------------------------------------------------------------
 
@@ -57966,7 +58580,7 @@ loc_3D5F8:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 push    ds              ; jumptable 0003D353 case 78
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+125h]
@@ -57993,7 +58607,7 @@ loc_3D614:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 push    ds              ; jumptable 0003D353 case 81
                 push    si
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+127h]
@@ -58018,7 +58632,7 @@ loc_3D62C:                              ; CODE XREF: sub_3D32E+25↑j
 
 loc_3D632:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_37326  ; jumptable 0003D353 case 85
+                mov     ax, Party_year  ; jumptable 0003D353 case 85
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
@@ -58038,7 +58652,7 @@ loc_3D638:                              ; CODE XREF: sub_3D32E+25↑j
 
 loc_3D64F:                              ; CODE XREF: sub_3D32E+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     al, byte_37325  ; jumptable 0003D353 case 93
+                mov     al, Party_day   ; jumptable 0003D353 case 93
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -58494,7 +59108,7 @@ loc_3D97A:                              ; CODE XREF: sub_3D8C9+A4↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -58504,7 +59118,7 @@ loc_3D97A:                              ; CODE XREF: sub_3D8C9+A4↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -58516,7 +59130,7 @@ loc_3D97A:                              ; CODE XREF: sub_3D8C9+A4↑j
                 mov     al, [bx-378Eh]
                 mov     ah, 0
                 push    ax
-                call    j_giveCharDamage
+                call    j_j_j_j_giveCharDamage
                 add     sp, 6
 
 loc_3D9BA:                              ; CODE XREF: sub_3D8C9+C3↑j
@@ -58525,14 +59139,14 @@ loc_3D9BA:                              ; CODE XREF: sub_3D8C9+C3↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_getThievery
+                call    j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     ax, 14h
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 pop     dx
@@ -58582,7 +59196,7 @@ loc_3D9F9:                              ; CODE XREF: sub_3D8C9+12B↑j
                 pop     ax
                 add     [bx-44FFh], ax
                 adc     word ptr [bx-44FDh], 0
-                mov     byte_34C10, 7
+                mov     Engine_mode, 7
                 mov     ax, [bp+var_4]
                 mov     dx, 12Fh
                 imul    dx
@@ -59017,7 +59631,7 @@ ovl04           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-sub_3DD20       proc far                ; CODE XREF: sub_280A8↑J
+resetTemps      proc far                ; CODE XREF: j_j_j_resetTemps↑J
 
 var_1A0         = byte ptr -1A0h
 s               = byte ptr -16Eh
@@ -59041,7 +59655,7 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 15Eh
                 push    ax              ; c
                 xor     ax, ax
@@ -59056,19 +59670,19 @@ var_2           = word ptr -2
                 jmp     loc_3DEE9
 ; ---------------------------------------------------------------------------
 
-loc_3DD51:                              ; CODE XREF: sub_3DD20+1D2↓j
+loc_3DD51:                              ; CODE XREF: resetTemps+1D2↓j
                 cmp     byte ptr [si-1714h], 14h
                 jnb     short loc_3DD5B
                 jmp     loc_3DEE8
 ; ---------------------------------------------------------------------------
 
-loc_3DD5B:                              ; CODE XREF: sub_3DD20+36↑j
-                cmp     byte_34C10, 9
+loc_3DD5B:                              ; CODE XREF: resetTemps+36↑j
+                cmp     Engine_mode, 9
                 jnz     short loc_3DD65
                 jmp     loc_3DEE8
 ; ---------------------------------------------------------------------------
 
-loc_3DD65:                              ; CODE XREF: sub_3DD20+40↑j
+loc_3DD65:                              ; CODE XREF: resetTemps+40↑j
                 inc     [bp+var_6]
                 mov     ax, si
                 mov     dx, 12Fh
@@ -59088,16 +59702,16 @@ loc_3DD65:                              ; CODE XREF: sub_3DD20+40↑j
                 jmp     short loc_3DD95
 ; ---------------------------------------------------------------------------
 
-loc_3DD8E:                              ; CODE XREF: sub_3DD20+60↑j
-                                        ; sub_3DD20+65↑j ...
+loc_3DD8E:                              ; CODE XREF: resetTemps+60↑j
+                                        ; resetTemps+65↑j ...
                 mov     [bp+var_8], 1
                 jmp     short loc_3DD9A
 ; ---------------------------------------------------------------------------
 
-loc_3DD95:                              ; CODE XREF: sub_3DD20+6C↑j
+loc_3DD95:                              ; CODE XREF: resetTemps+6C↑j
                 mov     [bp+var_8], 0
 
-loc_3DD9A:                              ; CODE XREF: sub_3DD20+73↑j
+loc_3DD9A:                              ; CODE XREF: resetTemps+73↑j
                 mov     al, [di+23h]
                 mov     ah, 0
                 mov     dl, [di+23h]
@@ -59119,26 +59733,26 @@ loc_3DD9A:                              ; CODE XREF: sub_3DD20+73↑j
                 jmp     short loc_3DDE0
 ; ---------------------------------------------------------------------------
 
-loc_3DDC6:                              ; CODE XREF: sub_3DD20+9F↑j
+loc_3DDC6:                              ; CODE XREF: resetTemps+9F↑j
                 mov     ax, word_37346
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 cmp     ax, [bp+var_E]
                 jb      short loc_3DDDE
                 jnz     short loc_3DDD9
                 cmp     dx, [bp+var_10]
                 jb      short loc_3DDDE
 
-loc_3DDD9:                              ; CODE XREF: sub_3DD20+B2↑j
+loc_3DDD9:                              ; CODE XREF: resetTemps+B2↑j
                 mov     ax, 1
                 jmp     short loc_3DDE0
 ; ---------------------------------------------------------------------------
 
-loc_3DDDE:                              ; CODE XREF: sub_3DD20+B0↑j
-                                        ; sub_3DD20+B7↑j
+loc_3DDDE:                              ; CODE XREF: resetTemps+B0↑j
+                                        ; resetTemps+B7↑j
                 xor     ax, ax
 
-loc_3DDE0:                              ; CODE XREF: sub_3DD20+A4↑j
-                                        ; sub_3DD20+BC↑j
+loc_3DDE0:                              ; CODE XREF: resetTemps+A4↑j
+                                        ; resetTemps+BC↑j
                 mov     [bp+var_2], ax
                 cmp     [bp+var_8], 0
                 jz      short loc_3DDEE
@@ -59146,18 +59760,18 @@ loc_3DDE0:                              ; CODE XREF: sub_3DD20+A4↑j
                 jmp     short loc_3DDFC
 ; ---------------------------------------------------------------------------
 
-loc_3DDEE:                              ; CODE XREF: sub_3DD20+C7↑j
+loc_3DDEE:                              ; CODE XREF: resetTemps+C7↑j
                 cmp     [bp+var_2], 0
                 jz      short loc_3DDF9
                 mov     ax, 289Ch
                 jmp     short loc_3DDFC
 ; ---------------------------------------------------------------------------
 
-loc_3DDF9:                              ; CODE XREF: sub_3DD20+D2↑j
+loc_3DDF9:                              ; CODE XREF: resetTemps+D2↑j
                 mov     ax, 28A1h
 
-loc_3DDFC:                              ; CODE XREF: sub_3DD20+CC↑j
-                                        ; sub_3DD20+D7↑j
+loc_3DDFC:                              ; CODE XREF: resetTemps+CC↑j
+                                        ; resetTemps+D7↑j
                 push    ax
                 cmp     [bp+var_8], 0
                 jnz     short loc_3DE0B
@@ -59166,11 +59780,11 @@ loc_3DDFC:                              ; CODE XREF: sub_3DD20+CC↑j
                 jmp     short loc_3DE0F
 ; ---------------------------------------------------------------------------
 
-loc_3DE0B:                              ; CODE XREF: sub_3DD20+E1↑j
+loc_3DE0B:                              ; CODE XREF: resetTemps+E1↑j
                 xor     dx, dx
                 xor     ax, ax
 
-loc_3DE0F:                              ; CODE XREF: sub_3DD20+E9↑j
+loc_3DE0F:                              ; CODE XREF: resetTemps+E9↑j
                 push    dx
                 push    ax
                 mov     al, [di+23h]
@@ -59194,15 +59808,15 @@ loc_3DE0F:                              ; CODE XREF: sub_3DD20+E9↑j
                 jmp     loc_3DEE8
 ; ---------------------------------------------------------------------------
 
-loc_3DE42:                              ; CODE XREF: sub_3DD20+11D↑j
+loc_3DE42:                              ; CODE XREF: resetTemps+11D↑j
                 mov     ax, [bp+var_E]
                 mov     dx, [bp+var_10]
-                sub     word_37344, dx
+                sub     Party_gold, dx
                 sbb     word_37346, ax
                 jmp     loc_3DEE8
 ; ---------------------------------------------------------------------------
 
-loc_3DE53:                              ; CODE XREF: sub_3DD20+117↑j
+loc_3DE53:                              ; CODE XREF: resetTemps+117↑j
                 mov     ax, 12Fh
                 push    ax
                 call    sub_22524
@@ -59233,7 +59847,7 @@ loc_3DE53:                              ; CODE XREF: sub_3DD20+117↑j
                 call    sub_26685
                 pop     cx
                 call    sub_2811C
-                call    j_sortParty
+                call    j_j_j_j_sortParty
                 mov     ax, 12Fh
                 push    ax              ; n
                 push    word ptr [bp+dest+2]
@@ -59260,11 +59874,11 @@ loc_3DE53:                              ; CODE XREF: sub_3DD20+117↑j
                 mov     [bx-1714h], dl
                 dec     si
 
-loc_3DEE8:                              ; CODE XREF: sub_3DD20+38↑j
-                                        ; sub_3DD20+42↑j ...
+loc_3DEE8:                              ; CODE XREF: resetTemps+38↑j
+                                        ; resetTemps+42↑j ...
                 inc     si
 
-loc_3DEE9:                              ; CODE XREF: sub_3DD20+2E↑j
+loc_3DEE9:                              ; CODE XREF: resetTemps+2E↑j
                 mov     al, byte_36FDA
                 mov     ah, 0
                 cmp     ax, si
@@ -59272,7 +59886,7 @@ loc_3DEE9:                              ; CODE XREF: sub_3DD20+2E↑j
                 jmp     loc_3DD51
 ; ---------------------------------------------------------------------------
 
-loc_3DEF5:                              ; CODE XREF: sub_3DD20+1D0↑j
+loc_3DEF5:                              ; CODE XREF: resetTemps+1D0↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_3DF6E
                 call    sub_170F7
@@ -59323,14 +59937,14 @@ loc_3DEF5:                              ; CODE XREF: sub_3DD20+1D0↑j
                 call    Music_playSong
                 pop     cx
 
-loc_3DF6E:                              ; CODE XREF: sub_3DD20+1D9↑j
+loc_3DF6E:                              ; CODE XREF: resetTemps+1D9↑j
                 call    sub_280EA
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_3DD20       endp
+resetTemps      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -59338,7 +59952,7 @@ sub_3DD20       endp
 ; (BinDiff sim .69 conf .97, unverified)
 ; Attributes: bp-based frame
 
-GiveBankInterest proc far               ; CODE XREF: j_GiveBankInterest↑J
+GiveBankInterest proc far               ; CODE XREF: j_j_j_j_GiveBankInterest↑J
                 push    bp
                 mov     bp, sp
                 xor     ax, ax
@@ -59346,18 +59960,18 @@ GiveBankInterest proc far               ; CODE XREF: j_GiveBankInterest↑J
                 push    ax
                 push    dx
                 push    word_3733E
-                push    word_3733C
+                push    Party_bankGold
                 call    F_LUDIV@
-                add     word_3733C, ax
+                add     Party_bankGold, ax
                 adc     word_3733E, dx
                 xor     ax, ax
                 mov     dx, 64h ; 'd'
                 push    ax
                 push    dx
                 push    word_37342
-                push    word_37340
+                push    Party_bankGems
                 call    F_LUDIV@
-                add     word_37340, ax
+                add     Party_bankGems, ax
                 adc     word_37342, dx
                 pop     bp
                 retf
@@ -59375,7 +59989,7 @@ sub_3DFB6       proc far                ; CODE XREF: sub_28099↑J
 
 loc_3DFBA:                              ; CODE XREF: sub_3DFB6+B3↓j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     al, byte_34C1D
                 mov     ah, 0
                 push    ax              ; format
@@ -59495,7 +60109,7 @@ sub_3E08F       endp
 ; jester.bin "Joke of the Day"
 ; Attributes: bp-based frame
 
-showJoke        proc far                ; CODE XREF: j_showJoke↑J
+showJoke        proc far                ; CODE XREF: j_j_j_j_showJoke↑J
                 push    bp
                 mov     bp, sp
                 call    sub_1B669
@@ -59509,7 +60123,7 @@ showJoke        proc far                ; CODE XREF: j_showJoke↑J
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 shl     ax, 1
@@ -59533,7 +60147,7 @@ showJoke        proc far                ; CODE XREF: j_showJoke↑J
                 push    ax
                 mov     ax, 5
                 push    ax              ; format
-                call    j_loadHireFaces
+                call    j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     ax, 1
                 push    ax
@@ -59553,7 +60167,7 @@ showJoke        endp
 ; combat.m "The Arena"
 ; Attributes: bp-based frame
 
-arenaEvent      proc far                ; CODE XREF: j_arenaEvent↑J
+arenaEvent      proc far                ; CODE XREF: j_j_j_j_arenaEvent↑J
 
 var_12          = word ptr -12h
 format          = dword ptr -2
@@ -59571,7 +60185,7 @@ format          = dword ptr -2
                 call    sub_27F45
                 pop     cx
                 pop     cx
-                cmp     byte_37462, 0
+                cmp     Party_size, 0
                 jnz     short loc_3E138
                 jmp     loc_3E2E4
 ; ---------------------------------------------------------------------------
@@ -59612,7 +60226,7 @@ loc_3E13F:                              ; CODE XREF: arenaEvent+A3↓j
                 push    ax
                 mov     ax, 8
                 push    ax              ; format
-                call    j_loadHireFaces
+                call    j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     al, 7
                 mov     byte_36FE6, al
@@ -59629,7 +60243,7 @@ loc_3E1AB:                              ; CODE XREF: arenaEvent+44↑j
                 inc     word ptr [bp+format]
 
 loc_3E1AE:                              ; CODE XREF: arenaEvent+2A↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, word ptr [bp+format]
                 jg      short loc_3E13F
@@ -59709,14 +60323,14 @@ loc_3E219:                              ; CODE XREF: arenaEvent+C7↑j
                 push    ax
                 mov     ax, 8
                 push    ax              ; format
-                call    j_loadHireFaces
+                call    j_j_j_j_loadHireFaces
                 add     sp, 0Ah
                 mov     byte_36FE7, 1
-                mov     byte_37462, 0
-                mov     al, byte_34C10
+                mov     Party_size, 0
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     word ptr [bp+format], ax
-                mov     byte_34C10, 0
+                mov     Engine_mode, 0
                 mov     ax, 4
                 push    ax
                 mov     ax, 2
@@ -59725,7 +60339,7 @@ loc_3E219:                              ; CODE XREF: arenaEvent+C7↑j
                 pop     cx
                 pop     cx
                 mov     al, byte ptr [bp+format]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     ax, 1
                 push    ax
                 call    Music_playSong
@@ -59812,7 +60426,7 @@ loc_3E301:                              ; CODE XREF: arenaEvent+1D6↑j
                 add     sp, 8
                 mov     word ptr [bp+format], ax
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 12Ch
                 push    ax              ; maxlen
                 mov     bx, word ptr [bp+format]
@@ -59886,7 +60500,7 @@ loc_3E3F8:                              ; CODE XREF: arenaEvent+2CC↑j
                 mov     byte_36FE5, al
                 mov     byte_36FE4, 0
                 mov     al, 0
-                mov     byte_37462, al
+                mov     Party_size, al
                 mov     ah, 0
                 mov     word_32E66, ax
                 mov     al, byte_34114
@@ -59902,7 +60516,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -59913,7 +60527,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -59929,7 +60543,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     bx, word_32E66
@@ -59940,7 +60554,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 mov     word ptr [bx-4D40h], 0
                 mov     ax, word ptr [bp+format]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 mov     bx, word_32E66
@@ -59968,13 +60582,13 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 pop     cx
                 mov     word_32E42, dx
                 mov     word_32E40, ax
-                inc     byte_37462
+                inc     Party_size
                 mov     al, byte_36FDA
                 mov     ah, 0
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_333BC, ax
@@ -59983,7 +60597,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -60018,7 +60632,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -60029,7 +60643,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -60044,7 +60658,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     bx, word_32E66
@@ -60055,7 +60669,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 mov     word ptr [bx-4D40h], 0
                 mov     ax, si
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 mov     bx, word_32E66
@@ -60065,7 +60679,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 shl     bx, 1
                 mov     [bx-4944h], si
                 inc     word_32E66
-                inc     byte_37462
+                inc     Party_size
                 inc     di
 
 loc_3E5DF:                              ; CODE XREF: arenaEvent+434↑j
@@ -60080,7 +60694,7 @@ loc_3E5E8:                              ; CODE XREF: arenaEvent+4D0↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_333BC, ax
@@ -60089,7 +60703,7 @@ loc_3E5E8:                              ; CODE XREF: arenaEvent+4D0↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 sar     ax, 1
@@ -60125,7 +60739,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -60136,7 +60750,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     ax, 6
@@ -60151,7 +60765,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     bx, word_32E66
@@ -60162,7 +60776,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 mov     word ptr [bx-4D40h], 0
                 mov     ax, si
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 mov     bx, word_32E66
@@ -60172,7 +60786,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 shl     bx, 1
                 mov     [bx-4944h], si
                 inc     word_32E66
-                inc     byte_37462
+                inc     Party_size
                 inc     di
 
 loc_3E6DD:                              ; CODE XREF: arenaEvent+532↑j
@@ -60411,7 +61025,7 @@ sub_3E729       endp
 
 ; Attributes: bp-based frame
 
-Spells_moonRay  proc far                ; CODE XREF: j_Spells_moonRay↑J
+Spells_moonRay  proc far                ; CODE XREF: j_j_j_j_Spells_moonRay↑J
                 push    bp
                 mov     bp, sp
                 push    si              ; n
@@ -60504,7 +61118,7 @@ loc_3E918:                              ; CODE XREF: sub_3E8E2+30↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     bx, si
@@ -60519,7 +61133,7 @@ loc_3E918:                              ; CODE XREF: sub_3E8E2+30↑j
                 mov     [bx-4D40h], ax
                 mov     ax, [bp+var_2]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 mov     bx, si
@@ -60555,7 +61169,7 @@ sub_3E8E2       endp
 ; death.vga, mm3theme.m (from strings)
 ; Attributes: bp-based frame
 
-death           proc far                ; CODE XREF: j_death↑J
+death           proc far                ; CODE XREF: j_j_j_j_death↑J
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -60592,7 +61206,7 @@ var_2           = word ptr -2
                 call    sub_281B2
                 pop     cx
                 call    sub_193DC
-                cmp     byte_34C10, 0
+                cmp     Engine_mode, 0
                 jnz     short loc_3E9DD
                 call    sub_28130
 
@@ -60605,7 +61219,7 @@ loc_3E9DD:                              ; CODE XREF: death+54↑j
                 push    ax
                 call    sub_15736
                 pop     cx
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 call    sub_1B669
 
 loc_3EA05:                              ; CODE XREF: death+8D6↓j
@@ -61100,7 +61714,7 @@ loc_3ED67:                              ; CODE XREF: death+3E0↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1
@@ -61110,7 +61724,7 @@ loc_3ED67:                              ; CODE XREF: death+3E0↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -61122,7 +61736,7 @@ loc_3ED67:                              ; CODE XREF: death+3E0↑j
                 mov     al, [bx-378Eh]
                 mov     ah, 0
                 push    ax
-                call    j_giveCharDamage
+                call    j_j_j_j_giveCharDamage
                 add     sp, 6
 
 loc_3EDA5:                              ; CODE XREF: death+3F7↑j
@@ -61131,14 +61745,14 @@ loc_3EDA5:                              ; CODE XREF: death+3F7↑j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ax
-                call    j_getThievery
+                call    j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     ax, 14h
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 pop     dx
@@ -61591,7 +62205,7 @@ loc_3F0F8:                              ; CODE XREF: death+706↑j
                 call    chargeStep
                 jmp     loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    j_rest
+                call    j_j_j_j_rest
                 jmp     loc_3F22F
 ; ---------------------------------------------------------------------------
                 cmp     word_28CED, 0
@@ -61703,7 +62317,7 @@ loc_3F1A7:                              ; CODE XREF: death+820↑j
                 jmp     short loc_3F1E9
 ; ---------------------------------------------------------------------------
                 call    chargeStep
-                call    j_dismissCharacter
+                call    j_j_j_j_dismissCharacter
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
                 call    sub_282CA
@@ -61725,7 +62339,7 @@ loc_3F1E9:                              ; CODE XREF: death+525↑j
                 call    sub_286B3
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    j_controlPanel
+                call    j_j_j_j_controlPanel
                 or      ax, ax
                 jz      short loc_3F22F
                 mov     [bp+var_6], 2
@@ -61886,7 +62500,7 @@ loc_3F337:                              ; CODE XREF: death+99E↑j
                 call    sub_24FF2
                 pop     cx
                 pop     cx
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 1Eh
                 push    ax
                 call    sub_25E9E
@@ -61994,7 +62608,7 @@ ovl05           segment para public 'OVERLAY' use16
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Awards_show(int, int)
-Awards_show     proc far                ; CODE XREF: j_Awards_show↑J
+Awards_show     proc far                ; CODE XREF: j_j_j_j_Awards_show↑J
 
 dest            = byte ptr -270h
 var_252         = byte ptr -252h
@@ -62207,7 +62821,7 @@ loc_3F617:                              ; CODE XREF: Awards_show+3F↑j
                 xor     ax, ax          ; jumptable 0003F4CF case 9
                 push    ax
                 push    [bp+arg_2]
-                call    j_getArmorClass
+                call    j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 mov     [bp+var_E], 0
@@ -62215,7 +62829,7 @@ loc_3F617:                              ; CODE XREF: Awards_show+3F↑j
                 mov     ax, 1
                 push    ax
                 push    [bp+arg_2]
-                call    j_getArmorClass
+                call    j_j_j_j_getArmorClass
                 jmp     short loc_3F682
 ; ---------------------------------------------------------------------------
 
@@ -62223,7 +62837,7 @@ loc_3F63A:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    ds              ; jumptable 0003F4CF case 10
                 push    [bp+arg_2]
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 xor     dx, dx
@@ -62252,7 +62866,7 @@ loc_3F66B:                              ; CODE XREF: Awards_show+3F↑j
                 mov     [bp+var_10], ax
                 push    ds
                 push    [bp+arg_2]
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
 
 loc_3F682:                              ; CODE XREF: Awards_show+1A8↑j
                 pop     cx
@@ -62380,7 +62994,7 @@ loc_3F6B7:                              ; CODE XREF: Awards_show+3F↑j
 loc_3F7AE:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    [bp+arg_2]      ; jumptable 0003F4CF case 13
-                call    j_getNumSkills
+                call    j_j_j_j_getNumSkills
                 pop     cx
                 mov     [bp+var_8], ax
                 cmp     [bp+var_8], 0
@@ -62400,7 +63014,7 @@ loc_3F7C7:                              ; CODE XREF: Awards_show+3B3↓j
                 or      si, si
                 jnz     short loc_3F802
                 push    [bp+arg_2]
-                call    j_getThievery
+                call    j_j_j_j_getThievery
                 pop     cx
                 push    ax
                 mov     bx, si
@@ -63073,7 +63687,7 @@ loc_3FCB1:                              ; CODE XREF: Awards_show+81C↑j
 loc_3FD13:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 push    [bp+arg_2]      ; jumptable 0003F4CF case 15
-                call    j_experienceToNextLevel
+                call    j_j_j_j_experienceToNextLevel
                 pop     cx
                 mov     word ptr [bp+value+2], dx
                 mov     word ptr [bp+value], ax
@@ -63103,7 +63717,7 @@ loc_3FD4D:                              ; CODE XREF: Awards_show+8A5↑j
                 mov     ax, 0E73Ch
                 push    ax
                 push    [bp+arg_2]
-                call    j_getCurrentExperience
+                call    j_j_j_j_getCurrentExperience
                 pop     cx
                 push    dx
                 push    ax
@@ -63117,22 +63731,22 @@ loc_3FD4D:                              ; CODE XREF: Awards_show+8A5↑j
 loc_3FD6B:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 mov     ax, word_37346  ; jumptable 0003F4CF case 16
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 mov     [bp+var_E], ax
                 mov     [bp+var_10], dx
                 mov     ax, word_3733E
-                mov     dx, word_3733C
+                mov     dx, Party_bankGold
                 jmp     short loc_3FD95
 ; ---------------------------------------------------------------------------
 
 loc_3FD81:                              ; CODE XREF: Awards_show+3F↑j
                                         ; DATA XREF: ovl05:jpt_3F4CF↓o
                 mov     ax, word_3734A  ; jumptable 0003F4CF case 17
-                mov     dx, word_37348
+                mov     dx, Party_gems
                 mov     [bp+var_E], ax
                 mov     [bp+var_10], dx
                 mov     ax, word_37342
-                mov     dx, word_37340
+                mov     dx, Party_bankGems
 
 loc_3FD95:                              ; CODE XREF: Awards_show+8EF↑j
                 mov     word ptr [bp+value+2], ax
@@ -63158,7 +63772,7 @@ loc_3FDC2:                              ; CODE XREF: Awards_show+3F↑j
                 mov     al, byte_36FDA  ; jumptable 0003F4CF case 18
                 mov     ah, 0
                 push    ax
-                mov     ax, word_37334
+                mov     ax, Party_food
                 xor     dx, dx
                 pop     bx
                 div     bx
@@ -63173,7 +63787,7 @@ loc_3FDC2:                              ; CODE XREF: Awards_show+3F↑j
 loc_3FDE3:                              ; CODE XREF: Awards_show+94C↑j
                 push    word ptr [bp+buffer+2]
                 push    si
-                push    word_37334
+                push    Party_food
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 push    word ptr [bx+5860h] ; format
@@ -63733,9 +64347,9 @@ arg_0           = word ptr  6
                 nop
                 push    cs
                 call    near ptr setSoundAddress
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     [bp+var_1], al
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 push    ds
                 mov     ax, 2D6Bh
                 push    ax
@@ -63773,7 +64387,7 @@ arg_0           = word ptr  6
                 push    cs
                 call    near ptr sub_402F6
                 mov     al, [bp+var_1]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     sp, bp
                 pop     bp
                 retf
@@ -64008,7 +64622,7 @@ sub_403A6       endp
 
 ; Attributes: bp-based frame
 
-setSoundAddress proc far                ; CODE XREF: j_setSoundAddress↑J
+setSoundAddress proc far                ; CODE XREF: j_j_j_j_setSoundAddress↑J
                                         ; Awards_show+BCE↑p ...
                 push    bp
                 mov     bp, sp
@@ -64025,7 +64639,7 @@ setSoundAddress endp
 
 ; Attributes: bp-based frame
 
-sortParty       proc far                ; CODE XREF: j_sortParty↑J
+sortParty       proc far                ; CODE XREF: j_j_j_j_sortParty↑J
                                         ; rosterMenu+660↓p ...
                 push    bp
                 mov     bp, sp
@@ -64419,8 +65033,8 @@ loc_40644:                              ; CODE XREF: sub_4058A+AE↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398+2
-                mov     bx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer+2
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     ax, bx
                 pop     bx
@@ -64894,7 +65508,7 @@ sub_4087E       endp
 
 ; Attributes: bp-based frame
 
-copyPartyToRoster proc far              ; CODE XREF: j_copyPartyToRoster↑J
+copyPartyToRoster proc far              ; CODE XREF: j_j_j_j_copyPartyToRoster↑J
                                         ; rosterMenu+672↓p ...
                 push    bp
                 mov     bp, sp
@@ -64908,9 +65522,9 @@ loc_40A75:                              ; CODE XREF: copyPartyToRoster+3A↓j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx              ; dest
                 mov     ax, si
                 mov     dx, 12Fh
@@ -64938,7 +65552,7 @@ copyPartyToRoster endp
 ; delete character/hireling, "Your Roster is full!"
 ; Attributes: bp-based frame
 
-rosterMenu      proc far                ; CODE XREF: j_rosterMenu↑J
+rosterMenu      proc far                ; CODE XREF: j_j_j_j_rosterMenu↑J
 
 var_5F          = byte ptr -5Fh
 var_35          = byte ptr -35h
@@ -65085,8 +65699,8 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_22524
                 pop     cx
-                mov     word ptr dword_37398+2, dx
-                mov     word ptr dword_37398, ax
+                mov     word ptr Roster_buffer+2, dx
+                mov     word ptr Roster_buffer, ax
                 mov     ax, 78h ; 'x'
                 push    ax              ; c
                 xor     ax, ax
@@ -65115,7 +65729,7 @@ loc_40C33:                              ; CODE XREF: rosterMenu+700↓j
 ; ---------------------------------------------------------------------------
 
 loc_40C3F:                              ; CODE XREF: rosterMenu+18C↑j
-                call    sub_26447
+                call    loadSavedGame
                 mov     [bp+var_2], 0
                 jmp     short loc_40C7C
 ; ---------------------------------------------------------------------------
@@ -65132,9 +65746,9 @@ loc_40C4B:                              ; CODE XREF: rosterMenu+1D8↓j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx
                 mov     cx, 12Fh
                 call    SCOPY@
@@ -65145,14 +65759,14 @@ loc_40C7C:                              ; CODE XREF: rosterMenu+19D↑j
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_40C4B
-                cmp     word_37332, 12Ch
+                cmp     Party_minutes, 12Ch
                 jnb     short loc_40C93
-                mov     byte_2879E, 1
+                mov     Party_newDay, 1
 
 loc_40C93:                              ; CODE XREF: rosterMenu+1E0↑j
                 cmp     byte_36FE7, 0
                 jz      short loc_40CA7
-                mov     byte_34C10, 0
+                mov     Engine_mode, 0
                 mov     byte_34B8C, 1
                 jmp     loc_413DE
 ; ---------------------------------------------------------------------------
@@ -65206,7 +65820,7 @@ loc_40D05:                              ; CODE XREF: rosterMenu+22E↑j
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_40CDC
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 mov     ax, 1Eh
                 push    ax              ; c
                 mov     ax, 0FFh
@@ -65224,14 +65838,14 @@ loc_40D33:                              ; CODE XREF: rosterMenu+2DA↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_40D7F
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                mov     bx, word ptr dword_37398
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     al, byte_36FEB
                 mov     ah, 0
@@ -65264,14 +65878,14 @@ loc_40D8F:                              ; CODE XREF: rosterMenu+32C↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_40DD1
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                mov     bx, word ptr dword_37398
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     al, byte_36FEB
                 mov     ah, 0
@@ -65470,8 +66084,8 @@ loc_40F3C:                              ; CODE XREF: rosterMenu+48B↑j
                 mov     [bp+var_4], ax
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398+2
-                mov     bx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer+2
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     word ptr [bp+src+2], dx
                 mov     word ptr [bp+src], bx
@@ -65586,14 +66200,14 @@ loc_41045:                              ; CODE XREF: rosterMenu+5EC↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_41091
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                mov     bx, word ptr dword_37398
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     al, byte_36FEB
                 mov     ah, 0
@@ -65626,14 +66240,14 @@ loc_410A1:                              ; CODE XREF: rosterMenu+63E↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_410E3
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                mov     bx, word ptr dword_37398
+                mov     bx, word ptr Roster_buffer
                 add     bx, ax
                 mov     al, byte_36FEB
                 mov     ah, 0
@@ -65745,7 +66359,7 @@ loc_4115F:                              ; CODE XREF: rosterMenu+6AE↑j
                 call    Music_playSong
                 pop     cx
                 mov     byte_34B8C, 0
-                call    j_createCharacter
+                call    j_j_j_j_createCharacter
                 push    cs
                 call    near ptr copyPartyToRoster
                 call    sub_25F71
@@ -65861,9 +66475,9 @@ loc_41254:                              ; CODE XREF: rosterMenu+798↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx
                 call    getCurrentLevel
                 pop     cx
@@ -65880,9 +66494,9 @@ loc_41254:                              ; CODE XREF: rosterMenu+798↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx              ; src
                 push    ds
                 mov     ax, 0E73Ch
@@ -65934,7 +66548,7 @@ loc_412FA:                              ; CODE XREF: rosterMenu+849↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 mov     al, es:[bx+23h]
                 mov     ah, 0
@@ -65989,9 +66603,9 @@ loc_4134D:                              ; CODE XREF: rosterMenu+88D↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx
                 mov     cx, 12Fh
                 call    SCOPY@
@@ -66066,7 +66680,7 @@ loc_413F9:                              ; CODE XREF: rosterMenu+937↑j
                 push    ax
                 call    sub_26685
                 pop     cx
-                cmp     byte_34C10, 0
+                cmp     Engine_mode, 0
                 jz      short loc_41464
                 mov     byte_36FB1, 0
                 jmp     short loc_4145D
@@ -66133,7 +66747,7 @@ ovl06           segment para public 'OVERLAY' use16
 
 ; Attributes: bp-based frame
 
-nextExperienceLevel proc far            ; CODE XREF: j_nextExperienceLevel↑J
+nextExperienceLevel proc far            ; CODE XREF: j_j_j_j_nextExperienceLevel↑J
                                         ; experienceToNextLevel+C↓p
 
 var_2           = word ptr -2
@@ -66202,7 +66816,7 @@ nextExperienceLevel endp
 
 ; Attributes: bp-based frame
 
-experienceToNextLevel proc far          ; CODE XREF: j_experienceToNextLevel↑J
+experienceToNextLevel proc far          ; CODE XREF: j_j_j_j_experienceToNextLevel↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -66259,7 +66873,7 @@ experienceToNextLevel endp
 
 ; Attributes: bp-based frame
 
-getCurrentExperience proc far           ; CODE XREF: j_getCurrentExperience↑J
+getCurrentExperience proc far           ; CODE XREF: j_j_j_j_getCurrentExperience↑J
                                         ; experienceToNextLevel+15↑p
 
 var_6           = word ptr -6
@@ -66488,7 +67102,7 @@ sub_416F1       endp
 ; "Too dangerous to rest here!" ... "8 hours pass.  Rest complete."
 ; Attributes: bp-based frame
 
-rest            proc far                ; CODE XREF: j_rest↑J
+rest            proc far                ; CODE XREF: j_j_j_j_rest↑J
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -66606,10 +67220,10 @@ loc_417A4:                              ; CODE XREF: rest+94↑j
                 cmp     ax, si
                 jg      short loc_41795
                 call    sub_170F7
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_4], ax
-                mov     byte_34C10, 5
+                mov     Engine_mode, 5
                 cmp     [bp+var_4], 0Ch
                 jz      short loc_417FA
                 xor     si, si
@@ -66619,10 +67233,10 @@ loc_417A4:                              ; CODE XREF: rest+94↑j
 loc_417C9:                              ; CODE XREF: rest+E8↓j
                 call    chargeStep
                 call    sub_1B669
-                cmp     byte_34C10, 1
+                cmp     Engine_mode, 1
                 jnz     short loc_417E3
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 jmp     loc_418ED
 ; ---------------------------------------------------------------------------
 
@@ -66650,7 +67264,7 @@ loc_417FA:                              ; CODE XREF: rest+C4↑j
 
 loc_417FD:                              ; CODE XREF: rest:loc_417F8↑j
                 push    ax
-                call    sub_16973
+                call    changeTime
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -66673,7 +67287,7 @@ loc_4181A:                              ; CODE XREF: rest+1A5↓j
                 mov     [bp+var_A], ax
                 mov     bx, [bp+var_A]
                 mov     byte ptr [bx+11Bh], 0
-                cmp     word_37334, 0
+                cmp     Party_food, 0
                 jz      short loc_41895
                 push    [bp+var_A]
                 call    worstCondition
@@ -66686,7 +67300,7 @@ loc_4181A:                              ; CODE XREF: rest+1A5↓j
                 jle     short loc_4189A
 
 loc_4184F:                              ; CODE XREF: rest+148↑j
-                dec     word_37334
+                dec     Party_food
                 inc     [bp+var_6]
                 mov     bx, [bp+var_A]
                 mov     al, 0
@@ -66697,14 +67311,14 @@ loc_4184F:                              ; CODE XREF: rest+148↑j
                 mov     [bx+11Fh], al
                 push    ds
                 push    [bp+var_A]
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     bx, [bp+var_A]
                 mov     [bx+125h], ax
                 push    ds
                 push    [bp+var_A]
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 mov     bx, [bp+var_A]
@@ -66730,7 +67344,7 @@ loc_4189B:                              ; CODE XREF: rest+118↑j
 loc_418A7:                              ; CODE XREF: rest+1A3↑j
                 call    sub_170F7
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     byte_2886E, 1
                 call    sub_1B669
                 push    [bp+var_6]
@@ -66863,7 +67477,7 @@ arg_4           = word ptr  0Ah
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_2]
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 cmp     [bp+arg_4], 0
                 jnz     short loc_419C1
                 mov     bx, di
@@ -66960,7 +67574,7 @@ loc_41A4D:                              ; CODE XREF: sub_41A2F+C↑j
                 or      si, si
                 jz      short loc_41A86
                 mov     ax, word_3733E
-                mov     dx, word_3733C
+                mov     dx, Party_bankGold
                 cmp     ax, [bp+arg_4]
                 ja      short loc_41A75
                 jb      short loc_41A64
@@ -66987,14 +67601,14 @@ loc_41A75:                              ; CODE XREF: sub_41A2F+2C↑j
                                         ; sub_41A2F+33↑j
                 mov     ax, [bp+arg_4]
                 mov     dx, [bp+arg_2]
-                sub     word_3733C, dx
+                sub     Party_bankGold, dx
                 sbb     word_3733E, ax
                 jmp     loc_41B25
 ; ---------------------------------------------------------------------------
 
 loc_41A86:                              ; CODE XREF: sub_41A2F+20↑j
                 mov     ax, word_37346
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 cmp     ax, [bp+arg_4]
                 ja      short loc_41A9B
                 jb      short loc_41A99
@@ -67009,7 +67623,7 @@ loc_41A9B:                              ; CODE XREF: sub_41A2F+61↑j
                                         ; sub_41A2F+68↑j
                 mov     ax, [bp+arg_4]
                 mov     dx, [bp+arg_2]
-                sub     word_37344, dx
+                sub     Party_gold, dx
                 sbb     word_37346, ax
                 jmp     short loc_41B25
 ; ---------------------------------------------------------------------------
@@ -67018,7 +67632,7 @@ loc_41AAB:                              ; CODE XREF: sub_41A2F+11↑j
                 or      si, si
                 jz      short loc_41AD4
                 mov     ax, word_37342
-                mov     dx, word_37340
+                mov     dx, Party_bankGems
                 cmp     ax, [bp+arg_4]
                 ja      short loc_41AC4
                 jb      short loc_41AC2
@@ -67033,14 +67647,14 @@ loc_41AC4:                              ; CODE XREF: sub_41A2F+8A↑j
                                         ; sub_41A2F+91↑j
                 mov     ax, [bp+arg_4]
                 mov     dx, [bp+arg_2]
-                sub     word_37340, dx
+                sub     Party_bankGems, dx
                 sbb     word_37342, ax
                 jmp     short loc_41B25
 ; ---------------------------------------------------------------------------
 
 loc_41AD4:                              ; CODE XREF: sub_41A2F+7E↑j
                 mov     ax, word_3734A
-                mov     dx, word_37348
+                mov     dx, Party_gems
                 cmp     ax, [bp+arg_4]
                 ja      short loc_41AF1
                 jb      short loc_41AE7
@@ -67060,13 +67674,13 @@ loc_41AF1:                              ; CODE XREF: sub_41A2F+AF↑j
                                         ; sub_41A2F+B6↑j
                 mov     ax, [bp+arg_4]
                 mov     dx, [bp+arg_2]
-                sub     word_37348, dx
+                sub     Party_gems, dx
                 sbb     word_3734A, ax
                 jmp     short loc_41B25
 ; ---------------------------------------------------------------------------
 
 loc_41B01:                              ; CODE XREF: sub_41A2F+18↑j
-                mov     ax, word_37334
+                mov     ax, Party_food
                 xor     dx, dx
                 cmp     dx, [bp+arg_4]
                 ja      short loc_41B1C
@@ -67084,9 +67698,9 @@ loc_41B12:                              ; CODE XREF: sub_41A2F+DC↑j
 
 loc_41B1C:                              ; CODE XREF: sub_41A2F+DA↑j
                                         ; sub_41A2F+E1↑j
-                mov     ax, word_37334
+                mov     ax, Party_food
                 sub     ax, [bp+arg_2]
-                mov     word_37334, ax
+                mov     Party_food, ax
 
 loc_41B25:                              ; CODE XREF: sub_41A2F:loc_41A4A↑j
                                         ; sub_41A2F+54↑j ...
@@ -67160,7 +67774,7 @@ format          = dword ptr  6
                 call    _strcpy
                 pop     cx
                 pop     cx
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
 
 loc_41BB8:                              ; CODE XREF: sub_41B2B+77↑j
                 mov     word_290D5, 25h ; '%'
@@ -67387,8 +68001,8 @@ loc_41D8C:                              ; CODE XREF: sub_41CED+9A↑j
                 push    ax
                 call    sub_22524
                 pop     cx
-                mov     word ptr dword_37398+2, dx
-                mov     word ptr dword_37398, ax
+                mov     word ptr Roster_buffer+2, dx
+                mov     word ptr Roster_buffer, ax
                 mov     ax, 396h
                 push    ax
                 call    sub_22524
@@ -67404,7 +68018,7 @@ loc_41D8C:                              ; CODE XREF: sub_41CED+9A↑j
                 push    word ptr [bp+dest] ; dest
                 call    _memcpy_0
                 add     sp, 0Ah
-                call    sub_26447
+                call    loadSavedGame
                 mov     ax, 396h
                 push    ax              ; n
                 push    word ptr [bp+dest+2]
@@ -67434,9 +68048,9 @@ loc_41DE4:                              ; CODE XREF: sub_41CED+178↓j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx
                 mov     ax, si
                 mov     dx, 12Fh
@@ -67455,9 +68069,9 @@ loc_41E31:                              ; CODE XREF: sub_41CED+FE↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx
                 mov     ax, si
                 mov     dx, 12Fh
@@ -67603,7 +68217,7 @@ sub_41EF1       endp
 ; cpanel.icn, load/save "*.mm3", quit confirmation, Mr. Wizard's help
 ; Attributes: bp-based frame
 
-controlPanel    proc far                ; CODE XREF: j_controlPanel↑J
+controlPanel    proc far                ; CODE XREF: j_j_j_j_controlPanel↑J
 
 s               = word ptr -24h
 var_22          = word ptr -22h
@@ -67814,7 +68428,7 @@ loc_420E7:                              ; CODE XREF: controlPanel+183↑j
                 call    sub_25DFE
                 jmp     loc_42087
 ; ---------------------------------------------------------------------------
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_42127
                 mov     ax, offset aNoLoadingAllow ; "No Loading Allowed in Combat!"
 
@@ -67862,7 +68476,7 @@ loc_42169:                              ; CODE XREF: controlPanel+1F4↑j
                 call    sub_2621D
                 jmp     loc_422AD
 ; ---------------------------------------------------------------------------
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_42182
                 mov     ax, offset aNoSavingAllowe ; "No Saving Allowed in Combat!"
                 jmp     short loc_4211F
@@ -68300,8 +68914,8 @@ var_2           = word ptr -2
                 call    sub_24F83
                 add     sp, 6
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     ax, word_37332
+                call    j_j_j_j_setSoundAddress
+                mov     ax, Party_minutes
                 mov     bx, 3Ch ; '<'
                 xor     dx, dx
                 div     bx
@@ -68315,8 +68929,8 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 push    ax
-                push    word_37326
-                mov     al, byte_37325
+                push    Party_year
+                mov     al, Party_day
                 mov     ah, 0
                 push    ax
                 cmp     si, 0Bh
@@ -68330,7 +68944,7 @@ loc_42501:                              ; CODE XREF: sub_424AB+4F↑j
 
 loc_42504:                              ; CODE XREF: sub_424AB+54↑j
                 push    ax
-                mov     ax, word_37332
+                mov     ax, Party_minutes
                 mov     bx, 3Ch ; '<'
                 xor     dx, dx
                 div     bx
@@ -68355,7 +68969,7 @@ loc_42525:                              ; CODE XREF: sub_424AB+73↑j
 loc_42527:                              ; CODE XREF: sub_424AB+6F↑j
                                         ; sub_424AB+78↑j
                 push    ax
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -68555,7 +69169,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_24F83
                 add     sp, 6
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     ax, 6
                 push    ax
                 call    sub_153EA
@@ -69912,9 +70526,9 @@ arg_0           = word ptr  6
                 call    sub_1693D
                 or      ax, ax
                 jz      short loc_43074
-                cmp     word_37332, 12Ch
+                cmp     Party_minutes, 12Ch
                 jb      short loc_43062
-                cmp     word_37332, 4ECh
+                cmp     Party_minutes, 4ECh
                 jnb     short loc_43062
                 mov     al, 0
                 jmp     short loc_43064
@@ -70258,7 +70872,7 @@ format          = dword ptr  6
                 mov     bp, sp
                 sub     sp, 1Ah
                 push    si              ; n
-                call    sub_263C3
+                call    loadPartyFaces
                 mov     byte_35D57, 0FFh
                 mov     ax, 4
                 push    ax              ; c
@@ -70322,7 +70936,7 @@ loc_43325:                              ; CODE XREF: sub_432B9+67↑j
                 push    ss
                 lea     ax, [bp+buffer]
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+src+2], dx
@@ -70598,12 +71212,12 @@ loc_434F9:                              ; CODE XREF: sub_434D6+1C↑j
                 call    near ptr sub_430A8
                 pop     cx
                 push    si              ; format
-                call    j_Map_load
+                call    j_j_j_j_Map_load
                 pop     cx
                 call    sub_1B6D1
-                cmp     byte_34C10, 0
+                cmp     Engine_mode, 0
                 jz      short loc_43563
-                cmp     byte_34C10, 9
+                cmp     Engine_mode, 9
                 jz      short loc_43563
                 mov     byte_36FB1, 0
                 jmp     short loc_4355C
@@ -70703,7 +71317,7 @@ loc_435B4:                              ; CODE XREF: sub_435A0+F↑j
                 push    ax
                 call    sub_226C6
                 add     sp, 8
-                call    sub_263C3
+                call    loadPartyFaces
                 mov     al, byte_34C1D
                 mov     ah, 0
                 push    ax              ; format
@@ -70716,7 +71330,7 @@ loc_435B4:                              ; CODE XREF: sub_435A0+F↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr [bp+var_4+2], dx
@@ -70743,7 +71357,7 @@ loc_43612:                              ; CODE XREF: sub_435A0+99↓j
                 inc     di
 
 loc_43632:                              ; CODE XREF: sub_435A0+70↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, di
                 jg      short loc_43612
@@ -70804,7 +71418,7 @@ sub_435A0       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Map_load(char *format)
-Map_load        proc far                ; CODE XREF: j_Map_load↑J
+Map_load        proc far                ; CODE XREF: j_j_j_j_Map_load↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -70827,7 +71441,7 @@ format          = dword ptr  6
                 pop     cx
                 mov     al, 0
                 mov     byte_373D0, al
-                mov     byte_37462, al
+                mov     Party_size, al
                 mov     ah, 0
                 mov     si, ax
                 mov     di, ax
@@ -70843,7 +71457,7 @@ format          = dword ptr  6
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr dword_32E5A+2, dx
@@ -70921,7 +71535,7 @@ loc_43775:                              ; CODE XREF: Map_load+B8↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     bx, si
@@ -70936,7 +71550,7 @@ loc_43775:                              ; CODE XREF: Map_load+B8↑j
                 mov     [bx-4D40h], ax
                 mov     ax, [bp+var_4]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     ax, es:[bx]
                 mov     bx, si
@@ -70947,7 +71561,7 @@ loc_43775:                              ; CODE XREF: Map_load+B8↑j
                 mov     ax, [bp+var_4]
                 mov     [bx-4944h], ax
                 inc     si
-                inc     byte_37462
+                inc     Party_size
 
 loc_437CC:                              ; CODE XREF: Map_load+5C↑j
                 les     bx, dword_32E5A
@@ -70957,7 +71571,7 @@ loc_437CC:                              ; CODE XREF: Map_load+5C↑j
 ; ---------------------------------------------------------------------------
 
 loc_437D9:                              ; CODE XREF: Map_load+13C↑j
-                cmp     byte_37462, 0AAh
+                cmp     Party_size, 0AAh
                 jbe     short loc_43818
                 mov     ax, 4
                 push    ax
@@ -70968,7 +71582,7 @@ loc_437D9:                              ; CODE XREF: Map_load+13C↑j
                 pop     cx
                 mov     ax, 0AAh
                 push    ax
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 push    ax              ; format
                 mov     ax, offset aMaxMonstersExc ; "Max Monsters Exceeded. (%u - %u)"
@@ -71149,7 +71763,7 @@ loc_438DB:                              ; CODE XREF: Map_load+2F3↓j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -71207,7 +71821,7 @@ loc_439BD:                              ; CODE XREF: Map_load+311↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr dword_32E5A+2, dx
@@ -71224,7 +71838,7 @@ loc_439BD:                              ; CODE XREF: Map_load+311↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr dword_32E7A+2, dx
@@ -71337,7 +71951,7 @@ Map_load        endp
 ; (BinDiff sim .78 conf .98, unverified)
 ; Attributes: bp-based frame
 
-giveCharDamage  proc far                ; CODE XREF: j_giveCharDamage↑J
+giveCharDamage  proc far                ; CODE XREF: j_j_j_j_giveCharDamage↑J
 
 var_10          = word ptr -10h
 var_E           = word ptr -0Eh
@@ -71885,7 +72499,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_43E37:                              ; CODE XREF: sub_43E0C+26↑j
-                cmp     byte_34C10, 9
+                cmp     Engine_mode, 9
                 jnz     short loc_43E41
                 jmp     loc_43F45
 ; ---------------------------------------------------------------------------
@@ -72073,7 +72687,7 @@ loc_43F45:                              ; CODE XREF: sub_43E0C+32↑j
 
 loc_43F7E:                              ; CODE XREF: sub_43E0C+166↑j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 call    sub_25DFE
                 push    word_36FB4
                 push    word_36FB2
@@ -72112,9 +72726,9 @@ loc_43F7E:                              ; CODE XREF: sub_43E0C+166↑j
                 push    ax
                 call    Music_deinit
                 add     sp, 14h
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jz      short loc_43FF7
-                mov     byte_34C10, 7
+                mov     Engine_mode, 7
 
 loc_43FF7:                              ; CODE XREF: sub_43E0C+1E4↑j
                 push    cs
@@ -72183,10 +72797,10 @@ loc_44063:                              ; CODE XREF: sub_43E0C+252↑j
                 push    ax
                 call    sub_2812B
                 pop     cx
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_4], ax
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 xor     ax, ax
                 push    ax
                 call    highlightChar
@@ -72201,7 +72815,7 @@ loc_44063:                              ; CODE XREF: sub_43E0C+252↑j
                 mov     di, ax
                 call    sub_27F7C
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4409F:                              ; CODE XREF: sub_43E0C+241↑j
                                         ; sub_43E0C+2DA↓j
@@ -72361,9 +72975,9 @@ loc_441D8:                              ; CODE XREF: sub_43E0C+3C7↑j
                 call    sub_254BA
 
 loc_441F8:                              ; CODE XREF: sub_43E0C+224↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jz      short loc_44204
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
 
 loc_44204:                              ; CODE XREF: sub_43E0C+3F1↑j
                 mov     ax, 1
@@ -72372,11 +72986,11 @@ loc_44204:                              ; CODE XREF: sub_43E0C+3F1↑j
                 pop     cx
                 mov     ax, word_376EC
                 mov     dx, word_376EA
-                add     word_37344, dx
+                add     Party_gold, dx
                 adc     word_37346, ax
                 mov     ax, word_376FA
                 mov     dx, word_376F8
-                add     word_37348, dx
+                add     Party_gems, dx
                 adc     word_3734A, ax
                 xor     ax, ax
                 xor     dx, dx
@@ -72386,7 +73000,7 @@ loc_44204:                              ; CODE XREF: sub_43E0C+3F1↑j
                 mov     word_376EA, dx
                 mov     ax, dx
                 mov     byte_37710, al
-                cmp     byte_34C10, 9
+                cmp     Engine_mode, 9
                 jnz     short loc_442B0
                 cmp     byte_34BB6, 0
                 jz      short loc_442B0
@@ -72473,7 +73087,7 @@ arg_0           = word ptr  6
                 push    di
                 push    ds
                 push    [bp+arg_0]
-                call    sub_24FDD
+                call    loadResourceByName
                 pop     cx
                 pop     cx
                 mov     word ptr dword_373AE+2, dx
@@ -72570,7 +73184,7 @@ loc_44358:                              ; CODE XREF: sub_4432C+26↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_8], ax
@@ -72578,7 +73192,7 @@ loc_44358:                              ; CODE XREF: sub_4432C+26↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_A], ax
@@ -72705,7 +73319,7 @@ loc_44470:                              ; CODE XREF: sub_4432C+139↑j
 loc_44477:                              ; CODE XREF: sub_4432C+89↑j
                                         ; sub_4432C+99↑j ...
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_4], ax
@@ -72722,7 +73336,7 @@ loc_44482:                              ; CODE XREF: sub_4432C+D1↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+s], ax
@@ -72738,7 +73352,7 @@ loc_444B6:                              ; CODE XREF: sub_4432C+165↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_2], ax
@@ -72779,7 +73393,7 @@ loc_444FF:                              ; CODE XREF: sub_4432C+1CE↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_C], ax
@@ -72789,7 +73403,7 @@ loc_444FF:                              ; CODE XREF: sub_4432C+1CE↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_12], ax
@@ -72801,7 +73415,7 @@ loc_44525:                              ; CODE XREF: sub_4432C+1C9↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_14], ax
@@ -72811,7 +73425,7 @@ loc_44539:                              ; CODE XREF: sub_4432C+222↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_E], ax
@@ -72828,7 +73442,7 @@ loc_44559:                              ; CODE XREF: sub_4432C+242↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+s], ax
@@ -72844,7 +73458,7 @@ loc_44577:                              ; CODE XREF: sub_4432C+1C3↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_8], ax
@@ -72914,7 +73528,7 @@ loc_445F0:                              ; CODE XREF: sub_4432C+2BF↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -72989,7 +73603,7 @@ loc_44635:                              ; CODE XREF: sub_4432C+2DC↑j
                 mov     al, [bx+3698h]
                 mov     ah, 0
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, [bp+arg_2]
@@ -73005,7 +73619,7 @@ loc_44694:                              ; CODE XREF: sub_4432C+2BF↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -73108,7 +73722,7 @@ loc_44701:                              ; CODE XREF: sub_4432C+380↑j
                 mov     al, [bx+36E6h]
                 mov     ah, 0
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, [bp+arg_2]
@@ -73124,7 +73738,7 @@ loc_44760:                              ; CODE XREF: sub_4432C+2BF↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -73177,7 +73791,7 @@ loc_44785:                              ; CODE XREF: sub_4432C+454↑j
                 mov     al, [bx+3768h]
                 mov     ah, 0
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, [bp+arg_2]
@@ -73201,7 +73815,7 @@ loc_447E3:                              ; CODE XREF: sub_4432C+2BF↑j
                 mov     al, [bx+3782h]
                 mov     ah, 0
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 les     bx, [bp+arg_2]
@@ -73210,7 +73824,7 @@ loc_447E3:                              ; CODE XREF: sub_4432C+2BF↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     al, 5
@@ -73562,7 +74176,7 @@ jpt_449A1       dw offset loc_449A6     ; DATA XREF: sub_4495A+47↑r
 ; "Too dangerous to dismiss here!"
 ; Attributes: bp-based frame
 
-dismissCharacter proc far               ; CODE XREF: j_dismissCharacter↑J
+dismissCharacter proc far               ; CODE XREF: j_j_j_j_dismissCharacter↑J
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -73681,7 +74295,7 @@ loc_44B4F:                              ; CODE XREF: dismissCharacter+85↑j
                 call    sub_26685
                 pop     cx
                 call    sub_2811C
-                call    j_sortParty
+                call    j_j_j_j_sortParty
                 mov     ax, 12Fh
                 push    ax              ; n
                 push    word ptr [bp+dest+2]
@@ -74111,7 +74725,7 @@ loc_44E64:                              ; CODE XREF: sub_44DBE+EC↓j
                 add     ax, dx
                 push    ax              ; int
                 push    di              ; int
-                call    sub_264ED
+                call    readSaveHeader
                 add     sp, 6
                 mov     al, [bp+di+var_1C]
                 mov     ah, 0
@@ -74878,10 +75492,10 @@ arg_2           = word ptr  6
                 push    si
                 push    di
                 mov     di, [bp+arg_2]
-                mov     ax, word ptr dword_37772
-                or      ax, word ptr dword_37772+2
+                mov     ax, word ptr Mon_hp
+                or      ax, word ptr Mon_hp+2
                 jnz     short loc_4544B
-                call    sub_26716
+                call    loadMonsterData
 
 loc_4544B:                              ; CODE XREF: sub_45431+13↑j
                 or      di, di
@@ -74938,7 +75552,7 @@ loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
                 push    ax              ; buffer
                 call    _sprintf
                 add     sp, 6
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     byte_29116, 0
                 or      di, di
                 jz      short loc_45502
@@ -75105,8 +75719,8 @@ loc_455FB:                              ; CODE XREF: ovl07:2056↑j
                 push    ax
                 call    sub_22524
                 pop     cx
-                mov     word ptr dword_37398+2, dx
-                mov     word ptr dword_37398, ax
+                mov     word ptr Roster_buffer+2, dx
+                mov     word ptr Roster_buffer, ax
                 call    sub_25FC3
                 mov     al, byte_37380
                 inc     byte_37380
@@ -75116,7 +75730,7 @@ loc_455FB:                              ; CODE XREF: ovl07:2056↑j
                 call    sub_22632
 
 loc_4563C:                              ; CODE XREF: ovl07:2095↑j
-                call    sub_26447
+                call    loadSavedGame
                 lea     ax, [bp-24h]
                 push    ax
                 mov     ax, 0E8CAh
@@ -75124,9 +75738,9 @@ loc_4563C:                              ; CODE XREF: ovl07:2095↑j
                 call    _strcpy
                 pop     cx
                 pop     cx
-                call    sub_27F54
-                mov     byte_37325, 1
-                mov     word_37326, 1F4h
+                call    j_j_j_resetBlacksmithWares
+                mov     Party_day, 1
+                mov     Party_year, 1F4h
                 call    sub_25F71
                 mov     ax, 0ECA8h
                 push    ax
@@ -75198,7 +75812,7 @@ loc_456B8:                              ; CODE XREF: ovl07:20E1↑j
                 call    Music_deinit
                 add     sp, 14h
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 call    sub_254BA
                 call    sub_280EA
                 mov     ax, 1
@@ -75243,7 +75857,7 @@ loc_4573C:                              ; CODE XREF: ovl07:2115↑j
                 call    sub_22632
 
 loc_45758:                              ; CODE XREF: ovl07:21B1↑j
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 cmp     si, 1Bh
                 jnz     short loc_45767
                 call    far ptr sub_27F86
@@ -75285,10 +75899,10 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     al, byte_34C10
+                call    j_j_j_j_setSoundAddress
+                mov     al, Engine_mode
                 mov     [bp+var_7], al
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 13h
                 push    ax              ; c
                 push    ax
@@ -75612,7 +76226,7 @@ loc_45A25:                              ; CODE XREF: sub_45790+286↑j
                 call    sub_25DFE
                 call    sub_280EA
                 mov     al, [bp+var_7]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -76118,7 +76732,7 @@ def_45C8F:                              ; CODE XREF: sub_45C21+69↑j
                                         ; sub_45C21+6E↑j ...
                 push    ds              ; jumptable 00045C8F default case, cases 5-7
                 push    [bp+arg_0]
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -76164,7 +76778,7 @@ def_45DD9:                              ; CODE XREF: sub_45C21+1B4↑j
                                         ; sub_45C21+1B8↑j ...
                 push    ds              ; jumptable 00045DD9 default case, cases 5-7
                 push    [bp+arg_0]
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -76460,7 +77074,7 @@ loc_45FFD:                              ; CODE XREF: sub_45F29+CF↑j
 
 loc_46019:                              ; CODE XREF: sub_45F29+E4↑j
                 mov     dx, word_37346
-                mov     ax, word_37344
+                mov     ax, Party_gold
 
 loc_46020:                              ; CODE XREF: sub_45F29+EE↑j
                 push    dx
@@ -76981,7 +77595,7 @@ loc_4640B:                              ; CODE XREF: sub_45F29+4BC↑j
 ; ---------------------------------------------------------------------------
                 cmp     [bp+arg_2], 0
                 jz      short loc_46468
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jz      short loc_46468
                 sub     [bp+var_2], 0C9h
                 mov     al, byte_36FDA
@@ -77472,7 +78086,7 @@ s               = dword ptr  10h
 
 loc_4685E:                              ; CODE XREF: sub_46847+F↑j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 3FDFh
                 push    ax
@@ -77664,10 +78278,10 @@ loc_4693A:                              ; CODE XREF: sub_46847+D7↑j
                 pop     es
                 mov     es:[bx+10Dh], al
                 les     bx, [bp+s]
-                mov     ax, word_37326
+                mov     ax, Party_year
                 sub     ax, 12h
                 mov     es:[bx+129h], ax
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     es:[bx+25h], al
                 mov     al, [bp+arg_0]
                 mov     ah, 0
@@ -77759,14 +78373,14 @@ loc_46AC8:                              ; CODE XREF: sub_46847+274↑j
 loc_46AE8:                              ; CODE XREF: sub_46847+294↑j
                 push    word ptr [bp+s+2]
                 push    word ptr [bp+s]
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 les     bx, [bp+s]
                 mov     es:[bx+125h], ax
                 push    word ptr [bp+s+2]
                 push    word ptr [bp+s]
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 les     bx, [bp+s]
@@ -77797,7 +78411,7 @@ jpt_46A48       dw offset loc_46A71     ; DATA XREF: sub_46847+201↑r
 ; (BinDiff sim .59 conf .93, unverified)
 ; Attributes: bp-based frame
 
-checkClasses    proc far                ; CODE XREF: j_checkClasses↑J
+checkClasses    proc far                ; CODE XREF: j_j_j_j_checkClasses↑J
                                         ; sub_46C21+70↓p ...
 
 arg_0           = word ptr  6
@@ -78058,7 +78672,7 @@ loc_46C4F:                              ; CODE XREF: sub_46C21+60↓j
                 push    ax
                 mov     ax, 0Ah
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     ah, 0
@@ -78394,7 +79008,7 @@ sub_46DE4       endp
 ; dice.vga, create.raw, create.icn
 ; Attributes: bp-based frame
 
-createCharacter proc far                ; CODE XREF: j_createCharacter↑J
+createCharacter proc far                ; CODE XREF: j_j_j_j_createCharacter↑J
 
 buffer          = byte ptr -200h
 var_70          = byte ptr -70h
@@ -78467,10 +79081,10 @@ var_2           = word ptr -2
                 mov     byte_3767E, 0F6h
                 mov     byte_3767C, 0F6h
                 mov     byte_3767F, 0Ah
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_A], ax
-                mov     byte_34C10, 4
+                mov     Engine_mode, 4
                 mov     ax, 14h
                 push    ax              ; c
                 xor     ax, ax
@@ -78562,7 +79176,7 @@ loc_46FCC:                              ; CODE XREF: createCharacter+1B5↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
-                les     bx, dword_37398
+                les     bx, Roster_buffer
                 add     bx, ax
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -79041,7 +79655,7 @@ loc_47330:                              ; CODE XREF: createCharacter+43B↑j
 loc_4739A:                              ; CODE XREF: createCharacter+54C↑j
                 jmp     loc_47147
 ; ---------------------------------------------------------------------------
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     al, [bp+var_12]
                 mov     ah, 0
                 lea     dx, [bp+var_70]
@@ -79051,9 +79665,9 @@ loc_4739A:                              ; CODE XREF: createCharacter+54C↑j
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
-                mov     dx, word ptr dword_37398
+                mov     dx, word ptr Roster_buffer
                 add     dx, ax
-                push    word ptr dword_37398+2
+                push    word ptr Roster_buffer+2
                 push    dx              ; s
                 lea     ax, [bp+var_1A]
                 push    ax              ; int
@@ -79069,7 +79683,7 @@ loc_4739A:                              ; CODE XREF: createCharacter+54C↑j
                 call    near ptr sub_46847
                 add     sp, 0Eh
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 4
+                mov     Engine_mode, 4
                 cmp     [bp+var_2], 0
                 jnz     short loc_473EE
                 jmp     def_474F8       ; jumptable 000474F8 default case
@@ -79217,7 +79831,7 @@ loc_474F6:                              ; CODE XREF: createCharacter+6A8↑j
 
 loc_474FD:                              ; CODE XREF: createCharacter+674↑j
                                         ; createCharacter+679↑j ...
-                mov     byte_34C10, 56h ; 'V' ; jumptable 000474F8 cases 1-7
+                mov     Engine_mode, 56h ; 'V' ; jumptable 000474F8 cases 1-7
                 xor     ax, ax
                 push    ax
                 mov     al, [si+50Ah]
@@ -79352,7 +79966,7 @@ loc_475FC:                              ; CODE XREF: createCharacter+787↑j
 
 loc_47624:                              ; CODE XREF: createCharacter+7BB↑j
                                         ; createCharacter+7CF↑j
-                mov     byte_34C10, 4
+                mov     Engine_mode, 4
                 jmp     def_474F8       ; jumptable 000474F8 default case
 ; ---------------------------------------------------------------------------
 
@@ -79582,7 +80196,7 @@ def_474F8:                              ; CODE XREF: createCharacter+2D3↑j
 loc_477FB:                              ; CODE XREF: createCharacter+1C0↑j
                                         ; createCharacter+9AD↑j
                 mov     al, byte ptr [bp+var_A]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 lea     ax, [bp+var_28]
                 push    ax
                 call    sub_26685
@@ -79928,7 +80542,7 @@ loc_47A93:                              ; CODE XREF: sub_47A33+55↑j
                                         ; sub_47A33+5A↑j
                 cmp     word_34C12, 41Dh
                 jnz     short loc_47AA8
-                cmp     byte_34C10, 3
+                cmp     Engine_mode, 3
                 jz      short loc_47AA8
                 mov     ax, 0FFFFh
                 jmp     loc_47B87
@@ -80489,21 +81103,21 @@ arg_0           = word ptr  6
                 or      si, si
                 jz      short loc_47EFF
                 mov     ax, word_3733E
-                mov     dx, word_3733C
+                mov     dx, Party_bankGold
                 mov     word ptr [bp+var_8+2], ax
                 mov     word ptr [bp+var_8], dx
                 mov     ax, word_37342
-                mov     dx, word_37340
+                mov     dx, Party_bankGems
                 jmp     short loc_47F13
 ; ---------------------------------------------------------------------------
 
 loc_47EFF:                              ; CODE XREF: sub_47ECE+19↑j
                 mov     ax, word_37346
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 mov     word ptr [bp+var_8+2], ax
                 mov     word ptr [bp+var_8], dx
                 mov     ax, word_3734A
-                mov     dx, word_37348
+                mov     dx, Party_gems
 
 loc_47F13:                              ; CODE XREF: sub_47ECE+2F↑j
                 mov     word ptr [bp+format+2], ax
@@ -80584,7 +81198,7 @@ loc_47FA5:                              ; CODE XREF: sub_47ECE+CE↑j
 loc_47FB0:                              ; CODE XREF: sub_47ECE+DD↑j
                 or      si, si
                 jz      short loc_47FC1
-                mov     ax, word_37340
+                mov     ax, Party_bankGems
                 or      ax, word_37342
                 jnz     short loc_47FC1
                 or      di, di
@@ -80594,7 +81208,7 @@ loc_47FC1:                              ; CODE XREF: sub_47ECE+E4↑j
                                         ; sub_47ECE+ED↑j
                 or      si, si
                 jz      short loc_47FD2
-                mov     ax, word_3733C
+                mov     ax, Party_bankGold
                 or      ax, word_3733E
                 jnz     short loc_47FD2
                 or      di, di
@@ -80604,7 +81218,7 @@ loc_47FD2:                              ; CODE XREF: sub_47ECE+F5↑j
                                         ; sub_47ECE+FE↑j
                 or      si, si
                 jnz     short loc_47FE3
-                mov     ax, word_37348
+                mov     ax, Party_gems
                 or      ax, word_3734A
                 jnz     short loc_47FE3
                 or      di, di
@@ -80614,7 +81228,7 @@ loc_47FE3:                              ; CODE XREF: sub_47ECE+106↑j
                                         ; sub_47ECE+10F↑j
                 or      si, si
                 jnz     short loc_48005
-                mov     ax, word_37344
+                mov     ax, Party_gold
                 or      ax, word_37346
                 jnz     short loc_48005
                 or      di, di
@@ -80672,7 +81286,7 @@ loc_48005:                              ; CODE XREF: sub_47ECE+117↑j
                 jz      short loc_48069
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
-                add     word_37348, dx
+                add     Party_gems, dx
                 adc     word_3734A, ax
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
@@ -80680,7 +81294,7 @@ loc_48005:                              ; CODE XREF: sub_47ECE+117↑j
 loc_48069:                              ; CODE XREF: sub_47ECE+189↑j
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
-                add     word_37340, dx
+                add     Party_bankGems, dx
                 adc     word_37342, ax
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
@@ -80699,7 +81313,7 @@ loc_48079:                              ; CODE XREF: sub_47ECE+16E↑j
                 jz      short loc_480A3
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
-                add     word_37344, dx
+                add     Party_gold, dx
                 adc     word_37346, ax
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
@@ -80707,7 +81321,7 @@ loc_48079:                              ; CODE XREF: sub_47ECE+16E↑j
 loc_480A3:                              ; CODE XREF: sub_47ECE+1C3↑j
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
-                add     word_3733C, dx
+                add     Party_bankGold, dx
                 adc     word_3733E, ax
 
 loc_480B1:                              ; CODE XREF: sub_47ECE+16A↑j
@@ -80715,21 +81329,21 @@ loc_480B1:                              ; CODE XREF: sub_47ECE+16A↑j
                 or      si, si
                 jz      short loc_480CB
                 mov     ax, word_3733E
-                mov     dx, word_3733C
+                mov     dx, Party_bankGold
                 mov     word ptr [bp+var_8+2], ax
                 mov     word ptr [bp+var_8], dx
                 mov     ax, word_37342
-                mov     dx, word_37340
+                mov     dx, Party_bankGems
                 jmp     short loc_480DF
 ; ---------------------------------------------------------------------------
 
 loc_480CB:                              ; CODE XREF: sub_47ECE+1E5↑j
                 mov     ax, word_37346
-                mov     dx, word_37344
+                mov     dx, Party_gold
                 mov     word ptr [bp+var_8+2], ax
                 mov     word ptr [bp+var_8], dx
                 mov     ax, word_3734A
-                mov     dx, word_37348
+                mov     dx, Party_gems
 
 loc_480DF:                              ; CODE XREF: sub_47ECE+1FB↑j
                 mov     word ptr [bp+format+2], ax
@@ -80799,7 +81413,7 @@ sub_47ECE       endp
 ; bank.m, bank.icn, bank2.icn
 ; Attributes: bp-based frame
 
-townBank        proc far                ; CODE XREF: j_townBank↑J
+townBank        proc far                ; CODE XREF: j_j_j_j_townBank↑J
 
 var_32          = word ptr -32h
 buffer          = byte ptr -30h
@@ -80815,9 +81429,9 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 32h
                 push    si
-                cmp     word_37332, 21Ch
+                cmp     Party_minutes, 21Ch
                 jb      short loc_48183
-                cmp     word_37332, 3FCh
+                cmp     Party_minutes, 3FCh
                 jbe     short loc_4819F
 
 loc_48183:                              ; CODE XREF: townBank+D↑j
@@ -80901,28 +81515,28 @@ loc_481F2:                              ; CODE XREF: townBank+81↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_3734A
-                push    word_37348      ; format
+                push    Party_gems      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_26]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_1C]
                 push    ax              ; buffer
                 push    word_37342
-                push    word_37340      ; format
+                push    Party_bankGems  ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_12]
                 push    ax              ; buffer
                 push    word_3733E
-                push    word_3733C      ; format
+                push    Party_bankGold  ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -81005,28 +81619,28 @@ loc_48302:                              ; CODE XREF: townBank+191↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_3734A
-                push    word_37348      ; format
+                push    Party_gems      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_26]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_1C]
                 push    ax              ; buffer
                 push    word_37342
-                push    word_37340      ; format
+                push    Party_bankGems  ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
                 lea     ax, [bp+var_12]
                 push    ax              ; buffer
                 push    word_3733E
-                push    word_3733C      ; format
+                push    Party_bankGold  ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax              ; format
@@ -81062,7 +81676,7 @@ loc_483B6:                              ; CODE XREF: townBank+245↑j
                 call    sub_280EA
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
 
 loc_483D4:                              ; CODE XREF: townBank+83↑j
@@ -81129,7 +81743,7 @@ loc_48434:                              ; CODE XREF: sub_483FB+28↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -81155,7 +81769,7 @@ sub_483FB       endp
 ; guild.m, spldesc.bin
 ; Attributes: bp-based frame
 
-townGuild       proc far                ; CODE XREF: j_townGuild↑J
+townGuild       proc far                ; CODE XREF: j_j_j_j_townGuild↑J
 
 var_2           = word ptr -2
 
@@ -81388,7 +82002,7 @@ loc_4862E:                              ; CODE XREF: townGuild+1C3↑j
                 call    sub_28185
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
 
 loc_4865B:                              ; CODE XREF: townGuild+7C↑j
@@ -81421,7 +82035,7 @@ townGuild       endp ; sp-analysis failed
 ; towninn.m
 ; Attributes: bp-based frame
 
-townInn         proc far                ; CODE XREF: j_townInn↑J
+townInn         proc far                ; CODE XREF: j_j_j_j_townInn↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -81498,7 +82112,7 @@ loc_48744:                              ; CODE XREF: townInn+83↑j
                 mov     byte_36FE7, 0
                 mov     ax, 5A0h
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
                 mov     ax, 1
                 push    ax
@@ -81536,7 +82150,7 @@ arg_0           = word ptr  6
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -81561,7 +82175,7 @@ sub_4877A       endp
 ; honky.m, tavern.bin
 ; Attributes: bp-based frame
 
-townTavern      proc far                ; CODE XREF: j_townTavern↑J
+townTavern      proc far                ; CODE XREF: j_j_j_j_townTavern↑J
 
 buffer          = byte ptr -1Eh
 var_A           = word ptr -0Ah
@@ -81575,9 +82189,9 @@ var_2           = word ptr -2
                 sub     sp, 1Eh
                 push    si
                 push    di
-                cmp     word_37332, 438h
+                cmp     Party_minutes, 438h
                 jnb     short loc_487E8
-                cmp     word_37332, 12Ch
+                cmp     Party_minutes, 12Ch
                 jbe     short loc_487E8
                 mov     ax, offset a007sorryTheTav ; "\v007Sorry, the Tavern's closed! Come b"...
                 push    ax
@@ -81632,10 +82246,10 @@ loc_487E8:                              ; CODE XREF: townTavern+E↑j
 ; ---------------------------------------------------------------------------
 
 loc_4883B:                              ; CODE XREF: townTavern+82↑j
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_6], ax
-                mov     byte_34C10, 0Bh
+                mov     Engine_mode, 0Bh
                 call    sub_28144
                 mov     ax, offset aEscIcn_0 ; "esc.icn"
                 push    ax
@@ -81658,7 +82272,7 @@ loc_4883B:                              ; CODE XREF: townTavern+82↑j
                 mov     [bp+var_4], ax
                 mov     ax, 78h ; 'x'
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
                 mov     si, 0B9D6h
 
@@ -81755,7 +82369,7 @@ loc_48934:                              ; CODE XREF: townTavern+17B↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -81779,7 +82393,7 @@ loc_48934:                              ; CODE XREF: townTavern+17B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, 1Ah
@@ -81850,7 +82464,7 @@ loc_48993:                              ; CODE XREF: townTavern+1D1↑j
                 mov     dx, 3
                 imul    dx
                 mov     [bp+var_8], ax
-                mov     ax, word_37334
+                mov     ax, Party_food
                 cmp     ax, [bp+var_8]
                 jnb     short loc_48A54
                 xor     ax, ax
@@ -81869,7 +82483,7 @@ loc_48993:                              ; CODE XREF: townTavern+1D1↑j
                 or      ax, ax
                 jz      short loc_48A61
                 mov     ax, [bp+var_8]
-                mov     word_37334, ax
+                mov     Party_food, ax
                 jmp     loc_48B9B
 ; ---------------------------------------------------------------------------
 
@@ -81906,7 +82520,7 @@ loc_48A7B:                              ; CODE XREF: townTavern+2C2↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -82040,7 +82654,7 @@ loc_48BA8:                              ; CODE XREF: townTavern+2C4↑j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -82077,7 +82691,7 @@ loc_48BE2:                              ; CODE XREF: townTavern+1DC↑j
                 dec     ax
                 mov     dx, 0Ah
                 imul    dx
-                mov     dl, byte_37325
+                mov     dl, Party_day
                 mov     dh, 0
                 mov     bx, 0Ah
                 push    ax
@@ -82132,7 +82746,7 @@ loc_48C64:                              ; CODE XREF: townTavern+14D↑j
 
 loc_48C6C:                              ; CODE XREF: townTavern+4B3↑j
                 mov     al, byte ptr [bp+var_6]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     ax, 0ECBEh
                 push    ax
                 call    sub_26685
@@ -82145,9 +82759,9 @@ loc_48C6C:                              ; CODE XREF: townTavern+4B3↑j
                 pop     cx
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
-                call    sub_263C3
+                call    loadPartyFaces
 
 loc_48C9F:                              ; CODE XREF: townTavern+84↑j
                 mov     ax, 3
@@ -82197,7 +82811,7 @@ format          = dword ptr  10h
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -82340,7 +82954,7 @@ loc_48DED:                              ; CODE XREF: sub_48D4B+46C↓j
                 mov     [bp+var_1E], ax
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 cmp     ax, [si+125h]
@@ -82662,7 +83276,7 @@ loc_49095:                              ; CODE XREF: sub_48D4B+345↑j
                 mov     [si+15h], al
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
@@ -82749,7 +83363,7 @@ loc_4916B:                              ; CODE XREF: sub_48D4B+3DA↑j
                 cwd
                 idiv    bx
                 mov     [bp+var_6], dx
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 cwd
                 idiv    bx
@@ -82847,7 +83461,7 @@ loc_49236:                              ; CODE XREF: sub_48D4B+4E6↑j
 
 loc_49253:                              ; CODE XREF: sub_48D4B+67↑j
                 push    [bp+var_22]
-                call    sub_1531F
+                call    addTime
                 pop     cx
                 call    sub_170F7
                 mov     ax, 2
@@ -82877,7 +83491,7 @@ sub_48D4B       endp ; sp-analysis failed
 ; Attributes: bp-based frame
 
 ; int __cdecl __far trainingNeedsExperience(char *format)
-trainingNeedsExperience proc far        ; CODE XREF: j_trainingNeedsExperience↑J
+trainingNeedsExperience proc far        ; CODE XREF: j_j_j_j_trainingNeedsExperience↑J
                                         ; townTraining+11F↓p
 
 var_4           = word ptr -4
@@ -82890,7 +83504,7 @@ format          = dword ptr  6
                 push    si
                 mov     si, word ptr [bp+format]
                 push    si
-                call    j_experienceToNextLevel
+                call    j_j_j_j_experienceToNextLevel
                 pop     cx
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
@@ -82982,7 +83596,7 @@ trainingNeedsExperience endp
 ; grounds.m, train.icn
 ; Attributes: bp-based frame
 
-townTraining    proc far                ; CODE XREF: j_townTraining↑J
+townTraining    proc far                ; CODE XREF: j_j_j_j_townTraining↑J
 
 buffer          = byte ptr -3Ah
 var_12          = word ptr -12h
@@ -83117,7 +83731,7 @@ loc_49485:                              ; CODE XREF: townTraining+287↓j
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -83239,12 +83853,12 @@ loc_49543:                              ; CODE XREF: townTraining+1D6↑j
 
 loc_4957E:                              ; CODE XREF: townTraining+211↑j
                 push    si
-                call    j_nextExperienceLevel
+                call    j_j_j_j_nextExperienceLevel
                 pop     cx
                 push    ax
                 push    dx
                 push    si
-                call    j_getCurrentExperience
+                call    j_j_j_j_getCurrentExperience
                 pop     cx
                 sub     ax, [si+12Bh]
                 sbb     dx, [si+12Dh]
@@ -83264,7 +83878,7 @@ loc_4957E:                              ; CODE XREF: townTraining+211↑j
                 jnz     short loc_495CB
                 mov     ax, 5A0h
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
                 lea     ax, [bp+s]
                 mov     bx, [bp+var_4]
@@ -83278,13 +83892,13 @@ loc_495CB:                              ; CODE XREF: townTraining+24C↑j
                 pop     cx
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
                 push    ds
                 push    si
-                call    j_getMaxSP
+                call    j_j_j_j_getMaxSP
                 pop     cx
                 pop     cx
                 mov     [si+127h], ax
@@ -83421,7 +84035,7 @@ arg_0           = word ptr  6
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 push    word_37346
-                push    word_37344      ; format
+                push    Party_gold      ; format
                 call    sub_28149
                 add     sp, 6
                 push    ax
@@ -83445,7 +84059,7 @@ sub_496FA       endp
 ; dungeon.m ("Sorry, the Smithy's closed")
 ; Attributes: bp-based frame
 
-townSmithy      proc far                ; CODE XREF: j_townSmithy↑J
+townSmithy      proc far                ; CODE XREF: j_j_j_j_townSmithy↑J
 
 format          = byte ptr -10h
 var_4           = word ptr -4
@@ -83641,7 +84255,7 @@ loc_498AA:                              ; CODE XREF: townSmithy+121↑j
                 pop     cx
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    sub_1531F
+                call    addTime
                 pop     cx
 
 loc_498CE:                              ; CODE XREF: townSmithy+97↑j
@@ -83673,7 +84287,7 @@ townSmithy      endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far loadHireFaces(char *format, int, int, int)
-loadHireFaces   proc far                ; CODE XREF: j_loadHireFaces↑J
+loadHireFaces   proc far                ; CODE XREF: j_j_j_j_loadHireFaces↑J
 
 var_12          = byte ptr -12h
 var_2           = word ptr -2
@@ -83712,7 +84326,7 @@ loc_49943:                              ; CODE XREF: loadHireFaces+20↑j
                 call    sub_28144
                 or      di, di
                 jz      short loc_49958
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 jmp     short loc_49970
 ; ---------------------------------------------------------------------------
 
@@ -84101,7 +84715,7 @@ loc_49C44:                              ; CODE XREF: sub_49B8B+B0↑j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3776A
+                les     dx, Mon_phys
                 mov     bx, ax
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -84270,7 +84884,7 @@ loc_49D72:                              ; CODE XREF: sub_49B8B+1E2↑j
                 mov     ax, [bx-4944h]
                 shl     ax, 1
                 shl     ax, 1
-                les     bx, dword_3775E
+                les     bx, Mon_exp
                 add     bx, ax
                 push    word ptr es:[bx+2]
                 push    word ptr es:[bx]
@@ -84292,7 +84906,7 @@ loc_49DB4:                              ; CODE XREF: sub_49B8B+224↑j
                 mov     ax, [bx-4944h]
                 shl     ax, 1
                 shl     ax, 1
-                les     bx, dword_37722
+                les     bx, Mon_gold
                 add     bx, ax
                 mov     ax, es:[bx+2]
                 mov     dx, es:[bx]
@@ -84304,7 +84918,7 @@ loc_49DB4:                              ; CODE XREF: sub_49B8B+224↑j
                 mov     bx, ax
                 mov     ax, [bx-4944h]
                 shl     ax, 1
-                les     bx, dword_37726
+                les     bx, Mon_gems
                 add     bx, ax
                 mov     ax, es:[bx]
                 add     word_376F8, ax
@@ -84312,7 +84926,7 @@ loc_49DB4:                              ; CODE XREF: sub_49B8B+224↑j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_37756
+                les     dx, Mon_trea
                 mov     bx, ax
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -84328,7 +84942,7 @@ loc_49E1B:                              ; CODE XREF: sub_49B8B+28B↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     dl, [bp+var_7]
@@ -84358,7 +84972,7 @@ loc_49E4F:                              ; CODE XREF: sub_49B8B+2BD↑j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_37756
+                les     dx, Mon_trea
                 mov     bx, ax
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -84558,7 +85172,7 @@ arg_2           = word ptr  8
                 sub     sp, 6
                 push    si
                 push    di
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_49FB7
                 mov     al, byte_333B1
                 jmp     short loc_49FBA
@@ -84582,7 +85196,7 @@ loc_49FC8:                              ; CODE XREF: sub_49FA3+7F↓j
 ; ---------------------------------------------------------------------------
 
 loc_49FCC:                              ; CODE XREF: sub_49FA3+79↓j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_49FDB
                 mov     al, [si-1337h]
                 mov     ah, 0
@@ -84680,7 +85294,7 @@ loc_4A05D:                              ; CODE XREF: sub_4A02A:loc_4A0BD↓j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_37736
+                les     dx, Mon_fire
                 jmp     loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84726,7 +85340,7 @@ loc_4A0A3:                              ; CODE XREF: sub_4A02A+74↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 0
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3776A
+                les     dx, Mon_phys
                 jmp     short loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84736,7 +85350,7 @@ loc_4A0B0:                              ; CODE XREF: sub_4A02A:loc_4A08F↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 1
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3774A
+                les     dx, Mon_magi
                 jmp     short loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84751,7 +85365,7 @@ loc_4A0BF:                              ; CODE XREF: sub_4A02A+48↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 3
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3773A
+                les     dx, Mon_elec
                 jmp     short loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84761,7 +85375,7 @@ loc_4A0CC:                              ; CODE XREF: sub_4A02A+51↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 4
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3773E
+                les     dx, Mon_cold
                 jmp     short loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84771,7 +85385,7 @@ loc_4A0D9:                              ; CODE XREF: sub_4A02A+5A↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 5
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_37742
+                les     dx, Mon_acid
                 jmp     short loc_4A0F1
 ; ---------------------------------------------------------------------------
 
@@ -84781,7 +85395,7 @@ loc_4A0E6:                              ; CODE XREF: sub_4A02A+63↑j
                 mov     al, byte_2D26C  ; jumptable 0004A09E case 6
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_37752
+                les     dx, Mon_ener
 
 loc_4A0F1:                              ; CODE XREF: sub_4A02A+3E↑j
                                         ; sub_4A02A+84↑j ...
@@ -84835,7 +85449,7 @@ jpt_4A09E       dw offset loc_4A0A3     ; DATA XREF: sub_4A02A+74↑r
 ; Attributes: bp-based frame
 
 ; int __cdecl __far attack(int, int)
-attack          proc far                ; CODE XREF: j_attack↑J
+attack          proc far                ; CODE XREF: j_j_j_j_attack↑J
                                         ; quickFight+32↓p ...
 
 var_7           = byte ptr -7
@@ -85034,7 +85648,7 @@ loc_4A268:                              ; CODE XREF: attack+8D↑j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3774A
+                les     dx, Mon_magi
                 mov     bx, ax
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -85049,13 +85663,13 @@ loc_4A268:                              ; CODE XREF: attack+8D↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     dl, byte_2D26C
                 mov     dh, 0
                 shl     dx, 1
-                les     bx, dword_3774A
+                les     bx, Mon_magi
                 xchg    bx, dx
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -85353,7 +85967,7 @@ loc_4A482:                              ; CODE XREF: attack+38F↓j
                 mov     bx, ax
                 mov     ax, [bx-4944h]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     si, es:[bx]
                 jmp     short loc_4A502
@@ -85376,7 +85990,7 @@ loc_4A4C3:                              ; CODE XREF: attack+1B5↑j
                 mov     bx, ax
                 mov     ax, [bx-4944h]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     si, es:[bx]
                 cmp     si, 96h
@@ -85450,7 +86064,7 @@ jpt_4A14F       dw offset loc_4A15B     ; DATA XREF: attack+1F↑r
 
 ; Attributes: bp-based frame
 
-allHaveGone     proc far                ; CODE XREF: j_allHaveGone↑J
+allHaveGone     proc far                ; CODE XREF: j_j_j_j_allHaveGone↑J
                                         ; nextChar+38↓p ...
                 push    bp
                 mov     bp, sp
@@ -85561,7 +86175,7 @@ jpt_4A5B5       dw offset loc_4A5C0     ; DATA XREF: allHaveGone+6F↑r
 ; (BinDiff sim .81 conf .90, unverified)
 ; Attributes: bp-based frame
 
-sortCombatParty proc far                ; CODE XREF: j_sortCombatParty↑J
+sortCombatParty proc far                ; CODE XREF: j_j_j_j_sortCombatParty↑J
                                         ; run+39↓p
                 push    bp
                 mov     bp, sp
@@ -85777,7 +86391,7 @@ loc_4A750:                              ; CODE XREF: sub_4A62C+3D↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -85833,28 +86447,28 @@ arg_4           = word ptr  0Ah
 ; ---------------------------------------------------------------------------
 
 loc_4A794:                              ; CODE XREF: sub_4A779+44↓j
-                les     bx, dword_37766
+                les     bx, Mon_dmgs
                 add     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 mov     ah, 0
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     di, ax
                 inc     si
 
 loc_4A7AF:                              ; CODE XREF: sub_4A779+19↑j
-                les     bx, dword_3775A
+                les     bx, Mon_dmgn
                 add     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_4A794
                 mov     [bp+var_4], 4
-                les     bx, dword_3774E
+                les     bx, Mon_dmgt
                 add     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -85983,7 +86597,7 @@ loc_4A8AB:                              ; CODE XREF: sub_4A779+12E↑j
 ; ---------------------------------------------------------------------------
 
 loc_4A8B2:                              ; CODE XREF: sub_4A779+134↑j
-                les     bx, dword_3772E
+                les     bx, Mon_spec
                 add     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_4A8C2
@@ -86004,7 +86618,7 @@ loc_4A8C2:                              ; CODE XREF: sub_4A779+144↑j
 ; ---------------------------------------------------------------------------
 
 loc_4A8D5:                              ; CODE XREF: sub_4A779+157↑j
-                les     bx, dword_3772E
+                les     bx, Mon_spec
                 add     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -86378,7 +86992,7 @@ jpt_4A7F5       dw offset loc_4A7FA     ; DATA XREF: sub_4A779+7C↑r
 ; (BinDiff sim .77 conf .96, unverified)
 ; Attributes: bp-based frame
 
-doMonsterTurn   proc far                ; CODE XREF: j_doMonsterTurn↑J
+doMonsterTurn   proc far                ; CODE XREF: j_j_j_j_doMonsterTurn↑J
                                         ; nextChar+142↓p
 
 s               = byte ptr -1Ch
@@ -86461,7 +87075,7 @@ loc_4ABD1:                              ; CODE XREF: doMonsterTurn+F↑j
 
 loc_4ABDC:                              ; CODE XREF: doMonsterTurn+3A9↓j
                 mov     di, 0FFFFh
-                les     bx, dword_37732
+                les     bx, Mon_attp
                 add     bx, [bp+arg_0]
                 cmp     byte ptr es:[bx], 1
                 jnz     short loc_4ABEF
@@ -86469,7 +87083,7 @@ loc_4ABDC:                              ; CODE XREF: doMonsterTurn+3A9↓j
 ; ---------------------------------------------------------------------------
 
 loc_4ABEF:                              ; CODE XREF: doMonsterTurn+82↑j
-                mov     bx, word ptr dword_37732
+                mov     bx, word ptr Mon_attp
                 add     bx, [bp+arg_0]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -86518,7 +87132,7 @@ loc_4AC1B:                              ; CODE XREF: doMonsterTurn+140↓j
 ; ---------------------------------------------------------------------------
 
 def_4AC43:                              ; CODE XREF: doMonsterTurn+D7↑j
-                les     bx, dword_37732 ; jumptable 0004AC43 default case
+                les     bx, Mon_attp    ; jumptable 0004AC43 default case
                 add     bx, [bp+arg_0]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -86626,7 +87240,7 @@ loc_4ACCB:                              ; CODE XREF: doMonsterTurn+152↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -86647,7 +87261,7 @@ loc_4ACEB:                              ; CODE XREF: doMonsterTurn+152↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -86668,7 +87282,7 @@ loc_4AD0B:                              ; CODE XREF: doMonsterTurn+152↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -86686,7 +87300,7 @@ loc_4AD29:                              ; CODE XREF: doMonsterTurn+161↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -86786,7 +87400,7 @@ loc_4ADD5:                              ; CODE XREF: doMonsterTurn+221↑j
                 cmp     [bp+var_4], 0
                 jnz     short loc_4ADF1
                 mov     byte_28841, 1
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 jmp     loc_4AF19
 ; ---------------------------------------------------------------------------
 
@@ -86796,7 +87410,7 @@ loc_4ADF1:                              ; CODE XREF: doMonsterTurn+27A↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 shl     ax, 1
@@ -86833,7 +87447,7 @@ def_4AD69:                              ; CODE XREF: doMonsterTurn+107↑j
                 imul    dx
                 add     ax, 0B9D6h
                 mov     [bp+var_C], ax
-                les     bx, dword_3774E
+                les     bx, Mon_dmgt
                 add     bx, [bp+arg_0]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_4AE4E
@@ -86857,7 +87471,7 @@ loc_4AE5F:                              ; CODE XREF: doMonsterTurn+2E4↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     si, ax
@@ -86877,17 +87491,17 @@ loc_4AE85:                              ; CODE XREF: doMonsterTurn+30B↑j
                 jz      short loc_4AEEA
 
 loc_4AE8A:                              ; CODE XREF: doMonsterTurn+31B↑j
-                les     bx, dword_37762
+                les     bx, Mon_hitb
                 add     bx, [bp+arg_0]
                 mov     al, es:[bx]
                 mov     ah, 0
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
-                les     bx, dword_37762
+                les     bx, Mon_hitb
                 add     bx, [bp+arg_0]
                 mov     dl, es:[bx]
                 mov     dh, 0
@@ -86898,7 +87512,7 @@ loc_4AE8A:                              ; CODE XREF: doMonsterTurn+31B↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+var_C]
-                call    j_getArmorClass
+                call    j_j_j_j_getArmorClass
                 pop     cx
                 pop     cx
                 push    ax
@@ -86943,7 +87557,7 @@ loc_4AEFD:                              ; CODE XREF: doMonsterTurn+A8↑j
                 inc     [bp+var_8]
 
 loc_4AF00:                              ; CODE XREF: doMonsterTurn+71↑j
-                les     bx, dword_37746
+                les     bx, Mon_numa
                 add     bx, [bp+arg_0]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -86998,7 +87612,7 @@ jpt_4AC43       dw offset def_4AC5F     ; DATA XREF: doMonsterTurn+DB↑r
 
 ; Attributes: bp-based frame
 
-charsCantAct    proc far                ; CODE XREF: j_charsCantAct↑J
+charsCantAct    proc far                ; CODE XREF: j_j_j_j_charsCantAct↑J
                                         ; nextChar+C2↓p
                 push    bp
                 mov     bp, sp
@@ -87063,7 +87677,7 @@ jpt_4AF82       dw offset loc_4AF8B     ; DATA XREF: charsCantAct+2B↑r
 
 ; Attributes: bp-based frame
 
-nextChar        proc far                ; CODE XREF: j_nextChar↑J
+nextChar        proc far                ; CODE XREF: j_j_j_j_nextChar↑J
                                         ; sub_4B7B5+9F↓p ...
 
 var_2           = word ptr -2
@@ -87137,7 +87751,7 @@ loc_4B008:                              ; CODE XREF: nextChar+49↑j
 
 loc_4B011:                              ; CODE XREF: nextChar+5B↑j
                                         ; nextChar+7A↓j
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 jmp     loc_4B11E
 ; ---------------------------------------------------------------------------
 
@@ -87307,7 +87921,7 @@ jpt_4B0CC       dw offset loc_4B0D1     ; DATA XREF: nextChar+121↑r
 
 ; Attributes: bp-based frame
 
-quickFight      proc far                ; CODE XREF: j_quickFight↑J
+quickFight      proc far                ; CODE XREF: j_j_j_j_quickFight↑J
                                         ; sub_4B7B5+1CA↓p
                 push    bp
                 mov     bp, sp
@@ -87470,7 +88084,7 @@ loc_4B207:                              ; CODE XREF: sub_4B194+89↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -87494,7 +88108,7 @@ loc_4B23D:                              ; CODE XREF: sub_4B194+A4↑j
                 mov     al, byte_2D26C
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3776E
+                les     dx, Mon_ac
                 mov     bx, ax
                 add     dx, [bx-4944h]
                 mov     bx, dx
@@ -87535,7 +88149,7 @@ jpt_4B1DB       dw offset loc_4B1E0     ; DATA XREF: sub_4B194+47↑r
 ; (BinDiff sim .72 conf .94, unverified)
 ; Attributes: bp-based frame
 
-getWeaponDamage proc far                ; CODE XREF: j_getWeaponDamage↑J
+getWeaponDamage proc far                ; CODE XREF: j_j_j_j_getWeaponDamage↑J
                                         ; sub_4B194+F↑p
 
 var_2           = word ptr -2
@@ -87644,7 +88258,7 @@ loc_4B340:                              ; CODE XREF: getWeaponDamage+DB↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     word_332AA, ax
@@ -87723,7 +88337,7 @@ sub_4B37C       endp
 
 ; Attributes: bp-based frame
 
-monsterSavingThrow proc far             ; CODE XREF: j_monsterSavingThrow↑J
+monsterSavingThrow proc far             ; CODE XREF: j_j_j_j_monsterSavingThrow↑J
                                         ; sub_49B8B+15F↑p ...
 
 arg_0           = word ptr  6
@@ -87737,7 +88351,7 @@ arg_0           = word ptr  6
                 push    ax              ; max
                 mov     ax, 1
                 push    ax              ; min
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 cmp     ax, si
@@ -87760,7 +88374,7 @@ monsterSavingThrow endp
 
 ; Attributes: bp-based frame
 
-run             proc far                ; CODE XREF: j_run↑J
+run             proc far                ; CODE XREF: j_j_j_j_run↑J
                                         ; quickFight+52↑p ...
                 push    bp              ; max
                 mov     bp, sp
@@ -87768,7 +88382,7 @@ run             proc far                ; CODE XREF: j_run↑J
                 push    ax
                 mov     ax, 1
                 push    ax              ; min
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -87807,7 +88421,7 @@ run             endp
 ; (BinDiff sim .64 conf .90, unverified)
 ; Attributes: bp-based frame
 
-block           proc far                ; CODE XREF: j_block↑J
+block           proc far                ; CODE XREF: j_j_j_j_block↑J
                                         ; quickFight+4B↑p ...
                 push    bp
                 mov     bp, sp
@@ -87838,7 +88452,7 @@ arg_0           = word ptr  6
                 shl     bx, 1
                 mov     ax, [bx-4944h]
                 shl     ax, 1
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 add     bx, ax
                 mov     di, es:[bx]
                 mov     bx, si
@@ -87877,7 +88491,7 @@ sub_4B432       endp
 
 ; Attributes: bp-based frame
 
-getMonsterDescriptions proc far         ; CODE XREF: j_getMonsterDescriptions↑J
+getMonsterDescriptions proc far         ; CODE XREF: j_j_j_j_getMonsterDescriptions↑J
                                         ; sub_4B7B5+C9↓p ...
 
 var_7A          = byte ptr -7Ah
@@ -88036,7 +88650,7 @@ getMonsterDescriptions endp
 
 ; Attributes: bp-based frame
 
-setSpeedTable   proc far                ; CODE XREF: j_setSpeedTable↑J
+setSpeedTable   proc far                ; CODE XREF: j_j_j_j_setSpeedTable↑J
                                         ; attack+3E5↑p ...
 
 s               = byte ptr -20h
@@ -88134,7 +88748,7 @@ loc_4B645:                              ; CODE XREF: setSpeedTable+58↑j
                 mov     al, byte_34B92
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3771E
+                les     dx, Mon_spd
                 push    bx
                 mov     bx, ax
                 add     dx, [bx-4946h]
@@ -88160,7 +88774,7 @@ loc_4B68A:                              ; CODE XREF: setSpeedTable+A5↑j
                 mov     al, byte_34B93
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3771E
+                les     dx, Mon_spd
                 push    bx
                 mov     bx, ax
                 add     dx, [bx-4946h]
@@ -88186,7 +88800,7 @@ loc_4B6C5:                              ; CODE XREF: setSpeedTable+E0↑j
                 mov     al, byte_34B94
                 mov     ah, 0
                 shl     ax, 1
-                les     dx, dword_3771E
+                les     dx, Mon_spd
                 push    bx
                 mov     bx, ax
                 add     dx, [bx-4946h]
@@ -88328,7 +88942,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 4
                 push    si              ; n
-                mov     byte_34C10, 2
+                mov     Engine_mode, 2
                 call    sub_27F63
                 call    sub_28185
                 mov     ax, 9
@@ -88638,7 +89252,7 @@ loc_4B9FC:                              ; CODE XREF: sub_4B7B5+23D↑j
                 call    near ptr run
                 push    cs
                 call    near ptr nextChar
-                cmp     byte_34C10, 1
+                cmp     Engine_mode, 1
                 jz      short loc_4BA11
                 jmp     loc_4BAE5
 ; ---------------------------------------------------------------------------
@@ -88683,7 +89297,7 @@ loc_4BA34:                              ; CODE XREF: sub_4B7B5+1CD↑j
                 call    sub_286B3
                 jmp     short loc_4BA6B
 ; ---------------------------------------------------------------------------
-                call    j_controlPanel
+                call    j_j_j_j_controlPanel
 
 loc_4BA6B:                              ; CODE XREF: sub_4B7B5+2A1↑j
                                         ; sub_4B7B5+2A8↑j ...
@@ -88781,7 +89395,7 @@ loc_4BB2E:                              ; CODE XREF: sub_4B7B5+3A1↓j
                 shl     bx, 1
                 cmp     word ptr [bx-4944h], 37h ; '7'
                 jnz     short loc_4BB4B
-                les     bx, dword_37772
+                les     bx, Mon_hp
                 mov     ax, es:[bx+6Eh]
                 mov     bx, [bp+var_2]
                 shl     bx, 1
@@ -88791,7 +89405,7 @@ loc_4BB4B:                              ; CODE XREF: sub_4B7B5+383↑j
                 inc     [bp+var_2]
 
 loc_4BB4E:                              ; CODE XREF: sub_4B7B5+377↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_4BB2E
@@ -88800,7 +89414,7 @@ loc_4BB4E:                              ; CODE XREF: sub_4B7B5+377↑j
                 call    sub_161AD
                 mov     ax, 1
                 push    ax
-                call    sub_16973
+                call    changeTime
                 pop     cx
 
 loc_4BB71:                              ; CODE XREF: sub_4B7B5+338↑j
@@ -88818,7 +89432,7 @@ loc_4BB71:                              ; CODE XREF: sub_4B7B5+338↑j
                 jnz     short loc_4BBB6
                 mov     ax, 1
                 push    ax
-                call    sub_16973
+                call    changeTime
                 pop     cx
                 call    sub_1B669
                 mov     al, byte_34B92
@@ -88839,14 +89453,14 @@ loc_4BBB6:                              ; CODE XREF: sub_4B7B5+3C3↑j
                 call    checkPartyDead
                 cmp     byte_28841, 0
                 jnz     short loc_4BBCC
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_4BBCC
                 jmp     loc_4B8AD
 ; ---------------------------------------------------------------------------
 
 loc_4BBCC:                              ; CODE XREF: sub_4B7B5+278↑j
                                         ; sub_4B7B5+3FF↑j ...
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 cmp     byte_3771C, 0
                 jz      short loc_4BC48
                 cmp     byte_34B92, 0
@@ -88911,10 +89525,10 @@ loc_4BC48:                              ; CODE XREF: sub_4B7B5+421↑j
                 call    Music_playSong
                 pop     cx
                 call    sub_25DFE
-                mov     byte_34C10, 2
+                mov     Engine_mode, 2
                 call    sub_1B669
                 call    sub_28230
-                mov     byte_34C10, 1
+                mov     Engine_mode, 1
                 mov     byte_2886E, 1
                 mov     ax, 1
                 push    ax
@@ -89014,7 +89628,7 @@ sub_4BD90       endp
 
 ; Attributes: bp-based frame
 
-Screen_saveBackground proc far          ; CODE XREF: j_Screen_saveBackground↑J
+Screen_saveBackground proc far          ; CODE XREF: j_j_j_j_Screen_saveBackground↑J
                                         ; sub_4C358+3D↓p ...
                 push    bp
                 mov     bp, sp
@@ -89185,7 +89799,7 @@ loc_4BE54:                              ; CODE XREF: sub_4BE23:loc_4BE52↑j
                 mov     [bp+var_8], ax
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -89288,10 +89902,10 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 68h
                 push    si
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 call    sub_28144
                 mov     ax, offset aElementIcn ; "element.icn"
                 push    ax
@@ -89387,7 +90001,7 @@ loc_4BFE2:                              ; CODE XREF: ovl11:023E↑j
                 call    sub_28117
                 call    sub_280EA
                 mov     al, [bp-2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     ax, si
                 pop     si
                 mov     sp, bp
@@ -89414,15 +90028,15 @@ var_2           = word ptr -2
                 sub     sp, 6
                 push    si
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     al, byte_34B8C
                 mov     ah, 0
                 mov     [bp+var_4], ax
                 mov     byte_34B8C, 1
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 3
+                mov     Engine_mode, 3
                 push    ds
                 mov     ax, 4C8Fh
                 push    ax
@@ -89491,7 +90105,7 @@ loc_4C0C0:                              ; CODE XREF: ovl11:0321↑j
                 pop     cx
                 call    sub_280EA
                 mov     al, [bp-2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     al, [bp-4]
                 mov     byte_34B8C, al
                 mov     ax, si
@@ -89518,11 +90132,11 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 sub     sp, 66h
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     al, byte_34C10
+                call    j_j_j_j_setSoundAddress
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 15h
                 push    ax
                 call    sub_1B16B
@@ -89566,7 +90180,7 @@ arg_0           = word ptr  6
                 call    sub_25DE3
                 call    sub_280EA
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     sp, bp
                 pop     bp
                 retf
@@ -89588,11 +90202,11 @@ arg_2           = word ptr  8
                 mov     bp, sp
                 sub     sp, 66h
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     al, byte_34C10
+                call    j_j_j_j_setSoundAddress
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 15h
                 push    ax
                 call    sub_1B16B
@@ -89639,7 +90253,7 @@ arg_2           = word ptr  8
                 call    sub_25DE3
                 call    sub_280EA
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     sp, bp
                 pop     bp
                 retf
@@ -89650,7 +90264,7 @@ sub_4C19A       endp
 
 ; Attributes: bp-based frame
 
-Spells_subSpellCost proc far            ; CODE XREF: j_Spells_subSpellCost↑J
+Spells_subSpellCost proc far            ; CODE XREF: j_j_j_j_Spells_subSpellCost↑J
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -89699,7 +90313,7 @@ loc_4C27E:                              ; CODE XREF: Spells_subSpellCost+40↑j
                 cmp     dx, word_3734A
                 jb      short loc_4C295
                 ja      short loc_4C290
-                cmp     ax, word_37348
+                cmp     ax, Party_gems
                 jbe     short loc_4C295
 
 loc_4C290:                              ; CODE XREF: Spells_subSpellCost+51↑j
@@ -89712,7 +90326,7 @@ loc_4C295:                              ; CODE XREF: Spells_subSpellCost+4F↑j
                 sub     [si+127h], di
                 mov     ax, [bp+var_2]
                 cwd
-                sub     word_37348, ax
+                sub     Party_gems, ax
                 sbb     word_3734A, dx
                 xor     ax, ax
 
@@ -89771,7 +90385,7 @@ loc_4C2E9:                              ; CODE XREF: sub_4C2AD+22↑j
                 add     [di+127h], si
                 mov     ax, [bp+var_2]
                 cwd
-                add     word_37348, ax
+                add     Party_gems, ax
                 adc     word_3734A, dx
                 pop     di
                 pop     si
@@ -89948,10 +90562,10 @@ var_2           = word ptr -2
                 mov     [bp+var_4], ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4C42A
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -89967,7 +90581,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4C42A:                              ; CODE XREF: sub_4C3DF+15↑j
                 mov     sp, bp
@@ -90152,7 +90766,7 @@ sub_4C534       proc far                ; CODE XREF: sub_284B9↑J
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -90812,19 +91426,19 @@ loc_4C994:                              ; CODE XREF: sub_4C917+51↑j
                 shl     bx, 1
                 mov     ax, [bx-4944h]
                 mov     [bp+var_2], ax
-                les     bx, dword_3772E
+                les     bx, Mon_spec
                 add     bx, [bp+var_2]
                 mov     al, es:[bx]
                 mov     ah, 0
                 shl     ax, 1
                 mov     bx, ax
                 push    word ptr [bx+5956h]
-                les     bx, dword_37746
+                les     bx, Mon_numa
                 add     bx, [bp+var_2]
                 mov     al, es:[bx]
                 mov     ah, 0
                 push    ax
-                les     bx, dword_3776E
+                les     bx, Mon_ac
                 add     bx, [bp+var_2]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -91012,7 +91626,7 @@ loc_4CB05:                              ; CODE XREF: sub_4CAC3+34↑j
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -91114,7 +91728,7 @@ sub_4CB99       proc far                ; CODE XREF: sub_28469↑J
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -91262,7 +91876,7 @@ sub_4CC76       endp
 ; lloyds.icn
 ; Attributes: bp-based frame
 
-spellLloydsBeacon proc far              ; CODE XREF: j_spellLloydsBeacon↑J
+spellLloydsBeacon proc far              ; CODE XREF: j_j_j_j_spellLloydsBeacon↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -91542,7 +92156,7 @@ sub_4CED6       proc far                ; CODE XREF: sub_2856D↑J
                 push    ax
                 mov     ax, 3
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -91590,7 +92204,7 @@ var_2           = word ptr -2
                 push    si
                 push    di              ; n
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 push    ds
                 mov     ax, 4DA3h
                 push    ax
@@ -91731,7 +92345,7 @@ loc_4D063:                              ; CODE XREF: sub_4CF1E+A4↑j
                 inc     [bp+var_8]
 
 loc_4D066:                              ; CODE XREF: sub_4CF1E+8E↑j
-                mov     al, byte_37462
+                mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_8]
                 jle     short loc_4D073
@@ -91861,7 +92475,7 @@ sub_4D153       proc far                ; CODE XREF: sub_2846E↑J
                 push    ax
                 mov     ax, 2
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -91961,7 +92575,7 @@ loc_4D202:                              ; CODE XREF: sub_4D1E4+16↑j
                 call    sub_1B16B
                 pop     cx
                 call    sub_28117
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -91976,7 +92590,7 @@ loc_4D202:                              ; CODE XREF: sub_4D1E4+16↑j
                 push    ax
                 call    sub_280EF
                 pop     cx
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -91984,7 +92598,7 @@ loc_4D202:                              ; CODE XREF: sub_4D1E4+16↑j
                 mov     bx, dx
                 mov     al, [bx+4BEBh]
                 mov     byte_36FE5, al
-                mov     al, byte_37325
+                mov     al, Party_day
                 mov     ah, 0
                 mov     bx, 0Ah
                 cwd
@@ -92114,11 +92728,11 @@ loc_4D313:                              ; CODE XREF: sub_4D2F8+103↓j
 
 loc_4D31A:                              ; CODE XREF: sub_4D2F8+19↑j
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     al, byte_34C10
+                call    j_j_j_j_setSoundAddress
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_4], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     al, byte_36FE4
                 mov     ah, 0
                 shl     ax, 1
@@ -92165,7 +92779,7 @@ loc_4D31A:                              ; CODE XREF: sub_4D2F8+19↑j
                 pop     cx
                 call    sub_280EA
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 cmp     [bp+var_2], 0
                 jnz     short loc_4D3AA
                 jmp     loc_4D508
@@ -92563,17 +93177,17 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_4D628:                              ; CODE XREF: sub_4D608+18↑j
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0Ch
+                mov     Engine_mode, 0Ch
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                call    j_rest
+                call    j_j_j_j_rest
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4D64A:                              ; CODE XREF: sub_4D608+1E↑j
                 mov     sp, bp
@@ -92614,7 +93228,7 @@ sub_4D679       proc far                ; CODE XREF: sub_28491↑J
                 mov     bp, sp
                 mov     al, byte_36FDA
                 mov     ah, 0
-                add     word_37334, ax
+                add     Party_food, ax
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -92653,11 +93267,11 @@ var_2           = word ptr -2
 
 loc_4D6B3:                              ; CODE XREF: sub_4D691+19↑j
                 call    sub_28144
-                call    j_setSoundAddress
-                mov     al, byte_34C10
+                call    j_j_j_j_setSoundAddress
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 4DEBh
                 push    ax
                 mov     ax, 0D256h
@@ -92704,7 +93318,7 @@ loc_4D705:                              ; CODE XREF: sub_4D691+88↓j
                 pop     cx
                 call    sub_280EA
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 or      si, si
                 jz      short loc_4D75E
                 mov     ax, 33h ; '3'
@@ -92796,10 +93410,10 @@ var_2           = word ptr -2
                 mov     [bp+var_4], ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4D7EC
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 4
                 push    ax
                 mov     ax, [bp+var_4]
@@ -92811,7 +93425,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4D7EC:                              ; CODE XREF: sub_4D7AB+15↑j
                 mov     sp, bp
@@ -92863,10 +93477,10 @@ var_2           = word ptr -2
                 mov     [bp+var_4], ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4D85C
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 5
                 push    ax
                 mov     ax, [bp+var_4]
@@ -92878,7 +93492,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4D85C:                              ; CODE XREF: sub_4D81B+15↑j
                 mov     sp, bp
@@ -93030,7 +93644,7 @@ loc_4D94B:                              ; CODE XREF: sub_4D901+3C↑j
                                         ; sub_4D901+42↑j
                 push    ds
                 push    si
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -93136,13 +93750,13 @@ loc_4D9A4:                              ; CODE XREF: sub_4D985+1A↑j
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 call    sub_1B669
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     byte_287A5, 1
                 jmp     short loc_4DA3F
 ; ---------------------------------------------------------------------------
@@ -93171,7 +93785,7 @@ sub_4DA44       proc far                ; CODE XREF: sub_2845A↑J
                 push    ax
                 mov     ax, 6
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -93211,7 +93825,7 @@ sub_4DA8D       proc far                ; CODE XREF: sub_284EB↑J
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     word_36CFE, ax
@@ -93261,7 +93875,7 @@ loc_4DAF1:                              ; CODE XREF: sub_4DAC3+61↓j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 push    ax
@@ -93331,10 +93945,10 @@ var_2           = word ptr -2
                 mov     [bp+var_4], ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4DB9A
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0FFh
+                mov     Engine_mode, 0FFh
                 mov     ax, 6
                 push    ax
                 mov     ax, [bp+var_4]
@@ -93346,7 +93960,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
 
 loc_4DB9A:                              ; CODE XREF: sub_4DB59+15↑j
                 mov     sp, bp
@@ -93644,7 +94258,7 @@ sub_4DD6E       endp
 
 ; Attributes: bp-based frame
 
-Spells_divineIntervention proc far      ; CODE XREF: j_Spells_divineIntervention↑J
+Spells_divineIntervention proc far      ; CODE XREF: j_j_j_j_Spells_divineIntervention↑J
 
 var_2           = word ptr -2
 
@@ -93699,7 +94313,7 @@ loc_4DDC7:                              ; CODE XREF: Spells_divineIntervention+7
                 jnz     short loc_4DE0B
                 push    ds
                 push    si              ; ps
-                call    j_getMaxHP
+                call    j_j_j_j_getMaxHP
                 pop     cx
                 pop     cx
                 mov     [si+125h], ax
@@ -93739,7 +94353,7 @@ ovl12           segment para public 'OVERLAY' use16
 ; Attributes: bp-based frame
 
 ; int __cdecl __far itemsDialog(char *format, int, int, int)
-itemsDialog     proc far                ; CODE XREF: j_itemsDialog↑J
+itemsDialog     proc far                ; CODE XREF: j_j_j_j_itemsDialog↑J
 
 s               = word ptr -28h
 var_26          = word ptr -26h
@@ -93991,7 +94605,7 @@ loc_4E002:                              ; CODE XREF: itemsDialog+1F3↓j
 loc_4E00B:                              ; CODE XREF: itemsDialog+1AF↑j
                 push    di
                 push    si
-                call    j_equipItem
+                call    j_j_j_j_equipItem
                 pop     cx
                 pop     cx
                 jmp     def_4DFB5       ; jumptable 0004DFB5 default case, cases 3,7
@@ -94150,7 +94764,7 @@ loc_4E11F:                              ; CODE XREF: itemsDialog+2E8↑j
                 mov     bx, di
                 mov     [bx+si+90h], al
                 mov     word_32E3E, si
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_4E13B
                 mov     ax, 2
                 jmp     short loc_4E13E
@@ -94443,7 +95057,7 @@ loc_4E32F:                              ; CODE XREF: itemsDialog+4FA↑j
                 add     sp, 6
                 mov     ax, [bp+var_10]
                 mov     dx, [bp+var_12]
-                add     word_37344, dx
+                add     Party_gold, dx
                 adc     word_37346, ax
                 push    si
                 jmp     loc_4E59E
@@ -94488,7 +95102,7 @@ loc_4E387:                              ; CODE XREF: itemsDialog+54F↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    j_identifyOrFix
+                call    j_j_j_j_identifyOrFix
                 add     sp, 0Ah
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -94533,7 +95147,7 @@ loc_4E3D8:                              ; CODE XREF: itemsDialog+477↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    j_identifyOrFix
+                call    j_j_j_j_identifyOrFix
                 add     sp, 0Ah
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -94611,7 +95225,7 @@ loc_4E420:                              ; CODE XREF: itemsDialog+5EB↑j
                 call    Music_deinit
                 add     sp, 14h
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 call    sub_254BA
                 call    sub_280EA
                 mov     ax, 1
@@ -94759,7 +95373,7 @@ loc_4E5B2:                              ; CODE XREF: itemsDialog+77D↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], ax
@@ -94946,7 +95560,7 @@ loc_4E728:                              ; CODE XREF: itemsDialog+8D2↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_E], ax
@@ -95057,7 +95671,7 @@ jpt_4DFB5       dw offset loc_4DFBA     ; DATA XREF: itemsDialog+185↑r
 ; Attributes: bp-based frame
 
 ; int __cdecl __far specialsDialog(int, int)
-specialsDialog  proc far                ; CODE XREF: j_specialsDialog↑J
+specialsDialog  proc far                ; CODE XREF: j_j_j_j_specialsDialog↑J
                                         ; itemsDialog+5F4↑p
 
 var_D0          = byte ptr -0D0h
@@ -95598,7 +96212,7 @@ sub_4EC06       endp
 
 ; Attributes: bp-based frame
 
-getThievery     proc far                ; CODE XREF: j_getThievery↑J
+getThievery     proc far                ; CODE XREF: j_j_j_j_getThievery↑J
 
 arg_0           = word ptr  6
 
@@ -96356,7 +96970,7 @@ loc_4F11B:                              ; CODE XREF: sub_4EFB6+161↑j
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_24ECC
+                call    rnd
                 pop     cx
                 pop     cx
                 add     di, ax
@@ -96751,7 +97365,7 @@ loc_4F3F5:                              ; CODE XREF: sub_4F24E+20A↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_attack
+                call    j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -96861,7 +97475,7 @@ loc_4F4E5:                              ; CODE XREF: sub_4F24E+2F7↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_attack
+                call    j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -96975,7 +97589,7 @@ loc_4F5D5:                              ; CODE XREF: sub_4F24E+3E7↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_attack
+                call    j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97089,7 +97703,7 @@ loc_4F6C5:                              ; CODE XREF: sub_4F24E+4D6↓j
                 mov     ax, 1
                 push    ax              ; int
                 push    word_32E3E      ; int
-                call    j_attack
+                call    j_j_j_j_attack
                 pop     cx
                 pop     cx
                 mov     si, 1
@@ -97153,10 +97767,10 @@ arg_0           = word ptr  6
                 sub     sp, 0Ch
                 push    si
                 push    di
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_4], ax
-                mov     byte_34C10, 3
+                mov     Engine_mode, 3
                 mov     [bp+var_6], 0
                 mov     al, byte_2886F
                 mov     ah, 0
@@ -97372,7 +97986,7 @@ loc_4F913:                              ; CODE XREF: sub_4F74F+44↑j
                 mov     ah, 0
                 push    ax
                 push    word ptr [bp+format]
-                call    j_Spells_subSpellCost
+                call    j_j_j_j_Spells_subSpellCost
                 pop     cx
                 pop     cx
                 mov     di, ax
@@ -97386,7 +98000,7 @@ loc_4F92F:                              ; CODE XREF: sub_4F74F+1DB↑j
                 mov     ax, word ptr [bp+format]
                 mov     word_32E3E, ax
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
                 mov     ah, 0
@@ -97664,7 +98278,7 @@ loc_4FADF:                              ; CODE XREF: sub_4F74F+38B↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FAE2:                              ; CODE XREF: sub_4F74F+36C↑j
-                call    j_spellLloydsBeacon
+                call    j_j_j_j_spellLloydsBeacon
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -98034,7 +98648,7 @@ loc_4FD17:                              ; CODE XREF: sub_4F74F+205↑j
 
 loc_4FD1F:                              ; CODE XREF: sub_4F74F+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    j_Spells_divineIntervention ; jumptable 0004F954 case 76
+                call    j_j_j_j_Spells_divineIntervention ; jumptable 0004F954 case 76
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -98058,7 +98672,7 @@ def_4F954:                              ; CODE XREF: sub_4F74F+200↑j
                 jmp     loc_4FE14       ; jumptable 0004F954 default case
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     ax, 1
                 push    ax              ; int
                 push    word ptr [bp+format] ; int
@@ -98070,7 +98684,7 @@ def_4F954:                              ; CODE XREF: sub_4F74F+200↑j
 ; ---------------------------------------------------------------------------
                 mov     [bp+var_2], 1Bh
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
                 cmp     [bp+var_4], 2
@@ -98080,7 +98694,7 @@ def_4F954:                              ; CODE XREF: sub_4F74F+200↑j
 
 loc_4FD75:                              ; CODE XREF: sub_4F74F+621↑j
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 sub     [bp+var_2], 0C9h
                 mov     ax, [bp+var_2]
                 mov     dl, byte_36FDA
@@ -98156,7 +98770,7 @@ loc_4FE12:                              ; CODE XREF: sub_4F74F+5F0↑j
 
 loc_4FE14:                              ; CODE XREF: sub_4F74F+20F↑j
                                         ; sub_4F74F+217↑j ...
-                mov     byte_34C10, 3
+                mov     Engine_mode, 3
 
 loc_4FE19:                              ; CODE XREF: sub_4F74F+198↑j
                                         ; sub_4F74F+1A8↑j ...
@@ -98195,7 +98809,7 @@ loc_4FE28:                              ; CODE XREF: sub_4F74F+2B7↑j
 loc_4FE71:                              ; CODE XREF: sub_4F74F+6DD↑j
                                         ; sub_4F74F+70A↑j ...
                 mov     al, byte ptr [bp+var_4]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 mov     al, byte ptr [bp+format+2]
                 mov     byte_2886F, al
                 mov     ax, [bp+var_6]
@@ -98362,7 +98976,7 @@ loc_4FFE6:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_4FFEE:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 16
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 16
                 jnz     short loc_4FFFB
                 mov     ax, 11h
                 jmp     loc_501B1
@@ -98393,7 +99007,7 @@ loc_50013:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_5001B:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 20
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 20
                 jnz     short loc_50028
                 mov     ax, 17h
                 jmp     loc_501B1
@@ -98448,14 +99062,14 @@ loc_50060:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_50068:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 28
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 28
                 jnz     short loc_50075
                 mov     ax, 21h ; '!'
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
 loc_50075:                              ; CODE XREF: sub_4FF60+10D↑j
-                call    j_spellLloydsBeacon
+                call    j_j_j_j_spellLloydsBeacon
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -98539,7 +99153,7 @@ loc_500DD:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_500E5:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 42
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 42
                 jnz     short loc_500F2
                 mov     ax, 2Bh ; '+'
                 jmp     loc_501B1
@@ -98552,7 +99166,7 @@ loc_500F2:                              ; CODE XREF: sub_4FF60+18A↑j
 
 loc_500FA:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 43
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 43
                 jnz     short loc_50107
                 mov     ax, 2Dh ; '-'
                 jmp     loc_501B1
@@ -98589,7 +99203,7 @@ loc_50127:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_5012F:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 48
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 48
                 jnz     short loc_5013B
                 mov     ax, 32h ; '2'
                 jmp     short loc_501B1
@@ -98632,7 +99246,7 @@ loc_50163:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_5016B:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 54
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 54
                 jnz     short loc_50177
                 mov     ax, 35h ; '5'
                 jmp     short loc_501B1
@@ -98675,7 +99289,7 @@ loc_5019F:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_501A7:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                cmp     byte_34C10, 2   ; jumptable 0004FF71 case 60
+                cmp     Engine_mode, 2  ; jumptable 0004FF71 case 60
                 jnz     short loc_501BA
                 mov     ax, 3Dh ; '='
 
@@ -98778,7 +99392,7 @@ loc_5021C:                              ; CODE XREF: sub_4FF60+11↑j
 
 loc_50223:                              ; CODE XREF: sub_4FF60+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    j_Spells_divineIntervention ; jumptable 0004FF71 case 75
+                call    j_j_j_j_Spells_divineIntervention ; jumptable 0004FF71 case 75
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -98848,10 +99462,10 @@ arg_0           = word ptr  6
                 cbw
                 mov     di, ax
                 mov     [bp-4], ax
-                mov     al, byte_34C10
+                mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
-                mov     byte_34C10, 0Ah
+                mov     Engine_mode, 0Ah
                 call    sub_28144
                 mov     word ptr [bp+format+2], 0D66Eh
                 push    word_36FB4
@@ -98984,21 +99598,21 @@ loc_503FB:                              ; CODE XREF: sub_502D2+120↑j
                 jmp     word ptr cs:[bx+44h]
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 push    word ptr [bp+format] ; int
                 push    si              ; int
-                call    j_Awards_show
+                call    j_j_j_j_Awards_show
                 pop     cx
                 pop     cx
 
 loc_50410:                              ; CODE XREF: sub_502D2+18C↓j
                                         ; sub_502D2+1A1↓j
-                mov     byte_34C10, 0Ah
+                mov     Engine_mode, 0Ah
                 jmp     loc_504E8
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
-                cmp     byte_34C10, 2
+                mov     Engine_mode, al
+                cmp     Engine_mode, 2
                 jnz     short loc_5042A
                 mov     ax, 1
                 jmp     short loc_5042C
@@ -99025,18 +99639,18 @@ loc_5042C:                              ; CODE XREF: sub_502D2+156↑j
 ; ---------------------------------------------------------------------------
 
 loc_5044B:                              ; CODE XREF: sub_502D2+16F↑j
-                mov     byte_34C10, 0Ah
+                mov     Engine_mode, 0Ah
                 jmp     loc_5035B
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 nop
                 push    cs
                 call    near ptr sub_519E5
                 jmp     short loc_50410
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 lea     ax, [bp+arg_0]
                 push    ax
                 call    sub_28267
@@ -99129,7 +99743,7 @@ loc_504FF:                              ; CODE XREF: sub_502D2+176↑j
                 mov     byte_287A0, 0
                 call    sub_280EA
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_34C10, al
+                mov     Engine_mode, al
                 cmp     word ptr [bp-4], 0
                 jz      short loc_50540
                 call    sub_28649
@@ -99764,7 +100378,7 @@ loc_50A05:                              ; CODE XREF: sub_505DF+371↑j
                 add     dx, ax
                 push    dx
                 push    word_37346
-                push    word_37344
+                push    Party_gold
                 cmp     [bp+var_A], 0
                 jnz     short loc_50AA2
                 mov     ax, 6521h
@@ -99856,7 +100470,7 @@ loc_50AC7:                              ; CODE XREF: sub_505DF+371↑j
                 add     dx, ax
                 push    dx
                 push    word_37346
-                push    word_37344
+                push    Party_gold
                 push    word ptr [bp+format]
                 mov     ax, 810Bh
                 jmp     loc_50BFA
@@ -99928,7 +100542,7 @@ loc_50B62:                              ; CODE XREF: sub_505DF+371↑j
                 add     dx, ax
                 push    dx
                 push    word_37346
-                push    word_37344
+                push    Party_gold
                 push    word ptr [bp+format] ; format
                 mov     ax, 8157h
 
@@ -100204,7 +100818,7 @@ loc_50DCC:                              ; CODE XREF: sub_505DF+7E3↑j
                 push    [bp+var_4]      ; int
                 push    di
                 push    word ptr [bp+format] ; format
-                call    j_itemsDialog
+                call    j_j_j_j_itemsDialog
                 add     sp, 0Ah
                 cmp     ax, 1
                 jz      short loc_50DEE
@@ -100349,7 +100963,7 @@ loc_50ED6:                              ; CODE XREF: sub_505DF+8F2↑j
 ; ---------------------------------------------------------------------------
 
 loc_50EDF:                              ; CODE XREF: sub_505DF+8FB↑j
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_50EEB
                 mov     al, byte_333B1
                 jmp     short loc_50EEE
@@ -100370,7 +100984,7 @@ loc_50EEE:                              ; CODE XREF: sub_505DF+90A↑j
 loc_50EFD:                              ; CODE XREF: sub_505DF+919↑j
                 cmp     word ptr [bp+format+2], 1
                 jnz     short loc_50F21
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_50F12
                 mov     al, [di-1337h]
                 mov     ah, 0
@@ -100396,7 +101010,7 @@ loc_50F21:                              ; CODE XREF: sub_505DF+922↑j
 
 loc_50F2D:                              ; CODE XREF: sub_505DF+946↑j
                 xor     si, si
-                cmp     byte_34C10, 2
+                cmp     Engine_mode, 2
                 jnz     short loc_50F3E
                 mov     al, [di-1337h]
                 mov     ah, 0
@@ -100670,7 +101284,7 @@ sub_511C8       endp
 ; (BinDiff sim .83 conf .93, unverified)
 ; Attributes: bp-based frame
 
-getNumSkills    proc far                ; CODE XREF: j_getNumSkills↑J
+getNumSkills    proc far                ; CODE XREF: j_j_j_j_getNumSkills↑J
                                         ; sub_5152B+114↓p
 
 arg_0           = word ptr  6
@@ -100748,7 +101362,7 @@ sub_5122D       endp
 
 ; Attributes: bp-based frame
 
-getMaxSP        proc far                ; CODE XREF: j_getMaxSP↑J
+getMaxSP        proc far                ; CODE XREF: j_j_j_j_getMaxSP↑J
                                         ; sub_5152B+2F4↓p ...
 
 var_B           = byte ptr -0Bh
@@ -100948,7 +101562,7 @@ getMaxSP        endp
 
 ; Attributes: bp-based frame
 
-getMaxHP        proc far                ; CODE XREF: j_getMaxHP↑J
+getMaxHP        proc far                ; CODE XREF: j_j_j_j_getMaxHP↑J
                                         ; sub_5152B+391↓p ...
 
 var_4           = word ptr -4
@@ -101052,7 +101666,7 @@ getMaxHP        endp
 
 ; Attributes: bp-based frame
 
-getArmorClass   proc far                ; CODE XREF: j_getArmorClass↑J
+getArmorClass   proc far                ; CODE XREF: j_j_j_j_getArmorClass↑J
                                         ; sub_5152B+9C↓p ...
 
 arg_0           = word ptr  6
@@ -101138,7 +101752,7 @@ buffer          = dword ptr  8
                 mov     al, byte_36FDA
                 mov     ah, 0
                 push    ax
-                mov     ax, word_37334
+                mov     ax, Party_food
                 xor     dx, dx
                 pop     bx
                 div     bx
@@ -101348,7 +101962,7 @@ loc_51639:                              ; CODE XREF: sub_5152B+109↑j
                 pop     cx
                 push    ax
                 push    word_3734A
-                push    word_37348
+                push    Party_gems
                 mov     ax, 0Bh
                 push    ax
                 push    ds
@@ -101501,7 +102115,7 @@ loc_51639:                              ; CODE XREF: sub_5152B+109↑j
                 cmp     byte ptr [bx-1714h], 14h
                 jnb     short loc_517FB
                 mov     dx, word_37346
-                mov     ax, word_37344
+                mov     ax, Party_gold
                 jmp     short loc_51816
 ; ---------------------------------------------------------------------------
 
@@ -101604,7 +102218,7 @@ loc_51816:                              ; CODE XREF: sub_5152B+2CE↑j
                 pop     cx
                 push    ax
                 push    si
-                call    j_getCurrentExperience
+                call    j_j_j_j_getCurrentExperience
                 pop     cx
                 push    dx
                 push    ax
@@ -101739,7 +102353,7 @@ sub_5152B       endp
 
 ; Attributes: bp-based frame
 
-statColor       proc far                ; CODE XREF: j_statColor↑J
+statColor       proc far                ; CODE XREF: j_j_j_j_statColor↑J
                                         ; sub_5152B+BB↑p ...
 
 arg_0           = word ptr  6
@@ -101830,7 +102444,7 @@ var_2           = word ptr -2
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 mov     word_32E66, 0
                 jmp     loc_51B83
 ; ---------------------------------------------------------------------------
@@ -102015,7 +102629,7 @@ loc_51B91:                              ; CODE XREF: sub_519E5+1A7↑j
                 mov     al, byte_36FDA
                 mov     ah, 0
                 push    ax
-                mov     ax, word_37334
+                mov     ax, Party_food
                 xor     dx, dx
                 pop     bx
                 div     bx
@@ -102036,9 +102650,9 @@ loc_51BB5:                              ; CODE XREF: sub_519E5+1CB↑j
                 push    ax
                 push    di
                 push    word_3734A
-                push    word_37348
+                push    Party_gems
                 push    word_37346
-                push    word_37344
+                push    Party_gold
                 lea     ax, [bp+var_66]
                 push    ax
                 lea     ax, [bp+var_CA]
@@ -102152,7 +102766,7 @@ def_51C61:                              ; CODE XREF: sub_51C4A+13↑j
 
 loc_51C8E:                              ; CODE XREF: sub_51C4A+3F↑j
                 call    sub_28144
-                call    j_setSoundAddress
+                call    j_j_j_j_setSoundAddress
                 cmp     si, 22h ; '"'
                 jl      short loc_51CA2
                 cmp     si, 29h ; ')'
@@ -102238,7 +102852,7 @@ jpt_51C61       dw offset loc_51C66     ; DATA XREF: sub_51C4A+17↑r
 ; "Identify" / "Fix" (from strings)
 ; Attributes: bp-based frame
 
-identifyOrFix   proc far                ; CODE XREF: j_identifyOrFix↑J
+identifyOrFix   proc far                ; CODE XREF: j_j_j_j_identifyOrFix↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
