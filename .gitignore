@@ -5,6 +5,7 @@
 *.nam
 *.til
 mm1/*
+mm45/*
 *.log
 mm2/build/
 __pycache__/
