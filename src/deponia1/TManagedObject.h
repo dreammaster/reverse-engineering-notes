@@ -341,7 +341,7 @@ public:
 			TGAnimation::HideAnimation(_currentAnimation, this);
 		_currentAnimation = nullptr;
 		for (TGAnimation *anim : _animations)
-			TGAnimation::HideAnimation(anim, nullptr);
+			TGAnimation::HideAnimation(anim, static_cast<TManagedObject *>(nullptr));
 		_animations.clear();
 	}
 

@@ -61,7 +61,7 @@ THGameControl	todo	6	256950	258050
 TGObject	todo	13	258159	259458
 THAnimation	todo	5	259729	260077
 TSceneActionArea	todo	4	260143	260601
-TGItem	todo	9	260668	261228
+TGItem	stub	9	260668	261228
 TGCommand	todo	5	261322	261584
 StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int (*)(lua_State*), char const*, StringHash<char const*> >	todo	1	289025	289025
 CmdGetCursorPos	todo	4	388789	428892
@@ -129,8 +129,8 @@ TGameControl	done	98	455671	478479
 SGameAction	todo	1	456169	456169
 SLoadingScreen	todo	2	479291	479330
 TLoadingControl	in-progress	7	483185	483735
-TCursorControl	stub	23	483805	485408
-SCursor	todo	1	484984	484984
+TCursorControl	in-progress	23	483805	485408
+SCursor	stub	1	484984	484984
 TMasterControl	in-progress	38	485602	491098
 TMovie	stub	21	491536	1071898
 v8::base::OS	todo	3	509497	2863318

@@ -10,7 +10,10 @@
 // for the animation subsystem's own dedicated future pass.
 #pragma once
 
+#include "WxStub.h"
 #include "datastruct/visobjref.h"
+
+class TSprite;
 
 class TCAnimation {
 public:
@@ -40,5 +43,14 @@ public:
 	// Confirmed call shape only (TManagedObject::RemoveSprites, asm line
 	// 190964) - not reversed.
 	void RemoveSprites() {
+	}
+	// Confirmed call shape only (TCursorControl::Draw, Deponia_Linux.asm
+	// line 622FB0) - not reversed.
+	void SetPosition(const wxPoint &/*pos*/, float /*scale*/) {
+	}
+	// Confirmed call shape only (TCursorControl::GetPositionNextToCursor,
+	// Deponia_Linux.asm line 6236DC) - not reversed.
+	TSprite *GetCurrentSprite() const {
+		return nullptr;
 	}
 };

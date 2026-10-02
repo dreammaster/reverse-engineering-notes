@@ -2073,6 +2073,77 @@ that isn't getting its own full pass yet:
 `TGObjectManager` is now `in-progress` in the manifest (not `done`, given
 the 3 stubs above); `TTButton` moved from `todo` to `stub`.
 
+## TCursorControl
+
+Implemented 22 of `TCursorControl`'s 23 manifest-listed methods for real -
+the other dependent flagged alongside `TGObjectManager` at the end of the
+`TManagedObject` pass. Only `GetSCursor()` stays a confirmed-call-shape
+stub (see below).
+
+**A genuine surprise: `TCursorControl` is not a `TManagedObject`.** The
+`_ZThn72_` thunks to `AnimationStopped()`/`GetOwnerId()`/`GetOwnerName()`
+that originally suggested a `TManagedObject`-shaped relationship actually
+belong to `TCursorControl` implementing the real, named `TAnimationOwner`
+interface *independently* - confirmed from its own constructor, which
+never calls a `TManagedObject` sub-object ctor at all, just pokes two
+vtable pointers directly (one for its own primary interface, one for
+`TAnimationOwner` at `+0x48`). `TManagedObject` and `TCursorControl` are
+siblings with respect to `TAnimationOwner`, not parent/child - a cursor
+isn't a managed scene object, it just also owns an animation and needs to
+participate in the same "who owns this, and what happens when it stops"
+protocol. Added `TAnimationOwner.h` (the real interface, 3 pure virtuals)
+and a parallel set of `TGAnimation::HideAnimation()`/`StartAnimation()`
+overloads taking `TAnimationOwner*` instead of `TManagedObject*`, rather
+than retrofitting `TManagedObject` itself onto the new interface - lower
+risk, since `TManagedObject`'s own design was already shipped and nothing
+needs to cast between the two owner kinds polymorphically.
+
+**Confirmed field layout:** a `std::vector<SCursor *> _cursors` (one
+heap-allocated entry per loadable cursor) plus an `_activeCursor` iterator
+into it, a `wxPoint _position`, the cursor's own `TGAnimation
+*_currentAnimation`, and a `TGItem *_heldItem` for whatever's being
+dragged. `SCursor` itself (new, `SCursor.h`) was reconstructed field-by-
+field by cross-referencing the constructor/destructor/`Clear()` (which
+manually inline what amounts to `delete cursor` on each entry) against
+`SetCursor()`'s own search loop and `SetActiveCursor()`/
+`SetInactiveCursor()`/`ReleaseMoveObject()`'s shared active/inactive-image
+toggle: two `TVisObjRef` images (`downImage`/`upImage` - which plays for
+"active" vs "inactive" isn't confirmed beyond which SetXCursor() happens
+to use which), a `bool active`, a `std::vector<int> linkedIds`, and an
+`int id`.
+
+**A corrected parameter order:** `LinkButtonCursor(int, int)`'s own body
+(now read directly, rather than inferred from its call site) shows the
+*first* argument is matched against an `SCursor`'s own `id` and the
+*second* is what gets appended to that entry's `linkedIds` - the opposite
+of the manifest's original "linked object's, then the object's own"
+guess. Fixed in the (renamed) parameters; `LinkButtonCursor()` and
+`LoadCursor()` are both implemented in full now - their own dedup/lookup
+logic doesn't depend on what the still-stubbed `GetSCursor()` fills in,
+since `LoadCursor()` computes its own id via the already-existing
+`PackVisId()` rather than relying on `GetSCursor()` to do it.
+
+**What's left as a confirmed-call-shape stub:** `GetSCursor()` builds a
+new `SCursor`'s images and name by string-concatenating two unidentified
+wide-string table suffixes onto the source object's own name, and (in one
+branch) calls an unidentified `TManagedObject`-family virtual at vtable
+slot `0xB0` - the exact same slot left ambiguous by identical-code-folding
+during the `TManagedObject` vtable cross-check (see that section above).
+`GetActionText()`-sized complexity for a single leaf helper; left for a
+future pass once `0xB0`'s real identity is known.
+
+**New shallow dependencies**, same "just enough to compile and behave
+correctly" treatment as elsewhere: `TGItem` (new, `TGItem.h`) - confirmed
+a `TManagedObject` subclass, but only `SetCenteredPosition()` (real) and
+`GetPositionNextToItem()` (stub - its real body reaches into
+`TManagedObject`'s own private animation/picture state, which isn't
+exposed) are modeled; `TCAnimation::SetPosition()`/`GetCurrentSprite()`
+(new stubs); `TGAnimation::UnloadAnimation()`/`PreloadAnimation()`/the new
+`HideAnimation()`/`StartAnimation()` overloads (new stubs).
+
+`TCursorControl` is now `in-progress` in the manifest; `TGItem` and
+`SCursor` both moved from `todo` to `stub`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

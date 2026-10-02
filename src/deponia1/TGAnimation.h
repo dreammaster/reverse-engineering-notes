@@ -16,6 +16,7 @@
 
 #include <vector>
 
+#include "TAnimationOwner.h"
 #include "TCAnimation.h"
 #include "WxStub.h"
 
@@ -46,10 +47,42 @@ public:
 	// 192657, 190934, 191252, 191550, 191563) - stops `animation` being
 	// displayed on behalf of `owner` (a null owner is confirmed distinct
 	// from a real one at one call site); not reversed beyond that call
-	// shape. Takes a TManagedObject* directly rather than modeling the
-	// original's separate TAnimationOwner mixin interface, since nothing
-	// here needs to dispatch through that narrower type.
+	// shape. Takes a TManagedObject* directly rather than the real
+	// TAnimationOwner interface TManagedObject implements it through (see
+	// TManagedObject.h's own header comment) - TCursorControl needed that
+	// narrower interface for real once it turned out to implement
+	// TAnimationOwner independently (see the overload below), but nothing
+	// here casts a TManagedObject* through it, so this overload is
+	// unaffected.
 	static void HideAnimation(TGAnimation *animation, TManagedObject *owner);
+	// Confirmed static call shape only (TCursorControl::SetCursor(bool,int,
+	// bool)/SetActiveCursor/SetInactiveCursor/ReleaseMoveObject,
+	// Deponia_Linux.asm lines 623454, 6235A3, 623635, 62385C, 6238AF) - the
+	// same operation as the overload above, for an owner that only
+	// implements the narrower TAnimationOwner interface (TCursorControl
+	// isn't a TManagedObject).
+	static void HideAnimation(TGAnimation *animation, TAnimationOwner *owner);
+	// Confirmed static call shape only (same call sites as the
+	// TAnimationOwner overload of HideAnimation() above, plus
+	// TCursorControl::SetMoveObject's search loop) - starts (and returns) a
+	// new animation for `dataObject`, owned by `owner`; not reversed beyond
+	// that call shape.
+	static TGAnimation *StartAnimation(const TVisObjRef &dataObject, TAnimationOwner *owner, bool flag,
+	                                   float scale, int frame);
+	// Confirmed static call shape only (TCursorControl::SetCursor(bool,int,
+	// bool), Deponia_Linux.asm lines 623454-623463) - a third, owner-less
+	// overload: hides whatever animation is currently tied to `dataObject`,
+	// wherever it's being shown.
+	static void HideAnimation(const TVisObjRef &dataObject);
+	// Confirmed static call shape only (TCursorControl::~TCursorControl()/
+	// Clear(), Deponia_Linux.asm lines 623A10-623A1E, 623B00-623B0E) - frees
+	// whatever resources were loaded for `dataObject`'s animation; not
+	// reversed beyond that call shape.
+	static void UnloadAnimation(const TVisObjRef &dataObject);
+	// Confirmed static call shape only (TCursorControl::LoadCursor,
+	// Deponia_Linux.asm lines 623C78-623C86) - the load-side counterpart to
+	// UnloadAnimation() above; not reversed beyond that call shape.
+	static void PreloadAnimation(const TVisObjRef &dataObject);
 
 	// Confirmed call shape only (TManagedObject::Prepare, asm lines 191034,
 	// 191071) - not reversed.
