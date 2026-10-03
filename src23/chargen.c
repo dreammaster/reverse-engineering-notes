@@ -1,5 +1,7 @@
 #include "chargen.h"
 
+#include <string.h>
+
 static const DerivedStatRule g_derivedRulesYendor2[] = {
     {0x58, 3, {{PartyStatStrength, 10}, {PartyStatDexterity, 30}, {PartyStatStamina, 60}}, {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {0, 5, 4, 3, 0, 0, 1, 0, 0, 2}}, /* Survival */
     {0x5A, 2, {{PartyStatStrength, 80}, {PartyStatDexterity, 20}}, {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {0, 5, 0, 5, -5, -5, 0, -5, -5, 0}}, /* Projectile */
@@ -100,6 +102,41 @@ void partyApplyRolledAttributes(uint8_t *record, const uint8_t rolls[6]) {
     }
     setPair(record, PartyFieldStats + PartyStatMagicPoints * 2, (uint16_t)(base >> 2));
     setPair(record, PartyFieldStats + PartyStatCasting * 2, (uint16_t)(base + bonus));
+}
+
+unsigned partyApplyStartingAbilities(uint8_t *record, GameKind game) {
+    static const uint8_t kStartFlags[6][2] = {{1, 3}, {1, 2}, {1, 0}, {2, 3}, {1, 2}, {2, 0}};
+    unsigned cls = partyGetU16(record, PartyFieldClass);
+    if (partyGetStatMax(record, PartyStatMagicPoints) == 0 || cls < 4 || cls > 9) {
+        return 0;
+    }
+    if (game != GameYendor3) {
+        partySetU16(record, PartyFieldStatusFlags,
+                    (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) | partyClassSecondaryBit(cls)));
+    }
+    unsigned set = 0;
+    for (unsigned j = 0; j < 2 && kStartFlags[cls - 4][j] != 0; j++) {
+        flagBankSet(record + PartyFieldFlagBankCA, 16, kStartFlags[cls - 4][j]);
+        set++;
+    }
+    return set;
+}
+
+void partyBeginClassSelection(uint8_t *record) {
+    partySetU16(record, PartyFieldStatusFlags, (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) & 0xFFC0));
+    memset(record + PartyFieldFlagBankCA, 0, 16 * 2);
+}
+
+void partyRerollAttributes(uint8_t *record, GameKind game, const ItemCatalog *catalog, RandomState *rng) {
+    partyRollAttributes(record, rng);
+    partyComputeDerivedStats(record, game);
+    partyRecomputeEquipmentStatBonuses(record, catalog, game);
+}
+
+void partyChooseClass(uint8_t *record, unsigned classBase, GameKind game, const ItemCatalog *catalog, RandomState *rng) {
+    partySetU16(record, PartyFieldClass, (uint16_t)classBase);
+    partySetU16(record, PartyFieldLevel, 1);
+    partyRerollAttributes(record, game, catalog, rng);
 }
 
 void partyRollAttributes(uint8_t *record, RandomState *rng) {

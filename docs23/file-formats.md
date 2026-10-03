@@ -1127,6 +1127,24 @@ Chemistry) are each a blend of attributes plus a class bonus, or for some classe
 retunes most class bonuses and flat values and never computes Chemistry. The scaling helper
 (`ScaleByPercentRounded`) does its multiply and +50 in 16 bits, so it wraps for large inputs.
 
+### Character creation flow and the new-game template (`chargen.c`, `newgame.c`)
+
+The roster's **"ShowCharacterSkills" is the class-selection screen** (keys F/M/R/O/A/P/D/K and one more
+pick class base 1-9): entering it clears the six secondary-class bits (low six of `+0x1C`) and the ability flag
+bank (`+0xCA`, 16 words); choosing a class sets `+0xE` = class, `+0x16` (level) = 1 and, during creation, rolls
+the attributes, derives the skills and recomputes the equipment ratings; the summary screen's R key repeats
+that roll. Accepting the summary runs `ApplySecondaryClassTierFlags`: for a character with magic points, the
+class's one or two starting ability flags (MONK 1,3; ALCHEMIST 1,2; PALADIN 1; MAGE 2,3; DRUID 1,2;
+MARKSMAN 2 -- the same in both games) and, in Chapter 2 only, the secondary-class status bit.
+
+**New game** (`InitializeNewGameWorldState`): the starting `CURGAME` section 0 (500-byte game-state block + nine
+500-byte party records, 5000 bytes) is a template at the END of `WORLD.DAT` (Chapter 2: offset `0x1ACCED`, the
+last 5000 bytes; Chapter 3: `0x41D72F`). It carries the opening position (Chapter 2: (166, 36) facing west,
+4 Nov 546, 07:00; Chapter 3: (460, 46) facing north, 20 Mar 547, 09:00) and **four ready-made heroes in roster
+slots 6-9** (SQUIRE, DIANA, YENDOR, JOSEPHINE; Chapter 3's template names its header "PRE-CREATED PARTY" and
+lists them as the active party, which the initializer then empties). The initializer also clears bit `0x0800` of
+every record's UI flags (`+0x15C`) and zeroes the remaining sections.
+
 ### The on-line clue book (F8)
 
 `ShowClueBook` (the manual's "F8 On-line clue book") opens by calling

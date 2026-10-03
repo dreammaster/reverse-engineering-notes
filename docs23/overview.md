@@ -11375,6 +11375,14 @@ byte for byte; the derived-skill tables differ (Chapter 3 retunes the class bonu
 The test file embeds emulator-produced vectors. This technique (emulate, fit, generate, cross-check) is
 worth reusing for other table-heavy routines.
 
+### Session update: the rest of character creation and the new-game template (`chargen.c`, `newgame.c`)
+
+Following the stat generation to its callers resolved the creation flow (the class screen, the reroll, the starting
+ability flags) and showed that the "new game" state is not constructed in code but copied from a 5000-byte template
+at the end of `WORLD.DAT` -- which also contains the four ready-made heroes of the roster. `saveGameNewGame` builds a
+`SaveGame` from it, checked on both real files. The IDA dump scripts `dump_class_start_flags.py` and
+`dump_newgame_block.py` (both games) located the tables.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

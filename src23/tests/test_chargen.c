@@ -223,7 +223,69 @@ static void testRollFromRng(void) {
               partyGetU16(record, 0x46) == 45u + expected[4] && partyGetU16(record, 0x40) == 45u + expected[5]);
 }
 
+static void testStartingAbilities(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetU16(record, PartyFieldClass, 4);
+    check("a class with no magic points gets nothing", partyApplyStartingAbilities(record, GameYendor2) == 0 &&
+                                                          !flagBankTest(record + PartyFieldFlagBankCA, 16, 1));
+    partySetStatMax(record, PartyStatMagicPoints, 12);
+    check("a MONK with magic gets flags 1 and 3", partyApplyStartingAbilities(record, GameYendor2) == 2 &&
+                                                    flagBankTest(record + PartyFieldFlagBankCA, 16, 1) &&
+                                                    flagBankTest(record + PartyFieldFlagBankCA, 16, 3) &&
+                                                    !flagBankTest(record + PartyFieldFlagBankCA, 16, 2));
+    check("Chapter 2 records the secondary-class bit", (partyGetU16(record, PartyFieldStatusFlags) & 0x20) != 0);
+
+    memset(record, 0, sizeof(record));
+    partySetU16(record, PartyFieldClass, 4);
+    partySetStatMax(record, PartyStatMagicPoints, 12);
+    partyApplyStartingAbilities(record, GameYendor3);
+    check("Chapter 3 does not", partyGetU16(record, PartyFieldStatusFlags) == 0 && flagBankTest(record + PartyFieldFlagBankCA, 16, 3));
+
+    memset(record, 0, sizeof(record));
+    partySetU16(record, PartyFieldClass, 6);
+    partySetStatMax(record, PartyStatMagicPoints, 3);
+    check("a PALADIN gets one flag (the zero entry ends the pair)", partyApplyStartingAbilities(record, GameYendor2) == 1 &&
+                                                                      flagBankTest(record + PartyFieldFlagBankCA, 16, 1) &&
+                                                                      (partyGetU16(record, PartyFieldStatusFlags) & 0x08));
+    memset(record, 0, sizeof(record));
+    partySetU16(record, PartyFieldClass, 2);
+    partySetStatMax(record, PartyStatMagicPoints, 3);
+    check("a MERCHANT with magic points still gets nothing", partyApplyStartingAbilities(record, GameYendor2) == 0);
+}
+
+static void testClassSelection(void) {
+    static ItemCatalog catalog; /* no items: the equipment ratings come only from their baselines */
+    memset(&catalog, 0, sizeof(catalog));
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    partySetU16(record, PartyFieldStatusFlags, 0x4000 | 0x003F);
+    flagBankSet(record + PartyFieldFlagBankCA, 16, 7);
+    partyBeginClassSelection(record);
+    check("entering the screen clears the six secondary-class bits and the ability flags",
+          partyGetU16(record, PartyFieldStatusFlags) == 0x4000 && !flagBankTest(record + PartyFieldFlagBankCA, 16, 7));
+
+    RandomState rng;
+    randomStart(&rng, 1, 2);
+    partyChooseClass(record, 7, GameYendor2, &catalog, &rng);
+    check("choosing a class sets it and level 1", partyGetU16(record, PartyFieldClass) == 7 && partyGetU16(record, PartyFieldLevel) == 1);
+    check("...and rolls the attributes (45-60) and the derived skills",
+          partyGetStat(record, PartyStatStrength) >= 45 && partyGetStat(record, PartyStatStrength) <= 60 &&
+              partyGetStat(record, PartyStatMapping) >= 40 && partyGetStat(record, PartyStatMagicPoints) > 0);
+    check("a MAGE's casting skill is its Intelligence + 10", partyGetStat(record, PartyStatCasting) ==
+                                                              partyGetStat(record, PartyStatIntelligence) + 10);
+    uint16_t before = partyGetStat(record, PartyStatStrength);
+    unsigned changed = 0;
+    for (int i = 0; i < 8; i++) {
+        partyRerollAttributes(record, GameYendor2, &catalog, &rng);
+        changed += partyGetStat(record, PartyStatStrength) != before;
+    }
+    check("rerolling gives new values", changed > 0);
+}
+
 int main(void) {
+    testClassSelection();
+    testStartingAbilities();
     testDerived();
     testRolls();
     testRollFromRng();

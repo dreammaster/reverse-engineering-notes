@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "item.h"
 #include "party.h"
 #include "random.h"
 
@@ -64,6 +65,30 @@ void partyRollAttributes(uint8_t *record, RandomState *rng);
 
 /* ComputeDerivedCharacterStats for the record's class. */
 void partyComputeDerivedStats(uint8_t *record, GameKind game);
+
+/*
+ * ApplySecondaryClassTierFlags (yendor2.asm:37509, yendor3.asm:37265), run when a new character's summary is
+ * shown: for a character with any magic (maximum MP above 0) whose class is 4-9, the starting ability flags
+ * (PartyFieldFlagBankCA) of that class are set -- up to two, from a table that is identical in both games
+ * (ida_scripts/dump_class_start_flags.py):
+ *   MONK 1,3   ALCHEMIST 1,2   PALADIN 1   MAGE 2,3   DRUID 1,2   MARKSMAN 2
+ * (a 0 entry ends the pair). Chapter 2 also records the secondary-class bit (partyClassSecondaryBit) in the
+ * status flags; Chapter 3 does not. Returns how many flags were set.
+ */
+unsigned partyApplyStartingAbilities(uint8_t *record, GameKind game);
+
+/*
+ * The class-selection step of character creation (the screen the roster calls ShowCharacterSkills,
+ * yendor2.asm:35989; its keys F M R O A P D K and the rest pick class base 1-9, also reachable from the summary
+ * screen's class key). Entering the screen clears the record's secondary-class status bits (the low six of
+ * +0x1C) and the 16-word ability flag bank at +0xCA; choosing a class sets PartyFieldClass = classBase and
+ * PartyFieldLevel = 1, and, when the choice is made during creation (not just browsing), rolls the
+ * attributes, derives the skills and recomputes the equipment ratings. The summary screen's 'R' reroll is the
+ * same roll + derive + recompute. gender, portrait and name come from the other steps (UI).
+ */
+void partyBeginClassSelection(uint8_t *record);
+void partyChooseClass(uint8_t *record, unsigned classBase, GameKind game, const ItemCatalog *catalog, RandomState *rng);
+void partyRerollAttributes(uint8_t *record, GameKind game, const ItemCatalog *catalog, RandomState *rng);
 
 /* The rule table (for tests/tools); *count receives its length. */
 const DerivedStatRule *partyDerivedStatRules(GameKind game, unsigned *count);
