@@ -1520,6 +1520,10 @@ Reimplemented once in `src23/combat.c`, shared by both games via the
 existing `GameKind` plumbing already threaded through `party.c`/
 `monster.c`/`savegame.c`.
 
+## PICTURES.VGA directory
+
+Same ten categories with the same picture sizes in both games; Chapter 3 simply holds more pictures of each (23/156/270/238/28/14/70/180/340/576 vs. 15/101/215/162/18/12/55/270/510/576 -- note the 32x32 and 16x16 icon categories shrink), at the bases listed in file-formats.md. The master palette moves from WORLD.DAT 0x8270A to 0x95BDA. No behavioral difference otherwise (`pictures.c`).
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

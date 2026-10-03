@@ -4994,7 +4994,7 @@ itself is just a flat blob of pixel bytes back to back.
 
 **Directory** (`g_pictureDir`, linear `0x3508E`, i.e. `DS:0x782E` with
 `DS` fixed to paragraph `0x2D86` — see `fix_ds_segreg.py`): an array of
-16-byte entries, indexed as `g_pictureDir + picture_id*0x10`:
+16-byte entries, indexed as `g_pictureDir + category*0x10` (see the correction below):
 
 ```
 +0x0  word   unused/reserved in the entries examined (always 0)
@@ -5007,47 +5007,52 @@ itself is just a flat blob of pixel bytes back to back.
 +0xE  word   file offset into PICTURES.VGA, high word
 ```
 
-**The table has exactly 10 entries** (confirmed by
-`ida_scripts/enumerate_pictures.py`: scanning for plausible
-width/height/offset values, the pattern holds for 10 entries then
-breaks down completely) — this is a small fixed set of splash/UI
-graphics, not a general asset catalog. Dungeon views, portraits etc.
-must be generated or stored some other way (not yet investigated).
+**Corrected 2026-10-04: the ten entries are picture *categories*, not ten
+pictures.** Every picture of a category has the entry's width x height; they lie
+back to back in the file, and picture `id` of category `c` is at
+`base(c) + id * width * height` (`DrawPicture` indexes the directory with
+`g_pictureCategory` = `c * 0x10` and `LoadPictureIntoEms` reads with
+`g_pictureId` = `id`; the first 8 bytes of each entry -- the EMS slot-table
+segment, slot count, size and LRU cursor -- are filled in at run time by
+`InitGraphics`/`Struc1_Allocate`, from the per-category `dx` sizes it passes).
+The earlier "10 entries" scan only found these ten descriptors. The categories
+tile the file exactly (every division is an integer, both games):
 
-All 10 extracted and rendered with `ida_scripts/extract_pic.py`
-(grayscale — real VGA palette not recovered yet, but shape alone was
-already unambiguous for most):
+| cat | size | Ch2 count | Ch3 count | content |
+|-----|------|-----------|-----------|---------|
+| 0 | 318x198 | 15 | 23 | full-screen scenes (SmithWare logo, title, ...) |
+| 1 | 210x105 | 101 | 156 | panels and view props: dialog/stat/inventory backgrounds, book, scroll, doors, barrels, beds, fireplaces, mountains |
+| 2 | 140x155 | 215 | 270 | the party's combat animation frames |
+| 3 | 190x110 | 162 | 238 | monster pictures, several frames per monster |
+| 4 | 224x74 | 18 | 28 | lower half of the first-person view: sky, floor textures |
+| 5 | 224x62 | 12 | 14 | upper half: sky with horizon, ceilings |
+| 6 | 56x136 | 55 | 70 | paper-doll bodies (inventory screen), chapter title card, slot grid |
+| 7 | 32x32 | 270 | 180 | effect/shop icons, portrait faces, clothing layers |
+| 8 | 16x16 | 510 | 340 | mouse cursor, UI buttons, equipment/item icons |
+| 9 | 8x8 | 576 | 576 | minimap tile glyphs |
 
-| # | size | offset | content |
-|---|------|--------|---------|
-| 0 | 318×198 | `0x0` | **"SmithWare" splash-screen logo** (matches the developer name from `CURGAME`'s header string) |
-| 1 | 210×105 | `0xE694C` | `GameDialog_draw*` background panel — button-label text fragments (`SAVE`/`LOAD`/`MUSIC`/`SOUND FX`/`DOS`/`RETURN`) baked into the bitmap |
-| 2 | 140×155 | `0x3064B6` | two-figure **combat/fighting scene** silhouette |
-| 3 | 190×110 | `0x779552` | **wolf/monster** silhouette |
-| 4 | 224×74 | `0xAB3F1A` | light gradient panel — indistinct in grayscale, possibly sky/background |
-| 5 | 224×62 | `0xAFCC9A` | sky/cloud gradient |
-| 6 | 56×136 | `0xB2579A` | male character silhouette — plausibly the character-creation body template (`docs/overview.md`'s string survey found `"MALE"`/`"FEMALE"`/`"PICK A PORTRAIT"` nearby in the string table right after this same directory) |
-| 7 | 32×32 | `0xB8BBDA` | icon — indistinct in grayscale (mostly two flat index values, needs the real palette) |
-| 8 | 16×16 | `0xBCF3DA` | **mouse-cursor arrow** |
-| 9 | 8×8 | `0xBEF1DA` | small **scroll-arrow icon** (matches `UpdateScrollArrows`' two-glyph indicator from earlier this session — likely one of its actual glyphs) |
+Chapter 2 bases: 0, 944460, 3171510, 7837010, 11222810, 11521178, 11687834,
+12106714, 12383194, 12513754 (file size 12,550,618); Chapter 3: 0, 1448172,
+4887972, 10746972, 15721172, 16185300, 16379732, 16912852, 17097172, 17184212
+(17,221,076). The directory is at `DS:0x782E` (Chapter 3 `DS:0x7B5C`);
+`ida_scripts/dump_picture_dir.py` dumps it, `src23/pictures.c` carries the
+tables, and `src23/tools/pic_sheet.py` renders any run of pictures to a PNG with
+the master palette (used to identify the contents above). Colour `0xFF` is the
+transparent key. The tile legends' picture offsets (`worldmap.h`) and the many
+`DrawPicture` call sites (ids such as 0x22-0x2F for a 14-frame animation) are
+ids within one of these categories.
 
-Loading path, fully traced in `ida_scripts/name_picture_system.py`:
-`DrawPicture` (`0x29878`, called from `start` and 8+ other functions)
-looks up `g_pictureDir[id]`, calls `LoadPictureIntoEms` (`0x2A68D`) to
-ensure the picture's bytes are mapped into a small LRU cache of LIM EMS
-4.0 pages (evicting the oldest entry on a cache miss and reading fresh
-bytes from `PICTURES.VGA` — the fixed `FileEntry` at `bx=0x9011`, opened
-once in `InitGame`), then blits `width`×`height` pixels from the EMS
-page frame to the video buffer at `(x, y)`, with the blit mode selected
-by `_font_bgTransparent` (0–5, different transparency/color-key
-branches).
-
-`sub_23874` (called repeatedly from `start`) indexes the same
-`g_pictureDir` table the same way (`g_pictureDir + g_pictureCategory`,
-`g_pictureCategory` = `picture_id*0x10`) — it's one shared directory, not a
-separate table per caller. One observed call used entry 8 (the mouse
-cursor), so this is more likely a cursor-draw/update path than an intro
-animation as first guessed — not confirmed either way.
+Loading path: `DrawPicture` (`0x29878`) adds `g_pictureCategory` to the
+directory base, calls `LoadPictureIntoEms` (`0x2A68D`) to ensure the picture's
+bytes are mapped into the category's small LRU cache of LIM EMS 4.0 pages
+(evicting the oldest entry on a miss and reading fresh bytes from
+`PICTURES.VGA`, the fixed `FileEntry` at `bx=0x9011`, opened once in
+`InitGame`), then blits `width` x `height` pixels to the video buffer at
+`(x, y)`; blit mode by `_font_bgTransparent`: 0 plain row copy, 1 skip `0xFF`
+(optionally remapping hues), 2 skip `0xFF` and shift the colour by the shade
+delta (clamped), 3 the same without a key colour, 4/5 copy a sub-rectangle
+(x/y offset and size in `word_32980..88`) skipping `0xFF` / opaque.
+`sub_23874` indexes the same directory.
 
 ### Palette
 
