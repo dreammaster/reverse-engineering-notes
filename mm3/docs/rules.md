@@ -144,3 +144,7 @@ Skill ids (names in the data segment next to `Experience`/`Gold`/`Gems`/`Conditi
 4 Cartographer, 5 Crusader, 6 Direction Sense, 7 Linguist, 8 Merchant, 9 Mountaineer, 10 Navigator, 11 Path Finder, 12 Prayer Master,
 13 Prestidigitator, 14 Swimmer, 15 Tracker, 16 Spot Secret Doors, 17 Danger Sense -- so Mountaineer, Navigator and Path Finder need two party
 members, Crusader and Swimmer every member, the rest one.  (Merchant = 8, the one `itemPrice` looks at.)
+
+Names in the data segment confirm the id orders used in this document: races 0 Human, 1 Elf, 2 Dwarf, 3 Gnome, 4 Half-Orc (shown "H-Orc"); sexes Male, Female; the 16 condition
+names in order Cursed, Heart Broken, Weak, Poisoned, Diseased, Insane, In Love, Drunk, Asleep, Depressed, Confused, Paralyzed, Unconscious, (Dead is drawn separately), Stone,
+Eradicated -- the Xeen order, which settles the mapping assumed in `monsters.md`.
