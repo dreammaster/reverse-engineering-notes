@@ -72,8 +72,9 @@ Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 
 
 * Closed when `byte_32E68` is set. Window text comes from `guild.m`; spell descriptions from `spldesc.bin`.
 * Shopping needs guild membership: the helper at 483FB tests `char[+38h + byte_34C1D]` (`byte_34C1D` = the guild's
-  town number 1..5), i.e. `awards[17 + town]` (awards start at +27h, so bytes 39h..3Dh). Without it: "You have to be a
-  member to shop here". Membership is therefore stored as one award byte per town.
+  town number 1..5), i.e. `awards[town - 1]`: the award bytes start at +39h, and awards 0-4 are the five guild memberships
+  ("Raven's Guild Member", "Albatross Guild Member", "Falcon's", "Buzzard's", "Eagle's", see `text-files.md`). Without it:
+  "You have to be a member to shop here".
 * Visiting the guild costs 60 (3Ch) minutes of game time on exit.
 * Shared town helpers (all reached through stubs at 281xx): `sub_281CB` -> `41A2F` (pay gold/gems; also used by
   `giveTake`), `sub_281D5` -> `41633` (character-can-act check, returns non-zero when the character is disabled),
