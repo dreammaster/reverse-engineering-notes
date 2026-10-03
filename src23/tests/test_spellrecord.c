@@ -212,7 +212,7 @@ static void checkRealBranches(const char *game, const SpellCatalog *catalog) {
         }
         check(label, fixedOnly);
     }
-    snprintf(label, sizeof(label), "%s: no record is both exploration-only (FlagsA 0x400) and an engaged-monster attack (FlagsB 0x3000)", game);
+    snprintf(label, sizeof(label), "%s: no record is both exploration-only and a combat attack", game);
     {
         bool clean = true;
         for (unsigned id = 1; id <= catalog->recordCount; id++) {
