@@ -736,6 +736,14 @@ loaded record *means* once read — that part is resolved 2026-09-26,
 see the status entry above), and flag bits `0x2000`/`0x400`'s
 consumers, if any.
 
+**New candidate 11 (2026-10-03): the NPC dialogue/service engine
+(`UseItem`)** -- data layer done (`dialog.c`, see file-formats.md's "NPC
+dialogue catalog"). Next: reimplement the topic handlers
+(`UseHealingItem`, `UseAttributeBoostItem`, `UseExperienceBoostItem`,
+`UseKeyItem`/`CheckKeyItem`, `UseAbilityScroll`, `UseItemType_400/800` and
+`ApplyItemEffectFlags`) as decide-don't-apply functions, then the topic-mask
+bookkeeping. `partyApplyTraining`'s `cost` input is the price in this data.
+
 ~~5. `UseTrainingItem`, fully~~ — **done 2026-09-24**
    (`partyApplyTraining`/`partyClassPromotionThresholds`/
    `partySyncStagedStats`/`partyRefreshCarryCapacityAndAttributeBonuses`/

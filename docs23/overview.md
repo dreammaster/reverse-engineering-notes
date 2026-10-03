@@ -11214,6 +11214,20 @@ function: FlagsA bit `0x400` is "exploration-only, refused in combat" -- the
 real-data census made it obvious (the 42 records are all projectiles and
 utilities), correcting an older "EFFECT: text variant" reading.
 
+### Session update (2026-10-03, continued): `UseItem` is the NPC dialogue engine
+
+Went looking at the `UseItem` item-use pipeline (the thing `partyApplyTraining`'s
+cost was waiting on) and found it isn't about items: `LoadItemData` reads three
+`WORLD.DAT` blocks that turned out, by their text, to be every NPC's
+dialogue and services -- 105 NPCs in Chapter 2, 140 in Chapter 3, 929/1073
+topics, 3218/4090 text lines. The 58-byte "use records" are conversation
+keywords ("HELLO", "BLACKWING", "PURCHASE FOOD"). Decoded the three layouts,
+including Chapter 3's 60-byte topic (an inserted word at `+0x10`, found because
+the names appeared shifted by 2 bytes per record), checked that the NPCs tile
+all three tables exactly in both games, and added `dialog.c` (26th suite) with
+the opening-topic rule and text assembly. The topic handlers behind each flag
+(shops, healers, tomes, riddles, key grants) are the next layer.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

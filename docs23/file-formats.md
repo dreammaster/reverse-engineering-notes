@@ -4124,6 +4124,76 @@ item's raw data in. Item contents/size/count not yet examined —
 `sub_27B42`'s own signature (id in, offset+size out) would be the
 fastest way to enumerate the whole catalog if that's wanted later.
 
+**Update 2026-10-03: this "item data catalog" is the NPC dialogue/service
+catalog** -- see "NPC dialogue catalog" below.
+
+### NPC dialogue catalog (decoded 2026-10-03; `src23/dialog.c`)
+
+`UseItem` (`yendor2.asm:13169`), `start`'s handler for a world object with the
+matching flag (it passes the object's `value`, `[si+4]`, as the id), is not an
+item-use routine: it is the **talk-to-an-NPC / use-a-service** engine, and
+`LoadItemData` (`:22216`) loads that NPC's data through three stubs,
+`PrepareItemDataBlockRead28/3A/22`, whose file offsets sit in DS
+(`DS:0xCE43/0xCE47/0xCE4F` in Chapter 2, `0xB1DB/0xB1DF/0xB1E7` in Chapter 3;
+`ida_scripts/dump_itemdata_offsets.py` in both games; the `...4B`/`...53`
+siblings are interior split points, not separate tables). The data is every
+character's dialogue and the services they offer; the text itself gave it
+away ("AS YOU APPROACH, YOU CAN SEE THAT THE GOVERNOR IS VERY CONCERNED...",
+"WELCOME TO OUR ESTABLISHMENT. THIS IS THE FINEST TAVERN IN ALL OF YENDOR").
+
+| Table | Ch2 offset | Ch2 entries | Ch3 offset | Ch3 entries |
+|---|---|---|---|---|
+| NPC headers, 40 bytes | `0x1677A1` | 105 (+blank slot 0, +1760 bytes slack) | `0x3D8EB9` | 140 (+slot 0) |
+| topics, 58 B (Ch2) / 60 B (Ch3) | `0x168F11` | 929 (index 0 blank; 72 more slack) | `0x3DA4C1` | 1073 (index 0 blank; 37 slack) |
+| text lines, 34 bytes | `0x1771DB` | 3218 | `0x3EA03D` | 4090 |
+
+The table sizes fall out of the headers: each NPC's first topic/line equals
+the previous NPC's first + count, and the totals match what the data holds
+(the last real line ends at the byte where printable text stops). The three
+"counts" `LoadItemData` itself reads from the header are `+4` (topics), `+6`
+(lines), with `+8`/`+0xA` the first indices. A text line is 33 characters
+space-padded plus a NUL; `%` is a line break, `~` the font's apostrophe.
+
+**NPC header (40 bytes)**: `+0` portrait picture id (category 0x70), `+2` a
+speaker mode (0/2/4/6 -- nonzero makes `LoadItemData` ask which party member is
+speaking, and keys `ComputeCostMessageIndentMode`'s stat thresholds), `+4/+6`
+topic/line counts, `+8/+0xA` first topic/line, `+0xC/+0xE/+0x10` three global
+flag ids choosing the opening topic (2nd greeting if set, else 3rd, else 4th,
+else the 1st), then service parameters read by the topic handlers: `+0x12` the
+one-time flag a tome-giver sets, `+0x14/+0x16` a party-record field offset and
+an amount (attribute tomes: e.g. +10 Strength; also `IsItemEligibleForEnhance`'s
+level range and `UseTrainingItem`'s level cap), `+0x18` a price multiplier
+(`ShowHealingCostPrompt`), `+0x1A` the per-character flag-bank index (the
+`+0x10C` bank: "this character already used this service"), `+0x1C/+0x1E`
+cost-message parameters, `+0x20` an item range the party must carry
+(`IsItemRangeAvailable`, feeding the topic-type word's bit 0). Chapter 3 adds a
+word at `+0x22` (usually equal to `+0x12`).
+
+**Topic**: a 13-character keyword + NUL ("HELLO", "BLACKWING", "NUORE",
+"PURCHASE FOOD", "BYE"), then `+0xE` flags (below), `+0x10` an argument (an exit
+code for flag 1, a lock id for key checks, a type word for the handlers...),
+`+0x12` the *byte* offset of the topic's first line from the NPC's first line
+(always a multiple of 34), `+0x14` the line count, `+0x16` this topic's bit in
+the NPC's topic mask (a distinct bit per topic: 0x8000, 0x4000, ... 1),
+`+0x1A` the bits it unlocks, `+0x1E` a copy (or -1), and from `+0x22` six signed
+global-flag ids `ApplyItemEffectFlags` walks (positive: set, negative: clear).
+**Chapter 3 topics are 60 bytes: an extra word at `+0x10` pushes everything
+after it up by 2** (`ShowItemUsagePreview` reads `+0x12` where Chapter 2 reads
+`+0x10`); `dialogTopicU16` hides the difference. A topic with no text keeps a
+bit mask in its offset/count words.
+
+**Topic flags** (`UseItem`'s tests of `es:[si+0Eh]`): `0x1` end the
+conversation (wait for a key, then leave with the argument as exit code if <=
+2), `0x40` the repair screen, `0x80` buy ore (for a topic named "BUY ...") or a
+riddle answer prompt, `0x100` the enhance screen, `0x200` an attribute tome,
+`0x400` an experience tome, `0x800` a preview, `0x1000` a key check, `0x4000` the
+sell screen, `0x8000` a key grant. `UseItem` additionally dispatches on a
+second word (the topic's argument, loaded into `word_2E410`): `0x8000`
+healing, `0x4000` training (`UseTrainingItem`, already reimplemented as
+`partyApplyTraining`), `0x3000` an ability scroll, `0x400`/`0x800` the paid
+service handlers. All of those handlers are UI-heavy and not reimplemented;
+this round is the data layer plus the opening-topic choice and text assembly.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
