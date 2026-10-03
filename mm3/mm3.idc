@@ -8639,6 +8639,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X1BEE9);
 	create_insn	(0X1C13C);
+	set_name	(0X1C13C,	"updateLight");
 	create_insn	(x=0X1C15C);
 	op_hex		(x,	1);
 	create_insn	(0X1C18E);
@@ -37867,6 +37868,7 @@ static Functions_0(void) {
 	set_frame_size(0X1BEE9, 0, 2, 0);
 	add_func    (0X1C13C,0X1C195);
 	set_func_flags(0X1C13C,0x5412);
+	set_func_cmt(0X1C13C,	"per view update: consumes one Party_light when the cell has flag 08h and the map is dark; sets byte_36FB1 (0 lit / 4 dark)", 0);
 	set_frame_size(0X1C13C, 0, 2, 0);
 	add_func    (0X1C195,0X1D8D5);
 	set_func_flags(0X1C195,0x5412);
@@ -39677,16 +39679,16 @@ static Functions_0(void) {
 	set_func_cmt(0X44ABA,	"\"Too dangerous to dismiss here!\"", 0);
 	set_frame_size(0X44ABA, 0XE, 2, 0);
 	define_local_var(0X44ABA, 0X44C04, "[bp-0X4]", "dest");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X44C14,0X44CC6);
 	set_func_flags(0X44C14,0x5412);
 	SetType(0X44C14, "int __cdecl __far sub_44C14(int, int, char *format);");
 	set_frame_size(0X44C14, 0X38, 2, 0);
 	define_local_var(0X44C14, 0X44CC6, "[bp-0X34]", "buffer");
 	define_local_var(0X44C14, 0X44CC6, "[bp+0XA]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X44CC6,0X44DAC);
 	set_func_flags(0X44CC6,0x5412);
 	SetType(0X44CC6, "int __cdecl __far sub_44CC6(int, char *format);");

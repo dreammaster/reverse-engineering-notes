@@ -158,10 +158,12 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 | `09` | neighbour when x > 15 |
 | `0A` | neighbour when y < 0 |
 | `0B` | neighbour when x < 0 |
+| `0C` | saving allowed (`loadSaveDialog`: "no saving in this maze" when 0) |
+| `0D` | map is lit (no light needed; `updateLight`) |
 | `0E` | resting allowed (`rest`: "Too dangerous to rest here!" when 0) |
 | `0F` | dismissing a character allowed ("Too dangerous to dismiss here!" when 0) |
 | `14` | Teleport allowed, `15` Lloyd's Beacon, `16` Time Distortion, `17` Super Shelter, `18` Town Portal, `19` Nature's Gate, `1A` Etherealize (each tested by that spell's routine) |
-| `0C`, `0D`, `10`-`13`, `1B`-`1E` | used by tavern / death / other code (not yet identified); in the shipped files `11h`-`13h` and `1Bh`-`1Eh` are typically `64h` |
+| `10`-`13`, `1B`-`1E` | used by tavern / death / other code (not yet identified); in the shipped files `11h`-`13h` and `1Bh`-`1Eh` are typically `64h` |
 
 ### Event operand encodings (verified by decoding every shipped `MAZEnn.EVT` with `tools/mm3_events.py`)
 
@@ -192,3 +194,7 @@ Exit; TakeOrGive item 73; SetVar; Teleport 6, 1, 13`.
 * Wall word of a cell: four nibbles, from the top: sides N, E, S, W (N faces the higher row index of the 16 rows stored in the `.DAT`).  Adjacent
   cells agree (a wall is stored on both sides; 473 of 480 shared edges of `MAZE05` are consistent).  The low 3 bits of a nibble are the wall style,
   bit 3 is a flag.  `tools/mm3_map.py MAZEnn.DAT` prints an ASCII map (flag bytes shown inside the cells).
+
+### Cell flag bytes (`.DAT` +200h)
+
+Bit `04h`: too dangerous to rest here (`rest`); bit `08h`: the cell burns light (`updateLight`).  `80h` is used by events (see Xeen's cell flags: `80h` = event/object marker); remaining bits not yet identified.

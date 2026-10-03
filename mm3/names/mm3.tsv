@@ -231,6 +231,7 @@
 1BC15	mazeGetWordRel	args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
 1BD67	mazeGetFlagsRel	same addressing, returns the cell flag byte (maze .DAT +200h) & mask
 1BE3E	mazeSetBits	args (x, y, field, value): clear the field's mask (table 16F8h) in the cell word, or in value << shift (88-byte field records at 159Ch)
+1C13C	updateLight	per view update: consumes one Party_light when the cell has flag 08h and the map is dark; sets byte_36FB1 (0 lit / 4 dark)
 1C195	prepareIndoorView	5.9 KB, called first by drawView (by call graph, unverified)
 1E407	renderIndoorView	8 KB, advances the animation counters then draws the view (unverified)
 203FE	drawViewOutdoors	outdoor counterpart: calls 2045A (by call graph)

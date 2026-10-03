@@ -3225,7 +3225,7 @@ loc_1575E:                              ; CODE XREF: sub_15736+13↑j
                 cmp     byte_34C1B, 0
                 jz      short loc_1579D
                 mov     byte_2886E, 1
-                call    sub_1C13C
+                call    updateLight
                 mov     al, byte_36FB1
                 cbw
                 or      ax, ax
@@ -16613,7 +16613,7 @@ jpt_1BCE9       dw offset loc_1BCEE     ; DATA XREF: mazeGetWordRel+D4↑r
 ; same addressing, returns the cell flag byte (maze .DAT +200h) & mask
 ; Attributes: bp-based frame
 
-mazeGetFlagsRel proc far                ; CODE XREF: sub_1C13C+1D↓p
+mazeGetFlagsRel proc far                ; CODE XREF: updateLight+1D↓p
                                         ; rest+18↓P
 
 arg_0           = word ptr  6
@@ -17058,9 +17058,10 @@ sub_1BEE9       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; per view update: consumes one Party_light when the cell has flag 08h and the map is dark; sets byte_36FB1 (0 lit / 4 dark)
 ; Attributes: bp-based frame
 
-sub_1C13C       proc far                ; CODE XREF: sub_15736+34↑P
+updateLight     proc far                ; CODE XREF: sub_15736+34↑P
                                         ; prepareIndoorView+26↓p ...
                 push    bp
                 mov     bp, sp
@@ -17085,8 +17086,8 @@ sub_1C13C       proc far                ; CODE XREF: sub_15736+34↑P
                 jz      short loc_1C16E
                 dec     Party_light
 
-loc_1C16E:                              ; CODE XREF: sub_1C13C+25↑j
-                                        ; sub_1C13C+2C↑j
+loc_1C16E:                              ; CODE XREF: updateLight+25↑j
+                                        ; updateLight+2C↑j
                 cmp     Party_light, 0
                 jnz     short loc_1C187
                 mov     al, Maze_curSlot
@@ -17097,19 +17098,19 @@ loc_1C16E:                              ; CODE XREF: sub_1C13C+25↑j
                 cmp     byte ptr [bx-379Fh], 0
                 jz      short loc_1C18E
 
-loc_1C187:                              ; CODE XREF: sub_1C13C+37↑j
+loc_1C187:                              ; CODE XREF: updateLight+37↑j
                 mov     byte_36FB1, 0
                 jmp     short loc_1C193
 ; ---------------------------------------------------------------------------
 
-loc_1C18E:                              ; CODE XREF: sub_1C13C+49↑j
+loc_1C18E:                              ; CODE XREF: updateLight+49↑j
                 mov     byte_36FB1, 4
 
-loc_1C193:                              ; CODE XREF: sub_1C13C+A↑j
-                                        ; sub_1C13C+50↑j
+loc_1C193:                              ; CODE XREF: updateLight+A↑j
+                                        ; updateLight+50↑j
                 pop     bp
                 retf
-sub_1C13C       endp
+updateLight     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17140,7 +17141,7 @@ var_2           = word ptr -2
                 push    cs
                 call    near ptr sub_1BEE9
                 push    cs
-                call    near ptr sub_1C13C
+                call    near ptr updateLight
                 mov     ax, di
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -26436,7 +26437,7 @@ drawViewOutdoors proc far               ; CODE XREF: drawView+A↑P
                 push    si
                 push    di
                 call    sub_1BEE9
-                call    sub_1C13C
+                call    updateLight
                 call    sub_15B50
                 cmp     byte_2886F, 0
                 jz      short loc_2044C
@@ -49146,8 +49147,8 @@ Party_year      dw 0                    ; DATA XREF: addTime+2F↑w
                                         ; getAge+7↑r ...
                                         ; word
 ; char *Party_light
-Party_light     dw 0                    ; DATA XREF: sub_1C13C+27↑r
-                                        ; sub_1C13C+2E↑w ...
+Party_light     dw 0                    ; DATA XREF: updateLight+27↑r
+                                        ; updateLight+2E↑w ...
                                         ; word (MAZE.PTY +34Eh): light count (ifProc action 70)
 Party_fireResist dw 0                   ; DATA XREF: sub_1B6D1+1C0↑r
                                         ; giveTake:loc_3C656↓r ...
