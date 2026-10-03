@@ -163,6 +163,12 @@ int main(int argc, char **argv) {
     scene.facing = facing;
 
     static uint8_t screen[ViewScreenWidth * ViewScreenHeight];
+    if (getenv("RENDER_HUD")) { /* the main screen's frame: category 0 picture 1 at (1, 1) */
+        const uint8_t *frame = pictureFileGet(pictures, 0, 1);
+        for (unsigned row = 0; frame && row < 198; row++) {
+            memcpy(&screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
+        }
+    }
     ViewRenderer renderer = {game, tables, pictureFileGet, pictures, screen};
     viewRender(&renderer, &scene);
     pictureFileClose(pictures);
