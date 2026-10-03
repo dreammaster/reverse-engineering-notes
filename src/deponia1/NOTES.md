@@ -2478,6 +2478,29 @@ GetMainMemBlock/GetCapturedFrame`, `TPictureMEM::ResizeImage`,
 
 `TMSavegame` is `done` in the manifest.
 
+## TPaintControl
+
+Implemented all 27 manifest-listed methods (Deponia_Linux.asm lines
+143284-749311 - the two virtuals sit far from the rest, as COMDAT-folded
+empty bodies). The real layout is 0x44 bytes (in `TPaintControl.h`'s header
+comment); the earlier model was wrong in three ways: **`_active` defaults to
+TRUE** (the constructor writes 1 to +0x08), there is a **worktop area rect**
+(+0x2C, distinct from the worktop size) that the scroll position is clamped
+into, and **`SetCurrent()`/`GetCurrent()` use a real static**,
+`TPictureIO::s_pPaintControl` (recovered symbol; the destructor clears it if
+it still points here).
+
+Behavior worth knowing: `AdjustWindowHorizontal/Vertical(float)` take an
+*absolute* scroll coordinate despite the name (TGScene::InitialiseBackground
+passes a saved scroll position), clamped so the visible window stays inside
+the worktop area; `SetWorktopArea()` tests every edge against the caller's
+rect but writes the corrections to a copy (a quirk reproduced as-is);
+`SetScrollPos(wxPoint)` and `(wxRealPoint)` always keep the int and float
+scroll pairs in sync; `GetRelativePoint()` is `(pos + scroll) - origin`.
+Adds `wxRealPoint` (a float pair) and `wxPoint::operator-`.
+
+`TPaintControl` is `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

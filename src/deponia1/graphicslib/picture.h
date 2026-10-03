@@ -45,6 +45,7 @@
 #include "baselib/file.h"
 
 class TFramebuffer;
+class TPaintControl;
 
 class TPictureIO : public TPictureMEM {
 public:
@@ -57,6 +58,11 @@ public:
 
 	TPictureIO(const TPictureIO &) = delete;
 	TPictureIO &operator=(const TPictureIO &other);
+
+	// Confirmed a real static (TPaintControl::SetCurrent()/GetCurrent()/~TPaintControl(),
+	// Deponia_Linux.asm lines 748595-748654): the paint control pictures
+	// currently draw relative to.
+	static TPaintControl *s_pPaintControl;
 
 	static void RetryFailedPicturesLoad();
 	static void TestCacheFileTime(bool enable);

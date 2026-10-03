@@ -1,13 +1,26 @@
 // Not yet assert-confirmed to a specific file; stays at the top level of
 // src/deponia1 until evidence pins it down (manifest/README.md policy).
 //
-// TPaintControl is a base "drawable surface" interface: TMasterControl
-// multiply-inherits it (confirmed via its vtable dump - a secondary vtable
-// section whose two slots default to TPaintControl::Prepare/TPaintControl::
-// Draw), and TSceneControl::GetScene(), TCursorControl and TLoadingControl
-// all appear to return/derive from it too (each gets called through the
-// same Prepare@slot0/Draw@slot1 pattern). Only the methods observed being
-// called from TMasterControl are stubbed here.
+// Implemented in full (Deponia_Linux.asm lines 143284-749311, all 27
+// manifest-listed methods). TPaintControl is a base "drawable surface"
+// interface: TMasterControl multiply-inherits it (confirmed via its vtable
+// dump - a secondary vtable section whose two slots default to
+// TPaintControl::Prepare/TPaintControl::Draw), and TGScene, TCursorControl
+// and TLoadingControl all derive from it too (each gets called through the
+// same Prepare@slot0/Draw@slot1 pattern). Both defaults are empty.
+//
+// Real layout (0x44 bytes): vtable (+0x00), an "active" flag (+0x08, default
+// TRUE) and a "scrollable" flag (+0x09, default false), the scroll position
+// as floats (+0x0C/0x10) and as ints (+0x14/0x18 - the int pair is always
+// the truncated float pair), the origin (+0x1C/0x20), the worktop size
+// (+0x24/0x28 - the scene's whole drawable extent), the worktop area (+0x2C-
+// 0x3B, a wxRect - the part of it the window may scroll over) and the
+// visible size (+0x3C/0x40 - the window's size). The scroll position is kept
+// so the visible window stays inside the worktop area.
+//
+// This also owns the engine's "current paint control" (TPictureIO::
+// s_pPaintControl): SetCurrent() makes this the one, the destructor clears
+// it if it still is.
 #pragma once
 
 #include "WxStub.h"
@@ -19,66 +32,62 @@ struct FloatPoint {
 
 class TPaintControl {
 public:
-	virtual ~TPaintControl() = default;
+	TPaintControl() = default;
+	virtual ~TPaintControl();
 	virtual void Prepare();
 	virtual void Draw();
 
 	// Confirmed called (Deponia_Linux.asm line 457443, from
-	// TGameControl::UpdateAspectRatio) with the resolved width/height as
-	// plain ints - presumably (re)configures the render surface, but its
-	// internal behavior wasn't traced further.
+	// TGameControl::UpdateAspectRatio) with the resolved width/height: resets
+	// the scroll position and origin and makes the worktop, its area and the
+	// visible window all exactly that size.
 	void InitControl(int width, int height);
 
+	static TPaintControl *GetCurrent();
 	void SetCurrent();
 	bool IsActive() const;
 	void SetActive(bool active);
 	const wxPoint &GetScrollPos() const;
 	void SetScrollPos(const wxPoint &pos);
+	void SetScrollPos(const wxRealPoint &pos);
 	bool IsScrollable() const;
-	// Confirmed call shape only (TGameControl::MoveScene, Deponia_Linux.asm
-	// line 459715) - not reversed beyond that.
 	void SetIsScrollable(bool scrollable);
 	int GetWorktopWidth() const;
 	int GetWorktopHeight() const;
-	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
-	// Deponia_Linux.asm lines 465184-465210) - not reversed beyond that.
+	// Sets the worktop size and makes its area the whole of it.
 	void SetWorktopSize(int width, int height);
-	// Confirmed call shape only (TGScene::InitialiseBackground(), Deponia_
-	// Linux.asm line 54ED5x) - the scene's scrollable area plus its
-	// background sprite's own width/height; not reversed beyond that.
+	// Sets the worktop size and an area within it (clamped to the worktop:
+	// a negative or past-the-end edge snaps to the worktop's own), then
+	// re-clamps the scroll position.
 	void SetWorktopArea(const wxRect &area, int width, int height);
+	wxRect GetWorktopArea() const;
 	const FloatPoint &GetFloatScrollPos() const;
-	void AdjustWindowHorizontal(float amount);
-	void AdjustWindowVertical(float amount);
+	// Despite the name, `position` is the new absolute scroll coordinate
+	// (TGScene::InitialiseBackground() passes a saved scroll position), kept
+	// inside the worktop area for the current visible size.
+	void AdjustWindowHorizontal(float position);
+	void AdjustWindowVertical(float position);
 	// Confirmed a reference-returning accessor, not a by-value wxSize
 	// (TGameControl::CenterScene dereferences the returned address as
 	// [ptr]/[ptr+4] rather than reading a register pair, Deponia_Linux.asm
 	// lines 460533-460715) - same "logical const, physical mutable
 	// accessor" shape as GetScrollPos() above.
 	const wxSize &GetVisibleSize() const;
-	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
-	// asm line 465210) - not reversed beyond that.
 	void SetVisibleSize(int width, int height);
-	// Confirmed a reference-returning accessor, same shape as
-	// GetScrollPos()/GetVisibleSize() above (TGameControl::
-	// AdjustInterfacesOnScreen, asm lines 465220-465223: dereferences the
-	// returned address as [ptr]/[ptr+4]).
 	const wxPoint &GetOrigin() const;
-	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
-	// asm line 465179).
 	void SetOrigin(int x, int y);
-	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
-	// asm lines 473029-473037, 473083-473091) - converts a screen-space
-	// click position to one relative to this surface (presumably subtracting
-	// _origin/_scrollPos); not reversed beyond that call shape.
+	// Converts a screen-space position to one relative to this surface
+	// (confirmed, asm lines 749311+): scroll position added, origin
+	// subtracted.
 	wxPoint GetRelativePoint(const wxPoint &pos) const;
 
 private:
-	wxPoint _scrollPos{};
-	FloatPoint _floatScrollPos{};
-	wxSize _visibleSize{};
-	wxSize _worktopSize{};
-	wxPoint _origin{};
-	bool _active = false;
+	bool _active = true;
 	bool _scrollable = false;
+	FloatPoint _floatScrollPos;
+	wxPoint _scrollPos;
+	wxPoint _origin;
+	wxSize _worktopSize;
+	wxRect _worktopArea;
+	wxSize _visibleSize;
 };

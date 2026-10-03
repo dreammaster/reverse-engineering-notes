@@ -23,7 +23,7 @@ HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >,
 HashNode<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	1	136783	136783
 TMCharacter	todo	10	137965	138489
 TGInterface	todo	25	138536	143021
-TPaintControl	stub	27	143284	749311
+TPaintControl	done	27	143284	749311
 HashMap<TId, int, TIdHash>	todo	1	143397	143397
 THText	todo	6	144162	144330
 TDiagnostic	todo	11	144499	148293

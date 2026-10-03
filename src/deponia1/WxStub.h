@@ -369,6 +369,13 @@ private:
 constexpr int WXK_BACK = 8;
 constexpr int WXK_ESCAPE = 27;
 
+// Confirmed a float pair (TPaintControl::SetScrollPos(), Deponia_Linux.asm
+// line 749183 reads it with movss/cvttss2si).
+struct wxRealPoint {
+	float x = 0.0f;
+	float y = 0.0f;
+};
+
 struct wxSize {
 	int width = 0;
 	int height = 0;
@@ -389,6 +396,11 @@ struct wxPoint {
 	// sum.
 	wxPoint operator+(const wxPoint &other) const {
 		return wxPoint{x + other.x, y + other.y};
+	}
+	// Confirmed a real free operator- (TPaintControl::GetRelativePoint(),
+	// Deponia_Linux.asm line 749311 - `_ZmiRK7wxPointS1_`).
+	wxPoint operator-(const wxPoint &other) const {
+		return wxPoint{x - other.x, y - other.y};
 	}
 };
 

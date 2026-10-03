@@ -5,6 +5,7 @@
 #include "graphicslib/graphics.h"
 #include "graphicslib/preloadedPicManager.h"
 
+TPaintControl *TPictureIO::s_pPaintControl = nullptr;
 std::vector<TPictureIO *> TPictureIO::_loadFailedPics;
 wxCriticalSection TPictureIO::RetryFailedPicturesSection;
 wxCriticalSection TPictureIO::_mutexStatus;
