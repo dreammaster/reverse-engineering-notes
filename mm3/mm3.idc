@@ -14344,6 +14344,7 @@ static Bytes_2(void) {
 	set_name	(0X28667,	"j_getThievery");
 	MakeStruct	(0X28670,	"_stub_descr");
 	create_insn	(0X28690);
+	set_name	(0X28690,	"j_itemPrice");
 	create_insn	(0X28695);
 	create_insn	(0X2869A);
 	set_name	(0X2869A,	"j_drawCharacterStats");
@@ -35460,6 +35461,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X51E1C);
 	op_hex		(x,	1);
 	create_insn	(0X51E25);
+	set_name	(0X51E25,	"itemPrice");
 	create_insn	(x=0X51E28);
 	op_hex		(x,	1);
 	create_insn	(x=0X51E2D);
@@ -39101,7 +39103,7 @@ static Functions_0(void) {
 	set_func_flags(0X28667,0x54c2);
 	set_frame_size(0X28667, 0, 0, 0);
 	add_func    (0X28690,0X28695);
-	set_func_flags(0X28690,0x5482);
+	set_func_flags(0X28690,0x54c2);
 	set_frame_size(0X28690, 0, 0, 0);
 	add_func    (0X28695,0X2869A);
 	set_func_flags(0X28695,0x5482);
@@ -40349,6 +40351,7 @@ static Functions_1(void) {
 	set_frame_size(0X51DAB, 0X8, 2, 0);
 	add_func    (0X51E25,0X5201C);
 	set_func_flags(0X51E25,0x5412);
+	set_func_cmt(0X51E25,	"price of an inventory item: base (table DGROUP 0B16) x metal x extras / merchant divisor; reached via stub sub_28690", 0);
 	set_frame_size(0X51E25, 0X1A, 2, 0);
 	add_func    (0X52030,0X52165);
 	set_func_flags(0X52030,0x5412);

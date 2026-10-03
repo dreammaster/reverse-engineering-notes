@@ -37592,16 +37592,7 @@ stub13          segment para public 'CODE' use16
                 dw 18                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28690       proc far                ; CODE XREF: itemsDialog+4B4↓P
-                                        ; itemsDialog+6A0↓P
-                jmp     sub_51E25
-sub_28690       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_itemPrice. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -99429,7 +99420,7 @@ loc_4E2D1:                              ; CODE XREF: itemsDialog+48F↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    sub_28690
+                call    j_itemPrice
                 add     sp, 8
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -99680,7 +99671,7 @@ loc_4E4C8:                              ; CODE XREF: itemsDialog+67F↑j
                 push    [bp+arg_8]
                 push    di
                 push    si
-                call    sub_28690
+                call    j_itemPrice
                 add     sp, 8
                 mov     [bp+var_10], dx
                 mov     [bp+var_12], ax
@@ -104531,7 +104522,7 @@ loc_5085B:                              ; CODE XREF: characterInfoInventory+278�
                 push    word ptr [bp+format]
                 nop
                 push    cs
-                call    near ptr sub_51E25
+                call    near ptr itemPrice
                 add     sp, 8
                 mov     word ptr [bp+value+2], dx
                 mov     word ptr [bp+value], ax
@@ -107295,7 +107286,7 @@ arg_8           = word ptr  0Eh
                 push    si
                 nop
                 push    cs
-                call    near ptr sub_51E25
+                call    near ptr itemPrice
                 add     sp, 8
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
@@ -107423,9 +107414,10 @@ sub_51DAB       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; price of an inventory item: base (table DGROUP 0B16) x metal x extras / merchant divisor; reached via stub sub_28690
 ; Attributes: bp-based frame
 
-sub_51E25       proc far                ; CODE XREF: sub_28690↑J
+itemPrice       proc far                ; CODE XREF: j_itemPrice↑J
                                         ; characterInfoInventory+28C↑p ...
 
 var_16          = word ptr -16h
@@ -107463,8 +107455,8 @@ arg_6           = word ptr  0Ch
                 jmp     loc_52016
 ; ---------------------------------------------------------------------------
 
-loc_51E51:                              ; CODE XREF: sub_51E25+15↑j
-                                        ; sub_51E25+1C↑j ...
+loc_51E51:                              ; CODE XREF: itemPrice+15↑j
+                                        ; itemPrice+1C↑j ...
                 cmp     [bp+arg_6], 80h
                 jle     short loc_51E65
                 cmp     [bp+arg_4], 2
@@ -107473,13 +107465,13 @@ loc_51E51:                              ; CODE XREF: sub_51E25+15↑j
                 jmp     short loc_51E6E
 ; ---------------------------------------------------------------------------
 
-loc_51E65:                              ; CODE XREF: sub_51E25+31↑j
-                                        ; sub_51E25+37↑j
+loc_51E65:                              ; CODE XREF: itemPrice+31↑j
+                                        ; itemPrice+37↑j
                 mov     ax, [bp+arg_6]
                 and     ax, 80h
                 mov     [bp+var_16], ax
 
-loc_51E6E:                              ; CODE XREF: sub_51E25+3E↑j
+loc_51E6E:                              ; CODE XREF: itemPrice+3E↑j
                 and     [bp+arg_6], 7Fh
                 mov     bx, di
                 cmp     byte ptr [bx+si+0DCh], 4Bh ; 'K'
@@ -107489,7 +107481,7 @@ loc_51E6E:                              ; CODE XREF: sub_51E25+3E↑j
                 jmp     short loc_51EB5
 ; ---------------------------------------------------------------------------
 
-loc_51E88:                              ; CODE XREF: sub_51E25+55↑j
+loc_51E88:                              ; CODE XREF: itemPrice+55↑j
                 mov     bx, di
                 cmp     byte ptr [bx+si+0DCh], 52h ; 'R'
                 jnz     short loc_51E9D
@@ -107498,7 +107490,7 @@ loc_51E88:                              ; CODE XREF: sub_51E25+55↑j
                 jmp     short loc_51EB5
 ; ---------------------------------------------------------------------------
 
-loc_51E9D:                              ; CODE XREF: sub_51E25+6A↑j
+loc_51E9D:                              ; CODE XREF: itemPrice+6A↑j
                 mov     bx, di
                 mov     al, [bx+si+0DCh]
                 mov     ah, 0
@@ -107508,8 +107500,8 @@ loc_51E9D:                              ; CODE XREF: sub_51E25+6A↑j
                 mov     [bp+var_2], 0
                 mov     [bp+var_4], ax
 
-loc_51EB5:                              ; CODE XREF: sub_51E25+61↑j
-                                        ; sub_51E25+76↑j
+loc_51EB5:                              ; CODE XREF: itemPrice+61↑j
+                                        ; itemPrice+76↑j
                 mov     bx, di
                 mov     al, [bx+si+0B6h]
                 mov     ah, 0
@@ -107521,7 +107513,7 @@ loc_51EB5:                              ; CODE XREF: sub_51E25+61↑j
                 jmp     cs:jpt_51EC7[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_51ECC:                              ; CODE XREF: sub_51E25+A2↑j
+loc_51ECC:                              ; CODE XREF: itemPrice+A2↑j
                                         ; DATA XREF: ovl13:jpt_51EC7↓o
                 xor     ax, ax          ; jumptable 00051EC7 case 1
                 mov     dx, 0Ah
@@ -107533,7 +107525,7 @@ loc_51ECC:                              ; CODE XREF: sub_51E25+A2↑j
                 jmp     short loc_51F35
 ; ---------------------------------------------------------------------------
 
-loc_51EE0:                              ; CODE XREF: sub_51E25+A2↑j
+loc_51EE0:                              ; CODE XREF: itemPrice+A2↑j
                                         ; DATA XREF: ovl13:jpt_51EC7↓o
                 mov     cl, 2           ; jumptable 00051EC7 case 2
                 mov     dx, [bp+var_2]
@@ -107542,7 +107534,7 @@ loc_51EE0:                              ; CODE XREF: sub_51E25+A2↑j
                 jmp     short loc_51F35
 ; ---------------------------------------------------------------------------
 
-loc_51EEF:                              ; CODE XREF: sub_51E25+A2↑j
+loc_51EEF:                              ; CODE XREF: itemPrice+A2↑j
                                         ; DATA XREF: ovl13:jpt_51EC7↓o
                 mov     ax, [bp+var_2]  ; jumptable 00051EC7 case 3
                 mov     dx, [bp+var_4]
@@ -107553,7 +107545,7 @@ loc_51EEF:                              ; CODE XREF: sub_51E25+A2↑j
                 jmp     short loc_51F3B
 ; ---------------------------------------------------------------------------
 
-loc_51F01:                              ; CODE XREF: sub_51E25+A2↑j
+loc_51F01:                              ; CODE XREF: itemPrice+A2↑j
                                         ; DATA XREF: ovl13:jpt_51EC7↓o
                 mov     dx, [bp+var_2]  ; jumptable 00051EC7 case 4
                 mov     ax, [bp+var_4]
@@ -107564,7 +107556,7 @@ loc_51F01:                              ; CODE XREF: sub_51E25+A2↑j
                 jmp     short loc_51F3B
 ; ---------------------------------------------------------------------------
 
-def_51EC7:                              ; CODE XREF: sub_51E25+9E↑j
+def_51EC7:                              ; CODE XREF: itemPrice+9E↑j
                 mov     bx, di          ; jumptable 00051EC7 default case
                 mov     al, [bx+si+0B6h]
                 mov     ah, 0
@@ -107580,13 +107572,13 @@ def_51EC7:                              ; CODE XREF: sub_51E25+9E↑j
                 pop     bx
                 call    LXMUL@
 
-loc_51F35:                              ; CODE XREF: sub_51E25+B9↑j
-                                        ; sub_51E25+C8↑j
+loc_51F35:                              ; CODE XREF: itemPrice+B9↑j
+                                        ; itemPrice+C8↑j
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
 
-loc_51F3B:                              ; CODE XREF: sub_51E25+DA↑j
-                                        ; sub_51E25+EF↑j
+loc_51F3B:                              ; CODE XREF: itemPrice+DA↑j
+                                        ; itemPrice+EF↑j
                 mov     bx, di
                 mov     al, [bx+si+0A3h]
                 mov     ah, 0
@@ -107625,7 +107617,7 @@ loc_51F3B:                              ; CODE XREF: sub_51E25+DA↑j
                 jmp     cs:jpt_51F95[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_51F9A:                              ; CODE XREF: sub_51E25+170↑j
+loc_51F9A:                              ; CODE XREF: itemPrice+170↑j
                                         ; DATA XREF: ovl13:jpt_51F95↓o
                 mov     bx, di          ; jumptable 00051F95 cases 1,2
                 test    byte ptr [bx+si+90h], 0C0h
@@ -107643,8 +107635,8 @@ loc_51F9A:                              ; CODE XREF: sub_51E25+170↑j
                 mov     [bp+var_2], ax
                 mov     [bp+var_4], dx
 
-loc_51FC5:                              ; CODE XREF: sub_51E25+17C↑j
-                                        ; sub_51E25+182↑j
+loc_51FC5:                              ; CODE XREF: itemPrice+17C↑j
+                                        ; itemPrice+182↑j
                 mov     bx, [bp+arg_6]
                 mov     al, [bx+5B15h]
                 mov     ah, 0
@@ -107665,7 +107657,7 @@ loc_51FC5:                              ; CODE XREF: sub_51E25+17C↑j
                 jmp     short loc_51FFE
 ; ---------------------------------------------------------------------------
 
-loc_51FF2:                              ; CODE XREF: sub_51E25+170↑j
+loc_51FF2:                              ; CODE XREF: itemPrice+170↑j
                                         ; DATA XREF: ovl13:jpt_51F95↓o
                 mov     bx, di          ; jumptable 00051F95 cases 3-6
                 mov     al, [bx+si+90h]
@@ -107673,11 +107665,11 @@ loc_51FF2:                              ; CODE XREF: sub_51E25+170↑j
                 and     ax, 3Fh
                 cwd
 
-loc_51FFE:                              ; CODE XREF: sub_51E25+1CB↑j
+loc_51FFE:                              ; CODE XREF: itemPrice+1CB↑j
                 mov     [bp+var_12], dx
                 mov     [bp+var_14], ax
 
-def_51F95:                              ; CODE XREF: sub_51E25+16C↑j
+def_51F95:                              ; CODE XREF: itemPrice+16C↑j
                 cmp     [bp+arg_4], 0   ; jumptable 00051F95 default case
                 jz      short loc_52012
                 mov     dx, [bp+var_12]
@@ -107685,27 +107677,27 @@ def_51F95:                              ; CODE XREF: sub_51E25+16C↑j
                 jmp     short loc_52016
 ; ---------------------------------------------------------------------------
 
-loc_52012:                              ; CODE XREF: sub_51E25+1E3↑j
+loc_52012:                              ; CODE XREF: itemPrice+1E3↑j
                 xor     dx, dx
                 xor     ax, ax
 
-loc_52016:                              ; CODE XREF: sub_51E25+29↑j
-                                        ; sub_51E25+1EB↑j
+loc_52016:                              ; CODE XREF: itemPrice+29↑j
+                                        ; itemPrice+1EB↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_51E25       endp
+itemPrice       endp
 
 ; ---------------------------------------------------------------------------
-jpt_51F95       dw offset loc_51F9A     ; DATA XREF: sub_51E25+170↑r
+jpt_51F95       dw offset loc_51F9A     ; DATA XREF: itemPrice+170↑r
                 dw offset loc_51F9A     ; jump table for switch statement
                 dw offset loc_51FF2
                 dw offset loc_51FF2
                 dw offset loc_51FF2
                 dw offset loc_51FF2
-jpt_51EC7       dw offset loc_51ECC     ; DATA XREF: sub_51E25+A2↑r
+jpt_51EC7       dw offset loc_51ECC     ; DATA XREF: itemPrice+A2↑r
                 dw offset loc_51EE0     ; jump table for switch statement
                 dw offset loc_51EEF
                 dw offset loc_51F01
