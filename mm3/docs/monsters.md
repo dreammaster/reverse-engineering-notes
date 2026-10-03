@@ -94,3 +94,22 @@ Field meanings: `dmg` = NdS physical damage (`MONDMGN`d`MONDMGS`), `att` = attac
 | 87 | Top Jouster | 1000 | 35 | 50 | 20d20 | 2 | 300000 | physical | random | 0 | 0 | 80 | 6 | 10000 | 0 | 60/0/0/0/0/0/0 |
 | 88 | Eye Master | 200 | 25 | 35 | 75d1 | 4 | 200000 | magical | random | 3 | 1 | 0 | 6 | 0 | 350 | 90/0/0/0/0/0/0 |
 | 89 | Cult Leader | 300 | 20 | 20 | 4d6 | 5 | 30000 | physical | druid | 0 | 1 | 25 | 5 | 10000 | 25 | 20/20/20/20/0/0/0 |
+
+## Special attacks (`doCharDamage`, `4A779`; `MONSPEC` value = switch case 1..16)
+
+After a successful hit the character gets a saving throw (`charSavingThrow`); if it fails the special attack (value of `Mon_spec[monster]`) is applied.
+Condition index `c` is the byte at char `+113h + c` (condition counter, saturating at FFh; order as in `character.h`):
+
+| MONSPEC | effect | MONSPEC | effect |
+|---|---|---|---|
+| 1 | poison (c=3) | 9 | spell points set to 0 |
+| 2 | sleep (c=8) | 10 | paralyse (c=11) |
+| 3 | insane (c=5) | 11 | age +5 years (char +26h) |
+| 4 | disease (c=4) | 12 | knocked unconscious (c=12, hit points set to 0) |
+| 5 | confusion (c=10) | 13 | eradicate (c=15, hit points 0) |
+| 6 | curse (c=0) | 14 | stone (c=14, hit points 0) |
+| 7 | breaks one worn body armour (item ids 34-41 get flag 80h, `broken`) | 15 | death (c=13, hit points 0) |
+| 8 | weakness (c=2) | 16 | curses every inventory item (flag 40h on ids < 70) |
+
+The condition-name mapping assumes the Xeen condition order (cursed, heart broken, weak, poisoned, diseased, insane, in love, drunk, asleep, depressed, confused, paralysed, unconscious, dead, stone, eradicated), which agrees with the two verified entries (unconscious 0Ch at +11Fh, dead 0Dh at +120h).
+The effect is skipped when the damage type 6-way switch earlier in the routine says the character resists (not decoded in detail).
