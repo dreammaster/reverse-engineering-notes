@@ -36665,8 +36665,8 @@ sub_28144       endp
 ; Attributes: thunk
 
 ; int __cdecl __far sub_28149(char *format, char *buffer)
-sub_28149       proc far                ; CODE XREF: sub_47ECE+59↓P
-                                        ; sub_47ECE+6C↓P ...
+sub_28149       proc far                ; CODE XREF: bankDialog+59↓P
+                                        ; bankDialog+6C↓P ...
                 jmp     sub_4033B
 sub_28149       endp
 
@@ -36762,7 +36762,7 @@ sub_281A3       endp
 
 ; Attributes: thunk
 
-sub_281A8       proc far                ; CODE XREF: sub_47ECE+12C↓P
+sub_281A8       proc far                ; CODE XREF: bankDialog+12C↓P
                 jmp     sub_41991
 sub_281A8       endp
 
@@ -37286,28 +37286,9 @@ sub_28362       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townTavern. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townTraining. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townSmithy. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2837B       proc far
-                jmp     sub_47ECE
-sub_2837B       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_bankDialog. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_loadHireFaces. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_28385(char *format, char *buffer)
-sub_28385       proc far
-                jmp     sub_47900
-sub_28385       endp
-
-stub09          ends
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_formatNumber. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -37964,15 +37945,15 @@ word_2896A      dw 0                    ; DATA XREF: townBank+BE↓w
 word_2896C      dw 0                    ; DATA XREF: townBank+BB↓w
                                         ; townBank+19C↓w ...
                 align 4
-word_28970      dw 64h                  ; DATA XREF: sub_47ECE+14↓w
-                                        ; sub_47ECE+281↓w
+word_28970      dw 64h                  ; DATA XREF: bankDialog+14↓w
+                                        ; bankDialog+281↓w
                 db 4 dup(0), 1Bh, 0
-word_28978      dw 64h                  ; DATA XREF: sub_47ECE+11↓w
-                                        ; sub_47ECE+27E↓w
+word_28978      dw 64h                  ; DATA XREF: bankDialog+11↓w
+                                        ; bankDialog+27E↓w
                 align 4
                 db 2, 0, 36h, 0
-word_28980      dw 64h                  ; DATA XREF: sub_47ECE+E↓w
-                                        ; sub_47ECE+27B↓w
+word_28980      dw 64h                  ; DATA XREF: bankDialog+E↓w
+                                        ; bankDialog+27B↓w
                 align 4
                 db 4, 0, 2 dup(0FFh), 4 dup(0), 19h, 1, 0F2h, 0, 2 dup(0FFh)
                 db 2 dup(6Ch), 2 dup(18h), 2 dup(14h), 2 dup(0FFh)
@@ -84331,10 +84312,11 @@ ovl09           segment para public 'OVERLAY' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; sprintf("%lu") or "%luK" when the value is above 9999 into the given buffer (strings at DGROUP 43ACh/43B0h)
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_47900(char *format, char *buffer)
-sub_47900       proc far                ; CODE XREF: sub_28385↑J
+; int __cdecl __far formatNumber(char *format, char *buffer)
+formatNumber    proc far                ; CODE XREF: j_formatNumber↑J
                                         ; sub_48CF7+26↓p
 
 format          = dword ptr  6
@@ -84350,7 +84332,7 @@ buffer          = dword ptr  0Ah
                 cmp     word ptr [bp+format], 270Fh
                 jbe     short loc_4792F
 
-loc_47916:                              ; CODE XREF: sub_47900+D↑j
+loc_47916:                              ; CODE XREF: formatNumber+D↑j
                 xor     ax, ax
                 mov     dx, 3E8h
                 push    ax
@@ -84364,13 +84346,13 @@ loc_47916:                              ; CODE XREF: sub_47900+D↑j
                 jmp     short loc_47938
 ; ---------------------------------------------------------------------------
 
-loc_4792F:                              ; CODE XREF: sub_47900+B↑j
-                                        ; sub_47900+14↑j
+loc_4792F:                              ; CODE XREF: formatNumber+B↑j
+                                        ; formatNumber+14↑j
                 push    word ptr [bp+format+2]
                 push    word ptr [bp+format] ; format
                 mov     ax, 43B0h
 
-loc_47938:                              ; CODE XREF: sub_47900+2D↑j
+loc_47938:                              ; CODE XREF: formatNumber+2D↑j
                 push    ax
                 push    si              ; buffer
                 call    _sprintf
@@ -84379,7 +84361,7 @@ loc_47938:                              ; CODE XREF: sub_47900+2D↑j
                 pop     si
                 pop     bp
                 retf
-sub_47900       endp
+formatNumber    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -85098,9 +85080,10 @@ loc_47EB2:                              ; CODE XREF: ovl09:05AB↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; deposit/withdraw gold and gems (arg 0 = party purse, non-zero = bank); window with 5 key commands (by code reading)
 ; Attributes: bp-based frame
 
-sub_47ECE       proc far                ; CODE XREF: sub_2837B↑J
+bankDialog      proc far                ; CODE XREF: j_bankDialog↑J
                                         ; townBank+1B2↓p
 
 var_22          = word ptr -22h
@@ -85133,7 +85116,7 @@ arg_0           = word ptr  6
                 jmp     short loc_47F13
 ; ---------------------------------------------------------------------------
 
-loc_47EFF:                              ; CODE XREF: sub_47ECE+19↑j
+loc_47EFF:                              ; CODE XREF: bankDialog+19↑j
                 mov     ax, word_37346
                 mov     dx, Party_gold
                 mov     word ptr [bp+var_8+2], ax
@@ -85141,7 +85124,7 @@ loc_47EFF:                              ; CODE XREF: sub_47ECE+19↑j
                 mov     ax, word_3734A
                 mov     dx, Party_gems
 
-loc_47F13:                              ; CODE XREF: sub_47ECE+2F↑j
+loc_47F13:                              ; CODE XREF: bankDialog+2F↑j
                 mov     word ptr [bp+format+2], ax
                 mov     word ptr [bp+format], dx
                 mov     ax, 278h
@@ -85191,7 +85174,7 @@ loc_47F13:                              ; CODE XREF: sub_47ECE+2F↑j
                 call    vdrv_1E_openWindow
                 add     sp, 14h
 
-loc_47F87:                              ; CODE XREF: sub_47ECE+26B↓j
+loc_47F87:                              ; CODE XREF: bankDialog+26B↓j
                 push    cs
                 call    near ptr sub_47A33
                 mov     di, ax
@@ -85199,7 +85182,7 @@ loc_47F87:                              ; CODE XREF: sub_47ECE+26B↓j
                 mov     cx, 5
                 mov     bx, 858h
 
-loc_47F96:                              ; CODE XREF: sub_47ECE+D2↓j
+loc_47F96:                              ; CODE XREF: bankDialog+D2↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_22]
                 jz      short loc_47FA5
@@ -85209,7 +85192,7 @@ loc_47F96:                              ; CODE XREF: sub_47ECE+D2↓j
                 jmp     loc_48134
 ; ---------------------------------------------------------------------------
 
-loc_47FA5:                              ; CODE XREF: sub_47ECE+CE↑j
+loc_47FA5:                              ; CODE XREF: bankDialog+CE↑j
                 jmp     word ptr cs:[bx+0Ah]
 ; ---------------------------------------------------------------------------
                 xor     di, di
@@ -85217,7 +85200,7 @@ loc_47FA5:                              ; CODE XREF: sub_47ECE+CE↑j
 ; ---------------------------------------------------------------------------
                 mov     di, 1
 
-loc_47FB0:                              ; CODE XREF: sub_47ECE+DD↑j
+loc_47FB0:                              ; CODE XREF: bankDialog+DD↑j
                 or      si, si
                 jz      short loc_47FC1
                 mov     ax, Party_bankGems
@@ -85226,8 +85209,8 @@ loc_47FB0:                              ; CODE XREF: sub_47ECE+DD↑j
                 or      di, di
                 jnz     short loc_47FF4
 
-loc_47FC1:                              ; CODE XREF: sub_47ECE+E4↑j
-                                        ; sub_47ECE+ED↑j
+loc_47FC1:                              ; CODE XREF: bankDialog+E4↑j
+                                        ; bankDialog+ED↑j
                 or      si, si
                 jz      short loc_47FD2
                 mov     ax, Party_bankGold
@@ -85236,8 +85219,8 @@ loc_47FC1:                              ; CODE XREF: sub_47ECE+E4↑j
                 or      di, di
                 jz      short loc_47FF4
 
-loc_47FD2:                              ; CODE XREF: sub_47ECE+F5↑j
-                                        ; sub_47ECE+FE↑j
+loc_47FD2:                              ; CODE XREF: bankDialog+F5↑j
+                                        ; bankDialog+FE↑j
                 or      si, si
                 jnz     short loc_47FE3
                 mov     ax, Party_gems
@@ -85246,8 +85229,8 @@ loc_47FD2:                              ; CODE XREF: sub_47ECE+F5↑j
                 or      di, di
                 jnz     short loc_47FF4
 
-loc_47FE3:                              ; CODE XREF: sub_47ECE+106↑j
-                                        ; sub_47ECE+10F↑j
+loc_47FE3:                              ; CODE XREF: bankDialog+106↑j
+                                        ; bankDialog+10F↑j
                 or      si, si
                 jnz     short loc_48005
                 mov     ax, Party_gold
@@ -85256,8 +85239,8 @@ loc_47FE3:                              ; CODE XREF: sub_47ECE+106↑j
                 or      di, di
                 jnz     short loc_48005
 
-loc_47FF4:                              ; CODE XREF: sub_47ECE+F1↑j
-                                        ; sub_47ECE+102↑j ...
+loc_47FF4:                              ; CODE XREF: bankDialog+F1↑j
+                                        ; bankDialog+102↑j ...
                 mov     ax, 1
                 push    ax
                 push    si
@@ -85267,8 +85250,8 @@ loc_47FF4:                              ; CODE XREF: sub_47ECE+F1↑j
                 jmp     loc_48134
 ; ---------------------------------------------------------------------------
 
-loc_48005:                              ; CODE XREF: sub_47ECE+117↑j
-                                        ; sub_47ECE+120↑j ...
+loc_48005:                              ; CODE XREF: bankDialog+117↑j
+                                        ; bankDialog+120↑j ...
                 mov     ax, 4464h
                 push    ax
                 mov     ax, 0D256h
@@ -85313,7 +85296,7 @@ loc_48005:                              ; CODE XREF: sub_47ECE+117↑j
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
 
-loc_48069:                              ; CODE XREF: sub_47ECE+189↑j
+loc_48069:                              ; CODE XREF: bankDialog+189↑j
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
                 add     Party_bankGems, dx
@@ -85321,7 +85304,7 @@ loc_48069:                              ; CODE XREF: sub_47ECE+189↑j
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
 
-loc_48079:                              ; CODE XREF: sub_47ECE+16E↑j
+loc_48079:                              ; CODE XREF: bankDialog+16E↑j
                 push    si
                 push    [bp+var_2]
                 push    [bp+var_4]
@@ -85340,14 +85323,14 @@ loc_48079:                              ; CODE XREF: sub_47ECE+16E↑j
                 jmp     short loc_480B1
 ; ---------------------------------------------------------------------------
 
-loc_480A3:                              ; CODE XREF: sub_47ECE+1C3↑j
+loc_480A3:                              ; CODE XREF: bankDialog+1C3↑j
                 mov     ax, [bp+var_2]
                 mov     dx, [bp+var_4]
                 add     Party_bankGold, dx
                 adc     word_3733E, ax
 
-loc_480B1:                              ; CODE XREF: sub_47ECE+16A↑j
-                                        ; sub_47ECE+185↑j ...
+loc_480B1:                              ; CODE XREF: bankDialog+16A↑j
+                                        ; bankDialog+185↑j ...
                 or      si, si
                 jz      short loc_480CB
                 mov     ax, word_3733E
@@ -85359,7 +85342,7 @@ loc_480B1:                              ; CODE XREF: sub_47ECE+16A↑j
                 jmp     short loc_480DF
 ; ---------------------------------------------------------------------------
 
-loc_480CB:                              ; CODE XREF: sub_47ECE+1E5↑j
+loc_480CB:                              ; CODE XREF: bankDialog+1E5↑j
                 mov     ax, word_37346
                 mov     dx, Party_gold
                 mov     word ptr [bp+var_8+2], ax
@@ -85367,7 +85350,7 @@ loc_480CB:                              ; CODE XREF: sub_47ECE+1E5↑j
                 mov     ax, word_3734A
                 mov     dx, Party_gems
 
-loc_480DF:                              ; CODE XREF: sub_47ECE+1FB↑j
+loc_480DF:                              ; CODE XREF: bankDialog+1FB↑j
                 mov     word ptr [bp+format+2], ax
                 mov     word ptr [bp+format], dx
                 lea     ax, [bp+buffer]
@@ -85403,14 +85386,14 @@ loc_480DF:                              ; CODE XREF: sub_47ECE+1FB↑j
 ; ---------------------------------------------------------------------------
                 mov     di, 2
 
-loc_48134:                              ; CODE XREF: sub_47ECE+D4↑j
-                                        ; sub_47ECE+134↑j ...
+loc_48134:                              ; CODE XREF: bankDialog+D4↑j
+                                        ; bankDialog+134↑j ...
                 cmp     di, 2
                 jz      short loc_4813C
                 jmp     loc_47F87
 ; ---------------------------------------------------------------------------
 
-loc_4813C:                              ; CODE XREF: sub_47ECE+269↑j
+loc_4813C:                              ; CODE XREF: bankDialog+269↑j
                 mov     ax, 1
                 push    ax
                 call    vdrv_06_closeWindows
@@ -85424,7 +85407,7 @@ loc_4813C:                              ; CODE XREF: sub_47ECE+269↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_47ECE       endp
+bankDialog      endp
 
 ; ---------------------------------------------------------------------------
                 db 2 dup(0), 1, 0, 1Bh, 0, 45h, 0, 4Fh, 0, 0B0h, 6, 0B0h
@@ -85629,7 +85612,7 @@ loc_48302:                              ; CODE XREF: townBank+191↑j
                 mov     word_319E6, dx
                 push    si
                 push    cs
-                call    near ptr sub_47ECE
+                call    near ptr bankDialog
                 pop     cx
                 mov     ax, [bp+var_6]
                 mov     dx, [bp+var_8]
@@ -86842,7 +86825,7 @@ format          = dword ptr  10h
                 push    word ptr [bp+format+2]
                 push    word ptr [bp+format] ; format
                 push    cs
-                call    near ptr sub_47900
+                call    near ptr formatNumber
                 add     sp, 6
                 push    ax
                 push    [bp+arg_8]

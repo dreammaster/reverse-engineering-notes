@@ -461,6 +461,8 @@
 45C21	trainCharacter	"Come back when you're ..." / "You have learned all we can teach you" (from strings)
 46B2D	checkClasses	(BinDiff sim .59 conf .93, unverified)
 46E49	createCharacter	dice.vga, create.raw, create.icn
+47900	formatNumber	sprintf("%lu") or "%luK" when the value is above 9999 into the given buffer (strings at DGROUP 43ACh/43B0h)
+47ECE	bankDialog	deposit/withdraw gold and gems (arg 0 = party purse, non-zero = bank); window with 5 key commands (by code reading)
 4816C	townBank	bank.m, bank.icn, bank2.icn
 48466	townGuild	guild.m, spldesc.bin
 486AB	townInn	towninn.m
@@ -605,5 +607,3 @@
 6002A	vdrv_api_2A
 6002D	vdrv_api_2D
 60030	vdrv_api_30
-47ECE	bankDialog	deposit/withdraw gold and gems (arg 0 = party purse, non-zero = bank); window with 5 key commands (by code reading)
-47900	formatNumber	sprintf("%lu") or "%luK" when the value is above 9999 into the given buffer (strings at DGROUP 43ACh/43B0h)

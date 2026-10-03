@@ -14126,9 +14126,11 @@ static Bytes_2(void) {
 	create_insn	(0X28376);
 	set_name	(0X28376,	"j_townSmithy");
 	create_insn	(0X2837B);
+	set_name	(0X2837B,	"j_bankDialog");
 	create_insn	(0X28380);
 	set_name	(0X28380,	"j_loadHireFaces");
 	create_insn	(0X28385);
+	set_name	(0X28385,	"j_formatNumber");
 	MakeStruct	(0X28390,	"_stub_descr");
 	create_insn	(0X283B0);
 	set_name	(0X283B0,	"j_doCombat");
@@ -28779,6 +28781,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X478F1);
 	op_hex		(x,	1);
 	create_insn	(0X47900);
+	set_name	(0X47900,	"formatNumber");
 	create_insn	(x=0X47904);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47907);
@@ -28921,6 +28924,7 @@ static Bytes_6(void) {
 	make_array	(0X47EBA,	0X2);
 	create_insn	(0X47EBC);
 	create_insn	(0X47ECE);
+	set_name	(0X47ECE,	"bankDialog");
 	create_insn	(x=0X47ED1);
 	op_hex		(x,	1);
 	create_insn	(x=0X47ED6);
@@ -33723,10 +33727,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F790);
 	op_stkvar	(x,	0);
-	create_insn	(0X4F796);
-	create_insn	(x=0X4F7CB);
-	op_stkvar	(x,	0);
-	create_insn	(0X4F7D6);
 }
 
 //------------------------------------------------------------------------
@@ -33736,6 +33736,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(0X4F796);
+	create_insn	(x=0X4F7CB);
+	op_stkvar	(x,	0);
+	create_insn	(0X4F7D6);
 	create_insn	(x=0X4F7EC);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F7F1);
@@ -38812,15 +38816,15 @@ static Functions_0(void) {
 	set_func_flags(0X28376,0x54c2);
 	set_frame_size(0X28376, 0, 0, 0);
 	add_func    (0X2837B,0X28380);
-	set_func_flags(0X2837B,0x5482);
+	set_func_flags(0X2837B,0x54c2);
 	set_frame_size(0X2837B, 0, 0, 0);
 	add_func    (0X28380,0X28385);
 	set_func_flags(0X28380,0x54c2);
 	SetType(0X28380, "int __cdecl __far j_loadHireFaces(char *format, int, int, int);");
 	set_frame_size(0X28380, 0, 0, 0);
 	add_func    (0X28385,0X2838A);
-	set_func_flags(0X28385,0x5482);
-	SetType(0X28385, "int __cdecl __far sub_28385(char *format, char *buffer);");
+	set_func_flags(0X28385,0x54c2);
+	SetType(0X28385, "int __cdecl __far j_formatNumber(char *format, char *buffer);");
 	set_frame_size(0X28385, 0, 0, 0);
 	add_func    (0X283B0,0X283B5);
 	set_func_flags(0X283B0,0x54c2);
@@ -39799,7 +39803,8 @@ static Functions_1(void) {
 	set_frame_size(0X4789F, 0X2, 2, 0);
 	add_func    (0X47900,0X47947);
 	set_func_flags(0X47900,0x5412);
-	SetType(0X47900, "int __cdecl __far sub_47900(char *format, char *buffer);");
+	SetType(0X47900, "int __cdecl __far formatNumber(char *format, char *buffer);");
+	set_func_cmt(0X47900,	"sprintf(\"%lu\") or \"%luK\" when the value is above 9999 into the given buffer (strings at DGROUP 43ACh/43B0h)", 0);
 	set_frame_size(0X47900, 0X2, 2, 0);
 	define_local_var(0X47900, 0X47947, "[bp+0X6]", "format");
 	define_local_var(0X47900, 0X47947, "[bp+0XA]", "buffer");
@@ -39816,6 +39821,7 @@ static Functions_1(void) {
 	define_local_var(0X47B8D, 0X47E61, "[bp+0X6]", "format");
 	add_func    (0X47ECE,0X48158);
 	set_func_flags(0X47ECE,0x5412);
+	set_func_cmt(0X47ECE,	"deposit/withdraw gold and gems (arg 0 = party purse, non-zero = bank); window with 5 key commands (by code reading)", 0);
 	set_frame_size(0X47ECE, 0X26, 2, 0);
 	define_local_var(0X47ECE, 0X48158, "[bp-0X20]", "buffer");
 	define_local_var(0X47ECE, 0X48158, "[bp-0XC]", "format");
