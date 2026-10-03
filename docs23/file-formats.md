@@ -4045,6 +4045,15 @@ magnitude, `[di+0xC]`=the character pointer) and set `g_uiScratchFlags4` bit
 `TickPartyAilmentIconBar`'s dispatch structure end to end — only the
 `word_36C79` bit-`2` slow-path trigger condition remains unconfirmed.
 
+**Reimplemented as `ailment.c`** (`ailmentTickIconBar`). Corrections found on the way: the Chapter 2 "slow
+path" counter is reset to 1 after every sweep, so while the party is in a travel-ailment place (word_36C79
+bit 2) the Survival-tiered pass simply runs on every call; its trigger is a travel destination with flag
+`0x4000`. The tiers are Survival <= 55 -> 12, <= 75 -> 9, <= 80 -> 6, <= 100 -> 3, else none. **Chapter 3
+restructures it**: no Survival pass; the disease/curse counter must exceed 40; and a new **cold** pass
+(word_36C79 bit 1, its own counter) stages effect `0x2E` on every member who is not incapacitated and not
+wearing item `0x10B` (DWARVEN FUR, slot `+0x154`), except one member picked with `RandomInRange(3)+1` by loop
+position, who gets effect `0x2F` with magnitude level + 4.
+
 `ApplyEffectAndDrawIconBar` also calls `ApplyIconBarStatDelta` (was
 `sub_182CE`): applies a capped or floored stat delta to a
 data-selected party field via the icon-bar slot, clears a `+0x1C`

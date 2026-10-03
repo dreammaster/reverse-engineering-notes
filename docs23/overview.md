@@ -11383,6 +11383,13 @@ at the end of `WORLD.DAT` -- which also contains the four ready-made heroes of t
 `SaveGame` from it, checked on both real files. The IDA dump scripts `dump_class_start_flags.py` and
 `dump_newgame_block.py` (both games) located the tables.
 
+### Session update: the party ailment sweep (`ailment.c`)
+
+`TickPartyAilmentIconBar` and its three per-member helpers are decision logic over the status bits: severities
+(disease 12/6/3, curse 16/8/4, Survival-tiered slow pass) and a per-game scheduler. Chapter 3's version differs
+substantially (cold pass, DWARVEN FUR). The effect application itself is the already-implemented icon-bar
+pipeline. `ailment.c`/`.h`, `test_ailment.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

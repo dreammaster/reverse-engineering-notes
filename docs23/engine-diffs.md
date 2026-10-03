@@ -434,6 +434,12 @@ Mapping has no flat value for any class, Bartering/Repair/Thievery have differen
 Linguistics differs) and never writes Chemistry (`+0x70`/`+0xB0`). `RollCharacterAttributes` is identical.
 See the generated tables in `chargen.c`.
 
+### `TickPartyAilmentIconBar` gains a cold-weather pass and loses the Survival pass
+
+Chapter 2's sweep has a Survival-tiered pass for "travel ailment" places and fires the disease/curse passes when
+its counter reaches 40; Chapter 3 fires them above 40, drops the Survival pass and adds a cold pass (effects
+0x2E/0x2F, DWARVEN FUR protects, one random member hit harder). See `ailment.h`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a
