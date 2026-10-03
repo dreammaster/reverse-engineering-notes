@@ -11240,6 +11240,17 @@ games (Chapter 2's governor and tavern, Chapter 3's NPC 1) -- the menus come out
 exactly as a player would expect, which is the best evidence the decode is
 right.
 
+### Session update (2026-10-03, continued): the first service handlers
+
+With the menu machinery in place, the handlers were mostly small: attribute and
+experience tomes (one-time, whole party), and the healer (`ClassifyPartyMemberCondition`
+drives which topics appear; price = base x multiplier x level; the same four
+type words as the topics' own mask bits). Real healer data lined up
+perfectly: NPC 7's HEAL/CURE/RESURRECT/RESTORATION topics own the exact bits
+the classifier sets. A small surprise preserved on purpose: the classifier keeps
+the low *ten* bits, so a stale "nothing wrong" 0x200 survives. 27th suite
+(`test_dialogservice`).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

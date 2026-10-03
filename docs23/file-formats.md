@@ -4215,6 +4215,26 @@ healing, `0x4000` training (`UseTrainingItem`, already reimplemented as
 service handlers. All of those handlers are UI-heavy and not reimplemented;
 this round is the data layer plus the opening-topic choice and text assembly.
 
+**Services decoded (2026-10-03, `src23/dialogservice.c`)**: the topic's argument
+is a "type word" whose high bits name the service and whose low bits carry
+the answer (2 = YES / accept, 4 = NO / decline). Healers (e.g. Chapter 2 NPC 7:
+HEAL arg 0x8000, CURE 0x4000, RESURRECT 0x2000, RESTORATION 0x1000, YES 2, NO 4)
+list only what the chosen party member needs, because
+`ClassifyPartyMemberCondition` rewrites the top bits of topic mask A with
+exactly those bits (0x2000 dead, 0x4000 any condition, 0x8000 hurt, 0x1000
+both, 0x200 nothing wrong -- keeping the low ten bits, which includes a stale
+0x200). The price is base x the NPC's price multiplier (`+0x18`) x the member's
+level, summed in BCD: 20 for HP, 100 for a revive, per-condition prices for a
+cure (Sick 5, Poisoned 10, Diseased 20, Paralyzed 40, Frozen 50, Stoned 60,
+Jinxed 20, Hexed 30, Cursed 40), the sum of what applies for the full service.
+Paying clears/sets exactly as the type says. Tomes (attribute and experience)
+are one-time gifts to every living member, capped at 999 (9999 for HP/MP).
+`dialogApplyAttributeTome`, `dialogApplyExperienceTome`, `dialogClassifyCondition`,
+`dialogAfflictionCost`, `dialogHealingCost`, `dialogApplyHealing`; the Chapter 3
+versions of the tome handlers differ only in data addresses. `UseKeyItem`
+turns out to be `LoadLockState` + `RunShopScreen`: the shop / item-grant
+screen.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by

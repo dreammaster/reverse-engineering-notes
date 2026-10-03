@@ -341,6 +341,10 @@ static void checkRealGame(const char *name, GameKind game, const char *envName, 
         checkU32("NPC 1 has 15 topics", dialogGetU16(governor, DialogNpcTopicCount), 15);
         checkU32("...and 90 lines", dialogGetU16(governor, DialogNpcLineCount), 90);
         checkU32("...and the portrait picture 185", dialogGetU16(governor, DialogNpcPictureId), 185);
+        const uint8_t *tome = dialogNpc(&catalog, 43);
+        check("Chapter 2 NPC 43 is a +10 Strength tome (flag 142, offset 0x3C)",
+              dialogGetU16(tome, DialogNpcOneTimeFlag) == 142 && dialogGetU16(tome, DialogNpcParamA) == 0x3C &&
+                  dialogGetU16(tome, DialogNpcParamB) == 10);
         const uint8_t *bye = dialogTopic(&catalog, dialogGetU16(governor, DialogNpcFirstTopic) + 14);
         dialogTopicName(bye, topicName);
         check("its last topic is BYE and ends the conversation",
