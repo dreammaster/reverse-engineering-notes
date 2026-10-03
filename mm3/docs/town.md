@@ -25,3 +25,16 @@ Cursed.  "Donate" sets, for every party member, a bit for this temple (bit array
 (`blessed`, `powerShield`, `holyBonus`, `heroism` = `+102h`..`+105h`) whose strength depends on the number of donations; an
 unaffordable action just returns.  (Derived by reading the code, not tested.)  Each action also advances the clock by 5A0h = 1440
 minutes (a day).
+
+## Smithy stock (`resetBlacksmithWares`, `385xx`)
+
+The stock is rebuilt from tables (script clears `32Ah` bytes at DGROUP `E901h` first): 6 towns x 3 groups x 9 slots.
+Group 0 = weapons, group 1 = armour, group 2 = jewellery/trinkets and consumables (ids as in `items.md`).
+
+* `1CC6h` (162 bytes): the item id of each slot; **0 = empty slot, filled with `generateItem(level)`** where the level is
+  `17A8h[town]` = 1, 2, 2, 3, 4, 1.  Example first town: weapons 2 short sword, 5 cutlass, 24 staff, 30 short bow, 10 nunchakas,
+  12 dagger, 15 cudgel, 8 hand axe; armour 34-36 padded/leather/scale (two each), 42 shield x2; trinkets 43 helm, 46 gauntlets, 48 boots,
+  49 cloak, 72 Torch, 73 Rope and Hooks x2, 70 potion.
+* `1D7Ah` (162 bytes): the metal/material byte given to the slot (0, 2, 5, 6, 7: better metals in later towns);
+  `1D4Dh`/`1E01h` (9 bytes per town): attribute and spell values for the third group.
+Prices come from `itemPrice` (`rules.md`).
