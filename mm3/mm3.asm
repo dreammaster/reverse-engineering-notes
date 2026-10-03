@@ -37438,97 +37438,16 @@ stub11          segment para public 'CODE' use16
                 dw 88                   ; nentries
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28450       proc far                ; CODE XREF: spellsDialog:loc_4FCEF↓P
-                                        ; castItemSpell:loc_501F2↓P
-                jmp     sub_4DC3B
-sub_28450       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28455       proc far                ; CODE XREF: spellsDialog:loc_4FBA8↓P
-                                        ; castItemSpell:loc_50117↓P
-                jmp     sub_4D53F
-sub_28455       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2845A       proc far                ; CODE XREF: spellsDialog:loc_4FCAF↓P
-                                        ; castItemSpell:loc_501C1↓P
-                jmp     sub_4DA44
-sub_2845A       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2845F       proc far                ; CODE XREF: spellsDialog:loc_4F961↓P
-                                        ; castItemSpell:loc_4FF7E↓P
-                jmp     sub_4C326
-sub_2845F       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_70_Resurrect. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_47_CureParalysis. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_62_DancingSword. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_01_Awaken. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spells_subSpellCost. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28469       proc far                ; CODE XREF: spellsDialog:loc_4FA8F↓P
-                                        ; castItemSpell:loc_50048↓P
-                jmp     sub_4CB99
-sub_28469       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2846E       proc far                ; CODE XREF: spellsDialog:loc_4FB12↓P
-                                        ; castItemSpell:loc_500B5↓P
-                jmp     sub_4D153
-sub_2846E       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28473       proc far                ; CODE XREF: spellsDialog:loc_4FCBF↓P
-                                        ; castItemSpell:loc_501C8↓P
-                jmp     sub_4DAC3
-sub_28473       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28478       proc far                ; CODE XREF: spellsDialog:loc_4FAAF↓P
-                                        ; castItemSpell:loc_5009D↓P
-                jmp     sub_4CC76
-sub_28478       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2847D       proc far                ; CODE XREF: spellsDialog:loc_4FBA0↓P
-                                        ; castItemSpell:loc_5010F↓P
-                jmp     sub_4D514
-sub_2847D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_28_LightningBolt. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_39_ColdRay. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_64_MoonRay. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_32_FrostBite. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_46_FingerOfDeath. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37538,16 +37457,7 @@ sub_28482       proc far
                 jmp     sub_4BE23
 sub_28482       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28487       proc far                ; CODE XREF: spellsDialog:loc_4FCCF↓P
-                                        ; castItemSpell:loc_501DD↓P
-                jmp     sub_4DB59
-sub_28487       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_66_EnchantItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37558,114 +37468,17 @@ sub_2848C       proc far                ; CODE XREF: death+21↓P
                 jmp     sub_4BDAE
 sub_2848C       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28491       proc far                ; CODE XREF: spellsDialog:loc_4FBFB↓P
-                                        ; castItemSpell:loc_5014B↓P
-                jmp     sub_4D679
-sub_28491       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28496       proc far                ; CODE XREF: spellsDialog:loc_4FC55↓P
-                                        ; castItemSpell:loc_5018F↓P
-                jmp     sub_4D860
-sub_28496       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2849B       proc far                ; CODE XREF: spellsDialog:loc_4F9B9↓P
-                                        ; castItemSpell:loc_4FFCE↓P
-                jmp     sub_4C5D3
-sub_2849B       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284A0       proc far                ; CODE XREF: spellsDialog:loc_4FCC7↓P
-                                        ; castItemSpell:loc_501CF↓P
-                jmp     sub_4DB2E
-sub_284A0       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284A5       proc far                ; CODE XREF: spellsDialog:loc_4F9C9↓P
-                jmp     sub_4C617
-sub_284A5       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284AA       proc far                ; CODE XREF: spellsDialog:loc_4FB55↓P
-                                        ; castItemSpell:loc_500CD↓P
-                jmp     sub_4D269
-sub_284AA       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284AF       proc far                ; CODE XREF: spellsDialog:loc_4FCD7↓P
-                                        ; castItemSpell:loc_501E4↓P
-                jmp     sub_4DB9E
-sub_284AF       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284B4       proc far                ; CODE XREF: spellsDialog:loc_4FB0A↓P
-                                        ; castItemSpell:loc_500C5↓P
-                jmp     sub_4D128
-sub_284B4       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284B9       proc far                ; CODE XREF: spellsDialog:loc_4F9A1↓P
-                                        ; castItemSpell:loc_4FFA6↓P
-                jmp     sub_4C534
-sub_284B9       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284BE       proc far                ; CODE XREF: spellsDialog:loc_4FA1C↓P
-                jmp     sub_4C809
-sub_284BE       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284C3       proc far                ; CODE XREF: spellsDialog:loc_4F9A9↓P
-                                        ; castItemSpell:loc_4FFAE↓P
-                jmp     sub_4C57D
-sub_284C3       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_52_CreateFood. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_58_Disintegrate. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_12_CreateRope. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_65_MassDistortion. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_14_SuppressPoison. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_42_TimeDistortion. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_67_Incinerate. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_38_AcidSpray. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_09_EnergyBlast. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_19_SuppressDisease. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_10_Sleep. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37675,36 +37488,9 @@ sub_284C8       proc far                ; CODE XREF: sub_4F24E+55↓P
                 jmp     sub_4BDC4
 sub_284C8       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284CD       proc far                ; CODE XREF: spellsDialog:loc_4FA14↓P
-                                        ; castItemSpell:loc_50003↓P
-                jmp     sub_4C7DE
-sub_284CD       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284D2       proc far                ; CODE XREF: spellsDialog:loc_4FC45↓P
-                                        ; castItemSpell:loc_50163↓P
-                jmp     sub_4D7F0
-sub_284D2       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284D7       proc far                ; CODE XREF: spellsDialog:loc_4FCE7↓P
-                                        ; castItemSpell:loc_501EB↓P
-                jmp     sub_4DC10
-sub_284D7       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_18_AcidStream. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_56_FantasticFreeze. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_69_HolyWord. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37724,36 +37510,9 @@ sub_284E1       proc far
                 jmp     sub_4BD90
 sub_284E1       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284E6       proc far                ; CODE XREF: spellsDialog:loc_4FBB8↓P
-                                        ; castItemSpell:loc_50143↓P
-                jmp     sub_4D5B2
-sub_284E6       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284EB       proc far                ; CODE XREF: spellsDialog:loc_4FCB7↓P
-                                        ; castItemSpell:loc_501D6↓P
-                jmp     sub_4DA8D
-sub_284EB       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284F0       proc far                ; CODE XREF: spellsDialog:loc_4FA7F↓P
-                                        ; castItemSpell:loc_50058↓P
-                jmp     sub_4CAC3
-sub_284F0       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_49_DragonBreath. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_63_PrismaticLight. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_26_PowerCure. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37763,77 +37522,14 @@ sub_284F5       proc far                ; CODE XREF: spellsDialog+5EB↓P
                 jmp     sub_4C19A
 sub_284F5       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284FA       proc far                ; CODE XREF: spellsDialog:loc_4FA2C↓P
-                                        ; castItemSpell:loc_50038↓P
-                jmp     sub_4C895
-sub_284FA       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284FF       proc far                ; CODE XREF: spellsDialog:loc_4F999↓P
-                                        ; castItemSpell:loc_4FFC6↓P
-                jmp     sub_4C4FE
-sub_284FF       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28504       proc far                ; CODE XREF: spellsDialog:loc_4FA77↓P
-                                        ; castItemSpell:loc_50050↓P
-                jmp     sub_4CA6E
-sub_28504       endp
-
-; [00000005 BYTES: COLLAPSED FUNCTION j_Spells_divineIntervention. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2850E       proc far                ; CODE XREF: spellsDialog:loc_4FAEA↓P
-                                        ; castItemSpell:loc_5007D↓P
-                jmp     sub_4CE39
-sub_2850E       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28513       proc far                ; CODE XREF: spellsDialog:loc_4FC65↓P
-                                        ; castItemSpell:loc_50197↓P
-                jmp     sub_4D901
-sub_28513       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28518       proc far                ; CODE XREF: spellsDialog:loc_4F9C1↓P
-                                        ; castItemSpell:loc_4FFD6↓P
-                jmp     sub_4C5EC
-sub_28518       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2851D       proc far                ; CODE XREF: spellsDialog:loc_4F9B1↓P
-                                        ; castItemSpell:loc_4FFE6↓P
-                jmp     sub_4C5A8
-sub_2851D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_21_Blessed. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_08_Sparks. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_25_HolyBonus. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_76_DivineIntervention. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_34_PowerShield. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_60_HalfForMe. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_13_ToxicCloud. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_11_Pain. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37844,56 +37540,11 @@ sub_28522       proc far                ; CODE XREF: spellsDialog:loc_4FA0C↓P
                 jmp     sub_4C711
 sub_28522       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28527       proc far                ; CODE XREF: spellsDialog:loc_4F959↓P
-                                        ; castItemSpell:loc_4FF76↓P
-                jmp     sub_4C2FF
-sub_28527       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2852C       proc far                ; CODE XREF: spellsDialog:loc_4FD07↓P
-                                        ; castItemSpell:loc_5020E↓P
-                jmp     sub_4DD18
-sub_2852C       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28531       proc far                ; CODE XREF: spellsDialog:loc_4F9D1↓P
-                                        ; castItemSpell:loc_4FFDE↓P
-                jmp     sub_4C678
-sub_28531       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28536       proc far                ; CODE XREF: spellsDialog:loc_4FA24↓P
-                                        ; castItemSpell:loc_50030↓P
-                jmp     sub_4C86A
-sub_28536       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2853B       proc far                ; CODE XREF: spellsDialog:loc_4FD17↓P
-                                        ; castItemSpell:loc_5021C↓P
-                jmp     sub_4DD6E
-sub_2853B       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_00_Light. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_73_SunRay. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_15_ProtFromElements. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_20_Silence. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_75_StarBurst. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37914,36 +37565,9 @@ sub_2854A       proc near
                 jmp     far ptr sub_4BF12
 sub_2854A       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2854F       proc far                ; CODE XREF: spellsDialog:loc_4F971↓P
-                                        ; castItemSpell:loc_4FF9E↓P
-                jmp     sub_4C3B4
-sub_2854F       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28554       proc far                ; CODE XREF: spellsDialog:loc_4F969↓P
-                                        ; castItemSpell:loc_4FF96↓P
-                jmp     sub_4C358
-sub_28554       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28559       proc far                ; CODE XREF: spellsDialog:loc_4FAA7↓P
-                                        ; castItemSpell:loc_50095↓P
-                jmp     sub_4CC62
-sub_28559       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_03_FlyingFist. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_02_FirstAid. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_31_WalkOnWater. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37954,67 +37578,13 @@ sub_2855E       proc far                ; CODE XREF: spellsDialog:loc_4FCA7↓P
                 jmp     sub_4D985
 sub_2855E       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28563       proc far                ; CODE XREF: spellsDialog:loc_4FC5D↓P
-                                        ; castItemSpell:loc_5019F↓P
-                jmp     sub_4D88B
-sub_28563       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28568       proc far                ; CODE XREF: spellsDialog:loc_4FA9F↓P
-                                        ; castItemSpell:loc_50085↓P
-                jmp     sub_4CC0D
-sub_28568       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2856D       proc far                ; CODE XREF: spellsDialog:loc_4FAFA↓P
-                                        ; castItemSpell:loc_500AD↓P
-                jmp     sub_4CED6
-sub_2856D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_59_RaiseDead. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_30_Heroism. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_36_Fireball. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_spellLloydsBeacon. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28577       proc far                ; CODE XREF: spellsDialog+2A5↓P
-                                        ; spellsDialog+300↓P ...
-                jmp     sub_4C2AD
-sub_28577       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2857C       proc far                ; CODE XREF: spellsDialog:loc_4F9D9↓P
-                                        ; castItemSpell:loc_5000B↓P
-                jmp     sub_4C6E6
-sub_2857C       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28581       proc far                ; CODE XREF: spellsDialog:loc_4F991↓P
-                                        ; castItemSpell:loc_4FFBE↓P
-                jmp     sub_4C4A2
-sub_28581       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_sharedHandler. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_16_TurnUndead. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_07_CureWounds. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38025,26 +37595,8 @@ sub_28586       proc far                ; CODE XREF: spellsDialog:loc_4FB98↓P
                 jmp     sub_4D2F8
 sub_28586       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2858B       proc far                ; CODE XREF: spellsDialog:loc_4FC35↓P
-                                        ; castItemSpell:loc_5017F↓P
-                jmp     sub_4D763
-sub_2858B       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28590       proc far                ; CODE XREF: spellsDialog:loc_4FA34↓P
-                                        ; castItemSpell:loc_50013↓P
-                jmp     sub_4C8EA
-sub_28590       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_54_StoneToFlesh. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_22_Levitate. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38054,106 +37606,16 @@ sub_28595       proc near
                 jmp     far ptr sub_4C027
 sub_28595       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2859A       proc far                ; CODE XREF: spellsDialog:loc_4FD0F↓P
-                                        ; castItemSpell:loc_50215↓P
-                jmp     sub_4DD43
-sub_2859A       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2859F       proc far                ; CODE XREF: spellsDialog:loc_4FBF3↓P
-                                        ; castItemSpell:loc_50153↓P
-                jmp     sub_4D64E
-sub_2859F       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285A4       proc far                ; CODE XREF: spellsDialog:loc_4FBB0↓P
-                                        ; castItemSpell:loc_5011F↓P
-                jmp     sub_4D587
-sub_285A4       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285A9       proc far                ; CODE XREF: spellsDialog:loc_4FCF7↓P
-                                        ; castItemSpell:loc_50200↓P
-                jmp     sub_4DCC3
-sub_285A9       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285AE       proc far                ; CODE XREF: spellsDialog:loc_4FA6F↓P
-                                        ; castItemSpell:loc_50040↓P
-                jmp     sub_4C917
-sub_285AE       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285B3       proc far                ; CODE XREF: spellsDialog:loc_4FB5D↓P
-                                        ; castItemSpell:loc_500D5↓P
-                jmp     sub_4D2A2
-sub_285B3       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285B8       proc far                ; CODE XREF: spellsDialog:loc_4FAF2↓P
-                                        ; castItemSpell:loc_500BD↓P
-                jmp     sub_4CE8E
-sub_285B8       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285BD       proc far                ; CODE XREF: spellsDialog:loc_4F981↓P
-                                        ; castItemSpell:loc_4FF8E↓P
-                jmp     sub_4C42E
-sub_285BD       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285C2       proc far                ; CODE XREF: spellsDialog:loc_4F979↓P
-                                        ; castItemSpell:loc_4FF86↓P
-                jmp     sub_4C3DF
-sub_285C2       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285C7       proc far                ; CODE XREF: spellsDialog:loc_4FCDF↓P
-                                        ; castItemSpell:loc_501F9↓P
-                jmp     sub_4DBC8
-sub_285C7       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_74_Implosion. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_51_FieryFlail. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_48_Paralyze. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_71_MegaVolts. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_24_IdentifyMonster. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_43_FeebleMind. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_35_CurePoison. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_05_ElementalArrow. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_04_DetectMagic. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_68_ElementalStorm. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38164,26 +37626,8 @@ sub_285CC       proc far                ; CODE XREF: spellsDialog:loc_4FA67↓P
                 jmp     sub_4C8FE
 sub_285CC       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285D1       proc far                ; CODE XREF: spellsDialog:loc_4FCFF↓P
-                                        ; castItemSpell:loc_50207↓P
-                jmp     sub_4DCEE
-sub_285D1       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285D6       proc far                ; CODE XREF: spellsDialog:loc_4FC3D↓P
-                                        ; castItemSpell:loc_5015B↓P
-                jmp     sub_4D7AB
-sub_285D6       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_72_Inferno. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_55_RechargeItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38194,76 +37638,13 @@ sub_285DB       proc far                ; CODE XREF: spellsDialog:loc_4FBEB↓P
                 jmp     sub_4D608
 sub_285DB       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285E0       proc far                ; CODE XREF: spellsDialog:loc_4FC4D↓P
-                                        ; castItemSpell:loc_50187↓P
-                jmp     sub_4D81B
-sub_285E0       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285E5       proc far                ; CODE XREF: spellsDialog:loc_4FB65↓P
-                                        ; castItemSpell:loc_50127↓P
-                jmp     sub_4D2CD
-sub_285E5       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285EA       proc far                ; CODE XREF: spellsDialog:loc_4FA97↓P
-                                        ; castItemSpell:loc_5008D↓P
-                jmp     sub_4CBE2
-sub_285EA       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285EF       proc far                ; CODE XREF: spellsDialog:loc_4FB1A↓P
-                                        ; castItemSpell:loc_500DD↓P
-                jmp     sub_4D19C
-sub_285EF       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285F4       proc far                ; CODE XREF: spellsDialog:loc_4FA87↓P
-                                        ; castItemSpell:loc_50060↓P
-                jmp     sub_4CB3D
-sub_285F4       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285F9       proc far                ; CODE XREF: spellsDialog:loc_4F989↓P
-                                        ; castItemSpell:loc_4FFB6↓P
-                jmp     sub_4C45A
-sub_285F9       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285FE       proc far                ; CODE XREF: spellsDialog:loc_4FB02↓P
-                                        ; castItemSpell:loc_500A5↓P
-                jmp     sub_4CF1E
-sub_285FE       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_57_Duplication. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_44_DeadlySwarm. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_29_Immobilize. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_40_CureDisease. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_27_NatureSCure. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_06_Revitalize. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_37_DetectMonster. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38366,7 +37747,7 @@ sub_28653       endp
 
 ; int __cdecl __far sub_2865D(char *format)
 sub_2865D       proc far                ; CODE XREF: sub_19174+13↑P
-                                        ; sub_4C3B4+23↓P ...
+                                        ; Spell_03_FlyingFist+23↓P ...
                 jmp     sub_4F24E
 sub_2865D       endp
 
@@ -38617,7 +37998,7 @@ byte_287A3      db 0                    ; DATA XREF: death:loc_3EADC↓r
                                         ; death+19F↓w ...
 byte_287A4      db 0                    ; DATA XREF: death+1A4↓w
                                         ; death:loc_3EBA3↓r ...
-byte_287A5      db 0                    ; DATA XREF: sub_4C2FF:loc_4C315↓w
+byte_287A5      db 0                    ; DATA XREF: Spell_00_Light:loc_4C315↓w
                                         ; sub_4C711+B9↓w ...
 byte_287A6      db 0                    ; DATA XREF: sub_15B50+DF↑w
                                         ; sub_15B50:loc_15C36↑r ...
@@ -47715,7 +47096,7 @@ byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
                                         ; sub_15B50+511↑r ...
                 align 2
 word_36FAC      dw 0                    ; DATA XREF: sub_19174+3↑w
-                                        ; sub_4C3B4+F↓w ...
+                                        ; Spell_03_FlyingFist+F↓w ...
 byte_36FAE      db 0                    ; DATA XREF: sub_1BEE9+202↑w
                                         ; sub_1C195+D29↑w ...
 byte_36FAF      db 0                    ; DATA XREF: sub_1BEE9+1ED↑w
@@ -92548,7 +91929,7 @@ sub_4BD90       endp
 ; Attributes: bp-based frame
 
 Screen_saveBackground proc far          ; CODE XREF: j_Screen_saveBackground↑J
-                                        ; sub_4C358+3D↓p ...
+                                        ; Spell_02_FirstAid+3D↓p ...
                 push    bp
                 mov     bp, sp
                 push    off_2D9C4       ; "Spell Failed!"
@@ -92666,7 +92047,7 @@ jpt_4BDFB       dw offset loc_4BE00     ; DATA XREF: sub_4BDC4+37↑r
 ; Attributes: bp-based frame
 
 sub_4BE23       proc far                ; CODE XREF: sub_28482↑J
-                                        ; sub_4C358+52↓p ...
+                                        ; Spell_02_FirstAid+52↓p ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -92811,7 +92192,7 @@ sub_4BE23       endp
 ; Attributes: bp-based frame
 
 sub_4BF12       proc near               ; CODE XREF: sub_2854A↑J
-                                        ; sub_4C42E+E↓p ...
+                                        ; Spell_05_ElementalArrow+E↓p ...
 
 buffer          = byte ptr -68h
 var_4           = word ptr -4
@@ -92895,7 +92276,7 @@ sub_4BF12       endp
                 push    word_32E3E
                 nop
                 push    cs
-                call    near ptr sub_4C2AD
+                call    near ptr Spell_sharedHandler
                 pop     cx
                 pop     cx
                 jmp     short loc_4BFE2
@@ -92936,7 +92317,7 @@ loc_4BFE2:                              ; CODE XREF: ovl11:023E↑j
 ; Attributes: bp-based frame
 
 sub_4C027       proc near               ; CODE XREF: sub_28595↑J
-                                        ; sub_4C358+C↓p ...
+                                        ; Spell_02_FirstAid+C↓p ...
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -93006,7 +92387,7 @@ sub_4C027       endp
                 push    word_32E3E
                 nop
                 push    cs
-                call    near ptr sub_4C2AD
+                call    near ptr Spell_sharedHandler
                 pop     cx
                 pop     cx
                 jmp     short loc_4C0C0
@@ -93261,9 +92642,10 @@ Spells_subSpellCost endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C2AD       proc far                ; CODE XREF: sub_28577↑J
+Spell_sharedHandler proc far            ; CODE XREF: j_Spell_sharedHandler↑J
                                         ; ovl11:0239↑p ...
 
 var_2           = word ptr -2
@@ -93300,7 +92682,7 @@ arg_2           = word ptr  8
                 imul    dx
                 mov     si, ax
 
-loc_4C2E9:                              ; CODE XREF: sub_4C2AD+22↑j
+loc_4C2E9:                              ; CODE XREF: Spell_sharedHandler+22↑j
                 add     [di+127h], si
                 mov     ax, [bp+var_2]
                 cwd
@@ -93311,14 +92693,15 @@ loc_4C2E9:                              ; CODE XREF: sub_4C2AD+22↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C2AD       endp
+Spell_sharedHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Light' (id 0, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C2FF       proc far                ; CODE XREF: sub_28527↑J
+Spell_00_Light  proc far                ; CODE XREF: j_Spell_00_Light↑J
                 push    bp
                 mov     bp, sp
                 inc     word_37328
@@ -93328,7 +92711,7 @@ sub_4C2FF       proc far                ; CODE XREF: sub_28527↑J
                 mov     byte_34C1B, al
                 mov     byte_2886E, al
 
-loc_4C315:                              ; CODE XREF: sub_4C2FF+C↑j
+loc_4C315:                              ; CODE XREF: Spell_00_Light+C↑j
                 mov     byte_287A5, 1
                 mov     ax, 2Ch ; ','
                 push    ax
@@ -93336,14 +92719,15 @@ loc_4C315:                              ; CODE XREF: sub_4C2FF+C↑j
                 pop     cx
                 pop     bp
                 retf
-sub_4C2FF       endp
+Spell_00_Light  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Awaken' (id 1, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C326       proc far                ; CODE XREF: sub_2845F↑J
+Spell_01_Awaken proc far                ; CODE XREF: j_Spell_01_Awaken↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -93351,7 +92735,7 @@ sub_4C326       proc far                ; CODE XREF: sub_2845F↑J
                 jmp     short loc_4C33D
 ; ---------------------------------------------------------------------------
 
-loc_4C32E:                              ; CODE XREF: sub_4C326+1E↓j
+loc_4C32E:                              ; CODE XREF: Spell_01_Awaken+1E↓j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -93359,7 +92743,7 @@ loc_4C32E:                              ; CODE XREF: sub_4C326+1E↓j
                 mov     byte ptr [bx-450Fh], 0
                 inc     si
 
-loc_4C33D:                              ; CODE XREF: sub_4C326+6↑j
+loc_4C33D:                              ; CODE XREF: Spell_01_Awaken+6↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, si
@@ -93372,14 +92756,15 @@ loc_4C33D:                              ; CODE XREF: sub_4C326+6↑j
                 pop     si
                 pop     bp
                 retf
-sub_4C326       endp
+Spell_01_Awaken endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'First Aid' (id 2, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C358       proc far                ; CODE XREF: sub_28554↑J
+Spell_02_FirstAid proc far              ; CODE XREF: j_Spell_02_FirstAid↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -93415,8 +92800,8 @@ var_2           = word ptr -2
                 jmp     short loc_4C3AF
 ; ---------------------------------------------------------------------------
 
-loc_4C39A:                              ; CODE XREF: sub_4C358+34↑j
-                                        ; sub_4C358+3A↑j
+loc_4C39A:                              ; CODE XREF: Spell_02_FirstAid+34↑j
+                                        ; Spell_02_FirstAid+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -93429,20 +92814,21 @@ loc_4C39A:                              ; CODE XREF: sub_4C358+34↑j
                 pop     cx
                 pop     cx
 
-loc_4C3AF:                              ; CODE XREF: sub_4C358+16↑j
-                                        ; sub_4C358+40↑j
+loc_4C3AF:                              ; CODE XREF: Spell_02_FirstAid+16↑j
+                                        ; Spell_02_FirstAid+40↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C358       endp
+Spell_02_FirstAid endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Flying Fist' (id 3, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C3B4       proc far                ; CODE XREF: sub_2854F↑J
+Spell_03_FlyingFist proc far            ; CODE XREF: j_Spell_03_FlyingFist↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 6
@@ -93458,14 +92844,15 @@ sub_4C3B4       proc far                ; CODE XREF: sub_2854F↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C3B4       endp
+Spell_03_FlyingFist endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Detect Magic' (id 4, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C3DF       proc far                ; CODE XREF: sub_285C2↑J
+Spell_04_DetectMagic proc far           ; CODE XREF: j_Spell_04_DetectMagic↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -93502,18 +92889,19 @@ var_2           = word ptr -2
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
-loc_4C42A:                              ; CODE XREF: sub_4C3DF+15↑j
+loc_4C42A:                              ; CODE XREF: Spell_04_DetectMagic+15↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C3DF       endp
+Spell_04_DetectMagic endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Elemental Arrow' (id 5, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C42E       proc far                ; CODE XREF: sub_285BD↑J
+Spell_05_ElementalArrow proc far        ; CODE XREF: j_Spell_05_ElementalArrow↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 8
@@ -93531,17 +92919,18 @@ sub_4C42E       proc far                ; CODE XREF: sub_285BD↑J
                 call    sub_2865D
                 pop     cx
 
-loc_4C458:                              ; CODE XREF: sub_4C42E+18↑j
+loc_4C458:                              ; CODE XREF: Spell_05_ElementalArrow+18↑j
                 pop     bp
                 retf
-sub_4C42E       endp
+Spell_05_ElementalArrow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Revitalize' (id 6, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C45A       proc far                ; CODE XREF: sub_285F9↑J
+Spell_06_Revitalize proc far            ; CODE XREF: j_Spell_06_Revitalize↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -93575,18 +92964,19 @@ sub_4C45A       proc far                ; CODE XREF: sub_285F9↑J
                 mov     byte ptr [bx-4515h], 0
                 call    sub_170F7
 
-loc_4C49F:                              ; CODE XREF: sub_4C45A+12↑j
+loc_4C49F:                              ; CODE XREF: Spell_06_Revitalize+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4C45A       endp
+Spell_06_Revitalize endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Cure Wounds' (id 7, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C4A2       proc far                ; CODE XREF: sub_28581↑J
+Spell_07_CureWounds proc far            ; CODE XREF: j_Spell_07_CureWounds↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -93622,8 +93012,8 @@ var_2           = word ptr -2
                 jmp     short loc_4C4F9
 ; ---------------------------------------------------------------------------
 
-loc_4C4E4:                              ; CODE XREF: sub_4C4A2+34↑j
-                                        ; sub_4C4A2+3A↑j
+loc_4C4E4:                              ; CODE XREF: Spell_07_CureWounds+34↑j
+                                        ; Spell_07_CureWounds+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -93636,20 +93026,21 @@ loc_4C4E4:                              ; CODE XREF: sub_4C4A2+34↑j
                 pop     cx
                 pop     cx
 
-loc_4C4F9:                              ; CODE XREF: sub_4C4A2+16↑j
-                                        ; sub_4C4A2+40↑j
+loc_4C4F9:                              ; CODE XREF: Spell_07_CureWounds+16↑j
+                                        ; Spell_07_CureWounds+40↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C4A2       endp
+Spell_07_CureWounds endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Sparks' (id 8, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C4FE       proc far                ; CODE XREF: sub_284FF↑J
+Spell_08_Sparks proc far                ; CODE XREF: j_Spell_08_Sparks↑J
                 push    bp
                 mov     bp, sp
                 push    ds
@@ -93671,14 +93062,15 @@ sub_4C4FE       proc far                ; CODE XREF: sub_284FF↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C4FE       endp
+Spell_08_Sparks endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Energy Blast' (id 9, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C534       proc far                ; CODE XREF: sub_284B9↑J
+Spell_09_EnergyBlast proc far           ; CODE XREF: j_Spell_09_EnergyBlast↑J
                 push    bp
                 mov     bp, sp
                 mov     ax, 6
@@ -93710,14 +93102,15 @@ sub_4C534       proc far                ; CODE XREF: sub_284B9↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C534       endp
+Spell_09_EnergyBlast endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Sleep' (id 10, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C57D       proc far                ; CODE XREF: sub_284C3↑J
+Spell_10_Sleep  proc far                ; CODE XREF: j_Spell_10_Sleep↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -93733,14 +93126,15 @@ sub_4C57D       proc far                ; CODE XREF: sub_284C3↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C57D       endp
+Spell_10_Sleep  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Pain' (id 11, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C5A8       proc far                ; CODE XREF: sub_2851D↑J
+Spell_11_Pain   proc far                ; CODE XREF: j_Spell_11_Pain↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 8
@@ -93756,14 +93150,15 @@ sub_4C5A8       proc far                ; CODE XREF: sub_2851D↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C5A8       endp
+Spell_11_Pain   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Create Rope' (id 12, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C5D3       proc far                ; CODE XREF: sub_2849B↑J
+Spell_12_CreateRope proc far            ; CODE XREF: j_Spell_12_CreateRope↑J
                 push    bp
                 mov     bp, sp
                 mov     byte_2879D, 1
@@ -93774,14 +93169,15 @@ sub_4C5D3       proc far                ; CODE XREF: sub_2849B↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C5D3       endp
+Spell_12_CreateRope endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Toxic Cloud' (id 13, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C5EC       proc far                ; CODE XREF: sub_28518↑J
+Spell_13_ToxicCloud proc far            ; CODE XREF: j_Spell_13_ToxicCloud↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0Ah
@@ -93797,14 +93193,15 @@ sub_4C5EC       proc far                ; CODE XREF: sub_28518↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C5EC       endp
+Spell_13_ToxicCloud endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Suppress Poison' (id 14, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C617       proc far                ; CODE XREF: sub_284A5↑J
+Spell_14_SuppressPoison proc far        ; CODE XREF: j_Spell_14_SuppressPoison↑J
 
 var_2           = word ptr -2
 
@@ -93834,13 +93231,13 @@ var_2           = word ptr -2
                 jmp     short loc_4C65A
 ; ---------------------------------------------------------------------------
 
-loc_4C650:                              ; CODE XREF: sub_4C617+30↑j
+loc_4C650:                              ; CODE XREF: Spell_14_SuppressPoison+30↑j
                 mov     al, [si+116h]
                 add     al, 0FDh
                 mov     [si+116h], al
 
-loc_4C65A:                              ; CODE XREF: sub_4C617+29↑j
-                                        ; sub_4C617+37↑j
+loc_4C65A:                              ; CODE XREF: Spell_14_SuppressPoison+29↑j
+                                        ; Spell_14_SuppressPoison+37↑j
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -93854,19 +93251,20 @@ loc_4C65A:                              ; CODE XREF: sub_4C617+29↑j
                 pop     cx
                 call    sub_170F7
 
-loc_4C673:                              ; CODE XREF: sub_4C617+15↑j
+loc_4C673:                              ; CODE XREF: Spell_14_SuppressPoison+15↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C617       endp
+Spell_14_SuppressPoison endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Prot. from Elements' (id 15, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C678       proc far                ; CODE XREF: sub_28531↑J
+Spell_15_ProtFromElements proc far      ; CODE XREF: j_Spell_15_ProtFromElements↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -93882,7 +93280,7 @@ sub_4C678       proc far                ; CODE XREF: sub_28531↑J
                 jle     short loc_4C698
                 mov     si, 0C8h
 
-loc_4C698:                              ; CODE XREF: sub_4C678+1B↑j
+loc_4C698:                              ; CODE XREF: Spell_15_ProtFromElements+1B↑j
                 mov     ax, 0Fh
                 push    ax
                 push    cs
@@ -93896,45 +93294,45 @@ loc_4C698:                              ; CODE XREF: sub_4C678+1B↑j
                 jmp     cs:jpt_4C6AB[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_4C6B0:                              ; CODE XREF: sub_4C678+33↑j
+loc_4C6B0:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
                 mov     word_3732A, si  ; jumptable 0004C6AB case 2
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
-loc_4C6B6:                              ; CODE XREF: sub_4C678+33↑j
+loc_4C6B6:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
                 mov     word_3732C, si  ; jumptable 0004C6AB case 3
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
-loc_4C6BC:                              ; CODE XREF: sub_4C678+33↑j
+loc_4C6BC:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
                 mov     word_3732E, si  ; jumptable 0004C6AB case 4
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
-loc_4C6C2:                              ; CODE XREF: sub_4C678+33↑j
+loc_4C6C2:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
                 mov     word_37330, si  ; jumptable 0004C6AB case 5
 
-def_4C6AB:                              ; CODE XREF: sub_4C678+2F↑j
-                                        ; sub_4C678+33↑j ...
+def_4C6AB:                              ; CODE XREF: Spell_15_ProtFromElements+2F↑j
+                                        ; Spell_15_ProtFromElements+33↑j ...
                 mov     ax, 14h         ; jumptable 0004C6AB default case, cases 0,1
                 push    ax
                 call    sub_1B16B
                 pop     cx
                 call    sub_170F7
 
-loc_4C6D5:                              ; CODE XREF: sub_4C678+33↑j
+loc_4C6D5:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
                 pop     si              ; jumptable 0004C6AB case -1
                 pop     bp
                 retf
-sub_4C678       endp
+Spell_15_ProtFromElements endp
 
 ; ---------------------------------------------------------------------------
-jpt_4C6AB       dw offset loc_4C6D5     ; DATA XREF: sub_4C678+33↑r
+jpt_4C6AB       dw offset loc_4C6D5     ; DATA XREF: Spell_15_ProtFromElements+33↑r
                 dw offset def_4C6AB     ; jump table for switch statement
                 dw offset def_4C6AB
                 dw offset loc_4C6B0
@@ -93944,9 +93342,10 @@ jpt_4C6AB       dw offset loc_4C6D5     ; DATA XREF: sub_4C678+33↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Turn Undead' (id 16, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C6E6       proc far                ; CODE XREF: sub_2857C↑J
+Spell_16_TurnUndead proc far            ; CODE XREF: j_Spell_16_TurnUndead↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -93962,7 +93361,7 @@ sub_4C6E6       proc far                ; CODE XREF: sub_2857C↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C6E6       endp
+Spell_16_TurnUndead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -94063,9 +93462,10 @@ sub_4C711       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Acid Stream' (id 18, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C7DE       proc far                ; CODE XREF: sub_284CD↑J
+Spell_18_AcidStream proc far            ; CODE XREF: j_Spell_18_AcidStream↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 19h
@@ -94081,14 +93481,15 @@ sub_4C7DE       proc far                ; CODE XREF: sub_284CD↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C7DE       endp
+Spell_18_AcidStream endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Suppress Disease' (id 19, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C809       proc far                ; CODE XREF: sub_284BE↑J
+Spell_19_SuppressDisease proc far       ; CODE XREF: j_Spell_19_SuppressDisease↑J
 
 var_2           = word ptr -2
 
@@ -94118,13 +93519,13 @@ var_2           = word ptr -2
                 jmp     short loc_4C84C
 ; ---------------------------------------------------------------------------
 
-loc_4C842:                              ; CODE XREF: sub_4C809+30↑j
+loc_4C842:                              ; CODE XREF: Spell_19_SuppressDisease+30↑j
                 mov     al, [si+117h]
                 add     al, 0FDh
                 mov     [si+117h], al
 
-loc_4C84C:                              ; CODE XREF: sub_4C809+29↑j
-                                        ; sub_4C809+37↑j
+loc_4C84C:                              ; CODE XREF: Spell_19_SuppressDisease+29↑j
+                                        ; Spell_19_SuppressDisease+37↑j
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -94138,19 +93539,20 @@ loc_4C84C:                              ; CODE XREF: sub_4C809+29↑j
                 pop     cx
                 call    sub_170F7
 
-loc_4C865:                              ; CODE XREF: sub_4C809+15↑j
+loc_4C865:                              ; CODE XREF: Spell_19_SuppressDisease+15↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C809       endp
+Spell_19_SuppressDisease endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Silence' (id 20, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C86A       proc far                ; CODE XREF: sub_28536↑J
+Spell_20_Silence proc far               ; CODE XREF: j_Spell_20_Silence↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -94166,14 +93568,15 @@ sub_4C86A       proc far                ; CODE XREF: sub_28536↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C86A       endp
+Spell_20_Silence endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Blessed' (id 21, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C895       proc far                ; CODE XREF: sub_284FA↑J
+Spell_21_Blessed proc far               ; CODE XREF: j_Spell_21_Blessed↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -94214,18 +93617,19 @@ sub_4C895       proc far                ; CODE XREF: sub_284FA↑J
                 mov     [bx-4528h], al
                 call    sub_170F7
 
-loc_4C8E7:                              ; CODE XREF: sub_4C895+12↑j
+loc_4C8E7:                              ; CODE XREF: Spell_21_Blessed+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4C895       endp
+Spell_21_Blessed endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Levitate' (id 22, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C8EA       proc far                ; CODE XREF: sub_28590↑J
+Spell_22_Levitate proc far              ; CODE XREF: j_Spell_22_Levitate↑J
                 push    bp
                 mov     bp, sp
                 mov     byte_36FEC, 1
@@ -94235,7 +93639,7 @@ sub_4C8EA       proc far                ; CODE XREF: sub_28590↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4C8EA       endp
+Spell_22_Levitate endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -94258,9 +93662,10 @@ sub_4C8FE       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Identify Monster' (id 24, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4C917       proc far                ; CODE XREF: sub_285AE↑J
+Spell_24_IdentifyMonster proc far       ; CODE XREF: j_Spell_24_IdentifyMonster↑J
 
 format          = byte ptr -98h
 var_66          = byte ptr -66h
@@ -94289,8 +93694,8 @@ var_2           = word ptr -2
                 jmp     loc_4CA68
 ; ---------------------------------------------------------------------------
 
-loc_4C942:                              ; CODE XREF: sub_4C917+10↑j
-                                        ; sub_4C917+19↑j ...
+loc_4C942:                              ; CODE XREF: Spell_24_IdentifyMonster+10↑j
+                                        ; Spell_24_IdentifyMonster+19↑j ...
                 mov     al, 0
                 mov     [bp+var_34], al
                 mov     [bp+var_66], al
@@ -94300,7 +93705,7 @@ loc_4C942:                              ; CODE XREF: sub_4C917+10↑j
                 jmp     loc_4C9F9
 ; ---------------------------------------------------------------------------
 
-loc_4C958:                              ; CODE XREF: sub_4C917+E7↓j
+loc_4C958:                              ; CODE XREF: Spell_24_IdentifyMonster+E7↓j
                 mov     ax, si
                 or      ax, ax
                 jz      short loc_4C96A
@@ -94311,36 +93716,36 @@ loc_4C958:                              ; CODE XREF: sub_4C917+E7↓j
                 jmp     short loc_4C994
 ; ---------------------------------------------------------------------------
 
-loc_4C96A:                              ; CODE XREF: sub_4C917+45↑j
+loc_4C96A:                              ; CODE XREF: Spell_24_IdentifyMonster+45↑j
                 cmp     byte_34B92, 0
                 jnz     short loc_4C974
                 jmp     loc_4C9F8
 ; ---------------------------------------------------------------------------
 
-loc_4C974:                              ; CODE XREF: sub_4C917+58↑j
+loc_4C974:                              ; CODE XREF: Spell_24_IdentifyMonster+58↑j
                 mov     al, byte_34B92
                 jmp     short loc_4C98F
 ; ---------------------------------------------------------------------------
 
-loc_4C979:                              ; CODE XREF: sub_4C917+4A↑j
+loc_4C979:                              ; CODE XREF: Spell_24_IdentifyMonster+4A↑j
                 cmp     byte_34B93, 0
                 jz      short loc_4C9F8
                 mov     al, byte_34B93
                 jmp     short loc_4C98F
 ; ---------------------------------------------------------------------------
 
-loc_4C985:                              ; CODE XREF: sub_4C917+4F↑j
+loc_4C985:                              ; CODE XREF: Spell_24_IdentifyMonster+4F↑j
                 cmp     byte_34B94, 0
                 jz      short loc_4C9F8
                 mov     al, byte_34B94
 
-loc_4C98F:                              ; CODE XREF: sub_4C917+60↑j
-                                        ; sub_4C917+6C↑j
+loc_4C98F:                              ; CODE XREF: Spell_24_IdentifyMonster+60↑j
+                                        ; Spell_24_IdentifyMonster+6C↑j
                 mov     ah, 0
                 dec     ax
                 mov     di, ax
 
-loc_4C994:                              ; CODE XREF: sub_4C917+51↑j
+loc_4C994:                              ; CODE XREF: Spell_24_IdentifyMonster+51↑j
                 mov     bx, di
                 shl     bx, 1
                 mov     ax, [bx-4944h]
@@ -94379,17 +93784,17 @@ loc_4C994:                              ; CODE XREF: sub_4C917+51↑j
                 call    _sprintf
                 add     sp, 0Eh
 
-loc_4C9F8:                              ; CODE XREF: sub_4C917+5A↑j
-                                        ; sub_4C917+67↑j ...
+loc_4C9F8:                              ; CODE XREF: Spell_24_IdentifyMonster+5A↑j
+                                        ; Spell_24_IdentifyMonster+67↑j ...
                 inc     si
 
-loc_4C9F9:                              ; CODE XREF: sub_4C917+3E↑j
+loc_4C9F9:                              ; CODE XREF: Spell_24_IdentifyMonster+3E↑j
                 cmp     si, 3
                 jge     short loc_4CA01
                 jmp     loc_4C958
 ; ---------------------------------------------------------------------------
 
-loc_4CA01:                              ; CODE XREF: sub_4C917+E5↑j
+loc_4CA01:                              ; CODE XREF: Spell_24_IdentifyMonster+E5↑j
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -94434,20 +93839,21 @@ loc_4CA01:                              ; CODE XREF: sub_4C917+E5↑j
                 pop     cx
                 call    sub_280EA
 
-loc_4CA68:                              ; CODE XREF: sub_4C917+28↑j
+loc_4CA68:                              ; CODE XREF: Spell_24_IdentifyMonster+28↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C917       endp
+Spell_24_IdentifyMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Holy Bonus' (id 25, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CA6E       proc far                ; CODE XREF: sub_28504↑J
+Spell_25_HolyBonus proc far             ; CODE XREF: j_Spell_25_HolyBonus↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -94488,18 +93894,19 @@ sub_4CA6E       proc far                ; CODE XREF: sub_28504↑J
                 mov     [bx-4526h], al
                 call    sub_170F7
 
-loc_4CAC0:                              ; CODE XREF: sub_4CA6E+12↑j
+loc_4CAC0:                              ; CODE XREF: Spell_25_HolyBonus+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4CA6E       endp
+Spell_25_HolyBonus endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Power Cure' (id 26, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CAC3       proc far                ; CODE XREF: sub_284F0↑J
+Spell_26_PowerCure proc far             ; CODE XREF: j_Spell_26_PowerCure↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -94535,8 +93942,8 @@ var_2           = word ptr -2
                 jmp     short loc_4CB38
 ; ---------------------------------------------------------------------------
 
-loc_4CB05:                              ; CODE XREF: sub_4CAC3+34↑j
-                                        ; sub_4CAC3+3A↑j
+loc_4CB05:                              ; CODE XREF: Spell_26_PowerCure+34↑j
+                                        ; Spell_26_PowerCure+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -94564,20 +93971,21 @@ loc_4CB05:                              ; CODE XREF: sub_4CAC3+34↑j
                 pop     cx
                 pop     cx
 
-loc_4CB38:                              ; CODE XREF: sub_4CAC3+16↑j
-                                        ; sub_4CAC3+40↑j
+loc_4CB38:                              ; CODE XREF: Spell_26_PowerCure+16↑j
+                                        ; Spell_26_PowerCure+40↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4CAC3       endp
+Spell_26_PowerCure endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Nature's Cure' (id 27, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CB3D       proc far                ; CODE XREF: sub_285F4↑J
+Spell_27_NatureSCure proc far           ; CODE XREF: j_Spell_27_NatureSCure↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -94613,8 +94021,8 @@ var_2           = word ptr -2
                 jmp     short loc_4CB94
 ; ---------------------------------------------------------------------------
 
-loc_4CB7F:                              ; CODE XREF: sub_4CB3D+34↑j
-                                        ; sub_4CB3D+3A↑j
+loc_4CB7F:                              ; CODE XREF: Spell_27_NatureSCure+34↑j
+                                        ; Spell_27_NatureSCure+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -94627,20 +94035,21 @@ loc_4CB7F:                              ; CODE XREF: sub_4CB3D+34↑j
                 pop     cx
                 pop     cx
 
-loc_4CB94:                              ; CODE XREF: sub_4CB3D+16↑j
-                                        ; sub_4CB3D+40↑j
+loc_4CB94:                              ; CODE XREF: Spell_27_NatureSCure+16↑j
+                                        ; Spell_27_NatureSCure+40↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4CB3D       endp
+Spell_27_NatureSCure endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Lightning Bolt' (id 28, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CB99       proc far                ; CODE XREF: sub_28469↑J
+Spell_28_LightningBolt proc far         ; CODE XREF: j_Spell_28_LightningBolt↑J
                 push    bp
                 mov     bp, sp
                 mov     ax, 6
@@ -94672,14 +94081,15 @@ sub_4CB99       proc far                ; CODE XREF: sub_28469↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4CB99       endp
+Spell_28_LightningBolt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Immobilize' (id 29, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CBE2       proc far                ; CODE XREF: sub_285EA↑J
+Spell_29_Immobilize proc far            ; CODE XREF: j_Spell_29_Immobilize↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -94695,14 +94105,15 @@ sub_4CBE2       proc far                ; CODE XREF: sub_285EA↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4CBE2       endp
+Spell_29_Immobilize endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Heroism' (id 30, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CC0D       proc far                ; CODE XREF: sub_28568↑J
+Spell_30_Heroism proc far               ; CODE XREF: j_Spell_30_Heroism↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -94743,18 +94154,19 @@ sub_4CC0D       proc far                ; CODE XREF: sub_28568↑J
                 mov     [bx-4525h], al
                 call    sub_170F7
 
-loc_4CC5F:                              ; CODE XREF: sub_4CC0D+12↑j
+loc_4CC5F:                              ; CODE XREF: Spell_30_Heroism+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4CC0D       endp
+Spell_30_Heroism endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Walk on Water' (id 31, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CC62       proc far                ; CODE XREF: sub_28559↑J
+Spell_31_WalkOnWater proc far           ; CODE XREF: j_Spell_31_WalkOnWater↑J
                 push    bp
                 mov     bp, sp
                 mov     byte_36FEF, 1
@@ -94764,14 +94176,15 @@ sub_4CC62       proc far                ; CODE XREF: sub_28559↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4CC62       endp
+Spell_31_WalkOnWater endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Frost Bite' (id 32, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CC76       proc far                ; CODE XREF: sub_28478↑J
+Spell_32_FrostBite proc far             ; CODE XREF: j_Spell_32_FrostBite↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 23h ; '#'
@@ -94787,7 +94200,7 @@ sub_4CC76       proc far                ; CODE XREF: sub_28478↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4CC76       endp
+Spell_32_FrostBite endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -94969,9 +94382,10 @@ spellLloydsBeacon endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Power Shield' (id 34, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CE39       proc far                ; CODE XREF: sub_2850E↑J
+Spell_34_PowerShield proc far           ; CODE XREF: j_Spell_34_PowerShield↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -95012,18 +94426,19 @@ sub_4CE39       proc far                ; CODE XREF: sub_2850E↑J
                 mov     [bx-4527h], al
                 call    sub_170F7
 
-loc_4CE8B:                              ; CODE XREF: sub_4CE39+12↑j
+loc_4CE8B:                              ; CODE XREF: Spell_34_PowerShield+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4CE39       endp
+Spell_34_PowerShield endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Cure Poison' (id 35, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CE8E       proc far                ; CODE XREF: sub_285B8↑J
+Spell_35_CurePoison proc far            ; CODE XREF: j_Spell_35_CurePoison↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -95057,18 +94472,19 @@ sub_4CE8E       proc far                ; CODE XREF: sub_285B8↑J
                 mov     byte ptr [bx-4514h], 0
                 call    sub_170F7
 
-loc_4CED3:                              ; CODE XREF: sub_4CE8E+12↑j
+loc_4CED3:                              ; CODE XREF: Spell_35_CurePoison+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4CE8E       endp
+Spell_35_CurePoison endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Fireball' (id 36, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CED6       proc far                ; CODE XREF: sub_2856D↑J
+Spell_36_Fireball proc far              ; CODE XREF: j_Spell_36_Fireball↑J
                 push    bp
                 mov     bp, sp
                 mov     ax, 7
@@ -95100,14 +94516,15 @@ sub_4CED6       proc far                ; CODE XREF: sub_2856D↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4CED6       endp
+Spell_36_Fireball endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Detect Monster' (id 37, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4CF1E       proc far                ; CODE XREF: sub_285FE↑J
+Spell_37_DetectMonster proc far         ; CODE XREF: j_Spell_37_DetectMonster↑J
 
 s               = byte ptr -3Eh
 var_C           = word ptr -0Ch
@@ -95161,20 +94578,20 @@ var_2           = word ptr -2
                 jmp     loc_4D07F
 ; ---------------------------------------------------------------------------
 
-loc_4CF97:                              ; CODE XREF: sub_4CF1E+167↓j
+loc_4CF97:                              ; CODE XREF: Spell_37_DetectMonster+167↓j
                 dec     [bp+var_4]
                 mov     [bp+var_2], 0FFFCh
                 xor     di, di
                 jmp     loc_4D074
 ; ---------------------------------------------------------------------------
 
-loc_4CFA4:                              ; CODE XREF: sub_4CF1E+15B↓j
+loc_4CFA4:                              ; CODE XREF: Spell_37_DetectMonster+15B↓j
                 inc     [bp+var_2]
                 mov     [bp+var_8], 0
                 jmp     loc_4D066
 ; ---------------------------------------------------------------------------
 
-loc_4CFAF:                              ; CODE XREF: sub_4CF1E+152↓j
+loc_4CFAF:                              ; CODE XREF: Spell_37_DetectMonster+152↓j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 mov     al, Party_x
@@ -95185,7 +94602,7 @@ loc_4CFAF:                              ; CODE XREF: sub_4CF1E+152↓j
                 jmp     loc_4D063
 ; ---------------------------------------------------------------------------
 
-loc_4CFC5:                              ; CODE XREF: sub_4CF1E+A2↑j
+loc_4CFC5:                              ; CODE XREF: Spell_37_DetectMonster+A2↑j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 mov     al, Party_y
@@ -95196,7 +94613,7 @@ loc_4CFC5:                              ; CODE XREF: sub_4CF1E+A2↑j
                 jmp     loc_4D063
 ; ---------------------------------------------------------------------------
 
-loc_4CFDB:                              ; CODE XREF: sub_4CF1E+B8↑j
+loc_4CFDB:                              ; CODE XREF: Spell_37_DetectMonster+B8↑j
                 mov     ax, di
                 mov     dx, 9
                 imul    dx
@@ -95244,7 +94661,7 @@ loc_4CFDB:                              ; CODE XREF: sub_4CF1E+B8↑j
                 mov     bx, ax
                 mov     byte ptr [bx], 3
 
-loc_4D045:                              ; CODE XREF: sub_4CF1E+111↑j
+loc_4D045:                              ; CODE XREF: Spell_37_DetectMonster+111↑j
                 mov     ax, [bp+var_6]
                 mov     dx, 7
                 imul    dx
@@ -95259,11 +94676,11 @@ loc_4D045:                              ; CODE XREF: sub_4CF1E+111↑j
                 mov     [bx-2992h], ax
                 inc     si
 
-loc_4D063:                              ; CODE XREF: sub_4CF1E+A4↑j
-                                        ; sub_4CF1E+BA↑j
+loc_4D063:                              ; CODE XREF: Spell_37_DetectMonster+A4↑j
+                                        ; Spell_37_DetectMonster+BA↑j
                 inc     [bp+var_8]
 
-loc_4D066:                              ; CODE XREF: sub_4CF1E+8E↑j
+loc_4D066:                              ; CODE XREF: Spell_37_DetectMonster+8E↑j
                 mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_8]
@@ -95271,25 +94688,25 @@ loc_4D066:                              ; CODE XREF: sub_4CF1E+8E↑j
                 jmp     loc_4CFAF
 ; ---------------------------------------------------------------------------
 
-loc_4D073:                              ; CODE XREF: sub_4CF1E+150↑j
+loc_4D073:                              ; CODE XREF: Spell_37_DetectMonster+150↑j
                 inc     di
 
-loc_4D074:                              ; CODE XREF: sub_4CF1E+83↑j
+loc_4D074:                              ; CODE XREF: Spell_37_DetectMonster+83↑j
                 cmp     di, 7
                 jge     short loc_4D07C
                 jmp     loc_4CFA4
 ; ---------------------------------------------------------------------------
 
-loc_4D07C:                              ; CODE XREF: sub_4CF1E+159↑j
+loc_4D07C:                              ; CODE XREF: Spell_37_DetectMonster+159↑j
                 inc     [bp+var_6]
 
-loc_4D07F:                              ; CODE XREF: sub_4CF1E+76↑j
+loc_4D07F:                              ; CODE XREF: Spell_37_DetectMonster+76↑j
                 cmp     [bp+var_6], 7
                 jge     short loc_4D088
                 jmp     loc_4CF97
 ; ---------------------------------------------------------------------------
 
-loc_4D088:                              ; CODE XREF: sub_4CF1E+165↑j
+loc_4D088:                              ; CODE XREF: Spell_37_DetectMonster+165↑j
                 mov     bx, si
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 1Fh
@@ -95357,14 +94774,15 @@ loc_4D088:                              ; CODE XREF: sub_4CF1E+165↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4CF1E       endp
+Spell_37_DetectMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Acid Spray' (id 38, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D128       proc far                ; CODE XREF: sub_284B4↑J
+Spell_38_AcidSpray proc far             ; CODE XREF: j_Spell_38_AcidSpray↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0Fh
@@ -95380,14 +94798,15 @@ sub_4D128       proc far                ; CODE XREF: sub_284B4↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D128       endp
+Spell_38_AcidSpray endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Cold Ray' (id 39, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D153       proc far                ; CODE XREF: sub_2846E↑J
+Spell_39_ColdRay proc far               ; CODE XREF: j_Spell_39_ColdRay↑J
                 push    bp
                 mov     bp, sp
                 mov     ax, 4
@@ -95419,14 +94838,15 @@ sub_4D153       proc far                ; CODE XREF: sub_2846E↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D153       endp
+Spell_39_ColdRay endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Cure Disease' (id 40, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D19C       proc far                ; CODE XREF: sub_285EF↑J
+Spell_40_CureDisease proc far           ; CODE XREF: j_Spell_40_CureDisease↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -95460,11 +94880,11 @@ sub_4D19C       proc far                ; CODE XREF: sub_285EF↑J
                 mov     byte ptr [bx-4513h], 0
                 call    sub_170F7
 
-loc_4D1E1:                              ; CODE XREF: sub_4D19C+12↑j
+loc_4D1E1:                              ; CODE XREF: Spell_40_CureDisease+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4D19C       endp
+Spell_40_CureDisease endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95536,9 +94956,10 @@ sub_4D1E4       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Time Distortion' (id 42, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D269       proc far                ; CODE XREF: sub_284AA↑J
+Spell_42_TimeDistortion proc far        ; CODE XREF: j_Spell_42_TimeDistortion↑J
                 push    bp
                 mov     bp, sp
                 mov     al, Maze_curSlot
@@ -95555,7 +94976,7 @@ sub_4D269       proc far                ; CODE XREF: sub_284AA↑J
                 jmp     short loc_4D2A0
 ; ---------------------------------------------------------------------------
 
-loc_4D287:                              ; CODE XREF: sub_4D269+16↑j
+loc_4D287:                              ; CODE XREF: Spell_42_TimeDistortion+16↑j
                 call    sub_1B925
                 call    mazeUpdateSlot
                 mov     ax, 33h ; '3'
@@ -95564,17 +94985,18 @@ loc_4D287:                              ; CODE XREF: sub_4D269+16↑j
                 pop     cx
                 call    sub_1B669
 
-loc_4D2A0:                              ; CODE XREF: sub_4D269+1C↑j
+loc_4D2A0:                              ; CODE XREF: Spell_42_TimeDistortion+1C↑j
                 pop     bp
                 retf
-sub_4D269       endp
+Spell_42_TimeDistortion endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Feeble Mind' (id 43, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D2A2       proc far                ; CODE XREF: sub_285B3↑J
+Spell_43_FeebleMind proc far            ; CODE XREF: j_Spell_43_FeebleMind↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -95590,14 +95012,15 @@ sub_4D2A2       proc far                ; CODE XREF: sub_285B3↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D2A2       endp
+Spell_43_FeebleMind endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Deadly Swarm' (id 44, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D2CD       proc far                ; CODE XREF: sub_285E5↑J
+Spell_44_DeadlySwarm proc far           ; CODE XREF: j_Spell_44_DeadlySwarm↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 28h ; '('
@@ -95613,7 +95036,7 @@ sub_4D2CD       proc far                ; CODE XREF: sub_285E5↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D2CD       endp
+Spell_44_DeadlySwarm endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95933,9 +95356,10 @@ jpt_4D3BB       dw offset loc_4D3C0     ; DATA XREF: sub_4D2F8+C3↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Finger of Death' (id 46, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D514       proc far                ; CODE XREF: sub_2847D↑J
+Spell_46_FingerOfDeath proc far         ; CODE XREF: j_Spell_46_FingerOfDeath↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -95951,14 +95375,15 @@ sub_4D514       proc far                ; CODE XREF: sub_2847D↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D514       endp
+Spell_46_FingerOfDeath endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Cure Paralysis' (id 47, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D53F       proc far                ; CODE XREF: sub_28455↑J
+Spell_47_CureParalysis proc far         ; CODE XREF: j_Spell_47_CureParalysis↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -95992,18 +95417,19 @@ sub_4D53F       proc far                ; CODE XREF: sub_28455↑J
                 mov     byte ptr [bx-450Ch], 0
                 call    sub_170F7
 
-loc_4D584:                              ; CODE XREF: sub_4D53F+12↑j
+loc_4D584:                              ; CODE XREF: Spell_47_CureParalysis+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4D53F       endp
+Spell_47_CureParalysis endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Paralyze' (id 48, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D587       proc far                ; CODE XREF: sub_285A4↑J
+Spell_48_Paralyze proc far              ; CODE XREF: j_Spell_48_Paralyze↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -96019,14 +95445,15 @@ sub_4D587       proc far                ; CODE XREF: sub_285A4↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D587       endp
+Spell_48_Paralyze endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Dragon Breath' (id 49, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D5B2       proc far                ; CODE XREF: sub_284E6↑J
+Spell_49_DragonBreath proc far          ; CODE XREF: j_Spell_49_DragonBreath↑J
                 push    bp
                 mov     bp, sp
                 push    ds
@@ -96063,10 +95490,10 @@ sub_4D5B2       proc far                ; CODE XREF: sub_284E6↑J
                 call    sub_2865D
                 pop     cx
 
-loc_4D606:                              ; CODE XREF: sub_4D5B2+26↑j
+loc_4D606:                              ; CODE XREF: Spell_49_DragonBreath+26↑j
                 pop     bp
                 retf
-sub_4D5B2       endp
+Spell_49_DragonBreath endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -96117,9 +95544,10 @@ sub_4D608       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Fiery Flail' (id 51, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D64E       proc far                ; CODE XREF: sub_2859F↑J
+Spell_51_FieryFlail proc far            ; CODE XREF: j_Spell_51_FieryFlail↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 64h ; 'd'
@@ -96135,14 +95563,15 @@ sub_4D64E       proc far                ; CODE XREF: sub_2859F↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D64E       endp
+Spell_51_FieryFlail endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Create Food' (id 52, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D679       proc far                ; CODE XREF: sub_28491↑J
+Spell_52_CreateFood proc far            ; CODE XREF: j_Spell_52_CreateFood↑J
                 push    bp
                 mov     bp, sp
                 mov     al, Party_count
@@ -96154,7 +95583,7 @@ sub_4D679       proc far                ; CODE XREF: sub_28491↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D679       endp
+Spell_52_CreateFood endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -96266,9 +95695,10 @@ sub_4D691       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Stone to Flesh' (id 54, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D763       proc far                ; CODE XREF: sub_2858B↑J
+Spell_54_StoneToFlesh proc far          ; CODE XREF: j_Spell_54_StoneToFlesh↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -96302,18 +95732,19 @@ sub_4D763       proc far                ; CODE XREF: sub_2858B↑J
                 mov     byte ptr [bx-4509h], 0
                 call    sub_170F7
 
-loc_4D7A8:                              ; CODE XREF: sub_4D763+12↑j
+loc_4D7A8:                              ; CODE XREF: Spell_54_StoneToFlesh+12↑j
                 pop     si
                 pop     bp
                 retf
-sub_4D763       endp
+Spell_54_StoneToFlesh endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Recharge Item' (id 55, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D7AB       proc far                ; CODE XREF: sub_285D6↑J
+Spell_55_RechargeItem proc far          ; CODE XREF: j_Spell_55_RechargeItem↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -96346,18 +95777,19 @@ var_2           = word ptr -2
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
-loc_4D7EC:                              ; CODE XREF: sub_4D7AB+15↑j
+loc_4D7EC:                              ; CODE XREF: Spell_55_RechargeItem+15↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D7AB       endp
+Spell_55_RechargeItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Fantastic Freeze' (id 56, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D7F0       proc far                ; CODE XREF: sub_284D2↑J
+Spell_56_FantasticFreeze proc far       ; CODE XREF: j_Spell_56_FantasticFreeze↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 28h ; '('
@@ -96373,14 +95805,15 @@ sub_4D7F0       proc far                ; CODE XREF: sub_284D2↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D7F0       endp
+Spell_56_FantasticFreeze endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Duplication' (id 57, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D81B       proc far                ; CODE XREF: sub_285E0↑J
+Spell_57_Duplication proc far           ; CODE XREF: j_Spell_57_Duplication↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -96413,18 +95846,19 @@ var_2           = word ptr -2
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
-loc_4D85C:                              ; CODE XREF: sub_4D81B+15↑j
+loc_4D85C:                              ; CODE XREF: Spell_57_Duplication+15↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D81B       endp
+Spell_57_Duplication endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Disintegrate' (id 58, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D860       proc far                ; CODE XREF: sub_28496↑J
+Spell_58_Disintegrate proc far          ; CODE XREF: j_Spell_58_Disintegrate↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -96440,14 +95874,15 @@ sub_4D860       proc far                ; CODE XREF: sub_28496↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4D860       endp
+Spell_58_Disintegrate endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Raise Dead' (id 59, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D88B       proc far                ; CODE XREF: sub_28563↑J
+Spell_59_RaiseDead proc far             ; CODE XREF: j_Spell_59_RaiseDead↑J
 
 var_2           = word ptr -2
 
@@ -96478,7 +95913,7 @@ var_2           = word ptr -2
                 jmp     short loc_4D8FC
 ; ---------------------------------------------------------------------------
 
-loc_4D8BF:                              ; CODE XREF: sub_4D88B+2C↑j
+loc_4D8BF:                              ; CODE XREF: Spell_59_RaiseDead+2C↑j
                 mov     al, 0
                 mov     [si+120h], al
                 mov     [si+11Fh], al
@@ -96502,23 +95937,24 @@ loc_4D8BF:                              ; CODE XREF: sub_4D88B+2C↑j
                 jge     short loc_4D8F7
                 mov     byte ptr [si+1Ah], 1
 
-loc_4D8F7:                              ; CODE XREF: sub_4D88B+66↑j
+loc_4D8F7:                              ; CODE XREF: Spell_59_RaiseDead+66↑j
                 call    sub_170F7
 
-loc_4D8FC:                              ; CODE XREF: sub_4D88B+15↑j
-                                        ; sub_4D88B+32↑j
+loc_4D8FC:                              ; CODE XREF: Spell_59_RaiseDead+15↑j
+                                        ; Spell_59_RaiseDead+32↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D88B       endp
+Spell_59_RaiseDead endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Half for Me' (id 60, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4D901       proc far                ; CODE XREF: sub_28513↑J
+Spell_60_HalfForMe proc far             ; CODE XREF: j_Spell_60_HalfForMe↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -96553,14 +95989,14 @@ var_2           = word ptr -2
                 cmp     [bp+var_2], 0Fh
                 jg      short loc_4D94B
 
-loc_4D945:                              ; CODE XREF: sub_4D901+36↑j
+loc_4D945:                              ; CODE XREF: Spell_60_HalfForMe+36↑j
                 push    cs
                 call    near ptr Screen_saveBackground
                 jmp     short loc_4D97F
 ; ---------------------------------------------------------------------------
 
-loc_4D94B:                              ; CODE XREF: sub_4D901+3C↑j
-                                        ; sub_4D901+42↑j
+loc_4D94B:                              ; CODE XREF: Spell_60_HalfForMe+3C↑j
+                                        ; Spell_60_HalfForMe+42↑j
                 push    ds
                 push    si
                 call    j_getMaxHP
@@ -96586,14 +96022,14 @@ loc_4D94B:                              ; CODE XREF: sub_4D901+3C↑j
                 pop     cx
                 call    sub_170F7
 
-loc_4D97F:                              ; CODE XREF: sub_4D901+17↑j
-                                        ; sub_4D901+48↑j
+loc_4D97F:                              ; CODE XREF: Spell_60_HalfForMe+17↑j
+                                        ; Spell_60_HalfForMe+48↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D901       endp
+Spell_60_HalfForMe endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -96695,9 +96131,10 @@ sub_4D985       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Dancing Sword' (id 62, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DA44       proc far                ; CODE XREF: sub_2845A↑J
+Spell_62_DancingSword proc far          ; CODE XREF: j_Spell_62_DancingSword↑J
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Eh
@@ -96729,14 +96166,15 @@ sub_4DA44       proc far                ; CODE XREF: sub_2845A↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DA44       endp
+Spell_62_DancingSword endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Prismatic Light' (id 63, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DA8D       proc far                ; CODE XREF: sub_284EB↑J
+Spell_63_PrismaticLight proc far        ; CODE XREF: j_Spell_63_PrismaticLight↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 50h ; 'P'
@@ -96759,14 +96197,15 @@ sub_4DA8D       proc far                ; CODE XREF: sub_284EB↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DA8D       endp
+Spell_63_PrismaticLight endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Moon Ray' (id 64, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DAC3       proc far                ; CODE XREF: sub_28473↑J
+Spell_64_MoonRay proc far               ; CODE XREF: j_Spell_64_MoonRay↑J
                 push    bp
                 mov     bp, sp
                 push    si
@@ -96785,7 +96224,7 @@ sub_4DAC3       proc far                ; CODE XREF: sub_28473↑J
                 jmp     short loc_4DB1D
 ; ---------------------------------------------------------------------------
 
-loc_4DAF1:                              ; CODE XREF: sub_4DAC3+61↓j
+loc_4DAF1:                              ; CODE XREF: Spell_64_MoonRay+61↓j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -96809,7 +96248,7 @@ loc_4DAF1:                              ; CODE XREF: sub_4DAC3+61↓j
                 pop     cx
                 inc     si
 
-loc_4DB1D:                              ; CODE XREF: sub_4DAC3+2C↑j
+loc_4DB1D:                              ; CODE XREF: Spell_64_MoonRay+2C↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, si
@@ -96818,14 +96257,15 @@ loc_4DB1D:                              ; CODE XREF: sub_4DAC3+2C↑j
                 pop     si
                 pop     bp
                 retf
-sub_4DAC3       endp
+Spell_64_MoonRay endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Mass Distortion' (id 65, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DB2E       proc far                ; CODE XREF: sub_284A0↑J
+Spell_65_MassDistortion proc far        ; CODE XREF: j_Spell_65_MassDistortion↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -96841,14 +96281,15 @@ sub_4DB2E       proc far                ; CODE XREF: sub_284A0↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DB2E       endp
+Spell_65_MassDistortion endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Enchant Item' (id 66, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DB59       proc far                ; CODE XREF: sub_28487↑J
+Spell_66_EnchantItem proc far           ; CODE XREF: j_Spell_66_EnchantItem↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -96881,18 +96322,19 @@ var_2           = word ptr -2
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
-loc_4DB9A:                              ; CODE XREF: sub_4DB59+15↑j
+loc_4DB9A:                              ; CODE XREF: Spell_66_EnchantItem+15↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4DB59       endp
+Spell_66_EnchantItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Incinerate' (id 67, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DB9E       proc far                ; CODE XREF: sub_284AF↑J
+Spell_67_Incinerate proc far            ; CODE XREF: j_Spell_67_Incinerate↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0FAh
@@ -96908,14 +96350,15 @@ sub_4DB9E       proc far                ; CODE XREF: sub_284AF↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DB9E       endp
+Spell_67_Incinerate endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Elemental Storm' (id 68, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DBC8       proc far                ; CODE XREF: sub_285C7↑J
+Spell_68_ElementalStorm proc far        ; CODE XREF: j_Spell_68_ElementalStorm↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 96h
@@ -96945,17 +96388,18 @@ sub_4DBC8       proc far                ; CODE XREF: sub_285C7↑J
                 call    sub_2865D
                 pop     cx
 
-loc_4DC0E:                              ; CODE XREF: sub_4DBC8+18↑j
+loc_4DC0E:                              ; CODE XREF: Spell_68_ElementalStorm+18↑j
                 pop     bp
                 retf
-sub_4DBC8       endp
+Spell_68_ElementalStorm endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Holy Word' (id 69, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DC10       proc far                ; CODE XREF: sub_284D7↑J
+Spell_69_HolyWord proc far              ; CODE XREF: j_Spell_69_HolyWord↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0
@@ -96971,14 +96415,15 @@ sub_4DC10       proc far                ; CODE XREF: sub_284D7↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DC10       endp
+Spell_69_HolyWord endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Resurrect' (id 70, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DC3B       proc far                ; CODE XREF: sub_28450↑J
+Spell_70_Resurrect proc far             ; CODE XREF: j_Spell_70_Resurrect↑J
 
 var_2           = word ptr -2
 
@@ -97009,7 +96454,7 @@ var_2           = word ptr -2
                 jmp     short loc_4DCBE
 ; ---------------------------------------------------------------------------
 
-loc_4DC6F:                              ; CODE XREF: sub_4DC3B+2C↑j
+loc_4DC6F:                              ; CODE XREF: Spell_70_Resurrect+2C↑j
                 mov     ax, 34h ; '4'
                 push    ax
                 call    sub_1B16B
@@ -97031,7 +96476,7 @@ loc_4DC6F:                              ; CODE XREF: sub_4DC3B+2C↑j
                 jge     short loc_4DC9E
                 mov     byte ptr [si+1Ah], 1
 
-loc_4DC9E:                              ; CODE XREF: sub_4DC3B+5D↑j
+loc_4DC9E:                              ; CODE XREF: Spell_70_Resurrect+5D↑j
                 mov     al, [si+26h]
                 mov     ah, 0
                 add     ax, 5
@@ -97041,28 +96486,29 @@ loc_4DC9E:                              ; CODE XREF: sub_4DC3B+5D↑j
                 jmp     short loc_4DCB9
 ; ---------------------------------------------------------------------------
 
-loc_4DCB1:                              ; CODE XREF: sub_4DC3B+6E↑j
+loc_4DCB1:                              ; CODE XREF: Spell_70_Resurrect+6E↑j
                 mov     al, [si+26h]
                 add     al, 5
                 mov     [si+26h], al
 
-loc_4DCB9:                              ; CODE XREF: sub_4DC3B+74↑j
+loc_4DCB9:                              ; CODE XREF: Spell_70_Resurrect+74↑j
                 call    sub_170F7
 
-loc_4DCBE:                              ; CODE XREF: sub_4DC3B+15↑j
-                                        ; sub_4DC3B+32↑j
+loc_4DCBE:                              ; CODE XREF: Spell_70_Resurrect+15↑j
+                                        ; Spell_70_Resurrect+32↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4DC3B       endp
+Spell_70_Resurrect endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Mega Volts' (id 71, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DCC3       proc far                ; CODE XREF: sub_285A9↑J
+Spell_71_MegaVolts proc far             ; CODE XREF: j_Spell_71_MegaVolts↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 96h
@@ -97078,14 +96524,15 @@ sub_4DCC3       proc far                ; CODE XREF: sub_285A9↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DCC3       endp
+Spell_71_MegaVolts endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Inferno' (id 72, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DCEE       proc far                ; CODE XREF: sub_285D1↑J
+Spell_72_Inferno proc far               ; CODE XREF: j_Spell_72_Inferno↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0FAh
@@ -97101,14 +96548,15 @@ sub_4DCEE       proc far                ; CODE XREF: sub_285D1↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DCEE       endp
+Spell_72_Inferno endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Sun Ray' (id 73, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DD18       proc far                ; CODE XREF: sub_2852C↑J
+Spell_73_SunRay proc far                ; CODE XREF: j_Spell_73_SunRay↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 0C8h
@@ -97124,14 +96572,15 @@ sub_4DD18       proc far                ; CODE XREF: sub_2852C↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DD18       endp
+Spell_73_SunRay endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Implosion' (id 74, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DD43       proc far                ; CODE XREF: sub_2859A↑J
+Spell_74_Implosion proc far             ; CODE XREF: j_Spell_74_Implosion↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 3E8h
@@ -97147,14 +96596,15 @@ sub_4DD43       proc far                ; CODE XREF: sub_2859A↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DD43       endp
+Spell_74_Implosion endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Star Burst' (id 75, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-sub_4DD6E       proc far                ; CODE XREF: sub_2853B↑J
+Spell_75_StarBurst proc far             ; CODE XREF: j_Spell_75_StarBurst↑J
                 push    bp
                 mov     bp, sp
                 mov     word_340B4, 1F4h
@@ -97170,14 +96620,15 @@ sub_4DD6E       proc far                ; CODE XREF: sub_2853B↑J
                 pop     cx
                 pop     bp
                 retf
-sub_4DD6E       endp
+Spell_75_StarBurst endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell effect routine for 'Divine Intervention' (id 76, via spellsDialog's switch)
 ; Attributes: bp-based frame
 
-Spells_divineIntervention proc far      ; CODE XREF: j_Spells_divineIntervention↑J
+Spell_76_DivineIntervention proc far    ; CODE XREF: j_Spell_76_DivineIntervention↑J
 
 var_2           = word ptr -2
 
@@ -97197,18 +96648,18 @@ var_2           = word ptr -2
                 jmp     short loc_4DDC3
 ; ---------------------------------------------------------------------------
 
-loc_4DDB7:                              ; CODE XREF: Spells_divineIntervention+16↑j
+loc_4DDB7:                              ; CODE XREF: Spell_76_DivineIntervention+16↑j
                 mov     bx, word_32E3E
                 mov     al, [bx+26h]
                 add     al, 5
                 mov     [bx+26h], al
 
-loc_4DDC3:                              ; CODE XREF: Spells_divineIntervention+1C↑j
+loc_4DDC3:                              ; CODE XREF: Spell_76_DivineIntervention+1C↑j
                 xor     di, di
                 jmp     short loc_4DE0C
 ; ---------------------------------------------------------------------------
 
-loc_4DDC7:                              ; CODE XREF: Spells_divineIntervention+7A↓j
+loc_4DDC7:                              ; CODE XREF: Spell_76_DivineIntervention+7A↓j
                 mov     ax, di
                 mov     dx, 12Fh
                 imul    dx
@@ -97237,10 +96688,10 @@ loc_4DDC7:                              ; CODE XREF: Spells_divineIntervention+7
                 pop     cx
                 mov     [si+125h], ax
 
-loc_4DE0B:                              ; CODE XREF: Spells_divineIntervention+63↑j
+loc_4DE0B:                              ; CODE XREF: Spell_76_DivineIntervention+63↑j
                 inc     di
 
-loc_4DE0C:                              ; CODE XREF: Spells_divineIntervention+2C↑j
+loc_4DE0C:                              ; CODE XREF: Spell_76_DivineIntervention+2C↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
@@ -97255,7 +96706,7 @@ loc_4DE0C:                              ; CODE XREF: Spells_divineIntervention+2
                 mov     sp, bp
                 pop     bp
                 retf
-Spells_divineIntervention endp
+Spell_76_DivineIntervention endp
 
 ovl11           ends
 
@@ -100937,103 +100388,103 @@ loc_4F952:                              ; CODE XREF: spellsDialog+1FE↑j
 
 loc_4F959:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28527       ; jumptable 0004F954 case 0
+                call    j_Spell_00_Light ; jumptable 0004F954 case 0
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F961:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2845F       ; jumptable 0004F954 case 1
+                call    j_Spell_01_Awaken ; jumptable 0004F954 case 1
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F969:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28554       ; jumptable 0004F954 case 2
+                call    j_Spell_02_FirstAid ; jumptable 0004F954 case 2
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F971:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2854F       ; jumptable 0004F954 case 3
+                call    j_Spell_03_FlyingFist ; jumptable 0004F954 case 3
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F979:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285C2       ; jumptable 0004F954 case 4
+                call    j_Spell_04_DetectMagic ; jumptable 0004F954 case 4
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F981:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285BD       ; jumptable 0004F954 case 5
+                call    j_Spell_05_ElementalArrow ; jumptable 0004F954 case 5
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F989:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285F9       ; jumptable 0004F954 case 6
+                call    j_Spell_06_Revitalize ; jumptable 0004F954 case 6
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F991:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28581       ; jumptable 0004F954 case 7
+                call    j_Spell_07_CureWounds ; jumptable 0004F954 case 7
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F999:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284FF       ; jumptable 0004F954 case 8
+                call    j_Spell_08_Sparks ; jumptable 0004F954 case 8
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9A1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284B9       ; jumptable 0004F954 case 9
+                call    j_Spell_09_EnergyBlast ; jumptable 0004F954 case 9
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9A9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284C3       ; jumptable 0004F954 case 10
+                call    j_Spell_10_Sleep ; jumptable 0004F954 case 10
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9B1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2851D       ; jumptable 0004F954 case 11
+                call    j_Spell_11_Pain ; jumptable 0004F954 case 11
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9B9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2849B       ; jumptable 0004F954 case 12
+                call    j_Spell_12_CreateRope ; jumptable 0004F954 case 12
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9C1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28518       ; jumptable 0004F954 case 13
+                call    j_Spell_13_ToxicCloud ; jumptable 0004F954 case 13
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9C9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284A5       ; jumptable 0004F954 case 14
+                call    j_Spell_14_SuppressPoison ; jumptable 0004F954 case 14
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9D1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28531       ; jumptable 0004F954 case 15
+                call    j_Spell_15_ProtFromElements ; jumptable 0004F954 case 15
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4F9D9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2857C       ; jumptable 0004F954 case 16
+                call    j_Spell_16_TurnUndead ; jumptable 0004F954 case 16
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101046,7 +100497,7 @@ loc_4F9E1:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101066,31 +100517,31 @@ loc_4FA0C:                              ; CODE XREF: spellsDialog+296↑j
 
 loc_4FA14:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284CD       ; jumptable 0004F954 case 18
+                call    j_Spell_18_AcidStream ; jumptable 0004F954 case 18
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA1C:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284BE       ; jumptable 0004F954 case 19
+                call    j_Spell_19_SuppressDisease ; jumptable 0004F954 case 19
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA24:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28536       ; jumptable 0004F954 case 20
+                call    j_Spell_20_Silence ; jumptable 0004F954 case 20
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA2C:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284FA       ; jumptable 0004F954 case 21
+                call    j_Spell_21_Blessed ; jumptable 0004F954 case 21
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA34:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28590       ; jumptable 0004F954 case 22
+                call    j_Spell_22_Levitate ; jumptable 0004F954 case 22
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101103,7 +100554,7 @@ loc_4FA3C:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101123,55 +100574,55 @@ loc_4FA67:                              ; CODE XREF: spellsDialog+2F1↑j
 
 loc_4FA6F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285AE       ; jumptable 0004F954 case 24
+                call    j_Spell_24_IdentifyMonster ; jumptable 0004F954 case 24
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA77:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28504       ; jumptable 0004F954 case 25
+                call    j_Spell_25_HolyBonus ; jumptable 0004F954 case 25
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA7F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284F0       ; jumptable 0004F954 case 26
+                call    j_Spell_26_PowerCure ; jumptable 0004F954 case 26
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA87:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285F4       ; jumptable 0004F954 case 27
+                call    j_Spell_27_NatureSCure ; jumptable 0004F954 case 27
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA8F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28469       ; jumptable 0004F954 case 28
+                call    j_Spell_28_LightningBolt ; jumptable 0004F954 case 28
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA97:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285EA       ; jumptable 0004F954 case 29
+                call    j_Spell_29_Immobilize ; jumptable 0004F954 case 29
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FA9F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28568       ; jumptable 0004F954 case 30
+                call    j_Spell_30_Heroism ; jumptable 0004F954 case 30
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FAA7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28559       ; jumptable 0004F954 case 31
+                call    j_Spell_31_WalkOnWater ; jumptable 0004F954 case 31
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FAAF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28478       ; jumptable 0004F954 case 32
+                call    j_Spell_32_FrostBite ; jumptable 0004F954 case 32
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101184,7 +100635,7 @@ loc_4FAB7:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101204,43 +100655,43 @@ loc_4FAE2:                              ; CODE XREF: spellsDialog+36C↑j
 
 loc_4FAEA:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2850E       ; jumptable 0004F954 case 34
+                call    j_Spell_34_PowerShield ; jumptable 0004F954 case 34
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FAF2:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285B8       ; jumptable 0004F954 case 35
+                call    j_Spell_35_CurePoison ; jumptable 0004F954 case 35
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FAFA:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2856D       ; jumptable 0004F954 case 36
+                call    j_Spell_36_Fireball ; jumptable 0004F954 case 36
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB02:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285FE       ; jumptable 0004F954 case 37
+                call    j_Spell_37_DetectMonster ; jumptable 0004F954 case 37
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB0A:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284B4       ; jumptable 0004F954 case 38
+                call    j_Spell_38_AcidSpray ; jumptable 0004F954 case 38
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB12:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2846E       ; jumptable 0004F954 case 39
+                call    j_Spell_39_ColdRay ; jumptable 0004F954 case 39
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB1A:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285EF       ; jumptable 0004F954 case 40
+                call    j_Spell_40_CureDisease ; jumptable 0004F954 case 40
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101253,7 +100704,7 @@ loc_4FB22:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101273,19 +100724,19 @@ loc_4FB4D:                              ; CODE XREF: spellsDialog+3D7↑j
 
 loc_4FB55:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284AA       ; jumptable 0004F954 case 42
+                call    j_Spell_42_TimeDistortion ; jumptable 0004F954 case 42
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB5D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285B3       ; jumptable 0004F954 case 43
+                call    j_Spell_43_FeebleMind ; jumptable 0004F954 case 43
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FB65:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285E5       ; jumptable 0004F954 case 44
+                call    j_Spell_44_DeadlySwarm ; jumptable 0004F954 case 44
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101298,7 +100749,7 @@ loc_4FB6D:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101318,25 +100769,25 @@ loc_4FB98:                              ; CODE XREF: spellsDialog+422↑j
 
 loc_4FBA0:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2847D       ; jumptable 0004F954 case 46
+                call    j_Spell_46_FingerOfDeath ; jumptable 0004F954 case 46
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FBA8:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28455       ; jumptable 0004F954 case 47
+                call    j_Spell_47_CureParalysis ; jumptable 0004F954 case 47
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FBB0:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285A4       ; jumptable 0004F954 case 48
+                call    j_Spell_48_Paralyze ; jumptable 0004F954 case 48
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FBB8:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284E6       ; jumptable 0004F954 case 49
+                call    j_Spell_49_DragonBreath ; jumptable 0004F954 case 49
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101349,7 +100800,7 @@ loc_4FBC0:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101369,13 +100820,13 @@ loc_4FBEB:                              ; CODE XREF: spellsDialog+475↑j
 
 loc_4FBF3:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2859F       ; jumptable 0004F954 case 51
+                call    j_Spell_51_FieryFlail ; jumptable 0004F954 case 51
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FBFB:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28491       ; jumptable 0004F954 case 52
+                call    j_Spell_52_CreateFood ; jumptable 0004F954 case 52
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101388,7 +100839,7 @@ loc_4FC03:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101408,43 +100859,43 @@ loc_4FC2D:                              ; CODE XREF: spellsDialog+4B8↑j
 
 loc_4FC35:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2858B       ; jumptable 0004F954 case 54
+                call    j_Spell_54_StoneToFlesh ; jumptable 0004F954 case 54
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC3D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285D6       ; jumptable 0004F954 case 55
+                call    j_Spell_55_RechargeItem ; jumptable 0004F954 case 55
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC45:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284D2       ; jumptable 0004F954 case 56
+                call    j_Spell_56_FantasticFreeze ; jumptable 0004F954 case 56
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC4D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285E0       ; jumptable 0004F954 case 57
+                call    j_Spell_57_Duplication ; jumptable 0004F954 case 57
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC55:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28496       ; jumptable 0004F954 case 58
+                call    j_Spell_58_Disintegrate ; jumptable 0004F954 case 58
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC5D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28563       ; jumptable 0004F954 case 59
+                call    j_Spell_59_RaiseDead ; jumptable 0004F954 case 59
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FC65:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28513       ; jumptable 0004F954 case 60
+                call    j_Spell_60_HalfForMe ; jumptable 0004F954 case 60
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101457,7 +100908,7 @@ loc_4FC6D:                              ; CODE XREF: spellsDialog+205↑j
                 mov     ah, 0
                 push    ax
                 push    word_32E3E
-                call    sub_28577
+                call    j_Spell_sharedHandler
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 0
@@ -101484,91 +100935,91 @@ loc_4FCA7:                              ; CODE XREF: spellsDialog+522↑j
 
 loc_4FCAF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2845A       ; jumptable 0004F954 case 62
+                call    j_Spell_62_DancingSword ; jumptable 0004F954 case 62
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCB7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284EB       ; jumptable 0004F954 case 63
+                call    j_Spell_63_PrismaticLight ; jumptable 0004F954 case 63
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCBF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28473       ; jumptable 0004F954 case 64
+                call    j_Spell_64_MoonRay ; jumptable 0004F954 case 64
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCC7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284A0       ; jumptable 0004F954 case 65
+                call    j_Spell_65_MassDistortion ; jumptable 0004F954 case 65
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCCF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28487       ; jumptable 0004F954 case 66
+                call    j_Spell_66_EnchantItem ; jumptable 0004F954 case 66
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCD7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284AF       ; jumptable 0004F954 case 67
+                call    j_Spell_67_Incinerate ; jumptable 0004F954 case 67
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCDF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285C7       ; jumptable 0004F954 case 68
+                call    j_Spell_68_ElementalStorm ; jumptable 0004F954 case 68
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCE7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_284D7       ; jumptable 0004F954 case 69
+                call    j_Spell_69_HolyWord ; jumptable 0004F954 case 69
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCEF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_28450       ; jumptable 0004F954 case 70
+                call    j_Spell_70_Resurrect ; jumptable 0004F954 case 70
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCF7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285A9       ; jumptable 0004F954 case 71
+                call    j_Spell_71_MegaVolts ; jumptable 0004F954 case 71
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FCFF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_285D1       ; jumptable 0004F954 case 72
+                call    j_Spell_72_Inferno ; jumptable 0004F954 case 72
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FD07:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2852C       ; jumptable 0004F954 case 73
+                call    j_Spell_73_SunRay ; jumptable 0004F954 case 73
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FD0F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2859A       ; jumptable 0004F954 case 74
+                call    j_Spell_74_Implosion ; jumptable 0004F954 case 74
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FD17:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    sub_2853B       ; jumptable 0004F954 case 75
+                call    j_Spell_75_StarBurst ; jumptable 0004F954 case 75
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
 loc_4FD1F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
-                call    j_Spells_divineIntervention ; jumptable 0004F954 case 76
+                call    j_Spell_76_DivineIntervention ; jumptable 0004F954 case 76
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101807,91 +101258,91 @@ loc_4FF6F:                              ; CODE XREF: castItemSpell+A↑j
 
 loc_4FF76:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28527       ; jumptable 0004FF71 case 1
+                call    j_Spell_00_Light ; jumptable 0004FF71 case 1
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FF7E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2845F       ; jumptable 0004FF71 case 2
+                call    j_Spell_01_Awaken ; jumptable 0004FF71 case 2
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FF86:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285C2       ; jumptable 0004FF71 case 3
+                call    j_Spell_04_DetectMagic ; jumptable 0004FF71 case 3
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FF8E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285BD       ; jumptable 0004FF71 case 4
+                call    j_Spell_05_ElementalArrow ; jumptable 0004FF71 case 4
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FF96:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28554       ; jumptable 0004FF71 case 5
+                call    j_Spell_02_FirstAid ; jumptable 0004FF71 case 5
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FF9E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2854F       ; jumptable 0004FF71 case 6
+                call    j_Spell_03_FlyingFist ; jumptable 0004FF71 case 6
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFA6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284B9       ; jumptable 0004FF71 case 7
+                call    j_Spell_09_EnergyBlast ; jumptable 0004FF71 case 7
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFAE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284C3       ; jumptable 0004FF71 case 8
+                call    j_Spell_10_Sleep ; jumptable 0004FF71 case 8
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFB6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285F9       ; jumptable 0004FF71 case 9
+                call    j_Spell_06_Revitalize ; jumptable 0004FF71 case 9
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFBE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28581       ; jumptable 0004FF71 case 10
+                call    j_Spell_07_CureWounds ; jumptable 0004FF71 case 10
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFC6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284FF       ; jumptable 0004FF71 case 11
+                call    j_Spell_08_Sparks ; jumptable 0004FF71 case 11
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFCE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2849B       ; jumptable 0004FF71 case 12
+                call    j_Spell_12_CreateRope ; jumptable 0004FF71 case 12
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFD6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28518       ; jumptable 0004FF71 case 13
+                call    j_Spell_13_ToxicCloud ; jumptable 0004FF71 case 13
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFDE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28531       ; jumptable 0004FF71 case 14
+                call    j_Spell_15_ProtFromElements ; jumptable 0004FF71 case 14
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_4FFE6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2851D       ; jumptable 0004FF71 case 15
+                call    j_Spell_11_Pain ; jumptable 0004FF71 case 15
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101910,19 +101361,19 @@ loc_4FFFB:                              ; CODE XREF: castItemSpell+93↑j
 
 loc_50003:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284CD       ; jumptable 0004FF71 case 17
+                call    j_Spell_18_AcidStream ; jumptable 0004FF71 case 17
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5000B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2857C       ; jumptable 0004FF71 case 18
+                call    j_Spell_16_TurnUndead ; jumptable 0004FF71 case 18
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50013:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28590       ; jumptable 0004FF71 case 19
+                call    j_Spell_22_Levitate ; jumptable 0004FF71 case 19
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101941,43 +101392,43 @@ loc_50028:                              ; CODE XREF: castItemSpell+C0↑j
 
 loc_50030:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28536       ; jumptable 0004FF71 case 21
+                call    j_Spell_20_Silence ; jumptable 0004FF71 case 21
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50038:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284FA       ; jumptable 0004FF71 case 22
+                call    j_Spell_21_Blessed ; jumptable 0004FF71 case 22
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50040:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285AE       ; jumptable 0004FF71 case 23
+                call    j_Spell_24_IdentifyMonster ; jumptable 0004FF71 case 23
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50048:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28469       ; jumptable 0004FF71 case 24
+                call    j_Spell_28_LightningBolt ; jumptable 0004FF71 case 24
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50050:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28504       ; jumptable 0004FF71 case 25
+                call    j_Spell_25_HolyBonus ; jumptable 0004FF71 case 25
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50058:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284F0       ; jumptable 0004FF71 case 26
+                call    j_Spell_26_PowerCure ; jumptable 0004FF71 case 26
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50060:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285F4       ; jumptable 0004FF71 case 27
+                call    j_Spell_27_NatureSCure ; jumptable 0004FF71 case 27
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101996,79 +101447,79 @@ loc_50075:                              ; CODE XREF: castItemSpell+10D↑j
 
 loc_5007D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2850E       ; jumptable 0004FF71 case 29
+                call    j_Spell_34_PowerShield ; jumptable 0004FF71 case 29
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50085:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28568       ; jumptable 0004FF71 case 30
+                call    j_Spell_30_Heroism ; jumptable 0004FF71 case 30
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5008D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285EA       ; jumptable 0004FF71 case 31
+                call    j_Spell_29_Immobilize ; jumptable 0004FF71 case 31
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50095:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28559       ; jumptable 0004FF71 case 32
+                call    j_Spell_31_WalkOnWater ; jumptable 0004FF71 case 32
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5009D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28478       ; jumptable 0004FF71 case 33
+                call    j_Spell_32_FrostBite ; jumptable 0004FF71 case 33
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500A5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285FE       ; jumptable 0004FF71 case 34
+                call    j_Spell_37_DetectMonster ; jumptable 0004FF71 case 34
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500AD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2856D       ; jumptable 0004FF71 case 35
+                call    j_Spell_36_Fireball ; jumptable 0004FF71 case 35
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500B5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2846E       ; jumptable 0004FF71 case 36
+                call    j_Spell_39_ColdRay ; jumptable 0004FF71 case 36
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500BD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285B8       ; jumptable 0004FF71 case 37
+                call    j_Spell_35_CurePoison ; jumptable 0004FF71 case 37
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500C5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284B4       ; jumptable 0004FF71 case 38
+                call    j_Spell_38_AcidSpray ; jumptable 0004FF71 case 38
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500CD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284AA       ; jumptable 0004FF71 case 39
+                call    j_Spell_42_TimeDistortion ; jumptable 0004FF71 case 39
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500D5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285B3       ; jumptable 0004FF71 case 40
+                call    j_Spell_43_FeebleMind ; jumptable 0004FF71 case 40
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_500DD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285EF       ; jumptable 0004FF71 case 41
+                call    j_Spell_40_CureDisease ; jumptable 0004FF71 case 41
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -102100,25 +101551,25 @@ loc_50107:                              ; CODE XREF: castItemSpell+19F↑j
 
 loc_5010F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2847D       ; jumptable 0004FF71 case 44
+                call    j_Spell_46_FingerOfDeath ; jumptable 0004FF71 case 44
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50117:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28455       ; jumptable 0004FF71 case 45
+                call    j_Spell_47_CureParalysis ; jumptable 0004FF71 case 45
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5011F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285A4       ; jumptable 0004FF71 case 46
+                call    j_Spell_48_Paralyze ; jumptable 0004FF71 case 46
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50127:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285E5       ; jumptable 0004FF71 case 47
+                call    j_Spell_44_DeadlySwarm ; jumptable 0004FF71 case 47
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -102137,31 +101588,31 @@ loc_5013B:                              ; CODE XREF: castItemSpell+1D4↑j
 
 loc_50143:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284E6       ; jumptable 0004FF71 case 49
+                call    j_Spell_49_DragonBreath ; jumptable 0004FF71 case 49
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5014B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28491       ; jumptable 0004FF71 case 50
+                call    j_Spell_52_CreateFood ; jumptable 0004FF71 case 50
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50153:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2859F       ; jumptable 0004FF71 case 51
+                call    j_Spell_51_FieryFlail ; jumptable 0004FF71 case 51
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5015B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285D6       ; jumptable 0004FF71 case 52
+                call    j_Spell_55_RechargeItem ; jumptable 0004FF71 case 52
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50163:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284D2       ; jumptable 0004FF71 case 53
+                call    j_Spell_56_FantasticFreeze ; jumptable 0004FF71 case 53
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -102180,31 +101631,31 @@ loc_50177:                              ; CODE XREF: castItemSpell+210↑j
 
 loc_5017F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2858B       ; jumptable 0004FF71 case 55
+                call    j_Spell_54_StoneToFlesh ; jumptable 0004FF71 case 55
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50187:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285E0       ; jumptable 0004FF71 case 56
+                call    j_Spell_57_Duplication ; jumptable 0004FF71 case 56
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5018F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28496       ; jumptable 0004FF71 case 57
+                call    j_Spell_58_Disintegrate ; jumptable 0004FF71 case 57
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50197:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28513       ; jumptable 0004FF71 case 58
+                call    j_Spell_60_HalfForMe ; jumptable 0004FF71 case 58
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5019F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28563       ; jumptable 0004FF71 case 59
+                call    j_Spell_59_RaiseDead ; jumptable 0004FF71 case 59
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -102229,91 +101680,91 @@ loc_501BA:                              ; CODE XREF: castItemSpell+24C↑j
 
 loc_501C1:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2845A       ; jumptable 0004FF71 case 61
+                call    j_Spell_62_DancingSword ; jumptable 0004FF71 case 61
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501C8:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28473       ; jumptable 0004FF71 case 62
+                call    j_Spell_64_MoonRay ; jumptable 0004FF71 case 62
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501CF:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284A0       ; jumptable 0004FF71 case 63
+                call    j_Spell_65_MassDistortion ; jumptable 0004FF71 case 63
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501D6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284EB       ; jumptable 0004FF71 case 64
+                call    j_Spell_63_PrismaticLight ; jumptable 0004FF71 case 64
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501DD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28487       ; jumptable 0004FF71 case 65
+                call    j_Spell_66_EnchantItem ; jumptable 0004FF71 case 65
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501E4:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284AF       ; jumptable 0004FF71 case 66
+                call    j_Spell_67_Incinerate ; jumptable 0004FF71 case 66
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501EB:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_284D7       ; jumptable 0004FF71 case 67
+                call    j_Spell_69_HolyWord ; jumptable 0004FF71 case 67
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501F2:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_28450       ; jumptable 0004FF71 case 68
+                call    j_Spell_70_Resurrect ; jumptable 0004FF71 case 68
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_501F9:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285C7       ; jumptable 0004FF71 case 69
+                call    j_Spell_68_ElementalStorm ; jumptable 0004FF71 case 69
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50200:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285A9       ; jumptable 0004FF71 case 70
+                call    j_Spell_71_MegaVolts ; jumptable 0004FF71 case 70
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50207:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_285D1       ; jumptable 0004FF71 case 71
+                call    j_Spell_72_Inferno ; jumptable 0004FF71 case 71
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5020E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2852C       ; jumptable 0004FF71 case 72
+                call    j_Spell_73_SunRay ; jumptable 0004FF71 case 72
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50215:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2859A       ; jumptable 0004FF71 case 73
+                call    j_Spell_74_Implosion ; jumptable 0004FF71 case 73
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_5021C:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    sub_2853B       ; jumptable 0004FF71 case 74
+                call    j_Spell_75_StarBurst ; jumptable 0004FF71 case 74
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
 loc_50223:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
-                call    j_Spells_divineIntervention ; jumptable 0004FF71 case 75
+                call    j_Spell_76_DivineIntervention ; jumptable 0004FF71 case 75
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
