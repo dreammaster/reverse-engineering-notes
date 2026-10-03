@@ -4,7 +4,7 @@ import struct
 import sys
 
 CLASSES = ["Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber", "Ninja", "Barbarian", "Druid", "Ranger"]
-RACES = ["Human", "Elf", "Dwarf", "Gnome", "Half-orc"]
+RACES = ["Human", "Elf", "Gnome", "Dwarf", "Half-orc"]
 SEX = ["Male", "Female"]
 ALIGN = ["Good", "Neutral", "Evil"]
 d = open(sys.argv[1], "rb").read()
