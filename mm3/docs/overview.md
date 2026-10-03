@@ -49,7 +49,7 @@ named in `names/mm3.tsv` (`BASE_HP_BY_CLASS`, `STAT_VALUES`, `AGE_RANGES`, ...).
 
 The full character record (303 bytes) is in `character.h` and as a `Character` struct in the database
 (`ida_scripts/apply_structs.py`).  Compared with Xeen it is the same layout up to the skills (`27h`), then: only 26 award
-bytes (`39h`), 36 spells (`53h`), the inventory is 18 slots stored as six parallel byte arrays 19 bytes apart
+bytes (`39h`), 36 learned-spell flags (`53h`, indexed by position in the class school list; the game has 77 spells, see spells.md), the inventory is 18 slots stored as six parallel byte arrays 19 bytes apart
 (`7Dh` present, `90h` flags, `0A3h` elemental material, `0B6h` metal, `0C9h` attribute material, `0DCh` item id), conditions
 at `113h`, hit points `125h`, spell points `127h`, birth year `129h`, experience `12Bh`.
 
