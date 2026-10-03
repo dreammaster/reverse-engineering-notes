@@ -4369,6 +4369,16 @@ earlier note said) become floor(units / d) of the other ore, d = 10/5/4/2 at Che
 <80/>=80/>=95/>=110. Chapter 3 has no transmutation (its ore economy is replaced by the artifact
 quest). `partyRestorativeForItem`, `partyUseRestorative`, `partyTransmuteOre`.
 
+**Chapter 2's quest relics (2026-10-03, `src23/relics.c`)**: `DispatchItemAbilityCommand`
+(item ids `0x242`-`0x2C8`, reached from `HandleGameCommand`'s fall-through) is the relic cluster. The
+four charge-gated relics need global flag `0xB1` (the "recharge" flag; otherwise "PATIENCE IS A
+VIRTUE."): `0x246` +5000 NUORE, `0x247` +5000 MAGIC ORE, `0x248` mass heal and **overheal** (clears every
+status above the low six -- including Dead -- and sets HP and MP to *twice* their maxima, 16-bit),
+`0x249` instant kill of the engaged monster (combat only). `0x258` is a potion that works only on map
+cell (104, 110), where it sets global flag `0x48`; `0x2C8` completes a quest when items
+`0x254`-`0x257` are all carried (it consumes them and hands over `0x258`) -- that last one needs the
+inventory range check (`IsItemRangeAvailable`) and isn't modeled. Chapter 3 has none of these.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
