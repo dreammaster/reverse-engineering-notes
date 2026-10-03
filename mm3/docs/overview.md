@@ -6,23 +6,32 @@ hand-picked second tier marked "unverified" in the comment), the Borland runtime
 
 ## Where things are
 
-| Segment | Observed content |
+| Segment | Content |
 |---|---|
 | `seg000` | Borland C runtime (stdio, conio, time, dos wrappers) |
-| `seg002`-`seg004` | game core: `getStat`/`getAge`/`conditionMod` (`16FB1`, `16E14`, `1918F`), a 6.7 KB event interpreter `runMazeEvent` (`19608`), maze/automap code |
-| `seg005`, `seg006` | single 8 KB routines (`1E407`, `2045A`) |
-| `seg007` | video/sound helpers + a 9 KB data blob (`22B30-24ECC`) |
-| `seg008` | resource/file helpers (`fileExists`, `timeToString`, ...) |
-| `ovl01` | monsters' combat code (`monstersAttack`, `stopAttack`), intro (`388A9`), `.CC` open (`37EB2`) |
-| `ovl02` | one 8.8 KB routine (`3998B`) |
-| `ovl03` | party time (`subPartyTime`), maze movement (`3C282`, 2.6 KB), `3D32E` (976 B) |
-| `ovl04` | bank interest, arena (`3E113`), death (`3E982`) |
-| `ovl05` | awards, roster (`sortParty`, `copyPartyToRoster`), roster menu (`40AAC`) |
-| `ovl06` | experience tables (`nextExperienceLevel`, `experienceToNextLevel`, `getCurrentExperience`), rest, control panel |
-| `ovl07` | `giveCharDamage`, map loading (`43698`), dismiss |
-| `ovl08` | character creation (`46E49`), class checks, level-up teaching |
-| `ovl09`-`ovl10` | town buildings (bank, guild, inn, tavern, training, smithy), combat helpers (`4A130 attack`, `4AB68 doMonsterTurn`, ...) |
-| `ovl11`-`ovl13` | items dialog, spells (`Spells_*`), `getMaxSP`/`getMaxHP`/`getArmorClass` |
+| `seg001` | `_main` (`14BE3`, copy-protection junk in the prologue) |
+| `seg002` | game core: `addTime`/`changeTime`, `statBonus`, `getAge`, `itemScan`, `getStat`, `getCurrentLevel`, `drawParty`, rendering helpers |
+| `seg003` | `subtractHitPoints`, `conditionMod`, `runMazeEvent` (event interpreter, `19608`), `moveMonsters` |
+| `seg004` | maze page access (`mazeGetWordRel`, `mazeSetBits`, ...), `drawView` (`1B669`), `prepareIndoorView` (`1C195`), `renderIndoorView` (`1E407`, 8 KB) |
+| `seg005`/`seg006` | `renderIndoorView` / `renderOutdoorView` (one 8 KB routine each), `drawViewOutdoors` |
+| `seg007` | wrappers into the video module (`vdrv_*`), `rnd`, bit helpers, a 9 KB data blob |
+| `seg008` | file/resource layer (`ccOpen`, `loadResourceByName`, `loadSavedGame`, `readSaveHeader`, `loadMonsterData`), `getCommand` (input), `currentTime` |
+| `seg009`-`seg011` | overlay manager |
+| `stub01`-`stub13` | overlay thunks |
+| `ovl01` | monsters' combat (`monstersAttack`, `stopAttack`), `introSequence`, `openMm3Cc`, equipment (`equipItem`) |
+| `ovl02` | `endingCutscene` (8.8 KB) |
+| `ovl03` | `subPartyTime`, `giveTake`, `setValue`, `ifProc` |
+| `ovl04` | `exploreLoop` (`3E982`, main command loop), `resetTemps`, `GiveBankInterest`, `arenaEvent`, `showJoke`, `trapOrLockEvent` |
+| `ovl05` | awards, roster (`sortParty`, `copyPartyToRoster`, `rosterMenu`), `showMessage`, `setButtons_*` |
+| `ovl06` | experience tables, `rest`, `controlPanel`, `loadSaveDialog`, `confirmDialog` |
+| `ovl07` | `giveCharDamage`, `Map_load`, `giveTreasure`, `dismissCharacter` |
+| `ovl08` | `createCharacter`, `checkClasses`, `trainCharacter` |
+| `ovl09` | town buildings (bank, guild, inn, tavern, temple, training, smithy) |
+| `ovl10` | combat (`attack`, `doMonsterTurn`, `charSavingThrow`, `doCharDamage`, `hitMonster`, `getWeaponDamage`, `nextChar`, `quickFight`, `run`, `setSpeedTable`, `doCombat`) |
+| `ovl11` | the ~70 spell effect routines (`Spell_NN_Name`) |
+| `ovl12` | items dialog, `spellsDialog` (`4F74F`), `getThievery`, `bash` (`4EFB6`) |
+| `ovl13` | `castItemSpell`, character stat screens, `getMaxSP`/`getMaxHP`/`getArmorClass`/`statColor` |
+| `vdrv` | the video/draw module of `MM3.CC` (member 8F99h), added by `load_driver.py` |
 
 ## Facts established by reading code
 
