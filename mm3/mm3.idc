@@ -645,29 +645,28 @@ static Bytes_0(void) {
 	create_insn	(x=0X103A9);
 	op_stkvar	(x,	0);
 	set_cmt	(0X103AE,	"switch 7 cases",	0);
-	set_cmt	(0X103B3,	"switch 7 cases ",	0);
 	create_insn	(x=0X103B8);
 	op_hex		(x,	1);
 	set_cmt	(0X103BA,	"switch jump",	0);
 	create_insn	(x=0X103BA);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	set_cmt	(0X103BF,	"jumptable 00011CFE case 0",	1);
+	set_cmt	(0X103BF,	"jumptable 000103BA case 7",	1);
 	create_insn	(0X103BF);
-	set_cmt	(0X103C8,	"jumptable 00011CFE case 1",	1);
+	set_cmt	(0X103C8,	"jumptable 000103BA case 8",	1);
 	create_insn	(0X103C8);
 	create_insn	(x=0X103CD);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X103D2);
 	op_stkvar	(x,	0);
-	set_cmt	(0X103D7,	"jumptable 00011CFE case 6",	1);
+	set_cmt	(0X103D7,	"jumptable 000103BA case 13",	1);
 	create_insn	(0X103D7);
 	create_insn	(x=0X103DC);
 	op_stkvar	(x,	0);
-	set_cmt	(0X103E1,	"jumptable 00011CFE case 3",	1);
+	set_cmt	(0X103E1,	"jumptable 000103BA case 10",	1);
 	create_insn	(x=0X103E1);
 	op_stkvar	(x,	0);
-	set_cmt	(0X103E6,	"jumptable 00011CFE default case",	1);
+	set_cmt	(0X103E6,	"jumptable 000103BA default case, cases 9,11,12",	1);
 	create_insn	(0X103E6);
 	set_name	(0X103E6,	"def_103BA");
 	create_insn	(x=0X103FA);
@@ -2176,8 +2175,8 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X11D3F);
 	create_insn	(0X11D54);
-	set_cmt	(0X11D74,	"whence",	0);
-	set_cmt	(0X11D76,	"offset",	0);
+	set_cmt	(0X11D74,	"offset",	0);
+	set_cmt	(0X11D76,	"stream",	0);
 	create_insn	(x=0X11D7C);
 	op_hex		(x,	1);
 	create_insn	(x=0X11D7F);
@@ -3416,10 +3415,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X13063);
 	op_stkvar	(x,	0);
-	set_cmt	(0X13066,	"len",	0);
+	set_cmt	(0X13066,	"buf",	0);
 	create_insn	(x=0X13066);
 	op_stkvar	(x,	0);
-	set_cmt	(0X13069,	"buf",	0);
+	set_cmt	(0X13069,	"handle",	0);
 	create_insn	(x=0X13069);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X13071);
@@ -3442,8 +3441,8 @@ static Bytes_0(void) {
 	set_cmt	(0X130AD,	"len",	0);
 	create_insn	(x=0X130B2);
 	op_stkvar	(x,	1);
-	set_cmt	(0X130B5,	"len",	0);
-	set_cmt	(0X130B6,	"buf",	0);
+	set_cmt	(0X130B5,	"buf",	0);
+	set_cmt	(0X130B6,	"handle",	0);
 	create_insn	(x=0X130B6);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X130BE);
@@ -4849,10 +4848,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X14B96);
 	op_stkvar	(x,	1);
 	set_cmt	(0X14B99,	"value",	0);
-	set_cmt	(0X14B9A,	"value",	0);
+	set_cmt	(0X14B9A,	"length",	0);
 	create_insn	(x=0X14B9A);
 	op_stkvar	(x,	0);
-	set_cmt	(0X14B9D,	"length",	0);
 	create_insn	(x=0X14B9D);
 	op_stkvar	(x,	0);
 	set_cmt	(0X14BA0,	"dest",	0);
@@ -4933,6 +4931,7 @@ static Bytes_0(void) {
 	create_insn	(0X14D13);
 	set_cmt	(0X14D1B,	"jumptable 00014CF6 case 4",	1);
 	create_insn	(0X14D1B);
+	set_cmt	(0X14D23,	"jumptable 00014CF6 default case",	1);
 	create_insn	(0X14D23);
 	set_name	(0X14D23,	"def_14CF6");
 	create_insn	(0X14D2B);
@@ -4961,6 +4960,7 @@ static Bytes_0(void) {
 	create_insn	(0X14D9C);
 	set_cmt	(0X14DA3,	"jumptable 00014D3D case 6",	1);
 	create_insn	(0X14DA3);
+	set_cmt	(0X14DAA,	"jumptable 00014D3D default case",	1);
 	create_insn	(0X14DAA);
 	set_name	(0X14DAA,	"def_14D3D");
 	create_insn	(0X14DB2);
@@ -5126,16 +5126,16 @@ static Bytes_0(void) {
 	create_insn	(0X15282);
 	create_insn	(0X1528A);
 	create_insn	(0X15296);
-	set_cmt	(0X152AB,	"switch 17 cases ",	0);
+	set_cmt	(0X152AB,	"switch 17 cases",	0);
 	create_insn	(x=0X152B0);
 	op_hex		(x,	1);
 	set_cmt	(0X152B2,	"switch jump",	0);
 	create_insn	(x=0X152B2);
 	op_plain_offset	(x,	0,	0X15230);
 	op_plain_offset	(x,	128,	0X15230);
-	set_cmt	(0X152B7,	"jumptable 0003219D cases 0-10,16",	1);
+	set_cmt	(0X152B7,	"jumptable 000152B2 cases 0-10,16",	1);
 	create_insn	(0X152B7);
-	set_cmt	(0X152BE,	"jumptable 0003219D default case",	1);
+	set_cmt	(0X152BE,	"jumptable 000152B2 default case, cases 11-15",	1);
 	create_insn	(0X152BE);
 	set_name	(0X152BE,	"def_152B2");
 	create_insn	(0X152C8);
@@ -5315,14 +5315,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15626);
 	op_hex		(x,	1);
-	create_insn	(x=0X15636);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X1563F);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X15648);
-	op_hex		(x,	1);
-	create_insn	(x=0X1564F);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -5332,6 +5324,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15636);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1563F);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X15648);
+	op_hex		(x,	1);
+	create_insn	(x=0X1564F);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X15652);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15658);
@@ -5995,47 +5995,44 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X16FBE);
 	op_stkvar	(x,	1);
-	set_cmt	(0X16FC3,	"switch 7 cases ",	0);
+	set_cmt	(0X16FC3,	"switch 7 cases",	0);
 	create_insn	(x=0X16FCB);
 	op_hex		(x,	1);
 	set_cmt	(0X16FCD,	"switch jump",	0);
 	create_insn	(x=0X16FCD);
 	op_plain_offset	(x,	0,	0X15230);
 	op_plain_offset	(x,	128,	0X15230);
-	set_cmt	(0X16FD2,	"jumptable 0002BBAF case 0",	1);
+	set_cmt	(0X16FD2,	"jumptable 00016FCD case 0",	1);
 	create_insn	(x=0X16FD2);
 	op_stkvar	(x,	1);
-	set_cmt	(0X16FE7,	"jumptable 0002BBAF case 1",	1);
+	set_cmt	(0X16FE7,	"jumptable 00016FCD case 1",	1);
 	create_insn	(x=0X16FE7);
 	op_stkvar	(x,	1);
-	set_cmt	(0X16FF8,	"jumptable 0002BBAF case 2",	1);
+	set_cmt	(0X16FF8,	"jumptable 00016FCD case 2",	1);
 	create_insn	(x=0X16FF8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1700B);
 	op_stkvar	(x,	0);
-	set_cmt	(0X17012,	"jumptable 0002BBAF case 3",	1);
+	set_cmt	(0X17012,	"jumptable 00016FCD case 3",	1);
 	create_insn	(x=0X17012);
 	op_stkvar	(x,	1);
-	set_cmt	(0X17023,	"jumptable 0002BBAF case 4",	1);
+	set_cmt	(0X17023,	"jumptable 00016FCD case 4",	1);
 	create_insn	(x=0X17023);
 	op_stkvar	(x,	1);
-	set_cmt	(0X17034,	"jumptable 0002BBAF case 5",	1);
+	set_cmt	(0X17034,	"jumptable 00016FCD case 5",	1);
 	create_insn	(x=0X17034);
 	op_stkvar	(x,	1);
-	set_cmt	(0X17045,	"jumptable 0002BBAF case 6",	1);
+	set_cmt	(0X17045,	"jumptable 00016FCD case 6",	1);
 	create_insn	(x=0X17045);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17058);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1705D,	"jumptable 0002BBAF default case",	1);
+	set_cmt	(0X1705D,	"jumptable 00016FCD default case",	1);
 	create_insn	(x=0X1705D);
 	op_stkvar	(x,	0);
 	set_name	(0X1705D,	"def_16FCD");
-	set_cmt	(0X17063,	"int",	0);
-	set_cmt	(0X17065,	"int",	0);
 	create_insn	(x=0X17066);
 	op_stkvar	(x,	0);
-	set_cmt	(0X17069,	"ps",	0);
 	create_insn	(x=0X17069);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X17070);
@@ -6058,25 +6055,20 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17099);
 	op_hex		(x,	1);
-	set_cmt	(0X1709B,	"p2",	0);
-	set_cmt	(0X170A3,	"itemId",	0);
 	create_insn	(x=0X170A3);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X170A6);
 	op_stkvar	(x,	0);
-	set_cmt	(0X170A9,	"pChar",	0);
 	create_insn	(x=0X170A9);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X170B0);
 	op_hex		(x,	1);
 	create_insn	(x=0X170B9);
 	op_stkvar	(x,	0);
-	set_cmt	(0X170BF,	"attrib",	0);
 	create_insn	(x=0X170BF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X170C2);
 	op_stkvar	(x,	0);
-	set_cmt	(0X170C5,	"ps",	0);
 	create_insn	(x=0X170C5);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X170CD);
@@ -6766,29 +6758,16 @@ static Bytes_1(void) {
 	set_name	(0X190C9,	"highlightChar");
 	create_insn	(x=0X190D0);
 	op_stkvar	(x,	1);
-	set_cmt	(0X190E3,	"windowIndex",	0);
-	set_cmt	(0X190E5,	"windowIndex",	0);
-	set_cmt	(0X190E9,	"flags",	0);
-	set_cmt	(0X190F6,	"x",	0);
-	set_cmt	(0X190FF,	"frame",	0);
-	set_cmt	(0X19103,	"spriteHandle",	0);
 	create_insn	(x=0X1910C);
 	op_hex		(x,	1);
-	set_cmt	(0X1910F,	"windowIndex",	0);
-	set_cmt	(0X19111,	"windowIndex",	0);
-	set_cmt	(0X19115,	"flags",	0);
 	create_insn	(x=0X19116);
 	op_stkvar	(x,	1);
-	set_cmt	(0X19125,	"x",	0);
-	set_cmt	(0X19126,	"frame",	0);
-	set_cmt	(0X1912A,	"spriteHandle",	0);
 	create_insn	(x=0X19133);
 	op_hex		(x,	1);
 	create_insn	(x=0X19136);
 	op_stkvar	(x,	1);
 	create_insn	(0X1913E);
 	set_name	(0X1913E,	"getElementalCategory");
-	set_cmt	(0X19148,	"p1",	0);
 	create_insn	(x=0X1914A);
 	op_stkvar	(x,	1);
 	create_insn	(0X19153);
@@ -6863,28 +6842,28 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1939E);
 	op_stkvar	(x,	1);
-	set_cmt	(0X193A1,	"switch 6 cases ",	0);
+	set_cmt	(0X193A1,	"switch 6 cases",	0);
 	create_insn	(x=0X193A6);
 	op_hex		(x,	1);
 	set_cmt	(0X193A8,	"switch jump",	0);
 	create_insn	(x=0X193A8);
 	op_plain_offset	(x,	0,	0X19030);
 	op_plain_offset	(x,	128,	0X19030);
-	set_cmt	(0X193AD,	"jumptable 0002A300 case 0",	1);
+	set_cmt	(0X193AD,	"jumptable 000193A8 case 0",	1);
 	create_insn	(0X193AD);
-	set_cmt	(0X193B1,	"jumptable 0002A300 case 1",	1);
+	set_cmt	(0X193B1,	"jumptable 000193A8 case 1",	1);
 	create_insn	(0X193B1);
-	set_cmt	(0X193B5,	"jumptable 0002A300 case 2",	1);
+	set_cmt	(0X193B5,	"jumptable 000193A8 case 2",	1);
 	create_insn	(0X193B5);
-	set_cmt	(0X193B9,	"jumptable 0002A300 case 3",	1);
+	set_cmt	(0X193B9,	"jumptable 000193A8 case 3",	1);
 	create_insn	(x=0X193B9);
 	op_stkvar	(x,	1);
-	set_cmt	(0X193BE,	"jumptable 0002A300 case 4",	1);
+	set_cmt	(0X193BE,	"jumptable 000193A8 case 4",	1);
 	create_insn	(0X193BE);
-	set_cmt	(0X193C2,	"jumptable 0002A300 case 5",	1);
+	set_cmt	(0X193C2,	"jumptable 000193A8 case 5",	1);
 	create_insn	(x=0X193C2);
 	op_stkvar	(x,	1);
-	set_cmt	(0X193C7,	"jumptable 0002A300 default case",	1);
+	set_cmt	(0X193C7,	"jumptable 000193A8 default case",	1);
 	create_insn	(x=0X193C7);
 	op_stkvar	(x,	1);
 	set_name	(0X193C7,	"def_193A8");
@@ -10062,15 +10041,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA6B,	"jpt_1CA00");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1DA79,	"jump table for switch statement",	0);
 	create_word	(x=0X1DA79);
 	make_array	(x,	0X7);
@@ -10089,6 +10059,15 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA95,	"jpt_1C88D");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1DAA3,	"jump table for switch statement",	0);
 	create_word	(x=0X1DAA3);
 	make_array	(x,	0X7);
@@ -12080,7 +12059,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2507A);
 	op_hex		(x,	1);
-	set_cmt	(0X2507C,	"DOS - 2+ - OPEN DISK FILE WITH HANDLE\nDS:DX -> ASCIZ filename\nAL = access mode\n2 - read & write",	0);
+	set_cmt	(0X2507C,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X2507C);
 	op_hex		(x,	0);
 	create_insn	(0X25085);
@@ -12964,7 +12943,6 @@ static Bytes_2(void) {
 	set_cmt	(0X266CC,	"ffblk",	0);
 	create_insn	(x=0X266CD);
 	op_stkvar	(x,	1);
-	set_cmt	(0X266D0,	"ffblk",	0);
 	set_cmt	(0X266D1,	"path",	0);
 	create_insn	(x=0X266D1);
 	op_stkvar	(x,	0);
@@ -12972,7 +12950,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X266DE);
 	op_stkvar	(x,	1);
-	set_cmt	(0X266F2,	"src",	0);
+	set_cmt	(0X266F2,	"dest",	0);
 	create_insn	(x=0X266FA);
 	op_stkvar	(x,	1);
 	set_cmt	(0X266FD,	"ffblk",	0);
@@ -14804,15 +14782,6 @@ static Bytes_2(void) {
 	make_array	(0X29CDE,	0X10A);
 	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
 	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X29E14);
 	create_word	(0X29E16);
 	create_byte	(0X29E18);
@@ -14832,6 +14801,15 @@ static Bytes_3(void) {
 	set_name	(0X2A556,	"aDelBoss");
 	create_strlit	(0X2A563,	0XA);
 	set_name	(0X2A563,	"aPowDIcn");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2A56D,	0XB);
 	set_name	(0X2A56D,	"aCombatIcn");
 	create_strlit	(0X2A578,	0X41);
@@ -17547,8 +17525,6 @@ static Bytes_3(void) {
 	create_byte	(0X3345D);
 	create_byte	(0X3345E);
 	set_cmt	(0X33460,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	create_byte	(0X33460);
-	make_array	(0X33460,	0X154);
 	set_name	(0X33460,	"Mon_y");
 	set_cmt	(0X335B4,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
 	set_name	(0X335B4,	"Mon_x");
@@ -18256,15 +18232,6 @@ static Bytes_3(void) {
 	create_insn	(0X37C6C);
 	create_insn	(x=0X37C70);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X37C85);
 	op_hex		(x,	1);
 	create_insn	(x=0X37C9F);
@@ -18296,6 +18263,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X37D55);
 	op_plain_offset	(x,	0,	0X378C0);
 	op_plain_offset	(x,	128,	0X378C0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37D5A,	"jumptable 00037D55 cases 0-6,15-17,19,20,23",	1);
 	create_insn	(0X37D5A);
 	set_cmt	(0X37D5D,	"maxlen",	0);
@@ -21792,7 +21768,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3E8C0);
 	op_hex		(x,	1);
 	create_insn	(0X3E8C8);
-	set_cmt	(0X3E8CC,	"max",	0);
 	create_insn	(x=0X3E8D6);
 	op_hex		(x,	1);
 	create_insn	(0X3E8E2);
@@ -23075,15 +23050,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FF9C);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FFA1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFA6);
@@ -23116,6 +23082,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFEC);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FFF1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFF4);
@@ -23244,11 +23219,7 @@ static Bytes_5(void) {
 	set_name	(0X403E6,	"sortParty");
 	create_insn	(0X403EF);
 	create_insn	(0X403FD);
-	set_cmt	(0X40417,	"dest",	0);
-	set_cmt	(0X40423,	"src",	0);
-	set_cmt	(0X40424,	"count",	0);
-	set_cmt	(0X40434,	"count",	0);
-	set_cmt	(0X40437,	"val",	0);
+	set_cmt	(0X40434,	"c",	0);
 	set_cmt	(0X40442,	"s",	0);
 	create_insn	(x=0X40448);
 	op_hex		(x,	1);
@@ -23588,9 +23559,6 @@ static Bytes_5(void) {
 	create_insn	(0X40A6D);
 	set_name	(0X40A6D,	"copyPartyToRoster");
 	create_insn	(0X40A75);
-	set_cmt	(0X40A8A,	"dest",	0);
-	set_cmt	(0X40A96,	"src",	0);
-	set_cmt	(0X40A97,	"count",	0);
 	create_insn	(0X40AAC);
 	set_name	(0X40AAC,	"rosterMenu");
 	create_insn	(x=0X40AAF);
@@ -24004,7 +23972,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X41544);
 	op_hex		(x,	1);
-	update_extra_cmt		(0X4154C,	E_PREV + 0,	"; ;");
 	create_insn	(x=0X4154D);
 	op_stkvar	(x,	1);
 	create_insn	(0X41565);
@@ -28710,15 +28677,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4772F);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47734);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47739);
@@ -28760,6 +28718,15 @@ static Bytes_6(void) {
 	create_insn	(x=0X477F2);
 	op_stkvar	(x,	0);
 	set_name	(0X477F2,	"def_474F8");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X477FB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47801);
@@ -30535,18 +30502,17 @@ static Bytes_6(void) {
 	create_insn	(0X4A577);
 	create_insn	(0X4A57F);
 	set_cmt	(0X4A5A9,	"switch 5 cases",	0);
-	set_cmt	(0X4A5AE,	"switch 5 cases ",	0);
 	create_insn	(x=0X4A5B3);
 	op_hex		(x,	1);
 	set_cmt	(0X4A5B5,	"switch jump",	0);
 	create_insn	(x=0X4A5B5);
 	op_plain_offset	(x,	0,	0X49B60);
 	op_plain_offset	(x,	128,	0X49B60);
-	set_cmt	(0X4A5BA,	"jumptable 000373EF default case",	1);
+	set_cmt	(0X4A5BA,	"jumptable 0004A5B5 default case",	1);
 	create_insn	(0X4A5BA);
 	set_name	(0X4A5BA,	"def_4A5B5");
 	create_insn	(0X4A5BE);
-	set_cmt	(0X4A5C0,	"jumptable 000373EF cases 0-4",	1);
+	set_cmt	(0X4A5C0,	"jumptable 0004A5B5 cases 11-15",	1);
 	create_insn	(0X4A5C0);
 	set_cmt	(0X4A5D3,	"jump table for switch statement",	0);
 	create_word	(x=0X4A5D3);
@@ -31062,17 +31028,16 @@ static Bytes_6(void) {
 	set_name	(0X4AF57,	"charsCantAct");
 	create_insn	(0X4AF5F);
 	set_cmt	(0X4AF76,	"switch 8 cases",	0);
-	set_cmt	(0X4AF7B,	"switch 8 cases ",	0);
 	create_insn	(x=0X4AF80);
 	op_hex		(x,	1);
 	set_cmt	(0X4AF82,	"switch jump",	0);
 	create_insn	(x=0X4AF82);
 	op_plain_offset	(x,	0,	0X49B60);
 	op_plain_offset	(x,	128,	0X49B60);
-	set_cmt	(0X4AF87,	"jumptable 00038068 default case",	1);
+	set_cmt	(0X4AF87,	"jumptable 0004AF82 default case, cases 9,10",	1);
 	create_insn	(0X4AF87);
 	set_name	(0X4AF87,	"def_4AF82");
-	set_cmt	(0X4AF8B,	"jumptable 00038068 cases 0,3-7",	1);
+	set_cmt	(0X4AF8B,	"jumptable 0004AF82 cases 8,11-15",	1);
 	create_insn	(0X4AF8B);
 	set_cmt	(0X4AF9B,	"jump table for switch statement",	0);
 	create_word	(x=0X4AF9B);
@@ -31090,10 +31055,8 @@ static Bytes_6(void) {
 	create_insn	(0X4B019);
 	create_insn	(0X4B027);
 	create_insn	(0X4B02C);
-	update_extra_cmt		(0X4B058,	E_PREV + 0,	"; ;");
 	create_insn	(0X4B077);
-	set_cmt	(0X4B087,	"count",	0);
-	set_cmt	(0X4B08A,	"val",	0);
+	set_cmt	(0X4B087,	"c",	0);
 	set_cmt	(0X4B08E,	"s",	0);
 	create_insn	(x=0X4B094);
 	op_hex		(x,	1);
@@ -31102,21 +31065,20 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B0BF);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4B0C2,	"switch 8 cases ",	0);
+	set_cmt	(0X4B0C2,	"switch 8 cases",	0);
 	create_insn	(x=0X4B0CA);
 	op_hex		(x,	1);
 	set_cmt	(0X4B0CC,	"switch jump",	0);
 	create_insn	(x=0X4B0CC);
 	op_plain_offset	(x,	0,	0X49B60);
 	op_plain_offset	(x,	128,	0X49B60);
-	set_cmt	(0X4B0D1,	"jumptable 000381A7 cases 8,11-15",	1);
+	set_cmt	(0X4B0D1,	"jumptable 0004B0CC cases 8,11-15",	1);
 	create_insn	(0X4B0D1);
-	set_cmt	(0X4B0E0,	"jumptable 000381A7 default case",	1);
+	set_cmt	(0X4B0E0,	"jumptable 0004B0CC default case, cases 9,10",	1);
 	create_insn	(0X4B0E0);
 	set_name	(0X4B0E0,	"def_4B0CC");
 	create_insn	(0X4B109);
 	create_insn	(0X4B10B);
-	set_cmt	(0X4B117,	"charId",	0);
 	set_cmt	(0X4B124,	"jump table for switch statement",	0);
 	create_word	(x=0X4B124);
 	make_array	(x,	0X8);
@@ -31125,26 +31087,24 @@ static Bytes_6(void) {
 	set_name	(0X4B124,	"jpt_4B0CC");
 	create_insn	(0X4B134);
 	set_name	(0X4B134,	"quickFight");
-	set_cmt	(0X4B155,	"switch 4 cases ",	0);
+	set_cmt	(0X4B155,	"switch 4 cases",	0);
 	create_insn	(x=0X4B15A);
 	op_hex		(x,	1);
 	set_cmt	(0X4B15C,	"switch jump",	0);
 	create_insn	(x=0X4B15C);
 	op_plain_offset	(x,	0,	0X49B60);
 	op_plain_offset	(x,	128,	0X49B60);
-	set_cmt	(0X4B161,	"jumptable 0003823C case 0",	1);
+	set_cmt	(0X4B161,	"jumptable 0004B15C case 0",	1);
 	create_insn	(0X4B161);
 	set_cmt	(0X4B163,	"int",	0);
-	set_cmt	(0X4B163,	"jumptable 0003823C case 0",	1);
 	set_cmt	(0X4B164,	"int",	0);
-	set_cmt	(0X4B16D,	"jumptable 0003823C case 1",	1);
+	set_cmt	(0X4B16D,	"jumptable 0004B15C case 1",	1);
 	create_insn	(0X4B16D);
-	set_cmt	(0X4B170,	"jumptable 0003823C case 1",	1);
-	set_cmt	(0X4B17D,	"jumptable 0003823C case 2",	1);
+	set_cmt	(0X4B17D,	"jumptable 0004B15C case 2",	1);
 	create_insn	(0X4B17D);
-	set_cmt	(0X4B184,	"jumptable 0003823C case 3",	1);
+	set_cmt	(0X4B184,	"jumptable 0004B15C case 3",	1);
 	create_insn	(0X4B184);
-	set_cmt	(0X4B189,	"jumptable 0003823C default case",	1);
+	set_cmt	(0X4B189,	"jumptable 0004B15C default case",	1);
 	set_name	(0X4B189,	"def_4B15C");
 	set_cmt	(0X4B18C,	"jump table for switch statement",	0);
 	create_word	(x=0X4B18C);
@@ -31231,13 +31191,9 @@ static Bytes_6(void) {
 	set_name	(0X4B3AB,	"monsterSavingThrow");
 	create_insn	(x=0X4B3AF);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4B3B7,	"max",	0);
-	set_cmt	(0X4B3BB,	"min",	0);
 	create_insn	(0X4B3CC);
-	set_cmt	(0X4B3D1,	"max",	0);
 	create_insn	(0X4B3D1);
 	set_name	(0X4B3D1,	"run");
-	set_cmt	(0X4B3DB,	"min",	0);
 	create_insn	(0X4B422);
 	set_name	(0X4B422,	"block");
 	create_insn	(0X4B432);
@@ -31277,8 +31233,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4B4B2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B4B6,	"format",	0);
-	set_cmt	(0X4B4B7,	"p1",	0);
-	set_cmt	(0X4B4BA,	"format",	0);
 	create_insn	(x=0X4B4BB);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B4BE,	"buffer",	0);
@@ -31293,8 +31247,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4B4F0);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B4F4,	"format",	0);
-	set_cmt	(0X4B4F5,	"p1",	0);
-	set_cmt	(0X4B4F8,	"format",	0);
 	create_insn	(x=0X4B4F9);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B4FC,	"buffer",	0);
@@ -31309,8 +31261,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4B52E);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B532,	"format",	0);
-	set_cmt	(0X4B533,	"p1",	0);
-	set_cmt	(0X4B536,	"format",	0);
 	create_insn	(x=0X4B537);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B53A,	"buffer",	0);
@@ -31338,14 +31288,11 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B5D3);
 	op_stkvar	(x,	0);
-	set_cmt	(0X4B5D9,	"count",	0);
-	update_extra_cmt		(0X4B5D9,	E_PREV + 0,	"; ;");
-	set_cmt	(0X4B5DD,	"val",	0);
-	set_cmt	(0X4B5E1,	"c",	0);
+	set_cmt	(0X4B5D9,	"c",	0);
+	set_cmt	(0X4B5E1,	"s",	0);
 	create_insn	(x=0X4B5E7);
 	op_hex		(x,	1);
-	set_cmt	(0X4B5ED,	"count",	0);
-	set_cmt	(0X4B5F1,	"c",	0);
+	set_cmt	(0X4B5ED,	"c",	0);
 	create_insn	(x=0X4B5F2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4B5F5,	"s",	0);
@@ -31353,16 +31300,11 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4B604);
 	op_stkvar	(x,	0);
-	set_cmt	(0X4B609,	"int",	0);
 	create_insn	(0X4B609);
-	set_cmt	(0X4B60F,	"int",	0);
-	set_cmt	(0X4B610,	"attrib",	0);
 	create_insn	(x=0X4B611);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4B622,	"ps",	0);
 	create_insn	(x=0X4B628);
 	op_hex		(x,	1);
-	update_extra_cmt		(0X4B62B,	E_PREV + 0,	"; ;");
 	create_insn	(x=0X4B62B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B62E);
@@ -31387,8 +31329,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4B665);
 	op_hex		(x,	1);
-	set_cmt	(0X4B677,	"p1",	0);
-	set_cmt	(0X4B679,	"p1",	0);
 	create_insn	(x=0X4B679);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B67F);
@@ -31405,8 +31345,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4B6A0);
 	op_hex		(x,	1);
-	set_cmt	(0X4B6B2,	"p1",	0);
-	set_cmt	(0X4B6B4,	"p1",	0);
 	create_insn	(x=0X4B6B4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B6BA);
@@ -31423,8 +31361,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4B6DB);
 	op_hex		(x,	1);
-	set_cmt	(0X4B6ED,	"p1",	0);
-	set_cmt	(0X4B6EF,	"p1",	0);
 	create_insn	(x=0X4B6EF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B6F5);
@@ -31841,7 +31777,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4C250);
 	op_hex		(x,	1);
-	set_cmt	(0X4C264,	"pChar",	0);
 	create_insn	(x=0X4C27E);
 	op_stkvar	(x,	1);
 	create_insn	(0X4C295);
@@ -32528,16 +32463,14 @@ static Bytes_6(void) {
 	create_insn	(0X4DDC7);
 	create_insn	(x=0X4DDD9);
 	op_stkvar	(x,	0);
-	set_cmt	(0X4DDDF,	"count",	0);
-	set_cmt	(0X4DDE2,	"val",	0);
-	set_cmt	(0X4DDE8,	"c",	0);
+	set_cmt	(0X4DDDF,	"c",	0);
+	set_cmt	(0X4DDE8,	"s",	0);
 	create_insn	(x=0X4DDEE);
 	op_hex		(x,	1);
 	create_insn	(x=0X4DDF1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4DDF8);
 	op_stkvar	(x,	0);
-	set_cmt	(0X4DDFF,	"ps",	0);
 	create_insn	(0X4DE30);
 	set_name	(0X4DE30,	"itemsDialog");
 	create_insn	(x=0X4DE33);
@@ -33290,15 +33223,11 @@ static Bytes_6(void) {
 	set_name	(0X4EC37,	"getThievery");
 	create_insn	(x=0X4EC3C);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4EC40,	"pChar",	0);
 	create_insn	(x=0X4EC48);
 	op_hex		(x,	1);
 	create_insn	(0X4EC57);
 	create_insn	(0X4EC71);
 	create_insn	(0X4EC7C);
-	set_cmt	(0X4EC85,	"itemId",	0);
-	set_cmt	(0X4EC88,	"itemId",	0);
-	set_cmt	(0X4EC8A,	"pChar",	0);
 	create_insn	(x=0X4EC90);
 	op_hex		(x,	1);
 	create_insn	(0X4ECAD);
@@ -33727,15 +33656,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F790);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X4F796);
 	create_insn	(x=0X4F7CB);
 	op_stkvar	(x,	0);
@@ -33829,6 +33749,15 @@ static Bytes_7(void) {
 	create_insn	(0X4F981);
 	set_cmt	(0X4F989,	"jumptable 0004F954 case 6",	1);
 	create_insn	(0X4F989);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4F991,	"jumptable 0004F954 case 7",	1);
 	create_insn	(0X4F991);
 	set_cmt	(0X4F999,	"jumptable 0004F954 case 8",	1);
@@ -35000,14 +34929,10 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X512A2);
 	op_stkvar	(x,	0);
-	set_cmt	(0X512A6,	"int",	0);
-	set_cmt	(0X512A8,	"int",	0);
 	create_insn	(x=0X512A9);
 	op_stkvar	(x,	1);
-	set_cmt	(0X512AE,	"attrib",	0);
 	create_insn	(x=0X512AF);
 	op_stkvar	(x,	0);
-	set_cmt	(0X512B2,	"ps",	0);
 	create_insn	(x=0X512B2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X512BA);
@@ -35018,7 +34943,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X512CE);
 	op_stkvar	(x,	1);
-	update_extra_cmt		(0X512D1,	E_PREV + 0,	"; ;");
 	create_insn	(x=0X512D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X512D9);
@@ -35045,7 +34969,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5131F);
 	op_stkvar	(x,	0);
-	set_cmt	(0X51322,	"pChar",	0);
 	create_insn	(x=0X51322);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5132E);
@@ -35108,11 +35031,8 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X513B9);
 	op_stkvar	(x,	0);
-	set_cmt	(0X513BC,	"itemId",	0);
-	set_cmt	(0X513BF,	"itemId",	0);
 	create_insn	(x=0X513C0);
 	op_stkvar	(x,	0);
-	set_cmt	(0X513C3,	"pChar",	0);
 	create_insn	(x=0X513C3);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X513CB);
@@ -35141,11 +35061,8 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X51410);
 	op_stkvar	(x,	0);
-	set_cmt	(0X51415,	"int",	0);
-	set_cmt	(0X51419,	"attrib",	0);
 	create_insn	(x=0X5141A);
 	op_stkvar	(x,	0);
-	set_cmt	(0X5141D,	"ps",	0);
 	create_insn	(x=0X5141D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X51425);
@@ -35176,7 +35093,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X51477);
 	op_stkvar	(x,	0);
-	set_cmt	(0X5147A,	"pChar",	0);
 	create_insn	(x=0X5147A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X51486);
@@ -35187,10 +35103,8 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X51496);
 	op_stkvar	(x,	0);
-	set_cmt	(0X5149C,	"itemId",	0);
 	create_insn	(x=0X5149D);
 	op_stkvar	(x,	0);
-	set_cmt	(0X514A0,	"pChar",	0);
 	create_insn	(x=0X514A0);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X514A8);
@@ -35211,15 +35125,10 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X514D1);
 	set_name	(0X514D1,	"getArmorClass");
-	set_cmt	(0X514D5,	"int",	0);
 	create_insn	(x=0X514D6);
 	op_stkvar	(x,	1);
-	set_cmt	(0X514DF,	"attrib",	0);
-	set_cmt	(0X514E1,	"ps",	0);
 	create_insn	(x=0X514E7);
 	op_hex		(x,	1);
-	set_cmt	(0X514F6,	"itemId",	0);
-	set_cmt	(0X514F8,	"pChar",	0);
 	create_insn	(x=0X514FE);
 	op_hex		(x,	1);
 	create_insn	(x=0X51507);
@@ -37702,12 +37611,6 @@ static Functions_0(void) {
 	set_func_flags(0X14BB2,0x5456);
 	SetType(0X14BB2, "char *__cdecl strncpy_0(char *dest, const char *src, size_t maxlen);");
 	set_frame_size(0X14BB2, 0X4, 2, 0);
-	add_func    (0X14D23,0X14D2B);
-	set_func_flags(0X14D23,0x1401);
-	set_func_cmt(0X14D23,	"jumptable 00014CF6 default case", 1);
-	add_func    (0X14DAA,0X14DB2);
-	set_func_flags(0X14DAA,0x1401);
-	set_func_cmt(0X14DAA,	"jumptable 00014D3D default case", 1);
 	add_func    (0X15006,0X15064);
 	set_func_flags(0X15006,0x5412);
 	set_frame_size(0X15006, 0X20, 2, 0);
@@ -39681,10 +39584,6 @@ static Functions_0(void) {
 	set_func_flags(0X43E0C,0x5412);
 	set_func_cmt(0X43E0C,	"\"Your backpacks are full\"; hands out treasure (BinDiff giveTreasure .17 agrees)", 0);
 	set_frame_size(0X43E0C, 0XA, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X442EB,0X4432C);
 	set_func_flags(0X442EB,0x5412);
 	set_frame_size(0X442EB, 0X4, 2, 0);
@@ -39693,6 +39592,10 @@ static Functions_1(void) {
 	SetType(0X4432C, "int __cdecl __far sub_4432C(char, __int32, int);");
 	set_frame_size(0X4432C, 0X1A, 2, 0);
 	define_local_var(0X4432C, 0X4483B, "[bp-0X10]", "s");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X44843,0X44921);
 	set_func_flags(0X44843,0x5412);
 	SetType(0X44843, "int __cdecl __far sub_44843(int, int, int);");
@@ -41129,17 +41032,17 @@ static SegRegs(void) {
 	split_sreg_range(0X51439,"es",BADSEL,3);
 	split_sreg_range(0X60000,"es",BADSEL,3);
 	split_sreg_range(0X60EB6,"es",BADSEL,3);
-	split_sreg_range(0X60F56,"es",BADSEL,3);
-	split_sreg_range(0X60F91,"es",0XA000,3);
+	split_sreg_range(0X60F56,"es",0XFB40,3);
+	split_sreg_range(0X60F91,"es",BADSEL,3);
 	split_sreg_range(0X60F9F,"es",BADSEL,3);
 	split_sreg_range(0X60FCC,"es",0X6000,3);
 	split_sreg_range(0X60FE9,"es",BADSEL,3);
-	split_sreg_range(0X6111A,"es",0XA000,3);
+	split_sreg_range(0X6111A,"es",BADSEL,3);
 	split_sreg_range(0X61145,"es",0X6000,3);
 	split_sreg_range(0X611B2,"es",BADSEL,3);
 	split_sreg_range(0X611D6,"es",0X6000,3);
 	split_sreg_range(0X611E0,"es",BADSEL,3);
-	split_sreg_range(0X61287,"es",0XA000,3);
+	split_sreg_range(0X61287,"es",BADSEL,3);
 	split_sreg_range(0X612A2,"es",BADSEL,3);
 	split_sreg_range(0X6130B,"es",BADSEL,3);
 	split_sreg_range(0X61310,"es",BADSEL,3);
@@ -41523,9 +41426,9 @@ static SegRegs(void) {
 	split_sreg_range(0X632C3,"ds",0X286F,3);
 	split_sreg_range(0X6336E,"ds",0X286F,3);
 	split_sreg_range(0X6337B,"ds",0X6000,3);
-	split_sreg_range(0X63430,"ds",0,3);
+	split_sreg_range(0X63430,"ds",0X286F,3);
 	split_sreg_range(0X63463,"ds",0X286F,3);
-	split_sreg_range(0X6347A,"ds",0,3);
+	split_sreg_range(0X6347A,"ds",0X286F,3);
 	split_sreg_range(0X63480,"ds",0X286F,3);
 	split_sreg_range(0X635D2,"ds",0X286F,3);
 	split_sreg_range(0X635DA,"ds",0X6000,3);

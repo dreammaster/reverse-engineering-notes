@@ -1809,18 +1809,12 @@ loc_14D1B:                              ; CODE XREF: seg001:0116↑j
                                         ; DATA XREF: seg001:jpt_14CF6↓o
                 mov     word_34C0E, 5   ; jumptable 00014CF6 case 4
                 jmp     short loc_14D2C
+; ---------------------------------------------------------------------------
 
-; =============== S U B R O U T I N E =======================================
-
-; jumptable 00014CF6 default case
-; Attributes: noreturn
-
-def_14CF6       proc near               ; CODE XREF: seg001:0112↑j
-                xor     ax, ax
+def_14CF6:                              ; CODE XREF: seg001:0112↑j
+                xor     ax, ax          ; jumptable 00014CF6 default case
                 push    ax
                 call    sub_27FA4
-def_14CF6       endp
-
 ; ---------------------------------------------------------------------------
                 pop     cx
 
@@ -1904,18 +1898,12 @@ loc_14DA3:                              ; CODE XREF: seg001:015D↑j
                                         ; DATA XREF: seg001:jpt_14D3D↓o
                 mov     byte_28843, 1   ; jumptable 00014D3D case 6
                 jmp     short loc_14DB3
+; ---------------------------------------------------------------------------
 
-; =============== S U B R O U T I N E =======================================
-
-; jumptable 00014D3D default case
-; Attributes: noreturn
-
-def_14D3D       proc near               ; CODE XREF: seg001:0158↑j
-                xor     ax, ax
+def_14D3D:                              ; CODE XREF: seg001:0158↑j
+                xor     ax, ax          ; jumptable 00014D3D default case
                 push    ax
                 call    sub_27FA4
-def_14D3D       endp
-
 ; ---------------------------------------------------------------------------
                 pop     cx
 
@@ -2492,21 +2480,21 @@ loc_15298:                              ; CODE XREF: checkPartyDead+23↑j
                 mov     ah, 0
                 mov     bx, ax
                 cmp     bx, 10h         ; switch 17 cases
-                ja      short def_152B2 ; jumptable 0003219D default case
+                ja      short def_152B2 ; jumptable 000152B2 default case, cases 11-15
                 shl     bx, 1
                 jmp     cs:jpt_152B2[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_152B7:                              ; CODE XREF: checkPartyDead+41↑j
                                         ; DATA XREF: seg002:jpt_152B2↓o
-                mov     byte_28841, 0   ; jumptable 0003219D cases 0-10,16
+                mov     byte_28841, 0   ; jumptable 000152B2 cases 0-10,16
                 jmp     short loc_152D6
 ; ---------------------------------------------------------------------------
 
 def_152B2:                              ; CODE XREF: checkPartyDead+3D↑j
                                         ; checkPartyDead+41↑j
                                         ; DATA XREF: ...
-                inc     si              ; jumptable 0003219D default case
+                inc     si              ; jumptable 000152B2 default case, cases 11-15
 
 loc_152BF:                              ; CODE XREF: checkPartyDead+17↑j
                 or      di, di
@@ -6404,7 +6392,7 @@ arg_6           = word ptr  0Ch
                 mov     bx, ax
                 cmp     bx, 6           ; switch 7 cases
                 jbe     short loc_16FCB
-                jmp     def_16FCD       ; jumptable 0002BBAF default case
+                jmp     def_16FCD       ; jumptable 00016FCD default case
 ; ---------------------------------------------------------------------------
 
 loc_16FCB:                              ; CODE XREF: getStat+15↑j
@@ -6414,7 +6402,7 @@ loc_16FCB:                              ; CODE XREF: getStat+15↑j
 
 loc_16FD2:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 0
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 0
                 mov     al, es:[bx+14h]
                 mov     ah, 0
                 mov     si, ax
@@ -6424,12 +6412,12 @@ loc_16FE1:                              ; CODE XREF: getStat+70↓j
                                         ; getStat+81↓j ...
                 mov     ah, 0
                 mov     di, ax
-                jmp     short def_16FCD ; jumptable 0002BBAF default case
+                jmp     short def_16FCD ; jumptable 00016FCD default case
 ; ---------------------------------------------------------------------------
 
 loc_16FE7:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 1
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 1
                 mov     al, es:[bx+16h]
                 mov     ah, 0
                 mov     si, ax
@@ -6439,7 +6427,7 @@ loc_16FE7:                              ; CODE XREF: getStat+1C↑j
 
 loc_16FF8:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 2
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 2
                 mov     al, es:[bx+18h]
                 mov     ah, 0
                 mov     si, ax
@@ -6449,12 +6437,12 @@ loc_17007:                              ; CODE XREF: getStat+45↑j
                 mov     ah, 0
                 mov     di, ax
                 mov     [bp+var_6], 1
-                jmp     short def_16FCD ; jumptable 0002BBAF default case
+                jmp     short def_16FCD ; jumptable 00016FCD default case
 ; ---------------------------------------------------------------------------
 
 loc_17012:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 3
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 3
                 mov     al, es:[bx+1Ah]
                 mov     ah, 0
                 mov     si, ax
@@ -6464,7 +6452,7 @@ loc_17012:                              ; CODE XREF: getStat+1C↑j
 
 loc_17023:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 4
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 4
                 mov     al, es:[bx+1Ch]
                 mov     ah, 0
                 mov     si, ax
@@ -6474,7 +6462,7 @@ loc_17023:                              ; CODE XREF: getStat+1C↑j
 
 loc_17034:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 5
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 5
                 mov     al, es:[bx+1Eh]
                 mov     ah, 0
                 mov     si, ax
@@ -6484,7 +6472,7 @@ loc_17034:                              ; CODE XREF: getStat+1C↑j
 
 loc_17045:                              ; CODE XREF: getStat+1C↑j
                                         ; DATA XREF: seg002:jpt_16FCD↓o
-                les     bx, [bp+arg_0]  ; jumptable 0002BBAF case 6
+                les     bx, [bp+arg_0]  ; jumptable 00016FCD case 6
                 mov     al, es:[bx+20h]
                 mov     ah, 0
                 mov     si, ax
@@ -6495,12 +6483,12 @@ loc_17045:                              ; CODE XREF: getStat+1C↑j
 
 def_16FCD:                              ; CODE XREF: getStat+17↑j
                                         ; getStat+34↑j ...
-                cmp     [bp+var_6], 2   ; jumptable 0002BBAF default case
+                cmp     [bp+var_6], 2   ; jumptable 00016FCD default case
                 jge     short loc_170A3
-                xor     ax, ax          ; int
-                push    ax              ; int
+                xor     ax, ax
+                push    ax
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; ps
+                push    word ptr [bp+arg_0]
                 push    cs
                 call    near ptr getAge
                 add     sp, 6
@@ -6523,14 +6511,14 @@ loc_17080:                              ; CODE XREF: getStat+CA↑j
                 imul    dx
                 mov     dx, [bp+var_4]
                 shl     dx, 1
-                add     ax, dx          ; p2
+                add     ax, dx
                 mov     bx, ax
                 add     si, [bx+0FD2h]
 
 loc_170A3:                              ; CODE XREF: getStat+B0↑j
-                push    [bp+arg_4]      ; itemId
+                push    [bp+arg_4]
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; pChar
+                push    word ptr [bp+arg_0]
                 push    cs
                 call    near ptr itemScan
                 add     sp, 6
@@ -6539,9 +6527,9 @@ loc_170A3:                              ; CODE XREF: getStat+B0↑j
                 mov     si, dx
                 cmp     [bp+arg_6], 0
                 jnz     short loc_170D8
-                push    [bp+arg_4]      ; attrib
+                push    [bp+arg_4]
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; ps
+                push    word ptr [bp+arg_0]
                 call    conditionMod
                 add     sp, 6
                 mov     dx, si
@@ -10910,39 +10898,39 @@ arg_0           = word ptr  6
                 jz      short loc_1913C
                 cmp     byte_2884E, 0FFh
                 jz      short loc_1910F
-                xor     ax, ax          ; windowIndex
-                push    ax              ; windowIndex
+                xor     ax, ax
+                push    ax
                 mov     ax, 94h
-                push    ax              ; flags
+                push    ax
                 mov     al, byte_2884E
                 cbw
                 mov     dx, 26h ; '&'
                 imul    dx
                 add     ax, 0Ah
-                push    ax              ; x
+                push    ax
                 mov     al, byte_2884E
                 cbw
                 add     ax, 3
                 push    ax
-                push    word_332CC      ; frame
-                push    word_332CA      ; spriteHandle
+                push    word_332CC
+                push    word_332CA
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
 
 loc_1910F:                              ; CODE XREF: highlightChar+18↑j
-                xor     ax, ax          ; windowIndex
-                push    ax              ; windowIndex
+                xor     ax, ax
+                push    ax
                 mov     ax, 94h
-                push    ax              ; flags
+                push    ax
                 mov     ax, [bp+arg_0]
                 mov     dx, 26h ; '&'
                 imul    dx
                 add     ax, 0Ah
                 push    ax
                 mov     ax, 2
-                push    ax              ; x
-                push    word_332CC      ; frame
-                push    word_332CA      ; spriteHandle
+                push    ax
+                push    word_332CC
+                push    word_332CA
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     al, byte ptr [bp+arg_0]
@@ -10971,7 +10959,7 @@ arg_0           = word ptr  6
 
 loc_19144:                              ; CODE XREF: getElementalCategory+16↓j
                 mov     al, [si+0FCCh]
-                mov     ah, 0           ; p1
+                mov     ah, 0
                 cmp     ax, [bp+arg_0]
                 jl      short loc_19153
                 mov     ax, si
@@ -11245,49 +11233,49 @@ loc_19351:                              ; CODE XREF: conditionMod+17E↑j
 loc_1939E:                              ; CODE XREF: conditionMod+1CB↑j
                 mov     bx, [bp+arg_4]
                 cmp     bx, 5           ; switch 6 cases
-                ja      short def_193A8 ; jumptable 0002A300 default case
+                ja      short def_193A8 ; jumptable 000193A8 default case
                 shl     bx, 1
                 jmp     cs:jpt_193A8[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_193AD:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, si          ; jumptable 0002A300 case 0
+                mov     ax, si          ; jumptable 000193A8 case 0
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 loc_193B1:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, di          ; jumptable 0002A300 case 1
+                mov     ax, di          ; jumptable 000193A8 case 1
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 loc_193B5:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, dx          ; jumptable 0002A300 case 2
+                mov     ax, dx          ; jumptable 000193A8 case 2
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 loc_193B9:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, [bp+var_2]  ; jumptable 0002A300 case 3
+                mov     ax, [bp+var_2]  ; jumptable 000193A8 case 3
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 loc_193BE:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, cx          ; jumptable 0002A300 case 4
+                mov     ax, cx          ; jumptable 000193A8 case 4
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 loc_193C2:                              ; CODE XREF: conditionMod+219↑j
                                         ; DATA XREF: seg003:jpt_193A8↓o
-                mov     ax, [bp+var_4]  ; jumptable 0002A300 case 5
+                mov     ax, [bp+var_4]  ; jumptable 000193A8 case 5
                 jmp     short loc_193CA
 ; ---------------------------------------------------------------------------
 
 def_193A8:                              ; CODE XREF: conditionMod+215↑j
-                mov     ax, [bp+var_6]  ; jumptable 0002A300 default case
+                mov     ax, [bp+var_6]  ; jumptable 000193A8 default case
 
 loc_193CA:                              ; CODE XREF: conditionMod+3C↑j
                                         ; conditionMod+220↑j ...
@@ -31853,10 +31841,8 @@ arg_4           = word ptr  0Ah
                 mov     cx, [bp+arg_4]
                 mov     bx, cs:word_22630
                 mov     ah, 40h
-                int     21h             ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
-                                        ; DS:DX -> ASCIZ filename
-                                        ; AL = access mode
-                                        ; 2 - read & write
+                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
                 jb      short loc_25082
                 sub     ax, ax
 
@@ -35034,7 +35020,7 @@ path            = dword ptr  6
                 xor     ax, ax
                 push    ax              ; ffblk
                 lea     ax, [bp+ffblk]
-                push    ax              ; ffblk
+                push    ax
                 push    word ptr [bp+path] ; path
                 call    _findfirst
                 add     sp, 6
@@ -35050,7 +35036,7 @@ loc_266DE:                              ; CODE XREF: getFiles+64↓j
                 mov     dx, 0Dh
                 imul    dx
                 add     ax, 0E836h
-                push    ax              ; src
+                push    ax              ; dest
                 call    _strcpy
                 pop     cx
                 pop     cx
@@ -36294,8 +36280,8 @@ sub_27F9A       endp
 
 ; Attributes: noreturn thunk
 
-sub_27FA4       proc far                ; CODE XREF: def_14CF6+3↑P
-                                        ; def_14D3D+3↑P
+sub_27FA4       proc far                ; CODE XREF: seg001:0146↑P
+                                        ; seg001:01CD↑P
                 jmp     far ptr sub_37E7A
 sub_27FA4       endp
 
@@ -45770,7 +45756,346 @@ byte_3345D      db 0                    ; DATA XREF: sub_17439:loc_17E10↑r
 byte_3345E      db 0                    ; DATA XREF: sub_17439:loc_17F0E↑r
                                         ; sub_17439+AF0↑r
                 align 2
-Mon_y           db 154h dup(0)          ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Mon_y           db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 Mon_x           db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
                 db    0
                 db    0
@@ -65032,7 +65357,7 @@ setStartFlags   proc far                ; CODE XREF: j_setStartFlags↑J
 loc_3E8C8:                              ; CODE XREF: setStartFlags+31↓j
                 mov     ax, 1
                 push    ax
-                push    si              ; max
+                push    si
                 mov     ax, 0EC60h
                 push    ax
                 call    setBit
@@ -68666,20 +68991,20 @@ loc_403FD:                              ; CODE XREF: sortParty+6F↓j
                 imul    dx
                 add     ax, 0B9D6h
                 push    ds
-                push    ax              ; dest
+                push    ax
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
                 add     ax, 0B9D6h
                 push    ds
-                push    ax              ; src
-                mov     cx, 12Fh        ; count
+                push    ax
+                mov     cx, 12Fh
                 call    SCOPY@
                 mov     byte ptr [si-1714h], 0FFh
                 mov     ax, 12Fh
-                push    ax              ; count
+                push    ax              ; c
                 xor     ax, ax
-                push    ax              ; val
+                push    ax
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -69523,14 +69848,14 @@ loc_40A75:                              ; CODE XREF: copyPartyToRoster+3A↓j
                 mov     dx, word ptr Roster_buffer
                 add     dx, ax
                 push    word ptr Roster_buffer+2
-                push    dx              ; dest
+                push    dx
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
                 add     ax, 0B9D6h
                 push    ds
-                push    ax              ; src
-                mov     cx, 12Fh        ; count
+                push    ax
+                mov     cx, 12Fh
                 call    SCOPY@
                 inc     si
 
@@ -70792,7 +71117,6 @@ loc_4152A:                              ; CODE XREF: nextExperienceLevel+1C↑j
                 push    ax
                 mov     ax, [bx+1CB2h]
                 push    dx
-; ;
                 cwd
                 mov     cl, byte ptr [bp+var_2]
                 call    LXLSH@
@@ -90121,7 +90445,7 @@ loc_4A57F:                              ; CODE XREF: allHaveGone+84↓j
                 mov     al, [si-4637h]
                 mov     ah, 0
                 or      ax, ax
-                jnz     short loc_4A5C0 ; jumptable 000373EF cases 0-4
+                jnz     short loc_4A5C0 ; jumptable 0004A5B5 cases 11-15
                 mov     al, Combat_partySize
                 mov     ah, 0
                 cmp     ax, si
@@ -90137,26 +90461,26 @@ loc_4A57F:                              ; CODE XREF: allHaveGone+84↓j
                 mov     ah, 0
                 sub     ax, 0Bh         ; switch 5 cases
                 mov     bx, ax
-                cmp     bx, 4           ; switch 5 cases
-                ja      short def_4A5B5 ; jumptable 000373EF default case
+                cmp     bx, 4
+                ja      short def_4A5B5 ; jumptable 0004A5B5 default case
                 shl     bx, 1
                 jmp     cs:jpt_4A5B5[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
 def_4A5B5:                              ; CODE XREF: allHaveGone+6B↑j
                                         ; allHaveGone:loc_4A5BE↓j
-                xor     ax, ax          ; jumptable 000373EF default case
+                xor     ax, ax          ; jumptable 0004A5B5 default case
                 jmp     short loc_4A5CF
 ; ---------------------------------------------------------------------------
 
 loc_4A5BE:                              ; CODE XREF: allHaveGone+4A↑j
-                jmp     short def_4A5B5 ; jumptable 000373EF default case
+                jmp     short def_4A5B5 ; jumptable 0004A5B5 default case
 ; ---------------------------------------------------------------------------
 
 loc_4A5C0:                              ; CODE XREF: allHaveGone+41↑j
                                         ; allHaveGone+6F↑j
                                         ; DATA XREF: ...
-                inc     si              ; jumptable 000373EF cases 0-4
+                inc     si              ; jumptable 0004A5B5 cases 11-15
 
 loc_4A5C1:                              ; CODE XREF: allHaveGone+37↑j
                 mov     al, Combat_partySize
@@ -91645,8 +91969,8 @@ loc_4AF5F:                              ; CODE XREF: charsCantAct+3C↓j
                 mov     ah, 0
                 sub     ax, 8           ; switch 8 cases
                 mov     bx, ax
-                cmp     bx, 7           ; switch 8 cases
-                ja      short def_4AF82 ; jumptable 00038068 default case
+                cmp     bx, 7
+                ja      short def_4AF82 ; jumptable 0004AF82 default case, cases 9,10
                 shl     bx, 1
                 jmp     cs:jpt_4AF82[bx] ; switch jump
 ; ---------------------------------------------------------------------------
@@ -91654,13 +91978,13 @@ loc_4AF5F:                              ; CODE XREF: charsCantAct+3C↓j
 def_4AF82:                              ; CODE XREF: charsCantAct+27↑j
                                         ; charsCantAct+2B↑j
                                         ; DATA XREF: ...
-                xor     ax, ax          ; jumptable 00038068 default case
+                xor     ax, ax          ; jumptable 0004AF82 default case, cases 9,10
                 jmp     short loc_4AF98
 ; ---------------------------------------------------------------------------
 
 loc_4AF8B:                              ; CODE XREF: charsCantAct+2B↑j
                                         ; DATA XREF: ovl10:jpt_4AF82↓o
-                inc     si              ; jumptable 00038068 cases 0,3-7
+                inc     si              ; jumptable 0004AF82 cases 8,11-15
 
 loc_4AF8C:                              ; CODE XREF: charsCantAct+6↑j
                 mov     al, Combat_partySize
@@ -91801,7 +92125,6 @@ loc_4B03E:                              ; CODE XREF: nextChar+86↑j
                 pop     bx
                 idiv    bx
                 mov     byte_28840, dl
-; ;
                 mov     al, dl
                 cbw
                 mov     bx, ax
@@ -91826,9 +92149,9 @@ loc_4B077:                              ; CODE XREF: nextChar+C7↑j
                 mov     byte_2883F, al
                 mov     byte_28840, al
                 mov     ax, 0Ch
-                push    ax              ; count
+                push    ax              ; c
                 xor     ax, ax
-                push    ax              ; val
+                push    ax
                 mov     ax, 0B9C9h
                 push    ax              ; s
                 call    _memset
@@ -91839,7 +92162,7 @@ loc_4B077:                              ; CODE XREF: nextChar+C7↑j
 loc_4B099:                              ; CODE XREF: nextChar+BF↑j
                 mov     al, byte_2883F
                 cmp     al, Combat_partySize
-                jnb     short def_4B0CC ; jumptable 000381A7 default case
+                jnb     short def_4B0CC ; jumptable 0004B0CC default case, cases 9,10
                 cbw
                 mov     bx, ax
                 mov     al, [bx-1337h]
@@ -91855,27 +92178,27 @@ loc_4B099:                              ; CODE XREF: nextChar+BF↑j
                 mov     bx, [bp+var_2]
                 sub     bx, 8           ; switch 8 cases
                 cmp     bx, 7
-                ja      short def_4B0CC ; jumptable 000381A7 default case
+                ja      short def_4B0CC ; jumptable 0004B0CC default case, cases 9,10
                 shl     bx, 1
                 jmp     cs:jpt_4B0CC[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_4B0D1:                              ; CODE XREF: nextChar+121↑j
                                         ; DATA XREF: ovl10:jpt_4B0CC↓o
-                inc     di              ; jumptable 000381A7 cases 8,11-15
+                inc     di              ; jumptable 0004B0CC cases 8,11-15
 
 loc_4B0D2:                              ; CODE XREF: nextChar+7E↑j
                 mov     al, Combat_partySize
                 mov     ah, 0
                 add     ax, si
                 cmp     ax, di
-                jle     short def_4B0CC ; jumptable 000381A7 default case
+                jle     short def_4B0CC ; jumptable 0004B0CC default case, cases 9,10
                 jmp     loc_4B02C
 ; ---------------------------------------------------------------------------
 
 def_4B0CC:                              ; CODE XREF: nextChar+F5↑j
                                         ; nextChar+11D↑j ...
-                mov     al, byte_2883F  ; jumptable 000381A7 default case
+                mov     al, byte_2883F  ; jumptable 0004B0CC default case, cases 9,10
                 cmp     al, Combat_partySize
                 jb      short loc_4B10B
                 xor     ax, ax
@@ -91906,7 +92229,7 @@ loc_4B10B:                              ; CODE XREF: nextChar+13C↑j
                 jnz     short loc_4B11E
                 mov     al, byte_2883F
                 cbw
-                push    ax              ; charId
+                push    ax
                 call    highlightChar
                 pop     cx
 
@@ -91951,7 +92274,7 @@ quickFight      proc far                ; CODE XREF: j_quickFight↑J
                 mov     ah, 0
                 mov     bx, ax
                 cmp     bx, 3           ; switch 4 cases
-                ja      short def_4B15C ; jumptable 0003823C default case
+                ja      short def_4B15C ; jumptable 0004B15C default case
                 shl     bx, 1
                 jmp     cs:jpt_4B15C[bx] ; switch jump
 ; ---------------------------------------------------------------------------
@@ -91959,44 +92282,44 @@ quickFight      proc far                ; CODE XREF: j_quickFight↑J
 loc_4B161:                              ; CODE XREF: quickFight+28↑j
                                         ; quickFight+47↓j
                                         ; DATA XREF: ...
-                xor     ax, ax          ; jumptable 0003823C case 0
+                xor     ax, ax          ; jumptable 0004B15C case 0
                 push    ax              ; int
                 push    si              ; int
                 push    cs
                 call    near ptr attack
                 pop     cx
                 pop     cx
-                jmp     short def_4B15C ; jumptable 0003823C default case
+                jmp     short def_4B15C ; jumptable 0004B15C default case
 ; ---------------------------------------------------------------------------
 
 loc_4B16D:                              ; CODE XREF: quickFight+28↑j
                                         ; DATA XREF: ovl10:jpt_4B15C↓o
-                mov     ax, 1           ; jumptable 0003823C case 1
-                push    ax              ; jumptable 0003823C case 1
+                mov     ax, 1           ; jumptable 0004B15C case 1
+                push    ax
                 call    j_spellsDialog
                 pop     cx
                 or      ax, ax
-                jnz     short def_4B15C ; jumptable 0003823C default case
-                jmp     short loc_4B161 ; jumptable 0003823C case 0
+                jnz     short def_4B15C ; jumptable 0004B15C default case
+                jmp     short loc_4B161 ; jumptable 0004B15C case 0
 ; ---------------------------------------------------------------------------
 
 loc_4B17D:                              ; CODE XREF: quickFight+28↑j
                                         ; DATA XREF: ovl10:jpt_4B15C↓o
-                nop                     ; jumptable 0003823C case 2
+                nop                     ; jumptable 0004B15C case 2
                 push    cs
                 call    near ptr block
-                jmp     short def_4B15C ; jumptable 0003823C default case
+                jmp     short def_4B15C ; jumptable 0004B15C default case
 ; ---------------------------------------------------------------------------
 
 loc_4B184:                              ; CODE XREF: quickFight+28↑j
                                         ; DATA XREF: ovl10:jpt_4B15C↓o
-                nop                     ; jumptable 0003823C case 3
+                nop                     ; jumptable 0004B15C case 3
                 push    cs
                 call    near ptr run
 
 def_4B15C:                              ; CODE XREF: quickFight+24↑j
                                         ; quickFight+37↑j ...
-                pop     si              ; jumptable 0003823C default case
+                pop     si              ; jumptable 0004B15C default case
                 pop     bp
                 retf
 quickFight      endp
@@ -92362,9 +92685,9 @@ arg_0           = word ptr  6
                 mov     si, [bp+arg_0]
                 mov     ax, si
                 add     ax, 32h ; '2'
-                push    ax              ; max
+                push    ax
                 mov     ax, 1
-                push    ax              ; min
+                push    ax
                 call    rnd
                 pop     cx
                 pop     cx
@@ -92390,12 +92713,12 @@ monsterSavingThrow endp
 
 run             proc far                ; CODE XREF: j_run↑J
                                         ; quickFight+52↑p ...
-                push    bp              ; max
+                push    bp
                 mov     bp, sp
                 mov     ax, 64h ; 'd'
                 push    ax
                 mov     ax, 1
-                push    ax              ; min
+                push    ax
                 call    rnd
                 pop     cx
                 pop     cx
@@ -92541,8 +92864,8 @@ var_1           = byte ptr -1
                 mov     al, [bp+var_1]
                 cbw
                 push    ax              ; format
-                mov     ax, 4B91h       ; p1
-                push    ax              ; format
+                mov     ax, 4B91h
+                push    ax
                 lea     ax, [bp+buffer]
                 push    ax              ; buffer
                 call    _sprintf
@@ -92569,8 +92892,8 @@ loc_4B4C7:                              ; CODE XREF: getMonsterDescriptions+16�
                 mov     al, [bp+var_1]
                 cbw
                 push    ax              ; format
-                mov     ax, 4B9Fh       ; p1
-                push    ax              ; format
+                mov     ax, 4B9Fh
+                push    ax
                 lea     ax, [bp+var_52]
                 push    ax              ; buffer
                 call    _sprintf
@@ -92597,8 +92920,8 @@ loc_4B505:                              ; CODE XREF: getMonsterDescriptions+54�
                 mov     al, [bp+var_1]
                 cbw
                 push    ax              ; format
-                mov     ax, 4BADh       ; p1
-                push    ax              ; format
+                mov     ax, 4BADh
+                push    ax
                 lea     ax, [bp+var_7A]
                 push    ax              ; buffer
                 call    _sprintf
@@ -92697,18 +93020,17 @@ loc_4B5C5:                              ; CODE XREF: setSpeedTable+12↑j
                 cbw
                 mov     [bp+var_6], ax
                 mov     ax, 0Ch
-; ;
-                push    ax              ; count
-                mov     ax, 0FFFFh
-                push    ax              ; val
-                mov     ax, 0AD54h
                 push    ax              ; c
+                mov     ax, 0FFFFh
+                push    ax
+                mov     ax, 0AD54h
+                push    ax              ; s
                 call    _memset
                 add     sp, 6
                 mov     ax, 18h
-                push    ax              ; count
-                mov     ax, 0FFFFh
                 push    ax              ; c
+                mov     ax, 0FFFFh
+                push    ax
                 lea     ax, [bp+s]
                 push    ax              ; s
                 call    _memset
@@ -92721,21 +93043,20 @@ loc_4B5C5:                              ; CODE XREF: setSpeedTable+12↑j
 ; ---------------------------------------------------------------------------
 
 loc_4B609:                              ; CODE XREF: setSpeedTable+9E↓j
-                xor     ax, ax          ; int
+                xor     ax, ax
                 push    ax
                 mov     ax, 4
-                push    ax              ; int
-                push    ds              ; attrib
+                push    ax
+                push    ds
                 mov     bx, [bp+var_2]
                 mov     al, [bx-1337h]
                 mov     ah, 0
                 mov     dx, 12Fh
                 imul    dx
                 add     ax, 0B9D6h
-                push    ax              ; ps
+                push    ax
                 call    getStat
                 add     sp, 8
-; ;
                 mov     [bp+var_4], ax
                 mov     bx, [bp+var_2]
                 shl     bx, 1
@@ -92769,8 +93090,8 @@ loc_4B645:                              ; CODE XREF: setSpeedTable+58↑j
                 add     dx, [bx-4946h]
                 mov     bx, dx
                 mov     al, es:[bx]
-                mov     ah, 0           ; p1
-                mov     [bp+var_4], ax  ; p1
+                mov     ah, 0
+                mov     [bp+var_4], ax
                 pop     bx
                 mov     [bx], ax
                 inc     [bp+var_2]
@@ -92795,8 +93116,8 @@ loc_4B68A:                              ; CODE XREF: setSpeedTable+A5↑j
                 add     dx, [bx-4946h]
                 mov     bx, dx
                 mov     al, es:[bx]
-                mov     ah, 0           ; p1
-                mov     [bp+var_4], ax  ; p1
+                mov     ah, 0
+                mov     [bp+var_4], ax
                 pop     bx
                 mov     [bx], ax
                 inc     [bp+var_2]
@@ -92821,8 +93142,8 @@ loc_4B6C5:                              ; CODE XREF: setSpeedTable+E0↑j
                 add     dx, [bx-4946h]
                 mov     bx, dx
                 mov     al, es:[bx]
-                mov     ah, 0           ; p1
-                mov     [bp+var_4], ax  ; p1
+                mov     ah, 0
+                mov     [bp+var_4], ax
                 pop     bx
                 mov     [bx], ax
                 inc     [bp+var_2]
@@ -94309,7 +94630,7 @@ arg_2           = word ptr  8
                 call    getCurrentLevel
                 pop     cx
                 pop     cx
-                push    ax              ; pChar
+                push    ax
                 mov     ax, di
                 mov     dx, 0FFFFh
                 imul    dx
@@ -98392,12 +98713,12 @@ loc_4DDC7:                              ; CODE XREF: Spell_76_DivineIntervention
                 mov     ah, 0
                 mov     [bp+var_2], ax
                 mov     ax, 10h
-                push    ax              ; count
+                push    ax              ; c
                 xor     ax, ax
-                push    ax              ; val
+                push    ax
                 mov     ax, si
                 add     ax, 113h
-                push    ax              ; c
+                push    ax              ; s
                 call    _memset
                 add     sp, 6
                 mov     al, byte ptr [bp+var_2]
@@ -98405,7 +98726,7 @@ loc_4DDC7:                              ; CODE XREF: Spell_76_DivineIntervention
                 cmp     [bp+var_2], 0
                 jnz     short loc_4DE0B
                 push    ds
-                push    si              ; ps
+                push    si
                 call    j_getMaxHP
                 pop     cx
                 pop     cx
@@ -100315,7 +100636,7 @@ arg_0           = word ptr  6
                 push    di
                 mov     si, [bp+arg_0]
                 push    ds
-                push    si              ; pChar
+                push    si
                 call    getCurrentLevel
                 pop     cx
                 pop     cx
@@ -100358,10 +100679,10 @@ loc_4EC7C:                              ; CODE XREF: getThievery+3E↑j
 
 loc_4EC85:                              ; CODE XREF: getThievery+38↑j
                                         ; getThievery+43↑j ...
-                mov     ax, 0Ah         ; itemId
-                push    ax              ; itemId
+                mov     ax, 0Ah
+                push    ax
                 push    ds
-                push    si              ; pChar
+                push    si
                 call    itemScan
                 add     sp, 6
                 mov     dx, di
@@ -105512,13 +105833,13 @@ loc_512A2:                              ; CODE XREF: getMaxSP+49↑j
 
 loc_512A6:                              ; CODE XREF: getMaxSP+50↑j
                                         ; getMaxSP+147↓j
-                xor     ax, ax          ; int
-                push    ax              ; int
+                xor     ax, ax
+                push    ax
                 mov     al, [bp+var_9]
                 mov     ah, 0
-                push    ax              ; attrib
+                push    ax
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; ps
+                push    word ptr [bp+arg_0]
                 call    getStat
                 add     sp, 8
                 push    ax
@@ -105529,7 +105850,6 @@ loc_512A6:                              ; CODE XREF: getMaxSP+50↑j
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
                 les     bx, [bp+arg_0]
-; ;
                 mov     al, es:[bx+11h]
                 mov     ah, 0
                 shl     ax, 1
@@ -105565,7 +105885,7 @@ loc_51315:                              ; CODE XREF: getMaxSP+BD↑j
 loc_5131F:                              ; CODE XREF: getMaxSP+BB↑j
                                         ; getMaxSP+C3↑j
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; pChar
+                push    word ptr [bp+arg_0]
                 call    getCurrentLevel
                 pop     cx
                 pop     cx
@@ -105629,10 +105949,10 @@ loc_5139A:                              ; CODE XREF: getMaxSP+120↑j
                 mov     [bp+var_4], dx
 
 loc_513BC:                              ; CODE XREF: getMaxSP+14E↑j
-                mov     ax, 8           ; itemId
-                push    ax              ; itemId
+                mov     ax, 8
+                push    ax
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; pChar
+                push    word ptr [bp+arg_0]
                 call    itemScan
                 add     sp, 6
                 add     [bp+var_4], ax
@@ -105679,11 +105999,11 @@ arg_0           = dword ptr  6
                 mov     [bp+var_2], 0
                 mov     [bp+var_4], ax
                 xor     ax, ax
-                push    ax              ; int
+                push    ax
                 mov     ax, 3
-                push    ax              ; attrib
+                push    ax
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; ps
+                push    word ptr [bp+arg_0]
                 call    getStat
                 add     sp, 8
                 push    ax
@@ -105721,7 +106041,7 @@ loc_5146D:                              ; CODE XREF: getMaxHP+71↑j
 loc_51477:                              ; CODE XREF: getMaxHP+6F↑j
                                         ; getMaxHP+77↑j
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; pChar
+                push    word ptr [bp+arg_0]
                 call    getCurrentLevel
                 pop     cx
                 pop     cx
@@ -105734,9 +106054,9 @@ loc_51477:                              ; CODE XREF: getMaxHP+6F↑j
                 mov     [bp+var_2], dx
                 mov     [bp+var_4], ax
                 mov     ax, 7
-                push    ax              ; itemId
+                push    ax
                 push    word ptr [bp+arg_0+2]
-                push    word ptr [bp+arg_0] ; pChar
+                push    word ptr [bp+arg_0]
                 call    itemScan
                 add     sp, 6
                 add     [bp+var_4], ax
@@ -105773,14 +106093,14 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 push    si
-                push    di              ; int
+                push    di
                 mov     di, [bp+arg_0]
                 xor     ax, ax
                 push    ax
                 mov     ax, 4
-                push    ax              ; attrib
+                push    ax
                 push    ds
-                push    di              ; ps
+                push    di
                 call    getStat
                 add     sp, 8
                 push    ax
@@ -105788,9 +106108,9 @@ arg_2           = word ptr  8
                 pop     cx
                 mov     si, ax
                 mov     ax, 9
-                push    ax              ; itemId
+                push    ax
                 push    ds
-                push    di              ; pChar
+                push    di
                 call    itemScan
                 add     sp, 6
                 mov     dx, si
@@ -108166,6 +108486,7 @@ arg_2           = word ptr  8
                 mov     bx, 0FB40h
                 call    cs:dword_609EE
                 mov     es, bx
+                assume es:nothing
                 xchg    bx, cs:word_609F8
                 mov     cs:word_609FC, bx
                 mov     ds, bx
@@ -108191,7 +108512,6 @@ arg_2           = word ptr  8
 
 loc_60F9A:                              ; CODE XREF: sub_60F3C+81↓j
                 mov     es, cs:word_609F8
-                assume es:nothing
                 mov     ah, 49h
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
@@ -108366,7 +108686,6 @@ loc_61102:                              ; CODE XREF: sub_60FC0+13D↑j
                 mov     ds, cs:word_609F8
                 assume ds:dseg
                 mov     es, cs:word_609F6
-                assume es:nothing
                 sub     si, si
                 sub     di, di
                 mov     cx, 7D00h
@@ -108655,7 +108974,6 @@ arg_2           = word ptr  8
                 call    sub_62A14
                 mov     ds, cs:word_609F8
                 mov     es, cs:word_609F6
-                assume es:nothing
                 sub     si, si
                 sub     di, di
                 mov     cx, 7D00h
@@ -108672,7 +108990,6 @@ loc_61296:                              ; CODE XREF: sub_6125C+1C↑j
                 mov     bx, cs:word_609C0
                 sub     di, di
                 mov     es, cs:word_609F8
-                assume es:nothing
                 push    cs
                 pop     ds
                 assume ds:vdrv
@@ -113673,7 +113990,7 @@ loc_633E5:                              ; CODE XREF: sub_63370+7F↓j
                 push    ds
                 push    si
                 mov     ds, word_60B22
-                assume ds:nothing
+                assume ds:dseg
                 mov     si, 200h
 
 loc_63433:                              ; CODE XREF: sub_63370+C8↓j
@@ -113712,7 +114029,6 @@ loc_6345F:                              ; CODE XREF: sub_63370+EB↑j
                 loop    loc_6344B
                 pop     si
                 pop     ds
-                assume ds:dseg
                 sub     si, dx
                 nop
 
@@ -113724,13 +114040,11 @@ loc_63466:                              ; CODE XREF: sub_63370+11D↓j
                 push    bx
                 mov     bx, word ptr byte_29081+3Bh
                 mov     ds, word ptr byte_290E1+7
-                assume ds:nothing
                 mov     ah, 40h
                 int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
                                         ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
                 pop     bx
                 pop     ds
-                assume ds:dseg
                 add     word ptr byte_29081+35h, ax
                 adc     word ptr byte_29081+37h, 0
                 add     bx, 2
