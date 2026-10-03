@@ -120,6 +120,38 @@ InteractOutcome interactClassifyLock(const LockRecord *lock, bool alreadyUnlocke
  */
 InteractOutcome interactClassifyCurgame(uint16_t curgameFlags, bool alreadyTriggered);
 
+/*
+ * Key matching (UnlockDoorCommand, yendor2.asm:45970, instruction-identical in
+ * Chapter 3 -- the handler for the key items, ids 0x21-0x2F). The key item's
+ * consumable-target entry (item.h) starts with a flags word:
+ *   high byte  the tier bit (0x80 BRASS ... 0x02 GOLD -- the same bits as
+ *              lockcatalog.h's LockFlagKey* shifted down 8)
+ *   0x80       a chest key        0x40  a door key        0x20  a master key (KEY RING, word 0x0030)
+ * Real data: BRASS CHEST KEY 0x8090, BRONZE 0x4090, ... GOLD CHEST KEY 0x0290;
+ * BRASS DOOR KEY 0x8050 ... GOLD DOOR KEY 0x0250; KEY RING 0x0030.
+ *
+ * interactKeyOpens decides whether the key opens the faced target, whose flags
+ * word (a lock-catalog record's, or a CURGAME record's -- they are the same
+ * shape) names the required tier(s) in its high byte:
+ *   lockTarget (the 0x8000 object path, LoadLockState): a master key uses
+ *     heldKeyFlags (the ring's accumulated tiers) HIGH byte; any other key must
+ *     be a chest key (0x80) and supplies its own word's high byte.
+ *   otherwise (the 0x4000 path, LoadCurgameRecord): a master key uses
+ *     heldKeyFlags' LOW byte; any other key must be a door key (0x40) and supplies
+ *     its own word's high byte.
+ * Success = that byte shares a bit with targetFlags' high byte. (heldKeyFlags
+ * only ever has low-byte bits -- see interactKeyRingContribution -- so a master
+ * key never opens the lockTarget path in practice; reproduced.)
+ */
+bool interactKeyOpens(bool lockTarget, uint16_t keyWord0, uint16_t heldKeyFlags, uint16_t targetFlags);
+
+/*
+ * FinishPlacingHeldItem's accumulation (:50205): placing an item adds its tier
+ * byte to g_heldKeyFlags (low byte), except an item with flag 0x80 (a chest key)
+ * adds nothing -- so the ring remembers door keys only.
+ */
+uint16_t interactKeyRingContribution(uint16_t keyWord0);
+
 /* alreadySpawned: monsterSpawnFlagTest(save, game, object->value) (monsterpool.h). */
 InteractOutcome interactClassifyMonsterSpawn(bool alreadySpawned);
 

@@ -18,8 +18,7 @@ both games), `dialogservice.c` (healer, trainer, challenges, tomes, ore, riddles
 repair rules), `shop.c`, with the lock catalog's unexplained bytes decoded as chest/shop **contents**.
 Also `lightsource.c`, `spellcast.c` (castability, learning), `repair.c`, `consumable.c` (potions, alchemy).
 What is left is mostly UI/orchestration (shop screen, text entry, animation shells, row-walking), container
-recursion (needs a CURGAME reader), `ConsumeItemChargeResource`'s three UI-heavy modes, `UnlockDoorCommand`'s
-key-tier match, `DispatchItemAbilityCommand`, `ExamineTarget`, `ShowLocalAreaMap`, and the SDL layer. Method
+recursion (needs a CURGAME reader), `ConsumeItemChargeResource`'s three UI-heavy modes, `DispatchItemAbilityCommand`, `ExamineTarget`, `ShowLocalAreaMap`, and the SDL layer. Method
 notes: list the real data that reaches a code path before decoding it; subtract the data-segment base from
 IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell heredocs.
 

@@ -142,3 +142,19 @@ bool interactTriggerFacingCurgameEvent(SaveGame *save, GameKind game, const Worl
     return interactResolveIfOutcome(save, game, object, lock, lockAlreadyUnlocked, curgameFlags,
                                      curgameAlreadyTriggered, monsterAlreadySpawned, qualifying, 2);
 }
+
+bool interactKeyOpens(bool lockTarget, uint16_t keyWord0, uint16_t heldKeyFlags, uint16_t targetFlags) {
+    uint16_t keyByte;
+    if (keyWord0 & 0x0020) {
+        keyByte = lockTarget ? (uint16_t)(heldKeyFlags >> 8) : (uint16_t)(heldKeyFlags & 0xFF);
+    } else if (keyWord0 & (lockTarget ? 0x0080 : 0x0040)) {
+        keyByte = (uint16_t)(keyWord0 >> 8);
+    } else {
+        return false;
+    }
+    return (keyByte & (targetFlags >> 8)) != 0;
+}
+
+uint16_t interactKeyRingContribution(uint16_t keyWord0) {
+    return (keyWord0 & 0x0080) ? 0 : (uint16_t)(keyWord0 >> 8);
+}

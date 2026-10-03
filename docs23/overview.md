@@ -11278,6 +11278,21 @@ and the sell/enhance/repair rules, on top of the topic-menu machinery. What's
 left of the NPC engine is UI (the shop screen, text entry) and the two
 screens' item-moving.
 
+### Session update: UnlockDoorCommand's key-tier match (`interactKeyOpens`)
+
+The last piece of the lock chain. Key items (ids 0x21-0x2F) are consumable-target
+entries whose first word is `tier byte << 8 | kind`: kind 0x90 = chest key
+(`BRASS CHEST KEY` 0x8090 ... `GOLD CHEST KEY` 0x0290), 0x50 = door key
+(0x8050 ... 0x0250), `KEY RING` 0x0030 (master flag 0x20). A lock or CURGAME
+record's flags word carries the acceptable tiers in its high byte, so the test
+is one AND. `FinishPlacingHeldItem` accumulates a door key's tier into
+`g_heldKeyFlags` (low byte), so the ring opens exactly the door tiers placed on
+it; chest keys add nothing, and on the 0x8000 (chest) path the ring reads the
+*high* byte, which is always empty, so a ring never opens a chest -- reproduced.
+`interactKeyOpens` / `interactKeyRingContribution` in `interact.c`, tests in
+`test_interact.c`. The sound, unlocked-bit write, message and cell-flag clear
+are I/O shells.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -297,6 +297,34 @@ static void testResolveIfOutcomeBit0x40QualifyingSet(void) {
           !interactResolveIfOutcome(&save, GameYendor2, &curgame, NULL, false, 0x20, false, false, qualifying, 3));
 }
 
+static void testKeyMatching(void) {
+    /* real item words: BRASS CHEST KEY 0x8090, GOLD DOOR KEY 0x0250, KEY RING 0x0030 */
+    uint16_t brassChest = 0x8090, goldChest = 0x0290, brassDoor = 0x8050, goldDoor = 0x0250, ring = 0x0030;
+    uint16_t brassLock = LockFlagKeyBrass, goldLock = LockFlagKeyGold;
+
+    check("a brass chest key opens a brass chest lock", interactKeyOpens(true, brassChest, 0, brassLock));
+    check("...not a gold one", !interactKeyOpens(true, brassChest, 0, goldLock));
+    check("a gold chest key opens a gold lock", interactKeyOpens(true, goldChest, 0, goldLock));
+    check("a door key does not open the chest path", !interactKeyOpens(true, brassDoor, 0, brassLock));
+    check("a door key opens a brass door", interactKeyOpens(false, brassDoor, 0, brassLock));
+    check("a chest key does not open the door path", !interactKeyOpens(false, brassChest, 0, brassLock));
+    check("a lock needing several tiers opens with any one of them",
+          interactKeyOpens(false, goldDoor, 0, (uint16_t)(brassLock | goldLock)));
+
+    uint16_t held = 0;
+    held |= interactKeyRingContribution(brassDoor);
+    held |= interactKeyRingContribution(goldChest);
+    check("placing a chest key adds nothing to the ring", held == 0x0080);
+    held |= interactKeyRingContribution(goldDoor);
+    check("door keys accumulate their tier bytes", held == 0x0082);
+
+    check("the key ring opens a door whose tier it has collected", interactKeyOpens(false, ring, held, goldLock));
+    check("...but not one it has not", !interactKeyOpens(false, ring, held, LockFlagKeyIron));
+    check("...and it never opens the chest path (the ring's high byte is always empty)",
+          !interactKeyOpens(true, ring, held, brassLock));
+    check("a non-key item opens nothing", !interactKeyOpens(false, 0x0000, held, brassLock) && !interactKeyOpens(true, 0x0000, held, brassLock));
+}
+
 int main(void) {
     testBitmap();
     testSelectBranch();
@@ -308,6 +336,7 @@ int main(void) {
     testKnock();
     testTriggerFacingCurgameEvent();
     testResolveIfOutcomeBit0x40QualifyingSet();
+    testKeyMatching();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
