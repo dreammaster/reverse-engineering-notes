@@ -17,8 +17,6 @@
 1036E	_lowvideo
 10374	_normvideo
 1037B	__CPUTN
-103E6	def_103BA
-104A0	jpt_103BA
 104AE	_cprintf
 104C4	_cputs
 10702	_gmtime
@@ -126,8 +124,6 @@
 13040	j____read
 130FB	__read
 13115	__scanner
-134D1	def_131CF
-13578	jpt_131CF
 1374E	_setblock
 1376A	_setdate
 1377D	_settime
@@ -139,8 +135,6 @@
 13876	_strncpy
 13B02	_unlink
 13B30	__VPRINTER
-13BFD	def_13BF8
-13FBF	jpt_13BF8
 13FEF	__VPTR
 14015	__VRAM
 1408E	__write
@@ -182,20 +176,10 @@
 14B93	_memset_0
 14BB2	_strncpy_0
 14BE3	_main
-14D23	def_14CF6
-14DAA	def_14D3D
-1521D	jpt_14D3D
-1522B	jpt_14CF6
 15271	checkPartyDead
-152BE	def_152B2
-152DA	jpt_152B2
+152FC	isBitSet	(bitarray, index) -> bit; used by ifProc for game flags (action 20)
 1531F	addTime	minutes +1440/day, day wrap at 100 -> year (Xeen Party::addTime); resets blacksmith wares + bank interest on day change
-15434	def_15418
-15444	jpt_15418
-15927	def_15906
-159BD	def_1599C
-15B34	jpt_1599C
-15B42	jpt_15906
+15468	setBit	(bitarray, index, value)
 16973	changeTime	per 480 minutes: condition ticks (poison/disease/insane...), then addTime (Xeen Party::changeTime)
 16DC0	chargeStep
 16DF4	statBonus
@@ -204,8 +188,6 @@
 16E6B	itemScan	(BinDiff sim .50 conf .97, unverified)
 16F89	getCurrentLevel	max(level+tempLevel,0) from +23h/+24h (identical to Xeen Character::getCurrentLevel)
 16FB1	getStat
-1705D	def_16FCD
-170E9	jpt_16FCD
 170F7	drawParty	party status line (BinDiff .62/.82)
 1741A	MemFree	(BinDiff sim .66 conf .95, unverified)
 19038	subtractHitPoints	hp at +125h; sets conditions +11Fh (unconscious) / +120h (dead), breaks armour (item ids 21h..29h, flag 80h)
@@ -213,8 +195,6 @@
 1913E	getElementalCategory
 19159	getAttributeCategory	(BinDiff sim .89 conf .92, unverified)
 1918F	conditionMod
-193C7	def_193A8
-193D0	jpt_193A8
 193DC	mazeUpdateSlot	re-evaluates Maze_curSlot when the party's x/y leaves the 16x16 page, loading/saving neighbour pages and calling Map_load when the map id changes
 19608	runMazeEvent	6.7 KB event interpreter: "What's the Password?", "picks the lock", Hologram sequences (name from strings, unverified)
 19850	evt_op32	event opcode 32: WhoWill (name from the Xeen opcode of the same number; unverified)
@@ -232,7 +212,6 @@
 1A49F	evt_op15	event opcode 15: SetChar (name from the Xeen opcode of the same number; unverified)
 1A505	evt_op16	event opcode 16: Spawn (name from the Xeen opcode of the same number; unverified)
 1A5C4	evt_op17	event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; unverified)
-1A625	def_1A5D6
 1A632	evt_op19	event opcode 19: AlterMap (name from the Xeen opcode of the same number; unverified)
 1A695	evt_op20	event opcode 20: GiveMulti (name from the Xeen opcode of the same number; unverified)
 1AA2A	evt_op21	event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; unverified)
@@ -245,125 +224,33 @@
 1ADBF	evt_op30	event opcode 30: cutscene end (name from the Xeen opcode of the same number; unverified)
 1AEEC	evt_op13	event opcode 13: ? (name from the Xeen opcode of the same number; unverified)
 1AF03	evt_op18	event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)
-1B0A7	jpt_1A5D6
-1B129	jpt_1984B
 1B358	moveMonsters	BinDiff .68/.87; calls monstersAttack
 1B669	drawView	indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)
 1B99E	mazeNeighbourSlot	maps a neighbour maze id to its loaded slot (1111h if not loaded)
 1BC15	mazeGetWordRel	args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
-1BD2A	def_1BCE9
-1BD57	jpt_1BCE9
 1BD67	mazeGetFlagsRel	same addressing, returns the cell flag byte (maze .DAT +200h) & mask
 1BE3E	mazeSetBits	args (x, y, field, value): clear the field's mask (table 16F8h) in the cell word, or in value << shift (88-byte field records at 159Ch)
 1C195	prepareIndoorView	5.9 KB, called first by drawView (by call graph, unverified)
-1C2E5	def_1C2AA
-1C352	def_1C343
-1C3EB	def_1C3B0
-1C458	def_1C449
-1C4F1	def_1C4B6
-1C58A	def_1C54F
-1C5F7	def_1C5E8
-1C690	def_1C655
-1C6FD	def_1C6EE
-1C796	def_1C75B
-1C82F	def_1C7F4
-1C89C	def_1C88D
-1C935	def_1C8FA
-1C9A2	def_1C993
-1CA3B	def_1CA00
-1CAA8	def_1CA99
-1CB41	def_1CB06
-1CBAE	def_1CB9F
-1CC47	def_1CC0C
-1CCE0	def_1CCA5
-1CD4D	def_1CD3E
-1CDE6	def_1CDAB
-1CE53	def_1CE44
-1CEEC	def_1CEB1
-1CF59	def_1CF4A
-1CFF2	def_1CFB7
-1D05F	def_1D050
-1D0F8	def_1D0BD
-1D165	def_1D156
-1D1FE	def_1D1C3
-1D26B	def_1D25C
-1D304	def_1D2C9
-1D371	def_1D362
-1D40A	def_1D3CF
-1D477	def_1D468
-1D510	def_1D4D5
-1D57D	def_1D56E
-1D5EA	def_1D5DB
-1D657	def_1D648
-1D6C4	def_1D6B5
-1D731	def_1D722
-1D79E	def_1D78F
-1D80B	def_1D7FC
-1D878	def_1D869
-1D8D5	jpt_1D869
-1D8E3	jpt_1D7FC
-1D8F1	jpt_1D78F
-1D8FF	jpt_1D722
-1D90D	jpt_1D6B5
-1D91B	jpt_1D648
-1D929	jpt_1D5DB
-1D937	jpt_1D56E
-1D945	jpt_1D4D5
-1D953	jpt_1D468
-1D961	jpt_1D3CF
-1D96F	jpt_1D362
-1D97D	jpt_1D2C9
-1D98B	jpt_1D25C
-1D999	jpt_1D1C3
-1D9A7	jpt_1D156
-1D9B5	jpt_1D0BD
-1D9C3	jpt_1D050
-1D9D1	jpt_1CFB7
-1D9DF	jpt_1CF4A
-1D9ED	jpt_1CEB1
-1D9FB	jpt_1CE44
-1DA09	jpt_1CDAB
-1DA17	jpt_1CD3E
-1DA25	jpt_1CCA5
-1DA33	jpt_1CC0C
-1DA41	jpt_1CB9F
-1DA4F	jpt_1CB06
-1DA5D	jpt_1CA99
-1DA6B	jpt_1CA00
-1DA79	jpt_1C993
-1DA87	jpt_1C8FA
-1DA95	jpt_1C88D
-1DAA3	jpt_1C7F4
-1DAB1	jpt_1C75B
-1DABF	jpt_1C6EE
-1DACD	jpt_1C655
-1DADB	jpt_1C5E8
-1DAE9	jpt_1C54F
-1DAF7	jpt_1C4B6
-1DB05	jpt_1C449
-1DB13	jpt_1C3B0
-1DB21	jpt_1C343
-1DB2F	jpt_1C2AA
 1E407	renderIndoorView	8 KB, advances the animation counters then draws the view (unverified)
 203FE	drawViewOutdoors	outdoor counterpart: calls 2045A (by call graph)
 2045A	renderOutdoorView	8 KB outdoor renderer (unverified)
-216D4	def_216CF
-21AF1	def_21AEC
-21E34	def_21E2F
-222A9	def_222A4
-2249C	jpt_222A4
-224B2	jpt_21E2F
-224C8	jpt_21AEC
-224DE	jpt_216CF
 24ECC	rnd	rnd(lo, hi)
-24F8D	Events_updateGameCounter	(BinDiff sim .65 conf .95, unverified)
-24FA1	Music_deinit
-24FAB	Music_playSong
-24FB5	Window_update	(BinDiff sim .67 conf .95, unverified)
-24FBF	Music_playFX
-24FD3	Sound_playVOC
+24F53	vdrv_30	video module API 30h (not identified)
+24F65	vdrv_0C_showRaw	API 0Ch: loads a 320x200 raw image (name pointer) and displays it (control.raw, logy5.raw)
+24F6F	vdrv_21_loadSprites	API 21h: loads a .pic/.icn/.fac/.out/.til by name, returns far pointer in dx:ax
+24F79	vdrv_24_freeSprites	API 24h: releases a loaded sprite resource
+24F83	vdrv_27_showScreen	API 27h: takes a screen/background pointer (+0/1 flag)
+24F8D	vdrv_18_getMouse	API 18h: writes the mouse x, y (far ptrs) and returns the button state
+24F97	vdrv_03_hideMouse	API 03h: hides the mouse cursor
+24FA1	vdrv_1E_openWindow	API 1Eh (612 bytes): opens a text window (10 args: rectangle, colours, text pointer; window stack of 7)
+24FAB	vdrv_06_closeWindows	API 06h: closes N windows, restoring the background
+24FB5	vdrv_2D_printText	API 2Dh (1 KB): prints a string with the in-text control codes (03 'c' centre, 0B nnn row, 09 nnn column, 'r', 'l' ...) at the window cursor
+24FBF	vdrv_0F_fade	API 0Fh: palette fade in/out (args direction, speed) via int 10h/1002h
+24FC9	vdrv_15_drawSprite	API 15h: draws frame N of a sprite resource at (x, y) (the line codec of mm3-re.md section 5)
+24FD3	vdrv_1B_animateCursor	API 1Bh: advances/draws the mouse cursor animation (called while waiting for input)
 24FDD	loadResourceByName	takes a name (DGROUP near ptr), returns far pointer to the loaded cc member (dx:ax)
-24FFB	Sound_deinit
+24FF2	vdrv_00_transition	API 00h: screen copy/transition taking a far pointer
+24FFB	vdrv_2A	API 2Ah (375 bytes; called with a far string pointer in the intro)
 2500F	ccOpen	(by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure
 25024	ccClose	(by use)
 25032	ccSeek	(by use) seek in the open cc file
@@ -374,11 +261,7 @@
 25238	setStartTime	(BinDiff sim .68 conf .97, unverified)
 2524D	getElapsedTime	(BinDiff sim .68 conf .97, unverified)
 25279	timeText	(BinDiff sim .67 conf .95, unverified)
-253C2	def_252EF
-253C5	jpt_252EF
 254BA	getCommand	waits for/reads input (keys and mouse) and returns a command code; 1.9 KB, ~50 callers (by use)
-2562C	def_25621
-25C22	jpt_25621
 25E20	ipause_5	(BinDiff sim .88 conf .92, unverified)
 2634D	openCcFile	creates the file if missing, opens it as a cc (ccOpen + Resources_openFile + ccClose) (by use)
 263C3	loadMazeDats	for the (up to) 4 neighbouring maze ids at DGROUP 274Eh: sprintf "maze%02u.dat" and load the 832-byte cell block into the 4 slots at DGROUP C554h (stride 340h) via sub_226C6
@@ -482,6 +365,7 @@
 37340	Party_bankGems	dword (+366h)
 37344	Party_gold	dword (+36Ah) (by use: spent in shops, shared by awards)
 37348	Party_gems	dword (+36Eh) (by use: spell gem costs)
+37350	Party_gameFlags	32-byte bit array of event flags (MAZE.PTY +376h)
 37398	Roster_buffer	far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
 37462	Party_size	byte, number of active characters
 3771E	Mon_spd	far pointer to the monspd.dat column (90 entries), loaded by loadMonsterData
@@ -507,10 +391,6 @@
 3776E	Mon_ac	far pointer to the monac.dat column (90 entries), loaded by loadMonsterData
 37772	Mon_hp	far pointer to the monhp.dat column (90 entries), loaded by loadMonsterData
 379F2	monstersAttack	(BinDiff sim .69 conf .93, unverified)
-37B31	def_37B2C
-37B49	jpt_37B2C
-37E41	def_37D55
-37E4A	jpt_37D55
 37EB2	openMm3Cc	opens mm3.cc, "Alert!" error box (from strings)
 380FE	getDiskFree	(BinDiff sim .69 conf .97, unverified)
 38425	stopAttack	(BinDiff sim .62 conf .95, unverified)
@@ -522,113 +402,43 @@
 3998B	endingCutscene	8.8 KB, only called for event opcode 30 (cutscene end) via runMazeEvent
 3BC30	subPartyTime
 3BCF6	indexEvents	walks the loaded maze%02u.evt records (len byte + len bytes) and fills the 10-byte index at DGROUP 92FCh: x, y, dir, line, offset; also indexes the text%02u.maz strings (offsets at DGROUP A6B6h)
-3BFD6	def_3BF95
-3C0D2	def_3C0C1
-3C1CE	jpt_3C0C1
-3C1E0	jpt_3BF95
 3C282	giveTake	Xeen Party::giveTake: (mode1, val1, mode2, val2, charIdx), switch on mode-8 (giveCharDamage for hp, items, gold...)
-3C3F9	def_3C3DE
-3C6EA	def_3C335
-3C82E	def_3C813
-3CCEA	def_3C6FA
-3CCF0	jpt_3C813
-3CD02	jpt_3C6FA
-3CDBA	jpt_3C3DE
-3CDCC	jpt_3C335
 3CFAD	setValue	Xeen Character::setValue: writes a character field by action number (+10h sex, +11h race, +13h class, +125h hp ...)
-3D273	def_3CFCE
-3D276	jpt_3CFCE
 3D32E	ifProc	event condition: (action, value, mode, charIndex) -> compares a character/party value; same action numbers as Xeen Scripts::ifProc (confirmed by the field offsets it reads)
-3D41D	def_3D402
-3D6A6	def_3D353
-3D6FE	jpt_3D402
-3D710	jpt_3D353
 3D8C9	trapOrLockEvent	uses getThievery, giveCharDamage, giveTake, rnd (by callees)
 3DD20	resetTemps
 3DF79	GiveBankInterest	(BinDiff sim .69 conf .97, unverified)
 3E0A0	showJoke	jester.bin "Joke of the Day"
 3E113	arenaEvent	combat.m "The Arena"
-3E8AC	Spells_moonRay
+3E8AC	setStartFlags	clears the 32-byte game flag array and sets flags 16-23 (name from use; was wrongly Spells_moonRay)
 3E982	exploreLoop	main exploration loop (Engine_mode 1): runs events, draws the view, reads a command from getCommand and dispatches through the 36-entry table at ovl04:16D4h (+48h = handlers). Replaces the earlier BinDiff name "death".
 3EA28	cmd_F0_turnLeft	command F0h: Party_facing step (sequence 0,1->..), then update (by code reading)
 3EA48	cmd_F1_turnRight	command F1h
-3EA70	def_3EA36
 3EAA0	cmd_F2_stepForward	command F2h: checks mazeGetWordRel in the facing direction, moves
-3EC7F	def_3EC64
-3EC8E	def_3F05F
-3ECAD	def_3F0D5
-3EE88	def_3EE62
-3F011	def_3EFEA
 3F017	cmd_F3	command F3h (not identified)
 3F094	cmd_F4	command F4h (not identified)
 3F112	cmd_F5	command F5h (not identified)
-3F3A6	jpt_3F153
-3F3AE	jpt_3F0D5
-3F3B6	jpt_3F05F
-3F3BE	jpt_3EFEA
-3F3D4	jpt_3EE62
-3F3DC	jpt_3EC64
-3F3E4	jpt_3EA56
-3F3EC	jpt_3EA36
 3F490	Awards_show	award.bin
-40036	def_3F4CF
-4008C	jpt_3F4CF
-403C9	setSoundAddress
+403C9	setButtons_41D	sets the four button/hotspot ids word_34C12..18 to 41Dh,421h,422h,423h (was wrongly setSoundAddress); other screens set other sets
 403E6	sortParty
 40A6D	copyPartyToRoster
 40AAC	rosterMenu	delete character/hireling, "Your Roster is full!"
 41500	nextExperienceLevel
 41565	experienceToNextLevel
 415A9	getCurrentExperience
-41674	def_4164F
-41679	jpt_4164F
 416FF	rest	"Too dangerous to rest here!" ... "8 hours pass.  Rest complete."
 41B2B	confirmDialog	confirm.icn (by string)
 41CED	loadSaveDialog	loadSavedGame + saveMazeState (by callees)
 41F5D	controlPanel	cpanel.icn, load/save "*.mm3", quit confirmation, Mr. Wizard's help
-42BF1	def_42BC4
-42C9F	def_42C72
-42E8D	jpt_42C72
-42E9B	jpt_42BC4
 435A0	saveMazeState	writes the current maze's .evt, .dat pages and .bin (monster/object positions) back to the open cc
 43698	Map_load	loads maze%02u.bin (monster + object lists, FFh-terminated), maze%02u.evt, text%02u.maz, the 5 monster/object .pic and 3 .mon resources
 43AF1	giveCharDamage	(BinDiff sim .78 conf .98, unverified)
-43B58	def_43B53
-43C30	def_43BB7
-43D03	jpt_43BB7
-43D13	jpt_43B53
 43E0C	giveTreasure	"Your backpacks are full"; hands out treasure (BinDiff giveTreasure .17 agrees)
-44115	def_440D3
-442DB	jpt_440D3
-44827	def_445EB
-4483B	jpt_445EB
-44A7F	def_449A1
-44AAA	jpt_449A1
 44ABA	dismissCharacter	"Too dangerous to dismiss here!"
-44BE5	def_44B0E
-44C04	jpt_44B0E
 44DAC	_strcoll
-45902	def_45891
-45A4A	jpt_45891
 45C21	trainCharacter	"Come back when you're ..." / "You have learned all we can teach you" (from strings)
-45DAD	def_45C8F
-45DEF	def_45DD9
-45F05	jpt_45DD9
-45F17	jpt_45C8F
-4625A	def_46233
-464B4	jpt_46233
-46682	def_46671
-466B6	jpt_46671
-46A80	def_46A48
-46B1B	jpt_46A48
 46B2D	checkClasses	(BinDiff sim .59 conf .93, unverified)
-46C00	def_46B49
-46C0D	jpt_46B49
-46D34	def_46CF5
-46DD0	jpt_46CF5
 46E49	createCharacter	dice.vga, create.raw, create.icn
-477F2	def_474F8
-4781B	jpt_474F8
 4816C	townBank	bank.m, bank.icn, bank2.icn
 48466	townGuild	guild.m, spldesc.bin
 486AB	townInn	towninn.m
@@ -639,52 +449,18 @@
 49915	loadHireFaces	hire%u.fac, eface%02u.out
 49B60	getDamageScale	(v<10 -> 0, <50 -> 1, <200 -> 2, else 3); differs from Xeen's version
 49B8B	attack2	(Xeen Combat::attack2) by position and size, unverified
-49F6C	def_49F15
-49F8B	jpt_49F15
 49FA3	giveExperience	splits experience over the living party (2 passes), adds to +12Bh; combat party if Engine_mode==2
 4A02A	getMonsterResistance	resistance scaling by spell/damage type via Mon_fire/elec/cold/acid/ener/phys/magi (Xeen Combat::getMonsterResistance)
-4A100	def_4A09E
-4A122	jpt_4A09E
 4A130	attack	(BinDiff sim .54 conf .91, unverified)
-4A175	def_4A14F
-4A507	def_4A2E5
-4A51E	jpt_4A2E5
-4A532	jpt_4A14F
 4A546	allHaveGone
-4A5BA	def_4A5B5
-4A5D3	jpt_4A5B5
 4A5DD	sortCombatParty	(BinDiff sim .81 conf .90, unverified)
 4A62C	charSavingThrow	(BinDiff .60/.61, unverified)
-4A74B	def_4A67A
-4A76D	jpt_4A67A
 4A779	doCharDamage	(BinDiff .34/.58, unverified)
-4A856	def_4A7F5
-4AB1C	def_4A8EE
-4AB3C	jpt_4A8EE
-4AB5C	jpt_4A7F5
 4AB68	doMonsterTurn	(BinDiff sim .77 conf .96, unverified)
-4AC48	def_4AC43
-4AC9E	def_4AC5F
-4AD36	def_4ACBA
-4ADBF	def_4ADB2
-4AE26	def_4AD69
-4AF1F	jpt_4ADB2
-4AF29	jpt_4AD69
-4AF33	jpt_4ACBA
-4AF43	jpt_4AC5F
-4AF4D	jpt_4AC43
 4AF57	charsCantAct
-4AF87	def_4AF82
-4AF9B	jpt_4AF82
 4AFAB	nextChar
-4B0E0	def_4B0CC
-4B124	jpt_4B0CC
 4B134	quickFight
-4B189	def_4B15C
-4B18C	jpt_4B15C
 4B194	hitMonster	identical to Xeen Combat::hitMonster: statBonus(accuracy)+bonus+level/divisor(class)+d20 (re-roll on 20) - cursed >= AC+10
-4B1F2	def_4B1DB
-4B26F	jpt_4B1DB
 4B283	getWeaponDamage	Xeen Combat::getWeaponDamage: weapon slot (+7Dh == 1/0Dh single, 4 ranged), METAL_DAMAGE(_PERCENT) by metal, dice from WEAPON_DAMAGE_BASE(+) / MULTIPLIER by item id; adds char +104h (holy bonus) and +105h (heroism)
 4B37C	getMonsterDamage	max(statBonus(might)+weaponDamage,1)
 4B3AB	monsterSavingThrow
@@ -694,14 +470,7 @@
 4B478	getMonsterDescriptions
 4B5AF	setSpeedTable
 4B7B5	doCombat	combat main loop: attack/block/allHaveGone/changeTime/getMonsterDescriptions/controlPanel (by callees; BinDiff doCombat .18 agrees)
-4B94B	def_4B911
-4BC3B	def_4BC27
-4BCC5	jpt_4BC27
-4BCD5	jpt_4B931
-4BCDD	jpt_4B911
-4BD9F	Screen_saveBackground
-4BE02	def_4BDFB
-4BE13	jpt_4BDFB
+4BD9F	showErrorMessage	pushes the string pointer at DGROUP 2D9C4h and calls sub_2812B (was wrongly Screen_saveBackground)
 4BE23	healCharacterEffect	adds hit points (capped at getMaxHP) and shows the spfx9.icn effect (by use in the cure/heroism spells)
 4C237	Spells_subSpellCost
 4C2AD	Spell_sharedHandler	shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)
@@ -721,8 +490,6 @@
 4C5EC	Spell_13_ToxicCloud	spell effect routine for 'Toxic Cloud' (id 13, via spellsDialog's switch)
 4C617	Spell_14_SuppressPoison	spell effect routine for 'Suppress Poison' (id 14, via spellsDialog's switch)
 4C678	Spell_15_ProtFromElements	spell effect routine for 'Prot. from Elements' (id 15, via spellsDialog's switch)
-4C6C6	def_4C6AB
-4C6D8	jpt_4C6AB
 4C6E6	Spell_16_TurnUndead	spell effect routine for 'Turn Undead' (id 16, via spellsDialog's switch)
 4C7DE	Spell_18_AcidStream	spell effect routine for 'Acid Stream' (id 18, via spellsDialog's switch)
 4C809	Spell_19_SuppressDisease	spell effect routine for 'Suppress Disease' (id 19, via spellsDialog's switch)
@@ -751,8 +518,6 @@
 4D2A2	Spell_43_FeebleMind	spell effect routine for 'Feeble Mind' (id 43, via spellsDialog's switch)
 4D2CD	Spell_44_DeadlySwarm	spell effect routine for 'Deadly Swarm' (id 44, via spellsDialog's switch)
 4D2F8	Spell_45_Teleport	tests maze header +14h (by header usage)
-4D4E1	def_4D3BB
-4D50C	jpt_4D3BB
 4D514	Spell_46_FingerOfDeath	spell effect routine for 'Finger of Death' (id 46, via spellsDialog's switch)
 4D53F	Spell_47_CureParalysis	spell effect routine for 'Cure Paralysis' (id 47, via spellsDialog's switch)
 4D587	Spell_48_Paralyze	spell effect routine for 'Paralyze' (id 48, via spellsDialog's switch)
@@ -785,29 +550,12 @@
 4DD6E	Spell_75_StarBurst	spell effect routine for 'Star Burst' (id 75, via spellsDialog's switch)
 4DD99	Spell_76_DivineIntervention	spell effect routine for 'Divine Intervention' (id 76, via spellsDialog's switch)
 4DE30	itemsDialog	"%s is not equippable!", "To use an item in Combat...", "Permanently discard %s?"
-4E06D	def_4E051
-4E680	def_4E67B
-4E783	def_4DFB5
-4E790	jpt_4E67B
-4E81C	jpt_4E051
-4E82C	jpt_4DFD3
-4E834	jpt_4DFB5
 4E846	specialsDialog	None/All/+5 Might... list
 4EC37	getThievery
-4F002	def_4EFFD
-4F20B	def_4F1DB
-4F236	jpt_4F1DB
-4F23E	jpt_4EFFD
 4F74F	spellsDialog	spell casting menu (Engine_mode 3); 77-entry key table
-4FD42	def_4F954
-4FE86	jpt_4F954
 4FF60	castItemSpell	switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog
-50236	def_4FF71
-50238	jpt_4FF71
 502D2	characterInfoDialog	character info; calls Awards_show (by callees)
 505DF	characterInfoInventory	character info/inventory page; calls itemsDialog (by callees)
-50C07	def_50950
-51199	jpt_50950
 5120A	getNumSkills	(BinDiff sim .83 conf .93, unverified)
 51250	getMaxSP
 513F4	getMaxHP
@@ -815,10 +563,21 @@
 5152B	drawCharacterStats	prints age/AC/level/HP/SP/experience/skills of a character (calls getAge, getArmorClass, getMaxHP, ...; by callees)
 519A8	statColor
 519E5	characterStatsDialog	character stats screen with command loop (by callees)
-51C85	def_51C61
-51D1D	jpt_51C61
 51D31	identifyOrFix	"Identify" / "Fix" (from strings)
-51F16	def_51EC7
-52004	def_51F95
-5201C	jpt_51F95
-52028	jpt_51EC7
+60000	vdrv_api_00
+60003	vdrv_api_03
+60006	vdrv_api_06
+60009	vdrv_api_09
+6000C	vdrv_api_0C
+6000F	vdrv_api_0F
+60012	vdrv_api_12
+60015	vdrv_api_15
+60018	vdrv_api_18
+6001B	vdrv_api_1B
+6001E	vdrv_api_1E
+60021	vdrv_api_21
+60024	vdrv_api_24
+60027	vdrv_api_27
+6002A	vdrv_api_2A
+6002D	vdrv_api_2D
+60030	vdrv_api_30

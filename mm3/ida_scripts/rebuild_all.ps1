@@ -17,3 +17,5 @@ Copy-Item (Join-Path $Build "mm3.exe.idb") (Join-Path $Mm3 "mm3.idb") -Force
 & (Join-Path $Root "ida_scriptsun_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scriptspply_names.py")
 & (Join-Path $Root "ida_scripts\run_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scripts\resolve_strings.py")
 & (Join-Path $Root "ida_scripts\run_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scripts\apply_structs.py")
+$env:MM3_CC = Join-Path (Split-Path $Exe -Parent) "MM3.CC"
+& (Join-Path $Root "ida_scripts\run_ida_script.ps1") -Idb (Join-Path $Mm3 "mm3.idb") -ScriptName (Join-Path $Mm3 "ida_scripts\load_driver.py")
