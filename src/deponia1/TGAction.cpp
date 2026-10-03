@@ -2,7 +2,17 @@
 
 #include "vsplayer/control/masterControl.h"
 
-void TGAction::AddRunningAction(const TVisObjRef &/*action*/) {
+TGAction *TGAction::AddRunningAction(const TVisObjRef &/*action*/) {
+	return nullptr;
+}
+
+void TGAction::Execute(bool /*flag*/, t_SkipCutsceneInfo */*skipInfo*/) {
+}
+
+void TGAction::StopRunningActions() {
+}
+
+void TGAction::ContinueStoppedActions() {
 }
 
 void TGAction::ContinueRunningActions(bool /*flag*/) {

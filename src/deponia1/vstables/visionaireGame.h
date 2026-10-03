@@ -6,6 +6,8 @@
 
 #include "datastruct/visobjref.h"
 
+class TVList;
+
 class TVisionaireGame {
 public:
 	TVisionaireGame() = default;
@@ -20,6 +22,11 @@ public:
 	// rather than behavior genuinely new to this class.
 	TVisObjRef GetGame() const;
 	TVisObjRef GetEmptyObject() const;
+	// Confirmed call shape only (TGScene::InitActionAreas(), Deponia_Linux.asm
+	// line 169215+) - identical to TVisionaire::GetList() (datastruct/
+	// visionaire.h), the same standing "may really be the same object" gap
+	// as GetGame() above.
+	void GetList(int fieldId, TVList &outList, bool flag) const;
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line

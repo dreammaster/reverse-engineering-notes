@@ -20,6 +20,15 @@ void TGAnimation::LoadAnimations() {
 void TGAnimation::ContinueAnimations() {
 }
 
+void TGAnimation::StopRunningAnimations() {
+}
+
+void TGAnimation::ContinueStoppedAnimations() {
+}
+
+void TGAnimation::ReattachAnimations(TManagedObject &/*object*/) {
+}
+
 void TGAnimation::HideAnimation(TGAnimation */*animation*/, TManagedObject */*owner*/) {
 }
 

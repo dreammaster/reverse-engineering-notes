@@ -2318,6 +2318,108 @@ rather than sitting unused.
 
 `TMSavegameArea` is `done` in the manifest.
 
+## TGScene
+
+Implemented all 39 manifest-listed methods (Deponia_Linux.asm lines
+166435-173218), with the three exceptions below. TGScene is the concrete
+scene drawable behind `TSceneControl::GetScene()`: a TPaintControl that owns
+a scene's background and lightmap pictures, its objects and characters, the
+depth-sorted draw order built from both, a savegame-slot picker (used by the
+"load game" menu scene), a particle effect, and the fading "snoop animation"
+overlay. The class's real byte layout is in `TGScene.h`'s own header comment.
+
+**Deliberate gaps** (the same two standing gaps as the rest of the project,
+nothing new): the Lua bridge (`GetTint()`'s optional "lightmap callback"
+override, `BeginScene()`'s `particleSystem:new(...)` script branch - a scene
+with a non-empty field 0x326 gets no particle container here) and the
+unmodeled `graphics` backend's virtual slots (`Draw()`'s particle-drawing
+translate/matrix/draw calls; `InitialiseBackground()`'s one bool-argument
+call when leaving a menu). Everything else around those calls - including
+ParticleContainer's own `Update()` and the particle system's fixed 25ms-
+step `IncTime()` catch-up loop - is implemented.
+
+**Corrections to earlier passes found along the way:**
+
+- **`TMSavegameArea`'s `_rect`/`_active` were not its own fields.** Its
+  constructor stores the rect at +0x28 (TManagedObject's own
+  `_boundingRect`, exactly what `TManagedObject::GetBoundingRect()` reads -
+  and `TGScene::Prepare()/Draw()` call that very method on each area to
+  place its slot's screenshot), and its `IsInside()` tests the +0x38 flag,
+  which is TManagedObject's own `_active` (default true; `SetActive()`
+  flips it). The earlier "never written anywhere, defaults to false" gap
+  was an artefact of modeling those as separate private fields. Both fields
+  moved from private to protected on `TManagedObject`; `TMSavegameArea`
+  now just sets the base's `_boundingRect`.
+- **`TManagedObject::_hasActionTypeFallback` defaults to TRUE**, not false:
+  both `TManagedObject` constructors (asm lines 192469/192540) write 1 to
+  +0x51, and `TMSavegameArea`'s constructor explicitly writes 0 over it
+  (which is what made that class's own "explicitly left false" look
+  meaningful). `ExecuteEvent()`'s fallback retry therefore runs for every
+  plain `TManagedObject` unless a subclass opts out.
+- **`TManagedObject::Prepare()`/`RemoveSprites()` are virtual** (vtable slots
+  0x88/0xA8 - `TGScene::Prepare()` calls them through the vtable on
+  `TMSavegame`/scene objects).
+- **`TPictureIO`'s +0xD0 field is the shader id**, not a LoadRect field -
+  `TGScene::Draw()` writes the resolved shader there immediately before
+  `Draw()`. Renamed `_shader`, with a `SetShader()` accessor.
+- **`TGScene::GetCharacters()` returns the member vector's address** (a
+  reference), not a copy. **`GetActionAreas()` and `ClearActionAreas()` are
+  static** - the manifest's `this`-taking signature for the former was a
+  decompiler artefact (`rdi` is the TVisObjRef argument, not `this`).
+- **`TMSavegame` is a TManagedObject subclass** (recovered RTTI, 0x1E8 bytes),
+  and its constructor's 3rd/4th ints are not "always 0" as the earlier
+  header guessed - `TGScene` passes the savegame slot rectangle's width/
+  height (recorded from the first click area in `SetScene()`).
+
+**Behavioral details worth knowing:**
+
+- **`defaultShader` quirk in `Draw()`**: the "no shader (id -1) -> use the
+  default" substitution only fires when the global `defaultShader` is
+  non-zero (`test eax,eax / cmovnz` - a zero default leaves the id -1).
+- **Savegame active-range bound**: `ScrollSavegames()`, `SetActiveSavegames()`
+  and `SetSavegames()` all flag a slot active when
+  `first <= index < savegameCount + first` - an upper bound that is *not*
+  clamped to the click area count, so scrolled-past-the-end slots stay
+  "active" (all three call sites use the identical expression).
+- **`SortAllObjects()`'s merge is back-to-front**: every character plus
+  every currently *moving* scene object is sorted by `GetCenter()`, then
+  merged with the stationary scene objects (which stay in their own order);
+  on a tie the moving/character side goes first. Each entry's draw-order
+  index is recorded in a hash map keyed by its data record's 4-byte id -
+  that's what `GetObject(TVisObjRef)` looks up. The original's hash keys
+  hash all four id bytes, unlike `PackVisId()`'s 3; modeled as an
+  `unordered_map` keyed by all four bytes.
+- **`InitActionAreas()`'s registry** is a process-wide `HashMap<int,
+  std::list<TSceneActionArea*>*>` keyed by the scene's `PackVisId()` (the
+  recovered type name `HashMap<int,std::list<...>*,IntegerHash<int>>` shows
+  up in a destructor symbol). `ClearActionAreas()` in the original frees
+  the lists' contents but leaves the emptied hash nodes (and their now-
+  dangling list pointers) in place; the registry is cleared here instead.
+- **`BeforeFade()`** just calls vtable slot 0 (`Prepare()`); the one
+  `GetInt(0x223)` read in front of it has its result discarded.
+- **`SetCharacters()`'s lifetime protocol**: a character that leaves the
+  scene has its walking sound stopped; one that was *in* the scene (or
+  whose lifetime counter has just run out) is unloaded - sprites removed,
+  animations unloaded - unless the game's "keep loaded" flag (0x282) is
+  clear on a menu scene, in which case a leaving character with time left is
+  skipped entirely.
+
+New confirmed-call-shape-only stubs this pass: `THObject` (the scene's
+object class, 0x340 bytes), `TSceneActionArea` (0x38 bytes),
+`TParticleSystem`/`TGParticleSystem`/`ParticleContainer`
+(`TGParticleSystem.h`), the `TGAction`/`TGAnimation`/`TGText` pause-and-
+resume statics (`StopRunningActions`/`ContinueStoppedActions` etc.),
+`TGAction::Execute()` (the engine's whole scripted-action interpreter - tens
+of thousands of lines, not reversed), eight `TGCharacter` per-scene
+bookkeeping methods, `TPaintControl::SetWorktopArea()`,
+`TPictureMEM::GetPixel()/SetMemoryBlock()`, the `defaultShader`/
+`ShaderCallback()` globals, `TVisObjRef::GetSprite()/GetRects()/
+GetStrHolder()` and the `g_loadingState` global (a recovered symbol - a
+one-letter "what's the engine doing" tag, "P" during `TGScene::Prepare()`,
+"L" otherwise).
+
+`TGScene` is `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

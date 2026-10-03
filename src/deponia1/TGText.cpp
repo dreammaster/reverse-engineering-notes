@@ -16,6 +16,15 @@ void TGText::Save() {
 void TGText::Load() {
 }
 
+void TGText::StopRunningTexts() {
+}
+
+void TGText::ContinueStoppedTexts() {
+}
+
+void TGText::RestartTalkAnimations(const TVisObjRef &/*scene*/) {
+}
+
 wxString TGText::GetEventHandlerTextStarted() {
 	return wxString();
 }

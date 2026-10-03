@@ -125,4 +125,17 @@ public:
 	// Confirmed call shape only (TManagedObject::ExecuteMatchingAction,
 	// Deponia_Linux.asm line 55E1C5) - not reversed beyond that.
 	void StopWalking(bool flag);
+
+	// Confirmed call shapes only (TGScene::SetCharacters(), Deponia_Linux.asm
+	// lines 170139-170482) - the per-character bookkeeping a scene runs when
+	// a character does/doesn't belong to it; none reversed beyond the call
+	// shapes.
+	void CheckWalkingSound();
+	void InitWaySystem(int spriteHeight);
+	void StopWalkingSound();
+	void PreloadAnimations();
+	void StartFittingAnimation();
+	void UnloadAnimations();
+	void StartStandingAnim();
+	void AdjustTimers();
 };

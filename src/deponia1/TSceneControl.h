@@ -85,6 +85,27 @@ public:
 	// 477024) - not reversed beyond that.
 	void SetNextStartScrollPos(const wxPoint &pos);
 
+	// Confirmed accessed directly as private fields from TGScene::
+	// InitialiseBackground() (Deponia_Linux.asm lines 168670-169184) -
+	// modeled as public accessors instead of a cross-class friendship,
+	// matching TGScene::SetRef()'s own already-established pattern for the
+	// same kind of access.
+	const wxPoint &GetNextStartScrollPos() const {
+		return _nextStartScrollPos;
+	}
+	void SetLastPlayableScrollPos(const wxPoint &pos) {
+		_lastPlayableScrollPos = pos;
+	}
+	void SetNextStartScrollPosFromLastPlayable() {
+		_nextStartScrollPos = _lastPlayableScrollPos;
+	}
+	void SetCurrentSceneRef(const TVisObjRef &ref) {
+		_ref = ref;
+	}
+	TGScene *GetOldScene() const {
+		return _oldScene;
+	}
+
 private:
 	// Confirmed call shape only (TSceneControl::ChangeScene/ShowScene,
 	// Deponia_Linux.asm lines 454129-454879) - see this class's own header

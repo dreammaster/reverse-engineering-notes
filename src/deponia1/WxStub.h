@@ -342,6 +342,12 @@ struct wxPoint {
 	bool operator!=(const wxPoint &other) const {
 		return !(*this == other);
 	}
+	// Confirmed a real free operator+ (TGScene::SetCharacter(), Deponia_
+	// Linux.asm line 550270 - `_ZplRK7wxPointS1_`), the plain component-wise
+	// sum.
+	wxPoint operator+(const wxPoint &other) const {
+		return wxPoint{x + other.x, y + other.y};
+	}
 };
 
 struct wxRect {

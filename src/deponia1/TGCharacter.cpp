@@ -59,3 +59,27 @@ void TGCharacter::ShowComment(const TVisObjRef &/*comment*/) {
 
 void TGCharacter::StopWalking(bool /*flag*/) {
 }
+
+void TGCharacter::CheckWalkingSound() {
+}
+
+void TGCharacter::InitWaySystem(int /*spriteHeight*/) {
+}
+
+void TGCharacter::StopWalkingSound() {
+}
+
+void TGCharacter::PreloadAnimations() {
+}
+
+void TGCharacter::StartFittingAnimation() {
+}
+
+void TGCharacter::UnloadAnimations() {
+}
+
+void TGCharacter::StartStandingAnim() {
+}
+
+void TGCharacter::AdjustTimers() {
+}

@@ -1,5 +1,6 @@
 #include "datastruct/visobjref.h"
 
+#include "TSprite.h"
 #include "datastruct/visionaireobject.h"
 #include "datastruct/vlist.h"
 
@@ -100,4 +101,17 @@ TVisionaire *TVisObjRef::GetVisionaire() const {
 
 bool TVisObjRef::IsAnyObject() const {
 	return false;
+}
+
+const TSprite &TVisObjRef::GetSprite(int /*fieldId*/) const {
+	static const TSprite empty;
+	return empty;
+}
+
+void TVisObjRef::GetRects(int /*fieldId*/, std::vector<wxRect> &/*outRects*/) const {
+}
+
+const TCharHolder &TVisObjRef::GetStrHolder(int /*fieldId*/) const {
+	static const TCharHolder empty;
+	return empty;
 }

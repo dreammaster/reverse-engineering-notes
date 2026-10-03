@@ -30,6 +30,7 @@ enum class TSendEventEnum { kSendEvent = 2 };
 // meaning/names not resolved.
 enum class TypeOrder { kValue0 = 0, kValue1 = 1 };
 
+class TSprite;
 class TVisionaireObject;
 class TVisionaire;
 class TVList;
@@ -105,6 +106,15 @@ public:
 	void SetValue(int fieldId, const wxString &value, TSendEventEnum event);
 	const wxPoint *GetPoint(int fieldId) const;
 	const wxRect *GetRect(int fieldId) const;
+	// Confirmed call shapes only (TGScene::SetScene()/InitialiseBackground()/
+	// BeginScene(), Deponia_Linux.asm lines 168670-172880) - the sprite-typed,
+	// rect-list-typed and string-holder-typed counterparts of GetRect()/
+	// GetStr() above (GetSprite()/GetStrHolder() return a reference into the
+	// data record's own storage rather than a copy); not reversed beyond
+	// those call shapes.
+	const TSprite &GetSprite(int fieldId) const;
+	void GetRects(int fieldId, std::vector<wxRect> &outRects) const;
+	const TCharHolder &GetStrHolder(int fieldId) const;
 	// Confirmed call shape only (TGameControl::InitInterfaces/
 	// InitGameActions, asm lines 458124-458250, 466739-467222+) - fills
 	// outLinks with TVisionaireObject* elements; not reversed beyond that.

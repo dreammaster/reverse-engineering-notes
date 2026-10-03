@@ -11,12 +11,21 @@
 
 #include "TSprite.h"
 
+struct TPictureMemBlock;
+
 class TPictureMEM : public TSprite {
 public:
 	TPictureMEM() = default;
 	virtual ~TPictureMEM() = default;
 
 	void ClearMemData();
+
+	// Confirmed call shapes only (TGScene::GetTint()/SetCurrentLightmap(),
+	// Deponia_Linux.asm lines 168383-171104) - a lightmap's pixel lookup (the
+	// float is the scene's brightness) and its backing memory block; not
+	// reversed beyond those call shapes.
+	unsigned int GetPixel(const wxPoint &pos, float brightness) const;
+	void SetMemoryBlock(TPictureMemBlock *block);
 
 protected:
 	int _width = 0;

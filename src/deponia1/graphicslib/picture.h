@@ -105,6 +105,11 @@ public:
 	void DrawWithSrcRect(const wxRect &srcRect, float alpha, unsigned int color);
 	void DrawWithLightMap(float alpha, unsigned int color, void *lightMap);
 	void Draw(float alpha, unsigned int color);
+	// Confirmed (TGScene::Draw(), Deponia_Linux.asm line 166568+, writes
+	// +0xD0 of the embedded background picture right before Draw()).
+	void SetShader(int shader) {
+		_shader = shader;
+	}
 
 private:
 	// Common "release current sprite handle, tell the graphics backend,
@@ -127,9 +132,9 @@ private:
 	ePreloadingStatus _preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by _mutexStatus
 	TPicturePreloader *_preloader = nullptr;  // +0xB8
 	bool _flagC0 = false;
-	int _loadRectX = -1;   // +0xC8/+0xCC/+0xD0 - guessed to relate to LoadRect()
+	int _loadRectX = -1;   // +0xC8/+0xCC - guessed to relate to LoadRect()
 	int _loadRectY = -1;
-	int _loadRectW = -1;
+	int _shader = -1;      // +0xD0, confirmed by TGScene::Draw(): written with the shader id just before Draw()
 	int _fieldD4 = 1;
 	float _scaleX = 1.0f;  // +0xD8
 	float _scaleY = 1.0f;  // +0xDC

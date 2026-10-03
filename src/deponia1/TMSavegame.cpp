@@ -3,6 +3,16 @@
 TMSavegame::TMSavegame(bool /*isNumberedSlot*/, int /*slot*/, int /*b*/, int /*c*/, TVisionaireGame */*game*/) {
 }
 
+void TMSavegame::SetScreenshotRect(const wxRect &/*rect*/) {
+}
+
+void TMSavegame::DrawText() {
+}
+
+bool TMSavegame::GetExistingSaveGames(std::vector<int> &/*outSlots*/) {
+	return false;
+}
+
 bool TMSavegame::Exists() const {
 	return false;
 }

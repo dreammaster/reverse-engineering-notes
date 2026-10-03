@@ -48,6 +48,13 @@ public:
 	// stored on the class itself, not in TGameControl's containers" pattern
 	// as TGAnimation::GetEventHandlerAnimStarted/Stopped above; not reversed
 	// beyond that call shape.
+	// Confirmed call shapes only (TGScene::InitialiseBackground(), Deponia_
+	// Linux.asm lines 168670-169184) - suspend/resume every running text on
+	// entering/leaving a menu scene, and restart a scene's talking
+	// animations; not reversed beyond that.
+	static void StopRunningTexts();
+	static void ContinueStoppedTexts();
+	static void RestartTalkAnimations(const TVisObjRef &scene);
 	static wxString GetEventHandlerTextStarted();
 	static wxString GetEventHandlerTextStopped();
 };

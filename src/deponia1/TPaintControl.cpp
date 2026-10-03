@@ -49,6 +49,9 @@ void TPaintControl::SetWorktopSize(int width, int height) {
 	_worktopSize.height = height;
 }
 
+void TPaintControl::SetWorktopArea(const wxRect &/*area*/, int /*width*/, int /*height*/) {
+}
+
 const FloatPoint &TPaintControl::GetFloatScrollPos() const {
 	return _floatScrollPos;
 }

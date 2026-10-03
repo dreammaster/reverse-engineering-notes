@@ -41,6 +41,13 @@ public:
 	// Confirmed static (TGameControl::Update, Deponia_Linux.asm line 469657)
 	// - called once per frame; not reversed beyond that call shape.
 	static void ContinueAnimations();
+	// Confirmed call shapes only (TGScene::InitialiseBackground()/SetScene(),
+	// Deponia_Linux.asm lines 168670-172880) - suspend/resume every running
+	// animation on entering/leaving a menu scene, and re-point a freshly
+	// built scene object's animations at it; not reversed beyond that.
+	static void StopRunningAnimations();
+	static void ContinueStoppedAnimations();
+	static void ReattachAnimations(TManagedObject &object);
 
 	// Confirmed static call shape only (TManagedObject::SetAnimation/
 	// ClearAnimations/RemoveAnimations/SetActive, Deponia_Linux.asm lines

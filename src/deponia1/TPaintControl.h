@@ -43,6 +43,10 @@ public:
 	// Confirmed call shape only (TGameControl::AdjustInterfacesOnScreen,
 	// Deponia_Linux.asm lines 465184-465210) - not reversed beyond that.
 	void SetWorktopSize(int width, int height);
+	// Confirmed call shape only (TGScene::InitialiseBackground(), Deponia_
+	// Linux.asm line 54ED5x) - the scene's scrollable area plus its
+	// background sprite's own width/height; not reversed beyond that.
+	void SetWorktopArea(const wxRect &area, int width, int height);
 	const FloatPoint &GetFloatScrollPos() const;
 	void AdjustWindowHorizontal(float amount);
 	void AdjustWindowVertical(float amount);

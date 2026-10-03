@@ -21,6 +21,11 @@ public:
 	// a TVList, unlike the rest of this survey's field access which goes
 	// through a TVisObjRef handle - not reversed beyond that.
 	int GetInt(int fieldId) const;
+	// Confirmed call shapes only (TGScene::InitialiseCharacter(), Deponia_
+	// Linux.asm lines 167462-167607) - the record-level counterparts of
+	// TVisObjRef::IsEmpty()/GetPoint(); not reversed beyond that.
+	bool IsEmpty() const;
+	const wxPoint *GetPoint(int fieldId) const;
 	// Confirmed call shapes only (TGameControl::LoadAndInitGame,
 	// Deponia_Linux.asm lines 468017-468037) - same "no field id, a property
 	// of the object itself" shape as TVisObjRef::GetName(); GetLink() takes a

@@ -9,6 +9,7 @@ wxString strAppName;
 wxSize surfaceSize;
 wxSize renderSize;
 bool g_unlockAspect = false;
+const char *g_loadingState = "L";
 
 TStandardPaths standardPaths;
 

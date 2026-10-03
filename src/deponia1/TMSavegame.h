@@ -8,16 +8,34 @@
 // TGAction::AddRunningAction/ClearActions pattern elsewhere).
 #pragma once
 
+#include <vector>
+
+#include "TManagedObject.h"
 #include "TXMLWriter.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 
 class TVisionaireGame;
 
-class TMSavegame {
+// Confirmed a TManagedObject subclass (its recovered RTTI/vtable overrides
+// ExecuteEvent/SetActive/Draw/GetActionList; 0x1E8 bytes in all, per the
+// `operator new` size at TGScene::GetSelectedSavegame()'s call site) - the
+// base is all this pass confirms; the rest of the class is still stubbed.
+class TMSavegame : public TManagedObject {
 public:
 	TMSavegame(bool isNumberedSlot, int slot, int b, int c, TVisionaireGame *game);
-	virtual ~TMSavegame() = default;
+	~TMSavegame() override = default;
+
+	// Confirmed call shapes only (TGScene::Prepare()/Draw(), Deponia_Linux.asm
+	// lines 166435-166997): called each frame with the on-screen slot's
+	// bounding rect (and, for DrawText(), after Draw()); not reversed beyond
+	// that.
+	void SetScreenshotRect(const wxRect &rect);
+	void DrawText();
+	// Confirmed static (TGScene::SetSavegames(), asm line 170896+ - called
+	// with no object, a vector of slot numbers to fill, and the result
+	// tested as a bool).
+	static bool GetExistingSaveGames(std::vector<int> &outSlots);
 
 	bool Exists() const;
 	bool Delete();

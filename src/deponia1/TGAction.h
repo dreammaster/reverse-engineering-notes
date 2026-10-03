@@ -11,6 +11,7 @@
 #include "datastruct/visobjref.h"
 
 enum class TMouseMessageEnum;
+struct t_SkipCutsceneInfo;
 
 // Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.asm
 // lines 472809-472810 and elsewhere in the same function) - the opaque event
@@ -23,7 +24,20 @@ enum class TMouseEventEnum { kValue1 = 1 };
 
 class TGAction {
 public:
-	static void AddRunningAction(const TVisObjRef &action);
+	// Confirmed to return the action it started (TGScene::EndScene()/
+	// BeginScene() test the result for null before calling Execute()) - not
+	// reversed beyond that call shape.
+	static TGAction *AddRunningAction(const TVisObjRef &action);
+	// Confirmed call shape only (TGScene::EndScene()/BeginScene(),
+	// Deponia_Linux.asm lines 167139, 172880) - executes this action; the
+	// real body is the engine's whole scripted-action interpreter (tens of
+	// thousands of lines), not reversed here.
+	void Execute(bool flag, t_SkipCutsceneInfo *skipInfo);
+	// Confirmed call shapes only (TGScene::InitialiseBackground(), asm lines
+	// 168670-169184) - suspend/resume every running action on entering/
+	// leaving a menu scene; not reversed beyond that.
+	static void StopRunningActions();
+	static void ContinueStoppedActions();
 	static void ContinueRunningActions(bool flag);
 	static void ClearActions();
 	// Confirmed static (TGameControl::Save, asm line 462895) - not

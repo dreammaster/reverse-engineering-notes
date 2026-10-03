@@ -248,7 +248,7 @@ public:
 	// Confirmed (asm lines 190946-190972): releases the picture's sprite
 	// and the primary animation's sprites, if present. (Needs TPictureIO's
 	// full definition, so implemented in the .cpp.)
-	void RemoveSprites();
+	virtual void RemoveSprites();
 
 	// Confirmed (asm lines 190980-191074): prepares the primary animation
 	// (unless it's a bones animation, which is prepared via the secondary-
@@ -261,7 +261,7 @@ public:
 	// check, since IsSpriteIndexValid()/IsModelAnimation() are pure queries
 	// with no effect on the actual outcome. (Needs TPictureIO's full
 	// definition, so implemented in the .cpp.)
-	void Prepare();
+	virtual void Prepare();
 
 	// Confirmed (asm lines 191082-191099): TId from the game-data
 	// reference's packed id - approximated via the project's existing
@@ -446,13 +446,18 @@ protected:
 	// (expanding the original candidate types and trying a different
 	// action list, field 0xAC) when nothing else matched; named for its
 	// observed effect, not recovered.
-	bool _hasActionTypeFallback = false;
+	bool _hasActionTypeFallback = true;
+
+	// Confirmed protected-by-need (TMSavegameArea's ctor writes the rect it's
+	// given straight into this field, asm line 159295 - it has no rect of its own
+	// - and its IsInside() override reads this and _active below): moved up from
+	// private.
+	wxRect _boundingRect;
+	bool _active = true;
 
 private:
 	wxPoint _position;
 	int _center = -1;
-	wxRect _boundingRect;
-	bool _active = true;
 	TPictureIO *_picture = nullptr;
 	unsigned int _color = 0xFFFFFFFF;
 	int _lifetime = 0;

@@ -1,5 +1,14 @@
 #include "datastruct/visionaireobject.h"
 
+bool TVisionaireObject::IsEmpty() const {
+	return true;
+}
+
+const wxPoint *TVisionaireObject::GetPoint(int /*fieldId*/) const {
+	static const wxPoint origin;
+	return &origin;
+}
+
 int TVisionaireObject::GetInt(int /*fieldId*/) const {
 	return 0;
 }

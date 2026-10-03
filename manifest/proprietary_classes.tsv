@@ -34,7 +34,7 @@ TMSavegameArea	done	6	159199	159295
 TMSavegame	todo	22	159356	164367
 HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
 TMButton	todo	9	165577	166172
-TGScene	todo	39	166435	172880
+TGScene	done	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	stub	76	175318	185835
 THAction	todo	5	187010	187127

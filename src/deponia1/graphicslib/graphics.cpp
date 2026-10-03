@@ -4,6 +4,15 @@
 
 TGraphicsInterface *graphics = new TGraphicsInterface();
 
+int defaultShader = 0;
+
+void ShaderCallback(int /*shader*/, TVisObjRef */*ref*/) {
+}
+
+TPictureMemBlock *TGraphicsInterface::GetLightMapMemBlock() {
+	return nullptr;
+}
+
 TPreloadedPicManager *TGraphicsInterface::GetPreloadedPicManager() {
 	if (!_preloadedPicManager)
 		_preloadedPicManager = new TPreloadedPicManager();

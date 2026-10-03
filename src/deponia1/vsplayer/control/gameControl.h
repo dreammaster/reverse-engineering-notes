@@ -225,6 +225,12 @@ public:
 	// with one, asm lines 478385-478469) - the manifest's void* was a
 	// placeholder guess.
 	bool LoadGame(TMSavegame *savegame);
+	// Confirmed accessed directly as a (private static) field from TGScene::
+	// InitialiseBackground() (Deponia_Linux.asm line 54F058) - modeled as a
+	// public accessor instead of a cross-class friendship.
+	static TTimer &GetStopTime() {
+		return s_stopTime;
+	}
 	bool LoadGame(int slot);
 	void StartTween(const Tween &tween, const std::string &name);
 

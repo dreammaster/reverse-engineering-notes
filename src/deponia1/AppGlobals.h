@@ -42,6 +42,12 @@ extern unsigned char byte_11F8B02;
 
 extern TMasterControl *g_pGameControl;
 
+// Confirmed a real, named global (recovered symbol) - a one-letter "what is
+// the engine doing right now" tag, written by TGScene::Prepare() ("P" on
+// entry, back to "L" on exit) and by the savegame/loading paths ("L"), never
+// read by any code reversed so far (presumably a crash-handler diagnostic).
+extern const char *g_loadingState;
+
 // Set by TGameController::ControllerAxisMouseMove/ControllerAxisCharacterMove
 // (TGameController.cpp) for the game loop to consume as per-frame cursor /
 // character movement deltas.
