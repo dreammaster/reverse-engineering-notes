@@ -50,3 +50,20 @@ Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 
 * The first character trained in a visit advances the clock by 5A0h (1440) minutes (one day) through `addTime`;
   a per-character flag array on the stack stops the day being charged twice.
 * Choosing a character: command codes C9h.. select party slot; ESC leaves. `byte_32E68` set = grounds closed.
+
+## Inn and tavern (`townInn` 486AB, `townTavern` 487B4)
+
+* **Inn** (`towninn.m`): after the confirmation window the party is placed on the overworld at the town's entrance cell,
+  table of (x,y) byte pairs at DGROUP `178Bh` indexed by `Party_map*2`: town 1 (2,5), 2 (3,2), 3 (7,13), 4 (3,9), 5 (14,6);
+  facing is flipped (`^1`), `byte_36FEB` = the town number, each character's word at +123h is set to the town number
+  (this is the "where I last slept" field, called `unknown123` in `character.h`), `Party_map` is cleared, time advances by
+  5A0h minutes (one day), and the save dialog (`loadSaveDialog(1)`) is opened - the inn is how the game is saved.
+* **Tavern** (`honky.m`, `tavern.bin`): open only when `Party_minutes` >= 1080 (18:00) or <= 300 (05:00); otherwise
+  "Sorry, the Tavern's closed! Come back later". Options: food, drink, tip (rumours), ESC.
+  * Food: fills `Party_food` up to `food_per_char[Party_map] * Party_count * 3`, gold cost from a word table; message
+    "Your food packs are already full!" when the party already holds that much. Per-town byte table at `435Fh`:
+    0,5,10,15,20,40; adjacent word table 10,50,250,1000,5000 are the matching prices (by code reading, unverified pairing).
+  * Drink: costs 1 gold; a character that already has the drunk counter (+11Ah) non-zero gets "You're Drunk"; otherwise
+    `rnd(1,100) < 26` increments +11Ah ("Good Stuff" / "Have a Drink").
+  * Rumours: each town has a block of rumour strings in the maze text (start index table at `436Eh`: 13h,32h,51h,78h,95h,ACh,C0h;
+    counts at `436Fh`), a pointer cycles through them (`Maze_curSlot` slot byte +? at -379Ch).
