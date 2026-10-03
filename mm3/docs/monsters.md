@@ -121,3 +121,10 @@ Druid / Paladin, 6 = prefers a character whose race (+11h) is 2; if no preferred
 The random single target depends on the combat party size `n`: for 1 member it is slot 0; for 2-5 `rnd(0, n-1)`; for 6, 7, 8 members the
 extra (last) member is hit only on a top roll: `rnd(1,8) == 8` -> slot 5 (6 members), `rnd(1,10) == 10` -> slot 6 (7), `rnd(1,12) == 12` -> slot 7 (8); otherwise `rnd(0, n-2)`.
 Characters whose worst condition is 0Bh-0Fh (paralysed, unconscious, dead, stone, eradicated) are skipped for the preferred-class search.
+
+## Monster to-hit (`doMonsterTurn`, per attack; `MONNUMA` attacks per turn)
+
+For a physical attack (`MONDMGT` = 0) on an awake character: roll d20 -- 20 always hits, 1 always misses (message "miss"), otherwise
+`score = d20 + rnd(1, MONHITB) + MONHITB / 4` and the attack hits when `score >= AC + D`, where `AC = getArmorClass(char)` and
+`D = 10`, or `15 + level / 2` when the character has taken the **block** action this round (flag byte array at DGROUP `C4CBh`
+by party slot, set by `block`, `4B422`).  Non-physical attacks and attacks on sleeping characters always hit; a hit then runs `doCharDamage`.
