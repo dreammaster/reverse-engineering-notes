@@ -30,3 +30,10 @@ frequency without key-on, `D` clears a channel's frequency slide and `E` starts 
 
 `S1.S`-`S7.S` are raw 8-bit unsigned PCM samples (centre 7Fh) for the Covox/Sound Blaster drivers, and `TIMER.DRV` (448 bytes) is the
 timer-interrupt helper loaded at start (`aTimerDrv` in `_main`).
+
+## Sound effects
+
+`playSoundEffect(n)` (`1B16B`, formerly `sub_1B16B`) is called with a constant at every sound site (heal 35h/34h, spell animations 0Bh-14h, hit 12h...).
+Ids below 97h (151) are sound effects, enabled by the FX flag `byte_36FE8`; 97h and above are gated by `byte_36FE9`.  It calls `soundDriverPlay`
+(`26978`), which transfers (push driver segment `cs:2693D`, push 9, `retf`) to API function 9 of the loaded sound driver module -- the same call
+convention as the video module (`video-module.md`).  `evt_op06` (event opcode 6, PlayFX) takes the same ids.
