@@ -369,3 +369,11 @@ Each attack spell routine sets three globals and calls `spellAttackAhead(animati
 | 73 | Sun Ray | 200 | 6 energy | all |
 | 74 | Implosion | 1000 | 6 energy | single |
 | 75 | Star Burst | 500 | 0 physical | all |
+
+## Buff spells (by code reading)
+
+All character-targeted buffs call `sub_4C027(spell id)` first (target selection with point/gem payment; `FFFFh` = cancelled), play the heal-style
+effect via `healCharacterEffect`, and then store the **caster's level** (`getCurrentLevel` of the active caster) in a character byte:
+Blessed -> `+102h` (`blessed`, AC bonus), Power Shield -> `+103h`, Holy Bonus -> `+104h` (damage), Heroism -> `+105h` (to-hit).
+Light increments `Party_light` (one unit is used up each step on a light-burning cell, `updateLight`); Levitate / Walk on Water just set
+`Party_levitate` / `Party_walkOnWater` to 1.

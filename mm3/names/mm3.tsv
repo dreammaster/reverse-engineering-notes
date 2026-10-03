@@ -627,3 +627,6 @@
 3CA1	TOWN_SPELL_CAP	byte per town 0-5: highest spell level the guild teaches (0,3,6,9,13,17)
 45BF3	spellGoldPrice	guild price of a spell: SP*100 (|SP|*500 if level scaled), shifted left once for half casters
 1CB2	XP_CLASS_MULT	10 words by class: experience multiplier (1500/2000/2000/1500/2000/1000/1500/1500/1500/2000)
+340B4	SpellAttack_damage	damage set by an attack spell routine before spellAttackAhead
+36CFE	SpellAttack_type	damage/effect type of the attack spell (0 phys, 2 fire, 3 elec, 4 cold, 5 poison, 6 energy, 7+ status effects)
+36FAC	SpellAttack_reach	0 one monster, 1 one group, 2 all monsters
