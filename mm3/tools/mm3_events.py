@@ -107,7 +107,7 @@ def main():
             text += "  " + repr(texts[k][:70]) if k < len(texts) else ""
         if not ok:
             bad += 1
-        print("(%2d,%2d) %s  line %-2d %-12s %s%s" % (x, y, "ANY" if d == 4 else "NESW"[d] + "  ", line, name, text, "" if ok else "   ; operand shape mismatch"))
+        print("(%2d,%2d) %s  line %-2d %-12s %s%s" % (x, y, "ANY" if d == 4 else "NSEW"[d] + "  ", line, name, text, "" if ok else "   ; operand shape mismatch"))
         i += 1 + n
     if bad:
         print("; %d records did not match the assumed operand shape" % bad, file=sys.stderr)

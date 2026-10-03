@@ -184,3 +184,11 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 Example (`MAZE01`, pit that needs a rope; text from `TEXT01.MAZ`): `SetChar 0; If item(21)=73 goto 5; Display1 "The drop is
 too great. You need a rope to climb down."; If yesno=1 goto 4; Exit; Display1 "A pit descends ... Enter the caverns?"; If yesno=0 goto 8;
 Exit; TakeOrGive item 73; SetVar; Teleport 6, 1, 13`.
+
+### Directions and wall nibbles (verified)
+
+* `Party_facing` / the event facing byte: **0 = north (+y), 1 = south (-y), 2 = east (+x), 3 = west (-x)**; 4 = any (events).  The view tables
+  `VIEW_DX`/`VIEW_DY` are indexed in that order.  Turning left from 0 goes to 3.
+* Wall word of a cell: four nibbles, from the top: sides N, E, S, W (N faces the higher row index of the 16 rows stored in the `.DAT`).  Adjacent
+  cells agree (a wall is stored on both sides; 473 of 480 shared edges of `MAZE05` are consistent).  The low 3 bits of a nibble are the wall style,
+  bit 3 is a flag.  `tools/mm3_map.py MAZEnn.DAT` prints an ASCII map (flag bytes shown inside the cells).
