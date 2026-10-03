@@ -614,3 +614,5 @@
 1BB33	mazeGetWordWrap	maze cell word at world (x,y) & mask, with Maze_wrapMode handling (returns 1111h outside the world when not wrapping)
 15736	updateAutomap	called after each move by runMazeEvent: Cartographer (skill 4) marks the current cell visited, redraws light, draws the Wizard Eye overhead map
 154B0	drawAutomapWrapped	wrap-mode (Maze_wrapMode != 0) version of the Wizard Eye map drawing
+4432C	generateItem	random item generator (level 1-6, buffer, slot): rolls d100 twice to choose the item id range (written to slot id byte +DCh), then 1-3 enchantment levels (95% one, 4% two, 1% three) for metal/element/attribute/spell; used by resetBlacksmithWares (via stub sub_2826C) and treasure
+4265B	showOverheadMap	full-screen overhead map: uses isCellVisited/mazeGetWordWrap and checkSkill(6) (Direction Sense) for the compass
