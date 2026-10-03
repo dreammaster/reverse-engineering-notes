@@ -48,7 +48,3 @@ public:
 	/** Registers ids 1-99 (once). */
 	static void InitXMLNamesIntern();
 };
-
-/** Confirmed (asm lines 636171-636260): parses an optionally '-'-prefixed run
- *  of decimal digits, with no validation of the characters. */
-long dtol(const char *text);

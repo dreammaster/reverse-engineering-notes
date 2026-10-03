@@ -9,8 +9,10 @@
 #include "baselib/xmlWriter.h"
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
+#include "vscommon/scripting/id.h"
 
 class EventHandler;
+class TVisionaireObject;
 
 // Confirmed one value, 0x22 (TGameControl::SaveGame, asm line 463095) - real
 // meaning/other values not resolved (named for its raw value like TypeOrder,
@@ -83,4 +85,15 @@ public:
 	// asm lines 1437558-1437577) - resolves a Lua "any object" sentinel id
 	// to a real object; not reversed beyond that.
 	TVisObjRef GetAnyObject() const;
+
+	// Confirmed call shapes only (TData::GetObjectById's callers, Deponia_
+	// Linux.asm lines 631474+): the object with the given id, or null.
+	TVisionaireObject *GetObjectById(const TId &id) const;
+	// Confirmed call shape only (TData::DeleteDataInstance, asm line 626161+):
+	// unregisters the link from `from` to `to` through `field`.
+	void RemoveLink(const TId &from, const TId &to, int field);
+	// The byte at +0x89 of the original (read in TData::DeleteDataInstance):
+	// when set, deleting a link record doesn't unregister it. Its real meaning
+	// (name guessed) is not reversed yet.
+	bool IsLinkRemovalSuppressed() const;
 };

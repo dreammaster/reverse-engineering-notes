@@ -2738,6 +2738,34 @@ All confirmed from the asm (see the file headers for line ranges):
 - `TTextLanguage` moved to its own header; its default language id is -1 (was
   0), per the default constructor.
 
+## TData and the typed field storage (datastruct/data.h/.cpp)
+
+Confirmed (asm 623914-635588): a record's fields live in one raw block, each at
+the byte offset `TTypeData::GetOffset()` gave it, and `TData`'s static methods
+act on "the value of kind K at this address" through a switch over the 19
+kinds. The kinds (now `eTypeData`, datastruct/type.h) are 0 bool, 1 int, 2
+string, 3 path, 4 float, 5 (no storage, unused), 6 rect list, 7 sprite list,
+8 point list, 9 string list, 10 int list, 11 path list, 12 float list, 13 point,
+14 rect, 15 sprite, 16 link, 17 link list, 18 text-language list. Defaults:
+bool false, int -1, float -1.0, point/rect zero on creation but -1 once cleared.
+The 19 `GetRef...()` helpers return the typed view of an address, logging
+"value for <T> is NULL" (verbosity > 1) and asserting on null, and then
+answering with a freshly emptied shared dummy.
+
+- `TData::Compare()` returns 0/-1; the asm leaves a stale register on several
+  "equal" exits (and inverts the string and string-list kinds), so the evident
+  contract is implemented. Kinds 5 and 18 are never equal; link lists compare
+  without regard to order.
+- `GetDataSize()` returns the sizes of the reconstructed C++ types (rounded up
+  to 8) instead of the original's fixed table, since the vectors/TSprite are
+  real objects here.
+- `DeleteDataInstance()` unregisters links from the visionaire first
+  (`TVisionaire::RemoveLink`, unless the byte at +0x89 of the visionaire - name
+  guessed, `IsLinkRemovalSuppressed()` - is set); `TDataGroup`/`TVisionaire`/
+  `TVisionaireObject` only have the few accessors this needs so far.
+- `baselib/xmlCommon.h/.cpp`: the attribute-text converters (`ConvertToInt/
+  Float/Bool/String/FileName`) plus `dtol` and `normalizepath`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

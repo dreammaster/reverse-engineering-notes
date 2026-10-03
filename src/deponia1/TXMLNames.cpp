@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "baselib/xmlCommon.h"
 #include "vstables/xmlNamesData.h"
 
 namespace {
@@ -91,15 +92,4 @@ void TXMLNames::InitXMLNamesIntern() {
 		AddXMLName(wxString(name), id++, false);
 	for (; id < 100; id++)
 		AddXMLName(wxString("DSunused"), id, false);
-}
-
-long dtol(const char *text) {
-	bool negative = (*text == '-');
-	if (negative)
-		text++;
-
-	int value = 0;
-	for (; *text; text++)
-		value = value * 10 + (*text - '0');
-	return negative ? -value : value;
 }

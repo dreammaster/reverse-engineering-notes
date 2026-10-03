@@ -149,7 +149,7 @@ void TTypeGroup::SetupNeededTypes(bool forSaveGame, bool linkTypesOnly, bool ski
 		return;
 
 	for (TTypeData *type : _types) {
-		if (linkTypesOnly && type->GetType() != eTypeData::kValue16 && type->GetType() != eTypeData::kValue17)
+		if (linkTypesOnly && type->GetType() != eTypeData::kLink && type->GetType() != eTypeData::kLinkList)
 			continue;
 		if (!type->IsFittingSaveGameType(forSaveGame) || !type->IsInFile())
 			continue;

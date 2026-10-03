@@ -18,13 +18,32 @@
 
 #include "datastruct/visionaire.h"
 
-// Confirmed values (TTypeGroup::SetupNeededTypes(), Deponia_Linux.asm line
-// 585762): 0x10 and 0x11 are the two "link" kinds that get special
-// handling; the rest of the numbering is not resolved. Named by raw value
-// like TypeOrder/eVisionaireTable.
+// The 19 kinds of value a field can hold (0-18). The kind decides how the
+// field's storage in a record is laid out and handled: see the switch tables
+// in TData (data.h), which this numbering and the names below were read off
+// (type 5 has no storage and no behavior anywhere; its name is invented).
+// Link fields (kLink/kLinkList) are the ones TTypeGroup::SetupNeededTypes()
+// treats specially.
 enum class eTypeData : int {
-	kValue16 = 0x10,
-	kValue17 = 0x11
+	kBool = 0,
+	kInt = 1,
+	kString = 2,
+	kPath = 3,
+	kFloat = 4,
+	kUnused5 = 5,
+	kRectList = 6,
+	kSpriteList = 7,
+	kPointList = 8,
+	kStringList = 9,
+	kIntList = 10,
+	kPathList = 11,
+	kFloatList = 12,
+	kPoint = 13,
+	kRect = 14,
+	kSprite = 15,
+	kLink = 16,
+	kLinkList = 17,
+	kTextList = 18
 };
 
 class TTypeData {

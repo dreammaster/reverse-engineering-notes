@@ -170,7 +170,7 @@ Geni::authresult_t	todo	3	607243	1656892
 TVisionaire	stub	90	608417	655305
 LoadSaveProgressEvent	todo	4	620683	1523917
 StringHashMap<wxString, int, wchar_t const*, StringHash<wchar_t const*> >	todo	1	620868	620868
-TData	todo	13	625861	634717
+TData	done	13	625861	634717
 TLink	done	15	635588	636057
 TXMLProjectReader	todo	6	636222	642078
 UserData	todo	2	643450	645562

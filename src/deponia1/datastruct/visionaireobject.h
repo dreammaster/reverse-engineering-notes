@@ -11,6 +11,20 @@
 #include <cstdint>
 
 #include "TCharHolder.h"
+#include "vscommon/scripting/id.h"
+
+// Packs a TVisObjRef::GetId()/TVisionaireObject::GetId() 3-byte id into a
+// 32-bit value the same way every confirmed hash-lookup site does it
+// (TGameControl::StartDialog/EndDialog/GetCharacter, TFontManager::
+// GetFont/SetCurrentFont/Initialize, and others): byte0 | (byte1<<8) |
+// (sign-extended byte2<<16) - the sign extension of the third byte is
+// confirmed (an `and 0xFF000000` masking a `sar 0x1F`-derived sign mask in
+// the disassembly), its purpose is not.
+inline int PackVisId(const std::uint8_t *id) {
+	return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
+}
+
+class TVisionaire;
 
 class TVisionaireObject {
 public:
@@ -39,18 +53,19 @@ public:
 	// Confirmed call shape only (asm line 468037) - same 3-4 byte packed id
 	// shape as TVisObjRef::GetId(), see that method's own comment.
 	const std::uint8_t *GetId() const;
+	// Confirmed call shapes only (TData::DeleteDataInstance, asm line 626161+):
+	// the object's id as a TId, and the visionaire it belongs to (the pointer
+	// at +0x20 of the original object).
+	TId GetTId() const {
+		return TId(PackVisId(_id), _id[3]);
+	}
+	TVisionaire *GetVisionaire() const {
+		return _visionaire;
+	}
 
 private:
 	std::uint8_t _id[4] {};
+	TVisionaire *_visionaire = nullptr;
 };
 
-// Packs a TVisObjRef::GetId()/TVisionaireObject::GetId() 3-byte id into a
-// 32-bit value the same way every confirmed hash-lookup site does it
-// (TGameControl::StartDialog/EndDialog/GetCharacter, TFontManager::
-// GetFont/SetCurrentFont/Initialize, and others): byte0 | (byte1<<8) |
-// (sign-extended byte2<<16) - the sign extension of the third byte is
-// confirmed (an `and 0xFF000000` masking a `sar 0x1F`-derived sign mask in
-// the disassembly), its purpose is not.
-inline int PackVisId(const std::uint8_t *id) {
-	return id[0] | (id[1] << 8) | (static_cast<int>(static_cast<std::int8_t>(id[2])) << 16);
-}
+

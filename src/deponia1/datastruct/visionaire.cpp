@@ -39,3 +39,14 @@ bool TVisionaire::Load(const wxFileName &/*file*/, const wxString &/*extra*/, eS
 bool TVisionaire::LoadSaveGame(const wxFileName &/*file*/, const wxString &/*extra*/) {
 	return false;
 }
+
+TVisionaireObject *TVisionaire::GetObjectById(const TId &/*id*/) const {
+	return nullptr;
+}
+
+void TVisionaire::RemoveLink(const TId &/*from*/, const TId &/*to*/, int /*field*/) {
+}
+
+bool TVisionaire::IsLinkRemovalSuppressed() const {
+	return false;
+}
