@@ -62,3 +62,19 @@ Slot item ids are **1-based** (0 = empty slot); the name tables start at id 1.  
 Armour: 34 padded armor (AC 2), 35 leather armor (AC 3), 36 scale armor (AC 4), 37 ring mail (AC 5), 38 chain mail (AC 6), 39 splint mail (AC 7), 40 plate mail (AC 8), 41 plate armor (AC 10), 42 shield (AC 4), 43 helm (AC 2), 44 crown (AC 0), 45 tiara (AC 0), 46 gauntlets (AC 1), 47 ring (AC 0)
 
 Metal materials 0-21 (`wooden` ... `obsidian`; index into `METAL_DAMAGE_PERCENT`, `METAL_DAMAGE`, `METAL_LAC`): to-hit % [0, -3, -4, 3, 2, 1, 2, 3, 4, 6, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 9], damage [0, -3, -6, -4, -2, 2, 4, 6, 8, 10, 0, 1, 1, 2, 2, 3, 4, 5, 12, 15, 20, 30], armour class [0, -3, 0, -2, -1, 1, 2, 4, 6, 8, 0, 1, 1, 2, 2, 3, 4, 5, 10, 12, 14, 16]
+
+## Random item generation (`generateItem`, 4432C)
+
+`generateItem(level 1..6, buffer, slot)` (level 0 is treated as 1) fills slot `slot` of an inventory buffer; used for the
+Blacksmith's stock (`resetBlacksmithWares`) and treasure. Two d100 rolls choose the item id (stored in the id array at +DCh):
+
+| first roll | second roll | item id (uniform in range) |
+|---|---|---|
+| 1-35 | 1-30 / 31-60 / 61-85 / 86-100 | 1-6 / 7-17 / 18-29 / 30-33 |
+| 36-60 | 1-70 / 71-100 | 34-41 / 42 |
+| 61-100 | 1-10 / -20 / -35 / -45 / -55 / -65 / -75 / -80 / -100 | 43-45 / 46 / 47 / 48 / 49-51 / 52 / 53-57 / 58-60 / 61-69 |
+
+Then a third d100 decides how many of the four enchantment fields (metal at +B6h, element +A3h, attribute +C9h, spell +EFh)
+get a value: roll <= 95 -> one, <= 99 -> two, else three (the fields are chosen at random without repeats, each value is
+drawn `rnd(0, level-1)`-style from the item level); at level 6 exactly one field is set. This is by code reading; the
+exact per-field value ranges were not traced.
