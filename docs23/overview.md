@@ -11309,6 +11309,21 @@ TRIDENT OF LIGHT (items 0x17F-0x181) held the key is refused; with none held
 the flag is cleared. This resolves the "new item-requirement gate" `engine-diffs.md`
 left untraced. `travel.c`/`.h`, tests in `test_travel.c`.
 
+### Session update: map tiers and the local area map (`mapview.c`)
+
+Reading `ShowLocalAreaMap` led to its gate, `UpdatePartyAverageStatTiers`, whose
+three averaged record offsets (`+0x64`, `+0x66`, `+0x58`) turned out, once converted
+to stat indices against the array base `0x3C`, to be Mapping, Navigation and
+Survival -- closing a long-open "unconfirmed identity" (the "light fuel" guess was
+wrong). The Mapping average sets the cumulative tier bits of the minimap word
+`word_36C7F` that gate the local map (60), coordinates (70) and the full overview
+(80). Also decoded the page arithmetic (40 x 24 world cells per page, 20 pages
+across -- the clue book's location index), the arrow facing picture and the
+overview marker. One original quirk reproduced: a large minimap that loses its
+capability gains the hidden bit without losing the large bit. Chapter 3's only
+difference is an extra bypass bit on the local-map gate. `mapview.c`/`.h`, 31st
+suite `test_mapview.c`. The row drawing, palette fades and key wait are UI.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

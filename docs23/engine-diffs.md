@@ -412,6 +412,13 @@ flag 0x9D (the spirit realm) is set and the party holds a SWORD/HAMMER/TRIDENT O
 LIGHT (items 0x17F-0x181) the key is refused with a 3-line message; if none is held
 the flag is cleared and the ordinary path runs. Chapter 2 has no gate.
 
+### `ShowLocalAreaMap` gained a second skill-gate bypass
+
+Chapter 2 skips the Mapping-skill gate only when `g_uiScratchFlags1` bit 0x1 is set
+(the map editor's call); Chapter 3 (`sub_2147B`, unnamed in its project) also skips it
+for bit 0x8000. Everything else, including `UpdatePartyAverageStatTiers` and
+`DrawPlayerPositionMarker`, is instruction-identical. See `mapview.h`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a

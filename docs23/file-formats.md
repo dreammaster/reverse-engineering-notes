@@ -992,6 +992,32 @@ has a gate-table row (see above) with its flag clear -- NUMAGIK and STONY PEAK -
 when it only shows a description. Chapter 3 adds a story gate on global flag 0x9D
 and items 0x17F-0x181 (SWORD/HAMMER/TRIDENT OF LIGHT). `travelExamineKey`.
 
+### Map tiers and the local area map (`UpdatePartyAverageStatTiers`, `ShowLocalAreaMap`)
+
+**Field identities settled** (the notes under the party record's stat block called
+these unconfirmed): `UpdatePartyAverageStatTiers`'s three fields `+0x64`, `+0x66`
+and `+0x58` are stat indices 20, 21 and 14 of the array at `0x3C` -- the
+**MAPPING**, **NAVIGATION** and **SURVIVAL** skills. The averages are over members
+in slot order (stopping at the first empty slot, skipping Dead/Stoned/Frozen/
+Paralyzed). Mapping's average sets cumulative tier bits in the minimap word
+`word_36C7F` (>= 45: 0x400, >= 50: 0x8000 large-minimap capable, >= 60: 0x200 the
+local map works, >= 70: 0x800 it prints coordinates, >= 80: 0x100 the full-screen
+overview works); the same word's 0x1000/0x2000/0x4000 are the minimap's hidden/
+small/large display modes (so the "light-source fuel" guess was wrong -- it is the
+Mapping skill). Navigation sizes `RevealMapRegion`'s box; Survival gates the
+monster panel's detail tiers (0x37/0x4B/0x50).
+
+`ShowLocalAreaMap` (action 0x1E) is refused with "YOUR SKILL IS NOT HIGH ENOUGH!"
+unless the 0x200 tier is set (the map editor's call, `g_uiScratchFlags1` bit 1,
+bypasses; Chapter 3 also bypasses on bit 0x8000). It shows the 40 x 24 *page* of the
+world containing the party (page index `(y / 24) * 20 + x / 40`, the clue book's
+location index), one 8-pixel tile per cell: unexplored (fog-bitmap bit clear) cells
+draw the fixed tile 0x13, explored ones their own two tile layers; the party's arrow
+(picture 0 north / 2 south / 1 east / 3 west) is drawn at `(x % 40, y % 24 + 1)`.
+`ToggleMapViewMode` (0x1F) needs the 0x100 tier and draws the full-screen overview
+picture with `DrawPlayerPositionMarker` for world x 160..639, y 48..239. All
+instruction-identical in both games apart from the one bypass bit. `mapview.c`.
+
 ### The party roster screen (`ShowWorldMap`)
 
 `ShowWorldMap` (the world-map screen, called from `RunTitleScreen`)
