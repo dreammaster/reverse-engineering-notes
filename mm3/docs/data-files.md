@@ -203,3 +203,10 @@ Exit; TakeOrGive item 73; SetVar; Teleport 6, 1, 13`.
 ### Cell flag bytes (`.DAT` +200h)
 
 Bit `04h`: too dangerous to rest here (`rest`); bit `08h`: the cell burns light (`updateLight`).  `80h` is used by events (see Xeen's cell flags: `80h` = event/object marker); remaining bits not yet identified.
+
+### Terrain restrictions in `exploreLoop` (outdoor movement, by code reading)
+
+When the party steps onto a cell whose terrain byte is non-zero (the byte read through the page slot at `-37ADh`, i.e. the cell flag table indexed
+`cell + 1`) the value 1-11 selects which skill is needed, tested with `checkSkill` (see `rules.md`): terrain 1, 6, 8, 11 need skill 9 (Mountaineer),
+2, 3, 5, 7, 10 need skill 11 (Path Finder), 4 and 9 are not enterable by skill at all.  A separate test on the cell ahead (a wall-nibble value, tested
+non-zero) needs skill 14 (Swimmer, all members) -- `Party_walkOnWater` bypasses it.  Details of the index computation were not fully traced.
