@@ -946,6 +946,41 @@ CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t
                                                    unsigned savingThrowThreshold, RandomState *rng);
 
 /*
+ * The Search command (HandleSearchCommand, yendor2.asm:48281, instruction-
+ * identical in Chapter 3) against the faced lock/trigger record (lockcatalog.h
+ * flags and packed trap value -- both record kinds load into the same
+ * globals):
+ *   1. alreadyOpened (the persistent "unlocked/triggered" bit): nothing more
+ *      to find -- CombatSearchAlreadyDone.
+ *   2. LockFlagUnknown40 clear: no hidden trap on this object -- the game just
+ *      shows its lock status (CombatSearchNothingToFind, no roll).
+ *   3. Otherwise a detection roll: combatFailsSavingThrow(searcher's
+ *      PartyFieldLevel, threshold = packedTrap / 100 -- the trap's own DC --,
+ *      bonus = PartyStatThievery). Failing it is a failed search
+ *      (CombatSearchFailed): the original plays a buzz and spends an item charge
+ *      (consumesCharge).
+ *   4. Passing it marks the object (the caller sets the persistent bit) and runs
+ *      the trap through combatApplySavingThrowTrap with the same packed value --
+ *      a second, independent roll that can still set the trap off
+ *      (CombatSearchFound; `trap` reports what happened).
+ */
+typedef enum {
+    CombatSearchNothingToFind,
+    CombatSearchAlreadyDone,
+    CombatSearchFailed,
+    CombatSearchFound
+} CombatSearchOutcome;
+
+typedef struct {
+    CombatSearchOutcome outcome;
+    CombatSavingThrowTrapOutcome trap; /* CombatSearchFound only */
+    bool consumesCharge;               /* CombatSearchFailed only */
+} CombatSearchResult;
+
+CombatSearchResult combatSearchTrap(uint16_t lockFlags, uint16_t packedTrap, bool alreadyOpened, uint8_t *searcher,
+                                      SaveGame *save, GameKind game, RandomState *rng);
+
+/*
  * ApplyEncodedItemEffect's single-target and whole-party status-effect
  * branches (yendor2.asm:51106 bits 0x8000/0x4000 of word_33302,
  * yendor3.asm:51993 same bits) -- the two branches roadmap.md already

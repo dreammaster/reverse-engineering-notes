@@ -4339,6 +4339,14 @@ tier 4 is (0, 100), a sure thing; across rows the destroy threshold never rises 
 skill (checked). The comment in the old name table had the success/soft-failure
 labels reversed.
 
+**The Search command (2026-10-03, `combatSearchTrap`)**: `HandleSearchCommand` checks the
+faced lock/trigger record: already opened -> nothing more; lock flag `0x40` clear -> just
+shows the lock status; flag `0x40` set -> a detection roll `FailsSavingThrow(level,
+DC = packed trap / 100, bonus = Thievery)`. Failing it plays a buzz and spends an item
+charge; passing marks the object and runs the trap through the existing
+`ApplySavingThrowEffect` composition -- a second, independent roll (so finding a trap
+doesn't always disarm it). That settles flag `0x40` as "hidden trap present".
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by

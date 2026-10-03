@@ -1,5 +1,7 @@
 #include "combat.h"
 
+#include "lockcatalog.h"
+
 #include <string.h>
 
 #include "party.h"
@@ -839,6 +841,28 @@ CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t
         outcome.recipients++;
     }
     return outcome;
+}
+
+CombatSearchResult combatSearchTrap(uint16_t lockFlags, uint16_t packedTrap, bool alreadyOpened, uint8_t *searcher,
+                                      SaveGame *save, GameKind game, RandomState *rng) {
+    CombatSearchResult result = {CombatSearchNothingToFind, CombatSavingThrowTrapNone, false};
+    if (alreadyOpened) {
+        result.outcome = CombatSearchAlreadyDone;
+        return result;
+    }
+    if (!(lockFlags & LockFlagUnknown40)) {
+        return result;
+    }
+    bool failed = combatFailsSavingThrow((int16_t)partyGetU16(searcher, PartyFieldLevel), (int16_t)(packedTrap / 100),
+                                          (int16_t)partyGetStat(searcher, PartyStatThievery), rng);
+    if (failed) {
+        result.outcome = CombatSearchFailed;
+        result.consumesCharge = true;
+        return result;
+    }
+    result.outcome = CombatSearchFound;
+    result.trap = combatApplySavingThrowTrap(packedTrap, searcher, save, game, rng);
+    return result;
 }
 
 CombatEncodedItemEffectValue combatResolveEncodedItemEffectValue(bool curseGateActive, const uint8_t *actingRecord,

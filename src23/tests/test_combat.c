@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "combat.h"
+#include "lockcatalog.h"
 #include "party.h"
 
 static int g_failureCount = 0;
@@ -1816,6 +1817,48 @@ static void testPlayerMeleeMissLeavesTheMonsterAlone(void) {
     checkU32("no wound", monsterGetU16(monster, MonsterFieldWound), 0);
 }
 
+static void testSearchTrapPaths(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    uint8_t searcher[PartyRecordSize];
+    memset(searcher, 0, sizeof(searcher));
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatSearchResult r = combatSearchTrap(LockFlagUnknown40, 0, true, searcher, &save, GameYendor2, &rng);
+    check("an already-opened object has nothing more to find", r.outcome == CombatSearchAlreadyDone);
+
+    RandomState before = rng;
+    r = combatSearchTrap(0, 5000, false, searcher, &save, GameYendor2, &rng);
+    check("without the 0x40 trap flag there is nothing to find", r.outcome == CombatSearchNothingToFind);
+    check("...and no roll is made", memcmp(&rng, &before, sizeof(rng)) == 0);
+
+    /* a clearly capable searcher: level 100 against DC 0 can't fail */
+    partySetU16(searcher, PartyFieldLevel, 100);
+    r = combatSearchTrap(LockFlagUnknown40, 0, false, searcher, &save, GameYendor2, &rng);
+    check("a skilled searcher finds it", r.outcome == CombatSearchFound && !r.consumesCharge);
+    check("a packed value of 0 means no trap goes off", r.trap == CombatSavingThrowTrapNone);
+
+    /* a hopeless one: level 0 against DC 90 has a chance of 5, so almost any roll fails */
+    partySetU16(searcher, PartyFieldLevel, 0);
+    bool sawFailure = false;
+    for (uint8_t seed = 1; seed < 40 && !sawFailure; seed++) {
+        RandomState a, peek;
+        randomStart(&a, seed, seed);
+        peek = a;
+        uint16_t roll = randomInRange(&peek, 100);
+        r = combatSearchTrap(LockFlagUnknown40, 9000, false, searcher, &save, GameYendor2, &a);
+        if (roll > 5) {
+            sawFailure = true;
+            check("a roll above the 5% chance is a failed search", r.outcome == CombatSearchFailed);
+            check("...which spends the item charge", r.consumesCharge);
+            check("...and no trap is rolled", r.trap == CombatSavingThrowTrapNone);
+            checkU32("...exactly one random draw was used", a.seed, peek.seed);
+        }
+    }
+    check("the hopeless search failed for some seed", sawFailure);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -2083,6 +2126,7 @@ int main(void) {
     testMonsterTurnEndsAtTheTimerWhenItExpires();
     testPlayerMeleeHitDamagesAndWounds();
     testPlayerMeleeMissLeavesTheMonsterAlone();
+    testSearchTrapPaths();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

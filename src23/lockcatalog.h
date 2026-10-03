@@ -107,7 +107,7 @@ bool lockCatalogParseWorldDat(LockCatalog *catalog, GameKind game, const uint8_t
 typedef enum {
     LockFlagTrapped = 0x0080, /* UseAbilityCommand runs the packed trap in price once, on first opening */
     LockFlagMagical = 0x0020,
-    LockFlagUnknown40 = 0x0040,
+    LockFlagUnknown40 = 0x0040, /* a hidden trap the Search command can detect (combat.h's combatSearchTrap) */
     LockFlagKeyGold = 0x0200,
     LockFlagKeySilver = 0x0400,
     LockFlagKeySteel = 0x0800,
