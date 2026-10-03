@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "globalflags.h"
+
 static const DialogLayout g_layoutYendor2 = {0x1677A1,
                                              0x168F11,
                                              0x1771DB,
@@ -131,4 +133,53 @@ unsigned dialogOpeningTopic(const uint8_t *npc, bool flagA, bool flagB, bool fla
         return first + 3;
     }
     return first;
+}
+
+bool dialogTopicListed(const DialogCatalog *catalog, const uint8_t *topic, const DialogState *state,
+                       const uint8_t *globalFlags, size_t flagsSize) {
+    uint16_t ownA = dialogTopicU16(catalog, topic, DialogTopicOwnMaskA);
+    uint16_t ownB = dialogTopicU16(catalog, topic, DialogTopicOwnMaskB);
+    if (ownA == 0 && ownB == 0) {
+        return false;
+    }
+    if (ownA != 0 && !(ownA & state->availA)) {
+        return false;
+    }
+    if (ownB != 0 && !(ownB & state->availB)) {
+        return false;
+    }
+    for (unsigned i = 0; i < DialogTopicFlagSlots; i++) {
+        int16_t id = (int16_t)dialogTopicU16(catalog, topic, (DialogTopicField)(DialogTopicRequireFirst + i * 2));
+        if (id > 0 && !globalFlagTest(globalFlags, flagsSize, (unsigned)id)) {
+            return false;
+        }
+        if (id < 0 && globalFlagTest(globalFlags, flagsSize, (unsigned)-id)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void dialogVisitTopic(const DialogCatalog *catalog, const uint8_t *topic, DialogState *state, uint8_t *globalFlags,
+                      size_t flagsSize, bool handlerSucceeded) {
+    uint16_t flags = dialogGetU16(topic, DialogTopicFlags);
+    if (flags & DialogTopicSaveMenu) {
+        state->savedA = (uint16_t)(state->availA & ~dialogTopicU16(catalog, topic, DialogTopicOwnMaskA));
+        state->savedB = (uint16_t)(state->availB & ~dialogTopicU16(catalog, topic, DialogTopicOwnMaskB));
+    } else if (flags & DialogTopicRestoreMenu) {
+        state->availA = state->savedA;
+        state->availB = state->savedB;
+    }
+    state->availA = (uint16_t)(state->availA & ~dialogTopicU16(catalog, topic, DialogTopicClearMaskA));
+    state->availB = (uint16_t)(state->availB & ~dialogTopicU16(catalog, topic, DialogTopicClearMaskB));
+    state->availA = (uint16_t)(state->availA | dialogTopicU16(catalog, topic, DialogTopicUnlockMaskA));
+    state->availB = (uint16_t)(state->availB | dialogTopicU16(catalog, topic, DialogTopicUnlockMaskB));
+
+    if ((flags & DialogTopicConditional) && !handlerSucceeded) {
+        return;
+    }
+    for (unsigned i = 0; i < DialogTopicFlagSlots; i++) {
+        globalFlagApplySigned(globalFlags, flagsSize,
+                              (int16_t)dialogTopicU16(catalog, topic, (DialogTopicField)(DialogTopicResultFirst + i * 2)));
+    }
 }

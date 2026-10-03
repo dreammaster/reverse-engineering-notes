@@ -125,11 +125,32 @@ typedef enum {
     DialogTopicArg = 0x10,        /* es:[si+10h] (Chapter 3: +12h): handler argument (an exit code for bit 0x1, a type word, a key id, ...) */
     DialogTopicTextOffset = 0x12, /* byte offset of the topic's first line from the NPC's first line (multiple of 34) */
     DialogTopicTextLines = 0x14,  /* number of lines shown */
-    DialogTopicBit = 0x16,        /* this topic's bit in the NPC's topic mask (0x8000, 0x4000, ... down to 1) */
-    DialogTopicUnlocks = 0x1A,    /* bits of the same mask this topic makes available */
-    DialogTopicBitCopy = 0x1E,    /* equal to DialogTopicBit in most records; -1 in the rest */
-    DialogTopicFlagFirst = 0x22   /* the first of six signed global-flag ids ApplyItemEffectFlags walks: set if > 0, cleared (negated) if < 0 */
+    /*
+     * The topic-availability masks (two 16-bit words, "A" and "B" -- the
+     * original's word_2E40C/word_2E40E). A topic is listed only while the
+     * conversation's available masks overlap its own bits (below); visiting
+     * it edits them.
+     */
+    DialogTopicOwnMaskA = 0x16,    /* this topic's bit(s) in mask A (0x8000, 0x4000, ... down to 1; 0 = none) */
+    DialogTopicOwnMaskB = 0x18,    /* ... in mask B (bit 2 here also shows the ore counters) */
+    DialogTopicUnlockMaskA = 0x1A, /* bits ORed into mask A when the topic is visited */
+    DialogTopicUnlockMaskB = 0x1C,
+    DialogTopicClearMaskA = 0x1E,  /* bits removed from mask A (usually the topic's own: it is used up); -1 clears all */
+    DialogTopicClearMaskB = 0x20,
+    /*
+     * Six signed global-flag ids the topic REQUIRES to be listed
+     * (CheckItemEligibilityAndCopyName): positive = that flag must be set,
+     * negative = its (negated) id must be clear, 0 = unused.
+     */
+    DialogTopicRequireFirst = 0x22,
+    /*
+     * Six signed global-flag ids set (positive) or cleared (negative) when
+     * the topic is visited (ApplyItemEffectFlags); see DialogTopicConditional.
+     */
+    DialogTopicResultFirst = 0x2E
 } DialogTopicField;
+
+enum { DialogTopicFlagSlots = 6 };
 
 /*
  * DialogTopicFlags bits as UseItem tests them (es:[si+0Eh]). Partial: the
@@ -137,15 +158,18 @@ typedef enum {
  */
 typedef enum {
     DialogTopicEndsConversation = 0x0001, /* after showing the text, wait for a key and leave; DialogTopicArg <= 2 becomes the exit code (word_2E52A) */
+    DialogTopicConditional = 0x0002,      /* the result flags apply only when the handler reports success (g_uiScratchFlags2 bit 0x40: a correct riddle answer, a completed purchase) */
+    DialogTopicRestoreMenu = 0x0010,      /* restore the masks saved by a DialogTopicSaveMenu topic (the "NO" answer) */
+    DialogTopicSaveMenu = 0x0020,         /* save the masks (minus this topic's own bits) so a later restore can return to this menu ("GO TO MENU", "BECOME MEMBER", the shops) */
     DialogTopicRepair = 0x0040,           /* RunRepairItemScreen */
     DialogTopicBuy = 0x0080,              /* "BUY ..." topics: PromptBuyOreQuantity; other 0x80 topics are riddles (UseRiddleAnswerItem) */
     DialogTopicEnhance = 0x0100,          /* RunEnhanceItemScreen */
     DialogTopicAttributeBoost = 0x0200,   /* UseAttributeBoostItem */
     DialogTopicExperienceBoost = 0x0400,  /* UseExperienceBoostItem */
     DialogTopicPreview = 0x0800,          /* ShowItemUsagePreview */
-    DialogTopicCheckKey = 0x1000,         /* CheckKeyItem (the arg is a lock id) */
+    DialogTopicCheckKey = 0x1000,         /* CheckKeyItem: the preview twin of 0x8000 (the arg is a LoadLockState id) */
     DialogTopicSell = 0x4000,             /* RunSellItemScreen after ConfirmAndValidatePartyTarget */
-    DialogTopicUseKey = 0x8000            /* UseKeyItem */
+    DialogTopicUseKey = 0x8000            /* UseKeyItem: LoadLockState(arg) then RunShopScreen -- the shop / item-grant screen ("BUY ARMOR", "PICK UP KEY", "OPEN CHEST", rewards) */
 } DialogTopicFlag;
 
 typedef struct {
@@ -199,5 +223,36 @@ size_t dialogTopicText(const DialogCatalog *catalog, const uint8_t *npc, const u
  * three DialogNpcGreetingFlag* global flags (an id of 0 counts as unset).
  */
 unsigned dialogOpeningTopic(const uint8_t *npc, bool flagA, bool flagB, bool flagC);
+
+/*
+ * The conversation's topic-availability state: the two masks (word_2E40C/
+ * word_2E40E, zeroed by LoadItemData) plus the menu snapshot (word_328F6/
+ * word_328F8) DialogTopicSaveMenu/RestoreMenu use. LoadItemData also sets
+ * bit 0 of mask B when the NPC's DialogNpcRequiredItemRange is available.
+ */
+typedef struct {
+    uint16_t availA, availB;
+    uint16_t savedA, savedB;
+} DialogState;
+
+/*
+ * Whether the topic is listed (CheckItemEligibilityAndCopyName,
+ * yendor2.asm:20527): a topic with both own masks zero is never listed;
+ * otherwise each nonzero own mask must overlap the matching available mask,
+ * and all six require-flags must hold against globalFlags.
+ */
+bool dialogTopicListed(const DialogCatalog *catalog, const uint8_t *topic, const DialogState *state,
+                       const uint8_t *globalFlags, size_t flagsSize);
+
+/*
+ * Visiting a topic's bookkeeping (ApplyItemEffectFlags, :20907): save or
+ * restore the menu snapshot (DialogTopicSaveMenu stores the available masks
+ * minus the topic's own bits; DialogTopicRestoreMenu loads them back), then
+ * clear the clear masks and OR in the unlock masks, then apply the six result
+ * flags -- unless the topic is DialogTopicConditional and handlerSucceeded is
+ * false. The handler's own effects (shops, tomes...) are separate.
+ */
+void dialogVisitTopic(const DialogCatalog *catalog, const uint8_t *topic, DialogState *state, uint8_t *globalFlags,
+                      size_t flagsSize, bool handlerSucceeded);
 
 #endif

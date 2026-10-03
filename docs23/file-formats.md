@@ -4173,21 +4173,42 @@ word at `+0x22` (usually equal to `+0x12`).
 "PURCHASE FOOD", "BYE"), then `+0xE` flags (below), `+0x10` an argument (an exit
 code for flag 1, a lock id for key checks, a type word for the handlers...),
 `+0x12` the *byte* offset of the topic's first line from the NPC's first line
-(always a multiple of 34), `+0x14` the line count, `+0x16` this topic's bit in
-the NPC's topic mask (a distinct bit per topic: 0x8000, 0x4000, ... 1),
-`+0x1A` the bits it unlocks, `+0x1E` a copy (or -1), and from `+0x22` six signed
-global-flag ids `ApplyItemEffectFlags` walks (positive: set, negative: clear).
+(always a multiple of 34), `+0x14` the line count, then the **menu machinery**:
+`+0x16`/`+0x18` the topic's own bits in two 16-bit "available topics" masks A
+and B, `+0x1A`/`+0x1C` bits it unlocks, `+0x1E`/`+0x20` bits it clears (usually
+its own: it is used up; -1 clears everything), then six signed global-flag
+ids at `+0x22` that the topic *requires* to be listed (positive: set,
+negative: must be clear) and six at `+0x2E` it applies when visited (positive
+sets, negative clears; `ApplyItemEffectFlags`).
 **Chapter 3 topics are 60 bytes: an extra word at `+0x10` pushes everything
 after it up by 2** (`ShowItemUsagePreview` reads `+0x12` where Chapter 2 reads
 `+0x10`); `dialogTopicU16` hides the difference. A topic with no text keeps a
 bit mask in its offset/count words.
 
+**How a conversation works** (`dialogTopicListed`/`dialogVisitTopic`, checked
+on both games' real NPCs): `LoadItemData` zeroes masks A/B and opens on the
+NPC's greeting topic; visiting any topic clears its clear-masks, ORs in its
+unlock-masks, and applies its result flags. A topic is *listed* while it has an
+own bit, each nonzero own mask overlaps the matching available mask, and its
+six require-flags hold (`CheckItemEligibilityAndCopyName`, `:20527`). So
+the Chapter 2 governor's HELLO unlocks BLACKWING, PORT HOPE and BYE; BLACKWING
+then unlocks NUORE and BATS; the tavern's GO TO MENU shows YES / NO and NO
+restores the main menu. Two flags implement sub-menus: `0x20` saves the masks
+(minus the topic's own bits) and `0x10` restores them. `0x2` makes a topic's
+result flags conditional on the handler succeeding (the original's
+`g_uiScratchFlags2` bit `0x40`, set by a correct riddle answer or completed
+purchase). Chapter 3's NPC 1 (after HELLO: NAME, ZAMORA, TASKS, BYE) behaves the
+same way.
+
 **Topic flags** (`UseItem`'s tests of `es:[si+0Eh]`): `0x1` end the
 conversation (wait for a key, then leave with the argument as exit code if <=
 2), `0x40` the repair screen, `0x80` buy ore (for a topic named "BUY ...") or a
 riddle answer prompt, `0x100` the enhance screen, `0x200` an attribute tome,
-`0x400` an experience tome, `0x800` a preview, `0x1000` a key check, `0x4000` the
-sell screen, `0x8000` a key grant. `UseItem` additionally dispatches on a
+`0x400` an experience tome, `0x800` a preview, `0x1000` the preview twin of
+`0x8000`, `0x4000` the sell screen, `0x8000` `UseKeyItem`, which is really
+`LoadLockState(arg)` then `RunShopScreen` -- the shop / item-grant screen
+(topics named BUY ARMOR, PICK UP KEY, OPEN CHEST, REWARD). The old "key item"
+names for these handlers were guesses. `UseItem` additionally dispatches on a
 second word (the topic's argument, loaded into `word_2E410`): `0x8000`
 healing, `0x4000` training (`UseTrainingItem`, already reimplemented as
 `partyApplyTraining`), `0x3000` an ability scroll, `0x400`/`0x800` the paid

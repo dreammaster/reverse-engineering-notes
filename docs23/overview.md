@@ -11228,6 +11228,18 @@ all three tables exactly in both games, and added `dialog.c` (26th suite) with
 the opening-topic rule and text assembly. The topic handlers behind each flag
 (shops, healers, tomes, riddles, key grants) are the next layer.
 
+### Session update (2026-10-03, continued): how a conversation's menu works
+
+Read `ApplyItemEffectFlags` and `CheckItemEligibilityAndCopyName` against the
+topic records and the pieces fell together: each topic carries bit masks for
+"I appear when these are available", "visiting me makes these available" and
+"visiting me removes these", plus six global flags required and six applied.
+Two flags save and restore the mask pair for sub-menus. Implemented as
+`dialogTopicListed`/`dialogVisitTopic` and checked by walking real NPCs in both
+games (Chapter 2's governor and tavern, Chapter 3's NPC 1) -- the menus come out
+exactly as a player would expect, which is the best evidence the decode is
+right.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

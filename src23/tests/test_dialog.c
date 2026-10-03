@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_dialog test_dialog.c ../dialog.c && ./test_dialog
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_dialog test_dialog.c ../dialog.c ../globalflags.c && ./test_dialog
  *
  * Real-data checks read WORLD.DAT from yendor2/game and yendor3/game
  * (override with YENDOR2_GAME_DIR / YENDOR3_GAME_DIR) and are skipped if absent.
@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "dialog.h"
+#include "globalflags.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -101,6 +102,132 @@ static void testTopicTextAssembly(void) {
     putU16(topic, DialogTopicTextLines, 0);
     checkU32("zero lines is the empty string", (uint32_t)dialogTopicText(&catalog, npc, topic, out, sizeof(out)), 0);
     checkU32("...with a terminator", out[0], 0);
+}
+
+/* Space-separated names of the NPC's listed topics. */
+static void listedNames(const DialogCatalog *catalog, const uint8_t *npc, const DialogState *state, const uint8_t *flags,
+                        char *out, size_t capacity) {
+    out[0] = '\0';
+    for (unsigned t = 0; t < dialogGetU16(npc, DialogNpcTopicCount); t++) {
+        const uint8_t *topic = dialogTopic(catalog, dialogGetU16(npc, DialogNpcFirstTopic) + t);
+        if (dialogTopicListed(catalog, topic, state, flags, 512)) {
+            char name[DialogTopicNameSize + 1];
+            dialogTopicName(topic, name);
+            if (out[0]) {
+                strncat(out, " ", capacity - strlen(out) - 1);
+            }
+            strncat(out, name, capacity - strlen(out) - 1);
+        }
+    }
+}
+
+static void testMasksSynthetic(void) {
+    static DialogCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.topicRecordSize = DialogTopicRecordSizeYendor2;
+    uint8_t flags[512];
+    memset(flags, 0, sizeof(flags));
+    uint8_t topic[DialogTopicRecordSizeMax];
+    memset(topic, 0, sizeof(topic));
+    DialogState state;
+    memset(&state, 0, sizeof(state));
+
+    check("a topic with no own bits is never listed", !dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    putU16(topic, DialogTopicOwnMaskA, 0x0004);
+    check("an own bit that isn't available isn't listed", !dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    state.availA = 0x0006;
+    check("...and is once the masks overlap", dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    putU16(topic, DialogTopicOwnMaskB, 0x0001);
+    check("a nonzero B mask must overlap too", !dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    state.availB = 0x0001;
+    check("both overlapping lists it", dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+
+    putU16(topic, DialogTopicRequireFirst, 5);
+    check("a positive require-flag that is clear hides it", !dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    globalFlagSet(flags, sizeof(flags), 5);
+    check("...set, it shows", dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    putU16(topic, DialogTopicRequireFirst + 2, (uint16_t)-7);
+    check("a negative require-flag that is clear passes", dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+    globalFlagSet(flags, sizeof(flags), 7);
+    check("...but hides it once set", !dialogTopicListed(&catalog, topic, &state, flags, sizeof(flags)));
+
+    /* visiting */
+    uint8_t visit[DialogTopicRecordSizeMax];
+    memset(visit, 0, sizeof(visit));
+    memset(&state, 0, sizeof(state));
+    state.availA = 0x00F0;
+    state.availB = 0x0003;
+    putU16(visit, DialogTopicOwnMaskA, 0x0010);
+    putU16(visit, DialogTopicClearMaskA, 0x0010);
+    putU16(visit, DialogTopicUnlockMaskA, 0x0100);
+    putU16(visit, DialogTopicClearMaskB, 0x0001);
+    putU16(visit, DialogTopicUnlockMaskB, 0x0008);
+    putU16(visit, DialogTopicResultFirst, 20);
+    putU16(visit, DialogTopicResultFirst + 2, (uint16_t)-5);
+    uint8_t flags2[512];
+    memset(flags2, 0, sizeof(flags2));
+    globalFlagSet(flags2, sizeof(flags2), 5);
+    dialogVisitTopic(&catalog, visit, &state, flags2, sizeof(flags2), true);
+    checkU32("visiting clears then unlocks mask A", state.availA, 0x01E0);
+    checkU32("...and mask B", state.availB, 0x000A);
+    check("a positive result flag sets", globalFlagTest(flags2, sizeof(flags2), 20));
+    check("a negative result flag clears", !globalFlagTest(flags2, sizeof(flags2), 5));
+
+    /* conditional results */
+    memset(flags2, 0, sizeof(flags2));
+    putU16(visit, DialogTopicFlags, DialogTopicConditional);
+    dialogVisitTopic(&catalog, visit, &state, flags2, sizeof(flags2), false);
+    check("a conditional topic's flags wait for success", !globalFlagTest(flags2, sizeof(flags2), 20));
+    dialogVisitTopic(&catalog, visit, &state, flags2, sizeof(flags2), true);
+    check("...and apply with it", globalFlagTest(flags2, sizeof(flags2), 20));
+
+    /* save / restore the menu */
+    memset(&state, 0, sizeof(state));
+    state.availA = 0x0C10;
+    state.availB = 0x0001;
+    uint8_t save[DialogTopicRecordSizeMax], restore[DialogTopicRecordSizeMax];
+    memset(save, 0, sizeof(save));
+    memset(restore, 0, sizeof(restore));
+    putU16(save, DialogTopicFlags, DialogTopicSaveMenu);
+    putU16(save, DialogTopicOwnMaskA, 0x0010);
+    putU16(save, DialogTopicClearMaskA, 0xFFFF);
+    putU16(save, DialogTopicUnlockMaskA, 0x3000);
+    putU16(restore, DialogTopicFlags, DialogTopicRestoreMenu);
+    dialogVisitTopic(&catalog, save, &state, flags2, sizeof(flags2), true);
+    checkU32("a save topic leaves its own new menu", state.availA, 0x3000);
+    checkU32("...having saved the old masks minus its own bits", state.savedA, 0x0C00);
+    dialogVisitTopic(&catalog, restore, &state, flags2, sizeof(flags2), true);
+    checkU32("a restore topic brings the saved menu back", state.availA, 0x0C00);
+    checkU32("...including mask B", state.availB, state.savedB);
+}
+
+static void testRealConversations(const DialogCatalog *catalog, GameKind game) {
+    uint8_t flags[512];
+    memset(flags, 0, sizeof(flags));
+    char names[200];
+    DialogState state;
+    memset(&state, 0, sizeof(state));
+    const uint8_t *npc = dialogNpc(catalog, 1);
+    dialogVisitTopic(catalog, dialogTopic(catalog, dialogGetU16(npc, DialogNpcFirstTopic)), &state, flags, sizeof(flags), true);
+    listedNames(catalog, npc, &state, flags, names, sizeof(names));
+    if (game == GameYendor2) {
+        check("Chapter 2 governor, after HELLO: BLACKWING, PORT HOPE and BYE", strcmp(names, "BLACKWING PORT HOPE BYE") == 0);
+        npc = dialogNpc(catalog, 6);
+        memset(&state, 0, sizeof(state));
+        unsigned first = dialogGetU16(npc, DialogNpcFirstTopic);
+        dialogVisitTopic(catalog, dialogTopic(catalog, first), &state, flags, sizeof(flags), true);
+        listedNames(catalog, npc, &state, flags, names, sizeof(names));
+        check("the tavern greets with PURCHASE FOOD, GO TO MENU, FINISHED", strcmp(names, "PURCHASE FOOD GO TO MENU FINISHED") == 0);
+        dialogVisitTopic(catalog, dialogTopic(catalog, first + 3), &state, flags, sizeof(flags), true); /* GO TO MENU */
+        listedNames(catalog, npc, &state, flags, names, sizeof(names));
+        check("GO TO MENU offers YES / NO", strcmp(names, "YES NO") == 0);
+        dialogVisitTopic(catalog, dialogTopic(catalog, first + 5), &state, flags, sizeof(flags), true); /* NO */
+        listedNames(catalog, npc, &state, flags, names, sizeof(names));
+        check("NO restores the original menu", strcmp(names, "PURCHASE FOOD GO TO MENU FINISHED") == 0);
+    } else {
+        check("Chapter 3 NPC 1, after HELLO: NAME, ZAMORA, TASKS, BYE", strcmp(names, "NAME ZAMORA TASKS BYE") == 0);
+    }
 }
 
 static uint8_t *loadFile(const char *path, size_t *size) {
@@ -201,6 +328,8 @@ static void checkRealGame(const char *name, GameKind game, const char *envName, 
     snprintf(label, sizeof(label), "%s: every text line is printable ASCII with a NUL at 33", name);
     check(label, lines);
 
+    testRealConversations(&catalog, game);
+
     if (game == GameYendor2) {
         const uint8_t *governor = dialogNpc(&catalog, 1);
         const uint8_t *hello = dialogTopic(&catalog, dialogGetU16(governor, DialogNpcFirstTopic));
@@ -242,6 +371,7 @@ int main(void) {
     testLayouts();
     testOpeningTopic();
     testTopicTextAssembly();
+    testMasksSynthetic();
     checkRealGame("yendor2", GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game");
     checkRealGame("yendor3", GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game");
 
