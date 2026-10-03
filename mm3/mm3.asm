@@ -42638,51 +42638,467 @@ off_2D9C4       dw offset aSpellFailed  ; DATA XREF: Screen_saveBackground+3↓r
                 db 5Bh, 4Ah, 5Bh, 7Dh, 5Bh, 82h, 5Bh, 4Ah, 5Bh, 8Bh, 5Bh
                 db 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 94h, 5Bh, 4Ah
                 db 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 9Eh, 5Bh, 4Ah, 5Bh
-                db 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 0A6h, 5Bh, 0AFh
-                db 5Bh, 0B6h, 5Bh, 0BDh, 5Bh, 0C5h, 5Bh, 0CEh, 5Bh, 0D8h
-                db 5Bh, 0E1h, 5Bh, 0ECh, 5Bh, 0F8h, 5Bh, 2, 5Ch, 0Ah, 5Ch
-                db 14h, 5Ch, 1Eh, 5Ch, 28h, 5Ch, 2Eh, 5Ch, 33h, 5Ch, 3Ah
-                db 5Ch, 44h, 5Ch, 4Ah, 5Ch, 50h, 5Ch, 58h, 5Ch, 62h, 5Ch
-                db 6Dh, 5Ch, 74h, 5Ch, 7Dh, 5Ch, 86h, 5Ch, 94h, 5Ch, 9Bh
-                db 5Ch, 0A2h, 5Ch, 0A9h, 5Ch, 0B2h, 5Ch, 0BDh, 5Ch, 0C6h
-                db 5Ch, 0CEh, 5Ch, 0D7h, 5Ch, 4Ah, 5Bh, 0E4h, 5Ch, 0ECh
-                db 5Ch, 0F5h, 5Ch, 0FCh, 5Ch, 4, 5Dh, 0Ah, 5Dh, 12h, 5Dh
-                db 19h, 5Dh, 1Fh, 5Dh, 29h, 5Dh, 30h, 5Dh, 37h, 5Dh, 40h
-                db 5Dh, 47h, 5Dh, 4Eh, 5Dh, 55h, 5Dh, 5Ch, 5Dh, 64h, 5Dh
-                db 6Ah, 5Dh, 73h, 5Dh, 7Dh, 5Dh, 86h, 5Dh, 4Ah, 5Bh, 90h
-                db 5Dh, 97h, 5Dh, 0A1h, 5Dh, 0AAh, 5Dh, 0B0h, 5Dh, 0B7h
-                db 5Dh, 0C0h, 5Dh, 0A2h, 5Ch, 0C7h, 5Dh, 0CFh, 5Dh, 0D7h
-                db 5Dh, 0DFh, 5Dh, 0E5h, 5Dh, 0EBh, 5Dh, 0F4h, 5Dh, 0FFh
-                db 5Dh, 0Ah, 5Eh, 12h, 5Eh, 1Ah, 5Eh, 21h, 5Eh, 2Dh, 5Eh
-                db 34h, 5Eh, 41h, 5Eh, 4Bh, 5Eh, 57h, 5Eh, 5Ch, 5Eh, 62h
-                db 5Eh, 69h, 5Eh, 70h, 5Eh, 76h, 5Eh, 7Dh, 5Eh, 84h, 5Eh
-                db 8Ah, 5Eh, 97h, 5Eh, 0A1h, 5Eh, 0A8h, 5Eh, 0B2h, 5Eh
-                db 0BCh, 5Eh, 0C7h, 5Eh, 0CDh, 5Eh, 0D5h, 5Eh, 0DDh, 5Eh
-                db 0E5h, 5Eh, 0EEh, 5Eh, 0F5h, 5Eh, 0FFh, 5Eh, 0Ch, 5Fh
-                db 13h, 5Fh, 1Bh, 5Fh, 21h, 5Fh, 28h, 5Fh, 32h, 5Fh, 39h
-                db 5Fh, 42h, 5Fh, 49h, 5Fh, 4Fh, 5Fh, 59h, 5Fh, 61h, 5Fh
-                db 6Dh, 5Fh, 76h, 5Fh, 80h, 5Fh, 89h, 5Fh, 91h, 5Fh, 99h
-                db 5Fh, 0A2h, 5Fh, 0AAh, 5Fh, 0B3h, 5Fh, 0BAh, 5Fh, 0C1h
-                db 5Fh, 0C8h, 5Fh, 0D1h, 5Fh, 0DBh, 5Fh, 4Ah, 5Bh, 0E3h
-                db 5Fh, 0EFh, 5Fh, 0FCh, 5Fh, 9, 60h, 13h, 60h, 1Ch, 60h
-                db 23h, 60h, 29h, 60h, 33h, 60h, 3Bh, 60h, 46h, 60h, 51h
-                db 60h, 59h, 60h, 5Fh, 60h, 66h, 60h, 6Eh, 60h, 74h, 60h
-                db 7Bh, 60h, 85h, 60h, 8Dh, 60h, 96h, 60h, 9Ch, 60h, 0A7h
-                db 60h, 0B0h, 60h, 0B7h, 60h, 0BFh, 60h, 0C9h, 60h, 0D5h
-                db 60h, 0E0h, 60h, 0EBh, 60h, 0F6h, 60h, 0, 61h, 0Ah, 61h
-                db 11h, 61h, 1Fh, 61h, 2Eh, 61h, 3Bh, 61h, 46h, 61h, 52h
-                db 61h, 5Fh, 61h, 6Bh, 61h, 78h, 61h, 80h, 61h, 86h, 61h
-                db 8Dh, 61h, 94h, 61h, 0F2h, 5Bh, 9Fh, 61h, 0A6h, 61h
-                db 0ADh, 61h, 0B4h, 61h, 0BAh, 61h, 0C0h, 61h, 0C8h, 61h
-                db 2Dh, 5Eh, 0CFh, 61h, 0D6h, 61h, 0DEh, 61h, 0E7h, 61h
-                db 0F1h, 61h, 0F9h, 61h, 0FEh, 61h, 5, 62h, 0Ah, 62h, 0Fh
-                db 62h, 14h, 62h, 1Ah, 62h, 20h, 62h, 26h, 62h, 2Fh, 62h
-                db 37h, 62h, 3Fh, 62h, 46h, 62h, 56h, 62h, 64h, 62h, 75h
-                db 62h, 88h, 62h, 9Ah, 62h, 0AFh, 62h, 0C9h, 62h, 0E9h
-                db 62h, 6Ch, 62h, 3, 63h, 27h, 63h, 39h, 63h, 54h, 63h
-                db 72h, 63h, 83h, 63h, 91h, 63h, 0AFh, 63h, 0C4h, 63h
-                db 0D5h, 63h, 0F3h, 63h, 11h, 64h, 2Fh, 64h, 4Dh, 64h
-                db 6Bh, 64h
+                db 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh, 4Ah, 5Bh
+ITEM_ELEMENT_NAMES db 0A6h              ; pointer table (40 entries: burning ... ectoplasmic) for the elemental material (char slot +0A3h)
+                db  5Bh ; [
+                db 0AFh
+                db  5Bh ; [
+                db 0B6h
+                db  5Bh ; [
+                db 0BDh
+                db  5Bh ; [
+                db 0C5h
+                db  5Bh ; [
+                db 0CEh
+                db  5Bh ; [
+                db 0D8h
+                db  5Bh ; [
+                db 0E1h
+                db  5Bh ; [
+                db 0ECh
+                db  5Bh ; [
+                db 0F8h
+                db  5Bh ; [
+                db    2
+                db  5Ch ; \
+                db  0Ah
+                db  5Ch ; \
+                db  14h
+                db  5Ch ; \
+                db  1Eh
+                db  5Ch ; \
+                db  28h ; (
+                db  5Ch ; \
+                db  2Eh ; .
+                db  5Ch ; \
+                db  33h ; 3
+                db  5Ch ; \
+                db  3Ah ; :
+                db  5Ch ; \
+                db  44h ; D
+                db  5Ch ; \
+                db  4Ah ; J
+                db  5Ch ; \
+                db  50h ; P
+                db  5Ch ; \
+                db  58h ; X
+                db  5Ch ; \
+                db  62h ; b
+                db  5Ch ; \
+                db  6Dh ; m
+                db  5Ch ; \
+                db  74h ; t
+                db  5Ch ; \
+                db  7Dh ; }
+                db  5Ch ; \
+                db  86h
+                db  5Ch ; \
+                db  94h
+                db  5Ch ; \
+                db  9Bh
+                db  5Ch ; \
+                db 0A2h
+                db  5Ch ; \
+                db 0A9h
+                db  5Ch ; \
+                db 0B2h
+                db  5Ch ; \
+                db 0BDh
+                db  5Ch ; \
+                db 0C6h
+                db  5Ch ; \
+                db 0CEh
+                db  5Ch ; \
+                db 0D7h
+                db  5Ch ; \
+                db  4Ah ; J
+                db  5Bh ; [
+                db 0E4h
+                db  5Ch ; \
+                db 0ECh
+                db  5Ch ; \
+                db 0F5h
+                db  5Ch ; \
+                db 0FCh
+                db  5Ch ; \
+                db    4
+                db  5Dh ; ]
+                db  0Ah
+                db  5Dh ; ]
+                db  12h
+                db  5Dh ; ]
+                db  19h
+                db  5Dh ; ]
+                db  1Fh
+                db  5Dh ; ]
+                db  29h ; )
+                db  5Dh ; ]
+                db  30h ; 0
+                db  5Dh ; ]
+                db  37h ; 7
+                db  5Dh ; ]
+                db  40h ; @
+                db  5Dh ; ]
+                db  47h ; G
+                db  5Dh ; ]
+                db  4Eh ; N
+                db  5Dh ; ]
+                db  55h ; U
+                db  5Dh ; ]
+                db  5Ch ; \
+                db  5Dh ; ]
+                db  64h ; d
+                db  5Dh ; ]
+                db  6Ah ; j
+                db  5Dh ; ]
+                db  73h ; s
+                db  5Dh ; ]
+                db  7Dh ; }
+                db  5Dh ; ]
+                db  86h
+                db  5Dh ; ]
+                db  4Ah ; J
+                db  5Bh ; [
+ITEM_ATTR_NAMES db  90h                 ; pointer table of attribute-enchantment prefixes 'might ... pirate' (slot +0C9h)
+                db  5Dh ; ]
+                db  97h
+                db  5Dh ; ]
+                db 0A1h
+                db  5Dh ; ]
+                db 0AAh
+                db  5Dh ; ]
+                db 0B0h
+                db  5Dh ; ]
+                db 0B7h
+                db  5Dh ; ]
+                db 0C0h
+                db  5Dh ; ]
+                db 0A2h
+                db  5Ch ; \
+                db 0C7h
+                db  5Dh ; ]
+                db 0CFh
+                db  5Dh ; ]
+                db 0D7h
+                db  5Dh ; ]
+                db 0DFh
+                db  5Dh ; ]
+                db 0E5h
+                db  5Dh ; ]
+                db 0EBh
+                db  5Dh ; ]
+                db 0F4h
+                db  5Dh ; ]
+                db 0FFh
+                db  5Dh ; ]
+                db  0Ah
+                db  5Eh ; ^
+                db  12h
+                db  5Eh ; ^
+                db  1Ah
+                db  5Eh ; ^
+                db  21h ; !
+                db  5Eh ; ^
+                db  2Dh ; -
+                db  5Eh ; ^
+                db  34h ; 4
+                db  5Eh ; ^
+                db  41h ; A
+                db  5Eh ; ^
+                db  4Bh ; K
+                db  5Eh ; ^
+                db  57h ; W
+                db  5Eh ; ^
+                db  5Ch ; \
+                db  5Eh ; ^
+                db  62h ; b
+                db  5Eh ; ^
+                db  69h ; i
+                db  5Eh ; ^
+                db  70h ; p
+                db  5Eh ; ^
+                db  76h ; v
+                db  5Eh ; ^
+                db  7Dh ; }
+                db  5Eh ; ^
+                db  84h
+                db  5Eh ; ^
+                db  8Ah
+                db  5Eh ; ^
+                db  97h
+                db  5Eh ; ^
+                db 0A1h
+                db  5Eh ; ^
+                db 0A8h
+                db  5Eh ; ^
+                db 0B2h
+                db  5Eh ; ^
+                db 0BCh
+                db  5Eh ; ^
+                db 0C7h
+                db  5Eh ; ^
+                db 0CDh
+                db  5Eh ; ^
+                db 0D5h
+                db  5Eh ; ^
+                db 0DDh
+                db  5Eh ; ^
+                db 0E5h
+                db  5Eh ; ^
+                db 0EEh
+                db  5Eh ; ^
+                db 0F5h
+                db  5Eh ; ^
+                db 0FFh
+                db  5Eh ; ^
+                db  0Ch
+                db  5Fh ; _
+                db  13h
+                db  5Fh ; _
+                db  1Bh
+                db  5Fh ; _
+                db  21h ; !
+                db  5Fh ; _
+                db  28h ; (
+                db  5Fh ; _
+                db  32h ; 2
+                db  5Fh ; _
+                db  39h ; 9
+                db  5Fh ; _
+                db  42h ; B
+                db  5Fh ; _
+                db  49h ; I
+                db  5Fh ; _
+                db  4Fh ; O
+                db  5Fh ; _
+                db  59h ; Y
+                db  5Fh ; _
+                db  61h ; a
+                db  5Fh ; _
+                db  6Dh ; m
+                db  5Fh ; _
+                db  76h ; v
+                db  5Fh ; _
+                db  80h
+                db  5Fh ; _
+                db  89h
+                db  5Fh ; _
+                db  91h
+                db  5Fh ; _
+                db  99h
+                db  5Fh ; _
+                db 0A2h
+                db  5Fh ; _
+                db 0AAh
+                db  5Fh ; _
+                db 0B3h
+                db  5Fh ; _
+                db 0BAh
+                db  5Fh ; _
+                db 0C1h
+                db  5Fh ; _
+                db 0C8h
+                db  5Fh ; _
+                db 0D1h
+                db  5Fh ; _
+                db 0DBh
+                db  5Fh ; _
+                db  4Ah ; J
+                db  5Bh ; [
+ITEM_WEAPON_NAMES db 0E3h               ; 33 weapons (ids 0-32: long sword ... sling)
+                db  5Fh ; _
+                db 0EFh
+                db  5Fh ; _
+                db 0FCh
+                db  5Fh ; _
+                db    9
+                db  60h ; `
+                db  13h
+                db  60h ; `
+                db  1Ch
+                db  60h ; `
+                db  23h ; #
+                db  60h ; `
+                db  29h ; )
+                db  60h ; `
+                db  33h ; 3
+                db  60h ; `
+                db  3Bh ; ;
+                db  60h ; `
+                db  46h ; F
+                db  60h ; `
+                db  51h ; Q
+                db  60h ; `
+                db  59h ; Y
+                db  60h ; `
+                db  5Fh ; _
+                db  60h ; `
+                db  66h ; f
+                db  60h ; `
+                db  6Eh ; n
+                db  60h ; `
+                db  74h ; t
+                db  60h ; `
+                db  7Bh ; {
+                db  60h ; `
+                db  85h
+                db  60h ; `
+                db  8Dh
+                db  60h ; `
+                db  96h
+                db  60h ; `
+                db  9Ch
+                db  60h ; `
+                db 0A7h
+                db  60h ; `
+                db 0B0h
+                db  60h ; `
+                db 0B7h
+                db  60h ; `
+                db 0BFh
+                db  60h ; `
+                db 0C9h
+                db  60h ; `
+                db 0D5h
+                db  60h ; `
+                db 0E0h
+                db  60h ; `
+                db 0EBh
+                db  60h ; `
+                db 0F6h
+                db  60h ; `
+                db    0
+                db  61h ; a
+                db  0Ah
+                db  61h ; a
+ITEM_ARMOR_NAMES db  11h                ; armour ids 33..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring
+                db  61h ; a
+                db  1Fh
+                db  61h ; a
+                db  2Eh ; .
+                db  61h ; a
+                db  3Bh ; ;
+                db  61h ; a
+                db  46h ; F
+                db  61h ; a
+                db  52h ; R
+                db  61h ; a
+                db  5Fh ; _
+                db  61h ; a
+                db  6Bh ; k
+                db  61h ; a
+                db  78h ; x
+                db  61h ; a
+                db  80h
+                db  61h ; a
+                db  86h
+                db  61h ; a
+                db  8Dh
+                db  61h ; a
+                db  94h
+                db  61h ; a
+                db 0F2h
+                db  5Bh ; [
+ITEM_ACCESSORY_NAMES db  9Fh            ; boots cloak robes cape belt broach
+                db  61h ; a
+                db 0A6h
+                db  61h ; a
+                db 0ADh
+                db  61h ; a
+                db 0B4h
+                db  61h ; a
+                db 0BAh
+                db  61h ; a
+                db 0C0h
+                db  61h ; a
+ITEM_MISC_NAMES db 0C8h                 ; medal charm cameo scarab pendant necklace amulet rod jewel gem box orb horn coin wand whistle potion scroll Torch 'Rope and Hooks' ...
+                db  61h ; a
+                db  2Dh ; -
+                db  5Eh ; ^
+                db 0CFh
+                db  61h ; a
+                db 0D6h
+                db  61h ; a
+                db 0DEh
+                db  61h ; a
+                db 0E7h
+                db  61h ; a
+                db 0F1h
+                db  61h ; a
+                db 0F9h
+                db  61h ; a
+                db 0FEh
+                db  61h ; a
+                db    5
+                db  62h ; b
+                db  0Ah
+                db  62h ; b
+                db  0Fh
+                db  62h ; b
+                db  14h
+                db  62h ; b
+                db  1Ah
+                db  62h ; b
+                db  20h
+                db  62h ; b
+                db  26h ; &
+                db  62h ; b
+                db  2Fh ; /
+                db  62h ; b
+                db  37h ; 7
+                db  62h ; b
+                db  3Fh ; ?
+                db  62h ; b
+                db  46h ; F
+                db  62h ; b
+                db  56h ; V
+                db  62h ; b
+                db  64h ; d
+                db  62h ; b
+                db  75h ; u
+                db  62h ; b
+                db  88h
+                db  62h ; b
+                db  9Ah
+                db  62h ; b
+                db 0AFh
+                db  62h ; b
+                db 0C9h
+                db  62h ; b
+                db 0E9h
+                db  62h ; b
+                db  6Ch ; l
+                db  62h ; b
+QUEST_ITEM_NAMES db    3                ; 'Precious Pearl of Youth and Beauty', 'Black Terror Key', ...
+                db  63h ; c
+                db  27h ; '
+                db  63h ; c
+                db  39h ; 9
+                db  63h ; c
+                db  54h ; T
+                db  63h ; c
+                db  72h ; r
+                db  63h ; c
+                db  83h
+                db  63h ; c
+                db  91h
+                db  63h ; c
+                db 0AFh
+                db  63h ; c
+                db 0C4h
+                db  63h ; c
+                db 0D5h
+                db  63h ; c
+                db 0F3h
+                db  63h ; c
+                db  11h
+                db  64h ; d
+                db  2Fh ; /
+                db  64h ; d
+                db  4Dh ; M
+                db  64h ; d
+                db  6Bh ; k
+                db  64h ; d
                 db 76h, 64h, 8Fh, 64h, 0ABh, 64h, 0B9h, 64h, 0D2h, 64h
                 db 0E5h, 64h, 4Ah, 5Bh, 0FCh, 64h, 2, 65h, 0Ch, 65h, 1Ch
                 db 65h, 23h, 65h, 27h, 65h, 2Dh, 65h, 3Bh, 65h, 44h, 65h
@@ -42714,7 +43130,7 @@ off_2DC7C       dw offset aMm3Cc        ; DATA XREF: openMm3Cc+63↓r
 ; char *str
 str             dw offset aErrorInAllocat ; DATA XREF: openCcFile+3C↑r
                                         ; "Error in Allocating Memory Buffers"
-                db 0A8h, 68h, 0ACh, 68h, 0B4h, 68h, 0BBh, 68h, 0BFh, 68h
+MONSTER_PIC_NAMES db 0A8h, 68h, 0ACh, 68h, 0B4h, 68h, 0BBh, 68h, 0BFh, 68h ; 81 entries; Map_load builds '%s.pic' / '%s.mon' from them
                 db 0C4h, 68h, 0C9h, 68h, 0CEh, 68h, 0D2h, 68h, 0D9h, 68h
                 db 0E0h, 68h, 0E7h, 68h, 0EDh, 68h, 0F3h, 68h, 0FAh, 68h
                 db 0FFh, 68h, 6, 69h, 0Eh, 69h, 15h, 69h, 1Ch, 69h, 23h
@@ -42729,40 +43145,361 @@ str             dw offset aErrorInAllocat ; DATA XREF: openCcFile+3C↑r
                 db 6Ah, 64h, 6Ah, 6Dh, 6Ah, 74h, 6Ah, 7Ah, 6Ah, 3Eh, 6Ah
                 db 82h, 6Ah, 89h, 6Ah, 8Eh, 6Ah, 96h, 6Ah, 9Fh, 6Ah, 0A8h
                 db 6Ah, 0AEh, 6Ah, 0B2h, 6Ah, 0B7h, 6Ah, 0BEh, 6Ah, 0C7h
-                db 6Ah, 0D0h, 6Ah, 0D9h, 6Ah, 0E5h, 6Ah, 0F0h, 6Ah, 0F7h
-                db 6Ah, 3, 6Bh, 0Ch, 6Bh, 15h, 6Bh, 1Fh, 6Bh, 29h, 6Bh
-                db 35h, 6Bh, 3Ch, 6Bh, 49h, 6Bh, 53h, 6Bh, 59h, 6Bh, 66h
-                db 3 dup(6Bh), 73h, 6Bh, 7Eh, 6Bh, 8Bh, 6Bh, 92h, 6Bh
-                db 9Eh, 6Bh, 0AAh, 6Bh, 0B2h, 6Bh, 0BDh, 6Bh, 0C9h, 6Bh
-                db 0D5h, 6Bh, 0DEh, 6Bh, 0EBh, 6Bh, 0F1h, 6Bh, 0FEh, 6Bh
-                db 6, 6Ch, 0Dh, 6Ch, 19h, 6Ch, 26h, 6Ch, 31h, 6Ch, 3Eh
-                db 6Ch, 4Ah, 6Ch, 57h, 6Ch, 5Eh, 6Ch, 6Bh, 6Ch, 75h, 6Ch
-                db 83h, 6Ch, 8Fh, 6Ch, 9Ch, 6Ch, 0A5h, 6Ch, 0ABh, 6Ch
-                db 0B3h, 6Ch, 0BFh, 6Ch, 0C8h, 6Ch, 0D1h, 6Ch, 0D9h, 6Ch
-                db 0E6h, 6Ch, 0EDh, 6Ch, 0F6h, 6Ch, 0FBh, 6Ch, 9, 6Dh
-                db 0Fh, 6Dh, 1Bh, 6Dh, 24h, 6Dh, 2Bh, 6Dh, 38h, 6Dh, 44h
-                db 6Dh, 4Ah, 6Dh, 58h, 6Dh, 63h, 6Dh, 6Fh, 6Dh, 77h, 6Dh
-                db 83h, 6Dh, 90h, 6Dh, 43h, 6Ch, 98h, 6Dh, 0A4h, 6Dh, 0ACh
-                db 6Dh, 0B5h, 6Dh, 0C0h, 6Dh, 0CCh, 6Dh, 0D8h, 6Dh, 0E2h
-                db 6Dh, 0E9h, 6Dh, 0F2h, 6Dh, 0FCh, 6Dh, 8, 6Eh, 15h, 6Eh
-                db 20h, 6Eh, 2Dh, 6Eh, 3Bh, 6Eh, 48h, 6Eh, 53h, 6Eh, 5Fh
-                db 6Eh, 6Ah, 6Eh, 76h, 6Eh, 7Ch, 6Eh, 83h, 6Eh, 8Dh, 6Eh
-                db 99h, 6Eh, 0A6h, 6Eh, 0B6h, 6Eh, 0C1h, 6Eh, 0CDh, 6Eh
-                db 0D4h, 6Eh, 0E1h, 6Eh, 0E7h, 6Eh, 0ECh, 6Eh, 0F8h, 6Eh
-                db 4, 6Fh, 14h, 6Fh, 28h, 6Fh, 34h, 6Fh, 39h, 6Fh, 45h
-                db 6Fh, 56h, 6Fh, 5Eh, 6Fh, 66h, 3 dup(6Fh), 7Ah, 6Fh
-                db 8Bh, 6Fh, 96h, 6Fh, 0A1h, 6Fh, 0AFh, 6Fh, 0BEh, 6Fh
-                db 0C9h, 6Fh, 0D1h, 6Fh, 0DFh, 6Fh, 0EAh, 6Fh, 0F9h, 6Fh
-                db 6, 70h, 12h, 70h, 1Bh, 70h, 2Ah, 70h, 35h, 70h, 3Eh
-                db 70h, 4Bh, 70h, 59h, 70h, 69h, 70h, 75h, 70h, 82h, 70h
-                db 8Bh, 70h, 9Bh, 70h, 0AAh, 70h, 0B3h, 70h, 0C1h, 70h
-                db 0CFh, 70h, 0DBh, 70h, 0E7h, 70h, 0F3h, 70h, 2, 71h
-                db 10h, 71h, 21h, 71h, 2Dh, 71h, 3Ah, 71h, 45h, 71h, 51h
-                db 71h, 5Dh, 71h, 6Bh, 71h, 7Bh, 71h, 84h, 71h, 94h, 71h
-                db 0A1h, 71h, 0ACh, 71h, 0BCh, 71h, 0C6h, 71h, 0D0h, 71h
-                db 0DBh, 71h, 0E3h, 71h, 0EBh, 71h, 0F5h, 71h, 0, 72h
-                db 14h, 72h, 1Fh, 72h, 24h, 72h, 32h, 72h, 3Bh, 72h, 44h
-                db 72h, 4Fh, 72h, 62h, 72h, 77h, 72h, 87h, 72h
+                db 6Ah, 0D0h, 6Ah
+MONSTER_NAMES   db 0D9h                 ; 90 names, same order as the MON*.DAT columns
+                db  6Ah ; j
+                db 0E5h
+                db  6Ah ; j
+                db 0F0h
+                db  6Ah ; j
+                db 0F7h
+                db  6Ah ; j
+                db    3
+                db  6Bh ; k
+                db  0Ch
+                db  6Bh ; k
+                db  15h
+                db  6Bh ; k
+                db  1Fh
+                db  6Bh ; k
+                db  29h ; )
+                db  6Bh ; k
+                db  35h ; 5
+                db  6Bh ; k
+                db  3Ch ; <
+                db  6Bh ; k
+                db  49h ; I
+                db  6Bh ; k
+                db  53h ; S
+                db  6Bh ; k
+                db  59h ; Y
+                db  6Bh ; k
+                db  66h ; f
+                db  6Bh ; k
+                db  6Bh ; k
+                db  6Bh ; k
+                db  73h ; s
+                db  6Bh ; k
+                db  7Eh ; ~
+                db  6Bh ; k
+                db  8Bh
+                db  6Bh ; k
+                db  92h
+                db  6Bh ; k
+                db  9Eh
+                db  6Bh ; k
+                db 0AAh
+                db  6Bh ; k
+                db 0B2h
+                db  6Bh ; k
+                db 0BDh
+                db  6Bh ; k
+                db 0C9h
+                db  6Bh ; k
+                db 0D5h
+                db  6Bh ; k
+                db 0DEh
+                db  6Bh ; k
+                db 0EBh
+                db  6Bh ; k
+                db 0F1h
+                db  6Bh ; k
+                db 0FEh
+                db  6Bh ; k
+                db    6
+                db  6Ch ; l
+                db  0Dh
+                db  6Ch ; l
+                db  19h
+                db  6Ch ; l
+                db  26h ; &
+                db  6Ch ; l
+                db  31h ; 1
+                db  6Ch ; l
+                db  3Eh ; >
+                db  6Ch ; l
+                db  4Ah ; J
+                db  6Ch ; l
+                db  57h ; W
+                db  6Ch ; l
+                db  5Eh ; ^
+                db  6Ch ; l
+                db  6Bh ; k
+                db  6Ch ; l
+                db  75h ; u
+                db  6Ch ; l
+                db  83h
+                db  6Ch ; l
+                db  8Fh
+                db  6Ch ; l
+                db  9Ch
+                db  6Ch ; l
+                db 0A5h
+                db  6Ch ; l
+                db 0ABh
+                db  6Ch ; l
+                db 0B3h
+                db  6Ch ; l
+                db 0BFh
+                db  6Ch ; l
+                db 0C8h
+                db  6Ch ; l
+                db 0D1h
+                db  6Ch ; l
+                db 0D9h
+                db  6Ch ; l
+                db 0E6h
+                db  6Ch ; l
+                db 0EDh
+                db  6Ch ; l
+                db 0F6h
+                db  6Ch ; l
+                db 0FBh
+                db  6Ch ; l
+                db    9
+                db  6Dh ; m
+                db  0Fh
+                db  6Dh ; m
+                db  1Bh
+                db  6Dh ; m
+                db  24h ; $
+                db  6Dh ; m
+                db  2Bh ; +
+                db  6Dh ; m
+                db  38h ; 8
+                db  6Dh ; m
+                db  44h ; D
+                db  6Dh ; m
+                db  4Ah ; J
+                db  6Dh ; m
+                db  58h ; X
+                db  6Dh ; m
+                db  63h ; c
+                db  6Dh ; m
+                db  6Fh ; o
+                db  6Dh ; m
+                db  77h ; w
+                db  6Dh ; m
+                db  83h
+                db  6Dh ; m
+                db  90h
+                db  6Dh ; m
+                db  43h ; C
+                db  6Ch ; l
+                db  98h
+                db  6Dh ; m
+                db 0A4h
+                db  6Dh ; m
+                db 0ACh
+                db  6Dh ; m
+                db 0B5h
+                db  6Dh ; m
+                db 0C0h
+                db  6Dh ; m
+                db 0CCh
+                db  6Dh ; m
+                db 0D8h
+                db  6Dh ; m
+                db 0E2h
+                db  6Dh ; m
+                db 0E9h
+                db  6Dh ; m
+                db 0F2h
+                db  6Dh ; m
+                db 0FCh
+                db  6Dh ; m
+                db    8
+                db  6Eh ; n
+                db  15h
+                db  6Eh ; n
+                db  20h
+                db  6Eh ; n
+                db  2Dh ; -
+                db  6Eh ; n
+                db  3Bh ; ;
+                db  6Eh ; n
+                db  48h ; H
+                db  6Eh ; n
+                db  53h ; S
+                db  6Eh ; n
+                db  5Fh ; _
+                db  6Eh ; n
+                db  6Ah ; j
+                db  6Eh ; n
+SPELL_NAMES     db  76h ; v             ; 79 entries, ids 0-76 (+ 'None Ready', 'None')
+                db  6Eh ; n
+                db  7Ch ; |
+                db  6Eh ; n
+                db  83h
+                db  6Eh ; n
+                db  8Dh
+                db  6Eh ; n
+                db  99h
+                db  6Eh ; n
+                db 0A6h
+                db  6Eh ; n
+                db 0B6h
+                db  6Eh ; n
+                db 0C1h
+                db  6Eh ; n
+                db 0CDh
+                db  6Eh ; n
+                db 0D4h
+                db  6Eh ; n
+                db 0E1h
+                db  6Eh ; n
+                db 0E7h
+                db  6Eh ; n
+                db 0ECh
+                db  6Eh ; n
+                db 0F8h
+                db  6Eh ; n
+                db    4
+                db  6Fh ; o
+                db  14h
+                db  6Fh ; o
+                db  28h ; (
+                db  6Fh ; o
+                db  34h ; 4
+                db  6Fh ; o
+                db  39h ; 9
+                db  6Fh ; o
+                db  45h ; E
+                db  6Fh ; o
+                db  56h ; V
+                db  6Fh ; o
+                db  5Eh ; ^
+                db  6Fh ; o
+                db  66h ; f
+                db  6Fh ; o
+                db  6Fh ; o
+                db  6Fh ; o
+                db  7Ah ; z
+                db  6Fh ; o
+                db  8Bh
+                db  6Fh ; o
+                db  96h
+                db  6Fh ; o
+                db 0A1h
+                db  6Fh ; o
+                db 0AFh
+                db  6Fh ; o
+                db 0BEh
+                db  6Fh ; o
+                db 0C9h
+                db  6Fh ; o
+                db 0D1h
+                db  6Fh ; o
+                db 0DFh
+                db  6Fh ; o
+                db 0EAh
+                db  6Fh ; o
+                db 0F9h
+                db  6Fh ; o
+                db    6
+                db  70h ; p
+                db  12h
+                db  70h ; p
+                db  1Bh
+                db  70h ; p
+                db  2Ah ; *
+                db  70h ; p
+                db  35h ; 5
+                db  70h ; p
+                db  3Eh ; >
+                db  70h ; p
+                db  4Bh ; K
+                db  70h ; p
+                db  59h ; Y
+                db  70h ; p
+                db  69h ; i
+                db  70h ; p
+                db  75h ; u
+                db  70h ; p
+                db  82h
+                db  70h ; p
+                db  8Bh
+                db  70h ; p
+                db  9Bh
+                db  70h ; p
+                db 0AAh
+                db  70h ; p
+                db 0B3h
+                db  70h ; p
+                db 0C1h
+                db  70h ; p
+                db 0CFh
+                db  70h ; p
+                db 0DBh
+                db  70h ; p
+                db 0E7h
+                db  70h ; p
+                db 0F3h
+                db  70h ; p
+                db    2
+                db  71h ; q
+                db  10h
+                db  71h ; q
+                db  21h ; !
+                db  71h ; q
+                db  2Dh ; -
+                db  71h ; q
+                db  3Ah ; :
+                db  71h ; q
+                db  45h ; E
+                db  71h ; q
+                db  51h ; Q
+                db  71h ; q
+                db  5Dh ; ]
+                db  71h ; q
+                db  6Bh ; k
+                db  71h ; q
+                db  7Bh ; {
+                db  71h ; q
+                db  84h
+                db  71h ; q
+                db  94h
+                db  71h ; q
+                db 0A1h
+                db  71h ; q
+                db 0ACh
+                db  71h ; q
+                db 0BCh
+                db  71h ; q
+                db 0C6h
+                db  71h ; q
+                db 0D0h
+                db  71h ; q
+                db 0DBh
+                db  71h ; q
+                db 0E3h
+                db  71h ; q
+                db 0EBh
+                db  71h ; q
+                db 0F5h
+                db  71h ; q
+                db    0
+                db  72h ; r
+                db  14h
+                db  72h ; r
+                db  1Fh
+                db  72h ; r
+LOCATION_NAMES  db  24h ; $             ; map names, 64+
+                db  72h ; r
+                db  32h ; 2
+                db  72h ; r
+                db  3Bh ; ;
+                db  72h ; r
+                db  44h ; D
+                db  72h ; r
+                db  4Fh ; O
+                db  72h ; r
+                db  62h ; b
+                db  72h ; r
+                db  77h ; w
+                db  72h ; r
+                db  87h
+                db  72h ; r
                 db 97h, 72h, 0A9h, 72h, 0C3h, 72h, 0D2h, 72h, 0E3h, 72h
                 db 0F6h, 72h, 4, 73h, 15h, 73h, 2Bh, 73h, 42h, 73h, 53h
                 db 73h, 65h, 73h, 77h, 73h, 8Ch, 73h, 9Bh, 73h, 0AEh, 73h

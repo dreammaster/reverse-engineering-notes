@@ -15339,7 +15339,21 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
 	create_byte	(0X2D9C6);
-	make_array	(0X2D9C6,	0X200);
+	make_array	(0X2D9C6,	0X34);
+	set_cmt	(0X2D9FA,	"pointer table (40 entries: burning ... ectoplasmic) for the elemental material (char slot +0A3h)",	0);
+	set_name	(0X2D9FA,	"ITEM_ELEMENT_NAMES");
+	set_cmt	(0X2DA72,	"pointer table of attribute-enchantment prefixes 'might ... pirate' (slot +0C9h)",	0);
+	set_name	(0X2DA72,	"ITEM_ATTR_NAMES");
+	set_cmt	(0X2DB04,	"33 weapons (ids 0-32: long sword ... sling)",	0);
+	set_name	(0X2DB04,	"ITEM_WEAPON_NAMES");
+	set_cmt	(0X2DB46,	"armour ids 33..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring",	0);
+	set_name	(0X2DB46,	"ITEM_ARMOR_NAMES");
+	set_cmt	(0X2DB62,	"boots cloak robes cape belt broach",	0);
+	set_name	(0X2DB62,	"ITEM_ACCESSORY_NAMES");
+	set_cmt	(0X2DB6E,	"medal charm cameo scarab pendant necklace amulet rod jewel gem box orb horn coin wand whistle potion scroll Torch 'Rope and Hooks' ...",	0);
+	set_name	(0X2DB6E,	"ITEM_MISC_NAMES");
+	set_cmt	(0X2DBA8,	"'Precious Pearl of Youth and Beauty', 'Black Terror Key', ...",	0);
+	set_name	(0X2DBA8,	"QUEST_ITEM_NAMES");
 	create_byte	(0X2DBC6);
 	make_array	(0X2DBC6,	0XAC);
 	create_word	(x=0X2DC72);
@@ -15357,8 +15371,16 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
 	set_name	(0X2DC7E,	"str");
+	set_cmt	(0X2DC80,	"81 entries; Map_load builds '%s.pic' / '%s.mon' from them",	0);
 	create_byte	(0X2DC80);
-	make_array	(0X2DC80,	0X204);
+	make_array	(0X2DC80,	0XA2);
+	set_name	(0X2DC80,	"MONSTER_PIC_NAMES");
+	set_cmt	(0X2DD22,	"90 names, same order as the MON*.DAT columns",	0);
+	set_name	(0X2DD22,	"MONSTER_NAMES");
+	set_cmt	(0X2DDD6,	"79 entries, ids 0-76 (+ 'None Ready', 'None')",	0);
+	set_name	(0X2DDD6,	"SPELL_NAMES");
+	set_cmt	(0X2DE74,	"map names, 64+",	0);
+	set_name	(0X2DE74,	"LOCATION_NAMES");
 	create_byte	(0X2DE84);
 	make_array	(0X2DE84,	0XCA);
 	create_word	(x=0X2DF4E);
@@ -18354,6 +18376,15 @@ static Bytes_3(void) {
 	set_cmt	(0X38007,	"x",	0);
 	set_cmt	(0X3800B,	"bottom",	0);
 	set_cmt	(0X3800F,	"right",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X38013,	"top",	0);
 	set_cmt	(0X38017,	"left",	0);
 	create_insn	(x=0X3801D);
@@ -18446,15 +18477,6 @@ static Bytes_3(void) {
 	set_cmt	(0X381F5,	"y",	0);
 	create_insn	(0X381F5);
 	set_cmt	(0X381F9,	"x",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X38217);
 	set_cmt	(0X3821A,	"stream",	0);
 	set_cmt	(0X3821D,	"c",	0);
@@ -23211,6 +23233,15 @@ static Bytes_4(void) {
 	set_cmt	(0X405C5,	"s",	0);
 	create_insn	(x=0X405CB);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X405D1,	"c",	0);
 	create_insn	(x=0X405D5);
 	op_stkvar	(x,	1);
@@ -23330,15 +23361,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X40765);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X40772);
 	op_hex		(x,	1);
 	create_insn	(x=0X40781);
@@ -28841,6 +28863,15 @@ static Bytes_5(void) {
 	set_cmt	(0X47F24,	"format",	0);
 	create_insn	(x=0X47F24);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47F2C);
 	op_hex		(x,	1);
 	create_insn	(x=0X47F30);
@@ -28952,15 +28983,6 @@ static Bytes_5(void) {
 	create_insn	(0X4813C);
 	create_byte	(0X48158);
 	make_array	(0X48158,	0X14);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X4816C);
 	set_name	(0X4816C,	"townBank");
 	create_insn	(x=0X4816F);
@@ -33783,6 +33805,15 @@ static Bytes_6(void) {
 	create_insn	(0X4FA97);
 	set_cmt	(0X4FA9F,	"jumptable 0004F954 case 30",	1);
 	create_insn	(0X4FA9F);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4FAA7,	"jumptable 0004F954 case 31",	1);
 	create_insn	(0X4FAA7);
 	set_cmt	(0X4FAAF,	"jumptable 0004F954 case 32",	1);
@@ -33848,15 +33879,6 @@ static Bytes_6(void) {
 	create_insn	(0X4FBB0);
 	set_cmt	(0X4FBB8,	"jumptable 0004F954 case 49",	1);
 	create_insn	(0X4FBB8);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4FBC0,	"jumptable 0004F954 case 50",	1);
 	create_insn	(x=0X4FBC0);
 	op_stkvar	(x,	0);

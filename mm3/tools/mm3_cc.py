@@ -212,6 +212,22 @@ def exe_names(exe_path):
     return names
 
 
+SUFFIXES = (".PIC", ".MON", ".FAC", ".OUT", ".VGA", ".ICN", ".RAW", ".TIL", ".BRD", ".S", ".M", ".BIN", ".DAT",
+            ".EVT", ".MAZ", ".DRV", ".SPL", ".CC", ".PAL")
+
+
+def exe_names_extended(exe_path):
+    """exe_names() plus every bare word of the EXE's strings combined with the known resource suffixes (monster and
+    object picture names are stored without extension and get '.pic'/'.mon' appended at run time), with digit patterns."""
+    names = exe_names(exe_path)
+    data = open(exe_path, "rb").read()
+    words = set(m.group(1).decode() for m in re.finditer(rb"([A-Za-z][A-Za-z0-9_]{1,11})" + bytes([0x5C, 0x78, 0x30, 0x30]), data))
+    for w in words:
+        for suf in SUFFIXES:
+            names.setdefault(name_id(w + suf), (w + suf).upper())
+    return names
+
+
 def member(d, off, size):
     blob = d[off:off + size]
     dec = lzhuf_decode(blob)
@@ -223,13 +239,13 @@ def main():
     d = open(arc, "rb").read()
     ents = read_toc(d)
     if cmd == "list":
-        names = exe_names(sys.argv[3] if len(sys.argv) > 3 else None)
+        names = exe_names_extended(sys.argv[3]) if len(sys.argv) > 3 else {}
         for ident, off, size in ents:
             m, packed = member(d, off, size)
             print("%04X %-14s off=%7d size=%5d  -> %5d%s" % (ident, names.get(ident, ""), off, size, len(m), "" if packed else " (stored)"))
     elif cmd == "extract":
         out = sys.argv[3]
-        names = exe_names(sys.argv[4] if len(sys.argv) > 4 else None)
+        names = exe_names_extended(sys.argv[4]) if len(sys.argv) > 4 else {}
         os.makedirs(out, exist_ok=True)
         for ident, off, size in ents:
             m, _ = member(d, off, size)
