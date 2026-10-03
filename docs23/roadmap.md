@@ -8,7 +8,7 @@ behavioral-difference reference.
 
 ## Snapshot, 2026-10-03 (read this first; the dated status below is older)
 
-29 test suites (`src23/tests/`, each file's header comment has its build line). Since the status below
+34 test suites (`src23/tests/`, each file's header comment has its build line). Later the same day: `mapview.c` (map tiers, local map), `travelExamineKey`, relic dispatcher + potion brewing, `partyFindItemDeep` (containers), `partyConsumeItemChargeMode`, `chargen.c` (attribute roll, derived skills, class selection, starting abilities) and `newgame.c` (the WORLD.DAT new-game template with the four ready-made heroes). A name census of the 769 functions against `src23` is the quick way to find what is still uncovered; the big remaining gaps are the world-ailment ticks (`Tick*Ailment*`), fog-of-war reveal (`RevealMapRegion`, `MarkCellExplored`), ground items, `ResolveAbilityEffect`/`HandleRangedOrCombatAction`, and everything UI. Since the status below
 was written: **`ApplyEncodedItemEffect` is complete** to the data model (`spellSelectBranch` names the whole
 dispatch; LIFE FORCE, projectile hit/splash, screen-wide attack, held item, JUMP spells, light timers,
 bookmark all implemented); combat has the **monster turn**, **player melee** and **Search**; and the
