@@ -1417,6 +1417,107 @@ static void testLifeForceUnknownEffectIdStillDamagesTheMonster(void) {
     checkU32("caster untouched", partyGetStat(caster, PartyStatHitPoints), 999);
 }
 
+static void setupProjectileFixture(uint8_t *target, uint8_t *spell, uint16_t health, uint16_t magnitude, uint16_t flagsB) {
+    memset(target, 0, MonsterRecordSize);
+    memset(spell, 0, SpellRecordSize);
+    monsterSetU16(target, MonsterFieldHealth, health);
+    monsterSetU16(target, MonsterFieldType, 7);
+    setSpellU16(spell, SpellFieldAttackMagnitude, magnitude);
+    setSpellU16(spell, SpellFieldInflictedMagnitude, 9);
+    setSpellU16(spell, SpellFieldFlagsB, flagsB);
+}
+
+static void testProjectileHitArmsTheTimedAfflictionTimer(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+    setupProjectileFixture(target, spell, 100, 15, SpellFlagsBProjectile);
+    setSpellU16(spell, SpellFieldAttackFlags, SpellAttackTimedAffliction);
+    setSpellU16(spell, SpellFieldTickOverlayAnimSetA, 131);
+    setSpellU16(spell, SpellFieldTickOverlayDefault, 211);
+    setSpellU16(spell, SpellFieldTickAmount, 10);
+    setSpellU16(spell, SpellFieldTickCountdown, 2);
+    monsterSetU16(target, MonsterFieldAnimSet, 0xD);
+
+    CombatProjectileHitOutcome out = combatApplyProjectileHit(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    check("hit landed", out.attack.hasEffect);
+    check("the monster survives", !out.monsterDied);
+    check("a non-piercing projectile stops", !out.continues);
+    checkU32("health reduced", monsterGetU16(target, MonsterFieldHealth), 85);
+    checkU32("hit marker", monsterGetU16(target, MonsterFieldLastAttackMarker), 9);
+    checkU32("anim set != 0xA: the default overlay picture", monsterGetU16(target, MonsterFieldTickTarget), 211);
+    checkU32("tick amount armed", monsterGetU16(target, MonsterFieldTickAmount), 10);
+    checkU32("tick countdown armed", monsterGetU16(target, MonsterFieldTickCountdown), 2);
+    checkU32("timed-affliction state bit set", monsterGetU16(target, MonsterFieldState) & MonsterStateTimedAffliction,
+             MonsterStateTimedAffliction);
+    checkU32("no persist flag: immunities untouched", monsterGetU16(target, MonsterFieldImmunities), 0);
+
+    setupProjectileFixture(target, spell, 100, 15, SpellFlagsBProjectile);
+    setSpellU16(spell, SpellFieldAttackFlags, SpellAttackTimedAffliction);
+    setSpellU16(spell, SpellFieldTickOverlayAnimSetA, 131);
+    setSpellU16(spell, SpellFieldTickOverlayDefault, 211);
+    setSpellU16(spell, SpellFieldFlagsA, SpellFlagsAPersistAffliction);
+    monsterSetU16(target, MonsterFieldAnimSet, 0xA);
+    combatApplyProjectileHit(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+    checkU32("anim set 0xA: the first overlay picture", monsterGetU16(target, MonsterFieldTickTarget), 131);
+    checkU32("persist flag marks a fixed 0x10 immunity bit",
+             monsterGetU16(target, MonsterFieldImmunities) & SpellAttackTimedAffliction, SpellAttackTimedAffliction);
+}
+
+static void testProjectileHitWithoutTheFlagDoesNotArmTheTimer(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+    setupProjectileFixture(target, spell, 100, 15, SpellFlagsBProjectile);
+    setSpellU16(spell, SpellFieldTickAmount, 10);
+
+    combatApplyProjectileHit(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    checkU32("damage still lands", monsterGetU16(target, MonsterFieldHealth), 85);
+    checkU32("timer untouched", monsterGetU16(target, MonsterFieldTickAmount), 0);
+    checkU32("no timed-affliction bit", monsterGetU16(target, MonsterFieldState) & MonsterStateTimedAffliction, 0);
+}
+
+static void testProjectileKillAndPiercingContinuation(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+    setupProjectileFixture(target, spell, 10, 15, SpellFlagsBProjectile | SpellFlagsBPiercing);
+
+    CombatProjectileHitOutcome out = combatApplyProjectileHit(target, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+    check("a lethal hit kills", out.monsterDied);
+    check("a piercing projectile keeps flying even past a kill", out.continues);
+    checkU32("the record is removed", monsterGetU16(target, MonsterFieldType), 0);
+}
+
+static void testProjectileMissKillCheckDependsOnPiercing(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+
+    /* Power 0 always misses, and the monster is already at 0 health. */
+    setupProjectileFixture(target, spell, 0, 0, SpellFlagsBProjectile);
+    randomStart(&rng, 1, 1);
+    CombatProjectileHitOutcome out = combatApplyProjectileHit(target, caster, spell, false, &staging, NULL, 0, NULL, &rng);
+    check("a non-piercing miss skips the kill check entirely", !out.monsterDied);
+    checkU32("so the record stays", monsterGetU16(target, MonsterFieldType), 7);
+
+    setupProjectileFixture(target, spell, 0, 0, SpellFlagsBProjectile | SpellFlagsBPiercing);
+    randomStart(&rng, 1, 1);
+    out = combatApplyProjectileHit(target, caster, spell, false, &staging, NULL, 0, NULL, &rng);
+    check("a piercing miss still runs the kill check (loc_2CB4F)", out.monsterDied);
+    check("...and keeps flying", out.continues);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -1666,6 +1767,10 @@ int main(void) {
     testLifeForceFallbackHealsTheMonsterAndUsesTheOtherEffect();
     testLifeForcePartyVariantStopsAtEmptySlotAndRerollsForDeadMembers();
     testLifeForceUnknownEffectIdStillDamagesTheMonster();
+    testProjectileHitArmsTheTimedAfflictionTimer();
+    testProjectileHitWithoutTheFlagDoesNotArmTheTimer();
+    testProjectileKillAndPiercingContinuation();
+    testProjectileMissKillCheckDependsOnPiercing();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

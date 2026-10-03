@@ -477,6 +477,43 @@ CombatMapMonsterAttackOutcome combatApplyDamageToMapMonster(uint8_t *targetRecor
     return outcome;
 }
 
+CombatProjectileHitOutcome combatApplyProjectileHit(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                      const uint8_t *spellRecord, bool alreadyResolved,
+                                                      MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                                      size_t globalFlagsSize, DungeonGrid *grid, RandomState *rng) {
+    CombatProjectileHitOutcome outcome;
+    outcome.attack = combatResolveSpellAttack(targetRecord, casterRecord, spellRecord, alreadyResolved, rng);
+    combatApplySpellAttack(targetRecord, spellRecord, outcome.attack);
+    outcome.monsterDied = false;
+    outcome.continues = (spellGetU16(spellRecord, SpellFieldFlagsB) & SpellFlagsBPiercing) != 0;
+
+    if (outcome.attack.hasEffect) {
+        combatMarkSpellAttackHit(targetRecord, spellRecord);
+        if (spellGetU16(spellRecord, SpellFieldAttackFlags) & SpellAttackTimedAffliction) {
+            uint16_t overlay = monsterGetU16(targetRecord, MonsterFieldAnimSet) == 0xA
+                                   ? spellGetU16(spellRecord, SpellFieldTickOverlayAnimSetA)
+                                   : spellGetU16(spellRecord, SpellFieldTickOverlayDefault);
+            monsterSetU16(targetRecord, MonsterFieldTickTarget, overlay);
+            monsterSetU16(targetRecord, MonsterFieldTickAmount, spellGetU16(spellRecord, SpellFieldTickAmount));
+            monsterSetU16(targetRecord, MonsterFieldState,
+                          (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) | MonsterStateTimedAffliction));
+            monsterSetU16(targetRecord, MonsterFieldTickCountdown, spellGetU16(spellRecord, SpellFieldTickCountdown));
+            if (spellGetU16(spellRecord, SpellFieldFlagsA) & SpellFlagsAPersistAffliction) {
+                monsterSetU16(targetRecord, MonsterFieldImmunities,
+                              (uint16_t)(monsterGetU16(targetRecord, MonsterFieldImmunities) | SpellAttackTimedAffliction));
+            }
+        }
+    }
+
+    /* Only a plain miss from a non-piercing projectile skips the kill check (loc_2CACB jumps straight to the end). */
+    if ((outcome.attack.hasEffect || outcome.continues) && (int16_t)monsterGetU16(targetRecord, MonsterFieldHealth) <= 0) {
+        monsterGrantRewards(staging, targetRecord, globalFlags, globalFlagsSize);
+        monsterPoolRemove(targetRecord, grid);
+        outcome.monsterDied = true;
+    }
+    return outcome;
+}
+
 /*
  * One icon-bar effect slot through ApplyEffectAndDrawIconBar's own
  * RollEffectMagnitude/RollEffectResistance/ApplyEffectCost sequence.

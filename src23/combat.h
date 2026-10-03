@@ -664,6 +664,50 @@ CombatMapMonsterAttackOutcome combatApplyDamageToMapMonster(uint8_t *targetRecor
                                                               RandomState *rng);
 
 /*
+ * The per-monster hit of ApplyEncodedItemEffect's word_33302 bit 0x100
+ * projectile branch (loc_2C92A, yendor2.asm:51997 on, instruction-identical
+ * in Chapter 3): what happens when the flying projectile reaches the first
+ * monster in its path (not the SpellFlagsBSplash variant, which replaces
+ * this with ApplyAttackAlongCorridorLine over three rows). The flight
+ * itself -- stepping g_viewportRowDepth down 0x31/0x2E/0x2B/0x28/0x24/0x19,
+ * ClassifyObstacleAtViewportRow, the animation frames -- is UI and isn't
+ * modeled; a caller walks rows, finds the monster, and calls this.
+ *
+ * The attack is the same combatResolveSpellAttack/combatApplySpellAttack/
+ * combatMarkSpellAttackHit sequence as combatApplyDamageToMapMonster, plus
+ * one extra step on a landed hit when SpellFieldAttackFlags has
+ * SpellAttackTimedAffliction (the BLOCK OF ICE/FIRE/ELECTRICITY/POWER
+ * records): the target gets a damage-over-time timer armed --
+ * MonsterFieldTickTarget = SpellFieldTickOverlayAnimSetA if its
+ * MonsterFieldAnimSet is 0xA else SpellFieldTickOverlayDefault,
+ * MonsterFieldTickAmount/TickCountdown from the record, and
+ * MonsterStateTimedAffliction set (inside monsterTickTimer's 0xFC10 gate).
+ * This is the "what sets the TickMonsterTimer gate bits" answer monster.h
+ * records. If the record also has SpellFlagsAPersistAffliction, a fixed
+ * 0x10 is OR'd into MonsterFieldImmunities (unlike combatApplySpellAttack's
+ * generic persist, which ORs the surviving status flags).
+ *
+ * Differences from combatApplyDamageToMapMonster: the kill check
+ * (monsterGrantRewards/monsterPoolRemove on MonsterFieldHealth <= 0) runs
+ * after a landed hit *or* for any piercing projectile even on a miss
+ * (loc_2CB4F), and is skipped only for a plain miss from a non-piercing
+ * one (which also ends the flight). `continues` is whether the projectile
+ * keeps flying to the next row: exactly SpellFlagsBPiercing -- even past a
+ * kill; the 0x40 scratch flag the original sets on a survivor only
+ * suppresses a redundant animation step.
+ */
+typedef struct {
+    CombatSpellAttackResult attack;
+    bool monsterDied;
+    bool continues;
+} CombatProjectileHitOutcome;
+
+CombatProjectileHitOutcome combatApplyProjectileHit(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                                      const uint8_t *spellRecord, bool alreadyResolved,
+                                                      MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                                      size_t globalFlagsSize, DungeonGrid *grid, RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

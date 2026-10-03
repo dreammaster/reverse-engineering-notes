@@ -11154,6 +11154,18 @@ bits. Reproduced as-is. Added `combatApplyLifeForceSpell`, named the spell
 fields/bits, factored `combatApplyEffectSlot` out of the trap helper, four
 tests; all 23 suites pass.
 
+### Session update (2026-10-03, continued): the projectile branch, and a gap in the spell record filled
+
+Took bit `0x100` next, using the same trick (list the real records that reach
+it): it's every projectile spell. Most of the branch is flight animation, but
+the per-monster hit is a clean unit, and it answered two old questions: the
+`0x30-0x33` spell bytes are overlay-sprite picture ids written into
+`MonsterFieldTickTarget`, and the "who sets the `TickMonsterTimer` gate" setter
+is exactly the four BLOCK OF ... spells. Added `combatApplyProjectileHit`
+(attack + marker + timer arming + the kill check's slightly odd conditions),
+named the new spell bits, four tests; all 23 suites pass. The splash variant
+(`ApplyAttackAlongCorridorLine`) is still untraced.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

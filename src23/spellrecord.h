@@ -163,7 +163,17 @@ typedef enum {
      */
     SpellFieldAttackMagnitude = 0x2E,
 
-    /* 0x30-0x33: referenced by nothing traced so far. */
+    /*
+     * word_332EA/word_332EC: picture ids combatApplyProjectileHit writes
+     * into MonsterFieldTickTarget when SpellAttackTimedAffliction is set --
+     * 0x30 if the target's MonsterFieldAnimSet is 0xA, else 0x32. Nonzero
+     * only in the four BLOCK OF ICE/FIRE/ELECTRICITY/POWER records (e.g.
+     * Chapter 2: 131/211, 130/210, 132/212, 133/213). The splash branch
+     * (SpellFlagsBSplash) reads the same words as ApplyAttackAlongCorridorLine
+     * setup, not traced.
+     */
+    SpellFieldTickOverlayAnimSetA = 0x30,
+    SpellFieldTickOverlayDefault = 0x32,
 
     /*
      * word_332EE: written verbatim into MonsterFieldTickAmount (monster.h)
@@ -295,6 +305,19 @@ typedef enum {
     SpellFlagsBWholeParty = 0x4000,  /* alias of SpellFlagsAWholeParty's role, same bit position as word_33300's -- different word, same name pattern kept distinct on purpose */
     SpellFlagsBSingleTarget = 0x8000,
     /*
+     * The projectile family (SLING SHOT, FIERY ARROW, BLOCK OF ICE,
+     * LIGHTNING BOLT, BALL OF FIRE, ... -- 24/23 records in Chapters 2/3):
+     * ApplyEncodedItemEffect's loc_2C92A flies a projectile down the
+     * viewport rows and hits the first monster. Combined with
+     * SpellFlagsBPiercing it keeps going past each hit; with
+     * SpellFlagsBSplash it hits the 3 rows around the impact
+     * (ApplyAttackAlongCorridorLine, not reimplemented). The hit itself is
+     * combat.h's combatApplyProjectileHit.
+     */
+    SpellFlagsBProjectile = 0x0100,
+    SpellFlagsBSplash = 0x0400,
+    SpellFlagsBPiercing = 0x0800,
+    /*
      * Routes into the ApplyAttackToTarget family (this header's own
      * SpellField attack fields) against g_activeCombatMonster, a single
      * already-engaged combat slot -- rather than the icon-bar
@@ -326,6 +349,12 @@ typedef enum {
  * PhysicalMask, 0x200-0x8000) that combatApplySpellAttack itself reads
  * directly.
  */
+/* SpellFieldAttackFlags bits beyond combatApplyTargetResistances' own roles. */
+typedef enum {
+    /* A landed projectile arms the target's timed-affliction timer: combat.h's combatApplyProjectileHit. */
+    SpellAttackTimedAffliction = 0x0010
+} SpellAttackFlag;
+
 typedef enum {
     /*
      * combatApplySpellAttack: "already resolved" direct-hit path uses half

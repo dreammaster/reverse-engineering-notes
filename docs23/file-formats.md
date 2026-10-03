@@ -3221,6 +3221,34 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**Bit `0x100` is the projectile-spell family; its per-monster hit is
+reimplemented (2026-10-03)**: listing the real records with word_33302 bit
+`0x100` gives SLING SHOT, FIERY ARROW, POISON ARROW, LIGHTNING BOLT, the
+BALL/CLOUD/BLOCK-OF spells and so on (24 in Chapter 2, 23 in Chapter 3) --
+every "fires down the corridor" spell. The branch (`loc_2C92A`) is mostly
+animation: it steps `g_viewportRowDepth` down 0x31/0x2E/0x2B/0x28/0x24/0x19,
+calls `ClassifyObstacleAtViewportRow` at each, and on a monster
+(errorCode 4) runs the hit. Bit `0x800` ("piercing", the 0x900 records:
+HEX MONSTER, LINKED LIGHTNING, FINGER OF FLAME, SHARD OF ICE, POWER SURGE,
+BEAM OF DEATH) continues to the next row after any hit, even a kill (the
+`g_uiScratchFlags1` 0x40 flag only skips a redundant animation step); bit
+`0x400` (SHRAPNEL, the BALLs and CLOUDs) replaces the single hit with
+`ApplyAttackAlongCorridorLine` over three rows (not traced; it reads
+record words `0x2A`/`0x2C`/`0x28` as picture id, frame count and sound).
+The hit is `ApplyAttackToTarget` plus a marker write and, when
+`SpellFieldAttackFlags` has `0x10` (only BLOCK OF ICE/FIRE/ELECTRICITY/
+POWER), a damage-over-time arming: monster `+0x1A` (`MonsterFieldTickTarget`)
+gets record word `0x30` if the monster's `MonsterFieldAnimSet` is 0xA else
+`0x32` (the `0x30-0x33` bytes that were "referenced by nothing traced" --
+by their values, 131/211 for ICE, 130/210 FIRE, 132/212 ELECTRICITY,
+133/213 POWER, overlay-sprite picture ids), `+0x1C`/`+0x1E` get the tick
+amount/countdown, state bit `0x10` is set (inside `TickMonsterTimer`'s
+0xFC10 gate), and with `SpellFlagsAPersistAffliction` a fixed `0x10` is
+OR'd into `MonsterFieldImmunities`. The kill check runs after any landed
+hit or any piercing projectile, and is skipped only for a plain miss from
+a non-piercing one. Reimplemented as `combatApplyProjectileHit`
+(`src23/combat.c`/`.h`); four tests.
+
 **`loc_2CF51` resolved later (2026-10-03): it's the LIFE FORCE spells**:
 dumping the real records that take it (word_33302 bit `0x2000` *and*
 `SpellFieldResistFlags & 0xC0`) gives exactly LIFE FORCE I-IV in both

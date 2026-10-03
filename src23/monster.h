@@ -61,7 +61,7 @@ typedef enum {
      * since nothing reads it back.
      */
     MonsterFieldLastAttackMarker = 0x18,
-    MonsterFieldTickTarget = 0x1A,   /* u16; zeroed by monsterTickTimer's reset step, not otherwise traced */
+    MonsterFieldTickTarget = 0x1A,   /* u16; zeroed by monsterTickTimer's reset step. Set by combatApplyProjectileHit to a spell-record picture id (SpellFieldTickOverlayAnimSetA/Default) -- by its values (131/211, 130/210, ...) the overlay sprite drawn on the monster while the timed affliction runs */
     MonsterFieldTickAmount = 0x1C,   /* u16 subtracted from MonsterFieldHealth once or twice per monsterTickTimer call */
     MonsterFieldTickCountdown = 0x1E, /* u16 ticks remaining until monsterTickTimer's state-machine reset fires */
 
@@ -141,6 +141,13 @@ typedef enum {
      * not persistent state.
      */
     MonsterStateHitFlashPending = 0x0002,
+    /*
+     * Inside TickMonsterTimer's 0xFC10 gate. Set by combat.h's
+     * combatApplyProjectileHit when a projectile spell with
+     * SpellAttackTimedAffliction lands (the BLOCK OF ICE/FIRE/ELECTRICITY/
+     * POWER family); the same bit position as MonsterImmuneMagicResist.
+     */
+    MonsterStateTimedAffliction = 0x0010,
     /*
      * SelectTrapEffectVariant (combat.h) always uses the ordinary attack
      * effect, never rolls for the special one, while this is set. Confirmed
@@ -392,7 +399,8 @@ unsigned monsterAmbushThreshold(uint16_t awareness);
  * `combatApplySpellAttack`'s generic mechanism). This is a genuinely
  * different, narrower mechanic than the attack family already
  * reimplemented (a piercing/burning-arrow-style effect, not a filtered
- * status application) and isn't reimplemented itself yet, but it does
+ * status application) and is reimplemented as combat.h's
+ * combatApplyProjectileHit; it does
  * answer "what sets the gate bits" for the first time: a specific,
  * fairly rare player-triggered attack variant, not a general monster-AI
  * mechanism. `ProcessLevelMonsters`/`ProcessMonsterAttackTurn` (this
