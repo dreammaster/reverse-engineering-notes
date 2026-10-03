@@ -5228,6 +5228,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1549D);
 	op_stkvar	(x,	1);
 	create_insn	(0X154B0);
+	set_name	(0X154B0,	"drawAutomapWrapped");
 	create_insn	(x=0X154B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X154BB);
@@ -5311,10 +5312,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1560A);
 	op_hex		(x,	1);
-	create_insn	(x=0X15619);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X15626);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5324,6 +5321,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15619);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X15626);
+	op_hex		(x,	1);
 	create_insn	(x=0X15636);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1563F);
@@ -5381,6 +5382,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15728);
 	op_hex		(x,	1);
 	create_insn	(0X15736);
+	set_name	(0X15736,	"updateAutomap");
 	create_insn	(x=0X15739);
 	op_hex		(x,	1);
 	create_insn	(0X15783);
@@ -8409,6 +8411,7 @@ static Bytes_1(void) {
 	create_insn	(0X1B9AA);
 	create_insn	(0X1B9B8);
 	create_insn	(0X1B9C5);
+	set_name	(0X1B9C5,	"markCellVisited");
 	create_insn	(x=0X1B9CC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B9CF);
@@ -8437,6 +8440,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BA79);
 	op_hex		(x,	1);
 	create_insn	(0X1BA82);
+	set_name	(0X1BA82,	"isCellVisited");
 	create_insn	(x=0X1BA89);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1BA8C);
@@ -8461,6 +8465,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BB1A);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BB33);
+	set_name	(0X1BB33,	"mazeGetWordWrap");
 	create_insn	(x=0X1BB3A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1BB3D);
@@ -10053,12 +10058,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA87,	"jpt_1C8FA");
-	set_cmt	(0X1DA95,	"jump table for switch statement",	0);
-	create_word	(x=0X1DA95);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1DA95,	"jpt_1C88D");
 }
 
 //------------------------------------------------------------------------
@@ -10068,6 +10067,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1DA95,	"jump table for switch statement",	0);
+	create_word	(x=0X1DA95);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1DA95,	"jpt_1C88D");
 	set_cmt	(0X1DAA3,	"jump table for switch statement",	0);
 	create_word	(x=0X1DAA3);
 	make_array	(x,	0X7);
@@ -14027,6 +14032,7 @@ static Bytes_2(void) {
 	create_insn	(0X281E4);
 	create_insn	(0X281E9);
 	create_insn	(0X281EE);
+	set_name	(0X281EE,	"j_showOverheadMap");
 	create_insn	(0X281F3);
 	create_insn	(0X281F8);
 	set_name	(0X281F8,	"j_experienceToNextLevel");
@@ -14048,9 +14054,11 @@ static Bytes_2(void) {
 	create_insn	(0X28253);
 	create_insn	(0X28258);
 	create_insn	(0X2825D);
+	set_name	(0X2825D,	"j_pickSaveSlot");
 	create_insn	(0X28262);
 	create_insn	(0X28267);
 	create_insn	(0X2826C);
+	set_name	(0X2826C,	"j_generateItem");
 	create_insn	(0X28271);
 	set_name	(0X28271,	"j__strcoll");
 	create_insn	(0X28276);
@@ -14338,6 +14346,7 @@ static Bytes_2(void) {
 	create_insn	(0X28658);
 	set_name	(0X28658,	"j_spellsDialog");
 	create_insn	(0X2865D);
+	set_name	(0X2865D,	"j_spellAttackAhead");
 	create_insn	(0X28662);
 	set_name	(0X28662,	"j_specialsDialog");
 	create_insn	(0X28667);
@@ -14787,6 +14796,15 @@ static Bytes_2(void) {
 	create_word	(0X29E16);
 	create_byte	(0X29E18);
 	make_array	(0X29E18,	0X8D);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X29EA5);
 	create_byte	(0X29EA7);
 	make_array	(0X29EA7,	0X2D0);
@@ -14802,15 +14820,6 @@ static Bytes_2(void) {
 	set_name	(0X2A556,	"aDelBoss");
 	create_strlit	(0X2A563,	0XA);
 	set_name	(0X2A563,	"aPowDIcn");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X2A56D,	0XB);
 	set_name	(0X2A56D,	"aCombatIcn");
 	create_strlit	(0X2A578,	0X41);
@@ -18241,6 +18250,15 @@ static Bytes_3(void) {
 	create_insn	(0X37CBB);
 	create_insn	(x=0X37CC0);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X37CDA);
 	create_insn	(x=0X37CDC);
 	op_hex		(x,	1);
@@ -18264,15 +18282,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X37D55);
 	op_plain_offset	(x,	0,	0X378C0);
 	op_plain_offset	(x,	128,	0X378C0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X37D5A,	"jumptable 00037D55 cases 0-6,15-17,19,20,23",	1);
 	create_insn	(0X37D5A);
 	set_cmt	(0X37D5D,	"maxlen",	0);
@@ -23059,6 +23068,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFB0);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FFB5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFBA);
@@ -23083,15 +23101,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFEC);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FFF1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFF4);
@@ -24616,6 +24625,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X42653);
 	op_hex		(x,	1);
 	create_insn	(0X4265B);
+	set_name	(0X4265B,	"showOverheadMap");
 	create_insn	(x=0X4265E);
 	op_hex		(x,	1);
 	set_cmt	(0X42663,	"n",	0);
@@ -25978,6 +25988,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X44317);
 	op_hex		(x,	1);
 	create_insn	(0X4432C);
+	set_name	(0X4432C,	"generateItem");
 	create_insn	(x=0X4432F);
 	op_hex		(x,	1);
 	set_cmt	(0X44333,	"n",	0);
@@ -26576,6 +26587,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X44DB2);
 	op_stkvar	(x,	0);
 	create_insn	(0X44DBE);
+	set_name	(0X44DBE,	"pickSaveSlot");
 	create_insn	(x=0X44DC1);
 	op_hex		(x,	1);
 	set_cmt	(0X44DC6,	"n",	0);
@@ -28691,6 +28703,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X4776A,	"format",	0);
 	set_cmt	(0X47772,	"buffer",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47778);
 	op_hex		(x,	1);
 	create_insn	(x=0X47780);
@@ -28719,15 +28740,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X477F2);
 	op_stkvar	(x,	0);
 	set_name	(0X477F2,	"def_474F8");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X477FB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47801);
@@ -33411,6 +33423,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X4DE30);
 	set_name	(0X4F23E,	"jpt_4EFFD");
 	create_insn	(0X4F24E);
+	set_name	(0X4F24E,	"spellAttackAhead");
 	create_insn	(x=0X4F251);
 	op_hex		(x,	1);
 	set_cmt	(0X4F255,	"n",	0);
@@ -33736,6 +33749,15 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F954);
 	op_plain_offset	(x,	0,	0X4DE30);
 	op_plain_offset	(x,	128,	0X4DE30);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4F959,	"jumptable 0004F954 case 0",	1);
 	create_insn	(0X4F959);
 	set_cmt	(0X4F961,	"jumptable 0004F954 case 1",	1);
@@ -33750,15 +33772,6 @@ static Bytes_6(void) {
 	create_insn	(0X4F981);
 	set_cmt	(0X4F989,	"jumptable 0004F954 case 6",	1);
 	create_insn	(0X4F989);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4F991,	"jumptable 0004F954 case 7",	1);
 	create_insn	(0X4F991);
 	set_cmt	(0X4F999,	"jumptable 0004F954 case 8",	1);
@@ -37643,10 +37656,12 @@ static Functions_0(void) {
 	set_frame_size(0X15468, 0X2, 2, 0);
 	add_func    (0X154B0,0X15736);
 	set_func_flags(0X154B0,0x5412);
+	set_func_cmt(0X154B0,	"wrap-mode (Maze_wrapMode != 0) version of the Wizard Eye map drawing", 0);
 	set_frame_size(0X154B0, 0X22, 2, 0);
 	define_local_var(0X154B0, 0X15736, "[bp-0X1E]", "buffer");
 	add_func    (0X15736,0X15B34);
 	set_func_flags(0X15736,0x5412);
+	set_func_cmt(0X15736,	"called after each move by runMazeEvent: Cartographer (skill 4) marks the current cell visited, redraws light, draws the Wizard Eye overhead map", 0);
 	set_frame_size(0X15736, 0X20, 2, 0);
 	define_local_var(0X15736, 0X15B34, "[bp-0X1C]", "buffer");
 	add_func    (0X15B50,0X161AD);
@@ -37770,12 +37785,15 @@ static Functions_0(void) {
 	set_frame_size(0X1B99E, 0X4, 2, 0);
 	add_func    (0X1B9C5,0X1BA82);
 	set_func_flags(0X1B9C5,0x5412);
+	set_func_cmt(0X1B9C5,	"sets the cell's bit in the page's 256-bit 'visited' bitmap (page slot + 320h) for the world cell (x,y) relative to the current slot; used by the Cartographer skill and the overhead map", 0);
 	set_frame_size(0X1B9C5, 0X2, 2, 0);
 	add_func    (0X1BA82,0X1BB33);
 	set_func_flags(0X1BA82,0x5412);
+	set_func_cmt(0X1BA82,	"reads that visited bit; 0 outside the 32x32 world", 0);
 	set_frame_size(0X1BA82, 0X2, 2, 0);
 	add_func    (0X1BB33,0X1BC15);
 	set_func_flags(0X1BB33,0x5412);
+	set_func_cmt(0X1BB33,	"maze cell word at world (x,y) & mask, with Maze_wrapMode handling (returns 1111h outside the world when not wrapping)", 0);
 	set_frame_size(0X1BB33, 0X2, 2, 0);
 	add_func    (0X1BC15,0X1BD57);
 	set_func_flags(0X1BC15,0x5412);
@@ -38540,7 +38558,7 @@ static Functions_0(void) {
 	set_func_flags(0X281E9,0x5482);
 	set_frame_size(0X281E9, 0, 0, 0);
 	add_func    (0X281EE,0X281F3);
-	set_func_flags(0X281EE,0x5482);
+	set_func_flags(0X281EE,0x54c2);
 	set_frame_size(0X281EE, 0, 0, 0);
 	add_func    (0X281F3,0X281F8);
 	set_func_flags(0X281F3,0x5482);
@@ -38588,7 +38606,7 @@ static Functions_0(void) {
 	set_func_flags(0X28258,0x5482);
 	set_frame_size(0X28258, 0, 0, 0);
 	add_func    (0X2825D,0X28262);
-	set_func_flags(0X2825D,0x5482);
+	set_func_flags(0X2825D,0x54c2);
 	set_frame_size(0X2825D, 0, 0, 0);
 	add_func    (0X28262,0X28267);
 	set_func_flags(0X28262,0x5482);
@@ -38597,8 +38615,8 @@ static Functions_0(void) {
 	set_func_flags(0X28267,0x5482);
 	set_frame_size(0X28267, 0, 0, 0);
 	add_func    (0X2826C,0X28271);
-	set_func_flags(0X2826C,0x5482);
-	SetType(0X2826C, "int __cdecl __far sub_2826C(char, __int32, int);");
+	set_func_flags(0X2826C,0x54c2);
+	SetType(0X2826C, "int __cdecl __far j_generateItem(char, __int32, int);");
 	set_frame_size(0X2826C, 0, 0, 0);
 	add_func    (0X28271,0X28276);
 	set_func_flags(0X28271,0x54c2);
@@ -39092,8 +39110,8 @@ static Functions_0(void) {
 	set_func_flags(0X28658,0x54c2);
 	set_frame_size(0X28658, 0, 0, 0);
 	add_func    (0X2865D,0X28662);
-	set_func_flags(0X2865D,0x5482);
-	SetType(0X2865D, "int __cdecl __far sub_2865D(char *format);");
+	set_func_flags(0X2865D,0x54c2);
+	SetType(0X2865D, "int __cdecl __far j_spellAttackAhead(char *format);");
 	set_frame_size(0X2865D, 0, 0, 0);
 	add_func    (0X28662,0X28667);
 	set_func_flags(0X28662,0x54c2);
@@ -39522,6 +39540,7 @@ static Functions_0(void) {
 	set_frame_size(0X425AB, 0X4, 2, 0);
 	add_func    (0X4265B,0X42E8D);
 	set_func_flags(0X4265B,0x5412);
+	set_func_cmt(0X4265B,	"full-screen overhead map: uses isCellVisited/mazeGetWordWrap and checkSkill(6) (Direction Sense) for the compass", 0);
 	set_frame_size(0X4265B, 0X112, 2, 0);
 	define_local_var(0X4265B, 0X42E8D, "[bp-0X10E]", "s");
 	define_local_var(0X4265B, 0X42E8D, "[bp-0XE]", "format");
@@ -39563,6 +39582,10 @@ static Functions_0(void) {
 	set_func_flags(0X435A0,0x5412);
 	set_func_cmt(0X435A0,	"writes the current maze's .evt, .dat pages and .bin (monster/object positions) back to the open cc", 0);
 	set_frame_size(0X435A0, 0X8, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X43698,0X43AF1);
 	set_func_flags(0X43698,0x5412);
 	SetType(0X43698, "int __cdecl __far Map_load(char *format);");
@@ -39591,13 +39614,10 @@ static Functions_0(void) {
 	set_frame_size(0X442EB, 0X4, 2, 0);
 	add_func    (0X4432C,0X4483B);
 	set_func_flags(0X4432C,0x5412);
-	SetType(0X4432C, "int __cdecl __far sub_4432C(char, __int32, int);");
+	SetType(0X4432C, "int __cdecl __far generateItem(char, __int32, int);");
+	set_func_cmt(0X4432C,	"random item generator (level 1-6, buffer, slot): rolls d100 twice to choose the item id range (written to slot id byte +DCh), then 1-3 enchantment levels (95% one, 4% two, 1% three) for metal/element/attribute/spell; used by resetBlacksmithWares (via stub sub_2826C) and treasure", 0);
 	set_frame_size(0X4432C, 0X1A, 2, 0);
 	define_local_var(0X4432C, 0X4483B, "[bp-0X10]", "s");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X44843,0X44921);
 	set_func_flags(0X44843,0x5412);
 	SetType(0X44843, "int __cdecl __far sub_44843(int, int, int);");
@@ -39634,6 +39654,7 @@ static Functions_1(void) {
 	define_local_var(0X44DAC, 0X44DBE, "[bp+0X6]", "s1");
 	add_func    (0X44DBE,0X452E4);
 	set_func_flags(0X44DBE,0x5412);
+	set_func_cmt(0X44DBE,	"save slot picker (uses readSaveHeader, getCommand); returns slot or FFFFh; called from loadSaveDialog/controlPanel via stub sub_2825D", 0);
 	set_frame_size(0X44DBE, 0X2B6, 2, 0);
 	define_local_var(0X44DBE, 0X452E4, "[bp-0X154]", "s");
 	add_func    (0X45364,0X453C5);
@@ -40275,7 +40296,8 @@ static Functions_1(void) {
 	set_frame_size(0X4EFB6, 0XC, 2, 0);
 	add_func    (0X4F24E,0X4F74F);
 	set_func_flags(0X4F24E,0x5412);
-	SetType(0X4F24E, "int __cdecl __far sub_4F24E(char *format);");
+	SetType(0X4F24E, "int __cdecl __far spellAttackAhead(char *format);");
+	set_func_cmt(0X4F24E,	"damage spell/attack arrival: called by Flying Fist etc. through stub sub_2865D with the spell id; starts the attack on the monster ahead (calls attack, drawView, giveTreasure)", 0);
 	set_frame_size(0X4F24E, 0X10, 2, 0);
 	define_local_var(0X4F24E, 0X4F74F, "[bp-0XA]", "s");
 	define_local_var(0X4F24E, 0X4F74F, "[bp+0X6]", "format");

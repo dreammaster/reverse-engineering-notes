@@ -2543,7 +2543,7 @@ jpt_152B2       dw offset loc_152B7     ; DATA XREF: checkPartyDead+41↑r
 ; (bitarray, index) -> bit; used by ifProc for game flags (action 20)
 ; Attributes: bp-based frame
 
-isBitSet        proc far                ; CODE XREF: sub_1BA82+A4↓P
+isBitSet        proc far                ; CODE XREF: isCellVisited+A4↓P
                                         ; sub_37D3E+53↓P ...
 
 arg_0           = word ptr  6
@@ -2687,7 +2687,7 @@ addTime         endp
 ; party skill test (ifProc action 99), by call
 ; Attributes: bp-based frame
 
-checkSkill      proc far                ; CODE XREF: sub_15736+D↓p
+checkSkill      proc far                ; CODE XREF: updateAutomap+D↓p
                                         ; sub_1B6D1+65↓P ...
 
 arg_0           = word ptr  6
@@ -2786,7 +2786,7 @@ jpt_15418       dw offset loc_1541D     ; DATA XREF: checkSkill+2E↑r
 ; Attributes: bp-based frame
 
 setBit          proc far                ; CODE XREF: addTime+40↑P
-                                        ; sub_1B9C5+AF↓P ...
+                                        ; markCellVisited+AF↓P ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -2838,9 +2838,10 @@ setBit          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; wrap-mode (Maze_wrapMode != 0) version of the Wizard Eye map drawing
 ; Attributes: bp-based frame
 
-sub_154B0       proc far                ; CODE XREF: sub_15736+CF↓p
+drawAutomapWrapped proc far             ; CODE XREF: updateAutomap+CF↓p
 
 buffer          = byte ptr -1Eh
 var_A           = word ptr -0Ah
@@ -2860,14 +2861,14 @@ var_2           = word ptr -2
                 jmp     loc_1569B
 ; ---------------------------------------------------------------------------
 
-loc_154C8:                              ; CODE XREF: sub_154B0+1F1↓j
+loc_154C8:                              ; CODE XREF: drawAutomapWrapped+1F1↓j
                 dec     [bp+var_6]
                 mov     [bp+var_8], 0FFFCh
                 mov     [bp+var_2], 0
                 jmp     loc_1568F
 ; ---------------------------------------------------------------------------
 
-loc_154D8:                              ; CODE XREF: sub_154B0+1E5↓j
+loc_154D8:                              ; CODE XREF: drawAutomapWrapped+1E5↓j
                 inc     [bp+var_8]
                 mov     ax, 70h ; 'p'
                 push    ax
@@ -2879,7 +2880,7 @@ loc_154D8:                              ; CODE XREF: sub_154B0+1E5↓j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -2896,15 +2897,15 @@ loc_154D8:                              ; CODE XREF: sub_154B0+1E5↓j
                 jmp     short loc_15521
 ; ---------------------------------------------------------------------------
 
-loc_15516:                              ; CODE XREF: sub_154B0+61↑j
+loc_15516:                              ; CODE XREF: drawAutomapWrapped+61↑j
                 mov     al, Party_x
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 jge     short loc_15521
                 dec     di
 
-loc_15521:                              ; CODE XREF: sub_154B0+64↑j
-                                        ; sub_154B0+6E↑j
+loc_15521:                              ; CODE XREF: drawAutomapWrapped+64↑j
+                                        ; drawAutomapWrapped+6E↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_6]
@@ -2915,7 +2916,7 @@ loc_15521:                              ; CODE XREF: sub_154B0+64↑j
                 jmp     short loc_1553E
 ; ---------------------------------------------------------------------------
 
-loc_15532:                              ; CODE XREF: sub_154B0+7C↑j
+loc_15532:                              ; CODE XREF: drawAutomapWrapped+7C↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_6]
@@ -2923,8 +2924,8 @@ loc_15532:                              ; CODE XREF: sub_154B0+7C↑j
                 dec     di
                 dec     di
 
-loc_1553E:                              ; CODE XREF: sub_154B0+80↑j
-                                        ; sub_154B0+8A↑j
+loc_1553E:                              ; CODE XREF: drawAutomapWrapped+80↑j
+                                        ; drawAutomapWrapped+8A↑j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     ax, [bx+0F1Ch]
@@ -2952,10 +2953,10 @@ loc_1553E:                              ; CODE XREF: sub_154B0+80↑j
                 jmp     short loc_1557F
 ; ---------------------------------------------------------------------------
 
-loc_1557D:                              ; CODE XREF: sub_154B0+B7↑j
+loc_1557D:                              ; CODE XREF: drawAutomapWrapped+B7↑j
                 xor     ax, ax
 
-loc_1557F:                              ; CODE XREF: sub_154B0+CB↑j
+loc_1557F:                              ; CODE XREF: drawAutomapWrapped+CB↑j
                 mov     bx, si
                 shl     bx, 1
                 mov     [bx-2992h], ax
@@ -2970,7 +2971,7 @@ loc_1557F:                              ; CODE XREF: sub_154B0+CB↑j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     [bp+var_A], ax
                 cmp     [bp+var_A], 0
@@ -2987,15 +2988,15 @@ loc_1557F:                              ; CODE XREF: sub_154B0+CB↑j
                 jmp     short loc_155D0
 ; ---------------------------------------------------------------------------
 
-loc_155C5:                              ; CODE XREF: sub_154B0+110↑j
+loc_155C5:                              ; CODE XREF: drawAutomapWrapped+110↑j
                 mov     al, Party_x
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 jge     short loc_155D0
                 dec     di
 
-loc_155D0:                              ; CODE XREF: sub_154B0+113↑j
-                                        ; sub_154B0+11D↑j
+loc_155D0:                              ; CODE XREF: drawAutomapWrapped+113↑j
+                                        ; drawAutomapWrapped+11D↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_6]
@@ -3006,7 +3007,7 @@ loc_155D0:                              ; CODE XREF: sub_154B0+113↑j
                 jmp     short loc_155ED
 ; ---------------------------------------------------------------------------
 
-loc_155E1:                              ; CODE XREF: sub_154B0+12B↑j
+loc_155E1:                              ; CODE XREF: drawAutomapWrapped+12B↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_6]
@@ -3014,8 +3015,8 @@ loc_155E1:                              ; CODE XREF: sub_154B0+12B↑j
                 dec     di
                 dec     di
 
-loc_155ED:                              ; CODE XREF: sub_154B0+12F↑j
-                                        ; sub_154B0+139↑j
+loc_155ED:                              ; CODE XREF: drawAutomapWrapped+12F↑j
+                                        ; drawAutomapWrapped+139↑j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     ax, [bx+0F1Ch]
@@ -3043,7 +3044,7 @@ loc_155ED:                              ; CODE XREF: sub_154B0+12F↑j
                 mov     [bx-2992h], ax
                 inc     si
 
-loc_1562D:                              ; CODE XREF: sub_154B0+FD↑j
+loc_1562D:                              ; CODE XREF: drawAutomapWrapped+FD↑j
                 mov     ax, 700h
                 push    ax
                 mov     al, Party_y
@@ -3054,7 +3055,7 @@ loc_1562D:                              ; CODE XREF: sub_154B0+FD↑j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 8
                 sar     ax, cl
@@ -3083,25 +3084,25 @@ loc_1562D:                              ; CODE XREF: sub_154B0+FD↑j
                 mov     [bx-2992h], ax
                 inc     si
 
-loc_1568C:                              ; CODE XREF: sub_154B0+1A6↑j
+loc_1568C:                              ; CODE XREF: drawAutomapWrapped+1A6↑j
                 inc     [bp+var_2]
 
-loc_1568F:                              ; CODE XREF: sub_154B0+25↑j
+loc_1568F:                              ; CODE XREF: drawAutomapWrapped+25↑j
                 cmp     [bp+var_2], 7
                 jge     short loc_15698
                 jmp     loc_154D8
 ; ---------------------------------------------------------------------------
 
-loc_15698:                              ; CODE XREF: sub_154B0+1E3↑j
+loc_15698:                              ; CODE XREF: drawAutomapWrapped+1E3↑j
                 inc     [bp+var_4]
 
-loc_1569B:                              ; CODE XREF: sub_154B0+15↑j
+loc_1569B:                              ; CODE XREF: drawAutomapWrapped+15↑j
                 cmp     [bp+var_4], 7
                 jge     short loc_156A4
                 jmp     loc_154C8
 ; ---------------------------------------------------------------------------
 
-loc_156A4:                              ; CODE XREF: sub_154B0+1EF↑j
+loc_156A4:                              ; CODE XREF: drawAutomapWrapped+1EF↑j
                 mov     bx, si
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 1Eh
@@ -3140,7 +3141,7 @@ loc_156A4:                              ; CODE XREF: sub_154B0+1EF↑j
                 jmp     short loc_15730
 ; ---------------------------------------------------------------------------
 
-loc_156FF:                              ; CODE XREF: sub_154B0+23F↑j
+loc_156FF:                              ; CODE XREF: drawAutomapWrapped+23F↑j
                 push    ss
                 lea     ax, [bp+buffer]
                 push    ax
@@ -3164,20 +3165,21 @@ loc_156FF:                              ; CODE XREF: sub_154B0+23F↑j
                 add     sp, 14h
                 mov     byte_32E4D, 1
 
-loc_15730:                              ; CODE XREF: sub_154B0+24D↑j
+loc_15730:                              ; CODE XREF: drawAutomapWrapped+24D↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_154B0       endp
+drawAutomapWrapped endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; called after each move by runMazeEvent: Cartographer (skill 4) marks the current cell visited, redraws light, draws the Wizard Eye overhead map
 ; Attributes: bp-based frame
 
-sub_15736       proc far                ; CODE XREF: runMazeEvent+110↓P
+updateAutomap   proc far                ; CODE XREF: runMazeEvent+110↓P
                                         ; runMazeEvent+5A9↓P ...
 
 buffer          = byte ptr -1Ch
@@ -3205,11 +3207,11 @@ arg_0           = word ptr  6
                 mov     al, Party_x
                 mov     ah, 0
                 push    ax
-                call    sub_1B9C5
+                call    markCellVisited
                 pop     cx
                 pop     cx
 
-loc_1575E:                              ; CODE XREF: sub_15736+13↑j
+loc_1575E:                              ; CODE XREF: updateAutomap+13↑j
                 cmp     byte_34C1B, 0
                 jz      short loc_1579D
                 mov     byte_2886E, 1
@@ -3223,19 +3225,19 @@ loc_1575E:                              ; CODE XREF: sub_15736+13↑j
                 jmp     short loc_1578C
 ; ---------------------------------------------------------------------------
 
-loc_15783:                              ; CODE XREF: sub_15736+5B↓j
+loc_15783:                              ; CODE XREF: updateAutomap+5B↓j
                 call    drawView
                 dec     byte_36FB1
 
-loc_1578C:                              ; CODE XREF: sub_15736+4B↑j
+loc_1578C:                              ; CODE XREF: updateAutomap+4B↑j
                 cmp     byte_36FB1, 0
                 jg      short loc_15783
 
-loc_15793:                              ; CODE XREF: sub_15736+3F↑j
+loc_15793:                              ; CODE XREF: updateAutomap+3F↑j
                 mov     byte_34C1B, 0
                 call    drawView
 
-loc_1579D:                              ; CODE XREF: sub_15736+2D↑j
+loc_1579D:                              ; CODE XREF: updateAutomap+2D↑j
                 mov     al, Party_wizardEye
                 mov     ah, 0
                 or      ax, ax
@@ -3248,14 +3250,14 @@ loc_1579D:                              ; CODE XREF: sub_15736+2D↑j
                 pop     cx
                 mov     byte_32E4D, 0
 
-loc_157BC:                              ; CODE XREF: sub_15736+6E↑j
-                                        ; sub_15736+75↑j
+loc_157BC:                              ; CODE XREF: updateAutomap+6E↑j
+                                        ; updateAutomap+75↑j
                 cmp     Party_wizardEye, 0
                 jnz     short loc_157C6
                 jmp     loc_15B2E
 ; ---------------------------------------------------------------------------
 
-loc_157C6:                              ; CODE XREF: sub_15736+8B↑j
+loc_157C6:                              ; CODE XREF: updateAutomap+8B↑j
                 cmp     byte_2886E, 0
                 jnz     short loc_157D6
                 cmp     [bp+arg_0], 0
@@ -3263,8 +3265,8 @@ loc_157C6:                              ; CODE XREF: sub_15736+8B↑j
                 jmp     loc_15B2E
 ; ---------------------------------------------------------------------------
 
-loc_157D6:                              ; CODE XREF: sub_15736+95↑j
-                                        ; sub_15736+9B↑j
+loc_157D6:                              ; CODE XREF: updateAutomap+95↑j
+                                        ; updateAutomap+9B↑j
                 mov     ax, 0FA0h
                 push    ax              ; c
                 xor     ax, ax
@@ -3281,25 +3283,25 @@ loc_157D6:                              ; CODE XREF: sub_15736+95↑j
                 cmp     Maze_wrapMode, 0
                 jz      short loc_1580B
                 push    cs
-                call    near ptr sub_154B0
+                call    near ptr drawAutomapWrapped
                 jmp     loc_15B2E
 ; ---------------------------------------------------------------------------
 
-loc_1580B:                              ; CODE XREF: sub_15736+CC↑j
+loc_1580B:                              ; CODE XREF: updateAutomap+CC↑j
                 mov     si, 3
                 mov     [bp+var_6], 4
                 mov     [bp+var_4], 0
                 jmp     short loc_1588B
 ; ---------------------------------------------------------------------------
 
-loc_1581A:                              ; CODE XREF: sub_15736+159↓j
+loc_1581A:                              ; CODE XREF: updateAutomap+159↓j
                 dec     [bp+var_6]
                 mov     [bp+var_8], 0FFFCh
                 mov     [bp+var_2], 0
                 jmp     short loc_15882
 ; ---------------------------------------------------------------------------
 
-loc_15829:                              ; CODE XREF: sub_15736+150↓j
+loc_15829:                              ; CODE XREF: updateAutomap+150↓j
                 inc     [bp+var_8]
                 mov     ax, 7777h
                 push    ax
@@ -3311,7 +3313,7 @@ loc_15829:                              ; CODE XREF: sub_15736+150↓j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jz      short loc_1587F
@@ -3335,15 +3337,15 @@ loc_15829:                              ; CODE XREF: sub_15736+150↓j
                 mov     word ptr [bx-2992h], 0
                 inc     si
 
-loc_1587F:                              ; CODE XREF: sub_15736+117↑j
+loc_1587F:                              ; CODE XREF: updateAutomap+117↑j
                 inc     [bp+var_2]
 
-loc_15882:                              ; CODE XREF: sub_15736+F1↑j
+loc_15882:                              ; CODE XREF: updateAutomap+F1↑j
                 cmp     [bp+var_2], 7
                 jl      short loc_15829
                 inc     [bp+var_4]
 
-loc_1588B:                              ; CODE XREF: sub_15736+E2↑j
+loc_1588B:                              ; CODE XREF: updateAutomap+E2↑j
                 cmp     [bp+var_4], 7
                 jl      short loc_1581A
                 mov     [bp+var_6], 4
@@ -3351,14 +3353,14 @@ loc_1588B:                              ; CODE XREF: sub_15736+E2↑j
                 jmp     loc_15A16
 ; ---------------------------------------------------------------------------
 
-loc_1589E:                              ; CODE XREF: sub_15736+2E6↓j
+loc_1589E:                              ; CODE XREF: updateAutomap+2E6↓j
                 dec     [bp+var_6]
                 mov     [bp+var_8], 0FFFCh
                 mov     [bp+var_2], 0
                 jmp     loc_15A0A
 ; ---------------------------------------------------------------------------
 
-loc_158AE:                              ; CODE XREF: sub_15736+2DA↓j
+loc_158AE:                              ; CODE XREF: updateAutomap+2DA↓j
                 inc     [bp+var_8]
                 mov     ax, 7777h
                 push    ax
@@ -3370,14 +3372,14 @@ loc_158AE:                              ; CODE XREF: sub_15736+2DA↓j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jnz     short loc_158D7
                 jmp     loc_15A07
 ; ---------------------------------------------------------------------------
 
-loc_158D7:                              ; CODE XREF: sub_15736+19C↑j
+loc_158D7:                              ; CODE XREF: updateAutomap+19C↑j
                 mov     di, 0FFFFh
                 mov     ax, 7000h
                 push    ax
@@ -3389,7 +3391,7 @@ loc_158D7:                              ; CODE XREF: sub_15736+19C↑j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 0Ch
                 sar     ax, cl
@@ -3401,42 +3403,42 @@ loc_158D7:                              ; CODE XREF: sub_15736+19C↑j
                 jmp     cs:jpt_15906[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1590B:                              ; CODE XREF: sub_15736+1D0↑j
+loc_1590B:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 2           ; jumptable 00015906 cases 1,3
                 jmp     short def_15906 ; jumptable 00015906 default case
 ; ---------------------------------------------------------------------------
 
-loc_15910:                              ; CODE XREF: sub_15736+1D0↑j
+loc_15910:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 0Ch         ; jumptable 00015906 case 4
                 jmp     short def_15906 ; jumptable 00015906 default case
 ; ---------------------------------------------------------------------------
 
-loc_15915:                              ; CODE XREF: sub_15736+1D0↑j
+loc_15915:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 0Ah         ; jumptable 00015906 case 5
                 jmp     short def_15906 ; jumptable 00015906 default case
 ; ---------------------------------------------------------------------------
 
-loc_1591A:                              ; CODE XREF: sub_15736+1D0↑j
+loc_1591A:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 6           ; jumptable 00015906 case 2
                 jmp     short def_15906 ; jumptable 00015906 default case
 ; ---------------------------------------------------------------------------
 
-loc_1591F:                              ; CODE XREF: sub_15736+1D0↑j
+loc_1591F:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 8           ; jumptable 00015906 case 6
                 jmp     short def_15906 ; jumptable 00015906 default case
 ; ---------------------------------------------------------------------------
 
-loc_15924:                              ; CODE XREF: sub_15736+1D0↑j
+loc_15924:                              ; CODE XREF: updateAutomap+1D0↑j
                                         ; DATA XREF: seg002:jpt_15906↓o
                 mov     di, 4           ; jumptable 00015906 case 7
 
-def_15906:                              ; CODE XREF: sub_15736+1CC↑j
-                                        ; sub_15736+1D8↑j ...
+def_15906:                              ; CODE XREF: updateAutomap+1CC↑j
+                                        ; updateAutomap+1D8↑j ...
                 cmp     di, 0FFFFh      ; jumptable 00015906 default case
                 jz      short loc_15971
                 mov     bx, [bp+var_2]
@@ -3462,7 +3464,7 @@ def_15906:                              ; CODE XREF: sub_15736+1CC↑j
                 jmp     short loc_15970
 ; ---------------------------------------------------------------------------
 
-loc_15961:                              ; CODE XREF: sub_15736+21F↑j
+loc_15961:                              ; CODE XREF: updateAutomap+21F↑j
                 mov     ax, di
                 sar     ax, 1
                 add     ax, 11h
@@ -3470,10 +3472,10 @@ loc_15961:                              ; CODE XREF: sub_15736+21F↑j
                 shl     bx, 1
                 mov     [bx-2992h], ax
 
-loc_15970:                              ; CODE XREF: sub_15736+229↑j
+loc_15970:                              ; CODE XREF: updateAutomap+229↑j
                 inc     si
 
-loc_15971:                              ; CODE XREF: sub_15736+1F4↑j
+loc_15971:                              ; CODE XREF: updateAutomap+1F4↑j
                 mov     di, 0FFFFh
                 mov     ax, 7
                 push    ax
@@ -3485,7 +3487,7 @@ loc_15971:                              ; CODE XREF: sub_15736+1F4↑j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 dec     ax              ; switch 7 cases
                 mov     bx, ax
@@ -3495,42 +3497,42 @@ loc_15971:                              ; CODE XREF: sub_15736+1F4↑j
                 jmp     cs:jpt_1599C[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_159A1:                              ; CODE XREF: sub_15736+266↑j
+loc_159A1:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 3           ; jumptable 0001599C cases 1,3
                 jmp     short def_1599C ; jumptable 0001599C default case
 ; ---------------------------------------------------------------------------
 
-loc_159A6:                              ; CODE XREF: sub_15736+266↑j
+loc_159A6:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 0Dh         ; jumptable 0001599C case 4
                 jmp     short def_1599C ; jumptable 0001599C default case
 ; ---------------------------------------------------------------------------
 
-loc_159AB:                              ; CODE XREF: sub_15736+266↑j
+loc_159AB:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 0Bh         ; jumptable 0001599C case 5
                 jmp     short def_1599C ; jumptable 0001599C default case
 ; ---------------------------------------------------------------------------
 
-loc_159B0:                              ; CODE XREF: sub_15736+266↑j
+loc_159B0:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 7           ; jumptable 0001599C case 2
                 jmp     short def_1599C ; jumptable 0001599C default case
 ; ---------------------------------------------------------------------------
 
-loc_159B5:                              ; CODE XREF: sub_15736+266↑j
+loc_159B5:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 9           ; jumptable 0001599C case 6
                 jmp     short def_1599C ; jumptable 0001599C default case
 ; ---------------------------------------------------------------------------
 
-loc_159BA:                              ; CODE XREF: sub_15736+266↑j
+loc_159BA:                              ; CODE XREF: updateAutomap+266↑j
                                         ; DATA XREF: seg002:jpt_1599C↓o
                 mov     di, 5           ; jumptable 0001599C case 7
 
-def_1599C:                              ; CODE XREF: sub_15736+262↑j
-                                        ; sub_15736+26E↑j ...
+def_1599C:                              ; CODE XREF: updateAutomap+262↑j
+                                        ; updateAutomap+26E↑j ...
                 cmp     di, 0FFFFh      ; jumptable 0001599C default case
                 jz      short loc_15A07
                 mov     bx, [bp+var_2]
@@ -3556,7 +3558,7 @@ def_1599C:                              ; CODE XREF: sub_15736+262↑j
                 jmp     short loc_15A06
 ; ---------------------------------------------------------------------------
 
-loc_159F7:                              ; CODE XREF: sub_15736+2B5↑j
+loc_159F7:                              ; CODE XREF: updateAutomap+2B5↑j
                 mov     ax, di
                 sar     ax, 1
                 add     ax, 17h
@@ -3564,42 +3566,42 @@ loc_159F7:                              ; CODE XREF: sub_15736+2B5↑j
                 shl     bx, 1
                 mov     [bx-2992h], ax
 
-loc_15A06:                              ; CODE XREF: sub_15736+2BF↑j
+loc_15A06:                              ; CODE XREF: updateAutomap+2BF↑j
                 inc     si
 
-loc_15A07:                              ; CODE XREF: sub_15736+19E↑j
-                                        ; sub_15736+28A↑j
+loc_15A07:                              ; CODE XREF: updateAutomap+19E↑j
+                                        ; updateAutomap+28A↑j
                 inc     [bp+var_2]
 
-loc_15A0A:                              ; CODE XREF: sub_15736+175↑j
+loc_15A0A:                              ; CODE XREF: updateAutomap+175↑j
                 cmp     [bp+var_2], 7
                 jge     short loc_15A13
                 jmp     loc_158AE
 ; ---------------------------------------------------------------------------
 
-loc_15A13:                              ; CODE XREF: sub_15736+2D8↑j
+loc_15A13:                              ; CODE XREF: updateAutomap+2D8↑j
                 inc     [bp+var_4]
 
-loc_15A16:                              ; CODE XREF: sub_15736+165↑j
+loc_15A16:                              ; CODE XREF: updateAutomap+165↑j
                 cmp     [bp+var_4], 7
                 jge     short loc_15A1F
                 jmp     loc_1589E
 ; ---------------------------------------------------------------------------
 
-loc_15A1F:                              ; CODE XREF: sub_15736+2E4↑j
+loc_15A1F:                              ; CODE XREF: updateAutomap+2E4↑j
                 mov     [bp+var_6], 4
                 mov     [bp+var_4], 0
                 jmp     short loc_15A9C
 ; ---------------------------------------------------------------------------
 
-loc_15A2B:                              ; CODE XREF: sub_15736+36A↓j
+loc_15A2B:                              ; CODE XREF: updateAutomap+36A↓j
                 dec     [bp+var_6]
                 mov     [bp+var_8], 0FFFCh
                 mov     [bp+var_2], 0
                 jmp     short loc_15A93
 ; ---------------------------------------------------------------------------
 
-loc_15A3A:                              ; CODE XREF: sub_15736+361↓j
+loc_15A3A:                              ; CODE XREF: updateAutomap+361↓j
                 inc     [bp+var_8]
                 mov     ax, 7777h
                 push    ax
@@ -3611,7 +3613,7 @@ loc_15A3A:                              ; CODE XREF: sub_15736+361↓j
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jnz     short loc_15A90
@@ -3635,15 +3637,15 @@ loc_15A3A:                              ; CODE XREF: sub_15736+361↓j
                 mov     word ptr [bx-2992h], 1
                 inc     si
 
-loc_15A90:                              ; CODE XREF: sub_15736+328↑j
+loc_15A90:                              ; CODE XREF: updateAutomap+328↑j
                 inc     [bp+var_2]
 
-loc_15A93:                              ; CODE XREF: sub_15736+302↑j
+loc_15A93:                              ; CODE XREF: updateAutomap+302↑j
                 cmp     [bp+var_2], 7
                 jl      short loc_15A3A
                 inc     [bp+var_4]
 
-loc_15A9C:                              ; CODE XREF: sub_15736+2F3↑j
+loc_15A9C:                              ; CODE XREF: updateAutomap+2F3↑j
                 cmp     [bp+var_4], 7
                 jl      short loc_15A2B
                 mov     bx, si
@@ -3684,7 +3686,7 @@ loc_15A9C:                              ; CODE XREF: sub_15736+2F3↑j
                 jmp     short loc_15B2E
 ; ---------------------------------------------------------------------------
 
-loc_15AFD:                              ; CODE XREF: sub_15736+3B7↑j
+loc_15AFD:                              ; CODE XREF: updateAutomap+3B7↑j
                 push    ss
                 lea     ax, [bp+buffer]
                 push    ax
@@ -3708,24 +3710,24 @@ loc_15AFD:                              ; CODE XREF: sub_15736+3B7↑j
                 add     sp, 14h
                 mov     byte_32E4D, 1
 
-loc_15B2E:                              ; CODE XREF: sub_15736+8D↑j
-                                        ; sub_15736+9D↑j ...
+loc_15B2E:                              ; CODE XREF: updateAutomap+8D↑j
+                                        ; updateAutomap+9D↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15736       endp
+updateAutomap   endp
 
 ; ---------------------------------------------------------------------------
-jpt_1599C       dw offset loc_159A1     ; DATA XREF: sub_15736+266↑r
+jpt_1599C       dw offset loc_159A1     ; DATA XREF: updateAutomap+266↑r
                 dw offset loc_159B0     ; jump table for switch statement
                 dw offset loc_159A1
                 dw offset loc_159A6
                 dw offset loc_159AB
                 dw offset loc_159B5
                 dw offset loc_159BA
-jpt_15906       dw offset loc_1590B     ; DATA XREF: sub_15736+1D0↑r
+jpt_15906       dw offset loc_1590B     ; DATA XREF: updateAutomap+1D0↑r
                 dw offset loc_1591A     ; jump table for switch statement
                 dw offset loc_1590B
                 dw offset loc_15910
@@ -11025,7 +11027,7 @@ sub_19174       proc far                ; CODE XREF: exploreLoop+701↓P
                 mov     word_36CFE, 0
                 mov     ax, 0Bh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -11744,7 +11746,7 @@ loc_196CD:                              ; CODE XREF: runMazeEvent+AE↑j
                 mov     [bp+var_3C], 0FFFFh
                 xor     ax, ax
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
 
 loc_1971E:                              ; CODE XREF: runMazeEvent+18EE↓j
@@ -12331,7 +12333,7 @@ loc_19B9D:                              ; CODE XREF: runMazeEvent+58E↑j
                 mov     word_373A4, 0
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 call    sub_25DFE
                 cmp     si, 1Fh
@@ -13248,7 +13250,7 @@ loc_1A36B:                              ; CODE XREF: runMazeEvent+D5E↑j
                 mov     word_373A4, 0
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
 
 loc_1A384:                              ; CODE XREF: runMazeEvent+428↑j
                 pop     cx
@@ -13373,7 +13375,7 @@ loc_1A45D:                              ; CODE XREF: runMazeEvent+E4E↑j
                 mov     word_373A4, 0
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 call    drawView
 
@@ -14627,7 +14629,7 @@ evt_op18:                               ; CODE XREF: runMazeEvent+122↑j
                 mov     word_373A4, 0
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 call    drawParty
 
@@ -14946,7 +14948,7 @@ sub_1B198       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far sub_1B223(char *format)
-sub_1B223       proc far                ; CODE XREF: sub_4265B+7DC↓P
+sub_1B223       proc far                ; CODE XREF: showOverheadMap+7DC↓P
 
 var_2           = word ptr -2
 format          = dword ptr  6
@@ -15527,8 +15529,8 @@ seg004          segment byte public 'CODE' use16
 ; indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)
 ; Attributes: bp-based frame
 
-drawView        proc far                ; CODE XREF: sub_15736:loc_15783↑P
-                                        ; sub_15736+62↑P ...
+drawView        proc far                ; CODE XREF: updateAutomap:loc_15783↑P
+                                        ; updateAutomap+62↑P ...
                 push    bp
                 mov     bp, sp
                 cmp     Maze_wrapMode, 0
@@ -15991,8 +15993,8 @@ sub_1B925       endp
 ; maps a neighbour maze id to its loaded slot (1111h if not loaded)
 ; Attributes: bp-based frame
 
-mazeNeighbourSlot proc far              ; CODE XREF: sub_1B9C5+5A↓p
-                                        ; sub_1B9C5+7F↓p ...
+mazeNeighbourSlot proc far              ; CODE XREF: markCellVisited+5A↓p
+                                        ; markCellVisited+7F↓p ...
 
 arg_0           = word ptr  6
 
@@ -16032,9 +16034,10 @@ mazeNeighbourSlot endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sets the cell's bit in the page's 256-bit 'visited' bitmap (page slot + 320h) for the world cell (x,y) relative to the current slot; used by the Cartographer skill and the overhead map
 ; Attributes: bp-based frame
 
-sub_1B9C5       proc far                ; CODE XREF: sub_15736+21↑P
+markCellVisited proc far                ; CODE XREF: updateAutomap+21↑P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -16068,7 +16071,7 @@ loc_1B9F3:                              ; DATA XREF: seg001:0598↑r
                 jmp     loc_1BA7C
 ; ---------------------------------------------------------------------------
 
-loc_1B9FA:                              ; CODE XREF: sub_1B9C5+30↑j
+loc_1B9FA:                              ; CODE XREF: markCellVisited+30↑j
                 or      di, di
                 jl      short loc_1BA7C
                 cmp     si, 1Fh
@@ -16091,7 +16094,7 @@ loc_1B9FA:                              ; CODE XREF: sub_1B9C5+30↑j
                 cmp     [bp+var_2], 1111h
                 jz      short loc_1BA7C
 
-loc_1BA2D:                              ; CODE XREF: sub_1B9C5+46↑j
+loc_1BA2D:                              ; CODE XREF: markCellVisited+46↑j
                 cmp     si, 0Fh
                 jle     short loc_1BA52
                 mov     ax, [bp+var_2]
@@ -16108,7 +16111,7 @@ loc_1BA2D:                              ; CODE XREF: sub_1B9C5+46↑j
                 cmp     [bp+var_2], 1111h
                 jz      short loc_1BA7C
 
-loc_1BA52:                              ; CODE XREF: sub_1B9C5+6B↑j
+loc_1BA52:                              ; CODE XREF: markCellVisited+6B↑j
                 mov     ax, 1
                 push    ax
                 mov     ax, di
@@ -16127,22 +16130,23 @@ loc_1BA52:                              ; CODE XREF: sub_1B9C5+6B↑j
                 call    setBit
                 add     sp, 6
 
-loc_1BA7C:                              ; CODE XREF: sub_1B9C5+32↑j
-                                        ; sub_1B9C5+37↑j ...
+loc_1BA7C:                              ; CODE XREF: markCellVisited+32↑j
+                                        ; markCellVisited+37↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1B9C5       endp
+markCellVisited endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; reads that visited bit; 0 outside the 32x32 world
 ; Attributes: bp-based frame
 
-sub_1BA82       proc far                ; CODE XREF: sub_4265B+109↓P
-                                        ; sub_4265B+454↓P
+isCellVisited   proc far                ; CODE XREF: showOverheadMap+109↓P
+                                        ; showOverheadMap+454↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -16174,13 +16178,13 @@ arg_2           = word ptr  8
                 cmp     di, 1Fh
                 jbe     short loc_1BABE
 
-loc_1BABA:                              ; CODE XREF: sub_1BA82+31↑j
-                                        ; sub_1BA82+5F↓j ...
+loc_1BABA:                              ; CODE XREF: isCellVisited+31↑j
+                                        ; isCellVisited+5F↓j ...
                 xor     ax, ax
                 jmp     short loc_1BB2D
 ; ---------------------------------------------------------------------------
 
-loc_1BABE:                              ; CODE XREF: sub_1BA82+36↑j
+loc_1BABE:                              ; CODE XREF: isCellVisited+36↑j
                 cmp     di, 0Fh
                 jle     short loc_1BAE3
                 mov     ax, [bp+var_2]
@@ -16199,8 +16203,8 @@ loc_1BABE:                              ; CODE XREF: sub_1BA82+36↑j
                 jmp     short loc_1BABA
 ; ---------------------------------------------------------------------------
 
-loc_1BAE3:                              ; CODE XREF: sub_1BA82+3F↑j
-                                        ; sub_1BA82+5D↑j
+loc_1BAE3:                              ; CODE XREF: isCellVisited+3F↑j
+                                        ; isCellVisited+5D↑j
                 cmp     si, 0Fh
                 jle     short loc_1BB08
                 mov     ax, [bp+var_2]
@@ -16219,8 +16223,8 @@ loc_1BAE3:                              ; CODE XREF: sub_1BA82+3F↑j
                 jmp     short loc_1BABA
 ; ---------------------------------------------------------------------------
 
-loc_1BB08:                              ; CODE XREF: sub_1BA82+64↑j
-                                        ; sub_1BA82+82↑j
+loc_1BB08:                              ; CODE XREF: isCellVisited+64↑j
+                                        ; isCellVisited+82↑j
                 mov     ax, di
                 and     ax, 0Fh
                 mov     cl, 4
@@ -16238,21 +16242,22 @@ loc_1BB08:                              ; CODE XREF: sub_1BA82+64↑j
                 pop     cx
                 pop     cx
 
-loc_1BB2D:                              ; CODE XREF: sub_1BA82+3A↑j
+loc_1BB2D:                              ; CODE XREF: isCellVisited+3A↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1BA82       endp
+isCellVisited   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; maze cell word at world (x,y) & mask, with Maze_wrapMode handling (returns 1111h outside the world when not wrapping)
 ; Attributes: bp-based frame
 
-sub_1BB33       proc far                ; CODE XREF: sub_154B0+41↑P
-                                        ; sub_154B0+EE↑P ...
+mazeGetWordWrap proc far                ; CODE XREF: drawAutomapWrapped+41↑P
+                                        ; drawAutomapWrapped+EE↑P ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -16289,23 +16294,23 @@ arg_4           = word ptr  0Ah
                 cmp     di, 1Fh
                 jle     short loc_1BB82
 
-loc_1BB73:                              ; CODE XREF: sub_1BB33+30↑j
-                                        ; sub_1BB33+34↑j ...
+loc_1BB73:                              ; CODE XREF: mazeGetWordWrap+30↑j
+                                        ; mazeGetWordWrap+34↑j ...
                 cmp     Maze_wrapMode, 0
                 jz      short loc_1BB7C
                 jmp     short loc_1BBE0
 ; ---------------------------------------------------------------------------
 
-loc_1BB7C:                              ; CODE XREF: sub_1BB33+45↑j
-                                        ; sub_1BB33:loc_1BBB0↓j ...
+loc_1BB7C:                              ; CODE XREF: mazeGetWordWrap+45↑j
+                                        ; mazeGetWordWrap:loc_1BBB0↓j ...
                 mov     ax, 1111h
 
-loc_1BB7F:                              ; CODE XREF: sub_1BB33+7F↓j
-                                        ; sub_1BB33+AF↓j ...
+loc_1BB7F:                              ; CODE XREF: mazeGetWordWrap+7F↓j
+                                        ; mazeGetWordWrap+AF↓j ...
                 jmp     loc_1BC0F
 ; ---------------------------------------------------------------------------
 
-loc_1BB82:                              ; CODE XREF: sub_1BB33+3E↑j
+loc_1BB82:                              ; CODE XREF: mazeGetWordWrap+3E↑j
                 cmp     di, 0Fh
                 jle     short loc_1BBB4
                 mov     ax, [bp+var_2]
@@ -16326,14 +16331,14 @@ loc_1BB82:                              ; CODE XREF: sub_1BB33+3E↑j
                 jmp     short loc_1BBE0
 ; ---------------------------------------------------------------------------
 
-loc_1BBB0:                              ; CODE XREF: sub_1BB33+79↑j
+loc_1BBB0:                              ; CODE XREF: mazeGetWordWrap+79↑j
                 jmp     short loc_1BB7C
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BB7F
 ; ---------------------------------------------------------------------------
 
-loc_1BBB4:                              ; CODE XREF: sub_1BB33+52↑j
-                                        ; sub_1BB33+72↑j
+loc_1BBB4:                              ; CODE XREF: mazeGetWordWrap+52↑j
+                                        ; mazeGetWordWrap+72↑j
                 cmp     si, 0Fh
                 jle     short loc_1BBE8
                 mov     ax, [bp+var_2]
@@ -16352,20 +16357,20 @@ loc_1BBB4:                              ; CODE XREF: sub_1BB33+52↑j
                 cmp     Maze_wrapMode, 0
                 jz      short loc_1BBE4
 
-loc_1BBE0:                              ; CODE XREF: sub_1BB33+47↑j
-                                        ; sub_1BB33+7B↑j
+loc_1BBE0:                              ; CODE XREF: mazeGetWordWrap+47↑j
+                                        ; mazeGetWordWrap+7B↑j
                 xor     ax, ax
                 jmp     short loc_1BB7F
 ; ---------------------------------------------------------------------------
 
-loc_1BBE4:                              ; CODE XREF: sub_1BB33+AB↑j
+loc_1BBE4:                              ; CODE XREF: mazeGetWordWrap+AB↑j
                 jmp     short loc_1BB7C
 ; ---------------------------------------------------------------------------
                 jmp     short loc_1BB7F
 ; ---------------------------------------------------------------------------
 
-loc_1BBE8:                              ; CODE XREF: sub_1BB33+84↑j
-                                        ; sub_1BB33+A4↑j
+loc_1BBE8:                              ; CODE XREF: mazeGetWordWrap+84↑j
+                                        ; mazeGetWordWrap+A4↑j
                 mov     ax, [bp+var_2]
                 mov     dx, 340h
                 imul    dx
@@ -16382,13 +16387,13 @@ loc_1BBE8:                              ; CODE XREF: sub_1BB33+84↑j
                 mov     ax, [bx-3AACh]
                 and     ax, [bp+arg_4]
 
-loc_1BC0F:                              ; CODE XREF: sub_1BB33:loc_1BB7F↑j
+loc_1BC0F:                              ; CODE XREF: mazeGetWordWrap:loc_1BB7F↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1BB33       endp
+mazeGetWordWrap endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17049,7 +17054,7 @@ sub_1BEE9       endp
 ; per view update: consumes one Party_light when the cell has flag 08h and the map is dark; sets byte_36FB1 (0 lit / 4 dark)
 ; Attributes: bp-based frame
 
-updateLight     proc far                ; CODE XREF: sub_15736+34↑P
+updateLight     proc far                ; CODE XREF: updateAutomap+34↑P
                                         ; prepareIndoorView+26↓p ...
                 push    bp
                 mov     bp, sp
@@ -31587,7 +31592,7 @@ vdrv_03_hideMouse endp ; sp-analysis failed
 ; API 1Eh (612 bytes): opens a text window (10 args: rectangle, colours, text pointer; window stack of 7)
 
 vdrv_1E_openWindow proc far             ; CODE XREF: seg001:0390↑P
-                                        ; sub_154B0+273↑P ...
+                                        ; drawAutomapWrapped+273↑P ...
                 push    cs:word_24F63
                 mov     ax, 1Eh
                 push    ax
@@ -31600,7 +31605,7 @@ vdrv_1E_openWindow endp ; sp-analysis failed
 ; API 06h: closes N windows, restoring the background
 
 vdrv_06_closeWindows proc far           ; CODE XREF: sub_15006+43↑P
-                                        ; sub_15736+7B↑P ...
+                                        ; updateAutomap+7B↑P ...
                 push    cs:word_24F63
                 mov     ax, 6
                 push    ax
@@ -31612,8 +31617,8 @@ vdrv_06_closeWindows endp ; sp-analysis failed
 
 ; API 2Dh (1 KB): prints a string with the in-text control codes (03 'c' centre, 0B nnn row, 09 nnn column, 'r', 'l' ...) at the window cursor
 
-vdrv_2D_printText proc far              ; CODE XREF: sub_154B0+246↑P
-                                        ; sub_15736+3BE↑P ...
+vdrv_2D_printText proc far              ; CODE XREF: drawAutomapWrapped+246↑P
+                                        ; updateAutomap+3BE↑P ...
                 push    cs:word_24F63
                 mov     ax, 2Dh ; '-'
                 push    ax
@@ -34743,7 +34748,7 @@ loadSavedGame   endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far readSaveHeader(int, int, int)
-readSaveHeader  proc far                ; CODE XREF: sub_44DBE+BD↓P
+readSaveHeader  proc far                ; CODE XREF: pickSaveSlot+BD↓P
 
 var_3A0         = byte ptr -3A0h
 var_39E         = byte ptr -39Eh
@@ -36577,7 +36582,7 @@ sub_28108       endp
 ; Attributes: thunk
 
 sub_2810D       proc far                ; CODE XREF: giveTake+1D6↓P
-                                        ; sub_4432C+12↓P ...
+                                        ; generateItem+12↓P ...
                 jmp     sub_404D5
 sub_2810D       endp
 
@@ -36620,7 +36625,7 @@ sub_28130       endp
 ; Attributes: thunk
 
 sub_28135       proc far                ; CODE XREF: sub_416F1+7↓P
-                                        ; sub_4265B+818↓P
+                                        ; showOverheadMap+818↓P
                 jmp     sub_403A6
 sub_28135       endp
 
@@ -36846,15 +36851,7 @@ sub_281E9       proc far                ; CODE XREF: addTime+AE↑P
                 jmp     sub_418F3
 sub_281E9       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_281EE       proc far                ; CODE XREF: exploreLoop+854↓P
-                jmp     sub_4265B
-sub_281EE       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_showOverheadMap. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36963,15 +36960,7 @@ sub_28258       proc far                ; CODE XREF: runMazeEvent:evt_op30↑P
                 jmp     sub_43D1B
 sub_28258       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2825D       proc far                ; CODE XREF: controlPanel:loc_42153↓P
-                jmp     sub_44DBE
-sub_2825D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_pickSaveSlot. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36990,17 +36979,7 @@ sub_28267       proc far                ; CODE XREF: characterInfoDialog+198↓P
                 jmp     sub_4495A
 sub_28267       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_2826C(char, __int32, int)
-sub_2826C       proc far                ; CODE XREF: resetBlacksmithWares+121↓P
-                                        ; giveTake+979↓P ...
-                jmp     sub_4432C
-sub_2826C       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_generateItem. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j__strcoll. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_dismissCharacter. PRESS NUMPAD+ TO EXPAND]
 
@@ -37344,7 +37323,7 @@ stub11          segment para public 'CODE' use16
 ; Attributes: thunk
 
 sub_2848C       proc far                ; CODE XREF: exploreLoop+21↓P
-                                        ; sub_4F24E:loc_4F733↓P
+                                        ; spellAttackAhead:loc_4F733↓P
                 jmp     sub_4BDAE
 sub_2848C       endp
 
@@ -37364,7 +37343,7 @@ sub_2848C       endp
 
 ; Attributes: thunk
 
-sub_284C8       proc far                ; CODE XREF: sub_4F24E+55↓P
+sub_284C8       proc far                ; CODE XREF: spellAttackAhead+55↓P
                 jmp     sub_4BDC4
 sub_284C8       endp
 
@@ -37565,17 +37544,7 @@ sub_28653       proc far                ; CODE XREF: rosterMenu+4EB↓P
 sub_28653       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_spellsDialog. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_2865D(char *format)
-sub_2865D       proc far                ; CODE XREF: sub_19174+13↑P
-                                        ; Spell_03_FlyingFist+23↓P ...
-                jmp     sub_4F24E
-sub_2865D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_spellAttackAhead. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_specialsDialog. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_getThievery. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
@@ -37852,7 +37821,7 @@ byte_28848      db 0                    ; DATA XREF: seg001:loc_14D9C↑w
 byte_28849      db 0                    ; DATA XREF: seg001:loc_14E3D↑w
                                         ; seg001:0267↑w ...
                 db 1
-Maze_wrapMode   db 0                    ; DATA XREF: sub_15736+C7↑r
+Maze_wrapMode   db 0                    ; DATA XREF: updateAutomap+C7↑r
                                         ; chargeStep+B↑r ...
                                         ; byte; non-zero = off-map cells wrap/return 0 instead of 1111h
 byte_2884C      db 1                    ; DATA XREF: sub_1B2A3+4F↑r
@@ -37869,8 +37838,8 @@ byte_28850      db 0FFh                 ; DATA XREF: sub_40248+4↓r
                 db 2 dup(0), 80h
 byte_2886D      db 0FFh                 ; DATA XREF: exploreLoop+F2↓r
                                         ; exploreLoop+100↓r ...
-byte_2886E      db 0                    ; DATA XREF: sub_15736+2F↑w
-                                        ; sub_15736+41↑w ...
+byte_2886E      db 0                    ; DATA XREF: updateAutomap+2F↑w
+                                        ; updateAutomap+41↑w ...
 byte_2886F      db 0                    ; DATA XREF: chargeStep+20↑r
                                         ; chargeStep:loc_16DEC↑w ...
 byte_28870      db 0                    ; DATA XREF: renderIndoorView+155↑r
@@ -37883,9 +37852,9 @@ word_28873      dw 0                    ; DATA XREF: MemFree+18↑w
 byte_28875      db 0                    ; DATA XREF: sub_1DB3D+9A↑r
                                         ; sub_1DB3D+1D1↑r ...
                 db 2 dup(0FFh)
-word_28878      dw 0                    ; DATA XREF: sub_44DBE+73↓w
+word_28878      dw 0                    ; DATA XREF: pickSaveSlot+73↓w
                                         ; sub_45F29+68↓w ...
-word_2887A      dw 0                    ; DATA XREF: sub_44DBE+70↓w
+word_2887A      dw 0                    ; DATA XREF: pickSaveSlot+70↓w
                                         ; sub_45F29+65↓w ...
                 db 61h, 0, 6Dh, 3 dup(0), 5, 0, 2 dup(0FFh), 4 dup(0)
                 db 2 dup(0FFh)
@@ -37894,9 +37863,9 @@ word_2888E      dw 0                    ; DATA XREF: runMazeEvent+338↑w
 byte_28890      db 2Fh, 0, 1Ah, 3 dup(0), 1Eh, 0, 2 dup(0FFh), 4 dup(0)
                                         ; DATA XREF: __InitModules+19↑o
                 db 2 dup(0FFh)
-word_288A0      dw 0                    ; DATA XREF: sub_44DBE+39↓w
+word_288A0      dw 0                    ; DATA XREF: pickSaveSlot+39↓w
                                         ; sub_45F29+31↓w
-word_288A2      dw 0                    ; DATA XREF: sub_44DBE+36↓w
+word_288A2      dw 0                    ; DATA XREF: pickSaveSlot+36↓w
                                         ; sub_45F29+2E↓w
                 db 4, 0, 0Ch, 3 dup(0), 4, 0, 98h, 0, 0Ch, 5 dup(0), 98h
                 db 0, 61h, 3 dup(0), 2, 0, 2 dup(0FFh), 4 dup(0), 0BBh
@@ -45380,8 +45349,8 @@ word_32E46      dw 0                    ; DATA XREF: arenaEvent+42B↓w
 word_32E48      dw 0                    ; DATA XREF: arenaEvent+52D↓w
 word_32E4A      dw 0                    ; DATA XREF: arenaEvent+529↓w
 byte_32E4C      db 0                    ; DATA XREF: indexEvents+115↓w
-byte_32E4D      db 0                    ; DATA XREF: sub_154B0+23A↑r
-                                        ; sub_154B0+27B↑w ...
+byte_32E4D      db 0                    ; DATA XREF: drawAutomapWrapped+23A↑r
+                                        ; drawAutomapWrapped+27B↑w ...
 byte_32E4E      db 0                    ; DATA XREF: sub_18BF1+3A5↑r
                                         ; sub_18BF1:loc_18FA0↑w ...
 byte_32E4F      db 0                    ; DATA XREF: sub_18BF1+12B↑r
@@ -48815,10 +48784,10 @@ word_34056      dw 0                    ; DATA XREF: sub_252CF+59↑r
 word_34058      dw 0                    ; DATA XREF: sub_252CF+55↑r
                                         ; rosterMenu+172↓w ...
                 db 20h dup(0)
-word_3407A      dw 0                    ; DATA XREF: sub_15736+BC↑r
-                                        ; sub_4265B+AB↓r ...
-word_3407C      dw 0                    ; DATA XREF: sub_15736+B9↑r
-                                        ; sub_4265B+A8↓r ...
+word_3407A      dw 0                    ; DATA XREF: updateAutomap+BC↑r
+                                        ; showOverheadMap+AB↓r ...
+word_3407C      dw 0                    ; DATA XREF: updateAutomap+B9↑r
+                                        ; showOverheadMap+A8↓r ...
 byte_3407E      db 0                    ; DATA XREF: sub_15B50+457↑r
                                         ; sub_15B50:loc_15FAE↑r ...
 byte_3407F      db 0                    ; DATA XREF: sub_15B50+57C↑r
@@ -48830,8 +48799,8 @@ byte_340A9      db 0                    ; DATA XREF: sub_1BEE9+DD↑w
                                         ; prepareIndoorView:loc_1D473↑w ...
 byte_340AA      db 0                    ; DATA XREF: sub_1BEE9+BF↑w
                                         ; prepareIndoorView:loc_1D874↑w ...
-byte_340AB      db 0                    ; DATA XREF: sub_4F24E:loc_4F2C3↓w
-                                        ; sub_4F24E:loc_4F2EC↓w
+byte_340AB      db 0                    ; DATA XREF: spellAttackAhead:loc_4F2C3↓w
+                                        ; spellAttackAhead:loc_4F2EC↓w
                 db 7 dup(0)
 byte_340B3      db 0                    ; DATA XREF: sub_1BEE9+B↑w
                                         ; prepareIndoorView:loc_1C892↑w ...
@@ -48873,7 +48842,7 @@ byte_34B88      db 0                    ; DATA XREF: sub_1BEE9+4C↑w
                                         ; prepareIndoorView:loc_1D573↑w ...
                 align 2
 word_34B8A      dw 0                    ; DATA XREF: attack:loc_4A1B6↓r
-                                        ; sub_4F24E+2E↓w ...
+                                        ; spellAttackAhead+2E↓w ...
 byte_34B8C      db 0                    ; DATA XREF: seg001:loc_14F90↑w
                                         ; sub_25D8D+4↑r ...
 byte_34B8D      db 0                    ; DATA XREF: sub_15B50+271↑r
@@ -48989,8 +48958,8 @@ word_34C18      dw 0                    ; DATA XREF: sub_25C52+18↑r
                                         ; sub_3CE7A+84↓w ...
 byte_34C1A      db 0                    ; DATA XREF: sub_15B50:loc_15D62↑r
                                         ; sub_15B50+21F↑r ...
-byte_34C1B      db 0                    ; DATA XREF: sub_15736:loc_1575E↑r
-                                        ; sub_15736:loc_15793↑w ...
+byte_34C1B      db 0                    ; DATA XREF: updateAutomap:loc_1575E↑r
+                                        ; updateAutomap:loc_15793↑w ...
 byte_34C1C      db 0                    ; DATA XREF: sub_1BEE9+24B↑w
                                         ; prepareIndoorView+16F3↑w
 byte_34C1D      db 0                    ; DATA XREF: mazeUpdateSlot+72↑w
@@ -49015,8 +48984,8 @@ byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
                                         ; sub_161AD+5FF↑r ...
 byte_34C2D      db 0                    ; DATA XREF: sub_15B50+62D↑r
                                         ; sub_161AD+75D↑r ...
-Maze_curSlot    db 0                    ; DATA XREF: sub_154B0+50↑r
-                                        ; sub_154B0+FF↑r ...
+Maze_curSlot    db 0                    ; DATA XREF: drawAutomapWrapped+50↑r
+                                        ; drawAutomapWrapped+FF↑r ...
                                         ; byte 0-3: which of the 4 loaded 16x16 pages (2x2 world) the party is in
                 db 31Fh dup(0)
 byte_34F4E      db 0                    ; DATA XREF: mazeUpdateSlot+83↑r
@@ -49047,11 +49016,11 @@ byte_35D5B      db 0                    ; DATA XREF: sub_1BEE9+1AF↑w
 byte_35D5C      db 0                    ; DATA XREF: sub_18BF1+11↑r
                                         ; runMazeEvent+1B0↑r ...
                 align 2
-word_35D5E      dw 0                    ; DATA XREF: sub_15736+B3↑w
+word_35D5E      dw 0                    ; DATA XREF: updateAutomap+B3↑w
                                         ; renderIndoorView+126↑w ...
-word_35D60      dw 0                    ; DATA XREF: sub_15736+C3↑w
+word_35D60      dw 0                    ; DATA XREF: updateAutomap+C3↑w
                                         ; renderIndoorView+143↑w ...
-word_35D62      dw 0                    ; DATA XREF: sub_15736+C0↑w
+word_35D62      dw 0                    ; DATA XREF: updateAutomap+C0↑w
                                         ; renderIndoorView+140↑w ...
 word_35D64      dw 0                    ; DATA XREF: renderIndoorView+132↑w
                                         ; renderOutdoorView+154↑w ...
@@ -49102,8 +49071,8 @@ byte_36FAF      db 0                    ; DATA XREF: sub_1BEE9+1ED↑w
                                         ; prepareIndoorView+66C↑w ...
 byte_36FB0      db 0                    ; DATA XREF: sub_15B50+3E3↑r
                                         ; sub_15B50+442↑r ...
-byte_36FB1      db 0                    ; DATA XREF: sub_15736+39↑r
-                                        ; sub_15736+46↑w ...
+byte_36FB1      db 0                    ; DATA XREF: updateAutomap+39↑r
+                                        ; updateAutomap+46↑w ...
 word_36FB2      dw 0                    ; DATA XREF: seg001:0180↑r
                                         ; seg001:0422↑w ...
 word_36FB4      dw 0                    ; DATA XREF: seg001:017C↑r
@@ -49119,14 +49088,14 @@ Party_count     db 0                    ; DATA XREF: checkPartyDead:loc_152C8↑
 byte_36FDB      db 0                    ; DATA XREF: rosterMenu+727↓w
                                         ; loadSaveDialog:loc_41E5C↓r ...
                 db 8 dup(0)
-Party_facing    db 0                    ; DATA XREF: sub_154B0+20F↑r
-                                        ; sub_15736+387↑r ...
+Party_facing    db 0                    ; DATA XREF: drawAutomapWrapped+20F↑r
+                                        ; updateAutomap+387↑r ...
                                         ; byte 0-3 (MAZE.PTY +0Ah)
-Party_x         db 0                    ; DATA XREF: sub_154B0+38↑r
-                                        ; sub_154B0+56↑r ...
+Party_x         db 0                    ; DATA XREF: drawAutomapWrapped+38↑r
+                                        ; drawAutomapWrapped+56↑r ...
                                         ; byte 0-15 within the page (+0Bh)
-Party_y         db 0                    ; DATA XREF: sub_154B0+2F↑r
-                                        ; sub_154B0:loc_15521↑r ...
+Party_y         db 0                    ; DATA XREF: drawAutomapWrapped+2F↑r
+                                        ; drawAutomapWrapped:loc_15521↑r ...
                                         ; byte (+0Ch)
 Party_map       db 0                    ; DATA XREF: sub_1693D+3↑r
                                         ; sub_1693D+A↑r ...
@@ -49143,8 +49112,8 @@ Party_levitate  db 0                    ; DATA XREF: sub_1B6D1+A6↑r
                                         ; giveTake:loc_3C63E↓r ...
                                         ; byte (+12h) (action 69)
                 align 2
-Party_wizardEye db 0                    ; DATA XREF: sub_15736:loc_1579D↑r
-                                        ; sub_15736:loc_157BC↑r ...
+Party_wizardEye db 0                    ; DATA XREF: updateAutomap:loc_1579D↑r
+                                        ; updateAutomap:loc_157BC↑r ...
                                         ; byte (+14h) (action 79)
 Party_walkOnWater db 0                  ; DATA XREF: giveTake:loc_3C6E5↓w
                                         ; giveTake:loc_3CCE5↓w ...
@@ -50820,7 +50789,7 @@ loc_37D1C:                              ; CODE XREF: sub_37CBB+55↑j
                 jnz     short loc_37D2C
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
 
 loc_37D2C:                              ; CODE XREF: sub_37CBB+65↑j
@@ -52291,7 +52260,7 @@ loc_386D1:                              ; CODE XREF: resetBlacksmithWares+48↑j
                 push    ax              ; __int32
                 mov     al, [di+17A8h]
                 push    ax              ; char
-                call    sub_2826C
+                call    j_generateItem
                 add     sp, 8
                 mov     al, [si+17B0h]
                 mov     ah, 0
@@ -61353,7 +61322,7 @@ loc_3CBE7:                              ; CODE XREF: giveTake+98C↓j
                 push    si              ; __int32
                 mov     al, byte ptr [bp+arg_8]
                 push    ax              ; char
-                call    sub_2826C
+                call    j_generateItem
                 add     sp, 8
                 jmp     loc_3C889
 ; ---------------------------------------------------------------------------
@@ -62246,7 +62215,7 @@ loc_3D24C:                              ; CODE XREF: setValue+21↑j
                 jnz     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
@@ -63758,7 +63727,7 @@ loc_3DC08:                              ; CODE XREF: trapOrLockEvent+338↑j
 loc_3DC0B:                              ; CODE XREF: trapOrLockEvent+333↑j
                                         ; trapOrLockEvent+33D↑j
                 push    ax              ; char
-                call    sub_2826C
+                call    j_generateItem
                 add     sp, 8
                 mov     al, [di+90h]
                 push    ax
@@ -64381,7 +64350,7 @@ loc_3E06C:                              ; CODE XREF: sub_3DFB6+96↑j
                 call    mazeUpdateSlot
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
 
 loc_3E08C:                              ; CODE XREF: sub_3DFB6+B9↑j
@@ -64678,7 +64647,7 @@ loc_3E2D2:                              ; CODE XREF: arenaEvent+95↑j
                 call    sub_1B925
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 jmp     loc_3E6E6
 ; ---------------------------------------------------------------------------
@@ -65521,7 +65490,7 @@ loc_3E9DD:                              ; CODE XREF: exploreLoop+54↑j
                 call    runMazeEvent
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 mov     Engine_mode, 1
                 call    drawView
@@ -66635,7 +66604,7 @@ loc_3F1A7:                              ; CODE XREF: exploreLoop+820↑j
                 call    sub_282CA
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    sub_281EE
+                call    j_showOverheadMap
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
                 call    sub_2818A
@@ -72775,7 +72744,7 @@ loc_42145:                              ; CODE XREF: controlPanel+1E3↑j
 ; ---------------------------------------------------------------------------
 
 loc_42153:                              ; CODE XREF: controlPanel+1ED↑j
-                call    sub_2825D
+                call    j_pickSaveSlot
                 mov     [bp+var_6], ax
                 cmp     ax, 0FFFFh
                 jnz     short loc_42163
@@ -72898,7 +72867,7 @@ loc_4223A:                              ; CODE XREF: controlPanel+2BD↑j
                 jg      short loc_4221C
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 jmp     short loc_422AC
 ; ---------------------------------------------------------------------------
 
@@ -73352,7 +73321,7 @@ sub_424AB       endp
 ; Attributes: bp-based frame
 
 sub_425AB       proc far                ; CODE XREF: sub_28202↑J
-                                        ; sub_4265B+12↓p
+                                        ; showOverheadMap+12↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -73453,9 +73422,10 @@ sub_425AB       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; full-screen overhead map: uses isCellVisited/mazeGetWordWrap and checkSkill(6) (Direction Sense) for the compass
 ; Attributes: bp-based frame
 
-sub_4265B       proc far                ; CODE XREF: sub_281EE↑J
+showOverheadMap proc far                ; CODE XREF: j_showOverheadMap↑J
 
 s               = byte ptr -10Eh
 format          = dword ptr -0Eh
@@ -73499,10 +73469,10 @@ var_2           = word ptr -2
                 jmp     short loc_426AA
 ; ---------------------------------------------------------------------------
 
-loc_426A7:                              ; CODE XREF: sub_4265B+3B↑j
+loc_426A7:                              ; CODE XREF: showOverheadMap+3B↑j
                 mov     ax, 313Eh
 
-loc_426AA:                              ; CODE XREF: sub_4265B+4A↑j
+loc_426AA:                              ; CODE XREF: showOverheadMap+4A↑j
                 push    ax
                 mov     al, Party_y
                 mov     ah, 0
@@ -73520,12 +73490,12 @@ loc_426AA:                              ; CODE XREF: sub_4265B+4A↑j
                 jmp     short loc_426D2
 ; ---------------------------------------------------------------------------
 
-loc_426CC:                              ; CODE XREF: sub_4265B+65↑j
+loc_426CC:                              ; CODE XREF: showOverheadMap+65↑j
                 mov     al, Party_map
                 mov     ah, 0
                 dec     ax
 
-loc_426D2:                              ; CODE XREF: sub_4265B+6F↑j
+loc_426D2:                              ; CODE XREF: showOverheadMap+6F↑j
                 shl     ax, 1
                 mov     bx, ax
                 push    word ptr [bx+5784h] ; format
@@ -73562,7 +73532,7 @@ loc_426D2:                              ; CODE XREF: sub_4265B+6F↑j
                 jmp     loc_42A7F
 ; ---------------------------------------------------------------------------
 
-loc_42734:                              ; CODE XREF: sub_4265B+D4↑j
+loc_42734:                              ; CODE XREF: showOverheadMap+D4↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -73570,7 +73540,7 @@ loc_42734:                              ; CODE XREF: sub_4265B+D4↑j
                 jmp     loc_4284D
 ; ---------------------------------------------------------------------------
 
-loc_42740:                              ; CODE XREF: sub_4265B+1F7↓j
+loc_42740:                              ; CODE XREF: showOverheadMap+1F7↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -73579,7 +73549,7 @@ loc_42740:                              ; CODE XREF: sub_4265B+1F7↓j
                 jmp     loc_42844
 ; ---------------------------------------------------------------------------
 
-loc_4274F:                              ; CODE XREF: sub_4265B+1EE↓j
+loc_4274F:                              ; CODE XREF: showOverheadMap+1EE↓j
                 inc     [bp+var_6]
                 mov     al, Party_y
                 mov     ah, 0
@@ -73589,7 +73559,7 @@ loc_4274F:                              ; CODE XREF: sub_4265B+1EE↓j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BA82
+                call    isCellVisited
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -73597,7 +73567,7 @@ loc_4274F:                              ; CODE XREF: sub_4265B+1EE↓j
                 jmp     loc_42843
 ; ---------------------------------------------------------------------------
 
-loc_42772:                              ; CODE XREF: sub_4265B+112↑j
+loc_42772:                              ; CODE XREF: showOverheadMap+112↑j
                 mov     bx, si
                 mov     cl, 4
                 shl     bx, cl
@@ -73615,7 +73585,7 @@ loc_42772:                              ; CODE XREF: sub_4265B+112↑j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 4
                 sar     ax, cl
@@ -73632,15 +73602,15 @@ loc_42772:                              ; CODE XREF: sub_4265B+112↑j
                 jmp     short loc_427CE
 ; ---------------------------------------------------------------------------
 
-loc_427C1:                              ; CODE XREF: sub_4265B+15F↑j
+loc_427C1:                              ; CODE XREF: showOverheadMap+15F↑j
                 mov     al, Party_x
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 jge     short loc_427CE
                 dec     [bp+var_4]
 
-loc_427CE:                              ; CODE XREF: sub_4265B+164↑j
-                                        ; sub_4265B+16E↑j
+loc_427CE:                              ; CODE XREF: showOverheadMap+164↑j
+                                        ; showOverheadMap+16E↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_8]
@@ -73650,15 +73620,15 @@ loc_427CE:                              ; CODE XREF: sub_4265B+164↑j
                 jmp     short loc_427EF
 ; ---------------------------------------------------------------------------
 
-loc_427E1:                              ; CODE XREF: sub_4265B+17E↑j
+loc_427E1:                              ; CODE XREF: showOverheadMap+17E↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 jge     short loc_427EF
                 sub     [bp+var_4], 2
 
-loc_427EF:                              ; CODE XREF: sub_4265B+184↑j
-                                        ; sub_4265B+18E↑j
+loc_427EF:                              ; CODE XREF: showOverheadMap+184↑j
+                                        ; showOverheadMap+18E↑j
                 mov     ax, si
                 mov     dx, 0Ah
                 imul    dx
@@ -73687,34 +73657,34 @@ loc_427EF:                              ; CODE XREF: sub_4265B+184↑j
                 jmp     short loc_42837
 ; ---------------------------------------------------------------------------
 
-loc_42835:                              ; CODE XREF: sub_4265B+1C3↑j
+loc_42835:                              ; CODE XREF: showOverheadMap+1C3↑j
                 xor     ax, ax
 
-loc_42837:                              ; CODE XREF: sub_4265B+1D8↑j
+loc_42837:                              ; CODE XREF: showOverheadMap+1D8↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     [bx-2992h], ax
                 inc     word ptr [bp+format]
 
-loc_42843:                              ; CODE XREF: sub_4265B+114↑j
+loc_42843:                              ; CODE XREF: showOverheadMap+114↑j
                 inc     si
 
-loc_42844:                              ; CODE XREF: sub_4265B+F1↑j
+loc_42844:                              ; CODE XREF: showOverheadMap+F1↑j
                 cmp     si, 10h
                 jge     short loc_4284C
                 jmp     loc_4274F
 ; ---------------------------------------------------------------------------
 
-loc_4284C:                              ; CODE XREF: sub_4265B+1EC↑j
+loc_4284C:                              ; CODE XREF: showOverheadMap+1EC↑j
                 inc     di
 
-loc_4284D:                              ; CODE XREF: sub_4265B+E2↑j
+loc_4284D:                              ; CODE XREF: showOverheadMap+E2↑j
                 cmp     di, 10h
                 jge     short loc_42855
                 jmp     loc_42740
 ; ---------------------------------------------------------------------------
 
-loc_42855:                              ; CODE XREF: sub_4265B+1F5↑j
+loc_42855:                              ; CODE XREF: showOverheadMap+1F5↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -73722,7 +73692,7 @@ loc_42855:                              ; CODE XREF: sub_4265B+1F5↑j
                 jmp     loc_4294E
 ; ---------------------------------------------------------------------------
 
-loc_42861:                              ; CODE XREF: sub_4265B+2F8↓j
+loc_42861:                              ; CODE XREF: showOverheadMap+2F8↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -73731,7 +73701,7 @@ loc_42861:                              ; CODE XREF: sub_4265B+2F8↓j
                 jmp     loc_42945
 ; ---------------------------------------------------------------------------
 
-loc_42870:                              ; CODE XREF: sub_4265B+2EF↓j
+loc_42870:                              ; CODE XREF: showOverheadMap+2EF↓j
                 inc     [bp+var_6]
                 mov     bx, si
                 mov     cl, 4
@@ -73744,7 +73714,7 @@ loc_42870:                              ; CODE XREF: sub_4265B+2EF↓j
                 jmp     loc_42944
 ; ---------------------------------------------------------------------------
 
-loc_42889:                              ; CODE XREF: sub_4265B+229↑j
+loc_42889:                              ; CODE XREF: showOverheadMap+229↑j
                 mov     ax, 7
                 push    ax
                 mov     al, Party_y
@@ -73755,7 +73725,7 @@ loc_42889:                              ; CODE XREF: sub_4265B+229↑j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     [bp+var_2], ax
                 cmp     [bp+var_2], 0
@@ -73763,7 +73733,7 @@ loc_42889:                              ; CODE XREF: sub_4265B+229↑j
                 jmp     loc_42944
 ; ---------------------------------------------------------------------------
 
-loc_428B3:                              ; CODE XREF: sub_4265B+253↑j
+loc_428B3:                              ; CODE XREF: showOverheadMap+253↑j
                 mov     al, Maze_curSlot
                 cbw
                 mov     [bp+var_4], ax
@@ -73776,15 +73746,15 @@ loc_428B3:                              ; CODE XREF: sub_4265B+253↑j
                 jmp     short loc_428D9
 ; ---------------------------------------------------------------------------
 
-loc_428CC:                              ; CODE XREF: sub_4265B+26A↑j
+loc_428CC:                              ; CODE XREF: showOverheadMap+26A↑j
                 mov     al, Party_x
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 jge     short loc_428D9
                 dec     [bp+var_4]
 
-loc_428D9:                              ; CODE XREF: sub_4265B+26F↑j
-                                        ; sub_4265B+279↑j
+loc_428D9:                              ; CODE XREF: showOverheadMap+26F↑j
+                                        ; showOverheadMap+279↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_8]
@@ -73794,15 +73764,15 @@ loc_428D9:                              ; CODE XREF: sub_4265B+26F↑j
                 jmp     short loc_428FA
 ; ---------------------------------------------------------------------------
 
-loc_428EC:                              ; CODE XREF: sub_4265B+289↑j
+loc_428EC:                              ; CODE XREF: showOverheadMap+289↑j
                 mov     al, Party_y
                 mov     ah, 0
                 add     ax, [bp+var_8]
                 jge     short loc_428FA
                 sub     [bp+var_4], 2
 
-loc_428FA:                              ; CODE XREF: sub_4265B+28F↑j
-                                        ; sub_4265B+299↑j
+loc_428FA:                              ; CODE XREF: showOverheadMap+28F↑j
+                                        ; showOverheadMap+299↑j
                 mov     ax, si
                 mov     dx, 0Ah
                 imul    dx
@@ -73831,26 +73801,26 @@ loc_428FA:                              ; CODE XREF: sub_4265B+28F↑j
                 mov     [bx-2992h], ax
                 inc     word ptr [bp+format]
 
-loc_42944:                              ; CODE XREF: sub_4265B+22B↑j
-                                        ; sub_4265B+255↑j
+loc_42944:                              ; CODE XREF: showOverheadMap+22B↑j
+                                        ; showOverheadMap+255↑j
                 inc     si
 
-loc_42945:                              ; CODE XREF: sub_4265B+212↑j
+loc_42945:                              ; CODE XREF: showOverheadMap+212↑j
                 cmp     si, 10h
                 jge     short loc_4294D
                 jmp     loc_42870
 ; ---------------------------------------------------------------------------
 
-loc_4294D:                              ; CODE XREF: sub_4265B+2ED↑j
+loc_4294D:                              ; CODE XREF: showOverheadMap+2ED↑j
                 inc     di
 
-loc_4294E:                              ; CODE XREF: sub_4265B+203↑j
+loc_4294E:                              ; CODE XREF: showOverheadMap+203↑j
                 cmp     di, 10h
                 jge     short loc_42956
                 jmp     loc_42861
 ; ---------------------------------------------------------------------------
 
-loc_42956:                              ; CODE XREF: sub_4265B+2F6↑j
+loc_42956:                              ; CODE XREF: showOverheadMap+2F6↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -73858,7 +73828,7 @@ loc_42956:                              ; CODE XREF: sub_4265B+2F6↑j
                 jmp     loc_429F9
 ; ---------------------------------------------------------------------------
 
-loc_42962:                              ; CODE XREF: sub_4265B+3A3↓j
+loc_42962:                              ; CODE XREF: showOverheadMap+3A3↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -73867,7 +73837,7 @@ loc_42962:                              ; CODE XREF: sub_4265B+3A3↓j
                 jmp     loc_429F0
 ; ---------------------------------------------------------------------------
 
-loc_42971:                              ; CODE XREF: sub_4265B+39A↓j
+loc_42971:                              ; CODE XREF: showOverheadMap+39A↓j
                 inc     [bp+var_6]
                 mov     bx, si
                 mov     cl, 4
@@ -73887,7 +73857,7 @@ loc_42971:                              ; CODE XREF: sub_4265B+39A↓j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 8
                 sar     ax, cl
@@ -73917,26 +73887,26 @@ loc_42971:                              ; CODE XREF: sub_4265B+39A↓j
                 mov     [bx-2992h], ax
                 inc     word ptr [bp+format]
 
-loc_429EF:                              ; CODE XREF: sub_4265B+32A↑j
-                                        ; sub_4265B+355↑j
+loc_429EF:                              ; CODE XREF: showOverheadMap+32A↑j
+                                        ; showOverheadMap+355↑j
                 inc     si
 
-loc_429F0:                              ; CODE XREF: sub_4265B+313↑j
+loc_429F0:                              ; CODE XREF: showOverheadMap+313↑j
                 cmp     si, 10h
                 jge     short loc_429F8
                 jmp     loc_42971
 ; ---------------------------------------------------------------------------
 
-loc_429F8:                              ; CODE XREF: sub_4265B+398↑j
+loc_429F8:                              ; CODE XREF: showOverheadMap+398↑j
                 inc     di
 
-loc_429F9:                              ; CODE XREF: sub_4265B+304↑j
+loc_429F9:                              ; CODE XREF: showOverheadMap+304↑j
                 cmp     di, 10h
                 jge     short loc_42A01
                 jmp     loc_42962
 ; ---------------------------------------------------------------------------
 
-loc_42A01:                              ; CODE XREF: sub_4265B+3A1↑j
+loc_42A01:                              ; CODE XREF: showOverheadMap+3A1↑j
                 cmp     byte ptr [bp+format+3], 0F8h
                 jz      short loc_42A1C
                 mov     al, Party_x
@@ -73949,12 +73919,12 @@ loc_42A01:                              ; CODE XREF: sub_4265B+3A1↑j
                 jmp     short loc_42A27
 ; ---------------------------------------------------------------------------
 
-loc_42A1C:                              ; CODE XREF: sub_4265B+3AA↑j
+loc_42A1C:                              ; CODE XREF: showOverheadMap+3AA↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 46h ; 'F'
 
-loc_42A27:                              ; CODE XREF: sub_4265B+3BF↑j
+loc_42A27:                              ; CODE XREF: showOverheadMap+3BF↑j
                 inc     word ptr [bp+format]
                 cmp     byte ptr [bp+format+2], 8
                 jz      short loc_42A51
@@ -73973,12 +73943,12 @@ loc_42A27:                              ; CODE XREF: sub_4265B+3BF↑j
                 jmp     short loc_42A5C
 ; ---------------------------------------------------------------------------
 
-loc_42A51:                              ; CODE XREF: sub_4265B+3D3↑j
+loc_42A51:                              ; CODE XREF: showOverheadMap+3D3↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 42h ; 'B'
 
-loc_42A5C:                              ; CODE XREF: sub_4265B+3F4↑j
+loc_42A5C:                              ; CODE XREF: showOverheadMap+3F4↑j
                 add     word ptr [bp+format], 2
                 mov     ax, 6
                 push    ax
@@ -73990,17 +73960,17 @@ loc_42A5C:                              ; CODE XREF: sub_4265B+3F4↑j
                 mov     ah, 0
                 add     ax, 13h
 
-loc_42A76:                              ; CODE XREF: sub_4265B+7BC↓j
+loc_42A76:                              ; CODE XREF: showOverheadMap+7BC↓j
                 jmp     loc_42E1D
 ; ---------------------------------------------------------------------------
 
-loc_42A79:                              ; CODE XREF: sub_4265B+411↑j
+loc_42A79:                              ; CODE XREF: showOverheadMap+411↑j
                 jmp     loc_42E1A
 ; ---------------------------------------------------------------------------
                 jmp     loc_42E1D
 ; ---------------------------------------------------------------------------
 
-loc_42A7F:                              ; CODE XREF: sub_4265B+D6↑j
+loc_42A7F:                              ; CODE XREF: showOverheadMap+D6↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -74008,7 +73978,7 @@ loc_42A7F:                              ; CODE XREF: sub_4265B+D6↑j
                 jmp     loc_42B31
 ; ---------------------------------------------------------------------------
 
-loc_42A8B:                              ; CODE XREF: sub_4265B+4DB↓j
+loc_42A8B:                              ; CODE XREF: showOverheadMap+4DB↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -74017,7 +73987,7 @@ loc_42A8B:                              ; CODE XREF: sub_4265B+4DB↓j
                 jmp     loc_42B28
 ; ---------------------------------------------------------------------------
 
-loc_42A9A:                              ; CODE XREF: sub_4265B+4D2↓j
+loc_42A9A:                              ; CODE XREF: showOverheadMap+4D2↓j
                 inc     [bp+var_6]
                 mov     al, Party_y
                 mov     ah, 0
@@ -74027,7 +73997,7 @@ loc_42A9A:                              ; CODE XREF: sub_4265B+4D2↓j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BA82
+                call    isCellVisited
                 pop     cx
                 pop     cx
                 or      ax, ax
@@ -74049,7 +74019,7 @@ loc_42A9A:                              ; CODE XREF: sub_4265B+4D2↓j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jz      short loc_42B27
@@ -74074,26 +74044,26 @@ loc_42A9A:                              ; CODE XREF: sub_4265B+4D2↓j
                 mov     word ptr [bx-2992h], 0
                 inc     word ptr [bp+format]
 
-loc_42B27:                              ; CODE XREF: sub_4265B+45D↑j
-                                        ; sub_4265B+491↑j
+loc_42B27:                              ; CODE XREF: showOverheadMap+45D↑j
+                                        ; showOverheadMap+491↑j
                 inc     si
 
-loc_42B28:                              ; CODE XREF: sub_4265B+43C↑j
+loc_42B28:                              ; CODE XREF: showOverheadMap+43C↑j
                 cmp     si, 10h
                 jge     short loc_42B30
                 jmp     loc_42A9A
 ; ---------------------------------------------------------------------------
 
-loc_42B30:                              ; CODE XREF: sub_4265B+4D0↑j
+loc_42B30:                              ; CODE XREF: showOverheadMap+4D0↑j
                 inc     di
 
-loc_42B31:                              ; CODE XREF: sub_4265B+42D↑j
+loc_42B31:                              ; CODE XREF: showOverheadMap+42D↑j
                 cmp     di, 10h
                 jge     short loc_42B39
                 jmp     loc_42A8B
 ; ---------------------------------------------------------------------------
 
-loc_42B39:                              ; CODE XREF: sub_4265B+4D9↑j
+loc_42B39:                              ; CODE XREF: showOverheadMap+4D9↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -74101,7 +74071,7 @@ loc_42B39:                              ; CODE XREF: sub_4265B+4D9↑j
                 jmp     loc_42CFD
 ; ---------------------------------------------------------------------------
 
-loc_42B45:                              ; CODE XREF: sub_4265B+6A7↓j
+loc_42B45:                              ; CODE XREF: showOverheadMap+6A7↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -74110,7 +74080,7 @@ loc_42B45:                              ; CODE XREF: sub_4265B+6A7↓j
                 jmp     loc_42CF4
 ; ---------------------------------------------------------------------------
 
-loc_42B54:                              ; CODE XREF: sub_4265B+69E↓j
+loc_42B54:                              ; CODE XREF: showOverheadMap+69E↓j
                 inc     [bp+var_6]
                 mov     bx, si
                 mov     cl, 4
@@ -74123,7 +74093,7 @@ loc_42B54:                              ; CODE XREF: sub_4265B+69E↓j
                 jmp     loc_42CF3
 ; ---------------------------------------------------------------------------
 
-loc_42B6D:                              ; CODE XREF: sub_4265B+50D↑j
+loc_42B6D:                              ; CODE XREF: showOverheadMap+50D↑j
                 mov     ax, 7777h
                 push    ax
                 mov     al, Party_y
@@ -74134,14 +74104,14 @@ loc_42B6D:                              ; CODE XREF: sub_4265B+50D↑j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jnz     short loc_42B93
                 jmp     loc_42CF3
 ; ---------------------------------------------------------------------------
 
-loc_42B93:                              ; CODE XREF: sub_4265B+533↑j
+loc_42B93:                              ; CODE XREF: showOverheadMap+533↑j
                 mov     [bp+var_A], 0FFFFh
                 mov     ax, 7000h
                 push    ax
@@ -74153,7 +74123,7 @@ loc_42B93:                              ; CODE XREF: sub_4265B+533↑j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 mov     cl, 0Ch
                 sar     ax, cl
@@ -74165,42 +74135,42 @@ loc_42B93:                              ; CODE XREF: sub_4265B+533↑j
                 jmp     cs:jpt_42BC4[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_42BC9:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BC9:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 2   ; jumptable 00042BC4 cases 1,3
                 jmp     short def_42BC4 ; jumptable 00042BC4 default case
 ; ---------------------------------------------------------------------------
 
-loc_42BD0:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BD0:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 0Ch ; jumptable 00042BC4 case 4
                 jmp     short def_42BC4 ; jumptable 00042BC4 default case
 ; ---------------------------------------------------------------------------
 
-loc_42BD7:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BD7:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 0Ah ; jumptable 00042BC4 case 5
                 jmp     short def_42BC4 ; jumptable 00042BC4 default case
 ; ---------------------------------------------------------------------------
 
-loc_42BDE:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BDE:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 6   ; jumptable 00042BC4 case 2
                 jmp     short def_42BC4 ; jumptable 00042BC4 default case
 ; ---------------------------------------------------------------------------
 
-loc_42BE5:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BE5:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 8   ; jumptable 00042BC4 case 6
                 jmp     short def_42BC4 ; jumptable 00042BC4 default case
 ; ---------------------------------------------------------------------------
 
-loc_42BEC:                              ; CODE XREF: sub_4265B+569↑j
+loc_42BEC:                              ; CODE XREF: showOverheadMap+569↑j
                                         ; DATA XREF: ovl06:jpt_42BC4↓o
                 mov     [bp+var_A], 4   ; jumptable 00042BC4 case 7
 
-def_42BC4:                              ; CODE XREF: sub_4265B+565↑j
-                                        ; sub_4265B+573↑j ...
+def_42BC4:                              ; CODE XREF: showOverheadMap+565↑j
+                                        ; showOverheadMap+573↑j ...
                 cmp     [bp+var_A], 0FFFFh ; jumptable 00042BC4 default case
                 jz      short loc_42C45
                 mov     ax, si
@@ -74227,18 +74197,18 @@ def_42BC4:                              ; CODE XREF: sub_4265B+565↑j
                 jmp     short loc_42C3E
 ; ---------------------------------------------------------------------------
 
-loc_42C31:                              ; CODE XREF: sub_4265B+5CA↑j
+loc_42C31:                              ; CODE XREF: showOverheadMap+5CA↑j
                 mov     ax, [bp+var_A]
                 sar     ax, 1
                 add     ax, 11h
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
 
-loc_42C3E:                              ; CODE XREF: sub_4265B+5D4↑j
+loc_42C3E:                              ; CODE XREF: showOverheadMap+5D4↑j
                 mov     [bx-2992h], ax
                 inc     word ptr [bp+format]
 
-loc_42C45:                              ; CODE XREF: sub_4265B+59A↑j
+loc_42C45:                              ; CODE XREF: showOverheadMap+59A↑j
                 mov     [bp+var_A], 0FFFFh
                 mov     ax, 7
                 push    ax
@@ -74250,7 +74220,7 @@ loc_42C45:                              ; CODE XREF: sub_4265B+59A↑j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 dec     ax              ; switch 7 cases
                 mov     bx, ax
@@ -74260,42 +74230,42 @@ loc_42C45:                              ; CODE XREF: sub_4265B+59A↑j
                 jmp     cs:jpt_42C72[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_42C77:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C77:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 3   ; jumptable 00042C72 cases 1,3
                 jmp     short def_42C72 ; jumptable 00042C72 default case
 ; ---------------------------------------------------------------------------
 
-loc_42C7E:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C7E:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 0Dh ; jumptable 00042C72 case 4
                 jmp     short def_42C72 ; jumptable 00042C72 default case
 ; ---------------------------------------------------------------------------
 
-loc_42C85:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C85:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 0Bh ; jumptable 00042C72 case 5
                 jmp     short def_42C72 ; jumptable 00042C72 default case
 ; ---------------------------------------------------------------------------
 
-loc_42C8C:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C8C:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 7   ; jumptable 00042C72 case 2
                 jmp     short def_42C72 ; jumptable 00042C72 default case
 ; ---------------------------------------------------------------------------
 
-loc_42C93:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C93:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 9   ; jumptable 00042C72 case 6
                 jmp     short def_42C72 ; jumptable 00042C72 default case
 ; ---------------------------------------------------------------------------
 
-loc_42C9A:                              ; CODE XREF: sub_4265B+617↑j
+loc_42C9A:                              ; CODE XREF: showOverheadMap+617↑j
                                         ; DATA XREF: ovl06:jpt_42C72↓o
                 mov     [bp+var_A], 5   ; jumptable 00042C72 case 7
 
-def_42C72:                              ; CODE XREF: sub_4265B+613↑j
-                                        ; sub_4265B+621↑j ...
+def_42C72:                              ; CODE XREF: showOverheadMap+613↑j
+                                        ; showOverheadMap+621↑j ...
                 cmp     [bp+var_A], 0FFFFh ; jumptable 00042C72 default case
                 jz      short loc_42CF3
                 mov     ax, si
@@ -74322,37 +74292,37 @@ def_42C72:                              ; CODE XREF: sub_4265B+613↑j
                 jmp     short loc_42CEC
 ; ---------------------------------------------------------------------------
 
-loc_42CDF:                              ; CODE XREF: sub_4265B+678↑j
+loc_42CDF:                              ; CODE XREF: showOverheadMap+678↑j
                 mov     ax, [bp+var_A]
                 sar     ax, 1
                 add     ax, 17h
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
 
-loc_42CEC:                              ; CODE XREF: sub_4265B+682↑j
+loc_42CEC:                              ; CODE XREF: showOverheadMap+682↑j
                 mov     [bx-2992h], ax
                 inc     word ptr [bp+format]
 
-loc_42CF3:                              ; CODE XREF: sub_4265B+50F↑j
-                                        ; sub_4265B+535↑j ...
+loc_42CF3:                              ; CODE XREF: showOverheadMap+50F↑j
+                                        ; showOverheadMap+535↑j ...
                 inc     si
 
-loc_42CF4:                              ; CODE XREF: sub_4265B+4F6↑j
+loc_42CF4:                              ; CODE XREF: showOverheadMap+4F6↑j
                 cmp     si, 10h
                 jge     short loc_42CFC
                 jmp     loc_42B54
 ; ---------------------------------------------------------------------------
 
-loc_42CFC:                              ; CODE XREF: sub_4265B+69C↑j
+loc_42CFC:                              ; CODE XREF: showOverheadMap+69C↑j
                 inc     di
 
-loc_42CFD:                              ; CODE XREF: sub_4265B+4E7↑j
+loc_42CFD:                              ; CODE XREF: showOverheadMap+4E7↑j
                 cmp     di, 10h
                 jge     short loc_42D05
                 jmp     loc_42B45
 ; ---------------------------------------------------------------------------
 
-loc_42D05:                              ; CODE XREF: sub_4265B+6A5↑j
+loc_42D05:                              ; CODE XREF: showOverheadMap+6A5↑j
                 mov     al, byte ptr [bp+format+2]
                 cbw
                 mov     [bp+var_8], ax
@@ -74360,7 +74330,7 @@ loc_42D05:                              ; CODE XREF: sub_4265B+6A5↑j
                 jmp     loc_42D98
 ; ---------------------------------------------------------------------------
 
-loc_42D11:                              ; CODE XREF: sub_4265B+742↓j
+loc_42D11:                              ; CODE XREF: showOverheadMap+742↓j
                 dec     [bp+var_8]
                 mov     al, byte ptr [bp+format+3]
                 cbw
@@ -74369,7 +74339,7 @@ loc_42D11:                              ; CODE XREF: sub_4265B+742↓j
                 jmp     short loc_42D92
 ; ---------------------------------------------------------------------------
 
-loc_42D1F:                              ; CODE XREF: sub_4265B+73A↓j
+loc_42D1F:                              ; CODE XREF: showOverheadMap+73A↓j
                 inc     [bp+var_6]
                 mov     bx, si
                 mov     cl, 4
@@ -74389,12 +74359,12 @@ loc_42D1F:                              ; CODE XREF: sub_4265B+73A↓j
                 mov     ah, 0
                 add     ax, [bp+var_6]
                 push    ax
-                call    sub_1BB33
+                call    mazeGetWordWrap
                 add     sp, 6
                 cmp     ax, 1111h
                 jnz     short loc_42D91
 
-loc_42D58:                              ; CODE XREF: sub_4265B+6D8↑j
+loc_42D58:                              ; CODE XREF: showOverheadMap+6D8↑j
                 mov     ax, si
                 mov     dx, 0Ah
                 imul    dx
@@ -74416,21 +74386,21 @@ loc_42D58:                              ; CODE XREF: sub_4265B+6D8↑j
                 mov     word ptr [bx-2992h], 1
                 inc     word ptr [bp+format]
 
-loc_42D91:                              ; CODE XREF: sub_4265B+6FB↑j
+loc_42D91:                              ; CODE XREF: showOverheadMap+6FB↑j
                 inc     si
 
-loc_42D92:                              ; CODE XREF: sub_4265B+6C2↑j
+loc_42D92:                              ; CODE XREF: showOverheadMap+6C2↑j
                 cmp     si, 10h
                 jl      short loc_42D1F
                 inc     di
 
-loc_42D98:                              ; CODE XREF: sub_4265B+6B3↑j
+loc_42D98:                              ; CODE XREF: showOverheadMap+6B3↑j
                 cmp     di, 10h
                 jge     short loc_42DA0
                 jmp     loc_42D11
 ; ---------------------------------------------------------------------------
 
-loc_42DA0:                              ; CODE XREF: sub_4265B+740↑j
+loc_42DA0:                              ; CODE XREF: showOverheadMap+740↑j
                 cmp     byte ptr [bp+format+3], 0F8h
                 jz      short loc_42DBD
                 mov     al, Party_x
@@ -74445,12 +74415,12 @@ loc_42DA0:                              ; CODE XREF: sub_4265B+740↑j
                 jmp     short loc_42DC8
 ; ---------------------------------------------------------------------------
 
-loc_42DBD:                              ; CODE XREF: sub_4265B+749↑j
+loc_42DBD:                              ; CODE XREF: showOverheadMap+749↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 46h ; 'F'
 
-loc_42DC8:                              ; CODE XREF: sub_4265B+760↑j
+loc_42DC8:                              ; CODE XREF: showOverheadMap+760↑j
                 inc     word ptr [bp+format]
                 cmp     byte ptr [bp+format+2], 8
                 jz      short loc_42DF2
@@ -74469,12 +74439,12 @@ loc_42DC8:                              ; CODE XREF: sub_4265B+760↑j
                 jmp     short loc_42DFD
 ; ---------------------------------------------------------------------------
 
-loc_42DF2:                              ; CODE XREF: sub_4265B+774↑j
+loc_42DF2:                              ; CODE XREF: showOverheadMap+774↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     word ptr [bx-2992h], 42h ; 'B'
 
-loc_42DFD:                              ; CODE XREF: sub_4265B+795↑j
+loc_42DFD:                              ; CODE XREF: showOverheadMap+795↑j
                 add     word ptr [bp+format], 2
                 mov     ax, 6
                 push    ax
@@ -74488,12 +74458,12 @@ loc_42DFD:                              ; CODE XREF: sub_4265B+795↑j
                 jmp     loc_42A76
 ; ---------------------------------------------------------------------------
 
-loc_42E1A:                              ; CODE XREF: sub_4265B:loc_42A79↑j
-                                        ; sub_4265B+7B2↑j
+loc_42E1A:                              ; CODE XREF: showOverheadMap:loc_42A79↑j
+                                        ; showOverheadMap+7B2↑j
                 mov     ax, 1Eh
 
-loc_42E1D:                              ; CODE XREF: sub_4265B:loc_42A76↑j
-                                        ; sub_4265B+421↑j
+loc_42E1D:                              ; CODE XREF: showOverheadMap:loc_42A76↑j
+                                        ; showOverheadMap+421↑j
                 mov     bx, word ptr [bp+format]
                 shl     bx, 1
                 mov     [bx-2992h], ax
@@ -74538,17 +74508,17 @@ loc_42E1D:                              ; CODE XREF: sub_4265B:loc_42A76↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4265B       endp
+showOverheadMap endp
 
 ; ---------------------------------------------------------------------------
-jpt_42C72       dw offset loc_42C77     ; DATA XREF: sub_4265B+617↑r
+jpt_42C72       dw offset loc_42C77     ; DATA XREF: showOverheadMap+617↑r
                 dw offset loc_42C8C     ; jump table for switch statement
                 dw offset loc_42C77
                 dw offset loc_42C7E
                 dw offset loc_42C85
                 dw offset loc_42C93
                 dw offset loc_42C9A
-jpt_42BC4       dw offset loc_42BC9     ; DATA XREF: sub_4265B+569↑r
+jpt_42BC4       dw offset loc_42BC9     ; DATA XREF: showOverheadMap+569↑r
                 dw offset loc_42BDE     ; jump table for switch statement
                 dw offset loc_42BC9
                 dw offset loc_42BD0
@@ -77442,10 +77412,11 @@ sub_442EB       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; random item generator (level 1-6, buffer, slot): rolls d100 twice to choose the item id range (written to slot id byte +DCh), then 1-3 enchantment levels (95% one, 4% two, 1% three) for metal/element/attribute/spell; used by resetBlacksmithWares (via stub sub_2826C) and treasure
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_4432C(char, __int32, int)
-sub_4432C       proc far                ; CODE XREF: sub_2826C↑J
+; int __cdecl __far generateItem(char, __int32, int)
+generateItem    proc far                ; CODE XREF: j_generateItem↑J
 
 var_16          = word ptr -16h
 var_14          = word ptr -14h
@@ -77480,7 +77451,7 @@ arg_6           = word ptr  0Ch
                 jnz     short loc_44358
                 mov     [bp+arg_0], 1
 
-loc_44358:                              ; CODE XREF: sub_4432C+26↑j
+loc_44358:                              ; CODE XREF: generateItem+26↑j
                 mov     ax, 6
                 push    ax              ; c
                 xor     ax, ax
@@ -77523,7 +77494,7 @@ loc_44358:                              ; CODE XREF: sub_4432C+26↑j
                 jmp     loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_443B8:                              ; CODE XREF: sub_4432C+80↑j
+loc_443B8:                              ; CODE XREF: generateItem+80↑j
                 cmp     [bp+var_A], 3Ch ; '<'
                 jg      short loc_443C8
                 mov     ax, 11h
@@ -77532,7 +77503,7 @@ loc_443B8:                              ; CODE XREF: sub_4432C+80↑j
                 jmp     loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_443C8:                              ; CODE XREF: sub_4432C+90↑j
+loc_443C8:                              ; CODE XREF: generateItem+90↑j
                 cmp     [bp+var_A], 55h ; 'U'
                 jg      short loc_443D8
                 mov     ax, 1Dh
@@ -77541,14 +77512,14 @@ loc_443C8:                              ; CODE XREF: sub_4432C+90↑j
                 jmp     loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_443D8:                              ; CODE XREF: sub_4432C+A0↑j
+loc_443D8:                              ; CODE XREF: generateItem+A0↑j
                 mov     ax, 21h ; '!'
                 push    ax
                 mov     ax, 1Eh
                 jmp     loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_443E2:                              ; CODE XREF: sub_4432C+7A↑j
+loc_443E2:                              ; CODE XREF: generateItem+7A↑j
                 cmp     [bp+var_8], 3Ch ; '<'
                 jg      short loc_44400
                 cmp     [bp+var_A], 46h ; 'F'
@@ -77559,12 +77530,12 @@ loc_443E2:                              ; CODE XREF: sub_4432C+7A↑j
                 jmp     loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_443F8:                              ; CODE XREF: sub_4432C+C0↑j
+loc_443F8:                              ; CODE XREF: generateItem+C0↑j
                 mov     [bp+var_4], 2Ah ; '*'
                 jmp     loc_44482
 ; ---------------------------------------------------------------------------
 
-loc_44400:                              ; CODE XREF: sub_4432C+BA↑j
+loc_44400:                              ; CODE XREF: generateItem+BA↑j
                 cmp     [bp+var_A], 0Ah
                 jg      short loc_4440F
                 mov     ax, 2Dh ; '-'
@@ -77573,28 +77544,28 @@ loc_44400:                              ; CODE XREF: sub_4432C+BA↑j
                 jmp     short loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_4440F:                              ; CODE XREF: sub_4432C+D8↑j
+loc_4440F:                              ; CODE XREF: generateItem+D8↑j
                 cmp     [bp+var_A], 14h
                 jg      short loc_4441C
                 mov     [bp+var_4], 2Eh ; '.'
                 jmp     short loc_44482
 ; ---------------------------------------------------------------------------
 
-loc_4441C:                              ; CODE XREF: sub_4432C+E7↑j
+loc_4441C:                              ; CODE XREF: generateItem+E7↑j
                 cmp     [bp+var_A], 23h ; '#'
                 jg      short loc_44429
                 mov     [bp+var_4], 2Fh ; '/'
                 jmp     short loc_44482
 ; ---------------------------------------------------------------------------
 
-loc_44429:                              ; CODE XREF: sub_4432C+F4↑j
+loc_44429:                              ; CODE XREF: generateItem+F4↑j
                 cmp     [bp+var_A], 2Dh ; '-'
                 jg      short loc_44436
                 mov     [bp+var_4], 30h ; '0'
                 jmp     short loc_44482
 ; ---------------------------------------------------------------------------
 
-loc_44436:                              ; CODE XREF: sub_4432C+101↑j
+loc_44436:                              ; CODE XREF: generateItem+101↑j
                 cmp     [bp+var_A], 37h ; '7'
                 jg      short loc_44445
                 mov     ax, 33h ; '3'
@@ -77603,14 +77574,14 @@ loc_44436:                              ; CODE XREF: sub_4432C+101↑j
                 jmp     short loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_44445:                              ; CODE XREF: sub_4432C+10E↑j
+loc_44445:                              ; CODE XREF: generateItem+10E↑j
                 cmp     [bp+var_A], 41h ; 'A'
                 jg      short loc_44452
                 mov     [bp+var_4], 34h ; '4'
                 jmp     short loc_44482
 ; ---------------------------------------------------------------------------
 
-loc_44452:                              ; CODE XREF: sub_4432C+11D↑j
+loc_44452:                              ; CODE XREF: generateItem+11D↑j
                 cmp     [bp+var_A], 4Bh ; 'K'
                 jg      short loc_44461
                 mov     ax, 39h ; '9'
@@ -77619,7 +77590,7 @@ loc_44452:                              ; CODE XREF: sub_4432C+11D↑j
                 jmp     short loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_44461:                              ; CODE XREF: sub_4432C+12A↑j
+loc_44461:                              ; CODE XREF: generateItem+12A↑j
                 cmp     [bp+var_A], 50h ; 'P'
                 jg      short loc_44470
                 mov     ax, 3Ch ; '<'
@@ -77628,21 +77599,21 @@ loc_44461:                              ; CODE XREF: sub_4432C+12A↑j
                 jmp     short loc_44477
 ; ---------------------------------------------------------------------------
 
-loc_44470:                              ; CODE XREF: sub_4432C+139↑j
+loc_44470:                              ; CODE XREF: generateItem+139↑j
                 mov     ax, 45h ; 'E'
                 push    ax
                 mov     ax, 3Dh ; '='
 
-loc_44477:                              ; CODE XREF: sub_4432C+89↑j
-                                        ; sub_4432C+99↑j ...
+loc_44477:                              ; CODE XREF: generateItem+89↑j
+                                        ; generateItem+99↑j ...
                 push    ax
                 call    rnd
                 pop     cx
                 pop     cx
                 mov     [bp+var_4], ax
 
-loc_44482:                              ; CODE XREF: sub_4432C+D1↑j
-                                        ; sub_4432C+EE↑j ...
+loc_44482:                              ; CODE XREF: generateItem+D1↑j
+                                        ; generateItem+EE↑j ...
                 les     bx, [bp+arg_2]
                 mov     al, byte ptr [bp+var_4]
                 mov     es:[bx+di+0DCh], al
@@ -77664,7 +77635,7 @@ loc_44482:                              ; CODE XREF: sub_4432C+D1↑j
                 jmp     loc_445CC
 ; ---------------------------------------------------------------------------
 
-loc_444B6:                              ; CODE XREF: sub_4432C+165↑j
+loc_444B6:                              ; CODE XREF: generateItem+165↑j
                 mov     ax, 64h ; 'd'
                 push    ax
                 mov     ax, 1
@@ -77679,25 +77650,25 @@ loc_444B6:                              ; CODE XREF: sub_4432C+165↑j
                 jmp     short loc_444E7
 ; ---------------------------------------------------------------------------
 
-loc_444D5:                              ; CODE XREF: sub_4432C+1A0↑j
+loc_444D5:                              ; CODE XREF: generateItem+1A0↑j
                 cmp     [bp+var_2], 63h ; 'c'
                 jg      short loc_444E2
                 mov     [bp+var_2], 2
                 jmp     short loc_444E7
 ; ---------------------------------------------------------------------------
 
-loc_444E2:                              ; CODE XREF: sub_4432C+1AD↑j
+loc_444E2:                              ; CODE XREF: generateItem+1AD↑j
                 mov     [bp+var_2], 3
 
-loc_444E7:                              ; CODE XREF: sub_4432C+1A7↑j
-                                        ; sub_4432C+1B4↑j
+loc_444E7:                              ; CODE XREF: generateItem+1A7↑j
+                                        ; generateItem+1B4↑j
                 mov     ax, [bp+var_2]
                 cmp     ax, 1
                 jnz     short loc_444F2
                 jmp     loc_44577
 ; ---------------------------------------------------------------------------
 
-loc_444F2:                              ; CODE XREF: sub_4432C+1C1↑j
+loc_444F2:                              ; CODE XREF: generateItem+1C1↑j
                 cmp     ax, 2
                 jz      short loc_44525
                 cmp     ax, 3
@@ -77705,7 +77676,7 @@ loc_444F2:                              ; CODE XREF: sub_4432C+1C1↑j
                 jmp     loc_445CC
 ; ---------------------------------------------------------------------------
 
-loc_444FF:                              ; CODE XREF: sub_4432C+1CE↑j
+loc_444FF:                              ; CODE XREF: generateItem+1CE↑j
                 mov     ax, 4
                 push    ax
                 mov     ax, 1
@@ -77725,7 +77696,7 @@ loc_444FF:                              ; CODE XREF: sub_4432C+1CE↑j
                 pop     cx
                 mov     [bp+var_12], ax
 
-loc_44525:                              ; CODE XREF: sub_4432C+1C9↑j
+loc_44525:                              ; CODE XREF: generateItem+1C9↑j
                 mov     al, [bp+arg_0]
                 mov     ah, 0
                 dec     ax
@@ -77737,7 +77708,7 @@ loc_44525:                              ; CODE XREF: sub_4432C+1C9↑j
                 pop     cx
                 mov     [bp+var_14], ax
 
-loc_44539:                              ; CODE XREF: sub_4432C+222↓j
+loc_44539:                              ; CODE XREF: generateItem+222↓j
                 mov     ax, 4
                 push    ax
                 mov     ax, 1
@@ -77753,8 +77724,8 @@ loc_44539:                              ; CODE XREF: sub_4432C+222↓j
                 dec     ax
                 mov     [bp+var_16], ax
 
-loc_44559:                              ; CODE XREF: sub_4432C+242↓j
-                                        ; sub_4432C+249↓j
+loc_44559:                              ; CODE XREF: generateItem+242↓j
+                                        ; generateItem+249↓j
                 mov     ax, 4
                 push    ax
                 mov     ax, 1
@@ -77770,7 +77741,7 @@ loc_44559:                              ; CODE XREF: sub_4432C+242↓j
                 jmp     short loc_44559
 ; ---------------------------------------------------------------------------
 
-loc_44577:                              ; CODE XREF: sub_4432C+1C3↑j
+loc_44577:                              ; CODE XREF: generateItem+1C3↑j
                 mov     ax, 64h ; 'd'
                 push    ax
                 mov     ax, 1
@@ -77790,39 +77761,39 @@ loc_44577:                              ; CODE XREF: sub_4432C+1C3↑j
                 jmp     short loc_445C7
 ; ---------------------------------------------------------------------------
 
-loc_445A0:                              ; CODE XREF: sub_4432C+26A↑j
-                                        ; sub_4432C+270↑j
+loc_445A0:                              ; CODE XREF: generateItem+26A↑j
+                                        ; generateItem+270↑j
                 cmp     [bp+var_8], 5Dh ; ']'
                 jg      short loc_445AD
                 mov     [bp+s], 3
                 jmp     short loc_445CC
 ; ---------------------------------------------------------------------------
 
-loc_445AD:                              ; CODE XREF: sub_4432C+278↑j
+loc_445AD:                              ; CODE XREF: generateItem+278↑j
                 cmp     [bp+var_8], 60h ; '`'
                 jg      short loc_445BA
                 mov     [bp+s], 1
                 jmp     short loc_445CC
 ; ---------------------------------------------------------------------------
 
-loc_445BA:                              ; CODE XREF: sub_4432C+285↑j
+loc_445BA:                              ; CODE XREF: generateItem+285↑j
                 cmp     [bp+var_8], 63h ; 'c'
                 jg      short loc_445C7
                 mov     [bp+s], 2
                 jmp     short loc_445CC
 ; ---------------------------------------------------------------------------
 
-loc_445C7:                              ; CODE XREF: sub_4432C+272↑j
-                                        ; sub_4432C+292↑j
+loc_445C7:                              ; CODE XREF: generateItem+272↑j
+                                        ; generateItem+292↑j
                 mov     [bp+s], 4
 
-loc_445CC:                              ; CODE XREF: sub_4432C+187↑j
-                                        ; sub_4432C+1D0↑j ...
+loc_445CC:                              ; CODE XREF: generateItem+187↑j
+                                        ; generateItem+1D0↑j ...
                 mov     [bp+var_6], 0
                 jmp     loc_4482A
 ; ---------------------------------------------------------------------------
 
-loc_445D4:                              ; CODE XREF: sub_4432C+506↓j
+loc_445D4:                              ; CODE XREF: generateItem+506↓j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 lea     ax, [bp+s]
@@ -77834,12 +77805,12 @@ loc_445D4:                              ; CODE XREF: sub_4432C+506↓j
                 jmp     def_445EB       ; jumptable 000445EB default case
 ; ---------------------------------------------------------------------------
 
-loc_445E9:                              ; CODE XREF: sub_4432C+2B8↑j
+loc_445E9:                              ; CODE XREF: generateItem+2B8↑j
                 shl     bx, 1
                 jmp     cs:jpt_445EB[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_445F0:                              ; CODE XREF: sub_4432C+2BF↑j
+loc_445F0:                              ; CODE XREF: generateItem+2BF↑j
                                         ; DATA XREF: ovl07:jpt_445EB↓o
                 mov     ax, 64h ; 'd'   ; jumptable 000445EB case 1
                 push    ax
@@ -77855,39 +77826,39 @@ loc_445F0:                              ; CODE XREF: sub_4432C+2BF↑j
                 jmp     short loc_44635
 ; ---------------------------------------------------------------------------
 
-loc_4460A:                              ; CODE XREF: sub_4432C+2D8↑j
+loc_4460A:                              ; CODE XREF: generateItem+2D8↑j
                 cmp     si, 2Dh ; '-'
                 jg      short loc_44614
                 mov     si, 1
                 jmp     short loc_44635
 ; ---------------------------------------------------------------------------
 
-loc_44614:                              ; CODE XREF: sub_4432C+2E1↑j
+loc_44614:                              ; CODE XREF: generateItem+2E1↑j
                 cmp     si, 3Ch ; '<'
                 jg      short loc_4461E
                 mov     si, 2
                 jmp     short loc_44635
 ; ---------------------------------------------------------------------------
 
-loc_4461E:                              ; CODE XREF: sub_4432C+2EB↑j
+loc_4461E:                              ; CODE XREF: generateItem+2EB↑j
                 cmp     si, 4Bh ; 'K'
                 jg      short loc_44628
                 mov     si, 3
                 jmp     short loc_44635
 ; ---------------------------------------------------------------------------
 
-loc_44628:                              ; CODE XREF: sub_4432C+2F5↑j
+loc_44628:                              ; CODE XREF: generateItem+2F5↑j
                 cmp     si, 5Fh ; '_'
                 jg      short loc_44632
                 mov     si, 4
                 jmp     short loc_44635
 ; ---------------------------------------------------------------------------
 
-loc_44632:                              ; CODE XREF: sub_4432C+2FF↑j
+loc_44632:                              ; CODE XREF: generateItem+2FF↑j
                 mov     si, 5
 
-loc_44635:                              ; CODE XREF: sub_4432C+2DC↑j
-                                        ; sub_4432C+2E6↑j ...
+loc_44635:                              ; CODE XREF: generateItem+2DC↑j
+                                        ; generateItem+2E6↑j ...
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 lea     ax, [bp+var_16]
@@ -77930,7 +77901,7 @@ loc_44635:                              ; CODE XREF: sub_4432C+2DC↑j
                 jmp     def_445EB       ; jumptable 000445EB default case
 ; ---------------------------------------------------------------------------
 
-loc_44694:                              ; CODE XREF: sub_4432C+2BF↑j
+loc_44694:                              ; CODE XREF: generateItem+2BF↑j
                                         ; DATA XREF: ovl07:jpt_445EB↓o
                 mov     ax, 64h ; 'd'   ; jumptable 000445EB case 2
                 push    ax
@@ -77946,67 +77917,67 @@ loc_44694:                              ; CODE XREF: sub_4432C+2BF↑j
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446AE:                              ; CODE XREF: sub_4432C+37C↑j
+loc_446AE:                              ; CODE XREF: generateItem+37C↑j
                 cmp     si, 19h
                 jg      short loc_446B8
                 mov     si, 1
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446B8:                              ; CODE XREF: sub_4432C+385↑j
+loc_446B8:                              ; CODE XREF: generateItem+385↑j
                 cmp     si, 23h ; '#'
                 jg      short loc_446C2
                 mov     si, 2
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446C2:                              ; CODE XREF: sub_4432C+38F↑j
+loc_446C2:                              ; CODE XREF: generateItem+38F↑j
                 cmp     si, 32h ; '2'
                 jg      short loc_446CC
                 mov     si, 3
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446CC:                              ; CODE XREF: sub_4432C+399↑j
+loc_446CC:                              ; CODE XREF: generateItem+399↑j
                 cmp     si, 41h ; 'A'
                 jg      short loc_446D6
                 mov     si, 4
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446D6:                              ; CODE XREF: sub_4432C+3A3↑j
+loc_446D6:                              ; CODE XREF: generateItem+3A3↑j
                 cmp     si, 50h ; 'P'
                 jg      short loc_446E0
                 mov     si, 5
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446E0:                              ; CODE XREF: sub_4432C+3AD↑j
+loc_446E0:                              ; CODE XREF: generateItem+3AD↑j
                 cmp     si, 55h ; 'U'
                 jg      short loc_446EA
                 mov     si, 6
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446EA:                              ; CODE XREF: sub_4432C+3B7↑j
+loc_446EA:                              ; CODE XREF: generateItem+3B7↑j
                 cmp     si, 5Ah ; 'Z'
                 jg      short loc_446F4
                 mov     si, 7
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446F4:                              ; CODE XREF: sub_4432C+3C1↑j
+loc_446F4:                              ; CODE XREF: generateItem+3C1↑j
                 cmp     si, 5Fh ; '_'
                 jg      short loc_446FE
                 mov     si, 8
                 jmp     short loc_44701
 ; ---------------------------------------------------------------------------
 
-loc_446FE:                              ; CODE XREF: sub_4432C+3CB↑j
+loc_446FE:                              ; CODE XREF: generateItem+3CB↑j
                 mov     si, 9
 
-loc_44701:                              ; CODE XREF: sub_4432C+380↑j
-                                        ; sub_4432C+38A↑j ...
+loc_44701:                              ; CODE XREF: generateItem+380↑j
+                                        ; generateItem+38A↑j ...
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 lea     ax, [bp+var_16]
@@ -78049,7 +78020,7 @@ loc_44701:                              ; CODE XREF: sub_4432C+380↑j
                 jmp     def_445EB       ; jumptable 000445EB default case
 ; ---------------------------------------------------------------------------
 
-loc_44760:                              ; CODE XREF: sub_4432C+2BF↑j
+loc_44760:                              ; CODE XREF: generateItem+2BF↑j
                                         ; DATA XREF: ovl07:jpt_445EB↓o
                 mov     ax, 64h ; 'd'   ; jumptable 000445EB case 3
                 push    ax
@@ -78064,18 +78035,18 @@ loc_44760:                              ; CODE XREF: sub_4432C+2BF↑j
                 jmp     short loc_44782
 ; ---------------------------------------------------------------------------
 
-loc_44779:                              ; CODE XREF: sub_4432C+449↑j
+loc_44779:                              ; CODE XREF: generateItem+449↑j
                 cmp     si, 46h ; 'F'
                 jg      short loc_44782
                 xor     si, si
                 jmp     short loc_44785
 ; ---------------------------------------------------------------------------
 
-loc_44782:                              ; CODE XREF: sub_4432C+44B↑j
-                                        ; sub_4432C+450↑j
+loc_44782:                              ; CODE XREF: generateItem+44B↑j
+                                        ; generateItem+450↑j
                 mov     si, 1
 
-loc_44785:                              ; CODE XREF: sub_4432C+454↑j
+loc_44785:                              ; CODE XREF: generateItem+454↑j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 lea     ax, [bp+var_16]
@@ -78118,7 +78089,7 @@ loc_44785:                              ; CODE XREF: sub_4432C+454↑j
                 jmp     short def_445EB ; jumptable 000445EB default case
 ; ---------------------------------------------------------------------------
 
-loc_447E3:                              ; CODE XREF: sub_4432C+2BF↑j
+loc_447E3:                              ; CODE XREF: generateItem+2BF↑j
                                         ; DATA XREF: ovl07:jpt_445EB↓o
                 mov     al, [bp+arg_0]  ; jumptable 000445EB case 4
                 mov     ah, 0
@@ -78148,27 +78119,27 @@ loc_447E3:                              ; CODE XREF: sub_4432C+2BF↑j
                 les     bx, [bp+arg_2]
                 mov     es:[bx+di+90h], al
 
-def_445EB:                              ; CODE XREF: sub_4432C+2BA↑j
-                                        ; sub_4432C+365↑j ...
+def_445EB:                              ; CODE XREF: generateItem+2BA↑j
+                                        ; generateItem+365↑j ...
                 inc     [bp+var_6]      ; jumptable 000445EB default case
 
-loc_4482A:                              ; CODE XREF: sub_4432C+2A5↑j
+loc_4482A:                              ; CODE XREF: generateItem+2A5↑j
                 mov     ax, [bp+var_6]
                 cmp     ax, [bp+var_2]
                 jge     short loc_44835
                 jmp     loc_445D4
 ; ---------------------------------------------------------------------------
 
-loc_44835:                              ; CODE XREF: sub_4432C+504↑j
+loc_44835:                              ; CODE XREF: generateItem+504↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4432C       endp
+generateItem    endp
 
 ; ---------------------------------------------------------------------------
-jpt_445EB       dw offset loc_445F0     ; DATA XREF: sub_4432C+2BF↑r
+jpt_445EB       dw offset loc_445F0     ; DATA XREF: generateItem+2BF↑r
                 dw offset loc_44694     ; jump table for switch statement
                 dw offset loc_44760
                 dw offset loc_447E3
@@ -78929,9 +78900,10 @@ sub_44CC6       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; save slot picker (uses readSaveHeader, getCommand); returns slot or FFFFh; called from loadSaveDialog/controlPanel via stub sub_2825D
 ; Attributes: bp-based frame
 
-sub_44DBE       proc far                ; CODE XREF: sub_2825D↑J
+pickSaveSlot    proc far                ; CODE XREF: j_pickSaveSlot↑J
                                         ; ovl07:20F2↓p
 
 var_2B2         = byte ptr -2B2h
@@ -79030,7 +79002,7 @@ var_2           = word ptr -2
                 jmp     short loc_44EA4
 ; ---------------------------------------------------------------------------
 
-loc_44E64:                              ; CODE XREF: sub_44DBE+EC↓j
+loc_44E64:                              ; CODE XREF: pickSaveSlot+EC↓j
                 lea     ax, [bp+var_1C]
                 mov     dx, di
                 add     dx, ax
@@ -79059,14 +79031,14 @@ loc_44E64:                              ; CODE XREF: sub_44DBE+EC↓j
                 add     sp, 6
                 inc     di
 
-loc_44EA4:                              ; CODE XREF: sub_44DBE+A4↑j
+loc_44EA4:                              ; CODE XREF: pickSaveSlot+A4↑j
                 mov     al, byte_29115
                 cbw
                 cmp     ax, di
                 jg      short loc_44E64
 
-loc_44EAC:                              ; CODE XREF: sub_44DBE+405↓j
-                                        ; sub_44DBE+40A↓j ...
+loc_44EAC:                              ; CODE XREF: pickSaveSlot+405↓j
+                                        ; pickSaveSlot+40A↓j ...
                 cmp     [bp+var_2], 0
                 jl      short loc_44EBF
                 mov     ax, [bp+var_2]
@@ -79076,10 +79048,10 @@ loc_44EAC:                              ; CODE XREF: sub_44DBE+405↓j
                 jmp     short loc_44EC2
 ; ---------------------------------------------------------------------------
 
-loc_44EBF:                              ; CODE XREF: sub_44DBE+F2↑j
+loc_44EBF:                              ; CODE XREF: pickSaveSlot+F2↑j
                 mov     ax, 37C4h
 
-loc_44EC2:                              ; CODE XREF: sub_44DBE+FF↑j
+loc_44EC2:                              ; CODE XREF: pickSaveSlot+FF↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79097,10 +79069,10 @@ loc_44EC2:                              ; CODE XREF: sub_44DBE+FF↑j
                 jmp     short loc_44EE8
 ; ---------------------------------------------------------------------------
 
-loc_44EE5:                              ; CODE XREF: sub_44DBE+116↑j
+loc_44EE5:                              ; CODE XREF: pickSaveSlot+116↑j
                 mov     ax, 37C4h
 
-loc_44EE8:                              ; CODE XREF: sub_44DBE+125↑j
+loc_44EE8:                              ; CODE XREF: pickSaveSlot+125↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79127,10 +79099,10 @@ loc_44EE8:                              ; CODE XREF: sub_44DBE+125↑j
                 jmp     short loc_44F21
 ; ---------------------------------------------------------------------------
 
-loc_44F1E:                              ; CODE XREF: sub_44DBE+14F↑j
+loc_44F1E:                              ; CODE XREF: pickSaveSlot+14F↑j
                 mov     ax, 37C4h
 
-loc_44F21:                              ; CODE XREF: sub_44DBE+15E↑j
+loc_44F21:                              ; CODE XREF: pickSaveSlot+15E↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79157,10 +79129,10 @@ loc_44F21:                              ; CODE XREF: sub_44DBE+15E↑j
                 jmp     short loc_44F5A
 ; ---------------------------------------------------------------------------
 
-loc_44F57:                              ; CODE XREF: sub_44DBE+188↑j
+loc_44F57:                              ; CODE XREF: pickSaveSlot+188↑j
                 mov     ax, 37C4h
 
-loc_44F5A:                              ; CODE XREF: sub_44DBE+197↑j
+loc_44F5A:                              ; CODE XREF: pickSaveSlot+197↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79187,10 +79159,10 @@ loc_44F5A:                              ; CODE XREF: sub_44DBE+197↑j
                 jmp     short loc_44F94
 ; ---------------------------------------------------------------------------
 
-loc_44F91:                              ; CODE XREF: sub_44DBE+1C2↑j
+loc_44F91:                              ; CODE XREF: pickSaveSlot+1C2↑j
                 mov     ax, 37C4h
 
-loc_44F94:                              ; CODE XREF: sub_44DBE+1D1↑j
+loc_44F94:                              ; CODE XREF: pickSaveSlot+1D1↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79217,10 +79189,10 @@ loc_44F94:                              ; CODE XREF: sub_44DBE+1D1↑j
                 jmp     short loc_44FCF
 ; ---------------------------------------------------------------------------
 
-loc_44FCC:                              ; CODE XREF: sub_44DBE+1FD↑j
+loc_44FCC:                              ; CODE XREF: pickSaveSlot+1FD↑j
                 mov     ax, 37C4h
 
-loc_44FCF:                              ; CODE XREF: sub_44DBE+20C↑j
+loc_44FCF:                              ; CODE XREF: pickSaveSlot+20C↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79247,10 +79219,10 @@ loc_44FCF:                              ; CODE XREF: sub_44DBE+20C↑j
                 jmp     short loc_4500A
 ; ---------------------------------------------------------------------------
 
-loc_45007:                              ; CODE XREF: sub_44DBE+238↑j
+loc_45007:                              ; CODE XREF: pickSaveSlot+238↑j
                 mov     ax, 37C4h
 
-loc_4500A:                              ; CODE XREF: sub_44DBE+247↑j
+loc_4500A:                              ; CODE XREF: pickSaveSlot+247↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79277,10 +79249,10 @@ loc_4500A:                              ; CODE XREF: sub_44DBE+247↑j
                 jmp     short loc_45045
 ; ---------------------------------------------------------------------------
 
-loc_45042:                              ; CODE XREF: sub_44DBE+273↑j
+loc_45042:                              ; CODE XREF: pickSaveSlot+273↑j
                 mov     ax, 37C4h
 
-loc_45045:                              ; CODE XREF: sub_44DBE+282↑j
+loc_45045:                              ; CODE XREF: pickSaveSlot+282↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79307,10 +79279,10 @@ loc_45045:                              ; CODE XREF: sub_44DBE+282↑j
                 jmp     short loc_45080
 ; ---------------------------------------------------------------------------
 
-loc_4507D:                              ; CODE XREF: sub_44DBE+2AE↑j
+loc_4507D:                              ; CODE XREF: pickSaveSlot+2AE↑j
                 mov     ax, 37C4h
 
-loc_45080:                              ; CODE XREF: sub_44DBE+2BD↑j
+loc_45080:                              ; CODE XREF: pickSaveSlot+2BD↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79337,10 +79309,10 @@ loc_45080:                              ; CODE XREF: sub_44DBE+2BD↑j
                 jmp     short loc_450BB
 ; ---------------------------------------------------------------------------
 
-loc_450B8:                              ; CODE XREF: sub_44DBE+2E9↑j
+loc_450B8:                              ; CODE XREF: pickSaveSlot+2E9↑j
                 mov     ax, 37C4h
 
-loc_450BB:                              ; CODE XREF: sub_44DBE+2F8↑j
+loc_450BB:                              ; CODE XREF: pickSaveSlot+2F8↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79367,10 +79339,10 @@ loc_450BB:                              ; CODE XREF: sub_44DBE+2F8↑j
                 jmp     short loc_450F6
 ; ---------------------------------------------------------------------------
 
-loc_450F3:                              ; CODE XREF: sub_44DBE+324↑j
+loc_450F3:                              ; CODE XREF: pickSaveSlot+324↑j
                 mov     ax, 37C4h
 
-loc_450F6:                              ; CODE XREF: sub_44DBE+333↑j
+loc_450F6:                              ; CODE XREF: pickSaveSlot+333↑j
                 push    ax
                 mov     ax, si
                 mov     dx, 1Fh
@@ -79402,7 +79374,7 @@ loc_450F6:                              ; CODE XREF: sub_44DBE+333↑j
                 jmp     short loc_4517E
 ; ---------------------------------------------------------------------------
 
-loc_45137:                              ; CODE XREF: sub_44DBE+369↑j
+loc_45137:                              ; CODE XREF: pickSaveSlot+369↑j
                 push    ds
                 mov     ax, 0D256h
                 push    ax
@@ -79426,7 +79398,7 @@ loc_45137:                              ; CODE XREF: sub_44DBE+369↑j
                 add     sp, 14h
                 mov     [bp+var_4], 1
 
-loc_45168:                              ; CODE XREF: sub_44DBE+3BE↓j
+loc_45168:                              ; CODE XREF: pickSaveSlot+3BE↓j
                 push    ds
                 mov     ax, 0ACCCh
                 push    ax
@@ -79438,11 +79410,11 @@ loc_45168:                              ; CODE XREF: sub_44DBE+3BE↓j
                 or      ax, ax
                 jnz     short loc_45168
 
-loc_4517E:                              ; CODE XREF: sub_44DBE+377↑j
+loc_4517E:                              ; CODE XREF: pickSaveSlot+377↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_4519D
 
-loc_45184:                              ; CODE XREF: sub_44DBE+3DD↓j
+loc_45184:                              ; CODE XREF: pickSaveSlot+3DD↓j
                 push    ds
                 mov     ax, 0ACCCh
                 push    ax
@@ -79455,15 +79427,15 @@ loc_45184:                              ; CODE XREF: sub_44DBE+3DD↓j
                 or      ax, ax
                 jnz     short loc_45184
 
-loc_4519D:                              ; CODE XREF: sub_44DBE+3C4↑j
-                                        ; sub_44DBE+4FB↓j
+loc_4519D:                              ; CODE XREF: pickSaveSlot+3C4↑j
+                                        ; pickSaveSlot+4FB↓j
                 call    getCommand
                 mov     di, ax
                 mov     [bp+var_1E], di
                 mov     cx, 20h ; ' '
                 mov     bx, 1D44h
 
-loc_451AD:                              ; CODE XREF: sub_44DBE+3F9↓j
+loc_451AD:                              ; CODE XREF: pickSaveSlot+3F9↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_1E]
                 jz      short loc_451BC
@@ -79473,7 +79445,7 @@ loc_451AD:                              ; CODE XREF: sub_44DBE+3F9↓j
                 jmp     loc_452B4
 ; ---------------------------------------------------------------------------
 
-loc_451BC:                              ; CODE XREF: sub_44DBE+3F5↑j
+loc_451BC:                              ; CODE XREF: pickSaveSlot+3F5↑j
                 jmp     word ptr cs:[bx+40h]
 ; ---------------------------------------------------------------------------
                 dec     si
@@ -79481,8 +79453,8 @@ loc_451BC:                              ; CODE XREF: sub_44DBE+3F5↑j
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
 
-loc_451C6:                              ; CODE XREF: sub_44DBE+403↑j
-                                        ; sub_44DBE:loc_451EF↓j ...
+loc_451C6:                              ; CODE XREF: pickSaveSlot+403↑j
+                                        ; pickSaveSlot:loc_451EF↓j ...
                 xor     si, si
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
@@ -79498,7 +79470,7 @@ loc_451C6:                              ; CODE XREF: sub_44DBE+403↑j
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
 
-loc_451DE:                              ; CODE XREF: sub_44DBE+41B↑j
+loc_451DE:                              ; CODE XREF: pickSaveSlot+41B↑j
                 mov     al, byte_29115
                 cbw
                 add     ax, 0FFF6h
@@ -79508,7 +79480,7 @@ loc_451DE:                              ; CODE XREF: sub_44DBE+41B↑j
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
 
-loc_451EF:                              ; CODE XREF: sub_44DBE+42C↑j
+loc_451EF:                              ; CODE XREF: pickSaveSlot+42C↑j
                 jmp     short loc_451C6
 ; ---------------------------------------------------------------------------
                 sub     di, 2Fh ; '/'
@@ -79516,7 +79488,7 @@ loc_451EF:                              ; CODE XREF: sub_44DBE+42C↑j
 ; ---------------------------------------------------------------------------
                 mov     di, 0Bh
 
-loc_451F9:                              ; CODE XREF: sub_44DBE+436↑j
+loc_451F9:                              ; CODE XREF: pickSaveSlot+436↑j
                 dec     di
                 mov     ax, di
                 push    ax
@@ -79528,7 +79500,7 @@ loc_451F9:                              ; CODE XREF: sub_44DBE+436↑j
                 jmp     loc_452B4
 ; ---------------------------------------------------------------------------
 
-loc_45209:                              ; CODE XREF: sub_44DBE+446↑j
+loc_45209:                              ; CODE XREF: pickSaveSlot+446↑j
                 mov     ax, di
                 add     ax, si
                 dec     ax
@@ -79542,7 +79514,7 @@ loc_45209:                              ; CODE XREF: sub_44DBE+446↑j
                 jmp     short loc_4524B
 ; ---------------------------------------------------------------------------
 
-loc_45225:                              ; CODE XREF: sub_44DBE+453↑j
+loc_45225:                              ; CODE XREF: pickSaveSlot+453↑j
                 mov     ax, 0Ah
                 push    ax              ; c
                 xor     ax, ax
@@ -79560,7 +79532,7 @@ loc_45225:                              ; CODE XREF: sub_44DBE+453↑j
                 add     bx, ax
                 mov     byte ptr [bx], 12h
 
-loc_4524B:                              ; CODE XREF: sub_44DBE+465↑j
+loc_4524B:                              ; CODE XREF: pickSaveSlot+465↑j
                 mov     [bp+var_6], 1
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
@@ -79578,8 +79550,8 @@ loc_4524B:                              ; CODE XREF: sub_44DBE+465↑j
 ; ---------------------------------------------------------------------------
                 add     si, 0Ah
 
-loc_4526F:                              ; CODE XREF: sub_44DBE+4A8↑j
-                                        ; sub_44DBE+4AC↑j ...
+loc_4526F:                              ; CODE XREF: pickSaveSlot+4A8↑j
+                                        ; pickSaveSlot+4AC↑j ...
                 push    ds
                 mov     ax, 0ACCCh
                 push    ax
@@ -79601,7 +79573,7 @@ loc_4526F:                              ; CODE XREF: sub_44DBE+4A8↑j
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
 
-loc_45297:                              ; CODE XREF: sub_44DBE+4D4↑j
+loc_45297:                              ; CODE XREF: pickSaveSlot+4D4↑j
                 mov     al, byte_29115
                 cbw
                 add     ax, 0FFF6h
@@ -79611,25 +79583,25 @@ loc_45297:                              ; CODE XREF: sub_44DBE+4D4↑j
                 jmp     loc_44EAC
 ; ---------------------------------------------------------------------------
 
-loc_452A8:                              ; CODE XREF: sub_44DBE+4E5↑j
+loc_452A8:                              ; CODE XREF: pickSaveSlot+4E5↑j
                 jmp     loc_451C6
 ; ---------------------------------------------------------------------------
 
-loc_452AB:                              ; CODE XREF: sub_44DBE+4A3↑j
+loc_452AB:                              ; CODE XREF: pickSaveSlot+4A3↑j
                 cmp     [bp+var_2], 0FFFFh
                 jz      short loc_452B4
 
-loc_452B1:                              ; CODE XREF: sub_44DBE+49A↑j
+loc_452B1:                              ; CODE XREF: pickSaveSlot+49A↑j
                 mov     di, 1Bh
 
-loc_452B4:                              ; CODE XREF: sub_44DBE+3FB↑j
-                                        ; sub_44DBE+448↑j ...
+loc_452B4:                              ; CODE XREF: pickSaveSlot+3FB↑j
+                                        ; pickSaveSlot+448↑j ...
                 cmp     di, 1Bh
                 jz      short loc_452BC
                 jmp     loc_4519D
 ; ---------------------------------------------------------------------------
 
-loc_452BC:                              ; CODE XREF: sub_44DBE+4F9↑j
+loc_452BC:                              ; CODE XREF: pickSaveSlot+4F9↑j
                 mov     ax, 1
                 push    ax
                 call    vdrv_06_closeWindows
@@ -79645,7 +79617,7 @@ loc_452BC:                              ; CODE XREF: sub_44DBE+4F9↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_44DBE       endp
+pickSaveSlot    endp
 
 ; ---------------------------------------------------------------------------
                 db 2 dup(0), 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0
@@ -80079,7 +80051,7 @@ loc_4563C:                              ; CODE XREF: ovl07:2095↑j
 
 loc_45691:                              ; CODE XREF: ovl07:20E8↑j
                 push    cs
-                call    near ptr sub_44DBE
+                call    near ptr pickSaveSlot
                 mov     [bp-2], ax
                 cmp     ax, 0FFFFh
                 jnz     short loc_456A0
@@ -85026,7 +84998,7 @@ arg_8           = word ptr  0Ch
                 mov     si, [bp+arg_8]
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 call    sub_28649
                 mov     ax, 10h
@@ -89301,7 +89273,7 @@ loc_49E4F:                              ; CODE XREF: attack2+2BD↑j
                 mov     bx, dx
                 mov     al, es:[bx]
                 push    ax              ; char
-                call    sub_2826C
+                call    j_generateItem
                 add     sp, 8
                 mov     al, [si+90h]
                 push    ax
@@ -93860,7 +93832,7 @@ loc_4BC48:                              ; CODE XREF: doCombat+421↑j
                 mov     byte_2886E, 1
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 call    sub_27F7C
                 mov     [bp+var_2], 0
@@ -94870,7 +94842,7 @@ Spell_03_FlyingFist proc far            ; CODE XREF: j_Spell_03_FlyingFist↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -94946,7 +94918,7 @@ Spell_05_ElementalArrow proc far        ; CODE XREF: j_Spell_05_ElementalArrow�
                 mov     word_36FAC, 0
                 mov     ax, 0Bh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
 
 loc_4C458:                              ; CODE XREF: Spell_05_ElementalArrow+18↑j
@@ -95088,7 +95060,7 @@ Spell_08_Sparks proc far                ; CODE XREF: j_Spell_08_Sparks↑J
                 pop     cx
                 mov     ax, 5
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95128,7 +95100,7 @@ Spell_09_EnergyBlast proc far           ; CODE XREF: j_Spell_09_EnergyBlast↑J
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95152,7 +95124,7 @@ Spell_10_Sleep  proc far                ; CODE XREF: j_Spell_10_Sleep↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95176,7 +95148,7 @@ Spell_11_Pain   proc far                ; CODE XREF: j_Spell_11_Pain↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95219,7 +95191,7 @@ Spell_13_ToxicCloud proc far            ; CODE XREF: j_Spell_13_ToxicCloud↑J
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95387,7 +95359,7 @@ Spell_16_TurnUndead proc far            ; CODE XREF: j_Spell_16_TurnUndead↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95507,7 +95479,7 @@ Spell_18_AcidStream proc far            ; CODE XREF: j_Spell_18_AcidStream↑J
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -95594,7 +95566,7 @@ Spell_20_Silence proc far               ; CODE XREF: j_Spell_20_Silence↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96107,7 +96079,7 @@ Spell_28_LightningBolt proc far         ; CODE XREF: j_Spell_28_LightningBolt↑
                 pop     cx
                 mov     ax, 3
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96131,7 +96103,7 @@ Spell_29_Immobilize proc far            ; CODE XREF: j_Spell_29_Immobilize↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96226,7 +96198,7 @@ Spell_32_FrostBite proc far             ; CODE XREF: j_Spell_32_FrostBite↑J
                 pop     cx
                 mov     ax, 8
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96542,7 +96514,7 @@ Spell_36_Fireball proc far              ; CODE XREF: j_Spell_36_Fireball↑J
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96824,7 +96796,7 @@ Spell_38_AcidSpray proc far             ; CODE XREF: j_Spell_38_AcidSpray↑J
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -96864,7 +96836,7 @@ Spell_39_ColdRay proc far               ; CODE XREF: j_Spell_39_ColdRay↑J
                 pop     cx
                 mov     ax, 8
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97039,7 +97011,7 @@ Spell_43_FeebleMind proc far            ; CODE XREF: j_Spell_43_FeebleMind↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97063,7 +97035,7 @@ Spell_44_DeadlySwarm proc far           ; CODE XREF: j_Spell_44_DeadlySwarm↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97403,7 +97375,7 @@ Spell_46_FingerOfDeath proc far         ; CODE XREF: j_Spell_46_FingerOfDeath↑
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97473,7 +97445,7 @@ Spell_48_Paralyze proc far              ; CODE XREF: j_Spell_48_Paralyze↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97519,7 +97491,7 @@ Spell_49_DragonBreath proc far          ; CODE XREF: j_Spell_49_DragonBreath↑J
                 mov     al, [bx+4C03h]
                 mov     ah, 0
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
 
 loc_4D606:                              ; CODE XREF: Spell_49_DragonBreath+26↑j
@@ -97592,7 +97564,7 @@ Spell_51_FieryFlail proc far            ; CODE XREF: j_Spell_51_FieryFlail↑J
                 pop     cx
                 mov     ax, 2
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97835,7 +97807,7 @@ Spell_56_FantasticFreeze proc far       ; CODE XREF: j_Spell_56_FantasticFreeze�
                 pop     cx
                 mov     ax, 9
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -97904,7 +97876,7 @@ Spell_58_Disintegrate proc far          ; CODE XREF: j_Spell_58_Disintegrate↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98197,7 +98169,7 @@ Spell_62_DancingSword proc far          ; CODE XREF: j_Spell_62_DancingSword↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98228,7 +98200,7 @@ Spell_63_PrismaticLight proc far        ; CODE XREF: j_Spell_63_PrismaticLight�
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98253,7 +98225,7 @@ Spell_64_MoonRay proc far               ; CODE XREF: j_Spell_64_MoonRay↑J
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 xor     si, si
                 jmp     short loc_4DB1D
@@ -98312,7 +98284,7 @@ Spell_65_MassDistortion proc far        ; CODE XREF: j_Spell_65_MassDistortion�
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98381,7 +98353,7 @@ Spell_67_Incinerate proc far            ; CODE XREF: j_Spell_67_Incinerate↑J
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98420,7 +98392,7 @@ Spell_68_ElementalStorm proc far        ; CODE XREF: j_Spell_68_ElementalStorm�
                 mov     al, [bx+4C03h]
                 mov     ah, 0
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
 
 loc_4DC0E:                              ; CODE XREF: Spell_68_ElementalStorm+18↑j
@@ -98446,7 +98418,7 @@ Spell_69_HolyWord proc far              ; CODE XREF: j_Spell_69_HolyWord↑J
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98555,7 +98527,7 @@ Spell_71_MegaVolts proc far             ; CODE XREF: j_Spell_71_MegaVolts↑J
                 pop     cx
                 mov     ax, 4
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98579,7 +98551,7 @@ Spell_72_Inferno proc far               ; CODE XREF: j_Spell_72_Inferno↑J
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98603,7 +98575,7 @@ Spell_73_SunRay proc far                ; CODE XREF: j_Spell_73_SunRay↑J
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98627,7 +98599,7 @@ Spell_74_Implosion proc far             ; CODE XREF: j_Spell_74_Implosion↑J
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -98651,7 +98623,7 @@ Spell_75_StarBurst proc far             ; CODE XREF: j_Spell_75_StarBurst↑J
                 pop     cx
                 mov     ax, 2
                 push    ax              ; format
-                call    sub_2865D
+                call    j_spellAttackAhead
                 pop     cx
                 pop     bp
                 retf
@@ -99979,7 +99951,7 @@ loc_4E761:                              ; CODE XREF: itemsDialog+92A↑j
                 push    si              ; __int32
                 mov     al, byte ptr [bp+var_E]
                 push    ax              ; char
-                call    sub_2826C
+                call    j_generateItem
                 add     sp, 8
                 mov     bx, di
                 mov     al, byte ptr [bp+var_6]
@@ -101539,10 +101511,11 @@ jpt_4EFFD       dw offset loc_4F018     ; DATA XREF: bash+47↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; damage spell/attack arrival: called by Flying Fist etc. through stub sub_2865D with the spell id; starts the attack on the monster ahead (calls attack, drawView, giveTreasure)
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_4F24E(char *format)
-sub_4F24E       proc far                ; CODE XREF: sub_2865D↑J
+; int __cdecl __far spellAttackAhead(char *format)
+spellAttackAhead proc far               ; CODE XREF: j_spellAttackAhead↑J
 
 var_B           = byte ptr -0Bh
 s               = byte ptr -0Ah
@@ -101582,7 +101555,7 @@ format          = dword ptr  6
                 jmp     short loc_4F2B8
 ; ---------------------------------------------------------------------------
 
-loc_4F298:                              ; CODE XREF: sub_4F24E+71↓j
+loc_4F298:                              ; CODE XREF: spellAttackAhead+71↓j
                 mov     ax, di
                 mov     dx, 12Fh
                 imul    dx
@@ -101595,10 +101568,10 @@ loc_4F298:                              ; CODE XREF: sub_4F24E+71↓j
                 mov     byte ptr [di-4645h], 1
                 mov     [bp+var_4], 1
 
-loc_4F2B7:                              ; CODE XREF: sub_4F24E+5D↑j
+loc_4F2B7:                              ; CODE XREF: spellAttackAhead+5D↑j
                 inc     di
 
-loc_4F2B8:                              ; CODE XREF: sub_4F24E+48↑j
+loc_4F2B8:                              ; CODE XREF: spellAttackAhead+48↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
@@ -101606,11 +101579,11 @@ loc_4F2B8:                              ; CODE XREF: sub_4F24E+48↑j
                 jmp     short loc_4F2CD
 ; ---------------------------------------------------------------------------
 
-loc_4F2C3:                              ; CODE XREF: sub_4F24E+39↑j
+loc_4F2C3:                              ; CODE XREF: spellAttackAhead+39↑j
                 mov     byte_340AB, 1
                 mov     [bp+var_4], 1
 
-loc_4F2CD:                              ; CODE XREF: sub_4F24E+73↑j
+loc_4F2CD:                              ; CODE XREF: spellAttackAhead+73↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_4F2DF
                 mov     ax, 0Ch
@@ -101620,7 +101593,7 @@ loc_4F2CD:                              ; CODE XREF: sub_4F24E+73↑j
                 jmp     short loc_4F2F7
 ; ---------------------------------------------------------------------------
 
-loc_4F2DF:                              ; CODE XREF: sub_4F24E+83↑j
+loc_4F2DF:                              ; CODE XREF: spellAttackAhead+83↑j
                 mov     ax, 15h
                 push    ax
                 call    sub_1B16B
@@ -101628,11 +101601,11 @@ loc_4F2DF:                              ; CODE XREF: sub_4F24E+83↑j
                 jmp     loc_4F749
 ; ---------------------------------------------------------------------------
 
-loc_4F2EC:                              ; CODE XREF: sub_4F24E+2C↑j
+loc_4F2EC:                              ; CODE XREF: spellAttackAhead+2C↑j
                 mov     byte_340AB, 1
                 mov     word_34B8A, 0
 
-loc_4F2F7:                              ; CODE XREF: sub_4F24E+8F↑j
+loc_4F2F7:                              ; CODE XREF: spellAttackAhead+8F↑j
                 mov     byte_2879A, 1
                 push    word ptr [bp+format] ; format
                 mov     ax, 522Ch
@@ -101649,7 +101622,7 @@ loc_4F2F7:                              ; CODE XREF: sub_4F24E+8F↑j
                 call    sub_26685
                 pop     cx
 
-loc_4F322:                              ; CODE XREF: sub_4F24E+C8↑j
+loc_4F322:                              ; CODE XREF: spellAttackAhead+C8↑j
                 call    MemFree
                 cmp     word_28873, 7
                 jbe     short loc_4F334
@@ -101658,13 +101631,13 @@ loc_4F322:                              ; CODE XREF: sub_4F24E+C8↑j
                 jmp     short loc_4F33F
 ; ---------------------------------------------------------------------------
 
-loc_4F334:                              ; CODE XREF: sub_4F24E+DE↑j
+loc_4F334:                              ; CODE XREF: spellAttackAhead+DE↑j
                 cmp     word_28873, 0
                 jz      short loc_4F34E
                 push    ds
                 mov     ax, 5236h
 
-loc_4F33F:                              ; CODE XREF: sub_4F24E+E4↑j
+loc_4F33F:                              ; CODE XREF: spellAttackAhead+E4↑j
                 push    ax
                 call    vdrv_21_loadSprites
                 pop     cx
@@ -101672,7 +101645,7 @@ loc_4F33F:                              ; CODE XREF: sub_4F24E+E4↑j
                 mov     word_32E34, dx
                 mov     word_32E32, ax
 
-loc_4F34E:                              ; CODE XREF: sub_4F24E+EB↑j
+loc_4F34E:                              ; CODE XREF: spellAttackAhead+EB↑j
                 mov     al, byte_3771B
                 mov     ah, 0
                 mov     [bp+var_6], ax
@@ -101702,7 +101675,7 @@ loc_4F34E:                              ; CODE XREF: sub_4F24E+EB↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F396:                              ; CODE XREF: sub_4F24E+131↑j
+loc_4F396:                              ; CODE XREF: spellAttackAhead+131↑j
                 cmp     byte_34B93, 0
                 jz      short loc_4F3B2
                 mov     al, [bp+var_B]
@@ -101714,7 +101687,7 @@ loc_4F396:                              ; CODE XREF: sub_4F24E+131↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F3B2:                              ; CODE XREF: sub_4F24E+14D↑j
+loc_4F3B2:                              ; CODE XREF: spellAttackAhead+14D↑j
                 cmp     byte_34B94, 0
                 jz      short loc_4F3CE
                 mov     al, [bp+var_B]
@@ -101726,7 +101699,7 @@ loc_4F3B2:                              ; CODE XREF: sub_4F24E+14D↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F3CE:                              ; CODE XREF: sub_4F24E+169↑j
+loc_4F3CE:                              ; CODE XREF: spellAttackAhead+169↑j
                 mov     byte_3771B, 0FFh
                 cmp     Combat_target, 0FFh
                 jz      short loc_4F3EA
@@ -101737,13 +101710,13 @@ loc_4F3CE:                              ; CODE XREF: sub_4F24E+169↑j
                 inc     al
                 mov     [bp+s], al
 
-loc_4F3EA:                              ; CODE XREF: sub_4F24E+18A↑j
+loc_4F3EA:                              ; CODE XREF: spellAttackAhead+18A↑j
                 call    drawView
                 mov     [bp+var_B], 0
                 jmp     short loc_4F454
 ; ---------------------------------------------------------------------------
 
-loc_4F3F5:                              ; CODE XREF: sub_4F24E+20A↓j
+loc_4F3F5:                              ; CODE XREF: spellAttackAhead+20A↓j
                 inc     byte_3771B
                 mov     al, [bp+var_B]
                 mov     ah, 0
@@ -101780,13 +101753,13 @@ loc_4F3F5:                              ; CODE XREF: sub_4F24E+20A↓j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F44C:                              ; CODE XREF: sub_4F24E+1BA↑j
+loc_4F44C:                              ; CODE XREF: spellAttackAhead+1BA↑j
                 call    drawView
 
-loc_4F451:                              ; CODE XREF: sub_4F24E+1F9↑j
+loc_4F451:                              ; CODE XREF: spellAttackAhead+1F9↑j
                 inc     [bp+var_B]
 
-loc_4F454:                              ; CODE XREF: sub_4F24E+1A5↑j
+loc_4F454:                              ; CODE XREF: spellAttackAhead+1A5↑j
                 cmp     [bp+var_B], 3
                 jb      short loc_4F3F5
                 or      si, si
@@ -101796,15 +101769,15 @@ loc_4F454:                              ; CODE XREF: sub_4F24E+1A5↑j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F468:                              ; CODE XREF: sub_4F24E+20E↑j
-                                        ; sub_4F24E+215↑j
+loc_4F468:                              ; CODE XREF: spellAttackAhead+20E↑j
+                                        ; spellAttackAhead+215↑j
                 mov     ax, word_32E32
                 or      ax, word_32E34
                 jnz     short loc_4F474
                 jmp     loc_4F555
 ; ---------------------------------------------------------------------------
 
-loc_4F474:                              ; CODE XREF: sub_4F24E+221↑j
+loc_4F474:                              ; CODE XREF: spellAttackAhead+221↑j
                 mov     [bp+var_B], 0
                 mov     ax, 3
                 push    ax              ; c
@@ -101825,7 +101798,7 @@ loc_4F474:                              ; CODE XREF: sub_4F24E+221↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F4A7:                              ; CODE XREF: sub_4F24E+242↑j
+loc_4F4A7:                              ; CODE XREF: spellAttackAhead+242↑j
                 cmp     byte_34B98, 0
                 jz      short loc_4F4C3
                 mov     al, [bp+var_B]
@@ -101837,7 +101810,7 @@ loc_4F4A7:                              ; CODE XREF: sub_4F24E+242↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F4C3:                              ; CODE XREF: sub_4F24E+25E↑j
+loc_4F4C3:                              ; CODE XREF: spellAttackAhead+25E↑j
                 cmp     byte_34B99, 0
                 jz      short loc_4F4DF
                 mov     al, [bp+var_B]
@@ -101849,12 +101822,12 @@ loc_4F4C3:                              ; CODE XREF: sub_4F24E+25E↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F4DF:                              ; CODE XREF: sub_4F24E+27A↑j
+loc_4F4DF:                              ; CODE XREF: spellAttackAhead+27A↑j
                 mov     [bp+var_B], 0
                 jmp     short loc_4F541
 ; ---------------------------------------------------------------------------
 
-loc_4F4E5:                              ; CODE XREF: sub_4F24E+2F7↓j
+loc_4F4E5:                              ; CODE XREF: spellAttackAhead+2F7↓j
                 inc     byte_3771B
                 mov     al, [bp+var_B]
                 mov     ah, 0
@@ -101890,13 +101863,13 @@ loc_4F4E5:                              ; CODE XREF: sub_4F24E+2F7↓j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F539:                              ; CODE XREF: sub_4F24E+2AA↑j
+loc_4F539:                              ; CODE XREF: spellAttackAhead+2AA↑j
                 call    drawView
 
-loc_4F53E:                              ; CODE XREF: sub_4F24E+2E6↑j
+loc_4F53E:                              ; CODE XREF: spellAttackAhead+2E6↑j
                 inc     [bp+var_B]
 
-loc_4F541:                              ; CODE XREF: sub_4F24E+295↑j
+loc_4F541:                              ; CODE XREF: spellAttackAhead+295↑j
                 cmp     [bp+var_B], 3
                 jb      short loc_4F4E5
                 or      si, si
@@ -101906,19 +101879,19 @@ loc_4F541:                              ; CODE XREF: sub_4F24E+295↑j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F555:                              ; CODE XREF: sub_4F24E+223↑j
+loc_4F555:                              ; CODE XREF: spellAttackAhead+223↑j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F558:                              ; CODE XREF: sub_4F24E+2FB↑j
-                                        ; sub_4F24E+302↑j
+loc_4F558:                              ; CODE XREF: spellAttackAhead+2FB↑j
+                                        ; spellAttackAhead+302↑j
                 mov     ax, word_32E32
                 or      ax, word_32E34
                 jnz     short loc_4F564
                 jmp     loc_4F645
 ; ---------------------------------------------------------------------------
 
-loc_4F564:                              ; CODE XREF: sub_4F24E+311↑j
+loc_4F564:                              ; CODE XREF: spellAttackAhead+311↑j
                 mov     [bp+var_B], 0
                 mov     ax, 3
                 push    ax              ; c
@@ -101939,7 +101912,7 @@ loc_4F564:                              ; CODE XREF: sub_4F24E+311↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F597:                              ; CODE XREF: sub_4F24E+332↑j
+loc_4F597:                              ; CODE XREF: spellAttackAhead+332↑j
                 cmp     byte_32E39, 0
                 jz      short loc_4F5B3
                 mov     al, [bp+var_B]
@@ -101951,7 +101924,7 @@ loc_4F597:                              ; CODE XREF: sub_4F24E+332↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F5B3:                              ; CODE XREF: sub_4F24E+34E↑j
+loc_4F5B3:                              ; CODE XREF: spellAttackAhead+34E↑j
                 cmp     byte_32E3B, 0
                 jz      short loc_4F5CF
                 mov     al, [bp+var_B]
@@ -101963,12 +101936,12 @@ loc_4F5B3:                              ; CODE XREF: sub_4F24E+34E↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F5CF:                              ; CODE XREF: sub_4F24E+36A↑j
+loc_4F5CF:                              ; CODE XREF: spellAttackAhead+36A↑j
                 mov     [bp+var_B], 0
                 jmp     short loc_4F631
 ; ---------------------------------------------------------------------------
 
-loc_4F5D5:                              ; CODE XREF: sub_4F24E+3E7↓j
+loc_4F5D5:                              ; CODE XREF: spellAttackAhead+3E7↓j
                 inc     byte_3771B
                 mov     al, [bp+var_B]
                 mov     ah, 0
@@ -102004,13 +101977,13 @@ loc_4F5D5:                              ; CODE XREF: sub_4F24E+3E7↓j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F629:                              ; CODE XREF: sub_4F24E+39A↑j
+loc_4F629:                              ; CODE XREF: spellAttackAhead+39A↑j
                 call    drawView
 
-loc_4F62E:                              ; CODE XREF: sub_4F24E+3D6↑j
+loc_4F62E:                              ; CODE XREF: spellAttackAhead+3D6↑j
                 inc     [bp+var_B]
 
-loc_4F631:                              ; CODE XREF: sub_4F24E+385↑j
+loc_4F631:                              ; CODE XREF: spellAttackAhead+385↑j
                 cmp     [bp+var_B], 3
                 jb      short loc_4F5D5
                 or      si, si
@@ -102020,19 +101993,19 @@ loc_4F631:                              ; CODE XREF: sub_4F24E+385↑j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F645:                              ; CODE XREF: sub_4F24E+313↑j
+loc_4F645:                              ; CODE XREF: spellAttackAhead+313↑j
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F648:                              ; CODE XREF: sub_4F24E+3EB↑j
-                                        ; sub_4F24E+3F2↑j
+loc_4F648:                              ; CODE XREF: spellAttackAhead+3EB↑j
+                                        ; spellAttackAhead+3F2↑j
                 mov     ax, word_32E32
                 or      ax, word_32E34
                 jnz     short loc_4F654
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F654:                              ; CODE XREF: sub_4F24E+401↑j
+loc_4F654:                              ; CODE XREF: spellAttackAhead+401↑j
                 mov     [bp+var_B], 0
                 mov     ax, 3
                 push    ax              ; c
@@ -102053,7 +102026,7 @@ loc_4F654:                              ; CODE XREF: sub_4F24E+401↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F687:                              ; CODE XREF: sub_4F24E+422↑j
+loc_4F687:                              ; CODE XREF: spellAttackAhead+422↑j
                 cmp     byte_32E3A, 0
                 jz      short loc_4F6A3
                 mov     al, [bp+var_B]
@@ -102065,7 +102038,7 @@ loc_4F687:                              ; CODE XREF: sub_4F24E+422↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F6A3:                              ; CODE XREF: sub_4F24E+43E↑j
+loc_4F6A3:                              ; CODE XREF: spellAttackAhead+43E↑j
                 cmp     byte_32E3C, 0
                 jz      short loc_4F6BF
                 mov     al, [bp+var_B]
@@ -102077,12 +102050,12 @@ loc_4F6A3:                              ; CODE XREF: sub_4F24E+43E↑j
                 mov     [bx], dl
                 inc     [bp+var_B]
 
-loc_4F6BF:                              ; CODE XREF: sub_4F24E+45A↑j
+loc_4F6BF:                              ; CODE XREF: spellAttackAhead+45A↑j
                 mov     [bp+var_B], 0
                 jmp     short loc_4F720
 ; ---------------------------------------------------------------------------
 
-loc_4F6C5:                              ; CODE XREF: sub_4F24E+4D6↓j
+loc_4F6C5:                              ; CODE XREF: spellAttackAhead+4D6↓j
                 inc     byte_3771B
                 mov     al, [bp+var_B]
                 mov     ah, 0
@@ -102118,13 +102091,13 @@ loc_4F6C5:                              ; CODE XREF: sub_4F24E+4D6↓j
                 jmp     short loc_4F733
 ; ---------------------------------------------------------------------------
 
-loc_4F718:                              ; CODE XREF: sub_4F24E+48A↑j
+loc_4F718:                              ; CODE XREF: spellAttackAhead+48A↑j
                 call    drawView
 
-loc_4F71D:                              ; CODE XREF: sub_4F24E+4C6↑j
+loc_4F71D:                              ; CODE XREF: spellAttackAhead+4C6↑j
                 inc     [bp+var_B]
 
-loc_4F720:                              ; CODE XREF: sub_4F24E+475↑j
+loc_4F720:                              ; CODE XREF: spellAttackAhead+475↑j
                 cmp     [bp+var_B], 3
                 jb      short loc_4F6C5
                 or      si, si
@@ -102134,25 +102107,25 @@ loc_4F720:                              ; CODE XREF: sub_4F24E+475↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_4F733:                              ; CODE XREF: sub_4F24E+1FB↑j
-                                        ; sub_4F24E+217↑j ...
+loc_4F733:                              ; CODE XREF: spellAttackAhead+1FB↑j
+                                        ; spellAttackAhead+217↑j ...
                 call    sub_2848C
 
-loc_4F738:                              ; CODE XREF: sub_4F24E+4DA↑j
-                                        ; sub_4F24E+4E1↑j
+loc_4F738:                              ; CODE XREF: spellAttackAhead+4DA↑j
+                                        ; spellAttackAhead+4E1↑j
                 mov     al, byte ptr [bp+var_2]
                 mov     Combat_target, al
                 mov     al, byte ptr [bp+var_6]
                 mov     byte_3771B, al
                 call    j_giveTreasure
 
-loc_4F749:                              ; CODE XREF: sub_4F24E+9B↑j
+loc_4F749:                              ; CODE XREF: spellAttackAhead+9B↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4F24E       endp
+spellAttackAhead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -103209,7 +103182,7 @@ loc_4FE28:                              ; CODE XREF: spellsDialog+2B7↑j
                 jz      short loc_4FE71
                 mov     ax, 1
                 push    ax
-                call    sub_15736
+                call    updateAutomap
                 pop     cx
                 mov     byte_287A5, 0
 
