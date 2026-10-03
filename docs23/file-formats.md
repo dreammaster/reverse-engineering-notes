@@ -3221,6 +3221,48 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**The whole `ApplyEncodedItemEffect` dispatch is now a function, and it
+shows which branches real data uses (2026-10-03)**: `spellSelectBranch`
+(`src23/spellrecord.c`) reproduces the flat if-chain (FlagsB bits in the
+order 0x8000, 0x4000, 0x80, 0x10, 0x4, 0x20, 0x8, 0x2, 0x1, 0x40, 0x2000,
+0x1000, 0x100, 0x200, then ResistFlags 0x8, 0x2, 0x4, 0x1). Run over the real
+catalogs it gives, for Chapter 2 (Chapter 3 is within one record of it):
+16 single-target, 3 whole-party, 3 light-timer, 2 held-item (CREATE FOOD,
+FORGE), 2 teleport (JUMP OVER/THROUGH), 1 bookmark, 1 each of the
+curgame-event/rest/knock/lock branches, 19 plain attacks, 4 LIFE FORCE, 13
+attack-all-slots, 24 projectiles, **0 for FlagsB 0x200** (bit 0x200 is dead
+in real data; the screen-wide scan is reached by the ResistFlags branches:
+7 beams `0x8`, 2 tremors `0x2`, 4 rains `0x4`, 1 turbulence `0x1`), and 20
+empty records (ids 106-125 in Chapter 2). So every branch with real users is
+now implemented or has its decision/mechanics decoded.
+
+**Held item (bit `0x10`, CREATE FOOD / FORGE)**: only if the cursor is empty
+(`g_heldItemType == 0`; otherwise an error line); item id = record word
+`0x2E` if nonzero (55 = BREAD for CREATE FOOD, 586 for FORGE) else
+`RandomInRange(word 0x34 - word 0x32) + word 0x32` (unused by real data);
+extra word = `0x30`. `spellCreatedItemRollBound`/`spellCreatedItem`.
+
+**Teleport (bit `0x4`, JUMP OVER / JUMP THROUGH) and the "10 unidentified
+bytes"**: words `0x36/0x38/0x3A/0x3C/0x3E` are the jump distances
+forward/backward/left/right/through (first nonzero wins), settling the
+long-open `0x36-0x3F` range -- with the usual caveat that ~20 projectile and
+area records have the same bytes nonzero as animation parameters (one more
+per-branch union). Forward/back/left/right walk cell by cell (each cell's
+wall type must classify as Normal, except intermediate cells of type 0/1,
+and its floor type must be passable); Through hops once and checks only the
+destination. `spellResolveJump` (`src23/spelljump.c`, new, 24th suite)
+decides the landing cell through a cell-lookup callback; the party move,
+`RevealCellsAroundPlayer` and the pull of a monster standing on the
+destination into a combat slot aren't modeled.
+
+**Screen-wide attack**: the `0x200` scan, and the tremor/rain/turbulence
+branches after their animations, all `jmp loc_2CEED`: optionally the 3
+combat slots, then the monster at viewport depth 0x32, 0x30, 0x2F..0x00, each
+through `ApplyDamageToMapMonster`. `combatApplyScreenWideAttack`. The beam
+(`0x8`, `loc_2CCEE`) is a single-monster hit with the same attack, marker
+only on a landed hit and a kill check only after one -- exactly
+`combatApplyDamageToMapMonster` again.
+
 **Bit `0x100` is the projectile-spell family; its per-monster hit is
 reimplemented (2026-10-03)**: listing the real records with word_33302 bit
 `0x100` gives SLING SHOT, FIERY ARROW, POISON ARROW, LIGHTNING BOLT, the

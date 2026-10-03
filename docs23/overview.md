@@ -11176,6 +11176,18 @@ damage a second time with compounding per-bit resistance halving. Added
 family's per-monster logic is now complete; the rest is row-walking and
 animation.
 
+### Session update (2026-10-03, continued): the dispatch as a function; held item, jump, screen-wide
+
+Wrote the `ApplyEncodedItemEffect` if-chain as `spellSelectBranch` and ran it
+over both real catalogs: the useful discovery was a census (bit `0x200`
+selects no real record at all; the screen-wide scan is reached through the
+`ResistFlags` fallbacks), and listing the records of the two remaining
+undecoded branches decoded them: CREATE FOOD/FORGE (held item) and JUMP
+OVER/THROUGH (teleport), whose jump distances are the spell bytes
+`0x36-0x3E` -- closing the "10 unidentified bytes" item. New:
+`spellCreatedItem*`, `spelljump.c` (24th suite), `combatApplyScreenWideAttack`.
+All suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

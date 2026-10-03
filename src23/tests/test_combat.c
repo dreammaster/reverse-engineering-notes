@@ -1590,6 +1590,71 @@ static void testReapDeadMapMonstersRemovesOnlyOccupiedDeadOnes(void) {
     checkU32("the living one stays", monsterGetU16(alive, MonsterFieldType), 5);
 }
 
+static void testScreenWideAttackHitsSlotsThenRowsAndSkipsEmpties(void) {
+    uint8_t slots[MonsterActiveSlots * MonsterRecordSize];
+    uint8_t rowStore[3][MonsterRecordSize];
+    uint8_t *rows[CombatScreenAttackRows];
+    uint8_t caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(slots, 0, sizeof(slots));
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+    memset(spell, 0, sizeof(spell));
+    memset(rows, 0, sizeof(rows));
+    setSpellU16(spell, SpellFieldAttackMagnitude, 10);
+
+    /* slot 0 occupied, slot 1 empty, slot 2 occupied */
+    monsterSetU16(slots, MonsterFieldType, 1);
+    monsterSetU16(slots, MonsterFieldHealth, 50);
+    monsterSetU16(slots + 2 * MonsterRecordSize, MonsterFieldType, 2);
+    monsterSetU16(slots + 2 * MonsterRecordSize, MonsterFieldHealth, 50);
+    for (int i = 0; i < 3; i++) {
+        memset(rowStore[i], 0, MonsterRecordSize);
+        monsterSetU16(rowStore[i], MonsterFieldType, 9);
+        monsterSetU16(rowStore[i], MonsterFieldHealth, i == 2 ? 5 : 50); /* the third will die */
+    }
+    rows[0] = rowStore[0];
+    rows[7] = rowStore[1];
+    rows[49] = rowStore[2];
+
+    CombatScreenAttackOutcome out =
+        combatApplyScreenWideAttack(slots, rows, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    checkU32("two slots plus three row monsters attacked", out.attacked, 5);
+    checkU32("one died", out.killed, 1);
+    checkU32("slot 0 hit", monsterGetU16(slots, MonsterFieldHealth), 40);
+    checkU32("the empty slot is skipped", monsterGetU16(slots + MonsterRecordSize, MonsterFieldHealth), 0);
+    checkU32("a row monster hit", monsterGetU16(rowStore[0], MonsterFieldHealth), 40);
+    checkU32("the lethal one is removed", monsterGetU16(rowStore[2], MonsterFieldType), 0);
+}
+
+static void testScreenWideAttackWithoutSlotsOnlyScansRows(void) {
+    uint8_t slots[MonsterActiveSlots * MonsterRecordSize];
+    uint8_t rowMonster[MonsterRecordSize];
+    uint8_t *rows[CombatScreenAttackRows];
+    uint8_t caster[PartyRecordSize], spell[SpellRecordSize];
+    MonsterRewardStaging staging;
+    RandomState rng;
+    memset(slots, 0, sizeof(slots));
+    memset(rowMonster, 0, sizeof(rowMonster));
+    memset(caster, 0, sizeof(caster));
+    memset(&staging, 0, sizeof(staging));
+    memset(spell, 0, sizeof(spell));
+    memset(rows, 0, sizeof(rows));
+    setSpellU16(spell, SpellFieldAttackMagnitude, 10);
+    monsterSetU16(slots, MonsterFieldType, 1);
+    monsterSetU16(slots, MonsterFieldHealth, 50);
+    monsterSetU16(rowMonster, MonsterFieldType, 9);
+    monsterSetU16(rowMonster, MonsterFieldHealth, 50);
+    rows[1] = rowMonster;
+
+    CombatScreenAttackOutcome out = combatApplyScreenWideAttack(NULL, rows, caster, spell, true, &staging, NULL, 0, NULL, &rng);
+
+    checkU32("only the row monster attacked", out.attacked, 1);
+    checkU32("the slot is untouched", monsterGetU16(slots, MonsterFieldHealth), 50);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -1848,6 +1913,8 @@ int main(void) {
     testSplashHitSecondPassFloorsHealthAtZero();
     testSplashMissDoesNothingFurther();
     testReapDeadMapMonstersRemovesOnlyOccupiedDeadOnes();
+    testScreenWideAttackHitsSlotsThenRowsAndSkipsEmpties();
+    testScreenWideAttackWithoutSlotsOnlyScansRows();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

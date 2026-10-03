@@ -566,6 +566,37 @@ unsigned combatReapDeadMapMonsters(uint8_t *pool, MonsterRewardStaging *staging,
     return reaped;
 }
 
+CombatScreenAttackOutcome combatApplyScreenWideAttack(uint8_t *monsterSlots, uint8_t *const rowMonsters[CombatScreenAttackRows],
+                                                        const uint8_t *casterRecord, const uint8_t *spellRecord,
+                                                        bool alreadyResolved, MonsterRewardStaging *staging,
+                                                        uint8_t *globalFlags, size_t globalFlagsSize, DungeonGrid *grid,
+                                                        RandomState *rng) {
+    CombatScreenAttackOutcome outcome = {0, 0};
+    if (monsterSlots) {
+        for (unsigned slot = 0; slot < MonsterActiveSlots; slot++) {
+            uint8_t *record = monsterSlots + (size_t)slot * MonsterRecordSize;
+            if (monsterGetU16(record, MonsterFieldType) == 0) {
+                continue;
+            }
+            CombatMapMonsterAttackOutcome r = combatApplyDamageToMapMonster(record, casterRecord, spellRecord, alreadyResolved,
+                                                                              staging, globalFlags, globalFlagsSize, grid, rng);
+            outcome.attacked++;
+            outcome.killed += r.monsterDied ? 1 : 0;
+        }
+    }
+    for (unsigned row = 0; row < CombatScreenAttackRows; row++) {
+        if (!rowMonsters[row]) {
+            continue;
+        }
+        CombatMapMonsterAttackOutcome r = combatApplyDamageToMapMonster(rowMonsters[row], casterRecord, spellRecord,
+                                                                          alreadyResolved, staging, globalFlags,
+                                                                          globalFlagsSize, grid, rng);
+        outcome.attacked++;
+        outcome.killed += r.monsterDied ? 1 : 0;
+    }
+    return outcome;
+}
+
 /*
  * One icon-bar effect slot through ApplyEffectAndDrawIconBar's own
  * RollEffectMagnitude/RollEffectResistance/ApplyEffectCost sequence.

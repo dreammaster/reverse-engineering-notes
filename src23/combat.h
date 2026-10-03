@@ -739,6 +739,35 @@ unsigned combatReapDeadMapMonsters(uint8_t *pool, MonsterRewardStaging *staging,
                                      size_t globalFlagsSize, DungeonGrid *grid);
 
 /*
+ * The scan-loop shell around combatApplyDamageToMapMonster for
+ * ApplyEncodedItemEffect's word_33302 bit 0x200 branch (loc_2CEE7,
+ * yendor2.asm:52514, instruction-identical in Chapter 3): a spell that hits
+ * everything in front of the party. In the original's order:
+ *   1. when g_uiScratchFlags4 bit 0x1000 is set, the 3 combat monster slots
+ *      (g_monsterSlots) that are occupied (type != 0);
+ *   2. the monster at viewport depth 0x32, then 0x30, then depths 0x2F
+ *      counting down 48 rows to 0x00 (GetMonsterAtViewportRow at each).
+ * Each target gets combatApplyDamageToMapMonster. The viewport-row lookup
+ * is a render-scratch-buffer query, so the caller supplies its result:
+ * rowMonsters[0] is depth 0x32, [1] depth 0x30, [2..49] depths 0x2F..0x00,
+ * NULL where no monster stands. Pass monsterSlots NULL to skip step 1.
+ * Dead monsters are rewarded and removed as they're hit, so a record that
+ * dies mid-scan simply isn't revisited.
+ */
+enum { CombatScreenAttackRows = 50 };
+
+typedef struct {
+    unsigned attacked;
+    unsigned killed;
+} CombatScreenAttackOutcome;
+
+CombatScreenAttackOutcome combatApplyScreenWideAttack(uint8_t *monsterSlots, uint8_t *const rowMonsters[CombatScreenAttackRows],
+                                                        const uint8_t *casterRecord, const uint8_t *spellRecord,
+                                                        bool alreadyResolved, MonsterRewardStaging *staging,
+                                                        uint8_t *globalFlags, size_t globalFlagsSize, DungeonGrid *grid,
+                                                        RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

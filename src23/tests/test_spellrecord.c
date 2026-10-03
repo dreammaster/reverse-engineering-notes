@@ -133,6 +133,89 @@ static void checkInvariants(const char *game, const SpellCatalog *catalog) {
     check(label, attackPathCount > 0);
 }
 
+static void testSelectBranchOrderAndModifiers(void) {
+    uint8_t r[SpellRecordSize];
+    memset(r, 0, sizeof(r));
+    check("empty record selects nothing", spellSelectBranch(r) == SpellBranchNone);
+
+    r[SpellFieldFlagsB] = 0x01;
+    check("0x1 alone is knock", spellSelectBranch(r) == SpellBranchKnock);
+    r[SpellFieldFlagsB + 1] = 0x80;
+    check("0x8000 outranks every lower bit", spellSelectBranch(r) == SpellBranchSingleTarget);
+
+    memset(r, 0, sizeof(r));
+    r[SpellFieldFlagsB + 1] = 0x09;
+    check("0x100 + 0x800 (piercing) is still the projectile branch", spellSelectBranch(r) == SpellBranchProjectile);
+    r[SpellFieldFlagsB + 1] = 0x05;
+    check("0x100 + 0x400 (splash) is still the projectile branch", spellSelectBranch(r) == SpellBranchProjectile);
+    r[SpellFieldFlagsB + 1] = 0x03;
+    check("0x100 outranks 0x200", spellSelectBranch(r) == SpellBranchProjectile);
+
+    memset(r, 0, sizeof(r));
+    r[SpellFieldFlagsB + 1] = 0x20;
+    check("0x2000 is the ordinary attack", spellSelectBranch(r) == SpellBranchAttackActiveMonster);
+    r[SpellFieldResistFlags] = 0x40;
+    check("0x2000 with ResistFlags 0x40 is LIFE FORCE", spellSelectBranch(r) == SpellBranchLifeForce);
+    r[SpellFieldResistFlags] = 0x80;
+    check("...and so is 0x80", spellSelectBranch(r) == SpellBranchLifeForce);
+
+    memset(r, 0, sizeof(r));
+    r[SpellFieldResistFlags] = 0x0F;
+    check("ResistFlags fallbacks: 0x8 first", spellSelectBranch(r) == SpellBranchBeam);
+    r[SpellFieldResistFlags] = 0x07;
+    check("then 0x2", spellSelectBranch(r) == SpellBranchTremor);
+    r[SpellFieldResistFlags] = 0x05;
+    check("then 0x4", spellSelectBranch(r) == SpellBranchRain);
+    r[SpellFieldResistFlags] = 0x01;
+    check("then 0x1", spellSelectBranch(r) == SpellBranchTurbulence);
+    r[SpellFieldFlagsB] = 0x01;
+    check("a FlagsB bit always wins over ResistFlags", spellSelectBranch(r) == SpellBranchKnock);
+}
+
+static void checkRealBranches(const char *game, const SpellCatalog *catalog) {
+    char label[96];
+    snprintf(label, sizeof(label), "%s: HEAL is the single-target branch", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 1)) == SpellBranchSingleTarget);
+    snprintf(label, sizeof(label), "%s: MAGIC ATTACK is the active-monster attack", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 2)) == SpellBranchAttackActiveMonster);
+    snprintf(label, sizeof(label), "%s: SLING SHOT is a projectile", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 3)) == SpellBranchProjectile);
+    snprintf(label, sizeof(label), "%s: MINER'S LIGHT I is the light timer", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 6)) == SpellBranchLightTimer);
+    snprintf(label, sizeof(label), "%s: LIFE FORCE I (53) is the life-force branch", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 53)) == SpellBranchLifeForce);
+    snprintf(label, sizeof(label), "%s: JUMP OVER walks 2 forward", game);
+    check(label, spellSelectBranch(spellRecord(catalog, 15)) == SpellBranchTeleportEngage &&
+                     spellGetU16(spellRecord(catalog, 15), SpellFieldJumpForward) == 2);
+    snprintf(label, sizeof(label), "%s: JUMP THROUGH hops 2", game);
+    check(label, spellGetU16(spellRecord(catalog, 50), SpellFieldJumpThrough) == 2);
+    snprintf(label, sizeof(label), "%s: only JUMP OVER/THROUGH select the teleport branch", game);
+    {
+        bool only = true;
+        for (unsigned id = 1; id <= catalog->recordCount; id++) {
+            const uint8_t *rec = spellRecord(catalog, id);
+            bool has = spellSelectBranch(rec) == SpellBranchTeleportEngage;
+            if (has != (id == 15 || id == 50)) {
+                only = false;
+            }
+        }
+        check(label, only);
+    }
+    snprintf(label, sizeof(label), "%s: CREATE FOOD/FORGE create fixed items (no random range used)", game);
+    {
+        bool fixedOnly = true;
+        for (unsigned id = 1; id <= catalog->recordCount; id++) {
+            const uint8_t *rec = spellRecord(catalog, id);
+            if (spellSelectBranch(rec) == SpellBranchHeldItem && spellCreatedItemRollBound(rec) != 0) {
+                fixedOnly = false;
+            }
+        }
+        check(label, fixedOnly);
+    }
+    snprintf(label, sizeof(label), "%s: TURBULENT ATMOSPHERE is the last-resort ResistFlags 0x1", game);
+    check(label, spellSelectBranch(spellRecord(catalog, catalog->game == GameYendor2 ? 105 : 107)) == SpellBranchTurbulence);
+}
+
 static void testRealYendor2(void) {
     SpellCatalog catalog;
     if (!loadReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", &catalog)) {
@@ -163,6 +246,7 @@ static void testRealYendor2(void) {
     check("...and the restriction bit is actually set", spellGetU16(insectRepellent, SpellFieldResistFlags) & SpellResistTypeRestricted);
 
     checkInvariants("yendor2", &catalog);
+    checkRealBranches("yendor2", &catalog);
 }
 
 static void testRealYendor3(void) {
@@ -177,12 +261,14 @@ static void testRealYendor3(void) {
     check("record 6 is MINER'S LIGHT I, same as chapter 2", recordNameIs(&catalog, 6, "MINER'S LIGHT I"));
 
     checkInvariants("yendor3", &catalog);
+    checkRealBranches("yendor3", &catalog);
 }
 
 int main(void) {
     testLayouts();
     testParseAndBounds();
     testFieldAccess();
+    testSelectBranchOrderAndModifiers();
     testRealYendor2();
     testRealYendor3();
 

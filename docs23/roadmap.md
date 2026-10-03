@@ -1163,7 +1163,15 @@ consumers, if any.
    `MonsterFieldAnimSet` selects between, what the fixed immunity-bit
    mark means) -- corrected rather than left standing.
 
-   **Still open**: `word_33302` bits `0x10`/`0x100` (held-item cursor
+   **Update 2026-10-03 -- supersedes the list below**: the whole dispatch is
+   now `spellSelectBranch`; every branch real data uses is implemented or
+   decoded (held item, JUMP spells via `spelljump.c`, screen-wide scan,
+   projectile hit/splash, LIFE FORCE). What's left of candidate 8 is
+   non-logic: the viewport-row/animation shells, the monster-to-combat-slot
+   pull after a jump, and the container-recursion/ConsumeItemChargeResource
+   items. Detail in file-formats.md.
+
+   **Still open** (historical): `word_33302` bits `0x10`/`0x100` (held-item cursor
    and the piercing-projectile mechanic just corrected above,
    respectively; update 2026-10-03: bit `0x100`'s per-monster hit is now
    `combatApplyProjectileHit` -- bit `0x400`'s splash is `combatApplySplashHit`

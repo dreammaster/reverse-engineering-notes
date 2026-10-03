@@ -172,8 +172,11 @@ typedef enum {
      * (SpellFlagsBSplash) reads the same words as ApplyAttackAlongCorridorLine
      * setup (0x28 sound, 0x2A first picture, 0x2C frame count).
      */
+    SpellFieldCreatedItemExtra = 0x30, /* SpellBranchHeldItem: the created item's extra word (word_332EA); shares 0x30 with the overlay id below */
     SpellFieldTickOverlayAnimSetA = 0x30,
     SpellFieldTickOverlayDefault = 0x32,
+    SpellFieldCreatedItemMin = 0x32,   /* SpellBranchHeldItem's random range, word_332EC */
+    SpellFieldCreatedItemMax = 0x34,   /* word_332EE (also SpellFieldTickAmount) */
 
     /*
      * word_332EE: written verbatim into MonsterFieldTickAmount (monster.h)
@@ -188,16 +191,23 @@ typedef enum {
     SpellFieldTickAmount = 0x34,
 
     /*
-     * 0x36-0x3F: referenced by nothing traced so far (10 bytes). An
-     * earlier guess that this might hold a description-block id for
-     * ShowClueBookSpellDetail's "EFFECT:"/"WHEN:" text doesn't hold up:
-     * LookupSpellDescriptionBlockOffset's own real call
-     * (yendor2.asm:6395/6402) passes a fixed scratch-buffer address and
-     * a fixed category constant (5/6), not any per-record field --
-     * whatever drives the actual per-spell text content isn't this
-     * lookup's own "id" parameter. Left unidentified rather than
-     * re-guessed.
+     * 0x36-0x3E (word_332F0..332F8): the party-jump distances read by
+     * ApplyEncodedItemEffect's SpellBranchTeleportEngage (loc_2C344) --
+     * JUMP OVER (0x36 = 2) and JUMP THROUGH (0x3E = 2) are the only
+     * records that select that branch, both games. The first nonzero in
+     * this order wins; spelljump.h's spellResolveJump. The same bytes are
+     * nonzero in about 20 projectile/area records too (0x36 = 1..12, 0x3C =
+     * 121/123/125, POISON ARROW's 0x36/0x38 = 22809/201) -- there they're
+     * animation parameters (the projectile branch only tests 0x36 for
+     * nonzero, to enable a blit mask), i.e. one more per-branch union; not
+     * decoded further. This accounts for all 10 bytes the earlier survey
+     * left open, with that caveat.
      */
+    SpellFieldJumpForward = 0x36,  /* cell-by-cell walk, in the facing direction */
+    SpellFieldJumpBackward = 0x38, /* ... opposite the facing */
+    SpellFieldJumpLeft = 0x3A,
+    SpellFieldJumpRight = 0x3C,
+    SpellFieldJumpThrough = 0x3E,  /* a single hop that ignores whatever lies between */
 
     /*
      * word_332FA: a byte offset into `g_currentPartyRecord` where
@@ -382,5 +392,63 @@ typedef enum {
     /* Gates SpellFieldTargetTypeId's match requirement (see that field's own doc comment). */
     SpellResistTypeRestricted = 0x0100
 } SpellResistFlag;
+
+/*
+ * Which of ApplyEncodedItemEffect's branches a record selects
+ * (yendor2.asm:51106-51217, instruction-identical in Chapter 3). The
+ * original is a flat if-chain: the first set bit of SpellFieldFlagsB wins,
+ * in exactly the order below, then (only if FlagsB matched nothing) the
+ * low four bits of SpellFieldResistFlags, 0x8, 0x2, 0x4, 0x1 in that order.
+ * Each branch's reimplementation lives in the module named beside it.
+ * SpellFlagsBSplash/Piercing (0x400/0x800) and the other modifier bits are
+ * never dispatch keys -- they only matter inside a branch.
+ */
+typedef enum {
+    SpellBranchNone = 0,             /* nothing set: ApplyEncodedItemEffect returns */
+    SpellBranchSingleTarget,         /* FlagsB 0x8000, combat.h combatApplyEncodedItemEffectSingle */
+    SpellBranchWholeParty,           /* 0x4000, combatApplyEncodedItemEffectParty */
+    SpellBranchLightTimer,           /* 0x80, lightsource.h lightSourceArmSpellTimer */
+    SpellBranchHeldItem,             /* 0x10 (loc_2C2F9), CREATE FOOD/FORGE: item in hand, spellCreatedItem */
+    SpellBranchTeleportEngage,       /* 0x4 (loc_2C344), JUMP OVER/THROUGH, spelljump.h */
+    SpellBranchLocationBookmark,     /* 0x20, combatSaveLocationBookmark/RestoreLocationBookmark */
+    SpellBranchTriggerCurgameEvent,  /* 0x8, interact.h interactTriggerFacingCurgameEvent */
+    SpellBranchRest,                 /* 0x2, gameclock.h rest-here wrapper */
+    SpellBranchKnock,                /* 0x1, interact.h interactKnock */
+    SpellBranchFacingLockOrEvent,    /* 0x40, interact.h interactResolveIfOutcome (bit 0x40's own set) */
+    SpellBranchAttackActiveMonster,  /* 0x2000, combatApplySpellAttack on the engaged slot */
+    SpellBranchLifeForce,            /* 0x2000 with ResistFlags 0x40/0x80, combatApplyLifeForceSpell */
+    SpellBranchAttackAllSlots,       /* 0x1000, combatApplySpellAttackToActiveSlots */
+    SpellBranchProjectile,           /* 0x100, combatApplyProjectileHit (or combatApplySplashHit with 0x400) */
+    SpellBranchScreenWide,           /* 0x200, combatApplyScreenWideAttack */
+    SpellBranchBeam,                 /* ResistFlags 0x8, flight then combatApplyDamageToMapMonster */
+    SpellBranchTremor,               /* ResistFlags 0x2, screen shake then combatApplyScreenWideAttack */
+    SpellBranchRain,                 /* ResistFlags 0x4, animation then combatApplyScreenWideAttack */
+    SpellBranchTurbulence            /* ResistFlags 0x1, animation then (apparently) the same scan */
+} SpellBranch;
+
+SpellBranch spellSelectBranch(const uint8_t *record);
+
+/*
+ * SpellBranchHeldItem (word_33302 bit 0x10, loc_2C2F9, yendor2.asm:51368,
+ * instruction-identical in Chapter 3): the spell puts a created item on the
+ * party's cursor -- but only if the cursor is empty (g_heldItemType == 0;
+ * otherwise the original just shows an error line). Real records: CREATE
+ * FOOD (item id 55 = 0x37, BREAD in the item catalog) and FORGE (586). The
+ * item id is SpellFieldAttackMagnitude (0x2E) if nonzero; if it's zero, a
+ * random id in [SpellFieldCreatedItemMin, SpellFieldCreatedItemMin +
+ * (SpellFieldCreatedItemMax - SpellFieldCreatedItemMin)] -- the original
+ * computes RandomInRange(max - min) + min, so the upper bound is exclusive.
+ * No real record uses the random form (both words are 0 in all of them).
+ * The held item's "extra" word is SpellFieldCreatedItemExtra (0x30).
+ * spellCreatedItemRollBound is what to pass to randomInRange (0 means no
+ * roll is made); spellCreatedItem then takes that roll.
+ */
+typedef struct {
+    uint16_t itemId;
+    uint16_t extra;
+} SpellCreatedItem;
+
+uint16_t spellCreatedItemRollBound(const uint8_t *record);
+SpellCreatedItem spellCreatedItem(const uint8_t *record, uint16_t roll);
 
 #endif
