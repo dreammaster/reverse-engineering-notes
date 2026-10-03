@@ -4317,9 +4317,14 @@ in both games; `ida_scripts/dump_ability_scroll_table.py`) priced 5000 / 15000 /
 a zero-line topic (the topics with bit-mask "offsets" and `0` lines noted
 earlier). Buying: refused if already known, then if gold is short; pays, sets
 the bit, zeroes that mount's charge counter (`+0xB6`, high bit first). Selling
-back clears the bit and refunds the **full** price. Greetings carry type `0x1000`
-(buy, 3 NPCs in Chapter 2) or `0x2000` (sell, 3). **`UseItemType_400` is dead
-code in both games' data**: no greeting ever carries type `0x400`.
+back clears the bit and refunds the **full** price. Mount sellers have a plain
+greeting and *switch into* the handler through a BUY/SELL topic whose flag `0x800`
+and argument (`0x1000` buy, `0x2000` sell) load the "type word" (3 such NPCs in each
+game). The type word is only ever loaded while it names no handler yet -- a
+healer/trainer/challenge/mount handler intercepts later topics before their own
+`0x800` flag is looked at -- which is why Chapter 3's healer topics can all carry
+`0x800`. **`UseItemType_400` is dead code in both games' data**: no topic ever
+loads type `0x400`. `dialogTypeAfterTopic`, `dialogServiceForType`.
 `dialogTransport`, `dialogLearnTransport`, `dialogSellTransport`.
 
 ### Item catalog (decoded 2026-09-19)

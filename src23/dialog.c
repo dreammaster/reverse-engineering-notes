@@ -187,3 +187,40 @@ void dialogVisitTopic(const DialogCatalog *catalog, const uint8_t *topic, Dialog
                               (int16_t)dialogTopicU16(catalog, topic, (DialogTopicField)(DialogTopicResultFirst + i * 2)));
     }
 }
+
+uint16_t dialogGreetingType(const DialogCatalog *catalog, const uint8_t *npc) {
+    const uint8_t *greeting = dialogTopic(catalog, dialogGetU16(npc, DialogNpcFirstTopic));
+    if (!greeting || !(dialogGetU16(greeting, DialogTopicFlags) & DialogTopicPreview)) {
+        return 0;
+    }
+    return dialogTopicU16(catalog, greeting, DialogTopicArg);
+}
+
+uint16_t dialogTypeAfterTopic(uint16_t current, const DialogCatalog *catalog, const uint8_t *topic) {
+    if (dialogServiceForType(current) != DialogServiceNone) {
+        return current;
+    }
+    if (dialogGetU16(topic, DialogTopicFlags) & DialogTopicPreview) {
+        return dialogTopicU16(catalog, topic, DialogTopicArg);
+    }
+    return current;
+}
+
+DialogService dialogServiceForType(uint16_t type) {
+    if (type & 0x8000) {
+        return DialogServiceHealer;
+    }
+    if (type & 0x4000) {
+        return DialogServiceTrainer;
+    }
+    if (type & 0x3000) {
+        return DialogServiceMounts;
+    }
+    if (type & 0x0400) {
+        return DialogServiceDead400;
+    }
+    if (type & 0x0800) {
+        return DialogServiceChallenge;
+    }
+    return DialogServiceNone;
+}

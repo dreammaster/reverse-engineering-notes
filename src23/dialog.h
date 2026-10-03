@@ -257,4 +257,43 @@ bool dialogTopicListed(const DialogCatalog *catalog, const uint8_t *topic, const
 void dialogVisitTopic(const DialogCatalog *catalog, const uint8_t *topic, DialogState *state, uint8_t *globalFlags,
                       size_t flagsSize, bool handlerSucceeded);
 
+/*
+ * Which service an NPC provides, from its greeting topic. LoadItemData opens
+ * the conversation on the greeting; a greeting with DialogTopicPreview
+ * (flag 0x800) loads its argument into UseItem's "type word" (word_2E410,
+ * ShowItemUsagePreview), and from then on UseItem's dispatch
+ * (yendor2.asm:17BA4) sends every chosen topic to the handler that type
+ * names, first match of 0x8000, 0x4000, 0x3000, 0x400, 0x800; anything else
+ * is a plain talker. Real data: Chapter 2 has 5 healers, 5 trainers, 20
+ * challenges; Chapter 3 1 / 4 / 14 (by greeting). The type word is set
+ * only while it names no handler yet: once a healer/trainer/challenge/mount
+ * handler owns it, later topics' own 0x800 flags are never looked at (the
+ * handler intercepts them first), which is how a mount seller -- plain
+ * greeting, then a "BUY PEGASUS" topic with flag 0x800 and arg 0x1000 -- switches
+ * into the mount handler mid-conversation (3 such NPCs in each game), and why
+ * Chapter 3's healer topics can each carry 0x800 harmlessly. Type 0x400 occurs
+ * in neither game (UseItemType_400 is dead).
+ */
+typedef enum {
+    DialogServiceNone,
+    DialogServiceHealer,       /* 0x8000, dialogservice.h's healing functions */
+    DialogServiceTrainer,      /* 0x4000 */
+    DialogServiceMounts,       /* 0x1000 (buying) or 0x2000 (selling back): the transport teachers, entered from a topic */
+    DialogServiceDead400,      /* 0x400, never reached */
+    DialogServiceChallenge     /* 0x800 */
+} DialogService;
+
+/* The greeting's type word: its argument if the greeting is a DialogTopicPreview topic, else 0. */
+uint16_t dialogGreetingType(const DialogCatalog *catalog, const uint8_t *npc);
+
+/*
+ * The type word after visiting `topic`: unchanged if `current` already selects a
+ * handler; otherwise the topic's argument if it is a DialogTopicPreview topic
+ * (ShowItemUsagePreview), else unchanged.
+ */
+uint16_t dialogTypeAfterTopic(uint16_t current, const DialogCatalog *catalog, const uint8_t *topic);
+
+/* UseItem's handler pick for a type word. */
+DialogService dialogServiceForType(uint16_t type);
+
 #endif

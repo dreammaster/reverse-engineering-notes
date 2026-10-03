@@ -331,6 +331,47 @@ static void checkRealGame(const char *name, GameKind game, const char *envName, 
     testRealConversations(&catalog, game);
 
     {
+        unsigned counts[6] = {0, 0, 0, 0, 0, 0};
+        unsigned mountNpcs = 0;
+        for (unsigned id = 1; id < catalog.npcCount; id++) {
+            const uint8_t *npc = dialogNpc(&catalog, id);
+            if (dialogGetU16(npc, DialogNpcTopicCount) == 0) {
+                continue;
+            }
+            uint16_t type = dialogGreetingType(&catalog, npc);
+            DialogService service = dialogServiceForType(type);
+            counts[service]++;
+            if (service == DialogServiceNone) {
+                /* walk the topics: a mount seller switches handler on a BUY/SELL topic */
+                uint16_t t2 = type;
+                bool onlyMounts = false;
+                for (unsigned t = 0; t < dialogGetU16(npc, DialogNpcTopicCount); t++) {
+                    const uint8_t *topic = dialogTopic(&catalog, dialogGetU16(npc, DialogNpcFirstTopic) + t);
+                    uint16_t before = t2;
+                    t2 = dialogTypeAfterTopic(t2, &catalog, topic);
+                    if (before == 0 && t2 != 0) {
+                        onlyMounts = dialogServiceForType(t2) == DialogServiceMounts;
+                        break;
+                    }
+                }
+                if (onlyMounts) {
+                    mountNpcs++;
+                }
+            }
+        }
+        snprintf(label, sizeof(label), "%s: healer count", name);
+        checkU32(label, counts[DialogServiceHealer], game == GameYendor2 ? 5 : 1);
+        snprintf(label, sizeof(label), "%s: trainer count", name);
+        checkU32(label, counts[DialogServiceTrainer], game == GameYendor2 ? 5 : 4);
+        snprintf(label, sizeof(label), "%s: challenge count", name);
+        checkU32(label, counts[DialogServiceChallenge], game == GameYendor2 ? 20 : 14);
+        snprintf(label, sizeof(label), "%s: NPCs that switch into the mount handler from a topic", name);
+        checkU32(label, mountNpcs, 3);
+        snprintf(label, sizeof(label), "%s: nobody uses the dead 0x400 handler", name);
+        checkU32(label, counts[DialogServiceDead400], 0);
+    }
+
+    {
         /* riddle topics (flag 0x80, not a "BUY ..." purchase) carry a riddle id the executable's answer table covers */
         unsigned riddles = 0;
         bool inRange = true;
