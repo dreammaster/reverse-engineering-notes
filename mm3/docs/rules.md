@@ -120,3 +120,13 @@ the smithy itself only handles opening hours (`byte_32E68`), the character selec
 * types 1-6: `T = itemScan(res) + byte pair of the character's resistance (temporary + permanent)`, range limit 40.
   Pairs at char `+111h` (type 1, magic, itemScan 10h), `+107h` (2, fire, 0Bh), `+10Bh` (3, electricity, 0Ch), `+109h` (4, cold, 0Dh),
   `+10Dh` (5, poison, 0Eh), `+10Fh` (6, energy, 0Fh); `unknown106` in `character.h` is therefore six resistance pairs plus one byte.
+
+## Experience (`getCurrentExperience` 415A8-ish, `nextExperienceLevel` 414F5-ish, `experienceToNextLevel`)
+
+The stored experience at char `+12Bh` (dword) is the experience **above the base of the character's current level**; total experience
+is `base(level) + stored`.  With the class multiplier `M` (word table `XP_CLASS_MULT` at DGROUP `1CB2h`, indexed by class:
+knight 1500, paladin 2000, archer 2000, cleric 1500, sorcerer 2000, robber 1000, ninja 1500, barbarian 1500, druid 1500, ranger 2000):
+
+* `base(1) = 0`; `base(n) = M * 2^(n-2)` for n = 2..12;  `base(n) = M * 1024 + (n-12) * 1,024,000` for n >= 13 (flat 1,024,000 per level).
+* `nextExperienceLevel(char)` = `base(level + 1)`; `experienceToNextLevel` = `max(0, base(level+1) - (base(level) + stored))`.
+* Training in the town raises the level and subtracts `base(level+1) - base(level)` from the stored value, so total experience is preserved.

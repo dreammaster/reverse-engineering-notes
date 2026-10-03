@@ -626,3 +626,4 @@
 3C03	SCHOOL_COUNTS	3 schools x 17 bytes: spells per spell level
 3CA1	TOWN_SPELL_CAP	byte per town 0-5: highest spell level the guild teaches (0,3,6,9,13,17)
 45BF3	spellGoldPrice	guild price of a spell: SP*100 (|SP|*500 if level scaled), shifted left once for half casters
+1CB2	XP_CLASS_MULT	10 words by class: experience multiplier (1500/2000/2000/1500/2000/1000/1500/1500/1500/2000)
