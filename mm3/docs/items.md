@@ -17,7 +17,7 @@ Item names are **built from parts**, exactly like Xeen: `<attribute prefix> <ele
 A character's inventory slot is described by six parallel arrays (see `character.h`): id (`slotId`, selects the base item and
 `ARMOR_STRENGTHS`; 1-based), element material (`slotElement` -> `ELEMENTAL_RESISTANCES`), metal (`slotMetal` -> `METAL_LAC`),
 attribute material (`slotAttribute` -> `ATTRIBUTE_BONUSES`) and the item's spell (`slotSpell`, used by `castItemSpell`).
-The weapon damage tables (`getWeaponDamage`, `4B283`) and prices (`calcItemCost`) are not decoded yet.
+Prices are decoded (`itemPrice`, see `rules.md` and the table below); the weapon damage tables are in `getWeaponDamage` (`4B283`).
 
 ## Base item table (decoded from DGROUP)
 
@@ -78,3 +78,47 @@ Then a third d100 decides how many of the four enchantment fields (metal at +B6h
 get a value: roll <= 95 -> one, <= 99 -> two, else three (the fields are chosen at random without repeats, each value is
 drawn `rnd(0, level-1)`-style from the item level); at level 6 exactly one field is set. This is by code reading; the
 exact per-field value ranges were not traced.
+
+## Complete item id list with base prices (word table at DGROUP `0B16h`, indexed by id)
+
+| id | item | base gold | id | item | base gold |
+|---|---|---|---|---|---|
+| 1 | long sword | 50 | 2 | short sword | 15 |
+| 3 | broad sword | 100 | 4 | scimitar | 80 |
+| 5 | cutlass | 40 | 6 | sabre | 60 |
+| 7 | club | 1 | 8 | hand axe | 10 |
+| 9 | katana | 150 | 10 | nunchakas | 30 |
+| 11 | wakazashi | 60 | 12 | dagger | 8 |
+| 13 | mace | 50 | 14 | flail | 100 |
+| 15 | cudgel | 15 | 16 | maul | 30 |
+| 17 | spear | 15 | 18 | bardiche | 200 |
+| 19 | glaive | 80 | 20 | halberd | 250 |
+| 21 | pike | 150 | 22 | flamberge | 400 |
+| 23 | trident | 100 | 24 | staff | 40 |
+| 25 | hammer | 120 | 26 | naginata | 300 |
+| 27 | battle axe | 100 | 28 | grand axe | 200 |
+| 29 | great axe | 300 | 30 | short bow | 25 |
+| 31 | long bow | 100 | 32 | crossbow | 50 |
+| 33 | sling | 15 | 34 | padded armor | 20 |
+| 35 | leather armor | 40 | 36 | scale armor | 100 |
+| 37 | ring mail | 200 | 38 | chain mail | 400 |
+| 39 | splint mail | 600 | 40 | plate mail | 1000 |
+| 41 | plate armor | 2000 | 42 | shield | 100 |
+| 43 | helm | 60 | 44 | crown | 1000 |
+| 45 | tiara | 200 | 46 | gauntlets | 100 |
+| 47 | ring | 100 | 48 | boots | 40 |
+| 49 | cloak | 250 | 50 | robes | 150 |
+| 51 | cape | 200 | 52 | belt | 100 |
+| 53 | broach | 250 | 54 | medal | 100 |
+| 55 | charm | 50 | 56 | cameo | 300 |
+| 57 | scarab | 200 | 58 | pendant | 500 |
+| 59 | necklace | 1000 | 60 | amulet | 2000 |
+| 61 | rod | 50 | 62 | jewel | 1000 |
+| 63 | gem | 500 | 64 | box | 10 |
+| 65 | orb | 100 | 66 | horn | 20 |
+| 67 | coin | 10 | 68 | wand | 50 |
+| 69 | whistle | 10 | 70 | potion | 10 |
+| 71 | scroll | 100 | 72 | Torch | 5 |
+| 73 | Rope and Hooks | 5 | | | |
+
+Ids 34-41 are body armour (the ones `subtractHitPoints` can break), 42 shield, 43-47 head/hand/finger gear, 48-53 boots, cloak, robes, cape, belt, broach, 54+ the magical trinkets and consumables (73 = Rope and Hooks, the item the pit events test for). Prices shown are before the metal / enchantment multipliers and the merchant divisor.

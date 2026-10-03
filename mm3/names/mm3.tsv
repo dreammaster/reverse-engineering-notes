@@ -619,3 +619,4 @@
 44DBE	pickSaveSlot	save slot picker (uses readSaveHeader, getCommand); returns slot or FFFFh; called from loadSaveDialog/controlPanel via stub sub_2825D
 4F24E	spellAttackAhead	damage spell/attack arrival: called by Flying Fist etc. through stub sub_2865D with the spell id; starts the attack on the monster ahead (calls attack, drawView, giveTreasure)
 1B925	setPartyStartCell	sets Party_x/y from page header byte 13h (low nibble x, high nibble y) plus the page origin
+1BEE9	clearViewFlags	zeroes ~100 per-frame view/object visibility flag bytes before prepareIndoorView walks the cells
