@@ -16,3 +16,25 @@ runs the intro (`introSequence`), then the title/roster menu (`rosterMenu`) and 
 3. at the end the same function plays the death sequence (`death.vga`, `mm3theme.m`) when the party is dead.
 
 `Engine_mode`: 0 = ?, 1 = exploring, 2 = combat, 3 = spell menu, 9 = script in progress (see `addTime`, `runMazeEvent`).
+
+## Exploration key table (decoded from overlay 04, table at `16D4h`, handlers at `+48h`; by the calls each handler makes)
+
+| command | handler does |
+|---|---|
+| `S` / 0 | `sub_19174` -- shoot / fire a ranged attack ahead (the routine that `spellAttackAhead` also uses) |
+| `C` / 1 | `spellsDialog` (cast) |
+| `R` / 2 (and `%`-code 25h goes to `13E8h`) | `rest` |
+| `B` / 3 | bash the door/wall ahead (`chargeStep` + wall test) |
+| `D` / 4 | `chargeStep`, `dismissCharacter` |
+| `V` / 5 | `showOverheadMap` (after `sub_282CA`) |
+| `M` / 6 | `showOverheadMap` (map) |
+| `I` / 7 | `sub_2818A` + `chargeStep` |
+| space (20h) | pass one step of time (`chargeStep` only) |
+| `Q` / 8 | `characterStatsDialog` / `controlPanel` |
+| ESC (9) | `controlPanel` |
+| `C9h`-`D0h` | select party member 1-8: `characterInfoDialog` (then `moveMonsters`, `runMazeEvent`) |
+| `F0h`/`F1h` | turn left / right |
+| `F2h`, `F3h`, `F4h`, `F5h` | forward, back and the two strafes (each tests the destination wall with `mazeGetWordRel` and spends time in `chargeStep`) |
+
+Letters are the upper-case key codes (`B`=42h, `C`=43h, `D`=44h, `I`=49h, `M`=4Dh, `Q`=51h, `R`=52h, `S`=53h, `V`=56h); the small numbers 0-9 are the
+same commands as delivered by the mouse/button panel.  The assignment of `I`/`V`/`Q` to their dialogs comes from the callees only and is uncertain.
