@@ -21,7 +21,7 @@ runs the intro (`introSequence`), then the title/roster menu (`rosterMenu`) and 
 
 | command | handler does |
 |---|---|
-| `S` / 0 | `sub_19174` -- shoot / fire a ranged attack ahead (the routine that `spellAttackAhead` also uses) |
+| `S` / 0 | `shootAhead` (19174): `spellAttackAhead(0Bh)`, the party fires its ranged weapons |
 | `C` / 1 | `spellsDialog` (cast) |
 | `R` / 2 (and `%`-code 25h goes to `13E8h`) | `rest` |
 | `B` / 3 | bash the door/wall ahead (`chargeStep` + wall test) |
