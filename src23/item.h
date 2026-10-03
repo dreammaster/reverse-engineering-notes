@@ -60,6 +60,11 @@ typedef enum {
  * offsets are in party.h): a slot code is only valid if the item has its bit.
  */
 typedef enum {
+    ItemFlagNoDrop = 0x0001,        /* cannot be dropped: keys, maps, quest items (47 / 22 items in Chapters 2 / 3); see inventory.h */
+    ItemFlagContainerAny = 0x0002,  /* a container that accepts every item (MAGIC CONTAINER) */
+    ItemFlagContainerBag = 0x0004,  /* accepts items whose fit flags have ItemFitBag */
+    ItemFlagContainerBox = 0x0008,  /* ... ItemFitBox */
+    ItemFlagContainerBackpack = 0x0010, /* ... ItemFitBackpack */
     ItemFlagConsumable = 0x0100, /* target record is in the consumable table */
     ItemFlagEquipShort = 0x0200, /* codes 0x10-0x14; ItemTargetSlotFlags picks which */
     ItemFlagEquipRing = 0x0400,  /* codes 0x0E and 0x0F */

@@ -4533,6 +4533,14 @@ target's flag word: `0x8000`/`0x4000`/`0x2000`/`0x1000`/`0x800` = `0x10`..
 `0x14`), `0x100` consumable, `0x1000` alternate icon. **Fit flags `+0x0E`**:
 `0x8000` backpack, `0x4000` box, `0x2000` bag (`0xE000` fits all).
 
+**Low flag bits** (found 2026-10-03, `inventory.c`): `0x1` = cannot be dropped (all keys, maps and quest items: 47
+items in Chapter 2, 22 in Chapter 3), `0x2` a container that accepts everything (MAGIC CONTAINER), `0x4`/`0x8`/`0x10`
+a BAG / BOX / BACKPACK, which accept items whose fit flags have `0x2000` / `0x4000` / `0x8000` (a BAG, fit `0xC000`,
+fits a BOX or BACKPACK but not another BAG; a BOX fits only a BACKPACK). `IsItemDroppable` is misnamed: it returns
+non-zero when dropping is BLOCKED -- the item itself, or any item up to three containers deep inside it, has bit 1.
+`IsItemEligibleForCommand`'s per-slot rules (two-handed weapons need the shield slot empty, shields need no
+two-handed weapon, an occupied slot always swaps) are `inventoryEligibleForSlot`.
+
 **Target tables**, chosen by the flags in this order (`LoadItemCatalogRecord`):
 `0xE00` bits -> wearable table (12 B); else `0xC000` -> weapon table (12 B);
 else `0x100` -> consumable table (8 B). Wearable/weapon words: `[0]`

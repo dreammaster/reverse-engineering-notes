@@ -11413,6 +11413,13 @@ a foreign script of three difficulty classes and the reader's skill decides how 
 readable letters (none below the first threshold, 1, 2, 3 of 5, then all). Chapter 3 raises every threshold by 10-20
 points. `DrawIndentedTextColumn` is the consumer (word-by-word font switching). `document.c`, `test_document.c`.
 
+### Session update: inventory gates (`inventory.c`)
+
+The slot-eligibility rules, the container-type compatibility test, the can't-drop test (the original's `IsItemDroppable`
+answers the opposite question) and the weapon/armour location test are pure functions of item flags; item flag bits
+0x1-0x10 are now named (no-drop, container kinds). Verified on the real item catalogs (keys, maps and quest items
+carry no-drop; BAG/BOX/BACKPACK fit flags nest as expected). `inventory.c`, `test_inventory.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
