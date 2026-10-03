@@ -13948,6 +13948,7 @@ static Bytes_2(void) {
 	MakeStruct	(0X28000,	"_stub_descr");
 	create_insn	(0X28020);
 	create_insn	(0X28025);
+	set_name	(0X28025,	"j_inputString");
 	create_insn	(0X2802A);
 	set_name	(0X2802A,	"j_indexEvents");
 	create_insn	(0X2802F);
@@ -14003,6 +14004,7 @@ static Bytes_2(void) {
 	create_insn	(0X28126);
 	set_name	(0X28126,	"j_rosterMenu");
 	create_insn	(0X2812B);
+	set_name	(0X2812B,	"j_showMessage");
 	create_insn	(0X28130);
 	create_insn	(0X28135);
 	create_insn	(0X2813A);
@@ -14340,6 +14342,7 @@ static Bytes_2(void) {
 	create_insn	(0X28635);
 	create_insn	(0X2863A);
 	create_insn	(0X2863F);
+	set_name	(0X2863F,	"j_bash");
 	create_insn	(0X28644);
 	set_name	(0X28644,	"j_itemsDialog");
 	create_insn	(0X28649);
@@ -14803,10 +14806,6 @@ static Bytes_2(void) {
 	make_array	(0X2A177,	0X38B);
 	create_byte	(0X2A502);
 	make_array	(0X2A502,	0X1C);
-	create_strlit	(0X2A51E,	0X33);
-	set_name	(0X2A51E,	"a007sorryBossKe");
-	create_strlit	(0X2A551,	0X5);
-	set_name	(0X2A551,	"aC");
 }
 
 //------------------------------------------------------------------------
@@ -14816,6 +14815,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X2A51E,	0X33);
+	set_name	(0X2A51E,	"a007sorryBossKe");
+	create_strlit	(0X2A551,	0X5);
+	set_name	(0X2A551,	"aC");
 	create_strlit	(0X2A556,	0XD);
 	set_name	(0X2A556,	"aDelBoss");
 	create_strlit	(0X2A563,	0XA);
@@ -18308,9 +18311,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X37E08,	"jumptable 00037D55 cases 7-9,11-14,18,21,22",	1);
 	create_insn	(0X37E08);
-	set_cmt	(0X37E0B,	"maxlen",	0);
-	create_insn	(x=0X37E0E);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18320,6 +18320,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X37E0B,	"maxlen",	0);
+	create_insn	(x=0X37E0E);
+	op_hex		(x,	1);
 	set_cmt	(0X37E1B,	"src",	0);
 	create_insn	(x=0X37E1D);
 	op_stkvar	(x,	1);
@@ -21154,6 +21157,7 @@ static Bytes_4(void) {
 	op_plain_offset	(x,	128,	0X3BC30);
 	set_name	(0X3D710,	"jpt_3D353");
 	create_insn	(0X3D7D2);
+	set_name	(0X3D7D2,	"inputString");
 	create_insn	(x=0X3D7D5);
 	op_hex		(x,	1);
 	set_cmt	(0X3D7D9,	"s2",	0);
@@ -23134,11 +23138,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X40126);
 	op_hex		(x,	1);
 	create_insn	(0X4012B);
-	create_insn	(0X40133);
-	create_insn	(0X4013E);
-	create_insn	(0X4014E);
-	create_insn	(0X4015B);
-	create_insn	(0X40173);
 }
 
 //------------------------------------------------------------------------
@@ -23148,6 +23147,11 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(0X40133);
+	create_insn	(0X4013E);
+	create_insn	(0X4014E);
+	create_insn	(0X4015B);
+	create_insn	(0X40173);
 	set_cmt	(0X4019D,	"format",	0);
 	set_cmt	(0X401A5,	"buffer",	0);
 	create_insn	(x=0X401AB);
@@ -23155,6 +23159,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X401CA);
 	op_hex		(x,	1);
 	create_insn	(0X401CF);
+	set_name	(0X401CF,	"showMessage");
 	create_insn	(x=0X401E1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40212);
@@ -28763,15 +28768,6 @@ static Bytes_5(void) {
 	set_cmt	(0X47932,	"format",	0);
 	create_insn	(x=0X47932);
 	op_stkvar	(x,	0);
-	set_cmt	(0X47939,	"buffer",	0);
-	create_insn	(x=0X4793F);
-	op_hex		(x,	1);
-	create_insn	(0X47947);
-	create_insn	(0X4795A);
-	create_insn	(x=0X47983);
-	op_hex		(x,	1);
-	create_insn	(x=0X47985);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -28781,6 +28777,15 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X47939,	"buffer",	0);
+	create_insn	(x=0X4793F);
+	op_hex		(x,	1);
+	create_insn	(0X47947);
+	create_insn	(0X4795A);
+	create_insn	(x=0X47983);
+	op_hex		(x,	1);
+	create_insn	(x=0X47985);
+	op_hex		(x,	1);
 	create_insn	(x=0X479A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X479A5);
@@ -33324,6 +33329,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4EFA1);
 	op_hex		(x,	1);
 	create_insn	(0X4EFB6);
+	set_name	(0X4EFB6,	"bash");
 	create_insn	(x=0X4EFB9);
 	op_hex		(x,	1);
 	create_insn	(0X4EFC8);
@@ -33784,10 +33790,6 @@ static Bytes_6(void) {
 	create_insn	(0X4F961);
 	set_cmt	(0X4F969,	"jumptable 0004F954 case 2",	1);
 	create_insn	(0X4F969);
-	set_cmt	(0X4F971,	"jumptable 0004F954 case 3",	1);
-	create_insn	(0X4F971);
-	set_cmt	(0X4F979,	"jumptable 0004F954 case 4",	1);
-	create_insn	(0X4F979);
 }
 
 //------------------------------------------------------------------------
@@ -33797,6 +33799,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4F971,	"jumptable 0004F954 case 3",	1);
+	create_insn	(0X4F971);
+	set_cmt	(0X4F979,	"jumptable 0004F954 case 4",	1);
+	create_insn	(0X4F979);
 	set_cmt	(0X4F981,	"jumptable 0004F954 case 5",	1);
 	create_insn	(0X4F981);
 	set_cmt	(0X4F989,	"jumptable 0004F954 case 6",	1);
@@ -38388,8 +38394,8 @@ static Functions_0(void) {
 	set_func_flags(0X28020,0x5482);
 	set_frame_size(0X28020, 0, 0, 0);
 	add_func    (0X28025,0X2802A);
-	set_func_flags(0X28025,0x5482);
-	SetType(0X28025, "int __cdecl __far sub_28025(int, int, char *format);");
+	set_func_flags(0X28025,0x54c2);
+	SetType(0X28025, "int __cdecl __far j_inputString(int, int, char *format);");
 	set_frame_size(0X28025, 0, 0, 0);
 	add_func    (0X2802A,0X2802F);
 	set_func_flags(0X2802A,0x54c2);
@@ -38504,7 +38510,7 @@ static Functions_0(void) {
 	set_func_flags(0X28126,0x54c2);
 	set_frame_size(0X28126, 0, 0, 0);
 	add_func    (0X2812B,0X28130);
-	set_func_flags(0X2812B,0x5482);
+	set_func_flags(0X2812B,0x54c2);
 	set_frame_size(0X2812B, 0, 0, 0);
 	add_func    (0X28130,0X28135);
 	set_func_flags(0X28130,0x5482);
@@ -39134,7 +39140,7 @@ static Functions_0(void) {
 	set_func_flags(0X2863A,0x5482);
 	set_frame_size(0X2863A, 0, 0, 0);
 	add_func    (0X2863F,0X28644);
-	set_func_flags(0X2863F,0x5482);
+	set_func_flags(0X2863F,0x54c2);
 	set_frame_size(0X2863F, 0, 0, 0);
 	add_func    (0X28644,0X28649);
 	set_func_flags(0X28644,0x54c2);
@@ -39375,7 +39381,8 @@ static Functions_0(void) {
 	set_frame_size(0X3D32E, 0X8, 2, 0);
 	add_func    (0X3D7D2,0X3D8C9);
 	set_func_flags(0X3D7D2,0x5412);
-	SetType(0X3D7D2, "int __cdecl __far sub_3D7D2(int, int, char *format);");
+	SetType(0X3D7D2, "int __cdecl __far inputString(int, int, char *format);");
+	set_func_cmt(0X3D7D2,	"text entry used by ConfirmWord (word id, message, prompt) -> result; thunk 28025", 0);
 	set_frame_size(0X3D7D2, 0X1A, 2, 0);
 	define_local_var(0X3D7D2, 0X3D8C9, "[bp-0X16]", "s1");
 	define_local_var(0X3D7D2, 0X3D8C9, "[bp+0XA]", "format");
@@ -39449,6 +39456,7 @@ static Functions_0(void) {
 	set_frame_size(0X40173, 0, 2, 0);
 	add_func    (0X401CF,0X40248);
 	set_func_flags(0X401CF,0x5412);
+	set_func_cmt(0X401CF,	"shows a message string in a window (error/info text); thunk 2812B", 0);
 	set_frame_size(0X401CF, 0X2, 2, 0);
 	add_func    (0X40248,0X40280);
 	set_func_flags(0X40248,0x5412);
@@ -39675,6 +39683,10 @@ static Functions_0(void) {
 	set_frame_size(0X44C14, 0X38, 2, 0);
 	define_local_var(0X44C14, 0X44CC6, "[bp-0X34]", "buffer");
 	define_local_var(0X44C14, 0X44CC6, "[bp+0XA]", "format");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X44CC6,0X44DAC);
 	set_func_flags(0X44CC6,0x5412);
 	SetType(0X44CC6, "int __cdecl __far sub_44CC6(int, char *format);");
@@ -39682,10 +39694,6 @@ static Functions_0(void) {
 	define_local_var(0X44CC6, 0X44DAC, "[bp-0X2E]", "s");
 	define_local_var(0X44CC6, 0X44DAC, "[bp-0X1A]", "buffer");
 	define_local_var(0X44CC6, 0X44DAC, "[bp+0X8]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X44DAC,0X44DBE);
 	set_func_flags(0X44DAC,0x5456);
 	SetType(0X44DAC, "int __cdecl strcoll(const char *s1, const char *s2);");
@@ -40327,6 +40335,7 @@ static Functions_1(void) {
 	define_local_var(0X4EEF8, 0X4EFB6, "[bp-0X28]", "format");
 	add_func    (0X4EFB6,0X4F236);
 	set_func_flags(0X4EFB6,0x5412);
+	set_func_cmt(0X4EFB6,	"command B: bashes the square ahead (checks mazeGetWordRel, rolls vs getStat, mazeSetBits to open it, subtractHitPoints on failure); thunk 2863F", 0);
 	set_frame_size(0X4EFB6, 0XC, 2, 0);
 	add_func    (0X4F24E,0X4F74F);
 	set_func_flags(0X4F24E,0x5412);

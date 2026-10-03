@@ -414,6 +414,7 @@
 3C282	giveTake	Xeen Party::giveTake: (mode1, val1, mode2, val2, charIdx), switch on mode-8 (giveCharDamage for hp, items, gold...)
 3CFAD	setValue	Xeen Character::setValue: writes a character field by action number (+10h sex, +11h race, +13h class, +125h hp ...)
 3D32E	ifProc	event condition: (action, value, mode, charIndex) -> compares a character/party value; same action numbers as Xeen Scripts::ifProc (confirmed by the field offsets it reads)
+3D7D2	inputString	text entry used by ConfirmWord (word id, message, prompt) -> result; thunk 28025
 3D8C9	trapOrLockEvent	uses getThievery, giveCharDamage, giveTake, rnd (by callees)
 3DD20	resetTemps
 3DF79	GiveBankInterest	(BinDiff sim .69 conf .97, unverified)
@@ -428,6 +429,7 @@
 3F094	cmd_F4	command F4h (not identified)
 3F112	cmd_F5	command F5h (not identified)
 3F490	Awards_show	award.bin
+401CF	showMessage	shows a message string in a window (error/info text); thunk 2812B
 403C9	setButtons_41D	sets the four button/hotspot ids word_34C12..18 to 41Dh,421h,422h,423h (was wrongly setSoundAddress); other screens set other sets
 403E6	sortParty
 40A6D	copyPartyToRoster
@@ -561,6 +563,7 @@
 4DE30	itemsDialog	"%s is not equippable!", "To use an item in Combat...", "Permanently discard %s?"
 4E846	specialsDialog	None/All/+5 Might... list
 4EC37	getThievery
+4EFB6	bash	command B: bashes the square ahead (checks mazeGetWordRel, rolls vs getStat, mazeSetBits to open it, subtractHitPoints on failure); thunk 2863F
 4F74F	spellsDialog	spell casting menu (Engine_mode 3); 77-entry key table
 4FF60	castItemSpell	switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog
 502D2	characterInfoDialog	character info; calls Awards_show (by callees)
