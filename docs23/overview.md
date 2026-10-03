@@ -11442,6 +11442,12 @@ close to complete: `viewportBuild` gives the 51 cells in front of the party for 
 culls the hidden ones using tables extracted by `dump_visibility_tables.py` (identical in both games once expressed as cell
 indices). The actual wall/floor/ceiling blitting (`RenderDungeonViewRow`, `DrawPicture`) is the platform layer's job.
 
+### Session update: which music plays (`music.c`)
+
+The ambient music is a u16-per-page table in WORLD.DAT (keyed by the same page index as the local map) plus the travel
+destination's day/night tracks; both games identical in logic. `music.c`/`.h`, `test_music.c`; dump scripts
+`dump_music_table_offset.py`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

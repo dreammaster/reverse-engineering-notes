@@ -1547,6 +1547,11 @@ path clears it alongside stopping playback — distinct from
 `g_forcedMusicTrack` (the "0 = let the ambient system choose" override
 flag `RunTitleScreen` and character creation toggle).
 
+**Reimplemented as `music.c`**: the region track is a u16 per 40 x 24 map page in a WORLD.DAT table (Chapter 2 `0x71048`,
+120 entries, ids 0-17; Chapter 3 `0x83DD0`, 140 entries, ids 0-23), found next to the per-page label table. A travel
+destination's day and night tracks (`TravelDestination.rawA/rawB` in Chapter 2) take over via `UpdateAmbientMusic`, which
+picks the forced track, else the day (07:00-19:00) or night track, if ambient music is allowed.
+
 ### The EMS page-mapping call cache
 
 `MapUnmapPages` (the central `int 67h` LIM EMS 4.0 page-mapping
