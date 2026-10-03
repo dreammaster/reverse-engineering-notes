@@ -118,4 +118,28 @@ unsigned documentLineCount(GameKind game, DocumentCategory category, unsigned id
 bool documentGetLine(const DocumentCatalog *catalog, DocumentCategory category, unsigned id, unsigned lineIndex,
                       char out[DocumentLineBufferSize]);
 
+/*
+ * Reading skill (ClassifyConversationSkillTier, yendor2.asm:50137, yendor3.asm:49909, identical but for the
+ * thresholds, called before every document is shown; DrawIndentedTextColumn is its consumer). Documents are
+ * written in a foreign script of three difficulty classes, given by bits of the triggering item's target entry
+ * word 1: 0x8 (easy), 0x4 (medium), 0x2 (hard); none of them means plain text. The reading character's
+ * LINGUISTICS skill (+0x6E, signed compares) decides how many words of every five are rendered in readable
+ * letters (the rest stay in the foreign font):
+ *
+ *            font   skill <T1      T1..T2    T2..T3    T3..T4    >= T4
+ *            offset  (none)        1 of 5    2 of 5    3 of 5    all
+ *   easy      2      Ch2 65,70,75,80   Ch3 80,85,90,95
+ *   medium    6      Ch2 75,80,85,90   Ch3 90,95,100,115
+ *   hard      4      Ch2 85,90,95,105  Ch3 100,115,120,125
+ * Below T1 nothing is readable; plain text (no difficulty bits) is always readable (font offset 0). The first
+ * clear words come first in each group of five.
+ */
+typedef struct {
+    bool plain;               /* no difficulty class: always readable */
+    unsigned fontOffset;      /* the foreign font (2, 6 or 4); 0 for plain text */
+    unsigned clearWordsOfFive; /* 0..5; 5 = everything readable */
+} DocumentReadability;
+
+DocumentReadability documentClassifyReadability(GameKind game, uint16_t entryWord1, int16_t linguistics);
+
 #endif

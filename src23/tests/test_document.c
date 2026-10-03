@@ -197,7 +197,28 @@ static void testRealYendor3(void) {
     checkRealInvariants("yendor3", GameYendor3);
 }
 
+static void testReadability(void) {
+    DocumentReadability r = documentClassifyReadability(GameYendor2, 0, 0);
+    check("a document with no difficulty bits is plain", r.plain && r.fontOffset == 0 && r.clearWordsOfFive == 5);
+    r = documentClassifyReadability(GameYendor2, 8, 64);
+    check("easy, Chapter 2, skill 64: unreadable, font 2", !r.plain && r.fontOffset == 2 && r.clearWordsOfFive == 0);
+    check("65 / 70 / 75 / 80 step up 1, 2, 3, all", documentClassifyReadability(GameYendor2, 8, 65).clearWordsOfFive == 1 &&
+                                                       documentClassifyReadability(GameYendor2, 8, 70).clearWordsOfFive == 2 &&
+                                                       documentClassifyReadability(GameYendor2, 8, 75).clearWordsOfFive == 3 &&
+                                                       documentClassifyReadability(GameYendor2, 8, 80).clearWordsOfFive == 5);
+    r = documentClassifyReadability(GameYendor2, 4, 80);
+    check("medium: font 6, thresholds 75/80/85/90", r.fontOffset == 6 && r.clearWordsOfFive == 2 && documentClassifyReadability(GameYendor2, 4, 90).clearWordsOfFive == 5);
+    r = documentClassifyReadability(GameYendor2, 2, 95);
+    check("hard: font 4, 85/90/95/105", r.fontOffset == 4 && r.clearWordsOfFive == 3 && documentClassifyReadability(GameYendor2, 2, 105).clearWordsOfFive == 5);
+    check("the easiest class wins when several bits are set", documentClassifyReadability(GameYendor2, 8 | 2, 100).fontOffset == 2);
+    check("Chapter 3 is harder: easy needs 80", documentClassifyReadability(GameYendor3, 8, 79).clearWordsOfFive == 0 &&
+                                                   documentClassifyReadability(GameYendor3, 8, 80).clearWordsOfFive == 1 &&
+                                                   documentClassifyReadability(GameYendor3, 2, 125).clearWordsOfFive == 5);
+    check("a negative skill (signed compare) reads nothing", documentClassifyReadability(GameYendor2, 8, -5).clearWordsOfFive == 0);
+}
+
 int main(void) {
+    testReadability();
     testLayouts();
     checkTableInvariants(GameYendor2);
     checkTableInvariants(GameYendor3);

@@ -11406,6 +11406,13 @@ halves damage once per overlapping resistance/type bit. The dungeon monster fiel
 on is the creature kind, 13 = undead. Animation and message shells (`HandleRangedOrCombatAction`) remain UI.
 `thrown.c`/`.h`, `test_thrown.c`.
 
+### Session update: reading skill gates found documents (`documentClassifyReadability`)
+
+`ClassifyConversationSkillTier` is the LINGUISTICS (stat `+0x6E`) check on the book/note/plaque reader: documents are in
+a foreign script of three difficulty classes and the reader's skill decides how many words in every five are shown in
+readable letters (none below the first threshold, 1, 2, 3 of 5, then all). Chapter 3 raises every threshold by 10-20
+points. `DrawIndentedTextColumn` is the consumer (word-by-word font switching). `document.c`, `test_document.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

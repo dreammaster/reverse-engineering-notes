@@ -155,3 +155,38 @@ bool documentGetLine(const DocumentCatalog *catalog, DocumentCategory category, 
     out[length] = '\0';
     return true;
 }
+
+DocumentReadability documentClassifyReadability(GameKind game, uint16_t entryWord1, int16_t linguistics) {
+    static const int16_t kThresholds[2][3][4] = {
+        {{65, 70, 75, 80}, {75, 80, 85, 90}, {85, 90, 95, 105}},
+        {{80, 85, 90, 95}, {90, 95, 100, 115}, {100, 115, 120, 125}},
+    };
+    static const unsigned kFonts[3] = {2, 6, 4};
+    DocumentReadability r = {false, 0, 0};
+    unsigned cls;
+    if (entryWord1 & 8) {
+        cls = 0;
+    } else if (entryWord1 & 4) {
+        cls = 1;
+    } else if (entryWord1 & 2) {
+        cls = 2;
+    } else {
+        r.plain = true;
+        r.clearWordsOfFive = 5;
+        return r;
+    }
+    const int16_t *t = kThresholds[game == GameYendor3 ? 1 : 0][cls];
+    r.fontOffset = kFonts[cls];
+    if (linguistics < t[0]) {
+        r.clearWordsOfFive = 0;
+    } else if (linguistics < t[1]) {
+        r.clearWordsOfFive = 1;
+    } else if (linguistics < t[2]) {
+        r.clearWordsOfFive = 2;
+    } else if (linguistics < t[3]) {
+        r.clearWordsOfFive = 3;
+    } else {
+        r.clearWordsOfFive = 5;
+    }
+    return r;
+}
