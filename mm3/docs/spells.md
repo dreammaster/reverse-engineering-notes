@@ -173,25 +173,157 @@ The item's spell id (character record `+0EFh`+slot, 1-77) selects the same effec
 
 Arguments (character, spell id). Spell point cost = word table at DGROUP `1B7Ah[id]`; a value below 1 means `|value| x character level` (e.g. Sparks costs level SP). Gem cost = word table `1C16h[id]`, taken from `Party_gems`. Returns 0 on success, 1 if the character lacks spell points, 2 if the party lacks gems (the SP are only deducted when both checks pass).
 
-| id | spell | SP | gems | id | spell | SP | gems |
-|---|---|---|---|---|---|---|---|
-| 0 | Light | 1 | 0 | 1 | Awaken | 1 | 0 |
-| 2 | First Aid | 1 | 0 | 3 | Flying Fist | 2 | 0 |
-| 4 | Detect Magic | 1 | 0 | 5 | Elemental Arrow | 2 | 0 |
-| 6 | Revitalize | 2 | 0 | 7 | Cure Wounds | 3 | 1 |
-| 8 | Sparks | 1/lvl | 1 | 9 | Energy Blast | 1/lvl | 1 |
-| 10 | Sleep | 3 | 1 | 11 | Pain | 4 | 0 |
-| 12 | Create Rope | 3 | 0 | 13 | Toxic Cloud | 4 | 1 |
-| 14 | Suppress Poison | 4 | 0 | 15 | Prot. from Elements | 1/lvl | 2 |
-| 16 | Turn Undead | 5 | 2 | 17 | Jump | 4 | 0 |
-| 18 | Acid Stream | 5 | 0 | 19 | Suppress Disease | 5 | 0 |
-| 20 | Silence | 6 | 0 | 21 | Blessed | 2/lvl | 0 |
-| 22 | Levitate | 5 | 0 | 23 | Wizard Eye | 5 | 2 |
-| 24 | Identify Monster | 5 | 0 | 25 | Holy Bonus | 2/lvl | 0 |
-| 26 | Power Cure | 2/lvl | 3 | 27 | Nature's Cure | 6 | 0 |
-| 28 | Lightning Bolt | 2/lvl | 2 | 29 | Immobilize | 6 | 3 |
-| 30 | Heroism | 2/lvl | 3 | 31 | Walk on Water | 7 | 0 |
-| 32 | Frost Bite | 7 | 0 | 33 | Lloyd's Beacon | 6 | 2 |
-| 34 | Power Shield | 2/lvl | 2 | 35 | Cure Poison | 8 | 0 |
-| 36 | Fireball | 2/lvl | 2 | 37 | Detect Monster | 6 | 0 |
-| 38 | Acid Spray | 8 | 0 | 39 | Cold Ray | 2/lvl | 4 |
+| id | spell | SP | gems |
+|---|---|---|---|
+| 0 | Light | 1 | 0 |
+| 1 | Awaken | 1 | 0 |
+| 2 | First Aid | 1 | 0 |
+| 3 | Flying Fist | 2 | 0 |
+| 4 | Detect Magic | 1 | 0 |
+| 5 | Elemental Arrow | 2 | 0 |
+| 6 | Revitalize | 2 | 0 |
+| 7 | Cure Wounds | 3 | 1 |
+| 8 | Sparks | 1/lvl | 1 |
+| 9 | Energy Blast | 1/lvl | 1 |
+| 10 | Sleep | 3 | 1 |
+| 11 | Pain | 4 | 0 |
+| 12 | Create Rope | 3 | 0 |
+| 13 | Toxic Cloud | 4 | 1 |
+| 14 | Suppress Poison | 4 | 0 |
+| 15 | Prot. from Elements | 1/lvl | 2 |
+| 16 | Turn Undead | 5 | 2 |
+| 17 | Jump | 4 | 0 |
+| 18 | Acid Stream | 5 | 0 |
+| 19 | Suppress Disease | 5 | 0 |
+| 20 | Silence | 6 | 0 |
+| 21 | Blessed | 2/lvl | 0 |
+| 22 | Levitate | 5 | 0 |
+| 23 | Wizard Eye | 5 | 2 |
+| 24 | Identify Monster | 5 | 0 |
+| 25 | Holy Bonus | 2/lvl | 0 |
+| 26 | Power Cure | 2/lvl | 3 |
+| 27 | Nature's Cure | 6 | 0 |
+| 28 | Lightning Bolt | 2/lvl | 2 |
+| 29 | Immobilize | 6 | 3 |
+| 30 | Heroism | 2/lvl | 3 |
+| 31 | Walk on Water | 7 | 0 |
+| 32 | Frost Bite | 7 | 0 |
+| 33 | Lloyd's Beacon | 6 | 2 |
+| 34 | Power Shield | 2/lvl | 2 |
+| 35 | Cure Poison | 8 | 0 |
+| 36 | Fireball | 2/lvl | 2 |
+| 37 | Detect Monster | 6 | 0 |
+| 38 | Acid Spray | 8 | 0 |
+| 39 | Cold Ray | 2/lvl | 4 |
+| 40 | Cure Disease | 10 | 0 |
+| 41 | Nature's Gate | 10 | 0 |
+| 42 | Time Distortion | 8 | 3 |
+| 43 | Feeble Mind | 8 | 0 |
+| 44 | Deadly Swarm | 12 | 0 |
+| 45 | Teleport | 10 | 0 |
+| 46 | Finger of Death | 10 | 4 |
+| 47 | Cure Paralysis | 12 | 0 |
+| 48 | Paralyze | 15 | 4 |
+| 49 | Dragon Breath | 3/lvl | 5 |
+| 50 | Super Shelter | 15 | 5 |
+| 51 | Fiery Flail | 25 | 5 |
+| 52 | Create Food | 20 | 5 |
+| 53 | Town Portal | 30 | 5 |
+| 54 | Stone to Flesh | 35 | 5 |
+| 55 | Recharge Item | 15 | 10 |
+| 56 | Fantastic Freeze | 15 | 5 |
+| 57 | Duplication | 20 | 50 |
+| 58 | Disintegrate | 25 | 8 |
+| 59 | Raise Dead | 50 | 10 |
+| 60 | Half for Me | 40 | 10 |
+| 61 | Etherealize | 30 | 8 |
+| 62 | Dancing Sword | 3/lvl | 10 |
+| 63 | Prismatic Light | 60 | 10 |
+| 64 | Moon Ray | 60 | 10 |
+| 65 | Mass Distortion | 75 | 10 |
+| 66 | Enchant Item | 30 | 20 |
+| 67 | Incinerate | 35 | 10 |
+| 68 | Elemental Storm | 100 | 10 |
+| 69 | Holy Word | 100 | 20 |
+| 70 | Resurrect | 125 | 20 |
+| 71 | Mega Volts | 40 | 10 |
+| 72 | Inferno | 75 | 10 |
+| 73 | Sun Ray | 150 | 10 |
+| 74 | Implosion | 100 | 20 |
+| 75 | Star Burst | 200 | 20 |
+| 76 | Divine Intervention | 200 | 20 |
+
+## Who can learn what (`trainCharacter`, `45C21`; guild purchase list `sub_45F29`)
+
+There are 77 spells (ids 0-76), in three schools (`SCHOOL_LISTS`, byte table at DGROUP `3C36h`, 36 entries per school, with the number of spells per spell level in `SCHOOL_COUNTS`, `3C03h`, 17 per school). `char.spells[i]` (+53h) is indexed by the **position in the character's school list**, not by spell id. Class (+13h) -> school:
+
+| class | school | full/half caster |
+|---|---|---|
+| Cleric (3) | cleric | full |
+| Paladin (1) | cleric | half (gold price x2) |
+| Sorcerer (4) | sorcerer | full |
+| Archer (2) | sorcerer | half |
+| Druid (8) | druid | full, spell level capped at 15 |
+| Ranger (9) | druid | half |
+| Knight, Robber, Ninja, Barbarian | none | - |
+
+A character can buy the spells of spell levels 1..min(town cap, character level); the town cap (`3CA1h[Party_map]`) is 0, 3, 6, 9, 13, 17 for towns 0-5. Price of a spell in gold: `SP * 100` (or `|SP| * 500` for level-scaled spells, from the same SP table) shifted left once for half casters (`sub_45BF3`). Messages: "Come back when you're more experienced" (nothing offered yet) / "You have learned all we can teach".
+
+**Cleric school list, by spell level:**
+
+* level 1: Light, Awaken, First Aid, Flying Fist
+* level 2: Revitalize, Cure Wounds, Sparks
+* level 3: Prot. from Elements, Pain, Suppress Poison
+* level 4: Suppress Disease, Turn Undead
+* level 5: Silence, Blessed
+* level 6: Holy Bonus, Power Cure
+* level 7: Heroism, Immobilize
+* level 8: Cold Ray, Cure Poison
+* level 9: Acid Spray, Cure Disease
+* level 10: Cure Paralysis, Paralyze
+* level 11: Create Food, Fiery Flail
+* level 12: Town Portal, Stone to Flesh
+* level 13: Half for Me, Raise Dead
+* level 14: Moon Ray, Mass Distortion
+* level 15: Holy Word, Resurrect
+* level 16: Sun Ray
+* level 17: Divine Intervention
+
+**Sorcerer school list, by spell level:**
+
+* level 1: Light, Awaken, Detect Magic, Elemental Arrow
+* level 2: Energy Blast, Sleep
+* level 3: Create Rope, Toxic Cloud
+* level 4: Jump, Acid Stream
+* level 5: Levitate, Wizard Eye
+* level 6: Identify Monster, Lightning Bolt
+* level 7: Lloyd's Beacon, Power Shield
+* level 8: Detect Monster, Fireball
+* level 9: Time Distortion, Feeble Mind
+* level 10: Teleport, Finger of Death
+* level 11: Super Shelter, Dragon Breath
+* level 12: Recharge Item, Fantastic Freeze
+* level 13: Duplication, Disintegrate
+* level 14: Etherealize, Dancing Sword
+* level 15: Enchant Item, Incinerate
+* level 16: Mega Volts, Inferno
+* level 17: Implosion, Star Burst
+
+**Druid school list, by spell level:**
+
+* level 1: Light, Awaken, First Aid, Detect Magic
+* level 2: Elemental Arrow, Revitalize
+* level 3: Create Rope, Sleep
+* level 4: Prot. from Elements, Suppress Poison
+* level 5: Suppress Disease, Identify Monster
+* level 6: Nature's Cure, Immobilize
+* level 7: Walk on Water, Frost Bite
+* level 8: Lightning Bolt, Acid Spray
+* level 9: Cold Ray, Nature's Gate
+* level 10: Fireball, Deadly Swarm
+* level 11: Cure Paralysis, Paralyze
+* level 12: Create Food, Stone to Flesh
+* level 13: Raise Dead
+* level 14: Prismatic Light
+* level 15: Elemental Storm
+
