@@ -3,12 +3,30 @@
 #include "bcd4.h"
 #include "party.h"
 
-bool spellCanCast(const uint8_t *spellRecord, const uint8_t *casterRecord, SaveGame *save, bool inCombat) {
+bool spellUsableInContext(const uint8_t *spellRecord, bool inCombat) {
     if (inCombat) {
-        if (spellGetU16(spellRecord, SpellFieldFlagsA) & SpellFlagsANotInCombat) {
-            return false;
-        }
-    } else if (spellGetU16(spellRecord, SpellFieldFlagsB) & (SpellFlagsBAttackPath | SpellFlagsBAttackAllSlots)) {
+        return !(spellGetU16(spellRecord, SpellFieldFlagsA) & SpellFlagsANotInCombat);
+    }
+    return !(spellGetU16(spellRecord, SpellFieldFlagsB) & (SpellFlagsBAttackPath | SpellFlagsBAttackAllSlots));
+}
+
+bool spellCanLearn(const uint8_t *spellRecord, unsigned spellId, const uint8_t *partyRecord) {
+    if (partyTestAbilityFlag(partyRecord, spellId)) {
+        return false;
+    }
+    uint16_t classMask = (uint16_t)(spellGetU16(spellRecord, SpellFieldClassEligibility) & PartyStatusSecondaryClassMask);
+    if (!(classMask & partyGetU16(partyRecord, PartyFieldStatusFlags))) {
+        return false;
+    }
+    return (int16_t)partyGetU16(partyRecord, PartyFieldLevel) >= (int16_t)spellGetU16(spellRecord, SpellFieldRequiredLevel);
+}
+
+void spellLearn(uint8_t *partyRecord, unsigned spellId) {
+    partySetAbilityFlag(partyRecord, spellId);
+}
+
+bool spellCanCast(const uint8_t *spellRecord, const uint8_t *casterRecord, SaveGame *save, bool inCombat) {
+    if (!spellUsableInContext(spellRecord, inCombat)) {
         return false;
     }
 

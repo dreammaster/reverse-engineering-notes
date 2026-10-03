@@ -4347,6 +4347,19 @@ charge; passing marks the object and runs the trap through the existing
 `ApplySavingThrowEffect` composition -- a second, independent roll (so finding a trap
 doesn't always disarm it). That settles flag `0x40` as "hidden trap present".
 
+**Spell scrolls: use or study (2026-10-03, `spellCanLearn`)**: `InteractWithContainer` -- a
+"container" target whose target word names a spell (`LoadClueBookSpellEntry`) -- is the
+spell-scroll handler: the spell's context rules are the cast gate (exploration-only spells
+refused in combat, attack spells outside it); a spell with FlagsA `0x8000` first asks who it
+targets; the cast runs `ApplyEncodedItemEffect` with the "already resolved" flag set and spends
+a charge; the alternative answer *studies* it, via `MarkIneligiblePartyMembers`: a member can
+learn it only if they don't already know it (the `+0xCA` ability bank), their low-six secondary-
+class status bits share a bit with the spell's class-eligibility word, and their level is at
+least the spell's word `0x16` -- which this settles as the **required level** (the old
+"group/tier" guess; max 38 in both games, climbing with record id). 74 of Chapter 2's 105 spells
+have an empty class mask: they aren't learnable from scrolls at all.
+`spellCanLearn`, `spellLearn`, `spellUsableInContext`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by

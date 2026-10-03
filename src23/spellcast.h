@@ -36,4 +36,25 @@ bool spellCanCast(const uint8_t *spellRecord, const uint8_t *casterRecord, SaveG
 
 void spellDeductCosts(const uint8_t *spellRecord, uint8_t *casterRecord, SaveGame *save);
 
+/*
+ * Learning a spell from a spell scroll (InteractWithContainer, yendor2.asm:
+ * 53457, the "study it" branch, with MarkIneligiblePartyMembers :53582 deciding
+ * who may): the member must NOT already know it (their PartyFieldFlagBankCA
+ * ability bank, indexed by the 1-based spell id), their secondary-class status
+ * bits (PartyStatusSecondaryClassMask, 0x3F) must share a bit with the spell's
+ * SpellFieldClassEligibility (masked to 6 bits), and their level must be at
+ * least SpellFieldRequiredLevel (signed). Members who fail are greyed out in
+ * the original's picker; picking one anyway just warns. spellLearn then sets
+ * the bank bit -- the same bank partyKnownAbilityIds lists.
+ *
+ * (The "cast it from the scroll" branch is ApplyEncodedItemEffect with its
+ * "already resolved" flag set -- see combat.h -- gated by the same
+ * context rules as spellCanCast but without the MP/ore costs.)
+ */
+bool spellCanLearn(const uint8_t *spellRecord, unsigned spellId, const uint8_t *partyRecord);
+void spellLearn(uint8_t *partyRecord, unsigned spellId);
+
+/* The in-combat / out-of-combat gate alone (spellCanCast without the costs): what a scroll checks before casting. */
+bool spellUsableInContext(const uint8_t *spellRecord, bool inCombat);
+
 #endif

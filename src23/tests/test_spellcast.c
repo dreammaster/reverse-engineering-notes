@@ -125,10 +125,53 @@ static void testDeduct(void) {
              partyGetStat(caster, PartyStatMagicPoints), (uint16_t)(2 - 5));
 }
 
+static void testLearning(void) {
+    uint8_t record[PartyRecordSize], spell[SpellRecordSize];
+    memset(record, 0, sizeof(record));
+    memset(spell, 0, sizeof(spell));
+    setU16(spell, SpellFieldClassEligibility, 0x0030);
+    setU16(spell, SpellFieldRequiredLevel, 5);
+
+    partySetU16(record, PartyFieldLevel, 5);
+    partySetU16(record, PartyFieldStatusFlags, 0x0010);
+    check("matching class bit and enough level can learn it", spellCanLearn(spell, 7, record));
+
+    partySetU16(record, PartyFieldLevel, 4);
+    check("one level short can't", !spellCanLearn(spell, 7, record));
+
+    partySetU16(record, PartyFieldLevel, 9);
+    partySetU16(record, PartyFieldStatusFlags, 0x0004);
+    check("the wrong class can't", !spellCanLearn(spell, 7, record));
+
+    partySetU16(record, PartyFieldStatusFlags, 0x0020 | PartyStatusPoisoned);
+    check("other status bits don't matter, only the low class bits", spellCanLearn(spell, 7, record));
+
+    setU16(spell, SpellFieldClassEligibility, 0xFFC0);
+    check("class bits above the low six are ignored (mask 0x3F)", !spellCanLearn(spell, 7, record));
+    setU16(spell, SpellFieldClassEligibility, 0x0030);
+
+    spellLearn(record, 7);
+    check("after learning it, the ability bank has it", partyTestAbilityFlag(record, 7));
+    check("...and an already-known spell can't be learned again", !spellCanLearn(spell, 7, record));
+    check("...but another can", spellCanLearn(spell, 8, record));
+}
+
+static void testContextAlone(void) {
+    uint8_t spell[SpellRecordSize];
+    memset(spell, 0, sizeof(spell));
+    setU16(spell, SpellFieldFlagsA, SpellFlagsANotInCombat);
+    check("an exploration spell: usable out of combat, not in", spellUsableInContext(spell, false) && !spellUsableInContext(spell, true));
+    memset(spell, 0, sizeof(spell));
+    setU16(spell, SpellFieldFlagsB, SpellFlagsBAttackAllSlots);
+    check("an attack spell: usable in combat, not out", !spellUsableInContext(spell, false) && spellUsableInContext(spell, true));
+}
+
 int main(void) {
     testResourceGates();
     testContextGates();
     testDeduct();
+    testLearning();
+    testContextAlone();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

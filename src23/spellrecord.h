@@ -73,15 +73,15 @@ typedef enum {
     SpellFieldName = 0x00, /* SpellNameFieldSize bytes */
 
     /*
-     * word_332D0: drawn as a labeled number in ShowClueBookSpellDetail, but
-     * only for a class already confirmed eligible-and-leveled, gated on a
-     * SpellFieldClassEligibility bit -- not identified beyond that; climbs
-     * slowly and roughly monotonically with record id in both games (1, 1,
-     * 1, 2, 2, 3, 4, 4, 4, 4, 4, 5, ... for Chapter 2's first 12 records),
-     * suggesting a tier/grouping id rather than a per-class value, but not
-     * confirmed.
+     * word_332D0: the character level needed to learn the spell -- identified
+     * 2026-10-03 from MarkIneligiblePartyMembers (yendor2.asm:53582), which
+     * rejects a member whose PartyFieldLevel is below it (signed compare).
+     * It climbs slowly with record id (1, 1, 1, 2, 2, 3, 4, 4, ... for Chapter
+     * 2's first records). ShowClueBookSpellDetail shows it as a labeled number
+     * for an eligible class. See spellcast.h's spellCanLearn.
      */
-    SpellFieldGroup = 0x16,
+    SpellFieldRequiredLevel = 0x16,
+    SpellFieldGroup = 0x16, /* the older name for the same word */
 
     SpellFieldMpCost = 0x18,   /* word_332D2; compared against the caster's own PartyFieldMp */
     SpellFieldNuoreCost = 0x1A, /* word_332D4; checked via IsBCDCounterAtLeast against SaveHeaderOreCounter2 */
