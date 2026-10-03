@@ -236,6 +236,8 @@
 1E407	renderIndoorView	8 KB, advances the animation counters then draws the view (unverified)
 203FE	drawViewOutdoors	outdoor counterpart: calls 2045A (by call graph)
 2045A	renderOutdoorView	8 KB outdoor renderer (unverified)
+22524	allocFar	(size) -> far pointer in dx:ax (by use in readSaveHeader/sub_435A0)
+226C6	writeResource	(name, far buffer): writes a buffer into the open cc member of that name (used to save maze pages/evt/bin)
 24ECC	rnd	rnd(lo, hi)
 24F53	vdrv_30	video module API 30h (not identified)
 24F65	vdrv_0C_showRaw	API 0Ch: loads a 320x200 raw image (name pointer) and displays it (control.raw, logy5.raw)
@@ -265,6 +267,9 @@
 25279	timeText	(BinDiff sim .67 conf .95, unverified)
 254BA	getCommand	waits for/reads input (keys and mouse) and returns a command code; 1.9 KB, ~50 callers (by use)
 25E20	ipause_5	(BinDiff sim .88 conf .92, unverified)
+25FC3	openAndLoadCc	opens a .cc via ccOpen/Resources_openFile/loadResourceByName (by callees)
+260ED	saveGame	copies the current game file (DGROUP `path` = "mm3.cur") to the save slot file named in the 13-byte table at DGROUP E836h (slot byte_29116), 4000 bytes at a time
+2621D	loadGame	the reverse: copies the slot file over mm3.cur
 2634D	openCcFile	creates the file if missing, opens it as a cc (ccOpen + Resources_openFile + ccClose) (by use)
 263C3	loadMazeDats	for the (up to) 4 neighbouring maze ids at DGROUP 274Eh: sprintf "maze%02u.dat" and load the 832-byte cell block into the 4 slots at DGROUP C554h (stride 340h) via sub_226C6
 2640B	readFileBytes	open, read n bytes, close

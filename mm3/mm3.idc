@@ -11707,6 +11707,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X22520);
 	op_hex		(x,	0);
 	create_insn	(0X22524);
+	set_name	(0X22524,	"allocFar");
 	create_insn	(x=0X22527);
 	op_stkvar	(x,	1);
 	create_insn	(0X22534);
@@ -11827,6 +11828,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X226C2);
 	create_insn	(0X226C6);
+	set_name	(0X226C6,	"writeResource");
 	create_insn	(x=0X226CC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X226CF);
@@ -12549,6 +12551,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X25FB5);
 	op_hex		(x,	1);
 	create_insn	(0X25FC3);
+	set_name	(0X25FC3,	"openAndLoadCc");
 	create_insn	(x=0X25FC6);
 	op_hex		(x,	1);
 	set_cmt	(0X25FD8,	"access",	0);
@@ -12607,6 +12610,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X260DD);
 	create_insn	(0X260ED);
+	set_name	(0X260ED,	"saveGame");
 	create_insn	(x=0X260F0);
 	op_hex		(x,	1);
 	set_cmt	(0X260F4,	"mode",	0);
@@ -12679,6 +12683,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X26204,	"stream",	0);
 	create_insn	(0X2621D);
+	set_name	(0X2621D,	"loadGame");
 	create_insn	(x=0X26220);
 	op_hex		(x,	1);
 	set_cmt	(0X26224,	"mode",	0);
@@ -14798,15 +14803,6 @@ static Bytes_2(void) {
 	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
 	create_word	(0X29E14);
 	create_word	(0X29E16);
-	create_byte	(0X29E18);
-	make_array	(0X29E18,	0X8D);
-	create_word	(0X29EA5);
-	create_byte	(0X29EA7);
-	make_array	(0X29EA7,	0X2D0);
-	create_byte	(0X2A177);
-	make_array	(0X2A177,	0X38B);
-	create_byte	(0X2A502);
-	make_array	(0X2A502,	0X1C);
 }
 
 //------------------------------------------------------------------------
@@ -14816,6 +14812,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_byte	(0X29E18);
+	make_array	(0X29E18,	0X8D);
+	create_word	(0X29EA5);
+	create_byte	(0X29EA7);
+	make_array	(0X29EA7,	0X2D0);
+	create_byte	(0X2A177);
+	make_array	(0X2A177,	0X38B);
+	create_byte	(0X2A502);
+	make_array	(0X2A502,	0X1C);
 	create_strlit	(0X2A51E,	0X33);
 	set_name	(0X2A51E,	"a007sorryBossKe");
 	create_strlit	(0X2A551,	0X5);
@@ -18302,6 +18307,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X37DF1);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37DF3,	"format",	0);
 	create_insn	(x=0X37DF7);
 	op_stkvar	(x,	1);
@@ -18312,15 +18326,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X37E08,	"jumptable 00037D55 cases 7-9,11-14,18,21,22",	1);
 	create_insn	(0X37E08);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X37E0B,	"maxlen",	0);
 	create_insn	(x=0X37E0E);
 	op_hex		(x,	1);
@@ -23127,6 +23132,15 @@ static Bytes_4(void) {
 	op_plain_offset	(x,	0,	0X3F490);
 	op_plain_offset	(x,	128,	0X3F490);
 	set_name	(0X4008C,	"jpt_3F4CF");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X400B4);
 	create_insn	(0X400BC);
 	create_insn	(x=0X400BE);
@@ -23139,15 +23153,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X40126);
 	op_hex		(x,	1);
 	create_insn	(0X4012B);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X40133);
 	create_insn	(0X4013E);
 	create_insn	(0X4014E);
@@ -28760,15 +28765,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4790F);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4791D);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X47920);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4792F);
-	op_stkvar	(x,	0);
-	set_cmt	(0X47932,	"format",	0);
-	create_insn	(x=0X47932);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -28778,6 +28774,15 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4791D);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X47920);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4792F);
+	op_stkvar	(x,	0);
+	set_cmt	(0X47932,	"format",	0);
+	create_insn	(x=0X47932);
+	op_stkvar	(x,	0);
 	set_cmt	(0X47939,	"buffer",	0);
 	create_insn	(x=0X4793F);
 	op_hex		(x,	1);
@@ -33787,10 +33792,6 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X4DE30);
 	set_cmt	(0X4F959,	"jumptable 0004F954 case 0",	1);
 	create_insn	(0X4F959);
-	set_cmt	(0X4F961,	"jumptable 0004F954 case 1",	1);
-	create_insn	(0X4F961);
-	set_cmt	(0X4F969,	"jumptable 0004F954 case 2",	1);
-	create_insn	(0X4F969);
 }
 
 //------------------------------------------------------------------------
@@ -33800,6 +33801,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4F961,	"jumptable 0004F954 case 1",	1);
+	create_insn	(0X4F961);
+	set_cmt	(0X4F969,	"jumptable 0004F954 case 2",	1);
+	create_insn	(0X4F969);
 	set_cmt	(0X4F971,	"jumptable 0004F954 case 3",	1);
 	create_insn	(0X4F971);
 	set_cmt	(0X4F979,	"jumptable 0004F954 case 4",	1);
@@ -37891,6 +37896,7 @@ static Functions_0(void) {
 	set_frame_size(0X2045A, 0X12, 2, 0);
 	add_func    (0X22524,0X22534);
 	set_func_flags(0X22524,0x5412);
+	set_func_cmt(0X22524,	"(size) -> far pointer in dx:ax (by use in readSaveHeader/sub_435A0)", 0);
 	set_frame_size(0X22524, 0, 2, 0);
 	add_func    (0X22534,0X225D6);
 	set_func_flags(0X22534,0x5402);
@@ -37903,6 +37909,7 @@ static Functions_0(void) {
 	set_frame_size(0X22636, 0, 0, 0);
 	add_func    (0X226C6,0X2273F);
 	set_func_flags(0X226C6,0x5412);
+	set_func_cmt(0X226C6,	"(name, far buffer): writes a buffer into the open cc member of that name (used to save maze pages/evt/bin)", 0);
 	set_frame_size(0X226C6, 0, 2, 0);
 	add_func    (0X22740,0X22B30);
 	set_func_flags(0X22740,0x5402);
@@ -38072,14 +38079,17 @@ static Functions_0(void) {
 	set_frame_size(0X25F71, 0, 2, 0);
 	add_func    (0X25FC3,0X260ED);
 	set_func_flags(0X25FC3,0x5412);
+	set_func_cmt(0X25FC3,	"opens a .cc via ccOpen/Resources_openFile/loadResourceByName (by callees)", 0);
 	set_frame_size(0X25FC3, 0X4, 2, 0);
 	add_func    (0X260ED,0X2621D);
 	set_func_flags(0X260ED,0x5412);
+	set_func_cmt(0X260ED,	"copies the current game file (DGROUP `path` = \"mm3.cur\") to the save slot file named in the 13-byte table at DGROUP E836h (slot byte_29116), 4000 bytes at a time", 0);
 	set_frame_size(0X260ED, 0X12, 2, 0);
 	define_local_var(0X260ED, 0X2621D, "[bp-0XE]", "n");
 	define_local_var(0X260ED, 0X2621D, "[bp-0XC]", "size");
 	add_func    (0X2621D,0X2634D);
 	set_func_flags(0X2621D,0x5412);
+	set_func_cmt(0X2621D,	"the reverse: copies the slot file over mm3.cur", 0);
 	set_frame_size(0X2621D, 0X12, 2, 0);
 	define_local_var(0X2621D, 0X2634D, "[bp-0XE]", "n");
 	define_local_var(0X2621D, 0X2634D, "[bp-0XC]", "size");
@@ -39655,6 +39665,10 @@ static Functions_0(void) {
 	set_func_flags(0X43E0C,0x5412);
 	set_func_cmt(0X43E0C,	"\"Your backpacks are full\"; hands out treasure (BinDiff giveTreasure .17 agrees)", 0);
 	set_frame_size(0X43E0C, 0XA, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X442EB,0X4432C);
 	set_func_flags(0X442EB,0x5412);
 	set_frame_size(0X442EB, 0X4, 2, 0);
@@ -39679,10 +39693,6 @@ static Functions_0(void) {
 	set_func_cmt(0X44ABA,	"\"Too dangerous to dismiss here!\"", 0);
 	set_frame_size(0X44ABA, 0XE, 2, 0);
 	define_local_var(0X44ABA, 0X44C04, "[bp-0X4]", "dest");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X44C14,0X44CC6);
 	set_func_flags(0X44C14,0x5412);
 	SetType(0X44C14, "int __cdecl __far sub_44C14(int, int, char *format);");

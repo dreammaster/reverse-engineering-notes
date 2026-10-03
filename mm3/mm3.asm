@@ -2015,7 +2015,7 @@ loc_14E4E:                              ; CODE XREF: seg001:0265↑j
 loc_14E72:                              ; CODE XREF: seg001:026C↑j
                 mov     ax, 1890h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word_332DE, dx
                 mov     word_332DC, ax
@@ -30480,9 +30480,10 @@ seg007          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; (size) -> far pointer in dx:ax (by use in readSaveHeader/sub_435A0)
 ; Attributes: bp-based frame
 
-sub_22524       proc far                ; CODE XREF: seg001:0296↑P
+allocFar        proc far                ; CODE XREF: seg001:0296↑P
                                         ; readSaveHeader+59↓P ...
 
 arg_0           = word ptr  6
@@ -30496,13 +30497,13 @@ arg_0           = word ptr  6
                 sub     ax, ax
                 pop     bp
                 retf
-sub_22524       endp
+allocFar        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22534       proc far                ; CODE XREF: sub_22524+7↑p
+sub_22534       proc far                ; CODE XREF: allocFar+7↑p
                                         ; sub_22636+53↓p ...
                 push    es
                 add     bx, 0Fh
@@ -30566,7 +30567,7 @@ loc_2257E:                              ; CODE XREF: sub_22534+32↑j
 ; ---------------------------------------------------------------------------
 
 loc_22584:                              ; CODE XREF: sub_22636:loc_226C2↓j
-                                        ; sub_226C6:loc_2270E↓j ...
+                                        ; writeResource:loc_2270E↓j ...
                 mov     si, 10Eh
                 jmp     short loc_22596
 ; ---------------------------------------------------------------------------
@@ -30739,9 +30740,10 @@ sub_22636       endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; (name, far buffer): writes a buffer into the open cc member of that name (used to save maze pages/evt/bin)
 ; Attributes: bp-based frame
 
-sub_226C6       proc far                ; CODE XREF: sub_25F71+18↓P
+writeResource   proc far                ; CODE XREF: sub_25F71+18↓P
                                         ; sub_25F71+2D↓P ...
 
 arg_0           = word ptr  6
@@ -30762,7 +30764,7 @@ arg_6           = word ptr  0Ch
                 sub     bx, bx
                 mov     dx, 7F60h
 
-loc_226E3:                              ; CODE XREF: sub_226C6+30↓j
+loc_226E3:                              ; CODE XREF: writeResource+30↓j
                 lodsb
                 or      ax, ax
                 jz      short loc_226F8
@@ -30771,14 +30773,14 @@ loc_226E3:                              ; CODE XREF: sub_226C6+30↓j
                 jb      short loc_226F0
                 sub     al, 20h ; ' '
 
-loc_226F0:                              ; CODE XREF: sub_226C6+26↑j
+loc_226F0:                              ; CODE XREF: writeResource+26↑j
                 xchg    bl, bh
                 rol     bx, 1
                 add     bx, ax
                 jmp     short loc_226E3
 ; ---------------------------------------------------------------------------
 
-loc_226F8:                              ; CODE XREF: sub_226C6+20↑j
+loc_226F8:                              ; CODE XREF: writeResource+20↑j
                 mov     ds, cs:word_22B34
                 assume ds:nothing
                 sub     si, si
@@ -30787,18 +30789,18 @@ loc_226F8:                              ; CODE XREF: sub_226C6+20↑j
                 mov     di, 8
                 nop
 
-loc_22706:                              ; CODE XREF: sub_226C6+46↓j
+loc_22706:                              ; CODE XREF: writeResource+46↓j
                 cmp     bx, [si]
                 jz      short loc_22711
                 add     si, di
                 loop    loc_22706
 
-loc_2270E:                              ; CODE XREF: sub_226C6+60↓j
-                                        ; sub_226C6+72↓j
+loc_2270E:                              ; CODE XREF: writeResource+60↓j
+                                        ; writeResource+72↓j
                 jmp     loc_22584
 ; ---------------------------------------------------------------------------
 
-loc_22711:                              ; CODE XREF: sub_226C6+42↑j
+loc_22711:                              ; CODE XREF: writeResource+42↑j
                 sub     cx, cx
                 lodsw
                 lodsw
@@ -30826,7 +30828,7 @@ loc_22711:                              ; CODE XREF: sub_226C6+42↑j
                 pop     ds
                 pop     bp
                 retf
-sub_226C6       endp ; sp-analysis failed
+writeResource   endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31362,10 +31364,10 @@ word_22B30      dw 0                    ; DATA XREF: sub_22740+194↑w
 word_22B32      dw 0                    ; DATA XREF: sub_22740+1A4↑w
                                         ; sub_22740:loc_228E8↑r
 word_22B34      dw 0                    ; DATA XREF: seg007:0017↑r
-                                        ; sub_226C6:loc_226F8↑r
+                                        ; writeResource:loc_226F8↑r
 word_22B36      dw 0                    ; DATA XREF: seg007:000E↑r
 word_22B38      dw 0                    ; DATA XREF: seg007:0029↑r
-                                        ; sub_226C6+56↑r ...
+                                        ; writeResource+56↑r ...
 word_22B3A      dw 0                    ; DATA XREF: seg007:0020↑r
                                         ; sub_22740+D0↑r ...
 word_22B3C      dw 0                    ; DATA XREF: sub_22740+B0↑r
@@ -31730,7 +31732,7 @@ vdrv_2A         endp ; sp-analysis failed
 ; (by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure
 ; Attributes: bp-based frame
 
-ccOpen          proc far                ; CODE XREF: sub_25FC3+31↓P
+ccOpen          proc far                ; CODE XREF: openAndLoadCc+31↓P
                                         ; openCcFile+28↓P ...
 
 arg_0           = word ptr  6
@@ -31757,7 +31759,7 @@ ccOpen          endp
 
 ; (by use)
 
-ccClose         proc far                ; CODE XREF: sub_25FC3+10E↓P
+ccClose         proc far                ; CODE XREF: openAndLoadCc+10E↓P
                                         ; openCcFile+65↓P ...
                 mov     bx, cs:word_22630
                 mov     ah, 3Eh
@@ -31836,8 +31838,8 @@ ccRead          endp
 
 ; Attributes: bp-based frame
 
-Resources_openFile proc far             ; CODE XREF: sub_25FC3+5C↓P
-                                        ; sub_25FC3+8E↓P ...
+Resources_openFile proc far             ; CODE XREF: openAndLoadCc+5C↓P
+                                        ; openAndLoadCc+8E↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -31868,8 +31870,8 @@ Resources_openFile endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25085       proc far                ; CODE XREF: sub_25FC3+121↓P
-                                        ; sub_260ED+125↓P ...
+sub_25085       proc far                ; CODE XREF: openAndLoadCc+121↓P
+                                        ; saveGame+125↓P ...
                 push    ds
                 push    cs
                 pop     ds
@@ -31894,8 +31896,8 @@ sub_25085       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2509A       proc far                ; CODE XREF: sub_25FC3+D↓P
-                                        ; sub_260ED+F↓P ...
+sub_2509A       proc far                ; CODE XREF: openAndLoadCc+D↓P
+                                        ; saveGame+F↓P ...
                 mov     bx, cs:word_22B38
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
@@ -34020,14 +34022,14 @@ sub_25F71       proc far                ; CODE XREF: rosterMenu+675↓P
                 push    ds
                 mov     ax, 85B6h
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
                 push    word ptr Roster_buffer+2
                 push    word ptr Roster_buffer
                 push    ds
                 mov     ax, 85BFh
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
                 push    ds
                 mov     ax, 0E8EAh
@@ -34035,9 +34037,9 @@ sub_25F71       proc far                ; CODE XREF: rosterMenu+675↓P
                 push    ds
                 mov     ax, 85C8h
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
-                call    sub_260ED
+                call    saveGame
                 push    cs
                 call    near ptr setStartTime
                 pop     bp
@@ -34047,9 +34049,10 @@ sub_25F71       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; opens a .cc via ccOpen/Resources_openFile/loadResourceByName (by callees)
 ; Attributes: bp-based frame
 
-sub_25FC3       proc far                ; CODE XREF: ovl07:2085↓P
+openAndLoadCc   proc far                ; CODE XREF: ovl07:2085↓P
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -34061,7 +34064,7 @@ var_2           = word ptr -2
                 jz      short loc_25FD5
                 call    sub_2509A
 
-loc_25FD5:                              ; CODE XREF: sub_25FC3+B↑j
+loc_25FD5:                              ; CODE XREF: openAndLoadCc+B↑j
                 mov     ax, 180h
                 push    ax              ; access
                 mov     ax, 8302h
@@ -34078,12 +34081,12 @@ loc_25FD5:                              ; CODE XREF: sub_25FC3+B↑j
                 or      ax, ax
                 jz      short loc_26003
 
-loc_25FFE:                              ; CODE XREF: sub_25FC3+66↓j
-                                        ; sub_25FC3+98↓j ...
+loc_25FFE:                              ; CODE XREF: openAndLoadCc+66↓j
+                                        ; openAndLoadCc+98↓j ...
                 call    far ptr sub_27F86
 ; ---------------------------------------------------------------------------
 
-loc_26003:                              ; CODE XREF: sub_25FC3+39↑j
+loc_26003:                              ; CODE XREF: openAndLoadCc+39↑j
                 push    ds
                 mov     ax, 85D1h
                 push    ax
@@ -34140,7 +34143,7 @@ loc_26003:                              ; CODE XREF: sub_25FC3+39↑j
                 jmp     loc_25FFE
 ; ---------------------------------------------------------------------------
 
-loc_26092:                              ; CODE XREF: sub_25FC3+CA↑j
+loc_26092:                              ; CODE XREF: openAndLoadCc+CA↑j
                 lea     ax, [bp+var_4]
                 push    ax
                 call    sub_26685
@@ -34163,7 +34166,7 @@ loc_26092:                              ; CODE XREF: sub_25FC3+CA↑j
                 jmp     loc_25FFE
 ; ---------------------------------------------------------------------------
 
-loc_260C7:                              ; CODE XREF: sub_25FC3+FF↑j
+loc_260C7:                              ; CODE XREF: openAndLoadCc+FF↑j
                 lea     ax, [bp+var_4]
                 push    ax
                 call    sub_26685
@@ -34174,23 +34177,24 @@ loc_260C7:                              ; CODE XREF: sub_25FC3+FF↑j
                 jmp     loc_25FFE
 ; ---------------------------------------------------------------------------
 
-loc_260DD:                              ; CODE XREF: sub_25FC3+115↑j
+loc_260DD:                              ; CODE XREF: openAndLoadCc+115↑j
                 cmp     byte_37380, 0
                 jz      short loc_260E9
                 call    sub_25085
 
-loc_260E9:                              ; CODE XREF: sub_25FC3+11F↑j
+loc_260E9:                              ; CODE XREF: openAndLoadCc+11F↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_25FC3       endp
+openAndLoadCc   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; copies the current game file (DGROUP `path` = "mm3.cur") to the save slot file named in the 13-byte table at DGROUP E836h (slot byte_29116), 4000 bytes at a time
 ; Attributes: bp-based frame
 
-sub_260ED       proc far                ; CODE XREF: sub_25F71+47↑P
+saveGame        proc far                ; CODE XREF: sub_25F71+47↑P
 
 n               = word ptr -0Eh
 size            = word ptr -0Ch
@@ -34209,7 +34213,7 @@ var_2           = word ptr -2
                 jz      short loc_26101
                 call    sub_2509A
 
-loc_26101:                              ; CODE XREF: sub_260ED+D↑j
+loc_26101:                              ; CODE XREF: saveGame+D↑j
                 mov     ax, 85F5h
                 push    ax
                 push    path            ; path
@@ -34220,11 +34224,11 @@ loc_26101:                              ; CODE XREF: sub_260ED+D↑j
                 or      ax, ax
                 jnz     short loc_2611B
 
-loc_26116:                              ; CODE XREF: sub_260ED+72↓j
+loc_26116:                              ; CODE XREF: saveGame+72↓j
                 call    far ptr sub_27F86
 ; ---------------------------------------------------------------------------
 
-loc_2611B:                              ; CODE XREF: sub_260ED+27↑j
+loc_2611B:                              ; CODE XREF: saveGame+27↑j
                 mov     ax, 2
                 push    ax
                 xor     ax, ax
@@ -34278,8 +34282,8 @@ loc_2611B:                              ; CODE XREF: sub_260ED+27↑j
                 jmp     short loc_261C2
 ; ---------------------------------------------------------------------------
 
-loc_26195:                              ; CODE XREF: sub_260ED+DB↓j
-                                        ; sub_260ED+E2↓j
+loc_26195:                              ; CODE XREF: saveGame+DB↓j
+                                        ; saveGame+E2↓j
                 push    si              ; n
                 mov     ax, 0FA0h
                 push    ax              ; size
@@ -34300,7 +34304,7 @@ loc_26195:                              ; CODE XREF: sub_260ED+DB↓j
                 add     sp, 8
                 inc     di
 
-loc_261C2:                              ; CODE XREF: sub_260ED+A6↑j
+loc_261C2:                              ; CODE XREF: saveGame+A6↑j
                 mov     ax, di
                 cwd
                 cmp     dx, [bp+var_6]
@@ -34309,7 +34313,7 @@ loc_261C2:                              ; CODE XREF: sub_260ED+A6↑j
                 cmp     ax, [bp+var_8]
                 jb      short loc_26195
 
-loc_261D1:                              ; CODE XREF: sub_260ED+DD↑j
+loc_261D1:                              ; CODE XREF: saveGame+DD↑j
                 push    si              ; n
                 push    [bp+size]       ; size
                 mov     ax, 1
@@ -34336,20 +34340,21 @@ loc_261D1:                              ; CODE XREF: sub_260ED+DD↑j
                 jz      short loc_26217
                 call    sub_25085
 
-loc_26217:                              ; CODE XREF: sub_260ED+123↑j
+loc_26217:                              ; CODE XREF: saveGame+123↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_260ED       endp
+saveGame        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; the reverse: copies the slot file over mm3.cur
 ; Attributes: bp-based frame
 
-sub_2621D       proc far                ; CODE XREF: controlPanel+211↓P
+loadGame        proc far                ; CODE XREF: controlPanel+211↓P
                                         ; ovl07:2110↓P
 
 n               = word ptr -0Eh
@@ -34369,7 +34374,7 @@ var_2           = word ptr -2
                 jz      short loc_26231
                 call    sub_2509A
 
-loc_26231:                              ; CODE XREF: sub_2621D+D↑j
+loc_26231:                              ; CODE XREF: loadGame+D↑j
                 mov     ax, 85F5h
                 push    ax
                 mov     al, byte_29116
@@ -34385,11 +34390,11 @@ loc_26231:                              ; CODE XREF: sub_2621D+D↑j
                 or      ax, ax
                 jnz     short loc_26254
 
-loc_2624F:                              ; CODE XREF: sub_2621D+72↓j
+loc_2624F:                              ; CODE XREF: loadGame+72↓j
                 call    far ptr sub_27F86
 ; ---------------------------------------------------------------------------
 
-loc_26254:                              ; CODE XREF: sub_2621D+30↑j
+loc_26254:                              ; CODE XREF: loadGame+30↑j
                 mov     ax, 2
                 push    ax
                 xor     ax, ax
@@ -34438,8 +34443,8 @@ loc_26254:                              ; CODE XREF: sub_2621D+30↑j
                 jmp     short loc_262F2
 ; ---------------------------------------------------------------------------
 
-loc_262C5:                              ; CODE XREF: sub_2621D+DB↓j
-                                        ; sub_2621D+E2↓j
+loc_262C5:                              ; CODE XREF: loadGame+DB↓j
+                                        ; loadGame+E2↓j
                 push    si              ; n
                 mov     ax, 0FA0h
                 push    ax              ; size
@@ -34460,7 +34465,7 @@ loc_262C5:                              ; CODE XREF: sub_2621D+DB↓j
                 add     sp, 8
                 inc     di
 
-loc_262F2:                              ; CODE XREF: sub_2621D+A6↑j
+loc_262F2:                              ; CODE XREF: loadGame+A6↑j
                 mov     ax, di
                 cwd
                 cmp     dx, [bp+var_6]
@@ -34469,7 +34474,7 @@ loc_262F2:                              ; CODE XREF: sub_2621D+A6↑j
                 cmp     ax, [bp+var_8]
                 jb      short loc_262C5
 
-loc_26301:                              ; CODE XREF: sub_2621D+DD↑j
+loc_26301:                              ; CODE XREF: loadGame+DD↑j
                 push    si              ; n
                 push    [bp+size]       ; size
                 mov     ax, 1
@@ -34496,13 +34501,13 @@ loc_26301:                              ; CODE XREF: sub_2621D+DD↑j
                 jz      short loc_26347
                 call    sub_25085
 
-loc_26347:                              ; CODE XREF: sub_2621D+123↑j
+loc_26347:                              ; CODE XREF: loadGame+123↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2621D       endp
+loadGame        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34609,7 +34614,7 @@ loc_263CB:                              ; CODE XREF: loadMazeDats+43↓j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
 
 loc_26402:                              ; CODE XREF: loadMazeDats+D↑j
@@ -34801,7 +34806,7 @@ arg_4           = word ptr  0Ah
                 mov     [bp+buf], ax
                 mov     ax, 2382h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr Roster_buffer+2, dx
                 mov     word ptr Roster_buffer, ax
@@ -36250,7 +36255,7 @@ sub_27F7C       endp
 ; Attributes: noreturn thunk
 
 sub_27F86       proc near               ; CODE XREF: seg001:002C↑P
-                                        ; sub_25FC3:loc_25FFE↑P ...
+                                        ; openAndLoadCc:loc_25FFE↑P ...
                 jmp     far ptr sub_39900
 sub_27F86       endp
 
@@ -38236,8 +38241,8 @@ byte_290FF      db 0EAh, 0, 4Dh, 5 dup(0), 5, 1, 4Dh, 3 dup(0), 2, 0, 2 dup(0FFh
                 db 4 dup(0)
 byte_29115      db 0                    ; DATA XREF: getFiles+7↑w
                                         ; getFiles+37↑r ...
-byte_29116      db 0FFh                 ; DATA XREF: sub_260ED+59↑r
-                                        ; sub_2621D+18↑r ...
+byte_29116      db 0FFh                 ; DATA XREF: saveGame+59↑r
+                                        ; loadGame+18↑r ...
 ELEMENTAL_RESISTANCES:                  ; indexed by elemental material (0A3h slot byte)
                 align 2
                 db 5, 7, 9, 0Ch, 0Fh, 14h, 19h, 1Eh, 5, 7, 9, 0Ch, 0Fh
@@ -43567,8 +43572,8 @@ word_2DFA0      dw 780Dh                ; DATA XREF: sub_3BF4B+21E↓r
                 db 8Bh, 78h, 97h, 78h, 0A3h, 78h, 0B1h, 78h
 word_2DFC0      dw 78B9h                ; DATA XREF: sub_45431+D2↓r
 ; char *path
-path            dw offset aMm3Cur       ; DATA XREF: sub_25FC3+1A↑r
-                                        ; sub_25FC3+2D↑r ...
+path            dw offset aMm3Cur       ; DATA XREF: openAndLoadCc+1A↑r
+                                        ; openAndLoadCc+2D↑r ...
                                         ; "mm3.cur"
                 db 4Eh, 79h, 57h, 79h, 5Fh, 79h, 67h, 79h, 70h, 79h, 77h
                 db 79h, 7Dh, 79h, 86h, 79h, 8Fh, 79h, 94h, 79h, 9Ch, 79h
@@ -49220,7 +49225,7 @@ word_3737C      dw 0                    ; DATA XREF: renderOutdoorView+193↑r
 word_3737E      dw 0                    ; DATA XREF: renderOutdoorView+190↑r
                                         ; sub_430A8+154↓w
 byte_37380      db 0                    ; DATA XREF: seg001:0103↑w
-                                        ; sub_25FC3+6↑r ...
+                                        ; openAndLoadCc+6↑r ...
 byte_37381      db 0                    ; DATA XREF: sub_1BEE9+F5↑w
                                         ; prepareIndoorView:loc_1C2E1↑w ...
 byte_37382      db 0                    ; DATA XREF: sub_1BEE9+F2↑w
@@ -63525,7 +63530,7 @@ loc_3DE42:                              ; CODE XREF: resetTemps+11D↑j
 loc_3DE53:                              ; CODE XREF: resetTemps+117↑j
                 mov     ax, 12Fh
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr [bp+dest+2], dx
                 mov     word ptr [bp+dest], ax
@@ -69414,7 +69419,7 @@ var_2           = word ptr -2
                 add     sp, 6
                 mov     ax, 2382h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr Roster_buffer+2, dx
                 mov     word ptr Roster_buffer, ax
@@ -71718,13 +71723,13 @@ loc_41D82:                              ; CODE XREF: loadSaveDialog+82↑j
 loc_41D8C:                              ; CODE XREF: loadSaveDialog+9A↑j
                 mov     ax, 2382h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr Roster_buffer+2, dx
                 mov     word ptr Roster_buffer, ax
                 mov     ax, 396h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr [bp+dest+2], dx
                 mov     word ptr [bp+dest], ax
@@ -72192,7 +72197,7 @@ loc_42163:                              ; CODE XREF: controlPanel+201↑j
 
 loc_42169:                              ; CODE XREF: controlPanel+1F4↑j
                 mov     [bp+var_A], 1
-                call    sub_2621D
+                call    loadGame
                 jmp     loc_422AD
 ; ---------------------------------------------------------------------------
                 cmp     Engine_mode, 2
@@ -75035,7 +75040,7 @@ loc_435B4:                              ; CODE XREF: saveMazeState+F↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
                 call    loadMazeDats
                 mov     al, byte_34C1D
@@ -75116,7 +75121,7 @@ loc_4366C:                              ; CODE XREF: saveMazeState+A0↑j
                 push    ds
                 mov     ax, 0E73Ch
                 push    ax
-                call    sub_226C6
+                call    writeResource
                 add     sp, 8
                 lea     ax, [bp+var_4]
                 push    ax
@@ -77988,7 +77993,7 @@ loc_44B4F:                              ; CODE XREF: dismissCharacter+85↑j
                                         ; dismissCharacter+8C↑j
                 mov     ax, 12Fh
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr [bp+dest+2], dx
                 mov     word ptr [bp+dest], ax
@@ -79438,11 +79443,11 @@ loc_455FB:                              ; CODE XREF: ovl07:2056↑j
                 add     sp, 6
                 mov     ax, 2382h
                 push    ax
-                call    sub_22524
+                call    allocFar
                 pop     cx
                 mov     word ptr Roster_buffer+2, dx
                 mov     word ptr Roster_buffer, ax
-                call    sub_25FC3
+                call    openAndLoadCc
                 mov     al, byte_37380
                 inc     byte_37380
                 mov     ah, 0
@@ -79499,7 +79504,7 @@ loc_456A6:                              ; CODE XREF: ovl07:20EF↑j
                 push    ax
                 call    vdrv_06_closeWindows
                 pop     cx
-                call    sub_2621D
+                call    loadGame
                 jmp     loc_4573C
 ; ---------------------------------------------------------------------------
 
