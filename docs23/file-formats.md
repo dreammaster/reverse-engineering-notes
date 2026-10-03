@@ -590,6 +590,12 @@ group is `[2-byte running weight total][8 slots × 4 bytes]`, and
 against the *main* inventory's `+0x118` counter (the 3 alternate bags'
 weight isn't shown on this panel, at least).
 
+**Container search** (`FindItemInInventoryRange`, `FindItemInsideContainer`/`Level2`/`Level3`,
+`partyFindItemDeep`): a container item's extra word is the 0-based item-instance record number
+holding its 8 slots (`FileEntry_Seek` offset = base + record * 34, no decrement); nested containers
+are searched to three levels, a hit inside a container is returned before the next main slot is
+examined, and the equipped slot at `+0x13E` is searched last (only as a container).
+
 **The "3 alternate bags" are literal container items**, confirmed via
 `HandleInventoryGridClick`'s (was `sub_26415`) open/close branches: clicking an unopened container item
 assigns it to the first free marker (`+0x17C`/`+0x1A2`/`+0x1C8`,

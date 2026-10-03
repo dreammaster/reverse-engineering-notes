@@ -11336,6 +11336,19 @@ panel, the five items are consumed and the POTION OF APPRECIATION is put on the 
 -- the very potion `relicUseLocationPotion` then spends at its one cell. Both are
 `relics.c`; the music and screen-peek handlers are UI.
 
+### Session update: container recursion (`partyFindItemDeep`)
+
+The "needs a CURGAME reader" blocker was a non-blocker: a container item's slot holds, in
+its extra word, the 0-based number of an item-instance record (save section 3, the same
+34-byte shape as an inventory group), which `saveGameRecord` already reads. The search
+(`FindItemInInventoryRange` + `FindItemInsideContainer` levels 1-3) opens containers to a
+fixed three levels, interleaved with the main slot scan -- a container hit beats a later
+direct slot -- and ends with the equipped container at +0x13E. `partyFindItemDeep` in
+`party.c` returns the item, the depth and the record chain (the original keeps the chain
+in `word_3296C/3296E/32972` for the later write-back). Not yet wired into
+`itemRangeAvailable` or the consumers: spending a charge of an item inside a bag also
+needs the bag written back (`SyncAllContainers`), still open. Test in `test_party.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

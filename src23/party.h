@@ -808,19 +808,47 @@ PartyRestOutcome partyApplyRestEffects(uint8_t *record, uint16_t regenPercent);
  * [lowId, highId] inclusive. Returns the id found (0 if none) and, via
  * outSlotOffset, the matching slot's own record-relative byte offset.
  *
- * NOT reimplemented: recursing into a container-type item's own
- * contents when a slot's own id doesn't match directly (ItemFlag bit
- * 0x2000) -- the original reads a CURGAME-backed "ground item
- * container" record for this (FindItemInsideContainer,
- * yendor2.asm:22911), a genuinely separate, not-yet-built subsystem
- * (see file-formats.md's "world ailments" section for where this
- * surfaced). Also omitted: the original's own extra check of equipment
+ * This direct-slot form does NOT recurse into container items; the full
+ * original, interleaved with FindItemInsideContainer (a container's contents
+ * live in an item-instance record of the save), is partyFindItemDeep below.
+ * Also omitted here: the original's own extra check of equipment
  * slot 0xB (record +0x13E) -- that slot is *only* ever consulted as a
  * possible container, never range-matched directly, so without
  * container support it can never contribute a match and is safely left
  * out rather than partially modeled.
  */
 uint16_t partyFindItemInRange(const uint8_t *record, uint16_t lowId, uint16_t highId, unsigned *outSlotOffset);
+
+/*
+ * FindItemInInventoryRange WITH its container recursion (yendor2.asm:22854 plus
+ * FindItemInsideContainer / ...Level2 / ...Level3, :22911-23080,
+ * instruction-identical in Chapter 3). A slot whose item is a container (ItemFlag
+ * 0x2000, see item.h) holds in its "extra" word the number of the item-instance
+ * record (save section 3, a 34-byte inventory group) where its contents live;
+ * those 8 slots are searched in turn, and a non-matching container inside is
+ * searched the same way, to a fixed depth of three containers (items in the third
+ * level are never opened). The scan is interleaved exactly as the original:
+ * main slots 1-8 in order, each either matching directly, or (if a container)
+ * yielding a hit from inside before the next slot is looked at; finally the
+ * equipment slot at +0x13E (code 0xB), which can only be a container and is never
+ * matched directly.
+ *
+ * Result: itemId 0 = nothing. depth 0 = a main slot (slotOffset is the offset in
+ * the party record, as partyFindItemInRange gives); depth 1-3 = inside that many
+ * nested containers, containerRecords[0..depth-1] the instance record numbers
+ * from the outermost, slotOffset the slot's offset (2 + 4 * (slot - 1)) in the
+ * innermost record. A container record number outside the save's 1296 records is
+ * treated as empty.
+ */
+typedef struct {
+    uint16_t itemId;
+    unsigned depth;
+    unsigned slotOffset;
+    unsigned containerRecords[3];
+} PartyDeepFind;
+
+PartyDeepFind partyFindItemDeep(const uint8_t *partyRecord, SaveGame *save, const ItemCatalog *catalog, uint16_t lowId,
+                                uint16_t highId);
 
 /*
  * IsItemRangeAvailable (yendor2.asm:22764, instruction-identical in

@@ -908,6 +908,71 @@ uint16_t partyFindItemInRange(const uint8_t *record, uint16_t lowId, uint16_t hi
     return 0;
 }
 
+enum { ContainerSearchMaxDepth = 3, EquipmentContainerSlotOffset = 0x13E };
+
+static bool itemIsContainer(const ItemCatalog *catalog, uint16_t id) {
+    const uint8_t *item = itemCatalogRecord(catalog, id);
+    return item && (itemGetU16(item, ItemFieldFlags) & ItemFlagEquipCode0B);
+}
+
+/* One FindItemInsideContainer level: instance record `number`, at nesting `level` (1-3). */
+static bool searchContainer(SaveGame *save, const ItemCatalog *catalog, unsigned number, unsigned level, uint16_t lowId,
+                            uint16_t highId, PartyDeepFind *out) {
+    uint8_t *contents = saveGameRecord(save, SaveSectionItemInstances, number);
+    if (!contents) {
+        return false;
+    }
+    out->containerRecords[level - 1] = number;
+    for (unsigned slot = 1; slot <= 8; slot++) {
+        const uint8_t *entry = inventoryGroupSlot(contents, slot);
+        uint16_t id = itemSlotId(entry);
+        if (id == 0) {
+            continue;
+        }
+        if (id >= lowId && id <= highId) {
+            out->itemId = id;
+            out->depth = level;
+            out->slotOffset = (unsigned)(entry - contents);
+            return true;
+        }
+        if (level < ContainerSearchMaxDepth && itemIsContainer(catalog, id) &&
+            searchContainer(save, catalog, itemSlotExtra(entry), level + 1, lowId, highId, out)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+PartyDeepFind partyFindItemDeep(const uint8_t *partyRecord, SaveGame *save, const ItemCatalog *catalog, uint16_t lowId,
+                                uint16_t highId) {
+    PartyDeepFind out;
+    memset(&out, 0, sizeof(out));
+    for (unsigned slot = 1; slot <= 8; slot++) {
+        unsigned offset = PartyFieldInventory + 2 + (slot - 1) * ItemSlotSize;
+        const uint8_t *entry = partyRecord + offset;
+        uint16_t id = itemSlotId(entry);
+        if (id == 0) {
+            continue;
+        }
+        if (id >= lowId && id <= highId) {
+            out.itemId = id;
+            out.slotOffset = offset;
+            return out;
+        }
+        if (itemIsContainer(catalog, id) && searchContainer(save, catalog, itemSlotExtra(entry), 1, lowId, highId, &out)) {
+            return out;
+        }
+    }
+    const uint8_t *equipped = partyRecord + EquipmentContainerSlotOffset;
+    uint16_t id = itemSlotId(equipped);
+    if (id != 0 && itemIsContainer(catalog, id) &&
+        searchContainer(save, catalog, itemSlotExtra(equipped), 1, lowId, highId, &out)) {
+        return out;
+    }
+    memset(&out, 0, sizeof(out));
+    return out;
+}
+
 ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *save, uint16_t lowId, uint16_t highId) {
     ItemRangeAvailability result;
     memset(&result, 0, sizeof(result));

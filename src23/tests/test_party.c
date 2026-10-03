@@ -1447,7 +1447,65 @@ static void testDeriveRestRegenPercentConsumesFromTheGlobalTableToo(void) {
     checkU32("the global slot itself is discarded (single-use food)", itemSlotId(globalSlots + 0), 0);
 }
 
+static void testFindItemDeep(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.itemCount = 20;
+    /* ids 10 and 11 are containers (flag 0x2000) */
+    for (unsigned id = 10; id <= 11; id++) {
+        uint8_t *rec = (uint8_t *)itemCatalogRecord(&catalog, id);
+        rec[ItemFieldFlags] = 0x00;
+        rec[ItemFieldFlags + 1] = 0x20;
+    }
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots, 1);
+    uint8_t *member = saveGamePartyRecordById(&save, 1);
+    uint8_t *pack = partyInventoryGroup(member, PartyGroupMain);
+
+    /* Slot 1: container -> record 5, which holds [item 3, container -> record 6]; record 6 holds [container -> record 7];
+     * record 7 holds [container -> record 8, item 4]; record 8 holds item 4 (past the third level). Slot 2 is item 4. */
+    uint8_t *r5 = saveGameRecord(&save, SaveSectionItemInstances, 5);
+    uint8_t *r6 = saveGameRecord(&save, SaveSectionItemInstances, 6);
+    uint8_t *r7 = saveGameRecord(&save, SaveSectionItemInstances, 7);
+    uint8_t *r8 = saveGameRecord(&save, SaveSectionItemInstances, 8);
+    itemSlotSet(inventoryGroupSlot(pack, 1), 10, 5);
+    itemSlotSet(inventoryGroupSlot(pack, 2), 4, 0);
+    itemSlotSet(inventoryGroupSlot(r5, 1), 3, 0);
+    itemSlotSet(inventoryGroupSlot(r5, 2), 11, 6);
+    itemSlotSet(inventoryGroupSlot(r6, 3), 10, 7);
+    itemSlotSet(inventoryGroupSlot(r7, 1), 11, 8);
+    itemSlotSet(inventoryGroupSlot(r7, 2), 4, 0);
+    itemSlotSet(inventoryGroupSlot(r8, 1), 4, 0);
+
+    PartyDeepFind f = partyFindItemDeep(member, &save, &catalog, 3, 3);
+    check("an item in a first-level container is found", f.itemId == 3 && f.depth == 1 && f.containerRecords[0] == 5 &&
+                                                              f.slotOffset == 2);
+    f = partyFindItemDeep(member, &save, &catalog, 4, 4);
+    check("the container's contents come before the next main slot (item 4 inside beats the direct slot 2)",
+          f.itemId == 4 && f.depth == 3 && f.containerRecords[0] == 5 && f.containerRecords[1] == 6 &&
+              f.containerRecords[2] == 7 && f.slotOffset == 2 + 4);
+    itemSlotSet(inventoryGroupSlot(r7, 2), 0, 0);
+    f = partyFindItemDeep(member, &save, &catalog, 4, 4);
+    check("a fourth-level container is never opened, so the direct slot wins", f.itemId == 4 && f.depth == 0 &&
+                                                                              f.slotOffset == PartyFieldInventory + 2 + 4);
+    check("a range works inside containers", partyFindItemDeep(member, &save, &catalog, 2, 3).itemId == 3);
+    check("nothing is reported as itemId 0", partyFindItemDeep(member, &save, &catalog, 15, 16).itemId == 0);
+
+    /* The equipment slot at +0x13E can only be a container. */
+    itemSlotSet(member + 0x13E, 11, 9);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 9), 8), 17, 0);
+    f = partyFindItemDeep(member, &save, &catalog, 17, 17);
+    check("the equipped container is searched last", f.itemId == 17 && f.depth == 1 && f.containerRecords[0] == 9 &&
+                                                       f.slotOffset == 2 + 7 * 4);
+    itemSlotSet(member + 0x13E, 17, 0);
+    check("an equipped non-container is never matched directly", partyFindItemDeep(member, &save, &catalog, 17, 17).itemId == 0);
+    itemSlotSet(inventoryGroupSlot(pack, 1), 10, 2000);
+    check("a container record past the section is empty", partyFindItemDeep(member, &save, &catalog, 3, 3).itemId == 0);
+}
+
 int main(void) {
+    testFindItemDeep();
     testLayoutRelations();
     testStats();
     testClasses();
