@@ -380,3 +380,5 @@ Light increments `Party_light` (one unit is used up each step on a light-burning
 
 Healing: First Aid heals 6 hit points, Cure Wounds 15, Power Cure `rnd(2,12) x level`, through `healCharacterEffect`; the target may not be dead,
 stone or eradicated (worst condition 0Dh-0Fh -> `showErrorMessage`).
+
+Town Portal (`4D69A`): refused ("showErrorMessage") unless page header byte 18h is non-zero; shows a town list (1-5, 0 = cancel), loads the chosen town's map (`sub_281B2`) and puts the party on that page's default start cell (`setPartyStartCell`, header byte 13h).
