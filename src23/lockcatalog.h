@@ -55,11 +55,27 @@
  *      TryInteractAtPosition (interact.h) -- confirmed to select its
  *      errorCode=8 outcome there, but its own meaning is still not
  *      confirmed either.
- *   +2 price (u16) -- a plain binary value, displayed split by 100 into
- *      two denominations (LoadLockState: `word_32DD0 / 100`,
- *      `word_32DD0 % 100`); which currency isn't confirmed.
- *   +4..+25 (22 bytes) -- not yet traced by any function read so far;
- *      exposed as raw bytes, not interpreted.
+ *   +2 price (u16) -- a plain binary value, split by 100 by LoadLockState
+ *      (`word_32DD0 / 100`, `% 100`). UseAbilityCommand feeds it to
+ *      ApplySavingThrowEffect when the lock has LockFlagTrapped (0x80) and
+ *      isn't yet opened: it is a packed trap, threshold x 100 + effect id
+ *      (party.h's partyDecodeSavingThrowEffect), not a price. "price" is
+ *      kept as the field name for the existing users.
+ *   +4..+25 (22 bytes) -- the record's CONTENTS, decoded 2026-10-03 from
+ *      RunShopScreen/BuildShopCategoryTabList/HandleShopCatalogSlotClick
+ *      (LoadLockState copies the 13 words to DS:0x556E, the eight item ids
+ *      landing at 0x5572, the amounts at word_32DE2/E4/E6): the same
+ *      record is a chest, a shop's stock or a reward pile.
+ *        +4..+0x13  eight item-catalog ids (0 = empty slot)
+ *        +0x14      gold coins, +0x16 MAGIC ORE, +0x18 NUORE
+ *      Item ids 1, 2 and 3 are the pile items GOLD COINS / MAGIC ORE /
+ *      NUORE (item flags 0x80/0x40/0x20) and take their amount from those
+ *      three words; any other id is an ordinary item whose "extra" is its
+ *      catalog +4 field when it is a charged one. Taking a slot sets a
+ *      bit in the persistent "taken" mask (byte_32DCC), which is why a
+ *      cleaned-out chest stays empty. Flag 0x2 marks the stock as
+ *      inexhaustible bookkeeping-wise (the toolbar visit counter isn't
+ *      touched), 0x80 traps it.
  */
 
 enum {
@@ -89,6 +105,7 @@ bool lockCatalogParse(LockCatalog *catalog, GameKind game, const uint8_t *region
 bool lockCatalogParseWorldDat(LockCatalog *catalog, GameKind game, const uint8_t *worldDat, size_t size);
 
 typedef enum {
+    LockFlagTrapped = 0x0080, /* UseAbilityCommand runs the packed trap in price once, on first opening */
     LockFlagMagical = 0x0020,
     LockFlagUnknown40 = 0x0040,
     LockFlagKeyGold = 0x0200,
@@ -100,10 +117,14 @@ typedef enum {
     LockFlagKeyBrass = 0x8000
 } LockFlag;
 
+enum { LockContentSlots = 8 };
+
 typedef struct {
     uint16_t flags;
-    uint16_t price;
-    uint8_t rest[LockRecordSize - 4]; /* raw, uninterpreted +4..+25 */
+    uint16_t price;                       /* really the packed trap value, see above */
+    uint8_t rest[LockRecordSize - 4];     /* the raw +4..+25 */
+    uint16_t items[LockContentSlots];     /* +4..+0x13: item ids, 0 = empty */
+    uint16_t gold, magicOre, nuore;       /* +0x14, +0x16, +0x18 */
 } LockRecord;
 
 /* 1-based lock id, matching worldobjects.h's door record value field. False if id is 0 or out of range. */

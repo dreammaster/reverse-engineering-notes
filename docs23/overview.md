@@ -11260,6 +11260,14 @@ fee being a BCD4 sitting in the NPC header (it showed up as `DS:0x512A`, which i
 the lighting system) is what unlocked it, and the real numbers (1000/1200/2000
 gold at 70/70/400) confirm every field. Also the trainer's price and cap.
 
+### Session update (2026-10-03, continued): what's in the chests and shops
+
+Following the shop-opening topic into `RunShopScreen` showed that the lock
+catalog's unexplained 22 bytes are the container contents -- eight item ids and
+three currency piles -- shared by chests, reward piles and shop stock. So every
+shop's inventory and every chest's loot is now readable data (and the
+"price" field is a trap). Lock records for shops: `LockRecord.items[]`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -50,6 +50,12 @@ bool lockCatalogRecord(const LockCatalog *catalog, unsigned lockId, LockRecord *
     out->flags = readU16(rec);
     out->price = readU16(rec + 2);
     memcpy(out->rest, rec + 4, sizeof(out->rest));
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        out->items[i] = readU16(rec + 4 + i * 2);
+    }
+    out->gold = readU16(rec + 0x14);
+    out->magicOre = readU16(rec + 0x16);
+    out->nuore = readU16(rec + 0x18);
     return true;
 }
 

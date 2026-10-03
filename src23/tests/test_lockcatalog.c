@@ -175,6 +175,17 @@ static void testRealYendor2(void) {
     checkU32("yendor2 lock id 1 flags", rec.flags, 0x0041);
     checkU32("yendor2 lock id 1 price", rec.price, 0);
 
+    check("yendor2 lock 319 (BUY ARMOR) parses", lockCatalogRecord(&catalog, 319, &rec));
+    checkU32("...it stocks six items", rec.items[5] != 0 && rec.items[6] == 0 ? 6 : 0, 6);
+    checkU32("...the first is item 313", rec.items[0], 313);
+    checkU32("...the last is item 181", rec.items[5], 181);
+    check("yendor2 lock 333 (the governor's KEY) parses", lockCatalogRecord(&catalog, 333, &rec));
+    check("...it holds the gold pile (id 1) and item 41 with 10000 gold",
+          rec.items[0] == 1 && rec.items[1] == 41 && rec.gold == 10000 && rec.magicOre == 0 && rec.nuore == 0);
+    check("yendor2 lock 3 holds all three piles",
+          lockCatalogRecord(&catalog, 3, &rec) && rec.items[0] == 1 && rec.items[1] == 2 && rec.items[2] == 3 &&
+              rec.gold == 7250 && rec.magicOre == 200 && rec.nuore == 400);
+
     KeyTally tally = tallyCatalog(&catalog);
     checkU32("yendor2 magical locks", tally.magicalCount, 17);
     checkU32("yendor2 multi-key-bit records", tally.multiKeyBitCount, 0);

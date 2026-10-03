@@ -4256,6 +4256,22 @@ projectile challenge costs 1000 gold for 3x at 70, the intelligence one 1200 for
 `dialogAttemptChallenge`, `dialogMarkServiceAvailability` (the once-per-
 character availability bits).
 
+**The lock catalog's "uninterpreted +4..+25" is the contents of chests, shops and
+reward piles (2026-10-03)**: the topics that open the shop screen
+(`UseKeyItem` -> `LoadLockState(topic arg)` -> `RunShopScreen`) point at 26-byte
+lock-catalog records, and following `BuildShopCategoryTabList` /
+`HandleShopCatalogSlotClick` / `PayGoldAndAcquireItem` through them gave: `+0`
+flags, `+2` a packed trap value (threshold x 100 + effect id, applied once on
+first opening when flag `0x80` is set -- not a price, despite the older note),
+`+4..+0x13` **eight item-catalog ids** (0 = empty), `+0x14` gold, `+0x16` MAGIC
+ORE, `+0x18` NUORE. Items 1/2/3 are the pile items (GOLD COINS / MAGIC ORE /
+NUORE, item flags 0x80/0x40/0x20) and take their amounts from those words.
+Taking a slot sets a bit in the persistent taken-mask (`byte_32DCC`), so
+emptied containers stay empty. Real data: the Chapter 2 armour shop (lock 319)
+stocks items 313, 363, 251, 223, 276, 181; the governor's key grant (333) is item
+41 plus 10000 gold; lock 3 holds all three piles (7250 gold, 200 magic ore, 400
+nuore). `LockRecord` now exposes `items[]`, `gold`, `magicOre`, `nuore`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
