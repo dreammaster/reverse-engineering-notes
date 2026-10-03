@@ -5176,6 +5176,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X153A4);
 	op_stkvar	(x,	1);
 	create_insn	(0X153EA);
+	set_name	(0X153EA,	"checkSkill");
 	create_insn	(x=0X153EF);
 	op_stkvar	(x,	1);
 	create_insn	(0X153FA);
@@ -5322,8 +5323,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1564F);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X15652);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -5333,6 +5332,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15652);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X15658);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1565B);
@@ -17766,9 +17767,15 @@ static Bytes_3(void) {
 	create_byte	(0X36FE9);
 	create_byte	(0X36FEA);
 	create_byte	(0X36FEB);
+	set_cmt	(0X36FEC,	"byte (+12h) (action 69)",	0);
 	create_byte	(0X36FEC);
+	set_name	(0X36FEC,	"Party_levitate");
+	set_cmt	(0X36FEE,	"byte (+14h) (action 79)",	0);
 	create_byte	(0X36FEE);
+	set_name	(0X36FEE,	"Party_wizardEye");
+	set_cmt	(0X36FEF,	"byte (+15h) (action 94)",	0);
 	create_byte	(0X36FEF);
+	set_name	(0X36FEF,	"Party_walkOnWater");
 	create_byte	(0X36FF0);
 	make_array	(0X36FF0,	0XEA);
 	set_cmt	(0X370DA,	"918-byte party block (MAZE.PTY), loaded by sub_26447",	0);
@@ -17779,11 +17786,21 @@ static Bytes_3(void) {
 	set_cmt	(0X37326,	"word",	0);
 	create_word	(0X37326);
 	set_name	(0X37326,	"Party_year");
+	set_cmt	(0X37328,	"word (MAZE.PTY +34Eh): light count (ifProc action 70)",	0);
 	create_word	(0X37328);
+	set_name	(0X37328,	"Party_light");
+	set_cmt	(0X3732A,	"word (+350h) (action 71)",	0);
 	create_word	(0X3732A);
+	set_name	(0X3732A,	"Party_fireResist");
+	set_cmt	(0X3732C,	"word (+352h) (action 72)",	0);
 	create_word	(0X3732C);
+	set_name	(0X3732C,	"Party_elecResist");
+	set_cmt	(0X3732E,	"word (+354h) (action 73)",	0);
 	create_word	(0X3732E);
+	set_name	(0X3732E,	"Party_coldResist");
+	set_cmt	(0X37330,	"word (+356h) (action 17)",	0);
 	create_word	(0X37330);
+	set_name	(0X37330,	"Party_poisonResist");
 	set_cmt	(0X37332,	"word, minutes into the day",	0);
 	create_word	(0X37332);
 	set_name	(0X37332,	"Party_minutes");
@@ -18294,6 +18311,15 @@ static Bytes_3(void) {
 	set_cmt	(0X37E0B,	"maxlen",	0);
 	create_insn	(x=0X37E0E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37E1B,	"src",	0);
 	create_insn	(x=0X37E1D);
 	op_stkvar	(x,	1);
@@ -18334,15 +18360,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X37E9F,	"str",	0);
 	set_cmt	(0X37EA9,	"status",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X37EAF);
 	create_insn	(0X37EB2);
 	set_name	(0X37EB2,	"openMm3Cc");
@@ -23122,6 +23139,15 @@ static Bytes_4(void) {
 	create_insn	(0X4014E);
 	create_insn	(0X4015B);
 	create_insn	(0X40173);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4019D,	"format",	0);
 	set_cmt	(0X401A5,	"buffer",	0);
 	create_insn	(x=0X401AB);
@@ -23183,15 +23209,6 @@ static Bytes_4(void) {
 	set_cmt	(0X4036E,	"format",	0);
 	create_insn	(x=0X4036E);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X40375,	"buffer",	0);
 	create_insn	(x=0X4037B);
 	op_hex		(x,	1);
@@ -28755,6 +28772,15 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47985);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X479A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X479A5);
@@ -28817,15 +28843,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47BBA);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47BC0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47BDC);
@@ -33771,6 +33788,15 @@ static Bytes_6(void) {
 	create_insn	(0X4F971);
 	set_cmt	(0X4F979,	"jumptable 0004F954 case 4",	1);
 	create_insn	(0X4F979);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4F981,	"jumptable 0004F954 case 5",	1);
 	create_insn	(0X4F981);
 	set_cmt	(0X4F989,	"jumptable 0004F954 case 6",	1);
@@ -33795,15 +33821,6 @@ static Bytes_6(void) {
 	create_insn	(0X4F9D1);
 	set_cmt	(0X4F9D9,	"jumptable 0004F954 case 16",	1);
 	create_insn	(0X4F9D9);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4F9E1,	"jumptable 0004F954 case 17",	1);
 	create_insn	(x=0X4F9E1);
 	op_stkvar	(x,	0);
@@ -37685,6 +37702,7 @@ static Functions_0(void) {
 	set_frame_size(0X1531F, 0X2, 2, 0);
 	add_func    (0X153EA,0X15444);
 	set_func_flags(0X153EA,0x5412);
+	set_func_cmt(0X153EA,	"party skill test (ifProc action 99), by call", 0);
 	set_frame_size(0X153EA, 0X4, 2, 0);
 	add_func    (0X15468,0X154B0);
 	set_func_flags(0X15468,0x5412);
@@ -39664,15 +39682,15 @@ static Functions_0(void) {
 	define_local_var(0X44CC6, 0X44DAC, "[bp-0X2E]", "s");
 	define_local_var(0X44CC6, 0X44DAC, "[bp-0X1A]", "buffer");
 	define_local_var(0X44CC6, 0X44DAC, "[bp+0X8]", "format");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X44DAC,0X44DBE);
 	set_func_flags(0X44DAC,0x5456);
 	SetType(0X44DAC, "int __cdecl strcoll(const char *s1, const char *s2);");
 	set_frame_size(0X44DAC, 0, 2, 0);
 	define_local_var(0X44DAC, 0X44DBE, "[bp+0X6]", "s1");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X44DBE,0X452E4);
 	set_func_flags(0X44DBE,0x5412);
 	set_frame_size(0X44DBE, 0X2B6, 2, 0);

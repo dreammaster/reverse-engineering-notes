@@ -26,7 +26,11 @@ name + party + the highest level of the characters in the party (for the load me
 |---|---|
 | `000h` | party size (`Party_count`) |
 | `001h`.. | roster indexes of the party members (`ff` = empty); `+0Ah` facing, `+0Bh` x, `+0Ch` y, `+0Dh` map id |
+| `12h` | levitate (spell counter) |
+| `14h` | wizard eye |
+| `15h` | walk on water |
 | `34Bh` | day (0-99) |
+| `34Eh` | light (word), then `350h` fire / `352h` electricity / `354h` cold / `356h` poison resistance (words) |
 | `34Ch` | year (word); new games start at 500 |
 | `358h` | minutes into the day (word, `1E0h` = 8:00) |
 | `35Ah` | food (word) |
@@ -34,6 +38,7 @@ name + party + the highest level of the characters in the party (for the load me
 | `366h` | bank gems (dword) |
 | `36Ah` | gold (dword) (by use) |
 | `36Eh` | gems (dword) (by use) |
+| `376h` | 32-byte game-flag bit array (`isBitSet`/`setBit`, event mode 20) |
 
 Party time is the same system as Xeen: 1440 minutes a day, 100 days a year, a condition tick every 480 minutes
 (`changeTime`, `addTime`).

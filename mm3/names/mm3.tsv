@@ -179,6 +179,7 @@
 15271	checkPartyDead
 152FC	isBitSet	(bitarray, index) -> bit; used by ifProc for game flags (action 20)
 1531F	addTime	minutes +1440/day, day wrap at 100 -> year (Xeen Party::addTime); resets blacksmith wares + bank interest on day change
+153EA	checkSkill	party skill test (ifProc action 99), by call
 15468	setBit	(bitarray, index, value)
 16973	changeTime	per 480 minutes: condition ticks (poison/disease/insane...), then addTime (Xeen Party::changeTime)
 16DC0	chargeStep
@@ -356,9 +357,17 @@
 36FE5	Party_x	byte 0-15 within the page (+0Bh)
 36FE6	Party_y	byte (+0Ch)
 36FE7	Party_map	byte, current maze id (+0Dh)
+36FEC	Party_levitate	byte (+12h) (action 69)
+36FEE	Party_wizardEye	byte (+14h) (action 79)
+36FEF	Party_walkOnWater	byte (+15h) (action 94)
 370DA	Party_state	918-byte party block (MAZE.PTY), loaded by sub_26447
 37325	Party_day	byte, 0-99
 37326	Party_year	word
+37328	Party_light	word (MAZE.PTY +34Eh): light count (ifProc action 70)
+3732A	Party_fireResist	word (+350h) (action 71)
+3732C	Party_elecResist	word (+352h) (action 72)
+3732E	Party_coldResist	word (+354h) (action 73)
+37330	Party_poisonResist	word (+356h) (action 17)
 37332	Party_minutes	word, minutes into the day
 37334	Party_food	word (+35Ah in MAZE.PTY); rest decrements it
 3733C	Party_bankGold	dword (+362h); GiveBankInterest adds 1% (same as Xeen Party::giveBankInterest)

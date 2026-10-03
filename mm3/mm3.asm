@@ -2696,9 +2696,10 @@ addTime         endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; party skill test (ifProc action 99), by call
 ; Attributes: bp-based frame
 
-sub_153EA       proc far                ; CODE XREF: sub_15736+D↓p
+checkSkill      proc far                ; CODE XREF: sub_15736+D↓p
                                         ; sub_1B6D1+65↓P ...
 
 arg_0           = word ptr  6
@@ -2714,7 +2715,7 @@ arg_0           = word ptr  6
                 jmp     short loc_15435
 ; ---------------------------------------------------------------------------
 
-loc_153FA:                              ; CODE XREF: sub_153EA+52↓j
+loc_153FA:                              ; CODE XREF: checkSkill+52↓j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
@@ -2731,20 +2732,20 @@ loc_153FA:                              ; CODE XREF: sub_153EA+52↓j
                 jmp     cs:jpt_15418[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1541D:                              ; CODE XREF: sub_153EA+2E↑j
-                                        ; sub_153EA+3D↓j ...
+loc_1541D:                              ; CODE XREF: checkSkill+2E↑j
+                                        ; checkSkill+3D↓j ...
                 mov     ax, 1           ; jumptable 00015418 cases 0-4,6-8,12,13,15-17
                 jmp     short loc_15440
 ; ---------------------------------------------------------------------------
 
-loc_15422:                              ; CODE XREF: sub_153EA+2E↑j
+loc_15422:                              ; CODE XREF: checkSkill+2E↑j
                                         ; DATA XREF: seg002:jpt_15418↓o
                 cmp     di, 2           ; jumptable 00015418 cases 9-11
                 jnz     short def_15418 ; jumptable 00015418 default case
                 jmp     short loc_1541D ; jumptable 00015418 cases 0-4,6-8,12,13,15-17
 ; ---------------------------------------------------------------------------
 
-loc_15429:                              ; CODE XREF: sub_153EA+2E↑j
+loc_15429:                              ; CODE XREF: checkSkill+2E↑j
                                         ; DATA XREF: seg002:jpt_15418↓o
                 mov     al, Party_count ; jumptable 00015418 cases 5,14
                 mov     ah, 0
@@ -2753,26 +2754,26 @@ loc_15429:                              ; CODE XREF: sub_153EA+2E↑j
                 jmp     short loc_1541D ; jumptable 00015418 cases 0-4,6-8,12,13,15-17
 ; ---------------------------------------------------------------------------
 
-def_15418:                              ; CODE XREF: sub_153EA+20↑j
-                                        ; sub_153EA+2A↑j ...
+def_15418:                              ; CODE XREF: checkSkill+20↑j
+                                        ; checkSkill+2A↑j ...
                 inc     si              ; jumptable 00015418 default case
 
-loc_15435:                              ; CODE XREF: sub_153EA+E↑j
+loc_15435:                              ; CODE XREF: checkSkill+E↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_153FA
                 xor     ax, ax
 
-loc_15440:                              ; CODE XREF: sub_153EA+36↑j
+loc_15440:                              ; CODE XREF: checkSkill+36↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_153EA       endp
+checkSkill      endp
 
 ; ---------------------------------------------------------------------------
-jpt_15418       dw offset loc_1541D     ; DATA XREF: sub_153EA+2E↑r
+jpt_15418       dw offset loc_1541D     ; DATA XREF: checkSkill+2E↑r
                 dw offset loc_1541D     ; jump table for switch statement
                 dw offset loc_1541D
                 dw offset loc_1541D
@@ -3206,7 +3207,7 @@ arg_0           = word ptr  6
                 mov     ax, 4
                 push    ax
                 push    cs
-                call    near ptr sub_153EA
+                call    near ptr checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_1575E
@@ -3247,7 +3248,7 @@ loc_15793:                              ; CODE XREF: sub_15736+3F↑j
                 call    drawView
 
 loc_1579D:                              ; CODE XREF: sub_15736+2D↑j
-                mov     al, byte_36FEE
+                mov     al, Party_wizardEye
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_157BC
@@ -3261,7 +3262,7 @@ loc_1579D:                              ; CODE XREF: sub_15736+2D↑j
 
 loc_157BC:                              ; CODE XREF: sub_15736+6E↑j
                                         ; sub_15736+75↑j
-                cmp     byte_36FEE, 0
+                cmp     Party_wizardEye, 0
                 jnz     short loc_157C6
                 jmp     loc_15B2E
 ; ---------------------------------------------------------------------------
@@ -15647,7 +15648,7 @@ sub_1B6D1       proc far                ; CODE XREF: renderIndoorView+1F5D↓P
                 inc     si
                 mov     ax, 6
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_1B74A
@@ -15682,7 +15683,7 @@ loc_1B74D:                              ; CODE XREF: sub_1B6D1+77↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0
-                cmp     byte_36FEC, 0
+                cmp     Party_levitate, 0
                 jz      short loc_1B789
                 inc     si
                 inc     si
@@ -15730,7 +15731,7 @@ loc_1B78F:                              ; CODE XREF: sub_1B6D1+B6↑j
                 jz      short loc_1B7EB
                 mov     ax, 10h
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_1B7EB
@@ -15781,7 +15782,7 @@ loc_1B7F1:                              ; CODE XREF: sub_1B6D1+118↑j
                 jz      short loc_1B84D
                 mov     ax, 11h
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_1B84D
@@ -15830,7 +15831,7 @@ loc_1B853:                              ; CODE XREF: sub_1B6D1+17A↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                cmp     word_3732A, 0
+                cmp     Party_fireResist, 0
                 jz      short loc_1B89C
                 xor     ax, ax
                 jmp     short loc_1B89F
@@ -15852,7 +15853,7 @@ loc_1B89F:                              ; CODE XREF: sub_1B6D1+1C9↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                cmp     word_3732C, 0
+                cmp     Party_elecResist, 0
                 jz      short loc_1B8C1
                 mov     ax, 2
                 jmp     short loc_1B8C4
@@ -15874,7 +15875,7 @@ loc_1B8C4:                              ; CODE XREF: sub_1B6D1+1EE↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                cmp     word_3732E, 0
+                cmp     Party_coldResist, 0
                 jz      short loc_1B8E6
                 mov     ax, 4
                 jmp     short loc_1B8E9
@@ -15896,7 +15897,7 @@ loc_1B8E9:                              ; CODE XREF: sub_1B6D1+213↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                cmp     word_37330, 0
+                cmp     Party_poisonResist, 0
                 jz      short loc_1B90B
                 mov     ax, 6
                 jmp     short loc_1B90E
@@ -17080,13 +17081,13 @@ sub_1C13C       proc far                ; CODE XREF: sub_15736+34↑P
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_1C16E
-                cmp     word_37328, 0
+                cmp     Party_light, 0
                 jz      short loc_1C16E
-                dec     word_37328
+                dec     Party_light
 
 loc_1C16E:                              ; CODE XREF: sub_1C13C+25↑j
                                         ; sub_1C13C+2C↑j
-                cmp     word_37328, 0
+                cmp     Party_light, 0
                 jnz     short loc_1C187
                 mov     al, Maze_curSlot
                 cbw
@@ -48541,7 +48542,7 @@ word_36FB8      dw 0                    ; DATA XREF: sub_1B6D1+DA↑r
                                         ; rosterMenu+A3↓w
 Save_name       db 20h dup(0)           ; 31 bytes, MAZE.NAM ("Default Characters")
 Party_count     db 0                    ; DATA XREF: checkPartyDead:loc_152C8↑r
-                                        ; sub_153EA:loc_15429↑r ...
+                                        ; checkSkill:loc_15429↑r ...
                                         ; byte, number of characters in the party (first byte of MAZE.PTY)
 byte_36FDB      db 0                    ; DATA XREF: rosterMenu+727↓w
                                         ; loadSaveDialog:loc_41E5C↓r ...
@@ -48566,13 +48567,16 @@ byte_36FEA      db 0                    ; DATA XREF: sub_25EF3+A↑r
                                         ; sub_41EF1:loc_41F36↓r ...
 byte_36FEB      db 0                    ; DATA XREF: rosterMenu+2A9↓r
                                         ; rosterMenu+305↓r ...
-byte_36FEC      db 0                    ; DATA XREF: sub_1B6D1+A6↑r
+Party_levitate  db 0                    ; DATA XREF: sub_1B6D1+A6↑r
                                         ; giveTake:loc_3C63E↓r ...
+                                        ; byte (+12h) (action 69)
                 align 2
-byte_36FEE      db 0                    ; DATA XREF: sub_15736:loc_1579D↑r
+Party_wizardEye db 0                    ; DATA XREF: sub_15736:loc_1579D↑r
                                         ; sub_15736:loc_157BC↑r ...
-byte_36FEF      db 0                    ; DATA XREF: giveTake:loc_3C6E5↓w
+                                        ; byte (+14h) (action 79)
+Party_walkOnWater db 0                  ; DATA XREF: giveTake:loc_3C6E5↓w
                                         ; giveTake:loc_3CCE5↓w ...
+                                        ; byte (+15h) (action 94)
                 db 0EAh dup(0)
 Party_state     db    0                 ; 918-byte party block (MAZE.PTY), loaded by sub_26447
                 db    0
@@ -49167,17 +49171,22 @@ Party_day       db 0                    ; DATA XREF: addTime+A↑r
 Party_year      dw 0                    ; DATA XREF: addTime+2F↑w
                                         ; getAge+7↑r ...
                                         ; word
-; char *word_37328
-word_37328      dw 0                    ; DATA XREF: sub_1C13C+27↑r
+; char *Party_light
+Party_light     dw 0                    ; DATA XREF: sub_1C13C+27↑r
                                         ; sub_1C13C+2E↑w ...
-word_3732A      dw 0                    ; DATA XREF: sub_1B6D1+1C0↑r
+                                        ; word (MAZE.PTY +34Eh): light count (ifProc action 70)
+Party_fireResist dw 0                   ; DATA XREF: sub_1B6D1+1C0↑r
                                         ; giveTake:loc_3C656↓r ...
-word_3732C      dw 0                    ; DATA XREF: sub_1B6D1+1E4↑r
+                                        ; word (+350h) (action 71)
+Party_elecResist dw 0                   ; DATA XREF: sub_1B6D1+1E4↑r
                                         ; giveTake:loc_3C662↓r ...
-word_3732E      dw 0                    ; DATA XREF: sub_1B6D1+209↑r
+                                        ; word (+352h) (action 72)
+Party_coldResist dw 0                   ; DATA XREF: sub_1B6D1+209↑r
                                         ; giveTake:loc_3C66D↓r ...
-word_37330      dw 0                    ; DATA XREF: sub_1B6D1+22E↑r
+                                        ; word (+354h) (action 73)
+Party_poisonResist dw 0                 ; DATA XREF: sub_1B6D1+22E↑r
                                         ; giveTake:loc_3C3B8↓r ...
+                                        ; word (+356h) (action 17)
 Party_minutes   dw 0                    ; DATA XREF: addTime+12↑w
                                         ; addTime:loc_15337↑w ...
                                         ; word, minutes into the day
@@ -59445,9 +59454,9 @@ loc_3C3A7:                              ; CODE XREF: giveTake+B3↑j
 
 loc_3C3B8:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_37330  ; jumptable 0003C335 case 17
+                mov     ax, Party_poisonResist ; jumptable 0003C335 case 17
                 sub     ax, [bp+arg_2]
-                mov     word_37330, ax
+                mov     Party_poisonResist, ax
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -59853,64 +59862,64 @@ loc_3C63B:                              ; CODE XREF: giveTake+3B4↑j
 
 loc_3C63E:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     al, byte_36FEC  ; jumptable 0003C335 case 69
+                mov     al, Party_levitate ; jumptable 0003C335 case 69
                 sub     al, byte ptr [bp+arg_2]
-                mov     byte_36FEC, al
+                mov     Party_levitate, al
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3C64A:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_37328  ; jumptable 0003C335 case 70
+                mov     ax, Party_light ; jumptable 0003C335 case 70
                 sub     ax, [bp+arg_2]
-                mov     word_37328, ax
+                mov     Party_light, ax
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3C656:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_3732A  ; jumptable 0003C335 case 71
+                mov     ax, Party_fireResist ; jumptable 0003C335 case 71
                 sub     ax, [bp+arg_2]
-                mov     word_3732A, ax
+                mov     Party_fireResist, ax
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3C662:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_3732C  ; jumptable 0003C335 case 72
+                mov     ax, Party_elecResist ; jumptable 0003C335 case 72
                 sub     ax, [bp+arg_2]
-                mov     word_3732C, ax
+                mov     Party_elecResist, ax
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3C66D:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     ax, word_3732E  ; jumptable 0003C335 case 73
+                mov     ax, Party_coldResist ; jumptable 0003C335 case 73
                 sub     ax, [bp+arg_2]
-                mov     word_3732E, ax
+                mov     Party_coldResist, ax
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3C678:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     al, byte_36FEC  ; jumptable 0003C335 case 74
+                mov     al, Party_levitate ; jumptable 0003C335 case 74
                 sub     al, byte ptr [bp+arg_2]
-                mov     byte_36FEC, al
-                mov     ax, word_37328
+                mov     Party_levitate, al
+                mov     ax, Party_light
                 sub     ax, [bp+arg_2]
-                mov     word_37328, ax
-                mov     ax, word_3732A
+                mov     Party_light, ax
+                mov     ax, Party_fireResist
                 sub     ax, [bp+arg_2]
-                mov     word_3732A, ax
-                mov     ax, word_3732C
+                mov     Party_fireResist, ax
+                mov     ax, Party_elecResist
                 sub     ax, [bp+arg_2]
-                mov     word_3732C, ax
-                mov     ax, word_3732E
+                mov     Party_elecResist, ax
+                mov     ax, Party_coldResist
                 sub     ax, [bp+arg_2]
-                mov     word_3732E, ax
-                mov     ax, word_37330
+                mov     Party_coldResist, ax
+                mov     ax, Party_poisonResist
                 sub     ax, [bp+arg_2]
-                mov     word_37330, ax
+                mov     Party_poisonResist, ax
                 jmp     short loc_3C6E5 ; jumptable 0003C335 case 94
 ; ---------------------------------------------------------------------------
 
@@ -59942,7 +59951,7 @@ loc_3C6C8:                              ; CODE XREF: giveTake+B3↑j
 
 loc_3C6D3:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
-                mov     byte_36FEE, 0   ; jumptable 0003C335 case 79
+                mov     Party_wizardEye, 0 ; jumptable 0003C335 case 79
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -59957,7 +59966,7 @@ loc_3C6DA:                              ; CODE XREF: giveTake+B3↑j
 loc_3C6E5:                              ; CODE XREF: giveTake+B3↑j
                                         ; giveTake+42C↑j
                                         ; DATA XREF: ...
-                mov     byte_36FEF, 0   ; jumptable 0003C335 case 94
+                mov     Party_walkOnWater, 0 ; jumptable 0003C335 case 94
 
 def_3C335:                              ; CODE XREF: giveTake+AE↑j
                                         ; giveTake+B3↑j ...
@@ -60063,9 +60072,9 @@ loc_3C76C:                              ; CODE XREF: giveTake+478↑j
 
 loc_3C77D:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_37330  ; jumptable 0003C6FA case 17
+                mov     ax, Party_poisonResist ; jumptable 0003C6FA case 17
                 add     ax, [bp+arg_8]
-                mov     word_37330, ax
+                mov     Party_poisonResist, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -60805,64 +60814,64 @@ loc_3CC22:                              ; CODE XREF: giveTake+99B↑j
 
 loc_3CC25:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     al, byte_36FEC  ; jumptable 0003C6FA case 69
+                mov     al, Party_levitate ; jumptable 0003C6FA case 69
                 add     al, byte ptr [bp+arg_8]
-                mov     byte_36FEC, al
+                mov     Party_levitate, al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3CC31:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_37328  ; jumptable 0003C6FA case 70
+                mov     ax, Party_light ; jumptable 0003C6FA case 70
                 add     ax, [bp+arg_8]
-                mov     word_37328, ax
+                mov     Party_light, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3CC3D:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_3732A  ; jumptable 0003C6FA case 71
+                mov     ax, Party_fireResist ; jumptable 0003C6FA case 71
                 add     ax, [bp+arg_8]
-                mov     word_3732A, ax
+                mov     Party_fireResist, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3CC49:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_3732C  ; jumptable 0003C6FA case 72
+                mov     ax, Party_elecResist ; jumptable 0003C6FA case 72
                 add     ax, [bp+arg_8]
-                mov     word_3732C, ax
+                mov     Party_elecResist, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3CC55:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     ax, word_3732E  ; jumptable 0003C6FA case 73
+                mov     ax, Party_coldResist ; jumptable 0003C6FA case 73
                 add     ax, [bp+arg_8]
-                mov     word_3732E, ax
+                mov     Party_coldResist, ax
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3CC61:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     al, byte_36FEC  ; jumptable 0003C6FA case 74
+                mov     al, Party_levitate ; jumptable 0003C6FA case 74
                 add     al, byte ptr [bp+arg_8]
-                mov     byte_36FEC, al
-                mov     ax, word_37328
+                mov     Party_levitate, al
+                mov     ax, Party_light
                 add     ax, [bp+arg_8]
-                mov     word_37328, ax
-                mov     ax, word_3732A
+                mov     Party_light, ax
+                mov     ax, Party_fireResist
                 add     ax, [bp+arg_8]
-                mov     word_3732A, ax
-                mov     ax, word_3732C
+                mov     Party_fireResist, ax
+                mov     ax, Party_elecResist
                 add     ax, [bp+arg_8]
-                mov     word_3732C, ax
-                mov     ax, word_3732E
+                mov     Party_elecResist, ax
+                mov     ax, Party_coldResist
                 add     ax, [bp+arg_8]
-                mov     word_3732E, ax
-                mov     ax, word_37330
+                mov     Party_coldResist, ax
+                mov     ax, Party_poisonResist
                 add     ax, [bp+arg_8]
-                mov     word_37330, ax
+                mov     Party_poisonResist, ax
                 jmp     short loc_3CCE5 ; jumptable 0003C6FA case 94
 ; ---------------------------------------------------------------------------
 
@@ -60893,7 +60902,7 @@ loc_3CCB2:                              ; CODE XREF: giveTake+478↑j
 
 loc_3CCBD:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
-                mov     byte_36FEE, 1   ; jumptable 0003C6FA case 79
+                mov     Party_wizardEye, 1 ; jumptable 0003C6FA case 79
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
@@ -60922,7 +60931,7 @@ loc_3CCDA:                              ; CODE XREF: giveTake+478↑j
 loc_3CCE5:                              ; CODE XREF: giveTake+478↑j
                                         ; giveTake+A15↑j
                                         ; DATA XREF: ...
-                mov     byte_36FEF, 1   ; jumptable 0003C6FA case 94
+                mov     Party_walkOnWater, 1 ; jumptable 0003C6FA case 94
 
 def_3C6FA:                              ; CODE XREF: giveTake+473↑j
                                         ; giveTake+478↑j ...
@@ -61278,7 +61287,7 @@ loc_3D020:                              ; CODE XREF: setValue+21↑j
 loc_3D031:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 17
-                mov     word_37330, ax
+                mov     Party_poisonResist, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -61586,46 +61595,46 @@ loc_3D1E6:                              ; CODE XREF: setValue+21↑j
 loc_3D1EB:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 70
-                mov     word_37328, ax
+                mov     Party_light, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3D1F4:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 71
-                mov     word_3732A, ax
+                mov     Party_fireResist, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3D1FC:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 72
-                mov     word_3732C, ax
+                mov     Party_elecResist, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3D204:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 73
-                mov     word_3732E, ax
+                mov     Party_coldResist, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
 loc_3D20C:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 74
-                mov     byte_36FEF, al
+                mov     Party_walkOnWater, al
                 mov     ah, 0
-                mov     word_37330, ax
-                mov     byte_36FEE, al
+                mov     Party_poisonResist, ax
+                mov     Party_wizardEye, al
                 mov     ah, 0
-                mov     word_3732E, ax
-                mov     word_3732C, ax
-                mov     word_3732A, ax
-                mov     word_37328, ax
+                mov     Party_coldResist, ax
+                mov     Party_elecResist, ax
+                mov     Party_fireResist, ax
+                mov     Party_light, ax
 
 loc_3D228:                              ; CODE XREF: setValue+23C↑j
-                mov     byte_36FEC, al
+                mov     Party_levitate, al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -61646,7 +61655,7 @@ loc_3D235:                              ; CODE XREF: setValue+21↑j
 
 loc_3D23D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
-                mov     byte_36FEE, 1   ; jumptable 0003CFCE case 79
+                mov     Party_wizardEye, 1 ; jumptable 0003CFCE case 79
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
@@ -61680,7 +61689,7 @@ loc_3D265:                              ; CODE XREF: setValue+21↑j
 loc_3D26D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 94
-                mov     byte_36FEF, al
+                mov     Party_walkOnWater, al
 
 def_3CFCE:                              ; CODE XREF: setValue+1C↑j
                                         ; setValue+21↑j ...
@@ -61872,7 +61881,7 @@ loc_3D3C4:                              ; CODE XREF: ifProc+25↑j
 
 loc_3D3CF:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_37330  ; jumptable 0003D353 case 17
+                mov     ax, Party_poisonResist ; jumptable 0003D353 case 17
                 jmp     short loc_3D35D
 ; ---------------------------------------------------------------------------
 
@@ -62256,31 +62265,31 @@ loc_3D5C8:                              ; CODE XREF: ifProc+25↑j
 
 loc_3D5CE:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     al, byte_36FEC  ; jumptable 0003D353 case 69
+                mov     al, Party_levitate ; jumptable 0003D353 case 69
                 jmp     loc_3D35B
 ; ---------------------------------------------------------------------------
 
 loc_3D5D4:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_37328  ; jumptable 0003D353 case 70
+                mov     ax, Party_light ; jumptable 0003D353 case 70
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
 loc_3D5DA:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_3732A  ; jumptable 0003D353 case 71
+                mov     ax, Party_fireResist ; jumptable 0003D353 case 71
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
 loc_3D5E0:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_3732C  ; jumptable 0003D353 case 72
+                mov     ax, Party_elecResist ; jumptable 0003D353 case 72
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
 loc_3D5E6:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     ax, word_3732E  ; jumptable 0003D353 case 73
+                mov     ax, Party_coldResist ; jumptable 0003D353 case 73
                 jmp     loc_3D35D
 ; ---------------------------------------------------------------------------
 
@@ -62319,7 +62328,7 @@ loc_3D60B:                              ; CODE XREF: ifProc+2F8↓j
 
 loc_3D60E:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     al, byte_36FEE  ; jumptable 0003D353 case 79
+                mov     al, Party_wizardEye ; jumptable 0003D353 case 79
                 jmp     loc_3D35B
 ; ---------------------------------------------------------------------------
 
@@ -62387,7 +62396,7 @@ loc_3D65D:                              ; CODE XREF: ifProc+4E↑j
 
 loc_3D663:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
-                mov     al, byte_36FEF  ; jumptable 0003D353 case 94
+                mov     al, Party_walkOnWater ; jumptable 0003D353 case 94
                 jmp     loc_3D35B
 ; ---------------------------------------------------------------------------
 
@@ -62418,7 +62427,7 @@ loc_3D67B:                              ; CODE XREF: ifProc+25↑j
 loc_3D681:                              ; CODE XREF: ifProc+25↑j
                                         ; DATA XREF: ovl03:jpt_3D353↓o
                 push    [bp+arg_2]      ; jumptable 0003D353 case 99
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_3D69C
@@ -65636,7 +65645,7 @@ loc_3EEB4:                              ; CODE XREF: exploreLoop+52D↑j
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3EF5D
-                cmp     byte_36FEF, 0
+                cmp     Party_walkOnWater, 0
                 jz      short loc_3EF02
                 jmp     loc_3EAC8
 ; ---------------------------------------------------------------------------
@@ -65676,7 +65685,7 @@ loc_3EF02:                              ; CODE XREF: exploreLoop+57B↑j
 loc_3EF49:                              ; CODE XREF: exploreLoop+5C2↑j
                 mov     ax, 0Eh
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jnz     short loc_3EF5A
@@ -65768,7 +65777,7 @@ loc_3EFEF:                              ; CODE XREF: exploreLoop+668↑j
                                         ; DATA XREF: ovl04:jpt_3EFEA↓o
                 mov     ax, 9           ; jumptable 0003EFEA cases 1,6,8,11
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short def_3EFEA ; jumptable 0003EFEA default case, cases 4,9
@@ -65779,7 +65788,7 @@ loc_3F000:                              ; CODE XREF: exploreLoop+668↑j
                                         ; DATA XREF: ovl04:jpt_3EFEA↓o
                 mov     ax, 0Bh         ; jumptable 0003EFEA cases 2,3,5,7,10
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short def_3EFEA ; jumptable 0003EFEA default case, cases 4,9
@@ -71175,14 +71184,14 @@ loc_4194E:                              ; CODE XREF: sub_418F3+7↑j
 loc_41973:                              ; CODE XREF: sub_418F3+69↑j
                                         ; sub_418F3+6F↑j
                 xor     ax, ax
-                mov     word_37330, ax
-                mov     word_3732E, ax
-                mov     word_3732C, ax
-                mov     word_3732A, ax
-                mov     word_37328, ax
-                mov     byte_36FEE, al
-                mov     byte_36FEC, al
-                mov     byte_36FEF, al
+                mov     Party_poisonResist, ax
+                mov     Party_coldResist, ax
+                mov     Party_elecResist, ax
+                mov     Party_fireResist, ax
+                mov     Party_light, ax
+                mov     Party_wizardEye, al
+                mov     Party_levitate, al
+                mov     Party_walkOnWater, al
                 pop     di
                 pop     si
                 pop     bp
@@ -72434,11 +72443,11 @@ arg_2           = dword ptr  8
                 cbw
                 mov     di, ax
                 mov     [si], ax
-                cmp     word_37328, 0
+                cmp     Party_light, 0
                 jz      short loc_42365
                 inc     word ptr [si]
                 inc     di
-                push    word_37328      ; format
+                push    Party_light     ; format
                 mov     ax, 349Eh
                 push    ax
                 lea     ax, [bp+buffer]
@@ -72447,10 +72456,10 @@ arg_2           = dword ptr  8
                 add     sp, 6
 
 loc_42365:                              ; CODE XREF: sub_4231C+30↑j
-                cmp     word_3732A, 0
+                cmp     Party_fireResist, 0
                 jz      short loc_42392
                 inc     word ptr [si]
-                push    word_3732A
+                push    Party_fireResist
                 mov     ax, di
                 inc     di
                 or      ax, ax
@@ -72472,10 +72481,10 @@ loc_42381:                              ; CODE XREF: sub_4231C+60↑j
                 add     sp, 8
 
 loc_42392:                              ; CODE XREF: sub_4231C+4E↑j
-                cmp     word_3732C, 0
+                cmp     Party_elecResist, 0
                 jz      short loc_423BF
                 inc     word ptr [si]
-                push    word_3732C
+                push    Party_elecResist
                 mov     ax, di
                 inc     di
                 or      ax, ax
@@ -72497,10 +72506,10 @@ loc_423AE:                              ; CODE XREF: sub_4231C+8D↑j
                 add     sp, 8
 
 loc_423BF:                              ; CODE XREF: sub_4231C+7B↑j
-                cmp     word_3732E, 0
+                cmp     Party_coldResist, 0
                 jz      short loc_423EC
                 inc     word ptr [si]
-                push    word_3732E
+                push    Party_coldResist
                 mov     ax, di
                 inc     di
                 or      ax, ax
@@ -72522,10 +72531,10 @@ loc_423DB:                              ; CODE XREF: sub_4231C+BA↑j
                 add     sp, 8
 
 loc_423EC:                              ; CODE XREF: sub_4231C+A8↑j
-                cmp     word_37330, 0
+                cmp     Party_poisonResist, 0
                 jz      short loc_4241A
                 inc     word ptr [si]
-                push    word_37330
+                push    Party_poisonResist
                 mov     ax, di
                 inc     di
                 or      ax, ax
@@ -72547,10 +72556,10 @@ loc_42408:                              ; CODE XREF: sub_4231C+E7↑j
                 add     sp, 8
 
 loc_4241A:                              ; CODE XREF: sub_4231C+D5↑j
-                cmp     byte_36FEC, 0
+                cmp     Party_levitate, 0
                 jz      short loc_4244A
                 inc     word ptr [si]
-                mov     al, byte_36FEC
+                mov     al, Party_levitate
                 mov     ah, 0
                 push    ax
                 mov     ax, di
@@ -72574,7 +72583,7 @@ loc_42438:                              ; CODE XREF: sub_4231C+117↑j
                 add     sp, 8
 
 loc_4244A:                              ; CODE XREF: sub_4231C+103↑j
-                cmp     byte_36FEF, 0
+                cmp     Party_walkOnWater, 0
                 jz      short loc_42474
                 inc     word ptr [si]
                 mov     ax, di
@@ -72905,7 +72914,7 @@ var_2           = word ptr -2
                 call    j_setButtons_41D
                 mov     ax, 6
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_426A7
@@ -73400,7 +73409,7 @@ loc_42A5C:                              ; CODE XREF: sub_4265B+3F4↑j
                 add     word ptr [bp+format], 2
                 mov     ax, 6
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_42A79
@@ -73896,7 +73905,7 @@ loc_42DFD:                              ; CODE XREF: sub_4265B+795↑j
                 add     word ptr [bp+format], 2
                 mov     ax, 6
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_42E1A
@@ -75824,7 +75833,7 @@ loc_43BC3:                              ; CODE XREF: giveCharDamage+C6↑j
 loc_43BCF:                              ; CODE XREF: giveCharDamage+C6↑j
                                         ; DATA XREF: ovl07:jpt_43BB7↓o
                 mov     ax, si          ; jumptable 00043BB7 case 2
-                sub     ax, word_3732A
+                sub     ax, Party_fireResist
                 mov     si, ax
                 mov     [bp+var_4], 1
                 mov     [bp+var_6], 0Dh
@@ -75834,7 +75843,7 @@ loc_43BCF:                              ; CODE XREF: giveCharDamage+C6↑j
 loc_43BE3:                              ; CODE XREF: giveCharDamage+C6↑j
                                         ; DATA XREF: ovl07:jpt_43BB7↓o
                 mov     ax, si          ; jumptable 00043BB7 case 3
-                sub     ax, word_3732C
+                sub     ax, Party_elecResist
                 mov     si, ax
                 mov     [bp+var_4], 2
                 mov     [bp+var_6], 0Eh
@@ -75844,7 +75853,7 @@ loc_43BE3:                              ; CODE XREF: giveCharDamage+C6↑j
 loc_43BF7:                              ; CODE XREF: giveCharDamage+C6↑j
                                         ; DATA XREF: ovl07:jpt_43BB7↓o
                 mov     ax, si          ; jumptable 00043BB7 case 4
-                sub     ax, word_3732E
+                sub     ax, Party_coldResist
                 mov     si, ax
                 mov     [bp+var_4], 3
                 mov     [bp+var_6], 0Fh
@@ -75854,7 +75863,7 @@ loc_43BF7:                              ; CODE XREF: giveCharDamage+C6↑j
 loc_43C0B:                              ; CODE XREF: giveCharDamage+C6↑j
                                         ; DATA XREF: ovl07:jpt_43BB7↓o
                 mov     ax, si          ; jumptable 00043BB7 case 5
-                sub     ax, word_37330
+                sub     ax, Party_poisonResist
                 mov     si, ax
                 mov     [bp+var_4], 4
                 mov     [bp+var_6], 11h
@@ -90250,7 +90259,7 @@ loc_4A7FA:                              ; CODE XREF: doCharDamage+7C↑j
 loc_4A801:                              ; CODE XREF: doCharDamage+7C↑j
                                         ; DATA XREF: ovl10:jpt_4A7F5↓o
                 mov     ax, di          ; jumptable 0004A7F5 case 2
-                sub     ax, word_3732A
+                sub     ax, Party_fireResist
                 mov     di, ax
                 mov     [bp+var_2], 1
                 mov     [bp+var_4], 0Dh
@@ -90260,7 +90269,7 @@ loc_4A801:                              ; CODE XREF: doCharDamage+7C↑j
 loc_4A815:                              ; CODE XREF: doCharDamage+7C↑j
                                         ; DATA XREF: ovl10:jpt_4A7F5↓o
                 mov     ax, di          ; jumptable 0004A7F5 case 3
-                sub     ax, word_3732C
+                sub     ax, Party_elecResist
                 mov     di, ax
                 mov     [bp+var_2], 2
                 mov     [bp+var_4], 0Eh
@@ -90270,7 +90279,7 @@ loc_4A815:                              ; CODE XREF: doCharDamage+7C↑j
 loc_4A829:                              ; CODE XREF: doCharDamage+7C↑j
                                         ; DATA XREF: ovl10:jpt_4A7F5↓o
                 mov     ax, di          ; jumptable 0004A7F5 case 4
-                sub     ax, word_3732E
+                sub     ax, Party_coldResist
                 mov     di, ax
                 mov     [bp+var_2], 3
                 mov     [bp+var_4], 0Fh
@@ -90280,7 +90289,7 @@ loc_4A829:                              ; CODE XREF: doCharDamage+7C↑j
 loc_4A83D:                              ; CODE XREF: doCharDamage+7C↑j
                                         ; DATA XREF: ovl10:jpt_4A7F5↓o
                 mov     ax, di          ; jumptable 0004A7F5 case 5
-                sub     ax, word_37330
+                sub     ax, Party_poisonResist
                 mov     di, ax
                 mov     [bp+var_2], 4
                 mov     [bp+var_4], 11h
@@ -94152,7 +94161,7 @@ Spell_sharedHandler endp
 Spell_00_Light  proc far                ; CODE XREF: j_Spell_00_Light↑J
                 push    bp
                 mov     bp, sp
-                inc     word_37328
+                inc     Party_light
                 cmp     byte_36FB1, 0
                 jz      short loc_4C315
                 mov     al, 1
@@ -94744,25 +94753,25 @@ loc_4C698:                              ; CODE XREF: Spell_15_ProtFromElements+1
 
 loc_4C6B0:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
-                mov     word_3732A, si  ; jumptable 0004C6AB case 2
+                mov     Party_fireResist, si ; jumptable 0004C6AB case 2
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
 loc_4C6B6:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
-                mov     word_3732C, si  ; jumptable 0004C6AB case 3
+                mov     Party_elecResist, si ; jumptable 0004C6AB case 3
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
 loc_4C6BC:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
-                mov     word_3732E, si  ; jumptable 0004C6AB case 4
+                mov     Party_coldResist, si ; jumptable 0004C6AB case 4
                 jmp     short def_4C6AB ; jumptable 0004C6AB default case, cases 0,1
 ; ---------------------------------------------------------------------------
 
 loc_4C6C2:                              ; CODE XREF: Spell_15_ProtFromElements+33↑j
                                         ; DATA XREF: ovl11:jpt_4C6AB↓o
-                mov     word_37330, si  ; jumptable 0004C6AB case 5
+                mov     Party_poisonResist, si ; jumptable 0004C6AB case 5
 
 def_4C6AB:                              ; CODE XREF: Spell_15_ProtFromElements+2F↑j
                                         ; Spell_15_ProtFromElements+33↑j ...
@@ -95080,7 +95089,7 @@ Spell_21_Blessed endp
 Spell_22_Levitate proc far              ; CODE XREF: j_Spell_22_Levitate↑J
                 push    bp
                 mov     bp, sp
-                mov     byte_36FEC, 1
+                mov     Party_levitate, 1
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -95097,7 +95106,7 @@ Spell_22_Levitate endp
 sub_4C8FE       proc far                ; CODE XREF: sub_285CC↑J
                 push    bp
                 mov     bp, sp
-                mov     byte_36FEE, 1
+                mov     Party_wizardEye, 1
                 mov     byte_287A5, 1
                 mov     ax, 14h
                 push    ax
@@ -95617,7 +95626,7 @@ Spell_30_Heroism endp
 Spell_31_WalkOnWater proc far           ; CODE XREF: j_Spell_31_WalkOnWater↑J
                 push    bp
                 mov     bp, sp
-                mov     byte_36FEF, 1
+                mov     Party_walkOnWater, 1
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -100527,7 +100536,7 @@ arg_0           = word ptr  6
                 inc     si
                 mov     ax, 6
                 push    ax
-                call    sub_153EA
+                call    checkSkill
                 pop     cx
                 or      ax, ax
                 jz      short loc_4EF71
