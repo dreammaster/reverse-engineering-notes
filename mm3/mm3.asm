@@ -12309,7 +12309,7 @@ loc_19B75:                              ; CODE XREF: runMazeEvent+562↑j
                 pop     cx
                 cmp     [bp+var_4], 0FFFFh
                 jnz     short loc_19B83
-                call    sub_1B925
+                call    setPartyStartCell
                 jmp     short loc_19B8F
 ; ---------------------------------------------------------------------------
 
@@ -15915,9 +15915,10 @@ sub_1B6D1       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sets Party_x/y from page header byte 13h (low nibble x, high nibble y) plus the page origin
 ; Attributes: bp-based frame
 
-sub_1B925       proc far                ; CODE XREF: runMazeEvent+574↑P
+setPartyStartCell proc far              ; CODE XREF: runMazeEvent+574↑P
                                         ; sub_3DFB6+C2↓P ...
 
 var_4           = word ptr -4
@@ -15937,31 +15938,31 @@ var_2           = word ptr -2
                 jmp     short loc_1B95E
 ; ---------------------------------------------------------------------------
 
-loc_1B93F:                              ; CODE XREF: sub_1B925+C↑j
+loc_1B93F:                              ; CODE XREF: setPartyStartCell+C↑j
                 mov     [bp+var_2], 0
                 mov     [bp+var_4], 0
                 jmp     short loc_1B968
 ; ---------------------------------------------------------------------------
 
-loc_1B94B:                              ; CODE XREF: sub_1B925+11↑j
+loc_1B94B:                              ; CODE XREF: setPartyStartCell+11↑j
                 mov     [bp+var_2], 10h
                 mov     [bp+var_4], 0
                 jmp     short loc_1B968
 ; ---------------------------------------------------------------------------
 
-loc_1B957:                              ; CODE XREF: sub_1B925+16↑j
+loc_1B957:                              ; CODE XREF: setPartyStartCell+16↑j
                 mov     [bp+var_2], 0
                 jmp     short loc_1B963
 ; ---------------------------------------------------------------------------
 
-loc_1B95E:                              ; CODE XREF: sub_1B925+18↑j
+loc_1B95E:                              ; CODE XREF: setPartyStartCell+18↑j
                 mov     [bp+var_2], 10h
 
-loc_1B963:                              ; CODE XREF: sub_1B925+37↑j
+loc_1B963:                              ; CODE XREF: setPartyStartCell+37↑j
                 mov     [bp+var_4], 10h
 
-loc_1B968:                              ; CODE XREF: sub_1B925+24↑j
-                                        ; sub_1B925+30↑j
+loc_1B968:                              ; CODE XREF: setPartyStartCell+24↑j
+                                        ; setPartyStartCell+30↑j
                 mov     al, byte_35D57
                 cbw
                 mov     dx, 340h
@@ -15985,7 +15986,7 @@ loc_1B968:                              ; CODE XREF: sub_1B925+24↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1B925       endp
+setPartyStartCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16838,9 +16839,10 @@ mazeSetBits     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; zeroes ~100 per-frame view/object visibility flag bytes before prepareIndoorView walks the cells
 ; Attributes: bp-based frame
 
-sub_1BEE9       proc far                ; CODE XREF: prepareIndoorView+22↓p
+clearViewFlags  proc far                ; CODE XREF: prepareIndoorView+22↓p
                                         ; drawViewOutdoors+5↓P
                 push    bp
                 mov     bp, sp
@@ -17046,7 +17048,7 @@ sub_1BEE9       proc far                ; CODE XREF: prepareIndoorView+22↓p
                 mov     byte_340C5, al
                 pop     bp
                 retf
-sub_1BEE9       endp
+clearViewFlags  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17132,7 +17134,7 @@ var_2           = word ptr -2
                 mov     ah, 0
                 mov     di, ax
                 push    cs
-                call    near ptr sub_1BEE9
+                call    near ptr clearViewFlags
                 push    cs
                 call    near ptr updateLight
                 mov     ax, di
@@ -26429,7 +26431,7 @@ drawViewOutdoors proc far               ; CODE XREF: drawView+A↑P
                 mov     bp, sp
                 push    si
                 push    di
-                call    sub_1BEE9
+                call    clearViewFlags
                 call    updateLight
                 call    sub_15B50
                 cmp     byte_2886F, 0
@@ -37045,15 +37047,7 @@ stub08          segment para public 'CODE' use16
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
 ; [00000005 BYTES: COLLAPSED FUNCTION j_createCharacter. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_282C5       proc far
-                jmp     sub_45BF3
-sub_282C5       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_spellGoldPrice. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -45285,21 +45279,21 @@ off_3142A       dw offset loc_140DC     ; DATA XREF: sub_14926↑r
                 db 10h, 2Ch, 49h, 3 dup(0), 10h, 3Fh, 4Ah, 2 dup(0), 2 dup(1)
                 db 9Ch, 1
                 dw seg seg010
-byte_31450      db 0                    ; DATA XREF: sub_1BEE9+1F9↑w
+byte_31450      db 0                    ; DATA XREF: clearViewFlags+1F9↑w
                                         ; prepareIndoorView+134D↑w ...
-byte_31451      db 0                    ; DATA XREF: sub_1BEE9+1A↑w
+byte_31451      db 0                    ; DATA XREF: clearViewFlags+1A↑w
                                         ; prepareIndoorView:loc_1C7F9↑r ...
                 db 190h dup(0)
-byte_315E2      db 0                    ; DATA XREF: sub_1BEE9+52↑w
+byte_315E2      db 0                    ; DATA XREF: clearViewFlags+52↑w
                                         ; prepareIndoorView:loc_1D64D↑w ...
-byte_315E3      db 0                    ; DATA XREF: sub_1BEE9+46↑w
+byte_315E3      db 0                    ; DATA XREF: clearViewFlags+46↑w
                                         ; prepareIndoorView:loc_1D794↑w ...
                 db 14Bh dup(0)
 byte_3172F      db 0                    ; DATA XREF: seg001:0593↑r
                 db 2B4h dup(0)
 byte_319E4      db 0                    ; DATA XREF: runMazeEvent+103↑w
                                         ; giveTake+BB↓r ...
-byte_319E5      db 0                    ; DATA XREF: sub_1BEE9+14↑w
+byte_319E5      db 0                    ; DATA XREF: clearViewFlags+14↑w
                                         ; prepareIndoorView:loc_1CC11↑r ...
 word_319E6      dw 0                    ; DATA XREF: sub_252CF+E7↑r
                                         ; getCommand+428↑r ...
@@ -45324,7 +45318,7 @@ word_32E32      dw 0                    ; DATA XREF: sub_1DB3D+4C4↑r
                                         ; sub_1DB3D+84E↑r ...
 word_32E34      dw 0                    ; DATA XREF: sub_1DB3D+4C1↑r
                                         ; sub_1DB3D+84B↑r ...
-byte_32E36      db 0                    ; DATA XREF: sub_1BEE9+29↑w
+byte_32E36      db 0                    ; DATA XREF: clearViewFlags+29↑w
                                         ; prepareIndoorView:loc_1D0C2↑r ...
 byte_32E37      db 0                    ; DATA XREF: sub_161AD+5F↑w
                                         ; sub_161AD+2C4↑r ...
@@ -45456,13 +45450,13 @@ byte_332A4      db 0                    ; DATA XREF: attack2+107↓r
                                         ; getMonsterResistance:loc_4A03B↓r ...
 byte_332A5      db 0                    ; DATA XREF: seg001:loc_14CA4↑w
                                         ; seg001:0260↑r
-byte_332A6      db 0                    ; DATA XREF: sub_1BEE9+A8↑w
+byte_332A6      db 0                    ; DATA XREF: clearViewFlags+A8↑w
                                         ; prepareIndoorView:loc_1D0F4↑w ...
-byte_332A7      db 0                    ; DATA XREF: sub_1BEE9+8D↑w
+byte_332A7      db 0                    ; DATA XREF: clearViewFlags+8D↑w
                                         ; prepareIndoorView:loc_1CA37↑w ...
-byte_332A8      db 0                    ; DATA XREF: sub_1BEE9+FE↑w
+byte_332A8      db 0                    ; DATA XREF: clearViewFlags+FE↑w
                                         ; prepareIndoorView:loc_1C68C↑w ...
-byte_332A9      db 0                    ; DATA XREF: sub_1BEE9+EF↑w
+byte_332A9      db 0                    ; DATA XREF: clearViewFlags+EF↑w
                                         ; prepareIndoorView:loc_1C3E7↑w ...
 Combat_weaponDamage dw 0                ; DATA XREF: attack:loc_4A224↓r
                                         ; getWeaponDamage+13↓w ...
@@ -45473,9 +45467,9 @@ byte_332AE      db 0                    ; DATA XREF: sub_15B50+2E5↑r
                                         ; sub_15B50:loc_15E4A↑r ...
 byte_332AF      db 0                    ; DATA XREF: sub_15B50+36A↑r
                                         ; sub_15B50:loc_15ECF↑r ...
-byte_332B0      db 0                    ; DATA XREF: sub_1BEE9+38↑w
+byte_332B0      db 0                    ; DATA XREF: clearViewFlags+38↑w
                                         ; prepareIndoorView:loc_1CEB6↑r ...
-byte_332B1      db 0                    ; DATA XREF: sub_1BEE9+67↑w
+byte_332B1      db 0                    ; DATA XREF: clearViewFlags+67↑w
                                         ; prepareIndoorView:loc_1CE49↑w ...
 word_332B2      dw 0                    ; DATA XREF: sub_18BF1+3D2↑r
                                         ; sub_18BF1+40A↑r
@@ -45488,110 +45482,110 @@ word_332CA      dw 0                    ; DATA XREF: highlightChar+3A↑r
                                         ; highlightChar+61↑r ...
 word_332CC      dw 0                    ; DATA XREF: highlightChar+36↑r
                                         ; highlightChar+5D↑r ...
-byte_332CE      db 0                    ; DATA XREF: sub_1BEE9+A5↑w
+byte_332CE      db 0                    ; DATA XREF: clearViewFlags+A5↑w
                                         ; prepareIndoorView:loc_1D05B↑w ...
-byte_332CF      db 0                    ; DATA XREF: sub_1BEE9+10D↑w
+byte_332CF      db 0                    ; DATA XREF: clearViewFlags+10D↑w
                                         ; prepareIndoorView:loc_1C99E↑w ...
-byte_332D0      db 0                    ; DATA XREF: sub_1BEE9+FB↑w
+byte_332D0      db 0                    ; DATA XREF: clearViewFlags+FB↑w
                                         ; prepareIndoorView:loc_1C5F3↑w ...
-byte_332D1      db 0                    ; DATA XREF: sub_1BEE9+EC↑w
+byte_332D1      db 0                    ; DATA XREF: clearViewFlags+EC↑w
                                         ; prepareIndoorView:loc_1C34E↑w ...
-byte_332D2      db 0                    ; DATA XREF: sub_1BEE9+D4↑w
+byte_332D2      db 0                    ; DATA XREF: clearViewFlags+D4↑w
                                         ; prepareIndoorView:loc_1D6C0↑w ...
 byte_332D3      db 0                    ; DATA XREF: runMazeEvent+D8↑w
                                         ; runMazeEvent:loc_198D0↑r ...
-byte_332D4      db 0                    ; DATA XREF: sub_1BEE9+213↑w
+byte_332D4      db 0                    ; DATA XREF: clearViewFlags+213↑w
                                         ; prepareIndoorView:loc_1C2C2↑w ...
-byte_332D5      db 0                    ; DATA XREF: sub_1BEE9+210↑w
+byte_332D5      db 0                    ; DATA XREF: clearViewFlags+210↑w
                                         ; prepareIndoorView:loc_1C4CE↑w ...
-byte_332D6      db 0                    ; DATA XREF: sub_1BEE9+11B↑w
+byte_332D6      db 0                    ; DATA XREF: clearViewFlags+11B↑w
                                         ; prepareIndoorView+141↑w ...
-byte_332D7      db 0                    ; DATA XREF: sub_1BEE9+118↑w
+byte_332D7      db 0                    ; DATA XREF: clearViewFlags+118↑w
                                         ; prepareIndoorView+353↑w ...
-byte_332D8      db 0                    ; DATA XREF: sub_1BEE9+197↑w
+byte_332D8      db 0                    ; DATA XREF: clearViewFlags+197↑w
                                         ; prepareIndoorView:loc_1C2BC↑w ...
-byte_332D9      db 0                    ; DATA XREF: sub_1BEE9+194↑w
+byte_332D9      db 0                    ; DATA XREF: clearViewFlags+194↑w
                                         ; prepareIndoorView:loc_1C4C8↑w ...
-byte_332DA      db 0                    ; DATA XREF: sub_1BEE9+21C↑w
+byte_332DA      db 0                    ; DATA XREF: clearViewFlags+21C↑w
                                         ; prepareIndoorView:loc_1C567↑w ...
-byte_332DB      db 0                    ; DATA XREF: sub_1BEE9+219↑w
+byte_332DB      db 0                    ; DATA XREF: clearViewFlags+219↑w
                                         ; prepareIndoorView:loc_1C773↑w ...
 ; void *word_332DC
 word_332DC      dw 0                    ; DATA XREF: seg001:02A0↑w
                                         ; sub_378C0+C4↓r ...
 word_332DE      dw 0                    ; DATA XREF: seg001:029C↑w
                                         ; sub_378C0+C0↓r ...
-byte_332E0      db 0                    ; DATA XREF: sub_1BEE9+124↑w
+byte_332E0      db 0                    ; DATA XREF: clearViewFlags+124↑w
                                         ; prepareIndoorView+3EC↑w ...
-byte_332E1      db 0                    ; DATA XREF: sub_1BEE9+121↑w
+byte_332E1      db 0                    ; DATA XREF: clearViewFlags+121↑w
                                         ; prepareIndoorView+5F8↑w ...
-byte_332E2      db 0                    ; DATA XREF: sub_1BEE9+2F↑w
+byte_332E2      db 0                    ; DATA XREF: clearViewFlags+2F↑w
                                         ; prepareIndoorView:loc_1D2CE↑r ...
-byte_332E3      db 0                    ; DATA XREF: sub_1BEE9+159↑w
+byte_332E3      db 0                    ; DATA XREF: clearViewFlags+159↑w
                                         ; prepareIndoorView:loc_1C2DB↑w ...
-byte_332E4      db 0                    ; DATA XREF: sub_1BEE9+156↑w
+byte_332E4      db 0                    ; DATA XREF: clearViewFlags+156↑w
                                         ; prepareIndoorView:loc_1C4DA↑w ...
-byte_332E5      db 0                    ; DATA XREF: sub_1BEE9+1A0↑w
+byte_332E5      db 0                    ; DATA XREF: clearViewFlags+1A0↑w
                                         ; prepareIndoorView:loc_1C561↑w ...
-byte_332E6      db 0                    ; DATA XREF: sub_1BEE9+19D↑w
+byte_332E6      db 0                    ; DATA XREF: clearViewFlags+19D↑w
                                         ; prepareIndoorView:loc_1C76D↑w ...
-byte_332E7      db 0                    ; DATA XREF: sub_1BEE9+228↑w
+byte_332E7      db 0                    ; DATA XREF: clearViewFlags+228↑w
                                         ; prepareIndoorView:loc_1C912↑w ...
-byte_332E8      db 0                    ; DATA XREF: sub_1BEE9+222↑w
+byte_332E8      db 0                    ; DATA XREF: clearViewFlags+222↑w
                                         ; prepareIndoorView:loc_1CB1E↑w ...
-byte_332E9      db 0                    ; DATA XREF: sub_1BEE9+130↑w
+byte_332E9      db 0                    ; DATA XREF: clearViewFlags+130↑w
                                         ; prepareIndoorView+797↑w ...
-byte_332EA      db 0                    ; DATA XREF: sub_1BEE9+12A↑w
+byte_332EA      db 0                    ; DATA XREF: clearViewFlags+12A↑w
                                         ; prepareIndoorView+9A3↑w ...
-byte_332EB      db 0                    ; DATA XREF: sub_1BEE9+1D5↑w
+byte_332EB      db 0                    ; DATA XREF: clearViewFlags+1D5↑w
                                         ; prepareIndoorView+122↑w ...
-byte_332EC      db 0                    ; DATA XREF: sub_1BEE9+1D2↑w
+byte_332EC      db 0                    ; DATA XREF: clearViewFlags+1D2↑w
                                         ; prepareIndoorView+32E↑w ...
-byte_332ED      db 0                    ; DATA XREF: sub_1BEE9+162↑w
+byte_332ED      db 0                    ; DATA XREF: clearViewFlags+162↑w
                                         ; prepareIndoorView:loc_1C573↑w ...
-byte_332EE      db 0                    ; DATA XREF: sub_1BEE9+15F↑w
+byte_332EE      db 0                    ; DATA XREF: clearViewFlags+15F↑w
                                         ; prepareIndoorView:loc_1C77F↑w ...
-byte_332EF      db 0                    ; DATA XREF: sub_1BEE9+1AC↑w
+byte_332EF      db 0                    ; DATA XREF: clearViewFlags+1AC↑w
                                         ; prepareIndoorView:loc_1C90C↑w ...
-byte_332F0      db 0                    ; DATA XREF: sub_1BEE9+1A6↑w
+byte_332F0      db 0                    ; DATA XREF: clearViewFlags+1A6↑w
                                         ; prepareIndoorView:loc_1CB18↑w ...
 byte_332F1      db 0                    ; DATA XREF: sub_15B50+3B↑w
                                         ; sub_15B50:loc_15D02↑r ...
 byte_332F2      db 0                    ; DATA XREF: sub_15B50+38↑w
                                         ; sub_15B50:loc_15D7D↑r ...
-byte_332F3      db 0                    ; DATA XREF: sub_1BEE9+64↑w
+byte_332F3      db 0                    ; DATA XREF: clearViewFlags+64↑w
                                         ; prepareIndoorView:loc_1D367↑w ...
-byte_332F4      db 0                    ; DATA XREF: sub_1BEE9+23D↑w
+byte_332F4      db 0                    ; DATA XREF: clearViewFlags+23D↑w
                                         ; prepareIndoorView:loc_1CFCF↑w ...
-byte_332F5      db 0                    ; DATA XREF: sub_1BEE9+231↑w
+byte_332F5      db 0                    ; DATA XREF: clearViewFlags+231↑w
                                         ; prepareIndoorView:loc_1D1DB↑w ...
-byte_332F6      db 0                    ; DATA XREF: sub_1BEE9+9F↑w
+byte_332F6      db 0                    ; DATA XREF: clearViewFlags+9F↑w
                                         ; prepareIndoorView:loc_1D161↑w ...
-byte_332F7      db 0                    ; DATA XREF: sub_1BEE9+107↑w
+byte_332F7      db 0                    ; DATA XREF: clearViewFlags+107↑w
                                         ; prepareIndoorView:loc_1CAA4↑w ...
-byte_332F8      db 0                    ; DATA XREF: sub_1BEE9+F8↑w
+byte_332F8      db 0                    ; DATA XREF: clearViewFlags+F8↑w
                                         ; prepareIndoorView:loc_1C6F9↑w ...
-byte_332F9      db 0                    ; DATA XREF: sub_1BEE9+E9↑w
+byte_332F9      db 0                    ; DATA XREF: clearViewFlags+E9↑w
                                         ; prepareIndoorView:loc_1C454↑w ...
-byte_332FA      db 0                    ; DATA XREF: sub_1BEE9+C8↑w
+byte_332FA      db 0                    ; DATA XREF: clearViewFlags+C8↑w
                                         ; prepareIndoorView:loc_1D72D↑w ...
-byte_332FB      db 0                    ; DATA XREF: sub_1BEE9+145↑w
+byte_332FB      db 0                    ; DATA XREF: clearViewFlags+145↑w
                                         ; prepareIndoorView+E54↑w ...
-byte_332FC      db 0                    ; DATA XREF: sub_1BEE9+139↑w
+byte_332FC      db 0                    ; DATA XREF: clearViewFlags+139↑w
                                         ; prepareIndoorView+1060↑w ...
-byte_332FD      db 0                    ; DATA XREF: sub_1BEE9+1DE↑w
+byte_332FD      db 0                    ; DATA XREF: clearViewFlags+1DE↑w
                                         ; prepareIndoorView+3C7↑w ...
-byte_332FE      db 0                    ; DATA XREF: sub_1BEE9+1DB↑w
+byte_332FE      db 0                    ; DATA XREF: clearViewFlags+1DB↑w
                                         ; prepareIndoorView+5D3↑w ...
-byte_332FF      db 0                    ; DATA XREF: sub_1BEE9+3B↑w
+byte_332FF      db 0                    ; DATA XREF: clearViewFlags+3B↑w
                                         ; prepareIndoorView:loc_1CDB0↑r ...
-byte_33300      db 0                    ; DATA XREF: sub_1BEE9+16E↑w
+byte_33300      db 0                    ; DATA XREF: clearViewFlags+16E↑w
                                         ; prepareIndoorView:loc_1C91E↑w ...
-byte_33301      db 0                    ; DATA XREF: sub_1BEE9+168↑w
+byte_33301      db 0                    ; DATA XREF: clearViewFlags+168↑w
                                         ; prepareIndoorView:loc_1CB2A↑w ...
-byte_33302      db 0                    ; DATA XREF: sub_1BEE9+1C1↑w
+byte_33302      db 0                    ; DATA XREF: clearViewFlags+1C1↑w
                                         ; prepareIndoorView:loc_1CFC9↑w ...
-byte_33303      db 0                    ; DATA XREF: sub_1BEE9+1B5↑w
+byte_33303      db 0                    ; DATA XREF: clearViewFlags+1B5↑w
                                         ; prepareIndoorView:loc_1D1D5↑w ...
 byte_33304      db 0                    ; DATA XREF: sub_15B50+35↑w
                                         ; sub_15B50+283↑r ...
@@ -45604,15 +45598,15 @@ word_33308      dw 0                    ; DATA XREF: sub_1B6D1+13F↑r
                                         ; rosterMenu+BA↓w
 word_3330A      dw 0                    ; DATA XREF: sub_1B6D1+13C↑r
                                         ; rosterMenu+B6↓w
-byte_3330C      db 0                    ; DATA XREF: sub_1BEE9+61↑w
+byte_3330C      db 0                    ; DATA XREF: clearViewFlags+61↑w
                                         ; prepareIndoorView:loc_1CD43↑w ...
-byte_3330D      db 0                    ; DATA XREF: sub_1BEE9+1EA↑w
+byte_3330D      db 0                    ; DATA XREF: clearViewFlags+1EA↑w
                                         ; prepareIndoorView+772↑w ...
-byte_3330E      db 0                    ; DATA XREF: sub_1BEE9+1E4↑w
+byte_3330E      db 0                    ; DATA XREF: clearViewFlags+1E4↑w
                                         ; prepareIndoorView+97E↑w ...
-byte_3330F      db 0                    ; DATA XREF: sub_1BEE9+183↑w
+byte_3330F      db 0                    ; DATA XREF: clearViewFlags+183↑w
                                         ; prepareIndoorView:loc_1CFDB↑w ...
-byte_33310      db 0                    ; DATA XREF: sub_1BEE9+177↑w
+byte_33310      db 0                    ; DATA XREF: clearViewFlags+177↑w
                                         ; prepareIndoorView:loc_1D1E7↑w ...
 byte_33311      db 0                    ; DATA XREF: sub_15B50+2C↑w
                                         ; sub_15B50+3EC↑r ...
@@ -45620,9 +45614,9 @@ byte_33312      db 0                    ; DATA XREF: sub_15B50+29↑w
                                         ; sub_15B50:loc_15FCA↑r ...
 byte_33313      db 0                    ; DATA XREF: sub_15B50+26↑w
                                         ; sub_15B50:loc_160EF↑r ...
-byte_33314      db 0                    ; DATA XREF: sub_1BEE9+1FF↑w
+byte_33314      db 0                    ; DATA XREF: clearViewFlags+1FF↑w
                                         ; prepareIndoorView+E2F↑w ...
-byte_33315      db 0                    ; DATA XREF: sub_1BEE9+1F3↑w
+byte_33315      db 0                    ; DATA XREF: clearViewFlags+1F3↑w
                                         ; prepareIndoorView+103B↑w ...
 byte_33316      db 0                    ; DATA XREF: sub_15B50+12E↑r
                                         ; sub_15B50+17B↑r ...
@@ -45636,23 +45630,23 @@ byte_333B0      db 0                    ; DATA XREF: seg001:027A↑r
 Combat_partySize db 0                   ; DATA XREF: checkPartyDead+52↑r
                                         ; drawParty+1BD↑r ...
                                         ; byte, size of the combat party (Engine_mode 2)
-byte_333B2      db 0                    ; DATA XREF: sub_1BEE9+32↑w
+byte_333B2      db 0                    ; DATA XREF: clearViewFlags+32↑w
                                         ; prepareIndoorView:loc_1D3D4↑r ...
-byte_333B3      db 0                    ; DATA XREF: sub_1BEE9+5E↑w
+byte_333B3      db 0                    ; DATA XREF: clearViewFlags+5E↑w
                                         ; prepareIndoorView:loc_1D46D↑w ...
-byte_333B4      db 0                    ; DATA XREF: sub_1BEE9+5B↑w
+byte_333B4      db 0                    ; DATA XREF: clearViewFlags+5B↑w
                                         ; prepareIndoorView:loc_1CCAA↑r ...
 byte_333B5      db 0                    ; DATA XREF: sub_15B50+190↑r
                                         ; sub_15B50+1AB↑r ...
-byte_333B6      db 0                    ; DATA XREF: sub_1BEE9+55↑w
+byte_333B6      db 0                    ; DATA XREF: clearViewFlags+55↑w
                                         ; prepareIndoorView:loc_1D6BA↑w ...
-byte_333B7      db 0                    ; DATA XREF: sub_1BEE9+B7↑w
+byte_333B7      db 0                    ; DATA XREF: clearViewFlags+B7↑w
                                         ; prepareIndoorView:loc_1CEE8↑w ...
-byte_333B8      db 0                    ; DATA XREF: sub_1BEE9+99↑w
+byte_333B8      db 0                    ; DATA XREF: clearViewFlags+99↑w
                                         ; prepareIndoorView:loc_1C82B↑w ...
-byte_333B9      db 0                    ; DATA XREF: sub_1BEE9+E6↑w
+byte_333B9      db 0                    ; DATA XREF: clearViewFlags+E6↑w
                                         ; prepareIndoorView:loc_1CE4F↑w ...
-byte_333BA      db 0                    ; DATA XREF: sub_1BEE9+CE↑w
+byte_333BA      db 0                    ; DATA XREF: clearViewFlags+CE↑w
                                         ; prepareIndoorView:loc_1D5E6↑w ...
                 align 2
 word_333BC      dw 0                    ; DATA XREF: getCommand+1C5↑r
@@ -45665,7 +45659,7 @@ word_333C0      dw 0                    ; DATA XREF: drawParty:loc_17324↑r
 word_333C2      dw 0                    ; DATA XREF: drawParty+230↑r
                                         ; drawParty+23F↑r ...
                 db 0
-byte_333C5      db 0                    ; DATA XREF: sub_1BEE9+58↑w
+byte_333C5      db 0                    ; DATA XREF: clearViewFlags+58↑w
                                         ; prepareIndoorView:loc_1D4DA↑r ...
                 db 74h dup(0)
 word_3343A      dw 0                    ; DATA XREF: drawParty+111↑r
@@ -45674,22 +45668,22 @@ word_3343C      dw 0                    ; DATA XREF: drawParty+10E↑r
                                         ; rosterMenu+DC↓w ...
 byte_3343E      db 0                    ; DATA XREF: sub_15B50+20B↑r
                                         ; sub_15B50+226↑r ...
-byte_3343F      db 0                    ; DATA XREF: sub_1BEE9+49↑w
+byte_3343F      db 0                    ; DATA XREF: clearViewFlags+49↑w
                                         ; prepareIndoorView:loc_1D727↑w ...
-byte_33440      db 0                    ; DATA XREF: sub_1BEE9+AE↑w
+byte_33440      db 0                    ; DATA XREF: clearViewFlags+AE↑w
                                         ; prepareIndoorView:loc_1D300↑w ...
-byte_33441      db 0                    ; DATA XREF: sub_1BEE9+93↑w
+byte_33441      db 0                    ; DATA XREF: clearViewFlags+93↑w
                                         ; prepareIndoorView:loc_1CC43↑w ...
-byte_33442      db 0                    ; DATA XREF: sub_1BEE9+E3↑w
+byte_33442      db 0                    ; DATA XREF: clearViewFlags+E3↑w
                                         ; prepareIndoorView:loc_1D36D↑w ...
-byte_33443      db 0                    ; DATA XREF: sub_1BEE9+C2↑w
+byte_33443      db 0                    ; DATA XREF: clearViewFlags+C2↑w
                                         ; prepareIndoorView:loc_1D807↑w ...
                 align 10h
-byte_33450      db 0                    ; DATA XREF: sub_1BEE9+BA↑w
+byte_33450      db 0                    ; DATA XREF: clearViewFlags+BA↑w
                                         ; prepareIndoorView:loc_1CDE2↑w ...
-byte_33451      db 0                    ; DATA XREF: sub_1BEE9+E0↑w
+byte_33451      db 0                    ; DATA XREF: clearViewFlags+E0↑w
                                         ; prepareIndoorView:loc_1CD49↑w ...
-byte_33452      db 0                    ; DATA XREF: sub_1BEE9+CB↑w
+byte_33452      db 0                    ; DATA XREF: clearViewFlags+CB↑w
                                         ; prepareIndoorView:loc_1D579↑w ...
 byte_33453      db 0                    ; DATA XREF: sub_18BF1:loc_18FF2↑r
                                         ; sub_18BF1+438↑r
@@ -48793,28 +48787,28 @@ byte_3407E      db 0                    ; DATA XREF: sub_15B50+457↑r
 byte_3407F      db 0                    ; DATA XREF: sub_15B50+57C↑r
                                         ; sub_15B50:loc_160D3↑r ...
                 db 28h dup(0)
-byte_340A8      db 0                    ; DATA XREF: sub_1BEE9+B1↑w
+byte_340A8      db 0                    ; DATA XREF: clearViewFlags+B1↑w
                                         ; prepareIndoorView:loc_1D406↑w ...
-byte_340A9      db 0                    ; DATA XREF: sub_1BEE9+DD↑w
+byte_340A9      db 0                    ; DATA XREF: clearViewFlags+DD↑w
                                         ; prepareIndoorView:loc_1D473↑w ...
-byte_340AA      db 0                    ; DATA XREF: sub_1BEE9+BF↑w
+byte_340AA      db 0                    ; DATA XREF: clearViewFlags+BF↑w
                                         ; prepareIndoorView:loc_1D874↑w ...
 byte_340AB      db 0                    ; DATA XREF: spellAttackAhead:loc_4F2C3↓w
                                         ; spellAttackAhead:loc_4F2EC↓w
                 db 7 dup(0)
-byte_340B3      db 0                    ; DATA XREF: sub_1BEE9+B↑w
+byte_340B3      db 0                    ; DATA XREF: clearViewFlags+B↑w
                                         ; prepareIndoorView:loc_1C892↑w ...
 word_340B4      dw 0                    ; DATA XREF: attack+E7↓r
                                         ; attack+EE↓r ...
-byte_340B6      db 0                    ; DATA XREF: sub_1BEE9+5↑w
+byte_340B6      db 0                    ; DATA XREF: clearViewFlags+5↑w
                                         ; prepareIndoorView:loc_1CBA4↑w ...
-byte_340B7      db 0                    ; DATA XREF: sub_1BEE9+4F↑w
+byte_340B7      db 0                    ; DATA XREF: clearViewFlags+4F↑w
                                         ; prepareIndoorView:loc_1D5E0↑w ...
-byte_340B8      db 0                    ; DATA XREF: sub_1BEE9+DA↑w
+byte_340B8      db 0                    ; DATA XREF: clearViewFlags+DA↑w
                                         ; prepareIndoorView:loc_1CCDC↑w ...
                 db 0Ch dup(0)
 byte_340C5      db 0                    ; DATA XREF: sub_1B6D1+FA↑r
-                                        ; sub_1BEE9+24E↑w ...
+                                        ; clearViewFlags+24E↑w ...
 Party_chars     db 4Eh dup(0)           ; active party records, stride 12Fh (303 bytes); +120h = Dead condition
 byte_34114      db 0                    ; DATA XREF: arenaEvent+110↓r
                                         ; arenaEvent+125↓r ...
@@ -48829,16 +48823,16 @@ byte_34B07      db 0                    ; DATA XREF: resetBlacksmithWares+1C2↓
                 db 25h dup(0)
 byte_34B2D      db 0                    ; DATA XREF: resetBlacksmithWares+18A↓r
                 db 3Fh dup(0)
-byte_34B6D      db 0                    ; DATA XREF: sub_1BEE9+43↑w
+byte_34B6D      db 0                    ; DATA XREF: clearViewFlags+43↑w
                                         ; prepareIndoorView:loc_1D801↑w ...
-byte_34B6E      db 0                    ; DATA XREF: sub_1BEE9+D7↑w
+byte_34B6E      db 0                    ; DATA XREF: clearViewFlags+D7↑w
                                         ; prepareIndoorView:loc_1D50C↑w ...
                 align 2
 word_34B70      dw 0                    ; DATA XREF: sub_18BF1+42A↑r
 word_34B72      dw 0                    ; DATA XREF: sub_18BF1+1B0↑r
 word_34B74      dw 0                    ; DATA XREF: sub_18BF1+2DA↑r
                 db 12h dup(0)
-byte_34B88      db 0                    ; DATA XREF: sub_1BEE9+4C↑w
+byte_34B88      db 0                    ; DATA XREF: clearViewFlags+4C↑w
                                         ; prepareIndoorView:loc_1D573↑w ...
                 align 2
 word_34B8A      dw 0                    ; DATA XREF: attack:loc_4A1B6↓r
@@ -48884,7 +48878,7 @@ byte_34BB6      db 0                    ; DATA XREF: sub_15B50+41↑w
                                         ; sub_15B50+9B↑r ...
 byte_34BB7      db 0                    ; DATA XREF: sub_15B50+3E↑w
                                         ; sub_15B50+137↑r ...
-byte_34BB8      db 0                    ; DATA XREF: sub_1BEE9+40↑w
+byte_34BB8      db 0                    ; DATA XREF: clearViewFlags+40↑w
                                         ; prepareIndoorView:loc_1D86E↑w ...
 byte_34BB9      db 0                    ; DATA XREF: getWeaponDamage+F↓w
                                         ; getWeaponDamage+A2↓w ...
@@ -48893,31 +48887,31 @@ byte_34BBA      db 0                    ; DATA XREF: seg001:loc_14C9D↑w
 byte_34BC7      db 0                    ; DATA XREF: sub_15B50:loc_15CE7↑r
                                         ; sub_15B50+1A4↑r ...
                 db 24h dup(0)
-byte_34BEC      db 0                    ; DATA XREF: sub_1BEE9+22E↑w
+byte_34BEC      db 0                    ; DATA XREF: clearViewFlags+22E↑w
                                         ; prepareIndoorView:loc_1D0D5↑w ...
-byte_34BED      db 0                    ; DATA XREF: sub_1BEE9+21F↑w
+byte_34BED      db 0                    ; DATA XREF: clearViewFlags+21F↑w
                                         ; prepareIndoorView:loc_1CA18↑w ...
-byte_34BEE      db 0                    ; DATA XREF: sub_1BEE9+216↑w
+byte_34BEE      db 0                    ; DATA XREF: clearViewFlags+216↑w
                                         ; prepareIndoorView:loc_1C66D↑w ...
-byte_34BEF      db 0                    ; DATA XREF: sub_1BEE9+20D↑w
+byte_34BEF      db 0                    ; DATA XREF: clearViewFlags+20D↑w
                                         ; prepareIndoorView:loc_1C3C8↑w ...
 byte_34BF0      db 0                    ; DATA XREF: runMazeEvent+11D↑w
                                         ; runMazeEvent:loc_1972D↑w ...
-byte_34BF1      db 0                    ; DATA XREF: sub_1BEE9+136↑w
+byte_34BF1      db 0                    ; DATA XREF: clearViewFlags+136↑w
                                         ; prepareIndoorView+F5A↑w ...
-byte_34BF2      db 0                    ; DATA XREF: sub_1BEE9+127↑w
+byte_34BF2      db 0                    ; DATA XREF: clearViewFlags+127↑w
                                         ; prepareIndoorView+89D↑w ...
-byte_34BF3      db 0                    ; DATA XREF: sub_1BEE9+11E↑w
+byte_34BF3      db 0                    ; DATA XREF: clearViewFlags+11E↑w
                                         ; prepareIndoorView+4F2↑w ...
-byte_34BF4      db 0                    ; DATA XREF: sub_1BEE9+115↑w
+byte_34BF4      db 0                    ; DATA XREF: clearViewFlags+115↑w
                                         ; prepareIndoorView+24D↑w ...
-byte_34BF5      db 0                    ; DATA XREF: sub_1BEE9+1B2↑w
+byte_34BF5      db 0                    ; DATA XREF: clearViewFlags+1B2↑w
                                         ; prepareIndoorView:loc_1D0CF↑w ...
-byte_34BF6      db 0                    ; DATA XREF: sub_1BEE9+1A3↑w
+byte_34BF6      db 0                    ; DATA XREF: clearViewFlags+1A3↑w
                                         ; prepareIndoorView:loc_1CA12↑w ...
-byte_34BF7      db 0                    ; DATA XREF: sub_1BEE9+19A↑w
+byte_34BF7      db 0                    ; DATA XREF: clearViewFlags+19A↑w
                                         ; prepareIndoorView:loc_1C667↑w ...
-byte_34BF8      db 0                    ; DATA XREF: sub_1BEE9+191↑w
+byte_34BF8      db 0                    ; DATA XREF: clearViewFlags+191↑w
                                         ; prepareIndoorView:loc_1C3C2↑w ...
 byte_34BF9      db 0                    ; DATA XREF: getWeaponDamage+19↓w
                                         ; getWeaponDamage+64↓w
@@ -48925,21 +48919,21 @@ word_34BFA      dw 0                    ; DATA XREF: setStartTime+10↑w
                                         ; getElapsedTime+18↑r
 word_34BFC      dw 0                    ; DATA XREF: setStartTime+C↑w
                                         ; getElapsedTime+1C↑r
-byte_34BFE      db 0                    ; DATA XREF: sub_1BEE9+174↑w
+byte_34BFE      db 0                    ; DATA XREF: clearViewFlags+174↑w
                                         ; prepareIndoorView:loc_1D0E1↑w ...
-byte_34BFF      db 0                    ; DATA XREF: sub_1BEE9+165↑w
+byte_34BFF      db 0                    ; DATA XREF: clearViewFlags+165↑w
                                         ; prepareIndoorView:loc_1CA24↑w ...
-byte_34C00      db 0                    ; DATA XREF: sub_1BEE9+15C↑w
+byte_34C00      db 0                    ; DATA XREF: clearViewFlags+15C↑w
                                         ; prepareIndoorView:loc_1C679↑w ...
-byte_34C01      db 0                    ; DATA XREF: sub_1BEE9+153↑w
+byte_34C01      db 0                    ; DATA XREF: clearViewFlags+153↑w
                                         ; prepareIndoorView:loc_1C3D4↑w ...
-byte_34C02      db 0                    ; DATA XREF: sub_1BEE9+1F0↑w
+byte_34C02      db 0                    ; DATA XREF: clearViewFlags+1F0↑w
                                         ; prepareIndoorView+F35↑w ...
-byte_34C03      db 0                    ; DATA XREF: sub_1BEE9+1E1↑w
+byte_34C03      db 0                    ; DATA XREF: clearViewFlags+1E1↑w
                                         ; prepareIndoorView+878↑w ...
-byte_34C04      db 0                    ; DATA XREF: sub_1BEE9+1D8↑w
+byte_34C04      db 0                    ; DATA XREF: clearViewFlags+1D8↑w
                                         ; prepareIndoorView+4CD↑w ...
-byte_34C05      db 0                    ; DATA XREF: sub_1BEE9+1CF↑w
+byte_34C05      db 0                    ; DATA XREF: clearViewFlags+1CF↑w
                                         ; prepareIndoorView+228↑w ...
                 db 8 dup(0)
 word_34C0E      dw 0                    ; DATA XREF: seg001:loc_14CFB↑w
@@ -48960,7 +48954,7 @@ byte_34C1A      db 0                    ; DATA XREF: sub_15B50:loc_15D62↑r
                                         ; sub_15B50+21F↑r ...
 byte_34C1B      db 0                    ; DATA XREF: updateAutomap:loc_1575E↑r
                                         ; updateAutomap:loc_15793↑w ...
-byte_34C1C      db 0                    ; DATA XREF: sub_1BEE9+24B↑w
+byte_34C1C      db 0                    ; DATA XREF: clearViewFlags+24B↑w
                                         ; prepareIndoorView+16F3↑w
 byte_34C1D      db 0                    ; DATA XREF: mazeUpdateSlot+72↑w
                                         ; mazeUpdateSlot+CB↑w ...
@@ -48976,9 +48970,9 @@ word_34C26      dw 0                    ; DATA XREF: sub_1B6D1+89↑r
                                         ; rosterMenu+94↓w
 word_34C28      dw 0                    ; DATA XREF: sub_1B6D1+86↑r
                                         ; rosterMenu+90↓w
-byte_34C2A      db 0                    ; DATA XREF: sub_1BEE9+35↑w
+byte_34C2A      db 0                    ; DATA XREF: clearViewFlags+35↑w
                                         ; prepareIndoorView:loc_1CFBC↑r ...
-byte_34C2B      db 0                    ; DATA XREF: sub_1BEE9+2C↑w
+byte_34C2B      db 0                    ; DATA XREF: clearViewFlags+2C↑w
                                         ; prepareIndoorView:loc_1D1C8↑r ...
 byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
                                         ; sub_161AD+5FF↑r ...
@@ -48999,19 +48993,19 @@ byte_355E3      db 0                    ; DATA XREF: mazeUpdateSlot+AC↑r
                 db 360h dup(0)
 word_35944      dw 0                    ; DATA XREF: indexEvents+C↓w
                 db 40Fh dup(0)
-byte_35D55      db 0                    ; DATA XREF: sub_1BEE9+240↑w
+byte_35D55      db 0                    ; DATA XREF: clearViewFlags+240↑w
                                         ; prepareIndoorView:loc_1CEC9↑w ...
-byte_35D56      db 0                    ; DATA XREF: sub_1BEE9+22B↑w
+byte_35D56      db 0                    ; DATA XREF: clearViewFlags+22B↑w
                                         ; prepareIndoorView:loc_1C80C↑w ...
-byte_35D57      db 0                    ; DATA XREF: sub_1B925+6↑r
-                                        ; sub_1B925:loc_1B968↑r ...
-byte_35D58      db 0                    ; DATA XREF: sub_1BEE9+148↑w
+byte_35D57      db 0                    ; DATA XREF: setPartyStartCell+6↑r
+                                        ; setPartyStartCell:loc_1B968↑r ...
+byte_35D58      db 0                    ; DATA XREF: clearViewFlags+148↑w
                                         ; prepareIndoorView+D4E↑w ...
-byte_35D59      db 0                    ; DATA XREF: sub_1BEE9+133↑w
+byte_35D59      db 0                    ; DATA XREF: clearViewFlags+133↑w
                                         ; prepareIndoorView+691↑w ...
-byte_35D5A      db 0                    ; DATA XREF: sub_1BEE9+1C4↑w
+byte_35D5A      db 0                    ; DATA XREF: clearViewFlags+1C4↑w
                                         ; prepareIndoorView:loc_1CEC3↑w ...
-byte_35D5B      db 0                    ; DATA XREF: sub_1BEE9+1AF↑w
+byte_35D5B      db 0                    ; DATA XREF: clearViewFlags+1AF↑w
                                         ; prepareIndoorView:loc_1C806↑w ...
 byte_35D5C      db 0                    ; DATA XREF: sub_18BF1+11↑r
                                         ; runMazeEvent+1B0↑r ...
@@ -49056,18 +49050,18 @@ byte_36D0B      db 0                    ; DATA XREF: currentTime+9F↑r
 byte_36D0D      db 0                    ; DATA XREF: currentTime+32↑w
                                         ; currentTime:loc_251B1↑w
                 db 29Ah dup(0)
-byte_36FA8      db 0                    ; DATA XREF: sub_1BEE9+186↑w
+byte_36FA8      db 0                    ; DATA XREF: clearViewFlags+186↑w
                                         ; prepareIndoorView:loc_1CED5↑w ...
-byte_36FA9      db 0                    ; DATA XREF: sub_1BEE9+171↑w
+byte_36FA9      db 0                    ; DATA XREF: clearViewFlags+171↑w
                                         ; prepareIndoorView:loc_1C818↑w ...
 byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
                                         ; sub_15B50+511↑r ...
                 align 2
 word_36FAC      dw 0                    ; DATA XREF: sub_19174+3↑w
                                         ; Spell_03_FlyingFist+F↓w ...
-byte_36FAE      db 0                    ; DATA XREF: sub_1BEE9+202↑w
+byte_36FAE      db 0                    ; DATA XREF: clearViewFlags+202↑w
                                         ; prepareIndoorView+D29↑w ...
-byte_36FAF      db 0                    ; DATA XREF: sub_1BEE9+1ED↑w
+byte_36FAF      db 0                    ; DATA XREF: clearViewFlags+1ED↑w
                                         ; prepareIndoorView+66C↑w ...
 byte_36FB0      db 0                    ; DATA XREF: sub_15B50+3E3↑r
                                         ; sub_15B50+442↑r ...
@@ -49765,20 +49759,20 @@ word_3734E      dw 0                    ; DATA XREF: getElapsedTime+24↑r
                                         ; sub_25F71+7↑w
 Party_gameFlags:                        ; 32-byte bit array of event flags (MAZE.PTY +376h)
                 align 40h
-byte_37370      db 0                    ; DATA XREF: sub_1BEE9+234↑w
+byte_37370      db 0                    ; DATA XREF: clearViewFlags+234↑w
                                         ; prepareIndoorView:loc_1D2E1↑w ...
-byte_37371      db 0                    ; DATA XREF: sub_1BEE9+225↑w
+byte_37371      db 0                    ; DATA XREF: clearViewFlags+225↑w
                                         ; prepareIndoorView:loc_1CC24↑w ...
                 db 4 dup(0)
-byte_37376      db 0                    ; DATA XREF: sub_1BEE9+13C↑w
+byte_37376      db 0                    ; DATA XREF: clearViewFlags+13C↑w
                                         ; prepareIndoorView+1166↑w ...
-byte_37377      db 0                    ; DATA XREF: sub_1BEE9+12D↑w
+byte_37377      db 0                    ; DATA XREF: clearViewFlags+12D↑w
                                         ; prepareIndoorView+AA9↑w ...
 byte_37378      db 0                    ; DATA XREF: getWeaponDamage+C↓w
                                         ; getWeaponDamage+B3↓w ...
-byte_37379      db 0                    ; DATA XREF: sub_1BEE9+1B8↑w
+byte_37379      db 0                    ; DATA XREF: clearViewFlags+1B8↑w
                                         ; prepareIndoorView:loc_1D2DB↑w ...
-byte_3737A      db 0                    ; DATA XREF: sub_1BEE9+1A9↑w
+byte_3737A      db 0                    ; DATA XREF: clearViewFlags+1A9↑w
                                         ; prepareIndoorView:loc_1CC1E↑w ...
                 align 2
 word_3737C      dw 0                    ; DATA XREF: renderOutdoorView+193↑r
@@ -49787,39 +49781,39 @@ word_3737E      dw 0                    ; DATA XREF: renderOutdoorView+190↑r
                                         ; sub_430A8+154↓w
 byte_37380      db 0                    ; DATA XREF: seg001:0103↑w
                                         ; openAndLoadCc+6↑r ...
-byte_37381      db 0                    ; DATA XREF: sub_1BEE9+F5↑w
+byte_37381      db 0                    ; DATA XREF: clearViewFlags+F5↑w
                                         ; prepareIndoorView:loc_1C2E1↑w ...
-byte_37382      db 0                    ; DATA XREF: sub_1BEE9+F2↑w
+byte_37382      db 0                    ; DATA XREF: clearViewFlags+F2↑w
                                         ; prepareIndoorView:loc_1C4ED↑w ...
 byte_37383      db 0                    ; DATA XREF: runMazeEvent+D5↑w
                                         ; runMazeEvent:loc_1A497↑w ...
-byte_37384      db 0                    ; DATA XREF: sub_1BEE9+17A↑w
+byte_37384      db 0                    ; DATA XREF: clearViewFlags+17A↑w
                                         ; prepareIndoorView:loc_1D2ED↑w ...
-byte_37385      db 0                    ; DATA XREF: sub_1BEE9+16B↑w
+byte_37385      db 0                    ; DATA XREF: clearViewFlags+16B↑w
                                         ; prepareIndoorView:loc_1CC30↑w ...
 byte_37386      db 0                    ; DATA XREF: sub_15B50+20↑w
                                         ; sub_15B50+636↑r ...
-byte_37387      db 0                    ; DATA XREF: sub_1BEE9+243↑w
+byte_37387      db 0                    ; DATA XREF: clearViewFlags+243↑w
                                         ; prepareIndoorView:loc_1CDC3↑w ...
-byte_37388      db 0                    ; DATA XREF: sub_1BEE9+104↑w
+byte_37388      db 0                    ; DATA XREF: clearViewFlags+104↑w
                                         ; prepareIndoorView:loc_1C586↑w ...
-byte_37389      db 0                    ; DATA XREF: sub_1BEE9+101↑w
+byte_37389      db 0                    ; DATA XREF: clearViewFlags+101↑w
                                         ; prepareIndoorView:loc_1C792↑w ...
-byte_3738A      db 0                    ; DATA XREF: sub_1BEE9+14B↑w
+byte_3738A      db 0                    ; DATA XREF: clearViewFlags+14B↑w
                                         ; prepareIndoorView+C48↑w ...
-byte_3738B      db 0                    ; DATA XREF: sub_1BEE9+1F6↑w
+byte_3738B      db 0                    ; DATA XREF: clearViewFlags+1F6↑w
                                         ; prepareIndoorView+1141↑w ...
-byte_3738C      db 0                    ; DATA XREF: sub_1BEE9+1E7↑w
+byte_3738C      db 0                    ; DATA XREF: clearViewFlags+1E7↑w
                                         ; prepareIndoorView+A84↑w ...
-byte_3738D      db 0                    ; DATA XREF: sub_1BEE9+1C7↑w
+byte_3738D      db 0                    ; DATA XREF: clearViewFlags+1C7↑w
                                         ; prepareIndoorView:loc_1CDBD↑w ...
-byte_3738E      db 0                    ; DATA XREF: sub_1BEE9+96↑w
+byte_3738E      db 0                    ; DATA XREF: clearViewFlags+96↑w
                                         ; prepareIndoorView:loc_1C931↑w ...
-byte_3738F      db 0                    ; DATA XREF: sub_1BEE9+90↑w
+byte_3738F      db 0                    ; DATA XREF: clearViewFlags+90↑w
                                         ; prepareIndoorView:loc_1CB3D↑w ...
-byte_37390      db 0                    ; DATA XREF: sub_1BEE9+110↑w
+byte_37390      db 0                    ; DATA XREF: clearViewFlags+110↑w
                                         ; prepareIndoorView:loc_1C898↑w ...
-byte_37391      db 0                    ; DATA XREF: sub_1BEE9+10A↑w
+byte_37391      db 0                    ; DATA XREF: clearViewFlags+10A↑w
                                         ; prepareIndoorView:loc_1CBAA↑w ...
 byte_37392      db 0                    ; DATA XREF: sub_15B50+2F3↑r
                                         ; sub_15B50+301↑r ...
@@ -49827,26 +49821,26 @@ byte_37392      db 0                    ; DATA XREF: sub_15B50+2F3↑r
 ; char *format
 format          dw 0                    ; DATA XREF: runMazeEvent+DD4↑r
                                         ; runMazeEvent+160B↑r ...
-byte_37396      db 0                    ; DATA XREF: sub_1BEE9+189↑w
+byte_37396      db 0                    ; DATA XREF: clearViewFlags+189↑w
                                         ; prepareIndoorView:loc_1CDCF↑w ...
                 align 2
 ; void *Roster_buffer
 Roster_buffer   dd 0                    ; DATA XREF: seg001:03F6↑w
                                         ; sub_25F71+24↑r ...
                                         ; far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
-byte_3739C      db 0                    ; DATA XREF: sub_1BEE9+B4↑w
+byte_3739C      db 0                    ; DATA XREF: clearViewFlags+B4↑w
                                         ; prepareIndoorView:loc_1CFEE↑w ...
-byte_3739D      db 0                    ; DATA XREF: sub_1BEE9+AB↑w
+byte_3739D      db 0                    ; DATA XREF: clearViewFlags+AB↑w
                                         ; prepareIndoorView:loc_1D1FA↑w ...
-byte_3739E      db 0                    ; DATA XREF: sub_1BEE9+A2↑w
+byte_3739E      db 0                    ; DATA XREF: clearViewFlags+A2↑w
                                         ; prepareIndoorView:loc_1CF55↑w ...
-byte_3739F      db 0                    ; DATA XREF: sub_1BEE9+9C↑w
+byte_3739F      db 0                    ; DATA XREF: clearViewFlags+9C↑w
                                         ; prepareIndoorView:loc_1D267↑w ...
-byte_373A0      db 0                    ; DATA XREF: sub_1BEE9+205↑w
+byte_373A0      db 0                    ; DATA XREF: clearViewFlags+205↑w
                                         ; prepareIndoorView+C23↑w ...
-byte_373A1      db 0                    ; DATA XREF: sub_1BEE9+D1↑w
+byte_373A1      db 0                    ; DATA XREF: clearViewFlags+D1↑w
                                         ; prepareIndoorView:loc_1D653↑w ...
-byte_373A2      db 0                    ; DATA XREF: sub_1BEE9+C5↑w
+byte_373A2      db 0                    ; DATA XREF: clearViewFlags+C5↑w
                                         ; prepareIndoorView:loc_1D79A↑w ...
                 align 2
 ; int word_373A4
@@ -49865,23 +49859,23 @@ word_373B6      dw 0                    ; DATA XREF: renderIndoorView+165↑r
 byte_373B8      db 0                    ; DATA XREF: sub_252CF+9D↑w
                                         ; getCommand+6D0↑r ...
                 db 9 dup(0)
-byte_373C2      db 0                    ; DATA XREF: sub_1BEE9+23A↑w
+byte_373C2      db 0                    ; DATA XREF: clearViewFlags+23A↑w
                                         ; prepareIndoorView:loc_1D3E7↑w ...
-byte_373C3      db 0                    ; DATA XREF: sub_1BEE9+142↑w
+byte_373C3      db 0                    ; DATA XREF: clearViewFlags+142↑w
                                         ; prepareIndoorView+126C↑w ...
-byte_373C4      db 0                    ; DATA XREF: sub_1BEE9+1BE↑w
+byte_373C4      db 0                    ; DATA XREF: clearViewFlags+1BE↑w
                                         ; prepareIndoorView:loc_1D3E1↑w ...
-byte_373C5      db 0                    ; DATA XREF: sub_1BEE9+180↑w
+byte_373C5      db 0                    ; DATA XREF: clearViewFlags+180↑w
                                         ; prepareIndoorView:loc_1D3F3↑w ...
 byte_373C6      db 0                    ; DATA XREF: sub_15B50+378↑r
                                         ; sub_15B50+386↑r ...
-byte_373C7      db 0                    ; DATA XREF: sub_1BEE9+246↑w
+byte_373C7      db 0                    ; DATA XREF: clearViewFlags+246↑w
                                         ; prepareIndoorView:loc_1CCBD↑w ...
-byte_373C8      db 0                    ; DATA XREF: sub_1BEE9+14E↑w
+byte_373C8      db 0                    ; DATA XREF: clearViewFlags+14E↑w
                                         ; prepareIndoorView+B42↑w ...
-byte_373C9      db 0                    ; DATA XREF: sub_1BEE9+1FC↑w
+byte_373C9      db 0                    ; DATA XREF: clearViewFlags+1FC↑w
                                         ; prepareIndoorView+1247↑w ...
-byte_373CA      db 0                    ; DATA XREF: sub_1BEE9+1CA↑w
+byte_373CA      db 0                    ; DATA XREF: clearViewFlags+1CA↑w
                                         ; prepareIndoorView:loc_1CCB7↑w ...
                 align 2
 word_373CC      dw 0                    ; DATA XREF: sub_17439+88B↑r
@@ -49890,21 +49884,21 @@ word_373CE      dw 0                    ; DATA XREF: sub_17439+888↑r
                                         ; sub_17439+9A3↑r ...
 byte_373D0      db 0                    ; DATA XREF: sub_15B50:loc_1619A↑r
                                         ; renderIndoorView:loc_1E51D↑r ...
-byte_373D1      db 0                    ; DATA XREF: sub_1BEE9+18C↑w
+byte_373D1      db 0                    ; DATA XREF: clearViewFlags+18C↑w
                                         ; prepareIndoorView:loc_1CCC9↑w ...
                 align 4
-byte_373D4      db 0                    ; DATA XREF: sub_1BEE9+208↑w
+byte_373D4      db 0                    ; DATA XREF: clearViewFlags+208↑w
                                         ; prepareIndoorView+B1D↑w ...
 byte_373D5      db 0                    ; DATA XREF: sub_15B50+182↑r
                                         ; sub_15B50+19A↑r ...
 byte_373D6      db 0                    ; DATA XREF: sub_15B50+1FD↑r
                                         ; sub_15B50+215↑r ...
-byte_373D7      db 0                    ; DATA XREF: sub_1BEE9+237↑w
+byte_373D7      db 0                    ; DATA XREF: clearViewFlags+237↑w
                                         ; prepareIndoorView:loc_1D4ED↑w ...
                 db 0Fh dup(0)
-byte_373E7      db 0                    ; DATA XREF: sub_1BEE9+13F↑w
+byte_373E7      db 0                    ; DATA XREF: clearViewFlags+13F↑w
                                         ; prepareIndoorView+1372↑w ...
-byte_373E8      db 0                    ; DATA XREF: sub_1BEE9+1BB↑w
+byte_373E8      db 0                    ; DATA XREF: clearViewFlags+1BB↑w
                                         ; prepareIndoorView:loc_1D4E7↑w ...
                 align 2
 word_373EA      dw 0                    ; DATA XREF: drawParty+77↑r
@@ -49915,7 +49909,7 @@ word_373EC      dw 0                    ; DATA XREF: drawParty+7A↑r
 Party_size      db 0                    ; DATA XREF: sub_15235:loc_15265↑r
                                         ; sub_161AD:loc_1692B↑r ...
                                         ; byte, number of active characters
-byte_37463      db 0                    ; DATA XREF: sub_1BEE9+17D↑w
+byte_37463      db 0                    ; DATA XREF: clearViewFlags+17D↑w
                                         ; prepareIndoorView:loc_1D4F9↑w ...
                 db 168h dup(0)
 word_375CC      dw 0                    ; DATA XREF: runMazeEvent+47↑w
@@ -64346,7 +64340,7 @@ loc_3E06C:                              ; CODE XREF: sub_3DFB6+96↑j
                 push    si
                 call    sub_281B2
                 pop     cx
-                call    sub_1B925
+                call    setPartyStartCell
                 call    mazeUpdateSlot
                 mov     ax, 1
                 push    ax
@@ -64644,7 +64638,7 @@ loc_3E2CC:                              ; CODE XREF: arenaEvent+191↑j
 
 loc_3E2D2:                              ; CODE XREF: arenaEvent+95↑j
                                         ; arenaEvent+2E2↓j
-                call    sub_1B925
+                call    setPartyStartCell
                 mov     ax, 1
                 push    ax
                 call    updateAutomap
@@ -72838,7 +72832,7 @@ loc_421B3:                              ; CODE XREF: controlPanel+24C↑j
                 pop     cx
                 mov     [bp+var_C], dx
                 mov     [bp+var_E], ax
-                call    sub_1B925
+                call    setPartyStartCell
                 call    mazeUpdateSlot
                 xor     si, si
                 jmp     short loc_4223A
@@ -80741,9 +80735,10 @@ sub_45BD1       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; guild price of a spell: SP*100 (|SP|*500 if level scaled), shifted left once for half casters
 ; Attributes: bp-based frame
 
-sub_45BF3       proc far                ; CODE XREF: sub_282C5↑J
+spellGoldPrice  proc far                ; CODE XREF: j_spellGoldPrice↑J
                                         ; trainCharacter+E4↓p ...
 
 arg_0           = word ptr  6
@@ -80765,18 +80760,18 @@ arg_2           = byte ptr  8
                 jmp     short loc_45C1E
 ; ---------------------------------------------------------------------------
 
-loc_45C12:                              ; CODE XREF: sub_45BF3+11↑j
+loc_45C12:                              ; CODE XREF: spellGoldPrice+11↑j
                 mov     ax, si
                 mov     dx, 64h ; 'd'
                 imul    dx
                 mov     cl, [bp+arg_2]
                 shl     ax, cl
 
-loc_45C1E:                              ; CODE XREF: sub_45BF3+1D↑j
+loc_45C1E:                              ; CODE XREF: spellGoldPrice+1D↑j
                 pop     si
                 pop     bp
                 retf
-sub_45BF3       endp
+spellGoldPrice  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -80934,7 +80929,7 @@ loc_45CEB:                              ; CODE XREF: trainCharacter+C1↑j
                 mov     ah, 0
                 push    ax
                 push    cs
-                call    near ptr sub_45BF3
+                call    near ptr spellGoldPrice
                 pop     cx
                 pop     cx
                 push    ax
@@ -81716,7 +81711,7 @@ loc_462BD:                              ; CODE XREF: sub_45F29+359↑j
                 push    [bp+var_8]
                 push    [bp+var_C]
                 push    cs
-                call    near ptr sub_45BF3
+                call    near ptr spellGoldPrice
                 pop     cx
                 pop     cx
                 mov     [bp+var_14], ax
@@ -93566,7 +93561,7 @@ loc_4BA11:                              ; CODE XREF: doCombat+257↑j
                 cwd
                 mov     word_376EC, dx
                 mov     word_376EA, ax
-                call    sub_1B925
+                call    setPartyStartCell
                 jmp     loc_4BBCC
 ; ---------------------------------------------------------------------------
                 push    cs
@@ -93777,7 +93772,7 @@ loc_4BBED:                              ; CODE XREF: doCombat+428↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4BC48
-                call    sub_1B925
+                call    setPartyStartCell
                 mov     [bp+var_2], 0
                 jmp     short loc_4BC3E
 ; ---------------------------------------------------------------------------
@@ -96980,7 +96975,7 @@ Spell_42_TimeDistortion proc far        ; CODE XREF: j_Spell_42_TimeDistortion�
 ; ---------------------------------------------------------------------------
 
 loc_4D287:                              ; CODE XREF: Spell_42_TimeDistortion+16↑j
-                call    sub_1B925
+                call    setPartyStartCell
                 call    mazeUpdateSlot
                 mov     ax, 33h ; '3'
                 push    ax
@@ -97687,7 +97682,7 @@ loc_4D705:                              ; CODE XREF: Spell_53_TownPortal+88↓j
                 push    ax
                 call    sub_280EF
                 pop     cx
-                call    sub_1B925
+                call    setPartyStartCell
                 mov     byte_287A5, 1
 
 loc_4D75E:                              ; CODE XREF: Spell_53_TownPortal+1F↑j

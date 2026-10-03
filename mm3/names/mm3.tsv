@@ -620,3 +620,9 @@
 4F24E	spellAttackAhead	damage spell/attack arrival: called by Flying Fist etc. through stub sub_2865D with the spell id; starts the attack on the monster ahead (calls attack, drawView, giveTreasure)
 1B925	setPartyStartCell	sets Party_x/y from page header byte 13h (low nibble x, high nibble y) plus the page origin
 1BEE9	clearViewFlags	zeroes ~100 per-frame view/object visibility flag bytes before prepareIndoorView walks the cells
+1B7A	SPELL_SP_COST	word per spell id (0-76); <1 means |v| x character level
+1C16	SPELL_GEM_COST	word per spell id (0-76)
+3C36	SCHOOL_LISTS	3 schools (cleric, sorcerer, druid) x 36 spell ids, ordered by spell level; char.spells[] is indexed by position in this list
+3C03	SCHOOL_COUNTS	3 schools x 17 bytes: spells per spell level
+3CA1	TOWN_SPELL_CAP	byte per town 0-5: highest spell level the guild teaches (0,3,6,9,13,17)
+45BF3	spellGoldPrice	guild price of a spell: SP*100 (|SP|*500 if level scaled), shifted left once for half casters

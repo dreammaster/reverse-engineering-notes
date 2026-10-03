@@ -8382,6 +8382,7 @@ static Bytes_1(void) {
 	create_insn	(0X1B8E6);
 	create_insn	(0X1B90B);
 	create_insn	(0X1B925);
+	set_name	(0X1B925,	"setPartyStartCell");
 	create_insn	(x=0X1B928);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B93F);
@@ -8622,6 +8623,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BEDB);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BEE9);
+	set_name	(0X1BEE9,	"clearViewFlags");
 	create_insn	(0X1C13C);
 	set_name	(0X1C13C,	"updateLight");
 	create_insn	(x=0X1C15C);
@@ -10052,12 +10054,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA79,	"jpt_1C993");
-	set_cmt	(0X1DA87,	"jump table for switch statement",	0);
-	create_word	(x=0X1DA87);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1DA87,	"jpt_1C8FA");
 }
 
 //------------------------------------------------------------------------
@@ -10067,6 +10063,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1DA87,	"jump table for switch statement",	0);
+	create_word	(x=0X1DA87);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1DA87,	"jpt_1C8FA");
 	set_cmt	(0X1DA95,	"jump table for switch statement",	0);
 	create_word	(x=0X1DA95);
 	make_array	(x,	0X7);
@@ -14072,6 +14074,7 @@ static Bytes_2(void) {
 	create_insn	(0X282C0);
 	set_name	(0X282C0,	"j_createCharacter");
 	create_insn	(0X282C5);
+	set_name	(0X282C5,	"j_spellGoldPrice");
 	create_insn	(0X282CA);
 	create_insn	(0X282CF);
 	set_name	(0X282CF,	"j_trainCharacter");
@@ -14792,10 +14795,6 @@ static Bytes_2(void) {
 	make_array	(0X29CDE,	0X10A);
 	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
 	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
-	create_word	(0X29E14);
-	create_word	(0X29E16);
-	create_byte	(0X29E18);
-	make_array	(0X29E18,	0X8D);
 }
 
 //------------------------------------------------------------------------
@@ -14805,6 +14804,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X29E14);
+	create_word	(0X29E16);
+	create_byte	(0X29E18);
+	make_array	(0X29E18,	0X8D);
 	create_word	(0X29EA5);
 	create_byte	(0X29EA7);
 	make_array	(0X29EA7,	0X2D0);
@@ -18244,12 +18247,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37C85);
 	op_hex		(x,	1);
-	create_insn	(x=0X37C9F);
-	op_hex		(x,	1);
-	create_insn	(0X37CAE);
-	create_insn	(0X37CBB);
-	create_insn	(x=0X37CC0);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18259,6 +18256,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X37C9F);
+	op_hex		(x,	1);
+	create_insn	(0X37CAE);
+	create_insn	(0X37CBB);
+	create_insn	(x=0X37CC0);
+	op_stkvar	(x,	1);
 	create_insn	(0X37CDA);
 	create_insn	(x=0X37CDC);
 	op_hex		(x,	1);
@@ -23062,12 +23065,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFA1);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X3FFA6);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X3FFAB);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X3FFB0);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23077,6 +23074,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X3FFA6);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X3FFAB);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X3FFB0);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFB5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFBA);
@@ -27054,6 +27057,7 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X45BEE);
 	create_insn	(0X45BF3);
+	set_name	(0X45BF3,	"spellGoldPrice");
 	create_insn	(x=0X45BF7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X45BFA);
@@ -28697,12 +28701,6 @@ static Bytes_5(void) {
 	set_cmt	(0X47746,	"dest",	0);
 	create_insn	(x=0X47750);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X47755);
-	op_hex		(x,	1);
-	create_insn	(x=0X4775D);
-	op_stkvar	(x,	1);
-	set_cmt	(0X4776A,	"format",	0);
-	set_cmt	(0X47772,	"buffer",	0);
 }
 
 //------------------------------------------------------------------------
@@ -28712,6 +28710,12 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47755);
+	op_hex		(x,	1);
+	create_insn	(x=0X4775D);
+	op_stkvar	(x,	1);
+	set_cmt	(0X4776A,	"format",	0);
+	set_cmt	(0X47772,	"buffer",	0);
 	create_insn	(x=0X47778);
 	op_hex		(x,	1);
 	create_insn	(x=0X47780);
@@ -33743,12 +33747,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F940);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4F94A,	"switch 77 cases",	0);
-	create_insn	(x=0X4F952);
-	op_hex		(x,	1);
-	set_cmt	(0X4F954,	"switch jump",	0);
-	create_insn	(x=0X4F954);
-	op_plain_offset	(x,	0,	0X4DE30);
-	op_plain_offset	(x,	128,	0X4DE30);
 }
 
 //------------------------------------------------------------------------
@@ -33758,6 +33756,12 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4F952);
+	op_hex		(x,	1);
+	set_cmt	(0X4F954,	"switch jump",	0);
+	create_insn	(x=0X4F954);
+	op_plain_offset	(x,	0,	0X4DE30);
+	op_plain_offset	(x,	128,	0X4DE30);
 	set_cmt	(0X4F959,	"jumptable 0004F954 case 0",	1);
 	create_insn	(0X4F959);
 	set_cmt	(0X4F961,	"jumptable 0004F954 case 1",	1);
@@ -37778,6 +37782,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B6D1, 0X2, 2, 0);
 	add_func    (0X1B925,0X1B99E);
 	set_func_flags(0X1B925,0x5412);
+	set_func_cmt(0X1B925,	"sets Party_x/y from page header byte 13h (low nibble x, high nibble y) plus the page origin", 0);
 	set_frame_size(0X1B925, 0X4, 2, 0);
 	add_func    (0X1B99E,0X1B9C5);
 	set_func_flags(0X1B99E,0x5412);
@@ -37809,6 +37814,7 @@ static Functions_0(void) {
 	set_frame_size(0X1BE3E, 0X4, 2, 0);
 	add_func    (0X1BEE9,0X1C13C);
 	set_func_flags(0X1BEE9,0x5412);
+	set_func_cmt(0X1BEE9,	"zeroes ~100 per-frame view/object visibility flag bytes before prepareIndoorView walks the cells", 0);
 	set_frame_size(0X1BEE9, 0, 2, 0);
 	add_func    (0X1C13C,0X1C195);
 	set_func_flags(0X1C13C,0x5412);
@@ -38644,7 +38650,7 @@ static Functions_0(void) {
 	set_func_flags(0X282C0,0x54c2);
 	set_frame_size(0X282C0, 0, 0, 0);
 	add_func    (0X282C5,0X282CA);
-	set_func_flags(0X282C5,0x5482);
+	set_func_flags(0X282C5,0x54c2);
 	set_frame_size(0X282C5, 0, 0, 0);
 	add_func    (0X282CA,0X282CF);
 	set_func_flags(0X282CA,0x5482);
@@ -39578,14 +39584,14 @@ static Functions_0(void) {
 	add_func    (0X434D6,0X43593);
 	set_func_flags(0X434D6,0x5412);
 	set_frame_size(0X434D6, 0X2, 2, 0);
-	add_func    (0X435A0,0X43698);
-	set_func_flags(0X435A0,0x5412);
-	set_func_cmt(0X435A0,	"writes the current maze's .evt, .dat pages and .bin (monster/object positions) back to the open cc", 0);
-	set_frame_size(0X435A0, 0X8, 2, 0);
 }
 
 static Functions_1(void) {
 
+	add_func    (0X435A0,0X43698);
+	set_func_flags(0X435A0,0x5412);
+	set_func_cmt(0X435A0,	"writes the current maze's .evt, .dat pages and .bin (monster/object positions) back to the open cc", 0);
+	set_frame_size(0X435A0, 0X8, 2, 0);
 	add_func    (0X43698,0X43AF1);
 	set_func_flags(0X43698,0x5412);
 	SetType(0X43698, "int __cdecl __far Map_load(char *format);");
@@ -39680,6 +39686,7 @@ static Functions_1(void) {
 	set_frame_size(0X45BD1, 0X2, 2, 0);
 	add_func    (0X45BF3,0X45C21);
 	set_func_flags(0X45BF3,0x5412);
+	set_func_cmt(0X45BF3,	"guild price of a spell: SP*100 (|SP|*500 if level scaled), shifted left once for half casters", 0);
 	set_frame_size(0X45BF3, 0X2, 2, 0);
 	add_func    (0X45C21,0X45F05);
 	set_func_flags(0X45C21,0x5412);
