@@ -206,6 +206,7 @@
 16FB1	getStat
 1705D	def_16FCD
 170E9	jpt_16FCD
+170F7	drawParty	party status line (BinDiff .62/.82)
 1741A	MemFree	(BinDiff sim .66 conf .95, unverified)
 19038	subtractHitPoints	hp at +125h; sets conditions +11Fh (unconscious) / +120h (dead), breaks armour (item ids 21h..29h, flag 80h)
 190C9	highlightChar
@@ -246,6 +247,7 @@
 1AF03	evt_op18	event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)
 1B0A7	jpt_1A5D6
 1B129	jpt_1984B
+1B358	moveMonsters	BinDiff .68/.87; calls monstersAttack
 1B669	drawView	indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)
 1B99E	mazeNeighbourSlot	maps a neighbour maze id to its loaded slot (1111h if not loaded)
 1BC15	mazeGetWordRel	args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
@@ -502,6 +504,7 @@
 39437	protectionHandler
 394A9	getEquipSlotName	"ring"/"medal" (from strings)
 3956E	equipItem	"You must remove %s to equip %s", "cannot equip two of the same items" (by string order, unverified)
+3998B	endingCutscene	8.8 KB, only called for event opcode 30 (cutscene end) via runMazeEvent
 3BC30	subPartyTime
 3BCF6	indexEvents	walks the loaded maze%02u.evt records (len byte + len bytes) and fills the 10-byte index at DGROUP 92FCh: x, y, dir, line, offset; also indexes the text%02u.maz strings (offsets at DGROUP A6B6h)
 3BFD6	def_3BF95
@@ -525,6 +528,7 @@
 3D6A6	def_3D353
 3D6FE	jpt_3D402
 3D710	jpt_3D353
+3D8C9	trapOrLockEvent	uses getThievery, giveCharDamage, giveTake, rnd (by callees)
 3DD20	resetTemps
 3DF79	GiveBankInterest	(BinDiff sim .69 conf .97, unverified)
 3E0A0	showJoke	jester.bin "Joke of the Day"
@@ -564,6 +568,8 @@
 41674	def_4164F
 41679	jpt_4164F
 416FF	rest	"Too dangerous to rest here!" ... "8 hours pass.  Rest complete."
+41B2B	confirmDialog	confirm.icn (by string)
+41CED	loadSaveDialog	loadSavedGame + saveMazeState (by callees)
 41F5D	controlPanel	cpanel.icn, load/save "*.mm3", quit confirmation, Mr. Wizard's help
 42BF1	def_42BC4
 42C9F	def_42C72
@@ -576,6 +582,7 @@
 43C30	def_43BB7
 43D03	jpt_43BB7
 43D13	jpt_43B53
+43E0C	giveTreasure	"Your backpacks are full"; hands out treasure (BinDiff giveTreasure .17 agrees)
 44115	def_440D3
 442DB	jpt_440D3
 44827	def_445EB
@@ -588,6 +595,7 @@
 44DAC	_strcoll
 45902	def_45891
 45A4A	jpt_45891
+45C21	trainCharacter	"Come back when you're ..." / "You have learned all we can teach you" (from strings)
 45DAD	def_45C8F
 45DEF	def_45DD9
 45F05	jpt_45DD9
@@ -670,6 +678,7 @@
 4B432	monster_getTextColor	(BinDiff .84/.86, unverified)
 4B478	getMonsterDescriptions
 4B5AF	setSpeedTable
+4B7B5	doCombat	combat main loop: attack/block/allHaveGone/changeTime/getMonsterDescriptions/controlPanel (by callees; BinDiff doCombat .18 agrees)
 4B94B	def_4B911
 4BC3B	def_4BC27
 4BCC5	jpt_4BC27
@@ -779,13 +788,17 @@
 4FF60	castItemSpell	switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog
 50236	def_4FF71
 50238	jpt_4FF71
+502D2	characterInfoDialog	character info; calls Awards_show (by callees)
+505DF	characterInfoInventory	character info/inventory page; calls itemsDialog (by callees)
 50C07	def_50950
 51199	jpt_50950
 5120A	getNumSkills	(BinDiff sim .83 conf .93, unverified)
 51250	getMaxSP
 513F4	getMaxHP
 514D1	getArmorClass
+5152B	drawCharacterStats	prints age/AC/level/HP/SP/experience/skills of a character (calls getAge, getArmorClass, getMaxHP, ...; by callees)
 519A8	statColor
+519E5	characterStatsDialog	character stats screen with command loop (by callees)
 51C85	def_51C61
 51D1D	jpt_51C61
 51D31	identifyOrFix	"Identify" / "Fix" (from strings)

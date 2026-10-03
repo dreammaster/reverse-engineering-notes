@@ -6078,6 +6078,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	128,	0X15230);
 	set_name	(0X170E9,	"jpt_16FCD");
 	create_insn	(0X170F7);
+	set_name	(0X170F7,	"drawParty");
 	create_insn	(x=0X170FA);
 	op_hex		(x,	1);
 	create_insn	(0X1710B);
@@ -8202,6 +8203,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B347);
 	op_stkvar	(x,	1);
 	create_insn	(0X1B358);
+	set_name	(0X1B358,	"moveMonsters");
 	create_insn	(x=0X1B35B);
 	op_hex		(x,	1);
 	set_cmt	(0X1B35F,	"n",	0);
@@ -13923,6 +13925,7 @@ static Bytes_2(void) {
 	MakeStruct	(0X27FD0,	"_stub_descr");
 	create_insn	(0X27FF0);
 	create_insn	(0X27FF5);
+	set_name	(0X27FF5,	"j_endingCutscene");
 	MakeStruct	(0X28000,	"_stub_descr");
 	create_insn	(0X28020);
 	create_insn	(0X28025);
@@ -13932,6 +13935,7 @@ static Bytes_2(void) {
 	create_insn	(0X28034);
 	set_name	(0X28034,	"j_ifProc");
 	create_insn	(0X28039);
+	set_name	(0X28039,	"j_trapOrLockEvent");
 	create_insn	(0X2803E);
 	create_insn	(0X28043);
 	set_name	(0X28043,	"j_setValue");
@@ -13996,6 +14000,7 @@ static Bytes_2(void) {
 	set_name	(0X2818F,	"j_getCurrentExperience");
 	create_insn	(0X28194);
 	create_insn	(0X28199);
+	set_name	(0X28199,	"j_confirmDialog");
 	create_insn	(0X2819E);
 	create_insn	(0X281A3);
 	create_insn	(0X281A8);
@@ -14013,6 +14018,7 @@ static Bytes_2(void) {
 	create_insn	(0X281D5);
 	create_insn	(0X281DA);
 	create_insn	(0X281DF);
+	set_name	(0X281DF,	"j_loadSaveDialog");
 	create_insn	(0X281E4);
 	create_insn	(0X281E9);
 	create_insn	(0X281EE);
@@ -14024,6 +14030,7 @@ static Bytes_2(void) {
 	create_insn	(0X28207);
 	MakeStruct	(0X28210,	"_stub_descr");
 	create_insn	(0X28230);
+	set_name	(0X28230,	"j_giveTreasure");
 	create_insn	(0X28235);
 	create_insn	(0X2823A);
 	set_name	(0X2823A,	"j_giveCharDamage");
@@ -14054,6 +14061,7 @@ static Bytes_2(void) {
 	create_insn	(0X282C5);
 	create_insn	(0X282CA);
 	create_insn	(0X282CF);
+	set_name	(0X282CF,	"j_trainCharacter");
 	create_insn	(0X282D4);
 	create_insn	(0X282D9);
 	create_insn	(0X282DE);
@@ -14095,6 +14103,7 @@ static Bytes_2(void) {
 	create_insn	(0X28385);
 	MakeStruct	(0X28390,	"_stub_descr");
 	create_insn	(0X283B0);
+	set_name	(0X283B0,	"j_doCombat");
 	create_insn	(0X283B5);
 	set_name	(0X283B5,	"j_setSpeedTable");
 	create_insn	(0X283BA);
@@ -14327,14 +14336,18 @@ static Bytes_2(void) {
 	create_insn	(0X28690);
 	create_insn	(0X28695);
 	create_insn	(0X2869A);
+	set_name	(0X2869A,	"j_drawCharacterStats");
 	create_insn	(0X2869F);
 	set_name	(0X2869F,	"j_castItemSpell");
 	create_insn	(0X286A4);
+	set_name	(0X286A4,	"j_characterInfoInventory");
 	create_insn	(0X286A9);
 	create_insn	(0X286AE);
 	set_name	(0X286AE,	"j_statColor");
 	create_insn	(0X286B3);
+	set_name	(0X286B3,	"j_characterStatsDialog");
 	create_insn	(0X286B8);
+	set_name	(0X286B8,	"j_characterInfoDialog");
 	create_insn	(0X286BD);
 	set_name	(0X286BD,	"j_getMaxSP");
 	create_insn	(0X286C2);
@@ -14802,6 +14815,15 @@ static Bytes_2(void) {
 	set_name	(0X2A648,	"aSDS");
 	create_strlit	(0X2A64E,	0X9);
 	set_name	(0X2A64E,	"aCrDVga");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2A657,	0X2);
 	set_name	(0X2A657,	"aC_3");
 	create_strlit	(0X2A684,	0X5);
@@ -14823,15 +14845,6 @@ static Bytes_2(void) {
 	create_word	(0X2A718);
 	create_word	(0X2A71A);
 	create_word	(0X2A71C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2A71E);
 	create_word	(0X2A720);
 	create_word	(0X2A722);
@@ -18433,6 +18446,15 @@ static Bytes_3(void) {
 	set_cmt	(0X381F5,	"y",	0);
 	create_insn	(0X381F5);
 	set_cmt	(0X381F9,	"x",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X38217);
 	set_cmt	(0X3821A,	"stream",	0);
 	set_cmt	(0X3821D,	"c",	0);
@@ -18458,15 +18480,6 @@ static Bytes_3(void) {
 	set_cmt	(0X38293,	"c",	0);
 	create_insn	(0X382A0);
 	create_insn	(0X382B6);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X382B9,	"stream",	0);
 	set_cmt	(0X382BC,	"c",	0);
 	create_insn	(x=0X382C5);
@@ -19092,6 +19105,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X39978);
 	op_stkvar	(x,	1);
 	create_insn	(0X3998B);
+	set_name	(0X3998B,	"endingCutscene");
 	create_insn	(x=0X3998E);
 	op_hex		(x,	1);
 	set_cmt	(0X39992,	"n",	0);
@@ -21108,6 +21122,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X3D8B1);
 	op_stkvar	(x,	0);
 	create_insn	(0X3D8C9);
+	set_name	(0X3D8C9,	"trapOrLockEvent");
 	create_insn	(x=0X3D8CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X3D8D3);
@@ -23315,6 +23330,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X40765);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X40772);
 	op_hex		(x,	1);
 	create_insn	(x=0X40781);
@@ -23354,15 +23378,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X40835);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4083A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4083E);
@@ -24139,6 +24154,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X41B1F);
 	op_stkvar	(x,	1);
 	create_insn	(0X41B2B);
+	set_name	(0X41B2B,	"confirmDialog");
 	create_insn	(x=0X41B2E);
 	op_hex		(x,	1);
 	set_cmt	(0X41B33,	"src",	0);
@@ -24193,6 +24209,7 @@ static Bytes_5(void) {
 	create_byte	(0X41CD9);
 	make_array	(0X41CD9,	0X14);
 	create_insn	(0X41CED);
+	set_name	(0X41CED,	"loadSaveDialog");
 	create_insn	(x=0X41CF0);
 	op_hex		(x,	1);
 	create_insn	(x=0X41CF5);
@@ -25774,6 +25791,7 @@ static Bytes_5(void) {
 	create_insn	(0X43DEA);
 	create_insn	(0X43E06);
 	create_insn	(0X43E0C);
+	set_name	(0X43E0C,	"giveTreasure");
 	create_insn	(x=0X43E0F);
 	op_hex		(x,	1);
 	set_cmt	(0X43E13,	"n",	0);
@@ -26968,6 +26986,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X45C19);
 	op_stkvar	(x,	1);
 	create_insn	(0X45C21);
+	set_name	(0X45C21,	"trainCharacter");
 	create_insn	(x=0X45C24);
 	op_hex		(x,	1);
 	create_insn	(x=0X45C2B);
@@ -28933,6 +28952,15 @@ static Bytes_5(void) {
 	create_insn	(0X4813C);
 	create_byte	(0X48158);
 	make_array	(0X48158,	0X14);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X4816C);
 	set_name	(0X4816C,	"townBank");
 	create_insn	(x=0X4816F);
@@ -28971,15 +28999,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48210);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4821A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4821D);
@@ -31355,6 +31374,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4B7AA);
 	op_stkvar	(x,	1);
 	create_insn	(0X4B7B5);
+	set_name	(0X4B7B5,	"doCombat");
 	create_insn	(x=0X4B7B8);
 	op_hex		(x,	1);
 	set_cmt	(0X4B7BB,	"n",	0);
@@ -33828,6 +33848,15 @@ static Bytes_6(void) {
 	create_insn	(0X4FBB0);
 	set_cmt	(0X4FBB8,	"jumptable 0004F954 case 49",	1);
 	create_insn	(0X4FBB8);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4FBC0,	"jumptable 0004F954 case 50",	1);
 	create_insn	(x=0X4FBC0);
 	op_stkvar	(x,	0);
@@ -33856,15 +33885,6 @@ static Bytes_6(void) {
 	create_insn	(0X4FC2D);
 	set_cmt	(0X4FC35,	"jumptable 0004F954 case 54",	1);
 	create_insn	(0X4FC35);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4FC3D,	"jumptable 0004F954 case 55",	1);
 	create_insn	(0X4FC3D);
 	set_cmt	(0X4FC45,	"jumptable 0004F954 case 56",	1);
@@ -34177,6 +34197,7 @@ static Bytes_7(void) {
 	op_plain_offset	(x,	128,	0X4FF60);
 	set_name	(0X50238,	"jpt_4FF71");
 	create_insn	(0X502D2);
+	set_name	(0X502D2,	"characterInfoDialog");
 	create_insn	(x=0X502D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X502E2);
@@ -34289,6 +34310,7 @@ static Bytes_7(void) {
 	create_byte	(0X50557);
 	make_array	(0X50557,	0X88);
 	create_insn	(0X505DF);
+	set_name	(0X505DF,	"characterInfoInventory");
 	create_insn	(x=0X505E2);
 	op_hex		(x,	1);
 	set_cmt	(0X505E7,	"n",	0);
@@ -35101,6 +35123,7 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X51525);
 	create_insn	(0X5152B);
+	set_name	(0X5152B,	"drawCharacterStats");
 	create_insn	(x=0X51532);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X51555);
@@ -35213,6 +35236,7 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(0X519DE);
 	create_insn	(0X519E5);
+	set_name	(0X519E5,	"characterStatsDialog");
 	create_insn	(x=0X519E8);
 	op_hex		(x,	1);
 	set_cmt	(0X519ED,	"n",	0);
@@ -36587,6 +36611,7 @@ static Functions_0(void) {
 	set_frame_size(0X16FB1, 0XA, 2, 0);
 	add_func    (0X170F7,0X1741A);
 	set_func_flags(0X170F7,0x5412);
+	set_func_cmt(0X170F7,	"party status line (BinDiff .62/.82)", 0);
 	set_frame_size(0X170F7, 0X1C, 2, 0);
 	define_local_var(0X170F7, 0X1741A, "[bp-0X12]", "buffer");
 	add_func    (0X1741A,0X17439);
@@ -36651,6 +36676,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B2A3, 0X4, 2, 0);
 	add_func    (0X1B358,0X1B669);
 	set_func_flags(0X1B358,0x5412);
+	set_func_cmt(0X1B358,	"BinDiff .68/.87; calls monstersAttack", 0);
 	set_frame_size(0X1B358, 0X14, 2, 0);
 	add_func    (0X1B669,0X1B6D1);
 	set_func_flags(0X1B669,0x5412);
@@ -37199,8 +37225,8 @@ static Functions_0(void) {
 	set_func_flags(0X27FF0,0x5482);
 	set_frame_size(0X27FF0, 0, 0, 0);
 	add_func    (0X27FF5,0X27FFA);
-	set_func_flags(0X27FF5,0x5482);
-	SetType(0X27FF5, "int __cdecl __far sub_27FF5(int, int);");
+	set_func_flags(0X27FF5,0x54c2);
+	SetType(0X27FF5, "int __cdecl __far j_endingCutscene(int, int);");
 	set_frame_size(0X27FF5, 0, 0, 0);
 	add_func    (0X28020,0X28025);
 	set_func_flags(0X28020,0x5482);
@@ -37219,7 +37245,7 @@ static Functions_0(void) {
 	set_func_flags(0X28034,0x54c2);
 	set_frame_size(0X28034, 0, 0, 0);
 	add_func    (0X28039,0X2803E);
-	set_func_flags(0X28039,0x5482);
+	set_func_flags(0X28039,0x54c2);
 	set_frame_size(0X28039, 0, 0, 0);
 	add_func    (0X2803E,0X28043);
 	set_func_flags(0X2803E,0x5482);
@@ -37365,8 +37391,8 @@ static Functions_0(void) {
 	set_func_flags(0X28194,0x5482);
 	set_frame_size(0X28194, 0, 0, 0);
 	add_func    (0X28199,0X2819E);
-	set_func_flags(0X28199,0x5482);
-	SetType(0X28199, "int __cdecl __far sub_28199(char *format);");
+	set_func_flags(0X28199,0x54c2);
+	SetType(0X28199, "int __cdecl __far j_confirmDialog(char *format);");
 	set_frame_size(0X28199, 0, 0, 0);
 	add_func    (0X2819E,0X281A3);
 	set_func_flags(0X2819E,0x5482);
@@ -37410,7 +37436,7 @@ static Functions_0(void) {
 	set_func_flags(0X281DA,0x5482);
 	set_frame_size(0X281DA, 0, 0, 0);
 	add_func    (0X281DF,0X281E4);
-	set_func_flags(0X281DF,0x5482);
+	set_func_flags(0X281DF,0x54c2);
 	set_frame_size(0X281DF, 0, 0, 0);
 	add_func    (0X281E4,0X281E9);
 	set_func_flags(0X281E4,0x5482);
@@ -37437,7 +37463,7 @@ static Functions_0(void) {
 	set_func_flags(0X28207,0x5482);
 	set_frame_size(0X28207, 0, 0, 0);
 	add_func    (0X28230,0X28235);
-	set_func_flags(0X28230,0x5482);
+	set_func_flags(0X28230,0x54c2);
 	set_frame_size(0X28230, 0, 0, 0);
 	add_func    (0X28235,0X2823A);
 	set_func_flags(0X28235,0x5482);
@@ -37511,7 +37537,7 @@ static Functions_0(void) {
 	set_func_flags(0X282CA,0x5482);
 	set_frame_size(0X282CA, 0, 0, 0);
 	add_func    (0X282CF,0X282D4);
-	set_func_flags(0X282CF,0x5482);
+	set_func_flags(0X282CF,0x54c2);
 	set_frame_size(0X282CF, 0, 0, 0);
 	add_func    (0X282D4,0X282D9);
 	set_func_flags(0X282D4,0x5482);
@@ -37611,7 +37637,7 @@ static Functions_0(void) {
 	SetType(0X28385, "int __cdecl __far sub_28385(char *format, char *buffer);");
 	set_frame_size(0X28385, 0, 0, 0);
 	add_func    (0X283B0,0X283B5);
-	set_func_flags(0X283B0,0x5482);
+	set_func_flags(0X283B0,0x54c2);
 	set_frame_size(0X283B0, 0, 0, 0);
 	add_func    (0X283B5,0X283BA);
 	set_func_flags(0X283B5,0x54c2);
@@ -37988,15 +38014,15 @@ static Functions_0(void) {
 	set_func_flags(0X28695,0x5482);
 	set_frame_size(0X28695, 0, 0, 0);
 	add_func    (0X2869A,0X2869F);
-	set_func_flags(0X2869A,0x5482);
-	SetType(0X2869A, "int __cdecl __far sub_2869A(int, char *buffer);");
+	set_func_flags(0X2869A,0x54c2);
+	SetType(0X2869A, "int __cdecl __far j_drawCharacterStats(int, char *buffer);");
 	set_frame_size(0X2869A, 0, 0, 0);
 	add_func    (0X2869F,0X286A4);
 	set_func_flags(0X2869F,0x54c2);
 	set_frame_size(0X2869F, 0, 0, 0);
 	add_func    (0X286A4,0X286A9);
-	set_func_flags(0X286A4,0x5482);
-	SetType(0X286A4, "int __cdecl __far sub_286A4(char *format);");
+	set_func_flags(0X286A4,0x54c2);
+	SetType(0X286A4, "int __cdecl __far j_characterInfoInventory(char *format);");
 	set_frame_size(0X286A4, 0, 0, 0);
 	add_func    (0X286A9,0X286AE);
 	set_func_flags(0X286A9,0x5482);
@@ -38005,10 +38031,10 @@ static Functions_0(void) {
 	set_func_flags(0X286AE,0x54c2);
 	set_frame_size(0X286AE, 0, 0, 0);
 	add_func    (0X286B3,0X286B8);
-	set_func_flags(0X286B3,0x5482);
+	set_func_flags(0X286B3,0x54c2);
 	set_frame_size(0X286B3, 0, 0, 0);
 	add_func    (0X286B8,0X286BD);
-	set_func_flags(0X286B8,0x5482);
+	set_func_flags(0X286B8,0x54c2);
 	set_frame_size(0X286B8, 0, 0, 0);
 	add_func    (0X286BD,0X286C2);
 	set_func_flags(0X286BD,0x54c2);
@@ -38150,7 +38176,8 @@ static Functions_0(void) {
 	set_frame_size(0X39930, 0X2, 2, 0);
 	add_func    (0X3998B,0X3BC29);
 	set_func_flags(0X3998B,0x5412);
-	SetType(0X3998B, "int __cdecl __far sub_3998B(int, int);");
+	SetType(0X3998B, "int __cdecl __far endingCutscene(int, int);");
+	set_func_cmt(0X3998B,	"8.8 KB, only called for event opcode 30 (cutscene end) via runMazeEvent", 0);
 	set_frame_size(0X3998B, 0X2C, 2, 0);
 	add_func    (0X3BC30,0X3BC65);
 	set_func_flags(0X3BC30,0x5412);
@@ -38198,6 +38225,7 @@ static Functions_0(void) {
 	define_local_var(0X3D7D2, 0X3D8C9, "[bp+0XA]", "format");
 	add_func    (0X3D8C9,0X3DCE4);
 	set_func_flags(0X3D8C9,0x5412);
+	set_func_cmt(0X3D8C9,	"uses getThievery, giveCharDamage, giveTake, rnd (by callees)", 0);
 	set_frame_size(0X3D8C9, 0X10, 2, 0);
 	add_func    (0X3DD20,0X3DF79);
 	set_func_flags(0X3DD20,0x5412);
@@ -38364,12 +38392,14 @@ static Functions_0(void) {
 	set_frame_size(0X41A2F, 0X2, 2, 0);
 	add_func    (0X41B2B,0X41CD9);
 	set_func_flags(0X41B2B,0x5412);
-	SetType(0X41B2B, "int __cdecl __far sub_41B2B(char *format);");
+	SetType(0X41B2B, "int __cdecl __far confirmDialog(char *format);");
+	set_func_cmt(0X41B2B,	"confirm.icn (by string)", 0);
 	set_frame_size(0X41B2B, 0X138, 2, 0);
 	define_local_var(0X41B2B, 0X41CD9, "[bp-0X134]", "buffer");
 	define_local_var(0X41B2B, 0X41CD9, "[bp+0X6]", "format");
 	add_func    (0X41CED,0X41EF1);
 	set_func_flags(0X41CED,0x5412);
+	set_func_cmt(0X41CED,	"loadSavedGame + saveMazeState (by callees)", 0);
 	set_frame_size(0X41CED, 0XA, 2, 0);
 	define_local_var(0X41CED, 0X41EF1, "[bp-0X6]", "dest");
 	add_func    (0X41EF1,0X41F5D);
@@ -38455,6 +38485,7 @@ static Functions_0(void) {
 	set_frame_size(0X43DC8, 0X4, 2, 0);
 	add_func    (0X43E0C,0X442BB);
 	set_func_flags(0X43E0C,0x5412);
+	set_func_cmt(0X43E0C,	"\"Your backpacks are full\"; hands out treasure (BinDiff giveTreasure .17 agrees)", 0);
 	set_frame_size(0X43E0C, 0XA, 2, 0);
 	add_func    (0X442EB,0X4432C);
 	set_func_flags(0X442EB,0x5412);
@@ -38528,6 +38559,7 @@ static Functions_0(void) {
 	set_frame_size(0X45BF3, 0X2, 2, 0);
 	add_func    (0X45C21,0X45F05);
 	set_func_flags(0X45C21,0x5412);
+	set_func_cmt(0X45C21,	"\"Come back when you're ...\" / \"You have learned all we can teach you\" (from strings)", 0);
 	set_frame_size(0X45C21, 0X10, 2, 0);
 	add_func    (0X45F29,0X464B4);
 	set_func_flags(0X45F29,0x5412);
@@ -38568,6 +38600,10 @@ static Functions_0(void) {
 	set_frame_size(0X46E49, 0X204, 2, 0);
 	define_local_var(0X46E49, 0X4781B, "[bp-0X200]", "buffer");
 	define_local_var(0X46E49, 0X4781B, "[bp-0X3E]", "s");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4789F,0X478FF);
 	set_func_flags(0X4789F,0x5412);
 	set_frame_size(0X4789F, 0X2, 2, 0);
@@ -38593,10 +38629,6 @@ static Functions_0(void) {
 	set_frame_size(0X47ECE, 0X26, 2, 0);
 	define_local_var(0X47ECE, 0X48158, "[bp-0X20]", "buffer");
 	define_local_var(0X47ECE, 0X48158, "[bp-0XC]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4816C,0X483E7);
 	set_func_flags(0X4816C,0x5412);
 	set_func_cmt(0X4816C,	"bank.m, bank.icn, bank2.icn", 0);
@@ -38748,6 +38780,7 @@ static Functions_1(void) {
 	define_local_var(0X4B5AF, 0X4B7B5, "[bp-0X20]", "s");
 	add_func    (0X4B7B5,0X4BCC5);
 	set_func_flags(0X4B7B5,0x5412);
+	set_func_cmt(0X4B7B5,	"combat main loop: attack/block/allHaveGone/changeTime/getMonsterDescriptions/controlPanel (by callees; BinDiff doCombat .18 agrees)", 0);
 	set_frame_size(0X4B7B5, 0X6, 2, 0);
 	add_func    (0X4BD90,0X4BD9F);
 	set_func_flags(0X4BD90,0x5412);
@@ -39152,11 +39185,13 @@ static Functions_1(void) {
 	set_frame_size(0X4FF60, 0, 2, 0);
 	add_func    (0X502D2,0X50557);
 	set_func_flags(0X502D2,0x5412);
+	set_func_cmt(0X502D2,	"character info; calls Awards_show (by callees)", 0);
 	set_frame_size(0X502D2, 0XE, 2, 0);
 	define_local_var(0X502D2, 0X50557, "[bp-0X8]", "format");
 	add_func    (0X505DF,0X510E5);
 	set_func_flags(0X505DF,0x5412);
-	SetType(0X505DF, "int __cdecl __far sub_505DF(char *format);");
+	SetType(0X505DF, "int __cdecl __far characterInfoInventory(char *format);");
+	set_func_cmt(0X505DF,	"character info/inventory page; calls itemsDialog (by callees)", 0);
 	set_frame_size(0X505DF, 0X1C4, 2, 0);
 	define_local_var(0X505DF, 0X510E5, "[bp-0X1C0]", "s");
 	define_local_var(0X505DF, 0X510E5, "[bp-0X30]", "buffer");
@@ -39186,7 +39221,8 @@ static Functions_1(void) {
 	set_frame_size(0X514D1, 0X4, 2, 0);
 	add_func    (0X5152B,0X519A8);
 	set_func_flags(0X5152B,0x5412);
-	SetType(0X5152B, "int __cdecl __far sub_5152B(int, char *buffer);");
+	SetType(0X5152B, "int __cdecl __far drawCharacterStats(int, char *buffer);");
+	set_func_cmt(0X5152B,	"prints age/AC/level/HP/SP/experience/skills of a character (calls getAge, getArmorClass, getMaxHP, ...; by callees)", 0);
 	set_frame_size(0X5152B, 0X2, 2, 0);
 	define_local_var(0X5152B, 0X519A8, "[bp+0X8]", "buffer");
 	add_func    (0X519A8,0X519E5);
@@ -39194,6 +39230,7 @@ static Functions_1(void) {
 	set_frame_size(0X519A8, 0X4, 2, 0);
 	add_func    (0X519E5,0X51C4A);
 	set_func_flags(0X519E5,0x5412);
+	set_func_cmt(0X519E5,	"character stats screen with command loop (by callees)", 0);
 	set_frame_size(0X519E5, 0X326, 2, 0);
 	define_local_var(0X519E5, 0X51C4A, "[bp-0X322]", "s");
 	add_func    (0X51C4A,0X51D1D);
