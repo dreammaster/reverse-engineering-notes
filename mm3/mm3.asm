@@ -2586,7 +2586,7 @@ sub_152FC       endp
 ; Attributes: bp-based frame
 
 addTime         proc far                ; CODE XREF: changeTime+373↓p
-                                        ; sub_3C282+A28↓P ...
+                                        ; giveTake+A28↓P ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -3233,7 +3233,7 @@ loc_1575E:                              ; CODE XREF: sub_15736+13↑j
 ; ---------------------------------------------------------------------------
 
 loc_15783:                              ; CODE XREF: sub_15736+5B↓j
-                call    sub_1B669
+                call    drawView
                 dec     byte_36FB1
 
 loc_1578C:                              ; CODE XREF: sub_15736+4B↑j
@@ -3242,7 +3242,7 @@ loc_1578C:                              ; CODE XREF: sub_15736+4B↑j
 
 loc_15793:                              ; CODE XREF: sub_15736+3F↑j
                 mov     byte_34C1B, 0
-                call    sub_1B669
+                call    drawView
 
 loc_1579D:                              ; CODE XREF: sub_15736+2D↑j
                 mov     al, byte_36FEE
@@ -3746,8 +3746,8 @@ jpt_15906       dw offset loc_1590B     ; DATA XREF: sub_15736+1D0↑r
 
 ; Attributes: bp-based frame
 
-sub_15B50       proc far                ; CODE XREF: sub_1C195+16F6↓P
-                                        ; sub_203FE+F↓P ...
+sub_15B50       proc far                ; CODE XREF: prepareIndoorView+16F6↓P
+                                        ; drawViewOutdoors+F↓P ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -4498,7 +4498,7 @@ sub_15B50       endp
 ; Attributes: bp-based frame
 
 sub_161AD       proc far                ; CODE XREF: runMazeEvent+12↓P
-                                        ; sub_1C195:loc_1D8CA↓P ...
+                                        ; prepareIndoorView:loc_1D8CA↓P ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -5483,7 +5483,7 @@ sub_1693D       endp
 ; Attributes: bp-based frame
 
 changeTime      proc far                ; CODE XREF: chargeStep+1C↓p
-                                        ; sub_3C282+1FE↓P ...
+                                        ; giveTake+1FE↓P ...
 
 arg_0           = word ptr  6
 
@@ -7067,8 +7067,8 @@ MemFree         endp
 
 ; Attributes: bp-based frame
 
-sub_17439       proc far                ; CODE XREF: sub_1E407+15E4↓P
-                                        ; sub_2045A+11D6↓P
+sub_17439       proc far                ; CODE XREF: renderIndoorView+15E4↓P
+                                        ; renderOutdoorView+11D6↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -8540,8 +8540,8 @@ sub_17439       endp
 
 ; Attributes: bp-based frame
 
-sub_17F38       proc far                ; CODE XREF: sub_1E407+1E42↓P
-                                        ; sub_2045A+15F3↓P
+sub_17F38       proc far                ; CODE XREF: renderIndoorView+1E42↓P
+                                        ; renderOutdoorView+15F3↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -9461,7 +9461,7 @@ sub_17F38       endp
 ; Attributes: bp-based frame
 
 sub_1862A       proc far                ; CODE XREF: sub_1DB3D+44A↓P
-                                        ; sub_2045A+1936↓P
+                                        ; renderOutdoorView+1936↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -10222,7 +10222,7 @@ sub_1862A       endp
 ; Attributes: bp-based frame
 
 sub_18BF1       proc far                ; CODE XREF: sub_1DB3D+7D5↓P
-                                        ; sub_2045A+1DD0↓P
+                                        ; renderOutdoorView+1DD0↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -11602,7 +11602,7 @@ mazeUpdateSlot  endp
 ; 6.7 KB event interpreter: "What's the Password?", "picks the lock", Hologram sequences (name from strings, unverified)
 ; Attributes: bp-based frame
 
-runMazeEvent    proc far                ; CODE XREF: sub_1B669+61↓P
+runMazeEvent    proc far                ; CODE XREF: drawView+61↓P
                                         ; death+6A↓P ...
 
 dest            = byte ptr -0CAh
@@ -11906,7 +11906,7 @@ evt_op32:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1985E
-                call    sub_1B669
+                call    drawView
 
 loc_1985E:                              ; CODE XREF: runMazeEvent+24F↑j
                 mov     ax, [bp+var_A]
@@ -11965,7 +11965,7 @@ evt_op01:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_198D0
-                call    sub_1B669
+                call    drawView
 
 loc_198D0:                              ; CODE XREF: runMazeEvent+2C1↑j
                 cmp     byte_332D3, 0
@@ -12063,7 +12063,7 @@ evt_op05:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1998A
-                call    sub_1B669
+                call    drawView
 
 loc_1998A:                              ; CODE XREF: runMazeEvent+37B↑j
                 cmp     word_373A4, 0
@@ -12146,7 +12146,7 @@ evt_op07:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_19A41
-                call    sub_1B669
+                call    drawView
 
 loc_19A41:                              ; CODE XREF: runMazeEvent+432↑j
                 les     bx, Maze_evtData
@@ -12581,7 +12581,7 @@ evt_op12:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_19DC6
-                call    sub_1B669
+                call    drawView
 
 loc_19DC6:                              ; CODE XREF: runMazeEvent+7B7↑j
                 les     bx, Maze_evtData
@@ -12942,7 +12942,7 @@ loc_1A0D3:                              ; CODE XREF: runMazeEvent+B39↓j
                 push    ax              ; int
                 push    dx              ; int
                 push    ax              ; int
-                call    sub_28048
+                call    j_giveTake
                 add     sp, 0Eh
                 cmp     [bp+var_12], 52h ; 'R'
                 jnz     short loc_1A136
@@ -13056,7 +13056,7 @@ loc_1A1D8:                              ; CODE XREF: runMazeEvent+BCB↑j
                 push    ax              ; int
                 push    dx              ; int
                 push    ax              ; int
-                call    sub_28048
+                call    j_giveTake
                 add     sp, 0Eh
                 cmp     [bp+var_10], 52h ; 'R'
                 jnz     short loc_1A219
@@ -13118,7 +13118,7 @@ loc_1A26F:                              ; CODE XREF: runMazeEvent+B95↑j
                 push    ax              ; int
                 push    dx              ; int
                 push    ax              ; int
-                call    sub_28048
+                call    j_giveTake
                 add     sp, 0Eh
                 jmp     evt_op13        ; jumptable 0001984B default case, case 13
 ; ---------------------------------------------------------------------------
@@ -13146,7 +13146,7 @@ loc_1A29E:                              ; CODE XREF: runMazeEvent+D27↓j
                 push    [bp+var_40]     ; int
                 push    [bp+var_42]     ; int
                 push    [bp+var_14]     ; int
-                call    sub_28048
+                call    j_giveTake
                 add     sp, 0Eh
                 mov     [bp+var_6], ax
                 mov     ax, [bp+var_14]
@@ -13236,7 +13236,7 @@ loc_1A335:                              ; CODE XREF: runMazeEvent+C7F↑j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax              ; int
-                call    sub_28048
+                call    j_giveTake
                 add     sp, 0Eh
                 or      ax, ax
                 jz      short loc_1A362
@@ -13383,7 +13383,7 @@ loc_1A45D:                              ; CODE XREF: runMazeEvent+E4E↑j
                 push    ax
                 call    sub_15736
                 pop     cx
-                call    sub_1B669
+                call    drawView
 
 loc_1A497:                              ; CODE XREF: runMazeEvent+E2B↑j
                 mov     byte_37383, 0
@@ -13954,7 +13954,7 @@ loc_1A96F:                              ; CODE XREF: runMazeEvent+1321↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1A97D
-                call    sub_1B669
+                call    drawView
 
 loc_1A97D:                              ; CODE XREF: runMazeEvent+136E↑j
                 cmp     word_373A4, 0
@@ -14047,7 +14047,7 @@ evt_op21:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1AA38
-                call    sub_1B669
+                call    drawView
 
 loc_1AA38:                              ; CODE XREF: runMazeEvent+1429↑j
                 les     bx, Maze_evtData
@@ -14146,7 +14146,7 @@ evt_op22:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1AB07
-                call    sub_1B669
+                call    drawView
 
 loc_1AB07:                              ; CODE XREF: runMazeEvent+14F8↑j
                 cmp     word_373A4, 0
@@ -14448,7 +14448,7 @@ loc_1AD74:                              ; CODE XREF: runMazeEvent+1792↓j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax              ; int
-                call    sub_28043
+                call    j_setValue
                 add     sp, 8
                 inc     [bp+var_4]
 
@@ -14470,7 +14470,7 @@ loc_1AD9F:                              ; CODE XREF: runMazeEvent+1763↑j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax              ; int
-                call    sub_28043
+                call    j_setValue
 
 loc_1ADB9:                              ; CODE XREF: runMazeEvent+354↑j
                                         ; runMazeEvent+108A↑j
@@ -14874,8 +14874,8 @@ sub_1B16B       endp
 
 ; Attributes: bp-based frame
 
-sub_1B198       proc far                ; CODE XREF: sub_1E407+1F84↓P
-                                        ; sub_2045A+1FCF↓P
+sub_1B198       proc far                ; CODE XREF: renderIndoorView+1F84↓P
+                                        ; renderOutdoorView+1FCF↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -15112,7 +15112,7 @@ sub_1B2A3       endp
 ; Attributes: bp-based frame
 
 sub_1B358       proc far                ; CODE XREF: chargeStep+27↑P
-                                        ; sub_1C195+1730↓P ...
+                                        ; prepareIndoorView+1730↓P ...
 
 var_10          = word ptr -10h
 var_E           = word ptr -0Eh
@@ -15531,23 +15531,24 @@ seg004          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)
 ; Attributes: bp-based frame
 
-sub_1B669       proc far                ; CODE XREF: sub_15736:loc_15783↑P
+drawView        proc far                ; CODE XREF: sub_15736:loc_15783↑P
                                         ; sub_15736+62↑P ...
                 push    bp
                 mov     bp, sp
                 cmp     Maze_wrapMode, 0
                 jz      short loc_1B67A
-                call    sub_203FE
+                call    drawViewOutdoors
                 jmp     short loc_1B684
 ; ---------------------------------------------------------------------------
 
-loc_1B67A:                              ; CODE XREF: sub_1B669+8↑j
-                call    sub_1C195
-                call    sub_1E407
+loc_1B67A:                              ; CODE XREF: drawView+8↑j
+                call    prepareIndoorView
+                call    renderIndoorView
 
-loc_1B684:                              ; CODE XREF: sub_1B669+F↑j
+loc_1B684:                              ; CODE XREF: drawView+F↑j
                 mov     byte_333BE, 1
                 cmp     byte_34B92, 0
                 jnz     short loc_1B69E
@@ -15556,14 +15557,14 @@ loc_1B684:                              ; CODE XREF: sub_1B669+F↑j
                 cmp     byte_34B94, 0
                 jz      short loc_1B6CF
 
-loc_1B69E:                              ; CODE XREF: sub_1B669+25↑j
-                                        ; sub_1B669+2C↑j
+loc_1B69E:                              ; CODE XREF: drawView+25↑j
+                                        ; drawView+2C↑j
                 cmp     Engine_mode, 1
                 jz      short loc_1B6AC
                 cmp     Engine_mode, 5
                 jnz     short loc_1B6CF
 
-loc_1B6AC:                              ; CODE XREF: sub_1B669+3A↑j
+loc_1B6AC:                              ; CODE XREF: drawView+3A↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -15577,19 +15578,19 @@ loc_1B6AC:                              ; CODE XREF: sub_1B669+3A↑j
                 jz      short loc_1B6CF
                 call    runMazeEvent
 
-loc_1B6CF:                              ; CODE XREF: sub_1B669+33↑j
-                                        ; sub_1B669+41↑j ...
+loc_1B6CF:                              ; CODE XREF: drawView+33↑j
+                                        ; drawView+41↑j ...
                 pop     bp
                 retf
-sub_1B669       endp
+drawView        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1B6D1       proc far                ; CODE XREF: sub_1E407+1F5D↓P
-                                        ; sub_2045A:loc_22402↓P ...
+sub_1B6D1       proc far                ; CODE XREF: renderIndoorView+1F5D↓P
+                                        ; renderOutdoorView:loc_22402↓P ...
                 push    bp
                 mov     bp, sp
                 push    si
@@ -16841,8 +16842,8 @@ mazeSetBits     endp
 
 ; Attributes: bp-based frame
 
-sub_1BEE9       proc far                ; CODE XREF: sub_1C195+22↓p
-                                        ; sub_203FE+5↓P
+sub_1BEE9       proc far                ; CODE XREF: prepareIndoorView+22↓p
+                                        ; drawViewOutdoors+5↓P
                 push    bp
                 mov     bp, sp
                 mov     al, 0
@@ -17055,7 +17056,7 @@ sub_1BEE9       endp
 ; Attributes: bp-based frame
 
 sub_1C13C       proc far                ; CODE XREF: sub_15736+34↑P
-                                        ; sub_1C195+26↓p ...
+                                        ; prepareIndoorView+26↓p ...
                 push    bp
                 mov     bp, sp
                 mov     al, byte_2886E
@@ -17108,9 +17109,10 @@ sub_1C13C       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; 5.9 KB, called first by drawView (by call graph, unverified)
 ; Attributes: bp-based frame
 
-sub_1C195       proc far                ; CODE XREF: sub_1B669:loc_1B67A↑P
+prepareIndoorView proc far              ; CODE XREF: drawView:loc_1B67A↑P
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -17173,8 +17175,8 @@ var_2           = word ptr -2
                 jmp     short loc_1C24C
 ; ---------------------------------------------------------------------------
 
-loc_1C213:                              ; CODE XREF: sub_1C195+75↑j
-                                        ; sub_1C195+7A↑j
+loc_1C213:                              ; CODE XREF: prepareIndoorView+75↑j
+                                        ; prepareIndoorView+7A↑j
                 mov     ax, 7777h
                 push    ax
                 mov     ax, di
@@ -17200,8 +17202,8 @@ loc_1C213:                              ; CODE XREF: sub_1C195+75↑j
                 jz      short loc_1C24C
                 mov     byte_340C5, 1
 
-loc_1C24C:                              ; CODE XREF: sub_1C195+7C↑j
-                                        ; sub_1C195+B0↑j
+loc_1C24C:                              ; CODE XREF: prepareIndoorView+7C↑j
+                                        ; prepareIndoorView+B0↑j
                 mov     ax, di
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17248,7 +17250,7 @@ loc_1C24C:                              ; CODE XREF: sub_1C195+7C↑j
                 jmp     cs:jpt_1C2AA[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C2AF:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2AF:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 mov     al, byte_373D5  ; jumptable 0001C2AA case 3
                 inc     al
@@ -17257,25 +17259,25 @@ loc_1C2AF:                              ; CODE XREF: sub_1C195+115↑j
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2BC:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2BC:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 inc     byte_332D8      ; jumptable 0001C2AA case 4
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2C2:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2C2:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 inc     byte_332D4      ; jumptable 0001C2AA case 5
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2C8:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2C8:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 inc     byte_373D5      ; jumptable 0001C2AA case 1
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2CE:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2CE:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 mov     al, byte_373D5  ; jumptable 0001C2AA case 2
                 inc     al
@@ -17284,18 +17286,18 @@ loc_1C2CE:                              ; CODE XREF: sub_1C195+115↑j
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2DB:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2DB:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 inc     byte_332E3      ; jumptable 0001C2AA case 6
                 jmp     short def_1C2AA ; jumptable 0001C2AA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C2E1:                              ; CODE XREF: sub_1C195+115↑j
+loc_1C2E1:                              ; CODE XREF: prepareIndoorView+115↑j
                                         ; DATA XREF: seg004:jpt_1C2AA↓o
                 inc     byte_37381      ; jumptable 0001C2AA case 7
 
-def_1C2AA:                              ; CODE XREF: sub_1C195+111↑j
-                                        ; sub_1C195+125↑j ...
+def_1C2AA:                              ; CODE XREF: prepareIndoorView+111↑j
+                                        ; prepareIndoorView+125↑j ...
                 mov     ax, di          ; jumptable 0001C2AA default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17342,18 +17344,18 @@ def_1C2AA:                              ; CODE XREF: sub_1C195+111↑j
                 jmp     cs:jpt_1C343[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C348:                              ; CODE XREF: sub_1C195+1AE↑j
+loc_1C348:                              ; CODE XREF: prepareIndoorView+1AE↑j
                                         ; DATA XREF: seg004:jpt_1C343↓o
                 inc     byte_333B5      ; jumptable 0001C343 cases 1-6
                 jmp     short def_1C343 ; jumptable 0001C343 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C34E:                              ; CODE XREF: sub_1C195+1AE↑j
+loc_1C34E:                              ; CODE XREF: prepareIndoorView+1AE↑j
                                         ; DATA XREF: seg004:jpt_1C343↓o
                 inc     byte_332D1      ; jumptable 0001C343 case 7
 
-def_1C343:                              ; CODE XREF: sub_1C195+1AA↑j
-                                        ; sub_1C195+1B7↑j
+def_1C343:                              ; CODE XREF: prepareIndoorView+1AA↑j
+                                        ; prepareIndoorView+1B7↑j
                 mov     ax, di          ; jumptable 0001C343 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17400,7 +17402,7 @@ def_1C343:                              ; CODE XREF: sub_1C195+1AA↑j
                 jmp     cs:jpt_1C3B0[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C3B5:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3B5:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 mov     al, byte_33316  ; jumptable 0001C3B0 case 3
                 inc     al
@@ -17409,31 +17411,31 @@ loc_1C3B5:                              ; CODE XREF: sub_1C195+21B↑j
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3C2:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3C2:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 inc     byte_34BF8      ; jumptable 0001C3B0 case 4
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3C8:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3C8:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 inc     byte_34BEF      ; jumptable 0001C3B0 case 5
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3CE:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3CE:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 inc     byte_33316      ; jumptable 0001C3B0 case 1
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3D4:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3D4:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 inc     byte_34C01      ; jumptable 0001C3B0 case 6
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3DA:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3DA:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 mov     al, byte_33316  ; jumptable 0001C3B0 case 2
                 inc     al
@@ -17442,12 +17444,12 @@ loc_1C3DA:                              ; CODE XREF: sub_1C195+21B↑j
                 jmp     short def_1C3B0 ; jumptable 0001C3B0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C3E7:                              ; CODE XREF: sub_1C195+21B↑j
+loc_1C3E7:                              ; CODE XREF: prepareIndoorView+21B↑j
                                         ; DATA XREF: seg004:jpt_1C3B0↓o
                 inc     byte_332A9      ; jumptable 0001C3B0 case 7
 
-def_1C3B0:                              ; CODE XREF: sub_1C195+217↑j
-                                        ; sub_1C195+22B↑j ...
+def_1C3B0:                              ; CODE XREF: prepareIndoorView+217↑j
+                                        ; prepareIndoorView+22B↑j ...
                 mov     ax, di          ; jumptable 0001C3B0 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17494,18 +17496,18 @@ def_1C3B0:                              ; CODE XREF: sub_1C195+217↑j
                 jmp     cs:jpt_1C449[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C44E:                              ; CODE XREF: sub_1C195+2B4↑j
+loc_1C44E:                              ; CODE XREF: prepareIndoorView+2B4↑j
                                         ; DATA XREF: seg004:jpt_1C449↓o
                 inc     byte_3343E      ; jumptable 0001C449 cases 1-6
                 jmp     short def_1C449 ; jumptable 0001C449 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C454:                              ; CODE XREF: sub_1C195+2B4↑j
+loc_1C454:                              ; CODE XREF: prepareIndoorView+2B4↑j
                                         ; DATA XREF: seg004:jpt_1C449↓o
                 inc     byte_332F9      ; jumptable 0001C449 case 7
 
-def_1C449:                              ; CODE XREF: sub_1C195+2B0↑j
-                                        ; sub_1C195+2BD↑j
+def_1C449:                              ; CODE XREF: prepareIndoorView+2B0↑j
+                                        ; prepareIndoorView+2BD↑j
                 mov     ax, di          ; jumptable 0001C449 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17552,7 +17554,7 @@ def_1C449:                              ; CODE XREF: sub_1C195+2B0↑j
                 jmp     cs:jpt_1C4B6[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C4BB:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4BB:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 mov     al, byte_373D6  ; jumptable 0001C4B6 case 3
                 inc     al
@@ -17561,31 +17563,31 @@ loc_1C4BB:                              ; CODE XREF: sub_1C195+321↑j
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4C8:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4C8:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 inc     byte_332D9      ; jumptable 0001C4B6 case 4
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4CE:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4CE:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 inc     byte_332D5      ; jumptable 0001C4B6 case 5
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4D4:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4D4:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 inc     byte_373D6      ; jumptable 0001C4B6 case 1
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4DA:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4DA:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 inc     byte_332E4      ; jumptable 0001C4B6 case 6
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4E0:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4E0:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 mov     al, byte_373D6  ; jumptable 0001C4B6 case 2
                 inc     al
@@ -17594,12 +17596,12 @@ loc_1C4E0:                              ; CODE XREF: sub_1C195+321↑j
                 jmp     short def_1C4B6 ; jumptable 0001C4B6 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C4ED:                              ; CODE XREF: sub_1C195+321↑j
+loc_1C4ED:                              ; CODE XREF: prepareIndoorView+321↑j
                                         ; DATA XREF: seg004:jpt_1C4B6↓o
                 inc     byte_37382      ; jumptable 0001C4B6 case 7
 
-def_1C4B6:                              ; CODE XREF: sub_1C195+31D↑j
-                                        ; sub_1C195+331↑j ...
+def_1C4B6:                              ; CODE XREF: prepareIndoorView+31D↑j
+                                        ; prepareIndoorView+331↑j ...
                 mov     ax, di          ; jumptable 0001C4B6 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17646,7 +17648,7 @@ def_1C4B6:                              ; CODE XREF: sub_1C195+31D↑j
                 jmp     cs:jpt_1C54F[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C554:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C554:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 mov     al, byte_332AE  ; jumptable 0001C54F case 3
                 inc     al
@@ -17655,31 +17657,31 @@ loc_1C554:                              ; CODE XREF: sub_1C195+3BA↑j
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C561:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C561:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 inc     byte_332E5      ; jumptable 0001C54F case 4
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C567:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C567:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 inc     byte_332DA      ; jumptable 0001C54F case 5
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C56D:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C56D:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 inc     byte_332AE      ; jumptable 0001C54F case 1
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C573:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C573:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 inc     byte_332ED      ; jumptable 0001C54F case 6
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C579:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C579:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 mov     al, byte_332AE  ; jumptable 0001C54F case 2
                 inc     al
@@ -17688,12 +17690,12 @@ loc_1C579:                              ; CODE XREF: sub_1C195+3BA↑j
                 jmp     short def_1C54F ; jumptable 0001C54F default case
 ; ---------------------------------------------------------------------------
 
-loc_1C586:                              ; CODE XREF: sub_1C195+3BA↑j
+loc_1C586:                              ; CODE XREF: prepareIndoorView+3BA↑j
                                         ; DATA XREF: seg004:jpt_1C54F↓o
                 inc     byte_37388      ; jumptable 0001C54F case 7
 
-def_1C54F:                              ; CODE XREF: sub_1C195+3B6↑j
-                                        ; sub_1C195+3CA↑j ...
+def_1C54F:                              ; CODE XREF: prepareIndoorView+3B6↑j
+                                        ; prepareIndoorView+3CA↑j ...
                 mov     ax, di          ; jumptable 0001C54F default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17740,18 +17742,18 @@ def_1C54F:                              ; CODE XREF: sub_1C195+3B6↑j
                 jmp     cs:jpt_1C5E8[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C5ED:                              ; CODE XREF: sub_1C195+453↑j
+loc_1C5ED:                              ; CODE XREF: prepareIndoorView+453↑j
                                         ; DATA XREF: seg004:jpt_1C5E8↓o
                 inc     byte_34BC7      ; jumptable 0001C5E8 cases 1-6
                 jmp     short def_1C5E8 ; jumptable 0001C5E8 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C5F3:                              ; CODE XREF: sub_1C195+453↑j
+loc_1C5F3:                              ; CODE XREF: prepareIndoorView+453↑j
                                         ; DATA XREF: seg004:jpt_1C5E8↓o
                 inc     byte_332D0      ; jumptable 0001C5E8 case 7
 
-def_1C5E8:                              ; CODE XREF: sub_1C195+44F↑j
-                                        ; sub_1C195+45C↑j
+def_1C5E8:                              ; CODE XREF: prepareIndoorView+44F↑j
+                                        ; prepareIndoorView+45C↑j
                 mov     ax, di          ; jumptable 0001C5E8 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17798,7 +17800,7 @@ def_1C5E8:                              ; CODE XREF: sub_1C195+44F↑j
                 jmp     cs:jpt_1C655[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C65A:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C65A:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 mov     al, byte_34B8D  ; jumptable 0001C655 case 3
                 inc     al
@@ -17807,31 +17809,31 @@ loc_1C65A:                              ; CODE XREF: sub_1C195+4C0↑j
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C667:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C667:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 inc     byte_34BF7      ; jumptable 0001C655 case 4
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C66D:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C66D:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 inc     byte_34BEE      ; jumptable 0001C655 case 5
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C673:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C673:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 inc     byte_34B8D      ; jumptable 0001C655 case 1
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C679:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C679:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 inc     byte_34C00      ; jumptable 0001C655 case 6
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C67F:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C67F:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 mov     al, byte_34B8D  ; jumptable 0001C655 case 2
                 inc     al
@@ -17840,12 +17842,12 @@ loc_1C67F:                              ; CODE XREF: sub_1C195+4C0↑j
                 jmp     short def_1C655 ; jumptable 0001C655 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C68C:                              ; CODE XREF: sub_1C195+4C0↑j
+loc_1C68C:                              ; CODE XREF: prepareIndoorView+4C0↑j
                                         ; DATA XREF: seg004:jpt_1C655↓o
                 inc     byte_332A8      ; jumptable 0001C655 case 7
 
-def_1C655:                              ; CODE XREF: sub_1C195+4BC↑j
-                                        ; sub_1C195+4D0↑j ...
+def_1C655:                              ; CODE XREF: prepareIndoorView+4BC↑j
+                                        ; prepareIndoorView+4D0↑j ...
                 mov     ax, di          ; jumptable 0001C655 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17892,18 +17894,18 @@ def_1C655:                              ; CODE XREF: sub_1C195+4BC↑j
                 jmp     cs:jpt_1C6EE[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C6F3:                              ; CODE XREF: sub_1C195+559↑j
+loc_1C6F3:                              ; CODE XREF: prepareIndoorView+559↑j
                                         ; DATA XREF: seg004:jpt_1C6EE↓o
                 inc     byte_34C1A      ; jumptable 0001C6EE cases 1-6
                 jmp     short def_1C6EE ; jumptable 0001C6EE default case
 ; ---------------------------------------------------------------------------
 
-loc_1C6F9:                              ; CODE XREF: sub_1C195+559↑j
+loc_1C6F9:                              ; CODE XREF: prepareIndoorView+559↑j
                                         ; DATA XREF: seg004:jpt_1C6EE↓o
                 inc     byte_332F8      ; jumptable 0001C6EE case 7
 
-def_1C6EE:                              ; CODE XREF: sub_1C195+555↑j
-                                        ; sub_1C195+562↑j
+def_1C6EE:                              ; CODE XREF: prepareIndoorView+555↑j
+                                        ; prepareIndoorView+562↑j
                 mov     ax, di          ; jumptable 0001C6EE default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -17950,7 +17952,7 @@ def_1C6EE:                              ; CODE XREF: sub_1C195+555↑j
                 jmp     cs:jpt_1C75B[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C760:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C760:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 mov     al, byte_332AF  ; jumptable 0001C75B case 3
                 inc     al
@@ -17959,31 +17961,31 @@ loc_1C760:                              ; CODE XREF: sub_1C195+5C6↑j
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C76D:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C76D:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 inc     byte_332E6      ; jumptable 0001C75B case 4
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C773:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C773:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 inc     byte_332DB      ; jumptable 0001C75B case 5
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C779:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C779:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 inc     byte_332AF      ; jumptable 0001C75B case 1
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C77F:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C77F:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 inc     byte_332EE      ; jumptable 0001C75B case 6
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C785:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C785:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 mov     al, byte_332AF  ; jumptable 0001C75B case 2
                 inc     al
@@ -17992,12 +17994,12 @@ loc_1C785:                              ; CODE XREF: sub_1C195+5C6↑j
                 jmp     short def_1C75B ; jumptable 0001C75B default case
 ; ---------------------------------------------------------------------------
 
-loc_1C792:                              ; CODE XREF: sub_1C195+5C6↑j
+loc_1C792:                              ; CODE XREF: prepareIndoorView+5C6↑j
                                         ; DATA XREF: seg004:jpt_1C75B↓o
                 inc     byte_37389      ; jumptable 0001C75B case 7
 
-def_1C75B:                              ; CODE XREF: sub_1C195+5C2↑j
-                                        ; sub_1C195+5D6↑j ...
+def_1C75B:                              ; CODE XREF: prepareIndoorView+5C2↑j
+                                        ; prepareIndoorView+5D6↑j ...
                 mov     ax, di          ; jumptable 0001C75B default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18044,7 +18046,7 @@ def_1C75B:                              ; CODE XREF: sub_1C195+5C2↑j
                 jmp     cs:jpt_1C7F4[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C7F9:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C7F9:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 mov     al, byte_31451  ; jumptable 0001C7F4 case 3
                 inc     al
@@ -18053,31 +18055,31 @@ loc_1C7F9:                              ; CODE XREF: sub_1C195+65F↑j
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C806:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C806:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 inc     byte_35D5B      ; jumptable 0001C7F4 case 4
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C80C:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C80C:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 inc     byte_35D56      ; jumptable 0001C7F4 case 5
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C812:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C812:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 inc     byte_31451      ; jumptable 0001C7F4 case 1
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C818:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C818:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 inc     byte_36FA9      ; jumptable 0001C7F4 case 6
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C81E:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C81E:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 mov     al, byte_31451  ; jumptable 0001C7F4 case 2
                 inc     al
@@ -18086,12 +18088,12 @@ loc_1C81E:                              ; CODE XREF: sub_1C195+65F↑j
                 jmp     short def_1C7F4 ; jumptable 0001C7F4 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C82B:                              ; CODE XREF: sub_1C195+65F↑j
+loc_1C82B:                              ; CODE XREF: prepareIndoorView+65F↑j
                                         ; DATA XREF: seg004:jpt_1C7F4↓o
                 inc     byte_333B8      ; jumptable 0001C7F4 case 7
 
-def_1C7F4:                              ; CODE XREF: sub_1C195+65B↑j
-                                        ; sub_1C195+66F↑j ...
+def_1C7F4:                              ; CODE XREF: prepareIndoorView+65B↑j
+                                        ; prepareIndoorView+66F↑j ...
                 mov     ax, di          ; jumptable 0001C7F4 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18138,18 +18140,18 @@ def_1C7F4:                              ; CODE XREF: sub_1C195+65B↑j
                 jmp     cs:jpt_1C88D[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C892:                              ; CODE XREF: sub_1C195+6F8↑j
+loc_1C892:                              ; CODE XREF: prepareIndoorView+6F8↑j
                                         ; DATA XREF: seg004:jpt_1C88D↓o
                 inc     byte_340B3      ; jumptable 0001C88D cases 1-6
                 jmp     short def_1C88D ; jumptable 0001C88D default case
 ; ---------------------------------------------------------------------------
 
-loc_1C898:                              ; CODE XREF: sub_1C195+6F8↑j
+loc_1C898:                              ; CODE XREF: prepareIndoorView+6F8↑j
                                         ; DATA XREF: seg004:jpt_1C88D↓o
                 inc     byte_37390      ; jumptable 0001C88D case 7
 
-def_1C88D:                              ; CODE XREF: sub_1C195+6F4↑j
-                                        ; sub_1C195+701↑j
+def_1C88D:                              ; CODE XREF: prepareIndoorView+6F4↑j
+                                        ; prepareIndoorView+701↑j
                 mov     ax, di          ; jumptable 0001C88D default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18196,7 +18198,7 @@ def_1C88D:                              ; CODE XREF: sub_1C195+6F4↑j
                 jmp     cs:jpt_1C8FA[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C8FF:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C8FF:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 mov     al, byte_3407E  ; jumptable 0001C8FA case 3
                 inc     al
@@ -18205,31 +18207,31 @@ loc_1C8FF:                              ; CODE XREF: sub_1C195+765↑j
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C90C:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C90C:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 inc     byte_332EF      ; jumptable 0001C8FA case 4
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C912:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C912:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 inc     byte_332E7      ; jumptable 0001C8FA case 5
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C918:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C918:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 inc     byte_3407E      ; jumptable 0001C8FA case 1
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C91E:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C91E:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 inc     byte_33300      ; jumptable 0001C8FA case 6
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C924:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C924:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 mov     al, byte_3407E  ; jumptable 0001C8FA case 2
                 inc     al
@@ -18238,12 +18240,12 @@ loc_1C924:                              ; CODE XREF: sub_1C195+765↑j
                 jmp     short def_1C8FA ; jumptable 0001C8FA default case
 ; ---------------------------------------------------------------------------
 
-loc_1C931:                              ; CODE XREF: sub_1C195+765↑j
+loc_1C931:                              ; CODE XREF: prepareIndoorView+765↑j
                                         ; DATA XREF: seg004:jpt_1C8FA↓o
                 inc     byte_3738E      ; jumptable 0001C8FA case 7
 
-def_1C8FA:                              ; CODE XREF: sub_1C195+761↑j
-                                        ; sub_1C195+775↑j ...
+def_1C8FA:                              ; CODE XREF: prepareIndoorView+761↑j
+                                        ; prepareIndoorView+775↑j ...
                 mov     ax, di          ; jumptable 0001C8FA default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18290,18 +18292,18 @@ def_1C8FA:                              ; CODE XREF: sub_1C195+761↑j
                 jmp     cs:jpt_1C993[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1C998:                              ; CODE XREF: sub_1C195+7FE↑j
+loc_1C998:                              ; CODE XREF: prepareIndoorView+7FE↑j
                                         ; DATA XREF: seg004:jpt_1C993↓o
                 inc     byte_37392      ; jumptable 0001C993 cases 1-6
                 jmp     short def_1C993 ; jumptable 0001C993 default case
 ; ---------------------------------------------------------------------------
 
-loc_1C99E:                              ; CODE XREF: sub_1C195+7FE↑j
+loc_1C99E:                              ; CODE XREF: prepareIndoorView+7FE↑j
                                         ; DATA XREF: seg004:jpt_1C993↓o
                 inc     byte_332CF      ; jumptable 0001C993 case 7
 
-def_1C993:                              ; CODE XREF: sub_1C195+7FA↑j
-                                        ; sub_1C195+807↑j
+def_1C993:                              ; CODE XREF: prepareIndoorView+7FA↑j
+                                        ; prepareIndoorView+807↑j
                 mov     ax, di          ; jumptable 0001C993 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18348,7 +18350,7 @@ def_1C993:                              ; CODE XREF: sub_1C195+7FA↑j
                 jmp     cs:jpt_1CA00[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CA05:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA05:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 mov     al, byte_36FB0  ; jumptable 0001CA00 case 3
                 inc     al
@@ -18357,31 +18359,31 @@ loc_1CA05:                              ; CODE XREF: sub_1C195+86B↑j
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA12:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA12:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 inc     byte_34BF6      ; jumptable 0001CA00 case 4
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA18:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA18:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 inc     byte_34BED      ; jumptable 0001CA00 case 5
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA1E:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA1E:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 inc     byte_36FB0      ; jumptable 0001CA00 case 1
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA24:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA24:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 inc     byte_34BFF      ; jumptable 0001CA00 case 6
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA2A:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA2A:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 mov     al, byte_36FB0  ; jumptable 0001CA00 case 2
                 inc     al
@@ -18390,12 +18392,12 @@ loc_1CA2A:                              ; CODE XREF: sub_1C195+86B↑j
                 jmp     short def_1CA00 ; jumptable 0001CA00 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CA37:                              ; CODE XREF: sub_1C195+86B↑j
+loc_1CA37:                              ; CODE XREF: prepareIndoorView+86B↑j
                                         ; DATA XREF: seg004:jpt_1CA00↓o
                 inc     byte_332A7      ; jumptable 0001CA00 case 7
 
-def_1CA00:                              ; CODE XREF: sub_1C195+867↑j
-                                        ; sub_1C195+87B↑j ...
+def_1CA00:                              ; CODE XREF: prepareIndoorView+867↑j
+                                        ; prepareIndoorView+87B↑j ...
                 mov     ax, di          ; jumptable 0001CA00 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18442,18 +18444,18 @@ def_1CA00:                              ; CODE XREF: sub_1C195+867↑j
                 jmp     cs:jpt_1CA99[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CA9E:                              ; CODE XREF: sub_1C195+904↑j
+loc_1CA9E:                              ; CODE XREF: prepareIndoorView+904↑j
                                         ; DATA XREF: seg004:jpt_1CA99↓o
                 inc     byte_373C6      ; jumptable 0001CA99 cases 1-6
                 jmp     short def_1CA99 ; jumptable 0001CA99 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CAA4:                              ; CODE XREF: sub_1C195+904↑j
+loc_1CAA4:                              ; CODE XREF: prepareIndoorView+904↑j
                                         ; DATA XREF: seg004:jpt_1CA99↓o
                 inc     byte_332F7      ; jumptable 0001CA99 case 7
 
-def_1CA99:                              ; CODE XREF: sub_1C195+900↑j
-                                        ; sub_1C195+90D↑j
+def_1CA99:                              ; CODE XREF: prepareIndoorView+900↑j
+                                        ; prepareIndoorView+90D↑j
                 mov     ax, di          ; jumptable 0001CA99 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18500,7 +18502,7 @@ def_1CA99:                              ; CODE XREF: sub_1C195+900↑j
                 jmp     cs:jpt_1CB06[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CB0B:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB0B:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 mov     al, byte_3407F  ; jumptable 0001CB06 case 3
                 inc     al
@@ -18509,31 +18511,31 @@ loc_1CB0B:                              ; CODE XREF: sub_1C195+971↑j
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB18:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB18:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 inc     byte_332F0      ; jumptable 0001CB06 case 4
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB1E:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB1E:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 inc     byte_332E8      ; jumptable 0001CB06 case 5
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB24:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB24:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 inc     byte_3407F      ; jumptable 0001CB06 case 1
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB2A:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB2A:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 inc     byte_33301      ; jumptable 0001CB06 case 6
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB30:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB30:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 mov     al, byte_3407F  ; jumptable 0001CB06 case 2
                 inc     al
@@ -18542,12 +18544,12 @@ loc_1CB30:                              ; CODE XREF: sub_1C195+971↑j
                 jmp     short def_1CB06 ; jumptable 0001CB06 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CB3D:                              ; CODE XREF: sub_1C195+971↑j
+loc_1CB3D:                              ; CODE XREF: prepareIndoorView+971↑j
                                         ; DATA XREF: seg004:jpt_1CB06↓o
                 inc     byte_3738F      ; jumptable 0001CB06 case 7
 
-def_1CB06:                              ; CODE XREF: sub_1C195+96D↑j
-                                        ; sub_1C195+981↑j ...
+def_1CB06:                              ; CODE XREF: prepareIndoorView+96D↑j
+                                        ; prepareIndoorView+981↑j ...
                 mov     ax, di          ; jumptable 0001CB06 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18594,18 +18596,18 @@ def_1CB06:                              ; CODE XREF: sub_1C195+96D↑j
                 jmp     cs:jpt_1CB9F[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CBA4:                              ; CODE XREF: sub_1C195+A0A↑j
+loc_1CBA4:                              ; CODE XREF: prepareIndoorView+A0A↑j
                                         ; DATA XREF: seg004:jpt_1CB9F↓o
                 inc     byte_340B6      ; jumptable 0001CB9F cases 1-6
                 jmp     short def_1CB9F ; jumptable 0001CB9F default case
 ; ---------------------------------------------------------------------------
 
-loc_1CBAA:                              ; CODE XREF: sub_1C195+A0A↑j
+loc_1CBAA:                              ; CODE XREF: prepareIndoorView+A0A↑j
                                         ; DATA XREF: seg004:jpt_1CB9F↓o
                 inc     byte_37391      ; jumptable 0001CB9F case 7
 
-def_1CB9F:                              ; CODE XREF: sub_1C195+A06↑j
-                                        ; sub_1C195+A13↑j
+def_1CB9F:                              ; CODE XREF: prepareIndoorView+A06↑j
+                                        ; prepareIndoorView+A13↑j
                 mov     ax, di          ; jumptable 0001CB9F default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18652,7 +18654,7 @@ def_1CB9F:                              ; CODE XREF: sub_1C195+A06↑j
                 jmp     cs:jpt_1CC0C[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CC11:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC11:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 mov     al, byte_319E5  ; jumptable 0001CC0C case 3
                 inc     al
@@ -18661,31 +18663,31 @@ loc_1CC11:                              ; CODE XREF: sub_1C195+A77↑j
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC1E:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC1E:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 inc     byte_3737A      ; jumptable 0001CC0C case 4
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC24:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC24:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 inc     byte_37371      ; jumptable 0001CC0C case 5
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC2A:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC2A:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 inc     byte_319E5      ; jumptable 0001CC0C case 1
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC30:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC30:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 inc     byte_37385      ; jumptable 0001CC0C case 6
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC36:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC36:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 mov     al, byte_319E5  ; jumptable 0001CC0C case 2
                 inc     al
@@ -18694,12 +18696,12 @@ loc_1CC36:                              ; CODE XREF: sub_1C195+A77↑j
                 jmp     short def_1CC0C ; jumptable 0001CC0C default case
 ; ---------------------------------------------------------------------------
 
-loc_1CC43:                              ; CODE XREF: sub_1C195+A77↑j
+loc_1CC43:                              ; CODE XREF: prepareIndoorView+A77↑j
                                         ; DATA XREF: seg004:jpt_1CC0C↓o
                 inc     byte_33441      ; jumptable 0001CC0C case 7
 
-def_1CC0C:                              ; CODE XREF: sub_1C195+A73↑j
-                                        ; sub_1C195+A87↑j ...
+def_1CC0C:                              ; CODE XREF: prepareIndoorView+A73↑j
+                                        ; prepareIndoorView+A87↑j ...
                 mov     ax, di          ; jumptable 0001CC0C default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18746,7 +18748,7 @@ def_1CC0C:                              ; CODE XREF: sub_1C195+A73↑j
                 jmp     cs:jpt_1CCA5[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CCAA:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCAA:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 mov     al, byte_333B4  ; jumptable 0001CCA5 case 3
                 inc     al
@@ -18755,31 +18757,31 @@ loc_1CCAA:                              ; CODE XREF: sub_1C195+B10↑j
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCB7:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCB7:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 inc     byte_373CA      ; jumptable 0001CCA5 case 4
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCBD:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCBD:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 inc     byte_373C7      ; jumptable 0001CCA5 case 5
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCC3:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCC3:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 inc     byte_333B4      ; jumptable 0001CCA5 case 1
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCC9:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCC9:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 inc     byte_373D1      ; jumptable 0001CCA5 case 6
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCCF:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCCF:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 mov     al, byte_333B4  ; jumptable 0001CCA5 case 2
                 inc     al
@@ -18788,12 +18790,12 @@ loc_1CCCF:                              ; CODE XREF: sub_1C195+B10↑j
                 jmp     short def_1CCA5 ; jumptable 0001CCA5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CCDC:                              ; CODE XREF: sub_1C195+B10↑j
+loc_1CCDC:                              ; CODE XREF: prepareIndoorView+B10↑j
                                         ; DATA XREF: seg004:jpt_1CCA5↓o
                 inc     byte_340B8      ; jumptable 0001CCA5 case 7
 
-def_1CCA5:                              ; CODE XREF: sub_1C195+B0C↑j
-                                        ; sub_1C195+B20↑j ...
+def_1CCA5:                              ; CODE XREF: prepareIndoorView+B0C↑j
+                                        ; prepareIndoorView+B20↑j ...
                 mov     ax, di          ; jumptable 0001CCA5 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18840,18 +18842,18 @@ def_1CCA5:                              ; CODE XREF: sub_1C195+B0C↑j
                 jmp     cs:jpt_1CD3E[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CD43:                              ; CODE XREF: sub_1C195+BA9↑j
+loc_1CD43:                              ; CODE XREF: prepareIndoorView+BA9↑j
                                         ; DATA XREF: seg004:jpt_1CD3E↓o
                 inc     byte_3330C      ; jumptable 0001CD3E cases 1-6
                 jmp     short def_1CD3E ; jumptable 0001CD3E default case
 ; ---------------------------------------------------------------------------
 
-loc_1CD49:                              ; CODE XREF: sub_1C195+BA9↑j
+loc_1CD49:                              ; CODE XREF: prepareIndoorView+BA9↑j
                                         ; DATA XREF: seg004:jpt_1CD3E↓o
                 inc     byte_33451      ; jumptable 0001CD3E case 7
 
-def_1CD3E:                              ; CODE XREF: sub_1C195+BA5↑j
-                                        ; sub_1C195+BB2↑j
+def_1CD3E:                              ; CODE XREF: prepareIndoorView+BA5↑j
+                                        ; prepareIndoorView+BB2↑j
                 mov     ax, di          ; jumptable 0001CD3E default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18898,7 +18900,7 @@ def_1CD3E:                              ; CODE XREF: sub_1C195+BA5↑j
                 jmp     cs:jpt_1CDAB[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CDB0:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDB0:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 mov     al, byte_332FF  ; jumptable 0001CDAB case 3
                 inc     al
@@ -18907,31 +18909,31 @@ loc_1CDB0:                              ; CODE XREF: sub_1C195+C16↑j
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDBD:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDBD:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 inc     byte_3738D      ; jumptable 0001CDAB case 4
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDC3:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDC3:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 inc     byte_37387      ; jumptable 0001CDAB case 5
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDC9:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDC9:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 inc     byte_332FF      ; jumptable 0001CDAB case 1
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDCF:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDCF:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 inc     byte_37396      ; jumptable 0001CDAB case 6
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDD5:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDD5:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 mov     al, byte_332FF  ; jumptable 0001CDAB case 2
                 inc     al
@@ -18940,12 +18942,12 @@ loc_1CDD5:                              ; CODE XREF: sub_1C195+C16↑j
                 jmp     short def_1CDAB ; jumptable 0001CDAB default case
 ; ---------------------------------------------------------------------------
 
-loc_1CDE2:                              ; CODE XREF: sub_1C195+C16↑j
+loc_1CDE2:                              ; CODE XREF: prepareIndoorView+C16↑j
                                         ; DATA XREF: seg004:jpt_1CDAB↓o
                 inc     byte_33450      ; jumptable 0001CDAB case 7
 
-def_1CDAB:                              ; CODE XREF: sub_1C195+C12↑j
-                                        ; sub_1C195+C26↑j ...
+def_1CDAB:                              ; CODE XREF: prepareIndoorView+C12↑j
+                                        ; prepareIndoorView+C26↑j ...
                 mov     ax, di          ; jumptable 0001CDAB default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -18992,18 +18994,18 @@ def_1CDAB:                              ; CODE XREF: sub_1C195+C12↑j
                 jmp     cs:jpt_1CE44[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CE49:                              ; CODE XREF: sub_1C195+CAF↑j
+loc_1CE49:                              ; CODE XREF: prepareIndoorView+CAF↑j
                                         ; DATA XREF: seg004:jpt_1CE44↓o
                 inc     byte_332B1      ; jumptable 0001CE44 cases 1-6
                 jmp     short def_1CE44 ; jumptable 0001CE44 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CE4F:                              ; CODE XREF: sub_1C195+CAF↑j
+loc_1CE4F:                              ; CODE XREF: prepareIndoorView+CAF↑j
                                         ; DATA XREF: seg004:jpt_1CE44↓o
                 inc     byte_333B9      ; jumptable 0001CE44 case 7
 
-def_1CE44:                              ; CODE XREF: sub_1C195+CAB↑j
-                                        ; sub_1C195+CB8↑j
+def_1CE44:                              ; CODE XREF: prepareIndoorView+CAB↑j
+                                        ; prepareIndoorView+CB8↑j
                 mov     ax, di          ; jumptable 0001CE44 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19050,7 +19052,7 @@ def_1CE44:                              ; CODE XREF: sub_1C195+CAB↑j
                 jmp     cs:jpt_1CEB1[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CEB6:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CEB6:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 mov     al, byte_332B0  ; jumptable 0001CEB1 case 3
                 inc     al
@@ -19059,31 +19061,31 @@ loc_1CEB6:                              ; CODE XREF: sub_1C195+D1C↑j
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CEC3:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CEC3:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 inc     byte_35D5A      ; jumptable 0001CEB1 case 4
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CEC9:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CEC9:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 inc     byte_35D55      ; jumptable 0001CEB1 case 5
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CECF:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CECF:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 inc     byte_332B0      ; jumptable 0001CEB1 case 1
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CED5:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CED5:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 inc     byte_36FA8      ; jumptable 0001CEB1 case 6
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CEDB:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CEDB:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 mov     al, byte_332B0  ; jumptable 0001CEB1 case 2
                 inc     al
@@ -19092,12 +19094,12 @@ loc_1CEDB:                              ; CODE XREF: sub_1C195+D1C↑j
                 jmp     short def_1CEB1 ; jumptable 0001CEB1 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CEE8:                              ; CODE XREF: sub_1C195+D1C↑j
+loc_1CEE8:                              ; CODE XREF: prepareIndoorView+D1C↑j
                                         ; DATA XREF: seg004:jpt_1CEB1↓o
                 inc     byte_333B7      ; jumptable 0001CEB1 case 7
 
-def_1CEB1:                              ; CODE XREF: sub_1C195+D18↑j
-                                        ; sub_1C195+D2C↑j ...
+def_1CEB1:                              ; CODE XREF: prepareIndoorView+D18↑j
+                                        ; prepareIndoorView+D2C↑j ...
                 mov     ax, di          ; jumptable 0001CEB1 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19144,18 +19146,18 @@ def_1CEB1:                              ; CODE XREF: sub_1C195+D18↑j
                 jmp     cs:jpt_1CF4A[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CF4F:                              ; CODE XREF: sub_1C195+DB5↑j
+loc_1CF4F:                              ; CODE XREF: prepareIndoorView+DB5↑j
                                         ; DATA XREF: seg004:jpt_1CF4A↓o
                 inc     byte_34C2C      ; jumptable 0001CF4A cases 1-6
                 jmp     short def_1CF4A ; jumptable 0001CF4A default case
 ; ---------------------------------------------------------------------------
 
-loc_1CF55:                              ; CODE XREF: sub_1C195+DB5↑j
+loc_1CF55:                              ; CODE XREF: prepareIndoorView+DB5↑j
                                         ; DATA XREF: seg004:jpt_1CF4A↓o
                 inc     byte_3739E      ; jumptable 0001CF4A case 7
 
-def_1CF4A:                              ; CODE XREF: sub_1C195+DB1↑j
-                                        ; sub_1C195+DBE↑j
+def_1CF4A:                              ; CODE XREF: prepareIndoorView+DB1↑j
+                                        ; prepareIndoorView+DBE↑j
                 mov     ax, di          ; jumptable 0001CF4A default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19202,7 +19204,7 @@ def_1CF4A:                              ; CODE XREF: sub_1C195+DB1↑j
                 jmp     cs:jpt_1CFB7[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1CFBC:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFBC:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 mov     al, byte_34C2A  ; jumptable 0001CFB7 case 3
                 inc     al
@@ -19211,31 +19213,31 @@ loc_1CFBC:                              ; CODE XREF: sub_1C195+E22↑j
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFC9:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFC9:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 inc     byte_33302      ; jumptable 0001CFB7 case 4
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFCF:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFCF:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 inc     byte_332F4      ; jumptable 0001CFB7 case 5
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFD5:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFD5:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 inc     byte_34C2A      ; jumptable 0001CFB7 case 1
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFDB:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFDB:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 inc     byte_3330F      ; jumptable 0001CFB7 case 6
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFE1:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFE1:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 mov     al, byte_34C2A  ; jumptable 0001CFB7 case 2
                 inc     al
@@ -19244,12 +19246,12 @@ loc_1CFE1:                              ; CODE XREF: sub_1C195+E22↑j
                 jmp     short def_1CFB7 ; jumptable 0001CFB7 default case
 ; ---------------------------------------------------------------------------
 
-loc_1CFEE:                              ; CODE XREF: sub_1C195+E22↑j
+loc_1CFEE:                              ; CODE XREF: prepareIndoorView+E22↑j
                                         ; DATA XREF: seg004:jpt_1CFB7↓o
                 inc     byte_3739C      ; jumptable 0001CFB7 case 7
 
-def_1CFB7:                              ; CODE XREF: sub_1C195+E1E↑j
-                                        ; sub_1C195+E32↑j ...
+def_1CFB7:                              ; CODE XREF: prepareIndoorView+E1E↑j
+                                        ; prepareIndoorView+E32↑j ...
                 mov     ax, di          ; jumptable 0001CFB7 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19296,18 +19298,18 @@ def_1CFB7:                              ; CODE XREF: sub_1C195+E1E↑j
                 jmp     cs:jpt_1D050[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D055:                              ; CODE XREF: sub_1C195+EBB↑j
+loc_1D055:                              ; CODE XREF: prepareIndoorView+EBB↑j
                                         ; DATA XREF: seg004:jpt_1D050↓o
                 inc     byte_32E5E      ; jumptable 0001D050 cases 1-6
                 jmp     short def_1D050 ; jumptable 0001D050 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D05B:                              ; CODE XREF: sub_1C195+EBB↑j
+loc_1D05B:                              ; CODE XREF: prepareIndoorView+EBB↑j
                                         ; DATA XREF: seg004:jpt_1D050↓o
                 inc     byte_332CE      ; jumptable 0001D050 case 7
 
-def_1D050:                              ; CODE XREF: sub_1C195+EB7↑j
-                                        ; sub_1C195+EC4↑j
+def_1D050:                              ; CODE XREF: prepareIndoorView+EB7↑j
+                                        ; prepareIndoorView+EC4↑j
                 mov     ax, di          ; jumptable 0001D050 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19354,7 +19356,7 @@ def_1D050:                              ; CODE XREF: sub_1C195+EB7↑j
                 jmp     cs:jpt_1D0BD[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D0C2:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0C2:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 mov     al, byte_32E36  ; jumptable 0001D0BD case 3
                 inc     al
@@ -19363,31 +19365,31 @@ loc_1D0C2:                              ; CODE XREF: sub_1C195+F28↑j
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0CF:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0CF:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 inc     byte_34BF5      ; jumptable 0001D0BD case 4
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0D5:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0D5:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 inc     byte_34BEC      ; jumptable 0001D0BD case 5
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0DB:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0DB:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 inc     byte_32E36      ; jumptable 0001D0BD case 1
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0E1:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0E1:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 inc     byte_34BFE      ; jumptable 0001D0BD case 6
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0E7:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0E7:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 mov     al, byte_32E36  ; jumptable 0001D0BD case 2
                 inc     al
@@ -19396,12 +19398,12 @@ loc_1D0E7:                              ; CODE XREF: sub_1C195+F28↑j
                 jmp     short def_1D0BD ; jumptable 0001D0BD default case
 ; ---------------------------------------------------------------------------
 
-loc_1D0F4:                              ; CODE XREF: sub_1C195+F28↑j
+loc_1D0F4:                              ; CODE XREF: prepareIndoorView+F28↑j
                                         ; DATA XREF: seg004:jpt_1D0BD↓o
                 inc     byte_332A6      ; jumptable 0001D0BD case 7
 
-def_1D0BD:                              ; CODE XREF: sub_1C195+F24↑j
-                                        ; sub_1C195+F38↑j ...
+def_1D0BD:                              ; CODE XREF: prepareIndoorView+F24↑j
+                                        ; prepareIndoorView+F38↑j ...
                 mov     ax, di          ; jumptable 0001D0BD default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19448,18 +19450,18 @@ def_1D0BD:                              ; CODE XREF: sub_1C195+F24↑j
                 jmp     cs:jpt_1D156[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D15B:                              ; CODE XREF: sub_1C195+FC1↑j
+loc_1D15B:                              ; CODE XREF: prepareIndoorView+FC1↑j
                                         ; DATA XREF: seg004:jpt_1D156↓o
                 inc     byte_332A3      ; jumptable 0001D156 cases 1-6
                 jmp     short def_1D156 ; jumptable 0001D156 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D161:                              ; CODE XREF: sub_1C195+FC1↑j
+loc_1D161:                              ; CODE XREF: prepareIndoorView+FC1↑j
                                         ; DATA XREF: seg004:jpt_1D156↓o
                 inc     byte_332F6      ; jumptable 0001D156 case 7
 
-def_1D156:                              ; CODE XREF: sub_1C195+FBD↑j
-                                        ; sub_1C195+FCA↑j
+def_1D156:                              ; CODE XREF: prepareIndoorView+FBD↑j
+                                        ; prepareIndoorView+FCA↑j
                 mov     ax, di          ; jumptable 0001D156 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19506,7 +19508,7 @@ def_1D156:                              ; CODE XREF: sub_1C195+FBD↑j
                 jmp     cs:jpt_1D1C3[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D1C8:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1C8:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 mov     al, byte_34C2B  ; jumptable 0001D1C3 case 3
                 inc     al
@@ -19515,31 +19517,31 @@ loc_1D1C8:                              ; CODE XREF: sub_1C195+102E↑j
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1D5:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1D5:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 inc     byte_33303      ; jumptable 0001D1C3 case 4
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1DB:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1DB:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 inc     byte_332F5      ; jumptable 0001D1C3 case 5
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1E1:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1E1:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 inc     byte_34C2B      ; jumptable 0001D1C3 case 1
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1E7:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1E7:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 inc     byte_33310      ; jumptable 0001D1C3 case 6
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1ED:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1ED:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 mov     al, byte_34C2B  ; jumptable 0001D1C3 case 2
                 inc     al
@@ -19548,12 +19550,12 @@ loc_1D1ED:                              ; CODE XREF: sub_1C195+102E↑j
                 jmp     short def_1D1C3 ; jumptable 0001D1C3 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D1FA:                              ; CODE XREF: sub_1C195+102E↑j
+loc_1D1FA:                              ; CODE XREF: prepareIndoorView+102E↑j
                                         ; DATA XREF: seg004:jpt_1D1C3↓o
                 inc     byte_3739D      ; jumptable 0001D1C3 case 7
 
-def_1D1C3:                              ; CODE XREF: sub_1C195+102A↑j
-                                        ; sub_1C195+103E↑j ...
+def_1D1C3:                              ; CODE XREF: prepareIndoorView+102A↑j
+                                        ; prepareIndoorView+103E↑j ...
                 mov     ax, di          ; jumptable 0001D1C3 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19600,18 +19602,18 @@ def_1D1C3:                              ; CODE XREF: sub_1C195+102A↑j
                 jmp     cs:jpt_1D25C[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D261:                              ; CODE XREF: sub_1C195+10C7↑j
+loc_1D261:                              ; CODE XREF: prepareIndoorView+10C7↑j
                                         ; DATA XREF: seg004:jpt_1D25C↓o
                 inc     byte_34C2D      ; jumptable 0001D25C cases 1-6
                 jmp     short def_1D25C ; jumptable 0001D25C default case
 ; ---------------------------------------------------------------------------
 
-loc_1D267:                              ; CODE XREF: sub_1C195+10C7↑j
+loc_1D267:                              ; CODE XREF: prepareIndoorView+10C7↑j
                                         ; DATA XREF: seg004:jpt_1D25C↓o
                 inc     byte_3739F      ; jumptable 0001D25C case 7
 
-def_1D25C:                              ; CODE XREF: sub_1C195+10C3↑j
-                                        ; sub_1C195+10D0↑j
+def_1D25C:                              ; CODE XREF: prepareIndoorView+10C3↑j
+                                        ; prepareIndoorView+10D0↑j
                 mov     ax, di          ; jumptable 0001D25C default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19658,7 +19660,7 @@ def_1D25C:                              ; CODE XREF: sub_1C195+10C3↑j
                 jmp     cs:jpt_1D2C9[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D2CE:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2CE:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 mov     al, byte_332E2  ; jumptable 0001D2C9 case 3
                 inc     al
@@ -19667,31 +19669,31 @@ loc_1D2CE:                              ; CODE XREF: sub_1C195+1134↑j
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D2DB:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2DB:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 inc     byte_37379      ; jumptable 0001D2C9 case 4
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D2E1:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2E1:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 inc     byte_37370      ; jumptable 0001D2C9 case 5
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D2E7:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2E7:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 inc     byte_332E2      ; jumptable 0001D2C9 case 1
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D2ED:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2ED:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 inc     byte_37384      ; jumptable 0001D2C9 case 6
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D2F3:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D2F3:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 mov     al, byte_332E2  ; jumptable 0001D2C9 case 2
                 inc     al
@@ -19700,12 +19702,12 @@ loc_1D2F3:                              ; CODE XREF: sub_1C195+1134↑j
                 jmp     short def_1D2C9 ; jumptable 0001D2C9 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D300:                              ; CODE XREF: sub_1C195+1134↑j
+loc_1D300:                              ; CODE XREF: prepareIndoorView+1134↑j
                                         ; DATA XREF: seg004:jpt_1D2C9↓o
                 inc     byte_33440      ; jumptable 0001D2C9 case 7
 
-def_1D2C9:                              ; CODE XREF: sub_1C195+1130↑j
-                                        ; sub_1C195+1144↑j ...
+def_1D2C9:                              ; CODE XREF: prepareIndoorView+1130↑j
+                                        ; prepareIndoorView+1144↑j ...
                 mov     ax, di          ; jumptable 0001D2C9 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19752,18 +19754,18 @@ def_1D2C9:                              ; CODE XREF: sub_1C195+1130↑j
                 jmp     cs:jpt_1D362[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D367:                              ; CODE XREF: sub_1C195+11CD↑j
+loc_1D367:                              ; CODE XREF: prepareIndoorView+11CD↑j
                                         ; DATA XREF: seg004:jpt_1D362↓o
                 inc     byte_332F3      ; jumptable 0001D362 cases 1-6
                 jmp     short def_1D362 ; jumptable 0001D362 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D36D:                              ; CODE XREF: sub_1C195+11CD↑j
+loc_1D36D:                              ; CODE XREF: prepareIndoorView+11CD↑j
                                         ; DATA XREF: seg004:jpt_1D362↓o
                 inc     byte_33442      ; jumptable 0001D362 case 7
 
-def_1D362:                              ; CODE XREF: sub_1C195+11C9↑j
-                                        ; sub_1C195+11D6↑j
+def_1D362:                              ; CODE XREF: prepareIndoorView+11C9↑j
+                                        ; prepareIndoorView+11D6↑j
                 mov     ax, di          ; jumptable 0001D362 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19810,7 +19812,7 @@ def_1D362:                              ; CODE XREF: sub_1C195+11C9↑j
                 jmp     cs:jpt_1D3CF[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D3D4:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3D4:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 mov     al, byte_333B2  ; jumptable 0001D3CF case 3
                 inc     al
@@ -19819,31 +19821,31 @@ loc_1D3D4:                              ; CODE XREF: sub_1C195+123A↑j
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D3E1:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3E1:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 inc     byte_373C4      ; jumptable 0001D3CF case 4
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D3E7:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3E7:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 inc     byte_373C2      ; jumptable 0001D3CF case 5
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D3ED:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3ED:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 inc     byte_333B2      ; jumptable 0001D3CF case 1
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D3F3:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3F3:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 inc     byte_373C5      ; jumptable 0001D3CF case 6
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D3F9:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D3F9:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 mov     al, byte_333B2  ; jumptable 0001D3CF case 2
                 inc     al
@@ -19852,12 +19854,12 @@ loc_1D3F9:                              ; CODE XREF: sub_1C195+123A↑j
                 jmp     short def_1D3CF ; jumptable 0001D3CF default case
 ; ---------------------------------------------------------------------------
 
-loc_1D406:                              ; CODE XREF: sub_1C195+123A↑j
+loc_1D406:                              ; CODE XREF: prepareIndoorView+123A↑j
                                         ; DATA XREF: seg004:jpt_1D3CF↓o
                 inc     byte_340A8      ; jumptable 0001D3CF case 7
 
-def_1D3CF:                              ; CODE XREF: sub_1C195+1236↑j
-                                        ; sub_1C195+124A↑j ...
+def_1D3CF:                              ; CODE XREF: prepareIndoorView+1236↑j
+                                        ; prepareIndoorView+124A↑j ...
                 mov     ax, di          ; jumptable 0001D3CF default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19904,18 +19906,18 @@ def_1D3CF:                              ; CODE XREF: sub_1C195+1236↑j
                 jmp     cs:jpt_1D468[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D46D:                              ; CODE XREF: sub_1C195+12D3↑j
+loc_1D46D:                              ; CODE XREF: prepareIndoorView+12D3↑j
                                         ; DATA XREF: seg004:jpt_1D468↓o
                 inc     byte_333B3      ; jumptable 0001D468 cases 1-6
                 jmp     short def_1D468 ; jumptable 0001D468 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D473:                              ; CODE XREF: sub_1C195+12D3↑j
+loc_1D473:                              ; CODE XREF: prepareIndoorView+12D3↑j
                                         ; DATA XREF: seg004:jpt_1D468↓o
                 inc     byte_340A9      ; jumptable 0001D468 case 7
 
-def_1D468:                              ; CODE XREF: sub_1C195+12CF↑j
-                                        ; sub_1C195+12DC↑j
+def_1D468:                              ; CODE XREF: prepareIndoorView+12CF↑j
+                                        ; prepareIndoorView+12DC↑j
                 mov     ax, di          ; jumptable 0001D468 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -19962,7 +19964,7 @@ def_1D468:                              ; CODE XREF: sub_1C195+12CF↑j
                 jmp     cs:jpt_1D4D5[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D4DA:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4DA:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 mov     al, byte_333C5  ; jumptable 0001D4D5 case 3
                 inc     al
@@ -19971,31 +19973,31 @@ loc_1D4DA:                              ; CODE XREF: sub_1C195+1340↑j
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D4E7:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4E7:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 inc     byte_373E8      ; jumptable 0001D4D5 case 4
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D4ED:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4ED:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 inc     byte_373D7      ; jumptable 0001D4D5 case 5
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D4F3:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4F3:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 inc     byte_333C5      ; jumptable 0001D4D5 case 1
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D4F9:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4F9:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 inc     byte_37463      ; jumptable 0001D4D5 case 6
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D4FF:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D4FF:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 mov     al, byte_333C5  ; jumptable 0001D4D5 case 2
                 inc     al
@@ -20004,12 +20006,12 @@ loc_1D4FF:                              ; CODE XREF: sub_1C195+1340↑j
                 jmp     short def_1D4D5 ; jumptable 0001D4D5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D50C:                              ; CODE XREF: sub_1C195+1340↑j
+loc_1D50C:                              ; CODE XREF: prepareIndoorView+1340↑j
                                         ; DATA XREF: seg004:jpt_1D4D5↓o
                 inc     byte_34B6E      ; jumptable 0001D4D5 case 7
 
-def_1D4D5:                              ; CODE XREF: sub_1C195+133C↑j
-                                        ; sub_1C195+1350↑j ...
+def_1D4D5:                              ; CODE XREF: prepareIndoorView+133C↑j
+                                        ; prepareIndoorView+1350↑j ...
                 mov     ax, di          ; jumptable 0001D4D5 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20056,18 +20058,18 @@ def_1D4D5:                              ; CODE XREF: sub_1C195+133C↑j
                 jmp     cs:jpt_1D56E[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D573:                              ; CODE XREF: sub_1C195+13D9↑j
+loc_1D573:                              ; CODE XREF: prepareIndoorView+13D9↑j
                                         ; DATA XREF: seg004:jpt_1D56E↓o
                 inc     byte_34B88      ; jumptable 0001D56E cases 1-6
                 jmp     short def_1D56E ; jumptable 0001D56E default case
 ; ---------------------------------------------------------------------------
 
-loc_1D579:                              ; CODE XREF: sub_1C195+13D9↑j
+loc_1D579:                              ; CODE XREF: prepareIndoorView+13D9↑j
                                         ; DATA XREF: seg004:jpt_1D56E↓o
                 inc     byte_33452      ; jumptable 0001D56E case 7
 
-def_1D56E:                              ; CODE XREF: sub_1C195+13D5↑j
-                                        ; sub_1C195+13E2↑j
+def_1D56E:                              ; CODE XREF: prepareIndoorView+13D5↑j
+                                        ; prepareIndoorView+13E2↑j
                 mov     ax, di          ; jumptable 0001D56E default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20114,18 +20116,18 @@ def_1D56E:                              ; CODE XREF: sub_1C195+13D5↑j
                 jmp     cs:jpt_1D5DB[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D5E0:                              ; CODE XREF: sub_1C195+1446↑j
+loc_1D5E0:                              ; CODE XREF: prepareIndoorView+1446↑j
                                         ; DATA XREF: seg004:jpt_1D5DB↓o
                 inc     byte_340B7      ; jumptable 0001D5DB cases 1-6
                 jmp     short def_1D5DB ; jumptable 0001D5DB default case
 ; ---------------------------------------------------------------------------
 
-loc_1D5E6:                              ; CODE XREF: sub_1C195+1446↑j
+loc_1D5E6:                              ; CODE XREF: prepareIndoorView+1446↑j
                                         ; DATA XREF: seg004:jpt_1D5DB↓o
                 inc     byte_333BA      ; jumptable 0001D5DB case 7
 
-def_1D5DB:                              ; CODE XREF: sub_1C195+1442↑j
-                                        ; sub_1C195+144F↑j
+def_1D5DB:                              ; CODE XREF: prepareIndoorView+1442↑j
+                                        ; prepareIndoorView+144F↑j
                 mov     ax, di          ; jumptable 0001D5DB default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20172,18 +20174,18 @@ def_1D5DB:                              ; CODE XREF: sub_1C195+1442↑j
                 jmp     cs:jpt_1D648[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D64D:                              ; CODE XREF: sub_1C195+14B3↑j
+loc_1D64D:                              ; CODE XREF: prepareIndoorView+14B3↑j
                                         ; DATA XREF: seg004:jpt_1D648↓o
                 inc     byte_315E2      ; jumptable 0001D648 cases 1-6
                 jmp     short def_1D648 ; jumptable 0001D648 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D653:                              ; CODE XREF: sub_1C195+14B3↑j
+loc_1D653:                              ; CODE XREF: prepareIndoorView+14B3↑j
                                         ; DATA XREF: seg004:jpt_1D648↓o
                 inc     byte_373A1      ; jumptable 0001D648 case 7
 
-def_1D648:                              ; CODE XREF: sub_1C195+14AF↑j
-                                        ; sub_1C195+14BC↑j
+def_1D648:                              ; CODE XREF: prepareIndoorView+14AF↑j
+                                        ; prepareIndoorView+14BC↑j
                 mov     ax, di          ; jumptable 0001D648 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20230,18 +20232,18 @@ def_1D648:                              ; CODE XREF: sub_1C195+14AF↑j
                 jmp     cs:jpt_1D6B5[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D6BA:                              ; CODE XREF: sub_1C195+1520↑j
+loc_1D6BA:                              ; CODE XREF: prepareIndoorView+1520↑j
                                         ; DATA XREF: seg004:jpt_1D6B5↓o
                 inc     byte_333B6      ; jumptable 0001D6B5 cases 1-6
                 jmp     short def_1D6B5 ; jumptable 0001D6B5 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D6C0:                              ; CODE XREF: sub_1C195+1520↑j
+loc_1D6C0:                              ; CODE XREF: prepareIndoorView+1520↑j
                                         ; DATA XREF: seg004:jpt_1D6B5↓o
                 inc     byte_332D2      ; jumptable 0001D6B5 case 7
 
-def_1D6B5:                              ; CODE XREF: sub_1C195+151C↑j
-                                        ; sub_1C195+1529↑j
+def_1D6B5:                              ; CODE XREF: prepareIndoorView+151C↑j
+                                        ; prepareIndoorView+1529↑j
                 mov     ax, di          ; jumptable 0001D6B5 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20288,18 +20290,18 @@ def_1D6B5:                              ; CODE XREF: sub_1C195+151C↑j
                 jmp     cs:jpt_1D722[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D727:                              ; CODE XREF: sub_1C195+158D↑j
+loc_1D727:                              ; CODE XREF: prepareIndoorView+158D↑j
                                         ; DATA XREF: seg004:jpt_1D722↓o
                 inc     byte_3343F      ; jumptable 0001D722 cases 1-6
                 jmp     short def_1D722 ; jumptable 0001D722 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D72D:                              ; CODE XREF: sub_1C195+158D↑j
+loc_1D72D:                              ; CODE XREF: prepareIndoorView+158D↑j
                                         ; DATA XREF: seg004:jpt_1D722↓o
                 inc     byte_332FA      ; jumptable 0001D722 case 7
 
-def_1D722:                              ; CODE XREF: sub_1C195+1589↑j
-                                        ; sub_1C195+1596↑j
+def_1D722:                              ; CODE XREF: prepareIndoorView+1589↑j
+                                        ; prepareIndoorView+1596↑j
                 mov     ax, di          ; jumptable 0001D722 default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20346,18 +20348,18 @@ def_1D722:                              ; CODE XREF: sub_1C195+1589↑j
                 jmp     cs:jpt_1D78F[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D794:                              ; CODE XREF: sub_1C195+15FA↑j
+loc_1D794:                              ; CODE XREF: prepareIndoorView+15FA↑j
                                         ; DATA XREF: seg004:jpt_1D78F↓o
                 inc     byte_315E3      ; jumptable 0001D78F cases 1-6
                 jmp     short def_1D78F ; jumptable 0001D78F default case
 ; ---------------------------------------------------------------------------
 
-loc_1D79A:                              ; CODE XREF: sub_1C195+15FA↑j
+loc_1D79A:                              ; CODE XREF: prepareIndoorView+15FA↑j
                                         ; DATA XREF: seg004:jpt_1D78F↓o
                 inc     byte_373A2      ; jumptable 0001D78F case 7
 
-def_1D78F:                              ; CODE XREF: sub_1C195+15F6↑j
-                                        ; sub_1C195+1603↑j
+def_1D78F:                              ; CODE XREF: prepareIndoorView+15F6↑j
+                                        ; prepareIndoorView+1603↑j
                 mov     ax, di          ; jumptable 0001D78F default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20404,18 +20406,18 @@ def_1D78F:                              ; CODE XREF: sub_1C195+15F6↑j
                 jmp     cs:jpt_1D7FC[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D801:                              ; CODE XREF: sub_1C195+1667↑j
+loc_1D801:                              ; CODE XREF: prepareIndoorView+1667↑j
                                         ; DATA XREF: seg004:jpt_1D7FC↓o
                 inc     byte_34B6D      ; jumptable 0001D7FC cases 1-6
                 jmp     short def_1D7FC ; jumptable 0001D7FC default case
 ; ---------------------------------------------------------------------------
 
-loc_1D807:                              ; CODE XREF: sub_1C195+1667↑j
+loc_1D807:                              ; CODE XREF: prepareIndoorView+1667↑j
                                         ; DATA XREF: seg004:jpt_1D7FC↓o
                 inc     byte_33443      ; jumptable 0001D7FC case 7
 
-def_1D7FC:                              ; CODE XREF: sub_1C195+1663↑j
-                                        ; sub_1C195+1670↑j
+def_1D7FC:                              ; CODE XREF: prepareIndoorView+1663↑j
+                                        ; prepareIndoorView+1670↑j
                 mov     ax, di          ; jumptable 0001D7FC default case
                 mov     dx, 58h ; 'X'
                 imul    dx
@@ -20462,18 +20464,18 @@ def_1D7FC:                              ; CODE XREF: sub_1C195+1663↑j
                 jmp     cs:jpt_1D869[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1D86E:                              ; CODE XREF: sub_1C195+16D4↑j
+loc_1D86E:                              ; CODE XREF: prepareIndoorView+16D4↑j
                                         ; DATA XREF: seg004:jpt_1D869↓o
                 inc     byte_34BB8      ; jumptable 0001D869 cases 1-6
                 jmp     short def_1D869 ; jumptable 0001D869 default case
 ; ---------------------------------------------------------------------------
 
-loc_1D874:                              ; CODE XREF: sub_1C195+16D4↑j
+loc_1D874:                              ; CODE XREF: prepareIndoorView+16D4↑j
                                         ; DATA XREF: seg004:jpt_1D869↓o
                 inc     byte_340AA      ; jumptable 0001D869 case 7
 
-def_1D869:                              ; CODE XREF: sub_1C195+16D0↑j
-                                        ; sub_1C195+16DD↑j
+def_1D869:                              ; CODE XREF: prepareIndoorView+16D0↑j
+                                        ; prepareIndoorView+16DD↑j
                 mov     bx, [bp+var_4]  ; jumptable 0001D869 default case
                 mov     cl, 4
                 shl     bx, cl
@@ -20489,7 +20491,7 @@ def_1D869:                              ; CODE XREF: sub_1C195+16D0↑j
                 cmp     Engine_mode, 2
                 jnz     short loc_1D8CA
 
-loc_1D8A5:                              ; CODE XREF: sub_1C195+1707↑j
+loc_1D8A5:                              ; CODE XREF: prepareIndoorView+1707↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -20506,319 +20508,319 @@ loc_1D8A5:                              ; CODE XREF: sub_1C195+1707↑j
                 jnz     short loc_1D8CA
                 call    sub_1B358
 
-loc_1D8CA:                              ; CODE XREF: sub_1C195+1700↑j
-                                        ; sub_1C195+170E↑j ...
+loc_1D8CA:                              ; CODE XREF: prepareIndoorView+1700↑j
+                                        ; prepareIndoorView+170E↑j ...
                 call    sub_161AD
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1C195       endp
+prepareIndoorView endp
 
 ; ---------------------------------------------------------------------------
-jpt_1D869       dw offset loc_1D86E     ; DATA XREF: sub_1C195+16D4↑r
+jpt_1D869       dw offset loc_1D86E     ; DATA XREF: prepareIndoorView+16D4↑r
                 dw offset loc_1D86E     ; jump table for switch statement
                 dw offset loc_1D86E
                 dw offset loc_1D86E
                 dw offset loc_1D86E
                 dw offset loc_1D86E
                 dw offset loc_1D874
-jpt_1D7FC       dw offset loc_1D801     ; DATA XREF: sub_1C195+1667↑r
+jpt_1D7FC       dw offset loc_1D801     ; DATA XREF: prepareIndoorView+1667↑r
                 dw offset loc_1D801     ; jump table for switch statement
                 dw offset loc_1D801
                 dw offset loc_1D801
                 dw offset loc_1D801
                 dw offset loc_1D801
                 dw offset loc_1D807
-jpt_1D78F       dw offset loc_1D794     ; DATA XREF: sub_1C195+15FA↑r
+jpt_1D78F       dw offset loc_1D794     ; DATA XREF: prepareIndoorView+15FA↑r
                 dw offset loc_1D794     ; jump table for switch statement
                 dw offset loc_1D794
                 dw offset loc_1D794
                 dw offset loc_1D794
                 dw offset loc_1D794
                 dw offset loc_1D79A
-jpt_1D722       dw offset loc_1D727     ; DATA XREF: sub_1C195+158D↑r
+jpt_1D722       dw offset loc_1D727     ; DATA XREF: prepareIndoorView+158D↑r
                 dw offset loc_1D727     ; jump table for switch statement
                 dw offset loc_1D727
                 dw offset loc_1D727
                 dw offset loc_1D727
                 dw offset loc_1D727
                 dw offset loc_1D72D
-jpt_1D6B5       dw offset loc_1D6BA     ; DATA XREF: sub_1C195+1520↑r
+jpt_1D6B5       dw offset loc_1D6BA     ; DATA XREF: prepareIndoorView+1520↑r
                 dw offset loc_1D6BA     ; jump table for switch statement
                 dw offset loc_1D6BA
                 dw offset loc_1D6BA
                 dw offset loc_1D6BA
                 dw offset loc_1D6BA
                 dw offset loc_1D6C0
-jpt_1D648       dw offset loc_1D64D     ; DATA XREF: sub_1C195+14B3↑r
+jpt_1D648       dw offset loc_1D64D     ; DATA XREF: prepareIndoorView+14B3↑r
                 dw offset loc_1D64D     ; jump table for switch statement
                 dw offset loc_1D64D
                 dw offset loc_1D64D
                 dw offset loc_1D64D
                 dw offset loc_1D64D
                 dw offset loc_1D653
-jpt_1D5DB       dw offset loc_1D5E0     ; DATA XREF: sub_1C195+1446↑r
+jpt_1D5DB       dw offset loc_1D5E0     ; DATA XREF: prepareIndoorView+1446↑r
                 dw offset loc_1D5E0     ; jump table for switch statement
                 dw offset loc_1D5E0
                 dw offset loc_1D5E0
                 dw offset loc_1D5E0
                 dw offset loc_1D5E0
                 dw offset loc_1D5E6
-jpt_1D56E       dw offset loc_1D573     ; DATA XREF: sub_1C195+13D9↑r
+jpt_1D56E       dw offset loc_1D573     ; DATA XREF: prepareIndoorView+13D9↑r
                 dw offset loc_1D573     ; jump table for switch statement
                 dw offset loc_1D573
                 dw offset loc_1D573
                 dw offset loc_1D573
                 dw offset loc_1D573
                 dw offset loc_1D579
-jpt_1D4D5       dw offset loc_1D4F3     ; DATA XREF: sub_1C195+1340↑r
+jpt_1D4D5       dw offset loc_1D4F3     ; DATA XREF: prepareIndoorView+1340↑r
                 dw offset loc_1D4FF     ; jump table for switch statement
                 dw offset loc_1D4DA
                 dw offset loc_1D4E7
                 dw offset loc_1D4ED
                 dw offset loc_1D4F9
                 dw offset loc_1D50C
-jpt_1D468       dw offset loc_1D46D     ; DATA XREF: sub_1C195+12D3↑r
+jpt_1D468       dw offset loc_1D46D     ; DATA XREF: prepareIndoorView+12D3↑r
                 dw offset loc_1D46D     ; jump table for switch statement
                 dw offset loc_1D46D
                 dw offset loc_1D46D
                 dw offset loc_1D46D
                 dw offset loc_1D46D
                 dw offset loc_1D473
-jpt_1D3CF       dw offset loc_1D3ED     ; DATA XREF: sub_1C195+123A↑r
+jpt_1D3CF       dw offset loc_1D3ED     ; DATA XREF: prepareIndoorView+123A↑r
                 dw offset loc_1D3F9     ; jump table for switch statement
                 dw offset loc_1D3D4
                 dw offset loc_1D3E1
                 dw offset loc_1D3E7
                 dw offset loc_1D3F3
                 dw offset loc_1D406
-jpt_1D362       dw offset loc_1D367     ; DATA XREF: sub_1C195+11CD↑r
+jpt_1D362       dw offset loc_1D367     ; DATA XREF: prepareIndoorView+11CD↑r
                 dw offset loc_1D367     ; jump table for switch statement
                 dw offset loc_1D367
                 dw offset loc_1D367
                 dw offset loc_1D367
                 dw offset loc_1D367
                 dw offset loc_1D36D
-jpt_1D2C9       dw offset loc_1D2E7     ; DATA XREF: sub_1C195+1134↑r
+jpt_1D2C9       dw offset loc_1D2E7     ; DATA XREF: prepareIndoorView+1134↑r
                 dw offset loc_1D2F3     ; jump table for switch statement
                 dw offset loc_1D2CE
                 dw offset loc_1D2DB
                 dw offset loc_1D2E1
                 dw offset loc_1D2ED
                 dw offset loc_1D300
-jpt_1D25C       dw offset loc_1D261     ; DATA XREF: sub_1C195+10C7↑r
+jpt_1D25C       dw offset loc_1D261     ; DATA XREF: prepareIndoorView+10C7↑r
                 dw offset loc_1D261     ; jump table for switch statement
                 dw offset loc_1D261
                 dw offset loc_1D261
                 dw offset loc_1D261
                 dw offset loc_1D261
                 dw offset loc_1D267
-jpt_1D1C3       dw offset loc_1D1E1     ; DATA XREF: sub_1C195+102E↑r
+jpt_1D1C3       dw offset loc_1D1E1     ; DATA XREF: prepareIndoorView+102E↑r
                 dw offset loc_1D1ED     ; jump table for switch statement
                 dw offset loc_1D1C8
                 dw offset loc_1D1D5
                 dw offset loc_1D1DB
                 dw offset loc_1D1E7
                 dw offset loc_1D1FA
-jpt_1D156       dw offset loc_1D15B     ; DATA XREF: sub_1C195+FC1↑r
+jpt_1D156       dw offset loc_1D15B     ; DATA XREF: prepareIndoorView+FC1↑r
                 dw offset loc_1D15B     ; jump table for switch statement
                 dw offset loc_1D15B
                 dw offset loc_1D15B
                 dw offset loc_1D15B
                 dw offset loc_1D15B
                 dw offset loc_1D161
-jpt_1D0BD       dw offset loc_1D0DB     ; DATA XREF: sub_1C195+F28↑r
+jpt_1D0BD       dw offset loc_1D0DB     ; DATA XREF: prepareIndoorView+F28↑r
                 dw offset loc_1D0E7     ; jump table for switch statement
                 dw offset loc_1D0C2
                 dw offset loc_1D0CF
                 dw offset loc_1D0D5
                 dw offset loc_1D0E1
                 dw offset loc_1D0F4
-jpt_1D050       dw offset loc_1D055     ; DATA XREF: sub_1C195+EBB↑r
+jpt_1D050       dw offset loc_1D055     ; DATA XREF: prepareIndoorView+EBB↑r
                 dw offset loc_1D055     ; jump table for switch statement
                 dw offset loc_1D055
                 dw offset loc_1D055
                 dw offset loc_1D055
                 dw offset loc_1D055
                 dw offset loc_1D05B
-jpt_1CFB7       dw offset loc_1CFD5     ; DATA XREF: sub_1C195+E22↑r
+jpt_1CFB7       dw offset loc_1CFD5     ; DATA XREF: prepareIndoorView+E22↑r
                 dw offset loc_1CFE1     ; jump table for switch statement
                 dw offset loc_1CFBC
                 dw offset loc_1CFC9
                 dw offset loc_1CFCF
                 dw offset loc_1CFDB
                 dw offset loc_1CFEE
-jpt_1CF4A       dw offset loc_1CF4F     ; DATA XREF: sub_1C195+DB5↑r
+jpt_1CF4A       dw offset loc_1CF4F     ; DATA XREF: prepareIndoorView+DB5↑r
                 dw offset loc_1CF4F     ; jump table for switch statement
                 dw offset loc_1CF4F
                 dw offset loc_1CF4F
                 dw offset loc_1CF4F
                 dw offset loc_1CF4F
                 dw offset loc_1CF55
-jpt_1CEB1       dw offset loc_1CECF     ; DATA XREF: sub_1C195+D1C↑r
+jpt_1CEB1       dw offset loc_1CECF     ; DATA XREF: prepareIndoorView+D1C↑r
                 dw offset loc_1CEDB     ; jump table for switch statement
                 dw offset loc_1CEB6
                 dw offset loc_1CEC3
                 dw offset loc_1CEC9
                 dw offset loc_1CED5
                 dw offset loc_1CEE8
-jpt_1CE44       dw offset loc_1CE49     ; DATA XREF: sub_1C195+CAF↑r
+jpt_1CE44       dw offset loc_1CE49     ; DATA XREF: prepareIndoorView+CAF↑r
                 dw offset loc_1CE49     ; jump table for switch statement
                 dw offset loc_1CE49
                 dw offset loc_1CE49
                 dw offset loc_1CE49
                 dw offset loc_1CE49
                 dw offset loc_1CE4F
-jpt_1CDAB       dw offset loc_1CDC9     ; DATA XREF: sub_1C195+C16↑r
+jpt_1CDAB       dw offset loc_1CDC9     ; DATA XREF: prepareIndoorView+C16↑r
                 dw offset loc_1CDD5     ; jump table for switch statement
                 dw offset loc_1CDB0
                 dw offset loc_1CDBD
                 dw offset loc_1CDC3
                 dw offset loc_1CDCF
                 dw offset loc_1CDE2
-jpt_1CD3E       dw offset loc_1CD43     ; DATA XREF: sub_1C195+BA9↑r
+jpt_1CD3E       dw offset loc_1CD43     ; DATA XREF: prepareIndoorView+BA9↑r
                 dw offset loc_1CD43     ; jump table for switch statement
                 dw offset loc_1CD43
                 dw offset loc_1CD43
                 dw offset loc_1CD43
                 dw offset loc_1CD43
                 dw offset loc_1CD49
-jpt_1CCA5       dw offset loc_1CCC3     ; DATA XREF: sub_1C195+B10↑r
+jpt_1CCA5       dw offset loc_1CCC3     ; DATA XREF: prepareIndoorView+B10↑r
                 dw offset loc_1CCCF     ; jump table for switch statement
                 dw offset loc_1CCAA
                 dw offset loc_1CCB7
                 dw offset loc_1CCBD
                 dw offset loc_1CCC9
                 dw offset loc_1CCDC
-jpt_1CC0C       dw offset loc_1CC2A     ; DATA XREF: sub_1C195+A77↑r
+jpt_1CC0C       dw offset loc_1CC2A     ; DATA XREF: prepareIndoorView+A77↑r
                 dw offset loc_1CC36     ; jump table for switch statement
                 dw offset loc_1CC11
                 dw offset loc_1CC1E
                 dw offset loc_1CC24
                 dw offset loc_1CC30
                 dw offset loc_1CC43
-jpt_1CB9F       dw offset loc_1CBA4     ; DATA XREF: sub_1C195+A0A↑r
+jpt_1CB9F       dw offset loc_1CBA4     ; DATA XREF: prepareIndoorView+A0A↑r
                 dw offset loc_1CBA4     ; jump table for switch statement
                 dw offset loc_1CBA4
                 dw offset loc_1CBA4
                 dw offset loc_1CBA4
                 dw offset loc_1CBA4
                 dw offset loc_1CBAA
-jpt_1CB06       dw offset loc_1CB24     ; DATA XREF: sub_1C195+971↑r
+jpt_1CB06       dw offset loc_1CB24     ; DATA XREF: prepareIndoorView+971↑r
                 dw offset loc_1CB30     ; jump table for switch statement
                 dw offset loc_1CB0B
                 dw offset loc_1CB18
                 dw offset loc_1CB1E
                 dw offset loc_1CB2A
                 dw offset loc_1CB3D
-jpt_1CA99       dw offset loc_1CA9E     ; DATA XREF: sub_1C195+904↑r
+jpt_1CA99       dw offset loc_1CA9E     ; DATA XREF: prepareIndoorView+904↑r
                 dw offset loc_1CA9E     ; jump table for switch statement
                 dw offset loc_1CA9E
                 dw offset loc_1CA9E
                 dw offset loc_1CA9E
                 dw offset loc_1CA9E
                 dw offset loc_1CAA4
-jpt_1CA00       dw offset loc_1CA1E     ; DATA XREF: sub_1C195+86B↑r
+jpt_1CA00       dw offset loc_1CA1E     ; DATA XREF: prepareIndoorView+86B↑r
                 dw offset loc_1CA2A     ; jump table for switch statement
                 dw offset loc_1CA05
                 dw offset loc_1CA12
                 dw offset loc_1CA18
                 dw offset loc_1CA24
                 dw offset loc_1CA37
-jpt_1C993       dw offset loc_1C998     ; DATA XREF: sub_1C195+7FE↑r
+jpt_1C993       dw offset loc_1C998     ; DATA XREF: prepareIndoorView+7FE↑r
                 dw offset loc_1C998     ; jump table for switch statement
                 dw offset loc_1C998
                 dw offset loc_1C998
                 dw offset loc_1C998
                 dw offset loc_1C998
                 dw offset loc_1C99E
-jpt_1C8FA       dw offset loc_1C918     ; DATA XREF: sub_1C195+765↑r
+jpt_1C8FA       dw offset loc_1C918     ; DATA XREF: prepareIndoorView+765↑r
                 dw offset loc_1C924     ; jump table for switch statement
                 dw offset loc_1C8FF
                 dw offset loc_1C90C
                 dw offset loc_1C912
                 dw offset loc_1C91E
                 dw offset loc_1C931
-jpt_1C88D       dw offset loc_1C892     ; DATA XREF: sub_1C195+6F8↑r
+jpt_1C88D       dw offset loc_1C892     ; DATA XREF: prepareIndoorView+6F8↑r
                 dw offset loc_1C892     ; jump table for switch statement
                 dw offset loc_1C892
                 dw offset loc_1C892
                 dw offset loc_1C892
                 dw offset loc_1C892
                 dw offset loc_1C898
-jpt_1C7F4       dw offset loc_1C812     ; DATA XREF: sub_1C195+65F↑r
+jpt_1C7F4       dw offset loc_1C812     ; DATA XREF: prepareIndoorView+65F↑r
                 dw offset loc_1C81E     ; jump table for switch statement
                 dw offset loc_1C7F9
                 dw offset loc_1C806
                 dw offset loc_1C80C
                 dw offset loc_1C818
                 dw offset loc_1C82B
-jpt_1C75B       dw offset loc_1C779     ; DATA XREF: sub_1C195+5C6↑r
+jpt_1C75B       dw offset loc_1C779     ; DATA XREF: prepareIndoorView+5C6↑r
                 dw offset loc_1C785     ; jump table for switch statement
                 dw offset loc_1C760
                 dw offset loc_1C76D
                 dw offset loc_1C773
                 dw offset loc_1C77F
                 dw offset loc_1C792
-jpt_1C6EE       dw offset loc_1C6F3     ; DATA XREF: sub_1C195+559↑r
+jpt_1C6EE       dw offset loc_1C6F3     ; DATA XREF: prepareIndoorView+559↑r
                 dw offset loc_1C6F3     ; jump table for switch statement
                 dw offset loc_1C6F3
                 dw offset loc_1C6F3
                 dw offset loc_1C6F3
                 dw offset loc_1C6F3
                 dw offset loc_1C6F9
-jpt_1C655       dw offset loc_1C673     ; DATA XREF: sub_1C195+4C0↑r
+jpt_1C655       dw offset loc_1C673     ; DATA XREF: prepareIndoorView+4C0↑r
                 dw offset loc_1C67F     ; jump table for switch statement
                 dw offset loc_1C65A
                 dw offset loc_1C667
                 dw offset loc_1C66D
                 dw offset loc_1C679
                 dw offset loc_1C68C
-jpt_1C5E8       dw offset loc_1C5ED     ; DATA XREF: sub_1C195+453↑r
+jpt_1C5E8       dw offset loc_1C5ED     ; DATA XREF: prepareIndoorView+453↑r
                 dw offset loc_1C5ED     ; jump table for switch statement
                 dw offset loc_1C5ED
                 dw offset loc_1C5ED
                 dw offset loc_1C5ED
                 dw offset loc_1C5ED
                 dw offset loc_1C5F3
-jpt_1C54F       dw offset loc_1C56D     ; DATA XREF: sub_1C195+3BA↑r
+jpt_1C54F       dw offset loc_1C56D     ; DATA XREF: prepareIndoorView+3BA↑r
                 dw offset loc_1C579     ; jump table for switch statement
                 dw offset loc_1C554
                 dw offset loc_1C561
                 dw offset loc_1C567
                 dw offset loc_1C573
                 dw offset loc_1C586
-jpt_1C4B6       dw offset loc_1C4D4     ; DATA XREF: sub_1C195+321↑r
+jpt_1C4B6       dw offset loc_1C4D4     ; DATA XREF: prepareIndoorView+321↑r
                 dw offset loc_1C4E0     ; jump table for switch statement
                 dw offset loc_1C4BB
                 dw offset loc_1C4C8
                 dw offset loc_1C4CE
                 dw offset loc_1C4DA
                 dw offset loc_1C4ED
-jpt_1C449       dw offset loc_1C44E     ; DATA XREF: sub_1C195+2B4↑r
+jpt_1C449       dw offset loc_1C44E     ; DATA XREF: prepareIndoorView+2B4↑r
                 dw offset loc_1C44E     ; jump table for switch statement
                 dw offset loc_1C44E
                 dw offset loc_1C44E
                 dw offset loc_1C44E
                 dw offset loc_1C44E
                 dw offset loc_1C454
-jpt_1C3B0       dw offset loc_1C3CE     ; DATA XREF: sub_1C195+21B↑r
+jpt_1C3B0       dw offset loc_1C3CE     ; DATA XREF: prepareIndoorView+21B↑r
                 dw offset loc_1C3DA     ; jump table for switch statement
                 dw offset loc_1C3B5
                 dw offset loc_1C3C2
                 dw offset loc_1C3C8
                 dw offset loc_1C3D4
                 dw offset loc_1C3E7
-jpt_1C343       dw offset loc_1C348     ; DATA XREF: sub_1C195+1AE↑r
+jpt_1C343       dw offset loc_1C348     ; DATA XREF: prepareIndoorView+1AE↑r
                 dw offset loc_1C348     ; jump table for switch statement
                 dw offset loc_1C348
                 dw offset loc_1C348
                 dw offset loc_1C348
                 dw offset loc_1C348
                 dw offset loc_1C34E
-jpt_1C2AA       dw offset loc_1C2C8     ; DATA XREF: sub_1C195+115↑r
+jpt_1C2AA       dw offset loc_1C2C8     ; DATA XREF: prepareIndoorView+115↑r
                 dw offset loc_1C2CE     ; jump table for switch statement
                 dw offset loc_1C2AF
                 dw offset loc_1C2BC
@@ -20830,7 +20832,7 @@ jpt_1C2AA       dw offset loc_1C2C8     ; DATA XREF: sub_1C195+115↑r
 
 ; Attributes: bp-based frame
 
-sub_1DB3D       proc far                ; CODE XREF: sub_1E407+1F57↓P
+sub_1DB3D       proc far                ; CODE XREF: renderIndoorView+1F57↓P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -22050,9 +22052,10 @@ seg005          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; 8 KB, advances the animation counters then draws the view (unverified)
 ; Attributes: bp-based frame
 
-sub_1E407       proc far                ; CODE XREF: sub_1B669+16↑P
+renderIndoorView proc far               ; CODE XREF: drawView+16↑P
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -22066,14 +22069,14 @@ var_2           = word ptr -2
                 jmp     short loc_1E426
 ; ---------------------------------------------------------------------------
 
-loc_1E416:                              ; CODE XREF: sub_1E407+23↓j
+loc_1E416:                              ; CODE XREF: renderIndoorView+23↓j
                 mov     bx, [bp+var_2]
                 mov     al, [bx-4645h]
                 add     al, 0FFh
                 mov     [bx-54AEh], al
                 inc     [bp+var_2]
 
-loc_1E426:                              ; CODE XREF: sub_1E407+D↑j
+loc_1E426:                              ; CODE XREF: renderIndoorView+D↑j
                 cmp     [bp+var_2], 8
                 jl      short loc_1E416
                 mov     al, byte ptr word_28810+1
@@ -22110,7 +22113,7 @@ loc_1E426:                              ; CODE XREF: sub_1E407+D↑j
                 jmp     short loc_1E4B9
 ; ---------------------------------------------------------------------------
 
-loc_1E47D:                              ; CODE XREF: sub_1E407+BA↓j
+loc_1E47D:                              ; CODE XREF: renderIndoorView+BA↓j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 cmp     word ptr [bx-47F0h], 0
@@ -22134,10 +22137,10 @@ loc_1E47D:                              ; CODE XREF: sub_1E407+BA↓j
                 shl     bx, 1
                 mov     [bx-4FE8h], dx
 
-loc_1E4B6:                              ; CODE XREF: sub_1E407+80↑j
+loc_1E4B6:                              ; CODE XREF: renderIndoorView+80↑j
                 inc     [bp+var_2]
 
-loc_1E4B9:                              ; CODE XREF: sub_1E407+74↑j
+loc_1E4B9:                              ; CODE XREF: renderIndoorView+74↑j
                 mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
@@ -22146,7 +22149,7 @@ loc_1E4B9:                              ; CODE XREF: sub_1E407+74↑j
                 jmp     short loc_1E51D
 ; ---------------------------------------------------------------------------
 
-loc_1E4CA:                              ; CODE XREF: sub_1E407+11E↓j
+loc_1E4CA:                              ; CODE XREF: renderIndoorView+11E↓j
                 cmp     Engine_mode, 7
                 jnz     short loc_1E4DC
                 mov     al, byte_34BB6
@@ -22155,7 +22158,7 @@ loc_1E4CA:                              ; CODE XREF: sub_1E407+11E↓j
                 cmp     ax, [bp+var_2]
                 jz      short loc_1E51A
 
-loc_1E4DC:                              ; CODE XREF: sub_1E407+C8↑j
+loc_1E4DC:                              ; CODE XREF: renderIndoorView+C8↑j
                 mov     ax, [bp+var_2]
                 mov     dx, 0Ch
                 imul    dx
@@ -22182,10 +22185,10 @@ loc_1E4DC:                              ; CODE XREF: sub_1E407+C8↑j
                 pop     ax
                 mov     [bx-586Ch], ax
 
-loc_1E51A:                              ; CODE XREF: sub_1E407+D3↑j
+loc_1E51A:                              ; CODE XREF: renderIndoorView+D3↑j
                 inc     [bp+var_2]
 
-loc_1E51D:                              ; CODE XREF: sub_1E407+C1↑j
+loc_1E51D:                              ; CODE XREF: renderIndoorView+C1↑j
                 mov     al, byte_373D0
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
@@ -22261,7 +22264,7 @@ loc_1E51D:                              ; CODE XREF: sub_1E407+C1↑j
                 jmp     short loc_1E5FE
 ; ---------------------------------------------------------------------------
 
-loc_1E5DF:                              ; CODE XREF: sub_1E407+1BC↑j
+loc_1E5DF:                              ; CODE XREF: renderIndoorView+1BC↑j
                 cmp     byte_33452, 0
                 jz      short loc_1E5FE
                 inc     si
@@ -22277,8 +22280,8 @@ loc_1E5DF:                              ; CODE XREF: sub_1E407+1BC↑j
                 inc     si
                 mov     word ptr [si], 1Ch
 
-loc_1E5FE:                              ; CODE XREF: sub_1E407+188↑j
-                                        ; sub_1E407+191↑j ...
+loc_1E5FE:                              ; CODE XREF: renderIndoorView+188↑j
+                                        ; renderIndoorView+191↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22316,7 +22319,7 @@ loc_1E5FE:                              ; CODE XREF: sub_1E407+188↑j
                 jmp     short loc_1E66B
 ; ---------------------------------------------------------------------------
 
-loc_1E64C:                              ; CODE XREF: sub_1E407+229↑j
+loc_1E64C:                              ; CODE XREF: renderIndoorView+229↑j
                 cmp     byte_333BA, 0
                 jz      short loc_1E66B
                 inc     si
@@ -22332,8 +22335,8 @@ loc_1E64C:                              ; CODE XREF: sub_1E407+229↑j
                 inc     si
                 mov     word ptr [si], 1Ah
 
-loc_1E66B:                              ; CODE XREF: sub_1E407+1FE↑j
-                                        ; sub_1E407+207↑j ...
+loc_1E66B:                              ; CODE XREF: renderIndoorView+1FE↑j
+                                        ; renderIndoorView+207↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22371,7 +22374,7 @@ loc_1E66B:                              ; CODE XREF: sub_1E407+1FE↑j
                 jmp     short loc_1E6D8
 ; ---------------------------------------------------------------------------
 
-loc_1E6B9:                              ; CODE XREF: sub_1E407+296↑j
+loc_1E6B9:                              ; CODE XREF: renderIndoorView+296↑j
                 cmp     byte_373A1, 0
                 jz      short loc_1E6D8
                 inc     si
@@ -22387,8 +22390,8 @@ loc_1E6B9:                              ; CODE XREF: sub_1E407+296↑j
                 inc     si
                 mov     word ptr [si], 18h
 
-loc_1E6D8:                              ; CODE XREF: sub_1E407+26B↑j
-                                        ; sub_1E407+274↑j ...
+loc_1E6D8:                              ; CODE XREF: renderIndoorView+26B↑j
+                                        ; renderIndoorView+274↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22425,7 +22428,7 @@ loc_1E6D8:                              ; CODE XREF: sub_1E407+26B↑j
                 jmp     short loc_1E74A
 ; ---------------------------------------------------------------------------
 
-loc_1E724:                              ; CODE XREF: sub_1E407+2FA↑j
+loc_1E724:                              ; CODE XREF: renderIndoorView+2FA↑j
                 cmp     byte_332D2, 0
                 jz      short loc_1E74E
                 inc     si
@@ -22444,12 +22447,12 @@ loc_1E724:                              ; CODE XREF: sub_1E407+2FA↑j
                 mov     bx, ax
                 mov     al, [bx+0E7Dh]
 
-loc_1E74A:                              ; CODE XREF: sub_1E407+31B↑j
+loc_1E74A:                              ; CODE XREF: renderIndoorView+31B↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_1E74E:                              ; CODE XREF: sub_1E407+2D8↑j
-                                        ; sub_1E407+2E1↑j ...
+loc_1E74E:                              ; CODE XREF: renderIndoorView+2D8↑j
+                                        ; renderIndoorView+2E1↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22491,7 +22494,7 @@ loc_1E74E:                              ; CODE XREF: sub_1E407+2D8↑j
                 jmp     short loc_1E7C4
 ; ---------------------------------------------------------------------------
 
-loc_1E7A5:                              ; CODE XREF: sub_1E407+382↑j
+loc_1E7A5:                              ; CODE XREF: renderIndoorView+382↑j
                 cmp     byte_340AA, 0
                 jz      short loc_1E7C4
                 inc     si
@@ -22507,8 +22510,8 @@ loc_1E7A5:                              ; CODE XREF: sub_1E407+382↑j
                 inc     si
                 mov     word ptr [si], 1Ch
 
-loc_1E7C4:                              ; CODE XREF: sub_1E407+34E↑j
-                                        ; sub_1E407+357↑j ...
+loc_1E7C4:                              ; CODE XREF: renderIndoorView+34E↑j
+                                        ; renderIndoorView+357↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22546,7 +22549,7 @@ loc_1E7C4:                              ; CODE XREF: sub_1E407+34E↑j
                 jmp     short loc_1E831
 ; ---------------------------------------------------------------------------
 
-loc_1E812:                              ; CODE XREF: sub_1E407+3EF↑j
+loc_1E812:                              ; CODE XREF: renderIndoorView+3EF↑j
                 cmp     byte_33443, 0
                 jz      short loc_1E831
                 inc     si
@@ -22562,8 +22565,8 @@ loc_1E812:                              ; CODE XREF: sub_1E407+3EF↑j
                 inc     si
                 mov     word ptr [si], 1Ah
 
-loc_1E831:                              ; CODE XREF: sub_1E407+3C4↑j
-                                        ; sub_1E407+3CD↑j ...
+loc_1E831:                              ; CODE XREF: renderIndoorView+3C4↑j
+                                        ; renderIndoorView+3CD↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22601,7 +22604,7 @@ loc_1E831:                              ; CODE XREF: sub_1E407+3C4↑j
                 jmp     short loc_1E89E
 ; ---------------------------------------------------------------------------
 
-loc_1E87F:                              ; CODE XREF: sub_1E407+45C↑j
+loc_1E87F:                              ; CODE XREF: renderIndoorView+45C↑j
                 cmp     byte_373A2, 0
                 jz      short loc_1E89E
                 inc     si
@@ -22617,8 +22620,8 @@ loc_1E87F:                              ; CODE XREF: sub_1E407+45C↑j
                 inc     si
                 mov     word ptr [si], 18h
 
-loc_1E89E:                              ; CODE XREF: sub_1E407+431↑j
-                                        ; sub_1E407+43A↑j ...
+loc_1E89E:                              ; CODE XREF: renderIndoorView+431↑j
+                                        ; renderIndoorView+43A↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -22658,7 +22661,7 @@ loc_1E89E:                              ; CODE XREF: sub_1E407+431↑j
                 jmp     short loc_1E91A
 ; ---------------------------------------------------------------------------
 
-loc_1E8EF:                              ; CODE XREF: sub_1E407+4C0↑j
+loc_1E8EF:                              ; CODE XREF: renderIndoorView+4C0↑j
                 cmp     byte_332FA, 0
                 jz      short loc_1E91E
                 inc     si
@@ -22680,12 +22683,12 @@ loc_1E8EF:                              ; CODE XREF: sub_1E407+4C0↑j
                 mov     bx, ax
                 mov     al, [bx+0E7Dh]
 
-loc_1E91A:                              ; CODE XREF: sub_1E407+4E6↑j
+loc_1E91A:                              ; CODE XREF: renderIndoorView+4E6↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_1E91E:                              ; CODE XREF: sub_1E407+49E↑j
-                                        ; sub_1E407+4A7↑j ...
+loc_1E91E:                              ; CODE XREF: renderIndoorView+49E↑j
+                                        ; renderIndoorView+4A7↑j ...
                 mov     al, byte_373D5
                 mov     ah, 0
                 or      ax, ax
@@ -22693,7 +22696,7 @@ loc_1E91E:                              ; CODE XREF: sub_1E407+49E↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E92A:                              ; CODE XREF: sub_1E407+51E↑j
+loc_1E92A:                              ; CODE XREF: renderIndoorView+51E↑j
                 mov     al, byte_333B5
                 mov     ah, 0
                 or      ax, ax
@@ -22701,7 +22704,7 @@ loc_1E92A:                              ; CODE XREF: sub_1E407+51E↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E936:                              ; CODE XREF: sub_1E407+52A↑j
+loc_1E936:                              ; CODE XREF: renderIndoorView+52A↑j
                 mov     al, byte_332AE
                 mov     ah, 0
                 or      ax, ax
@@ -22709,7 +22712,7 @@ loc_1E936:                              ; CODE XREF: sub_1E407+52A↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E942:                              ; CODE XREF: sub_1E407+536↑j
+loc_1E942:                              ; CODE XREF: renderIndoorView+536↑j
                 mov     al, byte_31451
                 mov     ah, 0
                 or      ax, ax
@@ -22717,7 +22720,7 @@ loc_1E942:                              ; CODE XREF: sub_1E407+536↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E94E:                              ; CODE XREF: sub_1E407+542↑j
+loc_1E94E:                              ; CODE XREF: renderIndoorView+542↑j
                 mov     al, byte_340B3
                 mov     ah, 0
                 or      ax, ax
@@ -22725,7 +22728,7 @@ loc_1E94E:                              ; CODE XREF: sub_1E407+542↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E95A:                              ; CODE XREF: sub_1E407+54E↑j
+loc_1E95A:                              ; CODE XREF: renderIndoorView+54E↑j
                 mov     al, byte_332B1
                 mov     ah, 0
                 or      ax, ax
@@ -22733,7 +22736,7 @@ loc_1E95A:                              ; CODE XREF: sub_1E407+54E↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E966:                              ; CODE XREF: sub_1E407+55A↑j
+loc_1E966:                              ; CODE XREF: renderIndoorView+55A↑j
                 mov     al, byte_3330C
                 mov     ah, 0
                 or      ax, ax
@@ -22741,7 +22744,7 @@ loc_1E966:                              ; CODE XREF: sub_1E407+55A↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E972:                              ; CODE XREF: sub_1E407+566↑j
+loc_1E972:                              ; CODE XREF: renderIndoorView+566↑j
                 cmp     byte_373C8, 0
                 jz      short loc_1E994
                 inc     si
@@ -22759,7 +22762,7 @@ loc_1E972:                              ; CODE XREF: sub_1E407+566↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E994:                              ; CODE XREF: sub_1E407+570↑j
+loc_1E994:                              ; CODE XREF: renderIndoorView+570↑j
                 cmp     byte_340B8, 0
                 jz      short loc_1E9B6
                 inc     si
@@ -22777,7 +22780,7 @@ loc_1E994:                              ; CODE XREF: sub_1E407+570↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E9B6:                              ; CODE XREF: sub_1E407+592↑j
+loc_1E9B6:                              ; CODE XREF: renderIndoorView+592↑j
                 cmp     byte_373D4, 0
                 jz      short loc_1E9DC
                 inc     si
@@ -22798,7 +22801,7 @@ loc_1E9B6:                              ; CODE XREF: sub_1E407+592↑j
                 jmp     loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E9DC:                              ; CODE XREF: sub_1E407+5B4↑j
+loc_1E9DC:                              ; CODE XREF: renderIndoorView+5B4↑j
                 cmp     byte_373D1, 0
                 jz      short loc_1E9FD
                 inc     si
@@ -22816,7 +22819,7 @@ loc_1E9DC:                              ; CODE XREF: sub_1E407+5B4↑j
                 jmp     short loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1E9FD:                              ; CODE XREF: sub_1E407+5DA↑j
+loc_1E9FD:                              ; CODE XREF: renderIndoorView+5DA↑j
                 cmp     byte_373C7, 0
                 jz      short loc_1EA1E
                 inc     si
@@ -22834,7 +22837,7 @@ loc_1E9FD:                              ; CODE XREF: sub_1E407+5DA↑j
                 jmp     short loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1EA1E:                              ; CODE XREF: sub_1E407+5FB↑j
+loc_1EA1E:                              ; CODE XREF: renderIndoorView+5FB↑j
                 cmp     byte_373CA, 0
                 jz      short loc_1EA3F
                 inc     si
@@ -22852,7 +22855,7 @@ loc_1EA1E:                              ; CODE XREF: sub_1E407+5FB↑j
                 jmp     short loc_1EA5E
 ; ---------------------------------------------------------------------------
 
-loc_1EA3F:                              ; CODE XREF: sub_1E407+61C↑j
+loc_1EA3F:                              ; CODE XREF: renderIndoorView+61C↑j
                 cmp     byte_333B4, 0
                 jz      short loc_1EA5E
                 inc     si
@@ -22868,8 +22871,8 @@ loc_1EA3F:                              ; CODE XREF: sub_1E407+61C↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1EA5E:                              ; CODE XREF: sub_1E407+520↑j
-                                        ; sub_1E407+52C↑j ...
+loc_1EA5E:                              ; CODE XREF: renderIndoorView+520↑j
+                                        ; renderIndoorView+52C↑j ...
                 mov     al, byte_373D6
                 mov     ah, 0
                 or      ax, ax
@@ -22877,7 +22880,7 @@ loc_1EA5E:                              ; CODE XREF: sub_1E407+520↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EA6A:                              ; CODE XREF: sub_1E407+65E↑j
+loc_1EA6A:                              ; CODE XREF: renderIndoorView+65E↑j
                 mov     al, byte_3343E
                 mov     ah, 0
                 or      ax, ax
@@ -22885,7 +22888,7 @@ loc_1EA6A:                              ; CODE XREF: sub_1E407+65E↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EA76:                              ; CODE XREF: sub_1E407+66A↑j
+loc_1EA76:                              ; CODE XREF: renderIndoorView+66A↑j
                 mov     al, byte_332AF
                 mov     ah, 0
                 or      ax, ax
@@ -22893,7 +22896,7 @@ loc_1EA76:                              ; CODE XREF: sub_1E407+66A↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EA82:                              ; CODE XREF: sub_1E407+676↑j
+loc_1EA82:                              ; CODE XREF: renderIndoorView+676↑j
                 mov     al, byte_319E5
                 mov     ah, 0
                 or      ax, ax
@@ -22901,7 +22904,7 @@ loc_1EA82:                              ; CODE XREF: sub_1E407+676↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EA8E:                              ; CODE XREF: sub_1E407+682↑j
+loc_1EA8E:                              ; CODE XREF: renderIndoorView+682↑j
                 mov     al, byte_340B6
                 mov     ah, 0
                 or      ax, ax
@@ -22909,7 +22912,7 @@ loc_1EA8E:                              ; CODE XREF: sub_1E407+682↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EA9A:                              ; CODE XREF: sub_1E407+68E↑j
+loc_1EA9A:                              ; CODE XREF: renderIndoorView+68E↑j
                 mov     al, byte_332F3
                 mov     ah, 0
                 or      ax, ax
@@ -22917,7 +22920,7 @@ loc_1EA9A:                              ; CODE XREF: sub_1E407+68E↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EAA6:                              ; CODE XREF: sub_1E407+69A↑j
+loc_1EAA6:                              ; CODE XREF: renderIndoorView+69A↑j
                 mov     al, byte_333B3
                 mov     ah, 0
                 or      ax, ax
@@ -22925,7 +22928,7 @@ loc_1EAA6:                              ; CODE XREF: sub_1E407+69A↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EAB2:                              ; CODE XREF: sub_1E407+6A6↑j
+loc_1EAB2:                              ; CODE XREF: renderIndoorView+6A6↑j
                 cmp     byte_373E7, 0
                 jz      short loc_1EAD4
                 inc     si
@@ -22943,7 +22946,7 @@ loc_1EAB2:                              ; CODE XREF: sub_1E407+6A6↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EAD4:                              ; CODE XREF: sub_1E407+6B0↑j
+loc_1EAD4:                              ; CODE XREF: renderIndoorView+6B0↑j
                 cmp     byte_34B6E, 0
                 jz      short loc_1EAF9
                 inc     si
@@ -22963,7 +22966,7 @@ loc_1EAD4:                              ; CODE XREF: sub_1E407+6B0↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EAF9:                              ; CODE XREF: sub_1E407+6D2↑j
+loc_1EAF9:                              ; CODE XREF: renderIndoorView+6D2↑j
                 cmp     byte_31450, 0
                 jz      short loc_1EB1F
                 inc     si
@@ -22984,7 +22987,7 @@ loc_1EAF9:                              ; CODE XREF: sub_1E407+6D2↑j
                 jmp     loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EB1F:                              ; CODE XREF: sub_1E407+6F7↑j
+loc_1EB1F:                              ; CODE XREF: renderIndoorView+6F7↑j
                 cmp     byte_37463, 0
                 jz      short loc_1EB40
                 inc     si
@@ -23002,7 +23005,7 @@ loc_1EB1F:                              ; CODE XREF: sub_1E407+6F7↑j
                 jmp     short loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EB40:                              ; CODE XREF: sub_1E407+71D↑j
+loc_1EB40:                              ; CODE XREF: renderIndoorView+71D↑j
                 cmp     byte_373D7, 0
                 jz      short loc_1EB61
                 inc     si
@@ -23020,7 +23023,7 @@ loc_1EB40:                              ; CODE XREF: sub_1E407+71D↑j
                 jmp     short loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EB61:                              ; CODE XREF: sub_1E407+73E↑j
+loc_1EB61:                              ; CODE XREF: renderIndoorView+73E↑j
                 cmp     byte_373E8, 0
                 jz      short loc_1EB82
                 inc     si
@@ -23038,7 +23041,7 @@ loc_1EB61:                              ; CODE XREF: sub_1E407+73E↑j
                 jmp     short loc_1EBA1
 ; ---------------------------------------------------------------------------
 
-loc_1EB82:                              ; CODE XREF: sub_1E407+75F↑j
+loc_1EB82:                              ; CODE XREF: renderIndoorView+75F↑j
                 cmp     byte_333C5, 0
                 jz      short loc_1EBA1
                 inc     si
@@ -23054,8 +23057,8 @@ loc_1EB82:                              ; CODE XREF: sub_1E407+75F↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1EBA1:                              ; CODE XREF: sub_1E407+660↑j
-                                        ; sub_1E407+66C↑j ...
+loc_1EBA1:                              ; CODE XREF: renderIndoorView+660↑j
+                                        ; renderIndoorView+66C↑j ...
                 mov     al, byte_373D5
                 mov     ah, 0
                 or      ax, ax
@@ -23097,7 +23100,7 @@ loc_1EBA1:                              ; CODE XREF: sub_1E407+660↑j
                 jmp     short loc_1EC17
 ; ---------------------------------------------------------------------------
 
-loc_1EBF8:                              ; CODE XREF: sub_1E407+7D5↑j
+loc_1EBF8:                              ; CODE XREF: renderIndoorView+7D5↑j
                 cmp     byte_33451, 0
                 jz      short loc_1EC17
                 inc     si
@@ -23113,8 +23116,8 @@ loc_1EBF8:                              ; CODE XREF: sub_1E407+7D5↑j
                 inc     si
                 mov     word ptr [si], 1Bh
 
-loc_1EC17:                              ; CODE XREF: sub_1E407+7A1↑j
-                                        ; sub_1E407+7AA↑j ...
+loc_1EC17:                              ; CODE XREF: renderIndoorView+7A1↑j
+                                        ; renderIndoorView+7AA↑j ...
                 mov     al, byte_373D6
                 mov     ah, 0
                 or      ax, ax
@@ -23156,7 +23159,7 @@ loc_1EC17:                              ; CODE XREF: sub_1E407+7A1↑j
                 jmp     short loc_1EC8D
 ; ---------------------------------------------------------------------------
 
-loc_1EC6E:                              ; CODE XREF: sub_1E407+84B↑j
+loc_1EC6E:                              ; CODE XREF: renderIndoorView+84B↑j
                 cmp     byte_340A9, 0
                 jz      short loc_1EC8D
                 inc     si
@@ -23172,8 +23175,8 @@ loc_1EC6E:                              ; CODE XREF: sub_1E407+84B↑j
                 inc     si
                 mov     word ptr [si], 1Bh
 
-loc_1EC8D:                              ; CODE XREF: sub_1E407+817↑j
-                                        ; sub_1E407+820↑j ...
+loc_1EC8D:                              ; CODE XREF: renderIndoorView+817↑j
+                                        ; renderIndoorView+820↑j ...
                 cmp     byte_333B5, 0
                 jz      short loc_1EC9E
                 cmp     byte_33316, 0
@@ -23181,8 +23184,8 @@ loc_1EC8D:                              ; CODE XREF: sub_1E407+817↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1EC9E:                              ; CODE XREF: sub_1E407+88B↑j
-                                        ; sub_1E407+892↑j
+loc_1EC9E:                              ; CODE XREF: renderIndoorView+88B↑j
+                                        ; renderIndoorView+892↑j
                 cmp     byte_333B5, 0
                 jz      short loc_1ECAF
                 cmp     byte_3407E, 0
@@ -23190,8 +23193,8 @@ loc_1EC9E:                              ; CODE XREF: sub_1E407+88B↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ECAF:                              ; CODE XREF: sub_1E407+89C↑j
-                                        ; sub_1E407+8A3↑j
+loc_1ECAF:                              ; CODE XREF: renderIndoorView+89C↑j
+                                        ; renderIndoorView+8A3↑j
                 cmp     byte_333B5, 0
                 jz      short loc_1ECC0
                 cmp     byte_34BC7, 0
@@ -23199,8 +23202,8 @@ loc_1ECAF:                              ; CODE XREF: sub_1E407+89C↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ECC0:                              ; CODE XREF: sub_1E407+8AD↑j
-                                        ; sub_1E407+8B4↑j
+loc_1ECC0:                              ; CODE XREF: renderIndoorView+8AD↑j
+                                        ; renderIndoorView+8B4↑j
                 cmp     byte_333B5, 0
                 jz      short loc_1ECD1
                 cmp     byte_34C2C, 0
@@ -23208,8 +23211,8 @@ loc_1ECC0:                              ; CODE XREF: sub_1E407+8AD↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ECD1:                              ; CODE XREF: sub_1E407+8BE↑j
-                                        ; sub_1E407+8C5↑j
+loc_1ECD1:                              ; CODE XREF: renderIndoorView+8BE↑j
+                                        ; renderIndoorView+8C5↑j
                 cmp     byte_373D5, 0
                 jz      short loc_1ECE2
                 cmp     byte_33316, 0
@@ -23217,8 +23220,8 @@ loc_1ECD1:                              ; CODE XREF: sub_1E407+8BE↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ECE2:                              ; CODE XREF: sub_1E407+8CF↑j
-                                        ; sub_1E407+8D6↑j
+loc_1ECE2:                              ; CODE XREF: renderIndoorView+8CF↑j
+                                        ; renderIndoorView+8D6↑j
                 cmp     byte_373D5, 0
                 jz      short loc_1ECF3
                 cmp     byte_3407E, 0
@@ -23226,8 +23229,8 @@ loc_1ECE2:                              ; CODE XREF: sub_1E407+8CF↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ECF3:                              ; CODE XREF: sub_1E407+8E0↑j
-                                        ; sub_1E407+8E7↑j
+loc_1ECF3:                              ; CODE XREF: renderIndoorView+8E0↑j
+                                        ; renderIndoorView+8E7↑j
                 cmp     byte_373D5, 0
                 jz      short loc_1ED04
                 cmp     byte_34BC7, 0
@@ -23235,8 +23238,8 @@ loc_1ECF3:                              ; CODE XREF: sub_1E407+8E0↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED04:                              ; CODE XREF: sub_1E407+8F1↑j
-                                        ; sub_1E407+8F8↑j
+loc_1ED04:                              ; CODE XREF: renderIndoorView+8F1↑j
+                                        ; renderIndoorView+8F8↑j
                 cmp     byte_373D5, 0
                 jz      short loc_1ED15
                 cmp     byte_34C2C, 0
@@ -23244,8 +23247,8 @@ loc_1ED04:                              ; CODE XREF: sub_1E407+8F1↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED15:                              ; CODE XREF: sub_1E407+902↑j
-                                        ; sub_1E407+909↑j
+loc_1ED15:                              ; CODE XREF: renderIndoorView+902↑j
+                                        ; renderIndoorView+909↑j
                 cmp     byte_31451, 0
                 jz      short loc_1ED26
                 cmp     byte_33316, 0
@@ -23253,8 +23256,8 @@ loc_1ED15:                              ; CODE XREF: sub_1E407+902↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED26:                              ; CODE XREF: sub_1E407+913↑j
-                                        ; sub_1E407+91A↑j
+loc_1ED26:                              ; CODE XREF: renderIndoorView+913↑j
+                                        ; renderIndoorView+91A↑j
                 cmp     byte_31451, 0
                 jz      short loc_1ED37
                 cmp     byte_3407E, 0
@@ -23262,8 +23265,8 @@ loc_1ED26:                              ; CODE XREF: sub_1E407+913↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED37:                              ; CODE XREF: sub_1E407+924↑j
-                                        ; sub_1E407+92B↑j
+loc_1ED37:                              ; CODE XREF: renderIndoorView+924↑j
+                                        ; renderIndoorView+92B↑j
                 cmp     byte_31451, 0
                 jz      short loc_1ED48
                 cmp     byte_34BC7, 0
@@ -23271,8 +23274,8 @@ loc_1ED37:                              ; CODE XREF: sub_1E407+924↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED48:                              ; CODE XREF: sub_1E407+935↑j
-                                        ; sub_1E407+93C↑j
+loc_1ED48:                              ; CODE XREF: renderIndoorView+935↑j
+                                        ; renderIndoorView+93C↑j
                 cmp     byte_31451, 0
                 jz      short loc_1ED59
                 cmp     byte_34C2C, 0
@@ -23280,32 +23283,32 @@ loc_1ED48:                              ; CODE XREF: sub_1E407+935↑j
                 jmp     loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1ED59:                              ; CODE XREF: sub_1E407+946↑j
-                                        ; sub_1E407+94D↑j
+loc_1ED59:                              ; CODE XREF: renderIndoorView+946↑j
+                                        ; renderIndoorView+94D↑j
                 cmp     byte_37392, 0
                 jz      short loc_1ED67
                 cmp     byte_33316, 0
                 jnz     short loc_1EDDA
 
-loc_1ED67:                              ; CODE XREF: sub_1E407+957↑j
+loc_1ED67:                              ; CODE XREF: renderIndoorView+957↑j
                 cmp     byte_37392, 0
                 jz      short loc_1ED75
                 cmp     byte_3407E, 0
                 jnz     short loc_1EDDA
 
-loc_1ED75:                              ; CODE XREF: sub_1E407+965↑j
+loc_1ED75:                              ; CODE XREF: renderIndoorView+965↑j
                 cmp     byte_37392, 0
                 jz      short loc_1ED83
                 cmp     byte_34BC7, 0
                 jnz     short loc_1EDDA
 
-loc_1ED83:                              ; CODE XREF: sub_1E407+973↑j
+loc_1ED83:                              ; CODE XREF: renderIndoorView+973↑j
                 cmp     byte_37392, 0
                 jz      short loc_1ED91
                 cmp     byte_34C2C, 0
                 jnz     short loc_1EDDA
 
-loc_1ED91:                              ; CODE XREF: sub_1E407+981↑j
+loc_1ED91:                              ; CODE XREF: renderIndoorView+981↑j
                 mov     al, byte_332AE
                 mov     ah, 0
                 or      ax, ax
@@ -23327,7 +23330,7 @@ loc_1ED91:                              ; CODE XREF: sub_1E407+981↑j
                 jmp     short loc_1EDDA
 ; ---------------------------------------------------------------------------
 
-loc_1EDBB:                              ; CODE XREF: sub_1E407+998↑j
+loc_1EDBB:                              ; CODE XREF: renderIndoorView+998↑j
                 cmp     byte_333B9, 0
                 jz      short loc_1EDDA
                 inc     si
@@ -23343,8 +23346,8 @@ loc_1EDBB:                              ; CODE XREF: sub_1E407+998↑j
                 inc     si
                 mov     word ptr [si], 19h
 
-loc_1EDDA:                              ; CODE XREF: sub_1E407+894↑j
-                                        ; sub_1E407+8A5↑j ...
+loc_1EDDA:                              ; CODE XREF: renderIndoorView+894↑j
+                                        ; renderIndoorView+8A5↑j ...
                 cmp     byte_3343E, 0
                 jz      short loc_1EDEB
                 cmp     byte_33316, 0
@@ -23352,8 +23355,8 @@ loc_1EDDA:                              ; CODE XREF: sub_1E407+894↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EDEB:                              ; CODE XREF: sub_1E407+9D8↑j
-                                        ; sub_1E407+9DF↑j
+loc_1EDEB:                              ; CODE XREF: renderIndoorView+9D8↑j
+                                        ; renderIndoorView+9DF↑j
                 cmp     byte_3343E, 0
                 jz      short loc_1EDFC
                 cmp     byte_3407F, 0
@@ -23361,8 +23364,8 @@ loc_1EDEB:                              ; CODE XREF: sub_1E407+9D8↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EDFC:                              ; CODE XREF: sub_1E407+9E9↑j
-                                        ; sub_1E407+9F0↑j
+loc_1EDFC:                              ; CODE XREF: renderIndoorView+9E9↑j
+                                        ; renderIndoorView+9F0↑j
                 cmp     byte_3343E, 0
                 jz      short loc_1EE0D
                 cmp     byte_34C1A, 0
@@ -23370,8 +23373,8 @@ loc_1EDFC:                              ; CODE XREF: sub_1E407+9E9↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE0D:                              ; CODE XREF: sub_1E407+9FA↑j
-                                        ; sub_1E407+A01↑j
+loc_1EE0D:                              ; CODE XREF: renderIndoorView+9FA↑j
+                                        ; renderIndoorView+A01↑j
                 cmp     byte_3343E, 0
                 jz      short loc_1EE1E
                 cmp     byte_34C2D, 0
@@ -23379,8 +23382,8 @@ loc_1EE0D:                              ; CODE XREF: sub_1E407+9FA↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE1E:                              ; CODE XREF: sub_1E407+A0B↑j
-                                        ; sub_1E407+A12↑j
+loc_1EE1E:                              ; CODE XREF: renderIndoorView+A0B↑j
+                                        ; renderIndoorView+A12↑j
                 cmp     byte_373D6, 0
                 jz      short loc_1EE2F
                 cmp     byte_33316, 0
@@ -23388,8 +23391,8 @@ loc_1EE1E:                              ; CODE XREF: sub_1E407+A0B↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE2F:                              ; CODE XREF: sub_1E407+A1C↑j
-                                        ; sub_1E407+A23↑j
+loc_1EE2F:                              ; CODE XREF: renderIndoorView+A1C↑j
+                                        ; renderIndoorView+A23↑j
                 cmp     byte_373D6, 0
                 jz      short loc_1EE40
                 cmp     byte_3407F, 0
@@ -23397,8 +23400,8 @@ loc_1EE2F:                              ; CODE XREF: sub_1E407+A1C↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE40:                              ; CODE XREF: sub_1E407+A2D↑j
-                                        ; sub_1E407+A34↑j
+loc_1EE40:                              ; CODE XREF: renderIndoorView+A2D↑j
+                                        ; renderIndoorView+A34↑j
                 cmp     byte_373D6, 0
                 jz      short loc_1EE51
                 cmp     byte_34C1A, 0
@@ -23406,8 +23409,8 @@ loc_1EE40:                              ; CODE XREF: sub_1E407+A2D↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE51:                              ; CODE XREF: sub_1E407+A3E↑j
-                                        ; sub_1E407+A45↑j
+loc_1EE51:                              ; CODE XREF: renderIndoorView+A3E↑j
+                                        ; renderIndoorView+A45↑j
                 cmp     byte_373D6, 0
                 jz      short loc_1EE62
                 cmp     byte_34C2D, 0
@@ -23415,8 +23418,8 @@ loc_1EE51:                              ; CODE XREF: sub_1E407+A3E↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE62:                              ; CODE XREF: sub_1E407+A4F↑j
-                                        ; sub_1E407+A56↑j
+loc_1EE62:                              ; CODE XREF: renderIndoorView+A4F↑j
+                                        ; renderIndoorView+A56↑j
                 cmp     byte_319E5, 0
                 jz      short loc_1EE73
                 cmp     byte_33316, 0
@@ -23424,8 +23427,8 @@ loc_1EE62:                              ; CODE XREF: sub_1E407+A4F↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE73:                              ; CODE XREF: sub_1E407+A60↑j
-                                        ; sub_1E407+A67↑j
+loc_1EE73:                              ; CODE XREF: renderIndoorView+A60↑j
+                                        ; renderIndoorView+A67↑j
                 cmp     byte_319E5, 0
                 jz      short loc_1EE84
                 cmp     byte_3407F, 0
@@ -23433,8 +23436,8 @@ loc_1EE73:                              ; CODE XREF: sub_1E407+A60↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE84:                              ; CODE XREF: sub_1E407+A71↑j
-                                        ; sub_1E407+A78↑j
+loc_1EE84:                              ; CODE XREF: renderIndoorView+A71↑j
+                                        ; renderIndoorView+A78↑j
                 cmp     byte_319E5, 0
                 jz      short loc_1EE95
                 cmp     byte_34C1A, 0
@@ -23442,8 +23445,8 @@ loc_1EE84:                              ; CODE XREF: sub_1E407+A71↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EE95:                              ; CODE XREF: sub_1E407+A82↑j
-                                        ; sub_1E407+A89↑j
+loc_1EE95:                              ; CODE XREF: renderIndoorView+A82↑j
+                                        ; renderIndoorView+A89↑j
                 cmp     byte_319E5, 0
                 jz      short loc_1EEA6
                 cmp     byte_34C2D, 0
@@ -23451,32 +23454,32 @@ loc_1EE95:                              ; CODE XREF: sub_1E407+A82↑j
                 jmp     loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EEA6:                              ; CODE XREF: sub_1E407+A93↑j
-                                        ; sub_1E407+A9A↑j
+loc_1EEA6:                              ; CODE XREF: renderIndoorView+A93↑j
+                                        ; renderIndoorView+A9A↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1EEB4
                 cmp     byte_33316, 0
                 jnz     short loc_1EF27
 
-loc_1EEB4:                              ; CODE XREF: sub_1E407+AA4↑j
+loc_1EEB4:                              ; CODE XREF: renderIndoorView+AA4↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1EEC2
                 cmp     byte_3407F, 0
                 jnz     short loc_1EF27
 
-loc_1EEC2:                              ; CODE XREF: sub_1E407+AB2↑j
+loc_1EEC2:                              ; CODE XREF: renderIndoorView+AB2↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1EED0
                 cmp     byte_34C1A, 0
                 jnz     short loc_1EF27
 
-loc_1EED0:                              ; CODE XREF: sub_1E407+AC0↑j
+loc_1EED0:                              ; CODE XREF: renderIndoorView+AC0↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1EEDE
                 cmp     byte_34C2D, 0
                 jnz     short loc_1EF27
 
-loc_1EEDE:                              ; CODE XREF: sub_1E407+ACE↑j
+loc_1EEDE:                              ; CODE XREF: renderIndoorView+ACE↑j
                 mov     al, byte_332AF
                 mov     ah, 0
                 or      ax, ax
@@ -23498,7 +23501,7 @@ loc_1EEDE:                              ; CODE XREF: sub_1E407+ACE↑j
                 jmp     short loc_1EF27
 ; ---------------------------------------------------------------------------
 
-loc_1EF08:                              ; CODE XREF: sub_1E407+AE5↑j
+loc_1EF08:                              ; CODE XREF: renderIndoorView+AE5↑j
                 cmp     byte_33442, 0
                 jz      short loc_1EF27
                 inc     si
@@ -23514,8 +23517,8 @@ loc_1EF08:                              ; CODE XREF: sub_1E407+AE5↑j
                 inc     si
                 mov     word ptr [si], 19h
 
-loc_1EF27:                              ; CODE XREF: sub_1E407+9E1↑j
-                                        ; sub_1E407+9F2↑j ...
+loc_1EF27:                              ; CODE XREF: renderIndoorView+9E1↑j
+                                        ; renderIndoorView+9F2↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -23523,7 +23526,7 @@ loc_1EF27:                              ; CODE XREF: sub_1E407+9E1↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF33:                              ; CODE XREF: sub_1E407+B27↑j
+loc_1EF33:                              ; CODE XREF: renderIndoorView+B27↑j
                 mov     al, byte_332AE
                 mov     ah, 0
                 or      ax, ax
@@ -23531,7 +23534,7 @@ loc_1EF33:                              ; CODE XREF: sub_1E407+B27↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF3F:                              ; CODE XREF: sub_1E407+B33↑j
+loc_1EF3F:                              ; CODE XREF: renderIndoorView+B33↑j
                 mov     al, byte_3407E
                 mov     ah, 0
                 or      ax, ax
@@ -23539,7 +23542,7 @@ loc_1EF3F:                              ; CODE XREF: sub_1E407+B33↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF4B:                              ; CODE XREF: sub_1E407+B3F↑j
+loc_1EF4B:                              ; CODE XREF: renderIndoorView+B3F↑j
                 mov     al, byte_34BC7
                 mov     ah, 0
                 or      ax, ax
@@ -23547,7 +23550,7 @@ loc_1EF4B:                              ; CODE XREF: sub_1E407+B3F↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF57:                              ; CODE XREF: sub_1E407+B4B↑j
+loc_1EF57:                              ; CODE XREF: renderIndoorView+B4B↑j
                 mov     al, byte_34C2C
                 mov     ah, 0
                 or      ax, ax
@@ -23555,7 +23558,7 @@ loc_1EF57:                              ; CODE XREF: sub_1E407+B4B↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF63:                              ; CODE XREF: sub_1E407+B57↑j
+loc_1EF63:                              ; CODE XREF: renderIndoorView+B57↑j
                 mov     al, byte_332B1
                 mov     ah, 0
                 or      ax, ax
@@ -23563,7 +23566,7 @@ loc_1EF63:                              ; CODE XREF: sub_1E407+B57↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF6F:                              ; CODE XREF: sub_1E407+B63↑j
+loc_1EF6F:                              ; CODE XREF: renderIndoorView+B63↑j
                 cmp     byte_3738A, 0
                 jz      short loc_1EF91
                 inc     si
@@ -23581,7 +23584,7 @@ loc_1EF6F:                              ; CODE XREF: sub_1E407+B63↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EF91:                              ; CODE XREF: sub_1E407+B6D↑j
+loc_1EF91:                              ; CODE XREF: renderIndoorView+B6D↑j
                 cmp     byte_33450, 0
                 jz      short loc_1EFB6
                 inc     si
@@ -23601,7 +23604,7 @@ loc_1EF91:                              ; CODE XREF: sub_1E407+B6D↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EFB6:                              ; CODE XREF: sub_1E407+B8F↑j
+loc_1EFB6:                              ; CODE XREF: renderIndoorView+B8F↑j
                 cmp     byte_373A0, 0
                 jz      short loc_1EFDC
                 inc     si
@@ -23622,7 +23625,7 @@ loc_1EFB6:                              ; CODE XREF: sub_1E407+B8F↑j
                 jmp     loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EFDC:                              ; CODE XREF: sub_1E407+BB4↑j
+loc_1EFDC:                              ; CODE XREF: renderIndoorView+BB4↑j
                 cmp     byte_37396, 0
                 jz      short loc_1EFFD
                 inc     si
@@ -23640,7 +23643,7 @@ loc_1EFDC:                              ; CODE XREF: sub_1E407+BB4↑j
                 jmp     short loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1EFFD:                              ; CODE XREF: sub_1E407+BDA↑j
+loc_1EFFD:                              ; CODE XREF: renderIndoorView+BDA↑j
                 cmp     byte_37387, 0
                 jz      short loc_1F01E
                 inc     si
@@ -23658,7 +23661,7 @@ loc_1EFFD:                              ; CODE XREF: sub_1E407+BDA↑j
                 jmp     short loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1F01E:                              ; CODE XREF: sub_1E407+BFB↑j
+loc_1F01E:                              ; CODE XREF: renderIndoorView+BFB↑j
                 cmp     byte_3738D, 0
                 jz      short loc_1F03F
                 inc     si
@@ -23676,7 +23679,7 @@ loc_1F01E:                              ; CODE XREF: sub_1E407+BFB↑j
                 jmp     short loc_1F05E
 ; ---------------------------------------------------------------------------
 
-loc_1F03F:                              ; CODE XREF: sub_1E407+C1C↑j
+loc_1F03F:                              ; CODE XREF: renderIndoorView+C1C↑j
                 cmp     byte_332FF, 0
                 jz      short loc_1F05E
                 inc     si
@@ -23692,8 +23695,8 @@ loc_1F03F:                              ; CODE XREF: sub_1E407+C1C↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F05E:                              ; CODE XREF: sub_1E407+B29↑j
-                                        ; sub_1E407+B35↑j ...
+loc_1F05E:                              ; CODE XREF: renderIndoorView+B29↑j
+                                        ; renderIndoorView+B35↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -23701,7 +23704,7 @@ loc_1F05E:                              ; CODE XREF: sub_1E407+B29↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F06A:                              ; CODE XREF: sub_1E407+C5E↑j
+loc_1F06A:                              ; CODE XREF: renderIndoorView+C5E↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F07B
                 cmp     byte_332AE, 0
@@ -23709,8 +23712,8 @@ loc_1F06A:                              ; CODE XREF: sub_1E407+C5E↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F07B:                              ; CODE XREF: sub_1E407+C68↑j
-                                        ; sub_1E407+C6F↑j
+loc_1F07B:                              ; CODE XREF: renderIndoorView+C68↑j
+                                        ; renderIndoorView+C6F↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F08C
                 cmp     byte_34BC7, 0
@@ -23718,8 +23721,8 @@ loc_1F07B:                              ; CODE XREF: sub_1E407+C68↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F08C:                              ; CODE XREF: sub_1E407+C79↑j
-                                        ; sub_1E407+C80↑j
+loc_1F08C:                              ; CODE XREF: renderIndoorView+C79↑j
+                                        ; renderIndoorView+C80↑j
                 cmp     byte_332AE, 0
                 jz      short loc_1F09D
                 cmp     byte_37392, 0
@@ -23727,8 +23730,8 @@ loc_1F08C:                              ; CODE XREF: sub_1E407+C79↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F09D:                              ; CODE XREF: sub_1E407+C8A↑j
-                                        ; sub_1E407+C91↑j
+loc_1F09D:                              ; CODE XREF: renderIndoorView+C8A↑j
+                                        ; renderIndoorView+C91↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_1F0AE
                 cmp     byte_37392, 0
@@ -23736,8 +23739,8 @@ loc_1F09D:                              ; CODE XREF: sub_1E407+C8A↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F0AE:                              ; CODE XREF: sub_1E407+C9B↑j
-                                        ; sub_1E407+CA2↑j
+loc_1F0AE:                              ; CODE XREF: renderIndoorView+C9B↑j
+                                        ; renderIndoorView+CA2↑j
                 mov     al, byte_3407E
                 mov     ah, 0
                 or      ax, ax
@@ -23745,7 +23748,7 @@ loc_1F0AE:                              ; CODE XREF: sub_1E407+C9B↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F0BA:                              ; CODE XREF: sub_1E407+CAE↑j
+loc_1F0BA:                              ; CODE XREF: renderIndoorView+CAE↑j
                 mov     al, byte_34C2C
                 mov     ah, 0
                 or      ax, ax
@@ -23753,7 +23756,7 @@ loc_1F0BA:                              ; CODE XREF: sub_1E407+CAE↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F0C6:                              ; CODE XREF: sub_1E407+CBA↑j
+loc_1F0C6:                              ; CODE XREF: renderIndoorView+CBA↑j
                 cmp     byte_35D58, 0
                 jz      short loc_1F0E8
                 inc     si
@@ -23771,7 +23774,7 @@ loc_1F0C6:                              ; CODE XREF: sub_1E407+CBA↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F0E8:                              ; CODE XREF: sub_1E407+CC4↑j
+loc_1F0E8:                              ; CODE XREF: renderIndoorView+CC4↑j
                 cmp     byte_333B7, 0
                 jz      short loc_1F10D
                 inc     si
@@ -23791,7 +23794,7 @@ loc_1F0E8:                              ; CODE XREF: sub_1E407+CC4↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F10D:                              ; CODE XREF: sub_1E407+CE6↑j
+loc_1F10D:                              ; CODE XREF: renderIndoorView+CE6↑j
                 cmp     byte_36FAE, 0
                 jz      short loc_1F133
                 inc     si
@@ -23812,7 +23815,7 @@ loc_1F10D:                              ; CODE XREF: sub_1E407+CE6↑j
                 jmp     loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F133:                              ; CODE XREF: sub_1E407+D0B↑j
+loc_1F133:                              ; CODE XREF: renderIndoorView+D0B↑j
                 cmp     byte_36FA8, 0
                 jz      short loc_1F154
                 inc     si
@@ -23830,7 +23833,7 @@ loc_1F133:                              ; CODE XREF: sub_1E407+D0B↑j
                 jmp     short loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F154:                              ; CODE XREF: sub_1E407+D31↑j
+loc_1F154:                              ; CODE XREF: renderIndoorView+D31↑j
                 cmp     byte_35D55, 0
                 jz      short loc_1F175
                 inc     si
@@ -23848,7 +23851,7 @@ loc_1F154:                              ; CODE XREF: sub_1E407+D31↑j
                 jmp     short loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F175:                              ; CODE XREF: sub_1E407+D52↑j
+loc_1F175:                              ; CODE XREF: renderIndoorView+D52↑j
                 cmp     byte_35D5A, 0
                 jz      short loc_1F196
                 inc     si
@@ -23866,7 +23869,7 @@ loc_1F175:                              ; CODE XREF: sub_1E407+D52↑j
                 jmp     short loc_1F1B5
 ; ---------------------------------------------------------------------------
 
-loc_1F196:                              ; CODE XREF: sub_1E407+D73↑j
+loc_1F196:                              ; CODE XREF: renderIndoorView+D73↑j
                 cmp     byte_332B0, 0
                 jz      short loc_1F1B5
                 inc     si
@@ -23882,8 +23885,8 @@ loc_1F196:                              ; CODE XREF: sub_1E407+D73↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F1B5:                              ; CODE XREF: sub_1E407+C60↑j
-                                        ; sub_1E407+C71↑j ...
+loc_1F1B5:                              ; CODE XREF: renderIndoorView+C60↑j
+                                        ; renderIndoorView+C71↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -23891,7 +23894,7 @@ loc_1F1B5:                              ; CODE XREF: sub_1E407+C60↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F1C1:                              ; CODE XREF: sub_1E407+DB5↑j
+loc_1F1C1:                              ; CODE XREF: renderIndoorView+DB5↑j
                 mov     al, byte_34B8D
                 mov     ah, 0
                 or      ax, ax
@@ -23899,7 +23902,7 @@ loc_1F1C1:                              ; CODE XREF: sub_1E407+DB5↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F1CD:                              ; CODE XREF: sub_1E407+DC1↑j
+loc_1F1CD:                              ; CODE XREF: renderIndoorView+DC1↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_1F1DE
                 cmp     byte_37392, 0
@@ -23907,8 +23910,8 @@ loc_1F1CD:                              ; CODE XREF: sub_1E407+DC1↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F1DE:                              ; CODE XREF: sub_1E407+DCB↑j
-                                        ; sub_1E407+DD2↑j
+loc_1F1DE:                              ; CODE XREF: renderIndoorView+DCB↑j
+                                        ; renderIndoorView+DD2↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_1F1EF
                 cmp     byte_3407E, 0
@@ -23916,8 +23919,8 @@ loc_1F1DE:                              ; CODE XREF: sub_1E407+DCB↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F1EF:                              ; CODE XREF: sub_1E407+DDC↑j
-                                        ; sub_1E407+DE3↑j
+loc_1F1EF:                              ; CODE XREF: renderIndoorView+DDC↑j
+                                        ; renderIndoorView+DE3↑j
                 cmp     byte_3407E, 0
                 jz      short loc_1F200
                 cmp     byte_32E5E, 0
@@ -23925,8 +23928,8 @@ loc_1F1EF:                              ; CODE XREF: sub_1E407+DDC↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F200:                              ; CODE XREF: sub_1E407+DED↑j
-                                        ; sub_1E407+DF4↑j
+loc_1F200:                              ; CODE XREF: renderIndoorView+DED↑j
+                                        ; renderIndoorView+DF4↑j
                 cmp     byte_37392, 0
                 jz      short loc_1F211
                 cmp     byte_32E5E, 0
@@ -23934,8 +23937,8 @@ loc_1F200:                              ; CODE XREF: sub_1E407+DED↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F211:                              ; CODE XREF: sub_1E407+DFE↑j
-                                        ; sub_1E407+E05↑j
+loc_1F211:                              ; CODE XREF: renderIndoorView+DFE↑j
+                                        ; renderIndoorView+E05↑j
                 cmp     byte_332FB, 0
                 jz      short loc_1F233
                 inc     si
@@ -23953,7 +23956,7 @@ loc_1F211:                              ; CODE XREF: sub_1E407+DFE↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F233:                              ; CODE XREF: sub_1E407+E0F↑j
+loc_1F233:                              ; CODE XREF: renderIndoorView+E0F↑j
                 cmp     byte_3739C, 0
                 jz      short loc_1F258
                 inc     si
@@ -23973,7 +23976,7 @@ loc_1F233:                              ; CODE XREF: sub_1E407+E0F↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F258:                              ; CODE XREF: sub_1E407+E31↑j
+loc_1F258:                              ; CODE XREF: renderIndoorView+E31↑j
                 cmp     byte_33314, 0
                 jz      short loc_1F27E
                 inc     si
@@ -23994,7 +23997,7 @@ loc_1F258:                              ; CODE XREF: sub_1E407+E31↑j
                 jmp     loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F27E:                              ; CODE XREF: sub_1E407+E56↑j
+loc_1F27E:                              ; CODE XREF: renderIndoorView+E56↑j
                 cmp     byte_3330F, 0
                 jz      short loc_1F29F
                 inc     si
@@ -24012,7 +24015,7 @@ loc_1F27E:                              ; CODE XREF: sub_1E407+E56↑j
                 jmp     short loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F29F:                              ; CODE XREF: sub_1E407+E7C↑j
+loc_1F29F:                              ; CODE XREF: renderIndoorView+E7C↑j
                 cmp     byte_332F4, 0
                 jz      short loc_1F2C0
                 inc     si
@@ -24030,7 +24033,7 @@ loc_1F29F:                              ; CODE XREF: sub_1E407+E7C↑j
                 jmp     short loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F2C0:                              ; CODE XREF: sub_1E407+E9D↑j
+loc_1F2C0:                              ; CODE XREF: renderIndoorView+E9D↑j
                 cmp     byte_33302, 0
                 jz      short loc_1F2E1
                 inc     si
@@ -24048,7 +24051,7 @@ loc_1F2C0:                              ; CODE XREF: sub_1E407+E9D↑j
                 jmp     short loc_1F300
 ; ---------------------------------------------------------------------------
 
-loc_1F2E1:                              ; CODE XREF: sub_1E407+EBE↑j
+loc_1F2E1:                              ; CODE XREF: renderIndoorView+EBE↑j
                 cmp     byte_34C2A, 0
                 jz      short loc_1F300
                 inc     si
@@ -24064,8 +24067,8 @@ loc_1F2E1:                              ; CODE XREF: sub_1E407+EBE↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F300:                              ; CODE XREF: sub_1E407+DB7↑j
-                                        ; sub_1E407+DC3↑j ...
+loc_1F300:                              ; CODE XREF: renderIndoorView+DB7↑j
+                                        ; renderIndoorView+DC3↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24073,7 +24076,7 @@ loc_1F300:                              ; CODE XREF: sub_1E407+DB7↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F30C:                              ; CODE XREF: sub_1E407+F00↑j
+loc_1F30C:                              ; CODE XREF: renderIndoorView+F00↑j
                 mov     al, byte_332AF
                 mov     ah, 0
                 or      ax, ax
@@ -24081,7 +24084,7 @@ loc_1F30C:                              ; CODE XREF: sub_1E407+F00↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F318:                              ; CODE XREF: sub_1E407+F0C↑j
+loc_1F318:                              ; CODE XREF: renderIndoorView+F0C↑j
                 mov     al, byte_3407F
                 mov     ah, 0
                 or      ax, ax
@@ -24089,7 +24092,7 @@ loc_1F318:                              ; CODE XREF: sub_1E407+F0C↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F324:                              ; CODE XREF: sub_1E407+F18↑j
+loc_1F324:                              ; CODE XREF: renderIndoorView+F18↑j
                 mov     al, byte_34C1A
                 mov     ah, 0
                 or      ax, ax
@@ -24097,7 +24100,7 @@ loc_1F324:                              ; CODE XREF: sub_1E407+F18↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F330:                              ; CODE XREF: sub_1E407+F24↑j
+loc_1F330:                              ; CODE XREF: renderIndoorView+F24↑j
                 mov     al, byte_34C2D
                 mov     ah, 0
                 or      ax, ax
@@ -24105,7 +24108,7 @@ loc_1F330:                              ; CODE XREF: sub_1E407+F24↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F33C:                              ; CODE XREF: sub_1E407+F30↑j
+loc_1F33C:                              ; CODE XREF: renderIndoorView+F30↑j
                 mov     al, byte_332F3
                 mov     ah, 0
                 or      ax, ax
@@ -24113,7 +24116,7 @@ loc_1F33C:                              ; CODE XREF: sub_1E407+F30↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F348:                              ; CODE XREF: sub_1E407+F3C↑j
+loc_1F348:                              ; CODE XREF: renderIndoorView+F3C↑j
                 cmp     byte_373C3, 0
                 jz      short loc_1F36A
                 inc     si
@@ -24131,7 +24134,7 @@ loc_1F348:                              ; CODE XREF: sub_1E407+F3C↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F36A:                              ; CODE XREF: sub_1E407+F46↑j
+loc_1F36A:                              ; CODE XREF: renderIndoorView+F46↑j
                 cmp     byte_340A8, 0
                 jz      short loc_1F38F
                 inc     si
@@ -24151,7 +24154,7 @@ loc_1F36A:                              ; CODE XREF: sub_1E407+F46↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F38F:                              ; CODE XREF: sub_1E407+F68↑j
+loc_1F38F:                              ; CODE XREF: renderIndoorView+F68↑j
                 cmp     byte_373C9, 0
                 jz      short loc_1F3B5
                 inc     si
@@ -24172,7 +24175,7 @@ loc_1F38F:                              ; CODE XREF: sub_1E407+F68↑j
                 jmp     loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F3B5:                              ; CODE XREF: sub_1E407+F8D↑j
+loc_1F3B5:                              ; CODE XREF: renderIndoorView+F8D↑j
                 cmp     byte_373C5, 0
                 jz      short loc_1F3D6
                 inc     si
@@ -24190,7 +24193,7 @@ loc_1F3B5:                              ; CODE XREF: sub_1E407+F8D↑j
                 jmp     short loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F3D6:                              ; CODE XREF: sub_1E407+FB3↑j
+loc_1F3D6:                              ; CODE XREF: renderIndoorView+FB3↑j
                 cmp     byte_373C2, 0
                 jz      short loc_1F3F7
                 inc     si
@@ -24208,7 +24211,7 @@ loc_1F3D6:                              ; CODE XREF: sub_1E407+FB3↑j
                 jmp     short loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F3F7:                              ; CODE XREF: sub_1E407+FD4↑j
+loc_1F3F7:                              ; CODE XREF: renderIndoorView+FD4↑j
                 cmp     byte_373C4, 0
                 jz      short loc_1F418
                 inc     si
@@ -24226,7 +24229,7 @@ loc_1F3F7:                              ; CODE XREF: sub_1E407+FD4↑j
                 jmp     short loc_1F437
 ; ---------------------------------------------------------------------------
 
-loc_1F418:                              ; CODE XREF: sub_1E407+FF5↑j
+loc_1F418:                              ; CODE XREF: renderIndoorView+FF5↑j
                 cmp     byte_333B2, 0
                 jz      short loc_1F437
                 inc     si
@@ -24242,8 +24245,8 @@ loc_1F418:                              ; CODE XREF: sub_1E407+FF5↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F437:                              ; CODE XREF: sub_1E407+F02↑j
-                                        ; sub_1E407+F0E↑j ...
+loc_1F437:                              ; CODE XREF: renderIndoorView+F02↑j
+                                        ; renderIndoorView+F0E↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24251,7 +24254,7 @@ loc_1F437:                              ; CODE XREF: sub_1E407+F02↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F443:                              ; CODE XREF: sub_1E407+1037↑j
+loc_1F443:                              ; CODE XREF: renderIndoorView+1037↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F454
                 cmp     byte_332AF, 0
@@ -24259,8 +24262,8 @@ loc_1F443:                              ; CODE XREF: sub_1E407+1037↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F454:                              ; CODE XREF: sub_1E407+1041↑j
-                                        ; sub_1E407+1048↑j
+loc_1F454:                              ; CODE XREF: renderIndoorView+1041↑j
+                                        ; renderIndoorView+1048↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F465
                 cmp     byte_34C1A, 0
@@ -24268,8 +24271,8 @@ loc_1F454:                              ; CODE XREF: sub_1E407+1041↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F465:                              ; CODE XREF: sub_1E407+1052↑j
-                                        ; sub_1E407+1059↑j
+loc_1F465:                              ; CODE XREF: renderIndoorView+1052↑j
+                                        ; renderIndoorView+1059↑j
                 cmp     byte_332AF, 0
                 jz      short loc_1F476
                 cmp     byte_373C6, 0
@@ -24277,8 +24280,8 @@ loc_1F465:                              ; CODE XREF: sub_1E407+1052↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F476:                              ; CODE XREF: sub_1E407+1063↑j
-                                        ; sub_1E407+106A↑j
+loc_1F476:                              ; CODE XREF: renderIndoorView+1063↑j
+                                        ; renderIndoorView+106A↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_1F487
                 cmp     byte_373C6, 0
@@ -24286,8 +24289,8 @@ loc_1F476:                              ; CODE XREF: sub_1E407+1063↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F487:                              ; CODE XREF: sub_1E407+1074↑j
-                                        ; sub_1E407+107B↑j
+loc_1F487:                              ; CODE XREF: renderIndoorView+1074↑j
+                                        ; renderIndoorView+107B↑j
                 mov     al, byte_3407F
                 mov     ah, 0
                 or      ax, ax
@@ -24295,7 +24298,7 @@ loc_1F487:                              ; CODE XREF: sub_1E407+1074↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F493:                              ; CODE XREF: sub_1E407+1087↑j
+loc_1F493:                              ; CODE XREF: renderIndoorView+1087↑j
                 mov     al, byte_34C2D
                 mov     ah, 0
                 or      ax, ax
@@ -24303,7 +24306,7 @@ loc_1F493:                              ; CODE XREF: sub_1E407+1087↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F49F:                              ; CODE XREF: sub_1E407+1093↑j
+loc_1F49F:                              ; CODE XREF: renderIndoorView+1093↑j
                 cmp     byte_37376, 0
                 jz      short loc_1F4C1
                 inc     si
@@ -24321,7 +24324,7 @@ loc_1F49F:                              ; CODE XREF: sub_1E407+1093↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F4C1:                              ; CODE XREF: sub_1E407+109D↑j
+loc_1F4C1:                              ; CODE XREF: renderIndoorView+109D↑j
                 cmp     byte_33440, 0
                 jz      short loc_1F4E6
                 inc     si
@@ -24341,7 +24344,7 @@ loc_1F4C1:                              ; CODE XREF: sub_1E407+109D↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F4E6:                              ; CODE XREF: sub_1E407+10BF↑j
+loc_1F4E6:                              ; CODE XREF: renderIndoorView+10BF↑j
                 cmp     byte_3738B, 0
                 jz      short loc_1F50C
                 inc     si
@@ -24362,7 +24365,7 @@ loc_1F4E6:                              ; CODE XREF: sub_1E407+10BF↑j
                 jmp     loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F50C:                              ; CODE XREF: sub_1E407+10E4↑j
+loc_1F50C:                              ; CODE XREF: renderIndoorView+10E4↑j
                 cmp     byte_37384, 0
                 jz      short loc_1F52D
                 inc     si
@@ -24380,7 +24383,7 @@ loc_1F50C:                              ; CODE XREF: sub_1E407+10E4↑j
                 jmp     short loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F52D:                              ; CODE XREF: sub_1E407+110A↑j
+loc_1F52D:                              ; CODE XREF: renderIndoorView+110A↑j
                 cmp     byte_37370, 0
                 jz      short loc_1F54E
                 inc     si
@@ -24398,7 +24401,7 @@ loc_1F52D:                              ; CODE XREF: sub_1E407+110A↑j
                 jmp     short loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F54E:                              ; CODE XREF: sub_1E407+112B↑j
+loc_1F54E:                              ; CODE XREF: renderIndoorView+112B↑j
                 cmp     byte_37379, 0
                 jz      short loc_1F56F
                 inc     si
@@ -24416,7 +24419,7 @@ loc_1F54E:                              ; CODE XREF: sub_1E407+112B↑j
                 jmp     short loc_1F58E
 ; ---------------------------------------------------------------------------
 
-loc_1F56F:                              ; CODE XREF: sub_1E407+114C↑j
+loc_1F56F:                              ; CODE XREF: renderIndoorView+114C↑j
                 cmp     byte_332E2, 0
                 jz      short loc_1F58E
                 inc     si
@@ -24432,8 +24435,8 @@ loc_1F56F:                              ; CODE XREF: sub_1E407+114C↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F58E:                              ; CODE XREF: sub_1E407+1039↑j
-                                        ; sub_1E407+104A↑j ...
+loc_1F58E:                              ; CODE XREF: renderIndoorView+1039↑j
+                                        ; renderIndoorView+104A↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24441,7 +24444,7 @@ loc_1F58E:                              ; CODE XREF: sub_1E407+1039↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F59A:                              ; CODE XREF: sub_1E407+118E↑j
+loc_1F59A:                              ; CODE XREF: renderIndoorView+118E↑j
                 mov     al, byte_34B8D
                 mov     ah, 0
                 or      ax, ax
@@ -24449,7 +24452,7 @@ loc_1F59A:                              ; CODE XREF: sub_1E407+118E↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F5A6:                              ; CODE XREF: sub_1E407+119A↑j
+loc_1F5A6:                              ; CODE XREF: renderIndoorView+119A↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_1F5B7
                 cmp     byte_373C6, 0
@@ -24457,8 +24460,8 @@ loc_1F5A6:                              ; CODE XREF: sub_1E407+119A↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F5B7:                              ; CODE XREF: sub_1E407+11A4↑j
-                                        ; sub_1E407+11AB↑j
+loc_1F5B7:                              ; CODE XREF: renderIndoorView+11A4↑j
+                                        ; renderIndoorView+11AB↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_1F5C8
                 cmp     byte_3407F, 0
@@ -24466,8 +24469,8 @@ loc_1F5B7:                              ; CODE XREF: sub_1E407+11A4↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F5C8:                              ; CODE XREF: sub_1E407+11B5↑j
-                                        ; sub_1E407+11BC↑j
+loc_1F5C8:                              ; CODE XREF: renderIndoorView+11B5↑j
+                                        ; renderIndoorView+11BC↑j
                 cmp     byte_3407F, 0
                 jz      short loc_1F5D9
                 cmp     byte_332A3, 0
@@ -24475,8 +24478,8 @@ loc_1F5C8:                              ; CODE XREF: sub_1E407+11B5↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F5D9:                              ; CODE XREF: sub_1E407+11C6↑j
-                                        ; sub_1E407+11CD↑j
+loc_1F5D9:                              ; CODE XREF: renderIndoorView+11C6↑j
+                                        ; renderIndoorView+11CD↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1F5EA
                 cmp     byte_332A3, 0
@@ -24484,8 +24487,8 @@ loc_1F5D9:                              ; CODE XREF: sub_1E407+11C6↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F5EA:                              ; CODE XREF: sub_1E407+11D7↑j
-                                        ; sub_1E407+11DE↑j
+loc_1F5EA:                              ; CODE XREF: renderIndoorView+11D7↑j
+                                        ; renderIndoorView+11DE↑j
                 cmp     byte_332FC, 0
                 jz      short loc_1F60C
                 inc     si
@@ -24503,7 +24506,7 @@ loc_1F5EA:                              ; CODE XREF: sub_1E407+11D7↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F60C:                              ; CODE XREF: sub_1E407+11E8↑j
+loc_1F60C:                              ; CODE XREF: renderIndoorView+11E8↑j
                 cmp     byte_3739D, 0
                 jz      short loc_1F631
                 inc     si
@@ -24523,7 +24526,7 @@ loc_1F60C:                              ; CODE XREF: sub_1E407+11E8↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F631:                              ; CODE XREF: sub_1E407+120A↑j
+loc_1F631:                              ; CODE XREF: renderIndoorView+120A↑j
                 cmp     byte_33315, 0
                 jz      short loc_1F657
                 inc     si
@@ -24544,7 +24547,7 @@ loc_1F631:                              ; CODE XREF: sub_1E407+120A↑j
                 jmp     loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F657:                              ; CODE XREF: sub_1E407+122F↑j
+loc_1F657:                              ; CODE XREF: renderIndoorView+122F↑j
                 cmp     byte_33310, 0
                 jz      short loc_1F678
                 inc     si
@@ -24562,7 +24565,7 @@ loc_1F657:                              ; CODE XREF: sub_1E407+122F↑j
                 jmp     short loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F678:                              ; CODE XREF: sub_1E407+1255↑j
+loc_1F678:                              ; CODE XREF: renderIndoorView+1255↑j
                 cmp     byte_332F5, 0
                 jz      short loc_1F699
                 inc     si
@@ -24580,7 +24583,7 @@ loc_1F678:                              ; CODE XREF: sub_1E407+1255↑j
                 jmp     short loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F699:                              ; CODE XREF: sub_1E407+1276↑j
+loc_1F699:                              ; CODE XREF: renderIndoorView+1276↑j
                 cmp     byte_33303, 0
                 jz      short loc_1F6BA
                 inc     si
@@ -24598,7 +24601,7 @@ loc_1F699:                              ; CODE XREF: sub_1E407+1276↑j
                 jmp     short loc_1F6D9
 ; ---------------------------------------------------------------------------
 
-loc_1F6BA:                              ; CODE XREF: sub_1E407+1297↑j
+loc_1F6BA:                              ; CODE XREF: renderIndoorView+1297↑j
                 cmp     byte_34C2B, 0
                 jz      short loc_1F6D9
                 inc     si
@@ -24614,8 +24617,8 @@ loc_1F6BA:                              ; CODE XREF: sub_1E407+1297↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F6D9:                              ; CODE XREF: sub_1E407+1190↑j
-                                        ; sub_1E407+119C↑j ...
+loc_1F6D9:                              ; CODE XREF: renderIndoorView+1190↑j
+                                        ; renderIndoorView+119C↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24623,7 +24626,7 @@ loc_1F6D9:                              ; CODE XREF: sub_1E407+1190↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F6E5:                              ; CODE XREF: sub_1E407+12D9↑j
+loc_1F6E5:                              ; CODE XREF: renderIndoorView+12D9↑j
                 mov     al, byte_34B8D
                 mov     ah, 0
                 or      ax, ax
@@ -24631,7 +24634,7 @@ loc_1F6E5:                              ; CODE XREF: sub_1E407+12D9↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F6F1:                              ; CODE XREF: sub_1E407+12E5↑j
+loc_1F6F1:                              ; CODE XREF: renderIndoorView+12E5↑j
                 mov     al, byte_36FB0
                 mov     ah, 0
                 or      ax, ax
@@ -24639,7 +24642,7 @@ loc_1F6F1:                              ; CODE XREF: sub_1E407+12E5↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F6FD:                              ; CODE XREF: sub_1E407+12F1↑j
+loc_1F6FD:                              ; CODE XREF: renderIndoorView+12F1↑j
                 cmp     byte_34BF1, 0
                 jz      short loc_1F71F
                 inc     si
@@ -24657,7 +24660,7 @@ loc_1F6FD:                              ; CODE XREF: sub_1E407+12F1↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F71F:                              ; CODE XREF: sub_1E407+12FB↑j
+loc_1F71F:                              ; CODE XREF: renderIndoorView+12FB↑j
                 cmp     byte_332A6, 0
                 jz      short loc_1F744
                 inc     si
@@ -24677,7 +24680,7 @@ loc_1F71F:                              ; CODE XREF: sub_1E407+12FB↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F744:                              ; CODE XREF: sub_1E407+131D↑j
+loc_1F744:                              ; CODE XREF: renderIndoorView+131D↑j
                 cmp     byte_34C02, 0
                 jz      short loc_1F76A
                 inc     si
@@ -24698,7 +24701,7 @@ loc_1F744:                              ; CODE XREF: sub_1E407+131D↑j
                 jmp     loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F76A:                              ; CODE XREF: sub_1E407+1342↑j
+loc_1F76A:                              ; CODE XREF: renderIndoorView+1342↑j
                 cmp     byte_34BFE, 0
                 jz      short loc_1F78B
                 inc     si
@@ -24716,7 +24719,7 @@ loc_1F76A:                              ; CODE XREF: sub_1E407+1342↑j
                 jmp     short loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F78B:                              ; CODE XREF: sub_1E407+1368↑j
+loc_1F78B:                              ; CODE XREF: renderIndoorView+1368↑j
                 cmp     byte_34BEC, 0
                 jz      short loc_1F7AC
                 inc     si
@@ -24734,7 +24737,7 @@ loc_1F78B:                              ; CODE XREF: sub_1E407+1368↑j
                 jmp     short loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F7AC:                              ; CODE XREF: sub_1E407+1389↑j
+loc_1F7AC:                              ; CODE XREF: renderIndoorView+1389↑j
                 cmp     byte_34BF5, 0
                 jz      short loc_1F7CD
                 inc     si
@@ -24752,7 +24755,7 @@ loc_1F7AC:                              ; CODE XREF: sub_1E407+1389↑j
                 jmp     short loc_1F7EC
 ; ---------------------------------------------------------------------------
 
-loc_1F7CD:                              ; CODE XREF: sub_1E407+13AA↑j
+loc_1F7CD:                              ; CODE XREF: renderIndoorView+13AA↑j
                 cmp     byte_32E36, 0
                 jz      short loc_1F7EC
                 inc     si
@@ -24768,8 +24771,8 @@ loc_1F7CD:                              ; CODE XREF: sub_1E407+13AA↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1F7EC:                              ; CODE XREF: sub_1E407+12DB↑j
-                                        ; sub_1E407+12E7↑j ...
+loc_1F7EC:                              ; CODE XREF: renderIndoorView+12DB↑j
+                                        ; renderIndoorView+12E7↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24802,7 +24805,7 @@ loc_1F7EC:                              ; CODE XREF: sub_1E407+12DB↑j
                 jmp     short loc_1F855
 ; ---------------------------------------------------------------------------
 
-loc_1F82F:                              ; CODE XREF: sub_1E407+1405↑j
+loc_1F82F:                              ; CODE XREF: renderIndoorView+1405↑j
                 cmp     byte_332CE, 0
                 jz      short loc_1F859
                 inc     si
@@ -24821,12 +24824,12 @@ loc_1F82F:                              ; CODE XREF: sub_1E407+1405↑j
                 mov     bx, ax
                 mov     al, [bx+0E7Bh]
 
-loc_1F855:                              ; CODE XREF: sub_1E407+1426↑j
+loc_1F855:                              ; CODE XREF: renderIndoorView+1426↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_1F859:                              ; CODE XREF: sub_1E407+13EC↑j
-                                        ; sub_1E407+13F5↑j ...
+loc_1F859:                              ; CODE XREF: renderIndoorView+13EC↑j
+                                        ; renderIndoorView+13F5↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24834,31 +24837,31 @@ loc_1F859:                              ; CODE XREF: sub_1E407+13EC↑j
                 jmp     loc_1F8E6
 ; ---------------------------------------------------------------------------
 
-loc_1F865:                              ; CODE XREF: sub_1E407+1459↑j
+loc_1F865:                              ; CODE XREF: renderIndoorView+1459↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F873
                 cmp     byte_34BC7, 0
                 jnz     short loc_1F8E6
 
-loc_1F873:                              ; CODE XREF: sub_1E407+1463↑j
+loc_1F873:                              ; CODE XREF: renderIndoorView+1463↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F881
                 cmp     byte_332AE, 0
                 jnz     short loc_1F8E6
 
-loc_1F881:                              ; CODE XREF: sub_1E407+1471↑j
+loc_1F881:                              ; CODE XREF: renderIndoorView+1471↑j
                 cmp     byte_37392, 0
                 jz      short loc_1F88F
                 cmp     byte_34BC7, 0
                 jnz     short loc_1F8E6
 
-loc_1F88F:                              ; CODE XREF: sub_1E407+147F↑j
+loc_1F88F:                              ; CODE XREF: renderIndoorView+147F↑j
                 cmp     byte_37392, 0
                 jz      short loc_1F89D
                 cmp     byte_332AE, 0
                 jnz     short loc_1F8E6
 
-loc_1F89D:                              ; CODE XREF: sub_1E407+148D↑j
+loc_1F89D:                              ; CODE XREF: renderIndoorView+148D↑j
                 mov     al, byte_3407E
                 mov     ah, 0
                 or      ax, ax
@@ -24880,7 +24883,7 @@ loc_1F89D:                              ; CODE XREF: sub_1E407+148D↑j
                 jmp     short loc_1F8E6
 ; ---------------------------------------------------------------------------
 
-loc_1F8C7:                              ; CODE XREF: sub_1E407+14A4↑j
+loc_1F8C7:                              ; CODE XREF: renderIndoorView+14A4↑j
                 cmp     byte_3739E, 0
                 jz      short loc_1F8E6
                 inc     si
@@ -24896,8 +24899,8 @@ loc_1F8C7:                              ; CODE XREF: sub_1E407+14A4↑j
                 inc     si
                 mov     word ptr [si], 17h
 
-loc_1F8E6:                              ; CODE XREF: sub_1E407+145B↑j
-                                        ; sub_1E407+146A↑j ...
+loc_1F8E6:                              ; CODE XREF: renderIndoorView+145B↑j
+                                        ; renderIndoorView+146A↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24933,7 +24936,7 @@ loc_1F8E6:                              ; CODE XREF: sub_1E407+145B↑j
                 jmp     short loc_1F959
 ; ---------------------------------------------------------------------------
 
-loc_1F92E:                              ; CODE XREF: sub_1E407+14FF↑j
+loc_1F92E:                              ; CODE XREF: renderIndoorView+14FF↑j
                 cmp     byte_332F6, 0
                 jz      short loc_1F95D
                 inc     si
@@ -24955,12 +24958,12 @@ loc_1F92E:                              ; CODE XREF: sub_1E407+14FF↑j
                 mov     bx, ax
                 mov     al, [bx+0E7Bh]
 
-loc_1F959:                              ; CODE XREF: sub_1E407+1525↑j
+loc_1F959:                              ; CODE XREF: renderIndoorView+1525↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_1F95D:                              ; CODE XREF: sub_1E407+14E6↑j
-                                        ; sub_1E407+14EF↑j ...
+loc_1F95D:                              ; CODE XREF: renderIndoorView+14E6↑j
+                                        ; renderIndoorView+14EF↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -24968,31 +24971,31 @@ loc_1F95D:                              ; CODE XREF: sub_1E407+14E6↑j
                 jmp     loc_1F9EA
 ; ---------------------------------------------------------------------------
 
-loc_1F969:                              ; CODE XREF: sub_1E407+155D↑j
+loc_1F969:                              ; CODE XREF: renderIndoorView+155D↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F977
                 cmp     byte_34C1A, 0
                 jnz     short loc_1F9EA
 
-loc_1F977:                              ; CODE XREF: sub_1E407+1567↑j
+loc_1F977:                              ; CODE XREF: renderIndoorView+1567↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1F985
                 cmp     byte_332AF, 0
                 jnz     short loc_1F9EA
 
-loc_1F985:                              ; CODE XREF: sub_1E407+1575↑j
+loc_1F985:                              ; CODE XREF: renderIndoorView+1575↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1F993
                 cmp     byte_34C1A, 0
                 jnz     short loc_1F9EA
 
-loc_1F993:                              ; CODE XREF: sub_1E407+1583↑j
+loc_1F993:                              ; CODE XREF: renderIndoorView+1583↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1F9A1
                 cmp     byte_332AF, 0
                 jnz     short loc_1F9EA
 
-loc_1F9A1:                              ; CODE XREF: sub_1E407+1591↑j
+loc_1F9A1:                              ; CODE XREF: renderIndoorView+1591↑j
                 mov     al, byte_3407F
                 mov     ah, 0
                 or      ax, ax
@@ -25014,7 +25017,7 @@ loc_1F9A1:                              ; CODE XREF: sub_1E407+1591↑j
                 jmp     short loc_1F9EA
 ; ---------------------------------------------------------------------------
 
-loc_1F9CB:                              ; CODE XREF: sub_1E407+15A8↑j
+loc_1F9CB:                              ; CODE XREF: renderIndoorView+15A8↑j
                 cmp     byte_3739F, 0
                 jz      short loc_1F9EA
                 inc     si
@@ -25030,8 +25033,8 @@ loc_1F9CB:                              ; CODE XREF: sub_1E407+15A8↑j
                 inc     si
                 mov     word ptr [si], 17h
 
-loc_1F9EA:                              ; CODE XREF: sub_1E407+155F↑j
-                                        ; sub_1E407+156E↑j ...
+loc_1F9EA:                              ; CODE XREF: renderIndoorView+155F↑j
+                                        ; renderIndoorView+156E↑j ...
                 push    si
                 call    sub_17439
                 pop     cx
@@ -25040,14 +25043,14 @@ loc_1F9EA:                              ; CODE XREF: sub_1E407+155F↑j
                 jmp     loc_1FADC
 ; ---------------------------------------------------------------------------
 
-loc_1F9FB:                              ; CODE XREF: sub_1E407+16DB↓j
+loc_1F9FB:                              ; CODE XREF: renderIndoorView+16DB↓j
                 mov     bx, [bp+var_2]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_1FA08
                 jmp     loc_1FAD9
 ; ---------------------------------------------------------------------------
 
-loc_1FA08:                              ; CODE XREF: sub_1E407+15FC↑j
+loc_1FA08:                              ; CODE XREF: renderIndoorView+15FC↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -25060,7 +25063,7 @@ loc_1FA08:                              ; CODE XREF: sub_1E407+15FC↑j
                 jmp     loc_1FAD9
 ; ---------------------------------------------------------------------------
 
-loc_1FA23:                              ; CODE XREF: sub_1E407+1617↑j
+loc_1FA23:                              ; CODE XREF: renderIndoorView+1617↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -25073,7 +25076,7 @@ loc_1FA23:                              ; CODE XREF: sub_1E407+1617↑j
                 cmp     byte_34BF5, 0
                 jz      short loc_1FA64
 
-loc_1FA42:                              ; CODE XREF: sub_1E407+1632↑j
+loc_1FA42:                              ; CODE XREF: renderIndoorView+1632↑j
                 cmp     di, 2
                 jnz     short loc_1FA64
                 mov     al, byte_2879C
@@ -25089,8 +25092,8 @@ loc_1FA42:                              ; CODE XREF: sub_1E407+1632↑j
                 jmp     short loc_1FAD9
 ; ---------------------------------------------------------------------------
 
-loc_1FA64:                              ; CODE XREF: sub_1E407+1639↑j
-                                        ; sub_1E407+163E↑j ...
+loc_1FA64:                              ; CODE XREF: renderIndoorView+1639↑j
+                                        ; renderIndoorView+163E↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -25134,7 +25137,7 @@ loc_1FA64:                              ; CODE XREF: sub_1E407+1639↑j
                 jmp     short loc_1FAD9
 ; ---------------------------------------------------------------------------
 
-loc_1FABD:                              ; CODE XREF: sub_1E407+16A5↑j
+loc_1FABD:                              ; CODE XREF: renderIndoorView+16A5↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx-4645h]
                 inc     al
@@ -25146,17 +25149,17 @@ loc_1FABD:                              ; CODE XREF: sub_1E407+16A5↑j
                 mov     bx, [bp+var_2]
                 mov     [bx-4645h], dl
 
-loc_1FAD9:                              ; CODE XREF: sub_1E407+15FE↑j
-                                        ; sub_1E407+1619↑j ...
+loc_1FAD9:                              ; CODE XREF: renderIndoorView+15FE↑j
+                                        ; renderIndoorView+1619↑j ...
                 inc     [bp+var_2]
 
-loc_1FADC:                              ; CODE XREF: sub_1E407+15F1↑j
+loc_1FADC:                              ; CODE XREF: renderIndoorView+15F1↑j
                 cmp     [bp+var_2], 8
                 jge     short loc_1FAE5
                 jmp     loc_1F9FB
 ; ---------------------------------------------------------------------------
 
-loc_1FAE5:                              ; CODE XREF: sub_1E407+16D9↑j
+loc_1FAE5:                              ; CODE XREF: renderIndoorView+16D9↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -25175,7 +25178,7 @@ loc_1FAE5:                              ; CODE XREF: sub_1E407+16D9↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB07:                              ; CODE XREF: sub_1E407+16FB↑j
+loc_1FB07:                              ; CODE XREF: renderIndoorView+16FB↑j
                 mov     al, byte_333B5
                 mov     ah, 0
                 or      ax, ax
@@ -25183,7 +25186,7 @@ loc_1FB07:                              ; CODE XREF: sub_1E407+16FB↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB13:                              ; CODE XREF: sub_1E407+1707↑j
+loc_1FB13:                              ; CODE XREF: renderIndoorView+1707↑j
                 mov     al, byte_332AE
                 mov     ah, 0
                 or      ax, ax
@@ -25191,7 +25194,7 @@ loc_1FB13:                              ; CODE XREF: sub_1E407+1707↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB1F:                              ; CODE XREF: sub_1E407+1713↑j
+loc_1FB1F:                              ; CODE XREF: renderIndoorView+1713↑j
                 mov     al, byte_340B3
                 mov     ah, 0
                 or      ax, ax
@@ -25199,7 +25202,7 @@ loc_1FB1F:                              ; CODE XREF: sub_1E407+1713↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB2B:                              ; CODE XREF: sub_1E407+171F↑j
+loc_1FB2B:                              ; CODE XREF: renderIndoorView+171F↑j
                 cmp     byte_35D59, 0
                 jz      short loc_1FB4D
                 inc     si
@@ -25217,7 +25220,7 @@ loc_1FB2B:                              ; CODE XREF: sub_1E407+171F↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB4D:                              ; CODE XREF: sub_1E407+1729↑j
+loc_1FB4D:                              ; CODE XREF: renderIndoorView+1729↑j
                 cmp     byte_333B8, 0
                 jz      short loc_1FB6F
                 inc     si
@@ -25235,7 +25238,7 @@ loc_1FB4D:                              ; CODE XREF: sub_1E407+1729↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB6F:                              ; CODE XREF: sub_1E407+174B↑j
+loc_1FB6F:                              ; CODE XREF: renderIndoorView+174B↑j
                 cmp     byte_35D5B, 0
                 jz      short loc_1FB91
                 inc     si
@@ -25253,7 +25256,7 @@ loc_1FB6F:                              ; CODE XREF: sub_1E407+174B↑j
                 jmp     loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FB91:                              ; CODE XREF: sub_1E407+176D↑j
+loc_1FB91:                              ; CODE XREF: renderIndoorView+176D↑j
                 cmp     byte_36FAF, 0
                 jz      short loc_1FBB6
                 inc     si
@@ -25274,7 +25277,7 @@ loc_1FB91:                              ; CODE XREF: sub_1E407+176D↑j
                 jmp     short loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FBB6:                              ; CODE XREF: sub_1E407+178F↑j
+loc_1FBB6:                              ; CODE XREF: renderIndoorView+178F↑j
                 cmp     byte_36FA9, 0
                 jz      short loc_1FBD7
                 inc     si
@@ -25292,7 +25295,7 @@ loc_1FBB6:                              ; CODE XREF: sub_1E407+178F↑j
                 jmp     short loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FBD7:                              ; CODE XREF: sub_1E407+17B4↑j
+loc_1FBD7:                              ; CODE XREF: renderIndoorView+17B4↑j
                 cmp     byte_35D56, 0
                 jz      short loc_1FBF8
                 inc     si
@@ -25310,7 +25313,7 @@ loc_1FBD7:                              ; CODE XREF: sub_1E407+17B4↑j
                 jmp     short loc_1FC17
 ; ---------------------------------------------------------------------------
 
-loc_1FBF8:                              ; CODE XREF: sub_1E407+17D5↑j
+loc_1FBF8:                              ; CODE XREF: renderIndoorView+17D5↑j
                 cmp     byte_31451, 0
                 jz      short loc_1FC17
                 inc     si
@@ -25326,8 +25329,8 @@ loc_1FBF8:                              ; CODE XREF: sub_1E407+17D5↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1FC17:                              ; CODE XREF: sub_1E407+16FD↑j
-                                        ; sub_1E407+1709↑j ...
+loc_1FC17:                              ; CODE XREF: renderIndoorView+16FD↑j
+                                        ; renderIndoorView+1709↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -25335,7 +25338,7 @@ loc_1FC17:                              ; CODE XREF: sub_1E407+16FD↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC23:                              ; CODE XREF: sub_1E407+1817↑j
+loc_1FC23:                              ; CODE XREF: renderIndoorView+1817↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1FC34
                 cmp     byte_34BC7, 0
@@ -25343,8 +25346,8 @@ loc_1FC23:                              ; CODE XREF: sub_1E407+1817↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC34:                              ; CODE XREF: sub_1E407+1821↑j
-                                        ; sub_1E407+1828↑j
+loc_1FC34:                              ; CODE XREF: renderIndoorView+1821↑j
+                                        ; renderIndoorView+1828↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1FC45
                 cmp     byte_332AE, 0
@@ -25352,8 +25355,8 @@ loc_1FC34:                              ; CODE XREF: sub_1E407+1821↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC45:                              ; CODE XREF: sub_1E407+1832↑j
-                                        ; sub_1E407+1839↑j
+loc_1FC45:                              ; CODE XREF: renderIndoorView+1832↑j
+                                        ; renderIndoorView+1839↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_1FC56
                 cmp     byte_37392, 0
@@ -25361,8 +25364,8 @@ loc_1FC45:                              ; CODE XREF: sub_1E407+1832↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC56:                              ; CODE XREF: sub_1E407+1843↑j
-                                        ; sub_1E407+184A↑j
+loc_1FC56:                              ; CODE XREF: renderIndoorView+1843↑j
+                                        ; renderIndoorView+184A↑j
                 cmp     byte_332AE, 0
                 jz      short loc_1FC67
                 cmp     byte_37392, 0
@@ -25370,8 +25373,8 @@ loc_1FC56:                              ; CODE XREF: sub_1E407+1843↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC67:                              ; CODE XREF: sub_1E407+1854↑j
-                                        ; sub_1E407+185B↑j
+loc_1FC67:                              ; CODE XREF: renderIndoorView+1854↑j
+                                        ; renderIndoorView+185B↑j
                 cmp     byte_332E9, 0
                 jz      short loc_1FC89
                 inc     si
@@ -25389,7 +25392,7 @@ loc_1FC67:                              ; CODE XREF: sub_1E407+1854↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FC89:                              ; CODE XREF: sub_1E407+1865↑j
+loc_1FC89:                              ; CODE XREF: renderIndoorView+1865↑j
                 cmp     byte_3738E, 0
                 jz      short loc_1FCAE
                 inc     si
@@ -25409,7 +25412,7 @@ loc_1FC89:                              ; CODE XREF: sub_1E407+1865↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FCAE:                              ; CODE XREF: sub_1E407+1887↑j
+loc_1FCAE:                              ; CODE XREF: renderIndoorView+1887↑j
                 cmp     byte_332E7, 0
                 jz      short loc_1FCD0
                 inc     si
@@ -25427,7 +25430,7 @@ loc_1FCAE:                              ; CODE XREF: sub_1E407+1887↑j
                 jmp     loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FCD0:                              ; CODE XREF: sub_1E407+18AC↑j
+loc_1FCD0:                              ; CODE XREF: renderIndoorView+18AC↑j
                 cmp     byte_33300, 0
                 jz      short loc_1FCF1
                 inc     si
@@ -25445,7 +25448,7 @@ loc_1FCD0:                              ; CODE XREF: sub_1E407+18AC↑j
                 jmp     short loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FCF1:                              ; CODE XREF: sub_1E407+18CE↑j
+loc_1FCF1:                              ; CODE XREF: renderIndoorView+18CE↑j
                 cmp     byte_3330D, 0
                 jz      short loc_1FD16
                 inc     si
@@ -25466,7 +25469,7 @@ loc_1FCF1:                              ; CODE XREF: sub_1E407+18CE↑j
                 jmp     short loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FD16:                              ; CODE XREF: sub_1E407+18EF↑j
+loc_1FD16:                              ; CODE XREF: renderIndoorView+18EF↑j
                 cmp     byte_332EF, 0
                 jz      short loc_1FD37
                 inc     si
@@ -25484,7 +25487,7 @@ loc_1FD16:                              ; CODE XREF: sub_1E407+18EF↑j
                 jmp     short loc_1FD56
 ; ---------------------------------------------------------------------------
 
-loc_1FD37:                              ; CODE XREF: sub_1E407+1914↑j
+loc_1FD37:                              ; CODE XREF: renderIndoorView+1914↑j
                 cmp     byte_3407E, 0
                 jz      short loc_1FD56
                 inc     si
@@ -25500,8 +25503,8 @@ loc_1FD37:                              ; CODE XREF: sub_1E407+1914↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1FD56:                              ; CODE XREF: sub_1E407+1819↑j
-                                        ; sub_1E407+182A↑j ...
+loc_1FD56:                              ; CODE XREF: renderIndoorView+1819↑j
+                                        ; renderIndoorView+182A↑j ...
                 mov     al, byte_373D6
                 mov     ah, 0
                 or      ax, ax
@@ -25509,7 +25512,7 @@ loc_1FD56:                              ; CODE XREF: sub_1E407+1819↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FD62:                              ; CODE XREF: sub_1E407+1956↑j
+loc_1FD62:                              ; CODE XREF: renderIndoorView+1956↑j
                 mov     al, byte_3343E
                 mov     ah, 0
                 or      ax, ax
@@ -25517,7 +25520,7 @@ loc_1FD62:                              ; CODE XREF: sub_1E407+1956↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FD6E:                              ; CODE XREF: sub_1E407+1962↑j
+loc_1FD6E:                              ; CODE XREF: renderIndoorView+1962↑j
                 mov     al, byte_332AF
                 mov     ah, 0
                 or      ax, ax
@@ -25525,7 +25528,7 @@ loc_1FD6E:                              ; CODE XREF: sub_1E407+1962↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FD7A:                              ; CODE XREF: sub_1E407+196E↑j
+loc_1FD7A:                              ; CODE XREF: renderIndoorView+196E↑j
                 mov     al, byte_340B6
                 mov     ah, 0
                 or      ax, ax
@@ -25533,7 +25536,7 @@ loc_1FD7A:                              ; CODE XREF: sub_1E407+196E↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FD86:                              ; CODE XREF: sub_1E407+197A↑j
+loc_1FD86:                              ; CODE XREF: renderIndoorView+197A↑j
                 cmp     byte_37377, 0
                 jz      short loc_1FDA8
                 inc     si
@@ -25551,7 +25554,7 @@ loc_1FD86:                              ; CODE XREF: sub_1E407+197A↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FDA8:                              ; CODE XREF: sub_1E407+1984↑j
+loc_1FDA8:                              ; CODE XREF: renderIndoorView+1984↑j
                 cmp     byte_33441, 0
                 jz      short loc_1FDD2
                 inc     si
@@ -25573,7 +25576,7 @@ loc_1FDA8:                              ; CODE XREF: sub_1E407+1984↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FDD2:                              ; CODE XREF: sub_1E407+19A6↑j
+loc_1FDD2:                              ; CODE XREF: renderIndoorView+19A6↑j
                 cmp     byte_3737A, 0
                 jz      short loc_1FDF4
                 inc     si
@@ -25591,7 +25594,7 @@ loc_1FDD2:                              ; CODE XREF: sub_1E407+19A6↑j
                 jmp     loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FDF4:                              ; CODE XREF: sub_1E407+19D0↑j
+loc_1FDF4:                              ; CODE XREF: renderIndoorView+19D0↑j
                 cmp     byte_3738C, 0
                 jz      short loc_1FE19
                 inc     si
@@ -25612,7 +25615,7 @@ loc_1FDF4:                              ; CODE XREF: sub_1E407+19D0↑j
                 jmp     short loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FE19:                              ; CODE XREF: sub_1E407+19F2↑j
+loc_1FE19:                              ; CODE XREF: renderIndoorView+19F2↑j
                 cmp     byte_37385, 0
                 jz      short loc_1FE3A
                 inc     si
@@ -25630,7 +25633,7 @@ loc_1FE19:                              ; CODE XREF: sub_1E407+19F2↑j
                 jmp     short loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FE3A:                              ; CODE XREF: sub_1E407+1A17↑j
+loc_1FE3A:                              ; CODE XREF: renderIndoorView+1A17↑j
                 cmp     byte_37371, 0
                 jz      short loc_1FE5B
                 inc     si
@@ -25648,7 +25651,7 @@ loc_1FE3A:                              ; CODE XREF: sub_1E407+1A17↑j
                 jmp     short loc_1FE7A
 ; ---------------------------------------------------------------------------
 
-loc_1FE5B:                              ; CODE XREF: sub_1E407+1A38↑j
+loc_1FE5B:                              ; CODE XREF: renderIndoorView+1A38↑j
                 cmp     byte_319E5, 0
                 jz      short loc_1FE7A
                 inc     si
@@ -25664,8 +25667,8 @@ loc_1FE5B:                              ; CODE XREF: sub_1E407+1A38↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1FE7A:                              ; CODE XREF: sub_1E407+1958↑j
-                                        ; sub_1E407+1964↑j ...
+loc_1FE7A:                              ; CODE XREF: renderIndoorView+1958↑j
+                                        ; renderIndoorView+1964↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -25673,7 +25676,7 @@ loc_1FE7A:                              ; CODE XREF: sub_1E407+1958↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FE86:                              ; CODE XREF: sub_1E407+1A7A↑j
+loc_1FE86:                              ; CODE XREF: renderIndoorView+1A7A↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1FE97
                 cmp     byte_34C1A, 0
@@ -25681,8 +25684,8 @@ loc_1FE86:                              ; CODE XREF: sub_1E407+1A7A↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FE97:                              ; CODE XREF: sub_1E407+1A84↑j
-                                        ; sub_1E407+1A8B↑j
+loc_1FE97:                              ; CODE XREF: renderIndoorView+1A84↑j
+                                        ; renderIndoorView+1A8B↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_1FEA8
                 cmp     byte_332AF, 0
@@ -25690,8 +25693,8 @@ loc_1FE97:                              ; CODE XREF: sub_1E407+1A84↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FEA8:                              ; CODE XREF: sub_1E407+1A95↑j
-                                        ; sub_1E407+1A9C↑j
+loc_1FEA8:                              ; CODE XREF: renderIndoorView+1A95↑j
+                                        ; renderIndoorView+1A9C↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_1FEB9
                 cmp     byte_373C6, 0
@@ -25699,8 +25702,8 @@ loc_1FEA8:                              ; CODE XREF: sub_1E407+1A95↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FEB9:                              ; CODE XREF: sub_1E407+1AA6↑j
-                                        ; sub_1E407+1AAD↑j
+loc_1FEB9:                              ; CODE XREF: renderIndoorView+1AA6↑j
+                                        ; renderIndoorView+1AAD↑j
                 cmp     byte_332AF, 0
                 jz      short loc_1FECA
                 cmp     byte_373C6, 0
@@ -25708,8 +25711,8 @@ loc_1FEB9:                              ; CODE XREF: sub_1E407+1AA6↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FECA:                              ; CODE XREF: sub_1E407+1AB7↑j
-                                        ; sub_1E407+1ABE↑j
+loc_1FECA:                              ; CODE XREF: renderIndoorView+1AB7↑j
+                                        ; renderIndoorView+1ABE↑j
                 cmp     byte_332EA, 0
                 jz      short loc_1FEEC
                 inc     si
@@ -25727,7 +25730,7 @@ loc_1FECA:                              ; CODE XREF: sub_1E407+1AB7↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FEEC:                              ; CODE XREF: sub_1E407+1AC8↑j
+loc_1FEEC:                              ; CODE XREF: renderIndoorView+1AC8↑j
                 cmp     byte_3738F, 0
                 jz      short loc_1FF11
                 inc     si
@@ -25747,7 +25750,7 @@ loc_1FEEC:                              ; CODE XREF: sub_1E407+1AC8↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FF11:                              ; CODE XREF: sub_1E407+1AEA↑j
+loc_1FF11:                              ; CODE XREF: renderIndoorView+1AEA↑j
                 cmp     byte_332F0, 0
                 jz      short loc_1FF33
                 inc     si
@@ -25765,7 +25768,7 @@ loc_1FF11:                              ; CODE XREF: sub_1E407+1AEA↑j
                 jmp     loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FF33:                              ; CODE XREF: sub_1E407+1B0F↑j
+loc_1FF33:                              ; CODE XREF: renderIndoorView+1B0F↑j
                 cmp     byte_3330E, 0
                 jz      short loc_1FF58
                 inc     si
@@ -25786,7 +25789,7 @@ loc_1FF33:                              ; CODE XREF: sub_1E407+1B0F↑j
                 jmp     short loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FF58:                              ; CODE XREF: sub_1E407+1B31↑j
+loc_1FF58:                              ; CODE XREF: renderIndoorView+1B31↑j
                 cmp     byte_33301, 0
                 jz      short loc_1FF79
                 inc     si
@@ -25804,7 +25807,7 @@ loc_1FF58:                              ; CODE XREF: sub_1E407+1B31↑j
                 jmp     short loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FF79:                              ; CODE XREF: sub_1E407+1B56↑j
+loc_1FF79:                              ; CODE XREF: renderIndoorView+1B56↑j
                 cmp     byte_332E8, 0
                 jz      short loc_1FF9A
                 inc     si
@@ -25822,7 +25825,7 @@ loc_1FF79:                              ; CODE XREF: sub_1E407+1B56↑j
                 jmp     short loc_1FFB9
 ; ---------------------------------------------------------------------------
 
-loc_1FF9A:                              ; CODE XREF: sub_1E407+1B77↑j
+loc_1FF9A:                              ; CODE XREF: renderIndoorView+1B77↑j
                 cmp     byte_3407F, 0
                 jz      short loc_1FFB9
                 inc     si
@@ -25838,8 +25841,8 @@ loc_1FF9A:                              ; CODE XREF: sub_1E407+1B77↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_1FFB9:                              ; CODE XREF: sub_1E407+1A7C↑j
-                                        ; sub_1E407+1A8D↑j ...
+loc_1FFB9:                              ; CODE XREF: renderIndoorView+1A7C↑j
+                                        ; renderIndoorView+1A8D↑j ...
                 mov     al, byte_34B8D
                 mov     ah, 0
                 or      ax, ax
@@ -25847,7 +25850,7 @@ loc_1FFB9:                              ; CODE XREF: sub_1E407+1A7C↑j
                 jmp     loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_1FFC5:                              ; CODE XREF: sub_1E407+1BB9↑j
+loc_1FFC5:                              ; CODE XREF: renderIndoorView+1BB9↑j
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -25855,7 +25858,7 @@ loc_1FFC5:                              ; CODE XREF: sub_1E407+1BB9↑j
                 jmp     loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_1FFD1:                              ; CODE XREF: sub_1E407+1BC5↑j
+loc_1FFD1:                              ; CODE XREF: renderIndoorView+1BC5↑j
                 cmp     byte_34BF2, 0
                 jz      short loc_1FFF3
                 inc     si
@@ -25873,7 +25876,7 @@ loc_1FFD1:                              ; CODE XREF: sub_1E407+1BC5↑j
                 jmp     loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_1FFF3:                              ; CODE XREF: sub_1E407+1BCF↑j
+loc_1FFF3:                              ; CODE XREF: renderIndoorView+1BCF↑j
                 cmp     byte_332A7, 0
                 jz      short loc_20018
                 inc     si
@@ -25893,7 +25896,7 @@ loc_1FFF3:                              ; CODE XREF: sub_1E407+1BCF↑j
                 jmp     loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_20018:                              ; CODE XREF: sub_1E407+1BF1↑j
+loc_20018:                              ; CODE XREF: renderIndoorView+1BF1↑j
                 cmp     byte_34BF6, 0
                 jz      short loc_2003A
                 inc     si
@@ -25911,7 +25914,7 @@ loc_20018:                              ; CODE XREF: sub_1E407+1BF1↑j
                 jmp     loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_2003A:                              ; CODE XREF: sub_1E407+1C16↑j
+loc_2003A:                              ; CODE XREF: renderIndoorView+1C16↑j
                 cmp     byte_34C03, 0
                 jz      short loc_2005F
                 inc     si
@@ -25932,7 +25935,7 @@ loc_2003A:                              ; CODE XREF: sub_1E407+1C16↑j
                 jmp     short loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_2005F:                              ; CODE XREF: sub_1E407+1C38↑j
+loc_2005F:                              ; CODE XREF: renderIndoorView+1C38↑j
                 cmp     byte_34BFF, 0
                 jz      short loc_20080
                 inc     si
@@ -25950,7 +25953,7 @@ loc_2005F:                              ; CODE XREF: sub_1E407+1C38↑j
                 jmp     short loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_20080:                              ; CODE XREF: sub_1E407+1C5D↑j
+loc_20080:                              ; CODE XREF: renderIndoorView+1C5D↑j
                 cmp     byte_34BED, 0
                 jz      short loc_200A1
                 inc     si
@@ -25968,7 +25971,7 @@ loc_20080:                              ; CODE XREF: sub_1E407+1C5D↑j
                 jmp     short loc_200C0
 ; ---------------------------------------------------------------------------
 
-loc_200A1:                              ; CODE XREF: sub_1E407+1C7E↑j
+loc_200A1:                              ; CODE XREF: renderIndoorView+1C7E↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_200C0
                 inc     si
@@ -25984,8 +25987,8 @@ loc_200A1:                              ; CODE XREF: sub_1E407+1C7E↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_200C0:                              ; CODE XREF: sub_1E407+1BBB↑j
-                                        ; sub_1E407+1BC7↑j ...
+loc_200C0:                              ; CODE XREF: renderIndoorView+1BBB↑j
+                                        ; renderIndoorView+1BC7↑j ...
                 mov     al, byte_373D5
                 mov     ah, 0
                 or      ax, ax
@@ -26015,7 +26018,7 @@ loc_200C0:                              ; CODE XREF: sub_1E407+1BBB↑j
                 jmp     short loc_2011B
 ; ---------------------------------------------------------------------------
 
-loc_200FC:                              ; CODE XREF: sub_1E407+1CD9↑j
+loc_200FC:                              ; CODE XREF: renderIndoorView+1CD9↑j
                 cmp     byte_37390, 0
                 jz      short loc_2011B
                 inc     si
@@ -26031,8 +26034,8 @@ loc_200FC:                              ; CODE XREF: sub_1E407+1CD9↑j
                 inc     si
                 mov     word ptr [si], 0Eh
 
-loc_2011B:                              ; CODE XREF: sub_1E407+1CC0↑j
-                                        ; sub_1E407+1CC9↑j ...
+loc_2011B:                              ; CODE XREF: renderIndoorView+1CC0↑j
+                                        ; renderIndoorView+1CC9↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -26061,7 +26064,7 @@ loc_2011B:                              ; CODE XREF: sub_1E407+1CC0↑j
                 jmp     short loc_2017B
 ; ---------------------------------------------------------------------------
 
-loc_20155:                              ; CODE XREF: sub_1E407+1D2B↑j
+loc_20155:                              ; CODE XREF: renderIndoorView+1D2B↑j
                 cmp     byte_332CF, 0
                 jz      short loc_2017F
                 inc     si
@@ -26080,12 +26083,12 @@ loc_20155:                              ; CODE XREF: sub_1E407+1D2B↑j
                 mov     bx, ax
                 mov     al, [bx+0E79h]
 
-loc_2017B:                              ; CODE XREF: sub_1E407+1D4C↑j
+loc_2017B:                              ; CODE XREF: renderIndoorView+1D4C↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_2017F:                              ; CODE XREF: sub_1E407+1D1B↑j
-                                        ; sub_1E407+1D24↑j ...
+loc_2017F:                              ; CODE XREF: renderIndoorView+1D1B↑j
+                                        ; renderIndoorView+1D24↑j ...
                 mov     al, byte_373D6
                 mov     ah, 0
                 or      ax, ax
@@ -26115,7 +26118,7 @@ loc_2017F:                              ; CODE XREF: sub_1E407+1D1B↑j
                 jmp     short loc_201DA
 ; ---------------------------------------------------------------------------
 
-loc_201BB:                              ; CODE XREF: sub_1E407+1D98↑j
+loc_201BB:                              ; CODE XREF: renderIndoorView+1D98↑j
                 cmp     byte_37391, 0
                 jz      short loc_201DA
                 inc     si
@@ -26131,8 +26134,8 @@ loc_201BB:                              ; CODE XREF: sub_1E407+1D98↑j
                 inc     si
                 mov     word ptr [si], 0Eh
 
-loc_201DA:                              ; CODE XREF: sub_1E407+1D7F↑j
-                                        ; sub_1E407+1D88↑j ...
+loc_201DA:                              ; CODE XREF: renderIndoorView+1D7F↑j
+                                        ; renderIndoorView+1D88↑j ...
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -26164,7 +26167,7 @@ loc_201DA:                              ; CODE XREF: sub_1E407+1D7F↑j
                 jmp     short loc_20244
 ; ---------------------------------------------------------------------------
 
-loc_20219:                              ; CODE XREF: sub_1E407+1DEA↑j
+loc_20219:                              ; CODE XREF: renderIndoorView+1DEA↑j
                 cmp     byte_332F7, 0
                 jz      short loc_20248
                 inc     si
@@ -26186,12 +26189,12 @@ loc_20219:                              ; CODE XREF: sub_1E407+1DEA↑j
                 mov     bx, ax
                 mov     al, [bx+0E79h]
 
-loc_20244:                              ; CODE XREF: sub_1E407+1E10↑j
+loc_20244:                              ; CODE XREF: renderIndoorView+1E10↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20248:                              ; CODE XREF: sub_1E407+1DDA↑j
-                                        ; sub_1E407+1DE3↑j ...
+loc_20248:                              ; CODE XREF: renderIndoorView+1DDA↑j
+                                        ; renderIndoorView+1DE3↑j ...
                 push    si
                 call    sub_17F38
                 pop     cx
@@ -26200,14 +26203,14 @@ loc_20248:                              ; CODE XREF: sub_1E407+1DDA↑j
                 jmp     loc_2033A
 ; ---------------------------------------------------------------------------
 
-loc_20259:                              ; CODE XREF: sub_1E407+1F39↓j
+loc_20259:                              ; CODE XREF: renderIndoorView+1F39↓j
                 mov     bx, [bp+var_2]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_20266
                 jmp     loc_20337
 ; ---------------------------------------------------------------------------
 
-loc_20266:                              ; CODE XREF: sub_1E407+1E5A↑j
+loc_20266:                              ; CODE XREF: renderIndoorView+1E5A↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -26220,7 +26223,7 @@ loc_20266:                              ; CODE XREF: sub_1E407+1E5A↑j
                 jmp     loc_20337
 ; ---------------------------------------------------------------------------
 
-loc_20281:                              ; CODE XREF: sub_1E407+1E75↑j
+loc_20281:                              ; CODE XREF: renderIndoorView+1E75↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -26233,7 +26236,7 @@ loc_20281:                              ; CODE XREF: sub_1E407+1E75↑j
                 cmp     byte_34BF6, 0
                 jz      short loc_202C2
 
-loc_202A0:                              ; CODE XREF: sub_1E407+1E90↑j
+loc_202A0:                              ; CODE XREF: renderIndoorView+1E90↑j
                 cmp     di, 2
                 jnz     short loc_202C2
                 mov     al, byte_2879C
@@ -26249,8 +26252,8 @@ loc_202A0:                              ; CODE XREF: sub_1E407+1E90↑j
                 jmp     short loc_20337
 ; ---------------------------------------------------------------------------
 
-loc_202C2:                              ; CODE XREF: sub_1E407+1E97↑j
-                                        ; sub_1E407+1E9C↑j ...
+loc_202C2:                              ; CODE XREF: renderIndoorView+1E97↑j
+                                        ; renderIndoorView+1E9C↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -26294,7 +26297,7 @@ loc_202C2:                              ; CODE XREF: sub_1E407+1E97↑j
                 jmp     short loc_20337
 ; ---------------------------------------------------------------------------
 
-loc_2031B:                              ; CODE XREF: sub_1E407+1F03↑j
+loc_2031B:                              ; CODE XREF: renderIndoorView+1F03↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx-4645h]
                 inc     al
@@ -26306,17 +26309,17 @@ loc_2031B:                              ; CODE XREF: sub_1E407+1F03↑j
                 mov     bx, [bp+var_2]
                 mov     [bx-4645h], dl
 
-loc_20337:                              ; CODE XREF: sub_1E407+1E5C↑j
-                                        ; sub_1E407+1E77↑j ...
+loc_20337:                              ; CODE XREF: renderIndoorView+1E5C↑j
+                                        ; renderIndoorView+1E77↑j ...
                 inc     [bp+var_2]
 
-loc_2033A:                              ; CODE XREF: sub_1E407+1E4F↑j
+loc_2033A:                              ; CODE XREF: renderIndoorView+1E4F↑j
                 cmp     [bp+var_2], 8
                 jge     short loc_20343
                 jmp     loc_20259
 ; ---------------------------------------------------------------------------
 
-loc_20343:                              ; CODE XREF: sub_1E407+1F37↑j
+loc_20343:                              ; CODE XREF: renderIndoorView+1F37↑j
                 cmp     byte_34B92, 0
                 jz      short loc_2035D
                 mov     ax, 96h
@@ -26328,7 +26331,7 @@ loc_20343:                              ; CODE XREF: sub_1E407+1F37↑j
                 call    _memset
                 add     sp, 6
 
-loc_2035D:                              ; CODE XREF: sub_1E407+1F41↑j
+loc_2035D:                              ; CODE XREF: renderIndoorView+1F41↑j
                 push    si
                 call    sub_1DB3D
                 pop     cx
@@ -26363,16 +26366,16 @@ loc_2035D:                              ; CODE XREF: sub_1E407+1F41↑j
                 jmp     short loc_203B9
 ; ---------------------------------------------------------------------------
 
-loc_203A7:                              ; CODE XREF: sub_1E407+1FB6↓j
+loc_203A7:                              ; CODE XREF: renderIndoorView+1FB6↓j
                 mov     bx, [bp+var_2]
                 cmp     byte ptr [bx-4645h], 0
                 jz      short loc_203B6
                 mov     [bp+var_4], 1
 
-loc_203B6:                              ; CODE XREF: sub_1E407+1FA8↑j
+loc_203B6:                              ; CODE XREF: renderIndoorView+1FA8↑j
                 inc     [bp+var_2]
 
-loc_203B9:                              ; CODE XREF: sub_1E407+1F9E↑j
+loc_203B9:                              ; CODE XREF: renderIndoorView+1F9E↑j
                 cmp     [bp+var_2], 8
                 jl      short loc_203A7
                 mov     ax, word_32E32
@@ -26386,8 +26389,8 @@ loc_203B9:                              ; CODE XREF: sub_1E407+1F9E↑j
                 pop     cx
                 mov     byte_2879A, 0
 
-loc_203DD:                              ; CODE XREF: sub_1E407+1FBF↑j
-                                        ; sub_1E407+1FC5↑j
+loc_203DD:                              ; CODE XREF: renderIndoorView+1FBF↑j
+                                        ; renderIndoorView+1FC5↑j
                 cmp     Engine_mode, 0
                 jnz     short loc_203F8
                 mov     ax, 4
@@ -26399,13 +26402,13 @@ loc_203DD:                              ; CODE XREF: sub_1E407+1FBF↑j
                 pop     cx
                 mov     Engine_mode, 1
 
-loc_203F8:                              ; CODE XREF: sub_1E407+1FDB↑j
+loc_203F8:                              ; CODE XREF: renderIndoorView+1FDB↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1E407       endp
+renderIndoorView endp
 
 seg005          ends
 
@@ -26419,9 +26422,10 @@ seg006          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; outdoor counterpart: calls 2045A (by call graph)
 ; Attributes: bp-based frame
 
-sub_203FE       proc far                ; CODE XREF: sub_1B669+A↑P
+drawViewOutdoors proc far               ; CODE XREF: drawView+A↑P
                 push    bp
                 mov     bp, sp
                 push    si
@@ -26436,7 +26440,7 @@ sub_203FE       proc far                ; CODE XREF: sub_1B669+A↑P
                 cmp     Engine_mode, 2
                 jnz     short loc_2044C
 
-loc_20427:                              ; CODE XREF: sub_203FE+20↑j
+loc_20427:                              ; CODE XREF: drawViewOutdoors+20↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -26453,22 +26457,23 @@ loc_20427:                              ; CODE XREF: sub_203FE+20↑j
                 jnz     short loc_2044C
                 call    sub_1B358
 
-loc_2044C:                              ; CODE XREF: sub_203FE+19↑j
-                                        ; sub_203FE+27↑j ...
+loc_2044C:                              ; CODE XREF: drawViewOutdoors+19↑j
+                                        ; drawViewOutdoors+27↑j ...
                 call    sub_161AD
-                call    sub_2045A
+                call    renderOutdoorView
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_203FE       endp
+drawViewOutdoors endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; 8 KB outdoor renderer (unverified)
 ; Attributes: bp-based frame
 
-sub_2045A       proc far                ; CODE XREF: sub_203FE+53↑P
+renderOutdoorView proc far              ; CODE XREF: drawViewOutdoors+53↑P
 
 var_E           = word ptr -0Eh
 var_C           = word ptr -0Ch
@@ -26487,14 +26492,14 @@ var_2           = word ptr -2
                 jmp     short loc_20479
 ; ---------------------------------------------------------------------------
 
-loc_20469:                              ; CODE XREF: sub_2045A+23↓j
+loc_20469:                              ; CODE XREF: renderOutdoorView+23↓j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-4645h]
                 add     al, 0FFh
                 mov     [bx-54AEh], al
                 inc     [bp+var_4]
 
-loc_20479:                              ; CODE XREF: sub_2045A+D↑j
+loc_20479:                              ; CODE XREF: renderOutdoorView+D↑j
                 cmp     [bp+var_4], 8
                 jl      short loc_20469
                 mov     al, Party_x
@@ -26538,12 +26543,12 @@ loc_20479:                              ; CODE XREF: sub_2045A+D↑j
                 jnz     short loc_204EB
                 xor     word_29E14, 1
 
-loc_204EB:                              ; CODE XREF: sub_2045A+89↑j
+loc_204EB:                              ; CODE XREF: renderOutdoorView+89↑j
                 mov     [bp+var_2], 0
                 jmp     short loc_2052E
 ; ---------------------------------------------------------------------------
 
-loc_204F2:                              ; CODE XREF: sub_2045A+DC↓j
+loc_204F2:                              ; CODE XREF: renderOutdoorView+DC↓j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 cmp     word ptr [bx-47F0h], 0
@@ -26567,10 +26572,10 @@ loc_204F2:                              ; CODE XREF: sub_2045A+DC↓j
                 shl     bx, 1
                 mov     [bx-4FE8h], dx
 
-loc_2052B:                              ; CODE XREF: sub_2045A+A2↑j
+loc_2052B:                              ; CODE XREF: renderOutdoorView+A2↑j
                 inc     [bp+var_2]
 
-loc_2052E:                              ; CODE XREF: sub_2045A+96↑j
+loc_2052E:                              ; CODE XREF: renderOutdoorView+96↑j
                 mov     al, Party_size
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
@@ -26579,7 +26584,7 @@ loc_2052E:                              ; CODE XREF: sub_2045A+96↑j
                 jmp     short loc_20592
 ; ---------------------------------------------------------------------------
 
-loc_2053F:                              ; CODE XREF: sub_2045A+140↓j
+loc_2053F:                              ; CODE XREF: renderOutdoorView+140↓j
                 cmp     Engine_mode, 7
                 jnz     short loc_20551
                 mov     al, byte_34BB6
@@ -26588,7 +26593,7 @@ loc_2053F:                              ; CODE XREF: sub_2045A+140↓j
                 cmp     ax, [bp+var_2]
                 jz      short loc_2058F
 
-loc_20551:                              ; CODE XREF: sub_2045A+EA↑j
+loc_20551:                              ; CODE XREF: renderOutdoorView+EA↑j
                 mov     ax, [bp+var_2]
                 mov     dx, 0Ch
                 imul    dx
@@ -26615,10 +26620,10 @@ loc_20551:                              ; CODE XREF: sub_2045A+EA↑j
                 pop     ax
                 mov     [bx-586Ch], ax
 
-loc_2058F:                              ; CODE XREF: sub_2045A+F5↑j
+loc_2058F:                              ; CODE XREF: renderOutdoorView+F5↑j
                 inc     [bp+var_2]
 
-loc_20592:                              ; CODE XREF: sub_2045A+E3↑j
+loc_20592:                              ; CODE XREF: renderOutdoorView+E3↑j
                 mov     al, byte_373D0
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
@@ -26711,7 +26716,7 @@ loc_20592:                              ; CODE XREF: sub_2045A+E3↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20677:                              ; CODE XREF: sub_2045A+1D8↑j
+loc_20677:                              ; CODE XREF: renderOutdoorView+1D8↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -26771,7 +26776,7 @@ loc_20677:                              ; CODE XREF: sub_2045A+1D8↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_206F6:                              ; CODE XREF: sub_2045A+257↑j
+loc_206F6:                              ; CODE XREF: renderOutdoorView+257↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -26831,7 +26836,7 @@ loc_206F6:                              ; CODE XREF: sub_2045A+257↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20775:                              ; CODE XREF: sub_2045A+2D6↑j
+loc_20775:                              ; CODE XREF: renderOutdoorView+2D6↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -26891,7 +26896,7 @@ loc_20775:                              ; CODE XREF: sub_2045A+2D6↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_207F4:                              ; CODE XREF: sub_2045A+355↑j
+loc_207F4:                              ; CODE XREF: renderOutdoorView+355↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -26954,7 +26959,7 @@ loc_207F4:                              ; CODE XREF: sub_2045A+355↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20878:                              ; CODE XREF: sub_2045A+3D4↑j
+loc_20878:                              ; CODE XREF: renderOutdoorView+3D4↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27017,7 +27022,7 @@ loc_20878:                              ; CODE XREF: sub_2045A+3D4↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_208FC:                              ; CODE XREF: sub_2045A+458↑j
+loc_208FC:                              ; CODE XREF: renderOutdoorView+458↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27080,7 +27085,7 @@ loc_208FC:                              ; CODE XREF: sub_2045A+458↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20980:                              ; CODE XREF: sub_2045A+4DC↑j
+loc_20980:                              ; CODE XREF: renderOutdoorView+4DC↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27143,7 +27148,7 @@ loc_20980:                              ; CODE XREF: sub_2045A+4DC↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20A04:                              ; CODE XREF: sub_2045A+560↑j
+loc_20A04:                              ; CODE XREF: renderOutdoorView+560↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27198,7 +27203,7 @@ loc_20A04:                              ; CODE XREF: sub_2045A+560↑j
                 inc     si
                 mov     word ptr [si], 10h
 
-loc_20A78:                              ; CODE XREF: sub_2045A+5E4↑j
+loc_20A78:                              ; CODE XREF: renderOutdoorView+5E4↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27258,7 +27263,7 @@ loc_20A78:                              ; CODE XREF: sub_2045A+5E4↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20AF7:                              ; CODE XREF: sub_2045A+658↑j
+loc_20AF7:                              ; CODE XREF: renderOutdoorView+658↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27318,7 +27323,7 @@ loc_20AF7:                              ; CODE XREF: sub_2045A+658↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20B76:                              ; CODE XREF: sub_2045A+6D7↑j
+loc_20B76:                              ; CODE XREF: renderOutdoorView+6D7↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27381,7 +27386,7 @@ loc_20B76:                              ; CODE XREF: sub_2045A+6D7↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20BFA:                              ; CODE XREF: sub_2045A+756↑j
+loc_20BFA:                              ; CODE XREF: renderOutdoorView+756↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27444,7 +27449,7 @@ loc_20BFA:                              ; CODE XREF: sub_2045A+756↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20C7E:                              ; CODE XREF: sub_2045A+7DA↑j
+loc_20C7E:                              ; CODE XREF: renderOutdoorView+7DA↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27499,7 +27504,7 @@ loc_20C7E:                              ; CODE XREF: sub_2045A+7DA↑j
                 inc     si
                 mov     word ptr [si], 0Bh
 
-loc_20CF2:                              ; CODE XREF: sub_2045A+85E↑j
+loc_20CF2:                              ; CODE XREF: renderOutdoorView+85E↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27559,7 +27564,7 @@ loc_20CF2:                              ; CODE XREF: sub_2045A+85E↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20D71:                              ; CODE XREF: sub_2045A+8D2↑j
+loc_20D71:                              ; CODE XREF: renderOutdoorView+8D2↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27619,7 +27624,7 @@ loc_20D71:                              ; CODE XREF: sub_2045A+8D2↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20DF0:                              ; CODE XREF: sub_2045A+951↑j
+loc_20DF0:                              ; CODE XREF: renderOutdoorView+951↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27682,7 +27687,7 @@ loc_20DF0:                              ; CODE XREF: sub_2045A+951↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20E74:                              ; CODE XREF: sub_2045A+9D0↑j
+loc_20E74:                              ; CODE XREF: renderOutdoorView+9D0↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27745,7 +27750,7 @@ loc_20E74:                              ; CODE XREF: sub_2045A+9D0↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20EF8:                              ; CODE XREF: sub_2045A+A54↑j
+loc_20EF8:                              ; CODE XREF: renderOutdoorView+A54↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27800,7 +27805,7 @@ loc_20EF8:                              ; CODE XREF: sub_2045A+A54↑j
                 inc     si
                 mov     word ptr [si], 6
 
-loc_20F6C:                              ; CODE XREF: sub_2045A+AD8↑j
+loc_20F6C:                              ; CODE XREF: renderOutdoorView+AD8↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27860,7 +27865,7 @@ loc_20F6C:                              ; CODE XREF: sub_2045A+AD8↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_20FEB:                              ; CODE XREF: sub_2045A+B4C↑j
+loc_20FEB:                              ; CODE XREF: renderOutdoorView+B4C↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27923,7 +27928,7 @@ loc_20FEB:                              ; CODE XREF: sub_2045A+B4C↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_2106F:                              ; CODE XREF: sub_2045A+BCB↑j
+loc_2106F:                              ; CODE XREF: renderOutdoorView+BCB↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -27978,7 +27983,7 @@ loc_2106F:                              ; CODE XREF: sub_2045A+BCB↑j
                 inc     si
                 mov     word ptr [si], 3
 
-loc_210E3:                              ; CODE XREF: sub_2045A+C4F↑j
+loc_210E3:                              ; CODE XREF: renderOutdoorView+C4F↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28038,7 +28043,7 @@ loc_210E3:                              ; CODE XREF: sub_2045A+C4F↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_21162:                              ; CODE XREF: sub_2045A+CC3↑j
+loc_21162:                              ; CODE XREF: renderOutdoorView+CC3↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28101,7 +28106,7 @@ loc_21162:                              ; CODE XREF: sub_2045A+CC3↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_211E6:                              ; CODE XREF: sub_2045A+D42↑j
+loc_211E6:                              ; CODE XREF: renderOutdoorView+D42↑j
                 mov     ax, 70h ; 'p'
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28156,7 +28161,7 @@ loc_211E6:                              ; CODE XREF: sub_2045A+D42↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_2125A:                              ; CODE XREF: sub_2045A+DC6↑j
+loc_2125A:                              ; CODE XREF: renderOutdoorView+DC6↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28207,7 +28212,7 @@ loc_2125A:                              ; CODE XREF: sub_2045A+DC6↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_212C7:                              ; CODE XREF: sub_2045A+E36↑j
+loc_212C7:                              ; CODE XREF: renderOutdoorView+E36↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28258,7 +28263,7 @@ loc_212C7:                              ; CODE XREF: sub_2045A+E36↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21334:                              ; CODE XREF: sub_2045A+EA3↑j
+loc_21334:                              ; CODE XREF: renderOutdoorView+EA3↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28309,7 +28314,7 @@ loc_21334:                              ; CODE XREF: sub_2045A+EA3↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_213A1:                              ; CODE XREF: sub_2045A+F10↑j
+loc_213A1:                              ; CODE XREF: renderOutdoorView+F10↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28360,7 +28365,7 @@ loc_213A1:                              ; CODE XREF: sub_2045A+F10↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_2140E:                              ; CODE XREF: sub_2045A+F7D↑j
+loc_2140E:                              ; CODE XREF: renderOutdoorView+F7D↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28411,7 +28416,7 @@ loc_2140E:                              ; CODE XREF: sub_2045A+F7D↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_2147B:                              ; CODE XREF: sub_2045A+FEA↑j
+loc_2147B:                              ; CODE XREF: renderOutdoorView+FEA↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28462,7 +28467,7 @@ loc_2147B:                              ; CODE XREF: sub_2045A+FEA↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_214E8:                              ; CODE XREF: sub_2045A+1057↑j
+loc_214E8:                              ; CODE XREF: renderOutdoorView+1057↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28513,7 +28518,7 @@ loc_214E8:                              ; CODE XREF: sub_2045A+1057↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21555:                              ; CODE XREF: sub_2045A+10C4↑j
+loc_21555:                              ; CODE XREF: renderOutdoorView+10C4↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28564,7 +28569,7 @@ loc_21555:                              ; CODE XREF: sub_2045A+10C4↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_215C2:                              ; CODE XREF: sub_2045A+1131↑j
+loc_215C2:                              ; CODE XREF: renderOutdoorView+1131↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28615,7 +28620,7 @@ loc_215C2:                              ; CODE XREF: sub_2045A+1131↑j
                 inc     si
                 mov     word ptr [si], 1
 
-loc_2162F:                              ; CODE XREF: sub_2045A+119E↑j
+loc_2162F:                              ; CODE XREF: renderOutdoorView+119E↑j
                 push    si
                 call    sub_17439
                 pop     cx
@@ -28624,14 +28629,14 @@ loc_2162F:                              ; CODE XREF: sub_2045A+119E↑j
                 jmp     loc_21822
 ; ---------------------------------------------------------------------------
 
-loc_21640:                              ; CODE XREF: sub_2045A+13CE↓j
+loc_21640:                              ; CODE XREF: renderOutdoorView+13CE↓j
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_2164D
                 jmp     loc_2181F
 ; ---------------------------------------------------------------------------
 
-loc_2164D:                              ; CODE XREF: sub_2045A+11EE↑j
+loc_2164D:                              ; CODE XREF: renderOutdoorView+11EE↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -28644,7 +28649,7 @@ loc_2164D:                              ; CODE XREF: sub_2045A+11EE↑j
                 jmp     loc_2181F
 ; ---------------------------------------------------------------------------
 
-loc_21668:                              ; CODE XREF: sub_2045A+1209↑j
+loc_21668:                              ; CODE XREF: renderOutdoorView+1209↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -28657,7 +28662,7 @@ loc_21668:                              ; CODE XREF: sub_2045A+1209↑j
                 jmp     loc_217A7
 ; ---------------------------------------------------------------------------
 
-loc_21683:                              ; CODE XREF: sub_2045A+1224↑j
+loc_21683:                              ; CODE XREF: renderOutdoorView+1224↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -28665,7 +28670,7 @@ loc_21683:                              ; CODE XREF: sub_2045A+1224↑j
                 jmp     loc_217A7
 ; ---------------------------------------------------------------------------
 
-loc_2168F:                              ; CODE XREF: sub_2045A+1230↑j
+loc_2168F:                              ; CODE XREF: renderOutdoorView+1230↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28696,8 +28701,8 @@ loc_2168F:                              ; CODE XREF: sub_2045A+1230↑j
                 jmp     cs:jpt_216CF[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-def_216CF:                              ; CODE XREF: sub_2045A+1271↑j
-                                        ; sub_2045A+1275↑j
+def_216CF:                              ; CODE XREF: renderOutdoorView+1271↑j
+                                        ; renderOutdoorView+1275↑j
                                         ; DATA XREF: ...
                 mov     ax, 70h ; 'p'   ; jumptable 000216CF default case, cases 2,4,9,10
                 push    ax
@@ -28730,7 +28735,7 @@ def_216CF:                              ; CODE XREF: sub_2045A+1271↑j
                 jmp     loc_217A7
 ; ---------------------------------------------------------------------------
 
-loc_2171A:                              ; CODE XREF: sub_2045A+12B2↑j
+loc_2171A:                              ; CODE XREF: renderOutdoorView+12B2↑j
                 mov     bx, [bp+var_C]
                 shl     bx, 1
                 push    word ptr [bx+165h]
@@ -28781,8 +28786,8 @@ loc_2171A:                              ; CODE XREF: sub_2045A+12B2↑j
                 or      ax, ax
                 jz      short loc_217A7
 
-loc_21793:                              ; CODE XREF: sub_2045A+1275↑j
-                                        ; sub_2045A+12BB↑j
+loc_21793:                              ; CODE XREF: renderOutdoorView+1275↑j
+                                        ; renderOutdoorView+12BB↑j
                                         ; DATA XREF: ...
                 mov     bx, [bp+var_4]  ; jumptable 000216CF cases 1,3,5-8,11
                 mov     byte ptr [bx-4645h], 0
@@ -28793,8 +28798,8 @@ loc_21793:                              ; CODE XREF: sub_2045A+1275↑j
                 jmp     short loc_2181F
 ; ---------------------------------------------------------------------------
 
-loc_217A7:                              ; CODE XREF: sub_2045A+1226↑j
-                                        ; sub_2045A+1232↑j ...
+loc_217A7:                              ; CODE XREF: renderOutdoorView+1226↑j
+                                        ; renderOutdoorView+1232↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -28839,7 +28844,7 @@ loc_217A7:                              ; CODE XREF: sub_2045A+1226↑j
                 jmp     short loc_2181F
 ; ---------------------------------------------------------------------------
 
-loc_21803:                              ; CODE XREF: sub_2045A+1398↑j
+loc_21803:                              ; CODE XREF: renderOutdoorView+1398↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-4645h]
                 inc     al
@@ -28851,17 +28856,17 @@ loc_21803:                              ; CODE XREF: sub_2045A+1398↑j
                 mov     bx, [bp+var_4]
                 mov     [bx-4645h], dl
 
-loc_2181F:                              ; CODE XREF: sub_2045A+11F0↑j
-                                        ; sub_2045A+120B↑j ...
+loc_2181F:                              ; CODE XREF: renderOutdoorView+11F0↑j
+                                        ; renderOutdoorView+120B↑j ...
                 inc     [bp+var_4]
 
-loc_21822:                              ; CODE XREF: sub_2045A+11E3↑j
+loc_21822:                              ; CODE XREF: renderOutdoorView+11E3↑j
                 cmp     [bp+var_4], 8
                 jge     short loc_2182B
                 jmp     loc_21640
 ; ---------------------------------------------------------------------------
 
-loc_2182B:                              ; CODE XREF: sub_2045A+13CC↑j
+loc_2182B:                              ; CODE XREF: renderOutdoorView+13CC↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28912,7 +28917,7 @@ loc_2182B:                              ; CODE XREF: sub_2045A+13CC↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21898:                              ; CODE XREF: sub_2045A+1407↑j
+loc_21898:                              ; CODE XREF: renderOutdoorView+1407↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -28963,7 +28968,7 @@ loc_21898:                              ; CODE XREF: sub_2045A+1407↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21905:                              ; CODE XREF: sub_2045A+1474↑j
+loc_21905:                              ; CODE XREF: renderOutdoorView+1474↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29014,7 +29019,7 @@ loc_21905:                              ; CODE XREF: sub_2045A+1474↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21972:                              ; CODE XREF: sub_2045A+14E1↑j
+loc_21972:                              ; CODE XREF: renderOutdoorView+14E1↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29065,7 +29070,7 @@ loc_21972:                              ; CODE XREF: sub_2045A+14E1↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_219DF:                              ; CODE XREF: sub_2045A+154E↑j
+loc_219DF:                              ; CODE XREF: renderOutdoorView+154E↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29116,7 +29121,7 @@ loc_219DF:                              ; CODE XREF: sub_2045A+154E↑j
                 inc     si
                 mov     word ptr [si], 1
 
-loc_21A4C:                              ; CODE XREF: sub_2045A+15BB↑j
+loc_21A4C:                              ; CODE XREF: renderOutdoorView+15BB↑j
                 push    si
                 call    sub_17F38
                 pop     cx
@@ -29125,14 +29130,14 @@ loc_21A4C:                              ; CODE XREF: sub_2045A+15BB↑j
                 jmp     loc_21C3F
 ; ---------------------------------------------------------------------------
 
-loc_21A5D:                              ; CODE XREF: sub_2045A+17EB↓j
+loc_21A5D:                              ; CODE XREF: renderOutdoorView+17EB↓j
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_21A6A
                 jmp     loc_21C3C
 ; ---------------------------------------------------------------------------
 
-loc_21A6A:                              ; CODE XREF: sub_2045A+160B↑j
+loc_21A6A:                              ; CODE XREF: renderOutdoorView+160B↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -29145,7 +29150,7 @@ loc_21A6A:                              ; CODE XREF: sub_2045A+160B↑j
                 jmp     loc_21C3C
 ; ---------------------------------------------------------------------------
 
-loc_21A85:                              ; CODE XREF: sub_2045A+1626↑j
+loc_21A85:                              ; CODE XREF: renderOutdoorView+1626↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -29158,7 +29163,7 @@ loc_21A85:                              ; CODE XREF: sub_2045A+1626↑j
                 jmp     loc_21BC4
 ; ---------------------------------------------------------------------------
 
-loc_21AA0:                              ; CODE XREF: sub_2045A+1641↑j
+loc_21AA0:                              ; CODE XREF: renderOutdoorView+1641↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -29166,7 +29171,7 @@ loc_21AA0:                              ; CODE XREF: sub_2045A+1641↑j
                 jmp     loc_21BC4
 ; ---------------------------------------------------------------------------
 
-loc_21AAC:                              ; CODE XREF: sub_2045A+164D↑j
+loc_21AAC:                              ; CODE XREF: renderOutdoorView+164D↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29197,8 +29202,8 @@ loc_21AAC:                              ; CODE XREF: sub_2045A+164D↑j
                 jmp     cs:jpt_21AEC[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-def_21AEC:                              ; CODE XREF: sub_2045A+168E↑j
-                                        ; sub_2045A+1692↑j
+def_21AEC:                              ; CODE XREF: renderOutdoorView+168E↑j
+                                        ; renderOutdoorView+1692↑j
                                         ; DATA XREF: ...
                 mov     ax, 70h ; 'p'   ; jumptable 00021AEC default case, cases 2,4,9,10
                 push    ax
@@ -29231,7 +29236,7 @@ def_21AEC:                              ; CODE XREF: sub_2045A+168E↑j
                 jmp     loc_21BC4
 ; ---------------------------------------------------------------------------
 
-loc_21B37:                              ; CODE XREF: sub_2045A+16CF↑j
+loc_21B37:                              ; CODE XREF: renderOutdoorView+16CF↑j
                 mov     bx, [bp+var_C]
                 shl     bx, 1
                 push    word ptr [bx+165h]
@@ -29282,8 +29287,8 @@ loc_21B37:                              ; CODE XREF: sub_2045A+16CF↑j
                 or      ax, ax
                 jz      short loc_21BC4
 
-loc_21BB0:                              ; CODE XREF: sub_2045A+1692↑j
-                                        ; sub_2045A+16D8↑j
+loc_21BB0:                              ; CODE XREF: renderOutdoorView+1692↑j
+                                        ; renderOutdoorView+16D8↑j
                                         ; DATA XREF: ...
                 mov     bx, [bp+var_4]  ; jumptable 00021AEC cases 1,3,5-8,11
                 mov     byte ptr [bx-4645h], 0
@@ -29294,8 +29299,8 @@ loc_21BB0:                              ; CODE XREF: sub_2045A+1692↑j
                 jmp     short loc_21C3C
 ; ---------------------------------------------------------------------------
 
-loc_21BC4:                              ; CODE XREF: sub_2045A+1643↑j
-                                        ; sub_2045A+164F↑j ...
+loc_21BC4:                              ; CODE XREF: renderOutdoorView+1643↑j
+                                        ; renderOutdoorView+164F↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -29340,7 +29345,7 @@ loc_21BC4:                              ; CODE XREF: sub_2045A+1643↑j
                 jmp     short loc_21C3C
 ; ---------------------------------------------------------------------------
 
-loc_21C20:                              ; CODE XREF: sub_2045A+17B5↑j
+loc_21C20:                              ; CODE XREF: renderOutdoorView+17B5↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-4645h]
                 inc     al
@@ -29352,17 +29357,17 @@ loc_21C20:                              ; CODE XREF: sub_2045A+17B5↑j
                 mov     bx, [bp+var_4]
                 mov     [bx-4645h], dl
 
-loc_21C3C:                              ; CODE XREF: sub_2045A+160D↑j
-                                        ; sub_2045A+1628↑j ...
+loc_21C3C:                              ; CODE XREF: renderOutdoorView+160D↑j
+                                        ; renderOutdoorView+1628↑j ...
                 inc     [bp+var_4]
 
-loc_21C3F:                              ; CODE XREF: sub_2045A+1600↑j
+loc_21C3F:                              ; CODE XREF: renderOutdoorView+1600↑j
                 cmp     [bp+var_4], 8
                 jge     short loc_21C48
                 jmp     loc_21A5D
 ; ---------------------------------------------------------------------------
 
-loc_21C48:                              ; CODE XREF: sub_2045A+17E9↑j
+loc_21C48:                              ; CODE XREF: renderOutdoorView+17E9↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29413,7 +29418,7 @@ loc_21C48:                              ; CODE XREF: sub_2045A+17E9↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21CB5:                              ; CODE XREF: sub_2045A+1824↑j
+loc_21CB5:                              ; CODE XREF: renderOutdoorView+1824↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29464,7 +29469,7 @@ loc_21CB5:                              ; CODE XREF: sub_2045A+1824↑j
                 inc     si
                 mov     word ptr [si], 2
 
-loc_21D22:                              ; CODE XREF: sub_2045A+1891↑j
+loc_21D22:                              ; CODE XREF: renderOutdoorView+1891↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29515,7 +29520,7 @@ loc_21D22:                              ; CODE XREF: sub_2045A+1891↑j
                 inc     si
                 mov     word ptr [si], 1
 
-loc_21D8F:                              ; CODE XREF: sub_2045A+18FE↑j
+loc_21D8F:                              ; CODE XREF: renderOutdoorView+18FE↑j
                 push    si
                 call    sub_1862A
                 pop     cx
@@ -29524,14 +29529,14 @@ loc_21D8F:                              ; CODE XREF: sub_2045A+18FE↑j
                 jmp     loc_21F82
 ; ---------------------------------------------------------------------------
 
-loc_21DA0:                              ; CODE XREF: sub_2045A+1B2E↓j
+loc_21DA0:                              ; CODE XREF: renderOutdoorView+1B2E↓j
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_21DAD
                 jmp     loc_21F7F
 ; ---------------------------------------------------------------------------
 
-loc_21DAD:                              ; CODE XREF: sub_2045A+194E↑j
+loc_21DAD:                              ; CODE XREF: renderOutdoorView+194E↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -29544,7 +29549,7 @@ loc_21DAD:                              ; CODE XREF: sub_2045A+194E↑j
                 jmp     loc_21F7F
 ; ---------------------------------------------------------------------------
 
-loc_21DC8:                              ; CODE XREF: sub_2045A+1969↑j
+loc_21DC8:                              ; CODE XREF: renderOutdoorView+1969↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -29557,7 +29562,7 @@ loc_21DC8:                              ; CODE XREF: sub_2045A+1969↑j
                 jmp     loc_21F07
 ; ---------------------------------------------------------------------------
 
-loc_21DE3:                              ; CODE XREF: sub_2045A+1984↑j
+loc_21DE3:                              ; CODE XREF: renderOutdoorView+1984↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -29565,7 +29570,7 @@ loc_21DE3:                              ; CODE XREF: sub_2045A+1984↑j
                 jmp     loc_21F07
 ; ---------------------------------------------------------------------------
 
-loc_21DEF:                              ; CODE XREF: sub_2045A+1990↑j
+loc_21DEF:                              ; CODE XREF: renderOutdoorView+1990↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29596,8 +29601,8 @@ loc_21DEF:                              ; CODE XREF: sub_2045A+1990↑j
                 jmp     cs:jpt_21E2F[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-def_21E2F:                              ; CODE XREF: sub_2045A+19D1↑j
-                                        ; sub_2045A+19D5↑j
+def_21E2F:                              ; CODE XREF: renderOutdoorView+19D1↑j
+                                        ; renderOutdoorView+19D5↑j
                                         ; DATA XREF: ...
                 mov     ax, 70h ; 'p'   ; jumptable 00021E2F default case, cases 2,4,9,10
                 push    ax
@@ -29630,7 +29635,7 @@ def_21E2F:                              ; CODE XREF: sub_2045A+19D1↑j
                 jmp     loc_21F07
 ; ---------------------------------------------------------------------------
 
-loc_21E7A:                              ; CODE XREF: sub_2045A+1A12↑j
+loc_21E7A:                              ; CODE XREF: renderOutdoorView+1A12↑j
                 mov     bx, [bp+var_C]
                 shl     bx, 1
                 push    word ptr [bx+165h]
@@ -29681,8 +29686,8 @@ loc_21E7A:                              ; CODE XREF: sub_2045A+1A12↑j
                 or      ax, ax
                 jz      short loc_21F07
 
-loc_21EF3:                              ; CODE XREF: sub_2045A+19D5↑j
-                                        ; sub_2045A+1A1B↑j
+loc_21EF3:                              ; CODE XREF: renderOutdoorView+19D5↑j
+                                        ; renderOutdoorView+1A1B↑j
                                         ; DATA XREF: ...
                 mov     bx, [bp+var_4]  ; jumptable 00021E2F cases 1,3,5-8,11
                 mov     byte ptr [bx-4645h], 0
@@ -29693,8 +29698,8 @@ loc_21EF3:                              ; CODE XREF: sub_2045A+19D5↑j
                 jmp     short loc_21F7F
 ; ---------------------------------------------------------------------------
 
-loc_21F07:                              ; CODE XREF: sub_2045A+1986↑j
-                                        ; sub_2045A+1992↑j ...
+loc_21F07:                              ; CODE XREF: renderOutdoorView+1986↑j
+                                        ; renderOutdoorView+1992↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -29739,7 +29744,7 @@ loc_21F07:                              ; CODE XREF: sub_2045A+1986↑j
                 jmp     short loc_21F7F
 ; ---------------------------------------------------------------------------
 
-loc_21F63:                              ; CODE XREF: sub_2045A+1AF8↑j
+loc_21F63:                              ; CODE XREF: renderOutdoorView+1AF8↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-4645h]
                 inc     al
@@ -29751,17 +29756,17 @@ loc_21F63:                              ; CODE XREF: sub_2045A+1AF8↑j
                 mov     bx, [bp+var_4]
                 mov     [bx-4645h], dl
 
-loc_21F7F:                              ; CODE XREF: sub_2045A+1950↑j
-                                        ; sub_2045A+196B↑j ...
+loc_21F7F:                              ; CODE XREF: renderOutdoorView+1950↑j
+                                        ; renderOutdoorView+196B↑j ...
                 inc     [bp+var_4]
 
-loc_21F82:                              ; CODE XREF: sub_2045A+1943↑j
+loc_21F82:                              ; CODE XREF: renderOutdoorView+1943↑j
                 cmp     [bp+var_4], 8
                 jge     short loc_21F8B
                 jmp     loc_21DA0
 ; ---------------------------------------------------------------------------
 
-loc_21F8B:                              ; CODE XREF: sub_2045A+1B2C↑j
+loc_21F8B:                              ; CODE XREF: renderOutdoorView+1B2C↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29812,7 +29817,7 @@ loc_21F8B:                              ; CODE XREF: sub_2045A+1B2C↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_21FF8:                              ; CODE XREF: sub_2045A+1B67↑j
+loc_21FF8:                              ; CODE XREF: renderOutdoorView+1B67↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29863,7 +29868,7 @@ loc_21FF8:                              ; CODE XREF: sub_2045A+1B67↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_22065:                              ; CODE XREF: sub_2045A+1BD4↑j
+loc_22065:                              ; CODE XREF: renderOutdoorView+1BD4↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29914,7 +29919,7 @@ loc_22065:                              ; CODE XREF: sub_2045A+1BD4↑j
                 inc     si
                 mov     word ptr [si], 1
 
-loc_220D2:                              ; CODE XREF: sub_2045A+1C41↑j
+loc_220D2:                              ; CODE XREF: renderOutdoorView+1C41↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -29965,7 +29970,7 @@ loc_220D2:                              ; CODE XREF: sub_2045A+1C41↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_2213F:                              ; CODE XREF: sub_2045A+1CAE↑j
+loc_2213F:                              ; CODE XREF: renderOutdoorView+1CAE↑j
                 mov     ax, 7
                 push    ax
                 mov     ax, [bp+var_C]
@@ -30016,7 +30021,7 @@ loc_2213F:                              ; CODE XREF: sub_2045A+1CAE↑j
                 inc     si
                 mov     word ptr [si], 0
 
-loc_221AC:                              ; CODE XREF: sub_2045A+1D1B↑j
+loc_221AC:                              ; CODE XREF: renderOutdoorView+1D1B↑j
                 mov     ax, 7
                 push    ax
                 push    [bp+var_A]
@@ -30077,7 +30082,7 @@ loc_221AC:                              ; CODE XREF: sub_2045A+1D1B↑j
                 inc     si
                 mov     word ptr [si], 1
 
-loc_22229:                              ; CODE XREF: sub_2045A+1D68↑j
+loc_22229:                              ; CODE XREF: renderOutdoorView+1D68↑j
                 push    si
                 call    sub_18BF1
                 pop     cx
@@ -30086,14 +30091,14 @@ loc_22229:                              ; CODE XREF: sub_2045A+1D68↑j
                 jmp     loc_223CD
 ; ---------------------------------------------------------------------------
 
-loc_2223A:                              ; CODE XREF: sub_2045A+1F79↓j
+loc_2223A:                              ; CODE XREF: renderOutdoorView+1F79↓j
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx-4645h], 0
                 jnz     short loc_22247
                 jmp     loc_223CA
 ; ---------------------------------------------------------------------------
 
-loc_22247:                              ; CODE XREF: sub_2045A+1DE8↑j
+loc_22247:                              ; CODE XREF: renderOutdoorView+1DE8↑j
                 mov     al, [bx-54AEh]
                 mov     ah, 0
                 mov     bx, 3
@@ -30106,7 +30111,7 @@ loc_22247:                              ; CODE XREF: sub_2045A+1DE8↑j
                 jmp     loc_223CA
 ; ---------------------------------------------------------------------------
 
-loc_22261:                              ; CODE XREF: sub_2045A+1E02↑j
+loc_22261:                              ; CODE XREF: renderOutdoorView+1E02↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-54AEh]
                 mov     ah, 0
@@ -30119,7 +30124,7 @@ loc_22261:                              ; CODE XREF: sub_2045A+1E02↑j
                 jmp     loc_22357
 ; ---------------------------------------------------------------------------
 
-loc_2227C:                              ; CODE XREF: sub_2045A+1E1D↑j
+loc_2227C:                              ; CODE XREF: renderOutdoorView+1E1D↑j
                 mov     al, byte_2879C
                 mov     ah, 0
                 or      ax, ax
@@ -30127,7 +30132,7 @@ loc_2227C:                              ; CODE XREF: sub_2045A+1E1D↑j
                 jmp     loc_22357
 ; ---------------------------------------------------------------------------
 
-loc_22288:                              ; CODE XREF: sub_2045A+1E29↑j
+loc_22288:                              ; CODE XREF: renderOutdoorView+1E29↑j
                 mov     ax, 7
                 push    ax
                 push    [bp+var_A]
@@ -30142,8 +30147,8 @@ loc_22288:                              ; CODE XREF: sub_2045A+1E29↑j
                 jmp     cs:jpt_222A4[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-def_222A4:                              ; CODE XREF: sub_2045A+1E46↑j
-                                        ; sub_2045A+1E4A↑j
+def_222A4:                              ; CODE XREF: renderOutdoorView+1E46↑j
+                                        ; renderOutdoorView+1E4A↑j
                                         ; DATA XREF: ...
                 mov     ax, 70h ; 'p'   ; jumptable 000222A4 default case, cases 2,4,9,10
                 push    ax
@@ -30176,7 +30181,7 @@ def_222A4:                              ; CODE XREF: sub_2045A+1E46↑j
                 jmp     short loc_22357
 ; ---------------------------------------------------------------------------
 
-loc_222EE:                              ; CODE XREF: sub_2045A+1E87↑j
+loc_222EE:                              ; CODE XREF: renderOutdoorView+1E87↑j
                 mov     bx, [bp+var_C]
                 shl     bx, 1
                 push    word ptr [bx+165h]
@@ -30211,8 +30216,8 @@ loc_222EE:                              ; CODE XREF: sub_2045A+1E87↑j
                 or      ax, ax
                 jz      short loc_22357
 
-loc_22343:                              ; CODE XREF: sub_2045A+1E4A↑j
-                                        ; sub_2045A+1E90↑j
+loc_22343:                              ; CODE XREF: renderOutdoorView+1E4A↑j
+                                        ; renderOutdoorView+1E90↑j
                                         ; DATA XREF: ...
                 mov     bx, [bp+var_4]  ; jumptable 000222A4 cases 1,3,5-8,11
                 mov     byte ptr [bx-4645h], 0
@@ -30223,8 +30228,8 @@ loc_22343:                              ; CODE XREF: sub_2045A+1E4A↑j
                 jmp     short loc_223CA
 ; ---------------------------------------------------------------------------
 
-loc_22357:                              ; CODE XREF: sub_2045A+1E1F↑j
-                                        ; sub_2045A+1E2B↑j ...
+loc_22357:                              ; CODE XREF: renderOutdoorView+1E1F↑j
+                                        ; renderOutdoorView+1E2B↑j ...
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -30267,7 +30272,7 @@ loc_22357:                              ; CODE XREF: sub_2045A+1E1F↑j
                 jmp     short loc_223CA
 ; ---------------------------------------------------------------------------
 
-loc_223AE:                              ; CODE XREF: sub_2045A+1F43↑j
+loc_223AE:                              ; CODE XREF: renderOutdoorView+1F43↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx-4645h]
                 inc     al
@@ -30279,17 +30284,17 @@ loc_223AE:                              ; CODE XREF: sub_2045A+1F43↑j
                 mov     bx, [bp+var_4]
                 mov     [bx-4645h], dl
 
-loc_223CA:                              ; CODE XREF: sub_2045A+1DEA↑j
-                                        ; sub_2045A+1E04↑j ...
+loc_223CA:                              ; CODE XREF: renderOutdoorView+1DEA↑j
+                                        ; renderOutdoorView+1E04↑j ...
                 inc     [bp+var_4]
 
-loc_223CD:                              ; CODE XREF: sub_2045A+1DDD↑j
+loc_223CD:                              ; CODE XREF: renderOutdoorView+1DDD↑j
                 cmp     [bp+var_4], 8
                 jge     short loc_223D6
                 jmp     loc_2223A
 ; ---------------------------------------------------------------------------
 
-loc_223D6:                              ; CODE XREF: sub_2045A+1F77↑j
+loc_223D6:                              ; CODE XREF: renderOutdoorView+1F77↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -30310,7 +30315,7 @@ loc_223D6:                              ; CODE XREF: sub_2045A+1F77↑j
                 call    _memset
                 add     sp, 6
 
-loc_22402:                              ; CODE XREF: sub_2045A+1F93↑j
+loc_22402:                              ; CODE XREF: renderOutdoorView+1F93↑j
                 call    sub_1B6D1
                 mov     ax, 0ACD6h
                 push    ax
@@ -30342,16 +30347,16 @@ loc_22402:                              ; CODE XREF: sub_2045A+1F93↑j
                 jmp     short loc_22457
 ; ---------------------------------------------------------------------------
 
-loc_22445:                              ; CODE XREF: sub_2045A+2001↓j
+loc_22445:                              ; CODE XREF: renderOutdoorView+2001↓j
                 mov     bx, [bp+var_4]
                 cmp     byte ptr [bx-4645h], 0
                 jz      short loc_22454
                 mov     [bp+var_E], 1
 
-loc_22454:                              ; CODE XREF: sub_2045A+1FF3↑j
+loc_22454:                              ; CODE XREF: renderOutdoorView+1FF3↑j
                 inc     [bp+var_4]
 
-loc_22457:                              ; CODE XREF: sub_2045A+1FE9↑j
+loc_22457:                              ; CODE XREF: renderOutdoorView+1FE9↑j
                 cmp     [bp+var_4], 8
                 jl      short loc_22445
                 mov     ax, word_32E32
@@ -30365,8 +30370,8 @@ loc_22457:                              ; CODE XREF: sub_2045A+1FE9↑j
                 pop     cx
                 mov     byte_2879A, 0
 
-loc_2247B:                              ; CODE XREF: sub_2045A+200A↑j
-                                        ; sub_2045A+2010↑j
+loc_2247B:                              ; CODE XREF: renderOutdoorView+200A↑j
+                                        ; renderOutdoorView+2010↑j
                 cmp     Engine_mode, 0
                 jnz     short loc_22496
                 mov     ax, 4
@@ -30378,16 +30383,16 @@ loc_2247B:                              ; CODE XREF: sub_2045A+200A↑j
                 pop     cx
                 mov     Engine_mode, 1
 
-loc_22496:                              ; CODE XREF: sub_2045A+2026↑j
+loc_22496:                              ; CODE XREF: renderOutdoorView+2026↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2045A       endp
+renderOutdoorView endp
 
 ; ---------------------------------------------------------------------------
-jpt_222A4       dw offset loc_22343     ; DATA XREF: sub_2045A+1E4A↑r
+jpt_222A4       dw offset loc_22343     ; DATA XREF: renderOutdoorView+1E4A↑r
                 dw offset def_222A4     ; jump table for switch statement
                 dw offset loc_22343
                 dw offset def_222A4
@@ -30398,7 +30403,7 @@ jpt_222A4       dw offset loc_22343     ; DATA XREF: sub_2045A+1E4A↑r
                 dw offset def_222A4
                 dw offset def_222A4
                 dw offset loc_22343
-jpt_21E2F       dw offset loc_21EF3     ; DATA XREF: sub_2045A+19D5↑r
+jpt_21E2F       dw offset loc_21EF3     ; DATA XREF: renderOutdoorView+19D5↑r
                 dw offset def_21E2F     ; jump table for switch statement
                 dw offset loc_21EF3
                 dw offset def_21E2F
@@ -30409,7 +30414,7 @@ jpt_21E2F       dw offset loc_21EF3     ; DATA XREF: sub_2045A+19D5↑r
                 dw offset def_21E2F
                 dw offset def_21E2F
                 dw offset loc_21EF3
-jpt_21AEC       dw offset loc_21BB0     ; DATA XREF: sub_2045A+1692↑r
+jpt_21AEC       dw offset loc_21BB0     ; DATA XREF: renderOutdoorView+1692↑r
                 dw offset def_21AEC     ; jump table for switch statement
                 dw offset loc_21BB0
                 dw offset def_21AEC
@@ -30420,7 +30425,7 @@ jpt_21AEC       dw offset loc_21BB0     ; DATA XREF: sub_2045A+1692↑r
                 dw offset def_21AEC
                 dw offset def_21AEC
                 dw offset loc_21BB0
-jpt_216CF       dw offset loc_21793     ; DATA XREF: sub_2045A+1275↑r
+jpt_216CF       dw offset loc_21793     ; DATA XREF: renderOutdoorView+1275↑r
                 dw offset def_216CF     ; jump table for switch statement
                 dw offset loc_21793
                 dw offset def_216CF
@@ -31616,7 +31621,7 @@ Window_update   endp ; sp-analysis failed
 
 
 Music_playFX    proc far                ; CODE XREF: seg001:02D1↑P
-                                        ; sub_1E407+1FE5↑P ...
+                                        ; renderIndoorView+1FE5↑P ...
                 push    cs:word_24F63
                 mov     ax, 0Fh
                 push    ax
@@ -32633,7 +32638,7 @@ loc_25565:                              ; CODE XREF: sub_254BA+40↑j
 
 loc_25598:                              ; CODE XREF: sub_254BA+B1↑j
                                         ; sub_254BA+B8↑j ...
-                call    sub_1B669
+                call    drawView
                 mov     al, byte_2879A
                 mov     ah, 0
                 or      ax, ax
@@ -32964,7 +32969,7 @@ loc_25825:                              ; CODE XREF: sub_254BA+364↑j
 
 loc_25841:                              ; CODE XREF: sub_254BA+369↑j
                                         ; sub_254BA+370↑j ...
-                call    sub_1B669
+                call    drawView
                 jmp     short loc_25854
 ; ---------------------------------------------------------------------------
 
@@ -33826,7 +33831,7 @@ loc_25E6D:                              ; CODE XREF: sub_25E66+33↓j
                 jnz     short loc_25E98
 
 loc_25E8E:                              ; CODE XREF: sub_25E66+1F↑j
-                call    sub_1B669
+                call    drawView
                 mov     byte_2886E, 0
 
 loc_25E98:                              ; CODE XREF: sub_25E66+26↑j
@@ -33872,7 +33877,7 @@ loc_25EA7:                              ; CODE XREF: sub_25E9E+4E↓j
                 jnz     short loc_25ED6
 
 loc_25ECC:                              ; CODE XREF: sub_25E9E+25↑j
-                call    sub_1B669
+                call    drawView
                 mov     byte_2886E, 0
 
 loc_25ED6:                              ; CODE XREF: sub_25E9E+2C↑j
@@ -33935,7 +33940,7 @@ loc_25F16:                              ; CODE XREF: sub_25EF3+5F↓j
                 call    Events_updateGameCounter
                 add     sp, 8
                 mov     di, ax
-                call    sub_1B669
+                call    drawView
                 mov     byte_2886E, 0
 
 loc_25F34:                              ; CODE XREF: sub_25EF3+21↑j
@@ -36402,28 +36407,8 @@ sub_2803E       proc far                ; CODE XREF: runMazeEvent:loc_1A4CA↑P
                 jmp     sub_3BE18
 sub_2803E       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_28043(int, int, int, int)
-sub_28043       proc far                ; CODE XREF: runMazeEvent+177F↑P
-                                        ; runMazeEvent+17AC↑P
-                jmp     sub_3CFAD
-sub_28043       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_28048(int, int, int, int, int, int, int)
-sub_28048       proc far                ; CODE XREF: runMazeEvent+B1D↑P
-                                        ; runMazeEvent+C00↑P ...
-                jmp     sub_3C282
-sub_28048       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_setValue. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_giveTake. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36569,8 +36554,8 @@ sub_280EF       endp
 
 ; Attributes: thunk
 
-sub_280F4       proc far                ; CODE XREF: sub_3C282+1DF↓P
-                                        ; sub_3C282+608↓P ...
+sub_280F4       proc far                ; CODE XREF: giveTake+1DF↓P
+                                        ; giveTake+608↓P ...
                 jmp     sub_40506
 sub_280F4       endp
 
@@ -36608,7 +36593,7 @@ sub_28108       endp
 
 ; Attributes: thunk
 
-sub_2810D       proc far                ; CODE XREF: sub_3C282+1D6↓P
+sub_2810D       proc far                ; CODE XREF: giveTake+1D6↓P
                                         ; sub_4432C+12↓P ...
                 jmp     sub_404D5
 sub_2810D       endp
@@ -36841,8 +36826,8 @@ sub_281BC       endp
 
 ; Attributes: thunk
 
-sub_281CB       proc far                ; CODE XREF: sub_3C282+210↓P
-                                        ; sub_3C282+22F↓P ...
+sub_281CB       proc far                ; CODE XREF: giveTake+210↓P
+                                        ; giveTake+22F↓P ...
                 jmp     sub_41A2F
 sub_281CB       endp
 
@@ -37066,7 +37051,7 @@ sub_28267       endp
 
 ; int __cdecl __far sub_2826C(char, __int32, int)
 sub_2826C       proc far                ; CODE XREF: resetBlacksmithWares+121↓P
-                                        ; sub_3C282+979↓P ...
+                                        ; giveTake+979↓P ...
                 jmp     sub_4432C
 sub_2826C       endp
 
@@ -37398,7 +37383,7 @@ stub10          segment para public 'CODE' use16
 
 ; Attributes: thunk
 
-sub_283B0       proc far                ; CODE XREF: sub_1B669+55↑P
+sub_283B0       proc far                ; CODE XREF: drawView+55↑P
                 jmp     sub_4B7B5
 sub_283B0       endp
 
@@ -37929,18 +37914,18 @@ word_28796      dw 0                    ; DATA XREF: sub_10F77+72↑w
 word_28798      dw 0                    ; DATA XREF: start+21↑w
                                         ; sub_10F77+36↑r ...
 byte_2879A      db 0                    ; DATA XREF: sub_1B358+D↑r
-                                        ; sub_1E407+1FD1↑w ...
+                                        ; renderIndoorView+1FD1↑w ...
 byte_2879B      db 0                    ; DATA XREF: sub_1B358+14↑w
                                         ; sub_254BA+EC↑r ...
 byte_2879C      db 0                    ; DATA XREF: sub_1B358:loc_1B657↑r
-                                        ; sub_1B669:loc_1B6AC↑r ...
+                                        ; drawView:loc_1B6AC↑r ...
 byte_2879D      db 0                    ; DATA XREF: runMazeEvent:loc_1AF66↑w
                                         ; ifProc+154↓r ...
 Party_newDay    db 0                    ; DATA XREF: addTime+8A↑w
                                         ; addTime:loc_153AE↑r ...
                                         ; byte
-byte_2879F      db 0                    ; DATA XREF: sub_2045A+12B4↑r
-                                        ; sub_2045A+16D1↑r ...
+byte_2879F      db 0                    ; DATA XREF: renderOutdoorView+12B4↑r
+                                        ; renderOutdoorView+16D1↑r ...
 byte_287A0      db 0                    ; DATA XREF: itemsDialog:def_4E051↓r
                                         ; sub_502D2:loc_5042C↓w ...
 byte_287A1      db 0FFh                 ; DATA XREF: sub_45F29+530↓w
@@ -38047,8 +38032,8 @@ byte_2886E      db 0                    ; DATA XREF: sub_15736+2F↑w
                                         ; sub_15736+41↑w ...
 byte_2886F      db 0                    ; DATA XREF: chargeStep+20↑r
                                         ; chargeStep:loc_16DEC↑w ...
-byte_28870      db 0                    ; DATA XREF: sub_1E407+155↑r
-                                        ; sub_2045A+174↑r ...
+byte_28870      db 0                    ; DATA XREF: renderIndoorView+155↑r
+                                        ; renderOutdoorView+174↑r ...
                 db 1
 byte_28872      db 0                    ; DATA XREF: sub_254BA:loc_254E1↑r
                                         ; controlPanel+230↓r ...
@@ -39425,57 +39410,811 @@ aC_2            db 3,'c'                ; DATA XREF: sub_1B223+29↑o
                 db  75h ; u
                 db    0
                 align 2
-                db 0FFh, 3 dup(0), 1, 0FFh, 3 dup(0), 1, 0FEh, 2 dup(0FFh)
-                db 3 dup(0), 2 dup(1), 2, 0FCh, 2 dup(0FDh), 2 dup(0FEh)
-                db 2 dup(0FFh), 3 dup(0), 2 dup(1), 2 dup(2), 2 dup(3)
-                db 4, 0FDh, 0FEh, 0FFh, 2 dup(0), 1, 2, 3, 0FCh, 4, 1
-                db 3 dup(0), 0FFh, 1, 3 dup(0), 0FFh, 2, 2 dup(1), 3 dup(0)
-                db 2 dup(0FFh), 0FEh, 4, 2 dup(3), 2 dup(2), 2 dup(1)
-                db 3 dup(0), 2 dup(0FFh), 2 dup(0FEh), 2 dup(0FDh), 0FCh
-                db 3, 2, 1, 2 dup(0), 0FFh, 0FEh, 0FDh, 4, 0FCh, 5 dup(0)
-                db 5 dup(1), 9 dup(2), 11h dup(3), 0Ah dup(4), 5 dup(0)
-                db 5 dup(0FFh), 9 dup(0FEh), 11h dup(0FDh), 0Ah dup(0FCh)
-                db 5 dup(0), 5 dup(1), 9 dup(2), 11h dup(3), 0Ah dup(4)
-                db 5 dup(0), 5 dup(0FFh), 9 dup(0FEh), 11h dup(0FDh), 0Ah dup(0FCh)
-                db 1, 3 dup(0), 0FFh, 1, 3 dup(0), 0FFh, 2, 2 dup(1), 3 dup(0)
-                db 2 dup(0FFh), 0FEh, 4, 2 dup(3), 2 dup(2), 2 dup(1)
-                db 3 dup(0), 2 dup(0FFh), 2 dup(0FEh), 2 dup(0FDh), 0FCh
-                db 3, 2, 1, 2 dup(0), 0FFh, 0FEh, 0FDh, 4, 0FCh, 0FFh
-                db 3 dup(0), 1, 0FFh, 3 dup(0), 1, 0FEh, 2 dup(0FFh), 3 dup(0)
-                db 2 dup(1), 2, 0FCh, 2 dup(0FDh), 2 dup(0FEh), 2 dup(0FFh)
-                db 3 dup(0), 2 dup(1), 2 dup(2), 2 dup(3), 4, 0FDh, 0FEh
-                db 0FFh, 2 dup(0), 1, 2, 3, 0FCh, 4, 0, 70h, 7, 2 dup(0)
-                db 70h, 0, 7, 0, 70h, 0, 70h, 7, 2 dup(0), 70h, 0, 7, 0
-                db 70h, 0, 70h, 7, 2 dup(0), 70h, 7, 2 dup(0), 70h, 0
-                db 7, 0, 70h, 0, 7, 0, 70h, 0, 70h, 7, 2 dup(0), 70h, 7
-                db 2 dup(0), 70h, 7, 2 dup(0), 70h, 7, 2 dup(0), 70h, 0
-                db 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h
-                db 7, 0, 7, 0, 7, 0, 7, 2 dup(0), 7, 0, 7, 0, 7, 0, 7
-                db 70h, 2 dup(0), 7, 70h, 0, 7, 0, 70h, 0, 70h, 2 dup(0)
-                db 7, 70h, 0, 7, 0, 70h, 0, 70h, 2 dup(0), 7, 70h, 2 dup(0)
-                db 7, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 70h, 2 dup(0)
-                db 7, 70h, 2 dup(0), 7, 70h, 2 dup(0), 7, 70h, 2 dup(0)
-                db 7, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h, 0
-                db 7, 0, 70h, 2 dup(0), 7, 0, 7, 0, 7, 0, 2 dup(7), 0
-                db 7, 0, 7, 0, 7, 2 dup(0), 7, 0, 70h, 0, 7, 70h, 2 dup(0)
-                db 7, 0, 7, 0, 70h, 0, 7, 70h, 2 dup(0), 7, 0, 7, 0, 70h
-                db 0, 7, 0, 70h, 0, 7, 70h, 2 dup(0), 7, 70h, 2 dup(0)
-                db 7, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 0
-                db 70h, 0, 7, 70h, 2 dup(0), 7, 70h, 2 dup(0), 7, 70h
-                db 2 dup(0), 7, 70h, 2 dup(0), 7, 0, 70h, 0, 70h, 0, 70h
-                db 0, 2 dup(70h), 0, 70h, 0, 70h, 0, 70h, 0, 7, 0, 70h
-                db 0, 7, 2 dup(0), 70h, 7, 0, 7, 0, 70h, 0, 7, 2 dup(0)
-                db 70h, 7, 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 2 dup(0)
-                db 70h, 7, 2 dup(0), 70h, 7, 0, 7, 0, 70h, 0, 7, 0, 70h
-                db 0, 7, 0, 70h, 0, 7, 0, 70h, 0, 7, 2 dup(0), 70h, 7
-                db 2 dup(0), 70h, 7, 2 dup(0), 70h, 7, 2 dup(0), 70h, 7
-                db 0, 70h, 0, 70h, 0, 70h, 0, 70h, 2 dup(0), 70h, 0, 70h
-                db 0, 70h, 0, 70h, 0Ch, 3 dup(0), 0Ch, 0, 8, 0, 0Ch, 0
-                db 0Ch, 3 dup(0), 0Ch, 0, 8, 0, 0Ch, 0, 0Ch, 3 dup(0)
-                db 0Ch, 3 dup(0), 0Ch, 0, 8, 0, 0Ch, 0, 8, 0, 0Ch, 0, 0Ch
-                db 3 dup(0), 0Ch, 3 dup(0), 0Ch, 3 dup(0), 0Ch, 3 dup(0)
-                db 0Ch, 0, 8, 0, 0Ch, 0, 8, 0, 0Ch, 0, 8, 0, 0Ch, 0, 8
-                db 0, 0Ch, 9 dup(0), 8, 0, 8, 0, 8, 0
+                db 0FFh, 0
+VIEW_DX         db    0                 ; 4 facings x 2Eh signed bytes: x offset of each visible cell relative to the party (46 entries per facing)
+                db    0
+                db    1
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db 0FEh
+                db 0FFh
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    2
+                db 0FCh
+                db 0FDh
+                db 0FDh
+                db 0FEh
+                db 0FEh
+                db 0FFh
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    2
+                db    2
+                db    3
+                db    3
+                db    4
+                db 0FDh
+                db 0FEh
+                db 0FFh
+                db    0
+                db    0
+                db    1
+                db    2
+                db    3
+                db 0FCh
+                db    4
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db    2
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db    4
+                db    3
+                db    3
+                db    2
+                db    2
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db 0FEh
+                db 0FDh
+                db 0FDh
+                db 0FCh
+                db    3
+                db    2
+                db    1
+                db    0
+                db    0
+                db 0FFh
+                db 0FEh
+                db 0FDh
+                db    4
+                db 0FCh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db    0
+                db    0
+VIEW_DY         db    0                 ; 4 facings x 2Eh signed bytes: y offset of each visible cell
+                db    0
+                db    0
+                db    1
+                db    1
+                db    1
+                db    1
+                db    1
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    2
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    3
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FEh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FDh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db 0FCh
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db    2
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db    4
+                db    3
+                db    3
+                db    2
+                db    2
+                db    1
+                db    1
+                db    0
+                db    0
+                db    0
+                db 0FFh
+                db 0FFh
+                db 0FEh
+                db 0FEh
+                db 0FDh
+                db 0FDh
+                db 0FCh
+                db    3
+                db    2
+                db    1
+                db    0
+                db    0
+                db 0FFh
+                db 0FEh
+                db 0FDh
+                db    4
+                db 0FCh
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db 0FEh
+                db 0FFh
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    2
+                db 0FCh
+                db 0FDh
+                db 0FDh
+                db 0FEh
+                db 0FEh
+                db 0FFh
+                db 0FFh
+                db    0
+                db    0
+                db    0
+                db    1
+                db    1
+                db    2
+                db    2
+                db    3
+                db    3
+                db    4
+                db 0FDh
+                db 0FEh
+                db 0FFh
+                db    0
+                db    0
+                db    1
+                db    2
+                db    3
+                db 0FCh
+                db    4
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+VIEW_MASK       db    0                 ; 4 facings x 58h bytes (44 words): mask of the wall nibble for that cell side in the maze word (7000h/700h/70h/7)
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db  70h ; p
+                db    0
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db    0
+                db  70h ; p
+                db    7
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db    0
+                db  70h ; p
+                db  0Ch
+                db    0
+                db    0
+                db    0
+VIEW_SHIFT      db  0Ch                 ; 4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db    8
+                db    0
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    8
+                db    0
+                db    8
+                db    0
+                db    8
+                db    0
                 db 8, 0, 4, 0, 8, 0, 4, 3 dup(0), 4, 0, 4, 0, 8, 0, 4
                 db 3 dup(0), 4, 0, 4, 0, 8, 0, 4, 0, 8, 0, 4, 3 dup(0)
                 db 4, 3 dup(0), 4, 0, 4, 0, 8, 0, 4, 0, 8, 0, 4, 0, 8
@@ -39491,15 +40230,55 @@ aC_2            db 3,'c'                ; DATA XREF: sub_1B223+29↑o
                 db 0Ch, 3 dup(0), 0Ch, 5 dup(0), 4, 3 dup(0), 4, 3 dup(0)
                 db 4, 3 dup(0), 4, 3 dup(0), 0Ch, 3 dup(0), 0Ch, 3 dup(0)
                 db 0Ch, 3 dup(0), 0Ch, 3 dup(0), 4, 0, 4, 0, 4, 0, 4, 0
-                db 0Ch, 0, 0Ch, 0, 0Ch, 0, 0Ch, 0, 0FFh, 2 dup(0Fh), 2 dup(0FFh)
-                db 2 dup(0F0h), 0FFh, 0, 1, 3 dup(0), 80h, 0, 0C0h, 4Ch
-                db 47h, 37h, 28h, 22h, 1Dh, 0Ch, 0FBh, 3, 64h, 5, 25h
-                db 70h, 25h, 73h, 3, 6Dh, 25h, 75h, 3, 64h, 3, 6Ch, 5
-                db 25h, 70h, 2 dup(0)
-word_29E14      dw 0                    ; DATA XREF: sub_2045A+8B↑w
-                                        ; sub_2045A+17C↑r
-word_29E16      dw 0                    ; DATA XREF: sub_2045A+73↑w
-                                        ; sub_2045A+77↑r ...
+                db 0Ch, 0, 0Ch, 0, 0Ch, 0, 0Ch, 0
+MAZE_CLEAR_MASKS db 0FFh                ; words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000
+                db  0Fh
+                db  0Fh
+                db 0FFh
+                db 0FFh
+                db 0F0h
+                db 0F0h
+                db 0FFh
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db  80h
+                db    0
+                db 0C0h
+                db  4Ch ; L
+                db  47h ; G
+                db  37h ; 7
+                db  28h ; (
+                db  22h ; "
+                db  1Dh
+                db  0Ch
+                db 0FBh
+                db    3
+                db  64h ; d
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Dh ; m
+                db  25h ; %
+                db  75h ; u
+                db    3
+                db  64h ; d
+                db    3
+                db  6Ch ; l
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db    0
+word_29E14      dw 0                    ; DATA XREF: renderOutdoorView+8B↑w
+                                        ; renderOutdoorView+17C↑r
+word_29E16      dw 0                    ; DATA XREF: renderOutdoorView+73↑w
+                                        ; renderOutdoorView+77↑r ...
                 db 15h, 18h, 14h, 17h, 12h, 16h, 11h, 13h, 0Dh, 0Fh, 0Ch
                 db 0Eh, 8, 0Ah, 7, 9, 4, 5, 1, 2, 3, 64h, 5, 25h, 70h
                 db 25h, 73h, 3, 6Dh, 25h, 75h, 3, 64h, 3, 6Ch, 5, 25h
@@ -43610,21 +44389,21 @@ off_3142A       dw offset loc_140DC     ; DATA XREF: sub_14926↑r
                 db 9Ch, 1
                 dw seg seg010
 byte_31450      db 0                    ; DATA XREF: sub_1BEE9+1F9↑w
-                                        ; sub_1C195+134D↑w ...
+                                        ; prepareIndoorView+134D↑w ...
 byte_31451      db 0                    ; DATA XREF: sub_1BEE9+1A↑w
-                                        ; sub_1C195:loc_1C7F9↑r ...
+                                        ; prepareIndoorView:loc_1C7F9↑r ...
                 db 190h dup(0)
 byte_315E2      db 0                    ; DATA XREF: sub_1BEE9+52↑w
-                                        ; sub_1C195:loc_1D64D↑w ...
+                                        ; prepareIndoorView:loc_1D64D↑w ...
 byte_315E3      db 0                    ; DATA XREF: sub_1BEE9+46↑w
-                                        ; sub_1C195:loc_1D794↑w ...
+                                        ; prepareIndoorView:loc_1D794↑w ...
                 db 14Bh dup(0)
 byte_3172F      db 0                    ; DATA XREF: seg001:0593↑r
                 db 2B4h dup(0)
 byte_319E4      db 0                    ; DATA XREF: runMazeEvent+103↑w
-                                        ; sub_3C282+BB↓r ...
+                                        ; giveTake+BB↓r ...
 byte_319E5      db 0                    ; DATA XREF: sub_1BEE9+14↑w
-                                        ; sub_1C195:loc_1CC11↑r ...
+                                        ; prepareIndoorView:loc_1CC11↑r ...
 word_319E6      dw 0                    ; DATA XREF: sub_252CF+E7↑r
                                         ; sub_254BA+428↑r ...
 word_319E8      dw 0                    ; DATA XREF: sub_252CF:loc_253B2↑r
@@ -43649,7 +44428,7 @@ word_32E32      dw 0                    ; DATA XREF: sub_1DB3D+4C4↑r
 word_32E34      dw 0                    ; DATA XREF: sub_1DB3D+4C1↑r
                                         ; sub_1DB3D+84B↑r ...
 byte_32E36      db 0                    ; DATA XREF: sub_1BEE9+29↑w
-                                        ; sub_1C195:loc_1D0C2↑r ...
+                                        ; prepareIndoorView:loc_1D0C2↑r ...
 byte_32E37      db 0                    ; DATA XREF: sub_161AD+5F↑w
                                         ; sub_161AD+2C4↑r ...
 byte_32E38      db 0                    ; DATA XREF: sub_161AD+56↑w
@@ -43781,13 +44560,13 @@ byte_332A4      db 0                    ; DATA XREF: attack2+107↓r
 byte_332A5      db 0                    ; DATA XREF: seg001:loc_14CA4↑w
                                         ; seg001:0260↑r
 byte_332A6      db 0                    ; DATA XREF: sub_1BEE9+A8↑w
-                                        ; sub_1C195:loc_1D0F4↑w ...
+                                        ; prepareIndoorView:loc_1D0F4↑w ...
 byte_332A7      db 0                    ; DATA XREF: sub_1BEE9+8D↑w
-                                        ; sub_1C195:loc_1CA37↑w ...
+                                        ; prepareIndoorView:loc_1CA37↑w ...
 byte_332A8      db 0                    ; DATA XREF: sub_1BEE9+FE↑w
-                                        ; sub_1C195:loc_1C68C↑w ...
+                                        ; prepareIndoorView:loc_1C68C↑w ...
 byte_332A9      db 0                    ; DATA XREF: sub_1BEE9+EF↑w
-                                        ; sub_1C195:loc_1C3E7↑w ...
+                                        ; prepareIndoorView:loc_1C3E7↑w ...
 Combat_weaponDamage dw 0                ; DATA XREF: attack:loc_4A224↓r
                                         ; getWeaponDamage+13↓w ...
                                         ; word
@@ -43798,9 +44577,9 @@ byte_332AE      db 0                    ; DATA XREF: sub_15B50+2E5↑r
 byte_332AF      db 0                    ; DATA XREF: sub_15B50+36A↑r
                                         ; sub_15B50:loc_15ECF↑r ...
 byte_332B0      db 0                    ; DATA XREF: sub_1BEE9+38↑w
-                                        ; sub_1C195:loc_1CEB6↑r ...
+                                        ; prepareIndoorView:loc_1CEB6↑r ...
 byte_332B1      db 0                    ; DATA XREF: sub_1BEE9+67↑w
-                                        ; sub_1C195:loc_1CE49↑w ...
+                                        ; prepareIndoorView:loc_1CE49↑w ...
 word_332B2      dw 0                    ; DATA XREF: sub_18BF1+3D2↑r
                                         ; sub_18BF1+40A↑r
 word_332B4      dw 0                    ; DATA XREF: sub_18BF1+158↑r
@@ -43813,110 +44592,110 @@ word_332CA      dw 0                    ; DATA XREF: highlightChar+3A↑r
 word_332CC      dw 0                    ; DATA XREF: highlightChar+36↑r
                                         ; highlightChar+5D↑r ...
 byte_332CE      db 0                    ; DATA XREF: sub_1BEE9+A5↑w
-                                        ; sub_1C195:loc_1D05B↑w ...
+                                        ; prepareIndoorView:loc_1D05B↑w ...
 byte_332CF      db 0                    ; DATA XREF: sub_1BEE9+10D↑w
-                                        ; sub_1C195:loc_1C99E↑w ...
+                                        ; prepareIndoorView:loc_1C99E↑w ...
 byte_332D0      db 0                    ; DATA XREF: sub_1BEE9+FB↑w
-                                        ; sub_1C195:loc_1C5F3↑w ...
+                                        ; prepareIndoorView:loc_1C5F3↑w ...
 byte_332D1      db 0                    ; DATA XREF: sub_1BEE9+EC↑w
-                                        ; sub_1C195:loc_1C34E↑w ...
+                                        ; prepareIndoorView:loc_1C34E↑w ...
 byte_332D2      db 0                    ; DATA XREF: sub_1BEE9+D4↑w
-                                        ; sub_1C195:loc_1D6C0↑w ...
+                                        ; prepareIndoorView:loc_1D6C0↑w ...
 byte_332D3      db 0                    ; DATA XREF: runMazeEvent+D8↑w
                                         ; runMazeEvent:loc_198D0↑r ...
 byte_332D4      db 0                    ; DATA XREF: sub_1BEE9+213↑w
-                                        ; sub_1C195:loc_1C2C2↑w ...
+                                        ; prepareIndoorView:loc_1C2C2↑w ...
 byte_332D5      db 0                    ; DATA XREF: sub_1BEE9+210↑w
-                                        ; sub_1C195:loc_1C4CE↑w ...
+                                        ; prepareIndoorView:loc_1C4CE↑w ...
 byte_332D6      db 0                    ; DATA XREF: sub_1BEE9+11B↑w
-                                        ; sub_1C195+141↑w ...
+                                        ; prepareIndoorView+141↑w ...
 byte_332D7      db 0                    ; DATA XREF: sub_1BEE9+118↑w
-                                        ; sub_1C195+353↑w ...
+                                        ; prepareIndoorView+353↑w ...
 byte_332D8      db 0                    ; DATA XREF: sub_1BEE9+197↑w
-                                        ; sub_1C195:loc_1C2BC↑w ...
+                                        ; prepareIndoorView:loc_1C2BC↑w ...
 byte_332D9      db 0                    ; DATA XREF: sub_1BEE9+194↑w
-                                        ; sub_1C195:loc_1C4C8↑w ...
+                                        ; prepareIndoorView:loc_1C4C8↑w ...
 byte_332DA      db 0                    ; DATA XREF: sub_1BEE9+21C↑w
-                                        ; sub_1C195:loc_1C567↑w ...
+                                        ; prepareIndoorView:loc_1C567↑w ...
 byte_332DB      db 0                    ; DATA XREF: sub_1BEE9+219↑w
-                                        ; sub_1C195:loc_1C773↑w ...
+                                        ; prepareIndoorView:loc_1C773↑w ...
 ; void *word_332DC
 word_332DC      dw 0                    ; DATA XREF: seg001:02A0↑w
                                         ; sub_378C0+C4↓r ...
 word_332DE      dw 0                    ; DATA XREF: seg001:029C↑w
                                         ; sub_378C0+C0↓r ...
 byte_332E0      db 0                    ; DATA XREF: sub_1BEE9+124↑w
-                                        ; sub_1C195+3EC↑w ...
+                                        ; prepareIndoorView+3EC↑w ...
 byte_332E1      db 0                    ; DATA XREF: sub_1BEE9+121↑w
-                                        ; sub_1C195+5F8↑w ...
+                                        ; prepareIndoorView+5F8↑w ...
 byte_332E2      db 0                    ; DATA XREF: sub_1BEE9+2F↑w
-                                        ; sub_1C195:loc_1D2CE↑r ...
+                                        ; prepareIndoorView:loc_1D2CE↑r ...
 byte_332E3      db 0                    ; DATA XREF: sub_1BEE9+159↑w
-                                        ; sub_1C195:loc_1C2DB↑w ...
+                                        ; prepareIndoorView:loc_1C2DB↑w ...
 byte_332E4      db 0                    ; DATA XREF: sub_1BEE9+156↑w
-                                        ; sub_1C195:loc_1C4DA↑w ...
+                                        ; prepareIndoorView:loc_1C4DA↑w ...
 byte_332E5      db 0                    ; DATA XREF: sub_1BEE9+1A0↑w
-                                        ; sub_1C195:loc_1C561↑w ...
+                                        ; prepareIndoorView:loc_1C561↑w ...
 byte_332E6      db 0                    ; DATA XREF: sub_1BEE9+19D↑w
-                                        ; sub_1C195:loc_1C76D↑w ...
+                                        ; prepareIndoorView:loc_1C76D↑w ...
 byte_332E7      db 0                    ; DATA XREF: sub_1BEE9+228↑w
-                                        ; sub_1C195:loc_1C912↑w ...
+                                        ; prepareIndoorView:loc_1C912↑w ...
 byte_332E8      db 0                    ; DATA XREF: sub_1BEE9+222↑w
-                                        ; sub_1C195:loc_1CB1E↑w ...
+                                        ; prepareIndoorView:loc_1CB1E↑w ...
 byte_332E9      db 0                    ; DATA XREF: sub_1BEE9+130↑w
-                                        ; sub_1C195+797↑w ...
+                                        ; prepareIndoorView+797↑w ...
 byte_332EA      db 0                    ; DATA XREF: sub_1BEE9+12A↑w
-                                        ; sub_1C195+9A3↑w ...
+                                        ; prepareIndoorView+9A3↑w ...
 byte_332EB      db 0                    ; DATA XREF: sub_1BEE9+1D5↑w
-                                        ; sub_1C195+122↑w ...
+                                        ; prepareIndoorView+122↑w ...
 byte_332EC      db 0                    ; DATA XREF: sub_1BEE9+1D2↑w
-                                        ; sub_1C195+32E↑w ...
+                                        ; prepareIndoorView+32E↑w ...
 byte_332ED      db 0                    ; DATA XREF: sub_1BEE9+162↑w
-                                        ; sub_1C195:loc_1C573↑w ...
+                                        ; prepareIndoorView:loc_1C573↑w ...
 byte_332EE      db 0                    ; DATA XREF: sub_1BEE9+15F↑w
-                                        ; sub_1C195:loc_1C77F↑w ...
+                                        ; prepareIndoorView:loc_1C77F↑w ...
 byte_332EF      db 0                    ; DATA XREF: sub_1BEE9+1AC↑w
-                                        ; sub_1C195:loc_1C90C↑w ...
+                                        ; prepareIndoorView:loc_1C90C↑w ...
 byte_332F0      db 0                    ; DATA XREF: sub_1BEE9+1A6↑w
-                                        ; sub_1C195:loc_1CB18↑w ...
+                                        ; prepareIndoorView:loc_1CB18↑w ...
 byte_332F1      db 0                    ; DATA XREF: sub_15B50+3B↑w
                                         ; sub_15B50:loc_15D02↑r ...
 byte_332F2      db 0                    ; DATA XREF: sub_15B50+38↑w
                                         ; sub_15B50:loc_15D7D↑r ...
 byte_332F3      db 0                    ; DATA XREF: sub_1BEE9+64↑w
-                                        ; sub_1C195:loc_1D367↑w ...
+                                        ; prepareIndoorView:loc_1D367↑w ...
 byte_332F4      db 0                    ; DATA XREF: sub_1BEE9+23D↑w
-                                        ; sub_1C195:loc_1CFCF↑w ...
+                                        ; prepareIndoorView:loc_1CFCF↑w ...
 byte_332F5      db 0                    ; DATA XREF: sub_1BEE9+231↑w
-                                        ; sub_1C195:loc_1D1DB↑w ...
+                                        ; prepareIndoorView:loc_1D1DB↑w ...
 byte_332F6      db 0                    ; DATA XREF: sub_1BEE9+9F↑w
-                                        ; sub_1C195:loc_1D161↑w ...
+                                        ; prepareIndoorView:loc_1D161↑w ...
 byte_332F7      db 0                    ; DATA XREF: sub_1BEE9+107↑w
-                                        ; sub_1C195:loc_1CAA4↑w ...
+                                        ; prepareIndoorView:loc_1CAA4↑w ...
 byte_332F8      db 0                    ; DATA XREF: sub_1BEE9+F8↑w
-                                        ; sub_1C195:loc_1C6F9↑w ...
+                                        ; prepareIndoorView:loc_1C6F9↑w ...
 byte_332F9      db 0                    ; DATA XREF: sub_1BEE9+E9↑w
-                                        ; sub_1C195:loc_1C454↑w ...
+                                        ; prepareIndoorView:loc_1C454↑w ...
 byte_332FA      db 0                    ; DATA XREF: sub_1BEE9+C8↑w
-                                        ; sub_1C195:loc_1D72D↑w ...
+                                        ; prepareIndoorView:loc_1D72D↑w ...
 byte_332FB      db 0                    ; DATA XREF: sub_1BEE9+145↑w
-                                        ; sub_1C195+E54↑w ...
+                                        ; prepareIndoorView+E54↑w ...
 byte_332FC      db 0                    ; DATA XREF: sub_1BEE9+139↑w
-                                        ; sub_1C195+1060↑w ...
+                                        ; prepareIndoorView+1060↑w ...
 byte_332FD      db 0                    ; DATA XREF: sub_1BEE9+1DE↑w
-                                        ; sub_1C195+3C7↑w ...
+                                        ; prepareIndoorView+3C7↑w ...
 byte_332FE      db 0                    ; DATA XREF: sub_1BEE9+1DB↑w
-                                        ; sub_1C195+5D3↑w ...
+                                        ; prepareIndoorView+5D3↑w ...
 byte_332FF      db 0                    ; DATA XREF: sub_1BEE9+3B↑w
-                                        ; sub_1C195:loc_1CDB0↑r ...
+                                        ; prepareIndoorView:loc_1CDB0↑r ...
 byte_33300      db 0                    ; DATA XREF: sub_1BEE9+16E↑w
-                                        ; sub_1C195:loc_1C91E↑w ...
+                                        ; prepareIndoorView:loc_1C91E↑w ...
 byte_33301      db 0                    ; DATA XREF: sub_1BEE9+168↑w
-                                        ; sub_1C195:loc_1CB2A↑w ...
+                                        ; prepareIndoorView:loc_1CB2A↑w ...
 byte_33302      db 0                    ; DATA XREF: sub_1BEE9+1C1↑w
-                                        ; sub_1C195:loc_1CFC9↑w ...
+                                        ; prepareIndoorView:loc_1CFC9↑w ...
 byte_33303      db 0                    ; DATA XREF: sub_1BEE9+1B5↑w
-                                        ; sub_1C195:loc_1D1D5↑w ...
+                                        ; prepareIndoorView:loc_1D1D5↑w ...
 byte_33304      db 0                    ; DATA XREF: sub_15B50+35↑w
                                         ; sub_15B50+283↑r ...
 byte_33305      db 0                    ; DATA XREF: sub_15B50+32↑w
@@ -43929,15 +44708,15 @@ word_33308      dw 0                    ; DATA XREF: sub_1B6D1+13F↑r
 word_3330A      dw 0                    ; DATA XREF: sub_1B6D1+13C↑r
                                         ; rosterMenu+B6↓w
 byte_3330C      db 0                    ; DATA XREF: sub_1BEE9+61↑w
-                                        ; sub_1C195:loc_1CD43↑w ...
+                                        ; prepareIndoorView:loc_1CD43↑w ...
 byte_3330D      db 0                    ; DATA XREF: sub_1BEE9+1EA↑w
-                                        ; sub_1C195+772↑w ...
+                                        ; prepareIndoorView+772↑w ...
 byte_3330E      db 0                    ; DATA XREF: sub_1BEE9+1E4↑w
-                                        ; sub_1C195+97E↑w ...
+                                        ; prepareIndoorView+97E↑w ...
 byte_3330F      db 0                    ; DATA XREF: sub_1BEE9+183↑w
-                                        ; sub_1C195:loc_1CFDB↑w ...
+                                        ; prepareIndoorView:loc_1CFDB↑w ...
 byte_33310      db 0                    ; DATA XREF: sub_1BEE9+177↑w
-                                        ; sub_1C195:loc_1D1E7↑w ...
+                                        ; prepareIndoorView:loc_1D1E7↑w ...
 byte_33311      db 0                    ; DATA XREF: sub_15B50+2C↑w
                                         ; sub_15B50+3EC↑r ...
 byte_33312      db 0                    ; DATA XREF: sub_15B50+29↑w
@@ -43945,9 +44724,9 @@ byte_33312      db 0                    ; DATA XREF: sub_15B50+29↑w
 byte_33313      db 0                    ; DATA XREF: sub_15B50+26↑w
                                         ; sub_15B50:loc_160EF↑r ...
 byte_33314      db 0                    ; DATA XREF: sub_1BEE9+1FF↑w
-                                        ; sub_1C195+E2F↑w ...
+                                        ; prepareIndoorView+E2F↑w ...
 byte_33315      db 0                    ; DATA XREF: sub_1BEE9+1F3↑w
-                                        ; sub_1C195+103B↑w ...
+                                        ; prepareIndoorView+103B↑w ...
 byte_33316      db 0                    ; DATA XREF: sub_15B50+12E↑r
                                         ; sub_15B50+17B↑r ...
                 db 96h dup(0)
@@ -43961,23 +44740,23 @@ Combat_partySize db 0                   ; DATA XREF: checkPartyDead+52↑r
                                         ; sub_170F7+1BD↑r ...
                                         ; byte, size of the combat party (Engine_mode 2)
 byte_333B2      db 0                    ; DATA XREF: sub_1BEE9+32↑w
-                                        ; sub_1C195:loc_1D3D4↑r ...
+                                        ; prepareIndoorView:loc_1D3D4↑r ...
 byte_333B3      db 0                    ; DATA XREF: sub_1BEE9+5E↑w
-                                        ; sub_1C195:loc_1D46D↑w ...
+                                        ; prepareIndoorView:loc_1D46D↑w ...
 byte_333B4      db 0                    ; DATA XREF: sub_1BEE9+5B↑w
-                                        ; sub_1C195:loc_1CCAA↑r ...
+                                        ; prepareIndoorView:loc_1CCAA↑r ...
 byte_333B5      db 0                    ; DATA XREF: sub_15B50+190↑r
                                         ; sub_15B50+1AB↑r ...
 byte_333B6      db 0                    ; DATA XREF: sub_1BEE9+55↑w
-                                        ; sub_1C195:loc_1D6BA↑w ...
+                                        ; prepareIndoorView:loc_1D6BA↑w ...
 byte_333B7      db 0                    ; DATA XREF: sub_1BEE9+B7↑w
-                                        ; sub_1C195:loc_1CEE8↑w ...
+                                        ; prepareIndoorView:loc_1CEE8↑w ...
 byte_333B8      db 0                    ; DATA XREF: sub_1BEE9+99↑w
-                                        ; sub_1C195:loc_1C82B↑w ...
+                                        ; prepareIndoorView:loc_1C82B↑w ...
 byte_333B9      db 0                    ; DATA XREF: sub_1BEE9+E6↑w
-                                        ; sub_1C195:loc_1CE4F↑w ...
+                                        ; prepareIndoorView:loc_1CE4F↑w ...
 byte_333BA      db 0                    ; DATA XREF: sub_1BEE9+CE↑w
-                                        ; sub_1C195:loc_1D5E6↑w ...
+                                        ; prepareIndoorView:loc_1D5E6↑w ...
                 align 2
 word_333BC      dw 0                    ; DATA XREF: sub_254BA+1C5↑r
                                         ; sub_254BA+1CC↑r ...
@@ -43990,7 +44769,7 @@ word_333C2      dw 0                    ; DATA XREF: sub_170F7+230↑r
                                         ; sub_170F7+23F↑r ...
                 db 0
 byte_333C5      db 0                    ; DATA XREF: sub_1BEE9+58↑w
-                                        ; sub_1C195:loc_1D4DA↑r ...
+                                        ; prepareIndoorView:loc_1D4DA↑r ...
                 db 74h dup(0)
 word_3343A      dw 0                    ; DATA XREF: sub_170F7+111↑r
                                         ; rosterMenu+E0↓w ...
@@ -43999,22 +44778,22 @@ word_3343C      dw 0                    ; DATA XREF: sub_170F7+10E↑r
 byte_3343E      db 0                    ; DATA XREF: sub_15B50+20B↑r
                                         ; sub_15B50+226↑r ...
 byte_3343F      db 0                    ; DATA XREF: sub_1BEE9+49↑w
-                                        ; sub_1C195:loc_1D727↑w ...
+                                        ; prepareIndoorView:loc_1D727↑w ...
 byte_33440      db 0                    ; DATA XREF: sub_1BEE9+AE↑w
-                                        ; sub_1C195:loc_1D300↑w ...
+                                        ; prepareIndoorView:loc_1D300↑w ...
 byte_33441      db 0                    ; DATA XREF: sub_1BEE9+93↑w
-                                        ; sub_1C195:loc_1CC43↑w ...
+                                        ; prepareIndoorView:loc_1CC43↑w ...
 byte_33442      db 0                    ; DATA XREF: sub_1BEE9+E3↑w
-                                        ; sub_1C195:loc_1D36D↑w ...
+                                        ; prepareIndoorView:loc_1D36D↑w ...
 byte_33443      db 0                    ; DATA XREF: sub_1BEE9+C2↑w
-                                        ; sub_1C195:loc_1D807↑w ...
+                                        ; prepareIndoorView:loc_1D807↑w ...
                 align 10h
 byte_33450      db 0                    ; DATA XREF: sub_1BEE9+BA↑w
-                                        ; sub_1C195:loc_1CDE2↑w ...
+                                        ; prepareIndoorView:loc_1CDE2↑w ...
 byte_33451      db 0                    ; DATA XREF: sub_1BEE9+E0↑w
-                                        ; sub_1C195:loc_1CD49↑w ...
+                                        ; prepareIndoorView:loc_1CD49↑w ...
 byte_33452      db 0                    ; DATA XREF: sub_1BEE9+CB↑w
-                                        ; sub_1C195:loc_1D579↑w ...
+                                        ; prepareIndoorView:loc_1D579↑w ...
 byte_33453      db 0                    ; DATA XREF: sub_18BF1:loc_18FF2↑r
                                         ; sub_18BF1+438↑r
 byte_33454      db 0                    ; DATA XREF: sub_18BF1:loc_18D78↑r
@@ -46779,24 +47558,24 @@ byte_3407F      db 0                    ; DATA XREF: sub_15B50+57C↑r
                                         ; sub_15B50:loc_160D3↑r ...
                 db 28h dup(0)
 byte_340A8      db 0                    ; DATA XREF: sub_1BEE9+B1↑w
-                                        ; sub_1C195:loc_1D406↑w ...
+                                        ; prepareIndoorView:loc_1D406↑w ...
 byte_340A9      db 0                    ; DATA XREF: sub_1BEE9+DD↑w
-                                        ; sub_1C195:loc_1D473↑w ...
+                                        ; prepareIndoorView:loc_1D473↑w ...
 byte_340AA      db 0                    ; DATA XREF: sub_1BEE9+BF↑w
-                                        ; sub_1C195:loc_1D874↑w ...
+                                        ; prepareIndoorView:loc_1D874↑w ...
 byte_340AB      db 0                    ; DATA XREF: sub_4F24E:loc_4F2C3↓w
                                         ; sub_4F24E:loc_4F2EC↓w
                 db 7 dup(0)
 byte_340B3      db 0                    ; DATA XREF: sub_1BEE9+B↑w
-                                        ; sub_1C195:loc_1C892↑w ...
+                                        ; prepareIndoorView:loc_1C892↑w ...
 word_340B4      dw 0                    ; DATA XREF: attack+E7↓r
                                         ; attack+EE↓r ...
 byte_340B6      db 0                    ; DATA XREF: sub_1BEE9+5↑w
-                                        ; sub_1C195:loc_1CBA4↑w ...
+                                        ; prepareIndoorView:loc_1CBA4↑w ...
 byte_340B7      db 0                    ; DATA XREF: sub_1BEE9+4F↑w
-                                        ; sub_1C195:loc_1D5E0↑w ...
+                                        ; prepareIndoorView:loc_1D5E0↑w ...
 byte_340B8      db 0                    ; DATA XREF: sub_1BEE9+DA↑w
-                                        ; sub_1C195:loc_1CCDC↑w ...
+                                        ; prepareIndoorView:loc_1CCDC↑w ...
                 db 0Ch dup(0)
 byte_340C5      db 0                    ; DATA XREF: sub_1B6D1+FA↑r
                                         ; sub_1BEE9+24E↑w ...
@@ -46815,16 +47594,16 @@ byte_34B07      db 0                    ; DATA XREF: resetBlacksmithWares+1C2↓
 byte_34B2D      db 0                    ; DATA XREF: resetBlacksmithWares+18A↓r
                 db 3Fh dup(0)
 byte_34B6D      db 0                    ; DATA XREF: sub_1BEE9+43↑w
-                                        ; sub_1C195:loc_1D801↑w ...
+                                        ; prepareIndoorView:loc_1D801↑w ...
 byte_34B6E      db 0                    ; DATA XREF: sub_1BEE9+D7↑w
-                                        ; sub_1C195:loc_1D50C↑w ...
+                                        ; prepareIndoorView:loc_1D50C↑w ...
                 align 2
 word_34B70      dw 0                    ; DATA XREF: sub_18BF1+42A↑r
 word_34B72      dw 0                    ; DATA XREF: sub_18BF1+1B0↑r
 word_34B74      dw 0                    ; DATA XREF: sub_18BF1+2DA↑r
                 db 12h dup(0)
 byte_34B88      db 0                    ; DATA XREF: sub_1BEE9+4C↑w
-                                        ; sub_1C195:loc_1D573↑w ...
+                                        ; prepareIndoorView:loc_1D573↑w ...
                 align 2
 word_34B8A      dw 0                    ; DATA XREF: attack:loc_4A1B6↓r
                                         ; sub_4F24E+2E↓w ...
@@ -46858,19 +47637,19 @@ word_34B9C      dw 0                    ; DATA XREF: sub_1DB3D+535↑r
                                         ; sub_41CED+7E↓r ...
 word_34B9E      dw 0                    ; DATA XREF: sub_1DB3D+15↑r
 word_34BA0      dw 0                    ; DATA XREF: sub_1DB3D+12↑r
-word_34BA2      dw 0                    ; DATA XREF: sub_1E407+16E9↑r
-word_34BA4      dw 0                    ; DATA XREF: sub_1E407+16E6↑r
+word_34BA2      dw 0                    ; DATA XREF: renderIndoorView+16E9↑r
+word_34BA4      dw 0                    ; DATA XREF: renderIndoorView+16E6↑r
 word_34BA6      dw 0                    ; DATA XREF: runMazeEvent+334↑r
-                                        ; sub_1E407+176↑r
+                                        ; renderIndoorView+176↑r
 word_34BA8      dw 0                    ; DATA XREF: runMazeEvent:evt_op02↑r
-                                        ; sub_1E407+173↑r
+                                        ; renderIndoorView+173↑r
                 db 0Ch dup(0)
 byte_34BB6      db 0                    ; DATA XREF: sub_15B50+41↑w
                                         ; sub_15B50+9B↑r ...
 byte_34BB7      db 0                    ; DATA XREF: sub_15B50+3E↑w
                                         ; sub_15B50+137↑r ...
 byte_34BB8      db 0                    ; DATA XREF: sub_1BEE9+40↑w
-                                        ; sub_1C195:loc_1D86E↑w ...
+                                        ; prepareIndoorView:loc_1D86E↑w ...
 byte_34BB9      db 0                    ; DATA XREF: getWeaponDamage+F↓w
                                         ; getWeaponDamage+A2↓w ...
 byte_34BBA      db 0                    ; DATA XREF: seg001:loc_14C9D↑w
@@ -46879,31 +47658,31 @@ byte_34BC7      db 0                    ; DATA XREF: sub_15B50:loc_15CE7↑r
                                         ; sub_15B50+1A4↑r ...
                 db 24h dup(0)
 byte_34BEC      db 0                    ; DATA XREF: sub_1BEE9+22E↑w
-                                        ; sub_1C195:loc_1D0D5↑w ...
+                                        ; prepareIndoorView:loc_1D0D5↑w ...
 byte_34BED      db 0                    ; DATA XREF: sub_1BEE9+21F↑w
-                                        ; sub_1C195:loc_1CA18↑w ...
+                                        ; prepareIndoorView:loc_1CA18↑w ...
 byte_34BEE      db 0                    ; DATA XREF: sub_1BEE9+216↑w
-                                        ; sub_1C195:loc_1C66D↑w ...
+                                        ; prepareIndoorView:loc_1C66D↑w ...
 byte_34BEF      db 0                    ; DATA XREF: sub_1BEE9+20D↑w
-                                        ; sub_1C195:loc_1C3C8↑w ...
+                                        ; prepareIndoorView:loc_1C3C8↑w ...
 byte_34BF0      db 0                    ; DATA XREF: runMazeEvent+11D↑w
                                         ; runMazeEvent:loc_1972D↑w ...
 byte_34BF1      db 0                    ; DATA XREF: sub_1BEE9+136↑w
-                                        ; sub_1C195+F5A↑w ...
+                                        ; prepareIndoorView+F5A↑w ...
 byte_34BF2      db 0                    ; DATA XREF: sub_1BEE9+127↑w
-                                        ; sub_1C195+89D↑w ...
+                                        ; prepareIndoorView+89D↑w ...
 byte_34BF3      db 0                    ; DATA XREF: sub_1BEE9+11E↑w
-                                        ; sub_1C195+4F2↑w ...
+                                        ; prepareIndoorView+4F2↑w ...
 byte_34BF4      db 0                    ; DATA XREF: sub_1BEE9+115↑w
-                                        ; sub_1C195+24D↑w ...
+                                        ; prepareIndoorView+24D↑w ...
 byte_34BF5      db 0                    ; DATA XREF: sub_1BEE9+1B2↑w
-                                        ; sub_1C195:loc_1D0CF↑w ...
+                                        ; prepareIndoorView:loc_1D0CF↑w ...
 byte_34BF6      db 0                    ; DATA XREF: sub_1BEE9+1A3↑w
-                                        ; sub_1C195:loc_1CA12↑w ...
+                                        ; prepareIndoorView:loc_1CA12↑w ...
 byte_34BF7      db 0                    ; DATA XREF: sub_1BEE9+19A↑w
-                                        ; sub_1C195:loc_1C667↑w ...
+                                        ; prepareIndoorView:loc_1C667↑w ...
 byte_34BF8      db 0                    ; DATA XREF: sub_1BEE9+191↑w
-                                        ; sub_1C195:loc_1C3C2↑w ...
+                                        ; prepareIndoorView:loc_1C3C2↑w ...
 byte_34BF9      db 0                    ; DATA XREF: getWeaponDamage+19↓w
                                         ; getWeaponDamage+64↓w
 word_34BFA      dw 0                    ; DATA XREF: setStartTime+10↑w
@@ -46911,21 +47690,21 @@ word_34BFA      dw 0                    ; DATA XREF: setStartTime+10↑w
 word_34BFC      dw 0                    ; DATA XREF: setStartTime+C↑w
                                         ; getElapsedTime+1C↑r
 byte_34BFE      db 0                    ; DATA XREF: sub_1BEE9+174↑w
-                                        ; sub_1C195:loc_1D0E1↑w ...
+                                        ; prepareIndoorView:loc_1D0E1↑w ...
 byte_34BFF      db 0                    ; DATA XREF: sub_1BEE9+165↑w
-                                        ; sub_1C195:loc_1CA24↑w ...
+                                        ; prepareIndoorView:loc_1CA24↑w ...
 byte_34C00      db 0                    ; DATA XREF: sub_1BEE9+15C↑w
-                                        ; sub_1C195:loc_1C679↑w ...
+                                        ; prepareIndoorView:loc_1C679↑w ...
 byte_34C01      db 0                    ; DATA XREF: sub_1BEE9+153↑w
-                                        ; sub_1C195:loc_1C3D4↑w ...
+                                        ; prepareIndoorView:loc_1C3D4↑w ...
 byte_34C02      db 0                    ; DATA XREF: sub_1BEE9+1F0↑w
-                                        ; sub_1C195+F35↑w ...
+                                        ; prepareIndoorView+F35↑w ...
 byte_34C03      db 0                    ; DATA XREF: sub_1BEE9+1E1↑w
-                                        ; sub_1C195+878↑w ...
+                                        ; prepareIndoorView+878↑w ...
 byte_34C04      db 0                    ; DATA XREF: sub_1BEE9+1D8↑w
-                                        ; sub_1C195+4CD↑w ...
+                                        ; prepareIndoorView+4CD↑w ...
 byte_34C05      db 0                    ; DATA XREF: sub_1BEE9+1CF↑w
-                                        ; sub_1C195+228↑w ...
+                                        ; prepareIndoorView+228↑w ...
                 db 8 dup(0)
 word_34C0E      dw 0                    ; DATA XREF: seg001:loc_14CFB↑w
                                         ; seg001:loc_14D03↑w ...
@@ -46946,7 +47725,7 @@ byte_34C1A      db 0                    ; DATA XREF: sub_15B50:loc_15D62↑r
 byte_34C1B      db 0                    ; DATA XREF: sub_15736:loc_1575E↑r
                                         ; sub_15736:loc_15793↑w ...
 byte_34C1C      db 0                    ; DATA XREF: sub_1BEE9+24B↑w
-                                        ; sub_1C195+16F3↑w
+                                        ; prepareIndoorView+16F3↑w
 byte_34C1D      db 0                    ; DATA XREF: mazeUpdateSlot+72↑w
                                         ; mazeUpdateSlot+CB↑w ...
 word_34C1E      dw 0                    ; DATA XREF: sub_170F7+83↑r
@@ -46962,9 +47741,9 @@ word_34C26      dw 0                    ; DATA XREF: sub_1B6D1+89↑r
 word_34C28      dw 0                    ; DATA XREF: sub_1B6D1+86↑r
                                         ; rosterMenu+90↓w
 byte_34C2A      db 0                    ; DATA XREF: sub_1BEE9+35↑w
-                                        ; sub_1C195:loc_1CFBC↑r ...
+                                        ; prepareIndoorView:loc_1CFBC↑r ...
 byte_34C2B      db 0                    ; DATA XREF: sub_1BEE9+2C↑w
-                                        ; sub_1C195:loc_1D1C8↑r ...
+                                        ; prepareIndoorView:loc_1D1C8↑r ...
 byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
                                         ; sub_161AD+5FF↑r ...
 byte_34C2D      db 0                    ; DATA XREF: sub_15B50+62D↑r
@@ -46985,50 +47764,50 @@ byte_355E3      db 0                    ; DATA XREF: mazeUpdateSlot+AC↑r
 word_35944      dw 0                    ; DATA XREF: indexEvents+C↓w
                 db 40Fh dup(0)
 byte_35D55      db 0                    ; DATA XREF: sub_1BEE9+240↑w
-                                        ; sub_1C195:loc_1CEC9↑w ...
+                                        ; prepareIndoorView:loc_1CEC9↑w ...
 byte_35D56      db 0                    ; DATA XREF: sub_1BEE9+22B↑w
-                                        ; sub_1C195:loc_1C80C↑w ...
+                                        ; prepareIndoorView:loc_1C80C↑w ...
 byte_35D57      db 0                    ; DATA XREF: sub_1B925+6↑r
                                         ; sub_1B925:loc_1B968↑r ...
 byte_35D58      db 0                    ; DATA XREF: sub_1BEE9+148↑w
-                                        ; sub_1C195+D4E↑w ...
+                                        ; prepareIndoorView+D4E↑w ...
 byte_35D59      db 0                    ; DATA XREF: sub_1BEE9+133↑w
-                                        ; sub_1C195+691↑w ...
+                                        ; prepareIndoorView+691↑w ...
 byte_35D5A      db 0                    ; DATA XREF: sub_1BEE9+1C4↑w
-                                        ; sub_1C195:loc_1CEC3↑w ...
+                                        ; prepareIndoorView:loc_1CEC3↑w ...
 byte_35D5B      db 0                    ; DATA XREF: sub_1BEE9+1AF↑w
-                                        ; sub_1C195:loc_1C806↑w ...
+                                        ; prepareIndoorView:loc_1C806↑w ...
 byte_35D5C      db 0                    ; DATA XREF: sub_18BF1+11↑r
                                         ; runMazeEvent+1B0↑r ...
                 align 2
 word_35D5E      dw 0                    ; DATA XREF: sub_15736+B3↑w
-                                        ; sub_1E407+126↑w ...
+                                        ; renderIndoorView+126↑w ...
 word_35D60      dw 0                    ; DATA XREF: sub_15736+C3↑w
-                                        ; sub_1E407+143↑w ...
+                                        ; renderIndoorView+143↑w ...
 word_35D62      dw 0                    ; DATA XREF: sub_15736+C0↑w
-                                        ; sub_1E407+140↑w ...
-word_35D64      dw 0                    ; DATA XREF: sub_1E407+132↑w
-                                        ; sub_2045A+154↑w ...
-word_35D66      dw 0                    ; DATA XREF: sub_1E407+12F↑w
-                                        ; sub_2045A+151↑w ...
-word_35D68      dw 0                    ; DATA XREF: sub_1E407+15A↑w
-                                        ; sub_2045A+179↑w
-word_35D6A      dw 0                    ; DATA XREF: sub_1E407+13D↑w
-                                        ; sub_2045A+162↑w
-word_35D6C      dw 0                    ; DATA XREF: sub_1E407+123↑w
-                                        ; sub_2045A+145↑w
-word_35D6E      dw 0                    ; DATA XREF: sub_1E407+13A↑w
-                                        ; sub_1E407+17D↑w ...
-word_35D70      dw 0                    ; DATA XREF: sub_1E407+137↑w
-                                        ; sub_1E407+17A↑w ...
-word_35D72      dw 0                    ; DATA XREF: sub_1E407+12C↑w
-                                        ; sub_2045A+14E↑w
-word_35D74      dw 0                    ; DATA XREF: sub_1E407+14C↑w
-                                        ; sub_2045A+16B↑w
-word_35D76      dw 0                    ; DATA XREF: sub_1E407+162↑w
-                                        ; sub_2045A+17F↑w
-word_35D78      dw 0                    ; DATA XREF: sub_1E407+146↑w
-                                        ; sub_2045A+159↑w
+                                        ; renderIndoorView+140↑w ...
+word_35D64      dw 0                    ; DATA XREF: renderIndoorView+132↑w
+                                        ; renderOutdoorView+154↑w ...
+word_35D66      dw 0                    ; DATA XREF: renderIndoorView+12F↑w
+                                        ; renderOutdoorView+151↑w ...
+word_35D68      dw 0                    ; DATA XREF: renderIndoorView+15A↑w
+                                        ; renderOutdoorView+179↑w
+word_35D6A      dw 0                    ; DATA XREF: renderIndoorView+13D↑w
+                                        ; renderOutdoorView+162↑w
+word_35D6C      dw 0                    ; DATA XREF: renderIndoorView+123↑w
+                                        ; renderOutdoorView+145↑w
+word_35D6E      dw 0                    ; DATA XREF: renderIndoorView+13A↑w
+                                        ; renderIndoorView+17D↑w ...
+word_35D70      dw 0                    ; DATA XREF: renderIndoorView+137↑w
+                                        ; renderIndoorView+17A↑w ...
+word_35D72      dw 0                    ; DATA XREF: renderIndoorView+12C↑w
+                                        ; renderOutdoorView+14E↑w
+word_35D74      dw 0                    ; DATA XREF: renderIndoorView+14C↑w
+                                        ; renderOutdoorView+16B↑w
+word_35D76      dw 0                    ; DATA XREF: renderIndoorView+162↑w
+                                        ; renderOutdoorView+17F↑w
+word_35D78      dw 0                    ; DATA XREF: renderIndoorView+146↑w
+                                        ; renderOutdoorView+159↑w
                 db 0F84h dup(0)
 word_36CFE      dw 0                    ; DATA XREF: sub_19174+9↑w
                                         ; attack2+58↓r ...
@@ -47042,18 +47821,18 @@ byte_36D0D      db 0                    ; DATA XREF: currentTime+32↑w
                                         ; currentTime:loc_251B1↑w
                 db 29Ah dup(0)
 byte_36FA8      db 0                    ; DATA XREF: sub_1BEE9+186↑w
-                                        ; sub_1C195:loc_1CED5↑w ...
+                                        ; prepareIndoorView:loc_1CED5↑w ...
 byte_36FA9      db 0                    ; DATA XREF: sub_1BEE9+171↑w
-                                        ; sub_1C195:loc_1C818↑w ...
+                                        ; prepareIndoorView:loc_1C818↑w ...
 byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
                                         ; sub_15B50+511↑r ...
                 align 2
 word_36FAC      dw 0                    ; DATA XREF: sub_19174+3↑w
                                         ; Spell_03_FlyingFist+F↓w ...
 byte_36FAE      db 0                    ; DATA XREF: sub_1BEE9+202↑w
-                                        ; sub_1C195+D29↑w ...
+                                        ; prepareIndoorView+D29↑w ...
 byte_36FAF      db 0                    ; DATA XREF: sub_1BEE9+1ED↑w
-                                        ; sub_1C195+66C↑w ...
+                                        ; prepareIndoorView+66C↑w ...
 byte_36FB0      db 0                    ; DATA XREF: sub_15B50+3E3↑r
                                         ; sub_15B50+442↑r ...
 byte_36FB1      db 0                    ; DATA XREF: sub_15736+39↑r
@@ -47094,12 +47873,12 @@ byte_36FEA      db 0                    ; DATA XREF: sub_25EF3+A↑r
 byte_36FEB      db 0                    ; DATA XREF: rosterMenu+2A9↓r
                                         ; rosterMenu+305↓r ...
 byte_36FEC      db 0                    ; DATA XREF: sub_1B6D1+A6↑r
-                                        ; sub_3C282:loc_3C63E↓r ...
+                                        ; giveTake:loc_3C63E↓r ...
                 align 2
 byte_36FEE      db 0                    ; DATA XREF: sub_15736:loc_1579D↑r
                                         ; sub_15736:loc_157BC↑r ...
-byte_36FEF      db 0                    ; DATA XREF: sub_3C282:loc_3C6E5↓w
-                                        ; sub_3C282:loc_3CCE5↓w ...
+byte_36FEF      db 0                    ; DATA XREF: giveTake:loc_3C6E5↓w
+                                        ; giveTake:loc_3CCE5↓w ...
                 db 0EAh dup(0)
 Party_state     db    0                 ; 918-byte party block (MAZE.PTY), loaded by sub_26447
                 db    0
@@ -47698,18 +48477,18 @@ Party_year      dw 0                    ; DATA XREF: addTime+2F↑w
 word_37328      dw 0                    ; DATA XREF: sub_1C13C+27↑r
                                         ; sub_1C13C+2E↑w ...
 word_3732A      dw 0                    ; DATA XREF: sub_1B6D1+1C0↑r
-                                        ; sub_3C282:loc_3C656↓r ...
+                                        ; giveTake:loc_3C656↓r ...
 word_3732C      dw 0                    ; DATA XREF: sub_1B6D1+1E4↑r
-                                        ; sub_3C282:loc_3C662↓r ...
+                                        ; giveTake:loc_3C662↓r ...
 word_3732E      dw 0                    ; DATA XREF: sub_1B6D1+209↑r
-                                        ; sub_3C282:loc_3C66D↓r ...
+                                        ; giveTake:loc_3C66D↓r ...
 word_37330      dw 0                    ; DATA XREF: sub_1B6D1+22E↑r
-                                        ; sub_3C282:loc_3C3B8↓r ...
+                                        ; giveTake:loc_3C3B8↓r ...
 Party_minutes   dw 0                    ; DATA XREF: addTime+12↑w
                                         ; addTime:loc_15337↑w ...
                                         ; word, minutes into the day
-Party_food      dw 0                    ; DATA XREF: sub_3C282:loc_3CBD6↓r
-                                        ; sub_3C282+95A↓w ...
+Party_food      dw 0                    ; DATA XREF: giveTake:loc_3CBD6↓r
+                                        ; giveTake+95A↓w ...
                                         ; word (+35Ah in MAZE.PTY); rest decrements it
                 db 6 dup(0)
 ; char *Party_bankGold
@@ -47725,78 +48504,78 @@ Party_bankGems  dw 0                    ; DATA XREF: GiveBankInterest+2A↓r
 word_37342      dw 0                    ; DATA XREF: GiveBankInterest+26↓r
                                         ; GiveBankInterest+37↓w ...
 ; char *Party_gold
-Party_gold      dw 0                    ; DATA XREF: sub_3C282+638↓w
-                                        ; sub_3CFAD+11A↓w ...
+Party_gold      dw 0                    ; DATA XREF: giveTake+638↓w
+                                        ; setValue+11A↓w ...
                                         ; dword (+36Ah) (by use: spent in shops, shared by awards)
-word_37346      dw 0                    ; DATA XREF: sub_3C282+63C↓w
-                                        ; sub_3CFAD+117↓w ...
+word_37346      dw 0                    ; DATA XREF: giveTake+63C↓w
+                                        ; setValue+117↓w ...
 ; char *Party_gems
-Party_gems      dw 0                    ; DATA XREF: sub_3C282+649↓w
-                                        ; sub_3CFAD+12A↓w ...
+Party_gems      dw 0                    ; DATA XREF: giveTake+649↓w
+                                        ; setValue+12A↓w ...
                                         ; dword (+36Eh) (by use: spell gem costs)
-word_3734A      dw 0                    ; DATA XREF: sub_3C282+64D↓w
-                                        ; sub_3CFAD+127↓w ...
+word_3734A      dw 0                    ; DATA XREF: giveTake+64D↓w
+                                        ; setValue+127↓w ...
 word_3734C      dw 0                    ; DATA XREF: getElapsedTime+20↑r
                                         ; sub_25F71+B↑w
 word_3734E      dw 0                    ; DATA XREF: getElapsedTime+24↑r
                                         ; sub_25F71+7↑w
                 align 40h
 byte_37370      db 0                    ; DATA XREF: sub_1BEE9+234↑w
-                                        ; sub_1C195:loc_1D2E1↑w ...
+                                        ; prepareIndoorView:loc_1D2E1↑w ...
 byte_37371      db 0                    ; DATA XREF: sub_1BEE9+225↑w
-                                        ; sub_1C195:loc_1CC24↑w ...
+                                        ; prepareIndoorView:loc_1CC24↑w ...
                 db 4 dup(0)
 byte_37376      db 0                    ; DATA XREF: sub_1BEE9+13C↑w
-                                        ; sub_1C195+1166↑w ...
+                                        ; prepareIndoorView+1166↑w ...
 byte_37377      db 0                    ; DATA XREF: sub_1BEE9+12D↑w
-                                        ; sub_1C195+AA9↑w ...
+                                        ; prepareIndoorView+AA9↑w ...
 byte_37378      db 0                    ; DATA XREF: getWeaponDamage+C↓w
                                         ; getWeaponDamage+B3↓w ...
 byte_37379      db 0                    ; DATA XREF: sub_1BEE9+1B8↑w
-                                        ; sub_1C195:loc_1D2DB↑w ...
+                                        ; prepareIndoorView:loc_1D2DB↑w ...
 byte_3737A      db 0                    ; DATA XREF: sub_1BEE9+1A9↑w
-                                        ; sub_1C195:loc_1CC1E↑w ...
+                                        ; prepareIndoorView:loc_1CC1E↑w ...
                 align 2
-word_3737C      dw 0                    ; DATA XREF: sub_2045A+193↑r
+word_3737C      dw 0                    ; DATA XREF: renderOutdoorView+193↑r
                                         ; sub_430A8+158↓w
-word_3737E      dw 0                    ; DATA XREF: sub_2045A+190↑r
+word_3737E      dw 0                    ; DATA XREF: renderOutdoorView+190↑r
                                         ; sub_430A8+154↓w
 byte_37380      db 0                    ; DATA XREF: seg001:0103↑w
                                         ; sub_25FC3+6↑r ...
 byte_37381      db 0                    ; DATA XREF: sub_1BEE9+F5↑w
-                                        ; sub_1C195:loc_1C2E1↑w ...
+                                        ; prepareIndoorView:loc_1C2E1↑w ...
 byte_37382      db 0                    ; DATA XREF: sub_1BEE9+F2↑w
-                                        ; sub_1C195:loc_1C4ED↑w ...
+                                        ; prepareIndoorView:loc_1C4ED↑w ...
 byte_37383      db 0                    ; DATA XREF: runMazeEvent+D5↑w
                                         ; runMazeEvent:loc_1A497↑w ...
 byte_37384      db 0                    ; DATA XREF: sub_1BEE9+17A↑w
-                                        ; sub_1C195:loc_1D2ED↑w ...
+                                        ; prepareIndoorView:loc_1D2ED↑w ...
 byte_37385      db 0                    ; DATA XREF: sub_1BEE9+16B↑w
-                                        ; sub_1C195:loc_1CC30↑w ...
+                                        ; prepareIndoorView:loc_1CC30↑w ...
 byte_37386      db 0                    ; DATA XREF: sub_15B50+20↑w
                                         ; sub_15B50+636↑r ...
 byte_37387      db 0                    ; DATA XREF: sub_1BEE9+243↑w
-                                        ; sub_1C195:loc_1CDC3↑w ...
+                                        ; prepareIndoorView:loc_1CDC3↑w ...
 byte_37388      db 0                    ; DATA XREF: sub_1BEE9+104↑w
-                                        ; sub_1C195:loc_1C586↑w ...
+                                        ; prepareIndoorView:loc_1C586↑w ...
 byte_37389      db 0                    ; DATA XREF: sub_1BEE9+101↑w
-                                        ; sub_1C195:loc_1C792↑w ...
+                                        ; prepareIndoorView:loc_1C792↑w ...
 byte_3738A      db 0                    ; DATA XREF: sub_1BEE9+14B↑w
-                                        ; sub_1C195+C48↑w ...
+                                        ; prepareIndoorView+C48↑w ...
 byte_3738B      db 0                    ; DATA XREF: sub_1BEE9+1F6↑w
-                                        ; sub_1C195+1141↑w ...
+                                        ; prepareIndoorView+1141↑w ...
 byte_3738C      db 0                    ; DATA XREF: sub_1BEE9+1E7↑w
-                                        ; sub_1C195+A84↑w ...
+                                        ; prepareIndoorView+A84↑w ...
 byte_3738D      db 0                    ; DATA XREF: sub_1BEE9+1C7↑w
-                                        ; sub_1C195:loc_1CDBD↑w ...
+                                        ; prepareIndoorView:loc_1CDBD↑w ...
 byte_3738E      db 0                    ; DATA XREF: sub_1BEE9+96↑w
-                                        ; sub_1C195:loc_1C931↑w ...
+                                        ; prepareIndoorView:loc_1C931↑w ...
 byte_3738F      db 0                    ; DATA XREF: sub_1BEE9+90↑w
-                                        ; sub_1C195:loc_1CB3D↑w ...
+                                        ; prepareIndoorView:loc_1CB3D↑w ...
 byte_37390      db 0                    ; DATA XREF: sub_1BEE9+110↑w
-                                        ; sub_1C195:loc_1C898↑w ...
+                                        ; prepareIndoorView:loc_1C898↑w ...
 byte_37391      db 0                    ; DATA XREF: sub_1BEE9+10A↑w
-                                        ; sub_1C195:loc_1CBAA↑w ...
+                                        ; prepareIndoorView:loc_1CBAA↑w ...
 byte_37392      db 0                    ; DATA XREF: sub_15B50+2F3↑r
                                         ; sub_15B50+301↑r ...
                 align 2
@@ -47804,26 +48583,26 @@ byte_37392      db 0                    ; DATA XREF: sub_15B50+2F3↑r
 format          dw 0                    ; DATA XREF: runMazeEvent+DD4↑r
                                         ; runMazeEvent+160B↑r ...
 byte_37396      db 0                    ; DATA XREF: sub_1BEE9+189↑w
-                                        ; sub_1C195:loc_1CDCF↑w ...
+                                        ; prepareIndoorView:loc_1CDCF↑w ...
                 align 2
 ; void *Roster_buffer
 Roster_buffer   dd 0                    ; DATA XREF: seg001:03F6↑w
                                         ; sub_25F71+24↑r ...
                                         ; far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
 byte_3739C      db 0                    ; DATA XREF: sub_1BEE9+B4↑w
-                                        ; sub_1C195:loc_1CFEE↑w ...
+                                        ; prepareIndoorView:loc_1CFEE↑w ...
 byte_3739D      db 0                    ; DATA XREF: sub_1BEE9+AB↑w
-                                        ; sub_1C195:loc_1D1FA↑w ...
+                                        ; prepareIndoorView:loc_1D1FA↑w ...
 byte_3739E      db 0                    ; DATA XREF: sub_1BEE9+A2↑w
-                                        ; sub_1C195:loc_1CF55↑w ...
+                                        ; prepareIndoorView:loc_1CF55↑w ...
 byte_3739F      db 0                    ; DATA XREF: sub_1BEE9+9C↑w
-                                        ; sub_1C195:loc_1D267↑w ...
+                                        ; prepareIndoorView:loc_1D267↑w ...
 byte_373A0      db 0                    ; DATA XREF: sub_1BEE9+205↑w
-                                        ; sub_1C195+C23↑w ...
+                                        ; prepareIndoorView+C23↑w ...
 byte_373A1      db 0                    ; DATA XREF: sub_1BEE9+D1↑w
-                                        ; sub_1C195:loc_1D653↑w ...
+                                        ; prepareIndoorView:loc_1D653↑w ...
 byte_373A2      db 0                    ; DATA XREF: sub_1BEE9+C5↑w
-                                        ; sub_1C195:loc_1D79A↑w ...
+                                        ; prepareIndoorView:loc_1D79A↑w ...
                 align 2
 ; int word_373A4
 word_373A4      dw 0                    ; DATA XREF: addTime+B4↑r
@@ -47834,54 +48613,54 @@ dword_373AE     dd 0                    ; DATA XREF: sub_37BF1+18↓r
 byte_373B2      db 0                    ; DATA XREF: sub_254BA+305↑w
                                         ; sub_254BA:loc_258B4↑r ...
                 align 2
-word_373B4      dw 0                    ; DATA XREF: sub_1E407+168↑r
-                                        ; sub_2045A+185↑r ...
-word_373B6      dw 0                    ; DATA XREF: sub_1E407+165↑r
-                                        ; sub_2045A+182↑r ...
+word_373B4      dw 0                    ; DATA XREF: renderIndoorView+168↑r
+                                        ; renderOutdoorView+185↑r ...
+word_373B6      dw 0                    ; DATA XREF: renderIndoorView+165↑r
+                                        ; renderOutdoorView+182↑r ...
 byte_373B8      db 0                    ; DATA XREF: sub_252CF+9D↑w
                                         ; sub_254BA+6D0↑r ...
                 db 9 dup(0)
 byte_373C2      db 0                    ; DATA XREF: sub_1BEE9+23A↑w
-                                        ; sub_1C195:loc_1D3E7↑w ...
+                                        ; prepareIndoorView:loc_1D3E7↑w ...
 byte_373C3      db 0                    ; DATA XREF: sub_1BEE9+142↑w
-                                        ; sub_1C195+126C↑w ...
+                                        ; prepareIndoorView+126C↑w ...
 byte_373C4      db 0                    ; DATA XREF: sub_1BEE9+1BE↑w
-                                        ; sub_1C195:loc_1D3E1↑w ...
+                                        ; prepareIndoorView:loc_1D3E1↑w ...
 byte_373C5      db 0                    ; DATA XREF: sub_1BEE9+180↑w
-                                        ; sub_1C195:loc_1D3F3↑w ...
+                                        ; prepareIndoorView:loc_1D3F3↑w ...
 byte_373C6      db 0                    ; DATA XREF: sub_15B50+378↑r
                                         ; sub_15B50+386↑r ...
 byte_373C7      db 0                    ; DATA XREF: sub_1BEE9+246↑w
-                                        ; sub_1C195:loc_1CCBD↑w ...
+                                        ; prepareIndoorView:loc_1CCBD↑w ...
 byte_373C8      db 0                    ; DATA XREF: sub_1BEE9+14E↑w
-                                        ; sub_1C195+B42↑w ...
+                                        ; prepareIndoorView+B42↑w ...
 byte_373C9      db 0                    ; DATA XREF: sub_1BEE9+1FC↑w
-                                        ; sub_1C195+1247↑w ...
+                                        ; prepareIndoorView+1247↑w ...
 byte_373CA      db 0                    ; DATA XREF: sub_1BEE9+1CA↑w
-                                        ; sub_1C195:loc_1CCB7↑w ...
+                                        ; prepareIndoorView:loc_1CCB7↑w ...
                 align 2
 word_373CC      dw 0                    ; DATA XREF: sub_17439+88B↑r
                                         ; sub_17439+9A6↑r ...
 word_373CE      dw 0                    ; DATA XREF: sub_17439+888↑r
                                         ; sub_17439+9A3↑r ...
 byte_373D0      db 0                    ; DATA XREF: sub_15B50:loc_1619A↑r
-                                        ; sub_1E407:loc_1E51D↑r ...
+                                        ; renderIndoorView:loc_1E51D↑r ...
 byte_373D1      db 0                    ; DATA XREF: sub_1BEE9+18C↑w
-                                        ; sub_1C195:loc_1CCC9↑w ...
+                                        ; prepareIndoorView:loc_1CCC9↑w ...
                 align 4
 byte_373D4      db 0                    ; DATA XREF: sub_1BEE9+208↑w
-                                        ; sub_1C195+B1D↑w ...
+                                        ; prepareIndoorView+B1D↑w ...
 byte_373D5      db 0                    ; DATA XREF: sub_15B50+182↑r
                                         ; sub_15B50+19A↑r ...
 byte_373D6      db 0                    ; DATA XREF: sub_15B50+1FD↑r
                                         ; sub_15B50+215↑r ...
 byte_373D7      db 0                    ; DATA XREF: sub_1BEE9+237↑w
-                                        ; sub_1C195:loc_1D4ED↑w ...
+                                        ; prepareIndoorView:loc_1D4ED↑w ...
                 db 0Fh dup(0)
 byte_373E7      db 0                    ; DATA XREF: sub_1BEE9+13F↑w
-                                        ; sub_1C195+1372↑w ...
+                                        ; prepareIndoorView+1372↑w ...
 byte_373E8      db 0                    ; DATA XREF: sub_1BEE9+1BB↑w
-                                        ; sub_1C195:loc_1D4E7↑w ...
+                                        ; prepareIndoorView:loc_1D4E7↑w ...
                 align 2
 word_373EA      dw 0                    ; DATA XREF: sub_170F7+77↑r
                                         ; rosterMenu:loc_40CC2↓r
@@ -47892,7 +48671,7 @@ Party_size      db 0                    ; DATA XREF: sub_15235:loc_15265↑r
                                         ; sub_161AD:loc_1692B↑r ...
                                         ; byte, number of active characters
 byte_37463      db 0                    ; DATA XREF: sub_1BEE9+17D↑w
-                                        ; sub_1C195:loc_1D4F9↑w ...
+                                        ; prepareIndoorView:loc_1D4F9↑w ...
                 db 168h dup(0)
 word_375CC      dw 0                    ; DATA XREF: runMazeEvent+47↑w
                                         ; runMazeEvent+C2↑w ...
@@ -48373,7 +49152,7 @@ loc_37A59:                              ; CODE XREF: monstersAttack+5B↑j
 ; ---------------------------------------------------------------------------
 
 loc_37A91:                              ; CODE XREF: monstersAttack+AB↓j
-                call    sub_1B669
+                call    drawView
 
 loc_37A96:                              ; CODE XREF: monstersAttack+9D↑j
                 mov     ax, word_32E32
@@ -56906,7 +57685,7 @@ ovl03           segment para public 'OVERLAY' use16
 ; Attributes: bp-based frame
 
 subPartyTime    proc far                ; CODE XREF: j_subPartyTime↑J
-                                        ; sub_3C282+440↓p ...
+                                        ; giveTake+440↓p ...
 
 arg_0           = word ptr  6
 
@@ -57329,7 +58108,7 @@ sub_3BE18       endp
 
 ; int __cdecl __far sub_3BF4B(int)
 sub_3BF4B       proc far                ; CODE XREF: sub_2804D↑J
-                                        ; sub_3C282+995↓p
+                                        ; giveTake+995↓p
 
 var_F           = byte ptr -0Fh
 s               = byte ptr -0Eh
@@ -57715,7 +58494,7 @@ jpt_3BF95       dw offset loc_3BF9A     ; DATA XREF: sub_3BF4B+4A↑r
 ; Attributes: bp-based frame
 
 sub_3C1F2       proc far                ; CODE XREF: sub_28020↑J
-                                        ; sub_3C282+31↓p
+                                        ; giveTake+31↓p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -57784,10 +58563,11 @@ sub_3C1F2       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Xeen Party::giveTake: (mode1, val1, mode2, val2, charIdx), switch on mode-8 (giveCharDamage for hp, items, gold...)
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_3C282(int, int, int, int, int, int, int)
-sub_3C282       proc far                ; CODE XREF: sub_28048↑J
+; int __cdecl __far giveTake(int, int, int, int, int, int, int)
+giveTake        proc far                ; CODE XREF: j_giveTake↑J
                                         ; sub_3D8C9+3F5↓p
 
 arg_0           = word ptr  6
@@ -57807,7 +58587,7 @@ arg_C           = word ptr  12h
                 and     [bp+arg_C], 7
                 mov     [bp+arg_0], 0
 
-loc_3C297:                              ; CODE XREF: sub_3C282+9↑j
+loc_3C297:                              ; CODE XREF: giveTake+9↑j
                 mov     ax, [bp+arg_C]
                 mov     dx, 12Fh
                 imul    dx
@@ -57825,13 +58605,13 @@ loc_3C297:                              ; CODE XREF: sub_3C282+9↑j
                 or      ax, [bp+arg_4]
                 jnz     short loc_3C2C7
 
-loc_3C2C1:                              ; CODE XREF: sub_3C282+1ED↓j
-                                        ; sub_3C282:loc_3C4A1↓j ...
+loc_3C2C1:                              ; CODE XREF: giveTake+1ED↓j
+                                        ; giveTake:loc_3C4A1↓j ...
                 mov     ax, 1
                 jmp     loc_3CCEC
 ; ---------------------------------------------------------------------------
 
-loc_3C2C7:                              ; CODE XREF: sub_3C282+3D↑j
+loc_3C2C7:                              ; CODE XREF: giveTake+3D↑j
                 cmp     [bp+arg_6], 0
                 jz      short loc_3C325
                 mov     ax, [bp+arg_8]
@@ -57844,8 +58624,8 @@ loc_3C2C7:                              ; CODE XREF: sub_3C282+3D↑j
                 jmp     short loc_3C325
 ; ---------------------------------------------------------------------------
 
-loc_3C2E3:                              ; CODE XREF: sub_3C282+26↑j
-                                        ; sub_3C282+2E↑j
+loc_3C2E3:                              ; CODE XREF: giveTake+26↑j
+                                        ; giveTake+2E↑j
                 mov     ax, [bp+arg_0]
                 cmp     ax, [bp+arg_6]
                 jnz     short loc_3C325
@@ -57868,14 +58648,14 @@ loc_3C2E3:                              ; CODE XREF: sub_3C282+26↑j
                 mov     [bp+arg_4], dx
                 mov     [bp+arg_2], ax
 
-loc_3C318:                              ; CODE XREF: sub_3C282+7F↑j
+loc_3C318:                              ; CODE XREF: giveTake+7F↑j
                 xor     ax, ax
                 mov     [bp+arg_A], 0
                 mov     [bp+arg_8], ax
                 mov     [bp+arg_6], ax
 
-loc_3C325:                              ; CODE XREF: sub_3C282+49↑j
-                                        ; sub_3C282+51↑j ...
+loc_3C325:                              ; CODE XREF: giveTake+49↑j
+                                        ; giveTake+51↑j ...
                 mov     bx, [bp+arg_0]
                 sub     bx, 8           ; switch 87 cases
                 cmp     bx, 56h
@@ -57883,12 +58663,12 @@ loc_3C325:                              ; CODE XREF: sub_3C282+49↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C333:                              ; CODE XREF: sub_3C282+AC↑j
+loc_3C333:                              ; CODE XREF: giveTake+AC↑j
                 shl     bx, 1
                 jmp     cs:jpt_3C335[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3C33A:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C33A:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 push    [bp+arg_C]      ; jumptable 0003C335 case 8
                 mov     al, byte_319E4
@@ -57897,19 +58677,19 @@ loc_3C33A:                              ; CODE XREF: sub_3C282+B3↑j
                 push    [bp+arg_2]
                 call    j_giveCharDamage
 
-loc_3C34B:                              ; CODE XREF: sub_3C282+1B8↓j
+loc_3C34B:                              ; CODE XREF: giveTake+1B8↓j
                 add     sp, 6
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C351:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C351:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 cmp     byte ptr [si+7Ah], 0 ; jumptable 0003C335 case 9
                 jnz     short loc_3C35A
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C35A:                              ; CODE XREF: sub_3C282+D3↑j
+loc_3C35A:                              ; CODE XREF: giveTake+D3↑j
                 mov     ax, [si+127h]
                 sub     ax, [bp+arg_2]
                 mov     [si+127h], ax
@@ -57918,17 +58698,17 @@ loc_3C35A:                              ; CODE XREF: sub_3C282+D3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C36F:                              ; CODE XREF: sub_3C282+E8↑j
+loc_3C36F:                              ; CODE XREF: giveTake+E8↑j
                 mov     word ptr [si+127h], 0
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C378:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C378:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 jmp     loc_3C6C8       ; jumptable 0003C335 case 10
 ; ---------------------------------------------------------------------------
 
-loc_3C37B:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C37B:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+24h]    ; jumptable 0003C335 case 11
                 sub     al, byte ptr [bp+arg_2]
@@ -57936,7 +58716,7 @@ loc_3C37B:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C387:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C387:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+26h]    ; jumptable 0003C335 case 12
                 sub     al, byte ptr [bp+arg_2]
@@ -57944,21 +58724,21 @@ loc_3C387:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C393:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C393:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     bx, [bp+arg_2]  ; jumptable 0003C335 case 13
                 mov     byte ptr [bx+si+27h], 0
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C39D:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C39D:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     bx, [bp+arg_2]  ; jumptable 0003C335 case 15
                 mov     byte ptr [bx+si+39h], 0
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C3A7:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C3A7:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, [bp+arg_4]  ; jumptable 0003C335 case 16
                 mov     dx, [bp+arg_2]
@@ -57967,7 +58747,7 @@ loc_3C3A7:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C3B8:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C3B8:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, word_37330  ; jumptable 0003C335 case 17
                 sub     ax, [bp+arg_2]
@@ -57975,14 +58755,14 @@ loc_3C3B8:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C3C4:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C3C4:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     bx, [bp+arg_2]  ; jumptable 0003C335 case 18
                 mov     byte ptr [bx+si+113h], 0
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C3CF:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C3CF:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+13h]    ; jumptable 0003C335 case 19
                 mov     ah, 0
@@ -57994,29 +58774,29 @@ loc_3C3CF:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     cs:jpt_3C3DE[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3C3E3:                              ; CODE XREF: sub_3C282+15C↑j
+loc_3C3E3:                              ; CODE XREF: giveTake+15C↑j
                                         ; DATA XREF: ovl03:jpt_3C3DE↓o
                 mov     word_32E66, 0   ; jumptable 0003C3DE cases 1,3
                 jmp     short def_3C3DE ; jumptable 0003C3DE default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C3EB:                              ; CODE XREF: sub_3C282+15C↑j
+loc_3C3EB:                              ; CODE XREF: giveTake+15C↑j
                                         ; DATA XREF: ovl03:jpt_3C3DE↓o
                 mov     word_32E66, 1   ; jumptable 0003C3DE cases 2,4
                 jmp     short def_3C3DE ; jumptable 0003C3DE default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C3F3:                              ; CODE XREF: sub_3C282+15C↑j
+loc_3C3F3:                              ; CODE XREF: giveTake+15C↑j
                                         ; DATA XREF: ovl03:jpt_3C3DE↓o
                 mov     word_32E66, 2   ; jumptable 0003C3DE cases 8,9
 
-def_3C3DE:                              ; CODE XREF: sub_3C282+158↑j
-                                        ; sub_3C282+15C↑j ...
+def_3C3DE:                              ; CODE XREF: giveTake+158↑j
+                                        ; giveTake+15C↑j ...
                 xor     di, di          ; jumptable 0003C3DE default case, cases 5-7
                 jmp     short loc_3C423
 ; ---------------------------------------------------------------------------
 
-loc_3C3FD:                              ; CODE XREF: sub_3C282+1A4↓j
+loc_3C3FD:                              ; CODE XREF: giveTake+1A4↓j
                 mov     ax, word_32E66
                 mov     dx, 24h ; '$'
                 imul    dx
@@ -58033,17 +58813,17 @@ loc_3C3FD:                              ; CODE XREF: sub_3C282+1A4↓j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C422:                              ; CODE XREF: sub_3C282+190↑j
-                                        ; sub_3C282+195↑j
+loc_3C422:                              ; CODE XREF: giveTake+190↑j
+                                        ; giveTake+195↑j
                 inc     di
 
-loc_3C423:                              ; CODE XREF: sub_3C282+179↑j
+loc_3C423:                              ; CODE XREF: giveTake+179↑j
                 cmp     di, 24h ; '$'
                 jl      short loc_3C3FD
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C42B:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C42B:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 xor     ax, ax          ; jumptable 0003C335 case 20
                 push    ax
@@ -58054,13 +58834,13 @@ loc_3C42B:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     loc_3C34B
 ; ---------------------------------------------------------------------------
 
-loc_3C43D:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C43D:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 xor     di, di          ; jumptable 0003C335 case 21
                 jmp     short loc_3C46A
 ; ---------------------------------------------------------------------------
 
-loc_3C441:                              ; CODE XREF: sub_3C282+1EB↓j
+loc_3C441:                              ; CODE XREF: giveTake+1EB↓j
                 mov     bx, di
                 mov     al, [bx+si+0DCh]
                 mov     ah, 0
@@ -58079,31 +58859,31 @@ loc_3C441:                              ; CODE XREF: sub_3C282+1EB↓j
                 jmp     loc_3C6C5
 ; ---------------------------------------------------------------------------
 
-loc_3C469:                              ; CODE XREF: sub_3C282+1CC↑j
-                                        ; sub_3C282+1D1↑j
+loc_3C469:                              ; CODE XREF: giveTake+1CC↑j
+                                        ; giveTake+1D1↑j
                 inc     di
 
-loc_3C46A:                              ; CODE XREF: sub_3C282+1BD↑j
+loc_3C46A:                              ; CODE XREF: giveTake+1BD↑j
                 cmp     di, 12h
                 jl      short loc_3C441
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3C472:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C472:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     bx, [bp+arg_2]  ; jumptable 0003C335 case 23
                 mov     byte ptr [bx-13D5h], 0
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C47D:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C47D:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 push    [bp+arg_2]      ; jumptable 0003C335 case 25
                 call    changeTime
                 jmp     loc_3C6C5
 ; ---------------------------------------------------------------------------
 
-loc_3C488:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C488:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 xor     ax, ax          ; jumptable 0003C335 case 34
                 push    ax
@@ -58117,11 +58897,11 @@ loc_3C488:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4A1:                              ; CODE XREF: sub_3C282+21A↑j
+loc_3C4A1:                              ; CODE XREF: giveTake+21A↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3C4A4:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4A4:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 xor     ax, ax          ; jumptable 0003C335 case 35
                 push    ax
@@ -58136,11 +58916,11 @@ loc_3C4A4:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4C0:                              ; CODE XREF: sub_3C282+239↑j
+loc_3C4C0:                              ; CODE XREF: giveTake+239↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3C4C3:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4C3:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+15h]    ; jumptable 0003C335 case 37
                 sub     al, byte ptr [bp+arg_2]
@@ -58148,7 +58928,7 @@ loc_3C4C3:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4CF:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4CF:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+17h]    ; jumptable 0003C335 case 38
                 sub     al, byte ptr [bp+arg_2]
@@ -58156,7 +58936,7 @@ loc_3C4CF:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4DB:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4DB:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+19h]    ; jumptable 0003C335 case 39
                 sub     al, byte ptr [bp+arg_2]
@@ -58164,7 +58944,7 @@ loc_3C4DB:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4E7:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4E7:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Bh]    ; jumptable 0003C335 case 40
                 sub     al, byte ptr [bp+arg_2]
@@ -58172,7 +58952,7 @@ loc_3C4E7:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4F3:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4F3:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Dh]    ; jumptable 0003C335 case 41
                 sub     al, byte ptr [bp+arg_2]
@@ -58180,7 +58960,7 @@ loc_3C4F3:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C4FF:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C4FF:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Fh]    ; jumptable 0003C335 case 42
                 sub     al, byte ptr [bp+arg_2]
@@ -58188,7 +58968,7 @@ loc_3C4FF:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C50B:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C50B:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+21h]    ; jumptable 0003C335 case 43
                 sub     al, byte ptr [bp+arg_2]
@@ -58196,7 +58976,7 @@ loc_3C50B:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C517:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C517:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+14h]    ; jumptable 0003C335 case 45
                 sub     al, byte ptr [bp+arg_2]
@@ -58204,7 +58984,7 @@ loc_3C517:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C523:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C523:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+16h]    ; jumptable 0003C335 case 46
                 sub     al, byte ptr [bp+arg_2]
@@ -58212,7 +58992,7 @@ loc_3C523:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C52F:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C52F:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+18h]    ; jumptable 0003C335 case 47
                 sub     al, byte ptr [bp+arg_2]
@@ -58220,7 +59000,7 @@ loc_3C52F:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C53B:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C53B:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Ah]    ; jumptable 0003C335 case 48
                 sub     al, byte ptr [bp+arg_2]
@@ -58228,7 +59008,7 @@ loc_3C53B:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C547:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C547:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Ch]    ; jumptable 0003C335 case 49
                 sub     al, byte ptr [bp+arg_2]
@@ -58236,7 +59016,7 @@ loc_3C547:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C553:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C553:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+1Eh]    ; jumptable 0003C335 case 50
                 sub     al, byte ptr [bp+arg_2]
@@ -58244,7 +59024,7 @@ loc_3C553:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C55F:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C55F:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+20h]    ; jumptable 0003C335 case 51
                 sub     al, byte ptr [bp+arg_2]
@@ -58252,7 +59032,7 @@ loc_3C55F:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C56B:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C56B:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+107h]   ; jumptable 0003C335 case 52
                 sub     al, byte ptr [bp+arg_2]
@@ -58260,7 +59040,7 @@ loc_3C56B:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C579:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C579:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Bh]   ; jumptable 0003C335 case 53
                 sub     al, byte ptr [bp+arg_2]
@@ -58268,7 +59048,7 @@ loc_3C579:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C587:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C587:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+109h]   ; jumptable 0003C335 case 54
                 sub     al, byte ptr [bp+arg_2]
@@ -58276,7 +59056,7 @@ loc_3C587:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C595:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C595:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Dh]   ; jumptable 0003C335 case 55
                 sub     al, byte ptr [bp+arg_2]
@@ -58284,7 +59064,7 @@ loc_3C595:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5A3:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5A3:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Fh]   ; jumptable 0003C335 case 56
                 sub     al, byte ptr [bp+arg_2]
@@ -58292,7 +59072,7 @@ loc_3C5A3:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5B1:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5B1:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+111h]   ; jumptable 0003C335 case 57
                 sub     al, byte ptr [bp+arg_2]
@@ -58300,7 +59080,7 @@ loc_3C5B1:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5BF:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5BF:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+108h]   ; jumptable 0003C335 case 58
                 sub     al, byte ptr [bp+arg_2]
@@ -58308,7 +59088,7 @@ loc_3C5BF:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5CD:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5CD:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Ch]   ; jumptable 0003C335 case 59
                 sub     al, byte ptr [bp+arg_2]
@@ -58316,7 +59096,7 @@ loc_3C5CD:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5DB:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5DB:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Ah]   ; jumptable 0003C335 case 60
                 sub     al, byte ptr [bp+arg_2]
@@ -58324,7 +59104,7 @@ loc_3C5DB:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5E9:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5E9:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+10Eh]   ; jumptable 0003C335 case 61
                 sub     al, byte ptr [bp+arg_2]
@@ -58332,7 +59112,7 @@ loc_3C5E9:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C5F7:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C5F7:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+110h]   ; jumptable 0003C335 case 62
                 sub     al, byte ptr [bp+arg_2]
@@ -58340,7 +59120,7 @@ loc_3C5F7:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C605:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C605:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+112h]   ; jumptable 0003C335 case 63
                 sub     al, byte ptr [bp+arg_2]
@@ -58348,7 +59128,7 @@ loc_3C605:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C613:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C613:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, [si+23h]    ; jumptable 0003C335 case 64
                 sub     al, byte ptr [bp+arg_2]
@@ -58356,7 +59136,7 @@ loc_3C613:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C61F:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C61F:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 xor     ax, ax          ; jumptable 0003C335 case 65
                 push    ax
@@ -58371,11 +59151,11 @@ loc_3C61F:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C63B:                              ; CODE XREF: sub_3C282+3B4↑j
+loc_3C63B:                              ; CODE XREF: giveTake+3B4↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3C63E:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C63E:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, byte_36FEC  ; jumptable 0003C335 case 69
                 sub     al, byte ptr [bp+arg_2]
@@ -58383,7 +59163,7 @@ loc_3C63E:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C64A:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C64A:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, word_37328  ; jumptable 0003C335 case 70
                 sub     ax, [bp+arg_2]
@@ -58391,7 +59171,7 @@ loc_3C64A:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C656:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C656:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, word_3732A  ; jumptable 0003C335 case 71
                 sub     ax, [bp+arg_2]
@@ -58399,7 +59179,7 @@ loc_3C656:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     def_3C335       ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C662:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C662:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, word_3732C  ; jumptable 0003C335 case 72
                 sub     ax, [bp+arg_2]
@@ -58407,7 +59187,7 @@ loc_3C662:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C66D:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C66D:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, word_3732E  ; jumptable 0003C335 case 73
                 sub     ax, [bp+arg_2]
@@ -58415,7 +59195,7 @@ loc_3C66D:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C678:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C678:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     al, byte_36FEC  ; jumptable 0003C335 case 74
                 sub     al, byte ptr [bp+arg_2]
@@ -58438,7 +59218,7 @@ loc_3C678:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     short loc_3C6E5 ; jumptable 0003C335 case 94
 ; ---------------------------------------------------------------------------
 
-loc_3C6B0:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C6B0:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     cx, [bp+arg_4]  ; jumptable 0003C335 case 76
                 mov     bx, [bp+arg_2]
@@ -58449,14 +59229,14 @@ loc_3C6B0:                              ; CODE XREF: sub_3C282+B3↑j
                 push    cs
                 call    near ptr subPartyTime
 
-loc_3C6C5:                              ; CODE XREF: sub_3C282+1E4↑j
-                                        ; sub_3C282+203↑j
+loc_3C6C5:                              ; CODE XREF: giveTake+1E4↑j
+                                        ; giveTake+203↑j
                 pop     cx
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C6C8:                              ; CODE XREF: sub_3C282+B3↑j
-                                        ; sub_3C282:loc_3C378↑j
+loc_3C6C8:                              ; CODE XREF: giveTake+B3↑j
+                                        ; giveTake:loc_3C378↑j
                                         ; DATA XREF: ...
                 mov     al, [si+22h]    ; jumptable 0003C335 case 77
                 sub     al, byte ptr [bp+arg_2]
@@ -58464,13 +59244,13 @@ loc_3C6C8:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C6D3:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C6D3:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     byte_36FEE, 0   ; jumptable 0003C335 case 79
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C6DA:                              ; CODE XREF: sub_3C282+B3↑j
+loc_3C6DA:                              ; CODE XREF: giveTake+B3↑j
                                         ; DATA XREF: ovl03:jpt_3C335↓o
                 mov     ax, Party_year  ; jumptable 0003C335 case 85
                 sub     ax, [bp+arg_2]
@@ -58478,13 +59258,13 @@ loc_3C6DA:                              ; CODE XREF: sub_3C282+B3↑j
                 jmp     short def_3C335 ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C6E5:                              ; CODE XREF: sub_3C282+B3↑j
-                                        ; sub_3C282+42C↑j
+loc_3C6E5:                              ; CODE XREF: giveTake+B3↑j
+                                        ; giveTake+42C↑j
                                         ; DATA XREF: ...
                 mov     byte_36FEF, 0   ; jumptable 0003C335 case 94
 
-def_3C335:                              ; CODE XREF: sub_3C282+AE↑j
-                                        ; sub_3C282+B3↑j ...
+def_3C335:                              ; CODE XREF: giveTake+AE↑j
+                                        ; giveTake+B3↑j ...
                 mov     bx, [bp+arg_6]  ; jumptable 0003C335 default case, cases 14,22,24,26-33,36,44,66-68,75,78,80-84,86-93
                 sub     bx, 3           ; switch 92 cases
                 cmp     bx, 5Bh
@@ -58492,40 +59272,40 @@ def_3C335:                              ; CODE XREF: sub_3C282+AE↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C6F8:                              ; CODE XREF: sub_3C282+471↑j
+loc_3C6F8:                              ; CODE XREF: giveTake+471↑j
                 shl     bx, 1
                 jmp     cs:jpt_3C6FA[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3C6FF:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C6FF:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte ptr [bp+arg_8] ; jumptable 0003C6FA case 3
                 mov     [si+10h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C708:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C708:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte ptr [bp+arg_8] ; jumptable 0003C6FA case 4
                 mov     [si+11h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C711:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C711:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte ptr [bp+arg_8] ; jumptable 0003C6FA case 5
                 mov     [si+13h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C71A:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C71A:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte ptr [bp+arg_8] ; jumptable 0003C6FA case 6
                 mov     [si+12h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C723:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C723:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [si+125h]   ; jumptable 0003C6FA case 8
                 add     ax, [bp+arg_8]
@@ -58533,7 +59313,7 @@ loc_3C723:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C731:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C731:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [si+127h]   ; jumptable 0003C6FA case 9
                 add     ax, [bp+arg_8]
@@ -58541,12 +59321,12 @@ loc_3C731:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C73F:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C73F:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 jmp     loc_3CCB2       ; jumptable 0003C6FA case 10
 ; ---------------------------------------------------------------------------
 
-loc_3C742:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C742:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+24h]    ; jumptable 0003C6FA case 11
                 add     al, byte ptr [bp+arg_8]
@@ -58554,7 +59334,7 @@ loc_3C742:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C74E:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C74E:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+26h]    ; jumptable 0003C6FA case 12
                 add     al, byte ptr [bp+arg_8]
@@ -58562,21 +59342,21 @@ loc_3C74E:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C75A:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C75A:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     bx, [bp+arg_8]  ; jumptable 0003C6FA case 13
                 inc     byte ptr [bx+si+27h]
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C763:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C763:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     bx, [bp+arg_8]  ; jumptable 0003C6FA case 15
                 inc     byte ptr [bx+si+39h]
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C76C:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C76C:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [bp+arg_A]  ; jumptable 0003C6FA case 16
                 mov     dx, [bp+arg_8]
@@ -58585,7 +59365,7 @@ loc_3C76C:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C77D:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C77D:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, word_37330  ; jumptable 0003C6FA case 17
                 add     ax, [bp+arg_8]
@@ -58593,7 +59373,7 @@ loc_3C77D:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C789:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C789:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 cmp     [bp+arg_A], 0   ; jumptable 0003C6FA case 18
                 jnz     short loc_3C7AC
@@ -58611,8 +59391,8 @@ loc_3C789:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     short loc_3C7C9
 ; ---------------------------------------------------------------------------
 
-loc_3C7AC:                              ; CODE XREF: sub_3C282+50B↑j
-                                        ; sub_3C282+511↑j
+loc_3C7AC:                              ; CODE XREF: giveTake+50B↑j
+                                        ; giveTake+511↑j
                 cmp     [bp+arg_A], 0
                 jnz     short loc_3C7C2
                 cmp     [bp+arg_8], 6
@@ -58622,52 +59402,52 @@ loc_3C7AC:                              ; CODE XREF: sub_3C282+50B↑j
                 jmp     short loc_3C7C9
 ; ---------------------------------------------------------------------------
 
-loc_3C7C2:                              ; CODE XREF: sub_3C282+52E↑j
-                                        ; sub_3C282+534↑j
+loc_3C7C2:                              ; CODE XREF: giveTake+52E↑j
+                                        ; giveTake+534↑j
                 mov     bx, [bp+arg_8]
                 inc     byte ptr [bx+si+113h]
 
-loc_3C7C9:                              ; CODE XREF: sub_3C282+528↑j
-                                        ; sub_3C282+53E↑j
+loc_3C7C9:                              ; CODE XREF: giveTake+528↑j
+                                        ; giveTake+53E↑j
                 cmp     [bp+arg_A], 0
                 jnb     short loc_3C7D2
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C7D2:                              ; CODE XREF: sub_3C282+54B↑j
+loc_3C7D2:                              ; CODE XREF: giveTake+54B↑j
                 jnz     short loc_3C7DD
                 cmp     [bp+arg_8], 0Dh
                 jnb     short loc_3C7DD
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C7DD:                              ; CODE XREF: sub_3C282:loc_3C7D2↑j
-                                        ; sub_3C282+556↑j
+loc_3C7DD:                              ; CODE XREF: giveTake:loc_3C7D2↑j
+                                        ; giveTake+556↑j
                 cmp     [bp+arg_A], 0
                 jbe     short loc_3C7E6
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C7E6:                              ; CODE XREF: sub_3C282+55F↑j
+loc_3C7E6:                              ; CODE XREF: giveTake+55F↑j
                 jnz     short loc_3C7F1
                 cmp     [bp+arg_8], 0Fh
                 jbe     short loc_3C7F1
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C7F1:                              ; CODE XREF: sub_3C282:loc_3C7E6↑j
-                                        ; sub_3C282+56A↑j
+loc_3C7F1:                              ; CODE XREF: giveTake:loc_3C7E6↑j
+                                        ; giveTake+56A↑j
                 cmp     word ptr [si+125h], 0
                 jg      short loc_3C7FB
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C7FB:                              ; CODE XREF: sub_3C282+574↑j
+loc_3C7FB:                              ; CODE XREF: giveTake+574↑j
                 mov     word ptr [si+125h], 0
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C804:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C804:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+13h]    ; jumptable 0003C6FA case 19
                 mov     ah, 0
@@ -58679,29 +59459,29 @@ loc_3C804:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     cs:jpt_3C813[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3C818:                              ; CODE XREF: sub_3C282+591↑j
+loc_3C818:                              ; CODE XREF: giveTake+591↑j
                                         ; DATA XREF: ovl03:jpt_3C813↓o
                 mov     word_32E66, 0   ; jumptable 0003C813 cases 1,3
                 jmp     short def_3C813 ; jumptable 0003C813 default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C820:                              ; CODE XREF: sub_3C282+591↑j
+loc_3C820:                              ; CODE XREF: giveTake+591↑j
                                         ; DATA XREF: ovl03:jpt_3C813↓o
                 mov     word_32E66, 1   ; jumptable 0003C813 cases 2,4
                 jmp     short def_3C813 ; jumptable 0003C813 default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C828:                              ; CODE XREF: sub_3C282+591↑j
+loc_3C828:                              ; CODE XREF: giveTake+591↑j
                                         ; DATA XREF: ovl03:jpt_3C813↓o
                 mov     word_32E66, 2   ; jumptable 0003C813 cases 8,9
 
-def_3C813:                              ; CODE XREF: sub_3C282+58D↑j
-                                        ; sub_3C282+591↑j ...
+def_3C813:                              ; CODE XREF: giveTake+58D↑j
+                                        ; giveTake+591↑j ...
                 xor     di, di          ; jumptable 0003C813 default case, cases 5-7
                 jmp     short loc_3C858
 ; ---------------------------------------------------------------------------
 
-loc_3C832:                              ; CODE XREF: sub_3C282+5D9↓j
+loc_3C832:                              ; CODE XREF: giveTake+5D9↓j
                 mov     ax, word_32E66
                 mov     dx, 24h ; '$'
                 imul    dx
@@ -58718,17 +59498,17 @@ loc_3C832:                              ; CODE XREF: sub_3C282+5D9↓j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C857:                              ; CODE XREF: sub_3C282+5C5↑j
-                                        ; sub_3C282+5CA↑j
+loc_3C857:                              ; CODE XREF: giveTake+5C5↑j
+                                        ; giveTake+5CA↑j
                 inc     di
 
-loc_3C858:                              ; CODE XREF: sub_3C282+5AE↑j
+loc_3C858:                              ; CODE XREF: giveTake+5AE↑j
                 cmp     di, 24h ; '$'
                 jl      short loc_3C832
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C860:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C860:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, 1           ; jumptable 0003C6FA case 20
                 push    ax
@@ -58739,13 +59519,13 @@ loc_3C860:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     loc_3CCD5
 ; ---------------------------------------------------------------------------
 
-loc_3C873:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C873:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     di, [bp+arg_C]  ; jumptable 0003C6FA case 21
                 jmp     short loc_3C893
 ; ---------------------------------------------------------------------------
 
-loc_3C878:                              ; CODE XREF: sub_3C282+618↓j
+loc_3C878:                              ; CODE XREF: giveTake+618↓j
                 mov     al, [si+0EDh]
                 mov     ah, 0
                 or      ax, ax
@@ -58753,16 +59533,16 @@ loc_3C878:                              ; CODE XREF: sub_3C282+618↓j
                 mov     al, byte ptr [bp+arg_8]
                 mov     [si+0EDh], al
 
-loc_3C889:                              ; CODE XREF: sub_3C282+981↓j
+loc_3C889:                              ; CODE XREF: giveTake+981↓j
                 push    si
                 call    sub_280F4
                 jmp     loc_3CCAF
 ; ---------------------------------------------------------------------------
 
-loc_3C892:                              ; CODE XREF: sub_3C282+5FE↑j
+loc_3C892:                              ; CODE XREF: giveTake+5FE↑j
                 inc     di
 
-loc_3C893:                              ; CODE XREF: sub_3C282+5F4↑j
+loc_3C893:                              ; CODE XREF: giveTake+5F4↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
@@ -58770,14 +59550,14 @@ loc_3C893:                              ; CODE XREF: sub_3C282+5F4↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3C89F:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C89F:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     bx, [bp+arg_8]  ; jumptable 0003C6FA case 23
                 mov     byte ptr [bx-13D5h], 1
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C8AA:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C8AA:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 push    [bp+arg_8]      ; jumptable 0003C6FA case 25
                 push    cs
@@ -58785,7 +59565,7 @@ loc_3C8AA:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     loc_3CCAF
 ; ---------------------------------------------------------------------------
 
-loc_3C8B4:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C8B4:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [bp+arg_A]  ; jumptable 0003C6FA case 34
                 mov     dx, [bp+arg_8]
@@ -58794,7 +59574,7 @@ loc_3C8B4:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C8C5:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C8C5:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, [bp+arg_A]  ; jumptable 0003C6FA case 35
                 mov     dx, [bp+arg_8]
@@ -58803,7 +59583,7 @@ loc_3C8C5:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C8D6:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C8D6:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+15h]    ; jumptable 0003C6FA case 37
                 mov     ah, 0
@@ -58816,20 +59596,20 @@ loc_3C8D6:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C8F4
 
-loc_3C8ED:                              ; CODE XREF: sub_3C282+664↑j
+loc_3C8ED:                              ; CODE XREF: giveTake+664↑j
                 mov     byte ptr [si+15h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C8F4:                              ; CODE XREF: sub_3C282+662↑j
-                                        ; sub_3C282+669↑j
+loc_3C8F4:                              ; CODE XREF: giveTake+662↑j
+                                        ; giveTake+669↑j
                 mov     al, [si+15h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+15h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C900:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C900:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+17h]    ; jumptable 0003C6FA case 38
                 mov     ah, 0
@@ -58842,20 +59622,20 @@ loc_3C900:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C91E
 
-loc_3C917:                              ; CODE XREF: sub_3C282+68E↑j
+loc_3C917:                              ; CODE XREF: giveTake+68E↑j
                 mov     byte ptr [si+17h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C91E:                              ; CODE XREF: sub_3C282+68C↑j
-                                        ; sub_3C282+693↑j
+loc_3C91E:                              ; CODE XREF: giveTake+68C↑j
+                                        ; giveTake+693↑j
                 mov     al, [si+17h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+17h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C92A:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C92A:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+19h]    ; jumptable 0003C6FA case 39
                 mov     ah, 0
@@ -58868,20 +59648,20 @@ loc_3C92A:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C948
 
-loc_3C941:                              ; CODE XREF: sub_3C282+6B8↑j
+loc_3C941:                              ; CODE XREF: giveTake+6B8↑j
                 mov     byte ptr [si+19h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C948:                              ; CODE XREF: sub_3C282+6B6↑j
-                                        ; sub_3C282+6BD↑j
+loc_3C948:                              ; CODE XREF: giveTake+6B6↑j
+                                        ; giveTake+6BD↑j
                 mov     al, [si+19h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+19h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C954:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C954:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Bh]    ; jumptable 0003C6FA case 40
                 mov     ah, 0
@@ -58894,20 +59674,20 @@ loc_3C954:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C972
 
-loc_3C96B:                              ; CODE XREF: sub_3C282+6E2↑j
+loc_3C96B:                              ; CODE XREF: giveTake+6E2↑j
                 mov     byte ptr [si+1Bh], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C972:                              ; CODE XREF: sub_3C282+6E0↑j
-                                        ; sub_3C282+6E7↑j
+loc_3C972:                              ; CODE XREF: giveTake+6E0↑j
+                                        ; giveTake+6E7↑j
                 mov     al, [si+1Bh]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Bh], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C97E:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C97E:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Dh]    ; jumptable 0003C6FA case 41
                 mov     ah, 0
@@ -58920,20 +59700,20 @@ loc_3C97E:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C99C
 
-loc_3C995:                              ; CODE XREF: sub_3C282+70C↑j
+loc_3C995:                              ; CODE XREF: giveTake+70C↑j
                 mov     byte ptr [si+1Dh], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C99C:                              ; CODE XREF: sub_3C282+70A↑j
-                                        ; sub_3C282+711↑j
+loc_3C99C:                              ; CODE XREF: giveTake+70A↑j
+                                        ; giveTake+711↑j
                 mov     al, [si+1Dh]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Dh], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C9A8:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C9A8:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Fh]    ; jumptable 0003C6FA case 42
                 mov     ah, 0
@@ -58946,20 +59726,20 @@ loc_3C9A8:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C9C6
 
-loc_3C9BF:                              ; CODE XREF: sub_3C282+736↑j
+loc_3C9BF:                              ; CODE XREF: giveTake+736↑j
                 mov     byte ptr [si+1Fh], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C9C6:                              ; CODE XREF: sub_3C282+734↑j
-                                        ; sub_3C282+73B↑j
+loc_3C9C6:                              ; CODE XREF: giveTake+734↑j
+                                        ; giveTake+73B↑j
                 mov     al, [si+1Fh]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Fh], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C9D2:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C9D2:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+21h]    ; jumptable 0003C6FA case 43
                 mov     ah, 0
@@ -58972,20 +59752,20 @@ loc_3C9D2:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3C9F0
 
-loc_3C9E9:                              ; CODE XREF: sub_3C282+760↑j
+loc_3C9E9:                              ; CODE XREF: giveTake+760↑j
                 mov     byte ptr [si+21h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C9F0:                              ; CODE XREF: sub_3C282+75E↑j
-                                        ; sub_3C282+765↑j
+loc_3C9F0:                              ; CODE XREF: giveTake+75E↑j
+                                        ; giveTake+765↑j
                 mov     al, [si+21h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+21h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3C9FC:                              ; CODE XREF: sub_3C282+478↑j
+loc_3C9FC:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+14h]    ; jumptable 0003C6FA case 45
                 mov     ah, 0
@@ -58998,20 +59778,20 @@ loc_3C9FC:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CA1A
 
-loc_3CA13:                              ; CODE XREF: sub_3C282+78A↑j
+loc_3CA13:                              ; CODE XREF: giveTake+78A↑j
                 mov     byte ptr [si+14h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA1A:                              ; CODE XREF: sub_3C282+788↑j
-                                        ; sub_3C282+78F↑j
+loc_3CA1A:                              ; CODE XREF: giveTake+788↑j
+                                        ; giveTake+78F↑j
                 mov     al, [si+14h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+14h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA26:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CA26:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+16h]    ; jumptable 0003C6FA case 46
                 mov     ah, 0
@@ -59024,20 +59804,20 @@ loc_3CA26:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CA44
 
-loc_3CA3D:                              ; CODE XREF: sub_3C282+7B4↑j
+loc_3CA3D:                              ; CODE XREF: giveTake+7B4↑j
                 mov     byte ptr [si+16h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA44:                              ; CODE XREF: sub_3C282+7B2↑j
-                                        ; sub_3C282+7B9↑j
+loc_3CA44:                              ; CODE XREF: giveTake+7B2↑j
+                                        ; giveTake+7B9↑j
                 mov     al, [si+16h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+16h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA50:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CA50:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+18h]    ; jumptable 0003C6FA case 47
                 mov     ah, 0
@@ -59050,20 +59830,20 @@ loc_3CA50:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CA6E
 
-loc_3CA67:                              ; CODE XREF: sub_3C282+7DE↑j
+loc_3CA67:                              ; CODE XREF: giveTake+7DE↑j
                 mov     byte ptr [si+18h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA6E:                              ; CODE XREF: sub_3C282+7DC↑j
-                                        ; sub_3C282+7E3↑j
+loc_3CA6E:                              ; CODE XREF: giveTake+7DC↑j
+                                        ; giveTake+7E3↑j
                 mov     al, [si+18h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+18h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA7A:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CA7A:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Ah]    ; jumptable 0003C6FA case 48
                 mov     ah, 0
@@ -59076,20 +59856,20 @@ loc_3CA7A:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CA98
 
-loc_3CA91:                              ; CODE XREF: sub_3C282+808↑j
+loc_3CA91:                              ; CODE XREF: giveTake+808↑j
                 mov     byte ptr [si+1Ah], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CA98:                              ; CODE XREF: sub_3C282+806↑j
-                                        ; sub_3C282+80D↑j
+loc_3CA98:                              ; CODE XREF: giveTake+806↑j
+                                        ; giveTake+80D↑j
                 mov     al, [si+1Ah]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Ah], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CAA4:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CAA4:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Ch]    ; jumptable 0003C6FA case 49
                 mov     ah, 0
@@ -59102,20 +59882,20 @@ loc_3CAA4:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CAC2
 
-loc_3CABB:                              ; CODE XREF: sub_3C282+832↑j
+loc_3CABB:                              ; CODE XREF: giveTake+832↑j
                 mov     byte ptr [si+1Ch], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CAC2:                              ; CODE XREF: sub_3C282+830↑j
-                                        ; sub_3C282+837↑j
+loc_3CAC2:                              ; CODE XREF: giveTake+830↑j
+                                        ; giveTake+837↑j
                 mov     al, [si+1Ch]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Ch], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CACE:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CACE:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+1Eh]    ; jumptable 0003C6FA case 50
                 mov     ah, 0
@@ -59128,20 +59908,20 @@ loc_3CACE:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CAEC
 
-loc_3CAE5:                              ; CODE XREF: sub_3C282+85C↑j
+loc_3CAE5:                              ; CODE XREF: giveTake+85C↑j
                 mov     byte ptr [si+1Eh], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CAEC:                              ; CODE XREF: sub_3C282+85A↑j
-                                        ; sub_3C282+861↑j
+loc_3CAEC:                              ; CODE XREF: giveTake+85A↑j
+                                        ; giveTake+861↑j
                 mov     al, [si+1Eh]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+1Eh], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CAF8:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CAF8:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+20h]    ; jumptable 0003C6FA case 51
                 mov     ah, 0
@@ -59154,20 +59934,20 @@ loc_3CAF8:                              ; CODE XREF: sub_3C282+478↑j
                 cmp     ax, 0FFh
                 jbe     short loc_3CB16
 
-loc_3CB0F:                              ; CODE XREF: sub_3C282+886↑j
+loc_3CB0F:                              ; CODE XREF: giveTake+886↑j
                 mov     byte ptr [si+20h], 0FFh
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB16:                              ; CODE XREF: sub_3C282+884↑j
-                                        ; sub_3C282+88B↑j
+loc_3CB16:                              ; CODE XREF: giveTake+884↑j
+                                        ; giveTake+88B↑j
                 mov     al, [si+20h]
                 add     al, byte ptr [bp+arg_8]
                 mov     [si+20h], al
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB22:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB22:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+107h]   ; jumptable 0003C6FA case 52
                 add     al, byte ptr [bp+arg_8]
@@ -59175,7 +59955,7 @@ loc_3CB22:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB30:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB30:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Bh]   ; jumptable 0003C6FA case 53
                 add     al, byte ptr [bp+arg_8]
@@ -59183,7 +59963,7 @@ loc_3CB30:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB3E:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB3E:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+109h]   ; jumptable 0003C6FA case 54
                 add     al, byte ptr [bp+arg_8]
@@ -59191,7 +59971,7 @@ loc_3CB3E:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB4C:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB4C:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Dh]   ; jumptable 0003C6FA case 55
                 add     al, byte ptr [bp+arg_8]
@@ -59199,7 +59979,7 @@ loc_3CB4C:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB5A:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB5A:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Fh]   ; jumptable 0003C6FA case 56
                 add     al, byte ptr [bp+arg_8]
@@ -59207,7 +59987,7 @@ loc_3CB5A:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB68:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB68:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+111h]   ; jumptable 0003C6FA case 57
                 add     al, byte ptr [bp+arg_8]
@@ -59215,7 +59995,7 @@ loc_3CB68:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB76:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB76:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+108h]   ; jumptable 0003C6FA case 58
                 add     al, byte ptr [bp+arg_8]
@@ -59223,7 +60003,7 @@ loc_3CB76:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB84:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB84:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Ch]   ; jumptable 0003C6FA case 59
                 add     al, byte ptr [bp+arg_8]
@@ -59231,7 +60011,7 @@ loc_3CB84:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CB92:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CB92:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Ah]   ; jumptable 0003C6FA case 60
                 add     al, byte ptr [bp+arg_8]
@@ -59239,7 +60019,7 @@ loc_3CB92:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBA0:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBA0:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+10Eh]   ; jumptable 0003C6FA case 61
                 add     al, byte ptr [bp+arg_8]
@@ -59247,7 +60027,7 @@ loc_3CBA0:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBAE:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBAE:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+110h]   ; jumptable 0003C6FA case 62
                 add     al, byte ptr [bp+arg_8]
@@ -59255,7 +60035,7 @@ loc_3CBAE:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBBC:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBBC:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+112h]   ; jumptable 0003C6FA case 63
                 add     al, byte ptr [bp+arg_8]
@@ -59263,7 +60043,7 @@ loc_3CBBC:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBCA:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBCA:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, [si+23h]    ; jumptable 0003C6FA case 64
                 add     al, byte ptr [bp+arg_8]
@@ -59271,7 +60051,7 @@ loc_3CBCA:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBD6:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBD6:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, Party_food  ; jumptable 0003C6FA case 65
                 add     ax, [bp+arg_8]
@@ -59279,13 +60059,13 @@ loc_3CBD6:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CBE2:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CBE2:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     di, [bp+arg_C]  ; jumptable 0003C6FA case 66
                 jmp     short loc_3CC07
 ; ---------------------------------------------------------------------------
 
-loc_3CBE7:                              ; CODE XREF: sub_3C282+98C↓j
+loc_3CBE7:                              ; CODE XREF: giveTake+98C↓j
                 mov     al, [si+0EDh]
                 mov     ah, 0
                 or      ax, ax
@@ -59301,10 +60081,10 @@ loc_3CBE7:                              ; CODE XREF: sub_3C282+98C↓j
                 jmp     loc_3C889
 ; ---------------------------------------------------------------------------
 
-loc_3CC06:                              ; CODE XREF: sub_3C282+96D↑j
+loc_3CC06:                              ; CODE XREF: giveTake+96D↑j
                 inc     di
 
-loc_3CC07:                              ; CODE XREF: sub_3C282+963↑j
+loc_3CC07:                              ; CODE XREF: giveTake+963↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
@@ -59312,7 +60092,7 @@ loc_3CC07:                              ; CODE XREF: sub_3C282+963↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3CC13:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC13:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 push    [bp+arg_8]      ; jumptable 0003C6FA case 67
                 push    cs
@@ -59323,11 +60103,11 @@ loc_3CC13:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC22:                              ; CODE XREF: sub_3C282+99B↑j
+loc_3CC22:                              ; CODE XREF: giveTake+99B↑j
                 jmp     loc_3C2C1
 ; ---------------------------------------------------------------------------
 
-loc_3CC25:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC25:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte_36FEC  ; jumptable 0003C6FA case 69
                 add     al, byte ptr [bp+arg_8]
@@ -59335,7 +60115,7 @@ loc_3CC25:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC31:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC31:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, word_37328  ; jumptable 0003C6FA case 70
                 add     ax, [bp+arg_8]
@@ -59343,7 +60123,7 @@ loc_3CC31:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC3D:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC3D:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, word_3732A  ; jumptable 0003C6FA case 71
                 add     ax, [bp+arg_8]
@@ -59351,7 +60131,7 @@ loc_3CC3D:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC49:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC49:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, word_3732C  ; jumptable 0003C6FA case 72
                 add     ax, [bp+arg_8]
@@ -59359,7 +60139,7 @@ loc_3CC49:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC55:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC55:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, word_3732E  ; jumptable 0003C6FA case 73
                 add     ax, [bp+arg_8]
@@ -59367,7 +60147,7 @@ loc_3CC55:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     def_3C6FA       ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CC61:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC61:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     al, byte_36FEC  ; jumptable 0003C6FA case 74
                 add     al, byte ptr [bp+arg_8]
@@ -59390,7 +60170,7 @@ loc_3CC61:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     short loc_3CCE5 ; jumptable 0003C6FA case 94
 ; ---------------------------------------------------------------------------
 
-loc_3CC99:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CC99:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     cx, [bp+arg_A]  ; jumptable 0003C6FA case 76
                 mov     bx, [bp+arg_8]
@@ -59400,14 +60180,14 @@ loc_3CC99:                              ; CODE XREF: sub_3C282+478↑j
                 push    ax
                 call    addTime
 
-loc_3CCAF:                              ; CODE XREF: sub_3C282+60D↑j
-                                        ; sub_3C282+62F↑j
+loc_3CCAF:                              ; CODE XREF: giveTake+60D↑j
+                                        ; giveTake+62F↑j
                 pop     cx
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CCB2:                              ; CODE XREF: sub_3C282+478↑j
-                                        ; sub_3C282:loc_3C73F↑j
+loc_3CCB2:                              ; CODE XREF: giveTake+478↑j
+                                        ; giveTake:loc_3C73F↑j
                                         ; DATA XREF: ...
                 mov     al, [si+22h]    ; jumptable 0003C6FA case 77
                 add     al, byte ptr [bp+arg_8]
@@ -59415,13 +60195,13 @@ loc_3CCB2:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CCBD:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CCBD:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     byte_36FEE, 1   ; jumptable 0003C6FA case 79
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CCC4:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CCC4:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 push    [bp+arg_C]      ; jumptable 0003C6FA case 82
                 mov     al, byte_319E4
@@ -59430,12 +60210,12 @@ loc_3CCC4:                              ; CODE XREF: sub_3C282+478↑j
                 push    [bp+arg_8]
                 call    j_giveCharDamage
 
-loc_3CCD5:                              ; CODE XREF: sub_3C282+5EE↑j
+loc_3CCD5:                              ; CODE XREF: giveTake+5EE↑j
                 add     sp, 6
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CCDA:                              ; CODE XREF: sub_3C282+478↑j
+loc_3CCDA:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 mov     ax, Party_year  ; jumptable 0003C6FA case 85
                 add     ax, [bp+arg_8]
@@ -59443,24 +60223,24 @@ loc_3CCDA:                              ; CODE XREF: sub_3C282+478↑j
                 jmp     short def_3C6FA ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CCE5:                              ; CODE XREF: sub_3C282+478↑j
-                                        ; sub_3C282+A15↑j
+loc_3CCE5:                              ; CODE XREF: giveTake+478↑j
+                                        ; giveTake+A15↑j
                                         ; DATA XREF: ...
                 mov     byte_36FEF, 1   ; jumptable 0003C6FA case 94
 
-def_3C6FA:                              ; CODE XREF: sub_3C282+473↑j
-                                        ; sub_3C282+478↑j ...
+def_3C6FA:                              ; CODE XREF: giveTake+473↑j
+                                        ; giveTake+478↑j ...
                 xor     ax, ax          ; jumptable 0003C6FA default case, cases 7,14,22,24,26-33,36,44,68,75,78,80,81,83,84,86-93
 
-loc_3CCEC:                              ; CODE XREF: sub_3C282+42↑j
+loc_3CCEC:                              ; CODE XREF: giveTake+42↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_3C282       endp
+giveTake        endp
 
 ; ---------------------------------------------------------------------------
-jpt_3C813       dw offset loc_3C818     ; DATA XREF: sub_3C282+591↑r
+jpt_3C813       dw offset loc_3C818     ; DATA XREF: giveTake+591↑r
                 dw offset loc_3C820     ; jump table for switch statement
                 dw offset loc_3C818
                 dw offset loc_3C820
@@ -59470,7 +60250,7 @@ jpt_3C813       dw offset loc_3C818     ; DATA XREF: sub_3C282+591↑r
                 dw offset loc_3C828
                 dw offset loc_3C828
 jpt_3C6FA       dw offset loc_3C6FF, offset loc_3C708, offset loc_3C711
-                                        ; DATA XREF: sub_3C282+478↑r
+                                        ; DATA XREF: giveTake+478↑r
                 dw offset loc_3C71A, offset def_3C6FA, offset loc_3C723 ; jump table for switch statement
                 dw offset loc_3C731, offset loc_3C73F, offset loc_3C742
                 dw offset loc_3C74E, offset loc_3C75A, offset def_3C6FA
@@ -59501,7 +60281,7 @@ jpt_3C6FA       dw offset loc_3C6FF, offset loc_3C708, offset loc_3C711
                 dw offset def_3C6FA, offset def_3C6FA, offset def_3C6FA
                 dw offset def_3C6FA, offset def_3C6FA, offset def_3C6FA
                 dw offset def_3C6FA, offset loc_3CCE5
-jpt_3C3DE       dw offset loc_3C3E3     ; DATA XREF: sub_3C282+15C↑r
+jpt_3C3DE       dw offset loc_3C3E3     ; DATA XREF: giveTake+15C↑r
                 dw offset loc_3C3EB     ; jump table for switch statement
                 dw offset loc_3C3E3
                 dw offset loc_3C3EB
@@ -59511,7 +60291,7 @@ jpt_3C3DE       dw offset loc_3C3E3     ; DATA XREF: sub_3C282+15C↑r
                 dw offset loc_3C3F3
                 dw offset loc_3C3F3
 jpt_3C335       dw offset loc_3C33A, offset loc_3C351, offset loc_3C378
-                                        ; DATA XREF: sub_3C282+B3↑r
+                                        ; DATA XREF: giveTake+B3↑r
                 dw offset loc_3C37B, offset loc_3C387, offset loc_3C393 ; jump table for switch statement
                 dw offset def_3C335, offset loc_3C39D, offset loc_3C3A7
                 dw offset loc_3C3B8, offset loc_3C3C4, offset loc_3C3CF
@@ -59698,10 +60478,11 @@ sub_3CE7A       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Xeen Character::setValue: writes a character field by action number (+10h sex, +11h race, +13h class, +125h hp ...)
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_3CFAD(int, int, int, int)
-sub_3CFAD       proc far                ; CODE XREF: sub_28043↑J
+; int __cdecl __far setValue(int, int, int, int)
+setValue        proc far                ; CODE XREF: j_setValue↑J
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -59723,73 +60504,73 @@ arg_6           = word ptr  0Ch
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CFCC:                              ; CODE XREF: sub_3CFAD+1A↑j
+loc_3CFCC:                              ; CODE XREF: setValue+1A↑j
                 shl     bx, 1
                 jmp     cs:jpt_3CFCE[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3CFD3:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3CFD3:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 3
                 mov     [si+10h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CFDC:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3CFDC:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 4
                 mov     [si+11h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CFE5:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3CFE5:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 5
                 mov     [si+13h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CFEE:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3CFEE:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 6
                 mov     [si+12h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3CFF7:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3CFF7:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 8
                 mov     [si+125h], ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D001:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D001:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 9
                 mov     [si+127h], ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D00B:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D00B:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 jmp     loc_3D235       ; jumptable 0003CFCE case 10
 ; ---------------------------------------------------------------------------
 
-loc_3D00E:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D00E:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 11
                 mov     [si+24h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D017:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D017:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 12
                 mov     [si+26h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D020:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D020:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_4]  ; jumptable 0003CFCE case 16
                 mov     dx, [bp+arg_2]
@@ -59798,14 +60579,14 @@ loc_3D020:                              ; CODE XREF: sub_3CFAD+21↑j
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D031:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D031:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 17
                 mov     word_37330, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D03A:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D03A:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 cmp     [bp+arg_4], 0   ; jumptable 0003CFCE case 18
                 jnz     short loc_3D05D
@@ -59823,8 +60604,8 @@ loc_3D03A:                              ; CODE XREF: sub_3CFAD+21↑j
                 jmp     short loc_3D07A
 ; ---------------------------------------------------------------------------
 
-loc_3D05D:                              ; CODE XREF: sub_3CFAD+91↑j
-                                        ; sub_3CFAD+97↑j
+loc_3D05D:                              ; CODE XREF: setValue+91↑j
+                                        ; setValue+97↑j
                 cmp     [bp+arg_4], 0
                 jnz     short loc_3D073
                 cmp     [bp+arg_2], 6
@@ -59834,59 +60615,59 @@ loc_3D05D:                              ; CODE XREF: sub_3CFAD+91↑j
                 jmp     short loc_3D07A
 ; ---------------------------------------------------------------------------
 
-loc_3D073:                              ; CODE XREF: sub_3CFAD+B4↑j
-                                        ; sub_3CFAD+BA↑j
+loc_3D073:                              ; CODE XREF: setValue+B4↑j
+                                        ; setValue+BA↑j
                 mov     bx, [bp+arg_2]
                 inc     byte ptr [bx+si+113h]
 
-loc_3D07A:                              ; CODE XREF: sub_3CFAD+AE↑j
-                                        ; sub_3CFAD+C4↑j
+loc_3D07A:                              ; CODE XREF: setValue+AE↑j
+                                        ; setValue+C4↑j
                 cmp     [bp+arg_4], 0
                 jnb     short loc_3D083
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D083:                              ; CODE XREF: sub_3CFAD+D1↑j
+loc_3D083:                              ; CODE XREF: setValue+D1↑j
                 jnz     short loc_3D08E
                 cmp     [bp+arg_2], 0Dh
                 jnb     short loc_3D08E
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D08E:                              ; CODE XREF: sub_3CFAD:loc_3D083↑j
-                                        ; sub_3CFAD+DC↑j
+loc_3D08E:                              ; CODE XREF: setValue:loc_3D083↑j
+                                        ; setValue+DC↑j
                 cmp     [bp+arg_4], 0
                 jbe     short loc_3D097
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D097:                              ; CODE XREF: sub_3CFAD+E5↑j
+loc_3D097:                              ; CODE XREF: setValue+E5↑j
                 jnz     short loc_3D0A2
                 cmp     [bp+arg_2], 0Fh
                 jbe     short loc_3D0A2
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0A2:                              ; CODE XREF: sub_3CFAD:loc_3D097↑j
-                                        ; sub_3CFAD+F0↑j
+loc_3D0A2:                              ; CODE XREF: setValue:loc_3D097↑j
+                                        ; setValue+F0↑j
                 cmp     word ptr [si+125h], 0
                 jg      short loc_3D0AC
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0AC:                              ; CODE XREF: sub_3CFAD+FA↑j
+loc_3D0AC:                              ; CODE XREF: setValue+FA↑j
                 mov     word ptr [si+125h], 0
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0B5:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0B5:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 25
                 mov     Party_minutes, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0BE:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0BE:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_4]  ; jumptable 0003CFCE case 34
                 mov     dx, [bp+arg_2]
@@ -59895,7 +60676,7 @@ loc_3D0BE:                              ; CODE XREF: sub_3CFAD+21↑j
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0CE:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0CE:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_4]  ; jumptable 0003CFCE case 35
                 mov     dx, [bp+arg_2]
@@ -59904,237 +60685,237 @@ loc_3D0CE:                              ; CODE XREF: sub_3CFAD+21↑j
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0DE:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0DE:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 37
                 mov     [si+15h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0E7:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0E7:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 38
                 mov     [si+17h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0F0:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0F0:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 39
                 mov     [si+19h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D0F9:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D0F9:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 40
                 mov     [si+1Bh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D102:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D102:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 41
                 mov     [si+1Dh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D10B:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D10B:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 42
                 mov     [si+1Fh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D114:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D114:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 43
                 mov     [si+21h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D11D:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D11D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 45
                 mov     [si+14h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D126:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D126:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 46
                 mov     [si+16h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D12F:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D12F:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 47
                 mov     [si+18h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D138:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D138:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 48
                 mov     [si+1Ah], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D141:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D141:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 49
                 mov     [si+1Ch], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D14A:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D14A:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 50
                 mov     [si+1Eh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D153:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D153:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 51
                 mov     [si+20h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D15C:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D15C:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 52
                 mov     [si+107h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D166:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D166:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 53
                 mov     [si+10Bh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D170:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D170:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 54
                 mov     [si+109h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D17A:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D17A:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 55
                 mov     [si+10Dh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D184:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D184:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 56
                 mov     [si+10Fh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D18E:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D18E:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 57
                 mov     [si+111h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D198:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D198:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 58
                 mov     [si+108h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1A2:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1A2:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 59
                 mov     [si+10Ch], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1AC:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1AC:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 60
                 mov     [si+10Ah], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1B6:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1B6:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 61
                 mov     [si+10Eh], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1C0:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1C0:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 62
                 mov     [si+110h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1CA:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1CA:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 63
                 mov     [si+112h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1D4:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1D4:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 64
                 mov     [si+23h], al
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1DD:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1DD:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 65
                 mov     Party_food, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1E6:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1E6:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 69
                 jmp     short loc_3D228
 ; ---------------------------------------------------------------------------
 
-loc_3D1EB:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1EB:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 70
                 mov     word_37328, ax
                 jmp     def_3CFCE       ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1F4:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1F4:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 71
                 mov     word_3732A, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D1FC:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D1FC:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 72
                 mov     word_3732C, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D204:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D204:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 73
                 mov     word_3732E, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D20C:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D20C:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 74
                 mov     byte_36FEF, al
@@ -60147,40 +60928,40 @@ loc_3D20C:                              ; CODE XREF: sub_3CFAD+21↑j
                 mov     word_3732A, ax
                 mov     word_37328, ax
 
-loc_3D228:                              ; CODE XREF: sub_3CFAD+23C↑j
+loc_3D228:                              ; CODE XREF: setValue+23C↑j
                 mov     byte_36FEC, al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D22D:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D22D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 76
                 mov     Party_day, al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D235:                              ; CODE XREF: sub_3CFAD+21↑j
-                                        ; sub_3CFAD:loc_3D00B↑j
+loc_3D235:                              ; CODE XREF: setValue+21↑j
+                                        ; setValue:loc_3D00B↑j
                                         ; DATA XREF: ...
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 77
                 mov     [si+22h], al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D23D:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D23D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     byte_36FEE, 1   ; jumptable 0003CFCE case 79
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D244:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D244:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 83
                 mov     byte_319E4, al
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D24C:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D24C:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 84
                 mov     Party_facing, al
@@ -60193,28 +60974,28 @@ loc_3D24C:                              ; CODE XREF: sub_3CFAD+21↑j
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D265:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D265:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     ax, [bp+arg_2]  ; jumptable 0003CFCE case 85
                 mov     Party_year, ax
                 jmp     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
 ; ---------------------------------------------------------------------------
 
-loc_3D26D:                              ; CODE XREF: sub_3CFAD+21↑j
+loc_3D26D:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 94
                 mov     byte_36FEF, al
 
-def_3CFCE:                              ; CODE XREF: sub_3CFAD+1C↑j
-                                        ; sub_3CFAD+21↑j ...
+def_3CFCE:                              ; CODE XREF: setValue+1C↑j
+                                        ; setValue+21↑j ...
                 pop     si              ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
                 pop     bp
                 retf
-sub_3CFAD       endp
+setValue        endp
 
 ; ---------------------------------------------------------------------------
 jpt_3CFCE       dw offset loc_3CFD3, offset loc_3CFDC, offset loc_3CFE5
-                                        ; DATA XREF: sub_3CFAD+21↑r
+                                        ; DATA XREF: setValue+21↑r
                 dw offset loc_3CFEE, offset def_3CFCE, offset loc_3CFF7 ; jump table for switch statement
                 dw offset loc_3D001, offset loc_3D00B, offset loc_3D00E
                 dw offset loc_3D017, offset def_3CFCE, offset def_3CFCE
@@ -61796,7 +62577,7 @@ loc_3DCB5:                              ; CODE XREF: sub_3D8C9+3DD↑j
                 push    dx              ; int
                 push    ax              ; int
                 push    cs
-                call    near ptr sub_3C282
+                call    near ptr giveTake
                 add     sp, 0Eh
                 or      ax, ax
                 jz      short loc_3DCCB
@@ -62355,7 +63136,7 @@ sub_3E08F       endp
 showJoke        proc far                ; CODE XREF: j_showJoke↑J
                 push    bp
                 mov     bp, sp
-                call    sub_1B669
+                call    drawView
                 mov     ax, offset aJesterBin ; "jester.bin"
                 push    ax
                 call    sub_28249
@@ -62420,7 +63201,7 @@ format          = dword ptr -2
                 sub     sp, 12h
                 push    si
                 push    di
-                call    sub_1B669
+                call    drawView
                 mov     al, 0C0h
                 push    ax              ; char
                 mov     ax, offset aCombatM ; "combat.m"
@@ -63040,7 +63821,7 @@ loc_3E6DD:                              ; CODE XREF: arenaEvent+532↑j
 
 loc_3E6E6:                              ; CODE XREF: arenaEvent+1CE↑j
                                         ; arenaEvent+5CE↑j
-                call    sub_1B669
+                call    drawView
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -63463,7 +64244,7 @@ loc_3E9DD:                              ; CODE XREF: death+54↑j
                 call    sub_15736
                 pop     cx
                 mov     Engine_mode, 1
-                call    sub_1B669
+                call    drawView
 
 loc_3EA05:                              ; CODE XREF: death+8D6↓j
                 call    sub_254BA
@@ -69475,7 +70256,7 @@ loc_417A4:                              ; CODE XREF: rest+94↑j
 
 loc_417C9:                              ; CODE XREF: rest+E8↓j
                 call    chargeStep
-                call    sub_1B669
+                call    drawView
                 cmp     Engine_mode, 1
                 jnz     short loc_417E3
                 mov     al, byte ptr [bp+var_4]
@@ -69589,7 +70370,7 @@ loc_418A7:                              ; CODE XREF: rest+1A3↑j
                 mov     al, byte ptr [bp+var_4]
                 mov     Engine_mode, al
                 mov     byte_2886E, 1
-                call    sub_1B669
+                call    drawView
                 push    [bp+var_6]
                 cmp     [bp+var_8], 0
                 jz      short loc_418CA
@@ -74919,7 +75700,7 @@ loc_43F45:                              ; CODE XREF: sub_43E0C+32↑j
                 call    sub_26685
                 pop     cx
                 mov     byte_2879A, 0
-                call    sub_1B669
+                call    drawView
                 mov     al, byte_37710
                 cbw
                 or      ax, ax
@@ -75289,7 +76070,7 @@ loc_44278:                              ; CODE XREF: sub_43E0C+464↑j
                 pop     ax
                 mov     [bx-587Eh], ax
                 call    sub_15B50
-                call    sub_1B669
+                call    drawView
 
 loc_442B0:                              ; CODE XREF: sub_43E0C+43C↑j
                                         ; sub_43E0C+443↑j ...
@@ -87108,7 +87889,7 @@ loc_49D5A:                              ; CODE XREF: attack2+14↑j
 
 loc_49D64:                              ; CODE XREF: attack2+1BE↑j
                                         ; attack2+1CD↑j
-                call    sub_1B669
+                call    drawView
                 cmp     [bp+var_4], 0
                 jnz     short loc_49D72
                 jmp     loc_49F85
@@ -87369,7 +88150,7 @@ loc_49F67:                              ; CODE XREF: attack2+38A↑j
 
 def_49F15:                              ; CODE XREF: attack2+386↑j
                                         ; attack2+394↑j ...
-                call    sub_1B669       ; jumptable 00049F15 default case
+                call    drawView        ; jumptable 00049F15 default case
                 cmp     byte_34B92, 0
                 jz      short loc_49F85
                 mov     al, byte_34B92
@@ -91267,7 +92048,7 @@ loc_4B861:                              ; CODE XREF: sub_4B7B5+A7↑j
                 cmp     byte_2886F, 0
                 jz      short loc_4B872
                 call    sub_1B358
-                call    sub_1B669
+                call    drawView
 
 loc_4B872:                              ; CODE XREF: sub_4B7B5+B1↑j
                 mov     al, byte_2883F
@@ -91687,7 +92468,7 @@ loc_4BB71:                              ; CODE XREF: sub_4B7B5+338↑j
                 push    ax
                 call    changeTime
                 pop     cx
-                call    sub_1B669
+                call    drawView
                 mov     al, byte_34B92
                 mov     ah, 0
                 or      ax, ax
@@ -91779,7 +92560,7 @@ loc_4BC48:                              ; CODE XREF: sub_4B7B5+421↑j
                 pop     cx
                 call    sub_25DFE
                 mov     Engine_mode, 2
-                call    sub_1B669
+                call    drawView
                 call    sub_28230
                 mov     Engine_mode, 1
                 mov     byte_2886E, 1
@@ -92109,7 +92890,7 @@ loc_4BEC4:                              ; CODE XREF: sub_4BE23+C6↓j
                 push    [bp+var_8]
                 call    sub_24FC9
                 add     sp, 0Ch
-                call    sub_1B669
+                call    drawView
                 inc     [bp+var_2]
 
 loc_4BEE5:                              ; CODE XREF: sub_4BE23+9F↑j
@@ -93395,7 +94176,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                call    sub_1B669
+                call    drawView
                 mov     byte_287A5, 1
                 mov     byte_2886E, 1
                 jmp     short loc_4C7DA
@@ -94937,7 +95718,7 @@ loc_4D287:                              ; CODE XREF: Spell_42_TimeDistortion+16�
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                call    sub_1B669
+                call    drawView
 
 loc_4D2A0:                              ; CODE XREF: Spell_42_TimeDistortion+1C↑j
                 pop     bp
@@ -96067,7 +96848,7 @@ loc_4D9A4:                              ; CODE XREF: Spell_61_Etherealize+1A↑j
                 mov     ah, 0
                 mov     [bp+var_2], ax
                 mov     Engine_mode, 0FFh
-                call    sub_1B669
+                call    drawView
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
                 mov     byte_287A5, 1
@@ -99660,7 +100441,7 @@ loc_4F3CE:                              ; CODE XREF: sub_4F24E+169↑j
                 mov     [bp+s], al
 
 loc_4F3EA:                              ; CODE XREF: sub_4F24E+18A↑j
-                call    sub_1B669
+                call    drawView
                 mov     [bp+var_B], 0
                 jmp     short loc_4F454
 ; ---------------------------------------------------------------------------
@@ -99703,7 +100484,7 @@ loc_4F3F5:                              ; CODE XREF: sub_4F24E+20A↓j
 ; ---------------------------------------------------------------------------
 
 loc_4F44C:                              ; CODE XREF: sub_4F24E+1BA↑j
-                call    sub_1B669
+                call    drawView
 
 loc_4F451:                              ; CODE XREF: sub_4F24E+1F9↑j
                 inc     [bp+var_B]
@@ -99813,7 +100594,7 @@ loc_4F4E5:                              ; CODE XREF: sub_4F24E+2F7↓j
 ; ---------------------------------------------------------------------------
 
 loc_4F539:                              ; CODE XREF: sub_4F24E+2AA↑j
-                call    sub_1B669
+                call    drawView
 
 loc_4F53E:                              ; CODE XREF: sub_4F24E+2E6↑j
                 inc     [bp+var_B]
@@ -99927,7 +100708,7 @@ loc_4F5D5:                              ; CODE XREF: sub_4F24E+3E7↓j
 ; ---------------------------------------------------------------------------
 
 loc_4F629:                              ; CODE XREF: sub_4F24E+39A↑j
-                call    sub_1B669
+                call    drawView
 
 loc_4F62E:                              ; CODE XREF: sub_4F24E+3D6↑j
                 inc     [bp+var_B]
@@ -100041,7 +100822,7 @@ loc_4F6C5:                              ; CODE XREF: sub_4F24E+4D6↓j
 ; ---------------------------------------------------------------------------
 
 loc_4F718:                              ; CODE XREF: sub_4F24E+48A↑j
-                call    sub_1B669
+                call    drawView
 
 loc_4F71D:                              ; CODE XREF: sub_4F24E+4C6↑j
                 inc     [bp+var_B]

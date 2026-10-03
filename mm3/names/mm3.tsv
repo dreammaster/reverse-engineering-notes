@@ -246,12 +246,14 @@
 1AF03	evt_op18	event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)
 1B0A7	jpt_1A5D6
 1B129	jpt_1984B
+1B669	drawView	indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)
 1B99E	mazeNeighbourSlot	maps a neighbour maze id to its loaded slot (1111h if not loaded)
 1BC15	mazeGetWordRel	args (dx, dy, mask): cell (x, y) relative to the current page's origin in the 32x32 world made of up to 4 pages of 16x16 (word at slot*340h + (y&15)*32 + (x&15)*2); returns the wall word & mask, 1111h if outside
 1BD2A	def_1BCE9
 1BD57	jpt_1BCE9
 1BD67	mazeGetFlagsRel	same addressing, returns the cell flag byte (maze .DAT +200h) & mask
 1BE3E	mazeSetBits	args (x, y, field, value): clear the field's mask (table 16F8h) in the cell word, or in value << shift (88-byte field records at 159Ch)
+1C195	prepareIndoorView	5.9 KB, called first by drawView (by call graph, unverified)
 1C2E5	def_1C2AA
 1C352	def_1C343
 1C3EB	def_1C3B0
@@ -340,6 +342,9 @@
 1DB13	jpt_1C3B0
 1DB21	jpt_1C343
 1DB2F	jpt_1C2AA
+1E407	renderIndoorView	8 KB, advances the animation counters then draws the view (unverified)
+203FE	drawViewOutdoors	outdoor counterpart: calls 2045A (by call graph)
+2045A	renderOutdoorView	8 KB outdoor renderer (unverified)
 216D4	def_216CF
 21AF1	def_21AEC
 21E34	def_21E2F
@@ -415,6 +420,11 @@
 296AC	ATTRIBUTE_CATEGORIES	10 bytes thresholds for getAttributeCategory
 296C2	AGE_RANGES_ADJUST	2 modes x 10 words, added to might/endurance/speed/accuracy (mode 0) or intellect/personality (mode 1)
 296EA	AGE_RANGES	words, age thresholds for getStat
+299BA	VIEW_DX	4 facings x 2Eh signed bytes: x offset of each visible cell relative to the party (46 entries per facing)
+29A72	VIEW_DY	4 facings x 2Eh signed bytes: y offset of each visible cell
+29B2C	VIEW_MASK	4 facings x 58h bytes (44 words): mask of the wall nibble for that cell side in the maze word (7000h/700h/70h/7)
+29C8C	VIEW_SHIFT	4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)
+29DE8	MAZE_CLEAR_MASKS	words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000
 2ACF0	MAZE_SLOT_X	x origin (0 or 16) of each page slot, added to the party's x
 2ACF4	MAZE_SLOT_Y	y origin (0 or 16) of each page slot
 2AE3E	Maze_slotIds	4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats
@@ -497,6 +507,7 @@
 3C0D2	def_3C0C1
 3C1CE	jpt_3C0C1
 3C1E0	jpt_3BF95
+3C282	giveTake	Xeen Party::giveTake: (mode1, val1, mode2, val2, charIdx), switch on mode-8 (giveCharDamage for hp, items, gold...)
 3C3F9	def_3C3DE
 3C6EA	def_3C335
 3C82E	def_3C813
@@ -505,6 +516,7 @@
 3CD02	jpt_3C6FA
 3CDBA	jpt_3C3DE
 3CDCC	jpt_3C335
+3CFAD	setValue	Xeen Character::setValue: writes a character field by action number (+10h sex, +11h race, +13h class, +125h hp ...)
 3D273	def_3CFCE
 3D276	jpt_3CFCE
 3D32E	ifProc	event condition: (action, value, mode, charIndex) -> compares a character/party value; same action numbers as Xeen Scripts::ifProc (confirmed by the field offsets it reads)

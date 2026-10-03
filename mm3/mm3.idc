@@ -8376,6 +8376,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1B657);
 	create_insn	(0X1B669);
+	set_name	(0X1B669,	"drawView");
 	create_insn	(0X1B67A);
 	create_insn	(0X1B6D1);
 	create_insn	(0X1B74A);
@@ -8629,6 +8630,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1C18E);
 	create_insn	(0X1C195);
+	set_name	(0X1C195,	"prepareIndoorView");
 	create_insn	(x=0X1C198);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C1A4);
@@ -10052,12 +10054,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA79,	"jpt_1C993");
-	set_cmt	(0X1DA87,	"jump table for switch statement",	0);
-	create_word	(x=0X1DA87);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1DA87,	"jpt_1C8FA");
 }
 
 //------------------------------------------------------------------------
@@ -10067,6 +10063,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1DA87,	"jump table for switch statement",	0);
+	create_word	(x=0X1DA87);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1DA87,	"jpt_1C8FA");
 	set_cmt	(0X1DA95,	"jump table for switch statement",	0);
 	create_word	(x=0X1DA95);
 	make_array	(x,	0X7);
@@ -10210,6 +10212,7 @@ static Bytes_2(void) {
 	create_insn	(0X1E3D0);
 	create_insn	(0X1E3EF);
 	create_insn	(0X1E407);
+	set_name	(0X1E407,	"renderIndoorView");
 	create_insn	(x=0X1E40A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E40F);
@@ -10539,7 +10542,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X203C8);
 	op_stkvar	(x,	0);
 	create_insn	(0X203FE);
+	set_name	(0X203FE,	"drawViewOutdoors");
 	create_insn	(0X2045A);
+	set_name	(0X2045A,	"renderOutdoorView");
 	create_insn	(x=0X2045D);
 	op_hex		(x,	1);
 	create_insn	(x=0X20462);
@@ -13928,7 +13933,9 @@ static Bytes_2(void) {
 	create_insn	(0X28039);
 	create_insn	(0X2803E);
 	create_insn	(0X28043);
+	set_name	(0X28043,	"j_setValue");
 	create_insn	(0X28048);
+	set_name	(0X28048,	"j_giveTake");
 	create_insn	(0X2804D);
 	create_insn	(0X28052);
 	create_insn	(0X28057);
@@ -14724,9 +14731,19 @@ static Bytes_2(void) {
 	create_strlit	(0X29981,	0X2);
 	set_name	(0X29981,	"aC_2");
 	create_byte	(0X299B8);
-	make_array	(0X299B8,	0X326);
+	make_array	(0X299B8,	0X2);
+	set_cmt	(0X299BA,	"4 facings x 2Eh signed bytes: x offset of each visible cell relative to the party (46 entries per facing)",	0);
+	set_name	(0X299BA,	"VIEW_DX");
+	set_cmt	(0X29A72,	"4 facings x 2Eh signed bytes: y offset of each visible cell",	0);
+	set_name	(0X29A72,	"VIEW_DY");
+	set_cmt	(0X29B2C,	"4 facings x 58h bytes (44 words): mask of the wall nibble for that cell side in the maze word (7000h/700h/70h/7)",	0);
+	set_name	(0X29B2C,	"VIEW_MASK");
+	set_cmt	(0X29C8C,	"4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)",	0);
+	set_name	(0X29C8C,	"VIEW_SHIFT");
 	create_byte	(0X29CDE);
-	make_array	(0X29CDE,	0X136);
+	make_array	(0X29CDE,	0X10A);
+	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
+	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
 	create_word	(0X29E14);
 	create_word	(0X29E16);
 	create_byte	(0X29E18);
@@ -14807,6 +14824,15 @@ static Bytes_2(void) {
 	create_word	(0X2A71C);
 	create_word	(0X2A71E);
 	create_word	(0X2A720);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2A722);
 	create_word	(0X2A724);
 	create_word	(0X2A726);
@@ -14871,15 +14897,6 @@ static Bytes_2(void) {
 	make_array	(0X2AE34,	0XA);
 	set_cmt	(0X2AE3E,	"4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats",	0);
 	set_name	(0X2AE3E,	"Maze_slotIds");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2AE42,	"3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)",	0);
 	set_name	(0X2AE42,	"MAP_MONSTER_PICS");
 	create_word	(0X2AF46);
@@ -18441,6 +18458,15 @@ static Bytes_3(void) {
 	create_insn	(0X382A0);
 	create_insn	(0X382B6);
 	set_cmt	(0X382B9,	"stream",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X382BC,	"c",	0);
 	create_insn	(x=0X382C5);
 	op_stkvar	(x,	1);
@@ -18516,15 +18542,6 @@ static Bytes_3(void) {
 	set_cmt	(0X38409,	"right",	0);
 	set_cmt	(0X3840F,	"top",	0);
 	set_cmt	(0X38413,	"left",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X38419);
 	op_hex		(x,	1);
 	create_insn	(0X38425);
@@ -19726,6 +19743,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X3C27B);
 	op_stkvar	(x,	1);
 	create_insn	(0X3C282);
+	set_name	(0X3C282,	"giveTake");
 	set_cmt	(0X3C286,	"n",	0);
 	create_insn	(x=0X3C287);
 	op_stkvar	(x,	0);
@@ -20525,6 +20543,7 @@ static Bytes_4(void) {
 	create_byte	(0X3CF99);
 	make_array	(0X3CF99,	0X14);
 	create_insn	(0X3CFAD);
+	set_name	(0X3CFAD,	"setValue");
 	set_cmt	(0X3CFB0,	"n",	0);
 	create_insn	(x=0X3CFB1);
 	op_stkvar	(x,	1);
@@ -23370,6 +23389,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X408C1);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X408C7);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -23463,15 +23491,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40C81);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X40CA7);
 	op_stkvar	(x,	1);
 	set_cmt	(0X40CB2,	"char",	0);
@@ -28984,6 +29003,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48305);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4830F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48312);
@@ -29067,15 +29095,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X484C4);
 	op_hex		(x,	1);
 	set_cmt	(0X484CA,	"int",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X484D2,	"format",	0);
 	set_cmt	(0X484D3,	"int",	0);
 	set_cmt	(0X484D6,	"int",	0);
@@ -33852,6 +33871,15 @@ static Bytes_6(void) {
 	create_insn	(0X4FCAF);
 	set_cmt	(0X4FCB7,	"jumptable 0004F954 case 63",	1);
 	create_insn	(0X4FCB7);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4FCBF,	"jumptable 0004F954 case 64",	1);
 	create_insn	(0X4FCBF);
 	set_cmt	(0X4FCC7,	"jumptable 0004F954 case 65",	1);
@@ -33906,15 +33934,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4FD80);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4FD90);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4FD9B);
@@ -36622,6 +36641,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B358, 0X14, 2, 0);
 	add_func    (0X1B669,0X1B6D1);
 	set_func_flags(0X1B669,0x5412);
+	set_func_cmt(0X1B669,	"indoor view refresh: calls sub_161AD, 1C195 then 1E407 (by call graph; events call it before showing text)", 0);
 	set_frame_size(0X1B669, 0, 2, 0);
 	add_func    (0X1B6D1,0X1B925);
 	set_func_flags(0X1B6D1,0x5412);
@@ -36662,18 +36682,22 @@ static Functions_0(void) {
 	set_frame_size(0X1C13C, 0, 2, 0);
 	add_func    (0X1C195,0X1D8D5);
 	set_func_flags(0X1C195,0x5412);
+	set_func_cmt(0X1C195,	"5.9 KB, called first by drawView (by call graph, unverified)", 0);
 	set_frame_size(0X1C195, 0X8, 2, 0);
 	add_func    (0X1DB3D,0X1E407);
 	set_func_flags(0X1DB3D,0x5412);
 	set_frame_size(0X1DB3D, 0X2, 2, 0);
 	add_func    (0X1E407,0X203FE);
 	set_func_flags(0X1E407,0x5412);
+	set_func_cmt(0X1E407,	"8 KB, advances the animation counters then draws the view (unverified)", 0);
 	set_frame_size(0X1E407, 0X8, 2, 0);
 	add_func    (0X203FE,0X2045A);
 	set_func_flags(0X203FE,0x5412);
+	set_func_cmt(0X203FE,	"outdoor counterpart: calls 2045A (by call graph)", 0);
 	set_frame_size(0X203FE, 0X4, 2, 0);
 	add_func    (0X2045A,0X2249C);
 	set_func_flags(0X2045A,0x5412);
+	set_func_cmt(0X2045A,	"8 KB outdoor renderer (unverified)", 0);
 	set_frame_size(0X2045A, 0X12, 2, 0);
 	add_func    (0X22524,0X22534);
 	set_func_flags(0X22524,0x5412);
@@ -37187,12 +37211,12 @@ static Functions_0(void) {
 	set_func_flags(0X2803E,0x5482);
 	set_frame_size(0X2803E, 0, 0, 0);
 	add_func    (0X28043,0X28048);
-	set_func_flags(0X28043,0x5482);
-	SetType(0X28043, "int __cdecl __far sub_28043(int, int, int, int);");
+	set_func_flags(0X28043,0x54c2);
+	SetType(0X28043, "int __cdecl __far j_setValue(int, int, int, int);");
 	set_frame_size(0X28043, 0, 0, 0);
 	add_func    (0X28048,0X2804D);
-	set_func_flags(0X28048,0x5482);
-	SetType(0X28048, "int __cdecl __far sub_28048(int, int, int, int, int, int, int);");
+	set_func_flags(0X28048,0x54c2);
+	SetType(0X28048, "int __cdecl __far j_giveTake(int, int, int, int, int, int, int);");
 	set_frame_size(0X28048, 0, 0, 0);
 	add_func    (0X2804D,0X28052);
 	set_func_flags(0X2804D,0x5482);
@@ -38137,14 +38161,16 @@ static Functions_0(void) {
 	set_frame_size(0X3C1F2, 0X8, 2, 0);
 	add_func    (0X3C282,0X3CCF0);
 	set_func_flags(0X3C282,0x5412);
-	SetType(0X3C282, "int __cdecl __far sub_3C282(int, int, int, int, int, int, int);");
+	SetType(0X3C282, "int __cdecl __far giveTake(int, int, int, int, int, int, int);");
+	set_func_cmt(0X3C282,	"Xeen Party::giveTake: (mode1, val1, mode2, val2, charIdx), switch on mode-8 (giveCharDamage for hp, items, gold...)", 0);
 	set_frame_size(0X3C282, 0X4, 2, 0);
 	add_func    (0X3CE7A,0X3CF99);
 	set_func_flags(0X3CE7A,0x5412);
 	set_frame_size(0X3CE7A, 0XC, 2, 0);
 	add_func    (0X3CFAD,0X3D276);
 	set_func_flags(0X3CFAD,0x5412);
-	SetType(0X3CFAD, "int __cdecl __far sub_3CFAD(int, int, int, int);");
+	SetType(0X3CFAD, "int __cdecl __far setValue(int, int, int, int);");
+	set_func_cmt(0X3CFAD,	"Xeen Character::setValue: writes a character field by action number (+10h sex, +11h race, +13h class, +125h hp ...)", 0);
 	set_frame_size(0X3CFAD, 0X2, 2, 0);
 	add_func    (0X3D32E,0X3D6FE);
 	set_func_flags(0X3D32E,0x5412);
@@ -38568,6 +38594,10 @@ static Functions_0(void) {
 	set_func_flags(0X48466,0x5412);
 	set_func_cmt(0X48466,	"guild.m, spldesc.bin", 0);
 	set_frame_size(0X48466, 0X2, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X486AB,0X4877A);
 	set_func_flags(0X486AB,0x5412);
 	set_func_cmt(0X486AB,	"towninn.m", 0);
@@ -38597,10 +38627,6 @@ static Functions_0(void) {
 	set_func_cmt(0X492B1,	"\"%s needs %lu experience for level %u.\"", 0);
 	set_frame_size(0X492B1, 0X6, 2, 0);
 	define_local_var(0X492B1, 0X49368, "[bp+0X6]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X49368,0X496CE);
 	set_func_flags(0X49368,0x5412);
 	set_func_cmt(0X49368,	"grounds.m, train.icn", 0);
