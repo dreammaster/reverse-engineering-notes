@@ -36,3 +36,17 @@ STAT_VALUES: [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 25, 30, 35, 40, 50, 75, 100, 1
 STAT_BONUSES: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20]
 
 Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 76, 101, 201, 65535]; per-age adjustment for might/endurance/speed/accuracy [6, -1, -50, -1, -20, -1, -10, -1, 0, 0] and for intellect/personality [6, -1, -50, -1, -20, -1, -10, -1, 0, 0] (luck is not age adjusted).
+
+## Training grounds (`townTraining` 492B1/49368)
+
+* `experienceToNextLevel(char)` (0 when already eligible) is shown by `trainingNeedsExperience`:
+  "%s needs %lu experience for level %u." / "%s is eligible for level %d." / "%s has learned all we can teach!".
+* Each town teaches up to a maximum level held in the byte table at DGROUP `43A6h`, indexed by `Party_map`
+  (town number): `0, 10, 15, 20, 25, 200`. A character whose level is at or above the cap gets the "learned all" message.
+* Training a level costs `level * level * 10` gold (current level, 32-bit multiply in the code), taken with the party gold
+  routine; it sets experience to exactly the threshold of the new level (`nextExperienceLevel` - `getCurrentExperience`
+  difference is subtracted from the stored experience at char+12Bh), increments level (char+23h) and sets
+  HP/SP current values (+125h/+127h) to the new `getMaxHP/getMaxSP`.
+* The first character trained in a visit advances the clock by 5A0h (1440) minutes (one day) through `addTime`;
+  a per-character flag array on the stack stops the day being charged twice.
+* Choosing a character: command codes C9h.. select party slot; ESC leaves. `byte_32E68` set = grounds closed.

@@ -607,3 +607,4 @@
 6002A	vdrv_api_2A
 6002D	vdrv_api_2D
 60030	vdrv_api_30
+43A6	TRAIN_MAX_LEVEL	byte table indexed by Party_map: highest level a town can train to (0,10,15,20,25,200)
