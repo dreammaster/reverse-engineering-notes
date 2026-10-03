@@ -616,3 +616,5 @@
 154B0	drawAutomapWrapped	wrap-mode (Maze_wrapMode != 0) version of the Wizard Eye map drawing
 4432C	generateItem	random item generator (level 1-6, buffer, slot): rolls d100 twice to choose the item id range (written to slot id byte +DCh), then 1-3 enchantment levels (95% one, 4% two, 1% three) for metal/element/attribute/spell; used by resetBlacksmithWares (via stub sub_2826C) and treasure
 4265B	showOverheadMap	full-screen overhead map: uses isCellVisited/mazeGetWordWrap and checkSkill(6) (Direction Sense) for the compass
+44DBE	pickSaveSlot	save slot picker (uses readSaveHeader, getCommand); returns slot or FFFFh; called from loadSaveDialog/controlPanel via stub sub_2825D
+4F24E	spellAttackAhead	damage spell/attack arrival: called by Flying Fist etc. through stub sub_2865D with the spell id; starts the attack on the monster ahead (calls attack, drawView, giveTreasure)
