@@ -39,7 +39,7 @@ typedef struct {
 	uint8_t powerShield;         /* 103 set by Power Shield */
 	uint8_t holyBonus;           /* 104 damage bonus (Holy Bonus), added to METAL_DAMAGE in getWeaponDamage */
 	uint8_t heroism;             /* 105 to-hit bonus (Heroism), added to METAL_DAMAGE_PERCENT */
-	uint8_t unknown106[13];      /* 106 (Xeen order: lloydSide + 6 resistance pairs) */
+	uint8_t unknown106[13];      /* 106 one byte, then six (temporary, permanent) resistance pairs at 107 fire, 109 cold, 10B electricity, 10D poison, 10F energy, 111 magic (charSavingThrow) */
 	uint8_t conditions[16];      /* 113: 0 cursed ... 0Ch unconscious (11Fh) 0Dh dead (120h) ... (Xeen order) */
 	uint16_t unknown123;         /* 123 */
 	int16_t  hp;                 /* 125 */
