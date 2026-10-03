@@ -15,7 +15,6 @@ for line in open(path, encoding="utf-8"):
         # overlay thunk (jmp far sel:off): the name belongs to the real routine, the thunk becomes j_<name>
         thunk = ea
         ea = (idc.get_wide_word(ea + 3) << 4) + idc.get_wide_word(ea + 1)
-        idc.set_name(thunk, "j_" + name, idc.SN_NOCHECK | idc.SN_NOWARN)
     if name != "-":
         if ida_bytes.is_code(ida_bytes.get_flags(ea)) and not ida_funcs.get_func(ea):
             ida_funcs.add_func(ea)
@@ -32,4 +31,18 @@ for line in open(path, encoding="utf-8"):
         f = ida_funcs.get_func(ea)
         (idc.set_func_cmt(ea, cmt, 0) if f and f.start_ea == ea else idc.set_cmt(ea, cmt, 0))
         c += 1
+# thunks in the stub segments get j_<name of the routine they jump to>
+import idautils
+t = 0
+for seg in idautils.Segments():
+    if not idc.get_segm_name(seg).startswith("stub"):
+        continue
+    for ea in idautils.Heads(seg, idc.get_segm_end(seg)):
+        if idc.print_insn_mnem(ea) == "jmp" and idc.get_operand_type(ea, 0) == idc.o_far:
+            tgt = (idc.get_wide_word(ea + 3) << 4) + idc.get_wide_word(ea + 1)
+            nm = idc.get_name(tgt)
+            if nm and ida_bytes.has_user_name(ida_bytes.get_flags(tgt)) and not nm.startswith("j_"):
+                idc.set_name(ea, "j_" + nm, idc.SN_NOCHECK | idc.SN_NOWARN)
+                t += 1
+print("thunks named:", t)
 print("applied %d names, %d comments" % (n, c))

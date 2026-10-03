@@ -19,6 +19,8 @@ names = dict(old)
 for ea, name in idautils.Names():
     if not ida_bytes.has_user_name(ida_bytes.get_flags(ea)):
         continue
+    if name.startswith("j_") and idc.get_segm_name(ea).startswith("stub"):
+        continue   # thunk names are derived by apply_names.py
     names[ea] = (name, old.get(ea, ("", ""))[1])
 for ea in idautils.Functions():
     c = idc.get_func_cmt(ea, 0)

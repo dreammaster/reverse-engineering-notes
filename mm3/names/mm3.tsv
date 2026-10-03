@@ -402,75 +402,6 @@
 27A16	__INITEXTMEM
 27AEE	__EXITEXT
 27B42	__EXTCOPY
-27F54	j_j_j_j_j_j_j_j_j_j_resetBlacksmithWares
-27F59	j_j_j_j_j_j_j_j_j_j_j_getDiskFree
-27F68	j_j_j_j_j_j_j_j_j_j_j_monstersAttack
-27F81	j_j_j_j_j_j_j_j_j_j_j_getEquipSlotName
-27F90	j_j_j_j_j_j_j_j_j_j_j_equipItem
-27F9F	j_j_j_j_j_j_j_j_j_j_j_openMm3Cc
-27FAE	j_j_j_j_j_j_j_j_j_j_j_stopAttack
-27FB3	j_j_j_j_j_j_j_j_j_j_j_introSequence
-27FB8	j_j_j_j_j_j_j_j_j_j_j_protectionHandler
-2802A	j_j_j_indexEvents
-28034	j_ifProc
-28057	j_j_j_j_j_j_j_j_j_j_j_subPartyTime
-28080	j_j_j_j_j_j_j_j_j_j_j_GiveBankInterest
-28085	j_j_j_j_j_j_j_j_j_j_j_death
-2808A	j_j_j_j_j_j_j_j_j_j_j_Spells_moonRay
-2808F	j_j_j_j_j_j_j_j_j_j_j_showJoke
-28094	j_j_j_j_j_j_j_j_j_j_j_arenaEvent
-280A8	j_j_j_j_j_j_j_j_j_j_resetTemps
-280F9	j_j_j_j_j_j_j_j_j_j_j_sortParty
-28112	j_j_j_j_j_j_j_j_j_j_j_copyPartyToRoster
-28121	j_j_j_j_j_j_j_j_j_j_j_Awards_show
-28126	j_j_j_j_j_j_j_j_j_j_j_rosterMenu
-2813A	j_j_j_j_j_j_j_j_j_j_j_setSoundAddress
-2818F	j_j_j_j_j_j_j_j_j_j_j_getCurrentExperience
-281B7	j_j_j_j_j_j_j_j_j_j_j_controlPanel
-281C1	j_j_j_j_j_j_j_j_j_j_j_nextExperienceLevel
-281C6	j_j_j_j_j_j_j_j_j_j_j_rest
-281F8	j_j_j_j_j_j_j_j_j_j_j_experienceToNextLevel
-2823A	j_j_j_j_j_j_j_j_j_j_j_giveCharDamage
-2823F	j_j_j_j_j_j_j_j_j_j_j_Map_load
-28244	j_j_j_saveMazeState
-28271	j_j_j_j_j_j_j_j_j_j_j__strcoll
-28276	j_j_j_j_j_j_j_j_j_j_j_dismissCharacter
-282C0	j_j_j_j_j_j_j_j_j_j_j_createCharacter
-28306	j_j_j_j_j_j_j_j_j_j_j_checkClasses
-28335	j_j_j_j_j_j_j_j_j_j_j_trainingNeedsExperience
-2833F	j_j_j_j_j_j_j_j_j_j_j_townInn
-2834E	j_j_j_j_j_j_j_j_j_j_j_townBank
-28358	j_j_j_j_j_j_j_j_j_j_j_townGuild
-2836C	j_j_j_j_j_j_j_j_j_j_j_townTavern
-28371	j_j_j_j_j_j_j_j_j_j_j_townTraining
-28376	j_j_j_j_j_j_j_j_j_j_j_townSmithy
-28380	j_j_j_j_j_j_j_j_j_j_j_loadHireFaces
-283B5	j_j_j_j_j_j_j_j_j_j_j_setSpeedTable
-283BF	j_j_j_j_j_j_j_j_j_j_j_getWeaponDamage
-283C9	j_j_j_j_j_j_j_j_j_j_j_block
-283CE	j_j_j_j_j_j_j_j_j_j_j_getMonsterDescriptions
-283D3	j_j_j_j_j_j_j_j_j_j_j_attack
-283E2	j_j_j_j_j_j_j_j_j_j_j_doMonsterTurn
-283E7	j_j_j_j_j_j_j_j_j_j_j_run
-283F1	j_j_j_j_j_j_j_j_j_j_j_nextChar
-283F6	j_j_j_j_j_j_j_j_j_j_j_charsCantAct
-283FB	j_j_j_j_j_j_j_j_j_j_j_allHaveGone
-28400	j_j_j_j_j_j_j_j_j_j_j_sortCombatParty
-2840A	j_j_j_j_j_j_j_j_j_j_j_quickFight
-28414	j_j_j_j_j_j_j_j_j_j_j_monsterSavingThrow
-28464	j_j_j_j_j_j_j_j_j_j_j_Spells_subSpellCost
-28509	j_j_j_j_j_j_j_j_j_j_j_Spells_divineIntervention
-28545	j_j_j_j_j_j_j_j_j_j_j_Screen_saveBackground
-28572	j_j_j_j_j_j_j_j_j_j_j_spellLloydsBeacon
-28644	j_j_j_j_j_j_j_j_j_j_j_itemsDialog
-28662	j_j_j_j_j_j_j_j_j_j_j_specialsDialog
-28667	j_j_j_j_j_j_j_j_j_j_j_getThievery
-286AE	j_j_j_j_j_j_j_j_j_j_j_statColor
-286BD	j_j_j_j_j_j_j_j_j_j_j_getMaxSP
-286C2	j_j_j_j_j_j_j_j_j_j_j_getMaxHP
-286CC	j_j_j_j_j_j_j_j_j_j_j_getArmorClass
-286E0	j_j_j_j_j_j_j_j_j_j_j_identifyOrFix
-286E5	j_j_j_j_j_j_j_j_j_j_j_getNumSkills
 28780	segx
 2879E	Party_newDay	byte
 2884B	Maze_wrapMode	byte; non-zero = off-map cells wrap/return 0 instead of 1111h
@@ -488,11 +419,23 @@
 2ACF4	MAZE_SLOT_Y	y origin (0 or 16) of each page slot
 2AE3E	Maze_slotIds	4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats
 2AE42	MAP_MONSTER_PICS	3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)
+2D26C	Combat_target	byte, index of the monster being attacked
 2E199	RACE_SP_BONUSES	[race*2 + attrib]
 2E1A4	RACE_HP_BONUSES	indexed by race
 30FA0	__ctype
+319EA	Combat_hitBonus	byte, hit chance bonus
 32E5A	Maze_evtData	far pointer to the loaded maze%02u.evt
 32E7A	Maze_textData	far pointer to the loaded text%02u.maz
+332AA	Combat_weaponDamage	word
+333B1	Combat_partySize	byte, size of the combat party (Engine_mode 2)
+33460	Mon_y	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+335B4	Mon_x	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+33708	Mon_counter	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+3385C	Mon_dir	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+339B0	Mon_flags2	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+33B04	Mon_hpCur	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+33DAC	Mon_id	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+33F00	Mon_status	word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
 340C6	Party_chars	active party records, stride 12Fh (303 bytes); +120h = Dead condition
 34C10	Engine_mode	byte; 9 skips the daily rest/reset handling (script in progress)
 34C2E	Maze_curSlot	byte 0-3: which of the 4 loaded 16x16 pages (2x2 world) the party is in
@@ -652,8 +595,12 @@
 49368	townTraining	grounds.m, train.icn
 49730	townSmithy	dungeon.m ("Sorry, the Smithy's closed")
 49915	loadHireFaces	hire%u.fac, eface%02u.out
+49B60	getDamageScale	(v<10 -> 0, <50 -> 1, <200 -> 2, else 3); differs from Xeen's version
+49B8B	attack2	(Xeen Combat::attack2) by position and size, unverified
 49F6C	def_49F15
 49F8B	jpt_49F15
+49FA3	giveExperience	splits experience over the living party (2 passes), adds to +12Bh; combat party if Engine_mode==2
+4A02A	getMonsterResistance	resistance scaling by spell/damage type via Mon_fire/elec/cold/acid/ener/phys/magi (Xeen Combat::getMonsterResistance)
 4A100	def_4A09E
 4A122	jpt_4A09E
 4A130	attack	(BinDiff sim .54 conf .91, unverified)
@@ -665,8 +612,10 @@
 4A5BA	def_4A5B5
 4A5D3	jpt_4A5B5
 4A5DD	sortCombatParty	(BinDiff sim .81 conf .90, unverified)
+4A62C	charSavingThrow	(BinDiff .60/.61, unverified)
 4A74B	def_4A67A
 4A76D	jpt_4A67A
+4A779	doCharDamage	(BinDiff .34/.58, unverified)
 4A856	def_4A7F5
 4AB1C	def_4A8EE
 4AB3C	jpt_4A8EE
@@ -691,12 +640,15 @@
 4B134	quickFight
 4B189	def_4B15C
 4B18C	jpt_4B15C
+4B194	hitMonster	identical to Xeen Combat::hitMonster: statBonus(accuracy)+bonus+level/divisor(class)+d20 (re-roll on 20) - cursed >= AC+10
 4B1F2	def_4B1DB
 4B26F	jpt_4B1DB
 4B283	getWeaponDamage	(BinDiff sim .72 conf .94, unverified)
+4B37C	getMonsterDamage	max(statBonus(might)+weaponDamage,1)
 4B3AB	monsterSavingThrow
 4B3D1	run
 4B422	block	(BinDiff sim .64 conf .90, unverified)
+4B432	monster_getTextColor	(BinDiff .84/.86, unverified)
 4B478	getMonsterDescriptions
 4B5AF	setSpeedTable
 4B94B	def_4B911

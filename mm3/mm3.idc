@@ -13883,35 +13883,35 @@ static Bytes_2(void) {
 	create_insn	(0X27F4A);
 	create_insn	(0X27F4F);
 	create_insn	(0X27F54);
-	set_name	(0X27F54,	"j_j_j_j_j_j_j_j_j_j_resetBlacksmithWares");
+	set_name	(0X27F54,	"j_resetBlacksmithWares");
 	create_insn	(0X27F59);
-	set_name	(0X27F59,	"j_j_j_j_j_j_j_j_j_j_j_getDiskFree");
+	set_name	(0X27F59,	"j_getDiskFree");
 	create_insn	(0X27F5E);
 	create_insn	(0X27F63);
 	create_insn	(0X27F68);
-	set_name	(0X27F68,	"j_j_j_j_j_j_j_j_j_j_j_monstersAttack");
+	set_name	(0X27F68,	"j_monstersAttack");
 	create_insn	(0X27F6D);
 	create_insn	(0X27F72);
 	create_insn	(0X27F77);
 	create_insn	(0X27F7C);
 	create_insn	(0X27F81);
-	set_name	(0X27F81,	"j_j_j_j_j_j_j_j_j_j_j_getEquipSlotName");
+	set_name	(0X27F81,	"j_getEquipSlotName");
 	create_insn	(0X27F86);
 	create_insn	(0X27F8B);
 	create_insn	(0X27F90);
-	set_name	(0X27F90,	"j_j_j_j_j_j_j_j_j_j_j_equipItem");
+	set_name	(0X27F90,	"j_equipItem");
 	create_insn	(0X27F95);
 	create_insn	(0X27F9A);
 	create_insn	(0X27F9F);
-	set_name	(0X27F9F,	"j_j_j_j_j_j_j_j_j_j_j_openMm3Cc");
+	set_name	(0X27F9F,	"j_openMm3Cc");
 	create_insn	(0X27FA4);
 	create_insn	(0X27FA9);
 	create_insn	(0X27FAE);
-	set_name	(0X27FAE,	"j_j_j_j_j_j_j_j_j_j_j_stopAttack");
+	set_name	(0X27FAE,	"j_stopAttack");
 	create_insn	(0X27FB3);
-	set_name	(0X27FB3,	"j_j_j_j_j_j_j_j_j_j_j_introSequence");
+	set_name	(0X27FB3,	"j_introSequence");
 	create_insn	(0X27FB8);
-	set_name	(0X27FB8,	"j_j_j_j_j_j_j_j_j_j_j_protectionHandler");
+	set_name	(0X27FB8,	"j_protectionHandler");
 	create_insn	(0X27FBD);
 	create_insn	(0X27FC2);
 	MakeStruct	(0X27FD0,	"_stub_descr");
@@ -13921,7 +13921,7 @@ static Bytes_2(void) {
 	create_insn	(0X28020);
 	create_insn	(0X28025);
 	create_insn	(0X2802A);
-	set_name	(0X2802A,	"j_j_j_indexEvents");
+	set_name	(0X2802A,	"j_indexEvents");
 	create_insn	(0X2802F);
 	create_insn	(0X28034);
 	set_name	(0X28034,	"j_ifProc");
@@ -13932,23 +13932,23 @@ static Bytes_2(void) {
 	create_insn	(0X2804D);
 	create_insn	(0X28052);
 	create_insn	(0X28057);
-	set_name	(0X28057,	"j_j_j_j_j_j_j_j_j_j_j_subPartyTime");
+	set_name	(0X28057,	"j_subPartyTime");
 	MakeStruct	(0X28060,	"_stub_descr");
 	create_insn	(0X28080);
-	set_name	(0X28080,	"j_j_j_j_j_j_j_j_j_j_j_GiveBankInterest");
+	set_name	(0X28080,	"j_GiveBankInterest");
 	create_insn	(0X28085);
-	set_name	(0X28085,	"j_j_j_j_j_j_j_j_j_j_j_death");
+	set_name	(0X28085,	"j_death");
 	create_insn	(0X2808A);
-	set_name	(0X2808A,	"j_j_j_j_j_j_j_j_j_j_j_Spells_moonRay");
+	set_name	(0X2808A,	"j_Spells_moonRay");
 	create_insn	(0X2808F);
-	set_name	(0X2808F,	"j_j_j_j_j_j_j_j_j_j_j_showJoke");
+	set_name	(0X2808F,	"j_showJoke");
 	create_insn	(0X28094);
-	set_name	(0X28094,	"j_j_j_j_j_j_j_j_j_j_j_arenaEvent");
+	set_name	(0X28094,	"j_arenaEvent");
 	create_insn	(0X28099);
 	create_insn	(0X2809E);
 	create_insn	(0X280A3);
 	create_insn	(0X280A8);
-	set_name	(0X280A8,	"j_j_j_j_j_j_j_j_j_j_resetTemps");
+	set_name	(0X280A8,	"j_resetTemps");
 	create_insn	(0X280AD);
 	create_insn	(0X280B2);
 	MakeStruct	(0X280C0,	"_stub_descr");
@@ -13958,24 +13958,24 @@ static Bytes_2(void) {
 	create_insn	(0X280EF);
 	create_insn	(0X280F4);
 	create_insn	(0X280F9);
-	set_name	(0X280F9,	"j_j_j_j_j_j_j_j_j_j_j_sortParty");
+	set_name	(0X280F9,	"j_sortParty");
 	create_insn	(0X280FE);
 	create_insn	(0X28103);
 	create_insn	(0X28108);
 	create_insn	(0X2810D);
 	create_insn	(0X28112);
-	set_name	(0X28112,	"j_j_j_j_j_j_j_j_j_j_j_copyPartyToRoster");
+	set_name	(0X28112,	"j_copyPartyToRoster");
 	create_insn	(0X28117);
 	create_insn	(0X2811C);
 	create_insn	(0X28121);
-	set_name	(0X28121,	"j_j_j_j_j_j_j_j_j_j_j_Awards_show");
+	set_name	(0X28121,	"j_Awards_show");
 	create_insn	(0X28126);
-	set_name	(0X28126,	"j_j_j_j_j_j_j_j_j_j_j_rosterMenu");
+	set_name	(0X28126,	"j_rosterMenu");
 	create_insn	(0X2812B);
 	create_insn	(0X28130);
 	create_insn	(0X28135);
 	create_insn	(0X2813A);
-	set_name	(0X2813A,	"j_j_j_j_j_j_j_j_j_j_j_setSoundAddress");
+	set_name	(0X2813A,	"j_setSoundAddress");
 	create_insn	(0X2813F);
 	create_insn	(0X28144);
 	create_insn	(0X28149);
@@ -13985,7 +13985,7 @@ static Bytes_2(void) {
 	create_insn	(0X28185);
 	create_insn	(0X2818A);
 	create_insn	(0X2818F);
-	set_name	(0X2818F,	"j_j_j_j_j_j_j_j_j_j_j_getCurrentExperience");
+	set_name	(0X2818F,	"j_getCurrentExperience");
 	create_insn	(0X28194);
 	create_insn	(0X28199);
 	create_insn	(0X2819E);
@@ -13994,12 +13994,12 @@ static Bytes_2(void) {
 	create_insn	(0X281AD);
 	create_insn	(0X281B2);
 	create_insn	(0X281B7);
-	set_name	(0X281B7,	"j_j_j_j_j_j_j_j_j_j_j_controlPanel");
+	set_name	(0X281B7,	"j_controlPanel");
 	create_insn	(0X281BC);
 	create_insn	(0X281C1);
-	set_name	(0X281C1,	"j_j_j_j_j_j_j_j_j_j_j_nextExperienceLevel");
+	set_name	(0X281C1,	"j_nextExperienceLevel");
 	create_insn	(0X281C6);
-	set_name	(0X281C6,	"j_j_j_j_j_j_j_j_j_j_j_rest");
+	set_name	(0X281C6,	"j_rest");
 	create_insn	(0X281CB);
 	create_insn	(0X281D0);
 	create_insn	(0X281D5);
@@ -14010,7 +14010,7 @@ static Bytes_2(void) {
 	create_insn	(0X281EE);
 	create_insn	(0X281F3);
 	create_insn	(0X281F8);
-	set_name	(0X281F8,	"j_j_j_j_j_j_j_j_j_j_j_experienceToNextLevel");
+	set_name	(0X281F8,	"j_experienceToNextLevel");
 	create_insn	(0X281FD);
 	create_insn	(0X28202);
 	create_insn	(0X28207);
@@ -14018,11 +14018,11 @@ static Bytes_2(void) {
 	create_insn	(0X28230);
 	create_insn	(0X28235);
 	create_insn	(0X2823A);
-	set_name	(0X2823A,	"j_j_j_j_j_j_j_j_j_j_j_giveCharDamage");
+	set_name	(0X2823A,	"j_giveCharDamage");
 	create_insn	(0X2823F);
-	set_name	(0X2823F,	"j_j_j_j_j_j_j_j_j_j_j_Map_load");
+	set_name	(0X2823F,	"j_Map_load");
 	create_insn	(0X28244);
-	set_name	(0X28244,	"j_j_j_saveMazeState");
+	set_name	(0X28244,	"j_saveMazeState");
 	create_insn	(0X28249);
 	create_insn	(0X2824E);
 	create_insn	(0X28253);
@@ -14032,9 +14032,9 @@ static Bytes_2(void) {
 	create_insn	(0X28267);
 	create_insn	(0X2826C);
 	create_insn	(0X28271);
-	set_name	(0X28271,	"j_j_j_j_j_j_j_j_j_j_j__strcoll");
+	set_name	(0X28271,	"j__strcoll");
 	create_insn	(0X28276);
-	set_name	(0X28276,	"j_j_j_j_j_j_j_j_j_j_j_dismissCharacter");
+	set_name	(0X28276,	"j_dismissCharacter");
 	create_insn	(0X2827B);
 	create_insn	(0X28280);
 	create_insn	(0X28285);
@@ -14042,7 +14042,7 @@ static Bytes_2(void) {
 	create_insn	(0X2828F);
 	MakeStruct	(0X282A0,	"_stub_descr");
 	create_insn	(0X282C0);
-	set_name	(0X282C0,	"j_j_j_j_j_j_j_j_j_j_j_createCharacter");
+	set_name	(0X282C0,	"j_createCharacter");
 	create_insn	(0X282C5);
 	create_insn	(0X282CA);
 	create_insn	(0X282CF);
@@ -14057,78 +14057,87 @@ static Bytes_2(void) {
 	create_insn	(0X282FC);
 	create_insn	(0X28301);
 	create_insn	(0X28306);
-	set_name	(0X28306,	"j_j_j_j_j_j_j_j_j_j_j_checkClasses");
+	set_name	(0X28306,	"j_checkClasses");
 	MakeStruct	(0X28310,	"_stub_descr");
 	create_insn	(0X28330);
 	create_insn	(0X28335);
-	set_name	(0X28335,	"j_j_j_j_j_j_j_j_j_j_j_trainingNeedsExperience");
+	set_name	(0X28335,	"j_trainingNeedsExperience");
 	create_insn	(0X2833A);
 	create_insn	(0X2833F);
-	set_name	(0X2833F,	"j_j_j_j_j_j_j_j_j_j_j_townInn");
+	set_name	(0X2833F,	"j_townInn");
 	create_insn	(0X28344);
 	create_insn	(0X28349);
 	create_insn	(0X2834E);
-	set_name	(0X2834E,	"j_j_j_j_j_j_j_j_j_j_j_townBank");
+	set_name	(0X2834E,	"j_townBank");
 	create_insn	(0X28353);
 	create_insn	(0X28358);
-	set_name	(0X28358,	"j_j_j_j_j_j_j_j_j_j_j_townGuild");
+	set_name	(0X28358,	"j_townGuild");
 	create_insn	(0X2835D);
 	create_insn	(0X28362);
 	create_insn	(0X28367);
 	create_insn	(0X2836C);
-	set_name	(0X2836C,	"j_j_j_j_j_j_j_j_j_j_j_townTavern");
+	set_name	(0X2836C,	"j_townTavern");
 	create_insn	(0X28371);
-	set_name	(0X28371,	"j_j_j_j_j_j_j_j_j_j_j_townTraining");
+	set_name	(0X28371,	"j_townTraining");
 	create_insn	(0X28376);
-	set_name	(0X28376,	"j_j_j_j_j_j_j_j_j_j_j_townSmithy");
+	set_name	(0X28376,	"j_townSmithy");
 	create_insn	(0X2837B);
 	create_insn	(0X28380);
-	set_name	(0X28380,	"j_j_j_j_j_j_j_j_j_j_j_loadHireFaces");
+	set_name	(0X28380,	"j_loadHireFaces");
 	create_insn	(0X28385);
 	MakeStruct	(0X28390,	"_stub_descr");
 	create_insn	(0X283B0);
 	create_insn	(0X283B5);
-	set_name	(0X283B5,	"j_j_j_j_j_j_j_j_j_j_j_setSpeedTable");
+	set_name	(0X283B5,	"j_setSpeedTable");
 	create_insn	(0X283BA);
+	set_name	(0X283BA,	"j_getDamageScale");
 	create_insn	(0X283BF);
-	set_name	(0X283BF,	"j_j_j_j_j_j_j_j_j_j_j_getWeaponDamage");
+	set_name	(0X283BF,	"j_getWeaponDamage");
 	create_insn	(0X283C4);
+	set_name	(0X283C4,	"j_monster_getTextColor");
 	create_insn	(0X283C9);
-	set_name	(0X283C9,	"j_j_j_j_j_j_j_j_j_j_j_block");
+	set_name	(0X283C9,	"j_block");
 	create_insn	(0X283CE);
-	set_name	(0X283CE,	"j_j_j_j_j_j_j_j_j_j_j_getMonsterDescriptions");
+	set_name	(0X283CE,	"j_getMonsterDescriptions");
 	create_insn	(0X283D3);
-	set_name	(0X283D3,	"j_j_j_j_j_j_j_j_j_j_j_attack");
+	set_name	(0X283D3,	"j_attack");
 	create_insn	(0X283D8);
+	set_name	(0X283D8,	"j_attack2");
 	create_insn	(0X283DD);
+	set_name	(0X283DD,	"j_doCharDamage");
 	create_insn	(0X283E2);
-	set_name	(0X283E2,	"j_j_j_j_j_j_j_j_j_j_j_doMonsterTurn");
+	set_name	(0X283E2,	"j_doMonsterTurn");
 	create_insn	(0X283E7);
-	set_name	(0X283E7,	"j_j_j_j_j_j_j_j_j_j_j_run");
+	set_name	(0X283E7,	"j_run");
 	create_insn	(0X283EC);
+	set_name	(0X283EC,	"j_hitMonster");
 	create_insn	(0X283F1);
-	set_name	(0X283F1,	"j_j_j_j_j_j_j_j_j_j_j_nextChar");
+	set_name	(0X283F1,	"j_nextChar");
 	create_insn	(0X283F6);
-	set_name	(0X283F6,	"j_j_j_j_j_j_j_j_j_j_j_charsCantAct");
+	set_name	(0X283F6,	"j_charsCantAct");
 	create_insn	(0X283FB);
-	set_name	(0X283FB,	"j_j_j_j_j_j_j_j_j_j_j_allHaveGone");
+	set_name	(0X283FB,	"j_allHaveGone");
 	create_insn	(0X28400);
-	set_name	(0X28400,	"j_j_j_j_j_j_j_j_j_j_j_sortCombatParty");
+	set_name	(0X28400,	"j_sortCombatParty");
 	create_insn	(0X28405);
+	set_name	(0X28405,	"j_giveExperience");
 	create_insn	(0X2840A);
-	set_name	(0X2840A,	"j_j_j_j_j_j_j_j_j_j_j_quickFight");
+	set_name	(0X2840A,	"j_quickFight");
 	create_insn	(0X2840F);
+	set_name	(0X2840F,	"j_getMonsterResistance");
 	create_insn	(0X28414);
-	set_name	(0X28414,	"j_j_j_j_j_j_j_j_j_j_j_monsterSavingThrow");
+	set_name	(0X28414,	"j_monsterSavingThrow");
 	create_insn	(0X28419);
+	set_name	(0X28419,	"j_charSavingThrow");
 	create_insn	(0X2841E);
+	set_name	(0X2841E,	"j_getMonsterDamage");
 	MakeStruct	(0X28430,	"_stub_descr");
 	create_insn	(0X28450);
 	create_insn	(0X28455);
 	create_insn	(0X2845A);
 	create_insn	(0X2845F);
 	create_insn	(0X28464);
-	set_name	(0X28464,	"j_j_j_j_j_j_j_j_j_j_j_Spells_subSpellCost");
+	set_name	(0X28464,	"j_Spells_subSpellCost");
 	create_insn	(0X28469);
 	create_insn	(0X2846E);
 	create_insn	(0X28473);
@@ -14162,7 +14171,7 @@ static Bytes_2(void) {
 	create_insn	(0X284FF);
 	create_insn	(0X28504);
 	create_insn	(0X28509);
-	set_name	(0X28509,	"j_j_j_j_j_j_j_j_j_j_j_Spells_divineIntervention");
+	set_name	(0X28509,	"j_Spells_divineIntervention");
 	create_insn	(0X2850E);
 	create_insn	(0X28513);
 	create_insn	(0X28518);
@@ -14175,7 +14184,7 @@ static Bytes_2(void) {
 	create_insn	(0X2853B);
 	create_insn	(0X28540);
 	create_insn	(0X28545);
-	set_name	(0X28545,	"j_j_j_j_j_j_j_j_j_j_j_Screen_saveBackground");
+	set_name	(0X28545,	"j_Screen_saveBackground");
 	create_insn	(0X2854A);
 	create_insn	(0X2854F);
 	create_insn	(0X28554);
@@ -14185,7 +14194,7 @@ static Bytes_2(void) {
 	create_insn	(0X28568);
 	create_insn	(0X2856D);
 	create_insn	(0X28572);
-	set_name	(0X28572,	"j_j_j_j_j_j_j_j_j_j_j_spellLloydsBeacon");
+	set_name	(0X28572,	"j_spellLloydsBeacon");
 	create_insn	(0X28577);
 	create_insn	(0X2857C);
 	create_insn	(0X28581);
@@ -14221,16 +14230,16 @@ static Bytes_2(void) {
 	create_insn	(0X2863A);
 	create_insn	(0X2863F);
 	create_insn	(0X28644);
-	set_name	(0X28644,	"j_j_j_j_j_j_j_j_j_j_j_itemsDialog");
+	set_name	(0X28644,	"j_itemsDialog");
 	create_insn	(0X28649);
 	create_insn	(0X2864E);
 	create_insn	(0X28653);
 	create_insn	(0X28658);
 	create_insn	(0X2865D);
 	create_insn	(0X28662);
-	set_name	(0X28662,	"j_j_j_j_j_j_j_j_j_j_j_specialsDialog");
+	set_name	(0X28662,	"j_specialsDialog");
 	create_insn	(0X28667);
-	set_name	(0X28667,	"j_j_j_j_j_j_j_j_j_j_j_getThievery");
+	set_name	(0X28667,	"j_getThievery");
 	MakeStruct	(0X28670,	"_stub_descr");
 	create_insn	(0X28690);
 	create_insn	(0X28695);
@@ -14239,23 +14248,23 @@ static Bytes_2(void) {
 	create_insn	(0X286A4);
 	create_insn	(0X286A9);
 	create_insn	(0X286AE);
-	set_name	(0X286AE,	"j_j_j_j_j_j_j_j_j_j_j_statColor");
+	set_name	(0X286AE,	"j_statColor");
 	create_insn	(0X286B3);
 	create_insn	(0X286B8);
 	create_insn	(0X286BD);
-	set_name	(0X286BD,	"j_j_j_j_j_j_j_j_j_j_j_getMaxSP");
+	set_name	(0X286BD,	"j_getMaxSP");
 	create_insn	(0X286C2);
-	set_name	(0X286C2,	"j_j_j_j_j_j_j_j_j_j_j_getMaxHP");
+	set_name	(0X286C2,	"j_getMaxHP");
 	create_insn	(0X286C7);
 	create_insn	(0X286CC);
-	set_name	(0X286CC,	"j_j_j_j_j_j_j_j_j_j_j_getArmorClass");
+	set_name	(0X286CC,	"j_getArmorClass");
 	create_insn	(0X286D1);
 	create_insn	(0X286D6);
 	create_insn	(0X286DB);
 	create_insn	(0X286E0);
-	set_name	(0X286E0,	"j_j_j_j_j_j_j_j_j_j_j_identifyOrFix");
+	set_name	(0X286E0,	"j_identifyOrFix");
 	create_insn	(0X286E5);
-	set_name	(0X286E5,	"j_j_j_j_j_j_j_j_j_j_j_getNumSkills");
+	set_name	(0X286E5,	"j_getNumSkills");
 	create_word	(0X286F0);
 	create_word	(0X286F2);
 	create_word	(0X286F4);
@@ -14860,15 +14869,6 @@ static Bytes_2(void) {
 	set_name	(0X2B683,	"aYouCannotDelet");
 	create_strlit	(0X2B6A1,	0X15);
 	set_name	(0X2B6A1,	"aYourRosterIsFu");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X2B6B6,	0X42);
 	set_name	(0X2B6B6,	"a007youMustHave_0");
 	create_strlit	(0X2B6F8,	0X2);
@@ -14929,6 +14929,15 @@ static Bytes_3(void) {
 	set_name	(0X2BB65,	"aAreYouSureYouW_1");
 	create_byte	(0X2BB8E);
 	make_array	(0X2BB8E,	0X92);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2BC20,	0X14);
 	set_name	(0X2BC20,	"aL024walkOnWate");
 	create_strlit	(0X2BC34,	0XF);
@@ -15118,7 +15127,9 @@ static Bytes_3(void) {
 	set_name	(0X2D240,	"a12479Aden");
 	create_byte	(0X2D252);
 	make_array	(0X2D252,	0X1A);
+	set_cmt	(0X2D26C,	"byte, index of the monster being attacked",	0);
 	create_byte	(0X2D26C);
+	set_name	(0X2D26C,	"Combat_target");
 	create_byte	(0X2D26D);
 	make_array	(0X2D26D,	0X2);
 	create_word	(0X2D26F);
@@ -17123,7 +17134,9 @@ static Bytes_3(void) {
 	create_byte	(0X319E5);
 	create_word	(0X319E6);
 	create_word	(0X319E8);
+	set_cmt	(0X319EA,	"byte, hit chance bonus",	0);
 	create_byte	(0X319EA);
+	set_name	(0X319EA,	"Combat_hitBonus");
 	create_byte	(0X319EB);
 	make_array	(0X319EB,	0X13BB);
 	create_word	(0X32DA6);
@@ -17215,7 +17228,9 @@ static Bytes_3(void) {
 	create_byte	(0X332A7);
 	create_byte	(0X332A8);
 	create_byte	(0X332A9);
+	set_cmt	(0X332AA,	"word",	0);
 	create_word	(0X332AA);
+	set_name	(0X332AA,	"Combat_weaponDamage");
 	create_word	(0X332AC);
 	create_byte	(0X332AE);
 	create_byte	(0X332AF);
@@ -17302,7 +17317,9 @@ static Bytes_3(void) {
 	create_byte	(0X333AE);
 	create_byte	(0X333AF);
 	create_byte	(0X333B0);
+	set_cmt	(0X333B1,	"byte, size of the combat party (Engine_mode 2)",	0);
 	create_byte	(0X333B1);
+	set_name	(0X333B1,	"Combat_partySize");
 	create_byte	(0X333B2);
 	create_byte	(0X333B3);
 	create_byte	(0X333B4);
@@ -17344,8 +17361,24 @@ static Bytes_3(void) {
 	create_byte	(0X3345C);
 	create_byte	(0X3345D);
 	create_byte	(0X3345E);
-	create_byte	(0X3345F);
-	make_array	(0X3345F,	0XBF5);
+	set_cmt	(0X33460,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	create_byte	(0X33460);
+	make_array	(0X33460,	0X154);
+	set_name	(0X33460,	"Mon_y");
+	set_cmt	(0X335B4,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X335B4,	"Mon_x");
+	set_cmt	(0X33708,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X33708,	"Mon_counter");
+	set_cmt	(0X3385C,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X3385C,	"Mon_dir");
+	set_cmt	(0X339B0,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X339B0,	"Mon_flags2");
+	set_cmt	(0X33B04,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X33B04,	"Mon_hpCur");
+	set_cmt	(0X33DAC,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X33DAC,	"Mon_id");
+	set_cmt	(0X33F00,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
+	set_name	(0X33F00,	"Mon_status");
 	create_byte	(0X34054);
 	create_word	(0X34056);
 	create_word	(0X34058);
@@ -18647,6 +18680,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X39032);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X39039,	"buffer",	0);
 	create_insn	(x=0X3903F);
 	op_hex		(x,	1);
@@ -18668,15 +18710,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X390E3);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X390E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X390F4);
@@ -23596,6 +23629,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X410E6);
 	op_stkvar	(x,	0);
 	create_insn	(0X410F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X410F6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X41100);
@@ -23612,15 +23654,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X41148,	"int",	0);
 	set_cmt	(0X4114B,	"int",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X41150);
 	op_hex		(x,	1);
 	create_insn	(x=0X41153);
@@ -29178,6 +29211,15 @@ static Bytes_5(void) {
 	op_plain_offset	(x,	129,	0X286F0);
 	set_cmt	(0X48BC5,	"format",	0);
 	set_cmt	(0X48BCD,	"buffer",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48BD3);
 	op_hex		(x,	1);
 	create_insn	(0X48BEE);
@@ -29195,15 +29237,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_byte	(0X48CB3);
 	make_array	(0X48CB3,	0X44);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X48CF7);
 	create_insn	(x=0X48CFA);
 	op_hex		(x,	1);
@@ -29801,12 +29834,14 @@ static Bytes_6(void) {
 	create_byte	(0X49B40);
 	make_array	(0X49B40,	0X14);
 	create_insn	(0X49B60);
+	set_name	(0X49B60,	"getDamageScale");
 	create_insn	(x=0X49B64);
 	op_stkvar	(x,	1);
 	create_insn	(0X49B70);
 	create_insn	(0X49B7A);
 	create_insn	(0X49B85);
 	create_insn	(0X49B8B);
+	set_name	(0X49B8B,	"attack2");
 	create_insn	(x=0X49B8E);
 	op_hex		(x,	1);
 	create_insn	(x=0X49B93);
@@ -29953,6 +29988,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X49B60);
 	set_name	(0X49F8B,	"jpt_49F15");
 	create_insn	(0X49FA3);
+	set_name	(0X49FA3,	"giveExperience");
 	create_insn	(x=0X49FA6);
 	op_hex		(x,	1);
 	create_insn	(0X49FB7);
@@ -29980,6 +30016,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4A019);
 	op_stkvar	(x,	1);
 	create_insn	(0X4A02A);
+	set_name	(0X4A02A,	"getMonsterResistance");
 	create_insn	(x=0X4A02F);
 	op_stkvar	(x,	1);
 	create_insn	(0X4A056);
@@ -30295,6 +30332,7 @@ static Bytes_6(void) {
 	create_insn	(0X4A5F4);
 	create_insn	(0X4A617);
 	create_insn	(0X4A62C);
+	set_name	(0X4A62C,	"charSavingThrow");
 	create_insn	(x=0X4A631);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A638);
@@ -30372,6 +30410,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X49B60);
 	set_name	(0X4A76D,	"jpt_4A67A");
 	create_insn	(0X4A779);
+	set_name	(0X4A779,	"doCharDamage");
 	create_insn	(x=0X4A77C);
 	op_hex		(x,	1);
 	create_insn	(x=0X4A781);
@@ -30886,6 +30925,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X49B60);
 	set_name	(0X4B18C,	"jpt_4B15C");
 	create_insn	(0X4B194);
+	set_name	(0X4B194,	"hitMonster");
 	create_insn	(x=0X4B19B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B19E);
@@ -30953,6 +30993,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X4B369);
 	create_insn	(0X4B37C);
+	set_name	(0X4B37C,	"getMonsterDamage");
 	create_insn	(x=0X4B385);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4B38D);
@@ -30972,6 +31013,7 @@ static Bytes_6(void) {
 	create_insn	(0X4B422);
 	set_name	(0X4B422,	"block");
 	create_insn	(0X4B432);
+	set_name	(0X4B432,	"monster_getTextColor");
 	create_insn	(x=0X4B437);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4B43C);
@@ -33966,6 +34008,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5035B);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X50361);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X5036C);
@@ -34006,15 +34057,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5043C);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X5044B);
 	create_insn	(x=0X50453);
 	op_stkvar	(x,	1);
@@ -37084,7 +37126,7 @@ static Functions_0(void) {
 	set_frame_size(0X2811C, 0, 0, 0);
 	add_func    (0X28121,0X28126);
 	set_func_flags(0X28121,0x54c2);
-	SetType(0X28121, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_Awards_show(int, int);");
+	SetType(0X28121, "int __cdecl __far j_Awards_show(int, int);");
 	set_frame_size(0X28121, 0, 0, 0);
 	add_func    (0X28126,0X2812B);
 	set_func_flags(0X28126,0x54c2);
@@ -37215,7 +37257,7 @@ static Functions_0(void) {
 	set_frame_size(0X2823A, 0, 0, 0);
 	add_func    (0X2823F,0X28244);
 	set_func_flags(0X2823F,0x54c2);
-	SetType(0X2823F, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_Map_load(char *format);");
+	SetType(0X2823F, "int __cdecl __far j_Map_load(char *format);");
 	set_frame_size(0X2823F, 0, 0, 0);
 	add_func    (0X28244,0X28249);
 	set_func_flags(0X28244,0x54c2);
@@ -37249,7 +37291,7 @@ static Functions_0(void) {
 	set_frame_size(0X2826C, 0, 0, 0);
 	add_func    (0X28271,0X28276);
 	set_func_flags(0X28271,0x54c2);
-	SetType(0X28271, "int __cdecl j_j_j_j_j_j_j_j_j_j_j__strcoll(const char *s1, const char *s2);");
+	SetType(0X28271, "int __cdecl j__strcoll(const char *s1, const char *s2);");
 	set_frame_size(0X28271, 0, 0, 0);
 	add_func    (0X28276,0X2827B);
 	set_func_flags(0X28276,0x54c2);
@@ -37324,7 +37366,7 @@ static Functions_0(void) {
 	set_frame_size(0X28330, 0, 0, 0);
 	add_func    (0X28335,0X2833A);
 	set_func_flags(0X28335,0x54c2);
-	SetType(0X28335, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_trainingNeedsExperience(char *format);");
+	SetType(0X28335, "int __cdecl __far j_trainingNeedsExperience(char *format);");
 	set_frame_size(0X28335, 0, 0, 0);
 	add_func    (0X2833A,0X2833F);
 	set_func_flags(0X2833A,0x5482);
@@ -37372,7 +37414,7 @@ static Functions_0(void) {
 	set_frame_size(0X2837B, 0, 0, 0);
 	add_func    (0X28380,0X28385);
 	set_func_flags(0X28380,0x54c2);
-	SetType(0X28380, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_loadHireFaces(char *format, int, int, int);");
+	SetType(0X28380, "int __cdecl __far j_loadHireFaces(char *format, int, int, int);");
 	set_frame_size(0X28380, 0, 0, 0);
 	add_func    (0X28385,0X2838A);
 	set_func_flags(0X28385,0x5482);
@@ -37385,13 +37427,13 @@ static Functions_0(void) {
 	set_func_flags(0X283B5,0x54c2);
 	set_frame_size(0X283B5, 0, 0, 0);
 	add_func    (0X283BA,0X283BF);
-	set_func_flags(0X283BA,0x5482);
+	set_func_flags(0X283BA,0x54c2);
 	set_frame_size(0X283BA, 0, 0, 0);
 	add_func    (0X283BF,0X283C4);
 	set_func_flags(0X283BF,0x54c2);
 	set_frame_size(0X283BF, 0, 0, 0);
 	add_func    (0X283C4,0X283C9);
-	set_func_flags(0X283C4,0x5482);
+	set_func_flags(0X283C4,0x54c2);
 	set_frame_size(0X283C4, 0, 0, 0);
 	add_func    (0X283C9,0X283CE);
 	set_func_flags(0X283C9,0x54c2);
@@ -37401,13 +37443,13 @@ static Functions_0(void) {
 	set_frame_size(0X283CE, 0, 0, 0);
 	add_func    (0X283D3,0X283D8);
 	set_func_flags(0X283D3,0x54c2);
-	SetType(0X283D3, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_attack(int, int);");
+	SetType(0X283D3, "int __cdecl __far j_attack(int, int);");
 	set_frame_size(0X283D3, 0, 0, 0);
 	add_func    (0X283D8,0X283DD);
-	set_func_flags(0X283D8,0x5482);
+	set_func_flags(0X283D8,0x54c2);
 	set_frame_size(0X283D8, 0, 0, 0);
 	add_func    (0X283DD,0X283E2);
-	set_func_flags(0X283DD,0x5482);
+	set_func_flags(0X283DD,0x54c2);
 	set_frame_size(0X283DD, 0, 0, 0);
 	add_func    (0X283E2,0X283E7);
 	set_func_flags(0X283E2,0x54c2);
@@ -37416,7 +37458,7 @@ static Functions_0(void) {
 	set_func_flags(0X283E7,0x54c2);
 	set_frame_size(0X283E7, 0, 0, 0);
 	add_func    (0X283EC,0X283F1);
-	set_func_flags(0X283EC,0x5482);
+	set_func_flags(0X283EC,0x54c2);
 	set_frame_size(0X283EC, 0, 0, 0);
 	add_func    (0X283F1,0X283F6);
 	set_func_flags(0X283F1,0x54c2);
@@ -37431,22 +37473,22 @@ static Functions_0(void) {
 	set_func_flags(0X28400,0x54c2);
 	set_frame_size(0X28400, 0, 0, 0);
 	add_func    (0X28405,0X2840A);
-	set_func_flags(0X28405,0x5482);
+	set_func_flags(0X28405,0x54c2);
 	set_frame_size(0X28405, 0, 0, 0);
 	add_func    (0X2840A,0X2840F);
 	set_func_flags(0X2840A,0x54c2);
 	set_frame_size(0X2840A, 0, 0, 0);
 	add_func    (0X2840F,0X28414);
-	set_func_flags(0X2840F,0x5482);
+	set_func_flags(0X2840F,0x54c2);
 	set_frame_size(0X2840F, 0, 0, 0);
 	add_func    (0X28414,0X28419);
 	set_func_flags(0X28414,0x54c2);
 	set_frame_size(0X28414, 0, 0, 0);
 	add_func    (0X28419,0X2841E);
-	set_func_flags(0X28419,0x5482);
+	set_func_flags(0X28419,0x54c2);
 	set_frame_size(0X28419, 0, 0, 0);
 	add_func    (0X2841E,0X28423);
-	set_func_flags(0X2841E,0x5482);
+	set_func_flags(0X2841E,0x54c2);
 	set_frame_size(0X2841E, 0, 0, 0);
 	add_func    (0X28450,0X28455);
 	set_func_flags(0X28450,0x5482);
@@ -37724,7 +37766,7 @@ static Functions_0(void) {
 	set_frame_size(0X2863F, 0, 0, 0);
 	add_func    (0X28644,0X28649);
 	set_func_flags(0X28644,0x54c2);
-	SetType(0X28644, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_itemsDialog(char *format, int, int, int);");
+	SetType(0X28644, "int __cdecl __far j_itemsDialog(char *format, int, int, int);");
 	set_frame_size(0X28644, 0, 0, 0);
 	add_func    (0X28649,0X2864E);
 	set_func_flags(0X28649,0x5482);
@@ -37744,7 +37786,7 @@ static Functions_0(void) {
 	set_frame_size(0X2865D, 0, 0, 0);
 	add_func    (0X28662,0X28667);
 	set_func_flags(0X28662,0x54c2);
-	SetType(0X28662, "int __cdecl __far j_j_j_j_j_j_j_j_j_j_j_specialsDialog(int, int);");
+	SetType(0X28662, "int __cdecl __far j_specialsDialog(int, int);");
 	set_frame_size(0X28662, 0, 0, 0);
 	add_func    (0X28667,0X2866C);
 	set_func_flags(0X28667,0x54c2);
@@ -38430,15 +38472,19 @@ static Functions_1(void) {
 	define_local_var(0X49915, 0X49B40, "[bp+0X6]", "format");
 	add_func    (0X49B60,0X49B8B);
 	set_func_flags(0X49B60,0x5412);
+	set_func_cmt(0X49B60,	"(v<10 -> 0, <50 -> 1, <200 -> 2, else 3); differs from Xeen's version", 0);
 	set_frame_size(0X49B60, 0X2, 2, 0);
 	add_func    (0X49B8B,0X49F8B);
 	set_func_flags(0X49B8B,0x5412);
+	set_func_cmt(0X49B8B,	"(Xeen Combat::attack2) by position and size, unverified", 0);
 	set_frame_size(0X49B8B, 0XC, 2, 0);
 	add_func    (0X49FA3,0X4A02A);
 	set_func_flags(0X49FA3,0x5412);
+	set_func_cmt(0X49FA3,	"splits experience over the living party (2 passes), adds to +12Bh; combat party if Engine_mode==2", 0);
 	set_frame_size(0X49FA3, 0XA, 2, 0);
 	add_func    (0X4A02A,0X4A122);
 	set_func_flags(0X4A02A,0x5412);
+	set_func_cmt(0X4A02A,	"resistance scaling by spell/damage type via Mon_fire/elec/cold/acid/ener/phys/magi (Xeen Combat::getMonsterResistance)", 0);
 	set_frame_size(0X4A02A, 0X4, 2, 0);
 	add_func    (0X4A130,0X4A51E);
 	set_func_flags(0X4A130,0x5412);
@@ -38454,9 +38500,11 @@ static Functions_1(void) {
 	set_frame_size(0X4A5DD, 0X4, 2, 0);
 	add_func    (0X4A62C,0X4A76D);
 	set_func_flags(0X4A62C,0x5412);
+	set_func_cmt(0X4A62C,	"(BinDiff .60/.61, unverified)", 0);
 	set_frame_size(0X4A62C, 0X4, 2, 0);
 	add_func    (0X4A779,0X4AB3C);
 	set_func_flags(0X4A779,0x5412);
+	set_func_cmt(0X4A779,	"(BinDiff .34/.58, unverified)", 0);
 	set_frame_size(0X4A779, 0X8, 2, 0);
 	add_func    (0X4AB68,0X4AF1F);
 	set_func_flags(0X4AB68,0x5412);
@@ -38474,6 +38522,7 @@ static Functions_1(void) {
 	set_frame_size(0X4B134, 0X2, 2, 0);
 	add_func    (0X4B194,0X4B26F);
 	set_func_flags(0X4B194,0x5412);
+	set_func_cmt(0X4B194,	"identical to Xeen Combat::hitMonster: statBonus(accuracy)+bonus+level/divisor(class)+d20 (re-roll on 20) - cursed >= AC+10", 0);
 	set_frame_size(0X4B194, 0X2, 2, 0);
 	add_func    (0X4B283,0X4B37C);
 	set_func_flags(0X4B283,0x5412);
@@ -38481,6 +38530,7 @@ static Functions_1(void) {
 	set_frame_size(0X4B283, 0X2, 2, 0);
 	add_func    (0X4B37C,0X4B3AB);
 	set_func_flags(0X4B37C,0x5412);
+	set_func_cmt(0X4B37C,	"max(statBonus(might)+weaponDamage,1)", 0);
 	set_frame_size(0X4B37C, 0X2, 2, 0);
 	add_func    (0X4B3AB,0X4B3D1);
 	set_func_flags(0X4B3AB,0x5412);
@@ -38494,6 +38544,7 @@ static Functions_1(void) {
 	set_frame_size(0X4B422, 0, 2, 0);
 	add_func    (0X4B432,0X4B478);
 	set_func_flags(0X4B432,0x5412);
+	set_func_cmt(0X4B432,	"(BinDiff .84/.86, unverified)", 0);
 	set_frame_size(0X4B432, 0X4, 2, 0);
 	add_func    (0X4B478,0X4B5AF);
 	set_func_flags(0X4B478,0x5412);
