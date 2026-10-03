@@ -638,3 +638,4 @@
 33DAC	Maze_monId	word[170]: monster id (index into the MON* tables)
 3385C	Maze_monPicSel	word[170]: picture selector of the monster record (b & 3 -> MAP_MONSTER_PICS)
 19174	shootAhead	'S' command: spellAttackAhead(0Bh), the ranged-weapon volley of the party (kind 0Bh is also used by Elemental Arrow)
+161AD	scanMonstersAhead	clears the per-row monster visibility bytes (34B92.. 32E37.. 3329D..) and scans the live monster list for monsters in view ahead of the party (called at the start of runMazeEvent, doCombat, moveMonsters, the draw functions)
