@@ -1166,8 +1166,8 @@ consumers, if any.
    **Still open**: `word_33302` bits `0x10`/`0x100` (held-item cursor
    and the piercing-projectile mechanic just corrected above,
    respectively; update 2026-10-03: bit `0x100`'s per-monster hit is now
-   `combatApplyProjectileHit` -- only its flight loop and bit `0x400`'s
-   splash (`ApplyAttackAlongCorridorLine`) remain) and bit `0x80`'s own surrounding dispatch (its
+   `combatApplyProjectileHit` -- bit `0x400`'s splash is `combatApplySplashHit`
+   + `combatReapDeadMapMonsters`; only the flight/animation shell remains) and bit `0x80`'s own surrounding dispatch (its
    per-target light-source counters are reimplemented, but the branch's
    own 6-slot arming write and `IsItemRangeAvailable`'s item-slot
    transition logic aren't); `loc_2CF51` (the bit `0x2000` diversion) was

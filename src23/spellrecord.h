@@ -170,7 +170,7 @@ typedef enum {
      * only in the four BLOCK OF ICE/FIRE/ELECTRICITY/POWER records (e.g.
      * Chapter 2: 131/211, 130/210, 132/212, 133/213). The splash branch
      * (SpellFlagsBSplash) reads the same words as ApplyAttackAlongCorridorLine
-     * setup, not traced.
+     * setup (0x28 sound, 0x2A first picture, 0x2C frame count).
      */
     SpellFieldTickOverlayAnimSetA = 0x30,
     SpellFieldTickOverlayDefault = 0x32,
@@ -311,7 +311,7 @@ typedef enum {
      * viewport rows and hits the first monster. Combined with
      * SpellFlagsBPiercing it keeps going past each hit; with
      * SpellFlagsBSplash it hits the 3 rows around the impact
-     * (ApplyAttackAlongCorridorLine, not reimplemented). The hit itself is
+     * (combat.h's combatApplySplashHit). The hit itself is
      * combat.h's combatApplyProjectileHit.
      */
     SpellFlagsBProjectile = 0x0100,

@@ -514,6 +514,58 @@ CombatProjectileHitOutcome combatApplyProjectileHit(uint8_t *targetRecord, const
     return outcome;
 }
 
+CombatSpellAttackResult combatApplySplashHit(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                               const uint8_t *spellRecord, bool alreadyResolved, RandomState *rng) {
+    CombatSpellAttackResult result = combatResolveSpellAttack(targetRecord, casterRecord, spellRecord, alreadyResolved, rng);
+    combatApplySpellAttack(targetRecord, spellRecord, result);
+    if (!result.hasEffect) {
+        return result;
+    }
+
+    uint16_t resistFlags = spellGetU16(spellRecord, SpellFieldResistFlags);
+    /* g_stagedAttackDamage as ApplyAttackToTarget left it: the half-target-damage replacement persists there. */
+    uint16_t damage = (resistFlags & SpellResistHalfTargetDamage)
+                          ? (uint16_t)(monsterGetU16(targetRecord, MonsterFieldDamage) >> 1)
+                          : result.damage;
+
+    /* Idempotent re-filter of the staged status flags by immunity (the first pass already OR'd them in). */
+    monsterSetU16(targetRecord, MonsterFieldState,
+                  (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) |
+                             (uint16_t)(~monsterGetU16(targetRecord, MonsterFieldImmunities) & result.statusFlags)));
+
+    /* One halving per matching resistance bit (0x200-0x8000), compounding -- unlike the first pass's single halving. */
+    uint16_t matching = (uint16_t)(resistFlags & 0xFE00u & monsterGetU16(targetRecord, MonsterFieldResistances));
+    for (unsigned bit = 0; bit < 16; bit++) {
+        if (matching & (1u << bit)) {
+            damage = (uint16_t)(damage >> 1);
+        }
+    }
+
+    int16_t health = (int16_t)((uint16_t)(monsterGetU16(targetRecord, MonsterFieldHealth) - damage));
+    monsterSetU16(targetRecord, MonsterFieldHealth, health > 0 ? (uint16_t)health : 0);
+    monsterSetU16(targetRecord, MonsterFieldState, (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) | 3u));
+    if (resistFlags & SpellResistClearAware) {
+        monsterSetU16(targetRecord, MonsterFieldState,
+                      (uint16_t)(monsterGetU16(targetRecord, MonsterFieldState) & (uint16_t)~MonsterStateAware));
+    }
+    return result;
+}
+
+unsigned combatReapDeadMapMonsters(uint8_t *pool, MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                     size_t globalFlagsSize, DungeonGrid *grid) {
+    unsigned reaped = 0;
+    for (unsigned i = 0; i < MonsterPoolSize; i++) {
+        uint8_t *record = pool + (size_t)i * MonsterRecordSize;
+        if (monsterGetU16(record, MonsterFieldType) == 0 || (int16_t)monsterGetU16(record, MonsterFieldHealth) > 0) {
+            continue;
+        }
+        monsterGrantRewards(staging, record, globalFlags, globalFlagsSize);
+        monsterPoolRemove(record, grid);
+        reaped++;
+    }
+    return reaped;
+}
+
 /*
  * One icon-bar effect slot through ApplyEffectAndDrawIconBar's own
  * RollEffectMagnitude/RollEffectResistance/ApplyEffectCost sequence.

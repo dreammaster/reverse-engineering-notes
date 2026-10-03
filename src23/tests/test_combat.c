@@ -1518,6 +1518,78 @@ static void testProjectileMissKillCheckDependsOnPiercing(void) {
     check("...and keeps flying", out.continues);
 }
 
+static void testSplashHitAppliesDamageTwice(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    setupProjectileFixture(target, spell, 100, 20, SpellFlagsBSplash);
+
+    CombatSpellAttackResult r = combatApplySplashHit(target, caster, spell, true, &rng);
+
+    check("landed", r.hasEffect);
+    checkU32("first pass 20 plus the re-application's 20", monsterGetU16(target, MonsterFieldHealth), 60);
+    checkU32("state bits 0x3 set", monsterGetU16(target, MonsterFieldState) & 3, 3);
+}
+
+static void testSplashHitCompoundsResistanceInTheSecondPass(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    setupProjectileFixture(target, spell, 100, 40, SpellFlagsBSplash);
+    setSpellU16(spell, SpellFieldResistFlags, 0x0200 | 0x0400);
+    monsterSetU16(target, MonsterFieldResistances, 0x0200 | 0x0400);
+
+    combatApplySplashHit(target, caster, spell, true, &rng);
+
+    /* first pass halves once: 40 -> 20 (100 -> 80); second halves that twice: 20 -> 5 (80 -> 75) */
+    checkU32("single halving, then compounded halving", monsterGetU16(target, MonsterFieldHealth), 75);
+}
+
+static void testSplashHitSecondPassFloorsHealthAtZero(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    setupProjectileFixture(target, spell, 30, 20, SpellFlagsBSplash);
+
+    combatApplySplashHit(target, caster, spell, true, &rng);
+
+    /* first pass: 30-20 = 10; second: 10-20 < 0 -> clamped to 0 */
+    checkU32("health clamps to zero rather than going negative", monsterGetU16(target, MonsterFieldHealth), 0);
+}
+
+static void testSplashMissDoesNothingFurther(void) {
+    uint8_t target[MonsterRecordSize], caster[PartyRecordSize], spell[SpellRecordSize];
+    RandomState rng;
+    memset(caster, 0, sizeof(caster));
+    setupProjectileFixture(target, spell, 100, 0, SpellFlagsBSplash);
+    randomStart(&rng, 1, 1);
+
+    CombatSpellAttackResult r = combatApplySplashHit(target, caster, spell, false, &rng);
+    check("a miss has no effect", !r.hasEffect);
+    checkU32("health untouched", monsterGetU16(target, MonsterFieldHealth), 100);
+}
+
+static void testReapDeadMapMonstersRemovesOnlyOccupiedDeadOnes(void) {
+    static uint8_t pool[MonsterPoolSize * MonsterRecordSize];
+    MonsterRewardStaging staging;
+    memset(pool, 0, sizeof(pool));
+    memset(&staging, 0, sizeof(staging));
+    uint8_t *alive = pool + 3 * MonsterRecordSize;
+    uint8_t *dead = pool + 10 * MonsterRecordSize;
+    uint8_t *emptyDead = pool + 20 * MonsterRecordSize; /* type 0: an empty slot, never reaped */
+    monsterSetU16(alive, MonsterFieldType, 5);
+    monsterSetU16(alive, MonsterFieldHealth, 1);
+    monsterSetU16(dead, MonsterFieldType, 6);
+    monsterSetU16(dead, MonsterFieldHealth, 0);
+    monsterSetU16(emptyDead, MonsterFieldHealth, 0);
+
+    unsigned n = combatReapDeadMapMonsters(pool, &staging, NULL, 0, NULL);
+
+    checkU32("exactly one reaped", n, 1);
+    checkU32("the dead one is removed", monsterGetU16(dead, MonsterFieldType), 0);
+    checkU32("the living one stays", monsterGetU16(alive, MonsterFieldType), 5);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -1771,6 +1843,11 @@ int main(void) {
     testProjectileHitWithoutTheFlagDoesNotArmTheTimer();
     testProjectileKillAndPiercingContinuation();
     testProjectileMissKillCheckDependsOnPiercing();
+    testSplashHitAppliesDamageTwice();
+    testSplashHitCompoundsResistanceInTheSecondPass();
+    testSplashHitSecondPassFloorsHealthAtZero();
+    testSplashMissDoesNothingFurther();
+    testReapDeadMapMonstersRemovesOnlyOccupiedDeadOnes();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

@@ -708,6 +708,37 @@ CombatProjectileHitOutcome combatApplyProjectileHit(uint8_t *targetRecord, const
                                                       size_t globalFlagsSize, DungeonGrid *grid, RandomState *rng);
 
 /*
+ * The splash variant (SpellFlagsBSplash, word_33302 bit 0x400) of the
+ * projectile branch: ApplyAttackAlongCorridorLine (yendor2.asm:53109,
+ * instruction-identical in Chapter 3) runs three times, each over 3
+ * consecutive viewport rows, calling ApplyAttackToTarget on whatever monster
+ * occupies each row and -- if anything landed --
+ * ReapplyDamageWithCompoundedResistance (:53069). combatApplySplashHit is
+ * that per-monster step; walking rows (a viewport-scratch lookup) is the
+ * caller's job.
+ *
+ * It is the ordinary combatResolveSpellAttack/combatApplySpellAttack plus a
+ * genuine second damage application: the damage is subtracted from health
+ * *again* (floored at 0, signed), halved once per set bit of
+ * SpellFieldResistFlags & 0xFE00 & MonsterFieldResistances (compounding,
+ * where the first pass halves at most once), and the surviving status bits
+ * are re-OR'd into MonsterFieldState (no-op in practice). Whether the double
+ * hit is deliberate area-attack design or an artifact isn't knowable; it is
+ * what the original does, so a splash spell hits monsters roughly twice.
+ * State bits 0x3 are set again and SpellResistClearAware re-clears Aware.
+ * Does not write the hit marker (neither does the original here).
+ *
+ * combatReapDeadMapMonsters is the sweep that follows the three calls
+ * (loc_2CC62): every occupied g_levelMonsters entry with health <= 0 gets
+ * monsterGrantRewards + monsterPoolRemove. Returns how many.
+ */
+CombatSpellAttackResult combatApplySplashHit(uint8_t *targetRecord, const uint8_t *casterRecord,
+                                               const uint8_t *spellRecord, bool alreadyResolved, RandomState *rng);
+
+unsigned combatReapDeadMapMonsters(uint8_t *pool, MonsterRewardStaging *staging, uint8_t *globalFlags,
+                                     size_t globalFlagsSize, DungeonGrid *grid);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

@@ -11166,6 +11166,16 @@ is exactly the four BLOCK OF ... spells. Added `combatApplyProjectileHit`
 named the new spell bits, four tests; all 23 suites pass. The splash variant
 (`ApplyAttackAlongCorridorLine`) is still untraced.
 
+### Session update (2026-10-03, continued): the splash variant, with a double hit
+
+`ApplyAttackAlongCorridorLine` turned out to be small: per row, the normal
+attack plus `ReapplyDamageWithCompoundedResistance`, which subtracts the
+damage a second time with compounding per-bit resistance halving. Added
+`combatApplySplashHit` and the follow-up dead-monster sweep
+`combatReapDeadMapMonsters`; five tests, all 23 suites pass. The projectile
+family's per-monster logic is now complete; the rest is row-walking and
+animation.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -3249,6 +3249,21 @@ hit or any piercing projectile, and is skipped only for a plain miss from
 a non-piercing one. Reimplemented as `combatApplyProjectileHit`
 (`src23/combat.c`/`.h`); four tests.
 
+**The splash variant (bit `0x400`) is reimplemented too**: it runs
+`ApplyAttackAlongCorridorLine` three times over row triples (the start rows
+come from a small table keyed by the current depth, e.g. 0x24 -> 0x18/0x23/
+0x27), each calling `ApplyAttackToTarget` per occupied row and then
+`ReapplyDamageWithCompoundedResistance`, which is a genuine *second* damage
+application on the same target: health -= damage again (floored at 0,
+signed), with the damage halved once per set bit of `ResistFlags & 0xFE00 &
+MonsterFieldResistances` (compounding; the first pass halves at most once),
+state bits 0x3 re-set and the status flags re-OR'd (a no-op). A sweep over
+all 80 `g_levelMonsters` entries then rewards and removes everything at
+health <= 0. Whether the double hit is design or artifact is unknowable;
+reproduced as `combatApplySplashHit` and `combatReapDeadMapMonsters`, five
+tests. What remains of the projectile branch is only the row-walking/
+animation shell around these per-monster steps.
+
 **`loc_2CF51` resolved later (2026-10-03): it's the LIFE FORCE spells**:
 dumping the real records that take it (word_33302 bit `0x2000` *and*
 `SpellFieldResistFlags & 0xC0`) gives exactly LIFE FORCE I-IV in both
