@@ -168,3 +168,30 @@ The item's spell id (character record `+0EFh`+slot, 1-77) selects the same effec
 | 75 | `Spell_76_DivineIntervention` |
 | 76 | `sub_3E08F` |
 | 77 | `-` |
+
+## Costs (`Spells_subSpellCost`, `4C237`)
+
+Arguments (character, spell id). Spell point cost = word table at DGROUP `1B7Ah[id]`; a value below 1 means `|value| x character level` (e.g. Sparks costs level SP). Gem cost = word table `1C16h[id]`, taken from `Party_gems`. Returns 0 on success, 1 if the character lacks spell points, 2 if the party lacks gems (the SP are only deducted when both checks pass).
+
+| id | spell | SP | gems | id | spell | SP | gems |
+|---|---|---|---|---|---|---|---|
+| 0 | Light | 1 | 0 | 1 | Awaken | 1 | 0 |
+| 2 | First Aid | 1 | 0 | 3 | Flying Fist | 2 | 0 |
+| 4 | Detect Magic | 1 | 0 | 5 | Elemental Arrow | 2 | 0 |
+| 6 | Revitalize | 2 | 0 | 7 | Cure Wounds | 3 | 1 |
+| 8 | Sparks | 1/lvl | 1 | 9 | Energy Blast | 1/lvl | 1 |
+| 10 | Sleep | 3 | 1 | 11 | Pain | 4 | 0 |
+| 12 | Create Rope | 3 | 0 | 13 | Toxic Cloud | 4 | 1 |
+| 14 | Suppress Poison | 4 | 0 | 15 | Prot. from Elements | 1/lvl | 2 |
+| 16 | Turn Undead | 5 | 2 | 17 | Jump | 4 | 0 |
+| 18 | Acid Stream | 5 | 0 | 19 | Suppress Disease | 5 | 0 |
+| 20 | Silence | 6 | 0 | 21 | Blessed | 2/lvl | 0 |
+| 22 | Levitate | 5 | 0 | 23 | Wizard Eye | 5 | 2 |
+| 24 | Identify Monster | 5 | 0 | 25 | Holy Bonus | 2/lvl | 0 |
+| 26 | Power Cure | 2/lvl | 3 | 27 | Nature's Cure | 6 | 0 |
+| 28 | Lightning Bolt | 2/lvl | 2 | 29 | Immobilize | 6 | 3 |
+| 30 | Heroism | 2/lvl | 3 | 31 | Walk on Water | 7 | 0 |
+| 32 | Frost Bite | 7 | 0 | 33 | Lloyd's Beacon | 6 | 2 |
+| 34 | Power Shield | 2/lvl | 2 | 35 | Cure Poison | 8 | 0 |
+| 36 | Fireball | 2/lvl | 2 | 37 | Detect Monster | 6 | 0 |
+| 38 | Acid Spray | 8 | 0 | 39 | Cold Ray | 2/lvl | 4 |
