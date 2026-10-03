@@ -141,6 +141,8 @@ typedef enum {
      * not persistent state.
      */
     MonsterStateHitFlashPending = 0x0002,
+    /* Set by ProcessMonsterAttackTurn when it first shows the monster's info panels (only when a 0xF010 gate bit is set); combat.h's combatProcessMonsterTurn. */
+    MonsterStateInfoRevealed = 0x0020,
     /*
      * Inside TickMonsterTimer's 0xFC10 gate. Set by combat.h's
      * combatApplyProjectileHit when a projectile spell with

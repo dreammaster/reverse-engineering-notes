@@ -3221,6 +3221,24 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**`ProcessMonsterAttackTurn` composed, and the "stale" saving-throw threshold
+identified (2026-10-03)**: the monster's whole combat turn is now
+`combatProcessMonsterTurn` (tick timer, then either the area-attack loop over
+the party or the single target, each through the already-reimplemented
+select-variant / resolve-action / apply-effect / corrosion / wear-tick
+pieces). Details that only the composition revealed: the area path rolls
+every member's attack first and applies the effect slots afterwards (so the
+RNG draw order is all-resolves-then-all-applies); a Damage outcome presets the
+slot's HP amount so there's no magnitude roll; the staged "damage" is 1 for
+status/corrosion outcomes, so it doubles as an "anything landed" flag; the
+equipment wear tick runs only for the single-target, non-special case; and it
+sets `word_32DC0` -- `RollEffectResistance`'s saving-throw threshold -- to the
+monster's own `MonsterFieldSaveDifficulty`, which is exactly the "stale" value
+the LIFE FORCE branch later reads (the last monster's DC). The Chapter 3 copy
+differs only by one extra UI/driver hook call (`sub_286D8`, a far call gated
+on a flag) after a landed attack. Not modeled: sounds/redraws, the key-press
+abort, and the party-wipe check `ApplyEffectAndDrawIconBar` runs.
+
 **The whole `ApplyEncodedItemEffect` dispatch is now a function, and it
 shows which branches real data uses (2026-10-03)**: `spellSelectBranch`
 (`src23/spellrecord.c`) reproduces the flat if-chain (FlagsB bits in the

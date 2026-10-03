@@ -606,7 +606,7 @@ CombatScreenAttackOutcome combatApplyScreenWideAttack(uint8_t *monsterSlots, uin
  * stages nothing (0, 0) gets both rolls.
  */
 static void combatApplyEffectSlot(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def, uint16_t presetAmount,
-                                   uint16_t presetStatus, unsigned threshold, RandomState *rng) {
+                                   uint16_t presetStatus, const Bcd4 material, unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);
     uint16_t magnitude = presetAmount;
     if (magnitude == 0 && effectRollsMagnitude(def)) {
@@ -632,13 +632,95 @@ static void combatApplyEffectSlot(uint8_t *recipientRecord, SaveGame *save, cons
         }
         inflicted = effectResolveInflictedStatus(def, failed);
     }
-    static const Bcd4 zeroMaterial = {0, 0, 0, 0};
-    combatApplyEffect(recipientRecord, save, effectSpend(def), magnitude, zeroMaterial, inflicted);
+    combatApplyEffect(recipientRecord, save, effectSpend(def), magnitude, material, inflicted);
 }
+
+static const Bcd4 g_zeroMaterial = {0, 0, 0, 0};
 
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
-    combatApplyEffectSlot(recipientRecord, save, def, 0, 0, threshold, rng);
+    combatApplyEffectSlot(recipientRecord, save, def, 0, 0, g_zeroMaterial, threshold, rng);
+}
+
+static void combatApplyAttackerActionTo(uint8_t *defender, SaveGame *save, const ItemCatalog *catalog, GameKind game,
+                                         const uint8_t *monster, const CombatEffectSelection *selection,
+                                         const CombatAttackerAction *action, RandomState *rng) {
+    EffectDef def;
+    if (action->outcome == CombatAttackCorrosion) {
+        combatApplyCorrosion(defender, catalog, game, selection, action);
+        return;
+    }
+    if (!effectGetDef(game, selection->effectId, &def)) {
+        return;
+    }
+    unsigned threshold = monsterGetU16(monster, MonsterFieldSaveDifficulty);
+    if (action->outcome == CombatAttackDamage) {
+        combatApplyEffectSlot(defender, save, &def, action->damage, 0, g_zeroMaterial, threshold, rng);
+    } else {
+        /* the slot's +0x10/+0x12 words are the gold-theft amount; its low word is also the preset "amount" */
+        uint16_t low = (uint16_t)(action->goldAmount[0] | (action->goldAmount[1] << 8));
+        combatApplyEffectSlot(defender, save, &def, low, 0, action->goldAmount, threshold, rng);
+    }
+}
+
+CombatMonsterTurnOutcome combatProcessMonsterTurn(uint8_t *monster, uint8_t *singleTarget, SaveGame *save,
+                                                    const ItemCatalog *catalog, GameKind game, RandomState *rng) {
+    CombatMonsterTurnOutcome outcome;
+    memset(&outcome, 0, sizeof(outcome));
+
+    outcome.tick = monsterTickTimer(monster);
+    if (monsterGetU16(monster, MonsterFieldState) & 0xF010) {
+        monsterSetU16(monster, MonsterFieldState, (uint16_t)(monsterGetU16(monster, MonsterFieldState) | MonsterStateInfoRevealed));
+    }
+    if (outcome.tick != MonsterTickIdle) {
+        return outcome;
+    }
+
+    if (monsterGetU16(monster, MonsterFieldFlags) & MonsterFlagAreaAttack) {
+        CombatEffectSelection selection = combatSelectTrapEffectVariant(monster, rng);
+        CombatAttackerAction actions[SavePartyMemberSlots];
+        uint8_t *records[SavePartyMemberSlots];
+        unsigned count = 0;
+        for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+            uint16_t id = saveGetPartySlot(save, slot);
+            if (id == 0) {
+                break;
+            }
+            uint8_t *record = saveGamePartyRecordById(save, id);
+            if (!record || (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+                continue;
+            }
+            CombatAttackerAction action =
+                combatResolveAttackerAction(monster, record, catalog, selection.isSpecial, rng);
+            if (action.outcome != CombatAttackMiss) {
+                actions[count] = action;
+                records[count] = record;
+                count++;
+            }
+        }
+        /* The effect slots are applied together afterwards, in party order -- after every attack roll has been made. */
+        for (unsigned i = 0; i < count; i++) {
+            combatApplyAttackerActionTo(records[i], save, catalog, game, monster, &selection, &actions[i], rng);
+        }
+        outcome.attacked = count;
+    } else if (singleTarget && !(partyGetU16(singleTarget, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        CombatEffectSelection selection = combatSelectTrapEffectVariant(monster, rng);
+        CombatAttackerAction action =
+            combatResolveAttackerAction(monster, singleTarget, catalog, selection.isSpecial, rng);
+        if (action.outcome != CombatAttackMiss) {
+            combatApplyAttackerActionTo(singleTarget, save, catalog, game, monster, &selection, &action, rng);
+            outcome.attacked = 1;
+            if (!selection.isSpecial) {
+                partyTickEquippedItemDurability(singleTarget, catalog, game, 0x146, rng);
+            }
+        }
+    }
+    outcome.idle = outcome.attacked == 0;
+
+    /* the animation-state bits ProcessMonsterAttackTurn sets for the turn are cleared again at its end */
+    monsterSetU16(monster, MonsterFieldState, (uint16_t)(monsterGetU16(monster, MonsterFieldState) & (uint16_t)~4u));
+    monsterSetU16(monster, MonsterFieldAnim, monsterGetU16(monster, MonsterFieldSpriteBase));
+    return outcome;
 }
 
 CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
@@ -715,7 +797,7 @@ CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t
 
     if (spellGetU16(spellRecord, SpellFieldResistFlags) & SpellResistLifeForceCaster) {
         /* The "status" word is the damage itself -- see combat.h. */
-        combatApplyEffectSlot(casterRecord, save, &def, hpCost, damage, savingThrowThreshold, rng);
+        combatApplyEffectSlot(casterRecord, save, &def, hpCost, damage, g_zeroMaterial, savingThrowThreshold, rng);
         outcome.recipients = 1;
         return outcome;
     }
@@ -730,9 +812,9 @@ CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t
             continue;
         }
         if (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusDead) {
-            combatApplyEffectSlot(record, save, &def, 0, 0, savingThrowThreshold, rng);
+            combatApplyEffectSlot(record, save, &def, 0, 0, g_zeroMaterial, savingThrowThreshold, rng);
         } else {
-            combatApplyEffectSlot(record, save, &def, hpCost, damage, savingThrowThreshold, rng);
+            combatApplyEffectSlot(record, save, &def, hpCost, damage, g_zeroMaterial, savingThrowThreshold, rng);
         }
         outcome.recipients++;
     }

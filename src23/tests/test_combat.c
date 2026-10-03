@@ -1655,6 +1655,129 @@ static void testScreenWideAttackWithoutSlotsOnlyScansRows(void) {
     checkU32("the slot is untouched", monsterGetU16(slots, MonsterFieldHealth), 50);
 }
 
+static void setupHittingMonster(uint8_t *monster, uint16_t flags) {
+    memset(monster, 0, MonsterRecordSize);
+    monsterSetU16(monster, MonsterFieldAttackEffect, 4); /* an HP-cost effect, both games */
+    monsterSetU16(monster, MonsterFieldAccuracy, 255);
+    monsterSetU16(monster, MonsterFieldDamage, 10);
+    monsterSetU16(monster, MonsterFieldFlags, flags);
+    monsterSetU16(monster, MonsterFieldSpriteBase, 77);
+    monsterSetU16(monster, MonsterFieldAnim, 80);
+    monsterSetU16(monster, MonsterFieldState, 0x4); /* the turn-in-progress animation bit */
+}
+
+static void testMonsterTurnSingleTargetHit(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *target = saveGamePartyRecordById(&save, 1);
+    uint8_t *bystander = saveGamePartyRecordById(&save, 2);
+    partySetStat(target, PartyStatHitPoints, 100);
+    partySetStat(bystander, PartyStatHitPoints, 100);
+    uint8_t monster[MonsterRecordSize];
+    setupHittingMonster(monster, 0);
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &save, NULL, GameYendor2, &rng);
+
+    checkU32("one target attacked", out.attacked, 1);
+    check("not idle", !out.idle);
+    checkU32("damage (10*255+50)/100 = 26 off the target's HP", partyGetStat(target, PartyStatHitPoints), 74);
+    checkU32("the bystander is untouched", partyGetStat(bystander, PartyStatHitPoints), 100);
+    checkU32("the turn's animation bit is cleared", monsterGetU16(monster, MonsterFieldState) & 4, 0);
+    checkU32("animation is back at the sprite base", monsterGetU16(monster, MonsterFieldAnim), 77);
+}
+
+static void testMonsterTurnMissIsIdle(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *target = saveGamePartyRecordById(&save, 1);
+    partySetStat(target, PartyStatHitPoints, 100);
+    uint8_t monster[MonsterRecordSize];
+    setupHittingMonster(monster, 0);
+    monsterSetU16(monster, MonsterFieldDamage, 0); /* power 0 always misses */
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &save, NULL, GameYendor2, &rng);
+
+    checkU32("nothing attacked", out.attacked, 0);
+    check("idle", out.idle);
+    checkU32("HP untouched", partyGetStat(target, PartyStatHitPoints), 100);
+}
+
+static void testMonsterTurnIncapacitatedOrMissingTargetIsIdle(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *target = saveGamePartyRecordById(&save, 1);
+    partySetStat(target, PartyStatHitPoints, 100);
+    partySetU16(target, PartyFieldStatusFlags, PartyStatusDead);
+    uint8_t monster[MonsterRecordSize];
+    setupHittingMonster(monster, 0);
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &save, NULL, GameYendor2, &rng);
+    check("a dead target is skipped", out.idle && out.attacked == 0);
+    out = combatProcessMonsterTurn(monster, NULL, &save, NULL, GameYendor2, &rng);
+    check("no target: idle", out.idle && out.attacked == 0);
+}
+
+static void testMonsterTurnAreaAttackHitsEveryLivingMemberUntilTheFirstEmptySlot(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 3);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 3 * 2, 0);
+    uint8_t *a = saveGamePartyRecordById(&save, 1);
+    uint8_t *dead = saveGamePartyRecordById(&save, 2);
+    uint8_t *c = saveGamePartyRecordById(&save, 3);
+    partySetStat(a, PartyStatHitPoints, 100);
+    partySetStat(dead, PartyStatHitPoints, 100);
+    partySetStat(c, PartyStatHitPoints, 100);
+    partySetU16(dead, PartyFieldStatusFlags, PartyStatusDead);
+    uint8_t monster[MonsterRecordSize];
+    setupHittingMonster(monster, MonsterFlagAreaAttack);
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, NULL, &save, NULL, GameYendor2, &rng);
+
+    checkU32("two living members attacked", out.attacked, 2);
+    checkU32("first hit", partyGetStat(a, PartyStatHitPoints), 74);
+    checkU32("the dead member is skipped", partyGetStat(dead, PartyStatHitPoints), 100);
+    checkU32("third hit", partyGetStat(c, PartyStatHitPoints), 74);
+}
+
+static void testMonsterTurnEndsAtTheTimerWhenItExpires(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *target = saveGamePartyRecordById(&save, 1);
+    partySetStat(target, PartyStatHitPoints, 100);
+    uint8_t monster[MonsterRecordSize];
+    setupHittingMonster(monster, 0);
+    monsterSetU16(monster, MonsterFieldState, MonsterStateTimedAffliction);
+    monsterSetU16(monster, MonsterFieldHealth, 5);
+    monsterSetU16(monster, MonsterFieldTickAmount, 10);
+    monsterSetU16(monster, MonsterFieldTickCountdown, 3);
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+
+    CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &save, NULL, GameYendor2, &rng);
+
+    check("the timer's tick ended the turn", out.tick != MonsterTickIdle);
+    checkU32("no attack made", out.attacked, 0);
+    checkU32("the target is untouched", partyGetStat(target, PartyStatHitPoints), 100);
+    checkU32("info panels flagged as revealed", monsterGetU16(monster, MonsterFieldState) & MonsterStateInfoRevealed,
+             MonsterStateInfoRevealed);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -1915,6 +2038,11 @@ int main(void) {
     testReapDeadMapMonstersRemovesOnlyOccupiedDeadOnes();
     testScreenWideAttackHitsSlotsThenRowsAndSkipsEmpties();
     testScreenWideAttackWithoutSlotsOnlyScansRows();
+    testMonsterTurnSingleTargetHit();
+    testMonsterTurnMissIsIdle();
+    testMonsterTurnIncapacitatedOrMissingTargetIsIdle();
+    testMonsterTurnAreaAttackHitsEveryLivingMemberUntilTheFirstEmptySlot();
+    testMonsterTurnEndsAtTheTimerWhenItExpires();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

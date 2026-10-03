@@ -846,6 +846,9 @@ consumers, if any.
    caller-context globals that bits `0x4`/`0x2000` haven't been traced
    far enough to supply -- left for whoever picks up those branches
    next, see candidate 8.
+   **Update 2026-10-03: `ProcessMonsterAttackTurn` is now composed as
+   `combatProcessMonsterTurn`** (see file-formats.md); the player-attack path
+   in `HandleDungeonInput` remains.
    **Still open, a good candidate for its own pass**: `ProcessMonsterAttackTurn`
    itself (the caller that would actually wire
    `combatSelectTrapEffectVariant`/`combatResolveAttackerAction`/

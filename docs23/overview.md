@@ -11188,6 +11188,15 @@ OVER/THROUGH (teleport), whose jump distances are the spell bytes
 `spellCreatedItem*`, `spelljump.c` (24th suite), `combatApplyScreenWideAttack`.
 All suites pass.
 
+### Session update (2026-10-03, continued): a monster's whole turn
+
+Composed `ProcessMonsterAttackTurn` as `combatProcessMonsterTurn` from the
+pieces built over earlier rounds -- the first function that runs a real
+combat action end to end (tick, target selection, attack, effect application,
+equipment wear). Reading it also settled what the "stale saving-throw
+threshold" in the LIFE FORCE branch is: the last attacking monster's
+`MonsterFieldSaveDifficulty`. Five tests; all suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

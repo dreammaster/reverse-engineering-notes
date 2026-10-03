@@ -768,6 +768,50 @@ CombatScreenAttackOutcome combatApplyScreenWideAttack(uint8_t *monsterSlots, uin
                                                         RandomState *rng);
 
 /*
+ * ProcessMonsterAttackTurn (yendor2.asm:10768, instruction-identical in
+ * Chapter 3): one monster's combat turn, composing the pieces above end to
+ * end. Called by RunDungeonGameLoop when the turn order's current entry is
+ * a monster.
+ *
+ *  1. monsterTickTimer. If a 0xF010 gate bit was set the monster also gets
+ *     MonsterStateInfoRevealed (the info panels are drawn); a nonzero tick
+ *     result (expired or mid-timer) ends the turn with no attack.
+ *  2. If MonsterFlagAreaAttack: combatSelectTrapEffectVariant once, then for
+ *     each party slot in order (stopping dead at the first unoccupied one)
+ *     that isn't incapacitated, combatResolveAttackerAction; every non-miss
+ *     is then applied, in party order, only after all the rolls (this is
+ *     the original's order -- ApplyEffectAndDrawIconBar runs once at the
+ *     end -- and so the RNG draw order).
+ *     Otherwise, for singleTarget (the record MonsterFieldTarget pointed at;
+ *     NULL or incapacitated = no attack): the same for that one member, plus
+ *     a wear tick on the target's 0x146 equipment slot
+ *     (partyTickEquippedItemDurability) when the ordinary, not special,
+ *     effect landed. The area path never wears equipment.
+ *  3. A landed attack applies through the effect slot machinery: Damage as
+ *     the preset HP amount (so no magnitude roll), StatusEffect with the
+ *     gold-theft amount, Corrosion via combatApplyCorrosion; the saving
+ *     throw threshold there is word_32DC0, which this function sets from
+ *     the monster's own MonsterFieldSaveDifficulty (+0x52) -- which is also
+ *     the "stale" value combatApplyLifeForceSpell's savingThrowThreshold
+ *     reads, i.e. the last attacker's.
+ *  4. No landed attack: `idle` (the original plays the monster's idle
+ *     sound and waits). The turn's animation bits end cleared and
+ *     MonsterFieldAnim back at MonsterFieldSpriteBase.
+ *
+ * Not modeled: the sounds, redraws, the key-press abort, and the party-wipe
+ * check (CheckPartyWipeAndReinitLevel, which ApplyEffectAndDrawIconBar
+ * runs) -- the caller checks for a wipe after this returns.
+ */
+typedef struct {
+    MonsterTickResult tick; /* nonzero: the turn ended at the timer, nothing attacked */
+    unsigned attacked;      /* party members an attack landed on */
+    bool idle;              /* the tick didn't end the turn and no attack landed */
+} CombatMonsterTurnOutcome;
+
+CombatMonsterTurnOutcome combatProcessMonsterTurn(uint8_t *monster, uint8_t *singleTarget, SaveGame *save,
+                                                    const ItemCatalog *catalog, GameKind game, RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this
@@ -861,8 +905,9 @@ CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, ui
  *     the other whole-party composition here.
  *
  * savingThrowThreshold is word_32DC0, RollEffectResistance's threshold --
- * stale caller-context state in the original (set by whichever lock/trap
- * last wrote it), only consulted when a slot's status word is zero.
+ * stale caller-context state in the original (word_32DC0: the last
+ * attacking monster's MonsterFieldSaveDifficulty via combatProcessMonsterTurn,
+ * or whichever lock/trap last wrote it), only consulted when a slot's status word is zero.
  */
 typedef struct {
     bool fallback;       /* the roll missed: monster healed, fallback effect */
