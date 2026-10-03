@@ -2420,6 +2420,64 @@ one-letter "what's the engine doing" tag, "P" during `TGScene::Prepare()`,
 
 `TGScene` is `done` in the manifest.
 
+## TMSavegame
+
+Implemented all 22 manifest-listed methods (Deponia_Linux.asm lines
+159356-164367). One savegame slot (or "bookmark" slot) as shown in the
+"load game" menu: a `TManagedObject` subclass (recovered RTTI, 0x1E8 bytes)
+that owns the slot's screenshot as an embedded `TPictureIO`, loads the
+slot's title/font from the savegame itself, and can write the slot to disk.
+`TGScene` creates one per slot found on disk and activates the ones
+scrolled into view. The real layout is in `TMSavegame.h`'s header comment.
+
+Savegame file naming: `<savegame dir>/savegame<NN>.dat` (or `bookmark<NN>.dat`;
+the slot number is zero-padded to two digits - the original checks `slot <= 9`
+and prepends "0"). Inside each composed file the screenshot lives at
+`vtp_savepic<slot>.webp#g#-01#00001#` and the title/game record at
+`vtp_savedata<slot>.xml#g#-01#00000#` (the `#g#...#` suffix is `TSprite`'s own
+embedded-settings path syntax). The composed file's password is
+`SAVEGAMEPWD30`; if that doesn't open, loading retries with none (the
+recovered global `passwd`, an empty string - `AppGlobals.h`). The savegame
+directory is looked up once through `TStandardPaths::GetSavegamePath()`.
+Dates in `MakeSaveGameName()` read "name D.M.YYYY, H:MMh" (with the colon
+followed by an extra "0" for minutes <= 9).
+
+**Corrections to the earlier header / manifest:**
+
+- The constructor's first bool is "is bookmark", not "numbered slot"
+  (`GetFileName()` picks "/bookmark" vs "/savegame" from it); its 3rd/4th
+  ints are the slot rectangle's width/height (what `TGScene::SetScene()`
+  records from the first click area), not "always 0". A bookmark's
+  `SetActive()` is a no-op - it never activates.
+- `MakeSaveGameName` is static and takes the scene (the manifest's `this`-
+  based listing hid that - the "this" slot is the hidden return buffer);
+  `InitSaveGamePath()` is static too.
+- Two fields at +0x1C0/+0x1C4 are constructed together via `TId(-1, -1)`
+  but used independently - +0x1C0 ends up holding the first four bytes of
+  link 0x1D5's id (a font id), +0x1C4 the x offset that centres the title
+  across the slot (`slotWidth/2 - titleWidth/2`). Modeled as two ints.
+
+**Deliberate gaps:** the write path is complete against the *call shapes* of
+`TComposedFile` (`InitForWrite`/`AddData`/`AddFile`/`WriteToDisk`),
+`TTempFile` and the writer's two virtual accessors (recovered from
+`TBufferedProjectFileWriter`'s own 3-pure-virtual vtable, named for their
+observed role - the buffer and the name it's stored under), all of which are
+still unreversed stubs - so `SaveGame()` currently reports success without
+writing anything. `AddFile()`'s real 4th parameter (an empty
+`StringHashMap<wxString,wxString,...>`) isn't modeled. `SaveSnapShot()`
+needs the unmodeled GL backend's "captured frame" virtual slot (+0x128,
+named `GetCapturedFrame()` for its role).
+
+New supporting stubs/fixes: `TTScene` (a TVisObjRef-derived scene handle,
+`TTScene.h`), `wxDir::Open/GetFirst/GetNext` (real, `std::filesystem`-
+backed, with wildcard matching), `wxRemoveFile`, `wxDateTime::GetTmNow`,
+`wxString::ToLong`, `wxPoint::operator+`, `TGraphicsInterface::RemoveFromCache/
+GetMainMemBlock/GetCapturedFrame`, `TPictureMEM::ResizeImage`,
+`TTempFile::AddTempFile`, `TSteamSDK::DeleteCloudSavegame`,
+`TVisionaireGame::LoadSaveGame`.
+
+`TMSavegame` is `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

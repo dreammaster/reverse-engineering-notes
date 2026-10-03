@@ -27,6 +27,11 @@ public:
 	// visionaire.h), the same standing "may really be the same object" gap
 	// as GetGame() above.
 	void GetList(int fieldId, TVList &outList, bool flag) const;
+	// Confirmed call shape only (TMSavegame::SetActive()/CheckVisPaths(),
+	// Deponia_Linux.asm lines 160840-162327) - loads a savegame file into this
+	// object; the same standing "same object as TVisionaire" gap as GetList()
+	// above (see TVisionaire::LoadSaveGame()).
+	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line

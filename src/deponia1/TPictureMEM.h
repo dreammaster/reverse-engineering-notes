@@ -26,6 +26,10 @@ public:
 	// reversed beyond those call shapes.
 	unsigned int GetPixel(const wxPoint &pos, float brightness) const;
 	void SetMemoryBlock(TPictureMemBlock *block);
+	// Confirmed call shape only (TMSavegame::SaveSnapShot(), Deponia_Linux.asm
+	// line 162236+) - rescales `source` to a new size into this picture (the
+	// two bools' meaning is unresolved); not reversed beyond that.
+	void ResizeImage(const TPictureMEM &source, const wxPoint &size, bool flag1, bool flag2);
 
 protected:
 	int _width = 0;

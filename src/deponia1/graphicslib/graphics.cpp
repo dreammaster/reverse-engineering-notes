@@ -9,6 +9,17 @@ int defaultShader = 0;
 void ShaderCallback(int /*shader*/, TVisObjRef */*ref*/) {
 }
 
+void TGraphicsInterface::RemoveFromCache(const wxString &/*name*/) {
+}
+
+TPictureMemBlock *TGraphicsInterface::GetMainMemBlock() {
+	return nullptr;
+}
+
+TPictureMEM *TGraphicsInterface::GetCapturedFrame() {
+	return nullptr;
+}
+
 TPictureMemBlock *TGraphicsInterface::GetLightMapMemBlock() {
 	return nullptr;
 }

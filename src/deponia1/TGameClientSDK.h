@@ -4,6 +4,8 @@
 // backends.
 #pragma once
 
+#include "WxStub.h"
+
 class TSteamSDK {
 public:
 	TSteamSDK() = default;
@@ -12,6 +14,9 @@ public:
 	// lines 470456, 470579) - checked once per frame; Update() only runs
 	// when GetStatus() reports active. Not reversed beyond that call shape.
 	bool GetStatus() const;
+	// Confirmed call shape only (TMSavegame::Delete, Deponia_Linux.asm line
+	// 163096) - not reversed beyond that.
+	void DeleteCloudSavegame(const wxString &fileName);
 	void Update();
 };
 

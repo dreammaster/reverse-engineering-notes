@@ -10,6 +10,7 @@ wxSize surfaceSize;
 wxSize renderSize;
 bool g_unlockAspect = false;
 const char *g_loadingState = "L";
+wxString passwd;
 
 TStandardPaths standardPaths;
 

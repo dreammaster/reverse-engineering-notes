@@ -4,7 +4,9 @@
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
+#include <ctime>
 #include <direct.h>
+#include <filesystem>
 #include <sys/stat.h>
 #include <thread>
 
@@ -127,6 +129,66 @@ void wxFile::Close() {
 bool wxDir::Exists(const wxString &path) {
 	struct stat st;
 	return ::stat(static_cast<const char *>(path.mb_str()), &st) == 0 && (st.st_mode & _S_IFDIR);
+}
+
+bool wxDir::Open(const wxString &path) {
+	_all.clear();
+	_entries.clear();
+	_index = 0;
+	std::error_code ec;
+	if (!std::filesystem::is_directory(path.ToStdWstring(), ec))
+		return false;
+	for (const auto &entry : std::filesystem::directory_iterator(path.ToStdWstring(), ec))
+		_all.push_back(entry.path().filename().wstring());
+	return true;
+}
+
+static bool wildcardMatch(const wchar_t *pattern, const wchar_t *name) {
+	for (; *pattern; pattern++) {
+		if (*pattern == L'*') {
+			while (pattern[1] == L'*')
+				pattern++;
+			for (const wchar_t *tail = name;; tail++) {
+				if (wildcardMatch(pattern + 1, tail))
+					return true;
+				if (!*tail)
+					return false;
+			}
+		}
+		if (!*name || (*pattern != L'?' && *pattern != *name))
+			return false;
+		name++;
+	}
+	return *name == L'\0';
+}
+
+bool wxDir::GetFirst(wxString *filename, const wxString &filespec, int /*flags*/) {
+	_index = 0;
+	// A wildcard-less (or empty) spec means "everything", as in wxWidgets.
+	_entries.clear();
+	std::wstring spec = filespec.ToStdWstring().empty() ? L"*" : filespec.ToStdWstring();
+	for (const std::wstring &name : _all) {
+		if (wildcardMatch(spec.c_str(), name.c_str()))
+			_entries.push_back(name);
+	}
+	return GetNext(filename);
+}
+
+bool wxDir::GetNext(wxString *filename) {
+	if (_index >= _entries.size())
+		return false;
+	*filename = wxString(_entries[_index++]);
+	return true;
+}
+
+bool wxRemoveFile(wxString file) {
+	return std::remove(static_cast<const char *>(file.mb_str())) == 0;
+}
+
+struct tm *wxDateTime::GetTmNow() {
+	static struct tm now;
+	std::time_t t = std::time(nullptr);
+	return localtime_s(&now, &t) == 0 ? &now : nullptr;
 }
 
 bool wxFileName::Exists() const {

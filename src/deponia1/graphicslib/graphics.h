@@ -15,6 +15,7 @@
 
 class TPreloadedPicManager;
 struct TPictureMemBlock;
+class TPictureMEM;
 
 // Confirmed 2 raw-int parameters read straight from game data (field ids
 // 0x224/0x225), never a named constant - real values/meaning not resolved
@@ -31,6 +32,17 @@ public:
 	// Linux.asm line 168383+) - the shared memory block a scene's lightmap
 	// picture decodes into; not reversed beyond that call shape.
 	TPictureMemBlock *GetLightMapMemBlock();
+	// Confirmed call shape only (TMSavegame::~TMSavegame()/SetActive()/
+	// SaveGame(), Deponia_Linux.asm lines 159388-163700) - evicts a named
+	// sprite from the sprite cache; not reversed beyond that call shape.
+	void RemoveFromCache(const wxString &name);
+	// Confirmed call shapes only (TMSavegame::SaveSnapShot(), Deponia_Linux.
+	// asm lines 162236-162327): the shared memory block frame captures decode
+	// into, and the current frame's captured picture (a virtual slot, +0x128
+	// of the unmodeled GL backend's vtable - null when nothing was captured);
+	// not reversed beyond those call shapes.
+	TPictureMemBlock *GetMainMemBlock();
+	virtual TPictureMEM *GetCapturedFrame();
 
 	// Confirmed call shapes only (TGameControl::LoadAndInitGame, asm lines
 	// 467717-467726, 467884-467886) - not reversed beyond that.

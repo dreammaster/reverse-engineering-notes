@@ -43,6 +43,20 @@ public:
 	wxString(const char *s) : _data(s, s + std::char_traits<char>::length(s)) {}
 	wxString(const std::wstring &s) : _data(s) {}
 
+	// Confirmed call shape only (TMSavegame::GetExistingSaveGames, Deponia_
+	// Linux.asm line 164367+) - real wxString::ToLong() parses the whole
+	// string as a base-`base` integer, reporting failure (and leaving the
+	// output untouched) unless every character is consumed.
+	bool ToLong(long *value, int base = 10) const {
+		if (_data.empty())
+			return false;
+		wchar_t *end = nullptr;
+		long parsed = std::wcstol(_data.c_str(), &end, base);
+		if (*end != L'\0')
+			return false;
+		*value = parsed;
+		return true;
+	}
 	const std::wstring &ToStdWstring() const {
 		return _data;
 	}
@@ -278,9 +292,37 @@ private:
 	std::wstring _fullPath;
 };
 
+// Confirmed call shapes only (TMSavegame::SavegameExists/GetExistingSaveGames,
+// Deponia_Linux.asm lines 163282-164367). GetFirst()/GetNext() list matching
+// entries of an opened directory one at a time; `filespec` is a wildcard
+// ('*' and '?') matched against the entry name, and a flags value of 0 (the
+// only one the call sites reversed so far pass) lists files and directories
+// alike, excluding "." and "..".
 class wxDir {
 public:
 	static bool Exists(const wxString &path);
+
+	bool Open(const wxString &path);
+	bool GetFirst(wxString *filename, const wxString &filespec, int flags);
+	bool GetNext(wxString *filename);
+
+private:
+	std::vector<std::wstring> _all;
+	std::vector<std::wstring> _entries;
+	std::size_t _index = 0;
+};
+
+// Confirmed call shape only (TMSavegame::Delete, Deponia_Linux.asm line
+// 163096) - real wxRemoveFile() takes its argument by value and reports
+// whether the file was deleted.
+bool wxRemoveFile(wxString file);
+
+// Confirmed call shape only (TMSavegame::MakeSaveGameName, asm line 161685)
+// - the real static GetTmNow() returns a pointer to a freshly filled `struct
+// tm` for the current local time (null on failure).
+class wxDateTime {
+public:
+	static struct tm *GetTmNow();
 };
 
 // Confirmed call shapes only (TGameControl::LoadEventHandlers,

@@ -1,5 +1,8 @@
 #include "TGameClientSDK.h"
 
+void TSteamSDK::DeleteCloudSavegame(const wxString &/*fileName*/) {
+}
+
 bool TSteamSDK::GetStatus() const {
 	return false;
 }
