@@ -4272,6 +4272,17 @@ stocks items 313, 363, 251, 223, 276, 181; the governor's key grant (333) is ite
 41 plus 10000 gold; lock 3 holds all three piles (7250 gold, 200 magic ore, 400
 nuore). `LockRecord` now exposes `items[]`, `gold`, `magicOre`, `nuore`.
 
+**Shop arithmetic (`src23/shop.c`, 2026-10-03)**: `ComputeBarterPricingPreview`
+sets a percentage from the haggling member's Bartering stat in seven tiers
+(<=54: 55%, <=64: 45%, <=79: 35%, <=100: 25%, <=124: 15%, <=149: 8%, <=999: 2%,
+anything else 55%); buying costs base x (100+p)%, selling back pays
+base x (100-p)%. `PayGoldAndAcquireItem`: affordable -> subtract; paying the
+exact balance flags the "resource depleted" overlay. Chapter 3's service
+handlers are the same code with every topic field 2 bytes higher (the new
+word) and one difference: the handler "finished" argument bit is `0x8` where
+Chapter 2 tests `0x1` (the topic data uses the FINISHED topic's mask bits and
+flags instead, so it doesn't matter for the data layer).
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
