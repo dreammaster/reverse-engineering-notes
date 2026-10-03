@@ -1,0 +1,96 @@
+# MM3 monsters (decoded from the `MON*.DAT` columns and `MONSTER_NAMES`)
+
+Field meanings: `dmg` = NdS physical damage (`MONDMGN`d`MONDMGS`), `att` = attacks per turn (`MONNUMA`), `type` = damage type (`MONDMGT`: 0 physical, 1 magical, 2 fire, 3 electrical, 4 cold, 5 poison, 6 energy - same numbering as Xeen), `hates` = `MONATTP` (target selection in `doMonsterTurn`: 0 random, 1 whole party, 2 cleric, 3 sorcerer, 4 druid, 5 paladin, 6 dwarf - the same idea as Xeen's `_hatesClass`), `spec` = `MONSPEC` special attack (Xeen's `SpecialAttack` numbering: 1 magic ... 7 disease, 8 insane, 9 sleep, 10 curse item, ...), `rng` = `MONRANG`, `hit` = `MONHITB`, `tr` = `MONTREA` treasure class, then gold, gems and the percent resistances magic/fire/elec/cold/acid(poison)/energy/physical.
+
+| id | name | HP | AC | spd | dmg | att | exp | type | hates | spec | rng | hit | tr | gold | gems | resist m/f/e/c/a/en/ph |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | Vampire Bat | 5 | 5 | 20 | 2d2 | 2 | 250 | physical | whole party | 1 | 0 | 5 | 0 | 0 | 0 | 0/0/0/0/0/0/0 |
+| 1 | Bubble Man | 15 | 0 | 15 | 1d6 | 1 | 250 | magical | whole party | 0 | 1 | 0 | 0 | 0 | 0 | 0/0/50/50/100/0/50 |
+| 2 | Goblin | 10 | 0 | 15 | 3d3 | 1 | 400 | physical | whole party | 0 | 1 | 3 | 1 | 10 | 0 | 0/0/0/0/0/0/0 |
+| 3 | Orc Warrior | 25 | 5 | 12 | 2d8 | 1 | 600 | physical | whole party | 0 | 1 | 5 | 1 | 20 | 0 | 0/50/50/50/0/0/0 |
+| 4 | Skeleton | 20 | 2 | 18 | 2d6 | 2 | 1000 | physical | cleric | 0 | 0 | 4 | 0 | 0 | 5 | 0/50/50/50/0/0/80 |
+| 5 | Screamer | 10 | 10 | 25 | 2d4 | 1 | 1750 | energy | - | 3 | 0 | 0 | 0 | 0 | 5 | 0/0/0/0/0/100/0 |
+| 6 | Oh No Bug | 40 | 8 | 30 | 3d3 | 3 | 1000 | physical | whole party | 0 | 0 | 6 | 0 | 0 | 0 | 0/0/60/80/80/0/0 |
+| 7 | Moose Rat | 40 | 4 | 16 | 2d8 | 2 | 1200 | physical | whole party | 0 | 0 | 8 | 0 | 0 | 0 | 0/30/30/30/30/0/0 |
+| 8 | Wild Fungus | 25 | 0 | 5 | 3d4 | 1 | 2000 | electrical | - | 0 | 0 | 0 | 0 | 0 | 10 | 25/0/100/100/50/50/0 |
+| 9 | Zombie | 35 | 2 | 2 | 3d6 | 2 | 1800 | physical | cleric | 4 | 0 | 5 | 0 | 0 | 6 | 0/0/75/75/0/0/80 |
+| 10 | Candle Creep | 70 | 5 | 8 | 2d5 | 2 | 3000 | fire | whole party | 0 | 1 | 0 | 1 | 0 | 5 | 0/0/100/0/50/0/50 |
+| 11 | Mad Dwarf | 75 | 10 | 16 | 4d5 | 1 | 2500 | physical | dwarf | 0 | 0 | 10 | 2 | 100 | 15 | 20/50/50/50/50/50/0 |
+| 12 | Ninja | 45 | 15 | 35 | 2d4 | 4 | 3000 | physical | whole party | 0 | 0 | 15 | 1 | 30 | 0 | 25/20/20/20/20/20/20 |
+| 13 | Magic Mantis | 50 | 12 | 30 | 2d10 | 2 | 3500 | physical | whole party | 1 | 0 | 8 | 0 | 0 | 10 | 50/0/0/0/0/0/0 |
+| 14 | Ogre | 60 | 10 | 15 | 2d16 | 1 | 2500 | physical | whole party | 7 | 1 | 10 | 2 | 50 | 5 | 0/50/30/30/20/0/0 |
+| 15 | Bugaboo | 60 | 15 | 22 | 2d12 | 2 | 4000 | magical | sorcerer | 0 | 0 | 0 | 2 | 0 | 8 | 80/50/50/50/50/50/0 |
+| 16 | Phase Head | 20 | 10 | 25 | 2d4 | 1 | 4000 | physical | - | 5 | 0 | 10 | 0 | 0 | 5 | 0/75/75/75/75/75/0 |
+| 17 | Giant Spider | 30 | 14 | 25 | 2d4 | 8 | 3000 | physical | whole party | 1 | 0 | 12 | 0 | 0 | 3 | 0/0/50/30/50/50/0 |
+| 18 | Sprite | 15 | 13 | 18 | 2d3 | 2 | 2500 | electrical | whole party | 6 | 0 | 0 | 2 | 40 | 10 | 60/25/25/25/25/25/50 |
+| 19 | Dino Beetle | 70 | 10 | 18 | 3d5 | 6 | 4000 | physical | whole party | 0 | 0 | 20 | 0 | 200 | 0 | 0/25/25/25/25/25/0 |
+| 20 | Cobra Fiend | 50 | 15 | 25 | 2d15 | 1 | 4000 | physical | whole party | 2 | 0 | 25 | 1 | 0 | 5 | 50/20/20/20/0/0/0 |
+| 21 | Scorpia | 50 | 5 | 10 | 3d4 | 1 | 5000 | poison | - | 1 | 0 | 0 | 2 | 50 | 10 | 10/0/0/0/0/0/0 |
+| 22 | Cryo Spore | 40 | 3 | 16 | 4d4 | 1 | 6000 | cold | - | 0 | 0 | 0 | 0 | 0 | 20 | 20/0/80/100/80/0/0 |
+| 23 | Cursed Fool | 40 | 8 | 15 | 3d3 | 3 | 3500 | physical | sorcerer | 6 | 0 | 20 | 2 | 100 | 10 | 25/0/0/0/0/0/0 |
+| 24 | Mini Dragon | 150 | 20 | 30 | 50d1 | 1 | 18000 | fire | - | 0 | 1 | 0 | 3 | 2500 | 100 | 10/100/20/0/20/0/0 |
+| 25 | Plasmoid | 100 | 5 | 17 | 4d3 | 3 | 8000 | poison | whole party | 7 | 0 | 0 | 2 | 500 | 10 | 0/60/60/0/60/60/50 |
+| 26 | Carnage Hand | 40 | 25 | 20 | 60d2 | 1 | 10000 | physical | whole party | 0 | 0 | 25 | 0 | 0 | 30 | 80/0/0/0/0/0/0 |
+| 27 | Ghoul | 100 | 15 | 16 | 3d6 | 4 | 16000 | physical | whole party | 8 | 0 | 27 | 2 | 250 | 0 | 0/0/0/0/0/0/80 |
+| 28 | Castle Guard | 75 | 10 | 20 | 2d40 | 1 | 10000 | physical | whole party | 0 | 0 | 30 | 2 | 0 | 0 | 20/0/0/0/0/0/0 |
+| 29 | Phantom | 50 | 12 | 20 | 4d4 | 1 | 16000 | magical | whole party | 11 | 0 | 0 | 2 | 0 | 15 | 20/0/0/0/0/0/90 |
+| 30 | Pirana | 40 | 20 | 30 | 3d3 | 8 | 10000 | physical | whole party | 0 | 0 | 20 | 0 | 0 | 0 | 0/0/0/0/0/0/0 |
+| 31 | Evil Ranger | 100 | 20 | 20 | 4d6 | 3 | 12000 | physical | druid | 0 | 1 | 25 | 2 | 1000 | 25 | 0/20/20/20/0/0/0 |
+| 32 | Shadow Rogue | 50 | 15 | 22 | 3d6 | 2 | 12000 | physical | whole party | 1 | 1 | 20 | 3 | 500 | 50 | 60/0/0/0/0/0/0 |
+| 33 | Tree Golem | 150 | 10 | 6 | 2d25 | 2 | 16000 | physical | cleric | 0 | 0 | 25 | 2 | 200 | 10 | 90/0/0/0/0/0/60 |
+| 34 | Wicked Witch | 50 | 8 | 16 | 4d4 | 1 | 16000 | magical | - | 16 | 1 | 0 | 3 | 300 | 15 | 50/0/0/0/0/0/0 |
+| 35 | Iron Wizard | 200 | 30 | 50 | 50d1 | 2 | 25000 | energy | whole party | 0 | 1 | 0 | 0 | 0 | 30 | 0/80/80/80/80/0/50 |
+| 36 | Death Locust | 100 | 20 | 30 | 4d8 | 4 | 16000 | physical | whole party | 4 | 0 | 30 | 0 | 0 | 0 | 0/0/40/40/40/0/0 |
+| 37 | Archer | 100 | 15 | 35 | 5d6 | 4 | 20000 | physical | whole party | 0 | 1 | 35 | 3 | 2000 | 40 | 15/15/15/15/15/0/0 |
+| 38 | Mystic Cloud | 50 | 18 | 40 | 4d4 | 1 | 30000 | magical | - | 9 | 1 | 0 | 0 | 0 | 25 | 90/0/0/0/0/0/0 |
+| 39 | Barbarian | 175 | 15 | 30 | 2d30 | 2 | 25000 | physical | whole party | 0 | 1 | 30 | 2 | 600 | 0 | 10/50/50/50/50/0/0 |
+| 40 | Cleric of Moo | 100 | 10 | 20 | 2d18 | 1 | 32000 | electrical | - | 0 | 1 | 0 | 2 | 1500 | 30 | 0/20/20/20/20/0/0 |
+| 41 | Fire Lizard | 150 | 10 | 30 | 2d25 | 2 | 25000 | fire | whole party | 0 | 1 | 0 | 0 | 0 | 0 | 5/100/50/0/50/0/0 |
+| 42 | Fire Stalker | 75 | 20 | 40 | 3d10 | 3 | 30000 | fire | whole party | 0 | 0 | 0 | 0 | 100 | 10 | 0/100/80/0/0/0/100 |
+| 43 | Gargoyle | 125 | 15 | 30 | 3d15 | 4 | 30000 | physical | whole party | 10 | 0 | 30 | 3 | 800 | 10 | 10/0/0/0/0/0/0 |
+| 44 | Ghost | 100 | 13 | 25 | 10d10 | 1 | 32000 | energy | whole party | 11 | 0 | 0 | 3 | 0 | 25 | 15/0/0/0/0/0/100 |
+| 45 | Draconi | 125 | 10 | 20 | 3d20 | 2 | 20000 | physical | whole party | 0 | 0 | 30 | 3 | 800 | 0 | 25/0/0/0/0/0/0 |
+| 46 | Sonic Ninja | 75 | 20 | 20 | 3d10 | 8 | 20000 | physical | whole party | 0 | 0 | 40 | 3 | 500 | 0 | 10/20/20/20/20/80/0 |
+| 47 | Evil Eye | 100 | 25 | 35 | 50d1 | 4 | 60000 | magical | whole party | 3 | 1 | 0 | 4 | 0 | 30 | 90/0/0/0/0/0/0 |
+| 48 | Guardian | 250 | 20 | 15 | 75d2 | 1 | 40000 | physical | whole party | 0 | 0 | 35 | 3 | 0 | 10 | 0/80/80/80/80/0/0 |
+| 49 | Paladin | 175 | 30 | 30 | 3d30 | 5 | 50000 | physical | whole party | 0 | 1 | 40 | 3 | 4000 | 25 | 50/50/50/50/50/0/0 |
+| 50 | Dark Pegasus | 125 | 20 | 40 | 2d20 | 4 | 40000 | physical | sorcerer | 5 | 0 | 35 | 3 | 0 | 0 | 10/0/0/0/0/0/30 |
+| 51 | Reaper | 150 | 15 | 25 | 4d20 | 1 | 50000 | magical | cleric | 0 | 1 | 0 | 3 | 0 | 20 | 0/0/0/0/0/0/90 |
+| 52 | Sorcerer | 100 | 10 | 40 | 8d10 | 1 | 50000 | cold | - | 0 | 1 | 0 | 4 | 2000 | 100 | 25/0/0/0/0/0/0 |
+| 53 | Lich | 200 | 12 | 50 | 5d5 | 1 | 120000 | magical | - | 15 | 1 | 0 | 5 | 10000 | 100 | 50/0/0/0/0/0/70 |
+| 54 | Spirit Shield | 100 | 35 | 80 | 6d20 | 2 | 60000 | physical | whole party | 0 | 0 | 40 | 0 | 0 | 0 | 0/0/0/0/0/0/80 |
+| 55 | Troll | 125 | 15 | 25 | 3d15 | 3 | 50000 | physical | dwarf | 0 | 0 | 35 | 3 | 2500 | 20 | 0/0/0/0/0/0/0 |
+| 56 | Major Demon | 333 | 16 | 33 | 2d20 | 6 | 100000 | physical | whole party | 10 | 0 | 40 | 4 | 3333 | 33 | 80/100/0/0/0/0/0 |
+| 57 | Dinosaur | 500 | 10 | 12 | 5d100 | 2 | 80000 | physical | whole party | 0 | 0 | 60 | 0 | 0 | 0 | 0/0/80/80/80/0/0 |
+| 58 | ED-409 | 400 | 40 | 75 | 50d2 | 3 | 120000 | energy | whole party | 0 | 1 | 0 | 0 | 0 | 100 | 0/80/80/80/80/20/60 |
+| 59 | Black Knight | 375 | 30 | 50 | 4d40 | 7 | 100000 | physical | paladin | 8 | 1 | 50 | 4 | 8000 | 0 | 20/60/60/60/60/0/0 |
+| 60 | Death Agent | 300 | 15 | 30 | 10d10 | 2 | 70000 | poison | whole party | 1 | 0 | 0 | 3 | 0 | 20 | 10/0/0/0/0/0/0 |
+| 61 | Mummy | 250 | 15 | 30 | 2d40 | 2 | 120000 | physical | druid | 4 | 0 | 40 | 4 | 1000 | 25 | 0/0/80/80/80/100/80 |
+| 62 | Priest of Moo | 200 | 20 | 40 | 4d15 | 1 | 120000 | electrical | - | 0 | 1 | 0 | 3 | 6000 | 45 | 10/40/40/40/40/0/0 |
+| 63 | Toxic Worm | 300 | 25 | 60 | 2d30 | 2 | 90000 | physical | whole party | 1 | 0 | 40 | 0 | 0 | 0 | 5/30/30/30/30/30/0 |
+| 64 | Dragon Worm | 400 | 35 | 45 | 100d1 | 1 | 150000 | poison | - | 1 | 0 | 0 | 4 | 5000 | 60 | 20/0/0/0/0/0/0 |
+| 65 | Cyclops | 500 | 25 | 40 | 6d25 | 2 | 150000 | physical | whole party | 5 | 0 | 50 | 4 | 10000 | 0 | 30/0/0/0/0/0/0 |
+| 66 | Major Devil | 666 | 33 | 66 | 2d40 | 4 | 250000 | physical | whole party | 12 | 0 | 50 | 5 | 6666 | 66 | 90/100/0/0/0/0/0 |
+| 67 | Green Dragon | 800 | 40 | 60 | 250d1 | 1 | 500000 | cold | - | 0 | 1 | 0 | 5 | 25000 | 500 | 25/0/50/100/0/0/0 |
+| 68 | Jouster | 600 | 35 | 50 | 20d20 | 1 | 180000 | physical | whole party | 0 | 0 | 80 | 5 | 10000 | 0 | 20/0/0/0/0/0/0 |
+| 69 | Wizard | 250 | 20 | 80 | 232d1 | 1 | 240000 | magical | whole party | 0 | 1 | 0 | 5 | 15000 | 200 | 50/70/70/70/70/30/0 |
+| 70 | Death Snake | 500 | 25 | 90 | 4d50 | 1 | 150000 | physical | whole party | 10 | 0 | 50 | 0 | 0 | 0 | 0/0/0/0/0/0/0 |
+| 71 | Vampire | 400 | 30 | 45 | 10d10 | 3 | 250000 | physical | cleric | 9 | 0 | 60 | 5 | 7500 | 50 | 10/0/80/100/100/0/90 |
+| 72 | Werewolf | 500 | 30 | 40 | 8d15 | 2 | 150000 | physical | whole party | 4 | 0 | 50 | 4 | 0 | 25 | 20/20/20/20/20/0/0 |
+| 73 | Terminator | 1000 | 100 | 200 | 232d4 | 1 | 3000000 | energy | whole party | 13 | 1 | 0 | 0 | 0 | 200 | 0/100/100/100/100/0/100 |
+| 74 | Great Hydra | 5000 | 60 | 75 | 12d12 | 12 | 4000000 | physical | whole party | 1 | 0 | 100 | 6 | 50000 | 100 | 10/100/50/0/50/0/0 |
+| 75 | Vulture Roc | 2000 | 50 | 100 | 5d50 | 2 | 2000000 | physical | whole party | 10 | 0 | 100 | 6 | 25000 | 0 | 20/50/50/0/50/0/0 |
+| 76 | Kudo Crab | 2500 | 80 | 80 | 8d30 | 4 | 2000000 | physical | whole party | 7 | 0 | 100 | 6 | 40000 | 0 | 15/50/50/100/50/0/0 |
+| 77 | Medusa | 1000 | 40 | 60 | 8d8 | 1 | 3000000 | magical | - | 14 | 1 | 0 | 6 | 10000 | 200 | 80/0/0/0/0/0/0 |
+| 78 | Minotaur | 1000 | 90 | 80 | 3d100 | 2 | 3000000 | physical | whole party | 15 | 0 | 150 | 6 | 100000 | 100 | 100/0/0/0/0/0/0 |
+| 79 | Octobeast | 3000 | 40 | 100 | 5d50 | 8 | 3000000 | physical | whole party | 8 | 0 | 150 | 6 | 50000 | 50 | 0/90/80/80/90/0/0 |
+| 80 | Dragon Lord | 10000 | 75 | 150 | 232d1 | 1 | 10000000 | energy | - | 0 | 1 | 0 | 6 | 250000 | 1000 | 100/100/100/100/100/100/0 |
+| 81 | Rat Overlord | 250 | 4 | 16 | 2d8 | 6 | 8000 | physical | whole party | 0 | 0 | 15 | 0 | 0 | 0 | 0/30/30/30/30/0/0 |
+| 82 | Mummy King | 500 | 15 | 30 | 2d40 | 3 | 250000 | physical | druid | 4 | 0 | 40 | 5 | 1000 | 500 | 0/0/80/80/80/100/80 |
+| 83 | Cyclops King | 1000 | 25 | 40 | 6d25 | 3 | 300000 | physical | whole party | 5 | 0 | 50 | 5 | 100000 | 0 | 80/0/0/0/0/0/0 |
+| 84 | Minotaur King | 2500 | 90 | 80 | 3d100 | 3 | 6000000 | physical | whole party | 15 | 0 | 150 | 6 | 100000 | 30000 | 100/0/0/0/0/0/0 |
+| 85 | Vampire King | 1000 | 30 | 45 | 10d10 | 4 | 500000 | physical | cleric | 9 | 0 | 60 | 6 | 25000 | 5000 | 40/0/80/100/100/0/90 |
+| 86 | Moo Master | 400 | 20 | 40 | 5d15 | 1 | 250000 | electrical | - | 0 | 1 | 0 | 5 | 6000 | 200 | 10/40/40/40/40/0/0 |
+| 87 | Top Jouster | 1000 | 35 | 50 | 20d20 | 2 | 300000 | physical | whole party | 0 | 0 | 80 | 6 | 10000 | 0 | 60/0/0/0/0/0/0 |
+| 88 | Eye Master | 200 | 25 | 35 | 75d1 | 4 | 200000 | magical | whole party | 3 | 1 | 0 | 6 | 0 | 350 | 90/0/0/0/0/0/0 |
+| 89 | Cult Leader | 300 | 20 | 20 | 4d6 | 5 | 30000 | physical | druid | 0 | 1 | 25 | 5 | 10000 | 25 | 20/20/20/20/0/0/0 |
