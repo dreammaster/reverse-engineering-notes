@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../viewport.c ../pictures.c ../pictures_stdio.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../minimap.c ../viewport.c ../pictures.c ../pictures_stdio.c \
  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
@@ -12,6 +12,7 @@
 
 #include "dungeongrid.h"
 #include "lighting.h"
+#include "minimap.h"
 #include "pictures_stdio.h"
 #include "viewport.h"
 #include "viewrender.h"
@@ -171,6 +172,18 @@ int main(int argc, char **argv) {
     }
     ViewRenderer renderer = {game, tables, pictureFileGet, pictures, screen};
     viewRender(&renderer, &scene);
+    if (getenv("RENDER_HUD")) {
+        for (int r = 0; r < DungeonGridSize; r++) {
+            for (int c = 0; c < DungeonGridSize; c++) {
+                dungeonGridCellMutable(&grid, r, c)->flags |= 0x8000; /* show the whole map as explored */
+            }
+        }
+        MinimapTile tiles[MinimapCells];
+        int16_t shades[LightingViewportCells];
+        lightingViewportTable(scene.gradient, shades);
+        minimapBuild(game, &grid, x, y, tiles);
+        minimapDraw(&renderer, tiles, shades, facing);
+    }
     pictureFileClose(pictures);
     if (!writePng(argv[7], screen, palette, ViewScreenWidth, ViewScreenHeight, scale)) {
         fprintf(stderr, "cannot write %s\n", argv[7]);

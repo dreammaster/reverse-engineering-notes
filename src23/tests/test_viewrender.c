@@ -100,19 +100,20 @@ static void testRowMask(void) {
 
 static void testPatch(void) {
     memset(g_tables, 0, sizeof(g_tables));
-    /* val12 (0x386) entry for cell 1: source (20, 3); records {run 3, shift 1}, {run 2, shift 0}, 0 */
+    /* val12 (0x386) entry for cell 1: source (20, 3); records {run 3, shift 1}, {run 2, shift -2}, {run 1, shift 0}, 0 */
     w16(0x386 + 6, 20);
     w16(0x386 + 6 + 2, 3);
     w16(0x386 + 6 + 4, 0x500);
-    unsigned list[] = {3, 1, 0, 2, 0, 0, 0};
-    words(0x500, list, 7);
+    unsigned list[] = {3, 1, 0, 2, 0xFFFE, 0, 1, 0, 0, 0};
+    words(0x500, list, 10);
     ViewRenderer r = renderer();
     viewDrawSprite(&r, 1, 4, 0, 1, 0, false, 0);
     unsigned dx = 20 + 8, dy = 3 + 70;
     check("patch: the first run lands at (x + 8, y + 70)", g_screen[dy * 320 + dx] == srcPixel(4, 20, 3) && g_screen[dy * 320 + dx + 2] == srcPixel(4, 22, 3) &&
                                                                g_screen[dy * 320 + dx + 3] == 0);
     check("...the next row shifts one pixel along on both sides", g_screen[(dy + 1) * 320 + dx + 1] == srcPixel(4, 21, 4) &&
-                                                                       g_screen[(dy + 1) * 320 + dx] == 0 && g_screen[(dy + 1) * 320 + dx + 2] == srcPixel(4, 22, 4) && g_screen[(dy + 2) * 320 + dx + 1] == 0);
+                                                                       g_screen[(dy + 1) * 320 + dx] == 0 && g_screen[(dy + 1) * 320 + dx + 2] == srcPixel(4, 22, 4));
+    check("...and a negative shift moves back (signed 16-bit)", g_screen[(dy + 2) * 320 + dx - 1] == srcPixel(4, 19, 5) && g_screen[(dy + 2) * 320 + dx] == 0);
     memset(g_screen, 0, sizeof(g_screen));
     w16(0xBF2 + 6, 20);
     w16(0xBF2 + 6 + 2, 3);
@@ -218,7 +219,8 @@ int main(void) {
     testStrip();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 720, 0x3C32DEEF, "Chapter 2: the inn, facing west by day (inspected render)");
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 1200, 0x7898374D, "Chapter 2: the same view at night");
-    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 166, 36, SaveFacingWest, 720, 0x3D90CFE8, "Chapter 3: a log wall by day (inspected render)");
+    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 166, 36, SaveFacingWest, 720, 0x04C83A87, "Chapter 3: a log wall by day (inspected render)");
+    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 460, 46, SaveFacingNorth, 540, 0x9FC5F5C8, "Chapter 3: the castle gate and its cobbled approach (inspected render)");
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed (%d skipped).\n", g_skipCount);

@@ -1094,6 +1094,29 @@ decimation patterns, stepping one row after each column set; layer 6 copies 113 
 strip of a 56-wide picture. Colour 0xFF is transparent; shading is `ShiftPaletteShadeClamped` (delta added to the low nibble of
 a colour < 0xD0, clamped inside its 16-colour block). Exact algorithm and layer map: `viewrender.h`.
 
+### The main screen: frame, minimap, fonts and click regions (`minimap.c`, `font.c`, `uiregions.c`)
+
+Decoded 2026-10-04 (render with `RENDER_HUD=1 render_view ...`). The main dungeon screen is `RunDungeonGameLoop`'s
+`DrawFullScreenPictureAndCacheToEMS` of **category 0 picture 1** (318 x 198 at (1, 1)): the stone frame with a black 224 x 136 viewport
+at (8, 8), the minimap well at (240, 8), the four-button icon row at y 67-82, a text panel below it, the six-arrow movement pad and four
+party panels along the bottom (each 32 x 32 portrait at (8 + 58n, 148) -- category 7 faces -- three 8 x 8 slot icons and a name bar).
+Other full-screen pictures (category 0): 0 SmithWare logo, 2 title menu, 3 character stat sheet, 4 party roster, 5 chapter title card
+(15 pictures in Chapter 2, 23 in Chapter 3), 6 castle gate, 7 automap background, 8 scroll in hand, 9 castle, 10 throne room,
+11 "Tyrants of Thaine", 12 Dark Union / clue book, 13-14 stone panels. All draw at (1, 1).
+
+The **minimap** (`BuildMinimapTileData` / `DrawMinimap`, identical in both games): a 9 x 7 grid of 8 x 8 category-9 tiles at (240, 8),
+the party's cell the fifth column of the fourth row. An explored cell (flag 0x8000) shows its wall legend word 5, plus an overlay (floor
+legend word 4, if nonzero, 0xFF transparent); unexplored cells show tile 0x13. Each tile is shaded by its entry of the lighting
+module's 63-cell table (the party cell is entry 31). The facing arrow is category-9 picture 0/2/1/3 (north/south/east/west) at
+(272, 32).
+
+**Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
+font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
+
+**Click regions** (`HitTestRegionTable`, 10-byte entries xMin, xMax, yMin, yMax, result; `uiregions.c` has all 24 tables of both games):
+main screen viewport (8,8)-(231,143) = 1, minimap well = 2, icon row = 3, right-hand monster panels = 4, lower panel = 5, portrait
+strip = 6; the party-panel table gives each panel's portrait (codes 1, 11, 21, 31), six slot squares and name bar.
+
 ### Ambient lighting (`ComputeAmbientLightingTable`, `lighting.c`)
 
 The 7-entry shade-delta gradient (`word_328E6`-`328F2`, previously "where the gradient values get computed isn't

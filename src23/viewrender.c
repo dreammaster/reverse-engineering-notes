@@ -65,6 +65,10 @@ static unsigned rd(const ViewRenderer *r, unsigned offset) {
     return (unsigned)r->tables[offset] | ((unsigned)r->tables[offset + 1] << 8);
 }
 
+static int rds(const ViewRenderer *r, unsigned offset) {
+    return (int16_t)rd(r, offset);
+}
+
 static void put(const Blit *b, long dest, uint8_t pixel) {
     if (dest >= 0 && dest < ScreenSize) {
         b->r->screen[dest] = viewShadeColour(pixel, b->shade);
@@ -150,9 +154,9 @@ static void patchSprite(const Blit *b, unsigned table, unsigned depth, int offse
         for (unsigned j = 0; j < run; j++) {
             emit(b, dest + j, source + j);
         }
-        unsigned shift = rd(b->r, list + 2);
+        int shift = rds(b->r, list + 2);
         source += b->width + shift;
-        dest += ViewScreenWidth + (long)shift;
+        dest += ViewScreenWidth + shift;
     }
 }
 
@@ -183,7 +187,8 @@ static void columnSprite(const Blit *b, unsigned depth, bool stepDown) {
     unsigned source = 0;
     long dest = (long)y * ViewScreenWidth + x;
     for (unsigned guard = 0; guard < 1024; guard++) {
-        unsigned columns = rd(b->r, header), advance = rd(b->r, header + 2), records = header + 4;
+        unsigned columns = rd(b->r, header), records = header + 4;
+        int advance = rds(b->r, header + 2);
         if (rd(b->r, records) == 0) {
             source += advance;
             header += 6;
