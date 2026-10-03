@@ -544,9 +544,10 @@ void combatApplySpellAttack(uint8_t *targetRecord, const uint8_t *spellRecord, C
  * record, then `combatMarkSpellAttackHit` on a landed hit. **A
  * precondition the caller must check first, not modeled here**: the
  * original only reaches this attack at all when the spell record's own
- * `SpellFieldResistFlags` doesn't have bit `0x40` or `0x80` set -- either
- * bit diverts to a completely different, untraced branch
- * (`yendor2.asm:loc_2CF51`) instead of attacking.
+ * `SpellFieldResistFlags` doesn't have `SpellResistLifeForceCaster`/
+ * `SpellResistLifeForceParty` (0x40/0x80) set -- either bit diverts to the
+ * LIFE FORCE branch (`yendor2.asm:loc_2CF51`,
+ * combatApplyLifeForceSpell below) instead of attacking.
  *
  * Bit `0x1000` is the same attack applied to every occupied, still-alive
  * `g_monsterSlots` entry (skips a slot whose `MonsterFieldType` is 0 or
@@ -717,6 +718,58 @@ typedef enum {
 
 CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
                                                           SaveGame *save, GameKind game, RandomState *rng);
+
+/*
+ * ApplyEncodedItemEffect's word_33302 bit 0x2000 branch when the spell
+ * record's SpellFieldResistFlags has SpellResistLifeForceCaster or
+ * SpellResistLifeForceParty set (loc_2CF51, yendor2.asm:52567,
+ * instruction-identical in Chapter 3) instead of the ordinary
+ * combatApplySpellAttack path. Real data: exactly LIFE FORCE I-IV in both
+ * games (hit effect 24, fallback effect 32; HP amount 82 in all of them).
+ *
+ * Against the one engaged monster (g_activeCombatMonster):
+ *  1. ResolveAttackAndLatchFirstHit: combatResolveAttack(monster's
+ *     MonsterFieldAbsorption, caster's PartyStatCasting,
+ *     SpellFieldAttackMagnitude) -- a roll of 0 doesn't miss, it "latches"
+ *     SpellFieldAttackMagnitude as the damage instead (fallback = true).
+ *     No resistances, no drain, no type gate, no death handling here.
+ *  2. A landed roll subtracts the damage from MonsterFieldHealth, writes
+ *     SpellFieldInflictedMagnitude into MonsterFieldLastAttackMarker and
+ *     sets MonsterStateHitFlashPending (not MonsterStateAware, unlike
+ *     combatApplySpellAttack). The fallback instead ADDS the damage to
+ *     MonsterFieldHealth -- the backfire heals the target (unclamped
+ *     16-bit arithmetic both ways).
+ *  3. The trap effect named by the matching record word
+ *     (SpellFieldLifeForceHitEffectId or ...FallbackEffectId) is applied
+ *     to the caster alone (SpellResistLifeForceCaster) or to every party
+ *     member (otherwise), with the slot's two words staged as
+ *     amount = SpellFieldLifeForceHpCost and *status = the damage just
+ *     dealt* -- verbatim from the disassembly (`mov ax, g_stagedAttackDamage;
+ *     mov [di+0Eh], ax`), where ApplyEffectCost ORs that word into the
+ *     recipient's PartyFieldStatusFlags. So the damage value's own bits
+ *     become status bits: damage 70 (0x46) sets Dead|0x4|0x2. Whether
+ *     this is an original bug or deliberate, the original does it, and
+ *     it's reproduced rather than "fixed". The whole-party path
+ *     zeroes both words for a Dead recipient instead, which makes the
+ *     slot fall through to the full RollEffectMagnitude/
+ *     RollEffectResistance pair (effect 24 inflicts Sick, so an RNG draw
+ *     happens), and stops dead at the first unoccupied party slot like
+ *     the other whole-party composition here.
+ *
+ * savingThrowThreshold is word_32DC0, RollEffectResistance's threshold --
+ * stale caller-context state in the original (set by whichever lock/trap
+ * last wrote it), only consulted when a slot's status word is zero.
+ */
+typedef struct {
+    bool fallback;       /* the roll missed: monster healed, fallback effect */
+    uint16_t damage;     /* the rolled or latched amount */
+    uint16_t effectId;   /* the trap effect chosen */
+    unsigned recipients; /* party members the effect ran for; 0 if effectId is past the table */
+} CombatLifeForceOutcome;
+
+CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t *casterRecord,
+                                                   const uint8_t *spellRecord, SaveGame *save, GameKind game,
+                                                   unsigned savingThrowThreshold, RandomState *rng);
 
 /*
  * ApplyEncodedItemEffect's single-target and whole-party status-effect

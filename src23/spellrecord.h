@@ -132,10 +132,27 @@ typedef enum {
      * SpellFlagsBLightTimer set, both games), which of 6 light timers to
      * arm and its duration. Consumed by ApplyEncodedItemEffect's
      * word_33302 bit 0x80 branch (lightsource.h's lightSourceArmSpellTimer).
-     * Also read, as effect ids, by the deferred loc_2CF51 branch.
+     * The same two words are read as trap-effect ids by the LIFE FORCE
+     * branch (loc_2CF51, SpellResistLifeForce* below) -- see
+     * SpellFieldLifeForceHitEffectId.
      */
     SpellFieldTimerSlot = 0x2A,
     SpellFieldTimerDuration = 0x2C,
+
+    /*
+     * 0x2A/0x2C as read by ApplyEncodedItemEffect's word_33302 bit 0x2000
+     * branch when SpellFieldResistFlags has SpellResistLifeForceCaster or
+     * SpellResistLifeForceParty set (loc_2CF51; LIFE FORCE I-IV, the only
+     * records in either game that do): the trap-effect id (effect.h) applied
+     * to the caster/party after the roll lands (0x2A, word_332E4) or falls
+     * back (0x2C, word_332E6). Real data: 24 on a hit ("costs HP, may inflict
+     * Sick") and 32 on a fallback ("costs HP") in both games. The branch also
+     * reads 0x28 (SpellFieldPositionResetFlags) as the plain HP amount (82)
+     * and 0x22/0x24/0x26 as the hit sound, hit marker and fallback sound.
+     */
+    SpellFieldLifeForceHitEffectId = 0x2A,
+    SpellFieldLifeForceFallbackEffectId = 0x2C,
+    SpellFieldLifeForceHpCost = 0x28,
 
     /*
      * word_332E8: ResolveAttack's "power" input (combat.h's
@@ -322,6 +339,17 @@ typedef enum {
      * genuinely unreachable: no real record in either game sets this bit.
      */
     SpellResistClearAware = 0x0020,
+    /*
+     * Either bit diverts word_33302 bit 0x2000 away from the ordinary
+     * attack (SpellFlagsBAttackPath) into the LIFE FORCE branch instead
+     * (combat.h's combatApplyLifeForceSpell). 0x40: the caster alone pays
+     * (LIFE FORCE I-III); 0x80: every party member does (LIFE FORCE IV).
+     * Exactly those 4 records, both games. Note ApplyIconBarStatDelta also
+     * reads bit 0x40|0x80 as "don't apply word_332E2 as a status-clear
+     * mask" -- RESURRECT's 0xFFBF there is the same field, different role.
+     */
+    SpellResistLifeForceCaster = 0x0040,
+    SpellResistLifeForceParty = 0x0080,
     /* Gates SpellFieldTargetTypeId's match requirement (see that field's own doc comment). */
     SpellResistTypeRestricted = 0x0100
 } SpellResistFlag;

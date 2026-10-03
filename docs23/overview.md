@@ -11137,6 +11137,23 @@ added the arm/tick functions, named the spell fields. Same trap as the
 spell-record cluster; worth checking *first* whenever two names look
 like unrelated neighbours.
 
+### Session update (2026-10-03): `loc_2CF51` is LIFE FORCE; a damage-as-status quirk
+
+Started with the other "separate-looking fields" check I'd noted, on the
+`loc_2CF51` diversion. The aliasing trap wasn't the issue this time, but the
+same lesson applied from the other side: record words `0x2A`/`0x2C` that I'd
+just identified as light-timer fields are *also* effect ids in this branch,
+so the record is a per-branch union and the right way in was to ask which
+real records take the branch. Dumping them (bit `0x2000` and
+`ResistFlags & 0xC0`) gave exactly LIFE FORCE I-IV in both games, and the
+branch read straight through: roll-with-fallback against the engaged
+monster (a fallback heals it), then an HP-cost effect on the caster
+(`0x40`) or the whole party (`0x80`). One original quirk: the icon slot's
+status word is staged with the *damage value*, so damage bits become status
+bits. Reproduced as-is. Added `combatApplyLifeForceSpell`, named the spell
+fields/bits, factored `combatApplyEffectSlot` out of the trap helper, four
+tests; all 23 suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -1168,8 +1168,9 @@ consumers, if any.
    respectively) and bit `0x80`'s own surrounding dispatch (its
    per-target light-source counters are reimplemented, but the branch's
    own 6-slot arming write and `IsItemRangeAvailable`'s item-slot
-   transition logic aren't); `loc_2CF51` (the bit `0x2000` diversion) is
-   still deferred to its own pass; bit `0x200`/`word_33306`'s own
+   transition logic aren't); `loc_2CF51` (the bit `0x2000` diversion) was
+   deferred here and has since been reimplemented as
+   `combatApplyLifeForceSpell` (see file-formats.md); bit `0x200`/`word_33306`'s own
    surrounding scan-loop *shape* (which of the two targeting modes
    fires, and the viewport-depth bookkeeping around it) is
    orchestration, not yet composed, even though the per-target attack

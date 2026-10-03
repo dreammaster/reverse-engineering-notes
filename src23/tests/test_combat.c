@@ -1265,6 +1265,158 @@ static void testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot(void) {
     }
 }
 
+/*
+ * LIFE FORCE branch (loc_2CF51). Real records use effect 24 on a landed hit and
+ * effect 32 on the fallback (both games), HP amount 82.
+ */
+static void setupLifeForceSpell(uint8_t *spell, uint16_t resistFlags, uint16_t magnitude) {
+    memset(spell, 0, SpellRecordSize);
+    setSpellU16(spell, SpellFieldAttackMagnitude, magnitude);
+    setSpellU16(spell, SpellFieldResistFlags, resistFlags);
+    setSpellU16(spell, SpellFieldInflictedMagnitude, 7);
+    setSpellU16(spell, SpellFieldLifeForceHpCost, 82);
+    setSpellU16(spell, SpellFieldLifeForceHitEffectId, 24);
+    setSpellU16(spell, SpellFieldLifeForceFallbackEffectId, 32);
+}
+
+static void testLifeForceHitDamagesMonsterAndChargesTheCasterWithDamageAsStatus(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    uint8_t *caster = saveGamePartyRecordById(&save, 1);
+    uint8_t *other = saveGamePartyRecordById(&save, 2);
+    partySetStat(caster, PartyStatHitPoints, 999);
+    partySetStat(other, PartyStatHitPoints, 999);
+    partySetStat(caster, PartyStatCasting, 200);
+
+    uint8_t monster[MonsterRecordSize];
+    memset(monster, 0, sizeof(monster));
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+    monsterSetU16(monster, MonsterFieldAbsorption, 0);
+
+    uint8_t spell[SpellRecordSize];
+    setupLifeForceSpell(spell, SpellResistLifeForceCaster, 10);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    CombatLifeForceOutcome out = combatApplyLifeForceSpell(monster, caster, spell, &save, GameYendor2, 0, &rng);
+
+    check("a clear roll doesn't fall back", !out.fallback);
+    checkU32("damage = (10*200+50)/100", out.damage, 20);
+    checkU32("monster loses it", monsterGetU16(monster, MonsterFieldHealth), 80);
+    checkU32("hit marker written", monsterGetU16(monster, MonsterFieldLastAttackMarker), 7);
+    checkU32("hit flash set", monsterGetU16(monster, MonsterFieldState) & MonsterStateHitFlashPending,
+             MonsterStateHitFlashPending);
+    checkU32("but not Aware", monsterGetU16(monster, MonsterFieldState) & MonsterStateAware, 0);
+    checkU32("the hit effect is used", out.effectId, 24);
+    checkU32("the caster alone pays", out.recipients, 1);
+    checkU32("caster pays the 82 HP", partyGetStat(caster, PartyStatHitPoints), 917);
+    checkU32("the damage value itself is OR'd into the caster's status flags",
+             partyGetU16(caster, PartyFieldStatusFlags), 20);
+    checkU32("another member is untouched", partyGetStat(other, PartyStatHitPoints), 999);
+}
+
+static void testLifeForceFallbackHealsTheMonsterAndUsesTheOtherEffect(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *caster = saveGamePartyRecordById(&save, 1);
+    partySetStat(caster, PartyStatHitPoints, 999);
+    partySetStat(caster, PartyStatCasting, 0);
+
+    uint8_t monster[MonsterRecordSize];
+    memset(monster, 0, sizeof(monster));
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+    monsterSetU16(monster, MonsterFieldAbsorption, 5); /* accuracy 0 < defense 5: guaranteed miss */
+
+    uint8_t spell[SpellRecordSize];
+    setupLifeForceSpell(spell, SpellResistLifeForceCaster, 30);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    CombatLifeForceOutcome out = combatApplyLifeForceSpell(monster, caster, spell, &save, GameYendor2, 0, &rng);
+
+    check("the miss falls back", out.fallback);
+    checkU32("the latched damage is the record's own magnitude", out.damage, 30);
+    checkU32("the monster is HEALED by it", monsterGetU16(monster, MonsterFieldHealth), 130);
+    checkU32("no hit marker", monsterGetU16(monster, MonsterFieldLastAttackMarker), 0);
+    checkU32("no hit flash", monsterGetU16(monster, MonsterFieldState), 0);
+    checkU32("the fallback effect is used", out.effectId, 32);
+    checkU32("the caster still pays the 82 HP", partyGetStat(caster, PartyStatHitPoints), 917);
+    checkU32("and the latched damage still lands in the status word", partyGetU16(caster, PartyFieldStatusFlags), 30);
+}
+
+static void testLifeForcePartyVariantStopsAtEmptySlotAndRerollsForDeadMembers(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 1 * 2, 2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2 * 2, 0); /* unoccupied: stops dead */
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 3 * 2, 3);
+    uint8_t *caster = saveGamePartyRecordById(&save, 1);
+    uint8_t *dead = saveGamePartyRecordById(&save, 2);
+    uint8_t *unreached = saveGamePartyRecordById(&save, 3);
+    partySetStat(caster, PartyStatHitPoints, 999);
+    partySetStat(dead, PartyStatHitPoints, 999);
+    partySetStat(unreached, PartyStatHitPoints, 999);
+    partySetStat(caster, PartyStatCasting, 200);
+    partySetU16(caster, PartyFieldLevel, 100);
+    partySetU16(dead, PartyFieldLevel, 100);
+    partySetU16(dead, PartyFieldStatusFlags, PartyStatusDead);
+
+    uint8_t monster[MonsterRecordSize];
+    memset(monster, 0, sizeof(monster));
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+
+    uint8_t spell[SpellRecordSize];
+    setupLifeForceSpell(spell, SpellResistLifeForceParty, 10);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    RandomState peek = rng;
+    /* Draws: one for the attack roll, one for the dead member's saving throw. */
+    randomInRange(&peek, 55);
+    randomInRange(&peek, 100);
+
+    /* threshold 0 against level 100: the saving throw can't fail */
+    CombatLifeForceOutcome out = combatApplyLifeForceSpell(monster, caster, spell, &save, GameYendor2, 0, &rng);
+
+    check("not a fallback", !out.fallback);
+    checkU32("two occupied slots reached; the scan stops at the empty one", out.recipients, 2);
+    checkU32("the living member pays", partyGetStat(caster, PartyStatHitPoints), 917);
+    checkU32("and takes the damage value as status", partyGetU16(caster, PartyFieldStatusFlags), 20);
+    checkU32("the dead member's zeroed slot costs nothing", partyGetStat(dead, PartyStatHitPoints), 999);
+    checkU32("and gains no status (it's only still Dead)", partyGetU16(dead, PartyFieldStatusFlags), PartyStatusDead);
+    checkU32("past the empty slot: untouched", partyGetStat(unreached, PartyStatHitPoints), 999);
+    checkU32("exactly the attack roll plus the dead member's saving throw consumed the RNG", rng.seed, peek.seed);
+}
+
+static void testLifeForceUnknownEffectIdStillDamagesTheMonster(void) {
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0 * 2, 1);
+    uint8_t *caster = saveGamePartyRecordById(&save, 1);
+    partySetStat(caster, PartyStatHitPoints, 999);
+    partySetStat(caster, PartyStatCasting, 200);
+
+    uint8_t monster[MonsterRecordSize];
+    memset(monster, 0, sizeof(monster));
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+
+    uint8_t spell[SpellRecordSize];
+    setupLifeForceSpell(spell, SpellResistLifeForceCaster, 10);
+    setSpellU16(spell, SpellFieldLifeForceHitEffectId, 200);
+
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    CombatLifeForceOutcome out = combatApplyLifeForceSpell(monster, caster, spell, &save, GameYendor2, 0, &rng);
+
+    checkU32("monster still damaged", monsterGetU16(monster, MonsterFieldHealth), 80);
+    checkU32("no recipients", out.recipients, 0);
+    checkU32("caster untouched", partyGetStat(caster, PartyStatHitPoints), 999);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -1510,6 +1662,10 @@ int main(void) {
     testMarkSpellAttackHitWritesTheInflictedMagnitudeField();
     testApplySpellAttackToActiveSlotsSkipsEmptyAndDeadSlots();
     testApplySpellAttackToActiveSlotsHitsEveryEligibleSlot();
+    testLifeForceHitDamagesMonsterAndChargesTheCasterWithDamageAsStatus();
+    testLifeForceFallbackHealsTheMonsterAndUsesTheOtherEffect();
+    testLifeForcePartyVariantStopsAtEmptySlotAndRerollsForDeadMembers();
+    testLifeForceUnknownEffectIdStillDamagesTheMonster();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

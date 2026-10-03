@@ -3221,6 +3221,44 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**`loc_2CF51` resolved later (2026-10-03): it's the LIFE FORCE spells**:
+dumping the real records that take it (word_33302 bit `0x2000` *and*
+`SpellFieldResistFlags & 0xC0`) gives exactly LIFE FORCE I-IV in both
+games, which made the "graze/backlash" tails legible. `0x40` (I-III)
+means the caster pays; `0x80` (IV) means the whole party does.
+`ResolveAttackAndLatchFirstHit` is "roll; if the roll is 0, use
+`SpellFieldAttackMagnitude` as the damage anyway and set errorCode". A
+landed roll subtracts the damage from the monster (and writes the
+`+0x18` marker and the hit-flash bit, but not Aware); the fallback *adds*
+it, healing the monster. The two tails then pick a trap-effect id from
+record words `0x2A` (hit; 24 in both games, "costs HP, may inflict Sick")
+and `0x2C` (fallback; 32, "costs HP") -- the same offsets bit `0x80`
+reads as light-timer slot and duration, so this record region is a
+per-branch union just like `0x22`-`0x28`. `0x28` is the HP amount here
+(82 in all four records; RESURRECT's `0xFFBF` in the same field is a
+status-clear mask for `ApplyIconBarStatDelta`).
+
+**A quirk reproduced rather than fixed**: the branch stages the icon slot's
+`+0xE` word -- which `ApplyEffectCost` ORs into the recipient's status
+flags -- with `g_stagedAttackDamage`. So the damage value's own bits
+become status bits (damage 70 = `0x46` sets Dead|0x4|0x2). Whether
+that's an original bug or intent isn't knowable from the code; the
+disassembly is unambiguous (`mov [di+0Eh], ax` straight after loading the
+staged damage), and `combatApplyEffect` already ORs its status argument,
+so the reimplementation just does what the original does. The
+whole-party path zeroes both words for a Dead recipient instead, which
+makes that slot fall through to the full RollEffectMagnitude/
+RollEffectResistance pair against a stale saving-throw threshold
+(`word_32DC0`, set by whichever lock/trap last wrote it) -- effect 24
+inflicts Sick, so an RNG draw happens even for the dead member. Hence the
+`savingThrowThreshold` parameter. Reimplemented as
+`combatApplyLifeForceSpell` (`src23/combat.c`/`.h`), with the shared
+per-slot roll-or-use-preset logic factored out of
+`combatApplyTrapEffectToRecipient` into `combatApplyEffectSlot`; four
+new tests in `test_combat.c` (hit, fallback-heals-the-monster, party
+variant with the stop-dead scan and the dead-member RNG draw, unknown
+effect id).
+
 **`ApplyDamageToMapMonster` finally traced, closing a gap left open
 since an earlier round, same day**: this function (`yendor2.asm:52979`,
 instruction-identical in Chapter 3) was already named and had a

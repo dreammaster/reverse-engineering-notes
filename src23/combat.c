@@ -477,10 +477,21 @@ CombatMapMonsterAttackOutcome combatApplyDamageToMapMonster(uint8_t *targetRecor
     return outcome;
 }
 
-static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
-                                              unsigned threshold, RandomState *rng) {
+/*
+ * One icon-bar effect slot through ApplyEffectAndDrawIconBar's own
+ * RollEffectMagnitude/RollEffectResistance/ApplyEffectCost sequence.
+ * presetAmount/presetStatus are the slot's +0x10/+0xE words as the caller
+ * staged them: each roll is skipped when its word is already nonzero
+ * ("already resolved"), exactly the original's early-outs, so a caller that
+ * stages nothing (0, 0) gets both rolls.
+ */
+static void combatApplyEffectSlot(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def, uint16_t presetAmount,
+                                   uint16_t presetStatus, unsigned threshold, RandomState *rng) {
     uint16_t level = partyGetU16(recipientRecord, PartyFieldLevel);
-    uint16_t magnitude = effectRollsMagnitude(def) ? effectRollMagnitude(def, level, rng) : 0;
+    uint16_t magnitude = presetAmount;
+    if (magnitude == 0 && effectRollsMagnitude(def)) {
+        magnitude = effectRollMagnitude(def, level, rng);
+    }
 
     /*
      * Matches RollEffectResistance's own double early-out exactly
@@ -492,14 +503,22 @@ static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame 
      * composition's RNG draw count identical to the original's for
      * every effect definition, not just outcome-identical.
      */
-    bool failed = false;
-    if (effectInflictedStatus(def) != 0 && (def->modeFlags & EffectModeRollResistance)) {
-        failed = combatFailsSavingThrow((int16_t)level, (int16_t)threshold,
-                                         (int16_t)effectResistanceBonus(def, recipientRecord), rng);
+    uint16_t inflicted = presetStatus;
+    if (inflicted == 0) {
+        bool failed = false;
+        if (effectInflictedStatus(def) != 0 && (def->modeFlags & EffectModeRollResistance)) {
+            failed = combatFailsSavingThrow((int16_t)level, (int16_t)threshold,
+                                             (int16_t)effectResistanceBonus(def, recipientRecord), rng);
+        }
+        inflicted = effectResolveInflictedStatus(def, failed);
     }
-    uint16_t inflicted = effectResolveInflictedStatus(def, failed);
     static const Bcd4 zeroMaterial = {0, 0, 0, 0};
     combatApplyEffect(recipientRecord, save, effectSpend(def), magnitude, zeroMaterial, inflicted);
+}
+
+static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
+                                              unsigned threshold, RandomState *rng) {
+    combatApplyEffectSlot(recipientRecord, save, def, 0, 0, threshold, rng);
 }
 
 CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
@@ -538,6 +557,66 @@ CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, ui
         combatApplyTrapEffectToRecipient(record, save, &def, decoded.threshold, rng);
     }
     return CombatSavingThrowTrapParty;
+}
+
+CombatLifeForceOutcome combatApplyLifeForceSpell(uint8_t *monsterRecord, uint8_t *casterRecord,
+                                                   const uint8_t *spellRecord, SaveGame *save, GameKind game,
+                                                   unsigned savingThrowThreshold, RandomState *rng) {
+    CombatLifeForceOutcome outcome;
+    memset(&outcome, 0, sizeof(outcome));
+
+    /* ResolveAttackAndLatchFirstHit: a missed roll falls back to the record's own magnitude instead of nothing. */
+    uint16_t damage = combatResolveAttack(monsterGetU16(monsterRecord, MonsterFieldAbsorption),
+                                           partyGetStat(casterRecord, PartyStatCasting),
+                                           spellGetU16(spellRecord, SpellFieldAttackMagnitude), rng);
+    if (damage == 0) {
+        outcome.fallback = true;
+        damage = spellGetU16(spellRecord, SpellFieldAttackMagnitude);
+    }
+    outcome.damage = damage;
+
+    uint16_t health = monsterGetU16(monsterRecord, MonsterFieldHealth);
+    if (outcome.fallback) {
+        monsterSetU16(monsterRecord, MonsterFieldHealth, (uint16_t)(health + damage));
+        outcome.effectId = spellGetU16(spellRecord, SpellFieldLifeForceFallbackEffectId);
+    } else {
+        monsterSetU16(monsterRecord, MonsterFieldHealth, (uint16_t)(health - damage));
+        monsterSetU16(monsterRecord, MonsterFieldLastAttackMarker, spellGetU16(spellRecord, SpellFieldInflictedMagnitude));
+        monsterSetU16(monsterRecord, MonsterFieldState,
+                      (uint16_t)(monsterGetU16(monsterRecord, MonsterFieldState) | MonsterStateHitFlashPending));
+        outcome.effectId = spellGetU16(spellRecord, SpellFieldLifeForceHitEffectId);
+    }
+
+    EffectDef def;
+    if (!effectGetDef(game, outcome.effectId, &def)) {
+        return outcome;
+    }
+    uint16_t hpCost = spellGetU16(spellRecord, SpellFieldLifeForceHpCost);
+
+    if (spellGetU16(spellRecord, SpellFieldResistFlags) & SpellResistLifeForceCaster) {
+        /* The "status" word is the damage itself -- see combat.h. */
+        combatApplyEffectSlot(casterRecord, save, &def, hpCost, damage, savingThrowThreshold, rng);
+        outcome.recipients = 1;
+        return outcome;
+    }
+
+    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+        uint16_t id = saveGetPartySlot(save, slot);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record) {
+            continue;
+        }
+        if (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusDead) {
+            combatApplyEffectSlot(record, save, &def, 0, 0, savingThrowThreshold, rng);
+        } else {
+            combatApplyEffectSlot(record, save, &def, hpCost, damage, savingThrowThreshold, rng);
+        }
+        outcome.recipients++;
+    }
+    return outcome;
 }
 
 CombatEncodedItemEffectValue combatResolveEncodedItemEffectValue(bool curseGateActive, const uint8_t *actingRecord,
