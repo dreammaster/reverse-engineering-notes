@@ -387,7 +387,6 @@
 37348	Party_gems	dword (+36Eh) (by use: spell gem costs)
 37350	Party_gameFlags	32-byte bit array of event flags (MAZE.PTY +376h)
 37398	Roster_buffer	far pointer to the 30-character roster (MAZE.CHR, 2382h = 30 x 12Fh bytes)
-37462	Party_size	byte, number of active characters
 3771E	Mon_spd	far pointer to the monspd.dat column (90 entries), loaded by loadMonsterData
 37722	Mon_gold	far pointer to the mongold.dat column (90 entries), loaded by loadMonsterData
 37726	Mon_gems	far pointer to the mongems.dat column (90 entries), loaded by loadMonsterData
@@ -630,3 +629,5 @@
 340B4	SpellAttack_damage	damage set by an attack spell routine before spellAttackAhead
 36CFE	SpellAttack_type	damage/effect type of the attack spell (0 phys, 2 fire, 3 elec, 4 cold, 5 poison, 6 energy, 7+ status effects)
 36FAC	SpellAttack_reach	0 one monster, 1 one group, 2 all monsters
+37462	Maze_monsterCount	byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff
+373D0	Maze_objectCount	byte, number of objects (MAZEnn.BIN object records, max 80)

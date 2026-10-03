@@ -2424,7 +2424,7 @@ loc_15264:                              ; CODE XREF: sub_15235+11↑j
                 inc     si
 
 loc_15265:                              ; CODE XREF: sub_15235+6↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_1523D
@@ -4470,7 +4470,7 @@ loc_16197:                              ; CODE XREF: sub_15B50+5C8↑j
                 inc     [bp+var_2]
 
 loc_1619A:                              ; CODE XREF: sub_15B50+49↑j
-                mov     al, byte_373D0
+                mov     al, Maze_objectCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jle     short loc_161A7
@@ -5415,7 +5415,7 @@ loc_1692A:                              ; CODE XREF: sub_161AD+6F7↑j
                 inc     cx
 
 loc_1692B:                              ; CODE XREF: sub_161AD+70↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, cx
                 jle     short loc_16937
@@ -15217,7 +15217,7 @@ loc_1B439:                              ; CODE XREF: moveMonsters+B9↑j
                 inc     si
 
 loc_1B43A:                              ; CODE XREF: moveMonsters+AE↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_1B408
@@ -15466,7 +15466,7 @@ loc_1B623:                              ; CODE XREF: moveMonsters+12E↑j
                 inc     [bp+var_2]
 
 loc_1B626:                              ; CODE XREF: moveMonsters+11D↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jle     short loc_1B633
@@ -22142,7 +22142,7 @@ loc_1E4B6:                              ; CODE XREF: renderIndoorView+80↑j
                 inc     [bp+var_2]
 
 loc_1E4B9:                              ; CODE XREF: renderIndoorView+74↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_1E47D
@@ -22190,7 +22190,7 @@ loc_1E51A:                              ; CODE XREF: renderIndoorView+D3↑j
                 inc     [bp+var_2]
 
 loc_1E51D:                              ; CODE XREF: renderIndoorView+C1↑j
-                mov     al, byte_373D0
+                mov     al, Maze_objectCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_1E4CA
@@ -26577,7 +26577,7 @@ loc_2052B:                              ; CODE XREF: renderOutdoorView+A2↑j
                 inc     [bp+var_2]
 
 loc_2052E:                              ; CODE XREF: renderOutdoorView+96↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_204F2
@@ -26625,7 +26625,7 @@ loc_2058F:                              ; CODE XREF: renderOutdoorView+F5↑j
                 inc     [bp+var_2]
 
 loc_20592:                              ; CODE XREF: renderOutdoorView+E3↑j
-                mov     al, byte_373D0
+                mov     al, Maze_objectCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_2053F
@@ -49885,8 +49885,9 @@ word_373CC      dw 0                    ; DATA XREF: sub_17439+88B↑r
                                         ; sub_17439+9A6↑r ...
 word_373CE      dw 0                    ; DATA XREF: sub_17439+888↑r
                                         ; sub_17439+9A3↑r ...
-byte_373D0      db 0                    ; DATA XREF: sub_15B50:loc_1619A↑r
+Maze_objectCount db 0                   ; DATA XREF: sub_15B50:loc_1619A↑r
                                         ; renderIndoorView:loc_1E51D↑r ...
+                                        ; byte, number of objects (MAZEnn.BIN object records, max 80)
 byte_373D1      db 0                    ; DATA XREF: clearViewFlags+18C↑w
                                         ; prepareIndoorView:loc_1CCC9↑w ...
                 align 4
@@ -49909,9 +49910,9 @@ word_373EA      dw 0                    ; DATA XREF: drawParty+77↑r
 word_373EC      dw 0                    ; DATA XREF: drawParty+7A↑r
                                         ; rosterMenu+219↓r
                 db 74h dup(0)
-Party_size      db 0                    ; DATA XREF: sub_15235:loc_15265↑r
+Maze_monsterCount db 0                  ; DATA XREF: sub_15235:loc_15265↑r
                                         ; sub_161AD:loc_1692B↑r ...
-                                        ; byte, number of active characters
+                                        ; byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff
 byte_37463      db 0                    ; DATA XREF: clearViewFlags+17D↑w
                                         ; prepareIndoorView:loc_1D4F9↑w ...
                 db 168h dup(0)
@@ -64454,7 +64455,7 @@ format          = dword ptr -2
                 call    sub_27F45
                 pop     cx
                 pop     cx
-                cmp     Party_size, 0
+                cmp     Maze_monsterCount, 0
                 jnz     short loc_3E138
                 jmp     loc_3E2E4
 ; ---------------------------------------------------------------------------
@@ -64512,7 +64513,7 @@ loc_3E1AB:                              ; CODE XREF: arenaEvent+44↑j
                 inc     word ptr [bp+format]
 
 loc_3E1AE:                              ; CODE XREF: arenaEvent+2A↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, word ptr [bp+format]
                 jg      short loc_3E13F
@@ -64595,7 +64596,7 @@ loc_3E219:                              ; CODE XREF: arenaEvent+C7↑j
                 call    j_loadHireFaces
                 add     sp, 0Ah
                 mov     Party_map, 1
-                mov     Party_size, 0
+                mov     Maze_monsterCount, 0
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     word ptr [bp+format], ax
@@ -64769,7 +64770,7 @@ loc_3E3F8:                              ; CODE XREF: arenaEvent+2CC↑j
                 mov     Party_x, al
                 mov     Party_facing, 0
                 mov     al, 0
-                mov     Party_size, al
+                mov     Maze_monsterCount, al
                 mov     ah, 0
                 mov     word_32E66, ax
                 mov     al, byte_34114
@@ -64851,7 +64852,7 @@ loc_3E425:                              ; CODE XREF: arenaEvent+30B↑j
                 pop     cx
                 mov     word_32E42, dx
                 mov     word_32E40, ax
-                inc     Party_size
+                inc     Maze_monsterCount
                 mov     al, Party_count
                 mov     ah, 0
                 push    ax
@@ -64948,7 +64949,7 @@ loc_3E54A:                              ; CODE XREF: arenaEvent+4D2↓j
                 shl     bx, 1
                 mov     [bx-4944h], si
                 inc     word_32E66
-                inc     Party_size
+                inc     Maze_monsterCount
                 inc     di
 
 loc_3E5DF:                              ; CODE XREF: arenaEvent+434↑j
@@ -65055,7 +65056,7 @@ loc_3E648:                              ; CODE XREF: arenaEvent+5D0↓j
                 shl     bx, 1
                 mov     [bx-4944h], si
                 inc     word_32E66
-                inc     Party_size
+                inc     Maze_monsterCount
                 inc     di
 
 loc_3E6DD:                              ; CODE XREF: arenaEvent+532↑j
@@ -75640,7 +75641,7 @@ loc_43612:                              ; CODE XREF: saveMazeState+99↓j
                 inc     di
 
 loc_43632:                              ; CODE XREF: saveMazeState+70↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, di
                 jg      short loc_43612
@@ -75670,7 +75671,7 @@ loc_43642:                              ; CODE XREF: saveMazeState+D3↓j
                 inc     di
 
 loc_4366C:                              ; CODE XREF: saveMazeState+A0↑j
-                mov     al, byte_373D0
+                mov     al, Maze_objectCount
                 mov     ah, 0
                 cmp     ax, di
                 jg      short loc_43642
@@ -75723,8 +75724,8 @@ format          = dword ptr  6
                 call    sub_26685
                 pop     cx
                 mov     al, 0
-                mov     byte_373D0, al
-                mov     Party_size, al
+                mov     Maze_objectCount, al
+                mov     Maze_monsterCount, al
                 mov     ah, 0
                 mov     si, ax
                 mov     di, ax
@@ -75844,7 +75845,7 @@ loc_43775:                              ; CODE XREF: Map_load+B8↑j
                 mov     ax, [bp+var_4]
                 mov     [bx-4944h], ax
                 inc     si
-                inc     Party_size
+                inc     Maze_monsterCount
 
 loc_437CC:                              ; CODE XREF: Map_load+5C↑j
                 les     bx, Maze_evtData
@@ -75854,7 +75855,7 @@ loc_437CC:                              ; CODE XREF: Map_load+5C↑j
 ; ---------------------------------------------------------------------------
 
 loc_437D9:                              ; CODE XREF: Map_load+13C↑j
-                cmp     Party_size, 0AAh
+                cmp     Maze_monsterCount, 0AAh
                 jbe     short loc_43818
                 mov     ax, 4
                 push    ax
@@ -75865,7 +75866,7 @@ loc_437D9:                              ; CODE XREF: Map_load+13C↑j
                 pop     cx
                 mov     ax, 0AAh
                 push    ax
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 push    ax              ; format
                 mov     ax, offset aMaxMonstersExc ; "Max Monsters Exceeded. (%u - %u)"
@@ -75970,7 +75971,7 @@ loc_438A0:                              ; CODE XREF: Map_load+203↑j
                 pop     cx
                 mov     ax, 50h ; 'P'
                 push    ax
-                mov     al, byte_373D0
+                mov     al, Maze_objectCount
                 mov     ah, 0
                 push    ax              ; format
                 mov     ax, offset aMaxObjectsExce ; "Max Objects Exceeded. (%u- %u)"
@@ -76062,7 +76063,7 @@ loc_438DB:                              ; CODE XREF: Map_load+2F3↓j
                 imul    dx
                 mov     bx, ax
                 mov     word ptr [bx-5868h], 0
-                inc     byte_373D0
+                inc     Maze_objectCount
 
 loc_43985:                              ; CODE XREF: Map_load+205↑j
                                         ; Map_load+240↑j
@@ -93703,7 +93704,7 @@ loc_4BB4B:                              ; CODE XREF: doCombat+383↑j
                 inc     [bp+var_2]
 
 loc_4BB4E:                              ; CODE XREF: doCombat+377↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_4BB2E
@@ -96681,7 +96682,7 @@ loc_4D063:                              ; CODE XREF: Spell_37_DetectMonster+A4�
                 inc     [bp+var_8]
 
 loc_4D066:                              ; CODE XREF: Spell_37_DetectMonster+8E↑j
-                mov     al, Party_size
+                mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, [bp+var_8]
                 jle     short loc_4D073

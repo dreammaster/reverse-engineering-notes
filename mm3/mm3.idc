@@ -17911,7 +17911,9 @@ static Bytes_3(void) {
 	create_byte	(0X373CA);
 	create_word	(0X373CC);
 	create_word	(0X373CE);
+	set_cmt	(0X373D0,	"byte, number of objects (MAZEnn.BIN object records, max 80)",	0);
 	create_byte	(0X373D0);
+	set_name	(0X373D0,	"Maze_objectCount");
 	create_byte	(0X373D1);
 	make_array	(0X373D2,	0X2);
 	create_byte	(0X373D4);
@@ -17926,9 +17928,9 @@ static Bytes_3(void) {
 	create_word	(0X373EC);
 	create_byte	(0X373EE);
 	make_array	(0X373EE,	0X74);
-	set_cmt	(0X37462,	"byte, number of active characters",	0);
+	set_cmt	(0X37462,	"byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff",	0);
 	create_byte	(0X37462);
-	set_name	(0X37462,	"Party_size");
+	set_name	(0X37462,	"Maze_monsterCount");
 	create_byte	(0X37463);
 	create_byte	(0X37464);
 	make_array	(0X37464,	0X168);
@@ -18211,6 +18213,15 @@ static Bytes_3(void) {
 	set_cmt	(0X37B31,	"jumptable 00037B2C default case, cases 9,10",	1);
 	create_insn	(0X37B31);
 	set_name	(0X37B31,	"def_37B2C");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37B38,	"jumptable 00037B2C cases 8,11-15",	1);
 	create_insn	(x=0X37B38);
 	op_stkvar	(x,	0);
@@ -18222,15 +18233,6 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X378C0);
 	op_plain_offset	(x,	128,	0X378C0);
 	set_name	(0X37B49,	"jpt_37B2C");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X37B59);
 	create_insn	(x=0X37B5E);
 	op_stkvar	(x,	1);
@@ -23026,6 +23028,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FF1C);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF20,	"buffer",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FF26);
 	op_hex		(x,	1);
 	create_insn	(x=0X3FF2A);
@@ -23045,15 +23056,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FF5D);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FF61);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF64,	"buffer",	0);
@@ -28661,6 +28663,15 @@ static Bytes_5(void) {
 	create_insn	(x=0X47681);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4768E,	"format",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X47696,	"buffer",	0);
 	create_insn	(x=0X4769C);
 	op_hex		(x,	1);
@@ -28682,15 +28693,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X476F9);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X476FE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47703);
@@ -33705,6 +33707,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F838);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F83B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F844);
@@ -33725,15 +33736,6 @@ static Bytes_6(void) {
 	set_cmt	(0X4F896,	"buffer",	0);
 	create_insn	(x=0X4F89C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F8C7);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F8CF);
