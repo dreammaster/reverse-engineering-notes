@@ -6,7 +6,7 @@
   `mm3_map.py` (ASCII map), `mm3_chars.py` (roster listing), `mm3_gfx.py` (sprites/screens -> PNG), `mm3_music.py` (song walker).
 * `docs/` -- `mm3-re.md` (packing, `.CC`, graphics codec; original notes), `exe-layout.md` (unpacking, overlays), `overview.md` (code map,
   Xeen comparison), `data-files.md` (saves, maps, events, party block), `character.h`, `items.md`, `spells.md`, `monsters.md`, `town.md`,
-  `view.md`, `video-module.md`, `engine-loop.md`, `text-files.md`, `music.md`.
+  `view.md`, `video-module.md`, `engine-loop.md`, `text-files.md`, `music.md`, `rules.md` (class requirements, experience, HP/SP, prices, damage and saving throws, training/inn/tavern/guild/smithy).
 
 The program is the same engine generation as Xeen (Borland C++ 1991, VROOMM overlays): the ScummVM Xeen source
 (`engines/mm/xeen`) is the best commentary for most of the code; the documents say where MM3 differs.
