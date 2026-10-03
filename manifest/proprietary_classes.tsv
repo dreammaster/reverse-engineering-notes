@@ -139,8 +139,8 @@ TComposedFileManager	in-progress	17	516915	519724
 TXMLWriter	todo	33	519891	522102
 TProjectFileWriter	todo	2	522192	522208
 TFieldValue	todo	9	522229	528588
-TFile	stub	37	522315	525436
-TVedFile	todo	10	522419	525756
+TFile	done	37	522315	525436
+TVedFile	done	10	522419	525756
 TPolygonList	todo	19	526053	532096
 TXMLNames	todo	10	527002	533265
 TCharHolder	done	34	529250	531864

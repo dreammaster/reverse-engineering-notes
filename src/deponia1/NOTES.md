@@ -2552,6 +2552,54 @@ reversed) and `TVedFile::IsSaveGame()/GetVersionOk()` (`datastruct/
 vedfile.h`; TVedFile itself is a separate, unreversed class).
 `TTypeData`/`TTypeGroup` are `done` in the manifest.
 
+## TFile and TVedFile
+
+`TFile` (37 methods, `baselib/file.h`) and `TVedFile` (10 methods,
+`datastruct/vedfile.h`) implemented in full (Deponia_Linux.asm lines
+522315-525756), replacing the earlier "FILE* plus a path" stand-in whose
+layout bore little relation to the real class. A `TFile` is a `wxFile` plus a
+*window* onto it - a start offset, a length (-1 = unbounded) and a position
+relative to the window - so one class reads a whole file *and* an entry packed
+inside a composed container (`OpenReadFromComposedFile(file, name, offset,
+length)` just opens the container and sets the window); every read is clamped
+to it. The open mode (0 closed / 1 read / 2 write) at +0x34, and a flag at
++0x30 (0 for a plain read, 1 for a composed entry *or* a file opened for
+writing), content flags at +0x38, and the entry name at +0x60 round out the
+layout (in the header comment).
+
+Details worth knowing: the 2- and 4-byte reads are big-endian (and the signed
+`ReadLong` sign-extends its 32-bit value into the 64-bit `long`);
+`ReadToBuf(buf, 0)` (or any size past the window) reads the whole window,
+512 KiB at a time, and asserts the length is known; `Seek()` returns false when
+closed and handles `wxFromStart/Current/End` against the window, treating any
+other mode as "stay put"; `OpenWrite()` makes the path absolute and leaves the
+window unbounded; `WriteToFile()` opens its destination *read-write* (so the
+file must already exist - consistent with `DecryptHeader()`'s use of the same
+mode). Content-flag bits: 1 compressed, 2 encrypted, 4 encrypted header (only
+the first 0x12C bytes - a composed file's header), 8 PNG header encrypted,
+0x10 compressed chunks (the original names bit 4
+`CONTENTFLAG_ENCRYPTED_HEADER` in an assert string).
+
+`PasteFile()`/`PasteData()` are the composed-file writer's appenders. Chunked
+mode writes 2 MiB chunks, each compressed (and encrypted if asked) and preceded
+by an (uncompressed length, stored length) pair, and *always* ends with a
+(0xFFEEFFEE, 0) footer - even if a chunk failed. Whole-file compressed mode
+oddly writes nothing when the content isn't encrypted (the original returns
+success without touching the destination - presumably its caller writes the
+buffer through `PasteData()`); the plain mode optionally encrypts everything
+or just the first 0x12C bytes, and never sets its length out-parameter.
+
+`TVedFile` is a `TFile` plus a binary flag ("VBIN" magic, `CheckBinary()`), the
+read- and write-side format versions (`SetVersion`; `GetVersionOk(in, out)`
+tests the write one for a file open for writing, the read one otherwise,
+and never for a mode above 2), the savegame flag and a reference path. That
+resolves the stub `TTypeGroup::AppliesToFileVersion()` was using.
+`wxFile` gained `Eof()` and a stdio-mode-string `Open()`; `wxFileName` gained
+`MakeAbsolute()`. Checked with a standalone test (window reads, big-endian
+values, `VBIN` detection, version ranges).
+
+`TFile` and `TVedFile` are `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

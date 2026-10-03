@@ -90,6 +90,28 @@ long wxFile::Length() const {
 	return len;
 }
 
+bool wxFile::Open(const wxString &path, const wxString &mode) {
+	Close();
+	std::string narrowMode(static_cast<const char *>(mode.mb_str()));
+	if (narrowMode.find('b') == std::string::npos)
+		narrowMode += 'b';
+	_handle = std::fopen(static_cast<const char *>(path.mb_str()), narrowMode.c_str());
+	return _handle != nullptr;
+}
+
+bool wxFile::Eof() const {
+	return !_handle || std::feof(_handle) != 0;
+}
+
+bool wxFileName::MakeAbsolute() {
+	std::error_code ec;
+	std::filesystem::path absolute = std::filesystem::absolute(_fullPath, ec);
+	if (ec)
+		return false;
+	_fullPath = absolute.wstring();
+	return true;
+}
+
 bool wxFile::Open(const wxString &path, int mode) {
 	Close();
 	_handle = std::fopen(static_cast<const char *>(path.mb_str()), mode == 2 ? "r+b" : "rb");

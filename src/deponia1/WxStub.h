@@ -260,6 +260,10 @@ public:
 	// this file's own directory.
 	void SetCwd() const;
 	void NormalizePath() {}
+	// Confirmed call shape only (TFile::OpenWrite, Deponia_Linux.asm line
+	// 523174) - real wxFileName::MakeAbsolute() prefixes the current directory
+	// to a relative path.
+	bool MakeAbsolute();
 	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
 	// Deponia_Linux.asm line 477491) - real wxFileName::GetFullName()
 	// returns just the name+extension portion, without the directory.
@@ -494,10 +498,21 @@ public:
 	// subsequent Write() call); the real wxWidgets wxFile::OpenMode ordinals
 	// for these two values weren't independently confirmed.
 	bool Open(const wxString &path, int mode);
+	// Confirmed call shape (TFile::OpenRead/OpenWrite, Deponia_Linux.asm lines
+	// 522746-523325): opens with a stdio-style mode string ("r" or "w"; the
+	// stub always opens binary - the original runs on Linux, where there's no
+	// text/binary distinction).
+	bool Open(const wxString &path, const wxString &mode);
 	bool IsOpened() const {
 		return _handle != nullptr;
 	}
+	// Confirmed call shape only (TFile::Eof, asm line 523078): true once the
+	// last read hit the end of the file.
+	bool Eof() const;
 	unsigned long Read(char *buffer, unsigned long size);
+	unsigned long Read(void *buffer, unsigned long size) {
+		return Read(static_cast<char *>(buffer), size);
+	}
 	// Confirmed call shape only (TFile::DecryptHeader, Deponia_Linux.asm line
 	// 523762).
 	unsigned long Write(const void *buffer, unsigned long size);
