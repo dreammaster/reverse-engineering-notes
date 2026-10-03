@@ -1603,6 +1603,32 @@ is the purchase flow for using an Ore-type item from the inventory —
 plausibly connected to `UseItemType_800`'s quantity-loop path above,
 though that link isn't confirmed.
 
+### Music and sound effects in `WORLD.DAT` (`audio.c`)
+
+Decoded 2026-10-04. The sound lives inside `WORLD.DAT`, found through two pairs of data-segment tables (`LookupMusicTrackBlockOffset`,
+`LookupSoundEffectBlockOffset`: 32-bit file offsets plus 16-bit lengths, ids 1-based, 0 = silence): **music tracks are Creative
+Music Files** (`CTMF` header + FM instrument block + MIDI-style events; played through `SBFMDRV.COM`) -- 21 in Chapter 2 (the
+first at 541383, 5357 bytes) and 24 in Chapter 3 -- and **sound effects are Creative Voice Files** (`Creative Voice File\x1A`, 8-bit PCM)
+-- 80 in Chapter 2 (the table has an 81st slot pointing at unrelated text) and 141 in Chapter 3. All blocks are contiguous (music,
+then effects). The 2493-byte block in front of the first track (Chapter 2 offset 538890, Chapter 3 618714) is the Creative
+`CT-VOICE.DRV` binary, not game data. Which music track plays where is `music.c`. Sound events (`TriggerSoundEvent`, the effect
+id in `ax`; when no driver is present only event 3 beeps on the PC speaker) are fired from the UI and game code; the effect
+ids by call site (Chapter 2 / Chapter 3 numbering differs, Chapter 3's effect set is larger):
+
+| use | Chapter 2 | Chapter 3 |
+|-----|-----------|-----------|
+| clicks on portraits, clue-book categories, dialogs, resting | 1 | 1, 15 (portraits) |
+| error / refusal (text field, warnings, failed unlock, searching) | 3 | 3, 11 |
+| confirm / placing a held item, music and sound toggles | 4 | 4 |
+| picking up, swapping or dropping items in inventory | 6 | 9 |
+| gold, ore, loot, shopping, repair, ability scrolls | 7 | 7, 8 |
+| mouse cursor / status-effect ticks | 9 | 40 |
+| map trigger effects, credits | 10 | 44, 84 (story events) |
+| monster spawns, party wipe | 19 | 50 (wipe), 6/10 (ranged/combat) |
+| movement | -- | 13 |
+| alchemy screen | 1, 3, 11, 52 | 1, 3, 44, 87 |
+| character creation | 5, 17-19, 22, 24-27 | 51, 54, 59, 71, 83, 130-141 |
+
 ### Ambient music by map region
 
 `UpdateAmbientMusicForRegion` computes a coarse map-region index from
