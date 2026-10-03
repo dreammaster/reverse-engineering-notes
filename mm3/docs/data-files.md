@@ -168,7 +168,12 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
   Strings start with control bytes (`03` centre, `0B nnn` ...).
 * `Teleport` (7, 31): map, x, y.  `MoveObj`: object, x, y.  `CallEvent` (25): x, y, line.  `SetChar` (15): 0 = all, 1-6 member,
   7 = random, 8 = ask (as Xeen).  `WhoWill` (32): message.  `DoTownEvent` (17): building 0-6.
-* Not yet understood: `NPC` (5 bytes), `Spawn` (4), `AlterMap` (4), `ConfirmWord` (4), `Damage` (3), `JumpRnd` (3), `AlterEvent` (2).
+* `Damage` (22): damage (u16), damage type -> `giveCharDamage`.  `Spawn` (16): monster slot, x, y, (unused) -> resets that monster's
+  position/hit points.  `AlterMap` (19): x, y, side (4 = all four), value -> `mazeSetBits`.  `ConfirmWord` (21): word id, line when
+  right, text index (message), text index (prompt; 0 = "What's the Password?").  `NPC` (5): a0, name text index, face resource
+  args, line.  `AlterEvent` (24): line, new opcode -- rewrites the opcode byte of that line of the event on the party's square.
+  `CallEvent` (25): x, y, line (pushes the current position on a call stack, `Return` pops it).  `JumpRnd` (23): max, value, line
+  (jumps when `rnd(1,max) == value`, `3 5 .. ` shape; the third operand is the target line).
 * One `If` record in MAZE60 carries a stray extra byte; scripts end with a 00 padding byte in some files.
 
 Example (`MAZE01`, pit that needs a rope; text from `TEXT01.MAZ`): `SetChar 0; If item(21)=73 goto 5; Display1 "The drop is

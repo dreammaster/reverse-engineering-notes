@@ -64,6 +64,23 @@ def decode(rec):
         else:
             text = " ".join(str(a) for a in args)
             ok = len(args) == int(shape)
+            a = list(args)
+            if op == 22 and ok:
+                text = "damage %d type %d" % (a[0] | a[1] << 8, a[2])
+            elif op == 16 and ok:
+                text = "monster %d at (%d,%d) [%d]" % (a[0], a[1], a[2], a[3])
+            elif op == 19 and ok:
+                text = "cell (%d,%d) %s = %d" % (a[0], a[1], "all sides" if a[2] == 4 else "side %d" % a[2], a[3])
+            elif op == 21 and ok:
+                text = "word#%d ok->line %d text %d prompt %d" % (a[0], a[1], a[2], a[3])
+            elif op == 5 and ok:
+                text = "name text %d face %d,%d line %d (a0=%d)" % (a[1], a[2], a[3], a[4], a[0])
+            elif op == 23 and ok:
+                text = "if rnd(1,%d)==%d then %d" % (a[0], a[1], a[2])
+            elif op == 24 and ok:
+                text = "line %d -> opcode %d (at this square)" % (a[0], a[1])
+            elif op == 25 and ok:
+                text = "call (%d,%d) line %d" % (a[0], a[1], a[2])
     except (ValueError, IndexError):
         text, ok = args.hex(" "), False
     return x, y, d, line, name, text, ok
