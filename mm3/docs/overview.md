@@ -50,3 +50,14 @@ The event condition code (`ifProc`, `3D32E`) is Xeen's `Scripts::ifProc` with th
 
 `MM3.CUR` (and the `*.mm3` save games) is a `.CC` archive (240 members here, TOC cipher as in `mm3-re.md`), i.e. the
 working copy of the maze data plus the party state.
+
+## Spells
+
+* The spell **names** are a 79-entry pointer table at DGROUP `56E6h` (ids 0-76 = display order: Light, Awaken, First Aid, Flying
+  Fist, ...; `SPLDESC.BIN` descriptions use the same order). Per-class spell lists (ids 0-76 in learn order, 36 entries x 3
+  categories: cleric/sorcerer/druid) are at DGROUP `3C36h`. Monster names: 90 pointers at `5632h`, monster picture names at
+  `5590h`, locations at `5784h`.
+* `castItemSpell` (`4FF60`) is the 77-way switch used for *item* spells; its numbering is Xeen's alphabetical order, not the
+  spell ids above. The overlay `ovl11` holds ~88 spell effect routines behind thunks `28450`-`28608`.
+* Caution: names that came from BinDiff for very small functions (a few instructions) can be coincidental matches
+  (e.g. `Spells_moonRay` at `3E8AC`).

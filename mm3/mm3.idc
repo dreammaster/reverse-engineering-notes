@@ -419,7 +419,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"slotMetal",	0XB6,	0x00000400,	-1,	19);
 	mid = add_struc_member(id,"slotAttribute",	0XC9,	0x00000400,	-1,	19);
 	mid = add_struc_member(id,"slotId",	0XDC,	0x00000400,	-1,	19);
-	mid = add_struc_member(id,"unknownEF",	0XEF,	0x00000400,	-1,	19);
+	mid = add_struc_member(id,"slotSpell",	0XEF,	0x00000400,	-1,	19);
 	mid = add_struc_member(id,"acBonus",	0X102,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"unknown103",	0X103,	0x00000400,	-1,	16);
 	mid = add_struc_member(id,"conditions",	0X113,	0x00000400,	-1,	16);
@@ -14235,6 +14235,7 @@ static Bytes_2(void) {
 	create_insn	(0X2864E);
 	create_insn	(0X28653);
 	create_insn	(0X28658);
+	set_name	(0X28658,	"j_spellsDialog");
 	create_insn	(0X2865D);
 	create_insn	(0X28662);
 	set_name	(0X28662,	"j_specialsDialog");
@@ -14245,6 +14246,7 @@ static Bytes_2(void) {
 	create_insn	(0X28695);
 	create_insn	(0X2869A);
 	create_insn	(0X2869F);
+	set_name	(0X2869F,	"j_castItemSpell");
 	create_insn	(0X286A4);
 	create_insn	(0X286A9);
 	create_insn	(0X286AE);
@@ -14925,10 +14927,6 @@ static Bytes_2(void) {
 	set_name	(0X2BB29,	"aNoSavingAllowe");
 	create_strlit	(0X2BB46,	0X1F);
 	set_name	(0X2BB46,	"aAreYouSureYouW_0");
-	create_strlit	(0X2BB65,	0X29);
-	set_name	(0X2BB65,	"aAreYouSureYouW_1");
-	create_byte	(0X2BB8E);
-	make_array	(0X2BB8E,	0X92);
 }
 
 //------------------------------------------------------------------------
@@ -14938,6 +14936,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X2BB65,	0X29);
+	set_name	(0X2BB65,	"aAreYouSureYouW_1");
+	create_byte	(0X2BB8E);
+	make_array	(0X2BB8E,	0X92);
 	create_strlit	(0X2BC20,	0X14);
 	set_name	(0X2BC20,	"aL024walkOnWate");
 	create_strlit	(0X2BC34,	0XF);
@@ -18672,14 +18674,6 @@ static Bytes_3(void) {
 	create_insn	(0X38F3A);
 	create_insn	(0X38F67);
 	create_insn	(0X38F73);
-	create_insn	(x=0X38FDA);
-	op_plain_offset	(x,	1,	0X286F0);
-	op_plain_offset	(x,	129,	0X286F0);
-	create_insn	(0X39022);
-	set_cmt	(0X39031,	"format",	0);
-	create_insn	(x=0X39032);
-	op_plain_offset	(x,	1,	0X286F0);
-	op_plain_offset	(x,	129,	0X286F0);
 }
 
 //------------------------------------------------------------------------
@@ -18689,6 +18683,14 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X38FDA);
+	op_plain_offset	(x,	1,	0X286F0);
+	op_plain_offset	(x,	129,	0X286F0);
+	create_insn	(0X39022);
+	set_cmt	(0X39031,	"format",	0);
+	create_insn	(x=0X39032);
+	op_plain_offset	(x,	1,	0X286F0);
+	op_plain_offset	(x,	129,	0X286F0);
 	set_cmt	(0X39039,	"buffer",	0);
 	create_insn	(x=0X3903F);
 	op_hex		(x,	1);
@@ -23620,15 +23622,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X410D4);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X410D9);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X410E0);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X410E3);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X410E6);
-	op_stkvar	(x,	0);
-	create_insn	(0X410F0);
 }
 
 //------------------------------------------------------------------------
@@ -23638,6 +23631,15 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X410D9);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X410E0);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X410E3);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X410E6);
+	op_stkvar	(x,	0);
+	create_insn	(0X410F0);
 	create_insn	(x=0X410F6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X41100);
@@ -29204,13 +29206,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X48BAB,	"buffer",	0);
 	set_cmt	(0X48BB0,	"format",	0);
-	create_insn	(x=0X48BB9);
-	op_hex		(x,	1);
-	create_insn	(x=0X48BBD);
-	op_plain_offset	(x,	1,	0X286F0);
-	op_plain_offset	(x,	129,	0X286F0);
-	set_cmt	(0X48BC5,	"format",	0);
-	set_cmt	(0X48BCD,	"buffer",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29220,6 +29215,13 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48BB9);
+	op_hex		(x,	1);
+	create_insn	(x=0X48BBD);
+	op_plain_offset	(x,	1,	0X286F0);
+	op_plain_offset	(x,	129,	0X286F0);
+	set_cmt	(0X48BC5,	"format",	0);
+	set_cmt	(0X48BCD,	"buffer",	0);
 	create_insn	(x=0X48BD3);
 	op_hex		(x,	1);
 	create_insn	(0X48BEE);
@@ -33409,6 +33411,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F73E);
 	op_stkvar	(x,	1);
 	create_insn	(0X4F74F);
+	set_name	(0X4F74F,	"spellsDialog");
 	create_insn	(x=0X4F752);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F75C);
@@ -33804,6 +33807,7 @@ static Bytes_6(void) {
 	create_byte	(0X4FF20);
 	make_array	(0X4FF20,	0X34);
 	create_insn	(0X4FF60);
+	set_name	(0X4FF60,	"castItemSpell");
 	create_insn	(x=0X4FF63);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4FF66,	"switch 77 cases",	0);
@@ -33994,6 +33998,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5030C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X50329);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X50333);
@@ -34008,15 +34021,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X5035B);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X50361);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X5036C);
@@ -37778,7 +37782,7 @@ static Functions_0(void) {
 	set_func_flags(0X28653,0x5482);
 	set_frame_size(0X28653, 0, 0, 0);
 	add_func    (0X28658,0X2865D);
-	set_func_flags(0X28658,0x5482);
+	set_func_flags(0X28658,0x54c2);
 	set_frame_size(0X28658, 0, 0, 0);
 	add_func    (0X2865D,0X28662);
 	set_func_flags(0X2865D,0x5482);
@@ -37802,7 +37806,7 @@ static Functions_0(void) {
 	SetType(0X2869A, "int __cdecl __far sub_2869A(int, char *buffer);");
 	set_frame_size(0X2869A, 0, 0, 0);
 	add_func    (0X2869F,0X286A4);
-	set_func_flags(0X2869F,0x5482);
+	set_func_flags(0X2869F,0x54c2);
 	set_frame_size(0X2869F, 0, 0, 0);
 	add_func    (0X286A4,0X286A9);
 	set_func_flags(0X286A4,0x5482);
@@ -38876,10 +38880,12 @@ static Functions_1(void) {
 	define_local_var(0X4F24E, 0X4F74F, "[bp+0X6]", "format");
 	add_func    (0X4F74F,0X4FE86);
 	set_func_flags(0X4F74F,0x5412);
+	set_func_cmt(0X4F74F,	"spell casting menu (Engine_mode 3); 77-entry key table", 0);
 	set_frame_size(0X4F74F, 0X10, 2, 0);
 	define_local_var(0X4F74F, 0X4FE86, "[bp-0XA]", "format");
 	add_func    (0X4FF60,0X50238);
 	set_func_flags(0X4FF60,0x5412);
+	set_func_cmt(0X4FF60,	"switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog", 0);
 	set_frame_size(0X4FF60, 0, 2, 0);
 	add_func    (0X502D2,0X50557);
 	set_func_flags(0X502D2,0x5412);

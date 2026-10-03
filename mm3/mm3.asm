@@ -36505,7 +36505,7 @@ sub_280AD       endp
 
 ; Attributes: thunk
 
-sub_280B2       proc far                ; CODE XREF: sub_4FF60:loc_5022A↓P
+sub_280B2       proc far                ; CODE XREF: castItemSpell:loc_5022A↓P
                 jmp     sub_3E08F
 sub_280B2       endp
 
@@ -37205,8 +37205,8 @@ sub_282E3       endp
 
 ; Attributes: thunk
 
-sub_282E8       proc far                ; CODE XREF: sub_4F74F+129↓P
-                                        ; sub_4F74F+692↓P
+sub_282E8       proc far                ; CODE XREF: spellsDialog+129↓P
+                                        ; spellsDialog+692↓P
                 jmp     sub_45BD1
 sub_282E8       endp
 
@@ -37443,8 +37443,8 @@ stub11          segment para public 'CODE' use16
 
 ; Attributes: thunk
 
-sub_28450       proc far                ; CODE XREF: sub_4F74F:loc_4FCEF↓P
-                                        ; sub_4FF60:loc_501F2↓P
+sub_28450       proc far                ; CODE XREF: spellsDialog:loc_4FCEF↓P
+                                        ; castItemSpell:loc_501F2↓P
                 jmp     sub_4DC3B
 sub_28450       endp
 
@@ -37453,8 +37453,8 @@ sub_28450       endp
 
 ; Attributes: thunk
 
-sub_28455       proc far                ; CODE XREF: sub_4F74F:loc_4FBA8↓P
-                                        ; sub_4FF60:loc_50117↓P
+sub_28455       proc far                ; CODE XREF: spellsDialog:loc_4FBA8↓P
+                                        ; castItemSpell:loc_50117↓P
                 jmp     sub_4D53F
 sub_28455       endp
 
@@ -37463,8 +37463,8 @@ sub_28455       endp
 
 ; Attributes: thunk
 
-sub_2845A       proc far                ; CODE XREF: sub_4F74F:loc_4FCAF↓P
-                                        ; sub_4FF60:loc_501C1↓P
+sub_2845A       proc far                ; CODE XREF: spellsDialog:loc_4FCAF↓P
+                                        ; castItemSpell:loc_501C1↓P
                 jmp     sub_4DA44
 sub_2845A       endp
 
@@ -37473,8 +37473,8 @@ sub_2845A       endp
 
 ; Attributes: thunk
 
-sub_2845F       proc far                ; CODE XREF: sub_4F74F:loc_4F961↓P
-                                        ; sub_4FF60:loc_4FF7E↓P
+sub_2845F       proc far                ; CODE XREF: spellsDialog:loc_4F961↓P
+                                        ; castItemSpell:loc_4FF7E↓P
                 jmp     sub_4C326
 sub_2845F       endp
 
@@ -37484,8 +37484,8 @@ sub_2845F       endp
 
 ; Attributes: thunk
 
-sub_28469       proc far                ; CODE XREF: sub_4F74F:loc_4FA8F↓P
-                                        ; sub_4FF60:loc_50048↓P
+sub_28469       proc far                ; CODE XREF: spellsDialog:loc_4FA8F↓P
+                                        ; castItemSpell:loc_50048↓P
                 jmp     sub_4CB99
 sub_28469       endp
 
@@ -37494,8 +37494,8 @@ sub_28469       endp
 
 ; Attributes: thunk
 
-sub_2846E       proc far                ; CODE XREF: sub_4F74F:loc_4FB12↓P
-                                        ; sub_4FF60:loc_500B5↓P
+sub_2846E       proc far                ; CODE XREF: spellsDialog:loc_4FB12↓P
+                                        ; castItemSpell:loc_500B5↓P
                 jmp     sub_4D153
 sub_2846E       endp
 
@@ -37504,8 +37504,8 @@ sub_2846E       endp
 
 ; Attributes: thunk
 
-sub_28473       proc far                ; CODE XREF: sub_4F74F:loc_4FCBF↓P
-                                        ; sub_4FF60:loc_501C8↓P
+sub_28473       proc far                ; CODE XREF: spellsDialog:loc_4FCBF↓P
+                                        ; castItemSpell:loc_501C8↓P
                 jmp     sub_4DAC3
 sub_28473       endp
 
@@ -37514,8 +37514,8 @@ sub_28473       endp
 
 ; Attributes: thunk
 
-sub_28478       proc far                ; CODE XREF: sub_4F74F:loc_4FAAF↓P
-                                        ; sub_4FF60:loc_5009D↓P
+sub_28478       proc far                ; CODE XREF: spellsDialog:loc_4FAAF↓P
+                                        ; castItemSpell:loc_5009D↓P
                 jmp     sub_4CC76
 sub_28478       endp
 
@@ -37524,8 +37524,8 @@ sub_28478       endp
 
 ; Attributes: thunk
 
-sub_2847D       proc far                ; CODE XREF: sub_4F74F:loc_4FBA0↓P
-                                        ; sub_4FF60:loc_5010F↓P
+sub_2847D       proc far                ; CODE XREF: spellsDialog:loc_4FBA0↓P
+                                        ; castItemSpell:loc_5010F↓P
                 jmp     sub_4D514
 sub_2847D       endp
 
@@ -37543,8 +37543,8 @@ sub_28482       endp
 
 ; Attributes: thunk
 
-sub_28487       proc far                ; CODE XREF: sub_4F74F:loc_4FCCF↓P
-                                        ; sub_4FF60:loc_501DD↓P
+sub_28487       proc far                ; CODE XREF: spellsDialog:loc_4FCCF↓P
+                                        ; castItemSpell:loc_501DD↓P
                 jmp     sub_4DB59
 sub_28487       endp
 
@@ -37563,8 +37563,8 @@ sub_2848C       endp
 
 ; Attributes: thunk
 
-sub_28491       proc far                ; CODE XREF: sub_4F74F:loc_4FBFB↓P
-                                        ; sub_4FF60:loc_5014B↓P
+sub_28491       proc far                ; CODE XREF: spellsDialog:loc_4FBFB↓P
+                                        ; castItemSpell:loc_5014B↓P
                 jmp     sub_4D679
 sub_28491       endp
 
@@ -37573,8 +37573,8 @@ sub_28491       endp
 
 ; Attributes: thunk
 
-sub_28496       proc far                ; CODE XREF: sub_4F74F:loc_4FC55↓P
-                                        ; sub_4FF60:loc_5018F↓P
+sub_28496       proc far                ; CODE XREF: spellsDialog:loc_4FC55↓P
+                                        ; castItemSpell:loc_5018F↓P
                 jmp     sub_4D860
 sub_28496       endp
 
@@ -37583,8 +37583,8 @@ sub_28496       endp
 
 ; Attributes: thunk
 
-sub_2849B       proc far                ; CODE XREF: sub_4F74F:loc_4F9B9↓P
-                                        ; sub_4FF60:loc_4FFCE↓P
+sub_2849B       proc far                ; CODE XREF: spellsDialog:loc_4F9B9↓P
+                                        ; castItemSpell:loc_4FFCE↓P
                 jmp     sub_4C5D3
 sub_2849B       endp
 
@@ -37593,8 +37593,8 @@ sub_2849B       endp
 
 ; Attributes: thunk
 
-sub_284A0       proc far                ; CODE XREF: sub_4F74F:loc_4FCC7↓P
-                                        ; sub_4FF60:loc_501CF↓P
+sub_284A0       proc far                ; CODE XREF: spellsDialog:loc_4FCC7↓P
+                                        ; castItemSpell:loc_501CF↓P
                 jmp     sub_4DB2E
 sub_284A0       endp
 
@@ -37603,7 +37603,7 @@ sub_284A0       endp
 
 ; Attributes: thunk
 
-sub_284A5       proc far                ; CODE XREF: sub_4F74F:loc_4F9C9↓P
+sub_284A5       proc far                ; CODE XREF: spellsDialog:loc_4F9C9↓P
                 jmp     sub_4C617
 sub_284A5       endp
 
@@ -37612,8 +37612,8 @@ sub_284A5       endp
 
 ; Attributes: thunk
 
-sub_284AA       proc far                ; CODE XREF: sub_4F74F:loc_4FB55↓P
-                                        ; sub_4FF60:loc_500CD↓P
+sub_284AA       proc far                ; CODE XREF: spellsDialog:loc_4FB55↓P
+                                        ; castItemSpell:loc_500CD↓P
                 jmp     sub_4D269
 sub_284AA       endp
 
@@ -37622,8 +37622,8 @@ sub_284AA       endp
 
 ; Attributes: thunk
 
-sub_284AF       proc far                ; CODE XREF: sub_4F74F:loc_4FCD7↓P
-                                        ; sub_4FF60:loc_501E4↓P
+sub_284AF       proc far                ; CODE XREF: spellsDialog:loc_4FCD7↓P
+                                        ; castItemSpell:loc_501E4↓P
                 jmp     sub_4DB9E
 sub_284AF       endp
 
@@ -37632,8 +37632,8 @@ sub_284AF       endp
 
 ; Attributes: thunk
 
-sub_284B4       proc far                ; CODE XREF: sub_4F74F:loc_4FB0A↓P
-                                        ; sub_4FF60:loc_500C5↓P
+sub_284B4       proc far                ; CODE XREF: spellsDialog:loc_4FB0A↓P
+                                        ; castItemSpell:loc_500C5↓P
                 jmp     sub_4D128
 sub_284B4       endp
 
@@ -37642,8 +37642,8 @@ sub_284B4       endp
 
 ; Attributes: thunk
 
-sub_284B9       proc far                ; CODE XREF: sub_4F74F:loc_4F9A1↓P
-                                        ; sub_4FF60:loc_4FFA6↓P
+sub_284B9       proc far                ; CODE XREF: spellsDialog:loc_4F9A1↓P
+                                        ; castItemSpell:loc_4FFA6↓P
                 jmp     sub_4C534
 sub_284B9       endp
 
@@ -37652,7 +37652,7 @@ sub_284B9       endp
 
 ; Attributes: thunk
 
-sub_284BE       proc far                ; CODE XREF: sub_4F74F:loc_4FA1C↓P
+sub_284BE       proc far                ; CODE XREF: spellsDialog:loc_4FA1C↓P
                 jmp     sub_4C809
 sub_284BE       endp
 
@@ -37661,8 +37661,8 @@ sub_284BE       endp
 
 ; Attributes: thunk
 
-sub_284C3       proc far                ; CODE XREF: sub_4F74F:loc_4F9A9↓P
-                                        ; sub_4FF60:loc_4FFAE↓P
+sub_284C3       proc far                ; CODE XREF: spellsDialog:loc_4F9A9↓P
+                                        ; castItemSpell:loc_4FFAE↓P
                 jmp     sub_4C57D
 sub_284C3       endp
 
@@ -37680,8 +37680,8 @@ sub_284C8       endp
 
 ; Attributes: thunk
 
-sub_284CD       proc far                ; CODE XREF: sub_4F74F:loc_4FA14↓P
-                                        ; sub_4FF60:loc_50003↓P
+sub_284CD       proc far                ; CODE XREF: spellsDialog:loc_4FA14↓P
+                                        ; castItemSpell:loc_50003↓P
                 jmp     sub_4C7DE
 sub_284CD       endp
 
@@ -37690,8 +37690,8 @@ sub_284CD       endp
 
 ; Attributes: thunk
 
-sub_284D2       proc far                ; CODE XREF: sub_4F74F:loc_4FC45↓P
-                                        ; sub_4FF60:loc_50163↓P
+sub_284D2       proc far                ; CODE XREF: spellsDialog:loc_4FC45↓P
+                                        ; castItemSpell:loc_50163↓P
                 jmp     sub_4D7F0
 sub_284D2       endp
 
@@ -37700,8 +37700,8 @@ sub_284D2       endp
 
 ; Attributes: thunk
 
-sub_284D7       proc far                ; CODE XREF: sub_4F74F:loc_4FCE7↓P
-                                        ; sub_4FF60:loc_501EB↓P
+sub_284D7       proc far                ; CODE XREF: spellsDialog:loc_4FCE7↓P
+                                        ; castItemSpell:loc_501EB↓P
                 jmp     sub_4DC10
 sub_284D7       endp
 
@@ -37710,8 +37710,8 @@ sub_284D7       endp
 
 ; Attributes: thunk
 
-sub_284DC       proc far                ; CODE XREF: sub_4F74F:loc_4FC2D↓P
-                                        ; sub_4FF60:loc_50177↓P
+sub_284DC       proc far                ; CODE XREF: spellsDialog:loc_4FC2D↓P
+                                        ; castItemSpell:loc_50177↓P
                 jmp     sub_4D691
 sub_284DC       endp
 
@@ -37729,8 +37729,8 @@ sub_284E1       endp
 
 ; Attributes: thunk
 
-sub_284E6       proc far                ; CODE XREF: sub_4F74F:loc_4FBB8↓P
-                                        ; sub_4FF60:loc_50143↓P
+sub_284E6       proc far                ; CODE XREF: spellsDialog:loc_4FBB8↓P
+                                        ; castItemSpell:loc_50143↓P
                 jmp     sub_4D5B2
 sub_284E6       endp
 
@@ -37739,8 +37739,8 @@ sub_284E6       endp
 
 ; Attributes: thunk
 
-sub_284EB       proc far                ; CODE XREF: sub_4F74F:loc_4FCB7↓P
-                                        ; sub_4FF60:loc_501D6↓P
+sub_284EB       proc far                ; CODE XREF: spellsDialog:loc_4FCB7↓P
+                                        ; castItemSpell:loc_501D6↓P
                 jmp     sub_4DA8D
 sub_284EB       endp
 
@@ -37749,8 +37749,8 @@ sub_284EB       endp
 
 ; Attributes: thunk
 
-sub_284F0       proc far                ; CODE XREF: sub_4F74F:loc_4FA7F↓P
-                                        ; sub_4FF60:loc_50058↓P
+sub_284F0       proc far                ; CODE XREF: spellsDialog:loc_4FA7F↓P
+                                        ; castItemSpell:loc_50058↓P
                 jmp     sub_4CAC3
 sub_284F0       endp
 
@@ -37759,7 +37759,7 @@ sub_284F0       endp
 
 ; Attributes: thunk
 
-sub_284F5       proc far                ; CODE XREF: sub_4F74F+5EB↓P
+sub_284F5       proc far                ; CODE XREF: spellsDialog+5EB↓P
                 jmp     sub_4C19A
 sub_284F5       endp
 
@@ -37768,8 +37768,8 @@ sub_284F5       endp
 
 ; Attributes: thunk
 
-sub_284FA       proc far                ; CODE XREF: sub_4F74F:loc_4FA2C↓P
-                                        ; sub_4FF60:loc_50038↓P
+sub_284FA       proc far                ; CODE XREF: spellsDialog:loc_4FA2C↓P
+                                        ; castItemSpell:loc_50038↓P
                 jmp     sub_4C895
 sub_284FA       endp
 
@@ -37778,8 +37778,8 @@ sub_284FA       endp
 
 ; Attributes: thunk
 
-sub_284FF       proc far                ; CODE XREF: sub_4F74F:loc_4F999↓P
-                                        ; sub_4FF60:loc_4FFC6↓P
+sub_284FF       proc far                ; CODE XREF: spellsDialog:loc_4F999↓P
+                                        ; castItemSpell:loc_4FFC6↓P
                 jmp     sub_4C4FE
 sub_284FF       endp
 
@@ -37788,8 +37788,8 @@ sub_284FF       endp
 
 ; Attributes: thunk
 
-sub_28504       proc far                ; CODE XREF: sub_4F74F:loc_4FA77↓P
-                                        ; sub_4FF60:loc_50050↓P
+sub_28504       proc far                ; CODE XREF: spellsDialog:loc_4FA77↓P
+                                        ; castItemSpell:loc_50050↓P
                 jmp     sub_4CA6E
 sub_28504       endp
 
@@ -37799,8 +37799,8 @@ sub_28504       endp
 
 ; Attributes: thunk
 
-sub_2850E       proc far                ; CODE XREF: sub_4F74F:loc_4FAEA↓P
-                                        ; sub_4FF60:loc_5007D↓P
+sub_2850E       proc far                ; CODE XREF: spellsDialog:loc_4FAEA↓P
+                                        ; castItemSpell:loc_5007D↓P
                 jmp     sub_4CE39
 sub_2850E       endp
 
@@ -37809,8 +37809,8 @@ sub_2850E       endp
 
 ; Attributes: thunk
 
-sub_28513       proc far                ; CODE XREF: sub_4F74F:loc_4FC65↓P
-                                        ; sub_4FF60:loc_50197↓P
+sub_28513       proc far                ; CODE XREF: spellsDialog:loc_4FC65↓P
+                                        ; castItemSpell:loc_50197↓P
                 jmp     sub_4D901
 sub_28513       endp
 
@@ -37819,8 +37819,8 @@ sub_28513       endp
 
 ; Attributes: thunk
 
-sub_28518       proc far                ; CODE XREF: sub_4F74F:loc_4F9C1↓P
-                                        ; sub_4FF60:loc_4FFD6↓P
+sub_28518       proc far                ; CODE XREF: spellsDialog:loc_4F9C1↓P
+                                        ; castItemSpell:loc_4FFD6↓P
                 jmp     sub_4C5EC
 sub_28518       endp
 
@@ -37829,8 +37829,8 @@ sub_28518       endp
 
 ; Attributes: thunk
 
-sub_2851D       proc far                ; CODE XREF: sub_4F74F:loc_4F9B1↓P
-                                        ; sub_4FF60:loc_4FFE6↓P
+sub_2851D       proc far                ; CODE XREF: spellsDialog:loc_4F9B1↓P
+                                        ; castItemSpell:loc_4FFE6↓P
                 jmp     sub_4C5A8
 sub_2851D       endp
 
@@ -37839,8 +37839,8 @@ sub_2851D       endp
 
 ; Attributes: thunk
 
-sub_28522       proc far                ; CODE XREF: sub_4F74F:loc_4FA0C↓P
-                                        ; sub_4FF60:loc_4FFFB↓P
+sub_28522       proc far                ; CODE XREF: spellsDialog:loc_4FA0C↓P
+                                        ; castItemSpell:loc_4FFFB↓P
                 jmp     sub_4C711
 sub_28522       endp
 
@@ -37849,8 +37849,8 @@ sub_28522       endp
 
 ; Attributes: thunk
 
-sub_28527       proc far                ; CODE XREF: sub_4F74F:loc_4F959↓P
-                                        ; sub_4FF60:loc_4FF76↓P
+sub_28527       proc far                ; CODE XREF: spellsDialog:loc_4F959↓P
+                                        ; castItemSpell:loc_4FF76↓P
                 jmp     sub_4C2FF
 sub_28527       endp
 
@@ -37859,8 +37859,8 @@ sub_28527       endp
 
 ; Attributes: thunk
 
-sub_2852C       proc far                ; CODE XREF: sub_4F74F:loc_4FD07↓P
-                                        ; sub_4FF60:loc_5020E↓P
+sub_2852C       proc far                ; CODE XREF: spellsDialog:loc_4FD07↓P
+                                        ; castItemSpell:loc_5020E↓P
                 jmp     sub_4DD18
 sub_2852C       endp
 
@@ -37869,8 +37869,8 @@ sub_2852C       endp
 
 ; Attributes: thunk
 
-sub_28531       proc far                ; CODE XREF: sub_4F74F:loc_4F9D1↓P
-                                        ; sub_4FF60:loc_4FFDE↓P
+sub_28531       proc far                ; CODE XREF: spellsDialog:loc_4F9D1↓P
+                                        ; castItemSpell:loc_4FFDE↓P
                 jmp     sub_4C678
 sub_28531       endp
 
@@ -37879,8 +37879,8 @@ sub_28531       endp
 
 ; Attributes: thunk
 
-sub_28536       proc far                ; CODE XREF: sub_4F74F:loc_4FA24↓P
-                                        ; sub_4FF60:loc_50030↓P
+sub_28536       proc far                ; CODE XREF: spellsDialog:loc_4FA24↓P
+                                        ; castItemSpell:loc_50030↓P
                 jmp     sub_4C86A
 sub_28536       endp
 
@@ -37889,8 +37889,8 @@ sub_28536       endp
 
 ; Attributes: thunk
 
-sub_2853B       proc far                ; CODE XREF: sub_4F74F:loc_4FD17↓P
-                                        ; sub_4FF60:loc_5021C↓P
+sub_2853B       proc far                ; CODE XREF: spellsDialog:loc_4FD17↓P
+                                        ; castItemSpell:loc_5021C↓P
                 jmp     sub_4DD6E
 sub_2853B       endp
 
@@ -37899,8 +37899,8 @@ sub_2853B       endp
 
 ; Attributes: thunk
 
-sub_28540       proc far                ; CODE XREF: sub_4F74F+54F↓P
-                                        ; sub_4FF60+252↓P
+sub_28540       proc far                ; CODE XREF: spellsDialog+54F↓P
+                                        ; castItemSpell+252↓P
                 jmp     sub_4C106
 sub_28540       endp
 
@@ -37919,8 +37919,8 @@ sub_2854A       endp
 
 ; Attributes: thunk
 
-sub_2854F       proc far                ; CODE XREF: sub_4F74F:loc_4F971↓P
-                                        ; sub_4FF60:loc_4FF9E↓P
+sub_2854F       proc far                ; CODE XREF: spellsDialog:loc_4F971↓P
+                                        ; castItemSpell:loc_4FF9E↓P
                 jmp     sub_4C3B4
 sub_2854F       endp
 
@@ -37929,8 +37929,8 @@ sub_2854F       endp
 
 ; Attributes: thunk
 
-sub_28554       proc far                ; CODE XREF: sub_4F74F:loc_4F969↓P
-                                        ; sub_4FF60:loc_4FF96↓P
+sub_28554       proc far                ; CODE XREF: spellsDialog:loc_4F969↓P
+                                        ; castItemSpell:loc_4FF96↓P
                 jmp     sub_4C358
 sub_28554       endp
 
@@ -37939,8 +37939,8 @@ sub_28554       endp
 
 ; Attributes: thunk
 
-sub_28559       proc far                ; CODE XREF: sub_4F74F:loc_4FAA7↓P
-                                        ; sub_4FF60:loc_50095↓P
+sub_28559       proc far                ; CODE XREF: spellsDialog:loc_4FAA7↓P
+                                        ; castItemSpell:loc_50095↓P
                 jmp     sub_4CC62
 sub_28559       endp
 
@@ -37949,8 +37949,8 @@ sub_28559       endp
 
 ; Attributes: thunk
 
-sub_2855E       proc far                ; CODE XREF: sub_4F74F:loc_4FCA7↓P
-                                        ; sub_4FF60:loc_501BA↓P
+sub_2855E       proc far                ; CODE XREF: spellsDialog:loc_4FCA7↓P
+                                        ; castItemSpell:loc_501BA↓P
                 jmp     sub_4D985
 sub_2855E       endp
 
@@ -37959,8 +37959,8 @@ sub_2855E       endp
 
 ; Attributes: thunk
 
-sub_28563       proc far                ; CODE XREF: sub_4F74F:loc_4FC5D↓P
-                                        ; sub_4FF60:loc_5019F↓P
+sub_28563       proc far                ; CODE XREF: spellsDialog:loc_4FC5D↓P
+                                        ; castItemSpell:loc_5019F↓P
                 jmp     sub_4D88B
 sub_28563       endp
 
@@ -37969,8 +37969,8 @@ sub_28563       endp
 
 ; Attributes: thunk
 
-sub_28568       proc far                ; CODE XREF: sub_4F74F:loc_4FA9F↓P
-                                        ; sub_4FF60:loc_50085↓P
+sub_28568       proc far                ; CODE XREF: spellsDialog:loc_4FA9F↓P
+                                        ; castItemSpell:loc_50085↓P
                 jmp     sub_4CC0D
 sub_28568       endp
 
@@ -37979,8 +37979,8 @@ sub_28568       endp
 
 ; Attributes: thunk
 
-sub_2856D       proc far                ; CODE XREF: sub_4F74F:loc_4FAFA↓P
-                                        ; sub_4FF60:loc_500AD↓P
+sub_2856D       proc far                ; CODE XREF: spellsDialog:loc_4FAFA↓P
+                                        ; castItemSpell:loc_500AD↓P
                 jmp     sub_4CED6
 sub_2856D       endp
 
@@ -37990,8 +37990,8 @@ sub_2856D       endp
 
 ; Attributes: thunk
 
-sub_28577       proc far                ; CODE XREF: sub_4F74F+2A5↓P
-                                        ; sub_4F74F+300↓P ...
+sub_28577       proc far                ; CODE XREF: spellsDialog+2A5↓P
+                                        ; spellsDialog+300↓P ...
                 jmp     sub_4C2AD
 sub_28577       endp
 
@@ -38000,8 +38000,8 @@ sub_28577       endp
 
 ; Attributes: thunk
 
-sub_2857C       proc far                ; CODE XREF: sub_4F74F:loc_4F9D9↓P
-                                        ; sub_4FF60:loc_5000B↓P
+sub_2857C       proc far                ; CODE XREF: spellsDialog:loc_4F9D9↓P
+                                        ; castItemSpell:loc_5000B↓P
                 jmp     sub_4C6E6
 sub_2857C       endp
 
@@ -38010,8 +38010,8 @@ sub_2857C       endp
 
 ; Attributes: thunk
 
-sub_28581       proc far                ; CODE XREF: sub_4F74F:loc_4F991↓P
-                                        ; sub_4FF60:loc_4FFBE↓P
+sub_28581       proc far                ; CODE XREF: spellsDialog:loc_4F991↓P
+                                        ; castItemSpell:loc_4FFBE↓P
                 jmp     sub_4C4A2
 sub_28581       endp
 
@@ -38020,8 +38020,8 @@ sub_28581       endp
 
 ; Attributes: thunk
 
-sub_28586       proc far                ; CODE XREF: sub_4F74F:loc_4FB98↓P
-                                        ; sub_4FF60:loc_50107↓P
+sub_28586       proc far                ; CODE XREF: spellsDialog:loc_4FB98↓P
+                                        ; castItemSpell:loc_50107↓P
                 jmp     sub_4D2F8
 sub_28586       endp
 
@@ -38030,8 +38030,8 @@ sub_28586       endp
 
 ; Attributes: thunk
 
-sub_2858B       proc far                ; CODE XREF: sub_4F74F:loc_4FC35↓P
-                                        ; sub_4FF60:loc_5017F↓P
+sub_2858B       proc far                ; CODE XREF: spellsDialog:loc_4FC35↓P
+                                        ; castItemSpell:loc_5017F↓P
                 jmp     sub_4D763
 sub_2858B       endp
 
@@ -38040,8 +38040,8 @@ sub_2858B       endp
 
 ; Attributes: thunk
 
-sub_28590       proc far                ; CODE XREF: sub_4F74F:loc_4FA34↓P
-                                        ; sub_4FF60:loc_50013↓P
+sub_28590       proc far                ; CODE XREF: spellsDialog:loc_4FA34↓P
+                                        ; castItemSpell:loc_50013↓P
                 jmp     sub_4C8EA
 sub_28590       endp
 
@@ -38059,8 +38059,8 @@ sub_28595       endp
 
 ; Attributes: thunk
 
-sub_2859A       proc far                ; CODE XREF: sub_4F74F:loc_4FD0F↓P
-                                        ; sub_4FF60:loc_50215↓P
+sub_2859A       proc far                ; CODE XREF: spellsDialog:loc_4FD0F↓P
+                                        ; castItemSpell:loc_50215↓P
                 jmp     sub_4DD43
 sub_2859A       endp
 
@@ -38069,8 +38069,8 @@ sub_2859A       endp
 
 ; Attributes: thunk
 
-sub_2859F       proc far                ; CODE XREF: sub_4F74F:loc_4FBF3↓P
-                                        ; sub_4FF60:loc_50153↓P
+sub_2859F       proc far                ; CODE XREF: spellsDialog:loc_4FBF3↓P
+                                        ; castItemSpell:loc_50153↓P
                 jmp     sub_4D64E
 sub_2859F       endp
 
@@ -38079,8 +38079,8 @@ sub_2859F       endp
 
 ; Attributes: thunk
 
-sub_285A4       proc far                ; CODE XREF: sub_4F74F:loc_4FBB0↓P
-                                        ; sub_4FF60:loc_5011F↓P
+sub_285A4       proc far                ; CODE XREF: spellsDialog:loc_4FBB0↓P
+                                        ; castItemSpell:loc_5011F↓P
                 jmp     sub_4D587
 sub_285A4       endp
 
@@ -38089,8 +38089,8 @@ sub_285A4       endp
 
 ; Attributes: thunk
 
-sub_285A9       proc far                ; CODE XREF: sub_4F74F:loc_4FCF7↓P
-                                        ; sub_4FF60:loc_50200↓P
+sub_285A9       proc far                ; CODE XREF: spellsDialog:loc_4FCF7↓P
+                                        ; castItemSpell:loc_50200↓P
                 jmp     sub_4DCC3
 sub_285A9       endp
 
@@ -38099,8 +38099,8 @@ sub_285A9       endp
 
 ; Attributes: thunk
 
-sub_285AE       proc far                ; CODE XREF: sub_4F74F:loc_4FA6F↓P
-                                        ; sub_4FF60:loc_50040↓P
+sub_285AE       proc far                ; CODE XREF: spellsDialog:loc_4FA6F↓P
+                                        ; castItemSpell:loc_50040↓P
                 jmp     sub_4C917
 sub_285AE       endp
 
@@ -38109,8 +38109,8 @@ sub_285AE       endp
 
 ; Attributes: thunk
 
-sub_285B3       proc far                ; CODE XREF: sub_4F74F:loc_4FB5D↓P
-                                        ; sub_4FF60:loc_500D5↓P
+sub_285B3       proc far                ; CODE XREF: spellsDialog:loc_4FB5D↓P
+                                        ; castItemSpell:loc_500D5↓P
                 jmp     sub_4D2A2
 sub_285B3       endp
 
@@ -38119,8 +38119,8 @@ sub_285B3       endp
 
 ; Attributes: thunk
 
-sub_285B8       proc far                ; CODE XREF: sub_4F74F:loc_4FAF2↓P
-                                        ; sub_4FF60:loc_500BD↓P
+sub_285B8       proc far                ; CODE XREF: spellsDialog:loc_4FAF2↓P
+                                        ; castItemSpell:loc_500BD↓P
                 jmp     sub_4CE8E
 sub_285B8       endp
 
@@ -38129,8 +38129,8 @@ sub_285B8       endp
 
 ; Attributes: thunk
 
-sub_285BD       proc far                ; CODE XREF: sub_4F74F:loc_4F981↓P
-                                        ; sub_4FF60:loc_4FF8E↓P
+sub_285BD       proc far                ; CODE XREF: spellsDialog:loc_4F981↓P
+                                        ; castItemSpell:loc_4FF8E↓P
                 jmp     sub_4C42E
 sub_285BD       endp
 
@@ -38139,8 +38139,8 @@ sub_285BD       endp
 
 ; Attributes: thunk
 
-sub_285C2       proc far                ; CODE XREF: sub_4F74F:loc_4F979↓P
-                                        ; sub_4FF60:loc_4FF86↓P
+sub_285C2       proc far                ; CODE XREF: spellsDialog:loc_4F979↓P
+                                        ; castItemSpell:loc_4FF86↓P
                 jmp     sub_4C3DF
 sub_285C2       endp
 
@@ -38149,8 +38149,8 @@ sub_285C2       endp
 
 ; Attributes: thunk
 
-sub_285C7       proc far                ; CODE XREF: sub_4F74F:loc_4FCDF↓P
-                                        ; sub_4FF60:loc_501F9↓P
+sub_285C7       proc far                ; CODE XREF: spellsDialog:loc_4FCDF↓P
+                                        ; castItemSpell:loc_501F9↓P
                 jmp     sub_4DBC8
 sub_285C7       endp
 
@@ -38159,8 +38159,8 @@ sub_285C7       endp
 
 ; Attributes: thunk
 
-sub_285CC       proc far                ; CODE XREF: sub_4F74F:loc_4FA67↓P
-                                        ; sub_4FF60:loc_50028↓P
+sub_285CC       proc far                ; CODE XREF: spellsDialog:loc_4FA67↓P
+                                        ; castItemSpell:loc_50028↓P
                 jmp     sub_4C8FE
 sub_285CC       endp
 
@@ -38169,8 +38169,8 @@ sub_285CC       endp
 
 ; Attributes: thunk
 
-sub_285D1       proc far                ; CODE XREF: sub_4F74F:loc_4FCFF↓P
-                                        ; sub_4FF60:loc_50207↓P
+sub_285D1       proc far                ; CODE XREF: spellsDialog:loc_4FCFF↓P
+                                        ; castItemSpell:loc_50207↓P
                 jmp     sub_4DCEE
 sub_285D1       endp
 
@@ -38179,8 +38179,8 @@ sub_285D1       endp
 
 ; Attributes: thunk
 
-sub_285D6       proc far                ; CODE XREF: sub_4F74F:loc_4FC3D↓P
-                                        ; sub_4FF60:loc_5015B↓P
+sub_285D6       proc far                ; CODE XREF: spellsDialog:loc_4FC3D↓P
+                                        ; castItemSpell:loc_5015B↓P
                 jmp     sub_4D7AB
 sub_285D6       endp
 
@@ -38189,8 +38189,8 @@ sub_285D6       endp
 
 ; Attributes: thunk
 
-sub_285DB       proc far                ; CODE XREF: sub_4F74F:loc_4FBEB↓P
-                                        ; sub_4FF60:loc_5013B↓P
+sub_285DB       proc far                ; CODE XREF: spellsDialog:loc_4FBEB↓P
+                                        ; castItemSpell:loc_5013B↓P
                 jmp     sub_4D608
 sub_285DB       endp
 
@@ -38199,8 +38199,8 @@ sub_285DB       endp
 
 ; Attributes: thunk
 
-sub_285E0       proc far                ; CODE XREF: sub_4F74F:loc_4FC4D↓P
-                                        ; sub_4FF60:loc_50187↓P
+sub_285E0       proc far                ; CODE XREF: spellsDialog:loc_4FC4D↓P
+                                        ; castItemSpell:loc_50187↓P
                 jmp     sub_4D81B
 sub_285E0       endp
 
@@ -38209,8 +38209,8 @@ sub_285E0       endp
 
 ; Attributes: thunk
 
-sub_285E5       proc far                ; CODE XREF: sub_4F74F:loc_4FB65↓P
-                                        ; sub_4FF60:loc_50127↓P
+sub_285E5       proc far                ; CODE XREF: spellsDialog:loc_4FB65↓P
+                                        ; castItemSpell:loc_50127↓P
                 jmp     sub_4D2CD
 sub_285E5       endp
 
@@ -38219,8 +38219,8 @@ sub_285E5       endp
 
 ; Attributes: thunk
 
-sub_285EA       proc far                ; CODE XREF: sub_4F74F:loc_4FA97↓P
-                                        ; sub_4FF60:loc_5008D↓P
+sub_285EA       proc far                ; CODE XREF: spellsDialog:loc_4FA97↓P
+                                        ; castItemSpell:loc_5008D↓P
                 jmp     sub_4CBE2
 sub_285EA       endp
 
@@ -38229,8 +38229,8 @@ sub_285EA       endp
 
 ; Attributes: thunk
 
-sub_285EF       proc far                ; CODE XREF: sub_4F74F:loc_4FB1A↓P
-                                        ; sub_4FF60:loc_500DD↓P
+sub_285EF       proc far                ; CODE XREF: spellsDialog:loc_4FB1A↓P
+                                        ; castItemSpell:loc_500DD↓P
                 jmp     sub_4D19C
 sub_285EF       endp
 
@@ -38239,8 +38239,8 @@ sub_285EF       endp
 
 ; Attributes: thunk
 
-sub_285F4       proc far                ; CODE XREF: sub_4F74F:loc_4FA87↓P
-                                        ; sub_4FF60:loc_50060↓P
+sub_285F4       proc far                ; CODE XREF: spellsDialog:loc_4FA87↓P
+                                        ; castItemSpell:loc_50060↓P
                 jmp     sub_4CB3D
 sub_285F4       endp
 
@@ -38249,8 +38249,8 @@ sub_285F4       endp
 
 ; Attributes: thunk
 
-sub_285F9       proc far                ; CODE XREF: sub_4F74F:loc_4F989↓P
-                                        ; sub_4FF60:loc_4FFB6↓P
+sub_285F9       proc far                ; CODE XREF: spellsDialog:loc_4F989↓P
+                                        ; castItemSpell:loc_4FFB6↓P
                 jmp     sub_4C45A
 sub_285F9       endp
 
@@ -38259,8 +38259,8 @@ sub_285F9       endp
 
 ; Attributes: thunk
 
-sub_285FE       proc far                ; CODE XREF: sub_4F74F:loc_4FB02↓P
-                                        ; sub_4FF60:loc_500A5↓P
+sub_285FE       proc far                ; CODE XREF: spellsDialog:loc_4FB02↓P
+                                        ; castItemSpell:loc_500A5↓P
                 jmp     sub_4CF1E
 sub_285FE       endp
 
@@ -38269,8 +38269,8 @@ sub_285FE       endp
 
 ; Attributes: thunk
 
-sub_28603       proc far                ; CODE XREF: sub_4F74F:loc_4FB4D↓P
-                                        ; sub_4FF60:loc_500F2↓P
+sub_28603       proc far                ; CODE XREF: spellsDialog:loc_4FB4D↓P
+                                        ; castItemSpell:loc_500F2↓P
                 jmp     sub_4D1E4
 sub_28603       endp
 
@@ -38358,16 +38358,7 @@ sub_28653       proc far                ; CODE XREF: rosterMenu+4EB↓P
                 jmp     sub_4EBE3
 sub_28653       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28658       proc far                ; CODE XREF: death+769↓P
-                                        ; quickFight+3D↓P ...
-                jmp     sub_4F74F
-sub_28658       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_spellsDialog. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38425,15 +38416,7 @@ sub_2869A       proc far
                 jmp     sub_5152B
 sub_2869A       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2869F       proc far                ; CODE XREF: itemsDialog+33F↓P
-                jmp     sub_4FF60
-sub_2869F       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_castItemSpell. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -38627,7 +38610,7 @@ byte_2879F      db 0                    ; DATA XREF: sub_2045A+12B4↑r
 byte_287A0      db 0                    ; DATA XREF: itemsDialog:def_4E051↓r
                                         ; sub_502D2:loc_5042C↓w ...
 byte_287A1      db 0FFh                 ; DATA XREF: sub_45F29+530↓w
-                                        ; sub_4F74F:loc_4F7D6↓r ...
+                                        ; spellsDialog:loc_4F7D6↓r ...
 byte_287A2      db 0                    ; DATA XREF: sub_254BA+69A↑r
                                         ; sub_378C0+A↓w ...
 byte_287A3      db 0                    ; DATA XREF: death:loc_3EADC↓r
@@ -38638,7 +38621,7 @@ byte_287A5      db 0                    ; DATA XREF: sub_4C2FF:loc_4C315↓w
                                         ; sub_4C711+B9↓w ...
 byte_287A6      db 0                    ; DATA XREF: sub_15B50+DF↑w
                                         ; sub_15B50:loc_15C36↑r ...
-byte_287A7      db 0                    ; DATA XREF: sub_4FF60:loc_50231↓w
+byte_287A7      db 0                    ; DATA XREF: castItemSpell:loc_50231↓w
                                         ; sub_502D2:loc_50540↓r ...
 word_287A8      dw 0                    ; DATA XREF: sub_253D3+42↑r
                                         ; sub_253D3+49↑w ...
@@ -65119,7 +65102,7 @@ loc_3F0E5:                              ; CODE XREF: death+735↑j
 ; ---------------------------------------------------------------------------
                 xor     ax, ax
                 push    ax
-                call    sub_28658
+                call    j_spellsDialog
                 pop     cx
                 or      ax, ax
                 jnz     short loc_3F0F8
@@ -90894,7 +90877,7 @@ loc_4B16D:                              ; CODE XREF: quickFight+28↑j
                                         ; DATA XREF: ovl10:jpt_4B15C↓o
                 mov     ax, 1           ; jumptable 0003823C case 1
                 push    ax              ; jumptable 0003823C case 1
-                call    sub_28658
+                call    j_spellsDialog
                 pop     cx
                 or      ax, ax
                 jnz     short def_4B15C ; jumptable 0003823C default case
@@ -92123,7 +92106,7 @@ loc_4B971:                              ; CODE XREF: sub_4B7B5+1B5↑j
 ; ---------------------------------------------------------------------------
                 xor     ax, ax
                 push    ax
-                call    sub_28658
+                call    j_spellsDialog
                 pop     cx
                 or      ax, ax
                 jz      short loc_4B995
@@ -97741,7 +97724,7 @@ loc_4E166:                              ; CODE XREF: itemsDialog+32F↑j
 loc_4E16E:                              ; CODE XREF: itemsDialog+31E↑j
                                         ; itemsDialog+329↑j ...
                 push    ax
-                call    sub_2869F
+                call    j_castItemSpell
                 pop     cx
                 cmp     [bp+var_8], 1
                 jge     short loc_4E18D
@@ -100687,9 +100670,10 @@ sub_4F24E       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; spell casting menu (Engine_mode 3); 77-entry key table
 ; Attributes: bp-based frame
 
-sub_4F74F       proc far                ; CODE XREF: sub_28658↑J
+spellsDialog    proc far                ; CODE XREF: j_spellsDialog↑J
 
 var_C           = word ptr -0Ch
 format          = dword ptr -0Ah
@@ -100726,7 +100710,7 @@ arg_0           = word ptr  6
                 jmp     loc_4F913
 ; ---------------------------------------------------------------------------
 
-loc_4F796:                              ; CODE XREF: sub_4F74F+2B↑j
+loc_4F796:                              ; CODE XREF: spellsDialog+2B↑j
                 call    sub_28144
                 mov     ax, 5240h
                 push    ax
@@ -100746,14 +100730,14 @@ loc_4F796:                              ; CODE XREF: sub_4F74F+2B↑j
                 jmp     short loc_4F818
 ; ---------------------------------------------------------------------------
 
-loc_4F7D6:                              ; CODE XREF: sub_4F74F+80↑j
+loc_4F7D6:                              ; CODE XREF: spellsDialog+80↑j
                 cmp     byte_287A1, 0
                 jl      short loc_4F7E6
                 mov     al, byte_287A1
                 cmp     al, Party_count
                 jb      short loc_4F815
 
-loc_4F7E6:                              ; CODE XREF: sub_4F74F+8C↑j
+loc_4F7E6:                              ; CODE XREF: spellsDialog+8C↑j
                 mov     al, Party_count
                 mov     ah, 0
                 dec     ax
@@ -100761,7 +100745,7 @@ loc_4F7E6:                              ; CODE XREF: sub_4F74F+8C↑j
                 jmp     short loc_4F80D
 ; ---------------------------------------------------------------------------
 
-loc_4F7F1:                              ; CODE XREF: sub_4F74F+C2↓j
+loc_4F7F1:                              ; CODE XREF: spellsDialog+C2↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
@@ -100773,24 +100757,24 @@ loc_4F7F1:                              ; CODE XREF: sub_4F74F+C2↓j
                 jmp     short loc_4F81C
 ; ---------------------------------------------------------------------------
 
-loc_4F80A:                              ; CODE XREF: sub_4F74F+B1↑j
+loc_4F80A:                              ; CODE XREF: spellsDialog+B1↑j
                 dec     [bp+var_2]
 
-loc_4F80D:                              ; CODE XREF: sub_4F74F+A0↑j
+loc_4F80D:                              ; CODE XREF: spellsDialog+A0↑j
                 cmp     [bp+var_2], 0
                 jge     short loc_4F7F1
                 jmp     short loc_4F81C
 ; ---------------------------------------------------------------------------
 
-loc_4F815:                              ; CODE XREF: sub_4F74F+95↑j
+loc_4F815:                              ; CODE XREF: spellsDialog+95↑j
                 mov     al, byte_287A1
 
-loc_4F818:                              ; CODE XREF: sub_4F74F+85↑j
+loc_4F818:                              ; CODE XREF: spellsDialog+85↑j
                 cbw
                 mov     [bp+var_2], ax
 
-loc_4F81C:                              ; CODE XREF: sub_4F74F+B9↑j
-                                        ; sub_4F74F+C4↑j
+loc_4F81C:                              ; CODE XREF: spellsDialog+B9↑j
+                                        ; spellsDialog+C4↑j
                 cmp     [bp+var_4], 2
                 jnz     short loc_4F82D
                 mov     bx, [bp+var_2]
@@ -100799,10 +100783,10 @@ loc_4F81C:                              ; CODE XREF: sub_4F74F+B9↑j
                 jmp     short loc_4F830
 ; ---------------------------------------------------------------------------
 
-loc_4F82D:                              ; CODE XREF: sub_4F74F+D1↑j
+loc_4F82D:                              ; CODE XREF: spellsDialog+D1↑j
                 mov     ax, [bp+var_2]
 
-loc_4F830:                              ; CODE XREF: sub_4F74F+DC↑j
+loc_4F830:                              ; CODE XREF: spellsDialog+DC↑j
                 mov     dx, 12Fh
                 imul    dx
                 add     ax, 0B9D6h
@@ -100817,12 +100801,12 @@ loc_4F830:                              ; CODE XREF: sub_4F74F+DC↑j
                 jmp     short loc_4F85A
 ; ---------------------------------------------------------------------------
 
-loc_4F852:                              ; CODE XREF: sub_4F74F+FC↑j
+loc_4F852:                              ; CODE XREF: spellsDialog+FC↑j
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
                 mov     ah, 0
 
-loc_4F85A:                              ; CODE XREF: sub_4F74F+101↑j
+loc_4F85A:                              ; CODE XREF: spellsDialog+101↑j
                 mov     si, ax
                 mov     bx, word ptr [bp+format]
                 push    word ptr [bx+127h]
@@ -100874,14 +100858,14 @@ loc_4F85A:                              ; CODE XREF: sub_4F74F+101↑j
                 call    Music_deinit
                 add     sp, 14h
 
-loc_4F8CA:                              ; CODE XREF: sub_4F74F+6D6↓j
+loc_4F8CA:                              ; CODE XREF: spellsDialog+6D6↓j
                 call    sub_254BA
                 mov     [bp+var_2], ax
                 mov     [bp+var_C], ax
                 mov     cx, 0Dh
                 mov     bx, 20F0h
 
-loc_4F8DB:                              ; CODE XREF: sub_4F74F+196↓j
+loc_4F8DB:                              ; CODE XREF: spellsDialog+196↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_C]
                 jz      short loc_4F8EA
@@ -100891,7 +100875,7 @@ loc_4F8DB:                              ; CODE XREF: sub_4F74F+196↓j
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4F8EA:                              ; CODE XREF: sub_4F74F+192↑j
+loc_4F8EA:                              ; CODE XREF: spellsDialog+192↑j
                 jmp     word ptr cs:[bx+1Ah]
 ; ---------------------------------------------------------------------------
                 mov     bx, word ptr [bp+format]
@@ -100900,13 +100884,13 @@ loc_4F8EA:                              ; CODE XREF: sub_4F74F+192↑j
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4F8FA:                              ; CODE XREF: sub_4F74F+1A6↑j
+loc_4F8FA:                              ; CODE XREF: spellsDialog+1A6↑j
                 cmp     byte ptr [bx+7Bh], 4Dh ; 'M'
                 jb      short loc_4F903
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4F903:                              ; CODE XREF: sub_4F74F+1AF↑j
+loc_4F903:                              ; CODE XREF: spellsDialog+1AF↑j
                 push    word ptr [bp+format] ; format
                 call    sub_281D5
                 pop     cx
@@ -100915,8 +100899,8 @@ loc_4F903:                              ; CODE XREF: sub_4F74F+1AF↑j
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4F913:                              ; CODE XREF: sub_4F74F+44↑j
-                                        ; sub_4F74F+1BF↑j
+loc_4F913:                              ; CODE XREF: spellsDialog+44↑j
+                                        ; spellsDialog+1BF↑j
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
                 mov     ah, 0
@@ -100931,7 +100915,7 @@ loc_4F913:                              ; CODE XREF: sub_4F74F+44↑j
                 jmp     loc_4FD27
 ; ---------------------------------------------------------------------------
 
-loc_4F92F:                              ; CODE XREF: sub_4F74F+1DB↑j
+loc_4F92F:                              ; CODE XREF: spellsDialog+1DB↑j
                 mov     [bp+var_6], 1
                 mov     ax, word ptr [bp+format]
                 mov     word_32E3E, ax
@@ -100946,114 +100930,114 @@ loc_4F92F:                              ; CODE XREF: sub_4F74F+1DB↑j
                 jmp     def_4F954       ; jumptable 0004F954 default case
 ; ---------------------------------------------------------------------------
 
-loc_4F952:                              ; CODE XREF: sub_4F74F+1FE↑j
+loc_4F952:                              ; CODE XREF: spellsDialog+1FE↑j
                 shl     bx, 1
                 jmp     cs:jpt_4F954[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_4F959:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F959:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28527       ; jumptable 0004F954 case 0
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F961:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F961:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2845F       ; jumptable 0004F954 case 1
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F969:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F969:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28554       ; jumptable 0004F954 case 2
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F971:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F971:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2854F       ; jumptable 0004F954 case 3
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F979:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F979:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285C2       ; jumptable 0004F954 case 4
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F981:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F981:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285BD       ; jumptable 0004F954 case 5
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F989:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F989:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285F9       ; jumptable 0004F954 case 6
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F991:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F991:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28581       ; jumptable 0004F954 case 7
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F999:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F999:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284FF       ; jumptable 0004F954 case 8
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9A1:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9A1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284B9       ; jumptable 0004F954 case 9
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9A9:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9A9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284C3       ; jumptable 0004F954 case 10
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9B1:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9B1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2851D       ; jumptable 0004F954 case 11
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9B9:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9B9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2849B       ; jumptable 0004F954 case 12
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9C1:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9C1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28518       ; jumptable 0004F954 case 13
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9C9:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9C9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284A5       ; jumptable 0004F954 case 14
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9D1:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9D1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28531       ; jumptable 0004F954 case 15
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9D9:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9D9:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2857C       ; jumptable 0004F954 case 16
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4F9E1:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4F9E1:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 17
                 jnz     short loc_4FA0C
@@ -101071,46 +101055,46 @@ loc_4F9E1:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FA09:                              ; CODE XREF: sub_4F74F+2B5↑j
+loc_4FA09:                              ; CODE XREF: spellsDialog+2B5↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FA0C:                              ; CODE XREF: sub_4F74F+296↑j
+loc_4FA0C:                              ; CODE XREF: spellsDialog+296↑j
                 call    sub_28522
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA14:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA14:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284CD       ; jumptable 0004F954 case 18
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA1C:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA1C:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284BE       ; jumptable 0004F954 case 19
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA24:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA24:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28536       ; jumptable 0004F954 case 20
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA2C:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA2C:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284FA       ; jumptable 0004F954 case 21
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA34:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA34:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28590       ; jumptable 0004F954 case 22
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA3C:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA3C:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 23
                 jnz     short loc_4FA67
@@ -101128,70 +101112,70 @@ loc_4FA3C:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FA64:                              ; CODE XREF: sub_4F74F+310↑j
+loc_4FA64:                              ; CODE XREF: spellsDialog+310↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FA67:                              ; CODE XREF: sub_4F74F+2F1↑j
+loc_4FA67:                              ; CODE XREF: spellsDialog+2F1↑j
                 call    sub_285CC
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA6F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA6F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285AE       ; jumptable 0004F954 case 24
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA77:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA77:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28504       ; jumptable 0004F954 case 25
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA7F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA7F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284F0       ; jumptable 0004F954 case 26
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA87:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA87:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285F4       ; jumptable 0004F954 case 27
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA8F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA8F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28469       ; jumptable 0004F954 case 28
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA97:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA97:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285EA       ; jumptable 0004F954 case 29
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FA9F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FA9F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28568       ; jumptable 0004F954 case 30
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAA7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAA7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28559       ; jumptable 0004F954 case 31
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAAF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAAF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28478       ; jumptable 0004F954 case 32
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAB7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAB7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 33
                 jnz     short loc_4FAE2
@@ -101209,58 +101193,58 @@ loc_4FAB7:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FADF:                              ; CODE XREF: sub_4F74F+38B↑j
+loc_4FADF:                              ; CODE XREF: spellsDialog+38B↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FAE2:                              ; CODE XREF: sub_4F74F+36C↑j
+loc_4FAE2:                              ; CODE XREF: spellsDialog+36C↑j
                 call    j_spellLloydsBeacon
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAEA:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAEA:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2850E       ; jumptable 0004F954 case 34
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAF2:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAF2:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285B8       ; jumptable 0004F954 case 35
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FAFA:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FAFA:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2856D       ; jumptable 0004F954 case 36
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB02:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB02:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285FE       ; jumptable 0004F954 case 37
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB0A:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB0A:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284B4       ; jumptable 0004F954 case 38
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB12:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB12:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2846E       ; jumptable 0004F954 case 39
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB1A:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB1A:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285EF       ; jumptable 0004F954 case 40
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB22:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB22:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 41
                 jnz     short loc_4FB4D
@@ -101278,34 +101262,34 @@ loc_4FB22:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FB4A:                              ; CODE XREF: sub_4F74F+3F6↑j
+loc_4FB4A:                              ; CODE XREF: spellsDialog+3F6↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FB4D:                              ; CODE XREF: sub_4F74F+3D7↑j
+loc_4FB4D:                              ; CODE XREF: spellsDialog+3D7↑j
                 call    sub_28603
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB55:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB55:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284AA       ; jumptable 0004F954 case 42
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB5D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB5D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285B3       ; jumptable 0004F954 case 43
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB65:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB65:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285E5       ; jumptable 0004F954 case 44
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FB6D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FB6D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 45
                 jnz     short loc_4FB98
@@ -101323,40 +101307,40 @@ loc_4FB6D:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FB95:                              ; CODE XREF: sub_4F74F+441↑j
+loc_4FB95:                              ; CODE XREF: spellsDialog+441↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FB98:                              ; CODE XREF: sub_4F74F+422↑j
+loc_4FB98:                              ; CODE XREF: spellsDialog+422↑j
                 call    sub_28586
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBA0:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBA0:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2847D       ; jumptable 0004F954 case 46
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBA8:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBA8:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28455       ; jumptable 0004F954 case 47
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBB0:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBB0:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285A4       ; jumptable 0004F954 case 48
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBB8:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBB8:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284E6       ; jumptable 0004F954 case 49
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBC0:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBC0:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 50
                 jnz     short loc_4FBEB
@@ -101374,28 +101358,28 @@ loc_4FBC0:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FBE8:                              ; CODE XREF: sub_4F74F+494↑j
+loc_4FBE8:                              ; CODE XREF: spellsDialog+494↑j
                 jmp     loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FBEB:                              ; CODE XREF: sub_4F74F+475↑j
+loc_4FBEB:                              ; CODE XREF: spellsDialog+475↑j
                 call    sub_285DB
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBF3:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBF3:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2859F       ; jumptable 0004F954 case 51
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FBFB:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FBFB:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28491       ; jumptable 0004F954 case 52
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC03:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC03:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 53
                 jnz     short loc_4FC2D
@@ -101413,58 +101397,58 @@ loc_4FC03:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FC2B:                              ; CODE XREF: sub_4F74F+4D7↑j
+loc_4FC2B:                              ; CODE XREF: spellsDialog+4D7↑j
                 jmp     short loc_4FC95
 ; ---------------------------------------------------------------------------
 
-loc_4FC2D:                              ; CODE XREF: sub_4F74F+4B8↑j
+loc_4FC2D:                              ; CODE XREF: spellsDialog+4B8↑j
                 call    sub_284DC
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC35:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC35:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2858B       ; jumptable 0004F954 case 54
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC3D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC3D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285D6       ; jumptable 0004F954 case 55
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC45:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC45:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284D2       ; jumptable 0004F954 case 56
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC4D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC4D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285E0       ; jumptable 0004F954 case 57
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC55:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC55:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28496       ; jumptable 0004F954 case 58
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC5D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC5D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28563       ; jumptable 0004F954 case 59
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC65:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC65:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28513       ; jumptable 0004F954 case 60
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FC6D:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FC6D:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 cmp     [bp+var_4], 2   ; jumptable 0004F954 case 61
                 jnz     short loc_4FCA7
@@ -101482,8 +101466,8 @@ loc_4FC6D:                              ; CODE XREF: sub_4F74F+205↑j
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FC95:                              ; CODE XREF: sub_4F74F:loc_4FA09↑j
-                                        ; sub_4F74F:loc_4FA64↑j ...
+loc_4FC95:                              ; CODE XREF: spellsDialog:loc_4FA09↑j
+                                        ; spellsDialog:loc_4FA64↑j ...
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
                 mov     ah, 0
@@ -101493,108 +101477,108 @@ loc_4FC95:                              ; CODE XREF: sub_4F74F:loc_4FA09↑j
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCA7:                              ; CODE XREF: sub_4F74F+522↑j
+loc_4FCA7:                              ; CODE XREF: spellsDialog+522↑j
                 call    sub_2855E
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCAF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCAF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2845A       ; jumptable 0004F954 case 62
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCB7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCB7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284EB       ; jumptable 0004F954 case 63
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCBF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCBF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28473       ; jumptable 0004F954 case 64
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCC7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCC7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284A0       ; jumptable 0004F954 case 65
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCCF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCCF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28487       ; jumptable 0004F954 case 66
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCD7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCD7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284AF       ; jumptable 0004F954 case 67
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCDF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCDF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285C7       ; jumptable 0004F954 case 68
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCE7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCE7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_284D7       ; jumptable 0004F954 case 69
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCEF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCEF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_28450       ; jumptable 0004F954 case 70
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCF7:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCF7:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285A9       ; jumptable 0004F954 case 71
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FCFF:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FCFF:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_285D1       ; jumptable 0004F954 case 72
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FD07:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FD07:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2852C       ; jumptable 0004F954 case 73
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FD0F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FD0F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2859A       ; jumptable 0004F954 case 74
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FD17:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FD17:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    sub_2853B       ; jumptable 0004F954 case 75
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FD1F:                              ; CODE XREF: sub_4F74F+205↑j
+loc_4FD1F:                              ; CODE XREF: spellsDialog+205↑j
                                         ; DATA XREF: ovl12:jpt_4F954↓o
                 call    j_Spells_divineIntervention ; jumptable 0004F954 case 76
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
-loc_4FD27:                              ; CODE XREF: sub_4F74F+1DD↑j
+loc_4FD27:                              ; CODE XREF: spellsDialog+1DD↑j
                 cmp     [bp+arg_0], 0
                 jz      short loc_4FD30
                 jmp     loc_4FE28
 ; ---------------------------------------------------------------------------
 
-loc_4FD30:                              ; CODE XREF: sub_4F74F+5DC↑j
+loc_4FD30:                              ; CODE XREF: spellsDialog+5DC↑j
                 push    di
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
@@ -101604,7 +101588,7 @@ loc_4FD30:                              ; CODE XREF: sub_4F74F+5DC↑j
                 jmp     loc_4FE12
 ; ---------------------------------------------------------------------------
 
-def_4F954:                              ; CODE XREF: sub_4F74F+200↑j
+def_4F954:                              ; CODE XREF: spellsDialog+200↑j
                 jmp     loc_4FE14       ; jumptable 0004F954 default case
 ; ---------------------------------------------------------------------------
                 mov     al, byte ptr [bp+var_4]
@@ -101628,7 +101612,7 @@ def_4F954:                              ; CODE XREF: sub_4F74F+200↑j
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4FD75:                              ; CODE XREF: sub_4F74F+621↑j
+loc_4FD75:                              ; CODE XREF: spellsDialog+621↑j
                 mov     al, byte ptr [bp+var_4]
                 mov     Engine_mode, al
                 sub     [bp+var_2], 0C9h
@@ -101640,7 +101624,7 @@ loc_4FD75:                              ; CODE XREF: sub_4F74F+621↑j
                 jmp     loc_4FE19
 ; ---------------------------------------------------------------------------
 
-loc_4FD90:                              ; CODE XREF: sub_4F74F+63C↑j
+loc_4FD90:                              ; CODE XREF: spellsDialog+63C↑j
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
                 imul    dx
@@ -101652,7 +101636,7 @@ loc_4FD90:                              ; CODE XREF: sub_4F74F+63C↑j
                 mov     al, byte ptr [bp+var_2]
                 mov     byte_287A1, al
 
-loc_4FDAD:                              ; CODE XREF: sub_4F74F+60D↑j
+loc_4FDAD:                              ; CODE XREF: spellsDialog+60D↑j
                 mov     bx, word ptr [bp+format]
                 cmp     byte ptr [bx+7Bh], 0FFh
                 jnz     short loc_4FDBB
@@ -101660,12 +101644,12 @@ loc_4FDAD:                              ; CODE XREF: sub_4F74F+60D↑j
                 jmp     short loc_4FDC3
 ; ---------------------------------------------------------------------------
 
-loc_4FDBB:                              ; CODE XREF: sub_4F74F+665↑j
+loc_4FDBB:                              ; CODE XREF: spellsDialog+665↑j
                 mov     bx, word ptr [bp+format]
                 mov     al, [bx+7Bh]
                 mov     ah, 0
 
-loc_4FDC3:                              ; CODE XREF: sub_4F74F+66A↑j
+loc_4FDC3:                              ; CODE XREF: spellsDialog+66A↑j
                 mov     si, ax
                 mov     bx, word ptr [bp+format]
                 push    word ptr [bx+127h]
@@ -101700,16 +101684,16 @@ loc_4FDC3:                              ; CODE XREF: sub_4F74F+66A↑j
                 push    ax
                 call    Window_update
 
-loc_4FE12:                              ; CODE XREF: sub_4F74F+5F0↑j
+loc_4FE12:                              ; CODE XREF: spellsDialog+5F0↑j
                 pop     cx
                 pop     cx
 
-loc_4FE14:                              ; CODE XREF: sub_4F74F+20F↑j
-                                        ; sub_4F74F+217↑j ...
+loc_4FE14:                              ; CODE XREF: spellsDialog+20F↑j
+                                        ; spellsDialog+217↑j ...
                 mov     Engine_mode, 3
 
-loc_4FE19:                              ; CODE XREF: sub_4F74F+198↑j
-                                        ; sub_4F74F+1A8↑j ...
+loc_4FE19:                              ; CODE XREF: spellsDialog+198↑j
+                                        ; spellsDialog+1A8↑j ...
                 cmp     [bp+var_2], 1Bh
                 jz      short loc_4FE28
                 cmp     [bp+var_6], 0
@@ -101717,8 +101701,8 @@ loc_4FE19:                              ; CODE XREF: sub_4F74F+198↑j
                 jmp     loc_4F8CA
 ; ---------------------------------------------------------------------------
 
-loc_4FE28:                              ; CODE XREF: sub_4F74F+2B7↑j
-                                        ; sub_4F74F+312↑j ...
+loc_4FE28:                              ; CODE XREF: spellsDialog+2B7↑j
+                                        ; spellsDialog+312↑j ...
                 cmp     [bp+arg_0], 0
                 jnz     short loc_4FE71
                 mov     ax, 1
@@ -101742,8 +101726,8 @@ loc_4FE28:                              ; CODE XREF: sub_4F74F+2B7↑j
                 pop     cx
                 mov     byte_287A5, 0
 
-loc_4FE71:                              ; CODE XREF: sub_4F74F+6DD↑j
-                                        ; sub_4F74F+70A↑j ...
+loc_4FE71:                              ; CODE XREF: spellsDialog+6DD↑j
+                                        ; spellsDialog+70A↑j ...
                 mov     al, byte ptr [bp+var_4]
                 mov     Engine_mode, al
                 mov     al, byte ptr [bp+format+2]
@@ -101754,11 +101738,11 @@ loc_4FE71:                              ; CODE XREF: sub_4F74F+6DD↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4F74F       endp
+spellsDialog    endp
 
 ; ---------------------------------------------------------------------------
 jpt_4F954       dw offset loc_4F959, offset loc_4F961, offset loc_4F969
-                                        ; DATA XREF: sub_4F74F+205↑r
+                                        ; DATA XREF: spellsDialog+205↑r
                 dw offset loc_4F971, offset loc_4F979, offset loc_4F981 ; jump table for switch statement
                 dw offset loc_4F989, offset loc_4F991, offset loc_4F999
                 dw offset loc_4F9A1, offset loc_4F9A9, offset loc_4F9B1
@@ -101800,9 +101784,10 @@ ovl13           segment para public 'OVERLAY' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog
 ; Attributes: bp-based frame
 
-sub_4FF60       proc far                ; CODE XREF: sub_2869F↑J
+castItemSpell   proc far                ; CODE XREF: j_castItemSpell↑J
 
 arg_0           = word ptr  6
 
@@ -101815,102 +101800,102 @@ arg_0           = word ptr  6
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF6F:                              ; CODE XREF: sub_4FF60+A↑j
+loc_4FF6F:                              ; CODE XREF: castItemSpell+A↑j
                 shl     bx, 1
                 jmp     cs:jpt_4FF71[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_4FF76:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF76:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28527       ; jumptable 0004FF71 case 1
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF7E:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF7E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2845F       ; jumptable 0004FF71 case 2
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF86:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF86:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285C2       ; jumptable 0004FF71 case 3
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF8E:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF8E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285BD       ; jumptable 0004FF71 case 4
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF96:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF96:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28554       ; jumptable 0004FF71 case 5
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FF9E:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FF9E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2854F       ; jumptable 0004FF71 case 6
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFA6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFA6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284B9       ; jumptable 0004FF71 case 7
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFAE:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFAE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284C3       ; jumptable 0004FF71 case 8
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFB6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFB6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285F9       ; jumptable 0004FF71 case 9
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFBE:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFBE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28581       ; jumptable 0004FF71 case 10
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFC6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFC6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284FF       ; jumptable 0004FF71 case 11
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFCE:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFCE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2849B       ; jumptable 0004FF71 case 12
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFD6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFD6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28518       ; jumptable 0004FF71 case 13
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFDE:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFDE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28531       ; jumptable 0004FF71 case 14
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFE6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFE6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2851D       ; jumptable 0004FF71 case 15
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_4FFEE:                              ; CODE XREF: sub_4FF60+11↑j
+loc_4FFEE:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 16
                 jnz     short loc_4FFFB
@@ -101918,30 +101903,30 @@ loc_4FFEE:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_4FFFB:                              ; CODE XREF: sub_4FF60+93↑j
+loc_4FFFB:                              ; CODE XREF: castItemSpell+93↑j
                 call    sub_28522
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50003:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50003:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284CD       ; jumptable 0004FF71 case 17
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5000B:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5000B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2857C       ; jumptable 0004FF71 case 18
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50013:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50013:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28590       ; jumptable 0004FF71 case 19
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5001B:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5001B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 20
                 jnz     short loc_50028
@@ -101949,54 +101934,54 @@ loc_5001B:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_50028:                              ; CODE XREF: sub_4FF60+C0↑j
+loc_50028:                              ; CODE XREF: castItemSpell+C0↑j
                 call    sub_285CC
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50030:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50030:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28536       ; jumptable 0004FF71 case 21
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50038:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50038:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284FA       ; jumptable 0004FF71 case 22
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50040:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50040:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285AE       ; jumptable 0004FF71 case 23
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50048:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50048:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28469       ; jumptable 0004FF71 case 24
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50050:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50050:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28504       ; jumptable 0004FF71 case 25
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50058:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50058:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284F0       ; jumptable 0004FF71 case 26
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50060:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50060:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285F4       ; jumptable 0004FF71 case 27
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50068:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50068:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 28
                 jnz     short loc_50075
@@ -102004,90 +101989,90 @@ loc_50068:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_50075:                              ; CODE XREF: sub_4FF60+10D↑j
+loc_50075:                              ; CODE XREF: castItemSpell+10D↑j
                 call    j_spellLloydsBeacon
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5007D:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5007D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2850E       ; jumptable 0004FF71 case 29
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50085:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50085:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28568       ; jumptable 0004FF71 case 30
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5008D:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5008D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285EA       ; jumptable 0004FF71 case 31
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50095:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50095:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28559       ; jumptable 0004FF71 case 32
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5009D:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5009D:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28478       ; jumptable 0004FF71 case 33
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500A5:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500A5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285FE       ; jumptable 0004FF71 case 34
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500AD:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500AD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2856D       ; jumptable 0004FF71 case 35
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500B5:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500B5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2846E       ; jumptable 0004FF71 case 36
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500BD:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500BD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285B8       ; jumptable 0004FF71 case 37
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500C5:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500C5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284B4       ; jumptable 0004FF71 case 38
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500CD:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500CD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284AA       ; jumptable 0004FF71 case 39
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500D5:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500D5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285B3       ; jumptable 0004FF71 case 40
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500DD:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500DD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285EF       ; jumptable 0004FF71 case 41
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500E5:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500E5:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 42
                 jnz     short loc_500F2
@@ -102095,12 +102080,12 @@ loc_500E5:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_500F2:                              ; CODE XREF: sub_4FF60+18A↑j
+loc_500F2:                              ; CODE XREF: castItemSpell+18A↑j
                 call    sub_28603
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_500FA:                              ; CODE XREF: sub_4FF60+11↑j
+loc_500FA:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 43
                 jnz     short loc_50107
@@ -102108,36 +102093,36 @@ loc_500FA:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_50107:                              ; CODE XREF: sub_4FF60+19F↑j
+loc_50107:                              ; CODE XREF: castItemSpell+19F↑j
                 call    sub_28586
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5010F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5010F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2847D       ; jumptable 0004FF71 case 44
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50117:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50117:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28455       ; jumptable 0004FF71 case 45
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5011F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5011F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285A4       ; jumptable 0004FF71 case 46
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50127:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50127:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285E5       ; jumptable 0004FF71 case 47
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5012F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5012F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 48
                 jnz     short loc_5013B
@@ -102145,42 +102130,42 @@ loc_5012F:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     short loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_5013B:                              ; CODE XREF: sub_4FF60+1D4↑j
+loc_5013B:                              ; CODE XREF: castItemSpell+1D4↑j
                 call    sub_285DB
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50143:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50143:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284E6       ; jumptable 0004FF71 case 49
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5014B:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5014B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28491       ; jumptable 0004FF71 case 50
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50153:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50153:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2859F       ; jumptable 0004FF71 case 51
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5015B:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5015B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285D6       ; jumptable 0004FF71 case 52
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50163:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50163:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284D2       ; jumptable 0004FF71 case 53
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5016B:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5016B:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 54
                 jnz     short loc_50177
@@ -102188,169 +102173,169 @@ loc_5016B:                              ; CODE XREF: sub_4FF60+11↑j
                 jmp     short loc_501B1
 ; ---------------------------------------------------------------------------
 
-loc_50177:                              ; CODE XREF: sub_4FF60+210↑j
+loc_50177:                              ; CODE XREF: castItemSpell+210↑j
                 call    sub_284DC
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5017F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5017F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2858B       ; jumptable 0004FF71 case 55
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50187:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50187:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285E0       ; jumptable 0004FF71 case 56
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5018F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5018F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28496       ; jumptable 0004FF71 case 57
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50197:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50197:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28513       ; jumptable 0004FF71 case 58
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5019F:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5019F:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28563       ; jumptable 0004FF71 case 59
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501A7:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501A7:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 cmp     Engine_mode, 2  ; jumptable 0004FF71 case 60
                 jnz     short loc_501BA
                 mov     ax, 3Dh ; '='
 
-loc_501B1:                              ; CODE XREF: sub_4FF60+98↑j
-                                        ; sub_4FF60+C5↑j ...
+loc_501B1:                              ; CODE XREF: castItemSpell+98↑j
+                                        ; castItemSpell+C5↑j ...
                 push    ax
                 call    sub_28540
                 pop     cx
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501BA:                              ; CODE XREF: sub_4FF60+24C↑j
+loc_501BA:                              ; CODE XREF: castItemSpell+24C↑j
                 call    sub_2855E
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501C1:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501C1:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2845A       ; jumptable 0004FF71 case 61
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501C8:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501C8:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28473       ; jumptable 0004FF71 case 62
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501CF:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501CF:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284A0       ; jumptable 0004FF71 case 63
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501D6:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501D6:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284EB       ; jumptable 0004FF71 case 64
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501DD:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501DD:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28487       ; jumptable 0004FF71 case 65
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501E4:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501E4:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284AF       ; jumptable 0004FF71 case 66
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501EB:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501EB:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_284D7       ; jumptable 0004FF71 case 67
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501F2:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501F2:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_28450       ; jumptable 0004FF71 case 68
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_501F9:                              ; CODE XREF: sub_4FF60+11↑j
+loc_501F9:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285C7       ; jumptable 0004FF71 case 69
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50200:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50200:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285A9       ; jumptable 0004FF71 case 70
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50207:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50207:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_285D1       ; jumptable 0004FF71 case 71
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5020E:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5020E:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2852C       ; jumptable 0004FF71 case 72
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50215:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50215:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2859A       ; jumptable 0004FF71 case 73
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5021C:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5021C:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_2853B       ; jumptable 0004FF71 case 74
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50223:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50223:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    j_Spells_divineIntervention ; jumptable 0004FF71 case 75
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_5022A:                              ; CODE XREF: sub_4FF60+11↑j
+loc_5022A:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 call    sub_280B2       ; jumptable 0004FF71 case 76
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
-loc_50231:                              ; CODE XREF: sub_4FF60+11↑j
+loc_50231:                              ; CODE XREF: castItemSpell+11↑j
                                         ; DATA XREF: ovl13:jpt_4FF71↓o
                 mov     byte_287A7, 1   ; jumptable 0004FF71 case 77
 
-def_4FF71:                              ; CODE XREF: sub_4FF60+C↑j
-                                        ; sub_4FF60+1B↑j ...
+def_4FF71:                              ; CODE XREF: castItemSpell+C↑j
+                                        ; castItemSpell+1B↑j ...
                 pop     bp              ; jumptable 0004FF71 default case
                 retf
-sub_4FF60       endp
+castItemSpell   endp
 
 ; ---------------------------------------------------------------------------
 jpt_4FF71       dw offset loc_4FF76, offset loc_4FF7E, offset loc_4FF86
-                                        ; DATA XREF: sub_4FF60+11↑r
+                                        ; DATA XREF: castItemSpell+11↑r
                 dw offset loc_4FF8E, offset loc_4FF96, offset loc_4FF9E ; jump table for switch statement
                 dw offset loc_4FFA6, offset loc_4FFAE, offset loc_4FFB6
                 dw offset loc_4FFBE, offset loc_4FFC6, offset loc_4FFCE

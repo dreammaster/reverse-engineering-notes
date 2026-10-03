@@ -34,7 +34,7 @@ typedef struct {
 	uint8_t slotMetal[19];       /* B6 armour/metal material -> METAL_LAC */
 	uint8_t slotAttribute[19];   /* C9 attribute enchantment material -> ATTRIBUTE_BONUSES */
 	uint8_t slotId[19];          /* DC item id (armour 21h-29h, ARMOR_STRENGTHS) */
-	uint8_t unknownEF[19];       /* EF */
+	uint8_t slotSpell[19];         /* EF item special-ability (spell) id used by castItemSpell, 4Dh = none */
 	uint8_t acBonus;             /* 102 added by getArmorClass(base=false) */
 	uint8_t unknown103[16];      /* 103 resistances etc. (Xeen: lloydSide + 6 resistance pairs) */
 	uint8_t conditions[16];      /* 113: 0 cursed ... 0Ch unconscious (11Fh) 0Dh dead (120h) ... (Xeen order) */

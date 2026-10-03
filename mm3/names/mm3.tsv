@@ -680,8 +680,10 @@
 4F20B	def_4F1DB
 4F236	jpt_4F1DB
 4F23E	jpt_4EFFD
+4F74F	spellsDialog	spell casting menu (Engine_mode 3); 77-entry key table
 4FD42	def_4F954
 4FE86	jpt_4F954
+4FF60	castItemSpell	switch on an item's spell id (slot array at char+0EFh, ids 1-77, Xeen's alphabetical item-spell order); called from itemsDialog
 50236	def_4FF71
 50238	jpt_4FF71
 50C07	def_50950
