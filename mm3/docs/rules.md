@@ -131,3 +131,11 @@ knight 1500, paladin 2000, archer 2000, cleric 1500, sorcerer 2000, robber 1000,
 * `base(1) = 0`; `base(n) = M * 2^(n-2)` for n = 2..12;  `base(n) = M * 1024 + (n-12) * 1,024,000` for n >= 13 (flat 1,024,000 per level).
 * `nextExperienceLevel(char)` = `base(level + 1)`; `experienceToNextLevel` = `max(0, base(level+1) - (base(level) + stored))`.
 * Training in the town raises the level and subtracts `base(level+1) - base(level)` from the stored value, so total experience is preserved.
+
+## Skills (`getThievery` 4EC3E-ish, `checkSkill` 153EA)
+
+* `getThievery(char)` = `2 * level` + class bonus (robber +30, ninja +15) + race bonus (race byte +11h: 1 and 3 give +10, 2 gives +5, 4 gives -10)
+  + `itemScan(10)` (item bonuses); 0 if the character lacks the Thievery skill (+27h == 0); never negative.  Locks/traps compare
+  `getThievery + d20` with the page's lock/trap difficulty bytes (`data-files.md`, bytes 11h/12h).
+* `checkSkill(n)` = "does the party have skill n": the skill byte (+27h + n) must be non-zero in the character; skill ids 0-4, 6-8, 12, 13, 15-17 need **one** member
+  with it, ids 9-11 need **two** members, ids 5 and 14 need **every** member of the party.  Used with ids 4 (Cartographer: auto-mapping) and 6 (Direction Sense: compass).
