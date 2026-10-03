@@ -167,6 +167,34 @@ static void testResolvePassword(void) {
           travelCheckUnlock(GameYendor3, 46, 0x8000, g_flags, sizeof(g_flags)).outcome == TravelUnlockAlreadyUnlocked);
 }
 
+static void testExamineKey(void) {
+    /* Chapter 2's real keys: KEY OF PORT HOPE (12), PARIAH (4), TRACKING (91) have no gate row and travel at once;
+     * KEY OF NUMAGIK (9) and STONY PEAK (19) are gated on their destination's flag. */
+    reset();
+    check("KEY OF PORT HOPE travels", travelExamineKey(GameYendor2, 12, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+    check("KEY OF PARIAH travels", travelExamineKey(GameYendor2, 4, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+    check("KEY OF TRACKING travels", travelExamineKey(GameYendor2, 91, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+    check("KEY OF NUMAGIK only describes itself until the destination is unlocked",
+          travelExamineKey(GameYendor2, 9, g_flags, sizeof(g_flags), false) == TravelExamineGateClosed);
+    check("KEY OF STONY PEAK likewise", travelExamineKey(GameYendor2, 19, g_flags, sizeof(g_flags), false) == TravelExamineGateClosed);
+    memset(g_flags, 0xFF, sizeof(g_flags));
+    check("with every flag set both travel", travelExamineKey(GameYendor2, 9, g_flags, sizeof(g_flags), false) == TravelExamineTravels &&
+                                                  travelExamineKey(GameYendor2, 19, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+
+    /* Chapter 3's story gate. */
+    reset();
+    check("Chapter 3 ANKH OF PORTALS travels", travelExamineKey(GameYendor3, 3, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+    globalFlagSet(g_flags, sizeof(g_flags), TravelStoryRealmFlag);
+    check("in the story realm with a weapon of light, it is refused",
+          travelExamineKey(GameYendor3, 3, g_flags, sizeof(g_flags), true) == TravelExamineStoryBlocked);
+    check("...and the realm flag is kept", globalFlagTest(g_flags, sizeof(g_flags), TravelStoryRealmFlag));
+    check("without one it travels", travelExamineKey(GameYendor3, 3, g_flags, sizeof(g_flags), false) == TravelExamineTravels);
+    check("...clearing the realm flag", !globalFlagTest(g_flags, sizeof(g_flags), TravelStoryRealmFlag));
+    reset();
+    globalFlagSet(g_flags, sizeof(g_flags), TravelStoryRealmFlag);
+    check("Chapter 2 has no such gate", travelExamineKey(GameYendor2, 12, g_flags, sizeof(g_flags), true) == TravelExamineTravels);
+}
+
 int main(void) {
     testDestinationCounts();
     testDestinationLookup();
@@ -175,6 +203,7 @@ int main(void) {
     testCheckUnlockMessageRow();
     testCheckUnlockChapter3Dispatch();
     testResolvePassword();
+    testExamineKey();
 
     if (g_failureCount == 0) {
         printf("All tests passed.\n");

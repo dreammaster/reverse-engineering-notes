@@ -406,8 +406,11 @@ All of yendor2's original calls (`TravelToDestination`,
 `UpdateCursorForHeldItem`, `DrawMouseCursorAlt`) are still present in
 the same order, with 4 new calls prepended: `TestGlobalFlag`,
 `IsItemRangeAvailable`, `ClearGlobalFlag`, `LoadItemCatalogRecord`.
-Plausibly a new "you need a specific item to examine/search this
-target" requirement check. Not traced further.
+Traced: `ExamineTarget` is the travel-key handler (see `travel.h`'s
+`travelExamineKey`). Chapter 3's four extra calls are a story gate: while global
+flag 0x9D (the spirit realm) is set and the party holds a SWORD/HAMMER/TRIDENT OF
+LIGHT (items 0x17F-0x181) the key is refused with a 3-line message; if none is held
+the flag is cleared and the ordinary path runs. Chapter 2 has no gate.
 
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 

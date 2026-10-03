@@ -101,4 +101,37 @@ TravelUnlockCheck travelCheckUnlock(GameKind game, unsigned destinationId, uint1
 bool travelResolvePassword(GameKind game, unsigned destinationId, const char *typedText,
                             uint8_t *globalFlags, size_t globalFlagsSize);
 
+/*
+ * ExamineTarget (yendor2.asm:53404 / yendor3.asm:54337) -- the handler for an
+ * item whose consumable-target entry has flag 0x4 and no container/conversation
+ * bits (word 1 & 0x7E00 == 0): the KEY OF PORT HOPE / PARIAH / NUMAGIK / STONY
+ * PEAK / TRACKING of Chapter 2 (target word 0 = 0x000C) and ANKH OF PORTALS /
+ * ATHANEUM KEY of Chapter 3 -- the only seven such items. The entry's word 2
+ * (+4) is a travel destination id. HandleGameCommand first refuses the item
+ * (a warning flash) while UI scratch flag 0x1000 is set.
+ *
+ * Decision: if the destination has a gate-table row (the same table
+ * travelCheckUnlock reads) whose global flag is NOT set, the item only shows
+ * its description ("ShowAbilityDescriptionColumn", cx=1) -- it never prompts for
+ * the password, unlike a travel object; otherwise it calls TravelToDestination.
+ *
+ * Chapter 3 prepends a story gate: while global flag 0x9D is set (the "spirit
+ * realm" HandleScriptedStoryEventTrigger enters, set on event 5, cleared on
+ * event 6) and the party holds any item 0x17F-0x181 (SWORD / HAMMER / TRIDENT
+ * OF LIGHT -- storyItemHeld, from itemRangeAvailable), the item shows a 3-line
+ * refusal (and sets UI flag 0x100 in word 0x536A) instead; if none is held the
+ * flag 0x9D is cleared on the spot and the ordinary path runs. Chapter 2 has no
+ * such gate.
+ */
+typedef enum {
+    TravelExamineTravels,
+    TravelExamineGateClosed,
+    TravelExamineStoryBlocked
+} TravelExamineOutcome;
+
+enum { TravelStoryRealmFlag = 0x9D, TravelStoryItemLow = 0x17F, TravelStoryItemHigh = 0x181 };
+
+TravelExamineOutcome travelExamineKey(GameKind game, unsigned destinationId, uint8_t *globalFlags, size_t globalFlagsSize,
+                                      bool storyItemHeld);
+
 #endif

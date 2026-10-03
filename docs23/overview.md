@@ -11293,6 +11293,22 @@ it; chest keys add nothing, and on the 0x8000 (chest) path the ring reads the
 `test_interact.c`. The sound, unlocked-bit write, message and cell-flag clear
 are I/O shells.
 
+### Session update: ExamineTarget is the travel-key handler (`travelExamineKey`)
+
+`ExamineTarget` is the fallback of `HandleGameCommand` for an item whose
+consumable-target entry has flag 0x4 and no container/conversation bits. A scan of
+both catalogs shows exactly seven such items: Chapter 2's KEY OF PORT HOPE,
+PARIAH, NUMAGIK, STONY PEAK and TRACKING (target word0 0x000C) and Chapter 3's
+ANKH OF PORTALS and ATHANEUM KEY. Target word 2 is a travel destination id.
+The handler is "use a travel key": travel straight to the destination, unless
+the destination has a password-gate row whose flag is still clear (real data:
+NUMAGIK and STONY PEAK), in which case it only shows the description -- it never
+prompts for the password. Chapter 3 prepends a story gate: with global flag 0x9D
+(the spirit realm of `HandleScriptedStoryEventTrigger`) set and a SWORD / HAMMER /
+TRIDENT OF LIGHT (items 0x17F-0x181) held the key is refused; with none held
+the flag is cleared. This resolves the "new item-requirement gate" `engine-diffs.md`
+left untraced. `travel.c`/`.h`, tests in `test_travel.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

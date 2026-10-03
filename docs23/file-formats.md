@@ -981,6 +981,17 @@ the destination requires it, rejecting with a message if not yet
 unlocked. Reveals cells around the new position and redraws the
 screen/minimap on success.
 
+### Travel keys (`ExamineTarget`)
+
+An item whose consumable-target entry (`item.h`) has word0 flag 0x4 (and word1
+& 0x7E00 clear) is handled by `ExamineTarget`; word 2 of the entry is a travel
+destination id. Real data: Chapter 2 KEY OF PORT HOPE (dest 12), PARIAH (4),
+NUMAGIK (9), STONY PEAK (19), TRACKING (91), all word0 0x000C; Chapter 3 ATHANEUM
+KEY (2) and ANKH OF PORTALS (3). The key travels at once unless the destination
+has a gate-table row (see above) with its flag clear -- NUMAGIK and STONY PEAK --
+when it only shows a description. Chapter 3 adds a story gate on global flag 0x9D
+and items 0x17F-0x181 (SWORD/HAMMER/TRIDENT OF LIGHT). `travelExamineKey`.
+
 ### The party roster screen (`ShowWorldMap`)
 
 `ShowWorldMap` (the world-map screen, called from `RunTitleScreen`)

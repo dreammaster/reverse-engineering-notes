@@ -481,6 +481,21 @@ TravelUnlockCheck travelCheckUnlock(GameKind game, unsigned destinationId, uint1
     return result;
 }
 
+TravelExamineOutcome travelExamineKey(GameKind game, unsigned destinationId, uint8_t *globalFlags, size_t globalFlagsSize,
+                                      bool storyItemHeld) {
+    if (game == GameYendor3 && globalFlagTest(globalFlags, globalFlagsSize, TravelStoryRealmFlag)) {
+        if (storyItemHeld) {
+            return TravelExamineStoryBlocked;
+        }
+        globalFlagClear(globalFlags, globalFlagsSize, TravelStoryRealmFlag);
+    }
+    const TravelGateEntry *entry = findGateEntry(game, destinationId);
+    if (entry && !globalFlagTest(globalFlags, globalFlagsSize, entry->globalFlagIndex)) {
+        return TravelExamineGateClosed;
+    }
+    return TravelExamineTravels;
+}
+
 bool travelResolvePassword(GameKind game, unsigned destinationId, const char *typedText,
                             uint8_t *globalFlags, size_t globalFlagsSize) {
     const TravelGateEntry *entry = findGateEntry(game, destinationId);
