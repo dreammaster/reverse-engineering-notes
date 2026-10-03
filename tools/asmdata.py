@@ -64,7 +64,11 @@ class AsmData:
                     body = t[len(kind):]
                 if addr is None:
                     continue
-                body = body.split(";")[0].strip()
+                # a ";" inside a quoted string is data, not a comment
+                mc = re.match(r"^((?:'(?:[^']|'')*'|[^';])*);", body)
+                if mc:
+                    body = mc.group(1)
+                body = body.strip()
                 size = {"db": 1, "dw": 2, "dd": 4, "dq": 8}[kind]
                 md = re.match(r"^(\d+)\s+dup\s*\(", body)
                 if md:

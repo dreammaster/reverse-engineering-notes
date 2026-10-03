@@ -136,16 +136,16 @@ TMovie	stub	21	491536	1071898
 v8::base::OS	todo	3	509497	2863318
 sha1	todo	8	513888	516547
 TComposedFileManager	in-progress	17	516915	519724
-TXMLWriter	todo	33	519891	522102
-TProjectFileWriter	todo	2	522192	522208
-TFieldValue	todo	9	522229	528588
+TXMLWriter	done	33	519891	522102
+TProjectFileWriter	done	2	522192	522208
+TFieldValue	done	9	522229	528588
 TFile	done	37	522315	525436
 TVedFile	done	10	522419	525756
 TPolygonList	todo	19	526053	532096
-TXMLNames	todo	10	527002	533265
+TXMLNames	done	10	527002	533265
 TCharHolder	done	34	529250	531864
 pattern_matcher	todo	2	531875	1441953
-TXMLStringWriter	todo	10	539847	540033
+TXMLStringWriter	done	10	539847	540033
 SEntryInfo	todo	1	541440	541440
 TComposedFile	done	20	541459	548209
 BuildProgressEvent	done	3	548597	548703
@@ -154,7 +154,7 @@ TMemoryFile	done	7	551869	552091
 TStandardPaths	done	13	552187	553383
 TTempFile	done	2	553440	553545
 md5	todo	5	554434	556285
-TTextLanguage	todo	3	558635	1524382
+TTextLanguage	done	3	558635	1524382
 TTimer	done	6	559372	559473
 wxFileConfig	todo	1	559663	559663
 ConfigSetting	todo	3	579294	580506
@@ -171,7 +171,7 @@ TVisionaire	stub	90	608417	655305
 LoadSaveProgressEvent	todo	4	620683	1523917
 StringHashMap<wxString, int, wchar_t const*, StringHash<wchar_t const*> >	todo	1	620868	620868
 TData	todo	13	625861	634717
-TLink	todo	15	635588	636057
+TLink	done	15	635588	636057
 TXMLProjectReader	todo	6	636222	642078
 UserData	todo	2	643450	645562
 bin_structure	todo	1	659327	659327

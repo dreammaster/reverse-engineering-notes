@@ -296,7 +296,7 @@ bool TMSavegame::SaveGame(const TBufferedProjectFileWriter &writer) {
 	composed.InitForWrite(-1, static_cast<TContainerTypeEnum>(4), true);
 
 	wxFileName emptyName;
-	wxFileName dataName(writer.GetBufferName().ToStdWstring());
+	wxFileName dataName(writer.GetFilePath());
 	dataName.NormalizePath();
 	composed.AddData(writer.GetBuffer(), dataName, emptyName, 0);
 

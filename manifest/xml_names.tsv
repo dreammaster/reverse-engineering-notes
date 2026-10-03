@@ -57,7 +57,6 @@ id	hex	name	label	flag	function
 56	0x38	ClipboardParentTable	unk_D738F8	None	amesInternEv
 57	0x39	ClipboardParentField	unk_D73950	None	amesInternEv
 58	0x3A	Text	aT_275	None	amesInternEv
-58	0x3A	DSunused	unk_D739A8	None	amesInternEv
 100	0x64	VisionaireAdventure	unk_E28D38	1	amesEv
 101	0x65	Scenes	unk_E366AC	1	amesEv
 102	0x66	Interfaces	unk_E2EC18	1	amesEv

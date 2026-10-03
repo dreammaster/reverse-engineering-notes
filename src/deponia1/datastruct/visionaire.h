@@ -6,7 +6,7 @@
 #pragma once
 
 #include "TSignalSlot.h"
-#include "TXMLWriter.h"
+#include "baselib/xmlWriter.h"
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
 

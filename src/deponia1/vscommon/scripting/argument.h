@@ -20,6 +20,7 @@
 
 #include "TCharHolder.h"
 #include "TSprite.h"
+#include "TTextLanguage.h"
 #include "WxStub.h"
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
@@ -54,15 +55,6 @@ enum class TArgType {
 	kTextList = 19,
 };
 
-// A single language-tagged string pair (TArgument::Set(const TTextLanguage&),
-// Deponia_Linux.asm lines 1436219-1436275: confirmed exactly two TCharHolder
-// fields plus one int, in this order; field names are a guess from the
-// class name, not recovered).
-struct TTextLanguage {
-	TCharHolder text;
-	TCharHolder audioFile;
-	int languageId = 0;
-};
 
 class TArgument {
 public:

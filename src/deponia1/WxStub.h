@@ -294,6 +294,11 @@ public:
 		_fullPath = (pos == std::wstring::npos) ? name.ToStdWstring() : _fullPath.substr(0, pos + 1) + name.ToStdWstring();
 	}
 
+	// Confirmed call shape only (TFieldValue::TFieldValue(wxFileName const&,
+	// wxFileName const&), asm line 528389) - real wxFileName::MakeRelativeTo()
+	// rewrites this path relative to the given base directory.
+	bool MakeRelativeTo(const wxFileName &base);
+
 	static bool Mkdir(const wxString &dir, int permissions = 0777, int flags = 0);
 	static wxString GetCwd();
 

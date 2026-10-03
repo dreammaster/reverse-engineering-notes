@@ -30,7 +30,7 @@
 #include <vector>
 
 #include "TManagedObject.h"
-#include "TXMLWriter.h"
+#include "baselib/xmlWriter.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 #include "graphicslib/picture.h"

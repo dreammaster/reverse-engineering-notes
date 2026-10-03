@@ -1,5 +1,6 @@
 #include "WxStub.h"
 
+#include <algorithm>
 #include <cerrno>
 #include <chrono>
 #include <cstdarg>
@@ -291,4 +292,27 @@ void wxCriticalSection::Enter() {
 }
 
 void wxCriticalSection::Leave() {
+}
+
+bool wxFileName::MakeRelativeTo(const wxFileName &base) {
+	std::wstring path = _fullPath;
+	std::wstring dir = base._fullPath;
+	std::replace(path.begin(), path.end(), L'\\', L'/');
+	std::replace(dir.begin(), dir.end(), L'\\', L'/');
+	if (!dir.empty() && dir.back() != L'/')
+		dir += L'/';
+
+	// Split off the common leading directories, then climb out of the rest of
+	// the base with "../".
+	std::size_t common = 0;
+	for (std::size_t pos = 0; (pos = dir.find(L'/', pos)) != std::wstring::npos; pos++) {
+		if (path.compare(0, pos + 1, dir, 0, pos + 1) != 0)
+			break;
+		common = pos + 1;
+	}
+	std::wstring result;
+	for (std::size_t pos = common; (pos = dir.find(L'/', pos)) != std::wstring::npos; pos++)
+		result += L"../";
+	_fullPath = result + path.substr(common);
+	return true;
 }

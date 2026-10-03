@@ -13,6 +13,7 @@ public:
 		_table = 0;
 	}
 	TId(const TId &other);
+	TId &operator=(const TId &other) = default;
 	TId(int id, int table);
 
 	bool operator==(const TId &other) const;
@@ -20,7 +21,9 @@ public:
 
 	/** The signed 24-bit id from bytes 0-2 (the value both comparisons use). */
 	int getId() const;
-	int getTable() const { return _table; }
+	int getTable() const {
+		return _table;
+	}
 
 private:
 	unsigned char _id[3];

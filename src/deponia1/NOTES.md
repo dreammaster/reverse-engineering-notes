@@ -2708,6 +2708,36 @@ then byte 3. `PackId` gives `(id << 7) + (table & 0x7F)` (table 0xFF maps to
 0x7F); `UnpackId` is the inverse. Member names (`_id`, `_table`) are invented.
 `AnyId`'s real initial value is still unread.
 
+## TXMLNames, TFieldValue, the XML writers and TLink
+
+All confirmed from the asm (see the file headers for line ranges):
+
+- `TXMLNames` (`TXMLNames.h/.cpp`): the id <-> XML-name registry. Ids are dense
+  and 1-based (`AddXMLName` refuses anything but count+1 and logs "AddXMLName
+  failed: <name>"). The name data is generated (`tools/gen_xml_names.py` ->
+  `vstables/xmlNamesData.h`): ids 1-58 are named in `InitXMLNamesIntern`, ids
+  59-99 are a loop adding the placeholder "DSunused", ids 100+ come from
+  `TVisionaireGame::InitXMLNames()` (now implemented; run from the ctor).
+  `manifest/xml_names.tsv` had mistakenly attributed "DSunused" to id 58; fixed.
+  `GetNrByUtf8Name` reads a name of the form "T<digit>..." as the number after
+  the "T" (`dtol`) instead of looking it up.
+- `tools/asmdata.py` used to cut a quoted string at a `;` (so the XML entity
+  strings lost their terminator); fixed.
+- `TFieldValue`: tag (0 none, 1 int, 2 string, 3 bool, 4 float, 5 path) plus
+  side-by-side payloads. `ToString()` escapes `& < > " '` for strings/paths.
+- `baselib/xmlWriter.h/.cpp`: `TProjectFileWriter : TVedFile` is the abstract
+  interface (22 pure virtuals, in vtable order); `TXMLWriter` writes indented
+  XML (CRLF line ends, tab indents up to 10 levels) into a `TMemoryBuffer`;
+  `TXMLStringWriter` additionally derives from the (invented-name)
+  `TBufferedProjectFileWriter` interface `TMSavegame::SaveGame()` takes.
+  `FinishWithContent` (never called) writes into `this` in the original; here
+  into the buffer. An empty `vector<TTextLanguage>` writes nothing at all.
+- `TLink` (`datastruct/link.h/.cpp`): 8 bytes - TId, field (short), flags (bit 0
+  parent link, bit 1 any-object link). Verified end-to-end for the writer with a
+  scratch program (TXMLNames lookups, attribute escaping, nested tags).
+- `TTextLanguage` moved to its own header; its default language id is -1 (was
+  0), per the default constructor.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

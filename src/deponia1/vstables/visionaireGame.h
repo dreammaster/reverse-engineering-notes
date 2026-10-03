@@ -10,7 +10,13 @@ class TVList;
 
 class TVisionaireGame {
 public:
-	TVisionaireGame() = default;
+	TVisionaireGame();
+
+	// Confirmed (Deponia_Linux.asm lines 1480547+): registers the data-field
+	// XML names (ids 100 up) with TXMLNames, after TXMLNames::
+	// InitXMLNamesIntern() has registered ids 1-99; runs once. Called by the
+	// constructor.
+	static void InitXMLNames();
 
 	// Confirmed called directly on whatever GetGameSystem()/GetVisionaire()
 	// returns, with the exact same call shape TVisionaire::GetGame()/
