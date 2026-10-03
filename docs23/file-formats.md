@@ -1041,6 +1041,18 @@ in Chapter 3 only, forbids flights to another page when either end is attribute 
 The fog-of-war bitmap (MSB-first, one record per row) and `RevealCellsAroundPlayer` (each step marks the party's
 row/column and the one ahead, three cells wide, in the order -1, +1, 0) are `explore.c`.
 
+### Ambient lighting (`ComputeAmbientLightingTable`, `lighting.c`)
+
+The 7-entry shade-delta gradient (`word_328E6`-`328F2`, previously "where the gradient values get computed isn't
+traced") is built from a base level -- a fixed cave/indoor gradient selected by a place flag, else the time of day from a
+37-entry table (dark -10..-4 at night, 0 by day; Chapter 2 adds +1 at midday; a clock past minute 1443 is reset to 0) --
+then lifted by the party's light sources (a tier chosen from the carried candle/torch/lantern bits, the spell timers, or a
+wall torch in the 3x3 cells around the party facing the right way; the adjustment table has 7 rows x 6 tiers and only ever
+raises a NEGATIVE delta, capping at 0). A second step expands the gradient into the 63-cell (7 x 9) viewport shade table
+(centre of the far row = the last delta, a diamond of nearer bands around it). Chapter 3 splits the flag word in two
+(place/travel flags vs light flags), forces noon while travel flag 0x4000 is set and drops one cave gradient.
+Tables dumped by `dump_lighting_tables.py` (both games).
+
 ### The party roster screen (`ShowWorldMap`)
 
 `ShowWorldMap` (the world-map screen, called from `RunTitleScreen`)

@@ -11427,6 +11427,14 @@ MAGIC CONTAINER in Chapter 2, a leftover that makes Chapter 3's BROKEN CLUB weig
 equipment slots by item flag, falling back to the first empty inventory slot (`inventoryPlanAutoEquip`). Chapter 3 drops
 one small-wearable slot and adds a second no-drop test on the fit flags (every key and the LIT TORCH).
 
+### Session update: ambient lighting (`lighting.c`)
+
+`ComputeAmbientLightingTable` computes the per-distance shade gradient that the renderer (`RenderDungeonViewport`,
+`DrawPicture`'s shade shift) applies: time-of-day base, cave/indoor override flags, light-source tiers from carried
+lights and spell timers, and the wall-torch tier from the 3x3 cells around the party; plus the expansion to the 7x9 viewport
+table. Chapter 3's differences (split flag words, noon override) are in `lighting.h`. The wall-light entries read from a
+runtime array (the near cells' overlay types) are an input here.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
