@@ -134,6 +134,8 @@ typedef enum {
 /* MonsterFieldState bits. */
 typedef enum {
     MonsterStateAware = 0x0001, /* it has noticed the party (TryActivateMonsterByDistance); gates ProcessLevelMonsters */
+    /* Set by ProcessMonsterAttackTurn when the monster starts an attack: its sprite then runs the attack frames MonsterFieldSpriteBase + 6..8. */
+    MonsterStateAttacking = 0x0004,
     /*
      * Set alongside MonsterStateAware whenever a player-triggered spell/item
      * attack lands any damage or status on this monster (ApplyAttackToTarget,
@@ -238,6 +240,10 @@ typedef enum {
 typedef enum {
     MonsterFlagAltSprite = 0x0001,    /* alternate sprite layout: anim set 0xA (else 0xD), clue-book category 0x30 (else 0x20) */
     MonsterFlagRemapPalette = 0x0004, /* apply MonsterFieldPalette */
+    MonsterFlagAscending = 0x0008,    /* ping-pong animation: currently counting up (set/cleared by monsterAdvanceAnimation) */
+    MonsterFlagAnimPingPong = 0x0010, /* idle animation base..base+5 and back */
+    MonsterFlagAnimCycle = 0x0020,    /* idle animation base..base+5 repeating */
+    MonsterFlagNoAnimation = 0x0040,  /* the animation never advances */
     MonsterFlagAreaAttack = 0x1000,   /* hits the whole party, not one target */
     MonsterFlagCorrodeWeaponSlot = 0x0800,   /* targets PartyFieldEquipment's main weapon slot (+0x13A) */
     MonsterFlagCorrodeSecondSlot = 0x0400,   /* targets the second equipment slot (+0x142) */
@@ -347,6 +353,15 @@ void monsterRecordPlace(uint8_t *record, uint16_t x, uint16_t y, uint16_t gridOr
 
 /* Sets the animation start to sprite base + randomExtra (RandomInRange(5), 0-5) and the anim set from MonsterFlagAltSprite. */
 void monsterRecordStartAnimation(uint8_t *record, unsigned randomExtra);
+
+/*
+ * AdvanceMonsterAnimationFrame (yendor2.asm:37744): one step of the animation of MonsterFieldAnim around MonsterFieldSpriteBase
+ * (frames base..base+5 idle, base+6..base+8 the attack frames, base+9 the hit flash). MonsterFlagNoAnimation: nothing.
+ * MonsterFlagAnimCycle: base..base+5 repeating, or, while MonsterStateAttacking is set, up to base+8 and stay.
+ * MonsterFlagAnimPingPong: base..base+5 and back (MonsterFlagAscending remembers the direction), or up to base+8 while attacking.
+ * With neither flag the frame stays.
+ */
+void monsterAdvanceAnimation(uint8_t *record);
 
 uint16_t monsterGetU16(const uint8_t *record, unsigned offset);
 void monsterSetU16(uint8_t *record, unsigned offset, uint16_t value);

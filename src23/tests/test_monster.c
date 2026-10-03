@@ -533,6 +533,45 @@ static void testWoundTierEscalatesAndReplacesThePreviousTier(void) {
     check("so 2 is moderate", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundModerate);
 }
 
+static void testAnimation(void) {
+    uint8_t m[MonsterRecordSize];
+    memset(m, 0, sizeof(m));
+    monsterSetU16(m, MonsterFieldSpriteBase, 100);
+    monsterSetU16(m, MonsterFieldAnim, 100);
+    monsterAdvanceAnimation(m);
+    check("a monster with no animation flag keeps its frame", monsterGetU16(m, MonsterFieldAnim) == 100);
+    monsterSetU16(m, MonsterFieldFlags, MonsterFlagAnimCycle);
+    for (unsigned i = 0; i < 5; i++) {
+        monsterAdvanceAnimation(m);
+    }
+    check("the cycle runs base..base+5", monsterGetU16(m, MonsterFieldAnim) == 105);
+    monsterAdvanceAnimation(m);
+    check("...and wraps to the base", monsterGetU16(m, MonsterFieldAnim) == 100);
+    monsterSetU16(m, MonsterFieldState, MonsterStateAttacking);
+    for (unsigned i = 0; i < 20; i++) {
+        monsterAdvanceAnimation(m);
+    }
+    check("an attacking cycler runs up to base+8 and stays", monsterGetU16(m, MonsterFieldAnim) == 108);
+    monsterSetU16(m, MonsterFieldState, 0);
+    monsterSetU16(m, MonsterFieldFlags, MonsterFlagAnimPingPong);
+    monsterSetU16(m, MonsterFieldAnim, 100);
+    unsigned seen[14], n = 0;
+    for (unsigned i = 0; i < 14; i++) {
+        monsterAdvanceAnimation(m);
+        seen[n++] = monsterGetU16(m, MonsterFieldAnim) - 100;
+    }
+    static const unsigned expected[14] = {1, 2, 3, 4, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4};
+    bool same = true;
+    for (unsigned i = 0; i < 14; i++) {
+        same = same && seen[i] == expected[i];
+    }
+    check("a ping-pong goes up to base+5 and back down", same);
+    monsterSetU16(m, MonsterFieldFlags, MonsterFlagNoAnimation | MonsterFlagAnimCycle);
+    monsterSetU16(m, MonsterFieldAnim, 102);
+    monsterAdvanceAnimation(m);
+    check("the no-animation flag wins", monsterGetU16(m, MonsterFieldAnim) == 102);
+}
+
 int main(void) {
     testLayouts();
     testParse();
@@ -540,6 +579,7 @@ int main(void) {
     testNames();
     testTickTimer();
     testWoundTierEscalatesAndReplacesThePreviousTier();
+    testAnimation();
     testActivateByDistance();
     testRealYendor2();
     testRealYendor3();

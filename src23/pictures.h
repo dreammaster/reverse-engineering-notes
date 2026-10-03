@@ -22,8 +22,8 @@
  *   0  318 x 198  full-screen scenes (splash, title, ...)
  *   1  210 x 105  panels and first-person-view props: dialog/stat/inventory backgrounds, book, scroll, doors, barrels, beds,
  *                 fireplaces, mountains
- *   2  140 x 155  the party's combat animation frames
- *   3  190 x 110  monster pictures, several frames per monster
+ *   2  140 x 155  monster sprites (10 frames each: base..base+5 idle, +6..+8 attack, +9 hit flash) and, in Chapter 3, object sprites
+ *   3  190 x 110  the large monsters (MonsterFlagAltSprite), 10 frames each
  *   4  224 x  74  the lower half of the first-person view: sky, floor textures
  *   5  224 x  62  the upper half: sky with horizon, ceilings
  *   6   56 x 136  paper-doll bodies of the inventory screen (and the chapter title card, dried-blood stains, slot grid)

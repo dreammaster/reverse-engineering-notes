@@ -219,6 +219,43 @@ void monsterRecordStartAnimation(uint8_t *record, unsigned randomExtra) {
                   (monsterGetU16(record, MonsterFieldFlags) & MonsterFlagAltSprite) ? 0x0A : 0x0D);
 }
 
+void monsterAdvanceAnimation(uint8_t *record) {
+    unsigned flags = monsterGetU16(record, MonsterFieldFlags), state = monsterGetU16(record, MonsterFieldState);
+    unsigned base = monsterGetU16(record, MonsterFieldSpriteBase), frame = monsterGetU16(record, MonsterFieldAnim);
+    if (flags & MonsterFlagNoAnimation) {
+        return;
+    }
+    bool wounded = (state & MonsterStateAttacking) != 0;
+    if (flags & MonsterFlagAnimCycle) {
+        if (!wounded) {
+            frame = frame >= base + 5 ? base : frame + 1;
+        } else if (frame != base + 8) {
+            frame++;
+        }
+    } else if (flags & MonsterFlagAnimPingPong) {
+        if (wounded) {
+            if (frame != base + 8) {
+                frame++;
+            }
+        } else if (flags & MonsterFlagAscending) {
+            if (frame >= base + 5) {
+                frame--;
+                monsterSetU16(record, MonsterFieldFlags, (uint16_t)(flags & ~MonsterFlagAscending));
+            } else {
+                frame++;
+            }
+        } else if (frame <= base) {
+            monsterSetU16(record, MonsterFieldFlags, (uint16_t)(flags | MonsterFlagAscending));
+            frame++;
+        } else {
+            frame--;
+        }
+    } else {
+        return;
+    }
+    monsterSetU16(record, MonsterFieldAnim, (uint16_t)frame);
+}
+
 const uint8_t *monsterLoot(const uint8_t *record, MonsterLoot kind) {
     switch (kind) {
     case MonsterLootGold:

@@ -63,7 +63,23 @@ typedef struct {
     const DungeonGridCell *cells; /* ViewportCellCount cells with ViewportCellHidden set by viewportComputeVisibility */
     uint16_t facing;              /* SaveFacing */
     int16_t gradient[ViewGradientSize]; /* lightingComputeGradient: [0] farthest row ... [6] the party's row */
+    /*
+     * Monster records (monster.h, 156 bytes; drawn with viewDrawMonster, which updates them like the original) per buffer cell:
+     * only cells 17-48 are consulted (a monster in the farthest row is not drawn), and a hidden cell draws none. The (up to
+     * three) monsters in combat are drawn on the party's own cell last. NULL = none; zero the arrays when unused.
+     */
+    uint8_t *cellMonsters[ViewportCellCount];
+    uint8_t *combatMonsters[3];
 } ViewScene;
+
+/*
+ * DrawMonsterAndUpdateAttackState's drawing (yendor2.asm:29823): the monster's current frame (MonsterFieldAnim; the hit-flash
+ * frame base + 9 once if MonsterStateHitFlashPending, which it clears; while MonsterStateAttacking at least base + 6) at the
+ * sprite layer MonsterFieldAnimSet (10 = category 3 pictures for MonsterFlagAltSprite monsters, 13 = category 2), transparent,
+ * recoloured by MonsterFieldPalette when MonsterFlagRemapPalette is set, then the timed-affliction overlay picture
+ * (MonsterFieldTickTarget) if MonsterStateTimedAffliction. Not drawn: the damage splash and the hit-flash colour effect.
+ */
+void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade);
 
 /* ShiftPaletteShadeClamped: `colour` shifted by `delta` (an 8-bit signed delta). */
 uint8_t viewShadeColour(uint8_t colour, int8_t delta);

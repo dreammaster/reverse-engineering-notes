@@ -148,6 +148,65 @@ static void testStrip(void) {
                                                                    g_screen[(20 + 113) * 320 + 8] == 0);
 }
 
+static const uint8_t *twoColours(void *ctx, unsigned category, unsigned id) {
+    (void)ctx;
+    (void)category;
+    g_picture[0] = 0x35;
+    g_picture[1] = 0x45;
+    g_picture[140] = 0x35;
+    g_picture[141] = 0x45;
+    g_picture[2] = (uint8_t)id; /* so the test can tell which frame was drawn */
+    return g_picture;
+}
+
+static void testMonster(void) {
+    memset(g_tables, 0, sizeof(g_tables));
+    /* ptr6 (layer 13) @0x4460, cell 20: x=30, y=40; ptr -> {groups 0x620, run (1, 3, 0), 0}; groups (1, 2, 0), 0 : 3 x 2 pixels */
+    w16(0x4460 + 6 * 20, 30);
+    w16(0x4460 + 6 * 20 + 2, 40);
+    w16(0x4460 + 6 * 20 + 4, 0x600);
+    unsigned head[] = {0x620, 1, 3, 0, 0};
+    words(0x600, head, 5);
+    unsigned groups[] = {1, 2, 0, 0};
+    words(0x620, groups, 4);
+    ViewRenderer r = renderer();
+    r.picture = twoColours;
+    uint8_t m[156];
+    memset(m, 0, sizeof(m));
+    m[0x4C] = 50;
+    m[0x08] = 52;
+    m[0x0A] = 13;
+    memset(g_picture, 0, sizeof(g_picture));
+    viewDrawMonster(&r, 20, m, 0);
+    check("a monster is drawn at its layer's table entry for the cell, frame [+8], 0xFF/transparent mode", g_screen[40 * 320 + 30] == 0x35 && g_screen[40 * 320 + 31] == 0x45 &&
+                                                                                                             g_screen[40 * 320 + 32] == 52);
+    check("...two scanlines", g_screen[41 * 320 + 30] == 0x35 && g_screen[42 * 320 + 30] == 0);
+
+    m[0x0C] = 2; /* hit flash pending */
+    viewDrawMonster(&r, 20, m, 0);
+    check("a pending hit flash draws frame base + 9 once and clears the flag", g_screen[40 * 320 + 32] == 59 && m[0x0C] == 0 && m[0x08] == 52);
+    m[0x0C] = 4; /* attacking */
+    viewDrawMonster(&r, 20, m, 0);
+    check("an attacking monster is at least on frame base + 6 (and the record keeps it)", g_screen[40 * 320 + 32] == 56 && m[0x08] == 56);
+    m[0x0C] = 0;
+    m[0x08] = 52;
+
+    m[0x92] = 4; /* remap palette */
+    m[0x72] = 0x31; /* hue group 3 becomes 1 */
+    m[0x73] = 0x4F; /* hue group 4 becomes transparent */
+    memset(g_screen, 0, sizeof(g_screen));
+    viewDrawMonster(&r, 20, m, 0);
+    check("MonsterFlagRemapPalette recolours a hue group and a target of 0xF makes it transparent", g_screen[40 * 320 + 30] == 0x15 && g_screen[40 * 320 + 31] == 0);
+
+    m[0x92] = 0;
+    m[0x0C] = 0x10;
+    m[0x1A] = 99;
+    memset(g_screen, 0, sizeof(g_screen));
+    viewDrawMonster(&r, 20, m, 0);
+    check("a timed affliction draws its overlay picture over the monster", g_screen[40 * 320 + 32] == 99);
+    check("the shade delta darkens a monster", (viewDrawMonster(&r, 20, m, -1), g_screen[40 * 320 + 30] == viewShadeColour(0x35, -1)));
+}
+
 /* ---- real data ---- */
 
 static uint32_t fnv(const uint8_t *p, size_t n) {
@@ -185,6 +244,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     viewportBuild(&grid, facing, x, y, cells);
     viewportComputeVisibility(game, cells);
     ViewScene scene;
+    memset(&scene, 0, sizeof(scene));
     LightingInput light = {0, 0, (uint16_t)clock, facing};
     bool reset;
     lightingComputeGradient(game, &light, 0, scene.gradient, &reset);
@@ -217,6 +277,7 @@ int main(void) {
     testPatch();
     testColumns();
     testStrip();
+    testMonster();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 720, 0x3C32DEEF, "Chapter 2: the inn, facing west by day (inspected render)");
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 1200, 0x7898374D, "Chapter 2: the same view at night");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 166, 36, SaveFacingWest, 720, 0x04C83A87, "Chapter 3: a log wall by day (inspected render)");

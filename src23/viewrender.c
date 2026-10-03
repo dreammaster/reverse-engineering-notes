@@ -56,6 +56,8 @@ typedef struct {
     unsigned width, size;
     int8_t shade;
     bool transparent;
+    bool remap;            /* RemapOrMaskColorByHueTable active (row-mask sprites only) */
+    uint16_t remapWords[16];
 } Blit;
 
 static unsigned rd(const ViewRenderer *r, unsigned offset) {
@@ -86,6 +88,45 @@ static long emit(const Blit *b, long dest, unsigned source) {
     return dest + 1;
 }
 
+/* RemapOrMaskColorByHueTable: replaces the hue group (high nibble) of a colour found in the table of {source << 8 | target}
+ * words, sorted by source; a target of 0xF makes the colour transparent (0xFF). */
+static uint8_t remapColour(const Blit *b, uint8_t colour) {
+    unsigned hue = colour >> 4;
+    for (unsigned i = 0; i < 16; i++) {
+        unsigned word = b->remapWords[i], source = word >> 8, target = word & 0xFF;
+        if (word == 0 || hue < source) {
+            break;
+        }
+        if (hue == source) {
+            if (target == 0xF) {
+                return 0xFF;
+            }
+            hue = target;
+            break;
+        }
+    }
+    return (uint8_t)((hue << 4) | (colour & 0xF));
+}
+
+/* DrawRleMaskedShadedRun's pixel: colour key, shade, hue remap. */
+static long emitRow(const Blit *b, long dest, unsigned source) {
+    if (source < b->size) {
+        uint8_t pixel = b->picture[source];
+        if (!(b->transparent && pixel == 0xFF)) {
+            pixel = viewShadeColour(pixel, b->shade);
+            if (b->remap) {
+                pixel = remapColour(b, pixel);
+            }
+            if (pixel != 0xFF || !b->remap) {
+                if (dest >= 0 && dest < ScreenSize) {
+                    b->r->screen[dest] = pixel;
+                }
+            }
+        }
+    }
+    return dest + 1;
+}
+
 static bool openBlit(Blit *b, const ViewRenderer *r, unsigned category, unsigned id, int8_t shade, bool transparent) {
     const PictureCategory *c = pictureCategory(r->game, category);
     b->r = r;
@@ -94,6 +135,7 @@ static bool openBlit(Blit *b, const ViewRenderer *r, unsigned category, unsigned
     b->size = c ? (unsigned)c->width * c->height : 0;
     b->shade = shade;
     b->transparent = transparent;
+    b->remap = false;
     return b->picture != NULL;
 }
 
@@ -106,7 +148,7 @@ static void drawRleRow(const Blit *b, unsigned records, unsigned source, long de
         }
         for (unsigned k = 0; k < count; k++) {
             for (unsigned j = 0; j < run; j++) {
-                dest = emit(b, dest, source++);
+                dest = emitRow(b, dest, source++);
             }
             source += skip;
         }
@@ -251,11 +293,18 @@ static unsigned rowMaskTable(unsigned layer) {
     }
 }
 
-void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade, bool transparent,
-                    unsigned frame) {
+static void drawSpriteRemapped(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade,
+                               bool transparent, unsigned frame, const uint8_t *remap) {
     Blit b;
     if (!openBlit(&b, r, category, id, shade, transparent)) {
         return;
+    }
+    if (remap) {
+        memset(b.remapWords, 0, sizeof(b.remapWords));
+        for (unsigned i = 0; i < 6; i++) {
+            b.remapWords[i] = (uint16_t)(((remap[i] >> 4) << 8) | (remap[i] & 0xF));
+        }
+        b.remap = b.remapWords[0] != 0;
     }
     switch (layer) {
     case 1:
@@ -276,6 +325,36 @@ void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, un
     default:
         rowMaskSprite(&b, rowMaskTable(layer), depth);
         break;
+    }
+}
+
+void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade, bool transparent,
+                    unsigned frame) {
+    drawSpriteRemapped(r, layer, category, id, depth, shade, transparent, frame, NULL);
+}
+
+static unsigned monsterWord(const uint8_t *monster, unsigned offset) {
+    return (unsigned)monster[offset] | ((unsigned)monster[offset + 1] << 8);
+}
+
+void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade) {
+    unsigned flags = monsterWord(monster, 0x92), state = monsterWord(monster, 0x0C);
+    unsigned base = monsterWord(monster, 0x4C), frame = monsterWord(monster, 0x08), layer = monsterWord(monster, 0x0A);
+    unsigned category = (flags & 1) ? 3 : 2;
+    if (state & 2) {
+        state &= ~2u;
+        frame = base + 9;
+        monster[0x0C] = (uint8_t)state;
+        monster[0x0D] = (uint8_t)(state >> 8);
+    } else if ((state & 4) && frame < base + 6) {
+        frame = base + 6;
+        monster[0x08] = (uint8_t)frame;
+        monster[0x09] = (uint8_t)(frame >> 8);
+    }
+    drawSpriteRemapped(r, layer, category, frame, depth, shade, true, 0, (flags & 4) ? monster + 0x72 : NULL);
+    monster[0x18] = monster[0x19] = 0;
+    if (state & 0x10) {
+        drawSpriteRemapped(r, layer, category, monsterWord(monster, 0x1A), depth, shade, true, 0, NULL);
     }
 }
 
@@ -475,6 +554,12 @@ static void drawSideWall(const Scene *sc, unsigned index, unsigned neighbour, un
     }
 }
 
+static void drawCellMonster(const Scene *sc, unsigned index, unsigned row) {
+    if (index >= 17 && index < 49 && sc->s->cellMonsters[index]) { /* TryTriggerMonsterEncounterAtCell: not the farthest row */
+        viewDrawMonster(sc->r, index, sc->s->cellMonsters[index], rowShade(sc->s, row));
+    }
+}
+
 static void drawRow(const Scene *sc, unsigned row) {
     unsigned first = kRowFirst[row], count = kRowCount[row], half = (count - 1) / 2;
     const DungeonGridCell *cells = sc->s->cells;
@@ -485,6 +570,7 @@ static void drawRow(const Scene *sc, unsigned row) {
         drawWall(sc, i, row);
         drawSideWall(sc, i, i + 1, 3, row);
         drawSideFeature(sc, i, row);
+        drawCellMonster(sc, i, row);
     }
     for (unsigned i = first + count - 1; i > first + half; i--) {
         if (cells[i].flags & HiddenFlag) {
@@ -493,11 +579,13 @@ static void drawRow(const Scene *sc, unsigned row) {
         drawWall(sc, i, row);
         drawSideWall(sc, i, i - 1, 4, row);
         drawSideFeature(sc, i, row);
+        drawCellMonster(sc, i, row);
     }
     unsigned mid = first + half;
     if (!(cells[mid].flags & HiddenFlag)) {
         drawWall(sc, mid, row);
         drawSideFeature(sc, mid, row);
+        drawCellMonster(sc, mid, row);
     }
 }
 
@@ -515,6 +603,11 @@ static void drawVanishingPoint(const Scene *sc) {
         }
     }
     drawSideFeature(sc, 49, 6);
+    for (unsigned i = 0; i < 3; i++) { /* RenderActiveMonsterSprites */
+        if (sc->s->combatMonsters[i]) {
+            viewDrawMonster(r, 49, sc->s->combatMonsters[i], rowShade(sc->s, 6));
+        }
+    }
 }
 
 void viewRender(const ViewRenderer *r, const ViewScene *scene) {

@@ -1080,8 +1080,9 @@ its even/odd partner; Chapter 3 always draws, id = legend id with the bit 0 of t
 far to near: each cell's wall (legend word 2; layer 0), a side wall when its neighbour on the centre side is open (layers 3 left /
 4 right), and its floor-type feature (layer 7 or 8; Chapter 3 draws floor types <= 99 as category 2 object sprites at layer 13);
 within a row the cells run left edge inward, right edge inward, centre last. The last three cells (48-50) draw the far-wall strips
-beside the party (layer 6) and the feature on the party's own cell. Monsters and weapon effects are drawn per cell by
-`DrawMonsterAndUpdateAttackState` (not yet decoded in C).
+beside the party (layer 6) and the feature on the party's own cell. Monsters are drawn by `viewDrawMonster` (`DrawMonsterAndUpdateAttackState`): frame `[+8]` of the record at layer `[+0xA]` (10 =
+category 3, 13 = category 2), recoloured by `[+0x72]` when flag 4 is set; monsters in cells 17-48 draw after their cell, up to three in
+combat on the party cell last. Damage splashes and the hit-flash colour effect are not drawn yet.
 
 Tables, 6-byte entries {x, y, ptr} indexed by cell number (x = 0: nothing there): `val11`@0 (front walls, layers 0 and 8),
 `val12`@0x386 (floor patches), `val13`@0xBF2 (ceiling patches), `val14`@0x13B6 (side walls and far strips),
@@ -5082,8 +5083,8 @@ tile the file exactly (every division is an integer, both games):
 |-----|------|-----------|-----------|---------|
 | 0 | 318x198 | 15 | 23 | full-screen scenes (SmithWare logo, title, ...) |
 | 1 | 210x105 | 101 | 156 | panels and view props: dialog/stat/inventory backgrounds, book, scroll, doors, barrels, beds, fireplaces, mountains |
-| 2 | 140x155 | 215 | 270 | the party's combat animation frames |
-| 3 | 190x110 | 162 | 238 | monster pictures, several frames per monster |
+| 2 | 140x155 | 215 | 270 | monster sprites, 10 frames each (base..base+5 idle, +6..+8 attack, +9 hit flash); Chapter 3 also object sprites (trees, furniture) |
+| 3 | 190x110 | 162 | 238 | the large monsters (`MonsterFlagAltSprite`), 10 frames each |
 | 4 | 224x74 | 18 | 28 | lower half of the first-person view: sky, floor textures |
 | 5 | 224x62 | 12 | 14 | upper half: sky with horizon, ceilings |
 | 6 | 56x136 | 55 | 70 | paper-doll bodies (inventory screen), chapter title card, slot grid |
