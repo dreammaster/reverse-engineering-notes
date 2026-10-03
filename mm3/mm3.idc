@@ -14118,6 +14118,7 @@ static Bytes_2(void) {
 	create_insn	(0X2835D);
 	create_insn	(0X28362);
 	create_insn	(0X28367);
+	set_name	(0X28367,	"j_townTemple");
 	create_insn	(0X2836C);
 	set_name	(0X2836C,	"j_townTavern");
 	create_insn	(0X28371);
@@ -14801,8 +14802,6 @@ static Bytes_2(void) {
 	make_array	(0X29CDE,	0X10A);
 	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
 	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
-	create_word	(0X29E14);
-	create_word	(0X29E16);
 }
 
 //------------------------------------------------------------------------
@@ -14812,6 +14811,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X29E14);
+	create_word	(0X29E16);
 	create_byte	(0X29E18);
 	make_array	(0X29E18,	0X8D);
 	create_word	(0X29EA5);
@@ -15204,7 +15205,17 @@ static Bytes_3(void) {
 	make_array	(0X2CA46,	0X2);
 	create_word	(0X2CA48);
 	create_byte	(0X2CA4A);
-	make_array	(0X2CA4A,	0X165);
+	make_array	(0X2CA4A,	0X19);
+	set_cmt	(0X2CA63,	"5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)",	0);
+	set_name	(0X2CA63,	"TEMPLE_HEAL_COST");
+	set_cmt	(0X2CA6D,	"5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)",	0);
+	set_name	(0X2CA6D,	"TEMPLE_DEAD_STONE_COST");
+	set_cmt	(0X2CA77,	"5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)",	0);
+	set_name	(0X2CA77,	"TEMPLE_ERADICATE_COST");
+	set_cmt	(0X2CA81,	"5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)",	0);
+	set_name	(0X2CA81,	"TEMPLE_UNCURSE_COST");
+	set_cmt	(0X2CA8B,	"5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)",	0);
+	set_name	(0X2CA8B,	"TEMPLE_DONATE_COST");
 	create_strlit	(0X2CBAF,	0X3D);
 	set_name	(0X2CBAF,	"a007sorryTheBan");
 	create_strlit	(0X2CBEC,	0X7);
@@ -18243,6 +18254,15 @@ static Bytes_3(void) {
 	create_insn	(0X37C6C);
 	create_insn	(x=0X37C70);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X37C85);
 	op_hex		(x,	1);
 	create_insn	(x=0X37C9F);
@@ -18307,15 +18327,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X37DF1);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X37DF3,	"format",	0);
 	create_insn	(x=0X37DF7);
 	op_stkvar	(x,	1);
@@ -23062,6 +23073,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FF9C);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FFA1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFA6);
@@ -23132,15 +23152,6 @@ static Bytes_4(void) {
 	op_plain_offset	(x,	0,	0X3F490);
 	op_plain_offset	(x,	128,	0X3F490);
 	set_name	(0X4008C,	"jpt_3F4CF");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X400B4);
 	create_insn	(0X400BC);
 	create_insn	(x=0X400BE);
@@ -28697,6 +28708,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4772F);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47734);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47739);
@@ -28765,15 +28785,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4790F);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4791D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47920);
@@ -29483,6 +29494,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X48D44);
 	op_hex		(x,	1);
 	create_insn	(0X48D4B);
+	set_name	(0X48D4B,	"townTemple");
 	create_insn	(x=0X48D4E);
 	op_hex		(x,	1);
 	set_cmt	(0X48D55,	"char",	0);
@@ -33715,6 +33727,15 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F7CB);
 	op_stkvar	(x,	0);
 	create_insn	(0X4F7D6);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F7EC);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F7F1);
@@ -33792,15 +33813,6 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X4DE30);
 	set_cmt	(0X4F959,	"jumptable 0004F954 case 0",	1);
 	create_insn	(0X4F959);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4F961,	"jumptable 0004F954 case 1",	1);
 	create_insn	(0X4F961);
 	set_cmt	(0X4F969,	"jumptable 0004F954 case 2",	1);
@@ -38788,7 +38800,7 @@ static Functions_0(void) {
 	SetType(0X28362, "int __fastcall sub_28362(int, int, int, int, char *format, int, int);");
 	set_frame_size(0X28362, 0, 0, 0XA);
 	add_func    (0X28367,0X2836C);
-	set_func_flags(0X28367,0x5482);
+	set_func_flags(0X28367,0x54c2);
 	set_frame_size(0X28367, 0, 0, 0);
 	add_func    (0X2836C,0X28371);
 	set_func_flags(0X2836C,0x54c2);
@@ -39843,6 +39855,7 @@ static Functions_1(void) {
 	define_local_var(0X48CF7, 0X48D4B, "[bp+0X10]", "format");
 	add_func    (0X48D4B,0X49275);
 	set_func_flags(0X48D4B,0x5412);
+	set_func_cmt(0X48D4B,	"Temple: heal/cure/uncurse/donate; costs from the TEMPLE_* tables (by code reading)", 0);
 	set_frame_size(0X48D4B, 0X28, 2, 0);
 	define_local_var(0X48D4B, 0X49275, "[bp-0X16]", "format");
 	add_func    (0X492B1,0X49368);

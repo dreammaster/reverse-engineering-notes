@@ -326,6 +326,11 @@
 2ACF4	MAZE_SLOT_Y	y origin (0 or 16) of each page slot
 2AE3E	Maze_slotIds	4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats
 2AE42	MAP_MONSTER_PICS	3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)
+2CA63	TEMPLE_HEAL_COST	5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+2CA6D	TEMPLE_DEAD_STONE_COST	5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+2CA77	TEMPLE_ERADICATE_COST	5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+2CA81	TEMPLE_UNCURSE_COST	5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+2CA8B	TEMPLE_DONATE_COST	5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
 2D26C	Combat_target	byte, index of the monster being attacked
 2D9FA	ITEM_ELEMENT_NAMES	pointer table (40 entries: burning ... ectoplasmic) for the elemental material (char slot +0A3h)
 2DA72	ITEM_ATTR_NAMES	pointer table of attribute-enchantment prefixes 'might ... pirate' (slot +0C9h)
@@ -460,6 +465,7 @@
 48466	townGuild	guild.m, spldesc.bin
 486AB	townInn	towninn.m
 487B4	townTavern	honky.m, tavern.bin
+48D4B	townTemple	Temple: heal/cure/uncurse/donate; costs from the TEMPLE_* tables (by code reading)
 492B1	trainingNeedsExperience	"%s needs %lu experience for level %u."
 49368	townTraining	grounds.m, train.icn
 49730	townSmithy	dungeon.m ("Sorry, the Smithy's closed")

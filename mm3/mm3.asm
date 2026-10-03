@@ -13572,7 +13572,7 @@ loc_1A601:                              ; CODE XREF: runMazeEvent+FCE↑j
 
 loc_1A608:                              ; CODE XREF: runMazeEvent+FCE↑j
                                         ; DATA XREF: seg003:jpt_1A5D6↓o
-                call    sub_28367       ; jumptable 0001A5D6 case 5
+                call    j_townTemple    ; jumptable 0001A5D6 case 5
                 jmp     short def_1A5D6 ; jumptable 0001A5D6 default case
 ; ---------------------------------------------------------------------------
 
@@ -37282,15 +37282,7 @@ sub_28362       proc near               ; CODE XREF: arenaEvent+22B↓P
                 jmp     far ptr sub_47B8D
 sub_28362       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28367       proc far                ; CODE XREF: runMazeEvent:loc_1A608↑P
-                jmp     sub_48D4B
-sub_28367       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_townTemple. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townTavern. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townTraining. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_townSmithy. PRESS NUMPAD+ TO EXPAND]
@@ -42047,35 +42039,338 @@ word_2CA48      dw 1                    ; DATA XREF: sub_47947+B5↓w
                                         ; sub_47B8D+179↓w ...
                 db 2 dup(0FFh), 4 dup(0), 5, 0Ah, 0Fh, 14h, 28h, 0Ah, 0
                 db 32h, 0, 0FAh, 0, 0E8h, 3, 88h, 13h, 32h, 51h, 78h, 95h
-                db 0ACh, 0C0h, 2 dup(0), 0Ah, 0, 14h, 0, 64h, 0, 0F4h
-                db 1, 2 dup(0), 32h, 0, 64h, 0, 0F4h, 1, 0C4h, 9, 2 dup(0)
-                db 0F4h, 1, 0E8h, 3, 88h, 13h, 0A8h, 61h, 2 dup(0), 64h
-                db 0, 0C8h, 0, 2Ch, 1, 0F4h, 1, 0Ah, 0, 19h, 0, 32h, 0
-                db 64h, 0, 0C8h, 0, 0Ah, 0Fh, 14h, 19h, 0C8h, 25h, 75h
-                db 6Bh, 0, 25h, 75h, 0, 25h, 73h, 2Eh, 6Fh, 75h, 74h, 0
-                db 74h, 72h, 61h, 69h, 6Eh, 32h, 2Eh, 6Fh, 75h, 74h, 0
-                db 74h, 72h, 61h, 69h, 6Eh, 33h, 2Eh, 6Fh, 75h, 74h, 0
-                db 74h, 72h, 61h, 69h, 6Eh, 34h, 2Eh, 6Fh, 75h, 74h, 0
-                db 67h, 75h, 69h, 6Ch, 64h, 32h, 2Eh, 6Fh, 75h, 74h, 0
-                db 66h, 72h, 61h, 6Dh, 65h, 2Eh, 6Fh, 75h, 74h, 0, 3, 64h
-                db 5, 25h, 70h, 5, 25h, 70h, 0, 3, 63h, 25h, 73h, 5, 25h
-                db 70h, 0, 63h, 6Fh, 6Eh, 66h, 69h, 72h, 6Dh, 32h, 2Eh
-                db 69h, 63h, 6Eh, 0, 3, 62h, 5, 25h, 70h, 0, 3, 63h, 25h
-                db 73h, 3, 6Ch, 2 dup(0Ah), 47h, 6Fh, 6Ch, 64h, 3, 72h
-                db 9, 30h, 39h, 33h, 25h, 73h, 3, 6Ch, 0Ah, 47h, 65h, 6Dh
-                db 73h, 3, 72h, 9, 30h, 39h, 33h, 25h, 73h, 2, 3, 63h
-                db 0Bh, 30h, 39h, 36h, 9, 30h, 31h, 33h, 47h, 0Ch, 32h
-                db 37h, 6Fh, 0Ch, 64h, 6Ch, 64h, 9, 30h, 34h, 30h, 47h
-                db 0Ch, 32h, 37h, 65h, 0Ch, 64h, 6Dh, 73h, 9, 30h, 36h
-                db 37h, 45h, 53h, 43h, 1, 5, 25h, 70h, 0, 3, 63h, 9, 3 dup(30h)
-                db 0Bh, 30h, 35h, 31h, 41h, 6Dh, 6Fh, 75h, 6Eh, 74h, 3
-                db 6Ch, 0Ah, 0, 9, 3 dup(30h), 0Bh, 3 dup(30h), 3, 63h
-                db 25h, 73h, 3, 6Ch, 2 dup(0Ah), 4, 30h, 2 dup(37h), 47h
-                db 6Fh, 6Ch, 64h, 3, 72h, 9, 30h, 39h, 33h, 25h, 73h, 3
-                db 6Ch, 0Ah, 4, 30h, 2 dup(37h), 47h, 65h, 6Dh, 73h, 3
-                db 72h, 9, 30h, 39h, 33h, 25h, 73h, 3, 6Ch, 9, 3 dup(30h)
-                db 0Bh, 30h, 35h, 31h, 4, 30h, 2 dup(37h), 0Ah, 4, 30h
-                db 2 dup(37h), 0
+TEMPLE_HEAL_COST db 0ACh                ; 5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+                db 0C0h
+                db    0
+                db    0
+                db  0Ah
+                db    0
+                db  14h
+                db    0
+                db  64h ; d
+                db    0
+TEMPLE_DEAD_STONE_COST db 0F4h          ; 5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+                db    1
+                db    0
+                db    0
+                db  32h ; 2
+                db    0
+                db  64h ; d
+                db    0
+                db 0F4h
+                db    1
+TEMPLE_ERADICATE_COST db 0C4h           ; 5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+                db    9
+                db    0
+                db    0
+                db 0F4h
+                db    1
+                db 0E8h
+                db    3
+                db  88h
+                db  13h
+TEMPLE_UNCURSE_COST db 0A8h             ; 5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+                db  61h ; a
+                db    0
+                db    0
+                db  64h ; d
+                db    0
+                db 0C8h
+                db    0
+                db  2Ch ; ,
+                db    1
+TEMPLE_DONATE_COST db 0F4h              ; 5 words indexed by temple/town map id 1..5 (entry 0 of the array is the previous table's last word)
+                db    1
+                db  0Ah
+                db    0
+                db  19h
+                db    0
+                db  32h ; 2
+                db    0
+                db  64h ; d
+                db    0
+                db 0C8h
+                db    0
+                db  0Ah
+                db  0Fh
+                db  14h
+                db  19h
+                db 0C8h
+                db  25h ; %
+                db  75h ; u
+                db  6Bh ; k
+                db    0
+                db  25h ; %
+                db  75h ; u
+                db    0
+                db  25h ; %
+                db  73h ; s
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db  74h ; t
+                db  72h ; r
+                db  61h ; a
+                db  69h ; i
+                db  6Eh ; n
+                db  32h ; 2
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db  74h ; t
+                db  72h ; r
+                db  61h ; a
+                db  69h ; i
+                db  6Eh ; n
+                db  33h ; 3
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db  74h ; t
+                db  72h ; r
+                db  61h ; a
+                db  69h ; i
+                db  6Eh ; n
+                db  34h ; 4
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db  67h ; g
+                db  75h ; u
+                db  69h ; i
+                db  6Ch ; l
+                db  64h ; d
+                db  32h ; 2
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db  66h ; f
+                db  72h ; r
+                db  61h ; a
+                db  6Dh ; m
+                db  65h ; e
+                db  2Eh ; .
+                db  6Fh ; o
+                db  75h ; u
+                db  74h ; t
+                db    0
+                db    3
+                db  64h ; d
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db    3
+                db  63h ; c
+                db  25h ; %
+                db  73h ; s
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db  63h ; c
+                db  6Fh ; o
+                db  6Eh ; n
+                db  66h ; f
+                db  69h ; i
+                db  72h ; r
+                db  6Dh ; m
+                db  32h ; 2
+                db  2Eh ; .
+                db  69h ; i
+                db  63h ; c
+                db  6Eh ; n
+                db    0
+                db    3
+                db  62h ; b
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db    3
+                db  63h ; c
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Ch ; l
+                db  0Ah
+                db  0Ah
+                db  47h ; G
+                db  6Fh ; o
+                db  6Ch ; l
+                db  64h ; d
+                db    3
+                db  72h ; r
+                db    9
+                db  30h ; 0
+                db  39h ; 9
+                db  33h ; 3
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Ch ; l
+                db  0Ah
+                db  47h ; G
+                db  65h ; e
+                db  6Dh ; m
+                db  73h ; s
+                db    3
+                db  72h ; r
+                db    9
+                db  30h ; 0
+                db  39h ; 9
+                db  33h ; 3
+                db  25h ; %
+                db  73h ; s
+                db    2
+                db    3
+                db  63h ; c
+                db  0Bh
+                db  30h ; 0
+                db  39h ; 9
+                db  36h ; 6
+                db    9
+                db  30h ; 0
+                db  31h ; 1
+                db  33h ; 3
+                db  47h ; G
+                db  0Ch
+                db  32h ; 2
+                db  37h ; 7
+                db  6Fh ; o
+                db  0Ch
+                db  64h ; d
+                db  6Ch ; l
+                db  64h ; d
+                db    9
+                db  30h ; 0
+                db  34h ; 4
+                db  30h ; 0
+                db  47h ; G
+                db  0Ch
+                db  32h ; 2
+                db  37h ; 7
+                db  65h ; e
+                db  0Ch
+                db  64h ; d
+                db  6Dh ; m
+                db  73h ; s
+                db    9
+                db  30h ; 0
+                db  36h ; 6
+                db  37h ; 7
+                db  45h ; E
+                db  53h ; S
+                db  43h ; C
+                db    1
+                db    5
+                db  25h ; %
+                db  70h ; p
+                db    0
+                db    3
+                db  63h ; c
+                db    9
+                db  30h ; 0
+                db  30h ; 0
+                db  30h ; 0
+                db  0Bh
+                db  30h ; 0
+                db  35h ; 5
+                db  31h ; 1
+                db  41h ; A
+                db  6Dh ; m
+                db  6Fh ; o
+                db  75h ; u
+                db  6Eh ; n
+                db  74h ; t
+                db    3
+                db  6Ch ; l
+                db  0Ah
+                db    0
+                db    9
+                db  30h ; 0
+                db  30h ; 0
+                db  30h ; 0
+                db  0Bh
+                db  30h ; 0
+                db  30h ; 0
+                db  30h ; 0
+                db    3
+                db  63h ; c
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Ch ; l
+                db  0Ah
+                db  0Ah
+                db    4
+                db  30h ; 0
+                db  37h ; 7
+                db  37h ; 7
+                db  47h ; G
+                db  6Fh ; o
+                db  6Ch ; l
+                db  64h ; d
+                db    3
+                db  72h ; r
+                db    9
+                db  30h ; 0
+                db  39h ; 9
+                db  33h ; 3
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Ch ; l
+                db  0Ah
+                db    4
+                db  30h ; 0
+                db  37h ; 7
+                db  37h ; 7
+                db  47h ; G
+                db  65h ; e
+                db  6Dh ; m
+                db  73h ; s
+                db    3
+                db  72h ; r
+                db    9
+                db  30h ; 0
+                db  39h ; 9
+                db  33h ; 3
+                db  25h ; %
+                db  73h ; s
+                db    3
+                db  6Ch ; l
+                db    9
+                db  30h ; 0
+                db  30h ; 0
+                db  30h ; 0
+                db  0Bh
+                db  30h ; 0
+                db  35h ; 5
+                db  31h ; 1
+                db    4
+                db  30h ; 0
+                db  37h ; 7
+                db  37h ; 7
+                db  0Ah
+                db    4
+                db  30h ; 0
+                db  37h ; 7
+                db  37h ; 7
+                db    0
 a007sorryTheBan db 0Bh,'007Sorry, the Bank',27h,'s closed! Come back between 9am and '
                                         ; DATA XREF: townBank:loc_48183↓o
                 db '5pm.',0
@@ -45090,7 +45385,7 @@ Combat_hitBonus db 0                    ; DATA XREF: hitMonster+30↓r
 word_32DA6      dw 0                    ; DATA XREF: arenaEvent+1FB↓r
                                         ; townTraining+8E↓r
 word_32DA8      dw 0                    ; DATA XREF: townSmithy+66↓r
-word_32DAA      dw 0                    ; DATA XREF: sub_48D4B+36↓r
+word_32DAA      dw 0                    ; DATA XREF: townTemple+36↓r
 word_32DAC      dw 0                    ; DATA XREF: arenaEvent+AC↓r
                                         ; townTavern+53↓r
 word_32DAE      dw 0                    ; DATA XREF: arenaEvent+4D↓r
@@ -86521,7 +86816,7 @@ townTavern      endp
 
 ; int __cdecl __far sub_48CF7(int, int, int, int, int, char *format)
 sub_48CF7       proc far                ; CODE XREF: sub_28349↑J
-                                        ; sub_48D4B+2B4↓p
+                                        ; townTemple+2B4↓p
 
 var_28          = byte ptr -28h
 buffer          = byte ptr -14h
@@ -86571,9 +86866,10 @@ sub_48CF7       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Temple: heal/cure/uncurse/donate; costs from the TEMPLE_* tables (by code reading)
 ; Attributes: bp-based frame
 
-sub_48D4B       proc far                ; CODE XREF: sub_28367↑J
+townTemple      proc far                ; CODE XREF: j_townTemple↑J
 
 var_24          = word ptr -24h
 var_22          = word ptr -22h
@@ -86642,7 +86938,7 @@ var_2           = word ptr -2
                 jmp     loc_49253
 ; ---------------------------------------------------------------------------
 
-loc_48DB5:                              ; CODE XREF: sub_48D4B+65↑j
+loc_48DB5:                              ; CODE XREF: townTemple+65↑j
                 call    sub_28144
                 mov     ax, offset aEscIcn_0 ; "esc.icn"
                 push    ax
@@ -86658,8 +86954,8 @@ loc_48DB5:                              ; CODE XREF: sub_48D4B+65↑j
                 mov     word_34C18, 2EEh
                 mov     si, 0B9D6h
 
-loc_48DED:                              ; CODE XREF: sub_48D4B+46C↓j
-                                        ; sub_48D4B+4B8↓j ...
+loc_48DED:                              ; CODE XREF: townTemple+46C↓j
+                                        ; townTemple+4B8↓j ...
                 xor     ax, ax
                 xor     dx, dx
                 mov     [bp+var_18], ax
@@ -86705,12 +87001,12 @@ loc_48DED:                              ; CODE XREF: sub_48D4B+46C↓j
                 mov     [bp+var_8], bx
                 mov     [bp+var_A], cx
 
-loc_48E5A:                              ; CODE XREF: sub_48D4B+E2↑j
+loc_48E5A:                              ; CODE XREF: townTemple+E2↑j
                 mov     di, 1
                 jmp     short loc_48E7F
 ; ---------------------------------------------------------------------------
 
-loc_48E5F:                              ; CODE XREF: sub_48D4B+137↓j
+loc_48E5F:                              ; CODE XREF: townTemple+137↓j
                 mov     bx, di
                 cmp     byte ptr [bx+si+113h], 0
                 jz      short loc_48E7E
@@ -86722,10 +87018,10 @@ loc_48E5F:                              ; CODE XREF: sub_48D4B+137↓j
                 add     [bp+var_A], ax
                 adc     [bp+var_8], dx
 
-loc_48E7E:                              ; CODE XREF: sub_48D4B+11B↑j
+loc_48E7E:                              ; CODE XREF: townTemple+11B↑j
                 inc     di
 
-loc_48E7F:                              ; CODE XREF: sub_48D4B+112↑j
+loc_48E7F:                              ; CODE XREF: townTemple+112↑j
                 cmp     di, 0Ch
                 jle     short loc_48E5F
                 mov     [bp+var_C], 0
@@ -86764,7 +87060,7 @@ loc_48E7F:                              ; CODE XREF: sub_48D4B+112↑j
                 add     [bp+var_E], cx
                 adc     [bp+var_C], bx
 
-loc_48ED7:                              ; CODE XREF: sub_48D4B+148↑j
+loc_48ED7:                              ; CODE XREF: townTemple+148↑j
                 cmp     byte ptr [si+121h], 0
                 jz      short loc_48F20
                 mov     cx, [bp+var_1C]
@@ -86799,7 +87095,7 @@ loc_48ED7:                              ; CODE XREF: sub_48D4B+148↑j
                 add     [bp+var_E], cx
                 adc     [bp+var_C], bx
 
-loc_48F20:                              ; CODE XREF: sub_48D4B+191↑j
+loc_48F20:                              ; CODE XREF: townTemple+191↑j
                 cmp     byte ptr [si+122h], 0
                 jz      short loc_48F69
                 mov     cx, [bp+var_1C]
@@ -86834,12 +87130,12 @@ loc_48F20:                              ; CODE XREF: sub_48D4B+191↑j
                 mov     [bp+var_10], bx
                 mov     [bp+var_12], cx
 
-loc_48F69:                              ; CODE XREF: sub_48D4B+1DA↑j
+loc_48F69:                              ; CODE XREF: townTemple+1DA↑j
                 xor     di, di
                 jmp     short loc_48F80
 ; ---------------------------------------------------------------------------
 
-loc_48F6D:                              ; CODE XREF: sub_48D4B+238↓j
+loc_48F6D:                              ; CODE XREF: townTemple+238↓j
                 mov     bx, di
                 mov     al, [bx+si+90h]
                 mov     ah, 0
@@ -86849,7 +87145,7 @@ loc_48F6D:                              ; CODE XREF: sub_48D4B+238↓j
                 or      word ptr [bp+format+2], dx
                 inc     di
 
-loc_48F80:                              ; CODE XREF: sub_48D4B+220↑j
+loc_48F80:                              ; CODE XREF: townTemple+220↑j
                 cmp     di, 12h
                 jl      short loc_48F6D
                 mov     ax, word ptr [bp+format]
@@ -86858,7 +87154,7 @@ loc_48F80:                              ; CODE XREF: sub_48D4B+220↑j
                 cmp     byte ptr [si+113h], 0
                 jz      short loc_48FBF
 
-loc_48F94:                              ; CODE XREF: sub_48D4B+240↑j
+loc_48F94:                              ; CODE XREF: townTemple+240↑j
                 mov     cx, [bp+var_1C]
                 mov     bx, [bp+var_1E]
                 xor     dx, dx
@@ -86878,7 +87174,7 @@ loc_48F94:                              ; CODE XREF: sub_48D4B+240↑j
                 mov     word ptr [bp+format+2], bx
                 mov     word ptr [bp+format], cx
 
-loc_48FBF:                              ; CODE XREF: sub_48D4B+247↑j
+loc_48FBF:                              ; CODE XREF: townTemple+247↑j
                 mov     al, byte_34C1D
                 mov     ah, 0
                 shl     ax, 1
@@ -86932,7 +87228,7 @@ loc_48FBF:                              ; CODE XREF: sub_48D4B+247↑j
                 jmp     short loc_49049
 ; ---------------------------------------------------------------------------
 
-loc_4903D:                              ; CODE XREF: sub_48D4B+2BE↑j
+loc_4903D:                              ; CODE XREF: townTemple+2BE↑j
                 push    ds
                 mov     ax, 0D256h
                 push    ax
@@ -86940,8 +87236,8 @@ loc_4903D:                              ; CODE XREF: sub_48D4B+2BE↑j
                 pop     cx
                 pop     cx
 
-loc_49049:                              ; CODE XREF: sub_48D4B+2F0↑j
-                                        ; sub_48D4B+4E8↓j
+loc_49049:                              ; CODE XREF: townTemple+2F0↑j
+                                        ; townTemple+4E8↓j
                 push    cs
                 call    near ptr sub_47A33
                 mov     di, ax
@@ -86949,7 +87245,7 @@ loc_49049:                              ; CODE XREF: sub_48D4B+2F0↑j
                 mov     cx, 0Fh
                 mov     bx, 1975h
 
-loc_49058:                              ; CODE XREF: sub_48D4B+317↓j
+loc_49058:                              ; CODE XREF: townTemple+317↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_24]
                 jz      short loc_49067
@@ -86959,7 +87255,7 @@ loc_49058:                              ; CODE XREF: sub_48D4B+317↓j
                 jmp     loc_4922E
 ; ---------------------------------------------------------------------------
 
-loc_49067:                              ; CODE XREF: sub_48D4B+313↑j
+loc_49067:                              ; CODE XREF: townTemple+313↑j
                 jmp     word ptr cs:[bx+1Eh]
 ; ---------------------------------------------------------------------------
                 mov     di, 1Bh
@@ -86971,7 +87267,7 @@ loc_49067:                              ; CODE XREF: sub_48D4B+313↑j
                 jmp     loc_4922E
 ; ---------------------------------------------------------------------------
 
-loc_4907C:                              ; CODE XREF: sub_48D4B+32C↑j
+loc_4907C:                              ; CODE XREF: townTemple+32C↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+var_8]
@@ -86984,7 +87280,7 @@ loc_4907C:                              ; CODE XREF: sub_48D4B+32C↑j
                 jmp     loc_4922E
 ; ---------------------------------------------------------------------------
 
-loc_49095:                              ; CODE XREF: sub_48D4B+345↑j
+loc_49095:                              ; CODE XREF: townTemple+345↑j
                 mov     al, 0
                 mov     [si+112h], al
                 mov     [si+110h], al
@@ -87029,7 +87325,7 @@ loc_49095:                              ; CODE XREF: sub_48D4B+345↑j
                 jmp     loc_4922E
 ; ---------------------------------------------------------------------------
 
-loc_4910A:                              ; CODE XREF: sub_48D4B+3BA↑j
+loc_4910A:                              ; CODE XREF: townTemple+3BA↑j
                 xor     ax, ax
                 push    ax
                 push    [bp+var_18]
@@ -87042,12 +87338,12 @@ loc_4910A:                              ; CODE XREF: sub_48D4B+3BA↑j
                 jmp     loc_4922E
 ; ---------------------------------------------------------------------------
 
-loc_49123:                              ; CODE XREF: sub_48D4B+3D3↑j
+loc_49123:                              ; CODE XREF: townTemple+3D3↑j
                 xor     di, di
                 jmp     short loc_4916B
 ; ---------------------------------------------------------------------------
 
-loc_49127:                              ; CODE XREF: sub_48D4B+427↓j
+loc_49127:                              ; CODE XREF: townTemple+427↓j
                 mov     ax, 1
                 push    ax
                 mov     al, byte_34C1D
@@ -87076,10 +87372,10 @@ loc_49127:                              ; CODE XREF: sub_48D4B+427↓j
                 mov     bx, ax
                 mov     byte ptr [bx-45EBh], 1
 
-loc_4916A:                              ; CODE XREF: sub_48D4B+40F↑j
+loc_4916A:                              ; CODE XREF: townTemple+40F↑j
                 inc     di
 
-loc_4916B:                              ; CODE XREF: sub_48D4B+3DA↑j
+loc_4916B:                              ; CODE XREF: townTemple+3DA↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
@@ -87102,17 +87398,17 @@ loc_4916B:                              ; CODE XREF: sub_48D4B+3DA↑j
                 jmp     short loc_4919D
 ; ---------------------------------------------------------------------------
 
-loc_4919A:                              ; CODE XREF: sub_48D4B+449↑j
+loc_4919A:                              ; CODE XREF: townTemple+449↑j
                 mov     al, byte ptr [bp+var_6]
 
-loc_4919D:                              ; CODE XREF: sub_48D4B+44D↑j
+loc_4919D:                              ; CODE XREF: townTemple+44D↑j
                 mov     [si+105h], al
                 mov     [si+104h], al
                 mov     [si+103h], al
                 mov     [si+102h], al
                 call    drawParty
 
-loc_491B2:                              ; CODE XREF: sub_48D4B+443↑j
+loc_491B2:                              ; CODE XREF: townTemple+443↑j
                 call    sub_25DE3
                 jmp     loc_48DED
 ; ---------------------------------------------------------------------------
@@ -87133,20 +87429,20 @@ loc_491B2:                              ; CODE XREF: sub_48D4B+443↑j
                 jmp     short loc_491F0
 ; ---------------------------------------------------------------------------
 
-loc_491E1:                              ; CODE XREF: sub_48D4B+4A8↓j
+loc_491E1:                              ; CODE XREF: townTemple+4A8↓j
                 mov     bx, di
                 test    byte ptr [bx+si+90h], 40h
                 jz      short loc_491EF
                 xor     byte ptr [bx+si+90h], 40h
 
-loc_491EF:                              ; CODE XREF: sub_48D4B+49D↑j
+loc_491EF:                              ; CODE XREF: townTemple+49D↑j
                 inc     di
 
-loc_491F0:                              ; CODE XREF: sub_48D4B+494↑j
+loc_491F0:                              ; CODE XREF: townTemple+494↑j
                 cmp     di, 12h
                 jl      short loc_491E1
 
-loc_491F5:                              ; CODE XREF: sub_48D4B+3B1↑j
+loc_491F5:                              ; CODE XREF: townTemple+3B1↑j
                 add     [bp+var_22], 5A0h
                 adc     [bp+var_20], 0
                 call    drawParty
@@ -87169,14 +87465,14 @@ loc_491F5:                              ; CODE XREF: sub_48D4B+3B1↑j
                 jmp     loc_48DED
 ; ---------------------------------------------------------------------------
 
-loc_4922E:                              ; CODE XREF: sub_48D4B+319↑j
-                                        ; sub_48D4B+323↑j ...
+loc_4922E:                              ; CODE XREF: townTemple+319↑j
+                                        ; townTemple+323↑j ...
                 cmp     di, 1Bh
                 jz      short loc_49236
                 jmp     loc_49049
 ; ---------------------------------------------------------------------------
 
-loc_49236:                              ; CODE XREF: sub_48D4B+4E6↑j
+loc_49236:                              ; CODE XREF: townTemple+4E6↑j
                 call    sub_28117
                 call    sub_280EA
                 mov     ax, 1
@@ -87186,7 +87482,7 @@ loc_49236:                              ; CODE XREF: sub_48D4B+4E6↑j
                 add     [bp+var_22], 5A0h
                 adc     [bp+var_20], 0
 
-loc_49253:                              ; CODE XREF: sub_48D4B+67↑j
+loc_49253:                              ; CODE XREF: townTemple+67↑j
                 push    [bp+var_22]
                 call    addTime
                 pop     cx
@@ -87203,7 +87499,7 @@ loc_49253:                              ; CODE XREF: sub_48D4B+67↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_48D4B       endp ; sp-analysis failed
+townTemple      endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 db 2 dup(0), 1, 0, 2, 0, 3, 0, 44h, 0, 48h, 0, 55h, 0
