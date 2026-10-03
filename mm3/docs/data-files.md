@@ -105,7 +105,7 @@ The map is a 32x32 world made of up to four 16x16 pages (`.DAT` blocks) held in 
 
 * Monster records, 3 bytes each, until a record starting with `FFh`: `x`, `y`, `b` where `b & 3` picks one of the map's 3
   monster picture ids (`MAP_MONSTER_PICS`, 3 bytes per map) and, if `b >> 2` is non-zero, the monster id is `(b >> 2) + 28h`
-  instead.  A monster gets random hit points..., `MONHP[id]` as its maximum.
+  instead.  Each monster record becomes an entry of the live monster table (at most 170 = AAh, else "Max Monsters Exceeded"): current hit points = `MONHP[id]` (no randomisation), state 0, a random animation phase (`rnd`), and its monster id; `Party_size` is reused as the count of live map monsters while a map is loaded.
 * Then 5 bytes: the picture slots (`2Ah` = unused) of the objects used on the map (`%s.pic` via a name table at DGROUP `58D4h`).
 * Then object records, 3 bytes each (`x`, `y`, picture slot), at most 80 (`50h`).
 
