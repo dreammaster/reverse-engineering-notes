@@ -139,3 +139,8 @@ knight 1500, paladin 2000, archer 2000, cleric 1500, sorcerer 2000, robber 1000,
   `getThievery + d20` with the page's lock/trap difficulty bytes (`data-files.md`, bytes 11h/12h).
 * `checkSkill(n)` = "does the party have skill n": the skill byte (+27h + n) must be non-zero in the character; skill ids 0-4, 6-8, 12, 13, 15-17 need **one** member
   with it, ids 9-11 need **two** members, ids 5 and 14 need **every** member of the party.  Used with ids 4 (Cartographer: auto-mapping) and 6 (Direction Sense: compass).
+
+Skill ids (names in the data segment next to `Experience`/`Gold`/`Gems`/`Condition`): 0 Thievery, 1 Arms Master, 2 Astrologer, 3 Body Builder,
+4 Cartographer, 5 Crusader, 6 Direction Sense, 7 Linguist, 8 Merchant, 9 Mountaineer, 10 Navigator, 11 Path Finder, 12 Prayer Master,
+13 Prestidigitator, 14 Swimmer, 15 Tracker, 16 Spot Secret Doors, 17 Danger Sense -- so Mountaineer, Navigator and Path Finder need two party
+members, Crusader and Swimmer every member, the rest one.  (Merchant = 8, the one `itemPrice` looks at.)
