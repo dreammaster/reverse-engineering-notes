@@ -163,7 +163,12 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 | `0E` | resting allowed (`rest`: "Too dangerous to rest here!" when 0) |
 | `0F` | dismissing a character allowed ("Too dangerous to dismiss here!" when 0) |
 | `14` | Teleport allowed, `15` Lloyd's Beacon, `16` Time Distortion, `17` Super Shelter, `18` Town Portal, `19` Nature's Gate, `1A` Etherealize (each tested by that spell's routine) |
-| `10`-`13`, `1B`-`1E` | used by tavern / death / other code (not yet identified); in the shipped files `11h`-`13h` and `1Bh`-`1Eh` are typically `64h` |
+| `10` | tavern rumour pointer (state byte, incremented by `townTavern`) |
+| `11` | door lock difficulty: `exploreLoop` compares thievery + d20 with it (unlock attempt) |
+| `12` | chest/event trap-lock difficulty: same test in `trapOrLockEvent` |
+| `13` | default start cell inside the page: low nibble x, high nibble y (`sub_1B925` adds the page origin to set `Party_x/y`; non-zero = page has one) |
+| `1B`, `1C`, `1D` | bash difficulty by wall style (`bash`: the wall nibble 2 -> `1B`, 4 -> `1C`, anything else -> `1D`); bash roll = might bonus + d30 >= value |
+| `1E` | trap damage passed to `giveCharDamage` by failed trap/lock attempts (`trapOrLockEvent`, `exploreLoop`) |
 
 ### Event operand encodings (verified by decoding every shipped `MAZEnn.EVT` with `tools/mm3_events.py`)
 
