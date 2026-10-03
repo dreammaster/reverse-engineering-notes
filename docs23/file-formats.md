@@ -1041,6 +1041,16 @@ in Chapter 3 only, forbids flights to another page when either end is attribute 
 The fog-of-war bitmap (MSB-first, one record per row) and `RevealCellsAroundPlayer` (each step marks the party's
 row/column and the one ahead, three cells wide, in the order -1, +1, 0) are `explore.c`.
 
+### The first-person viewport cells and their occlusion (`BuildDungeonViewportCells`, `ComputeDungeonCellVisibility`; `viewport.c`)
+
+The view is rendered from a 51-cell buffer: two 17-wide far rows, a 5-wide row, then four 3-wide rows ending with the
+party's own row (cell 49 = the party), copied from the dungeon grid with a facing-dependent column/row step (start offsets
+per facing in `viewport.h`). The occlusion pass sets bit 0 of a copied cell's flags: the first fully solid row of 3/3/3/5/17
+cells hides everything beyond it, eight corner rules hide a list when two adjacent cells are solid, and every visible solid
+cell from 50 down to 18 hides the cells it shadows. The static tables (identical in both games; the originals store buffer
+addresses, `viewport.c` uses cell indices) sit at DS:0x0E/0xE0 (Chapter 2) and DS:0x30A/0x3DC (Chapter 3). "Solid" is wall type
+2-5 in Chapter 2, 2-99 in Chapter 3.
+
 ### Ambient lighting (`ComputeAmbientLightingTable`, `lighting.c`)
 
 The 7-entry shade-delta gradient (`word_328E6`-`328F2`, previously "where the gradient values get computed isn't

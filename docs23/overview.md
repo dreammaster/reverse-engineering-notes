@@ -11435,6 +11435,13 @@ lights and spell timers, and the wall-torch tier from the 3x3 cells around the p
 table. Chapter 3's differences (split flag words, noon override) are in `lighting.h`. The wall-light entries read from a
 runtime array (the near cells' overlay types) are an input here.
 
+### Session update: the viewport cell buffer and occlusion (`viewport.c`)
+
+With the grid (`dungeongrid.c`), the lighting and the cell buffer decisions in place, the data side of the 3D renderer is
+close to complete: `viewportBuild` gives the 51 cells in front of the party for any facing and `viewportComputeVisibility`
+culls the hidden ones using tables extracted by `dump_visibility_tables.py` (identical in both games once expressed as cell
+indices). The actual wall/floor/ceiling blitting (`RenderDungeonViewRow`, `DrawPicture`) is the platform layer's job.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
