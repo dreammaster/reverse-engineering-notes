@@ -4360,6 +4360,15 @@ least the spell's word `0x16` -- which this settles as the **required level** (t
 have an empty class mask: they aren't learnable from scrolls at all.
 `spellCanLearn`, `spellLearn`, `spellUsableInContext`.
 
+**`CastSpell` is the potions handler (2026-10-03, `src23/consumable.c`)**: `HandleGameCommand`
+sends the restorative item ids here (Chapter 2: 0x12-0x14, 0x17, 0x18, 0x1D; Chapter 3: 0x34-0x39) --
+HP +25% / +50% of max / full, MP +50% / full, cure Diseased/Poisoned/Sick -- each refusing (flash a
+warning, spend nothing) when it would do nothing. Chapter 2's id 0x1C is the alchemist's ore
+transmutation: Chemistry >= 65 and >= 10 units, then up to **100** units of the source (not 10, as an
+earlier note said) become floor(units / d) of the other ore, d = 10/5/4/2 at Chemistry
+<80/>=80/>=95/>=110. Chapter 3 has no transmutation (its ore economy is replaced by the artifact
+quest). `partyRestorativeForItem`, `partyUseRestorative`, `partyTransmuteOre`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
