@@ -12293,6 +12293,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X254AA);
 	op_hex		(x,	1);
 	create_insn	(0X254BA);
+	set_name	(0X254BA,	"getCommand");
 	create_insn	(x=0X254BD);
 	op_hex		(x,	1);
 	create_insn	(x=0X25513);
@@ -13944,7 +13945,7 @@ static Bytes_2(void) {
 	create_insn	(0X28080);
 	set_name	(0X28080,	"j_GiveBankInterest");
 	create_insn	(0X28085);
-	set_name	(0X28085,	"j_death");
+	set_name	(0X28085,	"j_exploreLoop");
 	create_insn	(0X2808A);
 	set_name	(0X2808A,	"j_Spells_moonRay");
 	create_insn	(0X2808F);
@@ -14822,8 +14823,6 @@ static Bytes_2(void) {
 	create_word	(0X2A718);
 	create_word	(0X2A71A);
 	create_word	(0X2A71C);
-	create_word	(0X2A71E);
-	create_word	(0X2A720);
 }
 
 //------------------------------------------------------------------------
@@ -14833,6 +14832,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X2A71E);
+	create_word	(0X2A720);
 	create_word	(0X2A722);
 	create_word	(0X2A724);
 	create_word	(0X2A726);
@@ -18457,7 +18458,6 @@ static Bytes_3(void) {
 	set_cmt	(0X38293,	"c",	0);
 	create_insn	(0X382A0);
 	create_insn	(0X382B6);
-	set_cmt	(0X382B9,	"stream",	0);
 }
 
 //------------------------------------------------------------------------
@@ -18467,6 +18467,7 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X382B9,	"stream",	0);
 	set_cmt	(0X382BC,	"c",	0);
 	create_insn	(x=0X382C5);
 	op_stkvar	(x,	1);
@@ -21716,7 +21717,7 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X3E975);
 	create_insn	(0X3E982);
-	set_name	(0X3E982,	"death");
+	set_name	(0X3E982,	"exploreLoop");
 	create_insn	(x=0X3E985);
 	op_hex		(x,	1);
 	set_cmt	(0X3E989,	"n",	0);
@@ -21731,7 +21732,9 @@ static Bytes_4(void) {
 	create_insn	(x=0X3EA18);
 	op_stkvar	(x,	1);
 	create_insn	(0X3EA24);
+	set_cmt	(0X3EA28,	"command F0h: Party_facing step (sequence 0,1->..), then update (by code reading)",	0);
 	create_insn	(0X3EA28);
+	set_name	(0X3EA28,	"cmd_F0_turnLeft");
 	set_cmt	(0X3EA2F,	"switch 4 cases",	0);
 	create_insn	(x=0X3EA34);
 	op_hex		(x,	1);
@@ -21747,7 +21750,9 @@ static Bytes_4(void) {
 	create_insn	(0X3EA44);
 	set_cmt	(0X3EA46,	"jumptable 0003EA36 case 3",	1);
 	create_insn	(0X3EA46);
+	set_cmt	(0X3EA48,	"command F1h",	0);
 	create_insn	(0X3EA48);
+	set_name	(0X3EA48,	"cmd_F1_turnRight");
 	set_cmt	(0X3EA4F,	"switch 4 cases",	0);
 	create_insn	(x=0X3EA54);
 	op_hex		(x,	1);
@@ -21768,7 +21773,9 @@ static Bytes_4(void) {
 	create_insn	(x=0X3EA89);
 	op_hex		(x,	1);
 	create_insn	(0X3EA98);
+	set_cmt	(0X3EAA0,	"command F2h: checks mazeGetWordRel in the facing direction, moves",	0);
 	create_insn	(0X3EAA0);
+	set_name	(0X3EAA0,	"cmd_F2_stepForward");
 	create_insn	(x=0X3EAA5);
 	op_hex		(x,	1);
 	create_insn	(x=0X3EABE);
@@ -21935,7 +21942,9 @@ static Bytes_4(void) {
 	create_insn	(0X3F011);
 	set_name	(0X3F011,	"def_3EFEA");
 	create_insn	(0X3F014);
+	set_cmt	(0X3F017,	"command F3h (not identified)",	0);
 	create_insn	(0X3F017);
+	set_name	(0X3F017,	"cmd_F3");
 	create_insn	(x=0X3F023);
 	op_hex		(x,	1);
 	create_insn	(x=0X3F03C);
@@ -21958,7 +21967,9 @@ static Bytes_4(void) {
 	create_insn	(0X3F080);
 	create_insn	(0X3F083);
 	create_insn	(0X3F08A);
+	set_cmt	(0X3F094,	"command F4h (not identified)",	0);
 	create_insn	(0X3F094);
+	set_name	(0X3F094,	"cmd_F4");
 	create_insn	(x=0X3F099);
 	op_hex		(x,	1);
 	create_insn	(x=0X3F0B2);
@@ -21983,7 +21994,9 @@ static Bytes_4(void) {
 	create_insn	(0X3F0F8);
 	create_insn	(0X3F100);
 	create_insn	(0X3F108);
+	set_cmt	(0X3F112,	"command F5h (not identified)",	0);
 	create_insn	(0X3F112);
+	set_name	(0X3F112,	"cmd_F5");
 	create_insn	(x=0X3F117);
 	op_hex		(x,	1);
 	create_insn	(x=0X3F130);
@@ -23341,6 +23354,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X40835);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4083A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4083E);
@@ -23389,15 +23411,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X408C1);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X408C7);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -28958,6 +28971,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X48210);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4821A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4821D);
@@ -29003,15 +29025,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48305);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4830F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48312);
@@ -33843,6 +33856,15 @@ static Bytes_6(void) {
 	create_insn	(0X4FC2D);
 	set_cmt	(0X4FC35,	"jumptable 0004F954 case 54",	1);
 	create_insn	(0X4FC35);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4FC3D,	"jumptable 0004F954 case 55",	1);
 	create_insn	(0X4FC3D);
 	set_cmt	(0X4FC45,	"jumptable 0004F954 case 56",	1);
@@ -33871,15 +33893,6 @@ static Bytes_6(void) {
 	create_insn	(0X4FCAF);
 	set_cmt	(0X4FCB7,	"jumptable 0004F954 case 63",	1);
 	create_insn	(0X4FCB7);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4FCBF,	"jumptable 0004F954 case 64",	1);
 	create_insn	(0X4FCBF);
 	set_cmt	(0X4FCC7,	"jumptable 0004F954 case 65",	1);
@@ -36837,6 +36850,7 @@ static Functions_0(void) {
 	set_frame_size(0X253D3, 0X2, 2, 0);
 	add_func    (0X254BA,0X25C0E);
 	set_func_flags(0X254BA,0x5412);
+	set_func_cmt(0X254BA,	"waits for/reads input (keys and mouse) and returns a command code; 1.9 KB, ~50 callers (by use)", 0);
 	set_frame_size(0X254BA, 0XC, 2, 0);
 	add_func    (0X25C52,0X25D8D);
 	set_func_flags(0X25C52,0x5412);
@@ -38223,7 +38237,7 @@ static Functions_0(void) {
 	set_frame_size(0X3E8E2, 0X2, 2, 0);
 	add_func    (0X3E982,0X3F3A6);
 	set_func_flags(0X3E982,0x5412);
-	set_func_cmt(0X3E982,	"death.vga, mm3theme.m (from strings)", 0);
+	set_func_cmt(0X3E982,	"main exploration loop (Engine_mode 1): runs events, draws the view, reads a command from getCommand and dispatches through the 36-entry table at ovl04:16D4h (+48h = handlers). Replaces the earlier BinDiff name \"death\".", 0);
 	set_frame_size(0X3E982, 0X10, 2, 0);
 	add_func    (0X3F490,0X4008C);
 	set_func_flags(0X3F490,0x5412);
@@ -38579,6 +38593,10 @@ static Functions_0(void) {
 	set_frame_size(0X47ECE, 0X26, 2, 0);
 	define_local_var(0X47ECE, 0X48158, "[bp-0X20]", "buffer");
 	define_local_var(0X47ECE, 0X48158, "[bp-0XC]", "format");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4816C,0X483E7);
 	set_func_flags(0X4816C,0x5412);
 	set_func_cmt(0X4816C,	"bank.m, bank.icn, bank2.icn", 0);
@@ -38594,10 +38612,6 @@ static Functions_0(void) {
 	set_func_flags(0X48466,0x5412);
 	set_func_cmt(0X48466,	"guild.m, spldesc.bin", 0);
 	set_frame_size(0X48466, 0X2, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X486AB,0X4877A);
 	set_func_flags(0X486AB,0x5412);
 	set_func_cmt(0X486AB,	"towninn.m", 0);

@@ -374,6 +374,7 @@
 25279	timeText	(BinDiff sim .67 conf .95, unverified)
 253C2	def_252EF
 253C5	jpt_252EF
+254BA	getCommand	waits for/reads input (keys and mouse) and returns a command code; 1.9 KB, ~50 callers (by use)
 2562C	def_25621
 25C22	jpt_25621
 25E20	ipause_5	(BinDiff sim .88 conf .92, unverified)
@@ -529,13 +530,19 @@
 3E0A0	showJoke	jester.bin "Joke of the Day"
 3E113	arenaEvent	combat.m "The Arena"
 3E8AC	Spells_moonRay
-3E982	death	death.vga, mm3theme.m (from strings)
+3E982	exploreLoop	main exploration loop (Engine_mode 1): runs events, draws the view, reads a command from getCommand and dispatches through the 36-entry table at ovl04:16D4h (+48h = handlers). Replaces the earlier BinDiff name "death".
+3EA28	cmd_F0_turnLeft	command F0h: Party_facing step (sequence 0,1->..), then update (by code reading)
+3EA48	cmd_F1_turnRight	command F1h
 3EA70	def_3EA36
+3EAA0	cmd_F2_stepForward	command F2h: checks mazeGetWordRel in the facing direction, moves
 3EC7F	def_3EC64
 3EC8E	def_3F05F
 3ECAD	def_3F0D5
 3EE88	def_3EE62
 3F011	def_3EFEA
+3F017	cmd_F3	command F3h (not identified)
+3F094	cmd_F4	command F4h (not identified)
+3F112	cmd_F5	command F5h (not identified)
 3F3A6	jpt_3F153
 3F3AE	jpt_3F0D5
 3F3B6	jpt_3F05F
