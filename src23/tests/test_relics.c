@@ -97,11 +97,56 @@ static void testKillAndPotion(void) {
     check("...and sets flag 0x48", globalFlagTest(flags, sizeof(flags), LocationPotionFlag));
 }
 
+static void testClassify(void) {
+    check("crystal ball", relicClassify(0x253) == RelicActionVision);
+    check("potion and bottle", relicClassify(0x258) == RelicActionLocationPotion && relicClassify(0x2C8) == RelicActionAssemblePotion);
+    check("the four keys", relicClassify(0x242) == RelicActionDiscoveryKey && relicClassify(0x245) == RelicActionDiscoveryKey);
+    check("the flute", relicClassify(0x26D) == RelicActionPlayFlute);
+    check("the charged relics", relicClassify(0x246) == RelicActionCharged && relicClassify(0x249) == RelicActionCharged);
+    check("neighbours are not", relicClassify(0x241) == RelicActionNone && relicClassify(0x24A) == RelicActionNone &&
+                                    relicClassify(0x259) == RelicActionNone);
+}
+
+static unsigned countItem(SaveGame *save, uint8_t *globalSlots, uint16_t id) {
+    return itemRangeAvailable(globalSlots, save, id, id).found ? 1 : 0;
+}
+
+static void testAssemble(void) {
+    static ItemCatalog catalog; /* all-zero records: no multi-use items, zero weight */
+    SaveGame save;
+    uint8_t globalSlots[24];
+    memset(&catalog, 0, sizeof(catalog));
+    memset(globalSlots, 0, sizeof(globalSlots));
+    saveGameInit(&save, GameYendor2);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 0, 1);
+    saveHeaderSetU16(&save, SaveHeaderPartySlots + 2, 2);
+    uint8_t *a = saveGamePartyRecordById(&save, 1);
+    uint8_t *b = saveGamePartyRecordById(&save, 2);
+    uint8_t *packA = partyInventoryGroup(a, PartyGroupMain);
+    uint8_t *packB = partyInventoryGroup(b, PartyGroupMain);
+
+    itemSlotSet(inventoryGroupSlot(packA, 1), RelicEmptyBottle, 0);
+    itemSlotSet(inventoryGroupSlot(packA, 2), RelicFlower, 0);
+    itemSlotSet(inventoryGroupSlot(packB, 1), RelicCocoon, 0);
+    itemSlotSet(inventoryGroupSlot(packB, 2), RelicFeather, 0);
+    check("three of four ingredients is not enough", !relicAssemblePotion(globalSlots, &save, &catalog));
+    check("...and nothing was consumed", countItem(&save, globalSlots, RelicFlower) && countItem(&save, globalSlots, RelicEmptyBottle));
+
+    itemSlotSet(globalSlots, RelicOrange, 0); /* the resource panel counts too */
+    check("with all four across packs and the panel it brews", relicAssemblePotion(globalSlots, &save, &catalog));
+    check("every ingredient and the bottle are gone",
+          !countItem(&save, globalSlots, RelicFlower) && !countItem(&save, globalSlots, RelicCocoon) &&
+              !countItem(&save, globalSlots, RelicFeather) && !countItem(&save, globalSlots, RelicOrange) &&
+              !countItem(&save, globalSlots, RelicEmptyBottle));
+}
+
 int main(void) {
     testReadyFlag();
     testCaches();
     testMassHeal();
     testKillAndPotion();
+    testClassify();
+    testAssemble();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

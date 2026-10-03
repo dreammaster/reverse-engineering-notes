@@ -6,6 +6,8 @@
 #include <stdint.h>
 
 #include "bcd4.h"
+#include "item.h"
+#include "party.h"
 #include "savegame.h"
 
 /*
@@ -31,7 +33,17 @@ enum {
     RelicMassHeal = 0x248,
     RelicInstantKill = 0x249,
     RelicLocationPotion = 0x258,
+    RelicCrystalBall = 0x253,
+    RelicFlower = 0x254,
+    RelicCocoon = 0x255,
+    RelicFeather = 0x256,
+    RelicOrange = 0x257,
+    RelicEmptyBottle = 0x2C8,
+    RelicPanFlute = 0x26D,
     RelicCacheAmount = 5000,
+    RelicVisionX = 0x154,
+    RelicVisionY = 0x63,
+    RelicFluteTrack = 8,
     LocationPotionX = 0x68,
     LocationPotionY = 0x6E,
     LocationPotionFlag = 0x48
@@ -62,5 +74,49 @@ void relicInstantKill(uint8_t *monsterRecord);
  * worked and applies the flag.
  */
 bool relicUseLocationPotion(int worldX, int worldY, uint8_t *globalFlags, size_t flagsSize);
+
+/*
+ * DispatchItemAbilityCommand (:49086) -- the top-level dispatcher for the quest/
+ * relic item cluster (reached from HandleGameCommand for an item whose target
+ * flag 0x4 is clear), as a classifier of the item id:
+ *   0x253 CRYSTAL BALL        RelicActionVision: a peek at the fixed cell
+ *                             (RelicVisionX, RelicVisionY) = (340, 99) facing
+ *                             north; the party does not move (view-only)
+ *   0x258                     RelicActionLocationPotion (relicUseLocationPotion)
+ *   0x2C8 EMPTY POTION BOTTLE RelicActionAssemblePotion (relicAssemblePotion)
+ *   0x242-0x245 the keys      RelicActionDiscoveryKey (UseAbilityOnTarget; the
+ *                             0xDFBB discovery table travel.c already covers)
+ *   0x26D ELFIN PAN FLUTE     RelicActionPlayFlute: stops the music and plays
+ *                             track RelicFluteTrack
+ *   0x246-0x249               RelicActionCharged (gated on relicReady; 0x249 also
+ *                             needs combat) -- the four relics above
+ * anything else does nothing.
+ */
+typedef enum {
+    RelicActionNone,
+    RelicActionVision,
+    RelicActionLocationPotion,
+    RelicActionAssemblePotion,
+    RelicActionDiscoveryKey,
+    RelicActionPlayFlute,
+    RelicActionCharged
+} RelicAction;
+
+RelicAction relicClassify(unsigned itemId);
+
+/*
+ * CheckQuestItemsCompleted (:49380): the EMPTY POTION BOTTLE combines the four
+ * ingredients FLOWER, COCOON, FEATHER and ORANGE (ids 0x254-0x257) into the
+ * POTION OF APPRECIATION (0x258, which relicUseLocationPotion then uses at its
+ * one cell). Each is looked up with itemRangeAvailable (the resource panel's
+ * global slots first, then the party's packs); if any is missing nothing happens
+ * ("you need ..." message, returns false). Otherwise all four ingredients and the
+ * bottle are consumed (partyConsumeItemCharge / itemSlotConsumeGlobalCharge, in
+ * the original's order: ORANGE, FEATHER, COCOON, FLOWER, bottle) and the caller
+ * puts RelicPotionOfAppreciation on the cursor. Returns true when it brewed.
+ */
+enum { RelicPotionOfAppreciation = RelicLocationPotion };
+
+bool relicAssemblePotion(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
 
 #endif

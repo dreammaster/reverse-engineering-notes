@@ -11324,6 +11324,18 @@ capability gains the hidden bit without losing the large bit. Chapter 3's only
 difference is an extra bypass bit on the local-map gate. `mapview.c`/`.h`, 31st
 suite `test_mapview.c`. The row drawing, palette fades and key wait are UI.
 
+### Session update: the relic dispatcher and the potion brewing (`relicClassify`, `relicAssemblePotion`)
+
+`DispatchItemAbilityCommand` is just a classifier of the item id: CRYSTAL BALL (0x253,
+a view-only peek at cell (340, 99)), POTION OF APPRECIATION (0x258), EMPTY POTION
+BOTTLE (0x2C8), the four discovery keys (0x242-0x245, `UseAbilityOnTarget`), ELFIN PAN
+FLUTE (0x26D, plays music track 8) and the four recharge-gated relics. Reading
+`CheckQuestItemsCompleted` showed the bottle is the quest's crafting step: with FLOWER,
+COCOON, FEATHER and ORANGE (0x254-0x257) anywhere in the party or on the resource
+panel, the five items are consumed and the POTION OF APPRECIATION is put on the cursor
+-- the very potion `relicUseLocationPotion` then spends at its one cell. Both are
+`relics.c`; the music and screen-peek handlers are UI.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
