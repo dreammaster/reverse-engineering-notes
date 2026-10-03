@@ -212,6 +212,18 @@ static void checkRealBranches(const char *game, const SpellCatalog *catalog) {
         }
         check(label, fixedOnly);
     }
+    snprintf(label, sizeof(label), "%s: no record is both exploration-only (FlagsA 0x400) and an engaged-monster attack (FlagsB 0x3000)", game);
+    {
+        bool clean = true;
+        for (unsigned id = 1; id <= catalog->recordCount; id++) {
+            const uint8_t *rec = spellRecord(catalog, id);
+            if ((spellGetU16(rec, SpellFieldFlagsA) & SpellFlagsANotInCombat) &&
+                (spellGetU16(rec, SpellFieldFlagsB) & (SpellFlagsBAttackPath | SpellFlagsBAttackAllSlots))) {
+                clean = false;
+            }
+        }
+        check(label, clean);
+    }
     snprintf(label, sizeof(label), "%s: TURBULENT ATMOSPHERE is the last-resort ResistFlags 0x1", game);
     check(label, spellSelectBranch(spellRecord(catalog, catalog->game == GameYendor2 ? 105 : 107)) == SpellBranchTurbulence);
 }

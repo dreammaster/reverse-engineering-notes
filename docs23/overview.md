@@ -11206,6 +11206,14 @@ three-tier display flag). Added `combatPlayerMeleeAttack` and
 melee accuracy/power the stat recomputation has been building. Tests; all
 suites pass.
 
+### Session update (2026-10-03, continued): who can cast what, and what it costs
+
+`CheckSpellCastability`/`DeductAlchemySpellCosts` as `spellCanCast`/
+`spellDeductCosts` (`spellcast.c`, 25th suite). The payoff beyond the
+function: FlagsA bit `0x400` is "exploration-only, refused in combat" -- the
+real-data census made it obvious (the 42 records are all projectiles and
+utilities), correcting an older "EFFECT: text variant" reading.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

@@ -3221,6 +3221,17 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**Spell casting's gate and payment (2026-10-03)**: `CheckSpellCastability` and
+`DeductAlchemySpellCosts` as `spellCanCast`/`spellDeductCosts`
+(`src23/spellcast.c`, new, 25th suite). Context: in combat a spell with FlagsA
+`0x400` is refused, out of combat a spell with FlagsB `0x2000`/`0x1000` is
+refused -- which finally explains FlagsA `0x400`, set on 42 (Chapter 2) / 41
+(Chapter 3) real records: it's "exploration-only" (every projectile, light,
+jump, rest, unlock and mark spell), previously filed under "an EFFECT: text
+variant". Costs: NUORE and MAGIC ORE must each be at least the cost (zero not
+checked), and MP >= cost (signed). Payment subtracts MP *unclamped* and the two
+ore counters clamped.
+
 **The player's melee swing and `UpdateMonsterWoundTier` (2026-10-03)**:
 `HandleDungeonInput`'s attack button wears the second equipment slot (`0x142`);
 a broken weapon cancels the swing; otherwise `ResolveAttack(monster

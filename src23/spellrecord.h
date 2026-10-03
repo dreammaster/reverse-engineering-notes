@@ -256,9 +256,12 @@ typedef enum {
     SpellFlagsAPersistAffliction = 0x0200,
     /*
      * Bit 0x400 selects one of ShowClueBookSpellDetail's "EFFECT:" message
-     * variants (yendor2.asm:6380).
+     * variants (yendor2.asm:6380) -- the same "exploration-only" property
+     * CheckSpellCastability enforces (SpellFlagsANotInCombat below).
      */
     SpellFlagsAEffectTextVariant = 0x0400,
+    /* The same bit as CheckSpellCastability reads it: refuses the spell while in combat -- see spellcast.h. 42/41 real records, the projectile and utility spells. */
+    SpellFlagsANotInCombat = 0x0400,
     /*
      * Read directly inside ApplyEncodedItemEffect's own single-target
      * (word_33302 bit 0x8000, yendor2.asm:51241) and whole-party (bit
@@ -341,6 +344,7 @@ typedef enum {
      * combat-slot one.
      */
     SpellFlagsBAttackPath = 0x2000,
+    SpellFlagsBAttackAllSlots = 0x1000,
     /*
      * Routes to ApplyEncodedItemEffect's own "MARK OR RETURN" branch
      * (yendor2.asm:51685, combat.h's combatSaveLocationBookmark/
