@@ -264,6 +264,11 @@ public:
 	// 523174) - real wxFileName::MakeAbsolute() prefixes the current directory
 	// to a relative path.
 	bool MakeAbsolute();
+	// Confirmed call shapes only (TComposedFile::WriteToDisk(), Deponia_Linux.
+	// asm lines 542364-543915) - the instance versions test/create the
+	// directory part of the path (not the path itself), non-recursively.
+	bool DirExists() const;
+	bool Mkdir() const;
 	// Confirmed call shape only (TGameControl::LoadGame(TMSavegame*),
 	// Deponia_Linux.asm line 477491) - real wxFileName::GetFullName()
 	// returns just the name+extension portion, without the directory.
@@ -516,6 +521,9 @@ public:
 	// Confirmed call shape only (TFile::DecryptHeader, Deponia_Linux.asm line
 	// 523762).
 	unsigned long Write(const void *buffer, unsigned long size);
+	// Confirmed call shape (TComposedFile::WriteToDisk, asm line 542364+): the
+	// string's narrow form, no terminator.
+	unsigned long Write(const wxString &text);
 	// Confirmed call shape only (TFile::DecryptHeader, asm line 523764).
 	void Flush();
 	// Confirmed call shape only (TComposedFile::GetMemoryFile, Deponia_Linux.

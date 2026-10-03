@@ -147,12 +147,12 @@ TCharHolder	done	34	529250	531864
 pattern_matcher	todo	2	531875	1441953
 TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440
-TComposedFile	in-progress	20	541459	548209
-BuildProgressEvent	todo	3	548597	548703
+TComposedFile	done	20	541459	548209
+BuildProgressEvent	done	3	548597	548703
 TMemoryBuffer	in-progress	26	549297	551826
 TMemoryFile	done	7	551869	552091
 TStandardPaths	done	13	552187	553383
-TTempFile	todo	2	553440	553545
+TTempFile	done	2	553440	553545
 md5	todo	5	554434	556285
 TTextLanguage	todo	3	558635	1524382
 TTimer	done	6	559372	559473

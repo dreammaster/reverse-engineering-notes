@@ -271,21 +271,19 @@ bool TMSavegame::SavegameExists() {
 	return dir.GetFirst(&name, wxString(L"savegame*.*"), 0);
 }
 
-// Confirmed (asm lines 163411-164367) - see the header comment for why this
-// currently writes nothing. A real savegame first saves its screenshot to a
+// Confirmed (asm lines 163411-164367). A real savegame first saves its screenshot to a
 // temp file (failing the whole save if that fails); either kind then packs
 // the writer's data - and, for a real savegame, the screenshot - into one
 // composed file (container type 4, password "SAVEGAMEPWD30"), creating the
 // savegame directory if need be, and writes it to this slot's file. On
 // success the screenshot's cached sprite is evicted and the slot reloaded
-// (deactivated then reactivated). The original also passes an empty
-// StringHashMap<wxString,wxString,...> to AddFile(); that overload isn't
-// modeled, so the 3-argument one stands in.
+// (deactivated then reactivated). The screenshot is added through AddFile()
+// with a fresh (empty) name cache, as the original does.
 bool TMSavegame::SaveGame(const TBufferedProjectFileWriter &writer) {
 	wxFileName snapshotFile;
 	if (!_isBookmark) {
 		wxString name = wxString(L"vtp_savepic") + slotText(_slot);
-		snapshotFile = wxFileName(TTempFile::AddTempFile(name, wxString(L"webp")).ToStdWstring());
+		snapshotFile = TTempFile::AddTempFile(name, wxString(L"webp"));
 		if (!SaveSnapShot(snapshotFile)) {
 			if (wxLog::loglevel > 0)
 				wxLog::logexpanded(L"SaveGame: Saving snapshot failed");
@@ -304,7 +302,8 @@ bool TMSavegame::SaveGame(const TBufferedProjectFileWriter &writer) {
 	if (!_isBookmark) {
 		wxFileName snapshot = snapshotFile;
 		snapshot.NormalizePath();
-		composed.AddFile(snapshot, emptyName, 0);
+		StringHashMap names;
+		composed.AddFile(snapshot, emptyName, names, 0);
 	}
 
 	wxString password = L"SAVEGAMEPWD30";

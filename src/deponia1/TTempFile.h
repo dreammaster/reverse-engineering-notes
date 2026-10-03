@@ -1,19 +1,27 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Tracks temp files the engine creates and cleans them up. Confirmed call
-// shape only (TGameControl::SaveGame,
-// Deponia_Linux.asm line 463093): a static, no-argument cleanup entry
-// point, matching the TGAction/TGAnimation static-entry-point pattern.
+// Implemented in full (Deponia_Linux.asm lines 553440-553700, both
+// manifest-listed methods). Tracks the temp files the engine creates (a
+// static list of their full paths) so they can all be removed together:
+// AddTempFile() names one under the system temp directory and records it,
+// DeleteTempFiles() removes every recorded file and forgets them. Both are
+// called without an object (the manifest's `this` is not used).
 #pragma once
+
+#include <string>
+#include <vector>
 
 #include "WxStub.h"
 
 class TTempFile {
 public:
+	// The name is the temp directory plus `name` plus `ext`, concatenated with
+	// nothing between them (so callers choose what the pieces contain), made
+	// absolute/normalized. The file itself isn't created.
+	static wxFileName AddTempFile(const wxString &name, const wxString &ext);
+	// Removes every file AddTempFile() recorded (ignoring failures).
 	static void DeleteTempFiles();
-	// Confirmed call shape only (TMSavegame::SaveGame, Deponia_Linux.asm line
-	// 163500+) - registers a temp file named `name` with extension `ext` for
-	// later cleanup by DeleteTempFiles() and returns its full path; not
-	// reversed beyond that call shape.
-	static wxString AddTempFile(const wxString &name, const wxString &ext);
+
+private:
+	static std::vector<std::wstring> s_tempFiles;
 };

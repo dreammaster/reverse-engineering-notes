@@ -94,23 +94,27 @@ TMemoryBuffer &TMemoryBuffer::operator<<(unsigned char value) {
 	return *this;
 }
 
+// The fixed-size numeric writers are big-endian (confirmed, asm lines
+// 550213-550648: the high byte is stored first), and the "long" ones store
+// only the low 32 bits even though `long` is 64-bit in the binary.
 TMemoryBuffer &TMemoryBuffer::operator<<(short value) {
-	AppendData(&value, sizeof(value));
-	return *this;
+	return *this << static_cast<unsigned short>(value);
 }
 
 TMemoryBuffer &TMemoryBuffer::operator<<(unsigned short value) {
-	AppendData(&value, sizeof(value));
+	unsigned char bytes[2] = {static_cast<unsigned char>(value >> 8), static_cast<unsigned char>(value)};
+	AppendData(bytes, sizeof(bytes));
 	return *this;
 }
 
 TMemoryBuffer &TMemoryBuffer::operator<<(long value) {
-	AppendData(&value, sizeof(value));
-	return *this;
+	return *this << static_cast<unsigned long>(value);
 }
 
 TMemoryBuffer &TMemoryBuffer::operator<<(unsigned long value) {
-	AppendData(&value, sizeof(value));
+	unsigned char bytes[4] = {static_cast<unsigned char>(value >> 24), static_cast<unsigned char>(value >> 16),
+	                          static_cast<unsigned char>(value >> 8), static_cast<unsigned char>(value)};
+	AppendData(bytes, sizeof(bytes));
 	return *this;
 }
 

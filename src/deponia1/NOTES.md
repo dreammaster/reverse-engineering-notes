@@ -2600,6 +2600,66 @@ values, `VBIN` detection, version ranges).
 
 `TFile` and `TVedFile` are `done` in the manifest.
 
+## TComposedFile (the container format, read and write), TTempFile, BuildProgressEvent
+
+All 20 `TComposedFile` methods now implemented (Deponia_Linux.asm lines
+541459-548209), plus `TTempFile` (2), `BuildProgressEvent` (3). The earlier pass
+stopped short of the directory's record layout - the one thing a shipped game
+needs - and had a *wrong endianness*. Verified end-to-end with a standalone
+round-trip test (write a container with an in-memory entry and a file entry,
+read it back through `Init`/`Open`, wrong password rejected).
+
+**On-disk format** (full layout in `composedfile.h`): "VIS3" + 4-byte entry
+count, then `count*16+6` bytes encrypted with the MD5-keystream cipher; the
+decrypted block is "HDR", `count` 16-byte records `{offset, stored size,
+uncompressed length, content flags}`, "END" - **all values big-endian 32-bit**
+(`ByteStreamToLong`/`ULong`, which are the same function and sign-extend into
+64 bits). Entry offsets are relative to the end of the directory; `InitEntries()`
+adds that end position. Entries carry **no names** - they're addressed by index
+through the `<ext>#<type letter>#<volume>#<index>#` reference syntax that
+sprite paths embed (`vtp_savepic3.webp#g#-01#00001#` = the 1st entry of an
+unnumbered type-4 container; the letter is `scmgio`[type-1], `v` otherwise,
+the numbers `%03ld`/`%05ld`).
+
+**Corrections:** `TMemoryBuffer::operator<<(short/long/...)` write **big-endian**
+(2 bytes for short, 4 for long - low 32 bits only; an earlier version wrote
+native little-endian `sizeof(value)` bytes). `GetComposedFileExtension()` now has
+the real strings and the "type 4/7/8 -> empty" cases (the earlier version
+asserted on them); `InitForWrite(.., wxFileName, ..)` stores its file in the
+*composed path* field, not the exe field; `SEntryInfo`'s unknown fields are
+`memoryData` (+0x08, a TMemoryBuffer* for entries added from memory),
+`uncompressedLength` (+0x20) and `contentFlags` (+0x28). `TFile`'s +0x60 string,
+which `OpenReadFromComposedFile()` stores, is the container's *key*, so a file
+can decrypt itself later.
+
+**Writing** (`WriteToDisk`): optional embedded exe (copied verbatim first, its
+length recorded for a 7-byte `(length, "COM")` footer), "VIS3"+count header,
+a placeholder the size of the directory, each entry's data via
+`TFile::PasteData()`/`PasteFile()` per its content flags, then the real
+directory overwrites the placeholder. A failed entry logs and is recorded with
+zero sizes rather than aborting. A PNG flagged "header encrypted" (flag 8)
+has its IHDR width/height (file offsets 0x10/0x14) overwritten with the
+encrypted dimensions, keyed by its file name. The optional `wxFile*` log gets
+a terse trace; the optional `EventHandler*` a `BuildProgressEvent` (type 0x1D,
+0x88 bytes) per entry. `AddFile()` keeps a path -> reference cache
+(`StringHashMap`, modeled with `std::unordered_map`) so a file added twice is
+stored once; the two embedded-exe container types (7/8) use different
+reference formats (`<ext>#<vol>#<index %06d>#` / `<ext>#<vol>#m00000#`).
+
+**`TTempFile`**: `AddTempFile(a, b)` is `tempDir + a + b` (nothing between),
+recorded in a static list for `DeleteTempFiles()`. The original concatenates
+`wxStandardPaths::GetTempDir()` directly, which has no trailing separator;
+a separator is added here when missing (deviation noted in the code).
+
+**Still unreversed:** `TMemoryBuffer::Compress()/Uncompress()` are the engine's
+zlib wrappers (zlib isn't available in this build environment), so compressed
+content flags (1/0x10) can be read/written structurally but not actually
+(de)compressed yet - `PasteData()` with the compress flag fails cleanly.
+With that, `TMSavegame::SaveGame()` is a working path for bookmarks; a real
+savegame's screenshot still depends on the unmodeled GL backend.
+
+`TComposedFile`, `TTempFile` and `BuildProgressEvent` are `done`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

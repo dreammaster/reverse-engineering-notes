@@ -103,6 +103,19 @@ bool wxFile::Eof() const {
 	return !_handle || std::feof(_handle) != 0;
 }
 
+bool wxFileName::DirExists() const {
+	return wxDir::Exists(wxString(GetPath()));
+}
+
+bool wxFileName::Mkdir() const {
+	return Mkdir(wxString(GetPath()));
+}
+
+unsigned long wxFile::Write(const wxString &text) {
+	std::string narrow(static_cast<const char *>(text.mb_str()));
+	return Write(narrow.data(), static_cast<unsigned long>(narrow.size()));
+}
+
 bool wxFileName::MakeAbsolute() {
 	std::error_code ec;
 	std::filesystem::path absolute = std::filesystem::absolute(_fullPath, ec);

@@ -78,9 +78,10 @@ public:
 	// no null terminator.
 	TMemoryBuffer &operator<<(const char *value);
 	TMemoryBuffer &operator<<(unsigned char value);
-	// Confirmed (asm lines 550215-550323 for short): appends sizeof(value)
-	// raw bytes in the platform's native (little-endian) byte order - same
-	// shape confirmed for the other numeric overloads below.
+	// Confirmed (asm lines 550213-550648): the numeric overloads append
+	// BIG-ENDIAN bytes - 2 for short/unsigned short, 4 for long/unsigned long
+	// (only the low 32 bits of the 64-bit `long`). (An earlier version of this
+	// header said native little-endian, sizeof(value) bytes; wrong.)
 	TMemoryBuffer &operator<<(short value);
 	TMemoryBuffer &operator<<(unsigned short value);
 	TMemoryBuffer &operator<<(long value);
@@ -91,7 +92,7 @@ public:
 	TMemoryBuffer &operator<<(const wxFileName &value);
 	TMemoryBuffer &operator<<(const wxString &value);
 	// Confirmed (asm lines 551062-551322): narrow-converts, appends a 2-byte
-	// little-endian length prefix (via the same logic as operator<<(short)),
+	// big-endian length prefix (via the same logic as operator<<(short)),
 	// then the raw narrow bytes (no terminator).
 	void AppendStringWithLen(const wxString &value);
 

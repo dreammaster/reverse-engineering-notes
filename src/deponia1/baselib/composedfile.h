@@ -9,28 +9,30 @@
 // writer. The on-disk format (confirmed from InitEntries, which is the only
 // method traced in full depth):
 //   bytes 0-3:    magic "VIS3"
-//   bytes 4-7:    entry count (uint32 LE, via ByteStreamToLong)
+//   bytes 4-7:    entry count (big-endian, via ByteStreamToLong; at most
+//                 0x1869F)
 //   bytes 8-...:  entryCount*16 + 6 bytes, ENCRYPTED with TMemoryBuffer::
 //                 Decrypt(key, ...) where key is _encryptionKey - a real,
 //                 confirmed cipher (see TMemoryBuffer.h): a repeating
 //                 16-byte XOR keystream of MD5(key).
-//                 Decrypted layout: byte 0 must be 'H' (else "corrupt/wrong
-//                 key" error), bytes 1-2 unidentified (version/flags?),
-//                 then the actual 16-byte-per-entry directory table.
-// The exact field packing *within* each 16-byte on-disk entry record was
-// not traced (InitEntries is ~1200 lines; this reversed the header/
-// encryption framing and the in-memory grow/copy logic, not the final
-// unpack loop) - LoadEntriesFromDisk() below is a placeholder for that step.
+//                 Decrypted layout: "HDR", then entryCount 16-byte records
+//                 {offset, stored size, uncompressed length, content flags},
+//                 each a big-endian 32-bit value, then "END". Entry offsets
+//                 are relative to the end of this table (InitEntries() adds
+//                 the table's end position to each).
+// The entries carry no names: they're addressed by index, through the
+// "<ext>#<type letter>#<offset>#<index>#" sprite/file reference syntax (see
+// GetContainerFileExtension()).
 //
-// The write/authoring-side methods (WriteToDisk, Export, AddFile, AddData,
-// AddComposedFile - Visionaire Studio's export tooling, not needed to read
-// a shipped game's data files) are stubbed at signature level only; the
-// read path (Open, GetMemoryFile, Init, InitEntries, GetEntry) got the
-// deeper pass since it's what a shipped game actually exercises.
+// All 20 methods are implemented in full (Deponia_Linux.asm lines 541459-
+// 548209) - the read path (InitEntries, Open, GetMemoryFile) and the
+// authoring path (InitForWrite, AddData, AddFile, AddComposedFile, WriteToDisk,
+// Export) the savegame writer uses.
 #pragma once
 
 #include <functional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "TMemoryBuffer.h"
@@ -58,26 +60,29 @@ enum class TContainerTypeEnum {
 	kEmbeddedInExecutableAlt = 8,
 };
 
-// 48 bytes in the original: a single-pointer COW std::wstring handle at
-// +0x00 (see NOTES.md on this binary's pre-C++11 string ABI), an unnamed
-// qword at +0x08 whose purpose wasn't determined, then 4 more qwords
-// (+0x10, +0x18=field18, +0x20=field20, +0x28=field28 - names record their
-// original offset, per this project's usual placeholder convention).
-// GetMemoryFile() (Deponia_Linux.asm lines 545892-545893) confirms the
-// meaning of two of these: the qword at +0x10 (not separately modeled here
-// yet - GetMemoryFile() reads it straight off a raw `_entries.data() +
-// index*48` pointer rather than through this struct) is the entry's byte
-// offset within the container file (passed to wxFile::Seek()), and field18
-// is the entry's byte size (passed to TMemoryFile::Reserve() and used as
-// the read-loop's target length). field20/field28's meaning is still
-// unknown.
+// 48 bytes in the original (0x30): the entry's file name (+0x00, a wxFileName -
+// a single-pointer COW std::wstring handle, see NOTES.md on this binary's
+// pre-C++11 string ABI; entries read from a container carry none, since the
+// directory stores only offsets), a pointer to in-memory source data (+0x08,
+// set by AddData() for an entry written from a buffer), the entry's byte
+// offset (+0x10 - relative to the end of the directory table in a container
+// being read, which InitEntries() makes absolute), its stored byte size
+// (+0x18), its uncompressed length (+0x20) and its content flags (+0x28, a
+// TFileContentFlags mask - see baselib/file.h).
 struct SEntryInfo {
 	std::wstring filename;
-	long long containerOffset = 0;  // +0x10 in the original; confirmed by GetMemoryFile()
-	long long byteSize = 0;         // +0x18 in the original (was field18); confirmed by GetMemoryFile()
-	long long field20 = 0;
-	long long field28 = 0;
+	TMemoryBuffer *memoryData = nullptr;
+	long long containerOffset = 0;
+	long long byteSize = 0;
+	long long uncompressedLength = 0;
+	long long contentFlags = 0;
 };
+
+// The binary's own StringHashMap<wxString,wxString,wchar_t const*,StringHash<
+// wchar_t const*>> (a custom chained hash map keyed by a wide string) - only
+// its use as a "file path -> name already assigned" cache by TComposedFile::
+// AddFile() is confirmed, so it's modeled with the standard container.
+typedef std::unordered_map<std::wstring, std::wstring> StringHashMap;
 
 class TComposedFile {
 public:
@@ -112,23 +117,33 @@ public:
 	bool Open(TFile &outFile, const wxFileName &composedFilePath, long index);
 	bool GetMemoryFile(TMemoryFile &outFile, const wxFileName &composedFilePath, long index);
 
-	// Write/authoring path - signature-level only, see file header comment.
-	bool WriteToDisk(const wxFileName &path, const wxString &password, wxFile *file, EventHandler *handler);
-	bool WriteToDisk(const wxString &password, wxFile *file, EventHandler *handler);
+	// Writes the composed file to `path` (the container extension is applied;
+	// the directory is created if need be): the optional embedded exe, the
+	// directory placeholder, every entry's data (from its buffer or file,
+	// compressed/encrypted per its content flags), then the real directory
+	// (encrypted with `password`) and, when embedding, the exe-length footer.
+	// `log` (optional) receives a progress trace; `handler` (optional) gets a
+	// BuildProgressEvent per entry.
+	bool WriteToDisk(const wxFileName &path, const wxString &password, wxFile *log, EventHandler *handler);
+	bool WriteToDisk(const wxString &password, wxFile *log, EventHandler *handler);
+	// Extracts entry `index` to a new temp file (named from `a` and `b`) and
+	// returns its path in `outPath`.
 	bool Export(long index, wxFileName &outPath, const wxString &a, const wxString &b);
+	// Appends an entry whose data is `data` (kept by pointer - the buffer must
+	// outlive WriteToDisk(); it's compressed/encrypted in place there); returns
+	// true and `outName` = `name` with its extension replaced by the
+	// "<ext>#<type letter>#<offset>#<index>#" reference this entry is looked up
+	// by.
 	int AddData(const TMemoryBuffer &data, wxFileName name, wxFileName &outName, int flags);
-	// Real signature also takes a
-	// StringHashMap<wxString,wxString,wchar_t const*,StringHash<wchar_t
-	// const*>>& (an engine-specific hash map, not reversed); omitted since
-	// this method is a stub with no callers yet.
-	int AddFile(wxFileName file, wxFileName &baseDir, int flags);
+	// The same for a file on disk. `names` caches the references already
+	// handed out (by file path), so a file added twice is stored once.
+	int AddFile(wxFileName file, wxFileName &outName, StringHashMap &names, int flags);
+	// Appends the path a composed file would be written to (name + container
+	// extension) to `outList`.
 	bool AddComposedFile(const wxFileName &file, std::vector<wxFileName> &outList);
 
 private:
 	bool InitEntries();
-	// Placeholder for unpacking the encrypted 16-byte-per-record directory
-	// table into _entries - see the class comment. Not reversed.
-	void LoadEntriesFromDisk(const unsigned char *data, unsigned long entryCount);
 
 	std::vector<SEntryInfo> _entries;
 	std::wstring _composedFilePath;  // +0x18 in the original

@@ -21,10 +21,10 @@
 // Bookmarks (isBookmark) share the file naming scheme but save no screenshot
 // and, once constructed, never become active.
 //
-// The write path (SaveGame()) is implemented against TComposedFile/
-// TTempFile/the savegame writer's call shapes, all of which are themselves
-// still unreversed stubs, so it currently reports success without writing
-// anything.
+// SaveGame() writes through TComposedFile::WriteToDisk() (a real, tested
+// implementation); the screenshot it saves comes from the unmodeled GL
+// backend's captured frame, so with the current stub backend a real
+// savegame's snapshot step fails (bookmarks, which save no screenshot, work).
 #pragma once
 
 #include <vector>
