@@ -440,6 +440,12 @@ Chapter 2's sweep has a Survival-tiered pass for "travel ailment" places and fir
 its counter reaches 40; Chapter 3 fires them above 40, drops the Survival pass and adds a cold pass (effects
 0x2E/0x2F, DWARVEN FUR protects, one random member hit harder). See `ailment.h`.
 
+### Mount flight gains a page restriction in Chapter 3
+
+`TryTravelToClickedMapCell` in Chapter 3 refuses a flight to a different map page when the origin or destination
+page's attribute (per-page table, byte 5) is 2; Chapter 2 only hides such cells from the drawn box. Everything else
+in `RevealMapRegion` is identical. See `mount.h`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a

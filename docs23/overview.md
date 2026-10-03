@@ -11390,6 +11390,14 @@ at the end of `WORLD.DAT` -- which also contains the four ready-made heroes of t
 substantially (cold pass, DWARVEN FUR). The effect application itself is the already-implemented icon-bar
 pipeline. `ailment.c`/`.h`, `test_ailment.c`.
 
+### Session update: mount flight, the per-page table and the fog reveal (`mount.c`, `explore.c`)
+
+`RevealMapRegion`, long described as a scry/locate special ability (and "plausibly weather" before that), turned out
+to be what the transport-teacher abilities do once learned: the mount-flight command. Its rules (charges, time of
+day, Navigation-sized map box, click-to-fly verdicts) and a Chapter 3 page restriction are `mount.c`; the per-page
+attribute table lives in WORLD.DAT (`dump_pagetable_offset.py`, both games). The fog bitmap helpers and the
+three-wide reveal ahead of the party are `explore.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

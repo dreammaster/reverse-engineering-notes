@@ -1024,6 +1024,23 @@ draw the fixed tile 0x13, explored ones their own two tile layers; the party's a
 picture with `DrawPlayerPositionMarker` for world x 160..639, y 48..239. All
 instruction-identical in both games apart from the one bypass bit. `mapview.c`.
 
+### Mounts in use, the per-page table and the fog-of-war reveal (`mount.c`, `explore.c`)
+
+**Correction: `RevealMapRegion` is the mount-flight command, not a "Locate/Scout/Magic-Mapping" spell.** The
+four special abilities (PEGASUS, GIANT EAGLE, FLYING RUG, MAGIC DRAGON -- the table at `DS:0x77C6` that the
+transport teachers sell from) each have a daily charge count (1, 2, 4, 4; `ResetDailyAbilityCharges` zeroes
+`+0xB6..` every new day) and a time-of-day word (bit 1 = night, bit 2 = day; 07:00-19:00 inclusive is day: the
+RUG flies only by day, the DRAGON only by night). The command shows an 11x7 to 27x17 box of the map (size from
+the party's average Navigation: 65/80/95) and the player clicks an explored cell to fly there
+(`TryTravelToClickedMapCell`: refused for unexplored, impassable, trap/trigger cells; a charge is spent on
+success). **The per-page table**: WORLD.DAT `0x70800` (Chapter 2, 120 records) / `0x83400` (Chapter 3, 140),
+6-byte records indexed by page `(y / 24) * 20 + x / 40`; byte 5 is a page attribute 0/1/2 (Chapter 2: 48/25/47
+pages) that decides which other pages' cells the box shows (only from an attribute-1 page, never into a 2) and,
+in Chapter 3 only, forbids flights to another page when either end is attribute 2.
+
+The fog-of-war bitmap (MSB-first, one record per row) and `RevealCellsAroundPlayer` (each step marks the party's
+row/column and the one ahead, three cells wide, in the order -1, +1, 0) are `explore.c`.
+
 ### The party roster screen (`ShowWorldMap`)
 
 `ShowWorldMap` (the world-map screen, called from `RunTitleScreen`)
