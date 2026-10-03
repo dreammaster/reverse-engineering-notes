@@ -49,3 +49,5 @@ typedef struct {
 } Mm3Character;
 #pragma pack(pop)
 _Static_assert(sizeof(Mm3Character) == 0x12F, "Mm3Character size");
+/* Verified against MAZE.CHR of MM3.CUR with tools/mm3_chars.py (the 30 premade characters decode sensibly):
+ * sex 0 male 1 female; race 0 human 1 elf 2 dwarf 3 gnome 4 half-orc; alignment 0 good 1 neutral 2 evil. */
