@@ -37491,16 +37491,7 @@ sub_284C8       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_18_AcidStream. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_56_FantasticFreeze. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_69_HolyWord. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_284DC       proc far                ; CODE XREF: spellsDialog:loc_4FC2D↓P
-                                        ; castItemSpell:loc_50177↓P
-                jmp     sub_4D691
-sub_284DC       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_53_TownPortal. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -37568,16 +37559,7 @@ sub_2854A       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_03_FlyingFist. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_02_FirstAid. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_31_WalkOnWater. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2855E       proc far                ; CODE XREF: spellsDialog:loc_4FCA7↓P
-                                        ; castItemSpell:loc_501BA↓P
-                jmp     sub_4D985
-sub_2855E       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_61_Etherealize. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_59_RaiseDead. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_30_Heroism. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_36_Fireball. PRESS NUMPAD+ TO EXPAND]
@@ -37585,16 +37567,7 @@ sub_2855E       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_sharedHandler. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_16_TurnUndead. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_07_CureWounds. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28586       proc far                ; CODE XREF: spellsDialog:loc_4FB98↓P
-                                        ; castItemSpell:loc_50107↓P
-                jmp     sub_4D2F8
-sub_28586       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_45_Teleport. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_54_StoneToFlesh. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_22_Levitate. PRESS NUMPAD+ TO EXPAND]
 
@@ -37628,16 +37601,7 @@ sub_285CC       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_72_Inferno. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_55_RechargeItem. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285DB       proc far                ; CODE XREF: spellsDialog:loc_4FBEB↓P
-                                        ; castItemSpell:loc_5013B↓P
-                jmp     sub_4D608
-sub_285DB       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_50_SuperShelter. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_57_Duplication. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_44_DeadlySwarm. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_29_Immobilize. PRESS NUMPAD+ TO EXPAND]
@@ -37645,18 +37609,7 @@ sub_285DB       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_27_NatureSCure. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_06_Revitalize. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_37_DetectMonster. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28603       proc far                ; CODE XREF: spellsDialog:loc_4FB4D↓P
-                                        ; castItemSpell:loc_500F2↓P
-                jmp     sub_4D1E4
-sub_28603       endp
-
-stub11          ends
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_41_NaturesGate. PRESS NUMPAD+ TO EXPAND]
 ; ===========================================================================
 
 ; Segment type: Pure code
@@ -41671,7 +41624,7 @@ aLloydsIcn      db 'lloyds.icn',0       ; DATA XREF: spellLloydsBeacon+27↓o
                 db 6Eh, 2Eh, 69h, 63h, 6Eh, 0, 5, 25h, 70h, 3, 63h, 44h
                 db 65h, 74h, 65h, 63h, 74h, 20h, 4Dh, 6Fh, 6Eh, 73h, 74h
                 db 65h, 72h, 73h, 0
-aC_19           db 3,'c'                ; DATA XREF: sub_4D2F8+46↓o
+aC_19           db 3,'c'                ; DATA XREF: Spell_45_Teleport+46↓o
                 db  54h ; T
                 db  65h ; e
                 db  6Ch ; l
@@ -94889,9 +94842,10 @@ Spell_40_CureDisease endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tests maze header +19h
 ; Attributes: bp-based frame
 
-sub_4D1E4       proc far                ; CODE XREF: sub_28603↑J
+Spell_41_NaturesGate proc far           ; CODE XREF: j_Spell_41_NaturesGate↑J
                 push    bp
                 mov     bp, sp
                 mov     al, Maze_curSlot
@@ -94908,7 +94862,7 @@ sub_4D1E4       proc far                ; CODE XREF: sub_28603↑J
                 jmp     short loc_4D267
 ; ---------------------------------------------------------------------------
 
-loc_4D202:                              ; CODE XREF: sub_4D1E4+16↑j
+loc_4D202:                              ; CODE XREF: Spell_41_NaturesGate+16↑j
                 mov     ax, 33h ; '3'
                 push    ax
                 call    sub_1B16B
@@ -94948,10 +94902,10 @@ loc_4D202:                              ; CODE XREF: sub_4D1E4+16↑j
                 call    mazeUpdateSlot
                 mov     byte_287A5, 1
 
-loc_4D267:                              ; CODE XREF: sub_4D1E4+1C↑j
+loc_4D267:                              ; CODE XREF: Spell_41_NaturesGate+1C↑j
                 pop     bp
                 retf
-sub_4D1E4       endp
+Spell_41_NaturesGate endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95041,9 +94995,10 @@ Spell_44_DeadlySwarm endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tests maze header +14h (by header usage)
 ; Attributes: bp-based frame
 
-sub_4D2F8       proc far                ; CODE XREF: sub_28586↑J
+Spell_45_Teleport proc far              ; CODE XREF: j_Spell_45_Teleport↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -95061,14 +95016,14 @@ var_2           = word ptr -2
                 or      ax, ax
                 jnz     short loc_4D31A
 
-loc_4D313:                              ; CODE XREF: sub_4D2F8+103↓j
-                                        ; sub_4D2F8+14D↓j ...
+loc_4D313:                              ; CODE XREF: Spell_45_Teleport+103↓j
+                                        ; Spell_45_Teleport+14D↓j ...
                 push    cs
                 call    near ptr Screen_saveBackground
                 jmp     loc_4D508
 ; ---------------------------------------------------------------------------
 
-loc_4D31A:                              ; CODE XREF: sub_4D2F8+19↑j
+loc_4D31A:                              ; CODE XREF: Spell_45_Teleport+19↑j
                 call    sub_28144
                 call    j_setSoundAddress
                 mov     al, Engine_mode
@@ -95127,7 +95082,7 @@ loc_4D31A:                              ; CODE XREF: sub_4D2F8+19↑j
                 jmp     loc_4D508
 ; ---------------------------------------------------------------------------
 
-loc_4D3AA:                              ; CODE XREF: sub_4D2F8+AD↑j
+loc_4D3AA:                              ; CODE XREF: Spell_45_Teleport+AD↑j
                 mov     al, Party_facing
                 mov     ah, 0
                 mov     bx, ax
@@ -95136,12 +95091,12 @@ loc_4D3AA:                              ; CODE XREF: sub_4D2F8+AD↑j
                 jmp     def_4D3BB       ; jumptable 0004D3BB default case
 ; ---------------------------------------------------------------------------
 
-loc_4D3B9:                              ; CODE XREF: sub_4D2F8+BC↑j
+loc_4D3B9:                              ; CODE XREF: Spell_45_Teleport+BC↑j
                 shl     bx, 1
                 jmp     cs:jpt_4D3BB[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_4D3C0:                              ; CODE XREF: sub_4D2F8+C3↑j
+loc_4D3C0:                              ; CODE XREF: Spell_45_Teleport+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
                 cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 0
                 jz      short loc_4D3CC
@@ -95149,10 +95104,10 @@ loc_4D3C0:                              ; CODE XREF: sub_4D2F8+C3↑j
                 jmp     short loc_4D3CF
 ; ---------------------------------------------------------------------------
 
-loc_4D3CC:                              ; CODE XREF: sub_4D2F8+CD↑j
+loc_4D3CC:                              ; CODE XREF: Spell_45_Teleport+CD↑j
                 mov     ax, 7777h
 
-loc_4D3CF:                              ; CODE XREF: sub_4D2F8+D2↑j
+loc_4D3CF:                              ; CODE XREF: Spell_45_Teleport+D2↑j
                 push    ax
                 mov     al, Party_y
                 mov     ah, 0
@@ -95170,24 +95125,24 @@ loc_4D3CF:                              ; CODE XREF: sub_4D2F8+D2↑j
                 jmp     short loc_4D3F6
 ; ---------------------------------------------------------------------------
 
-loc_4D3F3:                              ; CODE XREF: sub_4D2F8+F5↑j
+loc_4D3F3:                              ; CODE XREF: Spell_45_Teleport+F5↑j
                 mov     ax, 1111h
 
-loc_4D3F6:                              ; CODE XREF: sub_4D2F8+F9↑j
+loc_4D3F6:                              ; CODE XREF: Spell_45_Teleport+F9↑j
                 pop     dx
                 cmp     dx, ax
                 jnz     short loc_4D3FE
                 jmp     loc_4D313
 ; ---------------------------------------------------------------------------
 
-loc_4D3FE:                              ; CODE XREF: sub_4D2F8+101↑j
+loc_4D3FE:                              ; CODE XREF: Spell_45_Teleport+101↑j
                 mov     al, Party_y
                 add     al, byte ptr [bp+var_2]
                 mov     Party_y, al
                 jmp     def_4D3BB       ; jumptable 0004D3BB default case
 ; ---------------------------------------------------------------------------
 
-loc_4D40A:                              ; CODE XREF: sub_4D2F8+C3↑j
+loc_4D40A:                              ; CODE XREF: Spell_45_Teleport+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
                 cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 1
                 jz      short loc_4D416
@@ -95195,10 +95150,10 @@ loc_4D40A:                              ; CODE XREF: sub_4D2F8+C3↑j
                 jmp     short loc_4D419
 ; ---------------------------------------------------------------------------
 
-loc_4D416:                              ; CODE XREF: sub_4D2F8+117↑j
+loc_4D416:                              ; CODE XREF: Spell_45_Teleport+117↑j
                 mov     ax, 7777h
 
-loc_4D419:                              ; CODE XREF: sub_4D2F8+11C↑j
+loc_4D419:                              ; CODE XREF: Spell_45_Teleport+11C↑j
                 push    ax
                 mov     al, Party_y
                 mov     ah, 0
@@ -95216,24 +95171,24 @@ loc_4D419:                              ; CODE XREF: sub_4D2F8+11C↑j
                 jmp     short loc_4D440
 ; ---------------------------------------------------------------------------
 
-loc_4D43D:                              ; CODE XREF: sub_4D2F8+13F↑j
+loc_4D43D:                              ; CODE XREF: Spell_45_Teleport+13F↑j
                 mov     ax, 1111h
 
-loc_4D440:                              ; CODE XREF: sub_4D2F8+143↑j
+loc_4D440:                              ; CODE XREF: Spell_45_Teleport+143↑j
                 pop     dx
                 cmp     dx, ax
                 jnz     short loc_4D448
                 jmp     loc_4D313
 ; ---------------------------------------------------------------------------
 
-loc_4D448:                              ; CODE XREF: sub_4D2F8+14B↑j
+loc_4D448:                              ; CODE XREF: Spell_45_Teleport+14B↑j
                 mov     al, Party_y
                 sub     al, byte ptr [bp+var_2]
                 mov     Party_y, al
                 jmp     def_4D3BB       ; jumptable 0004D3BB default case
 ; ---------------------------------------------------------------------------
 
-loc_4D454:                              ; CODE XREF: sub_4D2F8+C3↑j
+loc_4D454:                              ; CODE XREF: Spell_45_Teleport+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
                 cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 3
                 jz      short loc_4D460
@@ -95241,10 +95196,10 @@ loc_4D454:                              ; CODE XREF: sub_4D2F8+C3↑j
                 jmp     short loc_4D463
 ; ---------------------------------------------------------------------------
 
-loc_4D460:                              ; CODE XREF: sub_4D2F8+161↑j
+loc_4D460:                              ; CODE XREF: Spell_45_Teleport+161↑j
                 mov     ax, 7777h
 
-loc_4D463:                              ; CODE XREF: sub_4D2F8+166↑j
+loc_4D463:                              ; CODE XREF: Spell_45_Teleport+166↑j
                 push    ax
                 mov     al, Party_y
                 mov     ah, 0
@@ -95262,23 +95217,23 @@ loc_4D463:                              ; CODE XREF: sub_4D2F8+166↑j
                 jmp     short loc_4D48A
 ; ---------------------------------------------------------------------------
 
-loc_4D487:                              ; CODE XREF: sub_4D2F8+189↑j
+loc_4D487:                              ; CODE XREF: Spell_45_Teleport+189↑j
                 mov     ax, 1111h
 
-loc_4D48A:                              ; CODE XREF: sub_4D2F8+18D↑j
+loc_4D48A:                              ; CODE XREF: Spell_45_Teleport+18D↑j
                 pop     dx
                 cmp     dx, ax
                 jnz     short loc_4D492
                 jmp     loc_4D313
 ; ---------------------------------------------------------------------------
 
-loc_4D492:                              ; CODE XREF: sub_4D2F8+195↑j
+loc_4D492:                              ; CODE XREF: Spell_45_Teleport+195↑j
                 mov     al, Party_x
                 sub     al, byte ptr [bp+var_2]
                 jmp     short loc_4D4DE
 ; ---------------------------------------------------------------------------
 
-loc_4D49A:                              ; CODE XREF: sub_4D2F8+C3↑j
+loc_4D49A:                              ; CODE XREF: Spell_45_Teleport+C3↑j
                                         ; DATA XREF: ovl11:jpt_4D3BB↓o
                 cmp     Maze_wrapMode, 0 ; jumptable 0004D3BB case 2
                 jz      short loc_4D4A6
@@ -95286,10 +95241,10 @@ loc_4D49A:                              ; CODE XREF: sub_4D2F8+C3↑j
                 jmp     short loc_4D4A9
 ; ---------------------------------------------------------------------------
 
-loc_4D4A6:                              ; CODE XREF: sub_4D2F8+1A7↑j
+loc_4D4A6:                              ; CODE XREF: Spell_45_Teleport+1A7↑j
                 mov     ax, 7777h
 
-loc_4D4A9:                              ; CODE XREF: sub_4D2F8+1AC↑j
+loc_4D4A9:                              ; CODE XREF: Spell_45_Teleport+1AC↑j
                 push    ax
                 mov     al, Party_y
                 mov     ah, 0
@@ -95307,25 +95262,25 @@ loc_4D4A9:                              ; CODE XREF: sub_4D2F8+1AC↑j
                 jmp     short loc_4D4D0
 ; ---------------------------------------------------------------------------
 
-loc_4D4CD:                              ; CODE XREF: sub_4D2F8+1CF↑j
+loc_4D4CD:                              ; CODE XREF: Spell_45_Teleport+1CF↑j
                 mov     ax, 1111h
 
-loc_4D4D0:                              ; CODE XREF: sub_4D2F8+1D3↑j
+loc_4D4D0:                              ; CODE XREF: Spell_45_Teleport+1D3↑j
                 pop     dx
                 cmp     dx, ax
                 jnz     short loc_4D4D8
                 jmp     loc_4D313
 ; ---------------------------------------------------------------------------
 
-loc_4D4D8:                              ; CODE XREF: sub_4D2F8+1DB↑j
+loc_4D4D8:                              ; CODE XREF: Spell_45_Teleport+1DB↑j
                 mov     al, Party_x
                 add     al, byte ptr [bp+var_2]
 
-loc_4D4DE:                              ; CODE XREF: sub_4D2F8+1A0↑j
+loc_4D4DE:                              ; CODE XREF: Spell_45_Teleport+1A0↑j
                 mov     Party_x, al
 
-def_4D3BB:                              ; CODE XREF: sub_4D2F8+BE↑j
-                                        ; sub_4D2F8+10F↑j ...
+def_4D3BB:                              ; CODE XREF: Spell_45_Teleport+BE↑j
+                                        ; Spell_45_Teleport+10F↑j ...
                 call    mazeUpdateSlot  ; jumptable 0004D3BB default case
                 mov     byte_287A5, 1
                 mov     ax, 96h
@@ -95341,15 +95296,15 @@ def_4D3BB:                              ; CODE XREF: sub_4D2F8+BE↑j
                 call    sub_1B16B
                 pop     cx
 
-loc_4D508:                              ; CODE XREF: sub_4D2F8+1F↑j
-                                        ; sub_4D2F8+AF↑j
+loc_4D508:                              ; CODE XREF: Spell_45_Teleport+1F↑j
+                                        ; Spell_45_Teleport+AF↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D2F8       endp
+Spell_45_Teleport endp
 
 ; ---------------------------------------------------------------------------
-jpt_4D3BB       dw offset loc_4D3C0     ; DATA XREF: sub_4D2F8+C3↑r
+jpt_4D3BB       dw offset loc_4D3C0     ; DATA XREF: Spell_45_Teleport+C3↑r
                 dw offset loc_4D40A     ; jump table for switch statement
                 dw offset loc_4D49A
                 dw offset loc_4D454
@@ -95498,9 +95453,10 @@ Spell_49_DragonBreath endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tests maze header +17h
 ; Attributes: bp-based frame
 
-sub_4D608       proc far                ; CODE XREF: sub_285DB↑J
+Spell_50_SuperShelter proc far          ; CODE XREF: j_Spell_50_SuperShelter↑J
 
 var_2           = word ptr -2
 
@@ -95522,7 +95478,7 @@ var_2           = word ptr -2
                 jmp     short loc_4D64A
 ; ---------------------------------------------------------------------------
 
-loc_4D628:                              ; CODE XREF: sub_4D608+18↑j
+loc_4D628:                              ; CODE XREF: Spell_50_SuperShelter+18↑j
                 mov     al, Engine_mode
                 mov     ah, 0
                 mov     [bp+var_2], ax
@@ -95535,11 +95491,11 @@ loc_4D628:                              ; CODE XREF: sub_4D608+18↑j
                 mov     al, byte ptr [bp+var_2]
                 mov     Engine_mode, al
 
-loc_4D64A:                              ; CODE XREF: sub_4D608+1E↑j
+loc_4D64A:                              ; CODE XREF: Spell_50_SuperShelter+1E↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D608       endp
+Spell_50_SuperShelter endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95588,9 +95544,10 @@ Spell_52_CreateFood endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tests maze header +18h
 ; Attributes: bp-based frame
 
-sub_4D691       proc far                ; CODE XREF: sub_284DC↑J
+Spell_53_TownPortal proc far            ; CODE XREF: j_Spell_53_TownPortal↑J
 
 var_2           = word ptr -2
 
@@ -95613,7 +95570,7 @@ var_2           = word ptr -2
                 jmp     loc_4D75E
 ; ---------------------------------------------------------------------------
 
-loc_4D6B3:                              ; CODE XREF: sub_4D691+19↑j
+loc_4D6B3:                              ; CODE XREF: Spell_53_TownPortal+19↑j
                 call    sub_28144
                 call    j_setSoundAddress
                 mov     al, Engine_mode
@@ -95649,7 +95606,7 @@ loc_4D6B3:                              ; CODE XREF: sub_4D691+19↑j
                 call    Music_deinit
                 add     sp, 14h
 
-loc_4D705:                              ; CODE XREF: sub_4D691+88↓j
+loc_4D705:                              ; CODE XREF: Spell_53_TownPortal+88↓j
                 mov     ax, 0A0h
                 push    ax              ; format
                 mov     ax, 1
@@ -95684,13 +95641,13 @@ loc_4D705:                              ; CODE XREF: sub_4D691+88↓j
                 call    sub_1B925
                 mov     byte_287A5, 1
 
-loc_4D75E:                              ; CODE XREF: sub_4D691+1F↑j
-                                        ; sub_4D691+A1↑j
+loc_4D75E:                              ; CODE XREF: Spell_53_TownPortal+1F↑j
+                                        ; Spell_53_TownPortal+A1↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D691       endp
+Spell_53_TownPortal endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -96034,9 +95991,10 @@ Spell_60_HalfForMe endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tests maze header +1Ah
 ; Attributes: bp-based frame
 
-sub_4D985       proc far                ; CODE XREF: sub_2855E↑J
+Spell_61_Etherealize proc far           ; CODE XREF: j_Spell_61_Etherealize↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -96057,7 +96015,7 @@ var_2           = word ptr -2
                 jmp     loc_4DA3B
 ; ---------------------------------------------------------------------------
 
-loc_4D9A4:                              ; CODE XREF: sub_4D985+1A↑j
+loc_4D9A4:                              ; CODE XREF: Spell_61_Etherealize+1A↑j
                 mov     al, Party_x
                 mov     ah, 0
                 mov     [bp+var_2], ax
@@ -96116,17 +96074,17 @@ loc_4D9A4:                              ; CODE XREF: sub_4D985+1A↑j
                 jmp     short loc_4DA3F
 ; ---------------------------------------------------------------------------
 
-loc_4DA3B:                              ; CODE XREF: sub_4D985+1C↑j
-                                        ; sub_4D985+69↑j
+loc_4DA3B:                              ; CODE XREF: Spell_61_Etherealize+1C↑j
+                                        ; Spell_61_Etherealize+69↑j
                 push    cs
                 call    near ptr Screen_saveBackground
 
-loc_4DA3F:                              ; CODE XREF: sub_4D985+B4↑j
+loc_4DA3F:                              ; CODE XREF: Spell_61_Etherealize+B4↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4D985       endp
+Spell_61_Etherealize endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -100718,7 +100676,7 @@ loc_4FB4A:                              ; CODE XREF: spellsDialog+3F6↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FB4D:                              ; CODE XREF: spellsDialog+3D7↑j
-                call    sub_28603
+                call    j_Spell_41_NaturesGate
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -100763,7 +100721,7 @@ loc_4FB95:                              ; CODE XREF: spellsDialog+441↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FB98:                              ; CODE XREF: spellsDialog+422↑j
-                call    sub_28586
+                call    j_Spell_45_Teleport
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -100814,7 +100772,7 @@ loc_4FBE8:                              ; CODE XREF: spellsDialog+494↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FBEB:                              ; CODE XREF: spellsDialog+475↑j
-                call    sub_285DB
+                call    j_Spell_50_SuperShelter
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -100853,7 +100811,7 @@ loc_4FC2B:                              ; CODE XREF: spellsDialog+4D7↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FC2D:                              ; CODE XREF: spellsDialog+4B8↑j
-                call    sub_284DC
+                call    j_Spell_53_TownPortal
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -100929,7 +100887,7 @@ loc_4FC95:                              ; CODE XREF: spellsDialog:loc_4FA09↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FCA7:                              ; CODE XREF: spellsDialog+522↑j
-                call    sub_2855E
+                call    j_Spell_61_Etherealize
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -101532,7 +101490,7 @@ loc_500E5:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_500F2:                              ; CODE XREF: castItemSpell+18A↑j
-                call    sub_28603
+                call    j_Spell_41_NaturesGate
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101545,7 +101503,7 @@ loc_500FA:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_50107:                              ; CODE XREF: castItemSpell+19F↑j
-                call    sub_28586
+                call    j_Spell_45_Teleport
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101582,7 +101540,7 @@ loc_5012F:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_5013B:                              ; CODE XREF: castItemSpell+1D4↑j
-                call    sub_285DB
+                call    j_Spell_50_SuperShelter
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101625,7 +101583,7 @@ loc_5016B:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_50177:                              ; CODE XREF: castItemSpell+210↑j
-                call    sub_284DC
+                call    j_Spell_53_TownPortal
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -101674,7 +101632,7 @@ loc_501B1:                              ; CODE XREF: castItemSpell+98↑j
 ; ---------------------------------------------------------------------------
 
 loc_501BA:                              ; CODE XREF: castItemSpell+24C↑j
-                call    sub_2855E
+                call    j_Spell_61_Etherealize
                 jmp     short def_4FF71 ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 

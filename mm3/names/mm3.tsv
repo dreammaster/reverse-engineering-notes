@@ -702,17 +702,21 @@
 4D128	Spell_38_AcidSpray	spell effect routine for 'Acid Spray' (id 38, via spellsDialog's switch)
 4D153	Spell_39_ColdRay	spell effect routine for 'Cold Ray' (id 39, via spellsDialog's switch)
 4D19C	Spell_40_CureDisease	spell effect routine for 'Cure Disease' (id 40, via spellsDialog's switch)
+4D1E4	Spell_41_NaturesGate	tests maze header +19h
 4D269	Spell_42_TimeDistortion	spell effect routine for 'Time Distortion' (id 42, via spellsDialog's switch)
 4D2A2	Spell_43_FeebleMind	spell effect routine for 'Feeble Mind' (id 43, via spellsDialog's switch)
 4D2CD	Spell_44_DeadlySwarm	spell effect routine for 'Deadly Swarm' (id 44, via spellsDialog's switch)
+4D2F8	Spell_45_Teleport	tests maze header +14h (by header usage)
 4D4E1	def_4D3BB
 4D50C	jpt_4D3BB
 4D514	Spell_46_FingerOfDeath	spell effect routine for 'Finger of Death' (id 46, via spellsDialog's switch)
 4D53F	Spell_47_CureParalysis	spell effect routine for 'Cure Paralysis' (id 47, via spellsDialog's switch)
 4D587	Spell_48_Paralyze	spell effect routine for 'Paralyze' (id 48, via spellsDialog's switch)
 4D5B2	Spell_49_DragonBreath	spell effect routine for 'Dragon Breath' (id 49, via spellsDialog's switch)
+4D608	Spell_50_SuperShelter	tests maze header +17h
 4D64E	Spell_51_FieryFlail	spell effect routine for 'Fiery Flail' (id 51, via spellsDialog's switch)
 4D679	Spell_52_CreateFood	spell effect routine for 'Create Food' (id 52, via spellsDialog's switch)
+4D691	Spell_53_TownPortal	tests maze header +18h
 4D763	Spell_54_StoneToFlesh	spell effect routine for 'Stone to Flesh' (id 54, via spellsDialog's switch)
 4D7AB	Spell_55_RechargeItem	spell effect routine for 'Recharge Item' (id 55, via spellsDialog's switch)
 4D7F0	Spell_56_FantasticFreeze	spell effect routine for 'Fantastic Freeze' (id 56, via spellsDialog's switch)
@@ -720,6 +724,7 @@
 4D860	Spell_58_Disintegrate	spell effect routine for 'Disintegrate' (id 58, via spellsDialog's switch)
 4D88B	Spell_59_RaiseDead	spell effect routine for 'Raise Dead' (id 59, via spellsDialog's switch)
 4D901	Spell_60_HalfForMe	spell effect routine for 'Half for Me' (id 60, via spellsDialog's switch)
+4D985	Spell_61_Etherealize	tests maze header +1Ah
 4DA44	Spell_62_DancingSword	spell effect routine for 'Dancing Sword' (id 62, via spellsDialog's switch)
 4DA8D	Spell_63_PrismaticLight	spell effect routine for 'Prismatic Light' (id 63, via spellsDialog's switch)
 4DAC3	Spell_64_MoonRay	spell effect routine for 'Moon Ray' (id 64, via spellsDialog's switch)

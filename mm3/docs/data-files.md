@@ -78,7 +78,7 @@ in `MM3.CC`.)  `TEXTnn.MAZ` (text blocks per map, 64) and the graphics are in `M
 |---|---|---|
 | `000h` | 512 | 16x16 cells, one `u16` each: four wall nibbles (N/E/S/W as in Xeen's `_wallData`) |
 | `200h` | 256 | 16x16 cell flags / surface byte |
-| `300h` | 64 | header: map number, neighbour maps, flags, 16 wall types, 16 surface types, ... (not yet decoded) |
+| `300h` | 64 | header (below) |
 
 ### `MAZEnn.BIN`
 
@@ -142,3 +142,18 @@ operand counts in the shipped data:
 
 The names are inferred from the handler shapes (same jump table order and operand counts); the operand encodings of the `If`
 family (value widths 1-4 bytes selected by a type byte) are not yet written down.
+
+### `.DAT` header (offsets from `300h`; found from the code that reads it)
+
+| Off | Meaning |
+|---|---|
+| `00`-`06` | 7 bytes compared with the previous page's when changing slots (environment type) |
+| `07` | chance (%) that `run` succeeds in combat (`run`, `4B3D1`) -- e.g. `32h` = 50% |
+| `08` | map id of the neighbour page when y > 15 |
+| `09` | neighbour when x > 15 |
+| `0A` | neighbour when y < 0 |
+| `0B` | neighbour when x < 0 |
+| `0E` | resting allowed (`rest`: "Too dangerous to rest here!" when 0) |
+| `0F` | dismissing a character allowed ("Too dangerous to dismiss here!" when 0) |
+| `14` | Teleport allowed, `15` Lloyd's Beacon, `16` Time Distortion, `17` Super Shelter, `18` Town Portal, `19` Nature's Gate, `1A` Etherealize (each tested by that spell's routine) |
+| `0C`, `0D`, `10`-`13`, `1B`-`1E` | used by tavern / death / other code (not yet identified); in the shipped files `11h`-`13h` and `1Bh`-`1Eh` are typically `64h` |

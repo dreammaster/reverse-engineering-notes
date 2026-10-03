@@ -14186,6 +14186,7 @@ static Bytes_2(void) {
 	create_insn	(0X284D7);
 	set_name	(0X284D7,	"j_Spell_69_HolyWord");
 	create_insn	(0X284DC);
+	set_name	(0X284DC,	"j_Spell_53_TownPortal");
 	create_insn	(0X284E1);
 	create_insn	(0X284E6);
 	set_name	(0X284E6,	"j_Spell_49_DragonBreath");
@@ -14232,6 +14233,7 @@ static Bytes_2(void) {
 	create_insn	(0X28559);
 	set_name	(0X28559,	"j_Spell_31_WalkOnWater");
 	create_insn	(0X2855E);
+	set_name	(0X2855E,	"j_Spell_61_Etherealize");
 	create_insn	(0X28563);
 	set_name	(0X28563,	"j_Spell_59_RaiseDead");
 	create_insn	(0X28568);
@@ -14247,6 +14249,7 @@ static Bytes_2(void) {
 	create_insn	(0X28581);
 	set_name	(0X28581,	"j_Spell_07_CureWounds");
 	create_insn	(0X28586);
+	set_name	(0X28586,	"j_Spell_45_Teleport");
 	create_insn	(0X2858B);
 	set_name	(0X2858B,	"j_Spell_54_StoneToFlesh");
 	create_insn	(0X28590);
@@ -14278,6 +14281,7 @@ static Bytes_2(void) {
 	create_insn	(0X285D6);
 	set_name	(0X285D6,	"j_Spell_55_RechargeItem");
 	create_insn	(0X285DB);
+	set_name	(0X285DB,	"j_Spell_50_SuperShelter");
 	create_insn	(0X285E0);
 	set_name	(0X285E0,	"j_Spell_57_Duplication");
 	create_insn	(0X285E5);
@@ -14293,6 +14297,7 @@ static Bytes_2(void) {
 	create_insn	(0X285FE);
 	set_name	(0X285FE,	"j_Spell_37_DetectMonster");
 	create_insn	(0X28603);
+	set_name	(0X28603,	"j_Spell_41_NaturesGate");
 	MakeStruct	(0X28610,	"_stub_descr");
 	create_insn	(0X28630);
 	create_insn	(0X28635);
@@ -14866,8 +14871,6 @@ static Bytes_2(void) {
 	make_array	(0X2AE34,	0XA);
 	set_cmt	(0X2AE3E,	"4 bytes: maze id loaded in each slot (FFh = none), used by loadMazeDats",	0);
 	set_name	(0X2AE3E,	"Maze_slotIds");
-	set_cmt	(0X2AE42,	"3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)",	0);
-	set_name	(0X2AE42,	"MAP_MONSTER_PICS");
 }
 
 //------------------------------------------------------------------------
@@ -14877,6 +14880,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2AE42,	"3 bytes per map (map 1 at +0): monster picture ids, names at DGROUP 5590h (%s.mon)",	0);
+	set_name	(0X2AE42,	"MAP_MONSTER_PICS");
 	create_word	(0X2AF46);
 	create_word	(0X2AF48);
 	make_array	(0X2AF4A,	0X2);
@@ -18511,6 +18516,15 @@ static Bytes_3(void) {
 	set_cmt	(0X38409,	"right",	0);
 	set_cmt	(0X3840F,	"top",	0);
 	set_cmt	(0X38413,	"left",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X38419);
 	op_hex		(x,	1);
 	create_insn	(0X38425);
@@ -18522,15 +18536,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X38454);
 	op_hex		(x,	1);
 	create_insn	(0X38460);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X38472);
 	create_insn	(0X38475);
 	create_insn	(0X38478);
@@ -23458,6 +23463,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40C81);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X40CA7);
 	op_stkvar	(x,	1);
 	set_cmt	(0X40CB2,	"char",	0);
@@ -23468,15 +23482,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40CDC);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X40CE5);
 	op_hex		(x,	1);
 	create_insn	(x=0X40CE7);
@@ -29062,15 +29067,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X484C4);
 	op_hex		(x,	1);
 	set_cmt	(0X484CA,	"int",	0);
-	set_cmt	(0X484D2,	"format",	0);
-	set_cmt	(0X484D3,	"int",	0);
-	set_cmt	(0X484D6,	"int",	0);
-	set_cmt	(0X484D7,	"int",	0);
-	create_insn	(x=0X484DB);
-	op_hex		(x,	1);
-	create_insn	(x=0X484E5);
-	op_plain_offset	(x,	1,	0X286F0);
-	op_plain_offset	(x,	129,	0X286F0);
 }
 
 //------------------------------------------------------------------------
@@ -29080,6 +29076,15 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X484D2,	"format",	0);
+	set_cmt	(0X484D3,	"int",	0);
+	set_cmt	(0X484D6,	"int",	0);
+	set_cmt	(0X484D7,	"int",	0);
+	create_insn	(x=0X484DB);
+	op_hex		(x,	1);
+	create_insn	(x=0X484E5);
+	op_plain_offset	(x,	1,	0X286F0);
+	op_plain_offset	(x,	129,	0X286F0);
 	create_insn	(x=0X4850A);
 	op_hex		(x,	1);
 	create_insn	(x=0X48512);
@@ -32089,6 +32094,7 @@ static Bytes_6(void) {
 	create_insn	(0X4D19C);
 	set_name	(0X4D19C,	"Spell_40_CureDisease");
 	create_insn	(0X4D1E4);
+	set_name	(0X4D1E4,	"Spell_41_NaturesGate");
 	create_insn	(0X4D202);
 	create_insn	(0X4D269);
 	set_name	(0X4D269,	"Spell_42_TimeDistortion");
@@ -32100,6 +32106,7 @@ static Bytes_6(void) {
 	set_name	(0X4D2CD,	"Spell_44_DeadlySwarm");
 	set_cmt	(0X4D2EF,	"format",	0);
 	create_insn	(0X4D2F8);
+	set_name	(0X4D2F8,	"Spell_45_Teleport");
 	create_insn	(x=0X4D2FB);
 	op_hex		(x,	1);
 	create_insn	(0X4D31A);
@@ -32200,6 +32207,7 @@ static Bytes_6(void) {
 	set_name	(0X4D5B2,	"Spell_49_DragonBreath");
 	set_cmt	(0X4D5FF,	"format",	0);
 	create_insn	(0X4D608);
+	set_name	(0X4D608,	"Spell_50_SuperShelter");
 	create_insn	(0X4D628);
 	create_insn	(x=0X4D62D);
 	op_stkvar	(x,	0);
@@ -32211,6 +32219,7 @@ static Bytes_6(void) {
 	create_insn	(0X4D679);
 	set_name	(0X4D679,	"Spell_52_CreateFood");
 	create_insn	(0X4D691);
+	set_name	(0X4D691,	"Spell_53_TownPortal");
 	set_cmt	(0X4D696,	"format",	0);
 	create_insn	(0X4D6B3);
 	create_insn	(x=0X4D6C2);
@@ -32281,6 +32290,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X4D95A);
 	op_hex		(x,	1);
 	create_insn	(0X4D985);
+	set_name	(0X4D985,	"Spell_61_Etherealize");
 	create_insn	(x=0X4D988);
 	op_hex		(x,	1);
 	create_insn	(0X4D9A4);
@@ -33896,6 +33906,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4FD80);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4FD90);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4FD9B);
@@ -33924,15 +33943,6 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4FE19);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4FE1F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4FE28);
@@ -37717,7 +37727,7 @@ static Functions_0(void) {
 	set_func_flags(0X284D7,0x54c2);
 	set_frame_size(0X284D7, 0, 0, 0);
 	add_func    (0X284DC,0X284E1);
-	set_func_flags(0X284DC,0x5482);
+	set_func_flags(0X284DC,0x54c2);
 	set_frame_size(0X284DC, 0, 0, 0);
 	add_func    (0X284E1,0X284E6);
 	set_func_flags(0X284E1,0x5482);
@@ -37794,7 +37804,7 @@ static Functions_0(void) {
 	set_func_flags(0X28559,0x54c2);
 	set_frame_size(0X28559, 0, 0, 0);
 	add_func    (0X2855E,0X28563);
-	set_func_flags(0X2855E,0x5482);
+	set_func_flags(0X2855E,0x54c2);
 	set_frame_size(0X2855E, 0, 0, 0);
 	add_func    (0X28563,0X28568);
 	set_func_flags(0X28563,0x54c2);
@@ -37818,7 +37828,7 @@ static Functions_0(void) {
 	set_func_flags(0X28581,0x54c2);
 	set_frame_size(0X28581, 0, 0, 0);
 	add_func    (0X28586,0X2858B);
-	set_func_flags(0X28586,0x5482);
+	set_func_flags(0X28586,0x54c2);
 	set_frame_size(0X28586, 0, 0, 0);
 	add_func    (0X2858B,0X28590);
 	set_func_flags(0X2858B,0x54c2);
@@ -37868,7 +37878,7 @@ static Functions_0(void) {
 	set_func_flags(0X285D6,0x54c2);
 	set_frame_size(0X285D6, 0, 0, 0);
 	add_func    (0X285DB,0X285E0);
-	set_func_flags(0X285DB,0x5482);
+	set_func_flags(0X285DB,0x54c2);
 	set_frame_size(0X285DB, 0, 0, 0);
 	add_func    (0X285E0,0X285E5);
 	set_func_flags(0X285E0,0x54c2);
@@ -37892,7 +37902,7 @@ static Functions_0(void) {
 	set_func_flags(0X285FE,0x54c2);
 	set_frame_size(0X285FE, 0, 0, 0);
 	add_func    (0X28603,0X28608);
-	set_func_flags(0X28603,0x5482);
+	set_func_flags(0X28603,0x54c2);
 	set_frame_size(0X28603, 0, 0, 0);
 	add_func    (0X28630,0X28635);
 	set_func_flags(0X28630,0x5482);
@@ -38902,6 +38912,7 @@ static Functions_1(void) {
 	set_frame_size(0X4D19C, 0X2, 2, 0);
 	add_func    (0X4D1E4,0X4D269);
 	set_func_flags(0X4D1E4,0x5412);
+	set_func_cmt(0X4D1E4,	"tests maze header +19h", 0);
 	set_frame_size(0X4D1E4, 0, 2, 0);
 	add_func    (0X4D269,0X4D2A2);
 	set_func_flags(0X4D269,0x5412);
@@ -38917,6 +38928,7 @@ static Functions_1(void) {
 	set_frame_size(0X4D2CD, 0, 2, 0);
 	add_func    (0X4D2F8,0X4D50C);
 	set_func_flags(0X4D2F8,0x5412);
+	set_func_cmt(0X4D2F8,	"tests maze header +14h (by header usage)", 0);
 	set_frame_size(0X4D2F8, 0X4, 2, 0);
 	add_func    (0X4D514,0X4D53F);
 	set_func_flags(0X4D514,0x5412);
@@ -38936,6 +38948,7 @@ static Functions_1(void) {
 	set_frame_size(0X4D5B2, 0, 2, 0);
 	add_func    (0X4D608,0X4D64E);
 	set_func_flags(0X4D608,0x5412);
+	set_func_cmt(0X4D608,	"tests maze header +17h", 0);
 	set_frame_size(0X4D608, 0X2, 2, 0);
 	add_func    (0X4D64E,0X4D679);
 	set_func_flags(0X4D64E,0x5412);
@@ -38947,6 +38960,7 @@ static Functions_1(void) {
 	set_frame_size(0X4D679, 0, 2, 0);
 	add_func    (0X4D691,0X4D763);
 	set_func_flags(0X4D691,0x5412);
+	set_func_cmt(0X4D691,	"tests maze header +18h", 0);
 	set_frame_size(0X4D691, 0X2, 2, 0);
 	add_func    (0X4D763,0X4D7AB);
 	set_func_flags(0X4D763,0x5412);
@@ -38978,6 +38992,7 @@ static Functions_1(void) {
 	set_frame_size(0X4D901, 0X8, 2, 0);
 	add_func    (0X4D985,0X4DA44);
 	set_func_flags(0X4D985,0x5412);
+	set_func_cmt(0X4D985,	"tests maze header +1Ah", 0);
 	set_frame_size(0X4D985, 0X6, 2, 0);
 	add_func    (0X4DA44,0X4DA8D);
 	set_func_flags(0X4DA44,0x5412);
