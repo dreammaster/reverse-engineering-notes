@@ -21,9 +21,12 @@ enum class eVisionaireTable { kValue34 = 0x22 };
 // lines 464227, 467804) - real meaning/other values not resolved.
 enum class TLoadingTypeEnum { kValue0 = 0, kValue1 = 1 };
 
-// Confirmed one value, 0 (TGameControl::PreLoad, Deponia_Linux.asm line
-// 464228) - real meaning/other values not resolved.
-enum class eSaveGame { kValue0 = 0 };
+// Confirmed 3 values, 0-2 (TGameControl::PreLoad, Deponia_Linux.asm line
+// 464228; TTypeData/TTypeGroup::IsFittingSaveGameType(), asm lines 668776/
+// 585021) - whether a data field/type group exists in game data only (0), in
+// savegames only (1, "t_SAVEGAME" in the original's assert text), or in both
+// (2). Named by raw value like TypeOrder.
+enum class eSaveGame { kValue0 = 0, kValue1 = 1, kValue2 = 2 };
 
 class TVisionaire {
 public:

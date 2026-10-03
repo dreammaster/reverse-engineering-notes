@@ -2501,6 +2501,57 @@ Adds `wxRealPoint` (a float pair) and `wxPoint::operator-`.
 
 `TPaintControl` is `done` in the manifest.
 
+## TTypeData and TTypeGroup (the data schema)
+
+Implemented in full: `TTypeData` (19 methods, `datastruct/type.h`, original
+path confirmed `src/datastruct/type.cpp`) and `TTypeGroup` (30 methods,
+`datastruct/typegrp.h`, confirmed `src/datastruct/typegrp.cpp`). These are
+the backbone of the game-data schema: a `TTypeGroup` is one *record type* -
+the ordered list of `TTypeData` *fields* (field id, value kind, link table,
+file-format version ranges, storage offset) - and every `TT*` data-record
+class (`TTScene`, `TTEvent`, `TTScript`, ...) owns a static one, built in its
+static initializer (`TTypeGroup(int, eVisionaireTable, int, int)` - e.g.
+`TTEvent`'s is `(0x26, 0x340, 0xB8, -1)`) and filled by its `InitType()`,
+which also installs its `OnCreate`/`OnInit` default-value callbacks
+(`SetCreate`/`SetInit`). Layouts are in the two headers' comments.
+
+Field lookup goes through the recovered global `g_lookupTable` (modeled as
+`TLookupTable{pEntries, numEntries}` after the original's own assert text;
+the real binary keeps the pointer and count as two adjacent globals): one
+12-byte entry per field id naming the group that currently owns it and its
+index in that group's list. `GetTypeData()`/`GetTypeDataPtr()`/`GetType()`
+verify the entry belongs to *this* group, which is how a field id shared
+between groups resolves correctly.
+
+**`AddType()`'s version logic** (the interesting part, asm lines 585963-
+586100): a field's effective range is its savegame range for a savegame-only
+field, or the game range widened to the savegame range for a "both" field.
+Against the range the group is currently set up for (`ClearTypes(low,
+high)`), a field is added if it spans the low end (starts at or before it
+and is in force past it, or open-ended) or, failing that, spans the high end
+(starts at or before it and ends past it, or open-ended). It's a *temporary*
+field (`IsTempType`, stored only in memory) if it ends before the high end,
+and *stored in the file* (`IsInFile`) if it spans the low end. Persistent
+fields take storage offsets from `_sizeData`, temporary ones from
+`_sizeTempData`.
+
+**Other details:** `SetScrambled(seed)` shuffles field order once (each
+field's id + seed picks a partner slot in `1..n-1`; swap if the partner is
+later), keeping `g_lookupTable` in step - used to hide the on-disk layout.
+`SetupNeededTypes(forSaveGame, linkTypesOnly, skipTemp)` rebuilds the
+"needed" list (stored fields fitting the request; link-only keeps types
+0x10/0x11). Copying a group (`TTypeGroup(const&)`, `operator=`) is an
+intentional `x_assert(false)` trap. `GetTypeData()`'s "not found" log message
+is literally the one-character string "T" in the binary (the five arguments
+it's passed are never formatted). `eSaveGame` gained its other two values
+(0 = game data only, 1 = savegame only, 2 = both).
+
+New confirmed-call-shape stubs: `TData::GetDataSize(eTypeData)`
+(`datastruct/data.h`; returns 0, so storage offsets are all 0 until it's
+reversed) and `TVedFile::IsSaveGame()/GetVersionOk()` (`datastruct/
+vedfile.h`; TVedFile itself is a separate, unreversed class).
+`TTypeData`/`TTypeGroup` are `done` in the manifest.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
