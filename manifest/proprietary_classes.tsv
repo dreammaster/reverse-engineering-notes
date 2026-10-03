@@ -149,7 +149,7 @@ TXMLStringWriter	todo	10	539847	540033
 SEntryInfo	todo	1	541440	541440
 TComposedFile	done	20	541459	548209
 BuildProgressEvent	done	3	548597	548703
-TMemoryBuffer	in-progress	26	549297	551826
+TMemoryBuffer	done	26	549297	551826
 TMemoryFile	done	7	551869	552091
 TStandardPaths	done	13	552187	553383
 TTempFile	done	2	553440	553545

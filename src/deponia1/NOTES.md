@@ -2651,12 +2651,16 @@ recorded in a static list for `DeleteTempFiles()`. The original concatenates
 `wxStandardPaths::GetTempDir()` directly, which has no trailing separator;
 a separator is added here when missing (deviation noted in the code).
 
-**Still unreversed:** `TMemoryBuffer::Compress()/Uncompress()` are the engine's
-zlib wrappers (zlib isn't available in this build environment), so compressed
-content flags (1/0x10) can be read/written structurally but not actually
-(de)compressed yet - `PasteData()` with the compress flag fails cleanly.
-With that, `TMSavegame::SaveGame()` is a working path for bookmarks; a real
-savegame's screenshot still depends on the unmodeled GL backend.
+**zlib:** `TMemoryBuffer::Compress()/Uncompress()` (3 methods, now implemented -
+thin wrappers over zlib's `compress()`/`uncompress()`, with the standard
+`len*1.001+12` output size) call a stand-in in `zlibShim.h/.cpp` because zlib
+isn't available in this build: a complete inflate (stored/fixed/dynamic
+Huffman, after "puff" - verified against 28 real zlib streams at levels 0/1/6/9)
+plus a "deflate" that writes valid but *stored* blocks (correct, not smaller).
+Swap in the real library when it's linked. One quirk reproduced as-is:
+`Uncompress(TMemoryBuffer &dest, long)` never updates `dest`'s length.
+`TMSavegame::SaveGame()` is a working path for bookmarks; a real savegame's
+screenshot still depends on the unmodeled GL backend.
 
 `TComposedFile`, `TTempFile` and `BuildProgressEvent` are `done`.
 

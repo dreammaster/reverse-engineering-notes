@@ -1,19 +1,18 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except Compress()/Uncompress() (Deponia_Linux.asm lines
+// Confirmed in full (Deponia_Linux.asm lines
 // 549297-551866, all 26 manifest-listed methods): a growable owned byte
 // buffer - `unsigned char *` + a used length + an allocated capacity - used
 // both as a scratch read buffer (TFile::ReadToBuf) and as a byte-stream
 // builder (the operator<< family, used by TXMLWriter and others).
 //
 // Compress()/Uncompress() (3 of the 26 methods: both Uncompress() overloads
-// and Compress() itself) call the REAL zlib C API directly (`compress()`/
-// `uncompress()`, confirmed by their exact symbol names and zlib's own
+// and Compress() itself) are thin wrappers over zlib's C API `compress()`/
+// `uncompress()` (confirmed by their exact symbol names and zlib's own
 // well-known `len*1.001+12` worst-case-size formula for the compress-side
-// output buffer) - this project doesn't currently link zlib, so these 3
-// stay call-shape stubs (matching the same "genuine third-party API
-// boundary" treatment as the Lua C API and the Steam/Galaxy SDKs
-// elsewhere) pending a decision to add that dependency.
+// output buffer). zlib isn't available in this build, so they call the
+// project's stand-in in zlibShim.h (a full inflate, plus a stored-blocks
+// "deflate"); swap that for the real library when it's linked.
 //
 // Decrypt()/Encrypt() are a real, fully confirmed cipher: Encrypt() is
 // simply Decrypt() (XOR is its own inverse). Decrypt() XORs the buffer
@@ -96,8 +95,7 @@ public:
 	// then the raw narrow bytes (no terminator).
 	void AppendStringWithLen(const wxString &value);
 
-	// Not reversed beyond their confirmed real-zlib call shape - see the
-	// class comment.
+	// Confirmed (asm lines 551323-551698) zlib wrappers - see the class comment.
 	bool Uncompress(TMemoryBuffer &dest, long expectedSize);
 	bool Uncompress(long expectedSize);
 	bool Compress();

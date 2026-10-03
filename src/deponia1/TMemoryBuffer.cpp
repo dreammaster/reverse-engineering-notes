@@ -5,6 +5,7 @@
 #include <string>
 
 #include "MD5.h"
+#include "zlibShim.h"
 
 TMemoryBuffer::~TMemoryBuffer() {
 	delete[] _data;
@@ -136,19 +137,65 @@ void TMemoryBuffer::AppendStringWithLen(const wxString &value) {
 	AppendData(narrow.data(), static_cast<unsigned long>(narrow.size()));
 }
 
-bool TMemoryBuffer::Uncompress(TMemoryBuffer &/*dest*/, long /*expectedSize*/) {
-	// Not reversed beyond its real-zlib uncompress() call shape - see the
-	// class header comment.
+// Confirmed (asm lines 551323-551447): decompresses this buffer's contents into
+// `dest`, whose buffer is first replaced by a fresh `expectedSize`-byte one if
+// it's smaller than that. NOTE the original never updates `dest`'s length (the
+// decompressed byte count is discarded) - callers are expected to have
+// prepared `dest` themselves; reproduced as-is.
+bool TMemoryBuffer::Uncompress(TMemoryBuffer &dest, long expectedSize) {
+	unsigned long wanted = static_cast<unsigned long>(expectedSize);
+	if (wanted > dest._capacity || !dest._data) {
+		delete[] dest._data;
+		dest._data = new unsigned char[wanted];
+		dest._len = 0;
+		dest._capacity = wanted;
+	}
+
+	unsigned long outLength = wanted;
+	if (zlibUncompress(dest._data, &outLength, _data, _len) == 0)
+		return true;
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
 	return false;
 }
 
-bool TMemoryBuffer::Uncompress(long /*expectedSize*/) {
+// Confirmed (asm lines 551447-551564): decompresses in place into a new
+// `expectedSize`-byte buffer; on failure the old contents are kept.
+bool TMemoryBuffer::Uncompress(long expectedSize) {
+	unsigned long outLength = static_cast<unsigned long>(expectedSize);
+	unsigned char *out = new unsigned char[outLength];
+	if (zlibUncompress(out, &outLength, _data, _len) == 0) {
+		delete[] _data;
+		_data = out;
+		_len = outLength;
+		_capacity = outLength;
+		return true;
+	}
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
+	delete[] out;
 	return false;
 }
 
+// Confirmed (asm lines 551564-551698): zlib's compress() into a buffer of
+// zlib's own worst-case size (len * 1.001 + 12); the compressed bytes replace
+// this buffer's contents.
 bool TMemoryBuffer::Compress() {
-	// Not reversed beyond its real-zlib compress() call shape - see the
-	// class header comment.
+	unsigned long outLength = static_cast<unsigned long>(static_cast<int>(static_cast<double>(_len) * 1.001)) + 12;
+	unsigned char *out = new unsigned char[outLength];
+	if (zlibCompress(out, &outLength, _data, _len) == 0) {
+		delete[] _data;
+		_data = out;
+		_len = outLength;
+		_capacity = outLength;
+		return true;
+	}
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
+	delete[] out;
 	return false;
 }
 
