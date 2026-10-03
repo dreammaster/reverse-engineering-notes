@@ -17571,7 +17571,9 @@ static Bytes_3(void) {
 	create_byte	(0X340AC);
 	make_array	(0X340AC,	0X7);
 	create_byte	(0X340B3);
+	set_cmt	(0X340B4,	"damage set by an attack spell routine before spellAttackAhead",	0);
 	create_word	(0X340B4);
+	set_name	(0X340B4,	"SpellAttack_damage");
 	create_byte	(0X340B6);
 	create_byte	(0X340B7);
 	create_byte	(0X340B8);
@@ -17731,7 +17733,9 @@ static Bytes_3(void) {
 	create_word	(0X35D78);
 	create_byte	(0X35D7A);
 	make_array	(0X35D7A,	0XF84);
+	set_cmt	(0X36CFE,	"damage/effect type of the attack spell (0 phys, 2 fire, 3 elec, 4 cold, 5 poison, 6 energy, 7+ status effects)",	0);
 	create_word	(0X36CFE);
+	set_name	(0X36CFE,	"SpellAttack_type");
 	create_byte	(0X36D00);
 	create_byte	(0X36D01);
 	make_array	(0X36D01,	0XA);
@@ -17743,7 +17747,9 @@ static Bytes_3(void) {
 	create_byte	(0X36FA8);
 	create_byte	(0X36FA9);
 	create_byte	(0X36FAA);
+	set_cmt	(0X36FAC,	"0 one monster, 1 one group, 2 all monsters",	0);
 	create_word	(0X36FAC);
+	set_name	(0X36FAC,	"SpellAttack_reach");
 	create_byte	(0X36FAE);
 	create_byte	(0X36FAF);
 	create_byte	(0X36FB0);
@@ -18216,6 +18222,15 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X378C0);
 	op_plain_offset	(x,	128,	0X378C0);
 	set_name	(0X37B49,	"jpt_37B2C");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X37B59);
 	create_insn	(x=0X37B5E);
 	op_stkvar	(x,	1);
@@ -18247,15 +18262,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37C85);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X37C9F);
 	op_hex		(x,	1);
 	create_insn	(0X37CAE);
@@ -23039,6 +23045,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FF5D);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FF61);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF64,	"buffer",	0);
@@ -23065,15 +23080,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFA1);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FFA6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FFAB);
@@ -28676,6 +28682,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X476F9);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X476FE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47703);
@@ -28701,15 +28716,6 @@ static Bytes_5(void) {
 	set_cmt	(0X47746,	"dest",	0);
 	create_insn	(x=0X47750);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47755);
 	op_hex		(x,	1);
 	create_insn	(x=0X4775D);
@@ -33719,6 +33725,15 @@ static Bytes_6(void) {
 	set_cmt	(0X4F896,	"buffer",	0);
 	create_insn	(x=0X4F89C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F8C7);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F8CF);
@@ -33747,15 +33762,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F940);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4F94A,	"switch 77 cases",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F952);
 	op_hex		(x,	1);
 	set_cmt	(0X4F954,	"switch jump",	0);

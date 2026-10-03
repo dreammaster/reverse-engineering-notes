@@ -11023,8 +11023,8 @@ getAttributeCategory endp
 sub_19174       proc far                ; CODE XREF: exploreLoop+701↓P
                 push    bp
                 mov     bp, sp
-                mov     word_36FAC, 2
-                mov     word_36CFE, 0
+                mov     SpellAttack_reach, 2
+                mov     SpellAttack_type, 0
                 mov     ax, 0Bh
                 push    ax              ; format
                 call    j_spellAttackAhead
@@ -48798,8 +48798,9 @@ byte_340AB      db 0                    ; DATA XREF: spellAttackAhead:loc_4F2C3�
                 db 7 dup(0)
 byte_340B3      db 0                    ; DATA XREF: clearViewFlags+B↑w
                                         ; prepareIndoorView:loc_1C892↑w ...
-word_340B4      dw 0                    ; DATA XREF: attack+E7↓r
+SpellAttack_damage dw 0                 ; DATA XREF: attack+E7↓r
                                         ; attack+EE↓r ...
+                                        ; damage set by an attack spell routine before spellAttackAhead
 byte_340B6      db 0                    ; DATA XREF: clearViewFlags+5↑w
                                         ; prepareIndoorView:loc_1CBA4↑w ...
 byte_340B7      db 0                    ; DATA XREF: clearViewFlags+4F↑w
@@ -49039,8 +49040,9 @@ word_35D76      dw 0                    ; DATA XREF: renderIndoorView+162↑w
 word_35D78      dw 0                    ; DATA XREF: renderIndoorView+146↑w
                                         ; renderOutdoorView+159↑w
                 db 0F84h dup(0)
-word_36CFE      dw 0                    ; DATA XREF: sub_19174+9↑w
+SpellAttack_type dw 0                   ; DATA XREF: sub_19174+9↑w
                                         ; attack2+58↓r ...
+                                        ; damage/effect type of the attack spell (0 phys, 2 fire, 3 elec, 4 cold, 5 poison, 6 energy, 7+ status effects)
 byte_36D00      db 0                    ; DATA XREF: rosterMenu+32E↓w
                                         ; rosterMenu+3EF↓w
                 db 0Ah dup(0)
@@ -49057,8 +49059,9 @@ byte_36FA9      db 0                    ; DATA XREF: clearViewFlags+171↑w
 byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
                                         ; sub_15B50+511↑r ...
                 align 2
-word_36FAC      dw 0                    ; DATA XREF: sub_19174+3↑w
+SpellAttack_reach dw 0                  ; DATA XREF: sub_19174+3↑w
                                         ; Spell_03_FlyingFist+F↓w ...
+                                        ; 0 one monster, 1 one group, 2 all monsters
 byte_36FAE      db 0                    ; DATA XREF: clearViewFlags+202↑w
                                         ; prepareIndoorView+D29↑w ...
 byte_36FAF      db 0                    ; DATA XREF: clearViewFlags+1ED↑w
@@ -88948,9 +88951,9 @@ loc_49BC1:                              ; CODE XREF: attack2+25↑j
                 jz      short loc_49C0C
                 cmp     [bp+arg_4], 0
                 jz      short loc_49BFA
-                cmp     word_36CFE, 7
+                cmp     SpellAttack_type, 7
                 jnb     short loc_49BEF
-                mov     ax, word_36CFE
+                mov     ax, SpellAttack_type
                 jmp     short loc_49BF2
 ; ---------------------------------------------------------------------------
 
@@ -88998,7 +89001,7 @@ loc_49C37:                              ; CODE XREF: attack2+9B↑j
                                         ; attack2+A1↑j
                 cmp     [bp+arg_4], 0
                 jz      short loc_49C44
-                cmp     word_36CFE, 0
+                cmp     SpellAttack_type, 0
                 jnz     short loc_49C7E
 
 loc_49C44:                              ; CODE XREF: attack2+B0↑j
@@ -89085,7 +89088,7 @@ loc_49CD5:                              ; CODE XREF: attack2+136↑j
                 pop     cx
                 or      ax, ax
                 jz      short loc_49D12
-                mov     ax, word_36CFE
+                mov     ax, SpellAttack_type
                 cmp     ax, 0Bh
                 jz      short loc_49D06
                 cmp     ax, 0Dh
@@ -89620,7 +89623,7 @@ loc_4A08F:                              ; CODE XREF: getMonsterResistance+61↑j
 
 loc_4A091:                              ; CODE XREF: getMonsterResistance+F↑j
                 xor     di, di
-                mov     bx, word_36CFE
+                mov     bx, SpellAttack_type
                 cmp     bx, 6           ; switch 7 cases
                 ja      short def_4A09E ; jumptable 0004A09E default case
                 shl     bx, 1
@@ -89889,9 +89892,9 @@ loc_4A1DC:                              ; CODE XREF: attack+132↓j
                 pop     cx
                 or      ax, ax
                 jz      short loc_4A24B
-                cmp     word_340B4, 0
+                cmp     SpellAttack_damage, 0
                 jz      short loc_4A224
-                mov     si, word_340B4
+                mov     si, SpellAttack_damage
                 jmp     short loc_4A228
 ; ---------------------------------------------------------------------------
 
@@ -89980,14 +89983,14 @@ loc_4A2BC:                              ; CODE XREF: attack+14F↑j
 ; ---------------------------------------------------------------------------
 
 loc_4A2C6:                              ; CODE XREF: attack+191↑j
-                cmp     word_340B4, 0
+                cmp     SpellAttack_damage, 0
                 jz      short loc_4A2D4
-                mov     si, word_340B4
+                mov     si, SpellAttack_damage
                 jmp     def_4A2E5       ; jumptable 0004A2E5 default case
 ; ---------------------------------------------------------------------------
 
 loc_4A2D4:                              ; CODE XREF: attack+19B↑j
-                mov     bx, word_36CFE
+                mov     bx, SpellAttack_type
                 sub     bx, 7           ; switch 10 cases
                 cmp     bx, 9
                 jbe     short loc_4A2E3
@@ -90150,7 +90153,7 @@ loc_4A3E4:                              ; CODE XREF: attack+2AF↑j
                 mov     al, Combat_target
                 mov     ah, 0
                 shl     ax, 1
-                mov     dx, word_36CFE
+                mov     dx, SpellAttack_type
                 mov     bx, ax
                 mov     [bx-47F0h], dx
                 jmp     loc_4A518
@@ -90288,7 +90291,7 @@ loc_4A4C3:                              ; CODE XREF: attack+1B5↑j
                 cmp     si, 96h
                 jbe     short def_4A2E5 ; jumptable 0004A2E5 default case
                 mov     si, 32h ; '2'
-                mov     word_36CFE, 6
+                mov     SpellAttack_type, 6
                 jmp     short def_4A2E5 ; jumptable 0004A2E5 default case
 ; ---------------------------------------------------------------------------
 
@@ -94828,9 +94831,9 @@ Spell_02_FirstAid endp
 Spell_03_FlyingFist proc far            ; CODE XREF: j_Spell_03_FlyingFist↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 6
-                mov     word_36CFE, 0
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 6
+                mov     SpellAttack_type, 0
+                mov     SpellAttack_reach, 0
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -94901,16 +94904,16 @@ Spell_04_DetectMagic endp
 Spell_05_ElementalArrow proc far        ; CODE XREF: j_Spell_05_ElementalArrow↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 8
+                mov     SpellAttack_damage, 8
                 mov     ax, 5
                 push    ax
                 push    cs
                 call    sub_4BF12
                 pop     cx
-                mov     word_36CFE, ax
+                mov     SpellAttack_type, ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4C458
-                mov     word_36FAC, 0
+                mov     SpellAttack_reach, 0
                 mov     ax, 0Bh
                 push    ax              ; format
                 call    j_spellAttackAhead
@@ -95046,9 +95049,9 @@ Spell_08_Sparks proc far                ; CODE XREF: j_Spell_08_Sparks↑J
                 pop     cx
                 pop     cx
                 shl     ax, 1
-                mov     word_340B4, ax
-                mov     word_36CFE, 3
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 3
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
                 call    sub_1B16B
@@ -95086,9 +95089,9 @@ Spell_09_EnergyBlast proc far           ; CODE XREF: j_Spell_09_EnergyBlast↑J
                 mov     dx, ax
                 pop     ax
                 imul    dx
-                mov     word_340B4, ax
-                mov     word_36CFE, 6
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 6
+                mov     SpellAttack_reach, 0
                 mov     ax, 10h
                 push    ax
                 call    sub_1B16B
@@ -95110,9 +95113,9 @@ Spell_09_EnergyBlast endp
 Spell_10_Sleep  proc far                ; CODE XREF: j_Spell_10_Sleep↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 7
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 7
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -95134,9 +95137,9 @@ Spell_10_Sleep  endp
 Spell_11_Pain   proc far                ; CODE XREF: j_Spell_11_Pain↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 8
-                mov     word_36CFE, 0
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 8
+                mov     SpellAttack_type, 0
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -95177,9 +95180,9 @@ Spell_12_CreateRope endp
 Spell_13_ToxicCloud proc far            ; CODE XREF: j_Spell_13_ToxicCloud↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0Ah
-                mov     word_36CFE, 5
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0Ah
+                mov     SpellAttack_type, 5
+                mov     SpellAttack_reach, 1
                 mov     ax, 11h
                 push    ax
                 call    sub_1B16B
@@ -95345,9 +95348,9 @@ jpt_4C6AB       dw offset loc_4C6D5     ; DATA XREF: Spell_15_ProtFromElements+3
 Spell_16_TurnUndead proc far            ; CODE XREF: j_Spell_16_TurnUndead↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Eh
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Eh
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -95465,9 +95468,9 @@ sub_4C711       endp
 Spell_18_AcidStream proc far            ; CODE XREF: j_Spell_18_AcidStream↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 19h
-                mov     word_36CFE, 5
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 19h
+                mov     SpellAttack_type, 5
+                mov     SpellAttack_reach, 0
                 mov     ax, 11h
                 push    ax
                 call    sub_1B16B
@@ -95552,9 +95555,9 @@ Spell_19_SuppressDisease endp
 Spell_20_Silence proc far               ; CODE XREF: j_Spell_20_Silence↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 10h
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 10h
+                mov     SpellAttack_reach, 1
                 mov     ax, 14h
                 push    ax
                 call    sub_1B16B
@@ -96065,9 +96068,9 @@ Spell_28_LightningBolt proc far         ; CODE XREF: j_Spell_28_LightningBolt↑
                 mov     dx, ax
                 pop     ax
                 imul    dx
-                mov     word_340B4, ax
-                mov     word_36CFE, 3
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 3
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
                 call    sub_1B16B
@@ -96089,9 +96092,9 @@ Spell_28_LightningBolt endp
 Spell_29_Immobilize proc far            ; CODE XREF: j_Spell_29_Immobilize↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 8
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 8
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -96184,9 +96187,9 @@ Spell_31_WalkOnWater endp
 Spell_32_FrostBite proc far             ; CODE XREF: j_Spell_32_FrostBite↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 23h ; '#'
-                mov     word_36CFE, 4
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 23h ; '#'
+                mov     SpellAttack_type, 4
+                mov     SpellAttack_reach, 0
                 mov     ax, 0Fh
                 push    ax
                 call    sub_1B16B
@@ -96500,9 +96503,9 @@ Spell_36_Fireball proc far              ; CODE XREF: j_Spell_36_Fireball↑J
                 mov     dx, ax
                 pop     ax
                 imul    dx
-                mov     word_340B4, ax
-                mov     word_36CFE, 2
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 2
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -96782,9 +96785,9 @@ Spell_37_DetectMonster endp
 Spell_38_AcidSpray proc far             ; CODE XREF: j_Spell_38_AcidSpray↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0Fh
-                mov     word_36CFE, 5
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, 0Fh
+                mov     SpellAttack_type, 5
+                mov     SpellAttack_reach, 2
                 mov     ax, 11h
                 push    ax
                 call    sub_1B16B
@@ -96822,9 +96825,9 @@ Spell_39_ColdRay proc far               ; CODE XREF: j_Spell_39_ColdRay↑J
                 mov     dx, ax
                 pop     ax
                 imul    dx
-                mov     word_340B4, ax
-                mov     word_36CFE, 4
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 4
+                mov     SpellAttack_reach, 2
                 mov     ax, 0Fh
                 push    ax
                 call    sub_1B16B
@@ -96997,9 +97000,9 @@ Spell_42_TimeDistortion endp
 Spell_43_FeebleMind proc far            ; CODE XREF: j_Spell_43_FeebleMind↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 9
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 9
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -97021,9 +97024,9 @@ Spell_43_FeebleMind endp
 Spell_44_DeadlySwarm proc far           ; CODE XREF: j_Spell_44_DeadlySwarm↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 28h ; '('
-                mov     word_36CFE, 0
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 28h ; '('
+                mov     SpellAttack_type, 0
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -97361,9 +97364,9 @@ jpt_4D3BB       dw offset loc_4D3C0     ; DATA XREF: Spell_45_Teleport+C3↑r
 Spell_46_FingerOfDeath proc far         ; CODE XREF: j_Spell_46_FingerOfDeath↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Bh
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Bh
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -97431,9 +97434,9 @@ Spell_47_CureParalysis endp
 Spell_48_Paralyze proc far              ; CODE XREF: j_Spell_48_Paralyze↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Ah
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Ah
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -97462,17 +97465,17 @@ Spell_49_DragonBreath proc far          ; CODE XREF: j_Spell_49_DragonBreath↑J
                 pop     cx
                 mov     dx, 5
                 imul    dx
-                mov     word_340B4, ax
+                mov     SpellAttack_damage, ax
                 mov     ax, 31h ; '1'
                 push    ax
                 push    cs
                 call    sub_4BF12
                 pop     cx
-                mov     word_36CFE, ax
+                mov     SpellAttack_type, ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4D606
-                mov     word_36FAC, 2
-                mov     bx, word_36CFE
+                mov     SpellAttack_reach, 2
+                mov     bx, SpellAttack_type
                 dec     bx
                 dec     bx
                 mov     al, [bx+4BFFh]
@@ -97480,7 +97483,7 @@ Spell_49_DragonBreath proc far          ; CODE XREF: j_Spell_49_DragonBreath↑J
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                mov     bx, word_36CFE
+                mov     bx, SpellAttack_type
                 dec     bx
                 dec     bx
                 mov     al, [bx+4C03h]
@@ -97550,9 +97553,9 @@ Spell_50_SuperShelter endp
 Spell_51_FieryFlail proc far            ; CODE XREF: j_Spell_51_FieryFlail↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 64h ; 'd'
-                mov     word_36CFE, 2
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 64h ; 'd'
+                mov     SpellAttack_type, 2
+                mov     SpellAttack_reach, 0
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -97793,9 +97796,9 @@ Spell_55_RechargeItem endp
 Spell_56_FantasticFreeze proc far       ; CODE XREF: j_Spell_56_FantasticFreeze↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 28h ; '('
-                mov     word_36CFE, 4
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 28h ; '('
+                mov     SpellAttack_type, 4
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Fh
                 push    ax
                 call    sub_1B16B
@@ -97862,9 +97865,9 @@ Spell_57_Duplication endp
 Spell_58_Disintegrate proc far          ; CODE XREF: j_Spell_58_Disintegrate↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Fh
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Fh
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -98155,9 +98158,9 @@ Spell_62_DancingSword proc far          ; CODE XREF: j_Spell_62_DancingSword↑J
                 mov     dx, ax
                 pop     ax
                 imul    dx
-                mov     word_340B4, ax
-                mov     word_36CFE, 0
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, ax
+                mov     SpellAttack_type, 0
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -98179,7 +98182,7 @@ Spell_62_DancingSword endp
 Spell_63_PrismaticLight proc far        ; CODE XREF: j_Spell_63_PrismaticLight↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 50h ; 'P'
+                mov     SpellAttack_damage, 50h ; 'P'
                 mov     ax, 6
                 push    ax
                 xor     ax, ax
@@ -98187,8 +98190,8 @@ Spell_63_PrismaticLight proc far        ; CODE XREF: j_Spell_63_PrismaticLight�
                 call    rnd
                 pop     cx
                 pop     cx
-                mov     word_36CFE, ax
-                mov     word_36FAC, 2
+                mov     SpellAttack_type, ax
+                mov     SpellAttack_reach, 2
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -98211,9 +98214,9 @@ Spell_64_MoonRay proc far               ; CODE XREF: j_Spell_64_MoonRay↑J
                 push    bp
                 mov     bp, sp
                 push    si
-                mov     word_340B4, 1Eh
-                mov     word_36CFE, 6
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, 1Eh
+                mov     SpellAttack_type, 6
+                mov     SpellAttack_reach, 2
                 mov     ax, 10h
                 push    ax
                 call    sub_1B16B
@@ -98270,9 +98273,9 @@ Spell_64_MoonRay endp
 Spell_65_MassDistortion proc far        ; CODE XREF: j_Spell_65_MassDistortion↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Dh
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Dh
+                mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -98339,9 +98342,9 @@ Spell_66_EnchantItem endp
 Spell_67_Incinerate proc far            ; CODE XREF: j_Spell_67_Incinerate↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0FAh
-                mov     word_36CFE, 2
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 0FAh
+                mov     SpellAttack_type, 2
+                mov     SpellAttack_reach, 0
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -98363,17 +98366,17 @@ Spell_67_Incinerate endp
 Spell_68_ElementalStorm proc far        ; CODE XREF: j_Spell_68_ElementalStorm↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 96h
+                mov     SpellAttack_damage, 96h
                 mov     ax, 44h ; 'D'
                 push    ax
                 push    cs
                 call    sub_4BF12
                 pop     cx
-                mov     word_36CFE, ax
+                mov     SpellAttack_type, ax
                 cmp     ax, 0FFFFh
                 jz      short loc_4DC0E
-                mov     word_36FAC, 2
-                mov     bx, word_36CFE
+                mov     SpellAttack_reach, 2
+                mov     bx, SpellAttack_type
                 dec     bx
                 dec     bx
                 mov     al, [bx+4BFFh]
@@ -98381,7 +98384,7 @@ Spell_68_ElementalStorm proc far        ; CODE XREF: j_Spell_68_ElementalStorm�
                 push    ax
                 call    sub_1B16B
                 pop     cx
-                mov     bx, word_36CFE
+                mov     bx, SpellAttack_type
                 dec     bx
                 dec     bx
                 mov     al, [bx+4C03h]
@@ -98404,9 +98407,9 @@ Spell_68_ElementalStorm endp
 Spell_69_HolyWord proc far              ; CODE XREF: j_Spell_69_HolyWord↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0
-                mov     word_36CFE, 0Ch
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, 0
+                mov     SpellAttack_type, 0Ch
+                mov     SpellAttack_reach, 2
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -98513,9 +98516,9 @@ Spell_70_Resurrect endp
 Spell_71_MegaVolts proc far             ; CODE XREF: j_Spell_71_MegaVolts↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 96h
-                mov     word_36CFE, 3
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 96h
+                mov     SpellAttack_type, 3
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
                 call    sub_1B16B
@@ -98537,9 +98540,9 @@ Spell_71_MegaVolts endp
 Spell_72_Inferno proc far               ; CODE XREF: j_Spell_72_Inferno↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0FAh
-                mov     word_36CFE, 2
-                mov     word_36FAC, 1
+                mov     SpellAttack_damage, 0FAh
+                mov     SpellAttack_type, 2
+                mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -98561,9 +98564,9 @@ Spell_72_Inferno endp
 Spell_73_SunRay proc far                ; CODE XREF: j_Spell_73_SunRay↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 0C8h
-                mov     word_36CFE, 6
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, 0C8h
+                mov     SpellAttack_type, 6
+                mov     SpellAttack_reach, 2
                 mov     ax, 10h
                 push    ax
                 call    sub_1B16B
@@ -98585,9 +98588,9 @@ Spell_73_SunRay endp
 Spell_74_Implosion proc far             ; CODE XREF: j_Spell_74_Implosion↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 3E8h
-                mov     word_36CFE, 6
-                mov     word_36FAC, 0
+                mov     SpellAttack_damage, 3E8h
+                mov     SpellAttack_type, 6
+                mov     SpellAttack_reach, 0
                 mov     ax, 12h
                 push    ax
                 call    sub_1B16B
@@ -98609,9 +98612,9 @@ Spell_74_Implosion endp
 Spell_75_StarBurst proc far             ; CODE XREF: j_Spell_75_StarBurst↑J
                 push    bp
                 mov     bp, sp
-                mov     word_340B4, 1F4h
-                mov     word_36CFE, 0
-                mov     word_36FAC, 2
+                mov     SpellAttack_damage, 1F4h
+                mov     SpellAttack_type, 0
+                mov     SpellAttack_reach, 2
                 mov     ax, 0Dh
                 push    ax
                 call    sub_1B16B
@@ -101541,9 +101544,9 @@ format          = dword ptr  6
                 cmp     word ptr [bp+format], 0Bh
                 jnz     short loc_4F2EC
                 mov     word_34B8A, 1
-                cmp     word_36CFE, 0
+                cmp     SpellAttack_type, 0
                 jnz     short loc_4F2C3
-                mov     word_340B4, 0
+                mov     SpellAttack_damage, 0
                 xor     ax, ax
                 mov     [bp+var_4], ax
                 mov     di, ax
@@ -101743,7 +101746,7 @@ loc_4F3F5:                              ; CODE XREF: spellAttackAhead+20A↓j
                 pop     cx
                 pop     cx
                 mov     si, 1
-                cmp     word_36FAC, 0
+                cmp     SpellAttack_reach, 0
                 jnz     short loc_4F451
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -101759,7 +101762,7 @@ loc_4F454:                              ; CODE XREF: spellAttackAhead+1A5↑j
                 jb      short loc_4F3F5
                 or      si, si
                 jz      short loc_4F468
-                cmp     word_36FAC, 1
+                cmp     SpellAttack_reach, 1
                 jnz     short loc_4F468
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -101853,7 +101856,7 @@ loc_4F4E5:                              ; CODE XREF: spellAttackAhead+2F7↓j
                 pop     cx
                 pop     cx
                 mov     si, 1
-                cmp     word_36FAC, 0
+                cmp     SpellAttack_reach, 0
                 jnz     short loc_4F53E
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -101869,7 +101872,7 @@ loc_4F541:                              ; CODE XREF: spellAttackAhead+295↑j
                 jb      short loc_4F4E5
                 or      si, si
                 jz      short loc_4F558
-                cmp     word_36FAC, 1
+                cmp     SpellAttack_reach, 1
                 jnz     short loc_4F558
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -101967,7 +101970,7 @@ loc_4F5D5:                              ; CODE XREF: spellAttackAhead+3E7↓j
                 pop     cx
                 pop     cx
                 mov     si, 1
-                cmp     word_36FAC, 0
+                cmp     SpellAttack_reach, 0
                 jnz     short loc_4F62E
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -101983,7 +101986,7 @@ loc_4F631:                              ; CODE XREF: spellAttackAhead+385↑j
                 jb      short loc_4F5D5
                 or      si, si
                 jz      short loc_4F648
-                cmp     word_36FAC, 1
+                cmp     SpellAttack_reach, 1
                 jnz     short loc_4F648
                 jmp     loc_4F733
 ; ---------------------------------------------------------------------------
@@ -102081,7 +102084,7 @@ loc_4F6C5:                              ; CODE XREF: spellAttackAhead+4D6↓j
                 pop     cx
                 pop     cx
                 mov     si, 1
-                cmp     word_36FAC, 0
+                cmp     SpellAttack_reach, 0
                 jnz     short loc_4F71D
                 jmp     short loc_4F733
 ; ---------------------------------------------------------------------------
@@ -102097,7 +102100,7 @@ loc_4F720:                              ; CODE XREF: spellAttackAhead+475↑j
                 jb      short loc_4F6C5
                 or      si, si
                 jz      short loc_4F738
-                cmp     word_36FAC, 1
+                cmp     SpellAttack_reach, 1
                 jnz     short loc_4F738
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
