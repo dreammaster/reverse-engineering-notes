@@ -50,14 +50,7 @@ enum {
     WorldMapRowsYendor3 = 168,
     WorldMapRowsMax = WorldMapRowsYendor3,
 
-    /*
-     * The tile-type legend tables (WorldMapWallType.../WorldMapFloorType...
-     * below) are decoded for Chapter 2 only -- Chapter 3's equivalents
-     * (sub_1BC98/sub_1BCDB in yendor3.asm) page their table through EMS in
-     * 100-entry blocks instead of a flat array, and that paging scheme
-     * isn't traced yet. worldMapWallPictureOffset/worldMapFloorPictureOffset
-     * return false for GameYendor3 until it is.
-     */
+    /* The tile-type legend tables; Chapter 3 pages them (see worldMapWallLegend below). */
     WorldMapWallTypeCountYendor2 = 58,  /* real entries; the table has more reserved zero slots, unused by real data */
     WorldMapFloorTypeCountYendor2 = 68  /* real entries 0-64; 65-67 are legitimately zero (seen in real map data) */
 };
@@ -89,10 +82,22 @@ uint16_t worldMapTileA(const WorldMap *map, unsigned row, unsigned col); /* wall
 uint16_t worldMapTileB(const WorldMap *map, unsigned row, unsigned col); /* floor/overlay type -> WorldMapFloorType table */
 
 /*
- * Picture offsets for a tile-type index (add to a category's g_pictureDir
- * base to get the actual picture to draw -- see PICTURES.VGA in
- * file-formats.md, not yet reimplemented). False if game is GameYendor3
- * (not decoded yet) or the index is out of range.
+ * The tile-type legends (yendor2.asm 0xE551 wall / 0xE175 floor-overlay; Chapter 3 pages them, sub_1BC98/sub_1BCDB:
+ * type = page * 100 + index, pages 0-3, DS:0x2 and DS:0xC8E7). Raw entry words, dumped by dump_tile_legends.py:
+ *   wall   (6 words) 0 side-feature picture (Chapter 3: also the overlay drawn when the cell's flag 0x2000 is set -- Chapter 2
+ *          always draws picture 5), 1 a second feature id, 2 the wall texture picture id (0 = none),
+ *          3 its scale class, 4 a frame offset (0/14/28/42), 5 the minimap/local-map picture offset
+ *   floor  (5 words) 0-3 the overlay picture for facing north/south/east/west (DrawDungeonCellSideFeature picks by the
+ *          party's facing), 4 the minimap/local-map picture offset
+ * Chapter 3's page 4 of the wall table (types 400/401) is not tile data (code bytes follow the page-3 entries) and is
+ * excluded. False when the type has no entry.
+ */
+bool worldMapWallLegend(GameKind game, uint16_t wallType, const uint16_t **words);
+bool worldMapFloorLegend(GameKind game, uint16_t floorType, const uint16_t **words);
+
+/*
+ * Picture offsets for a tile-type index (add to a category's g_pictureDir base to get the actual picture to draw -- see
+ * PICTURES.VGA in file-formats.md): wall word 5, floor word 4 of the entries above. False if out of range.
  */
 bool worldMapWallPictureOffset(GameKind game, uint16_t wallType, uint16_t *outOffset);
 bool worldMapFloorPictureOffset(GameKind game, uint16_t floorType, uint16_t *outOffset);

@@ -1041,6 +1041,18 @@ in Chapter 3 only, forbids flights to another page when either end is attribute 
 The fog-of-war bitmap (MSB-first, one record per row) and `RevealCellsAroundPlayer` (each step marks the party's
 row/column and the one ahead, three cells wide, in the order -1, +1, 0) are `explore.c`.
 
+### Tile-type legends, both games (`worldmap.c`)
+
+The wall/base type (tileA) and floor/overlay type (tileB) of a map cell index two legend tables of raw picture data. Chapter 2:
+flat tables at DS:0xE551 (58 wall entries of 6 words) and DS:0xE175 (68 floor entries of 5 words). **Chapter 3 pages them**
+(`sub_1BC98` / `sub_1BCDB`, which earlier notes had called EMS-paged -- they are data-segment tables): a type is
+`page * 100 + index`, with a page table (4 bytes per page: entry pointer, highest valid index) at DS:2 (walls: pages 0-3 with
+10/4/9/43 entries) and DS:0xC8E7 (floors: pages 0-3 with 12/72/55/2). All 800 x 168 cells of Chapter 3's real map resolve
+to a wall and a floor entry (checked in `test_worldmap.c`). Wall words: 0 side-feature picture, 1 second feature id, 2 wall
+texture picture, 3 scale class, 4 frame offset, 5 local-map picture; floor words 0-3: overlay picture per party facing
+(N/S/E/W), 4 local-map picture. Chapter 3 draws the entry's word 0 as the overlay for flag 0x2000 cells where Chapter 2
+always draws picture 5.
+
 ### The first-person viewport cells and their occlusion (`BuildDungeonViewportCells`, `ComputeDungeonCellVisibility`; `viewport.c`)
 
 The view is rendered from a 51-cell buffer: two 17-wide far rows, a 5-wide row, then four 3-wide rows ending with the

@@ -97,8 +97,26 @@ static void testWallFloorTables(void) {
           worldMapFloorPictureOffset(GameYendor2, 67, &offset) && offset == 0);
     check("floor type 68 is past the decoded range", !worldMapFloorPictureOffset(GameYendor2, 68, &offset));
 
-    check("yendor3's tables aren't decoded (EMS-paged)", !worldMapWallPictureOffset(GameYendor3, 0, &offset));
-    check("...same for the floor table", !worldMapFloorPictureOffset(GameYendor3, 0, &offset));
+    /* Chapter 3: paged, type = page * 100 + index */
+    check("Chapter 3 wall type 0 / 9 / 100 / 103", worldMapWallPictureOffset(GameYendor3, 0, &offset) && offset == 29 &&
+                                                       worldMapWallPictureOffset(GameYendor3, 9, &offset) && offset == 0 &&
+                                                       worldMapWallPictureOffset(GameYendor3, 100, &offset) && offset == 0 &&
+                                                       worldMapWallPictureOffset(GameYendor3, 103, &offset) && offset == 32);
+    check("...page 3 runs 300-342", worldMapWallPictureOffset(GameYendor3, 301, &offset) && offset == 34 &&
+                                        worldMapWallPictureOffset(GameYendor3, 342, &offset) && offset == 0 && !worldMapWallPictureOffset(GameYendor3, 343, &offset));
+    check("...holes between pages are invalid", !worldMapWallPictureOffset(GameYendor3, 10, &offset) && !worldMapWallPictureOffset(GameYendor3, 104, &offset) &&
+                                                   !worldMapWallPictureOffset(GameYendor3, 209, &offset) && !worldMapWallPictureOffset(GameYendor3, 400, &offset));
+    check("Chapter 3 floor types 1 / 100 / 171 / 200 / 254 / 301", worldMapFloorPictureOffset(GameYendor3, 1, &offset) && offset == 35 &&
+                                                                       worldMapFloorPictureOffset(GameYendor3, 100, &offset) && offset == 36 &&
+                                                                       worldMapFloorPictureOffset(GameYendor3, 171, &offset) && offset == 37 &&
+                                                                       worldMapFloorPictureOffset(GameYendor3, 200, &offset) && offset == 37 &&
+                                                                       worldMapFloorPictureOffset(GameYendor3, 254, &offset) && offset == 0 &&
+                                                                       worldMapFloorPictureOffset(GameYendor3, 301, &offset) && offset == 6);
+    check("...and the gaps", !worldMapFloorPictureOffset(GameYendor3, 12, &offset) && !worldMapFloorPictureOffset(GameYendor3, 172, &offset) &&
+                                 !worldMapFloorPictureOffset(GameYendor3, 255, &offset) && !worldMapFloorPictureOffset(GameYendor3, 302, &offset));
+    const uint16_t *w;
+    check("the raw wall entry has six words, the floor entry five", worldMapWallLegend(GameYendor3, 3, &w) && w[2] == 71 && w[3] == 22 && w[4] == 14 && w[5] == 66 &&
+                                                                        worldMapFloorLegend(GameYendor2, 2, &w) && w[0] == 28 && w[4] == 64);
 }
 
 static bool loadReal(GameKind game, const char *envName, const char *fallbackDir) {
@@ -205,6 +223,17 @@ static void testRealYendor3(void) {
         return;
     }
     checkU32("parsed row count", g_map.rowCount, WorldMapRowsYendor3);
+    unsigned missingWall = 0, missingFloor = 0;
+    for (unsigned r = 0; r < g_map.rowCount; r++) {
+        for (unsigned c = 0; c < WorldMapColumns; c++) {
+            const uint16_t *words;
+            missingWall += !worldMapWallLegend(GameYendor3, worldMapTileA(&g_map, r, c), &words);
+            missingFloor += !worldMapFloorLegend(GameYendor3, worldMapTileB(&g_map, r, c), &words);
+        }
+    }
+    printf("  (Chapter 3 cells without a legend entry: wall %u, floor %u)", missingWall, missingFloor);
+    puts("");
+    check("every Chapter 3 map cell has a wall and a floor legend entry", missingWall == 0 && missingFloor == 0);
     checkInvariants("yendor3", GameYendor3);
 }
 

@@ -11448,6 +11448,12 @@ The ambient music is a u16-per-page table in WORLD.DAT (keyed by the same page i
 destination's day/night tracks; both games identical in logic. `music.c`/`.h`, `test_music.c`; dump scripts
 `dump_music_table_offset.py`.
 
+### Session update: both games' tile legends (`worldmap.c`)
+
+The Chapter 3 legend ("EMS-paged, not traced") is in fact a small page table in the data segment; both games' full
+legend entries (6-word wall, 5-word floor) are now embedded and exposed as raw words, and every cell of both real maps
+resolves. The old picture-offset accessors work for Chapter 3 now too.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
