@@ -11420,6 +11420,13 @@ answers the opposite question) and the weapon/armour location test are pure func
 0x1-0x10 are now named (no-drop, container kinds). Verified on the real item catalogs (keys, maps and quest items
 carry no-drop; BAG/BOX/BACKPACK fit flags nest as expected). `inventory.c`, `test_inventory.c`.
 
+### Session update: auto-equip on portrait drop, Chapter 3's torch rule (`inventory.c`)
+
+`HandleItemDropOnPartyPortrait` is decision logic too: a carry check (with a quirk: item 0x11 is weightless -- the
+MAGIC CONTAINER in Chapter 2, a leftover that makes Chapter 3's BROKEN CLUB weightless) then a fixed priority of
+equipment slots by item flag, falling back to the first empty inventory slot (`inventoryPlanAutoEquip`). Chapter 3 drops
+one small-wearable slot and adds a second no-drop test on the fit flags (every key and the LIT TORCH).
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

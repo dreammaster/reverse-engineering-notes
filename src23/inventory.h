@@ -48,12 +48,56 @@ bool inventoryContainerAccepts(uint16_t containerFlags, uint16_t itemFitFlags);
  * three containers (the held one counts as the first) -- hold such an item. A held id of 0 is not blocked.
  * `contentsRecord` is the held item's extra word (its instance record number).
  */
-bool inventoryDropBlocked(const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord);
+bool inventoryDropBlocked(GameKind game, const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord);
+
+/*
+ * Chapter 3 adds a second no-drop test: fit flags (ItemFieldFitFlags) bit 0 -- set on every key, the ATHANEUM KEY and
+ * the LIT TORCH (a burning torch cannot be dropped). Chapter 2 only tests ItemFlagNoDrop.
+ */
 
 /*
  * inventoryLocationAccepts: the repair/enhance-style "does this spot take that kind of item": a weapon-class item
  * (flags 0xC000) needs the location entry's word 1 bit 0x100, an armour-class item (flags 0x800) bit 0x40; others never.
  */
 bool inventoryLocationAccepts(uint16_t itemFlags, uint16_t locationEntryWord1);
+
+/*
+ * Dropping the held item onto a party member's portrait (HandleItemDropOnPartyPortrait, yendor2.asm:18C80 region;
+ * Chapter 3 the same minus one slot) equips or stows it automatically. inventoryPlanAutoEquip decides where.
+ *
+ * First the carry check: unless the held item is id 0x11 (MAGIC CONTAINER in Chapter 2, weightless; in Chapter 3 the
+ * test is left over and treats BROKEN CLUB as weightless -- reproduced), the member's carried weight (+0x118) plus
+ * the item's weight must not exceed their carry capacity (+0x56 current value); otherwise it is refused.
+ * Then, by the item's flags in this order:
+ *   0x8000  main hand +0x13A        (needs it empty; clears wear counter +0xBE; applies the item's stat effect)
+ *   0x2000  slot B +0x13E           (empty; the item's container is linked; no stat effect)
+ *   0x4000  second hand +0x142      (empty; a two-handed weapon (entry word 1 bit 0) also needs +0x146 empty;
+ *                                    clears +0xC0; stat effect)
+ *   0x800   +0x146                  (empty and no two-handed weapon (UI flag 0x20); clears +0xC2; stat effect)
+ *   0x400   rings +0x14A, else +0x14E
+ *   0x200   by the entry's word 1:  0x8000 -> +0x152, 0x4000 -> +0x154, 0x2000 -> +0x156 (Chapter 2 only),
+ *                                   0x1000 -> +0x158, 0x800 -> +0x15A    (id only; stat effect)
+ * and when its slot is taken, or the item has no such flag, the first empty of the eight inventory slots
+ * (+0x11A, +0x11E ... +0x136; the item's container is linked); with all eight full it is refused.
+ * Whatever is placed adds its weight (again except id 0x11) and the equipment bonuses are recomputed.
+ */
+typedef enum {
+    AutoEquipRefused,
+    AutoEquipEquipment,
+    AutoEquipInventory
+} AutoEquipKind;
+
+typedef struct {
+    AutoEquipKind kind;
+    unsigned slotOffset;    /* party record offset of the 2- or 4-byte slot */
+    bool storesExtra;       /* the slot has a +2 extra word (4-byte slots) */
+    unsigned wearOffset;    /* the wear counter to clear, 0 = none */
+    bool appliesStatEffect; /* partyApplyMultiStatEffect for the item */
+    bool linksContainer;    /* TryLoadNextContainerLink on the item */
+    bool addsWeight;
+} AutoEquipPlan;
+
+AutoEquipPlan inventoryPlanAutoEquip(GameKind game, const uint8_t *partyRecord, uint16_t itemId, uint16_t itemWeight,
+                                     uint16_t itemFlags, uint16_t entryWord1);
 
 #endif

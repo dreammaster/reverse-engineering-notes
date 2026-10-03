@@ -446,6 +446,12 @@ its counter reaches 40; Chapter 3 fires them above 40, drops the Survival pass a
 page's attribute (per-page table, byte 5) is 2; Chapter 2 only hides such cells from the drawn box. Everything else
 in `RevealMapRegion` is identical. See `mount.h`.
 
+### Dropping: Chapter 3 also blocks on fit-flag bit 0; the portrait-drop auto-equip loses a slot
+
+`IsItemDroppable` (really "is dropping blocked") tests the item's flag bit 1 in Chapter 2 and additionally its fit
+flags bit 0 in Chapter 3 (set on keys and the LIT TORCH). `HandleItemDropOnPartyPortrait` in Chapter 3 has no case
+for a small wearable whose entry word 1 has 0x2000 (slot `+0x156`). See `inventory.h`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a

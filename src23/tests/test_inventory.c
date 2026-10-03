@@ -66,25 +66,25 @@ static void testDrop(void) {
     }
     SaveGame save;
     saveGameInit(&save, GameYendor2);
-    check("a plain item can be dropped", !inventoryDropBlocked(&catalog, &save, 1, 0));
-    check("a key cannot", inventoryDropBlocked(&catalog, &save, 2, 0));
-    check("nothing held is not blocked", !inventoryDropBlocked(&catalog, &save, 0, 0));
-    check("an empty container can be dropped", !inventoryDropBlocked(&catalog, &save, 3, 20));
+    check("a plain item can be dropped", !inventoryDropBlocked(GameYendor2, &catalog, &save, 1, 0));
+    check("a key cannot", inventoryDropBlocked(GameYendor2, &catalog, &save, 2, 0));
+    check("nothing held is not blocked", !inventoryDropBlocked(GameYendor2, &catalog, &save, 0, 0));
+    check("an empty container can be dropped", !inventoryDropBlocked(GameYendor2, &catalog, &save, 3, 20));
 
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 3), 1, 0);
-    check("a container holding a plain item can", !inventoryDropBlocked(&catalog, &save, 3, 20));
+    check("a container holding a plain item can", !inventoryDropBlocked(GameYendor2, &catalog, &save, 3, 20));
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 4), 2, 0);
-    check("...holding a key cannot", inventoryDropBlocked(&catalog, &save, 3, 20));
+    check("...holding a key cannot", inventoryDropBlocked(GameYendor2, &catalog, &save, 3, 20));
 
     SaveGame deep;
     saveGameInit(&deep, GameYendor2);
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&deep, SaveSectionItemInstances, 20), 1), 4, 21); /* held -> 20 holds container -> 21 */
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&deep, SaveSectionItemInstances, 21), 1), 5, 22);
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&deep, SaveSectionItemInstances, 22), 1), 2, 0);
-    check("a key two containers down (third level) still blocks", inventoryDropBlocked(&catalog, &deep, 3, 20));
+    check("a key two containers down (third level) still blocks", inventoryDropBlocked(GameYendor2, &catalog, &deep, 3, 20));
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&deep, SaveSectionItemInstances, 22), 1), 5, 23);
     itemSlotSet(inventoryGroupSlot(saveGameRecord(&deep, SaveSectionItemInstances, 23), 1), 2, 0);
-    check("...but one in a fourth-level container is never looked at", !inventoryDropBlocked(&catalog, &deep, 3, 20));
+    check("...but one in a fourth-level container is never looked at", !inventoryDropBlocked(GameYendor2, &catalog, &deep, 3, 20));
 }
 
 static void testLocation(void) {
@@ -130,9 +130,9 @@ static void testReal(void) {
     saveGameInit(&save, GameYendor2);
     unsigned noDrop = 0;
     for (unsigned id = 1; id <= itemCatalogLayout(GameYendor2)->validItemCount; id++) {
-        noDrop += inventoryDropBlocked(&items, &save, (uint16_t)id, 0) && !(itemGetU16(itemCatalogRecord(&items, id), ItemFieldFlags) & 0x2000);
+        noDrop += inventoryDropBlocked(GameYendor2, &items, &save, (uint16_t)id, 0) && !(itemGetU16(itemCatalogRecord(&items, id), ItemFieldFlags) & 0x2000);
     }
-    check("47 items cannot be dropped, the BRASS CHEST KEY among them", noDrop >= 46 && inventoryDropBlocked(&items, &save, 0x21, 0));
+    check("47 items cannot be dropped, the BRASS CHEST KEY among them", noDrop >= 46 && inventoryDropBlocked(GameYendor2, &items, &save, 0x21, 0));
 }
 
 int main(void) {
