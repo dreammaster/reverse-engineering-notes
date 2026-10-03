@@ -157,3 +157,20 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 | `0F` | dismissing a character allowed ("Too dangerous to dismiss here!" when 0) |
 | `14` | Teleport allowed, `15` Lloyd's Beacon, `16` Time Distortion, `17` Super Shelter, `18` Town Portal, `19` Nature's Gate, `1A` Etherealize (each tested by that spell's routine) |
 | `0C`, `0D`, `10`-`13`, `1B`-`1E` | used by tavern / death / other code (not yet identified); in the shipped files `11h`-`13h` and `1Bh`-`1Eh` are typically `64h` |
+
+### Event operand encodings (verified by decoding every shipped `MAZEnn.EVT` with `tools/mm3_events.py`)
+
+* **Pairs**: `If` (8 `>=`, 9 `==`, 10 `<=`), `TakeOrGive` (12, 28, 33: 2 pairs), `TakeOrGive3` (29) and `GiveMulti` (20: 3 pairs),
+  `SetVar` (27: 1 pair) use `(mode, value)` pairs; the value is 4 bytes for modes 16 (experience) and 34 (gold), 2 bytes for 25
+  (minutes) and 35 (gems), else 1 byte.  The mode numbers are those of Xeen's `ifProc` (21 item, 44 yes/no prompt, 20 game flag,
+  ...), see `ifProc` (`3D32E`).  `If` is followed by one byte: the line to jump to when the test is true.
+* `Display1`/`DoorText*`/`SignText`: 1 byte, the index of a NUL-terminated string in `TEXTnn.MAZ` (string 0 first).
+  Strings start with control bytes (`03` centre, `0B nnn` ...).
+* `Teleport` (7, 31): map, x, y.  `MoveObj`: object, x, y.  `CallEvent` (25): x, y, line.  `SetChar` (15): 0 = all, 1-6 member,
+  7 = random, 8 = ask (as Xeen).  `WhoWill` (32): message.  `DoTownEvent` (17): building 0-6.
+* Not yet understood: `NPC` (5 bytes), `Spawn` (4), `AlterMap` (4), `ConfirmWord` (4), `Damage` (3), `JumpRnd` (3), `AlterEvent` (2).
+* One `If` record in MAZE60 carries a stray extra byte; scripts end with a 00 padding byte in some files.
+
+Example (`MAZE01`, pit that needs a rope; text from `TEXT01.MAZ`): `SetChar 0; If item(21)=73 goto 5; Display1 "The drop is
+too great. You need a rope to climb down."; If yesno=1 goto 4; Exit; Display1 "A pit descends ... Enter the caverns?"; If yesno=0 goto 8;
+Exit; TakeOrGive item 73; SetVar; Teleport 6, 1, 13`.
