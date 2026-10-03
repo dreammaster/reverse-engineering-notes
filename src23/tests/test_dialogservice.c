@@ -401,6 +401,41 @@ static void testRealItemServices(void) {
                                                   !dialogSellAccepts(0x0000, itemCatalogRecord(&items, 198)));
 }
 
+static void testTransport(void) {
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    Bcd4 gold, expected;
+
+    check("four mounts", dialogTransport(3) && !dialogTransport(4));
+    check("the highest bit wins", dialogTransportForMask(0x9000) == dialogTransport(0));
+    check("an unrelated mask is no mount", dialogTransportForMask(0x0F00) == NULL);
+
+    bcd4FromU16(gold, 4999);
+    check("one gold short", dialogLearnTransport(0x8000, record, gold) == DialogTransportNoGold);
+    check("...nothing learned", partyGetU16(record, PartyFieldAbilities) == 0);
+
+    bcd4FromU16(gold, 20000);
+    partySetU16(record, PartyFieldAbilityCharge, 3);
+    check("PEGASUS for 5000", dialogLearnTransport(0x8000, record, gold) == DialogTransportLearned);
+    bcd4FromU16(expected, 15000);
+    check("...gold 20000 -> 15000", bcd4Compare(gold, expected) == 0);
+    check("...bit set", partyGetU16(record, PartyFieldAbilities) == 0x8000);
+    check("...its charge counter zeroed", partyGetU16(record, PartyFieldAbilityCharge) == 0);
+    check("learning it again is refused without charging",
+          dialogLearnTransport(0x8000, record, gold) == DialogTransportAlreadyKnown && bcd4Compare(gold, expected) == 0);
+
+    partySetU16(record, PartyFieldAbilityCharge + 4, 2);
+    bcd4FromU16(gold, 40000);
+    check("FLYING RUG", dialogLearnTransport(0x2000, record, gold) == DialogTransportLearned);
+    check("...zeroes the third counter", partyGetU16(record, PartyFieldAbilityCharge + 4) == 0);
+    check("...both bits set", partyGetU16(record, PartyFieldAbilities) == 0xA000);
+
+    dialogSellTransport(0x8000, record, gold);
+    bcd4FromU16(expected, 20000);
+    check("selling the pegasus refunds the full 5000: 15000 + 5000", bcd4Compare(gold, expected) == 0);
+    check("...and clears only that bit", partyGetU16(record, PartyFieldAbilities) == 0x2000);
+}
+
 int main(void) {
     testAttributeTome();
     testAttributeCaps();
@@ -412,6 +447,7 @@ int main(void) {
     testTrainingQuote();
     testRiddles();
     testBuyOre();
+    testTransport();
     testRealItemServices();
 
     if (g_failureCount == 0) {

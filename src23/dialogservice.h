@@ -225,4 +225,51 @@ bool dialogEnhanceCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned 
 bool dialogRepairEligible(const ItemCatalog *catalog, const uint8_t *itemRecord);
 bool dialogRepairCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned originalItemId, Bcd4 cost);
 
+/*
+ * The transport teachers (UseAbilityScroll, yendor2.asm:21917; topics with flag
+ * DialogTopicPreview and the 0x1000/0x2000 type bits; "BUY PEGASUS", "SELL
+ * EAGLE"...). The four "special abilities" PartyFieldAbilities records are
+ * the fast-travel mounts, from a 4-entry table in the executable (DS:0x77C6 /
+ * 0x7AF4, identical in both games; ida_scripts/dump_ability_scroll_table.py):
+ *
+ *    mask    name          price (gold, BCD at +0x12 of its 26-byte entry)
+ *    0x8000  PEGASUS        5000
+ *    0x4000  GIANT EAGLE   15000
+ *    0x2000  FLYING RUG    25000
+ *    0x1000  MAGIC DRAGON  35000
+ *
+ * (the entry's other words -- 1/3/5/7, 1/2/4/4 and mask|3,3,2,1 -- are the mount's
+ * range/capacity data used by the travel UI, not yet decoded.)
+ */
+typedef struct {
+    uint16_t mask;
+    const char *name;
+    uint16_t price; /* gold */
+} DialogTransport;
+
+enum { DialogTransportCount = 4 };
+const DialogTransport *dialogTransport(unsigned index); /* 0 = PEGASUS .. 3 = MAGIC DRAGON; NULL out of range */
+const DialogTransport *dialogTransportForMask(uint16_t mask); /* the highest set bit wins, like the original's shift loop */
+
+typedef enum {
+    DialogTransportLearned,
+    DialogTransportAlreadyKnown, /* the member already has it: refused, nothing paid */
+    DialogTransportNoGold
+} DialogTransportResult;
+
+/*
+ * Buying (the 0x2 accept branch): refused if the member already knows it, then
+ * if gold < price; otherwise gold -= price, the ability bit is set in
+ * PartyFieldAbilities, and the matching charge counter (PartyFieldAbilityCharge,
+ * high bit first) is zeroed so it starts fully charged.
+ */
+DialogTransportResult dialogLearnTransport(uint16_t mask, uint8_t *partyRecord, Bcd4 gold);
+
+/*
+ * Selling it back (the "SELL <MOUNT>" topics, :22129): clears the ability bit
+ * and refunds the FULL price -- unconditionally, even if the member never had it
+ * (the original just clears the bit and credits the price).
+ */
+void dialogSellTransport(uint16_t mask, uint8_t *partyRecord, Bcd4 gold);
+
 #endif

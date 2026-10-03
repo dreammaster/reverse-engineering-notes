@@ -4308,6 +4308,20 @@ all; the apprentice smith (NPC 9, 0-2, 50%) the plain through +2 ones. Repair
 needs a target slot-flag bit and costs the *original* item's price x percent.
 `dialogSellAccepts`, `dialogEnhanceEligible/Cost`, `dialogRepairEligible/Cost`.
 
+**The "ability scrolls" are the fast-travel mounts (2026-10-03)**: `UseAbilityScroll`
+teaches/sells the four special abilities that `PartyFieldAbilities` (`+0xB4`)
+records -- PEGASUS `0x8000`, GIANT EAGLE `0x4000`, FLYING RUG `0x2000`, MAGIC
+DRAGON `0x1000` -- from a 4-entry, 26-byte table in the executable (identical
+in both games; `ida_scripts/dump_ability_scroll_table.py`) priced 5000 / 15000 /
+25000 / 35000 gold. The mount's mask rides in the topic's *text-offset* word of
+a zero-line topic (the topics with bit-mask "offsets" and `0` lines noted
+earlier). Buying: refused if already known, then if gold is short; pays, sets
+the bit, zeroes that mount's charge counter (`+0xB6`, high bit first). Selling
+back clears the bit and refunds the **full** price. Greetings carry type `0x1000`
+(buy, 3 NPCs in Chapter 2) or `0x2000` (sell, 3). **`UseItemType_400` is dead
+code in both games' data**: no greeting ever carries type `0x400`.
+`dialogTransport`, `dialogLearnTransport`, `dialogSellTransport`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by

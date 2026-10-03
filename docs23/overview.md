@@ -11268,6 +11268,16 @@ three currency piles -- shared by chests, reward piles and shop stock. So every
 shop's inventory and every chest's loot is now readable data (and the
 "price" field is a trap). Lock records for shops: `LockRecord.items[]`.
 
+### Session update (2026-10-03, continued): the mount sellers, and the NPC engine is covered
+
+The last big NPC handler, `UseAbilityScroll`, is the Pegasus / Giant Eagle / Flying
+Rug / Magic Dragon teacher: buy for 5000-35000 gold, sell back at full price.
+With it every handler reachable from real greeting data is reimplemented as
+data-model functions: healer, trainer, challenge, tomes, ore, riddles, mounts,
+and the sell/enhance/repair rules, on top of the topic-menu machinery. What's
+left of the NPC engine is UI (the shop screen, text entry) and the two
+screens' item-moving.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

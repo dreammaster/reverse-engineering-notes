@@ -287,3 +287,51 @@ bool dialogRepairEligible(const ItemCatalog *catalog, const uint8_t *itemRecord)
 bool dialogRepairCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned originalItemId, Bcd4 cost) {
     return priceOfItemAtPercent(npc, catalog, originalItemId, cost);
 }
+
+static const DialogTransport g_transports[DialogTransportCount] = {
+    {0x8000, "PEGASUS", 5000}, {0x4000, "GIANT EAGLE", 15000}, {0x2000, "FLYING RUG", 25000}, {0x1000, "MAGIC DRAGON", 35000}};
+
+const DialogTransport *dialogTransport(unsigned index) {
+    return index < DialogTransportCount ? &g_transports[index] : NULL;
+}
+
+const DialogTransport *dialogTransportForMask(uint16_t mask) {
+    for (unsigned i = 0; i < DialogTransportCount; i++) {
+        if (mask & g_transports[i].mask) {
+            return &g_transports[i];
+        }
+    }
+    return NULL;
+}
+
+DialogTransportResult dialogLearnTransport(uint16_t mask, uint8_t *partyRecord, Bcd4 gold) {
+    const DialogTransport *transport = dialogTransportForMask(mask);
+    if (!transport) {
+        return DialogTransportNoGold;
+    }
+    if (partyGetU16(partyRecord, PartyFieldAbilities) & mask) {
+        return DialogTransportAlreadyKnown;
+    }
+    Bcd4 price;
+    bcd4FromU16(price, transport->price);
+    if (bcd4Compare(gold, price) < 0) {
+        return DialogTransportNoGold;
+    }
+    bcd4Sub(gold, price);
+    partySetU16(partyRecord, PartyFieldAbilities, (uint16_t)(partyGetU16(partyRecord, PartyFieldAbilities) | mask));
+    for (unsigned i = 0; i < DialogTransportCount; i++) {
+        if (mask & g_transports[i].mask) {
+            partySetU16(partyRecord, PartyFieldAbilityCharge + i * 2, 0);
+            break;
+        }
+    }
+    return DialogTransportLearned;
+}
+
+void dialogSellTransport(uint16_t mask, uint8_t *partyRecord, Bcd4 gold) {
+    const DialogTransport *transport = dialogTransportForMask(mask);
+    partySetU16(partyRecord, PartyFieldAbilities, (uint16_t)(partyGetU16(partyRecord, PartyFieldAbilities) & ~mask));
+    if (transport) {
+        bcd4AddU16(gold, transport->price);
+    }
+}
