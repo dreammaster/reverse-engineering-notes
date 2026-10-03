@@ -377,3 +377,6 @@ effect via `healCharacterEffect`, and then store the **caster's level** (`getCur
 Blessed -> `+102h` (`blessed`, AC bonus), Power Shield -> `+103h`, Holy Bonus -> `+104h` (damage), Heroism -> `+105h` (to-hit).
 Light increments `Party_light` (one unit is used up each step on a light-burning cell, `updateLight`); Levitate / Walk on Water just set
 `Party_levitate` / `Party_walkOnWater` to 1.
+
+Healing: First Aid heals 6 hit points, Cure Wounds 15, Power Cure `rnd(2,12) x level`, through `healCharacterEffect`; the target may not be dead,
+stone or eradicated (worst condition 0Dh-0Fh -> `showErrorMessage`).
