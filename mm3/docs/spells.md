@@ -327,3 +327,45 @@ A character can buy the spells of spell levels 1..min(town cap, character level)
 * level 14: Prismatic Light
 * level 15: Elemental Storm
 
+## Attack spell parameters (by code reading)
+
+Each attack spell routine sets three globals and calls `spellAttackAhead(animation)`: `word_340B4` = damage, `word_36CFE` = effect/damage type (numbering of `MONDMGT` for 0-6: 0 physical, 2 fire, 3 electricity, 4 cold, 5 poison, 6 energy; 7-16 are status effects), `word_36FAC` = reach (0 one monster, 1 one group, 2 all monsters; reach names inferred from the spell descriptions).
+
+| id | spell | damage | type | reach |
+|---|---|---|---|---|
+| 3 | Flying Fist | 6 | 0 physical | single |
+| 5 | Elemental Arrow | 8 | chosen element (dialog `element.icn`) | single |
+| 8 | Sparks | 2 x level | 3 electricity | group |
+| 9 | Energy Blast | rnd(2,6) x level | 6 energy | single |
+| 10 | Sleep | - | 7 sleep | group |
+| 11 | Pain | 8 | 0 physical | group |
+| 13 | Toxic Cloud | 10 | 5 poison | group |
+| 16 | Turn Undead | - | 14 (0Eh) turn undead | group |
+| 18 | Acid Stream | 25 | 5 poison | single |
+| 20 | Silence | - | 16 (10h) silence | group |
+| 28 | Lightning Bolt | rnd(4,6) x level | 3 electricity | group |
+| 29 | Immobilize | - | 8 immobilize | group |
+| 32 | Frost Bite | 35 | 4 cold | single |
+| 36 | Fireball | rnd(3,7) x level | 2 fire | group |
+| 38 | Acid Spray | 15 | 5 poison | all |
+| 39 | Cold Ray | rnd(2,4) x level | 4 cold | all |
+| 43 | Feeble Mind | - | 9 feeble mind | group |
+| 44 | Deadly Swarm | 40 | 0 physical | group |
+| 46 | Finger of Death | - | 11 (0Bh) finger of death | group |
+| 48 | Paralyze | - | 10 (0Ah) paralyse | group |
+| 49 | Dragon Breath | 5 x level | chosen element | all |
+| 51 | Fiery Flail | 100 | 2 fire | single |
+| 56 | Fantastic Freeze | 40 | 4 cold | group |
+| 58 | Disintegrate | - | 15 (0Fh) disintegrate | group |
+| 62 | Dancing Sword | rnd(6,14) x level | 0 physical | group |
+| 63 | Prismatic Light | 80 | random 0-6 | all |
+| 64 | Moon Ray | 30 | 6 energy (also heals the party) | all |
+| 65 | Mass Distortion | - | 13 (0Dh) mass distortion | group |
+| 67 | Incinerate | 250 | 2 fire | single |
+| 68 | Elemental Storm | 150 | chosen element | all |
+| 69 | Holy Word | - | 12 (0Ch) holy word (undead) | all |
+| 71 | Mega Volts | 150 | 3 electricity | group |
+| 72 | Inferno | 250 | 2 fire | group |
+| 73 | Sun Ray | 200 | 6 energy | all |
+| 74 | Implosion | 1000 | 6 energy | single |
+| 75 | Star Burst | 500 | 0 physical | all |
