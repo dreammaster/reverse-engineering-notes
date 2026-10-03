@@ -38,26 +38,15 @@ The character code is the same engine as Xeen's `Character` class: `getStat`, `s
 (class numbers too: 2 archer, 3 cleric, 4 sorcerer, 8 druid, 9 ranger).  The tables they use are in DGROUP and are
 named in `names/mm3.tsv` (`BASE_HP_BY_CLASS`, `STAT_VALUES`, `AGE_RANGES`, ...).
 
-Record layout differences found so far (character record, offsets from the start):
+The full character record (303 bytes) is in `character.h` and as a `Character` struct in the database
+(`ida_scripts/apply_structs.py`).  Compared with Xeen it is the same layout up to the skills (`27h`), then: only 26 award
+bytes (`39h`), 36 spells (`53h`), the inventory is 18 slots stored as six parallel byte arrays 19 bytes apart
+(`7Dh` present, `90h` flags, `0A3h` elemental material, `0B6h` metal, `0C9h` attribute material, `0DCh` item id), conditions
+at `113h`, hit points `125h`, spell points `127h`, birth year `129h`, experience `12Bh`.
 
-| Offset | Field | Same as Xeen? |
-|---|---|---|
-| `00h`-`0Fh` | name | yes |
-| `10h`..`13h` | sex, race, alignment/side, class | yes |
-| `14h`-`21h` | 7 stat (permanent, temporary) byte pairs | yes |
-| `22h` | temporary AC | yes |
-| `23h`/`24h` | level, temporary level | yes |
-| `27h`... | 18 skills (`+2Ah` = Bodybuilder, `+27h+13` Prestidigitation/Prayer Master...) | yes |
-| `7Ah` | "has spells" flag | **no** (Xeen: after 64 award bytes + 39 spell bytes) |
-| `7Dh` | 18 item slots, first array: item present | **no**: items are 18 parallel byte arrays, not 3-byte records |
-| `90h` | item flags (`40h` cursed, `80h` broken) | |
-| `0A3h` | elemental material | |
-| `0B6h` | metal / armour material | |
-| `0C9h` | attribute (enchantment) material | |
-| `0DCh` | item id (armour ids `21h`-`29h`) | |
-| `0102h` | base AC bonus (`getArmorClass`) | |
-| `113h`-`122h` | 16 conditions (`11Fh` unconscious, `120h` dead) | |
-| `125h` | current HP (word) | |
+The event condition code (`ifProc`, `3D32E`) is Xeen's `Scripts::ifProc` with the same action numbers (3 sex, 4 race,
+5 class, 8 HP, 9 SP, 10 AC, 11 level bonus, 12 age, 13 skill, 15 award, 16 experience, 18 condition, 19 spell, 25 minutes,
+34 gold, 35 gems ...), reading the offsets above.
 
 `MM3.CUR` (and the `*.mm3` save games) is a `.CC` archive (240 members here, TOC cipher as in `mm3-re.md`), i.e. the
 working copy of the maze data plus the party state.
