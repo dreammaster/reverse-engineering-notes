@@ -11251,6 +11251,15 @@ the classifier sets. A small surprise preserved on purpose: the classifier keeps
 the low *ten* bits, so a stale "nothing wrong" 0x200 survives. 27th suite
 (`test_dialogservice`).
 
+### Session update (2026-10-03, continued): the challenge NPCs
+
+The 20 Chapter 2 NPCs whose greeting is type `0x800` turned out to be
+"challenges" -- pay a fee, pass a stat threshold, win a multiple of the fee. The
+fee being a BCD4 sitting in the NPC header (it showed up as `DS:0x512A`, which is
+`word_3298A`'s linear address minus the data base -- the same aliasing that bit
+the lighting system) is what unlocked it, and the real numbers (1000/1200/2000
+gold at 70/70/400) confirm every field. Also the trainer's price and cap.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

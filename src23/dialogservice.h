@@ -109,4 +109,52 @@ void dialogHealingCost(const uint8_t *npc, unsigned type, const DialogState *sta
  */
 bool dialogApplyHealing(unsigned type, const Bcd4 cost, Bcd4 gold, uint8_t *partyRecord, GameKind game);
 
+/*
+ * The trainer (UseTrainingItem, :21510; NPCs whose greeting carries type
+ * 0x4000). dialogTrainingQuote is the TRAIN topic's quote (:21860): false if
+ * the member's level + 1 would exceed the trainer's cap (DialogNpcParamB, e.g.
+ * 10 for the Chapter 2 NPC 10 -- a trainer only takes you so far); otherwise
+ * the price is 100 x DialogNpcPriceMultiplier x level, in BCD as for
+ * healing. Accepting (TRAIN NOW) is party.h's partyApplyTraining with that
+ * cost.
+ */
+bool dialogTrainingQuote(const uint8_t *npc, const uint8_t *partyRecord, Bcd4 cost);
+
+/*
+ * The challenge NPCs (UseItemType_800, :20988; greeting type 0x800 -- 20 in
+ * Chapter 2, "THE CHALLENGE OF PROJECTILE ACCURACY / INTELLIGENCE / HEALTH
+ * POINTS ..."). The header names a stat (DialogNpcParamA: an offset into the
+ * party record's MAXIMUM-stat array, e.g. 0x88 = projectile accuracy rating,
+ * 0x82 = intelligence, 0x92 = hit points), a threshold (DialogNpcParamB), an
+ * entry fee (dialogNpcFee), a reward multiplier (DialogNpcPriceMultiplier) and
+ * the per-character "already won" flag index (DialogNpcCharacterFlagIndex,
+ * bank 0x10C).
+ *
+ * Accepting: not enough gold -> DialogChallengeNoGold, nothing happens.
+ * Otherwise the fee is paid FIRST, whatever happens next; then if the stat
+ * is at or above the threshold (signed compare, no dice -- the "challenge" is
+ * a pure stat check) the member wins: the fee is paid back `multiplier` times
+ * over (so the net prize is (multiplier - 1) x fee), `*reward` receives
+ * fee x multiplier, and the member's flag is set so they can't win again.
+ * Below the threshold the fee is simply lost and the flag stays clear (they may
+ * try again).
+ */
+typedef enum {
+    DialogChallengeNoGold,
+    DialogChallengeLost,
+    DialogChallengeWon
+} DialogChallengeOutcome;
+
+DialogChallengeOutcome dialogAttemptChallenge(const uint8_t *npc, uint8_t *partyRecord, Bcd4 gold, Bcd4 reward);
+
+/*
+ * CheckPartyMemberItemFlag(AndClearPanel) (:20392): marks the services of a
+ * "once per character" NPC as available to the chosen member -- mask A
+ * becomes (availA & 0x1FFF) | 0x1000, plus 0x8000 if the member's flag
+ * (DialogNpcCharacterFlagIndex in bank 0x10C) is still clear. In the challenge
+ * NPCs' data 0x8000 is the TRY CHALLENGE topic's own bit and 0x1000 FINISHED's,
+ * so a member who already won sees only FINISHED.
+ */
+void dialogMarkServiceAvailability(DialogState *state, const uint8_t *npc, const uint8_t *partyRecord);
+
 #endif

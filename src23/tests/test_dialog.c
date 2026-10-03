@@ -345,6 +345,20 @@ static void checkRealGame(const char *name, GameKind game, const char *envName, 
         check("Chapter 2 NPC 43 is a +10 Strength tome (flag 142, offset 0x3C)",
               dialogGetU16(tome, DialogNpcOneTimeFlag) == 142 && dialogGetU16(tome, DialogNpcParamA) == 0x3C &&
                   dialogGetU16(tome, DialogNpcParamB) == 10);
+        static const struct { unsigned npc; uint8_t fee[4]; unsigned stat; unsigned threshold; unsigned mult; } challenges[] = {
+            {12, {0, 0, 0x10, 0}, 0x88, 70, 3}, {21, {0, 0, 0x12, 0}, 0x82, 70, 4}, {44, {0, 0, 0x20, 0}, 0x92, 400, 10}};
+        bool challengesOk = true;
+        for (unsigned i = 0; i < 3; i++) {
+            const uint8_t *c = dialogNpc(&catalog, challenges[i].npc);
+            uint8_t fee[4];
+            dialogNpcFee(c, fee);
+            if (memcmp(fee, challenges[i].fee, 4) != 0 || dialogGetU16(c, DialogNpcParamA) != challenges[i].stat ||
+                dialogGetU16(c, DialogNpcParamB) != challenges[i].threshold ||
+                dialogGetU16(c, DialogNpcPriceMultiplier) != challenges[i].mult) {
+                challengesOk = false;
+            }
+        }
+        check("Chapter 2's projectile / intelligence / HP challenges have the fees and thresholds the data implies", challengesOk);
         const uint8_t *bye = dialogTopic(&catalog, dialogGetU16(governor, DialogNpcFirstTopic) + 14);
         dialogTopicName(bye, topicName);
         check("its last topic is BYE and ends the conversation",

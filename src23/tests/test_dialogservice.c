@@ -244,6 +244,66 @@ static void testApplyHealing(void) {
     checkU32("...and only the low 6 status bits remain", partyGetU16(record, PartyFieldStatusFlags), 0x0005);
 }
 
+static void testChallenge(void) {
+    uint8_t npc[DialogNpcRecordSize], record[PartyRecordSize];
+    memset(npc, 0, sizeof(npc));
+    memset(record, 0, sizeof(record));
+    putU16(npc, DialogNpcParamA, 0x88);
+    putU16(npc, DialogNpcParamB, 70);
+    putU16(npc, DialogNpcPriceMultiplier, 3);
+    putU16(npc, DialogNpcCharacterFlagIndex, 1);
+    bcd4FromU16(npc + DialogNpcFee, 1000);
+
+    Bcd4 gold, reward, expected;
+    bcd4FromU16(gold, 500);
+    check("not enough gold for the fee", dialogAttemptChallenge(npc, record, gold, reward) == DialogChallengeNoGold);
+    bcd4FromU16(expected, 500);
+    check("...gold untouched", bcd4Compare(gold, expected) == 0);
+
+    bcd4FromU16(gold, 5000);
+    partySetU16(record, 0x88, 69);
+    check("one point short of the threshold loses", dialogAttemptChallenge(npc, record, gold, reward) == DialogChallengeLost);
+    bcd4FromU16(expected, 4000);
+    check("...the fee is still paid", bcd4Compare(gold, expected) == 0);
+    check("...and no flag is set, so the member can retry", !flagBankTest(record + PartyFieldFlagBank10C, 6, 1));
+
+    partySetU16(record, 0x88, 70);
+    check("meeting the threshold wins", dialogAttemptChallenge(npc, record, gold, reward) == DialogChallengeWon);
+    bcd4FromU16(expected, 6000);
+    check("fee refunded 3 times over: 4000 - 1000 + 3000", bcd4Compare(gold, expected) == 0);
+    bcd4FromU16(expected, 3000);
+    check("the reward is fee x multiplier", bcd4Compare(reward, expected) == 0);
+    check("the member's flag is set", flagBankTest(record + PartyFieldFlagBank10C, 6, 1));
+
+    DialogState state;
+    memset(&state, 0, sizeof(state));
+    state.availA = 0xE0F0;
+    dialogMarkServiceAvailability(&state, npc, record);
+    checkU32("a member who already won sees only the FINISHED bit", state.availA, 0x10F0);
+    uint8_t other[PartyRecordSize];
+    memset(other, 0, sizeof(other));
+    dialogMarkServiceAvailability(&state, npc, other);
+    checkU32("a fresh member also sees the offer bit", state.availA, 0x90F0);
+}
+
+static void testTrainingQuote(void) {
+    uint8_t npc[DialogNpcRecordSize], record[PartyRecordSize];
+    memset(npc, 0, sizeof(npc));
+    memset(record, 0, sizeof(record));
+    putU16(npc, DialogNpcParamB, 10);
+    putU16(npc, DialogNpcPriceMultiplier, 5);
+    Bcd4 cost, expected;
+
+    partySetU16(record, PartyFieldLevel, 4);
+    check("below the cap there is a quote", dialogTrainingQuote(npc, record, cost));
+    bcd4FromU16(expected, 2000);
+    check("100 x 5 x level 4", bcd4Compare(cost, expected) == 0);
+    partySetU16(record, PartyFieldLevel, 9);
+    check("level 9 -> 10 is still allowed", dialogTrainingQuote(npc, record, cost));
+    partySetU16(record, PartyFieldLevel, 10);
+    check("level 10 -> 11 would pass the cap: no training", !dialogTrainingQuote(npc, record, cost));
+}
+
 int main(void) {
     testAttributeTome();
     testAttributeCaps();
@@ -251,6 +311,8 @@ int main(void) {
     testClassifyCondition();
     testHealingCosts();
     testApplyHealing();
+    testChallenge();
+    testTrainingQuote();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

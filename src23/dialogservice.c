@@ -109,6 +109,15 @@ unsigned dialogAfflictionCost(const uint8_t *partyRecord) {
     return total;
 }
 
+/* ShowHealingCostPrompt's arithmetic: (base x multiplier, truncated to 16 bits) summed once per level, in BCD. */
+static void priceByLevel(const uint8_t *npc, unsigned base, const uint8_t *partyRecord, Bcd4 cost) {
+    uint16_t perLevel = (uint16_t)(base * dialogGetU16(npc, DialogNpcPriceMultiplier));
+    memset(cost, 0, sizeof(Bcd4));
+    for (unsigned i = 0; i < partyGetU16(partyRecord, PartyFieldLevel); i++) {
+        bcd4AddU16(cost, perLevel);
+    }
+}
+
 void dialogHealingCost(const uint8_t *npc, unsigned type, const DialogState *state, const uint8_t *partyRecord,
                        Bcd4 cost) {
     unsigned base = 0;
@@ -129,11 +138,7 @@ void dialogHealingCost(const uint8_t *npc, unsigned type, const DialogState *sta
     } else if (type & DialogHealHp) {
         base = 20;
     }
-    uint16_t perLevel = (uint16_t)(base * dialogGetU16(npc, DialogNpcPriceMultiplier));
-    memset(cost, 0, sizeof(Bcd4));
-    for (unsigned i = 0; i < partyGetU16(partyRecord, PartyFieldLevel); i++) {
-        bcd4AddU16(cost, perLevel);
-    }
+    priceByLevel(npc, base, partyRecord, cost);
 }
 
 bool dialogApplyHealing(unsigned type, const Bcd4 cost, Bcd4 gold, uint8_t *partyRecord, GameKind game) {
@@ -159,4 +164,40 @@ bool dialogApplyHealing(unsigned type, const Bcd4 cost, Bcd4 gold, uint8_t *part
     partySetU16(partyRecord, PartyFieldStatusFlags, status);
     partyCheckForLevelUp(partyRecord, game);
     return true;
+}
+
+bool dialogTrainingQuote(const uint8_t *npc, const uint8_t *partyRecord, Bcd4 cost) {
+    if ((int16_t)(partyGetU16(partyRecord, PartyFieldLevel) + 1) > (int16_t)dialogGetU16(npc, DialogNpcParamB)) {
+        return false;
+    }
+    priceByLevel(npc, 100, partyRecord, cost);
+    return true;
+}
+
+DialogChallengeOutcome dialogAttemptChallenge(const uint8_t *npc, uint8_t *partyRecord, Bcd4 gold, Bcd4 reward) {
+    Bcd4 fee;
+    dialogNpcFee(npc, fee);
+    if (bcd4Compare(gold, fee) < 0) {
+        return DialogChallengeNoGold;
+    }
+    bcd4Sub(gold, fee);
+    memset(reward, 0, sizeof(Bcd4));
+    int16_t stat = (int16_t)partyGetU16(partyRecord, dialogGetU16(npc, DialogNpcParamA));
+    if ((int16_t)dialogGetU16(npc, DialogNpcParamB) > stat) {
+        return DialogChallengeLost;
+    }
+    for (unsigned i = 0; i < dialogGetU16(npc, DialogNpcPriceMultiplier); i++) {
+        bcd4Add(gold, fee);
+        bcd4Add(reward, fee);
+    }
+    flagBankSet(partyRecord + PartyFieldFlagBank10C, 6, dialogGetU16(npc, DialogNpcCharacterFlagIndex));
+    return DialogChallengeWon;
+}
+
+void dialogMarkServiceAvailability(DialogState *state, const uint8_t *npc, const uint8_t *partyRecord) {
+    uint16_t a = (uint16_t)((state->availA & 0x1FFF) | 0x1000);
+    if (!flagBankTest(partyRecord + PartyFieldFlagBank10C, 6, dialogGetU16(npc, DialogNpcCharacterFlagIndex))) {
+        a |= 0x8000;
+    }
+    state->availA = a;
 }

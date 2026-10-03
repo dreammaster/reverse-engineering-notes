@@ -121,6 +121,10 @@ size_t dialogTopicText(const DialogCatalog *catalog, const uint8_t *npc, const u
     return trimmed;
 }
 
+void dialogNpcFee(const uint8_t *npc, uint8_t fee[4]) {
+    memcpy(fee, npc + DialogNpcFee, 4);
+}
+
 unsigned dialogOpeningTopic(const uint8_t *npc, bool flagA, bool flagB, bool flagC) {
     unsigned first = dialogGetU16(npc, DialogNpcFirstTopic);
     if (flagA) {

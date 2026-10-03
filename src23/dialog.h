@@ -104,7 +104,7 @@ typedef enum {
      * checks), 0x18 a price multiplier (ShowHealingCostPrompt), 0x1A the
      * per-character flag-bank index used with TestRecordFlag_10C /
      * SetRecordFlag_10C ("this character already used this service"),
-     * 0x1C/0x1E cost-message parameters, 0x20 an item range the party must
+     * 0x1C a 4-byte BCD fee, 0x20 an item range the party must
      * hold (IsItemRangeAvailable, feeding word_2E40E bit 1).
      */
     DialogNpcOneTimeFlag = 0x12,
@@ -112,8 +112,7 @@ typedef enum {
     DialogNpcParamB = 0x16,
     DialogNpcPriceMultiplier = 0x18,
     DialogNpcCharacterFlagIndex = 0x1A,
-    DialogNpcParamC = 0x1C,
-    DialogNpcParamD = 0x1E,
+    DialogNpcFee = 0x1C, /* 4 bytes: a packed-BCD gold amount (DS:0x512A in the original), the challenge entry fee */
     DialogNpcRequiredItemRange = 0x20
 } DialogNpcField;
 
@@ -223,6 +222,9 @@ size_t dialogTopicText(const DialogCatalog *catalog, const uint8_t *npc, const u
  * three DialogNpcGreetingFlag* global flags (an id of 0 counts as unset).
  */
 unsigned dialogOpeningTopic(const uint8_t *npc, bool flagA, bool flagB, bool flagC);
+
+/* The NPC's fee: the 4 header bytes at DialogNpcFee as a packed-BCD gold amount. */
+void dialogNpcFee(const uint8_t *npc, uint8_t fee[4]);
 
 /*
  * The conversation's topic-availability state: the two masks (word_2E40C/

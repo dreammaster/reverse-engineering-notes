@@ -4235,6 +4235,27 @@ versions of the tome handlers differ only in data addresses. `UseKeyItem`
 turns out to be `LoadLockState` + `RunShopScreen`: the shop / item-grant
 screen.
 
+**Trainers and challenges (2026-10-03)**: the NPCs' greeting topic carries a type
+word that picks the handler: `0x8000` healer (5 in Chapter 2, 1 in Chapter 3),
+`0x4000` level trainer (5 / 4), `0x800` "challenge" (20 / 14). A trainer
+(`UseTrainingItem`) quotes `100 x multiplier x level` and refuses once
+`level + 1` would pass its cap (`DialogNpcParamB`); accepting is
+`partyApplyTraining`. A **challenge** NPC (the data text is "WELCOME TO THE
+CHALLENGE OF PROJECTILE ACCURACY. FOR A SMALL FEE YOU CAN TRY TO HIT THE CENTER
+OF THE TARGET. IF YOU ARE SUCCESSFUL, I WILL REWARD YOU GREATLY") is a pure
+stat check, no dice: the header gives a party-record offset into the
+*maximum*-stat array (`0x88` the projectile-accuracy rating, `0x82`
+intelligence, `0x92` hit points), a threshold, a 4-byte BCD entry fee at
+header `+0x1C` (the original keeps it at `DS:0x512A`; this was the `word_3298A`
+aliasing again), a reward multiplier (`+0x18`) and a per-character "already
+won" flag index. The fee is taken first, win or lose; at or above the threshold
+the fee comes back `multiplier` times over and the flag is set (so the member
+can't win again); below it the fee is lost and they may retry. Real data: the
+projectile challenge costs 1000 gold for 3x at 70, the intelligence one 1200 for
+4x at 70, the HP one 2000 for 10x at 400. `dialogTrainingQuote`,
+`dialogAttemptChallenge`, `dialogMarkServiceAvailability` (the once-per-
+character availability bits).
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
