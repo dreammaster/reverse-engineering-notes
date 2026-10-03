@@ -113,3 +113,11 @@ Condition index `c` is the byte at char `+113h + c` (condition counter, saturati
 
 The condition-name mapping assumes the Xeen condition order (cursed, heart broken, weak, poisoned, diseased, insane, in love, drunk, asleep, depressed, confused, paralysed, unconscious, dead, stone, eradicated), which agrees with the two verified entries (unconscious 0Ch at +11Fh, dead 0Dh at +120h).
 The effect is skipped when the damage type 6-way switch earlier in the routine says the character resists (not decoded in detail).
+
+## Choosing the target (`doMonsterTurn`, `4AB68`)
+
+`MONATTP` 0 = hit every party member, 1 = random single target, 2/3/4/5 = prefers (the first) living member of class Cleric / Sorcerer /
+Druid / Paladin, 6 = prefers a character whose race (+11h) is 2; if no preferred character is in the party it falls back to the random choice.
+The random single target depends on the combat party size `n`: for 1 member it is slot 0; for 2-5 `rnd(0, n-1)`; for 6, 7, 8 members the
+extra (last) member is hit only when `rnd(1, 2n-4... )` hits: `rnd(1,8) == 8` -> slot 5 (6 members), `rnd(1,10) == 10` -> slot 6 (7), `rnd(1,12) == 12` -> slot 7 (8); otherwise `rnd(0, n-2)`.
+Characters whose worst condition is 0Bh-0Fh (paralysed, unconscious, dead, stone, eradicated) are skipped for the preferred-class search.
