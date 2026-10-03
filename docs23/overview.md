@@ -11197,6 +11197,15 @@ equipment wear). Reading it also settled what the "stale saving-throw
 threshold" in the LIFE FORCE branch is: the last attacking monster's
 `MonsterFieldSaveDifficulty`. Five tests; all suites pass.
 
+### Session update (2026-10-03, continued): the player's melee swing
+
+Read `HandleDungeonInput`'s attack button: wear tick on the melee slot, the same
+`ResolveAttack` used everywhere, and `UpdateMonsterWoundTier` (a pure
+three-tier display flag). Added `combatPlayerMeleeAttack` and
+`monsterApplyWoundTier`; it also confirms that `PartyStatEquipRating3/4` are the
+melee accuracy/power the stat recomputation has been building. Tests; all
+suites pass.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

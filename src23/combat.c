@@ -723,6 +723,26 @@ CombatMonsterTurnOutcome combatProcessMonsterTurn(uint8_t *monster, uint8_t *sin
     return outcome;
 }
 
+CombatPlayerMeleeOutcome combatPlayerMeleeAttack(uint8_t *partyRecord, uint8_t *monsterRecord,
+                                                   const ItemCatalog *catalog, GameKind game, RandomState *rng) {
+    CombatPlayerMeleeOutcome outcome = {false, false, 0};
+    if (partyTickEquippedItemDurability(partyRecord, catalog, game, 0x142, rng) == PartyItemDurabilityBroke) {
+        outcome.weaponBroke = true;
+        return outcome;
+    }
+    uint16_t damage = combatResolveAttack(monsterGetU16(monsterRecord, MonsterFieldAbsorption),
+                                           partyGetStat(partyRecord, PartyStatEquipRating3),
+                                           partyGetStat(partyRecord, PartyStatEquipRating4), rng);
+    if (damage == 0) {
+        return outcome;
+    }
+    monsterApplyWoundTier(monsterRecord, damage);
+    monsterSetU16(monsterRecord, MonsterFieldHealth, (uint16_t)(monsterGetU16(monsterRecord, MonsterFieldHealth) - damage));
+    outcome.hit = true;
+    outcome.damage = damage;
+    return outcome;
+}
+
 CombatSavingThrowTrapOutcome combatApplySavingThrowTrap(uint16_t packedValue, uint8_t *actingRecord,
                                                           SaveGame *save, GameKind game, RandomState *rng) {
     PartySavingThrowEffect decoded;

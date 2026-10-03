@@ -848,7 +848,8 @@ consumers, if any.
    next, see candidate 8.
    **Update 2026-10-03: `ProcessMonsterAttackTurn` is now composed as
    `combatProcessMonsterTurn`** (see file-formats.md); the player-attack path
-   in `HandleDungeonInput` remains.
+   in `HandleDungeonInput` remains: its melee swing is now
+   `combatPlayerMeleeAttack`; spell/ability use and the UI shell remain.
    **Still open, a good candidate for its own pass**: `ProcessMonsterAttackTurn`
    itself (the caller that would actually wire
    `combatSelectTrapEffectVariant`/`combatResolveAttackerAction`/

@@ -418,6 +418,19 @@ typedef enum {
 MonsterTickResult monsterTickTimer(uint8_t *record);
 
 /*
+ * UpdateMonsterWoundTier (yendor2.asm:44044, instruction-identical in
+ * Chapter 3): the wound-severity display for a monster the player just hit
+ * for `damage` (g_stagedAttackDamage in the original). MonsterWoundLight is
+ * always set; if damage exceeds 10% of MonsterFieldMaxHealth (rounded:
+ * (10*max + 50) / 100) it becomes MonsterWoundModerate instead, and above
+ * 30% MonsterWoundSevere -- only ever one of the three, the previous tier
+ * bit being cleared as the next is set. MonsterFieldState also gains 0xA
+ * (the hit-flash and aware-display bits). The comparisons are signed 16-bit,
+ * as in the original. Note the tier is per hit, not cumulative.
+ */
+void monsterApplyWoundTier(uint8_t *record, uint16_t damage);
+
+/*
  * TryActivateMonsterByDistance (yendor2.asm:34123, yendor3.asm:33917,
  * instruction-identical thresholds included). The setter for
  * MonsterStateAware -- everywhere else this session treats it as an

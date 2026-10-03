@@ -506,12 +506,40 @@ static void testActivateByDistance(void) {
           !monsterTryActivateByDistance(record, 0x27)); /* would satisfy Near's threshold but not Far's */
 }
 
+static void testWoundTierEscalatesAndReplacesThePreviousTier(void) {
+    uint8_t rec[MonsterRecordSize];
+    memset(rec, 0, sizeof(rec));
+    monsterSetU16(rec, MonsterFieldMaxHealth, 100);
+
+    monsterApplyWoundTier(rec, 10); /* exactly 10% (threshold is (10*100+50)/100 = 10): not above it */
+    check("damage at the 10% threshold stays light", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundLight);
+    check("state gains 0xA", (monsterGetU16(rec, MonsterFieldState) & 0xA) == 0xA);
+
+    monsterApplyWoundTier(rec, 11);
+    check("above 10% is moderate and clears light", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundModerate);
+
+    monsterApplyWoundTier(rec, 31);
+    check("above 30% is severe and clears moderate", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundSevere);
+
+    monsterApplyWoundTier(rec, 1);
+    check("a later small hit adds light on top (tiers aren't cumulative)",
+          monsterGetU16(rec, MonsterFieldWound) == (MonsterWoundSevere | MonsterWoundLight));
+
+    memset(rec, 0, sizeof(rec));
+    monsterSetU16(rec, MonsterFieldMaxHealth, 7);
+    monsterApplyWoundTier(rec, 1); /* (10*7+50)/100 = 1 */
+    check("small monsters round: 10% of 7 is 1", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundLight);
+    monsterApplyWoundTier(rec, 2);
+    check("so 2 is moderate", monsterGetU16(rec, MonsterFieldWound) == MonsterWoundModerate);
+}
+
 int main(void) {
     testLayouts();
     testParse();
     testRecord();
     testNames();
     testTickTimer();
+    testWoundTierEscalatesAndReplacesThePreviousTier();
     testActivateByDistance();
     testRealYendor2();
     testRealYendor3();

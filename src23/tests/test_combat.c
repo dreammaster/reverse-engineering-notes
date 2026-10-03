@@ -1778,6 +1778,44 @@ static void testMonsterTurnEndsAtTheTimerWhenItExpires(void) {
              MonsterStateInfoRevealed);
 }
 
+static void testPlayerMeleeHitDamagesAndWounds(void) {
+    uint8_t party[PartyRecordSize], monster[MonsterRecordSize];
+    RandomState rng;
+    memset(party, 0, sizeof(party));
+    memset(monster, 0, sizeof(monster));
+    partySetStat(party, PartyStatEquipRating3, 255); /* accuracy */
+    partySetStat(party, PartyStatEquipRating4, 20);  /* power */
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+    monsterSetU16(monster, MonsterFieldMaxHealth, 100);
+    randomStart(&rng, 1, 1);
+
+    CombatPlayerMeleeOutcome out = combatPlayerMeleeAttack(party, monster, NULL, GameYendor2, &rng);
+
+    check("hit", out.hit && !out.weaponBroke);
+    checkU32("damage (20*255+50)/100", out.damage, 51);
+    checkU32("health reduced", monsterGetU16(monster, MonsterFieldHealth), 49);
+    checkU32("51 > 30% of 100: severe wound only", monsterGetU16(monster, MonsterFieldWound), MonsterWoundSevere);
+    checkU32("state gains 0xA", monsterGetU16(monster, MonsterFieldState) & 0xA, 0xA);
+}
+
+static void testPlayerMeleeMissLeavesTheMonsterAlone(void) {
+    uint8_t party[PartyRecordSize], monster[MonsterRecordSize];
+    RandomState rng;
+    memset(party, 0, sizeof(party));
+    memset(monster, 0, sizeof(monster));
+    partySetStat(party, PartyStatEquipRating3, 0);
+    partySetStat(party, PartyStatEquipRating4, 20);
+    monsterSetU16(monster, MonsterFieldHealth, 100);
+    monsterSetU16(monster, MonsterFieldAbsorption, 5); /* accuracy below absorption: always misses */
+    randomStart(&rng, 1, 1);
+
+    CombatPlayerMeleeOutcome out = combatPlayerMeleeAttack(party, monster, NULL, GameYendor2, &rng);
+
+    check("miss", !out.hit && !out.weaponBroke && out.damage == 0);
+    checkU32("health untouched", monsterGetU16(monster, MonsterFieldHealth), 100);
+    checkU32("no wound", monsterGetU16(monster, MonsterFieldWound), 0);
+}
+
 static void testSaveLocationBookmarkWritesAllSevenFields(void) {
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
@@ -2043,6 +2081,8 @@ int main(void) {
     testMonsterTurnIncapacitatedOrMissingTargetIsIdle();
     testMonsterTurnAreaAttackHitsEveryLivingMemberUntilTheFirstEmptySlot();
     testMonsterTurnEndsAtTheTimerWhenItExpires();
+    testPlayerMeleeHitDamagesAndWounds();
+    testPlayerMeleeMissLeavesTheMonsterAlone();
     testSaveLocationBookmarkWritesAllSevenFields();
     testRestoreLocationBookmarkFailsWhenNeverSaved();
     testApplyDamageToMapMonsterSurvivesHit();

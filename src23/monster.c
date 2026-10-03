@@ -275,3 +275,17 @@ void monsterGetName(const uint8_t *record, char out[MonsterNameBufferSize]) {
     memcpy(out + first + 1, record + MonsterFieldName2, second);
     out[first + 1 + second] = '\0';
 }
+
+void monsterApplyWoundTier(uint8_t *record, uint16_t damage) {
+    uint32_t max = monsterGetU16(record, MonsterFieldMaxHealth);
+    uint16_t wound = monsterGetU16(record, MonsterFieldWound);
+    wound |= MonsterWoundLight;
+    if ((int16_t)damage > (int16_t)((10 * max + 50) / 100)) {
+        wound = (uint16_t)((wound & ~MonsterWoundLight) | MonsterWoundModerate);
+        if ((int16_t)damage > (int16_t)((30 * max + 50) / 100)) {
+            wound = (uint16_t)((wound & ~MonsterWoundModerate) | MonsterWoundSevere);
+        }
+    }
+    monsterSetU16(record, MonsterFieldWound, wound);
+    monsterSetU16(record, MonsterFieldState, (uint16_t)(monsterGetU16(record, MonsterFieldState) | 0xA));
+}

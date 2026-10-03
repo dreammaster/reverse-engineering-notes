@@ -812,6 +812,31 @@ CombatMonsterTurnOutcome combatProcessMonsterTurn(uint8_t *monster, uint8_t *sin
                                                     const ItemCatalog *catalog, GameKind game, RandomState *rng);
 
 /*
+ * The player's melee attack against the engaged monster, from
+ * HandleDungeonInput's attack button (yendor2.asm:10634-10686,
+ * instruction-identical in Chapter 3 apart from UI hooks):
+ *  1. partyTickEquippedItemDurability on the second equipment slot (0x142,
+ *     the melee weapon -- the slot PartyStatEquipRating3/4 derive from). If
+ *     the weapon breaks, the swing doesn't happen (weaponBroke).
+ *  2. combatResolveAttack(monster's MonsterFieldAbsorption, the party
+ *     member's PartyStatEquipRating3 as accuracy, PartyStatEquipRating4 as
+ *     power). 0 is a miss.
+ *  3. A hit applies monsterApplyWoundTier and subtracts the damage from
+ *     MonsterFieldHealth (unclamped, 16-bit). No death handling here: the
+ *     round processor sees health <= 0 afterwards (combatProcessRound).
+ * Not modeled: the swing sound (the weapon's item-record +0xA sound id, or
+ * a miss sound), redraws and the button animation.
+ */
+typedef struct {
+    bool weaponBroke;
+    bool hit;
+    uint16_t damage;
+} CombatPlayerMeleeOutcome;
+
+CombatPlayerMeleeOutcome combatPlayerMeleeAttack(uint8_t *partyRecord, uint8_t *monsterRecord,
+                                                   const ItemCatalog *catalog, GameKind game, RandomState *rng);
+
+/*
  * ApplySavingThrowEffect (yendor2.asm:44646, instruction-identical in
  * Chapter 3): the search/lockpicking trap composition party.h's
  * partyDecodeSavingThrowEffect leaves for "whoever composes this

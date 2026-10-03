@@ -3221,6 +3221,17 @@ field-offset information worth keeping, but the branch as a whole is a
 better-scoped candidate for its own dedicated pass than something to
 finish in the same sitting as three cleaner branches.
 
+**The player's melee swing and `UpdateMonsterWoundTier` (2026-10-03)**:
+`HandleDungeonInput`'s attack button wears the second equipment slot (`0x142`);
+a broken weapon cancels the swing; otherwise `ResolveAttack(monster
+absorption, EquipRating3 as accuracy, EquipRating4 as power)` -- those two
+ratings are the melee-weapon-slot ones, which is the first confirmed consumer
+of them -- and a hit sets the wound tier then subtracts the damage unclamped.
+`UpdateMonsterWoundTier` is: Light always; Moderate (replacing Light) when the
+hit exceeds `(10*max+50)/100`; Severe (replacing Moderate) above `(30*max+50)/100`;
+state `|= 0xA`. The tier is per hit -- earlier bits are only cleared when a
+higher tier is reached. `combatPlayerMeleeAttack`/`monsterApplyWoundTier`.
+
 **`ProcessMonsterAttackTurn` composed, and the "stale" saving-throw threshold
 identified (2026-10-03)**: the monster's whole combat turn is now
 `combatProcessMonsterTurn` (tick timer, then either the area-attack loop over
