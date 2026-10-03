@@ -162,7 +162,7 @@ std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	
 TSprite	in-progress	35	582998	584507
 TTypeGroup	done	30	584546	585963
 TVList	todo	21	586522	594785
-TId	todo	4	586976	587066
+TId	done	4	586976	587066
 TVisionaireObject	todo	99	587318	595390
 TVisObjRef	stub	85	597612	600326
 TDataGroup	todo	41	600389	607108

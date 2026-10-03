@@ -2159,12 +2159,12 @@ line	raw_symbol	status	owner	member	demangled
 586881	_ZN6TVList8pop_backEv	todo	TVList	pop_back	TVList::pop_back()
 586940	_ZNK6TVList4sizeEv	todo	TVList	size	TVList::size() const
 586958	_ZNK6TVList5emptyEv	todo	TVList	empty	TVList::empty() const
-586976	_ZN3TIdC2ERKS_	todo	TId	TId	TId::TId(TId const&)
-586997	_ZN3TIdC2Eii	todo	TId	TId	TId::TId(int, int)
-587019	_ZNK3TIdeqERKS_	todo	TId	operator==	TId::operator==(TId const&) const
-587066	_ZNK3TIdneERKS_	todo	TId	operator!=	TId::operator!=(TId const&) const
-587114	_Z6PackIdRK3TId	todo	(free function)	PackId	PackId(TId const&)
-587148	_Z8UnpackIdl	todo	(free function)	UnpackId	UnpackId(long)
+586976	_ZN3TIdC2ERKS_	done	TId	TId	TId::TId(TId const&)
+586997	_ZN3TIdC2Eii	done	TId	TId	TId::TId(int, int)
+587019	_ZNK3TIdeqERKS_	done	TId	operator==	TId::operator==(TId const&) const
+587066	_ZNK3TIdneERKS_	done	TId	operator!=	TId::operator!=(TId const&) const
+587114	_Z6PackIdRK3TId	done	(free function)	PackId	PackId(TId const&)
+587148	_Z8UnpackIdl	done	(free function)	UnpackId	UnpackId(long)
 587176	_Z5cmpIdPK17TVisionaireObjectS1_	todo	(free function)	cmpId	cmpId(TVisionaireObject const*, TVisionaireObject const*)
 587215	_Z7cmpNamePK17TVisionaireObjectS1_	todo	(free function)	cmpName	cmpName(TVisionaireObject const*, TVisionaireObject const*)
 587318	_ZN17TVisionaireObject16SetNameNewObjectERK11TCharHolder	todo	TVisionaireObject	SetNameNewObject	TVisionaireObject::SetNameNewObject(TCharHolder const&)

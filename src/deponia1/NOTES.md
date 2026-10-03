@@ -2700,6 +2700,14 @@ point list, 9 string list, 10/12 numeric lists (particle control points/curves),
 11 string/path list (model textures), 13 point, 14 rect, 15 sprite, 16 link, 17
 link list, 18 text-language list.
 
+## TId (vscommon/scripting/id.h)
+
+Confirmed (asm 586976-587170): a 4-byte value, a signed 24-bit id in bytes 0-2
+and a one-byte table in byte 3. `==`/`!=` compare the sign-extended 24-bit id,
+then byte 3. `PackId` gives `(id << 7) + (table & 0x7F)` (table 0xFF maps to
+0x7F); `UnpackId` is the inverse. Member names (`_id`, `_table`) are invented.
+`AnyId`'s real initial value is still unread.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
