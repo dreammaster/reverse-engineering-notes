@@ -319,3 +319,15 @@ layer that exceeds the first on at least one side).
   strings, or runtime-built and unexpanded).
 - The video driver module `0x8f99`'s own filename.
 - Whether/how the engine rebinds the palette per scene.
+
+---
+
+## Addendum (2026-10): corrections found while cross-checking with the game code
+
+* `MM3.EXE` uses **Borland** VROOMM overlays (not Microsoft), see `exe-layout.md`.
+* The `S#.S` members are raw 8-bit unsigned PCM samples (centre `7Fh`), not scene scripts (section 6); `*.TIL` are small automap tiles
+  (10x8 floor, 14x5 and 5x12 wall pieces, 31 frames) and `INx.VGA`/`OUTx.VGA` are 140x127 view-window frames.
+* Name recovery: bare words from the EXE's strings plus the suffixes `.pic .mon .fac .out ...` give names for 500 of 558 members
+  (`tools/mm3_cc.py`); a few of those are probably 16-bit hash collisions.
+* `tools/mm3_gfx.py` implements the section 5 codec and the palette lookup (`MM3.CC` member `8F99h`, offset `39Ch`) and was used to check both
+  against `CREATE.RAW`, the tiles and the faces.
