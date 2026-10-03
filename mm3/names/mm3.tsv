@@ -609,3 +609,8 @@
 60030	vdrv_api_30
 43A6	TRAIN_MAX_LEVEL	byte table indexed by Party_map: highest level a town can train to (0,10,15,20,25,200)
 51E25	itemPrice	price of an inventory item: base (table DGROUP 0B16) x metal x extras / merchant divisor; reached via stub sub_28690
+1B9C5	markCellVisited	sets the cell's bit in the page's 256-bit 'visited' bitmap (page slot + 320h) for the world cell (x,y) relative to the current slot; used by the Cartographer skill and the overhead map
+1BA82	isCellVisited	reads that visited bit; 0 outside the 32x32 world
+1BB33	mazeGetWordWrap	maze cell word at world (x,y) & mask, with Maze_wrapMode handling (returns 1111h outside the world when not wrapping)
+15736	updateAutomap	called after each move by runMazeEvent: Cartographer (skill 4) marks the current cell visited, redraws light, draws the Wizard Eye overhead map
+154B0	drawAutomapWrapped	wrap-mode (Maze_wrapMode != 0) version of the Wizard Eye map drawing
