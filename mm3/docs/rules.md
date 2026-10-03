@@ -67,3 +67,15 @@ Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 
     `rnd(1,100) < 26` increments +11Ah ("Good Stuff" / "Have a Drink").
   * Rumours: each town has a block of rumour strings in the maze text (start index table at `436Eh`: 13h,32h,51h,78h,95h,ACh,C0h;
     counts at `436Fh`), a pointer cycles through them (`Maze_curSlot` slot byte +? at -379Ch).
+
+## Guild (`townGuild` 48466)
+
+* Closed when `byte_32E68` is set. Window text comes from `guild.m`; spell descriptions from `spldesc.bin`.
+* Shopping needs guild membership: the helper at 483FB tests `char[+38h + byte_34C1D]` (`byte_34C1D` = the guild's
+  town number 1..5), i.e. `awards[17 + town]` (awards start at +27h, so bytes 39h..3Dh). Without it: "You have to be a
+  member to shop here". Membership is therefore stored as one award byte per town.
+* Visiting the guild costs 60 (3Ch) minutes of game time on exit.
+* Shared town helpers (all reached through stubs at 281xx): `sub_281CB` -> `41A2F` (pay gold/gems; also used by
+  `giveTake`), `sub_281D5` -> `41633` (character-can-act check, returns non-zero when the character is disabled),
+  `sub_28149` -> `4033B` (format number into buffer, used for the "Gold" lines), `sub_47A33` = town menu input
+  (mouse/keyboard command dispatcher returning command code; C9h+n selects party slot n, 1Bh = ESC).
