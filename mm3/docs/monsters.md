@@ -15,7 +15,7 @@ Field meanings: `dmg` = NdS physical damage (`MONDMGN`d`MONDMGS`), `att` = attac
 | 8 | Wild Fungus | 25 | 0 | 5 | 3d4 | 1 | 2000 | electrical | whole party | 0 | 0 | 0 | 0 | 0 | 10 | 25/0/100/100/50/50/0 |
 | 9 | Zombie | 35 | 2 | 2 | 3d6 | 2 | 1800 | physical | cleric | 4 | 0 | 5 | 0 | 0 | 6 | 0/0/75/75/0/0/80 |
 | 10 | Candle Creep | 70 | 5 | 8 | 2d5 | 2 | 3000 | fire | random | 0 | 1 | 0 | 1 | 0 | 5 | 0/0/100/0/50/0/50 |
-| 11 | Mad Dwarf | 75 | 10 | 16 | 4d5 | 1 | 2500 | physical | dwarf | 0 | 0 | 10 | 2 | 100 | 15 | 20/50/50/50/50/50/0 |
+| 11 | Mad Dwarf | 75 | 10 | 16 | 4d5 | 1 | 2500 | physical | race2 | 0 | 0 | 10 | 2 | 100 | 15 | 20/50/50/50/50/50/0 |
 | 12 | Ninja | 45 | 15 | 35 | 2d4 | 4 | 3000 | physical | random | 0 | 0 | 15 | 1 | 30 | 0 | 25/20/20/20/20/20/20 |
 | 13 | Magic Mantis | 50 | 12 | 30 | 2d10 | 2 | 3500 | physical | random | 1 | 0 | 8 | 0 | 0 | 10 | 50/0/0/0/0/0/0 |
 | 14 | Ogre | 60 | 10 | 15 | 2d16 | 1 | 2500 | physical | random | 7 | 1 | 10 | 2 | 50 | 5 | 0/50/30/30/20/0/0 |
@@ -59,7 +59,7 @@ Field meanings: `dmg` = NdS physical damage (`MONDMGN`d`MONDMGS`), `att` = attac
 | 52 | Sorcerer | 100 | 10 | 40 | 8d10 | 1 | 50000 | cold | whole party | 0 | 1 | 0 | 4 | 2000 | 100 | 25/0/0/0/0/0/0 |
 | 53 | Lich | 200 | 12 | 50 | 5d5 | 1 | 120000 | magical | whole party | 15 | 1 | 0 | 5 | 10000 | 100 | 50/0/0/0/0/0/70 |
 | 54 | Spirit Shield | 100 | 35 | 80 | 6d20 | 2 | 60000 | physical | random | 0 | 0 | 40 | 0 | 0 | 0 | 0/0/0/0/0/0/80 |
-| 55 | Troll | 125 | 15 | 25 | 3d15 | 3 | 50000 | physical | dwarf | 0 | 0 | 35 | 3 | 2500 | 20 | 0/0/0/0/0/0/0 |
+| 55 | Troll | 125 | 15 | 25 | 3d15 | 3 | 50000 | physical | race2 | 0 | 0 | 35 | 3 | 2500 | 20 | 0/0/0/0/0/0/0 |
 | 56 | Major Demon | 333 | 16 | 33 | 2d20 | 6 | 100000 | physical | random | 10 | 0 | 40 | 4 | 3333 | 33 | 80/100/0/0/0/0/0 |
 | 57 | Dinosaur | 500 | 10 | 12 | 5d100 | 2 | 80000 | physical | random | 0 | 0 | 60 | 0 | 0 | 0 | 0/0/80/80/80/0/0 |
 | 58 | ED-409 | 400 | 40 | 75 | 50d2 | 3 | 120000 | energy | random | 0 | 1 | 0 | 0 | 0 | 100 | 0/80/80/80/80/20/60 |
@@ -117,7 +117,7 @@ The effect is skipped when the damage type 6-way switch earlier in the routine s
 ## Choosing the target (`doMonsterTurn`, `4AB68`)
 
 `MONATTP` 0 = hit every party member, 1 = random single target, 2/3/4/5 = prefers (the first) living member of class Cleric / Sorcerer /
-Druid / Paladin, 6 = prefers a character whose race (+11h) is 2; if no preferred character is in the party it falls back to the random choice.
+Druid / Paladin, 6 = prefers a character of race 2 (Gnome in the name table; the table column below says `race2`); if no preferred character is in the party it falls back to the random choice.
 The random single target depends on the combat party size `n`: for 1 member it is slot 0; for 2-5 `rnd(0, n-1)`; for 6, 7, 8 members the
 extra (last) member is hit only on a top roll: `rnd(1,8) == 8` -> slot 5 (6 members), `rnd(1,10) == 10` -> slot 6 (7), `rnd(1,12) == 12` -> slot 7 (8); otherwise `rnd(0, n-2)`.
 Characters whose worst condition is 0Bh-0Fh (paralysed, unconscious, dead, stone, eradicated) are skipped for the preferred-class search.

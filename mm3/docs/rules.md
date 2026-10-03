@@ -23,7 +23,7 @@ A class can be chosen when the rolled/assigned stats meet its minimums (might, i
 
 BASE_HP_BY_CLASS: Knight 10, Paladin 8, Archer 7, Cleric 5, Sorcerer 4, Robber 8, Ninja 7, Barbarian 12, Druid 6, Ranger 9
 
-RACE_HP_BONUSES (human, elf, dwarf, gnome, half-orc): [0, -2, -1, 1, 2]
+RACE_HP_BONUSES (human, elf, gnome, dwarf, half-orc): [0, -2, -1, 1, 2]
 
 `SP`: only characters with the `hasSpells` flag; casting stat = intellect for Archer/Sorcerer, personality otherwise (druid/ranger: average of both); `(statBonus(stat) + 3 + RACE_SP_BONUSES + 2 if Prestidigitation/Prayer Master/Astrologer skill) * level`, halved for classes other than Sorcerer/Cleric/Druid, plus `itemScan(8)`.  RACE_SP_BONUSES words [127, 0, 0, 2, 0, 1, 1, -1, -1, -2, -2, 0].
 
@@ -134,7 +134,7 @@ knight 1500, paladin 2000, archer 2000, cleric 1500, sorcerer 2000, robber 1000,
 
 ## Skills (`getThievery` 4EC3E-ish, `checkSkill` 153EA)
 
-* `getThievery(char)` = `2 * level` + class bonus (robber +30, ninja +15) + race bonus (race byte +11h: 1 and 3 give +10, 2 gives +5, 4 gives -10)
+* `getThievery(char)` = `2 * level` + class bonus (robber +30, ninja +15) + race bonus (race byte +11h: Elf (1) and Dwarf (3) give +10, Gnome (2) +5, Half-Orc (4) -10)
   + `itemScan(10)` (item bonuses); 0 if the character lacks the Thievery skill (+27h == 0); never negative.  Locks/traps compare
   `getThievery + d20` with the page's lock/trap difficulty bytes (`data-files.md`, bytes 11h/12h).
 * `checkSkill(n)` = "does the party have skill n": the skill byte (+27h + n) must be non-zero in the character; skill ids 0-4, 6-8, 12, 13, 15-17 need **one** member
@@ -145,6 +145,6 @@ Skill ids (names in the data segment next to `Experience`/`Gold`/`Gems`/`Conditi
 13 Prestidigitator, 14 Swimmer, 15 Tracker, 16 Spot Secret Doors, 17 Danger Sense -- so Mountaineer, Navigator and Path Finder need two party
 members, Crusader and Swimmer every member, the rest one.  (Merchant = 8, the one `itemPrice` looks at.)
 
-Names in the data segment confirm the id orders used in this document: races 0 Human, 1 Elf, 2 Dwarf, 3 Gnome, 4 Half-Orc (shown "H-Orc"); sexes Male, Female; the 16 condition
+Names in the data segment confirm the id orders used in this document: races 0 Human, 1 Elf, 2 Gnome, 3 Dwarf, 4 Half-Orc (name pointer table at DGROUP `581Eh`; "H-Orc"), alignments 1 Good, 2 Neutral, 3 Evil; sexes Male, Female; the 16 condition
 names in order Cursed, Heart Broken, Weak, Poisoned, Diseased, Insane, In Love, Drunk, Asleep, Depressed, Confused, Paralyzed, Unconscious, (Dead is drawn separately), Stone,
 Eradicated -- the Xeen order, which settles the mapping assumed in `monsters.md`.
