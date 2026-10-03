@@ -35,8 +35,11 @@ typedef struct {
 	uint8_t slotAttribute[19];   /* C9 attribute enchantment material -> ATTRIBUTE_BONUSES */
 	uint8_t slotId[19];          /* DC item id (armour 21h-29h, ARMOR_STRENGTHS) */
 	uint8_t slotSpell[19];         /* EF item special-ability (spell) id used by castItemSpell, 4Dh = none */
-	uint8_t acBonus;             /* 102 added by getArmorClass(base=false) */
-	uint8_t unknown103[16];      /* 103 resistances etc. (Xeen: lloydSide + 6 resistance pairs) */
+	uint8_t blessed;             /* 102 AC bonus, set by Blessed, added by getArmorClass(base=false) */
+	uint8_t powerShield;         /* 103 set by Power Shield */
+	uint8_t holyBonus;           /* 104 damage bonus (Holy Bonus), added to METAL_DAMAGE in getWeaponDamage */
+	uint8_t heroism;             /* 105 to-hit bonus (Heroism), added to METAL_DAMAGE_PERCENT */
+	uint8_t unknown106[13];      /* 106 (Xeen order: lloydSide + 6 resistance pairs) */
 	uint8_t conditions[16];      /* 113: 0 cursed ... 0Ch unconscious (11Fh) 0Dh dead (120h) ... (Xeen order) */
 	uint16_t unknown123;         /* 123 */
 	int16_t  hp;                 /* 125 */

@@ -37373,15 +37373,7 @@ stub11          segment para public 'CODE' use16
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_64_MoonRay. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_32_FrostBite. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_46_FingerOfDeath. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28482       proc far
-                jmp     sub_4BE23
-sub_28482       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_healCharacterEffect. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_66_EnchantItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -38256,11 +38248,53 @@ ELEMENTAL_RESISTANCES:                  ; indexed by elemental material (0A3h sl
                 db 28h, 5, 7, 9, 0Bh, 0Dh, 0Fh, 14h, 19h, 5, 0Ah, 14h
                 db 0, 2, 3, 4, 5, 0Ah, 0Fh, 14h, 1Eh, 2, 3, 4, 5, 0Ah
                 db 0Fh, 14h, 2, 4, 5, 0Ah, 14h, 2, 4, 8, 10h, 20h, 2, 3
-                db 4, 5, 0Ah, 0Fh, 14h, 1Eh, 5, 0Ah, 19h, 0, 0FDh, 0FCh
-                db 3, 2, 1, 2, 3, 4, 6, 0, 2 dup(1), 2 dup(2), 3, 4, 5
-                db 6, 7, 8, 9, 0Ah, 0, 0FDh, 0FAh, 0FCh, 0FEh, 2, 4, 6
-                db 8, 0Ah, 0, 2 dup(1), 2 dup(2), 3, 4, 5, 0Ch, 0Fh, 14h
-                db 1Eh, 32h
+                db 4, 5, 0Ah, 0Fh, 14h, 1Eh, 5, 0Ah, 19h
+METAL_DAMAGE_PERCENT db    0            ; indexed by metal material (slot +0B6h): to-hit bonus
+                db 0FDh
+                db 0FCh
+                db    3
+                db    2
+                db    1
+                db    2
+                db    3
+                db    4
+                db    6
+                db    0
+                db    1
+                db    1
+                db    2
+                db    2
+                db    3
+                db    4
+                db    5
+                db    6
+                db    7
+                db    8
+                db    9
+                db  0Ah
+METAL_DAMAGE    db    0                 ; indexed by metal material: flat damage
+                db 0FDh
+                db 0FAh
+                db 0FCh
+                db 0FEh
+                db    2
+                db    4
+                db    6
+                db    8
+                db  0Ah
+                db    0
+                db    1
+                db    1
+                db    2
+                db    2
+                db    3
+                db    4
+                db    5
+                db  0Ch
+                db  0Fh
+                db  14h
+                db  1Eh
+                db  32h ; 2
 METAL_LAC       db    0                 ; indexed by item material (0B6h slot byte)
                 db 0FDh
                 db    0
@@ -38822,7 +38856,7 @@ ARMOR_STRENGTHS db    0                 ; indexed by item id
                 db    0
                 db    0
                 db    0
-                db    0
+WEAPON_DAMAGE_BASE db    0              ; indexed by item id: number of dice
                 db    3
                 db    2
                 db    3
@@ -38895,7 +38929,7 @@ ARMOR_STRENGTHS db    0                 ; indexed by item id
                 db    0
                 db    0
                 db    0
-                db    0
+WEAPON_DAMAGE_MULTIPLIER db    0        ; indexed by item id: die size
                 db    3
                 db    3
                 db    4
@@ -42209,7 +42243,7 @@ word_2D275      dw 12h                  ; DATA XREF: getMonsterDescriptions+110�
                 db 8, 0Dh, 0Eh, 0Fh, 11h, 0
 aOnlyWorksOutdo db 7,9,0Ah
                 db 'Only works Outdoors.  Spell Failed.',0
-aSpfx9Icn       db 'spfx9.icn',0        ; DATA XREF: sub_4BE23+32↓o
+aSpfx9Icn       db 'spfx9.icn',0        ; DATA XREF: healCharacterEffect+32↓o
 aElementIcn     db 'element.icn',0      ; DATA XREF: sub_4BF12+19↓o
                 db 5, 25h, 70h, 3, 63h, 57h, 68h, 69h, 63h, 68h, 20h, 45h
                 db 6Ch, 65h, 6Dh, 65h, 6Eh, 74h, 3Fh, 2, 0Bh, 30h, 33h
@@ -91832,7 +91866,7 @@ jpt_4B1DB       dw offset loc_4B1E0     ; DATA XREF: hitMonster+47↑r
 
 ; =============== S U B R O U T I N E =======================================
 
-; (BinDiff sim .72 conf .94, unverified)
+; Xeen Combat::getWeaponDamage: weapon slot (+7Dh == 1/0Dh single, 4 ranged), METAL_DAMAGE(_PERCENT) by metal, dice from WEAPON_DAMAGE_BASE(+) / MULTIPLIER by item id; adds char +104h (holy bonus) and +105h (heroism)
 ; Attributes: bp-based frame
 
 getWeaponDamage proc far                ; CODE XREF: j_getWeaponDamage↑J
@@ -93433,9 +93467,10 @@ jpt_4BDFB       dw offset loc_4BE00     ; DATA XREF: sub_4BDC4+37↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; adds hit points (capped at getMaxHP) and shows the spfx9.icn effect (by use in the cure/heroism spells)
 ; Attributes: bp-based frame
 
-sub_4BE23       proc far                ; CODE XREF: sub_28482↑J
+healCharacterEffect proc far            ; CODE XREF: j_healCharacterEffect↑J
                                         ; Spell_02_FirstAid+52↓p ...
 
 var_8           = word ptr -8
@@ -93461,23 +93496,23 @@ arg_2           = word ptr  8
                 jmp     loc_4BF0C
 ; ---------------------------------------------------------------------------
 
-loc_4BE42:                              ; CODE XREF: sub_4BE23+1A↑j
+loc_4BE42:                              ; CODE XREF: healCharacterEffect+1A↑j
                 cmp     ax, 0Eh
                 jnz     short loc_4BE4A
                 jmp     loc_4BF0C
 ; ---------------------------------------------------------------------------
 
-loc_4BE4A:                              ; CODE XREF: sub_4BE23+22↑j
+loc_4BE4A:                              ; CODE XREF: healCharacterEffect+22↑j
                 cmp     ax, 0Fh
                 jnz     short loc_4BE52
                 jmp     loc_4BF0C
 ; ---------------------------------------------------------------------------
 
-loc_4BE52:                              ; CODE XREF: sub_4BE23+2A↑j
+loc_4BE52:                              ; CODE XREF: healCharacterEffect+2A↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_4BE54:                              ; CODE XREF: sub_4BE23:loc_4BE52↑j
+loc_4BE54:                              ; CODE XREF: healCharacterEffect:loc_4BE52↑j
                 push    ds
                 mov     ax, offset aSpfx9Icn ; "spfx9.icn"
                 push    ax
@@ -93500,12 +93535,12 @@ loc_4BE54:                              ; CODE XREF: sub_4BE23:loc_4BE52↑j
                 jle     short loc_4BE88
                 mov     [si+125h], di
 
-loc_4BE88:                              ; CODE XREF: sub_4BE23+5F↑j
+loc_4BE88:                              ; CODE XREF: healCharacterEffect+5F↑j
                 xor     di, di
                 jmp     short loc_4BE9B
 ; ---------------------------------------------------------------------------
 
-loc_4BE8C:                              ; CODE XREF: sub_4BE23+7F↓j
+loc_4BE8C:                              ; CODE XREF: healCharacterEffect+7F↓j
                 mov     ax, di
                 mov     dx, 12Fh
                 imul    dx
@@ -93514,13 +93549,13 @@ loc_4BE8C:                              ; CODE XREF: sub_4BE23+7F↓j
                 jz      short loc_4BEA4
                 inc     di
 
-loc_4BE9B:                              ; CODE XREF: sub_4BE23+67↑j
+loc_4BE9B:                              ; CODE XREF: healCharacterEffect+67↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, di
                 jg      short loc_4BE8C
 
-loc_4BEA4:                              ; CODE XREF: sub_4BE23+75↑j
+loc_4BEA4:                              ; CODE XREF: healCharacterEffect+75↑j
                 mov     ax, di
                 mov     dx, 26h ; '&'
                 imul    dx
@@ -93534,7 +93569,7 @@ loc_4BEA4:                              ; CODE XREF: sub_4BE23+75↑j
                 jmp     short loc_4BEE5
 ; ---------------------------------------------------------------------------
 
-loc_4BEC4:                              ; CODE XREF: sub_4BE23+C6↓j
+loc_4BEC4:                              ; CODE XREF: healCharacterEffect+C6↓j
                 xor     ax, ax
                 push    ax
                 mov     ax, 95h
@@ -93548,32 +93583,32 @@ loc_4BEC4:                              ; CODE XREF: sub_4BE23+C6↓j
                 call    drawView
                 inc     [bp+var_2]
 
-loc_4BEE5:                              ; CODE XREF: sub_4BE23+9F↑j
+loc_4BEE5:                              ; CODE XREF: healCharacterEffect+9F↑j
                 cmp     [bp+var_2], 4
                 jl      short loc_4BEC4
                 mov     al, byte ptr [bp+var_4]
                 mov     byte_2886F, al
 
-loc_4BEF1:                              ; CODE XREF: sub_4BE23+52↑j
+loc_4BEF1:                              ; CODE XREF: healCharacterEffect+52↑j
                 cmp     word ptr [si+125h], 0
                 jle     short loc_4BEFD
                 mov     byte ptr [si+11Fh], 0
 
-loc_4BEFD:                              ; CODE XREF: sub_4BE23+D3↑j
+loc_4BEFD:                              ; CODE XREF: healCharacterEffect+D3↑j
                 lea     ax, [bp+var_8]
                 push    ax
                 call    sub_26685
                 pop     cx
                 call    drawParty
 
-loc_4BF0C:                              ; CODE XREF: sub_4BE23+1C↑j
-                                        ; sub_4BE23+24↑j ...
+loc_4BF0C:                              ; CODE XREF: healCharacterEffect+1C↑j
+                                        ; healCharacterEffect+24↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4BE23       endp
+healCharacterEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -94199,7 +94234,7 @@ loc_4C39A:                              ; CODE XREF: Spell_02_FirstAid+34↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
 
@@ -94343,7 +94378,7 @@ Spell_06_Revitalize proc far            ; CODE XREF: j_Spell_06_Revitalize↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -94411,7 +94446,7 @@ loc_4C4E4:                              ; CODE XREF: Spell_07_CureWounds+34↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
 
@@ -94635,7 +94670,7 @@ loc_4C65A:                              ; CODE XREF: Spell_14_SuppressPoison+29�
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 call    drawParty
@@ -94923,7 +94958,7 @@ loc_4C84C:                              ; CODE XREF: Spell_19_SuppressDisease+29
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 call    drawParty
@@ -94989,7 +95024,7 @@ Spell_21_Blessed proc far               ; CODE XREF: j_Spell_21_Blessed↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 push    ds
@@ -95266,7 +95301,7 @@ Spell_25_HolyBonus proc far             ; CODE XREF: j_Spell_25_HolyBonus↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 push    ds
@@ -95356,7 +95391,7 @@ loc_4CB05:                              ; CODE XREF: Spell_26_PowerCure+34↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
 
@@ -95420,7 +95455,7 @@ loc_4CB7F:                              ; CODE XREF: Spell_27_NatureSCure+34↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
 
@@ -95526,7 +95561,7 @@ Spell_30_Heroism proc far               ; CODE XREF: j_Spell_30_Heroism↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 push    ds
@@ -95798,7 +95833,7 @@ Spell_34_PowerShield proc far           ; CODE XREF: j_Spell_34_PowerShield↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 push    ds
@@ -95851,7 +95886,7 @@ Spell_35_CurePoison proc far            ; CODE XREF: j_Spell_35_CurePoison↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -96259,7 +96294,7 @@ Spell_40_CureDisease proc far           ; CODE XREF: j_Spell_40_CureDisease↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -96798,7 +96833,7 @@ Spell_47_CureParalysis proc far         ; CODE XREF: j_Spell_47_CureParalysis↑
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -97115,7 +97150,7 @@ Spell_54_StoneToFlesh proc far          ; CODE XREF: j_Spell_54_StoneToFlesh↑J
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -97319,7 +97354,7 @@ loc_4D8BF:                              ; CODE XREF: Spell_59_RaiseDead+2C↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     al, [si+1Ah]
@@ -97410,7 +97445,7 @@ loc_4D94B:                              ; CODE XREF: Spell_60_HalfForMe+3C↑j
                 push    di
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 call    drawParty
@@ -97637,7 +97672,7 @@ loc_4DAF1:                              ; CODE XREF: Spell_64_MoonRay+61↓j
                 add     ax, 0B9D6h
                 push    ax
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 inc     si
@@ -97857,7 +97892,7 @@ loc_4DC6F:                              ; CODE XREF: Spell_70_Resurrect+2C↑j
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_4BE23
+                call    near ptr healCharacterEffect
                 pop     cx
                 pop     cx
                 mov     byte ptr [si+122h], 0

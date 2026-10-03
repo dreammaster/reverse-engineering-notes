@@ -420,8 +420,11 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"slotAttribute",	0XC9,	0x00000400,	-1,	19);
 	mid = add_struc_member(id,"slotId",	0XDC,	0x00000400,	-1,	19);
 	mid = add_struc_member(id,"slotSpell",	0XEF,	0x00000400,	-1,	19);
-	mid = add_struc_member(id,"acBonus",	0X102,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"unknown103",	0X103,	0x00000400,	-1,	16);
+	mid = add_struc_member(id,"blessed",	0X102,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"powerShield",	0X103,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"holyBonus",	0X104,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"heroism",	0X105,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"unknown106",	0X106,	0x00000400,	-1,	13);
 	mid = add_struc_member(id,"conditions",	0X113,	0x00000400,	-1,	16);
 	mid = add_struc_member(id,"unknown123",	0X123,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"hp",	0X125,	0x10000400,	-1,	2);
@@ -14170,6 +14173,7 @@ static Bytes_2(void) {
 	create_insn	(0X2847D);
 	set_name	(0X2847D,	"j_Spell_46_FingerOfDeath");
 	create_insn	(0X28482);
+	set_name	(0X28482,	"j_healCharacterEffect");
 	create_insn	(0X28487);
 	set_name	(0X28487,	"j_Spell_66_EnchantItem");
 	create_insn	(0X2848C);
@@ -14688,13 +14692,21 @@ static Bytes_2(void) {
 	set_cmt	(0X29117,	"indexed by elemental material (0A3h slot byte)",	0);
 	set_name	(0X29117,	"ELEMENTAL_RESISTANCES");
 	create_byte	(0X29118);
-	make_array	(0X29118,	0X77);
+	make_array	(0X29118,	0X49);
+	set_cmt	(0X29161,	"indexed by metal material (slot +0B6h): to-hit bonus",	0);
+	set_name	(0X29161,	"METAL_DAMAGE_PERCENT");
+	set_cmt	(0X29178,	"indexed by metal material: flat damage",	0);
+	set_name	(0X29178,	"METAL_DAMAGE");
 	set_cmt	(0X2918F,	"indexed by item material (0B6h slot byte)",	0);
 	set_name	(0X2918F,	"METAL_LAC");
 	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
 	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
 	set_cmt	(0X29377,	"indexed by item id",	0);
 	set_name	(0X29377,	"ARMOR_STRENGTHS");
+	set_cmt	(0X293C0,	"indexed by item id: number of dice",	0);
+	set_name	(0X293C0,	"WEAPON_DAMAGE_BASE");
+	set_cmt	(0X29409,	"indexed by item id: die size",	0);
+	set_name	(0X29409,	"WEAPON_DAMAGE_MULTIPLIER");
 	create_byte	(0X29421);
 	make_array	(0X29421,	0X130);
 	set_cmt	(0X29551,	"10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)",	0);
@@ -14795,6 +14807,15 @@ static Bytes_2(void) {
 	set_name	(0X2A5E6,	"aItit2Vga");
 	create_strlit	(0X2A5F0,	0XA);
 	set_name	(0X2A5F0,	"aItit3Vga");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X2A5FA,	0XA);
 	set_name	(0X2A5FA,	"aItit4Vga");
 	create_strlit	(0X2A604,	0XA);
@@ -14815,15 +14836,6 @@ static Bytes_2(void) {
 	set_name	(0X2A648,	"aSDS");
 	create_strlit	(0X2A64E,	0X9);
 	set_name	(0X2A64E,	"aCrDVga");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X2A657,	0X2);
 	set_name	(0X2A657,	"aC_3");
 	create_strlit	(0X2A684,	0X5);
@@ -18341,6 +18353,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X37F6E,	"buf",	0);
 	set_cmt	(0X37F6F,	"handle",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X37F75);
 	op_hex		(x,	1);
 	set_cmt	(0X37F78,	"handle",	0);
@@ -18376,15 +18397,6 @@ static Bytes_3(void) {
 	set_cmt	(0X38007,	"x",	0);
 	set_cmt	(0X3800B,	"bottom",	0);
 	set_cmt	(0X3800F,	"right",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X38013,	"top",	0);
 	set_cmt	(0X38017,	"left",	0);
 	create_insn	(x=0X3801D);
@@ -23197,6 +23209,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X404DC);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X40506);
 	create_insn	(x=0X4050F);
 	op_stkvar	(x,	1);
@@ -23233,15 +23254,6 @@ static Bytes_4(void) {
 	set_cmt	(0X405C5,	"s",	0);
 	create_insn	(x=0X405CB);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X405D1,	"c",	0);
 	create_insn	(x=0X405D5);
 	op_stkvar	(x,	1);
@@ -28828,6 +28840,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47E43);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47E46);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47E52);
@@ -28863,15 +28884,6 @@ static Bytes_5(void) {
 	set_cmt	(0X47F24,	"format",	0);
 	create_insn	(x=0X47F24);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47F2C);
 	op_hex		(x,	1);
 	create_insn	(x=0X47F30);
@@ -31606,6 +31618,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	128,	0X4BD90);
 	set_name	(0X4BE13,	"jpt_4BDFB");
 	create_insn	(0X4BE23);
+	set_name	(0X4BE23,	"healCharacterEffect");
 	create_insn	(x=0X4BE26);
 	op_hex		(x,	1);
 	create_insn	(x=0X4BE2B);
@@ -33785,6 +33798,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4FA42);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4FA56);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4FA5B);
@@ -33805,15 +33827,6 @@ static Bytes_6(void) {
 	create_insn	(0X4FA97);
 	set_cmt	(0X4FA9F,	"jumptable 0004F954 case 30",	1);
 	create_insn	(0X4FA9F);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4FAA7,	"jumptable 0004F954 case 31",	1);
 	create_insn	(0X4FAA7);
 	set_cmt	(0X4FAAF,	"jumptable 0004F954 case 32",	1);
@@ -37759,7 +37772,7 @@ static Functions_0(void) {
 	set_func_flags(0X2847D,0x54c2);
 	set_frame_size(0X2847D, 0, 0, 0);
 	add_func    (0X28482,0X28487);
-	set_func_flags(0X28482,0x5482);
+	set_func_flags(0X28482,0x54c2);
 	set_frame_size(0X28482, 0, 0, 0);
 	add_func    (0X28487,0X2848C);
 	set_func_flags(0X28487,0x54c2);
@@ -38772,7 +38785,7 @@ static Functions_1(void) {
 	set_frame_size(0X4B194, 0X2, 2, 0);
 	add_func    (0X4B283,0X4B37C);
 	set_func_flags(0X4B283,0x5412);
-	set_func_cmt(0X4B283,	"(BinDiff sim .72 conf .94, unverified)", 0);
+	set_func_cmt(0X4B283,	"Xeen Combat::getWeaponDamage: weapon slot (+7Dh == 1/0Dh single, 4 ranged), METAL_DAMAGE(_PERCENT) by metal, dice from WEAPON_DAMAGE_BASE(+) / MULTIPLIER by item id; adds char +104h (holy bonus) and +105h (heroism)", 0);
 	set_frame_size(0X4B283, 0X2, 2, 0);
 	add_func    (0X4B37C,0X4B3AB);
 	set_func_flags(0X4B37C,0x5412);
@@ -38818,6 +38831,7 @@ static Functions_1(void) {
 	set_frame_size(0X4BDC4, 0X4, 2, 0);
 	add_func    (0X4BE23,0X4BF12);
 	set_func_flags(0X4BE23,0x5412);
+	set_func_cmt(0X4BE23,	"adds hit points (capped at getMaxHP) and shows the spfx9.icn effect (by use in the cure/heroism spells)", 0);
 	set_frame_size(0X4BE23, 0XC, 2, 0);
 	add_func    (0X4BF12,0X4BFBD);
 	set_func_flags(0X4BF12,0x1410);

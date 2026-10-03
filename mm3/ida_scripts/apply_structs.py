@@ -9,7 +9,7 @@ FIELDS = [
     (0x77, "lloydMap", 1), (0x78, "lloydX", 1), (0x79, "lloydY", 1), (0x7A, "hasSpells", 1), (0x7B, "currentSpell", 1),
     (0x7C, "quickOption", 1), (0x7D, "slotPresent", 19), (0x90, "slotFlags", 19), (0xA3, "slotElement", 19),
     (0xB6, "slotMetal", 19), (0xC9, "slotAttribute", 19), (0xDC, "slotId", 19), (0xEF, "slotSpell", 19),
-    (0x102, "acBonus", 1), (0x103, "unknown103", 16), (0x113, "conditions", 16), (0x123, "unknown123", 2),
+    (0x102, "blessed", 1), (0x103, "powerShield", 1), (0x104, "holyBonus", 1), (0x105, "heroism", 1), (0x106, "unknown106", 13), (0x113, "conditions", 16), (0x123, "unknown123", 2),
     (0x125, "hp", 2), (0x127, "sp", 2), (0x129, "birthYear", 2), (0x12B, "experience", 4),
 ]
 sid = ida_struct.get_struc_id("Character")

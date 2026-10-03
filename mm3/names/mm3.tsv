@@ -414,9 +414,13 @@
 2879E	Party_newDay	byte
 2884B	Maze_wrapMode	byte; non-zero = off-map cells wrap/return 0 instead of 1111h
 29117	ELEMENTAL_RESISTANCES	indexed by elemental material (0A3h slot byte)
+29161	METAL_DAMAGE_PERCENT	indexed by metal material (slot +0B6h): to-hit bonus
+29178	METAL_DAMAGE	indexed by metal material: flat damage
 2918F	METAL_LAC	indexed by item material (0B6h slot byte)
 291BD	ATTRIBUTE_BONUSES	indexed by attribute material (0C9h slot byte)
 29377	ARMOR_STRENGTHS	indexed by item id
+293C0	WEAPON_DAMAGE_BASE	indexed by item id: number of dice
+29409	WEAPON_DAMAGE_MULTIPLIER	indexed by item id: die size
 29551	BASE_HP_BY_CLASS	10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)
 29650	STAT_VALUES	24 words, statBonus thresholds
 29680	STAT_BONUSES	24 signed bytes
@@ -681,7 +685,7 @@
 4B194	hitMonster	identical to Xeen Combat::hitMonster: statBonus(accuracy)+bonus+level/divisor(class)+d20 (re-roll on 20) - cursed >= AC+10
 4B1F2	def_4B1DB
 4B26F	jpt_4B1DB
-4B283	getWeaponDamage	(BinDiff sim .72 conf .94, unverified)
+4B283	getWeaponDamage	Xeen Combat::getWeaponDamage: weapon slot (+7Dh == 1/0Dh single, 4 ranged), METAL_DAMAGE(_PERCENT) by metal, dice from WEAPON_DAMAGE_BASE(+) / MULTIPLIER by item id; adds char +104h (holy bonus) and +105h (heroism)
 4B37C	getMonsterDamage	max(statBonus(might)+weaponDamage,1)
 4B3AB	monsterSavingThrow
 4B3D1	run
@@ -698,6 +702,7 @@
 4BD9F	Screen_saveBackground
 4BE02	def_4BDFB
 4BE13	jpt_4BDFB
+4BE23	healCharacterEffect	adds hit points (capped at getMaxHP) and shows the spfx9.icn effect (by use in the cure/heroism spells)
 4C237	Spells_subSpellCost
 4C2AD	Spell_sharedHandler	shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)
 4C2FF	Spell_00_Light	spell effect routine for 'Light' (id 0, via spellsDialog's switch)
