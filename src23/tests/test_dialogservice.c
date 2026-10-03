@@ -304,6 +304,47 @@ static void testTrainingQuote(void) {
     check("level 10 -> 11 would pass the cap: no training", !dialogTrainingQuote(npc, record, cost));
 }
 
+static void testRiddles(void) {
+    check("Chapter 2 riddle 1 is PENTAGON", strcmp(dialogRiddleAnswer(GameYendor2, 1), "PENTAGON") == 0);
+    check("Chapter 2 riddle 6 is GAIN", strcmp(dialogRiddleAnswer(GameYendor2, 6), "GAIN") == 0);
+    check("Chapter 2 has no riddle 7", dialogRiddleAnswer(GameYendor2, 7) == NULL);
+    check("riddle 0 is not a riddle", dialogRiddleAnswer(GameYendor2, 0) == NULL);
+    check("Chapter 3 has 11, the last is 70", strcmp(dialogRiddleAnswer(GameYendor3, 11), "70") == 0);
+    check("a correct answer", dialogCheckRiddleAnswer(GameYendor2, 3, "WHITE POTION"));
+    check("is case-sensitive", !dialogCheckRiddleAnswer(GameYendor2, 3, "white potion"));
+    check("needs the whole string", !dialogCheckRiddleAnswer(GameYendor2, 3, "WHITE"));
+    check("and no extra", !dialogCheckRiddleAnswer(GameYendor2, 3, "WHITE POTION "));
+    check("a bad riddle id never matches", !dialogCheckRiddleAnswer(GameYendor2, 9, "GAIN"));
+}
+
+static void testBuyOre(void) {
+    Bcd4 gold, magic, nuore, qty, expected;
+    bcd4FromU16(gold, 1005);
+    bcd4FromU16(magic, 7);
+    bcd4FromU16(nuore, 3);
+    bcd4FromU16(qty, 101);
+    check("1005 gold affords 100 units, not 101", !dialogBuyOre(2, gold, magic, nuore, qty));
+    bcd4FromU16(expected, 1005);
+    check("...nothing changes", bcd4Compare(gold, expected) == 0);
+
+    bcd4FromU16(qty, 100);
+    check("100 units is fine", dialogBuyOre(2, gold, magic, nuore, qty));
+    bcd4FromU16(expected, 5);
+    check("...costing 1000 gold", bcd4Compare(gold, expected) == 0);
+    bcd4FromU16(expected, 107);
+    check("...into MAGIC ORE", bcd4Compare(magic, expected) == 0);
+    bcd4FromU16(expected, 3);
+    check("...leaving NUORE alone", bcd4Compare(nuore, expected) == 0);
+
+    bcd4FromU16(gold, 50);
+    bcd4FromU16(qty, 5);
+    check("an argument of 3 buys NUORE", dialogBuyOre(3, gold, magic, nuore, qty));
+    bcd4FromU16(expected, 8);
+    check("...NUORE 3 + 5", bcd4Compare(nuore, expected) == 0);
+    bcd4FromU16(expected, 0);
+    check("...for exactly 50 gold", bcd4Compare(gold, expected) == 0);
+}
+
 int main(void) {
     testAttributeTome();
     testAttributeCaps();
@@ -313,6 +354,8 @@ int main(void) {
     testApplyHealing();
     testChallenge();
     testTrainingQuote();
+    testRiddles();
+    testBuyOre();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

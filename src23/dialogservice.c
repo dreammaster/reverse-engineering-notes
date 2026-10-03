@@ -201,3 +201,35 @@ void dialogMarkServiceAvailability(DialogState *state, const uint8_t *npc, const
     }
     state->availA = a;
 }
+
+const char *dialogRiddleAnswer(GameKind game, unsigned riddleId) {
+    static const char *const answers2[] = {"PENTAGON", "LINGUISTIC", "WHITE POTION", "THAINE", "SHIRLEY", "GAIN"};
+    static const char *const answers3[] = {"PEACEFUL", "120",   "ARCHIBALD", "OVIAS",  "WIN",   "30",
+                                           "500",      "3925",  "46080",     "400000", "70"};
+    const char *const *table = game == GameYendor2 ? answers2 : answers3;
+    unsigned count = game == GameYendor2 ? sizeof(answers2) / sizeof(answers2[0]) : sizeof(answers3) / sizeof(answers3[0]);
+    if (riddleId == 0 || riddleId > count) {
+        return NULL;
+    }
+    return table[riddleId - 1];
+}
+
+bool dialogCheckRiddleAnswer(GameKind game, unsigned riddleId, const char *typed) {
+    const char *answer = dialogRiddleAnswer(game, riddleId);
+    return answer && strcmp(answer, typed) == 0;
+}
+
+bool dialogBuyOre(unsigned kind, Bcd4 gold, Bcd4 magicOre, Bcd4 nuore, const Bcd4 quantity) {
+    Bcd4 affordable;
+    memcpy(affordable, gold, sizeof(Bcd4));
+    bcd4ShiftRightNibble(affordable);
+    if (bcd4Compare(affordable, quantity) < 0) {
+        return false;
+    }
+    bcd4Add(kind == 2 ? magicOre : nuore, quantity);
+    Bcd4 cost;
+    memcpy(cost, quantity, sizeof(Bcd4));
+    bcd4ShiftLeftNibble(cost);
+    bcd4Sub(gold, cost);
+    return true;
+}

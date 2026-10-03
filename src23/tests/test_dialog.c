@@ -330,6 +330,30 @@ static void checkRealGame(const char *name, GameKind game, const char *envName, 
 
     testRealConversations(&catalog, game);
 
+    {
+        /* riddle topics (flag 0x80, not a "BUY ..." purchase) carry a riddle id the executable's answer table covers */
+        unsigned riddles = 0;
+        bool inRange = true;
+        unsigned limit = game == GameYendor2 ? 6 : 11;
+        for (unsigned id = 1; id < catalog.npcCount; id++) {
+            const uint8_t *npc = dialogNpc(&catalog, id);
+            for (unsigned t = 0; t < dialogGetU16(npc, DialogNpcTopicCount); t++) {
+                const uint8_t *topic = dialogTopic(&catalog, dialogGetU16(npc, DialogNpcFirstTopic) + t);
+                char topicName[DialogTopicNameSize + 1];
+                dialogTopicName(topic, topicName);
+                if ((dialogGetU16(topic, DialogTopicFlags) & DialogTopicBuy) && strncmp(topicName, "BUY ", 4) != 0) {
+                    riddles++;
+                    unsigned arg = dialogTopicU16(&catalog, topic, DialogTopicArg);
+                    if (arg < 1 || arg > limit) {
+                        inRange = false;
+                    }
+                }
+            }
+        }
+        snprintf(label, sizeof(label), "%s: riddle topics exist and every riddle id has an answer", name);
+        check(label, riddles > 0 && inRange);
+    }
+
     if (game == GameYendor2) {
         const uint8_t *governor = dialogNpc(&catalog, 1);
         const uint8_t *hello = dialogTopic(&catalog, dialogGetU16(governor, DialogNpcFirstTopic));

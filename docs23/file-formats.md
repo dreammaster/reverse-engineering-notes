@@ -4283,6 +4283,19 @@ word) and one difference: the handler "finished" argument bit is `0x8` where
 Chapter 2 tests `0x1` (the topic data uses the FINISHED topic's mask bits and
 flags instead, so it doesn't matter for the data layer).
 
+**Riddles and ore (2026-10-03)**: a topic with flag `0x80` is either a purchase
+(its name starts with "BUY ") or a riddle. A riddle's argument is its 1-based id
+into a table of answers **in the executable**, not WORLD.DAT (near-pointer table
+at `DS:0xBF48` / `0xA8C6`, 6 / 11 entries; `ida_scripts/dump_riddle_answers.py`):
+Chapter 2 PENTAGON, LINGUISTIC, WHITE POTION, THAINE, SHIRLEY, GAIN; Chapter 3
+PEACEFUL, 120, ARCHIBALD, OVIAS, WIN, 30, 500, 3925, 46080, 400000, 70. The compare
+is exact and case-sensitive; success is what lets a conditional topic's result
+flags apply. Every riddle topic in both games' data carries an id inside that
+range, which confirms the table sizes. Buying ore ("ORE COSTS 10 GOLD PER UNIT",
+argument 2 = MAGIC ORE, 3 = NUORE): quantity up to gold/10 (last digit dropped),
+ore += quantity, gold -= 10 x quantity. `dialogRiddleAnswer`,
+`dialogCheckRiddleAnswer`, `dialogBuyOre`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by

@@ -157,4 +157,34 @@ DialogChallengeOutcome dialogAttemptChallenge(const uint8_t *npc, uint8_t *party
  */
 void dialogMarkServiceAvailability(DialogState *state, const uint8_t *npc, const uint8_t *partyRecord);
 
+/*
+ * Riddle and password topics (UseRiddleAnswerItem, :18436; a topic with flag
+ * DialogTopicBuy whose name does not start with "BUY "). The topic's
+ * DialogTopicArg is the riddle id (1-based; Chapter 2 has 6, Chapter 3 11) and
+ * the expected answers live in the executable, not WORLD.DAT -- a table of
+ * near pointers (DS:0xBF48 / 0xA8C6), extracted with ida_scripts/
+ * dump_riddle_answers.py and embedded here:
+ *   Chapter 2: PENTAGON, LINGUISTIC, WHITE POTION, THAINE, SHIRLEY, GAIN
+ *   Chapter 3: PEACEFUL, 120, ARCHIBALD, OVIAS, WIN, 30, 500, 3925, 46080,
+ *              400000, 70
+ * The check is an exact, case-sensitive, whole-string compare against what the
+ * player typed into the 34-character field. A correct answer is the "handler
+ * succeeded" signal that makes a DialogTopicConditional topic's result flags
+ * apply (dialogVisitTopic); a wrong one just asks again.
+ */
+const char *dialogRiddleAnswer(GameKind game, unsigned riddleId);
+bool dialogCheckRiddleAnswer(GameKind game, unsigned riddleId, const char *typed);
+
+/*
+ * "BUY NUORE" / "BUY MAGIC ORE" (PromptBuyOreQuantity, :19565; topic flag
+ * DialogTopicBuy, argument 3 for NUORE and 2 for MAGIC ORE, "ORE COSTS 10 GOLD
+ * PER UNIT"). The player types a quantity; it must not exceed what the gold
+ * affords (gold with its last digit dropped -- gold / 10 truncated). On success
+ * the ore counter gains quantity and gold loses quantity x 10. Returns false,
+ * changing nothing, when it is too much. Any argument other than 2 buys NUORE.
+ * (The original also flashes its "resource depleted" overlay the first time a
+ * counter gains ore or the gold hits exactly zero; not modeled.)
+ */
+bool dialogBuyOre(unsigned kind, Bcd4 gold, Bcd4 magicOre, Bcd4 nuore, const Bcd4 quantity);
+
 #endif
