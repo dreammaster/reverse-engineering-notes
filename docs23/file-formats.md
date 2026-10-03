@@ -1112,6 +1112,21 @@ cleanup/exit path. The entry point *into* this wizard from the party
 roster screen is `ShowCreateCharacterPrompt` (see above), which first
 finds and wipes an empty `g_partyRecords` slot.
 
+### Character stat generation (`RollCharacterAttributes`, `ComputeDerivedCharacterStats`; `chargen.c`)
+
+Fully decoded and reimplemented; the formulas and class tables are in `chargen.h` and `chargen.c` (the
+tables were generated from the disassembly and cross-checked against an emulation of it, 759 derived
+values and 36 roll vectors over both games and all classes). Highlights, correcting earlier notes:
+the six rolls (45-60) are drawn in the order **Strength, Dexterity, Intelligence, Wisdom, Charisma,
+Stamina**; HP = 25 % of Stamina; carry capacity = 10 x Strength; MP = a class-dependent base / 4 and
+the CASTING skill (`+0x62`) = base + a class bonus (MONK, ALCHEMIST, DRUID, MAGE use Intelligence or Wisdom
+blends; classes 1-3 have no magic); the equipment baselines `+0x32`/`+0x34` (and their maxima) that
+`party.h` flagged as "nothing writes them" are zeroed here. The derived skills `+0x58`-`+0x70` (Survival,
+Projectile, Slashing, Bashing, Polearm, Mapping, Navigation, Bartering, Repair, Thievery, Linguistics,
+Chemistry) are each a blend of attributes plus a class bonus, or for some classes a flat 0 or 40. Chapter 3
+retunes most class bonuses and flat values and never computes Chemistry. The scaling helper
+(`ScaleByPercentRounded`) does its multiply and +50 in 16 bits, so it wraps for large inputs.
+
 ### The on-line clue book (F8)
 
 `ShowClueBook` (the manual's "F8 On-line clue book") opens by calling

@@ -427,6 +427,13 @@ the NEXT slot's id, and it leaves the discarded item's stat bonuses applied. Cha
 for offsets up to 0x14E and calls `RemoveMultiStatEffect` for slots 0x142-0x15A. The recharge
 (0x8000) and swap (0x2000) modes are identical. See `partyConsumeItemChargeMode`.
 
+### `ComputeDerivedCharacterStats` retunes class bonuses and drops Chemistry
+
+The structure is the same, but Chapter 3 changes most per-class bonuses and flat skill values (for example
+Mapping has no flat value for any class, Bartering/Repair/Thievery have different class sets and bonuses,
+Linguistics differs) and never writes Chemistry (`+0x70`/`+0xB0`). `RollCharacterAttributes` is identical.
+See the generated tables in `chargen.c`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a

@@ -11363,6 +11363,18 @@ word, which for the 2-byte equipment slots 0x152-0x15A wipes the next slot's ite
 never removes a discarded equipped item's stat bonuses; Chapter 3 does neither bug.
 `party.c`, `test_party.c`.
 
+### Session update: character stat generation (`chargen.c`)
+
+Looking for what is still unimplemented, a name census of the 769 functions against `src23` showed the
+whole character-creation stat path was missing. `RollCharacterAttributes` and `ComputeDerivedCharacterStats`
+are big class-switch routines, so instead of hand-translating ~450 instructions I wrote a small 16-bit x86
+subset interpreter over the IDA listings, fitted the per-class formulas by probing it (blend terms, flat
+values, bonuses), generated the C tables from the fit, and verified them against the emulator on thousands of
+random attribute vectors (including 16-bit-wrapping ones). Results: both games share the roll routine
+byte for byte; the derived-skill tables differ (Chapter 3 retunes the class bonuses and drops Chemistry).
+The test file embeds emulator-produced vectors. This technique (emulate, fit, generate, cross-check) is
+worth reusing for other table-heavy routines.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
