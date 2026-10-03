@@ -7,6 +7,7 @@
 
 #include "bcd4.h"
 #include "dialog.h"
+#include "item.h"
 #include "game.h"
 #include "savegame.h"
 
@@ -186,5 +187,42 @@ bool dialogCheckRiddleAnswer(GameKind game, unsigned riddleId, const char *typed
  * counter gains ore or the gold hits exactly zero; not modeled.)
  */
 bool dialogBuyOre(unsigned kind, Bcd4 gold, Bcd4 magicOre, Bcd4 nuore, const Bcd4 quantity);
+
+/*
+ * The item services -- ENHANCE, REPAIR and SELL topics. The party carries the
+ * item on the cursor; the NPC header supplies the terms.
+ *
+ * Selling (TrySellItemForGold, :15997): the NPC buys an item when the SELL
+ * topic's argument (DialogTopicArg: a class mask such as 0x8000 = gear, 0x4000
+ * = potions...) shares a bit with the item's ItemFieldClass; the price
+ * paid is shop.h's shopSellPrice.
+ *
+ * Enhancing (TryEnhanceItemForGold, :15729; IsItemEligibleForEnhance :19713):
+ * an item qualifies if, for armour (item flags 0x800 or 0x200) whose target
+ * entry has slot-flag bit 0x100, target word 3 -- or, for a weapon (0x4000 or
+ * 0x8000) whose target has bit 0x800, target word 4 -- lies between
+ * DialogNpcParamA and DialogNpcParamB inclusive (signed). The upgrade is the
+ * NEXT catalog id (id + 1: the "+1" version sits right after the base item);
+ * it costs that item's base value x DialogNpcPriceMultiplier percent (BCD).
+ *
+ * Repairing (TryRepairItemForGold, :15876; IsItemEligibleForRepair :19793):
+ * a weapon (0x4000/0x8000) whose target has slot-flag bit 0x100, or an item with
+ * flag 0x800 whose target has bit 0x40, can be repaired; the damaged item
+ * carries its original id in its "extra" word, and repair costs THAT item's base
+ * value x the multiplier percent and restores it.
+ *
+ * Real data bears the enhance rule out: Chapter 2's "+5 up to +7" smith (NPC
+ * 57, ParamA 5, ParamB 6, 80%) takes exactly the +5 and +6 armour -- target
+ * word 3 (item.h calls it ItemTargetBreakChanceA) is the item's "+N" level --
+ * and the first smith (NPC 9, 0..2) the plain through +2 ones. A quirk not
+ * reproduced: IsItemEligibleForRepair's second test reuses a register that
+ * still points at the target entry when the first test fell through, reading
+ * 12 bytes past it; the intended meaning is implemented.
+ */
+bool dialogSellAccepts(uint16_t sellTopicArg, const uint8_t *itemRecord);
+bool dialogEnhanceEligible(const uint8_t *npc, const ItemCatalog *catalog, const uint8_t *itemRecord);
+bool dialogEnhanceCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned itemId, Bcd4 cost);
+bool dialogRepairEligible(const ItemCatalog *catalog, const uint8_t *itemRecord);
+bool dialogRepairCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned originalItemId, Bcd4 cost);
 
 #endif

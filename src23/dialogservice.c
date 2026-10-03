@@ -233,3 +233,57 @@ bool dialogBuyOre(unsigned kind, Bcd4 gold, Bcd4 magicOre, Bcd4 nuore, const Bcd
     bcd4Sub(gold, cost);
     return true;
 }
+
+bool dialogSellAccepts(uint16_t sellTopicArg, const uint8_t *itemRecord) {
+    return (sellTopicArg & itemGetU16(itemRecord, ItemFieldClass)) != 0;
+}
+
+bool dialogEnhanceEligible(const uint8_t *npc, const ItemCatalog *catalog, const uint8_t *itemRecord) {
+    uint16_t flags = itemGetU16(itemRecord, ItemFieldFlags);
+    const uint8_t *entry = itemTargetEntry(catalog, itemRecord);
+    int16_t value;
+    if (flags & 0x0A00) {
+        if (!entry || !(itemTargetWord(entry, 1) & 0x0100)) {
+            return false;
+        }
+        value = (int16_t)itemTargetWord(entry, 3);
+    } else if (flags & 0xC000) {
+        if (!entry || !(itemTargetWord(entry, 1) & 0x0800)) {
+            return false;
+        }
+        value = (int16_t)itemTargetWord(entry, 4);
+    } else {
+        return false;
+    }
+    return value >= (int16_t)dialogGetU16(npc, DialogNpcParamA) && value <= (int16_t)dialogGetU16(npc, DialogNpcParamB);
+}
+
+static bool priceOfItemAtPercent(const uint8_t *npc, const ItemCatalog *catalog, unsigned itemId, Bcd4 cost) {
+    const uint8_t *record = itemCatalogRecord(catalog, itemId);
+    if (!record) {
+        return false;
+    }
+    memcpy(cost, itemBaseValue(record), sizeof(Bcd4));
+    bcd4MulPercent(cost, dialogGetU16(npc, DialogNpcPriceMultiplier));
+    return true;
+}
+
+bool dialogEnhanceCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned itemId, Bcd4 cost) {
+    return priceOfItemAtPercent(npc, catalog, itemId + 1, cost);
+}
+
+bool dialogRepairEligible(const ItemCatalog *catalog, const uint8_t *itemRecord) {
+    uint16_t flags = itemGetU16(itemRecord, ItemFieldFlags);
+    const uint8_t *entry = itemTargetEntry(catalog, itemRecord);
+    if (!entry) {
+        return false;
+    }
+    if ((flags & 0xC000) && (itemTargetWord(entry, 1) & 0x0100)) {
+        return true;
+    }
+    return (flags & 0x0800) && (itemTargetWord(entry, 1) & 0x0040);
+}
+
+bool dialogRepairCost(const uint8_t *npc, const ItemCatalog *catalog, unsigned originalItemId, Bcd4 cost) {
+    return priceOfItemAtPercent(npc, catalog, originalItemId, cost);
+}

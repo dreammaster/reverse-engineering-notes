@@ -89,7 +89,7 @@ enum {
     ItemTargetAbsorption = 0, /* wearables: the "ABSORPTION-" value */
     ItemTargetSlotFlags = 1,  /* wearables: 0x8000/0x4000/0x2000/0x1000/0x800 pick slot codes 0x10-0x14; weapons: skill-type bits */
     ItemTargetBreakItemA = 2, /* replacement item id when it breaks ... */
-    ItemTargetBreakChanceA = 3, /* ... and its percent chance (TickEquippedItemDurability) */
+    ItemTargetBreakChanceA = 3, /* ... and its percent chance (TickEquippedItemDurability). In real data this equals the item's "+N" level for armour (dialogservice.h: the enhance smiths select on it) */
     ItemTargetBreakItemB = 4,
     ItemTargetBreakChanceB = 5
 };

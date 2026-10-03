@@ -4296,6 +4296,18 @@ argument 2 = MAGIC ORE, 3 = NUORE): quantity up to gold/10 (last digit dropped),
 ore += quantity, gold -= 10 x quantity. `dialogRiddleAnswer`,
 `dialogCheckRiddleAnswer`, `dialogBuyOre`.
 
+**Sell / enhance / repair (2026-10-03)**: a SELL topic's argument is a class mask
+the NPC will buy (shares a bit with the item's class word); selling pays
+`shopSellPrice`. An ENHANCE smith takes armour whose target word 3 (what
+`item.h` calls the break chance -- in real data it is the item's "+N") lies in
+`[ParamA, ParamB]`, or weapons by target word 4, and swaps the item for the next
+catalog id (the "+1" version) for that item's base price x the smith's percent.
+Verified on real data: the "+5 up to +7" smith (Chapter 2 NPC 57, 80%) accepts
+exactly STEEL/SILVER/GOLD SHIELD +5 and +6, gloves and boots +5/+6, 58 items in
+all; the apprentice smith (NPC 9, 0-2, 50%) the plain through +2 ones. Repair
+needs a target slot-flag bit and costs the *original* item's price x percent.
+`dialogSellAccepts`, `dialogEnhanceEligible/Cost`, `dialogRepairEligible/Cost`.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
