@@ -4327,6 +4327,18 @@ healer/trainer/challenge/mount handler intercepts later topics before their own
 loads type `0x400`. `dialogTypeAfterTopic`, `dialogServiceForType`.
 `dialogTransport`, `dialogLearnTransport`, `dialogSellTransport`.
 
+**The skill-based repair attempt (2026-10-03, `src23/repair.c`)**: `RepairItemCommand`
+rolls `RandomInRange(100)` against a (low, high) pair from a 16-row x 5-tier table
+in the executable (`DS:0x6B7E` / `0x6EAC`, identical in both games;
+`ida_scripts/dump_repair_table.py`). Row = the damaged item's difficulty (armour "+N",
+weapon target word 4); tier = the repairer's `PartyStatRepair` (<50, <65, <80, <95,
+else). Roll < low: critical failure, the item is destroyed; low..high: success; above
+high: soft failure. The kit's charge is spent on the first two. Row 4 tier 0 is
+(100, 0) -- an unskilled repairer destroys it on any roll below 100 -- while row 0
+tier 4 is (0, 100), a sure thing; across rows the destroy threshold never rises with
+skill (checked). The comment in the old name table had the success/soft-failure
+labels reversed.
+
 ### Item catalog (decoded 2026-09-19)
 
 A contiguous `WORLD.DAT` region, loaded by `loadWorldDat1` and read back by
