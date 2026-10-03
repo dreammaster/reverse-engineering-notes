@@ -11398,6 +11398,14 @@ day, Navigation-sized map box, click-to-fly verdicts) and a Chapter 3 page restr
 attribute table lives in WORLD.DAT (`dump_pagetable_offset.py`, both games). The fog bitmap helpers and the
 three-wide reveal ahead of the party are `explore.c`.
 
+### Session update: thrown potions and flasks (`thrown.c`)
+
+`ResolveAbilityEffect`, documented for a long time as an "ability/spell resolver" with unidentified ids, is the damage
+table of the four throwable consumables (gold/silver/blue potions, flaming oil); `ApplyResolvedDamageWithResistance`
+halves damage once per overlapping resistance/type bit. The dungeon monster field `+0x4E` that spell records match
+on is the creature kind, 13 = undead. Animation and message shells (`HandleRangedOrCombatAction`) remain UI.
+`thrown.c`/`.h`, `test_thrown.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

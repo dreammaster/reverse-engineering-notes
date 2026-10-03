@@ -75,8 +75,10 @@ typedef enum {
      * combatApplySpellAttack when that record's SpellResistTypeRestricted
      * flag is set -- a type-restricted attack is a no-op entirely against
      * any monster whose own value here doesn't match. What the handful of
-     * distinct nonzero values actually group (element? creature family?)
-     * isn't identified; kept descriptive rather than guessed.
+     * distinct nonzero values actually group isn't fully identified, but
+     * value 13 is UNDEAD: the BLUE POTION (holy water) only harms those, and
+     * the 13s are SKELETON, GHOST, GHOUL, WIGHT, SPECTRE, VAMPIRE BATS...
+     * (thrown.h). The other values are kept descriptive rather than guessed.
      */
     MonsterFieldUnknown4E = 0x4E,
     MonsterFieldMaxHealth = 0x50, /* u16 ("HEALTH-") */

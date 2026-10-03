@@ -1785,6 +1785,13 @@ step used by both the ranged-weapon branch and
 bit-scan (the attack's type flags vs. the target's `[+0x98]`
 resistance flags, halving per match) before subtracting from HP.
 
+**Resolved and reimplemented (`thrown.c`)**: the "abilities" `ResolveAbilityEffect` dispatches on are **thrown
+consumables** -- GOLD POTION (60 damage), SILVER POTION (35 + poison, 6 x 5 timers), BLUE POTION (holy water: 50,
+85 in Chapter 3, undead only: monster kind 13) and the FLAMING OIL FLASK (40 down the corridor, nothing in formal
+combat). Item ids 0x19-0x1B / 0x240 in Chapter 2, 0x3D-0x3F / 0x3C in Chapter 3; two further branches (25 + 0x400,
+15 + 0x4000) test id globals that are 0xFFFF in both games and are dead. 14 % of throws fizzle (roll above 85,
+0..100 inclusive).
+
 **The full ranged-weapon shot sequence**, `HandleRangedOrCombatAction`
 (called from `start`, 2 sites — one sets `g_uiScratchFlags3` bit `0x100`
 first): a 3-way combat-action dispatcher. If already in formal combat
