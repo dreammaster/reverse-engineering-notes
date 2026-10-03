@@ -11474,3 +11474,11 @@ candidates once deeper work begins:
    unlocking `file-formats.md` content in the same pass (`ultima1`'s CRT
    file-I/O layer and `ultima2`'s dungeon/map struct work both started
    this way).
+
+### 2026-10-04 session update: PICTURES.VGA directory and the first-person renderer
+
+`g_pictureDir` is ten picture *categories* (all pictures of one size, picture = base + id x width x height), not ten pictures:
+`pictures.c`. The first-person view is decoded and reimplemented end to end for the static scene (`viewrender.c`): the
+table-driven blitter's geometry lives in a 0x499C-byte WORLD.DAT block identical in both games, and real positions of both
+games render correctly (see file-formats.md, "Drawing the first-person view"). The tile-legend word meanings were corrected
+along the way (word 0 = floor picture, 1 = ceiling picture, 2 = wall picture, 3 = far-wall picture, 4 = frame offset).

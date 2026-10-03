@@ -84,11 +84,14 @@ uint16_t worldMapTileB(const WorldMap *map, unsigned row, unsigned col); /* floo
 /*
  * The tile-type legends (yendor2.asm 0xE551 wall / 0xE175 floor-overlay; Chapter 3 pages them, sub_1BC98/sub_1BCDB:
  * type = page * 100 + index, pages 0-3, DS:0x2 and DS:0xC8E7). Raw entry words, dumped by dump_tile_legends.py:
- *   wall   (6 words) 0 side-feature picture (Chapter 3: also the overlay drawn when the cell's flag 0x2000 is set -- Chapter 2
- *          always draws picture 5), 1 a second feature id, 2 the wall texture picture id (0 = none),
- *          3 its scale class, 4 a frame offset (0/14/28/42), 5 the minimap/local-map picture offset
+ *   wall   (6 words) 0 the floor picture id (category 4; Chapter 3 keeps only the odd/even pair and takes the parity from the
+ *          party's own cell, and also uses it as the overlay drawn when a cell's flag 0x2000 is set -- Chapter 2 draws picture 5),
+ *          1 the ceiling picture id (category 5), 2 the wall picture id (category 1; 0 = no wall, an open cell),
+ *          3 the far-wall picture id (category 6; 0 = none), 4 its frame offset (0/14/28/42: which 14-column strip of the
+ *          56-wide picture), 5 the minimap/local-map picture offset
  *   floor  (5 words) 0-3 the overlay picture for facing north/south/east/west (DrawDungeonCellSideFeature picks by the
  *          party's facing), 4 the minimap/local-map picture offset
+ * (viewrender.h shows how they are drawn.)
  * Chapter 3's page 4 of the wall table (types 400/401) is not tile data (code bytes follow the page-3 entries) and is
  * excluded. False when the type has no entry.
  */

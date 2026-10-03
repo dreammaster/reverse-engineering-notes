@@ -13,3 +13,4 @@ yendor3/game/
 *.ilk
 src23/tests/*.exe
 src1/tests/*.exe
+src23/tools/*.exe

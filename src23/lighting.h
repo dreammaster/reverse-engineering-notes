@@ -10,7 +10,7 @@
  * ComputeAmbientLightingTable (yendor2.asm:41988, yendor3.asm:42334; the two are structurally identical): builds the
  * dungeon view's shading. Called whenever the view is redrawn and every few minutes by AdvanceDayNightPaletteFade.
  * Its output is a 7-entry gradient of shade deltas (zero or negative = darker; the globals word_328E6..328F2,
- * one per distance band, farthest last) which then fills a 63-entry table giving every cell of the 7-row x 9-column
+ * one per distance band, farthest first: entry 0 shades the farthest row of cells, 6 the party's own) which then fills a 63-entry table giving every cell of the 7-row x 9-column
  * viewport its delta (DrawPicture's per-pixel shift).
  *
  * The gradient, in order:

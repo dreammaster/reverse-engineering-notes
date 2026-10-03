@@ -1048,10 +1048,11 @@ flat tables at DS:0xE551 (58 wall entries of 6 words) and DS:0xE175 (68 floor en
 (`sub_1BC98` / `sub_1BCDB`, which earlier notes had called EMS-paged -- they are data-segment tables): a type is
 `page * 100 + index`, with a page table (4 bytes per page: entry pointer, highest valid index) at DS:2 (walls: pages 0-3 with
 10/4/9/43 entries) and DS:0xC8E7 (floors: pages 0-3 with 12/72/55/2). All 800 x 168 cells of Chapter 3's real map resolve
-to a wall and a floor entry (checked in `test_worldmap.c`). Wall words: 0 side-feature picture, 1 second feature id, 2 wall
-texture picture, 3 scale class, 4 frame offset, 5 local-map picture; floor words 0-3: overlay picture per party facing
-(N/S/E/W), 4 local-map picture. Chapter 3 draws the entry's word 0 as the overlay for flag 0x2000 cells where Chapter 2
-always draws picture 5.
+to a wall and a floor entry (checked in `test_worldmap.c`). Wall words (corrected 2026-10-04 once the renderer was
+decoded): 0 floor picture id (PICTURES.VGA category 4), 1 ceiling picture id (category 5), 2 wall picture id (category 1;
+0 = open cell), 3 far-wall picture id (category 6), 4 its frame offset (which 14-column strip), 5 local-map picture; floor
+words 0-3: overlay picture per party facing (N/S/E/W), 4 local-map picture. Chapter 3 additionally draws the entry's word 0
+as the overlay for flag 0x2000 cells where Chapter 2 always draws picture 5.
 
 ### The first-person viewport cells and their occlusion (`BuildDungeonViewportCells`, `ComputeDungeonCellVisibility`; `viewport.c`)
 
@@ -1062,6 +1063,36 @@ cells hides everything beyond it, eight corner rules hide a list when two adjace
 cell from 50 down to 18 hides the cells it shadows. The static tables (identical in both games; the originals store buffer
 addresses, `viewport.c` uses cell indices) sit at DS:0x0E/0xE0 (Chapter 2) and DS:0x30A/0x3DC (Chapter 3). "Solid" is wall type
 2-5 in Chapter 2, 2-99 in Chapter 3.
+
+### Drawing the first-person view (`RedrawDungeonScreen`, `DrawViewportSprite`; `viewrender.c`)
+
+Decoded 2026-10-04 and verified by rendering real positions of both games (`src23/tools/render_view.c` writes a PNG; the
+frames in `test_viewrender.c` were inspected). Nothing is scaled at run time: each of the 51 buffer cells has its own cut of a
+pre-drawn picture, described by one 0x499C-byte block of WORLD.DAT (offset 0x19C7A5 in Chapter 2, 0x40BF71 in Chapter 3;
+**byte-identical in both games**; `ida_scripts/dump_view_tables_offset.py`) that the original loads as "monster stats"
+(`PreloadMonsterStatsTable` is misnamed). The viewport is 224 x 136 at (8, 8) of the 320 x 200 screen.
+
+Order (`RedrawDungeonScreen`): base ceiling (category 5, 224 x 62, at y = 8) and floor (category 4, 224 x 74, at y = 70) pictures
+chosen from the party cell's legend entry (ceiling id 0 becomes 1 unless facing north/south), each re-shaded in seven horizontal
+bands by the lighting gradient (ceiling bands from the top use gradient 6..0 over 10/11/10/10/9/9/3 rows, floor from the top
+0..6 over 4/9/9/10/10/11/21); floor patches then ceiling patches per cell (Chapter 2 skips a cell whose id is the base id or
+its even/odd partner; Chapter 3 always draws, id = legend id with the bit 0 of the party cell's); then the six rows of cells
+far to near: each cell's wall (legend word 2; layer 0), a side wall when its neighbour on the centre side is open (layers 3 left /
+4 right), and its floor-type feature (layer 7 or 8; Chapter 3 draws floor types <= 99 as category 2 object sprites at layer 13);
+within a row the cells run left edge inward, right edge inward, centre last. The last three cells (48-50) draw the far-wall strips
+beside the party (layer 6) and the feature on the party's own cell. Monsters and weapon effects are drawn per cell by
+`DrawMonsterAndUpdateAttackState` (not yet decoded in C).
+
+Tables, 6-byte entries {x, y, ptr} indexed by cell number (x = 0: nothing there): `val11`@0 (front walls, layers 0 and 8),
+`val12`@0x386 (floor patches), `val13`@0xBF2 (ceiling patches), `val14`@0x13B6 (side walls and far strips),
+`ptr1`@0x3B76 (layer 7), `ptr2..7`@0x3CA8/0x3DF2/0x41D2/0x4316/0x4460/0x4858 (layers 9-14, monsters at ranges). Layers 0/7/8/9-14
+point at {group list, run records}: a run record {count, run, skip} copies `run` source pixels then skips `skip`, `count` times,
+per scanline; the group list {repeat, rows, skip} repeats "draw `rows` scanlines, skip `skip` source scanlines" -- so a far
+cell is the near picture with columns and rows dropped (nearest-neighbour decimation, pre-computed). Layers 1/2 are polygons
+{run, shift} cut from the 224-wide floor/ceiling picture; layers 3/4 draw columns downwards with per-column vertical
+decimation patterns, stepping one row after each column set; layer 6 copies 113 rows x 7 pixels at (x, y) from a 14-column
+strip of a 56-wide picture. Colour 0xFF is transparent; shading is `ShiftPaletteShadeClamped` (delta added to the low nibble of
+a colour < 0xD0, clamped inside its 16-colour block). Exact algorithm and layer map: `viewrender.h`.
 
 ### Ambient lighting (`ComputeAmbientLightingTable`, `lighting.c`)
 
