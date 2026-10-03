@@ -11349,6 +11349,20 @@ in `word_3296C/3296E/32972` for the later write-back). Not yet wired into
 `itemRangeAvailable` or the consumers: spending a charge of an item inside a bag also
 needs the bag written back (`SyncAllContainers`), still open. Test in `test_party.c`.
 
+### Session update: ConsumeItemChargeResource's special modes (`partyConsumeItemChargeMode`)
+
+The three "UI-heavy modes" are not UI at all but the repair outcomes: `RepairItemCommand` sets
+`g_uiScratchFlags3` bit 0x4000 on a critical failure and 0x8000 on a success before calling it,
+and it acts on the *damaged item's own equipment slot*. 0x8000 restores the original item
+(its id was parked in the slot's extra word when it broke) and zeroes the slot's wear
+counter; 0x4000 destroys it (clear and deduct weight); 0x2000 (`SwapItemMultiStatEffect`)
+swaps an item for the replacement named by its target entry, moving the stat effects. The
+earlier note that the repair kit's own charge is spent was wrong (`repair.h` corrected).
+A real Chapter 3 fix found on the way: Chapter 2's discard always zeroes the slot's extra
+word, which for the 2-byte equipment slots 0x152-0x15A wipes the next slot's item id, and
+never removes a discarded equipped item's stat bonuses; Chapter 3 does neither bug.
+`party.c`, `test_party.c`.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate

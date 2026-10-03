@@ -1504,7 +1504,75 @@ static void testFindItemDeep(void) {
     check("a container record past the section is empty", partyFindItemDeep(member, &save, &catalog, 3, 3).itemId == 0);
 }
 
+static void testConsumeChargeModes(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 10;
+    catalog.weaponCount = 1;
+    catalog.consumableCount = 1;
+    /* item 5: a weapon (flag 0x8000) of weight 7 whose entry allows a swap (word 1 = 0x200) to item 6; item 6: weight 3.
+     * item 7: a multi-use consumable (word 1 bit 1). */
+    uint8_t *w = catalog.items + 4 * ItemRecordSize;
+    setU16At(w, ItemFieldFlags, ItemFlagEquipCode0A);
+    setU16At(w, ItemFieldWeight, 7);
+    setWord(catalog.weapons, 0, 1, 0x200);
+    setWord(catalog.weapons, 0, 2, 6);
+    setU16At(catalog.items + 5 * ItemRecordSize, ItemFieldWeight, 3);
+    uint8_t *c = catalog.items + 6 * ItemRecordSize;
+    setU16At(c, ItemFieldFlags, ItemFlagConsumable);
+    setU16At(c, ItemFieldWeight, 2);
+    setWord(catalog.consumables, 0, ItemTargetSlotFlags, 1);
+
+    uint8_t record[PartyRecordSize];
+    memset(record, 0, sizeof(record));
+    uint8_t *pack = partyInventoryGroup(record, PartyGroupMain);
+    inventoryGroupSetWeight(pack, 50);
+
+    /* Recharge (a repaired item): extra becomes the id, the wear counter resets, weight untouched. */
+    itemSlotSet(record + 0x142, 6, 5);
+    partySetU16(record, PartyFieldWearSecond, 99);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, 0x142, 5, ItemChargeRecharge);
+    check("recharge restores the parked id", itemSlotId(record + 0x142) == 5 && itemSlotExtra(record + 0x142) == 0);
+    checkU32("...zeroes that slot's wear counter", partyGetU16(record, PartyFieldWearSecond), 0);
+    checkU32("...and changes no weight", inventoryGroupWeight(pack), 50);
+
+    /* Discard (a critical failure). */
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, 0x142, 5, ItemChargeDiscard);
+    check("discard clears the slot", itemSlotId(record + 0x142) == 0 && itemSlotExtra(record + 0x142) == 0);
+    checkU32("...and deducts the item's weight", inventoryGroupWeight(pack), 43);
+
+    /* Chapter 2 clobbers the neighbouring 2-byte slot; Chapter 3 does not. */
+    memset(record + 0x152, 0, 12);
+    partySetU16(record, 0x152, 5);
+    partySetU16(record, 0x154, 5);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, 0x152, 5, ItemChargeDiscard);
+    checkU32("Chapter 2's discard of slot 0x152 wipes slot 0x154's id too", partyGetU16(record, 0x154), 0);
+    partySetU16(record, 0x152, 5);
+    partySetU16(record, 0x154, 5);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor3, 0x152, 5, ItemChargeDiscard);
+    checkU32("Chapter 3's leaves it alone", partyGetU16(record, 0x154), 5);
+
+    /* Swap: the weapon slot becomes the replacement, with the old id parked. */
+    itemSlotSet(record + 0x13A, 5, 0);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, 0x13A, 5, ItemChargeSwap);
+    check("swap installs the replacement and parks the original", itemSlotId(record + 0x13A) == 6 && itemSlotExtra(record + 0x13A) == 5);
+    uint16_t before = inventoryGroupWeight(pack);
+    checkU32("...with no weight change", inventoryGroupWeight(pack), before);
+    itemSlotSet(record + 0x13A, 4, 0);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, 0x13A, 4, ItemChargeSwap);
+    check("an item without a swappable entry is untouched", itemSlotId(record + 0x13A) == 4);
+
+    /* Default: a multi-use item loses a use, then is discarded. */
+    itemSlotSet(inventoryGroupSlot(pack, 1), 7, 2);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, PartyFieldInventory + 2, 7, ItemChargeDefault);
+    check("default spends one use", itemSlotId(inventoryGroupSlot(pack, 1)) == 7 && itemSlotExtra(inventoryGroupSlot(pack, 1)) == 1);
+    partyConsumeItemChargeMode(record, &catalog, GameYendor2, PartyFieldInventory + 2, 7, ItemChargeDefault);
+    check("...and the last use discards it", itemSlotId(inventoryGroupSlot(pack, 1)) == 0);
+}
+
 int main(void) {
+    testConsumeChargeModes();
     testFindItemDeep();
     testLayoutRelations();
     testStats();

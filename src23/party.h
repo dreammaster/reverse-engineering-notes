@@ -926,6 +926,47 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
 void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, uint8_t *slot);
 
 /*
+ * ConsumeItemChargeResource's three special modes (yendor2.asm:41546; the
+ * g_uiScratchFlags3 bits a caller sets before the call, tested 0x8000, 0x4000,
+ * 0x2000 in that order), for an item in a party-record slot (record + slotOffset):
+ *   ItemChargeRecharge 0x8000 -- RepairItemCommand's success: the slot's extra
+ *     word (where a broken item's original id was parked, see
+ *     partyHandleIconBarItemExpiry) becomes its id and extra is zeroed; the wear
+ *     counter of the slot (0x13A -> +0xBE, 0x142 -> +0xC0, 0x146 -> +0xC2) is
+ *     reset to 0; no weight changes.
+ *   ItemChargeDiscard 0x4000 -- RepairItemCommand's critical failure: the slot is
+ *     cleared outright (the multi-use test of the default mode is skipped) and
+ *     the item's weight deducted from the main group, as in the default discard.
+ *     Chapter 3 fixes two Chapter 2 flaws in every discard (this mode and the
+ *     default one): the slot's extra word is zeroed only for offsets up to 0x14E
+ *     (Chapter 2 always writes it, which for the 2-byte slots at 0x152-0x15A
+ *     clobbers the NEXT slot's item id), and an item discarded from an equipment
+ *     slot 0x142-0x15A has its stat effect removed (Chapter 2 leaves the
+ *     bonuses applied).
+ *   ItemChargeSwap 0x2000 -- SwapItemMultiStatEffect (:41770): `currentItemId`'s
+ *     stat effect is removed, it is parked in the slot's extra word and the
+ *     slot's id becomes the replacement named by its target entry (word 2 when
+ *     the item is flagged 0xC000 and the entry's word 1 has 0x200; word 4 when it
+ *     is flagged 0x800 and the entry has 0x80), whose effect is applied; no
+ *     weight change; otherwise nothing happens.
+ *   ItemChargeDefault -- partyConsumeItemCharge, with the same Chapter 3 discard
+ *     rules when the slot is emptied.
+ * The original's tail (sync the three bags to the save, redraw the portrait, and
+ * for these modes ApplyMultiStatEffectForItem(word_31948) + a bonus recompute) is
+ * UI-driven by caller state that is not modeled; the effect removal/application in
+ * the swap mode is.
+ */
+typedef enum {
+    ItemChargeDefault = 0,
+    ItemChargeSwap = 0x2000,
+    ItemChargeDiscard = 0x4000,
+    ItemChargeRecharge = 0x8000
+} ItemChargeMode;
+
+void partyConsumeItemChargeMode(uint8_t *partyRecord, const ItemCatalog *catalog, GameKind game, unsigned slotOffset,
+                                uint16_t currentItemId, ItemChargeMode mode);
+
+/*
  * ConsumeItemChargeResource's own global-table branch (`word_3297A !=
  * 0`, `yendor2.asm:41557`) -- the exact same decrement-or-discard logic
  * as `partyConsumeItemCharge`, for a `slot` taken from

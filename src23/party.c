@@ -1052,6 +1052,88 @@ void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, ui
     inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
 }
 
+static void discardPartySlot(uint8_t *partyRecord, const ItemCatalog *catalog, GameKind game, unsigned slotOffset) {
+    uint8_t *slot = partyRecord + slotOffset;
+    uint16_t id = itemSlotId(slot);
+    partySetU16(slot, 0, 0);
+    if (game != GameYendor3 || slotOffset <= 0x14E) {
+        partySetU16(slot, 2, 0);
+    }
+    const uint8_t *record = itemCatalogRecord(catalog, id);
+    if (game == GameYendor3 && slotOffset >= 0x142 && slotOffset <= 0x15A) {
+        partyRemoveMultiStatEffect(partyRecord, record ? itemEffectEntry(catalog, record) : NULL);
+    }
+    uint8_t *mainGroup = partyInventoryGroup(partyRecord, PartyGroupMain);
+    uint16_t weight = record ? itemGetU16(record, ItemFieldWeight) : 0;
+    inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
+}
+
+void partyConsumeItemChargeMode(uint8_t *partyRecord, const ItemCatalog *catalog, GameKind game, unsigned slotOffset,
+                                uint16_t currentItemId, ItemChargeMode mode) {
+    uint8_t *slot = partyRecord + slotOffset;
+    switch (mode) {
+    case ItemChargeRecharge: {
+        itemSlotSet(slot, itemSlotExtra(slot), 0);
+        if (slotOffset == 0x142) {
+            partySetU16(partyRecord, PartyFieldWearSecond, 0);
+        } else if (slotOffset == 0x13A) {
+            partySetU16(partyRecord, PartyFieldWearMain, 0);
+        } else if (slotOffset == 0x146) {
+            partySetU16(partyRecord, PartyFieldWearThird, 0);
+        }
+        break;
+    }
+    case ItemChargeDiscard:
+        discardPartySlot(partyRecord, catalog, game, slotOffset);
+        break;
+    case ItemChargeSwap: {
+        const uint8_t *current = itemCatalogRecord(catalog, currentItemId);
+        const uint8_t *entry = current ? itemTargetEntry(catalog, current) : NULL;
+        if (!current || !entry) {
+            break;
+        }
+        uint16_t flags = itemGetU16(current, ItemFieldFlags);
+        unsigned replacementWord;
+        if (flags & 0xC000) {
+            if (!(itemTargetWord(entry, 1) & 0x200)) {
+                break;
+            }
+            replacementWord = 2;
+        } else if (flags & 0x800) {
+            if (!(itemTargetWord(entry, 1) & 0x80)) {
+                break;
+            }
+            replacementWord = 4;
+        } else {
+            break;
+        }
+        partyRemoveMultiStatEffect(partyRecord, itemEffectEntry(catalog, current));
+        uint16_t replacementId = itemTargetWord(entry, replacementWord);
+        itemSlotSet(slot, replacementId, currentItemId);
+        const uint8_t *replacement = itemCatalogRecord(catalog, replacementId);
+        partyApplyMultiStatEffect(partyRecord, replacement ? itemEffectEntry(catalog, replacement) : NULL);
+        break;
+    }
+    default: {
+        uint16_t id = itemSlotId(slot);
+        const uint8_t *record = itemCatalogRecord(catalog, id);
+        const uint8_t *entry = record ? itemTargetEntry(catalog, record) : NULL;
+        if (entry && (itemTargetWord(entry, 1) & 1)) {
+            uint16_t extra = itemSlotExtra(slot);
+            if (extra > 0) {
+                extra--;
+            }
+            if (extra > 0) {
+                itemSlotSet(slot, id, extra);
+                break;
+            }
+        }
+        discardPartySlot(partyRecord, catalog, game, slotOffset);
+        break;
+    }
+    }
+}
+
 void itemSlotConsumeGlobalCharge(const ItemCatalog *catalog, uint8_t *slot) {
     itemSlotSpendCharge(catalog, slot);
 }

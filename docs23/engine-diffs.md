@@ -419,6 +419,14 @@ Chapter 2 skips the Mapping-skill gate only when `g_uiScratchFlags1` bit 0x1 is 
 for bit 0x8000. Everything else, including `UpdatePartyAverageStatTiers` and
 `DrawPlayerPositionMarker`, is instruction-identical. See `mapview.h`.
 
+### `ConsumeItemChargeResource` fixes its discard of equipment slots
+
+For an item discarded from a party-record slot (default or critical-failure repair), Chapter 2
+always zeroes the slot's extra word, which for the 2-byte equipment slots at 0x152-0x15A clears
+the NEXT slot's id, and it leaves the discarded item's stat bonuses applied. Chapter 3 zeroes extra only
+for offsets up to 0x14E and calls `RemoveMultiStatEffect` for slots 0x142-0x15A. The recharge
+(0x8000) and swap (0x2000) modes are identical. See `partyConsumeItemChargeMode`.
+
 ### Starting the low-confidence tier: bad matches are now the majority, not the exception
 
 Round 5 checked ~37 of the 77 low-confidence (<0.70) functions. Of a

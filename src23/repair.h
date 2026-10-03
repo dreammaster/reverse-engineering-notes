@@ -26,8 +26,12 @@
  * much harder: row 4 tier 0 is (100, 0), i.e. an unskilled repairer destroys it
  * on any roll below 100; row 0 tier 4 is (0, 100), a guaranteed success.
  *
- * The repair kit's charge is spent on a critical failure and on a success, but
- * not on a soft failure (the original skips ConsumeItemChargeResource there).
+ * The outcome is applied through ConsumeItemChargeResource, which on a critical
+ * failure and on a success acts on the *damaged item's own slot* (not the kit):
+ * a critical failure sets mode bit 0x4000 (partyConsumeItemChargeMode's
+ * ItemChargeDiscard: the item is destroyed), a success sets 0x8000
+ * (ItemChargeRecharge: the original id parked in the slot's extra word when it
+ * broke is restored and its wear counter reset). A soft failure skips the call.
  */
 typedef enum {
     RepairSoftFail,
