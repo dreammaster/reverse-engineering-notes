@@ -6,6 +6,23 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
+## Snapshot, 2026-10-03 (read this first; the dated status below is older)
+
+29 test suites (`src23/tests/`, each file's header comment has its build line). Since the status below
+was written: **`ApplyEncodedItemEffect` is complete** to the data model (`spellSelectBranch` names the whole
+dispatch; LIFE FORCE, projectile hit/splash, screen-wide attack, held item, JUMP spells, light timers,
+bookmark all implemented); combat has the **monster turn**, **player melee** and **Search**; and the
+biggest find of the session: **`UseItem`/`LoadItemData` is the NPC dialogue + service engine** -- `dialog.c`
+(105/140 NPCs, 929/1073 topics, 3218/4090 text lines, the topic-menu mask machinery, verified on real NPCs of
+both games), `dialogservice.c` (healer, trainer, challenges, tomes, ore, riddles, mounts, sell/enhance/
+repair rules), `shop.c`, with the lock catalog's unexplained bytes decoded as chest/shop **contents**.
+Also `lightsource.c`, `spellcast.c` (castability, learning), `repair.c`, `consumable.c` (potions, alchemy).
+What is left is mostly UI/orchestration (shop screen, text entry, animation shells, row-walking), container
+recursion (needs a CURGAME reader), `ConsumeItemChargeResource`'s three UI-heavy modes, `UnlockDoorCommand`'s
+key-tier match, `DispatchItemAbilityCommand`, `ExamineTarget`, `ShowLocalAreaMap`, and the SDL layer. Method
+notes: list the real data that reaches a code path before decoding it; subtract the data-segment base from
+IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell heredocs.
+
 ## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new), the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack), ApplyEncodedItemEffect's full dispatch chain (all 19 branch addresses recorded), and two previously-untraced caller-context questions -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
 
 **Disassembly-level analysis is essentially done.** This is the
