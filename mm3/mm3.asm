@@ -42939,7 +42939,7 @@ ITEM_ATTR_NAMES db  90h                 ; pointer table of attribute-enchantment
                 db  5Fh ; _
                 db  4Ah ; J
                 db  5Bh ; [
-ITEM_WEAPON_NAMES db 0E3h               ; 33 weapons (ids 0-32: long sword ... sling)
+ITEM_WEAPON_NAMES db 0E3h               ; 33 weapons (ids 1-33: long sword ... sling)
                 db  5Fh ; _
                 db 0EFh
                 db  5Fh ; _
@@ -43005,7 +43005,7 @@ ITEM_WEAPON_NAMES db 0E3h               ; 33 weapons (ids 0-32: long sword ... s
                 db  61h ; a
                 db  0Ah
                 db  61h ; a
-ITEM_ARMOR_NAMES db  11h                ; armour ids 33..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring
+ITEM_ARMOR_NAMES db  11h                ; armour ids 34..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring
                 db  61h ; a
                 db  1Fh
                 db  61h ; a

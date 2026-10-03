@@ -439,8 +439,8 @@
 2D26C	Combat_target	byte, index of the monster being attacked
 2D9FA	ITEM_ELEMENT_NAMES	pointer table (40 entries: burning ... ectoplasmic) for the elemental material (char slot +0A3h)
 2DA72	ITEM_ATTR_NAMES	pointer table of attribute-enchantment prefixes 'might ... pirate' (slot +0C9h)
-2DB04	ITEM_WEAPON_NAMES	33 weapons (ids 0-32: long sword ... sling)
-2DB46	ITEM_ARMOR_NAMES	armour ids 33..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring
+2DB04	ITEM_WEAPON_NAMES	33 weapons (ids 1-33: long sword ... sling)
+2DB46	ITEM_ARMOR_NAMES	armour ids 34..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring
 2DB62	ITEM_ACCESSORY_NAMES	boots cloak robes cape belt broach
 2DB6E	ITEM_MISC_NAMES	medal charm cameo scarab pendant necklace amulet rod jewel gem box orb horn coin wand whistle potion scroll Torch 'Rope and Hooks' ...
 2DBA8	QUEST_ITEM_NAMES	'Precious Pearl of Youth and Beauty', 'Black Terror Key', ...

@@ -15356,9 +15356,9 @@ static Bytes_3(void) {
 	set_name	(0X2D9FA,	"ITEM_ELEMENT_NAMES");
 	set_cmt	(0X2DA72,	"pointer table of attribute-enchantment prefixes 'might ... pirate' (slot +0C9h)",	0);
 	set_name	(0X2DA72,	"ITEM_ATTR_NAMES");
-	set_cmt	(0X2DB04,	"33 weapons (ids 0-32: long sword ... sling)",	0);
+	set_cmt	(0X2DB04,	"33 weapons (ids 1-33: long sword ... sling)",	0);
 	set_name	(0X2DB04,	"ITEM_WEAPON_NAMES");
-	set_cmt	(0X2DB46,	"armour ids 33..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring",	0);
+	set_cmt	(0X2DB46,	"armour ids 34..: padded armor ... plate armor, shield (33-41), helm, crown, tiara, gauntlets, ring",	0);
 	set_name	(0X2DB46,	"ITEM_ARMOR_NAMES");
 	set_cmt	(0X2DB62,	"boots cloak robes cape belt broach",	0);
 	set_name	(0X2DB62,	"ITEM_ACCESSORY_NAMES");
