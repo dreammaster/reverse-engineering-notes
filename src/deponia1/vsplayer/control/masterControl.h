@@ -47,6 +47,7 @@
 #include "vscommon/fontManager.h"
 #include "vsplayer/control/cursorControl.h"
 #include "vsplayer/control/loadingControl.h"
+#include "vstables/fieldIds.h"
 
 class TSceneControl;
 class TGameController;
@@ -262,7 +263,7 @@ protected:
 	// element's content.
 	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
 
-	// Set from a TVisObjRef::GetBool(0x33A) field at the top of every
+	// Set from a TVisObjRef::GetBool(kGameSmoothScrolling) field at the top of every
 	// ScrollUpdate() call, then read back inside its easing formula to pick
 	// which of two target speeds to ease toward - real meaning (some kind
 	// of "scrolling direction/mode" flag) not resolved. +0x254 in the

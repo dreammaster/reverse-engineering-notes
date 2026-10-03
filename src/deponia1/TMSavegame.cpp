@@ -18,6 +18,7 @@
 #include "graphicslib/graphics.h"
 #include "vsplayer/control/gameControl.h"
 #include "vstables/visionaireGame.h"
+#include "vstables/fieldIds.h"
 
 // The real code builds each slot-number part with wxString::Format(L"%d", n).
 static wxString slotText(int number) {
@@ -136,7 +137,7 @@ void TMSavegame::SetActive(bool active) {
 	wxFileName saveFile(GetFileName().ToStdWstring());
 	saveFile.NormalizePath();
 	if (TComposedFileManager::SetSavegameFile(saveFile, passwd)) {
-		TVisObjRef font = gameControl()->GetScene()->GetRef().GetLink(0x15C);
+		TVisObjRef font = gameControl()->GetScene()->GetRef().GetLink(kSceneSavegameFont);
 		if (!font.IsEmpty()) {
 			// The real constructor builds a stand-alone TVisionaireGame here
 			// (the same standing "same object as TVisionaire" gap as
@@ -149,9 +150,9 @@ void TMSavegame::SetActive(bool active) {
 			dataFile.NormalizePath();
 			game.LoadSaveGame(dataFile, passwd);
 
-			_displayName = game.GetGame().GetStr(0x219);
-			_composedFile = wxFileName(game.GetGame().GetPath(0x268)).GetFullName();
-			TVisObjRef fontLink = game.GetGame().GetLink(0x1D5);
+			_displayName = game.GetGame().GetStr(kGameSaveGameName);
+			_composedFile = wxFileName(game.GetGame().GetPath(kGameComposedFile)).GetFullName();
+			TVisObjRef fontLink = game.GetGame().GetLink(kGameCurrentScene);
 			_fontId = *reinterpret_cast<const int *>(fontLink.GetId());
 
 			TFontManager *fonts = gameControl()->GetFontManager();
@@ -219,8 +220,8 @@ void TMSavegame::CheckVisPaths() {
 	dataFile.NormalizePath();
 	game.LoadSaveGame(dataFile, passwd);
 
-	_displayName = game.GetGame().GetStr(0x219);
-	_composedFile = wxFileName(game.GetGame().GetPath(0x268)).GetFullName();
+	_displayName = game.GetGame().GetStr(kGameSaveGameName);
+	_composedFile = wxFileName(game.GetGame().GetPath(kGameComposedFile)).GetFullName();
 }
 
 // Confirmed (asm lines 162986-163037): the screenshot goes at the rect's
@@ -237,7 +238,7 @@ void TMSavegame::SetScreenshotRect(const wxRect &rect) {
 // at the position SetScreenshotRect() worked out - nothing if the scene
 // names no font.
 void TMSavegame::DrawText() {
-	TVisObjRef font = gameControl()->GetScene()->GetRef().GetLink(0x15C);
+	TVisObjRef font = gameControl()->GetScene()->GetRef().GetLink(kSceneSavegameFont);
 	if (font.IsEmpty())
 		return;
 

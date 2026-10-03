@@ -3,6 +3,7 @@
 #include "AppGlobals.h"
 #include "TGCharacter.h"
 #include "vsplayer/control/gameControl.h"
+#include "vstables/fieldIds.h"
 
 // TGameControl implements every accessor used below, but g_pGameControl is
 // only declared as TMasterControl* (AppGlobals.h) - same cast already
@@ -52,7 +53,7 @@ void TSceneControl::ShowScene(TVisObjRef &scene, bool immediate, bool flag) {
 	TVisObjRef empty;
 	ToScene(immediate, scene, empty, wxPoint(), -1, flag);
 	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
-	TVisObjRef currentCharacter = game.GetLink(0x263);
+	TVisObjRef currentCharacter = game.GetLink(kGameScrollCharacter);
 	gameControl()->ScrollToCharacterIfNeeded(currentCharacter);
 }
 
@@ -61,17 +62,17 @@ void TSceneControl::ChangeScene(const TVisObjRef &character, const TVisObjRef &t
 	TVisObjRef sceneTarget = target.GetParent();
 	if (sceneTarget.IsEmpty())
 		return;
-	wxPoint pos = *target.GetPoint(0x153);
+	wxPoint pos = *target.GetPoint(kObjectPosition);
 	if (direction == -1)
-		direction = TGCharacter::GetOppositeDirection(target.GetInt(0xDE));
+		direction = TGCharacter::GetOppositeDirection(target.GetInt(kObjectDirection));
 	TVisObjRef characterRef = character;
 	if (characterRef.IsEmpty()) {
 		TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-		characterRef = game.GetLink(0x1D4);
+		characterRef = game.GetLink(kGameCurrentCharacter);
 	}
 	ToScene(immediate, sceneTarget, characterRef, pos, direction, false);
 	TVisObjRef game2 = gameControl()->GetVisionaire()->GetGame();
-	TVisObjRef currentCharacter = game2.GetLink(0x263);
+	TVisObjRef currentCharacter = game2.GetLink(kGameScrollCharacter);
 	gameControl()->ScrollToCharacterIfNeeded(currentCharacter);
 }
 
@@ -82,11 +83,11 @@ void TSceneControl::ChangeScene(const TVisObjRef &character, TVisObjRef &scene, 
 	TVisObjRef characterRef = character;
 	if (characterRef.IsEmpty()) {
 		TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-		characterRef = game.GetLink(0x1D4);
+		characterRef = game.GetLink(kGameCurrentCharacter);
 	}
 	ToScene(immediate, scene, characterRef, pos, direction, false);
 	TVisObjRef game2 = gameControl()->GetVisionaire()->GetGame();
-	TVisObjRef currentCharacter = game2.GetLink(0x263);
+	TVisObjRef currentCharacter = game2.GetLink(kGameScrollCharacter);
 	gameControl()->ScrollToCharacterIfNeeded(currentCharacter);
 }
 

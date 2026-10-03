@@ -9,6 +9,7 @@
 #include "vsplayer/control/cursorControl.h"
 #include "vsplayer/control/gameControl.h"
 #include "vstables/visionaireGame.h"
+#include "vstables/fieldIds.h"
 
 // TGameControl implements every one of these accessors, but g_pGameControl
 // is only declared as TMasterControl* (AppGlobals.h) - same cast already
@@ -19,43 +20,43 @@ static TGameControl *gameControl() {
 
 void TGObjectManager::ResetEventInfo() {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	game.ClearLink(0x2AE, true);
+	game.ClearLink(kGameUsedItem, true);
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(0x2DA, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
 void TGObjectManager::ResetCurrentObject() {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	game.ClearLink(0x2AE, true);
+	game.ClearLink(kGameUsedItem, true);
 }
 
 void TGObjectManager::RemoveItem(const TVisObjRef &item) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	if (!(game.GetLink(0x2AE) == item))
+	if (!(game.GetLink(kGameUsedItem) == item))
 		return;
-	game.ClearLink(0x2AE, true);
-	if (!game.GetBool(0x2DA))
+	game.ClearLink(kGameUsedItem, true);
+	if (!game.GetBool(kGameUsedItemPicked))
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(0x2DA, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
 void TGObjectManager::RemoveItem(bool keepIfNotHeld) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	bool held = game.GetBool(0x2DA);
+	bool held = game.GetBool(kGameUsedItemPicked);
 	if (!held && keepIfNotHeld)
 		return;
-	game.ClearLink(0x2AE, true);
+	game.ClearLink(kGameUsedItem, true);
 	if (!held)
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(0x2DA, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
 void TGObjectManager::SetItem(const TVisObjRef &item, bool held) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	game.SetLink(0x2AE, item, true);
-	game.SetValue(0x2DA, held && !item.IsEmpty(), TSendEventEnum::kSendEvent);
+	game.SetLink(kGameUsedItem, item, true);
+	game.SetValue(kGameUsedItemPicked, held && !item.IsEmpty(), TSendEventEnum::kSendEvent);
 	if (held)
 		g_pGameControl->GetCursorControl()->SetMoveObject(item);
 	else
@@ -66,9 +67,9 @@ void TGObjectManager::HandleEvent(TMouseEventEnum event) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 
 	TGEventInfo info;
-	info.action = game.GetLink(0x2AE);
-	info.command = TTButton(game.GetLink(0x262));
-	info.flag8 = game.GetBool(0x2DA);
+	info.action = game.GetLink(kGameUsedItem);
+	info.command = TTButton(game.GetLink(kGameActiveCommand));
+	info.flag8 = game.GetBool(kGameUsedItemPicked);
 	info.mouseEvent = static_cast<int>(event);
 	info.character = GetEventCharacter();
 
@@ -83,10 +84,10 @@ void TGObjectManager::ObjectReached(TManagedObject *object) {
 	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
 
 	TGEventInfo info;
-	info.flag8 = game.GetBool(0x1E5);
-	info.action = game.GetLink(0x1E4);
-	info.command = TTButton(game.GetLink(0x1E3));
-	info.mouseEvent = game.GetInt(0x267);
+	info.flag8 = game.GetBool(kGameDestinationItemPicked);
+	info.action = game.GetLink(kGameDestinationItem);
+	info.command = TTButton(game.GetLink(kGameDestinationCommand));
+	info.mouseEvent = game.GetInt(kGameDestinationEvent);
 	info.character = GetEventCharacter();
 
 	object->ExecuteEvent(info);
@@ -96,7 +97,7 @@ void TGObjectManager::ObjectReached(TGCharacter &character, TVisObjRef &target) 
 	TGCharacter *currentCharacter = gameControl()->GetCurrentCharacter();
 	if (!currentCharacter)
 		return;
-	if (!(currentCharacter->GetRef().GetLink(0x1F7) == gameControl()->GetScene()->GetRef()))
+	if (!(currentCharacter->GetRef().GetLink(kCharacterScene) == gameControl()->GetScene()->GetRef()))
 		return;
 	if (!(character.GetRef() == currentCharacter->GetRef()))
 		return;
@@ -107,10 +108,10 @@ void TGObjectManager::ObjectReached(TGCharacter &character, TVisObjRef &target) 
 void TGObjectManager::SaveEventInfo(TMouseEventEnum event) {
 	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
 	TVisObjRef gameSystemGame = gameControl()->GetGameSystem()->GetGame();
-	game.SetLink(0x1E3, gameSystemGame.GetLink(0x262), true);
-	game.SetLink(0x1E4, game.GetLink(0x2AE), true);
-	game.SetValue(0x1E5, game.GetBool(0x2DA), TSendEventEnum::kSendEvent);
-	game.SetValue(0x267, static_cast<int>(event), TSendEventEnum::kSendEvent);
+	game.SetLink(kGameDestinationCommand, gameSystemGame.GetLink(kGameActiveCommand), true);
+	game.SetLink(kGameDestinationItem, game.GetLink(kGameUsedItem), true);
+	game.SetValue(kGameDestinationItemPicked, game.GetBool(kGameUsedItemPicked), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameDestinationEvent, static_cast<int>(event), TSendEventEnum::kSendEvent);
 }
 
 void TGObjectManager::MouseMove(TManagedObject *object) {
@@ -139,21 +140,21 @@ void TGObjectManager::MouseMove(TManagedObject *object) {
 
 		_currentObject = object;
 		if (!object->GetRef().IsEmpty())
-			gameControl()->GetGameSystem()->GetGame().SetLink(0x2AF, object->GetRef(), true);
+			gameControl()->GetGameSystem()->GetGame().SetLink(kGameCurrentObject, object->GetRef(), true);
 	} else {
 		_currentObject = nullptr;
-		gameControl()->GetGameSystem()->GetGame().ClearLink(0x2AF, true);
+		gameControl()->GetGameSystem()->GetGame().ClearLink(kGameCurrentObject, true);
 	}
 }
 
 void TGObjectManager::NotifyObjectRemoved(const TVisObjRef &item) {
 	if (_savedObject && item == _savedObject->GetRef()) {
 		_savedObject = nullptr;
-		gameControl()->GetGameSystem()->GetGame().ClearLink(0x1E6, true);
+		gameControl()->GetGameSystem()->GetGame().ClearLink(kGameSavedObject, true);
 	}
 	if (_currentObject && item == _currentObject->GetRef()) {
 		_currentObject = nullptr;
-		gameControl()->GetGameSystem()->GetGame().ClearLink(0x2AF, true);
+		gameControl()->GetGameSystem()->GetGame().ClearLink(kGameCurrentObject, true);
 	}
 }
 
@@ -161,9 +162,9 @@ void TGObjectManager::SaveCurrentObject() {
 	_savedObject = _currentObject;
 	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
 	if (_savedObject)
-		game.SetLink(0x1E6, _savedObject->GetRef(), false);
+		game.SetLink(kGameSavedObject, _savedObject->GetRef(), false);
 	else
-		game.ClearLink(0x1E6, false);
+		game.ClearLink(kGameSavedObject, false);
 }
 
 void TGObjectManager::ExecuteSavedObject() {
@@ -178,15 +179,15 @@ void TGObjectManager::ExecuteSavedObject() {
 	_currentObject = _savedObject;
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	if (!_savedObject || _savedObject->GetRef().IsEmpty())
-		game.ClearLink(0x2AF, true);
+		game.ClearLink(kGameCurrentObject, true);
 	else
-		game.SetLink(0x2AF, _savedObject->GetRef(), true);
+		game.SetLink(kGameCurrentObject, _savedObject->GetRef(), true);
 	HandleEvent(TMouseEventEnum::kValue1);
 }
 
 void TGObjectManager::SavedObjectChanged() {
 	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
-	TVisObjRef link = game.GetLink(0x1E6);
+	TVisObjRef link = game.GetLink(kGameSavedObject);
 	if (link.IsEmpty())
 		_savedObject = nullptr;
 	else
@@ -202,19 +203,19 @@ bool TGObjectManager::IsCurrentObjectDetectable() const {
 		return false;
 	if (_currentObject->GetRef().GetId()[3] != 2)
 		return false;
-	return _currentObject->GetRef().GetInt(0x129) != 0;
+	return _currentObject->GetRef().GetInt(kButtonType) != 0;
 }
 
 bool TGObjectManager::IsCurrentObjectWalkable() const {
 	if (!_currentObject)
 		return false;
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	TTButton button(game.GetLink(0x262));
+	TTButton button(game.GetLink(kGameActiveCommand));
 	if (!_currentObject->IsWalkable())
 		return false;
 	if (!button.IsStandardCommand())
 		return false;
-	return !game.GetBool(0x2DA);
+	return !game.GetBool(kGameUsedItemPicked);
 }
 
 TVisObjRef TGObjectManager::GetCurrentObject() const {
@@ -225,12 +226,12 @@ TVisObjRef TGObjectManager::GetCurrentObject() const {
 
 void TGObjectManager::GetDetectInfo(TGDetectInfo &info) const {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	if (game.GetLink(0x262).IsEmpty()) {
+	if (game.GetLink(kGameActiveCommand).IsEmpty()) {
 		info.flagA = true;
 		info.flagB = false;
 		return;
 	}
-	int type = game.GetInt(0x150);
+	int type = game.GetInt(kButtonUse);
 	if (type == 2) {
 		info.flagA = true;
 		info.flagB = false;
@@ -240,7 +241,7 @@ void TGObjectManager::GetDetectInfo(TGDetectInfo &info) const {
 		return;
 	info.flagA = (type == 0);
 	info.flagB = true;
-	if (!game.GetBool(0x265))
+	if (!game.GetBool(kButtonUseOnCurrentCharacter))
 		info.character = gameControl()->GetCurrentCharacter()->GetRef();
 }
 
@@ -248,13 +249,13 @@ TGCharacter *TGObjectManager::GetEventCharacter() const {
 	TGCharacter *character = gameControl()->GetCurrentCharacter();
 	if (!character)
 		return nullptr;
-	if (character->GetRef().GetLink(0x1F7) == gameControl()->GetScene()->GetRef())
+	if (character->GetRef().GetLink(kCharacterScene) == gameControl()->GetScene()->GetRef())
 		return character;
 	return nullptr;
 }
 
 TVisObjRef TGObjectManager::GetEventCommand() const {
-	return gameControl()->GetGameSystem()->GetGame().GetLink(0x262);
+	return gameControl()->GetGameSystem()->GetGame().GetLink(kGameActiveCommand);
 }
 
 wxString TGObjectManager::GetActionText() const {

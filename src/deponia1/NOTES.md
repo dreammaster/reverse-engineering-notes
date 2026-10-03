@@ -2664,6 +2664,42 @@ screenshot still depends on the unmodeled GL backend.
 
 `TComposedFile`, `TTempFile` and `BuildProgressEvent` are `done`.
 
+## The game-data schema, recovered mechanically (field ids, names, record types)
+
+Every property of a game-data record is addressed by a numeric *field id*
+(`GetInt(0x124)`, `SetLink(0x1F7, ...)`). The binary names all 840 of them, and
+describes every record type's fields, in code that is regular enough to read off
+with scripts (all in `tools/`, outputs in `manifest/`):
+
+- `tools/asmdata.py` - reads the .asm's data sections into an addressable byte
+  image (IDA only prints addresses inside auto-generated label names; named
+  string labels like `aT_263` carry none, so it re-synchronises on hex-suffixed
+  labels and tracks `align` padding exactly). Decodes narrow/wide strings by label.
+- `tools/extract_xml_names.py` -> `manifest/xml_names.tsv`: the id -> XML-name
+  table, read from `TVisionaireGame::InitXMLNames()` (800 `AddXMLName` calls,
+  ids 1-840; ids 1-58 are structural XML names such as `x`, `left`, `path`,
+  `Link`; 100+ are the data fields: `SceneIsMenu` = 0x124, `CharacterScene` =
+  0x1F7, `SceneSavegameAreas` = 0x142, ...). Every guess the earlier passes made
+  about a hex id (e.g. 0x124 "is menu", 0x143 "page step", 0x15C "savegame
+  font") is confirmed by this table.
+- `tools/gen_field_ids.py` -> `src/deponia1/vstables/fieldIds.h`: an `eFieldId`
+  enum of `kCamelCase` constants named verbatim after those XML names (a
+  duplicated name gets a `_0x<id>` suffix).
+- `tools/apply_field_ids.py`: rewrote the 306 accessor call sites in the sources
+  (`GetBool(0x124)` -> `GetBool(kSceneIsMenu)`); idempotent, so re-run it after
+  adding code.
+- `tools/extract_schema.py` -> `manifest/schema_fields.tsv` (583 fields: class,
+  field id, name, value kind, link table, file-version range, savegame range) and
+  `manifest/schema_groups.tsv` (41 record-type classes with their TTypeGroup
+  constructor arguments and callbacks), from each `TT*::InitType()`/static
+  initializer - they are straight-line `mov`/`xor` + `TTypeData` ctor + `AddType`.
+
+Value-kind numbers (`eTypeData`) inferred from field names across all classes:
+0 bool, 1 int, 2 string, 3 file path, 4 float, 6 rect list, 7 sprite list, 8
+point list, 9 string list, 10/12 numeric lists (particle control points/curves),
+11 string/path list (model textures), 13 point, 14 rect, 15 sprite, 16 link, 17
+link list, 18 text-language list.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

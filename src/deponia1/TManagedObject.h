@@ -61,6 +61,7 @@
 #include "WxStub.h"
 #include "datastruct/visionaireobject.h"
 #include "datastruct/visobjref.h"
+#include "vstables/fieldIds.h"
 #include "vscommon/scripting/id.h"
 
 class TGCharacter;
@@ -228,7 +229,7 @@ public:
 	// Confirmed (asm lines 190861-190890): the given target's own stored
 	// screen position matches this object's GetScreenPosition().
 	bool IsReached(const TVisObjRef &target) const {
-		const wxPoint *pt = target.GetPoint(0x200);
+		const wxPoint *pt = target.GetPoint(kCharacterPosition);
 		return pt && *pt == GetScreenPosition();
 	}
 
@@ -389,7 +390,7 @@ public:
 	void SetAnimation(TGAnimation *animation) {
 		if (!animation)
 			return;
-		if (_objRef.GetLink(0xAB) == animation->GetDataObject()) {
+		if (_objRef.GetLink(kObjectAnimation) == animation->GetDataObject()) {
 			if (_currentAnimation && _currentAnimation != animation)
 				TGAnimation::HideAnimation(_currentAnimation, this);
 			_currentAnimation = animation;

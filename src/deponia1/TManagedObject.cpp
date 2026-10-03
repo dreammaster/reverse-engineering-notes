@@ -13,6 +13,7 @@
 #include "datastruct/vlist.h"
 #include "graphicslib/picture.h"
 #include "vsplayer/control/gameControl.h"
+#include "vstables/fieldIds.h"
 
 int GetAngle(float /*dx*/, float /*dy*/) {
 	return 0;
@@ -61,7 +62,7 @@ bool IsPointInsidePolygon(const wxPoint &pt, const TPolygonList &polygon) {
 }
 
 void TManagedObject::ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event) {
-	_objRef.SetLink(0x203, character->GetRef(), true);
+	_objRef.SetLink(kCharacterDestinationObject, character->GetRef(), true);
 	static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->SaveEventInfo(event);
 }
 
@@ -119,7 +120,7 @@ void TManagedObject::Draw() {
 void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &actionInfo) {
 	if (!actionInfo.flag4) {
 		if (actionInfo.flag7) {
-			int field264 = info.command.GetInt(0x264);
+			int field264 = info.command.GetInt(kButtonCommandType);
 			if ((field264 == 2 || actionInfo.flag8) && !info.action.IsEmpty() && ReceiveItem(info))
 				return;
 			if (info.character)
@@ -131,7 +132,7 @@ void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &
 	}
 
 	TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-	int field0xF4 = game.GetInt(0xF4);
+	int field0xF4 = game.GetInt(kGameCommandBehaviour);
 	if (actionInfo.flag9)
 		return;
 
@@ -144,7 +145,7 @@ void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &
 	}
 
 	if (!info.flag8 && !info.action.IsEmpty())
-		game.ClearLink(0x2AE, true);
+		game.ClearLink(kGameUsedItem, true);
 
 	if (actionInfo.flag4) {
 		if ((field0xF4 & ~2) != 0)
@@ -157,7 +158,7 @@ void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &
 	}
 
 	TVisObjRef parent = info.command.GetParent();
-	parent.SetLink(0x25F, parent.GetLink(0x12A), true);
+	parent.SetLink(kInterfaceActiveCommand, parent.GetLink(kInterfaceStandardCommand), true);
 	if (info.flag8)
 		static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->RemoveItem(true);
 }
@@ -170,19 +171,19 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 	bool matched = false;
 	for (TVisionaireObject *candidateObj : candidates.items) {
 		TVisObjRef actionRef(candidateObj);
-		TVisObjRef commandLink = actionRef.GetLink(0xA0);
-		int actionType = actionRef.GetInt(0x9F);
+		TVisObjRef commandLink = actionRef.GetLink(kActionFixture);
+		int actionType = actionRef.GetInt(kActionExecutionType);
 		bool isAnyObjectCmd = commandLink.IsAnyObject();
 		bool cmdEmpty = commandLink.IsEmpty();
 		bool notAnyObjectIfEmpty = cmdEmpty ? !isAnyObjectCmd : false;
-		TTButton button(commandLink.GetLink(0xA1));
+		TTButton button(commandLink.GetLink(kActionCommand));
 
 		bool linkedMatch;
 		if (button.IsCommand() && (button == info.command)) {
 			linkedMatch = true;
 		} else {
 			TVList linkedItems;
-			commandLink.GetList(0x248, linkedItems);
+			commandLink.GetList(kButtonGroup, linkedItems);
 			linkedMatch = false;
 			for (TVisionaireObject *item : linkedItems.items) {
 				if (info.command == *item) {
@@ -262,7 +263,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 
 				if (info.character && !_bypassReachCheck) {
 					TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-					bool shouldSetAngle = game.GetBool(0x246) &&
+					bool shouldSetAngle = game.GetBool(kGameAlignCharacterOnImExecution) &&
 					                      (tv == 0xD || tv == 0xF || tv == 0x10 || tv == 0x12 ||
 					                       tv == 0x13 || tv == 0x14 || tv == 0x22);
 					if (shouldSetAngle) {
@@ -271,7 +272,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 						wxPoint charPos = info.character->GetPosition();
 						int angle = GetAngle(static_cast<float>(objPos.x - charPos.x),
 						                     static_cast<float>(objPos.y - charPos.y));
-						info.character->GetRef().SetValue(0x257, angle, TSendEventEnum::kSendEvent);
+						info.character->GetRef().SetValue(kCharacterDirection, angle, TSendEventEnum::kSendEvent);
 					}
 				}
 
@@ -289,7 +290,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 
 void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionExecution> &outTypes,
                                       TGActionInfo &outAction) {
-	bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(0x124);
+	bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(kSceneIsMenu);
 	outAction.flag7 = false;
 	outAction.flag8 = false;
 	outAction.flagB = false;
@@ -313,7 +314,7 @@ void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionE
 			} else {
 				outTypes.push_back(TypeActionExecution::kValue0);
 				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-				if (game.GetInt(0x30E))
+				if (game.GetInt(kGameRightClickBehaviour))
 					outAction.flagB = true;
 				outTypes.push_back(TypeActionExecution::kValue16);
 			}
@@ -353,7 +354,7 @@ void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionE
 			} else {
 				outTypes.push_back(TypeActionExecution::kValue0);
 				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-				if (game.GetInt(0x30E))
+				if (game.GetInt(kGameRightClickBehaviour))
 					outAction.flagB = true;
 				outTypes.push_back(TypeActionExecution::kValue16);
 			}
@@ -370,7 +371,7 @@ void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionE
 			} else {
 				outTypes.push_back(TypeActionExecution::kValue33);
 				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-				if (game.GetInt(0x30D))
+				if (game.GetInt(kGameMiddleClickBehaviour))
 					outAction.flagB = true;
 				outTypes.push_back(TypeActionExecution::kValue34);
 			}
@@ -442,13 +443,13 @@ void TManagedObject::ExecuteEvent(TGEventInfo &info) {
 		}
 		if (!newTypes.empty()) {
 			TVList altActionList;
-			info.action.GetList(0xAC, altActionList);
+			info.action.GetList(kObjectActions, altActionList);
 			ExecuteMatchingAction(altActionList, newTypes, info, outAction);
 		}
 	}
 
 	if (!_skipFinalPostExecution) {
-		bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(0x124);
+		bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(kSceneIsMenu);
 		if (!sceneFlag124)
 			HandlePostExecution(info, outAction);
 	}

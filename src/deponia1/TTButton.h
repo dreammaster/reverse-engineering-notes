@@ -13,6 +13,7 @@
 #pragma once
 
 #include "datastruct/visobjref.h"
+#include "vstables/fieldIds.h"
 
 class TTButton : public TVisObjRef {
 public:
@@ -24,13 +25,13 @@ public:
 	// button's parent object's own "standard command" link (field 0x12A)
 	// points back at this button itself.
 	bool IsStandardCommand() const {
-		return GetParent().GetLink(0x12A) == *this;
+		return GetParent().GetLink(kInterfaceStandardCommand) == *this;
 	}
 	// Confirmed in full (Deponia_Linux.asm lines 1525911-1525926): its own
 	// "type" field (0x129) is one of two specific values - real meaning of
 	// 3/6 not resolved.
 	bool IsCommand() const {
-		int type = GetInt(0x129);
+		int type = GetInt(kButtonType);
 		return type == 6 || type == 3;
 	}
 };

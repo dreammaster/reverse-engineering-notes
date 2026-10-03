@@ -11,6 +11,7 @@
 #include "TSceneActionArea.h"
 #include "graphicslib/graphics.h"
 #include "vsplayer/control/gameControl.h"
+#include "vstables/fieldIds.h"
 
 // TGameControl implements every accessor used below, but g_pGameControl is
 // only declared as TMasterControl* (AppGlobals.h) - same cast already
@@ -86,7 +87,7 @@ void TGScene::Draw() {
 
 	// The original's `defaultShader` substitution only takes effect when
 	// the global is nonzero (a `test eax, eax / cmovnz` after the -1 check).
-	int shader = _ref.GetInt(0x31A);
+	int shader = _ref.GetInt(kSceneShaderSet);
 	if (shader == -1 && defaultShader != 0)
 		shader = defaultShader;
 	ShaderCallback(shader, &_ref);
@@ -161,10 +162,10 @@ void TGScene::EndScene() {
 
 	TVList links;
 	if (!_ref.IsEmpty())
-		_ref.GetLinks(0x14F, TypeOrder::kValue1, links);
+		_ref.GetLinks(kSceneActions, TypeOrder::kValue1, links);
 
 	for (TVisionaireObject *link : links.items) {
-		if (link->GetInt(0x9F) != 0x20)
+		if (link->GetInt(kActionExecutionType) != 0x20)
 			continue;
 		TGAction *action = TGAction::AddRunningAction(TVisObjRef(*link));
 		if (action)
@@ -221,9 +222,9 @@ void TGScene::InitialiseCharacter(const TVisObjRef &character, const wxPoint &po
 
 	if (pos == wxPoint{-1, -1} || pos == wxPoint{0, 0}) {
 		TVList links;
-		_ref.GetList(0x88, links);
+		_ref.GetList(kSceneObjects, links);
 		if (links.size() != 0 && !links.front()->IsEmpty()) {
-			wxPoint start = *links.front()->GetPoint(0x153);
+			wxPoint start = *links.front()->GetPoint(kObjectPosition);
 			if (start.x > 0 && start.y > 0) {
 				gameCharacter->AssignToScene(scene, start, direction);
 				return;
@@ -235,7 +236,7 @@ void TGScene::InitialiseCharacter(const TVisObjRef &character, const wxPoint &po
 }
 
 // Confirmed (asm lines 167607-167649): the real call is the vtable's own
-// slot 0 (Prepare()); the GetInt(0x223) read of the game data's own fade
+// slot 0 (Prepare()); the GetInt(kGameFadeEffect) read of the game data's own fade
 // field just before it has its result discarded.
 void TGScene::BeforeFade() {
 	Prepare();
@@ -243,7 +244,7 @@ void TGScene::BeforeFade() {
 
 // Confirmed (asm lines 167649-167666).
 bool TGScene::IsMenu() const {
-	return _ref.GetBool(0x124);
+	return _ref.GetBool(kSceneIsMenu);
 }
 
 std::uint32_t TGScene::objectKey(const TVisObjRef &ref) {
@@ -384,7 +385,7 @@ TMSavegame *TGScene::GetSavegameAt(const wxPoint &pos) const {
 // savegame's own active state accordingly.
 void TGScene::ScrollSavegames(bool backwards) {
 	int oldFirst = _firstVisibleSavegame;
-	int step = _ref.GetInt(0x143);
+	int step = _ref.GetInt(kSceneSavegameScrollStep);
 
 	if (backwards)
 		_firstVisibleSavegame -= step;
@@ -431,7 +432,7 @@ void TGScene::SetSelectedSavegame(int index) {
 void TGScene::SetCurrentLightmap() {
 	_lightmap.Clear();
 
-	wxFileName path(_ref.GetPath(0x226));
+	wxFileName path(_ref.GetPath(kSceneLightMap));
 	if (!path.IsOk()) {
 		_lightmap.Clear();
 		return;
@@ -464,20 +465,20 @@ void TGScene::InitialiseBackground() {
 	if (!sceneControl->OldSceneIsMenu())
 		sceneControl->SetLastPlayableScrollPos(sceneControl->GetOldScene()->GetScrollPos());
 
-	_background.Set(_ref.GetSprite(0xEC));
+	_background.Set(_ref.GetSprite(kSceneSprite));
 	_background.RefreshSprite(false);
 	SetCurrentLightmap();
-	_brightness = static_cast<float>(_ref.GetInt(0x252)) / 100.0f;
+	_brightness = static_cast<float>(_ref.GetInt(kSceneBrightness)) / 100.0f;
 
 	int windowWidth, windowHeight;
 	gameControl()->GetWindowSize(&windowWidth, &windowHeight);
 	SetVisibleSize(windowWidth, windowHeight);
 
-	wxRect worktop = *_ref.GetRect(0x238);
+	wxRect worktop = *_ref.GetRect(kSceneScrollableArea);
 	SetWorktopArea(worktop, _background.GetWidth(), _background.GetHeight());
-	SetIsScrollable(_ref.GetBool(0xE8));
+	SetIsScrollable(_ref.GetBool(kSceneScrollOnEdges));
 
-	bool isMenu = _ref.GetBool(0x124);
+	bool isMenu = _ref.GetBool(kSceneIsMenu);
 	if (isMenu) {
 		if (!sceneControl->OldSceneIsMenu()) {
 			// Entering a menu from the game: freeze the game, remember (and
@@ -491,12 +492,12 @@ void TGScene::InitialiseBackground() {
 
 			TVisObjRef dialog = gameControl()->GetDialog()->GetTarget();
 			TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-			game.SetLink(0x243, dialog, true);
+			game.SetLink(kGameHiddenDialog, dialog, true);
 			if (!dialog.IsEmpty())
 				gameControl()->EndDialog();
 
 			TVisObjRef game2 = gameControl()->GetGameSystem()->GetGame();
-			if (game2.GetBool(0x282)) {
+			if (game2.GetBool(kGameKeepCharacterSpritesDuringMenus)) {
 				for (TGCharacter *character : _characters) {
 					if (character->GetLifetime() <= 0)
 						character->SetLifetime(3);
@@ -516,11 +517,11 @@ void TGScene::InitialiseBackground() {
 				character->AdjustTimers();
 
 			TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-			TVisObjRef dialog = game.GetLink(0x243);
+			TVisObjRef dialog = game.GetLink(kGameHiddenDialog);
 			if (!dialog.IsEmpty()) {
 				gameControl()->StartDialog(dialog);
 				TVisObjRef game2 = gameControl()->GetGameSystem()->GetGame();
-				game2.ClearLink(0x243, true);
+				game2.ClearLink(kGameHiddenDialog, true);
 			}
 		}
 		sceneControl->SetCurrentSceneRef(_ref);
@@ -538,11 +539,11 @@ void TGScene::InitialiseBackground() {
 	gameControl()->AdjustInterfacesOnScreen(false, nullptr);
 
 	if (isMenu) {
-		TVisObjRef cursor = _ref.GetLink(0x125);
+		TVisObjRef cursor = _ref.GetLink(kSceneCursor);
 		gameControl()->GetCursorControl()->SetCursor(false, PackVisId(cursor.GetId()), true);
 	} else {
 		TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
-		TVisObjRef cursor = game.GetLink(0x262);
+		TVisObjRef cursor = game.GetLink(kGameActiveCommand);
 		if (!cursor.IsEmpty())
 			gameControl()->GetCursorControl()->SetCursor(false, PackVisId(cursor.GetId()), false);
 	}
@@ -560,7 +561,7 @@ void TGScene::InitActionAreas() {
 		TVisObjRef scene(*sceneObject);
 
 		TVList links;
-		scene.GetLinks(0x2A9, TypeOrder::kValue0, links);
+		scene.GetLinks(kSceneActionAreas, TypeOrder::kValue0, links);
 
 		int key = PackVisId(scene.GetId());
 		for (TVisionaireObject *link : links.items) {
@@ -606,11 +607,11 @@ std::list<TSceneActionArea *> *TGScene::GetActionAreas(const TVisObjRef &scene) 
 // that's in the scene starts its standing animation.
 void TGScene::SetCharacters() {
 	std::vector<TGCharacter *> oldCharacters = _characters;
-	bool isMenu = _ref.GetBool(0x124);
+	bool isMenu = _ref.GetBool(kSceneIsMenu);
 	_characters.clear();
 
 	for (TGCharacter *character : gameControl()->GetAllCharacters()) {
-		if (character->GetRef().GetLink(0x1F7) == _ref) {
+		if (character->GetRef().GetLink(kCharacterScene) == _ref) {
 			character->CheckWalkingSound();
 			character->SetRandomTime();
 			character->InitWaySystem(_background.GetHeight());
@@ -637,7 +638,7 @@ void TGScene::SetCharacters() {
 					unload = true;
 				} else if (!isMenu) {
 					TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-					unload = game.GetBool(0x282);
+					unload = game.GetBool(kGameKeepCharacterSpritesDuringMenus);
 				} else {
 					continue;
 				}
@@ -662,10 +663,10 @@ void TGScene::SetCharacters() {
 // state is reset.
 void TGScene::SetCharacter(const TVisObjRef &character, const TVisObjRef &scene, const wxPoint &pos,
                            int /*direction*/) {
-	TVisObjRef characterScene = character.GetLink(0x1F7);
+	TVisObjRef characterScene = character.GetLink(kCharacterScene);
 
 	if (scene.IsEmpty() || scene == characterScene) {
-		gameControl()->GetCharacter(character)->GetRef().SetValue(0x200, pos, TSendEventEnum::kSendEvent);
+		gameControl()->GetCharacter(character)->GetRef().SetValue(kCharacterPosition, pos, TSendEventEnum::kSendEvent);
 		return;
 	}
 
@@ -686,19 +687,19 @@ void TGScene::SetCharacter(const TVisObjRef &character, const TVisObjRef &scene,
 		return;
 
 	TVisObjRef sceneParent = scene.GetParent();
-	TVisObjRef characterScene = character.GetLink(0x1F7);
+	TVisObjRef characterScene = character.GetLink(kCharacterScene);
 
 	if (sceneParent == characterScene) {
-		wxPoint pos = *scene.GetPoint(0x153);
+		wxPoint pos = *scene.GetPoint(kObjectPosition);
 		TVisObjRef &characterRef = gameControl()->GetCharacter(character)->GetRef();
-		characterRef.SetValue(0x200, pos, TSendEventEnum::kSendEvent);
+		characterRef.SetValue(kCharacterPosition, pos, TSendEventEnum::kSendEvent);
 		if (direction != -1)
-			characterRef.SetValue(0x257, direction, TSendEventEnum::kSendEvent);
+			characterRef.SetValue(kCharacterDirection, direction, TSendEventEnum::kSendEvent);
 		return;
 	}
 
 	bool isThisScene = sceneParent == _ref || characterScene == _ref;
-	wxPoint pos = *scene.GetPoint(0x153) + *scene.GetPoint(0x30B);
+	wxPoint pos = *scene.GetPoint(kObjectPosition) + *scene.GetPoint(kObjectOffset);
 	InitialiseCharacter(character, pos, direction, sceneParent);
 	if (isThisScene)
 		SetCharacters();
@@ -732,7 +733,7 @@ void TGScene::SetSavegames() {
 		return;
 
 	_firstVisibleSavegame = 0;
-	int step = std::abs(_ref.GetInt(0x143));
+	int step = std::abs(_ref.GetInt(kSceneSavegameScrollStep));
 	int slotCount = static_cast<int>(slots.size());
 	int areaCount = static_cast<int>(_savegameAreas.size());
 	if (step != 0 && slotCount > areaCount) {
@@ -825,7 +826,7 @@ void TGScene::SortAllObjects() {
 // characters and draw order are set up and the game's own state reset.
 void TGScene::SetScene() {
 	TVList links;
-	_ref.GetLinks(0x88, TypeOrder::kValue1, links);
+	_ref.GetLinks(kSceneObjects, TypeOrder::kValue1, links);
 
 	Clear();
 
@@ -838,9 +839,9 @@ void TGScene::SetScene() {
 	_selectedSavegame = -1;
 	_firstVisibleSavegame = 0;
 
-	if (_ref.GetBool(0x124)) {
+	if (_ref.GetBool(kSceneIsMenu)) {
 		std::vector<wxRect> rects;
-		_ref.GetRects(0x142, rects);
+		_ref.GetRects(kSceneSavegameAreas, rects);
 
 		if (!rects.empty()) {
 			for (const wxRect &rect : rects)
@@ -873,9 +874,9 @@ void TGScene::BeginScene() {
 	SetScene();
 	gameControl()->ReattachSceneObjectTexts();
 
-	TVisObjRef particleLink = _ref.GetLink(0x1B9);
+	TVisObjRef particleLink = _ref.GetLink(kSceneParticleSystem);
 	_hasParticles = !particleLink.IsEmpty();
-	if (_hasParticles && _ref.GetStrHolder(0x326).size() == 0) {
+	if (_hasParticles && _ref.GetStrHolder(kParticleContainerSettings).size() == 0) {
 		_particleSystem.Init(particleLink, wxString());
 		int windowWidth, windowHeight;
 		gameControl()->GetWindowSize(&windowWidth, &windowHeight);
@@ -887,9 +888,9 @@ void TGScene::BeginScene() {
 	TGAnimation::ContinueAnimations();
 
 	TVList links;
-	_ref.GetLinks(0x14F, TypeOrder::kValue1, links);
+	_ref.GetLinks(kSceneActions, TypeOrder::kValue1, links);
 	for (TVisionaireObject *link : links.items) {
-		if (link->GetInt(0x9F) != 0x1F)
+		if (link->GetInt(kActionExecutionType) != 0x1F)
 			continue;
 		TGAction *action = TGAction::AddRunningAction(TVisObjRef(*link));
 		if (action)

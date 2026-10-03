@@ -9,6 +9,7 @@
 #include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
 #include "vsplayer/control/gameController.h"
+#include "vstables/fieldIds.h"
 
 // Draw-hook script lists: plain globals in the original (cs:luaDrawBeforeScene
 // etc.), populated by a registration mechanism separate from the generic
@@ -126,8 +127,8 @@ void TMasterControl::DrawInterfaces() {
 	// (see datastruct/visobjref.h) - reproduced structurally: only draw the
 	// registered interfaces when the game data says to.
 	TVisObjRef game = _visionaire->GetGame();
-	TVisObjRef link = game.GetLink(0x1D5);
-	bool shouldDraw = link.IsEmpty() ? link.GetBool(0x124) : !link.GetBool(0x274);
+	TVisObjRef link = game.GetLink(kGameCurrentScene);
+	bool shouldDraw = link.IsEmpty() ? link.GetBool(kSceneIsMenu) : !link.GetBool(kGameAutoHideInterfacesInMenu);
 	if (!shouldDraw)
 		return;
 
@@ -167,7 +168,7 @@ bool TMasterControl::Draw(bool showActionText) {
 		// with action text). The original tracks this in a local it also
 		// reuses for the action-text positioning mode further down (its
 		// `r13d`) - split into two clearly-named locals here instead.
-		int drawMode = game.GetInt(0x313);
+		int drawMode = game.GetInt(kGameShaderExclude);
 
 		if (drawMode == 1) {
 			graphics->SetMatrixMode(false, true);
@@ -192,7 +193,7 @@ bool TMasterControl::Draw(bool showActionText) {
 				// reconstruction doesn't determine) - not reproduced here.
 				// Field id 0x24D recovered from the disassembly; its real
 				// meaning needs the data-schema system to name properly.
-				TVisObjRef link = game.GetLink(0x24D);
+				TVisObjRef link = game.GetLink(kGameActionTextFont);
 				_fontManager->SetCurrentFont(link);
 				wxString text = _objectManager.GetActionText();
 				wxPoint textSize;
@@ -234,7 +235,7 @@ void TMasterControl::ScrollUpdate() {
 		return;
 
 	TVisObjRef game = _visionaire->GetGame();
-	_easeDirectionFlag = game.GetBool(0x33A);
+	_easeDirectionFlag = game.GetBool(kGameSmoothScrolling);
 	_isScrolling = false;
 
 	TPaintControl *scene = _sceneControl->GetScene();
@@ -244,8 +245,8 @@ void TMasterControl::ScrollUpdate() {
 	int worktopWidth = scene->GetWorktopWidth();
 	FloatPoint floatScroll = scene->GetFloatScrollPos();
 	(void)floatScroll;  // used by the real easing formula; not reproduced here (see below)
-	int targetX = game.GetInt(0x2B1);   // field id not resolved - a scroll target x position
-	int edgeMargin = game.GetInt(0x2B2);  // field id not resolved - an edge-scroll trigger margin
+	int targetX = game.GetInt(kGameCursorHorizontalScrollDistance);   // field id not resolved - a scroll target x position
+	int edgeMargin = game.GetInt(kGameCursorVerticalScrollDistance);  // field id not resolved - an edge-scroll trigger margin
 
 	constexpr float kMaxSpeed = 1.0f;
 

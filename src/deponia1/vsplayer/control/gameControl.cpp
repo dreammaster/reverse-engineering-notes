@@ -25,6 +25,7 @@
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
 #include "vscommon/scripting/lua.h"
+#include "vstables/fieldIds.h"
 
 namespace {
 // Confirmed global (not per-instance) engine-event queue guarded by a
@@ -232,7 +233,7 @@ namespace {
 // id meaning unresolved.
 bool ShouldPushMatrices(TGText *text) {
 	TGCharacter *speaker = text->GetSpeaker();
-	return speaker == nullptr || speaker->GetRef().GetInt(0x319) != 0;
+	return speaker == nullptr || speaker->GetRef().GetInt(kCharacterMatrixId) != 0;
 }
 }  // namespace
 
@@ -242,7 +243,7 @@ bool TGameControl::DisplayTexts() {
 	// several other text methods); then draw everything that's left, plus
 	// _currentText if it's still displayed too.
 	for (auto it = _activeTexts.begin(); it != _activeTexts.end();) {
-		if (!(*it)->GetTarget().GetBool(0x211)) {
+		if (!(*it)->GetTarget().GetBool(kTextActive)) {
 			(*it)->OnCleared();
 			(*it)->Discard();
 			it = _activeTexts.erase(it);
@@ -260,7 +261,7 @@ bool TGameControl::DisplayTexts() {
 		matricesActive = saved;
 	}
 
-	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(0x211))
+	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(kTextActive))
 		return false;
 
 	bool saved = matricesActive;
@@ -316,10 +317,10 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 	// rebuilt. Field 0x274, if set, defers to the current scene's own field
 	// 0x124 instead. Real meaning of all three flags is unresolved.
 	bool rebuild = !isHolding;
-	if (rebuild && game.GetBool(0x1DF))
+	if (rebuild && game.GetBool(kGameHideInterfaces))
 		rebuild = false;
-	else if (rebuild && game.GetBool(0x274))
-		rebuild = !_ownedSceneControl.GetScene()->GetRef().GetBool(0x124);
+	else if (rebuild && game.GetBool(kGameAutoHideInterfacesInMenu))
+		rebuild = !_ownedSceneControl.GetScene()->GetRef().GetBool(kSceneIsMenu);
 
 	if (rebuild) {
 		bool firstMatch = true;
@@ -349,7 +350,7 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 			}
 		}
 		if (!stillHovered)
-			TGAction::AddRunningAction(TVisObjRef(object->GetLink(0x184)));
+			TGAction::AddRunningAction(TVisObjRef(object->GetLink(kInterfaceLeaveAction)));
 	}
 }
 
@@ -372,8 +373,8 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	TVisObjRef game = _visionaire->GetGame();
 	// Field ids 0x283/0x1FC gate two "ignore this mouse-up entirely" states;
 	// real meaning of both flags/values is unresolved.
-	int stateFlag = game.GetInt(0x283);
-	int charFlag = _previousCharacter->GetRef().GetInt(0x1FC);
+	int stateFlag = game.GetInt(kGameDisableInteractionDuringAnim);
+	int charFlag = _previousCharacter->GetRef().GetInt(kCharacterAnimState);
 	if ((stateFlag == 2 && (charFlag == 4 || charFlag == 5)) || (stateFlag == 1 && charFlag == 4))
 		return;
 
@@ -386,45 +387,45 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	bool handled = false;
 	switch (msg) {
 	case TMouseMessageEnum::kLeftUp: {
-		TVisObjRef link = game.GetLink(0x17B);
+		TVisObjRef link = game.GetLink(kGameLeftDblClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		handled = true;
 		break;
 	}
 	case TMouseMessageEnum::kRightUp: {
-		TVisObjRef link = game.GetLink(0x233);
+		TVisObjRef link = game.GetLink(kGameLeftClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		handled = true;
 		break;
 	}
 	case TMouseMessageEnum::kValue5: {
-		TVisObjRef link = game.GetLink(0x17D);
+		TVisObjRef link = game.GetLink(kGameLeftHoldAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
-		handled = game.GetInt(0x30C) == 1;
+		handled = game.GetInt(kGameLeftHoldBehaviour) == 1;
 		break;
 	}
 	case TMouseMessageEnum::kValue9: {
 		if (GetCursorControl()->IsActiveMoveObject()) {
 			_objectManager.RemoveItem(true);
 		} else {
-			TVisObjRef link = game.GetLink(0x151);
+			TVisObjRef link = game.GetLink(kGameRightClickAction);
 			if (!link.IsEmpty())
 				TGAction::AddRunningAction(link);
 		}
 		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
-		handled = game.GetInt(0x30E) == 1;
+		handled = game.GetInt(kGameRightClickBehaviour) == 1;
 		break;
 	}
 	case TMouseMessageEnum::kValue11: {
-		TVisObjRef link = game.GetLink(0x2FE);
+		TVisObjRef link = game.GetLink(kGameMiddleClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
-		handled = game.GetInt(0x30D) == 1;
+		handled = game.GetInt(kGameMiddleClickBehaviour) == 1;
 		break;
 	}
 	case TMouseMessageEnum::kValue12:
@@ -473,9 +474,9 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	// block below it's paired with a different gate (paused/handled here,
 	// walkability below).
 	if (objEmpty && !EngineUpdatePaused && handled) {
-		if (_previousCharacter->GetRef().GetLink(0x1F7) == scene->GetRef()) {
+		if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 			wxPoint relPos = scene->GetRelativePoint(clickPos);
-			_previousCharacter->GetRef().SetValue(0x201, relPos, TSendEventEnum::kSendEvent);
+			_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
 		}
 	}
 
@@ -487,9 +488,9 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	}
 	if (EngineUpdatePaused)
 		return;
-	if (_previousCharacter->GetRef().GetLink(0x1F7) == scene->GetRef()) {
+	if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 		wxPoint relPos = scene->GetRelativePoint(clickPos);
-		_previousCharacter->GetRef().SetValue(0x201, relPos, TSendEventEnum::kSendEvent);
+		_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
 	}
 }
 
@@ -500,7 +501,7 @@ void TGameControl::HandleMouseHolding(const wxPoint &/*pos*/) {
 	if (!GetCursorControl()->IsActive())
 		return;
 	TVisObjRef game = _visionaire->GetGame();
-	TVisObjRef link = game.GetLink(0x182);
+	TVisObjRef link = game.GetLink(kGameLeftHoldingAction);
 	if (!link.IsEmpty())
 		TGAction::AddRunningAction(link);
 }
@@ -512,13 +513,13 @@ void TGameControl::UpdateTexts() {
 	// recalculating, its tail is exactly ClearCurrentText()'s body
 	// (matching field id 0x1DD).
 	for (TGText *text : _activeTexts) {
-		if (text->GetTarget().GetBool(0x211))
+		if (text->GetTarget().GetBool(kTextActive))
 			text->CalculateCurrentText();
 	}
 
-	if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211)) {
+	if (_currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive)) {
 		_currentText->CalculateCurrentText();
-		if (_currentText->GetTarget().GetBool(0x211))
+		if (_currentText->GetTarget().GetBool(kTextActive))
 			ClearCurrentText();
 	}
 }
@@ -615,21 +616,21 @@ void TGameControl::SkipCurrentText() {
 	// skip, then - if it finished as a result - clearing it exactly like
 	// ClearCurrentText() does (same field id 0x1DD).
 	TVisObjRef game = _visionaire->GetGame();
-	if (game.GetBool(0x1E0)) {
+	if (game.GetBool(kGameHideCursor)) {
 		TVisObjRef allowOverride = _visionaire->GetGame();
-		if (!allowOverride.GetBool(0x235))
+		if (!allowOverride.GetBool(kGameAlwaysAllowSkipText))
 			return;
 	}
 
-	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(0x211))
+	if (_currentText == nullptr || !_currentText->GetTarget().GetBool(kTextActive))
 		return;
 
 	_currentText->SkipCurrentText();
-	if (_currentText->GetTarget().GetBool(0x211))
+	if (_currentText->GetTarget().GetBool(kTextActive))
 		return;
 
 	TVisObjRef game2 = _visionaire->GetGame();
-	game2.ClearLink(0x1DD, true);
+	game2.ClearLink(kGameCurrentText, true);
 	_currentText->Discard();
 	_currentText = nullptr;
 }
@@ -695,7 +696,7 @@ void TGameControl::StartGameAction(TKeyboardMessageEnum msg, const wxString &/*n
 	// is unresolved. Stops at the first (a, msg)-matching action, whether
 	// or not it actually fires.
 	TVisObjRef game = _visionaire->GetGame();
-	bool overrideBlock = game.GetBool(0x242);
+	bool overrideBlock = game.GetBool(kGameExecuteActionsDuringDialog);
 
 	for (const SGameAction &action : _gameActions) {
 		if (action.a != a || action.msg != static_cast<int>(msg))
@@ -704,7 +705,7 @@ void TGameControl::StartGameAction(TKeyboardMessageEnum msg, const wxString &/*n
 		if (action.flag) {
 			TGAction::AddRunningAction(action.target);
 		} else if (_dialog.IsEmpty() || overrideBlock) {
-			bool textBlocking = _currentText != nullptr && _currentText->GetTarget().GetBool(0x211);
+			bool textBlocking = _currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive);
 			if (!textBlocking)
 				TGAction::AddRunningAction(action.target);
 		}
@@ -719,7 +720,7 @@ void TGameControl::UpdateAspectRatio() {
 	// inherited TPaintControl surface. TVisObjRef::GetPoint()'s field-id
 	// meaning is not resolved - see visobjref.h.
 	TVisObjRef game = _visionaire->GetGame();
-	const wxPoint *aspectPoint = game.GetPoint(0x7E);
+	const wxPoint *aspectPoint = game.GetPoint(kGameWindowResolution);
 	if (g_unlockAspect) {
 		_aspectWidth = renderSize.width;
 		_aspectHeight = renderSize.height;
@@ -797,14 +798,14 @@ void TGameControl::SaveEventHandlers() {
 	result += TGText::GetEventHandlerTextStopped();
 
 	TVisObjRef game = _visionaire->GetGame();
-	game.SetValue(0x2F7, result, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameRegisteredEventHandlers, result, TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::ExecuteStartingAction() {
 	// Confirmed (asm lines 458052-458116): field id 0x170, meaning not
 	// resolved.
 	TVisObjRef game = _visionaire->GetGame();
-	TVisObjRef link = game.GetLink(0x170);
+	TVisObjRef link = game.GetLink(kGameStartAction);
 	if (!link.IsEmpty()) {
 		TGAction::AddRunningAction(link);
 		TGAction::ContinueRunningActions(false);
@@ -816,7 +817,7 @@ void TGameControl::InitInterfaces() {
 	// value 1 are both unresolved.
 	TVisObjRef game = _visionaire->GetGame();
 	TVList links;
-	game.GetLinks(0x296, TypeOrder::kValue1, links);
+	game.GetLinks(kGameInterfaces, TypeOrder::kValue1, links);
 
 	for (TVisionaireObject *object : links)
 		_allInterfaces.push_back(new THInterface(TVisObjRef(*object)));
@@ -856,9 +857,9 @@ void TGameControl::InitScripts() {
 	}
 
 	TVList scriptLinks;
-	_visionaire->GetGame().GetLinks(0x28B, TypeOrder::kValue1, scriptLinks);
+	_visionaire->GetGame().GetLinks(kGameScriptLinks, TypeOrder::kValue1, scriptLinks);
 	for (TVisionaireObject *object : scriptLinks) {
-		if (object->GetInt(0x28D) != 1)
+		if (object->GetInt(kScriptType) != 1)
 			continue;
 
 		wxString sha1Str;
@@ -867,7 +868,7 @@ void TGameControl::InitScripts() {
 		if (nameStr.Contains(sha1Str))
 			continue;
 
-		wxString script = object->GetStr(0x28C);
+		wxString script = object->GetStr(kScriptScript);
 		script.Replace(wxString(L"<"), wxString(L"\n"), true);
 
 		std::string scriptNarrow(static_cast<const char *>(script.mb_str()));
@@ -902,8 +903,8 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 		return;
 
 	bool shouldScroll = false;
-	if (game.GetLink(0x263) == character && game.GetBool(0x231)) {
-		TVisObjRef charSceneLink = _previousCharacter->GetRef().GetLink(0x1F7);
+	if (game.GetLink(kGameScrollCharacter) == character && game.GetBool(kGameScrollCenterCharacter)) {
+		TVisObjRef charSceneLink = _previousCharacter->GetRef().GetLink(kCharacterScene);
 		shouldScroll = (charSceneLink == scene->GetRef());
 	}
 	if (!shouldScroll)
@@ -923,32 +924,32 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 		charRect.SetHeight(0);
 	}
 
-	int offsetX = game.GetInt(0x29B);
-	int offsetY = game.GetInt(0x29C);
+	int offsetX = game.GetInt(kGameHorizontalScrollDistance);
+	int offsetY = game.GetInt(kGameVerticalScrollDistance);
 
 	// Horizontal: right-scroll and left-scroll are checked independently (not
 	// mutually exclusive in the disassembly - a right-scroll match doesn't
 	// skip the left-scroll check below it).
 	if (static_cast<float>(worktopWidth) > visibleSize.width + scrollPos.x) {
 		if (static_cast<float>(charRect.GetRight() + offsetX) - scrollPos.x > visibleSize.width)
-			game.SetValue(0x1D9, 2, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kSendEvent);
 	}
 	if (scrollPos.x > 0.0f) {
 		if (static_cast<float>(charRect.GetLeft() - offsetX) - scrollPos.x < 0.0f)
-			game.SetValue(0x1D9, 1, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionHorizontal, 1, TSendEventEnum::kSendEvent);
 	}
 
 	// Vertical: scroll-up returns immediately on a match, so scroll-down is
 	// only ever checked when scroll-up didn't fire.
 	if (scrollPos.y > 0.0f) {
 		if (static_cast<float>(charRect.GetTop() - offsetY) - scrollPos.y < 0.0f) {
-			game.SetValue(0x1DA, 3, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionVertical, 3, TSendEventEnum::kSendEvent);
 			return;
 		}
 	}
 	if (static_cast<float>(worktopHeight) > visibleSize.height + scrollPos.y) {
 		if (static_cast<float>(charRect.GetBottom() + offsetY) - scrollPos.y > visibleSize.height)
-			game.SetValue(0x1DA, 4, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionVertical, 4, TSendEventEnum::kSendEvent);
 	}
 }
 
@@ -974,7 +975,7 @@ void TGameControl::MoveScene() {
 	static TTimer scrollTimer;
 
 	TVisObjRef game = _visionaire->GetGame();
-	bool overrideGate = game.GetBool(0x1D8);
+	bool overrideGate = game.GetBool(kGameScrollTo);
 
 	if (!overrideGate) {
 		if (IsScrolling()) {
@@ -983,7 +984,7 @@ void TGameControl::MoveScene() {
 		}
 		if (_currentCharacter == nullptr)
 			return;
-		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(kCharacterScene);
 		if (!(charSceneLink == _ownedSceneControl.GetScene()->GetRef()))
 			return;
 	}
@@ -998,7 +999,7 @@ void TGameControl::MoveScene() {
 	int worktopWidth = scene->GetWorktopWidth();
 	int worktopHeight = scene->GetWorktopHeight();
 	const wxSize &visibleSize = scene->GetVisibleSize();
-	const wxPoint *target = game.GetPoint(0x1D7);
+	const wxPoint *target = game.GetPoint(kGameScrollToPoint);
 
 	wxPoint charPos = _previousCharacter->GetScreenPosition();
 	wxRect charRect = _previousCharacter->GetVisibleRect();
@@ -1012,7 +1013,7 @@ void TGameControl::MoveScene() {
 	double elapsedMs = static_cast<double>(scrollTimer.GetTime());
 	float dt = (elapsedMs > 500.0) ? 1.0f : static_cast<float>(elapsedMs) * _timingValueSeconds;
 
-	int horizState = game.GetInt(0x1D9);
+	int horizState = game.GetInt(kGameScrollDirectionHorizontal);
 	float targetLeft = static_cast<float>(target->x) - static_cast<float>(visibleSize.width) / 2.0f;
 	if (horizState != 0 || static_cast<float>(worktopWidth) > scrollPos.x + static_cast<float>(visibleSize.width)) {
 		float distance = targetLeft - scrollPos.x;
@@ -1025,11 +1026,11 @@ void TGameControl::MoveScene() {
 		} else {
 			xspeed = 0.0f;
 			if (horizState != 0 && _previousCharacter->IsWalking())
-				game.SetValue(0x1D9, 2, TSendEventEnum::kSendEvent);
+				game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kSendEvent);
 		}
 	}
 
-	int vertState = game.GetInt(0x1DA);
+	int vertState = game.GetInt(kGameScrollDirectionVertical);
 	float targetTop = static_cast<float>(target->y) - static_cast<float>(visibleSize.height) / 2.0f;
 	if (vertState == 3 || vertState == 4 ||
 	        static_cast<float>(worktopHeight) > scrollPos.y + static_cast<float>(visibleSize.height)) {
@@ -1043,11 +1044,11 @@ void TGameControl::MoveScene() {
 		} else {
 			yspeed = 0.0f;
 			if ((vertState == 3 || vertState == 4) && _previousCharacter->IsWalking())
-				game.SetValue(0x1DA, vertState, TSendEventEnum::kSendEvent);
+				game.SetValue(kGameScrollDirectionVertical, vertState, TSendEventEnum::kSendEvent);
 		}
 	}
 
-	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
 	scrollTimer.SetTime();
 }
 
@@ -1059,7 +1060,7 @@ void TGameControl::CenterScene() {
 	TVisObjRef game = _visionaire->GetGame();
 	TGScene *scene = _ownedSceneControl.GetScene();
 
-	TVisObjRef link = _currentCharacter->GetRef().GetLink(0x1F7);
+	TVisObjRef link = _currentCharacter->GetRef().GetLink(kCharacterScene);
 	if (!(link == scene->GetRef()))
 		return;
 
@@ -1078,9 +1079,9 @@ void TGameControl::CenterScene() {
 		scene->AdjustWindowVertical(static_cast<float>(verticalAdjust));
 	}
 
-	game.SetValue(0x1D9, 0, TSendEventEnum::kSendEvent);
-	game.SetValue(0x1DA, 0, TSendEventEnum::kSendEvent);
-	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::SetOnScrollDestination() {
@@ -1093,15 +1094,15 @@ void TGameControl::SetOnScrollDestination() {
 	TVisObjRef game = _visionaire->GetGame();
 	TGScene *scene = _ownedSceneControl.GetScene();
 
-	scene->AdjustWindowHorizontal(static_cast<float>(game.GetPoint(0x1D7)->x));
-	scene->AdjustWindowVertical(static_cast<float>(game.GetPoint(0x1D7)->y));
+	scene->AdjustWindowHorizontal(static_cast<float>(game.GetPoint(kGameScrollToPoint)->x));
+	scene->AdjustWindowVertical(static_cast<float>(game.GetPoint(kGameScrollToPoint)->y));
 
-	game.SetValue(0x1D6, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
-	if (game.GetBool(0x231))
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	if (game.GetBool(kGameScrollCenterCharacter))
 		CenterScene();
 
 	TVisObjRef game2 = _visionaire->GetGame();
-	game2.SetValue(0x1D8, false, TSendEventEnum::kSendEvent);
+	game2.SetValue(kGameScrollTo, false, TSendEventEnum::kSendEvent);
 }
 
 void TGameControl::HandleCharacters() {
@@ -1127,7 +1128,7 @@ void TGameControl::ResetState() {
 	_objectManager.ResetCurrentObject();
 	_objectManager.ResetEventInfo();
 	TVisObjRef game = _visionaire->GetGame();
-	game.ClearLink(0x1E6, false);
+	game.ClearLink(kGameSavedObject, false);
 	_objectManager.RemoveItem(true);
 	_pendingItems.clear();
 }
@@ -1144,11 +1145,11 @@ void TGameControl::StartDialog(const TVisObjRef &dialog) {
 	if (_dialog.IsEmpty())
 		return;
 
-	TVisObjRef cursorLink = _currentCharacter->GetRef().GetLink(0x11B);
+	TVisObjRef cursorLink = _currentCharacter->GetRef().GetLink(kCharacterDialogCursor);
 	GetCursorControl()->SetCursor(PackVisId(cursorLink.GetId()), true);
 
 	TVisObjRef game = _visionaire->GetGame();
-	game.SetLink(0x1DC, dialog, true);
+	game.SetLink(kGameDialog, dialog, true);
 
 	_dialog.SetDialog(dialog);
 }
@@ -1162,9 +1163,9 @@ void TGameControl::EndDialog() {
 	_dialog.Clear();
 
 	TVisObjRef game = _visionaire->GetGame();
-	game.ClearLink(0x1DC, true);
+	game.ClearLink(kGameDialog, true);
 
-	TVisObjRef link = _visionaire->GetGame().GetLink(0x262);
+	TVisObjRef link = _visionaire->GetGame().GetLink(kGameActiveCommand);
 	if (!link.IsEmpty())
 		GetCursorControl()->SetCursor(false, PackVisId(link.GetId()), false);
 }
@@ -1189,7 +1190,7 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 	if (_currentText != nullptr) {
 		_currentText->Discard();
 		TVisObjRef game = _visionaire->GetGame();
-		game.ClearLink(0x1DD, true);
+		game.ClearLink(kGameCurrentText, true);
 		_currentText = nullptr;
 	}
 
@@ -1197,9 +1198,9 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 	TVisObjRef emptyObject = _visionaire->GetEmptyObject();
 	_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, false);
 
-	if (_currentText->GetTarget().GetBool(0x211)) {
+	if (_currentText->GetTarget().GetBool(kTextActive)) {
 		TVisObjRef game = _visionaire->GetGame();
-		game.SetLink(0x1DD, _currentText->GetTarget(), true);
+		game.SetLink(kGameCurrentText, _currentText->GetTarget(), true);
 	} else {
 		_currentText->Discard();
 		_currentText = nullptr;
@@ -1214,7 +1215,7 @@ void TGameControl::StartBackgroundText(const TVisObjRef &text, TGCharacter *char
 	// equality. Type id 0x18 (matches StartObjectText's CreateActiveObject
 	// call) and the two trailing THText constructor bools are unresolved.
 	if (character != nullptr) {
-		if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211) &&
+		if (_currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive) &&
 		        _currentText->GetSpeaker() == character)
 			return;
 
@@ -1234,7 +1235,7 @@ void TGameControl::ReattachSceneObjectTexts() {
 	// Confirmed (asm lines 461599-461666): field id 0x2AC, and the id-byte-3
 	// check ("== 6") meaning are both unresolved.
 	for (TGText *text : _sceneTexts) {
-		TVisObjRef linked = text->GetTarget().GetLink(0x2AC);
+		TVisObjRef linked = text->GetTarget().GetLink(kTextOwner);
 		if (linked.GetId()[3] != 6)
 			continue;
 		if (TManagedObject *object = _ownedSceneControl.GetScene()->GetObject(linked))
@@ -1248,14 +1249,14 @@ bool TGameControl::IsTextActive(const TVisObjRef &text) const {
 		return false;
 	if (!(_currentText->GetDataObject() == text))
 		return false;
-	return _currentText->GetTarget().GetBool(0x211);
+	return _currentText->GetTarget().GetBool(kTextActive);
 }
 
 bool TGameControl::IsNoTextDisplayed() const {
 	// Confirmed (asm lines 461747-461777): a text counts as "displayed"
-	// when its target's GetBool(0x211) is set; otherwise fall back to
+	// when its target's GetBool(kTextActive) is set; otherwise fall back to
 	// whether a dialog is active.
-	if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211))
+	if (_currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive))
 		return false;
 	return _dialog.IsEmpty();
 }
@@ -1293,7 +1294,7 @@ void TGameControl::ClearTexts() {
 		_currentText->Discard();
 		_currentText = nullptr;
 		TVisObjRef game = _visionaire->GetGame();
-		game.ClearLink(0x1DD, true);
+		game.ClearLink(kGameCurrentText, true);
 	}
 }
 
@@ -1304,7 +1305,7 @@ void TGameControl::ClearCurrentText() {
 		_currentText->Discard();
 		_currentText = nullptr;
 		TVisObjRef game = _visionaire->GetGame();
-		game.ClearLink(0x1DD, true);
+		game.ClearLink(kGameCurrentText, true);
 	}
 }
 
@@ -1328,11 +1329,11 @@ void TGameControl::ClearText(const TVisObjRef &text) {
 
 void TGameControl::ClearObjectText(const TVisObjRef &object) {
 	// Confirmed (asm lines 462158-462228): find the one scene text whose
-	// target's GetLink(0x2AC) matches `object`, discard and remove it, then
+	// target's GetLink(kTextOwner) matches `object`, discard and remove it, then
 	// stop (only ever removes at most one entry).
 	for (auto it = _sceneTexts.begin(); it != _sceneTexts.end(); ++it) {
 		TGText *text = *it;
-		if (text->GetTarget().GetLink(0x2AC) == object) {
+		if (text->GetTarget().GetLink(kTextOwner) == object) {
 			text->Discard();
 			_sceneTexts.erase(it);
 			return;
@@ -1426,16 +1427,16 @@ void TGameControl::Save() {
 	// StartDialog/EndDialog's active-dialog link) are all unresolved.
 	TVisObjRef game = _visionaire->GetGame();
 
-	TVisObjRef sceneLink = _currentCharacter->GetRef().GetLink(0x1F7);
+	TVisObjRef sceneLink = _currentCharacter->GetRef().GetLink(kCharacterScene);
 	wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
-	game.SetValue(0x219, saveName, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameSaveGameName, saveName, TSendEventEnum::kSendEvent);
 
 	TVisObjRef lastScene;
 	wxPoint lastPos{};
 	_ownedSceneControl.GetLastPlayableSceneParams(lastScene, lastPos);
-	game.SetLink(0x1D5, lastScene, false);
-	game.SetValue(0x1D6, lastPos, TSendEventEnum::kSendEvent);
-	game.SetLink(0x1DC, _dialog.GetTarget(), false);
+	game.SetLink(kGameCurrentScene, lastScene, false);
+	game.SetValue(kGameScrollPosition, lastPos, TSendEventEnum::kSendEvent);
+	game.SetLink(kGameDialog, _dialog.GetTarget(), false);
 
 	if (_currentText != nullptr)
 		_currentText->Save();
@@ -1493,7 +1494,7 @@ void TGameControl::SaveGame(int slot) {
 		delete savegame;
 
 	TVisObjRef gameRef = _visionaire->GetGame();
-	gameRef.SetLink(0x1D5, _ownedSceneControl.GetScene()->GetRef(), false);
+	gameRef.SetLink(kGameCurrentScene, _ownedSceneControl.GetScene()->GetRef(), false);
 }
 
 bool TGameControl::UnregisterEventHandlerMainLoop(const wxString &name) {
@@ -1551,7 +1552,7 @@ void TGameControl::UpdateWalkingSounds() {
 		float distFactor = (dx < 0) ? 0.0f : static_cast<float>(std::min(dx, visibleWidth));
 		int pan = static_cast<int>(distFactor / panDivisor - 100.0f);
 
-		float rawVolume = character->GetRef().GetFloat(0x2ED);
+		float rawVolume = character->GetRef().GetFloat(kCharacterSize);
 		int volume;
 		if (rawVolume > 100.0f)
 			volume = 100;
@@ -1646,22 +1647,22 @@ bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor)
 			SetLoadingScreen(loadingScreen);
 	} else {
 		TVList list15;
-		_visionaire->GetList(0x15, list15, false);
+		_visionaire->GetList(kParentLink, list15, false);
 		TVisObjRef pickedRef = list15.empty() ? currentRef : TVisObjRef(list15.front());
 		if (isEditor)
 			FillLoadingScreen(loadingScreen, pickedRef);
 	}
 
 	std::vector<TCharHolder> strings;
-	currentRef.GetStrings(0x323, strings);
+	currentRef.GetStrings(kGameContainers, strings);
 	if (!strings.empty()) {
 		TComposedFileManager::Init(_gamePath, passw, strings);
 	} else {
-		TComposedFileManager::Init(_gamePath, passw, currentRef.GetInt(0x26D), wxFileName(currentRef.GetPath(0x26E)),
-		                           currentRef.GetInt(0x29E), wxFileName(currentRef.GetPath(0x29F)),
-		                           currentRef.GetInt(0x26B), wxFileName(currentRef.GetPath(0x26C)),
-		                           currentRef.GetInt(0x269), wxFileName(currentRef.GetPath(0x26A)),
-		                           currentRef.GetInt(0x2AA), wxFileName(currentRef.GetPath(0x2AB)));
+		TComposedFileManager::Init(_gamePath, passw, currentRef.GetInt(kGameMovieComposedFiles), wxFileName(currentRef.GetPath(kGameMovieComposedFile)),
+		                           currentRef.GetInt(kGameInterfaceComposedFiles), wxFileName(currentRef.GetPath(kGameInterfaceComposedFile)),
+		                           currentRef.GetInt(kGameCharacterComposedFiles), wxFileName(currentRef.GetPath(kGameCharacterComposedFile)),
+		                           currentRef.GetInt(kGameSceneComposedFiles), wxFileName(currentRef.GetPath(kGameSceneComposedFile)),
+		                           currentRef.GetInt(kGameGameComposedFiles), wxFileName(currentRef.GetPath(kGameGameComposedFile)));
 	}
 
 	return true;
@@ -1681,7 +1682,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 	if (_lastInterfaceCharacter != _currentCharacter) {
 		_lastInterfaceCharacter = _currentCharacter;
 		TVList items;
-		_currentCharacter->GetRef().GetLinks(0x297, TypeOrder::kValue0, items);
+		_currentCharacter->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
 		for (TGInterface *interface : _currentCharacter->GetInterfaces())
 			interface->UpdateItems(items);
 	}
@@ -1707,7 +1708,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 	bool overrideAll = false;
 	if (!isMenu) {
 		TVisObjRef game = _visionaire->GetGame();
-		overrideAll = game.GetBool(0x1DF);
+		overrideAll = game.GetBool(kGameHideInterfaces);
 	}
 
 	int remainingWidth = windowWidth;
@@ -1720,8 +1721,8 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 			if (interface->GetRef().IsEmpty() || !interface->IsActive() || overrideAll)
 				continue;
 
-			int margin = interface->GetRef().GetInt(0x144);
-			auto posMode = static_cast<TInterfacePositionEnum>(interface->GetRef().GetInt(0x13A));
+			int margin = interface->GetRef().GetInt(kInterfaceSize);
+			auto posMode = static_cast<TInterfacePositionEnum>(interface->GetRef().GetInt(kInterfaceDisplacement));
 
 			int x = 0;
 			int y = 0;
@@ -1762,19 +1763,19 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 				break;
 			case TInterfacePositionEnum::kFixedReserveWidth: {
 				remainingWidth -= (margin > 0) ? margin : interface->GetWorktopWidth();
-				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				const wxPoint *pt = interface->GetRef().GetPoint(kInterfaceOffset);
 				x = pt->x;
 				y = pt->y;
 				break;
 			}
 			case TInterfacePositionEnum::kFixed: {
-				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				const wxPoint *pt = interface->GetRef().GetPoint(kInterfaceOffset);
 				x = pt->x;
 				y = pt->y;
 				break;
 			}
 			case TInterfacePositionEnum::kDraggableClamped: {
-				const wxPoint *pt = interface->GetRef().GetPoint(0x12E);
+				const wxPoint *pt = interface->GetRef().GetPoint(kInterfaceOffset);
 				if (force && interface == scene) {
 					const wxPoint &mousePos = GetMousePos();
 					x = mousePos.x - pt->x;
@@ -1797,7 +1798,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 			}
 
 			wxPoint pos{x, y};
-			interface->GetRef().SetValue(0x2B0, pos, TSendEventEnum::kSendEvent);
+			interface->GetRef().SetValue(kInterfacePosition, pos, TSendEventEnum::kSendEvent);
 			interface->SetOrigin(x, y);
 
 			int worktopHeight = interface->GetWorktopHeight();
@@ -1818,7 +1819,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 	ownedScene->AdjustWindowVertical(scrollPos.y);
 
 	TVisObjRef game = _visionaire->GetGame();
-	game.SetValue(0x1D6, wxPoint{static_cast<int>(scrollPos.x), static_cast<int>(scrollPos.y)},
+	game.SetValue(kGameScrollPosition, wxPoint{static_cast<int>(scrollPos.x), static_cast<int>(scrollPos.y)},
 	              TSendEventEnum::kSendEvent);
 }
 
@@ -1857,16 +1858,16 @@ void TGameControl::SetCharacterActiveCommand() {
 		return;
 
 	for (TGInterface *interface : _currentCharacter->GetInterfaces()) {
-		TVisObjRef link = interface->GetRef().GetLink(0x25F);
+		TVisObjRef link = interface->GetRef().GetLink(kInterfaceActiveCommand);
 		if (link.IsEmpty())
 			continue;
 
-		TVisObjRef commandLink = _currentCharacter->GetRef().GetLink(0x205);
+		TVisObjRef commandLink = _currentCharacter->GetRef().GetLink(kCharacterActiveCommand);
 		if (commandLink == link) {
 			TVisObjRef game = _visionaire->GetGame();
-			game.SetLink(0x262, link, true);
+			game.SetLink(kGameActiveCommand, link, true);
 		} else {
-			_currentCharacter->GetRef().SetLink(0x205, link, true);
+			_currentCharacter->GetRef().SetLink(kCharacterActiveCommand, link, true);
 		}
 		return;
 	}
@@ -1884,9 +1885,9 @@ void TGameControl::ChangeCharacter(const TVisObjRef &character, bool immediate, 
 				_previousCharacter = candidate;
 
 				TVisObjRef game = _visionaire->GetGame();
-				game.SetLink(0x1D4, candidate->GetRef(), false);
+				game.SetLink(kGameCurrentCharacter, candidate->GetRef(), false);
 				TVisObjRef game2 = _visionaire->GetGame();
-				game2.SetLink(0x263, candidate->GetRef(), false);
+				game2.SetLink(kGameScrollCharacter, candidate->GetRef(), false);
 
 				_currentCharacter->SetRandomTime();
 				ResetState();
@@ -1897,7 +1898,7 @@ void TGameControl::ChangeCharacter(const TVisObjRef &character, bool immediate, 
 		}
 	}
 
-	TVisObjRef targetScene = scene.IsEmpty() ? _currentCharacter->GetRef().GetLink(0x1F7) : scene;
+	TVisObjRef targetScene = scene.IsEmpty() ? _currentCharacter->GetRef().GetLink(kCharacterScene) : scene;
 
 	TGScene *currentScene = _ownedSceneControl.GetScene();
 	if (targetScene == currentScene->GetRef()) {
@@ -1937,11 +1938,11 @@ bool TGameControl::InitCharacters() {
 
 	for (TVisionaireObject *object : characterList) {
 		TVisObjRef ref(object);
-		TVisObjRef parent = ref.GetLink(0x137).GetParent();
+		TVisObjRef parent = ref.GetLink(kCharacterStartObject).GetParent();
 		THCharacter *character = new THCharacter(ref, parent);
 
-		wxPoint pos = *ref.GetPoint(0x153);
-		int walkSpeed = ref.GetInt(0xDE);
+		wxPoint pos = *ref.GetPoint(kObjectPosition);
+		int walkSpeed = ref.GetInt(kObjectDirection);
 		if (walkSpeed == -1)
 			walkSpeed = 0x10E;
 
@@ -1952,7 +1953,7 @@ bool TGameControl::InitCharacters() {
 		_charactersByHash[PackVisId(character->GetRef().GetId())] = character;
 	}
 
-	TVisObjRef startingLink = _visionaire->GetGame().GetLink(0x12F);
+	TVisObjRef startingLink = _visionaire->GetGame().GetLink(kGameFirstCharacter);
 	TGCharacter *starting = nullptr;
 	for (TGCharacter *candidate : _characters) {
 		if (candidate->GetRef() == startingLink) {
@@ -1965,9 +1966,9 @@ bool TGameControl::InitCharacters() {
 		_currentCharacter = starting;
 		_previousCharacter = starting;
 
-		_visionaire->GetGame().SetLink(0x1D4, starting->GetRef(), false);
-		_visionaire->GetGame().SetLink(0x263, starting->GetRef(), false);
-		_visionaire->GetGame().SetLink(0x262, starting->GetRef().GetLink(0x205), false);
+		_visionaire->GetGame().SetLink(kGameCurrentCharacter, starting->GetRef(), false);
+		_visionaire->GetGame().SetLink(kGameScrollCharacter, starting->GetRef(), false);
+		_visionaire->GetGame().SetLink(kGameActiveCommand, starting->GetRef().GetLink(kCharacterActiveCommand), false);
 	}
 
 	if (_currentCharacter == nullptr) {
@@ -1992,7 +1993,7 @@ void TGameControl::InitGameActions() {
 	_gameActions.clear();
 
 	TVList links;
-	_visionaire->GetGame().GetLinks(0x13E, TypeOrder::kValue0, links);
+	_visionaire->GetGame().GetLinks(kGameActions, TypeOrder::kValue0, links);
 
 	// A fixed table of "special" key codes - everything an action can be
 	// bound to besides a plain digit, letter, or controller-button pseudo-
@@ -2016,7 +2017,7 @@ void TGameControl::InitGameActions() {
 
 	for (TVisionaireObject *object : links) {
 		TVisObjRef actionRef(object);
-		int keyCode = actionRef.GetInt(0x9F);
+		int keyCode = actionRef.GetInt(kActionExecutionType);
 
 		// Confirmed arithmetic, not confirmed meaning: classifies keyCode
 		// against TKeyboardMessageEnum's raw values (masterControl.h) -
@@ -2042,14 +2043,14 @@ void TGameControl::InitGameActions() {
 		// fire unconditionally (see StartGameAction's `if (action.flag)`).
 		bool flag = false;
 		TVList conditions;
-		actionRef.GetList(0xA2, conditions);
+		actionRef.GetList(kActionActionParts, conditions);
 		for (TVisionaireObject *condition : conditions) {
-			int type = condition->GetInt(0xB3);
+			int type = condition->GetInt(kActionPartCommand);
 			if (type == 0x6B) {
 				flag = true;
 				break;
 			}
-			if (type == 0x99 && condition->GetInt(0xF2) == 1) {
+			if (type == 0x99 && condition->GetInt(kActionPartInt) == 1) {
 				flag = true;
 				break;
 			}
@@ -2068,15 +2069,15 @@ bool TGameControl::Init() {
 	// Confirmed (asm lines 467226-467624). Field ids 0x79 (starting scene
 	// link) and 0x231/0x1D8/0x1D6/0x1D9/0x1DA (matching CenterScene/
 	// SetOnScrollDestination's fields) are all unresolved.
-	TVisObjRef startScene = _visionaire->GetGame().GetLink(0x79);
+	TVisObjRef startScene = _visionaire->GetGame().GetLink(kGameFirstScene);
 	_ownedSceneControl.Set(startScene);
 
-	_visionaire->GetGame().SetLink(0x1D5, startScene, false);
-	_visionaire->GetGame().SetValue(0x231, true, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(0x1D8, false, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(0x1D6, wxPoint{}, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(0x1D9, 0, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(0x1DA, 0, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetLink(kGameCurrentScene, startScene, false);
+	_visionaire->GetGame().SetValue(kGameScrollCenterCharacter, true, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(kGameScrollTo, false, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(kGameScrollPosition, wxPoint{}, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kSendEvent);
 
 	_sceneControl = &_ownedSceneControl;
 	_currentCharacter = nullptr;
@@ -2128,11 +2129,11 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	// passed as a TSignalSlot* when isEditor is true are all flagged in
 	// their own declarations' comments rather than guessed at further here.
 	TVisObjRef game = _visionaire->GetGame();
-	graphics->SetFilters(static_cast<TInterpolationEnum>(game.GetInt(0x224)),
-	                     static_cast<TInterpolationEnum>(game.GetInt(0x225)));
-	graphics->PreallocateTextures(game.GetInt(0x2E7));
+	graphics->SetFilters(static_cast<TInterpolationEnum>(game.GetInt(kGameMinificationFilter)),
+	                     static_cast<TInterpolationEnum>(game.GetInt(kGameMagnificationFilter)));
+	graphics->PreallocateTextures(game.GetInt(kGamePreallocatedTextures));
 
-	const wxPoint *aspectPoint = game.GetPoint(0x7E);
+	const wxPoint *aspectPoint = game.GetPoint(kGameWindowResolution);
 	if (g_unlockAspect) {
 		_aspectWidth = renderSize.width;
 		_aspectHeight = renderSize.height;
@@ -2162,15 +2163,15 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	}
 
 	TDiagnostic::EndFixedRegion();
-	graphics->SetCacheSize(game.GetInt(0x29D));
+	graphics->SetCacheSize(game.GetInt(kGamePictureCacheSize));
 
 	if (gameName.ToStdWstring().empty()) {
-		TVisObjRef link = game.GetLink(0x132);
+		TVisObjRef link = game.GetLink(kGameStandardLanguage);
 		gameName = link.GetName().GetFullPath();
 	}
 
 	TVList languageList;
-	_visionaire->GetList(0x12, languageList, false);
+	_visionaire->GetList(kNewId, languageList, false);
 	if (!languageList.empty()) {
 		TVisionaireObject *match = nullptr;
 		for (TVisionaireObject *obj : languageList) {
@@ -2184,7 +2185,7 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	}
 
 	TVList cursorDefs;
-	_visionaire->GetList(0xF, cursorDefs, false);
+	_visionaire->GetList(kLink, cursorDefs, false);
 	for (TVisionaireObject *obj : cursorDefs) {
 		TVisObjRef ref(obj);
 		if (!ref.IsEmpty())
@@ -2194,13 +2195,13 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	TVList buttonList;
 	_visionaire->GetList(2, buttonList, false);
 	for (TVisionaireObject *obj : buttonList) {
-		TVisObjRef linkedRef(obj->GetLink(0xE5));
+		TVisObjRef linkedRef(obj->GetLink(kButtonCursor));
 		if (!linkedRef.IsEmpty())
 			GetCursorControl()->LinkButtonCursor(PackVisId(linkedRef.GetId()), PackVisId(obj->GetId()));
 	}
 
 	TVisObjRef game2 = _visionaire->GetGame();
-	_timingValueSeconds = static_cast<float>(game2.GetInt(0xF6)) / 1000.0f;
+	_timingValueSeconds = static_cast<float>(game2.GetInt(kGameScrollSpeed)) / 1000.0f;
 
 	if (!Init()) {
 		if (wxLog::loglevel >= 0) {
@@ -2255,7 +2256,7 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 
 	wxString fullPath = file.GetFullPath();
 	TVisObjRef game = _visionaire->GetGame();
-	TVisObjRef link = game.GetLink(0x132);
+	TVisObjRef link = game.GetLink(kGameStandardLanguage);
 	wxString warning = link.GetName().GetFullPath();
 	wxString emptyFile;
 
@@ -2276,7 +2277,7 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 
 	gameControl->InitAfterLoadingScreen();
 	TVisObjRef game2 = _visionaire->GetGame();
-	TVisObjRef target = game2.GetLink(0x170);
+	TVisObjRef target = game2.GetLink(kGameStartAction);
 	TGAction::AddRunningAction(target);
 	return true;
 }
@@ -2352,9 +2353,9 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 	}
 
 	TVisObjRef game = _visionaire->GetGame();
-	if (!game.GetLink(0x279).IsEmpty()) {
+	if (!game.GetLink(kGameCutsceneAction).IsEmpty()) {
 		TVisObjRef game2 = _visionaire->GetGame();
-		if (!game2.GetBool(0x1E0))
+		if (!game2.GetBool(kGameHideCursor))
 			StartGameAction(msg, key, a, b);
 		return;
 	}
@@ -2365,7 +2366,7 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 	}
 
 	TVisObjRef game3 = _visionaire->GetGame();
-	if (!game3.GetBool(0x235))
+	if (!game3.GetBool(kGameAlwaysAllowSkipText))
 		return;
 
 	for (const SGameAction &action : _gameActions) {
@@ -2373,7 +2374,7 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 			continue;
 		if (!action.flag)
 			return;
-		if (_currentText != nullptr && _currentText->GetTarget().GetBool(0x211))
+		if (_currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive))
 			return;
 		TGAction::AddRunningAction(action.target);
 		return;
@@ -2436,10 +2437,10 @@ void TGameControl::GetWalkingSounds(std::vector<wxFileName> &outSounds) {
 	// unresolved.
 	TGScene *scene = _ownedSceneControl.GetScene();
 	for (TGCharacter *character : _characters) {
-		if (!(character->GetRef().GetLink(0x1F7) == scene->GetRef()))
+		if (!(character->GetRef().GetLink(kCharacterScene) == scene->GetRef()))
 			continue;
 
-		wxFileName fileName(character->GetRef().GetPath(0x110));
+		wxFileName fileName(character->GetRef().GetPath(kCharacterWalkingSound));
 		if (!fileName.IsOk())
 			continue;
 
@@ -2484,7 +2485,7 @@ void TGameControl::LoadEventHandlers() {
 	// data at addresses 0xD686F0-0xD687B0) for a special case not traced
 	// here - every name is registered identically instead.
 	TVisObjRef game = _visionaire->GetGame();
-	wxString handlersStr = game.GetStr(0x2F7);
+	wxString handlersStr = game.GetStr(kGameRegisteredEventHandlers);
 
 	wxStringTokenizer entries(handlersStr, L';');
 	while (entries.HasMoreTokens()) {
@@ -2522,7 +2523,7 @@ bool TGameControl::Load() {
 	// return value.
 	TVisObjRef game = _visionaire->GetGame();
 	s_stopTime.SetTime();
-	_timingValueSeconds = game.GetInt(0xF6) / 1000.0f;
+	_timingValueSeconds = game.GetInt(kGameScrollSpeed) / 1000.0f;
 	ClearTexts();
 
 	TVisObjRef game2 = _visionaire->GetGame();
@@ -2532,10 +2533,10 @@ bool TGameControl::Load() {
 	// GetCharacterPointer() itself implements (falling back to the current
 	// _currentCharacter on a miss or an empty link) - collapsed to a single
 	// call rather than reproducing the redundant inlined branch.
-	_currentCharacter = GetCharacterPointer(game2.GetLink(0x1D4));
+	_currentCharacter = GetCharacterPointer(game2.GetLink(kGameCurrentCharacter));
 
-	TVisObjRef sceneRef = game2.GetLink(0x1D5);
-	_dialog.SetDialog(game2.GetLink(0x1DC));
+	TVisObjRef sceneRef = game2.GetLink(kGameCurrentScene);
+	_dialog.SetDialog(game2.GetLink(kGameDialog));
 
 	// Confirmed (asm lines 476776-476908): rebuilds every text linked from
 	// field 0x18's list, sorting each into _currentText (the one matching
@@ -2543,11 +2544,11 @@ bool TGameControl::Load() {
 	// text (_activeTexts), or a scene-attached one (_sceneTexts, which also
 	// tries to reattach it to whatever managed object sits at its own field-
 	// 0x2AC target).
-	TVisObjRef currentTextTarget = game2.GetLink(0x1DD);
+	TVisObjRef currentTextTarget = game2.GetLink(kGameCurrentText);
 	TVList textTargets;
-	_visionaire->GetList(0x18, textTargets, false);
+	_visionaire->GetList(kPoint, textTargets, false);
 	for (TVisionaireObject *obj : textTargets) {
-		TVisObjRef textLink(obj->GetLink(0x270));
+		TVisObjRef textLink(obj->GetLink(kTextSavedObject));
 		if (textLink.IsEmpty())
 			continue;
 
@@ -2555,7 +2556,7 @@ bool TGameControl::Load() {
 		THText *newText = new THText(textLink, objRef);
 		newText->Load();
 
-		TVisObjRef sceneTarget = newText->GetTarget().GetLink(0x2AC);
+		TVisObjRef sceneTarget = newText->GetTarget().GetLink(kTextOwner);
 		if (sceneTarget.IsEmpty()) {
 			if (currentTextTarget == *obj)
 				_currentText = newText;
@@ -2607,30 +2608,30 @@ bool TGameControl::Load() {
 	// not confidently identified with any currently-modeled member; left
 	// unimplemented rather than guessed.
 
-	_ownedSceneControl.SetNextStartScrollPos(*game2.GetPoint(0x1D6));
+	_ownedSceneControl.SetNextStartScrollPos(*game2.GetPoint(kGameScrollPosition));
 	_ownedSceneControl.ShowScene(sceneRef, true, true);
 
-	if (game2.GetBool(0x1D8)) {
+	if (game2.GetBool(kGameScrollTo)) {
 		GetMainControl()->SetIsScrollable(false);
 	} else {
 		TGScene *scene = _ownedSceneControl.GetScene();
-		GetMainControl()->SetIsScrollable(scene->GetRef().GetBool(0xE8));
+		GetMainControl()->SetIsScrollable(scene->GetRef().GetBool(kSceneScrollOnEdges));
 	}
 
 	// Confirmed (asm lines 477042-477247): same "either branch performs the
 	// identical hash lookup" shape as _currentCharacter's own update above.
-	_previousCharacter = GetCharacterPointer(game2.GetLink(0x263));
+	_previousCharacter = GetCharacterPointer(game2.GetLink(kGameScrollCharacter));
 
 	// Confirmed (asm lines 477063-477077): re-fetches field 0x132, clears
 	// it, then sets it right back to the same value - presumably to force a
 	// change notification without actually changing it (ClearLink/SetLink
 	// are called with different bool flags: false then true).
-	TVisObjRef gameNameLink = game2.GetLink(0x132);
-	game2.ClearLink(0x132, false);
-	game2.SetLink(0x132, gameNameLink, true);
+	TVisObjRef gameNameLink = game2.GetLink(kGameStandardLanguage);
+	game2.ClearLink(kGameStandardLanguage, false);
+	game2.SetLink(kGameStandardLanguage, gameNameLink, true);
 
-	if (game2.GetBool(0x275))
-		StartEarthquake(game2.GetInt(0x276), game2.GetInt(0x277));
+	if (game2.GetBool(kGameQuake))
+		StartEarthquake(game2.GetInt(kGameQuakeForce), game2.GetInt(kGameQuakeSpeed));
 	else
 		StopEarthquake();
 
@@ -2646,7 +2647,7 @@ bool TGameControl::Load() {
 bool TGameControl::LoadGame(TMSavegame *savegame) {
 	// Confirmed (Deponia_Linux.asm lines 477405-478377, ~970 lines).
 	TVisObjRef game = _visionaire->GetGame();
-	wxString fileName = wxFileName(game.GetPath(0x268)).GetFullName();
+	wxString fileName = wxFileName(game.GetPath(kGameComposedFile)).GetFullName();
 
 	// Confirmed re-fetched from `savegame` up to 3 separate times in the
 	// original (once to check emptiness/compare, once more inside the

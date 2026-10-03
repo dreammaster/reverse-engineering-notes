@@ -5,6 +5,7 @@
 #include "TGItem.h"
 #include "datastruct/visionaireobject.h"
 #include "vsplayer/control/gameControl.h"
+#include "vstables/fieldIds.h"
 
 // TGameControl implements GetObjectManager(), but g_pGameControl is only
 // declared as TMasterControl* (AppGlobals.h) - same cast already
@@ -92,7 +93,7 @@ wxPoint TCursorControl::GetPositionNextToCursor() const {
 		if (TSprite *sprite = _currentAnimation->GetCurrentSprite()) {
 			float width = sprite->GetSizedWidth();
 			TVisObjRef dataObject = _currentAnimation->GetDataObject();
-			if (const wxPoint *pt = dataObject.GetPoint(0x16F))
+			if (const wxPoint *pt = dataObject.GetPoint(kAnimationCenter))
 				pos.x = static_cast<int>(static_cast<float>(pos.x) + (width - static_cast<float>(pt->x)));
 		}
 	}

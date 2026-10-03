@@ -5,7 +5,7 @@
 // number of classes fetch typed field values from one via GetBool/GetInt/
 // GetStr/GetLink/GetPoint/GetRect/GetPath, each keyed by an opaque integer
 // field id from Visionaire's data schema (e.g. TMasterControl::Draw calls
-// GetInt(0x313) to pick a render path - the id numbers are recovered
+// GetInt(kGameShaderExclude) to pick a render path - the id numbers are recovered
 // faithfully from the disassembly, but what each one *means* requires the
 // data-schema/property-table system, which hasn't been reversed yet).
 //
@@ -19,6 +19,7 @@
 
 #include "TCharHolder.h"
 #include "WxStub.h"
+#include "vstables/fieldIds.h"
 
 // Confirmed to have at least one value, 2, used at every SetValue() call
 // site seen so far (TGameControl::SetOnScrollDestination, Deponia_Linux.asm
