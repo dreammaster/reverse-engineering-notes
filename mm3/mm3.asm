@@ -46390,7 +46390,7 @@ Mon_x           db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_counter     db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monAnim    db    0                 ; word[170]: animation phase of each live map monster (random start, wraps at the picture's frame count from table DGROUP 1A6Ch)
                 db    0
                 db    0
                 db    0
@@ -46730,7 +46730,7 @@ Mon_counter     db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_dir         db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monPicSel  db    0                 ; word[170]: picture selector of the monster record (b & 3 -> MAP_MONSTER_PICS)
                 db    0
                 db    0
                 db    0
@@ -47070,7 +47070,7 @@ Mon_dir         db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_flags2      db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monField   db    0                 ; word[170]: cleared at load, purpose not known
                 db    0
                 db    0
                 db    0
@@ -47410,7 +47410,7 @@ Mon_flags2      db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_hpCur       db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monHP      db    0                 ; word[170]: current hit points (MONHP at load)
                 db    0
                 db    0
                 db    0
@@ -48090,7 +48090,7 @@ Mon_hpCur       db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_id          db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monId      db    0                 ; word[170]: monster id (index into the MON* tables)
                 db    0
                 db    0
                 db    0
@@ -48430,7 +48430,7 @@ Mon_id          db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_status      db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monState   db    0                 ; word[170]: monster state (0 at load; tested by renderIndoorView/doMonsterTurn)
                 db    0
                 db    0
                 db    0

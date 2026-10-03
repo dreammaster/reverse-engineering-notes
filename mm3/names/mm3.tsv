@@ -631,3 +631,9 @@
 36FAC	SpellAttack_reach	0 one monster, 1 one group, 2 all monsters
 37462	Maze_monsterCount	byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff
 373D0	Maze_objectCount	byte, number of objects (MAZEnn.BIN object records, max 80)
+33708	Maze_monAnim	word[170]: animation phase of each live map monster (random start, wraps at the picture's frame count from table DGROUP 1A6Ch)
+33F00	Maze_monState	word[170]: monster state (0 at load; tested by renderIndoorView/doMonsterTurn)
+339B0	Maze_monField	word[170]: cleared at load, purpose not known
+33B04	Maze_monHP	word[170]: current hit points (MONHP at load)
+33DAC	Maze_monId	word[170]: monster id (index into the MON* tables)
+3385C	Maze_monPicSel	word[170]: picture selector of the monster record (b & 3 -> MAP_MONSTER_PICS)

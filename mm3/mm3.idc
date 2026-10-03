@@ -17541,18 +17541,18 @@ static Bytes_3(void) {
 	set_name	(0X33460,	"Mon_y");
 	set_cmt	(0X335B4,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
 	set_name	(0X335B4,	"Mon_x");
-	set_cmt	(0X33708,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X33708,	"Mon_counter");
-	set_cmt	(0X3385C,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X3385C,	"Mon_dir");
-	set_cmt	(0X339B0,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X339B0,	"Mon_flags2");
-	set_cmt	(0X33B04,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X33B04,	"Mon_hpCur");
-	set_cmt	(0X33DAC,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X33DAC,	"Mon_id");
-	set_cmt	(0X33F00,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X33F00,	"Mon_status");
+	set_cmt	(0X33708,	"word[170]: animation phase of each live map monster (random start, wraps at the picture's frame count from table DGROUP 1A6Ch)",	0);
+	set_name	(0X33708,	"Maze_monAnim");
+	set_cmt	(0X3385C,	"word[170]: picture selector of the monster record (b & 3 -> MAP_MONSTER_PICS)",	0);
+	set_name	(0X3385C,	"Maze_monPicSel");
+	set_cmt	(0X339B0,	"word[170]: cleared at load, purpose not known",	0);
+	set_name	(0X339B0,	"Maze_monField");
+	set_cmt	(0X33B04,	"word[170]: current hit points (MONHP at load)",	0);
+	set_name	(0X33B04,	"Maze_monHP");
+	set_cmt	(0X33DAC,	"word[170]: monster id (index into the MON* tables)",	0);
+	set_name	(0X33DAC,	"Maze_monId");
+	set_cmt	(0X33F00,	"word[170]: monster state (0 at load; tested by renderIndoorView/doMonsterTurn)",	0);
+	set_name	(0X33F00,	"Maze_monState");
 	create_byte	(0X34054);
 	create_word	(0X34056);
 	create_word	(0X34058);
@@ -18213,6 +18213,11 @@ static Bytes_3(void) {
 	set_cmt	(0X37B31,	"jumptable 00037B2C default case, cases 9,10",	1);
 	create_insn	(0X37B31);
 	set_name	(0X37B31,	"def_37B2C");
+	set_cmt	(0X37B38,	"jumptable 00037B2C cases 8,11-15",	1);
+	create_insn	(x=0X37B38);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X37B40);
+	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18222,11 +18227,6 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
-	set_cmt	(0X37B38,	"jumptable 00037B2C cases 8,11-15",	1);
-	create_insn	(x=0X37B38);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X37B40);
-	op_stkvar	(x,	1);
 	set_cmt	(0X37B49,	"jump table for switch statement",	0);
 	create_word	(x=0X37B49);
 	make_array	(x,	0X8);
@@ -23028,6 +23028,14 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FF1C);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF20,	"buffer",	0);
+	create_insn	(x=0X3FF26);
+	op_hex		(x,	1);
+	create_insn	(x=0X3FF2A);
+	op_stkvar	(x,	1);
+	set_cmt	(0X3FF3A,	"format",	0);
+	create_insn	(x=0X3FF3B);
+	op_plain_offset	(x,	1,	0X286F0);
+	op_plain_offset	(x,	129,	0X286F0);
 }
 
 //------------------------------------------------------------------------
@@ -23037,14 +23045,6 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
-	create_insn	(x=0X3FF26);
-	op_hex		(x,	1);
-	create_insn	(x=0X3FF2A);
-	op_stkvar	(x,	1);
-	set_cmt	(0X3FF3A,	"format",	0);
-	create_insn	(x=0X3FF3B);
-	op_plain_offset	(x,	1,	0X286F0);
-	op_plain_offset	(x,	129,	0X286F0);
 	create_insn	(x=0X3FF3F);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF42,	"buffer",	0);
@@ -28663,15 +28663,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X47681);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4768E,	"format",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X47696,	"buffer",	0);
 	create_insn	(x=0X4769C);
 	op_hex		(x,	1);
@@ -28681,6 +28672,15 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X476BA);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X476C4);
 	op_hex		(x,	1);
 	create_insn	(x=0X476CA);
@@ -33707,6 +33707,14 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F838);
 	op_stkvar	(x,	0);
+	create_insn	(x=0X4F83B);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4F844);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4F852);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4F85C);
+	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -33716,14 +33724,6 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
-	create_insn	(x=0X4F83B);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4F844);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4F852);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4F85C);
-	op_stkvar	(x,	1);
 	create_insn	(x=0X4F865);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F86C);
