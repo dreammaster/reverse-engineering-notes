@@ -79,3 +79,24 @@ Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 
   `giveTake`), `sub_281D5` -> `41633` (character-can-act check, returns non-zero when the character is disabled),
   `sub_28149` -> `4033B` (format number into buffer, used for the "Gold" lines), `sub_47A33` = town menu input
   (mouse/keyboard command dispatcher returning command code; C9h+n selects party slot n, 1Bh = ESC).
+
+## Item prices (`sub_51E25`, reached through stub `sub_28690`; `itemsDialog` shows "Buy/Sell %s for %lu gold?")
+
+Arguments: (character, slot, mode, flags). Only items with id <= 49h, or the special ids 4Bh/52h, have a price (others 0).
+Base price: id 4Bh = 2000, 52h = 1000, else word table at DGROUP `0B16h` indexed by item id (1-based id; the first ~75
+entries are gold values: 1=50, 2=15, 3=100, 4=80 ...). Then, in order:
+
+1. metal (slotMetal at +B6h, 1-based): 1 -> /10, 2 -> /4, 3 -> /2, 4 -> x0.75, otherwise multiplied by the signed byte
+   table `0AB6h[metal]` (2, 3, 5, 8, 12 ... 100 ...).
+2. extras: element `0A4Ch[slotElement] * 100`, attribute `0ACDh[slotAttribute] * 100`, spell word table
+   `0DABh[slotSpell]` (100, 200 or 300 by spell tier).
+3. Mode 1/2 (buy/sell): `(base + extras) / D[flags & 7Fh]` with D at `5B15h`; if the item is cursed/broken (flags C0h) and
+   the 80h flag asks for a sale it is worth 0. The caller passes flags `80h | (merchant skill == 0)` for selling where
+   skills[8] (char +2Fh) is the Merchant skill, so a character without Merchant gets half price (divisor 2) and one with it
+   the full price. Mode 3-6 return the item's charge/bonus count (`flags & 3Fh`) rather than a price; mode 0 returns 0.
+
+In `itemsDialog`, an item may be sold only if (id < 46h and not cursed (flags & 40h)) or id is 4Bh or 52h
+(the same classes that have a price).
+
+Shops (`townSmithy`, `dungeon.m`) are `characterInfoInventory` pages opened in buy/sell mode (modes 1/2 of `itemsDialog`);
+the smithy itself only handles opening hours (`byte_32E68`), the character selector and 60 minutes of game time.
