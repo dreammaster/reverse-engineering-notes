@@ -100,3 +100,23 @@ In `itemsDialog`, an item may be sold only if (id < 46h and not cursed (flags & 
 
 Shops (`townSmithy`, `dungeon.m`) are `characterInfoInventory` pages opened in buy/sell mode (modes 1/2 of `itemsDialog`);
 the smithy itself only handles opening hours (`byte_32E68`), the character selector and 60 minutes of game time.
+
+## Monster damage and saving throws (`doCharDamage` 4A779, `charSavingThrow` 4A62C)
+
+`doCharDamage(char, slot, monster)`:
+
+1. The character wakes up (sleep counter at +11Bh cleared).
+2. damage = sum of `MONDMGN` rolls of d`MONDMGS`.
+3. If the monster's damage type (`MONDMGT`) is not 0 (physical): a general saving throw (type 0) halves the damage; then, for
+   types 2-5 (fire, electricity, cold, poison) the party resistance word (`Party_fireResist`, `elecResist`, `coldResist`,
+   `poisonResist`) is subtracted, and the damage is repeatedly halved for as long as saving throws of that type succeed (so a well
+   resisted character takes very little). Type 1 = magic, 6 = energy get only the saving-throw halving loop.
+4. `damage -= char.powerShield` (+103h), minimum 0.
+5. If damage remains and `MONSPEC != 0`, a general saving throw is rolled; on failure the special attack of `monsters.md` applies.
+   Then `subtractHitPoints(char, damage)`.
+
+`charSavingThrow(char, type)` returns 1 = saved: roll `rnd(1, T + 20 or 40)` and succeed when the roll <= T, where
+* type 0: `T = level + statBonus(2 * luck)` (range limit 20),
+* types 1-6: `T = itemScan(res) + byte pair of the character's resistance (temporary + permanent)`, range limit 40.
+  Pairs at char `+111h` (type 1, magic, itemScan 10h), `+107h` (2, fire, 0Bh), `+10Bh` (3, electricity, 0Ch), `+109h` (4, cold, 0Dh),
+  `+10Dh` (5, poison, 0Eh), `+10Fh` (6, energy, 0Fh); `unknown106` in `character.h` is therefore six resistance pairs plus one byte.
