@@ -1110,6 +1110,12 @@ legend word 4, if nonzero, 0xFF transparent); unexplored cells show tile 0x13. E
 module's 63-cell table (the party cell is entry 31). The facing arrow is category-9 picture 0/2/1/3 (north/south/east/west) at
 (272, 32).
 
+The **party panels** (`DrawPartyMemberStatusPanel`, `statuspanel.c`; layout from the `PartyPanels` region table, 8 entries per panel):
+face = category 7 picture `[+0x12]` (a dead/stoned/frozen member also gets an overlay picture), three 38 x 5 bars -- HP `[+0x52]` of
+`[+0x92]` (colour 0x59; 0 when dead), MP `[+0x54]` of `[+0x94]` (0xCA) and **carried load** `[+0x118]` of `[+0x56]` (0x86; the third
+bar's meaning was previously unidentified) -- plus an abilities icon, a 'T' when a level-up is pending (`[+0x1E]`), three affliction
+icons and a protection icon (category 9), and "DEAD" over a dead member's bars. Bar width is `3800 / (100 * max / cur)` (min 1).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 

@@ -39,7 +39,7 @@ typedef enum {
     PartyFieldName = 0x00,        /* NUL-terminated, <= 13 chars */
     PartyFieldClass = 0x0E,       /* u16 class id, see partyClassName */
     PartyFieldGender = 0x10,      /* u16: 1 or 2 (the two real female characters are 2) */
-    PartyFieldUnknown12 = 0x12,   /* u16, values 20-33 in real data; meaning not identified */
+    PartyFieldPanelFace = 0x12,   /* u16, values 20-33 in real data: the face picture (PICTURES.VGA category 7) on the main screen's party panel */
     PartyFieldPortrait = 0x14,    /* u16 portrait icon id */
     PartyFieldLevel = 0x16,       /* u16, capped at 90 by training items */
     PartyFieldExperience = 0x18,  /* Bcd4 */

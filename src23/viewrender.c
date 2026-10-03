@@ -279,6 +279,26 @@ void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, un
     }
 }
 
+void viewDrawPicture(const ViewRenderer *r, unsigned category, unsigned id, int x, int y, bool transparent, int8_t shade) {
+    Blit b;
+    if (!openBlit(&b, r, category, id, shade, transparent)) {
+        return;
+    }
+    const PictureCategory *c = pictureCategory(r->game, category);
+    for (unsigned py = 0; py < c->height; py++) {
+        for (unsigned px = 0; px < c->width; px++) {
+            long dest = (long)(y + (int)py) * ViewScreenWidth + x + (int)px;
+            if (x + (int)px < 0 || x + (int)px >= ViewScreenWidth) {
+                continue;
+            }
+            uint8_t pixel = b.picture[py * c->width + px];
+            if (!(transparent && pixel == 0xFF)) {
+                put(&b, dest, pixel);
+            }
+        }
+    }
+}
+
 /* ---- the scene ---- */
 
 static const uint16_t kEmptyLegend[6] = {0, 0, 0, 0, 0, 0};

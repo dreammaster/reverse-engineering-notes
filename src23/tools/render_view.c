@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../minimap.c ../viewport.c ../pictures.c ../pictures_stdio.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
@@ -13,6 +13,8 @@
 #include "dungeongrid.h"
 #include "lighting.h"
 #include "minimap.h"
+#include "newgame.h"
+#include "statuspanel.h"
 #include "pictures_stdio.h"
 #include "viewport.h"
 #include "viewrender.h"
@@ -131,6 +133,8 @@ int main(int argc, char **argv) {
     char path[512];
     static WorldMap map;
     snprintf(path, sizeof(path), "%s/WORLD.DAT", dir);
+    char path0[512];
+    memcpy(path0, path, sizeof(path0));
     if (!worldMapReadWorldDatFile(&map, game, path)) {
         fprintf(stderr, "cannot read %s\n", path);
         return 1;
@@ -183,6 +187,20 @@ int main(int argc, char **argv) {
         lightingViewportTable(scene.gradient, shades);
         minimapBuild(game, &grid, x, y, tiles);
         minimapDraw(&renderer, tiles, shades, facing);
+        /* the four ready-made heroes of the new-game template in the party panels */
+        FILE *wf = fopen(path0, "rb");
+        static uint8_t worldDat[5000000];
+        size_t worldSize = wf ? fread(worldDat, 1, sizeof(worldDat), wf) : 0;
+        if (wf) {
+            fclose(wf);
+        }
+        static SaveGame save;
+        saveGameInit(&save, game);
+        if (worldSize && saveGameNewGame(&save, game, worldDat, worldSize)) {
+            for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
+                statusPanelDraw(&renderer, panel, saveGamePartyRecord(&save, 5 + panel));
+            }
+        }
     }
     pictureFileClose(pictures);
     if (!writePng(argv[7], screen, palette, ViewScreenWidth, ViewScreenHeight, scale)) {

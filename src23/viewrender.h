@@ -75,6 +75,12 @@ uint8_t viewShadeColour(uint8_t colour, int8_t delta);
 void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade, bool transparent,
                     unsigned frame);
 
+/*
+ * DrawPicture (yendor2.asm:46133) for the plain modes: picture `id` of `category` copied with its top-left at (x, y); `transparent`
+ * skips colour 0xFF; `shade` is the ShiftPaletteShadeClamped delta (0 = none). Pixels outside the 320 x 200 screen are clipped.
+ */
+void viewDrawPicture(const ViewRenderer *r, unsigned category, unsigned id, int x, int y, bool transparent, int8_t shade);
+
 /* The ceiling, floor and every cell's patches, walls, features (monsters are not drawn). */
 void viewRender(const ViewRenderer *r, const ViewScene *scene);
 
