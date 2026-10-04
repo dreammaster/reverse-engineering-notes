@@ -642,3 +642,4 @@
 1B16B	playSoundEffect	play sound effect n (all the 'mov ax, NN; call sub_1B16B' sites): ids below 97h need FX enabled (byte_36FE8), 97h and above (speech/music-like) need byte_36FE9; forwards to the sound driver
 26978	soundDriverPlay	far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id
 4C711	Spell_17_Jump	Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
+4C8FE	Spell_23_WizardEye	sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC
