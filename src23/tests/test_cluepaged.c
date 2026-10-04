@@ -98,6 +98,23 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
         }
     }
     check("...and page 1 draws its first line in 0xD at (10, 23)", lines);
+    static ClueHelpText h;
+    check("...the help screen text loads (13 lines, the nag reminder)", clueHelpTextLoad(&h, &exe, game) && strstr(h.banner, "PRESS TAB") && strstr(h.lines[0], "F1") && strstr(h.nag, "REGISTER YOUR COPY"));
+    memset(screen, 0xEE, sizeof(screen));
+    clueHelpDraw(&r, &h, 0x8000 | 0x60);
+    clueNagDraw(&r, &h);
+    bool banner = false, nag = false;
+    for (int y = 24; y < 30; y++) {
+        for (int x = 21; x < 60; x++) {
+            banner = banner || screen[y * 320 + x] == 0x59;
+        }
+    }
+    for (int y = 16; y < 22; y++) {
+        for (int x = 35; x < 80; x++) {
+            nag = nag || screen[y * 320 + x] == 0x59;
+        }
+    }
+    check("...and draws the banner and the nag in 0x59", banner && nag);
     free(exeData);
     free(world);
 }

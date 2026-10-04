@@ -80,3 +80,43 @@ void cluePagedDraw(const ViewRenderer *r, const CluePagedText *t, const uint8_t 
     fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 129, 167, footer, 0x0D, 0, FontTransparent);
     clueNavBarDraw(r, navFlags);
 }
+
+typedef struct {
+    unsigned title, heading, banner, lines, nag;
+} HelpAddresses;
+
+static const HelpAddresses kHelp2 = {0x86F6, 0x889F, 0x8719, 0x8748, 0x8E63};
+static const HelpAddresses kHelp3 = {0x8A1D, 0x8BC0, 0x8A3F, 0x8A6E, 0x917A};
+
+bool clueHelpTextLoad(ClueHelpText *t, const ExeData *exe, GameKind game) {
+    const HelpAddresses *a = game == GameYendor2 ? &kHelp2 : &kHelp3;
+    if (!exeDataString(exe, a->title, t->title, sizeof(t->title)) || !exeDataString(exe, a->heading, t->heading, sizeof(t->heading)) ||
+        !exeDataString(exe, a->banner, t->banner, sizeof(t->banner)) || !exeDataString(exe, a->nag, t->nag, sizeof(t->nag))) {
+        return false;
+    }
+    unsigned address = a->lines;
+    for (unsigned i = 0; i < ClueHelpLines; i++) {
+        if (!exeDataString(exe, address, t->lines[i], sizeof(t->lines[i]))) {
+            return false;
+        }
+        address += (unsigned)strlen(t->lines[i]) + 1;
+    }
+    return true;
+}
+
+void clueHelpDraw(const ViewRenderer *r, const ClueHelpText *t, uint16_t navFlags) {
+    memset(r->screen, 0, (size_t)ViewScreenWidth * ViewScreenHeight);
+    viewDrawPicture(r, 0, r->game == GameYendor2 ? 13 : 6, 1, 1, false, 0);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 6, 4, t->title, 0x0D, 0, FontTransparent);
+    int headingX = r->game == GameYendor2 ? 249 : 313 - 6 * (int)strlen(t->heading);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, headingX, 4, t->heading, 0x0D, 0, FontTransparent);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 21, 24, t->banner, 0x59, 0, FontTransparent);
+    for (unsigned i = 0; i < ClueHelpLines; i++) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 16, 60 + 6 * (int)i, t->lines[i], r->game == GameYendor2 ? 0x08 : 0x0A, 0, FontTransparent);
+    }
+    clueNavBarDraw(r, (uint16_t)(navFlags & 0xFF9F));
+}
+
+void clueNagDraw(const ViewRenderer *r, const ClueHelpText *t) {
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 35, 16, t->nag, 0x59, 0, FontTransparent);
+}

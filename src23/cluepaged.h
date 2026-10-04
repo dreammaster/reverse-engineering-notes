@@ -43,4 +43,21 @@ CluePagedResult cluePagedNavigate(GameKind game, unsigned *page, uint8_t key, un
 
 void cluePagedDraw(const ViewRenderer *r, const CluePagedText *text, const uint8_t *pageData, unsigned page, uint16_t navFlags);
 
+/*
+ * The help screen (Tab in the clue book; ShowClueBookHelpScreen yendor2.asm:7696, Chapter 3 sub_18691) and the shareware reminder
+ * (ShowClueBookRegistrationNag :7595). Help: the usual backdrop with the book title ("DARK UNION : THE ON-LINE CLUE BOOK") at (6, 4), the heading
+ * HELP SCREEN at the top right (Chapter 2 x = 249), "** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **" at (21, 24) in 0x59, then 13 lines (the F1-F6
+ * and key descriptions, some blank) from (16, 60), 6 pixels apart, in 0x08 (Chapter 3: 0x0A); the navigation bar is drawn with the hint bits
+ * (0x60) cleared. The reminder plays sound 3 and writes "REGISTER YOUR COPY OF THE CLUE BOOK TODAY!" at (35, 16) in 0x59.
+ */
+enum { ClueHelpLines = 13 };
+
+typedef struct {
+    char title[40], heading[16], banner[48], lines[ClueHelpLines][48], nag[48];
+} ClueHelpText;
+
+bool clueHelpTextLoad(ClueHelpText *text, const ExeData *exe, GameKind game);
+void clueHelpDraw(const ViewRenderer *r, const ClueHelpText *text, uint16_t navFlags);
+void clueNagDraw(const ViewRenderer *r, const ClueHelpText *text);
+
 #endif
