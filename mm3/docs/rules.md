@@ -164,3 +164,9 @@ member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit 
   heart-broken counts up to 10 then turns into depression, and so on (the full per-condition table of this 550-line routine is not decoded).
 * At the end of `changeTime`, on maps that have a day/night cycle (`mapHasDayNight`: maps below 6, 24-28, 41-104 and above 106), `Town_closed` (`byte_32E68`) is recomputed:
   night is `Party_minutes < 300 or >= 1260` (before 05:00 or from 21:00); when the state changed the town is reloaded (`sub_28194` -> `sub_43034`) in its day or night form. Guild, smithy and training grounds refuse entry while it is night (checked in those routines; the temple and bank were not checked); the tavern has its own hours (open 18:00-05:00).
+
+## Days, years, bank interest, smithy restock (`addTime` 1531F)
+
+* The day counter runs 0-99; passing 100 wraps it and increments `Party_year` and **clears game flags 6Fh-75h (111-117)**, the seven once-a-year event flags.
+* On a day where `day mod 10 == 1` (or when more than 1440 minutes were added at once) and the day has changed, the Blacksmith's stock is rebuilt (`resetBlacksmithWares`) and the bank pays interest:
+  `GiveBankInterest` adds 1 % (value / 100, integer) of the banked gold and of the banked gems -- so every 10 days, not every day.
