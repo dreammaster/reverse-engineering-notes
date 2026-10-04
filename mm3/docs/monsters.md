@@ -166,3 +166,4 @@ lets monsters step towards it with `moveMonsterBy(index, dx, dy)`: the step is m
 monster's state is 0 (not asleep/held) and `byte_2884C` allows movement; it updates the occupancy grid and `Maze_monX/Y` and flags the monster as moved.
 Monsters with a ranged attack (`MONRANG` != 0) standing in the party's row or column (and not already shown in one of the three near rows) fire at it once (`monstersAttack` via the stub `sub_27F5E`, flag byte array at `EE1Eh`/`ED74h`).
 After the movement pass the near-row bytes (`byte_34B92/93/94`) are refreshed; combat starts from `drawView` when they are non-zero (`engine-loop.md`).
+Cell capacity sizes (`MONSTER_SIZE`, DGROUP `1B20h`): every monster has size 1 except the large ones with size 3 (so only one of them plus at most one small monster share a cell): 17 Giant Spider, 24 Mini Dragon, 25 Plasmoid, 67 Green Dragon, 68 Jouster, 74 Great Hydra, 76 Kudo Crab, 80 Dragon Lord, 87 Top Jouster.
