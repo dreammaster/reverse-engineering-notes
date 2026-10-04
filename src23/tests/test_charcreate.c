@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_charcreate test_charcreate.c ../charcreate.c ../font.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c && ./test_charcreate
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_charcreate test_charcreate.c ../charcreate.c ../font.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_charcreate
  *
  * Face ids 20-33 are what the real Chapter 2 heroes carry.
  */
@@ -66,6 +66,68 @@ int main(void) {
         }
     }
     check("the class screen: header, FIGHTER with a highlighted F, ALCHEMIST at the second row of the second group", header && hot && normal && second);
+
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.itemCount = 10;
+    memcpy(catalog.items + 1 * ItemRecordSize + ItemFieldName1, "LONG SWORD   ", 13);
+    memcpy(catalog.items + 1 * ItemRecordSize + ItemFieldName2, "+1           ", 13);
+    memcpy(catalog.items + 2 * ItemRecordSize + ItemFieldName1, "ROPE         ", 13);
+    catalog.items[1 * ItemRecordSize + ItemFieldIcon] = 5;
+    catalog.items[2 * ItemRecordSize + ItemFieldIcon] = 6;
+    char label[2 * ItemNameLineSize + 2];
+    charCreateItemLabel(catalog.items + 1 * ItemRecordSize, label);
+    check("an item's label joins both name fields with a space", strcmp(label, "LONG SWORD +1") == 0);
+    charCreateItemLabel(catalog.items + 2 * ItemRecordSize, label);
+    check("...and drops trailing spaces when the second is empty", strcmp(label, "ROPE") == 0);
+    memset(screen, 0xEE, sizeof(screen));
+    uint16_t ids[8] = {2, 3, 2, 0, 0, 0, 0, 3};
+    charCreateItemListDraw(&r, &catalog, ids, 0x20 | 0x01, false); /* row 3 and row 8 hidden */
+    bool header2 = false, label1 = false, labelHidden = false, nameHot = false, quitHot = false;
+    for (int y = 31; y < 37; y++) {
+        for (int x = 8; x < 40; x++) {
+            header2 = header2 || screen[y * 320 + x] == 0x8A;
+        }
+    }
+    for (int y = 47; y < 53; y++) {
+        for (int x = 25; x < 60; x++) {
+            label1 = label1 || screen[y * 320 + x] == 0xF;
+        }
+    }
+    for (int y = 74; y < 80; y++) {
+        for (int x = 25; x < 60; x++) {
+            labelHidden = labelHidden || screen[y * 320 + x] == 0xF;
+        }
+    }
+    for (int y = 176; y < 182; y++) {
+        for (int x = 8; x < 14; x++) {
+            nameHot = nameHot || screen[y * 320 + x] == 0x7B;
+        }
+    }
+    for (int y = 185; y < 191; y++) {
+        for (int x = 8; x < 14; x++) {
+            quitHot = quitHot || screen[y * 320 + x] == 0x7B;
+        }
+    }
+    check("the item pick: second header line, a label beside the first icon, nothing in a hidden row", header2 && label1 && !labelHidden);
+    check("icons: item 2's picture (5) at (8, 42), item 3's (6) at (8, 58), hidden rows empty", screen[42 * 320 + 8] == 5 && screen[58 * 320 + 8] == 6 && screen[26 * 320 + 8] != 5 &&
+                                                                                       screen[74 * 320 + 8] == 0xEE && screen[154 * 320 + 8] == 0xEE);
+    check("NAME CHARACTER and QUIT \"CREATE\" carry highlighted first letters", nameHot && quitHot);
+    memset(screen, 0xEE, sizeof(screen));
+    charCreateItemListDraw(&r, &catalog, ids, 0, true);
+    bool anyName = false;
+    for (int y = 176; y < 182; y++) {
+        for (int x = 8; x < 100; x++) {
+            anyName = anyName || screen[y * 320 + x] != 0xEE;
+        }
+    }
+    bool returnE = false;
+    for (int y = 185; y < 191; y++) {
+        for (int x = 14; x < 20; x++) {
+            returnE = returnE || screen[y * 320 + x] == 0x7B;
+        }
+    }
+    check("viewing an existing hero: no NAME CHARACTER, RETURN with its E highlighted", !anyName && returnE);
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

@@ -1,5 +1,6 @@
 #include "charcreate.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "font.h"
@@ -51,4 +52,52 @@ void charCreateClassPickDraw(const ViewRenderer *r) {
             }
         }
     }
+}
+
+static void drawHotkeyLabel(const ViewRenderer *r, int x, int y, const char *text, unsigned highlight) {
+    for (unsigned i = 0; text[i]; i++) {
+        x = fontDrawChar(r->game, 0, r->screen, ViewScreenWidth, x, y, (unsigned char)text[i], i == highlight ? 0x7B : 0xF, 0, FontTransparent);
+    }
+}
+
+void charCreateExitLabelDraw(const ViewRenderer *r, bool returning) {
+    if (returning) {
+        drawHotkeyLabel(r, 8, 185, "RETURN", 1);
+    } else {
+        drawHotkeyLabel(r, 8, 185, "QUIT \"CREATE\"", 0);
+    }
+}
+
+void charCreateItemLabel(const uint8_t *itemRecord, char out[2 * ItemNameLineSize + 2]) {
+    char first[ItemNameLineSize], second[ItemNameLineSize];
+    itemGetNameLine(itemRecord, 0, first);
+    itemGetNameLine(itemRecord, 1, second);
+    snprintf(out, 2 * ItemNameLineSize + 2, "%s %s", first, second);
+    size_t length = strlen(out);
+    while (length > 0 && out[length - 1] == ' ') {
+        out[--length] = 0;
+    }
+}
+
+void charCreateItemListDraw(const ViewRenderer *r, const ItemCatalog *catalog, const uint16_t itemIds[8], unsigned hiddenMask, bool returning) {
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 25, "TAKE UP TO FOUR", 0x8A, 0, FontTransparent);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 31, "ITEMS", 0x8A, 0, FontTransparent);
+    for (unsigned row = 0; row < 8; row++) {
+        if ((hiddenMask & (0x80u >> row)) || itemIds[row] == 0) {
+            continue;
+        }
+        const uint8_t *item = itemCatalogRecord(catalog, itemIds[row]);
+        if (!item) {
+            continue;
+        }
+        int y = 0x2A + 0x10 * (int)row;
+        viewDrawPicture(r, 8, itemGetU16(item, ItemFieldIcon), 8, y, true, 0);
+        char label[2 * ItemNameLineSize + 2];
+        charCreateItemLabel(item, label);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 0x19, y + 5, label, 0xF, 0, FontTransparent);
+    }
+    if (!returning) {
+        drawHotkeyLabel(r, 8, 176, "NAME CHARACTER", 0);
+    }
+    charCreateExitLabelDraw(r, returning);
 }

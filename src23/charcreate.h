@@ -1,9 +1,11 @@
 #ifndef YENDOR23_CHARCREATE_H
 #define YENDOR23_CHARCREATE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "game.h"
+#include "item.h"
 #include "viewrender.h"
 
 /*
@@ -31,5 +33,21 @@ void charCreatePortraitGridDraw(const ViewRenderer *r, unsigned gender);
  * each (F M R O A P G D K) is drawn in colour 0x7B, the rest in 0xF. Class ids 1-9 (party.h partyClassName).
  */
 void charCreateClassPickDraw(const ViewRenderer *r);
+
+/*
+ * The bottom-left exit label (DrawQuitOrReturnLabel, yendor2.asm:37632): QUIT "CREATE" with the Q highlighted while creating a hero, or RETURN
+ * (the E highlighted) when the same screens show an existing character. Drawn at (8, 185), the highlighted letter in 0x7B, the rest 0xF.
+ * The class and item screens both end with it.
+ */
+void charCreateExitLabelDraw(const ViewRenderer *r, bool returning);
+
+/*
+ * The item pick (ShowCharacterInventory, yendor2.asm:36150; "TAKE UP TO FOUR" / "ITEMS" in 0x8A at (8, 25) and (8, 31)): up to eight items
+ * in rows 16 pixels apart from y = 42, each the item's category 8 icon at (8, y) and its label at (25, y + 5) in colour 0xF. An item id of 0 or a
+ * set bit in `hiddenMask` (0x80 for the first row down to 0x01 for the eighth: items already taken) leaves a row empty. Unless
+ * `returning` (viewing an existing character) "NAME CHARACTER" is written at (8, 176) with its N highlighted, then the exit label.
+ */
+void charCreateItemLabel(const uint8_t *itemRecord, char out[2 * ItemNameLineSize + 2]);
+void charCreateItemListDraw(const ViewRenderer *r, const ItemCatalog *catalog, const uint16_t itemIds[8], unsigned hiddenMask, bool returning);
 
 #endif

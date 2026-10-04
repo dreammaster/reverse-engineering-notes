@@ -237,13 +237,19 @@ int main(int argc, char **argv) {
                 }
                 detailSheetDraw(&renderer, saveGamePartyRecord(&save, 5 + hero), 6 + hero, droles);
             }
-            if (getenv("RENDER_PICK")) { /* RENDER_PICK=class|portrait: the creation steps over the picture-3 backdrop */
+            if (getenv("RENDER_PICK")) { /* RENDER_PICK=class|portrait|items: the creation steps over the picture-3 backdrop */
                 const uint8_t *backdrop = pictureFileGet(pictures, 0, 3);
                 for (unsigned row = 0; backdrop && row < 198; row++) {
                     memcpy(&screen[(row + 1) * ViewScreenWidth + 1], &backdrop[row * 318], 318);
                 }
                 if (getenv("RENDER_PICK")[0] == 'c') {
                     charCreateClassPickDraw(&renderer);
+                } else if (getenv("RENDER_PICK")[0] == 'i') { /* the first eight catalog items as the pick list */
+                    static ItemCatalog pickItems;
+                    uint16_t pickIds[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+                    if (itemCatalogParseWorldDat(&pickItems, game, worldDat, worldSize)) {
+                        charCreateItemListDraw(&renderer, &pickItems, pickIds, 0, false);
+                    }
                 } else {
                     charCreatePortraitGridDraw(&renderer, 2);
                 }

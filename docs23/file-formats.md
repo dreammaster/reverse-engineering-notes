@@ -1140,10 +1140,14 @@ average.
 The **shop item grid** (`DrawShopItemSlotGrid`, `shopgrid.c`): the stock of the shop is eight (item id, extra) slots shown as category 8 icons in the
 `CatalogSlots` boxes (two rows of four at x = 241 + 18k, y = 160 / 179) over a colour-4 background, or the word EMPTY at (259, 179).
 
-The **character-creation steps** (`charcreate.c`; `RENDER_PICK=class|portrait`): the functions earlier named `ShowCharacterSkills` and
+The **character-creation steps** (`charcreate.c`; `RENDER_PICK=class|portrait|items`): the functions earlier named `ShowCharacterSkills` and
 `ShowCharacterEquipment` are the class and portrait pickers (over the character-sheet backdrop, category 0 / 3). Classes 1-9 in three groups with
 hotkeys F M R O A P G D K; nine portraits per gender as a 3 x 3 grid of category 7 faces, portrait k giving body `[+0x14] = 2(k-1)` (+1 female)
-and face `[+0x12] = [+0x14] + 0x13`.
+and face `[+0x12] = [+0x14] + 0x13`. The item pick (`ShowCharacterInventory`, also misnamed) lists up to eight items under "TAKE UP TO FOUR /
+ITEMS" (0x8A at (8, 25) and (8, 31)): category 8 icon at (8, 42 + 16 row), label (name field 1 + space + name field 2, trailing spaces trimmed) at
+(25, y + 5); "NAME CHARACTER" (N highlighted) at (8, 176) unless the screen is reused for viewing a hero, and `DrawQuitOrReturnLabel` at (8, 185):
+`QUIT "CREATE"` (Q highlighted) or `RETURN` (E highlighted). Highlight colour 0x7B, text 0xF. String addresses: Chapter 2 DS:0x7A28 headers,
+0x79E5 / 0x7A84 exit labels; Chapter 3 0x7D5A, 0x7D17 / 0x7DB6 (`dump_creation_item_strings.py`).
 
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
