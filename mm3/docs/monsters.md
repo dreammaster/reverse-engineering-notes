@@ -137,3 +137,6 @@ by party slot, set by `block`, `4B422`).  Non-physical attacks and attacks on sl
   `monstersRecover` (`15235`) gives every monster with a non-zero state (put there by Sleep/Immobilize/Paralyze/... spells; `Maze_monState`) a `monsterSavingThrow` to shake it off;
   then `moveMonsters`, `scanMonstersAhead`, `changeTime(1)` (one minute per round) and `drawView` / `checkPartyDead`.
 * Victory: `giveTreasure` (and experience via `giveExperience`), then `updateAutomap`.
+
+`monsterSavingThrow(n)` (`4B3AB`): succeeds when `rnd(1, n + 50) <= n`; `monstersRecover` passes the **monster id** as `n`, so higher-numbered (later, tougher) monsters shake off Sleep/Paralyse etc. more easily (as the code stands).
+`run` (`4B3D1`): rolls d100 for the acting character against page header byte 07h (run chance, e.g. 32h = 50%); on success that single character is removed from the combat party (`Combat_partySize--`, `sortCombatParty`) and the round continues -- there is no whole-party escape roll.
