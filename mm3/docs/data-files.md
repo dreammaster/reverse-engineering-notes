@@ -210,3 +210,13 @@ When the party steps onto a cell whose terrain byte is non-zero (the byte read t
 `cell + 1`) the value 1-11 selects which skill is needed, tested with `checkSkill` (see `rules.md`): terrain 1, 6, 8, 11 need skill 9 (Mountaineer),
 2, 3, 5, 7, 10 need skill 11 (Path Finder), 4 and 9 are not enterable by skill at all.  A separate test on the cell ahead (a wall-nibble value, tested
 non-zero) needs skill 14 (Swimmer, all members) -- `Party_walkOnWater` bypasses it.  Details of the index computation were not fully traced.
+
+### Event value modes (`ifProc` 3D32E / `giveTake` 3C282 / `setValue` 3CFAD jump tables; `tools/mm3_events.py` knows all of them)
+
+The `mode` byte of every `(mode, value)` pair selects what is read, tested or changed.  Decoded from the three jump tables (same case numbers in all three):
+0 none (unused pair); 3 sex, 4 race, 5 class, 6 alignment; 8 hit points, 9 spell points, 10 AC, 11 level bonus (+24h), 12 age (+26h), 13 skill, 15 award, 16 experience, 17 poison resistance, 18 condition, 19 spell, 20 game flag, 21 item, 25 minutes, 34 gold, 35 gems;
+37-43 temporary attribute bonus (second byte of each stat pair: +15h might, +17h, +19h, +1Bh, +1Dh, +1Fh, +21h luck); 44 yes/no prompt; 45-51 base attributes (first byte of each pair: +14h ... +20h); 52-57 resistance base (+107h fire, +10Bh electricity, +109h cold, +10Dh poison, +10Fh energy, +111h magic -- the `charSavingThrow` pairs)
+and 58-63 the matching second bytes; 64 level; 65 food; 69 levitate, 70 light, 71-73 party fire/electricity/cold resistance, 76 day, 77 temporary AC (+22h), 79 wizard eye, 84 facing, 85 year, 93 day, 94 walk on water; 95, 96, 97, 98 the counters at +4Bh, +40h, +42h, +41h
+(awards 18, 7, 9, 8: skulls given to Kranion and the orbs given to Zealot, Tumult, Malefactor); 99 party skill check (`checkSkill`).
+In `giveTake` mode 66 = give a random item: for the first character (from the index in the pair) with a free last backpack slot (+EDh == 0) `generateItem(level = value)` fills it (used as `GiveMulti m66=1,1,1` = three level-1 items); mode 67 opens a selection window (`sub_3BF4B`);
+modes 23, 74, 78, 81, 82 (counters/flags used by a few special maps) were not identified.

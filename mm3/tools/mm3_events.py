@@ -21,10 +21,15 @@ OPS = {
 WIDE4 = {16, 34}
 WIDE2 = {25, 35}
 
-MODES = {3: "sex", 4: "race", 5: "class", 8: "hp", 9: "sp", 10: "ac", 11: "levelBonus", 12: "age", 13: "skill", 15: "award",
-         16: "exp", 18: "condition", 19: "spell", 20: "gameFlag", 21: "item", 25: "minutes", 34: "gold", 35: "gems",
-         37: "might+", 38: "intellect+", 39: "personality+", 40: "endurance+", 41: "speed+", 42: "accuracy+", 43: "luck+",
-         44: "yesno", 64: "level", 65: "food", 76: "day", 85: "year"}
+MODES = {0: "none", 3: "sex", 4: "race", 5: "class", 6: "alignment", 8: "hp", 9: "sp", 10: "ac", 11: "levelBonus", 12: "age", 13: "skill", 15: "award",
+         16: "exp", 17: "poisonResist", 18: "condition", 19: "spell", 20: "gameFlag", 21: "item", 23: "m23", 25: "minutes", 34: "gold", 35: "gems",
+         37: "might+", 38: "intellect+", 39: "personality+", 40: "endurance+", 41: "speed+", 42: "accuracy+", 43: "luck+", 44: "yesno",
+         45: "might", 46: "intellect", 47: "personality", 48: "endurance", 49: "speed", 50: "accuracy", 51: "luck",
+         52: "fire", 53: "elec", 54: "cold", 55: "poison", 56: "energy", 57: "magic",
+         58: "fire+", 59: "elec+", 60: "cold+", 61: "poison+", 62: "energy+", 63: "magic+",
+         64: "level", 65: "food", 66: "randomItem", 67: "m67", 69: "levitate", 70: "light", 71: "fireResist", 72: "elecResist", 73: "coldResist",
+         74: "m74", 76: "day", 77: "acTemp", 78: "m78", 79: "wizardEye", 81: "m81", 82: "m82", 84: "facing", 85: "year", 93: "day2", 94: "walkOnWater",
+         95: "award18count", 96: "award7count", 97: "award9count", 98: "award8count", 99: "skillCheck"}
 
 
 def take_pair(b, i):
