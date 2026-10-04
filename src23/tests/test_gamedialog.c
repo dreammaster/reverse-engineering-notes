@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gamedialog test_gamedialog.c ../gamedialog.c ../font.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_gamedialog
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gamedialog test_gamedialog.c ../gamedialog.c ../font.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c ../savegame.c && ./test_gamedialog
  */
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +17,17 @@ static void check(const char *label, bool ok) {
         g_failureCount++;
         printf("FAIL %s\n", label);
     }
+}
+
+static bool anyColour(const uint8_t *screen, int x0, int y0, int x1, int y1, uint8_t colour) {
+    for (int y = y0; y < y1; y++) {
+        for (int x = x0; x < x1; x++) {
+            if (screen[y * 320 + x] == colour) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 static const uint8_t *flat(void *ctx, unsigned category, unsigned id) {
@@ -93,6 +104,17 @@ int main(void) {
     check("a disabled SAVE is overwritten in the dull colour 6, and the ANIMATION caption appears", dim && caption);
     check("...with no ticks in the check boxes", screen[106 * 320 + 97] != 0x40 + 72 + 0x12 && screen[106 * 320 + 170] != 0x40 + 72 + 0x12);
 
+    SaveSlotEntry slots[SaveSlotCount];
+    memset(slots, 0, sizeof(slots));
+    strcpy(slots[0].name, "FIRST");
+    slots[0].used = true;
+    strcpy(slots[2].name, "THIRD");
+    slots[2].used = slots[2].highlighted = true;
+    memset(screen, 0xEE, sizeof(screen));
+    gameDialogSlotsDraw(&r, slots);
+    check("slot names are written at (row x + 12, row y + 1): 0x0F normally, 0x7B highlighted, nothing for an empty slot",
+          anyColour(screen, 51, 28, 90, 34, 0x0F) && anyColour(screen, 51, 50, 90, 56, 0x7B) && !anyColour(screen, 51, 39, 90, 45, 0x0F) && screen[28 * 320 + 55] != 0xEE);
+    check("slot rows map to regions 1-6", gameDialogSlotForRegion(1) == 0 && gameDialogSlotForRegion(6) == 5 && gameDialogSlotForRegion(7) == -1 && gameDialogSlotForRegion(0) == -1);
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

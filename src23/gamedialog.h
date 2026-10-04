@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "game.h"
+#include "savegame.h"
 #include "viewrender.h"
 
 /*
@@ -75,5 +76,24 @@ const char *gameDialogAnimationSpeedName(unsigned speed);
 
 /* The dialog: panel picture, dimmed labels of the options that are not enabled, check boxes and the animation speed. */
 void gameDialogDraw(const ViewRenderer *r, unsigned uiFlags, unsigned driverFlags, unsigned animationSpeed);
+
+/*
+ * The six save slots shown by SAVE and LOAD (the dialog's regions 1-6 are their rows; the table at DS:0x6CBE has 27 bytes per slot: the slot's
+ * file digit, a flag byte -- 0x80 the slot file exists, 0x40 it is the highlighted one -- and the 25 character name read from the SAVGAMEn file,
+ * findSavegame yendor2.asm:3401). Each name is written opaque on colour 4 at (row x + 12, row y + 1), in 0x0F or in 0x7B for the highlighted
+ * slot. Choosing an occupied slot to save asks for confirmation (ShowConfirmPrompt 3); an empty one asks for a name first (24 characters, then
+ * prompt 2); LOAD works only on occupied slots (prompt 3 again).
+ */
+enum { SaveSlotNameSize = 26 }; /* SaveSlotCount (6) is in savegame.h */
+
+typedef struct {
+    char name[SaveSlotNameSize];
+    bool used, highlighted;
+} SaveSlotEntry;
+
+void gameDialogSlotsDraw(const ViewRenderer *r, const SaveSlotEntry slots[SaveSlotCount]);
+
+/* The slot (0-5) whose row contains the click (UiRegionsGameDialog results 1-6), or -1. */
+int gameDialogSlotForRegion(unsigned region);
 
 #endif

@@ -1,6 +1,7 @@
 #include "gamedialog.h"
 
 #include "font.h"
+#include "uiregions.h"
 
 GameDialogOption gameDialogKeyOption(uint8_t key) {
     switch (key) {
@@ -101,4 +102,19 @@ void gameDialogDraw(const ViewRenderer *r, unsigned uiFlags, unsigned driverFlag
     if (driverFlags & DriverMusicOn) {
         viewDrawPicture(r, 9, 0x12, 97, 106, false, 0);
     }
+}
+
+void gameDialogSlotsDraw(const ViewRenderer *r, const SaveSlotEntry slots[SaveSlotCount]) {
+    unsigned count;
+    const uint16_t(*regions)[5] = uiRegionEntries(r->game, UiRegionsGameDialog, &count);
+    for (unsigned i = 0; i < SaveSlotCount && i < count; i++) {
+        if (!slots[i].used) {
+            continue;
+        }
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, regions[i][0] + 12, regions[i][2] + 1, slots[i].name, slots[i].highlighted ? 0x7B : 0x0F, 4, FontOpaque);
+    }
+}
+
+int gameDialogSlotForRegion(unsigned region) {
+    return region >= 1 && region <= SaveSlotCount ? (int)region - 1 : -1;
 }
