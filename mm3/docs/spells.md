@@ -399,3 +399,5 @@ Lloyd's Beacon (byte 15h, `lloyds.icn`) lets the caster set the beacon or return
 
 Item spells: Recharge Item, Duplication and Enchant Item pay via `sub_4C027`, then open the target's inventory page with `characterInfoInventory(char, mode)` using modes 4, 5 and 6 respectively (the same page the shops open with modes 1/2; the item action itself lives in `itemsDialog`, whose price routine returns the charge count for modes 3-6).
 Half for Me: the target (not the caster, not dead/stone/eradicated) is healed to full (`healCharacterEffect(max HP)`) and the caster takes `(max HP - current HP) / 2` damage of the target's deficit (`subtractHitPoints`).
+
+Identify Monster (`4CxxxE`, 180 lines of UI) opens a window with the monster ahead's armour class (`Mon_ac`), attacks per turn (`Mon_numa`) and special attack (`Mon_spec`), plus its other stats; Detect Monster (250 lines) draws the nearby monsters on the local map. Both refuse (`showErrorMessage`) when no monster is in range.
