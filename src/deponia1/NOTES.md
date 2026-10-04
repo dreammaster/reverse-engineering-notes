@@ -1152,7 +1152,7 @@ it:
   comment couldn't place them among its four regular categories.
 
 The assembled string is written back via `TVisObjRef::SetValue(0x2F7, ...,
-TSendEventEnum::kSendEvent)` - the same field `LoadEventHandlers` reads.
+TSendEventEnum::kNoEvent)` - the same field `LoadEventHandlers` reads.
 
 ## TGameControl batch 35: implement LoadGame(TMSavegame*)
 
@@ -2765,6 +2765,29 @@ answering with a freshly emptied shared dummy.
   `TVisionaireObject` only have the few accessors this needs so far.
 - `baselib/xmlCommon.h/.cpp`: the attribute-text converters (`ConvertToInt/
   Float/Bool/String/FileName`) plus `dtol` and `normalizepath`.
+
+## TDataGroup (datastruct/datagrp.h/.cpp)
+
+Confirmed (asm 600389-607108, all 41 methods). One record's field storage: a
+persistent block and a temporary block laid out by the TTypeGroup, name,
+24-bit last-modified stamp, flags (dirty/temporary/order-contains-position),
+event handlers, owner object. Links are kept in step with the visionaire's link
+tables (AddLink/RemoveLink); removing a parent link removes the child object.
+
+- `TSendEventEnum` was misnamed: 0 stores unconditionally and notifies, 1
+  stores if different and notifies, 2 stores if different and does *not*
+  notify. Every call site passes 2, now spelled `kNoEvent`.
+- `TEventHandlerInterface::OnEvent(TEventEnum, int, TVisionaireObject *)` (the
+  single pure virtual, confirmed via THObject's thunk) and `TDataCompareInfo`
+  are new headers.
+- `SetValue` mirrors ValueInt (0x148) and ValueFloat (0x325).
+- `ForEachCall(kCompare)` and `TData::Compare` use the sane equal/different
+  sense; the asm inverts string comparisons (see data.h).
+- `ClearLinks` would loop forever in the original on a parent link with an
+  empty id; here it is dropped.
+- TVisionaire/TVisionaireObject gained stub accessors (SetDirty, GetMappedId,
+  AddLink, RemoveObjectByParent, id/order setters, cmpOrder) to be replaced by
+  the real implementations.
 
 ## Reformatted to ScummVM's code conventions
 

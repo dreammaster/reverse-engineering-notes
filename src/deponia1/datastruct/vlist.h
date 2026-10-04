@@ -57,6 +57,9 @@ public:
 	// append to items - left as a no-op rather than fabricating a pointer.
 	void push_back(const TVisObjRef &/*ref*/) {
 	}
+	void push_back(TVisionaireObject *object) {
+		items.push_back(object);
+	}
 
 	std::vector<TVisionaireObject *> items;
 };

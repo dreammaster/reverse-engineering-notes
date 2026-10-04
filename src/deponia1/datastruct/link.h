@@ -33,6 +33,10 @@ public:
 	const TId &GetId() const {
 		return _id;
 	}
+	/** Re-points the link at another object (the loader's id remapping). */
+	void SetId(const TId &id) {
+		_id = id;
+	}
 	int GetField() const {
 		return _field;
 	}

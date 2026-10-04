@@ -476,7 +476,7 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	if (objEmpty && !EngineUpdatePaused && handled) {
 		if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 			wxPoint relPos = scene->GetRelativePoint(clickPos);
-			_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
+			_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kNoEvent);
 		}
 	}
 
@@ -490,7 +490,7 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 		return;
 	if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 		wxPoint relPos = scene->GetRelativePoint(clickPos);
-		_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
+		_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kNoEvent);
 	}
 }
 
@@ -798,7 +798,7 @@ void TGameControl::SaveEventHandlers() {
 	result += TGText::GetEventHandlerTextStopped();
 
 	TVisObjRef game = _visionaire->GetGame();
-	game.SetValue(kGameRegisteredEventHandlers, result, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameRegisteredEventHandlers, result, TSendEventEnum::kNoEvent);
 }
 
 void TGameControl::ExecuteStartingAction() {
@@ -932,24 +932,24 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 	// skip the left-scroll check below it).
 	if (static_cast<float>(worktopWidth) > visibleSize.width + scrollPos.x) {
 		if (static_cast<float>(charRect.GetRight() + offsetX) - scrollPos.x > visibleSize.width)
-			game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kNoEvent);
 	}
 	if (scrollPos.x > 0.0f) {
 		if (static_cast<float>(charRect.GetLeft() - offsetX) - scrollPos.x < 0.0f)
-			game.SetValue(kGameScrollDirectionHorizontal, 1, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionHorizontal, 1, TSendEventEnum::kNoEvent);
 	}
 
 	// Vertical: scroll-up returns immediately on a match, so scroll-down is
 	// only ever checked when scroll-up didn't fire.
 	if (scrollPos.y > 0.0f) {
 		if (static_cast<float>(charRect.GetTop() - offsetY) - scrollPos.y < 0.0f) {
-			game.SetValue(kGameScrollDirectionVertical, 3, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionVertical, 3, TSendEventEnum::kNoEvent);
 			return;
 		}
 	}
 	if (static_cast<float>(worktopHeight) > visibleSize.height + scrollPos.y) {
 		if (static_cast<float>(charRect.GetBottom() + offsetY) - scrollPos.y > visibleSize.height)
-			game.SetValue(kGameScrollDirectionVertical, 4, TSendEventEnum::kSendEvent);
+			game.SetValue(kGameScrollDirectionVertical, 4, TSendEventEnum::kNoEvent);
 	}
 }
 
@@ -1026,7 +1026,7 @@ void TGameControl::MoveScene() {
 		} else {
 			xspeed = 0.0f;
 			if (horizState != 0 && _previousCharacter->IsWalking())
-				game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kSendEvent);
+				game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kNoEvent);
 		}
 	}
 
@@ -1044,11 +1044,11 @@ void TGameControl::MoveScene() {
 		} else {
 			yspeed = 0.0f;
 			if ((vertState == 3 || vertState == 4) && _previousCharacter->IsWalking())
-				game.SetValue(kGameScrollDirectionVertical, vertState, TSendEventEnum::kSendEvent);
+				game.SetValue(kGameScrollDirectionVertical, vertState, TSendEventEnum::kNoEvent);
 		}
 	}
 
-	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kNoEvent);
 	scrollTimer.SetTime();
 }
 
@@ -1079,9 +1079,9 @@ void TGameControl::CenterScene() {
 		scene->AdjustWindowVertical(static_cast<float>(verticalAdjust));
 	}
 
-	game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kSendEvent);
-	game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kSendEvent);
-	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kNoEvent);
 }
 
 void TGameControl::SetOnScrollDestination() {
@@ -1097,12 +1097,12 @@ void TGameControl::SetOnScrollDestination() {
 	scene->AdjustWindowHorizontal(static_cast<float>(game.GetPoint(kGameScrollToPoint)->x));
 	scene->AdjustWindowVertical(static_cast<float>(game.GetPoint(kGameScrollToPoint)->y));
 
-	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kNoEvent);
 	if (game.GetBool(kGameScrollCenterCharacter))
 		CenterScene();
 
 	TVisObjRef game2 = _visionaire->GetGame();
-	game2.SetValue(kGameScrollTo, false, TSendEventEnum::kSendEvent);
+	game2.SetValue(kGameScrollTo, false, TSendEventEnum::kNoEvent);
 }
 
 void TGameControl::HandleCharacters() {
@@ -1429,13 +1429,13 @@ void TGameControl::Save() {
 
 	TVisObjRef sceneLink = _currentCharacter->GetRef().GetLink(kCharacterScene);
 	wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
-	game.SetValue(kGameSaveGameName, saveName, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameSaveGameName, saveName, TSendEventEnum::kNoEvent);
 
 	TVisObjRef lastScene;
 	wxPoint lastPos{};
 	_ownedSceneControl.GetLastPlayableSceneParams(lastScene, lastPos);
 	game.SetLink(kGameCurrentScene, lastScene, false);
-	game.SetValue(kGameScrollPosition, lastPos, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameScrollPosition, lastPos, TSendEventEnum::kNoEvent);
 	game.SetLink(kGameDialog, _dialog.GetTarget(), false);
 
 	if (_currentText != nullptr)
@@ -1798,7 +1798,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 			}
 
 			wxPoint pos{x, y};
-			interface->GetRef().SetValue(kInterfacePosition, pos, TSendEventEnum::kSendEvent);
+			interface->GetRef().SetValue(kInterfacePosition, pos, TSendEventEnum::kNoEvent);
 			interface->SetOrigin(x, y);
 
 			int worktopHeight = interface->GetWorktopHeight();
@@ -1820,7 +1820,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 
 	TVisObjRef game = _visionaire->GetGame();
 	game.SetValue(kGameScrollPosition, wxPoint{static_cast<int>(scrollPos.x), static_cast<int>(scrollPos.y)},
-	              TSendEventEnum::kSendEvent);
+	              TSendEventEnum::kNoEvent);
 }
 
 void TGameControl::SetInterfaces() {
@@ -2073,11 +2073,11 @@ bool TGameControl::Init() {
 	_ownedSceneControl.Set(startScene);
 
 	_visionaire->GetGame().SetLink(kGameCurrentScene, startScene, false);
-	_visionaire->GetGame().SetValue(kGameScrollCenterCharacter, true, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(kGameScrollTo, false, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(kGameScrollPosition, wxPoint{}, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kSendEvent);
-	_visionaire->GetGame().SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kSendEvent);
+	_visionaire->GetGame().SetValue(kGameScrollCenterCharacter, true, TSendEventEnum::kNoEvent);
+	_visionaire->GetGame().SetValue(kGameScrollTo, false, TSendEventEnum::kNoEvent);
+	_visionaire->GetGame().SetValue(kGameScrollPosition, wxPoint{}, TSendEventEnum::kNoEvent);
+	_visionaire->GetGame().SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kNoEvent);
+	_visionaire->GetGame().SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kNoEvent);
 
 	_sceneControl = &_ownedSceneControl;
 	_currentCharacter = nullptr;

@@ -28,3 +28,12 @@ const std::uint8_t *TVisionaireObject::GetId() const {
 wxString TVisionaireObject::GetStr(int /*fieldId*/) const {
 	return wxString();
 }
+
+TCharHolder &TVisionaireObject::GetNameNewObject() {
+	static TCharHolder name;
+	return name;
+}
+
+bool cmpOrder(const TVisionaireObject *a, const TVisionaireObject *b) {
+	return a->GetOrder24() < b->GetOrder24();
+}

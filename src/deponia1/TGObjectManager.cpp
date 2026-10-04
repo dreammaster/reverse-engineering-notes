@@ -22,7 +22,7 @@ void TGObjectManager::ResetEventInfo() {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	game.ClearLink(kGameUsedItem, true);
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
 }
 
 void TGObjectManager::ResetCurrentObject() {
@@ -38,7 +38,7 @@ void TGObjectManager::RemoveItem(const TVisObjRef &item) {
 	if (!game.GetBool(kGameUsedItemPicked))
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
 }
 
 void TGObjectManager::RemoveItem(bool keepIfNotHeld) {
@@ -50,13 +50,13 @@ void TGObjectManager::RemoveItem(bool keepIfNotHeld) {
 	if (!held)
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
 }
 
 void TGObjectManager::SetItem(const TVisObjRef &item, bool held) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	game.SetLink(kGameUsedItem, item, true);
-	game.SetValue(kGameUsedItemPicked, held && !item.IsEmpty(), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameUsedItemPicked, held && !item.IsEmpty(), TSendEventEnum::kNoEvent);
 	if (held)
 		g_pGameControl->GetCursorControl()->SetMoveObject(item);
 	else
@@ -110,8 +110,8 @@ void TGObjectManager::SaveEventInfo(TMouseEventEnum event) {
 	TVisObjRef gameSystemGame = gameControl()->GetGameSystem()->GetGame();
 	game.SetLink(kGameDestinationCommand, gameSystemGame.GetLink(kGameActiveCommand), true);
 	game.SetLink(kGameDestinationItem, game.GetLink(kGameUsedItem), true);
-	game.SetValue(kGameDestinationItemPicked, game.GetBool(kGameUsedItemPicked), TSendEventEnum::kSendEvent);
-	game.SetValue(kGameDestinationEvent, static_cast<int>(event), TSendEventEnum::kSendEvent);
+	game.SetValue(kGameDestinationItemPicked, game.GetBool(kGameUsedItemPicked), TSendEventEnum::kNoEvent);
+	game.SetValue(kGameDestinationEvent, static_cast<int>(event), TSendEventEnum::kNoEvent);
 }
 
 void TGObjectManager::MouseMove(TManagedObject *object) {

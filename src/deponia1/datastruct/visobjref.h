@@ -21,10 +21,12 @@
 #include "WxStub.h"
 #include "vstables/fieldIds.h"
 
-// Confirmed to have at least one value, 2, used at every SetValue() call
-// site seen so far (TGameControl::SetOnScrollDestination, Deponia_Linux.asm
-// lines 460720-460821) - real meaning/other values not resolved.
-enum class TSendEventEnum { kSendEvent = 2 };
+// How TDataGroup::SetValue() treats a new value (Deponia_Linux.asm lines
+// 601106-601430): kForce stores it unconditionally and notifies the event
+// handlers; kSendEvent stores it only if it differs from the current one, and
+// notifies; kNoEvent stores it only if it differs, without notifying. Every
+// call site reversed so far passes kNoEvent (2). The names are invented.
+enum class TSendEventEnum { kForce = 0, kSendEvent = 1, kNoEvent = 2 };
 
 // Confirmed 2 values, 0 and 1 (TGameControl::InitGameActions/
 // InitInterfaces, asm lines 458124-458250, 466739-467222+) - real

@@ -59,13 +59,34 @@ public:
 	TId GetTId() const {
 		return TId(PackVisId(_id), _id[3]);
 	}
+	// Confirmed call shapes only (TDataGroup, asm lines 602428+, 605492+): the
+	// 24-bit id (+8) and order (+0x10) of the original object.
+	void SetId24(int id) {
+		_id[0] = (std::uint8_t)id;
+		_id[1] = (std::uint8_t)(id >> 8);
+		_id[2] = (std::uint8_t)(id >> 16);
+	}
+	void SetOrder24(int order) {
+		_order = order;
+	}
+	int GetId24() const {
+		return PackVisId(_id);
+	}
+	int GetOrder24() const {
+		return _order;
+	}
+	static TCharHolder &GetNameNewObject();
 	TVisionaire *GetVisionaire() const {
 		return _visionaire;
 	}
 
 private:
 	std::uint8_t _id[4] {};
+	int _order = 0;
 	TVisionaire *_visionaire = nullptr;
 };
 
 
+
+// The ordering TDataGroup::GetList() sorts by (not reversed yet).
+bool cmpOrder(const TVisionaireObject *a, const TVisionaireObject *b);

@@ -50,3 +50,22 @@ void TVisionaire::RemoveLink(const TId &/*from*/, const TId &/*to*/, int /*field
 bool TVisionaire::IsLinkRemovalSuppressed() const {
 	return false;
 }
+
+bool TVisionaire::IsVisPlayerMode = false;
+
+void TVisionaire::SetDirty() {
+}
+
+bool TVisionaire::HasIdMapping() const {
+	return false;
+}
+
+TId TVisionaire::GetMappedId(const TId &/*id*/) const {
+	return TId(-1, -1);
+}
+
+void TVisionaire::AddLink(const TId &/*from*/, const TId &/*to*/, int /*field*/, bool /*flag*/) {
+}
+
+void TVisionaire::RemoveObjectByParent(TVisionaireObject */*object*/) {
+}

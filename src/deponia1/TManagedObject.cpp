@@ -272,7 +272,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 						wxPoint charPos = info.character->GetPosition();
 						int angle = GetAngle(static_cast<float>(objPos.x - charPos.x),
 						                     static_cast<float>(objPos.y - charPos.y));
-						info.character->GetRef().SetValue(kCharacterDirection, angle, TSendEventEnum::kSendEvent);
+						info.character->GetRef().SetValue(kCharacterDirection, angle, TSendEventEnum::kNoEvent);
 					}
 				}
 

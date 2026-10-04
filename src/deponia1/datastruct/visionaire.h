@@ -96,4 +96,14 @@ public:
 	// when set, deleting a link record doesn't unregister it. Its real meaning
 	// (name guessed) is not reversed yet.
 	bool IsLinkRemovalSuppressed() const;
+
+	// Confirmed call shapes only (TDataGroup, asm lines 600389-607108). The
+	// "modified" flag is the byte at +0x88 of the original; HasIdMapping() the
+	// byte at +0x78 (names guessed).
+	void SetDirty();
+	bool HasIdMapping() const;
+	TId GetMappedId(const TId &id) const;
+	void AddLink(const TId &from, const TId &to, int field, bool flag);
+	void RemoveObjectByParent(TVisionaireObject *object);
+	static bool IsVisPlayerMode;
 };
