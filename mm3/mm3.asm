@@ -5435,9 +5435,10 @@ scanMonstersAhead endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; 1 when Party_map is < 6, 24-28, 41-104 or > 106 (towns and open-air maps), 0 for maps 6-23, 29-40, 105, 106 (dungeons, arena)
 ; Attributes: bp-based frame
 
-sub_1693D       proc far                ; CODE XREF: changeTime+415↓p
+mapHasDayNight  proc far                ; CODE XREF: changeTime+415↓p
                                         ; sub_43034+11↓P
                 push    bp
                 mov     bp, sp
@@ -5448,7 +5449,7 @@ sub_1693D       proc far                ; CODE XREF: changeTime+415↓p
                 cmp     Party_map, 1Dh
                 jb      short loc_1696A
 
-loc_16955:                              ; CODE XREF: sub_1693D+F↑j
+loc_16955:                              ; CODE XREF: mapHasDayNight+F↑j
                 cmp     Party_map, 28h ; '('
                 jbe     short loc_1696F
                 cmp     Party_map, 6Ah ; 'j'
@@ -5456,20 +5457,20 @@ loc_16955:                              ; CODE XREF: sub_1693D+F↑j
                 cmp     Party_map, 69h ; 'i'
                 jz      short loc_1696F
 
-loc_1696A:                              ; CODE XREF: sub_1693D+8↑j
-                                        ; sub_1693D+16↑j
+loc_1696A:                              ; CODE XREF: mapHasDayNight+8↑j
+                                        ; mapHasDayNight+16↑j
                 mov     ax, 1
                 jmp     short loc_16971
 ; ---------------------------------------------------------------------------
 
-loc_1696F:                              ; CODE XREF: sub_1693D+1D↑j
-                                        ; sub_1693D+24↑j ...
+loc_1696F:                              ; CODE XREF: mapHasDayNight+1D↑j
+                                        ; mapHasDayNight+24↑j ...
                 xor     ax, ax
 
-loc_16971:                              ; CODE XREF: sub_1693D+30↑j
+loc_16971:                              ; CODE XREF: mapHasDayNight+30↑j
                 pop     bp
                 retf
-sub_1693D       endp
+mapHasDayNight  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5994,7 +5995,7 @@ loc_16D7B:                              ; CODE XREF: changeTime+379↑j
 
 loc_16D87:                              ; CODE XREF: changeTime+40F↑j
                 push    cs
-                call    near ptr sub_1693D
+                call    near ptr mapHasDayNight
                 or      ax, ax
                 jz      short loc_16DBC
                 cmp     Party_minutes, 12Ch
@@ -6010,7 +6011,7 @@ loc_16DA3:                              ; CODE XREF: changeTime+422↑j
                 mov     ax, 1
 
 loc_16DA6:                              ; CODE XREF: changeTime+42E↑j
-                mov     dl, byte_32E68
+                mov     dl, Town_closed
                 mov     dh, 0
                 cmp     ax, dx
                 jz      short loc_16DBC
@@ -11899,7 +11900,7 @@ loc_19849:                              ; CODE XREF: runMazeEvent+23C↑j
 
 evt_op32:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 32: WhoWill (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 32: WhoWill (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1985E
@@ -11958,7 +11959,7 @@ loc_19890:                              ; CODE XREF: runMazeEvent+277↑j
 
 evt_op01:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 1: Display1 (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 1: Display1 (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_198D0
@@ -12016,7 +12017,7 @@ loc_19907:                              ; CODE XREF: runMazeEvent+2E6↑j
 
 evt_op02:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     ax, word_34BA8  ; event opcode 2: DoorTextSml (name from the Xeen opcode of the same number; unverified)
+                mov     ax, word_34BA8  ; event opcode 2: DoorTextSml (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     dx, word_34BA6
                 mov     word_2888E, ax
                 mov     word_2888C, dx
@@ -12034,7 +12035,7 @@ evt_op02:                               ; CODE XREF: runMazeEvent+243↑j
 
 evt_op03:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     ax, 0E610h      ; event opcode 3: DoorTextLrg (name from the Xeen opcode of the same number; unverified)
+                mov     ax, 0E610h      ; event opcode 3: DoorTextLrg (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 push    ax              ; format
                 mov     ax, 11BEh
 
@@ -12048,7 +12049,7 @@ loc_19966:                              ; CODE XREF: runMazeEvent+372↓j
 
 evt_op04:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     ax, 0E610h      ; event opcode 4: SignText (name from the Xeen opcode of the same number; unverified)
+                mov     ax, 0E610h      ; event opcode 4: SignText (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 push    ax
                 mov     ax, 11CFh
                 jmp     short loc_19966
@@ -12056,7 +12057,7 @@ evt_op04:                               ; CODE XREF: runMazeEvent+243↑j
 
 evt_op05:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 5: NPC (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 5: NPC (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1998A
@@ -12129,7 +12130,7 @@ loc_19A14:                              ; CODE XREF: runMazeEvent+407↑j
 
 evt_op06:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 6: PlayFX (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 6: PlayFX (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
@@ -12139,7 +12140,7 @@ evt_op06:                               ; CODE XREF: runMazeEvent+243↑j
 
 evt_op07:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 7: Teleport (also op 31) (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 7: Teleport (also op 31) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_19A41
@@ -12350,7 +12351,7 @@ loc_19BC4:                              ; CODE XREF: runMazeEvent+5B7↑j
 
 evt_op08:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 8: If (ops 8-10) (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 8: If (ops 8-10) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+6]
                 cbw
                 mov     [bp+var_52], ax
@@ -12512,7 +12513,7 @@ loc_19D29:                              ; CODE XREF: runMazeEvent+71C↑j
 
 evt_op11:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 11: MoveObj (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 11: MoveObj (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+6]
                 cbw
                 mov     dx, 0Ch
@@ -12573,7 +12574,7 @@ loc_19D7A:                              ; CODE XREF: runMazeEvent+73C↑j
 
 evt_op12:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     [bp+var_16], 1  ; event opcode 12: TakeOrGive (ops 12, 28, 29, 33) (name from the Xeen opcode of the same number; unverified)
+                mov     [bp+var_16], 1  ; event opcode 12: TakeOrGive (ops 12, 28, 29, 33) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, byte_333BE
                 mov     ah, 0
                 or      ax, ax
@@ -13262,7 +13263,7 @@ loc_1A384:                              ; CODE XREF: runMazeEvent+428↑j
 
 evt_op14:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     [bp+var_4], 0   ; event opcode 14: Remove (name from the Xeen opcode of the same number; unverified)
+                mov     [bp+var_4], 0   ; event opcode 14: Remove (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 jmp     short loc_1A3D9
 ; ---------------------------------------------------------------------------
 
@@ -13389,7 +13390,7 @@ loc_1A497:                              ; CODE XREF: runMazeEvent+E2B↑j
 
 evt_op15:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 15: SetChar (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 15: SetChar (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 cmp     byte ptr es:[bx+si+6], 8
                 jle     short loc_1A4E2
                 cmp     word_373A4, 0
@@ -13439,7 +13440,7 @@ loc_1A4FF:                              ; CODE XREF: runMazeEvent+EE9↑j
 
 evt_op16:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 16: Spawn (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 16: Spawn (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+8]
                 cbw
                 push    ax
@@ -13520,7 +13521,7 @@ evt_op16:                               ; CODE XREF: runMazeEvent+243↑j
 
 evt_op17:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+6]
                 cbw
                 mov     bx, ax
@@ -13596,7 +13597,7 @@ def_1A5D6:                              ; CODE XREF: runMazeEvent+FCA↑j
 
 evt_op19:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 19: AlterMap (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 19: AlterMap (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 cmp     byte ptr es:[bx+si+8], 4
                 jnz     short loc_1A671
                 mov     [bp+var_4], 0
@@ -13645,7 +13646,7 @@ loc_1A671:                              ; CODE XREF: runMazeEvent+1033↑j
 
 evt_op20:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     [bp+var_16], 1  ; event opcode 20: GiveMulti (name from the Xeen opcode of the same number; unverified)
+                mov     [bp+var_16], 1  ; event opcode 20: GiveMulti (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 les     bx, Maze_evtData
                 mov     al, es:[bx+si+6]
                 cbw
@@ -14040,7 +14041,7 @@ loc_1AA22:                              ; CODE XREF: runMazeEvent+13F8↑j
 
 evt_op21:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1AA38
@@ -14139,7 +14140,7 @@ loc_1AAEE:                              ; CODE XREF: runMazeEvent+14E1↑j
 
 evt_op22:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     al, byte_333BE  ; event opcode 22: Damage (name from the Xeen opcode of the same number; unverified)
+                mov     al, byte_333BE  ; event opcode 22: Damage (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1AB07
@@ -14178,7 +14179,7 @@ loc_1AB45:                              ; CODE XREF: runMazeEvent+368↑j
 
 evt_op23:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                les     bx, Maze_evtData ; event opcode 23: JumpRnd (name from the Xeen opcode of the same number; unverified)
+                les     bx, Maze_evtData ; event opcode 23: JumpRnd (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
@@ -14203,7 +14204,7 @@ loc_1AB72:                              ; CODE XREF: runMazeEvent+1565↑j
 
 evt_op24:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     [bp+var_4], 0   ; event opcode 24: AlterEvent (name from the Xeen opcode of the same number; unverified)
+                mov     [bp+var_4], 0   ; event opcode 24: AlterEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 jmp     loc_1AC10
 ; ---------------------------------------------------------------------------
 
@@ -14281,7 +14282,7 @@ loc_1AC1C:                              ; CODE XREF: runMazeEvent+160F↑j
 
 evt_op25:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                inc     [bp+var_3C]     ; event opcode 25: CallEvent (name from the Xeen opcode of the same number; unverified)
+                inc     [bp+var_3C]     ; event opcode 25: CallEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 mov     bx, [bp+var_3C]
                 shl     bx, 1
                 lea     ax, [bp+var_26]
@@ -14323,7 +14324,7 @@ loc_1AC6C:                              ; CODE XREF: runMazeEvent+6F1↑j
 
 evt_op26:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     bx, [bp+var_3C] ; event opcode 26: Return (name from the Xeen opcode of the same number; unverified)
+                mov     bx, [bp+var_3C] ; event opcode 26: Return (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 shl     bx, 1
                 lea     ax, [bp+var_26]
                 add     bx, ax
@@ -14347,7 +14348,7 @@ evt_op26:                               ; CODE XREF: runMazeEvent+243↑j
 
 evt_op27:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                mov     [bp+var_16], 1  ; event opcode 27: SetVar (name from the Xeen opcode of the same number; unverified)
+                mov     [bp+var_16], 1  ; event opcode 27: SetVar (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 les     bx, Maze_evtData
                 mov     al, es:[bx+si+6]
                 cbw
@@ -14477,7 +14478,7 @@ loc_1ADB9:                              ; CODE XREF: runMazeEvent+354↑j
 
 evt_op30:                               ; CODE XREF: runMazeEvent+243↑j
                                         ; DATA XREF: seg003:jpt_1984B↓o
-                call    sub_28258       ; event opcode 30: cutscene end (name from the Xeen opcode of the same number; unverified)
+                call    sub_28258       ; event opcode 30: cutscene end (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 or      ax, ax
                 jnz     short loc_1ADCB
                 jmp     loc_1AEE0
@@ -14624,7 +14625,7 @@ loc_1AEFA:                              ; CODE XREF: runMazeEvent+12C↑j
 
 evt_op18:                               ; CODE XREF: runMazeEvent+122↑j
                                         ; runMazeEvent+243↑j ...
-                cmp     [bp+var_16], 0  ; event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)
+                cmp     [bp+var_16], 0  ; event opcode 18: Exit (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 jz      short loc_1AF28
                 push    word_373A4
                 call    vdrv_06_closeWindows
@@ -45378,8 +45379,9 @@ byte_32E64      db 0                    ; DATA XREF: scanMonstersAhead+23↑w
 ; int word_32E66
 word_32E66      dw 0                    ; DATA XREF: getCommand:loc_25671↑r
                                         ; getCommand+1BE↑r ...
-byte_32E68      db 0                    ; DATA XREF: changeTime:loc_16DA6↑r
+Town_closed     db 0                    ; DATA XREF: changeTime:loc_16DA6↑r
                                         ; sub_43034:loc_43064↓w ...
+                                        ; byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set
                 align 2
 word_32E6A      dw 0                    ; DATA XREF: sub_1B6D1+1A1↑r
                                         ; rosterMenu+CD↓w
@@ -49082,8 +49084,8 @@ Party_x         db 0                    ; DATA XREF: drawAutomapWrapped+38↑r
 Party_y         db 0                    ; DATA XREF: drawAutomapWrapped+2F↑r
                                         ; drawAutomapWrapped:loc_15521↑r ...
                                         ; byte (+0Ch)
-Party_map       db 0                    ; DATA XREF: sub_1693D+3↑r
-                                        ; sub_1693D+A↑r ...
+Party_map       db 0                    ; DATA XREF: mapHasDayNight+3↑r
+                                        ; mapHasDayNight+A↑r ...
                                         ; byte, current maze id (+0Dh)
 byte_36FE8      db 0                    ; DATA XREF: seg001:02A5↑w
                                         ; runMazeEvent+17E6↑w ...
@@ -50303,7 +50305,7 @@ sub_378C0       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; (BinDiff sim .69 conf .93, unverified)
+; monster ranged attack: loads pow%d.icn by damage type, plays a sound, runs doMonsterTurn (verified by code reading)
 ; Attributes: bp-based frame
 
 monstersAttack  proc far                ; CODE XREF: j_monstersAttack↑J
@@ -74794,7 +74796,7 @@ arg_0           = word ptr  6
                 push    ax
                 call    sub_26685
                 pop     cx
-                call    sub_1693D
+                call    mapHasDayNight
                 or      ax, ax
                 jz      short loc_43074
                 cmp     Party_minutes, 12Ch
@@ -74810,7 +74812,7 @@ loc_43062:                              ; CODE XREF: sub_43034+20↑j
                 mov     al, 1
 
 loc_43064:                              ; CODE XREF: sub_43034+2C↑j
-                mov     byte_32E68, al
+                mov     Town_closed, al
                 push    ds
                 mov     ah, 0
                 shl     ax, 1
@@ -82685,7 +82687,7 @@ jpt_46A48       dw offset loc_46A71     ; DATA XREF: sub_46847+201↑r
 
 ; =============== S U B R O U T I N E =======================================
 
-; (BinDiff sim .59 conf .93, unverified)
+; creation-time class eligibility: colours each class by whether the rolled stats meet its requirements (see rules.md, verified)
 ; Attributes: bp-based frame
 
 checkClasses    proc far                ; CODE XREF: j_checkClasses↑J
@@ -86058,7 +86060,7 @@ var_2           = word ptr -2
                 dec     sp
                 push    si
                 push    di
-                mov     al, byte_32E68
+                mov     al, Town_closed
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_48492
@@ -87891,7 +87893,7 @@ var_2           = word ptr -2
                 sub     sp, 3Ah
                 push    si
                 push    di              ; n
-                cmp     byte_32E68, 0
+                cmp     Town_closed, 0
                 jz      short loc_49392
                 mov     ax, offset a007sorryTheTra ; "\v007Sorry, the Training grounds are cl"...
                 push    ax
@@ -88349,7 +88351,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 10h
                 push    si
-                cmp     byte_32E68, 0
+                cmp     Town_closed, 0
                 jz      short loc_4975A
                 mov     ax, offset a007sorryTheSmi ; "\v007Sorry, the Smithy's closed! Come b"...
                 push    ax

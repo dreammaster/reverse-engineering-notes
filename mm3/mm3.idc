@@ -5892,6 +5892,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X16937);
 	create_insn	(0X1693D);
+	set_name	(0X1693D,	"mapHasDayNight");
 	create_insn	(0X1696F);
 	create_insn	(0X16973);
 	set_name	(0X16973,	"changeTime");
@@ -6989,7 +6990,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1984B);
 	op_plain_offset	(x,	0,	0X19030);
 	op_plain_offset	(x,	128,	0X19030);
-	set_cmt	(0X19850,	"event opcode 32: WhoWill (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19850,	"event opcode 32: WhoWill (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19850,	"jumptable 0001984B case 32",	1);
 	create_insn	(0X19850);
 	set_name	(0X19850,	"evt_op32");
@@ -7002,7 +7003,7 @@ static Bytes_1(void) {
 	create_insn	(0X19890);
 	create_insn	(x=0X198B8);
 	op_hex		(x,	1);
-	set_cmt	(0X198C2,	"event opcode 1: Display1 (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X198C2,	"event opcode 1: Display1 (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X198C2,	"jumptable 0001984B case 1",	1);
 	create_insn	(0X198C2);
 	set_name	(0X198C2,	"evt_op01");
@@ -7013,23 +7014,23 @@ static Bytes_1(void) {
 	create_insn	(0X19907);
 	create_insn	(x=0X1992F);
 	op_hex		(x,	1);
-	set_cmt	(0X19939,	"event opcode 2: DoorTextSml (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19939,	"event opcode 2: DoorTextSml (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19939,	"jumptable 0001984B case 2",	1);
 	create_insn	(0X19939);
 	set_name	(0X19939,	"evt_op02");
 	set_cmt	(0X1994E,	"format",	0);
 	set_cmt	(0X19956,	"buffer",	0);
-	set_cmt	(0X1995F,	"event opcode 3: DoorTextLrg (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1995F,	"event opcode 3: DoorTextLrg (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1995F,	"jumptable 0001984B case 3",	1);
 	create_insn	(0X1995F);
 	set_name	(0X1995F,	"evt_op03");
 	set_cmt	(0X19962,	"format",	0);
 	set_cmt	(0X1996A,	"buffer",	0);
-	set_cmt	(0X19973,	"event opcode 4: SignText (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19973,	"event opcode 4: SignText (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19973,	"jumptable 0001984B case 4",	1);
 	create_insn	(0X19973);
 	set_name	(0X19973,	"evt_op04");
-	set_cmt	(0X1997C,	"event opcode 5: NPC (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1997C,	"event opcode 5: NPC (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1997C,	"jumptable 0001984B case 5",	1);
 	create_insn	(0X1997C);
 	set_name	(0X1997C,	"evt_op05");
@@ -7049,11 +7050,11 @@ static Bytes_1(void) {
 	create_insn	(x=0X19A07);
 	op_stkvar	(x,	0);
 	create_insn	(0X19A14);
-	set_cmt	(0X19A21,	"event opcode 6: PlayFX (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19A21,	"event opcode 6: PlayFX (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19A21,	"jumptable 0001984B case 6",	1);
 	create_insn	(0X19A21);
 	set_name	(0X19A21,	"evt_op06");
-	set_cmt	(0X19A33,	"event opcode 7: Teleport (also op 31) (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19A33,	"event opcode 7: Teleport (also op 31) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19A33,	"jumptable 0001984B cases 7,31",	1);
 	create_insn	(0X19A33);
 	set_name	(0X19A33,	"evt_op07");
@@ -7113,7 +7114,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19B89);
 	op_stkvar	(x,	1);
 	create_insn	(0X19BC4);
-	set_cmt	(0X19BC7,	"event opcode 8: If (ops 8-10) (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19BC7,	"event opcode 8: If (ops 8-10) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19BC7,	"jumptable 0001984B cases 8-10",	1);
 	create_insn	(0X19BC7);
 	set_name	(0X19BC7,	"evt_op08");
@@ -7172,14 +7173,14 @@ static Bytes_1(void) {
 	create_insn	(x=0X19D1F);
 	op_hex		(x,	1);
 	create_insn	(0X19D29);
-	set_cmt	(0X19D2B,	"event opcode 11: MoveObj (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19D2B,	"event opcode 11: MoveObj (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19D2B,	"jumptable 0001984B case 11",	1);
 	create_insn	(0X19D2B);
 	set_name	(0X19D2B,	"evt_op11");
 	create_insn	(x=0X19D71);
 	op_hex		(x,	1);
 	create_insn	(0X19D7A);
-	set_cmt	(0X19DB3,	"event opcode 12: TakeOrGive (ops 12, 28, 29, 33) (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X19DB3,	"event opcode 12: TakeOrGive (ops 12, 28, 29, 33) (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X19DB3,	"jumptable 0001984B cases 12,28,29,33",	1);
 	create_insn	(x=0X19DB3);
 	op_stkvar	(x,	0);
@@ -7518,7 +7519,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1A362);
 	op_stkvar	(x,	0);
 	create_insn	(0X1A36B);
-	set_cmt	(0X1A388,	"event opcode 14: Remove (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A388,	"event opcode 14: Remove (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A388,	"jumptable 0001984B case 14",	1);
 	create_insn	(x=0X1A388);
 	op_stkvar	(x,	0);
@@ -7546,7 +7547,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1A475);
 	op_hex		(x,	1);
-	set_cmt	(0X1A49F,	"event opcode 15: SetChar (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A49F,	"event opcode 15: SetChar (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A49F,	"jumptable 0001984B case 15",	1);
 	create_insn	(0X1A49F);
 	set_name	(0X1A49F,	"evt_op15");
@@ -7557,7 +7558,7 @@ static Bytes_1(void) {
 	create_insn	(0X1A4F3);
 	create_insn	(x=0X1A4FC);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1A505,	"event opcode 16: Spawn (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A505,	"event opcode 16: Spawn (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A505,	"jumptable 0001984B case 16",	1);
 	create_insn	(0X1A505);
 	set_name	(0X1A505,	"evt_op16");
@@ -7579,7 +7580,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1A5B8);
 	op_hex		(x,	1);
-	set_cmt	(0X1A5C4,	"event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A5C4,	"event opcode 17: DoTownEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A5C4,	"jumptable 0001984B case 17",	1);
 	create_insn	(0X1A5C4);
 	set_name	(0X1A5C4,	"evt_op17");
@@ -7615,7 +7616,7 @@ static Bytes_1(void) {
 	set_name	(0X1A625,	"def_1A5D6");
 	create_insn	(x=0X1A62A);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1A632,	"event opcode 19: AlterMap (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A632,	"event opcode 19: AlterMap (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A632,	"jumptable 0001984B case 19",	1);
 	create_insn	(0X1A632);
 	set_name	(0X1A632,	"evt_op19");
@@ -7631,7 +7632,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1A668);
 	op_stkvar	(x,	0);
 	create_insn	(0X1A671);
-	set_cmt	(0X1A695,	"event opcode 20: GiveMulti (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1A695,	"event opcode 20: GiveMulti (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1A695,	"jumptable 0001984B case 20",	1);
 	create_insn	(x=0X1A695);
 	op_stkvar	(x,	0);
@@ -7785,7 +7786,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AA19);
 	op_stkvar	(x,	0);
 	create_insn	(0X1AA22);
-	set_cmt	(0X1AA2A,	"event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AA2A,	"event opcode 21: ConfirmWord (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AA2A,	"jumptable 0001984B case 21",	1);
 	create_insn	(0X1AA2A);
 	set_name	(0X1AA2A,	"evt_op21");
@@ -7825,7 +7826,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AAE5);
 	op_stkvar	(x,	0);
 	create_insn	(0X1AAEE);
-	set_cmt	(0X1AAF9,	"event opcode 22: Damage (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AAF9,	"event opcode 22: Damage (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AAF9,	"jumptable 0001984B case 22",	1);
 	create_insn	(0X1AAF9);
 	set_name	(0X1AAF9,	"evt_op22");
@@ -7833,12 +7834,12 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1AB45);
 	op_hex		(x,	1);
-	set_cmt	(0X1AB4B,	"event opcode 23: JumpRnd (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AB4B,	"event opcode 23: JumpRnd (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AB4B,	"jumptable 0001984B case 23",	1);
 	create_insn	(0X1AB4B);
 	set_name	(0X1AB4B,	"evt_op23");
 	create_insn	(0X1AB72);
-	set_cmt	(0X1AB75,	"event opcode 24: AlterEvent (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AB75,	"event opcode 24: AlterEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AB75,	"jumptable 0001984B case 24",	1);
 	create_insn	(x=0X1AB75);
 	op_stkvar	(x,	0);
@@ -7860,7 +7861,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AC10);
 	op_stkvar	(x,	1);
 	create_insn	(0X1AC1C);
-	set_cmt	(0X1AC1F,	"event opcode 25: CallEvent (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AC1F,	"event opcode 25: CallEvent (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AC1F,	"jumptable 0001984B case 25",	1);
 	create_insn	(x=0X1AC1F);
 	op_stkvar	(x,	0);
@@ -7895,7 +7896,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1AC6D);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1AC73,	"event opcode 26: Return (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AC73,	"event opcode 26: Return (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AC73,	"jumptable 0001984B case 26",	1);
 	create_insn	(x=0X1AC73);
 	op_stkvar	(x,	1);
@@ -7924,7 +7925,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1ACA0);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1ACA6,	"event opcode 27: SetVar (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1ACA6,	"event opcode 27: SetVar (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1ACA6,	"jumptable 0001984B case 27",	1);
 	create_insn	(x=0X1ACA6);
 	op_stkvar	(x,	0);
@@ -7979,7 +7980,7 @@ static Bytes_1(void) {
 	set_cmt	(0X1ADB3,	"int",	0);
 	create_insn	(x=0X1ADB9);
 	op_hex		(x,	1);
-	set_cmt	(0X1ADBF,	"event opcode 30: cutscene end (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1ADBF,	"event opcode 30: cutscene end (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1ADBF,	"jumptable 0001984B case 30",	1);
 	create_insn	(0X1ADBF);
 	set_name	(0X1ADBF,	"evt_op30");
@@ -8073,7 +8074,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AEF3);
 	op_stkvar	(x,	0);
 	create_insn	(0X1AEF9);
-	set_cmt	(0X1AF03,	"event opcode 18: Exit (name from the Xeen opcode of the same number; unverified)",	0);
+	set_cmt	(0X1AF03,	"event opcode 18: Exit (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)",	0);
 	set_cmt	(0X1AF03,	"jumptable 0001984B case 18",	1);
 	create_insn	(x=0X1AF03);
 	op_stkvar	(x,	0);
@@ -9987,6 +9988,15 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1D9D1,	"jpt_1CFB7");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1D9DF,	"jump table for switch statement",	0);
 	create_word	(x=0X1D9DF);
 	make_array	(x,	0X7);
@@ -10053,15 +10063,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA6B,	"jpt_1CA00");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1DA79,	"jump table for switch statement",	0);
 	create_word	(x=0X1DA79);
 	make_array	(x,	0X7);
@@ -14756,6 +14757,15 @@ static Bytes_2(void) {
 	set_name	(0X295CD,	"aTimerDrv");
 	create_strlit	(0X295D7,	0XA);
 	set_name	(0X295D7,	"aLogy5Raw");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X295E1,	0XC);
 	set_name	(0X295E1,	"aControlRaw");
 	create_strlit	(0X295ED,	0X9);
@@ -14797,15 +14807,6 @@ static Bytes_2(void) {
 	set_name	(0X29A72,	"VIEW_DY");
 	set_cmt	(0X29B2C,	"4 facings x 58h bytes (44 words): mask of the wall nibble for that cell side in the maze word (7000h/700h/70h/7)",	0);
 	set_name	(0X29B2C,	"VIEW_MASK");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29C8C,	"4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)",	0);
 	set_name	(0X29C8C,	"VIEW_SHIFT");
 	create_byte	(0X29CDE);
@@ -17375,7 +17376,9 @@ static Bytes_3(void) {
 	create_byte	(0X32E63);
 	create_byte	(0X32E64);
 	create_word	(0X32E66);
+	set_cmt	(0X32E68,	"byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set",	0);
 	create_byte	(0X32E68);
+	set_name	(0X32E68,	"Town_closed");
 	create_word	(0X32E6A);
 	create_word	(0X32E6C);
 	create_byte	(0X32E6E);
@@ -18099,6 +18102,15 @@ static Bytes_3(void) {
 	set_cmt	(0X3776A,	"far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776A);
 	set_name	(0X3776A,	"Mon_phys");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X3776E,	"far pointer to the monac.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776E);
 	set_name	(0X3776E,	"Mon_ac");
@@ -18199,15 +18211,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37AB7);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X37ABF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37ACA);
@@ -22893,6 +22896,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3FD1F);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X3FD2D,	"dest",	0);
 	create_insn	(0X3FD37);
 	set_cmt	(0X3FD3E,	"string",	0);
@@ -23012,15 +23024,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FEB8);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FEBC);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FEC0,	"buffer",	0);
@@ -28515,6 +28518,15 @@ static Bytes_5(void) {
 	create_insn	(x=0X47470);
 	op_stkvar	(x,	1);
 	set_cmt	(0X47474,	"buffer",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47475);
 	op_stkvar	(x,	1);
 	set_cmt	(0X47478,	"int",	0);
@@ -28645,15 +28657,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4761B);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4762C,	"jumptable 000474F8 cases 8-17",	1);
 	create_insn	(x=0X4762C);
 	op_stkvar	(x,	0);
@@ -33551,6 +33554,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F4B3);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F4C0);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F4CA);
@@ -33682,15 +33694,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X4F74F);
 	set_name	(0X4F74F,	"spellsDialog");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F752);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F75C);
@@ -37698,6 +37701,7 @@ static Functions_0(void) {
 	set_frame_size(0X161AD, 0XC, 2, 0);
 	add_func    (0X1693D,0X16973);
 	set_func_flags(0X1693D,0x5412);
+	set_func_cmt(0X1693D,	"1 when Party_map is < 6, 24-28, 41-104 or > 106 (towns and open-air maps), 0 for maps 6-23, 29-40, 105, 106 (dungeons, arena)", 0);
 	set_frame_size(0X1693D, 0, 2, 0);
 	add_func    (0X16973,0X16DC0);
 	set_func_flags(0X16973,0x5412);
@@ -39214,7 +39218,7 @@ static Functions_0(void) {
 	set_frame_size(0X378C0, 0, 2, 0);
 	add_func    (0X379F2,0X37B49);
 	set_func_flags(0X379F2,0x5412);
-	set_func_cmt(0X379F2,	"(BinDiff sim .69 conf .93, unverified)", 0);
+	set_func_cmt(0X379F2,	"monster ranged attack: loads pow%d.icn by damage type, plays a sound, runs doMonsterTurn (verified by code reading)", 0);
 	set_frame_size(0X379F2, 0X4, 2, 0);
 	define_local_var(0X379F2, 0X37B49, "[bp-0X4]", "format");
 	add_func    (0X37B59,0X37B7D);
@@ -39554,15 +39558,15 @@ static Functions_0(void) {
 	add_func    (0X41EF1,0X41F5D);
 	set_func_flags(0X41EF1,0x5412);
 	set_frame_size(0X41EF1, 0, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X41F5D,0X422D4);
 	set_func_flags(0X41F5D,0x5412);
 	set_func_cmt(0X41F5D,	"cpanel.icn, load/save \"*.mm3\", quit confirmation, Mr. Wizard's help", 0);
 	set_frame_size(0X41F5D, 0X28, 2, 0);
 	define_local_var(0X41F5D, 0X422D4, "[bp-0X24]", "s");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4231C,0X424AB);
 	set_func_flags(0X4231C,0x5412);
 	SetType(0X4231C, "int __cdecl __far sub_4231C(int, char *);");
@@ -39738,7 +39742,7 @@ static Functions_1(void) {
 	define_local_var(0X46847, 0X46B1B, "[bp+0X10]", "s");
 	add_func    (0X46B2D,0X46C0D);
 	set_func_flags(0X46B2D,0x5412);
-	set_func_cmt(0X46B2D,	"(BinDiff sim .59 conf .93, unverified)", 0);
+	set_func_cmt(0X46B2D,	"creation-time class eligibility: colours each class by whether the rolled stats meet its requirements (see rules.md, verified)", 0);
 	set_frame_size(0X46B2D, 0X4, 2, 0);
 	add_func    (0X46C21,0X46C9B);
 	set_func_flags(0X46C21,0x5412);
