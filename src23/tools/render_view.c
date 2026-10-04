@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../location.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../cluemap.c ../location.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>
@@ -18,6 +18,7 @@
 #include "cluespell.h"
 #include "spellrecord.h"
 #include "localmap.h"
+#include "cluemap.h"
 #include "exedata.h"
 #include "lighting.h"
 #include "minimap.h"
@@ -274,6 +275,21 @@ int main(int argc, char **argv) {
                     clueSpellPageDraw(&renderer, &spellText, spellRecord(&pageSpells, spellId), spellId, "SPELL INFORMATION", 0x8000, &description);
                 } else {
                     fprintf(stderr, "cannot build the spell page\n");
+                }
+            }
+            if (getenv("RENDER_CLUEMAP")) { /* RENDER_CLUEMAP=<map id>: the clue book map page with its markers */
+                static LocalMapCell clueCells[LocalMapColumns * LocalMapRows];
+                unsigned mapId = (unsigned)atoi(getenv("RENDER_CLUEMAP"));
+                ClueMapMarker clueMarkers[ClueMapMarkersMax];
+                LocationName clueName;
+                clueMapFill(clueCells, game, &map, worldDat, worldSize, mapId);
+                unsigned markerCount = clueMapMarkers(game, worldDat, worldSize, mapId, clueMarkers, ClueMapMarkersMax);
+                if (locationName(game, worldDat, worldSize, mapId - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &clueName)) {
+                    clueMapPageDraw(&renderer, clueCells, &clueName, "SELECT LEGEND OR ESC", clueMarkers, markerCount);
+                    char label[ClueMapLabelSize];
+                    if (markerCount && clueMapLabel(game, worldDat, worldSize, clueMarkers[0].label, label)) {
+                        clueMapLabelDraw(&renderer, label);
+                    }
                 }
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */

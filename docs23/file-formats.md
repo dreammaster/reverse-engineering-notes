@@ -1213,6 +1213,10 @@ area map is the name plus " LEVEL x" or " MAP x" (Chapter 3 three characters), c
 The **clue book entry list paging** (`ClueList` in `cluebook.c`): pages of 14 entries; I / Q (or the two arrows under the list, `UiRegionsClueScroll`) page up / down keeping the row, with no further page they jump
 to the first / last row; H / P move one row and turn the page at the edge. The list page backdrop is category 0 picture 14.
 
+The **clue book map page** (`cluemap.c`; `RENDER_CLUEMAP=<map id>`): map n is block n - 1 drawn like the local area map but with a "known" bitmap from WORLD.DAT (1 bit per world cell, MSB first, 100 bytes per
+row; Chapter 2 at 1396760, Chapter 3 at 3952386) instead of the fog of war, the block name in 0xD, the hint "SELECT LEGEND OR ESC" and the legend markers (8-byte records map id / x / y / label at 1450685 /
+4011261, sorted by map id; picture 0x73) whose labels are 26-byte strings (1453925 / 4013261).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
