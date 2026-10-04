@@ -29,3 +29,12 @@ with `mazeNeighbourSlot` and return `1111h` or 0 outside the 32x32 world): `mark
 Cartographer skill (`checkSkill(4)`), and when Wizard Eye is active (`Party_wizardEye`) draws the overhead map.
 
 Slot offsets for facing 0 (north), `(dx,dy)` (other facings are rotations): 0,1 (0,0) own cell; 2 (1,0); 3 (-1,1); 4,5,6 (0,1) the cell directly ahead (several slots refer to the same cell because the renderer draws several wall faces of it; Jump's wall test uses slot 5); 7 (1,1); 8 (-2,2); 9,10 (-1,2); 11,12,13 (0,2); 14,15 (1,2); 16 (2,2); 17-33 the row three ahead (x -4..4) and 34-43 the row four ahead (x -4..4); the last two entries are fillers.
+
+## Scene description (inferred from `renderIndoorView`, `sub_17439`)
+
+`renderIndoorView` fills a scene block at DGROUP `D66Eh` (the same 4000-byte scratch area that `sprintf` also uses): a 26-byte header of 13 words (`word_35D5E`..`word_35D78`: current sprite sets, view mode, light state, ...)
+followed from `D688h` by a list of draw records.  Each record starts with `FFFFh`, then a far pointer to the sprite set (taken from the 4-byte pointer tables at DGROUP `-3AC0h`/`-3B5Ah` style addresses: one per wall type / monster picture),
+then words for x, y (e.g. `67h`/`36h` for the monster slot in the centre of the screen), a flag word (`300h | animation state`) and a frame number.
+The monsters seen in the first rows (`byte_33311..` and the row bytes `34B92..`) are first collected into 12-byte group records at `A792h` (picture slot, animation phase, picture type -> frame count table `2815h`, flags);
+`sub_17439` turns each into one draw record, using `Maze_monAnim`-style phases that `renderIndoorView` advances every frame (modulo the frame counts).  The list is handed to the video module by the code following (not yet followed).
+Animated overlays (torch, water) use the small phase counters `word_28810`/`28812`/`byte_2884D` that `renderIndoorView` increments modulo 18/18/3 each frame.
