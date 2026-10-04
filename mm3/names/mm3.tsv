@@ -652,3 +652,5 @@
 1693D	mapHasDayNight	1 when Party_map is < 6, 24-28, 41-104 or > 106 (towns and open-air maps), 0 for maps 6-23, 29-40, 105, 106 (dungeons, arena)
 32E68	Town_closed	byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set
 1B198	checkDrawListOverflow	called with the end pointer of the scene draw list: length in words = (end - D66Eh)/2, remembers the maximum (word_29708) and shows a message window when it exceeds 7CFh words (the 4000-byte list buffer)
+D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (Knight/Paladin unrestricted); table 5AB5 holds the class bits
+51C4A	canEquip	canEquip(class, item id, silent): class 0/1 always; else EQUIP_FORBID[item] & class bit must be 0, otherwise shows '%ss are not proficient with %s!'

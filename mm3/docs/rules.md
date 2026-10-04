@@ -172,3 +172,52 @@ member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit 
   `GiveBankInterest` adds 1 % (value / 100, integer) of the banked gold and of the banked gems -- so every 10 days, not every day.
 
 Age (`getAge`, `16E06`-ish): `min(254, Party_year - birthYear) + tempAge`, where `birthYear` is the word at char +129h and `tempAge` the byte at +26h (raised by monsters and Resurrect); with the "permanent" argument set the temporary part is left out.
+
+## Which classes may equip what (`equipItem` 3956E, `canEquip` = `sub_51C4A`)
+
+`equipItem` first refuses a second identical item (same element, metal, attribute, id and spell) with "You cannot equip two of the same items!".  Then, for the item's id range, `canEquip(class, item)` is checked: Knights and Paladins may equip anything; for the other eight classes the item id indexes a byte table (`EQUIP_FORBID`, DGROUP `0D62h`) of **forbidden-class bits**, the class bit being `1 << (class - 2)` in the order Archer, Cleric, Sorcerer, Robber, Ninja, Barbarian, Druid, Ranger (word table `5AB5h`); a set bit gives "%ss are not proficient with %s!".  Ids 43 and above (trinkets, consumables) are unrestricted (0). Equipment slots are tracked in the per-slot array at char +7Dh with codes: 1 one-handed weapon, 0Dh two-handed, 4 missile weapon, ... (slot conflicts such as two weapons or weapon plus two-hander are rejected: ids 1-17 conflict with codes 1 and 0Dh, 18-29 with 1, 2 and 0Dh, 30-33 with 4).
+
+| id | item | forbid mask | classes that may use it |
+|---|---|---|---|
+| 1 | long sword | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 2 | short sword | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 3 | broad sword | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 4 | scimitar | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 5 | cutlass | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 6 | sabre | 118 | Knight, Paladin, Archer, Robber, Ranger |
+| 7 | club | 0 | everyone |
+| 8 | hand axe | 6 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Druid, Ranger |
+| 9 | katana | 239 | Knight, Paladin, Ninja |
+| 10 | nunchakas | 239 | Knight, Paladin, Ninja |
+| 11 | wakazashi | 239 | Knight, Paladin, Ninja |
+| 12 | dagger | 2 | Knight, Paladin, Archer, Sorcerer, Robber, Ninja, Barbarian, Druid, Ranger |
+| 13 | mace | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 14 | flail | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 15 | cudgel | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 16 | maul | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 17 | spear | 6 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Druid, Ranger |
+| 18 | bardiche | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 19 | glaive | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 20 | halberd | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 21 | pike | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 22 | flamberge | 126 | Knight, Paladin, Archer, Ranger |
+| 23 | trident | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 24 | staff | 0 | everyone |
+| 25 | hammer | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 26 | naginata | 239 | Knight, Paladin, Ninja |
+| 27 | battle axe | 86 | Knight, Paladin, Archer, Robber, Barbarian, Ranger |
+| 28 | grand axe | 86 | Knight, Paladin, Archer, Robber, Barbarian, Ranger |
+| 29 | great axe | 86 | Knight, Paladin, Archer, Robber, Barbarian, Ranger |
+| 30 | short bow | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 31 | long bow | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 32 | crossbow | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 33 | sling | 70 | Knight, Paladin, Archer, Robber, Ninja, Barbarian, Ranger |
+| 34 | padded armor | 0 | everyone |
+| 35 | leather armor | 4 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Druid, Ranger |
+| 36 | scale armor | 68 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Barbarian, Ranger |
+| 37 | ring mail | 100 | Knight, Paladin, Archer, Cleric, Robber, Ninja, Ranger |
+| 38 | chain mail | 116 | Knight, Paladin, Archer, Cleric, Robber, Ranger |
+| 39 | splint mail | 125 | Knight, Paladin, Cleric, Ranger |
+| 40 | plate mail | 255 | Knight, Paladin |
+| 41 | plate armor | 255 | Knight, Paladin |
+| 42 | shield | 85 | Knight, Paladin, Cleric, Robber, Barbarian, Ranger |
