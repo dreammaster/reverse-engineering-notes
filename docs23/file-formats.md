@@ -1117,6 +1117,14 @@ face = category 7 picture `[+0x12]` (a dead/stoned/frozen member also gets an ov
 bar's meaning was previously unidentified) -- plus an abilities icon, a 'T' when a level-up is pending (`[+0x1E]`), three affliction
 icons and a protection icon (category 9), and "DEAD" over a dead member's bars. Bar width is `3800 / (100 * max / cur)` (min 1).
 
+The **paper dolls** (`DrawPartyMemberPortrait`, `paperdoll.c`; render with `RENDER_DOLLS=1`): on the inventory screen the four members
+stand side by side, 56 pixels wide at x = 8/64/120/176, y = 8. Body = category 6 picture `[+0x14]`; equipment icons are category 8
+(`item [+8]`) at the `InventoryGrid` region entries (weapon `[+0x13A]` entry 9, `[+0x13E]` x3 entries 10-12 or, with status flag
+0x1000, `[+0x142]` x2 plus the held pair's icon, the open bag's or main inventory's first 8 slots entries 0-7, rings `[+0x14A]` as 8 x 8
+pictures at entries 13-14); worn clothing `[+0x152..+0x15A]` is drawn on the body as category 7 pictures numbered by **word 2 of the
+item's wearable entry** (+1 for a non-male wearer) -- the field earlier documented as "break replacement item" doubles as the
+worn/ring picture id.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
