@@ -155,3 +155,24 @@ void bcd4MulPercent(Bcd4 value, uint16_t percent) {
         value[i] = acc[i];
     }
 }
+
+void bcd4Format(const Bcd4 value, char out[12]) {
+    char digits[8];
+    for (unsigned i = 0; i < 4; i++) {
+        digits[2 * i] = (char)('0' + (value[i] >> 4));
+        digits[2 * i + 1] = (char)('0' + (value[i] & 0xF));
+    }
+    unsigned first = 0;
+    while (first < 7 && digits[first] == '0') {
+        first++;
+    }
+    unsigned n = 0;
+    for (unsigned i = first; i < 8; i++) {
+        out[n++] = digits[i];
+        unsigned remaining = 7 - i;
+        if (remaining > 0 && remaining % 3 == 0) {
+            out[n++] = ',';
+        }
+    }
+    out[n] = 0;
+}

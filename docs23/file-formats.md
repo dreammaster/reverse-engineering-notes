@@ -1130,6 +1130,13 @@ the party's reveal tier (55 / 75 / 80; Chapter 3's first threshold is 60), a 45 
 detail (POISONED/DISEASED, PARALYZED/FROZEN, HEXED/CURSED or HEALTH: cur/max, chosen by which quality bit 0x200/0x100/0x80/0x40 of
 the monster's state a spell set; the bits are cleared after one showing).
 
+The **character sheet** (`DrawCharacterSheetPanel`/`DrawCharacterStatSheet`, `statsheet.c`; `RENDER_SHEET=n`): full-screen picture category 0 / 3 (it
+carries all labels), title at (107, 6), face (category 7 `[+0x12]`) at (116, 19), paper doll at (116, 60), name (156, 26), class and level
+(156 / 256, 38), then every number in its slot: attributes `[+0x3C..+0x46]`, `[+0x4C..+0x50]`, HP/MP, comma-grouped experience, skills
+`[+0x58..+0x66]` and the role skills `[+0x68..+0x70]` (colour 0xCB for the character holding the role; Chapter 3 has no 5th/Chemistry);
+a value above its natural maximum (`+0x40`) is drawn in 0x8A; a level-1 character gets POOR/AVERAGE/GOOD/GREAT from the attribute
+average.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 

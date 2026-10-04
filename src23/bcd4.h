@@ -17,6 +17,12 @@ typedef uint8_t Bcd4[4];
 /* dst += src, packed-BCD addition (was AddBCD4). */
 void bcd4Add(Bcd4 dst, const Bcd4 src);
 
+/*
+ * FormatAndDrawBCD4's text (yendor2.asm:17025): the value in decimal with comma-grouped thousands, no leading zeros ("0" for zero),
+ * e.g. "12,345,678". `out` needs 12 bytes.
+ */
+void bcd4Format(const Bcd4 value, char out[12]);
+
 /* dst -= src, packed-BCD subtraction (was SubBCD4). */
 void bcd4Sub(Bcd4 dst, const Bcd4 src);
 

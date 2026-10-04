@@ -265,6 +265,23 @@ static void testMulPercent(void) {
     }
 }
 
+static void checkFormat(const char *label, const Bcd4 value, const char *expected) {
+    char text[12];
+    bcd4Format(value, text);
+    checkBool(label, strcmp(text, expected) == 0, true);
+}
+
+static void testFormat(void) {
+    Bcd4 zero = {0, 0, 0, 0}, small = {0, 0, 0, 0x07}, hundreds = {0, 0, 0x01, 0x23}, thousands = {0, 0, 0x12, 0x34}, big = {0x12, 0x34, 0x56, 0x78},
+         million = {0, 0x01, 0x00, 0x00};
+    checkFormat("format 0", zero, "0");
+    checkFormat("format 7", small, "7");
+    checkFormat("format 123", hundreds, "123");
+    checkFormat("format 1,234", thousands, "1,234");
+    checkFormat("format 12,345,678", big, "12,345,678");
+    checkFormat("format 10,000", million, "10,000");
+}
+
 int main(void) {
     testFromU16();
     testAdd();
@@ -274,6 +291,7 @@ int main(void) {
     testAddSubAgainstBinary();
     testShifts();
     testMulPercent();
+    testFormat();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
