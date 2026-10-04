@@ -14871,9 +14871,10 @@ playSoundEffect endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; called with the end pointer of the scene draw list: length in words = (end - D66Eh)/2, remembers the maximum (word_29708) and shows a message window when it exceeds 7CFh words (the 4000-byte list buffer)
 ; Attributes: bp-based frame
 
-sub_1B198       proc far                ; CODE XREF: renderIndoorView+1F84↓P
+checkDrawListOverflow proc far          ; CODE XREF: renderIndoorView+1F84↓P
                                         ; renderOutdoorView+1FCF↓P
 
 var_2           = word ptr -2
@@ -14899,7 +14900,7 @@ arg_0           = word ptr  6
                 jbe     short loc_1B1C6
                 mov     word_29708, si
 
-loc_1B1C6:                              ; CODE XREF: sub_1B198+28↑j
+loc_1B1C6:                              ; CODE XREF: checkDrawListOverflow+28↑j
                 cmp     si, di
                 jle     short loc_1B217
                 push    di
@@ -14937,7 +14938,7 @@ loc_1B1C6:                              ; CODE XREF: sub_1B198+28↑j
                 call    vdrv_06_closeWindows
                 pop     cx
 
-loc_1B217:                              ; CODE XREF: sub_1B198+30↑j
+loc_1B217:                              ; CODE XREF: checkDrawListOverflow+30↑j
                 mov     ax, [bp+var_2]
                 mov     word_34C12, ax
                 pop     di
@@ -14945,7 +14946,7 @@ loc_1B217:                              ; CODE XREF: sub_1B198+30↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1B198       endp
+checkDrawListOverflow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26359,7 +26360,7 @@ loc_2035D:                              ; CODE XREF: renderIndoorView+1F41↑j
                 call    _sprintf
                 add     sp, 0Ch
                 push    si
-                call    sub_1B198
+                call    checkDrawListOverflow
                 pop     cx
                 push    ds
                 mov     ax, 0D256h
@@ -30340,7 +30341,7 @@ loc_22402:                              ; CODE XREF: renderOutdoorView+1F93↑j
                 call    _sprintf
                 add     sp, 0Ch
                 push    si
-                call    sub_1B198
+                call    checkDrawListOverflow
                 pop     cx
                 push    ds
                 mov     ax, 0D256h
@@ -32546,7 +32547,7 @@ sub_253D3       endp
 ; waits for/reads input (keys and mouse) and returns a command code; 1.9 KB, ~50 callers (by use)
 ; Attributes: bp-based frame
 
-getCommand      proc far                ; CODE XREF: sub_1B198+70↑P
+getCommand      proc far                ; CODE XREF: checkDrawListOverflow+70↑P
                                         ; sub_1B223+65↑P ...
 
 var_8           = word ptr -8
@@ -37545,16 +37546,7 @@ stub13          segment para public 'CODE' use16
                 dw 0                    ; prevstub
                 db 10h dup(0)           ; workarea
 ; [00000005 BYTES: COLLAPSED FUNCTION j_itemPrice. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28695       proc far                ; CODE XREF: equipItem+91↓P
-                                        ; equipItem+DF↓P ...
-                jmp     sub_51C4A
-sub_28695       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_canEquip. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_drawCharacterStats. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_castItemSpell. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_characterInfoInventory. PRESS NUMPAD+ TO EXPAND]
@@ -39110,8 +39102,8 @@ AGE_RANGES      db    1                 ; words, age thresholds for getStat
                 db  25h ; %
                 db  70h ; p
                 db    0
-word_29708      dw 0                    ; DATA XREF: sub_1B198+24↑r
-                                        ; sub_1B198+2A↑w
+word_29708      dw 0                    ; DATA XREF: checkDrawListOverflow+24↑r
+                                        ; checkDrawListOverflow+2A↑w
 word_2970A      dw 0                    ; DATA XREF: sub_1B223+19↑r
                                         ; sub_1B223+1F↑w
 word_2970C      dw 0                    ; DATA XREF: sub_3BC65+18↓r
@@ -39143,7 +39135,7 @@ aWhatSThePasswo db 'What',27h,'s the Password?',0
                                         ; DATA XREF: runMazeEvent:loc_1AAB0↑o
 a007youMustHave db 0Bh,'007You must have all six Hologram Sequencing Cards to enter!',0
                                         ; DATA XREF: runMazeEvent:loc_1AEE0↑o
-aC_1            db 3,'c'                ; DATA XREF: sub_1B198+34↑o
+aC_1            db 3,'c'                ; DATA XREF: checkDrawListOverflow+34↑o
                 db  45h ; E
                 db  72h ; r
                 db  72h ; r
@@ -48933,8 +48925,8 @@ Engine_mode     db 0                    ; DATA XREF: checkPartyDead+5↑r
                                         ; addTime+9E↑r ...
                                         ; byte; 9 skips the daily rest/reset handling (script in progress)
                 align 2
-word_34C12      dw 0                    ; DATA XREF: sub_1B198+7↑r
-                                        ; sub_1B198+D↑w ...
+word_34C12      dw 0                    ; DATA XREF: checkDrawListOverflow+7↑r
+                                        ; checkDrawListOverflow+D↑w ...
 word_34C14      dw 0                    ; DATA XREF: sub_252CF+C9↑r
                                         ; sub_25C52:loc_25C58↑r ...
 word_34C16      dw 0                    ; DATA XREF: sub_25C52+46↑r
@@ -54333,7 +54325,7 @@ loc_395E0:                              ; CODE XREF: equipItem+C↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3960E
@@ -54379,7 +54371,7 @@ loc_39633:                              ; CODE XREF: equipItem+7F↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3965C
@@ -54428,7 +54420,7 @@ loc_39687:                              ; CODE XREF: equipItem+CD↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_396B0
@@ -54470,7 +54462,7 @@ loc_396CF:                              ; CODE XREF: equipItem+121↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_396F8
@@ -54512,7 +54504,7 @@ loc_39717:                              ; CODE XREF: equipItem+169↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_39740
@@ -100089,7 +100081,7 @@ loc_4E877:                              ; CODE XREF: specialsDialog+A2↓j
                 mov     al, [bp+var_1]
                 cbw
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_4E8E1
@@ -100905,7 +100897,7 @@ loc_4EE56:                              ; CODE XREF: sub_4EE43+E↑j
                 mov     al, [di+13h]
                 mov     ah, 0
                 push    ax
-                call    sub_28695
+                call    j_canEquip
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_4EE72
@@ -107088,9 +107080,10 @@ characterStatsDialog endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; canEquip(class, item id, silent): class 0/1 always; else EQUIP_FORBID[item] & class bit must be 0, otherwise shows '%ss are not proficient with %s!'
 ; Attributes: bp-based frame
 
-sub_51C4A       proc far                ; CODE XREF: sub_28695↑J
+canEquip        proc far                ; CODE XREF: j_canEquip↑J
 
 buffer          = byte ptr -66h
 var_2           = word ptr -2
@@ -107112,14 +107105,14 @@ arg_4           = word ptr  0Ah
                 jmp     cs:jpt_51C61[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_51C66:                              ; CODE XREF: sub_51C4A+17↑j
-                                        ; sub_51C4A+39↓j
+loc_51C66:                              ; CODE XREF: canEquip+17↑j
+                                        ; canEquip+39↓j
                                         ; DATA XREF: ...
                 mov     ax, 1           ; jumptable 00051C61 cases 0,1
                 jmp     loc_51D17
 ; ---------------------------------------------------------------------------
 
-loc_51C6C:                              ; CODE XREF: sub_51C4A+17↑j
+loc_51C6C:                              ; CODE XREF: canEquip+17↑j
                                         ; DATA XREF: ovl13:jpt_51C61↓o
                 mov     bx, di          ; jumptable 00051C61 cases 2-9
                 shl     bx, 1
@@ -107132,14 +107125,14 @@ loc_51C6C:                              ; CODE XREF: sub_51C4A+17↑j
                 jmp     short loc_51C66 ; jumptable 00051C61 cases 0,1
 ; ---------------------------------------------------------------------------
 
-def_51C61:                              ; CODE XREF: sub_51C4A+13↑j
-                                        ; sub_51C4A+37↑j
+def_51C61:                              ; CODE XREF: canEquip+13↑j
+                                        ; canEquip+37↑j
                 cmp     [bp+arg_4], 0   ; jumptable 00051C61 default case
                 jz      short loc_51C8E
                 jmp     loc_51D15
 ; ---------------------------------------------------------------------------
 
-loc_51C8E:                              ; CODE XREF: sub_51C4A+3F↑j
+loc_51C8E:                              ; CODE XREF: canEquip+3F↑j
                 call    sub_28144
                 call    j_setButtons_41D
                 cmp     si, 22h ; '"'
@@ -107147,15 +107140,15 @@ loc_51C8E:                              ; CODE XREF: sub_51C4A+3F↑j
                 cmp     si, 29h ; ')'
                 jle     short loc_51CA7
 
-loc_51CA2:                              ; CODE XREF: sub_51C4A+51↑j
+loc_51CA2:                              ; CODE XREF: canEquip+51↑j
                 mov     ax, 8518h
                 jmp     short loc_51CAA
 ; ---------------------------------------------------------------------------
 
-loc_51CA7:                              ; CODE XREF: sub_51C4A+56↑j
+loc_51CA7:                              ; CODE XREF: canEquip+56↑j
                 mov     ax, 5B4Ah
 
-loc_51CAA:                              ; CODE XREF: sub_51C4A+5B↑j
+loc_51CAA:                              ; CODE XREF: canEquip+5B↑j
                 push    ax
                 mov     bx, si
                 shl     bx, 1
@@ -107199,19 +107192,19 @@ loc_51CAA:                              ; CODE XREF: sub_51C4A+5B↑j
                 call    sub_280EA
                 call    sub_25DE3
 
-loc_51D15:                              ; CODE XREF: sub_51C4A+41↑j
+loc_51D15:                              ; CODE XREF: canEquip+41↑j
                 xor     ax, ax
 
-loc_51D17:                              ; CODE XREF: sub_51C4A+1F↑j
+loc_51D17:                              ; CODE XREF: canEquip+1F↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_51C4A       endp
+canEquip        endp
 
 ; ---------------------------------------------------------------------------
-jpt_51C61       dw offset loc_51C66     ; DATA XREF: sub_51C4A+17↑r
+jpt_51C61       dw offset loc_51C66     ; DATA XREF: canEquip+17↑r
                 dw offset loc_51C66     ; jump table for switch statement
                 dw offset loc_51C6C
                 dw offset loc_51C6C

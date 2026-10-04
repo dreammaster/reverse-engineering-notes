@@ -8121,6 +8121,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X1B181);
 	create_insn	(0X1B198);
+	set_name	(0X1B198,	"checkDrawListOverflow");
 	create_insn	(x=0X1B1A2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1B1AB);
@@ -9982,12 +9983,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1D9C3,	"jpt_1D050");
-	set_cmt	(0X1D9D1,	"jump table for switch statement",	0);
-	create_word	(x=0X1D9D1);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1D9D1,	"jpt_1CFB7");
 }
 
 //------------------------------------------------------------------------
@@ -9997,6 +9992,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1D9D1,	"jump table for switch statement",	0);
+	create_word	(x=0X1D9D1);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1D9D1,	"jpt_1CFB7");
 	set_cmt	(0X1D9DF,	"jump table for switch statement",	0);
 	create_word	(x=0X1D9DF);
 	make_array	(x,	0X7);
@@ -14367,6 +14368,7 @@ static Bytes_2(void) {
 	create_insn	(0X28690);
 	set_name	(0X28690,	"j_itemPrice");
 	create_insn	(0X28695);
+	set_name	(0X28695,	"j_canEquip");
 	create_insn	(0X2869A);
 	set_name	(0X2869A,	"j_drawCharacterStats");
 	create_insn	(0X2869F);
@@ -14751,12 +14753,6 @@ static Bytes_2(void) {
 	set_name	(0X29573,	"aUsingExpandedM");
 	create_strlit	(0X2958D,	0X1A);
 	set_name	(0X2958D,	"aUsingExtendedM");
-	create_strlit	(0X295A7,	0X26);
-	set_name	(0X295A7,	"aMightAndMagicI_1");
-	create_strlit	(0X295CD,	0XA);
-	set_name	(0X295CD,	"aTimerDrv");
-	create_strlit	(0X295D7,	0XA);
-	set_name	(0X295D7,	"aLogy5Raw");
 }
 
 //------------------------------------------------------------------------
@@ -14766,6 +14762,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X295A7,	0X26);
+	set_name	(0X295A7,	"aMightAndMagicI_1");
+	create_strlit	(0X295CD,	0XA);
+	set_name	(0X295CD,	"aTimerDrv");
+	create_strlit	(0X295D7,	0XA);
+	set_name	(0X295D7,	"aLogy5Raw");
 	create_strlit	(0X295E1,	0XC);
 	set_name	(0X295E1,	"aControlRaw");
 	create_strlit	(0X295ED,	0X9);
@@ -18099,9 +18101,6 @@ static Bytes_3(void) {
 	set_cmt	(0X37766,	"far pointer to the mondmgs.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37766);
 	set_name	(0X37766,	"Mon_dmgs");
-	set_cmt	(0X3776A,	"far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData",	0);
-	create_dword	(0X3776A);
-	set_name	(0X3776A,	"Mon_phys");
 }
 
 //------------------------------------------------------------------------
@@ -18111,6 +18110,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X3776A,	"far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData",	0);
+	create_dword	(0X3776A);
+	set_name	(0X3776A,	"Mon_phys");
 	set_cmt	(0X3776E,	"far pointer to the monac.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776E);
 	set_name	(0X3776E,	"Mon_ac");
@@ -22887,15 +22889,6 @@ static Bytes_4(void) {
 	set_cmt	(0X3FCD5,	"buffer",	0);
 	create_insn	(x=0X3FCDB);
 	op_hex		(x,	1);
-	create_insn	(x=0X3FD03);
-	op_hex		(x,	1);
-	set_cmt	(0X3FD13,	"jumptable 0003F4CF case 15",	1);
-	create_insn	(x=0X3FD13);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X3FD1C);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X3FD1F);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -22905,6 +22898,15 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X3FD03);
+	op_hex		(x,	1);
+	set_cmt	(0X3FD13,	"jumptable 0003F4CF case 15",	1);
+	create_insn	(x=0X3FD13);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X3FD1C);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X3FD1F);
+	op_stkvar	(x,	0);
 	set_cmt	(0X3FD2D,	"dest",	0);
 	create_insn	(0X3FD37);
 	set_cmt	(0X3FD3E,	"string",	0);
@@ -28506,6 +28508,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47458);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4745D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47466);
@@ -28518,15 +28529,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X47470);
 	op_stkvar	(x,	1);
 	set_cmt	(0X47474,	"buffer",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47475);
 	op_stkvar	(x,	1);
 	set_cmt	(0X47478,	"int",	0);
@@ -33541,6 +33543,15 @@ static Bytes_6(void) {
 	set_cmt	(0X4F47B,	"c",	0);
 	create_insn	(x=0X4F47F);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4F482,	"s",	0);
 	create_insn	(x=0X4F488);
 	op_hex		(x,	1);
@@ -33554,15 +33565,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F4B3);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F4C0);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F4CA);
@@ -35381,6 +35383,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X51C23);
 	op_hex		(x,	1);
 	create_insn	(0X51C4A);
+	set_name	(0X51C4A,	"canEquip");
 	create_insn	(x=0X51C4D);
 	op_hex		(x,	1);
 	create_insn	(x=0X51C52);
@@ -37788,6 +37791,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B16B, 0X2, 2, 0);
 	add_func    (0X1B198,0X1B223);
 	set_func_flags(0X1B198,0x5412);
+	set_func_cmt(0X1B198,	"called with the end pointer of the scene draw list: length in words = (end - D66Eh)/2, remembers the maximum (word_29708) and shows a message window when it exceeds 7CFh words (the 4000-byte list buffer)", 0);
 	set_frame_size(0X1B198, 0X2, 2, 0);
 	add_func    (0X1B223,0X1B2A3);
 	set_func_flags(0X1B223,0x5412);
@@ -39160,7 +39164,7 @@ static Functions_0(void) {
 	set_func_flags(0X28690,0x54c2);
 	set_frame_size(0X28690, 0, 0, 0);
 	add_func    (0X28695,0X2869A);
-	set_func_flags(0X28695,0x5482);
+	set_func_flags(0X28695,0x54c2);
 	set_frame_size(0X28695, 0, 0, 0);
 	add_func    (0X2869A,0X2869F);
 	set_func_flags(0X2869A,0x54c2);
@@ -39550,6 +39554,10 @@ static Functions_0(void) {
 	set_frame_size(0X41B2B, 0X138, 2, 0);
 	define_local_var(0X41B2B, 0X41CD9, "[bp-0X134]", "buffer");
 	define_local_var(0X41B2B, 0X41CD9, "[bp+0X6]", "format");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X41CED,0X41EF1);
 	set_func_flags(0X41CED,0x5412);
 	set_func_cmt(0X41CED,	"loadSavedGame + saveMazeState (by callees)", 0);
@@ -39558,10 +39566,6 @@ static Functions_0(void) {
 	add_func    (0X41EF1,0X41F5D);
 	set_func_flags(0X41EF1,0x5412);
 	set_frame_size(0X41EF1, 0, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X41F5D,0X422D4);
 	set_func_flags(0X41F5D,0x5412);
 	set_func_cmt(0X41F5D,	"cpanel.icn, load/save \"*.mm3\", quit confirmation, Mr. Wizard's help", 0);
@@ -40401,6 +40405,7 @@ static Functions_1(void) {
 	define_local_var(0X519E5, 0X51C4A, "[bp-0X322]", "s");
 	add_func    (0X51C4A,0X51D1D);
 	set_func_flags(0X51C4A,0x5412);
+	set_func_cmt(0X51C4A,	"canEquip(class, item id, silent): class 0/1 always; else EQUIP_FORBID[item] & class bit must be 0, otherwise shows '%ss are not proficient with %s!'", 0);
 	set_frame_size(0X51C4A, 0X6A, 2, 0);
 	define_local_var(0X51C4A, 0X51D1D, "[bp-0X66]", "buffer");
 	add_func    (0X51D31,0X51DAB);
