@@ -221,3 +221,8 @@ Age (`getAge`, `16E06`-ish): `min(254, Party_year - birthYear) + tempAge`, where
 | 40 | plate mail | 255 | Knight, Paladin |
 | 41 | plate armor | 255 | Knight, Paladin |
 | 42 | shield | 85 | Knight, Paladin, Cleric, Robber, Barbarian, Ranger |
+
+## Bash (`bash`, `4EFB6`, command `B`)
+
+Not possible on outdoor maps (`Maze_wrapMode` != 0).  Sound 19h is played, the first **two** members who can act (worst condition not asleep/paralysed/unconscious/dead/stone/eradicated: a switch on `worstCondition - 8`) each take 2 hit points of damage (`subtractHitPoints(char, 2)`) whether or not it works, and the bash succeeds when
+`(sum of their Might bonuses) + rnd(1, 30)` reaches the page header threshold for the wall in front: header byte 1Bh for wall style 2, 1Ch for style 4, 1Dh for any other style (`data-files.md`).  On success the wall is opened with `mazeSetBits(..., 5)` on both sides of the wall.
