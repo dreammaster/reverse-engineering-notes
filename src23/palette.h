@@ -9,7 +9,7 @@
 /*
  * The palette effects (all values are 6-bit VGA DAC components, 3 bytes per colour, 256 colours = 768 bytes per palette).
  * WORLD.DAT holds consecutive 768-byte palettes starting at the master palette (pictures.h, offset 0x8270A / 0x95BDA): block 0 is the
- * game palette (LoadMasterPalette); loadWorldDat5 (yendor2.asm:3708) also reads block 2, a sunrise/sunset ramp (black, blue,
+ * game palette (LoadMasterPalette; ShowIntroPicture loads block 3 for the chapter title card); loadWorldDat5 (yendor2.asm:3708) also reads block 2, a sunrise/sunset ramp (black, blue,
  * orange, pale blue ...), used by two effects:
  *
  *  - the dawn/dusk fade (AdvanceDayNightPaletteFade, yendor2.asm:28158): AdvanceGameClock starts it at 06:00 and 18:00; every call
