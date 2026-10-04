@@ -53,3 +53,20 @@ void localMapDraw(const ViewRenderer *r, const LocalMapCell cells[LocalMapColumn
         viewDrawPicture(r, LocalMapCategory, minimapCompassPicture(facing), x, y, true, 0);
     }
 }
+
+bool overviewMapMarker(int partyX, int partyY, int *markerX, int *markerY) {
+    if (partyX < 160 || partyY < 48 || partyX > 639 || partyY > 239) {
+        return false;
+    }
+    *markerX = 28 + 24 * ((partyX - 160) / 40);
+    *markerY = 23 + 20 * ((partyY - 48) / 24);
+    return true;
+}
+
+void overviewMapDraw(const ViewRenderer *r, int partyX, int partyY) {
+    viewDrawPicture(r, 0, 6, 0, 0, false, 0);
+    int x, y;
+    if (overviewMapMarker(partyX, partyY, &x, &y)) {
+        viewDrawPicture(r, 8, 0x11, x, y, true, 0);
+    }
+}

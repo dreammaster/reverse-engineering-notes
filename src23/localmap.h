@@ -41,4 +41,13 @@ void localMapFill(LocalMapCell cells[LocalMapColumns * LocalMapRows], GameKind g
 /* The tiles, then (when `facing` is nonzero) the party arrow at the block-relative position of (partyX, partyY). */
 void localMapDraw(const ViewRenderer *r, const LocalMapCell cells[LocalMapColumns * LocalMapRows], int partyX, int partyY, uint16_t facing);
 
+/*
+ * The overview map (ToggleMapViewMode, the W key; Chapter 2 only, yendor2.asm:32010): PICTURES category 0 picture 6 full screen at (0, 0) with
+ * the "you are here" marker (DrawPlayerPositionMarker, :32051), category 8 picture 0x11 transparent, when the party is inside the
+ * pictured area -- columns 160-639 and rows 48-239, one picture block of 24 x 20 pixels per 40 x 24 cells. The marker's position is
+ * (28 + 24 * ((x - 160) / 40), 23 + 20 * ((y - 48) / 24)). Returns false (nothing drawn but the picture) outside it.
+ */
+bool overviewMapMarker(int partyX, int partyY, int *markerX, int *markerY);
+void overviewMapDraw(const ViewRenderer *r, int partyX, int partyY);
+
 #endif
