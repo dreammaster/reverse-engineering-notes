@@ -28,4 +28,4 @@ with `mazeNeighbourSlot` and return `1111h` or 0 outside the 32x32 world): `mark
 `mazeGetWordWrap` (`1BB33`). After every step `updateAutomap` (`15736`) marks the party's cell visited when the party has the
 Cartographer skill (`checkSkill(4)`), and when Wizard Eye is active (`Party_wizardEye`) draws the overhead map.
 
-Slot examples (`VIEW_DX`/`VIEW_DY`, facing 0 = north): slot 0,1 = (0,0) the party's own cell, slots 2,3 = (+1,0),(-1,0), slot 4..7 = (0,1), (0,1),(0,1),(+1,1) region one row ahead (slot 5 = (0,1) is the cell directly ahead, used by Jump's wall test), slots 8-16 the row two cells ahead (x -2..+2), 17-33 three ahead (x -4..+4) and 34-43 four ahead (x -4..+4); the last two entries are fillers.
+Slot offsets for facing 0 (north), `(dx,dy)` (other facings are rotations): 0,1 (0,0) own cell; 2 (1,0); 3 (-1,1); 4,5,6 (0,1) the cell directly ahead (several slots refer to the same cell because the renderer draws several wall faces of it; Jump's wall test uses slot 5); 7 (1,1); 8 (-2,2); 9,10 (-1,2); 11,12,13 (0,2); 14,15 (1,2); 16 (2,2); 17-33 the row three ahead (x -4..4) and 34-43 the row four ahead (x -4..4); the last two entries are fillers.
