@@ -40,7 +40,11 @@ Compose a 320 x 200 8-bit surface, then apply the palette (`pictures.h`, `palett
 4. text uses `font.c` at the positions the screen modules document; click handling uses `uiregions.c` (`uiRegionHit`).
 
 `src23/tools/render_view.c` does exactly this and writes a PNG (env vars `RENDER_HUD`, `RENDER_MONSTER`, `RENDER_DOLLS`, `RENDER_SHEET`,
-`RENDER_ROSTER` add the party panels, a monster, the inventory dolls, a character sheet or the roster); it is the quickest way to check a change.
+`RENDER_ROSTER`, `RENDER_DIALOG`, `RENDER_PICK` add the party panels, a monster, the inventory dolls, a character sheet, the roster, the pause dialog or a creation step); it is the quickest way to check a change.
+
+`src23/tools/walk.c` walks the new-game party through a real map with `movementApply` / `movementClassifyCell` (doors, void, bumps, special cells) and
+writes the view after every step as a contact sheet (`walk 3 yendor3/game FFFFFR... out.png`): a headless check that movement, the grid, lighting
+and the renderer agree.
 
 Other screens implemented as draw functions: inventory dolls (`paperdoll.c`), character sheet (`statsheet.c`), party roster (`roster.c`). Their
 layouts come from the click-region tables.
