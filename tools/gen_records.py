@@ -34,7 +34,16 @@ HAND_HEADERS = {"TTScene": "TTScene.h", "TTAction": "TTAction.h", "TTButton": "T
 # Recovered methods of the generated classes that are written by hand (in TTxxx.cpp):
 # declarations added to the class.
 EXTRA_METHODS = {"TTAnimation": ["void SetMirrored(bool mirrored);"],
-                 "TTValue": ["void SetRandomValue(int minimum, int maximum);"]}
+                 "TTValue": ["void SetRandomValue(int minimum, int maximum);"],
+                 "TTCondition": ["bool IsTrue(TVList &evaluating) const;",
+                                 "bool IsTrue() const;",
+                                 "bool SetTo(bool value);"],
+                 "TTCharacter": ["bool AddItem(const TVisObjRef &item, bool scrollIntoView);",
+                                 "void AddItems(const TVList &items);",
+                                 "bool RemoveItem(const TVisObjRef &item);"],
+                 "TTSprite": ["void SetPosition(const wxPoint &position);"],
+                 "TTObject": ["static bool cmpY(const TVisionaireObject *a, const TVisionaireObject *b);"],
+                 "TTInterface": ["void SetNextCommand();"]}
 
 # Classes whose callbacks include GetNameInList.
 def const_names():

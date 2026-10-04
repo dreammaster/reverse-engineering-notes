@@ -10,14 +10,24 @@
 #include "datastruct/typegrp.h"
 
 #include "TGActionInfo.h"
+#include "datastruct/visobjref.h"
 
-class TTAction {
+class TTAction : public TVisObjRef {
 public:
 	// Recovered from the binary's schema (vstables/records.cpp).
 	static TTypeGroup &GetTypeGroup();
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+
+	TTAction() = default;
+	explicit TTAction(const TVisObjRef &ref) : TVisObjRef(ref) {
+	}
+
+	// Confirmed (asm lines 1477755-1477810): the action's command, type and fixture.
+	TVisObjRef GetCommand() const;
+	int GetTypeAction() const;
+	TVisObjRef GetFixture() const;
 
 	// Confirmed (asm lines 1478536-1478560): the names a new action gets by where
 	// it hangs.

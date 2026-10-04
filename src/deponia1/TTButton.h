@@ -42,4 +42,11 @@ public:
 		int type = GetInt(kButtonType);
 		return type == 6 || type == 3;
 	}
+	// Confirmed (asm lines 1525773-1525849): the button's condition (true if it
+	// has none) differs from its "negate" flag.
+	bool IsActive() const;
+	// Confirmed (asm lines 1525936-1526062, 1526063-1526190): the text of the
+	// button's name / conjunction in the current language (empty without one).
+	wxString GetLanguageName() const;
+	wxString GetLanguageConjunctionName() const;
 };

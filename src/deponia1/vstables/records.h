@@ -121,6 +121,9 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	bool AddItem(const TVisObjRef &item, bool scrollIntoView);
+	void AddItems(const TVList &items);
+	bool RemoveItem(const TVisObjRef &item);
 };
 
 class TTClipboardObject : public TVisObjRef {
@@ -167,6 +170,9 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	bool IsTrue(TVList &evaluating) const;
+	bool IsTrue() const;
+	bool SetTo(bool value);
 };
 
 class TTCursor : public TVisObjRef {
@@ -251,6 +257,7 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	void SetNextCommand();
 };
 
 class TTInterfaceClass : public TVisObjRef {
@@ -311,6 +318,7 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	static bool cmpY(const TVisionaireObject *a, const TVisionaireObject *b);
 };
 
 class TTOutfit : public TVisObjRef {
@@ -407,6 +415,7 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	void SetPosition(const wxPoint &position);
 };
 
 class TTTextLanguage : public TVisObjRef {
