@@ -75,4 +75,19 @@ unsigned alchemyYieldDivisor(uint16_t chemistry);
 AlchemyResult partyTransmuteOre(const uint8_t *partyRecord, Bcd4 source, Bcd4 destination, unsigned *consumed,
                                 unsigned *yield);
 
+/*
+ * The percentage restoratives (RestCharacter, yendor2.asm:48544, yendor3.asm:49236): the item's target entry carries a percentage (word 2,
+ * [+4]); `restoresMp` is the entry's word 1 bit 0x8000. Chapter 2 uses item ids 0x36-0x46 (health and magic variants), Chapter 3 only 0x1F-0x20
+ * and always restores magic -- its health branch is gone.
+ *
+ * Health: HP += (max HP x percent + 50) / 100, capped at max, no other condition. Magic: the class id ([+0x0E], reduced by 10 twice while
+ * above 9) must be at least 4, otherwise nothing is restored and the user is made Sick (PartyStatusSick); a caster gains
+ * (max MP x percent + 50) / 100, capped at max. In both cases the item's charge is spent. The division is the original's 32-bit
+ * DX:AX by 100 of the unreduced product with the +50 added to the low word only (a carry out of it is lost), reproduced here.
+ */
+typedef enum { PercentRestoreApplied, PercentRestoreMadeSick } PercentRestoreResult;
+
+bool partyIsPercentRestorativeItem(GameKind game, unsigned itemId);
+PercentRestoreResult partyUsePercentRestorative(GameKind game, uint8_t *partyRecord, bool restoresMp, unsigned percent);
+
 #endif

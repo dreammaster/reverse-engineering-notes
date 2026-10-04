@@ -135,7 +135,44 @@ static void testAlchemy(void) {
     checkU32("divisor 110", alchemyYieldDivisor(110), 2);
 }
 
+static void testPercent(void) {
+    check("Chapter 2 percentage items are 0x36-0x46, Chapter 3 0x1F-0x20", partyIsPercentRestorativeItem(GameYendor2, 0x36) && partyIsPercentRestorativeItem(GameYendor2, 0x46) &&
+                                                                              !partyIsPercentRestorativeItem(GameYendor2, 0x47) && !partyIsPercentRestorativeItem(GameYendor2, 0x35) &&
+                                                                              partyIsPercentRestorativeItem(GameYendor3, 0x1F) && partyIsPercentRestorativeItem(GameYendor3, 0x20) &&
+                                                                              !partyIsPercentRestorativeItem(GameYendor3, 0x21));
+    uint8_t r[PartyRecordSize];
+    memset(r, 0, sizeof(r));
+    setPoints(r, 10, 200, 5, 80);
+    partySetU16(r, PartyFieldClass, 1);
+    check("health 25%: 10 + (200 x 25 + 50) / 100 = 60", partyUsePercentRestorative(GameYendor2, r, false, 25) == PercentRestoreApplied && partyGetStat(r, PartyStatHitPoints) == 60);
+    partyUsePercentRestorative(GameYendor2, r, false, 100);
+    check("health is capped at the maximum", partyGetStat(r, PartyStatHitPoints) == 200);
+    check("a fighter (class 1) using a magic item gets nothing and is made sick", partyUsePercentRestorative(GameYendor2, r, true, 50) == PercentRestoreMadeSick &&
+                                                                                     partyGetStat(r, PartyStatMagicPoints) == 5 && (partyGetU16(r, PartyFieldStatusFlags) & PartyStatusSick));
+    partySetU16(r, PartyFieldStatusFlags, 0);
+    partySetU16(r, PartyFieldClass, 4);
+    check("a class 4 caster gains 50% of 80: 5 + 40", partyUsePercentRestorative(GameYendor2, r, true, 50) == PercentRestoreApplied && partyGetStat(r, PartyStatMagicPoints) == 45 &&
+                                                         partyGetU16(r, PartyFieldStatusFlags) == 0);
+    partySetU16(r, PartyFieldClass, 17);
+    partySetStat(r, PartyStatMagicPoints, 0);
+    check("class ids above 9 reduce by 10 (17 -> 7, a caster)", partyUsePercentRestorative(GameYendor2, r, true, 10) == PercentRestoreApplied && partyGetStat(r, PartyStatMagicPoints) == 8);
+    partySetU16(r, PartyFieldClass, 23);
+    check("...and again (23 -> 13 -> 3, not a caster)", partyUsePercentRestorative(GameYendor2, r, true, 10) == PercentRestoreMadeSick);
+    partySetU16(r, PartyFieldClass, 4);
+    partySetStat(r, PartyStatHitPoints, 1);
+    partySetStat(r, PartyStatMagicPoints, 0);
+    partyUsePercentRestorative(GameYendor3, r, false, 50);
+    check("Chapter 3 always restores magic whatever the flag", partyGetStat(r, PartyStatMagicPoints) == 40 && partyGetStat(r, PartyStatHitPoints) == 1);
+    setPoints(r, 0, 9999, 0, 80);
+    partyUsePercentRestorative(GameYendor2, r, false, 100);
+    check("9999 x 100 uses the full 32-bit product: 9999", partyGetStat(r, PartyStatHitPoints) == 9999);
+    setPoints(r, 0, 655, 0, 80);
+    partyUsePercentRestorative(GameYendor2, r, false, 100); /* 65500 + 50 = 65550 carries out of the low word: the carry is lost (original quirk) */
+    check("a carry out of the low word is dropped like the original: (65500 + 50) mod 65536 = 14 -> 0", partyGetStat(r, PartyStatHitPoints) == 0);
+}
+
 int main(void) {
+    testPercent();
     testIdMapping();
     testHealthItems();
     testMagicItems();

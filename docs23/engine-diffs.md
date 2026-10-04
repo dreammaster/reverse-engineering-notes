@@ -1622,3 +1622,10 @@ identity (a generic palette-fade-and-mark-dirty stub, 14 call sites),
 and the still-unverified `PlayTitleScreenSequence` guess (0x20DC4 --
 now a confirmed real call from `RunTitleScreen`, but not independently
 diffed).
+
+### Percentage restoratives (`RestCharacter`)
+
+Chapter 2 dispatches item ids 0x36-0x46 to `RestCharacter`, which restores a percentage of max HP or max MP depending on bit 0x8000 of the item
+entry's word 1; Chapter 3 only dispatches 0x1F-0x20 and its `RestCharacter` has dropped the HP branch (always magic). In both, magic needs a
+class id >= 4 after two "- 10 while > 9" reductions, otherwise the user is made Sick instead. The original's rounding adds 50 to the low word
+of the 32-bit product only (a carry is lost), then divides DX:AX by 100; `partyUsePercentRestorative` (`consumable.c`) reproduces it.

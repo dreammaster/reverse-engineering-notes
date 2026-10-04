@@ -101,3 +101,37 @@ AlchemyResult partyTransmuteOre(const uint8_t *partyRecord, Bcd4 source, Bcd4 de
     *yield = out;
     return AlchemyDone;
 }
+
+bool partyIsPercentRestorativeItem(GameKind game, unsigned itemId) {
+    return game == GameYendor2 ? itemId >= 0x36 && itemId <= 0x46 : itemId >= 0x1F && itemId <= 0x20;
+}
+
+static uint16_t percentOf(uint16_t value, unsigned percent) {
+    uint32_t product = (uint32_t)value * (uint16_t)percent;
+    uint32_t low = ((product & 0xFFFF) + 0x32) & 0xFFFF;
+    return (uint16_t)(((product & 0xFFFF0000u) | low) / 100);
+}
+
+PercentRestoreResult partyUsePercentRestorative(GameKind game, uint8_t *record, bool restoresMp, unsigned percent) {
+    if (game == GameYendor3) {
+        restoresMp = true;
+    }
+    PartyStat stat = restoresMp ? PartyStatMagicPoints : PartyStatHitPoints;
+    if (restoresMp) {
+        int classId = (int16_t)partyGetU16(record, PartyFieldClass);
+        if (classId > 9) {
+            classId -= 10;
+            if (classId > 9) {
+                classId -= 10;
+            }
+        }
+        if (classId < 4) {
+            partySetU16(record, PartyFieldStatusFlags, (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) | PartyStatusSick));
+            return PercentRestoreMadeSick;
+        }
+    }
+    int16_t max = (int16_t)partyGetStatMax(record, stat);
+    int16_t value = (int16_t)(percentOf((uint16_t)max, percent) + partyGetStat(record, stat));
+    partySetStat(record, stat, (uint16_t)(value > max ? max : value));
+    return PercentRestoreApplied;
+}
