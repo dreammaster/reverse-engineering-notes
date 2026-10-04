@@ -402,4 +402,4 @@ Half for Me: the target (not the caster, not dead/stone/eradicated) is healed to
 
 Identify Monster (`4C917`, about 180 lines of UI) opens a window with the monster ahead's armour class (`Mon_ac`), attacks per turn (`Mon_numa`) and special attack (`Mon_spec`), plus its other stats; Detect Monster (`4CF1E`, about 250 lines) is presumably the monster-radar display (inferred from its size and name, not read in detail). Identify Monster calls `showErrorMessage` on its failure path.
 
-Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): moves the party two cells forward in its facing after two `mazeGetWordRel` checks, plays effect 33h and redraws; `showErrorMessage` when blocked.
+Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): moves the party to the cell given by view-offset slot 5 of `VIEW_DX/VIEW_DY` for its facing (one or two cells ahead -- the slot meaning was not worked out) after `mazeGetWordRel` checks of the wall in between, plays effect 33h and redraws; `showErrorMessage` when blocked.
