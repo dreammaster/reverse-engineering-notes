@@ -47,6 +47,36 @@ int main(void) {
     }
     check("the LIST hint is drawn, the MAP hint not", hint && screen[186 * 320 + 290] == 0xEE);
 
+    memset(screen, 0xEE, sizeof(screen));
+    ClueListRow rows[3] = {{"SWORD", true}, {"AXE", false}, {NULL, false}};
+    clueEntryListDraw(&r, rows, 3, 1, false);
+    bool normal = false, dim = false, blank = false;
+    for (int y = 27; y < 33; y++) {
+        for (int x = 40; x < 80; x++) {
+            normal = normal || screen[y * 320 + x] == 0x0A;
+        }
+    }
+    for (int y = 37; y < 43; y++) {
+        for (int x = 40; x < 80; x++) {
+            dim = dim || screen[y * 320 + x] == 0x84;
+        }
+    }
+    for (int y = 47; y < 53; y++) {
+        for (int x = 40; x < 80; x++) {
+            blank = blank || screen[y * 320 + x] != 0xEE;
+        }
+    }
+    check("entry rows: known = 0x0A, selected and unknown = 0x84, a NULL row stays blank", normal && dim && !blank);
+    memset(screen, 0xEE, sizeof(screen));
+    clueEntryListDraw(&r, rows, 3, 1, true);
+    bool bright = false;
+    for (int y = 37; y < 43; y++) {
+        for (int x = 40; x < 80; x++) {
+            bright = bright || screen[y * 320 + x] == 0x8A;
+        }
+    }
+    check("revealing everything makes the selected unknown entry 0x8A", bright);
+
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

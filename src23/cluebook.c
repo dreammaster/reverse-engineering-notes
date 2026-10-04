@@ -20,3 +20,14 @@ void clueNavBarDraw(const ViewRenderer *r, uint16_t flags) {
         viewDrawPicture(r, 8, clueTabPicture(r->game, tab, flags), 62 + 30 * (int)tab, 180, false, 0);
     }
 }
+
+void clueEntryListDraw(const ViewRenderer *r, const ClueListRow *rows, unsigned count, int selected, bool revealAll) {
+    for (unsigned i = 0; i < count && i < ClueListRows; i++) {
+        if (!rows[i].name) {
+            continue;
+        }
+        bool dim = !revealAll && !rows[i].known;
+        uint8_t colour = (int)i == selected ? (dim ? 0x84 : 0x8A) : (dim ? 0x05 : 0x0A);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 40, 27 + 10 * (int)i, rows[i].name, colour, 0, FontTransparent);
+    }
+}

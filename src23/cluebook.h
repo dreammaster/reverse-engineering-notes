@@ -20,4 +20,18 @@ void clueNavBarDraw(const ViewRenderer *r, uint16_t flags);
 /* The picture id of tab `tab` (0-6) for the flags. */
 unsigned clueTabPicture(GameKind game, unsigned tab, uint16_t flags);
 
+/*
+ * DrawClueEntryList (yendor2.asm:4543): up to 14 entry names (the ClueEntries region table: x = 40, y = 27 + 10 row) in font 0, transparent:
+ * the selected row 0x8A, the others 0x0A; an entry the party has not identified (`known` false) while `revealAll` is off is drawn in 0x84
+ * (selected) or 0x05 (others). The names themselves come from BuildClueEntryText (not reimplemented here).
+ */
+enum { ClueListRows = 14 };
+
+typedef struct {
+    const char *name; /* NULL = blank row */
+    bool known;
+} ClueListRow;
+
+void clueEntryListDraw(const ViewRenderer *r, const ClueListRow *rows, unsigned count, int selected, bool revealAll);
+
 #endif
