@@ -1191,6 +1191,15 @@ The **local area map** (`ShowLocalAreaMap`, the M key; `localmap.c`; `RENDER_LOC
 block is shown full screen as 8 x 8 tiles (category 9, the minimap's pictures) from y = 8, unexplored cells as the blank tile 0x13, the party as the compass arrow. The clue book's
 map pages (F1) use the same drawing for any block.
 
+**Sound events** (`TriggerSoundEvent`, yendor2.asm:43714): the argument is simply the 1-based effect id of WORLD.DAT's VOC table (`audio.h`; `LookupSoundEffectBlockOffset(id)`).
+With no digital sound device only id 3 does anything (a PC speaker beep). Call-site census of the ids with a literal argument (Chapter 2): **1** opening
+a screen or dialog (pause dialog, inventory, alchemy, rest, portrait click, clue book selection); **2** opening the member detail screen; **3** the error / refusal beep
+(`FlashStatusWarning`, `EditTextField` overflow, locked door, search failure, title screen); **4** a confirm / click (toggles in the pause dialog, travel, placing a held item);
+**5** and **17-27** the character creation steps; **6** moving an item between slots; **7** spending or collecting money and ore; **8** `HandleMovementInput`; **9** a status
+tick and the cursor; **10** being hit (monster attacks, trap effects); **11** the alchemy screen; **12** damage effects; **19** monster spawn and the party wipe.
+Higher ids (42-59, 71-72, 100, 157 ...) are the item-effect sounds `ApplyEncodedItemEffect` picks per effect. The census script is a few lines of Python over the asm
+(track `mov ax, N` before each call).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
