@@ -39,11 +39,16 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   `src23/tools/render_view.c` renders a position (and, with `RENDER_*` environment variables, the party panels, a monster, the dolls, a sheet or the
   roster) to a PNG: the quickest way to check any of it.
 
-Still missing: the screens not drawn yet (title menu and its animation, character creation steps, the clue book, the pause/save dialog, the text
-panel's message lines, the shop's category tabs), input/timing glue (the original is driven by DOS interrupts), the message strings from the
-executables (`exedata.c` locates the data segment: Chapter 2's `SW.EXE` at file offset `0x21660`, Chapter 3's `REGISTER.EXE` at `0x21DB0`; the strings themselves are not extracted), OPL/mixer playback of the
-parsed music and effects, ground-item/UI orchestration shells, and Chapter 1's engine. A name census of the 769 functions against `src23` is the quick
-way to find what is still uncovered (what remains is overwhelmingly UI).
+* **Screens and input added later the same day**: `charcreate.c` (portrait, class, item pick, roll, summary menu, name prompt) + `textfield.c`,
+  `gamedialog.c` (pause dialog), `titlemenu.c`, `clueitem.c` / `cluemonster.c` (clue book item and monster pages), the alchemy status panel,
+  `maininput.c` (the main loop's and the combat turn's key and click maps), `partyUsePercentRestorative` (RestCharacter), and `exedata.c`: **the
+  executables are not packed** -- Chapter 2's `SW.EXE` holds its data segment at file offset `0x21660`, Chapter 3's `REGISTER.EXE` at `0x21DB0` -- so the
+  fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly.
+
+Still missing: the animated sequences (title / intro / creation / credits), the clue book's spell, transport and map pages and the run-time sub-icon row,
+the shop's category tab list, the message strings used by the game logic (`exedata.c` can fetch any, none are catalogued), input/timing glue (the
+original is driven by DOS interrupts), OPL/mixer playback of the parsed music and effects, Chapter 2's debug commands, and Chapter 1's engine. A name
+census of the 769 functions against `src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).
 
 ## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new), the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack), ApplyEncodedItemEffect's full dispatch chain (all 19 branch addresses recorded), and two previously-untraced caller-context questions -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
 
