@@ -61,6 +61,11 @@ The original runs one loop (`start` -> `RunDungeonGameLoop`); everything below i
 * monsters and combat: `monsterpool.c` (spawn, ambush, walk, rewards: `monsterPoolTakeTurn`), `monster.c`, `combat.c`, `effect.c`;
 * world state: `globalflags.c`, `worldobjects.c`, `savegame.c`.
 
+## Robustness
+
+`src23/tools/fuzz_parsers.c` feeds truncated and byte-corrupted copies of the real WORLD.DAT (ending at a no-access page, so any over-read crashes)
+to every memory-image parser (items, monsters, spells, world map, dialog, documents, locks, world objects); 400 rounds per game pass without a fault.
+
 ## Input
 
 `maininput.c` has the main loop's key map (both jump tables of `start`, dumped by `dump_main_key_table.py`) and the combat-turn keys
