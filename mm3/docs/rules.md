@@ -155,3 +155,12 @@ Refused with "Too dangerous to rest here!" on cells with flag bit 04h or a page 
 (`confirmDialog`). Resting plays out ten `chargeStep` ticks (during which monsters may arrive and interrupt), then `changeTime` for 8 hours ("0008 hours pass. Rest complete."), and for each
 member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit eaten per member) sets hit points and spell points to `getMaxHP`/`getMaxSP` ("Hit Pts and Spell Pts restored.");
 `checkPartyDead` then runs. Super Shelter calls the same routine.
+
+## Time (`changeTime` 16973, `chargeStep` 16DC0, `addTime` 1531F)
+
+* `chargeStep` (every movement command) advances the clock by 1 minute, or 10 minutes when `Maze_wrapMode` is set (outdoor maps), then calls `moveMonsters`.
+* Each time the clock crosses a multiple of 480 minutes (`1E0h`, 8 hours) `changeTime` runs the condition tick for every party member: a character with any stat reduced to 0 dies,
+  several timed conditions (asleep, confused, paralysed, weak ...) are cleared or aged, poison/disease counters grow (doubling, with a 1 in 10 chance each tick to roll a saving throw that cures them),
+  heart-broken counts up to 10 then turns into depression, and so on (the full per-condition table of this 550-line routine is not decoded).
+* At the end of `changeTime`, on maps that have a day/night cycle (`mapHasDayNight`: maps below 6, 24-28, 41-104 and above 106), `Town_closed` (`byte_32E68`) is recomputed:
+  night is `Party_minutes < 300 or >= 1260` (before 05:00 or from 21:00); when the state changed the town is reloaded (`sub_28194` -> `sub_43034`) in its day or night form. Temple, guild, smithy, training grounds refuse entry while it is night; the tavern has its own hours (open 18:00-05:00).

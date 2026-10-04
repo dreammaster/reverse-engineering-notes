@@ -649,3 +649,5 @@
 1B2A3	moveMonsterBy	moveMonsterBy(monster index, dx, dy): moves a live monster if the target cell's occupancy plus its size (MONSTER_SIZE table DGROUP 1B20h) stays below 4, the monster is awake (state 0) and movement is enabled (byte_2884C); sets its moved flag
 315E4	Maze_occupancy	1024 bytes (32x32 world cells, y*32+x): summed sizes of the monsters standing in each cell; rebuilt by moveMonsters
 1B20	MONSTER_SIZE	byte per monster id: how much of a cell's capacity (4) the monster fills
+1693D	mapHasDayNight	1 when Party_map is < 6, 24-28, 41-104 or > 106 (towns and open-air maps), 0 for maps 6-23, 29-40, 105, 106 (dungeons, arena)
+32E68	Town_closed	byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set
