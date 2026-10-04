@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o fuzz_parsers fuzz_parsers.c ../dialog.c ../document.c ../item.c ../lockcatalog.c ../monster.c ../spellrecord.c \
- *       ../worldmap.c ../worldobjects.c ../bcd4.c ../effect.c ../random.c ../globalflags.c ../movement.c ../party.c ../savegame.c && ./fuzz_parsers <2|3> <game dir> [rounds]
+ *       ../worldmap.c ../worldobjects.c ../bcd4.c ../effect.c ../random.c ../globalflags.c ../movement.c ../party.c ../savegame.c ../newgame.c ../chargen.c && ./fuzz_parsers <2|3> <game dir> [rounds]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +16,8 @@
 #include "item.h"
 #include "lockcatalog.h"
 #include "monster.h"
+#include "newgame.h"
+#include "savegame.h"
 #include "spellrecord.h"
 #include "worldmap.h"
 #include "worldobjects.h"
@@ -54,6 +56,22 @@ static void runAll(GameKind game, const uint8_t *data, size_t size, unsigned *ac
     *accepted += documentCatalogParseWorldDat(&documents, game, data, size);
     *accepted += lockCatalogParseWorldDat(&locks, game, data, size);
     *accepted += worldObjectTableParseWorldDat(&objects, game, data, size);
+    static SaveGame fresh;
+    saveGameInit(&fresh, game);
+    *accepted += saveGameNewGame(&fresh, game, data, size);
+}
+
+static void runSave(GameKind game, const uint8_t *data, size_t size, unsigned *accepted) {
+    static SaveGame save;
+    saveGameInit(&save, game);
+    if (saveGameLoad(&save, data, size)) {
+        (*accepted)++;
+        char name[SaveNameBufferSize];
+        saveGetName(&save, name);
+        for (unsigned i = 0; i < 9; i++) {
+            (void)saveGamePartyRecord(&save, i)[0];
+        }
+    }
 }
 
 int main(int argc, char **argv) {
@@ -80,6 +98,21 @@ int main(int argc, char **argv) {
     }
     fclose(f);
 
+    /* a real saved game (SAVGAME1), if the game directory has one, gets the same treatment */
+    snprintf(path, sizeof(path), "%s/SAVGAME1", argv[2]);
+    FILE *sf = fopen(path, "rb");
+    uint8_t *saved = NULL;
+    size_t savedSize = 0;
+    if (sf) {
+        fseek(sf, 0, SEEK_END);
+        savedSize = (size_t)ftell(sf);
+        fseek(sf, 0, SEEK_SET);
+        saved = malloc(savedSize);
+        if (!saved || fread(saved, 1, savedSize, sf) != savedSize) {
+            saved = NULL;
+        }
+        fclose(sf);
+    }
     srand(12345);
     unsigned accepted = 0, runs = 0;
     for (unsigned round = 0; round < rounds; round++) {
@@ -98,6 +131,15 @@ int main(int argc, char **argv) {
         runAll(game, copy, cut, &accepted);
         runs++;
         VirtualFree(base, 0, MEM_RELEASE);
+        if (saved) {
+            size_t savedCut = round == 0 ? savedSize : (size_t)(((unsigned long long)rand() * 32768ull + (unsigned)rand()) % (savedSize + 1));
+            uint8_t *savedCopy = guarded(saved, savedCut, &base);
+            for (unsigned k = 0; round > 20 && k < 100 && savedCut; k++) {
+                savedCopy[(size_t)(((unsigned long long)rand() * 32768ull + (unsigned)rand()) % savedCut)] = (uint8_t)rand();
+            }
+            runSave(game, savedCopy, savedCut, &accepted);
+            VirtualFree(base, 0, MEM_RELEASE);
+        }
     }
     printf("%u rounds survived, %u parser acceptances\n", runs, accepted);
     free(original);
