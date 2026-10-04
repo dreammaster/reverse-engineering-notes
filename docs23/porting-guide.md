@@ -68,6 +68,13 @@ See [module-index.md](module-index.md) for every module with a one-line descript
 `src23/tools/fuzz_parsers.c` feeds truncated and byte-corrupted copies of the real WORLD.DAT (ending at a no-access page, so any over-read crashes)
 to every memory-image parser (items, monsters, spells, world map, dialog, documents, locks, world objects, the new-game builder, and a real SAVGAME1 through saveGameLoad); 300-400 rounds per game pass without a fault.
 
+## Opening story
+
+`intro2.c` is Chapter 2's story cinematic: `introCellsInit` / `introCellsFrame` are the seven animated cells (flags, stepping, top and bottom clipping, and the original's
+over-read quirk for a cell cut off at the top), `introCards` / `introCardLine` the nine text cards (read from SW.EXE; with sound effects on the original plays the voice and
+does not draw the text). The rest is a script of fades and waits listed step by step in file-formats.md ("The opening story of Chapter 2 and Chapter 3", including the shorter,
+different Chapter 3 opening); `src23/tools/intro_sheet.c` renders four panned frames of the backdrop with the cells.
+
 ## Input
 
 `maininput.c` has the main loop's key map (both jump tables of `start`, dumped by `dump_main_key_table.py`) and the combat-turn keys

@@ -7389,6 +7389,68 @@ wired into `monsterPoolSpawn` at the same point
 covering the baseline gate, all three tiers' thresholds, `Never`, and
 priority when multiple tier bits are combined.
 
+## The opening story of Chapter 2 and Chapter 3 (`RunCharacterCreation`)
+
+Both games run an animated opening before the party is made (`RunCharacterCreation`, called by `InitGame` and by the title screen's `I` key).
+Each stage polls Escape (`PollForEscapeKeyOnlyAlt`) and abandons the rest; `FinalizeCharacterCreation` always runs afterwards (fade out, reload
+palette block 0, free the backdrop buffer, stop the music). The names `RunCharacterCreationSelectionStep` and `PlayCharacterCreationIntroAnimation`
+are old guesses: nothing is selected in either, they are the story. The cinematics differ per game; `src23/intro2.c` holds Chapter 2's data and the
+animated-cell engine, the rest is a script of timed steps for the port to play (all of it is fades, waits and pictures, no game state).
+
+### Chapter 2 (`SW.EXE`, yendor2.asm:8381-9698)
+
+Primitives: a *tick* is the animation timer (`g_uiScratchFlags1` bit `0x400`, set at the animation speed rate; every `Wait...` step below waits for
+that many ticks); a "16-colour fade up / down" is `StepPaletteFadeRange` mode 4 / 3 over 16 DAC colours starting at the stated colour, 63 rounds
+(`RunPaletteRange16FadeUp/Down`; the unqualified forms use colour 0x90, the text colours); "range fade" is `StepPaletteFadeRange(mode, 63, count, first)` with
+modes 0 fade out, 1 fade in, 2/4 up, 3 down, 5 from white (palette.h). During a loop the cells are redrawn each tick (`DrawCharacterCreationAnimationFrame`).
+
+1. `ComposeCharacterPortrait` (:9549): stop any music, wait 20 ticks; allocate 1F41h paragraphs; picture 5 at row 0 and picture 6 at row 196 of
+   category 0 are drawn into it (the tall backdrop: the chapter title card above a castle gate); palette block 3 is loaded and blanked; the nine
+   pictures of category 2 (10-18) and nine of category 6 (23-31) are drawn once off-screen to warm the picture cache; the seven cells are set up
+   (`introCellsInit`); the first frame is drawn.
+2. `PlayCharacterCreationIntroAnimation` (:8626): music track 0x12. 63 rounds of the palette sequence over colours 0-0x3F and 0x80-0xFF (the title
+   card fades in; the cells animate meanwhile). After a poll: wait 5; a spark (colour 0x1F, `SetWipeEffectPixel`) runs from (268, 8) down-left 2 px per
+   tick for 32 ticks, then 20 more with its colour dimming 1 per tick; poll; wait 10; 63 rounds of 16-colour fade up at colour 0x40; wait 10; 63 rounds of
+   range fade 4 over 0x30 colours from 0x50; wait 20; 63 rounds of 16-colour fade down at 0x40 together with range fade 3 over colours 0x50-0x7F.
+3. `RunCharacterCreationSelectionStep` (:8800), scroll offset 0:
+   - pan the backdrop down 31 rows, 16-colour fade up at 0x40, 39 more rows, range fade 1 over 0x30 colours from 0x50, 128 more rows (198 in all);
+   - the guard (cell 4) starts walking; wait 7; fade colours 0x93-0x98 to the card colours; **card 1** (5 lines at (10, 8)); fade up at 0x93 while the cells
+     run; wait 45; the guard walks once more (flags |= 0x4020); wait 15; 63 rounds fade down of all 256 colours; all cells off;
+   - reload palette block 0, fade out, clear; **card 2** at (10, 0xAE) (the dream), fade up 0x90, wait 25, fade down;
+   - clear; category 1 picture 0x27 at (55, 47) (a glowing blue eye / orb; 0x28 is the same orb held between two hands), fade up colours 0xC0; **card 3** at (10, 8) with voice 0x10, fade up 0xB0, voice 0x11,
+     fades down; clear; picture 0x28, palette to white, voice 0x12, range fade 5 (white to the picture) over 256 colours; voice 0x13; **card 4** at (28, 8)
+     (the laugh) with its fade; **card 5** at (10, 8) voice 0x17 over a cleared band (rows 0x8C0..), voice 0x18, voice 0x19, range fades 0/3/3 over colours
+     0-0x5F, 0x80-0xBF, 0xD0-0xFF; **card 6** at (28, 8) voice 0x14;
+   - clear rows from 0x8C0; category 7 pictures 0xAF-0xB6 (eight 32 x 32 item pictures: a green book, a rod, a red orb, a twig, a vial, an hourglass, a
+     gold nugget, a horn) at (142,1) (50,23) (236,23) (1,82) (286,82) (50,143) (236,143) (142,162); 16-colour fades up at 0xA0 (range fade 4), 0x30, 0x10, 0x50,
+     0x40, 0x90, 0x20, 0x80, 0xD0, 0 and down at 0xC0, 0x60 bring the groups of colours in one at a time; palette to white, voice 0x12, clear;
+   - picture 0x27 again with the 58 x 42 rectangle at (211, 82) cleared (the small teal shape beside the eye), range fade 5, wait 10; fade out colours 0-0xBF and 0xD0-0xFF; **card 7**
+     at (10, 8) (4 lines, voice 0x15) fades up; the screen is copied into the backdrop buffer, scroll 0;
+   - the door (cell 5 on and animating) opens: range fades 2 up over colours 0-0xBF and 0xD0-0xFF; wait 45 ticks with a cue; voice 0x16; when sound
+     effects are off the card band is cleared first; wait 3; voice 0x1A; wait 2; fades 0 / 3 over the same colours; cleared, wait 3; cell 5 off;
+   - reload palette block 3, blank; voice 0x1B; fade up 0x90; **card 8** at (34, 0xAE) (the knock); wait 20 and fade down; clear; voice 0x1B; cell 6 (the door)
+     on; copy to the backdrop; range fade 1 over 256 colours; wait for a tick; voice 5; wait 5; **card 9** at (34, 8) voice 0x1C; fade up 0x90; wait 20; return.
+
+   The voice numbers are sound-effect events (`TriggerSoundEvent`, the same blocks as the other sound effects); with sound effects on the game plays the voice
+   and does not draw the card (`DrawShadowedText`), otherwise the text is drawn with its shadow. The card text is read from the executable (`introCardLine`).
+
+### Chapter 3 (`REGISTER.EXE`, yendor3.asm:50964-51512)
+
+`RunCharacterCreation` runs six stages: `PlayCharacterCreationOpeningSetup`, `...OpeningPicture`, `...OpeningSequence`, `...OpeningSequenceAlt` (each a
+palette fade of a picture with polls), then:
+
+- `PlayCharacterCreationIntroAnimation` (:51220): music track 0x0A; sound 0x53; picture 11 of category 0 (a crowned figure holding a sword and a staff), range fade 5 (from white);
+  wait 20 x 5 ticks; then 25 frames in which that picture is redrawn and a sprite (category 1 picture 12, drawn at (157-6n, 98-4n) growing by (12, 8) per
+  frame) approaches while `FadePaletteStep` (mode 2) fades colours 0-0xDF; a text string at (95, 179) is written and its colours fade in over 31 steps;
+  wait 15 x 5 ticks; fade to black.
+- `RunCharacterCreationSelectionStep` (:51343): palette reload, fade; a two-line column at (60, 160) in colour 0x8A; wait 10 x 5; fade out; a second palette buffer is
+  built (3Fh minus the palette) at 0x5062; then a flip-book of 5 pictures repeated 7 times (category 2 pictures 0x28-0x2C at (70, 40), 2 ticks each, a palette sequence running); text cards from the
+  string tables at DS:0x597C, 0x598A and 0x5998 between the picture runs 0x2D-0x31, 0x32-0x48 (23 pictures; sound 0x47 before it, music track 0x0B before
+  the next) -- category 2 here is a robed figure with a staff who conjures a green cone of light; and finally 5 passes of category 1 pictures
+  0x49-0x4F (a stone doorway that opens on a starry portal) with a palette fade.
+
+Neither opening changes the game state; a port may play them as a slideshow of the same pictures or skip them (Escape does).
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not
