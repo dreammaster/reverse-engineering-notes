@@ -1137,6 +1137,9 @@ carries all labels), title at (107, 6), face (category 7 `[+0x12]`) at (116, 19)
 a value above its natural maximum (`+0x40`) is drawn in 0x8A; a level-1 character gets POOR/AVERAGE/GOOD/GREAT from the attribute
 average.
 
+The **shop item grid** (`DrawShopItemSlotGrid`, `shopgrid.c`): the stock of the shop is eight (item id, extra) slots shown as category 8 icons in the
+`CatalogSlots` boxes (two rows of four at x = 241 + 18k, y = 160 / 179) over a colour-4 background, or the word EMPTY at (259, 179).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
