@@ -1532,6 +1532,10 @@ The geometry tables are byte-identical in both games, so the same blitter serves
 
 Chapter 2 has two extra rules after the water/special-wall tests -- floor types 0x27-0x2A always block, trait 0x10 passes everything else, floor 0x25 needs trait 0x08 -- where Chapter 3 has the single rule "trait 0x02 forbids ordinary terrain". The special wall range is 6-11 vs. 200-299 (`movementIsSpecialWallType`). Everything else (flags 0xC00/0x6000, the two-cell hop, the water test) matches (`monsterStepBlocked`).
 
+## The alchemy spell list (`alchemylist.c`)
+
+Chapter 2 frames the list with category 1 picture 4 and shows three cost columns (MP at x = 150, NUORE 179, MAGIC ORE 202); Chapter 3 uses picture 3 and two columns (MP at 170 and a single material cost at 203) -- it has one ore counter fewer. Rows, colours and highlight are the same.
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95
