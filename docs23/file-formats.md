@@ -1157,6 +1157,13 @@ a 13-byte buffer that really holds 12 characters (the 13th is typed into the ter
 backspace (beep on empty), Enter / Escape; the name is trimmed of trailing spaces and asked again if empty. Strings (Chapter 2 / 3): 0x7A4D / 0x7D7F
 "ENTER THE NAME", 0x7A5C / 0x7D8E "KEEP CHARACTER", 0x7A22 / 0x7D54 "CLASS", 0x853C / 0x8863 "PORTRAIT".
 
+The **pause dialog** (`RunGameDialog`, `gamedialog.c`; `RENDER_DIALOG=<ui flags>`): the panel is PICTURES category 1 id 0 at (24, 23) with every label already
+baked into the picture; an option that is not enabled is overwritten with its label in the dull colour 6. Click regions 1-6 are the save-slot rows, 7-14 the
+options (SAVE 7, LOAD 8, NEW GAME 9, DOS 10, MUSIC 11, SOUND FX 12, ANIMATION 13, RETURN 14; hotkeys S L N D M F A R / Escape). A UI flag bit *set* means
+enabled (0x80 save, 0x40 load, 0x20 new game, 0x10 DOS, 0x08 animation, 0x04 return); music / sound need driver flags 1 / 4 (devices present) and toggle
+flags 2 / 8, shown as check boxes (category 9 picture 0x12 ticked / 0x11 clear) at (97, 106) and (170, 106). The animation option cycles the speed
+1 (FAST) -> 9 (SLOW) -> 5 (MEDIUM) -> 1 and shows the name at (97, 119). Strings: 0x78F2... (Chapter 3 0x7C20...; `dump_game_dialog_strings.py`).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 

@@ -2,8 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>
@@ -11,6 +10,7 @@
 #include <string.h>
 
 #include "dungeongrid.h"
+#include "gamedialog.h"
 #include "lighting.h"
 #include "minimap.h"
 #include "monster_stdio.h"
@@ -255,6 +255,9 @@ int main(int argc, char **argv) {
                 } else {
                     charCreatePortraitGridDraw(&renderer, 2);
                 }
+            }
+            if (getenv("RENDER_DIALOG")) { /* RENDER_DIALOG=<ui flags, e.g. 252>: the pause dialog over the view */
+                gameDialogDraw(&renderer, (unsigned)atoi(getenv("RENDER_DIALOG")), DriverMusicAvailable | DriverSoundFxAvailable | DriverMusicOn, 5);
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */
                 const uint8_t *records[RosterSlots];
