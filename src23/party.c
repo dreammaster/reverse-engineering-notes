@@ -1170,3 +1170,25 @@ uint16_t partyDeriveRestRegenPercent(uint8_t *globalSlots, SaveGame *save, const
     }
     return (uint16_t)((100 / activeCount) * consumed);
 }
+
+void partyCompactSlots(uint16_t slots[4]) {
+    if ((slots[0] | slots[1] | slots[2] | slots[3]) == 0) {
+        return;
+    }
+    for (unsigned gap = 0; gap < 2; gap++) {
+        if (slots[gap] != 0) {
+            continue;
+        }
+        for (unsigned i = gap + 1; i < 4; i++) {
+            if (slots[i] != 0) {
+                slots[gap] = slots[i];
+                slots[i] = 0;
+                break;
+            }
+        }
+    }
+    if (slots[2] == 0 && slots[3] != 0) {
+        slots[2] = slots[3];
+        slots[3] = 0;
+    }
+}

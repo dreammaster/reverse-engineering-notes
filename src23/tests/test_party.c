@@ -1571,6 +1571,24 @@ static void testConsumeChargeModes(void) {
     check("...and the last use discards it", itemSlotId(inventoryGroupSlot(pack, 1)) == 0);
 }
 
+static void testCompactSlots(void) {
+    uint16_t a[4] = {0, 0, 7, 0};
+    partyCompactSlots(a);
+    check("an empty slot 0 takes the first member to its right, slot 1 then takes from the right too", a[0] == 7 && a[1] == 0 && a[2] == 0 && a[3] == 0);
+    uint16_t b[4] = {0, 4, 0, 9};
+    partyCompactSlots(b);
+    check("{0,4,0,9}: slot 0 takes 4; slot 1 (now empty) takes 9", b[0] == 4 && b[1] == 9 && b[2] == 0 && b[3] == 0);
+    uint16_t c[4] = {1, 2, 0, 3};
+    partyCompactSlots(c);
+    check("an empty slot 2 takes slot 3", c[0] == 1 && c[1] == 2 && c[2] == 3 && c[3] == 0);
+    uint16_t d[4] = {1, 0, 2, 3};
+    partyCompactSlots(d);
+    check("{1,0,2,3}: slot 1 takes 2, slot 2 then takes 3", d[0] == 1 && d[1] == 2 && d[2] == 3 && d[3] == 0);
+    uint16_t e[4] = {0, 0, 0, 0};
+    partyCompactSlots(e);
+    check("all empty stays empty", e[0] == 0 && e[3] == 0);
+}
+
 int main(void) {
     testConsumeChargeModes();
     testFindItemDeep();
@@ -1619,6 +1637,7 @@ int main(void) {
     testDeriveRestRegenPercentStopsDeadAtFirstUnoccupiedSlot();
     testDeriveRestRegenPercentConsumesFromTheGlobalTableToo();
     testRealCharacters();
+    testCompactSlots();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed (%d skipped).\n", g_skipCount);

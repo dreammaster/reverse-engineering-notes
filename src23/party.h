@@ -615,7 +615,15 @@ void partySyncStagedStats(uint8_t *record);
 bool partyClassIsValid(unsigned classId);
 unsigned partyClassBase(unsigned classId);
 unsigned partyClassTier(unsigned classId);
-const char *partyClassName(unsigned classId); /* NULL if invalid */
+const char *partyClassName(unsigned classId);
+
+/*
+ * CompactPartyRosterSlots (yendor2.asm:50884; the party-assignment screen's exit): fills gaps in the four party slot ids
+ * (SaveHeaderPartySlots; 0 = empty) in the original's exact cascade -- an empty slot 0 takes the first nonzero of slots 1-3; then an
+ * empty slot 1 takes the first nonzero of slots 2-3; then an empty slot 2 takes slot 3. Not a general sort: members keep their relative
+ * order except where a gap is filled from the right. All four empty: unchanged.
+ */
+void partyCompactSlots(uint16_t slots[4]); /* NULL if invalid */
 
 /* Status bit recording that a character reached secondary class 4-9 (tier 0 only); 0 otherwise. */
 uint16_t partyClassSecondaryBit(unsigned classId);
