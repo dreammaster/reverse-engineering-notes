@@ -122,3 +122,13 @@ exact per-field value ranges were not traced.
 | 73 | Rope and Hooks | 5 | | | |
 
 Ids 34-41 are body armour (the ones `subtractHitPoints` can break), 42 shield, 43-47 head/hand/finger gear, 48-53 boots, cloak, robes, cape, belt, broach, 54+ the magical trinkets and consumables (73 = Rope and Hooks, the item the pit events test for). Prices shown are before the metal / enchantment multipliers and the merchant divisor.
+
+## `itemScan(char, what)` (`16E6B`): the sum of equipment bonuses
+
+Sums over the 18 inventory slots that are in use (+7Dh != 0) and neither cursed nor broken (flags & C0h == 0):
+
+* `what` < 0Bh, not 3: the attribute enchantment (+C9h) is mapped through `getAttributeCategory` (category > 2 is shifted up by one so that value 3 is skipped); when that equals `what` the item adds `ATTRIBUTE_BONUSES[attr]` (DGROUP `0ACDh`);
+* `what` > 0Ah: the element enchantment (+A3h) maps through `getElementalCategory` + 0Bh; on a match the item adds `ELEMENTAL_RESISTANCES[element]` (`0A27h`) -- so 0Bh..10h are the six resistances used by `charSavingThrow` and `getStat`;
+* `what` == 9 (armour class): every item adds `ARMOR_STRENGTHS[id]` (`0C87h`) and, if it has a metal (+B6h) and is not a weapon (codes 1, 4, 0Dh; the shield is always counted), the metal's armour bonus `METAL_LAC[metal]` (`0A9Fh`).
+
+Other callers use `what` 7 (hit point bonus), 8 (spell point bonus), 0Ah (thievery bonus) the same way.
