@@ -1649,6 +1649,15 @@ ids by call site (Chapter 2 / Chapter 3 numbering differs, Chapter 3's effect se
 | alchemy screen | 1, 3, 11, 52 | 1, 3, 44, 87 |
 | character creation | 5, 17-19, 22, 24-27 | 51, 54, 59, 71, 83, 130-141 |
 
+### Palette blocks, the dawn/dusk fade and the colour cycle (`palette.c`)
+
+Decoded 2026-10-04. `WORLD.DAT` holds consecutive 768-byte palettes from the master palette on (Chapter 2 `0x8270A`, Chapter 3 `0x95BDA`): block 0 is
+the game palette; `loadWorldDat5` also loads **block 2**, a sunrise/sunset ramp, for two effects. The dawn/dusk fade (started at 06:00 and 18:00) steps
+113 times, each time writing a 32-colour window of block 2 into DAC entries 0xE0-0xFF and recomputing the ambient lighting: dawn starts at colour
+0 and moves up, dusk starts at colour 111 and moves down (its last window starts one colour before the table). The colour cycle (every 5 timer ticks)
+writes block 2 colours 144-159 to DAC 0xD0-0xDF in four phases (phase 0 as stored, 1-3 rotate each group of four left by 1/2/3). The algorithms and
+constants are identical in both games.
+
 ### Ambient music by map region
 
 `UpdateAmbientMusicForRegion` computes a coarse map-region index from
