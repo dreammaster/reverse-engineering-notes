@@ -1183,6 +1183,10 @@ of every clue page sit at the top right (`clueHeadingX`; Chapter 3 right aligns 
 The **alchemy status panel** (`DrawAlchemyStatusPanel`, `alchemyStatusPanelDraw`): in the text panel (cleared first) the character name over a blank filler at (241, 87), MAGIC: at y 96
 (0xCA, 0xCC when MP is above the maximum), current/max MP in 0xF at y 102, then the ore labels (0x8A at y 114 and 132) each with its counter below in 0xF. Chapter 3 shows only NUORE.
 
+The **clue book transportation page** (`cluetransport.c`; `RENDER_TRANSPORT=1`): the mounts are 26-byte records in the executable's data segment (Chapter 2 `DS:0x77C6`, Chapter 3 `0x7AF4`:
+name 12 + NUL, price Bcd4 at `+0xE`, uses at `+0x16`, mask | time word at `+0x18`; PEGASUS 10,000 / GIANT EAGLE 30,000 / FLYING RUG 50,000 / MAGIC DRAGON 70,000). The page lists
+three of them (not the rug) with VALUE, USES and TIME; the time reads ANYTIME when the time word has bit 2, else "BETWEEN 7P.M. AND 7A.M." (so only the dragon).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
