@@ -643,3 +643,4 @@
 26978	soundDriverPlay	far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id
 4C711	Spell_17_Jump	Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
 4C8FE	Spell_23_WizardEye	sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC
+15235	monstersRecover	end-of-round recovery: every monster with a non-zero state (Maze_monState: asleep, held, silenced...) gets monsterSavingThrow(id) and returns to state 0 on success

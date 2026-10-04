@@ -128,3 +128,12 @@ For a physical attack (`MONDMGT` = 0) on an awake character: roll d20 -- 20 alwa
 `score = d20 + rnd(1, MONHITB) + MONHITB / 4` and the attack hits when `score >= AC + D`, where `AC = getArmorClass(char)` and
 `D = 10`, or `15 + level / 2` when the character has taken the **block** action this round (flag byte array at DGROUP `C4CBh`
 by party slot, set by `block`, `4B422`).  Non-physical attacks and attacks on sleeping characters always hit; a hit then runs `doCharDamage`.
+
+## Combat round structure (`doCombat`, `4B7B5`)
+
+* Party order comes from `setSpeedTable` / `nextChar`; each character's command (from `getCommand`): attack, block (sets the guard flag used by monster to-hit), cast
+  (`spellsDialog`), use item (`characterInfoInventory`), run (`run`, success chance = page header byte 07h), quick fight (`quickFight` = repeat attack for the rest of the round), character info.
+* After the party has acted (`allHaveGone`), the round ends with: Trolls (monster id 55) have their hit points reset to full (`Mon_hp[55]`) -- they regenerate completely every round;
+  `monstersRecover` (`15235`) gives every monster with a non-zero state (put there by Sleep/Immobilize/Paralyze/... spells; `Maze_monState`) a `monsterSavingThrow` to shake it off;
+  then `moveMonsters`, `scanMonstersAhead`, `changeTime(1)` (one minute per round) and `drawView` / `checkPartyDead`.
+* Victory: `giveTreasure` (and experience via `giveExperience`), then `updateAutomap`.
