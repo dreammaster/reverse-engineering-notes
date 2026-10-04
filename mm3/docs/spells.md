@@ -389,4 +389,4 @@ Suppress Poison reduces the poison counter (+116h) by 3 (to 1 if it was below 4;
 Create Rope only raises the "rope available" flags (`byte_2879D`, `byte_2886E`).
 
 Condition spells: Suppress Disease acts on +117h like Suppress Poison; Nature's Cure (target not dead/stone/eradicated) calls `healCharacterEffect(25)`; Cure Poison, Cure Disease, Cure Paralysis, Stone to Flesh each clear their condition counter and show the heal effect.
-Raise Dead turns a dead character (+120h) into an unconscious one (+11Fh set, hit points 0) and raises byte +1Ah (the "resurrection count" slot; set to 1 if it was 0) ; Resurrect clears Eradicated (+122h), adjusts +1Ah the same way and raises the temporary age `+26h` to at least 250 (the penalty for the stronger spell). Details of the +1Ah/+26h arithmetic were not traced (hidden by my first pass).
+Raise Dead turns a dead character (+120h) into an unconscious one (+11Fh set, hit points 0) and costs it 1 point of the first byte of the Endurance pair (+1Ah, minimum 1); Resurrect clears Eradicated (+122h), costs the same endurance point and adds 5 years of age (`+26h`, capped at 250).
