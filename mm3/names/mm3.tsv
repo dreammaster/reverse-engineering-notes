@@ -654,3 +654,4 @@
 1B198	checkDrawListOverflow	called with the end pointer of the scene draw list: length in words = (end - D66Eh)/2, remembers the maximum (word_29708) and shows a message window when it exceeds 7CFh words (the 4000-byte list buffer)
 D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (Knight/Paladin unrestricted); table 5AB5 holds the class bits
 51C4A	canEquip	canEquip(class, item id, silent): class 0/1 always; else EQUIP_FORBID[item] & class bit must be 0, otherwise shows '%ss are not proficient with %s!'
+3BF4B	learnSpellDialog	event mode 67: choose a character and teach it the spell id ('%s learns a %s spell.')
