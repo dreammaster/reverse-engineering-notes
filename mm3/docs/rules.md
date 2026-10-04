@@ -148,3 +148,10 @@ members, Crusader and Swimmer every member, the rest one.  (Merchant = 8, the on
 Names in the data segment confirm the id orders used in this document: races 0 Human, 1 Elf, 2 Gnome, 3 Dwarf, 4 Half-Orc (name pointer table at DGROUP `581Eh`; "H-Orc"), alignments 1 Good, 2 Neutral, 3 Evil; sexes Male, Female; the 16 condition
 names in order Cursed, Heart Broken, Weak, Poisoned, Diseased, Insane, In Love, Drunk, Asleep, Depressed, Confused, Paralyzed, Unconscious, (Dead is drawn separately), Stone,
 Eradicated -- the Xeen order, which settles the mapping assumed in `monsters.md`.
+
+## Resting (`rest`, `41610`-ish)
+
+Refused with "Too dangerous to rest here!" on cells with flag bit 04h or a page whose header byte 0Eh is 0. If the party cannot all be fed the game asks "Some Chars may die. Rest anyway?"
+(`confirmDialog`). Resting plays out ten `chargeStep` ticks (during which monsters may arrive and interrupt), then `changeTime` for 8 hours ("0008 hours pass. Rest complete."), and for each
+member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit eaten per member) sets hit points and spell points to `getMaxHP`/`getMaxSP` ("Hit Pts and Spell Pts restored.");
+`checkPartyDead` then runs. Super Shelter calls the same routine.
