@@ -382,3 +382,8 @@ Healing: First Aid heals 6 hit points, Cure Wounds 15, Power Cure `rnd(2,12) x l
 stone or eradicated (worst condition 0Dh-0Fh -> `showErrorMessage`).
 
 Town Portal (`4D69A`): refused ("showErrorMessage") unless page header byte 18h is non-zero; shows a town list (1-5, 0 = cancel), loads the chosen town's map (`sub_281B2`) and puts the party on that page's default start cell (`setPartyStartCell`, header byte 13h).
+
+Other effects (by code reading): Awaken clears the asleep counter (+11Bh) of the whole party; Revitalize heals nothing (heal 0) but clears Weak (+115h) of the target;
+Suppress Poison reduces the poison counter (+116h) by 3 (to 1 if it was below 4; it does not cure); Protection from Elements sets the chosen element's party resistance
+(`Party_fireResist` / `elecResist` / `coldResist` / `poisonResist`) to `min(2 x level + 5, 200)`; Create Food adds one food unit per party member;
+Create Rope only raises the "rope available" flags (`byte_2879D`, `byte_2886E`).
