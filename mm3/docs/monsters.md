@@ -158,3 +158,11 @@ Other special spell types in `attack`:
 * 13 Mass Distortion: half of each monster's current hit points (at least 1).
 * 15 Disintegrate: damage equal to the monster's current hit points, but a monster with more than 150 gets only 50 energy damage (type 6).
 * Any other damage type (0-6) is plain damage (`SpellAttack_damage`) reduced by the monster's resistance (`getMonsterResistance`).
+
+## Monster movement and ranged attacks (`moveMonsters` 1B2xx, `moveMonsterBy` 1B2A3)
+
+Monsters do move.  `moveMonsters` rebuilds `Maze_occupancy` (32x32 bytes at DGROUP `8EF4h`: each cell holds the sum of the `MONSTER_SIZE` values of the monsters in it), then, for the cells around the party,
+lets monsters step towards it with `moveMonsterBy(index, dx, dy)`: the step is made only when the target cell's occupancy plus the monster's size is below 4 (so e.g. four small monsters or one big one fit in a cell), the
+monster's state is 0 (not asleep/held) and `byte_2884C` allows movement; it updates the occupancy grid and `Maze_monX/Y` and flags the monster as moved.
+Monsters with a ranged attack (`MONRANG` != 0) standing in the party's row or column (and not already shown in one of the three near rows) fire at it once (`monstersAttack` via the stub `sub_27F5E`, flag byte array at `EE1Eh`/`ED74h`).
+After the movement pass the near-row bytes (`byte_34B92/93/94`) are refreshed; combat starts from `drawView` when they are non-zero (`engine-loop.md`).

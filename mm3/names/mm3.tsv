@@ -644,3 +644,8 @@
 4C711	Spell_17_Jump	Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
 4C8FE	Spell_23_WizardEye	sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC
 15235	monstersRecover	end-of-round recovery: every monster with a non-zero state (Maze_monState: asleep, held, silenced...) gets monsterSavingThrow(id) and returns to state 0 on success
+335B4	Maze_monX	word[170]: x of each live map monster (first byte of its MAZEnn.BIN record; 20h-range values used for off-map)
+33460	Maze_monY	word[170]: y of each live map monster (second byte of the record)
+1B2A3	moveMonsterBy	moveMonsterBy(monster index, dx, dy): moves a live monster if the target cell's occupancy plus its size (MONSTER_SIZE table DGROUP 1B20h) stays below 4, the monster is awake (state 0) and movement is enabled (byte_2884C); sets its moved flag
+315E4	Maze_occupancy	1024 bytes (32x32 world cells, y*32+x): summed sizes of the monsters standing in each cell; rebuilt by moveMonsters
+1B20	MONSTER_SIZE	byte per monster id: how much of a cell's capacity (4) the monster fills
