@@ -168,3 +168,10 @@ Monsters with a ranged attack (`MONRANG` != 0) standing in the party's row or co
 After the movement pass the near-row bytes (`byte_34B92/93/94`) are refreshed; combat starts from `drawView` when they are non-zero (`engine-loop.md`).
 Cell capacity sizes (`MONSTER_SIZE`, DGROUP `1B20h`): every monster has size 1 except the large ones with size 3 (so only one of them plus at most one small monster share a cell): 17 Giant Spider, 24 Mini Dragon, 25 Plasmoid, 67 Green Dragon, 68 Jouster, 74 Great Hydra, 76 Kudo Crab, 80 Dragon Lord, 87 Top Jouster.
 A monster's ranged attack (`monstersAttack`) loads the projectile animation `pow%d.icn` (by `MONDMGT`), plays a sound and then simply runs a normal `doMonsterTurn` for that monster, i.e. the same to-hit, damage and special-attack rules as melee.
+
+## What a killed monster gives (`attack2`, `49B8B`)
+
+When a monster's hit points reach 0: the party gets `MONEXP` (`giveExperience`, split over the living party), the monster's `MONGOLD` and `MONGEMS` are added to the pending treasure
+(`word_376EA` gold, `word_376F8` gems; shown and paid by `giveTreasure` after the fight), and, if its treasure class `MONTREA` is `c` > 0, with probability `TREASURE_CHANCE[c]` percent
+(table at DGROUP `4B23h`: class 1 = 1%, 2 = 2%, 3 = 5%, 4 = 10%, 5 = 20%, 6 = 100%) one item is generated with `generateItem(level c)` (at most 10 items per fight, `byte_37710`).
+No gold, gems or items are given on map 106 (6Ah, the arena).  The dead monster is removed by moving it to position (128,128) (off the map).
