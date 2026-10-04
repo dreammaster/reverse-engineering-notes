@@ -43,4 +43,13 @@ typedef enum { ClueSourceNone, ClueSourceLocation, ClueSourceMonster, ClueSource
 
 ClueTextSource clueCategorySource(unsigned category);
 
+/*
+ * The category heading in the top right corner of every clue page (the second string of DrawMessageBox, colour 0xD, y = 4). Chapter 3 right
+ * aligns it to x = 313 (x = 313 - 6 * length); Chapter 2 passes an explicit x per category that falls within 4 pixels of the same rule
+ * (MAPS 291, MONSTER STATISTICS 208, SPELL INFORMATION 213, MAGIC USER INFORMATION 183, INVENTORY ITEMS 225, ARMOR/RINGS 249,
+ * JEWELS/ARTIFACTS/UNIQUE ITEMS 141, MAGIC SCROLLS/QUARTZ 195, POTIONS 273, SUPPLIES/FOOD 237, WEAPONS 273). Categories as
+ * clueCategorySource: 1 maps, 2 monsters, 3 spells, 4 magic users, 11 items list, 12-17 item pages.
+ */
+int clueHeadingX(GameKind game, unsigned category, unsigned length);
+
 #endif

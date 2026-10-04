@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>
@@ -13,6 +13,7 @@
 #include "dungeongrid.h"
 #include "gamedialog.h"
 #include "clueitem.h"
+#include "cluemonster.h"
 #include "exedata.h"
 #include "lighting.h"
 #include "minimap.h"
@@ -179,7 +180,7 @@ int main(int argc, char **argv) {
                 if (itemCatalogParseWorldDat(&pageItems, game, worldDat, worldSize) && exeDataOpen(&exe, game, exeBytes, exeSize) && clueItemTextLoad(&pageText, &exe, game)) {
                     const uint8_t *rec = itemCatalogRecord(&pageItems, (unsigned)atoi(getenv("RENDER_ITEMPAGE")));
                     if (rec) {
-                        clueItemPageDraw(&renderer, &pageText, rec, 0x8000);
+                        clueItemPageDraw(&renderer, &pageText, rec, 0x8000, 12);
                         const uint8_t *entry = itemTargetEntry(&pageItems, rec);
                         ItemTargetKind kind = itemTargetKind(rec);
                         if (entry && kind == ItemTargetWearable) {
@@ -192,6 +193,28 @@ int main(int argc, char **argv) {
                     }
                 } else {
                     fprintf(stderr, "cannot build the item page\n");
+                }
+            }
+            if (getenv("RENDER_MONPAGE")) { /* RENDER_MONPAGE=<monster type id>: its clue book statistics page */
+                static MonsterCatalog pageMonsters;
+                static ClueMonsterText monText;
+                char exePath[512];
+                snprintf(exePath, sizeof(exePath), "%s/%s", dir, game == GameYendor2 ? "SW.EXE" : "REGISTER.EXE");
+                FILE *ef = fopen(exePath, "rb");
+                static uint8_t monExe[400000];
+                size_t monExeSize = ef ? fread(monExe, 1, sizeof(monExe), ef) : 0;
+                if (ef) {
+                    fclose(ef);
+                }
+                ExeData exe;
+                uint8_t rec[MonsterRecordSize];
+                if (monsterCatalogReadWorldDatFile(&pageMonsters, game, path0) && exeDataOpen(&exe, game, monExe, monExeSize) && clueMonsterTextLoad(&monText, &exe, game) &&
+                    monsterRecordSpawn(rec, &pageMonsters, (unsigned)atoi(getenv("RENDER_MONPAGE")))) {
+                    char name[MonsterNameBufferSize];
+                    monsterGetName(rec, name);
+                    clueMonsterPageDraw(&renderer, &monText, rec, name, 0x8000);
+                } else {
+                    fprintf(stderr, "cannot build the monster page\n");
                 }
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */

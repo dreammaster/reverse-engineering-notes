@@ -13,6 +13,11 @@ typedef struct {
     unsigned protectionNames, statNames, skillTypes;
 } TextAddresses;
 
+static const struct {
+    uint8_t category;
+    uint16_t yendor2, yendor3;
+} kHeadings[] = {{11, 0x88C0, 0x8BE1}, {12, 0x8A01, 0x8D22}, {13, 0x8A21, 0x8D44}, {14, 0x8A3F, 0x8D5D}, {15, 0x8A54, 0x8D6B}, {16, 0x8A5C, 0x8D80}, {17, 0x8A7A, 0x8D99}};
+
 static const TextAddresses kYendor2 = {0x8A82, 0x8A8E, 0x8A96, 0x8AA2, 0x8AAB, 0x8AB1, 0x8AC1, 0x8ACB, 0x8AD5, 0x8ADA, 0x8ADE, 0x8AE8,
                                        0x8AEC, 0x8AEF, 0x8B45, 0x8B4F, 0x8B57, 0x8B5F, 0x8B66, 0x7C81, 0x7B24, 0x7B31, 0x7DC7, 0x7E8A};
 static const TextAddresses kYendor3 = {0x8DA1, 0x8DAD, 0x8DB5, 0x8DC1, 0x8DCA, 0x8DD0, 0x8DE0, 0x8DEA, 0x8DF4, 0x8DF9, 0x8DFD, 0x8E07,
@@ -38,6 +43,12 @@ static bool loadPacked(const ExeData *exe, unsigned address, char (*out)[16], un
 
 bool clueItemTextLoad(ClueItemText *t, const ExeData *exe, GameKind game) {
     const TextAddresses *a = game == GameYendor2 ? &kYendor2 : &kYendor3;
+    memset(t->headings, 0, sizeof(t->headings));
+    for (unsigned i = 0; i < sizeof(kHeadings) / sizeof(kHeadings[0]); i++) {
+        if (!exeDataString(exe, game == GameYendor2 ? kHeadings[i].yendor2 : kHeadings[i].yendor3, t->headings[kHeadings[i].category], sizeof(t->headings[0]))) {
+            return false;
+        }
+    }
     return load(exe, a->baseValue, t->baseValue, sizeof(t->baseValue)) && load(exe, a->weight, t->weight, sizeof(t->weight)) &&
            load(exe, a->absorption, t->absorption, sizeof(t->absorption)) && load(exe, a->fitsIn, t->fitsIn, sizeof(t->fitsIn)) &&
            load(exe, a->adds, t->adds, sizeof(t->adds)) && load(exe, a->characterPanel, t->characterPanel, sizeof(t->characterPanel)) &&
@@ -80,12 +91,15 @@ static void labeledNumber(const ViewRenderer *r, int x, int y, const char *label
     }
 }
 
-void clueItemPageDraw(const ViewRenderer *r, const ClueItemText *t, const uint8_t *item, uint16_t navFlags) {
+void clueItemPageDraw(const ViewRenderer *r, const ClueItemText *t, const uint8_t *item, uint16_t navFlags, unsigned category) {
     memset(r->screen, 0, (size_t)ViewScreenWidth * ViewScreenHeight);
-    viewDrawPicture(r, 0, 13, 1, 1, false, 0);
+    viewDrawPicture(r, 0, r->game == GameYendor2 ? 13 : 6, 1, 1, false, 0);
     char name[ItemNameBufferSize];
     itemGetName(item, name);
     put(r, 6, 4, name, 0x0D);
+    if (category < 18 && t->headings[category][0]) {
+        put(r, clueHeadingX(r->game, category, (unsigned)strlen(t->headings[category])), 4, t->headings[category], 0x0D);
+    }
     clueNavBarDraw(r, navFlags);
     unsigned flags = itemGetU16(item, ItemFieldFlags);
     viewDrawPicture(r, 8, itemGetU16(item, ItemFieldIcon) + ((flags & ItemFlagAltIcon) ? 1 : 0), 68, 41, true, 0);

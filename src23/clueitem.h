@@ -15,7 +15,7 @@
  * (exedata.h) -- they are the game's text, so nothing here carries them -- from the addresses below.
  *
  * Page layout (font 0, transparent text; label colour 0x0A, values as listed):
- *   backdrop   screen cleared to colour 0, PICTURES category 0 picture 13 at (1, 1); the item's display name (itemGetName) at (6, 4) in 0xD;
+ *   backdrop   screen cleared to colour 0, PICTURES category 0 picture 13 (Chapter 3: 6) at (1, 1); the item's display name (itemGetName) at (6, 4) in 0xD and the category heading at the top right (cluebook.h);
  *              the clue navigation bar (cluebook.h)
  *   icon       category 8 picture [item +8] (+1 with ItemFlagAltIcon) at (68, 41)
  *   (91, 39)   BASE VALUE: label; the base value (comma grouped, bcd4Format) at x = 157 in 0x8A when not zero
@@ -40,6 +40,7 @@ typedef struct {
     char protectionNames[9][16];
     char statNames[27][16];
     char skillTypes[5][16];
+    char headings[18][32]; /* by clue category (cluebook.h clueHeadingX): 11 INVENTORY ITEMS, 12-17 the item pages; others empty */
 } ClueItemText;
 
 /* Reads every label from the executable; false if one lies outside the file. */
@@ -49,7 +50,7 @@ bool clueItemTextLoad(ClueItemText *text, const ExeData *exe, GameKind game);
 void clueFormatNumber(unsigned value, unsigned decimals, char out[16]);
 
 /* The common part of the page: backdrop, name, navigation bar, icon, value, weight, fits-in row. */
-void clueItemPageDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *itemRecord, uint16_t navFlags);
+void clueItemPageDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *itemRecord, uint16_t navFlags, unsigned category);
 
 void clueArmorRowDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *wearableEntry, const uint8_t *effectEntry);
 void clueWeaponRowDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *weaponEntry);

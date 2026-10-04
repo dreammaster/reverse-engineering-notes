@@ -70,6 +70,7 @@ static ClueItemText makeText(void) {
     strcpy(t.health, "HEALTH");
     strcpy(t.magic, "MAGIC");
     strcpy(t.percent, "PCT");
+    strcpy(t.headings[12], "ARMOR");
     return t;
 }
 
@@ -96,8 +97,9 @@ static void testDraw(void) {
     memcpy(item + ItemFieldName1, "BOW          ", 13);
     item[ItemFieldFitFlags + 1] = 0xC0; /* backpack + box */
     memset(screen, 0xEE, sizeof(screen));
-    clueItemPageDraw(&r, &t, item, 0x8000);
+    clueItemPageDraw(&r, &t, item, 0x8000, 12);
     check("the backdrop is cleared and picture 13 of category 0 drawn at (1, 1)", screen[0] == 0 && screen[320 + 1] == 0x40 + 13);
+    check("the category heading is right aligned at the top (Chapter 2: x = 249 for category 12)", anyColour(screen, 249, 4, 280, 10, 0x0D));
     check("the item name is written at (6, 4) in colour 0xD", anyColour(screen, 6, 4, 30, 10, 0x0D));
     check("the icon (category 8 picture 7) is at (68, 41)", screen[41 * 320 + 68] == 0x40 + 8 * 16 + 7);
     check("the labels are in colour 0x0A and the value and weight in 0x8A", anyColour(screen, 91, 39, 140, 45, 0x0A) && anyColour(screen, 157, 39, 200, 45, 0x8A) &&
@@ -106,7 +108,7 @@ static void testDraw(void) {
 
     memset(item + ItemFieldFitFlags, 0, 2);
     memset(screen, 0xEE, sizeof(screen));
-    clueItemPageDraw(&r, &t, item, 0x8000);
+    clueItemPageDraw(&r, &t, item, 0x8000, 12);
     check("with no fit bits ANY PANEL is shown", anyColour(screen, 158, 69, 180, 75, 0xCA) && !anyColour(screen, 212, 69, 240, 75, 0xCA));
 
     uint8_t armor[12] = {0}, effect[16] = {0};

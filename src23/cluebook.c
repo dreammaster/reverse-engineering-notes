@@ -61,3 +61,18 @@ ClueTextSource clueCategorySource(unsigned category) {
         return ClueSourceNone;
     }
 }
+
+int clueHeadingX(GameKind game, unsigned category, unsigned length) {
+    static const struct {
+        uint8_t category;
+        uint16_t x;
+    } kYendor2[] = {{1, 291}, {2, 208}, {3, 213}, {4, 183}, {11, 225}, {12, 249}, {13, 141}, {14, 195}, {15, 273}, {16, 237}, {17, 273}};
+    if (game == GameYendor2) {
+        for (unsigned i = 0; i < sizeof(kYendor2) / sizeof(kYendor2[0]); i++) {
+            if (kYendor2[i].category == category) {
+                return kYendor2[i].x;
+            }
+        }
+    }
+    return 313 - 6 * (int)length;
+}

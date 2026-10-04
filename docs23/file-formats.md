@@ -1175,6 +1175,11 @@ lists built from the effect pairs: field offsets 0x20-0x30 are protections, 0x7C
 healing (Chapter 3 only the magic variant) and duration rows. The page text is read from the executable (`exedata.c`, addresses in `clueitem.c`;
 `dump_clue_item_strings.py`). The sub-icon selector row's table at DS:0x6976 (Chapter 3 0x6CA4) is empty in the file and filled at run time.
 
+The **clue book monster page** (`ShowClueBookMonsterDetail`, `cluemonster.c`; `RENDER_MONPAGE=<monster type id>`): the same backdrop as the item page (Chapter 2 picture 13, Chapter 3
+picture 6) with the monster's name and the heading MONSTER STATISTICS; 23 rows with labels at fixed per-game positions: four loot rows (EXPERIENCE `+0x8A`, GOLD `+0x7E`,
+the ore `+0x86`, NUORE `+0x82`), seven u16 stats (`+0x50 0x54 0x56 0x58 0x5A 0x64 0x66`), ten immunity rows (bits of `+0x96`) and two resistance rows (`+0x98`). The category headings
+of every clue page sit at the top right (`clueHeadingX`; Chapter 3 right aligns to x = 313). Not drawn: the animated sprite and the attack-effects line.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
