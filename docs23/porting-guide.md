@@ -61,8 +61,15 @@ The original runs one loop (`start` -> `RunDungeonGameLoop`); everything below i
 * monsters and combat: `monsterpool.c` (spawn, ambush, walk, rewards: `monsterPoolTakeTurn`), `monster.c`, `combat.c`, `effect.c`;
 * world state: `globalflags.c`, `worldobjects.c`, `savegame.c`.
 
+## Input
+
+`maininput.c` has the main loop's key map (both jump tables of `start`, dumped by `dump_main_key_table.py`) and the combat-turn keys
+(`HandleDungeonInput`): `mainCommandForKey` / `combatCommandForKey` return what the original would run, `mainCommandRequiredItem` the item a
+command needs (map, clock, key). Mouse clicks go through `uiregions.c`. Chapter 2's debug keys are listed but not decoded.
+
 ## What is still missing
 
-See [roadmap.md](roadmap.md). In short: the screens not yet drawn (title menu, character creation, shop, alchemy, clue book, pause dialog), the
-monster damage splash, input/timing glue (the original is event driven from DOS interrupts), the text messages from the executables, music
-and the OPL/mixer glue for playback (the files are located and parsed), and Chapter 1's engine (a different, earlier engine).
+See [roadmap.md](roadmap.md). In short: the animated title / intro / creation sequences, the spell, transport and map clue book pages, the shop
+tabs and alchemy status panel, the sub-icon selector row (positions are filled in at run time), the debug commands, the attack-effects line of the
+monster page, music and the OPL/mixer glue for playback (the files are located and parsed), and Chapter 1's engine (a different, earlier engine).
+Text is read from the executables (`exedata.c`), not shipped.
