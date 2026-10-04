@@ -54,7 +54,10 @@ typedef enum {
     MainActionPartyInventory,
     MainActionRest,
     MainActionStatusMessage,
-    MainActionDebug
+    MainActionDebug,
+    MainActionDropHeldItem,   /* a click in the view while carrying an item (TryDropHeldItem) */
+    MainActionPanelClick,     /* a click on the map / status panel (region 2) */
+    MainActionPortraitClick   /* a click on the party portrait strip: drop the held item onto it, or open the panel */
 } MainAction;
 
 typedef struct {
@@ -76,5 +79,14 @@ unsigned mainCommandRequiredItem(GameKind game, MainAction action);
  * target or set one of four monster order flags) and the portrait strip.
  */
 MainCommand combatCommandForKey(bool extended, uint8_t key);
+
+/*
+ * Mouse clicks in the main screen (UiRegionsDungeonMain results): the left button on 1 the view drops a carried item, 2 the map panel,
+ * 3 the icon row (sub-region UiRegionsDungeonIconRow: 1 act = key S, 2 alchemy, 3 rest, 4 pause dialog), 5 the lower panel's direction pad
+ * (UiRegionsDirectionPad, see there: it feeds the same movement handler as the arrow keys) and 6 the portrait strip. Region 4 (the monster
+ * panels) does nothing outside combat. The right button on 1 examines the facing tile (like Space), on 2 tries to cure an ailment from an
+ * icon, on 6 opens the party inventory for the portrait.
+ */
+MainCommand mainCommandForClick(bool rightButton, unsigned region, unsigned subRegion);
 
 #endif

@@ -253,7 +253,7 @@ static const UiRegion kYendor2CatalogSlots[] = {
     {295, 311, 179, 195, 8}
 };
 
-static const UiRegion kYendor2ItemSlots[] = {
+static const UiRegion kYendor2DirectionPad[] = {
     {246, 261, 161, 177, 1},
     {268, 284, 161, 177, 2},
     {291, 307, 161, 177, 3},
@@ -647,7 +647,7 @@ static const UiRegion kYendor3CatalogSlots[] = {
     {295, 311, 179, 195, 8}
 };
 
-static const UiRegion kYendor3ItemSlots[] = {
+static const UiRegion kYendor3DirectionPad[] = {
     {246, 261, 161, 177, 1},
     {268, 284, 161, 177, 2},
     {291, 307, 161, 177, 3},
@@ -806,7 +806,7 @@ static const struct { const UiRegion *rows; unsigned count; } kYendor2Tables[UiR
     {kYendor2MemberDetail, 6},
     {kYendor2StatusIconBar, 9},
     {kYendor2CatalogSlots, 8},
-    {kYendor2ItemSlots, 6},
+    {kYendor2DirectionPad, 6},
     {kYendor2Shop, 20},
     {kYendor2ItemService, 22},
     {kYendor2MonsterPanels, 15},
@@ -833,7 +833,7 @@ static const struct { const UiRegion *rows; unsigned count; } kYendor3Tables[UiR
     {kYendor3MemberDetail, 5},
     {kYendor3StatusIconBar, 9},
     {kYendor3CatalogSlots, 8},
-    {kYendor3ItemSlots, 6},
+    {kYendor3DirectionPad, 6},
     {kYendor3Shop, 20},
     {kYendor3ItemService, 21},
     {kYendor3MonsterPanels, 15},

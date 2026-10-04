@@ -53,6 +53,16 @@ int main(void) {
               combatCommandForKey(false, 'D').action == MainActionGameDialog && combatCommandForKey(false, 'P').action == MainActionPartyInventory &&
               combatCommandForKey(false, '2').action == MainActionPartyPanel && combatCommandForKey(false, '2').index == 1 && combatCommandForKey(true, 0x48).action == MainActionMemberDetail &&
               combatCommandForKey(false, 'R').action == MainActionNone && combatCommandForKey(false, 'M').action == MainActionNone);
+    MainCommand pad = mainCommandForClick(false, 5, 1);
+    check("left clicks: the pad moves, the icon row runs act / alchemy / rest / dialog, the view drops an item",
+          pad.action == MainActionMove && pad.movement == MovementTurnLeft && mainCommandForClick(false, 5, 2).movement == MovementForward &&
+              mainCommandForClick(false, 5, 5).movement == MovementBackward && mainCommandForClick(false, 5, 6).movement == MovementStrafeRight &&
+              mainCommandForClick(false, 5, 0).action == MainActionNone && mainCommandForClick(false, 3, 1).action == MainActionAct &&
+              mainCommandForClick(false, 3, 2).action == MainActionAlchemy && mainCommandForClick(false, 3, 3).action == MainActionRest &&
+              mainCommandForClick(false, 3, 4).action == MainActionGameDialog && mainCommandForClick(false, 1, 0).action == MainActionDropHeldItem &&
+              mainCommandForClick(false, 4, 1).action == MainActionNone && mainCommandForClick(false, 6, 0).action == MainActionPortraitClick);
+    check("right clicks: examine, panel, party inventory", mainCommandForClick(true, 1, 0).action == MainActionExamine && mainCommandForClick(true, 2, 0).action == MainActionPanelClick &&
+                                                              mainCommandForClick(true, 6, 0).action == MainActionPartyInventory && mainCommandForClick(true, 3, 1).action == MainActionNone);
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

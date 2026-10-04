@@ -123,3 +123,43 @@ MainCommand combatCommandForKey(bool extended, uint8_t key) {
         return make(MainActionNone, 0);
     }
 }
+
+MainCommand mainCommandForClick(bool rightButton, unsigned region, unsigned subRegion) {
+    if (rightButton) {
+        switch (region) {
+        case 1:
+            return make(MainActionExamine, 0);
+        case 2:
+            return make(MainActionPanelClick, 0);
+        case 6:
+            return make(MainActionPartyInventory, 0);
+        default:
+            return make(MainActionNone, 0);
+        }
+    }
+    switch (region) {
+    case 1:
+        return make(MainActionDropHeldItem, 0);
+    case 2:
+        return make(MainActionPanelClick, 0);
+    case 3:
+        return subRegion == 1   ? make(MainActionAct, 0)
+               : subRegion == 2 ? make(MainActionAlchemy, 0)
+               : subRegion == 3 ? make(MainActionRest, 0)
+               : subRegion == 4 ? make(MainActionGameDialog, 0)
+                                : make(MainActionNone, 0);
+    case 5: {
+        static const MovementAction kPad[6] = {MovementTurnLeft, MovementForward, MovementTurnRight, MovementStrafeLeft, MovementBackward, MovementStrafeRight};
+        if (subRegion < 1 || subRegion > 6) {
+            return make(MainActionNone, 0);
+        }
+        MainCommand command = make(MainActionMove, 0);
+        command.movement = kPad[subRegion - 1];
+        return command;
+    }
+    case 6:
+        return make(MainActionPortraitClick, 0);
+    default:
+        return make(MainActionNone, 0);
+    }
+}

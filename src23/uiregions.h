@@ -33,7 +33,7 @@ typedef enum {
     UiRegionsMemberDetail,
     UiRegionsStatusIconBar,
     UiRegionsCatalogSlots,
-    UiRegionsItemSlots,
+    UiRegionsDirectionPad, /* the on-screen walk pad: 1 turn left, 2 forward, 3 turn right, 4 strafe left, 5 back, 6 strafe right */
     UiRegionsShop,
     UiRegionsItemService,
     UiRegionsMonsterPanels,
