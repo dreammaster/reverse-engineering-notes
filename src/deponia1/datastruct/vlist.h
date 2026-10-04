@@ -1,17 +1,15 @@
 // Not yet assert-confirmed to a specific file; stays at the top level of
 // datastruct/ alongside visobjref.h/visionaire.h, its evident siblings.
 //
-// TVList is passed by reference into TVisionaire::GetList(int, TVList&,
-// bool) (TGameControl::InitFonts, asm lines 458293-458331: the caller
-// zero-initializes 24 stack bytes in place of calling a visible
-// constructor, matching the 3-pointer shape of a vector-like container)
-// and into TVisObjRef::GetLinks(int, TypeOrder, TVList&)
-// (TGameControl::InitInterfaces/InitGameActions, asm lines 458124-458250,
-// 466739-467222+: iterated via explicit begin()/end() calls whose elements
-// are TVisionaireObject* - each one converted to a TVisObjRef via its
-// converting constructor before use - not TVisObjRef directly, contradicting
-// the type this was first modeled with for InitFonts, which never actually
-// inspects an element).
+// Confirmed (Deponia_Linux.asm lines 586522-586975, 593912-594290, 594785-
+// 594889): TVList is a std::vector<TVisionaireObject *> that owns one
+// reference to each of its objects - adding an object takes a reference
+// (asserting it isn't null), removing one releases it, and clearing or
+// destroying the list releases them all (the last release deletes the object).
+// It is the output type of every "list the linked objects" call
+// (TVisionaire::GetList(), TVisObjRef::GetLinks(), ...). Iteration uses the
+// vector's own iterators (`items` is public for that, and for the callers
+// that range-for over it).
 #pragma once
 
 #include <vector>
@@ -22,44 +20,61 @@ class TVisionaireObject;
 
 class TVList {
 public:
-	void clear() {
-		items.clear();
+	typedef std::vector<TVisionaireObject *>::iterator iterator;
+	typedef std::vector<TVisionaireObject *>::const_iterator const_iterator;
+
+	TVList() = default;
+	TVList(const TVList &other);
+	~TVList();
+	TVList &operator=(const TVList &other);
+
+	/** Releases every object and empties the list. */
+	void clear();
+	iterator erase(iterator position);
+	void pop_back();
+
+	TVisionaireObject *at(int index) const {
+		return items.at(index);
+	}
+	TVisionaireObject *front() const {
+		return items.front();
+	}
+	TVisionaireObject *back() const {
+		return items.back();
+	}
+	iterator begin() {
+		return items.begin();
+	}
+	iterator end() {
+		return items.end();
+	}
+	const_iterator begin() const {
+		return items.begin();
+	}
+	const_iterator end() const {
+		return items.end();
+	}
+	std::vector<TVisionaireObject *>::reverse_iterator rbegin() {
+		return items.rbegin();
+	}
+	std::vector<TVisionaireObject *>::reverse_iterator rend() {
+		return items.rend();
+	}
+	std::size_t size() const {
+		return items.size();
 	}
 	bool empty() const {
 		return items.empty();
 	}
-	// Confirmed call shape only (TGameControl::LoadAndInitGame,
-	// Deponia_Linux.asm line 467937).
-	std::size_t size() const {
-		return items.size();
-	}
-	// Confirmed call shape only (asm line 468190).
-	TVisionaireObject *front() const {
-		return items.front();
-	}
-	std::vector<TVisionaireObject *>::iterator begin() {
-		return items.begin();
-	}
-	std::vector<TVisionaireObject *>::iterator end() {
-		return items.end();
-	}
-	// Confirmed call shape only (TGameControl::HandleMouseMove,
-	// Deponia_Linux.asm line 472191) - a plain copy-assignment-style snapshot
-	// of another list's elements.
-	void copy(const TVList &other) {
-		items = other.items;
-	}
-	// Confirmed call shape only (TGameControl::HandleMouseMove, Deponia_Linux.
-	// asm line 472341) - passed a TGInterface's own TVisObjRef field there.
-	// TVisObjRef doesn't carry a real backing TVisionaireObject* pointer in
-	// this reconstruction (see visobjref.h's own header comment: it's a
-	// field-value stub, not a real handle), so there is nothing genuine to
-	// append to items - left as a no-op rather than fabricating a pointer.
-	void push_back(const TVisObjRef &/*ref*/) {
-	}
-	void push_back(TVisionaireObject *object) {
-		items.push_back(object);
-	}
+
+	/** Each of these takes a reference to the object. */
+	void push_back(const TVisObjRef &ref);
+	void push_back(TVisionaireObject *object);
+	iterator insert(iterator position, TVisionaireObject *object);
+	iterator insert(iterator position, const TVisObjRef &ref);
+
+	/** Makes this list hold references to the same objects as `other`. */
+	void copy(const TVList &other);
 
 	std::vector<TVisionaireObject *> items;
 };

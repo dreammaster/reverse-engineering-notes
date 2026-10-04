@@ -69,3 +69,26 @@ void TVisionaire::AddLink(const TId &/*from*/, const TId &/*to*/, int /*field*/,
 
 void TVisionaire::RemoveObjectByParent(TVisionaireObject */*object*/) {
 }
+
+int TVisionaire::ActiveInstances = 0;
+
+void TVisionaire::SetModified(bool /*modified*/) {
+}
+
+bool TVisionaire::GetTable(int /*table*/, TTable ** /*outTable*/) const {
+	return false;
+}
+
+bool TVisionaire::ChangeOrder(const TVisObjRef & /*object*/, TMoveOrderEnum /*move*/) {
+	return false;
+}
+
+void TVisionaire::GetObjectsLinkedTo(const TId & /*id*/, std::vector<TLinkRef> & /*out*/) const {
+}
+
+void TVisionaire::RemoveObject(TVisionaireObject * /*object*/) {
+}
+
+int TVisionaire::GetModifiedStamp() const {
+	return 0;
+}

@@ -161,10 +161,10 @@ ConfigSetting	todo	3	579294	580506
 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >	todo	1	581350	581350
 TSprite	in-progress	35	582998	584507
 TTypeGroup	done	30	584546	585963
-TVList	todo	21	586522	594785
+TVList	done	21	586522	594785
 TId	done	4	586976	587066
-TVisionaireObject	todo	99	587318	595390
-TVisObjRef	stub	85	597612	600326
+TVisionaireObject	done	99	587318	595390
+TVisObjRef	done	85	597612	600326
 TDataGroup	done	41	600389	607108
 Geni::authresult_t	todo	3	607243	1656892
 TVisionaire	stub	90	608417	655305
@@ -175,7 +175,7 @@ TLink	done	15	635588	636057
 TXMLProjectReader	todo	6	636222	642078
 UserData	todo	2	643450	645562
 bin_structure	todo	1	659327	659327
-TTable	todo	50	660697	667964
+TTable	in-progress	50	660697	667964
 TTypeData	done	19	668535	668932
 GLShader	todo	29	668992	677816
 TGraphicsSubSystemGL	todo	39	669758	678420

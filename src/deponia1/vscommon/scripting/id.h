@@ -41,6 +41,10 @@ TId UnpackId(long packed);
 // reversed beyond that call shape.
 void UnrefLuaFieldsCache(const TId &id, int value);
 
+// Confirmed call shape only (TVisionaireObject::Remove, asm lines 593103+):
+// drops the Lua handle of an object.
+void LuaObjectUnref(const TId &id, int handle);
+
 // Confirmed a real, named global (TArgument::ConvertToObject, Deponia_Linux.
 // asm line 1437520) - a sentinel TId meaning "any/the current object" in a
 // Lua-provided id string. Its initial value isn't recovered (the static

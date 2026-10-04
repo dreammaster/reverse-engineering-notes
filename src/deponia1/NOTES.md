@@ -2789,6 +2789,34 @@ tables (AddLink/RemoveLink); removing a parent link removes the child object.
   AddLink, RemoveObjectByParent, id/order setters, cmpOrder) to be replaced by
   the real implementations.
 
+## TVisionaireObject, TVisObjRef, TVList, TTable
+
+Confirmed (asm 586479-595389 TVisionaireObject, 597612-600388 TVisObjRef,
+660697-668540 TTable):
+
+- `TVisionaireObject` is a reference-counted wrapper around one `TDataGroup`
+  plus the object's identity: id (+8), parent id (+0xC), 24-bit order (+0x10),
+  flags (bit 0 "any object", bit 1 record in the same memory block, bit 2
+  removed), parent field, Lua handle. Every forwarding method starts with the
+  same "valid" test and answers a default (-1 / 0 / false / empty) otherwise. The
+  typed `SetValue`s forward to `TDataGroup::SetValue` with the value's kind;
+  `Remove()` and the destructor unlink the object from those linking to it.
+  `GetLinkId`'s fallback is an "any" link (odd, but what the asm builds).
+- `TVisObjRef` is a single counted pointer to one; all 85 methods forward.
+- `TVList` owns one reference per element (`push_back` takes one, `clear`/
+  destructor release; the last release deletes the object).
+- `TTable`: objects in id order with an id -> position index (an
+  `unordered_map` here instead of the 0x1000-bucket chain), a lazily built
+  name-ordered list, a 24-bit next-id counter, the "versioned id" for
+  new/deleted/changed detection, and the active-object link field. The
+  editor-side methods (Import/Merge/FixOrder, partly Changed/Deleted/
+  Conflicted and Paste) are only approximated.
+- A scratch program built a type group, a table and two objects: ids, ValueInt
+  <-> ValueFloat mirroring, lookup by name and id, `TVList` references and
+  `Clear()` all behaved.
+- TVisionaire is still a stub: GetObjectById, GetTable, RemoveObject,
+  GetObjectsLinkedTo, GetMappedId, AddLink/RemoveLink... are next.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

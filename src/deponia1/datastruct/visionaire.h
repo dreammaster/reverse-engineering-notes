@@ -13,6 +13,7 @@
 
 class EventHandler;
 class TVisionaireObject;
+class TTable;
 
 // Confirmed one value, 0x22 (TGameControl::SaveGame, asm line 463095) - real
 // meaning/other values not resolved (named for its raw value like TypeOrder,
@@ -29,6 +30,15 @@ enum class TLoadingTypeEnum { kValue0 = 0, kValue1 = 1 };
 // savegames only (1, "t_SAVEGAME" in the original's assert text), or in both
 // (2). Named by raw value like TypeOrder.
 enum class eSaveGame { kValue0 = 0, kValue1 = 1, kValue2 = 2 };
+
+// What TVisionaire::GetObjectsLinkedTo() reports: an object linking to another,
+// and through which of its fields (12 bytes in the original; the middle int is
+// not reversed yet).
+struct TLinkRef {
+	TId id;
+	int unknown = 0;
+	int field = -1;
+};
 
 class TVisionaire {
 public:
@@ -101,6 +111,15 @@ public:
 	// "modified" flag is the byte at +0x88 of the original; HasIdMapping() the
 	// byte at +0x78 (names guessed).
 	void SetDirty();
+	// Confirmed call shapes only (TVisionaireObject, asm lines 586976+).
+	void SetModified(bool modified);
+	bool GetTable(int table, TTable **outTable) const;
+	bool ChangeOrder(const TVisObjRef &object, TMoveOrderEnum move);
+	void GetObjectsLinkedTo(const TId &id, std::vector<TLinkRef> &out) const;
+	void RemoveObject(TVisionaireObject *object);
+	/** The value TVisionaireObject::SetLastModified() stamps (+0x18). */
+	int GetModifiedStamp() const;
+	static int ActiveInstances;
 	bool HasIdMapping() const;
 	TId GetMappedId(const TId &id) const;
 	void AddLink(const TId &from, const TId &to, int field, bool flag);

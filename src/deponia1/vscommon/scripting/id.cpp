@@ -49,4 +49,7 @@ TId UnpackId(long packed) {
 void UnrefLuaFieldsCache(const TId &/*id*/, int /*value*/) {
 }
 
+void LuaObjectUnref(const TId & /*id*/, int /*handle*/) {
+}
+
 TId AnyId(-1, -1);
