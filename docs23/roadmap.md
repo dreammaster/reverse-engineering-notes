@@ -1,4 +1,5 @@
 # Roadmap
+See [porting-guide.md](porting-guide.md) for how the modules fit together into an engine.
 
 Current status and prioritized next steps for the shared Chapter 2/3
 engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
