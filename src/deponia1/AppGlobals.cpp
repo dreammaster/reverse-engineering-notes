@@ -1,5 +1,6 @@
 #include "AppGlobals.h"
 
+#include "THGameControl.h"
 #include "vsplayer/control/gameControl.h"
 
 SDL_Window *VSPlayerWindow = nullptr;
@@ -29,7 +30,8 @@ unsigned char byte_11F8B02 = 0;
 // TMasterControl is abstract; TGameControl (98 methods, not yet
 // reconstructed - see vsplayer/control/gameControl.h) is the real concrete
 // class the binary instantiates here.
-TMasterControl *g_pGameControl = new TGameControl();
+TMasterControl *g_pGameControl = new THGameControl();
+int GameMinDownTime = 0;
 
 int movex = 0;
 int movey = 0;

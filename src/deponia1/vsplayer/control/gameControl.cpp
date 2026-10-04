@@ -1,4 +1,5 @@
 #include "vsplayer/control/gameControl.h"
+#include "THGameControl.h"
 
 #include <algorithm>
 #include <cmath>
@@ -2272,7 +2273,7 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 	if (!gameControl->LoadAndInitGame(fullPath, emptyFile, warning, false))
 		return false;
 
-	gameControl->RegisterEventHandler();
+	static_cast<THGameControl *>(gameControl)->RegisterEventHandler();
 	if (!isEditor)
 		return true;
 

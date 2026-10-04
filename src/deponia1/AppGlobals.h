@@ -41,6 +41,9 @@ extern unsigned char byte_11F8B01;
 extern unsigned char byte_11F8B02;
 
 extern TMasterControl *g_pGameControl;
+// Confirmed an exported, recovered global (asm line 5295779): the game settings'
+// "hold time" - set from the game object's field when it changes (THGameControl).
+extern int GameMinDownTime;
 
 // Confirmed a real, named global (recovered symbol) - a one-letter "what is
 // the engine doing right now" tag, written by TGScene::Prepare() ("P" on

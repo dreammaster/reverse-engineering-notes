@@ -382,9 +382,6 @@ void TMasterControl::RegisterKeyboardEventHandler(const wxString &name) {
 	_keyboardEventHandlers.push_back(TKeyboardEventHandler{name});
 }
 
-void TMasterControl::RegisterEventHandler() {
-}
-
 void TMasterControl::ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos) {
 	for (auto &handler : _mouseEventHandlers) {
 		bool matches = handler.mouseButtonFilter.empty();

@@ -2899,6 +2899,33 @@ game data turns out to be older than 0xB9 this needs the other branches.
 `TTAnimation::SetMirrored` and `TTValue::SetRandomValue` are written by hand
 (TTAnimation.cpp, TTValue.cpp; declared through tools/gen_records.py's EXTRA_METHODS).
 
+## THGameControl and TTText
+
+THGameControl derives from TGameControl and TEventHandlerInterface (second vtable at
++0xA90 of the original); the program instantiates it (AppGlobals: g_pGameControl).
+RegisterEventHandler registers it for changes of the game object; OnEvent applies the
+settings that have a running effect: scroll speed (_timingValueSeconds), earthquake,
+current character/scene/text/cursor visibility, scroll position/character, text and
+speech language, hold time (the recovered global GameMinDownTime), hidden interfaces,
+the active command and the used item. The TGameControl members are now protected for it.
+TTText is now a TVisObjRef-derived handle: SetLanguage/SetSpeechLanguage (only objects of
+table 0x12, the Languages), GetTextLanguage (by current/given language id),
+GetTextLanguageOrCreate, GetTextString, GetTextProperties, and ReplaceValues
+(`<v=name>`, `<vi=name>` integer and `<vs=name>` string placeholders of Value objects,
+'?' for an unknown one). GetNameInList (editor label) is still not reconstructed.
+
+## p2t and the polygon helpers
+
+p2t/p2t.h/.cpp is the open-source poly2tri (1.3) constrained Delaunay triangulation the
+way system uses; the binary's copy has the same function set (checked by name and by
+Orient2d/InScanArea/cmp/MeshClean), so the library's own algorithm is written out rather
+than decompiled. The binary's p2t::Triangle has two extra members (a cached area and its
+valid flag, used by PointInTriangleTolerant) which the way-system code will add.
+Tested: L-shape with a hole, a 24-point star, a comb - n-2 triangles, exact area.
+TPolygonList (an owning list of polygons) and the polygon helpers (LinesCut,
+PointInPolygon[List], CreatePolygonsFromPointList with its (-10000,-10000) separators,
+GetBoundingBox with inclusive width/height, IsPointInsidePolygon) are in TPolygonList.h.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

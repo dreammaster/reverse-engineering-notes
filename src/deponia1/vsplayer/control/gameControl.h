@@ -234,7 +234,7 @@ public:
 	bool LoadGame(int slot);
 	void StartTween(const Tween &tween, const std::string &name);
 
-private:
+protected:
 	TSceneControl _ownedSceneControl;
 	// Several vectors confirmed present in the constructor whose element
 	// types could be inferred from the ICF-vulnerable destructor symbols
