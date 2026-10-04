@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../cluemap.c ../location.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../cluemap.c ../cluepaged.c ../location.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>
@@ -19,6 +19,7 @@
 #include "spellrecord.h"
 #include "localmap.h"
 #include "cluemap.h"
+#include "cluepaged.h"
 #include "exedata.h"
 #include "lighting.h"
 #include "minimap.h"
@@ -290,6 +291,22 @@ int main(int argc, char **argv) {
                     if (markerCount && clueMapLabel(game, worldDat, worldSize, clueMarkers[0].label, label)) {
                         clueMapLabelDraw(&renderer, label);
                     }
+                }
+            }
+            if (getenv("RENDER_WALKTHROUGH")) { /* RENDER_WALKTHROUGH=<page>: a page of the clue book hint book */
+                static CluePagedText pagedText;
+                static uint8_t pagedExe[400000];
+                char exePath[512];
+                snprintf(exePath, sizeof(exePath), "%s/%s", dir, game == GameYendor2 ? "SW.EXE" : "REGISTER.EXE");
+                FILE *pf = fopen(exePath, "rb");
+                size_t pagedExeSize = pf ? fread(pagedExe, 1, sizeof(pagedExe), pf) : 0;
+                if (pf) {
+                    fclose(pf);
+                }
+                ExeData pexe;
+                unsigned pageNumber = (unsigned)atoi(getenv("RENDER_WALKTHROUGH"));
+                if (exeDataOpen(&pexe, game, pagedExe, pagedExeSize) && cluePagedTextLoad(&pagedText, &pexe, game)) {
+                    cluePagedDraw(&renderer, &pagedText, cluePagedPage(game, worldDat, worldSize, pageNumber), pageNumber, 0x8000 | cluePagedNavFlags(game, pageNumber));
                 }
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */

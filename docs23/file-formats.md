@@ -1217,6 +1217,9 @@ The **clue book map page** (`cluemap.c`; `RENDER_CLUEMAP=<map id>`): map n is bl
 row; Chapter 2 at 1396760, Chapter 3 at 3952386) instead of the fog of war, the block name in 0xD, the hint "SELECT LEGEND OR ESC" and the legend markers (8-byte records map id / x / y / label at 1450685 /
 4011261, sorted by map id; picture 0x73) whose labels are 26-byte strings (1453925 / 4013261).
 
+The **clue book walk through** (`cluepaged.c`; `RENDER_WALKTHROUGH=<page>`): a 31 (Chapter 3: 33) page hint book, 25 lines of 51 bytes per page in WORLD.DAT (Chapter 2 at 1411160, Chapter 3 at
+3969186), shown on the clue backdrop with the footer "a  MORE  b" and navigated with I / Q. The unregistered (shareware) program refuses to go past page 6.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
