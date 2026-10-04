@@ -31,3 +31,33 @@ void clueEntryListDraw(const ViewRenderer *r, const ClueListRow *rows, unsigned 
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 40, 27 + 10 * (int)i, rows[i].name, colour, 0, FontTransparent);
     }
 }
+
+ClueTextSource clueCategorySource(unsigned category) {
+    switch (category) {
+    case 1:
+        return ClueSourceLocation;
+    case 2:
+        return ClueSourceMonster;
+    case 3:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+        return ClueSourceSpell;
+    case 4:
+        return ClueSourcePackedA;
+    case 11:
+        return ClueSourcePackedB;
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+        return ClueSourceItem;
+    default:
+        return ClueSourceNone;
+    }
+}

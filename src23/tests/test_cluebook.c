@@ -77,6 +77,11 @@ int main(void) {
     }
     check("revealing everything makes the selected unknown entry 0x8A", bright);
 
+    check("category sources", clueCategorySource(1) == ClueSourceLocation && clueCategorySource(2) == ClueSourceMonster && clueCategorySource(3) == ClueSourceSpell &&
+                                  clueCategorySource(4) == ClueSourcePackedA && clueCategorySource(7) == ClueSourceSpell && clueCategorySource(11) == ClueSourcePackedB &&
+                                  clueCategorySource(12) == ClueSourceItem && clueCategorySource(17) == ClueSourceItem && clueCategorySource(0) == ClueSourceNone &&
+                                  clueCategorySource(18) == ClueSourceNone);
+
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

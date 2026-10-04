@@ -34,4 +34,13 @@ typedef struct {
 
 void clueEntryListDraw(const ViewRenderer *r, const ClueListRow *rows, unsigned count, int selected, bool revealAll);
 
+/*
+ * BuildClueEntryText (yendor2.asm:4808, yendor3 identical): where a category's entry names come from. Categories (g_clueBookCategory) 1-0x11:
+ * 1 map locations (BuildClueLocationSuffix), 2 monsters (BuildMonsterDisplayName), 3 and 5-10 spells/abilities (LoadClueBookSpellEntry), 4 and 11
+ * the n-th string of two packed string tables in the executable, 12-17 items (BuildItemDisplayName); anything else has no text.
+ */
+typedef enum { ClueSourceNone, ClueSourceLocation, ClueSourceMonster, ClueSourceSpell, ClueSourcePackedA, ClueSourcePackedB, ClueSourceItem } ClueTextSource;
+
+ClueTextSource clueCategorySource(unsigned category);
+
 #endif
