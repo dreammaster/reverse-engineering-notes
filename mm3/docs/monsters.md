@@ -140,3 +140,14 @@ by party slot, set by `block`, `4B422`).  Non-physical attacks and attacks on sl
 
 `monsterSavingThrow(n)` (`4B3AB`): succeeds when `rnd(1, n + 50) <= n`; `monstersRecover` passes the **monster id** as `n`, so higher-numbered (later, tougher) monsters shake off Sleep/Paralyse etc. more easily (as the code stands).
 `run` (`4B3D1`): rolls d100 for the acting character against page header byte 07h (run chance, e.g. 32h = 50%); on success that single character is removed from the combat party (`Combat_partySize--`, `sortCombatParty`) and the round continues -- there is no whole-party escape roll.
+
+## Which monsters the status spells can affect (`attack`, `4A130`)
+
+For the status effects (`SpellAttack_type` 7-16) the spell only works on monsters whose id is in a per-spell list (byte tables in the data segment); a listed monster then gets a `monsterSavingThrow`, and if it fails its state (`Maze_monState`) becomes the spell type (Finger of Death instead reduces the hit points). Every other monster is immune. Lists (tables at DGROUP `4B2Ah` sleep, `4B2Fh` immobilize, `4B3Ch` feeble mind, `4B49h` paralyze, `4B61h` finger of death, `4B77h` silence):
+
+* **Sleep (type 7)**: 2 sleep (c=8), 3 insane (c=5), 7 breaks one worn body armour (item ids 34-41 get flag 80h, `broken`), 14 Ogre, 22 Cryo Spore
+* **Immobilize (8)**: 2 sleep (c=8), 3 insane (c=5), 4 disease (c=4), 7 breaks one worn body armour (item ids 34-41 get flag 80h, `broken`), 8 weakness (c=2), 9 Zombie, 11 Mad Dwarf, 13 Magic Mantis, 15 Bugaboo, 19 Dino Beetle, 20 Cobra Fiend, 21 Scorpia, 22 Cryo Spore
+* **Feeble Mind (9)**: 2 sleep (c=8), 3 insane (c=5), 12 Ninja, 21 Scorpia, 24 Mini Dragon, 28 Castle Guard, 31 Evil Ranger, 32 Shadow Rogue, 37 Archer, 40 Cleric of Moo, 45 Draconi, 49 Paladin, 52 Sorcerer
+* **Paralyze (10)**: 2 sleep (c=8), 3 insane (c=5), 12 Ninja, 21 Scorpia, 24 Mini Dragon, 28 Castle Guard, 31 Evil Ranger, 32 Shadow Rogue, 37 Archer, 40 Cleric of Moo, 45 Draconi, 46 Sonic Ninja, 49 Paladin, 50 Dark Pegasus, 52 Sorcerer, 55 Troll, 57 Dinosaur, 59 Black Knight, 62 Priest of Moo, 63 Toxic Worm, 65 Cyclops, 68 Jouster, 69 Wizard, 78 Minotaur
+* **Finger of Death (11)**: 0 Vampire Bat, 2 sleep (c=8), 3 insane (c=5), 7 breaks one worn body armour (item ids 34-41 get flag 80h, `broken`), 11 Mad Dwarf, 12 Ninja, 14 Ogre, 18 Sprite, 20 Cobra Fiend, 21 Scorpia, 23 Cursed Fool, 24 Mini Dragon, 28 Castle Guard, 30 Pirana, 31 Evil Ranger, 32 Shadow Rogue, 34 Wicked Witch, 37 Archer, 39 Barbarian, 41 Fire Lizard, 46 Sonic Ninja, 49 Paladin
+* **Silence (16)**: 5 confusion (c=10), 23 Cursed Fool, 34 Wicked Witch, 40 Cleric of Moo, 52 Sorcerer
