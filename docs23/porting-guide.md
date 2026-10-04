@@ -27,7 +27,7 @@ differences in [engine-diffs.md](engine-diffs.md), and what is still missing in 
 | world map, legends | `worldmap.c` | 800 x 168 cells; legends give floor/ceiling/wall/far-wall/minimap pictures |
 | items, monsters, spells, dialog, documents, locks, travel, triggers | `item.c`, `monster.c`, `spellrecord.c`, `dialog.c`, `document.c`, `lockcatalog.c`, `travel.c`, `maptrigger.c` | catalogs read from `WORLD.DAT` |
 | saves | `savegame.c`, `newgame.c` | `CURGAME`/`SAVGAMEn`; a new game is a 5000-byte template at the end of `WORLD.DAT` |
-| text messages | -- | the game's message strings live in the executable (not extracted); the fixed UI labels used so far are in the screen modules |
+| text messages | -- | the message strings live in the executable's data segment, not extracted (they are copyrighted text). Chapter 2: `SW.EXE` is unpacked and the data segment starts at file offset `0x21660`, so a string at IDB `DS:0xNNNN` is at `0x21660 + 0xNNNN` (verified for the monster-panel and shop labels). Chapter 3's `Yendor3-full.exe` is a wrapped/compressed binary; its strings are not readable in place (the `yendor3` IDB was made from an unpacked image). The fixed UI labels used so far are in the screen modules |
 
 ## Rendering the main screen
 
