@@ -1,6 +1,7 @@
 #ifndef YENDOR23_CLUEBOOK_H
 #define YENDOR23_CLUEBOOK_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "game.h"
@@ -51,5 +52,27 @@ ClueTextSource clueCategorySource(unsigned category);
  * clueCategorySource: 1 maps, 2 monsters, 3 spells, 4 magic users, 11 items list, 12-17 item pages.
  */
 int clueHeadingX(GameKind game, unsigned category, unsigned length);
+
+/*
+ * The entry list's paging state (ShowClueCategoryEntries yendor2.asm:4758, HandleClueEntryScrollInput :4690, HandleClueEntryRowScrollInput :4617,
+ * ScrollClueEntryListPageUp/Down, RecomputeClueEntryPageBounds; the original keeps byte pointers into a list of 4-byte entries, here they are entry
+ * indices). A page shows ClueListRows (14) entries from `first` to `last`. The up / down hints of the navigation bar (bits 0x100 / 0x80) are set when
+ * the list is longer than a page and `first` is not the first entry / `last` is not the final one. The list page's backdrop is category 0
+ * picture 14 (the item and monster pages use 13).
+ *
+ * Keys: I and Q page up / down (the selection keeps its row in the page; with no further page they jump to the first / last row of this one),
+ * H and P move the selection one row, turning the page at the edge (the new page's last / first row is selected). The return value is the original's
+ * errorCode: 0 nothing, 1 the selection moved up, 2 down.
+ */
+typedef struct {
+    unsigned count;
+    unsigned first, last, selected;
+} ClueList;
+
+void clueListInit(ClueList *list, unsigned count);
+bool clueListCanPageUp(const ClueList *list);
+bool clueListCanPageDown(const ClueList *list);
+unsigned clueListPageKey(ClueList *list, bool down);
+unsigned clueListRowKey(ClueList *list, bool down);
 
 #endif

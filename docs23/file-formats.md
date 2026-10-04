@@ -1210,6 +1210,9 @@ block 6 the 39-byte lines (Chapter 2 offsets 1458267 / 1458767, Chapter 3 401976
 records (Chapter 2 at 460800, Chapter 3 at 537600: four digit characters, the 1-based name index, one more byte) and a table of 20-byte names (461520 / 538440). The header of the local
 area map is the name plus " LEVEL x" or " MAP x" (Chapter 3 three characters), colours 0xAA / 0x5B; the clue book's map list uses the same text.
 
+The **clue book entry list paging** (`ClueList` in `cluebook.c`): pages of 14 entries; I / Q (or the two arrows under the list, `UiRegionsClueScroll`) page up / down keeping the row, with no further page they jump
+to the first / last row; H / P move one row and turn the page at the edge. The list page backdrop is category 0 picture 14.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 

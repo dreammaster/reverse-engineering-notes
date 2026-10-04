@@ -76,3 +76,96 @@ int clueHeadingX(GameKind game, unsigned category, unsigned length) {
     }
     return 313 - 6 * (int)length;
 }
+
+static void clueListRecompute(ClueList *list) {
+    list->last = list->first + ClueListRows - 1;
+    if (list->last > list->count - 1) {
+        list->last = list->count - 1;
+    }
+}
+
+void clueListInit(ClueList *list, unsigned count) {
+    list->count = count;
+    list->first = list->selected = 0;
+    list->last = 0;
+    if (count) {
+        clueListRecompute(list);
+    }
+}
+
+bool clueListCanPageUp(const ClueList *list) {
+    return list->count > ClueListRows && list->first != 0;
+}
+
+bool clueListCanPageDown(const ClueList *list) {
+    return list->count > ClueListRows && list->last != list->count - 1;
+}
+
+static void clueListScrollUp(ClueList *list) {
+    unsigned row = list->selected - list->first;
+    list->first = list->first >= ClueListRows ? list->first - ClueListRows : 0;
+    list->selected = list->first + row;
+    clueListRecompute(list);
+}
+
+static void clueListScrollDown(ClueList *list) {
+    unsigned row = list->selected - list->first;
+    list->first += ClueListRows;
+    list->selected = list->first + row;
+    clueListRecompute(list);
+    if (list->selected > list->last) {
+        list->selected = list->last;
+    }
+}
+
+unsigned clueListPageKey(ClueList *list, bool down) {
+    if (list->count == 0) {
+        return 0;
+    }
+    if (!down) {
+        if (clueListCanPageUp(list)) {
+            clueListScrollUp(list);
+            return 1;
+        }
+        if (list->selected != list->first) {
+            list->selected = list->first;
+            return 1;
+        }
+        return 0;
+    }
+    if (clueListCanPageDown(list)) {
+        clueListScrollDown(list);
+        return 2;
+    }
+    if (list->selected != list->last) {
+        list->selected = list->last;
+        return 2;
+    }
+    return 0;
+}
+
+unsigned clueListRowKey(ClueList *list, bool down) {
+    if (list->count == 0) {
+        return 0;
+    }
+    if (!down) {
+        if (list->selected != list->first) {
+            list->selected--;
+        } else if (clueListCanPageUp(list)) {
+            clueListScrollUp(list);
+            list->selected = list->last;
+        } else {
+            list->selected = list->first;
+        }
+        return 1;
+    }
+    if (list->selected != list->last) {
+        list->selected++;
+    } else if (clueListCanPageDown(list)) {
+        clueListScrollDown(list);
+        list->selected = list->first;
+    } else {
+        list->selected = list->last;
+    }
+    return 2;
+}
