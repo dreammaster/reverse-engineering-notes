@@ -101,3 +101,11 @@ void charCreateItemListDraw(const ViewRenderer *r, const ItemCatalog *catalog, c
     }
     charCreateExitLabelDraw(r, returning);
 }
+
+void charCreateRollOptionsDraw(const ViewRenderer *r) {
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 25, "SELECT AN", 0x8A, 0, FontTransparent);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 31, "OPTION", 0x8A, 0, FontTransparent);
+    drawHotkeyLabel(r, 8, 51, "ROLL ATTRIBUTES", 0);
+    drawHotkeyLabel(r, 8, 69, "PICK ITEMS", 5);
+    charCreateExitLabelDraw(r, false);
+}

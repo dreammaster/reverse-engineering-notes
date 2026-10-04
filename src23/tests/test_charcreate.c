@@ -129,6 +129,24 @@ int main(void) {
     }
     check("viewing an existing hero: no NAME CHARACTER, RETURN with its E highlighted", !anyName && returnE);
 
+    memset(screen, 0xEE, sizeof(screen));
+    charCreateRollOptionsDraw(&r);
+    bool rollHot = false, pickHot = false, pickIPlain = false;
+    for (int y = 51; y < 57; y++) {
+        for (int x = 8; x < 14; x++) {
+            rollHot = rollHot || screen[y * 320 + x] == 0x7B;
+        }
+    }
+    for (int y = 69; y < 75; y++) {
+        for (int x = 8; x < 14; x++) {
+            pickIPlain = pickIPlain || screen[y * 320 + x] == 0x7B; /* the P is not the hotkey */
+        }
+        for (int x = 38; x < 44; x++) {
+            pickHot = pickHot || screen[y * 320 + x] == 0x7B; /* PICK I: the sixth character */
+        }
+    }
+    check("the roll screen: R of ROLL ATTRIBUTES and the I of PICK ITEMS are the highlighted hotkeys", rollHot && pickHot && !pickIPlain);
+
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

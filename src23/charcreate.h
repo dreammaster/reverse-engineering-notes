@@ -50,4 +50,12 @@ void charCreateExitLabelDraw(const ViewRenderer *r, bool returning);
 void charCreateItemLabel(const uint8_t *itemRecord, char out[2 * ItemNameLineSize + 2]);
 void charCreateItemListDraw(const ViewRenderer *r, const ItemCatalog *catalog, const uint16_t itemIds[8], unsigned hiddenMask, bool returning);
 
+/*
+ * The roll screen (ShowCharacterStats, yendor2.asm:36743): the new hero's character sheet (statsheet.h characterSheetDraw) with "SELECT AN" and
+ * "OPTION" in 0x8A at (8, 25) and (8, 31), "ROLL ATTRIBUTES" (R highlighted) at (8, 51), "PICK ITEMS" (the I, the sixth character, highlighted)
+ * at (8, 69) and the creation exit label. R rolls again, I (or a click on the second line) accepts the roll, Q quits creation. Draw the
+ * sheet first; this adds the option texts.
+ */
+void charCreateRollOptionsDraw(const ViewRenderer *r);
+
 #endif
