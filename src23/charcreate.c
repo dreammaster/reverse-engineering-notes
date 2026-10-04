@@ -109,3 +109,37 @@ void charCreateRollOptionsDraw(const ViewRenderer *r) {
     drawHotkeyLabel(r, 8, 69, "PICK ITEMS", 5);
     charCreateExitLabelDraw(r, false);
 }
+
+void charCreateSummaryDraw(const ViewRenderer *r) {
+    static const char *const kOptions[6] = {"KEEP CHARACTER", "CLASS", "PORTRAIT", "ROLL ATTRIBUTES", "PICK ITEMS", "NAME CHARACTER"};
+    static const unsigned kHotkey[6] = {0, 0, 0, 0, 5, 0};
+    static const int kY[6] = {51, 69, 78, 87, 96, 105};
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 25, "SELECT AN", 0x8A, 0, FontTransparent);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 31, "OPTION", 0x8A, 0, FontTransparent);
+    for (unsigned i = 0; i < 6; i++) {
+        drawHotkeyLabel(r, 8, kY[i], kOptions[i], kHotkey[i]);
+    }
+    charCreateExitLabelDraw(r, false);
+}
+
+void charCreateNamePromptDraw(const ViewRenderer *r, const TextField *field) {
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 25, "ENTER THE NAME", 0x8A, 0, FontTransparent);
+    int x = 8;
+    for (unsigned i = 0; i < CharCreateNameFieldSize; i++) {
+        char c = i < field->length ? field->text[i] : (i == field->length ? '-' : ' ');
+        x = fontDrawChar(r->game, 0, r->screen, ViewScreenWidth, x, 51, (unsigned char)c, 0xF, 0x33, FontOpaque);
+    }
+}
+
+bool charCreateAcceptName(uint8_t *record, const TextField *field) {
+    unsigned length = field->length;
+    while (length > 0 && field->text[length - 1] == ' ') {
+        length--;
+    }
+    if (length == 0) {
+        return false;
+    }
+    memset(record + PartyFieldName, 0, PartyNameBufferSize);
+    memcpy(record + PartyFieldName, field->text, length < PartyNameMaxLength ? length : PartyNameMaxLength);
+    return true;
+}

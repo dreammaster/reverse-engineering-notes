@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_charcreate test_charcreate.c ../charcreate.c ../font.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_charcreate
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_charcreate test_charcreate.c ../charcreate.c ../textfield.c ../font.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_charcreate
  *
  * Face ids 20-33 are what the real Chapter 2 heroes carry.
  */
@@ -9,6 +9,8 @@
 
 #include "charcreate.h"
 #include "pictures.h"
+#include "party.h"
+#include "textfield.h"
 
 static int g_failureCount = 0;
 
@@ -146,6 +148,48 @@ int main(void) {
         }
     }
     check("the roll screen: R of ROLL ATTRIBUTES and the I of PICK ITEMS are the highlighted hotkeys", rollHot && pickHot && !pickIPlain);
+
+    memset(screen, 0xEE, sizeof(screen));
+    charCreateSummaryDraw(&r);
+    bool rows[6] = {false}, pickHotI = false;
+    static const int summaryY[6] = {51, 69, 78, 87, 96, 105};
+    for (unsigned i = 0; i < 6; i++) {
+        for (int y = summaryY[i]; y < summaryY[i] + 6; y++) {
+            for (int x = 8; x < 60; x++) {
+                rows[i] = rows[i] || screen[y * 320 + x] == 0xF || screen[y * 320 + x] == 0x7B;
+            }
+        }
+    }
+    for (int y = 96; y < 102; y++) {
+        for (int x = 38; x < 44; x++) {
+            pickHotI = pickHotI || screen[y * 320 + x] == 0x7B;
+        }
+    }
+    check("the summary menu: six option rows (51, 69, 78, 87, 96, 105), PICK ITEMS highlighting its I",
+          rows[0] && rows[1] && rows[2] && rows[3] && rows[4] && rows[5] && pickHotI);
+
+    TextField field;
+    textFieldInit(&field, CharCreateNameFieldSize);
+    for (const char *k = "GRIMBLEWORTHXYZ"; *k; k++) {
+        textFieldKey(&field, (uint8_t)*k);
+    }
+    check("the name field keeps 12 characters, the rest beep", field.length == 12 && strcmp(field.text, "GRIMBLEWORTH") == 0 && textFieldKey(&field, 'Q') == TextFieldBeep);
+    memset(screen, 0xEE, sizeof(screen));
+    textFieldInit(&field, CharCreateNameFieldSize);
+    textFieldKey(&field, 'A');
+    charCreateNamePromptDraw(&r, &field);
+    check("the prompt: opaque field of 13 cells on 0x33, text then cursor",
+          screen[51 * 320 + 8 + 77] == 0x33 && screen[56 * 320 + 8] != 0xEE && screen[50 * 320 + 8] == 0xEE && screen[51 * 320 + 8 + 78] == 0xEE);
+    memset(record, 0xAA, sizeof(record));
+    textFieldInit(&field, CharCreateNameFieldSize);
+    for (const char *k = "BOB  "; *k; k++) {
+        textFieldKey(&field, (uint8_t)*k);
+    }
+    check("accepting a name trims trailing spaces and stores it NUL-terminated",
+          charCreateAcceptName(record, &field) && strcmp((const char *)record, "BOB") == 0 && record[PartyNameMaxLength] == 0);
+    textFieldInit(&field, CharCreateNameFieldSize);
+    textFieldKey(&field, ' ');
+    check("a blank name is refused", !charCreateAcceptName(record, &field));
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

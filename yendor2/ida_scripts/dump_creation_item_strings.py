@@ -1,19 +1,23 @@
 """
-Strings of the character-creation screens (ShowCharacterInventory yendor2.asm:36150, ShowCharacterStats :36743, DrawQuitOrReturnLabel
-:37632): the item pick headers at DS:0x7A28 and the name separator 0x7960, the stats screen headers 0x7A11 and its two hotkey labels
-0x8572, the exit labels 0x79E5 / 0x7A84. Dumps each.
+Strings of the character-creation screens (ShowCharacterInventory yendor2.asm:36150, ShowCharacterStats :36743, EditCharacterName :36518,
+ShowCharacterSummary :37176, DrawQuitOrReturnLabel :37632). Dumps the NUL-terminated string at each address (Chapter 2 addresses here;
+the Chapter 3 copy of this script uses that game's).
 
-    .
-un_ida_script.ps1 dump_creation_item_strings.py -NoExport
+    .\run_ida_script.ps1 dump_creation_item_strings.py -NoExport
 """
 import ida_bytes
 
 DS_BASE = 0x2D860
-# also the bottom-left exit label (DrawQuitOrReturnLabel): QUIT "CREATE" and RETURN
-out = []
-for addr, n in ((0x7A11, 24), (0x8572, 40), (0x79E5, 16), (0x7A84, 8), (0x7A28, 0x40), (0x7960, 8)):
-    data = bytes(ida_bytes.get_byte(DS_BASE + addr + i) for i in range(n))
-    out.append((hex(addr), data))
-text = repr(out)
+ADDRESSES = [0x7962, 0x7960, 0x79E5, 0x7A84, 0x7A11, 0x7A1B, 0x7A22, 0x7A28, 0x7A38, 0x7A3E, 0x7A4D, 0x7A5C, 0x853C, 0x8572, 0x8582]
+lines = []
+for addr in ADDRESSES:
+    data = bytearray()
+    while len(data) < 40:
+        b = ida_bytes.get_byte(DS_BASE + addr + len(data))
+        if b == 0:
+            break
+        data.append(b)
+    lines.append("%04X %r" % (addr, bytes(data)))
+text = "\n".join(lines)
 open(r"C:\dev\yendor\yendor2\ida_scripts\creation_item_strings.txt", "w", encoding="utf-8").write(text)
 print(text)

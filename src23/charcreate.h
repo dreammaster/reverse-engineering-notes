@@ -6,6 +6,7 @@
 
 #include "game.h"
 #include "item.h"
+#include "textfield.h"
 #include "viewrender.h"
 
 /*
@@ -57,5 +58,26 @@ void charCreateItemListDraw(const ViewRenderer *r, const ItemCatalog *catalog, c
  * sheet first; this adds the option texts.
  */
 void charCreateRollOptionsDraw(const ViewRenderer *r);
+
+/*
+ * The summary menu (ShowCharacterSummary, yendor2.asm:37176; the screen after the pick steps, over the character sheet whose title is
+ * "CHARACTER CREATION", see characterSheetDraw): "SELECT AN" / "OPTION" in 0x8A at (8, 25) and (8, 31), then the six options with their
+ * hotkey highlighted: KEEP CHARACTER (K) at y = 51, CLASS (C) 69, PORTRAIT (P) 78, ROLL ATTRIBUTES (R) 87, PICK ITEMS (I, the sixth
+ * character) 96, NAME CHARACTER (N) 105, all at x = 8, and the exit label. K saves the hero (ApplySecondaryClassTierFlags, chargen.h),
+ * Q discards it.
+ */
+void charCreateSummaryDraw(const ViewRenderer *r);
+
+/*
+ * The name prompt (EditCharacterName, yendor2.asm:36518): "ENTER THE NAME" in 0x8A at (8, 25) and the text field (textfield.h, 13 including
+ * the terminator) at (8, 51) in colour 0xF on 0x33, opaque, drawn as the text, the '-' cursor and spaces to the field's full width.
+ * A result that is empty after trimming trailing spaces is asked for again; otherwise it is stored in the record's name ([+0x00]) and also
+ * written at (156, 26) in 0xF on the sheet header (done by the sheet drawing). Escape returns to the summary menu.
+ */
+enum { CharCreateNameFieldSize = 13 };
+void charCreateNamePromptDraw(const ViewRenderer *r, const TextField *field);
+
+/* Stores a confirmed name: trailing spaces trimmed, false (nothing stored) if nothing is left. */
+bool charCreateAcceptName(uint8_t *partyRecord, const TextField *field);
 
 #endif

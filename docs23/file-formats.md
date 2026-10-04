@@ -1150,6 +1150,12 @@ ITEMS" (0x8A at (8, 25) and (8, 31)): category 8 icon at (8, 42 + 16 row), label
 0x79E5 / 0x7A84 exit labels; Chapter 3 0x7D5A, 0x7D17 / 0x7DB6 (`dump_creation_item_strings.py`). The roll screen (`ShowCharacterStats`) is the new
 hero's character sheet with "SELECT AN" / "OPTION" (0x8A at (8, 25) and (8, 31); DS:0x7A11, Chapter 3 0x7D43), "ROLL ATTRIBUTES" (R highlighted) at
 (8, 51), "PICK ITEMS" (I highlighted) at (8, 69) (0x8572 / 0x8899) and the `QUIT "CREATE"` label; R rolls again, I accepts, Q quits creation.
+The summary menu (`ShowCharacterSummary`, the hub after the steps) lists KEEP CHARACTER (K, y 51), CLASS (C, 69), PORTRAIT (P, 78),
+ROLL ATTRIBUTES (R, 87), PICK ITEMS (I, 96), NAME CHARACTER (N, 105) at x = 8 under the same "SELECT AN / OPTION" header; K applies the secondary-class
+tier flags and writes the hero out, Q discards. The name prompt (`EditCharacterName`) shows "ENTER THE NAME" and `EditTextField` (`textfield.c`):
+a 13-byte buffer that really holds 12 characters (the 13th is typed into the terminator's slot, beeps and is lost), '-' as the cursor,
+backspace (beep on empty), Enter / Escape; the name is trimmed of trailing spaces and asked again if empty. Strings (Chapter 2 / 3): 0x7A4D / 0x7D7F
+"ENTER THE NAME", 0x7A5C / 0x7D8E "KEEP CHARACTER", 0x7A22 / 0x7D54 "CLASS", 0x853C / 0x8863 "PORTRAIT".
 
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
