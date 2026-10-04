@@ -40,6 +40,16 @@
  */
 enum { PictureCategoryCount = 10, PicturePaletteSize = 768 };
 
+/*
+ * Category 0 screens drawn at (1, 1). The same in both games: 1 the main-screen frame, 2 the title menu, 3 the character sheet,
+ * 4 the party roster. Chapter 2 (15 pictures): 0 SmithWare logo, 5 chapter title card, 6 castle gate, 7 automap backdrop, 8 scroll in
+ * hand, 9 castle, 10 throne room, 11 "Tyrants of Thaine", 12 Dark Union / clue book, 13-14 stone panels (clue book / dialogs).
+ * Chapter 3 (23): 0 SW Games logo, 5 "Restoration" title card, 6-7 stone panels, 8 "Yendorian Tales" banner, 9-10 the story so far (Book I,
+ * Chapter 2), 11 the villain, 12 "Tyrants of Thaine" art, 13-14 the Chapter 3 story pages, 15 order form, 16 publisher logo, 17-22 the
+ * introduction slideshow (combat, monsters, lava, castle, statistics) with their captions.
+ */
+enum { PictureScreenMainFrame = 1, PictureScreenTitleMenu = 2, PictureScreenCharacterSheet = 3, PictureScreenRoster = 4 };
+
 typedef struct {
     uint16_t width, height;
     uint32_t base; /* file offset of picture 0 */
