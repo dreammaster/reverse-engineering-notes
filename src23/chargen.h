@@ -77,6 +77,9 @@ void partyComputeDerivedStats(uint8_t *record, GameKind game);
  */
 unsigned partyApplyStartingAbilities(uint8_t *record, GameKind game);
 
+/* The class base's (4-9) two starting ability ids (0 = none) -- the table the clue book's spell page checks for its "CREATION" rows. */
+void partyStartingAbilityIds(unsigned classBase, uint16_t out[2]);
+
 /*
  * The class-selection step of character creation (the screen the roster calls ShowCharacterSkills,
  * yendor2.asm:35989; its keys F M R O A P D K and the rest pick class base 1-9, also reachable from the summary

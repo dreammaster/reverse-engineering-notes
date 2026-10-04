@@ -104,8 +104,17 @@ void partyApplyRolledAttributes(uint8_t *record, const uint8_t rolls[6]) {
     setPair(record, PartyFieldStats + PartyStatCasting * 2, (uint16_t)(base + bonus));
 }
 
+static const uint8_t kStartFlags[6][2] = {{1, 3}, {1, 2}, {1, 0}, {2, 3}, {1, 2}, {2, 0}};
+
+void partyStartingAbilityIds(unsigned classBase, uint16_t out[2]) {
+    out[0] = out[1] = 0;
+    if (classBase >= 4 && classBase <= 9) {
+        out[0] = kStartFlags[classBase - 4][0];
+        out[1] = kStartFlags[classBase - 4][1];
+    }
+}
+
 unsigned partyApplyStartingAbilities(uint8_t *record, GameKind game) {
-    static const uint8_t kStartFlags[6][2] = {{1, 3}, {1, 2}, {1, 0}, {2, 3}, {1, 2}, {2, 0}};
     unsigned cls = partyGetU16(record, PartyFieldClass);
     if (partyGetStatMax(record, PartyStatMagicPoints) == 0 || cls < 4 || cls > 9) {
         return 0;

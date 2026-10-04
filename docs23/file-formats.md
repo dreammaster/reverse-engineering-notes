@@ -1200,6 +1200,12 @@ tick and the cursor; **10** being hit (monster attacks, trap effects); **11** th
 Higher ids (42-59, 71-72, 100, 157 ...) are the item-effect sounds `ApplyEncodedItemEffect` picks per effect. The census script is a few lines of Python over the asm
 (track `mov ax, N` before each call).
 
+The **clue book spell page** (`ShowClueBookSpellDetail`, `cluespell.c`; `RENDER_SPELLPAGE=<spell id>`): class rows (starting ability = CREATION level 1, unlock table = TRAINING at an even level,
+eligibility mask bit 0x20 MONK .. 0x01 MARKSMAN = SCROLL at the record's required level), costs, AFFECTS / WHEN lines built from the record's flag words, and the description. The
+description lines live in WORLD.DAT: block 5 is a table of (first line, line count) u16 pairs indexed by spell id (entry 0 unused; Chapter 2 describes 1-105 of 124),
+block 6 the 39-byte lines (Chapter 2 offsets 1458267 / 1458767, Chapter 3 4019761 / 4020193; `dump_spell_description_blocks.py`, which also lists the other four clue blocks: 1 the
+"fully known" map bitmap, 2 the paged entry screens, 3-4 not decoded).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
