@@ -48,4 +48,4 @@ There is no separate encounter roll: monsters standing on the map within three c
 
 ## Control panel (`controlPanel`, ESC / key 9)
 
-`cpanel.icn` buttons: save (`loadSaveDialog`; refused in combat: "No Saving Allowed in Combat!" and on pages whose header byte 0Ch is 0), load (lists `*.mm3` saves; "No Loading Allowed in Combat!"), quit ("Are you sure you want to quit?") and Mr. Wizard's Help (an in-game hint feature, confirmed with "Are you sure you want Mr. Wizard's Help?...").  Sound/music toggles use `byte_36FE8`/`byte_36FE9` (see `music.md`).
+`cpanel.icn` buttons: save (`loadSaveDialog`; refused in combat: "No Saving Allowed in Combat!" and on pages whose header byte 0Ch is 0), load (lists `*.mm3` saves; "No Loading Allowed in Combat!"), quit ("Are you sure you want to quit?") and Mr. Wizard's Help (an in-game hint feature, confirmed with "Are you sure you want Mr. Wizard's Help?...").
