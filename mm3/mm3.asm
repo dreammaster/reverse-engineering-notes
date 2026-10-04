@@ -2392,9 +2392,10 @@ seg002          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; end-of-round recovery: every monster with a non-zero state (Maze_monState: asleep, held, silenced...) gets monsterSavingThrow(id) and returns to state 0 on success
 ; Attributes: bp-based frame
 
-sub_15235       proc far                ; CODE XREF: exploreLoop:loc_3F24A↓P
+monstersRecover proc far                ; CODE XREF: exploreLoop:loc_3F24A↓P
                                         ; doCombat+3A3↓P
                 push    bp
                 mov     bp, sp
@@ -2403,7 +2404,7 @@ sub_15235       proc far                ; CODE XREF: exploreLoop:loc_3F24A↓P
                 jmp     short loc_15265
 ; ---------------------------------------------------------------------------
 
-loc_1523D:                              ; CODE XREF: sub_15235+37↓j
+loc_1523D:                              ; CODE XREF: monstersRecover+37↓j
                 mov     bx, si
                 shl     bx, 1
                 cmp     word ptr [bx-47F0h], 0
@@ -2419,11 +2420,11 @@ loc_1523D:                              ; CODE XREF: sub_15235+37↓j
                 shl     bx, 1
                 mov     word ptr [bx-47F0h], 0
 
-loc_15264:                              ; CODE XREF: sub_15235+11↑j
-                                        ; sub_15235+23↑j
+loc_15264:                              ; CODE XREF: monstersRecover+11↑j
+                                        ; monstersRecover+23↑j
                 inc     si
 
-loc_15265:                              ; CODE XREF: sub_15235+6↑j
+loc_15265:                              ; CODE XREF: monstersRecover+6↑j
                 mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, si
@@ -2431,7 +2432,7 @@ loc_15265:                              ; CODE XREF: sub_15235+6↑j
                 pop     si
                 pop     bp
                 retf
-sub_15235       endp
+monstersRecover endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15022,9 +15023,10 @@ sub_1B223       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; moveMonsterBy(monster index, dx, dy): moves a live monster if the target cell's occupancy plus its size (MONSTER_SIZE table DGROUP 1B20h) stays below 4, the monster is awake (state 0) and movement is enabled (byte_2884C); sets its moved flag
 ; Attributes: bp-based frame
 
-sub_1B2A3       proc far                ; CODE XREF: moveMonsters+2C5↓p
+moveMonsterBy   proc far                ; CODE XREF: moveMonsters+2C5↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -15092,16 +15094,16 @@ arg_4           = word ptr  0Ah
                 mov     bx, [bp+arg_4]
                 mov     byte ptr [bx-128Ch], 1
 
-loc_1B34F:                              ; CODE XREF: sub_1B2A3+4D↑j
-                                        ; sub_1B2A3+54↑j
+loc_1B34F:                              ; CODE XREF: moveMonsterBy+4D↑j
+                                        ; moveMonsterBy+54↑j
                 mov     byte_2883D, 1
 
-loc_1B354:                              ; CODE XREF: sub_1B2A3+41↑j
+loc_1B354:                              ; CODE XREF: moveMonsterBy+41↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_1B2A3       endp
+moveMonsterBy   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15461,7 +15463,7 @@ loc_1B609:                              ; CODE XREF: moveMonsters+219↑j
 loc_1B61C:                              ; CODE XREF: moveMonsters+255↑j
                                         ; moveMonsters+291↑j
                 push    cs
-                call    near ptr sub_1B2A3
+                call    near ptr moveMonsterBy
                 add     sp, 6
 
 loc_1B623:                              ; CODE XREF: moveMonsters+12E↑j
@@ -37775,7 +37777,7 @@ byte_2883B      db 0                    ; DATA XREF: sub_1B6D1+111↑r
                                         ; sub_1B6D1:loc_1B7F1↑r ...
 byte_2883C      db 0                    ; DATA XREF: sub_1B6D1+AF↑r
                                         ; sub_1B6D1:loc_1B78F↑r ...
-byte_2883D      db 0                    ; DATA XREF: sub_1B2A3:loc_1B34F↑w
+byte_2883D      db 0                    ; DATA XREF: moveMonsterBy:loc_1B34F↑w
                                         ; moveMonsters+8F↑w ...
                 db 0
 byte_2883F      db 0                    ; DATA XREF: getCommand+137↑r
@@ -37804,7 +37806,7 @@ byte_28849      db 0                    ; DATA XREF: seg001:loc_14E3D↑w
 Maze_wrapMode   db 0                    ; DATA XREF: updateAutomap+C7↑r
                                         ; chargeStep+B↑r ...
                                         ; byte; non-zero = off-map cells wrap/return 0 instead of 1111h
-byte_2884C      db 1                    ; DATA XREF: sub_1B2A3+4F↑r
+byte_2884C      db 1                    ; DATA XREF: moveMonsterBy+4F↑r
 byte_2884D      db 0                    ; DATA XREF: sub_1DB3D+12E↑r
                                         ; sub_1DB3D+265↑r ...
 byte_2884E      db 0FEh                 ; DATA XREF: highlightChar+3↑r
@@ -45274,7 +45276,7 @@ byte_315E2      db 0                    ; DATA XREF: clearViewFlags+52↑w
                                         ; prepareIndoorView:loc_1D64D↑w ...
 byte_315E3      db 0                    ; DATA XREF: clearViewFlags+46↑w
                                         ; prepareIndoorView:loc_1D794↑w ...
-                db 14Bh dup(0)
+Maze_occupancy  db 14Bh dup(0)          ; 1024 bytes (32x32 world cells, y*32+x): summed sizes of the monsters standing in each cell; rebuilt by moveMonsters
 byte_3172F      db 0                    ; DATA XREF: seg001:0593↑r
                 db 2B4h dup(0)
 byte_319E4      db 0                    ; DATA XREF: runMazeEvent+103↑w
@@ -45696,7 +45698,7 @@ byte_3345D      db 0                    ; DATA XREF: sub_17439:loc_17E10↑r
 byte_3345E      db 0                    ; DATA XREF: sub_17439:loc_17F0E↑r
                                         ; sub_17439+AF0↑r
                 align 2
-Mon_y           db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monY       db    0                 ; word[170]: y of each live map monster (second byte of the record)
                 db    0
                 db    0
                 db    0
@@ -46036,7 +46038,7 @@ Mon_y           db    0                 ; word array, 170 entries: per-monster r
                 db    0
                 db    0
                 db    0
-Mon_x           db    0                 ; word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)
+Maze_monX       db    0                 ; word[170]: x of each live map monster (first byte of its MAZEnn.BIN record; 20h-range values used for off-map)
                 db    0
                 db    0
                 db    0
@@ -49896,7 +49898,7 @@ word_373EA      dw 0                    ; DATA XREF: drawParty+77↑r
 word_373EC      dw 0                    ; DATA XREF: drawParty+7A↑r
                                         ; rosterMenu+219↓r
                 db 74h dup(0)
-Maze_monsterCount db 0                  ; DATA XREF: sub_15235:loc_15265↑r
+Maze_monsterCount db 0                  ; DATA XREF: monstersRecover:loc_15265↑r
                                         ; scanMonstersAhead:loc_1692B↑r ...
                                         ; byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff
 byte_37463      db 0                    ; DATA XREF: clearViewFlags+17D↑w
@@ -66641,7 +66643,7 @@ loc_3F22F:                              ; CODE XREF: exploreLoop+9F↑j
 
 loc_3F24A:                              ; CODE XREF: exploreLoop+8B2↑j
                                         ; exploreLoop+8C6↑j
-                call    sub_15235
+                call    monstersRecover
                 mov     al, byte_28841
                 mov     ah, 0
                 or      ax, ax
@@ -93694,7 +93696,7 @@ loc_4BB4E:                              ; CODE XREF: doCombat+377↑j
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_4BB2E
-                call    sub_15235
+                call    monstersRecover
                 call    moveMonsters
                 call    scanMonstersAhead
                 mov     ax, 1

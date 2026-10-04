@@ -5114,6 +5114,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0X14BE0);
 	set_name	(0X1522B,	"jpt_14CF6");
 	create_insn	(0X15235);
+	set_name	(0X15235,	"monstersRecover");
 	create_insn	(0X1523D);
 	create_insn	(x=0X1523F);
 	op_hex		(x,	1);
@@ -5308,10 +5309,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X155FF);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X15602);
-	op_hex		(x,	1);
-	create_insn	(x=0X1560A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5321,6 +5318,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X15602);
+	op_hex		(x,	1);
+	create_insn	(x=0X1560A);
+	op_hex		(x,	1);
 	create_insn	(x=0X15619);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15626);
@@ -8151,6 +8152,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B297);
 	op_stkvar	(x,	1);
 	create_insn	(0X1B2A3);
+	set_name	(0X1B2A3,	"moveMonsterBy");
 	create_insn	(x=0X1B2A8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B2AB);
@@ -17307,8 +17309,10 @@ static Bytes_3(void) {
 	make_array	(0X31452,	0X190);
 	create_byte	(0X315E2);
 	create_byte	(0X315E3);
+	set_cmt	(0X315E4,	"1024 bytes (32x32 world cells, y*32+x): summed sizes of the monsters standing in each cell; rebuilt by moveMonsters",	0);
 	create_byte	(0X315E4);
 	make_array	(0X315E4,	0X14B);
+	set_name	(0X315E4,	"Maze_occupancy");
 	create_byte	(0X3172F);
 	create_byte	(0X31730);
 	make_array	(0X31730,	0X2B4);
@@ -17543,10 +17547,10 @@ static Bytes_3(void) {
 	create_byte	(0X3345C);
 	create_byte	(0X3345D);
 	create_byte	(0X3345E);
-	set_cmt	(0X33460,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X33460,	"Mon_y");
-	set_cmt	(0X335B4,	"word array, 170 entries: per-monster runtime state of the current map (filled by Map_load)",	0);
-	set_name	(0X335B4,	"Mon_x");
+	set_cmt	(0X33460,	"word[170]: y of each live map monster (second byte of the record)",	0);
+	set_name	(0X33460,	"Maze_monY");
+	set_cmt	(0X335B4,	"word[170]: x of each live map monster (first byte of its MAZEnn.BIN record; 20h-range values used for off-map)",	0);
+	set_name	(0X335B4,	"Maze_monX");
 	set_cmt	(0X33708,	"word[170]: animation phase of each live map monster (random start, wraps at the picture's frame count from table DGROUP 1A6Ch)",	0);
 	set_name	(0X33708,	"Maze_monAnim");
 	set_cmt	(0X3385C,	"word[170]: picture selector of the monster record (b & 3 -> MAP_MONSTER_PICS)",	0);
@@ -18195,6 +18199,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37AB7);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X37ABF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X37ACA);
@@ -18210,15 +18223,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X37B0C);
 	op_stkvar	(x,	1);
 	set_cmt	(0X37B20,	"switch 8 cases",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X37B2A);
 	op_hex		(x,	1);
 	set_cmt	(0X37B2C,	"switch jump",	0);
@@ -23008,6 +23012,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FEB8);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FEBC);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FEC0,	"buffer",	0);
@@ -23021,15 +23034,6 @@ static Bytes_4(void) {
 	set_cmt	(0X3FEE1,	"dest",	0);
 	create_insn	(x=0X3FEED);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3FEF0,	"dest",	0);
 	create_insn	(x=0X3FEFC);
 	op_stkvar	(x,	1);
@@ -28641,6 +28645,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4761B);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4762C,	"jumptable 000474F8 cases 8-17",	1);
 	create_insn	(x=0X4762C);
 	op_stkvar	(x,	0);
@@ -28653,15 +28666,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4764B);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47650);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47653);
@@ -33678,6 +33682,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X4F74F);
 	set_name	(0X4F74F,	"spellsDialog");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F752);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F75C);
@@ -33691,15 +33704,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F790);
 	op_stkvar	(x,	0);
 	create_insn	(0X4F796);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F7CB);
 	op_stkvar	(x,	0);
 	create_insn	(0X4F7D6);
@@ -37654,6 +37658,7 @@ static Functions_0(void) {
 	set_frame_size(0X15194, 0, 2, 0);
 	add_func    (0X15235,0X15271);
 	set_func_flags(0X15235,0x5412);
+	set_func_cmt(0X15235,	"end-of-round recovery: every monster with a non-zero state (Maze_monState: asleep, held, silenced...) gets monsterSavingThrow(id) and returns to state 0 on success", 0);
 	set_frame_size(0X15235, 0X2, 2, 0);
 	add_func    (0X15271,0X152DA);
 	set_func_flags(0X15271,0x5412);
@@ -37787,6 +37792,7 @@ static Functions_0(void) {
 	define_local_var(0X1B223, 0X1B2A3, "[bp+0X6]", "format");
 	add_func    (0X1B2A3,0X1B358);
 	set_func_flags(0X1B2A3,0x5412);
+	set_func_cmt(0X1B2A3,	"moveMonsterBy(monster index, dx, dy): moves a live monster if the target cell's occupancy plus its size (MONSTER_SIZE table DGROUP 1B20h) stays below 4, the monster is awake (state 0) and movement is enabled (byte_2884C); sets its moved flag", 0);
 	set_frame_size(0X1B2A3, 0X4, 2, 0);
 	add_func    (0X1B358,0X1B669);
 	set_func_flags(0X1B358,0x5412);
@@ -39553,6 +39559,10 @@ static Functions_0(void) {
 	set_func_cmt(0X41F5D,	"cpanel.icn, load/save \"*.mm3\", quit confirmation, Mr. Wizard's help", 0);
 	set_frame_size(0X41F5D, 0X28, 2, 0);
 	define_local_var(0X41F5D, 0X422D4, "[bp-0X24]", "s");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4231C,0X424AB);
 	set_func_flags(0X4231C,0x5412);
 	SetType(0X4231C, "int __cdecl __far sub_4231C(int, char *);");
@@ -39570,10 +39580,6 @@ static Functions_0(void) {
 	set_frame_size(0X4265B, 0X112, 2, 0);
 	define_local_var(0X4265B, 0X42E8D, "[bp-0X10E]", "s");
 	define_local_var(0X4265B, 0X42E8D, "[bp-0XE]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X42EA9,0X42FB0);
 	set_func_flags(0X42EA9,0x5412);
 	set_frame_size(0X42EA9, 0X18, 2, 0);
