@@ -3836,7 +3836,7 @@ loc_15B9C:                              ; CODE XREF: sub_15B50+654↓j
 loc_15C25:                              ; CODE XREF: sub_15B50+C2↑j
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     byte_287A6, 1
                 jmp     short loc_15C4B
@@ -3847,7 +3847,7 @@ loc_15C36:                              ; CODE XREF: sub_15B50+D3↑j
                 jz      short loc_15C4B
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     byte_287A6, 0
 
@@ -4488,9 +4488,10 @@ sub_15B50       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; clears the per-row monster visibility bytes (34B92.. 32E37.. 3329D..) and scans the live monster list for monsters in view ahead of the party (called at the start of runMazeEvent, doCombat, moveMonsters, the draw functions)
 ; Attributes: bp-based frame
 
-sub_161AD       proc far                ; CODE XREF: runMazeEvent+12↓P
+scanMonstersAhead proc far              ; CODE XREF: runMazeEvent+12↓P
                                         ; prepareIndoorView:loc_1D8CA↓P ...
 
 var_8           = word ptr -8
@@ -4543,7 +4544,7 @@ var_2           = word ptr -2
                 jmp     loc_1692B
 ; ---------------------------------------------------------------------------
 
-loc_16220:                              ; CODE XREF: sub_161AD+787↓j
+loc_16220:                              ; CODE XREF: scanMonstersAhead+787↓j
                 mov     ax, cx
                 shl     ax, 1
                 add     ax, 0AD70h
@@ -4590,7 +4591,7 @@ loc_16220:                              ; CODE XREF: sub_161AD+787↓j
                 jmp     short loc_162AC
 ; ---------------------------------------------------------------------------
 
-loc_1628A:                              ; CODE XREF: sub_161AD+D2↑j
+loc_1628A:                              ; CODE XREF: scanMonstersAhead+D2↑j
                 mov     al, byte_34B93
                 mov     ah, 0
                 or      ax, ax
@@ -4601,7 +4602,7 @@ loc_1628A:                              ; CODE XREF: sub_161AD+D2↑j
                 jmp     short loc_162AC
 ; ---------------------------------------------------------------------------
 
-loc_1629C:                              ; CODE XREF: sub_161AD+E4↑j
+loc_1629C:                              ; CODE XREF: scanMonstersAhead+E4↑j
                 mov     al, byte_34B94
                 mov     ah, 0
                 or      ax, ax
@@ -4610,8 +4611,8 @@ loc_1629C:                              ; CODE XREF: sub_161AD+E4↑j
                 inc     al
                 mov     byte_34B94, al
 
-loc_162AC:                              ; CODE XREF: sub_161AD+A9↑j
-                                        ; sub_161AD+C2↑j ...
+loc_162AC:                              ; CODE XREF: scanMonstersAhead+A9↑j
+                                        ; scanMonstersAhead+C2↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4650,7 +4651,7 @@ loc_162AC:                              ; CODE XREF: sub_161AD+A9↑j
                 jmp     short loc_16323
 ; ---------------------------------------------------------------------------
 
-loc_16301:                              ; CODE XREF: sub_161AD+149↑j
+loc_16301:                              ; CODE XREF: scanMonstersAhead+149↑j
                 mov     al, byte_34B98
                 mov     ah, 0
                 or      ax, ax
@@ -4661,7 +4662,7 @@ loc_16301:                              ; CODE XREF: sub_161AD+149↑j
                 jmp     short loc_16323
 ; ---------------------------------------------------------------------------
 
-loc_16313:                              ; CODE XREF: sub_161AD+15B↑j
+loc_16313:                              ; CODE XREF: scanMonstersAhead+15B↑j
                 mov     al, byte_34B99
                 mov     ah, 0
                 or      ax, ax
@@ -4670,8 +4671,8 @@ loc_16313:                              ; CODE XREF: sub_161AD+15B↑j
                 inc     al
                 mov     byte_34B99, al
 
-loc_16323:                              ; CODE XREF: sub_161AD+117↑j
-                                        ; sub_161AD+130↑j ...
+loc_16323:                              ; CODE XREF: scanMonstersAhead+117↑j
+                                        ; scanMonstersAhead+130↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4699,13 +4700,13 @@ loc_16323:                              ; CODE XREF: sub_161AD+117↑j
                 cmp     byte_373D5, 0
                 jnz     short loc_163A4
 
-loc_16364:                              ; CODE XREF: sub_161AD+1AE↑j
+loc_16364:                              ; CODE XREF: scanMonstersAhead+1AE↑j
                 cmp     byte_33316, 0
                 jz      short loc_16372
                 cmp     byte_333B5, 0
                 jnz     short loc_163A4
 
-loc_16372:                              ; CODE XREF: sub_161AD+1BC↑j
+loc_16372:                              ; CODE XREF: scanMonstersAhead+1BC↑j
                 mov     al, byte_34BC7
                 and     al, byte_373D5
                 mov     ah, 0
@@ -4716,7 +4717,7 @@ loc_16372:                              ; CODE XREF: sub_161AD+1BC↑j
                 cmp     byte_333B5, 0
                 jnz     short loc_163A4
 
-loc_1638D:                              ; CODE XREF: sub_161AD+1D7↑j
+loc_1638D:                              ; CODE XREF: scanMonstersAhead+1D7↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_34B96
@@ -4727,8 +4728,8 @@ loc_1638D:                              ; CODE XREF: sub_161AD+1D7↑j
                 inc     al
                 mov     byte_34B96, al
 
-loc_163A4:                              ; CODE XREF: sub_161AD+18E↑j
-                                        ; sub_161AD+1A7↑j ...
+loc_163A4:                              ; CODE XREF: scanMonstersAhead+18E↑j
+                                        ; scanMonstersAhead+1A7↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4756,13 +4757,13 @@ loc_163A4:                              ; CODE XREF: sub_161AD+18E↑j
                 cmp     byte_373D6, 0
                 jnz     short loc_16425
 
-loc_163E5:                              ; CODE XREF: sub_161AD+22F↑j
+loc_163E5:                              ; CODE XREF: scanMonstersAhead+22F↑j
                 cmp     byte_33316, 0
                 jz      short loc_163F3
                 cmp     byte_3343E, 0
                 jnz     short loc_16425
 
-loc_163F3:                              ; CODE XREF: sub_161AD+23D↑j
+loc_163F3:                              ; CODE XREF: scanMonstersAhead+23D↑j
                 mov     al, byte_34C1A
                 and     al, byte_373D6
                 mov     ah, 0
@@ -4773,7 +4774,7 @@ loc_163F3:                              ; CODE XREF: sub_161AD+23D↑j
                 cmp     byte_3343E, 0
                 jnz     short loc_16425
 
-loc_1640E:                              ; CODE XREF: sub_161AD+258↑j
+loc_1640E:                              ; CODE XREF: scanMonstersAhead+258↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_34B97
@@ -4784,8 +4785,8 @@ loc_1640E:                              ; CODE XREF: sub_161AD+258↑j
                 inc     al
                 mov     byte_34B97, al
 
-loc_16425:                              ; CODE XREF: sub_161AD+20F↑j
-                                        ; sub_161AD+228↑j ...
+loc_16425:                              ; CODE XREF: scanMonstersAhead+20F↑j
+                                        ; scanMonstersAhead+228↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4828,7 +4829,7 @@ loc_16425:                              ; CODE XREF: sub_161AD+20F↑j
                 jmp     short loc_164A5
 ; ---------------------------------------------------------------------------
 
-loc_16483:                              ; CODE XREF: sub_161AD+2CB↑j
+loc_16483:                              ; CODE XREF: scanMonstersAhead+2CB↑j
                 mov     al, byte_32E39
                 mov     ah, 0
                 or      ax, ax
@@ -4839,7 +4840,7 @@ loc_16483:                              ; CODE XREF: sub_161AD+2CB↑j
                 jmp     short loc_164A5
 ; ---------------------------------------------------------------------------
 
-loc_16495:                              ; CODE XREF: sub_161AD+2DD↑j
+loc_16495:                              ; CODE XREF: scanMonstersAhead+2DD↑j
                 mov     al, byte_32E3B
                 mov     ah, 0
                 or      ax, ax
@@ -4848,8 +4849,8 @@ loc_16495:                              ; CODE XREF: sub_161AD+2DD↑j
                 inc     al
                 mov     byte_32E3B, al
 
-loc_164A5:                              ; CODE XREF: sub_161AD+290↑j
-                                        ; sub_161AD+2A9↑j ...
+loc_164A5:                              ; CODE XREF: scanMonstersAhead+290↑j
+                                        ; scanMonstersAhead+2A9↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4864,7 +4865,7 @@ loc_164A5:                              ; CODE XREF: sub_161AD+290↑j
                 jmp     loc_16545
 ; ---------------------------------------------------------------------------
 
-loc_164C2:                              ; CODE XREF: sub_161AD+310↑j
+loc_164C2:                              ; CODE XREF: scanMonstersAhead+310↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4885,25 +4886,25 @@ loc_164C2:                              ; CODE XREF: sub_161AD+310↑j
                 cmp     byte_34BC7, 0
                 jnz     short loc_16545
 
-loc_164F2:                              ; CODE XREF: sub_161AD+33C↑j
+loc_164F2:                              ; CODE XREF: scanMonstersAhead+33C↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_16500
                 cmp     byte_332AE, 0
                 jnz     short loc_16545
 
-loc_16500:                              ; CODE XREF: sub_161AD+34A↑j
+loc_16500:                              ; CODE XREF: scanMonstersAhead+34A↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_1650E
                 cmp     byte_37392, 0
                 jnz     short loc_16545
 
-loc_1650E:                              ; CODE XREF: sub_161AD+358↑j
+loc_1650E:                              ; CODE XREF: scanMonstersAhead+358↑j
                 cmp     byte_332AE, 0
                 jz      short loc_1651C
                 cmp     byte_37392, 0
                 jnz     short loc_16545
 
-loc_1651C:                              ; CODE XREF: sub_161AD+366↑j
+loc_1651C:                              ; CODE XREF: scanMonstersAhead+366↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_32E5F
@@ -4916,7 +4917,7 @@ loc_1651C:                              ; CODE XREF: sub_161AD+366↑j
                 jmp     short loc_16545
 ; ---------------------------------------------------------------------------
 
-loc_16535:                              ; CODE XREF: sub_161AD+37D↑j
+loc_16535:                              ; CODE XREF: scanMonstersAhead+37D↑j
                 mov     al, byte_32E62
                 mov     ah, 0
                 or      ax, ax
@@ -4925,8 +4926,8 @@ loc_16535:                              ; CODE XREF: sub_161AD+37D↑j
                 inc     al
                 mov     byte_32E62, al
 
-loc_16545:                              ; CODE XREF: sub_161AD+312↑j
-                                        ; sub_161AD+32C↑j ...
+loc_16545:                              ; CODE XREF: scanMonstersAhead+312↑j
+                                        ; scanMonstersAhead+32C↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4941,7 +4942,7 @@ loc_16545:                              ; CODE XREF: sub_161AD+312↑j
                 jmp     loc_165E5
 ; ---------------------------------------------------------------------------
 
-loc_16562:                              ; CODE XREF: sub_161AD+3B0↑j
+loc_16562:                              ; CODE XREF: scanMonstersAhead+3B0↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4962,25 +4963,25 @@ loc_16562:                              ; CODE XREF: sub_161AD+3B0↑j
                 cmp     byte_34C1A, 0
                 jnz     short loc_165E5
 
-loc_16592:                              ; CODE XREF: sub_161AD+3DC↑j
+loc_16592:                              ; CODE XREF: scanMonstersAhead+3DC↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_165A0
                 cmp     byte_332AF, 0
                 jnz     short loc_165E5
 
-loc_165A0:                              ; CODE XREF: sub_161AD+3EA↑j
+loc_165A0:                              ; CODE XREF: scanMonstersAhead+3EA↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_165AE
                 cmp     byte_373C6, 0
                 jnz     short loc_165E5
 
-loc_165AE:                              ; CODE XREF: sub_161AD+3F8↑j
+loc_165AE:                              ; CODE XREF: scanMonstersAhead+3F8↑j
                 cmp     byte_332AF, 0
                 jz      short loc_165BC
                 cmp     byte_373C6, 0
                 jnz     short loc_165E5
 
-loc_165BC:                              ; CODE XREF: sub_161AD+406↑j
+loc_165BC:                              ; CODE XREF: scanMonstersAhead+406↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_3329D
@@ -4993,7 +4994,7 @@ loc_165BC:                              ; CODE XREF: sub_161AD+406↑j
                 jmp     short loc_165E5
 ; ---------------------------------------------------------------------------
 
-loc_165D5:                              ; CODE XREF: sub_161AD+41D↑j
+loc_165D5:                              ; CODE XREF: scanMonstersAhead+41D↑j
                 mov     al, byte_332A0
                 mov     ah, 0
                 or      ax, ax
@@ -5002,8 +5003,8 @@ loc_165D5:                              ; CODE XREF: sub_161AD+41D↑j
                 inc     al
                 mov     byte_332A0, al
 
-loc_165E5:                              ; CODE XREF: sub_161AD+3B2↑j
-                                        ; sub_161AD+3CC↑j ...
+loc_165E5:                              ; CODE XREF: scanMonstersAhead+3B2↑j
+                                        ; scanMonstersAhead+3CC↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5050,7 +5051,7 @@ loc_165E5:                              ; CODE XREF: sub_161AD+3B2↑j
                 jmp     short loc_1666E
 ; ---------------------------------------------------------------------------
 
-loc_1664C:                              ; CODE XREF: sub_161AD+494↑j
+loc_1664C:                              ; CODE XREF: scanMonstersAhead+494↑j
                 mov     al, byte_32E3A
                 mov     ah, 0
                 or      ax, ax
@@ -5061,7 +5062,7 @@ loc_1664C:                              ; CODE XREF: sub_161AD+494↑j
                 jmp     short loc_1666E
 ; ---------------------------------------------------------------------------
 
-loc_1665E:                              ; CODE XREF: sub_161AD+4A6↑j
+loc_1665E:                              ; CODE XREF: scanMonstersAhead+4A6↑j
                 mov     al, byte_32E3C
                 mov     ah, 0
                 or      ax, ax
@@ -5070,8 +5071,8 @@ loc_1665E:                              ; CODE XREF: sub_161AD+4A6↑j
                 inc     al
                 mov     byte_32E3C, al
 
-loc_1666E:                              ; CODE XREF: sub_161AD+450↑j
-                                        ; sub_161AD+469↑j ...
+loc_1666E:                              ; CODE XREF: scanMonstersAhead+450↑j
+                                        ; scanMonstersAhead+469↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5086,7 +5087,7 @@ loc_1666E:                              ; CODE XREF: sub_161AD+450↑j
                 jmp     loc_1672C
 ; ---------------------------------------------------------------------------
 
-loc_1668B:                              ; CODE XREF: sub_161AD+4D9↑j
+loc_1668B:                              ; CODE XREF: scanMonstersAhead+4D9↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5101,7 +5102,7 @@ loc_1668B:                              ; CODE XREF: sub_161AD+4D9↑j
                 jmp     loc_1672C
 ; ---------------------------------------------------------------------------
 
-loc_166A7:                              ; CODE XREF: sub_161AD+4F5↑j
+loc_166A7:                              ; CODE XREF: scanMonstersAhead+4F5↑j
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -5115,25 +5116,25 @@ loc_166A7:                              ; CODE XREF: sub_161AD+4F5↑j
                 cmp     byte_37392, 0
                 jnz     short loc_1672C
 
-loc_166C7:                              ; CODE XREF: sub_161AD+511↑j
+loc_166C7:                              ; CODE XREF: scanMonstersAhead+511↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_166D5
                 cmp     byte_3407E, 0
                 jnz     short loc_1672C
 
-loc_166D5:                              ; CODE XREF: sub_161AD+51F↑j
+loc_166D5:                              ; CODE XREF: scanMonstersAhead+51F↑j
                 cmp     byte_3407E, 0
                 jz      short loc_166E3
                 cmp     byte_32E5E, 0
                 jnz     short loc_1672C
 
-loc_166E3:                              ; CODE XREF: sub_161AD+52D↑j
+loc_166E3:                              ; CODE XREF: scanMonstersAhead+52D↑j
                 cmp     byte_37392, 0
                 jz      short loc_166F1
                 cmp     byte_32E5E, 0
                 jnz     short loc_1672C
 
-loc_166F1:                              ; CODE XREF: sub_161AD+53B↑j
+loc_166F1:                              ; CODE XREF: scanMonstersAhead+53B↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_32E60
@@ -5146,7 +5147,7 @@ loc_166F1:                              ; CODE XREF: sub_161AD+53B↑j
                 jmp     short loc_1672C
 ; ---------------------------------------------------------------------------
 
-loc_1670A:                              ; CODE XREF: sub_161AD+552↑j
+loc_1670A:                              ; CODE XREF: scanMonstersAhead+552↑j
                 mov     al, byte_32E63
                 mov     ah, 0
                 or      ax, ax
@@ -5157,7 +5158,7 @@ loc_1670A:                              ; CODE XREF: sub_161AD+552↑j
                 jmp     short loc_1672C
 ; ---------------------------------------------------------------------------
 
-loc_1671C:                              ; CODE XREF: sub_161AD+564↑j
+loc_1671C:                              ; CODE XREF: scanMonstersAhead+564↑j
                 mov     al, byte_32E64
                 mov     ah, 0
                 or      ax, ax
@@ -5166,8 +5167,8 @@ loc_1671C:                              ; CODE XREF: sub_161AD+564↑j
                 inc     al
                 mov     byte_32E64, al
 
-loc_1672C:                              ; CODE XREF: sub_161AD+4DB↑j
-                                        ; sub_161AD+4F7↑j ...
+loc_1672C:                              ; CODE XREF: scanMonstersAhead+4DB↑j
+                                        ; scanMonstersAhead+4F7↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5182,7 +5183,7 @@ loc_1672C:                              ; CODE XREF: sub_161AD+4DB↑j
                 jmp     loc_167CC
 ; ---------------------------------------------------------------------------
 
-loc_16749:                              ; CODE XREF: sub_161AD+597↑j
+loc_16749:                              ; CODE XREF: scanMonstersAhead+597↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5203,25 +5204,25 @@ loc_16749:                              ; CODE XREF: sub_161AD+597↑j
                 cmp     byte_332AE, 0
                 jnz     short loc_167CC
 
-loc_16779:                              ; CODE XREF: sub_161AD+5C3↑j
+loc_16779:                              ; CODE XREF: scanMonstersAhead+5C3↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_16787
                 cmp     byte_34BC7, 0
                 jnz     short loc_167CC
 
-loc_16787:                              ; CODE XREF: sub_161AD+5D1↑j
+loc_16787:                              ; CODE XREF: scanMonstersAhead+5D1↑j
                 cmp     byte_332AE, 0
                 jz      short loc_16795
                 cmp     byte_37392, 0
                 jnz     short loc_167CC
 
-loc_16795:                              ; CODE XREF: sub_161AD+5DF↑j
+loc_16795:                              ; CODE XREF: scanMonstersAhead+5DF↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_167A3
                 cmp     byte_37392, 0
                 jnz     short loc_167CC
 
-loc_167A3:                              ; CODE XREF: sub_161AD+5ED↑j
+loc_167A3:                              ; CODE XREF: scanMonstersAhead+5ED↑j
                 mov     al, byte_3407E
                 mov     ah, 0
                 or      ax, ax
@@ -5240,8 +5241,8 @@ loc_167A3:                              ; CODE XREF: sub_161AD+5ED↑j
                 inc     al
                 mov     byte_32E61, al
 
-loc_167CC:                              ; CODE XREF: sub_161AD+599↑j
-                                        ; sub_161AD+5B3↑j ...
+loc_167CC:                              ; CODE XREF: scanMonstersAhead+599↑j
+                                        ; scanMonstersAhead+5B3↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5256,7 +5257,7 @@ loc_167CC:                              ; CODE XREF: sub_161AD+599↑j
                 jmp     loc_1688A
 ; ---------------------------------------------------------------------------
 
-loc_167E9:                              ; CODE XREF: sub_161AD+637↑j
+loc_167E9:                              ; CODE XREF: scanMonstersAhead+637↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5271,7 +5272,7 @@ loc_167E9:                              ; CODE XREF: sub_161AD+637↑j
                 jmp     loc_1688A
 ; ---------------------------------------------------------------------------
 
-loc_16805:                              ; CODE XREF: sub_161AD+653↑j
+loc_16805:                              ; CODE XREF: scanMonstersAhead+653↑j
                 mov     al, byte_33316
                 mov     ah, 0
                 or      ax, ax
@@ -5285,25 +5286,25 @@ loc_16805:                              ; CODE XREF: sub_161AD+653↑j
                 cmp     byte_373C6, 0
                 jnz     short loc_1688A
 
-loc_16825:                              ; CODE XREF: sub_161AD+66F↑j
+loc_16825:                              ; CODE XREF: scanMonstersAhead+66F↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_16833
                 cmp     byte_3407F, 0
                 jnz     short loc_1688A
 
-loc_16833:                              ; CODE XREF: sub_161AD+67D↑j
+loc_16833:                              ; CODE XREF: scanMonstersAhead+67D↑j
                 cmp     byte_3407F, 0
                 jz      short loc_16841
                 cmp     byte_332A3, 0
                 jnz     short loc_1688A
 
-loc_16841:                              ; CODE XREF: sub_161AD+68B↑j
+loc_16841:                              ; CODE XREF: scanMonstersAhead+68B↑j
                 cmp     byte_373C6, 0
                 jz      short loc_1684F
                 cmp     byte_332A3, 0
                 jnz     short loc_1688A
 
-loc_1684F:                              ; CODE XREF: sub_161AD+699↑j
+loc_1684F:                              ; CODE XREF: scanMonstersAhead+699↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
                 mov     al, byte_3329E
@@ -5316,7 +5317,7 @@ loc_1684F:                              ; CODE XREF: sub_161AD+699↑j
                 jmp     short loc_1688A
 ; ---------------------------------------------------------------------------
 
-loc_16868:                              ; CODE XREF: sub_161AD+6B0↑j
+loc_16868:                              ; CODE XREF: scanMonstersAhead+6B0↑j
                 mov     al, byte_332A1
                 mov     ah, 0
                 or      ax, ax
@@ -5327,7 +5328,7 @@ loc_16868:                              ; CODE XREF: sub_161AD+6B0↑j
                 jmp     short loc_1688A
 ; ---------------------------------------------------------------------------
 
-loc_1687A:                              ; CODE XREF: sub_161AD+6C2↑j
+loc_1687A:                              ; CODE XREF: scanMonstersAhead+6C2↑j
                 mov     al, byte_332A2
                 mov     ah, 0
                 or      ax, ax
@@ -5336,8 +5337,8 @@ loc_1687A:                              ; CODE XREF: sub_161AD+6C2↑j
                 inc     al
                 mov     byte_332A2, al
 
-loc_1688A:                              ; CODE XREF: sub_161AD+639↑j
-                                        ; sub_161AD+655↑j ...
+loc_1688A:                              ; CODE XREF: scanMonstersAhead+639↑j
+                                        ; scanMonstersAhead+655↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5352,7 +5353,7 @@ loc_1688A:                              ; CODE XREF: sub_161AD+639↑j
                 jmp     loc_1692A
 ; ---------------------------------------------------------------------------
 
-loc_168A7:                              ; CODE XREF: sub_161AD+6F5↑j
+loc_168A7:                              ; CODE XREF: scanMonstersAhead+6F5↑j
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -5373,25 +5374,25 @@ loc_168A7:                              ; CODE XREF: sub_161AD+6F5↑j
                 cmp     byte_332AF, 0
                 jnz     short loc_1692A
 
-loc_168D7:                              ; CODE XREF: sub_161AD+721↑j
+loc_168D7:                              ; CODE XREF: scanMonstersAhead+721↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_168E5
                 cmp     byte_34C1A, 0
                 jnz     short loc_1692A
 
-loc_168E5:                              ; CODE XREF: sub_161AD+72F↑j
+loc_168E5:                              ; CODE XREF: scanMonstersAhead+72F↑j
                 cmp     byte_332AF, 0
                 jz      short loc_168F3
                 cmp     byte_373C6, 0
                 jnz     short loc_1692A
 
-loc_168F3:                              ; CODE XREF: sub_161AD+73D↑j
+loc_168F3:                              ; CODE XREF: scanMonstersAhead+73D↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_16901
                 cmp     byte_373C6, 0
                 jnz     short loc_1692A
 
-loc_16901:                              ; CODE XREF: sub_161AD+74B↑j
+loc_16901:                              ; CODE XREF: scanMonstersAhead+74B↑j
                 mov     al, byte_3407F
                 mov     ah, 0
                 or      ax, ax
@@ -5410,11 +5411,11 @@ loc_16901:                              ; CODE XREF: sub_161AD+74B↑j
                 inc     al
                 mov     byte_3329F, al
 
-loc_1692A:                              ; CODE XREF: sub_161AD+6F7↑j
-                                        ; sub_161AD+711↑j ...
+loc_1692A:                              ; CODE XREF: scanMonstersAhead+6F7↑j
+                                        ; scanMonstersAhead+711↑j ...
                 inc     cx
 
-loc_1692B:                              ; CODE XREF: sub_161AD+70↑j
+loc_1692B:                              ; CODE XREF: scanMonstersAhead+70↑j
                 mov     al, Maze_monsterCount
                 mov     ah, 0
                 cmp     ax, cx
@@ -5422,13 +5423,13 @@ loc_1692B:                              ; CODE XREF: sub_161AD+70↑j
                 jmp     loc_16220
 ; ---------------------------------------------------------------------------
 
-loc_16937:                              ; CODE XREF: sub_161AD+785↑j
+loc_16937:                              ; CODE XREF: scanMonstersAhead+785↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_161AD       endp
+scanMonstersAhead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11018,9 +11019,10 @@ getAttributeCategory endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; 'S' command: spellAttackAhead(0Bh), the ranged-weapon volley of the party (kind 0Bh is also used by Elemental Arrow)
 ; Attributes: bp-based frame
 
-sub_19174       proc far                ; CODE XREF: exploreLoop+701↓P
+shootAhead      proc far                ; CODE XREF: exploreLoop+701↓P
                 push    bp
                 mov     bp, sp
                 mov     SpellAttack_reach, 2
@@ -11031,7 +11033,7 @@ sub_19174       proc far                ; CODE XREF: exploreLoop+701↓P
                 pop     cx
                 pop     bp
                 retf
-sub_19174       endp
+shootAhead      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11648,7 +11650,7 @@ var_2           = word ptr -2
                 push    cs
                 call    near ptr mazeUpdateSlot
                 mov     [bp+var_16], 0
-                call    sub_161AD
+                call    scanMonstersAhead
                 mov     al, Engine_mode
                 mov     [bp+var_4F], al
                 mov     ax, word_376EC
@@ -12130,7 +12132,7 @@ evt_op06:                               ; CODE XREF: runMazeEvent+243↑j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 jmp     loc_1A384
 ; ---------------------------------------------------------------------------
 
@@ -12179,7 +12181,7 @@ loc_19A95:                              ; CODE XREF: runMazeEvent+480↑j
                                         ; runMazeEvent+486↑j
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_19A9F:                              ; CODE XREF: runMazeEvent+45C↑j
@@ -12291,7 +12293,7 @@ loc_19B58:                              ; CODE XREF: runMazeEvent+547↑j
 
 loc_19B5B:                              ; CODE XREF: runMazeEvent+54E↑j
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_19B62:                              ; CODE XREF: runMazeEvent+549↑j
@@ -12303,7 +12305,7 @@ loc_19B62:                              ; CODE XREF: runMazeEvent+549↑j
 loc_19B6C:                              ; CODE XREF: runMazeEvent+4AC↑j
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
 
 loc_19B75:                              ; CODE XREF: runMazeEvent+562↑j
                 pop     cx
@@ -14826,9 +14828,10 @@ jpt_1984B       dw offset evt_op01      ; DATA XREF: runMazeEvent+243↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; play sound effect n (all the 'mov ax, NN; call sub_1B16B' sites): ids below 97h need FX enabled (byte_36FE8), 97h and above (speech/music-like) need byte_36FE9; forwards to the sound driver
 ; Attributes: bp-based frame
 
-sub_1B16B       proc far                ; CODE XREF: sub_15B50+D9↑P
+playSoundEffect proc far                ; CODE XREF: sub_15B50+D9↑P
                                         ; sub_15B50+F0↑P ...
 
 arg_0           = word ptr  6
@@ -14844,24 +14847,24 @@ arg_0           = word ptr  6
                 jmp     short loc_1B18E
 ; ---------------------------------------------------------------------------
 
-loc_1B181:                              ; CODE XREF: sub_1B16B+C↑j
-                                        ; sub_1B16B+12↑j
+loc_1B181:                              ; CODE XREF: playSoundEffect+C↑j
+                                        ; playSoundEffect+12↑j
                 cmp     si, 96h
                 jle     short loc_1B195
                 cmp     byte_36FE9, 0
                 jz      short loc_1B195
 
-loc_1B18E:                              ; CODE XREF: sub_1B16B+14↑j
+loc_1B18E:                              ; CODE XREF: playSoundEffect+14↑j
                 push    si
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
 
-loc_1B195:                              ; CODE XREF: sub_1B16B+1A↑j
-                                        ; sub_1B16B+21↑j
+loc_1B195:                              ; CODE XREF: playSoundEffect+1A↑j
+                                        ; playSoundEffect+21↑j
                 pop     si
                 pop     bp
                 retf
-sub_1B16B       endp
+playSoundEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20511,7 +20514,7 @@ loc_1D8A5:                              ; CODE XREF: prepareIndoorView+1707↑j
 
 loc_1D8CA:                              ; CODE XREF: prepareIndoorView+1700↑j
                                         ; prepareIndoorView+170E↑j ...
-                call    sub_161AD
+                call    scanMonstersAhead
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -21483,7 +21486,7 @@ loc_1DFD6:                              ; CODE XREF: sub_1DB3D+490↑j
                 mov     byte ptr [di-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_1E061
 ; ---------------------------------------------------------------------------
@@ -21957,7 +21960,7 @@ loc_1E360:                              ; CODE XREF: sub_1DB3D+81A↑j
                 mov     byte ptr [di-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_1E3E6
 ; ---------------------------------------------------------------------------
@@ -25088,7 +25091,7 @@ loc_1FA42:                              ; CODE XREF: renderIndoorView+1632↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_1FAD9
 ; ---------------------------------------------------------------------------
@@ -26248,7 +26251,7 @@ loc_202A0:                              ; CODE XREF: renderIndoorView+1E90↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_20337
 ; ---------------------------------------------------------------------------
@@ -26460,7 +26463,7 @@ loc_20427:                              ; CODE XREF: drawViewOutdoors+20↑j
 
 loc_2044C:                              ; CODE XREF: drawViewOutdoors+19↑j
                                         ; drawViewOutdoors+27↑j ...
-                call    sub_161AD
+                call    scanMonstersAhead
                 call    renderOutdoorView
                 pop     di
                 pop     si
@@ -28794,7 +28797,7 @@ loc_21793:                              ; CODE XREF: renderOutdoorView+1275↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_2181F
 ; ---------------------------------------------------------------------------
@@ -29295,7 +29298,7 @@ loc_21BB0:                              ; CODE XREF: renderOutdoorView+1692↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_21C3C
 ; ---------------------------------------------------------------------------
@@ -29694,7 +29697,7 @@ loc_21EF3:                              ; CODE XREF: renderOutdoorView+19D5↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_21F7F
 ; ---------------------------------------------------------------------------
@@ -30224,7 +30227,7 @@ loc_22343:                              ; CODE XREF: renderOutdoorView+1E4A↑j
                 mov     byte ptr [bx-4645h], 0
                 mov     ax, 9
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_223CA
 ; ---------------------------------------------------------------------------
@@ -32927,7 +32930,7 @@ loc_257C9:                              ; CODE XREF: getCommand+2FF↑j
                                         ; getCommand+303↑j
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     [bp+var_2], 1
 
@@ -33318,7 +33321,7 @@ loc_25B05:                              ; CODE XREF: getCommand+642↑j
 loc_25B0B:                              ; CODE XREF: getCommand+649↑j
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_25B15:                              ; CODE XREF: getCommand+66F↓j
@@ -33940,7 +33943,7 @@ arg_0           = word ptr  6
                 mov     si, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_25F34
 ; ---------------------------------------------------------------------------
@@ -33961,7 +33964,7 @@ loc_25F16:                              ; CODE XREF: sub_25EF3+5F↓j
 loc_25F34:                              ; CODE XREF: sub_25EF3+21↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, si
                 jge     short loc_25F5F
@@ -35364,20 +35367,21 @@ sub_26965       endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id
 
-sub_26978       proc far                ; CODE XREF: sub_1B16B+24↑P
+soundDriverPlay proc far                ; CODE XREF: playSoundEffect+24↑P
                                         ; sub_25EF3+1B↑P ...
                 cmp     cs:word_2693D, 0
                 jnz     short loc_26981
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26981:                              ; CODE XREF: sub_26978+6↑j
+loc_26981:                              ; CODE XREF: soundDriverPlay+6↑j
                 push    cs:word_2693D
                 mov     ax, 9
                 push    ax
                 retf
-sub_26978       endp ; sp-analysis failed
+soundDriverPlay endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37374,16 +37378,7 @@ sub_284F5       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_60_HalfForMe. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_13_ToxicCloud. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_11_Pain. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28522       proc far                ; CODE XREF: spellsDialog:loc_4FA0C↓P
-                                        ; castItemSpell:loc_4FFFB↓P
-                jmp     sub_4C711
-sub_28522       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_17_Jump. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_00_Light. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_73_SunRay. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_15_ProtFromElements. PRESS NUMPAD+ TO EXPAND]
@@ -37442,16 +37437,7 @@ sub_28595       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_05_ElementalArrow. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_04_DetectMagic. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_68_ElementalStorm. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_285CC       proc far                ; CODE XREF: spellsDialog:loc_4FA67↓P
-                                        ; castItemSpell:loc_50028↓P
-                jmp     sub_4C8FE
-sub_285CC       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_23_WizardEye. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_72_Inferno. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_55_RechargeItem. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_Spell_50_SuperShelter. PRESS NUMPAD+ TO EXPAND]
@@ -37741,7 +37727,7 @@ byte_287A3      db 0                    ; DATA XREF: exploreLoop:loc_3EADC↓r
 byte_287A4      db 0                    ; DATA XREF: exploreLoop+1A4↓w
                                         ; exploreLoop:loc_3EBA3↓r ...
 byte_287A5      db 0                    ; DATA XREF: Spell_00_Light:loc_4C315↓w
-                                        ; sub_4C711+B9↓w ...
+                                        ; Spell_17_Jump+B9↓w ...
 byte_287A6      db 0                    ; DATA XREF: sub_15B50+DF↑w
                                         ; sub_15B50:loc_15C36↑r ...
 byte_287A7      db 0                    ; DATA XREF: castItemSpell:loc_50231↓w
@@ -45320,18 +45306,18 @@ word_32E34      dw 0                    ; DATA XREF: sub_1DB3D+4C1↑r
                                         ; sub_1DB3D+84B↑r ...
 byte_32E36      db 0                    ; DATA XREF: clearViewFlags+29↑w
                                         ; prepareIndoorView:loc_1D0C2↑r ...
-byte_32E37      db 0                    ; DATA XREF: sub_161AD+5F↑w
-                                        ; sub_161AD+2C4↑r ...
-byte_32E38      db 0                    ; DATA XREF: sub_161AD+56↑w
-                                        ; sub_161AD+48D↑r ...
-byte_32E39      db 0                    ; DATA XREF: sub_161AD+41↑w
-                                        ; sub_161AD:loc_16483↑r ...
-byte_32E3A      db 0                    ; DATA XREF: sub_161AD+38↑w
-                                        ; sub_161AD:loc_1664C↑r ...
-byte_32E3B      db 0                    ; DATA XREF: sub_161AD+29↑w
-                                        ; sub_161AD:loc_16495↑r ...
-byte_32E3C      db 0                    ; DATA XREF: sub_161AD+26↑w
-                                        ; sub_161AD:loc_1665E↑r ...
+byte_32E37      db 0                    ; DATA XREF: scanMonstersAhead+5F↑w
+                                        ; scanMonstersAhead+2C4↑r ...
+byte_32E38      db 0                    ; DATA XREF: scanMonstersAhead+56↑w
+                                        ; scanMonstersAhead+48D↑r ...
+byte_32E39      db 0                    ; DATA XREF: scanMonstersAhead+41↑w
+                                        ; scanMonstersAhead:loc_16483↑r ...
+byte_32E3A      db 0                    ; DATA XREF: scanMonstersAhead+38↑w
+                                        ; scanMonstersAhead:loc_1664C↑r ...
+byte_32E3B      db 0                    ; DATA XREF: scanMonstersAhead+29↑w
+                                        ; scanMonstersAhead:loc_16495↑r ...
+byte_32E3C      db 0                    ; DATA XREF: scanMonstersAhead+26↑w
+                                        ; scanMonstersAhead:loc_1665E↑r ...
                 align 2
 ; char *word_32E3E
 word_32E3E      dw 0                    ; DATA XREF: sub_3E08F+3↓r
@@ -45374,18 +45360,18 @@ Maze_evtData    dd 0                    ; DATA XREF: seg001:0324↑w
                                         ; far pointer to the loaded maze%02u.evt
 byte_32E5E      db 0                    ; DATA XREF: sub_15B50+465↑r
                                         ; sub_15B50+473↑r ...
-byte_32E5F      db 0                    ; DATA XREF: sub_161AD+5C↑w
-                                        ; sub_161AD+376↑r ...
-byte_32E60      db 0                    ; DATA XREF: sub_161AD+53↑w
-                                        ; sub_161AD+54B↑r ...
-byte_32E61      db 0                    ; DATA XREF: sub_161AD+4D↑w
-                                        ; sub_161AD+60F↑r ...
-byte_32E62      db 0                    ; DATA XREF: sub_161AD+3E↑w
-                                        ; sub_161AD:loc_16535↑r ...
-byte_32E63      db 0                    ; DATA XREF: sub_161AD+35↑w
-                                        ; sub_161AD:loc_1670A↑r ...
-byte_32E64      db 0                    ; DATA XREF: sub_161AD+23↑w
-                                        ; sub_161AD:loc_1671C↑r ...
+byte_32E5F      db 0                    ; DATA XREF: scanMonstersAhead+5C↑w
+                                        ; scanMonstersAhead+376↑r ...
+byte_32E60      db 0                    ; DATA XREF: scanMonstersAhead+53↑w
+                                        ; scanMonstersAhead+54B↑r ...
+byte_32E61      db 0                    ; DATA XREF: scanMonstersAhead+4D↑w
+                                        ; scanMonstersAhead+60F↑r ...
+byte_32E62      db 0                    ; DATA XREF: scanMonstersAhead+3E↑w
+                                        ; scanMonstersAhead:loc_16535↑r ...
+byte_32E63      db 0                    ; DATA XREF: scanMonstersAhead+35↑w
+                                        ; scanMonstersAhead:loc_1670A↑r ...
+byte_32E64      db 0                    ; DATA XREF: scanMonstersAhead+23↑w
+                                        ; scanMonstersAhead:loc_1671C↑r ...
                 align 2
 ; int word_32E66
 word_32E66      dw 0                    ; DATA XREF: getCommand:loc_25671↑r
@@ -45432,18 +45418,18 @@ word_3329A      dw 0                    ; DATA XREF: indexEvents+A9↓r
                                         ; Map_load+59↓w ...
 byte_3329C      db 0                    ; DATA XREF: getCommand+74↑r
                                         ; getCommand+79↑w
-byte_3329D      db 0                    ; DATA XREF: sub_161AD+59↑w
-                                        ; sub_161AD+416↑r ...
-byte_3329E      db 0                    ; DATA XREF: sub_161AD+50↑w
-                                        ; sub_161AD+6A9↑r ...
-byte_3329F      db 0                    ; DATA XREF: sub_161AD+4A↑w
-                                        ; sub_161AD+76D↑r ...
-byte_332A0      db 0                    ; DATA XREF: sub_161AD+3B↑w
-                                        ; sub_161AD:loc_165D5↑r ...
-byte_332A1      db 0                    ; DATA XREF: sub_161AD+32↑w
-                                        ; sub_161AD:loc_16868↑r ...
-byte_332A2      db 0                    ; DATA XREF: sub_161AD+20↑w
-                                        ; sub_161AD:loc_1687A↑r ...
+byte_3329D      db 0                    ; DATA XREF: scanMonstersAhead+59↑w
+                                        ; scanMonstersAhead+416↑r ...
+byte_3329E      db 0                    ; DATA XREF: scanMonstersAhead+50↑w
+                                        ; scanMonstersAhead+6A9↑r ...
+byte_3329F      db 0                    ; DATA XREF: scanMonstersAhead+4A↑w
+                                        ; scanMonstersAhead+76D↑r ...
+byte_332A0      db 0                    ; DATA XREF: scanMonstersAhead+3B↑w
+                                        ; scanMonstersAhead:loc_165D5↑r ...
+byte_332A1      db 0                    ; DATA XREF: scanMonstersAhead+32↑w
+                                        ; scanMonstersAhead:loc_16868↑r ...
+byte_332A2      db 0                    ; DATA XREF: scanMonstersAhead+20↑w
+                                        ; scanMonstersAhead:loc_1687A↑r ...
 byte_332A3      db 0                    ; DATA XREF: sub_15B50+58A↑r
                                         ; sub_15B50+598↑r ...
 byte_332A4      db 0                    ; DATA XREF: attack2+107↓r
@@ -48846,22 +48832,22 @@ word_34B8E      dw 0                    ; DATA XREF: createCharacter+1E↓w
                                         ; createCharacter+24↓r
 word_34B90      dw 0                    ; DATA XREF: createCharacter+1A↓w
                                         ; createCharacter+21↓r
-byte_34B92      db 0                    ; DATA XREF: sub_161AD+6B↑w
-                                        ; sub_161AD+CB↑r ...
-byte_34B93      db 0                    ; DATA XREF: sub_161AD+47↑w
-                                        ; sub_161AD:loc_1628A↑r ...
-byte_34B94      db 0                    ; DATA XREF: sub_161AD+2F↑w
-                                        ; sub_161AD:loc_1629C↑r ...
-byte_34B95      db 0                    ; DATA XREF: sub_161AD+68↑w
-                                        ; sub_161AD+142↑r ...
-byte_34B96      db 0                    ; DATA XREF: sub_161AD+65↑w
-                                        ; sub_161AD+1E7↑r ...
-byte_34B97      db 0                    ; DATA XREF: sub_161AD+62↑w
-                                        ; sub_161AD+268↑r ...
-byte_34B98      db 0                    ; DATA XREF: sub_161AD+44↑w
-                                        ; sub_161AD:loc_16301↑r ...
-byte_34B99      db 0                    ; DATA XREF: sub_161AD+2C↑w
-                                        ; sub_161AD:loc_16313↑r ...
+byte_34B92      db 0                    ; DATA XREF: scanMonstersAhead+6B↑w
+                                        ; scanMonstersAhead+CB↑r ...
+byte_34B93      db 0                    ; DATA XREF: scanMonstersAhead+47↑w
+                                        ; scanMonstersAhead:loc_1628A↑r ...
+byte_34B94      db 0                    ; DATA XREF: scanMonstersAhead+2F↑w
+                                        ; scanMonstersAhead:loc_1629C↑r ...
+byte_34B95      db 0                    ; DATA XREF: scanMonstersAhead+68↑w
+                                        ; scanMonstersAhead+142↑r ...
+byte_34B96      db 0                    ; DATA XREF: scanMonstersAhead+65↑w
+                                        ; scanMonstersAhead+1E7↑r ...
+byte_34B97      db 0                    ; DATA XREF: scanMonstersAhead+62↑w
+                                        ; scanMonstersAhead+268↑r ...
+byte_34B98      db 0                    ; DATA XREF: scanMonstersAhead+44↑w
+                                        ; scanMonstersAhead:loc_16301↑r ...
+byte_34B99      db 0                    ; DATA XREF: scanMonstersAhead+2C↑w
+                                        ; scanMonstersAhead:loc_16313↑r ...
 word_34B9A      dw 0                    ; DATA XREF: sub_1DB3D+538↑r
                                         ; loadSaveDialog+7B↓r ...
 word_34B9C      dw 0                    ; DATA XREF: sub_1DB3D+535↑r
@@ -48976,9 +48962,9 @@ byte_34C2A      db 0                    ; DATA XREF: clearViewFlags+35↑w
 byte_34C2B      db 0                    ; DATA XREF: clearViewFlags+2C↑w
                                         ; prepareIndoorView:loc_1D1C8↑r ...
 byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
-                                        ; sub_161AD+5FF↑r ...
+                                        ; scanMonstersAhead+5FF↑r ...
 byte_34C2D      db 0                    ; DATA XREF: sub_15B50+62D↑r
-                                        ; sub_161AD+75D↑r ...
+                                        ; scanMonstersAhead+75D↑r ...
 Maze_curSlot    db 0                    ; DATA XREF: drawAutomapWrapped+50↑r
                                         ; drawAutomapWrapped+FF↑r ...
                                         ; byte 0-3: which of the 4 loaded 16x16 pages (2x2 world) the party is in
@@ -49040,7 +49026,7 @@ word_35D76      dw 0                    ; DATA XREF: renderIndoorView+162↑w
 word_35D78      dw 0                    ; DATA XREF: renderIndoorView+146↑w
                                         ; renderOutdoorView+159↑w
                 db 0F84h dup(0)
-SpellAttack_type dw 0                   ; DATA XREF: sub_19174+9↑w
+SpellAttack_type dw 0                   ; DATA XREF: shootAhead+9↑w
                                         ; attack2+58↓r ...
                                         ; damage/effect type of the attack spell (0 phys, 2 fire, 3 elec, 4 cold, 5 poison, 6 energy, 7+ status effects)
 byte_36D00      db 0                    ; DATA XREF: rosterMenu+32E↓w
@@ -49059,7 +49045,7 @@ byte_36FA9      db 0                    ; DATA XREF: clearViewFlags+171↑w
 byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
                                         ; sub_15B50+511↑r ...
                 align 2
-SpellAttack_reach dw 0                  ; DATA XREF: sub_19174+3↑w
+SpellAttack_reach dw 0                  ; DATA XREF: shootAhead+3↑w
                                         ; Spell_03_FlyingFist+F↓w ...
                                         ; 0 one monster, 1 one group, 2 all monsters
 byte_36FAE      db 0                    ; DATA XREF: clearViewFlags+202↑w
@@ -49911,7 +49897,7 @@ word_373EC      dw 0                    ; DATA XREF: drawParty+7A↑r
                                         ; rosterMenu+219↓r
                 db 74h dup(0)
 Maze_monsterCount db 0                  ; DATA XREF: sub_15235:loc_15265↑r
-                                        ; sub_161AD:loc_1692B↑r ...
+                                        ; scanMonstersAhead:loc_1692B↑r ...
                                         ; byte, number of monsters of the loaded map (max 170); was misnamed Party_size from BinDiff
 byte_37463      db 0                    ; DATA XREF: clearViewFlags+17D↑w
                                         ; prepareIndoorView:loc_1D4F9↑w ...
@@ -50389,7 +50375,7 @@ loc_37A59:                              ; CODE XREF: monstersAttack+5B↑j
                 mov     al, [bx+1757h]
                 mov     ah, 0
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_37A96
 ; ---------------------------------------------------------------------------
@@ -50794,7 +50780,7 @@ loc_37D2C:                              ; CODE XREF: sub_37CBB+65↑j
                 call    sub_25DFE
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     di
                 pop     si
@@ -52652,13 +52638,13 @@ loc_389AF:                              ; CODE XREF: introSequence+D9↑j
                 jnz     short loc_389C2
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_389C2:                              ; CODE XREF: introSequence+10D↑j
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -52676,7 +52662,7 @@ loc_389C2:                              ; CODE XREF: introSequence+10D↑j
                 jnz     short loc_389F1
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_389F1:                              ; CODE XREF: introSequence+13C↑j
@@ -52710,7 +52696,7 @@ loc_38A17:                              ; CODE XREF: introSequence+169↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -52750,7 +52736,7 @@ loc_38A5F:                              ; CODE XREF: introSequence+1B1↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -52771,7 +52757,7 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 jl      short loc_38A53
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0EF68h
                 push    ax
@@ -52817,7 +52803,7 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 pop     cx
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -52896,7 +52882,7 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_38BF1
 ; ---------------------------------------------------------------------------
@@ -52932,7 +52918,7 @@ loc_38BE5:                              ; CODE XREF: introSequence+323↑j
 loc_38BF1:                              ; CODE XREF: introSequence+31A↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38BC5
@@ -52942,11 +52928,11 @@ loc_38BF1:                              ; CODE XREF: introSequence+31A↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     ax, 25h ; '%'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_38C39
 ; ---------------------------------------------------------------------------
@@ -52967,7 +52953,7 @@ loc_38C24:                              ; CODE XREF: introSequence+39D↓j
 loc_38C39:                              ; CODE XREF: introSequence+379↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38C24
@@ -52976,11 +52962,11 @@ loc_38C39:                              ; CODE XREF: introSequence+379↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_38C7D
 ; ---------------------------------------------------------------------------
@@ -53005,7 +52991,7 @@ loc_38C71:                              ; CODE XREF: introSequence+3C3↑j
 loc_38C7D:                              ; CODE XREF: introSequence+3BA↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38C65
@@ -53016,7 +53002,7 @@ loc_38C7D:                              ; CODE XREF: introSequence+3BA↑j
                 mov     word_2A718, 1
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_38CC4
 ; ---------------------------------------------------------------------------
@@ -53041,7 +53027,7 @@ loc_38CB8:                              ; CODE XREF: introSequence+40A↑j
 loc_38CC4:                              ; CODE XREF: introSequence+401↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38CAC
@@ -53050,7 +53036,7 @@ loc_38CC4:                              ; CODE XREF: introSequence+401↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_38CFF
 ; ---------------------------------------------------------------------------
@@ -53075,13 +53061,13 @@ loc_38CF3:                              ; CODE XREF: introSequence+445↑j
 loc_38CFF:                              ; CODE XREF: introSequence+43C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38CE7
                 mov     ax, 25h ; '%'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3764E
                 mov     dx, word_3764C
@@ -53090,7 +53076,7 @@ loc_38CFF:                              ; CODE XREF: introSequence+43C↑j
                 mov     word_2A718, 2
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_38D50
 ; ---------------------------------------------------------------------------
@@ -53115,7 +53101,7 @@ loc_38D44:                              ; CODE XREF: introSequence+496↑j
 loc_38D50:                              ; CODE XREF: introSequence+48D↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38D38
@@ -53124,11 +53110,11 @@ loc_38D50:                              ; CODE XREF: introSequence+48D↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_38D94
 ; ---------------------------------------------------------------------------
@@ -53153,7 +53139,7 @@ loc_38D88:                              ; CODE XREF: introSequence+4DA↑j
 loc_38D94:                              ; CODE XREF: introSequence+4D1↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 0DAh
                 jl      short loc_38D7C
@@ -53180,13 +53166,13 @@ loc_38DB1:                              ; CODE XREF: introSequence+503↑j
 loc_38DBD:                              ; CODE XREF: introSequence+4FA↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 0DAh
                 jl      short loc_38DA5
                 mov     ax, 37h ; '7'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     word_2A712, 44h ; 'D'
                 mov     word_2A714, 16h
@@ -53196,7 +53182,7 @@ loc_38DBD:                              ; CODE XREF: introSequence+4FA↑j
                 mov     word_2A70E, dx
                 mov     ax, 26h ; '&'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     si, si
                 jmp     short loc_38E2F
@@ -53215,7 +53201,7 @@ loc_38E0A:                              ; CODE XREF: introSequence+55C↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -53255,7 +53241,7 @@ loc_38E52:                              ; CODE XREF: introSequence+5A4↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -53295,7 +53281,7 @@ loc_38E9A:                              ; CODE XREF: introSequence+5EC↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -53316,7 +53302,7 @@ loc_38EBF:                              ; CODE XREF: introSequence+5E3↑j
                 jl      short loc_38E8E
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3765E
                 mov     dx, word_3765C
@@ -53339,7 +53325,7 @@ loc_38EEC:                              ; CODE XREF: introSequence+63E↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -53360,7 +53346,7 @@ loc_38F11:                              ; CODE XREF: introSequence+635↑j
                 jl      short loc_38EE0
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_38F3A
 ; ---------------------------------------------------------------------------
@@ -53384,7 +53370,7 @@ loc_38F3A:                              ; CODE XREF: introSequence+677↑j
                                         ; introSequence+68C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38F22
@@ -53411,7 +53397,7 @@ loc_38F73:                              ; CODE XREF: introSequence+6C5↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
@@ -53518,7 +53504,7 @@ loc_39068:                              ; CODE XREF: introSequence+777↑j
                 jl      short loc_39022
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_390B5
 ; ---------------------------------------------------------------------------
@@ -53567,7 +53553,7 @@ loc_390A9:                              ; CODE XREF: introSequence+7D7↑j
 loc_390B5:                              ; CODE XREF: introSequence+7CE↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 50h ; 'P'
                 jl      short loc_39079
@@ -53578,7 +53564,7 @@ loc_390B5:                              ; CODE XREF: introSequence+7CE↑j
 loc_390C9:                              ; CODE XREF: introSequence+922↓j
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 mov     bx, si
@@ -53705,7 +53691,7 @@ loc_391CE:                              ; CODE XREF: introSequence+920↑j
                 mov     word_2A718, 0
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_391F8
 ; ---------------------------------------------------------------------------
@@ -53730,7 +53716,7 @@ loc_391EC:                              ; CODE XREF: introSequence+93E↑j
 loc_391F8:                              ; CODE XREF: introSequence+935↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 50h ; 'P'
                 jl      short loc_391E0
@@ -53836,7 +53822,7 @@ loc_392C6:                              ; CODE XREF: introSequence+9E0↑j
                 jl      short loc_3928B
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_392EF
 ; ---------------------------------------------------------------------------
@@ -53861,7 +53847,7 @@ loc_392E3:                              ; CODE XREF: introSequence+A35↑j
 loc_392EF:                              ; CODE XREF: introSequence+A2C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_392D7
@@ -53880,7 +53866,7 @@ loc_39306:                              ; CODE XREF: introSequence+B2C↓j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_39382
 ; ---------------------------------------------------------------------------
@@ -53899,7 +53885,7 @@ loc_39333:                              ; CODE XREF: introSequence+A85↑j
                 jz      short loc_39376
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 0B4h
                 jle     short loc_3934B
@@ -53946,7 +53932,7 @@ loc_39376:                              ; CODE XREF: introSequence+A8C↑j
 loc_39382:                              ; CODE XREF: introSequence+A7C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 168h
                 jl      short loc_39327
@@ -53957,7 +53943,7 @@ loc_39382:                              ; CODE XREF: introSequence+A7C↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 jmp     short loc_393C0
 ; ---------------------------------------------------------------------------
@@ -53978,7 +53964,7 @@ loc_393AB:                              ; CODE XREF: introSequence+B24↓j
 loc_393C0:                              ; CODE XREF: introSequence+B00↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cmp     ax, 64h ; 'd'
                 jl      short loc_393AB
@@ -54010,7 +53996,7 @@ loc_393ED:                              ; CODE XREF: introSequence+B31↑j
                 jl      short loc_393DC
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 1
                 jmp     short loc_39426
@@ -54040,7 +54026,7 @@ loc_3941A:                              ; CODE XREF: introSequence+103↑j
                                         ; introSequence+7FD↑j
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 10h
 
@@ -54085,7 +54071,7 @@ loc_3943C:                              ; CODE XREF: protectionHandler+2D↓j
 loc_39448:                              ; CODE XREF: protectionHandler+3↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cwd
                 mov     word_37600, dx
@@ -54905,7 +54891,7 @@ loc_39954:                              ; CODE XREF: sub_39930+20↑j
 loc_39964:                              ; CODE XREF: sub_39930+7↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 cwd
                 mov     word_37600, dx
@@ -55086,7 +55072,7 @@ loc_39A89:                              ; CODE XREF: endingCutscene+EF↑j
                 mov     word_2A714, 24h ; '$'
                 mov     ax, 18h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3764E
                 mov     dx, word_3764C
@@ -55228,7 +55214,7 @@ loc_39B3F:                              ; CODE XREF: endingCutscene+1A1↑j
                 mov     word_37658, ax
                 mov     ax, 18h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3764E
                 mov     dx, word_3764C
@@ -55352,7 +55338,7 @@ loc_39C69:                              ; CODE XREF: endingCutscene+2CB↑j
                 pop     cx
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     di, di
                 jmp     short loc_39CF8
@@ -55387,7 +55373,7 @@ loc_39CF8:                              ; CODE XREF: endingCutscene+350↑j
                 pop     cx
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 push    ds
                 mov     ax, 23F6h
@@ -55501,7 +55487,7 @@ loc_39DEC:                              ; CODE XREF: endingCutscene+452↑j
                 mov     word_2A730, 16h
                 mov     ax, 39h ; '9'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_37666
                 mov     dx, word_37664
@@ -55704,7 +55690,7 @@ loc_39FBB:                              ; CODE XREF: endingCutscene+5D7↑j
                 jl      short loc_39F64
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_39FC9:                              ; CODE XREF: endingCutscene+AAE↓j
@@ -55724,7 +55710,7 @@ loc_39FC9:                              ; CODE XREF: endingCutscene+AAE↓j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 push    word_37602
@@ -55852,7 +55838,7 @@ loc_3A118:                              ; CODE XREF: endingCutscene+784↑j
                 jg      short loc_3A103
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+var_4]
                 shl     bx, 1
@@ -56010,7 +55996,7 @@ loc_3A243:                              ; CODE XREF: endingCutscene+894↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 push    word_37604
@@ -56104,7 +56090,7 @@ loc_3A348:                              ; CODE XREF: endingCutscene+99A↑j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 push    word_37606
@@ -56264,7 +56250,7 @@ loc_3A4B3:                              ; CODE XREF: endingCutscene+C3E↓j
                 mov     word_2A730, 16h
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 mov     bx, si
@@ -56522,7 +56508,7 @@ loc_3A6AF:                              ; CODE XREF: endingCutscene+D00↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 push    word_37602
@@ -56911,7 +56897,7 @@ loc_3A9CB:                              ; CODE XREF: endingCutscene+101A↑j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
                 mov     word_37638, 0
                 push    word_37604
@@ -57089,7 +57075,7 @@ loc_3ABB7:                              ; CODE XREF: endingCutscene+121D↑j
                 pop     cx
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     di, di
                 jmp     short loc_3AC0B
@@ -57261,7 +57247,7 @@ loc_3AC0B:                              ; CODE XREF: endingCutscene+1263↑j
                 pop     cx
                 mov     ax, 32h ; '2'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     si, si
                 jmp     short loc_3ADBE
@@ -57622,7 +57608,7 @@ loc_3B005:                              ; CODE XREF: endingCutscene+1662↑j
                 pop     cx
                 mov     ax, 3Bh ; ';'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     si, si
                 jmp     short loc_3B168
@@ -57801,7 +57787,7 @@ loc_3B288:                              ; CODE XREF: endingCutscene+1882↑j
                 jl      short loc_3B20F
                 mov     ax, 37h ; '7'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3765A
                 mov     dx, word_37658
@@ -58358,7 +58344,7 @@ loc_3B74B:                              ; CODE XREF: endingCutscene+1DAD↑j
                 mov     word_2A70E, dx
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, word_3763C
                 mov     dx, word_3763A
@@ -58401,7 +58387,7 @@ loc_3B7E6:                              ; CODE XREF: endingCutscene+1E7E↓j
                 jnz     short loc_3B805
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_3B805:                              ; CODE XREF: endingCutscene+1E6E↑j
@@ -63479,7 +63465,7 @@ loc_3D9F9:                              ; CODE XREF: trapOrLockEvent+12B↑j
                 call    _sprintf
                 add     sp, 6
                 push    [bp+var_6]
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 push    ds
                 mov     ax, 0E610h
@@ -65926,7 +65912,7 @@ def_3F0D5:                              ; CODE XREF: exploreLoop+113↑j
 loc_3ECF0:                              ; CODE XREF: exploreLoop+385↓j
                                         ; exploreLoop+7F5↓j
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     loc_3F22F
 ; ---------------------------------------------------------------------------
@@ -66144,7 +66130,7 @@ def_3EE62:                              ; CODE XREF: exploreLoop+4DC↑j
                 add     sp, 8
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     loc_3F1E9
 ; ---------------------------------------------------------------------------
@@ -66406,7 +66392,7 @@ loc_3F079:                              ; CODE XREF: exploreLoop+6DD↑j
 loc_3F080:                              ; CODE XREF: exploreLoop+6BF↑j
                 jmp     loc_3F174
 ; ---------------------------------------------------------------------------
-                call    sub_19174
+                call    shootAhead
                 jmp     short loc_3F0F8
 ; ---------------------------------------------------------------------------
                 cmp     word_28CED, 0
@@ -66735,7 +66721,7 @@ loc_3F2D6:                              ; CODE XREF: exploreLoop+9B3↓j
                 jnz     short loc_3F2FE
                 mov     ax, 22h ; '"'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_3F2FE:                              ; CODE XREF: exploreLoop+970↑j
@@ -66749,7 +66735,7 @@ loc_3F2FE:                              ; CODE XREF: exploreLoop+970↑j
                 jnz     short loc_3F31B
                 mov     ax, 23h ; '#'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_3F31B:                              ; CODE XREF: exploreLoop+981↑j
@@ -66769,7 +66755,7 @@ loc_3F337:                              ; CODE XREF: exploreLoop+99E↑j
                                         ; exploreLoop+9AC↑j
                 mov     ax, 21h ; '!'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     word_2AF54, 0
                 mov     word_2AF4C, 6Ch ; 'l'
@@ -70902,7 +70888,7 @@ loc_4134D:                              ; CODE XREF: rosterMenu+88D↑j
 loc_413AD:                              ; CODE XREF: rosterMenu+77E↑j
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 jmp     short loc_413DA
 ; ---------------------------------------------------------------------------
                 call    far ptr sub_27F86
@@ -72642,7 +72628,7 @@ loc_4207E:                              ; CODE XREF: controlPanel+11A↑j
 loc_42080:                              ; CODE XREF: controlPanel+11F↑j
                                         ; controlPanel+168↓j
                 push    ax
-                call    sub_26978
+                call    soundDriverPlay
                 pop     cx
 
 loc_42087:                              ; CODE XREF: controlPanel+164↓j
@@ -72816,7 +72802,7 @@ loc_421B3:                              ; CODE XREF: controlPanel+24C↑j
                 pop     cx
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 lea     ax, [bp+var_E]
                 push    ax
@@ -75127,7 +75113,7 @@ loc_432A4:                              ; CODE XREF: sub_430A8+1DD↑j
                 jz      short loc_432B4
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_432B4:                              ; CODE XREF: sub_430A8+201↑j
@@ -76442,7 +76428,7 @@ loc_43C36:                              ; CODE XREF: giveCharDamage+15A↓j
 loc_43C4D:                              ; CODE XREF: giveCharDamage+143↑j
                                         ; giveCharDamage+154↑j
                 push    [bp+var_6]
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -76967,7 +76953,7 @@ loc_43F45:                              ; CODE XREF: giveTreasure+32↑j
                 jnz     short loc_43F7E
                 mov     ax, 36h ; '6'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_43F7E:                              ; CODE XREF: giveTreasure+166↑j
@@ -77163,7 +77149,7 @@ def_440D3:                              ; CODE XREF: giveTreasure+2C3↑j
                                         ; giveTreasure+2C7↑j ...
                 mov     ax, 24h ; '$'   ; jumptable 000440D3 default case, cases 9,10
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, [bp+var_2]
                 mov     dx, 12Fh
@@ -83596,7 +83582,7 @@ loc_470E0:                              ; CODE XREF: createCharacter+282↑j
                 mov     [bp+var_4], ax
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, [bp+var_4]
                 mov     [bp+var_2A], ax
@@ -84472,7 +84458,7 @@ loc_477DF:                              ; CODE XREF: createCharacter+328↑j
 loc_477E8:                              ; CODE XREF: createCharacter+2C1↑j
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 def_474F8:                              ; CODE XREF: createCharacter+2D3↑j
@@ -84672,7 +84658,7 @@ loc_4795A:                              ; CODE XREF: sub_47947+F↑j
 loc_47961:                              ; CODE XREF: sub_47947+11↑j
                 mov     ax, 18h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4796B:                              ; CODE XREF: sub_47947+8↑j
@@ -85209,7 +85195,7 @@ loc_47D69:                              ; CODE XREF: sub_47B8D+19A↑j
                 jnz     short loc_47D7A
                 mov     ax, 16h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_47D7A:                              ; CODE XREF: sub_47B8D+1E1↑j
@@ -85748,7 +85734,7 @@ loc_4819F:                              ; CODE XREF: townBank+15↑j
                 pop     cx
                 mov     ax, 97h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -86096,7 +86082,7 @@ loc_48492:                              ; CODE XREF: townGuild+E↑j
                 pop     cx
                 mov     ax, 98h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -86340,7 +86326,7 @@ townInn         proc far                ; CODE XREF: j_townInn↑J
                 pop     cx
                 mov     ax, 99h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -86507,7 +86493,7 @@ loc_487E8:                              ; CODE XREF: townTavern+E↑j
                 pop     cx
                 mov     ax, 9Ah
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -87172,7 +87158,7 @@ var_2           = word ptr -2
                 pop     cx
                 mov     ax, 9Bh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 mov     [bp+var_6], ax
@@ -87953,7 +87939,7 @@ loc_49392:                              ; CODE XREF: townTraining+D↑j
                 pop     cx
                 mov     ax, 9Ch
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -88385,7 +88371,7 @@ loc_4975A:                              ; CODE XREF: townSmithy+C↑j
                 pop     cx
                 mov     ax, 9Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     [bp+var_2], 0
                 jmp     short loc_49789
@@ -88942,7 +88928,7 @@ loc_49BA2:                              ; CODE XREF: attack2+12↑j
 loc_49BC1:                              ; CODE XREF: attack2+25↑j
                 mov     ax, 1
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     al, byte_3771B
                 mov     ah, 0
@@ -89151,7 +89137,7 @@ loc_49D4B:                              ; CODE XREF: attack2+1A8↑j
 loc_49D5A:                              ; CODE XREF: attack2+14↑j
                 mov     ax, 2
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_49D64:                              ; CODE XREF: attack2+1BE↑j
@@ -89165,11 +89151,11 @@ loc_49D64:                              ; CODE XREF: attack2+1BE↑j
 loc_49D72:                              ; CODE XREF: attack2+1E2↑j
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 3
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     al, Combat_target
                 mov     ah, 0
@@ -90864,7 +90850,7 @@ def_4A7F5:                              ; CODE XREF: doCharDamage+78↑j
 loc_4A86A:                              ; CODE XREF: doCharDamage+5D↑j
                                         ; doCharDamage+E9↑j
                 push    [bp+var_4]
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -91126,7 +91112,7 @@ loc_4AA27:                              ; CODE XREF: doCharDamage+175↑j
 loc_4AA3F:                              ; CODE XREF: doCharDamage+2BF↑j
                 mov     ax, 35h ; '5'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 cmp     word ptr [bx+125h], 0
@@ -91158,7 +91144,7 @@ loc_4AA7A:                              ; CODE XREF: doCharDamage+2FA↑j
                 pop     cx
                 mov     ax, 35h ; '5'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 cmp     word ptr [bx+125h], 0
@@ -91184,7 +91170,7 @@ loc_4AA9C:                              ; CODE XREF: doCharDamage+175↑j
 loc_4AAB4:                              ; CODE XREF: doCharDamage+334↑j
                 mov     ax, 35h ; '5'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 cmp     word ptr [bx+125h], 0
@@ -91206,7 +91192,7 @@ loc_4AACA:                              ; CODE XREF: doCharDamage+175↑j
 loc_4AAE2:                              ; CODE XREF: doCharDamage+362↑j
                 mov     ax, 35h ; '5'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 cmp     word ptr [bx+125h], 0
@@ -91239,7 +91225,7 @@ loc_4AB12:                              ; CODE XREF: doCharDamage+1B0↑j
 
 loc_4AB15:                              ; CODE XREF: doCharDamage+195↑j
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 def_4A8EE:                              ; CODE XREF: doCharDamage+136↑j
@@ -91841,7 +91827,7 @@ loc_4AEEA:                              ; CODE XREF: doMonsterTurn+320↑j
                                         ; doMonsterTurn+37D↑j
                 mov     ax, 2
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4AEF4:                              ; CODE XREF: doMonsterTurn+2F4↑j
@@ -93355,7 +93341,7 @@ loc_4B8AD:                              ; CODE XREF: doCombat+414↓j
                 mov     ax, [bx-4944h]
                 add     ax, 3Ch ; '<'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4B8CB:                              ; CODE XREF: doCombat+FD↑j
@@ -93710,7 +93696,7 @@ loc_4BB4E:                              ; CODE XREF: doCombat+377↑j
                 jg      short loc_4BB2E
                 call    sub_15235
                 call    moveMonsters
-                call    sub_161AD
+                call    scanMonstersAhead
                 mov     ax, 1
                 push    ax
                 call    changeTime
@@ -93857,7 +93843,7 @@ loc_4BC93:                              ; CODE XREF: doCombat+4CF↑j
                 mov     Combat_target, 0FFh
                 xor     ax, ax
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4BCC0:                              ; CODE XREF: doCombat+A9↑j
@@ -94440,7 +94426,7 @@ arg_0           = word ptr  6
                 mov     Engine_mode, 0FFh
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
@@ -94510,7 +94496,7 @@ arg_2           = word ptr  8
                 mov     Engine_mode, 0FFh
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
@@ -94643,7 +94629,7 @@ Spells_subSpellCost endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)
+; refundSpellCost(char, spell): returns the spell points and gems paid by Spells_subSpellCost (inverse); the spellsDialog switch uses it for spells whose effect is done by the caller
 ; Attributes: bp-based frame
 
 Spell_sharedHandler proc far            ; CODE XREF: j_Spell_sharedHandler↑J
@@ -94716,7 +94702,7 @@ loc_4C315:                              ; CODE XREF: Spell_00_Light+C↑j
                 mov     byte_287A5, 1
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
@@ -94752,7 +94738,7 @@ loc_4C33D:                              ; CODE XREF: Spell_01_Awaken+6↑j
                 call    drawParty
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     si
                 pop     bp
@@ -94805,7 +94791,7 @@ loc_4C39A:                              ; CODE XREF: Spell_02_FirstAid+34↑j
                                         ; Spell_02_FirstAid+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 6
                 push    ax
@@ -94837,7 +94823,7 @@ Spell_03_FlyingFist proc far            ; CODE XREF: j_Spell_03_FlyingFist↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -94875,7 +94861,7 @@ var_2           = word ptr -2
                 mov     Engine_mode, 0FFh
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 3
                 push    ax
@@ -94945,7 +94931,7 @@ Spell_06_Revitalize proc far            ; CODE XREF: j_Spell_06_Revitalize↑J
                 jz      short loc_4C49F
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -95017,7 +95003,7 @@ loc_4C4E4:                              ; CODE XREF: Spell_07_CureWounds+34↑j
                                         ; Spell_07_CureWounds+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Fh
                 push    ax
@@ -95055,7 +95041,7 @@ Spell_08_Sparks proc far                ; CODE XREF: j_Spell_08_Sparks↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 5
                 push    ax              ; format
@@ -95095,7 +95081,7 @@ Spell_09_EnergyBlast proc far           ; CODE XREF: j_Spell_09_EnergyBlast↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 10h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
@@ -95119,7 +95105,7 @@ Spell_10_Sleep  proc far                ; CODE XREF: j_Spell_10_Sleep↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -95143,7 +95129,7 @@ Spell_11_Pain   proc far                ; CODE XREF: j_Spell_11_Pain↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -95166,7 +95152,7 @@ Spell_12_CreateRope proc far            ; CODE XREF: j_Spell_12_CreateRope↑J
                 mov     byte_2886E, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
@@ -95186,7 +95172,7 @@ Spell_13_ToxicCloud proc far            ; CODE XREF: j_Spell_13_ToxicCloud↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 11h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
@@ -95241,7 +95227,7 @@ loc_4C65A:                              ; CODE XREF: Spell_14_SuppressPoison+29�
                                         ; Spell_14_SuppressPoison+37↑j
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -95321,7 +95307,7 @@ def_4C6AB:                              ; CODE XREF: Spell_15_ProtFromElements+2
                                         ; Spell_15_ProtFromElements+33↑j ...
                 mov     ax, 14h         ; jumptable 0004C6AB default case, cases 0,1
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    drawParty
 
@@ -95354,7 +95340,7 @@ Spell_16_TurnUndead proc far            ; CODE XREF: j_Spell_16_TurnUndead↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -95367,9 +95353,10 @@ Spell_16_TurnUndead endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
 ; Attributes: bp-based frame
 
-sub_4C711       proc far                ; CODE XREF: sub_28522↑J
+Spell_17_Jump   proc far                ; CODE XREF: j_Spell_17_Jump↑J
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -95441,7 +95428,7 @@ var_2           = word ptr -2
                 add     Party_y, al
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    drawView
                 mov     byte_287A5, 1
@@ -95449,16 +95436,16 @@ var_2           = word ptr -2
                 jmp     short loc_4C7DA
 ; ---------------------------------------------------------------------------
 
-loc_4C7D6:                              ; CODE XREF: sub_4C711+61↑j
-                                        ; sub_4C711+80↑j
+loc_4C7D6:                              ; CODE XREF: Spell_17_Jump+61↑j
+                                        ; Spell_17_Jump+80↑j
                 push    cs
                 call    near ptr showErrorMessage
 
-loc_4C7DA:                              ; CODE XREF: sub_4C711+C3↑j
+loc_4C7DA:                              ; CODE XREF: Spell_17_Jump+C3↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4C711       endp
+Spell_17_Jump   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95474,7 +95461,7 @@ Spell_18_AcidStream proc far            ; CODE XREF: j_Spell_18_AcidStream↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 11h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
@@ -95529,7 +95516,7 @@ loc_4C84C:                              ; CODE XREF: Spell_19_SuppressDisease+29
                                         ; Spell_19_SuppressDisease+37↑j
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -95561,7 +95548,7 @@ Spell_20_Silence proc far               ; CODE XREF: j_Spell_20_Silence↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -95591,7 +95578,7 @@ Spell_21_Blessed proc far               ; CODE XREF: j_Spell_21_Blessed↑J
                 jz      short loc_4C8E7
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -95636,7 +95623,7 @@ Spell_22_Levitate proc far              ; CODE XREF: j_Spell_22_Levitate↑J
                 mov     Party_levitate, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
@@ -95645,20 +95632,21 @@ Spell_22_Levitate endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC
 ; Attributes: bp-based frame
 
-sub_4C8FE       proc far                ; CODE XREF: sub_285CC↑J
+Spell_23_WizardEye proc far             ; CODE XREF: j_Spell_23_WizardEye↑J
                 push    bp
                 mov     bp, sp
                 mov     Party_wizardEye, 1
                 mov     byte_287A5, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
-sub_4C8FE       endp
+Spell_23_WizardEye endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -95798,7 +95786,7 @@ loc_4C9F9:                              ; CODE XREF: Spell_24_IdentifyMonster+3E
 loc_4CA01:                              ; CODE XREF: Spell_24_IdentifyMonster+E5↑j
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 lea     ax, [bp+var_34]
                 push    ax
@@ -95868,7 +95856,7 @@ Spell_25_HolyBonus proc far             ; CODE XREF: j_Spell_25_HolyBonus↑J
                 jz      short loc_4CAC0
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -95947,7 +95935,7 @@ loc_4CB05:                              ; CODE XREF: Spell_26_PowerCure+34↑j
                                         ; Spell_26_PowerCure+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Ch
                 push    ax
@@ -96026,7 +96014,7 @@ loc_4CB7F:                              ; CODE XREF: Spell_27_NatureSCure+34↑j
                                         ; Spell_27_NatureSCure+3A↑j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 19h
                 push    ax
@@ -96074,7 +96062,7 @@ Spell_28_LightningBolt proc far         ; CODE XREF: j_Spell_28_LightningBolt↑
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 3
                 push    ax              ; format
@@ -96098,7 +96086,7 @@ Spell_29_Immobilize proc far            ; CODE XREF: j_Spell_29_Immobilize↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -96128,7 +96116,7 @@ Spell_30_Heroism proc far               ; CODE XREF: j_Spell_30_Heroism↑J
                 jz      short loc_4CC5F
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -96173,7 +96161,7 @@ Spell_31_WalkOnWater proc far           ; CODE XREF: j_Spell_31_WalkOnWater↑J
                 mov     Party_walkOnWater, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
@@ -96193,7 +96181,7 @@ Spell_32_FrostBite proc far             ; CODE XREF: j_Spell_32_FrostBite↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 8
                 push    ax              ; format
@@ -96319,7 +96307,7 @@ loc_4CD8C:                              ; CODE XREF: spellLloydsBeacon+E3↑j
 ; ---------------------------------------------------------------------------
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    sub_28117
                 call    sub_28117
@@ -96352,7 +96340,7 @@ loc_4CDBD:                              ; CODE XREF: spellLloydsBeacon+10E↑j
 ; ---------------------------------------------------------------------------
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, word_32E3E
                 mov     al, byte_34C1D
@@ -96400,7 +96388,7 @@ Spell_34_PowerShield proc far           ; CODE XREF: j_Spell_34_PowerShield↑J
                 jz      short loc_4CE8B
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -96453,7 +96441,7 @@ Spell_35_CurePoison proc far            ; CODE XREF: j_Spell_35_CurePoison↑J
                 jz      short loc_4CED3
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -96509,7 +96497,7 @@ Spell_36_Fireball proc far              ; CODE XREF: j_Spell_36_Fireball↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
@@ -96729,7 +96717,7 @@ loc_4D088:                              ; CODE XREF: Spell_37_DetectMonster+165�
                 mov     word ptr [bx-2992h], 0FFFFh
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0D66Eh
                 push    ax              ; format
@@ -96791,7 +96779,7 @@ Spell_38_AcidSpray proc far             ; CODE XREF: j_Spell_38_AcidSpray↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 11h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Ah
                 push    ax              ; format
@@ -96831,7 +96819,7 @@ Spell_39_ColdRay proc far               ; CODE XREF: j_Spell_39_ColdRay↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 8
                 push    ax              ; format
@@ -96861,7 +96849,7 @@ Spell_40_CureDisease proc far           ; CODE XREF: j_Spell_40_CureDisease↑J
                 jz      short loc_4D1E1
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -96913,7 +96901,7 @@ Spell_41_NaturesGate proc far           ; CODE XREF: j_Spell_41_NaturesGate↑J
 loc_4D202:                              ; CODE XREF: Spell_41_NaturesGate+16↑j
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    sub_28117
                 mov     al, Party_day
@@ -96983,7 +96971,7 @@ loc_4D287:                              ; CODE XREF: Spell_42_TimeDistortion+16�
                 call    mazeUpdateSlot
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    drawView
 
@@ -97006,7 +96994,7 @@ Spell_43_FeebleMind proc far            ; CODE XREF: j_Spell_43_FeebleMind↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -97030,7 +97018,7 @@ Spell_44_DeadlySwarm proc far           ; CODE XREF: j_Spell_44_DeadlySwarm↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -97341,7 +97329,7 @@ def_4D3BB:                              ; CODE XREF: Spell_45_Teleport+BE↑j
                 add     sp, 6
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4D508:                              ; CODE XREF: Spell_45_Teleport+1F↑j
@@ -97370,7 +97358,7 @@ Spell_46_FingerOfDeath proc far         ; CODE XREF: j_Spell_46_FingerOfDeath↑
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -97400,7 +97388,7 @@ Spell_47_CureParalysis proc far         ; CODE XREF: j_Spell_47_CureParalysis↑
                 jz      short loc_4D584
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -97440,7 +97428,7 @@ Spell_48_Paralyze proc far              ; CODE XREF: j_Spell_48_Paralyze↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -97482,7 +97470,7 @@ Spell_49_DragonBreath proc far          ; CODE XREF: j_Spell_49_DragonBreath↑J
                 mov     al, [bx+4BFFh]
                 mov     ah, 0
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, SpellAttack_type
                 dec     bx
@@ -97533,7 +97521,7 @@ loc_4D628:                              ; CODE XREF: Spell_50_SuperShelter+18↑
                 mov     Engine_mode, 0Ch
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    j_rest
                 mov     al, byte ptr [bp+var_2]
@@ -97559,7 +97547,7 @@ Spell_51_FieryFlail proc far            ; CODE XREF: j_Spell_51_FieryFlail↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 2
                 push    ax              ; format
@@ -97583,7 +97571,7 @@ Spell_52_CreateFood proc far            ; CODE XREF: j_Spell_52_CreateFood↑J
                 add     Party_food, ax
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 pop     bp
                 retf
@@ -97676,7 +97664,7 @@ loc_4D705:                              ; CODE XREF: Spell_53_TownPortal+88↓j
                 jz      short loc_4D75E
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    sub_28117
                 push    si
@@ -97717,7 +97705,7 @@ Spell_54_StoneToFlesh proc far          ; CODE XREF: j_Spell_54_StoneToFlesh↑J
                 jz      short loc_4D7A8
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -97802,7 +97790,7 @@ Spell_56_FantasticFreeze proc far       ; CODE XREF: j_Spell_56_FantasticFreeze�
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 9
                 push    ax              ; format
@@ -97871,7 +97859,7 @@ Spell_58_Disintegrate proc far          ; CODE XREF: j_Spell_58_Disintegrate↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -97925,7 +97913,7 @@ loc_4D8BF:                              ; CODE XREF: Spell_59_RaiseDead+2C↑j
                 mov     word ptr [si+125h], 0
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 1
                 push    ax
@@ -98017,7 +98005,7 @@ loc_4D94B:                              ; CODE XREF: Spell_60_HalfForMe+3C↑j
                 pop     cx
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 push    di
                 push    si
@@ -98109,7 +98097,7 @@ loc_4D9A4:                              ; CODE XREF: Spell_61_Etherealize+1A↑j
                 add     Party_y, al
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     al, Engine_mode
                 mov     ah, 0
@@ -98164,7 +98152,7 @@ Spell_62_DancingSword proc far          ; CODE XREF: j_Spell_62_DancingSword↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -98195,7 +98183,7 @@ Spell_63_PrismaticLight proc far        ; CODE XREF: j_Spell_63_PrismaticLight�
                 mov     SpellAttack_reach, 2
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -98220,7 +98208,7 @@ Spell_64_MoonRay proc far               ; CODE XREF: j_Spell_64_MoonRay↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 10h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
@@ -98233,7 +98221,7 @@ Spell_64_MoonRay proc far               ; CODE XREF: j_Spell_64_MoonRay↑J
 loc_4DAF1:                              ; CODE XREF: Spell_64_MoonRay+61↓j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 1Eh
                 push    ax
@@ -98279,7 +98267,7 @@ Spell_65_MassDistortion proc far        ; CODE XREF: j_Spell_65_MassDistortion�
                 mov     SpellAttack_reach, 1
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -98348,7 +98336,7 @@ Spell_67_Incinerate proc far            ; CODE XREF: j_Spell_67_Incinerate↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
@@ -98383,7 +98371,7 @@ Spell_68_ElementalStorm proc far        ; CODE XREF: j_Spell_68_ElementalStorm�
                 mov     al, [bx+4BFFh]
                 mov     ah, 0
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, SpellAttack_type
                 dec     bx
@@ -98413,7 +98401,7 @@ Spell_69_HolyWord proc far              ; CODE XREF: j_Spell_69_HolyWord↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Eh
                 push    ax              ; format
@@ -98463,7 +98451,7 @@ var_2           = word ptr -2
 loc_4DC6F:                              ; CODE XREF: Spell_70_Resurrect+2C↑j
                 mov     ax, 34h ; '4'
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -98522,7 +98510,7 @@ Spell_71_MegaVolts proc far             ; CODE XREF: j_Spell_71_MegaVolts↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Eh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 4
                 push    ax              ; format
@@ -98546,7 +98534,7 @@ Spell_72_Inferno proc far               ; CODE XREF: j_Spell_72_Inferno↑J
                 mov     SpellAttack_reach, 1
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 push    ax              ; format
@@ -98570,7 +98558,7 @@ Spell_73_SunRay proc far                ; CODE XREF: j_Spell_73_SunRay↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 10h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
@@ -98594,7 +98582,7 @@ Spell_74_Implosion proc far             ; CODE XREF: j_Spell_74_Implosion↑J
                 mov     SpellAttack_reach, 0
                 mov     ax, 12h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 0Dh
                 push    ax              ; format
@@ -98618,7 +98606,7 @@ Spell_75_StarBurst proc far             ; CODE XREF: j_Spell_75_StarBurst↑J
                 mov     SpellAttack_reach, 2
                 mov     ax, 0Dh
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     ax, 2
                 push    ax              ; format
@@ -98704,7 +98692,7 @@ loc_4DE0C:                              ; CODE XREF: Spell_76_DivineIntervention
                 jg      short loc_4DDC7
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 call    drawParty
                 pop     di
@@ -99755,7 +99743,7 @@ loc_4E5B2:                              ; CODE XREF: itemsDialog+77D↑j
                 mov     [bp+var_6], ax
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 mov     bx, di
                 mov     al, [bx+si+90h]
@@ -99782,7 +99770,7 @@ loc_4E609:                              ; CODE XREF: itemsDialog+787↑j
                                         ; itemsDialog+790↑j
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 push    off_2D9C4       ; "Spell Failed!"
                 mov     ax, offset aC_23 ; "\x03c"
@@ -99911,7 +99899,7 @@ loc_4E70B:                              ; CODE XREF: itemsDialog+834↑j
                 add     sp, 6
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
 
 loc_4E722:                              ; CODE XREF: itemsDialog+695↑j
@@ -99959,7 +99947,7 @@ loc_4E761:                              ; CODE XREF: itemsDialog+92A↑j
 loc_4E779:                              ; CODE XREF: itemsDialog+8A2↑j
                 mov     ax, 14h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
 
 loc_4E782:                              ; CODE XREF: itemsDialog+1D8↑j
                                         ; itemsDialog+667↑j ...
@@ -101170,7 +101158,7 @@ arg_4           = word ptr  0Ah
 loc_4EFC8:                              ; CODE XREF: bash+D↑j
                 mov     ax, 19h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 xor     ax, ax
                 mov     [bp+var_6], ax
@@ -101587,7 +101575,7 @@ loc_4F2CD:                              ; CODE XREF: spellAttackAhead+73↑j
                 jz      short loc_4F2DF
                 mov     ax, 0Ch
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     short loc_4F2F7
 ; ---------------------------------------------------------------------------
@@ -101595,7 +101583,7 @@ loc_4F2CD:                              ; CODE XREF: spellAttackAhead+73↑j
 loc_4F2DF:                              ; CODE XREF: spellAttackAhead+83↑j
                 mov     ax, 15h
                 push    ax
-                call    sub_1B16B
+                call    playSoundEffect
                 pop     cx
                 jmp     loc_4F749
 ; ---------------------------------------------------------------------------
@@ -102519,7 +102507,7 @@ loc_4FA09:                              ; CODE XREF: spellsDialog+2B5↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FA0C:                              ; CODE XREF: spellsDialog+296↑j
-                call    sub_28522
+                call    j_Spell_17_Jump
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -102576,7 +102564,7 @@ loc_4FA64:                              ; CODE XREF: spellsDialog+310↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FA67:                              ; CODE XREF: spellsDialog+2F1↑j
-                call    sub_285CC
+                call    j_Spell_23_WizardEye
                 jmp     loc_4FE14
 ; ---------------------------------------------------------------------------
 
@@ -103363,7 +103351,7 @@ loc_4FFEE:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_4FFFB:                              ; CODE XREF: castItemSpell+93↑j
-                call    sub_28522
+                call    j_Spell_17_Jump
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 
@@ -103394,7 +103382,7 @@ loc_5001B:                              ; CODE XREF: castItemSpell+11↑j
 ; ---------------------------------------------------------------------------
 
 loc_50028:                              ; CODE XREF: castItemSpell+C0↑j
-                call    sub_285CC
+                call    j_Spell_23_WizardEye
                 jmp     def_4FF71       ; jumptable 0004FF71 default case
 ; ---------------------------------------------------------------------------
 

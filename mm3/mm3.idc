@@ -5753,6 +5753,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X161A7);
 	create_insn	(0X161AD);
+	set_name	(0X161AD,	"scanMonstersAhead");
 	create_insn	(x=0X161B0);
 	op_hex		(x,	1);
 	create_insn	(x=0X161C1);
@@ -6781,6 +6782,7 @@ static Bytes_1(void) {
 	create_insn	(0X1916E);
 	create_insn	(0X19171);
 	create_insn	(0X19174);
+	set_name	(0X19174,	"shootAhead");
 	set_cmt	(0X19186,	"format",	0);
 	create_insn	(0X1918F);
 	set_name	(0X1918F,	"conditionMod");
@@ -8112,6 +8114,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	128,	0X19030);
 	set_name	(0X1B129,	"jpt_1984B");
 	create_insn	(0X1B16B);
+	set_name	(0X1B16B,	"playSoundEffect");
 	create_insn	(x=0X1B16F);
 	op_stkvar	(x,	1);
 	create_insn	(0X1B181);
@@ -10048,12 +10051,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DA6B,	"jpt_1CA00");
-	set_cmt	(0X1DA79,	"jump table for switch statement",	0);
-	create_word	(x=0X1DA79);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1DA79,	"jpt_1C993");
 }
 
 //------------------------------------------------------------------------
@@ -10063,6 +10060,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1DA79,	"jump table for switch statement",	0);
+	create_word	(x=0X1DA79);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1DA79,	"jpt_1C993");
 	set_cmt	(0X1DA87,	"jump table for switch statement",	0);
 	create_word	(x=0X1DA87);
 	make_array	(x,	0X7);
@@ -12978,6 +12981,7 @@ static Bytes_2(void) {
 	create_insn	(0X26965);
 	create_insn	(0X2696E);
 	create_insn	(0X26978);
+	set_name	(0X26978,	"soundDriverPlay");
 	create_insn	(0X26981);
 	create_insn	(0X2698B);
 	create_insn	(0X26994);
@@ -14249,6 +14253,7 @@ static Bytes_2(void) {
 	create_insn	(0X2851D);
 	set_name	(0X2851D,	"j_Spell_11_Pain");
 	create_insn	(0X28522);
+	set_name	(0X28522,	"j_Spell_17_Jump");
 	create_insn	(0X28527);
 	set_name	(0X28527,	"j_Spell_00_Light");
 	create_insn	(0X2852C);
@@ -14313,6 +14318,7 @@ static Bytes_2(void) {
 	create_insn	(0X285C7);
 	set_name	(0X285C7,	"j_Spell_68_ElementalStorm");
 	create_insn	(0X285CC);
+	set_name	(0X285CC,	"j_Spell_23_WizardEye");
 	create_insn	(0X285D1);
 	set_name	(0X285D1,	"j_Spell_72_Inferno");
 	create_insn	(0X285D6);
@@ -14789,12 +14795,6 @@ static Bytes_2(void) {
 	set_name	(0X29A72,	"VIEW_DY");
 	set_cmt	(0X29B2C,	"4 facings x 58h bytes (44 words): mask of the wall nibble for that cell side in the maze word (7000h/700h/70h/7)",	0);
 	set_name	(0X29B2C,	"VIEW_MASK");
-	set_cmt	(0X29C8C,	"4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)",	0);
-	set_name	(0X29C8C,	"VIEW_SHIFT");
-	create_byte	(0X29CDE);
-	make_array	(0X29CDE,	0X10A);
-	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
-	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
 }
 
 //------------------------------------------------------------------------
@@ -14804,6 +14804,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X29C8C,	"4 facings x 58h bytes: bit shift (words) matching VIEW_MASK (12/8/4/0)",	0);
+	set_name	(0X29C8C,	"VIEW_SHIFT");
+	create_byte	(0X29CDE);
+	make_array	(0X29CDE,	0X10A);
+	set_cmt	(0X29DE8,	"words used by mazeSetBits to clear a wall field: FFF, FF0F, F0FF, FFF0, 100, 0, 8000, C000",	0);
+	set_name	(0X29DE8,	"MAZE_CLEAR_MASKS");
 	create_word	(0X29E14);
 	create_word	(0X29E16);
 	create_byte	(0X29E18);
@@ -18204,6 +18210,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X37B0C);
 	op_stkvar	(x,	1);
 	set_cmt	(0X37B20,	"switch 8 cases",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X37B2A);
 	op_hex		(x,	1);
 	set_cmt	(0X37B2C,	"switch jump",	0);
@@ -18218,15 +18233,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X37B40);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X37B49,	"jump table for switch statement",	0);
 	create_word	(x=0X37B49);
 	make_array	(x,	0X8);
@@ -23015,6 +23021,15 @@ static Bytes_4(void) {
 	set_cmt	(0X3FEE1,	"dest",	0);
 	create_insn	(x=0X3FEED);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X3FEF0,	"dest",	0);
 	create_insn	(x=0X3FEFC);
 	op_stkvar	(x,	1);
@@ -23036,15 +23051,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FF3B);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FF3F);
 	op_stkvar	(x,	1);
 	set_cmt	(0X3FF42,	"buffer",	0);
@@ -28647,6 +28653,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4764B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47650);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47653);
@@ -28672,15 +28687,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X476BA);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X476C4);
 	op_hex		(x,	1);
 	create_insn	(x=0X476CA);
@@ -31933,6 +31939,7 @@ static Bytes_6(void) {
 	set_name	(0X4C6E6,	"Spell_16_TurnUndead");
 	set_cmt	(0X4C708,	"format",	0);
 	create_insn	(0X4C711);
+	set_name	(0X4C711,	"Spell_17_Jump");
 	create_insn	(x=0X4C714);
 	op_hex		(x,	1);
 	create_insn	(x=0X4C730);
@@ -31970,6 +31977,7 @@ static Bytes_6(void) {
 	create_insn	(0X4C8EA);
 	set_name	(0X4C8EA,	"Spell_22_Levitate");
 	create_insn	(0X4C8FE);
+	set_name	(0X4C8FE,	"Spell_23_WizardEye");
 	create_insn	(0X4C917);
 	set_name	(0X4C917,	"Spell_24_IdentifyMonster");
 	create_insn	(x=0X4C91A);
@@ -33683,6 +33691,15 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F790);
 	op_stkvar	(x,	0);
 	create_insn	(0X4F796);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F7CB);
 	op_stkvar	(x,	0);
 	create_insn	(0X4F7D6);
@@ -33715,15 +33732,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F85C);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F865);
 	op_hex		(x,	1);
 	create_insn	(x=0X4F86C);
@@ -37681,6 +37689,7 @@ static Functions_0(void) {
 	set_frame_size(0X15B50, 0XC, 2, 0);
 	add_func    (0X161AD,0X1693D);
 	set_func_flags(0X161AD,0x5412);
+	set_func_cmt(0X161AD,	"clears the per-row monster visibility bytes (34B92.. 32E37.. 3329D..) and scans the live monster list for monsters in view ahead of the party (called at the start of runMazeEvent, doCombat, moveMonsters, the draw functions)", 0);
 	set_frame_size(0X161AD, 0XC, 2, 0);
 	add_func    (0X1693D,0X16973);
 	set_func_flags(0X1693D,0x5412);
@@ -37750,6 +37759,7 @@ static Functions_0(void) {
 	set_frame_size(0X19159, 0X2, 2, 0);
 	add_func    (0X19174,0X1918F);
 	set_func_flags(0X19174,0x5412);
+	set_func_cmt(0X19174,	"'S' command: spellAttackAhead(0Bh), the ranged-weapon volley of the party (kind 0Bh is also used by Elemental Arrow)", 0);
 	set_frame_size(0X19174, 0, 2, 0);
 	add_func    (0X1918F,0X193D0);
 	set_func_flags(0X1918F,0x5412);
@@ -37765,6 +37775,7 @@ static Functions_0(void) {
 	define_local_var(0X19608, 0X1B043, "[bp-0XCA]", "dest");
 	add_func    (0X1B16B,0X1B198);
 	set_func_flags(0X1B16B,0x5412);
+	set_func_cmt(0X1B16B,	"play sound effect n (all the 'mov ax, NN; call sub_1B16B' sites): ids below 97h need FX enabled (byte_36FE8), 97h and above (speech/music-like) need byte_36FE9; forwards to the sound driver", 0);
 	set_frame_size(0X1B16B, 0X2, 2, 0);
 	add_func    (0X1B198,0X1B223);
 	set_func_flags(0X1B198,0x5412);
@@ -38106,6 +38117,7 @@ static Functions_0(void) {
 	set_frame_size(0X26965, 0, 0, 0);
 	add_func    (0X26978,0X2698B);
 	set_func_flags(0X26978,0x5402);
+	set_func_cmt(0X26978,	"far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id", 0);
 	set_frame_size(0X26978, 0, 0, 0);
 	add_func    (0X2698B,0X2699E);
 	set_func_flags(0X2698B,0x5402);
@@ -38960,7 +38972,7 @@ static Functions_0(void) {
 	set_func_flags(0X2851D,0x54c2);
 	set_frame_size(0X2851D, 0, 0, 0);
 	add_func    (0X28522,0X28527);
-	set_func_flags(0X28522,0x5482);
+	set_func_flags(0X28522,0x54c2);
 	set_frame_size(0X28522, 0, 0, 0);
 	add_func    (0X28527,0X2852C);
 	set_func_flags(0X28527,0x54c2);
@@ -39060,7 +39072,7 @@ static Functions_0(void) {
 	set_func_flags(0X285C7,0x54c2);
 	set_frame_size(0X285C7, 0, 0, 0);
 	add_func    (0X285CC,0X285D1);
-	set_func_flags(0X285CC,0x5482);
+	set_func_flags(0X285CC,0x54c2);
 	set_frame_size(0X285CC, 0, 0, 0);
 	add_func    (0X285D1,0X285D6);
 	set_func_flags(0X285D1,0x54c2);
@@ -39558,6 +39570,10 @@ static Functions_0(void) {
 	set_frame_size(0X4265B, 0X112, 2, 0);
 	define_local_var(0X4265B, 0X42E8D, "[bp-0X10E]", "s");
 	define_local_var(0X4265B, 0X42E8D, "[bp-0XE]", "format");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X42EA9,0X42FB0);
 	set_func_flags(0X42EA9,0x5412);
 	set_frame_size(0X42EA9, 0X18, 2, 0);
@@ -39592,10 +39608,6 @@ static Functions_0(void) {
 	add_func    (0X434D6,0X43593);
 	set_func_flags(0X434D6,0x5412);
 	set_frame_size(0X434D6, 0X2, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X435A0,0X43698);
 	set_func_flags(0X435A0,0x5412);
 	set_func_cmt(0X435A0,	"writes the current maze's .evt, .dat pages and .bin (monster/object positions) back to the open cc", 0);
@@ -39957,7 +39969,7 @@ static Functions_1(void) {
 	set_frame_size(0X4C237, 0X2, 2, 0);
 	add_func    (0X4C2AD,0X4C2FF);
 	set_func_flags(0X4C2AD,0x5412);
-	set_func_cmt(0X4C2AD,	"shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)", 0);
+	set_func_cmt(0X4C2AD,	"refundSpellCost(char, spell): returns the spell points and gems paid by Spells_subSpellCost (inverse); the spellsDialog switch uses it for spells whose effect is done by the caller", 0);
 	set_frame_size(0X4C2AD, 0X2, 2, 0);
 	add_func    (0X4C2FF,0X4C326);
 	set_func_flags(0X4C2FF,0x5412);
@@ -40029,6 +40041,7 @@ static Functions_1(void) {
 	set_frame_size(0X4C6E6, 0, 2, 0);
 	add_func    (0X4C711,0X4C7DE);
 	set_func_flags(0X4C711,0x5412);
+	set_func_cmt(0X4C711,	"Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat", 0);
 	set_frame_size(0X4C711, 0X4, 2, 0);
 	add_func    (0X4C7DE,0X4C809);
 	set_func_flags(0X4C7DE,0x5412);
@@ -40052,6 +40065,7 @@ static Functions_1(void) {
 	set_frame_size(0X4C8EA, 0, 2, 0);
 	add_func    (0X4C8FE,0X4C917);
 	set_func_flags(0X4C8FE,0x5412);
+	set_func_cmt(0X4C8FE,	"sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC", 0);
 	set_frame_size(0X4C8FE, 0, 2, 0);
 	add_func    (0X4C917,0X4CA6E);
 	set_func_flags(0X4C917,0x5412);
