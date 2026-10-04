@@ -175,3 +175,4 @@ When a monster's hit points reach 0: the party gets `MONEXP` (`giveExperience`, 
 (`word_376EA` gold, `word_376F8` gems; shown and paid by `giveTreasure` after the fight), and, if its treasure class `MONTREA` is `c` > 0, with probability `TREASURE_CHANCE[c]` percent
 (table at DGROUP `4B23h`: class 1 = 1%, 2 = 2%, 3 = 5%, 4 = 10%, 5 = 20%, 6 = 100%) one item is generated with `generateItem(level c)` (at most 10 items per fight, `byte_37710`).
 No gold, gems or items are given on map 106 (6Ah, the arena).  The dead monster is removed by moving it to position (128,128) (off the map).
+`giveExperience(xp)` (`49FA3`): two passes over the members of the combat party (or the whole party outside combat): the first only counts them, the second adds `xp / count` (integer division) to each character's stored experience (+12Bh). The disassembly calls `worstCondition` but ignores its result, so no explicit exclusion of dead members is visible in this routine.
