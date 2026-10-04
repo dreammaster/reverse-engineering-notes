@@ -387,3 +387,6 @@ Other effects (by code reading): Awaken clears the asleep counter (+11Bh) of the
 Suppress Poison reduces the poison counter (+116h) by 3 (to 1 if it was below 4; it does not cure); Protection from Elements sets the chosen element's party resistance
 (`Party_fireResist` / `elecResist` / `coldResist` / `poisonResist`) to `min(2 x level + 5, 200)`; Create Food adds one food unit per party member;
 Create Rope only raises the "rope available" flags (`byte_2879D`, `byte_2886E`).
+
+Condition spells: Suppress Disease acts on +117h like Suppress Poison; Nature's Cure (target not dead/stone/eradicated) calls `healCharacterEffect(25)`; Cure Poison, Cure Disease, Cure Paralysis, Stone to Flesh each clear their condition counter and show the heal effect.
+Raise Dead turns a dead character (+120h) into an unconscious one (+11Fh set, hit points 0) and raises byte +1Ah (the "resurrection count" slot; set to 1 if it was 0) ; Resurrect clears Eradicated (+122h), adjusts +1Ah the same way and raises the temporary age `+26h` to at least 250 (the penalty for the stronger spell). Details of the +1Ah/+26h arithmetic were not traced (hidden by my first pass).
