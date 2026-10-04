@@ -7,9 +7,12 @@
 // rather than guessing a table name).
 enum class eVisionaireTable { kValue34 = 0x22 };
 
-// Confirmed 2 values, 0 and 1 (TGameControl::PreLoad/LoadAndInitGame, asm
-// lines 464227, 467804) - real meaning/other values not resolved.
-enum class TLoadingTypeEnum { kValue0 = 0, kValue1 = 1 };
+// Confirmed 3 values (TGameControl::PreLoad/LoadAndInitGame, asm lines 464227,
+// 467804; TVisionaire::Load/BinaryLoad): 0 reads the file into the loader's
+// buffer but only loads the Loading table (so a loading screen can be shown
+// first), 1 loads everything from the buffer a pass of type 0 left behind, 2
+// reads the file and loads everything in one go.
+enum class TLoadingTypeEnum { kValue0 = 0, kValue1 = 1, kValue2 = 2 };
 
 // Confirmed 3 values, 0-2 (TGameControl::PreLoad, Deponia_Linux.asm line
 // 464228; TTypeData/TTypeGroup::IsFittingSaveGameType(), asm lines 668776/

@@ -17,7 +17,7 @@ public:
 	// constructor.
 	static void InitXMLNames();
 	/** Builds the field lookup table and every record type. */
-	void InitWithVersion(int versionLow);
+	void InitWithVersion(int versionLow) override;
 	/** Creates the main object and runs its default-value callback. */
 	bool NewGame();
 };

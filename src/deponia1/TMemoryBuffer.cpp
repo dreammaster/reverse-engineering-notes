@@ -45,13 +45,14 @@ void TMemoryBuffer::EnsureBufferSize(unsigned long size) {
 	}
 }
 
-void TMemoryBuffer::Init(unsigned long size) {
+unsigned char *TMemoryBuffer::Init(unsigned long size) {
 	if (_capacity < size || !_data) {
 		delete[] _data;
 		_data = new unsigned char[size];
 		_capacity = size;
 	}
 	_len = 0;
+	return _data;
 }
 
 void TMemoryBuffer::growForAppend(unsigned long extraBytes) {

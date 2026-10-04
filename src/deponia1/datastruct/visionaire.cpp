@@ -5,7 +5,10 @@
 #include "Diagnostics.h"
 #include "TXMLNames.h"
 #include "datastruct/link.h"
+#include "TComposedFileManager.h"
+#include "TTimer.h"
 #include "datastruct/table.h"
+#include "datastruct/vedfile.h"
 #include "datastruct/visionaireobject.h"
 
 static const char *const kSourceFile = "/home/simon/Documents/jenkins/branchPillars/src/datastruct/visionaire.cpp";
@@ -810,10 +813,85 @@ bool TVisionaire::LoadDataGame(const wxFileName &/*file*/, const wxString &/*ext
 	return false;
 }
 
-bool TVisionaire::Load(const wxFileName &/*file*/, const wxString &/*extra*/, eSaveGame /*saveGame*/,
-                       TLoadingTypeEnum /*type*/, int * /*outFlag*/, TSignalSlot * /*slot*/,
-                       EventHandler * /*handler*/) {
-	return false;
+// Confirmed (asm lines 619961-620665). `saveGame` is 0 for game data and 1 for a
+// savegame (which is only ever loaded in one go, type 2); `type` is described
+// at TLoadingTypeEnum. Game data (but not a savegame) clears the project first;
+// a savegame resets the active objects instead. Binary files go to
+// BinaryLoad(); the XML project reader (TXMLProjectReader) is not
+// reconstructed yet, so an XML file fails to load.
+bool TVisionaire::Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame,
+                       TLoadingTypeEnum type, int *outFlag, TSignalSlot *slot, EventHandler *handler) {
+	int gameType = (int)saveGame;
+	int loadType = (int)type;
+
+	x_assert(gameType == 0 || gameType == 1, "gameType == t_DATAGAME || gameType == t_SAVEGAME", kSourceFile, 0x212);
+	x_assert(loadType == 2 || gameType != 1, "gameType != t_SAVEGAME || loadingType == t_ALL", kSourceFile, 0x213);
+
+	bool isSaveGame = gameType == 1;
+
+	if (file.IsOk())
+		_loadedFile = file;
+	_path = file;
+
+	TTimer timer;
+	timer.SetTime();
+
+	int xmlRoot;
+	if (loadType == 0 || loadType == 2) {
+		if (isSaveGame) {
+			for (TTable *table : _tableList)
+				table->ResetActiveData();
+			xmlRoot = 0x21;
+		} else {
+			Clear();
+			xmlRoot = 0x64;
+		}
+	} else {
+		xmlRoot = isSaveGame ? 0x21 : 0x64;
+	}
+
+	x_assert(!_mainObject->IsEmpty(), "!MainObject->IsEmpty()", kSourceFile, 0x23F);
+
+	TVedFile ved;
+	if (!TComposedFileManager::Open(ved, file))
+		return false;
+
+	ved.CheckBinary();
+	ved.SetSaveGame(isSaveGame);
+	_linksCount = (long)_links.size();
+
+	if (ved.IsBinary()) {
+		if (!BinaryLoad(ved, type, slot, outFlag, handler)) {
+			if (wxLog::loglevel >= 0)
+				wxLog::logexpanded(L"Failed to load ved file %ls", file.GetName().c_str());
+			return false;
+		}
+	} else {
+		// FIXME: TXMLProjectReader::ReadXMLDoc (asm lines 636222-642078) is not reconstructed.
+		(void)extra;
+		(void)xmlRoot;
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"Failed to load ved file %ls", file.GetName().c_str());
+		return false;
+	}
+
+	if (wxLog::loglevel > 1)
+		wxLog::logexpanded(L"Serialization finished. Needed time: %ld ms", timer.GetTime());
+	timer.SetTime();
+
+	if (loadType != 0) {
+		SetupParents();
+		if (wxLog::loglevel > 1)
+			wxLog::logexpanded(L"SetupParents finished. Needed time: %ld ms", timer.GetTime());
+		timer.SetTime();
+
+		SortLinks();
+		if (wxLog::loglevel > 1)
+			wxLog::logexpanded(L"SortLinks finished. Needed time: %ld ms", timer.GetTime());
+		timer.SetTime();
+	}
+
+	return true;
 }
 
 bool TVisionaire::LoadSaveGame(const wxFileName &/*file*/, const wxString &/*extra*/) {

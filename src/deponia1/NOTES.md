@@ -2837,6 +2837,45 @@ Confirmed (asm 1499937-1504534, 1480082-1480237):
 Not done yet: loading/saving (LoadDataGame, LoadSaveGame, BeforeSave, the XML and
 binary project readers), UpdateVersion, clipboard methods.
 
+## The binary project reader (datastruct/binaryProjectReader)
+
+Confirmed (asm 647056-655295, 619961-620665): `TVisionaire::Load` opens the file
+through TComposedFileManager, then goes to `BinaryLoad` (VBIN files) - the XML
+reader, `TXMLProjectReader`, is not reconstructed, so XML projects fail to load.
+
+File format: `"VBIN"`, an unknown int, uncompressed size, stored size, then the
+payload (zlib if the sizes differ). The payload is read through a global
+TMemoryBuffer `membuf` and cursor `offset` (recovered global names). It starts with
+a *schema tree* (`bin_structure`: u16 id <= 0x347, u16 child count <= 999, children):
+one child per table whose children are the field ids the file stores per record, so
+files of other schema versions can be read. Then three ints (project type, revision,
+file version - a version other than 0xBA re-runs `InitWithVersion`), then per table:
+a skipped int, the record count and per record: name (int length + bytes), id, order,
+lastModified and the fields in the file's order as `loadObject` reads them (by
+eTypeData kind). Name/id/order/lastModified (field ids 12-14, 55) are record header
+data and skipped in the field list; `Version`, `ProjectType`, `Revision` (17, 53, 54)
+are not tables; `Game` (116) is the main object, read the same way.
+
+Loading types: 0 = read the file, load only the Loading table (index 21) and keep
+the buffer; 1 = load everything from that buffer; 2 = both in one go. A savegame
+(`eSaveGame` 1, always type 2) is loaded over an existing project: existing objects
+are found by id (active tables always create new ones) and their old links are taken
+out of the link table before being overwritten.
+
+Quirks kept: `load(long&)` only skips 8 bytes; `load(TLink&)` reads the "any" flag
+before the "parent" flag; the main object's link handling is conditioned on the
+file-reading flag rather than the savegame flag. Deviations: reads past the end of
+the buffer are detected (the original has no check) and make the load fail; the
+buffer's length is set even when the data wasn't compressed (the original leaves it
+0, which only spoils the progress ratio). The editor's progress signals to a
+TSignalSlot are not reconstructed; LoadSaveProgressEvent is posted to the handler.
+
+Tested with a synthetic file (schema + two Font records) only: no game data exists
+locally.
+
+Not done: the save side of the same file (writeStructure/save()/saveObject(),
+TVisionaire::BinarySave), TVisionaireGame::LoadDataGame/LoadSaveGame, the XML reader.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

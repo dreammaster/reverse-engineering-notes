@@ -51,7 +51,11 @@ public:
 	void EnsureBufferSize(unsigned long size);
 	// Confirmed (asm lines 549518-549567): like Reserve(), but always resets
 	// the used length to 0 even when no reallocation was needed.
-	void Init(unsigned long size);
+	unsigned char *Init(unsigned long size);
+	/** Sets the used length (after the data was filled in directly). */
+	void SetLen(unsigned long length) {
+		_len = length;
+	}
 
 	// Confirmed (asm lines 549575-549819, matching operator<<(char)'s
 	// identical shape): appends `size` bytes, growing the buffer (by

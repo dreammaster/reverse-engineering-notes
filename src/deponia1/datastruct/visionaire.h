@@ -71,6 +71,11 @@ public:
 	TVisionaire(const TTypeGroup &gameTypeGroup, int projectType);
 	virtual ~TVisionaire();
 
+	/** Builds the record types for a file-version range (TVisionaireGame
+	 *  does; the first virtual of the original). */
+	virtual void InitWithVersion(int /*versionLow*/) {
+	}
+
 	TVisionaire(const TVisionaire &) = delete;
 	TVisionaire &operator=(const TVisionaire &) = delete;
 
@@ -232,6 +237,9 @@ public:
 	bool Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame, TLoadingTypeEnum type,
 	          int *outFlag, TSignalSlot *slot, EventHandler *handler);
 	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
+	/** Reads a binary (VBIN) project or savegame (datastruct/binaryProjectReader.cpp). */
+	bool BinaryLoad(TVedFile &file, TLoadingTypeEnum type, TSignalSlot *slot, int *outVersion,
+	                EventHandler *handler);
 
 protected:
 	int tableIndex(const TId &id) const;
@@ -245,6 +253,7 @@ protected:
 	long _linksCount;                            // +0x58
 	std::vector<TMappedId> _mappedIds;           // +0x60
 	bool _hasIdMapping;                          // +0x78
+	wxFileName _loadedFile;                      // +0x20, the file last loaded
 	wxFileName _path;                            // +0x80
 	bool _modified;                              // +0x88
 	bool _shuttingDown;                          // +0x89
