@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "game.h"
+#include "location.h"
 #include "savegame.h"
 #include "viewrender.h"
 #include "worldmap.h"
@@ -40,6 +41,9 @@ void localMapFill(LocalMapCell cells[LocalMapColumns * LocalMapRows], GameKind g
 
 /* The tiles, then (when `facing` is nonzero) the party arrow at the block-relative position of (partyX, partyY). */
 void localMapDraw(const ViewRenderer *r, const LocalMapCell cells[LocalMapColumns * LocalMapRows], int partyX, int partyY, uint16_t facing);
+
+/* The first line of the screen: the block's name at (0, 0) in 0x8A on 0, then its suffix one character space further in 0x5B (a map) or 0xAA (a level). */
+void localMapHeaderDraw(const ViewRenderer *r, const LocationName *name);
 
 /*
  * The overview map (ToggleMapViewMode, the W key; Chapter 2 only, yendor2.asm:32010): PICTURES category 0 picture 6 full screen at (0, 0) with

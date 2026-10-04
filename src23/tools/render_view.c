@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../cluemonster.c ../cluetransport.c ../cluespell.c ../spellrecord.c ../chargen.c ../localmap.c ../location.c ../explore.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>

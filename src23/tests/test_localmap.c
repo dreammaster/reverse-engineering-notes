@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_localmap test_localmap.c ../localmap.c ../minimap.c ../explore.c ../savegame.c ../worldmap.c ../viewrender.c ../random.c ../pictures.c ../font.c ../uiregions.c ../dungeongrid.c ../movement.c && ./test_localmap
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_localmap test_localmap.c ../localmap.c ../minimap.c ../explore.c ../savegame.c ../worldmap.c ../viewrender.c ../random.c ../pictures.c ../font.c ../uiregions.c ../dungeongrid.c ../movement.c ../location.c && ./test_localmap
  */
 #include <stdio.h>
 #include <string.h>
@@ -81,6 +81,19 @@ int main(void) {
     check("...(460, 100) -> block 7 across, 2 down", overviewMapMarker(460, 100, &mx, &my) && mx == 28 + 24 * 7 && my == 23 + 20 * 2);
     check("...and the area ends at column 639 / row 239", overviewMapMarker(639, 239, &mx, &my) && mx == 28 + 24 * 11 && my == 23 + 20 * 7 && !overviewMapMarker(640, 100, &mx, &my) &&
                                                           !overviewMapMarker(300, 240, &mx, &my) && !overviewMapMarker(159, 100, &mx, &my));
+    LocationName where = {"PORT", " MAP 1", 1};
+    memset(screen, 0xEE, sizeof(screen));
+    localMapHeaderDraw(&r, &where);
+    bool nameOk = false, suffixOk = false;
+    for (int y = 0; y < 6; y++) {
+        for (int x = 0; x < 24; x++) {
+            nameOk = nameOk || screen[y * 320 + x] == 0x8A;
+        }
+        for (int x = 30; x < 70; x++) {
+            suffixOk = suffixOk || screen[y * 320 + x] == 0x5B;
+        }
+    }
+    check("the header: the name in 0x8A at x = 0, a map suffix in 0x5B after name length + 1 characters", nameOk && suffixOk);
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

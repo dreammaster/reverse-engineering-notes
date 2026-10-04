@@ -1206,6 +1206,10 @@ description lines live in WORLD.DAT: block 5 is a table of (first line, line cou
 block 6 the 39-byte lines (Chapter 2 offsets 1458267 / 1458767, Chapter 3 4019761 / 4020193; `dump_spell_description_blocks.py`, which also lists the other four clue blocks: 1 the
 "fully known" map bitmap, 2 the paged entry screens, 3-4 not decoded).
 
+**Map block names** (`BuildClueLocationSuffix`, `location.c`): the world is 120 (Chapter 3: 140) blocks of 40 x 24 cells; straight after the world map WORLD.DAT has a table of 6-byte block
+records (Chapter 2 at 460800, Chapter 3 at 537600: four digit characters, the 1-based name index, one more byte) and a table of 20-byte names (461520 / 538440). The header of the local
+area map is the name plus " LEVEL x" or " MAP x" (Chapter 3 three characters), colours 0xAA / 0x5B; the clue book's map list uses the same text.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 

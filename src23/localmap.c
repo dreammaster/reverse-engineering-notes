@@ -1,6 +1,8 @@
 #include "localmap.h"
 
 #include "explore.h"
+#include "font.h"
+#include <string.h>
 #include "minimap.h"
 #include "pictures.h"
 
@@ -68,5 +70,13 @@ void overviewMapDraw(const ViewRenderer *r, int partyX, int partyY) {
     int x, y;
     if (overviewMapMarker(partyX, partyY, &x, &y)) {
         viewDrawPicture(r, 8, 0x11, x, y, true, 0);
+    }
+}
+
+void localMapHeaderDraw(const ViewRenderer *r, const LocationName *name) {
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 0, 0, name->name, 0x8A, 0, FontOpaque);
+    if (name->kind != 0) {
+        int x = ((int)strlen(name->name) + 1) * 6;
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, x, 0, name->suffix, name->kind == 1 ? 0x5B : 0xAA, 0, FontOpaque);
     }
 }
