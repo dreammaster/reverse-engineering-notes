@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
@@ -14,6 +14,7 @@
 #include "lighting.h"
 #include "minimap.h"
 #include "monster_stdio.h"
+#include "charcreate.h"
 #include "newgame.h"
 #include "paperdoll.h"
 #include "roster.h"
@@ -235,6 +236,17 @@ int main(int argc, char **argv) {
                     droles[i] = saveHeaderGetU16(&save, SaveHeaderRoleAssignments + 2 * i);
                 }
                 detailSheetDraw(&renderer, saveGamePartyRecord(&save, 5 + hero), 6 + hero, droles);
+            }
+            if (getenv("RENDER_PICK")) { /* RENDER_PICK=class|portrait: the creation steps over the picture-3 backdrop */
+                const uint8_t *backdrop = pictureFileGet(pictures, 0, 3);
+                for (unsigned row = 0; backdrop && row < 198; row++) {
+                    memcpy(&screen[(row + 1) * ViewScreenWidth + 1], &backdrop[row * 318], 318);
+                }
+                if (getenv("RENDER_PICK")[0] == 'c') {
+                    charCreateClassPickDraw(&renderer);
+                } else {
+                    charCreatePortraitGridDraw(&renderer, 2);
+                }
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */
                 const uint8_t *records[RosterSlots];
