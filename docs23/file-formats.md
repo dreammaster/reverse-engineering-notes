@@ -1125,6 +1125,11 @@ pictures at entries 13-14); worn clothing `[+0x152..+0x15A]` is drawn on the bod
 item's wearable entry** (+1 for a non-male wearer) -- the field earlier documented as "break replacement item" doubles as the
 worn/ring picture id.
 
+The **monster panels** (`DrawMonsterInfoPanel`, `monsterpanel.c`): three at x = 241, y = 87/123/159 -- the two name lines, then, by
+the party's reveal tier (55 / 75 / 80; Chapter 3's first threshold is 60), a 45 x 8 health bar, three status icons and a one-line
+detail (POISONED/DISEASED, PARALYZED/FROZEN, HEXED/CURSED or HEALTH: cur/max, chosen by which quality bit 0x200/0x100/0x80/0x40 of
+the monster's state a spell set; the bits are cleared after one showing).
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
