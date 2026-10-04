@@ -10,10 +10,15 @@
 #pragma once
 
 #include "Event.h"
+#include "WxStub.h"
 
 class LoadSaveProgressEvent : public Event {
 public:
 	LoadSaveProgressEvent(int table, bool flag) : _table(table), _flag(flag) {
+	}
+	/** A named progress step (ProgressLoad, ...): the text is the wx command
+	 *  string, the flag 0. */
+	explicit LoadSaveProgressEvent(const wxString &message) : _message(message), _table(0), _flag(false) {
 	}
 
 	Event *Clone() const override {
@@ -29,6 +34,7 @@ public:
 
 private:
 	int _eventType = 0x26;
+	wxString _message;
 	int _table;
 	bool _flag;
 };

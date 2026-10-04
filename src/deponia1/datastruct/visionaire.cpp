@@ -808,11 +808,6 @@ void TVisionaire::SetVisPlayerMode(bool playerMode) {
 void TVisionaire::SaveSaveGame(TProjectFileWriter &/*writer*/) {
 }
 
-bool TVisionaire::LoadDataGame(const wxFileName &/*file*/, const wxString &/*extra*/, TLoadingTypeEnum /*type*/,
-                               bool /*flag*/, TSignalSlot * /*slot*/, EventHandler * /*handler*/) {
-	return false;
-}
-
 // Confirmed (asm lines 619961-620665). `saveGame` is 0 for game data and 1 for a
 // savegame (which is only ever loaded in one go, type 2); `type` is described
 // at TLoadingTypeEnum. Game data (but not a savegame) clears the project first;
@@ -894,6 +889,3 @@ bool TVisionaire::Load(const wxFileName &file, const wxString &extra, eSaveGame 
 	return true;
 }
 
-bool TVisionaire::LoadSaveGame(const wxFileName &/*file*/, const wxString &/*extra*/) {
-	return false;
-}

@@ -72,6 +72,7 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	void SetMirrored(bool mirrored);
 };
 
 class TTAnimationFrame : public TVisObjRef {
@@ -430,6 +431,7 @@ public:
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
+	void SetRandomValue(int minimum, int maximum);
 };
 
 class TTWaySystem : public TVisObjRef {

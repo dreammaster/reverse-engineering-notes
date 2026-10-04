@@ -31,6 +31,11 @@ TYPE_NAMES = {0: "kBool", 1: "kInt", 2: "kString", 3: "kPath", 4: "kFloat", 5: "
 HAND_HEADERS = {"TTScene": "TTScene.h", "TTAction": "TTAction.h", "TTButton": "TTButton.h",
                 "TTText": "TTText.h", "TSText": "TSText.h"}
 
+# Recovered methods of the generated classes that are written by hand (in TTxxx.cpp):
+# declarations added to the class.
+EXTRA_METHODS = {"TTAnimation": ["void SetMirrored(bool mirrored);"],
+                 "TTValue": ["void SetRandomValue(int minimum, int maximum);"]}
+
 # Classes whose callbacks include GetNameInList.
 def const_names():
     used = set()
@@ -137,6 +142,8 @@ def main():
                 h.append("\tstatic void OnInit(TVisionaireObject *object);")
             if "GetNameInList" in cb:
                 h.append("\tstatic wxString GetNameInList(const TVisionaireObject *object);")
+            for decl in EXTRA_METHODS.get(cls, []):
+                h.append("	" + decl)
             h.append("};")
             h.append("")
 

@@ -2876,6 +2876,29 @@ locally.
 Not done: the save side of the same file (writeStructure/save()/saveObject(),
 TVisionaire::BinarySave), TVisionaireGame::LoadDataGame/LoadSaveGame, the XML reader.
 
+## Loading game data: LoadDataGame / UpdateVersion
+
+`TVisionaireGame::LoadDataGame` (asm 1523439) looks the file up by name (setting the
+current directory to the file's when asked), posts the "ProgressLoad",
+"ProgressUpdateVersion", "ProgressLoadFinalizing" events to the handler, runs
+`TVisionaire::Load` (game data), `UpdateVersion` and, for a file of another version,
+`InitWithVersion(0xBA)` + `RemoveTempData`. `LoadSaveGame` is `Load` (savegame, type 2)
++ `UpdateVersionGame` (the short cascade of savegame fixes, fully reconstructed).
+`TGameControl`'s `_visionaire` is now a TVisionaireGame*.
+
+`UpdateVersion` (asm 1508677, 14000 lines, a cascade of fixes by file version) is only
+partly reconstructed: found by walking its control flow with the version fixed at 0xBA
+(tools/ scratch script, not kept), which leaves the steps every version gets - objects
+at (-1,-1) moved to their way system's first point, random TTValues rolled, the game's
+scroll distances derived from the window resolution and, unless the file was loaded in
+one go (type 2), mirrored animations rebuilt from their source, minimum pauses, and the
+"game needs a first character" check. The conversions of files below version 0xB9
+(and the rejection of < 99) are the missing part: such files get a log warning. If the
+game data turns out to be older than 0xB9 this needs the other branches.
+
+`TTAnimation::SetMirrored` and `TTValue::SetRandomValue` are written by hand
+(TTAnimation.cpp, TTValue.cpp; declared through tools/gen_records.py's EXTRA_METHODS).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

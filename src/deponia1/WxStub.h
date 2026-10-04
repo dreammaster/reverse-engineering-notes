@@ -260,6 +260,11 @@ public:
 	// this file's own directory.
 	void SetCwd() const;
 	void NormalizePath() {}
+	// Confirmed call shape only (TVisionaireGame::LoadDataGame) - back to an
+	// empty name.
+	void Clear() {
+		_fullPath.clear();
+	}
 	// Confirmed call shape only (TFile::OpenWrite, Deponia_Linux.asm line
 	// 523174) - real wxFileName::MakeAbsolute() prefixes the current directory
 	// to a relative path.

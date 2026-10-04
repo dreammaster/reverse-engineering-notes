@@ -225,18 +225,8 @@ public:
 	// and writers; see NOTES.md).
 	void SaveSaveGame(TProjectFileWriter &writer);
 
-	// Confirmed call shape only (TGameControl::LoadAndInitGame, asm lines
-	// 467799-467810) - returns a success bool (tested with a plain bool
-	// check, not compared against a specific value). IDA resolves the real
-	// symbol as `TVisionaireGame::LoadDataGame`, but the confirmed `this`
-	// pointer at that call site is _visionaire (TVisionaire*), not
-	// _visionaireGame (TVisionaireGame*): TVisionaireGame derives from
-	// TVisionaire (see above), so this is the same object.
-	bool LoadDataGame(const wxFileName &file, const wxString &extra, TLoadingTypeEnum type, bool flag,
-	                  TSignalSlot *slot, EventHandler *handler);
 	bool Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame, TLoadingTypeEnum type,
 	          int *outFlag, TSignalSlot *slot, EventHandler *handler);
-	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
 	/** Reads a binary (VBIN) project or savegame (datastruct/binaryProjectReader.cpp). */
 	bool BinaryLoad(TVedFile &file, TLoadingTypeEnum type, TSignalSlot *slot, int *outVersion,
 	                EventHandler *handler);

@@ -45,6 +45,7 @@
 #include "WxStub.h"
 #include "datastruct/visionaire.h"
 #include "vscommon/fontManager.h"
+#include "vstables/visionaireGame.h"
 #include "vsplayer/control/cursorControl.h"
 #include "vsplayer/control/loadingControl.h"
 #include "vstables/fieldIds.h"
@@ -231,7 +232,7 @@ protected:
 	// TMasterControl-only accessor was never called at those sites, so this
 	// is protected rather than private for the same reason as
 	// _sceneControl above.
-	TVisionaire *_visionaire = nullptr;
+	TVisionaireGame *_visionaire = nullptr;
 
 	// TGameControl reads both directly (GetInterface/GetAllInterfaces/
 	// GetActiveInterfaces/GetObject, asm lines 456603-466193) - same

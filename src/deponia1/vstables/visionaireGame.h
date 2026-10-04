@@ -20,6 +20,20 @@ public:
 	void InitWithVersion(int versionLow) override;
 	/** Creates the main object and runs its default-value callback. */
 	bool NewGame();
+
+	/** Loads the game data (a project file); the file is looked up by name in the
+	 *  current directory, or `relativeToFile` makes that directory the file's own.
+	 *  (Confirmed call shape: TGameControl::LoadAndInitGame.) */
+	bool LoadDataGame(const wxFileName &file, const wxString &extra, TLoadingTypeEnum type,
+	                  bool relativeToFile, TSignalSlot *slot, EventHandler *handler);
+	/** Loads a savegame's data over the loaded game. */
+	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
+
+	/** Brings game data of an older file version up to date (`allAtOnce`: the file
+	 *  was loaded in one go, type 2). */
+	bool UpdateVersion(int version, bool allAtOnce);
+	/** The same for a savegame's data. */
+	bool UpdateVersionGame(int version);
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line
