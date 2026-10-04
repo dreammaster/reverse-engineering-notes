@@ -1,5 +1,7 @@
 #include "inventory.h"
 
+#include <string.h>
+
 #include "party.h"
 
 bool inventoryEligibleForSlot(unsigned code, uint16_t itemFlags, uint16_t entryWord1, bool occupiedB, bool shieldSlotOccupied,
@@ -181,4 +183,31 @@ AutoEquipPlan inventoryPlanAutoEquip(GameKind game, const uint8_t *partyRecord, 
     }
     plan.kind = AutoEquipRefused;
     return plan;
+}
+
+static bool isContainerId(const ItemCatalog *catalog, uint16_t id) {
+    uint16_t flags;
+    return id != 0 && itemFlagsFor(catalog, id, &flags) && (flags & ItemFlagEquipCode0B);
+}
+
+static void discardLevel(const ItemCatalog *catalog, SaveGame *save, unsigned number, unsigned level) {
+    uint8_t *contents = saveGameRecord(save, SaveSectionItemInstances, number);
+    if (!contents) {
+        return;
+    }
+    if (level < 3) {
+        for (unsigned slot = 1; slot <= 8; slot++) {
+            const uint8_t *entry = inventoryGroupSlot(contents, slot);
+            if (isContainerId(catalog, itemSlotId(entry))) {
+                discardLevel(catalog, save, itemSlotExtra(entry), level + 1);
+            }
+        }
+    }
+    memset(contents, 0, InventoryGroupSize);
+}
+
+void inventoryDiscardDropped(const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord) {
+    if (isContainerId(catalog, itemId)) {
+        discardLevel(catalog, save, contentsRecord, 1);
+    }
 }

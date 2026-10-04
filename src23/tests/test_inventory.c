@@ -87,6 +87,34 @@ static void testDrop(void) {
     check("...but one in a fourth-level container is never looked at", !inventoryDropBlocked(GameYendor2, &catalog, &deep, 3, 20));
 }
 
+static void testDiscard(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.itemCount = 10;
+    for (unsigned id = 3; id <= 5; id++) {
+        catalog.items[(id - 1) * ItemRecordSize + ItemFieldFlags + 1] = 0x20; /* containers 3-5; 1-2 plain */
+    }
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    /* held container 3 -> record 20 holds a plain item 1 and container 4 -> record 21 holds container 5 -> record 22 holds container 5 -> 23 */
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 1), 1, 0);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 2), 4, 21);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 21), 1), 5, 22);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 22), 1), 5, 23);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 23), 1), 2, 0);
+    inventoryDiscardDropped(&catalog, &save, 1, 20);
+    check("dropping a plain item leaves the save alone", itemSlotId(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 1)) == 1);
+    inventoryDiscardDropped(&catalog, &save, 3, 20);
+    bool zero20 = true, zero21 = true, zero22 = true;
+    for (unsigned i = 0; i < InventoryGroupSize; i++) {
+        zero20 = zero20 && saveGameRecord(&save, SaveSectionItemInstances, 20)[i] == 0;
+        zero21 = zero21 && saveGameRecord(&save, SaveSectionItemInstances, 21)[i] == 0;
+        zero22 = zero22 && saveGameRecord(&save, SaveSectionItemInstances, 22)[i] == 0;
+    }
+    check("dropping a container zeroes its record and the two levels of containers below it", zero20 && zero21 && zero22);
+    check("...but not a fourth level", itemSlotId(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 23), 1)) == 2);
+}
+
 static void testLocation(void) {
     check("a weapon needs 0x100, armour 0x40", inventoryLocationAccepts(0x8000, 0x100) && !inventoryLocationAccepts(0x8000, 0x40) &&
                                                   inventoryLocationAccepts(0x800, 0x40) && !inventoryLocationAccepts(0x800, 0x100) &&
@@ -139,6 +167,7 @@ int main(void) {
     testEligibility();
     testContainers();
     testDrop();
+    testDiscard();
     testLocation();
     testReal();
 

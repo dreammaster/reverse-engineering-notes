@@ -51,6 +51,14 @@ bool inventoryContainerAccepts(uint16_t containerFlags, uint16_t itemFitFlags);
 bool inventoryDropBlocked(GameKind game, const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord);
 
 /*
+ * PlaceItemOnGround (yendor2.asm:17974): what dropping an item does to the save. The item itself simply ceases to exist (there is no
+ * ground inventory); only a container leaves anything to clean up: its instance record `contentsRecord` and the records of the
+ * containers directly inside it and inside those (three levels, the same depth the other container walks use) are zeroed. Containers
+ * nested a fourth level down keep their records (the original leaks them). A non-container drops with no effect on the save.
+ */
+void inventoryDiscardDropped(const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord);
+
+/*
  * Chapter 3 adds a second no-drop test: fit flags (ItemFieldFitFlags) bit 0 -- set on every key, the ATHANEUM KEY and
  * the LIT TORCH (a burning torch cannot be dropped). Chapter 2 only tests ItemFlagNoDrop.
  */
