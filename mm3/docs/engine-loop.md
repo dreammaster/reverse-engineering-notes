@@ -38,3 +38,10 @@ runs the intro (`introSequence`), then the title/roster menu (`rosterMenu`) and 
 
 Letters are the upper-case key codes (`B`=42h, `C`=43h, `D`=44h, `I`=49h, `M`=4Dh, `Q`=51h, `R`=52h, `S`=53h, `V`=56h); the small numbers 0-9 are the
 same commands as delivered by the mouse/button panel.  The assignment of `I`/`V`/`Q` to their dialogs comes from the callees only and is uncertain.
+
+## Combat is started from `drawView`
+
+`drawView` (`1B669`) = `drawViewOutdoors` (when `Maze_wrapMode` != 0) or `prepareIndoorView` + `renderIndoorView`.  After drawing, if any of the three
+monster-row bytes `byte_34B92/93/94` (set by `scanMonstersAhead`: monsters in the first three rows ahead) is non-zero, the engine mode is 1 or 5 and neither
+the "no combat" flag `byte_2879C` nor the pending-light-change flag `byte_34C1B` is set, it calls `doCombat` (and, when that leaves `byte_34BF0` set, `runMazeEvent` again).
+There is no separate encounter roll: monsters standing on the map within three cells ahead of the party start combat when the view is drawn.
