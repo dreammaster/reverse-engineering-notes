@@ -1012,4 +1012,13 @@ void itemSlotConsumeGlobalCharge(const ItemCatalog *catalog, uint8_t *slot);
  */
 uint16_t partyDeriveRestRegenPercent(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
 
+/*
+ * CheckPartyWipeAndReinitLevel's test (yendor2.asm:25AA0, run after every input round of the dungeon loop): scans the four active slots in order; the
+ * first member who is not incapacitated (PartyStatusIncapacitated) means the party is alive, and reaching an empty slot (NULL) or the end of the four
+ * means it is wiped out -- so an empty slot ends the scan as a wipe even if a later slot holds a living hero (the slots are kept compact,
+ * partyCompactSlots, so that cannot happen). A wipe plays sound 0x13, clears the combat state, shows the full screen picture 1 and opens the pause
+ * dialog with only LOAD, NEW GAME and DOS enabled (gamedialog.h, flags 0x70); anything but quitting then reinitialises the level.
+ */
+bool partyWipedOut(const uint8_t *const records[4]);
+
 #endif

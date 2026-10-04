@@ -1192,3 +1192,15 @@ void partyCompactSlots(uint16_t slots[4]) {
         slots[3] = 0;
     }
 }
+
+bool partyWipedOut(const uint8_t *const records[4]) {
+    for (unsigned i = 0; i < 4; i++) {
+        if (!records[i]) {
+            return true;
+        }
+        if (!(partyGetU16(records[i], PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            return false;
+        }
+    }
+    return true;
+}

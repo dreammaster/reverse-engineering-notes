@@ -1589,7 +1589,25 @@ static void testCompactSlots(void) {
     check("all empty stays empty", e[0] == 0 && e[3] == 0);
 }
 
+static void testWipe(void) {
+    uint8_t dead[PartyRecordSize], alive[PartyRecordSize], stoned[PartyRecordSize];
+    memset(dead, 0, sizeof(dead));
+    memset(alive, 0, sizeof(alive));
+    memset(stoned, 0, sizeof(stoned));
+    partySetU16(dead, PartyFieldStatusFlags, PartyStatusDead);
+    partySetU16(stoned, PartyFieldStatusFlags, PartyStatusStoned | PartyStatusPoisoned);
+    const uint8_t *allDown[4] = {dead, stoned, dead, stoned};
+    const uint8_t *oneUp[4] = {dead, stoned, alive, dead};
+    const uint8_t *shortParty[4] = {dead, stoned, NULL, NULL};
+    const uint8_t *gap[4] = {dead, NULL, alive, NULL};
+    const uint8_t *poisonedOnly[4] = {alive, NULL, NULL, NULL};
+    check("a party is wiped when every member is dead, stoned, frozen or paralyzed", partyWipedOut(allDown));
+    check("one member who can act keeps it alive", !partyWipedOut(oneUp) && !partyWipedOut(poisonedOnly));
+    check("an empty slot ends the scan as a wipe (a short party of downed heroes, even an empty slot before a living one)", partyWipedOut(shortParty) && partyWipedOut(gap));
+}
+
 int main(void) {
+    testWipe();
     testConsumeChargeModes();
     testFindItemDeep();
     testLayoutRelations();
