@@ -58,6 +58,7 @@
 #include "TGActionInfo.h"
 #include "TGEventInfo.h"
 #include "TTimer.h"
+#include "TPolygonList.h"
 #include "WxStub.h"
 #include "datastruct/visionaireobject.h"
 #include "datastruct/visobjref.h"
@@ -77,26 +78,6 @@ enum class TMouseEventEnum;
 // int (the real callee's result lands in a plain integer register, not
 // xmm0, despite taking float arguments).
 int GetAngle(float dx, float dy);
-
-// Confirmed present (TManagedObject::SetPolygon/IsInside, Deponia_Linux.asm
-// lines 191660-191767, 191159-191170) as a 3-qword (begin/end/capacity)
-// member - modeled as a plain point list rather than reversing whatever
-// internal multi-polygon structure the original used, since nothing here
-// depends on more than "the set of points IsPointInsidePolygon() tests
-// against".
-using TPolygonList = std::vector<wxPoint>;
-
-// Confirmed call shape only (TManagedObject::SetPolygon) - real behavior
-// (validating/splitting a raw point list into the original's own polygon
-// representation) not reversed; this always accepts the input as-is.
-bool CreatePolygonsFromPointList(const std::vector<wxPoint> &points, TPolygonList &outPolygons);
-// Confirmed call shape only (TManagedObject::SetPolygon) - the axis-aligned
-// bounding box of every point in `polygons`; empty if there are none.
-wxRect GetBoundingBox(const TPolygonList &polygons);
-// Confirmed call shape only (TManagedObject::IsInside) - a standard
-// even-odd ray-casting point-in-polygon test over `polygon` as a single
-// point ring.
-bool IsPointInsidePolygon(const wxPoint &pt, const TPolygonList &polygon);
 
 class TManagedObject {
 public:

@@ -19,48 +19,6 @@ int GetAngle(float /*dx*/, float /*dy*/) {
 	return 0;
 }
 
-bool CreatePolygonsFromPointList(const std::vector<wxPoint> &points, TPolygonList &outPolygons) {
-	outPolygons = points;
-	return true;
-}
-
-wxRect GetBoundingBox(const TPolygonList &polygons) {
-	if (polygons.empty())
-		return wxRect();
-	int minX = std::numeric_limits<int>::max();
-	int minY = std::numeric_limits<int>::max();
-	int maxX = std::numeric_limits<int>::min();
-	int maxY = std::numeric_limits<int>::min();
-	for (const wxPoint &pt : polygons) {
-		minX = std::min(minX, pt.x);
-		minY = std::min(minY, pt.y);
-		maxX = std::max(maxX, pt.x);
-		maxY = std::max(maxY, pt.y);
-	}
-	wxRect result;
-	result.x = minX;
-	result.y = minY;
-	result.width = maxX - minX;
-	result.height = maxY - minY;
-	return result;
-}
-
-bool IsPointInsidePolygon(const wxPoint &pt, const TPolygonList &polygon) {
-	if (polygon.size() < 3)
-		return false;
-	bool inside = false;
-	for (std::size_t i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
-		const wxPoint &a = polygon[i];
-		const wxPoint &b = polygon[j];
-		if ((a.y > pt.y) != (b.y > pt.y)) {
-			double intersectX = a.x + static_cast<double>(pt.y - a.y) / (b.y - a.y) * (b.x - a.x);
-			if (pt.x < intersectX)
-				inside = !inside;
-		}
-	}
-	return inside;
-}
-
 void TManagedObject::ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event) {
 	_objRef.SetLink(kCharacterDestinationObject, character->GetRef(), true);
 	static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->SaveEventInfo(event);
