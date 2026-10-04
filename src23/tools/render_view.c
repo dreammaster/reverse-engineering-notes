@@ -191,7 +191,7 @@ int main(int argc, char **argv) {
             memcpy(&screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
         }
     }
-    ViewRenderer renderer = {game, tables, pictureFileGet, pictures, screen};
+    ViewRenderer renderer = {game, tables, pictureFileGet, pictures, screen, NULL};
     viewRender(&renderer, &scene);
     if (getenv("RENDER_HUD")) {
         for (int r = 0; r < DungeonGridSize; r++) {

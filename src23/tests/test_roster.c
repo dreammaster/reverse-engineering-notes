@@ -31,7 +31,7 @@ static const uint8_t *fill(void *ctx, unsigned category, unsigned id) {
 
 int main(void) {
     static uint8_t screen[320 * 200];
-    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen};
+    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen, NULL};
     uint8_t member[500], joined[500];
     memset(member, 0, sizeof(member));
     memset(joined, 0, sizeof(joined));

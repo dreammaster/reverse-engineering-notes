@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_statuspanel test_statuspanel.c ../statuspanel.c ../viewrender.c ../pictures.c ../font.c ../uiregions.c ../worldmap.c && ./test_statuspanel
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_statuspanel test_statuspanel.c ../statuspanel.c ../viewrender.c ../random.c ../pictures.c ../font.c ../uiregions.c ../worldmap.c && ./test_statuspanel
  */
 #include <stdio.h>
 #include <string.h>
@@ -43,7 +43,7 @@ int main(void) {
     check("the quotient truncates before the division (100 * max / cur = 150 -> 3800 / 150)", statusPanelBarWidth(2, 3) == 25);
 
     static uint8_t screen[320 * 200];
-    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen};
+    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen, NULL};
     uint8_t record[PartyRecordSize];
     memset(record, 0, sizeof(record));
     put16(record, 0x12, 21);

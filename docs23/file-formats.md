@@ -1082,7 +1082,7 @@ far to near: each cell's wall (legend word 2; layer 0), a side wall when its nei
 within a row the cells run left edge inward, right edge inward, centre last. The last three cells (48-50) draw the far-wall strips
 beside the party (layer 6) and the feature on the party's own cell. Monsters are drawn by `viewDrawMonster` (`DrawMonsterAndUpdateAttackState`): frame `[+8]` of the record at layer `[+0xA]` (10 =
 category 3, 13 = category 2), recoloured by `[+0x72]` when flag 4 is set; monsters in cells 17-48 draw after their cell, up to three in
-combat on the party cell last. The damage splash is drawn (state bit 8); only the hit-flash colour effect (`word_32984`) is not.
+combat on the party cell last. The damage splash (state bit 8) and the hit colour effect (record `[+0x18]`: 44 per-pixel effects -- dissolve, shade, recolour to a hue group, recolour + shade) are drawn.
 
 Tables, 6-byte entries {x, y, ptr} indexed by cell number (x = 0: nothing there): `val11`@0 (front walls, layers 0 and 8),
 `val12`@0x386 (floor patches), `val13`@0xBF2 (ceiling patches), `val14`@0x13B6 (side walls and far strips),

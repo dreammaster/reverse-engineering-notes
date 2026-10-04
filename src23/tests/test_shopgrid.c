@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_shopgrid test_shopgrid.c ../shopgrid.c ../viewrender.c ../pictures.c ../font.c ../uiregions.c ../item.c ../worldmap.c && ./test_shopgrid
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_shopgrid test_shopgrid.c ../shopgrid.c ../viewrender.c ../random.c ../pictures.c ../font.c ../uiregions.c ../item.c ../worldmap.c && ./test_shopgrid
  */
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +34,7 @@ int main(void) {
     catalog.items[(3 - 1) * ItemRecordSize + ItemFieldIcon] = 21; /* item 3's icon is picture 21 */
     catalog.items[(6 - 1) * ItemRecordSize + ItemFieldIcon] = 30;
     static uint8_t screen[320 * 200];
-    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen};
+    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen, NULL};
     memset(screen, 0xEE, sizeof(screen));
     uint16_t ids[8] = {3, 0, 0, 6, 0, 0, 0, 0};
     unsigned drawn = shopGridDraw(&r, &catalog, ids);

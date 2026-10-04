@@ -56,6 +56,7 @@ typedef struct {
     unsigned width, size;
     int8_t shade;
     bool transparent;
+    unsigned effect;       /* the monster colour effect (0 = none) */
     bool remap;            /* RemapOrMaskColorByHueTable active (row-mask sprites only) */
     uint16_t remapWords[16];
 } Blit;
@@ -108,7 +109,48 @@ static uint8_t remapColour(const Blit *b, uint8_t colour) {
     return (uint8_t)((hue << 4) | (colour & 0xF));
 }
 
-/* DrawRleMaskedShadedRun's pixel: colour key, shade, hue remap. */
+/* The effect routines' shade (loc_2A25C): like ShiftPaletteShadeClamped, but a wrap past 0x80 clamps by the delta's sign. */
+static uint8_t effectShade(uint8_t colour, int delta) {
+    if (colour >= 0xD0) {
+        return colour;
+    }
+    uint8_t low = colour & 0xF0, high = colour | 0x0F;
+    uint8_t shifted = (uint8_t)(colour + (uint8_t)delta);
+    if (shifted < low) {
+        return low;
+    }
+    if (shifted <= high) {
+        return shifted;
+    }
+    if (colour & 0x80) {
+        return high;
+    }
+    if (!(shifted & 0x80)) {
+        return high;
+    }
+    return delta < 0 ? low : high;
+}
+
+uint8_t viewMonsterEffectColour(unsigned effect, uint8_t colour, RandomState *rng) {
+    static const int kDeltas[4] = {-8, -4, 4, 8};
+    static const uint8_t kHues[6] = {0, 1, 5, 7, 10, 11};
+    if (effect == 1) {
+        return (rng && (randomInRange(rng, 1) & 1) == 0) ? 0xFF : colour;
+    }
+    if (effect >= 2 && effect <= 5) {
+        return effectShade(colour, kDeltas[effect - 2]);
+    }
+    if (effect >= 6 && effect <= 19) {
+        return (uint8_t)((colour & 0x0F) | ((effect - 6) << 4));
+    }
+    if (effect >= 20 && effect <= 43) {
+        uint8_t recoloured = (uint8_t)((colour & 0x0F) | (kHues[(effect - 20) / 4] << 4));
+        return effectShade(recoloured, kDeltas[(effect - 20) % 4]);
+    }
+    return colour;
+}
+
+/* DrawRleMaskedShadedRun's pixel: colour key, shade, hue remap, colour effect. */
 static long emitRow(const Blit *b, long dest, unsigned source) {
     if (source < b->size) {
         uint8_t pixel = b->picture[source];
@@ -117,7 +159,10 @@ static long emitRow(const Blit *b, long dest, unsigned source) {
             if (b->remap) {
                 pixel = remapColour(b, pixel);
             }
-            if (pixel != 0xFF || !b->remap) {
+            if (b->effect) {
+                pixel = viewMonsterEffectColour(b->effect, pixel, b->r->rng);
+            }
+            if (pixel != 0xFF || !(b->remap || b->effect)) {
                 if (dest >= 0 && dest < ScreenSize) {
                     b->r->screen[dest] = pixel;
                 }
@@ -136,6 +181,7 @@ static bool openBlit(Blit *b, const ViewRenderer *r, unsigned category, unsigned
     b->shade = shade;
     b->transparent = transparent;
     b->remap = false;
+    b->effect = 0;
     return b->picture != NULL;
 }
 
@@ -294,11 +340,12 @@ static unsigned rowMaskTable(unsigned layer) {
 }
 
 static void drawSpriteRemapped(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade,
-                               bool transparent, unsigned frame, const uint8_t *remap) {
+                               bool transparent, unsigned frame, const uint8_t *remap, unsigned effect) {
     Blit b;
     if (!openBlit(&b, r, category, id, shade, transparent)) {
         return;
     }
+    b.effect = effect;
     if (remap) {
         memset(b.remapWords, 0, sizeof(b.remapWords));
         for (unsigned i = 0; i < 6; i++) {
@@ -330,7 +377,7 @@ static void drawSpriteRemapped(const ViewRenderer *r, unsigned layer, unsigned c
 
 void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade, bool transparent,
                     unsigned frame) {
-    drawSpriteRemapped(r, layer, category, id, depth, shade, transparent, frame, NULL);
+    drawSpriteRemapped(r, layer, category, id, depth, shade, transparent, frame, NULL, 0);
 }
 
 static unsigned monsterWord(const uint8_t *monster, unsigned offset) {
@@ -351,10 +398,10 @@ void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, in
         monster[0x08] = (uint8_t)frame;
         monster[0x09] = (uint8_t)(frame >> 8);
     }
-    drawSpriteRemapped(r, layer, category, frame, depth, shade, true, 0, (flags & 4) ? monster + 0x72 : NULL);
+    drawSpriteRemapped(r, layer, category, frame, depth, shade, true, 0, (flags & 4) ? monster + 0x72 : NULL, monsterWord(monster, 0x18));
     monster[0x18] = monster[0x19] = 0;
     if (state & 0x10) {
-        drawSpriteRemapped(r, layer, category, monsterWord(monster, 0x1A), depth, shade, true, 0, NULL);
+        drawSpriteRemapped(r, layer, category, monsterWord(monster, 0x1A), depth, shade, true, 0, NULL, 0);
     }
     if (state & 8) {
         state &= ~8u;

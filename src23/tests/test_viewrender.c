@@ -1,7 +1,7 @@
 /*
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_viewrender test_viewrender.c ../viewrender.c ../viewport.c ../pictures.c ../pictures_stdio.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c && ./test_viewrender
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../random.c && ./test_viewrender
  *
  * The real-data check renders views from WORLD.DAT / PICTURES.VGA in yendor2/game and yendor3/game (skipped if absent;
  * YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override) and compares a hash of the frame with one recorded after inspecting the render.
@@ -159,6 +159,27 @@ static const uint8_t *twoColours(void *ctx, unsigned category, unsigned id) {
     return g_picture;
 }
 
+static void testMonsterEffects(void) {
+    check("effect 0 leaves the colour", viewMonsterEffectColour(0, 0x57, NULL) == 0x57);
+    check("effects 2-5 shade by -8, -4, +4, +8 inside the block", viewMonsterEffectColour(2, 0x5A, NULL) == 0x52 && viewMonsterEffectColour(3, 0x5A, NULL) == 0x56 &&
+                                                                       viewMonsterEffectColour(4, 0x52, NULL) == 0x56 && viewMonsterEffectColour(5, 0x52, NULL) == 0x5A);
+    check("...clamped at the block edges", viewMonsterEffectColour(2, 0x53, NULL) == 0x50 && viewMonsterEffectColour(5, 0x5E, NULL) == 0x5F);
+    check("colours from 0xD0 are not shaded", viewMonsterEffectColour(2, 0xD5, NULL) == 0xD5);
+    check("effects 6-19 recolour to hue group 0-13 keeping the low nibble", viewMonsterEffectColour(6, 0x5A, NULL) == 0x0A && viewMonsterEffectColour(7, 0x5A, NULL) == 0x1A &&
+                                                                                viewMonsterEffectColour(19, 0x5A, NULL) == 0xDA);
+    check("effects 20-43 recolour and shade: 20 = hue 0 shade -8, 24 = hue 1 shade -8, 43 = hue 11 shade +8", viewMonsterEffectColour(20, 0x5A, NULL) == 0x02 &&
+                                                                                                                 viewMonsterEffectColour(24, 0x5A, NULL) == 0x12 &&
+                                                                                                                 viewMonsterEffectColour(43, 0x52, NULL) == 0xBA);
+    RandomState rng;
+    randomStart(&rng, 3, 7);
+    unsigned dropped = 0;
+    for (int i = 0; i < 200; i++) {
+        dropped += viewMonsterEffectColour(1, 0x40, &rng) == 0xFF;
+    }
+    check("effect 1 drops about half the pixels at random", dropped > 60 && dropped < 140);
+    check("...and keeps them all without a generator", viewMonsterEffectColour(1, 0x40, NULL) == 0x40);
+}
+
 static void testMonster(void) {
     memset(g_tables, 0, sizeof(g_tables));
     /* ptr6 (layer 13) @0x4460, cell 20: x=30, y=40; ptr -> {groups 0x620, run (1, 3, 0), 0}; groups (1, 2, 0), 0 : 3 x 2 pixels */
@@ -261,7 +282,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     scene.facing = facing;
     static uint8_t screen[ViewScreenWidth * ViewScreenHeight];
     memset(screen, 0, sizeof(screen));
-    ViewRenderer r = {game, tables, pictureFileGet, pictures, screen};
+    ViewRenderer r = {game, tables, pictureFileGet, pictures, screen, NULL};
     viewRender(&r, &scene);
     pictureFileClose(pictures);
     uint32_t h = fnv(screen, sizeof(screen));
@@ -286,6 +307,7 @@ int main(void) {
     testPatch();
     testColumns();
     testStrip();
+    testMonsterEffects();
     testMonster();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 720, 0x3C32DEEF, "Chapter 2: the inn, facing west by day (inspected render)");
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 1200, 0x7898374D, "Chapter 2: the same view at night");

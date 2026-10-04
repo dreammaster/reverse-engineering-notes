@@ -58,7 +58,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     check("the catalog and the new-game template load", ok);
     static uint8_t screen[ViewScreenWidth * ViewScreenHeight];
     memset(screen, 0, sizeof(screen));
-    ViewRenderer r = {game, NULL, pictureFileGet, pictures, screen};
+    ViewRenderer r = {game, NULL, pictureFileGet, pictures, screen, NULL};
     uint32_t combined = 0;
     uint16_t roles[5];
     for (unsigned i = 0; i < 5; i++) {

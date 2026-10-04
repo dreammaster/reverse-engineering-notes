@@ -58,7 +58,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     check("the catalog and the new-game template load", ok);
     static uint8_t screen[ViewScreenWidth * ViewScreenHeight];
     memset(screen, 0, sizeof(screen));
-    ViewRenderer r = {game, NULL, pictureFileGet, pictures, screen};
+    ViewRenderer r = {game, NULL, pictureFileGet, pictures, screen, NULL};
     for (unsigned i = 0; i < 4; i++) {
         paperDollDraw(&r, &items, saveGamePartyRecord(&save, 5 + i), 8 + 56 * (int)i, 8);
     }

@@ -7,6 +7,7 @@
 
 #include "dungeongrid.h"
 #include "game.h"
+#include "random.h"
 #include "viewport.h"
 
 /*
@@ -57,6 +58,7 @@ typedef struct {
     ViewPictureFn picture;
     void *pictureCtx;
     uint8_t *screen; /* 320 x 200 palette indices */
+    RandomState *rng; /* only for the dissolve colour effect (monster effect 1); NULL = that effect draws nothing special */
 } ViewRenderer;
 
 typedef struct {
@@ -80,9 +82,19 @@ typedef struct {
  * (MonsterFieldTickTarget) if MonsterStateTimedAffliction, then, if state bit 8 (a hit just landed) is set, the damage splash: category 6
  * picture 0x12 / 0x13 / 0x20 (Chapter 3: 0x18) for light / moderate (wound 0x4000) / severe (0x2000), at a spot set by the layer (x = -22, 25, 82, -7,
  * 50 or 107 for layers 9-14; y = 34, or 8 for layer 12) plus the monster's own offsets [+0x68], [+0x6A], shaded by `splashShade` (the party's
- * row), clearing state bit 8 and the wound bits 0xE000. Not drawn: the hit-flash colour effect (word_32984).
+ * row), clearing state bit 8 and the wound bits 0xE000. The record's [+0x18] "last attack marker" selects a colour effect for the main sprite (viewMonsterEffectColour; cleared afterwards).
  */
 void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade, int8_t splashShade);
+
+/*
+ * The per-pixel colour effects a hit can put on a monster sprite (InvokePixelEffectCallback; the table of 44 routines at yendor2.asm:47749,
+ * indexed by the record's [+0x18]; applied after shading and the palette remap, to row-mask sprites only):
+ *   0 none; 1 dissolve: half the pixels (random) become transparent; 2-5 shade by -8, -4, +4, +8;
+ *   6-19 recolour to hue group 0-13 (the low nibble stays); 20-43 hue group {0, 1, 5, 7, 10, 11}[(e - 20) / 4] with shade
+ *   {-8, -4, +4, +8}[(e - 20) % 4].
+ * Colours >= 0xD0 are not shaded. Returns 0xFF when the pixel becomes transparent. `rng` may be NULL (effect 1 then keeps the pixel).
+ */
+uint8_t viewMonsterEffectColour(unsigned effect, uint8_t colour, RandomState *rng);
 
 /* ShiftPaletteShadeClamped: `colour` shifted by `delta` (an 8-bit signed delta). */
 uint8_t viewShadeColour(uint8_t colour, int8_t delta);

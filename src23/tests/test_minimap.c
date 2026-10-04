@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_minimap test_minimap.c ../minimap.c ../viewrender.c ../pictures.c ../dungeongrid.c ../movement.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_minimap test_minimap.c ../minimap.c ../viewrender.c ../random.c ../pictures.c ../dungeongrid.c ../movement.c \
  *       ../worldmap.c ../savegame.c && ./test_minimap
  */
 #include <stdio.h>
@@ -56,7 +56,7 @@ int main(void) {
                                               minimapCompassPicture(SaveFacingEast) == 1 && minimapCompassPicture(SaveFacingWest) == 3);
 
     static uint8_t screen[ViewScreenWidth * ViewScreenHeight];
-    ViewRenderer r = {GameYendor2, NULL, tilePicture, NULL, screen};
+    ViewRenderer r = {GameYendor2, NULL, tilePicture, NULL, screen, NULL};
     MinimapTile simple[MinimapCells];
     memset(simple, 0, sizeof(simple));
     for (unsigned i = 0; i < MinimapCells; i++) {

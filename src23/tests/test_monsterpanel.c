@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpanel test_monsterpanel.c ../monsterpanel.c ../viewrender.c ../pictures.c ../font.c ../worldmap.c && ./test_monsterpanel
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_monsterpanel test_monsterpanel.c ../monsterpanel.c ../viewrender.c ../random.c ../pictures.c ../font.c ../worldmap.c && ./test_monsterpanel
  */
 #include <stdio.h>
 #include <string.h>
@@ -49,7 +49,7 @@ int main(void) {
     check("the three panel rows", monsterPanelY(0) == 87 && monsterPanelY(1) == 123 && monsterPanelY(2) == 159);
 
     static uint8_t screen[320 * 200];
-    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen};
+    ViewRenderer r = {GameYendor2, NULL, fill, NULL, screen, NULL};
     uint8_t m[156];
     memset(m, 0, sizeof(m));
     memcpy(m + 0x32, "GIANT ANT", 10);
