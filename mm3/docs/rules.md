@@ -57,7 +57,7 @@ Age adjustments (`getStat`): age thresholds `AGE_RANGES` [1, 6, 11, 18, 36, 51, 
   table of (x,y) byte pairs at DGROUP `178Bh` indexed by `Party_map*2`: town 1 (2,5), 2 (3,2), 3 (7,13), 4 (3,9), 5 (14,6);
   facing is flipped (`^1`), `byte_36FEB` = the town number, each character's word at +123h is set to the town number
   (this is the "where I last slept" field, called `unknown123` in `character.h`), `Party_map` is cleared, time advances by
-  5A0h minutes (one day), and the save dialog (`loadSaveDialog(1)`) is opened - the inn is how the game is saved.
+  5A0h minutes (one day), and the save dialog (`loadSaveDialog(1)`) is opened -- the inn forces a save; saving is also available from the control panel (ESC) wherever the page header byte 0Ch allows it, but not in combat ("No Saving Allowed in Combat!").
 * **Tavern** (`honky.m`, `tavern.bin`): open only when `Party_minutes` >= 1080 (18:00) or <= 300 (05:00); otherwise
   "Sorry, the Tavern's closed! Come back later". Options: food, drink, tip (rumours), ESC.
   * Food: fills `Party_food` up to `food_per_char[Party_map] * Party_count * 3`, gold cost from a word table; message
