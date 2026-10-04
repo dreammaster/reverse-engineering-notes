@@ -396,3 +396,6 @@ Travel spells and the page header permission bytes (`data-files.md`): Time Disto
 Teleport (permission byte 14h) asks for a direction with the standard direction prompt (`sub_2824E`), then moves the party along it with repeated `mazeGetWordRel` existence tests and refreshes the page (`mazeUpdateSlot`); the exact maximum distance was not traced.
 Lloyd's Beacon (byte 15h, `lloyds.icn`) lets the caster set the beacon or return to it: the position is stored in the character record (`lloydMap`, `lloydX`, `lloydY` at +77h), recall loads the stored map (`sub_281B2`) and places the party there.
 `Spell_sharedHandler` (`4C2AD`) just adds the caster level to `Party_gems` (purpose not established; it may be a gem refund path for cancelled spells, which is only a guess).
+
+Item spells: Recharge Item, Duplication and Enchant Item pay via `sub_4C027`, then open the target's inventory page with `characterInfoInventory(char, mode)` using modes 4, 5 and 6 respectively (the same page the shops open with modes 1/2; the item action itself lives in `itemsDialog`, whose price routine returns the charge count for modes 3-6).
+Half for Me: the target (not the caster, not dead/stone/eradicated) is healed to full (`healCharacterEffect(max HP)`) and the caster takes `(max HP - current HP) / 2` damage of the target's deficit (`subtractHitPoints`).
