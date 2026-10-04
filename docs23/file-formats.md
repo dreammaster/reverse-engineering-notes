@@ -1164,6 +1164,11 @@ enabled (0x80 save, 0x40 load, 0x20 new game, 0x10 DOS, 0x08 animation, 0x04 ret
 flags 2 / 8, shown as check boxes (category 9 picture 0x12 ticked / 0x11 clear) at (97, 106) and (170, 106). The animation option cycles the speed
 1 (FAST) -> 9 (SLOW) -> 5 (MEDIUM) -> 1 and shows the name at (97, 119). Strings: 0x78F2... (Chapter 3 0x7C20...; `dump_game_dialog_strings.py`).
 
+The **title menu** (`RunTitleScreen`, `titlemenu.c`): PICTURES category 0 picture 2 at (1, 1) with five commands baked in (regions 1-5 = C party roster,
+A world map, E enter the game, R intro picture, I create a hero; Return toggles music, Ctrl+S sound effects, Ctrl+Q quits). E beeps unless a hero exists
+(sum of the four party slot assignments non-zero). Chapter 3 adds an idle attract: 75 periodic ticks without input run its intro sequence. The Chapter 2
+boot sequence (`PlayTitleScreenSequence`) fades in category 0 picture 0, plays music track 3 and waits 216 ticks or Escape.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
