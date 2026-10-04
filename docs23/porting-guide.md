@@ -23,7 +23,7 @@ differences in [engine-diffs.md](engine-diffs.md), and what is still missing in 
 | `PICTURES.VGA` | `pictures.c`, `pictures_stdio.c` | ten categories of same-sized 8 bpp pictures, colour 0xFF transparent |
 | palette, fades, colour cycle | `pictures.c` (offset), `palette.c` | 6-bit DAC values in `WORLD.DAT`; block 2 drives the dawn/dusk fade |
 | fonts | `font.c` | 6 x 6, four faces, tables built in |
-| music / effects | `audio.c` | CMF tracks and VOC samples inside `WORLD.DAT`; ids per area in `music.c` |
+| music / effects | `audio.c`, `cmf.c`, `voc.c` | CMF tracks (parsed to events + AdLib instrument patches) and VOC samples (8-bit PCM, 4-13 kHz) inside `WORLD.DAT`; ids per area in `music.c`; no playback yet |
 | world map, legends | `worldmap.c` | 800 x 168 cells; legends give floor/ceiling/wall/far-wall/minimap pictures |
 | items, monsters, spells, dialog, documents, locks, travel, triggers | `item.c`, `monster.c`, `spellrecord.c`, `dialog.c`, `document.c`, `lockcatalog.c`, `travel.c`, `maptrigger.c` | catalogs read from `WORLD.DAT` |
 | saves | `savegame.c`, `newgame.c` | `CURGAME`/`SAVGAMEn`; a new game is a 5000-byte template at the end of `WORLD.DAT` |
@@ -61,4 +61,4 @@ The original runs one loop (`start` -> `RunDungeonGameLoop`); everything below i
 
 See [roadmap.md](roadmap.md). In short: the screens not yet drawn (title menu, character creation, shop, alchemy, clue book, pause dialog), the
 monster damage splash, input/timing glue (the original is event driven from DOS interrupts), the text messages from the executables, music
-and effect *playback* (the files are located but not decoded), and Chapter 1's engine (a different, earlier engine).
+and the OPL/mixer glue for playback (the files are located and parsed), and Chapter 1's engine (a different, earlier engine).
