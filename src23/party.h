@@ -40,7 +40,7 @@ typedef enum {
     PartyFieldClass = 0x0E,       /* u16 class id, see partyClassName */
     PartyFieldGender = 0x10,      /* u16: 1 or 2 (the two real female characters are 2) */
     PartyFieldPanelFace = 0x12,   /* u16, values 20-33 in real data: the face picture (PICTURES.VGA category 7) on the main screen's party panel */
-    PartyFieldPortrait = 0x14,    /* u16 portrait icon id */
+    PartyFieldPortrait = 0x14,    /* u16 paper-doll body picture (PICTURES.VGA category 6): 2 * (portrait - 1), +1 for a female; the face at +0x12 is this + 0x13 (charcreate.h) */
     PartyFieldLevel = 0x16,       /* u16, capped at 90 by training items */
     PartyFieldExperience = 0x18,  /* Bcd4 */
     PartyFieldStatusFlags = 0x1C, /* u16, PartyStatus bits */
