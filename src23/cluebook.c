@@ -1,0 +1,22 @@
+#include "cluebook.h"
+
+#include "font.h"
+
+unsigned clueTabPicture(GameKind game, unsigned tab, uint16_t flags) {
+    static const unsigned kYendor2[ClueTabCount] = {0x20, 0x145, 0x147, 0x153, 0x149, 0x14B, 0x14D};
+    static const unsigned kYendor3[ClueTabCount] = {0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A};
+    unsigned base = game == GameYendor3 ? kYendor3[tab] : kYendor2[tab];
+    return base + ((flags & (ClueTabFirstBit >> tab)) ? 1 : 0);
+}
+
+void clueNavBarDraw(const ViewRenderer *r, uint16_t flags) {
+    if (flags & ClueNavHintList) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 11, 185, "d LIST", 0xF, 0, FontTransparent);
+    }
+    if (flags & ClueNavHintMap) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 272, 185, "MAP c", 0xF, 0, FontTransparent);
+    }
+    for (unsigned tab = 0; tab < ClueTabCount; tab++) {
+        viewDrawPicture(r, 8, clueTabPicture(r->game, tab, flags), 62 + 30 * (int)tab, 180, false, 0);
+    }
+}
