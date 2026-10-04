@@ -401,3 +401,5 @@ Item spells: Recharge Item, Duplication and Enchant Item pay via `sub_4C027`, th
 Half for Me: the target (not the caster, not dead/stone/eradicated) is healed to full (`healCharacterEffect(max HP)`) and the caster takes `(max HP - current HP) / 2` damage of the target's deficit (`subtractHitPoints`).
 
 Identify Monster (`4C917`, about 180 lines of UI) opens a window with the monster ahead's armour class (`Mon_ac`), attacks per turn (`Mon_numa`) and special attack (`Mon_spec`), plus its other stats; Detect Monster (`4CF1E`, about 250 lines) is presumably the monster-radar display (inferred from its size and name, not read in detail). Identify Monster calls `showErrorMessage` on its failure path.
+
+Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): moves the party two cells forward in its facing after two `mazeGetWordRel` checks, plays effect 33h and redraws; `showErrorMessage` when blocked.
