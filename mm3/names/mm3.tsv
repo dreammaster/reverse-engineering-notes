@@ -497,7 +497,7 @@
 4BD9F	showErrorMessage	pushes the string pointer at DGROUP 2D9C4h and calls sub_2812B (was wrongly Screen_saveBackground)
 4BE23	healCharacterEffect	adds hit points (capped at getMaxHP) and shows the spfx9.icn effect (by use in the cure/heroism spells)
 4C237	Spells_subSpellCost
-4C2AD	Spell_sharedHandler	shared by: Jump, Wizard Eye, Lloyd's Beacon, Nature's Gate, Teleport, Super Shelter, Town Portal, Etherealize (via spellsDialog's switch)
+4C2AD	Spell_sharedHandler	refundSpellCost(char, spell): returns the spell points and gems paid by Spells_subSpellCost (inverse); the spellsDialog switch uses it for spells whose effect is done by the caller
 4C2FF	Spell_00_Light	spell effect routine for 'Light' (id 0, via spellsDialog's switch)
 4C326	Spell_01_Awaken	spell effect routine for 'Awaken' (id 1, via spellsDialog's switch)
 4C358	Spell_02_FirstAid	spell effect routine for 'First Aid' (id 2, via spellsDialog's switch)
