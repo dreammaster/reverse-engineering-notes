@@ -27,3 +27,5 @@ Accessors for coordinates relative to the current slot (they add the slot's orig
 with `mazeNeighbourSlot` and return `1111h` or 0 outside the 32x32 world): `markCellVisited` (`1B9C5`), `isCellVisited` (`1BA82`),
 `mazeGetWordWrap` (`1BB33`). After every step `updateAutomap` (`15736`) marks the party's cell visited when the party has the
 Cartographer skill (`checkSkill(4)`), and when Wizard Eye is active (`Party_wizardEye`) draws the overhead map.
+
+Slot examples (`VIEW_DX`/`VIEW_DY`, facing 0 = north): slot 0,1 = (0,0) the party's own cell, slots 2,3 = (+1,0),(-1,0), slot 4..7 = (0,1), (0,1),(0,1),(+1,1) region one row ahead (slot 5 = (0,1) is the cell directly ahead, used by Jump's wall test), slots 8-16 the row two cells ahead (x -2..+2), 17-33 three ahead (x -4..+4) and 34-43 four ahead (x -4..+4); the last two entries are fillers.
