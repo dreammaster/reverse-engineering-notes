@@ -1528,6 +1528,10 @@ Same ten categories with the same picture sizes in both games; Chapter 3 simply 
 
 The geometry tables are byte-identical in both games, so the same blitter serves both. What differs: (1) floors/ceilings: Chapter 2 draws a base picture with the party cell's legend id and overdraws only cells whose id is not the base id or its even/odd partner; Chapter 3 draws the base as just the party cell's parity (id & 1: water/sky) and overdraws every visible cell with `(legend id & ~1) | party parity` -- floors and ceilings come in even/odd variant pairs there; (2) wall overlay for flag 0x2000: picture 5 in Chapter 2, the legend's word 0 in Chapter 3; (3) side features: Chapter 2 draws floor types 0-22 and 51-67 at layer 7 and the rest at layer 8 (all category 1), Chapter 3 draws floor types <= 99 as category 2 object sprites at layer 13 (trees, furniture), 100-199 at layer 7 and 200+ at layer 8 (category 1); the lit-torch overlay is picture 6 for feature 0x1C in Chapter 2 and picture 5 for feature 0x3F in Chapter 3.
 
+## Monster step blocking (`IsMonsterStepBlocked`)
+
+Chapter 2 has two extra rules after the water/special-wall tests -- floor types 0x27-0x2A always block, trait 0x10 passes everything else, floor 0x25 needs trait 0x08 -- where Chapter 3 has the single rule "trait 0x02 forbids ordinary terrain". The special wall range is 6-11 vs. 200-299 (`movementIsSpecialWallType`). Everything else (flags 0xC00/0x6000, the two-cell hop, the water test) matches (`monsterStepBlocked`).
+
 ## Review status
 
 - 68 functions bulk-imported at BinDiff similarity >=0.95

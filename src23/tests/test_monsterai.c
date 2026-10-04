@@ -8,6 +8,8 @@
 #include "monster.h"
 #include "monsterpool.h"
 #include "random.h"
+#include "dungeongrid.h"
+#include "movement.h"
 #include "worldmap.h"
 
 static int g_failureCount = 0;
@@ -285,6 +287,127 @@ static void testProcessSlotApproachGates(void) {
     check("...and it set a direction bit", (monsterGetU16(g_record, MonsterFieldWound) & MonsterWoundPartyMustFaceNorth) != 0);
 }
 
+static DungeonGrid g_walkGrid;
+
+static DungeonGridCell *walkCell(int x, int y) {
+    return dungeonGridCellMutable(&g_walkGrid, y - g_walkGrid.originRow, x - g_walkGrid.originCol);
+}
+
+static void walkSetup(uint8_t *monster, int x, int y) {
+    memset(&g_walkGrid, 0, sizeof(g_walkGrid));
+    g_walkGrid.game = GameYendor2;
+    g_walkGrid.originCol = 20;
+    g_walkGrid.originRow = 20;
+    for (int r = 0; r < DungeonGridSize; r++) {
+        for (int c = 0; c < DungeonGridSize; c++) {
+            g_walkGrid.cells[r][c].wallType = 20; /* ordinary walkable ground */
+        }
+    }
+    memset(monster, 0, MonsterRecordSize);
+    monsterSetU16(monster, MonsterFieldType, 7);
+    monsterSetU16(monster, MonsterFieldWorldX, (uint16_t)x);
+    monsterSetU16(monster, MonsterFieldWorldY, (uint16_t)y);
+    monsterSetU16(monster, MonsterFieldWound, 0x1F00 | 0x8000);
+    walkCell(x, y)->flags = 0x0400;
+    walkCell(x, y)->reserved4 = 7;
+}
+
+static void testStepBlocked(void) {
+    DungeonGridCell cell;
+    bool hops;
+    memset(&cell, 0, sizeof(cell));
+    cell.wallType = 20;
+    check("open ground is free", !monsterStepBlocked(GameYendor2, &cell, 0, &hops) && !hops);
+    cell.flags = 0x0400;
+    check("a cell with another monster (0x400) blocks, whatever the traits", monsterStepBlocked(GameYendor2, &cell, 0xFFFF, &hops));
+    cell.flags = 0x2000;
+    check("a door blocks without trait 0x10", monsterStepBlocked(GameYendor2, &cell, 0, &hops));
+    check("...and is hopped (two cells) with it", !monsterStepBlocked(GameYendor2, &cell, 0x10, &hops) && hops);
+    cell.flags = 0;
+    cell.wallType = 8; /* the special wall range 6-11 */
+    check("the special wall range blocks without 0x14", monsterStepBlocked(GameYendor2, &cell, 0, &hops));
+    check("...and is hopped with 0x04", !monsterStepBlocked(GameYendor2, &cell, 0x04, &hops) && hops);
+    cell.wallType = 1;
+    check("water (wall type 0-1) blocks walkers and lets 0x08/0x02/0x10 traits through", monsterStepBlocked(GameYendor2, &cell, 0, &hops) &&
+                                                                                           !monsterStepBlocked(GameYendor2, &cell, 0x02, &hops));
+    cell.wallType = 3;
+    check("a plain wall blocks", monsterStepBlocked(GameYendor2, &cell, 0, &hops));
+    cell.wallType = 20;
+    cell.floorType = 0x28;
+    check("floor types 0x27-0x2A block even a 0x10 monster", monsterStepBlocked(GameYendor2, &cell, 0x10, &hops));
+    cell.floorType = 0x25;
+    check("floor type 0x25 needs trait 8", monsterStepBlocked(GameYendor2, &cell, 0, &hops) && !monsterStepBlocked(GameYendor2, &cell, 8, &hops));
+    cell.wallType = 300;
+    cell.floorType = 0;
+    check("Chapter 3: trait 2 forbids ordinary terrain", monsterStepBlocked(GameYendor3, &cell, 2, &hops) && !monsterStepBlocked(GameYendor3, &cell, 0, &hops));
+}
+
+static void testWalk(void) {
+    uint8_t m[MonsterRecordSize];
+    walkSetup(m, 30, 30);
+    check("a monster two rows away on another column steps horizontally toward the party",
+          monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 35, 33) == MonsterMoveStepped && monsterGetU16(m, MonsterFieldWorldX) == 31 &&
+              monsterGetU16(m, MonsterFieldWorldY) == 30);
+    check("...the direction bits are cleared (0x8000 stays)", monsterGetU16(m, MonsterFieldWound) == 0x8000);
+    check("...the markers moved with it", !(walkCell(30, 30)->flags & 0x400) && walkCell(30, 30)->reserved4 == 0 && (walkCell(31, 30)->flags & 0x400) &&
+                                              walkCell(31, 30)->reserved4 == 7);
+    check("...and its cell offset follows ((y - row) * 0x270 + (x - col) * 8)", monsterGetU16(m, MonsterFieldCell) == 10 * 0x270 + 11 * 8);
+
+    walkSetup(m, 30, 30);
+    monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 30, 36);
+    check("in the party's column it steps along the column", monsterGetU16(m, MonsterFieldWorldX) == 30 && monsterGetU16(m, MonsterFieldWorldY) == 31);
+    walkSetup(m, 30, 30);
+    monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 30, 20);
+    check("...upward when the party is above", monsterGetU16(m, MonsterFieldWorldY) == 29);
+
+    walkSetup(m, 30, 30);
+    walkCell(29, 30)->wallType = 3;
+    check("a blocked horizontal step falls back to the vertical one", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 25, 35) == MonsterMoveStepped &&
+                                                                          monsterGetU16(m, MonsterFieldWorldX) == 30 && monsterGetU16(m, MonsterFieldWorldY) == 31);
+    walkSetup(m, 30, 30);
+    walkCell(29, 30)->wallType = 3;
+    check("...but not when already in the party's row", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 25, 30) == MonsterMoveNone &&
+                                                             monsterGetU16(m, MonsterFieldWorldX) == 30);
+
+    walkSetup(m, 30, 30);
+    check("one row from the party it tries the vertical step first", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 36, 31) == MonsterMoveStepped &&
+                                                                         monsterGetU16(m, MonsterFieldWorldY) == 31 && monsterGetU16(m, MonsterFieldWorldX) == 30);
+    walkSetup(m, 30, 30);
+    walkCell(30, 31)->wallType = 3;
+    check("...falling back to the horizontal one", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 36, 31) == MonsterMoveStepped &&
+                                                       monsterGetU16(m, MonsterFieldWorldX) == 31 && monsterGetU16(m, MonsterFieldWorldY) == 30);
+
+    walkSetup(m, 30, 30);
+    check("a step onto the party's cell is combat, nothing moves", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 31, 30) == MonsterMoveEngaged &&
+                                                                       monsterGetU16(m, MonsterFieldWorldX) == 30 && (walkCell(30, 30)->flags & 0x400));
+    walkSetup(m, 30, 30);
+    check("on the party's own cell nothing happens", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 30, 30) == MonsterMoveNone);
+
+    walkSetup(m, 30, 30);
+    walkCell(31, 30)->flags = 0x2000;
+    monsterSetU16(m, MonsterFieldAwareness, 0x10);
+    check("a door-passing monster covers two cells and lands on the party's cell as combat", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 32, 30) == MonsterMoveEngaged);
+    walkSetup(m, 30, 30);
+    walkCell(31, 30)->flags = 0x2000;
+    monsterSetU16(m, MonsterFieldAwareness, 0x10);
+    check("...or past the party's column with the hop", monsterWalkTowardParty(m, GameYendor2, &g_walkGrid, 40, 30) == MonsterMoveStepped && monsterGetU16(m, MonsterFieldWorldX) == 32);
+}
+
+static void testFullTurn(void) {
+    uint8_t m[MonsterRecordSize];
+    RandomState rng;
+    randomStart(&rng, 1, 1);
+    walkSetup(m, 30, 30);
+    MonsterFullTurn t = monsterPoolTakeTurn(m, GameYendor2, &g_map, &g_walkGrid, NULL, 0, NULL, 36, 36, &rng);
+    check("an unaware monster neither approaches nor walks", t.turn == MonsterTurnSkipped && t.move == MonsterMoveNone && monsterGetU16(m, MonsterFieldWorldX) == 30);
+    walkSetup(m, 30, 30);
+    monsterSetU16(m, MonsterFieldState, MonsterStateAware);
+    monsterSetU16(m, MonsterFieldApproachGate, 0);
+    t = monsterPoolTakeTurn(m, GameYendor2, &g_map, &g_walkGrid, NULL, 0, NULL, 36, 36, &rng);
+    check("with the approach gate closed the monster still walks toward the party", t.turn == MonsterTurnSkipped && t.move == MonsterMoveStepped &&
+                                                                                    monsterGetU16(m, MonsterFieldWorldX) == 31);
+}
+
 int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0);
     testAmbushThreshold();
@@ -298,6 +421,9 @@ int main(void) {
     testProcessSlotExpiresAndRemoves();
     testProcessSlotOngoingIsSkipped();
     testProcessSlotApproachGates();
+    testStepBlocked();
+    testWalk();
+    testFullTurn();
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

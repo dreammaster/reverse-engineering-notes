@@ -6551,6 +6551,18 @@ actually gets created — see the "side trap"/ambush section above for
 what's still open there. `TickMonsterTimer`'s state machine is now
 covered too — see below.
 
+### Monster walking (`IsMonsterStepBlocked`, the tail of `ProcessLevelMonsters`; `monsterpool.c`; decoded 2026-10-04)
+
+Correcting the notes above: the ambush check does not end a monster's turn. Unless it triggers, the monster (aware, timer idle,
+whether or not the approach gate/busy flag let the ambush roll run) clears its direction bits (`+0xE &= 0xE0FF`) and **walks one cell
+toward the party**: vertical first when it is one row above/below the party, else horizontal toward the party's column, else vertical;
+a blocked step retries the other axis once. A free step onto the party's cell starts combat (the record is copied into a combat slot);
+otherwise the record's position, `+6` cell offset and the grid's cell flag `0x400`/occupant word move. `IsMonsterStepBlocked`: cell flags
+`0xC00` always block; `0x6000` (a door) needs awareness trait `0x10` and the monster then hops **two** cells; the special wall range
+(Chapter 2 types 6-11, Chapter 3 200-299) needs `0x14` (also a two-cell hop); wall types 0-1 (water) need `0x1A`; Chapter 2 then blocks
+floor types 0x27-0x2A, lets trait `0x10` through, and needs `0x08` for floor 0x25; Chapter 3 instead blocks everything with trait `0x02`;
+finally the player's `ClassifyFloorType`/`IsCellTypeImpassable` pair decides.
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "movement.h"
+
 static uint8_t *spawnFlagByte(SaveGame *save, unsigned typeId) {
     return saveGameRecord(save, SaveSectionMonsterSpawnFlags, typeId / 8);
 }
@@ -331,4 +333,143 @@ MonsterTurnOutcome monsterPoolProcessSlot(uint8_t *record, GameKind game, const 
 
     monsterApproachParty(record, game, map, partyWorldX, partyWorldY, rng);
     return MonsterTurnApproached;
+}
+
+bool monsterStepBlocked(GameKind game, const DungeonGridCell *target, uint16_t traits, bool *hopsTwo) {
+    *hopsTwo = false;
+    if (!target || (target->flags & 0x0C00)) {
+        return true;
+    }
+    if (target->flags & 0x6000) {
+        if (!(traits & 0x10)) {
+            return true;
+        }
+        *hopsTwo = true;
+        return false;
+    }
+    uint16_t wall = target->wallType, floor = target->floorType;
+    if (movementIsSpecialWallType(game, wall)) {
+        if (traits & 0x14) {
+            *hopsTwo = true;
+            return false;
+        }
+        return true;
+    }
+    if (wall <= 1) {
+        return !(traits & 0x1A);
+    }
+    if (game == GameYendor3) {
+        if (traits & 0x02) {
+            return true;
+        }
+    } else {
+        if (floor >= 0x27 && floor <= 0x2A) {
+            return true;
+        }
+        if (traits & 0x10) {
+            return false;
+        }
+        if (floor == 0x25) {
+            return !(traits & 0x08);
+        }
+    }
+    if (movementClassifyFloorType(game, wall) != MovementFloorNormal) {
+        return true;
+    }
+    return movementIsFloorTypeImpassable(game, floor);
+}
+
+MonsterMoveOutcome monsterWalkTowardParty(uint8_t *record, GameKind game, DungeonGrid *grid, int partyWorldX, int partyWorldY) {
+    int x = monsterGetU16(record, MonsterFieldWorldX), y = monsterGetU16(record, MonsterFieldWorldY);
+    uint16_t traits = monsterGetU16(record, MonsterFieldAwareness);
+    monsterSetU16(record, MonsterFieldWound, (uint16_t)(monsterGetU16(record, MonsterFieldWound) & 0xE0FF));
+
+    enum { Horizontal, Vertical, VerticalFirst } attempt;
+    if (y == partyWorldY) {
+        attempt = Horizontal;
+    } else if (y + 1 == partyWorldY || y - 1 == partyWorldY) {
+        attempt = VerticalFirst;
+    } else {
+        attempt = Horizontal;
+    }
+    for (unsigned guard = 0; guard < 4; guard++) {
+        int dx = 0, dy = 0;
+        if (attempt == Horizontal) {
+            if (partyWorldX == x) {
+                if (partyWorldY == y) {
+                    return MonsterMoveNone; /* already on the party's cell */
+                }
+                attempt = Vertical;
+                continue;
+            }
+            dx = partyWorldX < x ? -1 : 1;
+        } else {
+            dy = partyWorldY < y ? -1 : 1;
+        }
+        const DungeonGridCell *target = dungeonGridCellAtWorldPos(grid, x + dx, y + dy);
+        bool hops;
+        if (!monsterStepBlocked(game, target, traits, &hops)) {
+            if (hops) {
+                dx *= 2;
+                dy *= 2;
+            }
+            int nx = x + dx, ny = y + dy;
+            if (nx == partyWorldX && ny == partyWorldY) {
+                return MonsterMoveEngaged;
+            }
+            DungeonGridCell *from = (DungeonGridCell *)dungeonGridCellAtWorldPos(grid, x, y);
+            DungeonGridCell *to = (DungeonGridCell *)dungeonGridCellAtWorldPos(grid, nx, ny);
+            if (from) {
+                from->flags &= (uint16_t)~0x0400;
+                from->reserved4 = 0;
+            }
+            if (to) {
+                to->flags |= 0x0400;
+                to->reserved4 = monsterGetU16(record, MonsterFieldType);
+            }
+            monsterSetU16(record, MonsterFieldWorldX, (uint16_t)nx);
+            monsterSetU16(record, MonsterFieldWorldY, (uint16_t)ny);
+            monsterSetU16(record, MonsterFieldCell,
+                          (uint16_t)((ny - grid->originRow) * DungeonGridSize * 8 + (nx - grid->originCol) * 8));
+            return MonsterMoveStepped;
+        }
+        if (attempt == VerticalFirst) {
+            attempt = Horizontal;
+        } else if (attempt == Horizontal) {
+            if (partyWorldY == y) {
+                return MonsterMoveNone;
+            }
+            attempt = Vertical;
+        } else {
+            return MonsterMoveNone;
+        }
+    }
+    return MonsterMoveNone;
+}
+
+MonsterFullTurn monsterPoolTakeTurn(uint8_t *record, GameKind game, const WorldMap *map, DungeonGrid *grid, uint8_t *globalFlags,
+                                    size_t globalFlagsSize, MonsterRewardStaging *staging, int partyWorldX, int partyWorldY, RandomState *rng) {
+    MonsterFullTurn result = {MonsterTurnSkipped, MonsterMoveNone};
+    if ((monsterGetU16(record, MonsterFieldState) & MonsterStateAware) == 0) {
+        return result;
+    }
+    MonsterTickResult tick = monsterTickTimer(record);
+    if (tick == MonsterTickExpired) {
+        monsterGrantRewards(staging, record, globalFlags, globalFlagsSize);
+        monsterPoolRemove(record, grid);
+        result.turn = MonsterTurnRemoved;
+        return result;
+    }
+    if (tick == MonsterTickOngoing) {
+        return result;
+    }
+    if (monsterGetU16(record, MonsterFieldApproachGate) != 0 && !(monsterGetU16(record, MonsterFieldState) & MonsterStateBusy)) {
+        monsterApproachParty(record, game, map, partyWorldX, partyWorldY, rng);
+        result.turn = MonsterTurnApproached;
+        if (monsterGetU16(record, MonsterFieldWound) & MonsterWoundAmbushPending) {
+            return result;
+        }
+    }
+    result.move = monsterWalkTowardParty(record, game, grid, partyWorldX, partyWorldY);
+    return result;
 }

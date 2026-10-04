@@ -197,8 +197,8 @@ MonsterObstacle monsterClassifyObstacle(GameKind game, uint16_t wallType, uint16
  * RandomInRange(100) against monsterAmbushThreshold(awareness); success
  * sets MonsterWoundAmbushPending too (consumed by the "side trap"/ambush
  * presentation pipeline, not reimplemented here). The monster's own
- * position is never changed by this check -- it only ever "notices" the
- * party from where it already stands, never actually steps closer.
+ * position is never changed by this check itself (the step toward the party
+ * is monsterWalkTowardParty, the next stage of the same turn).
  *
  * **A confirmed Chapter 2 bug, not replicated here**: Chapter 2's own
  * code only explicitly bounds this scan to 5 steps when the monster is
@@ -235,9 +235,46 @@ void monsterApproachParty(uint8_t *record, GameKind game, const WorldMap *map, i
  */
 typedef enum { MonsterTurnSkipped, MonsterTurnRemoved, MonsterTurnApproached } MonsterTurnOutcome;
 
+/*
+ * The rest of ProcessLevelMonsters' per-monster turn (yendor2.asm:33534 on, Chapter 3 identical in structure): unless the ambush
+ * check above triggered (MonsterWoundAmbushPending), the monster -- whenever it is aware, not timed out, and whether or not the
+ * approach gate or busy flag let the ambush check run -- clears its MonsterWound direction bits (0x1F00) and takes one step toward
+ * the party along the grid. The step is chosen thus: if the party is in an adjacent row (the monster is one row above/below), try the
+ * vertical step first (a "vertical-first" attempt); otherwise a horizontal step toward the party's column if it is in another
+ * column; failing that (same column) a vertical step. A blocked step falls back to the other axis once (vertical-first -> horizontal ->
+ * vertical; horizontal -> vertical); a blocked vertical step ends the turn. A free step whose target is the party's own cell starts
+ * combat (MonsterMoveEngaged -- the caller copies the record into a combat slot); otherwise the record and the grid's "monster here"
+ * markers (cell flag 0x400 and its occupant word) move to the new cell (MonsterMoveStepped).
+ */
+typedef enum { MonsterMoveNone, MonsterMoveStepped, MonsterMoveEngaged } MonsterMoveOutcome;
+
+/*
+ * IsMonsterStepBlocked (yendor2.asm:49530, Chapter 3 :37868): can a monster with awareness traits `traits` (MonsterFieldAwareness bits
+ * 0x10 passes closed doors, 0x14 crosses the special wall range, 0x1A crosses water-type walls (types 0-1), 0x8 crosses floor type
+ * 0x25 [Chapter 2]; Chapter 3: bit 2 forbids ordinary terrain) enter `target`? Cells with flags 0xC00 (another monster/object) always
+ * block. *hopsTwo is set when the monster passes a door or the special wall range: the step then covers two cells.
+ */
+bool monsterStepBlocked(GameKind game, const DungeonGridCell *target, uint16_t traits, bool *hopsTwo);
+
+MonsterMoveOutcome monsterWalkTowardParty(uint8_t *record, GameKind game, DungeonGrid *grid, int partyWorldX, int partyWorldY);
+
 MonsterTurnOutcome monsterPoolProcessSlot(uint8_t *record, GameKind game, const WorldMap *map, DungeonGrid *grid,
                                            uint8_t *globalFlags, size_t globalFlagsSize,
                                            MonsterRewardStaging *staging, int partyWorldX, int partyWorldY,
                                            RandomState *rng);
+
+/*
+ * The whole per-monster turn of ProcessLevelMonsters in order: not aware -> nothing; the timer (expired: rewards + removal; still
+ * running: the turn ends); the ambush check when the approach gate is nonzero and the monster is not busy, which ends the turn
+ * when it triggers; then the walk toward the party. `turn` is monsterPoolProcessSlot's classification (Skipped also covers an idle
+ * monster that only walked), `move` the walk's outcome.
+ */
+typedef struct {
+    MonsterTurnOutcome turn;
+    MonsterMoveOutcome move;
+} MonsterFullTurn;
+
+MonsterFullTurn monsterPoolTakeTurn(uint8_t *record, GameKind game, const WorldMap *map, DungeonGrid *grid, uint8_t *globalFlags,
+                                    size_t globalFlagsSize, MonsterRewardStaging *staging, int partyWorldX, int partyWorldY, RandomState *rng);
 
 #endif
