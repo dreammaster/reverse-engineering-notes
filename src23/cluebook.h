@@ -75,4 +75,16 @@ bool clueListCanPageDown(const ClueList *list);
 unsigned clueListPageKey(ClueList *list, bool down);
 unsigned clueListRowKey(ClueList *list, bool down);
 
+/*
+ * HandleClueCategorySelection (yendor2.asm, RunClueEntryMenu's input): turns a key or a click into g_currentCommandCode and updates the navigation
+ * bar flags. Codes: 0 nothing, 1 the entry list ("d LIST" hint, flag 0x40 must be set), 2-8 a category tab (the tab's flag bit is 0x8000 >> (code - 2); the
+ * seventh, code 8, is EXIT), 9 the map ("MAP c" hint, flag 0x20 must be set), ClueCommandHelp (-1) the help screen (Tab; the tab flags are cleared by
+ * 0x9F first). Keys (an upper-case ASCII key, or an extended scan code with `extended`): Escape 8, K 1, P 9, Tab help, F1-F6 (0x3B-0x40) 2-7. A click
+ * passes the UiRegionsClueCategories result (1 = the list hint, 2-8 the tabs, 9 the map hint) as `region`. Choosing the tab that is already selected is
+ * ignored (code 0); a new tab replaces the selection (all of bits 0x7FFF but the low nine are cleared first) and plays sound 1.
+ */
+enum { ClueCommandHelp = -1 };
+
+int clueCategoryCommand(bool extended, uint8_t key, unsigned region, uint16_t *navFlags, bool *playSound);
+
 #endif

@@ -169,3 +169,42 @@ unsigned clueListRowKey(ClueList *list, bool down) {
     }
     return 2;
 }
+
+int clueCategoryCommand(bool extended, uint8_t key, unsigned region, uint16_t *flags, bool *playSound) {
+    int command = 0;
+    *playSound = false;
+    if (key != 0) {
+        if (!extended && key == 0x1B) {
+            command = 8;
+        } else if (!extended && key == 'K') {
+            return (*flags & ClueNavHintList) ? 1 : 0;
+        } else if (!extended && key == 'P') {
+            return (*flags & ClueNavHintMap) ? 9 : 0;
+        } else if (!extended && key == 9) {
+            *flags &= 0xFF9F;
+            return ClueCommandHelp;
+        } else if (extended && key >= 0x3B && key <= 0x40) {
+            command = key - 0x3B + 2;
+        } else {
+            return 0;
+        }
+    } else if (region == 0) {
+        return 0;
+    } else if (region == 1) {
+        return (*flags & ClueNavHintList) ? 1 : 0;
+    } else if (region == 9) {
+        return (*flags & ClueNavHintMap) ? 9 : 0;
+    } else {
+        command = (int)region;
+    }
+    if (command < 2 || command > 8) {
+        return 0;
+    }
+    uint16_t bit = (uint16_t)(0x8000u >> (command - 2));
+    if (*flags & bit) {
+        return 0;
+    }
+    *flags = (uint16_t)((*flags & 0x1FF) | bit);
+    *playSound = true;
+    return command;
+}
