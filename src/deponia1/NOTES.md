@@ -2817,6 +2817,26 @@ Confirmed (asm 586479-595389 TVisionaireObject, 597612-600388 TVisObjRef,
 - TVisionaire is still a stub: GetObjectById, GetTable, RemoveObject,
   GetObjectsLinkedTo, GetMappedId, AddLink/RemoveLink... are next.
 
+## TVisionaireGame and the table registry
+
+`TVisionaireGame` now derives from `TVisionaire` (so TGameControl's `_visionaire`
+and `_visionaireGame` are the same object, as the earlier call sites suggested).
+Confirmed (asm 1499937-1504534, 1480082-1480237):
+
+- The constructor builds `TVisionaire(TTGame::GetTypeGroup(), 0xBA)`, registers the
+  XML names, sizes the registry to 39 tables and calls `AddTable` 39 times (the
+  descriptions, table numbers, "eXxx"/singular/plural names, active-link fields
+  and flags were read off the binary; table 21 is Loading, 24-26 the active
+  text/action/animation tables). Then `CompleteTables`, a once-per-run
+  `InitWithVersion(186)` and `NewGame`.
+- `InitWithVersion` allocates/clears the 0x348-entry field lookup table and runs
+  every record `InitType` (all of which are generated; see vstables/records.cpp).
+- `NewGame` creates the main object and runs `TTGame::OnCreate` (still an empty
+  stub - editor-only defaults, including a random game id).
+
+Not done yet: loading/saving (LoadDataGame, LoadSaveGame, BeforeSave, the XML and
+binary project readers), UpdateVersion, clipboard methods.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
