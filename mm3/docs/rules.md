@@ -170,3 +170,5 @@ member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit 
 * The day counter runs 0-99; passing 100 wraps it and increments `Party_year` and **clears game flags 6Fh-75h (111-117)**, the seven once-a-year event flags.
 * On a day where `day mod 10 == 1` (or when more than 1440 minutes were added at once) and the day has changed, the Blacksmith's stock is rebuilt (`resetBlacksmithWares`) and the bank pays interest:
   `GiveBankInterest` adds 1 % (value / 100, integer) of the banked gold and of the banked gems -- so every 10 days, not every day.
+
+Age (`getAge`, `16E06`-ish): `min(254, Party_year - birthYear) + tempAge`, where `birthYear` is the word at char +129h and `tempAge` the byte at +26h (raised by monsters and Resurrect); with the "permanent" argument set the temporary part is left out.
