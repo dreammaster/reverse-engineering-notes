@@ -208,3 +208,24 @@ int clueCategoryCommand(bool extended, uint8_t key, unsigned region, uint16_t *f
     *playSound = true;
     return command;
 }
+
+ClueScreen clueScreenForCommand(int command) {
+    switch (command) {
+    case 8:
+        return ClueScreenExit;
+    case 2:
+        return ClueScreenMaps;
+    case 3:
+        return ClueScreenMonsters;
+    case 4:
+        return ClueScreenSpells;
+    case 5:
+        return ClueScreenMagicUsers;
+    case 6:
+        return ClueScreenItems;
+    case 7:
+        return ClueScreenWalkThrough;
+    default:
+        return ClueScreenHelp;
+    }
+}

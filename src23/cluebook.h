@@ -87,4 +87,21 @@ enum { ClueCommandHelp = -1 };
 
 int clueCategoryCommand(bool extended, uint8_t key, unsigned region, uint16_t *navFlags, bool *playSound);
 
+/*
+ * ShowClueBook (F8; yendor2.asm:1257) opens the book with music track 21, the open animation (PlayClueBookOpenAnimation: category 0 picture 12 faded
+ * in on a special palette) and the help screen, then loops on the category tab commands above: tab command -> what runs.
+ */
+typedef enum {
+    ClueScreenExit,
+    ClueScreenMaps,        /* command 2, category 1: the list of map locations, then the map page (cluemap.h) */
+    ClueScreenMonsters,    /* 3, category 2: monster list, then the statistics page (cluemonster.h) */
+    ClueScreenSpells,      /* 4, category 3: spell list, then the spell page (cluespell.h) */
+    ClueScreenMagicUsers,  /* 5, category 4: the magic user lists (spell page per class) */
+    ClueScreenItems,       /* 6, category 11: the item groups (12-17), then the item pages (clueitem.h) */
+    ClueScreenWalkThrough, /* 7: the paged hint book (cluepaged.h) */
+    ClueScreenHelp         /* anything else */
+} ClueScreen;
+
+ClueScreen clueScreenForCommand(int command);
+
 #endif
