@@ -49,6 +49,7 @@ TGameControl::TGameControl() {
 	_sceneControl = &_ownedSceneControl;
 
 	_visionaireGame = new TVisionaireGame();
+	_visionaire = _visionaireGame;
 
 	// Confirmed: the constructor makes *this* the global game-controller
 	// singleton itself, rather than leaving that to the caller.

@@ -4,11 +4,10 @@
 // exposed via GetVisionaire()/GetGameSystem().
 #pragma once
 
+#include "datastruct/visionaire.h"
 #include "datastruct/visobjref.h"
 
-class TVList;
-
-class TVisionaireGame {
+class TVisionaireGame : public TVisionaire {
 public:
 	TVisionaireGame();
 
@@ -17,27 +16,10 @@ public:
 	// InitXMLNamesIntern() has registered ids 1-99; runs once. Called by the
 	// constructor.
 	static void InitXMLNames();
-
-	// Confirmed called directly on whatever GetGameSystem()/GetVisionaire()
-	// returns, with the exact same call shape TVisionaire::GetGame()/
-	// GetEmptyObject() use everywhere else in this codebase (e.g.
-	// TGObjectManager::ResetEventInfo/GetCurrentObject, Deponia_Linux.asm
-	// lines 187267-187315, 189315-189352) - another data point for the
-	// standing "may really be the same underlying object" gap noted above
-	// (see LoadDataGame/LoadSaveGame's own comments on TVisionaire),
-	// rather than behavior genuinely new to this class.
-	TVisObjRef GetGame() const;
-	TVisObjRef GetEmptyObject() const;
-	// Confirmed call shape only (TGScene::InitActionAreas(), Deponia_Linux.asm
-	// line 169215+) - identical to TVisionaire::GetList() (datastruct/
-	// visionaire.h), the same standing "may really be the same object" gap
-	// as GetGame() above.
-	void GetList(int fieldId, TVList &outList, bool flag) const;
-	// Confirmed call shape only (TMSavegame::SetActive()/CheckVisPaths(),
-	// Deponia_Linux.asm lines 160840-162327) - loads a savegame file into this
-	// object; the same standing "same object as TVisionaire" gap as GetList()
-	// above (see TVisionaire::LoadSaveGame()).
-	bool LoadSaveGame(const wxFileName &file, const wxString &extra);
+	/** Builds the field lookup table and every record type. */
+	void InitWithVersion(int versionLow);
+	/** Creates the main object and runs its default-value callback. */
+	bool NewGame();
 };
 
 // Confirmed a free function, not a member (TGameControl::Save, asm line
