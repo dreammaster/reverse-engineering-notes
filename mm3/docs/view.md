@@ -39,6 +39,6 @@ The monsters seen in the first rows (`byte_33311..` and the row bytes `34B92..`)
 `sub_17439` turns each into one draw record, using `Maze_monAnim`-style phases that `renderIndoorView` advances every frame (modulo the frame counts).  The list is handed to the video module by the code following (not yet followed).
 Animated overlays (torch, water) use the small phase counters `word_28810`/`28812`/`byte_2884D` that `renderIndoorView` increments modulo 18/18/3 each frame.
 
-The scene buffer is 4000 bytes (2000 words, `memset(D66Eh, 0, FA0h)` in `moveMonsters`' caller): after the record writers (`sub_17439` monsters, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D` wall/object layers, `sub_1B6D1` HUD pieces -- all call-free list writers) have run,
+The scene buffer is 4000 bytes (2000 words; `updateAutomap` clears it with `memset(D66Eh, 0, FA0h)`): after the record writers (`sub_17439` monsters, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D` wall/object layers, `sub_1B6D1` HUD pieces -- all call-free list writers) have run,
 `renderIndoorView` passes the end pointer to `checkDrawListOverflow` (`1B198`), which converts it to a length in words, keeps the maximum seen (`word_29708`) and shows a message if the list exceeds `7CFh` words.
-The video module reads the list from this fixed location when the scene is shown (not through an argument).
+How the video module receives the list was not traced (probably it reads the fixed location when the scene is shown; that is a guess).
