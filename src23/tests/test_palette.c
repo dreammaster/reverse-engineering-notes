@@ -71,6 +71,40 @@ static void testCycle(void) {
     check("phase 3 by three", memcmp(frame, t + 9, 3) == 0 && memcmp(frame + 3, t, 9) == 0);
 }
 
+static void testFullFades(void) {
+    uint8_t master[PaletteBytes], p[PaletteBytes], out[PaletteBytes];
+    for (unsigned i = 0; i < PaletteBytes; i++) {
+        master[i] = (uint8_t)(i % 64);
+    }
+    memcpy(p, master, sizeof(p));
+    unsigned rounds = 0;
+    while (paletteFadeOutRound(p)) {
+        rounds++;
+    }
+    bool black = true;
+    for (unsigned i = 0; i < PaletteBytes; i++) {
+        black = black && p[i] == 0;
+    }
+    check("a fade out takes 63 rounds to black (and stops when nothing changes)", rounds == 63 && black);
+    memcpy(p, master, sizeof(p));
+    paletteFadeOutRound(p);
+    check("each round drops every nonzero component by one", p[63] == 62 && p[0] == 0 && p[1] == 0 && p[2] == 1);
+
+    paletteFadeInFrame(master, 1, out);
+    check("fade in round 1: only the brightest components appear (63 -> 1)", out[63] == 1 && out[62] == 0 && out[0] == 0);
+    paletteFadeInFrame(master, 30, out);
+    check("round 30: component 40 shows 40 - 63 + 30 = 7, 10 shows 0", out[40] == 7 && out[10] == 0 && out[63] == 30);
+    paletteFadeInFrame(master, 63, out);
+    check("round 63 is the master palette", memcmp(out, master, sizeof(out)) == 0);
+
+    memset(p, 0, sizeof(p));
+    unsigned up = 0;
+    while (paletteFadeUpRound(p, master)) {
+        up++;
+    }
+    check("fading up toward the master takes as many rounds as its brightest component", up == 63 && memcmp(p, master, sizeof(p)) == 0);
+}
+
 static void testReal(GameKind game, const char *envName, const char *defaultDir, const char *label) {
     const char *dir = getenv(envName);
     char path[512];
@@ -97,6 +131,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
 int main(void) {
     testFade();
     testCycle();
+    testFullFades();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: the first four palette blocks hold 6-bit values");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: the first four palette blocks hold 6-bit values");
 

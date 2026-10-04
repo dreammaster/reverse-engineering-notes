@@ -36,3 +36,32 @@ void paletteCycleFrame(const uint8_t block2[PaletteBytes], unsigned phase, uint8
         }
     }
 }
+
+bool paletteFadeOutRound(uint8_t palette[PaletteBytes]) {
+    bool changed = false;
+    for (unsigned i = 0; i < PaletteBytes; i++) {
+        if (palette[i] > 0) {
+            palette[i]--;
+            changed = true;
+        }
+    }
+    return changed;
+}
+
+void paletteFadeInFrame(const uint8_t master[PaletteBytes], unsigned round, uint8_t out[PaletteBytes]) {
+    for (unsigned i = 0; i < PaletteBytes; i++) {
+        int value = (int)master[i] - FadeRounds + (int)round;
+        out[i] = (uint8_t)(value < 0 ? 0 : value > master[i] ? master[i] : value);
+    }
+}
+
+bool paletteFadeUpRound(uint8_t palette[PaletteBytes], const uint8_t master[PaletteBytes]) {
+    bool changed = false;
+    for (unsigned i = 0; i < PaletteBytes; i++) {
+        if (palette[i] < master[i]) {
+            palette[i]++;
+            changed = true;
+        }
+    }
+    return changed;
+}

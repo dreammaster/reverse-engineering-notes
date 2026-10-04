@@ -41,4 +41,24 @@ bool dayNightFadeStep(DayNightFade *fade, const uint8_t block2[PaletteBytes], ui
 /* The 16 colours (48 bytes) for DAC entries 0xD0-0xDF in cycle phase 0-3. */
 void paletteCycleFrame(const uint8_t block2[PaletteBytes], unsigned phase, uint8_t out[CycleBytes]);
 
+/*
+ * TriggerFullPaletteFadeOut / TriggerFullPaletteFadeIn (yendor2.asm:38133 / :38152) are StepPaletteFadeRange (:38171) with a round
+ * count of 63 over all 256 colours; one round writes the DAC once (SetPaletteRange):
+ *   fade out (mode 0): from the DAC's current palette, every nonzero component loses 1 per round (so black after 63 rounds; it stops
+ *     early once nothing changes);
+ *   fade in (mode 1): round r (1-63) shows each component as clamp(target - 63 + r, 0, target) of the master palette (so the brightest
+ *     components appear first), reaching the master palette after round 63;
+ *   modes 2/4 move the current palette up toward the master palette by 1 per round (skipping components already at or above it).
+ */
+enum { FadeRounds = 63 };
+
+/* One fade-out round on a 768-byte palette; false when every component is already 0 (nothing changed). */
+bool paletteFadeOutRound(uint8_t palette[PaletteBytes]);
+
+/* The palette shown after fade-in round `round` (1-63). */
+void paletteFadeInFrame(const uint8_t master[PaletteBytes], unsigned round, uint8_t out[PaletteBytes]);
+
+/* One round of StepPaletteFadeRange modes 2/4: every component below the master's gains 1; false when none changed. */
+bool paletteFadeUpRound(uint8_t palette[PaletteBytes], const uint8_t master[PaletteBytes]);
+
 #endif
