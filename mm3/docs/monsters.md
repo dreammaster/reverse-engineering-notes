@@ -151,3 +151,10 @@ For the status effects (`SpellAttack_type` 7-16) the spell only works on monster
 * **Paralyze (10)**: 2 Goblin, 3 Orc Warrior, 12 Ninja, 21 Scorpia, 24 Mini Dragon, 28 Castle Guard, 31 Evil Ranger, 32 Shadow Rogue, 37 Archer, 40 Cleric of Moo, 45 Draconi, 46 Sonic Ninja, 49 Paladin, 50 Dark Pegasus, 52 Sorcerer, 55 Troll, 57 Dinosaur, 59 Black Knight, 62 Priest of Moo, 63 Toxic Worm, 65 Cyclops, 68 Jouster, 69 Wizard, 78 Minotaur
 * **Finger of Death (11)**: 0 Vampire Bat, 2 Goblin, 3 Orc Warrior, 7 Moose Rat, 11 Mad Dwarf, 12 Ninja, 14 Ogre, 18 Sprite, 20 Cobra Fiend, 21 Scorpia, 23 Cursed Fool, 24 Mini Dragon, 28 Castle Guard, 30 Pirana, 31 Evil Ranger, 32 Shadow Rogue, 34 Wicked Witch, 37 Archer, 39 Barbarian, 41 Fire Lizard, 46 Sonic Ninja, 49 Paladin
 * **Silence (16)**: 5 Screamer, 23 Cursed Fool, 34 Wicked Witch, 40 Cleric of Moo, 52 Sorcerer
+
+Other special spell types in `attack`:
+* 11 Finger of Death: a monster in its list takes damage equal to its **current** hit points (instant kill, no saving throw).
+* 12 Holy Word and 14 Turn Undead only work on the nine undead listed in the first nine bytes of table `4BD8h` (4 Skeleton, 9 Zombie, 27 Ghoul, 29 Phantom, 44 Ghost, 51 Reaper, 53 Lich, 61 Mummy, 71 Vampire): Holy Word does damage equal to their full `MONHP`, Turn Undead 25 damage.
+* 13 Mass Distortion: half of each monster's current hit points (at least 1).
+* 15 Disintegrate: damage equal to the monster's current hit points, but a monster with more than 150 gets only 50 energy damage (type 6).
+* Any other damage type (0-6) is plain damage (`SpellAttack_damage`) reduced by the monster's resistance (`getMonsterResistance`).
