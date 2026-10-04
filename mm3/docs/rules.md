@@ -226,3 +226,9 @@ Age (`getAge`, `16E06`-ish): `min(254, Party_year - birthYear) + tempAge`, where
 
 Not possible on outdoor maps (`Maze_wrapMode` != 0).  Sound 19h is played, the first **two** members who can act (worst condition not asleep/paralysed/unconscious/dead/stone/eradicated: a switch on `worstCondition - 8`) each take 2 hit points of damage (`subtractHitPoints(char, 2)`) whether or not it works, and the bash succeeds when
 `(Might of the first basher + Might of the second, raw `getStat(char, 0)` values) + rnd(1, 30)` reaches the page header threshold for the wall in front: header byte 1Bh for wall style 2, 1Ch for style 4, 1Dh for any other style (`data-files.md`).  On success the wall is opened with `mazeSetBits(..., 5)` on both sides of the wall.
+
+## Chests and objects (`trapOrLockEvent`, `3D8CF`-ish; by code reading)
+
+When the party interacts with a map object (`byte_34BB6` = object slot; its picture id is looked up in an 8-entry table in the overlay) the picture selects a trap kind code (14h, 2Ah, 2Bh ... ) and the chest is "armed" once (`byte_37383`).
+`sub_3BE18` asks who will open it (cancel = leave, `byte_37383 = FFh`).  Then with probability 1/4 (`rnd(1,4) == 1`) the trap fires: `giveCharDamage(char, rnd(0,6), page header byte 1Eh)`.  The opener then rolls
+`getThievery(char) + rnd(1,20)` against the page's lock difficulty (header byte 12h) and, depending on the object kind, the loot is produced with `generateItem`, gold from `giveTake`, or a message.  The details of the per-kind loot were not traced.
