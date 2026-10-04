@@ -77,9 +77,12 @@ typedef struct {
  * frame base + 9 once if MonsterStateHitFlashPending, which it clears; while MonsterStateAttacking at least base + 6) at the
  * sprite layer MonsterFieldAnimSet (10 = category 3 pictures for MonsterFlagAltSprite monsters, 13 = category 2), transparent,
  * recoloured by MonsterFieldPalette when MonsterFlagRemapPalette is set, then the timed-affliction overlay picture
- * (MonsterFieldTickTarget) if MonsterStateTimedAffliction. Not drawn: the damage splash and the hit-flash colour effect.
+ * (MonsterFieldTickTarget) if MonsterStateTimedAffliction, then, if state bit 8 (a hit just landed) is set, the damage splash: category 6
+ * picture 0x12 / 0x13 / 0x20 (Chapter 3: 0x18) for light / moderate (wound 0x4000) / severe (0x2000), at a spot set by the layer (x = -22, 25, 82, -7,
+ * 50 or 107 for layers 9-14; y = 34, or 8 for layer 12) plus the monster's own offsets [+0x68], [+0x6A], shaded by `splashShade` (the party's
+ * row), clearing state bit 8 and the wound bits 0xE000. Not drawn: the hit-flash colour effect (word_32984).
  */
-void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade);
+void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade, int8_t splashShade);
 
 /* ShiftPaletteShadeClamped: `colour` shifted by `delta` (an 8-bit signed delta). */
 uint8_t viewShadeColour(uint8_t colour, int8_t delta);

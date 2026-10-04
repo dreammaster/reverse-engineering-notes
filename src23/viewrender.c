@@ -337,7 +337,7 @@ static unsigned monsterWord(const uint8_t *monster, unsigned offset) {
     return (unsigned)monster[offset] | ((unsigned)monster[offset + 1] << 8);
 }
 
-void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade) {
+void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, int8_t shade, int8_t splashShade) {
     unsigned flags = monsterWord(monster, 0x92), state = monsterWord(monster, 0x0C);
     unsigned base = monsterWord(monster, 0x4C), frame = monsterWord(monster, 0x08), layer = monsterWord(monster, 0x0A);
     unsigned category = (flags & 1) ? 3 : 2;
@@ -355,6 +355,41 @@ void viewDrawMonster(const ViewRenderer *r, unsigned depth, uint8_t *monster, in
     monster[0x18] = monster[0x19] = 0;
     if (state & 0x10) {
         drawSpriteRemapped(r, layer, category, monsterWord(monster, 0x1A), depth, shade, true, 0, NULL);
+    }
+    if (state & 8) {
+        state &= ~8u;
+        monster[0x0C] = (uint8_t)state;
+        monster[0x0D] = (uint8_t)(state >> 8);
+        int x, y = 0x22;
+        switch (layer) {
+        case 9:
+            x = -0x16;
+            break;
+        case 10:
+            x = 0x19;
+            break;
+        case 11:
+            x = 0x52;
+            break;
+        case 12:
+            x = -7;
+            y = 8;
+            break;
+        case 13:
+            x = 0x32;
+            break;
+        default:
+            x = 0x6B;
+            break;
+        }
+        x += (int16_t)monsterWord(monster, 0x68);
+        y += (int16_t)monsterWord(monster, 0x6A);
+        unsigned wound = monsterWord(monster, 0x0E);
+        unsigned id = (wound & 0x2000) ? (r->game == GameYendor3 ? 0x18 : 0x20) : (wound & 0x4000) ? 0x13 : 0x12;
+        viewDrawPicture(r, CategoryFarWall, id, x, y, true, splashShade);
+        wound &= 0x1FFF;
+        monster[0x0E] = (uint8_t)wound;
+        monster[0x0F] = (uint8_t)(wound >> 8);
     }
 }
 
@@ -556,7 +591,7 @@ static void drawSideWall(const Scene *sc, unsigned index, unsigned neighbour, un
 
 static void drawCellMonster(const Scene *sc, unsigned index, unsigned row) {
     if (index >= 17 && index < 49 && sc->s->cellMonsters[index]) { /* TryTriggerMonsterEncounterAtCell: not the farthest row */
-        viewDrawMonster(sc->r, index, sc->s->cellMonsters[index], rowShade(sc->s, row));
+        viewDrawMonster(sc->r, index, sc->s->cellMonsters[index], rowShade(sc->s, row), rowShade(sc->s, 6));
     }
 }
 
@@ -605,7 +640,7 @@ static void drawVanishingPoint(const Scene *sc) {
     drawSideFeature(sc, 49, 6);
     for (unsigned i = 0; i < 3; i++) { /* RenderActiveMonsterSprites */
         if (sc->s->combatMonsters[i]) {
-            viewDrawMonster(r, 49, sc->s->combatMonsters[i], rowShade(sc->s, 6));
+            viewDrawMonster(r, 49, sc->s->combatMonsters[i], rowShade(sc->s, 6), rowShade(sc->s, 6));
         }
     }
 }

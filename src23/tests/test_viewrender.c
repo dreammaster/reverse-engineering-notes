@@ -177,16 +177,16 @@ static void testMonster(void) {
     m[0x08] = 52;
     m[0x0A] = 13;
     memset(g_picture, 0, sizeof(g_picture));
-    viewDrawMonster(&r, 20, m, 0);
+    viewDrawMonster(&r, 20, m, 0, 0);
     check("a monster is drawn at its layer's table entry for the cell, frame [+8], 0xFF/transparent mode", g_screen[40 * 320 + 30] == 0x35 && g_screen[40 * 320 + 31] == 0x45 &&
                                                                                                              g_screen[40 * 320 + 32] == 52);
     check("...two scanlines", g_screen[41 * 320 + 30] == 0x35 && g_screen[42 * 320 + 30] == 0);
 
     m[0x0C] = 2; /* hit flash pending */
-    viewDrawMonster(&r, 20, m, 0);
+    viewDrawMonster(&r, 20, m, 0, 0);
     check("a pending hit flash draws frame base + 9 once and clears the flag", g_screen[40 * 320 + 32] == 59 && m[0x0C] == 0 && m[0x08] == 52);
     m[0x0C] = 4; /* attacking */
-    viewDrawMonster(&r, 20, m, 0);
+    viewDrawMonster(&r, 20, m, 0, 0);
     check("an attacking monster is at least on frame base + 6 (and the record keeps it)", g_screen[40 * 320 + 32] == 56 && m[0x08] == 56);
     m[0x0C] = 0;
     m[0x08] = 52;
@@ -195,16 +195,25 @@ static void testMonster(void) {
     m[0x72] = 0x31; /* hue group 3 becomes 1 */
     m[0x73] = 0x4F; /* hue group 4 becomes transparent */
     memset(g_screen, 0, sizeof(g_screen));
-    viewDrawMonster(&r, 20, m, 0);
+    viewDrawMonster(&r, 20, m, 0, 0);
     check("MonsterFlagRemapPalette recolours a hue group and a target of 0xF makes it transparent", g_screen[40 * 320 + 30] == 0x15 && g_screen[40 * 320 + 31] == 0);
 
     m[0x92] = 0;
     m[0x0C] = 0x10;
     m[0x1A] = 99;
     memset(g_screen, 0, sizeof(g_screen));
-    viewDrawMonster(&r, 20, m, 0);
+    viewDrawMonster(&r, 20, m, 0, 0);
     check("a timed affliction draws its overlay picture over the monster", g_screen[40 * 320 + 32] == 99);
-    check("the shade delta darkens a monster", (viewDrawMonster(&r, 20, m, -1), g_screen[40 * 320 + 30] == viewShadeColour(0x35, -1)));
+    m[0x0C] = 8;
+    m[0x0E] = 0x00;
+    m[0x0F] = 0x40; /* wound 0x4000 */
+    m[0x68] = 0;
+    m[0x6A] = 0;
+    memset(g_screen, 0, sizeof(g_screen));
+    viewDrawMonster(&r, 20, m, 0, 0);
+    check("a hit splash (state bit 8) is category 6 picture 0x13 for a moderate wound at layer 13's spot (50, 34), and clears its bits",
+          g_screen[34 * 320 + 50 + 2] == 0x13 && m[0x0C] == 0 && m[0x0F] == 0);
+    check("the shade delta darkens a monster", (viewDrawMonster(&r, 20, m, -1, 0), g_screen[40 * 320 + 30] == viewShadeColour(0x35, -1)));
 }
 
 /* ---- real data ---- */
