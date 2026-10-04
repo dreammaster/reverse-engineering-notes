@@ -13,10 +13,18 @@
 // explanation for two unrelated-looking classes sharing one virtual slot.
 #pragma once
 
+#include "datastruct/typegrp.h"
+
 #include "datastruct/visobjref.h"
 
 class TSText {
 public:
+	// Recovered from the binary's schema (vstables/records.cpp).
+	static TTypeGroup &GetTypeGroup();
+	static void InitType(int versionLow, int versionHigh);
+	static void OnCreate(TVisionaireObject *object);
+	static void OnInit(TVisionaireObject *object);
+
 	virtual ~TSText() = default;
 
 	// Unconfirmed name/purpose - called right before a text is dropped

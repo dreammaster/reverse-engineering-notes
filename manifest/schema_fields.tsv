@@ -9,13 +9,13 @@ TTActionPart	6	591	ActionPartAltInt2	1	plain	-2	99	-1		-1	-1
 TTActionPart	7	654	ActionPartString	2	plain	-2	100	-1		-1	-1
 TTScene	0	236	SceneSprite	15	plain	-2	18	-1		-1	-1
 TTScene	1	364	SceneName	16	plain	-2	28	-1		-1	-1
-TTScene	2	132	SceneBackgroundMusic	3	save	-2	1	-1	2	None	None
+TTScene	2	132	SceneBackgroundMusic	3	save	-2	1	-1	2	43	-1
 TTScene	3	365	SceneContinueMusic	0	plain	-2	29	-1		-1	-1
 TTScene	4	133	CDTrack	1	plain	-2	1	-1		-1	-1
-TTScene	5	315	SceneMusicVolume	1	save	-2	23	-1	2	None	None
-TTScene	6	316	SceneMusicBalance	1	save	-2	23	-1	2	None	None
+TTScene	5	315	SceneMusicVolume	1	save	-2	23	-1	2	100	-1
+TTScene	6	316	SceneMusicBalance	1	save	-2	23	-1	2	100	-1
 TTScene	7	136	SceneObjects	17	link	6	1	-1		-1	-1
-TTScene	8	232	SceneScrollOnEdges	0	save	-2	17	-1	2	None	None
+TTScene	8	232	SceneScrollOnEdges	0	save	-2	17	-1	2	100	-1
 TTScene	9	292	SceneIsMenu	0	plain	-2	23	-1		-1	-1
 TTScene	10	293	SceneCursor	16	plain	-2	23	-1		-1	-1
 TTScene	11	322	SceneSavegameAreas	6	plain	-2	23	-1		-1	-1
@@ -25,20 +25,20 @@ TTScene	14	330	SceneConditions	17	link	10	24	-1		-1	-1
 TTScene	15	335	SceneActions	17	link	7	24	-1		-1	-1
 TTScene	16	348	SceneSavegameFont	16	link	3	25	-1		-1	-1
 TTScene	17	441	SceneParticleSystem	16	link	23	41	-1		-1	-1
-TTScene	18	550	SceneLightMap	3	save	-2	46	-1	2	None	None
-TTScene	19	568	SceneScrollableArea	14	save	-2	54	-1	2	None	None
-TTScene	20	594	SceneBrightness	1	save	-2	-1	-1	1	None	None
+TTScene	18	550	SceneLightMap	3	save	-2	46	-1	2	46	-1
+TTScene	19	568	SceneScrollableArea	14	save	-2	54	-1	2	54	-1
+TTScene	20	594	SceneBrightness	1	save	-2	-1	-1	1	100	-1
 TTScene	21	640	SceneWaySystems	17	link	29	99	-1		-1	-1
-TTScene	22	641	SceneCurrentWaySystem	16	save	-2	99	-1	2	None	None
+TTScene	22	641	SceneCurrentWaySystem	16	save	-2	99	-1	2	99	-1
 TTScene	23	681	SceneActionAreas	17	link	32	120	-1		-1	-1
 TTScene	24	765	SceneSavegameScreenshot	3	plain	-2	170	-1		-1	-1
-TTScene	25	794	SceneShaderSet	1	save	-2	-1	-1	1	None	None
+TTScene	25	794	SceneShaderSet	1	save	-2	-1	-1	1	179	-1
 TTScene	26	838	SceneAudioBusses	17	plain	-2	184	-1		-1	-1
 TTTextLanguage	0	256	TextLanguageText	2	plain	-2	1	-1		-1	-1
 TTTextLanguage	1	257	TextLanguageSound	3	plain	-2	1	-1		-1	-1
 TTTextLanguage	2	258	TextLanguageLanguage	16	plain	-2	1	-1		-1	-1
 TTCondition	0	193	ConditionIsVariable	0	plain	-2	1	-1		-1	-1
-TTCondition	1	194	ConditionValue	0	save	-2	1	-1	2	None	None
+TTCondition	1	194	ConditionValue	0	save	-2	1	-1	2	-1	-1
 TTCondition	2	195	ConditionReturnNegate	0	plain	-2	1	-1		-1	-1
 TTCondition	3	196	ConditionCondition1Negate	0	plain	-2	1	-1		-1	-1
 TTCondition	4	197	ConditionCondition2Negate	0	plain	-2	1	-1		-1	-1
@@ -81,11 +81,11 @@ TTAudioBus	1	829	AudioBusType	1	plain	-2	184	-1		-1	-1
 TTAudioBus	2	831	AudioBusSettings	2	plain	-2	184	-1		-1	-1
 TTAudioBus	3	836	AudioBusValues	17	plain	-2	184	-1		-1	-1
 TTAudioBus	4	837	AudioBusEvents	17	plain	-2	184	-1		-1	-1
-TTScriptVariable	0	695	ScriptVariableValueType	1	save	-2	-1	-1	1	None	None
-TTScriptVariable	1	694	ScriptVariableKeyType	1	save	-2	-1	-1	1	None	None
-TTScriptVariable	2	696	ScriptVariableValue	2	save	-2	-1	-1	1	None	None
-TTScriptVariable	3	697	ScriptVariableIsGlobalVar	0	save	-2	-1	-1	1	None	None
-TTScriptVariable	4	698	ScriptVariableItems	17	save	-2	-1	-1	1	None	None
+TTScriptVariable	0	695	ScriptVariableValueType	1	save	-2	-1	-1	1	133	-1
+TTScriptVariable	1	694	ScriptVariableKeyType	1	save	-2	-1	-1	1	133	-1
+TTScriptVariable	2	696	ScriptVariableValue	2	save	-2	-1	-1	1	133	-1
+TTScriptVariable	3	697	ScriptVariableIsGlobalVar	0	save	-2	-1	-1	1	133	-1
+TTScriptVariable	4	698	ScriptVariableItems	17	save	-2	-1	-1	1	133	-1
 TTSprite	0	237	SpriteSprite	15	plain	-2	18	-1		-1	-1
 TTModel	0	706	ModelModel	3	plain	-2	140	-1		-1	-1
 TTModel	1	707	ModelTextures	11	plain	-2	140	-1		-1	-1
@@ -94,21 +94,21 @@ TTShader	1	822	ShaderVS	2	plain	-2	181	-1		-1	-1
 TTShader	2	823	ShaderCompiled	2	plain	-2	181	-1		-1	-1
 TTText	0	253	TextAll	17	plain	-2	23	167		-1	-1
 TTText	1	761	TextTextLanguages	18	plain	-2	167	-1		-1	-1
-TSText	0	624	TextSavedObject	16	save	-2	1	-1	1	None	None
-TSText	1	521	TextRemainingText	2	save	-2	1	-1	1	None	None
-TSText	2	522	TextCurrentText	2	save	-2	1	-1	1	None	None
-TSText	3	523	TextPosition	13	save	-2	1	-1	1	None	None
-TSText	4	524	TextTimeToWait	1	save	-2	1	-1	1	None	None
-TSText	5	525	TextTimeElapsed	1	save	-2	1	-1	1	None	None
-TSText	6	526	TextFont	16	save	-2	1	-1	1	None	None
-TSText	7	527	TextBackground	0	save	-2	1	-1	1	None	None
-TSText	8	528	TextSpeaker	16	save	-2	-1	-1	1	None	None
-TSText	9	529	TextActive	0	save	-2	1	-1	1	None	None
-TSText	10	530	TextWaitForAudio	0	save	-2	1	-1	1	None	None
-TSText	11	684	TextOwner	16	save	-2	-1	-1	1	None	None
-TSText	12	744	TextAlignment	1	save	-2	-1	-1	1	None	None
+TSText	0	624	TextSavedObject	16	save	-2	1	-1	1	-1	-1
+TSText	1	521	TextRemainingText	2	save	-2	1	-1	1	-1	-1
+TSText	2	522	TextCurrentText	2	save	-2	1	-1	1	-1	-1
+TSText	3	523	TextPosition	13	save	-2	1	-1	1	-1	-1
+TSText	4	524	TextTimeToWait	1	save	-2	1	-1	1	-1	-1
+TSText	5	525	TextTimeElapsed	1	save	-2	1	-1	1	-1	-1
+TSText	6	526	TextFont	16	save	-2	1	-1	1	-1	-1
+TSText	7	527	TextBackground	0	save	-2	1	-1	1	-1	-1
+TSText	8	528	TextSpeaker	16	save	-2	-1	-1	1	-1	124
+TSText	9	529	TextActive	0	save	-2	1	-1	1	-1	-1
+TSText	10	530	TextWaitForAudio	0	save	-2	1	-1	1	-1	-1
+TSText	11	684	TextOwner	16	save	-2	-1	-1	1	125	-1
+TSText	12	744	TextAlignment	1	save	-2	-1	-1	1	155	-1
 TTGame	0	370	GameId	2	plain	-2	35	-1		-1	-1
-TTGame	1	537	GameSaveGameName	2	save	-2	1	-1	1	None	None
+TTGame	1	537	GameSaveGameName	2	save	-2	1	-1	1	-1	-1
 TTGame	2	117	GameSceneLinks	17	link	4	1	-1		-1	-1
 TTGame	3	118	GameCharacterLinks	17	link	0	1	-1		-1	-1
 TTGame	4	662	GameInterfaces	17	link	1	99	-1		-1	-1
@@ -122,62 +122,62 @@ TTGame	11	125	GameAbout	2	plain	-2	1	-1		-1	-1
 TTGame	12	126	GameWindowResolution	13	plain	-2	1	-1		-1	-1
 TTGame	13	215	GameCursors	17	link	15	8	-1		-1	-1
 TTGame	14	224	GameIntro	3	plain	-2	15	-1		-1	-1
-TTGame	15	244	GameCommandBehaviour	1	save	-2	21	-1	2	None	None
-TTGame	16	234	GameFadeDelay	1	save	-2	17	-1	2	None	None
-TTGame	17	246	GameScrollSpeed	1	save	-2	22	-1	2	None	None
+TTGame	15	244	GameCommandBehaviour	1	save	-2	21	-1	2	100	-1
+TTGame	16	234	GameFadeDelay	1	save	-2	17	-1	2	47	-1
+TTGame	17	246	GameScrollSpeed	1	save	-2	22	-1	2	100	-1
 TTGame	18	247	GameFullScreenIntro	0	plain	-2	22	-1		-1	-1
 TTGame	19	303	GameFirstCharacter	16	plain	-2	23	-1		-1	-1
-TTGame	20	304	GameRightMouseClick	1	save	-2	23	171	2	None	None
-TTGame	21	305	GameDraggableItems	0	save	-2	23	-1	2	None	None
-TTGame	22	306	GameStandardLanguage	16	save	-2	23	-1	2	None	None
+TTGame	20	304	GameRightMouseClick	1	save	-2	23	171	2	100	171
+TTGame	21	305	GameDraggableItems	0	save	-2	23	-1	2	100	-1
+TTGame	22	306	GameStandardLanguage	16	save	-2	23	-1	2	100	-1
 TTGame	23	318	GameActions	17	link	7	23	-1		-1	-1
 TTGame	24	368	GameStartAction	16	plain	-2	34	-1		-1	-1
 TTGame	25	337	GameRightClickAction	16	plain	-2	24	-1		-1	-1
 TTGame	26	369	GameReserved	2	plain	-2	35	-1		-1	-1
-TTGame	27	377	GameHoldTime	1	save	-2	37	-1	2	None	None
-TTGame	28	378	GameLeftMouseDblClick	1	save	-2	37	171	2	None	None
+TTGame	27	377	GameHoldTime	1	save	-2	37	-1	2	100	-1
+TTGame	28	378	GameLeftMouseDblClick	1	save	-2	37	171	2	100	171
 TTGame	29	379	GameLeftDblClickAction	16	plain	-2	37	-1		-1	-1
-TTGame	30	380	GameLeftMouseHold	1	save	-2	37	171	2	None	None
+TTGame	30	380	GameLeftMouseHold	1	save	-2	37	171	2	100	171
 TTGame	31	381	GameLeftHoldAction	16	plain	-2	37	-1		-1	-1
-TTGame	32	385	GameLeftMouseHolding	1	save	-2	39	171	2	None	None
+TTGame	32	385	GameLeftMouseHolding	1	save	-2	39	171	2	100	171
 TTGame	33	386	GameLeftHoldingAction	16	plain	-2	39	-1		-1	-1
 TTGame	34	448	GameParticleContainerLinks	17	link	23	41	-1		-1	-1
-TTGame	35	547	GameFadeEffect	1	save	-2	44	-1	2	None	None
+TTGame	35	547	GameFadeEffect	1	save	-2	44	-1	2	47	-1
 TTGame	36	548	GameMinificationFilter	1	plain	-2	45	-1		-1	-1
 TTGame	37	549	GameMagnificationFilter	1	plain	-2	45	-1		-1	-1
-TTGame	38	468	GameCurrentCharacter	16	save	-2	1	-1	1	None	None
-TTGame	39	469	GameCurrentScene	16	save	-2	1	-1	1	None	None
-TTGame	40	470	GameScrollPosition	13	save	-2	1	-1	1	None	None
-TTGame	41	471	GameScrollToPoint	13	save	-2	1	-1	1	None	None
-TTGame	42	472	GameScrollTo	0	save	-2	1	-1	1	None	None
-TTGame	43	473	GameScrollDirectionHorizontal	1	save	-2	1	-1	1	None	None
-TTGame	44	474	GameScrollDirectionVertical	1	save	-2	1	-1	1	None	None
-TTGame	45	475	GameWaitForDialogSelection	0	save	-2	-1	-1	1	None	None
-TTGame	46	476	GameDialog	16	save	-2	1	-1	1	None	None
-TTGame	47	477	GameCurrentText	16	save	-2	1	-1	1	None	None
-TTGame	48	478	GameBackgroundTexts	17	save	-2	-1	-1	1	None	None
-TTGame	49	628	GameAutoHideInterfacesInMenu	0	save	-2	100	-1	2	None	None
-TTGame	50	479	GameHideInterfaces	0	save	-2	1	-1	1	None	None
-TTGame	51	480	GameHideCursor	0	save	-2	1	-1	1	None	None
-TTGame	52	481	GameDialogAction	16	save	-2	1	-1	1	None	None
-TTGame	53	482	GameCurrentDialogAction	16	save	-2	-1	-1	1	None	None
-TTGame	54	483	GameDestinationCommand	16	save	-2	1	-1	1	None	None
-TTGame	55	484	GameDestinationItem	16	save	-2	1	-1	1	None	None
-TTGame	56	485	GameDestinationItemPicked	0	save	-2	1	-1	1	None	None
-TTGame	57	615	GameDestinationEvent	1	save	-2	-1	-1	1	None	None
-TTGame	58	486	GameSavedObject	16	save	-2	1	-1	1	None	None
-TTGame	59	556	GameSceneBrightness	1	save	-2	-1	-1	1	None	None
-TTGame	60	487	GameObjectSaved	0	save	-2	-1	-1	1	None	None
-TTGame	61	561	GameScrollCenterCharacter	0	save	-2	-1	-1	1	None	None
-TTGame	62	611	GameScrollCharacter	16	save	-2	-1	-1	1	None	None
+TTGame	38	468	GameCurrentCharacter	16	save	-2	1	-1	1	-1	-1
+TTGame	39	469	GameCurrentScene	16	save	-2	1	-1	1	-1	-1
+TTGame	40	470	GameScrollPosition	13	save	-2	1	-1	1	-1	-1
+TTGame	41	471	GameScrollToPoint	13	save	-2	1	-1	1	-1	-1
+TTGame	42	472	GameScrollTo	0	save	-2	1	-1	1	-1	-1
+TTGame	43	473	GameScrollDirectionHorizontal	1	save	-2	1	-1	1	-1	-1
+TTGame	44	474	GameScrollDirectionVertical	1	save	-2	1	-1	1	-1	-1
+TTGame	45	475	GameWaitForDialogSelection	0	save	-2	-1	-1	1	-1	99
+TTGame	46	476	GameDialog	16	save	-2	1	-1	1	-1	-1
+TTGame	47	477	GameCurrentText	16	save	-2	1	-1	1	-1	-1
+TTGame	48	478	GameBackgroundTexts	17	save	-2	-1	-1	1	1	99
+TTGame	49	628	GameAutoHideInterfacesInMenu	0	save	-2	100	-1	2	100	-1
+TTGame	50	479	GameHideInterfaces	0	save	-2	1	-1	1	-1	-1
+TTGame	51	480	GameHideCursor	0	save	-2	1	-1	1	-1	-1
+TTGame	52	481	GameDialogAction	16	save	-2	1	-1	1	-1	-1
+TTGame	53	482	GameCurrentDialogAction	16	save	-2	-1	-1	1	99	-1
+TTGame	54	483	GameDestinationCommand	16	save	-2	1	-1	1	-1	-1
+TTGame	55	484	GameDestinationItem	16	save	-2	1	-1	1	-1	-1
+TTGame	56	485	GameDestinationItemPicked	0	save	-2	1	-1	1	-1	-1
+TTGame	57	615	GameDestinationEvent	1	save	-2	-1	-1	1	100	-1
+TTGame	58	486	GameSavedObject	16	save	-2	1	-1	1	-1	-1
+TTGame	59	556	GameSceneBrightness	1	save	-2	-1	-1	1	47	99
+TTGame	60	487	GameObjectSaved	0	save	-2	-1	-1	1	-1	47
+TTGame	61	561	GameScrollCenterCharacter	0	save	-2	-1	-1	1	50	-1
+TTGame	62	611	GameScrollCharacter	16	save	-2	-1	-1	1	100	-1
 TTGame	63	562	GameLeftMouseClick	1	plain	-2	51	171		-1	-1
 TTGame	64	563	GameLeftClickAction	16	plain	-2	51	-1		-1	-1
-TTGame	65	565	GameAlwaysAllowSkipText	0	save	-2	52	-1	2	None	None
-TTGame	66	578	GameExecuteActionsDuringDialog	0	save	-2	55	-1	2	None	None
-TTGame	67	579	GameHiddenDialog	16	save	-2	-1	-1	1	None	None
+TTGame	65	565	GameAlwaysAllowSkipText	0	save	-2	52	-1	2	100	-1
+TTGame	66	578	GameExecuteActionsDuringDialog	0	save	-2	55	-1	2	100	-1
+TTGame	67	579	GameHiddenDialog	16	save	-2	-1	-1	1	56	-1
 TTGame	68	582	GameAlignCharacterOnImExecution	0	plain	-2	58	-1		-1	-1
-TTGame	69	583	GameTextOutput	1	save	-2	-1	-1	1	None	None
-TTGame	70	616	GameComposedFile	3	save	-2	99	-1	2	None	None
+TTGame	69	583	GameTextOutput	1	save	-2	-1	-1	1	59	-1
+TTGame	70	616	GameComposedFile	3	save	-2	99	-1	2	169	-1
 TTGame	71	617	GameSceneComposedFiles	1	plain	-2	99	-1		-1	-1
 TTGame	72	618	GameSceneComposedFile	3	plain	-2	99	-1		-1	-1
 TTGame	73	619	GameCharacterComposedFiles	1	plain	-2	100	-1		-1	-1
@@ -185,54 +185,54 @@ TTGame	74	620	GameCharacterComposedFile	3	plain	-2	100	-1		-1	-1
 TTGame	75	621	GameMovieComposedFiles	1	plain	-2	100	-1		-1	-1
 TTGame	76	622	GameMovieComposedFile	3	plain	-2	100	-1		-1	-1
 TTGame	77	627	GameVersion	2	plain	-2	100	-1		-1	-1
-TTGame	78	610	GameActiveCommand	16	save	-2	-1	-1	1	None	None
-TTGame	79	588	GameDrawActionText	1	save	-2	99	-1	2	None	None
-TTGame	80	589	GameActionTextFont	16	save	-2	99	-1	2	None	None
+TTGame	78	610	GameActiveCommand	16	save	-2	-1	-1	1	100	-1
+TTGame	79	588	GameDrawActionText	1	save	-2	99	-1	2	116	-1
+TTGame	80	589	GameActionTextFont	16	save	-2	99	-1	2	139	-1
 TTGame	81	590	GameActionTextRect	14	plain	-2	99	-1		-1	-1
 TTGame	82	629	GameQuake	0	plain	-2	99	-1		-1	-1
-TTGame	83	630	GameQuakeForce	1	save	-2	-1	-1	1	None	None
-TTGame	84	631	GameQuakeSpeed	1	save	-2	-1	-1	1	None	None
-TTGame	85	592	GameSpeakerTextAlignment	1	save	-2	99	-1	2	None	None
-TTGame	86	593	GameTextAlignment	1	save	-2	99	-1	2	None	None
-TTGame	87	633	GameCutsceneAction	16	save	-2	-1	-1	1	None	None
+TTGame	83	630	GameQuakeForce	1	save	-2	-1	-1	1	99	-1
+TTGame	84	631	GameQuakeSpeed	1	save	-2	-1	-1	1	99	-1
+TTGame	85	592	GameSpeakerTextAlignment	1	save	-2	99	-1	2	99	-1
+TTGame	86	593	GameTextAlignment	1	save	-2	99	-1	2	99	-1
+TTGame	87	633	GameCutsceneAction	16	save	-2	-1	-1	1	99	-1
 TTGame	88	642	GameKeepCharacterSpritesDuringMenus	0	plain	-2	99	-1		-1	-1
 TTGame	89	643	GameDisableInteractionDuringAnim	1	plain	-2	99	-1		-1	-1
-TTGame	90	646	GameTextSpeed	1	save	-2	-1	-1	1	None	None
+TTGame	90	646	GameTextSpeed	1	save	-2	-1	-1	1	99	-1
 TTGame	91	651	GameScriptLinks	17	link	30	100	-1		-1	-1
 TTGame	92	661	GameInterfaceClasses	17	link	31	114	-1		-1	-1
-TTGame	93	667	GameHorizontalScrollDistance	1	save	-2	-1	-1	1	None	None
-TTGame	94	668	GameVerticalScrollDistance	1	save	-2	-1	-1	1	None	None
+TTGame	93	667	GameHorizontalScrollDistance	1	save	-2	-1	-1	1	119	-1
+TTGame	94	668	GameVerticalScrollDistance	1	save	-2	-1	-1	1	119	-1
 TTGame	95	669	GamePictureCacheSize	1	plain	-2	118	-1		-1	-1
 TTGame	96	670	GameInterfaceComposedFiles	1	plain	-2	119	-1		-1	-1
 TTGame	97	671	GameInterfaceComposedFile	3	plain	-2	119	-1		-1	-1
 TTGame	98	682	GameGameComposedFiles	1	plain	-2	121	-1		-1	-1
 TTGame	99	683	GameGameComposedFile	3	plain	-2	121	-1		-1	-1
 TTGame	100	685	GameObjectFont	16	plain	-2	125	-1		-1	-1
-TTGame	101	686	GameUsedItem	16	save	-2	-1	-1	1	None	None
-TTGame	102	687	GameCurrentObject	16	save	-2	-1	-1	1	None	None
-TTGame	103	689	GameCursorHorizontalScrollDistance	1	save	-2	-1	-1	1	None	None
-TTGame	104	690	GameCursorVerticalScrollDistance	1	save	-2	-1	-1	1	None	None
+TTGame	101	686	GameUsedItem	16	save	-2	-1	-1	1	126	-1
+TTGame	102	687	GameCurrentObject	16	save	-2	-1	-1	1	126	-1
+TTGame	103	689	GameCursorHorizontalScrollDistance	1	save	-2	-1	-1	1	132	-1
+TTGame	104	690	GameCursorVerticalScrollDistance	1	save	-2	-1	-1	1	132	-1
 TTGame	105	699	GameVideosEncrypted	0	plain	-2	134	-1		-1	-1
 TTGame	106	700	GameCompanyName	2	plain	-2	136	-1		-1	-1
 TTGame	107	701	GameGameName	2	plain	-2	136	-1		-1	-1
-TTGame	108	702	GameObjectTextOutput	1	save	-2	-1	-1	1	None	None
+TTGame	108	702	GameObjectTextOutput	1	save	-2	-1	-1	1	59	-1
 TTGame	109	717	GameModelLinks	17	link	35	141	144		-1	-1
-TTGame	110	730	GameUsedItemPicked	0	save	-2	-1	-1	1	None	None
+TTGame	110	730	GameUsedItemPicked	0	save	-2	-1	-1	1	146	-1
 TTGame	111	731	GamePreloadPicThreads	1	plain	-2	147	-1		-1	-1
 TTGame	112	732	GamePreloadedPicBufferSize	1	plain	-2	147	-1		-1	-1
 TTGame	113	733	GamePicBufferSize	1	plain	-2	147	-1		-1	-1
-TTGame	114	735	GameVideoSubtitleFont	16	save	-2	151	-1	2	None	None
-TTGame	115	736	GameVideoSubtitlePosition	13	save	-2	151	-1	2	None	None
-TTGame	116	737	GameVideoSubtitleLanguage	2	save	-2	151	-1	2	None	None
-TTGame	117	738	GameVideoAudioLanguage	2	save	-2	151	-1	2	None	None
+TTGame	114	735	GameVideoSubtitleFont	16	save	-2	151	-1	2	150	151
+TTGame	115	736	GameVideoSubtitlePosition	13	save	-2	151	-1	2	150	151
+TTGame	116	737	GameVideoSubtitleLanguage	2	save	-2	151	-1	2	150	151
+TTGame	117	738	GameVideoAudioLanguage	2	save	-2	151	-1	2	150	151
 TTGame	118	739	GamePreallocatedTextures3Bpt	1	plain	-2	151	154		-1	-1
 TTGame	119	740	GamePreallocatedTextures4Bpt	1	plain	-2	151	154		-1	-1
 TTGame	120	743	GamePreallocatedTextures	1	plain	-2	154	-1		-1	-1
 TTGame	121	745	GameNearestNeighborInterpolation	0	plain	-2	156	-1		-1	-1
-TTGame	122	755	GameSpeechLanguage	16	save	-2	-1	-1	1	None	None
-TTGame	123	758	SpeakerSoundPanFactor	1	save	-2	173	-1	2	None	None
-TTGame	124	759	GameRegisteredEventHandlers	2	save	-2	-1	-1	1	None	None
-TTGame	125	763	GameShowBlackScreenAfterVideo	0	save	-2	169	-1	2	None	None
+TTGame	122	755	GameSpeechLanguage	16	save	-2	-1	-1	1	162	-1
+TTGame	123	758	SpeakerSoundPanFactor	1	save	-2	173	-1	2	164	-1
+TTGame	124	759	GameRegisteredEventHandlers	2	save	-2	-1	-1	1	166	-1
+TTGame	125	763	GameShowBlackScreenAfterVideo	0	save	-2	169	-1	2	169	-1
 TTGame	126	764	GameSavegameScreenshot	3	plain	-2	170	-1		-1	-1
 TTGame	127	766	GameMiddleClickAction	16	plain	-2	171	-1		-1	-1
 TTGame	128	767	GameMouseWheelUpAction	16	plain	-2	171	-1		-1	-1
@@ -240,7 +240,7 @@ TTGame	129	768	GameMouseWheelDownAction	16	plain	-2	171	-1		-1	-1
 TTGame	130	780	GameLeftHoldBehaviour	1	plain	-2	173	-1		-1	-1
 TTGame	131	781	GameMiddleClickBehaviour	1	plain	-2	173	-1		-1	-1
 TTGame	132	782	GameRightClickBehaviour	1	plain	-2	173	-1		-1	-1
-TTGame	133	787	GameShaderExclude	1	save	-2	-1	-1	1	None	None
+TTGame	133	787	GameShaderExclude	1	save	-2	-1	-1	1	173	-1
 TTGame	134	788	GameVideoPauseScreen	3	plain	-2	175	-1		-1	-1
 TTGame	135	790	GameExecuteCalledActionImmediately	0	plain	-2	177	-1		-1	-1
 TTGame	136	803	GameContainers	9	plain	-2	180	-1		-1	-1
@@ -263,36 +263,36 @@ TTDialogPart	8	288	DialogPartRemove	0	plain	-2	23	-1		-1	-1
 TTDialogPart	9	289	DialogPartNextDialog	16	link	11	23	-1		-1	-1
 TTDialogPart	10	465	DialogPartAltText	16	plain	-2	41	-1		-1	-1
 TTDialogPart	11	466	DialogPartUseAltText	0	plain	-2	41	-1		-1	-1
-TTDialogPart	12	317	DialogPartAvailable	0	save	-2	-1	-1	1	None	None
+TTDialogPart	12	317	DialogPartAvailable	0	save	-2	-1	-1	1	23	-1
 TTScript	0	652	ScriptScript	2	plain	-2	1	-1		-1	-1
 TTScript	1	653	ScriptType	1	plain	-2	1	-1		-1	-1
-TTInterface	0	138	InterfaceScrollStepSize	1	save	-2	-1	-1	2	None	None
+TTInterface	0	138	InterfaceScrollStepSize	1	save	-2	-1	-1	2	100	-1
 TTInterface	1	238	InterfaceSprite	15	plain	-2	18	-1		-1	-1
 TTInterface	2	140	InterfaceButtons	17	link	2	1	-1		-1	-1
-TTInterface	3	298	InterfaceStandardCommand	16	save	-2	23	-1	2	None	None
-TTInterface	4	302	InterfaceOffset	13	save	-2	23	-1	2	None	None
-TTInterface	5	314	InterfaceDisplacement	1	save	-2	23	-1	2	None	None
+TTInterface	3	298	InterfaceStandardCommand	16	save	-2	23	-1	2	100	-1
+TTInterface	4	302	InterfaceOffset	13	save	-2	23	-1	2	100	-1
+TTInterface	5	314	InterfaceDisplacement	1	save	-2	23	-1	2	100	-1
 TTInterface	6	320	InterfaceActionTextFont	16	plain	-2	23	-1		-1	-1
 TTInterface	7	319	InterfaceActionTextRect	14	plain	-2	23	-1		-1	-1
 TTInterface	8	389	InterfaceTextOnScreen	0	plain	-2	40	99		-1	-1
-TTInterface	9	324	InterfaceSize	1	save	-2	23	-1	2	None	None
+TTInterface	9	324	InterfaceSize	1	save	-2	23	-1	2	100	-1
 TTInterface	10	325	InterfaceBorder	8	plain	-2	23	-1		-1	-1
-TTInterface	11	388	InterfaceLeaveAction	16	save	-2	40	-1	0	None	None
+TTInterface	11	388	InterfaceLeaveAction	16	save	-2	40	-1	0	-1	-1
 TTInterface	12	452	InterfaceConditions	17	link	10	41	-1		-1	-1
 TTInterface	13	453	InterfaceValues	17	link	20	41	-1		-1	-1
-TTInterface	14	608	InterfaceItems	17	save	-2	-1	-1	1	None	None
-TTInterface	15	609	InterfaceItemsScrollPosition	1	save	-2	-1	-1	1	None	None
-TTInterface	16	586	InterfaceActive	0	save	-2	99	114	2	None	None
-TTInterface	17	606	InterfaceVisible	0	save	-2	-1	-1	1	None	None
-TTInterface	18	603	InterfaceVisibility	1	save	-2	-1	-1	1	None	None
-TTInterface	19	604	InterfaceDestVisibility	1	save	-2	-1	-1	1	None	None
-TTInterface	20	605	InterfaceTimeToDestVisibility	1	save	-2	-1	-1	1	None	None
-TTInterface	21	607	InterfaceActiveCommand	16	save	-2	1	-1	1	None	None
+TTInterface	14	608	InterfaceItems	17	save	-2	-1	-1	1	100	114
+TTInterface	15	609	InterfaceItemsScrollPosition	1	save	-2	-1	-1	1	100	-1
+TTInterface	16	586	InterfaceActive	0	save	-2	99	114	2	100	114
+TTInterface	17	606	InterfaceVisible	0	save	-2	-1	-1	1	100	-1
+TTInterface	18	603	InterfaceVisibility	1	save	-2	-1	-1	1	100	-1
+TTInterface	19	604	InterfaceDestVisibility	1	save	-2	-1	-1	1	100	-1
+TTInterface	20	605	InterfaceTimeToDestVisibility	1	save	-2	-1	-1	1	100	-1
+TTInterface	21	607	InterfaceActiveCommand	16	save	-2	1	-1	1	-1	-1
 TTInterface	22	587	InterfaceDrawActionText	0	plain	-2	99	-1		-1	-1
-TTInterface	23	659	InterfaceInterfaceClass	16	save	-2	114	-1	0	None	None
-TTInterface	24	688	InterfacePosition	13	save	-2	-1	-1	1	None	None
+TTInterface	23	659	InterfaceInterfaceClass	16	save	-2	114	-1	0	-1	-1
+TTInterface	24	688	InterfacePosition	13	save	-2	-1	-1	1	128	-1
 TTInterface	25	789	InterfaceShowAlways	0	plain	-2	176	-1		-1	-1
-TTInterface	26	802	InterfaceMatrixId	1	save	-2	-1	-1	1	None	None
+TTInterface	26	802	InterfaceMatrixId	1	save	-2	-1	-1	1	180	-1
 TTObject	0	251	ObjectName	16	plain	-2	23	-1		-1	-1
 TTObject	1	341	ObjectPolygon	8	plain	-2	25	-1		-1	-1
 TTObject	2	222	ObjectDirection	1	plain	-2	13	-1		-1	-1
@@ -312,25 +312,25 @@ TTObject	15	384	ObjectIsWalkable	0	plain	-2	38	-1		-1	-1
 TTObject	16	467	ObjectParticleSystem	16	link	23	41	-1		-1	-1
 TTObject	17	538	ObjectScrollFactorX	1	plain	-2	42	-1		-1	-1
 TTObject	18	539	ObjectScrollFactorY	1	plain	-2	42	-1		-1	-1
-TTObject	19	600	ObjectVisibility	1	save	-2	-1	-1	1	None	None
-TTObject	20	601	ObjectDestVisibility	1	save	-2	-1	-1	1	None	None
-TTObject	21	602	ObjectTimeToDestVisibility	1	save	-2	-1	-1	1	None	None
+TTObject	19	600	ObjectVisibility	1	save	-2	-1	-1	1	100	-1
+TTObject	20	601	ObjectDestVisibility	1	save	-2	-1	-1	1	100	-1
+TTObject	21	602	ObjectTimeToDestVisibility	1	save	-2	-1	-1	1	100	-1
 TTObject	22	665	ObjectSnoopAnimation	16	link	9	117	-1		-1	-1
 TTObject	23	666	ObjectSnoopAnimationPos	13	plain	-2	117	-1		-1	-1
-TTObject	24	779	ObjectOffset	13	save	-2	-1	-1	1	None	None
-TTObject	25	783	ObjectRotation	4	save	-2	-1	-1	1	None	None
-TTObject	26	784	ObjectRotationCenter	13	save	-2	-1	-1	1	None	None
-TTObject	27	785	ObjectShaderSet	1	save	-2	-1	-1	1	None	None
-TTObject	28	786	ObjectScale	4	save	-2	-1	-1	1	None	None
+TTObject	24	779	ObjectOffset	13	save	-2	-1	-1	1	172	-1
+TTObject	25	783	ObjectRotation	4	save	-2	-1	-1	1	174	-1
+TTObject	26	784	ObjectRotationCenter	13	save	-2	-1	-1	1	174	-1
+TTObject	27	785	ObjectShaderSet	1	save	-2	-1	-1	1	174	-1
+TTObject	28	786	ObjectScale	4	save	-2	-1	-1	1	174	-1
 TTObject	29	791	ObjectModel	3	plain	-2	178	-1		-1	-1
-TTObject	30	792	ObjectMatrixId	1	save	-2	-1	-1	1	None	None
-TTObject	31	812	ObjectScaleX	4	save	-2	-1	-1	1	None	None
-TTObject	32	813	ObjectScaleY	4	save	-2	-1	-1	1	None	None
-TTInterfaceClass	0	660	InterfaceClassName	2	save	-2	114	-1	0	None	None
+TTObject	30	792	ObjectMatrixId	1	save	-2	-1	-1	1	178	-1
+TTObject	31	812	ObjectScaleX	4	save	-2	-1	-1	1	180	-1
+TTObject	32	813	ObjectScaleY	4	save	-2	-1	-1	1	180	-1
+TTInterfaceClass	0	660	InterfaceClassName	2	save	-2	114	-1	0	-1	-1
 TTAreaAction	0	678	AreaActionCharacter	16	link	0	120	-1		-1	-1
-TTAreaAction	1	679	AreaActionExecuteAlways	0	save	-2	120	-1	0	None	None
+TTAreaAction	1	679	AreaActionExecuteAlways	0	save	-2	120	-1	0	-1	-1
 TTAreaAction	2	680	AreaActionAction	16	link	7	120	-1		-1	-1
-TTActionArea	0	674	ActionAreaPolygon	8	save	-2	120	-1	0	None	None
+TTActionArea	0	674	ActionAreaPolygon	8	save	-2	120	-1	0	-1	-1
 TTActionArea	1	675	ActionAreaActions	17	link	33	120	-1		-1	-1
 TTCommentSet	0	264	CommentSetElements	17	link	14	-1	48		-1	-1
 TTCommentSet	1	557	CommentSetEntries	17	link	27	48	-1		-1	-1
@@ -421,33 +421,33 @@ TTAnimation	19	760	AnimationWalkSteps	12	plain	-2	166	-1		-1	-1
 TTAnimation	20	808	AnimationModelFile	3	plain	-2	180	-1		-1	-1
 TTAnimation	21	809	AnimationModelName	2	plain	-2	180	-1		-1	-1
 TTAnimation	22	811	AnimationEndDirection	1	plain	-2	180	-1		-1	-1
-TSAnimation	0	626	AnimationSavedObject	16	save	-2	1	-1	1	None	None
-TSAnimation	1	493	AnimationLoops	1	save	-2	1	-1	1	None	None
-TSAnimation	2	541	PlayOppositeDirection	0	save	-2	-1	-1	1	None	None
-TSAnimation	3	494	AnimationCurrentSpriteIndex	1	save	-2	1	-1	1	None	None
-TSAnimation	4	495	AnimationCurrentSpritePos	13	save	-2	1	-1	1	None	None
-TSAnimation	5	496	AnimationCurrentPosition	13	save	-2	1	-1	1	None	None
-TSAnimation	6	497	AnimationCalledTime	1	save	-2	1	-1	1	None	None
-TSAnimation	7	499	AnimationSize	4	save	-2	1	-1	1	None	None
-TSAnimation	8	500	AnimationWaiting	0	save	-2	1	-1	1	None	None
-TSAnimation	9	501	AnimationWaitingTime	1	save	-2	1	-1	1	None	None
-TSAnimation	10	542	FrameCount	1	save	-2	-1	-1	1	None	None
-TSAnimation	11	577	AnimationPreloaded	0	save	-2	-1	-1	1	None	None
-TSAnimation	12	580	AnimationActive	0	save	-2	-1	-1	1	None	None
-TSAnimation	13	644	AnimationFirstFrame	1	save	-2	-1	-1	1	None	None
-TSAnimation	14	645	AnimationLastFrame	1	save	-2	-1	-1	1	None	None
-TSAnimation	15	691	AnimationStartedByUser	0	save	-2	-1	-1	1	None	None
+TSAnimation	0	626	AnimationSavedObject	16	save	-2	1	-1	1	-1	-1
+TSAnimation	1	493	AnimationLoops	1	save	-2	1	-1	1	-1	-1
+TSAnimation	2	541	PlayOppositeDirection	0	save	-2	-1	-1	1	42	-1
+TSAnimation	3	494	AnimationCurrentSpriteIndex	1	save	-2	1	-1	1	-1	-1
+TSAnimation	4	495	AnimationCurrentSpritePos	13	save	-2	1	-1	1	-1	-1
+TSAnimation	5	496	AnimationCurrentPosition	13	save	-2	1	-1	1	-1	-1
+TSAnimation	6	497	AnimationCalledTime	1	save	-2	1	-1	1	-1	-1
+TSAnimation	7	499	AnimationSize	4	save	-2	1	-1	1	-1	-1
+TSAnimation	8	500	AnimationWaiting	0	save	-2	1	-1	1	-1	-1
+TSAnimation	9	501	AnimationWaitingTime	1	save	-2	1	-1	1	-1	-1
+TSAnimation	10	542	FrameCount	1	save	-2	-1	-1	1	42	-1
+TSAnimation	11	577	AnimationPreloaded	0	save	-2	-1	-1	1	54	-1
+TSAnimation	12	580	AnimationActive	0	save	-2	-1	-1	1	56	-1
+TSAnimation	13	644	AnimationFirstFrame	1	save	-2	-1	-1	1	99	-1
+TSAnimation	14	645	AnimationLastFrame	1	save	-2	-1	-1	1	99	-1
+TSAnimation	15	691	AnimationStartedByUser	0	save	-2	-1	-1	1	133	-1
 TTCursor	0	240	CursorSpritesActive	7	plain	-2	18	99		-1	-1
 TTCursor	1	241	CursorSpritesInActive	7	plain	-2	18	99		-1	-1
 TTCursor	2	647	CursorActiveAnimation	16	plain	-2	99	-1		-1	-1
 TTCursor	3	648	CursorInactiveAnimation	16	plain	-2	99	-1		-1	-1
 TTCursor	4	239	CursorHotspot	13	plain	-2	18	100		-1	-1
 TTCharacter	0	271	CharacterName	16	plain	-2	23	-1		-1	-1
-TTCharacter	1	272	CharacterWalkingSound	3	save	-2	23	-1	2	None	None
+TTCharacter	1	272	CharacterWalkingSound	3	save	-2	23	-1	2	-1	-1
 TTCharacter	2	585	CharacterInterfaces	17	link	1	2	-1		-1	-1
 TTCharacter	3	275	CharacterFont	16	plain	-2	23	-1		-1	-1
-TTCharacter	4	276	CharacterCurrentOutfit	16	save	-2	23	-1	2	None	None
-TTCharacter	5	277	CharacterCurrentCommentSet	16	save	-2	23	-1	2	None	None
+TTCharacter	4	276	CharacterCurrentOutfit	16	save	-2	23	-1	2	-1	-1
+TTCharacter	5	277	CharacterCurrentCommentSet	16	save	-2	23	-1	2	-1	-1
 TTCharacter	6	283	CharacterDialogCursor	16	plain	-2	23	-1		-1	-1
 TTCharacter	7	278	CharacterDialogs	17	link	11	23	-1		-1	-1
 TTCharacter	8	279	CharacterTexts	17	link	14	23	32		-1	-1
@@ -467,79 +467,79 @@ TTCharacter	21	461	CharacterDialogActiveScrollDown	15	plain	-2	41	-1		-1	-1
 TTCharacter	22	462	CharacterDialogInactiveScrollDown	15	plain	-2	41	-1		-1	-1
 TTCharacter	23	463	CharacterDialogSprite	15	plain	-2	41	-1		-1	-1
 TTCharacter	24	464	CharacterDialogVerticalSpace	1	plain	-2	41	-1		-1	-1
-TTCharacter	25	502	CharacterActive	0	save	-2	1	-1	1	None	None
-TTCharacter	26	503	CharacterScene	16	save	-2	1	-1	1	None	None
-TTCharacter	27	504	CharacterFollowCharacter	16	save	-2	1	-1	1	None	None
-TTCharacter	28	505	CharacterActionCharacter	16	save	-2	1	-1	1	None	None
-TTCharacter	29	506	CharacterFollowAction	16	save	-2	1	-1	1	None	None
-TTCharacter	30	507	CharacterFollowReachDistance	1	save	-2	1	-1	1	None	None
-TTCharacter	31	508	CharacterAnimState	1	save	-2	1	-1	1	None	None
-TTCharacter	32	599	CharacterDirection	1	save	-2	1	-1	1	None	None
-TTCharacter	33	511	CharacterState	1	save	-2	1	-1	1	None	None
-TTCharacter	34	512	CharacterPosition	13	save	-2	1	-1	1	None	None
-TTCharacter	35	513	CharacterDestination	13	save	-2	1	-1	1	None	None
-TTCharacter	36	515	CharacterDestinationObject	16	save	-2	1	-1	1	None	None
-TTCharacter	37	517	CharacterActiveCommand	16	save	-2	1	-1	1	None	None
-TTCharacter	38	598	CharacterInterfaceWithItems	16	save	-2	-1	-1	1	None	None
-TTCharacter	39	553	CharacterAlpha	1	save	-2	-1	-1	1	None	None
-TTCharacter	40	554	CharacterDestAlpha	1	save	-2	-1	-1	1	None	None
-TTCharacter	41	555	CharacterTimeToDestAlpha	1	save	-2	-1	-1	1	None	None
-TTCharacter	42	564	CharacterAnimIndex	1	save	-2	-1	-1	1	None	None
-TTCharacter	43	566	CharacterScaleFactor	1	save	-2	52	-1	2	None	None
-TTCharacter	44	595	CharacterVisibility	1	save	-2	-1	-1	1	None	None
-TTCharacter	45	596	CharacterDestVisibility	1	save	-2	-1	-1	1	None	None
-TTCharacter	46	597	CharacterTimeToDestVisibility	1	save	-2	-1	-1	1	None	None
-TTCharacter	47	663	CharacterItems	17	save	-2	-1	-1	1	None	None
-TTCharacter	48	664	CharacterTint	1	save	-2	-1	-1	1	None	None
-TTCharacter	49	734	CharacterActionDestPosition	13	save	-2	149	-1	2	None	None
-TTCharacter	50	749	CharacterSize	4	save	-2	-1	-1	1	None	None
-TTCharacter	51	793	CharacterMatrixId	1	save	-2	-1	-1	1	None	None
-TTCharacter	52	795	CharacterShaderSet	1	save	-2	-1	-1	1	None	None
-TTCharacter	53	801	CharacterLightmapActive	0	save	-2	-1	-1	1	None	None
+TTCharacter	25	502	CharacterActive	0	save	-2	1	-1	1	-1	-1
+TTCharacter	26	503	CharacterScene	16	save	-2	1	-1	1	-1	-1
+TTCharacter	27	504	CharacterFollowCharacter	16	save	-2	1	-1	1	-1	-1
+TTCharacter	28	505	CharacterActionCharacter	16	save	-2	1	-1	1	-1	-1
+TTCharacter	29	506	CharacterFollowAction	16	save	-2	1	-1	1	-1	-1
+TTCharacter	30	507	CharacterFollowReachDistance	1	save	-2	1	-1	1	-1	-1
+TTCharacter	31	508	CharacterAnimState	1	save	-2	1	-1	1	-1	-1
+TTCharacter	32	599	CharacterDirection	1	save	-2	1	-1	1	-1	-1
+TTCharacter	33	511	CharacterState	1	save	-2	1	-1	1	-1	-1
+TTCharacter	34	512	CharacterPosition	13	save	-2	1	-1	1	-1	-1
+TTCharacter	35	513	CharacterDestination	13	save	-2	1	-1	1	-1	-1
+TTCharacter	36	515	CharacterDestinationObject	16	save	-2	1	-1	1	-1	-1
+TTCharacter	37	517	CharacterActiveCommand	16	save	-2	1	-1	1	-1	-1
+TTCharacter	38	598	CharacterInterfaceWithItems	16	save	-2	-1	-1	1	100	114
+TTCharacter	39	553	CharacterAlpha	1	save	-2	-1	-1	1	47	100
+TTCharacter	40	554	CharacterDestAlpha	1	save	-2	-1	-1	1	47	100
+TTCharacter	41	555	CharacterTimeToDestAlpha	1	save	-2	-1	-1	1	47	100
+TTCharacter	42	564	CharacterAnimIndex	1	save	-2	-1	-1	1	51	-1
+TTCharacter	43	566	CharacterScaleFactor	1	save	-2	52	-1	2	52	-1
+TTCharacter	44	595	CharacterVisibility	1	save	-2	-1	-1	1	100	-1
+TTCharacter	45	596	CharacterDestVisibility	1	save	-2	-1	-1	1	100	-1
+TTCharacter	46	597	CharacterTimeToDestVisibility	1	save	-2	-1	-1	1	100	-1
+TTCharacter	47	663	CharacterItems	17	save	-2	-1	-1	1	114	-1
+TTCharacter	48	664	CharacterTint	1	save	-2	-1	-1	1	115	-1
+TTCharacter	49	734	CharacterActionDestPosition	13	save	-2	149	-1	2	148	-1
+TTCharacter	50	749	CharacterSize	4	save	-2	-1	-1	1	158	-1
+TTCharacter	51	793	CharacterMatrixId	1	save	-2	-1	-1	1	178	-1
+TTCharacter	52	795	CharacterShaderSet	1	save	-2	-1	-1	1	179	-1
+TTCharacter	53	801	CharacterLightmapActive	0	save	-2	-1	-1	1	180	-1
 TTCharacter	54	839	CharacterHarmonizeWalkAnimations	0	plain	-2	186	-1		-1	-1
-TTValue	0	328	ValueInt	1	save	-2	1	-1	2	None	None
+TTValue	0	328	ValueInt	1	save	-2	1	-1	2	43	-1
 TTValue	1	345	ValueRandom	0	plain	-2	25	-1		-1	-1
 TTValue	2	346	ValueRandomMin	1	plain	-2	25	-1		-1	-1
 TTValue	3	347	ValueRandomMax	1	plain	-2	25	-1		-1	-1
-TTValue	4	632	ValueString	2	save	-2	100	-1	2	None	None
-TTValue	5	376	ValueCurrent	1	save	-2	-1	-1	1	None	None
-TTValue	6	805	ValueFloat	4	save	-2	184	-1	2	None	None
+TTValue	4	632	ValueString	2	save	-2	100	-1	2	100	-1
+TTValue	5	376	ValueCurrent	1	save	-2	-1	-1	1	37	43
+TTValue	6	805	ValueFloat	4	save	-2	184	-1	2	184	-1
 TTAction	0	159	ActionExecutionType	1	plain	-2	1	-1		-1	-1
 TTAction	1	160	ActionFixture	16	plain	-2	1	-1		-1	-1
 TTAction	2	161	ActionCommand	16	plain	-2	1	-1		-1	-1
 TTAction	3	162	ActionActionParts	17	link	8	1	-1		-1	-1
-TSAction	0	625	ActionSavedObject	16	save	-2	1	-1	1	None	None
-TSAction	1	488	ActionActionPartStarted	0	save	-2	1	-1	1	None	None
-TSAction	2	489	ActionActionPartIndex	1	save	-2	1	-1	1	None	None
-TSAction	3	490	ActionContinueWaitForEndIfElse	1	save	-2	1	-1	1	None	None
-TSAction	4	491	ActionTimerStarted	0	save	-2	1	-1	1	None	None
-TSAction	5	492	ActionPauseTime	1	save	-2	1	-1	1	None	None
+TSAction	0	625	ActionSavedObject	16	save	-2	1	-1	1	-1	-1
+TSAction	1	488	ActionActionPartStarted	0	save	-2	1	-1	1	-1	-1
+TSAction	2	489	ActionActionPartIndex	1	save	-2	1	-1	1	-1	-1
+TSAction	3	490	ActionContinueWaitForEndIfElse	1	save	-2	1	-1	1	-1	-1
+TSAction	4	491	ActionTimerStarted	0	save	-2	1	-1	1	-1	-1
+TSAction	5	492	ActionPauseTime	1	save	-2	1	-1	1	-1	-1
 TTOutfit	0	267	OutfitWalkAnimations	17	link	9	1	-1		-1	-1
 TTOutfit	1	268	OutfitTalkAnimations	17	link	9	1	-1		-1	-1
 TTOutfit	2	321	OutfitRandomAnimations	17	link	9	1	-1		-1	-1
 TTOutfit	3	269	OutfitCharacterAnimations	17	link	9	1	-1		-1	-1
 TTOutfit	4	383	OutfitStandingAnimations	17	link	9	38	-1		-1	-1
-TTOutfit	5	270	OutfitCharacterSpeed	1	save	-2	1	-1	2	None	None
+TTOutfit	5	270	OutfitCharacterSpeed	1	save	-2	1	-1	2	-1	-1
 TTOutfit	6	708	OutfitModel	3	plain	-2	140	-1		-1	-1
 TTOutfit	7	709	OutfitCameraDistance	4	plain	-2	140	142		-1	-1
-TTOutfit	8	710	OutfitCameraHeight	1	save	-2	140	-1	2	None	None
-TTOutfit	9	711	OutfitCameraAngle	1	save	-2	140	-1	2	None	None
-TTOutfit	10	712	OutfitUseLight	0	save	-2	140	-1	2	None	None
-TTOutfit	11	713	OutfitLightPosX	4	save	-2	140	-1	2	None	None
-TTOutfit	12	714	OutfitLightPosY	4	save	-2	140	-1	2	None	None
-TTOutfit	13	715	OutfitLightPosZ	4	save	-2	140	-1	2	None	None
-TTOutfit	14	716	OutfitLightColor	1	save	-2	140	-1	2	None	None
-TTOutfit	15	718	OutfitModelScaleFactor	1	save	-2	142	-1	2	None	None
-TTOutfit	16	719	OutfitModelShowShadow	0	save	-2	142	160	2	None	None
-TTOutfit	17	720	OutfitModelShadowTranslucency	1	save	-2	142	160	2	None	None
-TTOutfit	18	721	OutfitModelUseToonShading	0	save	-2	142	-1	2	None	None
-TTOutfit	19	722	OutfitModelToonNuances	1	save	-2	142	-1	2	None	None
-TTOutfit	20	723	OutfitModelShowOutline	0	save	-2	142	-1	2	None	None
-TTOutfit	21	724	OutfitModelOutlineColor	1	save	-2	142	-1	2	None	None
-TTOutfit	22	725	OutfitModelOutlineWidth	1	save	-2	142	-1	2	None	None
+TTOutfit	8	710	OutfitCameraHeight	1	save	-2	140	-1	2	144	-1
+TTOutfit	9	711	OutfitCameraAngle	1	save	-2	140	-1	2	144	-1
+TTOutfit	10	712	OutfitUseLight	0	save	-2	140	-1	2	144	-1
+TTOutfit	11	713	OutfitLightPosX	4	save	-2	140	-1	2	144	-1
+TTOutfit	12	714	OutfitLightPosY	4	save	-2	140	-1	2	144	-1
+TTOutfit	13	715	OutfitLightPosZ	4	save	-2	140	-1	2	144	-1
+TTOutfit	14	716	OutfitLightColor	1	save	-2	140	-1	2	144	-1
+TTOutfit	15	718	OutfitModelScaleFactor	1	save	-2	142	-1	2	144	-1
+TTOutfit	16	719	OutfitModelShowShadow	0	save	-2	142	160	2	144	160
+TTOutfit	17	720	OutfitModelShadowTranslucency	1	save	-2	142	160	2	144	160
+TTOutfit	18	721	OutfitModelUseToonShading	0	save	-2	142	-1	2	144	-1
+TTOutfit	19	722	OutfitModelToonNuances	1	save	-2	142	-1	2	144	-1
+TTOutfit	20	723	OutfitModelShowOutline	0	save	-2	142	-1	2	144	-1
+TTOutfit	21	724	OutfitModelOutlineColor	1	save	-2	142	-1	2	144	-1
+TTOutfit	22	725	OutfitModelOutlineWidth	1	save	-2	142	-1	2	144	-1
 TTOutfit	23	728	OutfitModelTextures	11	plain	-2	143	-1		-1	-1
-TTOutfit	24	729	OutfitAmbientLightColor	1	save	-2	144	-1	2	None	None
-TTOutfit	25	750	OutfitModelShadowVisibility	1	save	-2	160	-1	2	None	None
+TTOutfit	24	729	OutfitAmbientLightColor	1	save	-2	144	-1	2	144	-1
+TTOutfit	25	750	OutfitModelShadowVisibility	1	save	-2	160	-1	2	160	-1
 TTOutfit	26	753	OutfitWalkCycleCurve	12	plain	-2	161	162		-1	-1
 TTOutfit	27	754	OutfitWalkCyclePoints	10	plain	-2	161	162		-1	-1
 TTOutfit	28	756	OutfitRandomMinTime	1	plain	-2	163	-1		-1	-1
@@ -568,13 +568,13 @@ TTButton	15	545	ButtonAnimation	16	plain	-2	43	-1		-1	-1
 TTButton	16	546	ButtonAnimations	17	link	9	43	-1		-1	-1
 TTButton	17	567	ButtonDraggable	0	plain	-2	53	-1		-1	-1
 TTButton	18	584	ButtonGroup	17	link	2	60	-1		-1	-1
-TTButton	19	796	ButtonRotation	4	save	-2	-1	-1	1	None	None
-TTButton	20	797	ButtonRotationCenter	13	save	-2	-1	-1	1	None	None
-TTButton	21	798	ButtonShaderSet	1	save	-2	-1	-1	1	None	None
-TTButton	22	799	ButtonScale	4	save	-2	-1	-1	1	None	None
-TTButton	23	800	ButtonMatrixId	1	save	-2	-1	-1	1	None	None
-TTButton	24	814	ButtonScaleX	4	save	-2	-1	-1	1	None	None
-TTButton	25	815	ButtonScaleY	4	save	-2	-1	-1	1	None	None
+TTButton	19	796	ButtonRotation	4	save	-2	-1	-1	1	180	-1
+TTButton	20	797	ButtonRotationCenter	13	save	-2	-1	-1	1	180	-1
+TTButton	21	798	ButtonShaderSet	1	save	-2	-1	-1	1	180	-1
+TTButton	22	799	ButtonScale	4	save	-2	-1	-1	1	180	-1
+TTButton	23	800	ButtonMatrixId	1	save	-2	-1	-1	1	180	-1
+TTButton	24	814	ButtonScaleX	4	save	-2	-1	-1	1	180	-1
+TTButton	25	815	ButtonScaleY	4	save	-2	-1	-1	1	180	-1
 TTLoading	0	357	LoadingMusic	3	plain	-2	1	-1		-1	-1
 TTLoading	1	353	LoadingSprite	15	plain	-2	1	-1		-1	-1
 TTLoading	2	355	LoadingStatusSprite	15	plain	-2	99	-1		-1	-1

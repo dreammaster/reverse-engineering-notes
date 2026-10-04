@@ -26,7 +26,7 @@ import sys
 ASM = sys.argv[1] if len(sys.argv) > 1 else "Deponia_Linux.asm"
 
 
-STACK_RE = re.compile(r"^\s+mov\s+(?:dword ptr )?\[rsp\+([0-9A-F]+)h\+var_([0-9A-F]+)\], (-?[0-9A-F]+h?)b")
+STACK_RE = re.compile(r"^\s+mov\s+(?:dword ptr )?\[rsp\+([0-9A-F]+)h\+var_([0-9A-F]+)\], (-?[0-9A-F]+h?)\b")
 
 
 def to_int(tok):
@@ -81,12 +81,14 @@ def parse_fields(lines, cls, start, names):
         m = re.match(r"^\s+mov\s+(esi|edx|ecx|r8d|r9d), (esi|edx|ecx|r8d|r9d)\b", l)
         if m:
             regs[m.group(1)] = regs.get(m.group(2))
-        m = re.match(r"^\s+mov\s+\[rsp\+\w+h\+(var_\w+)\], (-?[0-9A-F]+h?)\b", l)
-        if m and m.group(1) in ("var_48", "var_40"):
-            try:
-                stack[m.group(1)] = to_int(m.group(2))
-            except ValueError:
-                stack[m.group(1)] = None
+        m = re.match(r"^\s+mov\s+(?:dword ptr )?\[rsp\+([0-9A-F]+)h\+var_([0-9A-F]+)\], (-?[0-9A-F]+h?)\b", l)
+        if m:
+            off = int(m.group(1), 16) - int(m.group(2), 16)
+            if off in (0, 8):
+                try:
+                    stack[off] = to_int(m.group(3))
+                except ValueError:
+                    stack[off] = None
         if re.search(r"call\s+_ZN9TTypeDataC2", l):
             if "eSaveGame" in l:
                 kind = "save"
@@ -183,11 +185,12 @@ def main():
 
     os.makedirs("manifest", exist_ok=True)
     with open("manifest/schema_groups.tsv", "w", encoding="utf-8", newline="\n") as f:
-        f.write("class\tdesc\tdesc_name\ttable\tversion_in\tversion_out\tform\tcallbacks\n")
+        f.write("class\tdesc\tdesc_name\ttable\tversion_in\tversion_out\tform\tcallbacks\tsave_type\tsave_in\tsave_out\n")
         for cls, g in sorted(groups.items()):
-            f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+            f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                 cls, g.get("desc"), names.get(g.get("desc"), "?"), g.get("table"), g.get("vin"), g.get("vout"),
-                g.get("form", ""), ",".join(sorted(g["callbacks"]))))
+                g.get("form", ""), ",".join(sorted(g["callbacks"])), g.get("save", ""), g.get("sin", ""),
+                g.get("sout", "")))
     with open("manifest/schema_fields.tsv", "w", encoding="utf-8", newline="\n") as f:
         f.write("class\torder\tid\tname\ttype\tkind\tlink\tversion_in\tversion_out\tsavegame\tsave_in\tsave_out\n")
         for r in fields:

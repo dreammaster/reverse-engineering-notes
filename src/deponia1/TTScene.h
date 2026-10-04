@@ -8,11 +8,19 @@
 // reversed.
 #pragma once
 
+#include "datastruct/typegrp.h"
+
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 
 class TTScene : public TVisObjRef {
 public:
+	// Recovered from the binary's schema (vstables/records.cpp).
+	static TTypeGroup &GetTypeGroup();
+	static void InitType(int versionLow, int versionHigh);
+	static void OnCreate(TVisionaireObject *object);
+	static void OnInit(TVisionaireObject *object);
+
 	TTScene() = default;
 	explicit TTScene(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}

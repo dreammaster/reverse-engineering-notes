@@ -7,10 +7,24 @@
 // in this project. Nothing else about this class is modeled.
 #pragma once
 
+#include "datastruct/typegrp.h"
+
 #include "TGActionInfo.h"
 
 class TTAction {
 public:
+	// Recovered from the binary's schema (vstables/records.cpp).
+	static TTypeGroup &GetTypeGroup();
+	static void InitType(int versionLow, int versionHigh);
+	static void OnCreate(TVisionaireObject *object);
+	static void OnInit(TVisionaireObject *object);
+
+	// Confirmed (asm lines 1478536-1478560): the names a new action gets by where
+	// it hangs.
+	static wxString strAction;
+	static wxString strRightClickAction;
+	static wxString strStartAction;
+
 	// Confirmed in full: true for exactly the 16 literal values this
 	// enumerates (none individually named - see TypeActionExecution's own
 	// header comment); false for everything else.

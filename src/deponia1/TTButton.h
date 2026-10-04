@@ -12,11 +12,19 @@
 // it.
 #pragma once
 
+#include "datastruct/typegrp.h"
+
 #include "datastruct/visobjref.h"
 #include "vstables/fieldIds.h"
 
 class TTButton : public TVisObjRef {
 public:
+	// Recovered from the binary's schema (vstables/records.cpp).
+	static TTypeGroup &GetTypeGroup();
+	static void InitType(int versionLow, int versionHigh);
+	static void OnCreate(TVisionaireObject *object);
+	static void OnInit(TVisionaireObject *object);
+
 	TTButton() = default;
 	explicit TTButton(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}
