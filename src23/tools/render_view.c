@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c \
  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
@@ -16,6 +16,7 @@
 #include "monster_stdio.h"
 #include "newgame.h"
 #include "paperdoll.h"
+#include "roster.h"
 #include "statsheet.h"
 #include "statuspanel.h"
 #include "pictures_stdio.h"
@@ -226,6 +227,13 @@ int main(int argc, char **argv) {
                 if (itemCatalogParseWorldDat(&sheetItems, game, worldDat, worldSize)) {
                     characterSheetDraw(&renderer, &sheetItems, saveGamePartyRecord(&save, 5 + hero), 6 + hero, roles, "CHARACTER CREATION");
                 }
+            }
+            if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */
+                const uint8_t *records[RosterSlots];
+                for (unsigned i = 0; i < RosterSlots; i++) {
+                    records[i] = saveGamePartyRecord(&save, i);
+                }
+                rosterDraw(&renderer, records);
             }
             if (getenv("RENDER_DOLLS")) { /* RENDER_DOLLS=1: the four paper dolls over the viewport, as on the inventory screen */
                 static ItemCatalog items;
