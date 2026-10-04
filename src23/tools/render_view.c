@@ -228,6 +228,14 @@ int main(int argc, char **argv) {
                     characterSheetDraw(&renderer, &sheetItems, saveGamePartyRecord(&save, 5 + hero), 6 + hero, roles, "CHARACTER CREATION");
                 }
             }
+            if (getenv("RENDER_DETAIL")) { /* RENDER_DETAIL=<0-3>: that hero's detail screen over the viewport */
+                unsigned hero = (unsigned)atoi(getenv("RENDER_DETAIL")) & 3;
+                uint16_t droles[5];
+                for (unsigned i = 0; i < 5; i++) {
+                    droles[i] = saveHeaderGetU16(&save, SaveHeaderRoleAssignments + 2 * i);
+                }
+                detailSheetDraw(&renderer, saveGamePartyRecord(&save, 5 + hero), 6 + hero, droles);
+            }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */
                 const uint8_t *records[RosterSlots];
                 for (unsigned i = 0; i < RosterSlots; i++) {

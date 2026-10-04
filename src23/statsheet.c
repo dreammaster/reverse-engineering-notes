@@ -74,3 +74,29 @@ void characterSheetDraw(const ViewRenderer *r, const ItemCatalog *catalog, const
     snprintf(level, sizeof(level), "%d", field(record, 0x16));
     fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 256, 38, level, 0xF, 0, FontTransparent);
 }
+
+void detailSheetDraw(const ViewRenderer *r, const uint8_t *record, unsigned characterId, const uint16_t roles[5]) {
+    viewDrawPicture(r, 1, 1, 15, 23, false, 0);
+    const char *className = partyClassName((unsigned)field(record, 0x0E));
+    if (className) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 20, 27, className, 0xF, 0, FontTransparent);
+    }
+    number(r, 122, 27, field(record, 0x16), field(record, 0x16), 0xF, 0xF);
+    char experience[12];
+    bcd4Format(record + 0x18, experience);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 160, 27, experience, 0xF, 0, FontTransparent);
+    for (unsigned i = 0; i < 6; i++) {
+        stat(r, 42, 37 + 10 * (int)i, record, 0x3C + 2 * i);
+    }
+    for (unsigned i = 0; i < 3; i++) {
+        stat(r, 42, 99 + 10 * (int)i, record, 0x4C + 2 * i);
+    }
+    for (unsigned i = 0; i < 8; i++) {
+        stat(r, 116, 43 + 10 * (int)i, record, 0x58 + 2 * i);
+    }
+    unsigned roleCount = r->game == GameYendor3 ? 4 : 5;
+    for (unsigned i = 0; i < roleCount; i++) {
+        bool holder = roles[i] == characterId;
+        number(r, 203, 43 + 10 * (int)i, field(record, 0x68 + 2 * i), field(record, 0x68 + 2 * i + 0x40), holder ? 0xCB : 0xF, holder ? 0x9B : 0x8A);
+    }
+}

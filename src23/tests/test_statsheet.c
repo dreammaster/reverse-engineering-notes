@@ -67,6 +67,9 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     for (unsigned i = 0; i < 4; i++) {
         characterSheetDraw(&r, &items, saveGamePartyRecord(&save, 5 + i), 6 + i, roles, "CHARACTER CREATION");
         combined = (combined * 16777619u) ^ fnv(screen, sizeof(screen));
+        memset(screen, 0, sizeof(screen));
+        detailSheetDraw(&r, saveGamePartyRecord(&save, 5 + i), 6 + i, roles);
+        combined = (combined * 16777619u) ^ fnv(screen, sizeof(screen));
     }
     pictureFileClose(pictures);
     uint32_t h = combined;
@@ -77,8 +80,8 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
 }
 
 int main(void) {
-    testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 0xB0AFB0C1, "Chapter 2: the four heroes' character sheets (inspected render)");
-    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 0x9E67D64C, "Chapter 3: the four heroes' character sheets (inspected render)");
+    testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 0x089590D9, "Chapter 2: the four heroes' character and detail sheets (inspected render)");
+    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 0x75A641DA, "Chapter 3: the four heroes' character and detail sheets (inspected render)");
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed (%d skipped).\n", g_skipCount);

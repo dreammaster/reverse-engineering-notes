@@ -29,4 +29,13 @@ void statSheetDraw(const ViewRenderer *r, const uint8_t *partyRecord, unsigned c
 void characterSheetDraw(const ViewRenderer *r, const ItemCatalog *catalog, const uint8_t *partyRecord, unsigned characterId, const uint16_t roles[5],
                         const char *title);
 
+/*
+ * The party-member detail screen (RunPartyMemberDetailScreen, yendor2.asm:16307, with DrawTrainingScreenStatSheet :16614 and
+ * SelectAndDrawPartyStatusRow :16739; the same in Chapter 3 apart from having four role skills): the frame (category 1 picture 1, opaque) at
+ * (15, 23) with the labels baked in; the class name at (20, 27), the level at (122, 27) and the experience at (160, 27); the six attributes
+ * `[+0x3C..+0x46]` at x = 42, y = 37 + 10k; `[+0x4C..+0x50]` at x = 42, y = 99, 109, 119; the skills `[+0x58..+0x66]` at x = 116, y = 43 + 10k;
+ * the role skills `[+0x68..]` at x = 203, y = 43 + 10k (colour 0xCB for the holder of the role). Values above their natural maximum are 0x8A.
+ */
+void detailSheetDraw(const ViewRenderer *r, const uint8_t *partyRecord, unsigned characterId, const uint16_t roles[5]);
+
 #endif
