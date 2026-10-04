@@ -9,7 +9,7 @@ behavioral-difference reference.
 
 ## Snapshot, 2026-10-03 (read this first; the dated status below is older)
 
-65 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
+66 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
 was written: **`ApplyEncodedItemEffect` is complete** to the data model (`spellSelectBranch` names the whole
 dispatch; LIFE FORCE, projectile hit/splash, screen-wide attack, held item, JUMP spells, light timers,
 bookmark all implemented); combat has the **monster turn**, **player melee** and **Search**; and the
@@ -25,7 +25,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
 
 ## Snapshot, 2026-10-04 (newest; supersedes the paragraphs above where they disagree)
 
-65 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
+66 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
 
 * **Decision logic** added since the snapshot above: `mapview.c` (map tiers, local map), `travelExamineKey`, the relic dispatcher and potion
   brewing, `partyFindItemDeep` / `partyConsumeItemChargeMode` (containers), `chargen.c` + `newgame.c` (attribute roll, derived skills, classes,

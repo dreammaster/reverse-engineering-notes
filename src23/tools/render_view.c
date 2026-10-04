@@ -2,7 +2,7 @@
  * Renders the first-person view at a map position to a PNG (palette from WORLD.DAT, stored-deflate encoder, no zlib).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o render_view render_view.c ../viewrender.c ../monster.c ../monster_stdio.c ../minimap.c ../paperdoll.c ../statsheet.c ../roster.c ../charcreate.c ../gamedialog.c ../clueitem.c ../exedata.c ../textfield.c ../statuspanel.c ../font.c ../uiregions.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../monsterpanel.c ../textpanel.c ../cluebook.c ../palette.c
  *   ./render_view <2|3> <game dir> <x> <y> <N|S|E|W> <clock minutes> <out.png>
  */
 #include <stdio.h>
@@ -12,6 +12,8 @@
 #include "pngwrite.h"
 #include "dungeongrid.h"
 #include "gamedialog.h"
+#include "clueitem.h"
+#include "exedata.h"
 #include "lighting.h"
 #include "minimap.h"
 #include "monster_stdio.h"
@@ -161,6 +163,36 @@ int main(int argc, char **argv) {
             }
             if (getenv("RENDER_DIALOG")) { /* RENDER_DIALOG=<ui flags, e.g. 252>: the pause dialog over the view */
                 gameDialogDraw(&renderer, (unsigned)atoi(getenv("RENDER_DIALOG")), DriverMusicAvailable | DriverSoundFxAvailable | DriverMusicOn, 5);
+            }
+            if (getenv("RENDER_ITEMPAGE")) { /* RENDER_ITEMPAGE=<item id>: its clue book page (labels read from the executable) */
+                static ItemCatalog pageItems;
+                static ClueItemText pageText;
+                char exePath[512];
+                snprintf(exePath, sizeof(exePath), "%s/%s", dir, game == GameYendor2 ? "SW.EXE" : "REGISTER.EXE");
+                FILE *ef = fopen(exePath, "rb");
+                static uint8_t exeBytes[400000];
+                size_t exeSize = ef ? fread(exeBytes, 1, sizeof(exeBytes), ef) : 0;
+                if (ef) {
+                    fclose(ef);
+                }
+                ExeData exe;
+                if (itemCatalogParseWorldDat(&pageItems, game, worldDat, worldSize) && exeDataOpen(&exe, game, exeBytes, exeSize) && clueItemTextLoad(&pageText, &exe, game)) {
+                    const uint8_t *rec = itemCatalogRecord(&pageItems, (unsigned)atoi(getenv("RENDER_ITEMPAGE")));
+                    if (rec) {
+                        clueItemPageDraw(&renderer, &pageText, rec, 0x8000);
+                        const uint8_t *entry = itemTargetEntry(&pageItems, rec);
+                        ItemTargetKind kind = itemTargetKind(rec);
+                        if (entry && kind == ItemTargetWearable) {
+                            clueArmorRowDraw(&renderer, &pageText, entry, itemEffectEntry(&pageItems, rec));
+                        } else if (entry && kind == ItemTargetWeapon) {
+                            clueWeaponRowDraw(&renderer, &pageText, entry);
+                        } else if (entry && kind == ItemTargetConsumable) {
+                            clueHealingRowDraw(&renderer, &pageText, game, entry);
+                        }
+                    }
+                } else {
+                    fprintf(stderr, "cannot build the item page\n");
+                }
             }
             if (getenv("RENDER_ROSTER")) { /* the roster screen with all nine template records */
                 const uint8_t *records[RosterSlots];

@@ -1169,6 +1169,12 @@ A world map, E enter the game, R intro picture, I create a hero; Return toggles 
 (sum of the four party slot assignments non-zero). Chapter 3 adds an idle attract: 75 periodic ticks without input run its intro sequence. The Chapter 2
 boot sequence (`PlayTitleScreenSequence`) fades in category 0 picture 0, plays music track 3 and waits 216 ticks or Escape.
 
+The **clue book item page** (`ShowClueBookItemDetail` and its rows, `clueitem.c`; `RENDER_ITEMPAGE=<item id>`): colour-0 screen with category 0 picture 13, the item name
+at (6, 4) in 0xD, the navigation bar, the item icon at (68, 41), BASE VALUE / WEIGHT (one decimal) / FITS IN- rows, then armor (ABSORPTION-, PROTECTIONS:, ADDS:
+lists built from the effect pairs: field offsets 0x20-0x30 are protections, 0x7C and up the 27 attribute / skill names), weapon (DAMAGE:, SKILL:, 2-HANDED:),
+healing (Chapter 3 only the magic variant) and duration rows. The page text is read from the executable (`exedata.c`, addresses in `clueitem.c`;
+`dump_clue_item_strings.py`). The sub-icon selector row's table at DS:0x6976 (Chapter 3 0x6CA4) is empty in the file and filled at run time.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
