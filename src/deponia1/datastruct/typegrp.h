@@ -30,7 +30,7 @@
 
 #include "WxStub.h"
 #include "datastruct/type.h"
-#include "datastruct/visionaire.h"
+#include "datastruct/visenums.h"
 
 class TVedFile;
 class TVisionaireObject;

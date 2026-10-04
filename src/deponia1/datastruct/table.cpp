@@ -59,10 +59,10 @@ TVisionaireObject *TTable::GetObject(const TId &id) const {
 }
 
 // Confirmed (asm lines 660799-661004)
-bool TTable::GetObject(const TId &id, TVisObjRef &out, bool warn) const {
+bool TTable::GetObject(const TId &id, TVisObjRef &out, bool quiet) const {
 	TVisionaireObject *object = GetObject(id);
 	if (!object) {
-		if (warn && wxLog::loglevel > 0)
+		if (!quiet && wxLog::loglevel > 0)
 			wxLog::logexpanded(L"TTable::GetObject: object %d not found in table %ls", id.getId(),
 			                   _name.c_str());
 		return false;

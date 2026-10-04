@@ -70,7 +70,7 @@ public:
 	bool GetObjectAtPosition(TVisionaireObject **object, int position) const;
 
 	TVisionaireObject *GetObject(const TId &id) const;
-	bool GetObject(const TId &id, TVisObjRef &out, bool warn) const;
+	bool GetObject(const TId &id, TVisObjRef &out, bool quiet) const;
 	TVisionaireObject *GetObject(const wxString &name) const;
 	bool GetObjectPosition(const TId &id, unsigned long &position) const;
 	bool GetObjectPosition(const wxString &name, const TId &id, unsigned long &position) const;

@@ -73,7 +73,7 @@ void TVisionaireObject::unlinkFromObjectsLinkedTo() {
 	std::vector<TLinkRef> linked;
 	_visionaire->GetObjectsLinkedTo(_id, linked);
 	for (const TLinkRef &ref : linked) {
-		TVisionaireObject *object = _visionaire->GetObjectById(ref.id);
+		TVisionaireObject *object = _visionaire->GetObjectById(ref.from);
 		if (object && object->isValid())
 			object->_data->RemoveLink(ref.field, _id, false);
 	}
@@ -731,7 +731,7 @@ void TVisionaireObject::GetObjectsLinkedTo(TVList &out, std::vector<int> &fields
 	std::vector<TLinkRef> linked;
 	_visionaire->GetObjectsLinkedTo(_id, linked);
 	for (const TLinkRef &ref : linked) {
-		TVisionaireObject *object = _visionaire->GetObjectById(ref.id);
+		TVisionaireObject *object = _visionaire->GetObjectById(ref.from);
 		if (!object)
 			continue;
 		out.push_back(object);

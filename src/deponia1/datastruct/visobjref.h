@@ -39,9 +39,9 @@ enum class TSendEventEnum { kForce = 0, kSendEvent = 1, kNoEvent = 2 };
 // meaning/names not resolved.
 enum class TypeOrder { kValue0 = 0, kValue1 = 1 };
 
-// How TVisionaire::ChangeOrder() moves an object in its list (values not
-// resolved yet).
-enum class TMoveOrderEnum { kValue0 = 0, kValue1 = 1, kValue2 = 2, kValue3 = 3 };
+// How TVisionaire::ChangeOrder() moves an object in its list (Deponia_Linux.asm
+// lines 610604-610748; the names are invented).
+enum class TMoveOrderEnum { kUp = 0, kDown = 1, kFirst = 2, kLast = 3 };
 
 class TSprite;
 class TVisionaireObject;

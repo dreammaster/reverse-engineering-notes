@@ -40,7 +40,8 @@ TMasterControl::TMasterControl() {
 	// which caused ~TMasterControl() to `delete` TGameControl's non-heap
 	// member and corrupt the heap. Only the owning subclass should manage
 	// this pointer's lifetime.
-	_visionaire = new TVisionaire();
+	// _visionaire is set by TGameControl (to its TVisionaireGame): the original
+	// constructor doesn't create one.
 	_moviesEnabled = true;
 }
 

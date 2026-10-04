@@ -167,7 +167,7 @@ TVisionaireObject	done	99	587318	595390
 TVisObjRef	done	85	597612	600326
 TDataGroup	done	41	600389	607108
 Geni::authresult_t	todo	3	607243	1656892
-TVisionaire	stub	90	608417	655305
+TVisionaire	in-progress	90	608417	655305
 LoadSaveProgressEvent	todo	4	620683	1523917
 StringHashMap<wxString, int, wchar_t const*, StringHash<wchar_t const*> >	todo	1	620868	620868
 TData	done	13	625861	634717

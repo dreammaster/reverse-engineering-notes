@@ -16,7 +16,7 @@
 // and two flags (+0x24 temporary, +0x25 stored in the file).
 #pragma once
 
-#include "datastruct/visionaire.h"
+#include "datastruct/visenums.h"
 
 // The 19 kinds of value a field can hold (0-18). The kind decides how the
 // field's storage in a record is laid out and handled: see the switch tables
