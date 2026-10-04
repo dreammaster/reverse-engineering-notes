@@ -1187,6 +1187,10 @@ The **clue book transportation page** (`cluetransport.c`; `RENDER_TRANSPORT=1`):
 name 12 + NUL, price Bcd4 at `+0xE`, uses at `+0x16`, mask | time word at `+0x18`; PEGASUS 10,000 / GIANT EAGLE 30,000 / FLYING RUG 50,000 / MAGIC DRAGON 70,000). The page lists
 three of them (not the rug) with VALUE, USES and TIME; the time reads ANYTIME when the time word has bit 2, else "BETWEEN 7P.M. AND 7A.M." (so only the dragon).
 
+The **local area map** (`ShowLocalAreaMap`, the M key; `localmap.c`; `RENDER_LOCALMAP=1`): the world is cut into blocks of 40 x 24 cells, 20 blocks per row; the party's
+block is shown full screen as 8 x 8 tiles (category 9, the minimap's pictures) from y = 8, unexplored cells as the blank tile 0x13, the party as the compass arrow. The clue book's
+map pages (F1) use the same drawing for any block.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
