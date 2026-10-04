@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_alchemylist test_alchemylist.c ../alchemylist.c ../viewrender.c ../random.c ../pictures.c ../font.c ../worldmap.c && ./test_alchemylist
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_alchemylist test_alchemylist.c ../alchemylist.c ../textpanel.c ../bcd4.c ../viewrender.c ../random.c ../pictures.c ../font.c ../worldmap.c && ./test_alchemylist
  */
 #include <stdio.h>
 #include <string.h>
@@ -60,6 +60,22 @@ int main(void) {
     check("Chapter 3: frame picture 3, MP at x = 170, the second cost at 203, no third column", screen[23 * 320 + 15] == 0x33 && anyColour(screen, 170, 43, 180, 49, 0x25) &&
                                                                                                    anyColour(screen, 203, 43, 214, 49, 0x25) && !anyColour(screen, 150, 43, 160, 49, 0x25) &&
                                                                                                    !anyColour(screen, 215, 43, 230, 49, 0x25));
+
+    memset(screen, 0xEE, sizeof(screen));
+    AlchemyPanelText text = {"            ", "MAGIC:", "ORE:", "NUORE:"};
+    Bcd4 ore = {0x00, 0x00, 0x00, 0x00}, nuore = {0x00, 0x00, 0x00, 0x00};
+    ore[3] = 0x12;
+    nuore[3] = 0x05;
+    alchemyStatusPanelDraw(&r, &text, "ANNA", 20, 30, ore, nuore);
+    check("status panel: the panel band is cleared to 4 and the name sits at y = 87", screen[96 * 320 + 250] != 0xEE && anyColour(screen, 241, 87, 280, 93, 0x8A));
+    check("MAGIC: in 0xCA, 20/30 in 0xF", anyColour(screen, 240, 96, 280, 102, 0xCA) && anyColour(screen, 240, 102, 270, 108, 0xF));
+    check("both ore labels and counters", anyColour(screen, 240, 114, 270, 120, 0x8A) && anyColour(screen, 240, 120, 260, 126, 0xF) && anyColour(screen, 240, 132, 280, 138, 0x8A) &&
+                                             anyColour(screen, 240, 138, 250, 144, 0xF));
+    memset(screen, 0xEE, sizeof(screen));
+    AlchemyPanelText text3 = {"            ", "MAGIC:", NULL, "NUORE:"};
+    alchemyStatusPanelDraw(&r3, &text3, "ANNA", 40, 30, NULL, nuore);
+    check("over the maximum the label is 0xCC; Chapter 3 shows one ore counter at y = 114", anyColour(screen, 240, 96, 280, 102, 0xCC) && !anyColour(screen, 240, 96, 280, 102, 0xCA) &&
+                                                                                                anyColour(screen, 240, 114, 280, 120, 0x8A) && !anyColour(screen, 240, 132, 280, 138, 0x8A));
 
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");

@@ -1180,6 +1180,9 @@ picture 6) with the monster's name and the heading MONSTER STATISTICS; 23 rows w
 the ore `+0x86`, NUORE `+0x82`), seven u16 stats (`+0x50 0x54 0x56 0x58 0x5A 0x64 0x66`), ten immunity rows (bits of `+0x96`) and two resistance rows (`+0x98`). The category headings
 of every clue page sit at the top right (`clueHeadingX`; Chapter 3 right aligns to x = 313). Not drawn: the animated sprite and the attack-effects line.
 
+The **alchemy status panel** (`DrawAlchemyStatusPanel`, `alchemyStatusPanelDraw`): in the text panel (cleared first) the character name over a blank filler at (241, 87), MAGIC: at y 96
+(0xCA, 0xCC when MP is above the maximum), current/max MP in 0xF at y 102, then the ore labels (0x8A at y 114 and 132) each with its counter below in 0xF. Chapter 3 shows only NUORE.
+
 **Fonts** (`writeChar`, `font.c`): 6 x 6 glyphs, 6 bytes each, indexed by character - 0x20, four fonts selected by `fontOffset` (0/2/4/6);
 font 0 is the text face, 1-3 the unreadable-script faces; Chapter 3's ':' and ';' are thinner. The pen advances 6.
 
