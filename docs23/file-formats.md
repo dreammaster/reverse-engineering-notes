@@ -5864,7 +5864,7 @@ after a successful unlock:
   `curgameIdOffset` is `_val10` (`yendor2.asm:56832`) — confirmed
   arithmetically to be exactly Chapter 2's lock count, **608**.
   **Chapter 3's equivalent global (`word_2ECF8`, `yendor3.asm:58618`)
-  is read but never written anywhere in the disassembly, always 0** —
+  [SUPERSEDED, see engine-diffs.md 2026-10-07 correction] is read but never written anywhere in the disassembly, always 0** —
   the same always-zero-global quirk already found for
   `LoadCurgameRecord`'s *other*, unrelated EMS-record multiplier
   (`word_3320E`/`_val9`, see "LoadCurgameRecord" below) — meaning
@@ -5946,7 +5946,7 @@ words (4 bytes, not 26) from `si = (id-1)*4 + 26*_val9` (Chapter 2) —
 `_val9 = 600`, i.e. starting 15,600 bytes into the region, which is
 `26 * 600`, *before* the 608-record boundary this section uses. In
 Chapter 3 the equivalent
-multiplier (`word_3320E`) is a global that's **read but never written
+[SUPERSEDED, see engine-diffs.md 2026-10-07 correction] multiplier (`word_3320E`) is a global that's **read but never written
 anywhere in the whole disassembly — always 0** (confirmed via
 `yendor3/ida_scripts/check_lock_catalog_size.py`), meaning Chapter 3's
 `LoadCurgameRecord` table would start at offset 0, overlapping lock id
@@ -6292,7 +6292,7 @@ source, since this project hasn't built the upstream item-use pipeline
   `yendor2.asm:3489`), `PartyFieldClass += 10` (promotes tier 0→1 or
   1→2). **In Chapter 3, the equivalent globals (`word_331F8`/
   `word_331FA`) are read but never written anywhere in the
-  disassembly — always 0** — so this comparison can never match a
+  [SUPERSEDED, see engine-diffs.md 2026-10-07 correction] disassembly — always 0** — so this comparison can never match a
   real level (always ≥ 1), and secondary-class promotion via training
   is **effectively disabled in Chapter 3**. This is the *third*
   independent always-zero-global quirk found in this project (see

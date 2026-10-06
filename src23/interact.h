@@ -45,16 +45,11 @@
  *     curgameIdOffset so the two id spaces don't collide. Set once
  *     that record's one-time effect has been triggered.
  *
- * curgameIdOffset is exactly Chapter 2's lock count (608, `_val10`,
- * yendor2.asm:56832) -- confirmed arithmetically, not assumed. **In
- * Chapter 3 the equivalent global (`word_2ECF8`) is read but never
- * written anywhere in the disassembly, always 0** -- the same
- * always-zero-global quirk already found for LoadCurgameRecord's EMS
- * record multiplier (`word_3320E`, see lockcatalog.h's "LoadCurgameRecord"
- * note). With curgameIdOffset == 0, Chapter 3's curgame-record ids
- * collide with its own lowest lock ids' unlock bits -- not determined
- * whether that's a genuine bug, dead code, or the two id spaces simply
- * never overlap in practice for Chapter 3's real data.
+ * curgameIdOffset is exactly the lock bitmap's size: 608 in Chapter 2 (`_val10`, yendor2.asm:3467) and 1008 in Chapter 3 (`word_2ECF8` = DS:0x0F48, set
+ * by Chapter 3's InitGlobals with the raw operand `mov word ptr ds:0F48h, 3F0h`). **Correction (2026-10-07): an earlier version of this note, and the code, said
+ * Chapter 3's was "read but never written, always 0"** -- IDA does not attribute the raw `ds:` writes of that InitGlobals to the named words, which made every
+ * Chapter 3 global initialised there look unwritten (this one, the curgame record multiplier word_3320E = DS:0x545E = 1000, and the class-promotion thresholds
+ * word_331F8/FA = DS:0x5448/0x544A = 10/30; yendor3/ida_scripts/check_curgame_globals.py verifies the address arithmetic).
  */
 bool interactBitmapTest(SaveGame *save, unsigned bitIndex);
 void interactBitmapSet(SaveGame *save, unsigned bitIndex);
@@ -62,7 +57,7 @@ void interactBitmapSet(SaveGame *save, unsigned bitIndex);
 /* 0-based bit index for a 1-based lock id (see lockcatalog.h's lockCatalogRecord). */
 unsigned interactLockBitIndex(unsigned lockId);
 
-/* Chapter 2: 608 (lockcatalog.h's LockRecordCountYendor2). Chapter 3: 0 (see the always-zero-global note above). */
+/* Chapter 2: 608 (lockcatalog.h's LockRecordCountYendor2). Chapter 3: 1008 (see the note above). */
 unsigned interactCurgameIdOffset(GameKind game);
 
 /* 0-based bit index for a 1-based curgame-record id (a WorldObjectFlagCurgameRecord record's value field). */

@@ -18,6 +18,27 @@ filtering out call targets that only differ because the *other*
 function hasn't been renamed yet) and reading anything that doesn't
 fully explain away as compiler/register-allocation noise.
 
+## Correction (2026-10-07): the three "always-zero" Chapter 3 globals are set
+
+Three separate notes in these docs (and the code they fed) said that Chapter 3 reads some globals that are "never written anywhere in the disassembly, always 0":
+the curgame bit offset `word_2ECF8`, the curgame record multiplier `word_3320E`, and the class-promotion thresholds `word_331F8` / `word_331FA`. **All three are
+set**. Chapter 3's `InitGlobals` (yendor3.asm:26982-27057) writes its constants through raw data-segment operands (`mov word ptr ds:545Eh, 3E8h`), which IDA's
+cross-references do not attribute to the named words, so every global initialised there looks unwritten. With the data-segment base 0x2DDB0
+(`yendor3/ida_scripts/check_curgame_globals.py` prints it and the names) the addresses match exactly:
+
+| IDA name | DS offset | value | Chapter 2 counterpart |
+|----------|-----------|-------|-----------------------|
+| `word_3320E` (record multiplier) | 0x545E | 1000 (0x3E8) | `_val9` = 600 |
+| `word_2ECF8` (curgame bit offset) | 0x0F48 | 1008 (0x3F0) | `_val10` = 608 |
+| `word_331F8` (first promotion level) | 0x5448 | 10 | `_val25` = 10 |
+| `word_331FA` (second promotion level) | 0x544A | 30 | `_val26` = 30 |
+
+So Chapter 3 behaves like Chapter 2 here: curgame ids occupy bits 1008 and up of the event bitmap (no collision with lock ids), curgame records are read from the
+second WORLD.DAT block at 1000 * 26 bytes (the real, valid-looking records), and secondary-class promotion at levels 10 and 30 **works** in Chapter 3. The
+statements below that say otherwise (and the "third always-zero-global quirk" conclusions) are superseded; `interact.c`, `lockcatalog.c` and `party.c` now use the
+real values. General lesson: for yendor3, a global that looks "read, never written" must be checked against the raw `ds:` writes of `InitGlobals` before it is
+believed to be zero.
+
 ## Important caution: some BinDiff matches are simply wrong
 
 Found by direct evidence, not inference: yendor3's `ErrorCheck`
@@ -1188,7 +1209,7 @@ The one real difference is in the data, not the code: the shared
 "already unlocked/triggered" bitmap's curgame-record id offset
 (`interactCurgameIdOffset` in `interact.h`) is a live, correctly-set
 constant in Chapter 2 (`_val10 = 608`, exactly its lock count) but a
-global that's **read, never written, always 0** in Chapter 3
+[SUPERSEDED, see the 2026-10-07 correction above] global that's **read, never written, always 0** in Chapter 3
 (`word_2ECF8`) -- meaning Chapter 3's curgame-record ids share bit
 positions with its own lowest lock ids in this bitmap, while Chapter
 2's two id spaces are kept cleanly separate. This is the *second*
@@ -1221,7 +1242,7 @@ different addresses.
 (`monsterRewardsAward`) is likewise instruction-identical between the
 two games -- checked directly, not assumed.
 
-## Character training/leveling (`UseTrainingItem`): identical growth formulas, Chapter 3 disables secondary-class promotion
+## Character training/leveling (`UseTrainingItem`): identical growth formulas (the Chapter 3 "disabled promotion" claim below was wrong, see the 2026-10-07 correction)
 
 Found while writing `src23/party.c`'s `partyApplyTraining` (2026-09-24).
 The cost gate, level increment/cap, HP/MP growth formulas (including
@@ -1241,7 +1262,7 @@ The secondary-class promotion step is not, though: Chapter 2 promotes
 a character's class (`PartyFieldClass += 10`) at levels 10 and 30
 (`_val25`/`_val26`, live constants). Chapter 3's equivalent globals
 (`word_331F8`/`word_331FA`) are read but never written anywhere in the
-disassembly — always 0 — so the comparison against a real level
+[SUPERSEDED, see the 2026-10-07 correction above] disassembly — always 0 — so the comparison against a real level
 (always ≥ 1) can never match. **Secondary-class promotion via training
 is therefore effectively disabled in Chapter 3.** This is the third
 always-zero-global quirk found in this project, each in an unrelated

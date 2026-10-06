@@ -164,7 +164,7 @@ groundwork below is already in place.
   **`LoadCurgameRecord` investigated further, genuinely unresolved**:
   it reads from the exact same EMS-backed region as the lock catalog,
   at a base offset (`_val9`/`word_3320E`) that's `600` in Chapter 2 but
-  **always 0 in Chapter 3** (that global is read but never written
+  [SUPERSEDED, see engine-diffs.md 2026-10-07 correction] **always 0 in Chapter 3** (that global is read but never written
   anywhere in the whole disassembly) — meaning Chapter 3's
   curgame-record table would start at offset 0, overlapping lock id
   1's own record entirely. Not determined whether that's a real quirk,
@@ -300,7 +300,7 @@ groundwork below is already in place.
   Locks get bits `[0, lockCount)`; curgame records get bits offset by
   `_val10` (confirmed to be exactly Chapter 2's lock count, 608) so the
   two id spaces don't collide — **except in Chapter 3, where the
-  equivalent global (`word_2ECF8`) is read but never written, always
+  [SUPERSEDED, see engine-diffs.md 2026-10-07 correction] equivalent global (`word_2ECF8`) is read but never written, always
   0**, the same always-zero-global quirk already found for
   `LoadCurgameRecord`'s unrelated EMS-record multiplier
   (`word_3320E`/`_val9`) — two independent always-zero offset globals
@@ -371,7 +371,7 @@ groundwork below is already in place.
   reduction), the two flat-`+2` attribute/skill growth loops, and
   secondary-class promotion are all reimplemented and instruction-
   identical between the games *except* the promotion thresholds — a
-  **third** always-zero-global quirk found in Chapter 3
+  [SUPERSEDED, see engine-diffs.md 2026-10-07 correction] **third** always-zero-global quirk found in Chapter 3
   (`word_331F8`/`word_331FA`), disabling secondary-class promotion via
   training entirely; see `engine-diffs.md`.
   **`UseTrainingItem`'s tail calls — done, same round**:

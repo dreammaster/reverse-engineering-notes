@@ -143,10 +143,8 @@ bool lockCatalogRecord(const LockCatalog *catalog, unsigned lockId, LockRecord *
  * cell's floor / wall type and ApplySavingThrowEffect reads as a trap. They are the second of the two WORLD.DAT blocks loadWorldDat2 / loadWorldDat3 read
  * into one buffer: block 2 is the locks (Chapter 2: 0x3CF0 = 600 records of 26 bytes; Chapter 3: 0x6590 = 1000), block 3 follows at that buffer offset
  * (Chapter 2: 0x460 = 280 curgame records, the real ids go up to 231; Chapter 3: 0x640 = 400, ids up to 71). LoadCurgameRecord addresses record n at
- * 0x1A * _val9 + 4 * (n - 1); Chapter 2 sets _val9 = 600 in InitGlobals. **Chapter 3's equivalent (word_3320E) has no static writer and its data-segment
- * value is 0**, which would read the record from the first lock records' bytes (garbage flags); the real block-3 table at 1000 * 26 is full of valid-looking
- * records (flags 0x41 / 0x9 / 0x4001 ... with packed traps), so this reads block 3 in both games -- the likely truth is that the value is set at run time by
- * something the static view cannot see. False when the id is 0 or beyond the block.
+ * 0x1A * _val9 + 4 * (n - 1); Chapter 2 sets _val9 = 600 in InitGlobals. Chapter 3's equivalent (`word_3320E` = DS:0x545E) is set to 1000 by its InitGlobals with a raw `ds:` operand (which IDA's cross-references miss; an
+ * earlier version of this note called it "never written, always 0"), so block 3 sits at 1000 * 26 there. False when the id is 0 or beyond the block.
  */
 bool lockCatalogCurgameRecord(const LockCatalog *catalog, unsigned curgameId, uint16_t *flags, uint16_t *value);
 

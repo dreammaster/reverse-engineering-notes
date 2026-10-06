@@ -11482,3 +11482,11 @@ candidates once deeper work begins:
 table-driven blitter's geometry lives in a 0x499C-byte WORLD.DAT block identical in both games, and real positions of both
 games render correctly (see file-formats.md, "Drawing the first-person view"). The tile-legend word meanings were corrected
 along the way (word 0 = floor picture, 1 = ceiling picture, 2 = wall picture, 3 = far-wall picture, 4 = frame offset).
+
+
+### 2026-10-07: correction -- Chapter 3's "always-zero" globals are set by raw `ds:` writes
+
+`word_3320E` (curgame record multiplier = 1000), `word_2ECF8` (curgame bit offset = 1008) and `word_331F8` / `word_331FA` (promotion levels 10 / 30) are initialised by
+Chapter 3's `InitGlobals` through raw `ds:` operands that IDA does not cross-reference to the names, so earlier entries (2026-09-24 .. 2026-09-30) that call them
+"read but never written, always 0" are wrong; promotion works in Chapter 3 and curgame ids are offset by 1008. Details and the address arithmetic are in
+engine-diffs.md's "Correction (2026-10-07)"; code fixed in `interact.c`, `lockcatalog.c`, `party.c`.

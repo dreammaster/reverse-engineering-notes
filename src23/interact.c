@@ -20,7 +20,7 @@ unsigned interactLockBitIndex(unsigned lockId) {
 }
 
 unsigned interactCurgameIdOffset(GameKind game) {
-    return game == GameYendor2 ? LockRecordCountYendor2 : 0;
+    return game == GameYendor2 ? LockRecordCountYendor2 : LockRecordCountYendor3;
 }
 
 unsigned interactCurgameBitIndex(GameKind game, unsigned curgameId) {

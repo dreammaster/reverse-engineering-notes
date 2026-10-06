@@ -44,10 +44,9 @@ static void testBitmap(void) {
     check("lock id 9 (next byte) unaffected", !interactBitmapTest(&save, interactLockBitIndex(9)));
 
     checkU32("yendor2 curgame offset is the lock count", interactCurgameIdOffset(GameYendor2), 608);
-    checkU32("yendor3 curgame offset is 0 (word_2ECF8 never written)", interactCurgameIdOffset(GameYendor3), 0);
+    checkU32("yendor3 curgame offset is 1008 (word_2ECF8 = DS:0x0F48, set by InitGlobals)", interactCurgameIdOffset(GameYendor3), 1008);
     checkU32("yendor2 curgame id 1's bit follows the last lock id", interactCurgameBitIndex(GameYendor2, 1), 608);
-    checkU32("yendor3 curgame id 1's bit collides with lock id 1's", interactCurgameBitIndex(GameYendor3, 1),
-             interactLockBitIndex(1));
+    checkU32("yendor3 curgame id 1's bit follows its 1008 lock bits", interactCurgameBitIndex(GameYendor3, 1), 1008);
 
     unsigned curgameBit = interactCurgameBitIndex(GameYendor2, 1);
     check("curgame id 1's bit is distinct from any lock id's (yendor2 offsets by the lock count)",

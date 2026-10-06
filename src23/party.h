@@ -410,16 +410,10 @@ typedef struct {
 } PartyClassPromotionThresholds;
 
 /*
- * Ch2: {10, 30} (`_val25`/`_val26`, yendor2.asm:3489-3490).
- * **Ch3: {0, 0}** -- the equivalent globals (`word_331F8`/`word_331FA`,
- * yendor3.asm) are read but never written anywhere in the disassembly,
- * always 0, so `partyApplyTraining`'s comparison against them can never
- * match a real level (which is always >= 1) -- promotion is effectively
- * disabled in Chapter 3. The third always-zero-global quirk found in
- * this project (see lockcatalog.h's "LoadCurgameRecord" note and
- * interact.h's `curgameIdOffset`), now in a third, unrelated subsystem
- * -- three independent instances make a systemic Chapter 3 change more
- * plausible than three separate coincidences, but that's not confirmed.
+ * Both games: {10, 30} (Chapter 2 `_val25`/`_val26`, yendor2.asm:3489-3490; Chapter 3 `word_331F8`/`word_331FA` = DS:0x5448 / 0x544A, written by InitGlobals with
+ * the raw `ds:` operands `mov word ptr ds:5448h, 0Ah` / `ds:544Ah, 1Eh` -- yendor3.asm's InitGlobals, which IDA's cross-references do not attribute to the named
+ * words). An earlier version of this note said Chapter 3's were "read but never written, always 0" and disabled promotion there: wrong, the same artifact as the
+ * curgame globals (see lockcatalog.h and interact.h; resolved with yendor3/ida_scripts/check_curgame_globals.py).
  */
 const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game);
 

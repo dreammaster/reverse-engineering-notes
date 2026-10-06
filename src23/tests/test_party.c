@@ -479,11 +479,11 @@ static void testTraining(void) {
     checkU32("Strength is capped at 999 (998 + 2 would overflow)", partyGetStatMax(g_record, PartyStatStrength),
              999);
 
-    /* Class promotion at the two Chapter 2 thresholds; Chapter 3's are always-zero (disabled). */
+    /* Class promotion at the two thresholds (10 and 30 in both games). */
     checkU32("yendor2 promotion thresholds", partyClassPromotionThresholds(GameYendor2)->tier1At, 10);
     checkU32("yendor2 second promotion threshold", partyClassPromotionThresholds(GameYendor2)->tier2At, 30);
-    checkU32("yendor3 promotion thresholds are always-zero (disabled)",
-             partyClassPromotionThresholds(GameYendor3)->tier1At, 0);
+    checkU32("yendor3 promotion thresholds are the same: 10 and 30", partyClassPromotionThresholds(GameYendor3)->tier1At * 100 + partyClassPromotionThresholds(GameYendor3)->tier2At,
+             1030);
 
     saveGameInit(&save, GameYendor2);
     bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
@@ -505,8 +505,8 @@ static void testTraining(void) {
     bcd4FromU16(saveHeaderBcd4(&save, SaveHeaderGold), 1000);
     setupTrainee(g_record, 1, 9, 10, 10, 10, 10, 10, 10, 100, 30);
     partyApplyTraining(g_record, GameYendor3, &save, cost); /* level 9 -> 10 */
-    checkU32("yendor3: reaching level 10 does NOT promote (thresholds always 0)",
-             partyGetU16(g_record, PartyFieldClass), 1);
+    checkU32("yendor3: reaching level 10 promotes a tier-0 class to tier 1 (FIGHTER 1 -> WARRIOR 11)",
+             partyGetU16(g_record, PartyFieldClass), 11);
 
     /* Strength/Dexterity excess-over-72 bonus, exercised directly via the standalone refresh function. */
     memset(g_record, 0, PartyRecordSize);

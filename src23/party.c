@@ -370,7 +370,7 @@ PartyItemDurabilityOutcome partyTickEquippedItemDurability(uint8_t *record, cons
 
 const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game) {
     static const PartyClassPromotionThresholds kYendor2 = {10, 30};
-    static const PartyClassPromotionThresholds kYendor3 = {0, 0};
+    static const PartyClassPromotionThresholds kYendor3 = {10, 30};
     return game == GameYendor2 ? &kYendor2 : &kYendor3;
 }
 
