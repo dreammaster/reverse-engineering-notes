@@ -64,6 +64,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `random` | A faithful port of RandomInRange (yendor2.asm:41476), the game's only random source. | yes |
 | `relics` | Chapter 2's quest relics (DispatchItemAbilityCommand, yendor2.asm:49086; HandleGameCommand's fall-through for item ids 0x242-0x2C8 -- the "themed cluster" earlier notes called UseAbilityOnTarget / the item-icon dispatcher). | yes |
 | `repair` | The skill-based repair attempt (RepairItemCommand, yendor2.asm:50996, instruction-identical in Chapter 3; the "use a repair kit on a damaged item" path HandleGameCommand reaches -- distinct from the NPC repair service in dialogservice.h). | yes |
+| `rest` | The R command, RestPartyAndAdvanceClock (yendor2.asm:25686, Chapter 3 :24173), composed from the pieces that already exist (gameclock.h, party.h): * 1. | yes |
 | `roster` | The party roster screen: ShowWorldMap (yendor2.asm:50651; Chapter 3 sub_2B7AE) with DrawPartyRosterEntry (:50954), identical in both games. | yes |
 | `savegame` | CURGAME / SAVGAMEn: the live game file and its six save slots. | yes |
 | `savegame_stdio` | tdio wrappers for tools and tests; the engine proper should use savegame.h alone. |  |

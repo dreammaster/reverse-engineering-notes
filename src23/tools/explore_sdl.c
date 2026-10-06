@@ -5,16 +5,16 @@
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
  *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c \
- *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
+ *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../rest.c ../gameclock.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
  *       ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), M the local area
- * map, D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * map, R rest (eight hours; monsters can interrupt it), D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
- * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, D dialog, + -, ESC as '!') the keys are played
+ * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, + -, ESC as '!') the keys are played
  * at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display).
  */
 #include <stdio.h>
@@ -38,6 +38,7 @@
 #include "newgame.h"
 #include "paperdoll.h"
 #include "pictures_stdio.h"
+#include "rest.h"
 #include "pngwrite.h"
 #include "statsheet.h"
 #include "statuspanel.h"
@@ -178,6 +179,12 @@ static void monstersTakeTurns(GameKind game, int x, int y) {
             combatStart(record);
         }
     }
+}
+
+static bool restMonstersTurn(void *ctx) {
+    const int *pos = ctx;
+    monstersTakeTurns(g_game, pos[0], pos[1]);
+    return g_combat.active;
 }
 
 static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictures, int x, int y, uint16_t facing, unsigned clock, Overlay overlay) {
@@ -348,6 +355,7 @@ int main(int argc, char **argv) {
             case 'Q': press.key.keysym.sym = SDLK_LEFT; press.key.keysym.mod = KMOD_CTRL; break;
             case 'E': press.key.keysym.sym = SDLK_RIGHT; press.key.keysym.mod = KMOD_CTRL; break;
             case 'M': press.key.keysym.sym = SDLK_m; break;
+            case 'T': press.key.keysym.sym = SDLK_r; break;
             case 'A': press.key.keysym.sym = SDLK_a; break;
             case 'D': press.key.keysym.sym = SDLK_d; break;
             case 'P': press.key.keysym.sym = SDLK_p; break;
@@ -432,6 +440,14 @@ int main(int argc, char **argv) {
                         exploreRevealAroundPlayer(&g_save, x, y, facing, &revealed);
                         buildWindow(game, x, y);
                         monstersTakeTurns(game, x, y);
+                    } else if (command.action == MainActionRest) {
+                        GameClock gameClock = {(uint16_t)clock, 1, 1, 1};
+                        uint8_t globalSlots[24];
+                        memset(globalSlots, 0, sizeof(globalSlots));
+                        int pos[2] = {x, y};
+                        RestOutcome rest = restParty(&g_save, &gameClock, &g_items, globalSlots, false, false, false, restMonstersTurn, pos);
+                        clock = gameClock.minutes % 1440;
+                        snprintf(g_combat.log, sizeof(g_combat.log), rest.refused ? "you cannot rest here" : rest.interrupted ? "rest interrupted in hour %u" : "rested 8 hours, %u fed", rest.interrupted ? rest.hour : rest.fed);
                     } else if (command.action == MainActionLocalMap) {
                         overlay = OverlayLocalMap;
                     } else if (command.action == MainActionGameDialog) {

@@ -55,7 +55,7 @@ The original runs one loop (`start` -> `RunDungeonGameLoop`); everything below i
 
 * input to action: `movement.c` (passability, bump), `interact.c` (doors/locks/keys), `travel.c` (teleports and the typed-password system),
   `mapview.c` (which maps the party may open), `explore.c` (fog of war), `mount.c`;
-* time: `gameclock.c` (calendar, rest), `lighting.c`, `lightsource.c`, `ailment.c`, `music.c`;
+* time: `gameclock.c` (calendar), `rest.c` (the R command: hourly slices, interruption, calendar, food-driven regeneration), `lighting.c`, `lightsource.c`, `ailment.c`, `music.c`;
 * party: `party.c` (records, equipment, containers, stats), `chargen.c`, `inventory.c` (what an item may do/where it fits), `shop.c`, `repair.c`,
   `consumable.c`, `relics.c`, `thrown.c`, `spellcast.c`, `spelljump.c`;
 * monsters and combat: `monsterpool.c` (spawn, ambush, walk, rewards: `monsterPoolTakeTurn`), `monster.c`, `combat.c`, `effect.c`;
