@@ -159,9 +159,12 @@ member that is not dead/stone/eradicated and is fed (`Party_food` > 0, one unit 
 ## Time (`changeTime` 16973, `chargeStep` 16DC0, `addTime` 1531F)
 
 * `chargeStep` (every movement command) advances the clock by 1 minute, or 10 minutes when `Maze_wrapMode` is set (outdoor maps), then calls `moveMonsters`.
-* Each time the clock crosses a multiple of 480 minutes (`1E0h`, 8 hours) `changeTime` runs the condition tick for every party member: a character with any stat reduced to 0 dies,
-  several timed conditions (asleep, confused, paralysed, weak ...) are cleared or aged, poison/disease counters grow (doubling, with a 1 in 10 chance each tick to roll a saving throw that cures them),
-  heart-broken counts up to 10 then turns into depression, and so on (the full per-condition table of this 550-line routine is not decoded).
+* Each time the clock crosses a multiple of 480 minutes (`1E0h`, 8 hours) `changeTime` runs the **condition tick** for every party member (counters are the bytes at char +113h + condition index, order cursed, heart broken, weak, poisoned, diseased, insane, in love, drunk, asleep, depressed, confused, paralysed, unconscious, dead, stone, eradicated):
+  * a living character with any of the seven attributes (`getStat`) below 1 dies;
+  * heart broken: counts up; after 10 ticks it ends and the character becomes depressed;  in love: counts up; after 10 ticks it ends and becomes heart broken;  depressed: counts 1-2-3 and ends on the 4th tick;
+  * asleep, confused, paralysed and weak are cleared; drunk ends and leaves the character weak (the drunk counter value becomes the weak counter);
+  * poisoned and diseased: with probability 1/10 per tick a saving throw (types 3 and 4) is rolled and cures on success; otherwise (9/10) the counter **doubles** (so the poison/disease damage and severity escalate until cured);
+  * insane keeps counting up; dead, stone and eradicated count up (saturating at 255) as the time since death.
 * At the end of `changeTime`, on maps that have a day/night cycle (`mapHasDayNight`: maps below 6, 24-28, 41-104 and above 106), `Town_closed` (`byte_32E68`) is recomputed:
   night is `Party_minutes < 300 or >= 1260` (before 05:00 or from 21:00); when the state changed the town is reloaded (`sub_28194` -> `sub_43034`) in its day or night form. Guild, smithy and training grounds refuse entry while it is night (checked in those routines; the temple and bank were not checked); the tavern has its own hours (open 18:00-05:00).
 
@@ -232,3 +235,4 @@ Not possible on outdoor maps (`Maze_wrapMode` != 0).  Sound 19h is played, the f
 When the party interacts with a map object (`byte_34BB6` = object slot; its picture id is looked up in an 8-entry table in the overlay) the picture selects a trap kind code (14h, 2Ah, 2Bh ... ) and the chest is "armed" once (`byte_37383`).
 `sub_3BE18` asks who will open it (cancel = leave, `byte_37383 = FFh`).  Then with probability 1/4 (`rnd(1,4) == 1`) the trap fires: `giveCharDamage(char, rnd(0,6), page header byte 1Eh)`.  The opener then rolls
 `getThievery(char) + rnd(1,20)` against the page's lock difficulty (header byte 12h) and, depending on the object kind, the loot is produced with `generateItem`, gold from `giveTake`, or a message.  The details of the per-kind loot were not traced.
+On **every** call of `changeTime` (each minute of game time, not only every 8 hours): a confused character has a 1/3 chance of a general saving throw that cures it (otherwise the counter is decremented), and a paralysed character has a 1/5 chance of its counter being decremented (so paralysis wears off slowly).
