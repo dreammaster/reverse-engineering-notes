@@ -16,5 +16,5 @@ The program is the same engine generation as Xeen (Borland C++ 1991, VROOMM over
 Decoded and documented (details in `docs/`): executable packing and overlays; `.CC`/`.CUR` archives; the maze files (cells, header bytes, events with all value modes, monster/object records, passwords); the character record
 and its rules (stats, HP/SP, experience, skills, equipment, saving throws, damage); items (prices, generation, class restrictions, smithy stock); the 77 spells (cost, school lists, attack parameters, many effects); monsters
 (table, special attacks, targeting, to-hit, movement, loot, status-spell susceptibility); the town buildings; time, day/night, resting; the exploration loop and key table, combat round, music/sound entry points.
-Known gaps: the renderer's record writers (`sub_17439`, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D`) and the video module's scene consumer, per-object chest loot, the per-condition tick table in `changeTime`,
+Known gaps: the renderer's record writers (`sub_17439`, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D`) and the video module's scene consumer, per-object chest loot,
 some event modes (23, 74, 82), `moveMonsters`' exact pathing, character creation screens, the AdLib effect data tables.
