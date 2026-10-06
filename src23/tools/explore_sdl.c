@@ -12,7 +12,7 @@
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), M the local area
- * map, D the pause dialog, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * map, D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, D dialog, + -, ESC as '!') the keys are played
  * at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display).
@@ -36,15 +36,18 @@
 #include "monsterpool.h"
 #include "movement.h"
 #include "newgame.h"
+#include "paperdoll.h"
 #include "pictures_stdio.h"
 #include "pngwrite.h"
+#include "statsheet.h"
 #include "statuspanel.h"
 #include "viewport.h"
 #include "viewrender.h"
 #include "windowbake.h"
 #include "worldmap_stdio.h"
 
-typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog } Overlay;
+typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls } Overlay;
+static unsigned g_overlayHero;
 
 static WorldMap g_map;
 static WorldObjectTable g_objects;
@@ -223,6 +226,16 @@ static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictur
         localMapFill(localCells, game, &g_map, &g_save, c0, r0);
         memset(g_screen, 0, sizeof(g_screen));
         localMapDraw(renderer, localCells, x, y, facing);
+    } else if (overlay == OverlayDetail) {
+        uint16_t roles[5];
+        for (unsigned i = 0; i < 5; i++) {
+            roles[i] = saveHeaderGetU16(&g_save, SaveHeaderRoleAssignments + 2 * i);
+        }
+        detailSheetDraw(renderer, saveGamePartyRecord(&g_save, 5 + g_overlayHero), 6 + g_overlayHero, roles);
+    } else if (overlay == OverlayDolls) {
+        for (unsigned i = 0; i < 4; i++) {
+            paperDollDraw(renderer, &g_items, saveGamePartyRecord(&g_save, 5 + i), 8 + 56 * (int)i, 8);
+        }
     } else if (overlay == OverlayDialog) {
         gameDialogDraw(renderer, GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagNewGame,
                        DriverMusicAvailable | DriverSoundFxAvailable | DriverMusicOn, 5);
@@ -337,6 +350,9 @@ int main(int argc, char **argv) {
             case 'M': press.key.keysym.sym = SDLK_m; break;
             case 'A': press.key.keysym.sym = SDLK_a; break;
             case 'D': press.key.keysym.sym = SDLK_d; break;
+            case 'P': press.key.keysym.sym = SDLK_p; break;
+            case '1': press.key.keysym.sym = SDLK_F1; break;
+            case '2': press.key.keysym.sym = SDLK_F2; break;
             case '+': press.key.keysym.sym = SDLK_PLUS; break;
             case '-': press.key.keysym.sym = SDLK_MINUS; break;
             case '!': press.key.keysym.sym = SDLK_ESCAPE; break;
@@ -382,6 +398,8 @@ int main(int argc, char **argv) {
                         code = ctrl ? 0x73 : 0x4B;
                     } else if (key == SDLK_RIGHT) {
                         code = ctrl ? 0x74 : 0x4D;
+                    } else if (key >= SDLK_F1 && key <= SDLK_F4) {
+                        code = (uint8_t)(0x3B + (key - SDLK_F1));
                     } else if (key >= SDLK_a && key <= SDLK_z) {
                         extended = false;
                         code = (uint8_t)(key - SDLK_a + 'A');
@@ -418,6 +436,11 @@ int main(int argc, char **argv) {
                         overlay = OverlayLocalMap;
                     } else if (command.action == MainActionGameDialog) {
                         overlay = OverlayDialog;
+                    } else if (command.action == MainActionMemberDetail) {
+                        g_overlayHero = command.index & 3;
+                        overlay = OverlayDetail;
+                    } else if (command.action == MainActionPartyInventory) {
+                        overlay = OverlayDolls;
                     }
                 }
                 dirty = true;
