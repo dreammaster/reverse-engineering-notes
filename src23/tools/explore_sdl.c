@@ -4,7 +4,8 @@
  * It is the smallest "engine" that uses them together; nothing here is game logic (that is all in the modules), only input and display glue.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c \
+ *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
  *       ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2
@@ -29,6 +30,8 @@
 #include "localmap.h"
 #include "maininput.h"
 #include "minimap.h"
+#include "monster_stdio.h"
+#include "monsterpool.h"
 #include "movement.h"
 #include "newgame.h"
 #include "pictures_stdio.h"
@@ -36,18 +39,48 @@
 #include "statuspanel.h"
 #include "viewport.h"
 #include "viewrender.h"
+#include "windowbake.h"
 #include "worldmap_stdio.h"
 
 typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog } Overlay;
 
 static WorldMap g_map;
+static WorldObjectTable g_objects;
+static LockCatalog g_locks;
+static MonsterCatalog g_catalog;
+static uint8_t g_pool[MonsterPoolSize * MonsterRecordSize];
+static RandomState g_rng;
+static int g_engagedType = 0;
 static SaveGame g_save;
 static DungeonGrid g_grid;
 static uint8_t g_screen[ViewScreenWidth * ViewScreenHeight];
 static uint8_t g_tables[ViewTablesSize];
 
-static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictures, int x, int y, uint16_t facing, unsigned clock, Overlay overlay) {
+/* RefreshDungeonMapWindow: the base window, the interaction markers baked in, then the live monsters relinked into it. */
+static void buildWindow(GameKind game, int x, int y) {
     dungeonGridBuild(&g_grid, game, &g_map, &g_save, x, y);
+    dungeonGridBakeMarkers(&g_grid, game, &g_objects, &g_locks, &g_save);
+    monsterPoolRefreshWindow(g_pool, &g_grid, &g_save);
+}
+
+/* ProcessLevelMonsters: every live monster takes its turn (walk toward the party, ambush, timers); one reaching the party engages it. */
+static void monstersTakeTurns(GameKind game, int x, int y) {
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+    for (unsigned slot = 0; slot < MonsterPoolSize && !g_engagedType; slot++) {
+        uint8_t *record = g_pool + (size_t)slot * MonsterRecordSize;
+        if (monsterGetU16(record, MonsterFieldType) == 0) {
+            continue;
+        }
+        MonsterFullTurn turn = monsterPoolTakeTurn(record, game, &g_map, &g_grid, NULL, 0, &staging, x, y, &g_rng);
+        if (turn.move == MonsterMoveEngaged) {
+            g_engagedType = (int)monsterGetU16(record, MonsterFieldType);
+        }
+    }
+}
+
+static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictures, int x, int y, uint16_t facing, unsigned clock, Overlay overlay) {
+    buildWindow(game, x, y);
     DungeonGridCell cells[ViewportCellCount];
     viewportBuild(&g_grid, facing, x, y, cells);
     viewportComputeVisibility(game, cells);
@@ -58,6 +91,15 @@ static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictur
     lightingComputeGradient(game, &light, 0, scene.gradient, &reset);
     scene.cells = cells;
     scene.facing = facing;
+    monsterPoolEncounterScan(g_pool, &g_catalog, &g_save, game, facing, (uint16_t)x, (uint16_t)y, (uint16_t)g_grid.originRow, (uint16_t)g_grid.originCol, cells,
+                             scene.cellMonsters, &g_rng);
+    if (getenv("EXPLORE_DEBUG")) {
+        for (unsigned i = 0; i < ViewportCellCount; i++) {
+            if (cells[i].flags & DungeonGridCellFlagOverlay) {
+                fprintf(stderr, "view cell %u: marker type %u flags %04X monster %s\n", i, (unsigned)cells[i].reserved4, (unsigned)cells[i].flags, scene.cellMonsters[i] ? "yes" : "no");
+            }
+        }
+    }
     memset(g_screen, 0, sizeof(g_screen));
     const uint8_t *frame = pictureFileGet(pictures, 0, 1);
     for (unsigned row = 0; frame && row < 198; row++) {
@@ -120,6 +162,12 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot open %s\n", path);
         return 1;
     }
+    if (!worldObjectTableParseWorldDat(&g_objects, game, worldDat, worldSize) || !lockCatalogParseWorldDat(&g_locks, game, worldDat, worldSize) ||
+        !monsterCatalogParseWorldDat(&g_catalog, game, worldDat, worldSize)) {
+        fprintf(stderr, "cannot read the world objects, locks or monsters\n");
+        return 1;
+    }
+    randomStart(&g_rng, 30, 50);
     saveGameInit(&g_save, game);
     if (!saveGameNewGame(&g_save, game, worldDat, worldSize)) {
         fprintf(stderr, "cannot build the new game\n");
@@ -129,6 +177,15 @@ int main(int argc, char **argv) {
     uint16_t facing = saveHeaderGetU16(&g_save, SaveHeaderFacing);
     unsigned clock = saveHeaderGetU16(&g_save, SaveHeaderClockMinutes);
 
+    if (getenv("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
+        int sx, sy;
+        char dirChar = 'N';
+        if (sscanf(getenv("EXPLORE_START"), "%d,%d,%c", &sx, &sy, &dirChar) >= 2) {
+            x = sx;
+            y = sy;
+            facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
+        }
+    }
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
         return 1;
@@ -215,12 +272,14 @@ int main(int argc, char **argv) {
                         code = (uint8_t)(key - SDLK_a + 'A');
                     }
                     MainCommand command = mainCommandForKey(game, extended, code);
-                    if (command.action == MainActionMove) {
+                    if (command.action == MainActionMove && g_engagedType) {
+                        /* combat is not part of this demo: stand still while a monster has the party */
+                    } else if (command.action == MainActionMove) {
                         MovementResult move = movementApply(command.movement, facing);
                         if (move.deltaCol || move.deltaRow) {
                             int nx = x + move.deltaCol, ny = y + move.deltaRow;
                             if (movementInBounds(game, (uint16_t)nx, (uint16_t)ny)) {
-                                dungeonGridBuild(&g_grid, game, &g_map, &g_save, x, y);
+                                buildWindow(game, x, y);
                                 const DungeonGridCell *cell = dungeonGridCellAtWorldPos(&g_grid, nx, ny);
                                 bool isDoor = cell && (cell->flags & 0x6000);
                                 MovementCellOutcome outcome =
@@ -234,6 +293,8 @@ int main(int argc, char **argv) {
                             facing = move.facing;
                         }
                         exploreRevealAroundPlayer(&g_save, x, y, facing, &revealed);
+                        buildWindow(game, x, y);
+                        monstersTakeTurns(game, x, y);
                     } else if (command.action == MainActionLocalMap) {
                         overlay = OverlayLocalMap;
                     } else if (command.action == MainActionGameDialog) {
@@ -256,7 +317,7 @@ int main(int argc, char **argv) {
             SDL_RenderCopy(sdl, texture, NULL, NULL);
             SDL_RenderPresent(sdl);
             char title[96];
-            snprintf(title, sizeof(title), "Yendorian Tales - (%d, %d) clock %02u:%02u", x, y, clock / 60, clock % 60);
+            snprintf(title, sizeof(title), "Yendorian Tales - (%d, %d) clock %02u:%02u%s", x, y, clock / 60, clock % 60, g_engagedType ? " - ENGAGED (combat is not in this demo)" : "");
             SDL_SetWindowTitle(window, title);
             dirty = false;
         }

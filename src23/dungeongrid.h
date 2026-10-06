@@ -24,7 +24,7 @@
  * This module covers the base window -- windowing/clamping and the raw
  * per-cell copy from the world map plus the explored-map bitmap. It does
  * NOT cover the two things RefreshDungeonMapWindow does after that base
- * copy, both out of scope for this pass:
+ * copy (the first is now windowbake.h, the second monsterpool.h's monsterPoolRefreshWindow):
  *   - TryInteractAtPosition's per-cell marker baking, which is what
  *     actually sets the door/lock flag (bit 0x6000, consumed by
  *     movement.h's MovementCellOutcome via a plain isDoor bool -- this

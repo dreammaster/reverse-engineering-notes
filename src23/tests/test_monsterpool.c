@@ -216,6 +216,45 @@ static void testPoolSpawn(void) {
               0);
 }
 
+static void testEncounterScan(void) {
+    MonsterCatalog catalog = buildTestCatalog();
+    memset(g_pool, 0, sizeof(g_pool));
+    SaveGame save;
+    saveGameInit(&save, GameYendor2);
+    RandomState rng;
+    randomStart(&rng, 30, 50);
+    DungeonGridCell cells[51];
+    memset(cells, 0, sizeof(cells));
+    uint8_t *drawn[51];
+
+    cells[30].flags = DungeonGridCellFlagOverlay; /* a marker for type 5 */
+    cells[30].reserved4 = 5;
+    cells[10].flags = DungeonGridCellFlagOverlay; /* in the farthest row: ignored */
+    cells[10].reserved4 = 5;
+    cells[49].flags = DungeonGridCellFlagOverlay; /* the party's own cell: ignored */
+    cells[49].reserved4 = 5;
+    cells[40].flags = DungeonGridCellFlagOverlay | 1; /* hidden: ignored */
+    cells[40].reserved4 = 5;
+    cells[20].flags = DungeonGridCellFlagOverlay; /* a marker without a type id: ignored */
+    unsigned spawned = monsterPoolEncounterScan(g_pool, &catalog, &save, GameYendor2, SaveFacingNorth, 200, 60, 150, 160, cells, drawn, &rng);
+    check("the scan spawns the one eligible marker", spawned == 1 && monsterPoolFindType(g_pool, 5) >= 0);
+    check("... and offers it for drawing at that cell only", drawn[30] == g_pool + (size_t)monsterPoolFindType(g_pool, 5) * MonsterRecordSize && drawn[10] == NULL &&
+                                                          drawn[49] == NULL && drawn[40] == NULL && drawn[20] == NULL);
+    check("the type is marked spawned", monsterSpawnFlagTest(&save, GameYendor2, 5));
+
+    spawned = monsterPoolEncounterScan(g_pool, &catalog, &save, GameYendor2, SaveFacingNorth, 200, 60, 150, 160, cells, drawn, &rng);
+    unsigned live = 0;
+    for (unsigned i = 0; i < MonsterPoolSize; i++) {
+        live += monsterGetU16(g_pool + (size_t)i * MonsterRecordSize, MonsterFieldType) != 0;
+    }
+    check("a second scan spawns nothing more (the type is already in the pool)", spawned == 0 && live == 1 && drawn[30] != NULL);
+    check("FindType: a type that is not there gives -1", monsterPoolFindType(g_pool, 77) == -1);
+
+    cells[30].reserved4 = 999; /* a type the catalog does not know: nothing to draw */
+    spawned = monsterPoolEncounterScan(g_pool, &catalog, &save, GameYendor2, SaveFacingNorth, 200, 60, 150, 160, cells, drawn, &rng);
+    check("an unknown type is skipped", spawned == 0 && drawn[30] == NULL);
+}
+
 static uint32_t bcdHex(const uint8_t *value) {
     return (uint32_t)value[0] << 24 | (uint32_t)value[1] << 16 | (uint32_t)value[2] << 8 | value[3];
 }
@@ -344,6 +383,7 @@ int main(void) {
     testPoolRefreshWithoutSave();
     testOffsetTable();
     testPoolSpawn();
+    testEncounterScan();
     testGrantRewards();
     testRewardsAward();
     testPoolRemove();

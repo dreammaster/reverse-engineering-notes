@@ -165,6 +165,42 @@ int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *sav
     return slot;
 }
 
+int monsterPoolFindType(const uint8_t *pool, unsigned typeId) {
+    for (unsigned i = 0; i < MonsterPoolSize; i++) {
+        if (monsterGetU16(pool + (size_t)i * MonsterRecordSize, MonsterFieldType) == typeId) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+unsigned monsterPoolEncounterScan(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *save, GameKind game, uint16_t facing, uint16_t partyWorldX,
+                                   uint16_t partyWorldY, uint16_t gridOriginRow, uint16_t gridOriginCol, const DungeonGridCell cells[51],
+                                   uint8_t *cellMonsters[51], RandomState *rng) {
+    unsigned spawned = 0;
+    for (unsigned i = 0; i < 51; i++) {
+        cellMonsters[i] = NULL;
+    }
+    for (unsigned i = 17; i < 49; i++) {
+        const DungeonGridCell *cell = &cells[i];
+        if ((cell->flags & 1) || !(cell->flags & DungeonGridCellFlagOverlay) || cell->reserved4 == 0) {
+            continue;
+        }
+        int slot = monsterPoolFindType(pool, cell->reserved4);
+        if (slot < 0) {
+            slot = monsterPoolSpawn(pool, catalog, save, game, facing, partyWorldX, partyWorldY, gridOriginRow, gridOriginCol, i, cell->reserved4, rng);
+            if (slot < 0) {
+                continue;
+            }
+            spawned++;
+        } else {
+            monsterTryActivateByDistance(pool + (size_t)slot * MonsterRecordSize, (uint16_t)i);
+        }
+        cellMonsters[i] = pool + (size_t)slot * MonsterRecordSize;
+    }
+    return spawned;
+}
+
 void monsterGrantRewards(MonsterRewardStaging *staging, const uint8_t *record, uint8_t *globalFlags,
                           size_t globalFlagsSize) {
     bcd4Add(staging->gold, monsterLoot(record, MonsterLootGold));

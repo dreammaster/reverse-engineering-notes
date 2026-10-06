@@ -23,6 +23,14 @@ bool lockCatalogParse(LockCatalog *catalog, GameKind game, const uint8_t *region
     catalog->game = game;
     catalog->recordCount = layout->recordCount;
     memcpy(catalog->records, region, (size_t)layout->recordCount * LockRecordSize);
+    unsigned block2 = game == GameYendor2 ? LockBlock2RecordsYendor2 : LockBlock2RecordsYendor3;
+    unsigned count = game == GameYendor2 ? LockCurgameCountYendor2 : LockCurgameCountYendor3;
+    size_t start = (size_t)block2 * LockRecordSize;
+    catalog->curgameCount = 0;
+    if (size >= start + (size_t)count * 4) {
+        memcpy(catalog->curgame, region + start, (size_t)count * 4);
+        catalog->curgameCount = (uint16_t)count;
+    }
     return true;
 }
 
@@ -56,6 +64,16 @@ bool lockCatalogRecord(const LockCatalog *catalog, unsigned lockId, LockRecord *
     out->gold = readU16(rec + 0x14);
     out->magicOre = readU16(rec + 0x16);
     out->nuore = readU16(rec + 0x18);
+    return true;
+}
+
+bool lockCatalogCurgameRecord(const LockCatalog *catalog, unsigned curgameId, uint16_t *flags, uint16_t *value) {
+    if (curgameId == 0 || curgameId > catalog->curgameCount) {
+        return false;
+    }
+    const uint8_t *rec = catalog->curgame + (size_t)(curgameId - 1) * 4;
+    *flags = readU16(rec);
+    *value = readU16(rec + 2);
     return true;
 }
 

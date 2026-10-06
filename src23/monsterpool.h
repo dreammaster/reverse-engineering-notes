@@ -124,6 +124,24 @@ int monsterPoolSpawn(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *sav
                       unsigned viewportIndex, unsigned typeId, RandomState *rng);
 
 /*
+ * FindMonsterTypeInLevelPool (yendor2.asm:33123): the pool slot holding a live monster of type `typeId` (the first, scanning slots 0-79), or -1. The original
+ * also runs TryActivateMonsterByDistance on the monster it finds, which the encounter scan below does with the cell's viewport index.
+ */
+int monsterPoolFindType(const uint8_t *pool, unsigned typeId);
+
+/*
+ * TryTriggerMonsterEncounterAtCell (yendor2.asm:30285; Chapter 3 the same), run once per cell of the first-person view as it is drawn: for the viewport cells
+ * 17-48 (not the farthest row, not the party's own cell 49) that are not hidden (viewport.h) and carry the "monster here" marker (+6 bit 0x400, whose +4 is
+ * the monster's type id: baked for a not-yet-spawned marker by windowbake.h, for a live monster by monsterPoolRefreshWindow): if no monster of that type is in
+ * the pool the monster is spawned from its catalog record at that cell (monsterPoolSpawn, which also marks the type as spawned), otherwise the existing one
+ * has monsterTryActivateByDistance run with the cell's index. Either way the monster is then drawn: cellMonsters[index] receives the pool record (NULL for
+ * every cell without one). Returns the number of monsters spawned by the scan. `cells` are the 51 view cells (viewportBuild + viewportComputeVisibility).
+ */
+unsigned monsterPoolEncounterScan(uint8_t *pool, const MonsterCatalog *catalog, SaveGame *save, GameKind game, uint16_t facing, uint16_t partyWorldX,
+                                   uint16_t partyWorldY, uint16_t gridOriginRow, uint16_t gridOriginCol, const DungeonGridCell cells[51],
+                                   uint8_t *cellMonsters[51], RandomState *rng);
+
+/*
  * GrantMonsterRewards (yendor2.asm:33151): a dying monster's own loot
  * fields (monster.h's MonsterLoot) are added into 4 staging BCD4
  * counters -- not permanent material totals directly; the original

@@ -7451,6 +7451,25 @@ palette fade of a picture with polls), then:
 
 Neither opening changes the game state; a port may play them as a slideshow of the same pictures or skip them (Escape does).
 
+### The window's marker pass, the curgame records and the monster encounter scan (2026-10-07)
+
+`RefreshDungeonMapWindow`'s second loop (yendor2.asm:29437; `src23/windowbake.c`) runs `TryInteractAtPosition` on every cell of the 78 x 78 window and bakes the
+outcome into the cell: outcomes 10 and 1 `flags |= 0x4000`, 2 `|= 0x2000`, 3 (a magical lock) `|= 0x1000`, 6 floor type `= curgame value`, 7 wall type
+`= curgame value`, 5 (an unspawned monster marker) `flags |= 0x400` and `+4 =` the object's value; 0, 4, 8 and 9 write nothing. This is where the `0x6000` "door"
+bits that `HandleMovementInput` tests (and answers with `TryInteractAtPosition` + `ShowLockStatus`) and the `0x400` monster markers come from. On real data a window
+bakes a few hundred cells (every unspawned marker, plus the curgame records' flags and rewritten wall / floor types).
+
+**The curgame records live in WORLD.DAT block 3, not in a separate file.** `loadWorldDat2` / `loadWorldDat3` read two consecutive blocks into one buffer:
+Chapter 2 0x3CF0 bytes (600 lock records of 26) then 0x460 bytes (280 curgame records of 4: flags + packed value; real ids reach 231); Chapter 3 0x6590 (1000 locks)
+then 0x640 (400 records; ids reach 71). `LoadCurgameRecord` reads record n at `0x1A * _val9 + 4 * (n - 1)` of that buffer, `_val9` = 600 in Chapter 2's
+`InitGlobals`. Chapter 3's equivalent `word_3320E` has no static writer (its data-segment value is 0, which would read the first lock records' bytes as curgame flags --
+garbage), while block 3 at 26000 holds valid-looking records, so `lockCatalogCurgameRecord` reads block 3 in both games (the value is presumably set at run time
+by something not visible statically; the savegame's event bitmap offset 0 for Chapter 3 in interact.h is a separate, still-open question).
+
+**`TryTriggerMonsterEncounterAtCell`** (`monsterPoolEncounterScan`): for view cells 17-48 that are visible with the `0x400` marker, a type not yet in the pool is spawned
+(`monsterPoolSpawn`, which sets its spawn flag), one already there only gets `monsterTryActivateByDistance`; either way the pool record is what the view draws in that cell.
+`src23/tools/explore_sdl.c` runs the whole chain (bake, refresh, scan, `viewRender`, `monsterPoolTakeTurn` after every step) on both games' real maps.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

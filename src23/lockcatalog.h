@@ -82,7 +82,12 @@ enum {
     LockRecordSize = 26,
     LockRecordCountYendor2 = 608, /* matches savegame.h's SaveSectionLockAndShopState recordCount */
     LockRecordCountYendor3 = 1008,
-    LockRecordCountMax = LockRecordCountYendor3
+    LockRecordCountMax = LockRecordCountYendor3,
+    LockCurgameCountYendor2 = 280,
+    LockCurgameCountYendor3 = 400,
+    LockCurgameCountMax = LockCurgameCountYendor3,
+    LockBlock2RecordsYendor2 = 600, /* the lock records of block 2 (the 608 above is the lock bitmap's size); block 3 follows them */
+    LockBlock2RecordsYendor3 = 1000
 };
 
 typedef struct {
@@ -96,6 +101,8 @@ typedef struct {
     GameKind game;
     uint16_t recordCount;
     uint8_t records[LockRecordCountMax * LockRecordSize];
+    uint16_t curgameCount; /* records in the block that follows the locks (0 when the parsed region was too short to hold it) */
+    uint8_t curgame[LockCurgameCountMax * 4];
 } LockCatalog;
 
 /* Parses recordCount*LockRecordSize bytes starting at region[0]; false if size is too small. */
@@ -129,6 +136,19 @@ typedef struct {
 
 /* 1-based lock id, matching worldobjects.h's door record value field. False if id is 0 or out of range. */
 bool lockCatalogRecord(const LockCatalog *catalog, unsigned lockId, LockRecord *out);
+
+/*
+ * LoadCurgameRecord's 4-byte records (a WorldObjectFlagCurgameRecord record's `value`, 1-based): two words, the flags (the same shape as a lock's: bits
+ * 0x10, 0x8, 0x40, 0x20 select the outcome in interact.h; 0x1 is set on nearly all) and the packed value, which interact.h's outcomes 6 and 7 write into the
+ * cell's floor / wall type and ApplySavingThrowEffect reads as a trap. They are the second of the two WORLD.DAT blocks loadWorldDat2 / loadWorldDat3 read
+ * into one buffer: block 2 is the locks (Chapter 2: 0x3CF0 = 600 records of 26 bytes; Chapter 3: 0x6590 = 1000), block 3 follows at that buffer offset
+ * (Chapter 2: 0x460 = 280 curgame records, the real ids go up to 231; Chapter 3: 0x640 = 400, ids up to 71). LoadCurgameRecord addresses record n at
+ * 0x1A * _val9 + 4 * (n - 1); Chapter 2 sets _val9 = 600 in InitGlobals. **Chapter 3's equivalent (word_3320E) has no static writer and its data-segment
+ * value is 0**, which would read the record from the first lock records' bytes (garbage flags); the real block-3 table at 1000 * 26 is full of valid-looking
+ * records (flags 0x41 / 0x9 / 0x4001 ... with packed traps), so this reads block 3 in both games -- the likely truth is that the value is set at run time by
+ * something the static view cannot see. False when the id is 0 or beyond the block.
+ */
+bool lockCatalogCurgameRecord(const LockCatalog *catalog, unsigned curgameId, uint16_t *flags, uint16_t *value);
 
 /*
  * The key-type bit set on flags, checked in the same order and
