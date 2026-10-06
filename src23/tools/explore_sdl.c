@@ -5,7 +5,7 @@
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
  *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c \
- *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
+ *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
  *       ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2
@@ -23,11 +23,13 @@
 
 #include <SDL.h>
 
+#include "combat.h"
 #include "dungeongrid.h"
 #include "explore.h"
 #include "gamedialog.h"
 #include "lighting.h"
 #include "localmap.h"
+#include "item_stdio.h"
 #include "maininput.h"
 #include "minimap.h"
 #include "monster_stdio.h"
@@ -51,6 +53,20 @@ static MonsterCatalog g_catalog;
 static uint8_t g_pool[MonsterPoolSize * MonsterRecordSize];
 static RandomState g_rng;
 static int g_engagedType = 0;
+static ItemCatalog g_items;
+static GameKind g_game;
+
+/* The combat of the original's main loop (RunDungeonGameLoop): up to three monsters in slots, a turn order by dexterity, and per tick the current combatant acts. */
+static struct {
+    bool active, wiped;
+    uint8_t slots[CombatMonsterSlotCount * MonsterRecordSize];
+    bool defeated[CombatMonsterSlotCount];
+    CombatTurnOrderEntry order[CombatTurnOrderCapacity];
+    unsigned count, cursor;
+    uint16_t targets[CombatMonsterSlotCount];
+    MonsterRewardStaging staging;
+    char log[96];
+} g_combat;
 static SaveGame g_save;
 static DungeonGrid g_grid;
 static uint8_t g_screen[ViewScreenWidth * ViewScreenHeight];
@@ -61,6 +77,87 @@ static void buildWindow(GameKind game, int x, int y) {
     dungeonGridBuild(&g_grid, game, &g_map, &g_save, x, y);
     dungeonGridBakeMarkers(&g_grid, game, &g_objects, &g_locks, &g_save);
     monsterPoolRefreshWindow(g_pool, &g_grid, &g_save);
+}
+
+
+static uint8_t *partySlotRecord(unsigned slot) {
+    unsigned id = saveHeaderGetU16(&g_save, SaveHeaderPartySlots + 2 * slot);
+    return id ? saveGamePartyRecordById(&g_save, id) : NULL;
+}
+
+static void combatNewRound(void) {
+    g_combat.count = combatBuildTurnOrder(&g_save, g_combat.slots, &g_rng, g_combat.order, g_combat.targets);
+    g_combat.cursor = 0;
+}
+
+static void combatCheckWipe(void) {
+    const uint8_t *records[4];
+    for (unsigned i = 0; i < 4; i++) {
+        records[i] = partySlotRecord(i);
+    }
+    if (partyWipedOut(records)) {
+        g_combat.wiped = true;
+        g_combat.active = false;
+        snprintf(g_combat.log, sizeof(g_combat.log), "THE PARTY HAS BEEN DEFEATED");
+    }
+}
+
+/* After a combatant has acted: reap the dead, then move to the next one (ProcessCombatRound). */
+static void combatAfterAction(void) {
+    CombatRoundOutcome outcome = combatProcessRound(g_combat.slots, g_combat.order, g_combat.count, g_combat.defeated, &g_combat.cursor, &g_combat.staging, NULL, 0);
+    if (outcome == CombatRoundNoMonstersLeft) {
+        monsterRewardsAward(&g_save, g_game, &g_combat.staging);
+        memset(&g_combat.staging, 0, sizeof(g_combat.staging));
+        g_combat.active = false;
+        g_engagedType = 0;
+        snprintf(g_combat.log, sizeof(g_combat.log), "VICTORY - the loot and experience are in the party's totals");
+    } else if (outcome == CombatRoundNewRound) {
+        combatNewRound();
+    }
+}
+
+/* Runs monster turns until it is a party member's turn (or the combat ends). */
+static void combatRunMonsters(void) {
+    while (g_combat.active && g_combat.cursor < g_combat.count && g_combat.order[g_combat.cursor].isMonster) {
+        unsigned slot = g_combat.order[g_combat.cursor].index;
+        uint8_t *monster = g_combat.slots + (size_t)slot * MonsterRecordSize;
+        uint16_t targetId = g_combat.targets[slot];
+        uint8_t *target = targetId ? saveGamePartyRecordById(&g_save, targetId) : NULL;
+        CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &g_save, &g_items, g_game, &g_rng);
+        snprintf(g_combat.log, sizeof(g_combat.log), "monster %u: %s", (unsigned)monsterGetU16(monster, MonsterFieldType), out.attacked ? "hits the party" : "misses / waits");
+        combatCheckWipe();
+        if (!g_combat.active) {
+            return;
+        }
+        combatAfterAction();
+    }
+}
+
+static void combatStart(uint8_t *poolRecord) {
+    memset(&g_combat, 0, sizeof(g_combat));
+    memcpy(g_combat.slots, poolRecord, MonsterRecordSize);
+    monsterPoolRemove(poolRecord, &g_grid);
+    g_combat.active = true;
+    combatNewRound();
+    snprintf(g_combat.log, sizeof(g_combat.log), "COMBAT");
+    combatRunMonsters();
+}
+
+/* The player's A: the current party member swings at the first live monster. */
+static void combatPlayerAttack(void) {
+    if (!g_combat.active || g_combat.cursor >= g_combat.count || g_combat.order[g_combat.cursor].isMonster) {
+        return;
+    }
+    uint8_t *member = partySlotRecord(g_combat.order[g_combat.cursor].index);
+    unsigned monsterSlot = 0;
+    if (!member || !combatSelectActiveMonster(g_combat.order, g_combat.count, g_combat.defeated, &monsterSlot)) {
+        return;
+    }
+    CombatPlayerMeleeOutcome out = combatPlayerMeleeAttack(member, g_combat.slots + (size_t)monsterSlot * MonsterRecordSize, &g_items, g_game, &g_rng);
+    snprintf(g_combat.log, sizeof(g_combat.log), "party member %u: %s", g_combat.order[g_combat.cursor].index + 1,
+             out.weaponBroke ? "the weapon broke" : out.hit ? "hits" : "misses");
+    combatAfterAction();
+    combatRunMonsters();
 }
 
 /* ProcessLevelMonsters: every live monster takes its turn (walk toward the party, ambush, timers); one reaching the party engages it. */
@@ -75,6 +172,7 @@ static void monstersTakeTurns(GameKind game, int x, int y) {
         MonsterFullTurn turn = monsterPoolTakeTurn(record, game, &g_map, &g_grid, NULL, 0, &staging, x, y, &g_rng);
         if (turn.move == MonsterMoveEngaged) {
             g_engagedType = (int)monsterGetU16(record, MonsterFieldType);
+            combatStart(record);
         }
     }
 }
@@ -91,6 +189,10 @@ static void drawScene(GameKind game, ViewRenderer *renderer, PictureFile *pictur
     lightingComputeGradient(game, &light, 0, scene.gradient, &reset);
     scene.cells = cells;
     scene.facing = facing;
+    for (unsigned i = 0; g_combat.active && i < CombatMonsterSlotCount; i++) {
+        uint8_t *slotRecord = g_combat.slots + (size_t)i * MonsterRecordSize;
+        scene.combatMonsters[i] = monsterGetU16(slotRecord, MonsterFieldType) ? slotRecord : NULL;
+    }
     monsterPoolEncounterScan(g_pool, &g_catalog, &g_save, game, facing, (uint16_t)x, (uint16_t)y, (uint16_t)g_grid.originRow, (uint16_t)g_grid.originCol, cells,
                              scene.cellMonsters, &g_rng);
     if (getenv("EXPLORE_DEBUG")) {
@@ -167,11 +269,20 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot read the world objects, locks or monsters\n");
         return 1;
     }
+    g_game = game;
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir);
+    if (!itemCatalogReadWorldDatFile(&g_items, game, path)) {
+        fprintf(stderr, "cannot read the item catalog\n");
+        return 1;
+    }
     randomStart(&g_rng, 30, 50);
     saveGameInit(&g_save, game);
     if (!saveGameNewGame(&g_save, game, worldDat, worldSize)) {
         fprintf(stderr, "cannot build the new game\n");
         return 1;
+    }
+    for (unsigned slot = 0; slot < 4; slot++) { /* the four ready-made heroes (records 5-8) are the active party */
+        saveHeaderSetU16(&g_save, SaveHeaderPartySlots + slot * 2, (uint16_t)(6 + slot));
     }
     int x = saveHeaderGetU16(&g_save, SaveHeaderWorldX), y = saveHeaderGetU16(&g_save, SaveHeaderWorldY);
     uint16_t facing = saveHeaderGetU16(&g_save, SaveHeaderFacing);
@@ -224,6 +335,7 @@ int main(int argc, char **argv) {
             case 'Q': press.key.keysym.sym = SDLK_LEFT; press.key.keysym.mod = KMOD_CTRL; break;
             case 'E': press.key.keysym.sym = SDLK_RIGHT; press.key.keysym.mod = KMOD_CTRL; break;
             case 'M': press.key.keysym.sym = SDLK_m; break;
+            case 'A': press.key.keysym.sym = SDLK_a; break;
             case 'D': press.key.keysym.sym = SDLK_d; break;
             case '+': press.key.keysym.sym = SDLK_PLUS; break;
             case '-': press.key.keysym.sym = SDLK_MINUS; break;
@@ -236,6 +348,9 @@ int main(int argc, char **argv) {
         } else if (script && shotPath) {
             drawScene(game, &renderer, pictures, x, y, facing, clock, overlay);
             writePng(shotPath, g_screen, palette, ViewScreenWidth, ViewScreenHeight, 2);
+            if (g_combat.log[0]) {
+                printf("combat: %s%s\n", g_combat.log, g_combat.active ? " (active)" : "");
+            }
             printf("(%d, %d) facing %u clock %u -> %s\n", x, y, (unsigned)facing, clock, shotPath);
             break;
         }
@@ -272,7 +387,11 @@ int main(int argc, char **argv) {
                         code = (uint8_t)(key - SDLK_a + 'A');
                     }
                     MainCommand command = mainCommandForKey(game, extended, code);
-                    if (command.action == MainActionMove && g_engagedType) {
+                    if (g_combat.active) {
+                        if (key == SDLK_a) {
+                            combatPlayerAttack();
+                        }
+                    } else if (command.action == MainActionMove && g_engagedType) {
                         /* combat is not part of this demo: stand still while a monster has the party */
                     } else if (command.action == MainActionMove) {
                         MovementResult move = movementApply(command.movement, facing);
@@ -316,8 +435,12 @@ int main(int argc, char **argv) {
             SDL_RenderClear(sdl);
             SDL_RenderCopy(sdl, texture, NULL, NULL);
             SDL_RenderPresent(sdl);
-            char title[96];
-            snprintf(title, sizeof(title), "Yendorian Tales - (%d, %d) clock %02u:%02u%s", x, y, clock / 60, clock % 60, g_engagedType ? " - ENGAGED (combat is not in this demo)" : "");
+            char title[256];
+            snprintf(title, sizeof(title), "Yendorian Tales - (%d, %d) clock %02u:%02u%s", x, y, clock / 60, clock % 60, g_combat.active ? " - COMBAT: A attacks" : "");
+            if (g_combat.log[0]) {
+                size_t used = strlen(title);
+                snprintf(title + used, sizeof(title) - used, " - %s", g_combat.log);
+            }
             SDL_SetWindowTitle(window, title);
             dirty = false;
         }
