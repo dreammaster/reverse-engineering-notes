@@ -68,6 +68,14 @@ See [module-index.md](module-index.md) for every module with a one-line descript
 `src23/tools/fuzz_parsers.c` feeds truncated and byte-corrupted copies of the real WORLD.DAT (ending at a no-access page, so any over-read crashes)
 to every memory-image parser (items, monsters, spells, world map, dialog, documents, locks, world objects, the new-game builder, and a real SAVGAME1 through saveGameLoad); 300-400 rounds per game pass without a fault.
 
+## A playable slice
+
+`src23/tools/explore_sdl.c` is the smallest engine built from the modules: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`) in which the new-game
+party walks a real map. Keys go through `mainCommandForKey` with the original scan codes, steps through `movementApply` / `movementClassifyCell`, the fog reveal is
+`exploreRevealAroundPlayer`, and the screen is the frame picture, `viewRender`, `minimapDraw`, the four `statusPanelDraw` panels, plus the local area map (M) and the pause dialog (D)
+as overlays and the clock keys (+ / -) to watch the lighting. `EXPLORE_KEYS` / `EXPLORE_SHOT` replay a key string headlessly (`SDL_VIDEODRIVER=dummy`) and write the final screen as a PNG.
+A ScummVM engine replaces the SDL calls with `OSystem` ones and keeps everything else.
+
 ## Opening story
 
 `intro2.c` is Chapter 2's story cinematic: `introCellsInit` / `introCellsFrame` are the seven animated cells (flags, stepping, top and bottom clipping, and the original's

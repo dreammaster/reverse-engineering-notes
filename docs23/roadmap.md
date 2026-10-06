@@ -43,7 +43,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   `gamedialog.c` (pause dialog), `titlemenu.c`, `clueitem.c` / `cluemonster.c` (clue book item and monster pages), the alchemy status panel,
   `maininput.c` (the main loop's and the combat turn's key and click maps), `partyUsePercentRestorative` (RestCharacter), and `exedata.c`: **the
   executables are not packed** -- Chapter 2's `SW.EXE` holds its data segment at file offset `0x21660`, Chapter 3's `REGISTER.EXE` at `0x21DB0` -- so the
-  fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly. `intro2.c` holds Chapter 2's opening story (the seven animated picture cells with their clipping and
+  fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly. `tools/explore_sdl.c` is a playable SDL2 slice (walk, fog, view, minimap, panels, local map, pause dialog) using the modules together. `intro2.c` holds Chapter 2's opening story (the seven animated picture cells with their clipping and
   stepping rules, the nine story cards read from the executable); the timeline of both games' openings is in file-formats.md ("The opening story"), `tools/intro_sheet.c` renders it.
 
 Still missing: the playback of the animated sequences (title / intro / credits, as scripts; their data and rules are decoded), the run-time sub-icon row,
