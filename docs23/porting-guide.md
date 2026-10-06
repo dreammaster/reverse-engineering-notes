@@ -61,7 +61,7 @@ The original runs one loop (`start` -> `RunDungeonGameLoop`); everything below i
 * monsters and combat: `monsterpool.c` (spawn, ambush, walk, rewards: `monsterPoolTakeTurn`), `monster.c`, `combat.c`, `effect.c`;
 * world state: `globalflags.c`, `worldobjects.c`, `savegame.c`.
 
-See [module-index.md](module-index.md) for every module with a one-line description.
+See [scummvm-plan.md](scummvm-plan.md) for how the pieces map onto an engine (detection checksums, loop, audio, saves), and [module-index.md](module-index.md) for every module with a one-line description.
 
 ## Robustness
 
