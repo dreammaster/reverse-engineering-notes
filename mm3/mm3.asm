@@ -36407,16 +36407,7 @@ sub_2803E       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_setValue. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_giveTake. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_2804D(int)
-sub_2804D       proc far
-                jmp     sub_3BF4B
-sub_2804D       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_learnSpellDialog. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -43761,9 +43752,9 @@ off_2DF4E       dw offset aGood         ; DATA XREF: Awards_show+A24↓r
                 db 76h, 0DBh, 76h, 0E6h, 76h, 0F3h, 76h, 0, 77h, 9, 77h
                 db 19h, 77h, 22h, 77h, 2Bh, 77h, 37h, 77h, 41h, 77h, 4Dh
                 db 77h, 5Bh, 77h, 6Bh, 77h, 73h, 77h, 7Bh, 77h, 8Dh, 77h
-word_2DF9C      dw 779Ah                ; DATA XREF: sub_3BF4B+9E↓r
-word_2DF9E      dw 77CEh                ; DATA XREF: sub_3BF4B+DE↓r
-word_2DFA0      dw 780Dh                ; DATA XREF: sub_3BF4B+21E↓r
+word_2DF9C      dw 779Ah                ; DATA XREF: learnSpellDialog+9E↓r
+word_2DF9E      dw 77CEh                ; DATA XREF: learnSpellDialog+DE↓r
+word_2DFA0      dw 780Dh                ; DATA XREF: learnSpellDialog+21E↓r
                 db 45h, 78h, 4Ah, 78h, 51h, 78h, 59h, 78h, 60h, 78h, 67h
                 db 78h, 6Dh, 78h, 76h, 78h, 7Bh, 78h, 81h, 78h, 87h, 78h
                 db 8Bh, 78h, 97h, 78h, 0A3h, 78h, 0B1h, 78h
@@ -59176,7 +59167,7 @@ indexEvents     endp
 ; Attributes: bp-based frame
 
 sub_3BE18       proc far                ; CODE XREF: sub_2803E↑J
-                                        ; sub_3BF4B+134↓p ...
+                                        ; learnSpellDialog+134↓p ...
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -59330,10 +59321,11 @@ sub_3BE18       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; event mode 67: choose a character and teach it the spell id ('%s learns a %s spell.')
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_3BF4B(int)
-sub_3BF4B       proc far                ; CODE XREF: sub_2804D↑J
+; int __cdecl __far learnSpellDialog(int)
+learnSpellDialog proc far               ; CODE XREF: j_learnSpellDialog↑J
                                         ; giveTake+995↓p
 
 var_F           = byte ptr -0Fh
@@ -59365,7 +59357,7 @@ arg_0           = word ptr  6
                 jmp     short loc_3BFD7
 ; ---------------------------------------------------------------------------
 
-loc_3BF7A:                              ; CODE XREF: sub_3BF4B+93↓j
+loc_3BF7A:                              ; CODE XREF: learnSpellDialog+93↓j
                 xor     di, di
                 mov     ax, si
                 mov     dx, 12Fh
@@ -59381,24 +59373,24 @@ loc_3BF7A:                              ; CODE XREF: sub_3BF4B+93↓j
                 jmp     cs:jpt_3BF95[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3BF9A:                              ; CODE XREF: sub_3BF4B+4A↑j
+loc_3BF9A:                              ; CODE XREF: learnSpellDialog+4A↑j
                                         ; DATA XREF: ovl03:jpt_3BF95↓o
                 mov     [bp+var_2], 0   ; jumptable 0003BF95 cases 1,3
                 jmp     short loc_3BFAD
 ; ---------------------------------------------------------------------------
 
-loc_3BFA1:                              ; CODE XREF: sub_3BF4B+4A↑j
+loc_3BFA1:                              ; CODE XREF: learnSpellDialog+4A↑j
                                         ; DATA XREF: ovl03:jpt_3BF95↓o
                 mov     [bp+var_2], 1   ; jumptable 0003BF95 cases 2,4
                 jmp     short loc_3BFAD
 ; ---------------------------------------------------------------------------
 
-loc_3BFA8:                              ; CODE XREF: sub_3BF4B+4A↑j
+loc_3BFA8:                              ; CODE XREF: learnSpellDialog+4A↑j
                                         ; DATA XREF: ovl03:jpt_3BF95↓o
                 mov     [bp+var_2], 2   ; jumptable 0003BF95 cases 8,9
 
-loc_3BFAD:                              ; CODE XREF: sub_3BF4B+54↑j
-                                        ; sub_3BF4B+5B↑j ...
+loc_3BFAD:                              ; CODE XREF: learnSpellDialog+54↑j
+                                        ; learnSpellDialog+5B↑j ...
                 mov     ax, [bp+var_2]
                 mov     dx, 24h ; '$'
                 imul    dx
@@ -59416,15 +59408,15 @@ loc_3BFAD:                              ; CODE XREF: sub_3BF4B+54↑j
                 jmp     short def_3BF95 ; jumptable 0003BF95 default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3BFD1:                              ; CODE XREF: sub_3BF4B+7A↑j
+loc_3BFD1:                              ; CODE XREF: learnSpellDialog+7A↑j
                 cmp     di, 24h ; '$'
                 jl      short loc_3BFAD
 
-def_3BF95:                              ; CODE XREF: sub_3BF4B+46↑j
-                                        ; sub_3BF4B+4A↑j ...
+def_3BF95:                              ; CODE XREF: learnSpellDialog+46↑j
+                                        ; learnSpellDialog+4A↑j ...
                 inc     si              ; jumptable 0003BF95 default case, cases 5-7
 
-loc_3BFD7:                              ; CODE XREF: sub_3BF4B+2D↑j
+loc_3BFD7:                              ; CODE XREF: learnSpellDialog+2D↑j
                 mov     al, Party_count
                 mov     ah, 0
                 cmp     ax, si
@@ -59462,7 +59454,7 @@ loc_3BFD7:                              ; CODE XREF: sub_3BF4B+2D↑j
                 jmp     loc_3C1B1
 ; ---------------------------------------------------------------------------
 
-loc_3C020:                              ; CODE XREF: sub_3BF4B+9B↑j
+loc_3C020:                              ; CODE XREF: learnSpellDialog+9B↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 push    word ptr [bx+56E6h] ; format
@@ -59503,8 +59495,8 @@ loc_3C020:                              ; CODE XREF: sub_3BF4B+9B↑j
                 jmp     loc_3C1B1
 ; ---------------------------------------------------------------------------
 
-loc_3C074:                              ; CODE XREF: sub_3BF4B+124↑j
-                                        ; sub_3BF4B+263↓j
+loc_3C074:                              ; CODE XREF: learnSpellDialog+124↑j
+                                        ; learnSpellDialog+263↓j
                 mov     ax, 1
                 push    ax
                 call    vdrv_06_closeWindows
@@ -59518,7 +59510,7 @@ loc_3C074:                              ; CODE XREF: sub_3BF4B+124↑j
                 jmp     loc_3C1C0
 ; ---------------------------------------------------------------------------
 
-loc_3C092:                              ; CODE XREF: sub_3BF4B+13D↑j
+loc_3C092:                              ; CODE XREF: learnSpellDialog+13D↑j
                 lea     ax, [bp+s]
                 mov     bx, [bp+var_6]
                 add     bx, ax
@@ -59527,7 +59519,7 @@ loc_3C092:                              ; CODE XREF: sub_3BF4B+13D↑j
                 jmp     loc_3C15D
 ; ---------------------------------------------------------------------------
 
-loc_3C0A2:                              ; CODE XREF: sub_3BF4B+152↑j
+loc_3C0A2:                              ; CODE XREF: learnSpellDialog+152↑j
                 mov     [bp+var_4], 1
                 mov     ax, [bp+var_6]
                 mov     dx, 12Fh
@@ -59543,29 +59535,29 @@ loc_3C0A2:                              ; CODE XREF: sub_3BF4B+152↑j
                 jmp     cs:jpt_3C0C1[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_3C0C6:                              ; CODE XREF: sub_3BF4B+176↑j
+loc_3C0C6:                              ; CODE XREF: learnSpellDialog+176↑j
                                         ; DATA XREF: ovl03:jpt_3C0C1↓o
                 xor     di, di          ; jumptable 0003C0C1 cases 1,3
                 jmp     short def_3C0C1 ; jumptable 0003C0C1 default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C0CA:                              ; CODE XREF: sub_3BF4B+176↑j
+loc_3C0CA:                              ; CODE XREF: learnSpellDialog+176↑j
                                         ; DATA XREF: ovl03:jpt_3C0C1↓o
                 mov     di, 1           ; jumptable 0003C0C1 cases 2,4
                 jmp     short def_3C0C1 ; jumptable 0003C0C1 default case, cases 5-7
 ; ---------------------------------------------------------------------------
 
-loc_3C0CF:                              ; CODE XREF: sub_3BF4B+176↑j
+loc_3C0CF:                              ; CODE XREF: learnSpellDialog+176↑j
                                         ; DATA XREF: ovl03:jpt_3C0C1↓o
                 mov     di, 2           ; jumptable 0003C0C1 cases 8,9
 
-def_3C0C1:                              ; CODE XREF: sub_3BF4B+172↑j
-                                        ; sub_3BF4B+176↑j ...
+def_3C0C1:                              ; CODE XREF: learnSpellDialog+172↑j
+                                        ; learnSpellDialog+176↑j ...
                 xor     si, si          ; jumptable 0003C0C1 default case, cases 5-7
                 jmp     short loc_3C0FC
 ; ---------------------------------------------------------------------------
 
-loc_3C0D6:                              ; CODE XREF: sub_3BF4B+1B4↓j
+loc_3C0D6:                              ; CODE XREF: learnSpellDialog+1B4↓j
                 mov     ax, di
                 mov     dx, 24h ; '$'
                 imul    dx
@@ -59582,14 +59574,14 @@ loc_3C0D6:                              ; CODE XREF: sub_3BF4B+1B4↓j
                 jmp     short loc_3C101
 ; ---------------------------------------------------------------------------
 
-loc_3C0FB:                              ; CODE XREF: sub_3BF4B+19D↑j
+loc_3C0FB:                              ; CODE XREF: learnSpellDialog+19D↑j
                 inc     si
 
-loc_3C0FC:                              ; CODE XREF: sub_3BF4B+189↑j
+loc_3C0FC:                              ; CODE XREF: learnSpellDialog+189↑j
                 cmp     si, 24h ; '$'
                 jl      short loc_3C0D6
 
-loc_3C101:                              ; CODE XREF: sub_3BF4B+1AE↑j
+loc_3C101:                              ; CODE XREF: learnSpellDialog+1AE↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 push    word ptr [bx+56E6h]
@@ -59634,7 +59626,7 @@ loc_3C101:                              ; CODE XREF: sub_3BF4B+1AE↑j
                 jmp     short loc_3C1B6
 ; ---------------------------------------------------------------------------
 
-loc_3C15D:                              ; CODE XREF: sub_3BF4B+154↑j
+loc_3C15D:                              ; CODE XREF: learnSpellDialog+154↑j
                 mov     ax, [bp+var_6]
                 mov     dx, 12Fh
                 imul    dx
@@ -59675,17 +59667,17 @@ loc_3C15D:                              ; CODE XREF: sub_3BF4B+154↑j
                 jmp     loc_3C074
 ; ---------------------------------------------------------------------------
 
-loc_3C1B1:                              ; CODE XREF: sub_3BF4B+D2↑j
-                                        ; sub_3BF4B+126↑j
+loc_3C1B1:                              ; CODE XREF: learnSpellDialog+D2↑j
+                                        ; learnSpellDialog+126↑j
                 mov     [bp+var_4], 0
 
-loc_3C1B6:                              ; CODE XREF: sub_3BF4B+210↑j
+loc_3C1B6:                              ; CODE XREF: learnSpellDialog+210↑j
                 mov     ax, 1
                 push    ax
                 call    vdrv_06_closeWindows
                 pop     cx
 
-loc_3C1C0:                              ; CODE XREF: sub_3BF4B+144↑j
+loc_3C1C0:                              ; CODE XREF: learnSpellDialog+144↑j
                 call    sub_280EA
                 mov     ax, [bp+var_4]
                 pop     di
@@ -59693,10 +59685,10 @@ loc_3C1C0:                              ; CODE XREF: sub_3BF4B+144↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_3BF4B       endp
+learnSpellDialog endp
 
 ; ---------------------------------------------------------------------------
-jpt_3C0C1       dw offset loc_3C0C6     ; DATA XREF: sub_3BF4B+176↑r
+jpt_3C0C1       dw offset loc_3C0C6     ; DATA XREF: learnSpellDialog+176↑r
                 dw offset loc_3C0CA     ; jump table for switch statement
                 dw offset loc_3C0C6
                 dw offset loc_3C0CA
@@ -59705,7 +59697,7 @@ jpt_3C0C1       dw offset loc_3C0C6     ; DATA XREF: sub_3BF4B+176↑r
                 dw offset def_3C0C1
                 dw offset loc_3C0CF
                 dw offset loc_3C0CF
-jpt_3BF95       dw offset loc_3BF9A     ; DATA XREF: sub_3BF4B+4A↑r
+jpt_3BF95       dw offset loc_3BF9A     ; DATA XREF: learnSpellDialog+4A↑r
                 dw offset loc_3BFA1     ; jump table for switch statement
                 dw offset loc_3BF9A
                 dw offset loc_3BFA1
@@ -61322,7 +61314,7 @@ loc_3CC13:                              ; CODE XREF: giveTake+478↑j
                                         ; DATA XREF: ovl03:jpt_3C6FA↓o
                 push    [bp+arg_8]      ; jumptable 0003C6FA case 67
                 push    cs
-                call    near ptr sub_3BF4B
+                call    near ptr learnSpellDialog
                 pop     cx
                 or      ax, ax
                 jnz     short loc_3CC22
@@ -61552,7 +61544,7 @@ jpt_3C335       dw offset loc_3C33A, offset loc_3C351, offset loc_3C378
 ; Attributes: bp-based frame
 
 sub_3CE7A       proc far                ; CODE XREF: sub_2802F↑J
-                                        ; sub_3BF4B+CE↑p ...
+                                        ; learnSpellDialog+CE↑p ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6

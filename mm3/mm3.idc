@@ -13961,6 +13961,7 @@ static Bytes_2(void) {
 	create_insn	(0X28048);
 	set_name	(0X28048,	"j_giveTake");
 	create_insn	(0X2804D);
+	set_name	(0X2804D,	"j_learnSpellDialog");
 	create_insn	(0X28052);
 	create_insn	(0X28057);
 	set_name	(0X28057,	"j_subPartyTime");
@@ -14751,8 +14752,6 @@ static Bytes_2(void) {
 	create_word	(0X29571);
 	create_strlit	(0X29573,	0X1A);
 	set_name	(0X29573,	"aUsingExpandedM");
-	create_strlit	(0X2958D,	0X1A);
-	set_name	(0X2958D,	"aUsingExtendedM");
 }
 
 //------------------------------------------------------------------------
@@ -14762,6 +14761,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X2958D,	0X1A);
+	set_name	(0X2958D,	"aUsingExtendedM");
 	create_strlit	(0X295A7,	0X26);
 	set_name	(0X295A7,	"aMightAndMagicI_1");
 	create_strlit	(0X295CD,	0XA);
@@ -19719,6 +19720,7 @@ static Bytes_4(void) {
 	create_byte	(0X3BF27);
 	make_array	(0X3BF27,	0X24);
 	create_insn	(0X3BF4B);
+	set_name	(0X3BF4B,	"learnSpellDialog");
 	create_insn	(x=0X3BF4E);
 	op_hex		(x,	1);
 	set_cmt	(0X3BF52,	"n",	0);
@@ -22886,9 +22888,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FCC8);
 	op_hex		(x,	1);
 	set_cmt	(0X3FCCA,	"format",	0);
-	set_cmt	(0X3FCD5,	"buffer",	0);
-	create_insn	(x=0X3FCDB);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -22898,6 +22897,9 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X3FCD5,	"buffer",	0);
+	create_insn	(x=0X3FCDB);
+	op_hex		(x,	1);
 	create_insn	(x=0X3FD03);
 	op_hex		(x,	1);
 	set_cmt	(0X3FD13,	"jumptable 0003F4CF case 15",	1);
@@ -28506,8 +28508,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47455);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X47458);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -28517,6 +28517,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47458);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4745D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47466);
@@ -33541,8 +33543,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F474);
 	op_stkvar	(x,	0);
 	set_cmt	(0X4F47B,	"c",	0);
-	create_insn	(x=0X4F47F);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -33552,6 +33552,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4F47F);
+	op_stkvar	(x,	1);
 	set_cmt	(0X4F482,	"s",	0);
 	create_insn	(x=0X4F488);
 	op_hex		(x,	1);
@@ -38412,8 +38414,8 @@ static Functions_0(void) {
 	SetType(0X28048, "int __cdecl __far j_giveTake(int, int, int, int, int, int, int);");
 	set_frame_size(0X28048, 0, 0, 0);
 	add_func    (0X2804D,0X28052);
-	set_func_flags(0X2804D,0x5482);
-	SetType(0X2804D, "int __cdecl __far sub_2804D(int);");
+	set_func_flags(0X2804D,0x54c2);
+	SetType(0X2804D, "int __cdecl __far j_learnSpellDialog(int);");
 	set_frame_size(0X2804D, 0, 0, 0);
 	add_func    (0X28052,0X28057);
 	set_func_flags(0X28052,0x5482);
@@ -39347,7 +39349,8 @@ static Functions_0(void) {
 	set_frame_size(0X3BE18, 0X8, 2, 0);
 	add_func    (0X3BF4B,0X3C1CE);
 	set_func_flags(0X3BF4B,0x5412);
-	SetType(0X3BF4B, "int __cdecl __far sub_3BF4B(int);");
+	SetType(0X3BF4B, "int __cdecl __far learnSpellDialog(int);");
+	set_func_cmt(0X3BF4B,	"event mode 67: choose a character and teach it the spell id ('%s learns a %s spell.')", 0);
 	set_frame_size(0X3BF4B, 0X14, 2, 0);
 	define_local_var(0X3BF4B, 0X3C1CE, "[bp-0XE]", "s");
 	add_func    (0X3C1F2,0X3C282);
