@@ -1178,7 +1178,7 @@ healing (Chapter 3 only the magic variant) and duration rows. The page text is r
 The **clue book monster page** (`ShowClueBookMonsterDetail`, `cluemonster.c`; `RENDER_MONPAGE=<monster type id>`): the same backdrop as the item page (Chapter 2 picture 13, Chapter 3
 picture 6) with the monster's name and the heading MONSTER STATISTICS; 23 rows with labels at fixed per-game positions: four loot rows (EXPERIENCE `+0x8A`, GOLD `+0x7E`,
 the ore `+0x86`, NUORE `+0x82`), seven u16 stats (`+0x50 0x54 0x56 0x58 0x5A 0x64 0x66`), ten immunity rows (bits of `+0x96`) and two resistance rows (`+0x98`). The category headings
-of every clue page sit at the top right (`clueHeadingX`; Chapter 3 right aligns to x = 313). Not drawn: the animated sprite and the attack-effects line.
+of every clue page sit at the top right (`clueHeadingX`; Chapter 3 right aligns to x = 313). Not drawn: the animated sprite (the attack-effects line is `clueMonsterAttackWords`).
 
 The **alchemy status panel** (`DrawAlchemyStatusPanel`, `alchemyStatusPanelDraw`): in the text panel (cleared first) the character name over a blank filler at (241, 87), MAGIC: at y 96
 (0xCA, 0xCC when MP is above the maximum), current/max MP in 0xF at y 102, then the ore labels (0x8A at y 114 and 132) each with its counter below in 0xF. Chapter 3 shows only NUORE.

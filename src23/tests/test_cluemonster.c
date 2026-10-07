@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_cluemonster test_cluemonster.c ../cluemonster.c ../clueitem.c ../cluebook.c ../exedata.c ../font.c ../monster.c ../item.c ../bcd4.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_cluemonster
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_cluemonster test_cluemonster.c ../cluemonster.c ../clueitem.c ../cluebook.c ../exedata.c ../font.c ../monster.c ../effect.c ../party.c ../savegame.c ../item.c ../bcd4.c ../viewrender.c ../random.c ../pictures.c ../worldmap.c ../uiregions.c && ./test_cluemonster
  *
  * The real-data check loads the labels from yendor2/game/SW.EXE and yendor3/game/REGISTER.EXE (skipped if absent; YENDOR2_GAME_DIR /
  * YENDOR3_GAME_DIR override).
@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "cluemonster.h"
+#include "effect.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -76,6 +77,49 @@ static void testDraw(void) {
     check("the gold loot is drawn in 0x8A at x = 251 on its row (y 22)", anyColour(screen, 251, 22, 290, 28, 0x8A) && !anyColour(screen, 251, 16, 290, 22, 0x8A));
 }
 
+static void testAttackWords(void) {
+    static ClueMonsterText t;
+    memset(&t, 0, sizeof(t));
+    const char *words[ClueAttackWordCount] = {"AREA, ", "SICK, ", "POISON, ", "DISEASE, ", "PARALYZE, ", "FROZEN, ", "STONING, ", "JINXING, ", "HEXING, ", "CURSING, ",
+                                               "GOLD, ", "ORE, ", "NUORE, ", "BREAK ", "DESTROY ", "PROJECTILE, ", "WEAPON, ", "SHIELD, "};
+    for (unsigned i = 0; i < ClueAttackWordCount; i++) {
+        strcpy(t.attackWord[i], words[i]);
+    }
+    uint8_t m[MonsterRecordSize];
+    memset(m, 0, sizeof(m));
+    char out[160];
+    bool has;
+    clueMonsterAttackWords(&t, GameYendor2, m, out, &has);
+    check("no special attack and no area flag: no words at all", !has && out[0] == 0);
+    monsterSetU16(m, MonsterFieldFlags, MonsterFlagAreaAttack);
+    clueMonsterAttackWords(&t, GameYendor2, m, out, &has);
+    check("the area flag alone (effect 0 inflicts nothing) shows AREA", has && strcmp(out, "AREA") == 0);
+    /* find real effects: one that inflicts POISON (0x4000) and one that steals */
+    unsigned poison = 0, thief = 0;
+    for (unsigned id = 1; id < EffectCountYendor2; id++) {
+        EffectDef def;
+        if (effectGetDef(GameYendor2, id, &def)) {
+            if (!poison && (def.costFlags & 0x4000)) {
+                poison = id;
+            }
+            if (!thief && (def.costFlags & 0x0001)) {
+                thief = id;
+            }
+        }
+    }
+    monsterSetU16(m, MonsterFieldFlags, 0);
+    monsterSetU16(m, MonsterFieldSpecialAttack, (uint16_t)poison);
+    clueMonsterAttackWords(&t, GameYendor2, m, out, &has);
+    check("a poisoning special attack lists POISON among its words", has && strstr(out, "POISON") != NULL);
+    monsterSetU16(m, MonsterFieldSpecialAttack, (uint16_t)thief);
+    clueMonsterAttackWords(&t, GameYendor2, m, out, &has);
+    check("a stealing one lists GOLD", has && strstr(out, "GOLD") != NULL);
+    monsterSetU16(m, MonsterFieldFlags, 0x0800 | 0x0200);
+    clueMonsterAttackWords(&t, GameYendor2, m, out, &has);
+    check("the corrode flags add BREAK / DESTROY then PROJECTILE and SHIELD, with no trailing separator", strstr(out, "PROJECTILE") != NULL && strstr(out, "SHIELD") != NULL &&
+                                                                                                          strstr(out, "WEAPON") == NULL && out[strlen(out) - 1] != ' ');
+}
+
 static void testReal(GameKind game, const char *envName, const char *defaultDir, const char *name, const char *label) {
     const char *dir = getenv(envName);
     char path[512];
@@ -101,6 +145,11 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
         for (unsigned i = 0; i < ClueMonsterRows; i++) {
             filled = filled && t.label[i][0] != 0;
         }
+        bool words = t.attackLabel[0] != 0;
+        for (unsigned i = 0; i < ClueAttackWordCount; i++) {
+            words = words && t.attackWord[i][0] != 0;
+        }
+        check("...the label and the 18 words of the attack line are there", words);
         check("...every row has a label, the marks and the heading are there", filled && strcmp(t.heading, "MONSTER STATISTICS") == 0 && t.immuneMark[0] && t.resistantMark[0] &&
                                                                                  strcmp(t.immuneMark, t.resistantMark) != 0);
     }
@@ -109,6 +158,7 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
 
 int main(void) {
     testDraw();
+    testAttackWords();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "SW.EXE", "Chapter 2: the monster page labels load from SW.EXE");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "REGISTER.EXE", "Chapter 3: the monster page labels load from REGISTER.EXE");
 

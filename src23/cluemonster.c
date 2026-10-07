@@ -5,6 +5,7 @@
 #include "bcd4.h"
 #include "cluebook.h"
 #include "clueitem.h"
+#include "effect.h"
 #include "font.h"
 
 typedef enum { RowBcd, RowStat, RowImmune, RowResistant } RowKind;
@@ -80,6 +81,17 @@ bool clueMonsterTextLoad(ClueMonsterText *t, const ExeData *exe, GameKind game) 
             return false;
         }
     }
+    static const uint16_t kAttackWords[2][ClueAttackWordCount + 1] = {
+        {0x8B6E, 0x8DFE, 0x8B8D, 0x8B96, 0x8BA0, 0x8BAB, 0x8BB4, 0x8BBE, 0x8BC8, 0x8BD1, 0x8BDB, 0x8BE8, 0x8BF4, 0x8B7D, 0x8B84, 0x8C02, 0x8C0F, 0x8C18, 0x89CF},
+        {0x8E8B, 0x9115, 0x8EAA, 0x8EB3, 0x8EBD, 0x8EC8, 0x8ED1, 0x8EDB, 0x8EE5, 0x8EEE, 0x8EF8, 0x8F05, 0x8F12, 0x8E9A, 0x8EA1, 0x8F20, 0x8F2D, 0x8F36, 0x8CF0}};
+    for (unsigned i = 0; i < ClueAttackWordCount; i++) {
+        if (!exeDataString(exe, kAttackWords[game == GameYendor2 ? 0 : 1][i], t->attackWord[i], sizeof(t->attackWord[i]))) {
+            return false;
+        }
+    }
+    if (!exeDataString(exe, kAttackWords[game == GameYendor2 ? 0 : 1][ClueAttackWordCount], t->attackLabel, sizeof(t->attackLabel))) {
+        return false;
+    }
     const unsigned g = game == GameYendor2 ? 0 : 1;
     return exeDataString(exe, kMarks[g].immuneMark, t->immuneMark, sizeof(t->immuneMark)) &&
            exeDataString(exe, kMarks[g].resistantMark, t->resistantMark, sizeof(t->resistantMark)) &&
@@ -88,6 +100,46 @@ bool clueMonsterTextLoad(ClueMonsterText *t, const ExeData *exe, GameKind game) 
 
 static void put(const ViewRenderer *r, int x, int y, const char *s, uint8_t colour) {
     fontDrawString(r->game, 0, r->screen, ViewScreenWidth, x, y, s, colour, 0, FontTransparent);
+}
+
+void clueMonsterAttackWords(const ClueMonsterText *t, GameKind game, const uint8_t *m, char out[160], bool *hasWords) {
+    out[0] = 0;
+    *hasWords = false;
+    unsigned special = monsterGetU16(m, MonsterFieldSpecialAttack);
+    unsigned flags = monsterGetU16(m, MonsterFieldFlags);
+    if (special == 0 && !(flags & MonsterFlagAreaAttack)) {
+        return;
+    }
+    *hasWords = true;
+    if (flags & MonsterFlagAreaAttack) {
+        strcat(out, t->attackWord[0]);
+    }
+    EffectDef def;
+    if (!effectGetDef(game, special, &def)) {
+        memset(&def, 0, sizeof(def));
+    }
+    static const uint16_t kBits[12] = {0x8000, 0x4000, 0x2000, 0x1000, 0x0800, 0x0400, 0x0200, 0x0100, 0x0080, 0x0001, 0x0004, 0x0002};
+    for (unsigned i = 0; i < 12; i++) {
+        if (def.costFlags & kBits[i]) {
+            strcat(out, t->attackWord[1 + i]);
+        }
+    }
+    if (flags & MonsterFlagSpecialMask) {
+        strcat(out, t->attackWord[def.modeFlags & 0x200 ? 14 : 13]);
+        if (flags & 0x0800) {
+            strcat(out, t->attackWord[15]);
+        }
+        if (flags & 0x0400) {
+            strcat(out, t->attackWord[16]);
+        }
+        if (flags & 0x0200) {
+            strcat(out, t->attackWord[17]);
+        }
+    }
+    size_t len = strlen(out);
+    if (len >= 2) {
+        out[len - 2] = 0; /* cut the last ", " */
+    }
 }
 
 void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *t, const uint8_t *m, const char *name, uint16_t navFlags) {
@@ -135,5 +187,16 @@ void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *t, const 
             break;
         }
         }
+    }
+    char words[160];
+    bool hasWords;
+    clueMonsterAttackWords(t, r->game, m, words, &hasWords);
+    int labelX = 171;
+    if (hasWords && strlen(words) > 8) {
+        labelX = (uint16_t)((35 - (int)strlen(words)) * 6); /* 16-bit like the original */
+    }
+    put(r, labelX, 169, t->attackLabel, 0x0A);
+    if (hasWords) {
+        put(r, labelX + 90, 169, words, 0xCA);
     }
 }
