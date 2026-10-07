@@ -46,5 +46,5 @@ checksums.
 
 ## Not done (see roadmap.md)
 
-The opening and credits as scripts (their data and timeline are decoded), the clue sub-icon table (runtime-filled), music and effect playback,
+The opening and credits as scripts (their data and timeline are decoded),  music and effect playback,
 the platform glue (`OSystem`, `Engine` subclass, `MetaEngine`, detection tables), and Chapter 1, which is a different, unanalysed engine.

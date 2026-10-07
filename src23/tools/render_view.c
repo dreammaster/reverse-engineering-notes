@@ -187,6 +187,9 @@ int main(int argc, char **argv) {
                     const uint8_t *rec = itemCatalogRecord(&pageItems, (unsigned)atoi(getenv("RENDER_ITEMPAGE")));
                     if (rec) {
                         clueItemPageDraw(&renderer, &pageText, rec, 0x8000, 12);
+                        uint16_t subMask;
+                        unsigned subCount = clueSubIconCount(&pageItems, (unsigned)atoi(getenv("RENDER_ITEMPAGE")), &subMask);
+                        clueSubIconRowDraw(&renderer, subCount, subMask);
                         const uint8_t *entry = itemTargetEntry(&pageItems, rec);
                         ItemTargetKind kind = itemTargetKind(rec);
                         if (entry && kind == ItemTargetWearable) {

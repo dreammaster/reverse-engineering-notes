@@ -181,9 +181,42 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     free(data);
 }
 
+static void setItemWord(uint8_t *base, size_t offset, uint16_t value) {
+    base[offset] = (uint8_t)value;
+    base[offset + 1] = (uint8_t)(value >> 8);
+}
+
+static void testSubIcons(void) {
+    static ItemCatalog catalog;
+    memset(&catalog, 0, sizeof(catalog));
+    catalog.game = GameYendor2;
+    catalog.itemCount = 20;
+    catalog.consumableCount = 0;
+    catalog.weaponCount = 5;
+    /* items 5-9: five "+N" weapons (flags 0x8000, target word 1 has 0x800); item 10: a plain weapon without the bit; items 11-14: rings */
+    for (unsigned id = 5; id <= 9; id++) {
+        uint8_t *record = catalog.items + (id - 1) * ItemRecordSize;
+        setItemWord(record, ItemFieldFlags, 0x8000);
+        setItemWord(record, ItemFieldTargetOffset, (uint16_t)((id - 5) * ItemWeaponSize));
+    }
+    for (unsigned i = 0; i < 5; i++) {
+        setItemWord(catalog.weapons, (size_t)i * ItemWeaponSize + ItemTargetSlotFlags * 2, 0x800);
+    }
+    uint16_t mask;
+    unsigned count = clueSubIconCount(&catalog, 5, &mask);
+    check("items 5-9 carry the next-variant bit, item 10 lacks it: item 5 shows 2 + 4 icons (5-10)", count == 6 && mask == 0x8000);
+    check("an item without equip flags has no row", clueSubIconCount(&catalog, 2, &mask) == 0 && mask == 0);
+    uint16_t region[5];
+    clueSubIconRegion(2, region);
+    check("icon 2 sits at x 0x15 + 2 * 0x1A with the click region of the original", region[0] == 0x49 && region[1] == 0x59 && region[2] == 0x8D && region[3] == 0x96 && region[4] == 3);
+    uint16_t sel = 0x8001;
+    check("a click selects that icon, keeps the mode bit and names item first + k - 1", clueSubIconClick(3, 5, &sel) == 7 && sel == (0x2000 | 1));
+}
+
 int main(void) {
     testFormatting();
     testDraw();
+    testSubIcons();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "SW.EXE", "Chapter 2: the item page labels load from SW.EXE");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "REGISTER.EXE", "Chapter 3: the item page labels load from REGISTER.EXE");
 

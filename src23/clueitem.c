@@ -198,3 +198,62 @@ void clueDurationRowDraw(const ViewRenderer *r, const ClueItemText *t, const uin
     labeledNumber(r, 103, 57, t->duration, 10 * itemTargetWord(entry, 2), 0, 0x59);
     put(r, 181, 57, t->minutes, 0x0D);
 }
+
+static unsigned subIconTargetWord1(const ItemCatalog *catalog, const uint8_t *record) {
+    const uint8_t *entry = record ? itemTargetEntry(catalog, record) : NULL;
+    return entry ? itemTargetWord(entry, ItemTargetSlotFlags) : 0;
+}
+
+unsigned clueSubIconCount(const ItemCatalog *catalog, unsigned itemId, uint16_t *selectionMask) {
+    const uint8_t *record = itemCatalogRecord(catalog, itemId);
+    *selectionMask = 0;
+    if (!record) {
+        return 0;
+    }
+    unsigned flags = (unsigned)record[ItemFieldFlags] | ((unsigned)record[ItemFieldFlags + 1] << 8);
+    bool ring = false;
+    if (flags & 0xC000) {
+        if (!(subIconTargetWord1(catalog, record) & 0x800)) {
+            return 0;
+        }
+    } else if (flags & 0x0E00) {
+        if (!(subIconTargetWord1(catalog, record) & 0x100)) {
+            return 0;
+        }
+        ring = true;
+    } else {
+        return 0;
+    }
+    unsigned count = 2;
+    for (unsigned i = 1; i <= 9; i++) {
+        if (!(subIconTargetWord1(catalog, itemCatalogRecord(catalog, itemId + i)) & (ring ? 0x100u : 0x800u))) {
+            break;
+        }
+        count++;
+    }
+    *selectionMask = (uint16_t)(0x8000 | (ring ? 1 : 0));
+    return count;
+}
+
+void clueSubIconRegion(unsigned icon, uint16_t out[5]) {
+    out[0] = (uint16_t)(0x15 + 0x1A * icon);
+    out[1] = (uint16_t)(out[0] + 0x10);
+    out[2] = 0x8D;
+    out[3] = 0x96;
+    out[4] = (uint16_t)(icon + 1);
+}
+
+unsigned clueSubIconClick(unsigned region, unsigned firstItemId, uint16_t *selectionMask) {
+    unsigned icon = region - 1;
+    *selectionMask = (uint16_t)((*selectionMask & 0x1F) | (0x8000u >> icon));
+    return firstItemId + icon;
+}
+
+void clueSubIconRowDraw(const ViewRenderer *r, unsigned count, uint16_t selectionMask) {
+    for (unsigned i = 0; i < count && i < ClueSubIconMax; i++) {
+        uint16_t region[5];
+        clueSubIconRegion(i, region);
+        bool selected = (selectionMask & (0x8000u >> i)) != 0;
+        viewDrawPicture(r, 8, 0x155 + 2 * i + (selected ? 1 : 0), region[0], region[2], true, 0);
+    }
+}

@@ -57,4 +57,30 @@ void clueWeaponRowDraw(const ViewRenderer *r, const ClueItemText *text, const ui
 void clueHealingRowDraw(const ViewRenderer *r, const ClueItemText *text, GameKind game, const uint8_t *consumableEntry);
 void clueDurationRowDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *consumableEntry);
 
+/*
+ * The "+N" sub-icon row under an armour, ring or weapon page (ListCompatibleClueBookItems yendor2.asm:7143, DrawSubIconSelectorRow :7428, the click in
+ * RunClueBookItemCategory :5096 / RunClueBookWeaponCategory :5222; Chapter 3 the same). The item catalog keeps the +0, +1, +2 ... variants of one piece
+ * of equipment under consecutive ids, and the row lets the player step through them: icon i (0-based) is the "+i" picture (category 8, id 0x155 + 2i grey,
+ * 0x156 + 2i for the selected one), drawn at (0x15 + 0x1A * i, 0x8D), its click region the 10-byte entry (x, x + 16, 0x8D, 0x96, i + 1); clicking region k
+ * shows the item `first + k - 1` and selects that icon (selection mask bit 0x8000 >> i; the low five bits keep the mode).
+ *
+ * Which items get a row: an item with an equip code 0A / 0C flag (0xC000) whose target entry has word 1 & 0x800 (weapon / body armour style), or else one with
+ * 0xE00 flags (short equip, ring, code 0D) and target word 1 & 0x100 (mode bit 1 in the mask). That bit marks "this item has a next variant": the row has two
+ * icons at once (the item and its successor) and then one more for each following catalog id up to nine, until the first whose target word lacks the bit
+ * (0x800 or 0x100 by mode; the flags are not checked again). So a family of six +N rings 181-186 gives 181 six icons, 182 five ... and 186, which lacks the bit
+ * (the last variant), none; 185 shows two. The icons stand for ids id .. id + count - 1.
+ */
+enum { ClueSubIconMax = 11 };
+
+/* Number of icons (0 = no row) and the initial selection mask (0x8000, | 1 in ring mode). */
+unsigned clueSubIconCount(const ItemCatalog *catalog, unsigned itemId, uint16_t *selectionMask);
+
+/* The click-region entry of icon i (xMin, xMax, yMin, yMax, id i + 1). */
+void clueSubIconRegion(unsigned icon, uint16_t out[5]);
+
+/* A click on region k (1-based): the item id to show, and the mask updated to select that icon. */
+unsigned clueSubIconClick(unsigned region, unsigned firstItemId, uint16_t *selectionMask);
+
+void clueSubIconRowDraw(const ViewRenderer *r, unsigned count, uint16_t selectionMask);
+
 #endif

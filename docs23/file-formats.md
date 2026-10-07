@@ -1173,7 +1173,7 @@ The **clue book item page** (`ShowClueBookItemDetail` and its rows, `clueitem.c`
 at (6, 4) in 0xD, the navigation bar, the item icon at (68, 41), BASE VALUE / WEIGHT (one decimal) / FITS IN- rows, then armor (ABSORPTION-, PROTECTIONS:, ADDS:
 lists built from the effect pairs: field offsets 0x20-0x30 are protections, 0x7C and up the 27 attribute / skill names), weapon (DAMAGE:, SKILL:, 2-HANDED:),
 healing (Chapter 3 only the magic variant) and duration rows. The page text is read from the executable (`exedata.c`, addresses in `clueitem.c`;
-`dump_clue_item_strings.py`). The sub-icon selector row's table at DS:0x6976 (Chapter 3 0x6CA4) is empty in the file and filled at run time.
+`dump_clue_item_strings.py`). The sub-icon selector row's table at DS:0x6976 (Chapter 3 0x6CA4) is empty in the file because it is built at run time: ten-byte click regions for the "+N" variants of the shown equipment (`clueSubIconCount` in clueitem.h: the next-variant bit of consecutive catalog entries).
 
 The **clue book monster page** (`ShowClueBookMonsterDetail`, `cluemonster.c`; `RENDER_MONPAGE=<monster type id>`): the same backdrop as the item page (Chapter 2 picture 13, Chapter 3
 picture 6) with the monster's name and the heading MONSTER STATISTICS; 23 rows with labels at fixed per-game positions: four loot rows (EXPERIENCE `+0x8A`, GOLD `+0x7E`,
