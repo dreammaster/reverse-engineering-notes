@@ -285,3 +285,8 @@ Spell casters: Cleric, Sorcerer and Druid get `hasSpells` and the first four spe
 An extra starting spell is taken from `3CF0h[class]` (Paladin 0, Archer 2, Ranger 1; the value FEh stored for the three full casters is not guarded against by the code and writes a byte past the record -- harmless quirk).
 Starting **skills**: class table `3CE1h`: Knight Arms Master, Paladin Crusader, Sorcerer Cartographer, Robber and Ninja Thievery, Druid Direction Sense, Ranger Path Finder (Archer, Cleric, Barbarian none); race table `3CEBh`: Human Swimmer, Gnome Spot Secret Doors, Dwarf Danger Sense (Elf and Half-Orc none).
 Hit and spell points come from `getMaxHP` / `getMaxSP` (`rules.md` formulas).
+
+## Roster and party limits (`rosterMenu`)
+
+The roster holds 30 characters (`MAZE.CHR`). "Your Roster is full!" blocks creating or adding more. A character cannot be deleted while holding special (quest) items ("%s cannot be deleted because %she is holding special items!"); hirelings cannot be deleted ("You cannot delete a Hireling!"); deletion asks "Are you sure you want to delete %s the %s?".
+The party is at most six real characters plus hirelings ("You can only have six characters but you may add more hirelings"); at least one real character must stay with hirelings ("You must have at least one character accompany the hirelings!").
