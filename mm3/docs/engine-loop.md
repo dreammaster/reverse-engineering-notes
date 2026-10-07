@@ -49,3 +49,5 @@ There is no separate encounter roll: monsters standing on the map within three c
 ## Control panel (`controlPanel`, ESC / key 9)
 
 `cpanel.icn` buttons: save (`loadSaveDialog`; refused in combat: "No Saving Allowed in Combat!" and on pages whose header byte 0Ch is 0), load (lists `*.mm3` saves; "No Loading Allowed in Combat!"), quit ("Are you sure you want to quit?") and Mr. Wizard's Help (an in-game hint feature, confirmed with "Are you sure you want Mr. Wizard's Help?...").
+
+Correction to the control-panel note above: the panel does hold the sound settings -- buttons toggle sound effects (`byte_36FE8`, MAZE.PTY `+0Eh`, sets the driver FX state through `soundDriverPlay`), music (`byte_36FE9`, `+0Fh`) and cycle a 0-9 setting (`byte_36FEA`, `+10h`; printed with a label by `sub_41EF1`, probably the game/message delay).  `+11h` (`byte_36FEB`) is the town number the party last slept in (used by `rosterMenu` and the inn).
