@@ -68,10 +68,10 @@ that BinDiff run (>= 0.90 similarity) are kept in `names/mm3.tsv`; `rebuild_all.
 (`ida_scripts/apply_names.py`) after a rebuild, and `ida_scripts/export_names.py` writes the names
 of the open database back to that file.
 
-## `MM3.CFG` (4 bytes, read by `openMm3Cc`)
+## `MM3.CFG` (4 bytes, read by `openMm3Cc`: video mode, sound device, 16-bit port)
 
 Copied to DGROUP `ACBDh` (`byte_333AD`..`byte_333B0`) and consumed by `_main`:
 * byte 0: video mode selector 0-4, mapped by a 5-way switch to the internal video mode `word_34C0E` (0 -> 0, 1 -> 4, 2 -> 3, 3 -> 1, 4 -> 5); the intro uses `logy5.raw` when it is 4 (the VGA logo);
 * byte 1: sound device 0-6, a 7-way switch that sets one of seven driver flags (`byte_28842`..`28848`); the driver file names are in a pointer table in the code segment before the strings `roland.drv`, `blaster.drv`, `adlib.drv`, `covox.drv`, `tandy.drv`, `ibm.drv`, `demo.drv` (offsets 45h, 50h, 5Ch, 66h, 70h, 7Ah, 82h), so the likely meaning is 0 Roland, 1 Sound Blaster, 2 AdLib, 3 Covox, 4 Tandy, 5 IBM speaker, 6 none/demo (the order of the table was read, the flag-to-table mapping was not traced); `TIMER.DRV` is always loaded;
-* bytes 2 and 3: passed to the driver initialisation `sub_2693F(byte2, byte3)` -- most likely the port and IRQ.
-The GOG copy is `00 01 20 02`: video selector 0, sound device 1 (Sound Blaster by the table order; AdLib music is then presumably played through the same driver family), parameters 20h and 2 (plausibly base port 220h and IRQ 2).
+* bytes 2 and 3: a little-endian 16-bit **I/O port** (`byte_333AF` low, `byte_333B0` high) passed to the driver initialisation `sub_2693F`; the GOG value `20 02` is 0220h, the Sound Blaster / AdLib base port. The IRQ is not stored in this file (it is not among the four bytes read by `openMm3Cc`).
+The GOG copy is `00 01 20 02`: video selector 0, sound device 1 (Sound Blaster by the table order; AdLib music is then presumably played through the same driver family), port 0220h.
