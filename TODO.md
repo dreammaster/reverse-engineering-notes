@@ -105,3 +105,12 @@ Left out:
   nothing else is known to use it).
 
 `TGObject` stays `in-progress` in `manifest/proprietary_classes.tsv` until then.
+
+### TGInterface: the matrix transform of the cursor position
+
+`src/deponia1/TGInterface.cpp`; original `src/vsplayer/interfaceGame.cpp`.
+
+`GetObject(const wxPoint &)` and `IsInside()` first move the position back through the global
+inverse matrix (`invMatrix1`, nine entries) when the interface is drawn through a matrix
+(`kInterfaceMatrixId` not 0, and its parent's `kGameShaderExclude` is not 1); not
+reconstructed. `TGInterface` stays `in-progress` until then.

@@ -3258,6 +3258,30 @@ manager's virtual at slot 0xD8 and followed by the one at 0xE0 with `(4, 3000, f
 `TGActionArea` (asm 247238-247290) is a `THButton` by another name, like `TGPlaceHolder`;
 header-only. `TGScene`'s data reference and brightness are protected for `THScene`.
 
+## TGInterface, THInterface, TGCommand and TGScrollButton (the interfaces)
+
+`TGInterface` (asm 138535-143198) is a panel of the game made from an interface record
+(`kInterface*`): background sprite, border polygon, buttons, and the items of the current
+character. Its buttons are made by `Init()` from their `kButtonType`: 0 `TGPlaceHolder` (a
+slot for an item), 1 and 2 the `TGScrollButton`s (back, forward), 3 and 6 `TGCommand`,
+4 `TGActionArea`, 5 nothing. `THInterface` (asm 246907-247200) is the one the game creates
+and follows the record's fields.
+
+- The items (`THItem`) are made by `UpdateItems()` from the items the character has; the
+  place holders show the items from the scroll position on, one each, but only the
+  place holders that are active (`GetPlaceHolder()`, `GetObject(point)`, `Draw()` all count
+  them the same way; `Draw()` goes through the buttons from the last to the first).
+- `Draw()` has `UpdateAlpha()` inlined; `SetDestAlpha()` too (an alpha change without a time
+  is applied at once). The alpha is given to every button and item as a percent.
+- The original keeps two `HashMap<TId, int>`s (button and item by id) with 0x80 buckets; they
+  are `std::unordered_map`s over the four bytes of the id here.
+- A scroll button scrolls back when its type is 1 (`kInterfaceItemsScrollPosition` minus
+  `kInterfaceScrollStepSize`). `UpdateItems()` keeps the scroll position in range by
+  taking a step off at a time. `TGCommand::ExecuteEvent()` makes the command the active
+  one of its interface; the original builds a copy of the event first (nothing changes).
+- Not reconstructed (see `TODO.md`): the matrix transform of the mouse position in
+  `GetObject(point)` and `IsInside()`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

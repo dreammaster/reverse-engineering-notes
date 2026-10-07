@@ -22,7 +22,7 @@ hmap_iterator<int, int, IntegerHash<int> >	todo	1	135669	135669
 HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	1	135743	135743
 HashNode<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	1	136783	136783
 TMCharacter	done	10	137965	138489
-TGInterface	todo	25	138536	143021
+TGInterface	in-progress	25	138536	143021
 TPaintControl	done	27	143284	749311
 HashMap<TId, int, TIdHash>	todo	1	143397	143397
 THText	todo	6	144162	144330
@@ -51,10 +51,10 @@ TSText	todo	15	216919	1460684
 THCharacter	todo	5	217481	218783
 THItem	done	5	218884	219148
 THScene	done	7	219228	219814
-TGScrollButton	todo	5	219879	220036
+TGScrollButton	done	5	219879	220036
 TGDialog	stub	14	220105	479462
 TConsole	stub	61	223417	242869
-THInterface	todo	5	246907	247172
+THInterface	done	5	246907	247172
 TGActionArea	done	3	247238	247279
 TGWaySystem	done	21	247325	253067
 THGameControl	todo	6	256950	258050
@@ -62,7 +62,7 @@ TGObject	in-progress	13	258159	259458
 THAnimation	done	5	259729	260077
 TSceneActionArea	todo	4	260143	260601
 TGItem	done	9	260668	261228
-TGCommand	todo	5	261322	261584
+TGCommand	done	5	261322	261584
 StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int (*)(lua_State*), char const*, StringHash<char const*> >	todo	1	289025	289025
 CmdGetCursorPos	todo	4	388789	428892
 CmdGetWindowBrightness	todo	4	388806	429255
