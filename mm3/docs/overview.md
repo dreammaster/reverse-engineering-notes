@@ -21,7 +21,7 @@ hand-picked second tier marked "unverified" in the comment), the Borland runtime
 | `ovl01` | monsters' combat (`monstersAttack`, `stopAttack`), `introSequence`, `openMm3Cc`, equipment (`equipItem`) |
 | `ovl02` | `endingCutscene` (8.8 KB) |
 | `ovl03` | `subPartyTime`, `giveTake`, `setValue`, `ifProc` |
-| `ovl04` | `exploreLoop` (`3E982`, main command loop), `resetTemps`, `GiveBankInterest`, `arenaEvent`, `showJoke`, `trapOrLockEvent` |
+| `ovl04` | `exploreLoop` (`3E982`, main command loop), `resetTemps`, `GiveBankInterest`, `arenaEvent`, `showJoke`, `giveMultiTreasure` (was `trapOrLockEvent`) |
 | `ovl05` | awards, roster (`sortParty`, `copyPartyToRoster`, `rosterMenu`), `showMessage`, `setButtons_*` |
 | `ovl06` | experience tables, `rest`, `controlPanel`, `loadSaveDialog`, `confirmDialog` |
 | `ovl07` | `giveCharDamage`, `Map_load`, `giveTreasure`, `dismissCharacter` |
