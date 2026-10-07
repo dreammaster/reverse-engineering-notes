@@ -257,3 +257,8 @@ Asleep, depressed, confused, paralysed, unconscious do not change attributes (th
 `worstCondition(char)` (`16E52`): scans the condition counters from index 15 down to 0 and returns the index of the first non-zero one, or 10h (16) when the character has no condition.  Callers treat the result as a severity rank:
 >= 0Bh (paralysed, unconscious, dead, stone, eradicated) = cannot act / cannot be targeted for healing (`doMonsterTurn` skips them when looking for a preferred target; `giveTake`, the cure spells and `rest` test 0Dh-0Fh = dead/stone/eradicated);
 `bash` skips characters whose worst condition is 8 (asleep) or 0Bh-0Fh but lets depressed (9) and confused (0Ah) characters bash; 10h = fully healthy.
+
+## Opening hours summary (by `Party_minutes`)
+
+Bank: open 09:00-17:00 (`21Ch` <= minutes <= `3FCh`), checked directly in `townBank`; Tavern: open 18:00-05:00 (closed `12Ch` < minutes < `438h`); Guild, Smithy and Training grounds: closed while `Town_closed` (night, 21:00-05:00 as set by `changeTime`); Inn and Temple: no hours check was found in `townInn` / `townTemple`.
+The game starts at minute 1E0h (08:00) of day 1, year 500 (new game).  Message on a closed door: "Sorry, the <place>'s closed! Come back later" (the bank and tavern texts differ slightly).
