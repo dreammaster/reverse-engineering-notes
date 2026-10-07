@@ -30,15 +30,32 @@ Cartographer skill (`checkSkill(4)`), and when Wizard Eye is active (`Party_wiza
 
 Slot offsets for facing 0 (north), `(dx,dy)` (other facings are rotations): 0,1 (0,0) own cell; 2 (1,0); 3 (-1,1); 4,5,6 (0,1) the cell directly ahead (several slots refer to the same cell because the renderer draws several wall faces of it; Jump's wall test uses slot 5); 7 (1,1); 8 (-2,2); 9,10 (-1,2); 11,12,13 (0,2); 14,15 (1,2); 16 (2,2); 17-33 the row three ahead (x -4..4) and 34-43 the row four ahead (x -4..4); the last two entries are fillers.
 
-## Scene description (inferred from `renderIndoorView`, `sub_17439`)
+## The draw list and who draws it (decoded from the video module)
 
-`renderIndoorView` fills a scene block at DGROUP `D66Eh` (the same 4000-byte scratch area that `sprintf` also uses): a 26-byte header of 13 words (`word_35D5E`..`word_35D78`: current sprite sets, view mode, light state, ...)
-followed from `D688h` by a list of draw records.  Each record starts with `FFFFh`, then a far pointer to the sprite set (taken from the 4-byte pointer tables at DGROUP `-3AC0h`/`-3B5Ah` style addresses: one per wall type / monster picture),
-then words for x, y (e.g. `67h`/`36h` for the monster slot in the centre of the screen), a flag word (`300h | animation state`) and a frame number.
-The monsters seen in the first rows (`byte_33311..` and the row bytes `34B92..`) are first collected into 12-byte group records at `A792h` (picture slot, animation phase, picture type -> frame count table `2815h`, flags);
-`sub_17439` turns each into one draw record, using `Maze_monAnim`-style phases that `renderIndoorView` advances every frame (modulo the frame counts).  The list is handed to the video module by the code following (not yet followed).
-Animated overlays (torch, water) use the small phase counters `word_28810`/`28812`/`byte_2884D` that `renderIndoorView` increments modulo 18/18/3 each frame.
+**The scene is drawn by the text printer.**  The indoor/outdoor renderers and `drawParty` only build a *draw list* in the 4000-byte scratch buffer at DGROUP `D66Eh`, then call `vdrv_2D_printText` on a short string that contains the text control code `05h` followed by the list's near address written as four hex digits (`sprintf` with `%p`; the strings are `"k%p"` for the party HUD list and similar).  The text engine (`sub_615B6` in the video module, `vdrv` offset 2Dh) dispatches control codes 0-0Dh; code 05h reads the four hex digits, stores the far pointer (string segment : offset) in `dword_60B34` and calls the list interpreter `sub_61BB8`.  (`vdrv_27` is not a screen draw at all: it installs the **mouse cursor** sprite and range, `vdrv_2A` is a particle/starfield transition effect, `vdrv_30` is the module initialiser.)
 
-The scene buffer is 4000 bytes (2000 words; `updateAutomap` clears it with `memset(D66Eh, 0, FA0h)`): after the record writers (`sub_17439` monsters, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D` wall/object layers, `sub_1B6D1` HUD pieces -- all call-free list writers) have run,
-`renderIndoorView` passes the end pointer to `checkDrawListOverflow` (`1B198`), which converts it to a length in words, keeps the maximum seen (`word_29708`) and shows a message if the list exceeds `7CFh` words.
-How the video module receives the list was not traced (probably it reads the fixed location when the scene is shown; that is a guess).
+Control codes of the text engine (character < 20h; `` takes one letter, the numeric ones fixed-width decimal digits):
+
+| code | meaning |
+|---|---|
+| 01h / 02h | normal / alternate font flag (`byte_29262` = 0 / 80h) |
+| 03h + letter | `l` left, `c` centre, `r` right alignment; `t`/`f` (flag `byte_60A15` 0 / 80h); `m` + digit (colour mode); `q`, `k`, `b`, `d` set the "absolute coordinates" flags (`k` is used for HUD lists: do not add the window origin) |
+| 04h + 3 digits | draw a filled bar 9 pixels high of that width in the current colour (hit-point/spell-point gauge) |
+| 05h + 4 hex digits | **draw list** at that address (see below) |
+| 06h | print a space glyph |
+| 07h + 3 digits | set the text colour attribute (`word_290FD+1`) |
+| 08h + char | print a character with a narrower advance (overlay glyph) |
+| 09h + 3 digits | column (x inside the window) |
+| 0Ah | tab-like command (`sub_61A1C`) |
+| 0Bh + 3 digits | row (y inside the window) |
+| 0Ch + 2 digits | text colour index |
+| 0Dh | new line |
+
+**Draw list format** (interpreted by `sub_61BB8`, word-granular, 16-bit little endian):
+
+* `FFFFh, offset, segment` -- select the sprite set for the following records: a far pointer to a sprite resource (as returned by `vdrv_21_loadSprites`); the offset word is ignored by the interpreter, only the **segment** is used; **segment 0 ends the list** (`FFFF 0000 0000` is the terminator written by `drawParty`).
+* otherwise a 4-word record `x, y, flags, frame` (8 bytes): draw frame `frame` of the current sprite set at (x, y), where x and y are relative to the current window origin unless one of the absolute-coordinate flags `k`/`b`/`d` is set.  A frame has up to two layers (two line-coded images; see `mm3_gfx.py`), both drawn.
+* `flags` (`sub_61D70`): bit 15 set = enlarged draw (x2, or x3 when bit 14 is also set); otherwise bits 0-1: 0 normal, 1 horizontally mirrored, 2 a second blit variant (`sub_62180`); bits 8-9 (`100h`/`200h`/`300h`) select a **distance scale** 1-3 from a small table at module offset `0B6Ah` (size reduction for objects one, two, three rows away) and are combined with bit 0 for mirrored scaled sprites.  Monster records are written with `300h | group flags`.
+
+`renderIndoorView`'s record writers produce, in drawing order (back to front): far wall faces, side walls, object sprites, monsters (via `sub_17439`: x/y of the 12-byte monster group slot, flags `300h | slot flags`, frame number from the group's animation phase), and finally the HUD pieces (`sub_1B6D1`).
+
