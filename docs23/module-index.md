@@ -11,6 +11,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `bcd4` | 4-byte (8-digit) packed BCD counter, most-significant digit pair first. | yes |
 | `charcreate` | The portrait step of character creation (ShowCharacterEquipment, yendor2.asm:36582 -- misnamed; it is the "pick a portrait" screen), the same in both games. | yes |
 | `chargen` | Character creation's stat generation: RollCharacterAttributes (yendor2.asm:37365, yendor3.asm:37121 -- the two are instruction-identical) and ComputeDerivedCharacterStats (yendor2.asm:35535, yendor3.asm:35331 -- same structure, different class tables). | yes |
+| `chest` | What a lock record's eight content slots are for the party: a chest to loot, or the stock of a shop (RunShopScreen, HandleShopCatalogSlotClick yendor2.asm:11896, BuildShopCategoryTabList :12932, TriggerShopExitSoundAndPersist :12991; Chapter 3 the same). | yes |
 | `cluebook` | The on-line clue book's navigation bar: DrawClueBookNavBar (yendor2.asm:7728, yendor3.asm:15479). | yes |
 | `clueitem` | The clue book's item pages (F5 INVENTORY ITEMS; ShowClueBookItemDetail yendor2.asm:5668, the armor / weapon / healing / duration rows after it and their helpers; Chapter 3 the same apart from the healing row). | yes |
 | `cluemap` | The clue book's MAPS page (F1; RunClueBookMapCategory yendor2.asm:5287, LoadClueBookMapEntry :6689, DrawClueBookMapGrid :6532, DrawClueBookMapLocationMarker :5430, DrawClueBookMapCategoryHeader :6655). | yes |

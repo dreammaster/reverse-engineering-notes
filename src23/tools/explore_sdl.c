@@ -5,14 +5,14 @@
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
  *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c \
- *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../rest.c ../gameclock.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
+ *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
  *       ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), M the local area
- * map, R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * map, R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S loot the chest ahead, D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, + -, ESC as '!') the keys are played
  * at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display).
@@ -23,6 +23,7 @@
 
 #include <SDL.h>
 
+#include "chest.h"
 #include "combat.h"
 #include "dungeongrid.h"
 #include "explore.h"
@@ -366,6 +367,7 @@ int main(int argc, char **argv) {
             case 'M': press.key.keysym.sym = SDLK_m; break;
             case 'T': press.key.keysym.sym = SDLK_r; break;
             case 'K': press.key.keysym.sym = SDLK_k; break;
+            case 'S': press.key.keysym.sym = SDLK_s; break;
             case 'A': press.key.keysym.sym = SDLK_a; break;
             case 'D': press.key.keysym.sym = SDLK_d; break;
             case 'P': press.key.keysym.sym = SDLK_p; break;
@@ -462,6 +464,16 @@ int main(int argc, char **argv) {
                         InteractUnlockOutcome unlock = interactUnlockFacing(&g_save, game, &g_objects, &g_locks, x, y, facing, 0xFFC0, 0);
                         static const char *const names[] = {"nothing to unlock here", "already unlocked", "unlocked", "locked (needs another key)"};
                         snprintf(g_combat.log, sizeof(g_combat.log), "%s", names[unlock.result]);
+                    } else if (command.action == MainActionAct) { /* loot the chest ahead: every slot that is still there */
+                        WorldObjectProbeResult probe = worldObjectProbeFacingTile(&g_objects, game, x, y, facing);
+                        LockRecord lock;
+                        unsigned looted = 0;
+                        if (probe.outcome != WorldObjectProbeNone && (probe.object.flags & WorldObjectFlagDoor) && lockCatalogRecord(&g_locks, probe.object.value, &lock)) {
+                            for (unsigned slot = 0; slot < LockContentSlots; slot++) {
+                                looted += chestTake(&g_save, probe.object.value, &lock, &g_items, slot, NULL);
+                            }
+                        }
+                        snprintf(g_combat.log, sizeof(g_combat.log), "looted %u slots", looted);
                     } else if (command.action == MainActionLocalMap) {
                         overlay = OverlayLocalMap;
                     } else if (command.action == MainActionGameDialog) {
