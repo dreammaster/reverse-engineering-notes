@@ -152,7 +152,7 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 
 | Off | Meaning |
 |---|---|
-| `00`-`06` | 7 bytes compared with the previous page's when changing slots (environment type) |
+| `00`-`06` | 7 terrain sprite-sheet selectors of an outdoor page (index into the name table at DGROUP `5A46h`: mount, ltree, grass, ...; compared with the previous page's when changing slots; see `view.md`) |
 | `07` | chance (%) that `run` succeeds in combat (`run`, `4B3D1`) -- e.g. `32h` = 50% |
 | `08` | map id of the neighbour page when y > 15 |
 | `09` | neighbour when x > 15 |
