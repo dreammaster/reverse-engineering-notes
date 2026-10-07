@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
- *   ./intro_story <game dir> <out.png> [sound effects on: 0|1]
+ *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +15,7 @@
 #include "pictures_stdio.h"
 #include "pngwrite.h"
 
-enum { MaxStills = 40, Columns = 4 };
+enum { MaxStills = 48, Columns = 4 };
 
 static uint8_t g_still[MaxStills][320 * 200];
 static unsigned g_stills;
@@ -108,12 +108,13 @@ int main(int argc, char **argv) {
     }
     IntroAssets assets = {world, worldSize, &exe, pictureFileGet, pictures};
     static IntroStory story;
-    if (!introStoryStart(&story, &assets)) {
+    bool all = argc > 4 && strcmp(argv[4], "all") == 0;
+    if (!(all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
         fprintf(stderr, "cannot start the story\n");
         return 1;
     }
-    IntroHost host = {NULL, present, soundFn, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0};
-    bool finished = introStoryPlay(&story, &assets, &host);
+    IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0};
+    bool finished = all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
     printf("story %s: %u ticks, %u sound events, %u stills\n", finished ? "finished" : "stopped", g_ticks, g_sounds, g_stills);
 
     unsigned rows = (g_stills + Columns - 1) / Columns;

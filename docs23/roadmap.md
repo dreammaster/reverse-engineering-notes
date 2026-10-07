@@ -46,7 +46,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly. `tools/explore_sdl.c` is a playable SDL2 slice (walk, fog, view, minimap, panels, local map, pause dialog) using the modules together. `intro2.c` holds Chapter 2's opening story (the seven animated picture cells with their clipping and
   stepping rules, the nine story cards read from the executable); the timeline of both games' openings is in file-formats.md ("The opening story"), `tools/intro_sheet.c` renders it.
 
-Still missing: the opening's first part (title fade-in, spark; documented), the title and credits animations (their data and rules are decoded), the message strings used by the game logic (`exedata.c` can fetch any, none are catalogued), input/timing glue (the
+Still missing: the title screen and credits animations and the Chapter 3 opening (Chapter 2's whole opening, from the title fade-in to the last card, is `introstory.c`), the message strings used by the game logic (`exedata.c` can fetch any, none are catalogued), input/timing glue (the
 original is driven by DOS interrupts), the engine's mixer glue for effects (music has a reference synthesizer, opl.c), Chapter 2's debug commands, and Chapter 1's engine. A name
 census of the 769 functions against `src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).
 

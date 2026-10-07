@@ -29,6 +29,11 @@
 #define CAPTURE {IntroOpCapture, 0, 0, 0, 0}
 #define RESET {IntroOpScrollReset, 0, 0, 0, 0}
 #define POLL {IntroOpPoll, 0, 0, 0, 0}
+#define PREPARE {IntroOpPrepareFadeIn, 0, 0, 0, 0}
+#define TITLEFADE {IntroOpTitleFadeIn, 0, 0, 0, 0}
+#define SPARK(colour, frames, dim) {IntroOpSpark, (colour), (frames), (dim), 0}
+#define DOWNPAIR {IntroOpFadeDownPair, 0, 0, 0, 0}
+#define MUSIC(track) {IntroOpMusic, (track), 0, 0, 0}
 
 /* Cell indices (intro2.c): 4 the guard, 5 the sorcerer, 6 the door. The numbers after the semicolons are the asm addresses of the original's calls. */
 static const IntroOp kStory[] = {
@@ -81,6 +86,20 @@ static const IntroOp kStory[] = {
     CARD(8), UP(0x90), WAIT(20)               /* :9527 */
 };
 
+/* yendor2.asm:8626-8794. The tick flag tests before each cell frame are taken as always set. */
+static const IntroOp kOpening[] = {
+    PREPARE, MUSIC(0x12), TITLEFADE, POLL,       /* :8626 the title card and plaques fade in (colours 0-0x3F and 0x80-0xFF) */
+    WAITDRAW(5), SPARK(0x1F, 32, 20), POLL,      /* :8674 the spark */
+    WAITDRAW(10), FADEFRAMES(4, 63, 16, 0x40), POLL,
+    WAITDRAW(10), FADEFRAMES(4, 63, 0x30, 0x50), POLL,
+    WAITDRAW(20), DOWNPAIR
+};
+
+const IntroOp *introOpeningScript(unsigned *count) {
+    *count = (unsigned)(sizeof(kOpening) / sizeof(kOpening[0]));
+    return kOpening;
+}
+
 const IntroOp *introStoryScript(unsigned *count) {
     *count = (unsigned)(sizeof(kStory) / sizeof(kStory[0]));
     return kStory;
@@ -116,6 +135,15 @@ static bool buildBackdrop(IntroStory *s, const IntroAssets *a) {
     for (unsigned r = 0; r < 198; r++) {
         memcpy(s->backdrop + (196 + r) * 320 + 1, bottom + r * 318, 318);
     }
+    return true;
+}
+
+bool introOpeningStart(IntroStory *s, const IntroAssets *a) {
+    if (!introStoryStart(s, a)) {
+        return false;
+    }
+    memset(s->fader.dac, 0, PaletteBytes);
+    memset(s->fader.buffer, 0, PaletteBytes);
     return true;
 }
 
@@ -211,9 +239,7 @@ static void drawCard(IntroStory *s, const IntroAssets *a, const IntroHost *h, un
     present(s, h);
 }
 
-bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
-    unsigned count;
-    const IntroOp *ops = introStoryScript(&count);
+static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, const IntroOp *ops, unsigned count) {
     for (unsigned i = 0; i < count; i++) {
         const IntroOp *op = &ops[i];
         if (h->mark) {
@@ -320,7 +346,65 @@ bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
         case IntroOpScrollReset:
             s->scrollY = 0;
             break;
+        case IntroOpPrepareFadeIn:
+            paletteFadeInPrepare(&s->fader);
+            break;
+        case IntroOpTitleFadeIn: {
+            FadeCtx ctx = {s, a, h, true};
+            for (unsigned r = 0; r < 63; r++) {
+                paletteFadeRange(&s->fader, 6, 1, 0x40, 0, NULL, NULL);
+                paletteFadeRange(&s->fader, 6, 1, 0x80, 0x80, NULL, NULL);
+                onFadeRound(&ctx, &s->fader, 0, 0);
+            }
+            memset(s->fader.out, 0, PaletteBytes);
+            break;
+        }
+        case IntroOpSpark: {
+            int x = 268, y = 8;
+            uint8_t colour = (uint8_t)op->a;
+            for (int n = 0; n < op->b + op->c; n++) {
+                drawFrame(s, a, h);
+                if (n > 0) {
+                    x -= 2;
+                    y += 2;
+                }
+                if (n >= op->b) {
+                    colour--;
+                }
+                if (x >= 0 && x < 320 && y >= 0 && y < 200) {
+                    s->screen[y * 320 + x] = colour;
+                }
+                present(s, h);
+            }
+            break;
+        }
+        case IntroOpFadeDownPair: {
+            FadeCtx ctx = {s, a, h, true};
+            for (unsigned r = 0; r < 63; r++) {
+                paletteFadeRange(&s->fader, 3, 1, 16, 0x40, NULL, NULL);
+                paletteFadeRange(&s->fader, 3, 1, 0x30, 0x50, NULL, NULL);
+                onFadeRound(&ctx, &s->fader, 0, 0);
+            }
+            break;
+        }
+        case IntroOpMusic:
+            if (h->music) {
+                h->music(h->ctx, (unsigned)op->a);
+            }
+            break;
         }
     }
     return true;
+}
+
+bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    unsigned count;
+    const IntroOp *ops = introStoryScript(&count);
+    return runScript(s, a, h, ops, count);
+}
+
+bool introPlayAll(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    unsigned count;
+    const IntroOp *ops = introOpeningScript(&count);
+    return runScript(s, a, h, ops, count) && introStoryPlay(s, a, h);
 }

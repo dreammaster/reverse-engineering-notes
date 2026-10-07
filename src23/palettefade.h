@@ -19,6 +19,8 @@
  *           once it is >= 0, is copied to `out`; the range of `out` is written (so the brightest components appear first); `out` is zeroed afterwards
  *   mode 2  buffer = the DAC, then as mode 4
  *   mode 4  fade up: each round every component of the range below its target gains 1; the call ends early when nothing changed
+ *   mode 6  RunPaletteFadeSequence (yendor2.asm:9738): mode 1's rounds without its initialisation and without clearing `out` -- the opening's title fade-in calls it
+ *           63 times after preparing `work` once (paletteFadeInPrepare)
  *   mode 5  from white: each round every component of `work` over the range that differs from the target loses 1 (so after SetPaletteToWhite
  *           -- work all 63 -- it sinks onto the target); the range of `work` is written
  *
@@ -36,6 +38,9 @@ typedef struct {
 typedef void (*PaletteFrameFn)(void *ctx, const PaletteFader *fader, unsigned first, unsigned count);
 
 unsigned paletteFadeRange(PaletteFader *fader, unsigned mode, unsigned rounds, unsigned count, unsigned first, PaletteFrameFn frame, void *ctx);
+
+/* The preparation mode 1 does at its start (and PlayCharacterCreationIntroAnimation does by hand): work = target - 63 everywhere, `out` cleared. */
+void paletteFadeInPrepare(PaletteFader *fader);
 
 /* SetPaletteToWhite: work = all 63 and the whole DAC set to it. */
 void paletteSetToWhite(PaletteFader *fader);

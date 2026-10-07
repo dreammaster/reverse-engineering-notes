@@ -32,14 +32,21 @@ static const uint8_t *picture(void *ctx, unsigned category, unsigned id) {
 }
 
 typedef struct {
-    unsigned presents, ticks, sounds, marks, escapeAfter, polls;
+    unsigned presents, ticks, sounds, marks, escapeAfter, polls, music;
+    uint8_t lastDac[768], afterTitle[768];
+    bool haveAfterTitle;
     unsigned cardsSeen[9];
 } Counts;
 
 static void onPresent(void *ctx, const uint8_t *screen, const uint8_t *dac) {
     (void)screen;
-    (void)dac;
+    memcpy(((Counts *)ctx)->lastDac, dac, 768);
     ((Counts *)ctx)->presents++;
+}
+
+static void onMusic(void *ctx, unsigned track) {
+    Counts *c = ctx;
+    c->music = track;
 }
 
 static void onTick(void *ctx) {
@@ -52,9 +59,12 @@ static void onSound(void *ctx, unsigned id) {
 }
 
 static void onMark(void *ctx, unsigned index, const IntroOp *op) {
-    (void)index;
     Counts *c = ctx;
     c->marks++;
+    if (index == 3 && !c->haveAfterTitle && op->kind == IntroOpPoll) {
+        memcpy(c->afterTitle, c->lastDac, 768); /* the poll right after the title fade-in */
+        c->haveAfterTitle = true;
+    }
     if (op->kind == IntroOpCard && op->a >= 0 && op->a < 9) {
         c->cardsSeen[op->a]++;
     }
@@ -129,7 +139,7 @@ static void testPlay(void) {
     check("the story starts", introStoryStart(&story, &assets));
     Counts counts;
     memset(&counts, 0, sizeof(counts));
-    IntroHost host = {&counts, onPresent, onSound, onTick, onEscape, onMark, false};
+    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false};
     bool finished = introStoryPlay(&story, &assets, &host);
     unsigned count;
     introStoryScript(&count);
@@ -154,6 +164,24 @@ static void testPlay(void) {
     introStoryStart(&story, &assets);
     finished = introStoryPlay(&story, &assets, &host);
     check("Escape at the third poll ends the story there", !finished && counts.polls == 3 && counts.marks < count / 2);
+
+    /* the opening: from black, the title fades in, music track 0x12 starts, the cells animate, and it runs into the story */
+    memset(&counts, 0, sizeof(counts));
+    check("the opening starts from a black screen", introOpeningStart(&story, &assets) && story.fader.dac[100] == 0 && story.fader.dac[500] == 0);
+    host.soundEffectsOn = false;
+    const IntroOp *opening;
+    unsigned openingCount;
+    opening = introOpeningScript(&openingCount);
+    check("the opening script has a few dozen ops", opening && openingCount > 10 && openingCount < 30);
+    finished = introPlayAll(&story, &assets, &host);
+    check("the whole thing runs to the end", finished && counts.music == 0x12);
+    check("the opening adds about 63 + 52 + 63 + 63 + 63 + frames to the tick count", counts.ticks > 3443 + 300 && counts.ticks < 3443 + 600);
+    bool titleVisible = counts.haveAfterTitle;
+    for (unsigned i = 0; titleVisible && i < 0x40 * 3; i++) {
+        titleVisible = counts.afterTitle[i] == story.fader.target[i] || story.fader.target[i] == 0;
+    }
+    bool darkMiddle = counts.haveAfterTitle && counts.afterTitle[0x50 * 3 + 20] == 0;
+    check("after the title fade-in colours 0-0x3F show the target palette while 0x50-0x7F are still dark", titleVisible && darkMiddle);
     free(world);
     free(image);
 }

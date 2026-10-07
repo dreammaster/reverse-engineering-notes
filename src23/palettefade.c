@@ -65,6 +65,22 @@ unsigned paletteFadeRange(PaletteFader *fader, unsigned mode, unsigned rounds, u
         }
         memset(fader->out, 0, PaletteBytes);
         break;
+    case 6: /* RunPaletteFadeSequence: mode 1's rounds continuing from the work area as it is (no initialisation, `out` is kept) */
+        for (unsigned r = 0; r < rounds; r++) {
+            for (size_t i = lo; i < lo + n; i++) {
+                uint8_t v = fader->work[i];
+                if ((v & 0x80) || v != fader->target[i]) {
+                    v++;
+                    fader->work[i] = v;
+                    if (!(v & 0x80)) {
+                        fader->out[i] = v;
+                    }
+                }
+            }
+            setRange(fader, fader->out, first, count, frame, ctx);
+            written++;
+        }
+        break;
     case 5:
         for (unsigned r = 0; r < rounds; r++) {
             for (size_t i = lo; i < lo + n; i++) {
@@ -85,4 +101,11 @@ unsigned paletteFadeRange(PaletteFader *fader, unsigned mode, unsigned rounds, u
 void paletteSetToWhite(PaletteFader *fader) {
     memset(fader->work, 0x3F, PaletteBytes);
     memcpy(fader->dac, fader->work, PaletteBytes);
+}
+
+void paletteFadeInPrepare(PaletteFader *fader) {
+    for (size_t i = 0; i < PaletteBytes; i++) {
+        fader->work[i] = (uint8_t)(fader->target[i] - 0x3F);
+    }
+    memset(fader->out, 0, PaletteBytes);
 }

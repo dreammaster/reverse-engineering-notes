@@ -42,7 +42,12 @@ typedef enum {
     IntroOpSound,        /* sound event a */
     IntroOpCapture,      /* the screen becomes the backdrop's first 200 rows and the scroll goes back to 0 */
     IntroOpScrollReset,
-    IntroOpPoll          /* the original's Escape poll: ends the story when the host says Escape */
+    IntroOpPoll,         /* the original's Escape poll: ends the story when the host says Escape */
+    IntroOpPrepareFadeIn, /* the fader's work area = target - 63 (PlayCharacterCreationIntroAnimation's first loop) */
+    IntroOpTitleFadeIn,  /* 63 rounds of RunPaletteFadeSequence over colours 0-0x3F and 0x80-0xFF, a cell frame each */
+    IntroOpSpark,        /* a spark of colour a runs diagonally for b frames from (268, 8), 2 pixels down-left per frame; c frames more dimming 1 per frame */
+    IntroOpFadeDownPair, /* 63 rounds of: 16 colours at 0x40 down, 0x30 colours at 0x50 down, a cell frame */
+    IntroOpMusic         /* music track a */
 } IntroOpKind;
 
 typedef struct {
@@ -50,14 +55,18 @@ typedef struct {
     int16_t a, b, c, d;
 } IntroOp;
 
-/* The ops of the story and their number. */
+/* The ops of the story (from the point where the title card fades in is `introOpeningScript`; this is the story proper) and their number. */
 const IntroOp *introStoryScript(unsigned *count);
+
+/* PlayCharacterCreationIntroAnimation (yendor2.asm:8626), the part before the story: the title card fades in, a spark crosses it, the flags and plaques light up. */
+const IntroOp *introOpeningScript(unsigned *count);
 
 typedef struct {
     void *ctx;
     /* the picture or the palette changed (a frame, a fade round, a wait tick): show `screen` through `dac` */
     void (*present)(void *ctx, const uint8_t *screen, const uint8_t *dac);
     void (*sound)(void *ctx, unsigned id);
+    void (*music)(void *ctx, unsigned track);
     /* one animation tick has passed (the host may sleep) */
     void (*tick)(void *ctx);
     /* true when the player pressed Escape */
@@ -87,7 +96,13 @@ typedef struct {
 /* Builds the backdrop and the cells and starts from a fully visible block-3 palette; false when a picture or the palette is missing. */
 bool introStoryStart(IntroStory *story, const IntroAssets *assets);
 
-/* Runs the whole script; returns false when the host's escape ended it early. */
+/* The same, but with the screen black as it is when the opening begins (the title then fades in with `introOpeningScript`). */
+bool introOpeningStart(IntroStory *story, const IntroAssets *assets);
+
+/* Runs the story script; returns false when the host's escape ended it early. */
 bool introStoryPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
+
+/* Runs the opening script, then (when it was not stopped) the story one. */
+bool introPlayAll(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
 #endif
