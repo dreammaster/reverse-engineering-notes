@@ -57,6 +57,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `music` | Which music track plays: UpdateAmbientMusicForRegion (yendor2.asm:37699, yendor3.asm identical) and UpdateAmbientMusic (:43589). | yes |
 | `newgame` | InitializeNewGameWorldState (yendor2.asm:49634, yendor3.asm:37448) -- the title screen's "new game". | yes |
 | `palette` | The palette effects (all values are 6-bit VGA DAC components, 3 bytes per colour, 256 colours = 768 bytes per palette). | yes |
+| `palettefade` | StepPaletteFadeRange (yendor2.asm:38171; Chapter 3 the same), the general fader behind every fade of the opening story, the clue book and the screen transitions: `rounds` (bx) rounds over `count` (cx) colours starting at colour `first` (dx), each round ending  | yes |
 | `paperdoll` | A character's paper doll with the equipment shown on it: DrawPartyMemberPortrait (yendor2.asm:39190, yendor3.asm:39482), drawn 56 pixels wide at (8, 8), (64, 8), (120, 8) or (176, 8) -- the four party members side by side on the inventory screen. | yes |
 | `party` | Party-member records: the 500-byte structures at g_partyRecords (nine per save, stored in section 1 of CURGAME right after the game-state block; see savegame.h). | yes |
 | `pictures` | PICTURES.VGA: the picture directory g_pictureDir (yendor2.asm:84214, DS:0x782E; Chapter 3 DS:0x7B5C) is not a list of ten pictures but of ten picture CATEGORIES (g_pictureCategory = category * 0x10). | yes |
