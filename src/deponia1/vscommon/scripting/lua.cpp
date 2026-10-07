@@ -1,18 +1,9 @@
 #include "vscommon/scripting/lua.h"
 
-void LuaDoString(const std::string &/*code*/, const std::string &/*chunkName*/) {
-}
-
-void LuaDoString(const std::string &/*code*/) {
-}
-
 void LuaDoRef(int /*ref*/) {
 }
 
 void LuaDebugName(const char */*name*/) {
-}
-
-void LuaExecuteEventHandler(const std::string &/*handler*/, const TVisObjRef &/*object*/) {
 }
 
 std::string IdStrStd(const std::uint8_t */*id*/) {
@@ -31,4 +22,40 @@ void LuaSetCurrentAction(const TVisObjRef &/*action*/) {
 }
 
 void LuaSetNumber(const std::string &/*name*/, double /*value*/) {
+}
+
+// Not reconstructed yet (visionaireobjectLua.cpp and the commands): nothing is put into Lua.
+#include "vscommon/scripting/luaConversion.h"
+#include "vscommon/scripting/visLuaObjects.h"
+
+LuaVisionaireObject *CheckVisionaireObject(lua_State *, int, bool) {
+	return nullptr;
+}
+
+int luaopen_VisionaireObject(lua_State *) {
+	return 0;
+}
+
+int luaopen_Sprite(lua_State *) {
+	return 0;
+}
+
+int luaopen_Particles(lua_State *) {
+	return 0;
+}
+
+void SetField(int) {
+}
+
+void SetTables() {
+}
+
+void SetEnums() {
+}
+
+void InitCommonCommands() {
+}
+
+void ConvertToLua(const TVisObjRef &) {
+	lua_pushnil(L);
 }

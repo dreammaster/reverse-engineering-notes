@@ -51,11 +51,11 @@ extern int GameMinDownTime;
 // are tested by other code that is not reconstructed.
 extern int g_traceFlags;
 
-// Confirmed a real, named global (recovered symbol) - a one-letter "what is
-// the engine doing right now" tag, written by TGScene::Prepare() ("P" on
-// entry, back to "L" on exit) and by the savegame/loading paths ("L"), never
-// read by any code reversed so far (presumably a crash-handler diagnostic).
-extern const char *g_loadingState;
+// Confirmed a real, named global (recovered symbol) - what the engine is doing right now, as the
+// text the loading screen shows ("Loading", "Preparing Scene", "Lua Script"): written by
+// TGScene::Prepare() and by the Lua script runner (which sets it back to "Loading"), never read by
+// any code reversed so far.
+extern const wchar_t *g_loadingState;
 
 // Confirmed a real, named global (recovered symbol; IDA types it wxFileName
 // but every use, TMSavegame::SetActive()/CheckVisPaths(), passes it where a

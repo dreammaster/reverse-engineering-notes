@@ -18,12 +18,28 @@ OBJ = os.path.join(ROOT, "build", "%s-%d" % (game, bits))
 CXX = (r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe")
 FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-MMD"]
 
+# The Lua of the engine is ScummVM's (common/lua, Lua 5.1): the reconstructed code includes it as
+# "common/lua/lua.h". For a stand-alone build its core is compiled here, with tools/luashim for what it
+# takes from the rest of ScummVM (set VIS_SCUMMVM to the ScummVM source if it is not C:\dev\scummvm).
+SCUMMVM = os.environ.get("VIS_SCUMMVM", r"C:\dev\scummvm")
+LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp",
+               "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
+LUA_SOURCES = []
+if os.path.isdir(os.path.join(SCUMMVM, "common", "lua")):
+    FLAGS += ["-I", SCUMMVM]
+    for f in sorted(os.listdir(os.path.join(SCUMMVM, "common", "lua"))):
+        if f.endswith(".cpp") and f not in LUA_EXCLUDE:
+            LUA_SOURCES.append(os.path.join(SCUMMVM, "common", "lua", f))
+    LUA_SOURCES.append(os.path.join(ROOT, "tools", "luashim", "luashim.cpp"))
+
 sources = []
 for root, _, files in os.walk(SRC):
     for f in files:
         if f.endswith(".cpp"):
             p = os.path.join(root, f)
             sources.append((p, os.path.join(OBJ, os.path.relpath(p, SRC)[:-4] + ".o")))
+for p in LUA_SOURCES:
+    sources.append((p, os.path.join(OBJ, "lua", os.path.basename(p)[:-4] + ".o")))
 
 
 def stale(src, obj):
@@ -45,7 +61,8 @@ def stale(src, obj):
 def compile_one(item):
     src, obj = item
     os.makedirs(os.path.dirname(obj), exist_ok=True)
-    r = subprocess.run([CXX] + FLAGS + ["-c", src, "-o", obj], capture_output=True, text=True)
+    extra = ["-w"] if (SCUMMVM in src or "luashim" in src) else []
+    r = subprocess.run([CXX] + FLAGS + extra + ["-c", src, "-o", obj], capture_output=True, text=True)
     return src, (r.stdout + r.stderr) if r.returncode != 0 else None, r.stderr
 
 

@@ -43,12 +43,12 @@ int TGScene::visibleSavegameEnd() const {
 	                static_cast<int>(_savegameAreas.size()) + _firstVisibleSavegame);
 }
 
-// Confirmed (asm lines 166435-166568): one 'P' tag set around the whole
+// Confirmed (asm lines 166435-166568): one "Preparing Scene" label set around the whole
 // method (g_loadingState), the background picture refreshed, every
 // currently visible savegame slot's screenshot rect set and its own Prepare()
 // run, then every scene object's Prepare().
 void TGScene::Prepare() {
-	g_loadingState = "P";
+	g_loadingState = L"Preparing Scene";
 	if (IsActive()) {
 		_background.RefreshSprite(false);
 
@@ -62,7 +62,7 @@ void TGScene::Prepare() {
 		for (TManagedObject *object : _drawList)
 			object->Prepare();
 	}
-	g_loadingState = "L";
+	g_loadingState = L"Loading";
 }
 
 // Confirmed (asm lines 166568-166997) except the particle-drawing branch's

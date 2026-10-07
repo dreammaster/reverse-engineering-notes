@@ -31,6 +31,7 @@ public:
 // stubbed as a pure no-op rather than reversed further.
 enum class ProfileArea {
 	kValue1 = 1, // used once, bracketing sprite/picture creation
+	kValue2 = 2, // the Lua scripts (visLua.cpp)
 	kValue4 = 4, // used for every other observed section
 };
 

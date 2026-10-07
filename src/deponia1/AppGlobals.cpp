@@ -10,7 +10,7 @@ wxString strAppName;
 wxSize surfaceSize;
 wxSize renderSize;
 bool g_unlockAspect = false;
-const char *g_loadingState = "L";
+const wchar_t *g_loadingState = L"Loading";
 wxString passwd;
 
 TStandardPaths standardPaths;

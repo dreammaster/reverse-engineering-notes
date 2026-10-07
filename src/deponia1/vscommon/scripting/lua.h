@@ -6,6 +6,7 @@
 #include <string>
 
 #include "WxStub.h"
+#include "vscommon/scripting/visLua.h"
 
 class TVisionaire;
 class TVisObjRef;
@@ -16,13 +17,11 @@ class TVisObjRef;
 // a fixed "controller" literal for controller.lua, an id-derived string
 // via IdStrStd() for game-data scripts). Not reversed beyond that call
 // shape.
-void LuaDoString(const std::string &code, const std::string &chunkName);
 // A second, one-argument overload, confirmed distinct by its own mangled
 // signature (TGameControl::Update, Deponia_Linux.asm lines 469957, 470027) -
 // used for the per-frame tween/delay "name = value" and delay-by-name
 // script dispatches, which don't carry a separate chunk-name argument. Not
 // reversed beyond that call shape.
-void LuaDoString(const std::string &code);
 // Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
 // 470535) - runs a Lua callback previously registered in the registry via a
 // numeric reference (the delay-by-id counterpart to LuaDoString's delay-by-
@@ -49,7 +48,6 @@ void LuaDebugName(const char *name);
 // registered event handler name stands for, with the object the event is
 // about; not reversed beyond that call shape (same standing "Lua bridge
 // contract" gap as LuaExecuteFunction elsewhere).
-void LuaExecuteEventHandler(const std::string &handler, const TVisObjRef &object);
 
 // Confirmed call shape only (TArgument::ConvertToObject, Deponia_Linux.asm
 // line 1437560) - the game-data root associated with the current Lua state;
