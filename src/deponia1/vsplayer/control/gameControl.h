@@ -242,16 +242,8 @@ protected:
 	// them: walking-sound filenames, per-character scroll-timing pairs, and
 	// registered scene-mouse-position hooks.
 	//
-	// _pendingTweens's element type was originally guessed as
-	// pair<Tween,string> and found wrong (see StartTween's two overloads,
-	// asm lines 474993-475136 and 478477-478598+): there are two distinct
-	// tween-related vectors, 176-byte and 88-byte elements respectively,
-	// neither matching that pair. TGameControl::Update (Deponia_Linux.asm
-	// lines 469883-470176, processing this exact 88-byte vector each frame)
-	// confirms the element is just a Tween by value - Tween itself carries
-	// its own name field (see Tween.h) rather than needing a paired string.
-	// StartTween(Tween,string) itself is still a stub (its own erase/replace-
-	// by-name logic, asm lines 478477-478598+, wasn't re-examined this pass).
+	// The tweens the scripts named (88-byte elements in the original: a Tween and its name, which
+	// Tween carries itself here).
 	std::vector<Tween> _pendingTweens;
 	// The real vector StartTween(const TVisObjTween&) operates on (176-byte
 	// elements, confirmed distinct from _pendingTweens above - see its own

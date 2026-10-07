@@ -67,3 +67,8 @@ bool FindObjectByNameOrId(const wxString &nameOrId, TVisObjRef &outObject, bool 
 // lua_setfield); an empty reference clears it. Not reversed beyond that call shape (the
 // Lua bridge is not reconstructed).
 void LuaSetCurrentAction(const TVisObjRef &action);
+
+// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm lines 469917-470000, the
+// plain-name branch of a named tween): sets the Lua global `name` to a number. Not reversed
+// beyond that call shape.
+void LuaSetNumber(const std::string &name, double value);

@@ -25,6 +25,7 @@
 #include "graphicslib/preloadedPicManager.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
+#include <cstdio>
 #include "vscommon/scripting/lua.h"
 #include "vstables/fieldIds.h"
 
@@ -162,20 +163,25 @@ bool TGameControl::Update() {
 				break;
 		}
 
-		// Confirmed (asm lines 469910-470176): also syncs each tween's
-		// current interpolated value into Lua (a dotted name does a
-		// "table.field = value" script eval; a plain name sets a global
-		// directly) before checking IsFinished() - not reproduced since
-		// Tween's own interpolated-value field isn't modeled (see Tween.h).
+		// Confirmed (asm lines 469910-470176): each tween the scripts named sets the Lua variable of
+		// its name to its value (a dotted name - "table.field" - by running "name = value", a plain
+		// one directly) and ends with the tween.
 		for (auto it = _pendingTweens.begin(); it != _pendingTweens.end();) {
 			it->Update(static_cast<float>(deltaMs));
-			if (it->IsFinished()) {
-				// Real code invokes a 3-argument completion callback stored
-				// on the tween before erasing it - not modeled.
-				it = _pendingTweens.erase(it);
+
+			if (it->name.find('.') != std::string::npos) {
+				char value[64];
+
+				snprintf(value, sizeof(value), "%f", it->GetValue());
+				LuaDoString(it->name + " = " + value);
 			} else {
-				++it;
+				LuaSetNumber(it->name, it->GetValue());
 			}
+
+			if (it->IsFinished())
+				it = _pendingTweens.erase(it);
+			else
+				++it;
 		}
 
 		for (auto it = _delaysByName.begin(); it != _delaysByName.end();) {
@@ -2731,12 +2737,15 @@ bool TGameControl::LoadGame(int slot) {
 	return result;
 }
 
-void TGameControl::StartTween(const Tween &/*tween*/, const std::string &/*name*/) {
-	// Was a guessed `_pendingTweens.push_back({tween, name})` - checking
-	// the real asm (lines 478477-478598+) shows this operates on an
-	// 88-byte-element vector at a DIFFERENT offset than StartTween(const
-	// TVisObjTween&)'s 176-byte-element one, keyed by a string comparison
-	// against `name` with a non-trivial erase/replace on a match - not a
-	// plain append. Reverted to a stub rather than keep a confidently wrong
-	// implementation; see NOTES.md.
+// Confirmed (asm lines 478477-478700): a tween a script names replaces the one that has the same name.
+void TGameControl::StartTween(const Tween &tween, const std::string &name) {
+	for (auto it = _pendingTweens.begin(); it != _pendingTweens.end();) {
+		if (it->name == name)
+			it = _pendingTweens.erase(it);
+		else
+			++it;
+	}
+
+	_pendingTweens.push_back(tween);
+	_pendingTweens.back().name = name;
 }

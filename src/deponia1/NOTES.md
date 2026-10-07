@@ -3394,7 +3394,7 @@ for again, faded out when another one comes), and the messages the texts send it
 the earlier work guessed for these calls (`PlaySound`, `Resume`, `OnVideoFrameFinished`, `Slot0xD8` ...) were
 `SetStats`, `CleanUp`, `ContinueAll`, `FinishSoundFade`.
 `Tween` (a number over a time through an easing function) and `TVisObjTween` (it sets the x and y of a
-field of a data object each frame) are reconstructed; of the easing functions only the linear one is.
+field of a data object each frame) are reconstructed, with all the easing functions (Penner's equations, `Easing.cpp`; the `easing_*_func` ones are the In version of each kind, and `easing_expo_func` gives 2^-10 for 0, as the original does).
 
 ## Reformatted to ScummVM's code conventions
 

@@ -29,3 +29,6 @@ bool FindObjectByNameOrId(const wxString &/*nameOrId*/, TVisObjRef &/*outObject*
 
 void LuaSetCurrentAction(const TVisObjRef &/*action*/) {
 }
+
+void LuaSetNumber(const std::string &/*name*/, double /*value*/) {
+}
