@@ -238,6 +238,12 @@ public:
 	bool IsOk() const {
 		return !_fullPath.empty();
 	}
+	// Confirmed call shape (TGAction::Execute, Deponia_Linux.asm line 202966): real
+	// wxFileName::SameAs() compares the two normalized absolute paths; the path is taken as it
+	// is here (the data's paths are all written the same way).
+	bool SameAs(const wxFileName &other) const {
+		return _fullPath == other._fullPath;
+	}
 	// Confirmed call shape only (TGameControl::ReplaceGame, Deponia_Linux.asm
 	// line 468671).
 	bool Exists() const;

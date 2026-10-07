@@ -37,14 +37,14 @@ TMButton	done	9	165577	166172
 TGScene	done	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	in-progress	76	175318	185835
-THAction	todo	5	187010	187127
+THAction	done	5	187010	187127
 TGObjectManager	in-progress	25	187194	189565
 TTObject	todo	9	190187	1468584
 TTButton	stub	12	190202	1526063
 TGEventInfo	done	1	190217	190217
 no_check_checker_t	todo	4	191182	1570709
 t_SkipCutsceneInfo	todo	1	194735	194735
-TGAction	todo	33	194786	211541
+TGAction	in-progress	33	194786	211541
 TVisObjTween	todo	4	212286	481002
 TGText	in-progress	31	212567	215356
 TSText	done	15	216919	1460684

@@ -736,7 +736,7 @@ void TGameControl::UpdateAspectRatio() {
 void TGameControl::InitAfterLoadingScreen() {
 	// Confirmed (asm lines 457468-457503).
 	if (_soundManager != nullptr)
-		_soundManager->Resume();
+		_soundManager->CleanUp();
 
 	TGScene *scene = _ownedSceneControl.GetScene();
 	if (!scene->GetRef().IsEmpty())
@@ -1523,8 +1523,7 @@ void TGameControl::UpdateRandomTimers() {
 void TGameControl::UpdateWalkingSounds() {
 	// Confirmed (asm lines 463474-463680) - previously deliberately deferred
 	// (see NOTES.md) pending identification of the unresolved virtual call
-	// this makes on _soundManager (now TSoundFFMPEG::PlaySound(), added this
-	// pass - see its own comment). Rate-limited to run at most once every
+	// this makes on _soundManager (TSoundBase::SetStats(), vtable slot 0x70). Rate-limited to run at most once every
 	// 500ms via a function-local static timer. Field id 0x2ED (a character's
 	// walking-sound volume, clamped to [0,100]) is unresolved beyond that.
 	// The pan calculation (a character's on-screen x position relative to
@@ -1564,7 +1563,7 @@ void TGameControl::UpdateWalkingSounds() {
 			volume = static_cast<int>(rawVolume);
 
 		wxFileName walkSound = character->GetWalkingSound();
-		_soundManager->PlaySound(walkSound, volume, pan, 3, 0);
+		_soundManager->SetStats(walkSound, volume, pan, TSoundTypeEnum::kValue3, false, 0);
 	}
 
 	updateTimer.SetTime();

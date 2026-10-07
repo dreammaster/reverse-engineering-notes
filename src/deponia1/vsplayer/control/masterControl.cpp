@@ -307,7 +307,7 @@ bool TMasterControl::VideoFrame() {
 	// the original calls its vtable slot 1 here.
 
 	if (/* field +0x4C, likely TPaintControl-internal state - not resolved */ false) {
-		_soundManager->OnVideoFrameFinished();
+		_soundManager->ContinueAll();
 	}
 	return false;
 }

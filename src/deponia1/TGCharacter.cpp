@@ -494,7 +494,7 @@ void TGCharacter::SetCurrentWalkingSound(const wxFileName &file) {
 		TSoundFFMPEG *sounds = g_pGameControl->GetSoundManager();
 
 		if (sounds)
-			sounds->StopSound(_walkingSound);
+			sounds->Stop(_walkingSound);
 		_walkingSoundPlaying = false;
 	}
 
@@ -511,7 +511,7 @@ void TGCharacter::StopWalkingSound() {
 	TSoundFFMPEG *sounds = g_pGameControl->GetSoundManager();
 
 	if (sounds)
-		sounds->StopSound(_walkingSound);
+		sounds->Stop(_walkingSound);
 	_walkingSoundPlaying = false;
 }
 

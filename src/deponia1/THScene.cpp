@@ -49,17 +49,17 @@ void THScene::OnEvent(TEventEnum /*event*/, int field, TVisionaireObject * /*obj
 	case kSceneMusicVolume:
 	case kSceneMusicBalance:
 		// the music goes on with the new volume and balance
-		g_pGameControl->GetSoundManager()->PlaySound(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
-		        scene.GetInt(kSceneMusicBalance), 0, 0);
+		g_pGameControl->GetSoundManager()->SetStats(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
+		        scene.GetInt(kSceneMusicBalance), TSoundTypeEnum::kValue0, false, 0);
 		break;
 	case kSceneBackgroundMusic: {
 		// new music: the old one is let go, the new one plays (and is faded in)
 		TSoundFFMPEG *sounds = g_pGameControl->GetSoundManager();
 
-		sounds->Slot0xD8();
+		sounds->FinishSoundFade();
 		g_pGameControl->GetSoundManager()->Play(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
 		                                        scene.GetInt(kSceneMusicBalance), true, TSoundTypeEnum::kValue0, true, 0);
-		g_pGameControl->GetSoundManager()->Slot0xE0(4, 3000, false);
+		g_pGameControl->GetSoundManager()->StartSoundFade(TFadeEnum::kValue4, 3000, false);
 		break;
 	}
 	case kSceneBrightness: {

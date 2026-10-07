@@ -132,3 +132,15 @@ reconstructed. `TGInterface` stays `in-progress` until then.
   `GLCharBuffer`s).
 
 `TGText` stays `in-progress` in `manifest/proprietary_classes.tsv` until the hooks are done.
+
+
+## TGAction::Execute: commands not reconstructed yet (in progress)
+
+`TGAction` (the action list, stop/continue, save/load, `SkipCutscene`, the `Execute` loop with
+its IF/ELSE depth and 10000-part guard) and `THAction` are done. The commands of the action parts
+are being decoded one by one from the jump table at `jpt_562CD8` (the command minus 5 is the
+index; `tools/cfg.py` prints the code of one entry): `TGActionPartExecutor` in
+`TGActionCommands.cpp`, the commands' numbers in `vstables/eCommand.h`. A command that is not in
+`TGActionPartExecutor::run()` does nothing, so the actions that use it do not do its part yet.
+Not done yet (as of this commit): everything of the table that is not listed in
+`vstables/eCommand.h`.
