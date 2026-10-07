@@ -236,3 +236,20 @@ When the party interacts with a map object (`byte_34BB6` = object slot; its pict
 `sub_3BE18` asks who will open it (cancel = leave, `byte_37383 = FFh`).  Then with probability 1/4 (`rnd(1,4) == 1`) the trap fires: `giveCharDamage(char, rnd(0,6), page header byte 1Eh)`.  The opener then rolls
 `getThievery(char) + rnd(1,20)` against the page's lock difficulty (header byte 12h) and, depending on the object kind, the loot is produced with `generateItem`, gold from `giveTake`, or a message.  The details of the per-kind loot were not traced.
 On **every** call of `changeTime` (each minute of game time, not only every 8 hours): a confused character has a 1/3 chance of a general saving throw that cures it (otherwise the counter is decremented), and a paralysed character has a 1/5 chance of its counter being decremented (so paralysis wears off slowly).
+
+## Condition effects on attributes (`conditionMod`, `19190`-ish; called from `getStat`)
+
+Each non-zero condition counter `v` (the counters grow over time, see above) is added to / subtracted from the attributes: returns 0 (no modification) for dead, stone and eradicated characters.
+
+| condition (counter) | effect on the current attribute |
+|---|---|
+| cursed (+113h) | luck -v |
+| heart broken (+114h) | all seven attributes -v |
+| weak (+115h) | all seven attributes -v |
+| poisoned (+116h) | might -v, speed -v, accuracy -v |
+| diseased (+117h) | endurance -v, personality -v, intellect -v |
+| insane (+118h) | might +v, speed +v; intellect -v, personality -v, accuracy -v |
+| in love (+119h) | all seven attributes +v |
+| drunk (+11Ah) | personality +v, luck +v; might -v, intellect -v, endurance -v, speed -v, accuracy -v |
+
+Asleep, depressed, confused, paralysed, unconscious do not change attributes (they act through `worstCondition`, which gates actions).  Since poison and disease double every 8-hour tick, their penalties grow quickly until cured; any attribute that reaches 0 kills the character at the next tick.
