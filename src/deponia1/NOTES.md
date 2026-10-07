@@ -3049,6 +3049,79 @@ the noise (labels kept, XREF comments, push/pop and string-refcount code dropped
 `-t`; careful, `-t` also hides `test eax, eax`, which can hide a branch condition)
 and `tools/wstr.py` decodes the wide-character strings IDA lists one byte per line.
 
+## TGWaySystem, TPointSize and the way-finding geometry
+
+What a character walks on. A `TGWaySystem` is built from a scene's `TTWaySystem`
+(`SetWaySystem`): the outline (`kWaySystemBorder`) is cut into polygons at the separator
+points, a polygon whose first point lies inside another is a hole of it, and every
+outer polygon is triangulated with its holes by the project's p2t (`p2t::CDT`). The
+way points (`kWaySystemPoints`, linked to each other through `kPointRelations`) give
+a coarser graph. Original layout (all documented in `TGWaySystem.h`): `TPointSize`
+base, outline +0x18, way points +0x30, the way +0x48, the best/current search length
++0x68/+0x6C, the end way point +0x70, the route being searched +0x78,
+triangulations/triangles/their points +0x90/+0xA8/+0xC0, destination +0xD8, flags
++0xE0/+0xE1.
+
+Two ways to find a way:
+
+- `CalculateWay(wayPoint, from, to)`: the way points visible from `from`
+  (`GetAllPointsNextTo`, a `LineCuts` test against the outline); if the nearest is
+  connected to the end way point (`IsConnected`, a breadth first walk over the links)
+  a depth first `SearchWay` finds the shortest route (pruned against the best
+  length so far, neighbours tried nearest to the end first), which is then trimmed:
+  its start moved to the farthest route point that can be seen directly, and its end
+  cut at the first point `to` can be seen from. With no way point in sight it walks
+  straight (`LineInPolygonSet`) or round the outline's corners (`shortestPath`).
+- `CalculateWayTriangles(from, to)`: for a `to` outside the triangulation. A circle
+  around `from` through `to` is intersected with the outline's edges
+  (`circleLineSegmentIntersection`), a point 2 pixels to either side of each hit is a
+  candidate, and the one whose direction from `from` is nearest to the direction of `to`
+  (within 80 degrees) that lies in a triangle becomes the way. (A far-away `to`
+  finds none: the circle has to cross the outline.) The candidates are left in the
+  exported global `drawPoints` for the debug overlay.
+
+`GetNextPosition` is the per-frame step along the way (the direction of a leg is worked
+out when it starts; reaching the end of the way heads for the destination if that
+is not where it ended). `CheckPosition` keeps a position in the walkable area: inside a
+triangle it stays; just outside one (within 0.2 in barycentric terms) it moves to the
+nearest point of the triangle; further away it is left alone.
+
+`TPointSize` scales characters by where they stand: the way points that have a size
+(`kPointSize`) give (y, size) pairs sorted by y, interpolated linearly (extrapolated
+past the ends; 100 with none).
+
+Free functions (geometry): `LineCuts` (two overloads), `GetNumCuts`, `LineInPolygonSet`
+(a segment lies in the area: it crosses no edge properly, partly overlaps none that
+lie along it, and its middle is inside), `shortestPath` (Dijkstra over start, polygon
+vertices and end with visibility as the edges; returns only the corners in between),
+`PointInTriangle`/`PointInTriangleTolerant` (barycentric, with the triangle's area
+cached in two fields the binary's `p2t::Triangle` has and the library does not),
+`closesPointOnTriangle` (the standard region construction in single precision -
+including its region 6, which reuses region 1's formula as the original does),
+`angleDist`, `argsort`, and `GetAngle` (now real: degrees, 0 to 359, y inverted;
+note it truncates, so a 45 degree vector gives 44).
+
+Things worth knowing:
+
+- The original's `PointInTriangle` and `PointInTriangleTolerant` only differ in
+  the threshold (0 against -0.2); `PointInPolygonList` in `shortestPath` is called
+  for the end point and its result ignored (omitted).
+- The log message in `SetWaySystem`'s catch uses a format string that reads as the two
+  letters "wa" in the binary; reproduced with a plain format, noted in the code.
+- Not reconstructed (nothing calls them): `Len`, `Normalize`, `Distance`,
+  `LinePointDistance`, `LinePointPoint`, `dot`, `_point`, `toVec2`, `MapPointToLine`,
+  `Rotation`, `PointOnLine`, `GetDotProduct`, `RectHit`.
+- `TGCharacter` now has a `TGWaySystem` member; `InitWaySystem` and
+  `CheckCharacterPosition` are real. The walking itself (`TGCharacter`'s use of
+  `CalculateWay`, `GetNextPosition`) is still to come with the rest of that class.
+- `GlmStub.h` is a two-line stand-in for `glm::vec2`. `TManagedObject::_position` is
+  now protected.
+- Tested with a scratch program (not committed) over real objects built through the
+  data layer: a 200x100 area with a hole triangulates into 8 triangles; positions
+  inside are kept, a position just in the hole is moved to its edge, a way through
+  two way points is walked to the end, and targets just outside the area resolve to a
+  point near it.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

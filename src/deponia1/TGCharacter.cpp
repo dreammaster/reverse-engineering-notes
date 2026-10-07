@@ -63,7 +63,26 @@ void TGCharacter::StopWalking(bool /*flag*/) {
 void TGCharacter::CheckWalkingSound() {
 }
 
-void TGCharacter::InitWaySystem(int /*spriteHeight*/) {
+void TGCharacter::InitWaySystem(int spriteHeight) {
+	_waySystem.SetNoLines(spriteHeight);
+
+	// the character's size: scaled by where it stands, if it is to be, and by its own
+	// scale factor (percent)
+	float size = 100.0f;
+
+	if (_objRef.GetBool(kCharacterScale)) {
+		size = _waySystem.GetCalculatedSize(_position);
+
+		int factor = _objRef.GetInt(kCharacterScaleFactor);
+
+		if (factor != 100)
+			size = size * (float)factor / 100.0f;
+	}
+	_objRef.SetValue(kCharacterSize, size, TSendEventEnum::kNoEvent);
+}
+
+void TGCharacter::CheckCharacterPosition() {
+	_position = _waySystem.CheckPosition(_position);
 }
 
 void TGCharacter::StopWalkingSound() {

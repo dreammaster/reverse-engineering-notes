@@ -169,6 +169,199 @@ bool LinesCut(const wxPoint &a, const wxPoint &b, const wxPoint &c, const wxPoin
 	return side(c, d, a) != side(c, d, b);
 }
 
+// Confirmed (asm lines 1376396-1376462)
+bool LineCuts(const wxPoint &a, const wxPoint &b, const std::vector<wxPoint> &polygon) {
+	if (polygon.empty())
+		return false;
+
+	wxPoint previous = polygon.back();
+
+	for (const wxPoint &point : polygon) {
+		if (LinesCut(a, b, point, previous))
+			return true;
+		previous = point;
+	}
+	return false;
+}
+
+// Confirmed (asm lines 1376538-1376630)
+bool LineCuts(const wxPoint &a, const wxPoint &b, const TPolygonList &polygons) {
+	for (const std::vector<wxPoint> *polygon : polygons) {
+		if (LineCuts(a, b, *polygon))
+			return true;
+	}
+	return false;
+}
+
+// Confirmed (asm lines 1376463-1376537)
+int GetNumCuts(const wxPoint &a, const wxPoint &b, const std::vector<wxPoint> &polygon) {
+	// (the original reads the polygon as edges from the last point round; a polygon
+	// of fewer than three points has none)
+	if (polygon.size() < 3)
+		return 0;
+
+	int cuts = 0;
+	wxPoint previous = polygon.back();
+
+	for (const wxPoint &point : polygon) {
+		if (LinesCut(a, b, point, previous))
+			cuts++;
+		previous = point;
+	}
+	return cuts;
+}
+
+// Confirmed (asm lines 247863-248160). The edge points are moved into the
+// segment's frame: x along the segment (0 to its length), y across it.
+bool LineInPolygonSet(double x1, double y1, double x2, double y2, TPolygonList &polygons) {
+	double dx = x2 - x1;
+	double dy = y2 - y1;
+	double length = std::sqrt(dx * dx + dy * dy);
+	double ux = dx / length;
+	double uy = dy / length;
+
+	for (size_t i = 0; i < polygons.size(); i++) {
+		const std::vector<wxPoint> &polygon = *polygons[i];
+		size_t count = polygon.size();
+
+		for (size_t j = 0; j < count; j++) {
+			const wxPoint &first = polygon[j];
+			const wxPoint &second = polygon[(j + 1 == count) ? 0 : j + 1];
+
+			double ax = first.x - x1;
+			double ay = first.y - y1;
+			double bx = second.x - x1;
+			double by = second.y - y1;
+
+			// the segment is an edge of the polygon (either way round)
+			if (ay == 0 && ax == 0 && by == dy && bx == dx)
+				return true;
+			if (by == 0 && bx == 0 && ay == dy && ax == dx)
+				return true;
+
+			double aAlong = ax * ux + ay * uy;
+			double aAcross = ay * ux - ax * uy;
+			double bAlong = bx * ux + by * uy;
+			double bAcross = by * ux - bx * uy;
+			bool crosses = false;
+
+			// the edge crosses the line of the segment: where?
+			if ((0 > aAcross && bAcross > 0) || (0 > bAcross && aAcross > 0)) {
+				double along = (bAlong - aAlong) * (0 - aAcross) / (bAcross - aAcross) + aAlong;
+
+				if (!(along < 0 || length < along))
+					return false;
+			}
+
+			// an edge along the line of the segment must not overlap it only partly
+			if (aAcross == 0 && bAcross == 0) {
+				if (aAlong < 0)
+					crosses = bAlong >= 0;
+				else
+					crosses = length >= aAlong || !(length < bAlong);
+
+				if (crosses && (0 > aAlong || 0 > bAlong || aAlong > length || bAlong > length))
+					return false;
+			}
+		}
+	}
+
+	return PointInPolygonList((int)(x1 + dx * 0.5), (int)(y1 + dy * 0.5), polygons);
+}
+
+namespace {
+
+// A vertex of the graph shortestPath() searches, with the way found to it.
+struct PathNode {
+	int x, y;
+	int previous;
+	float distance;
+};
+
+} // End of anonymous namespace
+
+// Confirmed (asm lines 251746-252152): a Dijkstra search over the start, the
+// polygon vertices and the end point, where two points are joined when
+// LineInPolygonSet() says they see each other. The settled nodes are kept at the
+// front of the array, the next one swapped in behind them.
+bool shortestPath(double x1, double y1, double x2, double y2, TPolygonList &polygons, std::vector<wxPoint> &path) {
+	int startX = (int)x1;
+	int startY = (int)y1;
+	int endX = (int)x2;
+	int endY = (int)y2;
+
+	if (!PointInPolygonList(startX, startY, polygons))
+		return false;
+
+	// (the original also tests whether the end point is in the area, but ignores the
+	// result)
+	if (LineInPolygonSet(x1, y1, x2, y2, polygons)) {
+		path.push_back(wxPoint{endX, endY});
+		return true;
+	}
+
+	std::vector<PathNode> nodes;
+
+	nodes.push_back(PathNode{startX, startY, 0, 0.0f});
+	for (size_t i = 0; i < polygons.size(); i++) {
+		for (const wxPoint &point : *polygons[i])
+			nodes.push_back(PathNode{point.x, point.y, 0, 0.0f});
+	}
+	nodes.push_back(PathNode{endX, endY, 0, 0.0f});
+
+	int last = (int)nodes.size() - 1;
+	int settled = 0;
+	int limit;
+
+	for (;;) {
+		double best = 9999999.0;
+		int bestTo = 0;
+		int bestFrom = 0;
+
+		limit = settled + 1;
+		for (int from = 0; from < limit; from++) {
+			if (last < limit)
+				break;
+
+			for (int to = limit; to <= last; to++) {
+				if (!LineInPolygonSet(nodes[from].x, nodes[from].y, nodes[to].x, nodes[to].y, polygons))
+					continue;
+
+				double total = std::sqrt((double)(nodes[to].x - nodes[from].x) * (nodes[to].x - nodes[from].x) +
+				                         (double)(nodes[to].y - nodes[from].y) * (nodes[to].y - nodes[from].y)) +
+				               nodes[from].distance;
+
+				if (best > total) {
+					best = total;
+					bestTo = to;
+					bestFrom = from;
+				}
+			}
+		}
+
+		if (best == 9999999.0)
+			return false;
+
+		nodes[bestTo].previous = bestFrom;
+		nodes[bestTo].distance = (float)best;
+		std::swap(nodes[bestTo], nodes[limit]);
+		settled++;
+
+		if (bestTo >= last)
+			break;
+	}
+
+	// the way back from the end point, without it and without the start
+	int count = 0;
+
+	for (int node = nodes[limit].previous; node > 0; node = nodes[node].previous)
+		count++;
+	path.resize(count);
+	for (int index = count - 1, node = nodes[limit].previous; index >= 0; index--, node = nodes[node].previous)
+		path[index] = wxPoint{nodes[node].x, nodes[node].y};
+	return true;
+}
+
 // Confirmed (asm lines 247392-247504)
 bool PointInPolygon(int x, int y, std::vector<wxPoint> &polygon) {
 	bool inside = false;

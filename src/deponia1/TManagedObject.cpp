@@ -1,6 +1,7 @@
 #include "TManagedObject.h"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 #include "AppGlobals.h"
@@ -15,8 +16,24 @@
 #include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
-int GetAngle(float /*dx*/, float /*dy*/) {
-	return 0;
+// Confirmed (asm lines 1376052-1376134): the direction of (dx, dy) in degrees, 0 to
+// 359, counted anticlockwise from the positive x axis with y pointing up (so y is
+// negated: the screen's y points down).
+int GetAngle(float dx, float dy) {
+	if (dx == 0.0f)
+		return (0 > dy) ? 90 : 270;
+
+	int angle = (int)(std::atan(-(double)dy / (double)dx) * 57.29577950560105);
+
+	if (0 > dy) {
+		if (0 > dx)
+			angle += 180;
+	} else if (dx <= 0) {
+		angle += 180;
+	} else {
+		angle += 360;
+	}
+	return angle % 360;
 }
 
 void TManagedObject::ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event) {

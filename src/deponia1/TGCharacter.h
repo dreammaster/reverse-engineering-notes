@@ -6,6 +6,7 @@
 
 #include <list>
 
+#include "TGWaySystem.h"
 #include "TManagedObject.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
@@ -131,11 +132,22 @@ public:
 	// a character does/doesn't belong to it; none reversed beyond the call
 	// shapes.
 	void CheckWalkingSound();
+	/** Sets the way system's size scaling up and works out the character's size
+	 *  at its position (confirmed in full, asm lines 175894-175958). */
 	void InitWaySystem(int spriteHeight);
+	/** Moves the character into the walkable area if it is not in it (confirmed in
+	 *  full, asm lines 175992-176011). */
+	void CheckCharacterPosition();
+	TGWaySystem &GetWaySystem() {
+		return _waySystem;
+	}
 	void StopWalkingSound();
 	void PreloadAnimations();
 	void StartFittingAnimation();
 	void UnloadAnimations();
 	void StartStandingAnim();
 	void AdjustTimers();
+
+private:
+	TGWaySystem _waySystem;  // +0x168, what the character walks on
 };

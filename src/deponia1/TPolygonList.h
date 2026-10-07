@@ -99,6 +99,23 @@ wxRect GetBoundingBox(const std::vector<wxPoint> &points);
 
 /** Whether the segments a-b and c-d intersect. */
 bool LinesCut(const wxPoint &a, const wxPoint &b, const wxPoint &c, const wxPoint &d);
+/** Whether the segment a-b crosses any edge of the polygon (closed: the last
+ *  point is joined to the first). */
+bool LineCuts(const wxPoint &a, const wxPoint &b, const std::vector<wxPoint> &polygon);
+/** The same for all the polygons. */
+bool LineCuts(const wxPoint &a, const wxPoint &b, const TPolygonList &polygons);
+/** How many edges of the polygon the segment a-b crosses (none for fewer than
+ *  three points). */
+int GetNumCuts(const wxPoint &a, const wxPoint &b, const std::vector<wxPoint> &polygon);
+/** Whether the segment from (x1, y1) to (x2, y2) lies inside the walkable area:
+ *  it crosses no polygon edge (an edge it runs along has to lie inside it, and
+ *  one that is exactly the segment counts) and its middle is inside. */
+bool LineInPolygonSet(double x1, double y1, double x2, double y2, TPolygonList &polygons);
+/** The corners of the shortest way from (x1, y1) to (x2, y2) through the area
+ *  (polygon vertices that can see each other), without the start and the end
+ *  point; when they see each other the end point alone. False when the start is
+ *  not in the area, or there is no way. */
+bool shortestPath(double x1, double y1, double x2, double y2, TPolygonList &polygons, std::vector<wxPoint> &path);
 /** Even-odd test of a point against one polygon (a ray to the left, counting
  *  the edges it crosses with LinesCut). */
 bool PointInPolygon(int x, int y, std::vector<wxPoint> &polygon);

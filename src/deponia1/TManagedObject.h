@@ -71,11 +71,8 @@ class TVList;
 class TGDetectInfo;
 enum class TMouseEventEnum;
 
-// Confirmed call shape only (TManagedObject::ExecuteMatchingAction,
-// Deponia_Linux.asm line 55E1E8) - computes some kind of facing angle from
-// two screen-space deltas; not reversed beyond that call shape. Returns
-// int (the real callee's result lands in a plain integer register, not
-// xmm0, despite taking float arguments).
+// Confirmed in full (asm lines 1376052-1376134): the direction of the vector
+// (dx, dy) as an angle in degrees, 0 to 359 (see the definition).
 int GetAngle(float dx, float dy);
 
 class TManagedObject : public TAnimationOwner {
@@ -435,9 +432,12 @@ protected:
 	// private.
 	wxRect _boundingRect;
 	bool _active = true;
+	// Confirmed protected-by-need (TGCharacter::InitWaySystem()/
+	// CheckCharacterPosition() read and move it, asm lines 175894-176011): moved up
+	// from private.
+	wxPoint _position;
 
 private:
-	wxPoint _position;
 	int _center = -1;
 	TPictureIO *_picture = nullptr;
 	unsigned int _color = 0xFFFFFFFF;

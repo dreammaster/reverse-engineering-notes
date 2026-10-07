@@ -56,7 +56,7 @@ TGDialog	stub	14	220105	479462
 TConsole	stub	61	223417	242869
 THInterface	todo	5	246907	247172
 TGActionArea	todo	3	247238	247279
-TGWaySystem	todo	21	247325	253067
+TGWaySystem	done	21	247325	253067
 THGameControl	todo	6	256950	258050
 TGObject	todo	13	258159	259458
 THAnimation	done	5	259729	260077
@@ -328,7 +328,7 @@ Tools	todo	2	1374466	1374734
 TGParticleSystem	todo	4	1378274	1380801
 TGParticleEmitter	todo	6	1378290	1379800
 TFontManager	done	16	1388826	1390109
-TPointSize	todo	5	1390459	1390856
+TPointSize	done	5	1390459	1390856
 TCFont	todo	16	1391446	1397049
 TSyntaxDocArray	todo	7	1409666	1415006
 TExampleDocArray	todo	7	1410025	1415280

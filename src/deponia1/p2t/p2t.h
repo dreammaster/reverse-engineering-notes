@@ -53,6 +53,11 @@ public:
 	bool constrainedEdge[3];
 	bool delaunayEdge[3];
 
+	/** The way system's PointInTriangle() caches the triangle's area here: the
+	 *  binary's Triangle has a flag (+6) and a double (+8) the library does not. */
+	bool areaCalculated = false;
+	double area = 0.0;
+
 	Triangle(Point &a, Point &b, Point &c);
 
 	Point *GetPoint(int index);
