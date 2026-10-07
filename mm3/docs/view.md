@@ -109,4 +109,4 @@ Each kind of record is preceded by an `FFFF` sprite-set record naming where the 
 
 * The `*.til` tile sets (`town.til`, `cave.til`, `dung.til`, `castle.til`, `scifi.til`) loaded into `word_3407C:3407A` are used only by the **overhead map** (`updateAutomap`, `showOverheadMap`), not by the 3D view; they are the map tile pictures, selected per environment.
 * The far-pointer table at `-3B5Ah` (DGROUP `C4A6h`) holds the four wall sheets by their sheet number n (4 bytes each at `C4A6h + 4n`): `word_34B9A/34B9C` = `wl1`, `word_34B9E/34BA0` = `wl2` (the sheet named by the first record of `sub_1DB3D`), then `wl3` and `wl4`.  The wall faces of the deeper rows therefore reference the smaller sheets.
-* No routine of the 3D renderer draws a floor or ceiling: the background of the view window (sky, floor) is part of the screen picture that is drawn earlier, and the wall/object records are drawn over it.
+* No routine of the 3D renderer draws a floor or ceiling: the background of the view window (sky, floor) presumably comes from a screen picture drawn earlier (not located), with the wall/object records drawn over it.
