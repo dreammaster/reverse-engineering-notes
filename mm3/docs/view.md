@@ -62,3 +62,20 @@ Control codes of the text engine (character < 20h; `` takes one letter, the num
 
 **Wall faces** (`sub_1DB3D`, 1,200 lines, call-free): the first record selects the current environment's wall sprite set (far pointer `word_34B9E/34BA0`); then, for each visible face, a hard-coded record is emitted when its per-face flag byte (`byte_332E0`, `byte_37388`, `byte_332DA`, `byte_332ED` ... -- hundreds of them, one per face position and type, zeroed by `clearViewFlags` and set by `prepareIndoorView` from the wall nibbles of the cells in `VIEW_DX/DY` order) is non-zero, e.g. `(-40, 40, 2, 6)`: x = -40 (`FFD8h`), y = 40, flags 2, frame 6; `(-40, 40, 2 | byte_28875, 10)` for the animated variant.  Doors, switches and other wall styles select other frames of the same sheet.  The records are therefore a flat, fully unrolled table from (face flag) to (x, y, flags, frame); what remains undecoded is the per-flag correspondence list itself (which cell/side/style sets which flag byte, which frame).
 **HUD status icons**: after the scene, `renderIndoorView` appends a row of 8-pixel-high icon records at y = 60 (x = 8, 20h, 38h, 50h, 68h, 78h, 83h, 90h, 98h, B0h, C8h; frames 9-28) for the active party effects (light, protection, levitation, ... each gated by one of the `byte_3xxxx` effect flags that `clearViewFlags` resets and the spell code sets), always in two variants per slot (frames 0Dh/1Ch, 0Bh/1Ah, 9/18h ...).
+
+### Wall styles and face flags (decoded with `tools/mm3_viewflags.py` and `tools/mm3_scenelist.py`)
+
+`prepareIndoorView` is 44 unrolled blocks, one per view slot (the order of `VIEW_DX/VIEW_DY`; the blocks with only style 7 are the extra side faces of a slot).  Each block reads the wall nibble of its cell side and jumps through a 7-way table on the **wall style 1-7** (low three bits of the nibble) that increments flag bytes.  For the visible face blocks the pattern is the same everywhere:
+
+| style | flags set (example: face block 5 = the left-hand near face) |
+|---|---|
+| 1 | the face's base flag (`byte_332AE`): a plain wall |
+| 2 | base + variant A (`byte_332E0`) |
+| 3 | base + variant B (`byte_332FD`) |
+| 4 | overlay D only (`byte_332E5`) |
+| 5 | overlay E only (`byte_332DA`) |
+| 6 | overlay F only (`byte_332ED`) |
+| 7 | the special flag (`byte_37388`) -- the animated wall/door |
+
+and `sub_1DB3D` turns the flags into records, e.g. for that face (sprite sheet `word_34B9E/34BA0`, x = -40, y = 40, flags 2 = blit variant): base -> frame 0, variant A -> frame 6, overlay D -> frame 8, E -> frame 9, F -> frame 7, special -> frame 10 (with the animation phase `byte_28875` ORed into the flags, and `byte_2884D` selecting alternating frames).  The mirrored right-hand face uses x = 168 and flags 3, the centre face x = 64 and flags 0, further rows other (x, y) pairs and the distance-scale flag bits; the other wall faces of the deeper rows follow the same style -> flag -> frame scheme.  So wall style 1 is a plain wall, 2/3 are walls with the two common decorations (doors) added to the base, 4-6 are three overlay-only types and 7 is the animated type.
+`python tools/mm3_viewflags.py mm3.asm` prints all 44 blocks and `python tools/mm3_scenelist.py mm3.asm sub_1DB3D sub_17F38 sub_1862A sub_18BF1` the emitted records.
