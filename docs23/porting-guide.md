@@ -81,7 +81,7 @@ A ScummVM engine replaces the SDL calls with `OSystem` ones and keeps everything
 `intro2.c` is Chapter 2's story cinematic: `introCellsInit` / `introCellsFrame` are the seven animated cells (flags, stepping, top and bottom clipping, and the original's
 over-read quirk for a cell cut off at the top), `introCards` / `introCardLine` the nine text cards (read from SW.EXE; with sound effects on the original plays the voice and
 does not draw the text). The rest is a script of fades and waits listed step by step in file-formats.md ("The opening story of Chapter 2 and Chapter 3", including the shorter,
-different Chapter 3 opening); `src23/tools/intro_sheet.c` renders four panned frames of the backdrop with the cells.
+different Chapter 3 opening); `src23/tools/intro_sheet.c` renders four panned frames of the backdrop with the cells, `intro_cards.c` the nine story cards with their text read from the executable.
 
 ## Input
 

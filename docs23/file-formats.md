@@ -7417,14 +7417,14 @@ modes 0 fade out, 1 fade in, 2/4 up, 3 down, 5 from white (palette.h). During a 
    - the guard (cell 4) starts walking; wait 7; fade colours 0x93-0x98 to the card colours; **card 1** (5 lines at (10, 8)); fade up at 0x93 while the cells
      run; wait 45; the guard walks once more (flags |= 0x4020); wait 15; 63 rounds fade down of all 256 colours; all cells off;
    - reload palette block 0, fade out, clear; **card 2** at (10, 0xAE) (the dream), fade up 0x90, wait 25, fade down;
-   - clear; category 1 picture 0x27 at (55, 47) (a glowing blue eye / orb; 0x28 is the same orb held between two hands), fade up colours 0xC0; **card 3** at (10, 8) with voice 0x10, fade up 0xB0, voice 0x11,
+   - clear; category 1 picture 0x27 at (55, 47) (a dark orb with a small face beside it, colours of palette block 0; 0x28 is the orb held between two hands), fade up colours 0xC0; **card 3** at (10, 8) with voice 0x10, fade up 0xB0, voice 0x11,
      fades down; clear; picture 0x28, palette to white, voice 0x12, range fade 5 (white to the picture) over 256 colours; voice 0x13; **card 4** at (28, 8)
      (the laugh) with its fade; **card 5** at (10, 8) voice 0x17 over a cleared band (rows 0x8C0..), voice 0x18, voice 0x19, range fades 0/3/3 over colours
      0-0x5F, 0x80-0xBF, 0xD0-0xFF; **card 6** at (28, 8) voice 0x14;
    - clear rows from 0x8C0; category 7 pictures 0xAF-0xB6 (eight 32 x 32 item pictures: a green book, a rod, a red orb, a twig, a vial, an hourglass, a
      gold nugget, a horn) at (142,1) (50,23) (236,23) (1,82) (286,82) (50,143) (236,143) (142,162); 16-colour fades up at 0xA0 (range fade 4), 0x30, 0x10, 0x50,
      0x40, 0x90, 0x20, 0x80, 0xD0, 0 and down at 0xC0, 0x60 bring the groups of colours in one at a time; palette to white, voice 0x12, clear;
-   - picture 0x27 again with the 58 x 42 rectangle at (211, 82) cleared (the small teal shape beside the eye), range fade 5, wait 10; fade out colours 0-0xBF and 0xD0-0xFF; **card 7**
+   - picture 0x27 again with the 58 x 42 rectangle at (211, 82) cleared (the small face beside the orb), range fade 5, wait 10; fade out colours 0-0xBF and 0xD0-0xFF; **card 7**
      at (10, 8) (4 lines, voice 0x15) fades up; the screen is copied into the backdrop buffer, scroll 0;
    - the door (cell 5 on and animating) opens: range fades 2 up over colours 0-0xBF and 0xD0-0xFF; wait 45 ticks with a cue; voice 0x16; when sound
      effects are off the card band is cleared first; wait 3; voice 0x1A; wait 2; fades 0 / 3 over the same colours; cleared, wait 3; cell 5 off;
