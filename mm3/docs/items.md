@@ -132,3 +132,9 @@ Sums over the 18 inventory slots that are in use (+7Dh != 0) and neither cursed 
 * `what` == 9 (armour class): every item adds `ARMOR_STRENGTHS[id]` (`0C87h`) and, if it has a metal (+B6h) and is not a weapon (codes 1, 4, 0Dh; the shield is always counted), the metal's armour bonus `METAL_LAC[metal]` (`0A9Fh`).
 
 Other callers use `what` 7 (hit point bonus), 8 (spell point bonus), 0Ah (thievery bonus) the same way.
+
+## Item spell effects in `itemsDialog` (modes 4-6; by code reading)
+
+* **Recharge** (mode 4): the item (id <= 71) must carry a spell (+EFh != 0); it gains `rnd(1,6)` charges in the low six bits of its flag byte (+90h), capped at 63.  Otherwise "Spell Failed!".
+* **Duplication** (mode 5): needs the character's last backpack slot (+EDh) to be empty; the item (id <= 72, metal <= 17, spell <= 55, and an element/attribute combination not in a refusal list of 11 element values) is copied into that slot with its flags reduced to the cursed/broken bits (C0h) -- the copy has **no charges**.  Otherwise "Spell Failed!".
+* **Enchant** (mode 6): only for plain items (id <= 71 and element, metal, attribute and spell all 0); the strength is `rnd(1, level/10 + 1)` of the caster, capped at 5, and picks the enchantment (not decoded further here).
