@@ -3315,6 +3315,36 @@ it, and `THText` (asm 144161-144340) is the one the game creates.
   `TextPositionHook`, `TextRenderHook`; their registered names are stored), the glyph printing
   (`TCFont`), and the sound manager.
 
+## TGDialog (the dialog the player picks the replies of)
+
+`TGDialog` (asm 220104-223152) is a `TTDialog` - the dialog record itself sits at its address
+(so `TGameControl::Save()` hands `&_dialog` over as the current dialog) - with the lines of the
+parts the player can pick, their rectangles, the arrows to scroll and the background. The fonts,
+the area, the five sprites and the space between lines are the data of the character that is
+speaking (fields `0x1C9`..`0x1D0` and `0x245`).
+
+- `SetDialog()` takes the parts that are available (`kDialogPartAvailable`) and whose condition
+  holds (negated by `kDialogPartConditionNegate`), cuts each part's text in lines that fit the
+  area (`TFontManager::SplitTexts`) and puts the lines one under the other. A character without
+  an area (top `-1`, or an empty one) has the whole window.
+- Reproduced from the binary: the text goes through `Replace("<", "
+")` *before* it is searched
+  for `"<p"`, so the cut at a pause tag never finds one (the '<' of every tag is gone by then).
+  The value placeholders (`<v=..>`) go through `TTText::ReplaceValues()` after the same replace.
+- The mouse: a line is picked only when it is wholly inside the area (the lines scrolled out are
+  not shown or picked). The wheel (messages 12 up, 13 down) does what a click on the arrow does,
+  at most every 10 ms; it leaves the arrow marked as hovered until the mouse moves.
+- Picking a part builds the game's dialog action (`kGameDialogAction`, made if there is none,
+  emptied if there is): the actions of the part and of its linked action are copied into it, then
+  the character says the part's answer text (command `0x17`, first in the action) and the
+  other answers with the part's text (or the alternative text), then the action goes on to the
+  next dialog (command `0x0D`, last) when that has a part to pick - else by the part's "return"
+  setting: `0` the same dialog again (when it has a part left to pick), `0` with nothing left
+  or `1` the dialog above (the grandparent record, when it is a dialog with a part to pick).
+  Picking again the part the action already starts with leaves the action as it is. Then the
+  action runs (`TGAction::AddRunningAction`) and the dialog ends.
+- A part with `kDialogPartRemove` is made unavailable when it is picked.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

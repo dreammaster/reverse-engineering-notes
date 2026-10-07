@@ -1,96 +1,114 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
-// Embedded by value in TGameControl (confirmed: TGameControl's ctor calls
-// TGDialog::TGDialog() directly on an interior pointer, and TGameControl
-// exposes it via GetDialog()/StartDialog()/EndDialog()).
 //
-// Confirmed from TGameControl::DisplayDialog() (Deponia_Linux.asm lines
-// 455780-455803): TVisObjRef::IsEmpty()/TGDialog::Draw() are both called on
-// TGDialog's own base address, so a dialog is "active" exactly when
-// whatever lives at that address is non-empty. SetDialog()/Clear()
-// (TGameControl::StartDialog/EndDialog, asm lines 460983-461192) set/clear
-// it, as their names suggest.
+// Confirmed (Deponia_Linux.asm lines 220104-223152, all 17 manifest-listed methods): the
+// dialog the player picks the replies of. It is a TTDialog (the dialog record the game is in,
+// kGameDialog), and is embedded by value in TGameControl: it is "active" exactly when the
+// record is not empty (TGameControl::StartDialog()/EndDialog() set it and clear it, and save
+// it through GetTarget()).
 //
-// IMPORTANT, found while reading TGDialog::TGDialog()/Clear() directly
-// (asm lines 220105-220404) for a planned fuller pass: this is a much
-// bigger and more complex class than the rest of this header (and the
-// current Clear()/SetDialog()/IsEmpty()/GetTarget() implementations below)
-// assume. TGDialog actually derives from an entirely unreversed TTDialog
-// base (the ctor's very first call) - for the "TVisObjRef at TGDialog's own
-// address" claim above to be consistent with the constructor evidence
-// below, TTDialog's own first field would need to itself be a TVisObjRef
-// (TTDialog has no vtable in this constructor), which hasn't been verified.
-// Confirmed TGDialog-own fields after the TTDialog base, in order: a
-// std::vector<std::wstring> (+0x08 begin/+0x10 end), two independently
-// `operator delete`d raw buffers (+0x20, +0x38) each paired with an
-// unexplored qword, a TVList (+0x50, destroyed via TVList::clear()/
-// ~TVList() - likely the set of selectable dialog choices), a
-// std::vector<wxRect> (+0x20's buffer is actually THIS - SetScrollButtons/
-// HandleMouseMove stride it in 16-byte steps and call wxRect methods on
-// it) paired with a parallel std::vector<int> (+0x38, each int being a
-// "dialog part" index, read by HandleMouseMove via GetCurrentDialogPart()'s
-// own +0x68 field), an int "current hovered dialog part" at +0x68
-// (default/cleared to -1), a byte at +0x6C ("has more than one page of
-// choices, i.e. needs scroll buttons" per SetScrollButtons' own
-// GetBottom()-comparison logic) plus 3 more bytes at +0x6D/+0x6E/+0x6F
-// (hover state for the up/down scroll buttons and the text area,
-// respectively, set by HandleMouseMove), THREE TVisObjRef fields (+0x70,
-// +0x78, +0x80 - not just the one this header's existing model assumes),
-// a TTimer (+0x88), four ints (+0x98-0xA4), and FIVE embedded TPictureIO
-// sprites at +0xA8/+0x190/+0x278/+0x360/+0x448 (each stride 0xE8 bytes,
-// matching TPictureIO's own real size) - at least a background, the two
-// scroll buttons (+0x98's wxRect and +0x278's sprite are both referenced
-// by HandleMouseMove), and likely a character portrait and a text/name
-// plate. None of this is modeled below; SetScrollButtons()/
-// HandleMouseMove()/HandleMouseClick()/HandleMouseWheel()/Draw()/
-// GetDialogCharacter()/Load()/Save() all depend on it and need their own
-// dedicated pass (including reversing TTDialog itself) rather than being
-// guessed at here - left as an honest, now-documented gap.
+// SetDialog() takes the parts of the dialog the player can pick now (the ones that are
+// available, and whose condition holds), cuts the text of each of them into lines that fit the
+// dialog area of the character that is speaking (the area, the two fonts - the one under the
+// mouse, the others -, the arrows to scroll and the background are the data of that
+// character), and puts the lines one under the other. The lines that do not fit in the area
+// are scrolled to by the two arrows (or by the mouse wheel).
+//
+// Picking a part (HandleMouseClick()) builds the game's dialog action (kGameDialogAction): the
+// actions of the part, the line the character says for it (the answer text) and the line the
+// other one answers (the text of the part), and then what follows: the next dialog, or - when
+// there is none to go on with - the dialog above, or the same one again (the part's "return"
+// setting); the action then runs and the dialog ends (the next dialog's own action starts it
+// again).
+//
+// Original layout (the record is the TTDialog base): +0x08 the lines, +0x20 their rectangles,
+// +0x38 for each line the index of the part it is of, +0x50 the parts, +0x68 the part under the
+// mouse (-1: none), +0x6C..+0x6F can scroll up / can scroll down / the mouse is on the up arrow
+// / the mouse is on the down arrow, +0x70 the font of the part under the mouse, +0x78 the font
+// of the others, +0x80 the character the dialog is with, +0x88 the timer that stops the wheel
+// from scrolling too fast, +0x98 the dialog area, +0xA8 the sprite of the active up arrow,
+// +0x190 of the inactive one, +0x278 of the active down arrow, +0x360 of the inactive one,
+// +0x448 the background, +0x530 how many lines are scrolled away, +0x534 the space between
+// lines (the data of the character: kCharacterActiveDialogFont 0x1C9 .. kCharacterDialogVerticalSpace
+// 0x1D0, kCharacterInactiveDialogFont 0x245).
 #pragma once
 
+#include <vector>
+
+#include "TTimer.h"
 #include "WxStub.h"
+#include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
+#include "graphicslib/picture.h"
+#include "vstables/records.h"
 
 enum class TMouseMessageEnum;
 
-class TGDialog {
+class TGDialog : public TTDialog {
 public:
-	TGDialog() = default;
+	TGDialog();
+	~TGDialog();
 
-	// Confirmed call shape only (TGameControl::HandleMouseMove,
-	// Deponia_Linux.asm line 472265) - not reversed beyond that.
-	void HandleMouseMove(const wxPoint &pos);
-	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
-	// asm line 472603) - fired for msg values 2/4 (left/right button
-	// released) while a dialog is active; not reversed beyond that.
-	void HandleMouseClick();
-	// Confirmed call shape only (TGameControl::HandleMouseUp, Deponia_Linux.
-	// asm line 472595) - fired for msg values 12/13 (the two confirmed
-	// wheel-direction messages, see TMouseMessageEnum) while a dialog is
-	// active; not reversed beyond that.
-	void HandleMouseWheel(TMouseMessageEnum msg);
-	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm line
-	// 469668) - checked (once a dialog is active) to decide whether the
-	// cursor should show its active or inactive state; not reversed beyond
-	// that call shape.
-	bool IsActiveDialogPart() const;
+	/** Makes the dialog from `dialog` (an empty one: no dialog). */
+	void SetDialog(const TVisObjRef &dialog);
+	/** Ends the dialog: nothing is shown any more. */
+	void Clear();
 
-	bool IsEmpty() const {
-		return _target.IsEmpty();
-	}
-	// Confirmed used directly (TGameControl::Save passes &_dialog itself
-	// as a TVisObjRef* to SetLink(), asm line 462856 - the same "TVisObjRef
-	// at a known offset" pattern as TGCharacter/TGScene/TSText/TGText).
+	/** The dialog record (what the saved game keeps as the current dialog). */
 	const TVisObjRef &GetTarget() const {
-		return _target;
+		return *this;
 	}
+
 	void Draw();
-	void SetDialog(const TVisObjRef &dialog) {
-		_target = dialog;
+	void HandleMouseMove(const wxPoint &pos);
+	/** The player clicks: on an arrow it scrolls, on a part it is picked. */
+	void HandleMouseClick();
+	/** The wheel (12: up, 13: down) scrolls like the arrows do (at most every 10 ms). */
+	void HandleMouseWheel(TMouseMessageEnum msg);
+
+	/** The part under the mouse (-1: none). */
+	int GetCurrentDialogPart() const {
+		return _hovered;
 	}
-	void Clear() {
-		_target = TVisObjRef();
+	bool IsActiveDialogPart() const {
+		return _hovered != -1;
+	}
+	/** The character the dialog is of (the dialog record's own character, or the one above). */
+	TVisObjRef GetDialogCharacter() const;
+
+	// Nothing is kept of a dialog but the record itself.
+	void Load() {
+	}
+	void Save() {
 	}
 
 private:
-	TVisObjRef _target;
+	/** The arrows are shown when there is more than the area shows. */
+	void SetScrollButtons();
+	/** Adds a line of the action: `link` says (or does) command `command`; `speaker` is who says it. */
+	static void AddActionPart(TVisObjRef &action, const TVisObjRef &link, int command, const TVisObjRef &speaker,
+	                          TMoveOrderEnum order);
+	/** The available parts of `dialog` as the player sees them: is one there? */
+	static bool HasAvailablePart(const TVisObjRef &dialog);
+
+	std::vector<wxString> _lines;      // +0x08
+	std::vector<wxRect> _lineRects;    // +0x20
+	std::vector<int> _lineParts;       // +0x38
+	TVList _parts;                     // +0x50
+	int _hovered;                      // +0x68
+	bool _canScrollUp;                 // +0x6C
+	bool _canScrollDown;               // +0x6D
+	bool _hoverUp;                     // +0x6E
+	bool _hoverDown;                   // +0x6F
+	TVisObjRef _activeFont;            // +0x70
+	TVisObjRef _normalFont;            // +0x78
+	TVisObjRef _partner;               // +0x80
+	TTimer _wheelTimer;                // +0x88
+	wxRect _area;                      // +0x98
+	TPictureIO _activeScrollUp;        // +0xA8
+	TPictureIO _inactiveScrollUp;      // +0x190
+	TPictureIO _activeScrollDown;      // +0x278
+	TPictureIO _inactiveScrollDown;    // +0x360
+	TPictureIO _background;            // +0x448
+	int _scroll;                       // +0x530
+	int _lineSpacing;                  // +0x534
 };

@@ -52,7 +52,7 @@ THCharacter	todo	5	217481	218783
 THItem	done	5	218884	219148
 THScene	done	7	219228	219814
 TGScrollButton	done	5	219879	220036
-TGDialog	stub	14	220105	479462
+TGDialog	done	14	220105	479462
 TConsole	stub	61	223417	242869
 THInterface	done	5	246907	247172
 TGActionArea	done	3	247238	247279
