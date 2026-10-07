@@ -104,3 +104,9 @@ After the wall faces, one writer per viewing distance appends the movable things
 | `sub_17F38` | 3 cells ahead | `200h` (scale 2) | objects at x = 88, 8, 168 and y = 41; monsters; effects (`512`/`514` = `200h`/`200h|2`) |
 | `sub_17439` | 4 cells ahead (the farthest row) | `300h` (scale 3) | the same kinds of records at the smallest scale |
 Each kind of record is preceded by an `FFFF` sprite-set record naming where the pictures come from (object pictures: the far-pointer table at `-3AC0h`; monster pictures: the table at `-58B0h`; effect sprites: `word_373CE:373CC`), and each is gated by one of the per-position flag bytes that `scanMonstersAhead`/`prepareIndoorView` set.  Mirroring uses flag bit 1 (`|2`) for the left-hand positions.
+
+### Corrections from tracing the pointers
+
+* The `*.til` tile sets (`town.til`, `cave.til`, `dung.til`, `castle.til`, `scifi.til`) loaded into `word_3407C:3407A` are used only by the **overhead map** (`updateAutomap`, `showOverheadMap`), not by the 3D view; they are the map tile pictures, selected per environment.
+* The far-pointer table at `-3B5Ah` (DGROUP `C4A6h`) holds the four wall sheets by their sheet number n (4 bytes each at `C4A6h + 4n`): `word_34B9A/34B9C` = `wl1`, `word_34B9E/34BA0` = `wl2` (the sheet named by the first record of `sub_1DB3D`), then `wl3` and `wl4`.  The wall faces of the deeper rows therefore reference the smaller sheets.
+* No routine of the 3D renderer draws a floor or ceiling: the background of the view window (sky, floor) is part of the screen picture that is drawn earlier, and the wall/object records are drawn over it.
