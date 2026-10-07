@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o fuzz_parsers fuzz_parsers.c ../dialog.c ../document.c ../item.c ../lockcatalog.c ../monster.c ../spellrecord.c \
- *       ../worldmap.c ../worldobjects.c ../bcd4.c ../effect.c ../random.c ../globalflags.c ../movement.c ../party.c ../savegame.c ../newgame.c ../chargen.c && ./fuzz_parsers <2|3> <game dir> [rounds]
+ *       ../worldmap.c ../worldobjects.c ../bcd4.c ../effect.c ../random.c ../globalflags.c ../movement.c ../party.c ../savegame.c ../newgame.c ../chargen.c ../windowbake.c ../interact.c ../dungeongrid.c ../monsterpool.c && ./fuzz_parsers <2|3> <game dir> [rounds]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +19,7 @@
 #include "newgame.h"
 #include "savegame.h"
 #include "spellrecord.h"
+#include "windowbake.h"
 #include "worldmap.h"
 #include "worldobjects.h"
 
@@ -59,6 +60,12 @@ static void runAll(GameKind game, const uint8_t *data, size_t size, unsigned *ac
     static SaveGame fresh;
     saveGameInit(&fresh, game);
     *accepted += saveGameNewGame(&fresh, game, data, size);
+    /* the window pass over whatever the parsers made of the damaged data (bake needs a save, any save will do) */
+    static DungeonGrid grid;
+    for (int step = 0; step < 4; step++) {
+        dungeonGridBuild(&grid, game, &map, &fresh, 80 + step * 150, 20 + step * 35);
+        *accepted += dungeonGridBakeMarkers(&grid, game, &objects, &locks, &fresh) > 0;
+    }
 }
 
 static void runSave(GameKind game, const uint8_t *data, size_t size, unsigned *accepted) {

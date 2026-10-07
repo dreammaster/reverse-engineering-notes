@@ -66,7 +66,7 @@ See [scummvm-plan.md](scummvm-plan.md) for how the pieces map onto an engine (de
 ## Robustness
 
 `src23/tools/fuzz_parsers.c` feeds truncated and byte-corrupted copies of the real WORLD.DAT (ending at a no-access page, so any over-read crashes)
-to every memory-image parser (items, monsters, spells, world map, dialog, documents, locks, world objects, the new-game builder, and a real SAVGAME1 through saveGameLoad); 300-400 rounds per game pass without a fault.
+to every memory-image parser (items, monsters, spells, world map, dialog, documents, locks, world objects, the new-game builder, the window marker pass over the damaged tables, and a real SAVGAME1 through saveGameLoad); 300-400 rounds per game pass without a fault.
 
 ## A playable slice
 
