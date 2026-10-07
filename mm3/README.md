@@ -17,4 +17,4 @@ Decoded and documented (details in `docs/`): executable packing and overlays; `.
 and its rules (stats, HP/SP, experience, skills, equipment, saving throws, damage); items (prices, generation, class restrictions, smithy stock); the 77 spells (cost, school lists, attack parameters, many effects); monsters
 (table, special attacks, targeting, to-hit, movement, loot, status-spell susceptibility); the town buildings; time, day/night, resting; the exploration loop and key table, combat round, music/sound entry points.
 Known gaps: the renderer's record writers (`sub_17439`, `sub_17F38`, `sub_1862A`, `sub_18BF1`, `sub_1DB3D`) and the video module's scene consumer, per-object chest loot,
-`moveMonsters`' exact pathing, character creation screens, the AdLib effect data tables.
+`moveMonsters`' exact pathing, the character-creation screen flow and dice animation (the resulting record is documented), the AdLib effect data tables.
