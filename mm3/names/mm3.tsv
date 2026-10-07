@@ -660,3 +660,4 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 36FEA	Option_delay	byte (+10h): 0-9 option cycled in controlPanel (probably the message/game delay)
 36FEB	Party_lastInn	byte (+11h): town number the party last slept in (townInn)
 3D8C9	giveMultiTreasure	GiveMulti (event opcode 20) helper formerly named trapOrLockEvent by BinDiff: with an interacted container (byte_34BB6) first runs the open procedure (trap 1/4, thievery+d20 vs page header 12h), then pays up to three (mode, value) entries: 21 item id, 34 gold, 35 gems, 66 random item of level, 67 spell; other modes show the message
+434D6	setWrapModeForMap	sets Maze_wrapMode = 1 (outdoor map: 10-minute steps, drawViewOutdoors, no bash, no teleport limits) for maps 41-104 and >106, 0 otherwise (called with the map number while loading)

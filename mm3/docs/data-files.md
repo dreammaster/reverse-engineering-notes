@@ -234,3 +234,5 @@ Default party in `MM3.CUR` (`MAZE.PTY`, the state of a new game): six members, r
 `MAZE.PTY` bytes `341h`-`375h` (53 bytes at `EC2Bh`..`EC5Fh`) are the byte flags tested/set by event value mode 23 (the mode's value indexes this array; in the new-game state bytes `343h`, `344h`, `348h`, `349h` are 1), followed by the 32-byte game-flag bit array at `376h` (mode 20).
 
 `MAZE.PTY` header bytes `0Eh`-`11h`: `0Eh` sound effects on/off, `0Fh` music on/off, `10h` a 0-9 option cycled in the control panel, `11h` the town the party last stayed at (written by `townInn`).
+
+`Maze_wrapMode` (outdoor flag) is set by `sub_434D6` (`setWrapModeForMap`) when a map is loaded: 1 for map numbers 41-104 and above 106 (the overland and open-air maps), 0 for maps 1-40 (towns, dungeons, caverns) and for 105/106.  It switches the renderer to `drawViewOutdoors`, makes `chargeStep` cost 10 minutes, disables bashing, and makes `mazeGetWordWrap` return 0 instead of 1111h for cells beyond the world edge.
