@@ -37,3 +37,9 @@ timer-interrupt helper loaded at start (`aTimerDrv` in `_main`).
 Ids below 97h (151) are sound effects, enabled by the FX flag `byte_36FE8`; 97h and above are gated by `byte_36FE9`.  It calls `soundDriverPlay`
 (`26978`), which transfers (push driver segment `cs:2693D`, push 9, `retf`) to API function 9 of the loaded sound driver module -- the same call
 convention as the video module (`video-module.md`).  `evt_op06` (event opcode 6, PlayFX) takes the same ids.
+
+### Where the effect data lives (decoded from `ADLIB.DRV`)
+
+The driver's API entry 4 (offset 9, called as `soundDriverPlay`'s "function 9") takes an effect id `n`: ids `FFFFh` and other negative values query/clear the busy flag (`word_F`); ids 21h and 23h are ignored; otherwise the driver loads its effect cursor from the word table at **driver offset `967h` + 2n**, which points to an effect stream stored **inside the driver file itself** (offsets `0AA9h`..`1FE2h`), resets the four channel counters and starts the effects sequencer.
+The table has entries for ids 0-150 (151 = the `97h` limit in `playSoundEffect`): 98 distinct streams, and 17 ids (1, 5, 6, 12, 19, 23, 26, 27, 32, 33, 37, 39, 49, 50, 56, 59 ... i.e. every id pointing at `0B22h`) share a short "silent" stream (`20 12 ff ff ff 01 11 ff`).  Several ids deliberately reuse the same stream (for example 3/4/5 area spells).
+Each effect is therefore a few dozen bytes of the effects command stream described above; the other drivers (`ROLAND`, `IBM`, `TANDY`, ...) have their own equivalents of the same table.
