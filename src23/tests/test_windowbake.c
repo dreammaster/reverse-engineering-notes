@@ -164,6 +164,32 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     printf("     %s: %u windows, %u cells baked, %u monster markers\n", label, windows, bakedCells, monsterMarkers);
     check("windows bake something and every monster marker matches its world object", bakedCells > 0 && monsterMarkers > 0 && badMarkers == 0);
 
+    /* UnlockDoorCommand: find a door whose lock needs a key tier, stand just south of it facing north and try keys */
+    bool unlockTested = false;
+    for (int col = 0x28; col < 0x28 + 800 && !unlockTested; col++) {
+        for (int row = 2; row < 168 && !unlockTested; row++) {
+            WorldObjectRecord object;
+            LockRecord lock;
+            if (!worldObjectFind(&objects, game, col, row, &object) || !(object.flags & WorldObjectFlagDoor) || !lockCatalogRecord(&locks, object.value, &lock) ||
+                !(lock.flags & 0xFF00) || worldObjectFind(&objects, game, col, row + 1, &object)) {
+                continue;
+            }
+            SaveGame fresh;
+            saveGameInit(&fresh, game);
+            InteractUnlockOutcome wrong = interactUnlockFacing(&fresh, game, &objects, &locks, col, row + 1, SaveFacingNorth, 0x0090, 0);
+            uint16_t rightKey = (uint16_t)((lock.flags & 0xFF00) | 0x80);
+            InteractUnlockOutcome right = interactUnlockFacing(&fresh, game, &objects, &locks, col, row + 1, SaveFacingNorth, rightKey, 0);
+            InteractUnlockOutcome again = interactUnlockFacing(&fresh, game, &objects, &locks, col, row + 1, SaveFacingNorth, rightKey, 0);
+            InteractUnlockOutcome away = interactUnlockFacing(&fresh, game, &objects, &locks, col, row + 3, SaveFacingNorth, rightKey, 0);
+            check("a key of the wrong tier leaves the door locked", wrong.result == InteractUnlockLocked && wrong.worldCol == col && wrong.worldRow == row);
+            check("the right chest key opens it and asks for the door marker to be cleared", right.result == InteractUnlockOpened && right.clearCellBits == 0x4000);
+            check("trying again says it is already unlocked", again.result == InteractUnlockAlready);
+            check("facing nothing there is nothing to unlock", away.result == InteractUnlockNothing);
+            unlockTested = true;
+        }
+    }
+    check("a door with a tiered lock was found to test with", unlockTested);
+
     /* once a monster's type is flagged as spawned its marker is not baked again; an unlocked bit silences a curgame cell */
     dungeonGridBuild(&grid, game, &map, &save, 60, 20);
     unsigned first = dungeonGridBakeMarkers(&grid, game, &objects, &locks, &save);

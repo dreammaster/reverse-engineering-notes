@@ -12,7 +12,7 @@
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), M the local area
- * map, R rest (eight hours; monsters can interrupt it), D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * map, R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, D the pause dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, + -, ESC as '!') the keys are played
  * at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display).
@@ -365,6 +365,7 @@ int main(int argc, char **argv) {
             case 'E': press.key.keysym.sym = SDLK_RIGHT; press.key.keysym.mod = KMOD_CTRL; break;
             case 'M': press.key.keysym.sym = SDLK_m; break;
             case 'T': press.key.keysym.sym = SDLK_r; break;
+            case 'K': press.key.keysym.sym = SDLK_k; break;
             case 'A': press.key.keysym.sym = SDLK_a; break;
             case 'D': press.key.keysym.sym = SDLK_d; break;
             case 'P': press.key.keysym.sym = SDLK_p; break;
@@ -457,6 +458,10 @@ int main(int argc, char **argv) {
                         RestOutcome rest = restParty(&g_save, &gameClock, &g_items, globalSlots, false, false, false, restMonstersTurn, pos);
                         clock = gameClock.minutes % 1440;
                         snprintf(g_combat.log, sizeof(g_combat.log), rest.refused ? "you cannot rest here" : rest.interrupted ? "rest interrupted in hour %u" : "rested 8 hours, %u fed", rest.interrupted ? rest.hour : rest.fed);
+                    } else if (command.action == MainActionUnlockDoor) { /* a demo skeleton key: every tier, as chest and door key at once */
+                        InteractUnlockOutcome unlock = interactUnlockFacing(&g_save, game, &g_objects, &g_locks, x, y, facing, 0xFFC0, 0);
+                        static const char *const names[] = {"nothing to unlock here", "already unlocked", "unlocked", "locked (needs another key)"};
+                        snprintf(g_combat.log, sizeof(g_combat.log), "%s", names[unlock.result]);
                     } else if (command.action == MainActionLocalMap) {
                         overlay = OverlayLocalMap;
                     } else if (command.action == MainActionGameDialog) {

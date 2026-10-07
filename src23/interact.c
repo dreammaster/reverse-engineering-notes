@@ -158,3 +158,38 @@ bool interactKeyOpens(bool lockTarget, uint16_t keyWord0, uint16_t heldKeyFlags,
 uint16_t interactKeyRingContribution(uint16_t keyWord0) {
     return (keyWord0 & 0x0080) ? 0 : (uint16_t)(keyWord0 >> 8);
 }
+
+InteractUnlockOutcome interactUnlockFacing(SaveGame *save, GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, int partyCol, int partyRow,
+                                            uint16_t facing, uint16_t keyWord0, uint16_t heldKeyFlags) {
+    InteractUnlockOutcome out = {InteractUnlockNothing, partyCol, partyRow, 0};
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(objects, game, partyCol, partyRow, facing);
+    if (probe.outcome == WorldObjectProbeNone) {
+        return out;
+    }
+    out.worldCol = probe.worldCol;
+    out.worldRow = probe.worldRow;
+    bool isLock = (probe.object.flags & WorldObjectFlagDoor) != 0;
+    if (!isLock && !(probe.object.flags & WorldObjectFlagCurgameRecord)) {
+        return out;
+    }
+    uint16_t targetFlags = 0, ignored = 0;
+    if (isLock) {
+        LockRecord lock;
+        if (lockCatalogRecord(locks, probe.object.value, &lock)) {
+            targetFlags = lock.flags;
+        }
+    } else {
+        lockCatalogCurgameRecord(locks, probe.object.value, &targetFlags, &ignored);
+    }
+    unsigned bit = interactWorldObjectBitIndex(game, &probe.object);
+    if (interactBitmapTest(save, bit)) {
+        out.result = InteractUnlockAlready;
+    } else if (interactKeyOpens(isLock, keyWord0, heldKeyFlags, targetFlags)) {
+        interactBitmapSet(save, bit);
+        out.result = InteractUnlockOpened;
+        out.clearCellBits = 0x4000;
+    } else {
+        out.result = InteractUnlockLocked;
+    }
+    return out;
+}

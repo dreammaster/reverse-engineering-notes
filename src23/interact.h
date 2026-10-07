@@ -231,4 +231,26 @@ bool interactTriggerFacingCurgameEvent(SaveGame *save, GameKind game, const Worl
                                         const LockRecord *lock, bool lockAlreadyUnlocked, uint16_t curgameFlags,
                                         bool curgameAlreadyTriggered, bool monsterAlreadySpawned);
 
+/*
+ * UnlockDoorCommand (yendor2.asm:45970; Chapter 3 the same), after the key item has been chosen and the facing tile probed. The key's own target flags word
+ * (`keyWord0`, see interactKeyOpens) and the key ring's accumulated tiers (`heldKeyFlags`) decide:
+ *   - nothing found at the party's cell or the one ahead, or a record that is neither a door (0x8000) nor a curgame record (0x4000): InteractUnlockNothing
+ *     (sound 3);
+ *   - its "already unlocked / triggered" bit is set: InteractUnlockAlready (the "already unlocked" description);
+ *   - the key opens it (interactKeyOpens with the lock's or curgame record's flags): the bit is set (the original also writes the section back to CURGAME)
+ *     and `clearCellBits` is 0x4000 for the caller to clear in the faced grid cell's flags (the door marker, `and [cell+6], 0xBFFF`), InteractUnlockOpened;
+ *   - otherwise InteractUnlockLocked: ShowLockStatus shows what the lock needs (lockRequiredKeyType).
+ * `locks` is the catalog (lockcatalog.h, curgame records included).
+ */
+typedef enum { InteractUnlockNothing, InteractUnlockAlready, InteractUnlockOpened, InteractUnlockLocked } InteractUnlockResult;
+
+typedef struct {
+    InteractUnlockResult result;
+    int worldCol, worldRow; /* the faced object's cell */
+    uint16_t clearCellBits; /* to clear in that cell's grid flags (InteractUnlockOpened) */
+} InteractUnlockOutcome;
+
+InteractUnlockOutcome interactUnlockFacing(SaveGame *save, GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, int partyCol, int partyRow,
+                                            uint16_t facing, uint16_t keyWord0, uint16_t heldKeyFlags);
+
 #endif
