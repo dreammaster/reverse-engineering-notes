@@ -93,3 +93,14 @@ The tile set is loaded by name from `5A3Eh[env]` (`town.til`, `cave.til`, `dung.
 
 The 20 wall sheets exist in `MM3.CC` under the hashed names `twn|cav|dun|cas|sci` + `wl1/2/4/3.vga` and decode with `mm3_gfx.py`.  Each sheet holds 13 frames for one **viewing distance**: `wl1` = the adjacent row (front faces 168x85, side faces 24x109), `wl2` = 104x53 / 32x85, `wl3` = 56x29 / 24x52, `wl4` = 24x13 / 16x29, so the renderer's FFFF records switch sheet when going deeper (`wl1` first, then `wl2`, `wl4`...).
 Frames of the town sheet (looked at as PNG): 0 plain wall, 1-3 plain wall with a lit lamp (three flicker variants, chosen by the `byte_2884D` counter that counts 0-2), 4 and 5 left and right side walls, 6 closed double door, 7 open door (doorway with red carpet), 8 gate / portcullis, 9 broken wall (rough hole), 10 empty archway (pillars only), 11 and 12 side-face decorations.  With the flag table above: wall style 1 = plain wall (frame 0), style 2 = wall + closed door (6), style 3 = a second door variant (flag `byte_332FD`), style 4 = gate (8), style 5 = broken wall (9), style 6 = open door (7), style 7 = archway (10, with the animation variant when `byte_28875` is set).  The cave, dungeon, castle and sci-fi sheets keep the same frame numbering with different artwork.
+
+### The four sprite writers: objects, monsters and effects by row
+
+After the wall faces, one writer per viewing distance appends the movable things; the distance is encoded in the scale bits of the record flags (`tools/mm3_scenelist.py` lists them):
+| routine | row | flag bits | contents |
+|---|---|---|---|
+| `sub_18BF1` | adjacent cells | 0 | objects (`word`-indexed far pointers at `-3AC0h`, slot pictures loaded by `Map_load`, e.g. at x = 47, y = 8), monsters (far pointers at `-58B0h`, one per monster group slot), spell effect sprites (`word_373CC/373CE`) |
+| `sub_1862A` | row 2 away... first scaled row | `100h` (scale 1) | objects at x = 70 (centre), -22 (left, mirrored `|2`), 162 (right), y = 23; monsters; effects |
+| `sub_17F38` | next row | `200h` (scale 2) | objects at x = 88, 8, 168 and y = 41; monsters; effects (`512`/`514` = `200h`/`200h|2`) |
+| `sub_17439` | farthest row | `300h` (scale 3) | the same kinds of records at the smallest scale |
+Each kind of record is preceded by an `FFFF` sprite-set record naming where the pictures come from (object pictures: the far-pointer table at `-3AC0h`; monster pictures: the table at `-58B0h`; effect sprites: `word_373CE:373CC`), and each is gated by one of the per-position flag bytes that `scanMonstersAhead`/`prepareIndoorView` set.  Mirroring uses flag bit 1 (`|2`) for the left-hand positions.
