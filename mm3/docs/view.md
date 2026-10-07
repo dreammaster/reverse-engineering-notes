@@ -99,8 +99,8 @@ Frames of the town sheet (looked at as PNG): 0 plain wall, 1-3 plain wall with a
 After the wall faces, one writer per viewing distance appends the movable things; the distance is encoded in the scale bits of the record flags (`tools/mm3_scenelist.py` lists them):
 | routine | row | flag bits | contents |
 |---|---|---|---|
-| `sub_18BF1` | adjacent cells | 0 | objects (`word`-indexed far pointers at `-3AC0h`, slot pictures loaded by `Map_load`, e.g. at x = 47, y = 8), monsters (far pointers at `-58B0h`, one per monster group slot), spell effect sprites (`word_373CC/373CE`) |
-| `sub_1862A` | row 2 away... first scaled row | `100h` (scale 1) | objects at x = 70 (centre), -22 (left, mirrored `|2`), 162 (right), y = 23; monsters; effects |
-| `sub_17F38` | next row | `200h` (scale 2) | objects at x = 88, 8, 168 and y = 41; monsters; effects (`512`/`514` = `200h`/`200h|2`) |
-| `sub_17439` | farthest row | `300h` (scale 3) | the same kinds of records at the smallest scale |
+| `sub_18BF1` | 1 cell ahead (the adjacent row) | 0 (full size) | objects (`word`-indexed far pointers at `-3AC0h`, slot pictures loaded by `Map_load`, e.g. at x = 47, y = 8), monsters (far pointers at `-58B0h`, one per monster group slot), spell effect sprites (`word_373CC/373CE`) |
+| `sub_1862A` | 2 cells ahead | `100h` (scale 1) | objects at x = 70 (centre), -22 (left, mirrored `|2`), 162 (right), y = 23; monsters; effects |
+| `sub_17F38` | 3 cells ahead | `200h` (scale 2) | objects at x = 88, 8, 168 and y = 41; monsters; effects (`512`/`514` = `200h`/`200h|2`) |
+| `sub_17439` | 4 cells ahead (the farthest row) | `300h` (scale 3) | the same kinds of records at the smallest scale |
 Each kind of record is preceded by an `FFFF` sprite-set record naming where the pictures come from (object pictures: the far-pointer table at `-3AC0h`; monster pictures: the table at `-58B0h`; effect sprites: `word_373CE:373CC`), and each is gated by one of the per-position flag bytes that `scanMonstersAhead`/`prepareIndoorView` set.  Mirroring uses flag bit 1 (`|2`) for the left-hand positions.
