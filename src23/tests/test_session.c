@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -79,6 +79,16 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         moved += sessionMove(s, MovementForward) == SessionStepMoved;
     }
     check("walking forward moves the party until a wall stops it", moved >= 1 && (s->x != startX || s->y != startY) && moved < 20);
+
+    /* a healing potion from the inventory (Chapter 2: item 0x14 heals fully; Chapter 3: 0x36) */
+    uint8_t *hero = sessionPartyRecord(s, 1);
+    uint16_t potion = game == GameYendor2 ? 0x14 : 0x36;
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 3), potion, 1);
+    partySetStat(hero, PartyStatHitPoints, 1);
+    SessionUse used = sessionUseItem(s, 0, 3, 1);
+    check("a healing potion heals the recipient to full", used == SessionUseDone && partyGetStat(hero, PartyStatHitPoints) == partyGetStatMax(hero, PartyStatHitPoints));
+    check("... and is used up when it was a single-use item", sessionUseItem(s, 0, 3, 1) != SessionUseDone);
+    check("an empty slot is refused", sessionUseItem(s, 0, 5, 1) == SessionUseNothing);
 
     RestOutcome rest = sessionRest(s);
     check("resting uses up the time (eight hours or an interruption)", !rest.refused && (rest.interrupted || rest.minutes == 480));

@@ -8,6 +8,7 @@
 #include "explore.h"
 #include "lighting.h"
 #include "newgame.h"
+#include "consumable.h"
 #include "party.h"
 #include "spellcast.h"
 #include "windowbake.h"
@@ -248,6 +249,43 @@ SessionCast sessionCast(GameSession *s, unsigned spellId) {
     combatAfterAction(s);
     combatRunMonsters(s);
     return SessionCastDone;
+}
+
+SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot) {
+    uint8_t *user = sessionPartyRecord(s, userSlot), *recipient = sessionPartyRecord(s, recipientSlot);
+    if (!user || !recipient) {
+        return SessionUseNothing;
+    }
+    uint8_t *slot = inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot);
+    unsigned id = slot ? itemSlotId(slot) : 0;
+    if (!id) {
+        return SessionUseNothing;
+    }
+    bool done;
+    RestorativeKind kind = partyRestorativeForItem(s->game, id);
+    if (kind != RestorativeNone) {
+        done = partyUseRestorative(kind, recipient);
+    } else if (partyIsPercentRestorativeItem(s->game, id)) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *entry = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (!entry) {
+            return SessionUseUnsupported;
+        }
+        partyUsePercentRestorative(s->game, recipient, (itemTargetWord(entry, ItemTargetSlotFlags) & 0x8000) != 0, itemTargetWord(entry, 2));
+        done = true;
+    } else {
+        return SessionUseUnsupported;
+    }
+    if (!done) {
+        return SessionUseNoEffect;
+    }
+    partyConsumeItemCharge(user, &s->items, slot);
+    snprintf(s->log, sizeof(s->log), "party member %u uses item %u on member %u", userSlot + 1, id, recipientSlot + 1);
+    if (s->combat.active && s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster) {
+        combatAfterAction(s);
+        combatRunMonsters(s);
+    }
+    return SessionUseDone;
 }
 
 typedef struct {

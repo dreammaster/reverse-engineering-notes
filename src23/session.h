@@ -99,6 +99,14 @@ InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uin
 typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported } SessionCast;
 SessionCast sessionCast(GameSession *session, unsigned spellId);
 
+/*
+ * Using a restorative from a member's main inventory (slot 1-8) on a recipient member (0-3): the healing / magic / cure items and, in Chapter 2, the percentage
+ * healers (consumable.h). The item's charge is spent only when it did something; in a combat the use takes the member's turn. SessionUseNothing: no item
+ * there; SessionUseNoEffect: it would do nothing for that recipient (the original flashes a warning and spends nothing); SessionUseUnsupported: not a restorative.
+ */
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported } SessionUse;
+SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
+
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);
 
