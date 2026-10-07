@@ -20,6 +20,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `cluespell` | The clue book's spell page (F3 SPELLS; RunClueBookSpellCategory yendor2.asm:5283, ShowClueBookSpellDetail :6091 with its out-of-line chunk, Chapter 3 the same except that the ORE cost is gone). | yes |
 | `cluetransport` | The clue book's TRANSPORTATIONS page (ShowClueBookTransportDetail yendor2.asm:6430, DrawTransportDetailRow :6455; Chapter 3 the same). | yes |
 | `cmf` | Creative Music Files, the format of the music tracks in WORLD.DAT (audio.h): a "CTMF" header, an AdLib instrument block and a standard-MIDI-style event stream. | yes |
+| `cmfplayer` | Plays a parsed CMF track (cmf.h) through the OPL2 synthesizer (opl.h): the MIDI channels share the nine FM voices. |  |
 | `combat` | Turn-based combat: a genuinely separate subsystem from the dungeon-exploration monster AI (monsterpool.h) -- surfaced while resolving "do monsters ever reposition themselves" (they don't; see dungeongrid.h/monsterpool.h), not otherwise touched by this project. | yes |
 | `consumable` | Using a restorative item or the alchemist's ore transmutation on a party member. | yes |
 | `dialog` | The NPC conversation / service catalog -- the data behind `UseItem` (yendor2.asm:13169; the same structure in Chapter 3), which `start` calls for a world object (worldobjects.h) with the matching flag, passing the object's own `value` field (its +4 word) as th | yes |
@@ -57,6 +58,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `movement` | SaveFacing | yes |
 | `music` | Which music track plays: UpdateAmbientMusicForRegion (yendor2.asm:37699, yendor3.asm identical) and UpdateAmbientMusic (:43589). | yes |
 | `newgame` | InitializeNewGameWorldState (yendor2.asm:49634, yendor3.asm:37448) -- the title screen's "new game". | yes |
+| `opl` | A small floating-point OPL2 (YM3812 / AdLib) FM synthesizer, enough to hear what the CMF music of both games sounds like and to check the parsed tracks (cmf.h, cmfplayer.h); a ScummVM engine would use ScummVM's own OPL emulator instead. | yes |
 | `palette` | The palette effects (all values are 6-bit VGA DAC components, 3 bytes per colour, 256 colours = 768 bytes per palette). | yes |
 | `palettefade` | StepPaletteFadeRange (yendor2.asm:38171; Chapter 3 the same), the general fader behind every fade of the opening story, the clue book and the screen transitions: `rounds` (bx) rounds over `count` (cx) colours starting at colour `first` (dx), each round ending  | yes |
 | `paperdoll` | A character's paper doll with the equipment shown on it: DrawPartyMemberPortrait (yendor2.asm:39190, yendor3.asm:39482), drawn 56 pixels wide at (8, 8), (64, 8), (120, 8) or (176, 8) -- the four party members side by side on the inventory screen. | yes |

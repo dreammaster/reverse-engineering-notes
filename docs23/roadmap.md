@@ -9,7 +9,7 @@ behavioral-difference reference.
 
 ## Snapshot, 2026-10-03 (read this first; the dated status below is older)
 
-79 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
+80 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
 was written: **`ApplyEncodedItemEffect` is complete** to the data model (`spellSelectBranch` names the whole
 dispatch; LIFE FORCE, projectile hit/splash, screen-wide attack, held item, JUMP spells, light timers,
 bookmark all implemented); combat has the **monster turn**, **player melee** and **Search**; and the
@@ -25,7 +25,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
 
 ## Snapshot, 2026-10-04 (newest; supersedes the paragraphs above where they disagree)
 
-79 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
+80 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
 
 * **Decision logic** added since the snapshot above: `mapview.c` (map tiers, local map), `travelExamineKey`, the relic dispatcher and potion
   brewing, `partyFindItemDeep` / `partyConsumeItemChargeMode` (containers), `chargen.c` + `newgame.c` (attribute roll, derived skills, classes,
@@ -47,7 +47,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   stepping rules, the nine story cards read from the executable); the timeline of both games' openings is in file-formats.md ("The opening story"), `tools/intro_sheet.c` renders it.
 
 Still missing: the playback of the animated sequences (title / intro / credits, as scripts; their data and rules are decoded), the message strings used by the game logic (`exedata.c` can fetch any, none are catalogued), input/timing glue (the
-original is driven by DOS interrupts), OPL/mixer playback of the parsed music and effects, Chapter 2's debug commands, and Chapter 1's engine. A name
+original is driven by DOS interrupts), the engine's mixer glue for effects (music has a reference synthesizer, opl.c), Chapter 2's debug commands, and Chapter 1's engine. A name
 census of the 769 functions against `src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).
 
 ## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new), the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack), ApplyEncodedItemEffect's full dispatch chain (all 19 branch addresses recorded), and two previously-untraced caller-context questions -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)

@@ -23,7 +23,7 @@ differences in [engine-diffs.md](engine-diffs.md), and what is still missing in 
 | `PICTURES.VGA` | `pictures.c`, `pictures_stdio.c` | ten categories of same-sized 8 bpp pictures, colour 0xFF transparent |
 | palette, fades, colour cycle | `pictures.c` (offset), `palette.c` | 6-bit DAC values in `WORLD.DAT`; block 2 drives the dawn/dusk fade |
 | fonts | `font.c` | 6 x 6, four faces, tables built in |
-| music / effects | `audio.c`, `cmf.c`, `voc.c` | CMF tracks (parsed to events + AdLib instrument patches) and VOC samples (8-bit PCM, 4-13 kHz) inside `WORLD.DAT`; ids per area in `music.c`; no playback yet |
+| music / effects | `audio.c`, `cmf.c`, `voc.c` | CMF tracks (parsed to events + AdLib instrument patches) and VOC samples (8-bit PCM, 4-13 kHz) inside `WORLD.DAT`; ids per area in `music.c`; `opl.c` + `cmfplayer.c` are a small OPL2 FM synthesizer and CMF player (all 45 tracks render; `tools/cmf_wav.c` writes a WAV to listen to -- none of the tracks uses the rhythm mode); an engine would use ScummVM's own OPL emulator |
 | world map, legends | `worldmap.c` | 800 x 168 cells; legends give floor/ceiling/wall/far-wall/minimap pictures |
 | items, monsters, spells, dialog, documents, locks, travel, triggers | `item.c`, `monster.c`, `spellrecord.c`, `dialog.c`, `document.c`, `lockcatalog.c`, `travel.c`, `maptrigger.c` | catalogs read from `WORLD.DAT` |
 | saves | `savegame.c`, `newgame.c` | `CURGAME`/`SAVGAMEn`; a new game is a 5000-byte template at the end of `WORLD.DAT` |
@@ -92,6 +92,5 @@ command needs (map, clock, key). Mouse clicks go through `uiregions.c`. Chapter 
 ## What is still missing
 
 See [roadmap.md](roadmap.md). In short, what is not in `src23` is: playback of the animated title / opening / credits sequences (their data, timelines and
-primitives -- `intro2.c`, `palettefade.c`, `palette.c` -- are decoded), the debug commands of Chapter 2, music and sound playback and the OPL / mixer glue (the files
-are located and parsed), the platform glue of an engine, and Chapter 1's engine (a different, earlier engine with no analysis yet).
+primitives -- `intro2.c`, `palettefade.c`, `palette.c` -- are decoded), the debug commands of Chapter 2, sound-effect playback and the engine's mixer glue (the music files are parsed and synthesised in `opl.c`; the VOC effects are parsed), the platform glue of an engine, and Chapter 1's engine (a different, earlier engine with no analysis yet).
 Text is read from the executables (`exedata.c`), not shipped.
