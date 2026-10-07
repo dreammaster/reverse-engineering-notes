@@ -359,7 +359,7 @@ Each attack spell routine sets three globals and calls `spellAttackAhead(animati
 | 58 | Disintegrate | - | 15 (0Fh) disintegrate | group |
 | 62 | Dancing Sword | rnd(6,14) x level | 0 physical | group |
 | 63 | Prismatic Light | 80 | random 0-6 | all |
-| 64 | Moon Ray | 30 | 6 energy (also heals the party) | all |
+| 64 | Moon Ray | 30 | 6 energy (also heals every party member for rnd(1,30) hit points) | all |
 | 65 | Mass Distortion | - | 13 (0Dh) mass distortion | group |
 | 67 | Incinerate | 250 | 2 fire | single |
 | 68 | Elemental Storm | 150 | chosen element | all |
