@@ -179,7 +179,7 @@ family (value widths 1-4 bytes selected by a type byte) are not yet written down
 * `Display1`/`DoorText*`/`SignText`: 1 byte, the index of a NUL-terminated string in `TEXTnn.MAZ` (string 0 first).
   Strings start with control bytes (`03` centre, `0B nnn` ...).
 * `Teleport` (7, 31): map, x, y.  `MoveObj`: object, x, y.  `CallEvent` (25): x, y, line.  `SetChar` (15): 0 = all, 1-6 member,
-  7 = random, 8 = ask (as Xeen).  `WhoWill` (32): message.  `DoTownEvent` (17): building 0-6.
+  7 = random, 8 = ask (as Xeen).  `WhoWill` (32): message.  `DoTownEvent` (17): building number 0 bank (`townBank`), 1 smithy, 2 guild, 3 inn, 4 tavern, 5 temple, 6 training grounds, 7 the Arena (`arenaEvent`), 8 `showJoke` (a random joke screen).
 * `Damage` (22): damage (u16), damage type -> `giveCharDamage`.  `Spawn` (16): monster slot, x, y, (unused) -> resets that monster's
   position/hit points.  `AlterMap` (19): x, y, side (4 = all four), value -> `mazeSetBits`.  `ConfirmWord` (21): word id, line when
   right, text index (message), text index (prompt; 0 = "What's the Password?").  `NPC` (5): a0 (not read by the handler), name text index (into TEXTnn.MAZ, copied to the caption buffer), hire face number (`hire%u.fac`) and portrait number (`eface%02u.out`) for `loadHireFaces`, and the line the script continues at (-1) when the portrait was shown; a previously open portrait window (`word_373A4`) is closed first; (older note: face resource
