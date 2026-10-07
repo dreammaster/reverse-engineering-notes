@@ -140,7 +140,7 @@ void load(TSprite &value, std::FILE *file) {
 	int mode = readInt();
 	int color = readInt();
 
-	value.SetPosition(position, 1.0f);
+	value.SetPosition(position, -1.0f);
 	value.SetPause(pause);
 	value.SetTransparency(static_cast<eTransparencyMode>(mode), (unsigned int)color);
 }

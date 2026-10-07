@@ -7,6 +7,6 @@
 void TTSprite::SetPosition(const wxPoint &position) {
 	TSprite sprite(GetSprite(kSpriteSprite));
 
-	sprite.SetPosition(position, 1.0f);
+	sprite.SetPosition(position, -1.0f);
 	SetValue(kSpriteSprite, sprite, TSendEventEnum::kSendEvent);
 }

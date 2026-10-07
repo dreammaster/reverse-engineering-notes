@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "TAnimationOwner.h"
-#include "TCAnimation.h"
+#include "vscommon/canimation.h"
 #include "WxStub.h"
 
 class TManagedObject;

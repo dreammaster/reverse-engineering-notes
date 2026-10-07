@@ -116,6 +116,12 @@ public:
 	void SetShader(int shader) {
 		_shader = shader;
 	}
+	// Confirmed (TCAnimation::PreloadSprites, asm lines 1381578-1381644): written
+	// (+0xB0) with the order a picture is to be preloaded in before it is handed
+	// to the preloader.
+	void SetPreloadPriority(int priority) {
+		_preloadPriority = priority;
+	}
 
 private:
 	// Common "release current sprite handle, tell the graphics backend,
@@ -135,6 +141,7 @@ private:
 	int _parallaxX = 0;
 	int _parallaxY = 0;
 	int _field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
+	int _preloadPriority = 0;  // +0xB0
 	ePreloadingStatus _preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by _mutexStatus
 	TPicturePreloader *_preloader = nullptr;  // +0xB8
 	bool _flagC0 = false;

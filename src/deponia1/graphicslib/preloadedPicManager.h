@@ -9,6 +9,10 @@ class TPictureIO;
 class TPreloadedPicManager {
 public:
 	void StopPreloading(TPictureIO *picture);
+	// Confirmed call shape only (TCAnimation::PreloadSprites): queues a picture
+	// for the background loader; not reconstructed (the picture is loaded when it
+	// is first drawn).
+	void PreloadPicture(TPictureIO *picture);
 	// Confirmed call shape only (TGameControl::Update, Deponia_Linux.asm
 	// lines 469773-469780) - returned by value via a nested-container
 	// iteration (an outer "bucket" list of inner pointer arrays in the

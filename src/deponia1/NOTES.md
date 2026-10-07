@@ -2926,6 +2926,43 @@ TPolygonList (an owning list of polygons) and the polygon helpers (LinesCut,
 PointInPolygon[List], CreatePolygonsFromPointList with its (-10000,-10000) separators,
 GetBoundingBox with inclusive width/height, IsPointInsidePolygon) are in TPolygonList.h.
 
+## TCAnimation (vscommon/canimation.cpp)
+
+The sprite animation player that `TGAnimation` derives from. It was left as a
+confirmed-call-shape stub through the earlier passes; now real (moved to
+`vscommon/canimation.{h,cpp}` once the `x_assert()` in
+`GetCurrentSpritePosition` gave its original path: `src/vscommon/canimation.cpp`,
+line 0x246).
+
+A `TCAnimation` holds two records - a `TSAnimation` (+0x08, the running state:
+loops left, current sprite index, position, scale, waiting) and the
+`TTAnimation` data (+0x10) - plus one `TPictureIO` per sprite of the data
+(owned, deleted in the dtor) and a `TTimer`. All running state lives in the
+`TSAnimation` record rather than in C++ members so that it survives a save;
+the class itself keeps only the data reference, the pictures, the current
+picture, two flags (`_isOutfit`, `_paused`) and the timer.
+
+Real: ctor/dtor, `Start`, `CanRemoveCurrentSprite`, `GetAnimationLoops`,
+`FirstSprite`/`NextSprite`/`EofSprite` (forward, backward and random order),
+`GetCurrentPause`/`GetPauseCompletion`, `SetCurrentSprite` (the per-frame
+step: random-loop waits, advancing after the pause, loop counting, finishing),
+`GetCurrentSpritePosition` (mirrored sprites mirror around the animation's
+centre; scaled by the size as a percentage with round-half-away rounding) and
+the `Is*` queries. Checked in particular `CanRemoveCurrentSprite` against the
+disassembly (vtable slot 0x28 is `GetAnimationLoops`).
+
+Deliberately NOT reconstructed: the 3D-model (`ModelContainer`/`ModelAnimation`)
+and Spine skeleton animation kinds the class also plays. Deponia 1 only uses
+sprite animations; every model/bones branch is left out, so `IsModelAnimation()`/
+`IsBonesAnimation()` are fixed `false`. This is why the manifest status is
+`in-progress`, not `done`.
+
+Side corrections found along the way: `TSprite::SetPosition(pos, scale)` takes
+`-1.0f` (not `1.0f`) as its "leave the scale alone" argument - fixed in
+`TTSprite::SetPosition` and the binary project reader; `TCAnimation::SetPosition`
+uses the same sentinel. `TPictureIO` gained `SetPreloadPriority()` (+0xB0) and
+`TPreloadedPicManager::PreloadPicture()` is a call-shape-only stub.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
