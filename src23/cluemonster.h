@@ -26,7 +26,8 @@
  * DESTROY (modeFlags 0x200) and PROJECTILE / WEAPON / SHIELD (0x800 / 0x400 / 0x200), each word followed by ", " with the last two characters cut; with no
  * special attack (and no area flag) only the label shows. The label starts at x = (35 - length) * 6 when the words are longer than 8 characters, so the line ends
  * at the right edge, and the words follow 90 pixels later.
- * Not drawn: the animated sprite.
+ * The sprite is drawn as its first idle frame (MonsterFieldSpriteBase; category 2 at (8, 7), or category 3 at (6, 33) for the alternate large layout); the
+ * animation (a frame counter that cycles idle frames, then plays the attack frames and its sound) and the palette remap are not.
  * The label and mark texts come from the executable (the tables in cluemonster.c hold their data-segment addresses).
  */
 enum { ClueMonsterRows = 23 };

@@ -148,6 +148,12 @@ void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *t, const 
     put(r, 6, 4, name, 0x0D);
     put(r, clueHeadingX(r->game, 2, (unsigned)strlen(t->heading)), 4, t->heading, 0x0D);
     clueNavBarDraw(r, navFlags);
+    {
+        /* the sprite: its first idle frame, category 2 at (8, 7) or, for the alternate large sprites, category 3 at (6, 33); the palette remap of
+           MonsterFlagRemapPalette is not applied */
+        bool large = (monsterGetU16(m, MonsterFieldFlags) & MonsterFlagAltSprite) != 0;
+        viewDrawPicture(r, large ? 3 : 2, monsterGetU16(m, MonsterFieldSpriteBase), large ? 6 : 8, large ? 33 : 7, true, 0);
+    }
 
     const MonsterRow *rows = r->game == GameYendor2 ? kYendor2Rows : kYendor3Rows;
     for (unsigned i = 0; i < ClueMonsterRows; i++) {
