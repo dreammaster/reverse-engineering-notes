@@ -266,3 +266,22 @@ The game starts at minute 1E0h (08:00) of day 1, year 500 (new game).  Message o
 Interactive containers: `giveMultiTreasure` only reacts to eight object pictures (the picture-slot values 4, 12, 18, 20, 23, 33, 38, 40 of the object table in `data-files.md`): BLKBOX (black box), FLRSAFE (floor safe), IRONCHST (iron chest), LEATHSAC (leather sack), ORNTBOX (ornate box), STONCOFN (stone coffin), WDNCHST (wooden chest) and WOODCFN (wooden coffin). Other pictures (pits, pools, signposts...) are not containers and are handled by event scripts instead.
 The handler for each container only chooses the sound played when it is opened (`playSoundEffect` 14h for black box, leather sack and ornate box; 2Ah for the floor safe and iron chest; 2Bh for the wooden chest, stone coffin and wooden coffin); the leather sack (picture 20 = 14h) skips the trap/lock procedure altogether.
 **Loot is script-defined:** the routine is the handler of event opcode 20 (`GiveMulti`).  After the container procedure above succeeds it pays the script's up to three `(mode, value)` entries: mode 21 gives the item id, 34 gold, 35 gems, 66 a random item of the given level (`generateItem`, at most 10 items per pile in `byte_37710`), 67 a spell; any other mode ends with the script's message instead.  So every chest's contents are written in its MAZEnn.EVT lines (e.g. `GiveMulti gold=900 randomItem=1`).
+
+## New character record (`sub_46847` = finish creation, called from `createCharacter`)
+
+After the name is typed (up to 10 characters) the record (`12Fh` bytes) is zeroed and filled: `+123h` = `Party_lastInn`, sex, race, alignment, class; the seven rolled attributes become the first byte of each stat pair (+14h, +16h ... +20h); level 1;
+age 18 (`birthYear = Party_year - 18`, `+129h`; `birthDay = Party_day`, +25h);
+**racial resistances** (byte tables at DGROUP `0E43h` magic, `0E48h` fire, `0E4Dh` electricity, `0E52h` cold, `0E57h` energy, `0E5Ch` poison, indexed by race 0-4 Human, Elf, Gnome, Dwarf, Half-Orc) written to the base resistance bytes:
+
+| race | magic | fire | elec | cold | energy | poison |
+|---|---|---|---|---|---|---|
+| Human | 7 | 7 | 7 | 7 | 7 | 7 |
+| Elf | 5 | 0 | 0 | 0 | 5 | 0 |
+| Gnome | 20 | 2 | 2 | 2 | 2 | 2 |
+| Dwarf | 0 | 5 | 5 | 5 | 5 | 20 |
+| Half-Orc | 0 | 10 | 10 | 10 | 0 | 0 |
+
+Spell casters: Cleric, Sorcerer and Druid get `hasSpells` and the first four spells of their school (`spells[0..3] = 1`, current spell 0); Paladin, Archer and Ranger get `hasSpells` and `spells[0]`; Knight, Robber, Ninja and Barbarian get no spells (`currentSpell = FFh`).
+An extra starting spell is taken from `3CF0h[class]` (Paladin 0, Archer 2, Ranger 1; the value FEh stored for the three full casters is not guarded against by the code and writes a byte past the record -- harmless quirk).
+Starting **skills**: class table `3CE1h`: Knight Arms Master, Paladin Crusader, Sorcerer Cartographer, Robber and Ninja Thievery, Druid Direction Sense, Ranger Path Finder (Archer, Cleric, Barbarian none); race table `3CEBh`: Human Swimmer, Gnome Spot Secret Doors, Dwarf Danger Sense (Elf and Half-Orc none).
+Hit and spell points come from `getMaxHP` / `getMaxSP` (`rules.md` formulas).
