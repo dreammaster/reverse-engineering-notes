@@ -67,3 +67,11 @@ The program is Borland C++ (1991) code, not Microsoft: the thunk/overlay scheme 
 that BinDiff run (>= 0.90 similarity) are kept in `names/mm3.tsv`; `rebuild_all.ps1` re-applies them
 (`ida_scripts/apply_names.py`) after a rebuild, and `ida_scripts/export_names.py` writes the names
 of the open database back to that file.
+
+## `MM3.CFG` (4 bytes, read by `openMm3Cc`)
+
+Copied to DGROUP `ACBDh` (`byte_333AD`..`byte_333B0`) and consumed by `_main`:
+* byte 0: video mode selector 0-4, mapped by a 5-way switch to the internal video mode `word_34C0E` (0 -> 0, 1 -> 4, 2 -> 3, 3 -> 1, 4 -> 5); the intro uses `logy5.raw` when it is 4 (the VGA logo);
+* byte 1: sound device 0-6, a 7-way switch that sets one of seven driver flags (`byte_28842`..`28848`) before the matching `*.DRV` (`ADLIB`, `ROLAND`, `BLASTER`, `COVOX`, `TANDY`, `IBM`, `DEMO`) is loaded; `TIMER.DRV` is always loaded;
+* bytes 2 and 3: the sound device's port and IRQ parameters (`sub_2693F(byte2, byte3)`).
+The GOG copy is `00 01 20 02`: video selector 0, sound device 1, parameters 20h and 2 (the device-to-number assignment of byte 1 was not worked out).
