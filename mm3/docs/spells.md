@@ -405,3 +405,5 @@ Identify Monster (`4C917`, about 180 lines of UI) opens a window with the monste
 Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): tests the wall in the facing direction of the party's own cell and of the cell straight ahead (view slot 5 = (0,+1) for facing 0, mask taken from the facing table at `165h`), and when both are open moves the party by view slot 12 of `VIEW_DX`/`VIEW_DY`, i.e. exactly **two cells forward** (offset (0,2) for facing 0), plays effect 33h and redraws; `showErrorMessage` when blocked.
 
 Wizard Eye (`Spell_23_WizardEye`, `4C8FE`, via stub `sub_285CC`) simply sets `Party_wizardEye` to 1; `updateAutomap` then draws the overhead map every step.
+
+Detect Magic (`4C3DF`) is the same pattern with mode 3: the target's inventory page is opened in mode 3 (items show their enchantments and charges). So the `characterInfoInventory` modes are 0 normal, 1/2 shop buy/sell, 3 detect magic, 4 recharge, 5 duplicate, 6 enchant.
