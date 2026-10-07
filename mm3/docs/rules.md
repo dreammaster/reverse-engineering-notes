@@ -256,4 +256,4 @@ Asleep, depressed, confused, paralysed, unconscious do not change attributes (th
 
 `worstCondition(char)` (`16E52`): scans the condition counters from index 15 down to 0 and returns the index of the first non-zero one, or 10h (16) when the character has no condition.  Callers treat the result as a severity rank:
 >= 0Bh (paralysed, unconscious, dead, stone, eradicated) = cannot act / cannot be targeted for healing (`doMonsterTurn` skips them when looking for a preferred target; `giveTake`, the cure spells and `rest` test 0Dh-0Fh = dead/stone/eradicated);
-8 and above gate bashing (asleep, depressed, confused...); 10h = fully healthy.
+`bash` skips characters whose worst condition is 8 (asleep) or 0Bh-0Fh but lets depressed (9) and confused (0Ah) characters bash; 10h = fully healthy.
