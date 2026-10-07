@@ -73,6 +73,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `roster` | The party roster screen: ShowWorldMap (yendor2.asm:50651; Chapter 3 sub_2B7AE) with DrawPartyRosterEntry (:50954), identical in both games. | yes |
 | `savegame` | CURGAME / SAVGAMEn: the live game file and its six save slots. | yes |
 | `savegame_stdio` | tdio wrappers for tools and tests; the engine proper should use savegame.h alone. |  |
+| `session` | The playable core of the exploration game: everything the main loop of the original does between a key press and the next picture, composed from the modules and with no display, sound or timing in it (RunDungeonGameLoop's order: the input is applied, the windo | yes |
 | `shop` | Shop pricing and the gold exchange (ComputeBarterPricingPreview, yendor2.asm:22663; PayGoldAndAcquireItem :13049; SellClickedCatalogItem :13101; instruction-identical in Chapter 3). | yes |
 | `shopgrid` | The shop's item grid (DrawShopItemSlotGrid, yendor2.asm:12162; Chapter 3 identical): a 72 x 35 area at (241, 160) is filled with colour 4, then each of the eight slots (the CatalogSlots region table: two rows of four 17 x 17 boxes) whose item id is nonzero sho | yes |
 | `spellcast` | Casting a spell from the alchemy/spell screen (RunAlchemyScreen, yendor2.asm:24615; CheckSpellCastability :25259 and DeductAlchemySpellCosts :25654, instruction-identical in Chapter 3). | yes |

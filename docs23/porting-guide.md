@@ -70,12 +70,20 @@ to every memory-image parser (items, monsters, spells, world map, dialog, docume
 
 ## A playable slice
 
-`src23/tools/explore_sdl.c` is the smallest engine built from the modules: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`) in which the new-game
-party walks a real map. Keys go through `mainCommandForKey` with the original scan codes, steps through `movementApply` / `movementClassifyCell`, the fog reveal is
-`exploreRevealAroundPlayer`, and the screen is the frame picture, `viewRender`, `minimapDraw`, the four `statusPanelDraw` panels, plus the local area map (M) and the pause dialog (D)
-as overlays and the clock keys (+ / -) to watch the lighting. Each rebuild of the window is `dungeonGridBuild` + `dungeonGridBakeMarkers` (windowbake.c: the door / marker bits from the world objects) + `monsterPoolRefreshWindow`; the view's monsters come from `monsterPoolEncounterScan` and take their turns (`monsterPoolTakeTurn`) after each step; a monster that reaches the party starts a combat (`combatBuildTurnOrder` / `combatProcessMonsterTurn` / `combatPlayerMeleeAttack` / `combatProcessRound`, A attacks, victory awards the loot with `monsterRewardsAward`, a wipe is `partyWipedOut`) -- the whole cycle of walking, meeting a spider, fighting and winning runs on the real data of both games. F1-F4 (a hero's detail sheet), K / S (unlock / loot the chest ahead) and P (the paper dolls) open more screens; `EXPLORE_RANDOM=<n>` plays n random keys (a soak test: 3000 keys on five starts of both games ran without a fault), `EXPLORE_KEYS` / `EXPLORE_SHOT` replay a key string headlessly (`SDL_VIDEODRIVER=dummy`) and write the final screen as a PNG.
-The explorer also plays the area's music (`musicRegionChanged` -> `cmfplayer.c` through SDL's audio callback, looping; `EXPLORE_NOSOUND=1` or `SDL_AUDIODRIVER=dummy` silences it) and Chapter 2's bump sound (effect 6, `_val33`).
-A ScummVM engine replaces the SDL calls with `OSystem` ones and keeps everything else.
+`src23/session.c` is the game core: a `GameSession` owns the map, catalogs, save, monster pool and combat, and composes the modules into the commands of the original's
+main loop -- `sessionMove` (passability, fog reveal, window rebuild = grid + `dungeonGridBakeMarkers` + `monsterPoolRefreshWindow`, then every live monster's turn
+with `monsterPoolTakeTurn`; a monster that reaches the party starts a combat), `sessionAttack` (`combatBuildTurnOrder` / `combatPlayerMeleeAttack` /
+`combatProcessMonsterTurn` / `combatProcessRound`; victory awards the loot with `monsterRewardsAward`, a wipe is `partyWipedOut`), `sessionRest` (`restParty`),
+`sessionUnlock` (`interactUnlockFacing`), `sessionLoot` (`chestTake`) and `sessionScene` (the view cells and the monsters to draw via `monsterPoolEncounterScan`).
+Nothing in it draws, plays or waits; spells, items on the cursor, inventory, shops and dialogs are decision modules a front end wires in. `test_session.c` plays both games
+(random soak, a combat from the first spider to the end, a chest looted once).
+
+`src23/tools/explore_sdl.c` is a front end for it: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`), keys through
+`mainCommandForKey` with the original scan codes, the screen drawn from the frame picture, `viewRender`, `minimapDraw` and the four `statusPanelDraw` panels, with the local
+area map (M), the pause dialog (D), hero sheets (F1-F4) and paper dolls (P) as overlays, the clock keys (+ / -) to watch the lighting, and sound -- the area's music
+(`musicRegionChanged` -> `cmfplayer.c` through SDL's audio callback, looping) and Chapter 2's bump sound (effect 6, `_val33`). `EXPLORE_RANDOM=<n>` plays n random keys (a soak
+test: 3000 keys on five starts of both games ran without a fault), `EXPLORE_KEYS` / `EXPLORE_SHOT` replay a key string headlessly (`SDL_VIDEODRIVER=dummy`,
+`SDL_AUDIODRIVER=dummy`) and write the final screen as a PNG. A ScummVM engine replaces the SDL calls with `OSystem` ones and keeps the session.
 
 ## Opening story
 

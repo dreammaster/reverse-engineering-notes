@@ -2,7 +2,7 @@
 
 What an `engines/yendorian/` module would be made of, given what `src23/` already holds. Nothing here is built against ScummVM yet (no ScummVM tree is
 checked in); every item names the `src23` module that supplies the logic, so the engine is mostly glue. The playable proof of the approach is
-`src23/tools/explore_sdl.c` (walk, fog, view, monsters, melee combat, rest, local map, dialogs), which uses the modules exactly as an engine would.
+`src23/session.c` is the engine core (movement, fog, monsters, combat, rest, locks, chests) and `src23/tools/explore_sdl.c` a front end for it, which uses the modules exactly as an engine would.
 
 ## Detection
 
