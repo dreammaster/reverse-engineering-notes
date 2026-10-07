@@ -5,10 +5,10 @@
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
  *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c \
- *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
+ *       ../monsterpool.c ../monster.c ../monster_stdio.c ../globalflags.c ../cmfplayer.c ../opl.c ../cmf.c ../audio.c ../voc.c ../music.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../item_stdio.c ../spellrecord.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c ../uiregions.c \
  *       ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../palette.c \
- *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2
+ *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), M the local area
@@ -23,7 +23,9 @@
 
 #include <SDL.h>
 
+#include "audio.h"
 #include "chest.h"
+#include "cmfplayer.h"
 #include "combat.h"
 #include "dungeongrid.h"
 #include "explore.h"
@@ -33,6 +35,7 @@
 #include "item_stdio.h"
 #include "maininput.h"
 #include "minimap.h"
+#include "music.h"
 #include "monster_stdio.h"
 #include "monsterpool.h"
 #include "movement.h"
@@ -45,6 +48,7 @@
 #include "statuspanel.h"
 #include "viewport.h"
 #include "viewrender.h"
+#include "voc.h"
 #include "windowbake.h"
 #include "worldmap_stdio.h"
 
@@ -60,6 +64,71 @@ static RandomState g_rng;
 static int g_engagedType = 0;
 static ItemCatalog g_items;
 static GameKind g_game;
+
+/* Sound: the area music through the OPL2 synthesizer (opl.c), effects as VOC samples, both mixed in SDL's audio callback. */
+static uint8_t g_worldDat[5000000];
+static size_t g_worldSize;
+static CmfPlayer g_music;
+static bool g_musicOn;
+static unsigned g_musicTrack, g_lastMusicPage = 0xFFFF;
+static SDL_AudioDeviceID g_audio;
+static int16_t g_effect[44100 * 3];
+static unsigned g_effectLength, g_effectPos;
+
+static void audioCallback(void *userdata, Uint8 *stream, int bytes) {
+    (void)userdata;
+    int16_t *out = (int16_t *)stream;
+    unsigned count = (unsigned)bytes / 2;
+    memset(out, 0, (size_t)bytes);
+    if (g_musicOn) {
+        unsigned got = cmfPlayerRender(&g_music, out, count);
+        for (unsigned i = 0; i < got; i++) {
+            out[i] = (int16_t)(out[i] / 3); /* the tracks are loud enough at a third */
+        }
+        if (got < count) { /* the track ended: loop it */
+            unsigned track = g_musicTrack;
+            uint32_t offset, length;
+            if (audioMusicTrack(g_game, track, &offset, &length) && offset + length <= g_worldSize) {
+                cmfPlayerStart(&g_music, g_worldDat + offset, length, 44100);
+            } else {
+                g_musicOn = false;
+            }
+        }
+    }
+    for (unsigned i = 0; i < count && g_effectPos < g_effectLength; i++, g_effectPos++) {
+        int v = out[i] + g_effect[g_effectPos];
+        out[i] = (int16_t)(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+    }
+}
+
+static void playMusic(unsigned track) {
+    uint32_t offset, length;
+    if (!g_audio) {
+        return;
+    }
+    SDL_LockAudioDevice(g_audio);
+    g_musicTrack = track;
+    g_musicOn = track && audioMusicTrack(g_game, track, &offset, &length) && offset + length <= g_worldSize && cmfPlayerStart(&g_music, g_worldDat + offset, length, 44100);
+    SDL_UnlockAudioDevice(g_audio);
+}
+
+/* Sound effect id (WORLD.DAT's VOC list) resampled to 44.1 kHz. */
+static void playEffect(unsigned id) {
+    uint32_t offset, length;
+    VocSound voc;
+    if (!g_audio || !audioEffect(g_game, id, &offset, &length) || offset + length > g_worldSize || !vocOpen(&voc, g_worldDat + offset, length)) {
+        return;
+    }
+    SDL_LockAudioDevice(g_audio);
+    unsigned n = (unsigned)((double)voc.length * 44100.0 / voc.sampleRate);
+    n = n > sizeof(g_effect) / sizeof(g_effect[0]) ? (unsigned)(sizeof(g_effect) / sizeof(g_effect[0])) : n;
+    for (unsigned i = 0; i < n; i++) {
+        g_effect[i] = (int16_t)(((int)voc.samples[(size_t)((double)i * voc.sampleRate / 44100.0)] - 128) * 100);
+    }
+    g_effectLength = n;
+    g_effectPos = 0;
+    SDL_UnlockAudioDevice(g_audio);
+}
 
 /* The combat of the original's main loop (RunDungeonGameLoop): up to three monsters in slots, a turn order by dexterity, and per tick the current combatant acts. */
 static struct {
@@ -277,6 +346,8 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot read the view tables\n");
         return 1;
     }
+    memcpy(g_worldDat, worldDat, worldSize);
+    g_worldSize = worldSize;
     memcpy(g_tables, worldDat + viewTablesOffset(game), sizeof(g_tables));
     memcpy(palette, worldDat + pictureMasterPaletteOffset(game), sizeof(palette));
     snprintf(path, sizeof(path), "%s/PICTURES.VGA", dir);
@@ -318,7 +389,7 @@ int main(int argc, char **argv) {
             facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
         }
     }
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
         return 1;
     }
@@ -337,6 +408,23 @@ int main(int argc, char **argv) {
     ViewRenderer renderer = {game, g_tables, pictureFileGet, pictures, g_screen, NULL};
     ExploreReveal revealed;
     exploreRevealAroundPlayer(&g_save, x, y, facing, &revealed);
+    if (!getenv("EXPLORE_NOSOUND")) {
+        SDL_AudioSpec want, have;
+        SDL_zero(want);
+        want.freq = 44100;
+        want.format = AUDIO_S16SYS;
+        want.channels = 1;
+        want.samples = 2048;
+        want.callback = audioCallback;
+        g_audio = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
+        if (g_audio) {
+            uint16_t track = 0;
+            if (musicRegionChanged(&g_lastMusicPage, x, y, game, g_worldDat, g_worldSize, &track)) {
+                playMusic(track);
+            }
+            SDL_PauseAudioDevice(g_audio, 0);
+        }
+    }
 
     Overlay overlay = OverlayNone;
     bool running = true, dirty = true;
@@ -444,12 +532,18 @@ int main(int argc, char **argv) {
                                 if (outcome == MovementCellClear || outcome == MovementCellSpecial) {
                                     x = nx;
                                     y = ny;
+                                } else if (game == GameYendor2) {
+                                    playEffect(6); /* the bump sound, _val33 */
                                 }
                             }
                         } else {
                             facing = move.facing;
                         }
                         exploreRevealAroundPlayer(&g_save, x, y, facing, &revealed);
+                        uint16_t newTrack;
+                        if (musicRegionChanged(&g_lastMusicPage, x, y, game, g_worldDat, g_worldSize, &newTrack)) {
+                            playMusic(newTrack);
+                        }
                         buildWindow(game, x, y);
                         monstersTakeTurns(game, x, y);
                     } else if (command.action == MainActionRest) {
