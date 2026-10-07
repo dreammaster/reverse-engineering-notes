@@ -50,7 +50,7 @@ API entry 0 (`init(port)`): stores the DSP base port (the 16-bit value from `MM3
 The start-up code uses neither a sound-card IRQ nor DMA (everything is driven from the timer tick; the PCM path itself was not read), which is consistent with the configuration file storing only the port.  API entry 1 (`restore`) puts the old INT 08h vector back.
 
 Correction/addition on ids >= 97h: the town routines call `sub_27F45("bank.m" ...)` (loads and starts the song file; second argument C0h) and then `playSoundEffect(97h..9Dh)` -- 97h bank, 98h guild, 99h inn, 9Ah tavern, 9Bh temple, 9Ch training grounds, 9Dh smithy (character creation uses 9Eh).
-In `ADLIB.DRV`'s effect table the entries for ids 151-159 all point at the silent stream, so for the AdLib driver these calls produce no sound effect of their own; they are gated by the music flag (`Option_music`, `byte_36FE9`) and are presumably what the sample-based drivers (`BLASTER`, `COVOX`) key on to start the matching digitised sound (`S1.S`-`S7.S`: seven samples for the seven ids 97h-9Dh).
+In `ADLIB.DRV`'s effect table the entries for ids 151-159 all point at the silent stream, so for the AdLib driver these calls produce no sound effect of their own; they are gated by the music flag (`Option_music`, `byte_36FE9`).  The sample drivers have a separate sample entry point (see below), so these ids are probably just harmless marks in the sound call stream; what they are for was not established (the seven ids and the seven `S1.S`-`S7.S` samples may be related, but no link was found).
 
 ### `BLASTER.DRV` entry points (disassembled)
 
