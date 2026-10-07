@@ -1,7 +1,6 @@
 #include "THObject.h"
 
-#include <cwchar>
-#include <string>
+#include "ConditionListener.h"
 
 #include "AppGlobals.h"
 #include "datastruct/visionaireobject.h"
@@ -39,62 +38,12 @@ THObject::~THObject() {
 
 // Confirmed (asm lines 114721-114752)
 void THObject::UnRegisterConditions() {
-	for (TVisionaireObject *item : _conditions)
-		TVisObjRef(item).UnRegisterEventHandler(this);
-
-	_conditions.clear();
+	UnRegisterConditionHandlers(this, _conditions);
 }
 
-// Adds "'name' (id: n)" and the suffix to the text of the way down to a condition.
-static void appendCondition(std::wstring &text, const TVisObjRef &condition, const wchar_t *suffix) {
-	std::wstring name = condition.GetName().c_str().ToStdWstring();
-	wchar_t number[16];
-
-	swprintf(number, 16, L"%d", PackVisId(condition.GetId()));
-	text += L"'" + name + L"' (id: " + number + L")" + suffix;
-}
-
-// Confirmed (asm lines 113666-114205): a condition that is a variable is listened to; one
-// that is made of two others lists them (one level at a time: a condition that is already
-// on the way down is a cycle, which is logged).
+// Confirmed (asm lines 113666-114205): see ConditionListener.h.
 void THObject::RegisterConditions(TVisObjRef &condition, TVList &path) {
-	if (condition.GetBool(kConditionIsVariable)) {
-		condition.RegisterEventHandler(this, TEventEnum::kChanged);
-		_conditions.push_back(condition);
-		return;
-	}
-
-	for (TVisionaireObject *item : path) {
-		if (condition == *item) {
-			if (wxLog::loglevel > 0) {
-				// the way down to it
-				std::wstring chain;
-
-				for (TVisionaireObject *step : path)
-					appendCondition(chain, TVisObjRef(step), L" - ");
-
-				appendCondition(chain, condition, L"");
-
-				TVisObjRef first(path.front());
-
-				wxLog::logexpanded(L"Condition '%s' (id: %d) has a cyclic reference: %s", first.GetName().c_str().wc_str(),
-				                   PackVisId(first.GetId()), wxString(chain).wc_str());
-			}
-			return;
-		}
-	}
-
-	path.push_back(condition);
-
-	TVisObjRef first = condition.GetLink(kConditionCondition1);
-	TVisObjRef second = condition.GetLink(kConditionCondition2);
-
-	if (!first.IsEmpty())
-		RegisterConditions(first, path);
-	if (!second.IsEmpty())
-		RegisterConditions(second, path);
-
-	path.pop_back();
+	RegisterConditionHandlers(this, condition, path, _conditions);
 }
 
 // Confirmed (asm lines 114212-114585). Which field changed is all that is given: the new
@@ -144,21 +93,19 @@ void THObject::OnEvent(TEventEnum /*event*/, int field, TVisionaireObject * /*ob
 		_objRef.SetValue(kObjectScaleY, _objRef.GetFloat(kObjectScale), TSendEventEnum::kSendEvent);
 		break;
 	case kObjectScaleY:
-		_scaleY = _objRef.GetFloat(kObjectScaleY);
-		break;
 	case kObjectScaleX:
-		_scaleX = _objRef.GetFloat(kObjectScaleX);
+		_sprite.SetScale(_objRef.GetFloat(kObjectScaleX), _objRef.GetFloat(kObjectScaleY));
 		break;
 	case kObjectRotationCenter:
-		_rotationCenter = *_objRef.GetPoint(kObjectRotationCenter);
+		_sprite.SetRotationCenter(*_objRef.GetPoint(kObjectRotationCenter));
 		// (the original goes on to read the matrix id too)
-		_matrixId = _objRef.GetInt(kObjectMatrixId);
+		_sprite.SetMatrixId(_objRef.GetInt(kObjectMatrixId));
 		break;
 	case kObjectMatrixId:
-		_matrixId = _objRef.GetInt(kObjectMatrixId);
+		_sprite.SetMatrixId(_objRef.GetInt(kObjectMatrixId));
 		break;
 	case kObjectRotation:
-		_rotation = _objRef.GetFloat(kObjectRotation);
+		_sprite.SetRotation(_objRef.GetFloat(kObjectRotation));
 		break;
 	case kConditionValue: {
 		// the value of a variable of the condition changed

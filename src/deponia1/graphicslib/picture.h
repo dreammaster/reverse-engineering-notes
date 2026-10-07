@@ -135,8 +135,17 @@ public:
 		_scaleX = scaleX;
 		_scaleY = scaleY;
 	}
+	void SetScaleX(float scaleX) {
+		_scaleX = scaleX;
+	}
+	void SetScaleY(float scaleY) {
+		_scaleY = scaleY;
+	}
 	void SetMatrixId(int matrixId) {
 		_matrixId = matrixId;
+	}
+	int GetMatrixId() const {
+		return _matrixId;
 	}
 
 private:

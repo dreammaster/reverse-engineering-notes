@@ -3206,14 +3206,44 @@ and of the variables of its condition.
 - The `kObjectRotationCenter` event reads the matrix id too (the code of the two cases
   is shared in the binary), and `kObjectScale` sets both scale fields with `kSendEvent`
   (which then arrive as their own events).
-- Object fields at +0x17C..+0x194 (rotation, rotation centre, shader, matrix id, scale)
-  overlap the `TPictureIO` that `TMObject` embeds if that is 0xE8 bytes as the
-  neighbouring embeds suggest; the layout comments in `TGObject.h` keep the offsets from
-  the code but nothing depends on them.
+- The object's fields at +0x17C..+0x194 (rotation, rotation centre, shader, matrix id,
+  scale) are not the object's: they lie inside the embedded `TPictureIO` (0xE8 bytes
+  from +0xB8, which `TMButton` confirms: its second picture is at +0x1A0 and gets the
+  same values at +0x264...). They are the picture's draw settings, set by the owner
+  through inline setters (`TPictureIO::SetRotation()` etc.), and are modeled so.
 - Not reconstructed (see `TODO.md`): the particle effect built from a script expression
   (`kParticleContainerSettings`, the same Lua-bridge gap as in `TGScene::BeginScene()`),
   the graphics-backend calls that draw the particles, and the matrix transform in
   `IsInside()`/`DrawSnoopAnimation()`.
+
+## The button and item family: TMButton, THButton, TGPlaceHolder, TGItem, THItem
+
+`TMButton` (asm 165577-166300) is the managed object of a button of an interface: two
+embedded `TPictureIO`s (active sprite from `kButtonActiveSprite`, inactive from
+`kButtonInactiveSprite`; `SetActiveSprite()` points the base's picture at one of them), the
+button's own polygon and action list, and its animation (`kButtonAnimation`) while it is
+active. `THButton` (asm 114929-116060) adds the event handler (a second vtable at +0x288),
+the variables of the condition it listens to and the interface it belongs to
+(`kConditionValue` makes that interface show or hide its objects). `TGPlaceHolder` (asm
+114826-114878) is a `THButton` with nothing of its own (so header-only). `TGItem` (asm
+260668-261289) is the item of an interface (a `TMObject`) drawn centred on the position
+the interface gives it and `THItem` (asm 218884-219190) the one the game creates, which
+follows visibility and scale changes.
+
+- The draw settings (rotation, rotation centre, scale, matrix id, shader) that these
+  classes set at +0x17C... / +0x264... are the `TPictureIO`'s own fields, set through
+  inline setters (see `TPictureIO::SetRotation()`; `SetScaleX()`/`SetScaleY()`/
+  `GetMatrixId()` were added). `TMButton` has the two pictures at +0xB8 and +0x1A0, which
+  also fixed `TPictureIO`'s size at 0xE8 bytes.
+- `RegisterConditions()`/`UnRegisterConditions()` are the same code in `THObject`,
+  `THButton` (and, by the look of the callers, `THItem`'s siblings): written once in
+  `ConditionListener.{h,cpp}` and called from each class's own method.
+- `TGItem::HandlePostExecution()`: for a click (mouse event 1, 3 or 4) that no action ran
+  for, an item becomes the used item (`kGameUsedItem`), and with the game's draggable items
+  on and a draggable command also the object that moves with the cursor. Commands 1 and 2
+  count as "use".
+- `TGInterface::GetPlaceHolder()` is only a call-shape stub for now (null) until
+  `TGInterface` itself is reconstructed.
 
 ## Reformatted to ScummVM's code conventions
 

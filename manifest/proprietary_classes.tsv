@@ -4,9 +4,9 @@ std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >:
 Supplier<OT::IntType<unsigned short, 2u> >	todo	1	109688	109688
 ExceptionSwallower<aiReturn>	todo	1	111476	111476
 THObject	done	7	113495	114721
-TGPlaceHolder	todo	3	114826	114867
+TGPlaceHolder	done	3	114826	114867
 TManagedObject	done	50	114890	194554
-THButton	todo	7	114929	116008
+THButton	done	7	114929	116008
 TMObject	done	7	116072	116424
 TCPDebuggerServer	todo	9	120400	123408
 TCPDebuggerClient	todo	14	120478	499237
@@ -33,7 +33,7 @@ TCAnimation	in-progress	40	158833	1384914
 TMSavegameArea	done	6	159199	159295
 TMSavegame	done	22	159356	164367
 HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
-TMButton	todo	9	165577	166172
+TMButton	done	9	165577	166172
 TGScene	done	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	in-progress	76	175318	185835
@@ -49,7 +49,7 @@ TVisObjTween	todo	4	212286	481002
 TGText	todo	31	212567	215356
 TSText	todo	15	216919	1460684
 THCharacter	todo	5	217481	218783
-THItem	todo	5	218884	219148
+THItem	done	5	218884	219148
 THScene	todo	7	219228	219814
 TGScrollButton	todo	5	219879	220036
 TGDialog	stub	14	220105	479462
@@ -61,7 +61,7 @@ THGameControl	todo	6	256950	258050
 TGObject	in-progress	13	258159	259458
 THAnimation	done	5	259729	260077
 TSceneActionArea	todo	4	260143	260601
-TGItem	stub	9	260668	261228
+TGItem	done	9	260668	261228
 TGCommand	todo	5	261322	261584
 StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int (*)(lua_State*), char const*, StringHash<char const*> >	todo	1	289025	289025
 CmdGetCursorPos	todo	4	388789	428892

@@ -19,8 +19,11 @@
 // TPictureIO (cleared when the object is deactivated), +0x2A0 whether it has a
 // particle effect, +0x2A1 whether that one is a script container, +0x2A8 the
 // TGParticleSystem, +0x300 the ParticleContainer, +0x308 the particle timer, +0x318 the
-// snoop animation. The settings read from the data (+0x17C rotation, +0x180 rotation
-// centre, +0x188 shader, +0x18C matrix id, +0x190/+0x194 scale) are before them.
+// snoop animation. The rotation, rotation centre, shader, matrix id and scale the
+// constructor reads from the data (at +0x17C...+0x194) are not fields of the object:
+// they are the draw settings of the embedded sprite picture (TPictureIO::SetRotation(),
+// SetRotationCenter(), SetShader(), SetMatrixId(), SetScale()), which the original sets
+// through inline setters.
 #pragma once
 
 #include "TGParticleSystem.h"
@@ -59,12 +62,6 @@ public:
 	void SetActive(bool active) override;
 
 protected:
-	float _rotation;                    // +0x17C
-	wxPoint _rotationCenter;            // +0x180
-	int _shader;                        // +0x188
-	int _matrixId;                      // +0x18C
-	float _scaleX;                      // +0x190
-	float _scaleY;                      // +0x194
 	bool _scrolls;                      // +0x1AC
 	int _scrollX;                       // +0x1B0
 	int _scrollY;                       // +0x1B4

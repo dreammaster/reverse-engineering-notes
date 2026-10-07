@@ -14,6 +14,10 @@ bool TGInterface::IsInside(const wxPoint &/*pos*/) const {
 	return false;
 }
 
+TGPlaceHolder *TGInterface::GetPlaceHolder(const TManagedObject */*object*/) const {
+	return nullptr;
+}
+
 void TGInterface::RemoveSpritesAndAnimations() {
 }
 

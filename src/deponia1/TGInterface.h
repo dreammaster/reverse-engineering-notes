@@ -13,6 +13,7 @@
 #include "datastruct/vlist.h"
 #include "datastruct/visobjref.h"
 
+class TGPlaceHolder;
 class TManagedObject;
 
 // Confirmed 6 values, 0-5, from a jump table keyed on an interface's field
@@ -54,6 +55,11 @@ public:
 	// 472335) - a hit-test, matching TMSavegame-area-style IsInside()
 	// methods elsewhere; not reversed beyond that.
 	bool IsInside(const wxPoint &pos) const;
+	// Confirmed call shape only (TGItem::HandlePreExecution(), asm lines
+	// 260991-261000): the place holder (button) of the interface that stands for
+	// the item, or null when the interface does not show it; not reversed beyond
+	// that.
+	TGPlaceHolder *GetPlaceHolder(const TManagedObject *object) const;
 
 	// Confirmed call shapes only (TGameControl::SetInterfaces, asm lines
 	// 465533-465671): called on an interface leaving the active set before

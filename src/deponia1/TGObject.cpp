@@ -38,12 +38,11 @@ TGObject::TGObject(const TVisObjRef &ref) : TMObject(ref, true) {
 	_scrollY -= 100;
 	_sprite.SetParallax(_scrollX, _scrollY);
 
-	_rotation = _objRef.GetFloat(kObjectRotation);
-	_rotationCenter = *_objRef.GetPoint(kObjectRotationCenter);
-	_scaleX = _objRef.GetFloat(kObjectScaleX);
-	_scaleY = _objRef.GetFloat(kObjectScaleY);
-	_matrixId = _objRef.GetInt(kObjectMatrixId);
-	_shader = _objRef.GetInt(kObjectShaderSet);
+	_sprite.SetRotation(_objRef.GetFloat(kObjectRotation));
+	_sprite.SetRotationCenter(*_objRef.GetPoint(kObjectRotationCenter));
+	_sprite.SetScale(_objRef.GetFloat(kObjectScaleX), _objRef.GetFloat(kObjectScaleY));
+	_sprite.SetMatrixId(_objRef.GetInt(kObjectMatrixId));
+	_sprite.SetShader(_objRef.GetInt(kObjectShaderSet));
 
 	_particleContainer = nullptr;
 	_particlesFromScript = false;
@@ -106,7 +105,7 @@ void TGObject::Draw() {
 	// an object that is not shown through a matrix is drawn without them
 	bool savedMatrices = false;
 
-	if (_matrixId == 0) {
+	if (_sprite.GetMatrixId() == 0) {
 		savedMatrices = matricesActive;
 		matricesActive = false;
 	}
@@ -117,7 +116,7 @@ void TGObject::Draw() {
 	if (defaultShader != 0 && shader == -1)
 		shader = defaultShader;
 
-	_shader = shader;
+	_sprite.SetShader(shader);
 	ShaderCallback(shader, &_objRef);
 
 	TManagedObject::Draw();
@@ -141,7 +140,7 @@ void TGObject::Draw() {
 		}
 	}
 
-	if (_matrixId == 0)
+	if (_sprite.GetMatrixId() == 0)
 		matricesActive = savedMatrices;
 }
 
