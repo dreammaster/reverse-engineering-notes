@@ -7412,24 +7412,14 @@ modes 0 fade out, 1 fade in, 2/4 up, 3 down, 5 from white (palette.h). During a 
    card fades in; the cells animate meanwhile). After a poll: wait 5; a spark (colour 0x1F, `SetWipeEffectPixel`) runs from (268, 8) down-left 2 px per
    tick for 32 ticks, then 20 more with its colour dimming 1 per tick; poll; wait 10; 63 rounds of 16-colour fade up at colour 0x40; wait 10; 63 rounds of
    range fade 4 over 0x30 colours from 0x50; wait 20; 63 rounds of 16-colour fade down at 0x40 together with range fade 3 over colours 0x50-0x7F.
-3. `RunCharacterCreationSelectionStep` (:8800), scroll offset 0:
-   - pan the backdrop down 31 rows, 16-colour fade up at 0x40, 39 more rows, range fade 1 over 0x30 colours from 0x50, 128 more rows (198 in all);
-   - the guard (cell 4) starts walking; wait 7; fade colours 0x93-0x98 to the card colours; **card 1** (5 lines at (10, 8)); fade up at 0x93 while the cells
-     run; wait 45; the guard walks once more (flags |= 0x4020); wait 15; 63 rounds fade down of all 256 colours; all cells off;
-   - reload palette block 0, fade out, clear; **card 2** at (10, 0xAE) (the dream), fade up 0x90, wait 25, fade down;
-   - clear; category 1 picture 0x27 at (55, 47) (a dark orb with a small face beside it, colours of palette block 0; 0x28 is the orb held between two hands), fade up colours 0xC0; **card 3** at (10, 8) with voice 0x10, fade up 0xB0, voice 0x11,
-     fades down; clear; picture 0x28, palette to white, voice 0x12, range fade 5 (white to the picture) over 256 colours; voice 0x13; **card 4** at (28, 8)
-     (the laugh) with its fade; **card 5** at (10, 8) voice 0x17 over a cleared band (rows 0x8C0..), voice 0x18, voice 0x19, range fades 0/3/3 over colours
-     0-0x5F, 0x80-0xBF, 0xD0-0xFF; **card 6** at (28, 8) voice 0x14;
-   - clear rows from 0x8C0; category 7 pictures 0xAF-0xB6 (eight 32 x 32 item pictures: a green book, a rod, a red orb, a twig, a vial, an hourglass, a
-     gold nugget, a horn) at (142,1) (50,23) (236,23) (1,82) (286,82) (50,143) (236,143) (142,162); 16-colour fades up at 0xA0 (range fade 4), 0x30, 0x10, 0x50,
-     0x40, 0x90, 0x20, 0x80, 0xD0, 0 and down at 0xC0, 0x60 bring the groups of colours in one at a time; palette to white, voice 0x12, clear;
-   - picture 0x27 again with the 58 x 42 rectangle at (211, 82) cleared (the small face beside the orb), range fade 5, wait 10; fade out colours 0-0xBF and 0xD0-0xFF; **card 7**
-     at (10, 8) (4 lines, voice 0x15) fades up; the screen is copied into the backdrop buffer, scroll 0;
-   - the door (cell 5 on and animating) opens: range fades 2 up over colours 0-0xBF and 0xD0-0xFF; wait 45 ticks with a cue; voice 0x16; when sound
-     effects are off the card band is cleared first; wait 3; voice 0x1A; wait 2; fades 0 / 3 over the same colours; cleared, wait 3; cell 5 off;
-   - reload palette block 3, blank; voice 0x1B; fade up 0x90; **card 8** at (34, 0xAE) (the knock); wait 20 and fade down; clear; voice 0x1B; cell 6 (the door)
-     on; copy to the backdrop; range fade 1 over 256 colours; wait for a tick; voice 5; wait 5; **card 9** at (34, 8) voice 0x1C; fade up 0x90; wait 20; return.
+3. `RunCharacterCreationSelectionStep` (:8800): the story proper, about 150 steps. The exact sequence is the script in `src23/introstory.c` (one op per call of the
+   original, with the asm addresses in its comments) and `introStoryPlay` runs it against a small host interface; `tools/intro_story.c` plays it headlessly and writes
+   a contact sheet of stills (`intro_story <game dir> out.png`). In outline: the view pans down the tall backdrop in three stretches (31, 39, 128 rows) while the
+   title card, flags and plaques fade in and the guard walks; story card 1 (the Governor's guests) appears over the gate; a reload of palette block 0 and card 2 (the
+   dream); the dark orb picture (category 1 picture 0x27) with card 3, then the orb between two hands (0x28) after a flash to white, with the laugh, the shouts and
+   "you must venture forth" (cards 4-6); the eight item pictures (category 7, 0xAF-0xB6) light up group by group; another flash; the orb again with card 7
+   (Paltivar and the wizards) and the sorcerer cell stepping out; a black screen with the knock card (8); the door cell opening on a silhouette; card 9 ("the Governor
+   requests your presence"). Voice events and the stage timings are in the script.
 
    The voice numbers are sound-effect events (`TriggerSoundEvent`, the same blocks as the other sound effects); with sound effects on the game plays the voice
    and does not draw the card (`DrawShadowedText`), otherwise the text is drawn with its shadow. The card text is read from the executable (`introCardLine`).
