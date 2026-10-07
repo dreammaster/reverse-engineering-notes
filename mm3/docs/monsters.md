@@ -179,9 +179,9 @@ No gold, gems or items are given on map 106 (6Ah, the arena).  The dead monster 
 
 Turn order (`setSpeedTable` `4B5AF`, `nextChar` `4AFAB`, `charsCantAct` `4AF57`; inferred from the calls): at the start of a round the party members (by `getStat(char, speed)`) and the up to three visible monster groups (by `MONSPD`) are put in a table sorted by speed (arrays at DGROUP `AD54h` and a 24-byte companion); `nextChar` hands out the next acting character (`highlightChar`) and, when the next entry is a monster group, runs `doMonsterTurn` for it (`byte_2883F` = current party slot, FFh = none yet); characters whose `worstCondition` makes them unable to act are skipped (`charsCantAct` tests the condition class with a 5-way switch on `worstCondition - 0Bh`) and `checkPartyDead` runs after every monster turn.
 
-## The Arena (`arenaEvent`, `3E113`; event `DoTownEvent` building for map 106)
+## The Arena (`arenaEvent`, `3E113`)
 
 `combat.m` / "The Arena": the event is called with a difficulty value `d`.  It fills the live monster table (`Maze_mon*` arrays) with fresh monsters in the 6..12 x 6..12 area of the arena map (map 106, 6Ah):
 a first group of `rnd(1, party size)` monsters of type `d` (the chosen opponent), a second group of `rnd(1, party size)` monsters of a random type `rnd(1, d - 1)` (capped at 80), a third group of type `rnd(1, d - 1) / 2` and so on; picture
-files are loaded for each type with `sprintf("%s.mon", MON_PIC_NAMES[type])`.  After the fight the "%u Arena Wins" award counter (award 21) is incremented; no loot is paid in the arena (see `attack2`).
+files are loaded for each type with `sprintf("%s.mon", MON_PIC_NAMES[type])`.  No loot is paid on map 106 (see `attack2`); the award text "%u Arena Wins" (award 21) probably counts victories here but the increment was not located.
 (Structure by code reading; the exact number of groups and the reward amounts were not traced.)
