@@ -33,4 +33,10 @@ public:
 	// a file (the walking sound it started with TSoundInterface::Play()). Not reversed
 	// beyond that call shape, so it is a plain method here.
 	void StopSound(const wxFileName &file);
+	// Confirmed call shapes only (THScene::OnEvent(), Deponia_Linux.asm lines 219546-219588):
+	// the virtuals at slots 0xD8 and 0xE0 of the sound manager that are called around playing
+	// a scene's new background music - the first with nothing, the second with (4, 3000, 0).
+	// Not reversed (the sound base class is still `todo`), named by their slots.
+	virtual void Slot0xD8();
+	virtual void Slot0xE0(int kind, int milliseconds, bool flag);
 };

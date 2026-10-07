@@ -2,6 +2,7 @@
 
 #include "AppGlobals.h"
 #include "TGCharacter.h"
+#include "THScene.h"
 #include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
@@ -13,8 +14,8 @@ static TGameControl *gameControl() {
 }
 
 TSceneControl::TSceneControl() {
-	_currentScene = new TGScene();
-	_oldScene = new TGScene();
+	_currentScene = new THScene();
+	_oldScene = new THScene();
 }
 
 TSceneControl::~TSceneControl() {

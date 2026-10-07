@@ -10,12 +10,10 @@
 // concrete TGScene subclass, by the same `operator new` + default-ctor
 // shape as THCharacter's own relationship to TGCharacter - Deponia_Linux.
 // asm lines 60E93A-60E966) rather than a TGScene by value, as the
-// manifest's original guess had it. Modeled here as plain `TGScene*`
-// instead of introducing a near-empty THScene subclass, since nothing this
-// class does needs anything beyond TGScene's own confirmed interface
-// (IsMenu()/GetRef()/SetRef()/GetScrollPos()/Draw()) - THScene's own extra
-// behavior (e.g. RegisterEvents(), called from ToScene()) isn't reversed
-// and isn't needed here.
+// manifest's original guess had it. They are kept as `TGScene*`, since
+// everything this class does goes through TGScene's own confirmed
+// interface (IsMenu()/GetRef()/SetRef()/GetScrollPos()/Draw()); THScene's
+// own RegisterEvents() is what ToScene() will call.
 //
 // ToScene() is the actual scene-transition implementation (sound handling,
 // swapping the current/old scene pointers, registering the new scene's

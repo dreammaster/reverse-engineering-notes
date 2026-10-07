@@ -3245,6 +3245,19 @@ follows visibility and scale changes.
 - `TGInterface::GetPlaceHolder()` is only a call-shape stub for now (null) until
   `TGInterface` itself is reconstructed.
 
+## THScene and TGActionArea
+
+`THScene` (asm 219228-219860) is the scene the game creates: a `TGScene` that is also a
+`TEventHandlerInterface` (second vtable at +0x378) and follows the scene's data object:
+brightness (kept in 0..100, also in the data), the current way system (every character of
+the scene walks on the new one), scrolling on the edges, the lightmap, the scrollable
+area, and the music (a change of volume or balance plays the music again with the new
+values through the sound manager's `PlaySound`; a new music file is preceded by the sound
+manager's virtual at slot 0xD8 and followed by the one at 0xE0 with `(4, 3000, false)`
+- both only call shapes, named by their slots). `TSceneControl` now creates `THScene`s.
+`TGActionArea` (asm 247238-247290) is a `THButton` by another name, like `TGPlaceHolder`;
+header-only. `TGScene`'s data reference and brightness are protected for `THScene`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

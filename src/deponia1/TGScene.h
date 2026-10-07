@@ -140,6 +140,12 @@ public:
 	static void ClearActionAreas();
 	static std::list<TSceneActionArea *> *GetActionAreas(const TVisObjRef &scene);
 
+protected:
+	// Confirmed protected-by-need (THScene reads the data object at +0x48 and sets the
+	// brightness, asm lines 219228-219640): moved up from private.
+	TVisObjRef _ref;
+	float _brightness = 1.0f;
+
 private:
 	static std::uint32_t objectKey(const TVisObjRef &ref);
 	int visibleSavegameEnd() const;
@@ -148,8 +154,6 @@ private:
 
 	static std::unordered_map<int, std::list<TSceneActionArea *> *> s_sceneActionAreas;
 
-	TVisObjRef _ref;
-	float _brightness = 1.0f;
 	TPictureIO _background;
 	TPictureIO _lightmap;
 	float _lightmapScaleX = 0.0f;

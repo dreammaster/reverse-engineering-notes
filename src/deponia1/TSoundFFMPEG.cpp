@@ -11,3 +11,9 @@ void TSoundFFMPEG::PlaySound(const wxFileName &/*file*/, int /*volume*/, int /*p
 
 void TSoundFFMPEG::StopSound(const wxFileName &/*file*/) {
 }
+
+void TSoundFFMPEG::Slot0xD8() {
+}
+
+void TSoundFFMPEG::Slot0xE0(int /*kind*/, int /*milliseconds*/, bool /*flag*/) {
+}
