@@ -47,4 +47,4 @@ Each effect is therefore a few dozen bytes of the effects command stream describ
 ### `BLASTER.DRV` start-up (disassembled; why `MM3.CFG` needs no IRQ)
 
 API entry 0 (`init(port)`): stores the DSP base port (the 16-bit value from `MM3.CFG`), hooks the **timer interrupt** (writes its handler at `5CAh` into the INT 08h vector at 0000:0020h, saving the old one) and reprograms PIT channel 0 with divisor `4006h` (about 72.8 Hz), then initialises the FM chip registers through the OPL port `388h` (`word_110`; the music engine is the same as in `ADLIB.DRV`) and finally sends DSP command `D1h` (speaker on) to `port + 0Ch` after waiting for the write-ready bit.
-Because everything runs from the timer tick (PCM is written by programmed I/O, not DMA), no sound-card IRQ or DMA channel is ever used, which is why the configuration file stores only the port.  API entry 1 (`restore`) puts the old INT 08h vector back.
+The start-up code uses neither a sound-card IRQ nor DMA (everything is driven from the timer tick; the PCM path itself was not read), which is consistent with the configuration file storing only the port.  API entry 1 (`restore`) puts the old INT 08h vector back.
