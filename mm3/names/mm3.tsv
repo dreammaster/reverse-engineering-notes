@@ -239,11 +239,11 @@
 22524	allocFar	(size) -> far pointer in dx:ax (by use in readSaveHeader/sub_435A0)
 226C6	writeResource	(name, far buffer): writes a buffer into the open cc member of that name (used to save maze pages/evt/bin)
 24ECC	rnd	rnd(lo, hi)
-24F53	vdrv_30	video module API 30h (not identified)
+24F53	vdrv_30_init	API 30h: module initialiser called by sub_24F1A with the game callback table (seg007:44h, :250h)
 24F65	vdrv_0C_showRaw	API 0Ch: loads a 320x200 raw image (name pointer) and displays it (control.raw, logy5.raw)
 24F6F	vdrv_21_loadSprites	API 21h: loads a .pic/.icn/.fac/.out/.til by name, returns far pointer in dx:ax
 24F79	vdrv_24_freeSprites	API 24h: releases a loaded sprite resource
-24F83	vdrv_27_showScreen	API 27h: takes a screen/background pointer (+0/1 flag)
+24F83	vdrv_27_setCursor	API 27h: installs the mouse cursor sprite (sprite set far pointer + frame) and range (was misnamed showScreen)
 24F8D	vdrv_18_getMouse	API 18h: writes the mouse x, y (far ptrs) and returns the button state
 24F97	vdrv_03_hideMouse	API 03h: hides the mouse cursor
 24FA1	vdrv_1E_openWindow	API 1Eh (612 bytes): opens a text window (10 args: rectangle, colours, text pointer; window stack of 7)
@@ -254,7 +254,7 @@
 24FD3	vdrv_1B_animateCursor	API 1Bh: advances/draws the mouse cursor animation (called while waiting for input)
 24FDD	loadResourceByName	takes a name (DGROUP near ptr), returns far pointer to the loaded cc member (dx:ax)
 24FF2	vdrv_00_transition	API 00h: screen copy/transition taking a far pointer
-24FFB	vdrv_2A	API 2Ah (375 bytes; called with a far string pointer in the intro)
+24FFB	vdrv_2A_starfield	API 2Ah: 74-particle starfield/comet transition effect with a far callback (intro and screen transitions)
 2500F	ccOpen	(by use in readSaveHeader) opens the .cc file named by the argument; non-zero = failure
 25024	ccClose	(by use)
 25032	ccSeek	(by use) seek in the open cc file

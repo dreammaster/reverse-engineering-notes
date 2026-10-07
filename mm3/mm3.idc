@@ -11984,7 +11984,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X24F43);
 	op_stkvar	(x,	1);
 	create_insn	(0X24F53);
-	set_name	(0X24F53,	"vdrv_30");
+	set_name	(0X24F53,	"vdrv_30_init");
 	create_byte	(0X24F5D);
 	make_array	(0X24F5D,	0X6);
 	create_word	(0X24F63);
@@ -11995,7 +11995,7 @@ static Bytes_2(void) {
 	create_insn	(0X24F79);
 	set_name	(0X24F79,	"vdrv_24_freeSprites");
 	create_insn	(0X24F83);
-	set_name	(0X24F83,	"vdrv_27_showScreen");
+	set_name	(0X24F83,	"vdrv_27_setCursor");
 	create_insn	(0X24F8D);
 	set_name	(0X24F8D,	"vdrv_18_getMouse");
 	create_insn	(0X24F97);
@@ -12021,7 +12021,7 @@ static Bytes_2(void) {
 	create_insn	(0X24FF2);
 	set_name	(0X24FF2,	"vdrv_00_transition");
 	create_insn	(0X24FFB);
-	set_name	(0X24FFB,	"vdrv_2A");
+	set_name	(0X24FFB,	"vdrv_2A_starfield");
 	create_insn	(0X25005);
 	create_insn	(0X2500F);
 	set_name	(0X2500F,	"ccOpen");
@@ -14027,6 +14027,7 @@ static Bytes_2(void) {
 	create_insn	(0X281A8);
 	create_insn	(0X281AD);
 	create_insn	(0X281B2);
+	set_name	(0X281B2,	"j_setWrapModeForMap");
 	create_insn	(0X281B7);
 	set_name	(0X281B7,	"j_controlPanel");
 	create_insn	(0X281BC);
@@ -14748,10 +14749,6 @@ static Bytes_2(void) {
 	set_cmt	(0X29551,	"10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)",	0);
 	set_name	(0X29551,	"BASE_HP_BY_CLASS");
 	create_byte	(0X29556);
-	create_word	(0X2956F);
-	create_word	(0X29571);
-	create_strlit	(0X29573,	0X1A);
-	set_name	(0X29573,	"aUsingExpandedM");
 }
 
 //------------------------------------------------------------------------
@@ -14761,6 +14758,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X2956F);
+	create_word	(0X29571);
+	create_strlit	(0X29573,	0X1A);
+	set_name	(0X29573,	"aUsingExpandedM");
 	create_strlit	(0X2958D,	0X1A);
 	set_name	(0X2958D,	"aUsingExtendedM");
 	create_strlit	(0X295A7,	0X26);
@@ -25512,6 +25513,7 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(0X434A6);
 	create_insn	(0X434D6);
+	set_name	(0X434D6,	"setWrapModeForMap");
 	create_insn	(x=0X434DA);
 	op_stkvar	(x,	1);
 	create_insn	(0X434F4);
@@ -28466,9 +28468,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X473C2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473C5,	"int",	0);
-	create_insn	(x=0X473C6);
-	op_stkvar	(x,	1);
-	set_cmt	(0X473C9,	"char",	0);
 }
 
 //------------------------------------------------------------------------
@@ -28478,6 +28477,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X473C6);
+	op_stkvar	(x,	1);
+	set_cmt	(0X473C9,	"char",	0);
 	create_insn	(x=0X473CA);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473CD,	"char",	0);
@@ -33501,10 +33503,6 @@ static Bytes_6(void) {
 	set_cmt	(0X4F371,	"s",	0);
 	create_insn	(x=0X4F377);
 	op_hex		(x,	1);
-	create_insn	(x=0X4F381);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4F386);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -33514,6 +33512,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4F381);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4F386);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4F393);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F39D);
@@ -37911,7 +37913,7 @@ static Functions_0(void) {
 	set_frame_size(0X24F1A, 0, 2, 0);
 	add_func    (0X24F53,0X24F5D);
 	set_func_flags(0X24F53,0x5402);
-	set_func_cmt(0X24F53,	"video module API 30h (not identified)", 0);
+	set_func_cmt(0X24F53,	"API 30h: module initialiser called by sub_24F1A with the game callback table (seg007:44h, :250h)", 0);
 	set_frame_size(0X24F53, 0, 0, 0);
 	add_func    (0X24F65,0X24F6F);
 	set_func_flags(0X24F65,0x5402);
@@ -37927,7 +37929,7 @@ static Functions_0(void) {
 	set_frame_size(0X24F79, 0, 0, 0);
 	add_func    (0X24F83,0X24F8D);
 	set_func_flags(0X24F83,0x5402);
-	set_func_cmt(0X24F83,	"API 27h: takes a screen/background pointer (+0/1 flag)", 0);
+	set_func_cmt(0X24F83,	"API 27h: installs the mouse cursor sprite (sprite set far pointer + frame) and range (was misnamed showScreen)", 0);
 	set_frame_size(0X24F83, 0, 0, 0);
 	add_func    (0X24F8D,0X24F97);
 	set_func_flags(0X24F8D,0x5402);
@@ -37971,7 +37973,7 @@ static Functions_0(void) {
 	set_frame_size(0X24FF2, 0, 0, 0);
 	add_func    (0X24FFB,0X25005);
 	set_func_flags(0X24FFB,0x5402);
-	set_func_cmt(0X24FFB,	"API 2Ah (375 bytes; called with a far string pointer in the intro)", 0);
+	set_func_cmt(0X24FFB,	"API 2Ah: 74-particle starfield/comet transition effect with a far callback (intro and screen transitions)", 0);
 	set_frame_size(0X24FFB, 0, 0, 0);
 	add_func    (0X2500F,0X25024);
 	set_func_flags(0X2500F,0x5412);
@@ -38570,7 +38572,7 @@ static Functions_0(void) {
 	set_func_flags(0X281AD,0x5482);
 	set_frame_size(0X281AD, 0, 0, 0);
 	add_func    (0X281B2,0X281B7);
-	set_func_flags(0X281B2,0x5482);
+	set_func_flags(0X281B2,0x54c2);
 	set_frame_size(0X281B2, 0, 0, 0);
 	add_func    (0X281B7,0X281BC);
 	set_func_flags(0X281B7,0x54c2);
@@ -39542,6 +39544,10 @@ static Functions_0(void) {
 	set_func_flags(0X416C7,0x5412);
 	set_frame_size(0X416C7, 0XA, 2, 0);
 	define_local_var(0X416C7, 0X416F1, "[bp-0XA]", "buffer");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X416F1,0X416FF);
 	set_func_flags(0X416F1,0x5412);
 	set_frame_size(0X416F1, 0, 2, 0);
@@ -39549,10 +39555,6 @@ static Functions_0(void) {
 	set_func_flags(0X416FF,0x5412);
 	set_func_cmt(0X416FF,	"\"Too dangerous to rest here!\" ... \"8 hours pass.  Rest complete.\"", 0);
 	set_frame_size(0X416FF, 0XE, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X418F3,0X41991);
 	set_func_flags(0X418F3,0x5412);
 	set_frame_size(0X418F3, 0X4, 2, 0);
@@ -39632,6 +39634,7 @@ static Functions_1(void) {
 	set_frame_size(0X434A6, 0, 2, 0);
 	add_func    (0X434D6,0X43593);
 	set_func_flags(0X434D6,0x5412);
+	set_func_cmt(0X434D6,	"sets Maze_wrapMode = 1 (outdoor map: 10-minute steps, drawViewOutdoors, no bash) for maps 41-104 and >106, 0 otherwise (called with the map number while loading)", 0);
 	set_frame_size(0X434D6, 0X2, 2, 0);
 	add_func    (0X435A0,0X43698);
 	set_func_flags(0X435A0,0x5412);

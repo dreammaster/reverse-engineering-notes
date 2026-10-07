@@ -24,10 +24,10 @@ is loaded into the database as segment `vdrv` (`60000h`, `ida_scripts/load_drive
 | `1Eh` | `vdrv_1E_openWindow` | open a text window (rectangle, colours, text); window stack of 7 |
 | `21h` | `vdrv_21_loadSprites` | load a sprite resource by name (returns a far pointer) |
 | `24h` | `vdrv_24_freeSprites` | free it |
-| `27h` | `vdrv_27_showScreen` | draw a loaded background/screen |
-| `2Ah` | `vdrv_2A` | not identified (375 bytes) |
-| `2Dh` | `vdrv_2D_printText` | print a string with the in-text control codes (`03` + `c` centre, `0B nnn` row, `09 nnn` column, `l`/`r` alignment, ...) |
-| `30h` | `vdrv_30` | not identified |
+| `27h` | `vdrv_27_setCursor` | install the mouse cursor sprite (far pointer to a sprite set + frame), reset the mouse driver (`int 33h`) and set its range; the earlier name `showScreen` was wrong |
+| `2Ah` | `vdrv_2A_starfield` | 74-particle starfield / comet transition effect driven by a far callback (intro, transitions) |
+| `2Dh` | `vdrv_2D_printText` | print a string with the in-text control codes; **control code `05h` + four hex digits runs a draw list**, which is how the 3D view and the party HUD are drawn (full table and the list format in `view.md`) |
+| `30h` | `vdrv_30_init` | module initialiser (called from `sub_24F1A` with the game's callback table) |
 
 The sound/music code is a separate set of drivers (`ADLIB.DRV`, `ROLAND.DRV`, `BLASTER.DRV`, `COVOX.DRV`, `TANDY.DRV`, `IBM.DRV`, `DEMO.DRV`,
 `TIMER.DRV`); `*.M` are the songs and `S1.S`-`S7.S` are **raw 8-bit unsigned PCM samples** (centre value 7Fh), not scene scripts as

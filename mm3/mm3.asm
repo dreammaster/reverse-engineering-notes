@@ -1857,7 +1857,7 @@ loc_14D50:                              ; CODE XREF: seg001:015D↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
 
 loc_14D6F:                              ; CODE XREF: seg001:01AC↓j
@@ -12300,7 +12300,7 @@ loc_19B5B:                              ; CODE XREF: runMazeEvent+54E↑j
 
 loc_19B62:                              ; CODE XREF: runMazeEvent+549↑j
                 push    [bp+var_C]
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 jmp     short loc_19B75
 ; ---------------------------------------------------------------------------
 
@@ -31492,7 +31492,7 @@ arg_4           = word ptr  0Ah
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_4]
                 push    cs
-                call    near ptr vdrv_30
+                call    near ptr vdrv_30_init
                 pop     di
                 pop     si
                 pop     bp
@@ -31505,14 +31505,14 @@ sub_24F1A       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; video module API 30h (not identified)
+; API 30h: module initialiser called by sub_24F1A with the game callback table (seg007:44h, :250h)
 
-vdrv_30         proc far                ; CODE XREF: sub_24F1A+2D↑p
+vdrv_30_init    proc far                ; CODE XREF: sub_24F1A+2D↑p
                 push    cs:word_24F63
                 mov     bp, 30h ; '0'
                 push    bp
                 retf
-vdrv_30         endp ; sp-analysis failed
+vdrv_30_init    endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 db 76h, 67h, 61h, 3 dup(0)
@@ -31559,15 +31559,15 @@ vdrv_24_freeSprites endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
-; API 27h: takes a screen/background pointer (+0/1 flag)
+; API 27h: installs the mouse cursor sprite (sprite set far pointer + frame) and range (was misnamed showScreen)
 
-vdrv_27_showScreen proc far             ; CODE XREF: seg001:0187↑P
+vdrv_27_setCursor proc far              ; CODE XREF: seg001:0187↑P
                                         ; currentTime+F↓P ...
                 push    cs:word_24F63
                 mov     ax, 27h ; '''
                 push    ax
                 retf
-vdrv_27_showScreen endp ; sp-analysis failed
+vdrv_27_setCursor endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31713,15 +31713,15 @@ vdrv_00_transition endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
-; API 2Ah (375 bytes; called with a far string pointer in the intro)
+; API 2Ah: 74-particle starfield/comet transition effect with a far callback (intro and screen transitions)
 
-vdrv_2A         proc far                ; CODE XREF: introSequence+AD↓P
+vdrv_2A_starfield proc far              ; CODE XREF: introSequence+AD↓P
                                         ; introSequence+128↓P ...
                 push    cs:word_24F63
                 mov     ax, 2Ah ; '*'
                 push    ax
                 retf
-vdrv_2A         endp ; sp-analysis failed
+vdrv_2A_starfield endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 push    cs:word_24F63
@@ -32017,7 +32017,7 @@ time            = dword ptr  6
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 lea     ax, [bp+time]
                 push    ax              ; time
@@ -33102,7 +33102,7 @@ loc_25905:                              ; CODE XREF: getCommand+446↑j
                 push    word_36FB2
                 mov     ax, 6
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33137,7 +33137,7 @@ loc_25952:                              ; CODE XREF: getCommand+450↑j
                 push    word_36FB2
                 mov     ax, 5
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33172,7 +33172,7 @@ loc_259A1:                              ; CODE XREF: getCommand+49E↑j
                 push    word_36FB2
                 mov     ax, 1
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33207,7 +33207,7 @@ loc_259EF:                              ; CODE XREF: getCommand+4EC↑j
                 push    word_36FB2
                 mov     ax, 2
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33242,7 +33242,7 @@ loc_25A3D:                              ; CODE XREF: getCommand+53A↑j
                 push    word_36FB2
                 mov     ax, 4
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33277,7 +33277,7 @@ loc_25A8A:                              ; CODE XREF: getCommand+588↑j
                 push    word_36FB2
                 mov     ax, 3
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 0ACCCh
@@ -33306,7 +33306,7 @@ loc_25AD9:                              ; CODE XREF: getCommand+43E↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
 
 loc_25AF0:                              ; CODE XREF: getCommand+621↑j
@@ -36768,16 +36768,7 @@ sub_281AD       proc far                ; CODE XREF: mazeUpdateSlot+1EF↑P
                 jmp     sub_430A8
 sub_281AD       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_281B2       proc far                ; CODE XREF: runMazeEvent+55D↑P
-                                        ; sub_37CBB+41↓P ...
-                jmp     sub_434D6
-sub_281B2       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_setWrapModeForMap. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_controlPanel. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -50277,7 +50268,7 @@ loc_3798F:                              ; CODE XREF: sub_378C0+B7↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 mov     ax, offset aDelBoss ; "del boss.$$$"
                 push    ax              ; command
@@ -50743,7 +50734,7 @@ loc_37CEB:                              ; CODE XREF: sub_37CBB+1D↑j
                 mov     al, Party_map
                 mov     ah, 0
                 push    ax
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
 
 loc_37D02:                              ; CODE XREF: sub_37CBB+39↑j
@@ -52577,7 +52568,7 @@ loc_388E9:                              ; CODE XREF: introSequence+31↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 4
@@ -52640,7 +52631,7 @@ loc_389C2:                              ; CODE XREF: introSequence+10D↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52692,7 +52683,7 @@ loc_38A17:                              ; CODE XREF: introSequence+169↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52732,7 +52723,7 @@ loc_38A5F:                              ; CODE XREF: introSequence+1B1↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 2
@@ -52799,7 +52790,7 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 4
@@ -52902,7 +52893,7 @@ loc_38BE5:                              ; CODE XREF: introSequence+323↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -52937,7 +52928,7 @@ loc_38C24:                              ; CODE XREF: introSequence+39D↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -52975,7 +52966,7 @@ loc_38C71:                              ; CODE XREF: introSequence+3C3↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53011,7 +53002,7 @@ loc_38CB8:                              ; CODE XREF: introSequence+40A↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53045,7 +53036,7 @@ loc_38CF3:                              ; CODE XREF: introSequence+445↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53085,7 +53076,7 @@ loc_38D44:                              ; CODE XREF: introSequence+496↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53123,7 +53114,7 @@ loc_38D88:                              ; CODE XREF: introSequence+4DA↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53150,7 +53141,7 @@ loc_38DB1:                              ; CODE XREF: introSequence+503↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53197,7 +53188,7 @@ loc_38E0A:                              ; CODE XREF: introSequence+55C↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -53237,7 +53228,7 @@ loc_38E52:                              ; CODE XREF: introSequence+5A4↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -53277,7 +53268,7 @@ loc_38E9A:                              ; CODE XREF: introSequence+5EC↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -53321,7 +53312,7 @@ loc_38EEC:                              ; CODE XREF: introSequence+63E↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -53346,7 +53337,7 @@ loc_38F22:                              ; CODE XREF: introSequence+69E↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 push    cs
@@ -53393,7 +53384,7 @@ loc_38F73:                              ; CODE XREF: introSequence+6C5↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -53450,7 +53441,7 @@ loc_38F98:                              ; CODE XREF: introSequence+6BC↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 xor     si, si
@@ -53461,7 +53452,7 @@ loc_39022:                              ; CODE XREF: introSequence+7C2↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -53537,7 +53528,7 @@ loc_390A9:                              ; CODE XREF: introSequence+7D7↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53581,7 +53572,7 @@ loc_390F7:                              ; CODE XREF: introSequence+8C8↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -53667,7 +53658,7 @@ loc_391AD:                              ; CODE XREF: introSequence+8DD↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     si
@@ -53700,7 +53691,7 @@ loc_391EC:                              ; CODE XREF: introSequence+93E↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53803,7 +53794,7 @@ loc_3928B:                              ; CODE XREF: introSequence+A20↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     si
@@ -53831,7 +53822,7 @@ loc_392E3:                              ; CODE XREF: introSequence+A35↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53916,7 +53907,7 @@ loc_39376:                              ; CODE XREF: introSequence+A8C↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -53948,7 +53939,7 @@ loc_393AB:                              ; CODE XREF: introSequence+B24↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -54055,7 +54046,7 @@ loc_3943C:                              ; CODE XREF: protectionHandler+2D↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -58537,7 +58528,7 @@ loc_3B8A0:                              ; CODE XREF: endingCutscene+1F06↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 mov     ax, 40h ; '@'
@@ -58564,7 +58555,7 @@ loc_3B987:                              ; CODE XREF: endingCutscene+1FF5↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     si
@@ -58594,7 +58585,7 @@ loc_3B9C5:                              ; CODE XREF: endingCutscene+2033↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     [bp+var_4]
@@ -58609,7 +58600,7 @@ loc_3B9E7:                              ; CODE XREF: endingCutscene+2055↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     si
@@ -58668,7 +58659,7 @@ loc_3BA67:                              ; CODE XREF: endingCutscene+2092↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 xor     di, di
@@ -58718,7 +58709,7 @@ loc_3BAC0:                              ; CODE XREF: endingCutscene+212E↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 inc     di
@@ -58804,7 +58795,7 @@ loc_3BB5F:                              ; CODE XREF: endingCutscene+21CD↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
                 or      di, di
@@ -58842,7 +58833,7 @@ loc_3BBBA:                              ; CODE XREF: endingCutscene+2228↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A
+                call    vdrv_2A_starfield
                 pop     cx
                 pop     cx
 
@@ -61620,7 +61611,7 @@ loc_3CF0B:                              ; CODE XREF: sub_3CE7A+8A↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 mov     al, byte_34B8C
                 mov     ah, 0
@@ -64320,7 +64311,7 @@ loc_3E06C:                              ; CODE XREF: sub_3DFB6+96↑j
                 cmp     si, 1
                 jl      short loc_3E08C
                 push    si
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
                 call    setPartyStartCell
                 call    mazeUpdateSlot
@@ -65452,7 +65443,7 @@ var_2           = word ptr -2
                 mov     al, Party_map
                 mov     ah, 0
                 push    ax
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
                 call    mazeUpdateSlot
                 cmp     Engine_mode, 0
@@ -66656,7 +66647,7 @@ loc_3F25B:                              ; CODE XREF: exploreLoop+883↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 mov     ax, 0Ah
                 push    ax
@@ -68577,7 +68568,7 @@ sub_40173       proc far                ; CODE XREF: sub_28130↑J
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 pop     bp
                 retf
@@ -71344,7 +71335,7 @@ sub_416C7       endp
 ; Attributes: bp-based frame
 
 sub_416F1       proc far                ; CODE XREF: sub_281F3↑J
-                                        ; sub_434D6+28↓p
+                                        ; setWrapModeForMap+28↓p
                 push    bp
                 mov     bp, sp
                 push    cs
@@ -72504,7 +72495,7 @@ var_2           = word ptr -2
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 call    sub_28144
                 mov     [bp+var_A], 0
@@ -72804,7 +72795,7 @@ loc_421B3:                              ; CODE XREF: controlPanel+24C↑j
                 push    ax
                 nop
                 push    cs
-                call    near ptr sub_434D6
+                call    near ptr setWrapModeForMap
                 pop     cx
                 push    ds
                 mov     ax, offset aCpanelIcn ; "cpanel.icn"
@@ -73171,7 +73162,7 @@ var_2           = word ptr -2
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 call    sub_28144
                 call    j_setButtons_41D
@@ -73428,7 +73419,7 @@ var_2           = word ptr -2
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 call    j_setButtons_41D
                 mov     ax, 6
@@ -75122,7 +75113,7 @@ sub_430A8       endp
 
 ; int __cdecl __far sub_432B9(char *format)
 sub_432B9       proc far                ; CODE XREF: sub_28180↑J
-                                        ; sub_434D6+32↓p
+                                        ; setWrapModeForMap+32↓p
 
 buffer          = byte ptr -1Ah
 src             = dword ptr -6
@@ -75405,7 +75396,7 @@ sub_4346B       endp
 ; Attributes: bp-based frame
 
 sub_434A6       proc far                ; CODE XREF: sub_281A3↑J
-                                        ; sub_434D6+24↓p
+                                        ; setWrapModeForMap+24↓p
                 push    bp
                 mov     bp, sp
                 call    j_saveMazeState
@@ -75432,9 +75423,10 @@ sub_434A6       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sets Maze_wrapMode = 1 (outdoor map: 10-minute steps, drawViewOutdoors, no bash) for maps 41-104 and >106, 0 otherwise (called with the map number while loading)
 ; Attributes: bp-based frame
 
-sub_434D6       proc far                ; CODE XREF: sub_281B2↑J
+setWrapModeForMap proc far              ; CODE XREF: j_setWrapModeForMap↑J
                                         ; controlPanel+29B↑p
 
 arg_0           = word ptr  6
@@ -75454,11 +75446,11 @@ arg_0           = word ptr  6
                 jmp     short loc_434F9
 ; ---------------------------------------------------------------------------
 
-loc_434F4:                              ; CODE XREF: sub_434D6+B↑j
-                                        ; sub_434D6+10↑j ...
+loc_434F4:                              ; CODE XREF: setWrapModeForMap+B↑j
+                                        ; setWrapModeForMap+10↑j ...
                 mov     Maze_wrapMode, 0
 
-loc_434F9:                              ; CODE XREF: sub_434D6+1C↑j
+loc_434F9:                              ; CODE XREF: setWrapModeForMap+1C↑j
                 push    cs
                 call    near ptr sub_434A6
                 push    cs
@@ -75484,7 +75476,7 @@ loc_434F9:                              ; CODE XREF: sub_434D6+1C↑j
                 jmp     short loc_4355C
 ; ---------------------------------------------------------------------------
 
-loc_43533:                              ; CODE XREF: sub_434D6+8B↓j
+loc_43533:                              ; CODE XREF: setWrapModeForMap+8B↓j
                 mov     ax, 0ACD6h
                 push    ax
                 mov     al, byte_36FB1
@@ -75504,12 +75496,12 @@ loc_43533:                              ; CODE XREF: sub_434D6+8B↓j
                 pop     cx
                 inc     byte_36FB1
 
-loc_4355C:                              ; CODE XREF: sub_434D6+5B↑j
+loc_4355C:                              ; CODE XREF: setWrapModeForMap+5B↑j
                 cmp     byte_36FB1, 5
                 jl      short loc_43533
 
-loc_43563:                              ; CODE XREF: sub_434D6+4D↑j
-                                        ; sub_434D6+54↑j
+loc_43563:                              ; CODE XREF: setWrapModeForMap+4D↑j
+                                        ; setWrapModeForMap+54↑j
                 mov     al, 0
                 mov     byte_37710, al
                 cbw
@@ -75530,7 +75522,7 @@ loc_43563:                              ; CODE XREF: sub_434D6+4D↑j
                 pop     si
                 pop     bp
                 retf
-sub_434D6       endp
+setWrapModeForMap endp
 
 ovl06           ends
 
@@ -76956,7 +76948,7 @@ loc_43F7E:                              ; CODE XREF: giveTreasure+166↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    word_376FA
                 push    word_376F8
@@ -79793,7 +79785,7 @@ loc_45465:                              ; CODE XREF: sub_45431+2E↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
 
 loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
@@ -83383,7 +83375,7 @@ var_2           = word ptr -2
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, offset aCreateIcn ; "create.icn"
@@ -85195,7 +85187,7 @@ loc_47D7A:                              ; CODE XREF: sub_47B8D+1E1↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 4401h
@@ -85256,7 +85248,7 @@ loc_47DFD:                              ; CODE XREF: sub_47B8D+244↑j
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 mov     al, byte_34B8C
                 mov     ah, 0
@@ -88576,7 +88568,7 @@ arg_8           = word ptr  0Eh
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 xor     si, si
                 jmp     short loc_49943
@@ -96310,7 +96302,7 @@ loc_4CD8C:                              ; CODE XREF: spellLloydsBeacon+E3↑j
                 mov     al, [bx+77h]
                 mov     ah, 0
                 push    ax
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
 
 loc_4CDBD:                              ; CODE XREF: spellLloydsBeacon+10E↑j
@@ -96905,7 +96897,7 @@ loc_4D202:                              ; CODE XREF: Spell_41_NaturesGate+16↑j
                 mov     al, [bx+4BE1h]
                 mov     ah, 0
                 push    ax
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
                 mov     ax, 4D9Ah
                 push    ax
@@ -97660,7 +97652,7 @@ loc_4D705:                              ; CODE XREF: Spell_53_TownPortal+88↓j
                 pop     cx
                 call    sub_28117
                 push    si
-                call    sub_281B2
+                call    j_setWrapModeForMap
                 pop     cx
                 mov     ax, 4D9Ah
                 push    ax
@@ -103833,7 +103825,7 @@ arg_0           = word ptr  6
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 call    MemFree
                 cmp     word_28873, 1Eh
@@ -104223,7 +104215,7 @@ loc_50642:                              ; CODE XREF: characterInfoInventory+4E�
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 push    ds
                 mov     ax, 8033h
@@ -106797,7 +106789,7 @@ var_2           = word ptr -2
                 push    word_36FB2
                 xor     ax, ax
                 push    ax
-                call    vdrv_27_showScreen
+                call    vdrv_27_setCursor
                 add     sp, 6
                 mov     ax, 320h
                 push    ax              ; c
