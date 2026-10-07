@@ -262,3 +262,5 @@ Asleep, depressed, confused, paralysed, unconscious do not change attributes (th
 
 Bank: open 09:00-17:00 (`21Ch` <= minutes <= `3FCh`), checked directly in `townBank`; Tavern: open 18:00-05:00 (closed `12Ch` < minutes < `438h`); Guild, Smithy and Training grounds: closed while `Town_closed` (night, 21:00-05:00 as set by `changeTime`); Inn and Temple: no hours check was found in `townInn` / `townTemple`.
 The game starts at minute 1E0h (08:00) of day 1, year 500 (new game).  Message on a closed door: "Sorry, the <place>'s closed! Come back later" (the bank and tavern texts differ slightly).
+
+Interactive containers: `trapOrLockEvent` only reacts to eight object pictures (the picture-slot values 4, 12, 18, 20, 23, 33, 38, 40 of the object table in `data-files.md`): BLKBOX (black box), FLRSAFE (floor safe), IRONCHST (iron chest), LEATHSAC (leather sack), ORNTBOX (ornate box), STONCOFN (stone coffin), WDNCHST (wooden chest) and WOODCFN (wooden coffin). Other pictures (pits, pools, signposts...) are not containers and are handled by event scripts instead.
