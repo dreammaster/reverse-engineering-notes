@@ -13954,7 +13954,7 @@ static Bytes_2(void) {
 	create_insn	(0X28034);
 	set_name	(0X28034,	"j_ifProc");
 	create_insn	(0X28039);
-	set_name	(0X28039,	"j_trapOrLockEvent");
+	set_name	(0X28039,	"j_giveMultiTreasure");
 	create_insn	(0X2803E);
 	create_insn	(0X28043);
 	set_name	(0X28043,	"j_setValue");
@@ -21241,7 +21241,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X3D8B1);
 	op_stkvar	(x,	0);
 	create_insn	(0X3D8C9);
-	set_name	(0X3D8C9,	"trapOrLockEvent");
+	set_name	(0X3D8C9,	"giveMultiTreasure");
 	create_insn	(x=0X3D8CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X3D8D3);
@@ -39390,7 +39390,7 @@ static Functions_0(void) {
 	define_local_var(0X3D7D2, 0X3D8C9, "[bp+0XA]", "format");
 	add_func    (0X3D8C9,0X3DCE4);
 	set_func_flags(0X3D8C9,0x5412);
-	set_func_cmt(0X3D8C9,	"uses getThievery, giveCharDamage, giveTake, rnd (by callees)", 0);
+	set_func_cmt(0X3D8C9,	"GiveMulti (event opcode 20) helper formerly named trapOrLockEvent by BinDiff: with an interacted container (byte_34BB6) first runs the open procedure (trap 1/4, thievery+d20 vs page header 12h), then pays up to three (mode, value) entries: 21 item id, 34 gold, 35 gems, 66 random item of level, 67 spell; other modes show the message", 0);
 	set_frame_size(0X3D8C9, 0X10, 2, 0);
 	add_func    (0X3DD20,0X3DF79);
 	set_func_flags(0X3DD20,0x5412);
@@ -39549,6 +39549,10 @@ static Functions_0(void) {
 	set_func_flags(0X416FF,0x5412);
 	set_func_cmt(0X416FF,	"\"Too dangerous to rest here!\" ... \"8 hours pass.  Rest complete.\"", 0);
 	set_frame_size(0X416FF, 0XE, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X418F3,0X41991);
 	set_func_flags(0X418F3,0x5412);
 	set_frame_size(0X418F3, 0X4, 2, 0);
@@ -39565,10 +39569,6 @@ static Functions_0(void) {
 	set_frame_size(0X41B2B, 0X138, 2, 0);
 	define_local_var(0X41B2B, 0X41CD9, "[bp-0X134]", "buffer");
 	define_local_var(0X41B2B, 0X41CD9, "[bp+0X6]", "format");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X41CED,0X41EF1);
 	set_func_flags(0X41CED,0x5412);
 	set_func_cmt(0X41CED,	"loadSavedGame + saveMazeState (by callees)", 0);

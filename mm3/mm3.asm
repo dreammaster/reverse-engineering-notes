@@ -6341,7 +6341,7 @@ itemScan        endp
 ; Attributes: bp-based frame
 
 getCurrentLevel proc far                ; CODE XREF: readSaveHeader+13C↓P
-                                        ; trapOrLockEvent+13D↓P ...
+                                        ; giveMultiTreasure+13D↓P ...
 
 var_2           = word ptr -2
 arg_0           = dword ptr  6
@@ -13987,7 +13987,7 @@ loc_1A9A3:                              ; CODE XREF: runMazeEvent+1396↑j
                 mov     al, es:[bx+si+6]
                 cbw
                 push    ax
-                call    j_trapOrLockEvent
+                call    j_giveMultiTreasure
                 add     sp, 14h
                 or      ax, ax
                 jz      short loc_1AA02
@@ -36394,7 +36394,7 @@ sub_2802F       proc far                ; CODE XREF: townTavern+246↓P
 sub_2802F       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_ifProc. PRESS NUMPAD+ TO EXPAND]
-; [00000005 BYTES: COLLAPSED FUNCTION j_trapOrLockEvent. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_giveMultiTreasure. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -40632,7 +40632,7 @@ aC_6            db 3,'c'                ; DATA XREF: sub_3BE18+65↓o
                 db 2 dup(0Ah), 0, 63h, 6Fh, 6Eh, 66h, 69h, 72h, 6Dh, 32h
                 db 2Eh, 69h, 63h, 6Eh, 0, 3, 62h, 5, 25h, 70h, 0, 0Dh
                 db 3, 63h, 25h, 73h, 2 dup(0Ah), 0
-aC_7            db 3,'c'                ; DATA XREF: trapOrLockEvent+186↓o
+aC_7            db 3,'c'                ; DATA XREF: giveMultiTreasure+186↓o
                 db  0Bh
                 db  30h ; 0
                 db  31h ; 1
@@ -40672,7 +40672,7 @@ aC_7            db 3,'c'                ; DATA XREF: trapOrLockEvent+186↓o
                 db  79h ; y
                 db  2Eh ; .
                 db    0
-aC_8            db 3,'c'                ; DATA XREF: trapOrLockEvent+1F2↓o
+aC_8            db 3,'c'                ; DATA XREF: giveMultiTreasure+1F2↓o
                                         ; runMazeEvent+183E↑o
                 db  0Bh
                 db  30h ; 0
@@ -59790,7 +59790,7 @@ sub_3C1F2       endp
 
 ; int __cdecl __far giveTake(int, int, int, int, int, int, int)
 giveTake        proc far                ; CODE XREF: j_giveTake↑J
-                                        ; trapOrLockEvent+3F5↓p
+                                        ; giveMultiTreasure+3F5↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -63224,10 +63224,10 @@ inputString     endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; uses getThievery, giveCharDamage, giveTake, rnd (by callees)
+; GiveMulti (event opcode 20) helper formerly named trapOrLockEvent by BinDiff: with an interacted container (byte_34BB6) first runs the open procedure (trap 1/4, thievery+d20 vs page header 12h), then pays up to three (mode, value) entries: 21 item id, 34 gold, 35 gems, 66 random item of level, 67 spell; other modes show the message
 ; Attributes: bp-based frame
 
-trapOrLockEvent proc far                ; CODE XREF: j_trapOrLockEvent↑J
+giveMultiTreasure proc far              ; CODE XREF: j_giveMultiTreasure↑J
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -63259,7 +63259,7 @@ arg_12          = word ptr  18h
                 jmp     loc_3DAD8
 ; ---------------------------------------------------------------------------
 
-loc_3D8E3:                              ; CODE XREF: trapOrLockEvent+15↑j
+loc_3D8E3:                              ; CODE XREF: giveMultiTreasure+15↑j
                 mov     al, byte_37383
                 cbw
                 or      ax, ax
@@ -63267,7 +63267,7 @@ loc_3D8E3:                              ; CODE XREF: trapOrLockEvent+15↑j
                 jmp     loc_3DAD8
 ; ---------------------------------------------------------------------------
 
-loc_3D8EE:                              ; CODE XREF: trapOrLockEvent+20↑j
+loc_3D8EE:                              ; CODE XREF: giveMultiTreasure+20↑j
                 mov     al, byte_34BB6
                 mov     ah, 0
                 mov     dx, 0Ch
@@ -63278,7 +63278,7 @@ loc_3D8EE:                              ; CODE XREF: trapOrLockEvent+20↑j
                 mov     cx, 8
                 mov     bx, 20C8h
 
-loc_3D907:                              ; CODE XREF: trapOrLockEvent+48↓j
+loc_3D907:                              ; CODE XREF: giveMultiTreasure+48↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_A]
                 jz      short loc_3D916
@@ -63288,19 +63288,19 @@ loc_3D907:                              ; CODE XREF: trapOrLockEvent+48↓j
                 jmp     loc_3DAD8
 ; ---------------------------------------------------------------------------
 
-loc_3D916:                              ; CODE XREF: trapOrLockEvent+44↑j
+loc_3D916:                              ; CODE XREF: giveMultiTreasure+44↑j
                 jmp     word ptr cs:[bx+10h]
 ; ---------------------------------------------------------------------------
 
-loc_3D91A:                              ; CODE XREF: trapOrLockEvent+61↓j
-                                        ; trapOrLockEvent+63↓j ...
+loc_3D91A:                              ; CODE XREF: giveMultiTreasure+61↓j
+                                        ; giveMultiTreasure+63↓j ...
                 mov     [bp+var_6], 14h
                 jmp     short loc_3D937
 ; ---------------------------------------------------------------------------
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_3D923:                              ; CODE XREF: trapOrLockEvent+58↑j
+loc_3D923:                              ; CODE XREF: giveMultiTreasure+58↑j
                 mov     [bp+var_6], 2Ah ; '*'
                 jmp     short loc_3D937
 ; ---------------------------------------------------------------------------
@@ -63313,11 +63313,11 @@ loc_3D923:                              ; CODE XREF: trapOrLockEvent+58↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_3D932:                              ; CODE XREF: trapOrLockEvent+67↑j
+loc_3D932:                              ; CODE XREF: giveMultiTreasure+67↑j
                 mov     [bp+var_6], 2Bh ; '+'
 
-loc_3D937:                              ; CODE XREF: trapOrLockEvent+56↑j
-                                        ; trapOrLockEvent+5F↑j
+loc_3D937:                              ; CODE XREF: giveMultiTreasure+56↑j
+                                        ; giveMultiTreasure+5F↑j
                 inc     byte_37383
                 mov     al, byte_34BB6
                 mov     ah, 0
@@ -63335,23 +63335,23 @@ loc_3D937:                              ; CODE XREF: trapOrLockEvent+56↑j
                 jmp     loc_3DAD8
 ; ---------------------------------------------------------------------------
 
-loc_3D963:                              ; CODE XREF: trapOrLockEvent+95↑j
-                                        ; trapOrLockEvent+1E3↓j
+loc_3D963:                              ; CODE XREF: giveMultiTreasure+95↑j
+                                        ; giveMultiTreasure+1E3↓j
                 push    cs
                 call    near ptr sub_3BE18
                 mov     [bp+var_4], ax
                 cmp     ax, 0FFFFh
                 jnz     short loc_3D97A
 
-loc_3D96F:                              ; CODE XREF: trapOrLockEvent+20C↓j
+loc_3D96F:                              ; CODE XREF: giveMultiTreasure+20C↓j
                 mov     byte_37383, 0FFh
 
-loc_3D974:                              ; CODE XREF: trapOrLockEvent+3FF↓j
+loc_3D974:                              ; CODE XREF: giveMultiTreasure+3FF↓j
                 mov     ax, 1
                 jmp     loc_3DCDE
 ; ---------------------------------------------------------------------------
 
-loc_3D97A:                              ; CODE XREF: trapOrLockEvent+A4↑j
+loc_3D97A:                              ; CODE XREF: giveMultiTreasure+A4↑j
                 mov     ax, 4
                 push    ax
                 mov     ax, 1
@@ -63381,7 +63381,7 @@ loc_3D97A:                              ; CODE XREF: trapOrLockEvent+A4↑j
                 call    j_giveCharDamage
                 add     sp, 6
 
-loc_3D9BA:                              ; CODE XREF: trapOrLockEvent+C3↑j
+loc_3D9BA:                              ; CODE XREF: giveMultiTreasure+C3↑j
                 mov     ax, [bp+var_4]
                 mov     dx, 12Fh
                 imul    dx
@@ -63413,7 +63413,7 @@ loc_3D9BA:                              ; CODE XREF: trapOrLockEvent+C3↑j
                 jmp     loc_3DAAF
 ; ---------------------------------------------------------------------------
 
-loc_3D9F9:                              ; CODE XREF: trapOrLockEvent+12B↑j
+loc_3D9F9:                              ; CODE XREF: giveMultiTreasure+12B↑j
                 push    ds
                 mov     ax, [bp+var_4]
                 mov     dx, 12Fh
@@ -63494,7 +63494,7 @@ loc_3D9F9:                              ; CODE XREF: trapOrLockEvent+12B↑j
                 jmp     loc_3D963
 ; ---------------------------------------------------------------------------
 
-loc_3DAAF:                              ; CODE XREF: trapOrLockEvent+12D↑j
+loc_3DAAF:                              ; CODE XREF: giveMultiTreasure+12D↑j
                 mov     ax, [bp+var_4]
                 mov     dx, 12Fh
                 imul    dx
@@ -63513,38 +63513,38 @@ loc_3DAAF:                              ; CODE XREF: trapOrLockEvent+12D↑j
                 jmp     loc_3D96F
 ; ---------------------------------------------------------------------------
 
-loc_3DAD8:                              ; CODE XREF: trapOrLockEvent+17↑j
-                                        ; trapOrLockEvent+22↑j ...
+loc_3DAD8:                              ; CODE XREF: giveMultiTreasure+17↑j
+                                        ; giveMultiTreasure+22↑j ...
                 xor     ax, ax
                 mov     [bp+var_8], ax
                 mov     si, ax
                 jmp     loc_3DCD4
 ; ---------------------------------------------------------------------------
 
-loc_3DAE2:                              ; CODE XREF: trapOrLockEvent+410↓j
+loc_3DAE2:                              ; CODE XREF: giveMultiTreasure+410↓j
                 or      si, si
                 jnz     short loc_3DAEB
                 mov     ax, [bp+arg_0]
                 jmp     short loc_3DAF8
 ; ---------------------------------------------------------------------------
 
-loc_3DAEB:                              ; CODE XREF: trapOrLockEvent+21B↑j
+loc_3DAEB:                              ; CODE XREF: giveMultiTreasure+21B↑j
                 cmp     si, 1
                 jnz     short loc_3DAF5
                 mov     ax, [bp+arg_6]
                 jmp     short loc_3DAF8
 ; ---------------------------------------------------------------------------
 
-loc_3DAF5:                              ; CODE XREF: trapOrLockEvent+225↑j
+loc_3DAF5:                              ; CODE XREF: giveMultiTreasure+225↑j
                 mov     ax, [bp+arg_C]
 
-loc_3DAF8:                              ; CODE XREF: trapOrLockEvent+220↑j
-                                        ; trapOrLockEvent+22A↑j
+loc_3DAF8:                              ; CODE XREF: giveMultiTreasure+220↑j
+                                        ; giveMultiTreasure+22A↑j
                 mov     [bp+var_C], ax
                 mov     cx, 5
                 mov     bx, 20B4h
 
-loc_3DB01:                              ; CODE XREF: trapOrLockEvent+242↓j
+loc_3DB01:                              ; CODE XREF: giveMultiTreasure+242↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_C]
                 jz      short loc_3DB10
@@ -63554,7 +63554,7 @@ loc_3DB01:                              ; CODE XREF: trapOrLockEvent+242↓j
                 jmp     loc_3DC7B
 ; ---------------------------------------------------------------------------
 
-loc_3DB10:                              ; CODE XREF: trapOrLockEvent+23E↑j
+loc_3DB10:                              ; CODE XREF: giveMultiTreasure+23E↑j
                 jmp     word ptr cs:[bx+0Ah]
 ; ---------------------------------------------------------------------------
                 or      si, si
@@ -63564,7 +63564,7 @@ loc_3DB10:                              ; CODE XREF: trapOrLockEvent+23E↑j
                 jmp     short loc_3DB33
 ; ---------------------------------------------------------------------------
 
-loc_3DB20:                              ; CODE XREF: trapOrLockEvent+24D↑j
+loc_3DB20:                              ; CODE XREF: giveMultiTreasure+24D↑j
                 cmp     si, 1
                 jnz     short loc_3DB2D
                 mov     dx, [bp+arg_A]
@@ -63572,12 +63572,12 @@ loc_3DB20:                              ; CODE XREF: trapOrLockEvent+24D↑j
                 jmp     short loc_3DB33
 ; ---------------------------------------------------------------------------
 
-loc_3DB2D:                              ; CODE XREF: trapOrLockEvent+25A↑j
+loc_3DB2D:                              ; CODE XREF: giveMultiTreasure+25A↑j
                 mov     dx, [bp+arg_10]
                 mov     ax, [bp+arg_E]
 
-loc_3DB33:                              ; CODE XREF: trapOrLockEvent+255↑j
-                                        ; trapOrLockEvent+262↑j
+loc_3DB33:                              ; CODE XREF: giveMultiTreasure+255↑j
+                                        ; giveMultiTreasure+262↑j
                 add     word_376EA, ax
                 adc     word_376EC, dx
                 jmp     loc_3DCD3
@@ -63589,7 +63589,7 @@ loc_3DB33:                              ; CODE XREF: trapOrLockEvent+255↑j
                 jmp     short loc_3DB5D
 ; ---------------------------------------------------------------------------
 
-loc_3DB4A:                              ; CODE XREF: trapOrLockEvent+277↑j
+loc_3DB4A:                              ; CODE XREF: giveMultiTreasure+277↑j
                 cmp     si, 1
                 jnz     short loc_3DB57
                 mov     dx, [bp+arg_A]
@@ -63597,12 +63597,12 @@ loc_3DB4A:                              ; CODE XREF: trapOrLockEvent+277↑j
                 jmp     short loc_3DB5D
 ; ---------------------------------------------------------------------------
 
-loc_3DB57:                              ; CODE XREF: trapOrLockEvent+284↑j
+loc_3DB57:                              ; CODE XREF: giveMultiTreasure+284↑j
                 mov     dx, [bp+arg_10]
                 mov     ax, [bp+arg_E]
 
-loc_3DB5D:                              ; CODE XREF: trapOrLockEvent+27F↑j
-                                        ; trapOrLockEvent+28C↑j
+loc_3DB5D:                              ; CODE XREF: giveMultiTreasure+27F↑j
+                                        ; giveMultiTreasure+28C↑j
                 add     word_376F8, ax
                 adc     word_376FA, dx
                 jmp     loc_3DCD3
@@ -63614,7 +63614,7 @@ loc_3DB5D:                              ; CODE XREF: trapOrLockEvent+27F↑j
                 jle     short loc_3DB79
                 mov     byte_37710, 0Ah
 
-loc_3DB79:                              ; CODE XREF: trapOrLockEvent+2A9↑j
+loc_3DB79:                              ; CODE XREF: giveMultiTreasure+2A9↑j
                 mov     al, byte_37710
                 cbw
                 mov     dl, 0
@@ -63651,18 +63651,18 @@ loc_3DB79:                              ; CODE XREF: trapOrLockEvent+2A9↑j
                 jmp     short loc_3DBCD
 ; ---------------------------------------------------------------------------
 
-loc_3DBC0:                              ; CODE XREF: trapOrLockEvent+2F0↑j
+loc_3DBC0:                              ; CODE XREF: giveMultiTreasure+2F0↑j
                 cmp     si, 1
                 jnz     short loc_3DBCA
                 mov     al, byte ptr [bp+arg_8]
                 jmp     short loc_3DBCD
 ; ---------------------------------------------------------------------------
 
-loc_3DBCA:                              ; CODE XREF: trapOrLockEvent+2FA↑j
+loc_3DBCA:                              ; CODE XREF: giveMultiTreasure+2FA↑j
                 mov     al, byte ptr [bp+arg_E]
 
-loc_3DBCD:                              ; CODE XREF: trapOrLockEvent+2F5↑j
-                                        ; trapOrLockEvent+2FF↑j
+loc_3DBCD:                              ; CODE XREF: giveMultiTreasure+2F5↑j
+                                        ; giveMultiTreasure+2FF↑j
                 push    ax
                 mov     al, byte_37710
                 cbw
@@ -63678,7 +63678,7 @@ loc_3DBCD:                              ; CODE XREF: trapOrLockEvent+2F5↑j
                 jle     short loc_3DBED
                 mov     byte_37710, 0Ah
 
-loc_3DBED:                              ; CODE XREF: trapOrLockEvent+31D↑j
+loc_3DBED:                              ; CODE XREF: giveMultiTreasure+31D↑j
                 mov     di, 0C34Eh
                 xor     ax, ax
                 push    ax              ; int
@@ -63690,18 +63690,18 @@ loc_3DBED:                              ; CODE XREF: trapOrLockEvent+31D↑j
                 jmp     short loc_3DC0B
 ; ---------------------------------------------------------------------------
 
-loc_3DBFE:                              ; CODE XREF: trapOrLockEvent+32E↑j
+loc_3DBFE:                              ; CODE XREF: giveMultiTreasure+32E↑j
                 cmp     si, 1
                 jnz     short loc_3DC08
                 mov     al, byte ptr [bp+arg_8]
                 jmp     short loc_3DC0B
 ; ---------------------------------------------------------------------------
 
-loc_3DC08:                              ; CODE XREF: trapOrLockEvent+338↑j
+loc_3DC08:                              ; CODE XREF: giveMultiTreasure+338↑j
                 mov     al, byte ptr [bp+arg_E]
 
-loc_3DC0B:                              ; CODE XREF: trapOrLockEvent+333↑j
-                                        ; trapOrLockEvent+33D↑j
+loc_3DC0B:                              ; CODE XREF: giveMultiTreasure+333↑j
+                                        ; giveMultiTreasure+33D↑j
                 push    ax              ; char
                 call    j_generateItem
                 add     sp, 8
@@ -63751,7 +63751,7 @@ loc_3DC0B:                              ; CODE XREF: trapOrLockEvent+333↑j
 ; ---------------------------------------------------------------------------
                 mov     [bp+var_8], 1
 
-loc_3DC7B:                              ; CODE XREF: trapOrLockEvent+244↑j
+loc_3DC7B:                              ; CODE XREF: giveMultiTreasure+244↑j
                 push    [bp+arg_12]     ; int
                 or      si, si
                 jnz     short loc_3DC8A
@@ -63760,7 +63760,7 @@ loc_3DC7B:                              ; CODE XREF: trapOrLockEvent+244↑j
                 jmp     short loc_3DC9D
 ; ---------------------------------------------------------------------------
 
-loc_3DC8A:                              ; CODE XREF: trapOrLockEvent+3B7↑j
+loc_3DC8A:                              ; CODE XREF: giveMultiTreasure+3B7↑j
                 cmp     si, 1
                 jnz     short loc_3DC97
                 mov     dx, [bp+arg_A]
@@ -63768,12 +63768,12 @@ loc_3DC8A:                              ; CODE XREF: trapOrLockEvent+3B7↑j
                 jmp     short loc_3DC9D
 ; ---------------------------------------------------------------------------
 
-loc_3DC97:                              ; CODE XREF: trapOrLockEvent+3C4↑j
+loc_3DC97:                              ; CODE XREF: giveMultiTreasure+3C4↑j
                 mov     dx, [bp+arg_10]
                 mov     ax, [bp+arg_E]
 
-loc_3DC9D:                              ; CODE XREF: trapOrLockEvent+3BF↑j
-                                        ; trapOrLockEvent+3CC↑j
+loc_3DC9D:                              ; CODE XREF: giveMultiTreasure+3BF↑j
+                                        ; giveMultiTreasure+3CC↑j
                 push    dx              ; int
                 push    ax              ; int
                 or      si, si
@@ -63782,18 +63782,18 @@ loc_3DC9D:                              ; CODE XREF: trapOrLockEvent+3BF↑j
                 jmp     short loc_3DCB5
 ; ---------------------------------------------------------------------------
 
-loc_3DCA8:                              ; CODE XREF: trapOrLockEvent+3D8↑j
+loc_3DCA8:                              ; CODE XREF: giveMultiTreasure+3D8↑j
                 cmp     si, 1
                 jnz     short loc_3DCB2
                 mov     ax, [bp+arg_6]
                 jmp     short loc_3DCB5
 ; ---------------------------------------------------------------------------
 
-loc_3DCB2:                              ; CODE XREF: trapOrLockEvent+3E2↑j
+loc_3DCB2:                              ; CODE XREF: giveMultiTreasure+3E2↑j
                 mov     ax, [bp+arg_C]
 
-loc_3DCB5:                              ; CODE XREF: trapOrLockEvent+3DD↑j
-                                        ; trapOrLockEvent+3E7↑j
+loc_3DCB5:                              ; CODE XREF: giveMultiTreasure+3DD↑j
+                                        ; giveMultiTreasure+3E7↑j
                 push    ax              ; int
                 xor     ax, ax
                 xor     dx, dx
@@ -63808,33 +63808,33 @@ loc_3DCB5:                              ; CODE XREF: trapOrLockEvent+3DD↑j
                 jmp     loc_3D974
 ; ---------------------------------------------------------------------------
 
-loc_3DCCB:                              ; CODE XREF: trapOrLockEvent+3FD↑j
+loc_3DCCB:                              ; CODE XREF: giveMultiTreasure+3FD↑j
                 cmp     [bp+var_8], 0
                 jz      short loc_3DCD3
                 jmp     short loc_3DCDC
 ; ---------------------------------------------------------------------------
 
-loc_3DCD3:                              ; CODE XREF: trapOrLockEvent+272↑j
-                                        ; trapOrLockEvent+29C↑j ...
+loc_3DCD3:                              ; CODE XREF: giveMultiTreasure+272↑j
+                                        ; giveMultiTreasure+29C↑j ...
                 inc     si
 
-loc_3DCD4:                              ; CODE XREF: trapOrLockEvent+216↑j
+loc_3DCD4:                              ; CODE XREF: giveMultiTreasure+216↑j
                 cmp     si, 3
                 jge     short loc_3DCDC
                 jmp     loc_3DAE2
 ; ---------------------------------------------------------------------------
 
-loc_3DCDC:                              ; CODE XREF: trapOrLockEvent+408↑j
-                                        ; trapOrLockEvent+40E↑j
+loc_3DCDC:                              ; CODE XREF: giveMultiTreasure+408↑j
+                                        ; giveMultiTreasure+40E↑j
                 xor     ax, ax
 
-loc_3DCDE:                              ; CODE XREF: trapOrLockEvent+AE↑j
+loc_3DCDE:                              ; CODE XREF: giveMultiTreasure+AE↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-trapOrLockEvent endp
+giveMultiTreasure endp
 
 ; ---------------------------------------------------------------------------
                 adc     ax, 2200h
