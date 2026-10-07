@@ -27,13 +27,19 @@ constexpr int kSignalPrintTextLines = 0x2004;
 // (TSText.cpp). Named by what the text does with the answer; the sound manager itself is
 // not reconstructed. They take the speech file in `speechFile`; the answer has the same type
 // as the question and its result in `value` (the fields start at -1, as in the original).
-constexpr int kSignalSpeechIsPlaying = 0x1000;   // value != 0: the file is still playing
-constexpr int kSignalSpeechDisabled = 0x1003;    // value != 0: the player has speech turned off
-constexpr int kSignalSpeechLoad = 0x1005;        // the file is made ready; value: what to play it with
-constexpr int kSignalSpeechPlay = 0x1008;        // file; value: from kSignalSpeechLoad, value2: the
-// balance, value3: 0, value4: 2
-constexpr int kSignalSpeechStop = 0x100F;        // the file stops
-constexpr int kSignalSpeechEnabled = 0x1012;     // value != 0: speech can be played for a text
+constexpr int kSignalSoundIsPlaying = 0x1000;    // value != 0: the file is still playing
+constexpr int kSignalSoundFlag = 0x1001;         // value: a flag of the sound system (not used by the texts)
+constexpr int kSignalSoundMute = 0x1002;         // value != 0: all sounds are muted (no answer)
+constexpr int kSignalSoundsDisabled = 0x1003;    // value != 0: the player has sounds (and speech) turned off
+constexpr int kSignalMusicVolume = 0x1004;       // value: the volume of the music (percent)
+constexpr int kSignalSpeechVolume = 0x1005;      // value: the volume of the speech (what to play it with)
+constexpr int kSignalMovieVolume = 0x1006;       // value: the volume of the movies
+constexpr int kSignalGlobalVolume = 0x1007;      // value: the volume of everything
+constexpr int kSignalSoundPlay = 0x1008;         // file; value: the volume, value2: the balance,
+// value3: != 0 to loop, value4: the kind of sound (TSoundTypeEnum; 2 for the speech)
+constexpr int kSignalSoundStop = 0x100F;         // the file stops
+constexpr int kSignalSoundFade = 0x1010;         // value != 0: the fades go on (answers as kSignalSoundSystemReady)
+constexpr int kSignalSoundSystemReady = 0x1012;  // value != 0: the sound system works (speech can be played)
 
 struct TSignalData {
 	int type = 0;

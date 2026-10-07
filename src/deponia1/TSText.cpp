@@ -60,7 +60,7 @@ void TSText::ClearText() {
 			TSignalData stop;
 			TSignalData ignored;
 
-			stop.type = kSignalSpeechStop;
+			stop.type = kSignalSoundStop;
 			stop.speechFile = _speechFile.GetFullPath();
 			_slot->Signal(stop, ignored);
 		}
@@ -97,7 +97,7 @@ void TSText::CalculateCurrentText() {
 
 	TSignalData answer;
 
-	if (!ask(_slot, kSignalSpeechIsPlaying, _speechFile, answer)) {
+	if (!ask(_slot, kSignalSoundIsPlaying, _speechFile, answer)) {
 		x_assert(false, "false", kSourceFile, 0x243);
 		return;
 	}
@@ -146,7 +146,7 @@ void TSText::CalculateRestText() {
 
 		if (_speech) {
 			TSignalData answer;
-			bool speechEnabled = (_slot && ask(_slot, kSignalSpeechEnabled, _speechFile, answer) && answer.value != 0);
+			bool speechEnabled = (_slot && ask(_slot, kSignalSoundSystemReady, _speechFile, answer) && answer.value != 0);
 
 			if (TComposedFileManager::FileExists(_speechFile) && speechEnabled) {
 				// it stays until the speech has ended
@@ -282,7 +282,7 @@ void TSText::SetTextIntern(TextOutputEnum mode, int balance) {
 	if (_slot) {
 		TSignalData answer;
 
-		if (ask(_slot, kSignalSpeechDisabled, _speechFile, answer))
+		if (ask(_slot, kSignalSoundsDisabled, _speechFile, answer))
 			speechDisabled = (answer.value != 0);
 	}
 
@@ -309,13 +309,13 @@ void TSText::SetTextIntern(TextOutputEnum mode, int balance) {
 	if (TComposedFileManager::FileExists(_speechFile) && _slot) {
 		TSignalData answer;
 
-		if (!ask(_slot, kSignalSpeechLoad, _speechFile, answer)) {
+		if (!ask(_slot, kSignalSpeechVolume, _speechFile, answer)) {
 			x_assert(false, "false", kSourceFile, 0x208);
 		} else {
 			TSignalData play;
 			TSignalData ignored;
 
-			play.type = kSignalSpeechPlay;
+			play.type = kSignalSoundPlay;
 			play.speechFile = _speechFile.GetFullPath();
 			play.value = answer.value;
 			play.value2 = balance;

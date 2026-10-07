@@ -1563,7 +1563,7 @@ void TGameControl::UpdateWalkingSounds() {
 			volume = static_cast<int>(rawVolume);
 
 		wxFileName walkSound = character->GetWalkingSound();
-		_soundManager->SetStats(walkSound, volume, pan, TSoundTypeEnum::kValue3, false, 0);
+		_soundManager->SetStats(walkSound, volume, pan, TSoundTypeEnum::kSound2, false, 0);
 	}
 
 	updateTimer.SetTime();

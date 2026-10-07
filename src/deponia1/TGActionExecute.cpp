@@ -61,7 +61,7 @@ static void undoStartedParts(const TVisObjRef &active, const TVList &parts, t_Sk
 	for (size_t i = 0; i < parts.size(); i++) {
 		TVisObjRef part(parts.at(i));
 
-		if (part.GetInt(kActionPartCommand) == kCommandStartCutscene && part.GetInt(kActionPartInt) == 0) {
+		if (part.GetInt(kActionPartCommand) == kCommandCutscene && part.GetInt(kActionPartInt) == 0) {
 			first = i;
 			break;
 		}
@@ -178,6 +178,9 @@ void TGAction::Execute(bool skip, t_SkipCutsceneInfo *skipInfo) {
 
 		if (executor._quit)
 			return;
+
+		if (executor._newPosition >= 0)
+			position = (size_t)executor._newPosition;
 
 		guard--;
 

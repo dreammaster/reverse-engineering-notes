@@ -61,3 +61,9 @@ TVisionaire *GetLuaGame();
 // or id string to a game-data object reference, writing it into outObject
 // and returning whether it was found; not reversed beyond that call shape.
 bool FindObjectByNameOrId(const wxString &nameOrId, TVisObjRef &outObject, bool flag);
+
+// Confirmed call shape only (TGAction::Execute, Deponia_Linux.asm lines 201760-201830): makes
+// the Lua global `currentAction` the action that runs a script (`ConvertToLua()` of the record and
+// lua_setfield); an empty reference clears it. Not reversed beyond that call shape (the
+// Lua bridge is not reconstructed).
+void LuaSetCurrentAction(const TVisObjRef &action);

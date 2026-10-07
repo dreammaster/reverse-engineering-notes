@@ -3345,6 +3345,57 @@ speaking (fields `0x1C9`..`0x1D0` and `0x245`).
   action runs (`TGAction::AddRunningAction`) and the dialog ends.
 - A part with `kDialogPartRemove` is made unavailable when it is picked.
 
+## TGAction, THAction and the action part commands (the scripted actions)
+
+`TGAction` (asm 194786-212169) runs an action: the list of action parts of a data object (`TTAction`)
+with its state in a record of its own (`TSAction`, the "ActiveAction": which part is next, whether it
+was started, the depth inside an IF that is not taken, how long it was paused). `THAction` (asm
+187010-187150) is the one the game creates: it also listens to its record (and does nothing with what it
+hears). The running actions are in a list (`RunningActions`) and a table from the data id to the place in
+the list: an action is started once (`AddRunningAction()` returns the one that runs already).
+
+- `Execute(skip, skipInfo)` goes through the parts from the next one: a part that can be done is done and
+  the next follows, up to 10000 in one call (then the action is "probably in an endless loop" and is
+  stopped, as logged); a part that waits ends the call and is looked at again next frame. A command tells
+  the loop three things (the registers `al` and `r12b` of the original): wait, stay on the same part
+  (a goto) or go on. The IF/ELSE/END IF parts work by the depth in the record: above 0 only the ifs and
+  their ends are counted (`IsIFActionPart`: commands 0x45, 0x4F, 0x54, 0x5C, 0x5F, 0x67, 0x7A, 0x7B,
+  0x8C, 0xA0); an IF that is false adds 1, the ELSE and END IF at depth 1 end the skipping.
+- Skipping a cutscene (`SkipCutscene()`): the game's cutscene action (`kGameCutsceneAction`, set by the
+  command 144 that starts it) is executed with `skip` set. First what the parts did before is undone
+  (animations hidden, texts cleared, sounds stopped, started actions run to their end), then the
+  commands do their end result at once and tell the `t_SkipCutsceneInfo` (the character and the scene it
+  ends with, the scenes whose music changed) so that `SkipCutscene()` can put the game there.
+- The commands are in `TGActionPartExecutor` (`TGActionCommands*.cpp`), the numbers in
+  `vstables/eCommand.h`: all 104 entries of the jump table `jpt_562CD8` (index = command - 5; the other
+  numbers do nothing) are done. The names are invented, from what each one does (and from the
+  messages the binary logs: 'Change scene', 'Set value', FADE_INTERFACE, SHOW_HIDE_INTERFACE ...); the
+  editor's own names are loaded from a file at run time. `tools/cfg.py` prints the code of one entry of
+  such a jump table, `tools/av.py` is a compact reader for long functions and `tools/strs.py` prints
+  the strings.
+- Reproduced from the binary: the command 12 ('Change character') is not done while a text is shown
+  (the part is skipped); `kCommandSetObjectActive` leaves the active command of an interface as it is
+  when it is to be shown inactive; a divide by zero of 'Set value' (which stops the original) leaves the
+  value as it is; the sound parts (24, 72) call the sound manager the same way and Keep() the sound when
+  their last integer is 0; the save commands (145, 146) set `TGAction::s_saveAction` and save the game
+  with the index of the part moved on (and the action marked finished when that is past the last).
+- The text of a script (commands 137, 138) is made as the original does (the '<' of the data is a new
+  line), but the Lua bridge is not reconstructed, so it is not run (`LuaDoString()` and
+  `LuaSetCurrentAction()` are call-shape stubs).
+
+## The sound interface and the tweens
+
+`TSoundInterface` (asm 1105963-1107210) is now real: the volumes (music, sounds, speech, movies, all),
+whether sounds are turned off, the background music (kept when the same name - what is before a '#' - is asked
+for again, faded out when another one comes), and the messages the texts send it (`Signal()`: ids
+0x1000-0x1012; what was called "load" for the speech is the speech volume). The sound engine
+(`TSoundBase`, `TSoundFFMPEG`) is not reconstructed: its virtual methods are declared in
+`TSoundInterface.h` with the names and the slots of `TSoundBase`'s vtable and do nothing. The names
+the earlier work guessed for these calls (`PlaySound`, `Resume`, `OnVideoFrameFinished`, `Slot0xD8` ...) were
+`SetStats`, `CleanUp`, `ContinueAll`, `FinishSoundFade`.
+`Tween` (a number over a time through an easing function) and `TVisObjTween` (it sets the x and y of a
+field of a data object each frame) are reconstructed; of the easing functions only the linear one is.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

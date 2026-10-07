@@ -484,7 +484,7 @@ void TGCharacter::CheckWalkingSound() {
 	if (!(size > 100.0f))
 		volume = (0.0f > size) ? 0 : (int)size;
 
-	sounds->Play(_walkingSound, volume, pan, true, TSoundTypeEnum::kValue3, true, 0);
+	sounds->Play(_walkingSound, volume, pan, true, TSoundTypeEnum::kSound2, true, 0);
 	_walkingSoundPlaying = true;
 }
 

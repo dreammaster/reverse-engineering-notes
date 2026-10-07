@@ -133,6 +133,11 @@ public:
 	static void SaveActions();
 	static void LoadActions();
 	static TMouseEventEnum ConvertToEvent(TMouseMessageEnum msg);
+	/** The action that is saving the game (set by its save command for the save: the saved game
+	 *  is then of the action as it is after the save). */
+	static const TVisObjRef &GetSaveAction() {
+		return s_saveAction;
+	}
 
 protected:
 	TSAction _active;   // +0x08
@@ -147,6 +152,7 @@ private:
 	static std::vector<TGAction *> s_runningActions;
 	static std::unordered_map<int, int> s_actionIdToRunningAction;
 	static bool s_deletedActions;
+	static TVisObjRef s_saveAction;
 
 	/** Puts the action into the list and the table (the place at the end). */
 	static void registerAction(TGAction *action);

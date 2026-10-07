@@ -26,3 +26,6 @@ TVisionaire *GetLuaGame() {
 bool FindObjectByNameOrId(const wxString &/*nameOrId*/, TVisObjRef &/*outObject*/, bool /*flag*/) {
 	return false;
 }
+
+void LuaSetCurrentAction(const TVisObjRef &/*action*/) {
+}

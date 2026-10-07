@@ -29,6 +29,7 @@ static TGameControl *gameControl() {
 std::vector<TGAction *> TGAction::s_runningActions;
 std::unordered_map<int, int> TGAction::s_actionIdToRunningAction;
 bool TGAction::s_deletedActions = false;
+TVisObjRef TGAction::s_saveAction;
 
 // The actions' trace messages: bit 1 of g_traceFlags and the log level above 1.
 static bool traceActions() {

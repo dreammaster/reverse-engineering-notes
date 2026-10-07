@@ -31,7 +31,7 @@ static int dataId(const TVisObjRef &ref) {
 TGActionPartExecutor::TGActionPartExecutor(TGAction &action, const TVisObjRef &part, const TVisObjRef &game,
         const TVList &parts, bool skip, t_SkipCutsceneInfo *skipInfo,
         bool &dialogEnded)
-	: _wait(false), _stay(false), _quit(false), _action(action), _part(part), _game(game), _parts(parts),
+	: _wait(false), _stay(false), _quit(false), _newPosition(-1), _action(action), _part(part), _game(game), _parts(parts),
 	  _skip(skip), _skipInfo(skipInfo), _dialogEnded(dialogEnded) {
 }
 
@@ -49,6 +49,10 @@ TVisObjRef TGActionPartExecutor::currentCharacter() const {
 
 TVisObjRef TGActionPartExecutor::orCurrentCharacter(const TVisObjRef &ref) const {
 	return ref.IsEmpty() ? currentCharacter() : ref;
+}
+
+TVisObjRef TGActionPartExecutor::orCurrentScene(const TVisObjRef &ref) const {
+	return ref.IsEmpty() ? gameControl()->GetScene()->GetRef() : ref;
 }
 
 bool TGActionPartExecutor::started() const {
@@ -110,6 +114,7 @@ void TGActionPartExecutor::run(int command) {
 		cmdWait();
 		break;
 	case kCommandCharacterGoToObject:
+	case kCommandCharacterGoToObject2:
 		cmdCharacterGoToObject();
 		break;
 	case kCommandWaitCharacter:
@@ -182,6 +187,207 @@ void TGActionPartExecutor::run(int command) {
 		break;
 	case kCommandIfCharacterDirection:
 		cmdIfCharacterDirection();
+		break;
+	case kCommandSetMusicVolume:
+		cmdSetMusicVolume();
+		break;
+	case kCommandGoto:
+		cmdGoto();
+		break;
+	case kCommandIfCurrentCharacter:
+		cmdIfCurrentCharacter();
+		break;
+	case kCommandClearItems:
+		cmdClearItems();
+		break;
+	case kCommandGiveAllItems:
+		cmdGiveAllItems();
+		break;
+	case kCommandSetOutfitSpeed:
+		cmdSetOutfitSpeed();
+		break;
+	case kCommandRandomValue:
+		cmdRandomValue();
+		break;
+	case kCommandIfCharacterInScene:
+		cmdIfCharacterInScene();
+		break;
+	case kCommandFollowCharacter:
+		cmdFollowCharacter();
+		break;
+	case kCommandStopFollowing:
+		cmdStopFollowing();
+		break;
+	case kCommandStopWalking:
+		cmdStopWalking();
+		break;
+	case kCommandSetWalkingSound:
+		cmdSetWalkingSound();
+		break;
+	case kCommandSetFont:
+		cmdSetFont();
+		break;
+	case kCommandSetInterface:
+		cmdSetInterface();
+		break;
+	case kCommandIfLanguage:
+		cmdIfLanguage();
+		break;
+	case kCommandSetCursor:
+		cmdSetCursor();
+		break;
+	case kCommandIfCommand:
+		cmdIfCommand();
+		break;
+	case kCommandCharacterActive:
+		cmdCharacterActive();
+		break;
+	case kCommandSaveObject:
+		cmdSaveObject();
+		break;
+	case kCommandExecuteSavedObject:
+		cmdExecuteSavedObject();
+		break;
+	case kCommandIfCurrentObject:
+		cmdIfCurrentObject();
+		break;
+	case kCommandSetObjectActive:
+		cmdSetObjectActive();
+		break;
+	case kCommandClearSavedObject:
+		cmdClearSavedObject();
+		break;
+	case kCommandSkipText:
+		cmdSkipText();
+		break;
+	case kCommandFade:
+		cmdFade();
+		break;
+	case kCommandSetObjectVisibility:
+		cmdSetVisibility(false);
+		break;
+	case kCommandSetCharacterVisibility:
+		cmdSetVisibility(true);
+		break;
+	case kCommandFadeInterface:
+		cmdFadeInterface();
+		break;
+	case kCommandSetLightMap:
+		cmdSetLightMap();
+		break;
+	case kCommandSetBrightness:
+		cmdSetBrightness();
+		break;
+	case kCommandSetItem:
+		cmdSetItem();
+		break;
+	case kCommandCharacterGoToPoint:
+		cmdCharacterGoToPoint();
+		break;
+	case kCommandDeleteSavegame:
+		cmdDeleteSavegame();
+		break;
+	case kCommandIfSavegame:
+		cmdIfSavegame();
+		break;
+	case kCommandSetAnimationIndex:
+		cmdSetAnimationIndex();
+		break;
+	case kCommandWaitSound:
+		cmdWaitSound();
+		break;
+	case kCommandSetScrollableAreaX:
+		cmdSetScrollableArea(true);
+		break;
+	case kCommandSetScrollableAreaY:
+		cmdSetScrollableArea(false);
+		break;
+	case kCommandSetTextOutput:
+		cmdSetTextOutput();
+		break;
+	case kCommandPlaceCharacterAt:
+		cmdPlaceCharacterAt();
+		break;
+	case kCommandSetWaySystem:
+		cmdSetWaySystem();
+		break;
+	case kCommandSetFirstFrame:
+		cmdSetAnimationFrame(false);
+		break;
+	case kCommandSetLastFrame:
+		cmdSetAnimationFrame(true);
+		break;
+	case kCommandSetTextSpeed:
+		cmdSetTextSpeed();
+		break;
+	case kCommandRunScript:
+		cmdRunScript();
+		break;
+	case kCommandRunPartScript:
+		cmdRunPartScript();
+		break;
+	case kCommandSetCondition:
+		cmdSetCondition();
+		break;
+	case kCommandIfCondition:
+		cmdIfCondition();
+		break;
+	case kCommandHideCursor:
+		cmdHideCursor();
+		break;
+	case kCommandHideInterfaces:
+		cmdHideInterfaces();
+		break;
+	case kCommandEarthquake:
+		cmdEarthquake();
+		break;
+	case kCommandCutscene:
+		cmdCutscene();
+		break;
+	case kCommandAutosave:
+		cmdAutosave();
+		break;
+	case kCommandGameSave:
+		cmdGameSave();
+		break;
+	case kCommandSetVolume:
+		cmdSetVolume();
+		break;
+	case kCommandStartAction:
+		cmdStartAction();
+		break;
+	case kCommandPreloadAnimation:
+		cmdPreloadAnimation();
+		break;
+	case kCommandCharacterItem:
+		cmdCharacterItem();
+		break;
+	case kCommandScrollSavegames:
+		cmdScrollSavegames();
+		break;
+	case kCommandMoveAnimation:
+		cmdMoveAnimation();
+		break;
+	case kCommandSnoopAnimations:
+		cmdSnoopAnimations();
+		break;
+	case kCommandPreloadCharacter:
+		cmdPreloadCharacter();
+		break;
+	case kCommandShowObjectText:
+		cmdShowObjectText();
+		break;
+	case kCommandClearObjectText:
+		cmdClearObjectText();
+		break;
+	case kCommandWaitTalking:
+		cmdWaitTalking();
+		break;
+	case kCommandMoveObjectBy:
+		cmdMoveObject(true);
+		break;
+	case kCommandMoveObjectTo:
+		cmdMoveObject(false);
 		break;
 	default:
 		break;
@@ -375,7 +581,7 @@ void TGActionPartExecutor::cmdPlaySound(bool loop) {
 
 	wxFileName path = _part.GetPath(kActionPartPath);
 	int sound = sounds->Play(path, _part.GetInt(kActionPartInt), _part.GetInt(kActionPartAltInt), loop,
-	                         TSoundTypeEnum::kValue1, true, 0);
+	                         TSoundTypeEnum::kSound, true, 0);
 
 	if (sound == -1)
 		return;

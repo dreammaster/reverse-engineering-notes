@@ -472,6 +472,13 @@ struct wxRect {
 	void SetHeight(int h) {
 		height = h;
 	}
+	// Real wxRect::SetRight()/SetBottom(): the width/height that makes that edge the last pixel.
+	void SetRight(int right) {
+		width = right - x + 1;
+	}
+	void SetBottom(int bottom) {
+		height = bottom - y + 1;
+	}
 	bool IsEmpty() const {
 		return width <= 0 || height <= 0;
 	}

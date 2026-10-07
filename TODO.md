@@ -134,13 +134,17 @@ reconstructed. `TGInterface` stays `in-progress` until then.
 `TGText` stays `in-progress` in `manifest/proprietary_classes.tsv` until the hooks are done.
 
 
-## TGAction::Execute: commands not reconstructed yet (in progress)
+## TGAction: what is not reconstructed
 
-`TGAction` (the action list, stop/continue, save/load, `SkipCutscene`, the `Execute` loop with
-its IF/ELSE depth and 10000-part guard) and `THAction` are done. The commands of the action parts
-are being decoded one by one from the jump table at `jpt_562CD8` (the command minus 5 is the
-index; `tools/cfg.py` prints the code of one entry): `TGActionPartExecutor` in
-`TGActionCommands.cpp`, the commands' numbers in `vstables/eCommand.h`. A command that is not in
-`TGActionPartExecutor::run()` does nothing, so the actions that use it do not do its part yet.
-Not done yet (as of this commit): everything of the table that is not listed in
-`vstables/eCommand.h`.
+All 104 commands of `TGAction::Execute()` are done (`vstables/eCommand.h`). What they need and is
+missing elsewhere:
+
+- The Lua bridge: the script commands 137 and 138 only build the script text (`LuaSetCurrentAction()`
+  and `LuaDoString()` are stubs), so scripts of action parts do not run.
+- The sound engine (`TSoundBase`, `TSoundFFMPEG`): the commands call the sound manager the way the
+  original does, but nothing plays (see `TSoundInterface.h` for the virtual surface).
+- The easing functions other than the linear one (`Easing::*`, asm 1628883-1630440): the scripts' tweens
+  choose them by name; the action commands 158 and 159 use the linear one only.
+- `TGameControl::StartTween(const Tween &, const std::string &)` (the tweens the scripts name) is still
+  a stub.
+- Command 122 (0x7A) is an if (`IsIFActionPart`) that has no entry in the jump table: it does nothing.

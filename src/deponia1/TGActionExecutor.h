@@ -29,6 +29,8 @@ public:
 	bool _wait;
 	bool _stay;
 	bool _quit;
+	/** The part the loop goes on at (a command that jumps sets it; -1: not changed). */
+	int _newPosition;
 
 private:
 	TGAction &_action;
@@ -50,6 +52,8 @@ private:
 	TVisObjRef currentCharacter() const;
 	/** `ref`, or the current character's record when it is empty. */
 	TVisObjRef orCurrentCharacter(const TVisObjRef &ref) const;
+	/** `ref`, or the record of the scene that is shown when it is empty. */
+	TVisObjRef orCurrentScene(const TVisObjRef &ref) const;
 	/** The action part is not done until the thing that was started has ended: `started` is kept in
 	 *  the record (kActionActionPartStarted). */
 	bool started() const;
@@ -92,4 +96,68 @@ private:
 	void cmdShowTextAt();
 	void cmdStopSound();
 	void cmdIfCharacterDirection();
+	void cmdSetMusicVolume();
+	void cmdGoto();
+	void cmdIfCurrentCharacter();
+	void cmdClearItems();
+	void cmdGiveAllItems();
+	void cmdSetOutfitSpeed();
+	void cmdRandomValue();
+	void cmdIfCharacterInScene();
+	void cmdFollowCharacter();
+	void cmdStopFollowing();
+	void cmdStopWalking();
+	void cmdSetWalkingSound();
+	void cmdSetFont();
+	void cmdSetInterface();
+	void cmdIfLanguage();
+	void cmdSetCursor();
+	void cmdIfCommand();
+	void cmdCharacterActive();
+	void cmdSaveObject();
+	void cmdExecuteSavedObject();
+	void cmdIfCurrentObject();
+	void cmdSetObjectActive();
+	void cmdClearSavedObject();
+	void cmdSkipText();
+	void cmdFade();
+	void cmdSetVisibility(bool character);
+	void cmdFadeInterface();
+	void cmdSetLightMap();
+	void cmdSetBrightness();
+	void cmdSetItem();
+	void cmdCharacterGoToPoint();
+	void cmdDeleteSavegame();
+	void cmdIfSavegame();
+	void cmdSetAnimationIndex();
+	void cmdWaitSound();
+	void cmdSetScrollableArea(bool horizontal);
+	void cmdSetTextOutput();
+	void cmdPlaceCharacterAt();
+	void cmdSetWaySystem();
+	void cmdSetAnimationFrame(bool last);
+	void cmdSetTextSpeed();
+	void cmdRunScript();
+	void cmdRunPartScript();
+	void cmdSetCondition();
+	void cmdIfCondition();
+	void cmdHideCursor();
+	void cmdHideInterfaces();
+	void cmdEarthquake();
+	void cmdCutscene();
+	void saveGame(int slot, bool saveAfter);
+	void cmdAutosave();
+	void cmdGameSave();
+	void cmdSetVolume();
+	void cmdStartAction();
+	void cmdPreloadAnimation();
+	void cmdCharacterItem();
+	void cmdScrollSavegames();
+	void cmdMoveAnimation();
+	void cmdSnoopAnimations();
+	void cmdPreloadCharacter();
+	void cmdShowObjectText();
+	void cmdClearObjectText();
+	void cmdWaitTalking();
+	void cmdMoveObject(bool by);
 };
