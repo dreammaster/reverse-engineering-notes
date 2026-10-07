@@ -18,9 +18,9 @@
 // (null when none is shown), +0x38 the rendered sprite of a model, +0x40 the
 // ModelAnimation, +0x48 the SpineSkeleton, +0x50 its animation, +0x58 a path,
 // +0x60 the model's tick, +0x64 a flag set for the animations of outfits (and
-// models), +0x65 paused, +0x66 a flag set by Start()/read elsewhere, +0x68 a
-// TTimer. The virtuals are Start(), CanRemoveCurrentSprite(),
-// NextSpriteSelected(), GetAnimationLoops() and WaitBetweenLoops().
+// models), +0x65 paused, +0x66 stopped, +0x68 a TTimer. The virtuals are Start(),
+// CanRemoveCurrentSprite(), NextSpriteSelected(), GetAnimationLoops() and
+// WaitBetweenLoops().
 //
 // NOT reconstructed: the 3D-model (ModelContainer/ModelAnimation) and Spine
 // skeleton (SpineContainer/SpineSkeleton) animation kinds the original also
@@ -139,6 +139,10 @@ protected:
 	TPictureIO *_currentSprite;          // +0x30
 	bool _isOutfit;      // +0x64 (the animation belongs to an outfit)
 	bool _paused;        // +0x65
-	bool _flag66;        // +0x66
+	// +0x66: set from construction on and while the animation is stopped (all
+	// running animations are stopped when a menu scene is entered); cleared by
+	// Start() and when the animation is loaded or continued. A stopped animation
+	// is skipped by TGAnimation::ContinueAnimations().
+	bool _stopped;
 	TTimer _timer;       // +0x68
 };

@@ -122,6 +122,22 @@ public:
 	void SetPreloadPriority(int priority) {
 		_preloadPriority = priority;
 	}
+	// Confirmed (TGAnimation::Draw(), asm lines 149954-150106): written (+0xC4,
+	// +0xC8, +0xD8/+0xDC, +0xD4) from the rotation, rotation centre, scale and
+	// matrix id fields of the object an animation is drawn for, just before Draw().
+	void SetRotation(float rotation) {
+		_rotation = rotation;
+	}
+	void SetRotationCenter(const wxPoint &center) {
+		_rotationCenter = center;
+	}
+	void SetScale(float scaleX, float scaleY) {
+		_scaleX = scaleX;
+		_scaleY = scaleY;
+	}
+	void SetMatrixId(int matrixId) {
+		_matrixId = matrixId;
+	}
 
 private:
 	// Common "release current sprite handle, tell the graphics backend,
@@ -141,14 +157,14 @@ private:
 	int _parallaxX = 0;
 	int _parallaxY = 0;
 	int _field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
-	int _preloadPriority = 0;  // +0xB0
+	int _preloadPriority = -1;  // +0xB0
 	ePreloadingStatus _preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by _mutexStatus
 	TPicturePreloader *_preloader = nullptr;  // +0xB8
 	bool _flagC0 = false;
-	int _loadRectX = -1;   // +0xC8/+0xCC - guessed to relate to LoadRect()
-	int _loadRectY = -1;
+	float _rotation = 0.0f;  // +0xC4, from the rotation field of the object the picture is drawn for
+	wxPoint _rotationCenter{-1, -1};  // +0xC8/+0xCC (-1, -1: none)
 	int _shader = -1;      // +0xD0, confirmed by TGScene::Draw(): written with the shader id just before Draw()
-	int _fieldD4 = 1;
+	int _matrixId = 1;     // +0xD4, from the matrix id field of the object the picture is drawn for
 	float _scaleX = 1.0f;  // +0xD8
 	float _scaleY = 1.0f;  // +0xDC
 	bool _flagE0 = false;

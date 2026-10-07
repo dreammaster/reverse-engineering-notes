@@ -32,6 +32,7 @@ unsigned char byte_11F8B02 = 0;
 // class the binary instantiates here.
 TMasterControl *g_pGameControl = new THGameControl();
 int GameMinDownTime = 0;
+int g_traceFlags = 0;
 
 int movex = 0;
 int movey = 0;

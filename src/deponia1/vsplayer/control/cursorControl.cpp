@@ -1,7 +1,7 @@
 #include "vsplayer/control/cursorControl.h"
 
 #include "AppGlobals.h"
-#include "TGAnimation.h"
+#include "vsplayer/animationGame.h"
 #include "TGItem.h"
 #include "datastruct/visionaireobject.h"
 #include "vsplayer/control/gameControl.h"

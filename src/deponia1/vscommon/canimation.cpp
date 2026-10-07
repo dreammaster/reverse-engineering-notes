@@ -21,7 +21,7 @@
 // pictures are made from the data's sprite list (the sprites of an outfit's
 // animations are owned by their pictures).
 TCAnimation::TCAnimation(const TVisObjRef &active, const TVisObjRef &animation)
-	: _state(active), _data(animation), _currentSprite(nullptr), _isOutfit(false), _paused(false), _flag66(true) {
+	: _state(active), _data(animation), _currentSprite(nullptr), _isOutfit(false), _paused(false), _stopped(true) {
 	_state.SetName(_data.GetName());
 
 	TVisObjRef parent = _data.GetParent();
@@ -69,7 +69,7 @@ void TCAnimation::Start(bool reverse, float scale) {
 	_state.SetValue(kAnimationCurrentSpriteIndex, -1, TSendEventEnum::kNoEvent);
 
 	_currentSprite = nullptr;
-	_flag66 = false;
+	_stopped = false;
 	_state.SetValue(kAnimationActive, true, TSendEventEnum::kNoEvent);
 
 	if (_data.GetBool(kAnimationLoopRandom)) {
@@ -274,7 +274,9 @@ void TCAnimation::SetCurrentSprite(bool force) {
 
 	int loops = GetAnimationLoops();
 
-	if (CanRemoveCurrentSprite())
+	// (The original does not check for a current sprite here; TGAnimation's
+	// CanRemoveCurrentSprite() does not either, so guard it.)
+	if (CanRemoveCurrentSprite() && _currentSprite)
 		_currentSprite->RemoveSprite();
 
 	_timer.SetTime();

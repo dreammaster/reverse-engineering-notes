@@ -39,6 +39,18 @@ void LuaDoRef(int ref);
 // relationship.
 std::string IdStrStd(const std::uint8_t *id);
 
+// Confirmed call shape only (TGAnimation::Start()/ContinueAnimations()/
+// HideAnimation(), Deponia_Linux.asm lines 149462, 150665, 150866) - sets the
+// name the next Lua call is reported under in error messages (the animation
+// hooks pass "AnimationStartedHook" / "AnimationStoppedHook"). Not reversed
+// beyond that call shape.
+void LuaDebugName(const char *name);
+// Confirmed call shape only (same call sites) - calls the Lua function a
+// registered event handler name stands for, with the object the event is
+// about; not reversed beyond that call shape (same standing "Lua bridge
+// contract" gap as LuaExecuteFunction elsewhere).
+void LuaExecuteEventHandler(const std::string &handler, const TVisObjRef &object);
+
 // Confirmed call shape only (TArgument::ConvertToObject, Deponia_Linux.asm
 // line 1437560) - the game-data root associated with the current Lua state;
 // not reversed beyond that call shape.

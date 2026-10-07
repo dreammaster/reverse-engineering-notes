@@ -9,6 +9,12 @@ void LuaDoString(const std::string &/*code*/) {
 void LuaDoRef(int /*ref*/) {
 }
 
+void LuaDebugName(const char */*name*/) {
+}
+
+void LuaExecuteEventHandler(const std::string &/*handler*/, const TVisObjRef &/*object*/) {
+}
+
 std::string IdStrStd(const std::uint8_t */*id*/) {
 	return std::string();
 }

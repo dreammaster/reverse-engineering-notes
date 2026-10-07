@@ -73,6 +73,12 @@ public:
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
 	void SetMirrored(bool mirrored);
+	/** Whether the animation (data object) plays a 3D model: it belongs to an
+	 *  outfit that has a model file. */
+	static bool IsModelAnimation(const TVisObjRef &animation);
+	/** Whether it plays a skeleton: it belongs to an outfit with model files, or to
+	 *  an object that has a model. */
+	static bool IsBonesAnimation(const TVisObjRef &animation);
 };
 
 class TTAnimationFrame : public TVisObjRef {

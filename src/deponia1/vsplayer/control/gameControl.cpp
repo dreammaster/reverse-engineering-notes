@@ -8,7 +8,7 @@
 #include "Diagnostics.h"
 #include "TComposedFileManager.h"
 #include "TGAction.h"
-#include "TGAnimation.h"
+#include "vsplayer/animationGame.h"
 #include "TGInterface.h"
 #include "THCharacter.h"
 #include "THInterface.h"

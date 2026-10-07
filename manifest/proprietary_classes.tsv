@@ -28,7 +28,7 @@ HashMap<TId, int, TIdHash>	todo	1	143397	143397
 THText	todo	6	144162	144330
 TDiagnostic	todo	11	144499	148293
 Geni::mslocale_t	todo	2	148405	479251
-TGAnimation	todo	51	148778	158721
+TGAnimation	in-progress	51	148778	158721
 TCAnimation	in-progress	40	158833	1384914
 TMSavegameArea	done	6	159199	159295
 TMSavegame	done	22	159356	164367
@@ -59,7 +59,7 @@ TGActionArea	todo	3	247238	247279
 TGWaySystem	todo	21	247325	253067
 THGameControl	todo	6	256950	258050
 TGObject	todo	13	258159	259458
-THAnimation	todo	5	259729	260077
+THAnimation	done	5	259729	260077
 TSceneActionArea	todo	4	260143	260601
 TGItem	stub	9	260668	261228
 TGCommand	todo	5	261322	261584

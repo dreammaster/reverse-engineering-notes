@@ -44,6 +44,12 @@ extern TMasterControl *g_pGameControl;
 // Confirmed an exported, recovered global (asm line 5295779): the game settings'
 // "hold time" - set from the game object's field when it changes (THGameControl).
 extern int GameMinDownTime;
+// Confirmed an exported, recovered global (asm line 5295800): a bit mask of the
+// kinds of trace logging that are switched on (written by the command line flag
+// parsing, asm lines 234566-234769). Bit 0 (1) is the animation tracing of
+// TGAnimation (used together with wxLog::loglevel > 1); bits 1 (2) and 2 (4)
+// are tested by other code that is not reconstructed.
+extern int g_traceFlags;
 
 // Confirmed a real, named global (recovered symbol) - a one-letter "what is
 // the engine doing right now" tag, written by TGScene::Prepare() ("P" on

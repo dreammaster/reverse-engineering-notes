@@ -2965,6 +2965,90 @@ Side corrections found along the way: `TSprite::SetPosition(pos, scale)` takes
 uses the same sentinel. `TPictureIO` gained `SetPreloadPriority()` (+0xB0) and
 `TPreloadedPicManager::PreloadPicture()` is a call-shape-only stub.
 
+## TGAnimation and THAnimation (vsplayer/animationGame.cpp)
+
+The game's animation player, layered on `TCAnimation`. Until now only its static
+entry points were known as call shapes; now real (moved to
+`vsplayer/animationGame.{h,cpp}`, the path the `x_assert()` in `DetachOwner` gives).
+
+What a `TGAnimation` adds to `TCAnimation`: a frame list (+0x90, the data's
+`kAnimationPropertyFrames` objects, each with a sound and an action for a sprite
+index), the object it belongs to (+0xA8: the data's parent, or an outfit
+animation's character), and the owners (+0x78, `TAnimationOwner*`) to tell when it
+stops. All running animations live in the static list `RunningAnimations` (the
+recovered name; `EventHandlerAnimStarted`/`EventHandlerAnimStopped` are the two
+recovered static hook names). Animations are always `new THAnimation(...)`
+(0xB8 bytes), which is a `TGAnimation` plus a `TEventHandlerInterface` registered
+on the animation's running-state record.
+
+How it fits together:
+
+- **Start** (`StartAnimation`): an animation with no sprites (and not a model/Spine
+  one) is refused. If the data object already has a running animation: a
+  *preloaded* idle one is restarted (`Start`, then the 1-based `frame` if wanted,
+  then `SetCurrentSprite(true)`); a preloaded running one just gains the owner; a
+  non-preloaded running one gains the owner; a non-preloaded *ended* one (waiting to
+  be deleted) is refused (returns null). Otherwise a new one is created from a new
+  TSAnimation record (`CreateActiveObject(0x1A, data)`).
+- **Per frame** (`ContinueAnimations`): skip stopped/paused/ended ones; step the
+  sprite; one that ends now tells its owners (only if it is preloaded - otherwise
+  its destructor does), starts its data's action and calls the stopped hook. A second
+  pass deletes ended animations that are not preloaded.
+- **Hide** (`HideAnimation`, three overloads sharing one private tail): sets the
+  record inactive, calls the stopped hook, then either keeps the animation (preloaded:
+  owners are told) or deletes it. With an owner it first detaches that owner and only
+  hides when none is left.
+- **Preload/Unload**: preloaded animations stay in the list after they end
+  (`kAnimationPreloaded`), idle, to be shown again cheaply; `UnloadAnimation` deletes
+  one (even a running one).
+- **Save/Load**: only preloaded animations, and active ones the player started
+  (`kAnimationStartedByUser`), keep their record (with the time since they were
+  called); every other record is marked temporary. `LoadAnimations` rebuilds an
+  animation from every saved record whose original data object still exists.
+- **Menus**: `StopRunningAnimations` sets the stopped flag of every animation except
+  those of a scene that is a menu (data -> parent -> parent has `kSceneIsMenu`);
+  `ContinueStoppedAnimation` moves the timer on by the time spent stopped.
+- **Frames** (`NextSpriteSelected`): for every frame object whose index is the sprite
+  just selected, play its sound - only if what the animation belongs to is on the
+  shown scene (a character in it; an object that is not on a scene, or on the shown
+  one; anything else always) - then rename its action to `"<name>: Frame #<n>"` and
+  start it.
+- **Drawing** (`Draw`): preloads the next two pictures, then sets the picture's
+  rotation, rotation centre, scale, shader and matrix id from the owning object (an
+  object of type 6, a button of type 2, a character of type 0 - each with its own
+  field ids), and draws it at the animation's position and size.
+
+Things worth knowing:
+
+- `TAnimationOwner` is now a real base of `TManagedObject` (it was modeled as plain
+  virtuals): the owner list needs the pointer, and `ReattachAnimations()` adds a
+  `TManagedObject` to it.
+- `TCAnimation::_flag66` is now `_stopped` (set from construction and while stopped;
+  cleared by `Start`/`Load`/`ContinueStoppedAnimation`).
+- `g_traceFlags` is a real exported global (`AppGlobals.h`); bit 0 enables the
+  animation trace messages (with `wxLog::loglevel > 1`). All those messages are
+  reproduced, so they work once the flag is set.
+- `DrawWithLightMap` reads the (float) size field with `GetInt`; in the original that
+  read fails and gives -1, which leaves the sprite scale alone. Reproduced as is.
+- `TTAnimation::IsModelAnimation()`/`IsBonesAnimation()` (the static data-object
+  tests) are real; the instance tests of `TCAnimation` stay fixed `false`.
+- The three log strings of a few trace messages have extra arguments the format does
+  not use (`"Animation loaded: "`): reproduced, minus the unused arguments.
+- Call-shape stubs added: `LuaDebugName`, `LuaExecuteEventHandler` (the Lua bridge),
+  `TSoundInterface::Play()` (the 7-argument overload),
+  `TPreloadedPicManager::StopPreloading(vector&)`/`PreloadPictures()`/
+  `HasQueuedPictures()`. `TPictureIO` gained the rotation/rotation centre/scale/
+  matrix id setters (its fields at +0xC4..+0xDC were misnamed as a "load rect" before;
+  +0xC8/+0xCC is the rotation centre, (-1, -1) when none) and its preload priority now
+  starts at -1.
+- Not reconstructed (see `TODO.md`): the model/Spine branches, and the debugger
+  overlay (`GetAnimationDetails`, `PrintRunningAnimations`, `DrawAnimation`).
+
+Tooling added along the way: `tools/asmview.py` prints a range of the `.asm` without
+the noise (labels kept, XREF comments, push/pop and string-refcount code dropped with
+`-t`; careful, `-t` also hides `test eax, eax`, which can hide a branch condition)
+and `tools/wstr.py` decodes the wide-character strings IDA lists one byte per line.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

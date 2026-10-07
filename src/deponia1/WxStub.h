@@ -421,6 +421,13 @@ struct wxPoint {
 	wxPoint operator-(const wxPoint &other) const {
 		return wxPoint{x - other.x, y - other.y};
 	}
+	// Confirmed a real free operator+= (TGAnimation::Draw(), Deponia_Linux.asm line
+	// 150061 - `_ZpLR7wxPointRKS_`), the component-wise sum in place.
+	wxPoint &operator+=(const wxPoint &other) {
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
 };
 
 struct wxRect {

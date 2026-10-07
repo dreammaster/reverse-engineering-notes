@@ -22,11 +22,10 @@
 // TAnimationOwner* interface pointer into a larger composite object) and
 // TTextOwner (1 pure virtual - TextFinished(), reached from a secondary
 // vtable fragment at this object's +0x10 via a constant `_ZThn16_`
-// adjustment). Modeled here as a single ordinary class with virtual
-// methods instead of replicating the two-vtable ABI trick - nothing in
-// this codebase casts a TManagedObject* through a narrower
-// TAnimationOwner*/TTextOwner* pointer obtained some other way, so there's
-// no behavioral difference.
+// adjustment). TAnimationOwner is a real base class here: TGAnimation keeps
+// its owners as TAnimationOwner* (and ReattachAnimations() adds a
+// TManagedObject to them). TTextOwner is still modeled as a plain method,
+// since nothing here casts a TManagedObject* through it.
 //
 // The vtable cross-check also caught two errors from this class's original
 // pass: an invented "OnAlphaChanged()" hook that doesn't exist - the real
@@ -54,7 +53,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "TGAnimation.h"
+#include "vsplayer/animationGame.h"
 #include "TGActionInfo.h"
 #include "TGEventInfo.h"
 #include "TTimer.h"
@@ -79,7 +78,7 @@ enum class TMouseEventEnum;
 // xmm0, despite taking float arguments).
 int GetAngle(float dx, float dy);
 
-class TManagedObject {
+class TManagedObject : public TAnimationOwner {
 public:
 	TManagedObject() = default;
 	explicit TManagedObject(const TVisObjRef &objRef) : _objRef(objRef) {
@@ -167,7 +166,7 @@ public:
 	// Confirmed (asm lines 190536-190602): clears the primary animation
 	// slot if it matches, and removes `animation` from the secondary list
 	// either way.
-	virtual void AnimationStopped(TGAnimation *animation) {
+	void AnimationStopped(TGAnimation *animation) override {
 		if (_currentAnimation == animation)
 			_currentAnimation = nullptr;
 		auto it = std::find(_animations.begin(), _animations.end(), animation);
@@ -252,12 +251,12 @@ public:
 	// and the packed id are somehow layout-compatible in the original;
 	// neither TId's nor TVisObjRef's real fields are known, so that aliasing
 	// trick isn't reproduced).
-	virtual TId GetOwnerId() const {
+	TId GetOwnerId() const override {
 		return TId(PackVisId(_objRef.GetId()), 0);
 	}
 	// Confirmed (asm lines 191107-191124): the game-data reference's own
 	// name.
-	virtual wxString GetOwnerName() const {
+	wxString GetOwnerName() const override {
 		return _objRef.GetName();
 	}
 

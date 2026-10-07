@@ -34,3 +34,30 @@ What is missing:
 
 Until this is done, an animation of those kinds plays no sprites, and
 `TCAnimation` stays `in-progress` in `manifest/proprietary_classes.tsv`.
+
+### TGAnimation: the model and Spine branches (part of the item above)
+
+`src/deponia1/vsplayer/animationGame.{h,cpp}`; original
+`src/vsplayer/animationGame.cpp`.
+
+`TGAnimation` is layered on `TCAnimation` and has its own model/Spine branches,
+all left out for the same reason:
+
+- the ctor loading the model (`ModelContainer::GetInstance()->ReadLoadedModel()`);
+- `NextSpriteSelected()` matching the frames of a model by tick
+  (`ModelAnimation::GetCurrentTick()/GetLastTick()`) and of a skeleton by time
+  (`SpineSkeleton::GetTime()`), instead of by sprite index;
+- `Prepare()`/`Draw()`/`DrawWithLightMap()` updating and drawing a
+  `ModelAnimation`, and `DrawMixed()` (Spine only) updating and mixing
+  `SpineSkeleton`s - `DrawMixed()` is an empty function until then.
+
+`TTAnimation::IsModelAnimation()`/`IsBonesAnimation()` (the data-object tests the
+start functions use) are reconstructed; `TCAnimation::IsModelAnimation()`/
+`IsBonesAnimation()` (the instance tests) are fixed `false`.
+
+### TGAnimation: the debugger overlay
+
+`GetAnimationDetails()`, `PrintRunningAnimations()` and `DrawAnimation()` (asm
+lines 154252-156548) list the running animations as text lines and draw a
+thumbnail of each in the debugger overlay. Not reconstructed (not declared at
+all); the manifest keeps them `todo`.

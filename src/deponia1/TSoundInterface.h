@@ -9,6 +9,12 @@
 
 #include "WxStub.h"
 
+// The kinds of sound a sound can be played as; only value 1 (the frame sounds of
+// TGAnimation) has been seen, so it is named by its raw value.
+enum class TSoundTypeEnum {
+	kValue1 = 1
+};
+
 class TSoundInterface {
 public:
 	virtual ~TSoundInterface() = default;
@@ -22,4 +28,10 @@ public:
 	// which isn't itself declared here since Init() remains unimplemented -
 	// see its own comment), not a recovered identifier.
 	virtual void Play(const wxFileName &file);
+	// Confirmed call shape only (TGAnimation::NextSpriteSelected(), Deponia_Linux.asm
+	// lines 149021): the non-virtual overload that plays a frame's sound with its
+	// volume and balance; the other arguments are always (false, kValue1, true, 0)
+	// there and are not resolved. Not reversed beyond that call shape.
+	void Play(const wxFileName &file, int volume, int balance, bool flagA, TSoundTypeEnum type, bool flagB,
+	          int value);
 };
