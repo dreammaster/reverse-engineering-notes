@@ -91,7 +91,7 @@ command needs (map, clock, key). Mouse clicks go through `uiregions.c`. Chapter 
 
 ## What is still missing
 
-See [roadmap.md](roadmap.md). In short: the animated title / intro / creation sequences, the spell, transport and map clue book pages, the shop
-tabs and alchemy status panel, the sub-icon selector row (`clueSubIcon*`), the debug commands, the attack-effects line of the
-monster page, music and the OPL/mixer glue for playback (the files are located and parsed), and Chapter 1's engine (a different, earlier engine).
+See [roadmap.md](roadmap.md). In short, what is not in `src23` is: playback of the animated title / opening / credits sequences (their data, timelines and
+primitives -- `intro2.c`, `palettefade.c`, `palette.c` -- are decoded), the debug commands of Chapter 2, music and sound playback and the OPL / mixer glue (the files
+are located and parsed), the platform glue of an engine, and Chapter 1's engine (a different, earlier engine with no analysis yet).
 Text is read from the executables (`exedata.c`), not shipped.
