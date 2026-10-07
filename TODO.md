@@ -84,3 +84,24 @@ Left out, for the same reason as the model/Spine items above:
 
 `TGCharacter` stays `in-progress` in `manifest/proprietary_classes.tsv` until the
 Spine branches are done.
+
+### TGObject: particles, shaders and the matrix transform
+
+`src/deponia1/TGObject.{h,cpp}`; original `src/vsplayer/` (object file, not
+assert-confirmed).
+
+Left out:
+
+- the particle container built from a script expression (`SetActive()` runs
+  `return particleSystem:new(<kParticleContainerSettings>)` through `LuaDoString()` and
+  adopts the userdata it returns) - needs the Lua bridge, like `TGScene::BeginScene()`;
+- the draw calls of the particle effect through the `graphics` backend (translate by the
+  negated float scroll position times the scroll factor, an optional multiply with the
+  global matrix, `ParticleContainer::Draw()`/the particle system draw, and the scroll
+  fields the particle system is given at +0x2E0/+0x2E4);
+- the matrix transform of `IsInside()` and `DrawSnoopAnimation()` while the object is drawn
+  through a matrix (`kObjectMatrixId`, the global `invMatrix1`/`matrix1` with 9 entries);
+- the second `TPictureIO` at +0x1B8 (cleared when an object with particles is deactivated;
+  nothing else is known to use it).
+
+`TGObject` stays `in-progress` in `manifest/proprietary_classes.tsv` until then.

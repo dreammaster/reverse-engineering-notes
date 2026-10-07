@@ -3182,6 +3182,39 @@ Needed from other classes: `TSoundFFMPEG::StopSound()` (call shape only: the vir
 at slot 0x48), `TSoundTypeEnum::kValue3`, and `TManagedObject`'s `_color`, `_lifetime`,
 `_animations`, `_text`, the alpha fields and `_timer` made protected.
 
+## TMObject, TGObject and THObject (the objects of a scene)
+
+`TMObject` (asm 116072-116550, vsplayer/objectManaged.cpp) is the managed object for a
+scene object: it owns the picture of the object's sprite (a `TPictureIO` the base's
+picture pointer points to), shows the sprite at its own position moved by the object's
+offset (`kObjectOffset`, scale -1 = keep), and while active shows the object's animation
+(`kObjectAnimation`, when it is one of `kObjectAnimations`). `TGObject` (asm
+258158-259640) adds the hit polygon, position and centre, the scroll factor (parallax:
+`kObjectScrollFactorX/Y`, percent, stored as the value minus 100, with a flag set when
+either is not 100), shader/matrix/rotation/scale settings, an optional particle effect and
+the snoop animation. `THObject` (asm 113494-114760) is what the game creates: a `TGObject`
+that is also a `TEventHandlerInterface` and takes over changes of the data object's fields
+and of the variables of its condition.
+
+- The manifest range for `TGObject` stops at 259458; the rest of its constructor runs
+  to 259640, after which come unrelated classes (`THAnimation`, `TSceneActionArea`, ...)
+  that happen to follow it.
+- `THObject::RegisterConditions()` recurses through the two conditions a compound one is
+  made of; a condition that is already on the way down is a cycle and is logged, its
+  message is `Condition '%s' (id: %d) has a cyclic reference: %s` with the chain
+  `'name' (id: n) - ...`.
+- The `kObjectRotationCenter` event reads the matrix id too (the code of the two cases
+  is shared in the binary), and `kObjectScale` sets both scale fields with `kSendEvent`
+  (which then arrive as their own events).
+- Object fields at +0x17C..+0x194 (rotation, rotation centre, shader, matrix id, scale)
+  overlap the `TPictureIO` that `TMObject` embeds if that is 0xE8 bytes as the
+  neighbouring embeds suggest; the layout comments in `TGObject.h` keep the offsets from
+  the code but nothing depends on them.
+- Not reconstructed (see `TODO.md`): the particle effect built from a script expression
+  (`kParticleContainerSettings`, the same Lua-bridge gap as in `TGScene::BeginScene()`),
+  the graphics-backend calls that draw the particles, and the matrix transform in
+  `IsInside()`/`DrawSnoopAnimation()`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
