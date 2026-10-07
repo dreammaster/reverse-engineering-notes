@@ -7,9 +7,9 @@ engine work (`yendor2.idb`/`yendor3.idb`, `docs23/`, `src23/`). See
 [engine-diffs.md](engine-diffs.md) for the Chapter 2 vs. Chapter 3
 behavioral-difference reference.
 
-## Snapshot, 2026-10-03 (read this first; the dated status below is older)
+## Snapshot, 2026-10-03 (older; the 2026-10-04 snapshot below supersedes it)
 
-82 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
+39 test suites (`python src23/tests/run_all.py` builds and runs them all) (`src23/tests/`, each file's header comment has its build line). Since the status below
 was written: **`ApplyEncodedItemEffect` is complete** to the data model (`spellSelectBranch` names the whole
 dispatch; LIFE FORCE, projectile hit/splash, screen-wide attack, held item, JUMP spells, light timers,
 bookmark all implemented); combat has the **monster turn**, **player melee** and **Search**; and the
@@ -23,7 +23,7 @@ recursion's consumers (`partyFindItemDeep` finds, nothing yet consumes in a bag)
 notes: list the real data that reaches a code path before decoding it; subtract the data-segment base from
 IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell heredocs.
 
-## Snapshot, 2026-10-04 (newest; supersedes the paragraphs above where they disagree)
+## Snapshot, 2026-10-07 (newest; supersedes the paragraphs above where they disagree)
 
 82 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
 
@@ -43,12 +43,20 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   `gamedialog.c` (pause dialog), `titlemenu.c`, `clueitem.c` / `cluemonster.c` (clue book item and monster pages), the alchemy status panel,
   `maininput.c` (the main loop's and the combat turn's key and click maps), `partyUsePercentRestorative` (RestCharacter), and `exedata.c`: **the
   executables are not packed** -- Chapter 2's `SW.EXE` holds its data segment at file offset `0x21660`, Chapter 3's `REGISTER.EXE` at `0x21DB0` -- so the
-  fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly. `tools/explore_sdl.c` is a playable SDL2 slice (walk, fog, view, minimap, panels, local map, pause dialog) using the modules together. `intro2.c` holds Chapter 2's opening story (the seven animated picture cells with their clipping and
-  stepping rules, the nine story cards read from the executable); the timeline of both games' openings is in file-formats.md ("The opening story"), `tools/intro_sheet.c` renders it.
+  fixed UI text is read from them at run time instead of being copied into the source. `tools/walk.c` walks the party through a real map headlessly.
 
-Still missing: the title screen and credits animations and the Chapter 3 opening (Chapter 2's whole opening, from the title fade-in to the last card, is `introstory.c`), the message strings used by the game logic (`exedata.c` can fetch any, none are catalogued), input/timing glue (the
-original is driven by DOS interrupts), the engine's mixer glue for effects (music has a reference synthesizer, opl.c), Chapter 2's debug commands, and Chapter 1's engine. A name
-census of the 769 functions against `src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).
+* **Engine core and front end (2026-10-07)**: `session.c` composes the modules into the main loop's commands (movement with the marker bake `windowbake.c`, monsters and
+  combat, resting `rest.c`, locks, chests `chest.c`, combat spells, restoratives) with no display in it, and `tools/explore_sdl.c` is an SDL2 front end that plays both games'
+  real maps (view, minimap, panels, local map, dialogs, area music through `opl.c` / `cmfplayer.c`). `introstory.c` is Chapter 2's whole opening as a script plus a player
+  (`palettefade.c` has the fader's six modes), `intro2.c` its animated cells and cards, `clueitem.c` / `cluemonster.c` / the other clue pages are complete, and generated
+  indexes list every module (`module-index.md`), every message string by function (`messages.md`) and every sound event (`sound-events.md`). Two corrections that mattered:
+  Chapter 3's "never written" globals are set by raw `ds:` writes in `InitGlobals` (curgame offset 1008, record multiplier 1000, promotion levels 10 / 30; engine-diffs.md
+  "Correction (2026-10-07)"), and the "runtime-filled" tables (shop tabs, sub-icon row) are computed from records the code already decodes.
+
+Still missing: the title screen and credits animations and the Chapter 3 opening (decoded in outline: see file-formats.md), the other spell kinds and item uses in `session.c`
+(their decision modules exist), shop and dialog screens (`dialog.c`, `shop.c` hold the logic), input and timing glue for a real engine (the original is driven by DOS
+interrupts), the engine's mixer glue for effects, Chapter 2's debug commands, and Chapter 1's engine (no files, no analysis). A name census of the 769 functions against
+`src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).
 
 ## Status (last updated 2026-10-01, resolved: the spell/ability catalog's full 80-byte field layout (spellrecord.c, new), the ApplyAttackToTarget/TryResolveAttackAgainstTarget attack-resolution family's composition (combatResolveSpellAttack/combatApplySpellAttack), ApplyEncodedItemEffect's full dispatch chain (all 19 branch addresses recorded), and two previously-untraced caller-context questions -- plus the prior round's "region/town password" mechanism, the wall/door trap creation mystery, and the "R rest" command's decision logic)
 
