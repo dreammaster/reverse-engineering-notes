@@ -402,6 +402,6 @@ Half for Me: the target (not the caster, not dead/stone/eradicated) is healed to
 
 Identify Monster (`4C917`, about 180 lines of UI) opens a window with the monster ahead's armour class (`Mon_ac`), attacks per turn (`Mon_numa`) and special attack (`Mon_spec`), plus its other stats; Detect Monster (`4CF1E`, about 250 lines) is presumably the monster-radar display (inferred from its size and name, not read in detail). Identify Monster calls `showErrorMessage` on its failure path.
 
-Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): tests the cell straight ahead (view slot 5 of `VIEW_DX/VIEW_DY` is (0,+1) for facing 0) and then moves the party beyond it, most likely two cells in total (the final offset table was not traced), plays effect 33h and redraws; `showErrorMessage` when blocked.
+Jump (`Spell_17_Jump`, `4C711`, via stub `sub_28522`): tests the wall in the facing direction of the party's own cell and of the cell straight ahead (view slot 5 = (0,+1) for facing 0, mask taken from the facing table at `165h`), and when both are open moves the party by view slot 12 of `VIEW_DX`/`VIEW_DY`, i.e. exactly **two cells forward** (offset (0,2) for facing 0), plays effect 33h and redraws; `showErrorMessage` when blocked.
 
 Wizard Eye (`Spell_23_WizardEye`, `4C8FE`, via stub `sub_285CC`) simply sets `Party_wizardEye` to 1; `updateAutomap` then draws the overhead map every step.

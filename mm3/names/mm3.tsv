@@ -641,7 +641,7 @@
 161AD	scanMonstersAhead	clears the per-row monster visibility bytes (34B92.. 32E37.. 3329D..) and scans the live monster list for monsters in view ahead of the party (called at the start of runMazeEvent, doCombat, moveMonsters, the draw functions)
 1B16B	playSoundEffect	play sound effect n (all the 'mov ax, NN; call sub_1B16B' sites): ids below 97h need FX enabled (byte_36FE8), 97h and above (speech/music-like) need byte_36FE9; forwards to the sound driver
 26978	soundDriverPlay	far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id
-4C711	Spell_17_Jump	Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
+4C711	Spell_17_Jump	Jump: moves the party exactly two cells forward when both walls in between are open (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
 4C8FE	Spell_23_WizardEye	sets Party_wizardEye = 1 (enables the updateAutomap overhead display), via stub sub_285CC
 15235	monstersRecover	end-of-round recovery: every monster with a non-zero state (Maze_monState: asleep, held, silenced...) gets monsterSavingThrow(id) and returns to state 0 on success
 335B4	Maze_monX	word[170]: x of each live map monster (first byte of its MAZEnn.BIN record; 20h-range values used for off-map)
