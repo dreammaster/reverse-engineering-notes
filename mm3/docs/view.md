@@ -70,14 +70,14 @@ Control codes of the text engine (character < 20h; `` takes one letter, the num
 | style | flags set (example: face block 5 = the left-hand near face) |
 |---|---|
 | 1 | the face's base flag (`byte_332AE`): a plain wall |
-| 2 | base + variant A (`byte_332E0`) |
-| 3 | base + variant B (`byte_332FD`) |
+| 2 | base + variant A (`byte_332E0`): the closed door, frame 6 |
+| 3 | base + variant B (`byte_332FD`): the lamp wall, frame `1 + byte_2884D` |
 | 4 | overlay D only (`byte_332E5`) |
 | 5 | overlay E only (`byte_332DA`) |
 | 6 | overlay F only (`byte_332ED`) |
 | 7 | the special flag (`byte_37388`) -- the animated wall/door |
 
-and `sub_1DB3D` turns the flags into records, e.g. for that face (sprite sheet `word_34B9E/34BA0`, x = -40, y = 40, flags 2 = blit variant): base -> frame 0, variant A -> frame 6, overlay D -> frame 8, E -> frame 9, F -> frame 7, special -> frame 10 (with the animation phase `byte_28875` ORed into the flags, and `byte_2884D` selecting alternating frames).  The mirrored right-hand face uses x = 168 and flags 3, the centre face x = 64 and flags 0, further rows other (x, y) pairs and the distance-scale flag bits; the other wall faces of the deeper rows follow the same style -> flag -> frame scheme.  The meaning of the styles (verified against the artwork in the next subsection): 1 plain wall, 2 and 3 doors, 4 gate, 5 broken wall, 6 open door, 7 archway.
+and `sub_1DB3D` turns the flags into records, e.g. for that face (sprite sheet `word_34B9E/34BA0`, x = -40, y = 40, flags 2 = blit variant): base -> frame 0, variant A -> frame 6, overlay D -> frame 8, E -> frame 9, F -> frame 7, special -> frame 10 (with the animation phase `byte_28875` ORed into the flags, and `byte_2884D` selecting alternating frames).  The mirrored right-hand face uses x = 168 and flags 3, the centre face x = 64 and flags 0, further rows other (x, y) pairs and the distance-scale flag bits; the other wall faces of the deeper rows follow the same style -> flag -> frame scheme.  The meaning of the styles (verified against the artwork in the next subsection): 1 plain wall, 2 closed door, 3 wall with a lit lamp, 4 gate, 5 broken wall, 6 open door, 7 archway.
 `python tools/mm3_viewflags.py mm3.asm` prints all 44 blocks and `python tools/mm3_scenelist.py mm3.asm sub_1DB3D sub_17F38 sub_1862A sub_18BF1` the emitted records.
 
 ## Environment graphics (`sub_430A8` = load map graphics, called when a map is loaded)
@@ -92,7 +92,7 @@ The tile set is loaded by name from `5A3Eh[env]` (`town.til`, `cave.til`, `dung.
 ### Wall sheets verified against the artwork
 
 The 20 wall sheets exist in `MM3.CC` under the hashed names `twn|cav|dun|cas|sci` + `wl1/2/4/3.vga` and decode with `mm3_gfx.py`.  Each sheet holds 13 frames for one **viewing distance**: `wl1` = the adjacent row (front faces 168x85, side faces 24x109), `wl2` = 104x53 / 32x85, `wl3` = 56x29 / 24x52, `wl4` = 24x13 / 16x29, so the renderer's FFFF records switch sheet when going deeper (`wl1` first, then `wl2`, `wl4`...).
-Frames of the town sheet (looked at as PNG): 0 plain wall, 1-3 plain wall with a lit lamp (three flicker variants, chosen by the `byte_2884D` counter that counts 0-2), 4 and 5 left and right side walls, 6 closed double door, 7 open door (doorway with red carpet), 8 gate / portcullis, 9 broken wall (rough hole), 10 empty archway (pillars only), 11 and 12 side-face decorations.  With the flag table above: wall style 1 = plain wall (frame 0), style 2 = wall + closed door (6), style 3 = a second door variant (flag `byte_332FD`), style 4 = gate (8), style 5 = broken wall (9), style 6 = open door (7), style 7 = archway (10, with the animation variant when `byte_28875` is set).  The cave, dungeon, castle and sci-fi sheets keep the same frame numbering with different artwork.
+Frames of the town sheet (looked at as PNG): 0 plain wall, 1-3 plain wall with a lit lamp (three flicker variants, chosen by the `byte_2884D` counter that counts 0-2), 4 and 5 left and right side walls, 6 closed double door, 7 open door (doorway with red carpet), 8 gate / portcullis, 9 broken wall (rough hole), 10 empty archway (pillars only), 11 and 12 side-face decorations.  With the flag table above: wall style 1 = plain wall (frame 0), style 2 = wall + closed door (6), style 3 = the lamp wall (flag `byte_332FD` emits frame `1 + byte_2884D`, i.e. frames 1-3 cycling), style 4 = gate (8), style 5 = broken wall (9), style 6 = open door (7), style 7 = archway (10, with the animation variant when `byte_28875` is set).  The cave, dungeon, castle and sci-fi sheets keep the same frame numbering with different artwork.
 
 ### The four sprite writers: objects, monsters and effects by row
 
