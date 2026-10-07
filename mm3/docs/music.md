@@ -64,3 +64,5 @@ In `ADLIB.DRV`'s effect table the entries for ids 151-159 all point at the silen
 So the digitised sounds are played by a software timer loop at ~8 kHz with no DMA or card interrupt, the same way the DSP "direct DAC" mode is driven.  The game side that supplies the sample buffers (`sub_2693F` init, `sub_26965` stop/query) was not traced further.
 
 Use of the samples: the only `sprintf("s%d.s")` in the executable is in `introSequence` (`388A9`): the intro loads one of `S1.S`..`S7.S` per scene (`loadResourceByName`) and hands it to the driver's sample entry point (`sub_26965` / API `0Ch`); after the last scene (`cmp si, 7`) it clears the effect state with `soundDriverPlay(FFFEh)`.  So the seven digitised sounds belong to the introduction, not to the town ids discussed above.
+
+`tools/mm3_samples.py OUTDIR` exports the seven samples to 8-bit mono WAV files at 8008 Hz (`1193182 / 149`): S1 24,449 bytes (3.1 s), S2 21,121 (2.6 s), S3 25,409 (3.2 s), S4 29,825 (3.7 s), S5 34,754 (4.3 s), S6 34,369 (4.3 s), S7 19,265 (2.4 s).
