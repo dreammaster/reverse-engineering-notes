@@ -13,7 +13,7 @@
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
- * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on,
+ * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S loot the chest ahead, M the local area map, D the pause
  * dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
@@ -186,6 +186,7 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case 'K': return SDLK_k;
     case 'S': return SDLK_s;
     case 'A': return SDLK_a;
+    case 'C': return SDLK_c;
     case 'D': return SDLK_d;
     case 'P': return SDLK_p;
     case '1': return SDLK_F1;
@@ -221,6 +222,12 @@ static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     if (s->combat.active) {
         if (key == SDLK_a) {
             sessionAttack(s);
+        } else if (key == SDLK_c) { /* the first attack spell the member can cast */
+            for (unsigned spell = 1; spell < 126; spell++) {
+                if (sessionCast(s, spell) == SessionCastDone) {
+                    break;
+                }
+            }
         }
         return true;
     }

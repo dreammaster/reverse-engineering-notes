@@ -15,6 +15,7 @@
 #include "monsterpool.h"
 #include "movement.h"
 #include "random.h"
+#include "spellrecord.h"
 #include "rest.h"
 #include "savegame.h"
 #include "viewport.h"
@@ -54,6 +55,7 @@ typedef struct GameSession {
     LockCatalog locks;
     MonsterCatalog monsters;
     ItemCatalog items;
+    SpellCatalog spells;
     SaveGame save;
     DungeonGrid grid;
     uint8_t pool[MonsterPoolSize * MonsterRecordSize];
@@ -87,6 +89,15 @@ RestOutcome sessionRest(GameSession *session);
 
 /* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. */
 InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uint16_t heldKeyFlags);
+
+/*
+ * A combat spell for the party member whose turn it is: the member must know it (the ability bank), the context, the nuore / ore and the MP must allow it
+ * (spellCanCast), and it must be one of the two attack kinds the combat decoding covers -- SpellFlagsBAttackPath (the first live monster) or
+ * SpellFlagsBAttackAllSlots (every live monster). The costs are paid, the attack resolved and applied (combat.h), and the turn passes like an attack. The other
+ * spell kinds (healing, light, jump, mark, summon...) are decided by their own modules but not composed here: SessionCastUnsupported.
+ */
+typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported } SessionCast;
+SessionCast sessionCast(GameSession *session, unsigned spellId);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);

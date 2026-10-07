@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bcd4.h"
 #include "session.h"
 
 static int g_failureCount = 0;
@@ -134,11 +135,20 @@ static void testCombat(const char *envName, const char *defaultDir) {
         turns++;
     }
     check("monsters reach a standing party and start a combat", s->combat.active);
-    unsigned swings = 0;
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 50); /* the spell costs nuore (and some need ore) */
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 50);
+    unsigned swings = 0, casts = 0, refused = 0;
     while (s->combat.active && swings < 400) {
-        sessionAttack(s);
+        SessionCast cast = sessionCast(s, 2); /* the attack spell the second and third heroes know */
+        if (cast == SessionCastDone) {
+            casts++;
+        } else {
+            refused += cast == SessionCastCannot;
+            sessionAttack(s);
+        }
         swings++;
     }
+    check("the attack spell is cast by the heroes who know it (and refused when the MP are gone), the others swing", casts > 0 && casts + refused <= swings);
     check("the combat ends one way or the other", !s->combat.active);
     if (!s->combat.wiped) {
         check("a won combat leaves the monster out of the pool and the move command free again", sessionMove(s, MovementTurnLeft) == SessionStepTurned);

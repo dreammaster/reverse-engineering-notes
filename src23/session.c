@@ -9,6 +9,7 @@
 #include "lighting.h"
 #include "newgame.h"
 #include "party.h"
+#include "spellcast.h"
 #include "windowbake.h"
 
 GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
@@ -20,7 +21,7 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     saveGameInit(&s->save, game);
     if (!worldMapParseWorldDat(&s->map, game, worldDat, size) || !worldObjectTableParseWorldDat(&s->objects, game, worldDat, size) ||
         !lockCatalogParseWorldDat(&s->locks, game, worldDat, size) || !monsterCatalogParseWorldDat(&s->monsters, game, worldDat, size) ||
-        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
+        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !spellCatalogParseWorldDat(&s->spells, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
         free(s);
         return NULL;
     }
@@ -198,6 +199,55 @@ bool sessionAttack(GameSession *s) {
     combatAfterAction(s);
     combatRunMonsters(s);
     return true;
+}
+
+SessionCast sessionCast(GameSession *s, unsigned spellId) {
+    SessionCombat *c = &s->combat;
+    if (!c->active || c->cursor >= c->count || c->order[c->cursor].isMonster) {
+        return SessionCastNoCombat;
+    }
+    uint8_t *caster = sessionPartyRecord(s, c->order[c->cursor].index);
+    const uint8_t *spell = spellRecord(&s->spells, spellId);
+    if (!caster || !spell) {
+        return SessionCastNotKnown;
+    }
+    unsigned known[256];
+    unsigned knownCount = partyKnownAbilityIds(caster, s->game, known, 256);
+    bool knows = false;
+    for (unsigned i = 0; i < knownCount && i < 256; i++) {
+        knows = knows || known[i] == spellId;
+    }
+    if (!knows) {
+        return SessionCastNotKnown;
+    }
+    if (!spellCanCast(spell, caster, &s->save, true)) {
+        return SessionCastCannot;
+    }
+    unsigned flagsB = spellGetU16(spell, SpellFieldFlagsB);
+    unsigned resist = spellGetU16(spell, SpellFieldResistFlags);
+    bool single = (flagsB & SpellFlagsBAttackPath) && !(resist & (SpellResistLifeForceCaster | SpellResistLifeForceParty));
+    bool all = (flagsB & SpellFlagsBAttackAllSlots) != 0;
+    if (!single && !all) {
+        return SessionCastUnsupported;
+    }
+    spellDeductCosts(spell, caster, &s->save);
+    if (all) {
+        combatApplySpellAttackToActiveSlots(c->slots, caster, spell, false, &s->rng);
+    } else {
+        unsigned slot = 0;
+        if (combatSelectActiveMonster(c->order, c->count, c->defeated, &slot)) {
+            uint8_t *target = c->slots + (size_t)slot * MonsterRecordSize;
+            CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, false, &s->rng);
+            combatApplySpellAttack(target, spell, result);
+            if (result.hasEffect) {
+                combatMarkSpellAttackHit(target, spell);
+            }
+        }
+    }
+    snprintf(s->log, sizeof(s->log), "party member %u casts spell %u", c->order[c->cursor].index + 1, spellId);
+    combatAfterAction(s);
+    combatRunMonsters(s);
+    return SessionCastDone;
 }
 
 typedef struct {

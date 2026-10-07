@@ -74,8 +74,8 @@ to every memory-image parser (items, monsters, spells, world map, dialog, docume
 main loop -- `sessionMove` (passability, fog reveal, window rebuild = grid + `dungeonGridBakeMarkers` + `monsterPoolRefreshWindow`, then every live monster's turn
 with `monsterPoolTakeTurn`; a monster that reaches the party starts a combat), `sessionAttack` (`combatBuildTurnOrder` / `combatPlayerMeleeAttack` /
 `combatProcessMonsterTurn` / `combatProcessRound`; victory awards the loot with `monsterRewardsAward`, a wipe is `partyWipedOut`), `sessionRest` (`restParty`),
-`sessionUnlock` (`interactUnlockFacing`), `sessionLoot` (`chestTake`) and `sessionScene` (the view cells and the monsters to draw via `monsterPoolEncounterScan`).
-Nothing in it draws, plays or waits; spells, items on the cursor, inventory, shops and dialogs are decision modules a front end wires in. `test_session.c` plays both games
+`sessionCast` (a combat attack spell: known, `spellCanCast`, costs, `combatResolveSpellAttack` / `combatApplySpellAttackToActiveSlots`), `sessionUnlock` (`interactUnlockFacing`), `sessionLoot` (`chestTake`) and `sessionScene` (the view cells and the monsters to draw via `monsterPoolEncounterScan`).
+Nothing in it draws, plays or waits; the other spell kinds, items on the cursor, inventory, shops and dialogs are decision modules a front end wires in. `test_session.c` plays both games
 (random soak, a combat from the first spider to the end, a chest looted once).
 
 `src23/tools/explore_sdl.c` is a front end for it: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`), keys through
