@@ -66,3 +66,9 @@ So the digitised sounds are played by a software timer loop at ~8 kHz with no DM
 Use of the samples: the only `sprintf("s%d.s")` in the executable is in `introSequence` (`388A9`): the intro loads one of `S1.S`..`S7.S` per scene (`loadResourceByName`) and hands it to the driver's sample entry point (`sub_26965` / API `0Ch`); after the last scene (`cmp si, 7`) it clears the effect state with `soundDriverPlay(FFFEh)`.  So the seven digitised sounds belong to the introduction, not to the town ids discussed above.
 
 `tools/mm3_samples.py OUTDIR` exports the seven samples to 8-bit mono WAV files at 8008 Hz (`1193182 / 149`): S1 24,449 bytes (3.1 s), S2 21,121 (2.6 s), S3 25,409 (3.2 s), S4 29,825 (3.7 s), S5 34,754 (4.3 s), S6 34,369 (4.3 s), S7 19,265 (2.4 s).
+
+### Which song plays on which map (`loadMapGraphics`, `430A8`)
+
+At the end of map loading the song is chosen from the map number (the routine compares the 0-based number `n = map - 1`; a song is only restarted when its name differs from the one already playing, `stricmp` with the current name at `ECE8h`, and only if the music device flag `byte_28848` is set it also plays effect 0):
+maps 1-5 (`n < 5`, the towns) `medieval.m`; maps 6-15 `caves.m`; maps 16-23 `eerie.m`; maps 24-28 `city.m`; maps 29-33 `eerie.m`; maps 34-40 `cyber.m`; maps 41 and above (outdoors) `venture.m`.
+Town buildings override this with their own songs (`bank.m`, `guild.m`, `towninn.m`, `honky.m`, `temples.m`, `grounds.m`, `dungeon.m`), `combat.m` is used for the Arena, `mm3theme.m` for the intro and the death sequence.
