@@ -28,6 +28,12 @@
 // of Deponia 1's); every branch for them is left out, so IsModelAnimation()/
 // IsBonesAnimation() are always false and an animation of those kinds plays no
 // sprites.
+//
+// TODO (low priority, see /TODO.md): reconstruct the model and Spine animation
+// kinds. Deponia 1 never uses them, but the engine is meant to be reusable for
+// other Visionaire games that may. The original's fields for them are the
+// +0x38..+0x60 block above (rendered sprite, ModelAnimation, SpineSkeleton and
+// its animation, path, tick).
 #pragma once
 
 #include <vector>
@@ -112,6 +118,8 @@ public:
 	bool IsSpriteAnimation() const {
 		return true;
 	}
+	// TODO (low priority, see /TODO.md): always false until the model and Spine
+	// animation kinds are reconstructed.
 	bool IsModelAnimation() const {
 		return false;
 	}

@@ -2955,7 +2955,9 @@ Deliberately NOT reconstructed: the 3D-model (`ModelContainer`/`ModelAnimation`)
 and Spine skeleton animation kinds the class also plays. Deponia 1 only uses
 sprite animations; every model/bones branch is left out, so `IsModelAnimation()`/
 `IsBonesAnimation()` are fixed `false`. This is why the manifest status is
-`in-progress`, not `done`.
+`in-progress`, not `done`. Tracked as a low-priority item in the repo-root
+`TODO.md`: the engine is meant to be reusable for other Visionaire games, which
+may use those kinds, so they are to be done before the project is finished.
 
 Side corrections found along the way: `TSprite::SetPosition(pos, scale)` takes
 `-1.0f` (not `1.0f`) as its "leave the scale alone" argument - fixed in

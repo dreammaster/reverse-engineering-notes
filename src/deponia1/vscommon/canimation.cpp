@@ -10,6 +10,11 @@
 #include "graphicslib/preloadedPicManager.h"
 #include "vstables/fieldIds.h"
 
+// TODO (low priority, see /TODO.md): the model/Spine branches of this ctor, the
+// dtor, Start(), FirstSprite()/NextSprite()/EofSprite(), SetCurrentSprite(),
+// GetCurrentSpriteIndexOrTick(), GetFrameCount() and
+// GetCurrentSpritePosition() are all left out.
+//
 // Confirmed (asm lines 1383514-1384913; the sprite part only). The first
 // reference is the TSAnimation that holds the running state, the second the
 // TTAnimation to play. The state record takes the name of the animation; the
