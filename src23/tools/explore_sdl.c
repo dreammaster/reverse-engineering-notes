@@ -340,6 +340,15 @@ int main(int argc, char **argv) {
     Overlay overlay = OverlayNone;
     bool running = true, dirty = true;
     const char *script = getenv("EXPLORE_KEYS");
+    static char randomScript[20001];
+    if (getenv("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */
+        unsigned n = (unsigned)atoi(getenv("EXPLORE_RANDOM"));
+        const char alphabet[] = "FFFFFFBLRLRQEAAAT";
+        for (unsigned i = 0; i < n && i < sizeof(randomScript) - 1; i++) {
+            randomScript[i] = alphabet[rand() % (sizeof(alphabet) - 1)];
+        }
+        script = randomScript;
+    }
     const char *shotPath = getenv("EXPLORE_SHOT");
     while (running) {
         if (script && *script) { /* feed the next scripted key as a key press */
@@ -379,7 +388,7 @@ int main(int argc, char **argv) {
             break;
         }
         SDL_Event event;
-        while (SDL_WaitEventTimeout(&event, 100)) {
+        while (SDL_WaitEventTimeout(&event, script && *script ? 0 : 100)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN) {
