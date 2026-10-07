@@ -3122,6 +3122,66 @@ Things worth knowing:
   two way points is walked to the end, and targets just outside the area resolve to a
   point near it.
 
+## TMCharacter and TGCharacter (characterManaged.cpp, the characters of a scene)
+
+`TMCharacter` (asm 137965-138511) is what is specific to a character in the managed object:
+the actions are the character's own list, the direction is its own field, it is hit
+by the opaque pixels of its sprite (and not by the character that detects), and its name
+is a language text. It has one pure virtual of its own, `GetCurrentSpriteRect()`
+(vtable slot 0x100). `TGCharacter : TMCharacter` (asm 175318-186239, 76 methods) is the
+character that walks, talks, turns and plays animations; `THCharacter` only adds the
+constructor.
+
+What was recovered, and not obvious from the code:
+
+- The vtable names: slot 0xB0 is `GetLanguageName()`, 0x68 `GetPosition()` (what was
+  first called `GetScreenPosition()`), 0x100 `GetCurrentSpriteRect()` (was
+  `GetVisibleRect()`).
+- States: `_state` (+0xF0, the field `kCharacterState`) is 2 standing, 3 walking, 4 a
+  turn animation plays (`_previousState` remembers a walk that is to go on after it).
+  `kCharacterAnimState` (0x1FC) is the kind of the animation shown (`TCharacterAnimEnum`).
+- `GetDirectionIndex()` is the nearest-direction search over an outfit's animations: the
+  direction lists are ascending, the same direction can repeat (variants, chosen by
+  `kCharacterAnimIndex`), and the search wraps at 360. Ties go to the lower direction
+  in the middle of the list, to the first when above the last, to the last when below
+  the first. **Quirk of the original reproduced**: when the direction is above the last
+  one, nearer to it than to the first, and the last direction has variants, the
+  comparison is with one less than the size of the group, so the last variant is never
+  chosen.
+- `CheckTurning()` builds four entries per turn animation, but all with the same
+  `(from, to)` pair, so only the first (unmirrored, not replayed) can ever match; the
+  mirrored/replayed combinations are dead code in the binary. Also: `SetCurrentOutfit()`
+  never clears the turn animation lists, so a second outfit adds to them.
+- `SetCurrentOutfit()` writes into the outfit's animations in the game data
+  (`kAnimationMove` = true and `kAnimationNumberOfLoops` = 0 on the walk/talk/standing
+  ones, 1 loop on the turn ones), and `UnloadAnimations()` zeroes `_state` while the
+  animations are unloaded (restoring it after).
+- `WalkWay()` has two kinds of walk animation: with `kOutfitSlideWalkAnimation` the
+  per-frame values of `kAnimationWalkSteps` are speeds per second (scaled by the time
+  since the last step, at most 500 ms); without it they are the distance to step when
+  the animation reaches the next frame (and a 0 there means do not step).
+- `IsReached()` is two things: for a character that follows another (`strict`), the
+  distance depends on both sizes and the follow reach; otherwise it is 1.5 sprite
+  widths (50 when the character has no sprite), or an exact place when
+  `kCharacterActionDestPosition` is set.
+- The walking sound is panned from the character's place on the screen
+  (`x / window width * 200 - 100`) and has the volume of its size (0-100).
+- Constants: 100.0 (percent), 500.0 (longest step time), 1000.0 (ms per s), 200.0
+  (`IsReached`), 1.5 (sprite widths), 0.0 (no step).
+- Checked with a scratch program (not committed): `GetDirectionIndex()` over
+  `{0, 90, 90, 180, 270}` and `{30, 30, 100}` gives the nearest index at, between and
+  beyond the ends, with the tie rules above.
+
+Left out (see `TODO.md`): the model and Spine branches (`IsSpineAnimation()` is real
+but the code that plays several animations at once is not), the matrix transform of
+`TMCharacter::IsInside()` and `TGCharacter::Draw()`, and the Lua hook
+`CharacterDirectionHook` that `GetDirectionIndex()` asks first (the same standing
+Lua-bridge gap as the other hooks; the registered name is stored).
+
+Needed from other classes: `TSoundFFMPEG::StopSound()` (call shape only: the virtual
+at slot 0x48), `TSoundTypeEnum::kValue3`, and `TManagedObject`'s `_color`, `_lifetime`,
+`_animations`, `_text`, the alpha fields and `_timer` made protected.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

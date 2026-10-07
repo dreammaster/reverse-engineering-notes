@@ -10,9 +10,11 @@
 #include "WxStub.h"
 
 // The kinds of sound a sound can be played as; only value 1 (the frame sounds of
-// TGAnimation) has been seen, so it is named by its raw value.
+// TGAnimation) and value 3 (the walking sound of TGCharacter) have been seen, so they
+// are named by their raw values.
 enum class TSoundTypeEnum {
-	kValue1 = 1
+	kValue1 = 1,
+	kValue3 = 3
 };
 
 class TSoundInterface {

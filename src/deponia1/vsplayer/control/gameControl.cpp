@@ -917,8 +917,8 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 	int worktopHeight = scene->GetWorktopHeight();
 	const wxSize &visibleSize = scene->GetVisibleSize();
 
-	wxPoint charPos = _previousCharacter->GetScreenPosition();
-	wxRect charRect = _previousCharacter->GetVisibleRect();
+	wxPoint charPos = _previousCharacter->GetPosition();
+	wxRect charRect = _previousCharacter->GetCurrentSpriteRect();
 	if (charRect.IsEmpty()) {
 		charRect.SetLeft(charPos.x);
 		charRect.SetWidth(0);
@@ -1003,8 +1003,8 @@ void TGameControl::MoveScene() {
 	const wxSize &visibleSize = scene->GetVisibleSize();
 	const wxPoint *target = game.GetPoint(kGameScrollToPoint);
 
-	wxPoint charPos = _previousCharacter->GetScreenPosition();
-	wxRect charRect = _previousCharacter->GetVisibleRect();
+	wxPoint charPos = _previousCharacter->GetPosition();
+	wxRect charRect = _previousCharacter->GetCurrentSpriteRect();
 	if (charRect.IsEmpty()) {
 		charRect.SetLeft(charPos.x);
 		charRect.SetWidth(0);
@@ -1067,8 +1067,8 @@ void TGameControl::CenterScene() {
 		return;
 
 	const wxSize &visibleSize = scene->GetVisibleSize();
-	wxPoint charPos = _currentCharacter->GetScreenPosition();
-	wxRect charRect = _currentCharacter->GetVisibleRect();
+	wxPoint charPos = _currentCharacter->GetPosition();
+	wxRect charRect = _currentCharacter->GetCurrentSpriteRect();
 
 	if (!(charPos == wxPoint{-1, -1})) {
 		scene->AdjustWindowHorizontal(static_cast<float>(charPos.x - visibleSize.width / 2));
@@ -1549,7 +1549,7 @@ void TGameControl::UpdateWalkingSounds() {
 		if (!character->IsWalkingSoundPlaying())
 			continue;
 
-		wxPoint charPos = character->GetScreenPosition();
+		wxPoint charPos = character->GetPosition();
 		int dx = charPos.x - scrollX;
 		float distFactor = (dx < 0) ? 0.0f : static_cast<float>(std::min(dx, visibleWidth));
 		int pan = static_cast<int>(distFactor / panDivisor - 100.0f);

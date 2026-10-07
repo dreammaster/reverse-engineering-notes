@@ -21,7 +21,7 @@ StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<cha
 hmap_iterator<int, int, IntegerHash<int> >	todo	1	135669	135669
 HashNode<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, StringHash<char const*> >	todo	1	135743	135743
 HashNode<int, std::vector<int, std::allocator<int> >, IntegerHash<int> >	todo	1	136783	136783
-TMCharacter	todo	10	137965	138489
+TMCharacter	done	10	137965	138489
 TGInterface	todo	25	138536	143021
 TPaintControl	done	27	143284	749311
 HashMap<TId, int, TIdHash>	todo	1	143397	143397
@@ -36,7 +36,7 @@ HashMap<wxString, wxString, StringHash<wchar_t const*> >	todo	1	164898	164898
 TMButton	todo	9	165577	166172
 TGScene	done	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
-TGCharacter	stub	76	175318	185835
+TGCharacter	in-progress	76	175318	185835
 THAction	todo	5	187010	187127
 TGObjectManager	in-progress	25	187194	189565
 TTObject	todo	9	190187	1468584

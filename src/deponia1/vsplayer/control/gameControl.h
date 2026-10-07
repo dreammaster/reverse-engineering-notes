@@ -331,7 +331,7 @@ protected:
 	// 465849-466072; also set by InitCharacters, asm lines 466201-466735) -
 	// despite the name, it's never observed differing from _currentCharacter
 	// at any write site, and it IS read: ScrollToCharacterIfNeeded (asm lines
-	// 458931-459278) calls GetScreenPosition()/GetVisibleRect() through it,
+	// 458931-459278) calls GetPosition()/GetCurrentSpriteRect() through it,
 	// not through _currentCharacter directly. May just be a second cached
 	// copy rather than a distinct "previous character" as the name suggests.
 	TGCharacter *_previousCharacter = nullptr;

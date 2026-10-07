@@ -28,4 +28,9 @@ public:
 	// unresolved). "PlaySound" is a guess from the call shape, not a
 	// recovered identifier.
 	virtual void PlaySound(const wxFileName &file, int volume, int pan, int a, int b);
+	// Confirmed call shape only (TGCharacter::StopWalkingSound(), Deponia_Linux.asm lines
+	// 177644-177654): the virtual at slot 0x48 of the sound manager stops the sound of
+	// a file (the walking sound it started with TSoundInterface::Play()). Not reversed
+	// beyond that call shape, so it is a plain method here.
+	void StopSound(const wxFileName &file);
 };

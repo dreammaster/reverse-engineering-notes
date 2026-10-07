@@ -61,3 +61,26 @@ start functions use) are reconstructed; `TCAnimation::IsModelAnimation()`/
 lines 154252-156548) list the running animations as text lines and draw a
 thumbnail of each in the debugger overlay. Not reconstructed (not declared at
 all); the manifest keeps them `todo`.
+
+### TGCharacter and TMCharacter: Spine skeletons and the matrix transform
+
+`src/deponia1/TGCharacter.{h,cpp}`, `src/deponia1/TMCharacter.{h,cpp}`; original
+`src/vsplayer/characterManaged.cpp` and the character file of `vsplayer`.
+
+Left out, for the same reason as the model/Spine items above:
+
+- the branches for a character shown as a Spine skeleton (`IsSpineAnimation()`):
+  `StartCharacterAnim()` starting a second animation on top of the first (the
+  secondary list `_animations` and the kinds `_animKinds[1...]`), `StopCharacterAnim()`
+  ending them by kind, `GetCurrentSpriteRect()` (the skeleton's size, scaled by
+  `kAnimationSize`), `SetSpritePosition()`/`UpdateSpriteRect()`/`Draw()` positioning
+  a model or skeleton animation;
+- the matrix transform: `TMCharacter::IsInside()` moves the point back through the
+  inverse matrix while a character is drawn through one (`kCharacterMatrixId` 1),
+  and `TGCharacter::Draw()` works with a matrix of its own (the part reconstructed
+  only turns the global matrices off for a character that has none);
+- the Lua hook `CharacterDirectionHook` that `GetDirectionIndex()` asks before its own
+  search (needs the Lua bridge, like the other hooks).
+
+`TGCharacter` stays `in-progress` in `manifest/proprietary_classes.tsv` until the
+Spine branches are done.

@@ -89,7 +89,9 @@ public:
 			_text = nullptr;
 	}
 
-	wxPoint GetPosition() const {
+	// Confirmed virtual (vtable slot 0x68; TGObject adds its offset to it). This is what
+	// was first modeled as "GetScreenPosition()" - the same slot.
+	virtual wxPoint GetPosition() const {
 		return _position;
 	}
 	// Confirmed accessed directly as a private field from TGObjectManager
@@ -99,6 +101,14 @@ public:
 	// own already-established pattern for the same field.
 	const TVisObjRef &GetRef() const {
 		return _objRef;
+	}
+	// Confirmed virtual (vtable slot 0xB0, between RemoveSprites() and SetAnimation()):
+	// the object's name as shown to the player. The base returns an empty string
+	// (its body is identical to an unrelated trivial method's, so the linker folded
+	// the two: the symbol the vtable shows is `no_check_checker_t::to_string()`);
+	// TMCharacter and TMObject return the language text of the object's name.
+	virtual wxString GetLanguageName() const {
+		return wxString();
 	}
 	// Confirmed virtual (called polymorphically by CompObjectCenter below;
 	// this class's own body is a plain field read either way).
@@ -201,13 +211,15 @@ public:
 	// Confirmed (asm lines 190835-190852): records this object as the
 	// "clicked without being in reach" target and forwards the mouse event
 	// to the global object manager.
-	void ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event);
+	// (virtual, vtable slot 0x60; TGCharacter overrides it)
+	virtual void ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event);
 
 	// Confirmed (asm lines 190861-190890): the given target's own stored
-	// screen position matches this object's GetScreenPosition().
-	bool IsReached(const TVisObjRef &target) const {
+	// screen position matches this object's GetPosition(). Virtual (vtable slot
+	// 0x50; TGCharacter overrides it).
+	virtual bool IsReached(const TVisObjRef &target) const {
 		const wxPoint *pt = target.GetPoint(kCharacterPosition);
-		return pt && *pt == GetScreenPosition();
+		return pt && *pt == GetPosition();
 	}
 
 	// Confirmed (asm lines 190899-190938): deactivating hides (and clears)
@@ -364,7 +376,7 @@ public:
 	// animation (hiding whatever was primary before, if different);
 	// anything else is added to the secondary list instead (without
 	// duplicating an entry already present).
-	void SetAnimation(TGAnimation *animation) {
+	virtual void SetAnimation(TGAnimation *animation) {
 		if (!animation)
 			return;
 		if (_objRef.GetLink(kObjectAnimation) == animation->GetDataObject()) {
@@ -392,14 +404,6 @@ public:
 
 protected:
 	TVisObjRef _objRef;
-
-	// Confirmed virtual (IsReached() above calls it polymorphically; no
-	// TManagedObject-level body is confirmed, so this default - falling
-	// back to the plain stored position - is a reasonable guess, not
-	// recovered evidence).
-	virtual wxPoint GetScreenPosition() const {
-		return _position;
-	}
 
 	// Confirmed a bool field at a fixed offset distinct from every field
 	// below (GetActionsToTest()/ExecuteEvent()/ExecuteMatchingAction(),
@@ -436,13 +440,17 @@ protected:
 	// CheckCharacterPosition() read and move it, asm lines 175894-176011): moved up
 	// from private.
 	wxPoint _position;
-
-private:
+	// Confirmed protected-by-need (TMCharacter reads them, asm lines 137965-138421):
+	// moved up from private.
 	int _center = -1;
 	TPictureIO *_picture = nullptr;
+	TGAnimation *_currentAnimation = nullptr;
+
+	// Confirmed protected-by-need (TGCharacter reads/writes them: its draw colour, its
+	// alpha fade and the secondary animations, asm lines 175318-186239): moved up from
+	// private.
 	unsigned int _color = 0xFFFFFFFF;
 	int _lifetime = 0;
-	TGAnimation *_currentAnimation = nullptr;
 	std::vector<TGAnimation *> _animations;
 	TGText *_text = nullptr;
 	float _alpha = 1.0f;

@@ -13,7 +13,8 @@ terse = "-t" in sys.argv[1:]
 path, first, last = args[0], int(args[1]), int(args[2])
 NOISE = re.compile(r"exchange_and_add|_M_destroy|S_empty_rep|Unwind_Resume|~pair|^\s*(push|pop)\s+r[a-z0-9]+$|"
                    r"sub\s+r[a-z0-9]+, 18h|cmp\s+r[a-z0-9]+, offset _ZNSbIw|lea\s+rdi, \[r[a-z0-9]+\+10h\]|"
-                   r"test\s+eax, eax|jg\s+(short )?loc_|^\s*nop|mov\s+r[a-z0-9]+, \[rsp\+.*(var|arg)_(10|8|18|20|28|30)\]")
+                   r"^\s*nop|mov\s+r[a-z0-9]+, \[rsp\+.*(var|arg)_(10|8|18|20|28|30)\]")
+skip = 0
 with open(path, encoding="utf-8", errors="replace") as f:
     for n, line in enumerate(f, 1):
         if n < first:
@@ -21,6 +22,15 @@ with open(path, encoding="utf-8", errors="replace") as f:
         if n > last:
             break
         s = line.rstrip()
+        if terse and "exchange_and_add" in s:
+            skip = 6
+            continue
+        if skip and terse:
+            skip -= 1
+            if "_M_destroy" in s or re.match(r"^[A-Za-z_]", s):
+                skip = 0
+            if not re.match(r"^[A-Za-z_]", s):
+                continue
         if not s.strip() or s.lstrip().startswith(";") or "align" in s.split(";")[0]:
             continue
         if re.match(r"^[A-Za-z_][\w@$.?]*:", s):
