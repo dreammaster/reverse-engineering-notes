@@ -655,3 +655,7 @@
 D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (Knight/Paladin unrestricted); table 5AB5 holds the class bits
 51C4A	canEquip	canEquip(class, item id, silent): class 0/1 always; else EQUIP_FORBID[item] & class bit must be 0, otherwise shows '%ss are not proficient with %s!'
 3BF4B	learnSpellDialog	event mode 67: choose a character and teach it the spell id ('%s learns a %s spell.')
+36FE8	Option_sfx	byte (MAZE.PTY +0Eh): sound effects on/off, toggled in controlPanel
+36FE9	Option_music	byte (+0Fh): music on/off (gates playSoundEffect ids >= 97h)
+36FEA	Option_delay	byte (+10h): 0-9 option cycled in controlPanel (probably the message/game delay)
+36FEB	Party_lastInn	byte (+11h): town number the party last slept in (townInn)

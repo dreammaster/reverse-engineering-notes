@@ -2008,8 +2008,8 @@ loc_14E72:                              ; CODE XREF: seg001:026C↑j
                 mov     word_332DE, dx
                 mov     word_332DC, ax
                 mov     al, 1
-                mov     byte_36FE8, al
-                mov     byte_36FE9, al
+                mov     Option_sfx, al
+                mov     Option_music, al
                 call    j_introSequence
                 cmp     byte_333AD, 4
                 jnz     short loc_14E9D
@@ -14502,8 +14502,8 @@ loc_1ADCB:                              ; CODE XREF: runMazeEvent+14E3↑j
                 pop     cx
                 pop     cx
                 mov     al, 1
-                mov     byte_36FE8, al
-                mov     byte_36FE9, al
+                mov     Option_sfx, al
+                mov     Option_music, al
                 mov     [bp+var_40], 0
                 mov     [bp+var_42], 0
                 mov     [bp+var_4], 0
@@ -14842,7 +14842,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    si
                 mov     si, [bp+arg_0]
-                cmp     byte_36FE8, 0
+                cmp     Option_sfx, 0
                 jz      short loc_1B181
                 cmp     si, 97h
                 jge     short loc_1B181
@@ -14853,7 +14853,7 @@ loc_1B181:                              ; CODE XREF: playSoundEffect+C↑j
                                         ; playSoundEffect+12↑j
                 cmp     si, 96h
                 jle     short loc_1B195
-                cmp     byte_36FE9, 0
+                cmp     Option_music, 0
                 jz      short loc_1B195
 
 loc_1B18E:                              ; CODE XREF: playSoundEffect+14↑j
@@ -33938,7 +33938,7 @@ arg_0           = word ptr  6
                 push    di
                 mov     si, [bp+arg_0]
                 xor     di, di
-                mov     al, byte_36FEA
+                mov     al, Option_delay
                 mov     ah, 0
                 push    ax
                 mov     ax, si
@@ -49070,14 +49070,18 @@ Party_y         db 0                    ; DATA XREF: drawAutomapWrapped+2F↑r
 Party_map       db 0                    ; DATA XREF: mapHasDayNight+3↑r
                                         ; mapHasDayNight+A↑r ...
                                         ; byte, current maze id (+0Dh)
-byte_36FE8      db 0                    ; DATA XREF: seg001:02A5↑w
+Option_sfx      db 0                    ; DATA XREF: seg001:02A5↑w
                                         ; runMazeEvent+17E6↑w ...
-byte_36FE9      db 0                    ; DATA XREF: seg001:02A8↑w
+                                        ; byte (MAZE.PTY +0Eh): sound effects on/off, toggled in controlPanel
+Option_music    db 0                    ; DATA XREF: seg001:02A8↑w
                                         ; runMazeEvent+17E9↑w ...
-byte_36FEA      db 0                    ; DATA XREF: sub_25EF3+A↑r
+                                        ; byte (+0Fh): music on/off (gates playSoundEffect ids >= 97h)
+Option_delay    db 0                    ; DATA XREF: sub_25EF3+A↑r
                                         ; sub_41EF1:loc_41F36↓r ...
-byte_36FEB      db 0                    ; DATA XREF: rosterMenu+2A9↓r
+                                        ; byte (+10h): 0-9 option cycled in controlPanel (probably the message/game delay)
+Party_lastInn   db 0                    ; DATA XREF: rosterMenu+2A9↓r
                                         ; rosterMenu+305↓r ...
+                                        ; byte (+11h): town number the party last slept in (townInn)
 Party_levitate  db 0                    ; DATA XREF: sub_1B6D1+A6↑r
                                         ; giveTake:loc_3C63E↓r ...
                                         ; byte (+12h) (action 69)
@@ -50230,7 +50234,7 @@ loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
 loc_37972:                              ; CODE XREF: sub_378C0+A1↑j
                 cmp     byte_28849, 0
                 jz      short loc_3798F
-                cmp     byte_36FE9, 0
+                cmp     Option_music, 0
                 jz      short loc_3798F
                 push    word_332DE
                 push    word_332DC
@@ -52384,7 +52388,7 @@ src             = dword ptr -4
                 push    ax
                 call    sub_26685
                 pop     cx
-                cmp     byte_36FE9, 0
+                cmp     Option_music, 0
                 jz      short loc_38818
                 push    word_332DE
                 push    word_332DC
@@ -70102,7 +70106,7 @@ loc_40D33:                              ; CODE XREF: rosterMenu+2DA↓j
                 imul    dx
                 mov     bx, word ptr Roster_buffer
                 add     bx, ax
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     ah, 0
                 cmp     es:[bx+123h], ax
                 jnz     short loc_40D7F
@@ -70142,7 +70146,7 @@ loc_40D8F:                              ; CODE XREF: rosterMenu+32C↓j
                 imul    dx
                 mov     bx, word ptr Roster_buffer
                 add     bx, ax
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     ah, 0
                 cmp     es:[bx+123h], ax
                 jnz     short loc_40DD1
@@ -70464,7 +70468,7 @@ loc_41045:                              ; CODE XREF: rosterMenu+5EC↓j
                 imul    dx
                 mov     bx, word ptr Roster_buffer
                 add     bx, ax
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     ah, 0
                 cmp     es:[bx+123h], ax
                 jnz     short loc_41091
@@ -70504,7 +70508,7 @@ loc_410A1:                              ; CODE XREF: rosterMenu+63E↓j
                 imul    dx
                 mov     bx, word ptr Roster_buffer
                 add     bx, ax
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     ah, 0
                 cmp     es:[bx+123h], ax
                 jnz     short loc_410E3
@@ -70650,7 +70654,7 @@ loc_411C6:                              ; CODE XREF: rosterMenu+715↑j
 loc_411D0:                              ; CODE XREF: rosterMenu+720↑j
                 mov     al, Party_count
                 mov     byte_36FDB, al
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     Party_map, al
                 push    cs
                 call    near ptr copyPartyToRoster
@@ -72296,7 +72300,7 @@ loc_41DE4:                              ; CODE XREF: loadSaveDialog+178↓j
                 mov     ax, si
                 mov     dx, 12Fh
                 imul    dx
-                mov     dl, byte_36FEB
+                mov     dl, Party_lastInn
                 mov     dh, 0
                 mov     bx, ax
                 mov     [bx-4507h], dx
@@ -72421,7 +72425,7 @@ sub_41EF1       proc far                ; CODE XREF: sub_281DA↑J
                                         ; controlPanel+A1↓p ...
                 push    bp
                 mov     bp, sp
-                cmp     byte_36FE8, 0
+                cmp     Option_sfx, 0
                 jz      short loc_41F09
                 mov     ax, word_2B77C
                 mov     word_37676, ax
@@ -72435,7 +72439,7 @@ loc_41F09:                              ; CODE XREF: sub_41EF1+8↑j
                 mov     word_28E0D, 0
 
 loc_41F15:                              ; CODE XREF: sub_41EF1+16↑j
-                cmp     byte_36FE9, 0
+                cmp     Option_music, 0
                 jz      short loc_41F2A
                 mov     ax, word_2B77C
                 mov     word_37678, ax
@@ -72449,7 +72453,7 @@ loc_41F2A:                              ; CODE XREF: sub_41EF1+29↑j
                 mov     word_28E15, 0
 
 loc_41F36:                              ; CODE XREF: sub_41EF1+37↑j
-                mov     al, byte_36FEA
+                mov     al, Option_delay
                 mov     ah, 0
                 push    ax
                 push    word_37678
@@ -72603,8 +72607,8 @@ loc_4205A:                              ; CODE XREF: controlPanel+107↓j
 loc_42069:                              ; CODE XREF: controlPanel+103↑j
                 jmp     word ptr cs:[bx+24h]
 ; ---------------------------------------------------------------------------
-                xor     byte_36FE8, 1
-                cmp     byte_36FE8, 0
+                xor     Option_sfx, 1
+                cmp     Option_sfx, 0
                 jz      short loc_4207E
                 mov     ax, 14h
                 jmp     short loc_42080
@@ -72631,8 +72635,8 @@ loc_42087:                              ; CODE XREF: controlPanel+164↓j
                 call    sub_25DFE
                 jmp     loc_4229B
 ; ---------------------------------------------------------------------------
-                xor     byte_36FE9, 1
-                cmp     byte_36FE9, 0
+                xor     Option_music, 1
+                cmp     Option_music, 0
                 jz      short loc_420C7
                 mov     byte_287AA, 0
                 push    word_332DE
@@ -72656,15 +72660,15 @@ loc_420C7:                              ; CODE XREF: controlPanel+149↑j
                 pop     cx
                 jmp     short loc_42087
 ; ---------------------------------------------------------------------------
-                mov     al, byte_36FEA
+                mov     al, Option_delay
                 inc     al
-                mov     byte_36FEA, al
+                mov     Option_delay, al
                 cmp     al, 9
                 jbe     short loc_420E7
-                mov     byte_36FEA, 0
+                mov     Option_delay, 0
 
 loc_420E7:                              ; CODE XREF: controlPanel+183↑j
-                mov     al, byte_36FEA
+                mov     al, Option_delay
                 mov     ah, 0
                 push    ax
                 lea     ax, [bp+s]
@@ -82455,7 +82459,7 @@ loc_4693A:                              ; CODE XREF: sub_46847+D7↑j
                 cmp     [bp+var_2], di
                 jl      short loc_46920
                 les     bx, [bp+s]
-                mov     al, byte_36FEB
+                mov     al, Party_lastInn
                 mov     ah, 0
                 mov     es:[bx+123h], ax
                 mov     al, [bp+arg_6]
@@ -86354,7 +86358,7 @@ townInn         proc far                ; CODE XREF: j_townInn↑J
                 mov     Party_y, al
                 xor     Party_facing, 1
                 mov     al, Party_map
-                mov     byte_36FEB, al
+                mov     Party_lastInn, al
                 xor     si, si
                 jmp     short loc_48744
 ; ---------------------------------------------------------------------------
@@ -95341,7 +95345,7 @@ Spell_16_TurnUndead endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
+; Jump: moves the party exactly two cells forward when both walls in between are open (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat
 ; Attributes: bp-based frame
 
 Spell_17_Jump   proc far                ; CODE XREF: j_Spell_17_Jump↑J

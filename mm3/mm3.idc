@@ -17796,10 +17796,18 @@ static Bytes_3(void) {
 	set_cmt	(0X36FE7,	"byte, current maze id (+0Dh)",	0);
 	create_byte	(0X36FE7);
 	set_name	(0X36FE7,	"Party_map");
+	set_cmt	(0X36FE8,	"byte (MAZE.PTY +0Eh): sound effects on/off, toggled in controlPanel",	0);
 	create_byte	(0X36FE8);
+	set_name	(0X36FE8,	"Option_sfx");
+	set_cmt	(0X36FE9,	"byte (+0Fh): music on/off (gates playSoundEffect ids >= 97h)",	0);
 	create_byte	(0X36FE9);
+	set_name	(0X36FE9,	"Option_music");
+	set_cmt	(0X36FEA,	"byte (+10h): 0-9 option cycled in controlPanel (probably the message/game delay)",	0);
 	create_byte	(0X36FEA);
+	set_name	(0X36FEA,	"Option_delay");
+	set_cmt	(0X36FEB,	"byte (+11h): town number the party last slept in (townInn)",	0);
 	create_byte	(0X36FEB);
+	set_name	(0X36FEB,	"Party_lastInn");
 	set_cmt	(0X36FEC,	"byte (+12h) (action 69)",	0);
 	create_byte	(0X36FEC);
 	set_name	(0X36FEC,	"Party_levitate");
@@ -18090,6 +18098,15 @@ static Bytes_3(void) {
 	set_cmt	(0X37756,	"far pointer to the montrea.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37756);
 	set_name	(0X37756,	"Mon_trea");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X3775A,	"far pointer to the mondmgn.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3775A);
 	set_name	(0X3775A,	"Mon_dmgn");
@@ -18102,15 +18119,6 @@ static Bytes_3(void) {
 	set_cmt	(0X37766,	"far pointer to the mondmgs.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37766);
 	set_name	(0X37766,	"Mon_dmgs");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3776A,	"far pointer to the monphys.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3776A);
 	set_name	(0X3776A,	"Mon_phys");
@@ -22845,6 +22853,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FC51);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X3FC57,	"buffer",	0);
 	set_cmt	(0X3FC5B,	"int",	0);
 	set_cmt	(0X3FC5C,	"int",	0);
@@ -22888,15 +22905,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3FCC8);
 	op_hex		(x,	1);
 	set_cmt	(0X3FCCA,	"format",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3FCD5,	"buffer",	0);
 	create_insn	(x=0X3FCDB);
 	op_hex		(x,	1);
@@ -28461,6 +28469,15 @@ static Bytes_5(void) {
 	create_insn	(x=0X473C6);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473C9,	"char",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X473CA);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473CD,	"char",	0);
@@ -28508,15 +28525,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47455);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47458);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4745D);
@@ -33497,6 +33505,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F386);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F393);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4F39D);
@@ -33543,15 +33560,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F474);
 	op_stkvar	(x,	0);
 	set_cmt	(0X4F47B,	"c",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F47F);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4F482,	"s",	0);
@@ -40058,7 +40066,7 @@ static Functions_1(void) {
 	set_frame_size(0X4C6E6, 0, 2, 0);
 	add_func    (0X4C711,0X4C7DE);
 	set_func_flags(0X4C711,0x5412);
-	set_func_cmt(0X4C711,	"Jump: tests the cell straight ahead and moves the party (probably two cells) when the walls allow (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat", 0);
+	set_func_cmt(0X4C711,	"Jump: moves the party exactly two cells forward when both walls in between are open (mazeGetWordRel checks), refuses with showErrorMessage; reached via stub sub_28522 from spellsDialog outside combat", 0);
 	set_frame_size(0X4C711, 0X4, 2, 0);
 	add_func    (0X4C7DE,0X4C809);
 	set_func_flags(0X4C7DE,0x5412);
