@@ -25,7 +25,7 @@ TMCharacter	done	10	137965	138489
 TGInterface	in-progress	25	138536	143021
 TPaintControl	done	27	143284	749311
 HashMap<TId, int, TIdHash>	todo	1	143397	143397
-THText	todo	6	144162	144330
+THText	done	6	144162	144330
 TDiagnostic	todo	11	144499	148293
 Geni::mslocale_t	todo	2	148405	479251
 TGAnimation	in-progress	51	148778	158721
@@ -46,8 +46,8 @@ no_check_checker_t	todo	4	191182	1570709
 t_SkipCutsceneInfo	todo	1	194735	194735
 TGAction	todo	33	194786	211541
 TVisObjTween	todo	4	212286	481002
-TGText	todo	31	212567	215356
-TSText	todo	15	216919	1460684
+TGText	in-progress	31	212567	215356
+TSText	done	15	216919	1460684
 THCharacter	todo	5	217481	218783
 THItem	done	5	218884	219148
 THScene	done	7	219228	219814

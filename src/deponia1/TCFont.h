@@ -15,10 +15,20 @@
 #include "vscommon/fontManager.h"
 
 class TFontManager;
-class GLCharBuffer;
+
+// Confirmed call shape only (TGText, Deponia_Linux.asm lines 213821-213827): the glyph buffer
+// of a printed text, kept by the text that printed it and deleted by it. Not reversed.
+class GLCharBuffer {
+public:
+	~GLCharBuffer();
+};
 
 class TCFont {
 public:
+	/** Set while a text is printed that is not tied to a character (TGText::Draw()): the text
+	 *  is zoomed with the scene. */
+	static bool ZoomText;
+
 	TCFont(TVisObjRef &font, TFontManager *manager);
 
 	int GetLineHeight() const;

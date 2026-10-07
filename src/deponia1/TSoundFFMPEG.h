@@ -7,9 +7,10 @@
 #pragma once
 
 #include "WxStub.h"
+#include "TSignalSlot.h"
 #include "TSoundInterface.h"
 
-class TSoundFFMPEG : public TSoundInterface {
+class TSoundFFMPEG : public TSoundInterface, public TSignalSlot {
 public:
 	virtual ~TSoundFFMPEG() = default;
 	virtual void OnVideoFrameFinished();

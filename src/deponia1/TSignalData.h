@@ -23,6 +23,17 @@ constexpr int kSignalLoadingProgress = 0x100;
 // the two interpretations to share the same bytes in this reconstruction.
 constexpr int kSignalPrintText = 0x2003;
 constexpr int kSignalPrintTextLines = 0x2004;
+// The signals TSText sends to the sound manager (TSignalSlot) for the speech of a text
+// (TSText.cpp). Named by what the text does with the answer; the sound manager itself is
+// not reconstructed. They take the speech file in `speechFile`; the answer has the same type
+// as the question and its result in `value` (the fields start at -1, as in the original).
+constexpr int kSignalSpeechIsPlaying = 0x1000;   // value != 0: the file is still playing
+constexpr int kSignalSpeechDisabled = 0x1003;    // value != 0: the player has speech turned off
+constexpr int kSignalSpeechLoad = 0x1005;        // the file is made ready; value: what to play it with
+constexpr int kSignalSpeechPlay = 0x1008;        // file; value: from kSignalSpeechLoad, value2: the
+// balance, value3: 0, value4: 2
+constexpr int kSignalSpeechStop = 0x100F;        // the file stops
+constexpr int kSignalSpeechEnabled = 0x1012;     // value != 0: speech can be played for a text
 
 struct TSignalData {
 	int type = 0;
@@ -44,4 +55,11 @@ struct TSignalData {
 	wxString text;
 	wxPoint point;
 	int fontId = 0;
+	// The speech signals (above): the file (+0x10 in the original), and a result or arguments
+	// (+0x18, +0x1C, +0x20 and +0x24; the first two are also what kSignalLoadingProgress reads).
+	wxString speechFile;
+	int value = -1;
+	int value2 = -1;
+	int value3 = -1;
+	int value4 = -1;
 };

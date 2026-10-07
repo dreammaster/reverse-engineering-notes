@@ -246,8 +246,8 @@ bool TGameControl::DisplayTexts() {
 	// _currentText if it's still displayed too.
 	for (auto it = _activeTexts.begin(); it != _activeTexts.end();) {
 		if (!(*it)->GetTarget().GetBool(kTextActive)) {
-			(*it)->OnCleared();
-			(*it)->Discard();
+			(*it)->ClearText();
+			delete *it;
 			it = _activeTexts.erase(it);
 		} else {
 			++it;
@@ -633,7 +633,7 @@ void TGameControl::SkipCurrentText() {
 
 	TVisObjRef game2 = _visionaire->GetGame();
 	game2.ClearLink(kGameCurrentText, true);
-	_currentText->Discard();
+	delete _currentText;
 	_currentText = nullptr;
 }
 
@@ -1181,8 +1181,8 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 	if (character != nullptr) {
 		for (auto it = _activeTexts.begin(); it != _activeTexts.end(); ++it) {
 			if ((*it)->GetSpeaker() == character) {
-				(*it)->OnCleared();
-				(*it)->Discard();
+				(*it)->ClearText();
+				delete *it;
 				_activeTexts.erase(it);
 				break;
 			}
@@ -1190,7 +1190,7 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 	}
 
 	if (_currentText != nullptr) {
-		_currentText->Discard();
+		delete _currentText;
 		TVisObjRef game = _visionaire->GetGame();
 		game.ClearLink(kGameCurrentText, true);
 		_currentText = nullptr;
@@ -1204,7 +1204,7 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 		TVisObjRef game = _visionaire->GetGame();
 		game.SetLink(kGameCurrentText, _currentText->GetTarget(), true);
 	} else {
-		_currentText->Discard();
+		delete _currentText;
 		_currentText = nullptr;
 	}
 }
@@ -1277,23 +1277,23 @@ bool TGameControl::IsTalking(const TVisObjRef &character) const {
 
 void TGameControl::ClearTexts() {
 	// Confirmed (asm lines 461872-461993): drains _activeTexts and
-	// _sceneTexts (OnCleared() then Discard() on each), then separately
-	// discards _currentText (Discard() only, no OnCleared()) and clears
+	// _sceneTexts (ClearText() then delete on each), then separately
+	// discards _currentText (delete only, no ClearText()) and clears
 	// its game-data link (field id 0x1DD, matching ClearCurrentText).
 	for (TGText *text : _activeTexts) {
-		text->OnCleared();
-		text->Discard();
+		text->ClearText();
+		delete text;
 	}
 	_activeTexts.clear();
 
 	for (TGText *text : _sceneTexts) {
-		text->OnCleared();
-		text->Discard();
+		text->ClearText();
+		delete text;
 	}
 	_sceneTexts.clear();
 
 	if (_currentText != nullptr) {
-		_currentText->Discard();
+		delete _currentText;
 		_currentText = nullptr;
 		TVisObjRef game = _visionaire->GetGame();
 		game.ClearLink(kGameCurrentText, true);
@@ -1304,7 +1304,7 @@ void TGameControl::ClearCurrentText() {
 	// Confirmed (asm lines 462001-462040): field id 0x1DD, meaning not
 	// resolved.
 	if (_currentText != nullptr) {
-		_currentText->Discard();
+		delete _currentText;
 		_currentText = nullptr;
 		TVisObjRef game = _visionaire->GetGame();
 		game.ClearLink(kGameCurrentText, true);
@@ -1318,8 +1318,8 @@ void TGameControl::ClearText(const TVisObjRef &text) {
 	for (auto it = _activeTexts.begin(); it != _activeTexts.end(); ++it) {
 		TGText *activeText = *it;
 		if (activeText->GetDataObject() == text) {
-			activeText->OnCleared();
-			activeText->Discard();
+			activeText->ClearText();
+			delete activeText;
 			_activeTexts.erase(it);
 			break;
 		}
@@ -1336,7 +1336,7 @@ void TGameControl::ClearObjectText(const TVisObjRef &object) {
 	for (auto it = _sceneTexts.begin(); it != _sceneTexts.end(); ++it) {
 		TGText *text = *it;
 		if (text->GetTarget().GetLink(kTextOwner) == object) {
-			text->Discard();
+			delete text;
 			_sceneTexts.erase(it);
 			return;
 		}

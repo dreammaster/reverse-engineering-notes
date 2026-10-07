@@ -114,3 +114,21 @@ Left out:
 inverse matrix (`invMatrix1`, nine entries) when the interface is drawn through a matrix
 (`kInterfaceMatrixId` not 0, and its parent's `kGameShaderExclude` is not 1); not
 reconstructed. `TGInterface` stays `in-progress` until then.
+
+### The text engine: the Lua hooks and the speech
+
+`src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`.
+
+- `TGText::CalculateRestText()` calls the Lua function registered by
+  `RegisterHookFunctionText()` ("TextTextHook") with the text's record and takes the string it
+  returns as the part to show; `CalculateTextPos()` calls the one registered by
+  `RegisterHookFunctionSetTextPosition()` ("TextPositionHook", a true answer ends it) and `Draw()`
+  the one of `RegisterHookFunctionRender()` ("TextRenderHook": the lines, their widths, the position,
+  alignment, alpha and the wrap flag; a true answer means the script drew the text). Needs the Lua
+  bridge (`LuaExecuteFunction()` and `TArgument`).
+- The sound manager's side of the speech signals (`TSignalData.h`: `kSignalSpeech*`) - `TSoundBase`
+  and `TSoundFFMPEG` are not reconstructed.
+- Printing the glyphs: `TFontManager::PrintTextLines()` and `TCFont` (the buffers a text keeps are
+  `GLCharBuffer`s).
+
+`TGText` stays `in-progress` in `manifest/proprietary_classes.tsv` until the hooks are done.

@@ -3282,6 +3282,39 @@ and follows the record's fields.
 - Not reconstructed (see `TODO.md`): the matrix transform of the mouse position in
   `GetObject(point)` and `IsInside()`.
 
+## The text engine: TSText, TGText and THText
+
+`TSText` (asm 1454187-1460704) is the text that is shown while a character speaks; it works on
+its record (the "ActiveText" table: the text that is left, the part shown now, the time the part
+stays, whether it waits for the speech, whether it is active). `TGText` (asm 212566-216250) draws
+it, and `THText` (asm 144161-144340) is the one the game creates.
+
+- A text is made of parts cut by pause tags: `<p>` (until skipped), `<pt>` (as long as the text
+  so far takes without speech: 130 ms a character), `<pa>` (until the speech ends; no speech: as
+  `<pt>`; a number after `a` is the fallback), `<p5>`/`<p5s>` (seconds), `<p500ms>`
+  (milliseconds). The times of `<pt>` and the numbers (not `<p>`/`<pa>` with speech) are scaled
+  by the player's text speed (`kGameTextSpeed`, percent). A text without any tag is one part that
+  stays as long as its speech, or 130 ms a character.
+- Reproduced from the binary: a tag that does not end (`<p5` without `>`) leaves the rest of the
+  text unchanged, so the text stays on its first part until it is skipped; an invalid number
+  (`<p5x>`) is logged and the tag is dropped.
+- The speech goes through the sound manager as a `TSignalSlot` (messages: is speech turned off
+  `0x1003`, can speech play `0x1012`, load `0x1005`, play `0x1008` with the pan, is it still
+  playing `0x1000`, stop `0x100F`). The sound manager is not reconstructed: the default
+  `TSignalSlot::Signal()` answers every question with 0, so a text goes by its length. The signal
+  fields start at -1 as in the original; `TSignalData` gained the speech file and four values.
+- The vtable of the text is: `SetText`, `SetTextIntern(TextOutputEnum, int)`, `ClearText`,
+  `CalculateRestText`, then the destructors. What `TGameControl` called `OnCleared()` and
+  `Discard()` were `ClearText()` and the deleting destructor.
+- `TGText` takes the pan of the speaker's sound from where it stands on the screen
+  (`-100...100` scaled by `kSpeakerSoundPanFactor`), keeps the speaker's talking animation going
+  while it shows, puts the lines above the speaker's sprite (beside it when there is no room
+  above, on the side with more room) inside the part of the scene in view, and tells its owner
+  (an object, for the texts of objects) when it is over. A '<' in a text is a line break.
+- Not reconstructed (see `TODO.md`): the three Lua hooks of `TGText` (`TextTextHook`,
+  `TextPositionHook`, `TextRenderHook`; their registered names are stored), the glyph printing
+  (`TCFont`), and the sound manager.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

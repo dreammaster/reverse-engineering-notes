@@ -1,5 +1,10 @@
 #include "TCFont.h"
 
+bool TCFont::ZoomText = false;
+
+GLCharBuffer::~GLCharBuffer() {
+}
+
 TCFont::TCFont(TVisObjRef &/*font*/, TFontManager */*manager*/) {
 }
 

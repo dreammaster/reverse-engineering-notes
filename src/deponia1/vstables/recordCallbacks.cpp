@@ -35,7 +35,9 @@ void TSAnimation::OnCreate(TVisionaireObject *object) {
 void TSAnimation::OnInit(TVisionaireObject *object) {
 }
 
+// Confirmed (asm lines 1454169-1454176): a new active text is not active.
 void TSText::OnCreate(TVisionaireObject *object) {
+	object->SetValue(kTextActive, false, TSendEventEnum::kNoEvent);
 }
 
 void TSText::OnInit(TVisionaireObject *object) {
