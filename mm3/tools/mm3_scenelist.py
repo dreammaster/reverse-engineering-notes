@@ -3,6 +3,7 @@
 
 usage: mm3_scenelist.py [mm3.asm] [function ...]
 For each record (x, y, flags, frame) written through SI the guarding flag byte (last 'cmp byte_XXXX, 0') is printed.
+Caveat: records are listed in emission order but the guard shown can be the wrong flag where the code branches into shared tails (check the asm; e.g. wall style 3 / byte_332FD emits frame 1 + byte_2884D without being listed here).
 Flags that are not immediates (for example `2 | byte_28875`) are printed as the register expression found just before the store.
 """
 import re
