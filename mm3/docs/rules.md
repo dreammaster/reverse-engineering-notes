@@ -232,7 +232,7 @@ Not possible on outdoor maps (`Maze_wrapMode` != 0).  Sound 19h is played, the f
 
 ## Chests and objects (`trapOrLockEvent`, `3D8CF`-ish; by code reading)
 
-When the party interacts with a map object (`byte_34BB6` = object slot; its picture id is looked up in an 8-entry table in the overlay) the picture selects a trap kind code (14h, 2Ah, 2Bh ... ) and the chest is "armed" once (`byte_37383`).
+When the party interacts with a map object (`byte_34BB6` = object slot; its picture id is looked up in an 8-entry table in the overlay) the picture selects the opening sound (14h, 2Ah or 2Bh, see below) and the container is marked "opened" once (`byte_37383`).
 `sub_3BE18` asks who will open it (cancel = leave, `byte_37383 = FFh`).  Then with probability 1/4 (`rnd(1,4) == 1`) the trap fires: `giveCharDamage(char, rnd(0,6), page header byte 1Eh)`.  The opener then rolls
 `getThievery(char) + rnd(1,20)` against the page's lock difficulty (header byte 12h) and, depending on the object kind, the loot is produced with `generateItem`, gold from `giveTake`, or a message.  The details of the per-kind loot were not traced.
 On **every** call of `changeTime` (each minute of game time, not only every 8 hours): a confused character has a 1/3 chance of a general saving throw that cures it (otherwise the counter is decremented), and a paralysed character has a 1/5 chance of its counter being decremented (so paralysis wears off slowly).
