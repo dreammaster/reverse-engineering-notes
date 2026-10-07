@@ -110,3 +110,10 @@ Each kind of record is preceded by an `FFFF` sprite-set record naming where the 
 * The `*.til` tile sets (`town.til`, `cave.til`, `dung.til`, `castle.til`, `scifi.til`) loaded into `word_3407C:3407A` are used only by the **overhead map** (`updateAutomap`, `showOverheadMap`), not by the 3D view; they are the map tile pictures, selected per environment.
 * The far-pointer table at `-3B5Ah` (DGROUP `C4A6h`) holds the four wall sheets by their sheet number n (4 bytes each at `C4A6h + 4n`): `word_34B9A/34B9C` = `wl1`, `word_34B9E/34BA0` = `wl2` (the sheet named by the first record of `sub_1DB3D`), then `wl3` and `wl4`.  The wall faces of the deeper rows therefore reference the smaller sheets.
 * No routine of the 3D renderer draws a floor or ceiling: the background of the view window (sky, floor) presumably comes from a screen picture drawn earlier (not located), with the wall/object records drawn over it.
+
+### The view background (`sub_43034`, called by `loadMapGraphics`; sets `word_373B6:373B4`)
+
+The picture behind the walls (ceiling and floor) is a sprite set loaded for the map and passed in the scene header (`word_35D62:35D60` in `renderIndoorView`):
+* on maps with a day/night cycle (`mapHasDayNight`: towns and open-air maps) it is `day.vga` or `night.vga` (entries 19/20 of the name table at `5A46h`, picked by `Town_closed`, i.e. by the time of day: before 05:00 or from 21:00 night), and `sub_43034` also (re)computes `Town_closed` itself;
+* on all other maps it is `sprintf("%s.sky", prefix)` with the environment prefix `5A34h[ENV[map]]` -- `twn.sky`, `cav.sky`, `dun.sky`, `cas.sky`, `sci.sky` (byte table `30E1h`, the same environment numbers as above).
+This replaces the earlier guess that the background comes from a screen picture drawn before the view: it is a normal first record of the scene.  (The *.sky and day/night names are recovered from the executable's strings; their files can be exported with `mm3_gfx.py` using the name hash.)
