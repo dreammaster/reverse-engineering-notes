@@ -138,3 +138,16 @@ Other callers use `what` 7 (hit point bonus), 8 (spell point bonus), 0Ah (thieve
 * **Recharge** (mode 4): the item (id <= 71) must carry a spell (+EFh != 0); it gains `rnd(1,6)` charges in the low six bits of its flag byte (+90h), capped at 63.  Otherwise "Spell Failed!".
 * **Duplication** (mode 5): needs the character's last backpack slot (+EDh) to be empty; the item (id <= 72, metal <= 17, spell <= 55, and an element/attribute combination not in a refusal list of 11 element values) is copied into that slot with its flags reduced to the cursed/broken bits (C0h) -- the copy has **no charges**.  Otherwise "Spell Failed!".
 * **Enchant** (mode 6): only for plain items (id <= 71 and element, metal, attribute and spell all 0); it rolls `rnd(1, caster level / 10 + 1)` capped at 5, calls `generateItem(that level, character, same slot)` to fill the slot with a random item of that treasure level, and then **restores the original item id** -- the item keeps its identity but receives the random element/metal/attribute/spell enchantments that generation produced (so enchanting is a gamble on up to level-5 enchantments).
+
+### Enchantment generation in `generateItem` (decoded)
+
+After the item id, the number of enchantment **categories** is rolled (95% one, 4% two, 1% three; always one at level 6).  Categories: 1 = element (+A3h), 2 = attribute (+C9h), 3 = metal (+B6h), 4 = spell (+EFh).
+With a single category: roll d100 -- for trinket-class ids >= 61 a roll <= 90 gives a spell; otherwise <= 93 -> metal (3), <= 96 -> element (1), <= 99 -> attribute (2), 100 -> spell (4).
+With two or three categories they are drawn at random without repeats.  The first category always uses the item's top tier (`level - 1`); the others use a random tier `rnd(0, level - 1)`.
+Each category then picks a *kind* by a d100 roll and a value `rnd(lo, hi)` from a row of per-tier (lo, hi) byte pairs, plus a per-kind base index:
+
+* **element** (`1` ; tables `3698h` pairs: 6 kinds x 6 tiers x 2, base `36E0h` = 0, 8, 15, 20, 25, 33): kind thresholds 25/45/60/75/95/100 %; the result is `base[kind] + rnd(lo, hi)` (an index into `ELEMENTAL_RESISTANCES` / the element name tables).
+* **attribute** (`2`; tables `36E6h`, base `375Eh` = 0, 10, 18, 26, 34, 40, 46, 51, 57, 62): 10 kinds with thresholds 15/25/35/50/65/80/85/90/95/100 %, value `base[kind] + rnd(lo, hi)` (index into `ATTRIBUTE_BONUSES`).
+* **metal** (`3`; table `3768h`): kind 0 with 70 %, kind 1 otherwise, each a row of per-tier pairs ((1,4),(3,7),(4,8),(5,9),(8,9),(9,9) for kind 0; (1,4),(2,6),(4,7),(6,10),(9,13),(13,13) for kind 1).
+* **spell** (`4`; tables `3782h`/`3789h`): the item's spell id, with the tier choosing among item-spell ids by a threshold list (0, 1, 16, 31, 41, 51, 61 ... in percent steps).
+Higher item levels therefore shift all three random choices towards the better-valued entries of every table; tier 5 rows (`8,8` / `13,13` ...) are the maxima.
