@@ -51,3 +51,14 @@ The start-up code uses neither a sound-card IRQ nor DMA (everything is driven fr
 
 Correction/addition on ids >= 97h: the town routines call `sub_27F45("bank.m" ...)` (loads and starts the song file; second argument C0h) and then `playSoundEffect(97h..9Dh)` -- 97h bank, 98h guild, 99h inn, 9Ah tavern, 9Bh temple, 9Ch training grounds, 9Dh smithy (character creation uses 9Eh).
 In `ADLIB.DRV`'s effect table the entries for ids 151-159 all point at the silent stream, so for the AdLib driver these calls produce no sound effect of their own; they are gated by the music flag (`Option_music`, `byte_36FE9`) and are presumably what the sample-based drivers (`BLASTER`, `COVOX`) key on to start the matching digitised sound (`S1.S`-`S7.S`: seven samples for the seven ids 97h-9Dh).
+
+### `BLASTER.DRV` entry points (disassembled)
+
+| offset | meaning |
+|---|---|
+| `0` | `init(port)`: described above |
+| `3` | `restore`: puts the old INT 08h vector back, silences the FM chip |
+| `6` | music command (argument < 0 queries/clears, otherwise starts a song from a buffer; same command engine as `ADLIB.DRV`) |
+| `9` | **effect** player: identical to the AdLib driver (word table of effect-stream offsets at driver offset `8DDh`, ids 21h and 23h ignored, negative = query/clear busy flag) -- so effects on a Sound Blaster are still FM effects |
+| `0Ch` | **sample** player (`play(mode, buffer, rate/length)`): mode 0 with a non-zero buffer pointer starts digital playback by installing a second timer ISR (`3ECh`) and programming the PIT with divisor `95h` (149), i.e. about **8 kHz**; the ISR writes each unsigned 8-bit sample byte (centre 7Fh, the `S1.S`..`S7.S` format) to the DSP; a null buffer stops it; the other mode returns the current state (`byte_15B`) |
+So the digitised sounds are played by a software timer loop at ~8 kHz with no DMA or card interrupt, the same way the DSP "direct DAC" mode is driven.  The game side that supplies the sample buffers (`sub_2693F` init, `sub_26965` stop/query) was not traced further.
