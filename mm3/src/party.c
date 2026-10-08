@@ -31,7 +31,7 @@ int mm3_party_load(Mm3Party *p, const uint8_t *d, size_t len) {
 int mm3_party_flag(const Mm3Party *p, unsigned bit) {
 	if (bit >= MM3_FLAG_BYTES * 8)
 		return 0;
-	return (p->flags[bit >> 3] >> (bit & 7)) & 1; /* bit order within a byte: see note in README, unverified */
+	return (p->flags[bit >> 3] >> (7 - (bit & 7))) & 1; /* isBitSet: mask 80h >> (bit & 7) */
 }
 
 int mm3_roster_load(Mm3Character *out, unsigned max, const uint8_t *d, size_t len) {

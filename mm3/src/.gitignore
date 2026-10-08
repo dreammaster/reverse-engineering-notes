@@ -5,3 +5,4 @@ tests/test_real
 tests/test_state
 gfxsum
 viewer
+tests/test_mapbin

@@ -11,3 +11,4 @@ mm2/build/
 __pycache__/
 mm2/src/build/
 mm3/build/
+mm3/data/DGROUP.BIN

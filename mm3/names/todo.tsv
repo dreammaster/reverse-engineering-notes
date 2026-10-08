@@ -1,0 +1,8 @@
+# Rename TODO: names/comments worked out while writing the C reimplementation (src/), NOT yet applied to the database.
+# Same format as mm3.tsv (address<TAB>name<TAB>comment), so after applying (append these lines to mm3.tsv, run apply_names.py,
+# regenerate .asm/.idc) delete the lines from this file.  Address = linear address as in mm3.tsv.  "evidence" says how it was derived.
+# Keep sorted by address.
+22534	dosAllocOrDie	bx = bytes; allocates (bx+15)>>4 paragraphs through DOS INT 21h/48h (last-fit strategy 5801h on DOS 3+), returns the segment in ax; on failure prints "Might and Magic ]I[ ran out of memory!" and exits (evidence: reads the code; called by allocFar and ccLoadMember)
+22740	ccLoadMember	core of loadResourceByName: ax = name near ptr, bx = its segment, cx = destination segment (0 = allocate with dosAllocOrDie); hashes the name (rol 9 + char, the .CC filename hash), looks the id up in the open archive TOC, seeks and reads the member (stored, or LZHUF through the 4-byte header when the first four name characters differ from the 4-byte string at cs:0652h); returns the segment in bx and the size in DGROUP n (evidence: reads the code, same hash as tools/mm3_cc.py name_id)
+27F86	j_exitGame	near thunk of exitGame (the thunk has no stub segment, so apply_names will not make it by itself)
+39900	exitGame	shuts down the video and sound modules (sub_250F8, sub_26952), sets text mode 3, prints "Thank you for playing Might and Magic ]I[" and ends the program with INT 21h/4Ch; used for fatal errors such as "Max Monsters Exceeded" (evidence: reads the code)
