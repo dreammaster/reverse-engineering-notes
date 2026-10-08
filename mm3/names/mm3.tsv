@@ -371,7 +371,6 @@
 36FEC	Party_levitate	byte (+12h) (action 69)
 36FEE	Party_wizardEye	byte (+14h) (action 79)
 36FEF	Party_walkOnWater	byte (+15h) (action 94)
-370DA	Party_state	918-byte party block (MAZE.PTY), loaded by sub_26447
 37325	Party_day	byte, 0-99
 37326	Party_year	word
 37328	Party_light	word (MAZE.PTY +34Eh): light count (ifProc action 70)
@@ -662,3 +661,6 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 3D8C9	giveMultiTreasure	GiveMulti (event opcode 20) helper formerly named trapOrLockEvent by BinDiff: with an interacted container (byte_34BB6) first runs the open procedure (trap 1/4, thievery+d20 vs page header 12h), then pays up to three (mode, value) entries: 21 item id, 34 gold, 35 gems, 66 random item of level, 67 spell; other modes show the message
 434D6	setWrapModeForMap	sets Maze_wrapMode = 1 (outdoor map: 10-minute steps, drawViewOutdoors, no bash) for maps 41-104 and >106, 0 otherwise (called with the map number while loading)
 430A8	loadMapGraphics	loads the environment graphics of map n: ENV table 30E2 -> town/cave/dung/castle tile set and the four '<env>wl<n>.vga' wall sheets for indoor maps, the seven terrain sheets named by the page header bytes 00-06 (name table 5A46) for outdoor maps
+
+36FDA	Party_stateBase	start of the 918-byte MAZE.PTY block (same address as Party_count, +0); an older entry 'Party_state' at 370DA was +100h off and was removed
+3731B	Party_eventFlags	53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)
