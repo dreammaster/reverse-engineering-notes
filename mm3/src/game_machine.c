@@ -95,7 +95,39 @@ void game_call(void (*fn)(Cpu *c), Cpu *c, const uint16_t *args, int nargs) {
 }
 
 /* ---- resources: maze files (names starting with MAZE) are stored members of MM3.CUR, everything else LZHUF members of MM3.CC */
+/* writeResource stores changed members (party, roster, maze state) in memory; the data files are never modified */
+#define MAXOV 64
+static struct { char name[16]; uint8_t *data; size_t len; } overrides[MAXOV];
+static int novr;
+
+void host_writeResource(Cpu *c) {
+	const char *name = (const char *)(SEGP(host_arg(c, 1)) + host_arg(c, 0));
+	const uint8_t *src = SEGP(host_arg(c, 3)) + host_arg(c, 2);
+	size_t len = 0;
+	uint8_t *orig = mm3_cc_read(&G.cur, name, &len);
+	if (!orig) orig = mm3_cc_read(&G.cc, name, &len);
+	free(orig);
+	if (!len) return;
+	int i;
+	for (i = 0; i < novr; i++) if (!strcasecmp(overrides[i].name, name)) break;
+	if (i == novr) {
+		if (novr == MAXOV) return;
+		snprintf(overrides[novr].name, sizeof overrides[0].name, "%s", name);
+		overrides[novr].data = malloc(len);
+		overrides[novr++].len = len;
+	}
+	memcpy(overrides[i].data, src, len < overrides[i].len ? len : overrides[i].len);
+}
+
 uint16_t game_load_resource(const char *name, uint32_t *size) {
+	for (int i = 0; i < novr; i++)
+		if (!strcasecmp(overrides[i].name, name)) {
+			uint16_t seg = dos_alloc(overrides[i].len + 16);
+			if (!seg) return 0;
+			memcpy(SEGP(seg), overrides[i].data, overrides[i].len);
+			if (size) *size = (uint32_t)overrides[i].len;
+			return seg;
+		}
 	Mm3Cc *cc = (strlen(name) >= 4 && !strncasecmp(name, "maze", 4)) ? &G.cur : &G.cc;
 	size_t len;
 	uint8_t *data = mm3_cc_read(cc, name, &len);
