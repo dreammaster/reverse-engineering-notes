@@ -25,7 +25,15 @@ each rule comes from.
 Verified on the real game files (`../data`): all 558 `MM3.CC` and 240 `MM3.CUR` members extract byte-identical to the Python tool, and
 `make realtest` parses every `MAZEnn.DAT`/`.EVT` (10,831 events, records tile each file exactly).
 
-Not done yet (planned order): event effects (`If` tests, give/take, teleport, town buildings: the host side of `evtrun`), rules (combat, spells, town), game screens on top of the SDL viewer (UI frames, text colours/windows/alignment), monster movement (`moveMonsters` is a stub in `view_host.c`), UI screens.
+## Status
+The whole game runs: `make mm3game` builds a program that loads the original data files and plays the real game -- intro, town, 3D
+exploration of every map, inns/shops/guilds (all events), the HUD buttons and mouse, combat, spells, saving and loading (to `./mm3-saves`),
+music and sound effects.  The game logic is the original code, statically translated (`gen/game_gen.c`, ~415 routines, regenerate with
+`make regen_game`); everything it calls out to is hand-written here: allocator/DOS/stdio (`game_machine.c`, `game_files.c`), video, keyboard and
+mouse (`game_video.c`, `ui_text.c`), sound (`game_sound.c`, `x86.c`, `opl.c`).  Pieces are being replaced by readable C verified against
+the translation (`rules.c` so far).  Not done: the digital-sample drivers and PC-speaker/Roland sound, the screen-transition effect
+(`vdrv_00`), a cycle-exact OPL, the original's random number generator, the `_main` start-up/copy-protection path (the bring-up in
+`game_main.c` replaces it), and readable rewrites of the remaining ~400 translated routines.
 
 Facing (settled from `exploreLoop`'s turn and step tables): 0 = north (+y), 1 = south (-y), 2 = east (+x), 3 = west (-x);
 turning left goes 0 -> 3 -> 1 -> 2 -> 0, turning right 0 -> 2 -> 1 -> 3 -> 0.  Wall nibble sides are N, E, S, W from the top nibble
