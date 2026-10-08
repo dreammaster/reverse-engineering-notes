@@ -1752,8 +1752,11 @@ been written against the old (wrong) TSprite model and referenced fields
 (asm lines 785997-786106) shows it uses `_path`, `GetTransparency()`, and
 `TPictureIO`'s own `_flagC0`, plus a third value that's 0 unless
 `s_bTestCacheFileTime` is set (then a file-modification-time value, not
-modeled). The exact `wxString::privFormat()` output shape remains an
-approximation, as it already was before this fix.
+modeled). *Later:* the format string was found (`asc_DA9360`, wide
+`%s_%d_%d_%d_%d`; `%s_%d_%d_%d_%d_%d` with the file time in seconds as the last):
+the full path, 0, the transparency mode, the transparent color (only in the color
+key mode) and `_flagC0`. `GetSpriteName()` now builds exactly that, and the Lua
+`Sprite:getSize()` builds the same name (without the file time) to ask the cache.
 
 ## TTimer
 
@@ -3395,6 +3398,26 @@ the earlier work guessed for these calls (`PlaySound`, `Resume`, `OnVideoFrameFi
 `SetStats`, `CleanUp`, `ContinueAll`, `FinishSoundFade`.
 `Tween` (a number over a time through an easing function) and `TVisObjTween` (it sets the x and y of a
 field of a data object each frame) are reconstructed, with all the easing functions (Penner's equations, `Easing.cpp`; the `easing_*_func` ones are the In version of each kind, and `easing_expo_func` gives 2^-10 for 0, as the original does).
+
+## The Lua bridge (vscommon/scripting)
+
+`visLua.cpp` is the Lua state (`L`, ScummVM's Lua 5.1 - the original uses LuaJIT's compatible API), `InitLua()`,
+`LuaDoString()` and `LuaExecuteFunction()`; `luaConversion.cpp` converts points, rects, sprites, texts and lists
+to and from Lua tables. What the scripts see:
+
+- `luaGlobals.cpp`: a global `V<XML name>` for every field id (0x65-0x347), a global for every table
+  (-1 to 0x26) holding its number, and the 194 enum constants (`eFadeIn`, `eKeyModAlt`, `easeSineInOut` ...).
+  The names were extracted from the asm with a script, because a few are not plain `offset` strings: the easing
+  names are built (`"ease"` + kind + `"In"`/`"Out"`/`"InOut"`, the pieces tail-merged into other strings), and
+  two are the tails of assert strings (`eFadeNo` in `"m_eSoundFade == eFadeNo"`, `eAlignLeft` in
+  `"eAlignment == eAlignLeft"`) that the code reaches by an immediate address. The easing numbers (0-32)
+  are those that `CmdStartObjectTween::Do` maps to the `Easing::*` functions (not reconstructed yet).
+- `luaSprite.cpp`: a sprite is a userdata holding a `TSprite *`, metatable `Visionaire.TSprite`, with
+  `setPath getPath getSize setPosition getPosition` and `createSprite("path")`. Its registration is the "Lunar"
+  class template with its quirks kept (the methods table has itself as `__metatable` and `__index`, and `new`
+  and `__call` are put in the wrong tables).
+- `Cmd*` classes (the commands the scripts call), the data object class (`VisionaireObject`) and the particles
+  are not reconstructed yet (stubs in `lua.cpp`).
 
 ## Reformatted to ScummVM's code conventions
 

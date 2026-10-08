@@ -10,6 +10,7 @@
 #include "common/lua/lua.h"
 #include "datastruct/visobjref.h"
 
+class TSprite;
 class TVisionaireObject;
 
 /** What the userdata of a data object holds (the object is referenced by the game's tables). */
@@ -20,7 +21,14 @@ struct LuaVisionaireObject {
 LuaVisionaireObject *CheckVisionaireObject(lua_State *state, int index, bool quiet);
 
 int luaopen_VisionaireObject(lua_State *state);
+/** Makes the sprite class of the scripts (luaSprite.cpp) and the function createSprite(). */
 int luaopen_Sprite(lua_State *state);
+/** The sprite of the userdata at `index` (it is an error when it is not a sprite). */
+TSprite **CheckSprite(lua_State *state, int index);
+/** createSprite("path"): pushes a new sprite. */
+int CreateSprite(lua_State *state);
+/** Pushes a new sprite for the scripts that is a copy of `sprite`. */
+void CreateTSprite(lua_State *state, const TSprite &sprite);
 int luaopen_Particles(lua_State *state);
 int lua_debugerror(lua_State *state);
 

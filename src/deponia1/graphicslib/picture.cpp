@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "baselib/file.h"
 #include "graphicslib/graphics.h"
 #include "graphicslib/preloadedPicManager.h"
 
@@ -97,18 +98,18 @@ void TPictureIO::RemoveSprite() {
 	Clear();
 }
 
+// Confirmed (asm lines 785997-786253): "%s_%d_%d_%d_%d" with the full path, 0, the transparency mode,
+// the transparent color (only in the color key mode, else 0) and _flagC0; with s_bTestCacheFileTime
+// "%s_%d_%d_%d_%d_%d", where the last is the modification time of the file in seconds.
 wxString TPictureIO::GetSpriteName() const {
-	// Builds a diagnostic name from the sprite's path plus GetTransparency(),
-	// _flagC0, and a third value that's always 0 unless s_bTestCacheFileTime
-	// is enabled, in which case it's the path's file modification time (via
-	// TFile::GetFileTime()+wxDateTime::GetTicks()) instead. The exact wx
-	// formatting call (wxString::privFormat with a bare "%" format string)
-	// couldn't be pinned down at the byte level (see NOTES.md); this
-	// reproduces the observable inputs, not the exact original string shape.
-	wxString path = GetPath().GetFullPath();
-	long thirdValue = 0;  // TFile::GetFileTime()-based value when s_bTestCacheFileTime - not modeled
-	return wxString(path.ToStdWstring() + L" (" + std::to_wstring(static_cast<int>(GetTransparency())) + L"," +
-	                std::to_wstring(_flagC0) + L"," + std::to_wstring(thirdValue) + L")");
+	int color = (GetTransparency() == eTransparencyMode::kColorKey) ? static_cast<int>(GetTransparentColor()) : 0;
+	std::wstring name = GetPath().GetFullPath().ToStdWstring() + L"_0_" + std::to_wstring(static_cast<int>(GetTransparency())) +
+	                    L"_" + std::to_wstring(color) + L"_" + std::to_wstring(_flagC0 ? 1 : 0);
+
+	if (s_bTestCacheFileTime)
+		name += L"_" + std::to_wstring(static_cast<int>(TFile::GetFileTime(GetPath()) / 1000));
+
+	return wxString(name);
 }
 
 void TPictureIO::SetParallax(int x, int y) {

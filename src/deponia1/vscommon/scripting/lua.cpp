@@ -36,10 +36,6 @@ int luaopen_VisionaireObject(lua_State *) {
 	return 0;
 }
 
-int luaopen_Sprite(lua_State *) {
-	return 0;
-}
-
 int luaopen_Particles(lua_State *) {
 	return 0;
 }
