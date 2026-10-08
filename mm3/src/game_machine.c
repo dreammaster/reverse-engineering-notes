@@ -296,3 +296,12 @@ void host_rnd(Cpu *c) {
 	unsigned lo = host_arg(c, 0), hi = host_arg(c, 1);
 	c->ax = (uint16_t)(hi >= lo ? lo + rng_next() % (hi - lo + 1) : lo);
 }
+
+/* DOS-level leftovers: reopening MM3.CC around floppy swaps (only when byte_37380 is set: never here) and the program exit */
+void host_sub_25085(Cpu *c) { c->ax = 0; }
+void host_sub_2509A(Cpu *c) { c->ax = 0; }
+void host_ccOpen(Cpu *c) { c->ax = 0; }
+void host_ccClose(Cpu *c) { (void)c; }
+void host_ccRead(Cpu *c) { c->ax = 0; }
+void host_ccSeek(Cpu *c) { c->ax = 0; }
+void host_sub_39900(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }

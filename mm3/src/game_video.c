@@ -300,4 +300,5 @@ void host_vdrv_2A_starfield(Cpu *c) {
 	video_present();
 	if (!headless) SDL_Delay(25);
 }
-void host_vdrv_00_transition(Cpu *c) { (void)c; video_present(); }
+/* vdrv_00(draw list far pointer): the list is drawn into an off-screen copy of the screen which then replaces it -- here: draw it onto the screen */
+void host_vdrv_00_transition(Cpu *c) { if (host_arg(c, 1) == DSEG) game_exec_draw_list(host_arg(c, 0)); video_present(); }
