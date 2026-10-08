@@ -17840,9 +17840,7 @@ static Bytes_3(void) {
 	create_byte	(0X36FEF);
 	set_name	(0X36FEF,	"Party_walkOnWater");
 	create_byte	(0X36FF0);
-	make_array	(0X36FF0,	0XEA);
-	set_cmt	(0X370DA,	"918-byte party block (MAZE.PTY), loaded by sub_26447",	0);
-	set_name	(0X370DA,	"Party_state");
+	make_array	(0X36FF0,	0X32B);
 	set_cmt	(0X3731B,	"53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)",	0);
 	set_name	(0X3731B,	"Party_eventFlags");
 	set_cmt	(0X37325,	"byte, 0-99",	0);
