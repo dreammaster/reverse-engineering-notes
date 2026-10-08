@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../lightsource.c ../spelljump.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -17,6 +17,9 @@
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S loot the chest ahead, M the local area map, D the pause
  * dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ *
+ * EXPLORE_INTRO=opening|story|ending plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
+ * the milliseconds per tick, 25 by default; EXPLORE_INTRO_SOUND=1 plays the voices instead of drawing the text); Escape ends it.
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, K, S, A, P, 1 2, + -, ESC as '!') the
  * keys are played at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display;
@@ -31,7 +34,9 @@
 
 #include "audio.h"
 #include "cmfplayer.h"
+#include "exedata.h"
 #include "gamedialog.h"
+#include "introstory.h"
 #include "lighting.h"
 #include "localmap.h"
 #include "maininput.h"
@@ -300,6 +305,113 @@ static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     return true;
 }
 
+/* ---- the cinematics (introstory.h): EXPLORE_INTRO=opening|story|ending plays one in the window before the game; Escape ends it --------------------------------- */
+static SDL_Renderer *g_introRenderer;
+static SDL_Texture *g_introTexture;
+static bool g_introEscape;
+static unsigned g_introDelayMs = 25;
+
+static void introPump(void) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
+            g_introEscape = true;
+        }
+    }
+}
+
+static void introPresent(void *ctx, const uint8_t *screen, const uint8_t *dac) {
+    (void)ctx;
+    static uint32_t pixels[ViewScreenWidth * ViewScreenHeight];
+    uint32_t colours[256];
+    for (unsigned i = 0; i < 256; i++) {
+        unsigned r = dac[i * 3] & 63, g = dac[i * 3 + 1] & 63, b = dac[i * 3 + 2] & 63;
+        colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
+    }
+    for (unsigned i = 0; i < ViewScreenWidth * ViewScreenHeight; i++) {
+        pixels[i] = colours[screen[i]];
+    }
+    SDL_UpdateTexture(g_introTexture, NULL, pixels, ViewScreenWidth * 4);
+    SDL_RenderClear(g_introRenderer);
+    SDL_RenderCopy(g_introRenderer, g_introTexture, NULL, NULL);
+    SDL_RenderPresent(g_introRenderer);
+}
+
+static void introTick(void *ctx) {
+    (void)ctx;
+    introPump();
+    if (g_introDelayMs) {
+        SDL_Delay(g_introDelayMs);
+    }
+}
+
+static bool introEscapeFn(void *ctx) {
+    (void)ctx;
+    introPump();
+    return g_introEscape;
+}
+
+static void introSound(void *ctx, unsigned id) {
+    (void)ctx;
+    playEffect(id);
+}
+
+static void introMusic(void *ctx, unsigned track) {
+    (void)ctx;
+    playMusic(track);
+}
+
+static bool introSoundBusy(void *ctx) {
+    (void)ctx;
+    return g_effectPos < g_effectLength;
+}
+
+static void introWaitSound(void *ctx) {
+    while (introSoundBusy(ctx) && !g_introEscape) {
+        SDL_Delay(10);
+        introPump();
+    }
+}
+
+static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, SDL_Renderer *renderer, SDL_Texture *texture) {
+    GameKind game = g_session->game;
+    char path[512];
+    snprintf(path, sizeof(path), "%s/%s", dir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
+    FILE *f = fopen(path, "rb");
+    if (!f) {
+        fprintf(stderr, "cannot open %s\n", path);
+        return false;
+    }
+    static uint8_t exeBytes[400000];
+    size_t exeSize = fread(exeBytes, 1, sizeof(exeBytes), f);
+    fclose(f);
+    ExeData exe;
+    if (!exeDataOpen(&exe, game, exeBytes, exeSize)) {
+        fprintf(stderr, "%s is not the game executable\n", path);
+        return false;
+    }
+    IntroAssets assets = {g_worldDat, g_worldSize, &exe, pictureFileGet, pictures, game};
+    static IntroStory story;
+    g_introRenderer = renderer;
+    g_introTexture = texture;
+    if (getenv("EXPLORE_INTRO_MS")) {
+        g_introDelayMs = (unsigned)atoi(getenv("EXPLORE_INTRO_MS"));
+    }
+    IntroHost host = {NULL, introPresent, introSound, introMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
+    bool ok;
+    if (game == GameYendor3) {
+        ok = introOpening3Start(&story, &assets) && introOpening3Play(&story, &assets, &host);
+    } else if (strcmp(kind, "ending") == 0) {
+        ok = introEndingStart(&story, &assets) && introEndingPlay(&story, &assets, &host);
+    } else if (strcmp(kind, "story") == 0) {
+        ok = introStoryStart(&story, &assets) && introStoryPlay(&story, &assets, &host);
+    } else {
+        ok = introOpeningStart(&story, &assets) && introPlayAll(&story, &assets, &host);
+    }
+    playMusic(0);
+    return ok || g_introEscape;
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
         fprintf(stderr, "usage: %s <2|3> <game dir> [scale]\n", argv[0]);
@@ -379,6 +491,9 @@ int main(int argc, char **argv) {
         }
     }
 
+    if (getenv("EXPLORE_INTRO") && !playIntro(getenv("EXPLORE_INTRO"), dir, pictures, sdl, texture)) {
+        return 1;
+    }
     Overlay overlay = OverlayNone;
     bool running = true, dirty = true;
     const char *script = getenv("EXPLORE_KEYS");
