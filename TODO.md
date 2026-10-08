@@ -138,14 +138,17 @@ reconstructed. `TGInterface` stays `in-progress` until then.
 
 Done: the Lua state and running scripts (`visLua.cpp`), the conversions (`luaConversion.cpp`, `lua.cpp`), the
 constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the tables of the game
-(`visionaireobjectLua.cpp`), the path language (`vscommon/objAccess.cpp`). Missing:
+(`visionaireobjectLua.cpp`), the path language (`vscommon/objAccess.cpp`), the command framework and the common
+commands, and the 49 commands of the player with `InitPlayerCommands()` (`vsplayer/scripting/playerCommands.cpp`).
+Missing:
 
-- `InitCommands()` / `InitPlayerCommands()` (asm 425066, 1439990-1440140): sets `Game`, calls `InitLua()` and
-  `InitObjectAccess()`, makes the command queue. `TGameControl::InitScripts()` has to call it.
-- The `Cmd*` classes (asm ~1431480-1500000): the functions the scripts call (`system_*`, `graphics_*`, `sprite_*`,
-  `movie_*`, `particles_*` ...), with `TArgSyntax`/`TArgParser`/`TCommandQueue`, `InitCommonCommands()` that
-  registers them, and `CmdVisObjTo` (the object method `to`). `CmdStartObjectTween::Do` (asm 407771) is
-  where the easing numbers of `luaGlobals.cpp` (0-32) are mapped to the `Easing::*` functions.
+- `TGameControl::InitScripts()` has to call `InitPlayerCommands()`. That function does not yet call
+  `InitDrawLua()` (asm 447452: the `system_*`, `graphics_*`, `sprite_*`, `movie_*`, `particles_*` functions) or open
+  the libraries `utf8`, `luacurl`, `rex_pcre` and `lfs` that the original has built in.
+- The shader commands (`shaderCompile`, `shaderUniform`) keep the shaders in `shader_list`, but `CreateShader()`
+  (`graphicslib/shader.cpp`) makes none: the shader objects belong to the GL backend behind `graphics`
+  (`g_subSys`, not reconstructed). `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are
+  stubs for the same reason.
 - `luaopen_Particles`, `vsplayer/scripting/scriptingutils.cpp` (`Save`/`LoadGlobalScriptVariables`, asm ~432832).
 - `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
   never called.
@@ -156,10 +159,8 @@ All 104 commands of `TGAction::Execute()` are done (`vstables/eCommand.h`). What
 missing elsewhere:
 
 - The Lua bridge is partly there (see below): the script commands 137 and 138 now run their text through
-  `LuaDoString()`, but nothing starts the Lua state yet (`InitCommands()`), and the functions the scripts
-  call are missing.
+  `LuaDoString()`, but nothing starts the Lua state yet (`InitPlayerCommands()` is not called), and the drawing
+  functions of the scripts (`InitDrawLua()`) are missing.
 - The sound engine (`TSoundBase`, `TSoundFFMPEG`): the commands call the sound manager the way the
   original does, but nothing plays (see `TSoundInterface.h` for the virtual surface).
-- `TGameControl::StartTween(const Tween &, const std::string &)` (the tweens the scripts name) is still
-  a stub.
 - Command 122 (0x7A) is an if (`IsIFActionPart`) that has no entry in the jump table: it does nothing.

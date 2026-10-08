@@ -81,6 +81,10 @@ public:
 
 	/** The action that is run (its data object). */
 	TVisObjRef GetDataObject() const;
+	/** The record of the running state (the "active action" that the scripts get). */
+	const TVisObjRef &GetActive() const {
+		return _active;
+	}
 	/** The scripts pause and resume an action. */
 	void SetPaused(bool paused);
 	/** A stopped action goes on: the time that the game was stopped does not count. */

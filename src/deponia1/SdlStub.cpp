@@ -120,3 +120,21 @@ int SDL_HapticRunEffect(SDL_Haptic */*haptic*/, int /*effect*/, Uint32 /*iterati
 int SDL_HapticStopEffect(SDL_Haptic */*haptic*/, int /*effect*/) {
 	return -1;
 }
+
+int SDL_PushEvent(SDL_Event */*event*/) {
+	return 1;
+}
+
+void SDL_WarpMouseInWindow(SDL_Window */*window*/, int /*x*/, int /*y*/) {
+}
+
+void SDL_SetWindowTitle(SDL_Window */*window*/, const char */*title*/) {
+}
+
+float SDL_GetWindowBrightness(SDL_Window */*window*/) {
+	return 1.0f;
+}
+
+int SDL_SetWindowBrightness(SDL_Window */*window*/, float /*brightness*/) {
+	return 0;
+}

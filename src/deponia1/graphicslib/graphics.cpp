@@ -30,6 +30,27 @@ TPreloadedPicManager *TGraphicsInterface::GetPreloadedPicManager() {
 	return _preloadedPicManager;
 }
 
+bool TGraphicsInterface::CaptureScreen(TPictureIO &/*picture*/) {
+	return false;
+}
+
+void TGraphicsInterface::CreateSavegameScreenshot(bool /*flag*/) {
+}
+
+void TGraphicsInterface::ClearSavegameScreenshot(bool /*flag*/) {
+}
+
+void TGraphicsInterface::ToggleWindowMode() {
+}
+
+bool TGraphicsInterface::SetWindowSize(int /*width*/, int /*height*/) {
+	return true;
+}
+
+bool TGraphicsInterface::IsFullscreen() {
+	return false;
+}
+
 TSpriteHandle *TGraphicsInterface::GetSpriteFromCache(const wxString &/*name*/) {
 	return nullptr;
 }

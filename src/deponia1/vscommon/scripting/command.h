@@ -15,11 +15,11 @@
 #include <vector>
 
 #include "WxStub.h"
-#include "common/lua/lauxlib.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/argumentParser.h"
 #include "vscommon/scripting/argumentSyntax.h"
 #include "vscommon/scripting/visLua.h"
+#include "common/lua/lauxlib.h"
 
 class TVisionaireGame;
 

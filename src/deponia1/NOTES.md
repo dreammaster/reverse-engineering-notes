@@ -3442,9 +3442,26 @@ to and from Lua tables. What the scripts see:
   reconstructed: nothing in the game calls it.
 - `lua.cpp`: `LuaDoFile`, `LuaDoRef`, `CloseLua`, `LuaSetCurrentAction`/`LuaSetNumber` (found inline in
   `TGAction::Execute` and `TGameControl::Update`) and the conversion of object lists to and from Lua.
-- Not reconstructed yet: the `Cmd*` classes (the functions the scripts call, `InitCommonCommands()`,
-  `InitCommands()` which also calls `InitObjectAccess()`), `CmdVisObjTo` (the object method `to`), the particles
-  (`luaopen_Particles`).
+- The commands (`argumentSyntax.cpp`, `argumentParser.cpp`, `argument.cpp`, `command.cpp`, `commonCommands.cpp`,
+  `vsplayer/scripting/playerCommands.cpp`): a function of the scripts is a `Cmd*` class (`TCommand`: `Do()`
+  parses the arguments and calls `Redo()`, which does the work and puts the result with `Result.Set()` +
+  `Result.ToLua()`), a syntax function that says its arguments, and a Lua function `RunCommand<Cmd>()` that looks the
+  syntax up by the name, parses the Lua stack (`TArgParser`), runs `Do()` and keeps the command in the queue when it
+  `CanUndo()`. An argument is positional (mandatory ones first) or a flag, which the script gives in a table with the
+  key `flags` (`getTime({flags = 1, reset = true})`, the table last). The texts of the editor's help (`AddDoc`,
+  `AddArgDoc` ...) were not reconstructed. `InitCommands()` (asm 1440087) sets up the Lua state and the object paths;
+  `InitPlayerCommands()` (asm 425066) calls it and registers the 49 commands of the player in the order of the
+  original. Quirks kept: `shaderUniform` with a value that is not a number, a list or a string fails; the
+  haptic effect commands pass `-1` for what the script did not give; `object:to()` takes any easing number that is
+  not 0-32 as linear-in-out, while `startTween` and `startObjectTween` refuse it (`Unsupported property`).
+  The easing numbers (0-32) are the `Easing::*` functions in the order Back, Bounce, Circ, Cubic, Elastic, Linear,
+  None, Quad, Quart, Quint, Sine, each In, Out and InOut. A correction of an earlier guess: the periodic and ramp
+  haptic effects (`TGameController::HapticNewEffectPeriodic/Ramp`) take the attack and fade *levels* and no button or
+  interval, as the script commands pass them.
+- Not reconstructed yet: `InitDrawLua()` (`system_*`, `graphics_*`, `sprite_*`, `movie_*` ...), the Lua libraries the
+  original has built in (`luaopen_utf8`, `luacurl`, `rex_pcre`, `lfs`), the particles (`luaopen_Particles`), and the
+  shader objects behind `shaderCompile`/`shaderUniform` (the GL backend; `graphicslib/shader.h` has what the
+  commands use).
 
 ## Reformatted to ScummVM's code conventions
 

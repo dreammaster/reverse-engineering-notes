@@ -35,7 +35,9 @@ void stackDump(lua_State *state);
 void ClearLuaObjectCaches();
 /** The tables of the game as globals (`Scenes` ...). */
 int luaopen_ExportTables(lua_State *state);
-/** The command behind the object method `to` (not reconstructed yet). */
+/** The id of the field of the object that `name` says (-1 when there is none): see visionaireobjectLua.cpp. */
+int getFieldFromString(LuaVisionaireObject *self, const char *name);
+/** The command behind the object method `to` (playerCommands.cpp). */
 void CmdVisObjTo(lua_State *state);
 
 int luaopen_VisionaireObject(lua_State *state);

@@ -203,3 +203,98 @@ constexpr Sint32 SDLK_RIGHT = 79 | SDLK_SCANCODE_MASK;
 constexpr Sint32 SDLK_LEFT = 80 | SDLK_SCANCODE_MASK;
 constexpr Sint32 SDLK_DOWN = 81 | SDLK_SCANCODE_MASK;
 constexpr Sint32 SDLK_UP = 82 | SDLK_SCANCODE_MASK;
+
+// The events that the commands of the scripts make (real SDL2 values and layouts).
+constexpr Uint32 SDL_KEYDOWN = 0x300u;
+constexpr Uint32 SDL_KEYUP = 0x301u;
+constexpr Uint32 SDL_MOUSEMOTION = 0x400u;
+constexpr Uint32 SDL_MOUSEBUTTONDOWN = 0x401u;
+constexpr Uint32 SDL_MOUSEBUTTONUP = 0x402u;
+constexpr Uint32 SDL_MOUSEWHEEL = 0x403u;
+constexpr Uint32 SDL_CONTROLLERAXISMOTION = 0x650u;
+constexpr Uint32 SDL_CONTROLLERBUTTONDOWN = 0x651u;
+constexpr Uint32 SDL_CONTROLLERBUTTONUP = 0x652u;
+
+struct SDL_MouseMotionEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	Uint32 which;
+	Uint32 state;
+	Sint32 x;
+	Sint32 y;
+	Sint32 xrel;
+	Sint32 yrel;
+};
+
+struct SDL_MouseButtonEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	Uint32 which;
+	Uint8 button;
+	Uint8 state;
+	Uint8 clicks;
+	Uint8 padding1;
+	Sint32 x;
+	Sint32 y;
+};
+
+struct SDL_MouseWheelEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	Uint32 which;
+	Sint32 x;
+	Sint32 y;
+	Uint32 direction;
+};
+
+struct SDL_Keysym {
+	Sint32 scancode;
+	Sint32 sym;
+	Uint16 mod;
+	Uint32 unused;
+};
+
+struct SDL_KeyboardEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	Uint8 state;
+	Uint8 repeat;
+	Uint8 padding2;
+	Uint8 padding3;
+	SDL_Keysym keysym;
+};
+
+struct SDL_ControllerAxisEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Sint32 which;
+	Uint8 axis;
+	Uint8 padding1;
+	Uint8 padding2;
+	Uint8 padding3;
+	Sint16 value;
+	Uint16 padding4;
+};
+
+union SDL_Event {
+	Uint32 type;
+	SDL_MouseMotionEvent motion;
+	SDL_MouseButtonEvent button;
+	SDL_MouseWheelEvent wheel;
+	SDL_KeyboardEvent key;
+	SDL_ControllerAxisEvent caxis;
+	SDL_ControllerButtonEvent cbutton;
+	Uint8 padding[56];
+};
+
+extern "C" {
+	void SDL_SetWindowTitle(SDL_Window *window, const char *title);
+	float SDL_GetWindowBrightness(SDL_Window *window);
+	int SDL_SetWindowBrightness(SDL_Window *window, float brightness);
+	int SDL_PushEvent(SDL_Event *event);
+	void SDL_WarpMouseInWindow(SDL_Window *window, int x, int y);
+}

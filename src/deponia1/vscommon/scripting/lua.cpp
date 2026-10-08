@@ -176,10 +176,7 @@ void ConvertToLua(const TVList &objects) {
 	}
 }
 
-// Not reconstructed yet (the commands, and the particles): nothing is put into Lua.
-void CmdVisObjTo(lua_State *) {
-}
-
+// Not reconstructed yet (the particles): nothing is put into Lua.
 int luaopen_Particles(lua_State *) {
 	return 0;
 }

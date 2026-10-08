@@ -98,11 +98,11 @@ public:
 	int HapticNewEffectLeftRight(TControllerEffectType effectType, int length, int largeMagnitude,
 	                             int smallMagnitude);
 	int HapticNewEffectRamp(TControllerEffectType effectType, TControllerEffectDirection direction,
-	                        int *dirComponents, int length, int delay, int button, int interval, int start, int end,
-	                        int attackLength, int fadeLength);
+	                        int *dirComponents, int length, int delay, int start, int end, int attackLength,
+	                        int attackLevel, int fadeLength, int fadeLevel);
 	int HapticNewEffectPeriodic(TControllerEffectType effectType, TControllerEffectDirection direction,
-	                            int *dirComponents, int length, int delay, int button, int interval, int period,
-	                            int magnitude, int offset, int phase, int attackLength, int fadeLength);
+	                            int *dirComponents, int length, int delay, int period, int magnitude, int offset,
+	                            int phase, int attackLength, int attackLevel, int fadeLength, int fadeLevel);
 	int HapticNewEffectCondition(TControllerEffectType effectType, int length, int delay, int rightSat, int leftSat,
 	                             int rightCoeff, int leftCoeff, int deadband, int center);
 	int HapticNewEffectConstant(TControllerEffectType effectType, TControllerEffectDirection direction,

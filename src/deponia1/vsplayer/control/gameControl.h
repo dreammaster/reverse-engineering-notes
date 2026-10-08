@@ -127,6 +127,11 @@ public:
 	void InitScripts();
 	TVisionaireGame *GetGameSystem();
 	TVisionaireGame *GetVisionaire();
+	/** The mouse position as the scripts see it (after the scene mouse position hook; (-1,-1) before the
+	 *  mouse moved). */
+	const wxPoint &GetScriptMousePosition() const {
+		return _lastHookMousePos;
+	}
 	void ScrollToCharacterIfNeeded(const TVisObjRef &character);
 	void MoveScene();
 	void CenterScene();

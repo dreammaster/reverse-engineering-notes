@@ -100,6 +100,22 @@ public:
 	virtual void CleanUp();
 	/** Stops the sound of `file`. */
 	virtual void Stop(const wxFileName &file);
+	// The sounds by their id (the id Play() gives); asked by the script commands. Slots of TSoundBase:
+	// 0x50 Stop(int), 0x58 TogglePause(int), 0x60 GetExistingSoundID(file), 0x78 SetStats(int ...), 0x88
+	// IsPlaying(int), 0x90 IsPaused(int), 0x98 GetVolume(int), 0xA0 GetBalance(int), 0xA8 GetOffset(int),
+	// 0xB0 GetDuration(int), 0xC0 IsLoop(int). All say "no sound" (-1, false) until the engine is there.
+	virtual bool Stop(int id);
+	virtual bool TogglePause(int id);
+	/** The id of the sound of `file` that plays (-1: none). */
+	virtual int GetExistingSoundID(const wxFileName &file) const;
+	virtual bool SetStats(int id, int volume, int balance, TSoundTypeEnum type, bool loop, int offset);
+	virtual bool IsPlaying(int id) const;
+	virtual bool IsPaused(int id) const;
+	virtual int GetVolume(int id) const;
+	virtual int GetBalance(int id) const;
+	virtual int GetOffset(int id) const;
+	virtual int GetDuration(int id) const;
+	virtual bool IsLoop(int id) const;
 	/** Changes the volume and the balance of a sound that is playing, and its kind. */
 	virtual void SetStats(const wxFileName &file, int volume, int balance, TSoundTypeEnum type, bool flag, int value);
 	virtual bool IsPlaying(const wxFileName &file) const;

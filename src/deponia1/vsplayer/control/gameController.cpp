@@ -357,9 +357,11 @@ static void ApplyDirection(SDL_HapticDirection &outDirection, TControllerEffectD
 	}
 }
 
+// Confirmed (asm lines 451669-451880): the parameters are those of the ramp effect of SDL, without the button and the
+// interval (the ones that the script command createHapticEffectRamp gives, asm 389302-389384).
 int TGameController::HapticNewEffectRamp(TControllerEffectType effectType, TControllerEffectDirection direction,
-        int *dirComponents, int length, int delay, int button, int interval,
-        int start, int end, int attackLength, int fadeLength) {
+        int *dirComponents, int length, int delay, int start, int end, int attackLength, int attackLevel,
+        int fadeLength, int fadeLevel) {
 	int typeBit = ConvertHapticEffectType(effectType);
 	(void)typeBit;
 
@@ -376,26 +378,27 @@ int TGameController::HapticNewEffectRamp(TControllerEffectType effectType, TCont
 		effect.ramp.length = static_cast<Uint32>(length);
 	if (delay != -1)
 		effect.ramp.delay = static_cast<Uint16>(delay);
-	if (button != -1)
-		effect.ramp.button = static_cast<Uint16>(button);
-	if (interval != -1)
-		effect.ramp.interval = static_cast<Uint16>(interval);
 	if (start != -1)
 		effect.ramp.start = static_cast<Sint16>(start);
 	if (end != -1)
 		effect.ramp.end = static_cast<Sint16>(end);
 	if (attackLength != -1)
 		effect.ramp.attack_length = static_cast<Uint16>(attackLength);
+	if (attackLevel != -1)
+		effect.ramp.attack_level = static_cast<Uint16>(attackLevel);
 	if (fadeLength != -1)
 		effect.ramp.fade_length = static_cast<Uint16>(fadeLength);
+	if (fadeLevel != -1)
+		effect.ramp.fade_level = static_cast<Uint16>(fadeLevel);
 
 	return HapticControllerEffectUpload(effectType, effect);
 }
 
+// Confirmed (asm lines 453287-453540): the parameters are those of the periodic effect of SDL, without the button and the
+// interval (the ones that the script command createHapticEffectPeriodic gives, asm 389470-389564).
 int TGameController::HapticNewEffectPeriodic(TControllerEffectType effectType, TControllerEffectDirection direction,
-        int *dirComponents, int length, int delay, int button, int interval,
-        int period, int magnitude, int offset, int phase, int attackLength,
-        int fadeLength) {
+        int *dirComponents, int length, int delay, int period, int magnitude, int offset, int phase,
+        int attackLength, int attackLevel, int fadeLength, int fadeLevel) {
 	if (effectType < TCET_Sine || effectType > TCET_SawtoothDown) {
 		if (wxLog::loglevel > 0)
 			wxLog::logexpanded(L"Unsupported haptic effect type");
@@ -409,10 +412,6 @@ int TGameController::HapticNewEffectPeriodic(TControllerEffectType effectType, T
 		effect.periodic.length = static_cast<Uint32>(length);
 	if (delay != -1)
 		effect.periodic.delay = static_cast<Uint16>(delay);
-	if (button != -1)
-		effect.periodic.button = static_cast<Uint16>(button);
-	if (interval != -1)
-		effect.periodic.interval = static_cast<Uint16>(interval);
 	if (period != -1)
 		effect.periodic.period = static_cast<Uint16>(period);
 	if (magnitude != -1)
@@ -423,8 +422,12 @@ int TGameController::HapticNewEffectPeriodic(TControllerEffectType effectType, T
 		effect.periodic.phase = static_cast<Uint16>(phase);
 	if (attackLength != -1)
 		effect.periodic.attack_length = static_cast<Uint16>(attackLength);
+	if (attackLevel != -1)
+		effect.periodic.attack_level = static_cast<Uint16>(attackLevel);
 	if (fadeLength != -1)
 		effect.periodic.fade_length = static_cast<Uint16>(fadeLength);
+	if (fadeLevel != -1)
+		effect.periodic.fade_level = static_cast<Uint16>(fadeLevel);
 
 	return HapticControllerEffectUpload(effectType, effect);
 }

@@ -77,6 +77,8 @@ int GetAngle(float dx, float dy);
 
 class TManagedObject : public TAnimationOwner {
 public:
+	/** The Lua function that draws the objects (registered by the script command registerHookFunction("renderObject", ...)). */
+	static std::string HookFunctionRender;
 	TManagedObject() = default;
 	explicit TManagedObject(const TVisObjRef &objRef) : _objRef(objRef) {
 	}

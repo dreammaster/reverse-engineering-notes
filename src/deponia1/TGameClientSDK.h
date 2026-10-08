@@ -14,6 +14,16 @@ public:
 	// lines 470456, 470579) - checked once per frame; Update() only runs
 	// when GetStatus() reports active. Not reversed beyond that call shape.
 	bool GetStatus() const;
+	// The stats and achievements of the player in Steam, and a web page in the overlay (the Steam SDK is the
+	// vendor's; asked by the script commands through TGameClientSDK, asm 426024-426530). Nothing here is
+	// reconstructed: the answers are those of a game that Steam does not run.
+	int GetStat(const wxString &name);
+	bool SetStat(const wxString &name, int value);
+	bool ResetStats(bool achievementsToo);
+	bool GetAchievement(const wxString &name);
+	bool SetAchievement(const wxString &name);
+	bool ClearAchievement(const wxString &name);
+	bool ActivateGameOverlayToWebPage(const wxString &url);
 	// Confirmed call shape only (TMSavegame::Delete, Deponia_Linux.asm line
 	// 163096) - not reversed beyond that.
 	void DeleteCloudSavegame(const wxString &fileName);
@@ -29,6 +39,26 @@ public:
 	// as TSteamSDK above; not reversed beyond that call shape.
 	bool IsActive() const;
 	void Update();
+	// The same for GOG Galaxy (also the vendor's, not reconstructed).
+	int GetStat(const wxString &name);
+	bool SetStat(const wxString &name, int value);
+	bool ResetStatsAndAchievements();
+	bool GetAchievement(const wxString &name);
+	bool SetAchievement(const wxString &name);
+	bool ClearAchievement(const wxString &name);
+	/** Whether Galaxy is initialised (`ready` false) or ready for requests (`ready` true). */
+	bool GetStatus(bool ready) const;
+	bool ActivateGameOverlayToWebPage(const wxString &url);
+	/** Starts Galaxy with the client id and secret of the game. */
+	bool InitSDK(const wxString &clientId, const wxString &clientSecret);
+};
+
+/** What TGameClientSDK::GetStatus() asks about. */
+enum TGameClientType {
+	kGameClientNone = 0,
+	kGameClientSteamInitialized = 1,
+	kGameClientGalaxyInitialized = 2,
+	kGameClientGalaxyReady = 3
 };
 
 class TGameClientSDK {
@@ -45,6 +75,17 @@ public:
 	TGalaxySDK *GetGalaxy() const {
 		return _galaxy;
 	}
+
+	// Confirmed (asm lines 426024-426530): each asks Steam (when it is active) and then Galaxy (when it is
+	// active); an active Galaxy has the last word.
+	int GetStat(const wxString &name);
+	bool SetStat(const wxString &name, int value);
+	bool ResetStats(bool achievementsToo);
+	bool GetAchievement(const wxString &name);
+	bool SetAchievement(const wxString &name);
+	bool ClearAchievement(const wxString &name);
+	bool GetStatus(TGameClientType type);
+	bool ActivateGameOverlayToWebPage(const wxString &url);
 
 private:
 	TSteamSDK *_steam;

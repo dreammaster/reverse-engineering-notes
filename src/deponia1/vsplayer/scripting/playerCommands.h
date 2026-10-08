@@ -1,0 +1,54 @@
+// Confirmed (Deponia_Linux.asm lines 388789-425066): the commands of the scripts that only the player has. Each
+// `Register_CmdXxx()` registers a command (its Lua function and its syntax, see vscommon/scripting/command.h);
+// InitPlayerCommands() calls them all.
+#pragma once
+
+void Register_CmdCreateEvent();
+void Register_CmdCreateHapticEffectCondition();
+void Register_CmdCreateHapticEffectConstant();
+void Register_CmdCreateHapticEffectLeftRight();
+void Register_CmdCreateHapticEffectPeriodic();
+void Register_CmdCreateHapticEffectRamp();
+void Register_CmdCreateScreenshot();
+void Register_CmdGetCursorPos();
+void Register_CmdGetGameClientAchievement();
+void Register_CmdGetGameClientStat();
+void Register_CmdGetProperty();
+void Register_CmdGetSoundId();
+void Register_CmdGetSoundProperty();
+void Register_CmdGetVolume();
+void Register_CmdGetWindowBrightness();
+void Register_CmdGetWindowMode();
+void Register_CmdInitGameClient();
+void Register_CmdIsPointInsidePolygon();
+void Register_CmdRegisterEventHandler();
+void Register_CmdRegisterHookFunction();
+void Register_CmdReplaceGame();
+void Register_CmdResetGameClientStats();
+void Register_CmdSetCursorPos();
+void Register_CmdSetGameClientAchievement();
+void Register_CmdSetGameClientStat();
+void Register_CmdSetSoundProperty();
+void Register_CmdSetVolume();
+void Register_CmdSetWindowBrightness();
+void Register_CmdSetWindowSize();
+void Register_CmdSetWindowTitle();
+void Register_CmdShaderCompile();
+void Register_CmdShaderSetOptions();
+void Register_CmdShaderUniform();
+void Register_CmdStartAction();
+void Register_CmdStartAnimation();
+void Register_CmdStartDefaultBrowser();
+void Register_CmdStartHapticEffect();
+void Register_CmdStartHapticRumble();
+void Register_CmdStartObjectTween();
+void Register_CmdStartSound();
+void Register_CmdStartTween();
+void Register_CmdStopAction();
+void Register_CmdStopAnimation();
+void Register_CmdStopHapticEffect();
+void Register_CmdStopHapticRumble();
+void Register_CmdStopSound();
+void Register_CmdToggleSoundPause();
+void Register_CmdToggleWindowMode();
+void Register_CmdUnregisterEventHandler();

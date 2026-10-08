@@ -590,6 +590,29 @@ private:
 };
 
 bool wxInitialize();
+
+// Confirmed call shapes only (CmdGetProperty::Redo(), Deponia_Linux.asm lines 398051-398150): the language of the
+// system. The stub knows none (wxLANGUAGE_UNKNOWN).
+constexpr int wxLANGUAGE_UNKNOWN = 1;
+
+class wxLocale {
+public:
+	static int GetSystemLanguage() {
+		return wxLANGUAGE_UNKNOWN;
+	}
+	static wxString GetLanguageName(int /*language*/) {
+		return wxString();
+	}
+	static wxString GetLanguageCode(int /*language*/) {
+		return wxString();
+	}
+};
+
+// Confirmed call shape only (CmdStartDefaultBrowser::Redo(), asm line 398228): opens the URL in the browser of the
+// system; the stub opens nothing.
+inline bool wxLaunchDefaultBrowser(const wxString &/*url*/) {
+	return false;
+}
 wxString wxConvertMB2WX(const char *s);
 
 // Confirmed call shape only (TTimer::TTimer/SetTime/GetTime, Deponia_Linux.

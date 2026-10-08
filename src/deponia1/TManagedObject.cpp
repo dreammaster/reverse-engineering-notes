@@ -16,6 +16,8 @@
 #include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
+std::string TManagedObject::HookFunctionRender;
+
 // Confirmed (asm lines 1376052-1376134): the direction of (dx, dy) in degrees, 0 to
 // 359, counted anticlockwise from the positive x axis with y pointing up (so y is
 // negated: the screen's y points down).

@@ -848,7 +848,7 @@ int luaopen_ExportTables(lua_State *state) {
 // Confirmed (asm lines 1422468-1422668): the id of the field that `name` says. The name of a field may have the
 // `V` of the constants before it, and may have the name of the table before it (`SceneName`); the
 // fields of the active records (ActiveTexts ...) are those of the record they stand for.
-static int getFieldFromString(LuaVisionaireObject *self, const char *name) {
+int getFieldFromString(LuaVisionaireObject *self, const char *name) {
 	const std::uint8_t *id = self->object->GetId();
 	int table = static_cast<signed char>(id[3]);
 	TTypeGroup *group = GetTypeGroup(table);

@@ -198,6 +198,51 @@ void TSoundInterface::SetStats(const wxFileName &/*file*/, int /*volume*/, int /
                                bool /*flag*/, int /*value*/) {
 }
 
+bool TSoundInterface::Stop(int /*id*/) {
+	return false;
+}
+
+bool TSoundInterface::TogglePause(int /*id*/) {
+	return false;
+}
+
+int TSoundInterface::GetExistingSoundID(const wxFileName &/*file*/) const {
+	return -1;
+}
+
+bool TSoundInterface::SetStats(int /*id*/, int /*volume*/, int /*balance*/, TSoundTypeEnum /*type*/, bool /*loop*/,
+                               int /*offset*/) {
+	return false;
+}
+
+bool TSoundInterface::IsPlaying(int /*id*/) const {
+	return false;
+}
+
+bool TSoundInterface::IsPaused(int /*id*/) const {
+	return false;
+}
+
+int TSoundInterface::GetVolume(int /*id*/) const {
+	return -1;
+}
+
+int TSoundInterface::GetBalance(int /*id*/) const {
+	return 0;
+}
+
+int TSoundInterface::GetOffset(int /*id*/) const {
+	return -1;
+}
+
+int TSoundInterface::GetDuration(int /*id*/) const {
+	return -1;
+}
+
+bool TSoundInterface::IsLoop(int /*id*/) const {
+	return false;
+}
+
 bool TSoundInterface::IsPlaying(const wxFileName &/*file*/) const {
 	return false;
 }

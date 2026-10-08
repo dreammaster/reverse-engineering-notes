@@ -53,3 +53,5 @@ wxString passw;
 bool EngineUpdatePaused = false;
 
 bool MainLoopsPaused = false;
+
+wxRect g_displayedArea;

@@ -41,6 +41,9 @@ extern unsigned char byte_11F8B01;
 extern unsigned char byte_11F8B02;
 
 extern TMasterControl *g_pGameControl;
+// Confirmed an exported, recovered global (asm line 26933): the part of the window where the game is drawn
+// (the window less the bars of the aspect ratio); set by Init() and CreateWindowGL() (mainSDL, not reconstructed).
+extern wxRect g_displayedArea;
 // Confirmed an exported, recovered global (asm line 5295779): the game settings'
 // "hold time" - set from the game object's field when it changes (THGameControl).
 extern int GameMinDownTime;

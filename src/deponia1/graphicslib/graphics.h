@@ -43,6 +43,19 @@ public:
 	// not reversed beyond those call shapes.
 	TPictureMemBlock *GetMainMemBlock();
 	virtual TPictureMEM *GetCapturedFrame();
+	// Confirmed call shapes only (CmdCreateScreenshot::Redo(), Deponia_Linux.asm lines 392054-392180): three more
+	// slots of the unmodeled GL backend. Slot 0xC8 captures the screen into a picture (false: it failed); slot
+	// 0x120 makes the screenshot that the next savegames use, and slot 0x130 clears it (the engine makes a new one
+	// by itself when the scene changes from a playable one to a menu); both are called with 1.
+	virtual bool CaptureScreen(class TPictureIO &picture);
+	virtual void CreateSavegameScreenshot(bool flag);
+	virtual void ClearSavegameScreenshot(bool flag);
+	// Confirmed call shapes only (CmdToggleWindowMode/CmdSetWindowSize/CmdGetWindowMode, asm lines 388874-388967):
+	// slots 0x158 (changes between the window and the full screen), 0x160 (the size of the window, in windowed mode)
+	// and 0x168 (whether the window is a full screen one) of the unmodeled GL backend.
+	virtual void ToggleWindowMode();
+	virtual bool SetWindowSize(int width, int height);
+	virtual bool IsFullscreen();
 
 	// Confirmed call shapes only (TGameControl::LoadAndInitGame, asm lines
 	// 467717-467726, 467884-467886) - not reversed beyond that.
