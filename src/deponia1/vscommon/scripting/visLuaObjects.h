@@ -26,8 +26,11 @@ int lua_debugerror(lua_State *state);
 
 /** Makes a global for the field with this id (named after the XML name of the field). */
 void SetField(int field);
-/** Makes a global for each table of the game's data, and for the enums of the scripts. */
+/** Makes the global of every field. */
+void SetFields();
+/** Makes a global for each table of the game's data. */
 void SetTables();
+/** Makes the globals for the enums of the scripts (luaGlobals.cpp). */
 void SetEnums();
 /** Puts the commands the scripts call into the Lua state. */
 void InitCommonCommands();

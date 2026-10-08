@@ -10,6 +10,7 @@ alignment directives until a zero wide character."""
 import re
 import struct
 import sys
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 path, first, last = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
 

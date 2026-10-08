@@ -44,15 +44,6 @@ int luaopen_Particles(lua_State *) {
 	return 0;
 }
 
-void SetField(int) {
-}
-
-void SetTables() {
-}
-
-void SetEnums() {
-}
-
 void InitCommonCommands() {
 }
 
