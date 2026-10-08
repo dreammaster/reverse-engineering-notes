@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
- *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead]
+ *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir)]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +15,7 @@
 #include "pictures_stdio.h"
 #include "pngwrite.h"
 
-enum { MaxStills = 48, Columns = 4 };
+enum { MaxStills = 64, Columns = 4 };
 
 static uint8_t g_still[MaxStills][320 * 200];
 static unsigned g_stills;
@@ -28,9 +28,17 @@ static void present(void *ctx, const uint8_t *screen, const uint8_t *dac) {
     memcpy(g_lastDac, dac, sizeof(g_lastDac));
 }
 
+static void snapshot(void);
+static unsigned g_wanted[MaxStills], g_wantedCount;
+
 static void tickFn(void *ctx) {
     (void)ctx;
     g_ticks++;
+    for (unsigned i = 0; i < g_wantedCount; i++) { /* INTRO_TICKS=n,n,...: a still at those ticks instead of the per-stage ones */
+        if (g_wanted[i] == g_ticks) {
+            snapshot();
+        }
+    }
 }
 
 static void soundFn(void *ctx, unsigned id) {
@@ -40,22 +48,32 @@ static void soundFn(void *ctx, unsigned id) {
 }
 
 /* a snapshot at every Escape poll that follows a card, picture, frame or fade: the stage is complete there */
-static bool g_drawn, g_ending;
+static bool g_drawn, g_ending, g_chapter3;
+
+static void snapshot(void) {
+    if (g_stills >= MaxStills) {
+        return;
+    }
+    uint8_t *dst = g_still[g_stills++];
+    for (unsigned i = 0; i < 320 * 200; i++) {
+        const uint8_t *rgb = g_lastDac + g_lastScreen[i] * 3;
+        unsigned r = rgb[0] * 255 / 63, g = rgb[1] * 255 / 63, b = rgb[2] * 255 / 63;
+        dst[i] = (uint8_t)((r >> 5) << 5 | (g >> 5) << 2 | (b >> 6));
+    }
+}
 
 static void mark(void *ctx, unsigned index, const IntroOp *op) {
     (void)ctx;
+    if (op->kind == IntroOpPicture || op->kind == IntroOpPictureOpaque || op->kind == IntroOpWipeRight || op->kind == IntroOpZoom || op->kind == IntroOpFrames || op->kind == IntroOpPlainText) {
+        g_drawn = true;
+    }
     if (op->kind == IntroOpCard || op->kind == IntroOpPicture || op->kind == IntroOpDrawFrame || op->kind == IntroOpFade16Up || op->kind == IntroOpFade || op->kind == IntroOpFadeFrames) {
         g_drawn = true;
     }
-    bool shoot = g_ending ? (op->kind == IntroOpWait && op->a >= 20) || op->kind == IntroOpFadeOutAll : (g_drawn && op->kind == IntroOpPoll);
+    bool shoot = g_wantedCount ? false : g_chapter3 ? (op->kind == IntroOpPoll && g_drawn) || op->kind == IntroOpStory3 || op->kind == IntroOpFlip : g_ending ? (op->kind == IntroOpWait && op->a >= 20) || op->kind == IntroOpFadeOutAll : (g_drawn && op->kind == IntroOpPoll);
     if (shoot && g_stills < MaxStills) {
         printf("still %u at op %u\n", g_stills, index);
-        uint8_t *dst = g_still[g_stills++];
-        for (unsigned i = 0; i < 320 * 200; i++) {
-            const uint8_t *rgb = g_lastDac + g_lastScreen[i] * 3;
-            unsigned r = rgb[0] * 255 / 63, g = rgb[1] * 255 / 63, b = rgb[2] * 255 / 63;
-            dst[i] = (uint8_t)((r >> 5) << 5 | (g >> 5) << 2 | (b >> 6));
-        }
+        snapshot();
         g_drawn = false;
     }
 }
@@ -84,7 +102,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     fclose(f);
-    snprintf(path, sizeof(path), "%s/SW.EXE", argv[1]);
+    g_chapter3 = argc > 4 && strcmp(argv[4], "opening3") == 0;
+    snprintf(path, sizeof(path), "%s/%s", argv[1], g_chapter3 ? "REGISTER.EXE" : "SW.EXE");
     f = fopen(path, "rb");
     if (!f) {
         return 1;
@@ -98,25 +117,33 @@ int main(int argc, char **argv) {
     }
     fclose(f);
     ExeData exe;
-    if (!exeDataOpen(&exe, GameYendor2, exeBytes, exeSize)) {
+    if (!exeDataOpen(&exe, g_chapter3 ? GameYendor3 : GameYendor2, exeBytes, exeSize)) {
         fprintf(stderr, "not SW.EXE\n");
         return 1;
     }
     snprintf(path, sizeof(path), "%s/PICTURES.VGA", argv[1]);
-    PictureFile *pictures = pictureFileOpen(path, GameYendor2);
+    PictureFile *pictures = pictureFileOpen(path, g_chapter3 ? GameYendor3 : GameYendor2);
     if (!pictures) {
         return 1;
     }
-    IntroAssets assets = {world, worldSize, &exe, pictureFileGet, pictures};
+    if (getenv("INTRO_TICKS")) {
+        for (const char *p = getenv("INTRO_TICKS"); *p && g_wantedCount < MaxStills;) {
+            g_wanted[g_wantedCount++] = (unsigned)strtoul(p, (char **)&p, 10);
+            if (*p == ',') {
+                p++;
+            }
+        }
+    }
+    IntroAssets assets = {world, worldSize, &exe, pictureFileGet, pictures, g_chapter3 ? GameYendor3 : GameYendor2};
     static IntroStory story;
     bool all = argc > 4 && strcmp(argv[4], "all") == 0;
     g_ending = argc > 4 && strcmp(argv[4], "ending") == 0;
-    if (!(g_ending ? introEndingStart(&story, &assets) : all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
+    if (!(g_chapter3 ? introOpening3Start(&story, &assets) : g_ending ? introEndingStart(&story, &assets) : all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
         fprintf(stderr, "cannot start the story\n");
         return 1;
     }
-    IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0};
-    bool finished = g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
+    IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0, NULL, NULL};
+    bool finished = g_chapter3 ? introOpening3Play(&story, &assets, &host) : g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
     printf("story %s: %u ticks, %u sound events, %u stills\n", finished ? "finished" : "stopped", g_ticks, g_sounds, g_stills);
 
     unsigned rows = (g_stills + Columns - 1) / Columns;

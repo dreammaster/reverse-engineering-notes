@@ -127,6 +127,50 @@ const IntroOp *introEndingScript(unsigned *count) {
     return kEnding;
 }
 
+/*
+ * yendor3.asm:50964-51512, in the order RunCharacterCreation calls its six stages. The Escape polls (PollForEscapeKeyOnlyAlt) are POLL; the stage-level checks of
+ * RunCharacterCreation are the same test. The pictures drawn "to the video buffer" are drawn to the screen, the ones drawn to the second page (53F6) are PICBACK.
+ * The first three fades of the setup run over a black screen (a palette settle) and are kept as time.
+ */
+#define PICBACK(cat, id, x, y) {IntroOpPictureBack, (cat), (id), (x), (y)}
+#define WIPER {IntroOpWipeRight, 0, 0, 0, 0}
+#define WAITSND(n) {IntroOpWaitSound, (n), 0, 0, 0}
+#define WORKT {IntroOpWorkFromTarget, 0, 0, 0, 0}
+#define ZOOM(frames) {IntroOpZoom, (frames), 0, 0, 0}
+#define PLAIN(i) {IntroOpPlainText, (i), 0, 0, 0}
+#define STORY3(i) {IntroOpStory3, (i), 0, 0, 0}
+#define FRAMES(first, count) {IntroOpFrames, (first), (count), 0, 0}
+#define FLIP(first, count, passes, mode) {IntroOpFlip, (first), (count), (passes), (mode)}
+#define SOUNDWAIT(id, ticks) SOUND(id), WAITSND(ticks), POLL
+#define POLLN(times, ticks) {IntroOpPollWait, (times), (ticks), 0, 0}
+#define FADELOOP(times, rounds, mode, colour) {IntroOpFadeLoop, (times), (rounds), (mode), (colour)}
+static const IntroOp kOpening3[] = {
+    WAIT(20), MUSIC(9), CLEAR, PALETTE(3),                              /* :51731 setup */
+    FADE(0, 63, 256, 0), FADE(1, 63, 256, 0), FADE(0, 63, 256, 0),
+    PICOP(0, 8, 1, 1), POLL, FADE(1, 63, 256, 0), POLL,                  /* :51690 the banner */
+    POLLN(7, 5), PICBACK(0, 9, 1, 1), POLL, WIPER, POLL,                              /* :51110 the second picture wipes in */
+    SOUNDWAIT(0x33, 8), SOUNDWAIT(0x34, 8), SOUNDWAIT(0x35, 8), WAIT(3),
+    SOUNDWAIT(0x36, 10), SOUNDWAIT(0x37, 10), SOUNDWAIT(0x38, 10), SOUNDWAIT(0x39, 10), SOUNDWAIT(0x3A, 10),
+    PICBACK(0, 10, 1, 1), POLL, WIPER, POLL,                             /* :51170 the third */
+    SOUNDWAIT(0x3B, 9), SOUNDWAIT(0x3C, 9), SOUNDWAIT(0x3D, 9), SOUNDWAIT(0x3E, 9), SOUNDWAIT(0x3F, 9), SOUNDWAIT(0x40, 9), SOUNDWAIT(0x41, 9), SOUNDWAIT(0x42, 9),
+    POLLN(5, 5), MUSIC(0x0A), WHITE, POLL, SOUND(0x53), POLL,                         /* :51210 the title flashes, fades in and zooms */
+    PICOP(0, 11, 1, 1), FADE(5, 63, 0xFF, 0), POLL,
+    POLLN(20, 5), WORKT, ZOOM(25), PLAIN(0),
+    FADELOOP(31, 2, 6, 0x5F),                                           /* the copyright line fades in */
+    POLLN(15, 5), FADE(0, 63, 256, 0),
+    CLEAR, PALETTE(0), FADE(0, 63, 256, 0), PLAIN(1), FADE(1, 63, 256, 0), /* :51343 Zamora's request */
+    POLLN(10, 5), FADE(0, 63, 256, 0), CLEAR, PREPARE, POLL,
+    FLIP(0x28, 5, 7, 6), POLL,
+    STORY3(0), FRAMES(0x2D, 5), SOUND(0x47), FRAMES(0x32, 23),
+    STORY3(1), MUSIC(0x0B), FRAMES(0x49, 7),
+    STORY3(2), WORKT, FLIP(0x49, 7, 5, 7)
+};
+
+const IntroOp *introOpening3Script(unsigned *count) {
+    *count = (unsigned)(sizeof(kOpening3) / sizeof(kOpening3[0]));
+    return kOpening3;
+}
+
 const IntroOp *introOpeningScript(unsigned *count) {
     *count = (unsigned)(sizeof(kOpening) / sizeof(kOpening[0]));
     return kOpening;
@@ -196,11 +240,11 @@ bool introOpeningStart(IntroStory *s, const IntroAssets *a) {
 
 bool introStoryStart(IntroStory *s, const IntroAssets *a) {
     memset(s->screen, 0, sizeof(s->screen));
-    if (!buildBackdrop(s, a) || a->worldSize < paletteBlockOffset(GameYendor2, 3) + PaletteBytes) {
+    if (!buildBackdrop(s, a) || a->worldSize < paletteBlockOffset(a->game, 3) + PaletteBytes) {
         return false;
     }
     memset(&s->fader, 0, sizeof(s->fader));
-    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(GameYendor2, 3), PaletteBytes);
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 3), PaletteBytes);
     memcpy(s->fader.dac, s->fader.target, PaletteBytes);
     introCellsInit(s->cells);
     s->scrollY = 0;
@@ -279,8 +323,8 @@ static void drawText(IntroStory *s, const IntroAssets *a, const IntroHost *h, co
             break;
         }
         int y = card->y + (int)line * 6;
-        fontDrawString(GameYendor2, 0, s->screen, 320, card->x, y, text, background, 0, FontTransparent);
-        fontDrawString(GameYendor2, 0, s->screen, 320, card->x - 1, y - 1, text, foreground, 0, FontTransparent);
+        fontDrawString(a->game, 0, s->screen, 320, card->x, y, text, background, 0, FontTransparent);
+        fontDrawString(a->game, 0, s->screen, 320, card->x - 1, y - 1, text, foreground, 0, FontTransparent);
     }
     present(s, h);
 }
@@ -317,6 +361,143 @@ static void wipe(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
             tick(h);
         }
     }
+}
+
+static bool escaped(const IntroHost *h) {
+    return h->escape && h->escape(h->ctx);
+}
+
+static void waitTicks(IntroStory *s, const IntroHost *h, int ticks) {
+    for (int n = 0; n < ticks; n++) {
+        present(s, h);
+        tick(h);
+    }
+}
+
+/* sub_2C376: 80 strips of four columns, from column 316 leftwards, 200 rows each, one vertical retrace per strip. */
+static void wipeRight(IntroStory *s, const IntroHost *h) {
+    for (int strip = 0; strip < 80; strip++) {
+        int column = 316 - 4 * strip;
+        for (int row = 0; row < 200; row++) {
+            memcpy(s->screen + row * 320 + column, s->back + row * 320 + column, 4);
+        }
+        present(s, h);
+        tick(h);
+    }
+}
+
+/* DrawViewportSprite's layer 0x14 (yendor3.asm:47648): the 318 x 198 picture stretched to w x h at (x, y), source steps of floor(size * 1000 / w) thousandths,
+ * colour 0xFF transparent. */
+static void zoomSprite(uint8_t *screen, const uint8_t *picture, int x, int y, int w, int h) {
+    unsigned ratioX = 318000u / (unsigned)w, ratioY = 198000u / (unsigned)h;
+    uint32_t accY = 0;
+    for (int row = 0; row < h; row++) {
+        unsigned srcY = accY / 1000;
+        uint32_t accX = 0;
+        for (int col = 0; col < w; col++) {
+            unsigned srcX = accX / 1000;
+            uint8_t pixel = picture[srcY * 318 + srcX];
+            int dx = x + col, dy = y + row;
+            if (pixel != 0xFF && dx >= 0 && dx < 320 && dy >= 0 && dy < 200) {
+                screen[dy * 320 + dx] = pixel;
+            }
+            accX += ratioX;
+        }
+        accY += ratioY;
+    }
+}
+
+/* The loop of PlayCharacterCreationIntroAnimation (:51264): the title picture redrawn, the second picture growing from the centre, the colours dimming. */
+static bool zoom(IntroStory *s, const IntroAssets *a, const IntroHost *h, int frames) {
+    int x = 157, y = 98, w = 6, height = 4;
+    const uint8_t *title = a->picture(a->pictureCtx, 0, 11), *art = a->picture(a->pictureCtx, 0, 12);
+    for (int frame = 0; frame < frames && title && art; frame++) {
+        blitOpaque(s->screen, title, 318, 198, 1, 1);
+        zoomSprite(s->screen, art, x, y, w, height);
+        FadeCtx ctx = {s, a, h, false};
+        paletteFadeRange(&s->fader, 7, 2, 0xE0, 0, onFadeRound, &ctx);
+        x -= 6;
+        y -= 4;
+        w += 12;
+        height += 8;
+        if (escaped(h)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static void drawStory3Picture(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsigned id) {
+    const uint8_t *pixels = a->picture(a->pictureCtx, 3, id);
+    if (pixels) {
+        blitOpaque(s->screen, pixels, kPictureSize[3][0], kPictureSize[3][1], 70, 40);
+    }
+    present(s, h);
+}
+
+/* sub_2C13C (:51545): a story slide. With sound effects off the text is written (no shadow) and its pictures loop until the slide's timer has run down by two per
+ * frame; with them on the slide's sound events play one after the other, the pictures looping while each is still playing. False when Escape ended it. */
+static bool story3(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsigned index) {
+    IntroStory3Card c;
+    if (!introStory3Card(a->exe, index, &c)) {
+        return true;
+    }
+    if (!h->soundEffectsOn) {
+        memset(s->screen, 0, sizeof(s->screen));
+        for (unsigned line = 0; line < c.lines; line++) {
+            char text[IntroCardLineMax];
+            IntroCard card = {c.textOffset, c.lines, 10, 160, IntroCardNoVoice};
+            if (!introCardLine(a->exe, &card, line, text)) {
+                break;
+            }
+            fontDrawString(a->game, 0, s->screen, 320, 10, 160 + (int)line * 6, text, 0x9B, 0, FontTransparent);
+        }
+        int timer = (int)c.timer;
+        for (;;) {
+            for (unsigned frame = 0; frame < c.frames; frame++) {
+                drawStory3Picture(s, a, h, c.firstPicture + frame);
+                waitTicks(s, h, 2);
+                if (escaped(h)) {
+                    return false;
+                }
+                timer -= 2;
+                if (timer <= 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    for (unsigned n = 0; n < c.voiceRepeat; n++) {
+        if (h->sound) {
+            h->sound(h->ctx, c.voice + n);
+        }
+        do {
+            for (unsigned frame = 0; frame < c.frames; frame++) {
+                drawStory3Picture(s, a, h, c.firstPicture + frame);
+                waitTicks(s, h, 2);
+            }
+        } while (h->soundBusy && h->soundBusy(h->ctx));
+        if (escaped(h)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/* Category 3 pictures `first` .. `first + count - 1`, `passes` times,, each with two fade rounds (mode 6 on the way in, 7 on the way out) and two ticks. */
+static bool flip(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsigned first, unsigned count, unsigned passes, unsigned mode) {
+    FadeCtx ctx = {s, a, h, false};
+    for (unsigned pass = 0; pass < passes; pass++) {
+        for (unsigned i = 0; i < count; i++) {
+            drawStory3Picture(s, a, h, first + i);
+            paletteFadeRange(&s->fader, mode, 2, 0xFF, 0, onFadeRound, &ctx);
+            waitTicks(s, h, 2);
+        }
+        if (mode == 7 && escaped(h)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, const IntroOp *ops, unsigned count) {
@@ -403,8 +584,8 @@ static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, c
             memset(s->backdrop + (size_t)op->a * 320, 0, (size_t)op->b * 320);
             break;
         case IntroOpLoadPalette:
-            if (a->worldSize >= paletteBlockOffset(GameYendor2, (unsigned)op->a) + PaletteBytes) {
-                memcpy(s->fader.target, a->worldDat + paletteBlockOffset(GameYendor2, (unsigned)op->a), PaletteBytes);
+            if (a->worldSize >= paletteBlockOffset(a->game, (unsigned)op->a) + PaletteBytes) {
+                memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, (unsigned)op->a), PaletteBytes);
             }
             break;
         case IntroOpFadeOutAll:
@@ -483,6 +664,86 @@ static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, c
         case IntroOpWipe:
             wipe(s, a, h);
             break;
+        case IntroOpPictureBack: {
+            const uint8_t *pixels = a->picture(a->pictureCtx, (unsigned)op->a, (unsigned)op->b);
+            if (pixels) {
+                blitOpaque(s->back, pixels, kPictureSize[op->a][0], kPictureSize[op->a][1], op->c, op->d);
+            }
+            break;
+        }
+        case IntroOpWipeRight:
+            wipeRight(s, h);
+            break;
+        case IntroOpWaitSound:
+            if (h->soundEffectsOn) {
+                if (h->waitSound) {
+                    h->waitSound(h->ctx);
+                }
+            } else {
+                waitTicks(s, h, op->a);
+            }
+            break;
+        case IntroOpWorkFromTarget:
+            memcpy(s->fader.work, s->fader.target, PaletteBytes);
+            memset(s->fader.out, 0, PaletteBytes);
+            break;
+        case IntroOpFadeStep: {
+            FadeCtx ctx = {s, a, h, false};
+            paletteFadeRange(&s->fader, 7, (unsigned)op->a, (unsigned)op->b, (unsigned)op->c, onFadeRound, &ctx);
+            break;
+        }
+        case IntroOpZoom:
+            if (!zoom(s, a, h, op->a)) {
+                return false;
+            }
+            break;
+        case IntroOpPlainText: {
+            const IntroPlainText *plain = &introPlainTexts()[op->a];
+            for (unsigned line = 0; line < plain->card.lines; line++) {
+                char text[IntroCardLineMax];
+                if (!introCardLine(a->exe, &plain->card, line, text)) {
+                    break;
+                }
+                fontDrawString(a->game, 0, s->screen, 320, plain->card.x, plain->card.y + (int)line * 6, text, plain->colour, 0, FontTransparent);
+            }
+            present(s, h);
+            break;
+        }
+        case IntroOpStory3:
+            if (!story3(s, a, h, (unsigned)op->a)) {
+                return false;
+            }
+            break;
+        case IntroOpFrames:
+            for (int n = 0; n < op->b; n++) {
+                drawStory3Picture(s, a, h, (unsigned)(op->a + n));
+                waitTicks(s, h, 2);
+                if (escaped(h)) {
+                    return false;
+                }
+            }
+            break;
+        case IntroOpPollWait:
+            for (int n = 0; n < op->a; n++) {
+                if (escaped(h)) {
+                    return false;
+                }
+                waitTicks(s, h, op->b);
+            }
+            break;
+        case IntroOpFadeLoop: {
+            FadeCtx ctx = {s, a, h, false};
+            for (int n = 0; n < op->a; n++) {
+                paletteFadeRange(&s->fader, (unsigned)op->c, (unsigned)op->b, 1, (unsigned)op->d, onFadeRound, &ctx);
+                waitTicks(s, h, 1);
+            }
+            break;
+        }
+        case IntroOpFlip:
+            if (!flip(s, a, h, (unsigned)op->a, (unsigned)op->b, (unsigned)op->c, (unsigned)op->d)) {
+                return false;
+            }
+            break;
         case IntroOpEndingText:
             drawText(s, a, h, &introEndingTexts()[op->a].card, introEndingTexts()[op->a].foreground, introEndingTexts()[op->a].background);
             break;
@@ -498,12 +759,12 @@ bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
 }
 
 bool introEndingStart(IntroStory *s, const IntroAssets *a) {
-    if (a->worldSize < paletteBlockOffset(GameYendor2, 0) + PaletteBytes) {
+    if (a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
         return false;
     }
     memset(s->screen, 0, sizeof(s->screen));
     memset(&s->fader, 0, sizeof(s->fader));
-    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(GameYendor2, 0), PaletteBytes);
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
     memcpy(s->fader.dac, s->fader.target, PaletteBytes);
     memcpy(s->fader.buffer, s->fader.target, PaletteBytes);
     s->scrollY = 0;
@@ -513,6 +774,26 @@ bool introEndingStart(IntroStory *s, const IntroAssets *a) {
 bool introEndingPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     unsigned count;
     const IntroOp *ops = introEndingScript(&count);
+    return runScript(s, a, h, ops, count);
+}
+
+bool introOpening3Start(IntroStory *s, const IntroAssets *a) {
+    if (a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
+        return false;
+    }
+    memset(s->screen, 0, sizeof(s->screen));
+    memset(s->back, 0, sizeof(s->back));
+    memset(&s->fader, 0, sizeof(s->fader));
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
+    memcpy(s->fader.dac, s->fader.target, PaletteBytes);
+    memcpy(s->fader.buffer, s->fader.target, PaletteBytes);
+    s->scrollY = 0;
+    return true;
+}
+
+bool introOpening3Play(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    unsigned count;
+    const IntroOp *ops = introOpening3Script(&count);
     return runScript(s, a, h, ops, count);
 }
 

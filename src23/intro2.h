@@ -96,6 +96,27 @@ typedef struct {
 enum { IntroEndingTextCount = 5 };
 const IntroEndingText *introEndingTexts(void);
 
+/*
+ * Chapter 3's opening (RunCharacterCreation, yendor3.asm:50964): the plain text lines it writes (WriteString / DrawStringColumn, one colour, no shadow) and the
+ * three story slides whose parameter records the executable carries at DS:0x597C, 0x598A and 0x5998 (seven words each, read from the file):
+ *   voice    the first sound event of the slide (sound effects on: the slide plays `voiceRepeat` consecutive events, the picture loop running while each plays)
+ *   picture  the first of `frames` pictures of category 3 shown in turn at (70, 40), two ticks each
+ *   text     DS offset of `lines` lines at (10, 160) in colour 0x9B (sound effects off: the pictures loop until `timer` ticks have passed)
+ */
+typedef struct {
+    IntroCard card;
+    uint8_t colour;
+} IntroPlainText;
+
+enum { IntroPlainTextCount = 2, IntroStory3CardCount = 3 };
+const IntroPlainText *introPlainTexts(void);
+
+typedef struct {
+    unsigned voice, firstPicture, textOffset, voiceRepeat, frames, lines, timer;
+} IntroStory3Card;
+
+bool introStory3Card(const ExeData *exe, unsigned index, IntroStory3Card *out);
+
 /* The nine cards of Chapter 2's story, in the order they appear. */
 const IntroCard *introCards(void);
 

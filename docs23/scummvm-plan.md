@@ -46,5 +46,5 @@ checksums.
 
 ## Not done (see roadmap.md)
 
-The Chapter 3 opening as a script (Chapter 2's opening, story and ending are `introstory.c`; Chapter 3's data and timeline are documented),  effect playback (music: `opl.c` is a reference synthesizer to compare against),
+The title screen's own animations are not scripted (Chapter 2's and Chapter 3's openings and Chapter 2's ending are `introstory.c`; Chapter 3's ending, if there is one, is not found),  effect playback (music: `opl.c` is a reference synthesizer to compare against),
 the platform glue (`OSystem`, `Engine` subclass, `MetaEngine`, detection tables), and Chapter 1, which is a different, unanalysed engine.

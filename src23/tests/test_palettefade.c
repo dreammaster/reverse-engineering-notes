@@ -84,6 +84,20 @@ int main(void) {
     written = paletteFadeRange(&f, 0, 5, 300, 250, frame, NULL);
     check("a range past the end is clipped to the 256 colours", g_lastFirst == 250 && g_lastCount == 6 && written == 5);
 
+    setUp(&f);
+    memcpy(f.work, f.target, PaletteBytes);
+    f.work[0x10 * 3] = 0x90; /* a signed-negative byte is left alone */
+    g_frames = 0;
+    written = paletteFadeRange(&f, 7, 2, 0xE0, 0, frame, NULL);
+    check("mode 7 (Chapter 3 FadePaletteStep) takes 1 per round off the work area and writes it every round",
+          written == 2 && g_frames == 2 && g_lastCount == 0xE0 && f.work[0x10 * 3] == 0x90 && f.dac[5] == (f.target[5] > 1 ? f.target[5] - 2 : 0));
+    written = paletteFadeRange(&f, 7, 70, 0xE0, 0, NULL, NULL);
+    bool black = true;
+    for (unsigned i = 0; i < 0xE0 * 3; i++) {
+        black = black && (f.dac[i] == 0 || i == 0x10 * 3);
+    }
+    check("... and 70 rounds leave the range dark, never ending early", written == 70 && black);
+
     printf("%s\n", g_failureCount ? "FAILED" : "ALL PASSED");
     return g_failureCount ? 1 : 0;
 }

@@ -78,6 +78,30 @@ const IntroEndingText *introEndingTexts(void) {
     return kEndingTexts;
 }
 
+static const IntroPlainText kPlainTexts[IntroPlainTextCount] = {
+    {{0x9626, 1, 91, 179, IntroCardNoVoice}, 0x5F}, /* the copyright line under the zoomed title */
+    {{0x9325, 2, 60, 160, IntroCardNoVoice}, 0x8A}, /* "you speak with Zamora..." */
+};
+
+const IntroPlainText *introPlainTexts(void) {
+    return kPlainTexts;
+}
+
+bool introStory3Card(const ExeData *exe, unsigned index, IntroStory3Card *out) {
+    if (index >= IntroStory3CardCount) {
+        return false;
+    }
+    unsigned at = 0x597C + index * 14;
+    out->voice = exeDataU16(exe, at);
+    out->firstPicture = exeDataU16(exe, at + 2);
+    out->textOffset = exeDataU16(exe, at + 4);
+    out->voiceRepeat = exeDataU16(exe, at + 6);
+    out->frames = exeDataU16(exe, at + 8);
+    out->lines = exeDataU16(exe, at + 10);
+    out->timer = exeDataU16(exe, at + 12);
+    return out->frames != 0 && out->lines != 0;
+}
+
 bool introCardLine(const ExeData *exe, const IntroCard *card, unsigned index, char out[IntroCardLineMax]) {
     if (index >= card->lines) {
         return false;

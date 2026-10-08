@@ -50,7 +50,20 @@ typedef enum {
     IntroOpMusic,        /* music track a */
     IntroOpPictureOpaque, /* the same as IntroOpPicture but a plain copy (colour 0xFF is drawn too) */
     IntroOpWipe,         /* PlayCreditsWipeAnimation: picture 8 of category 0 slides up from the bottom edge over picture 7, 65 steps */
-    IntroOpEndingText    /* ending text panel a (intro2.h, introEndingTexts) */
+    IntroOpEndingText,   /* ending text panel a (intro2.h, introEndingTexts) */
+    /* Chapter 3's opening (introOpening3Script) */
+    IntroOpPictureBack,  /* category a, picture b at (c, d) into the back page, opaque */
+    IntroOpWipeRight,    /* the back page onto the screen in 80 strips of 4 columns from the right edge, one retrace each (sub_2C376) */
+    IntroOpWaitSound,    /* WaitForSoundDriverThenTicks: with sound effects on the host waits for the sound to end, off: a ticks */
+    IntroOpWorkFromTarget, /* the fader's work area = the target palette, `out` cleared (the opening's zoom starts from the full palette) */
+    IntroOpFadeStep,     /* mode 7: a rounds, b colours from c (FadePaletteStep) */
+    IntroOpZoom,         /* a frames of the title zoom: picture 11 redrawn, picture 12 of category 0 scaled up from the screen centre, a fade step, an Escape poll each */
+    IntroOpPlainText,    /* plain text line(s) a (intro2.h, introPlainTexts) */
+    IntroOpStory3,       /* story slide a (introStory3Card); polls Escape inside */
+    IntroOpFrames,       /* sub_2C11E: category 3 pictures a .. a + b - 1 at (70, 40), two ticks and an Escape poll each */
+    IntroOpPollWait,     /* a times: an Escape poll, then b ticks */
+    IntroOpFadeLoop,     /* a times: b rounds of fade mode c over the one colour d, then one tick */
+    IntroOpFlip          /* category 3 pictures a .. a + b - 1 at (70, 40), c passes, each picture followed by two rounds of fade mode d (6 or 7) and two ticks; mode 7 polls per pass */
 } IntroOpKind;
 
 typedef struct {
@@ -71,6 +84,13 @@ const IntroOp *introOpeningScript(unsigned *count);
  */
 const IntroOp *introEndingScript(unsigned *count);
 
+/*
+ * Chapter 3's opening (RunCharacterCreation, yendor3.asm:50964-51512): the banner fades in; two pictures wipe in from the right with sound effects 0x33-0x3A and
+ * 0x3B-0x42; the title flashes white, fades in and zooms up while the colours darken; Zamora's request (three story slides of category 3 pictures, with voices or text)
+ * and a last fade. The conditional waits on the music state of the original (stop, wait 20 ticks) are taken as "music was playing".
+ */
+const IntroOp *introOpening3Script(unsigned *count);
+
 typedef struct {
     void *ctx;
     /* the picture or the palette changed (a frame, a fade round, a wait tick): show `screen` through `dac` */
@@ -84,11 +104,16 @@ typedef struct {
     /* called before op `index` runs, for tools that want stills */
     void (*mark)(void *ctx, unsigned index, const IntroOp *op);
     bool soundEffectsOn; /* with sound effects on a card plays its voice and draws no text */
+    /* Chapter 3: block until the last sound event has finished (WaitForSoundDriverIdle); NULL = nothing to wait for */
+    void (*waitSound)(void *ctx);
+    /* Chapter 3: true while a sound event is still playing (word_2E494 != 0); NULL = never */
+    bool (*soundBusy)(void *ctx);
 } IntroHost;
 
 typedef struct {
     uint8_t backdrop[320 * (196 + 198 + 4)];
     uint8_t screen[320 * 200];
+    uint8_t back[320 * 200]; /* the second page (Chapter 3's PlayCharacterCreationOpeningSequence draws there and wipes it onto the screen) */
     PaletteFader fader;
     IntroCell cells[IntroCellCount];
     int scrollY;
@@ -101,6 +126,7 @@ typedef struct {
     /* picture pixels (category, id) as in viewrender.h */
     const uint8_t *(*picture)(void *ctx, unsigned category, unsigned id);
     void *pictureCtx;
+    GameKind game;           /* GameYendor2 (the default value) or GameYendor3: palette blocks and fonts */
 } IntroAssets;
 
 /* Builds the backdrop and the cells and starts from a fully visible block-3 palette; false when a picture or the palette is missing. */
@@ -110,6 +136,10 @@ bool introStoryStart(IntroStory *story, const IntroAssets *assets);
 bool introOpeningStart(IntroStory *story, const IntroAssets *assets);
 
 bool introEndingStart(IntroStory *story, const IntroAssets *assets);
+
+/* Chapter 3's opening: starts from the master palette (block 0) shown on a black screen. */
+bool introOpening3Start(IntroStory *story, const IntroAssets *assets);
+bool introOpening3Play(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 bool introEndingPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
 /* Runs the story script; returns false when the host's escape ended it early. */

@@ -21,6 +21,8 @@
  *   mode 4  fade up: each round every component of the range below its target gains 1; the call ends early when nothing changed
  *   mode 6  RunPaletteFadeSequence (yendor2.asm:9738): mode 1's rounds without its initialisation and without clearing `out` -- the opening's title fade-in calls it
  *           63 times after preparing `work` once (paletteFadeInPrepare)
+ *   mode 7  Chapter 3's own FadePaletteStep (the opening's zoom and last fade): each round every component of `work` in the range above 0 loses 1 and the range of
+ *           `work` is written -- unlike mode 3 it works on `work`, writes every round, and never ends early
  *   mode 5  from white: each round every component of `work` over the range that differs from the target loses 1 (so after SetPaletteToWhite
  *           -- work all 63 -- it sinks onto the target); the range of `work` is written
  *

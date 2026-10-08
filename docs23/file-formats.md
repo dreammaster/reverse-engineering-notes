@@ -7424,20 +7424,37 @@ modes 0 fade out, 1 fade in, 2/4 up, 3 down, 5 from white (palette.h). During a 
    The voice numbers are sound-effect events (`TriggerSoundEvent`, the same blocks as the other sound effects); with sound effects on the game plays the voice
    and does not draw the card (`DrawShadowedText`), otherwise the text is drawn with its shadow. The card text is read from the executable (`introCardLine`).
 
-### Chapter 3 (`REGISTER.EXE`, yendor3.asm:50964-51512)
+### Chapter 3 (`REGISTER.EXE`, yendor3.asm:50964-51870)
 
-`RunCharacterCreation` runs six stages: `PlayCharacterCreationOpeningSetup`, `...OpeningPicture`, `...OpeningSequence`, `...OpeningSequenceAlt` (each a
-palette fade of a picture with polls), then:
+`RunCharacterCreation` runs six stages (each checks Escape, `byte ds:0E9A == 0x1B`, before the next) and then `FinalizeCharacterCreation`. The whole sequence is the script
+`kOpening3` in `src23/introstory.c` (`introOpening3Script` / `introOpening3Start` / `introOpening3Play`, against the same player as Chapter 2's opening; `tools/intro_story
+<game dir> out.png 0 opening3` writes a contact sheet, `INTRO_TICKS=n,n,...` stills at given ticks). The `IntroAssets.game` field selects the palette blocks (Chapter 3's at
+`0x95BDA + 768 n`), the fonts and the executable. Chapter 3 draws to two pages: a video buffer (`ds:53CC`, the screen here) and a second page (`ds:53F6`, allocated zeroed in the
+setup) that is wiped onto the video memory.
 
-- `PlayCharacterCreationIntroAnimation` (:51220): music track 0x0A; sound 0x53; picture 11 of category 0 (a crowned figure holding a sword and a staff), range fade 5 (from white);
-  wait 20 x 5 ticks; then 25 frames in which that picture is redrawn and a sprite (category 1 picture 12, drawn at (157-6n, 98-4n) growing by (12, 8) per
-  frame) approaches while `FadePaletteStep` (mode 2) fades colours 0-0xDF; a text string at (95, 179) is written and its colours fade in over 31 steps;
-  wait 15 x 5 ticks; fade to black.
-- `RunCharacterCreationSelectionStep` (:51343): palette reload, fade; a two-line column at (60, 160) in colour 0x8A; wait 10 x 5; fade out; a second palette buffer is
-  built (3Fh minus the palette) at 0x5062; then a flip-book of 5 pictures repeated 7 times (category 2 pictures 0x28-0x2C at (70, 40), 2 ticks each, a palette sequence running); text cards from the
-  string tables at DS:0x597C, 0x598A and 0x5998 between the picture runs 0x2D-0x31, 0x32-0x48 (23 pictures; sound 0x47 before it, music track 0x0B before
-  the next) -- category 2 here is a robed figure with a staff who conjures a green cone of light; and finally 5 passes of category 1 pictures
-  0x49-0x4F (a stone doorway that opens on a starry portal) with a palette fade.
+1. `PlayCharacterCreationOpeningSetup` (:51731): if music is playing, stop it and wait 20 ticks; music track 9; clear; palette block 3 becomes the target; three full-palette
+   fades over the black screen (out, in, out: only time); the second page allocated.
+2. `...OpeningPicture` (:51690): picture 8 of category 0 ("Yendorian Tales", the book cover) at (1, 1), full fade in, then seven polls of five ticks.
+3. `...OpeningSequence` (:51110): picture 9 (the story so far, Book I) into the second page; `sub_2C376` wipes it onto the screen: 80 strips of four columns from column 316
+   leftwards, 200 rows each, one vertical retrace per strip; sound events `0x33`-`0x35` (a wait of 8 ticks after each), three ticks, `0x36`-`0x3A` (10 ticks after each).
+   `WaitForSoundDriverThenTicks` waits those ticks only with sound effects **off**; with them on it waits for the driver to go idle and no more.
+4. `...OpeningSequenceAlt` (:51170): the same with picture 10 (Chapter 2's story) and sound events `0x3B`-`0x42` (9 ticks), then five polls of five ticks.
+5. `PlayCharacterCreationIntroAnimation` (:51210): music track `0x0A`; `sub_2C3C4` fills the work palette with 0x3F and shows it (a white flash over picture 10); sound `0x53`;
+   picture 11 ("the villain", a crowned figure with a sword and a sceptre) redrawn at (1, 1) and faded in from white (mode 5); 20 polls of five ticks; then the zoom: 25
+   frames in each of which picture 11 is redrawn and **picture 12 of category 0 (the "Tyrants of Thaine" title art, 318 x 198)** is stretched over the rectangle
+   (157 - 6n, 98 - 4n, 6 + 12n, 4 + 8n) -- the layer `0x14` branch of `DrawViewportSprite` (:47648), nearest-neighbour with source steps of `floor(size * 1000 / w)`
+   thousandths, colour 0xFF transparent -- then Chapter 3's own `FadePaletteStep` (mode 7 of `palettefade.c`: two rounds of "work -1" over colours 0-0xDF, written to the DAC) and
+   an Escape poll. The string "COPYRIGHT 1997 SW GAMES" (DS:0x9626) is written at (91, 179) in colour 0x5F and that one colour fades up (31 times two rounds of
+   `RunPaletteFadeSequence`); 15 polls of five ticks; full fade out.
+6. `RunCharacterCreationSelectionStep` (:51343): palette block 0; the two lines at DS:0x9325 ("you speak with Zamora at his home near the Athaneum...") at (60, 160) in colour
+   0x8A; fade in; ten polls of five ticks; fade out; the work palette = target - 63; a flip-book of category **3** pictures 0x28-0x2C at (70, 40) (190 x 110: the robed
+   figure by the fireplace), seven passes, each picture followed by two rounds of `RunPaletteFadeSequence` over 255 colours and two ticks (the picture fades in over 70
+   rounds); then the three **story slides** (`sub_2C13C`), whose parameter records are in the executable at DS:0x597C, 0x598A, 0x5998 (seven words each: first sound event, first
+   picture, text offset, number of sound events, frames per loop, text lines, timer; `introStory3Card`): sound effects off = clear the screen, the lines written at (10, 160) in
+   colour 0x9B, the pictures looping until the timer (120, 180, 280) has run down two per frame; sound effects on = the slide's sound events one after another (0x43-0x46,
+   0x48, 0x49-0x4B), the pictures looping while each is still playing (`word_2E494`) -- the screen is not cleared and no text is drawn. Between the slides: pictures
+   0x2D-0x31 (two ticks each, polling), sound `0x47`, pictures 0x32-0x48 (23); music track `0x0B` and pictures 0x49-0x4F (7). The last stage restores the work palette to the
+   target and plays pictures 0x49-0x4F five times, each with two rounds of `FadePaletteStep` over 255 colours: the screen fades to black.
 
 Neither opening changes the game state; a port may play them as a slideshow of the same pictures or skip them (Escape does).
 

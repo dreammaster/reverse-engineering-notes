@@ -134,12 +134,12 @@ static void testPlay(void) {
     }
     ExeData exe;
     check("the synthetic executable opens", exeDataOpen(&exe, GameYendor2, image, imageSize));
-    IntroAssets assets = {world, size, &exe, picture, NULL};
+    IntroAssets assets = {world, size, &exe, picture, NULL, GameYendor2};
     static IntroStory story;
     check("the story starts", introStoryStart(&story, &assets));
     Counts counts;
     memset(&counts, 0, sizeof(counts));
-    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false};
+    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, NULL};
     bool finished = introStoryPlay(&story, &assets, &host);
     unsigned count;
     introStoryScript(&count);
@@ -208,7 +208,7 @@ static void testPlay(void) {
           eachText && wipes == 1 && ending[endingCount - 1].kind == IntroOpFadeOutAll && endingCount > 60 && endingCount < 90);
     ExeData exe2;
     exeDataOpen(&exe2, GameYendor2, image, imageSize);
-    IntroAssets endAssets = {world, size, &exe2, picture, NULL};
+    IntroAssets endAssets = {world, size, &exe2, picture, NULL, GameYendor2};
     check("the ending starts from the master palette, fully shown", introEndingStart(&story, &endAssets) && memcmp(story.fader.dac, story.fader.target, 768) == 0);
     memset(&counts, 0, sizeof(counts));
     host.soundEffectsOn = false;
@@ -225,9 +225,95 @@ static void testPlay(void) {
     free(image);
 }
 
+static bool g_busy;
+static unsigned g_busyChecks;
+
+static bool onBusy(void *ctx) {
+    (void)ctx;
+    g_busyChecks++;
+    return g_busy && g_busyChecks % 3 != 0; /* a sound that lasts for two extra passes of the pictures */
+}
+
+/* Chapter 3's opening against its own WORLD.DAT (palette blocks) and a synthetic executable image (the slide table and the texts). */
+static void testOpening3(void) {
+    const char *dir = getenv("YENDOR3_GAME_DIR");
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : "../../yendor3/game");
+    FILE *f = fopen(path, "rb");
+    if (!f) {
+        printf("SKIP Chapter 3's opening (%s not found)\n", path);
+        g_skipCount++;
+        return;
+    }
+    fseek(f, 0, SEEK_END);
+    size_t size = (size_t)ftell(f);
+    fseek(f, 0, SEEK_SET);
+    uint8_t *world = malloc(size);
+    bool read = world && fread(world, 1, size, f) == size;
+    fclose(f);
+    if (!read) {
+        check("Chapter 3's WORLD.DAT reads", false);
+        return;
+    }
+    size_t imageSize = 0x21DB0 + 0x10000;
+    uint8_t *image = calloc(imageSize, 1);
+    memcpy(image + 0x21DB0 + 0x7D17, "QUIT \"CREATE\"", 14);
+    static const unsigned records[3][7] = {{0x43, 0x28, 0x935C, 4, 5, 2, 0x78}, {0x48, 0x49, 0x93C2, 1, 7, 3, 0xB4}, {0x49, 0x49, 0x9440, 3, 7, 5, 0x118}};
+    for (unsigned r = 0; r < 3; r++) {
+        for (unsigned w = 0; w < 7; w++) {
+            image[0x21DB0 + 0x597C + r * 14 + w * 2] = (uint8_t)(records[r][w] & 0xFF);
+            image[0x21DB0 + 0x597C + r * 14 + w * 2 + 1] = (uint8_t)(records[r][w] >> 8);
+        }
+        for (unsigned line = 0; line < records[r][5]; line++) {
+            memcpy(image + 0x21DB0 + records[r][2] + line * 2, "X", 2);
+        }
+    }
+    memcpy(image + 0x21DB0 + 0x9626, "X", 2);
+    memcpy(image + 0x21DB0 + 0x9325, "X\0X", 4);
+    ExeData exe;
+    check("the synthetic Chapter 3 executable opens", exeDataOpen(&exe, GameYendor3, image, imageSize));
+    IntroStory3Card card;
+    check("the slide table is read from the executable", introStory3Card(&exe, 2, &card) && card.voice == 0x49 && card.voiceRepeat == 3 && card.lines == 5 && card.timer == 0x118);
+    IntroAssets assets = {world, size, &exe, picture, NULL, GameYendor3};
+    static IntroStory story;
+    unsigned count;
+    const IntroOp *ops = introOpening3Script(&count);
+    unsigned slides = 0, zooms = 0, wipes = 0;
+    for (unsigned i = 0; i < count; i++) {
+        slides += ops[i].kind == IntroOpStory3;
+        zooms += ops[i].kind == IntroOpZoom;
+        wipes += ops[i].kind == IntroOpWipeRight;
+    }
+    check("the opening script has its three slides, one zoom and two wipes", slides == 3 && zooms == 1 && wipes == 2 && count > 80 && count < 120);
+    check("it starts on a black screen with the master palette shown", introOpening3Start(&story, &assets) && story.screen[100] == 0);
+    Counts counts;
+    memset(&counts, 0, sizeof(counts));
+    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, onBusy};
+    bool finished = introOpening3Play(&story, &assets, &host);
+    check("it runs to the end", finished && counts.marks == count);
+    check("it ends on black (colours 0-254 are dark)", ({ bool dark = true; for (unsigned i = 0; i < 255 * 3; i++) { dark = dark && counts.lastDac[i] == 0; } dark; }));
+    check("it takes about 2200 animation ticks", counts.ticks > 2000 && counts.ticks < 2400);
+    check("its 18 sound events play with sound effects off", counts.sounds == 18 && counts.music == 0x0B);
+    memset(&counts, 0, sizeof(counts));
+    host.soundEffectsOn = true;
+    g_busy = true;
+    introOpening3Start(&story, &assets);
+    finished = introOpening3Play(&story, &assets, &host);
+    check("with sound effects on the slides add their eight voices", finished && counts.sounds == 18 + 8);
+    memset(&counts, 0, sizeof(counts));
+    counts.escapeAfter = 5;
+    host.soundEffectsOn = false;
+    introOpening3Start(&story, &assets);
+    finished = introOpening3Play(&story, &assets, &host);
+    check("Escape ends it early", !finished && counts.polls == 5);
+    free(world);
+    free(image);
+}
+
 int main(void) {
     testScript();
     testPlay();
+    testOpening3();
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

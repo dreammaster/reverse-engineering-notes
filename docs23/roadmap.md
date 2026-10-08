@@ -53,7 +53,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   Chapter 3's "never written" globals are set by raw `ds:` writes in `InitGlobals` (curgame offset 1008, record multiplier 1000, promotion levels 10 / 30; engine-diffs.md
   "Correction (2026-10-07)"), and the "runtime-filled" tables (shop tabs, sub-icon row) are computed from records the code already decodes.
 
-Still missing: the Chapter 3 opening (decoded in outline: see file-formats.md; Chapter 2's ending cinematic is `introEndingScript`), the projectile / screen-wide / beam spells and the non-restorative item uses in `session.c`
+Still missing: Chapter 3's ending (if it has one; Chapter 2's ending is `introEndingScript`, both openings are scripts in `introstory.c`), the projectile / screen-wide / beam spells and the non-restorative item uses in `session.c`
 (their decision modules exist; every other spell kind is composed since 2026-10-08), shop and dialog screens (`dialog.c`, `shop.c` hold the logic), input and timing glue for a real engine (the original is driven by DOS
 interrupts), the engine's mixer glue for effects, Chapter 2's debug commands, and Chapter 1's engine (no files, no analysis). A name census of the 769 functions against
 `src23` is the quick way to find what is still uncovered (what remains is overwhelmingly UI).

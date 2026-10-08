@@ -92,6 +92,17 @@ unsigned paletteFadeRange(PaletteFader *fader, unsigned mode, unsigned rounds, u
             written++;
         }
         break;
+    case 7: /* Chapter 3's FadePaletteStep (yendor3.asm:51629): every component of `work` in the range above 0 (a signed byte) loses 1, then the range of `work` is written */
+        for (unsigned r = 0; r < rounds; r++) {
+            for (size_t i = lo; i < lo + n; i++) {
+                if ((int8_t)fader->work[i] > 0) {
+                    fader->work[i]--;
+                }
+            }
+            setRange(fader, fader->work, first, count, frame, ctx);
+            written++;
+        }
+        break;
     default:
         break;
     }
