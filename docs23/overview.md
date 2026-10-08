@@ -11490,3 +11490,14 @@ along the way (word 0 = floor picture, 1 = ceiling picture, 2 = wall picture, 3 
 Chapter 3's `InitGlobals` through raw `ds:` operands that IDA does not cross-reference to the names, so earlier entries (2026-09-24 .. 2026-09-30) that call them
 "read but never written, always 0" are wrong; promotion works in Chapter 3 and curgame ids are offset by 1008. Details and the address arithmetic are in
 engine-diffs.md's "Correction (2026-10-07)"; code fixed in `interact.c`, `lockcatalog.c`, `party.c`.
+
+### 2026-10-08: the main game composed -- spells, items, travel, talk, shops, saves; both openings and the ending
+
+Everything the main loop does between a key press and the next picture is now in `src23/session.c` and drawn by `src23/gameui.c`, with `tools/explore_sdl.c` as the SDL2 shell. New decodes
+that mattered: the heal spells are a capped stat delta of effect 18 (record `+0x22` delta, `+0x24` / `+0x26` stat and maximum offsets, `+0x28` status-clear mask); `PlayStudioCreditsIntro` is
+Chapter 2's *ending* (the Quartz Chamber parchment, reached by using the single `0x400` world object once flags 0x69-0x6B are set), its Chapter 3 counterpart being six scripted teleports
+(`HandleScriptedStoryEventTrigger`, `storyevent.c`); **the global quest flags live in the save header at `+0xD2`** (96 bytes), next to the place flags (`+0x1A` / `+0x1C`) and the day / night
+music tracks (`+0x52` / `+0x54`); the use command's dispatch order is door, destination, talker, story event; the conversation loop of `UseItem` (topic masks, type word, services keyed on the
+topic argument's bits 1 / 4 / 2 / quote) is `conversation.c` + `sessionTalk*` and was validated by walking every NPC of both games to the end; shops are the lock record's eight slots with
+`shopBuyPrice`; readable items take their text id from the consumable target entry's word 2; HandleGameCommand's item dispatch order is documented in `sessionUseItem`. Chapter 2's opening, story and
+ending and Chapter 3's opening are scripts for one player (`introstory.c`; `tools/intro_story`). Open: Chapter 3's ending (if any), the splash spells, the character-creation item source, ScummVM glue.
