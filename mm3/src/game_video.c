@@ -186,7 +186,17 @@ void host__bioskey(Cpu *c) {
 		if (headless) headless_finish();
 		SDL_Delay(5);
 	}
-	if (cmd == 2) { c->ax = 0; return; } /* shift-key status */
+	if (!headless && cmd == 1) { /* polling loop of the game: keep the picture current and the CPU cool */
+		static Uint32 last_present;
+		Uint32 now = SDL_GetTicks();
+		if (now - last_present >= 16) { video_present(); last_present = now; }
+		SDL_Delay(1);
+	}
+	if (cmd == 2) { /* BIOS shift status: 1 right shift, 2 left shift, 4 ctrl, 8 alt */
+		SDL_Keymod m = headless ? 0 : SDL_GetModState();
+		c->ax = (uint16_t)(((m & KMOD_RSHIFT) ? 1 : 0) | ((m & KMOD_LSHIFT) ? 2 : 0) | ((m & KMOD_CTRL) ? 4 : 0) | ((m & KMOD_ALT) ? 8 : 0));
+		return;
+	}
 	if (kq_head == kq_tail) { c->ax = 0; return; }
 	c->ax = (uint16_t)keyq[kq_head];
 	if (cmd == 0 && getenv("MM3_TRACE")) fprintf(stderr, "key %04X\n", c->ax);
