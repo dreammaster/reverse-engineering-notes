@@ -57,3 +57,12 @@
 2698B	soundDriverSample	API 0Ch: digital sample player (Covox/Blaster drivers)
 38821	startSong	startSong(name, mode): copies the song name to ECE8h and (if byte_28849) calls soundDriverMusic; mode 0 then loads it via sub_387C6
 387C6	loadAndPlaySong	loads the song file named at ECE8h, copies it to the song buffer (word_332DC/E, 1890h bytes) and starts it if Option_music
+25E66	delayFrames	delayFrames(n): calls vdrv_18_getMouse n times; each call waits for the 70 Hz retrace, so n = number of video frames (the intro and message delays use it)
+3946E	pollSkipKey	returns 1 when ESC is pressed, Ctrl-Q (11h) exits via sub_39900; used by the intro scenes
+253D3	readKey	_bioskey wrapper: fills the shift/ctrl/alt words (word_28CE7..28CED), maps F-keys to codes C9h..D2h and keypad keys through the table at 0x8..; returns the command byte
+378C0	bossKey	F10 'boss key': saves the screen to boss.$$$, goes to text mode (not reproduced in the port)
+29116	currentSaveIndex	byte: index of the current saved game in the 13-byte name table at E836h (FFh = none)
+29115	saveFileCount	byte: number of *.mm3 files found by getFiles
+332DC	songBuffer	far pointer (word_332DC/word_332DE) to the 1890h-byte buffer the song files are loaded into (allocated by _main)
+28848	sfxDeviceAvailable	byte: sound effects available
+28849	musicDeviceAvailable	byte: music available (startSong and loadAndPlaySong test it)
