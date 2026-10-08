@@ -639,6 +639,15 @@ static void combatApplyEffectSlot(uint8_t *recipientRecord, SaveGame *save, cons
 
 static const Bcd4 g_zeroMaterial = {0, 0, 0, 0};
 
+bool combatApplyPresetEffect(uint8_t *recipientRecord, SaveGame *save, GameKind game, unsigned effectId, uint16_t presetAmount, unsigned threshold, RandomState *rng) {
+    EffectDef def;
+    if (!effectGetDef(game, effectId, &def)) {
+        return false;
+    }
+    combatApplyEffectSlot(recipientRecord, save, &def, presetAmount, 0, g_zeroMaterial, threshold, rng);
+    return true;
+}
+
 static void combatApplyTrapEffectToRecipient(uint8_t *recipientRecord, SaveGame *save, const EffectDef *def,
                                               unsigned threshold, RandomState *rng) {
     combatApplyEffectSlot(recipientRecord, save, def, 0, 0, g_zeroMaterial, threshold, rng);

@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -671,6 +671,28 @@ static void testTime(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* The ailment sweep: a poisoned member loses hit points every fortieth pass. */
+static void testAilments(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    uint8_t *hero = sessionPartyRecord(s, 1);
+    partySetU16(hero, PartyFieldStatusFlags, PartyStatusPoisoned);
+    uint16_t before = partyGetStat(hero, PartyStatHitPoints);
+    for (unsigned i = 0; i < 39; i++) {
+        sessionTickAilments(s);
+    }
+    bool untouched = partyGetStat(hero, PartyStatHitPoints) == before;
+    for (unsigned i = 0; i < 3; i++) {
+        sessionTickAilments(s);
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: poison takes hit points on the fortieth pass of the sweep and not before", label);
+    check(text, untouched && partyGetStat(hero, PartyStatHitPoints) < before);
+    sessionFree(s);
+}
+
 /* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
 static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -876,6 +898,7 @@ int main(void) {
             testLightsAndRelics(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTime(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testAilments(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

@@ -10,6 +10,7 @@
 #include "lighting.h"
 #include "newgame.h"
 #include "consumable.h"
+#include "ailment.h"
 #include "dialogservice.h"
 #include "maptrigger.h"
 #include "inventory.h"
@@ -572,6 +573,27 @@ static bool lightsActive(const GameSession *s) {
         total += s->light.timers[i];
     }
     return total != 0;
+}
+
+void sessionTickAilments(GameSession *s) {
+    if (s->combat.wiped) {
+        return;
+    }
+    AilmentPass passes[4];
+    unsigned n = ailmentTickIconBar(&s->ailments, &s->save, s->game, AilmentUiGateMask & 0x0800, *placeWord(s), &s->rng, passes);
+    for (unsigned p = 0; p < n; p++) {
+        for (unsigned i = 0; i < passes[p].count; i++) {
+            const AilmentStage *stage = &passes[p].stages[i];
+            uint8_t *member = sessionPartyRecord(s, stage->slot);
+            uint16_t amount = passes[p].kind == AilmentPassCold ? stage->magnitude : stage->severity;
+            if (member) {
+                combatApplyPresetEffect(member, &s->save, s->game, stage->effectId, amount, 0, &s->rng);
+            }
+        }
+    }
+    if (n) {
+        combatCheckWipe(s);
+    }
 }
 
 void sessionAdvanceTime(GameSession *s, unsigned minutes) {

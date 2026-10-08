@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "chest.h"
+#include "ailment.h"
 #include "combat.h"
 #include "conversation.h"
 #include "dungeongrid.h"
@@ -77,6 +78,7 @@ typedef struct GameSession {
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
     unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
+    AilmentClock ailments;  /* the counters of the periodic ailment sweep (ailment.h) */
     unsigned pendingFade;   /* 1 at 06:00, 2 at 18:00 (sessionAdvanceTime): the front end runs the dawn / dusk palette fade (palette.h) and clears it */
     unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
     unsigned pendingMusic;  /* a music track a command asked for (the pan flute); the front end plays it and clears it */
@@ -209,6 +211,13 @@ bool sessionTravelPassword(GameSession *session, const char *typed);
  * minute while a light burns, TickWorldAilments: the lit candles and torches and the spell timers burn down. (sessionRest advances the clock by itself.)
  */
 void sessionAdvanceTime(GameSession *session, unsigned minutes);
+
+/*
+ * One pass of the main loop's ailment sweep (TickPartyAilmentIconBar, ailment.h): every fortieth call the diseased / poisoned / sick lose hit points and the cursed / hexed /
+ * jinxed lose magic points, in a Chapter 2 "slow" place (the place flag bit 2) the survival skill is tested every call, in Chapter 3 a cold place (bit 1) chills the party.
+ * Call it once per pass of the front end's loop (not while it waits for a key).
+ */
+void sessionTickAilments(GameSession *session);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);

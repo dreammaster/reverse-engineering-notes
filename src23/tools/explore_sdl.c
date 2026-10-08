@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -742,6 +742,9 @@ int main(int argc, char **argv) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN) {
                 running = handleKey(event.key.keysym.sym, (event.key.keysym.mod & KMOD_CTRL) != 0, &overlay) && running;
+                if (overlay == OverlayNone && !g_session->combat.active) {
+                    sessionTickAilments(g_session); /* once per command here; the original sweeps once per pass of its loop */
+                }
                 dirty = true;
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;

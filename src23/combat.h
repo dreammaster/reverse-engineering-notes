@@ -768,6 +768,13 @@ CombatScreenAttackOutcome combatApplyScreenWideAttack(uint8_t *monsterSlots, uin
                                                         RandomState *rng);
 
 /*
+ * One effect staged on a recipient the way the icon-bar slots are (ApplyEffectAndDrawIconBar's RollEffectMagnitude / RollEffectResistance / ApplyEffectCost): a nonzero
+ * presetAmount is used as it is (no magnitude roll), otherwise the effect rolls its own; the saving throw threshold is word_32DC0 (the ailment sweeps leave it at
+ * what the last monster or trap set -- pass 0). False if the effect id is past the table.
+ */
+bool combatApplyPresetEffect(uint8_t *recipientRecord, SaveGame *save, GameKind game, unsigned effectId, uint16_t presetAmount, unsigned threshold, RandomState *rng);
+
+/*
  * ProcessMonsterAttackTurn (yendor2.asm:10768, instruction-identical in
  * Chapter 3): one monster's combat turn, composing the pieces above end to
  * end. Called by RunDungeonGameLoop when the turn order's current entry is
