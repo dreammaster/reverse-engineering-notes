@@ -307,3 +307,11 @@ Resources: `create.raw` (background), `create.icn` (buttons/class icons), `dice.
 The roster menu only lists characters that are **stored at the current inn**: a character is offered when its home-inn word at `+123h` equals `Party_lastInn` (the town last slept in; the inn writes that word for the whole party).
 Roster slots 20-29 are the ten hirelings and need one more condition: the flag byte `Party_eventFlags[slot - 20]` (MAZE.PTY `+341h`..`+34Ah`, DGROUP `EC2Bh`..) must be non-zero.  That flag array is the one written by event value mode 23: a script that "recruits" a hireling (for example the NPC conversation "If you ever need my services, I will gladly join your ranks. Find me in the Captain's Quarters in Baywatch. Ask for Sir Galant.") sets the flag of that hireling, after which he appears in the roster menu of the town where he is located (his own `+123h`) and can be added to the party there (up to six real characters; hirelings extra).
 Entries 10-52 of the same flag array are further event flags (mode 23) not tied to hirelings.
+
+## The quest log (`sub_45790`, the `V` key via stub `sub_282CA`; texts in `QUEST.BIN`)
+
+The log lists the active quests among 19 (`QUEST.BIN` strings 0-18, shown with `sprintf` into a scroll window), where *active* is decided from the party game-flag bit array (`Party_gameFlags`, DGROUP `EC60h`):
+* quests 0-12 are active while game flag `157 + n` (9Dh + n) is **set** -- 0 Athea's sea shells, 1 Pearls for the Pirate Queen, 2 Princess Trueberry, 3 the relic for Icarus's unicorn, 4 Greywind, 5 Blackwind, 6/7/8 the Artifacts of Good/Neutrality/Evil, 9/10/11 the Power Orbs for Zealot/Tumult/Malefactor, 12 the final steps under the Ancient Pyramids;
+* quest 13 (find Morphose in Fountain Head) is active while flag 170 (0AAh) is **clear**;
+* quests 14-18 (Kranion's five Silver Skulls; Brothers Beta, Gamma, Delta and Zeta) are active while a start flag is set and a done flag is clear: start flags `4, 1, 2, 3, 10`, done flags `9, 2, 3, 10, 11` (byte tables at `3BD8h`/`3BDDh`, indexed by quest 14-18).
+Flag set/clear is done by event scripts (`TakeOrGive` with mode 20, game flag); the award counters shown on the awards screen (orbs given, skulls) are separate.
