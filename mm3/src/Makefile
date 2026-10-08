@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun ccdump gfxsum viewer
+	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun tests/view_run ccdump gfxsum viewer
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -74,3 +74,22 @@ tests/test_evtrun: tests/test_evtrun.c $(CORE) evtrun.h events.h
 evttest: tests/test_evtrun
 	tests/test_evtrun $(DATA)/MM3.CUR
 .PHONY: evttest
+
+# ---- translated 3D view pipeline (see gen/README.md)
+VIEW_SRC = view_host.c gen/view_gen.c
+VIEW_FUNCS = prepareIndoorView renderIndoorView drawWallFaces drawRow1Sprites drawRow2Sprites drawRow3Sprites drawRow4Sprites \
+  drawHudPieces scanObjectsAhead scanMonstersAhead clearViewFlags updateLight mazeGetWordRel mazeGetFlagsRel mazeNeighbourSlot \
+  checkDrawListOverflow checkSkill
+
+# regenerate gen/view_gen.c from the disassembly (only needed when mm3.asm / the translator change)
+regen:
+	python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/view_gen.c $(VIEW_FUNCS)
+.PHONY: regen
+
+tests/view_run: tests/view_run.c $(VIEW_SRC) view_host.h recomp.h
+	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/view_run.c $(VIEW_SRC)
+
+# compare the translated view code with the original running in the emulator (needs `pip install unicorn`)
+viewcheck: tests/view_run
+	python3 ../tools/mm3_viewcheck.py ../data/MM3.EXE $(DATA)/MM3.CUR tests/view_run 300
+.PHONY: viewcheck
