@@ -2,3 +2,4 @@ build/
 tests/test_cc
 ccdump
 tests/test_real
+tests/test_state

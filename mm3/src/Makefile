@@ -1,8 +1,8 @@
 # Might and Magic III C reimplementation -- core (no SDL yet)
 CC ?= cc
-CFLAGS ?= -std=c99 -Wall -Wextra -O2
+CFLAGS ?= -std=c11 -Wall -Wextra -O2
 
-CORE = cc.c maze.c
+CORE = cc.c maze.c party.c events.c
 
 test: tests/test_cc
 	python3 tests/gen_testdata.py build/testdata
@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real ccdump
+	rm -rf build tests/test_cc tests/test_real tests/test_state ccdump
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -34,3 +34,10 @@ tests/test_real: tests/test_real.c $(CORE) cc.h maze.h
 realtest: tests/test_real
 	tests/test_real $(DATA)/MM3.CUR
 .PHONY: realtest
+
+tests/test_state: tests/test_state.c $(CORE) cc.h maze.h party.h events.h character.h
+	$(CC) $(CFLAGS) -o $@ tests/test_state.c $(CORE)
+
+statetest: tests/test_state
+	tests/test_state $(DATA)/MM3.CUR
+.PHONY: statetest
