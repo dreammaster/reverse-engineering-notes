@@ -151,3 +151,8 @@ Each category then picks a *kind* by a d100 roll and a value `rnd(lo, hi)` from 
 * **metal** (`3`; table `3768h`): kind 0 with 70 %, kind 1 otherwise, each a row of per-tier pairs ((1,4),(3,7),(4,8),(5,9),(8,9),(9,9) for kind 0; (1,4),(2,6),(4,7),(6,10),(9,13),(13,13) for kind 1).
 * **spell** (`4`; tables `3782h`/`3789h`): the item's spell id, with the tier choosing among item-spell ids by a threshold list (0, 1, 16, 31, 41, 51, 61 ... in percent steps).
 Higher item levels therefore shift all three random choices towards the better-valued entries of every table; tier 5 rows (`8,8` / `13,13` ...) are the maxima.
+
+## How an item's name is built (`itemName`, `52030`, reached through stub `sub_286C7`)
+
+`sprintf("%s%s%s%s%s\x0c%02u%s%s%s%s", ...)` composes (colour code `0Ch` in the middle changes the text colour) from these parts: the **attribute** word (`5380h[+C9h byte]`, e.g. "might", "clever"), the **metal** (`5352h[+B6h]`), the **element** (`5308h[+A3h]`), the base item name by id, and, when the item has a spell (`+EFh`), the suffix `"of " + 54E2h[spell]` (item spell names such as "light", "awakening", "magic detection", "arrows", "aid");
+a **cursed** item (flag 40h) is prefixed with `\x0c12cursed ` and a **broken** one (flag 80h) with `\x0c07broken `; **while the cursed/broken bits are set the enchantment words and the spell suffix are suppressed** (the routine substitutes empty strings), so only the base name and the cursed/broken tag are shown.  The result goes into the buffer given as the third argument (used by the shop and inventory dialogs: "Sell %s for %lu gold?").

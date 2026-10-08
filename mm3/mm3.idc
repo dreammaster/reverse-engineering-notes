@@ -13948,6 +13948,7 @@ static Bytes_2(void) {
 	set_name	(0X27FB8,	"j_protectionHandler");
 	create_insn	(0X27FBD);
 	create_insn	(0X27FC2);
+	set_name	(0X27FC2,	"j_textModeScreen");
 	MakeStruct	(0X27FD0,	"_stub_descr");
 	create_insn	(0X27FF0);
 	create_insn	(0X27FF5);
@@ -14023,6 +14024,7 @@ static Bytes_2(void) {
 	create_insn	(0X2814E);
 	MakeStruct	(0X28160,	"_stub_descr");
 	create_insn	(0X28180);
+	set_name	(0X28180,	"j_loadMapData");
 	create_insn	(0X28185);
 	create_insn	(0X2818A);
 	create_insn	(0X2818F);
@@ -14130,6 +14132,7 @@ static Bytes_2(void) {
 	set_name	(0X28358,	"j_townGuild");
 	create_insn	(0X2835D);
 	create_insn	(0X28362);
+	set_name	(0X28362,	"j_townBuildingIntro");
 	create_insn	(0X28367);
 	set_name	(0X28367,	"j_townTemple");
 	create_insn	(0X2836C);
@@ -14403,6 +14406,7 @@ static Bytes_2(void) {
 	create_insn	(0X286C2);
 	set_name	(0X286C2,	"j_getMaxHP");
 	create_insn	(0X286C7);
+	set_name	(0X286C7,	"j_itemName");
 	create_insn	(0X286CC);
 	set_name	(0X286CC,	"j_getArmorClass");
 	create_insn	(0X286D1);
@@ -14747,11 +14751,6 @@ static Bytes_2(void) {
 	set_name	(0X2918F,	"METAL_LAC");
 	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
 	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
-	create_word	(0X29218);
-	create_word	(0X2921A);
-	create_byte	(0X29262);
-	create_word	(0X29264);
-	create_word	(0X29266);
 }
 
 //------------------------------------------------------------------------
@@ -14761,6 +14760,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X29218);
+	create_word	(0X2921A);
+	create_byte	(0X29262);
+	create_word	(0X29264);
+	create_word	(0X29266);
 	set_cmt	(0X29377,	"indexed by item id",	0);
 	set_name	(0X29377,	"ARMOR_STRENGTHS");
 	set_cmt	(0X293C0,	"indexed by item id: number of dice",	0);
@@ -18097,9 +18101,6 @@ static Bytes_3(void) {
 	set_cmt	(0X3773E,	"far pointer to the moncold.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3773E);
 	set_name	(0X3773E,	"Mon_cold");
-	set_cmt	(0X37742,	"far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData",	0);
-	create_dword	(0X37742);
-	set_name	(0X37742,	"Mon_acid");
 }
 
 //------------------------------------------------------------------------
@@ -18109,6 +18110,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X37742,	"far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData",	0);
+	create_dword	(0X37742);
+	set_name	(0X37742,	"Mon_acid");
 	set_cmt	(0X37746,	"far pointer to the monnuma.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37746);
 	set_name	(0X37746,	"Mon_numa");
@@ -18568,6 +18572,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X38140);
 	op_stkvar	(x,	1);
 	create_insn	(0X38147);
+	set_name	(0X38147,	"textModeScreen");
 	create_insn	(x=0X3814C);
 	op_stkvar	(x,	1);
 	set_cmt	(0X38152,	"newcolor",	0);
@@ -22803,6 +22808,15 @@ static Bytes_4(void) {
 	set_cmt	(0X3FB7E,	"int",	0);
 	create_insn	(x=0X3FB7E);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FB86);
 	op_hex		(x,	1);
 	create_insn	(0X3FB8B);
@@ -22815,15 +22829,6 @@ static Bytes_4(void) {
 	set_cmt	(0X3FBA3,	"int",	0);
 	create_insn	(x=0X3FBA3);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FBAB);
 	op_hex		(x,	1);
 	create_insn	(0X3FBB0);
@@ -25431,6 +25436,7 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X4329C,	"dest",	0);
 	create_insn	(0X432B9);
+	set_name	(0X432B9,	"loadMapData");
 	create_insn	(x=0X432BC);
 	op_hex		(x,	1);
 	set_cmt	(0X432BF,	"n",	0);
@@ -28402,6 +28408,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47293);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4729C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4729F);
@@ -28419,15 +28434,6 @@ static Bytes_5(void) {
 	set_cmt	(0X472C4,	"dest",	0);
 	create_insn	(x=0X472CE);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X472D3);
 	op_hex		(x,	1);
 	create_insn	(x=0X472DB);
@@ -28898,6 +28904,7 @@ static Bytes_6(void) {
 	create_insn	(0X47B6C);
 	create_insn	(0X47B85);
 	create_insn	(0X47B8D);
+	set_name	(0X47B8D,	"townBuildingIntro");
 	create_insn	(x=0X47B90);
 	op_hex		(x,	1);
 	set_cmt	(0X47B94,	"n",	0);
@@ -33454,6 +33461,15 @@ static Bytes_6(void) {
 	set_cmt	(0X4F1E0,	"jumptable 0004F1DB case 0",	1);
 	create_insn	(x=0X4F1E0);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4F1E4);
 	op_stkvar	(x,	0);
 	set_cmt	(0X4F1EC,	"jumptable 0004F1DB case 1",	1);
@@ -33467,15 +33483,6 @@ static Bytes_6(void) {
 	set_cmt	(0X4F202,	"jumptable 0004F1DB case 3",	1);
 	create_insn	(x=0X4F202);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4F20B,	"jumptable 0004F1DB default case",	1);
 	set_name	(0X4F20B,	"def_4F1DB");
 	create_insn	(x=0X4F210);
@@ -35721,6 +35728,7 @@ static Bytes_7(void) {
 	op_plain_offset	(x,	128,	0X4FF60);
 	set_name	(0X52028,	"jpt_51EC7");
 	create_insn	(0X52030);
+	set_name	(0X52030,	"itemName");
 	create_insn	(x=0X52037);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X5203A);
@@ -38416,8 +38424,8 @@ static Functions_0(void) {
 	set_func_flags(0X27FBD,0x5482);
 	set_frame_size(0X27FBD, 0, 0, 0);
 	add_func    (0X27FC2,0X27FC7);
-	set_func_flags(0X27FC2,0x5482);
-	SetType(0X27FC2, "int __cdecl __far sub_27FC2(int, int, int, int, int x, char *format);");
+	set_func_flags(0X27FC2,0x54c2);
+	SetType(0X27FC2, "int __cdecl __far j_textModeScreen(int, int, int, int, int x, char *format);");
 	set_frame_size(0X27FC2, 0, 0, 0);
 	add_func    (0X27FF0,0X27FF5);
 	set_func_flags(0X27FF0,0x5482);
@@ -38573,8 +38581,8 @@ static Functions_0(void) {
 	SetType(0X2814E, "int __cdecl __far sub_2814E(int, int, int);");
 	set_frame_size(0X2814E, 0, 0, 0);
 	add_func    (0X28180,0X28185);
-	set_func_flags(0X28180,0x5482);
-	SetType(0X28180, "int __cdecl __far sub_28180(char *format);");
+	set_func_flags(0X28180,0x54c2);
+	SetType(0X28180, "int __cdecl __far j_loadMapData(char *format);");
 	set_frame_size(0X28180, 0, 0, 0);
 	add_func    (0X28185,0X2818A);
 	set_func_flags(0X28185,0x5482);
@@ -38808,8 +38816,8 @@ static Functions_0(void) {
 	set_func_flags(0X2835D,0x5482);
 	set_frame_size(0X2835D, 0, 0, 0);
 	add_func    (0X28362,0X28367);
-	set_func_flags(0X28362,0x5480);
-	SetType(0X28362, "int __fastcall sub_28362(int, int, int, int, char *format, int, int);");
+	set_func_flags(0X28362,0x54c0);
+	SetType(0X28362, "int __fastcall j_townBuildingIntro(int, int, int, int, char *format, int, int);");
 	set_frame_size(0X28362, 0, 0, 0XA);
 	add_func    (0X28367,0X2836C);
 	set_func_flags(0X28367,0x54c2);
@@ -39241,8 +39249,8 @@ static Functions_0(void) {
 	set_func_flags(0X286C2,0x54c2);
 	set_frame_size(0X286C2, 0, 0, 0);
 	add_func    (0X286C7,0X286CC);
-	set_func_flags(0X286C7,0x5482);
-	SetType(0X286C7, "int __cdecl __far sub_286C7(int, int, char *buffer);");
+	set_func_flags(0X286C7,0x54c2);
+	SetType(0X286C7, "int __cdecl __far j_itemName(int, int, char *buffer);");
 	set_frame_size(0X286C7, 0, 0, 0);
 	add_func    (0X286CC,0X286D1);
 	set_func_flags(0X286CC,0x54c2);
@@ -39309,7 +39317,8 @@ static Functions_0(void) {
 	define_local_var(0X380FE, 0X38147, "[bp-0X8]", "dtable");
 	add_func    (0X38147,0X38399);
 	set_func_flags(0X38147,0x5412);
-	SetType(0X38147, "int __cdecl __far sub_38147(int, int, int, int, int x, char *format);");
+	SetType(0X38147, "int __cdecl __far textModeScreen(int, int, int, int, int x, char *format);");
+	set_func_cmt(0X38147,	"DOS text-mode screen (cprintf/clrscr/gotoxy with colours) used by the fatal-error and startup message paths", 0);
 	set_frame_size(0X38147, 0X4, 2, 0);
 	define_local_var(0X38147, 0X38399, "[bp+0XE]", "x");
 	define_local_var(0X38147, 0X38399, "[bp+0X10]", "format");
@@ -39529,16 +39538,16 @@ static Functions_0(void) {
 	add_func    (0X40465,0X404D5);
 	set_func_flags(0X40465,0x5412);
 	set_frame_size(0X40465, 0X4, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X404D5,0X40506);
 	set_func_flags(0X404D5,0x5412);
 	set_frame_size(0X404D5, 0X2, 2, 0);
 	add_func    (0X40506,0X4058A);
 	set_func_flags(0X40506,0x5412);
 	set_frame_size(0X40506, 0X4, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4058A,0X4087E);
 	set_func_flags(0X4058A,0x5412);
 	SetType(0X4058A, "int __cdecl __far sub_4058A(int, int);");
@@ -39655,7 +39664,8 @@ static Functions_1(void) {
 	define_local_var(0X430A8, 0X432B9, "[bp-0X14]", "buffer");
 	add_func    (0X432B9,0X4346B);
 	set_func_flags(0X432B9,0x5412);
-	SetType(0X432B9, "int __cdecl __far sub_432B9(char *format);");
+	SetType(0X432B9, "int __cdecl __far loadMapData(char *format);");
+	set_func_cmt(0X432B9,	"loads the map's data files (MAZEnn.DAT/EVT/BIN through loadMazeDats and loadResourceByName) and resets the per-map state", 0);
 	set_frame_size(0X432B9, 0X1C, 2, 0);
 	define_local_var(0X432B9, 0X4346B, "[bp-0X1A]", "buffer");
 	define_local_var(0X432B9, 0X4346B, "[bp-0X6]", "src");
@@ -39836,7 +39846,8 @@ static Functions_1(void) {
 	set_frame_size(0X47A33, 0X2, 2, 0);
 	add_func    (0X47B8D,0X47E61);
 	set_func_flags(0X47B8D,0x1410);
-	SetType(0X47B8D, "int __fastcall sub_47B8D(int, int, int, int, char *format, int, int);");
+	SetType(0X47B8D, "int __fastcall townBuildingIntro(int, int, int, int, char *format, int, int);");
+	set_func_cmt(0X47B8D,	"shared opening of every town building: loads the building's picture sprites, prints the intro text, sets the cursor and shows the entry window; returns non-zero to enter", 0);
 	set_frame_size(0X47B8D, 0XA, 2, 0);
 	define_local_var(0X47B8D, 0X47E61, "[bp+0X6]", "format");
 	add_func    (0X47ECE,0X48158);
@@ -40474,7 +40485,8 @@ static Functions_1(void) {
 	set_frame_size(0X51E25, 0X1A, 2, 0);
 	add_func    (0X52030,0X52165);
 	set_func_flags(0X52030,0x5412);
-	SetType(0X52030, "int __cdecl __far sub_52030(int, int, char *buffer);");
+	SetType(0X52030, "int __cdecl __far itemName(int, int, char *buffer);");
+	set_func_cmt(0X52030,	"builds an item's display name: attribute + metal + element words, base name, 'of <spell>', cursed/broken tags (enchantments hidden while cursed or broken); stub sub_286C7", 0);
 	set_frame_size(0X52030, 0X2, 2, 0);
 	define_local_var(0X52030, 0X52165, "[bp+0XA]", "buffer");
 	add_func    (0X60000,0X60003);
