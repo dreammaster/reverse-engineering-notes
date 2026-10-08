@@ -4,21 +4,39 @@
 // the constants the scripts use (the id of every field, the number of every table, the enums), the
 // sprite and particle objects, and the debug error function.
 //
-// Not reconstructed yet: the functions of these objects themselves (the stubs in lua.cpp).
+// (visionaireobjectLua.cpp, luaSprite.cpp, luaGlobals.cpp)
 #pragma once
 
-#include "common/lua/lua.h"
+#include "vscommon/scripting/visLua.h"
 #include "datastruct/visobjref.h"
 
 class TSprite;
 class TVisionaireObject;
+class TVisObjRef;
 
 /** What the userdata of a data object holds (the object is referenced by the game's tables). */
 struct LuaVisionaireObject {
 	TVisionaireObject *object;
 };
 
-LuaVisionaireObject *CheckVisionaireObject(lua_State *state, int index, bool quiet);
+/** The data object of the userdata at `index` (it is an error when it is not one); the userdata is taken
+ *  off the stack when `remove` says so. */
+LuaVisionaireObject *CheckVisionaireObject(lua_State *state, int index, bool remove);
+/** Pushes the userdata of a data object (the empty object when there is none): the same one each time. */
+void CreateVisionaireObject(lua_State *state, TVisionaireObject *object);
+void CreateVisionaireObject(lua_State *state, const TVisObjRef &object);
+/** Sets `object` to the data object of the userdata at `index` (of the Lua state of the game). */
+bool GetObjectFromLua(TVisObjRef &object, int index);
+/** The boolean at `index`, or `defaultValue` when it is not one. */
+int luaL_optboolean(lua_State *state, int index, int defaultValue);
+/** Logs the values on the stack. */
+void stackDump(lua_State *state);
+/** Forgets the tables that were made for the link fields of the objects (the Lua state goes). */
+void ClearLuaObjectCaches();
+/** The tables of the game as globals (`Scenes` ...). */
+int luaopen_ExportTables(lua_State *state);
+/** The command behind the object method `to` (not reconstructed yet). */
+void CmdVisObjTo(lua_State *state);
 
 int luaopen_VisionaireObject(lua_State *state);
 /** Makes the sprite class of the scripts (luaSprite.cpp) and the function createSprite(). */

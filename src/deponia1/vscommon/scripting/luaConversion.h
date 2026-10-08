@@ -18,9 +18,13 @@
 #include "TTextLanguage.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
+#include "datastruct/vlist.h"
 
 /** Pushes a data object (a userdata of the scripts; see visLuaObjects.h); an empty one is nil. */
 void ConvertToLua(const TVisObjRef &object);
+/** Pushes a table of the objects (numbered from 1) that has the metatable of the tables of the game, so
+ *  that an object of it can also be got by its name. */
+void ConvertToLua(const TVList &objects);
 void ConvertToLua(const wxPoint &point);
 void ConvertToLua(const wxRect &rect);
 void ConvertToLua(const TSprite &sprite);
@@ -33,6 +37,9 @@ void ConvertToLua(const std::vector<wxRect> &values);
 void ConvertToLua(const std::vector<TCharHolder> &values);
 void ConvertToLua(const std::vector<TSprite> &values);
 
+bool ConvertFromLua(TVisObjRef &object, int index);
+/** The objects of a table, numbered from 1; each is an object or the name or id of one. */
+bool ConvertFromLua(TVList &objects, int index);
 bool ConvertFromLua(wxPoint &point, int index);
 bool ConvertFromLua(wxRect &rect, int index);
 bool ConvertFromLua(TSprite &sprite, int index);

@@ -3416,8 +3416,35 @@ to and from Lua tables. What the scripts see:
   `setPath getPath getSize setPosition getPosition` and `createSprite("path")`. Its registration is the "Lunar"
   class template with its quirks kept (the methods table has itself as `__metatable` and `__index`, and `new`
   and `__call` are put in the wrong tables).
-- `Cmd*` classes (the commands the scripts call), the data object class (`VisionaireObject`) and the particles
-  are not reconstructed yet (stubs in `lua.cpp`).
+- `visionaireobjectLua.cpp`: the data object class. A data object is a userdata (a counted reference to the
+  `TVisionaireObject`) with the metatable `Visionaire.TVisionaireObject`; the registry keeps one userdata for each
+  object (`TVisionaireObject::GetLuaObject()` is its entry, so an object is always the same Lua value; it is
+  let go with `LuaObjectUnref()` when the object goes). `obj.SceneName` reads a field and `obj.SceneName = x`
+  writes one (`getFieldFromString()` finds the field: the name may have the `V` of the constants before it, may have the
+  singular name of the table before it, and the fields of the active records are those of the record they
+  stand for); `obj.id`, `obj.tableId`, `obj.name` and `obj.parent` are special; the methods (`getInt`, `getLinks`,
+  `setValue`, `getObject`, `info` ...) are found in a map by `__index`, not in the metatable. The tables of the
+  game (`Scenes` ...) are globals, tables `{tableId = n}` whose `__index` gives the object at a number or of a name
+  (and `__len`); the tables that `getLinks()` and `ConvertToLua(TVList)` make have the same metatable and are
+  searched by name (an index of the names is made with the table, in `RefStringIndexCache`, and a table
+  of a field is given again until the field changes, `LinksCache`; the data layer calls
+  `UnrefLuaFieldsCache()` for that). Differences from the binary: its three custom hash maps are
+  `std::unordered_map`s, the address of a table is `lua_topointer` (the original parses `tostring(table)`), and when a cache is
+  cleared the registry entries and the name indexes of the tables are given up too (the original leaves
+  both, so a new table at the same address could find a stale index). Quirks kept: `info()` of an object that has a
+  string-list field (the game object has two) fails, as the original's jump table has no getter for that type;
+  `setValue` with a number needs the field to be an int, a bool or a float; the "Lunar" registration puts
+  `__call` in the wrong table (see above).
+- `objAccess.cpp` (`vscommon/objAccess.cpp`): `GetTypeGroup(table)`, the `(table,id)` strings, and the path
+  language of `FindObjectByName*`: `Scenes[Hallway].Objects[Door]`, a table name and the name of the object in
+  brackets (the index is a *name*: a number only finds an object that is named so), then fields with dots. The
+  messages for a wrong path are those of the binary. `CreateObjectPath()` (the reverse, 1387666-1388740) is not
+  reconstructed: nothing in the game calls it.
+- `lua.cpp`: `LuaDoFile`, `LuaDoRef`, `CloseLua`, `LuaSetCurrentAction`/`LuaSetNumber` (found inline in
+  `TGAction::Execute` and `TGameControl::Update`) and the conversion of object lists to and from Lua.
+- Not reconstructed yet: the `Cmd*` classes (the functions the scripts call, `InitCommonCommands()`,
+  `InitCommands()` which also calls `InitObjectAccess()`), `CmdVisObjTo` (the object method `to`), the particles
+  (`luaopen_Particles`).
 
 ## Reformatted to ScummVM's code conventions
 

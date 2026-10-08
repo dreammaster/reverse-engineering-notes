@@ -46,6 +46,14 @@ int LuaPrint(lua_State *state);
  *  those are saved with the game). */
 bool IsInternalGlobalVar(const wxString &name);
 
+/** Closes the Lua state (lua.cpp). */
+void CloseLua();
+/** Runs a Lua file; what goes wrong is logged. */
+void LuaDoFile(const wxFileName &file);
+void LuaDoFile(const char *path);
+/** Runs the function that the registry holds under `ref` (see LuaDoString()). */
+void LuaDoRef(int ref);
+
 /** Runs a piece of Lua. `chunkName` is how errors name it. */
 void LuaDoString(const std::string &code);
 void LuaDoString(const std::string &code, const std::string &chunkName);

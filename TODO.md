@@ -134,13 +134,30 @@ reconstructed. `TGInterface` stays `in-progress` until then.
 `TGText` stays `in-progress` in `manifest/proprietary_classes.tsv` until the hooks are done.
 
 
+## The Lua bridge: what is not reconstructed
+
+Done: the Lua state and running scripts (`visLua.cpp`), the conversions (`luaConversion.cpp`, `lua.cpp`), the
+constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the tables of the game
+(`visionaireobjectLua.cpp`), the path language (`vscommon/objAccess.cpp`). Missing:
+
+- `InitCommands()` / `InitPlayerCommands()` (asm 425066, 1439990-1440140): sets `Game`, calls `InitLua()` and
+  `InitObjectAccess()`, makes the command queue. `TGameControl::InitScripts()` has to call it.
+- The `Cmd*` classes (asm ~1431480-1500000): the functions the scripts call (`system_*`, `graphics_*`, `sprite_*`,
+  `movie_*`, `particles_*` ...), with `TArgSyntax`/`TArgParser`/`TCommandQueue`, `InitCommonCommands()` that
+  registers them, and `CmdVisObjTo` (the object method `to`). `CmdStartObjectTween::Do` (asm 407771) is
+  where the easing numbers of `luaGlobals.cpp` (0-32) are mapped to the `Easing::*` functions.
+- `luaopen_Particles`, `vsplayer/scripting/scriptingutils.cpp` (`Save`/`LoadGlobalScriptVariables`, asm ~432832).
+- `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
+  never called.
+
 ## TGAction: what is not reconstructed
 
 All 104 commands of `TGAction::Execute()` are done (`vstables/eCommand.h`). What they need and is
 missing elsewhere:
 
-- The Lua bridge: the script commands 137 and 138 only build the script text (`LuaSetCurrentAction()`
-  and `LuaDoString()` are stubs), so scripts of action parts do not run.
+- The Lua bridge is partly there (see below): the script commands 137 and 138 now run their text through
+  `LuaDoString()`, but nothing starts the Lua state yet (`InitCommands()`), and the functions the scripts
+  call are missing.
 - The sound engine (`TSoundBase`, `TSoundFFMPEG`): the commands call the sound manager the way the
   original does, but nothing plays (see `TSoundInterface.h` for the virtual surface).
 - `TGameControl::StartTween(const Tween &, const std::string &)` (the tweens the scripts name) is still
