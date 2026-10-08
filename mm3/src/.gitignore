@@ -14,3 +14,4 @@ tests/ui_run
 mm3game
 tests/rules_run
 mm3-saves
+tests/test_rules_diff

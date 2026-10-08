@@ -10,7 +10,6 @@ drawParty
 drawView
 freeSpriteSlot
 getCommand
-getCurrentLevel
 bash
 characterInfoDialog
 characterStatsDialog
@@ -68,7 +67,6 @@ sub_2698B
 sub_38821
 sub_3946E
 changeTime
-getMaxHP
 worstCondition
 drawViewOutdoors
 doCombat
@@ -83,7 +81,6 @@ sub_28103
 sub_282ED
 timeText
 checkPartyDead
-getStat
 subtractHitPoints
 characterInfoInventory
 drawCharacterStats
@@ -97,8 +94,6 @@ sub_28144
 sub_281E4
 sub_28267
 sub_511C8
-getArmorClass
-getMaxSP
 statColor
 sub_25DE3
 getFiles
@@ -112,7 +107,6 @@ sub_2811C
 sub_44843
 sub_44921
 buildActiveEffects
-itemScan
 charSavingThrow
 isBitSet
 sub_28249
@@ -270,7 +264,6 @@ sub_387C6
 addTime
 mapHasDayNight
 sub_28194
-statBonus
 clearViewFlags
 renderOutdoorView
 scanObjectsAhead
@@ -292,8 +285,6 @@ sub_2864E
 sub_400DF
 currentTime
 timeToString
-conditionMod
-getAge
 itemName
 itemPrice
 itemsDialog
@@ -316,8 +307,6 @@ sub_511AB
 readSaveHeader
 saveMazeState
 sub_40465
-getAttributeCategory
-getElementalCategory
 sub_442EB
 indexEvents
 loadMazeDats
@@ -410,6 +399,7 @@ sub_37BF1
 formatNumber
 sub_4BDC4
 getDamageScale
+getElementalCategory
 getMonsterResistance
 giveExperience
 sub_27F9A
@@ -418,6 +408,7 @@ sub_28108
 sub_280B2
 getEquipSlotName
 canEquip
+getAttributeCategory
 ipause_5
 sub_27F72
 sub_37B7D

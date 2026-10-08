@@ -37,3 +37,10 @@ Keys are BIOS codes (scan<<8|ascii, e.g. 4800 = Up, 1E41 = 'A', 3920 = Space).  
 `MM3_TEXTLOG=1` (every string given to the text engine), `MM3_SHOT_EVERY=N`/`MM3_SHOT_PREFIX` (screenshots while the game polls
 the keyboard), `MM3_IDLE=N` (headless idle limit).  Scripts: `tests/gamefuzz.sh`, `tests/combatfuzz.sh`, `tests/combatwin.sh`.
 Combat commands (table in the combat overlay): A attack, B block, C cast, F fight, I info, O, Q quick reference, R run, U use.
+
+## Hand-written replacements for translated routines (the hybrid step)
+`rules.c`/`rules.h` are readable C versions of the character rules (`statBonus`, `getAge`, `itemScan`, `conditionMod`, `getStat`,
+`getCurrentLevel`, `getMaxHP`, `getMaxSP`, `getArmorClass`); `make rulesdiff` fuzzes them against the translated originals on random
+characters (200,000+ checks, bit-exact, including the originals' 16/32-bit quirks).  `game_rules.c` exposes them as hosts and the
+names are listed in `gen/hosts.txt`, so `make regen_game` leaves the translated copies out of the game.  The same recipe applies to
+any other routine: write the readable function, add a differential test against `gen/*_gen.c`, then list it in `gen/hosts.txt`.

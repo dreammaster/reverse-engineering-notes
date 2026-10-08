@@ -23,3 +23,12 @@ sub_25085
 sub_2509A
 writeResource
 soundDriverPlay
+statBonus
+getAge
+itemScan
+conditionMod
+getStat
+getCurrentLevel
+getMaxHP
+getMaxSP
+getArmorClass

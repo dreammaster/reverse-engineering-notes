@@ -141,8 +141,16 @@ regen_game:
 .PHONY: regen_game
 
 # ---- the recompiled game
-GAME_SRC = recomp.c gen/game_gen.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
+GAME_SRC = recomp.c gen/game_gen.c rules.c game_rules.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
 
 mm3game: game_main.c $(GAME_SRC) game.h recomp.h
 	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS)
 .PHONY: mm3game
+
+# ---- readable rules vs the translated originals
+tests/test_rules_diff: tests/test_rules_diff.c rules.c $(RULES_SRC) rules.h recomp.h
+	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/test_rules_diff.c rules.c $(RULES_SRC)
+
+rulesdiff: tests/test_rules_diff
+	./tests/test_rules_diff $(DATA)/DGROUP.BIN 3000
+.PHONY: rulesdiff
