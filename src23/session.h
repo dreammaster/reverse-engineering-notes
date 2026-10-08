@@ -134,9 +134,11 @@ InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uin
  *   knock       UNLOCK MAGIC (interactKnock), DISPEL ILLUSION (the curgame event), SAFE UNLOCK (lock flag 0x40 / priced / curgame flag 0x40) on the object ahead
  *   rest        SAFE HAVEN (sessionRest)
  *   held item   CREATE FOOD / FORGE put the item on the cursor if it is empty
- * SessionCastNoEffect: the costs were paid and nothing happened (a blocked jump, nothing ahead to open, nothing marked, a full cursor). Not composed
- * (SessionCastUnsupported, nothing paid): the projectile family, the screen-wide attacks, the beam / tremor / rain / turbulence spells -- they need monsters
- * on the viewport rows, which the session keeps in the pool.
+ * SessionCastNoEffect: the costs were paid and nothing happened (a blocked jump, nothing ahead to open, nothing marked, a full cursor, a shot at nothing).
+ * Outside a combat the projectile family, the screen-wide attacks and the beam / tremor / rain / turbulence spells attack the monsters in front: a projectile flies down the
+ * centre column of the view (cells 49, 46, 43, 40, 36, 25) and a splash one hits three runs of three cells around the impact, the screen-wide family hits every monster in the
+ * 51-cell buffer and the beam the first one of the column (session.c castProjectile / castColumnAttack; GetMonsterAtViewportRow's marker lookup). SessionCastUnsupported is
+ * kept for branches without a composition (none now).
  */
 typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported, SessionCastNoEffect } SessionCast;
 SessionCast sessionCast(GameSession *session, unsigned spellId);
