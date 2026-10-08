@@ -498,6 +498,19 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
     ConversationStep shop = riddle;
     shop.flags = DialogTopicUseKey;
     check("a shop topic is for the front end's screen", sessionTalkService(s, &shop, NULL) == SessionServiceNeedScreen);
+    ConversationStep sell = riddle;
+    sell.flags = DialogTopicSell;
+    sell.arg = 0xFFFF;
+    s->heldItem = 0;
+    check("selling with an empty hand asks for an item", sessionTalkService(s, &sell, NULL) == SessionServiceNeedItem);
+    memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+    s->heldItem = game == GameYendor2 ? 0x14 : 0x36; /* a healing potion: it has a base value */
+    check("a sold item pays gold and leaves the cursor", sessionTalkService(s, &sell, NULL) == SessionServiceDone && s->heldItem == 0 && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 1));
+    ConversationStep repair = riddle;
+    repair.flags = DialogTopicRepair;
+    s->heldItem = 0x14;
+    s->heldExtra = 0;
+    check("an item that is not damaged cannot be repaired", sessionTalkService(s, &repair, NULL) == SessionServiceFailed);
     sessionFree(s);
 }
 

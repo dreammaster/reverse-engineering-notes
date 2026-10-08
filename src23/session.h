@@ -186,9 +186,9 @@ SessionInteract sessionInteract(GameSession *session);
  * `speaker` is the party slot (0-3) that talks (the original asks only when the NPC's speaker mode is set; a member who cannot act is refused then). The healer, trainer,
  * challenge and mount services (the type word the NPC's greeting loads, dialog.h) are carried out for that member by sessionTalkService as well: a quote topic fills
  * `serviceCost`, the accept topic (argument bit 2) pays it and does the work (dialogservice.h; party.h's partyApplyTraining), the refresh topic (bit 4) re-marks what
- * can be offered, bit 1 leaves the service. Service topics that are not these -- the shops, sell, enhance and repair screens -- still answer NeedScreen.
+ * can be offered, bit 1 leaves the service. The sell, enhance and repair topics work on the cursor item (`heldItem`; NeedItem when it is empty): sell pays shopSellPrice for an item of the topic's class, enhance swaps in the next catalog id for the NPC's price, repair restores the id parked in the extra word. The shop topics (DialogTopicUseKey) answer NeedScreen: sessionShop*.
  */
-typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen } SessionService;
+typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen, SessionServiceNeedItem } SessionService;
 
 bool sessionTalkStart(GameSession *session, unsigned npcId, unsigned speaker, ConversationStep *first);
 ConversationStep sessionTalkChoose(GameSession *session, unsigned number);

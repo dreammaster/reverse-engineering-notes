@@ -808,6 +808,50 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
     return SessionServiceDone;
 }
 
+static const uint8_t *haggler(GameSession *s);
+
+/* The sell, enhance and repair topics work on the cursor item (the original's screens ask the player to put it down; here it is `heldItem`). */
+static SessionService itemService(GameSession *s, const ConversationStep *step) {
+    if (!s->heldItem) {
+        return SessionServiceNeedItem;
+    }
+    const uint8_t *npc = s->talk.npc;
+    const uint8_t *record = itemCatalogRecord(&s->items, s->heldItem);
+    uint8_t *gold = saveHeaderBcd4(&s->save, SaveHeaderGold);
+    Bcd4 amount;
+    if (!record) {
+        return SessionServiceFailed;
+    }
+    if (step->flags & DialogTopicSell) {
+        if (!dialogSellAccepts(step->arg, record)) {
+            return SessionServiceFailed;
+        }
+        memcpy(amount, record + ItemFieldBaseValue, 4);
+        Bcd4 price;
+        shopSellPrice(amount, (uint16_t)partyGetStat(haggler(s), PartyStatBartering), price);
+        bcd4Add(gold, price);
+        s->heldItem = s->heldExtra = 0;
+        return SessionServiceDone;
+    }
+    if (step->flags & DialogTopicEnhance) {
+        if (!dialogEnhanceEligible(npc, &s->items, record) || !dialogEnhanceCost(npc, &s->items, s->heldItem, amount) || bcd4Compare(gold, amount) < 0) {
+            return SessionServiceFailed;
+        }
+        bcd4Sub(gold, amount);
+        s->heldItem = (uint16_t)(s->heldItem + 1);
+        return SessionServiceDone;
+    }
+    /* repair: the damaged item holds its original id in its extra word */
+    const uint8_t *original = s->heldExtra ? itemCatalogRecord(&s->items, s->heldExtra) : NULL;
+    if (!original || !dialogRepairEligible(&s->items, original) || !dialogRepairCost(npc, &s->items, s->heldExtra, amount) || bcd4Compare(gold, amount) < 0) {
+        return SessionServiceFailed;
+    }
+    bcd4Sub(gold, amount);
+    s->heldItem = s->heldExtra;
+    s->heldExtra = 0;
+    return SessionServiceDone;
+}
+
 bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, ConversationStep *first) {
     const uint8_t *npc = dialogNpc(&s->dialogs, npcId);
     const uint8_t *voice = sessionPartyRecord(s, speaker);
@@ -893,7 +937,10 @@ SessionService sessionTalkService(GameSession *s, const ConversationStep *step, 
         }
         return ok ? SessionServiceDone : SessionServiceFailed;
     }
-    if (step->flags & (DialogTopicRepair | DialogTopicEnhance | DialogTopicSell | DialogTopicUseKey | DialogTopicCheckKey) || step->typeService != DialogServiceNone) {
+    if (step->flags & (DialogTopicRepair | DialogTopicEnhance | DialogTopicSell)) {
+        return itemService(s, step);
+    }
+    if (step->flags & (DialogTopicUseKey | DialogTopicCheckKey)) {
         return SessionServiceNeedScreen;
     }
     return SessionServiceNone;
