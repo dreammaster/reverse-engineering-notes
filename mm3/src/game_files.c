@@ -65,7 +65,10 @@ void host__fopen(Cpu *c) {
 	snprintf(mode, sizeof mode, "%s", (const char *)dsp(host_arg(c, 1)));
 	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path, strchr(mode, 'w') || strchr(mode, 'a') || strchr(mode, '+'));
 	int wr = strchr(mode, 'w') || strchr(mode, 'a') || strchr(mode, '+');
-	if (!wr && is_cur(path)) dump_cur(path); /* the game copies the live MM3.CUR into a save: give it the in-memory image */
+	if (!wr && is_cur(path)) { /* the game copies the live MM3.CUR into a save: give it the in-memory image (in the save dir, never over the data file) */
+		snprintf(path, sizeof path, "%s/mm3.cur", save_dir());
+		dump_cur(path);
+	}
 	FILE *f = fopen(path, mode);
 	c->ax = 0;
 	if (!f) return;
