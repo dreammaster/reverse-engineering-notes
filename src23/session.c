@@ -11,6 +11,7 @@
 #include "newgame.h"
 #include "consumable.h"
 #include "dialogservice.h"
+#include "inventory.h"
 #include "relics.h"
 #include "shop.h"
 #include "party.h"
@@ -1239,6 +1240,73 @@ SessionShop sessionShopSell(GameSession *s, unsigned lockId) {
     say(s, "sold item %u", s->heldItem);
     s->heldItem = s->heldExtra = 0;
     return SessionShopSold;
+}
+
+static uint16_t itemWeightOf(GameSession *s, unsigned id) {
+    const uint8_t *item = itemCatalogRecord(&s->items, id);
+    return item ? (uint16_t)(item[ItemFieldWeight] | (item[ItemFieldWeight + 1] << 8)) : 0;
+}
+
+bool sessionDropOnPortrait(GameSession *s, unsigned member) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    const uint8_t *item = s->heldItem ? itemCatalogRecord(&s->items, s->heldItem) : NULL;
+    if (!record || !item) {
+        return false;
+    }
+    const uint8_t *target = itemTargetEntry(&s->items, item);
+    uint16_t weight = itemWeightOf(s, s->heldItem);
+    AutoEquipPlan plan = inventoryPlanAutoEquip(s->game, record, s->heldItem, weight, itemGetU16(item, ItemFieldFlags), target ? itemTargetWord(target, ItemTargetSlotFlags) : 0);
+    if (plan.kind == AutoEquipRefused) {
+        return false;
+    }
+    uint8_t *slot = record + plan.slotOffset;
+    if (plan.storesExtra) {
+        itemSlotSet(slot, s->heldItem, s->heldExtra);
+    } else {
+        partySetU16(record, plan.slotOffset, s->heldItem);
+    }
+    if (plan.wearOffset) {
+        partySetU16(record, plan.wearOffset, 0);
+    }
+    if (plan.appliesStatEffect) {
+        partyApplyMultiStatEffect(record, itemEffectEntry(&s->items, item));
+    }
+    if (plan.addsWeight) {
+        uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
+        inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) + weight));
+    }
+    partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
+    s->heldItem = s->heldExtra = 0;
+    return true;
+}
+
+bool sessionPickUp(GameSession *s, unsigned member, unsigned slotNumber, unsigned equipmentCode) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    if (!record || s->heldItem) {
+        return false;
+    }
+    uint8_t *slot = equipmentCode ? partyEquipmentSlot(record, equipmentCode, s->game) : inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), slotNumber);
+    bool shortSlot = equipmentCode >= PartyEquipmentFirstShort;
+    unsigned id = !slot ? 0 : shortSlot ? (unsigned)(slot[0] | (slot[1] << 8)) : itemSlotId(slot);
+    if (!id) {
+        return false;
+    }
+    s->heldItem = (uint16_t)id;
+    s->heldExtra = shortSlot ? 0 : itemSlotExtra(slot);
+    if (shortSlot) {
+        slot[0] = slot[1] = 0;
+    } else {
+        itemSlotSet(slot, 0, 0);
+    }
+    const uint8_t *item = itemCatalogRecord(&s->items, id);
+    if (equipmentCode && equipmentCode != 0x0B && item) { /* equipped gear carries its stat effect */
+        partyRemoveMultiStatEffect(record, itemEffectEntry(&s->items, item));
+    }
+    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
+    uint16_t weight = itemWeightOf(s, id);
+    inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) - weight));
+    partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
+    return true;
 }
 
 bool sessionStowHeld(GameSession *s, unsigned member) {

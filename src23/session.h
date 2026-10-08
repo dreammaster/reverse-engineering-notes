@@ -224,6 +224,15 @@ SessionShop sessionShopSell(GameSession *session, unsigned lockId);
 bool sessionStowHeld(GameSession *session, unsigned member);
 
 /*
+ * The cursor item and the inventory (the inventory screen without its screen): sessionDropOnPortrait is HandleItemDropOnPartyPortrait -- the held item is equipped in its
+ * slot when it has one and it is free (the stat effect applied, the wear counter cleared), else stowed in the first free inventory slot, the carry weight checked and the
+ * weight added (inventoryPlanAutoEquip); false = refused. sessionPickUp takes an item to the cursor from a main-inventory slot (1-8) or, with `equipmentCode` (0xA-0x14),
+ * from that equipment slot (its stat effect taken off, the weight subtracted).
+ */
+bool sessionDropOnPortrait(GameSession *session, unsigned member);
+bool sessionPickUp(GameSession *session, unsigned member, unsigned slotNumber, unsigned equipmentCode);
+
+/*
  * The save image (savegame.h: the CURGAME / SAVGAMEn file of the original, byte for byte): sessionSave first copies the session's own state into the header (position,
  * facing, clock, the place flags, Chapter 2's lit lights and timers) and the monster pool into its section, then stores the whole image; sessionLoad replaces the state
  * with an image of the same game (false otherwise) and rebuilds the window. A combat in progress is not saved; the cursor item neither.

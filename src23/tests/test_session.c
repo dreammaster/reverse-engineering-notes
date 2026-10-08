@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -601,6 +601,47 @@ static void testLightsAndRelics(GameKind game, const uint8_t *world, size_t size
     sessionFree(s);
 }
 
+/* The cursor and the inventory: equip a weapon by dropping it on a portrait, take it off again; stow something else. */
+static void testEquip(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned weapon = 0, junk = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !(weapon && junk); id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        unsigned flags = record ? itemGetU16(record, ItemFieldFlags) : 0;
+        if (!weapon && (flags & 0x8000)) {
+            weapon = id;
+        } else if (!junk && !(flags & 0xEE00) && record) {
+            junk = id;
+        }
+    }
+    char text[160];
+    uint8_t *hero = sessionPartyRecord(s, 3);
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1), 0, 0);
+    uint16_t weaponWas = partyGetU16(hero, 0x13A);
+    uint16_t weightBefore = inventoryGroupWeight(partyInventoryGroup(hero, PartyGroupMain));
+    partySetU16(hero, 0x13A, 0);
+    s->heldItem = (uint16_t)weapon;
+    s->heldExtra = 0;
+    bool equipped = sessionDropOnPortrait(s, 3);
+    snprintf(text, sizeof(text), "%s: a weapon dropped on a portrait goes to the main hand and adds its weight", label);
+    check(text, weapon && equipped && partyGetU16(hero, 0x13A) == weapon && !s->heldItem && inventoryGroupWeight(partyInventoryGroup(hero, PartyGroupMain)) >= weightBefore);
+    check("... and picking it up empties the slot, takes the weight off again", sessionPickUp(s, 3, 0, 0x0A) && s->heldItem == weapon && partyGetU16(hero, 0x13A) == 0 &&
+                                                                                   inventoryGroupWeight(partyInventoryGroup(hero, PartyGroupMain)) == weightBefore);
+    check("a hand that is full cannot pick up again", !sessionPickUp(s, 3, 1, 0));
+    s->heldItem = (uint16_t)junk;
+    bool stowed = sessionDropOnPortrait(s, 3) && !s->heldItem;
+    bool found = false;
+    for (unsigned n = 1; n <= InventorySlotCount; n++) {
+        found = found || itemSlotId(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), n)) == junk;
+    }
+    check("something without a slot is stowed in the inventory", junk && stowed && found);
+    (void)weaponWas;
+    sessionFree(s);
+}
+
 /* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
 static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -804,6 +845,7 @@ int main(void) {
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testLightsAndRelics(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
