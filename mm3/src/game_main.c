@@ -20,7 +20,9 @@ void call_getFiles(Cpu *c);
 
 int main(int argc, char **argv) {
 	Cpu c;
-	int headless = 0, intro = 0, at_n = 0, roster_menu = 1;
+	int headless = 0, intro = 0, at_n = 0, roster_menu = 1, difftest = 0;
+	const char *difftest_only = NULL;
+	unsigned difftest_n = 500;
 	const char *cur_path = NULL;
 	unsigned at[4];
 	const char *shot = NULL;
@@ -33,6 +35,7 @@ int main(int argc, char **argv) {
 		else if (!strcmp(argv[i], "--at") && i + 1 < argc) { at_n = sscanf(argv[++i], "%u,%u,%u,%u", &at[0], &at[1], &at[2], &at[3]); }
 		else if (!strcmp(argv[i], "--bare")) roster_menu = 0; /* skip rosterMenu: straight into exploreLoop without the full HUD */
 		else if (!strcmp(argv[i], "--cur") && i + 1 < argc) cur_path = argv[++i]; /* start from this saved game (a .MM3 file) instead of MM3.CUR */
+		else if (!strcmp(argv[i], "--difftest")) { difftest = 1; if (i + 1 < argc && argv[i + 1][0] != '-') difftest_only = argv[++i]; if (i + 1 < argc && argv[i + 1][0] != '-') difftest_n = (unsigned)atoi(argv[++i]); }
 		else if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
 		else if (!strcmp(argv[i], "--keys") && i + 1 < argc) {
 			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'w') ? 0x40000000u | (unsigned)atoi(t + 1) : (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
@@ -75,6 +78,7 @@ int main(int argc, char **argv) {
 	}
 	if (roster_menu) game_call(call_rosterMenu, &c, NULL, 0);
 	if (at_n == 4) { DG[0xE8F7] = at[0]; DG[0xE8F5] = at[1]; DG[0xE8F6] = at[2]; DG[0xE8F4] = at[3]; } /* --at MAP,X,Y,FACING */
+	if (difftest) return game_difftest(difftest_only, difftest_n);
 	game_call(call_exploreLoop, &c, NULL, 0);
 	if (shot) video_save_bmp(shot);
 	return 0;

@@ -62,3 +62,10 @@ audio device the ticks follow the wall clock, headless runs use virtual time (`M
 `tests/x86_sound_check.sh` proves the interpreter bit-exact against Unicorn (60k+ register writes per song incl. all 151 effects);
 `tests/opl_render` renders a song offline.  The OPL emulator itself is approximate (envelope/key-scale curves are modelled, not
 cycle-exact; rhythm mode is not emulated) -- judge it by ear.  The sample (digital) drivers are not wired.
+
+### Replacing a translated routine by readable C (recipe)
+1. Write the function in `logic.c` (declare it in `logic.h`; it works on the data segment `Mm3Game.dg`) and a host wrapper in `game_logic.c`.
+2. Add the routine's name to `gen/readable.txt`; `make regen_ref regen_game` then (a) translate the original into `gen/ref_gen.c` as the reference
+   and (b) leave it out of `gen/game_gen.c`, so the game calls the host.
+3. Add a case (argument/state randomiser) to `game_diff.c` and run `tests/difftest.sh`: results and the whole data segment must be identical to the
+   translated original on random states.

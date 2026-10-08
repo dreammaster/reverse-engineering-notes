@@ -216,7 +216,6 @@ sub_27F5E
 getElapsedTime
 arenaEvent
 endingCutscene
-getCurrentExperience
 giveMultiTreasure
 giveTake
 giveTreasure
@@ -293,7 +292,6 @@ sub_2863A
 sub_51DAB
 getNumSkills
 sub_5122D
-experienceToNextLevel
 sub_27F40
 sub_286D6
 sub_42FF5
@@ -350,7 +348,6 @@ sub_496FA
 sub_2802F
 sub_4877A
 sub_48CF7
-nextExperienceLevel
 sub_281E9
 trainingNeedsExperience
 sub_43D1B
@@ -399,7 +396,6 @@ sub_4BDC4
 getDamageScale
 getElementalCategory
 getMonsterResistance
-giveExperience
 sub_27F9A
 getWeaponDamage
 sub_28108

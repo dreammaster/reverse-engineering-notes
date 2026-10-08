@@ -1,0 +1,30 @@
+/* Game logic rewritten as readable C.  Every function here replaces a routine of the translated game (src/gen/game_gen.c); it works on
+ * the game's data segment (`dg`, DGROUP offsets as in docs/ and names/) and is verified against the translated original with
+ * `mm3game --difftest` (game_diff.c).  game_logic.c exposes them to the translated code as hosts. */
+#ifndef MM3_LOGIC_H
+#define MM3_LOGIC_H
+
+#include <stdint.h>
+#include "character.h"
+
+typedef struct { uint8_t *dg; } Mm3Game;
+
+/* DGROUP offsets */
+enum {
+	MM3_DG_PARTY_CHARS = 0xB9D6,      /* the party's character records, 0x12F bytes each */
+	MM3_DG_PARTY_STATE_BASE = 0xE8EA, /* Party_stateBase: party size (byte) */
+	MM3_DG_ENGINE_MODE = 0xC520,      /* Engine_mode: 1 exploring, 2 combat ... */
+	MM3_DG_COMBAT_PARTY_SIZE = 0xACC1,
+	MM3_DG_COMBAT_ORDER = 0xECC9,     /* party member index per combat slot */
+	MM3_DG_CLASS_XP = 0x1CB2          /* words by class: experience base per level */
+};
+
+Mm3Character *mm3_party_member(const Mm3Game *g, unsigned index);
+
+/* experience (docs/rules.md "training grounds") */
+uint32_t mm3_experience_total(const Mm3Game *g, const Mm3Character *ch);       /* getCurrentExperience */
+uint32_t mm3_experience_for_next_level(const Mm3Game *g, const Mm3Character *ch); /* nextExperienceLevel */
+uint32_t mm3_experience_needed(const Mm3Game *g, const Mm3Character *ch);       /* experienceToNextLevel: 0 when already eligible */
+void mm3_give_experience(const Mm3Game *g, uint32_t amount);                       /* giveExperience: split evenly between the party */
+
+#endif

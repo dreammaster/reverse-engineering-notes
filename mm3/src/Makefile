@@ -136,12 +136,20 @@ rulescheck: tests/rules_run
 
 # ---- the whole game logic, translated (everything reachable from exploreLoop except the routines in gen/hosts.txt)
 regen_game:
-	python3 ../tools/mm3_reach.py ../mm3.asm exploreLoop,loadMonsterData,loadSavedGame,rosterMenu,introSequence,copyPartyToRoster gen/hosts.txt > gen/game_funcs.txt
+	mkdir -p build
+	cat gen/hosts.txt gen/readable.txt > build/hosts_all.txt
+	python3 ../tools/mm3_reach.py ../mm3.asm exploreLoop,loadMonsterData,loadSavedGame,rosterMenu,introSequence,copyPartyToRoster build/hosts_all.txt > gen/game_funcs.txt
 	ASM2C_WEAK_HOSTS=1 python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/game_gen.c $$(cat gen/game_funcs.txt | tr '\n' ' ')
 .PHONY: regen_game
 
+# the translated originals of the routines that have readable replacements (gen/readable.txt): the reference for `mm3game --difftest`
+regen_ref:
+	python3 ../tools/mm3_reach.py ../mm3.asm $$(cat gen/readable.txt | tr '\n' ',' | sed 's/,$$//') gen/hosts.txt > build/ref_funcs.txt
+	ASM2C_STATIC_CALLS=1 python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/ref_gen.c $$(cat build/ref_funcs.txt | tr '\n' ' ')
+.PHONY: regen_ref
+
 # ---- the recompiled game
-GAME_SRC = recomp.c gen/game_gen.c rules.c game_rules.c x86.c opl.c game_sound.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
+GAME_SRC = recomp.c gen/game_gen.c gen/ref_gen.c logic.c game_logic.c game_diff.c rules.c game_rules.c x86.c opl.c game_sound.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
 
 mm3game: game_main.c $(GAME_SRC) game.h recomp.h
 	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS) -lm

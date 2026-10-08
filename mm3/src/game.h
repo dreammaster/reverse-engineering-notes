@@ -38,6 +38,7 @@ void video_present(void);
 void video_pump_events(void);
 void game_sprite_free_cache(uint16_t seg);
 void game_exec_draw_list(unsigned list_addr);
+int game_difftest(const char *only, unsigned n); /* game_diff.c */
 int sound_init(int headless);  /* game_sound.c */
 void sound_pump(int headless_polls);
 

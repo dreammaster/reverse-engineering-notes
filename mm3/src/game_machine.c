@@ -305,3 +305,5 @@ void host_ccClose(Cpu *c) { (void)c; }
 void host_ccRead(Cpu *c) { c->ax = 0; }
 void host_ccSeek(Cpu *c) { c->ax = 0; }
 void host_sub_39900(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }
+
+void mm3_rng_seed(uint32_t seed) { rng_state = seed ? seed : 1; } /* tests: make the random numbers repeatable */

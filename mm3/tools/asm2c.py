@@ -575,7 +575,7 @@ def main():
     code.append("")
     code.extend(body)
     for f in ordered:
-        code.append("void call_%s(Cpu *c) { fn_%s(c); }" % (f, f))
+        code.append("%svoid call_%s(Cpu *c) { fn_%s(c); }" % ("static " if os.environ.get("ASM2C_STATIC_CALLS") else "", f, f))
     code.append("")
     code.append("/* name -> entry point, for test drivers */")
     code.append("const RecompEntry recomp_entries_%s[] = {" % re.sub(r"\W", "_", out.split("/")[-1].rsplit(".", 1)[0]))
