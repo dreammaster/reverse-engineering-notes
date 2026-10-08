@@ -5633,6 +5633,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	128,	0X15230);
 	set_name	(0X15B42,	"jpt_15906");
 	create_insn	(0X15B50);
+	set_name	(0X15B50,	"scanObjectsAhead");
 	create_insn	(x=0X15B53);
 	op_hex		(x,	1);
 	create_insn	(x=0X15B64);
@@ -37733,6 +37734,7 @@ static Functions_0(void) {
 	define_local_var(0X15736, 0X15B34, "[bp-0X1C]", "buffer");
 	add_func    (0X15B50,0X161AD);
 	set_func_flags(0X15B50,0x5412);
+	set_func_cmt(0X15B50,	"counterpart of scanMonstersAhead for map objects (12-byte records at DGROUP A78Eh: y word, x word, ...): finds the objects in the view slots, sets the per-slot object flags and byte_34BB6 = index+1 of the object straight ahead (the container used by giveMultiTreasure)", 0);
 	set_frame_size(0X15B50, 0XC, 2, 0);
 	add_func    (0X161AD,0X1693D);
 	set_func_flags(0X161AD,0x5412);
@@ -39533,6 +39535,10 @@ static Functions_0(void) {
 	add_func    (0X40506,0X4058A);
 	set_func_flags(0X40506,0x5412);
 	set_frame_size(0X40506, 0X4, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X4058A,0X4087E);
 	set_func_flags(0X4058A,0x5412);
 	SetType(0X4058A, "int __cdecl __far sub_4058A(int, int);");
@@ -39548,10 +39554,6 @@ static Functions_0(void) {
 	add_func    (0X40A6D,0X40AAC);
 	set_func_flags(0X40A6D,0x5412);
 	set_frame_size(0X40A6D, 0X2, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X40AAC,0X41474);
 	set_func_flags(0X40AAC,0x5412);
 	set_func_cmt(0X40AAC,	"delete character/hireling, \"Your Roster is full!\"", 0);

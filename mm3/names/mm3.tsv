@@ -679,3 +679,4 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 46C9B	showClassAvailability	creation: draws each class icon available or greyed from the rolled attributes
 47A33	townMenuInput	town building input: mouse/keyboard dispatcher returning a command code (C9h+n = party slot n, 1Bh = ESC)
 26685	freeSpriteSlot	frees the far-pointer sprite resource in the slot and clears the slot
+15B50	scanObjectsAhead	counterpart of scanMonstersAhead for map objects (12-byte records at DGROUP A78Eh: y word, x word, ...): finds the objects in the view slots, sets the per-slot object flags and byte_34BB6 = index+1 of the object straight ahead (the container used by giveMultiTreasure)

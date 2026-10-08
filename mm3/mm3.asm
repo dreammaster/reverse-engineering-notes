@@ -3738,9 +3738,10 @@ jpt_15906       dw offset loc_1590B     ; DATA XREF: updateAutomap+1D0↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; counterpart of scanMonstersAhead for map objects (12-byte records at DGROUP A78Eh: y word, x word, ...): finds the objects in the view slots, sets the per-slot object flags and byte_34BB6 = index+1 of the object straight ahead (the container used by giveMultiTreasure)
 ; Attributes: bp-based frame
 
-sub_15B50       proc far                ; CODE XREF: prepareIndoorView+16F6↓P
+scanObjectsAhead proc far               ; CODE XREF: prepareIndoorView+16F6↓P
                                         ; drawViewOutdoors+F↓P ...
 
 var_8           = word ptr -8
@@ -3779,7 +3780,7 @@ var_2           = word ptr -2
                 jmp     loc_1619A
 ; ---------------------------------------------------------------------------
 
-loc_15B9C:                              ; CODE XREF: sub_15B50+654↓j
+loc_15B9C:                              ; CODE XREF: scanObjectsAhead+654↓j
                 mov     ax, [bp+var_2]
                 mov     dx, 0Ch
                 imul    dx
@@ -3834,7 +3835,7 @@ loc_15B9C:                              ; CODE XREF: sub_15B50+654↓j
                 cmp     word ptr [bx-586Ah], 38h ; '8'
                 jnz     short loc_15C36
 
-loc_15C25:                              ; CODE XREF: sub_15B50+C2↑j
+loc_15C25:                              ; CODE XREF: scanObjectsAhead+C2↑j
                 mov     ax, 2Eh ; '.'
                 push    ax
                 call    playSoundEffect
@@ -3843,7 +3844,7 @@ loc_15C25:                              ; CODE XREF: sub_15B50+C2↑j
                 jmp     short loc_15C4B
 ; ---------------------------------------------------------------------------
 
-loc_15C36:                              ; CODE XREF: sub_15B50+D3↑j
+loc_15C36:                              ; CODE XREF: scanObjectsAhead+D3↑j
                 cmp     byte_287A6, 0
                 jz      short loc_15C4B
                 xor     ax, ax
@@ -3852,8 +3853,8 @@ loc_15C36:                              ; CODE XREF: sub_15B50+D3↑j
                 pop     cx
                 mov     byte_287A6, 0
 
-loc_15C4B:                              ; CODE XREF: sub_15B50+80↑j
-                                        ; sub_15B50+99↑j ...
+loc_15C4B:                              ; CODE XREF: scanObjectsAhead+80↑j
+                                        ; scanObjectsAhead+99↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -3888,8 +3889,8 @@ loc_15C4B:                              ; CODE XREF: sub_15B50+80↑j
                 inc     al
                 mov     byte_34BB7, al
 
-loc_15C98:                              ; CODE XREF: sub_15B50+113↑j
-                                        ; sub_15B50+12C↑j ...
+loc_15C98:                              ; CODE XREF: scanObjectsAhead+113↑j
+                                        ; scanObjectsAhead+12C↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -3917,13 +3918,13 @@ loc_15C98:                              ; CODE XREF: sub_15B50+113↑j
                 cmp     byte_373D5, 0
                 jnz     short loc_15D13
 
-loc_15CD9:                              ; CODE XREF: sub_15B50+180↑j
+loc_15CD9:                              ; CODE XREF: scanObjectsAhead+180↑j
                 cmp     byte_33316, 0
                 jz      short loc_15CE7
                 cmp     byte_333B5, 0
                 jnz     short loc_15D13
 
-loc_15CE7:                              ; CODE XREF: sub_15B50+18E↑j
+loc_15CE7:                              ; CODE XREF: scanObjectsAhead+18E↑j
                 mov     al, byte_34BC7
                 and     al, byte_373D5
                 mov     ah, 0
@@ -3934,7 +3935,7 @@ loc_15CE7:                              ; CODE XREF: sub_15B50+18E↑j
                 cmp     byte_333B5, 0
                 jnz     short loc_15D13
 
-loc_15D02:                              ; CODE XREF: sub_15B50+1A9↑j
+loc_15D02:                              ; CODE XREF: scanObjectsAhead+1A9↑j
                 mov     al, byte_332F1
                 mov     ah, 0
                 or      ax, ax
@@ -3943,8 +3944,8 @@ loc_15D02:                              ; CODE XREF: sub_15B50+1A9↑j
                 inc     al
                 mov     byte_332F1, al
 
-loc_15D13:                              ; CODE XREF: sub_15B50+160↑j
-                                        ; sub_15B50+179↑j ...
+loc_15D13:                              ; CODE XREF: scanObjectsAhead+160↑j
+                                        ; scanObjectsAhead+179↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -3972,13 +3973,13 @@ loc_15D13:                              ; CODE XREF: sub_15B50+160↑j
                 cmp     byte_373D6, 0
                 jnz     short loc_15D8E
 
-loc_15D54:                              ; CODE XREF: sub_15B50+1FB↑j
+loc_15D54:                              ; CODE XREF: scanObjectsAhead+1FB↑j
                 cmp     byte_33316, 0
                 jz      short loc_15D62
                 cmp     byte_3343E, 0
                 jnz     short loc_15D8E
 
-loc_15D62:                              ; CODE XREF: sub_15B50+209↑j
+loc_15D62:                              ; CODE XREF: scanObjectsAhead+209↑j
                 mov     al, byte_34C1A
                 and     al, byte_373D6
                 mov     ah, 0
@@ -3989,7 +3990,7 @@ loc_15D62:                              ; CODE XREF: sub_15B50+209↑j
                 cmp     byte_3343E, 0
                 jnz     short loc_15D8E
 
-loc_15D7D:                              ; CODE XREF: sub_15B50+224↑j
+loc_15D7D:                              ; CODE XREF: scanObjectsAhead+224↑j
                 mov     al, byte_332F2
                 mov     ah, 0
                 or      ax, ax
@@ -3998,8 +3999,8 @@ loc_15D7D:                              ; CODE XREF: sub_15B50+224↑j
                 inc     al
                 mov     byte_332F2, al
 
-loc_15D8E:                              ; CODE XREF: sub_15B50+1DB↑j
-                                        ; sub_15B50+1F4↑j ...
+loc_15D8E:                              ; CODE XREF: scanObjectsAhead+1DB↑j
+                                        ; scanObjectsAhead+1F4↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4038,8 +4039,8 @@ loc_15D8E:                              ; CODE XREF: sub_15B50+1DB↑j
                 inc     al
                 mov     byte_33304, al
 
-loc_15DE4:                              ; CODE XREF: sub_15B50+256↑j
-                                        ; sub_15B50+26F↑j ...
+loc_15DE4:                              ; CODE XREF: scanObjectsAhead+256↑j
+                                        ; scanObjectsAhead+26F↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4071,25 +4072,25 @@ loc_15DE4:                              ; CODE XREF: sub_15B50+256↑j
                 cmp     byte_34BC7, 0
                 jnz     short loc_15E69
 
-loc_15E2E:                              ; CODE XREF: sub_15B50+2D5↑j
+loc_15E2E:                              ; CODE XREF: scanObjectsAhead+2D5↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_15E3C
                 cmp     byte_332AE, 0
                 jnz     short loc_15E69
 
-loc_15E3C:                              ; CODE XREF: sub_15B50+2E3↑j
+loc_15E3C:                              ; CODE XREF: scanObjectsAhead+2E3↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_15E4A
                 cmp     byte_37392, 0
                 jnz     short loc_15E69
 
-loc_15E4A:                              ; CODE XREF: sub_15B50+2F1↑j
+loc_15E4A:                              ; CODE XREF: scanObjectsAhead+2F1↑j
                 cmp     byte_332AE, 0
                 jz      short loc_15E58
                 cmp     byte_37392, 0
                 jnz     short loc_15E69
 
-loc_15E58:                              ; CODE XREF: sub_15B50+2FF↑j
+loc_15E58:                              ; CODE XREF: scanObjectsAhead+2FF↑j
                 mov     al, byte_33305
                 mov     ah, 0
                 or      ax, ax
@@ -4098,8 +4099,8 @@ loc_15E58:                              ; CODE XREF: sub_15B50+2FF↑j
                 inc     al
                 mov     byte_33305, al
 
-loc_15E69:                              ; CODE XREF: sub_15B50+2AC↑j
-                                        ; sub_15B50+2C5↑j ...
+loc_15E69:                              ; CODE XREF: scanObjectsAhead+2AC↑j
+                                        ; scanObjectsAhead+2C5↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4131,25 +4132,25 @@ loc_15E69:                              ; CODE XREF: sub_15B50+2AC↑j
                 cmp     byte_34C1A, 0
                 jnz     short loc_15EEE
 
-loc_15EB3:                              ; CODE XREF: sub_15B50+35A↑j
+loc_15EB3:                              ; CODE XREF: scanObjectsAhead+35A↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_15EC1
                 cmp     byte_332AF, 0
                 jnz     short loc_15EEE
 
-loc_15EC1:                              ; CODE XREF: sub_15B50+368↑j
+loc_15EC1:                              ; CODE XREF: scanObjectsAhead+368↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_15ECF
                 cmp     byte_373C6, 0
                 jnz     short loc_15EEE
 
-loc_15ECF:                              ; CODE XREF: sub_15B50+376↑j
+loc_15ECF:                              ; CODE XREF: scanObjectsAhead+376↑j
                 cmp     byte_332AF, 0
                 jz      short loc_15EDD
                 cmp     byte_373C6, 0
                 jnz     short loc_15EEE
 
-loc_15EDD:                              ; CODE XREF: sub_15B50+384↑j
+loc_15EDD:                              ; CODE XREF: scanObjectsAhead+384↑j
                 mov     al, byte_33306
                 mov     ah, 0
                 or      ax, ax
@@ -4158,8 +4159,8 @@ loc_15EDD:                              ; CODE XREF: sub_15B50+384↑j
                 inc     al
                 mov     byte_33306, al
 
-loc_15EEE:                              ; CODE XREF: sub_15B50+331↑j
-                                        ; sub_15B50+34A↑j ...
+loc_15EEE:                              ; CODE XREF: scanObjectsAhead+331↑j
+                                        ; scanObjectsAhead+34A↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4202,8 +4203,8 @@ loc_15EEE:                              ; CODE XREF: sub_15B50+331↑j
                 inc     al
                 mov     byte_33311, al
 
-loc_15F4D:                              ; CODE XREF: sub_15B50+3B6↑j
-                                        ; sub_15B50+3CF↑j ...
+loc_15F4D:                              ; CODE XREF: scanObjectsAhead+3B6↑j
+                                        ; scanObjectsAhead+3CF↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4239,25 +4240,25 @@ loc_15F4D:                              ; CODE XREF: sub_15B50+3B6↑j
                 cmp     byte_37392, 0
                 jnz     short loc_15FDB
 
-loc_15FA0:                              ; CODE XREF: sub_15B50+447↑j
+loc_15FA0:                              ; CODE XREF: scanObjectsAhead+447↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_15FAE
                 cmp     byte_3407E, 0
                 jnz     short loc_15FDB
 
-loc_15FAE:                              ; CODE XREF: sub_15B50+455↑j
+loc_15FAE:                              ; CODE XREF: scanObjectsAhead+455↑j
                 cmp     byte_3407E, 0
                 jz      short loc_15FBC
                 cmp     byte_32E5E, 0
                 jnz     short loc_15FDB
 
-loc_15FBC:                              ; CODE XREF: sub_15B50+463↑j
+loc_15FBC:                              ; CODE XREF: scanObjectsAhead+463↑j
                 cmp     byte_37392, 0
                 jz      short loc_15FCA
                 cmp     byte_32E5E, 0
                 jnz     short loc_15FDB
 
-loc_15FCA:                              ; CODE XREF: sub_15B50+471↑j
+loc_15FCA:                              ; CODE XREF: scanObjectsAhead+471↑j
                 mov     al, byte_33312
                 mov     ah, 0
                 or      ax, ax
@@ -4266,8 +4267,8 @@ loc_15FCA:                              ; CODE XREF: sub_15B50+471↑j
                 inc     al
                 mov     byte_33312, al
 
-loc_15FDB:                              ; CODE XREF: sub_15B50+415↑j
-                                        ; sub_15B50+42E↑j ...
+loc_15FDB:                              ; CODE XREF: scanObjectsAhead+415↑j
+                                        ; scanObjectsAhead+42E↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4299,25 +4300,25 @@ loc_15FDB:                              ; CODE XREF: sub_15B50+415↑j
                 cmp     byte_332AE, 0
                 jnz     short loc_16072
 
-loc_16025:                              ; CODE XREF: sub_15B50+4CC↑j
+loc_16025:                              ; CODE XREF: scanObjectsAhead+4CC↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_16033
                 cmp     byte_34BC7, 0
                 jnz     short loc_16072
 
-loc_16033:                              ; CODE XREF: sub_15B50+4DA↑j
+loc_16033:                              ; CODE XREF: scanObjectsAhead+4DA↑j
                 cmp     byte_332AE, 0
                 jz      short loc_16041
                 cmp     byte_37392, 0
                 jnz     short loc_16072
 
-loc_16041:                              ; CODE XREF: sub_15B50+4E8↑j
+loc_16041:                              ; CODE XREF: scanObjectsAhead+4E8↑j
                 cmp     byte_34BC7, 0
                 jz      short loc_1604F
                 cmp     byte_37392, 0
                 jnz     short loc_16072
 
-loc_1604F:                              ; CODE XREF: sub_15B50+4F6↑j
+loc_1604F:                              ; CODE XREF: scanObjectsAhead+4F6↑j
                 mov     al, byte_3407E
                 mov     ah, 0
                 or      ax, ax
@@ -4334,8 +4335,8 @@ loc_1604F:                              ; CODE XREF: sub_15B50+4F6↑j
                 inc     al
                 mov     byte_36FAA, al
 
-loc_16072:                              ; CODE XREF: sub_15B50+4A3↑j
-                                        ; sub_15B50+4BC↑j ...
+loc_16072:                              ; CODE XREF: scanObjectsAhead+4A3↑j
+                                        ; scanObjectsAhead+4BC↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4371,25 +4372,25 @@ loc_16072:                              ; CODE XREF: sub_15B50+4A3↑j
                 cmp     byte_373C6, 0
                 jnz     short loc_16100
 
-loc_160C5:                              ; CODE XREF: sub_15B50+56C↑j
+loc_160C5:                              ; CODE XREF: scanObjectsAhead+56C↑j
                 cmp     byte_36FB0, 0
                 jz      short loc_160D3
                 cmp     byte_3407F, 0
                 jnz     short loc_16100
 
-loc_160D3:                              ; CODE XREF: sub_15B50+57A↑j
+loc_160D3:                              ; CODE XREF: scanObjectsAhead+57A↑j
                 cmp     byte_3407F, 0
                 jz      short loc_160E1
                 cmp     byte_332A3, 0
                 jnz     short loc_16100
 
-loc_160E1:                              ; CODE XREF: sub_15B50+588↑j
+loc_160E1:                              ; CODE XREF: scanObjectsAhead+588↑j
                 cmp     byte_373C6, 0
                 jz      short loc_160EF
                 cmp     byte_332A3, 0
                 jnz     short loc_16100
 
-loc_160EF:                              ; CODE XREF: sub_15B50+596↑j
+loc_160EF:                              ; CODE XREF: scanObjectsAhead+596↑j
                 mov     al, byte_33313
                 mov     ah, 0
                 or      ax, ax
@@ -4398,8 +4399,8 @@ loc_160EF:                              ; CODE XREF: sub_15B50+596↑j
                 inc     al
                 mov     byte_33313, al
 
-loc_16100:                              ; CODE XREF: sub_15B50+53A↑j
-                                        ; sub_15B50+553↑j ...
+loc_16100:                              ; CODE XREF: scanObjectsAhead+53A↑j
+                                        ; scanObjectsAhead+553↑j ...
                 mov     ax, si
                 mov     dx, 2Eh ; '.'
                 imul    dx
@@ -4431,25 +4432,25 @@ loc_16100:                              ; CODE XREF: sub_15B50+53A↑j
                 cmp     byte_332AF, 0
                 jnz     short loc_16197
 
-loc_1614A:                              ; CODE XREF: sub_15B50+5F1↑j
+loc_1614A:                              ; CODE XREF: scanObjectsAhead+5F1↑j
                 cmp     byte_34B8D, 0
                 jz      short loc_16158
                 cmp     byte_34C1A, 0
                 jnz     short loc_16197
 
-loc_16158:                              ; CODE XREF: sub_15B50+5FF↑j
+loc_16158:                              ; CODE XREF: scanObjectsAhead+5FF↑j
                 cmp     byte_332AF, 0
                 jz      short loc_16166
                 cmp     byte_373C6, 0
                 jnz     short loc_16197
 
-loc_16166:                              ; CODE XREF: sub_15B50+60D↑j
+loc_16166:                              ; CODE XREF: scanObjectsAhead+60D↑j
                 cmp     byte_34C1A, 0
                 jz      short loc_16174
                 cmp     byte_373C6, 0
                 jnz     short loc_16197
 
-loc_16174:                              ; CODE XREF: sub_15B50+61B↑j
+loc_16174:                              ; CODE XREF: scanObjectsAhead+61B↑j
                 mov     al, byte_3407F
                 mov     ah, 0
                 or      ax, ax
@@ -4466,11 +4467,11 @@ loc_16174:                              ; CODE XREF: sub_15B50+61B↑j
                 inc     al
                 mov     byte_37386, al
 
-loc_16197:                              ; CODE XREF: sub_15B50+5C8↑j
-                                        ; sub_15B50+5E1↑j ...
+loc_16197:                              ; CODE XREF: scanObjectsAhead+5C8↑j
+                                        ; scanObjectsAhead+5E1↑j ...
                 inc     [bp+var_2]
 
-loc_1619A:                              ; CODE XREF: sub_15B50+49↑j
+loc_1619A:                              ; CODE XREF: scanObjectsAhead+49↑j
                 mov     al, Maze_objectCount
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
@@ -4478,13 +4479,13 @@ loc_1619A:                              ; CODE XREF: sub_15B50+49↑j
                 jmp     loc_15B9C
 ; ---------------------------------------------------------------------------
 
-loc_161A7:                              ; CODE XREF: sub_15B50+652↑j
+loc_161A7:                              ; CODE XREF: scanObjectsAhead+652↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15B50       endp
+scanObjectsAhead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14837,8 +14838,8 @@ jpt_1984B       dw offset evt_op01      ; DATA XREF: runMazeEvent+243↑r
 ; play sound effect n (all the 'mov ax, NN; call sub_1B16B' sites): ids below 97h need FX enabled (byte_36FE8), 97h and above (speech/music-like) need byte_36FE9; forwards to the sound driver
 ; Attributes: bp-based frame
 
-playSoundEffect proc far                ; CODE XREF: sub_15B50+D9↑P
-                                        ; sub_15B50+F0↑P ...
+playSoundEffect proc far                ; CODE XREF: scanObjectsAhead+D9↑P
+                                        ; scanObjectsAhead+F0↑P ...
 
 arg_0           = word ptr  6
 
@@ -20496,7 +20497,7 @@ def_1D869:                              ; CODE XREF: prepareIndoorView+16D0↑j
                 mov     al, [bx-38ACh]
                 and     al, 20h
                 mov     byte_34C1C, al
-                call    sub_15B50
+                call    scanObjectsAhead
                 cmp     byte_2886F, 0
                 jz      short loc_1D8CA
                 cmp     Engine_mode, 1
@@ -26446,7 +26447,7 @@ drawViewOutdoors proc far               ; CODE XREF: drawView+A↑P
                 push    di
                 call    clearViewFlags
                 call    updateLight
-                call    sub_15B50
+                call    scanObjectsAhead
                 cmp     byte_2886F, 0
                 jz      short loc_2044C
                 cmp     Engine_mode, 1
@@ -37658,8 +37659,8 @@ byte_287A4      db 0                    ; DATA XREF: exploreLoop+1A4↓w
                                         ; exploreLoop:loc_3EBA3↓r ...
 byte_287A5      db 0                    ; DATA XREF: Spell_00_Light:loc_4C315↓w
                                         ; Spell_17_Jump+B9↓w ...
-byte_287A6      db 0                    ; DATA XREF: sub_15B50+DF↑w
-                                        ; sub_15B50:loc_15C36↑r ...
+byte_287A6      db 0                    ; DATA XREF: scanObjectsAhead+DF↑w
+                                        ; scanObjectsAhead:loc_15C36↑r ...
 byte_287A7      db 0                    ; DATA XREF: castItemSpell:loc_50231↓w
                                         ; characterInfoDialog:loc_50540↓r ...
 word_287A8      dw 0                    ; DATA XREF: sub_253D3+42↑r
@@ -45288,8 +45289,8 @@ byte_32E59      db 0                    ; DATA XREF: drawRow4Sprites+A91↑r
 Maze_evtData    dd 0                    ; DATA XREF: seg001:0324↑w
                                         ; seg001:032F↑r ...
                                         ; far pointer to the loaded maze%02u.evt
-byte_32E5E      db 0                    ; DATA XREF: sub_15B50+465↑r
-                                        ; sub_15B50+473↑r ...
+byte_32E5E      db 0                    ; DATA XREF: scanObjectsAhead+465↑r
+                                        ; scanObjectsAhead+473↑r ...
 byte_32E5F      db 0                    ; DATA XREF: scanMonstersAhead+5C↑w
                                         ; scanMonstersAhead+376↑r ...
 byte_32E60      db 0                    ; DATA XREF: scanMonstersAhead+53↑w
@@ -45361,8 +45362,8 @@ byte_332A1      db 0                    ; DATA XREF: scanMonstersAhead+32↑w
                                         ; scanMonstersAhead:loc_16868↑r ...
 byte_332A2      db 0                    ; DATA XREF: scanMonstersAhead+20↑w
                                         ; scanMonstersAhead:loc_1687A↑r ...
-byte_332A3      db 0                    ; DATA XREF: sub_15B50+58A↑r
-                                        ; sub_15B50+598↑r ...
+byte_332A3      db 0                    ; DATA XREF: scanObjectsAhead+58A↑r
+                                        ; scanObjectsAhead+598↑r ...
 byte_332A4      db 0                    ; DATA XREF: attack2+107↓r
                                         ; getMonsterResistance:loc_4A03B↓r ...
 byte_332A5      db 0                    ; DATA XREF: seg001:loc_14CA4↑w
@@ -45380,10 +45381,10 @@ Combat_weaponDamage dw 0                ; DATA XREF: attack:loc_4A224↓r
                                         ; word
 word_332AC      dw 0                    ; DATA XREF: indexEvents:loc_3BE00↓r
                                         ; Map_load+37E↓w
-byte_332AE      db 0                    ; DATA XREF: sub_15B50+2E5↑r
-                                        ; sub_15B50:loc_15E4A↑r ...
-byte_332AF      db 0                    ; DATA XREF: sub_15B50+36A↑r
-                                        ; sub_15B50:loc_15ECF↑r ...
+byte_332AE      db 0                    ; DATA XREF: scanObjectsAhead+2E5↑r
+                                        ; scanObjectsAhead:loc_15E4A↑r ...
+byte_332AF      db 0                    ; DATA XREF: scanObjectsAhead+36A↑r
+                                        ; scanObjectsAhead:loc_15ECF↑r ...
 byte_332B0      db 0                    ; DATA XREF: clearViewFlags+38↑w
                                         ; prepareIndoorView:loc_1CEB6↑r ...
 byte_332B1      db 0                    ; DATA XREF: clearViewFlags+67↑w
@@ -45466,10 +45467,10 @@ byte_332EF      db 0                    ; DATA XREF: clearViewFlags+1AC↑w
                                         ; prepareIndoorView:loc_1C90C↑w ...
 byte_332F0      db 0                    ; DATA XREF: clearViewFlags+1A6↑w
                                         ; prepareIndoorView:loc_1CB18↑w ...
-byte_332F1      db 0                    ; DATA XREF: sub_15B50+3B↑w
-                                        ; sub_15B50:loc_15D02↑r ...
-byte_332F2      db 0                    ; DATA XREF: sub_15B50+38↑w
-                                        ; sub_15B50:loc_15D7D↑r ...
+byte_332F1      db 0                    ; DATA XREF: scanObjectsAhead+3B↑w
+                                        ; scanObjectsAhead:loc_15D02↑r ...
+byte_332F2      db 0                    ; DATA XREF: scanObjectsAhead+38↑w
+                                        ; scanObjectsAhead:loc_15D7D↑r ...
 byte_332F3      db 0                    ; DATA XREF: clearViewFlags+64↑w
                                         ; prepareIndoorView:loc_1D367↑w ...
 byte_332F4      db 0                    ; DATA XREF: clearViewFlags+23D↑w
@@ -45504,12 +45505,12 @@ byte_33302      db 0                    ; DATA XREF: clearViewFlags+1C1↑w
                                         ; prepareIndoorView:loc_1CFC9↑w ...
 byte_33303      db 0                    ; DATA XREF: clearViewFlags+1B5↑w
                                         ; prepareIndoorView:loc_1D1D5↑w ...
-byte_33304      db 0                    ; DATA XREF: sub_15B50+35↑w
-                                        ; sub_15B50+283↑r ...
-byte_33305      db 0                    ; DATA XREF: sub_15B50+32↑w
-                                        ; sub_15B50:loc_15E58↑r ...
-byte_33306      db 0                    ; DATA XREF: sub_15B50+2F↑w
-                                        ; sub_15B50:loc_15EDD↑r ...
+byte_33304      db 0                    ; DATA XREF: scanObjectsAhead+35↑w
+                                        ; scanObjectsAhead+283↑r ...
+byte_33305      db 0                    ; DATA XREF: scanObjectsAhead+32↑w
+                                        ; scanObjectsAhead:loc_15E58↑r ...
+byte_33306      db 0                    ; DATA XREF: scanObjectsAhead+2F↑w
+                                        ; scanObjectsAhead:loc_15EDD↑r ...
                 align 2
 word_33308      dw 0                    ; DATA XREF: drawHudPieces+13F↑r
                                         ; rosterMenu+BA↓w
@@ -45525,18 +45526,18 @@ byte_3330F      db 0                    ; DATA XREF: clearViewFlags+183↑w
                                         ; prepareIndoorView:loc_1CFDB↑w ...
 byte_33310      db 0                    ; DATA XREF: clearViewFlags+177↑w
                                         ; prepareIndoorView:loc_1D1E7↑w ...
-byte_33311      db 0                    ; DATA XREF: sub_15B50+2C↑w
-                                        ; sub_15B50+3EC↑r ...
-byte_33312      db 0                    ; DATA XREF: sub_15B50+29↑w
-                                        ; sub_15B50:loc_15FCA↑r ...
-byte_33313      db 0                    ; DATA XREF: sub_15B50+26↑w
-                                        ; sub_15B50:loc_160EF↑r ...
+byte_33311      db 0                    ; DATA XREF: scanObjectsAhead+2C↑w
+                                        ; scanObjectsAhead+3EC↑r ...
+byte_33312      db 0                    ; DATA XREF: scanObjectsAhead+29↑w
+                                        ; scanObjectsAhead:loc_15FCA↑r ...
+byte_33313      db 0                    ; DATA XREF: scanObjectsAhead+26↑w
+                                        ; scanObjectsAhead:loc_160EF↑r ...
 byte_33314      db 0                    ; DATA XREF: clearViewFlags+1FF↑w
                                         ; prepareIndoorView+E2F↑w ...
 byte_33315      db 0                    ; DATA XREF: clearViewFlags+1F3↑w
                                         ; prepareIndoorView+103B↑w ...
-byte_33316      db 0                    ; DATA XREF: sub_15B50+12E↑r
-                                        ; sub_15B50+17B↑r ...
+byte_33316      db 0                    ; DATA XREF: scanObjectsAhead+12E↑r
+                                        ; scanObjectsAhead+17B↑r ...
                 db 96h dup(0)
 byte_333AD      db 0                    ; DATA XREF: seg001:0108↑r
                                         ; seg001:02B0↑r ...
@@ -45553,8 +45554,8 @@ byte_333B3      db 0                    ; DATA XREF: clearViewFlags+5E↑w
                                         ; prepareIndoorView:loc_1D46D↑w ...
 byte_333B4      db 0                    ; DATA XREF: clearViewFlags+5B↑w
                                         ; prepareIndoorView:loc_1CCAA↑r ...
-byte_333B5      db 0                    ; DATA XREF: sub_15B50+190↑r
-                                        ; sub_15B50+1AB↑r ...
+byte_333B5      db 0                    ; DATA XREF: scanObjectsAhead+190↑r
+                                        ; scanObjectsAhead+1AB↑r ...
 byte_333B6      db 0                    ; DATA XREF: clearViewFlags+55↑w
                                         ; prepareIndoorView:loc_1D6BA↑w ...
 byte_333B7      db 0                    ; DATA XREF: clearViewFlags+B7↑w
@@ -45583,8 +45584,8 @@ word_3343A      dw 0                    ; DATA XREF: drawParty+111↑r
                                         ; rosterMenu+E0↓w ...
 word_3343C      dw 0                    ; DATA XREF: drawParty+10E↑r
                                         ; rosterMenu+DC↓w ...
-byte_3343E      db 0                    ; DATA XREF: sub_15B50+20B↑r
-                                        ; sub_15B50+226↑r ...
+byte_3343E      db 0                    ; DATA XREF: scanObjectsAhead+20B↑r
+                                        ; scanObjectsAhead+226↑r ...
 byte_3343F      db 0                    ; DATA XREF: clearViewFlags+49↑w
                                         ; prepareIndoorView:loc_1D727↑w ...
 byte_33440      db 0                    ; DATA XREF: clearViewFlags+AE↑w
@@ -48699,10 +48700,10 @@ word_3407A      dw 0                    ; DATA XREF: updateAutomap+BC↑r
                                         ; showOverheadMap+AB↓r ...
 word_3407C      dw 0                    ; DATA XREF: updateAutomap+B9↑r
                                         ; showOverheadMap+A8↓r ...
-byte_3407E      db 0                    ; DATA XREF: sub_15B50+457↑r
-                                        ; sub_15B50:loc_15FAE↑r ...
-byte_3407F      db 0                    ; DATA XREF: sub_15B50+57C↑r
-                                        ; sub_15B50:loc_160D3↑r ...
+byte_3407E      db 0                    ; DATA XREF: scanObjectsAhead+457↑r
+                                        ; scanObjectsAhead:loc_15FAE↑r ...
+byte_3407F      db 0                    ; DATA XREF: scanObjectsAhead+57C↑r
+                                        ; scanObjectsAhead:loc_160D3↑r ...
                 db 28h dup(0)
 byte_340A8      db 0                    ; DATA XREF: clearViewFlags+B1↑w
                                         ; prepareIndoorView:loc_1D406↑w ...
@@ -48757,8 +48758,8 @@ word_34B8A      dw 0                    ; DATA XREF: attack:loc_4A1B6↓r
                                         ; spellAttackAhead+2E↓w ...
 byte_34B8C      db 0                    ; DATA XREF: seg001:loc_14F90↑w
                                         ; sub_25D8D+4↑r ...
-byte_34B8D      db 0                    ; DATA XREF: sub_15B50+271↑r
-                                        ; sub_15B50+2D0↑r ...
+byte_34B8D      db 0                    ; DATA XREF: scanObjectsAhead+271↑r
+                                        ; scanObjectsAhead+2D0↑r ...
 word_34B8E      dw 0                    ; DATA XREF: createCharacter+1E↓w
                                         ; createCharacter+24↓r
 word_34B90      dw 0                    ; DATA XREF: createCharacter+1A↓w
@@ -48792,18 +48793,18 @@ word_34BA6      dw 0                    ; DATA XREF: runMazeEvent+334↑r
 word_34BA8      dw 0                    ; DATA XREF: runMazeEvent:evt_op02↑r
                                         ; renderIndoorView+173↑r
                 db 0Ch dup(0)
-byte_34BB6      db 0                    ; DATA XREF: sub_15B50+41↑w
-                                        ; sub_15B50+9B↑r ...
-byte_34BB7      db 0                    ; DATA XREF: sub_15B50+3E↑w
-                                        ; sub_15B50+137↑r ...
+byte_34BB6      db 0                    ; DATA XREF: scanObjectsAhead+41↑w
+                                        ; scanObjectsAhead+9B↑r ...
+byte_34BB7      db 0                    ; DATA XREF: scanObjectsAhead+3E↑w
+                                        ; scanObjectsAhead+137↑r ...
 byte_34BB8      db 0                    ; DATA XREF: clearViewFlags+40↑w
                                         ; prepareIndoorView:loc_1D86E↑w ...
 byte_34BB9      db 0                    ; DATA XREF: getWeaponDamage+F↓w
                                         ; getWeaponDamage+A2↓w ...
 byte_34BBA      db 0                    ; DATA XREF: seg001:loc_14C9D↑w
                 db 0Ch dup(0)
-byte_34BC7      db 0                    ; DATA XREF: sub_15B50:loc_15CE7↑r
-                                        ; sub_15B50+1A4↑r ...
+byte_34BC7      db 0                    ; DATA XREF: scanObjectsAhead:loc_15CE7↑r
+                                        ; scanObjectsAhead+1A4↑r ...
                 db 24h dup(0)
 byte_34BEC      db 0                    ; DATA XREF: clearViewFlags+22E↑w
                                         ; prepareIndoorView:loc_1D0D5↑w ...
@@ -48868,8 +48869,8 @@ word_34C16      dw 0                    ; DATA XREF: sub_25C52+46↑r
                                         ; sub_3CE7A+7E↓w ...
 word_34C18      dw 0                    ; DATA XREF: sub_25C52+18↑r
                                         ; sub_3CE7A+84↓w ...
-byte_34C1A      db 0                    ; DATA XREF: sub_15B50:loc_15D62↑r
-                                        ; sub_15B50+21F↑r ...
+byte_34C1A      db 0                    ; DATA XREF: scanObjectsAhead:loc_15D62↑r
+                                        ; scanObjectsAhead+21F↑r ...
 byte_34C1B      db 0                    ; DATA XREF: updateAutomap:loc_1575E↑r
                                         ; updateAutomap:loc_15793↑w ...
 byte_34C1C      db 0                    ; DATA XREF: clearViewFlags+24B↑w
@@ -48892,9 +48893,9 @@ byte_34C2A      db 0                    ; DATA XREF: clearViewFlags+35↑w
                                         ; prepareIndoorView:loc_1CFBC↑r ...
 byte_34C2B      db 0                    ; DATA XREF: clearViewFlags+2C↑w
                                         ; prepareIndoorView:loc_1D1C8↑r ...
-byte_34C2C      db 0                    ; DATA XREF: sub_15B50+508↑r
+byte_34C2C      db 0                    ; DATA XREF: scanObjectsAhead+508↑r
                                         ; scanMonstersAhead+5FF↑r ...
-byte_34C2D      db 0                    ; DATA XREF: sub_15B50+62D↑r
+byte_34C2D      db 0                    ; DATA XREF: scanObjectsAhead+62D↑r
                                         ; scanMonstersAhead+75D↑r ...
 Maze_curSlot    db 0                    ; DATA XREF: drawAutomapWrapped+50↑r
                                         ; drawAutomapWrapped+FF↑r ...
@@ -48973,8 +48974,8 @@ byte_36FA8      db 0                    ; DATA XREF: clearViewFlags+186↑w
                                         ; prepareIndoorView:loc_1CED5↑w ...
 byte_36FA9      db 0                    ; DATA XREF: clearViewFlags+171↑w
                                         ; prepareIndoorView:loc_1C818↑w ...
-byte_36FAA      db 0                    ; DATA XREF: sub_15B50+23↑w
-                                        ; sub_15B50+511↑r ...
+byte_36FAA      db 0                    ; DATA XREF: scanObjectsAhead+23↑w
+                                        ; scanObjectsAhead+511↑r ...
                 align 2
 SpellAttack_reach dw 0                  ; DATA XREF: shootAhead+3↑w
                                         ; Spell_03_FlyingFist+F↓w ...
@@ -48983,8 +48984,8 @@ byte_36FAE      db 0                    ; DATA XREF: clearViewFlags+202↑w
                                         ; prepareIndoorView+D29↑w ...
 byte_36FAF      db 0                    ; DATA XREF: clearViewFlags+1ED↑w
                                         ; prepareIndoorView+66C↑w ...
-byte_36FB0      db 0                    ; DATA XREF: sub_15B50+3E3↑r
-                                        ; sub_15B50+442↑r ...
+byte_36FB0      db 0                    ; DATA XREF: scanObjectsAhead+3E3↑r
+                                        ; scanObjectsAhead+442↑r ...
 byte_36FB1      db 0                    ; DATA XREF: updateAutomap+39↑r
                                         ; updateAutomap+46↑w ...
 word_36FB2      dw 0                    ; DATA XREF: seg001:0180↑r
@@ -49715,8 +49716,8 @@ byte_37384      db 0                    ; DATA XREF: clearViewFlags+17A↑w
                                         ; prepareIndoorView:loc_1D2ED↑w ...
 byte_37385      db 0                    ; DATA XREF: clearViewFlags+16B↑w
                                         ; prepareIndoorView:loc_1CC30↑w ...
-byte_37386      db 0                    ; DATA XREF: sub_15B50+20↑w
-                                        ; sub_15B50+636↑r ...
+byte_37386      db 0                    ; DATA XREF: scanObjectsAhead+20↑w
+                                        ; scanObjectsAhead+636↑r ...
 byte_37387      db 0                    ; DATA XREF: clearViewFlags+243↑w
                                         ; prepareIndoorView:loc_1CDC3↑w ...
 byte_37388      db 0                    ; DATA XREF: clearViewFlags+104↑w
@@ -49739,8 +49740,8 @@ byte_37390      db 0                    ; DATA XREF: clearViewFlags+110↑w
                                         ; prepareIndoorView:loc_1C898↑w ...
 byte_37391      db 0                    ; DATA XREF: clearViewFlags+10A↑w
                                         ; prepareIndoorView:loc_1CBAA↑w ...
-byte_37392      db 0                    ; DATA XREF: sub_15B50+2F3↑r
-                                        ; sub_15B50+301↑r ...
+byte_37392      db 0                    ; DATA XREF: scanObjectsAhead+2F3↑r
+                                        ; scanObjectsAhead+301↑r ...
                 align 2
 ; char *format
 format          dw 0                    ; DATA XREF: runMazeEvent+DD4↑r
@@ -49791,8 +49792,8 @@ byte_373C4      db 0                    ; DATA XREF: clearViewFlags+1BE↑w
                                         ; prepareIndoorView:loc_1D3E1↑w ...
 byte_373C5      db 0                    ; DATA XREF: clearViewFlags+180↑w
                                         ; prepareIndoorView:loc_1D3F3↑w ...
-byte_373C6      db 0                    ; DATA XREF: sub_15B50+378↑r
-                                        ; sub_15B50+386↑r ...
+byte_373C6      db 0                    ; DATA XREF: scanObjectsAhead+378↑r
+                                        ; scanObjectsAhead+386↑r ...
 byte_373C7      db 0                    ; DATA XREF: clearViewFlags+246↑w
                                         ; prepareIndoorView:loc_1CCBD↑w ...
 byte_373C8      db 0                    ; DATA XREF: clearViewFlags+14E↑w
@@ -49806,7 +49807,7 @@ word_373CC      dw 0                    ; DATA XREF: drawRow4Sprites+88B↑r
                                         ; drawRow4Sprites+9A6↑r ...
 word_373CE      dw 0                    ; DATA XREF: drawRow4Sprites+888↑r
                                         ; drawRow4Sprites+9A3↑r ...
-Maze_objectCount db 0                   ; DATA XREF: sub_15B50:loc_1619A↑r
+Maze_objectCount db 0                   ; DATA XREF: scanObjectsAhead:loc_1619A↑r
                                         ; renderIndoorView:loc_1E51D↑r ...
                                         ; byte, number of objects (MAZEnn.BIN object records, max 80)
 byte_373D1      db 0                    ; DATA XREF: clearViewFlags+18C↑w
@@ -49814,10 +49815,10 @@ byte_373D1      db 0                    ; DATA XREF: clearViewFlags+18C↑w
                 align 4
 byte_373D4      db 0                    ; DATA XREF: clearViewFlags+208↑w
                                         ; prepareIndoorView+B1D↑w ...
-byte_373D5      db 0                    ; DATA XREF: sub_15B50+182↑r
-                                        ; sub_15B50+19A↑r ...
-byte_373D6      db 0                    ; DATA XREF: sub_15B50+1FD↑r
-                                        ; sub_15B50+215↑r ...
+byte_373D5      db 0                    ; DATA XREF: scanObjectsAhead+182↑r
+                                        ; scanObjectsAhead+19A↑r ...
+byte_373D6      db 0                    ; DATA XREF: scanObjectsAhead+1FD↑r
+                                        ; scanObjectsAhead+215↑r ...
 byte_373D7      db 0                    ; DATA XREF: clearViewFlags+237↑w
                                         ; prepareIndoorView:loc_1D4ED↑w ...
                 db 0Fh dup(0)
@@ -77253,7 +77254,7 @@ loc_44278:                              ; CODE XREF: giveTreasure+464↑j
                 mov     bx, ax
                 pop     ax
                 mov     [bx-587Eh], ax
-                call    sub_15B50
+                call    scanObjectsAhead
                 call    drawView
 
 loc_442B0:                              ; CODE XREF: giveTreasure+43C↑j
