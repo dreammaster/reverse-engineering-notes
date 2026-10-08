@@ -26,6 +26,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `consumable` | Using a restorative item or the alchemist's ore transmutation on a party member. | yes |
 | `conversation` | A talk with an NPC: the control loop of UseItem (yendor2.asm:13168; Chapter 3 the same) without a screen. | yes |
 | `creation` | Making a hero without the screens (charcreate.c draws them; this is what the wizard's choices amount to): the portrait (charCreateChoosePortrait), the gender word (+0x10: 1 male, 2 female), the class (partyBeginClassSelection + partyChooseClass: the attributes | yes |
+| `creationwizard` | The title menu's character creation (C: ShowPartyMembers yendor2.asm:35211, with ShowCreateCharacterPrompt :37602) as a state machine over the screens charcreate.h draws. | yes |
 | `dialog` | The NPC conversation / service catalog -- the data behind `UseItem` (yendor2.asm:13169; the same structure in Chapter 3), which `start` calls for a world object (worldobjects.h) with the matching flag, passing the object's own `value` field (its +4 word) as th | yes |
 | `dialogservice` | The topic handlers behind dialog.h's DialogTopicFlag bits, as decide-and-apply functions on the data model (the UI parts -- the "+10 STRENGTH" overlay, the icon-bar slots, the redraws -- are not modeled). | yes |
 | `document` | In-world readable text: journal/history entries and verses, short notes, and longer found documents -- everything RunConversation displays (yendor2.asm:49793). | yes |

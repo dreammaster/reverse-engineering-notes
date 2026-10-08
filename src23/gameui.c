@@ -10,6 +10,7 @@
 #include "cluemonster.h"
 #include "cluespell.h"
 #include "cluetransport.h"
+#include "creationwizard.h"
 #include "font.h"
 #include "gamedialog.h"
 #include "lighting.h"
@@ -534,6 +535,33 @@ static unsigned rosterSlotSum(const GameUi *ui) { /* what RunTitleScreen tests: 
     return sum;
 }
 
+/* ShowCreateCharacterPrompt's slot: the first roster record without a class (+0x0E); false when all nine are taken. */
+static bool wizardStart(GameUi *ui) {
+    for (unsigned i = 0; i < SavePartyRecordCount; i++) {
+        const uint8_t *record = saveGamePartyRecord(&ui->session->save, i);
+        if (record && (record[PartyFieldClass] | (record[PartyFieldClass + 1] << 8)) == 0) {
+            ui->wizardSlot = i;
+            creationWizardStart(&ui->wizard, ui->session->game, &ui->session->items, &ui->session->rng);
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool wizardKey(GameUi *ui, UiKey key) {
+    int ascii = key == UiKeyEscape ? 27 : (key >= 8 && key < 128 ? (int)key : 0);
+    if (!ascii) {
+        return true;
+    }
+    if (!creationWizardKey(&ui->wizard, ascii)) {
+        if (ui->wizard.step == CreationStepDone) {
+            memcpy(saveGamePartyRecord(&ui->session->save, ui->wizardSlot), ui->wizard.record, SavePartyRecordSize);
+        }
+        ui->overlay = UiOverlayTitle;
+    }
+    return true;
+}
+
 static void drawRoster(GameUi *ui) {
     const uint8_t *records[RosterSlots];
     for (unsigned i = 0; i < RosterSlots; i++) {
@@ -583,6 +611,10 @@ void gameUiDraw(GameUi *ui) {
     GameSession *s = ui->session;
     if (ui->overlay == UiOverlayRoster) {
         drawRoster(ui);
+        return;
+    }
+    if (ui->overlay == UiOverlayCreate) {
+        creationWizardDraw(&ui->wizard, &ui->renderer);
         return;
     }
     if (ui->overlay == UiOverlayTitle) {
@@ -882,15 +914,24 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
             }
             ui->overlay = UiOverlayNone;
             gameUiAmbientMusic(ui);
-        } else if (key == 'c') {
+        } else if (key == 'a') {
             rosterSyncFlags(ui);
             ui->overlay = UiOverlayRoster;
+        } else if (key == 'c') {
+            if (wizardStart(ui)) {
+                ui->overlay = UiOverlayCreate;
+            } else {
+                effect(ui, 3);
+            }
         } else if ((key == 'i' || key == 'r') && ui->host.cinematic) {
             ui->host.cinematic(ui->host.ctx, key == 'i' ? "opening" : "credits");
         } else if (key == UiKeyEscape || (key == 'q' && ctrl)) {
             return false;
         }
         return true;
+    }
+    if (ui->overlay == UiOverlayCreate) {
+        return wizardKey(ui, key);
     }
     if (ui->overlay == UiOverlayRoster) {
         return rosterKey(ui, key);

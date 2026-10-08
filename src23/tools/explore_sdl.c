@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../chargen.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -119,6 +119,8 @@ static UiKey uiKeyFor(SDL_Keycode key) {
     case SDLK_RIGHT: return UiKeyRight;
     case SDLK_ESCAPE: return UiKeyEscape;
     case SDLK_TAB: return (UiKey)9;
+    case SDLK_BACKSPACE: return UiKeyBackspace;
+    case SDLK_SPACE: return (UiKey)' ';
     case SDLK_RETURN: case SDLK_KP_ENTER: return UiKeyEnter;
     case SDLK_PLUS: case SDLK_KP_PLUS: case SDLK_EQUALS: return (UiKey)'+';
     case SDLK_MINUS: case SDLK_KP_MINUS: return (UiKey)'-';
@@ -170,7 +172,15 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case 'J': return SDLK_q;
     case 'W': return SDLK_F5; /* save */
     case 'O': return SDLK_F9; /* load */
-    default: return SDLK_UNKNOWN;
+    case '_': return SDLK_SPACE;
+    case '<': return SDLK_BACKSPACE;
+    case '^': return SDLK_5;
+    case '*': return SDLK_6;
+    case '(': return SDLK_7;
+    case ')': return SDLK_8;
+    case '=': return SDLK_9;
+    default:
+        return c >= 'a' && c <= 'z' ? SDLK_a + (c - 'a') : SDLK_UNKNOWN; /* lower case: the plain letter keys (character creation, names) */
     }
 }
 

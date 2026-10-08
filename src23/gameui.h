@@ -10,6 +10,7 @@
 #include "cluemap.h"
 #include "cluemonster.h"
 #include "cluepaged.h"
+#include "creationwizard.h"
 #include "cluespell.h"
 #include "exedata.h"
 #include "session.h"
@@ -25,11 +26,12 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
     UiKeyEscape = 27,
+    UiKeyBackspace = 8,
     UiKeyEnter = 13,
     UiKeyUp = 0x100,
     UiKeyDown,
@@ -70,6 +72,8 @@ typedef struct {
     unsigned lastMusicPage;
     unsigned castNext;     /* the next spell id the C key tries outside a combat */
     const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
+    CreationWizard wizard; /* the character creation under way (UiOverlayCreate) */
+    unsigned wizardSlot;   /* the roster record it will be stored in */
     unsigned rosterCursor; /* the roster screen's slot (0-8) */
     bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
     bool clueNag;          /* the reminder is showing on the page */
@@ -89,10 +93,10 @@ typedef struct {
 bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_t worldSize, ViewPictureFn picture, void *pictureCtx, const GameUiHost *host);
 
 /*
- * The title menu (titlemenu.h: PICTURES category 0 picture 2 with its five commands baked in) as the first screen: C the party roster (UiOverlayRoster: the nine heroes, arrows
- * move, Enter or Space puts a hero in or out of the party of four, Escape returns), E enters the game (the overlay closes; refused with the beep, effect 3, while no hero is in the
- * party), I plays the opening cinematic through the host ("opening"), R the credits ("credits"; Chapter 2), Escape or Ctrl+Q quits. The world map ("Assemble a Party") and the character
- * creation wizard screens are not driven from here (creation.h builds heroes; sessionSetParty installs them).
+ * The title menu (titlemenu.h: PICTURES category 0 picture 2 with its five commands baked in) as the first screen: C character creation (UiOverlayCreate, creationwizard.h; the new
+ * hero goes into the first empty roster slot; refused with the beep when the roster is full), A the party roster ("Assemble a Party", UiOverlayRoster: the nine heroes, arrows
+ * move, Enter or Space puts a hero in or out of the party of four, D or Escape returns), E enters the game (the overlay closes; refused with the beep, effect 3, while no hero is in the
+ * party), I plays the opening cinematic through the host ("opening"), R the credits ("credits"; Chapter 2), Escape or Ctrl+Q quits.
  */
 void gameUiShowTitle(GameUi *ui);
 

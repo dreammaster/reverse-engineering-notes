@@ -58,9 +58,9 @@ The lists are the executable's own. Their entries carry a flag for what the shar
 given). Not done: item group 2 (the attribute enhancers: the original's screen only waits for a key), the item pages' ability-info overlay, the monster animation, and Chapter 3's list backdrop
 is assumed to be picture 6.
 
-The title menu (`gameUiShowTitle`) drives C (the party roster: arrows, Enter / Space puts a hero into or out of the party of four, D or Escape returns), E (enter the game; refused with the beep
-while the party is empty), I (the opening cinematic) and R (the credits) through the host. Missing: A (the world map, "Assemble a Party") and the character creation wizard screens; `creation.h`
-already builds a hero from the wizard's choices and `sessionSetParty` installs one.
+The title menu (`gameUiShowTitle`) drives all five commands: C is character creation (`creationwizard.c`: class, portrait, roll, items, name, summary, over the screens of `charcreate.c`; the
+hero goes into the first empty roster slot), A the party roster ("Assemble a Party": Enter / Space puts a hero in or out of the party of four, D or Escape returns), E enters the game (refused
+with the beep while the party is empty), I the opening cinematic and R the credits through the host.
 
 ## Engine loop
 

@@ -7577,6 +7577,8 @@ flags set from the start.)
 
 ### The title menu's names, and Chapter 2's credits (2026-10-08)
 
+(Correction 2026-10-08, later: `RunTitleScreen` calls `ShowPartyMembers` for C -- the character creation pipeline of "Character creation flow" below -- and `ShowWorldMap` for A, which is the nine-slot roster with "ASSIGN UP TO 4 CHARACTERS"; `titlemenu.h` and `roster.h` use the function names, the lines below the picture's own.)
+
 The five lines of the title picture read **Character Creation (C), Assemble a Party (A), Enter the Game (E), Credits (R), Introduction (I)**, with `CTRL Q - QUIT`, `CTRL M - MUSIC` and
 `CTRL S - SOUND` along the bottom: so `titlemenu.h`'s "intro picture" (R, `ShowIntroPicture`) is the **credits** and its "character creation" (I, `RunCharacterCreation`) is the
 **Introduction** -- the cinematic of "The opening story" above -- while C is the roster / creation hub (`ShowPartyMembers`). Chapter 2's `ShowIntroPicture` (yendor2.asm:2545) is the

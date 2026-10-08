@@ -4,7 +4,7 @@
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
- *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../titlemenu.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
+ *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../titlemenu.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
  */
@@ -122,10 +122,10 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiDraw(&ui);
     unsigned titleSum = sum(ui.screen);
     check("the title menu draws picture 2 and swallows the game keys", titleSum > 0 && (gameUiKey(&ui, UiKeyUp, false), s->x == s->x) && ui.overlay == UiOverlayTitle);
-    gameUiKey(&ui, 'c', false);
+    gameUiKey(&ui, 'a', false);
     gameUiDraw(&ui);
     unsigned rosterSum = sum(ui.screen);
-    check("C opens the party roster", ui.overlay == UiOverlayRoster && rosterSum > 0 && rosterSum != titleSum);
+    check("A opens the party roster", ui.overlay == UiOverlayRoster && rosterSum > 0 && rosterSum != titleSum);
     gameUiKey(&ui, UiKeyDown, false);
     gameUiKey(&ui, UiKeyRight, false);
     gameUiKey(&ui, UiKeyRight, false);
@@ -140,7 +140,7 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiKey(&ui, UiKeyEscape, false);
     gameUiKey(&ui, 'e', false);
     check("E is refused with the beep while the party is empty", ui.overlay == UiOverlayTitle && g_effects > effectsBefore);
-    gameUiKey(&ui, 'c', false);
+    gameUiKey(&ui, 'a', false);
     ui.rosterCursor = 4;
     gameUiKey(&ui, UiKeyEnter, false);
     check("an empty slot cannot join", rosterSlotSumCheck(s) == 0);
@@ -150,6 +150,20 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     }
     check("the four heroes are back in the party, in order", saveHeaderGetU16(&s->save, SaveHeaderPartySlots) == 6 && saveHeaderGetU16(&s->save, SaveHeaderPartySlots + 6) == 9);
     gameUiKey(&ui, UiKeyEscape, false);
+    gameUiKey(&ui, 'c', false);
+    gameUiDraw(&ui);
+    unsigned createSum = sum(ui.screen);
+    check("C opens character creation on the class step", ui.overlay == UiOverlayCreate && ui.wizard.step == CreationStepClass && ui.wizardSlot == 0 && createSum != rosterSum);
+    const char *script = "g3i1nann#k"; /* # = Enter */
+    for (const char *k = script; *k; k++) {
+        gameUiKey(&ui, *k == '#' ? UiKeyEnter : (UiKey)*k, false);
+        gameUiDraw(&ui);
+    }
+    const uint8_t *made = saveGamePartyRecord(&s->save, 0);
+    check("a hero made through the keys lands in the first empty roster slot and the title returns", ui.overlay == UiOverlayTitle && made[PartyFieldClass] == 7 && memcmp(made + PartyFieldName, "ANN", 4) == 0);
+    gameUiKey(&ui, 'c', false);
+    gameUiKey(&ui, 'q', false);
+    check("Q abandons a creation: nothing is stored", ui.overlay == UiOverlayTitle && saveGamePartyRecord(&s->save, 1)[PartyFieldClass] == 0);
     check("E enters the game", gameUiKey(&ui, 'e', false) && ui.overlay == UiOverlayNone);
     gameUiDraw(&ui);
     unsigned first = sum(ui.screen);
