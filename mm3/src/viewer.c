@@ -1,12 +1,14 @@
 /* viewer DATADIR NAME [FRAME] [--shot out.bmp]
  * First SDL front end: shows a raw screen (*.RAW, 320x200) or a sprite frame from MM3.CC with the master palette.
  * NAME is a member name (CREATE.RAW) or a 4-digit hex id.  Left/Right change the frame, Esc quits.
+  --text "string" draws a line of text with the game font at (10, 150) (try the alternate font with \x02).
  * With --shot the picture is written as a BMP and the program exits (works with SDL_VIDEODRIVER=dummy). */
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "font.h"
 #include "gfx.h"
 
 static int find_member(const Mm3Cc *cc, const char *name) {
@@ -21,7 +23,8 @@ static int find_member(const Mm3Cc *cc, const char *name) {
 
 int main(int argc, char **argv) {
 	char path[1024];
-	const char *shot = NULL;
+	const char *shot = NULL, *text = NULL;
+	Mm3Font font;
 	int frame = 0, member, quit = 0;
 	Mm3Cc cc;
 	Mm3Palette pal;
@@ -37,6 +40,7 @@ int main(int argc, char **argv) {
 	if (argc < 3) { fprintf(stderr, "usage: %s DATADIR NAME [FRAME] [--shot out.bmp]\n", argv[0]); return 2; }
 	for (int i = 3; i < argc; i++) {
 		if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
+		else if (!strcmp(argv[i], "--text") && i + 1 < argc) text = argv[++i];
 		else frame = atoi(argv[i]);
 	}
 	snprintf(path, sizeof path, "%s/MM3.CC", argv[1]);
@@ -63,6 +67,10 @@ int main(int argc, char **argv) {
 			if (frame >= (int)spr.count) frame = (int)spr.count - 1;
 			if (frame < 0) frame = 0;
 			mm3_blit(screen, MM3_SCREEN_W, MM3_SCREEN_H, &spr.frames[frame], 10, 10);
+		}
+		if (text && mm3_font_load(&font, &cc) == 0) {
+			static const uint8_t colors[3] = { 0x40, 0x30, 0x20 }; /* the module's initial colour table (B75h..B77h) */
+			mm3_font_draw_text(&font, screen, MM3_SCREEN_W, MM3_SCREEN_H, 10, 150, text, colors);
 		}
 		for (int i = 0; i < MM3_RAW_SIZE; i++) {
 			const uint8_t *c = pal.rgb[screen[i]];

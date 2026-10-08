@@ -2,7 +2,7 @@
 CC ?= cc
 CFLAGS ?= -std=c11 -Wall -Wextra -O2
 
-CORE = cc.c maze.c party.c events.c gfx.c dgroup.c mapbin.c evtrun.c
+CORE = cc.c maze.c party.c events.c gfx.c dgroup.c mapbin.c evtrun.c font.c
 
 test: tests/test_cc
 	python3 tests/gen_testdata.py build/testdata

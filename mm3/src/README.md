@@ -12,6 +12,7 @@ each rule comes from.
 | `party.c/.h`, `character.h` | `MAZE.PTY` party state and the 303-byte character record / `MAZE.CHR` roster |
 | `events.c/.h` | event operand decoder (opcodes, `(mode,value)` pairs, goto lines); every shipped record decodes except the documented MAZE60 stray byte |
 | `gfx.c/.h` | master palette and sprite codec (literal/skip/fill, two-layer frames), blit; `make gfxcheck` diffs all 415 graphics members against `tools/mm3_gfx.py` |
+| `font.c/.h` | the text font (`FO.T`, id 8D92h, found through the video module's init code): glyph drawing with descenders, widths, simple control codes |
 | `viewer.c` | first SDL2 front end: `make viewer && ./viewer ../data CREATE.RAW` (arrow keys step sprite frames; `--shot x.bmp` for headless screenshots with `SDL_VIDEODRIVER=dummy`) |
 | `dgroup.c/.h`, `mapbin.c/.h` | run-time access to the game's lookup tables (DGROUP dumped from `MM3.EXE` by `tools/mm3_dgroup.py`, git-ignored) and the `MAZEnn.BIN` monster/object lists (`make mapbintest`: 64 maps, 2,604 monsters, 1,483 objects, ids in range) |
 | `evtrun.c/.h` | event script runner: the control flow of `runMazeEvent` (lines, If/JumpRnd goto, CallEvent/Return, AlterEvent, Exit) with a host interface for the game effects; `make evttest` replays the real MAZE01 pit script |
@@ -20,7 +21,7 @@ each rule comes from.
 Verified on the real game files (`../data`): all 558 `MM3.CC` and 240 `MM3.CUR` members extract byte-identical to the Python tool, and
 `make realtest` parses every `MAZEnn.DAT`/`.EVT` (10,831 events, records tile each file exactly).
 
-Not done yet (planned order): event effects (`If` tests, give/take, teleport, town buildings: the host side of `evtrun`), rules (combat, spells, town), game screens on top of the SDL viewer (UI frames, text/font), first-person renderer (draw-list format still partly undecoded, see `docs/view.md`).
+Not done yet (planned order): event effects (`If` tests, give/take, teleport, town buildings: the host side of `evtrun`), rules (combat, spells, town), game screens on top of the SDL viewer (UI frames, text colours/windows/alignment), first-person renderer (draw-list format still partly undecoded, see `docs/view.md`).
 
 Open question found while porting: `docs/data-files.md` gives facing 0 = north, 1 = south, 2 = east, 3 = west, while
 the view tables are described as N, E, S, W; settle this before writing movement code.
