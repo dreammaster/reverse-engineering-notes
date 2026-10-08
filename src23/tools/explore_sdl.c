@@ -332,7 +332,7 @@ static void useAhead(Overlay *overlay) {
         break;
     case SessionInteractTalker: {
         ConversationStep first;
-        if (sessionTalkStart(s, use.value, &first)) {
+        if (sessionTalkStart(s, use.value, 0, &first)) {
             *overlay = OverlayTalk;
             talkStep(&first, overlay);
         }

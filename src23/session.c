@@ -679,11 +679,147 @@ SessionInteract sessionInteract(GameSession *s) {
     return out;
 }
 
-bool sessionTalkStart(GameSession *s, unsigned npcId, ConversationStep *first) {
+/*
+ * What ShowItemUsagePreview does when a topic loads a service's type word (yendor2.asm:22337): it marks what the speaker can be offered by rewriting the topic masks --
+ * the healer classifies the member's condition, the trainer checks for a level-up (CheckAndAnnounceLevelUp: mask A keeps its low 13 bits, gets 0x1000 and, when a
+ * level is pending, 0x8000), the challenge NPCs mark whether the member already won, the mount sellers collect the topics the member's abilities allow
+ * (AccumulateLearnedAbilityFlags: mask A / B become the OR of the own masks of every topic whose argument has bit 1, or whose flag 0x8 matches an ability the member has).
+ */
+static void refreshService(GameSession *s) {
+    uint8_t *member = sessionPartyRecord(s, s->talkSpeaker);
+    const uint8_t *npc = s->talk.npc;
+    if (!member || !npc) {
+        return;
+    }
+    switch (dialogServiceForType(s->talk.typeWord)) {
+    case DialogServiceHealer:
+        dialogClassifyCondition(&s->talk.masks, member);
+        break;
+    case DialogServiceTrainer:
+        s->talk.masks.availA = (uint16_t)((s->talk.masks.availA & 0x1FFF) | 0x1000);
+        if (partyCheckForLevelUp(member, s->game)) {
+            s->talk.masks.availA |= 0x8000;
+        }
+        break;
+    case DialogServiceChallenge:
+        dialogMarkServiceAvailability(&s->talk.masks, npc, member);
+        break;
+    case DialogServiceMounts: {
+        uint16_t abilities = partyGetU16(member, PartyFieldAbilities);
+        s->talk.masks.availA = s->talk.masks.availB = 0;
+        unsigned first = dialogGetU16(npc, DialogNpcFirstTopic), count = dialogGetU16(npc, DialogNpcTopicCount);
+        for (unsigned n = 0; n < count; n++) {
+            const uint8_t *topic = dialogTopic(&s->dialogs, first + n);
+            if (!topic) {
+                continue;
+            }
+            if ((dialogTopicU16(&s->dialogs, topic, DialogTopicArg) & 1) ||
+                ((dialogGetU16(topic, DialogTopicFlags) & 8) && (dialogTopicU16(&s->dialogs, topic, DialogTopicTextOffset) & abilities))) {
+                s->talk.masks.availA |= dialogTopicU16(&s->dialogs, topic, DialogTopicOwnMaskA);
+                s->talk.masks.availB |= dialogTopicU16(&s->dialogs, topic, DialogTopicOwnMaskB);
+            }
+        }
+        break;
+    }
+    default:
+        return;
+    }
+    conversationList(&s->talk, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+}
+
+/*
+ * The services a type word hands every topic to (UseHealingItem, UseTrainingItem, UseItemType_800, UseAbilityScroll; yendor2.asm:21328, :21510, :20987, :21916). They
+ * all read the topic's argument as a small command: 1 = leave the service (the topic only visits), 4 = refresh what the member can be offered (the healer classifies
+ * the member's condition, the trainer checks for a level-up, the challenge marks whether the member has won, the mount seller nothing), 2 = accept (pay the quote
+ * and do it), and a higher bit = a quote (the healer's 0x1000 / 0x2000 / 0x4000 / 0x8000 types, the trainer's 0x800, the challenge's 0x400), which stores the cost
+ * in `serviceCost`.
+ */
+static SessionService serviceByType(GameSession *s, const ConversationStep *step) {
+    uint8_t *member = sessionPartyRecord(s, s->talkSpeaker);
+    const uint8_t *npc = s->talk.npc;
+    if (!member) {
+        return SessionServiceFailed;
+    }
+    unsigned arg = step->arg;
+    Bcd4 *cost = &s->serviceCost;
+    uint8_t *gold = saveHeaderBcd4(&s->save, SaveHeaderGold);
+    if (arg & 1) {
+        return SessionServiceDone;
+    }
+    switch (step->typeService) {
+    case DialogServiceHealer:
+        if (arg & 4) {
+            dialogClassifyCondition(&s->talk.masks, member);
+        } else if (arg & 2) {
+            if (!dialogApplyHealing(s->serviceType, *cost, gold, member, s->game)) {
+                return SessionServiceFailed;
+            }
+            dialogClassifyCondition(&s->talk.masks, member);
+        } else if (arg & 0xF000) {
+            s->serviceType = (uint16_t)(arg & 0xF000);
+            dialogHealingCost(npc, s->serviceType, &s->talk.masks, member, *cost);
+        }
+        break;
+    case DialogServiceTrainer:
+        if (arg & 4) {
+            partyCheckForLevelUp(member, s->game);
+        } else if (arg & 2) {
+            if (partyApplyTraining(member, s->game, &s->save, *cost) != PartyTrainOutcomeApplied) {
+                return SessionServiceFailed;
+            }
+            partyRecomputeEquipmentStatBonuses(member, &s->items, s->game);
+        } else if (arg & 0x800) {
+            if (!dialogTrainingQuote(npc, member, *cost)) {
+                return SessionServiceFailed;
+            }
+        }
+        break;
+    case DialogServiceChallenge:
+        if (arg & 4) {
+            dialogMarkServiceAvailability(&s->talk.masks, npc, member);
+        } else if (arg & 2) {
+            Bcd4 reward;
+            memset(reward, 0, sizeof(reward));
+            DialogChallengeOutcome outcome = dialogAttemptChallenge(npc, member, gold, reward);
+            s->serviceType = (uint16_t)outcome;
+            if (outcome == DialogChallengeNoGold) {
+                return SessionServiceFailed;
+            }
+        } else if (arg & 0x400) {
+            dialogNpcFee(npc, *cost);
+        }
+        break;
+    case DialogServiceMounts: {
+        const uint8_t *topic = dialogTopic(&s->dialogs, step->topic);
+        uint16_t mask = topic ? dialogTopicU16(&s->dialogs, topic, DialogTopicTextOffset) : 0;
+        if (arg & 2) {
+            if (s->talk.typeWord & 0x2000) {
+                dialogSellTransport(mask, member, gold);
+            } else if (dialogLearnTransport(mask, member, gold) != DialogTransportLearned) {
+                return SessionServiceFailed;
+            }
+        }
+        break;
+    }
+    default:
+        return SessionServiceNone;
+    }
+    conversationList(&s->talk, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+    return SessionServiceDone;
+}
+
+bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, ConversationStep *first) {
     const uint8_t *npc = dialogNpc(&s->dialogs, npcId);
-    if (!npc || s->combat.active || s->combat.wiped) {
+    const uint8_t *voice = sessionPartyRecord(s, speaker);
+    if (!npc || s->combat.active || s->combat.wiped || !voice) {
         return false;
     }
+    if (conversationNeedsSpeaker(npc) && (partyGetU16(voice, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        return false; /* LoadItemData asks again for a member who can act */
+    }
+    s->talkSpeaker = speaker;
+    memset(s->serviceCost, 0, sizeof(s->serviceCost));
+    s->serviceType = 0;
     uint8_t globalSlots[24];
     memset(globalSlots, 0, sizeof(globalSlots));
     unsigned item = dialogGetU16(npc, DialogNpcRequiredItemRange);
@@ -692,11 +828,16 @@ bool sessionTalkStart(GameSession *s, unsigned npcId, ConversationStep *first) {
     if (s->talking && s->talk.ended) {
         s->talking = false;
     }
+    refreshService(s);
     return s->talking || (first && first->ended);
 }
 
 ConversationStep sessionTalkChoose(GameSession *s, unsigned number) {
+    DialogService before = dialogServiceForType(s->talk.typeWord);
     ConversationStep step = conversationChoose(&s->talk, number, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+    if (before == DialogServiceNone) {
+        refreshService(s);
+    }
     if (s->talk.ended) {
         s->talking = false;
     }
@@ -725,6 +866,9 @@ SessionService sessionTalkService(GameSession *s, const ConversationStep *step, 
     const uint8_t *npc = s->talk.npc;
     if (!npc || !step || !step->topic) {
         return SessionServiceNone;
+    }
+    if (step->typeService != DialogServiceNone && !(step->flags & (DialogTopicAttributeBoost | DialogTopicExperienceBoost))) {
+        return serviceByType(s, step);
     }
     if (step->flags & DialogTopicAttributeBoost) {
         return dialogApplyAttributeTome(npc, &s->save, flags, SaveHeaderGlobalFlagsSize).applied ? SessionServiceDone : SessionServiceFailed;

@@ -458,7 +458,7 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
         }
         total++;
         ConversationStep step;
-        if (!sessionTalkStart(s, id, &step)) {
+        if (!sessionTalkStart(s, id, 0, &step)) {
             continue;
         }
         started++;
@@ -472,11 +472,11 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
     }
     snprintf(text, sizeof(text), "%s: every NPC (%u) can be talked to and left with Escape through the session", label, total);
     check(text, total > 50 && started == total && left == total);
-    check("an NPC that does not exist cannot be started", !sessionTalkStart(s, 9999, NULL));
+    check("an NPC that does not exist cannot be started", !sessionTalkStart(s, 9999, 0, NULL));
 
     /* the typed services, on a conversation that is open */
     ConversationStep dummy;
-    sessionTalkStart(s, 1, &dummy);
+    sessionTalkStart(s, 1, 0, &dummy);
     ConversationStep riddle;
     memset(&riddle, 0, sizeof(riddle));
     riddle.topic = 1;

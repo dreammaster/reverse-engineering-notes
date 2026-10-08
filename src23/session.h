@@ -72,6 +72,9 @@ typedef struct GameSession {
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
     bool talking;
+    unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
+    uint16_t serviceType;      /* the healer's last quoted type (word_3298E) / the challenge's outcome */
+    Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
     unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
     unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
@@ -180,11 +183,14 @@ SessionInteract sessionInteract(GameSession *session);
  *   conditional topic is resolved with the outcome;
  *   SessionServiceNeedText: the topic needs the typed text; SessionServiceNeedScreen: the healer, trainer, challenge, mount, shop, sell, enhance and repair services (their decision
  *   modules are dialogservice.h, shop.h, chest.h; the choice of party member and item is the front end's); None: a plain topic.
- * With NPC speaker mode set (conversationNeedsSpeaker) the original first asks which member speaks.
+ * `speaker` is the party slot (0-3) that talks (the original asks only when the NPC's speaker mode is set; a member who cannot act is refused then). The healer, trainer,
+ * challenge and mount services (the type word the NPC's greeting loads, dialog.h) are carried out for that member by sessionTalkService as well: a quote topic fills
+ * `serviceCost`, the accept topic (argument bit 2) pays it and does the work (dialogservice.h; party.h's partyApplyTraining), the refresh topic (bit 4) re-marks what
+ * can be offered, bit 1 leaves the service. Service topics that are not these -- the shops, sell, enhance and repair screens -- still answer NeedScreen.
  */
 typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen } SessionService;
 
-bool sessionTalkStart(GameSession *session, unsigned npcId, ConversationStep *first);
+bool sessionTalkStart(GameSession *session, unsigned npcId, unsigned speaker, ConversationStep *first);
 ConversationStep sessionTalkChoose(GameSession *session, unsigned number);
 void sessionTalkResolve(GameSession *session, bool success);
 SessionService sessionTalkService(GameSession *session, const ConversationStep *step, const char *text);
