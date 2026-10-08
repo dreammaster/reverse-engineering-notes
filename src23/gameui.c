@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "cluebook.h"
+#include "cluemonster.h"
 #include "font.h"
 #include "gamedialog.h"
 #include "lighting.h"
@@ -125,8 +127,14 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe) {
     ui->exe = exe;
 }
 
+static void drawClueMonsters(GameUi *ui);
+
 static void drawClue(GameUi *ui) {
     GameKind game = ui->session->game;
+    if (ui->clueScreen) {
+        drawClueMonsters(ui);
+        return;
+    }
     if (ui->clueHelp) {
         ClueHelpText help;
         if (clueHelpTextLoad(&help, ui->exe, game)) {
@@ -144,8 +152,88 @@ static void drawClue(GameUi *ui) {
     }
 }
 
+static void clueMonsterName(const GameUi *ui, unsigned typeId, char out[MonsterNameBufferSize]) {
+    uint8_t record[MonsterRecordSize];
+    out[0] = 0;
+    if (monsterRecordSpawn(record, &ui->session->monsters, typeId)) {
+        monsterGetName(record, out);
+    }
+}
+
+/* The monster list: every type the catalog can spawn (clue entries are the party's to discover in the original; no record of that is decoded, so all show as known). */
+static void clueMonstersOpen(GameUi *ui) {
+    unsigned n = 0;
+    bool seen[MonsterBlockCountMax + 1];
+    memset(seen, 0, sizeof(seen));
+    for (unsigned type = 1; type < ui->session->monsters.lookupCount && n < sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]); type++) {
+        unsigned block = monsterCatalogBlockIndex(&ui->session->monsters, type);
+        if (block && block <= MonsterBlockCountMax && !seen[block]) { /* the types that share a block are one entry */
+            seen[block] = true;
+            ui->clueTypes[n++] = (uint16_t)type;
+        }
+    }
+    clueListInit(&ui->clueList, n);
+    ui->clueScreen = 1;
+    ui->clueNag = false;
+}
+
+static void drawClueMonsters(GameUi *ui) {
+    GameKind game = ui->session->game;
+    ClueMonsterText text;
+    if (!clueMonsterTextLoad(&text, ui->exe, game)) {
+        return;
+    }
+    const ViewRenderer *r = &ui->renderer;
+    uint16_t tab = (uint16_t)(ClueTabFirstBit >> 1);
+    if (ui->clueScreen == 2) {
+        uint8_t record[MonsterRecordSize];
+        char name[MonsterNameBufferSize];
+        if (monsterRecordSpawn(record, &ui->session->monsters, ui->clueTypes[ui->clueList.selected])) {
+            monsterGetName(record, name);
+            clueMonsterPageDraw(r, &text, record, name, tab);
+        }
+        return;
+    }
+    memset(ui->screen, 0, sizeof(ui->screen));
+    viewDrawPicture(r, 0, game == GameYendor2 ? 14 : 6, 1, 1, false, 0);
+    fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, 2, (unsigned)strlen(text.heading)), 4, text.heading, 0x0D, 0, FontTransparent);
+    char names[ClueListRows][MonsterNameBufferSize];
+    ClueListRow rows[ClueListRows];
+    unsigned shown = 0;
+    for (unsigned i = ui->clueList.first; i < ui->clueList.count && shown < ClueListRows; i++, shown++) {
+        clueMonsterName(ui, ui->clueTypes[i], names[shown]);
+        rows[shown].name = names[shown];
+        rows[shown].known = true;
+    }
+    clueEntryListDraw(r, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), true);
+    uint16_t flags = tab;
+    flags |= clueListCanPageUp(&ui->clueList) ? 0x100 : 0;
+    flags |= clueListCanPageDown(&ui->clueList) ? 0x80 : 0;
+    clueNavBarDraw(r, flags);
+}
+
 static bool clueKey(GameUi *ui, UiKey key) { /* Tab help, F6 the walk through, I / Q turn its pages, Escape closes */
-    if (key == UiKeyEscape) {
+    if (key == UiKeyF2) {
+        clueMonstersOpen(ui);
+        ui->clueHelp = false;
+    } else if (ui->clueScreen == 2) { /* a monster's page: Escape returns to the list */
+        if (key == UiKeyEscape) {
+            ui->clueScreen = 1;
+        }
+    } else if (ui->clueScreen == 1) {
+        if (key == UiKeyEscape) {
+            ui->clueScreen = 0;
+            ui->cluePage = 1;
+        } else if (key == 'i' || key == 'q') {
+            clueListPageKey(&ui->clueList, key == 'q');
+        } else if (key == UiKeyUp || key == UiKeyDown) {
+            clueListRowKey(&ui->clueList, key == UiKeyDown);
+        } else if (key == UiKeyEnter && ui->clueList.count) {
+            ui->clueScreen = 2;
+        } else if (key == UiKeyF6) {
+            ui->clueScreen = 0;
+        }
+    } else if (key == UiKeyEscape) {
         ui->overlay = UiOverlayNone;
     } else if (key == 9 /* Tab */) {
         ui->clueHelp = !ui->clueHelp;
@@ -433,6 +521,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
             ui->overlay = UiOverlayClue;
             ui->clueHelp = false;
             ui->clueNag = false;
+            ui->clueScreen = 0;
             ui->cluePage = 1;
         }
         break;

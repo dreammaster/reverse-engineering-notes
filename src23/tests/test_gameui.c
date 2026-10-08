@@ -4,7 +4,7 @@
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
- *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../exedata.c && ./test_gameui
+ *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../cluemonster.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
  */
@@ -178,6 +178,25 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("Tab shows the help screen", ui.clueHelp && help != page1);
         gameUiKey(&ui, UiKeyF6, false);
         check("F6 goes back to the walk through", !ui.clueHelp);
+        gameUiKey(&ui, UiKeyF2, false);
+        gameUiDraw(&ui);
+        unsigned list = sum(ui.screen);
+        check("F2 lists the monsters", ui.clueScreen == 1 && ui.clueList.count > 14 && list != page1);
+        unsigned types = ui.clueList.count;
+        gameUiKey(&ui, UiKeyDown, false);
+        gameUiKey(&ui, UiKeyDown, false);
+        check("Down moves the selection", ui.clueList.selected == 2);
+        gameUiKey(&ui, 'q', false);
+        gameUiDraw(&ui);
+        check("Q pages down", ui.clueList.first > 0 && ui.clueList.selected >= ui.clueList.first && sum(ui.screen) != list);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        unsigned monster = sum(ui.screen);
+        check("Enter shows the monster's statistics page", ui.clueScreen == 2 && monster != list);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape goes back to the list", ui.clueScreen == 1 && ui.clueList.count == types && ui.overlay == UiOverlayClue);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("and once more to the walk through", ui.clueScreen == 0 && ui.overlay == UiOverlayClue);
         gameUiKey(&ui, 'e', false);
         check("the game keys are swallowed inside the clue book", ui.overlay == UiOverlayClue);
         check("Escape closes the clue book without quitting", gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayNone);

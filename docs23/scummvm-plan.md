@@ -47,7 +47,7 @@ driver) and VOC effects to the mixer, and run the cinematics of `introstory.h` (
 interface. `tools/explore_sdl.c` is exactly that glue for SDL2, about 300 lines.
 
 The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts live in the data segment; `ExeData`): today it shows the walk through (F6; I / Q turn the pages; the
-shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) and the help screen (Tab). The category lists (maps, monsters, spells, items) are the remaining clue-book work; the page
+shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) the help screen (Tab) and the monster statistics (F2: the list of the catalog's distinct monsters, Up / Down / I / Q to choose, Enter for the page, Escape back; the original greys out monsters the party has not met, which is not decoded, so all show as known; Chapter 3's list backdrop is assumed to be picture 6). The other category lists (maps, spells, magic users, items) are the remaining clue-book work; the page
 renderers for them exist (`cluemap.c`, `cluemonster.c`, `cluespell.c`, `clueitem.c`, `cluetransport.c`), only the controller does not.
 
 ## Engine loop
