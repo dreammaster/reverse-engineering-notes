@@ -142,13 +142,15 @@ constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the ta
 commands, and the 49 commands of the player with `InitPlayerCommands()` (`vsplayer/scripting/playerCommands.cpp`).
 Missing:
 
-- `TGameControl::InitScripts()` has to call `InitPlayerCommands()`. That function does not yet call
-  `InitDrawLua()` (asm 447452: the `system_*`, `graphics_*`, `sprite_*`, `movie_*`, `particles_*` functions) or open
-  the libraries `utf8`, `luacurl`, `rex_pcre` and `lfs` that the original has built in.
-- The shader commands (`shaderCompile`, `shaderUniform`) keep the shaders in `shader_list`, but `CreateShader()`
-  (`graphicslib/shader.cpp`) makes none: the shader objects belong to the GL backend behind `graphics`
-  (`g_subSys`, not reconstructed). `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are
-  stubs for the same reason.
+- `TGameControl::InitScripts()` has to call `InitPlayerCommands()`. That function calls the part of `InitDrawLua()`
+  that is done (`sha1`, `system`, `setDelay`: `luaSystem.cpp`); missing are the rest of it - the Box2D bindings
+  (`tolua_b2_open`), the `graphics` object with its sprites, framebuffers, buffers and movies (`graphics_*`, `sprite_*`,
+  `framebuffer_*`, `buffer_*`, `movie_*`: asm 438459-448600, all about the GL backend) - the `steam` object (asm
+  286850-288180) and the libraries `utf8`, `luacurl`, `rex_pcre` and `lfs` that the original has built in.
+- The GL backend (`g_subSys`, 299 uses in the asm; `graphicslib/subsys.h` has the two slots the commands use) is not
+  reconstructed and nothing sets `g_subSys`: `shaderCompile` and `shaderUniform` keep the shader list but make no
+  shaders, `system.systemInfo().gpu` is empty, `getGPUMem()` has only the base number, `system.cacheContents` is
+  empty. `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are stubs for the same reason.
 - `luaopen_Particles`. `Init()` in `AppFunctions.cpp` (asm 493088, calls `InitPlayerCommands()`) and `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) are still stubs.
 - `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
   never called.

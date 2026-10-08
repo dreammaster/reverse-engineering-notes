@@ -96,6 +96,9 @@ public:
 
 	// What the sound engine does (see the list above).
 	virtual void Mute(bool mute);
+	/** Slots 0x20 and 0x28: lets the sounds of a kind go on / pauses them (`system.pauseAllSounds` ...). */
+	virtual void Continue(TSoundTypeEnum type);
+	virtual void Pause(TSoundTypeEnum type);
 	virtual void ContinueAll();
 	virtual void CleanUp();
 	/** Stops the sound of `file`. */

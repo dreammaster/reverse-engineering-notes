@@ -27,6 +27,28 @@ constexpr Uint32 SDL_TEXTINPUT = 0x303u;
 constexpr int SDL_ENABLE = 1;
 constexpr int SDL_DISABLE = 0;
 
+struct SDL_JoystickGUID {
+	Uint8 data[16];
+};
+
+struct SDL_DisplayMode {
+	Uint32 format;
+	int w;
+	int h;
+	int refresh_rate;
+	void *driverdata;
+};
+
+// The pixel formats of 32 bits (SDL_PIXELFORMAT_RGBX8888 ...).
+constexpr Uint32 SDL_PIXELFORMAT_RGB888 = 0x16161804u;
+constexpr Uint32 SDL_PIXELFORMAT_RGBX8888 = 0x16261804u;
+constexpr Uint32 SDL_PIXELFORMAT_BGR888 = 0x16561804u;
+constexpr Uint32 SDL_PIXELFORMAT_BGRX8888 = 0x16661804u;
+constexpr Uint32 SDL_PIXELFORMAT_ARGB8888 = 0x16362004u;
+constexpr Uint32 SDL_PIXELFORMAT_RGBA8888 = 0x16462004u;
+constexpr Uint32 SDL_PIXELFORMAT_ABGR8888 = 0x16762004u;
+constexpr Uint32 SDL_PIXELFORMAT_BGRA8888 = 0x16862004u;
+
 // These are stub *implementations* (see SdlStub.cpp), not just
 // declarations, so the reconstructed main() links and runs standalone
 // before real SDL2 is wired in as a dependency.
@@ -54,6 +76,14 @@ extern "C" {
 	SDL_Joystick *SDL_GameControllerGetJoystick(SDL_GameController *controller);
 	const char *SDL_GameControllerName(SDL_GameController *controller);
 	int SDL_JoystickInstanceID(SDL_Joystick *joystick);
+	const char *SDL_JoystickName(SDL_Joystick *joystick);
+	SDL_JoystickGUID SDL_JoystickGetGUID(SDL_Joystick *joystick);
+	void SDL_JoystickGetGUIDString(SDL_JoystickGUID guid, char *pszGUID, int cbGUID);
+
+// --- Displays and the machine ---
+	int SDL_GetCPUCount(void);
+	int SDL_GetNumDisplayModes(int displayIndex);
+	int SDL_GetDisplayMode(int displayIndex, int modeIndex, SDL_DisplayMode *mode);
 	int SDL_JoystickIsHaptic(SDL_Joystick *joystick);
 
 // --- Haptics ---

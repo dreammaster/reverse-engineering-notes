@@ -77,6 +77,11 @@ public:
 	bool HapticControllerStopEffect(int localEffectIndex);
 	bool HapticStopAll();
 
+	/** The controllers that are open, with their haptic device (`system.controllerCount` ...). */
+	static const std::vector<std::pair<SDL_GameController *, SDL_Haptic *>> &GetGameControllers() {
+		return _gamecontrollers;
+	}
+
 	// Returns the joystick instance ID on success (existing entry's ID if
 	// this joystick was already added), or -1 on failure.
 	int AddGameController(int joystickIndex);

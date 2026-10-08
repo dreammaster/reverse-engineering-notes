@@ -24,9 +24,11 @@
 #include "graphicslib/picture.h"
 #include "base64.h"
 #include "graphicslib/shader.h"
+#include "graphicslib/subsys.h"
 #include "zlibShim.h"
 #include "vsplayer/control/gameControl.h"
 #include "vsplayer/control/gameController.h"
+#include "vsplayer/scripting/luaSystem.h"
 #include "vsplayer/scripting/playerCommands.h"
 #include "vstables/visionaireGame.h"
 
@@ -2286,7 +2288,7 @@ bool CmdShaderCompile::Do() {
 	if (_parser.GetArgument(1, &argument))
 		_fragmentShader = std::string(argument->GetString().mb_str());
 
-	TShader *shader = CreateShader();
+	TShader *shader = g_subSys ? g_subSys->CreateShader() : nullptr;
 
 	shader_list.push_back(shader);
 
@@ -3305,11 +3307,12 @@ COMMAND_FUNCTION(CreateHapticEffectRamp, "createHapticEffectRamp")
 COMMAND_FUNCTION(CreateHapticEffectLeftRight, "createHapticEffectLeftRight")
 
 // Confirmed (asm lines 425066-425195): the commands of the scripts and then the ones of the player, in this order.
-// TODO: InitDrawLua() (the drawing functions of the scripts, graphics_*, sprite_*, ...) and the Lua libraries that
-// the original has built in (luaopen_utf8, luaopen_luacurl, luaopen_rex_pcre and luaopen_lfs) are not reconstructed.
+// TODO: InitDrawLua() has only the parts that are not about the video card (luaSystem.cpp), and the Lua libraries
+// that the original has built in (luaopen_utf8, luaopen_luacurl, luaopen_rex_pcre and luaopen_lfs) are not here.
 void InitPlayerCommands(TVisionaireGame *game, const wxString &appDir, const wxString &resourcesDir,
                         const wxString &unused) {
 	InitCommands(game, appDir, resourcesDir, unused);
+	InitDrawLua(L);
 
 	Register_CmdStartAction();
 	Register_CmdStopAction();

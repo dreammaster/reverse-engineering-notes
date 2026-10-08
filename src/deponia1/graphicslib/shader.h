@@ -62,12 +62,6 @@ extern int shader_buffers;
 /** `shader_transition`: the "transition" option of shaderSetOptions (-1 without one). */
 extern int shader_transition;
 
-/**
- * Makes a shader of the GL backend (slot 0x20 of `g_subSys` in the original). TODO: the GL backend is not
- * reconstructed, nothing is made (the result is null; the commands go on without the shader).
- */
-TShader *CreateShader();
-
 /** Confirmed call shape (asm 404590-404612, `CompositeEnums(int)`): the blend mode of the engine for the number of
  *  a script (0 to 10; the others are 2). */
 int CompositeEnums(int value);

@@ -104,12 +104,21 @@ extern wxString passw;
 
 // Confirmed a real, named global (TGameControl::HandleMouseMove,
 // Deponia_Linux.asm line 472208) - gates whether the hovered-interface-object
-// set is rebuilt every call when it's already empty. Never seen written
-// anywhere reversed so far.
+// set is rebuilt every call when it's already empty. The scripts set it with
+// `system.pauseEngineUpdate = true` (see luaSystem.cpp).
 extern bool EngineUpdatePaused;
 
 // Confirmed a real, named global, distinct from EngineUpdatePaused above
 // (TGameControl::Update, Deponia_Linux.asm line 470381) - specifically gates
-// the per-frame "mainLoop" Lua handler dispatch; never seen written anywhere
-// reversed so far.
+// the per-frame "mainLoop" Lua handler dispatch. The scripts set it with
+// `system.pauseMainLoops = true` (see luaSystem.cpp).
 extern bool MainLoopsPaused;
+
+// Confirmed real, named globals (Deponia_Linux.asm lines 5250598, 5251151, 5294355, 5294362; read and written by
+// the `system` object of the scripts, luaSystem.cpp): whether the game pauses when the window loses the focus (the
+// script sets it with `system.pauseOnFocusLost`), whether a movie may be paused (`system.moviePauseAllowed`), the
+// frames per second and the time the last frame took in milliseconds (`system.frameTime`, `system.lastFrameTime`).
+extern bool CanLoseFocus;
+extern bool g_bMoviePauseAllowed;
+extern float fps;
+extern int lastFrameTime;

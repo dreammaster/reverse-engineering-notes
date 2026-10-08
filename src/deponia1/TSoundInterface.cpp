@@ -185,6 +185,12 @@ int TSoundInterface::AdjustToGeneralVolume(int volume, TSoundTypeEnum type) cons
 void TSoundInterface::Mute(bool /*mute*/) {
 }
 
+void TSoundInterface::Continue(TSoundTypeEnum /*type*/) {
+}
+
+void TSoundInterface::Pause(TSoundTypeEnum /*type*/) {
+}
+
 void TSoundInterface::ContinueAll() {
 }
 

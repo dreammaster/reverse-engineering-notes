@@ -53,5 +53,9 @@ wxString passw;
 bool EngineUpdatePaused = false;
 
 bool MainLoopsPaused = false;
+bool CanLoseFocus = true;
+bool g_bMoviePauseAllowed = true;
+float fps = 0.0f;
+int lastFrameTime = 0;
 
 wxRect g_displayedArea;

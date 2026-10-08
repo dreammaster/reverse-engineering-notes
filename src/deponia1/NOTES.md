@@ -3458,6 +3458,17 @@ to and from Lua tables. What the scripts see:
   None, Quad, Quart, Quint, Sine, each In, Out and InOut. A correction of an earlier guess: the periodic and ramp
   haptic effects (`TGameController::HapticNewEffectPeriodic/Ramp`) take the attack and fade *levels* and no button or
   interval, as the script commands pass them.
+- `vsplayer/scripting/luaSystem.cpp`: the global `system` (metatable `Visionaire.TSystem`, made by `lua_open_system`).
+  Reading a name gives a function of the table `system_meths` (the original keeps a hash map of them, filled when the
+  object is made) or a value (`vramUsed`, `memoryUsed`, `lastFrameTime`, `frameTime`, `cacheContents`,
+  `savegamesCount`, `selectedSavegame`, `savegamesScrollPos`); writing `pauseMainLoops`, `pauseEngineUpdate`
+  (which also lets go of the object under the mouse), `pauseOnFocusLost`, `moviePauseAllowed` (booleans) or
+  `selectedSavegame` (a number) changes the engine; the functions pause and resume the sounds (all kinds but the music,
+  and the music), the running animations and actions, and tell about the controllers, joysticks, the CPU and the
+  display modes (only the 32-bit ones, and a mode with the width or the height of the one before is left out - a quirk of
+  the original). `InitDrawLua()` there also makes `sha1()` and `setDelay(ms, function or name)`; the rest of it (the Box2D
+  bindings, the `graphics` object and its sprites, framebuffers, buffers and movies) is not here. The `steam` object
+  (`steam_*`, asm 286850-288180: Steam Input) is not reconstructed either.
 - `vsplayer/scripting/scriptingutils.cpp`: the Lua globals in the savegames. `SaveGlobalScriptVariables()` walks the
   global table and makes `ScriptVariable` records (table 0x22: key type, value type, value as text, `IsGlobalVar`, the
   elements of a table as children in `Items`; a data object is saved as its `(table,id)` string); skipped are the

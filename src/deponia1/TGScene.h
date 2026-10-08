@@ -118,6 +118,17 @@ public:
 	void DeleteSelectedSavegame();
 	void SelectSavegame(const wxPoint &pos);
 	void SetSelectedSavegame(int index);
+	/** The savegame-picker state that the scripts read (`system.savegamesCount`, `selectedSavegame`,
+	 *  `savegamesScrollPos`). */
+	int GetSavegameCount() const {
+		return static_cast<int>(_savegames.size());
+	}
+	int GetSelectedSavegameIndex() const {
+		return _selectedSavegame;
+	}
+	int GetFirstVisibleSavegame() const {
+		return _firstVisibleSavegame;
+	}
 	void ScrollSavegames(bool backwards);
 	void SetActiveSavegames();
 	void SetSavegames();

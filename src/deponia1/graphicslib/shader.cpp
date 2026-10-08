@@ -1,13 +1,12 @@
 #include "graphicslib/shader.h"
+#include "graphicslib/subsys.h"
+
+TSubSys *g_subSys = nullptr;
 
 std::list<TShader *> shader_list;
 std::vector<std::vector<TRenderPass> > shader_renderpasses;
 int shader_buffers = 0;
 int shader_transition = -1;
-
-TShader *CreateShader() {
-	return nullptr;
-}
 
 // Confirmed (asm lines 404590-404612, and the table `CSWTCH_1542` at 3141883): the blend modes of the engine for
 // the numbers 0 to 10 of the scripts.
