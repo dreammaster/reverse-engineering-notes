@@ -636,6 +636,7 @@ void toUTF(wxString *out, const char *utf8);
 // immediately appended to a std::wstring at that call site, so a plain
 // decimal rendering (matching its name) is the obvious behavior.
 wxString CONVTOSTR(const int &value);
+wxString CONVTOSTR(const long &value);
 
 // Stand-in for wxWidgets' wxStandardPathsBase, which real TStandardPaths
 // (see TStandardPaths.h) holds a pointer to and forwards most calls to.

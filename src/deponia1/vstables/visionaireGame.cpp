@@ -156,12 +156,6 @@ void TVisionaireGame::InitXMLNames() {
 		TXMLNames::AddXMLName(wxString(name), id++, true);
 }
 
-void SaveGlobalScriptVariables(TVisionaireGame &/*game*/) {
-}
-
-void LoadGlobalScriptVariables(TVisionaireGame &/*game*/) {
-}
-
 // Confirmed (asm lines 1523439-1523825): the file is looked up by its name
 // (relative to the current directory; with `relativeToFile` that directory is
 // first set to the one the file is in), loaded as game data, brought up to date

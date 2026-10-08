@@ -22,6 +22,7 @@
 #include "vsplayer/animationGame.h"
 #include "graphicslib/graphics.h"
 #include "graphicslib/picture.h"
+#include "base64.h"
 #include "graphicslib/shader.h"
 #include "zlibShim.h"
 #include "vsplayer/control/gameControl.h"

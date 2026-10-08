@@ -19,36 +19,3 @@ int CompositeEnums(int value) {
 
 	return kModes[value];
 }
-
-std::string base64_decode(const std::string &text) {
-	std::string result;
-	unsigned int accumulator = 0;
-	int bits = 0;
-
-	for (char c : text) {
-		int value;
-
-		if (c >= 'A' && c <= 'Z')
-			value = c - 'A';
-		else if (c >= 'a' && c <= 'z')
-			value = c - 'a' + 26;
-		else if (c >= '0' && c <= '9')
-			value = c - '0' + 52;
-		else if (c == '+')
-			value = 62;
-		else if (c == '/')
-			value = 63;
-		else
-			continue;
-
-		accumulator = (accumulator << 6) | value;
-		bits += 6;
-
-		if (bits >= 8) {
-			bits -= 8;
-			result += static_cast<char>((accumulator >> bits) & 0xFF);
-		}
-	}
-
-	return result;
-}

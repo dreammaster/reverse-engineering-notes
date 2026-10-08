@@ -2472,25 +2472,13 @@ void TGameControl::StartTween(const TVisObjTween &tween) {
 	_visObjTweens.push_back(tween);
 }
 
+// Confirmed (asm lines 475143-476661): the inverse of SaveEventHandlers(). The specification (field 0x2F7 of the game)
+// is "type:names;type:names ...", an entry with anything but one ':' is skipped. For the types of the handlers that
+// the game keeps (mainLoop, mouseEvent, keyEvent, engineEvent) the list is made new from the comma-separated names
+// (the handlers are not registered one by one: the old ones go, even if the entry has no names that survive); a name
+// of a mouse handler is followed by the numbers of its filter, "name|1|2", and a handler without a filter is not kept.
+// The types animationStarted, animationStopped, textStarted and textStopped have one name each (a whole text).
 void TGameControl::LoadEventHandlers() {
-	// Confirmed (asm lines 475143-476661+, TGameControl's largest method):
-	// parses a ';'-separated "type:names" specification string (field
-	// 0x2F7) - each entry's comma-separated names get registered via the
-	// matching confirmed Register* method, by the entry's type prefix:
-	// "mainLoop" -> RegisterEventHandlerMainLoop, "mouseEvent" ->
-	// RegisterMouseEventHandler, "keyEvent" -> RegisterKeyboardEventHandler,
-	// "engineEvent" -> RegisterEngineEventHandler (all four strings
-	// recovered byte-for-byte from the binary's own data). An entry whose
-	// ':'-split token count isn't exactly 2, or whose type matches none of
-	// the four, is skipped. The mouse case's real per-name filter-list
-	// syntax (TMouseEventHandler needs one) wasn't fully traced - registered
-	// here with an empty filter (matches every mouse message), which is a
-	// strict superset of whatever the real filter would have restricted it
-	// to, not a made-up specific one. Likewise, a handful of comma-separated
-	// names get compared against four further fixed strings
-	// ("animationStarted"/"animationStopped"/"textStarted"/"textEnded" -
-	// data at addresses 0xD686F0-0xD687B0) for a special case not traced
-	// here - every name is registered identically instead.
 	TVisObjRef game = _visionaire->GetGame();
 	wxString handlersStr = game.GetStr(kGameRegisteredEventHandlers);
 
@@ -2503,21 +2491,61 @@ void TGameControl::LoadEventHandlers() {
 
 		wxString type = parts.GetNextToken();
 		wxString namesStr = parts.GetNextToken();
-		wxStringTokenizer names(namesStr, L',');
+		const std::wstring typeName = type.ToStdWstring();
 
-		if (type.ToStdWstring() == L"mainLoop") {
+		if (typeName == L"mainLoop") {
+			_engineEventHandlerNamesMainLoop.clear();
+
+			wxStringTokenizer names(namesStr, L',');
 			while (names.HasMoreTokens())
-				RegisterEventHandlerMainLoop(names.GetNextToken());
-		} else if (type.ToStdWstring() == L"mouseEvent") {
-			std::vector<int> filter;
+				_engineEventHandlerNamesMainLoop.push_back(names.GetNextToken().ToStdWstring());
+		} else if (typeName == L"mouseEvent") {
+			_mouseEventHandlers.clear();
+
+			wxStringTokenizer names(namesStr, L',');
+			while (names.HasMoreTokens()) {
+				wxStringTokenizer fields(names.GetNextToken(), L'|');
+				TMouseEventHandler handler;
+
+				if (!fields.HasMoreTokens())
+					continue;
+
+				handler.name = fields.GetNextToken();
+
+				while (fields.HasMoreTokens()) {
+					long value;
+
+					if (fields.GetNextToken().ToLong(&value, 10))
+						handler.mouseButtonFilter.push_back(static_cast<unsigned int>(value));
+				}
+
+				if (!handler.mouseButtonFilter.empty())
+					_mouseEventHandlers.push_back(handler);
+			}
+		} else if (typeName == L"engineEvent") {
+			_engineEventHandlerNames.clear();
+
+			wxStringTokenizer names(namesStr, L',');
 			while (names.HasMoreTokens())
-				RegisterMouseEventHandler(names.GetNextToken(), filter);
-		} else if (type.ToStdWstring() == L"keyEvent") {
-			while (names.HasMoreTokens())
-				RegisterKeyboardEventHandler(names.GetNextToken());
-		} else if (type.ToStdWstring() == L"engineEvent") {
-			while (names.HasMoreTokens())
-				RegisterEngineEventHandler(names.GetNextToken());
+				_engineEventHandlerNames.push_back(std::string(names.GetNextToken().mb_str()));
+		} else if (typeName == L"keyEvent") {
+			_keyboardEventHandlers.clear();
+
+			wxStringTokenizer names(namesStr, L',');
+			while (names.HasMoreTokens()) {
+				TKeyboardEventHandler handler;
+
+				handler.name = names.GetNextToken();
+				_keyboardEventHandlers.push_back(handler);
+			}
+		} else if (typeName == L"animationStarted") {
+			TGAnimation::RegisterEventHandlerAnimStarted(namesStr);
+		} else if (typeName == L"animationStopped") {
+			TGAnimation::RegisterEventHandlerAnimStopped(namesStr);
+		} else if (typeName == L"textStarted") {
+			TGText::RegisterEventHandlerTextStarted(namesStr);
+		} else if (typeName == L"textStopped") {
+			TGText::RegisterEventHandlerTextStopped(namesStr);
 		}
 	}
 }

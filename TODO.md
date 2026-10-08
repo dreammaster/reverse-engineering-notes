@@ -149,7 +149,7 @@ Missing:
   (`graphicslib/shader.cpp`) makes none: the shader objects belong to the GL backend behind `graphics`
   (`g_subSys`, not reconstructed). `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are
   stubs for the same reason.
-- `luaopen_Particles`, `vsplayer/scripting/scriptingutils.cpp` (`Save`/`LoadGlobalScriptVariables`, asm ~432832).
+- `luaopen_Particles`. `Init()` in `AppFunctions.cpp` (asm 493088, calls `InitPlayerCommands()`) and `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) are still stubs.
 - `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
   never called.
 

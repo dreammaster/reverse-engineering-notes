@@ -3458,6 +3458,19 @@ to and from Lua tables. What the scripts see:
   None, Quad, Quart, Quint, Sine, each In, Out and InOut. A correction of an earlier guess: the periodic and ramp
   haptic effects (`TGameController::HapticNewEffectPeriodic/Ramp`) take the attack and fade *levels* and no button or
   interval, as the script commands pass them.
+- `vsplayer/scripting/scriptingutils.cpp`: the Lua globals in the savegames. `SaveGlobalScriptVariables()` walks the
+  global table and makes `ScriptVariable` records (table 0x22: key type, value type, value as text, `IsGlobalVar`, the
+  elements of a table as children in `Items`; a data object is saved as its `(table,id)` string); skipped are the
+  engine's own globals, global functions, tables with `_temporary_`, other userdata, and tables below the 10th level (a
+  message names the top table). `LoadGlobalScriptVariables()` puts the records marked global back. Two oddities of the
+  original that the code keeps or marks: (1) the root records are made with `TVisionaire::CreateActiveObject(0x22,
+  empty)`, but the table has no active store (`AddTable(..., -1, ...)`), so it returns an empty reference and **no
+  global variable is ever saved** (the children, which use `CreateObject`, have no parent to go under) - the feature
+  is dormant in the original as far as the asm shows; (2) the load pushes the value and *then* the key before
+  `lua_settable`, which would set `t[value] = key`; the code here pushes the key first (a `TODO` in the source asks to
+  check it if a saved variable ever comes back wrong) - which of the two the game was meant to do cannot be seen,
+  because (1) means nothing was ever loaded. `LuaVisionaireObject`s are saved by id, functions as their bytecode in
+  base64 (the original passes the text to the boolean overload of `SetValue`, a slip that stores `true`; not copied).
 - Not reconstructed yet: `InitDrawLua()` (`system_*`, `graphics_*`, `sprite_*`, `movie_*` ...), the Lua libraries the
   original has built in (`luaopen_utf8`, `luacurl`, `rex_pcre`, `lfs`), the particles (`luaopen_Particles`), and the
   shader objects behind `shaderCompile`/`shaderUniform` (the GL backend; `graphicslib/shader.h` has what the
