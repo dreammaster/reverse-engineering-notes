@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	for (e = recomp_entries_rules_gen; e->name && strcmp(e->name, argv[3]); e++) {}
 	if (!e->name) { fprintf(stderr, "no function %s\n", argv[3]); return 2; }
 	memset(&c, 0, sizeof c);
-	c.sp = 0xFF00; c.ds = DSEG;
+	c.sp = STACK_TOP; c.ds = DSEG;
 	mm3_rules_set_dialog_answer(1);
 	for (int i = argc - 1; i >= 4; i--) PUSH(&c, (uint16_t)strtoul(argv[i], NULL, 0));
 	PUSH(&c, 0); PUSH(&c, 0);

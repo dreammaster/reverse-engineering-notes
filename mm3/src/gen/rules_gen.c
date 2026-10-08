@@ -21,6 +21,7 @@ void host_sub_3CE7A(Cpu *c);
 
 static void fn_ifProc(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("ifProc");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (4), 16);
@@ -526,6 +527,7 @@ loc_3D6F8: RTRACE(c, "loc_3D6F8");
 
 static void fn_getMaxSP(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getMaxSP");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (12), 16);
@@ -718,6 +720,7 @@ loc_513ED: RTRACE(c, "loc_513ED");
 
 static void fn_getMaxHP(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getMaxHP");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (4), 16);
@@ -824,6 +827,7 @@ loc_514CA: RTRACE(c, "loc_514CA");
 
 static void fn_getArmorClass(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getArmorClass");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -884,6 +888,7 @@ loc_51527: RTRACE(c, "loc_51527");
 
 static void fn_getStat(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getStat");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (6), 16);
@@ -1048,6 +1053,7 @@ loc_170E3: RTRACE(c, "loc_170E3");
 
 static void fn_getAge(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getAge");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -1083,6 +1089,7 @@ loc_16E47: RTRACE(c, "loc_16E47");
 
 static void fn_isBitSet(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("isBitSet");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -1111,6 +1118,7 @@ static void fn_isBitSet(Cpu *c) {
 
 static void fn_checkSkill(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("checkSkill");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -1171,6 +1179,7 @@ loc_15440: RTRACE(c, "loc_15440");
 
 static void fn_conditionMod(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("conditionMod");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (6), 16);
@@ -1437,6 +1446,7 @@ loc_193CA: RTRACE(c, "loc_193CA");
 
 static void fn_getCurrentLevel(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getCurrentLevel");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -1468,6 +1478,7 @@ loc_16FAD: RTRACE(c, "loc_16FAD");
 
 static void fn_itemScan(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("itemScan");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -1606,6 +1617,7 @@ loc_16F81: RTRACE(c, "loc_16F81");
 
 static void fn_statBonus(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("statBonus");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -1633,6 +1645,7 @@ loc_16DFF: RTRACE(c, "loc_16DFF");
 
 static void fn_getAttributeCategory(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getAttributeCategory");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -1657,6 +1670,7 @@ loc_19171: RTRACE(c, "loc_19171");
 
 static void fn_getElementalCategory(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("getElementalCategory");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);

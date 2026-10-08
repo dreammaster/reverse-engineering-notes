@@ -15,15 +15,30 @@ typedef struct {
 } Cpu;
 
 #define DSEG 0x286F      /* DGROUP */
-#define STACK_SEG 0x9000 /* the program stack (STK[]) */
 
-extern uint8_t DG[65536];  /* DGROUP (segment 286Fh) */
-extern uint8_t STK[65536]; /* the program stack */
+/* Machine memory: the 8086 address space, linear address = segment * 16 + offset.  The program image (root code, the 13 overlays and
+ * the initialised data) lives at 10000h-52165h exactly where IDA has it; DGROUP is segment 286Fh and the stack segment 9000h. */
+#define MEM_SIZE 0x120000
+extern uint8_t MEM[MEM_SIZE + 0x10000]; /* 64 KB slack: a segment near the end can still be addressed with a 16-bit offset */
+#define DG (MEM + 0x286F0)    /* DGROUP, segment 286Fh */
+#ifdef RECOMP_STACK_IN_DG
+/* the whole game: as in the original SS = DS, the stack lives at the top of DGROUP (near pointers to locals work with DS) */
+#define STK DG
+#define STACK_SEG DSEG
+#define STACK_TOP 0xFFF0
+#else
+#define STK (MEM + 0x90000)   /* the program stack, segment 9000h (the verified view / rules bundles keep it apart) */
+#define STACK_SEG 0x9000
+#define STACK_TOP 0xFF00
+#endif
+#define SEGP(seg) (MEM + ((uint32_t)(seg) << 4))
+/* read-only access to code-segment data (tables the compiler put after the code): segment constant + offset */
+#define CS8(seg, a) rd8(SEGP(seg), a)
+#define CS16(seg, a) rd16(SEGP(seg), a)
 
 static inline uint8_t rd8(const uint8_t *m, uint16_t a) { return m[a]; }
 static inline uint16_t rd16(const uint8_t *m, uint16_t a) { return (uint16_t)(m[a] | (m[(uint16_t)(a + 1)] << 8)); }
 #ifdef RECOMP_TRACE
-extern uint8_t STK[65536];
 #define TRACE_STK(m, a, v) do { if ((m) == STK) fprintf(stderr, "W %04X %02X\n", (unsigned)(a), (unsigned)((v) & 0xFF)); } while (0)
 #else
 #define TRACE_STK(m, a, v) ((void)0)
@@ -32,8 +47,7 @@ static inline void wr8(uint8_t *m, uint16_t a, uint32_t v) { TRACE_STK(m, a, v);
 static inline void wr16(uint8_t *m, uint16_t a, uint32_t v) { TRACE_STK(m, a, v); TRACE_STK(m, (uint16_t)(a + 1), v >> 8); m[a] = (uint8_t)v; m[(uint16_t)(a + 1)] = (uint8_t)(v >> 8); }
 
 /* Memory behind a segment value (far pointers): DGROUP, the stack, and buffers registered by the host (roster, loaded files ...). */
-uint8_t *recomp_seg_mem(uint16_t seg);
-void recomp_register_segment(uint16_t seg, uint8_t *mem); /* make a host buffer reachable through a far pointer */
+static inline uint8_t *recomp_seg_mem(uint16_t seg) { return SEGP(seg); }
 #define ES8(c, a) rd8(recomp_seg_mem((c)->es), a)
 #define ES16(c, a) rd16(recomp_seg_mem((c)->es), a)
 #define ES8_SET(c, a, v) wr8(recomp_seg_mem((c)->es), a, v)
@@ -155,6 +169,12 @@ static inline uint32_t alu_ror(Cpu *c, uint32_t a, unsigned n, int bits) {
 	return a;
 }
 
+#ifdef RECOMP_TRACE_CALLS
+#define FNTRACE(name) fprintf(stderr, "> %s\n", name)
+#else
+#define FNTRACE(name) ((void)0)
+#endif
+
 #ifdef RECOMP_TRACE
 #include <stdio.h>
 /* debugging aid: register state at every label, to diff against the emulator (tools/mm3_trace_diff.py) */
@@ -162,6 +182,9 @@ static inline uint32_t alu_ror(Cpu *c, uint32_t a, unsigned n, int bits) {
 #else
 #define RTRACE(c, name) ((void)0)
 #endif
+
+/* a host routine that has not been written yet (see the weak definitions in generated code) */
+void recomp_unimplemented(const char *name, Cpu *c);
 
 typedef struct { const char *name; void (*fn)(Cpu *); } RecompEntry;
 

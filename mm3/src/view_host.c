@@ -87,7 +87,7 @@ void call_mazeUpdateSlot(Cpu *c);
 void mm3_view_run_outdoor(void) {
 	Cpu c;
 	memset(&c, 0, sizeof c);
-	c.sp = 0xFF00;
+	c.sp = STACK_TOP;
 	PUSH(&c, 0); PUSH(&c, 0);
 	call_drawViewOutdoors(&c);
 }
@@ -95,7 +95,7 @@ void mm3_view_run_outdoor(void) {
 void mm3_view_update_slot(void) {
 	Cpu c;
 	memset(&c, 0, sizeof c);
-	c.sp = 0xFF00;
+	c.sp = STACK_TOP;
 	PUSH(&c, 0); PUSH(&c, 0);
 	call_mazeUpdateSlot(&c);
 }
@@ -103,10 +103,10 @@ void mm3_view_update_slot(void) {
 void mm3_view_run(void) {
 	Cpu c;
 	memset(&c, 0, sizeof c);
-	c.sp = 0xFF00;
+	c.sp = STACK_TOP;
 	PUSH(&c, 0); PUSH(&c, 0);
 	call_prepareIndoorView(&c);
-	c.sp = 0xFF00;
+	c.sp = STACK_TOP;
 	PUSH(&c, 0); PUSH(&c, 0);
 	call_renderIndoorView(&c);
 }

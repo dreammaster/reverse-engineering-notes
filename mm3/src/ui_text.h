@@ -44,7 +44,10 @@ typedef struct {
 } Mm3Window;
 
 typedef struct Mm3Ui {
-	uint8_t screen[65536];        /* segment A000h: the visible 320x200 pixels are the first 64000 bytes */
+	uint8_t *screen;              /* segment A000h: the visible 320x200 pixels are the first 64000 bytes (owned unless set by the host) */
+	uint8_t *owned_screen;
+	void (*draw_list)(void *user, unsigned dgroup_offset); /* control code 05: a draw list at that DGROUP offset (see view_glue.c) */
+	void *draw_list_user;
 	Mm3Font font;
 	uint8_t tiles[20][64];        /* window frame pieces (module offset 37D2h) */
 	uint8_t colour_entries[0xAA]; /* module offset 0B78h: 4 bytes per colour index */
@@ -64,6 +67,8 @@ typedef struct Mm3Ui {
 /* Loads the font and the module's tables from MM3.CC; the screen starts black. */
 Mm3Ui *mm3_ui_create(const Mm3Cc *mm3cc);
 void mm3_ui_destroy(Mm3Ui *ui);
+/* Draw into a screen buffer owned by the caller (e.g. video memory of the recompiled game) instead of the built-in one. */
+void mm3_ui_set_screen(Mm3Ui *ui, uint8_t *screen);
 
 void mm3_ui_print(Mm3Ui *ui, const char *text);
 /* vdrv_1E_openWindow: x, y, width, height in pixels, text colour index, text printed in the new window (may be NULL). */

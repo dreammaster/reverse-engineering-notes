@@ -1,0 +1,24 @@
+# Routines that stay hand-written (src/host_*.c): the video module's wrappers, DOS and file layer, input, sound, startup/shutdown.
+vdrv_*
+rnd
+ccOpen
+ccClose
+ccRead
+ccSeek
+Resources_openFile
+loadResourceByName
+sub_22740
+sub_22534
+allocFar
+MemFree
+sub_250F8
+sub_378C0
+sub_39900
+sub_27F86
+_main
+start
+__*
+_*
+sub_25085
+sub_2509A
+writeResource

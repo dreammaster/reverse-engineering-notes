@@ -257,7 +257,17 @@ restart:
 				stos_pattern(ui, off + r * MM3_UI_W, width, w->fill);
 			break;
 		}
-		case 5: cur.p += 4; break; /* draw list: not handled by this module */
+		case 5: { /* draw list: four hex digits, the DGROUP offset of the list */
+			unsigned addr = 0;
+			for (int i = 0; i < 4; i++) {
+				unsigned d = cur.p[i] & 0x7F;
+				d = d <= '9' ? d - '0' : (d & 0xDF) - 'A' + 10;
+				addr = addr * 16 + (d & 15);
+			}
+			cur.p += 4;
+			if (ui->draw_list) ui->draw_list(ui->draw_list_user, addr);
+			break;
+		}
 		case 6: draw_glyph(ui, 0x20); break;
 		case 7: {
 			unsigned v;
@@ -437,6 +447,8 @@ Mm3Ui *mm3_ui_create(const Mm3Cc *cc) {
 	ui->window_fill = (uint16_t)(mod[0xC20] | (mod[0xC21] << 8));
 	free(mod);
 	/* the module's initial state: one full-screen "window" */
+	ui->owned_screen = calloc(1, 65536);
+	ui->screen = ui->owned_screen;
 	ui->win.width = MM3_UI_W; ui->win.height = MM3_UI_H;
 	ui->win.colour = 1; ui->win.fill = 0x8888;
 	ui->win.right = MM3_UI_W; ui->win.bottom = MM3_UI_H;
@@ -445,8 +457,11 @@ Mm3Ui *mm3_ui_create(const Mm3Cc *cc) {
 	return ui;
 }
 
+void mm3_ui_set_screen(Mm3Ui *ui, uint8_t *screen) { ui->screen = screen; }
+
 void mm3_ui_destroy(Mm3Ui *ui) {
 	if (!ui) return;
+	free(ui->owned_screen);
 	for (int i = 0; i < MM3_UI_MAX_WINDOWS; i++) free(ui->saved_bg[i]);
 	free(ui);
 }

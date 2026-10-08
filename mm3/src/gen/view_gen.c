@@ -40,6 +40,7 @@ void host_vdrv_2D_printText(Cpu *c);
 
 static void fn_prepareIndoorView(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("prepareIndoorView");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (4), 16);
@@ -3521,6 +3522,7 @@ loc_1D8CA: RTRACE(c, "loc_1D8CA");
 
 static void fn_renderIndoorView(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("renderIndoorView");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (4), 16);
@@ -8609,6 +8611,7 @@ loc_203F8: RTRACE(c, "loc_203F8");
 
 static void fn_drawWallFaces(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawWallFaces");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -10082,6 +10085,7 @@ loc_1E3EF: RTRACE(c, "loc_1E3EF");
 
 static void fn_drawRow1Sprites(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawRow1Sprites");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -10788,6 +10792,7 @@ loc_19030: RTRACE(c, "loc_19030");
 
 static void fn_drawRow2Sprites(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawRow2Sprites");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -11750,6 +11755,7 @@ loc_18BE9: RTRACE(c, "loc_18BE9");
 
 static void fn_drawRow3Sprites(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawRow3Sprites");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -12900,6 +12906,7 @@ loc_18622: RTRACE(c, "loc_18622");
 
 static void fn_drawRow4Sprites(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawRow4Sprites");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -14702,6 +14709,7 @@ loc_17F30: RTRACE(c, "loc_17F30");
 
 static void fn_drawHudPieces(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawHudPieces");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -15137,6 +15145,7 @@ loc_1B90E: RTRACE(c, "loc_1B90E");
 
 static void fn_scanObjectsAhead(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("scanObjectsAhead");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (8), 16);
@@ -15890,6 +15899,7 @@ loc_161A7: RTRACE(c, "loc_161A7");
 
 static void fn_scanMonstersAhead(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("scanMonstersAhead");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (8), 16);
@@ -16828,6 +16838,7 @@ loc_16937: RTRACE(c, "loc_16937");
 
 static void fn_clearViewFlags(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("clearViewFlags");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -17036,6 +17047,7 @@ static void fn_clearViewFlags(Cpu *c) {
 
 static void fn_updateLight(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("updateLight");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(382)) & 0xFF) << 0));
@@ -17085,6 +17097,7 @@ loc_1C193: RTRACE(c, "loc_1C193");
 
 static void fn_mazeGetWordRel(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("mazeGetWordRel");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -17248,6 +17261,7 @@ loc_1BD51: RTRACE(c, "loc_1BD51");
 
 static void fn_mazeGetFlagsRel(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("mazeGetFlagsRel");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -17366,6 +17380,7 @@ loc_1BE3A: RTRACE(c, "loc_1BE3A");
 
 static void fn_mazeNeighbourSlot(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("mazeNeighbourSlot");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -17397,6 +17412,7 @@ loc_1B9C1: RTRACE(c, "loc_1B9C1");
 
 static void fn_checkDrawListOverflow(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("checkDrawListOverflow");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_dec(c, c->sp, 16);
@@ -17471,6 +17487,7 @@ loc_1B217: RTRACE(c, "loc_1B217");
 
 static void fn_checkSkill(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("checkSkill");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -17531,6 +17548,7 @@ loc_15440: RTRACE(c, "loc_15440");
 
 static void fn_drawViewOutdoors(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("drawViewOutdoors");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->si);
@@ -17580,6 +17598,7 @@ loc_2044C: RTRACE(c, "loc_2044C");
 
 static void fn_renderOutdoorView(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("renderOutdoorView");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (14), 16);
@@ -22587,6 +22606,7 @@ loc_22496: RTRACE(c, "loc_22496");
 
 static void fn_mazeUpdateSlot(Cpu *c) {
 	uint32_t t_; (void)t_;
+	FNTRACE("mazeUpdateSlot");
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 	t_ = alu_sub(c, c->sp, (4), 16);

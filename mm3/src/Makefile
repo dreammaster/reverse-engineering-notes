@@ -133,3 +133,16 @@ tests/rules_run: tests/rules_run.c $(RULES_SRC) recomp.h
 rulescheck: tests/rules_run
 	python3 ../tools/mm3_rules_check.py ../data/MM3.EXE $(DATA) tests/rules_run 300
 .PHONY: rulescheck
+
+# ---- the whole game logic, translated (everything reachable from exploreLoop except the routines in gen/hosts.txt)
+regen_game:
+	python3 ../tools/mm3_reach.py ../mm3.asm exploreLoop,loadMonsterData,loadSavedGame,rosterMenu,introSequence,copyPartyToRoster gen/hosts.txt > gen/game_funcs.txt
+	ASM2C_WEAK_HOSTS=1 python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/game_gen.c $$(cat gen/game_funcs.txt | tr '\n' ' ')
+.PHONY: regen_game
+
+# ---- the recompiled game
+GAME_SRC = recomp.c gen/game_gen.c game_machine.c game_video.c ui_text.c font.c gfx.c cc.c
+
+mm3game: game_main.c $(GAME_SRC) game.h recomp.h
+	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS)
+.PHONY: mm3game

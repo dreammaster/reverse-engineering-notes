@@ -11,3 +11,5 @@ tests/view_run
 mm3view
 tests/test_walk
 tests/ui_run
+mm3game
+tests/rules_run
