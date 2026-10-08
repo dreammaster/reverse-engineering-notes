@@ -38,6 +38,10 @@ static void impl_getThievery(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3
 
 static void impl_itemPrice(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_item_price(&g, near_char(c, 0), (int16_t)host_arg(c, 1), (int16_t)host_arg(c, 2), host_arg(c, 3))); }
 
+static void impl_getMonsterResistance(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_monster_resistance(&g, (int16_t)host_arg(c, 0)); }
+static void impl_Spells_subSpellCost(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_spend_spell_cost(&g, (Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
+static void impl_moveMonsterBy(Cpu *c) { Mm3Game g = game(); mm3_move_monster_by(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
+
 /* host entry points: with MM3_SHADOW=1 every call is also run through the translated original and the results compared (game_diff.c) */
 void host_getCurrentExperience(Cpu *c) { game_shadow("getCurrentExperience", impl_getCurrentExperience, c, 1, 2); }
 void host_nextExperienceLevel(Cpu *c) { game_shadow("nextExperienceLevel", impl_nextExperienceLevel, c, 1, 2); }
@@ -64,3 +68,6 @@ void host_checkClasses(Cpu *c) { game_shadow("checkClasses", impl_checkClasses, 
 void host_rollAttributes(Cpu *c) { game_shadow("rollAttributes", impl_rollAttributes, c, 2, 0); }
 void host_getThievery(Cpu *c) { game_shadow("getThievery", impl_getThievery, c, 1, 1); }
 void host_itemPrice(Cpu *c) { game_shadow("itemPrice", impl_itemPrice, c, 4, 2); }
+void host_getMonsterResistance(Cpu *c) { game_shadow("getMonsterResistance", impl_getMonsterResistance, c, 1, 1); }
+void host_Spells_subSpellCost(Cpu *c) { game_shadow("Spells_subSpellCost", impl_Spells_subSpellCost, c, 2, 1); }
+void host_moveMonsterBy(Cpu *c) { game_shadow("moveMonsterBy", impl_moveMonsterBy, c, 3, 0); }

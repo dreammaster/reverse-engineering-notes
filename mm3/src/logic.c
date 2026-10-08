@@ -302,3 +302,61 @@ uint32_t mm3_item_price(const Mm3Game *g, const Mm3Character *ch, int slot, int 
 	default: return 0;
 	}
 }
+
+/* ---- monsters */
+static unsigned far_column(const Mm3Game *g, unsigned pointer_at, unsigned target) { /* value of the current target in a loaded monster stat column */
+	const uint8_t *col = g->mem + (unsigned)rd16(g, pointer_at + 2) * 16;
+	return col[(uint16_t)(rd16(g, pointer_at) + rd16(g, MM3_DG_MON_COLUMN_OFFSET + target * 2))];
+}
+
+int mm3_monster_resistance(const Mm3Game *g, int kind) {
+	unsigned target = g->dg[MM3_DG_COMBAT_TARGET], column = 0, percent = 0;
+	int amount = 0;
+	if (kind == 0 || kind == 3) {  /* attack with the wielded weapon: its element picks the column */
+		int8_t element = (int8_t)g->dg[MM3_DG_WEAPON_ELEMENT];
+		amount = g->dg[MM3_DG_ELEMENT_RESIST_BASE + (uint8_t)element];
+		if (element) {
+			column = element < 9 ? MM3_DG_MON_FIRE : element < 0x10 ? MM3_DG_MON_ELEC : element < 0x15 ? MM3_DG_MON_COLD
+			       : element < 0x1A ? MM3_DG_MON_ACID : element < 0x22 ? MM3_DG_MON_ENER : MM3_DG_MON_MAGI;
+			percent = far_column(g, column, target);
+		}
+	} else {                         /* spell attack: its type picks the column (and the amount stays 0) */
+		static const unsigned columns[7] = { MM3_DG_MON_PHYS, MM3_DG_MON_MAGI, MM3_DG_MON_FIRE, MM3_DG_MON_ELEC, MM3_DG_MON_COLD, MM3_DG_MON_ACID, MM3_DG_MON_ENER };
+		unsigned type = rd16(g, MM3_DG_SPELL_ATTACK_TYPE);
+		if (type < 7) percent = far_column(g, columns[type], target);
+	}
+	if (percent == 0) return amount;
+	if (percent == 100) return 0;
+	return (int16_t)((int16_t)((100 - (int)percent) * amount) / 100);
+}
+
+int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell) {
+	int gems = (int16_t)rd16(g, MM3_DG_SPELL_GEM_COST + spell * 2);
+	int sp = (int16_t)rd16(g, MM3_DG_SPELL_SP_COST + spell * 2);
+	if (sp < 1) sp = (int16_t)(mm3_char_level(ch) * (int16_t)-sp);   /* "per level" costs are stored negated */
+	if (ch->sp < sp) return 1;
+	uint32_t have = (uint32_t)rd16(g, MM3_DG_PARTY_GEMS) | ((uint32_t)rd16(g, MM3_DG_PARTY_GEMS + 2) << 16), need = (uint32_t)(int32_t)gems;
+	if (need > have) return 2;
+	ch->sp = (int16_t)(ch->sp - sp);
+	have -= need;
+	g->dg[MM3_DG_PARTY_GEMS] = (uint8_t)have; g->dg[MM3_DG_PARTY_GEMS + 1] = (uint8_t)(have >> 8);
+	g->dg[MM3_DG_PARTY_GEMS + 2] = (uint8_t)(have >> 16); g->dg[MM3_DG_PARTY_GEMS + 3] = (uint8_t)(have >> 24);
+	return 0;
+}
+
+void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster) {
+	uint8_t *dg = g->dg;
+	unsigned y = (uint16_t)(rd16(g, MM3_DG_MON_Y + monster * 2) + dy), x = (uint16_t)(rd16(g, MM3_DG_MON_X + monster * 2) + dx);
+	unsigned size = dg[MM3_DG_MON_SIZE + rd16(g, MM3_DG_MON_COLUMN_OFFSET + monster * 2)];
+	unsigned target_cell = MM3_DG_MON_GRID + ((y << 5) + x);
+	if ((int)(dg[target_cell] + size) >= 4) return;                  /* the cell is full */
+	if (rd16(g, MM3_DG_MON_ASLEEP + monster * 2) == 0 && dg[MM3_DG_MONSTERS_MOVE_FLAG]) {
+		unsigned from = MM3_DG_MON_GRID + (((unsigned)rd16(g, MM3_DG_MON_Y + monster * 2) << 5) + rd16(g, MM3_DG_MON_X + monster * 2));
+		dg[target_cell] = (uint8_t)(dg[target_cell] + size);
+		dg[from & 0xFFFF] = (uint8_t)(dg[from & 0xFFFF] - size);
+		dg[MM3_DG_MON_Y + monster * 2] = (uint8_t)y; dg[MM3_DG_MON_Y + monster * 2 + 1] = (uint8_t)(y >> 8);
+		dg[MM3_DG_MON_X + monster * 2] = (uint8_t)x; dg[MM3_DG_MON_X + monster * 2 + 1] = (uint8_t)(x >> 8);
+		dg[MM3_DG_MON_MOVED + monster] = 1;
+	}
+	dg[MM3_DG_MONSTERS_SEEN_FLAG] = 1;
+}

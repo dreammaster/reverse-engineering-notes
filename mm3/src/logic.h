@@ -44,7 +44,20 @@ enum {
 	MM3_DG_WEAPON_HIT_BONUS = 0xA71,      /* by weapon metal */
 	MM3_DG_WEAPON_METAL_DAMAGE = 0xA88,
 	MM3_DG_WEAPON_DICE_COUNT = 0xCD0,     /* by item id */
-	MM3_DG_WEAPON_DICE_SIDES = 0xD19
+	MM3_DG_WEAPON_DICE_SIDES = 0xD19,
+	MM3_DG_SPELL_ATTACK_TYPE = 0xE60E,    /* word */
+	MM3_DG_ELEMENT_RESIST_BASE = 0xA4C,   /* by weapon element */
+	MM3_DG_MON_PHYS = 0xF07A, MM3_DG_MON_MAGI = 0xF05A, MM3_DG_MON_FIRE = 0xF046, MM3_DG_MON_ELEC = 0xF04A,
+	MM3_DG_MON_COLD = 0xF04E, MM3_DG_MON_ACID = 0xF052, MM3_DG_MON_ENER = 0xF062,
+	MM3_DG_SPELL_SP_COST = 0x1B7A,        /* words by spell: spell points (<= 0: that many per level) */
+	MM3_DG_SPELL_GEM_COST = 0x1C16,
+	MM3_DG_PARTY_GEMS = 0xEC58,           /* 32 bits: word at +0 and +2 */
+	/* monster movement */
+	MM3_DG_MON_Y = 0xAD70, MM3_DG_MON_X = 0xAEC4,  /* words per combat/maze monster slot */
+	MM3_DG_MON_GRID = 0x8EF4,             /* 32x32 bytes: how much of each cell is occupied */
+	MM3_DG_MON_SIZE = 0x1B20,             /* by monster type offset */
+	MM3_DG_MON_MOVED = 0xED74,
+	MM3_DG_MONSTERS_MOVE_FLAG = 0x15C, MM3_DG_MONSTERS_SEEN_FLAG = 0x14D
 };
 
 #define MM3_NO_SLOT 0x1111
@@ -87,5 +100,9 @@ int mm3_thievery(const Mm3Game *g, const Mm3Character *ch);                    /
 
 /* items */
 uint32_t mm3_item_price(const Mm3Game *g, const Mm3Character *ch, int slot, int mode, int discount); /* itemPrice: 1 buy, 2 sell, 3-6 repair/identify fee, 0 nothing */
+
+int mm3_monster_resistance(const Mm3Game *g, int kind);                         /* getMonsterResistance: scaled resistance of the current target */
+int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell);       /* Spells_subSpellCost: 0 paid, 1 not enough spell points, 2 not enough gems */
+void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster);       /* moveMonsterBy */
 
 #endif

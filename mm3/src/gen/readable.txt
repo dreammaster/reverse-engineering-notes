@@ -23,3 +23,6 @@ checkClasses
 rollAttributes
 getThievery
 itemPrice
+getMonsterResistance
+Spells_subSpellCost
+moveMonsterBy

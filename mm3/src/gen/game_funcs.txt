@@ -187,7 +187,6 @@ Spell_74_Implosion
 Spell_75_StarBurst
 Spell_76_DivineIntervention
 Spell_sharedHandler
-Spells_subSpellCost
 guildSpellShop
 spellLloydsBeacon
 sub_280EF
@@ -199,7 +198,6 @@ sub_28540
 sub_2819E
 monsterSavingThrow
 monstersAttack
-moveMonsterBy
 sub_27F5E
 getElapsedTime
 arenaEvent
@@ -375,7 +373,6 @@ formatNumber
 sub_4BDC4
 getDamageScale
 getElementalCategory
-getMonsterResistance
 sub_27F9A
 sub_28108
 sub_280B2
