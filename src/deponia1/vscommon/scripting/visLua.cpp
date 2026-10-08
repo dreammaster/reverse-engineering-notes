@@ -174,7 +174,7 @@ void LuaDoString(const std::string &code) {
 	int status = luaL_loadstring(L, code.c_str());
 
 	if (status == 0)
-		status = lua_pcall(L, 0, 0, TVisionaire::IsVisPlayerMode ? lua_gettop(L) - 1 : 0);
+		status = lua_pcall(L, 0, LUA_MULTRET, TVisionaire::IsVisPlayerMode ? lua_gettop(L) - 1 : 0);
 
 	if (status != 0) {
 		logScriptError(lua_tolstring(L, -1, nullptr), code);
@@ -216,7 +216,7 @@ void LuaDoString(const std::string &code, const std::string &chunkName) {
 		}
 
 		debugger.EndArea(ProfileArea::kValue2, -1);
-	} else if (luaL_loadstring(L, code.c_str()) != 0 || lua_pcall(L, 0, 0, 0) != 0) {
+	} else if (luaL_loadstring(L, code.c_str()) != 0 || lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
 		logScriptError(lua_tolstring(L, -1, nullptr), code);
 		lua_settop(L, -2);
 	}

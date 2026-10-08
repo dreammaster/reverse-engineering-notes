@@ -1,5 +1,10 @@
 #include "TSprite.h"
 
+#include <cwchar>
+
+#include "vscommon/scripting/luaConversion.h"
+#include "vscommon/scripting/visLua.h"
+
 TSprite::TSprite(const TSprite &other) {
 	Set(other);
 }
@@ -58,13 +63,41 @@ void TSprite::Clear() {
 	_name = "";
 }
 
+// Confirmed (asm lines 583664-583929): the sprite as a Lua table constructor, which SetFromLuaString() reads back.
 wxString TSprite::ToLuaString() const {
-	// Not reversed - see this method's own header comment.
-	return wxString();
+	const wchar_t *transparency = L"eTransparencyUndefined";
+
+	switch (_transparencyMode) {
+	case eTransparencyMode::kAlpha:
+		transparency = L"eTransparencyAlpha";
+		break;
+	case eTransparencyMode::kNone:
+		transparency = L"eTransparencyNone";
+		break;
+	case eTransparencyMode::kColorKey:
+		transparency = L"eTransparencyColorKey";
+		break;
+	default:
+		break;
+	}
+
+	wxString path = _path.GetFullPath(1);
+	wchar_t text[2048];
+
+	std::swprintf(text, sizeof(text) / sizeof(text[0]),
+	              L"{path='%ls',position={x=%d,y=%d},transparency=%ls,transpcolor=%d,pause=%d}", path.wc_str(),
+	              _position.x, _position.y, transparency, static_cast<int>(_transparentColor), static_cast<int>(_pause));
+	return wxString(text);
 }
 
-bool TSprite::SetFromLuaString(const wxString &/*value*/) {
-	// Not reversed - see this method's own header comment.
+// Confirmed (asm lines 583939-584050): the text is run as Lua (a table constructor, "return " first is its
+// business) and the table it gives is read as the sprite. The answer is always true. (The table is given to
+// ConvertFromLua() as index -1, but that function counts after it has pushed the name of the first key, so it
+// looks at the wrong value and the sprite stays as it was - the same in the original. Only the editor calls this.)
+bool TSprite::SetFromLuaString(const wxString &value) {
+	LuaDoString(std::string(value.mb_str()), std::string());
+	ConvertFromLua(*this, -1);
+	lua_settop(L, -2);
 	return true;
 }
 

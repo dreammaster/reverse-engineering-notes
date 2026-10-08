@@ -54,7 +54,8 @@ void LuaDoFile(const char *path);
 /** Runs the function that the registry holds under `ref` (see LuaDoString()). */
 void LuaDoRef(int ref);
 
-/** Runs a piece of Lua. `chunkName` is how errors name it. */
+/** Runs a piece of Lua. `chunkName` is how errors name it. What the code returns stays on the stack (except for a
+ *  chunk with a name in the player's mode). */
 void LuaDoString(const std::string &code);
 void LuaDoString(const std::string &code, const std::string &chunkName);
 /** Calls the function `name` of the scripts with `arguments`; its return values go to `results`

@@ -1,6 +1,6 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except ToLuaString()/SetFromLuaString() (Deponia_Linux.
+// Confirmed in full (Deponia_Linux.
 // asm lines 582998-584513, all 35 manifest-listed methods): describes a
 // displayable image reference - a path plus a separate display name, image
 // dimensions, a display position, a percentage scale, transparency
@@ -83,13 +83,9 @@ public:
 	// means that's observably unchanged either way).
 	void Clear();
 
-	// Confirmed call shape only (asm lines 583662-584050): builds/parses a
-	// Lua constructor-call string for this sprite - the same "Lua bridge
-	// contract not reversed" gap used throughout this project
-	// (LuaExecuteFunction, TArgument::ToLua(), etc.). The mode-dependent
-	// format strings ToLuaString() selects between weren't decoded
-	// byte-for-byte; SetFromLuaString() just runs the string through
-	// LuaDoString() + a not-reversed ConvertFromLua(TSprite&, int).
+	// Confirmed (asm lines 583664-584050): the sprite as the text of a Lua table constructor
+	// (`{path='...',position={x=,y=},transparency=eTransparency...,transpcolor=,pause=}`), and the
+	// reading of such a text (see TSprite.cpp for its quirk).
 	wxString ToLuaString() const;
 	bool SetFromLuaString(const wxString &value);
 
