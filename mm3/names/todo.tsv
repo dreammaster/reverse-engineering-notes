@@ -49,3 +49,5 @@
 6361E	vdrv_closeWindowsImpl	target of vdrv_api_06: pops N windows: restores the saved background of the current window rectangle from the temp file (mm3.$$$) and the previous window state
 636CA	vdrv_fillTextArea	fills the text area (60A16..60A18 x 60A1A..60A1C) with the fill pattern word; the routine begins with clc, so the 'stc = whole window' variant below it is never reached
 6371C	vdrv_updateScreen	after drawing: copies the changed rectangle to the video memory, redraws the mouse cursor, and clears one of the update-region flags 60E6A (q) / 60E69 (k) / 60E68 (b) / 60E67 (d) (evidence: reads the code; only the flag clearing is visible in the screen buffer)
+vdrv_2A_starfield	vdrv_2A_introFrame	one frame of the intro: 75-particle starfield (arrays at module data +0/96h/12Ch/1C2h/258h, colour table 0E62h) + draw list at the argument, then copy to screen
+soundDriverPlay	soundDriverCall	cmd 0FFFEh restarts the song clock, 0FFFFh returns song position (intro scenes are timed by it); other values = song/sfx numbers

@@ -41,6 +41,7 @@ void game_sprite_free_cache(uint16_t seg) {
 
 static void draw_frame(uint16_t seg, unsigned frame, int x, int y, unsigned flags) {
 	Mm3Sprite *s = sprite_for_seg(seg);
+	if (getenv("MM3_DUMPLIST")) fprintf(stderr, "draw seg %04X frame %u at %d,%d fl %X -> %s count %d\n", seg, frame, x, y, flags, s ? "ok" : "NOSPR", s ? (int)s->count : -1);
 	if (s && frame < s->count)
 		mm3_blit_ex(SCREEN_MEM, MM3_SCREEN_W, MM3_SCREEN_H, &s->frames[frame], x, y, flags, G.scale_patterns);
 }
@@ -150,8 +151,10 @@ static void headless_finish(void) {
 
 void host__bioskey(Cpu *c) {
 	unsigned cmd = host_arg(c, 0);
-	static int idle;
-	if (headless && cmd == 1 && kq_head == kq_tail && script_pos >= script_n && ++idle > 3000) headless_finish();
+	static int idle, polls, idle_limit, every = -1;
+	if (every < 0) { const char *e = getenv("MM3_SHOT_EVERY"), *l = getenv("MM3_IDLE"); every = e ? atoi(e) : 0; idle_limit = l ? atoi(l) : 3000; }
+	if (cmd == 1 && every && ++polls % every == 0) { char fn[256]; snprintf(fn, sizeof fn, "%s_%04d.bmp", getenv("MM3_SHOT_PREFIX") ? getenv("MM3_SHOT_PREFIX") : "build/poll", polls / every); video_save_bmp(fn); }
+	if (headless && cmd == 1 && kq_head == kq_tail && script_pos >= script_n && ++idle > idle_limit) headless_finish();
 	if (kq_head != kq_tail) idle = 0;
 	for (;;) {
 		video_pump_events();
@@ -208,3 +211,52 @@ int video_init(int headless_mode) {
 	G.ui->draw_list = ui_draw_list;
 	return 0;
 }
+
+/* vdrv_2A_starfield: one frame of the intro's particle effect.  A 75-particle field bursts out of the screen centre
+ * (positions/velocities are 16-bit fixed point, >>6 gives the pixel; velocity grows by 1/16 per frame, a particle is
+ * respawned when it leaves 5000h x 3200h or its colour has faded to the target), then the draw list passed in is drawn on top.
+ * Arguments: far pointer to the draw list.  The original seeds respawns from the DOS clock; here: a small LCG. */
+#define NSTARS 75
+static struct { int16_t x, vx, y, vy; uint8_t col, target; } stars[NSTARS];
+/* soundDriverPlay: there is no sound driver yet, but the intro is timed by the music position: 0FFFEh restarts the song clock,
+ * 0FFFFh reads it.  The clock advances 2 ticks per starfield frame (virtual time keeps headless runs reproducible). */
+static unsigned music_ticks;
+void host_soundDriverPlay(Cpu *c) {
+	unsigned cmd = host_arg(c, 0);
+	if (cmd == 0xFFFE) music_ticks = 0;
+	c->ax = cmd == 0xFFFF ? (uint16_t)music_ticks : 0;
+}
+static unsigned star_rng = 12345, star_parity;
+static int star_rand(void) { star_rng = star_rng * 1103515245u + 12345u; return (int)(star_rng >> 16); }
+
+void host_vdrv_2A_starfield(Cpu *c) {
+	static const uint8_t cols[4] = { 0x1F, 0x1F, 0x9F, 0xDF };
+	unsigned list = host_arg(c, 0);
+	star_parity ^= 1; music_ticks += 2;
+	if (getenv("MM3_DUMPLIST")) { for (int k = 0; k < 20; k++) fprintf(stderr, "%04X ", rd16(DG, (uint16_t)(list + 2 * k))); fprintf(stderr, "\n"); }
+	memset(SCREEN_MEM, 0, 64000);
+	for (int i = 0; i < NSTARS; i++) {
+		uint16_t x, y;
+		stars[i].vx += stars[i].vx >> 4; stars[i].x += stars[i].vx;
+		x = (uint16_t)stars[i].x;
+		int respawn = x >= 0x5000;
+		if (!respawn) {
+			stars[i].vy += stars[i].vy >> 4; stars[i].y += stars[i].vy;
+			y = (uint16_t)stars[i].y;
+			respawn = y >= 0x3200 || stars[i].col == stars[i].target;
+		}
+		if (respawn) {
+			uint8_t al = cols[star_rand() & 3];
+			stars[i].col = al; stars[i].target = al - 0x1F;
+			stars[i].vx = (int8_t)star_rand(); stars[i].x = 0x2800 + (uint8_t)star_rand() * 4;
+			stars[i].vy = (int8_t)star_rand(); stars[i].y = 0x1900 + (uint8_t)star_rand() * 4;
+			x = (uint16_t)stars[i].x; y = (uint16_t)stars[i].y;
+		}
+		SCREEN_MEM[((x >> 6) + (y >> 6) * 320) & 0xFFFF] = stars[i].col;
+		if (stars[i].col != stars[i].target) stars[i].col -= star_parity;
+	}
+	game_exec_draw_list(list);
+	video_present();
+	if (!headless) SDL_Delay(25);
+}
+void host_vdrv_00_transition(Cpu *c) { (void)c; video_present(); }

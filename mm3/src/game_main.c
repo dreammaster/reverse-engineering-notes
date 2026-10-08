@@ -14,16 +14,18 @@ void video_set_shot(const char *path);
 void call_loadMonsterData(Cpu *c);
 void call_loadSavedGame(Cpu *c);
 void call_exploreLoop(Cpu *c);
+void call_introSequence(Cpu *c);
 
 int main(int argc, char **argv) {
 	Cpu c;
-	int headless = 0;
+	int headless = 0, intro = 0;
 	const char *shot = NULL;
 	unsigned keys[256];
 	int nkeys = 0;
 	if (argc < 2) { fprintf(stderr, "usage: %s DATADIR [--headless] [--keys HEX,HEX..] [--shot out.bmp]\n", argv[0]); return 2; }
 	for (int i = 2; i < argc; i++) {
 		if (!strcmp(argv[i], "--headless")) headless = 1;
+		else if (!strcmp(argv[i], "--intro")) intro = 1;
 		else if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
 		else if (!strcmp(argv[i], "--keys") && i + 1 < argc) {
 			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) keys[nkeys++] = (unsigned)strtoul(t, NULL, 16);
@@ -40,6 +42,7 @@ int main(int argc, char **argv) {
 		uint16_t roster = dos_alloc(0x2382 + 16);
 		wr16(DG, 0xECA8, 0); wr16(DG, 0xECAA, roster); /* Roster_buffer (far pointer) */
 	}
+	if (intro) game_call(call_introSequence, &c, NULL, 0);
 	game_call(call_loadMonsterData, &c, NULL, 0);
 	game_call(call_loadSavedGame, &c, NULL, 0);
 	{ /* the party members are copies of roster characters (their indices are in the party block) */

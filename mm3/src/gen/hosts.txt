@@ -22,3 +22,4 @@ _*
 sub_25085
 sub_2509A
 writeResource
+soundDriverPlay

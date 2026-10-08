@@ -62,7 +62,6 @@ sub_40173
 sub_4058A
 sub_4087E
 protectionHandler
-soundDriverPlay
 sub_253D3
 sub_25E66
 sub_2698B

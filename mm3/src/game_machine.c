@@ -120,6 +120,7 @@ void host_writeResource(Cpu *c) {
 }
 
 uint16_t game_load_resource(const char *name, uint32_t *size) {
+	if (getenv("MM3_DUMPLIST")) fprintf(stderr, "load %s\n", name);
 	for (int i = 0; i < novr; i++)
 		if (!strcasecmp(overrides[i].name, name)) {
 			uint16_t seg = dos_alloc(overrides[i].len + 16);
