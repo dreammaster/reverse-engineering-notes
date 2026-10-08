@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_cluemap test_cluemap.c ../cluemap.c ../localmap.c ../location.c ../minimap.c ../explore.c ../savegame.c ../worldmap.c ../worldmap_stdio.c ../font.c ../viewrender.c ../random.c ../pictures.c ../uiregions.c ../dungeongrid.c ../movement.c && ./test_cluemap
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_cluemap test_cluemap.c ../cluemap.c ../exedata.c ../localmap.c ../location.c ../minimap.c ../explore.c ../savegame.c ../worldmap.c ../worldmap_stdio.c ../font.c ../viewrender.c ../random.c ../pictures.c ../uiregions.c ../dungeongrid.c ../movement.c && ./test_cluemap
  *
  * The real-data checks read WORLD.DAT in yendor2/game and yendor3/game (skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -76,8 +76,18 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     free(data);
 }
 
+static void testHeading(void) {
+    static uint8_t exe[0x22000 + 0x9000];
+    memset(exe, 0, sizeof(exe));
+    ExeData data = {exe, sizeof(exe), exeDataFileOffset(GameYendor2)};
+    memcpy(exe + data.base + 0x8871, "MAPS", 5);
+    char heading[24];
+    check("the map list's heading is read from the data segment", clueMapHeading(&data, GameYendor2, heading) && strcmp(heading, "MAPS") == 0);
+}
+
 int main(void) {
     testSynthetic();
+    testHeading();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: the clue map markers read from WORLD.DAT");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: the clue map markers read from WORLD.DAT");
 
