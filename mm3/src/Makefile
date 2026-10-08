@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun tests/test_walk tests/view_run ccdump gfxsum viewer
+	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun tests/test_walk tests/view_run tests/ui_run ccdump gfxsum viewer
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -56,8 +56,8 @@ gfxcheck: gfxsum
 SDL_CFLAGS := $(shell pkg-config --cflags sdl2 2>/dev/null)
 SDL_LIBS := $(shell pkg-config --libs sdl2 2>/dev/null)
 
-viewer: viewer.c $(CORE) gfx.h cc.h
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ viewer.c $(CORE) $(SDL_LIBS)
+viewer: viewer.c $(CORE) ui_text.c gfx.h cc.h ui_text.h
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ viewer.c $(CORE) ui_text.c $(SDL_LIBS)
 .PHONY: viewer
 
 tests/test_mapbin: tests/test_mapbin.c $(CORE) cc.h mapbin.h dgroup.h party.h
@@ -107,3 +107,13 @@ tests/test_walk: tests/test_walk.c $(GLUE_SRC) view_glue.h
 walktest: tests/test_walk
 	tests/test_walk $(DATA)
 .PHONY: walktest
+
+# ---- text engine and windows (hand-written port of the video module's text code)
+tests/ui_run: tests/ui_run.c ui_text.c ui_text.h font.c cc.c
+	$(CC) $(CFLAGS) -o $@ tests/ui_run.c ui_text.c font.c cc.c
+
+# fuzz the C text engine against the original video module in the emulator (needs `pip install unicorn`)
+uifuzz: tests/ui_run
+	python3 ../tools/mm3_ui_fuzz.py ../data/MM3.EXE $(DATA) tests/ui_run 150 2
+	MM3_FUZZ_ITEMS=70 python3 ../tools/mm3_ui_fuzz.py ../data/MM3.EXE $(DATA) tests/ui_run 60 5
+.PHONY: uifuzz

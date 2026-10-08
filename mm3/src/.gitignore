@@ -10,3 +10,4 @@ tests/test_evtrun
 tests/view_run
 mm3view
 tests/test_walk
+tests/ui_run

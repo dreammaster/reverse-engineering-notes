@@ -14,7 +14,9 @@ import os
 import struct
 import sys
 
-from unicorn import Uc, UC_ARCH_X86, UC_MODE_16, UC_HOOK_CODE, UC_HOOK_MEM_WRITE, UcError
+from unicorn.x86_const import UC_X86_INS_IN, UC_X86_INS_OUT
+from unicorn import UC_HOOK_INSN
+from unicorn import Uc, UC_ARCH_X86, UC_MODE_16, UC_HOOK_CODE, UC_HOOK_MEM_WRITE, UC_HOOK_INTR, UcError
 from unicorn.x86_const import (UC_X86_REG_AX, UC_X86_REG_BX, UC_X86_REG_CX, UC_X86_REG_DX, UC_X86_REG_SI, UC_X86_REG_DI,
                                UC_X86_REG_BP, UC_X86_REG_SP, UC_X86_REG_CS, UC_X86_REG_DS, UC_X86_REG_ES, UC_X86_REG_SS,
                                UC_X86_REG_IP, UC_X86_REG_FLAGS)
@@ -48,6 +50,56 @@ class Emu:
         self.insn_count = 0
         self.stop_at = None
         self.uc.hook_add(UC_HOOK_CODE, self._code_hook)
+        self.uc.hook_add(UC_HOOK_INTR, self._intr_hook)
+        self._port3da = 0
+        self.uc.hook_add(UC_HOOK_INSN, self._in_hook, None, 1, 0, UC_X86_INS_IN)
+        self.uc.hook_add(UC_HOOK_INSN, lambda uc, port, size, value, user: None, None, 1, 0, UC_X86_INS_OUT)
+        self.dos_files = {}   # handle -> bytearray (virtual files: the video module's temp file for saved window backgrounds)
+        self.dos_pos = {}
+        self.int_log = []
+
+    def _in_hook(self, uc, port, size, user):
+        """port reads: the VGA status register 3DAh alternates (display / vertical retrace) so the module's retrace waits end"""
+        if port == 0x3DA:
+            self._port3da ^= 1
+            return 0x09 if self._port3da else 0x00
+        return 0
+
+    # ---- DOS: the few calls the video module makes (INT 21h on a temp file), the rest is ignored
+    def _intr_hook(self, uc, intno, user):
+        if intno != 0x21:
+            return
+        ah = (uc.reg_read(UC_X86_REG_AX) >> 8) & 0xFF
+        al = uc.reg_read(UC_X86_REG_AX) & 0xFF
+        bx = uc.reg_read(UC_X86_REG_BX)
+        cx = uc.reg_read(UC_X86_REG_CX)
+        dx = uc.reg_read(UC_X86_REG_DX)
+        ds = uc.reg_read(UC_X86_REG_DS)
+        fl = uc.reg_read(UC_X86_REG_FLAGS)
+        ok = True
+        ax = uc.reg_read(UC_X86_REG_AX)
+        if ah == 0x3C:    # create
+            self.dos_files[5] = bytearray(); self.dos_pos[5] = 0; ax = 5
+        elif ah == 0x41:  # delete
+            pass
+        elif ah == 0x40:  # write
+            data = bytes(uc.mem_read(ds * 16 + dx, cx)); f = self.dos_files.setdefault(bx, bytearray()); p = self.dos_pos.get(bx, 0)
+            if len(f) < p + cx: f.extend(bytes(p + cx - len(f)))
+            f[p:p + cx] = data; self.dos_pos[bx] = p + cx; ax = cx
+        elif ah == 0x3F:  # read
+            f = self.dos_files.setdefault(bx, bytearray()); p = self.dos_pos.get(bx, 0)
+            data = bytes(f[p:p + cx]); data += bytes(cx - len(data))
+            uc.mem_write(ds * 16 + dx, data); self.dos_pos[bx] = p + cx; ax = cx
+        elif ah == 0x42:  # lseek (from start)
+            self.dos_pos[bx] = (cx << 16) | dx
+            dx_out = self.dos_pos[bx] >> 16; ax = self.dos_pos[bx] & 0xFFFF
+            uc.reg_write(UC_X86_REG_DX, dx_out)
+        elif ah == 0x3E:
+            pass
+        else:
+            self.int_log.append((ah, al))
+        uc.reg_write(UC_X86_REG_AX, ax & 0xFFFF)
+        uc.reg_write(UC_X86_REG_FLAGS, fl & ~1)  # carry clear = success
 
     # ---- memory helpers (DGROUP offsets unless noted)
     def rb(self, off, seg=DSEG): return self.uc.mem_read(seg * 16 + off, 1)[0]

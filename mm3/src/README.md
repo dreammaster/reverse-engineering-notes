@@ -13,6 +13,7 @@ each rule comes from.
 | `events.c/.h` | event operand decoder (opcodes, `(mode,value)` pairs, goto lines); every shipped record decodes except the documented MAZE60 stray byte |
 | `gfx.c/.h` | master palette and sprite codec (literal/skip/fill, two-layer frames), blit; `make gfxcheck` diffs all 415 graphics members against `tools/mm3_gfx.py` |
 | `font.c/.h` | the text font (`FO.T`, id 8D92h, found through the video module's init code): glyph drawing with descenders, widths, simple control codes |
+| `ui_text.c/.h` | **text engine and windows**: hand-written port of the video module's `printText` / `openWindow` / `closeWindows` (word wrap, centre/right alignment, scrolling, colours, bars, overlay glyphs, parchment window frame with saved background), fuzzed against the original module in the emulator (`make uifuzz`, ~700 random cases identical) |
 | `viewer.c` | first SDL2 front end: `make viewer && ./viewer ../data CREATE.RAW` (arrow keys step sprite frames; `--shot x.bmp` for headless screenshots with `SDL_VIDEODRIVER=dummy`) |
 | `dgroup.c/.h`, `mapbin.c/.h` | run-time access to the game's lookup tables (DGROUP dumped from `MM3.EXE` by `tools/mm3_dgroup.py`, git-ignored) and the `MAZEnn.BIN` monster/object lists (`make mapbintest`: 64 maps, 2,604 monsters, 1,483 objects, ids in range) |
 | `evtrun.c/.h` | event script runner: the control flow of `runMazeEvent` (lines, If/JumpRnd goto, CallEvent/Return, AlterEvent, Exit) with a host interface for the game effects; `make evttest` replays the real MAZE01 pit script |
