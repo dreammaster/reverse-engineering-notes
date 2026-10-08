@@ -18,10 +18,13 @@
 #include "minimap.h"
 #include "music.h"
 #include "paperdoll.h"
+#include "party.h"
 #include "pictures.h"
+#include "roster.h"
 #include "statsheet.h"
 #include "statuspanel.h"
 #include "titlemenu.h"
+#include "uiregions.h"
 
 bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_t worldSize, ViewPictureFn picture, void *pictureCtx, const GameUiHost *host) {
     memset(ui, 0, sizeof(*ui));
@@ -475,12 +478,113 @@ static bool clueKey(GameUi *ui, UiKey key) {
     return true;
 }
 
+/* The roster's check boxes are the party flag (0x800 of +0x15C) of the records the four party slots name. */
+static void rosterSyncFlags(GameUi *ui) {
+    SaveGame *save = &ui->session->save;
+    for (unsigned i = 0; i < SavePartyRecordCount; i++) {
+        uint8_t *record = saveGamePartyRecord(save, i);
+        bool active = false;
+        for (unsigned slot = 0; slot < 4; slot++) {
+            active = active || saveHeaderGetU16(save, SaveHeaderPartySlots + 2 * slot) == i + 1;
+        }
+        unsigned flags = record[0x15C] | (record[0x15D] << 8);
+        flags = active ? flags | 0x800 : flags & ~0x800u;
+        record[0x15C] = (uint8_t)flags;
+        record[0x15D] = (uint8_t)(flags >> 8);
+    }
+}
+
+/* Puts the hero in slot `index` into the party (the first free of the four slots) or takes it out (the others close up). False when the party is full or the slot is empty. */
+static bool rosterToggle(GameUi *ui, unsigned index) {
+    SaveGame *save = &ui->session->save;
+    uint8_t *record = saveGamePartyRecord(save, index);
+    uint16_t slots[4];
+    unsigned count = 0;
+    bool present = false;
+    if (!record || (record[PartyFieldLevel] | (record[PartyFieldLevel + 1] << 8)) == 0) {
+        return false;
+    }
+    for (unsigned slot = 0; slot < 4; slot++) {
+        uint16_t id = saveHeaderGetU16(save, SaveHeaderPartySlots + 2 * slot);
+        if (id == index + 1) {
+            present = true;
+        } else if (id) {
+            slots[count++] = id;
+        }
+    }
+    if (!present) {
+        if (count == 4) {
+            return false;
+        }
+        slots[count++] = (uint16_t)(index + 1);
+    }
+    for (unsigned slot = 0; slot < 4; slot++) {
+        saveHeaderSetU16(save, SaveHeaderPartySlots + 2 * slot, slot < count ? slots[slot] : 0);
+    }
+    rosterSyncFlags(ui);
+    sessionRebuild(ui->session);
+    return true;
+}
+
+static unsigned rosterSlotSum(const GameUi *ui) { /* what RunTitleScreen tests: the sum of the four slot assignments */
+    unsigned sum = 0;
+    for (unsigned slot = 0; slot < 4; slot++) {
+        sum += saveHeaderGetU16(&ui->session->save, SaveHeaderPartySlots + 2 * slot);
+    }
+    return sum;
+}
+
+static void drawRoster(GameUi *ui) {
+    const uint8_t *records[RosterSlots];
+    for (unsigned i = 0; i < RosterSlots; i++) {
+        records[i] = saveGamePartyRecord(&ui->session->save, i);
+    }
+    memset(ui->screen, 0, sizeof(ui->screen));
+    rosterDraw(&ui->renderer, records);
+    unsigned count;
+    const uint16_t(*grid)[5] = uiRegionEntries(ui->session->game, UiRegionsPartyRoster, &count);
+    if (grid && count >= (ui->rosterCursor + 1) * 4) { /* a frame round the chosen slot's face */
+        const uint16_t(*e)[5] = grid + ui->rosterCursor * 4;
+        int x0 = e[0][0] - 2, x1 = e[0][1] + 1, y0 = e[0][2] - 2, y1 = e[0][3] + 1;
+        for (int x = x0; x <= x1; x++) {
+            ui->screen[y0 * ViewScreenWidth + x] = ui->screen[y1 * ViewScreenWidth + x] = 0xF;
+        }
+        for (int y = y0; y <= y1; y++) {
+            ui->screen[y * ViewScreenWidth + x0] = ui->screen[y * ViewScreenWidth + x1] = 0xF;
+        }
+    }
+}
+
+static bool rosterKey(GameUi *ui, UiKey key) {
+    unsigned col = ui->rosterCursor % 3, row = ui->rosterCursor / 3;
+    if (key == UiKeyEscape || key == 'd') { /* "D DONE" */
+        ui->overlay = UiOverlayTitle;
+    } else if (key == UiKeyLeft && col > 0) {
+        ui->rosterCursor--;
+    } else if (key == UiKeyRight && col < 2) {
+        ui->rosterCursor++;
+    } else if (key == UiKeyUp && row > 0) {
+        ui->rosterCursor -= 3;
+    } else if (key == UiKeyDown && row < 2) {
+        ui->rosterCursor += 3;
+    } else if (key == UiKeyEnter || key == ' ') {
+        if (!rosterToggle(ui, ui->rosterCursor)) {
+            effect(ui, 3);
+        }
+    }
+    return true;
+}
+
 void gameUiShowTitle(GameUi *ui) {
     ui->overlay = UiOverlayTitle;
 }
 
 void gameUiDraw(GameUi *ui) {
     GameSession *s = ui->session;
+    if (ui->overlay == UiOverlayRoster) {
+        drawRoster(ui);
+        return;
+    }
     if (ui->overlay == UiOverlayTitle) {
         memset(ui->screen, 0, sizeof(ui->screen));
         const uint8_t *menu = ui->renderer.picture(ui->renderer.pictureCtx, 0, TitleMenuPicture);
@@ -772,14 +876,24 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     bool running = true;
     if (ui->overlay == UiOverlayTitle) {
         if (key == 'e') {
+            if (!titleCanEnter(rosterSlotSum(ui))) {
+                effect(ui, 3);
+                return true;
+            }
             ui->overlay = UiOverlayNone;
             gameUiAmbientMusic(ui);
+        } else if (key == 'c') {
+            rosterSyncFlags(ui);
+            ui->overlay = UiOverlayRoster;
         } else if ((key == 'i' || key == 'r') && ui->host.cinematic) {
             ui->host.cinematic(ui->host.ctx, key == 'i' ? "opening" : "credits");
         } else if (key == UiKeyEscape || (key == 'q' && ctrl)) {
             return false;
         }
         return true;
+    }
+    if (ui->overlay == UiOverlayRoster) {
+        return rosterKey(ui, key);
     }
     if (ui->overlay == UiOverlayShop) {
         return shopKey(ui, key);
