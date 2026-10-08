@@ -119,7 +119,7 @@ class Translator:
 
     def operand(self, text, locals_, hint_size=None):
         """-> dict(kind, size, expr info)"""
-        t = text.strip()
+        t = text.strip().replace("ffblk.ff_name", "ffblk+1Eh")  # Borland struct ffblk: the name is at +1Eh
         size = None
         m = re.match(r"^(byte|word|dword) ptr\s+(.*)$", t)
         if m:

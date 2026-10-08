@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L /* strdup, strcasecmp */
 /* Hand-written hosts for the Borland C runtime's file routines (stdio, handles, findfirst).
  * Paths are resolved case-insensitively inside the game data directory; the original FILE* / handle
  * values are opaque tokens to the game code, so small table indices stand in for them. */
@@ -8,43 +9,80 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "game.h"
 
 #define MAXF 16
 static FILE *files[MAXF];
+static char file_path[MAXF][512];
+static int file_write[MAXF];
 static int fds[MAXF];
 static const uint8_t *dsp(uint16_t off) { return DG + off; }
 
-/* find an existing file case-insensitively; otherwise return the path as given (for creation) */
-static void resolve(const char *name, char *out, size_t n) {
+/* Files the game writes (saved games) go to the save directory (MM3_SAVE_DIR, default ./mm3-saves) so the data files stay
+ * untouched; reads look there first. */
+static const char *save_dir(void) {
+	static const char *dir;
+	if (!dir) { dir = getenv("MM3_SAVE_DIR"); if (!dir) dir = "mm3-saves"; mkdir(dir, 0755); }
+	return dir;
+}
+
+static int find_in(const char *dir, const char *base, char *out, size_t n) {
+	DIR *d = opendir(dir);
+	struct dirent *e;
+	int found = 0;
+	while (d && (e = readdir(d)))
+		if (!strcasecmp(e->d_name, base)) { snprintf(out, n, "%s/%s", dir, e->d_name); found = 1; break; }
+	if (d) closedir(d);
+	return found;
+}
+
+/* existing file (save dir first, then the data dir), case-insensitive; for writing: the save dir */
+static void resolve(const char *name, char *out, size_t n, int writing) {
 	const char *base = strrchr(name, '\\');
 	base = base ? base + 1 : name;
-	DIR *d = opendir(G.data_dir);
-	snprintf(out, n, "%s/%s", G.data_dir, base);
-	if (!d) return;
-	struct dirent *e;
-	while ((e = readdir(d)))
-		if (!strcasecmp(e->d_name, base)) { snprintf(out, n, "%s/%s", G.data_dir, e->d_name); break; }
-	closedir(d);
+	if (find_in(save_dir(), base, out, n)) return;
+	if (!writing && find_in(G.data_dir, base, out, n)) return;
+	snprintf(out, n, "%s/%s", writing ? save_dir() : G.data_dir, base);
+}
+
+static int is_cur(const char *path) {
+	const char *b = strrchr(path, '/');
+	return !strcasecmp(b ? b + 1 : path, "mm3.cur");
+}
+/* write the in-memory MM3.CUR image to `path` */
+static void dump_cur(const char *path) {
+	FILE *o = fopen(path, "wb");
+	if (o) { fwrite(G.cur.data, 1, G.cur.len, o); fclose(o); }
 }
 
 static FILE *fp_of(uint16_t t) { return t && t <= MAXF ? files[t - 1] : NULL; }
 
 void host__fopen(Cpu *c) {
+	if (getenv("MM3_FILELOG")) fprintf(stderr, "fopen(%s, %s)\n", (const char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1)));
 	char path[512], mode[8];
 	snprintf(mode, sizeof mode, "%s", (const char *)dsp(host_arg(c, 1)));
-	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path);
+	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path, strchr(mode, 'w') || strchr(mode, 'a') || strchr(mode, '+'));
+	int wr = strchr(mode, 'w') || strchr(mode, 'a') || strchr(mode, '+');
+	if (!wr && is_cur(path)) dump_cur(path); /* the game copies the live MM3.CUR into a save: give it the in-memory image */
 	FILE *f = fopen(path, mode);
 	c->ax = 0;
 	if (!f) return;
-	for (int i = 0; i < MAXF; i++) if (!files[i]) { files[i] = f; c->ax = i + 1; return; }
+	for (int i = 0; i < MAXF; i++) if (!files[i]) { files[i] = f; snprintf(file_path[i], sizeof file_path[i], "%s", path); file_write[i] = wr; c->ax = i + 1; return; }
 	fclose(f);
 }
 void host__fclose(Cpu *c) {
 	uint16_t t = host_arg(c, 0);
 	FILE *f = fp_of(t);
-	c->ax = f ? (fclose(f), files[t - 1] = NULL, 0) : 0xFFFF;
+	if (!f) { c->ax = 0xFFFF; return; }
+	fclose(f);
+	files[t - 1] = NULL;
+	if (file_write[t - 1] && is_cur(file_path[t - 1])) { /* a load: the game copied a save over MM3.CUR; use it from now on */
+		Mm3Cc fresh;
+		if (!mm3_cc_open(&fresh, file_path[t - 1])) { mm3_cc_close(&G.cur); G.cur = fresh; }
+	}
+	c->ax = 0;
 }
 void host__fread(Cpu *c) {
 	FILE *f = fp_of(host_arg(c, 3));
@@ -73,7 +111,7 @@ void host__open(Cpu *c) {
 	int mode = (fl & 3) == 1 ? O_WRONLY : (fl & 3) == 2 ? O_RDWR : O_RDONLY;
 	if (fl & 0x100) mode |= O_CREAT;
 	if (fl & 0x200) mode |= O_TRUNC;
-	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path);
+	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path, (fl & 3) != 0 || (fl & 0x100));
 	int fd = open(path, mode, 0644);
 	c->ax = 0xFFFF;
 	if (fd < 0) return;
@@ -105,18 +143,25 @@ static void fill_ffblk(uint16_t off) {
 	snprintf((char *)b + 0x1E, 13, "%s", found[nextfound++]);
 }
 void host__findfirst(Cpu *c) {
+	if (getenv("MM3_FILELOG")) fprintf(stderr, "findfirst(%s) ffblk=%04X\n", (const char *)dsp(host_arg(c, 0)), host_arg(c, 1));
 	const char *pat = (const char *)dsp(host_arg(c, 0));
 	const char *base = strrchr(pat, '\\'); base = base ? base + 1 : pat;
 	for (int i = 0; i < nfound; i++) free(found[i]);
 	free(found); found = NULL; nfound = nextfound = 0;
-	DIR *d = opendir(G.data_dir);
-	struct dirent *e;
-	while (d && (e = readdir(d)))
-		if (e->d_name[0] != '.' && strlen(e->d_name) <= 12 && wild(base, e->d_name)) {
-			found = realloc(found, (nfound + 1) * sizeof *found);
-			found[nfound++] = strdup(e->d_name);
+	const char *dirs[2] = { save_dir(), G.data_dir };
+	for (int k = 0; k < 2; k++) {
+		DIR *d = opendir(dirs[k]);
+		struct dirent *e;
+		while (d && (e = readdir(d))) {
+			int dup = 0;
+			for (int i = 0; i < nfound; i++) if (!strcasecmp(found[i], e->d_name)) dup = 1;
+			if (!dup && e->d_name[0] != '.' && strlen(e->d_name) <= 12 && wild(base, e->d_name)) {
+				found = realloc(found, (nfound + 1) * sizeof *found);
+				found[nfound++] = strdup(e->d_name);
+			}
 		}
-	if (d) closedir(d);
+		if (d) closedir(d);
+	}
 	qsort(found, nfound, sizeof *found, cmpstr);
 	if (!nfound) { c->ax = 0xFFFF; return; }
 	fill_ffblk(host_arg(c, 1));

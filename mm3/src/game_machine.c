@@ -103,9 +103,14 @@ static int novr;
 void host_writeResource(Cpu *c) {
 	const char *name = (const char *)(SEGP(host_arg(c, 1)) + host_arg(c, 0));
 	const uint8_t *src = SEGP(host_arg(c, 3)) + host_arg(c, 2);
+	int idx = mm3_cc_find(&G.cur, name);
+	if (idx >= 0) { /* the CUR members are stored (not compressed): update the in-memory image, saved games are copies of it */
+		const Mm3CcEntry *e = &G.cur.entries[idx];
+		if ((size_t)e->offset + e->size <= G.cur.len) memcpy(G.cur.data + e->offset, src, e->size);
+		return;
+	}
 	size_t len = 0;
-	uint8_t *orig = mm3_cc_read(&G.cur, name, &len);
-	if (!orig) orig = mm3_cc_read(&G.cc, name, &len);
+	uint8_t *orig = mm3_cc_read(&G.cc, name, &len);
 	free(orig);
 	if (!len) return;
 	int i;
@@ -202,7 +207,7 @@ void host__strncpy_0(Cpu *c) {
 	for (; i < n; i++) d[i] = 0;
 	c->ax = host_arg(c, 0); c->dx = host_arg(c, 1);
 }
-void host__strcpy(Cpu *c) { strcpy((char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1))); c->ax = host_arg(c, 0); }
+void host__strcpy(Cpu *c) { if (getenv("MM3_FILELOG")) fprintf(stderr, "strcpy(%04X <- %04X [%s])\n", host_arg(c, 0), host_arg(c, 1), (const char *)dsp(host_arg(c, 1))); strcpy((char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1))); c->ax = host_arg(c, 0); }
 void host__stricmp(Cpu *c) { c->ax = (uint16_t)(int16_t)strcasecmp((const char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1))); }
 void host__ultoa(Cpu *c) {
 	uint32_t v = host_arg(c, 0) | ((uint32_t)host_arg(c, 1) << 16);
@@ -282,7 +287,7 @@ void host__exit(Cpu *c) { exit((int)host_arg(c, 0)); }
 void host__textmode(Cpu *c) { (void)c; }
 void host_sub_27F86(Cpu *c) { (void)c; fprintf(stderr, "game exit\n"); exit(0); }
 void host_sub_250F8(Cpu *c) { (void)c; }
-void host_sub_378C0(Cpu *c) { (void)c; fprintf(stderr, "sub_378C0 (fatal error handler)\n"); exit(6); }
+void host_sub_378C0(Cpu *c) { (void)c; /* the DOS "boss key" (F10): ignored */ }
 
 /* rnd(lo, hi): uniform in [lo, hi] */
 static uint32_t rng_state = 0x1234567u;

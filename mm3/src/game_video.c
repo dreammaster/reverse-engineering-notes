@@ -111,7 +111,7 @@ void video_save_bmp(const char *path) {
 static unsigned keyq[KEYQ];
 static int kq_head, kq_tail;
 static unsigned script_keys[256];
-static int script_n, script_pos;
+static int script_n, script_pos, script_wait;
 
 static void push_key(unsigned code) { int n = (kq_tail + 1) % KEYQ; if (n != kq_head) { keyq[kq_tail] = code; kq_tail = n; } }
 
@@ -139,6 +139,8 @@ static unsigned bios_code(SDL_Keycode k, Uint16 mod) {
 void video_pump_events(void) {
 	SDL_Event e;
 	if (headless) {
+		if (script_wait > 0) { script_wait--; return; }
+		if (script_pos < script_n && (script_keys[script_pos] & 0x40000000u) && !(script_keys[script_pos] & 0x80000000u)) { script_wait = script_keys[script_pos++] & 0xFFFFF; return; } /* wN: let the game run N polls */
 		if (script_pos < script_n && kq_head == kq_tail && !(script_keys[script_pos] & 0x80000000u)) push_key(script_keys[script_pos++]);
 		return;
 	}
@@ -235,7 +237,7 @@ void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg 
 /* getMouse(&x, &y) -> buttons.  A scripted click ("mX:Y" in --keys) holds the button for a few polls, then releases */
 void host_vdrv_18_getMouse(Cpu *c) {
 	video_pump_events();
-	if (headless && !click_reads && script_pos < script_n && kq_head == kq_tail && (script_keys[script_pos] & 0x80000000u)) {
+	if (headless && !click_reads && script_wait <= 0 && script_pos < script_n && kq_head == kq_tail && (script_keys[script_pos] & 0x80000000u)) {
 		unsigned v = script_keys[script_pos++];
 		mouse_x = (v >> 12) & 0xFFF; mouse_y = v & 0xFFF; mouse_seen = 1; click_reads = 4;
 	}

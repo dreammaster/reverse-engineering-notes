@@ -16,10 +16,12 @@ void call_loadSavedGame(Cpu *c);
 void call_exploreLoop(Cpu *c);
 void call_introSequence(Cpu *c);
 void call_rosterMenu(Cpu *c);
+void call_getFiles(Cpu *c);
 
 int main(int argc, char **argv) {
 	Cpu c;
 	int headless = 0, intro = 0, at_n = 0, roster_menu = 1;
+	const char *cur_path = NULL;
 	unsigned at[4];
 	const char *shot = NULL;
 	unsigned keys[256];
@@ -30,12 +32,14 @@ int main(int argc, char **argv) {
 		else if (!strcmp(argv[i], "--intro")) intro = 1;
 		else if (!strcmp(argv[i], "--at") && i + 1 < argc) { at_n = sscanf(argv[++i], "%u,%u,%u,%u", &at[0], &at[1], &at[2], &at[3]); }
 		else if (!strcmp(argv[i], "--bare")) roster_menu = 0; /* skip rosterMenu: straight into exploreLoop without the full HUD */
+		else if (!strcmp(argv[i], "--cur") && i + 1 < argc) cur_path = argv[++i]; /* start from this saved game (a .MM3 file) instead of MM3.CUR */
 		else if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
 		else if (!strcmp(argv[i], "--keys") && i + 1 < argc) {
-			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
+			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'w') ? 0x40000000u | (unsigned)atoi(t + 1) : (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
 		}
 	}
 	if (game_init(argv[1]) || video_init(headless)) return 1;
+	if (cur_path) { Mm3Cc fresh; if (mm3_cc_open(&fresh, cur_path)) { fprintf(stderr, "cannot open %s\n", cur_path); return 1; } mm3_cc_close(&G.cur); G.cur = fresh; }
 	video_set_key_script(keys, nkeys);
 	video_set_shot(shot);
 	memset(&c, 0, sizeof c);
@@ -57,7 +61,12 @@ int main(int argc, char **argv) {
 			if (idx != 0xFF) memcpy(DG + 0xB9D6 + i * 0x12F, roster + idx * 0x12F, 0x12F);
 		}
 	}
-	DG[0xA26] = 0; /* byte_29116: 0FFh makes rosterMenu end the program (set by the startup code) */
+	{ /* the startup code lists the saved games (*.mm3) and picks one: byte_29116 is its index in the 13-byte name table at E836h (0FFh = none: rosterMenu ends) */
+		uint16_t pattern[2] = { 0x3433, DSEG };
+		game_call(call_getFiles, &c, pattern, 2);
+		fprintf(stderr, "getFiles: count %u first [%s]\n", DG[0xA25], (char *)DG + 0xE836);
+		DG[0xA26] = DG[0xE836] ? 0 : 0xFF;
+	}
 	if (roster_menu) game_call(call_rosterMenu, &c, NULL, 0);
 	if (at_n == 4) { DG[0xE8F7] = at[0]; DG[0xE8F5] = at[1]; DG[0xE8F6] = at[2]; DG[0xE8F4] = at[3]; } /* --at MAP,X,Y,FACING */
 	game_call(call_exploreLoop, &c, NULL, 0);

@@ -34535,7 +34535,7 @@ static void fn_getFiles(Cpu *c) {
 	c->sp = (uint16_t)(t_);
 	goto loc_26704;
 loc_266DE: RTRACE(c, "loc_266DE");
-	c->ax = (uint16_t)((uint16_t)(c->bp + -44));
+	c->ax = (uint16_t)((uint16_t)(c->bp + -14));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(2597)) & 0xFF) << 0));
 	t_ = alu_inc(c, DG8(2597), 8);
