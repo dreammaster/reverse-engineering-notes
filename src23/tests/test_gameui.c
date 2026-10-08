@@ -4,7 +4,7 @@
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
- *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
+ *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
  */
@@ -181,6 +181,14 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyF2, false);
         gameUiDraw(&ui);
         unsigned list = sum(ui.screen);
+        while (ui.clueList.selected + 1 < ui.clueList.count && ui.clueEntries[ui.clueList.selected].free) {
+            gameUiKey(&ui, UiKeyDown, false);
+        }
+        bool locked = !ui.clueEntries[ui.clueList.selected].free;
+        gameUiKey(&ui, UiKeyEnter, false);
+        check("a shareware-locked entry is refused with the reminder (Chapter 3 is the registered program, nothing is locked)", !locked || (ui.clueScreen == 1 && ui.clueNag));
+        ui.clueRegistered = true;
+        gameUiKey(&ui, UiKeyF2, false);
         check("F2 lists the monsters", ui.clueScreen == 1 && ui.clueList.count > 14 && list != page1);
         unsigned types = ui.clueList.count;
         gameUiKey(&ui, UiKeyDown, false);
@@ -223,18 +231,44 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyF4, false);
         gameUiDraw(&ui);
         unsigned classes = sum(ui.screen);
-        check("F4 offers the six magic user classes", ui.clueScreen == 3 && ui.clueList.count == 6 && classes != spells);
+        check("F4 offers the six magic user classes", ui.clueScreen == 1 && ui.clueCategory == 4 && ui.clueList.count == 6 && classes != spells);
         gameUiKey(&ui, UiKeyDown, false);
         gameUiKey(&ui, UiKeyEnter, false);
         gameUiDraw(&ui);
         unsigned count1 = ui.clueList.count;
-        check("Enter lists the chosen class's spells", ui.clueScreen == 1 && ui.clueClass == 1 && count1 > 3 && count1 < 126 && sum(ui.screen) != classes);
+        check("Enter lists the chosen class's spells", ui.clueScreen == 1 && ui.clueCategory == 6 && count1 > 3 && count1 < 126 && sum(ui.screen) != classes);
         gameUiKey(&ui, UiKeyEnter, false);
         gameUiDraw(&ui);
         check("Enter shows the spell page", ui.clueScreen == 2);
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
-        check("Escape returns to the class picker on the same class", ui.clueScreen == 3 && ui.clueList.selected == 1);
+        check("Escape returns to the class list on the same class", ui.clueCategory == 4 && ui.clueScreen == 1 && ui.clueList.selected == 1);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("and then to the walk through", ui.clueScreen == 0);
+        gameUiKey(&ui, UiKeyF5, false);
+        gameUiDraw(&ui);
+        unsigned groups = sum(ui.screen);
+        check("F5 lists the eight item groups", ui.clueScreen == 1 && ui.clueCategory == 11 && ui.clueList.count == 8 && groups != classes);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        unsigned armor = sum(ui.screen);
+        check("Enter lists the group's items", ui.clueScreen == 1 && ui.clueCategory == 12 && ui.clueList.count > 14 && armor != groups);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        unsigned itemPage = sum(ui.screen);
+        check("Enter shows the item page", ui.clueScreen == 2 && itemPage != armor);
+        gameUiKey(&ui, UiKeyRight, false);
+        gameUiKey(&ui, UiKeyEscape, false);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape returns to the group list", ui.clueCategory == 11 && ui.clueScreen == 1 && ui.clueList.selected == 0);
+        for (unsigned i = 0; i < 6; i++) {
+            gameUiKey(&ui, UiKeyDown, false);
+        }
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        check("group 7 is the transportation page", ui.clueScreen == 2 && ui.clueCategory == 11 && sum(ui.screen) != groups);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape returns from it to the group list", ui.clueScreen == 1 && ui.clueList.selected == 6);
         gameUiKey(&ui, UiKeyEscape, false);
         check("and then to the walk through", ui.clueScreen == 0);
         gameUiKey(&ui, 'e', false);

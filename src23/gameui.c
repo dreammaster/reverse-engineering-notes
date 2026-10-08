@@ -4,9 +4,12 @@
 #include <string.h>
 
 #include "cluebook.h"
+#include "clueentries.h"
+#include "clueitem.h"
 #include "cluemap.h"
 #include "cluemonster.h"
 #include "cluespell.h"
+#include "cluetransport.h"
 #include "font.h"
 #include "gamedialog.h"
 #include "lighting.h"
@@ -129,184 +132,269 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe) {
     ui->exe = exe;
 }
 
-/* The clue book's category screens (F2 monsters, F3 spells): a list page (the backdrop of picture 14, 14 names to a page) and an entry page. The entries are every distinct monster
- * the catalog can spawn and every spell with a name; the original greys out what the party has not met or learnt, which no record is decoded for, so all show as known. */
-enum { ClueNameSize = 48 };
-enum { ClueCategoryMaps = 1, ClueCategoryMonsters = 2, ClueCategorySpells = 3, ClueCategoryUsers = 4, ClueScreenClasses = 3 };
+/*
+ * The clue book's category screens, from the entry lists the executable carries (clueentries.h). A list page (the backdrop of picture 14, 14 names to a page) shows one category's entries,
+ * Enter opens the selected one: a page for the maps (1), monsters (2), spells (3, 5-10) and items (12-17), the spell list of a class from the class list (4 -> 5-10), the item list of a
+ * group from the group list (11 -> 12-17; group 7 is the transportation page, group 2 -- the attribute enhancers -- has nothing). Escape backs out one level. Entries without the
+ * shareware flag are dim and refused with the registration reminder unless the program is registered (clueRegistered).
+ */
+enum { ClueNameSize = ClueEntryTextSize + 16 };
 
-static void clueEntryName(const GameUi *ui, unsigned id, char out[ClueNameSize]) {
+static unsigned clueItemGroupCategory(unsigned group) { /* the item group's list: 1 -> 12 ... 6 -> 16, 8 -> 17 (2 and 7 have none) */
+    static const unsigned kCategory[9] = {0, 12, 0, 13, 14, 15, 16, 0, 17};
+    return group < 9 ? kCategory[group] : 0;
+}
+
+static unsigned clueTab(unsigned category) { /* the navigation bar tab: maps, monsters, spells, magic users, items */
+    return category == 1 ? 0 : category == 2 ? 1 : category == 3 ? 2 : category <= 10 ? 3 : 4;
+}
+
+static const ClueEntry *clueSelected(const GameUi *ui) {
+    return ui->clueList.count ? &ui->clueEntries[ui->clueList.selected] : NULL;
+}
+
+static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char out[ClueNameSize]) {
+    GameKind game = ui->session->game;
     out[0] = 0;
-    if (ui->clueCategory == ClueCategoryUsers && ui->clueScreen == ClueScreenClasses) { /* the class picker */
-        ClueSpellText text;
-        if (id < 6 && clueSpellTextLoad(&text, ui->exe, ui->session->game)) {
-            snprintf(out, ClueNameSize, "%s", text.classNames[id]);
-        }
-        return;
-    }
-    if (ui->clueCategory == ClueCategoryMaps) {
+    if (category == 1) {
         LocationName name;
-        if (locationName(ui->session->game, ui->worldDat, ui->worldSize, id - 1, ui->session->game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", ui->session->game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
+        if (locationBlockNamed(game, ui->worldDat, ui->worldSize, id - 1) &&
+            locationName(game, ui->worldDat, ui->worldSize, id - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
             snprintf(out, ClueNameSize, "%s%s", name.name, name.suffix);
         }
-        if (!locationBlockNamed(ui->session->game, ui->worldDat, ui->worldSize, id - 1)) {
-            out[0] = 0;
+    } else if (category == 2) {
+        uint8_t record[MonsterRecordSize];
+        if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
+            monsterGetName(record, out);
         }
-        return;
-    }
-    if (ui->clueCategory == ClueCategorySpells || ui->clueCategory == ClueCategoryUsers) {
+    } else if (category == 3 || (category >= 5 && category <= 10)) {
         const uint8_t *record = spellRecord(&ui->session->spells, id);
         if (record) {
             char name[SpellNameFieldSize + 1];
             spellGetName(record, name);
             snprintf(out, ClueNameSize, "%s", name);
         }
-        return;
-    }
-    uint8_t record[MonsterRecordSize];
-    if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
-        monsterGetName(record, out);
+    } else if (category == 4 || category == 11) {
+        clueEntryPackedString(ui->exe, game, category, id, out);
+    } else if (category >= 12 && category <= 17) {
+        const uint8_t *record = itemCatalogRecord(&ui->session->items, id);
+        if (record) {
+            char name[ItemNameBufferSize];
+            itemGetName(record, name);
+            snprintf(out, ClueNameSize, "%s", name);
+        }
     }
 }
 
-static void clueCategoryOpen(GameUi *ui, unsigned category) {
-    unsigned n = 0, capacity = sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]);
+static void clueListOpen(GameUi *ui, unsigned category) {
     ui->clueCategory = category;
-    if (category == ClueCategoryUsers) { /* the class picker first */
-        for (unsigned k = 0; k < 6; k++) {
-            ui->clueTypes[n++] = (uint16_t)k;
-        }
-        clueListInit(&ui->clueList, n);
-        ui->clueScreen = ClueScreenClasses;
-        ui->clueNag = false;
-        ui->clueHelp = false;
-        return;
-    }
-    if (category == ClueCategoryMaps || category == ClueCategorySpells) {
-        unsigned last = category == ClueCategoryMaps ? (ui->session->game == GameYendor2 ? 120 : 140) : ui->session->spells.recordCount;
-        for (unsigned id = 1; id <= last && n < capacity; id++) {
-            char name[ClueNameSize];
-            clueEntryName(ui, id, name);
-            if (name[0]) {
-                ui->clueTypes[n++] = (uint16_t)id;
-            }
-        }
-    } else {
-        bool seen[MonsterBlockCountMax + 1];
-        memset(seen, 0, sizeof(seen));
-        for (unsigned type = 1; type < ui->session->monsters.lookupCount && n < capacity; type++) {
-            unsigned block = monsterCatalogBlockIndex(&ui->session->monsters, type);
-            if (block && block <= MonsterBlockCountMax && !seen[block]) { /* the types that share a block are one entry */
-                seen[block] = true;
-                ui->clueTypes[n++] = (uint16_t)type;
-            }
-        }
-    }
-    clueListInit(&ui->clueList, n);
+    clueListInit(&ui->clueList, clueEntries(ui->exe, ui->session->game, category, ui->clueEntries));
     ui->clueScreen = 1;
     ui->clueNag = false;
     ui->clueHelp = false;
 }
 
-/* The magic user list of one class: the spells it gets (clueSpellClassUse). */
-static void clueUsersChoose(GameUi *ui, unsigned classIndex) {
-    unsigned n = 0;
-    ui->clueClass = (int)classIndex;
-    for (unsigned id = 1; id <= ui->session->spells.recordCount && n < sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]); id++) {
-        const uint8_t *record = spellRecord(&ui->session->spells, id);
-        unsigned level;
-        if (record && clueSpellClassUse(ui->session->game, classIndex, id, record, &level) != ClueSpellUseNone) {
-            ui->clueTypes[n++] = (uint16_t)id;
-        }
+static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
+    const ClueEntry *entry = clueSelected(ui);
+    if (!entry) {
+        return;
     }
-    clueListInit(&ui->clueList, n);
-    ui->clueScreen = 1;
+    if (!entry->free && !ui->clueRegistered) {
+        ui->clueNag = true;
+        effect(ui, 3);
+        return;
+    }
+    ui->clueNag = false;
+    unsigned category = ui->clueCategory, id = entry->id;
+    ui->clueSub = 0;
+    ui->clueMarker = -1;
+    if (category == 4) {
+        ui->clueParent = ui->clueList.selected;
+        clueListOpen(ui, 4 + id);
+    } else if (category == 11) {
+        unsigned next = clueItemGroupCategory(id);
+        ui->clueParent = ui->clueList.selected;
+        if (next) {
+            clueListOpen(ui, next);
+        } else if (id == 7) {
+            ui->clueScreen = 2;
+        }
+    } else {
+        ui->clueScreen = 2;
+    }
 }
 
-static void drawClueEntryList(GameUi *ui, const char *heading, uint16_t tab) {
+static void clueBack(GameUi *ui) { /* Escape: one level up */
+    unsigned category = ui->clueCategory;
+    ui->clueNag = false;
+    if (ui->clueScreen == 2) {
+        ui->clueScreen = 1;
+        if (category == 11) { /* the transportation page came from the group list */
+            ui->clueList.selected = ui->clueParent;
+        }
+        return;
+    }
+    unsigned parent = (category >= 5 && category <= 10) ? 4 : (category >= 12 && category <= 17) ? 11 : 0;
+    if (parent) {
+        unsigned chosen = ui->clueParent;
+        clueListOpen(ui, parent);
+        if (chosen < ui->clueList.count) { /* back on the row that was chosen, on the page that holds it */
+            ui->clueList.selected = chosen;
+            ui->clueList.first = chosen - chosen % ClueListRows;
+            ui->clueList.last = ui->clueList.first + ClueListRows - 1 < ui->clueList.count - 1 ? ui->clueList.first + ClueListRows - 1 : ui->clueList.count - 1;
+        }
+        return;
+    }
+    ui->clueScreen = 0;
+    ui->cluePage = 1;
+}
+
+static void drawClueList(GameUi *ui, const char *heading) {
     GameKind game = ui->session->game;
     memset(ui->screen, 0, sizeof(ui->screen));
     viewDrawPicture(&ui->renderer, 0, game == GameYendor2 ? 14 : 6, 1, 1, false, 0);
-    fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, ui->clueCategory, (unsigned)strlen(heading)), 4, heading, 0x0D, 0, FontTransparent);
+    fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, ui->clueCategory <= 3 ? ui->clueCategory : ui->clueCategory <= 10 ? 4 : 11, (unsigned)strlen(heading)), 4, heading, 0x0D, 0, FontTransparent);
     char names[ClueListRows][ClueNameSize];
     ClueListRow rows[ClueListRows];
     unsigned shown = 0;
     for (unsigned i = ui->clueList.first; i < ui->clueList.count && shown < ClueListRows; i++, shown++) {
-        clueEntryName(ui, ui->clueTypes[i], names[shown]);
+        clueEntryName(ui, ui->clueCategory, ui->clueEntries[i].id, names[shown]);
         rows[shown].name = names[shown];
-        rows[shown].known = true;
+        rows[shown].known = ui->clueEntries[i].free;
     }
-    clueEntryListDraw(&ui->renderer, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), true);
-    uint16_t flags = tab;
+    clueEntryListDraw(&ui->renderer, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), ui->clueRegistered);
+    uint16_t flags = (uint16_t)(ClueTabFirstBit >> clueTab(ui->clueCategory));
     flags |= clueListCanPageUp(&ui->clueList) ? 0x100 : 0;
     flags |= clueListCanPageDown(&ui->clueList) ? 0x80 : 0;
     clueNavBarDraw(&ui->renderer, flags);
 }
 
+static void drawClueSpellPage(GameUi *ui, unsigned id, uint16_t tab, bool users) {
+    GameKind game = ui->session->game;
+    ClueSpellText text;
+    if (!clueSpellTextLoad(&text, ui->exe, game)) {
+        return;
+    }
+    ClueSpellDescription description;
+    memset(&description, 0, sizeof(description));
+    unsigned first, count;
+    if (spellDescriptionRange(game, ui->worldDat, ui->worldSize, id, &first, &count) && count < 16) {
+        for (unsigned i = 0; i < count; i++) {
+            description.lines[i] = spellDescriptionLine(game, ui->worldDat, ui->worldSize, first + i);
+        }
+        description.lineCount = count;
+    }
+    const uint8_t *record = spellRecord(&ui->session->spells, id);
+    if (record) {
+        clueSpellPageDraw(&ui->renderer, &text, record, id, users ? text.usersHeading : text.heading, tab, &description);
+    }
+}
+
+static void drawClueMapPage(GameUi *ui, unsigned id, uint16_t tab) {
+    GameKind game = ui->session->game;
+    static LocalMapCell cells[LocalMapColumns * LocalMapRows];
+    ClueMapMarker markers[ClueMapMarkersMax];
+    LocationName name;
+    (void)tab;
+    clueMapFill(cells, game, &ui->session->map, ui->worldDat, ui->worldSize, id);
+    unsigned count = clueMapMarkers(game, ui->worldDat, ui->worldSize, id, markers, ClueMapMarkersMax);
+    if (locationName(game, ui->worldDat, ui->worldSize, id - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
+        clueMapPageDraw(&ui->renderer, cells, &name, "SELECT LEGEND OR ESC", markers, count);
+        char label[ClueMapLabelSize];
+        if (ui->clueMarker >= 0 && (unsigned)ui->clueMarker < count && clueMapLabel(game, ui->worldDat, ui->worldSize, markers[ui->clueMarker].label, label)) {
+            clueMapLabelDraw(&ui->renderer, label);
+        }
+    }
+}
+
+/* The item page: the common part, the sub-icon row of the "+N" variants (Left / Right step through them) and the row for the kind of item. */
+static void drawClueItemPage(GameUi *ui, unsigned id, uint16_t tab) {
+    GameKind game = ui->session->game;
+    static ClueItemText text;
+    if (!clueItemTextLoad(&text, ui->exe, game)) {
+        return;
+    }
+    const ItemCatalog *catalog = &ui->session->items;
+    uint16_t mask;
+    unsigned count = clueSubIconCount(catalog, id, &mask);
+    unsigned shown = id + (count && ui->clueSub < count ? ui->clueSub : 0);
+    const uint8_t *record = itemCatalogRecord(catalog, shown);
+    if (!record) {
+        return;
+    }
+    clueItemPageDraw(&ui->renderer, &text, record, tab, ui->clueCategory);
+    if (count) {
+        clueSubIconRowDraw(&ui->renderer, count, (uint16_t)((mask & 0x7FFF) | (0x8000 >> (ui->clueSub < count ? ui->clueSub : 0))));
+    }
+    const uint8_t *entry = itemTargetEntry(catalog, record);
+    ItemTargetKind kind = itemTargetKind(record);
+    if (entry && kind == ItemTargetWearable) {
+        clueArmorRowDraw(&ui->renderer, &text, entry, itemEffectEntry(catalog, record));
+    } else if (entry && kind == ItemTargetWeapon) {
+        clueWeaponRowDraw(&ui->renderer, &text, entry);
+    } else if (entry && kind == ItemTargetConsumable) {
+        clueHealingRowDraw(&ui->renderer, &text, game, entry);
+    }
+}
+
 static void drawClueCategory(GameUi *ui) {
     GameKind game = ui->session->game;
-    const ViewRenderer *r = &ui->renderer;
-    unsigned id = ui->clueTypes[ui->clueList.selected];
-    if (ui->clueCategory == ClueCategoryUsers || ui->clueCategory == ClueCategorySpells) {
-        ClueSpellText text;
-        uint16_t tab = (uint16_t)(ClueTabFirstBit >> (ui->clueCategory == ClueCategoryUsers ? 3 : 2));
-        if (!clueSpellTextLoad(&text, ui->exe, game)) {
-            return;
-        }
-        const char *heading = ui->clueCategory == ClueCategoryUsers ? text.usersHeading : text.heading;
-        if (ui->clueScreen != 2) { /* the class picker or the spell list */
-            drawClueEntryList(ui, heading, tab);
-            return;
-        }
-        ClueSpellDescription description;
-        memset(&description, 0, sizeof(description));
-        unsigned first, count;
-        if (spellDescriptionRange(game, ui->worldDat, ui->worldSize, id, &first, &count) && count < 16) {
-            for (unsigned i = 0; i < count; i++) {
-                description.lines[i] = spellDescriptionLine(game, ui->worldDat, ui->worldSize, first + i);
-            }
-            description.lineCount = count;
-        }
-        clueSpellPageDraw(r, &text, spellRecord(&ui->session->spells, id), id, heading, tab, &description);
-        return;
-    }
-    if (ui->clueCategory == ClueCategoryMaps) {
-        char heading[24];
-        uint16_t tab = ClueTabFirstBit;
-        if (!clueMapHeading(ui->exe, game, heading)) {
-            return;
-        }
-        if (ui->clueScreen == 1) {
-            drawClueEntryList(ui, heading, tab);
-            return;
-        }
-        static LocalMapCell cells[LocalMapColumns * LocalMapRows];
-        ClueMapMarker markers[ClueMapMarkersMax];
-        LocationName name;
-        clueMapFill(cells, game, &ui->session->map, ui->worldDat, ui->worldSize, id);
-        unsigned count = clueMapMarkers(game, ui->worldDat, ui->worldSize, id, markers, ClueMapMarkersMax);
-        if (locationName(game, ui->worldDat, ui->worldSize, id - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
-            clueMapPageDraw(r, cells, &name, "SELECT LEGEND OR ESC", markers, count);
-            char label[ClueMapLabelSize];
-            if (ui->clueMarker >= 0 && (unsigned)ui->clueMarker < count && clueMapLabel(game, ui->worldDat, ui->worldSize, markers[ui->clueMarker].label, label)) {
-                clueMapLabelDraw(r, label);
-            }
-        }
-        return;
-    }
-    ClueMonsterText text;
-    uint16_t tab = (uint16_t)(ClueTabFirstBit >> 1);
-    if (!clueMonsterTextLoad(&text, ui->exe, game)) {
-        return;
-    }
+    unsigned category = ui->clueCategory;
+    uint16_t tab = (uint16_t)(ClueTabFirstBit >> clueTab(category));
+    const ClueEntry *entry = clueSelected(ui);
     if (ui->clueScreen == 1) {
-        drawClueEntryList(ui, text.heading, tab);
+        char heading[32] = "";
+        if (category == 1) {
+            clueMapHeading(ui->exe, game, heading);
+        } else if (category == 2) {
+            ClueMonsterText text;
+            if (clueMonsterTextLoad(&text, ui->exe, game)) {
+                snprintf(heading, sizeof(heading), "%s", text.heading);
+            }
+        } else if (category <= 10) {
+            ClueSpellText text;
+            if (clueSpellTextLoad(&text, ui->exe, game)) {
+                snprintf(heading, sizeof(heading), "%s", category == 3 ? text.heading : text.usersHeading);
+            }
+        } else {
+            static ClueItemText items;
+            if (clueItemTextLoad(&items, ui->exe, game)) {
+                snprintf(heading, sizeof(heading), "%s", items.headings[category][0] ? items.headings[category] : items.headings[11]);
+            }
+        }
+        drawClueList(ui, heading);
+        if (ui->clueNag) {
+            ClueHelpText help;
+            if (clueHelpTextLoad(&help, ui->exe, game)) {
+                clueNagDraw(&ui->renderer, &help);
+            }
+        }
         return;
     }
-    uint8_t record[MonsterRecordSize];
-    if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
-        char name[ClueNameSize];
-        monsterGetName(record, name);
-        clueMonsterPageDraw(r, &text, record, name, tab);
+    if (category == 11) { /* group 7: the transportation page */
+        static ClueTransportData transport;
+        if (clueTransportLoad(&transport, ui->exe, game)) {
+            clueTransportPageDraw(&ui->renderer, &transport, tab);
+        }
+        return;
+    }
+    if (!entry) {
+        return;
+    }
+    if (category == 1) {
+        drawClueMapPage(ui, entry->id, tab);
+    } else if (category == 2) {
+        ClueMonsterText text;
+        uint8_t record[MonsterRecordSize];
+        if (clueMonsterTextLoad(&text, ui->exe, game) && monsterRecordSpawn(record, &ui->session->monsters, entry->id)) {
+            char name[MonsterNameBufferSize];
+            monsterGetName(record, name);
+            clueMonsterPageDraw(&ui->renderer, &text, record, name, tab);
+        }
+    } else if (category <= 10) {
+        drawClueSpellPage(ui, entry->id, tab, category != 3);
+    } else {
+        drawClueItemPage(ui, entry->id, tab);
     }
 }
 
@@ -333,11 +421,35 @@ static void drawClue(GameUi *ui) {
     }
 }
 
-static bool clueKey(GameUi *ui, UiKey key) { /* F2 / F3 the monster / spell lists (Up Down I Q choose, Enter opens, Escape backs out), F6 the walk through (I / Q turn pages), Tab help, Escape closes */
-    if (key >= UiKeyF1 && key <= UiKeyF4) {
-        clueCategoryOpen(ui, ClueCategoryMaps + (key - UiKeyF1));
-    } else if (ui->clueScreen == ClueScreenClasses) { /* the class picker of the magic users */
-        if (key == UiKeyEscape || key == UiKeyF6) {
+/* F1-F5 the category lists, F6 the walk through (I / Q turn its pages), Tab the help; in a list Up / Down / I / Q choose and Enter opens; on a map page Left / Right pick a legend
+ * marker, on an item page the "+N" variant; Escape backs out and from the first level closes the book. */
+static bool clueKey(GameUi *ui, UiKey key) {
+    static const unsigned kFKeyCategory[5] = {1, 2, 3, 4, 11};
+    if (key >= UiKeyF1 && key <= UiKeyF5) {
+        clueListOpen(ui, kFKeyCategory[key - UiKeyF1]);
+    } else if (ui->clueScreen == 2) {
+        unsigned category = ui->clueCategory;
+        if (key == UiKeyEscape) {
+            clueBack(ui);
+        } else if (category == 1 && (key == UiKeyLeft || key == UiKeyRight)) {
+            ClueMapMarker markers[ClueMapMarkersMax];
+            const ClueEntry *entry = clueSelected(ui);
+            int count = entry ? (int)clueMapMarkers(ui->session->game, ui->worldDat, ui->worldSize, entry->id, markers, ClueMapMarkersMax) : 0;
+            if (count) {
+                ui->clueMarker = key == UiKeyRight ? (ui->clueMarker + 1) % count : (ui->clueMarker + count - 1 + (ui->clueMarker < 0 ? 1 : 0)) % count;
+            }
+        } else if (category >= 12 && (key == UiKeyLeft || key == UiKeyRight)) {
+            const ClueEntry *entry = clueSelected(ui);
+            uint16_t mask;
+            unsigned count = entry ? clueSubIconCount(&ui->session->items, entry->id, &mask) : 0;
+            if (count) {
+                ui->clueSub = key == UiKeyRight ? (ui->clueSub + 1) % count : (ui->clueSub + count - 1) % count;
+            }
+        }
+    } else if (ui->clueScreen == 1) {
+        if (key == UiKeyEscape) {
+            clueBack(ui);
+        } else if (key == UiKeyF6) {
             ui->clueScreen = 0;
             ui->cluePage = 1;
         } else if (key == 'i' || key == 'q') {
@@ -345,33 +457,7 @@ static bool clueKey(GameUi *ui, UiKey key) { /* F2 / F3 the monster / spell list
         } else if (key == UiKeyUp || key == UiKeyDown) {
             clueListRowKey(&ui->clueList, key == UiKeyDown);
         } else if (key == UiKeyEnter) {
-            clueUsersChoose(ui, ui->clueTypes[ui->clueList.selected]);
-        }
-    } else if (ui->clueScreen == 2) { /* an entry's page: Escape returns to the list; on a map Left / Right step through its legend markers */
-        if (key == UiKeyEscape) {
-            ui->clueScreen = 1;
-        } else if (ui->clueCategory == ClueCategoryMaps && (key == UiKeyLeft || key == UiKeyRight)) {
-            ClueMapMarker markers[ClueMapMarkersMax];
-            int count = (int)clueMapMarkers(ui->session->game, ui->worldDat, ui->worldSize, ui->clueTypes[ui->clueList.selected], markers, ClueMapMarkersMax);
-            if (count) {
-                ui->clueMarker = key == UiKeyRight ? (ui->clueMarker + 1) % count : (ui->clueMarker + count - 1 + (ui->clueMarker < 0 ? 1 : 0)) % count;
-            }
-        }
-    } else if (ui->clueScreen == 1) {
-        if (key == UiKeyEscape && ui->clueCategory == ClueCategoryUsers) { /* back to the class picker, on the class that was chosen */
-            unsigned chosen = (unsigned)ui->clueClass;
-            clueCategoryOpen(ui, ClueCategoryUsers);
-            ui->clueList.selected = chosen;
-        } else if (key == UiKeyEscape || key == UiKeyF6) {
-            ui->clueScreen = 0;
-            ui->cluePage = 1;
-        } else if (key == 'i' || key == 'q') {
-            clueListPageKey(&ui->clueList, key == 'q');
-        } else if (key == UiKeyUp || key == UiKeyDown) {
-            clueListRowKey(&ui->clueList, key == UiKeyDown);
-        } else if (key == UiKeyEnter && ui->clueList.count) {
-            ui->clueScreen = 2;
-            ui->clueMarker = -1;
+            clueEntryOpen(ui);
         }
     } else if (key == UiKeyEscape) {
         ui->overlay = UiOverlayNone;

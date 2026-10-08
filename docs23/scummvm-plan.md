@@ -46,14 +46,17 @@ callbacks (sound effect, music track, the ending cinematic, store / fetch a save
 driver) and VOC effects to the mixer, and run the cinematics of `introstory.h` (`introOpeningScript`, `introStoryScript`, `introEndingScript`, `introOpening3Script`) against its host
 interface. `tools/explore_sdl.c` is exactly that glue for SDL2, about 300 lines.
 
-The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts live in the data segment; `ExeData`). Today it has:
+The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts and entry lists live in the data segment; `ExeData`, `clueentries.h`). It has:
 
-- the walk through (F6; I / Q turn the pages; the shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) and the help screen (Tab);
-- the maps (F1: the named blocks, `locationBlockNamed`; Left / Right on a page pick a legend marker), the monster statistics (F2), the spell information (F3) and the magic users (F4: the six
-  classes, then the spells each gets, `clueSpellClassUse`, the rule behind the class rows of the spell page). Lists page with Up / Down / I / Q, Enter opens an entry, Escape backs out. The
-  original greys out entries the party has not met or learnt, which no record is decoded for, so all show as known; Chapter 3's list backdrop is assumed to be picture 6.
+- the walk through (F6; I / Q turn the pages) and the help screen (Tab);
+- the category lists F1 maps, F2 monsters, F3 spells, F4 magic users (a class, then its spells: `clueSpellClassUse`, the rule behind the class rows of the spell page), F5 items (one of the
+  eight groups, then its items with the "+N" variant row; group 7 is the transportation page). Lists page with Up / Down / I / Q, Enter opens an entry, Escape backs out one level, Left /
+  Right pick a map's legend marker or an item's variant.
 
-The items (F5, eight subtypes) are the remaining clue-book work; their page renderers exist (`clueitem.c`, `cluetransport.c`), only the controller does not.
+The lists are the executable's own. Their entries carry a flag for what the shareware program opens: the others are dim and answered with the registration reminder unless
+`clueRegistered` is set (a ScummVM front end would set it; Chapter 3's REGISTER.EXE is the registered program and has no locked entries; `explore_sdl` sets it unless `EXPLORE_SHAREWARE` is
+given). Not done: item group 2 (the attribute enhancers: the original's screen only waits for a key), the item pages' ability-info overlay, the monster animation, and Chapter 3's list backdrop
+is assumed to be picture 6.
 
 ## Engine loop
 
