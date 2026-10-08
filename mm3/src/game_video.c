@@ -68,7 +68,7 @@ static void ui_draw_list(void *user, unsigned addr) { (void)user; game_exec_draw
 static int init_sdl(void) {
 	if (getenv("MM3_HEADLESS")) { headless = 1; return 0; }
 	if (SDL_Init(SDL_INIT_VIDEO)) { fprintf(stderr, "SDL: %s\n", SDL_GetError()); return -1; }
-	window = SDL_CreateWindow("Might and Magic III", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, MM3_SCREEN_W * 3, MM3_SCREEN_H * 3, 0);
+	window = SDL_CreateWindow("Might and Magic III", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, MM3_SCREEN_W * 3, MM3_SCREEN_H * 3, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_RenderSetLogicalSize(renderer, MM3_SCREEN_W, MM3_SCREEN_H);
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, MM3_SCREEN_W, MM3_SCREEN_H);
@@ -154,6 +154,10 @@ void video_pump_events(void) {
 			mouse_x = px * MM3_SCREEN_W / (w ? w : 1); mouse_y = py * MM3_SCREEN_H / (h ? h : 1);
 			mouse_btn = (b & SDL_BUTTON_LMASK ? 1 : 0) | (b & SDL_BUTTON_RMASK ? 2 : 0);
 			mouse_seen = 1;
+		}
+		if (e.type == SDL_KEYDOWN && ((e.key.keysym.sym == SDLK_RETURN && (e.key.keysym.mod & KMOD_ALT)) || e.key.keysym.sym == SDLK_F11)) { /* Alt+Enter / F11: full screen */
+			SDL_SetWindowFullscreen(window, (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+			continue;
 		}
 		if (e.type == SDL_KEYDOWN) {
 			unsigned code = bios_code(e.key.keysym.sym, e.key.keysym.mod);

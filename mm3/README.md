@@ -8,6 +8,13 @@
   Xeen comparison), `data-files.md` (saves, maps, events, party block), `character.h`, `items.md`, `spells.md`, `monsters.md`, `town.md`,
   `view.md`, `video-module.md`, `engine-loop.md`, `text-files.md`, `music.md`, `rules.md` (class requirements, experience, HP/SP, prices, damage and saving throws, training/inn/tavern/guild/smithy).
 
+* `src/` -- a **playable C + SDL2 port** that loads the original data files at run time (nothing of the game is in this repository except the
+  data you copy to `data/`): `cd src && make mm3game && ./mm3game ../data` (`../data` = a folder with `MM3.EXE`, `MM3.CC`, `MM3.CUR` and the derived
+  `DGROUP.BIN`/`IMAGE.BIN` made by `tools/mm3_dgroup.py` / `tools/mm3_image.py`).  Mouse and keyboard as in the DOS game, music and effects through the original
+  AdLib driver (run in an 8086 interpreter) and an OPL2 emulator, saved games in `./mm3-saves`.  See `src/README.md` for the architecture: the
+  game logic is statically translated from the disassembly (`tools/asm2c.py`) and is being replaced piece by piece with readable C that is
+  verified against the translation (`src/logic.c`, `src/rules.c`; `tests/difftest.sh`).
+
 The program is the same engine generation as Xeen (Borland C++ 1991, VROOMM overlays): the ScummVM Xeen source
 (`engines/mm/xeen`) is the best commentary for most of the code; the documents say where MM3 differs.
 
