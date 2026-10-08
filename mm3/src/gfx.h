@@ -17,8 +17,16 @@ typedef struct {
 } Mm3Palette;
 
 typedef struct {
-	int w, h;
+	int x_off, y_off, w, h;
 	uint8_t *pixels; /* w*h palette indices, 0 = transparent; owned */
+} Mm3Layer;
+
+typedef struct {
+	int w, h;
+	uint8_t *pixels; /* union rectangle of the layers, w*h palette indices, 0 = transparent; owned */
+	int x0, y0;      /* position of the union rectangle relative to the draw position (min of the layer offsets) */
+	int nlayers;
+	Mm3Layer layer[2];
 } Mm3Frame;
 
 typedef struct {
@@ -35,5 +43,8 @@ void mm3_sprite_free(Mm3Sprite *spr);
 
 /* Blit a frame (index 0 transparent) into an 8-bit surface of size surf_w x surf_h at (x, y), clipped. */
 void mm3_blit(uint8_t *surf, int surf_w, int surf_h, const Mm3Frame *f, int x, int y);
+
+/* Draw as the video module does: each layer at (x + its own offset), optionally mirrored horizontally within the layer. */
+void mm3_blit_layers(uint8_t *surf, int surf_w, int surf_h, const Mm3Frame *f, int x, int y, int mirror);
 
 #endif

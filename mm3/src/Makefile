@@ -93,3 +93,7 @@ tests/view_run: tests/view_run.c $(VIEW_SRC) view_host.h recomp.h
 viewcheck: tests/view_run
 	python3 ../tools/mm3_viewcheck.py ../data/MM3.EXE $(DATA)/MM3.CUR tests/view_run 300
 .PHONY: viewcheck
+
+mm3view: mm3view.c view_glue.c cc.c maze.c gfx.c dgroup.c $(VIEW_SRC) view_glue.h
+	$(CC) $(CFLAGS) -Wno-unused-label $(SDL_CFLAGS) -o $@ mm3view.c view_glue.c cc.c maze.c gfx.c dgroup.c $(VIEW_SRC) $(SDL_LIBS)
+.PHONY: mm3view

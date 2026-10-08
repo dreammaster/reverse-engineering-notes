@@ -133,6 +133,7 @@ int mm3_sprite_decode(Mm3Sprite *spr, const uint8_t *d, size_t len) {
 			goto fail;
 		}
 		f->pixels = calloc((size_t)f->w * f->h + 1, 1);
+		f->x0 = x0; f->y0 = y0; f->nlayers = nl;
 		for (int k = 0; k < nl; k++) {
 			for (int y = 0; y < L[k].h; y++)
 				for (int x = 0; x < L[k].w; x++) {
@@ -140,7 +141,8 @@ int mm3_sprite_decode(Mm3Sprite *spr, const uint8_t *d, size_t len) {
 					if (v)
 						f->pixels[(size_t)(L[k].y_off - y0 + y) * f->w + (L[k].x_off - x0 + x)] = v;
 				}
-			free(L[k].rows);
+			f->layer[k].x_off = L[k].x_off; f->layer[k].y_off = L[k].y_off; f->layer[k].w = L[k].w; f->layer[k].h = L[k].h;
+			f->layer[k].pixels = L[k].rows; /* ownership moves to the frame */
 		}
 	}
 	return 0;
@@ -150,8 +152,11 @@ fail:
 }
 
 void mm3_sprite_free(Mm3Sprite *spr) {
-	for (unsigned i = 0; i < spr->count; i++)
+	for (unsigned i = 0; i < spr->count; i++) {
 		free(spr->frames[i].pixels);
+		for (int k = 0; k < spr->frames[i].nlayers; k++)
+			free(spr->frames[i].layer[k].pixels);
+	}
 	free(spr->frames);
 	spr->frames = NULL;
 	spr->count = 0;
@@ -167,6 +172,23 @@ void mm3_blit(uint8_t *surf, int sw, int sh, const Mm3Frame *f, int x, int y) {
 			uint8_t v = f->pixels[(size_t)j * f->w + i];
 			if (v && dx >= 0 && dx < sw)
 				surf[dy * sw + dx] = v;
+		}
+	}
+}
+
+void mm3_blit_layers(uint8_t *surf, int sw, int sh, const Mm3Frame *f, int x, int y, int mirror) {
+	for (int k = 0; k < f->nlayers; k++) {
+		const Mm3Layer *L = &f->layer[k];
+		for (int j = 0; j < L->h; j++) {
+			int dy = y + L->y_off + j;
+			if (dy < 0 || dy >= sh)
+				continue;
+			for (int i = 0; i < L->w; i++) {
+				uint8_t v = L->pixels[(size_t)j * L->w + i];
+				int dx = x + L->x_off + (mirror ? L->w - 1 - i : i);
+				if (v && dx >= 0 && dx < sw)
+					surf[dy * sw + dx] = v;
+			}
 		}
 	}
 }

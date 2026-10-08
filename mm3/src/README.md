@@ -16,12 +16,15 @@ each rule comes from.
 | `viewer.c` | first SDL2 front end: `make viewer && ./viewer ../data CREATE.RAW` (arrow keys step sprite frames; `--shot x.bmp` for headless screenshots with `SDL_VIDEODRIVER=dummy`) |
 | `dgroup.c/.h`, `mapbin.c/.h` | run-time access to the game's lookup tables (DGROUP dumped from `MM3.EXE` by `tools/mm3_dgroup.py`, git-ignored) and the `MAZEnn.BIN` monster/object lists (`make mapbintest`: 64 maps, 2,604 monsters, 1,483 objects, ids in range) |
 | `evtrun.c/.h` | event script runner: the control flow of `runMazeEvent` (lines, If/JumpRnd goto, CallEvent/Return, AlterEvent, Exit) with a host interface for the game effects; `make evttest` replays the real MAZE01 pit script |
+| `recomp.h`, `view_host.c`, `view_glue.c`, `gen/` | the **3D view**: the original renderer, mechanically translated from the disassembly (`tools/asm2c.py`, see `gen/README.md`) and verified draw-list-exact against the original code in an emulator (`make viewcheck`); the glue fills its data segment from the maps and composites its draw lists with the real sprite sheets |
+| `mm3view.c` | SDL first-person viewer: `make mm3view && ./mm3view ../data 1 2 5 2` (map x y facing; arrows move) |
 | `tests/` | `make test` -- round-trips a synthetic ciphered/LZHUF archive built by `gen_testdata.py` (which reuses the Python reference) and checks the parsers |
 
 Verified on the real game files (`../data`): all 558 `MM3.CC` and 240 `MM3.CUR` members extract byte-identical to the Python tool, and
 `make realtest` parses every `MAZEnn.DAT`/`.EVT` (10,831 events, records tile each file exactly).
 
-Not done yet (planned order): event effects (`If` tests, give/take, teleport, town buildings: the host side of `evtrun`), rules (combat, spells, town), game screens on top of the SDL viewer (UI frames, text colours/windows/alignment), first-person renderer (draw-list format still partly undecoded, see `docs/view.md`).
+Not done yet (planned order): event effects (`If` tests, give/take, teleport, town buildings: the host side of `evtrun`), rules (combat, spells, town), game screens on top of the SDL viewer (UI frames, text colours/windows/alignment), objects/monsters in the view (scaled sprites), outdoor view, UI screens.
 
-Open question found while porting: `docs/data-files.md` gives facing 0 = north, 1 = south, 2 = east, 3 = west, while
-the view tables are described as N, E, S, W; settle this before writing movement code.
+Facing (settled from `exploreLoop`'s turn and step tables): 0 = north (+y), 1 = south (-y), 2 = east (+x), 3 = west (-x);
+turning left goes 0 -> 3 -> 1 -> 2 -> 0, turning right 0 -> 2 -> 1 -> 3 -> 0.  Wall nibble sides are N, E, S, W from the top nibble
+(`MM3_SIDE_*`); `mm3_facing_*` in `view_glue.c` has the helpers.
