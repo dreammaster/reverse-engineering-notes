@@ -13,7 +13,7 @@ void mm3_rng_seed(uint32_t seed);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -72,10 +72,31 @@ static void randomize_conditions(void) {
 }
 static void setup_conditions(unsigned iter, uint16_t *a) { (void)iter; (void)a; randomize_conditions(); }
 static void setup_char_cond(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; }
+static void setup_combat(unsigned iter, uint16_t *a) {
+	(void)iter; randomize_conditions();
+	for (int i = 0; i < 6; i++) {
+		Mm3Character *ch = (Mm3Character *)(DG + 0xB9D6 + i * 0x12F);
+		for (int s = 0; s < 18; s++) {
+			ch->slotPresent[s] = rnd(3) ? (uint8_t[]){ 1, 4, 0xD, 2, 0, 3 }[rnd(6)] : 0; ch->slotMetal[s] = rnd(12); ch->slotId[s] = 1 + rnd(0x40);
+			ch->slotElement[s] = rnd(20); ch->slotSpell[s] = rnd(0x4E);
+		}
+		ch->heroism = rnd(5); ch->holyBonus = rnd(5); ch->conditions[0] = rnd(4) ? 0 : rnd(5);
+	}
+	/* the monster stat column: 64 bytes at a free spot in far memory */
+	for (int i = 0; i < 64; i++) MEM[0x90000 + 0x4000 + i] = (uint8_t)rnd(60);
+	wr16(DG, 0xF07E, 0x4000); wr16(DG, 0xF080, 0x9000);
+	for (int t = 0; t < 8; t++) { wr16(DG, 0xB6BC + t * 2, rnd(60)); wr16(DG, 0xB810 + t * 2, rnd(3) ? 0 : 1); }
+	DG[0x4B7C] = rnd(8);
+	a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(2);
+}
+static void setup_save(unsigned iter, uint16_t *a) { setup_combat(iter, a); a[1] = rnd(7); }
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "getWeaponDamage", host_getWeaponDamage, 2, 0, setup_combat },
+	{ "hitMonster", host_hitMonster, 2, 1, setup_combat },
+	{ "charSavingThrow", host_charSavingThrow, 2, 1, setup_save },
 	{ "worstCondition", host_worstCondition, 1, 1, setup_char_cond },
 	{ "checkPartyDead", host_checkPartyDead, 0, 0, setup_conditions },
 	{ "allHaveGone", host_allHaveGone, 0, 1, setup_conditions },

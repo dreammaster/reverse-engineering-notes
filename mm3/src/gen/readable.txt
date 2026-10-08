@@ -16,3 +16,6 @@ checkPartyDead
 allHaveGone
 charsCantAct
 subtractHitPoints
+getWeaponDamage
+hitMonster
+charSavingThrow

@@ -100,7 +100,6 @@ sub_2811C
 sub_44843
 sub_44921
 buildActiveEffects
-charSavingThrow
 sub_28249
 sub_418F3
 Map_load
@@ -348,7 +347,6 @@ drawRow1Sprites
 drawRow2Sprites
 attack2
 getMonsterDamage
-hitMonster
 monster_getTextColor
 sortCombatParty
 sub_37BA7
@@ -383,7 +381,6 @@ getDamageScale
 getElementalCategory
 getMonsterResistance
 sub_27F9A
-getWeaponDamage
 sub_28108
 sub_280B2
 getEquipSlotName

@@ -2,7 +2,7 @@
 #include "game.h"
 #include "logic.h"
 
-static Mm3Game game(void) { Mm3Game g = { DG }; return g; }
+static Mm3Game game(void) { Mm3Game g = { DG, MEM }; return g; }
 static const Mm3Character *near_char(Cpu *c, int n) { return (const Mm3Character *)(DG + host_arg(c, n)); }
 static void ret32(Cpu *c, uint32_t v) { c->ax = (uint16_t)v; c->dx = (uint16_t)(v >> 16); }
 
@@ -28,6 +28,10 @@ static void impl_allHaveGone(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3
 static void impl_charsCantAct(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_chars_cant_act(&g); }
 static void impl_subtractHitPoints(Cpu *c) { Mm3Game g = game(); mm3_subtract_hit_points(&g, (Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
 
+static void impl_getWeaponDamage(Cpu *c) { Mm3Game g = game(); mm3_weapon_damage(&g, (const Mm3Character *)(DG + host_arg(c, 0)), host_arg(c, 1) != 0); }
+static void impl_hitMonster(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_hit_monster(&g, (const Mm3Character *)(DG + host_arg(c, 0)), host_arg(c, 1) != 0); }
+static void impl_charSavingThrow(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_saving_throw(&g, (const Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
+
 /* host entry points: with MM3_SHADOW=1 every call is also run through the translated original and the results compared (game_diff.c) */
 void host_getCurrentExperience(Cpu *c) { game_shadow("getCurrentExperience", impl_getCurrentExperience, c, 1, 2); }
 void host_nextExperienceLevel(Cpu *c) { game_shadow("nextExperienceLevel", impl_nextExperienceLevel, c, 1, 2); }
@@ -47,3 +51,6 @@ void host_checkPartyDead(Cpu *c) { game_shadow("checkPartyDead", impl_checkParty
 void host_allHaveGone(Cpu *c) { game_shadow("allHaveGone", impl_allHaveGone, c, 0, 1); }
 void host_charsCantAct(Cpu *c) { game_shadow("charsCantAct", impl_charsCantAct, c, 0, 1); }
 void host_subtractHitPoints(Cpu *c) { game_shadow("subtractHitPoints", impl_subtractHitPoints, c, 2, 0); }
+void host_getWeaponDamage(Cpu *c) { game_shadow("getWeaponDamage", impl_getWeaponDamage, c, 2, 0); }
+void host_hitMonster(Cpu *c) { game_shadow("hitMonster", impl_hitMonster, c, 2, 1); }
+void host_charSavingThrow(Cpu *c) { game_shadow("charSavingThrow", impl_charSavingThrow, c, 2, 1); }

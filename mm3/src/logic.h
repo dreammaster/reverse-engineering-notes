@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "character.h"
 
-typedef struct { uint8_t *dg; } Mm3Game;
+typedef struct { uint8_t *dg; uint8_t *mem; /* flat real-mode memory: far pointer seg:off = mem + seg*16 + off */ } Mm3Game;
 
 /* DGROUP offsets */
 enum {
@@ -29,7 +29,22 @@ enum {
 	MM3_DG_BITSET_SHIFTS = 0x159C,    /* ... and shift (byte, 0x58 bytes per field) */
 	MM3_DG_PARTY_DEAD_FLAG = 0x151,   /* byte_28841: set by checkPartyDead when no member can act */
 	MM3_DG_MONSTER_ROWS = 0xC4A2,     /* byte_34B92..94: monsters present in the first three rows ahead (also: groups in combat) */
-	MM3_DG_COMBAT_GONE = 0xB9C9       /* per combat slot: has acted this round */
+	MM3_DG_COMBAT_GONE = 0xB9C9,      /* per combat slot: has acted this round */
+	/* combat globals */
+	MM3_DG_COMBAT_TARGET = 0x4B7C,
+	MM3_DG_COMBAT_HIT_BONUS = 0x92FA,
+	MM3_DG_COMBAT_WEAPON_DAMAGE = 0xABBA, /* word */
+	MM3_DG_WEAPON_ELEMENT = 0xABB4,       /* byte_332A4: element of the attacking weapon */
+	MM3_DG_WEAPON_SPELL = 0xC509,         /* byte_34BF9 */
+	MM3_DG_WEAPON_DICE = 0xC4C9,          /* byte_34BB9 */
+	MM3_DG_WEAPON_SIDES = 0xEC88,         /* byte_37378 */
+	MM3_DG_MON_AC = 0xF07E,               /* far pointers to the loaded monster stat columns: offset word, segment word */
+	MM3_DG_MON_COLUMN_OFFSET = 0xB6BC,    /* word per combat target: offset of its entry in each column */
+	MM3_DG_MON_ASLEEP = 0xB810,           /* word per combat target (non-zero: easy to hit) */
+	MM3_DG_WEAPON_HIT_BONUS = 0xA71,      /* by weapon metal */
+	MM3_DG_WEAPON_METAL_DAMAGE = 0xA88,
+	MM3_DG_WEAPON_DICE_COUNT = 0xCD0,     /* by item id */
+	MM3_DG_WEAPON_DICE_SIDES = 0xD19
 };
 
 #define MM3_NO_SLOT 0x1111
@@ -59,5 +74,10 @@ void mm3_check_party_dead(const Mm3Game *g);                                   /
 int mm3_all_have_gone(const Mm3Game *g);                                       /* allHaveGone: every active combat participant has acted */
 int mm3_chars_cant_act(const Mm3Game *g);                                      /* charsCantAct: every character is asleep/paralysed/unconscious ... */
 void mm3_subtract_hit_points(const Mm3Game *g, Mm3Character *ch, int amount);  /* subtractHitPoints */
+
+/* combat rolls */
+void mm3_weapon_damage(const Mm3Game *g, const Mm3Character *ch, int ranged);  /* getWeaponDamage: fills the Combat_* globals */
+int mm3_hit_monster(const Mm3Game *g, const Mm3Character *ch, int ranged);     /* hitMonster: does the attack hit the current target? */
+int mm3_saving_throw(const Mm3Game *g, const Mm3Character *ch, int kind);      /* charSavingThrow: 0 luck, 1 magic, 2 fire, 3 electricity, 4 cold, 5 poison, 6 energy */
 
 #endif

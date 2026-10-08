@@ -184,3 +184,56 @@ void mm3_subtract_hit_points(const Mm3Game *g, Mm3Character *ch, int amount) {
 		}
 	}
 }
+
+/* ---- combat rolls */
+extern int mm3_rnd(int lo, int hi); /* the game's random number routine (host_rnd) */
+
+void mm3_weapon_damage(const Mm3Game *g, const Mm3Character *ch, int ranged) {
+	uint8_t *dg = g->dg;
+	dg[MM3_DG_WEAPON_SIDES] = dg[MM3_DG_WEAPON_DICE] = dg[MM3_DG_COMBAT_HIT_BONUS] = dg[MM3_DG_WEAPON_SPELL] = dg[MM3_DG_WEAPON_ELEMENT] = 0;
+	int damage = 0;
+	for (int i = 0; i < 18; i++) {
+		int weapon = ranged ? ch->slotPresent[i] == 4 : (ch->slotPresent[i] == 1 || ch->slotPresent[i] == 0xD);
+		if (!weapon) continue;
+		dg[MM3_DG_WEAPON_ELEMENT] = ch->slotElement[i];
+		dg[MM3_DG_WEAPON_SPELL] = ch->slotSpell[i];
+		dg[MM3_DG_COMBAT_HIT_BONUS] = (uint8_t)(dg[MM3_DG_WEAPON_HIT_BONUS + ch->slotMetal[i]] + ch->heroism);
+		damage = (int8_t)dg[MM3_DG_WEAPON_METAL_DAMAGE + ch->slotMetal[i]] + ch->holyBonus;
+		dg[MM3_DG_WEAPON_DICE] = dg[MM3_DG_WEAPON_DICE_COUNT + ch->slotId[i]];
+		dg[MM3_DG_WEAPON_SIDES] = dg[MM3_DG_WEAPON_DICE_SIDES + ch->slotId[i]];
+		for (int d = 0; d < (int8_t)dg[MM3_DG_WEAPON_DICE]; d++) damage += mm3_rnd(1, (int8_t)dg[MM3_DG_WEAPON_SIDES]);
+	}
+	if (damage < 1) damage = 0;
+	dg[MM3_DG_COMBAT_WEAPON_DAMAGE] = (uint8_t)damage; dg[MM3_DG_COMBAT_WEAPON_DAMAGE + 1] = (uint8_t)((unsigned)damage >> 8);
+}
+
+int mm3_hit_monster(const Mm3Game *g, const Mm3Character *ch, int ranged) {
+	Mm3Rules rules = { g->dg };
+	mm3_weapon_damage(g, ch, ranged);
+	int roll = mm3_stat_bonus(&rules, (uint16_t)mm3_char_stat(&rules, ch, MM3_STAT_ACCURACY, 0)) + (int8_t)g->dg[MM3_DG_COMBAT_HIT_BONUS];
+	static const uint8_t level_divisor[10] = { 1, 2, 2, 3, 4, 2, 2, 1, 3, 2 }; /* by class: fighters add more of their level */
+	roll += mm3_char_level(ch) / level_divisor[ch->charClass % 10];
+	int die;
+	do { die = mm3_rnd(1, 20); roll += die; } while (die == 20);   /* a natural 20 rolls again */
+	roll -= ch->conditions[0];                                      /* cursed */
+	unsigned target = g->dg[MM3_DG_COMBAT_TARGET];
+	if (rd16(g, MM3_DG_MON_ASLEEP + target * 2)) roll += 20;
+	const uint8_t *ac_column = g->mem + (unsigned)rd16(g, MM3_DG_MON_AC + 2) * 16 + rd16(g, MM3_DG_MON_AC);
+	int armour = 10 + ac_column[(uint16_t)rd16(g, MM3_DG_MON_COLUMN_OFFSET + target * 2)];
+	return roll >= armour;
+}
+
+int mm3_saving_throw(const Mm3Game *g, const Mm3Character *ch, int kind) {
+	Mm3Rules rules = { g->dg };
+	static const struct { uint8_t scan; uint16_t offset; } RESIST[7] = { { 0, 0 }, { 0x10, 0x111 }, { 0x0B, 0x107 }, { 0x0C, 0x10B }, { 0x0D, 0x109 }, { 0x0E, 0x10D }, { 0x0F, 0x10F } };
+	int chance, limit;
+	if (kind == 0) { /* luck: level + twice the luck bonus, out of that + 20 */
+		chance = mm3_char_level(ch) + mm3_stat_bonus(&rules, (uint16_t)(mm3_char_stat(&rules, ch, MM3_STAT_LUCK, 0) * 2));
+		limit = chance + 20;
+	} else { /* resistance: temporary + permanent + equipment, out of that + 40 */
+		const uint8_t *r = (const uint8_t *)ch + RESIST[kind].offset;
+		chance = r[0] + mm3_item_scan(&rules, ch, RESIST[kind].scan) + r[1];
+		limit = chance + 40;
+	}
+	return mm3_rnd(1, limit) <= chance;
+}
