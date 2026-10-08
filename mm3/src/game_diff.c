@@ -10,6 +10,7 @@
 
 extern const RecompEntry recomp_entries_ref_gen[];
 void mm3_rng_seed(uint32_t seed);
+uint32_t mm3_rng_get(void);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
@@ -216,14 +217,19 @@ void game_shadow(const char *name, void (*host)(Cpu *), Cpu *c, int nargs, int r
 	for (int i = 0; i < nargs && i < 8; i++) args[i] = host_arg(c, i);
 	uint16_t sp = c->sp;
 	memcpy(before, DG, 65536);
+	uint32_t rng_before = mm3_rng_get();
 	host(c);
+	uint32_t rng_after = mm3_rng_get();
 	Cpu host_cpu = *c;
 	memcpy(after_host, DG, 65536);
 	memcpy(DG, before, 65536);
 	Cpu ref;
+	mm3_rng_seed(rng_before);       /* the original must see the same random numbers */
 	run_ref(name, args, nargs, &ref);
+	int rng_same = mm3_rng_get() == rng_after;
+	mm3_rng_seed(rng_after);
 	size_t diff_at = 0;
-	int same = !ret || (ref.ax == host_cpu.ax && (ret < 2 || ref.dx == host_cpu.dx));
+	int same = rng_same && (!ret || (ref.ax == host_cpu.ax && (ret < 2 || ref.dx == host_cpu.dx)));
 	for (size_t o = 0; same && o < 0xF000; o++) if (DG[o] != after_host[o]) { same = 0; diff_at = o; }
 	if (!same) {
 		static char reported[64][32]; static int nrep;

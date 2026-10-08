@@ -307,4 +307,5 @@ void host_ccSeek(Cpu *c) { c->ax = 0; }
 void host_sub_39900(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }
 
 int mm3_rnd(int lo, int hi) { unsigned l = (uint16_t)lo, h = (uint16_t)hi; return (int)(h >= l ? l + rng_next() % (h - l + 1) : l); } /* same 16-bit unsigned arithmetic as host_rnd */
+uint32_t mm3_rng_get(void) { return rng_state; }
 void mm3_rng_seed(uint32_t seed) { rng_state = seed ? seed : 1; } /* tests: make the random numbers repeatable */
