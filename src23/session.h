@@ -194,6 +194,14 @@ bool sessionTravelPassword(GameSession *session, const char *typed);
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);
 
+/*
+ * The save image (savegame.h: the CURGAME / SAVGAMEn file of the original, byte for byte): sessionSave first copies the session's own state into the header (position,
+ * facing, clock, the place flags, Chapter 2's lit lights and timers) and the monster pool into its section, then stores the whole image; sessionLoad replaces the state
+ * with an image of the same game (false otherwise) and rebuilds the window. A combat in progress is not saved; the cursor item neither.
+ */
+size_t sessionSave(GameSession *session, uint8_t *out, size_t capacity);
+bool sessionLoad(GameSession *session, const uint8_t *data, size_t size);
+
 /* One of the four active party members' records (0-3), or NULL. */
 uint8_t *sessionPartyRecord(GameSession *session, unsigned slot);
 

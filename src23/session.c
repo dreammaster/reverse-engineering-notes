@@ -754,6 +754,67 @@ SessionService sessionTalkService(GameSession *s, const ConversationStep *step, 
     return SessionServiceNone;
 }
 
+/* Chapter 2's light-source counters and spell timers in the save header (word_36C85 / 36C89 / 36C8B, 36C93-36C9D: header + 0x26, 0x2A, 0x2C and 0x34-0x3E). */
+static const unsigned kLightCountOffset[LightSourceCount] = {0x26, 0x2A, 0x2C};
+enum { LightTimerOffset = 0x34 };
+
+static void syncHeader(GameSession *s) {
+    saveHeaderSetU16(&s->save, SaveHeaderWorldX, (uint16_t)s->x);
+    saveHeaderSetU16(&s->save, SaveHeaderWorldY, (uint16_t)s->y);
+    saveHeaderSetU16(&s->save, SaveHeaderFacing, s->facing);
+    saveHeaderSetU16(&s->save, SaveHeaderClockMinutes, s->clock.minutes);
+    saveHeaderSetU16(&s->save, SaveHeaderGameDay, s->clock.day);
+    saveHeaderSetU16(&s->save, SaveHeaderGameMonth, s->clock.month);
+    saveHeaderSetU16(&s->save, SaveHeaderGameYear, s->clock.year);
+    storePlace(s);
+    if (s->game == GameYendor2) {
+        for (unsigned i = 0; i < LightSourceCount; i++) {
+            saveHeaderSetU16(&s->save, kLightCountOffset[i], s->light.litCount[i]);
+        }
+        for (unsigned i = 0; i < LightSpellTimerCount; i++) {
+            saveHeaderSetU16(&s->save, LightTimerOffset + 2 * i, s->light.timers[i]);
+        }
+    }
+}
+
+size_t sessionSave(GameSession *s, uint8_t *out, size_t capacity) {
+    syncHeader(s);
+    memcpy(saveGameSection(&s->save, SaveSectionMonsters), s->pool, sizeof(s->pool));
+    return saveGameStore(&s->save, out, capacity);
+}
+
+bool sessionLoad(GameSession *s, const uint8_t *data, size_t size) {
+    SaveGame loaded;
+    if (!saveGameLoad(&loaded, data, size) || loaded.kind != s->game) {
+        return false;
+    }
+    s->save = loaded;
+    s->x = saveHeaderGetU16(&s->save, SaveHeaderWorldX);
+    s->y = saveHeaderGetU16(&s->save, SaveHeaderWorldY);
+    s->facing = saveHeaderGetU16(&s->save, SaveHeaderFacing);
+    s->clock.minutes = saveHeaderGetU16(&s->save, SaveHeaderClockMinutes);
+    s->clock.day = saveHeaderGetU16(&s->save, SaveHeaderGameDay);
+    s->clock.month = saveHeaderGetU16(&s->save, SaveHeaderGameMonth);
+    s->clock.year = saveHeaderGetU16(&s->save, SaveHeaderGameYear);
+    *placeWord(s) = saveHeaderGetU16(&s->save, saveHeaderPlaceFlagsOffset(s->game));
+    if (s->game == GameYendor2) {
+        for (unsigned i = 0; i < LightSourceCount; i++) {
+            s->light.litCount[i] = saveHeaderGetU16(&s->save, kLightCountOffset[i]);
+        }
+        for (unsigned i = 0; i < LightSpellTimerCount; i++) {
+            s->light.timers[i] = saveHeaderGetU16(&s->save, LightTimerOffset + 2 * i);
+        }
+    }
+    memcpy(s->pool, saveGameSection(&s->save, SaveSectionMonsters), sizeof(s->pool));
+    memset(&s->combat, 0, sizeof(s->combat));
+    s->talking = false;
+    s->pendingTravel = 0;
+    s->pendingSound = 0;
+    s->heldItem = s->heldExtra = 0;
+    sessionRebuild(s);
+    return true;
+}
+
 bool sessionTravelPassword(GameSession *s, const char *typed) {
     if (!s->pendingTravel || !travelResolvePassword(s->game, s->pendingTravel, typed, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize)) {
         return false;

@@ -23,6 +23,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `cmfplayer` | Plays a parsed CMF track (cmf.h) through the OPL2 synthesizer (opl.h): the MIDI channels share the nine FM voices. |  |
 | `combat` | Turn-based combat: a genuinely separate subsystem from the dungeon-exploration monster AI (monsterpool.h) -- surfaced while resolving "do monsters ever reposition themselves" (they don't; see dungeongrid.h/monsterpool.h), not otherwise touched by this project. | yes |
 | `consumable` | Using a restorative item or the alchemist's ore transmutation on a party member. | yes |
+| `conversation` | A talk with an NPC: the control loop of UseItem (yendor2.asm:13168; Chapter 3 the same) without a screen. | yes |
 | `dialog` | The NPC conversation / service catalog -- the data behind `UseItem` (yendor2.asm:13169; the same structure in Chapter 3), which `start` calls for a world object (worldobjects.h) with the matching flag, passing the object's own `value` field (its +4 word) as th | yes |
 | `dialogservice` | The topic handlers behind dialog.h's DialogTopicFlag bits, as decide-and-apply functions on the data model (the UI parts -- the "+10 STRENGTH" overlay, the icon-bar slots, the redraws -- are not modeled). | yes |
 | `document` | In-world readable text: journal/history entries and verses, short notes, and longer found documents -- everything RunConversation displays (yendor2.asm:49793). | yes |
@@ -82,6 +83,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `spellrecord_stdio` | Reads just the spell/ability catalog region out of a WORLD.DAT file; for tools and tests. |  |
 | `statsheet` | The numbers on the character stat sheet: DrawCharacterStatSheet (yendor2.asm:36860, yendor3.asm:36628), drawn over the full-screen picture category 0 / id 3 (which carries the labels). | yes |
 | `statuspanel` | One party member's panel on the main screen: DrawPartyMemberStatusPanel (yendor2.asm:32307, yendor3.asm:31580), with DrawAfflictionIconRow and DrawStatBar. | yes |
+| `storyevent` | What the main loop does when the party uses a world object with flag 0x400 (worldobjects.h, WorldObjectFlagStoryEvent): `start` (yendor2.asm:748-870) tests the flags in the order door 0x8000, destination 0x2000, talker 0x1000, then 0x400. | yes |
 | `textfield` | The game's single-line text editor (EditTextField, yendor2.asm:23401; identical in Chapter 3), used for the hero's name and the numeric prompts. | yes |
 | `textpanel` | The text panel on the right of the main screen, below the minimap and icon row (frame picture region 4/5): ClearStatusPanelIfDirty (yendor2.asm:11486), ClearMessageBoxArea (:11641), DrawStringColumn (:35154), ShowMaterialCounterHud (:12557). | yes |
 | `thrown` | Thrown potions and flasks, and the ranged-weapon shot: ResolveAbilityEffect (yendor2.asm:24427, yendor3.asm:22868, same logic, other item ids), ResolveAttackOrAbilityAction (:24310) and ApplyResolvedDamageWithResistance (:24223). | yes |

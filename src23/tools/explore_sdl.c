@@ -16,7 +16,7 @@
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), M the local area map, D the pause
- * dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * dialog, P the paper dolls, F5 saves / F9 loads explore.sav (the original save-file layout), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * EXPLORE_INTRO=opening|story|ending plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
  * the milliseconds per tick, 25 by default; EXPLORE_INTRO_SOUND=1 plays the voices instead of drawing the text); Escape ends it.
@@ -314,6 +314,27 @@ static void useAhead(Overlay *overlay) {
     }
 }
 
+/* F5 / F9: the session's save image (the original's SAVGAME file layout) to and from explore.sav in the current directory. */
+static void saveLoadKey(bool save) {
+    GameSession *s = g_session;
+    static uint8_t image[SaveFileSizeMax];
+    FILE *f;
+    if (save) {
+        size_t bytes = sessionSave(s, image, sizeof(image));
+        f = fopen("explore.sav", "wb");
+        if (f) {
+            fwrite(image, 1, bytes, f);
+            fclose(f);
+            snprintf(s->log, sizeof(s->log), "saved %u bytes to explore.sav", (unsigned)bytes);
+        }
+    } else if ((f = fopen("explore.sav", "rb")) != NULL) {
+        size_t bytes = fread(image, 1, sizeof(image), f);
+        fclose(f);
+        snprintf(s->log, sizeof(s->log), sessionLoad(s, image, bytes) ? "loaded explore.sav" : "explore.sav is not a save of this game");
+        area();
+    }
+}
+
 static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     GameSession *s = g_session;
     if (*overlay == OverlayTalk) { /* 1-9 choose a topic, Escape the last one listed (the way out) */
@@ -333,6 +354,10 @@ static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
             return true;
         }
         return false;
+    }
+    if (key == SDLK_F5 || key == SDLK_F9) {
+        saveLoadKey(key == SDLK_F5);
+        return true;
     }
     if (key == SDLK_PLUS || key == SDLK_EQUALS || key == SDLK_KP_PLUS) {
         s->clock.minutes = (uint16_t)((s->clock.minutes + 30) % 1440);

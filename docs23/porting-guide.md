@@ -75,7 +75,12 @@ main loop -- `sessionMove` (passability, fog reveal, window rebuild = grid + `du
 with `monsterPoolTakeTurn`; a monster that reaches the party starts a combat), `sessionAttack` (`combatBuildTurnOrder` / `combatPlayerMeleeAttack` /
 `combatProcessMonsterTurn` / `combatProcessRound`; victory awards the loot with `monsterRewardsAward`, a wipe is `partyWipedOut`), `sessionRest` (`restParty`),
 `sessionCast` / `sessionCastBy` (a spell: known, `spellCanCast`, costs paid first, then the branch `spellSelectBranch` picks: attacks, LIFE FORCE, the heals and cures as the capped stat delta, light timers, jump, mark / return, knock and the curgame-event spells, rest, the item on the cursor), `sessionUseItem` (the restoratives of consumable.h from a member's inventory), `sessionUnlock` (`interactUnlockFacing`), `sessionLoot` (`chestTake`) and `sessionScene` (the view cells and the monsters to draw via `monsterPoolEncounterScan`).
-Nothing in it draws, plays or waits; the projectile / screen-wide / beam spells, other item uses, inventory, shops and dialogs are decision modules a front end wires in. `test_session.c` plays both games
+`sessionInteract` is the use command on the object ahead (the click on the view in `start`): doors and chests, destinations (`travelArrival`, the password prompt), talkers,
+Chapter 3's six scripted story events (`storyevent.c`) and Chapter 2's ending trigger; `sessionTalkStart` / `sessionTalkChoose` / `sessionTalkResolve` / `sessionTalkService` run a conversation
+(`conversation.c`, the loop of `UseItem`: the topic masks and flags, the type word, the end; the tomes, the ore purchase and the riddles are carried out, the healer, trainer, challenge,
+mount, shop, sell, enhance and repair services are reported for a front end's screens), and `sessionSave` / `sessionLoad` read and write the original's save-file layout (the global
+quest flags are in the header, `saveGlobalFlags`). Nothing in it draws, plays or waits; the projectile / screen-wide / beam spells, the screens of the services above and inventory
+are decision modules a front end wires in. `test_session.c` plays both games
 (random soak, a combat from the first spider to the end, a chest looted once).
 
 `src23/tools/explore_sdl.c` is a front end for it: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`), keys through

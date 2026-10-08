@@ -501,6 +501,42 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* Saving and loading: the state of the session goes into a save image and comes back in a fresh session. */
+static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *a = sessionNew(game, world, size), *b = sessionNew(game, world, size);
+    if (!a || !b) {
+        return;
+    }
+    char text[160];
+    for (int i = 0; i < 12; i++) {
+        sessionMove(a, i % 5 == 4 ? MovementTurnRight : MovementForward);
+    }
+    sessionRest(a);
+    globalFlagSet(saveGlobalFlags(&a->save), SaveHeaderGlobalFlagsSize, 77);
+    partySetStat(sessionPartyRecord(a, 2), PartyStatHitPoints, 3);
+    a->light.timers[1] = 40;
+    a->light.litFlags |= 0x300;
+    a->travelFlags = 0x2000;
+    a->clock.day = 9;
+    static uint8_t image[SaveFileSizeMax];
+    size_t bytes = sessionSave(a, image, sizeof(image));
+    snprintf(text, sizeof(text), "%s: a save image has the game's file size", label);
+    check(text, bytes == (game == GameYendor2 ? SaveFileSizeYendor2 : SaveFileSizeYendor3));
+    check("... and loads into another session", sessionLoad(b, image, bytes));
+    bool same = a->x == b->x && a->y == b->y && a->facing == b->facing && a->clock.minutes == b->clock.minutes && b->clock.day == 9 &&
+                globalFlagTest(saveGlobalFlags(&b->save), SaveHeaderGlobalFlagsSize, 77) && partyGetStat(sessionPartyRecord(b, 2), PartyStatHitPoints) == 3 &&
+                memcmp(a->pool, b->pool, sizeof(a->pool)) == 0;
+    check("... with the position, clock, flags, party and monsters as they were", same);
+    if (game == GameYendor2) {
+        check("... and Chapter 2's light timers and lit flags", b->light.timers[1] == 40 && (b->light.litFlags & 0x300) == 0x300);
+    } else {
+        check("... and Chapter 3's travel flags", b->travelFlags == 0x2000);
+    }
+    check("a save of the other game is refused", !sessionLoad(b, (const uint8_t *)"short", 5));
+    sessionFree(a);
+    sessionFree(b);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: a session starts");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: a session starts");
@@ -514,6 +550,7 @@ int main(void) {
         if (worldI) {
             testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

@@ -53,6 +53,11 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
   Chapter 3's "never written" globals are set by raw `ds:` writes in `InitGlobals` (curgame offset 1008, record multiplier 1000, promotion levels 10 / 30; engine-diffs.md
   "Correction (2026-10-07)"), and the "runtime-filled" tables (shop tabs, sub-icon row) are computed from records the code already decodes.
 
+**Story, travel and talk (2026-10-08)**: `sessionInteract` composes the use command (destinations with `travelArrival`, talkers, Chapter 3's scripted story events, Chapter 2's ending), `conversation.c` the
+NPC talk loop (validated by walking every NPC of both games to the end), `sessionSave` / `sessionLoad` the original's save layout; the **global quest flags are in the save header at +0xD2**
+(settling an old open question), the Chapter 2 "studio credits" function is the ending cinematic and both openings and the ending are scripts (`introstory.c`). Shops, the healer / trainer /
+challenge screens, the projectile spells and Chapter 3's ending (if any) are what is left of the main game.
+
 Still missing: Chapter 3's ending (if it has one; Chapter 2's ending is `introEndingScript`, both openings are scripts in `introstory.c`), the projectile / screen-wide / beam spells and the non-restorative item uses in `session.c`
 (their decision modules exist; every other spell kind is composed since 2026-10-08), shop and dialog screens (`dialog.c`, `shop.c` hold the logic), input and timing glue for a real engine (the original is driven by DOS
 interrupts), the engine's mixer glue for effects, Chapter 2's debug commands, and Chapter 1's engine (no files, no analysis). A name census of the 769 functions against
