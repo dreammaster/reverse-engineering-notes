@@ -573,6 +573,39 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
+static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned keys = 0, closedOrTravel = 0, travelledWhenOpen = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *target = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (!target || !(itemTargetWord(target, 0) & 4) || (itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00) || !itemTargetWord(target, 2)) {
+            continue;
+        }
+        TravelDestination d;
+        if (!travelDestinationLookup(game, itemTargetWord(target, 2), &d)) {
+            continue;
+        }
+        keys++;
+        memset(saveGlobalFlags(&s->save), 0, SaveHeaderGlobalFlagsSize);
+        uint8_t *hero = sessionPartyRecord(s, 0);
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1), (uint16_t)id, 0);
+        SessionUse closed = sessionUseItem(s, 0, 1, 0);
+        closedOrTravel += closed == SessionUseClosed || closed == SessionUseTravelled;
+        memset(saveGlobalFlags(&s->save), 0xFF, SaveHeaderGlobalFlagsSize);
+        globalFlagClear(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, TravelStoryRealmFlag);
+        travelledWhenOpen += sessionUseItem(s, 0, 1, 0) == SessionUseTravelled && itemSlotId(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1)) == id;
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: its %u destination keys stay closed without their flag and travel with it, and are not used up", label, keys);
+    check(text, keys > 0 && closedOrTravel == keys && travelledWhenOpen == keys);
+    sessionFree(s);
+}
+
 /* Saving and loading: the state of the session goes into a save image and comes back in a fresh session. */
 static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *a = sessionNew(game, world, size), *b = sessionNew(game, world, size);
@@ -742,6 +775,7 @@ int main(void) {
             testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);

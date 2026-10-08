@@ -510,6 +510,8 @@ SessionCast sessionCastBy(GameSession *s, unsigned casterSlot, unsigned spellId,
     return castSpell(s, casterSlot, spellId, returnToMark);
 }
 
+static void travelTo(GameSession *s, unsigned destinationId);
+
 SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot) {
     uint8_t *user = sessionPartyRecord(s, userSlot), *recipient = sessionPartyRecord(s, recipientSlot);
     if (!user || !recipient) {
@@ -521,6 +523,21 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         return SessionUseNothing;
     }
     bool done;
+    const uint8_t *itemRec = itemCatalogRecord(&s->items, id);
+    const uint8_t *target = itemRec ? itemTargetEntry(&s->items, itemRec) : NULL;
+    if (target && (itemTargetWord(target, 0) & 4) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00)) {
+        /* ExamineTarget: a key to a destination (KEY OF PORT HOPE..., ANKH OF PORTALS, ATHANEUM KEY): the road opens when its gate flag is set */
+        uint8_t globalSlots[24];
+        memset(globalSlots, 0, sizeof(globalSlots));
+        bool storyItem = itemRangeAvailable(globalSlots, &s->save, TravelStoryItemLow, TravelStoryItemHigh).found;
+        unsigned destination = itemTargetWord(target, 2);
+        TravelExamineOutcome outcome = travelExamineKey(s->game, destination, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, storyItem);
+        if (outcome != TravelExamineTravels) {
+            return outcome == TravelExamineGateClosed ? SessionUseClosed : SessionUseBlocked;
+        }
+        travelTo(s, destination);
+        return SessionUseTravelled;
+    }
     RestorativeKind kind = partyRestorativeForItem(s->game, id);
     if (kind != RestorativeNone) {
         done = partyUseRestorative(kind, recipient);
