@@ -73,7 +73,8 @@ int main(int argc, char **argv) {
 	{ /* the startup code lists the saved games (*.mm3) and picks one: byte_29116 is its index in the 13-byte name table at E836h (0FFh = none: rosterMenu ends) */
 		uint16_t pattern[2] = { 0x3433, DSEG };
 		game_call(call_getFiles, &c, pattern, 2);
-		fprintf(stderr, "getFiles: count %u first [%s]\n", DG[0xA25], (char *)DG + 0xE836);
+		if (!DG[0xE836]) { game_create_first_save(); game_call(call_getFiles, &c, pattern, 2); } /* no saved games: start a new one */
+		if (getenv("MM3_TRACE")) fprintf(stderr, "getFiles: count %u first [%s]\n", DG[0xA25], (char *)DG + 0xE836);
 		DG[0xA26] = DG[0xE836] ? 0 : 0xFF;
 	}
 	if (roster_menu) game_call(call_rosterMenu, &c, NULL, 0);

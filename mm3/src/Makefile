@@ -162,3 +162,9 @@ tests/test_rules_diff: tests/test_rules_diff.c rules.c $(RULES_SRC) rules.h reco
 rulesdiff: tests/test_rules_diff
 	./tests/test_rules_diff $(DATA)/DGROUP.BIN 3000
 .PHONY: rulesdiff
+
+# ---- derived data files (made from MM3.EXE in the data folder; git-ignored): make derive DATA=../data
+derive:
+	python3 ../tools/mm3_dgroup.py $(DATA)/MM3.EXE $(DATA)/DGROUP.BIN
+	python3 ../tools/mm3_image.py $(DATA)/MM3.EXE $(DATA)/IMAGE.BIN
+.PHONY: derive

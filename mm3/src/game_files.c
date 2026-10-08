@@ -192,3 +192,11 @@ void host__memset_0(Cpu *c) {
 void host__movedata(Cpu *c) {
 	memmove(SEGP(host_arg(c, 2)) + host_arg(c, 3), SEGP(host_arg(c, 0)) + host_arg(c, 1), host_arg(c, 4));
 }
+
+/* No saved game yet: a new game starts from a copy of MM3.CUR, so write one as SAVE00.MM3 into the save directory. */
+int game_create_first_save(void) {
+	char path[600];
+	snprintf(path, sizeof path, "%s/SAVE00.MM3", save_dir());
+	dump_cur(path);
+	return 0;
+}
