@@ -35,6 +35,7 @@
  */
 typedef struct {
     char heading[24]; /* SPELL INFORMATION (DS:0x8848, Chapter 3 0x8B69) */
+    char usersHeading[24]; /* MAGIC USER INFORMATION (the next string: DS:0x885A, Chapter 3 0x8B7B) */
     char header[24];
     char costLabels[3][8];
     unsigned costLabelCount; /* 3 in Chapter 2, 2 in Chapter 3 */
@@ -54,6 +55,12 @@ bool spellDescriptionRange(GameKind game, const uint8_t *worldDat, size_t size, 
 
 /* Line `index` of the line block (a pointer into worldDat, ClueSpellLineSize bytes), or NULL. */
 const uint8_t *spellDescriptionLine(GameKind game, const uint8_t *worldDat, size_t size, unsigned index);
+
+/* How class `classIndex` (0-5: MONK .. MARKSMAN, party.h classes 4-9) gets spell `spellId`: a starting ability (kind Creation, level 1), the training table at an even level, or a scroll
+ * of the record's required level when the eligibility mask names the class; None if it cannot use the spell. The class rows of the page and the magic user lists are this. */
+typedef enum { ClueSpellUseNone, ClueSpellUseCreation, ClueSpellUseTraining, ClueSpellUseScroll } ClueSpellUse;
+
+ClueSpellUse clueSpellClassUse(GameKind game, unsigned classIndex, unsigned spellId, const uint8_t *spellRecord, unsigned *level);
 
 typedef struct {
     const uint8_t *lines[16];

@@ -71,9 +71,10 @@ typedef struct {
     const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
     bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
     bool clueNag;          /* the reminder is showing on the page */
+    int clueClass;         /* the magic user class (0-5) whose spells the list shows */
     int clueMarker;        /* the map page's legend marker whose label shows, -1 none */
-    unsigned clueCategory; /* 1 maps, 2 monsters, 3 spells: what the list and entry screens show */
-    unsigned clueScreen;   /* 0 the walk through, 1 the category's list, 2 an entry's page (F6 / F2, F3 / Enter) */
+    unsigned clueCategory; /* 1 maps, 2 monsters, 3 spells, 4 magic users: what the list and entry screens show */
+    unsigned clueScreen;   /* 0 the walk through, 1 the category's list, 2 an entry's page, 3 the magic users' class picker (F6 / F1-F4 / Enter) */
     ClueList clueList;     /* the list's paging */
     uint16_t clueTypes[256]; /* the ids of the list's entries (map id, monster type, spell id), ascending */
     bool clueHelp;         /* the clue book shows its help screen (Tab), else the walk through */
@@ -91,7 +92,7 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
  */
 void gameUiShowTitle(GameUi *ui);
 
-/* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. Today it shows the walk through (F6, I / Q turn pages), the maps (F1: Left / Right pick a legend marker), monster statistics (F2) and spell information (F3): the list, Up / Down / I / Q to choose, Enter for the page and the help screen (Tab). */
+/* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. Today it shows the walk through (F6, I / Q turn pages), the maps (F1: Left / Right pick a legend marker), monster statistics (F2) spell information (F3) and the magic users (F4: pick a class, then its spells): the list, Up / Down / I / Q to choose, Enter for the page and the help screen (Tab). */
 void gameUiSetExe(GameUi *ui, const ExeData *exe);
 
 /* One key press; false = quit (Escape with no overlay open). */

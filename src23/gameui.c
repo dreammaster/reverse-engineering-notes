@@ -132,10 +132,17 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe) {
 /* The clue book's category screens (F2 monsters, F3 spells): a list page (the backdrop of picture 14, 14 names to a page) and an entry page. The entries are every distinct monster
  * the catalog can spawn and every spell with a name; the original greys out what the party has not met or learnt, which no record is decoded for, so all show as known. */
 enum { ClueNameSize = 48 };
-enum { ClueCategoryMaps = 1, ClueCategoryMonsters = 2, ClueCategorySpells = 3 };
+enum { ClueCategoryMaps = 1, ClueCategoryMonsters = 2, ClueCategorySpells = 3, ClueCategoryUsers = 4, ClueScreenClasses = 3 };
 
 static void clueEntryName(const GameUi *ui, unsigned id, char out[ClueNameSize]) {
     out[0] = 0;
+    if (ui->clueCategory == ClueCategoryUsers && ui->clueScreen == ClueScreenClasses) { /* the class picker */
+        ClueSpellText text;
+        if (id < 6 && clueSpellTextLoad(&text, ui->exe, ui->session->game)) {
+            snprintf(out, ClueNameSize, "%s", text.classNames[id]);
+        }
+        return;
+    }
     if (ui->clueCategory == ClueCategoryMaps) {
         LocationName name;
         if (locationName(ui->session->game, ui->worldDat, ui->worldSize, id - 1, ui->session->game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", ui->session->game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
@@ -146,7 +153,7 @@ static void clueEntryName(const GameUi *ui, unsigned id, char out[ClueNameSize])
         }
         return;
     }
-    if (ui->clueCategory == ClueCategorySpells) {
+    if (ui->clueCategory == ClueCategorySpells || ui->clueCategory == ClueCategoryUsers) {
         const uint8_t *record = spellRecord(&ui->session->spells, id);
         if (record) {
             char name[SpellNameFieldSize + 1];
@@ -164,6 +171,16 @@ static void clueEntryName(const GameUi *ui, unsigned id, char out[ClueNameSize])
 static void clueCategoryOpen(GameUi *ui, unsigned category) {
     unsigned n = 0, capacity = sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]);
     ui->clueCategory = category;
+    if (category == ClueCategoryUsers) { /* the class picker first */
+        for (unsigned k = 0; k < 6; k++) {
+            ui->clueTypes[n++] = (uint16_t)k;
+        }
+        clueListInit(&ui->clueList, n);
+        ui->clueScreen = ClueScreenClasses;
+        ui->clueNag = false;
+        ui->clueHelp = false;
+        return;
+    }
     if (category == ClueCategoryMaps || category == ClueCategorySpells) {
         unsigned last = category == ClueCategoryMaps ? (ui->session->game == GameYendor2 ? 120 : 140) : ui->session->spells.recordCount;
         for (unsigned id = 1; id <= last && n < capacity; id++) {
@@ -190,6 +207,21 @@ static void clueCategoryOpen(GameUi *ui, unsigned category) {
     ui->clueHelp = false;
 }
 
+/* The magic user list of one class: the spells it gets (clueSpellClassUse). */
+static void clueUsersChoose(GameUi *ui, unsigned classIndex) {
+    unsigned n = 0;
+    ui->clueClass = (int)classIndex;
+    for (unsigned id = 1; id <= ui->session->spells.recordCount && n < sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]); id++) {
+        const uint8_t *record = spellRecord(&ui->session->spells, id);
+        unsigned level;
+        if (record && clueSpellClassUse(ui->session->game, classIndex, id, record, &level) != ClueSpellUseNone) {
+            ui->clueTypes[n++] = (uint16_t)id;
+        }
+    }
+    clueListInit(&ui->clueList, n);
+    ui->clueScreen = 1;
+}
+
 static void drawClueEntryList(GameUi *ui, const char *heading, uint16_t tab) {
     GameKind game = ui->session->game;
     memset(ui->screen, 0, sizeof(ui->screen));
@@ -214,6 +246,29 @@ static void drawClueCategory(GameUi *ui) {
     GameKind game = ui->session->game;
     const ViewRenderer *r = &ui->renderer;
     unsigned id = ui->clueTypes[ui->clueList.selected];
+    if (ui->clueCategory == ClueCategoryUsers || ui->clueCategory == ClueCategorySpells) {
+        ClueSpellText text;
+        uint16_t tab = (uint16_t)(ClueTabFirstBit >> (ui->clueCategory == ClueCategoryUsers ? 3 : 2));
+        if (!clueSpellTextLoad(&text, ui->exe, game)) {
+            return;
+        }
+        const char *heading = ui->clueCategory == ClueCategoryUsers ? text.usersHeading : text.heading;
+        if (ui->clueScreen != 2) { /* the class picker or the spell list */
+            drawClueEntryList(ui, heading, tab);
+            return;
+        }
+        ClueSpellDescription description;
+        memset(&description, 0, sizeof(description));
+        unsigned first, count;
+        if (spellDescriptionRange(game, ui->worldDat, ui->worldSize, id, &first, &count) && count < 16) {
+            for (unsigned i = 0; i < count; i++) {
+                description.lines[i] = spellDescriptionLine(game, ui->worldDat, ui->worldSize, first + i);
+            }
+            description.lineCount = count;
+        }
+        clueSpellPageDraw(r, &text, spellRecord(&ui->session->spells, id), id, heading, tab, &description);
+        return;
+    }
     if (ui->clueCategory == ClueCategoryMaps) {
         char heading[24];
         uint16_t tab = ClueTabFirstBit;
@@ -236,28 +291,6 @@ static void drawClueCategory(GameUi *ui) {
                 clueMapLabelDraw(r, label);
             }
         }
-        return;
-    }
-    if (ui->clueCategory == ClueCategorySpells) {
-        ClueSpellText text;
-        uint16_t tab = (uint16_t)(ClueTabFirstBit >> 2);
-        if (!clueSpellTextLoad(&text, ui->exe, game)) {
-            return;
-        }
-        if (ui->clueScreen == 1) {
-            drawClueEntryList(ui, text.heading, tab);
-            return;
-        }
-        ClueSpellDescription description;
-        memset(&description, 0, sizeof(description));
-        unsigned first, count;
-        if (spellDescriptionRange(game, ui->worldDat, ui->worldSize, id, &first, &count) && count < 16) {
-            for (unsigned i = 0; i < count; i++) {
-                description.lines[i] = spellDescriptionLine(game, ui->worldDat, ui->worldSize, first + i);
-            }
-            description.lineCount = count;
-        }
-        clueSpellPageDraw(r, &text, spellRecord(&ui->session->spells, id), id, text.heading, tab, &description);
         return;
     }
     ClueMonsterText text;
@@ -301,8 +334,19 @@ static void drawClue(GameUi *ui) {
 }
 
 static bool clueKey(GameUi *ui, UiKey key) { /* F2 / F3 the monster / spell lists (Up Down I Q choose, Enter opens, Escape backs out), F6 the walk through (I / Q turn pages), Tab help, Escape closes */
-    if (key >= UiKeyF1 && key <= UiKeyF3) {
+    if (key >= UiKeyF1 && key <= UiKeyF4) {
         clueCategoryOpen(ui, ClueCategoryMaps + (key - UiKeyF1));
+    } else if (ui->clueScreen == ClueScreenClasses) { /* the class picker of the magic users */
+        if (key == UiKeyEscape || key == UiKeyF6) {
+            ui->clueScreen = 0;
+            ui->cluePage = 1;
+        } else if (key == 'i' || key == 'q') {
+            clueListPageKey(&ui->clueList, key == 'q');
+        } else if (key == UiKeyUp || key == UiKeyDown) {
+            clueListRowKey(&ui->clueList, key == UiKeyDown);
+        } else if (key == UiKeyEnter) {
+            clueUsersChoose(ui, ui->clueTypes[ui->clueList.selected]);
+        }
     } else if (ui->clueScreen == 2) { /* an entry's page: Escape returns to the list; on a map Left / Right step through its legend markers */
         if (key == UiKeyEscape) {
             ui->clueScreen = 1;
@@ -314,7 +358,11 @@ static bool clueKey(GameUi *ui, UiKey key) { /* F2 / F3 the monster / spell list
             }
         }
     } else if (ui->clueScreen == 1) {
-        if (key == UiKeyEscape || key == UiKeyF6) {
+        if (key == UiKeyEscape && ui->clueCategory == ClueCategoryUsers) { /* back to the class picker, on the class that was chosen */
+            unsigned chosen = (unsigned)ui->clueClass;
+            clueCategoryOpen(ui, ClueCategoryUsers);
+            ui->clueList.selected = chosen;
+        } else if (key == UiKeyEscape || key == UiKeyF6) {
             ui->clueScreen = 0;
             ui->cluePage = 1;
         } else if (key == 'i' || key == 'q') {

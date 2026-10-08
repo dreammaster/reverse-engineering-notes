@@ -46,9 +46,14 @@ callbacks (sound effect, music track, the ending cinematic, store / fetch a save
 driver) and VOC effects to the mixer, and run the cinematics of `introstory.h` (`introOpeningScript`, `introStoryScript`, `introEndingScript`, `introOpening3Script`) against its host
 interface. `tools/explore_sdl.c` is exactly that glue for SDL2, about 300 lines.
 
-The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts live in the data segment; `ExeData`): today it shows the walk through (F6; I / Q turn the pages; the
-shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) the help screen (Tab) the maps (F1: the named blocks, `locationBlockNamed`; Left / Right on a page pick a legend marker), the monster statistics (F2) and spell information (F3: the list of the catalog's distinct monsters / the named spells, Up / Down / I / Q to choose, Enter for the page, Escape back; the original greys out monsters the party has not met, which is not decoded, so all show as known; Chapter 3's list backdrop is assumed to be picture 6). The other category lists (magic users, items) are the remaining clue-book work; the page
-renderers for them exist (`cluemap.c`, `cluemonster.c`, `cluespell.c`, `clueitem.c`, `cluetransport.c`), only the controller does not.
+The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts live in the data segment; `ExeData`). Today it has:
+
+- the walk through (F6; I / Q turn the pages; the shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) and the help screen (Tab);
+- the maps (F1: the named blocks, `locationBlockNamed`; Left / Right on a page pick a legend marker), the monster statistics (F2), the spell information (F3) and the magic users (F4: the six
+  classes, then the spells each gets, `clueSpellClassUse`, the rule behind the class rows of the spell page). Lists page with Up / Down / I / Q, Enter opens an entry, Escape backs out. The
+  original greys out entries the party has not met or learnt, which no record is decoded for, so all show as known; Chapter 3's list backdrop is assumed to be picture 6.
+
+The items (F5, eight subtypes) are the remaining clue-book work; their page renderers exist (`clueitem.c`, `cluetransport.c`), only the controller does not.
 
 ## Engine loop
 

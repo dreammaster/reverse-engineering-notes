@@ -153,6 +153,7 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case '1': return SDLK_F1;
     case '2': return SDLK_F2;
     case '3': return SDLK_F3;
+    case '4': return SDLK_F4;
     case '+': return SDLK_PLUS;
     case '-': return SDLK_MINUS;
     case '!': return SDLK_ESCAPE;
