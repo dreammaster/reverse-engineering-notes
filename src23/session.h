@@ -77,6 +77,7 @@ typedef struct GameSession {
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
     unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
+    unsigned pendingMusic;  /* a music track a command asked for (the pan flute); the front end plays it and clears it */
     unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
     uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
     SessionCombat combat;
@@ -136,7 +137,7 @@ SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned sp
  * healers (consumable.h). The item's charge is spent only when it did something; in a combat the use takes the member's turn. SessionUseNothing: no item
  * there; SessionUseNoEffect: it would do nothing for that recipient (the original flashes a warning and spends nothing); SessionUseUnsupported: neither a restorative nor a
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
- * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent.
+ * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
 typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);

@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -14,6 +14,7 @@
 #include "lightsource.h"
 #include "dialogservice.h"
 #include "globalflags.h"
+#include "relics.h"
 #include "spellcast.h"
 #include "session.h"
 
@@ -573,6 +574,33 @@ static void testTalk(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* Light sources and Chapter 2's relics through sessionUseItem. */
+static void testLightsAndRelics(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[160];
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    uint8_t *slot = inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1);
+    itemSlotSet(slot, 8, 100);
+    SessionUse lit = sessionUseItem(s, 0, 1, 0);
+    snprintf(text, sizeof(text), "%s: a candle lights (flag, count, and the item becomes the lit one) and goes out again", label);
+    bool lighted = lit == SessionUseDone && itemSlotId(slot) == 9 && s->light.litCount[LightSourceCandle] == 1 && (s->light.litFlags & 0x2000);
+    SessionUse out = sessionUseItem(s, 0, 1, 0);
+    check(text, lighted && out == SessionUseDone && itemSlotId(slot) == 8 && s->light.litCount[LightSourceCandle] == 0 && !(s->light.litFlags & 0x2000));
+    if (game == GameYendor2) {
+        itemSlotSet(slot, RelicMagicOreCache, 1);
+        check("Chapter 2: a charged relic needs the recharge flag", sessionUseItem(s, 0, 1, 0) == SessionUseNoEffect);
+        globalFlagSet(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, RelicRechargeFlag);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 0, 4);
+        check("... and then adds 5000 magic ore", sessionUseItem(s, 0, 1, 0) == SessionUseDone && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 5000));
+        itemSlotSet(slot, 0x26D, 1);
+        check("the pan flute asks for its music", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->pendingMusic == RelicFluteTrack);
+    }
+    sessionFree(s);
+}
+
 /* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
 static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -775,6 +803,7 @@ int main(void) {
             testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testLightsAndRelics(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

@@ -11,6 +11,7 @@
 #include "newgame.h"
 #include "consumable.h"
 #include "dialogservice.h"
+#include "relics.h"
 #include "shop.h"
 #include "party.h"
 #include "spelljump.h"
@@ -537,6 +538,66 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         }
         travelTo(s, destination);
         return SessionUseTravelled;
+    }
+    /* the light sources (HandleGameCommand: 8 / 0xE / 0xB light, 9 / 0xF / 0xC put out; ApplyStatusEffect, TickStatusEffects): the lit-item family steps to the next id */
+    if (id == 8 || id == 0xE || id == 0xB || id == 9 || id == 0xF || id == 0xC) {
+        bool lighting = id == 8 || id == 0xE || id == 0xB;
+        if (lighting && s->game == GameYendor2 && (s->light.litFlags & 2)) {
+            return SessionUseNoEffect; /* the place bit 2: the original flashes a warning */
+        }
+        bool ok = lighting ? lightSourceApply(&s->light, id) : lightSourceTick(&s->light, id);
+        if (!ok) {
+            return SessionUseNoEffect;
+        }
+        itemSlotSet(slot, (uint16_t)(lighting ? id + 1 : id - 1), itemSlotExtra(slot));
+        snprintf(s->log, sizeof(s->log), lighting ? "light source %u lit" : "light source %u put out", id);
+        return SessionUseDone;
+    }
+    /* Chapter 2's quest relics (DispatchItemAbilityCommand) */
+    if (s->game == GameYendor2 && !(target && (itemTargetWord(target, 0) & 4)) && relicClassify(id) != RelicActionNone) {
+        RelicAction action = relicClassify(id);
+        uint8_t *flags = saveGlobalFlags(&s->save);
+        if (action == RelicActionCharged) {
+            if (!relicReady(flags, SaveHeaderGlobalFlagsSize)) {
+                return SessionUseNoEffect; /* "PATIENCE IS A VIRTUE." */
+            }
+            if (id == RelicNuoreCache) {
+                relicAddCache(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2));
+            } else if (id == RelicMagicOreCache) {
+                relicAddCache(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1));
+            } else if (id == RelicMassHeal) {
+                relicMassHealAndOverheal(&s->save);
+            } else {
+                unsigned monster = 0;
+                if (!s->combat.active || !combatSelectActiveMonster(s->combat.order, s->combat.count, s->combat.defeated, &monster)) {
+                    return SessionUseNoEffect;
+                }
+                relicInstantKill(s->combat.slots + (size_t)monster * MonsterRecordSize);
+            }
+            partyConsumeItemCharge(user, &s->items, slot);
+            return SessionUseDone;
+        }
+        if (action == RelicActionLocationPotion) {
+            if (!relicUseLocationPotion(s->x, s->y, flags, SaveHeaderGlobalFlagsSize)) {
+                return SessionUseNoEffect;
+            }
+            partyConsumeItemCharge(user, &s->items, slot);
+            return SessionUseDone;
+        }
+        if (action == RelicActionAssemblePotion) {
+            uint8_t globalSlots[24];
+            memset(globalSlots, 0, sizeof(globalSlots));
+            if (!relicAssemblePotion(globalSlots, &s->save, &s->items)) {
+                return SessionUseNoEffect;
+            }
+            s->heldItem = RelicPotionOfAppreciation;
+            s->heldExtra = 0;
+            return SessionUseDone;
+        }
+        if (action == RelicActionPlayFlute) {
+            s->pendingMusic = RelicFluteTrack;
+            return SessionUseDone;
+        }
     }
     RestorativeKind kind = partyRestorativeForItem(s->game, id);
     if (kind != RestorativeNone) {
