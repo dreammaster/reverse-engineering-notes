@@ -58,5 +58,4 @@ void SetFields();
 void SetTables();
 /** Makes the globals for the enums of the scripts (luaGlobals.cpp). */
 void SetEnums();
-/** Puts the commands the scripts call into the Lua state. */
-void InitCommonCommands();
+/** Puts the commands the scripts call into the Lua state (command.h). */

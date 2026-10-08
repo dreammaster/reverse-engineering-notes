@@ -53,6 +53,11 @@ enum class TArgType {
 	kSpriteList = 17,
 	kObjectList = 18, // TVList
 	kTextList = 19,
+	// Confirmed (ConvertArgumentFromLua(), asm lines 1433460-1434417): the type that a command asks for when
+	// it takes any value (the type is then taken from the Lua value), and the `flags` table of a call
+	// (which is not converted).
+	kAny = 20,
+	kFlags = 21,
 };
 
 

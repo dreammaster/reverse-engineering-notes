@@ -183,6 +183,3 @@ void CmdVisObjTo(lua_State *) {
 int luaopen_Particles(lua_State *) {
 	return 0;
 }
-
-void InitCommonCommands() {
-}

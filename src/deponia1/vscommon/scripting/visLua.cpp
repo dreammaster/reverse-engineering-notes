@@ -8,6 +8,7 @@
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
 #include "datastruct/visionaire.h"
+#include "vscommon/scripting/command.h"
 #include "vscommon/scripting/lua.h"
 #include "vscommon/scripting/luaConversion.h"
 #include "vscommon/scripting/visLuaObjects.h"

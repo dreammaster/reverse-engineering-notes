@@ -70,6 +70,12 @@ public:
 	bool IsEmpty() const {
 		return _data.empty();
 	}
+	size_t Length() const {
+		return _data.size();
+	}
+	size_t Len() const {
+		return _data.size();
+	}
 	// Confirmed call shape only (TGameControl::PreLoad, Deponia_Linux.asm
 	// line 463998) - real wxString::CmpNoCase() is a case-insensitive
 	// three-way compare.

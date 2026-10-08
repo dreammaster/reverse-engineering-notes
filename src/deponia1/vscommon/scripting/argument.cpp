@@ -6,6 +6,7 @@
 #include "datastruct/visionaireobject.h"
 #include "vscommon/scripting/id.h"
 #include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/luaConversion.h"
 
 namespace {
 // Confirmed byte-for-byte (TArgument::SetPath/AddPath, Deponia_Linux.asm
@@ -81,6 +82,11 @@ void TArgument::SetType(TArgType type) {
 		break;
 	case TArgType::kTextList:
 		_value = std::vector<TTextLanguage>();
+		break;
+	case TArgType::kAny:
+	case TArgType::kFlags:
+		// (not types of a value: they only say what a command takes)
+		_value = std::monostate{};
 		break;
 	}
 	_type = type;
@@ -393,6 +399,62 @@ bool TArgument::ConvertToObjectList() {
 	return true;
 }
 
+// Confirmed (asm lines 1437922-1438155): pushes the value on the Lua stack, as the table or the userdata that
+// the scripts see (a sprite as the table of ConvertToLua(TSprite), not the userdata); nothing for no
+// value, and nothing for a list of sprites.
 void TArgument::ToLua() const {
-	// Not reversed - see this method's own header comment.
+	switch (_type) {
+	case TArgType::kBool:
+		lua_pushboolean(L, GetBool());
+		break;
+	case TArgType::kInt:
+		lua_pushinteger(L, GetInt());
+		break;
+	case TArgType::kFloat:
+		lua_pushnumber(L, std::get<double>(_value));
+		break;
+	case TArgType::kPoint:
+		ConvertToLua(GetPoint());
+		break;
+	case TArgType::kRect:
+		ConvertToLua(GetRect());
+		break;
+	case TArgType::kString:
+	case TArgType::kPath:
+		lua_pushstring(L, GetString().mb_str());
+		break;
+	case TArgType::kSprite:
+		ConvertToLua(GetSprite());
+		break;
+	case TArgType::kObject:
+		ConvertToLua(GetObject());
+		break;
+	case TArgType::kText:
+		ConvertToLua(GetText());
+		break;
+	case TArgType::kIntList:
+		ConvertToLua(GetIntList());
+		break;
+	case TArgType::kFloatList:
+		ConvertToLua(GetFloatList());
+		break;
+	case TArgType::kPointList:
+		ConvertToLua(GetPointList());
+		break;
+	case TArgType::kRectList:
+		ConvertToLua(GetRectList());
+		break;
+	case TArgType::kStringList:
+	case TArgType::kPathList:
+		ConvertToLua(GetStringList());
+		break;
+	case TArgType::kObjectList:
+		ConvertToLua(GetObjectList());
+		break;
+	case TArgType::kTextList:
+		ConvertToLua(GetTextList());
+		break;
+	default:
+		break;
+	}
 }
