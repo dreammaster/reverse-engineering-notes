@@ -1,6 +1,7 @@
 #include "logic.h"
 
 #include <string.h>
+#include "rules.h"
 
 static unsigned rd16(const Mm3Game *g, unsigned off) { return g->dg[off] | (g->dg[off + 1] << 8); }
 
@@ -122,4 +123,64 @@ unsigned mm3_maze_is_visited(const Mm3Game *g, int x, int y) {
 	unsigned slot; int cx, cy;
 	if (!locate(g, x, y, &slot, &cx, &cy, 0)) return 0;
 	return mm3_is_bit_set(g->dg + slot_base(slot) + 0x320, (cy & 15) * 16 + (cx & 15));
+}
+
+/* ---- conditions and damage */
+unsigned mm3_worst_condition(const Mm3Character *ch) {
+	for (int i = 15; i >= 0; i--) if (ch->conditions[i]) return (unsigned)i;
+	return 16;
+}
+
+static unsigned party_count(const Mm3Game *g) {
+	return g->dg[MM3_DG_ENGINE_MODE] == 2 ? g->dg[MM3_DG_COMBAT_PARTY_SIZE] : g->dg[MM3_DG_PARTY_STATE_BASE];
+}
+static const Mm3Character *member_in_order(const Mm3Game *g, unsigned i) { /* party member of slot i (combat order in combat) */
+	return mm3_party_member(g, g->dg[MM3_DG_ENGINE_MODE] == 2 ? g->dg[MM3_DG_COMBAT_ORDER + i] : i);
+}
+
+/* conditions 11-15 (paralysed ... eradicated) take a character out; the party is "dead" when everyone is out */
+void mm3_check_party_dead(const Mm3Game *g) {
+	for (unsigned i = 0; i < party_count(g); i++) {
+		unsigned w = mm3_worst_condition(member_in_order(g, i));
+		if (w <= 10 || w == 16) { g->dg[MM3_DG_PARTY_DEAD_FLAG] = 0; return; }
+	}
+	g->dg[MM3_DG_PARTY_DEAD_FLAG] = 1;
+}
+
+int mm3_all_have_gone(const Mm3Game *g) {
+	unsigned groups = (g->dg[MM3_DG_MONSTER_ROWS] > 0) + (g->dg[MM3_DG_MONSTER_ROWS + 1] > 0) + (g->dg[MM3_DG_MONSTER_ROWS + 2] > 0);
+	unsigned party = g->dg[MM3_DG_COMBAT_PARTY_SIZE];
+	for (unsigned i = 0; i < party + groups; i++) {
+		if (g->dg[MM3_DG_COMBAT_GONE + i]) continue;
+		if (i >= party) return 0;                                   /* a monster group still to move */
+		unsigned w = mm3_worst_condition(mm3_party_member(g, g->dg[MM3_DG_COMBAT_ORDER + i]));
+		if (w < 11 || w > 15) return 0;                            /* an able character that has not acted */
+	}
+	return 1;
+}
+
+int mm3_chars_cant_act(const Mm3Game *g) {
+	for (unsigned i = 0; i < g->dg[MM3_DG_COMBAT_PARTY_SIZE]; i++) {
+		unsigned w = mm3_worst_condition(mm3_party_member(g, g->dg[MM3_DG_COMBAT_ORDER + i]));
+		if (w != 8 && !(w >= 11 && w <= 15)) return 0;
+	}
+	return 1;
+}
+
+void mm3_subtract_hit_points(const Mm3Game *g, Mm3Character *ch, int amount) {
+	Mm3Rules rules = { g->dg };
+	ch->hp = (int16_t)(ch->hp - amount);
+	int dead = ch->hp <= -10;
+	if (ch->hp < 1) {
+		if ((int16_t)(ch->hp + (int16_t)mm3_max_hp(&rules, ch)) < 1) { /* at or below minus max hp: dead */
+			ch->conditions[0x0D] = 1; /* offset 120h */
+			dead = 1;
+		} else {
+			ch->conditions[0x0C] = 1; /* 11Fh: unconscious */
+		}
+		if (dead) { /* a death breaks the first worn armour piece */
+			for (int i = 0; i < 18; i++)
+				if (ch->slotId[i] > 0x21 && ch->slotId[i] < 0x2A && ch->slotPresent[i]) { ch->slotFlags[i] |= 0x80; break; }
+		}
+	}
 }

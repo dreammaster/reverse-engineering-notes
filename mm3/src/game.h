@@ -39,6 +39,7 @@ void video_pump_events(void);
 void game_sprite_free_cache(uint16_t seg);
 void game_exec_draw_list(unsigned list_addr);
 int game_difftest(const char *only, unsigned n); /* game_diff.c */
+void game_shadow(const char *name, void (*host)(Cpu *), Cpu *c, int nargs, int ret); /* run a readable replacement, and the translated original when MM3_SHADOW is set */
 int sound_init(int headless);  /* game_sound.c */
 void sound_pump(int headless_polls);
 

@@ -11,3 +11,8 @@ markCellVisited
 isCellVisited
 setBit
 isBitSet
+worstCondition
+checkPartyDead
+allHaveGone
+charsCantAct
+subtractHitPoints

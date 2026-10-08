@@ -22,6 +22,8 @@ DGROUP_LINEAR = 0x286F0
 class Translator:
     def __init__(self, asm_path, idc_path):
         self.asm_path = asm_path
+        rf = os.environ.get("ASM2C_READABLE")
+        self.readable = set(l.strip() for l in open(rf) if l.strip()) if rf and os.path.exists(rf) else set()
         self.lines = open(asm_path, encoding="latin1").read().split("\n")
         self.names = {}
         for m in re.finditer(r'set_name\s*\(0[Xx]([0-9A-Fa-f]+),\s*"([^"]+)"', open(idc_path, encoding="latin1").read()):
@@ -532,13 +534,18 @@ class Translator:
             return ["if (%s) goto %s;" % (cond, target)]
         if mn == "call":
             target = re.sub(r"^(near ptr |far ptr )", "", ops[0])
-            if target.startswith("j_") and target[2:] in translated:  # overlay thunk of a routine we translate
+            thunk = target.startswith("j_") and (target[2:] in translated or target[2:] in self.readable)  # readable: hand-written replacements (hosts) named in gen/readable.txt
+            if thunk:  # overlay thunk (jmp X): call the routine itself, translated or host; the call through the thunk was a far call
                 target = target[2:]
             if target not in self.procs and not re.match(r"^[\w@]+$", target):
                 raise ValueError("indirect call")
             target_c = target.replace("@", "_AT")
-            far_call = "far ptr" in ops[0] or (("near ptr" not in ops[0]) and self.procs.get(target, [0, 0, "near"])[2] == "far")
+            far_call = thunk or "far ptr" in ops[0] or (("near ptr" not in ops[0]) and self.procs.get(target, [0, 0, "near"])[2] == "far")
             if target not in translated:
+                if "near ptr" in ops[0] and self.procs.get(target, [0, 0, "near"])[2] == "far":
+                    # `push cs; call near ptr X` is a far call: the pushed segment word is part of the return address, so take it
+                    # off the stack again for the host (the callee's retf would have popped it)
+                    return ["c->sp += 2; host_%s(c); /* far call by push cs / call near: args start at sp */" % target_c]
                 return ["host_%s(c); /* no return address is pushed for host routines: args start at sp */" % target_c]
             pushes = ["PUSH(c, 0); PUSH(c, 0);"] if far_call else ["PUSH(c, 0);"]
             return pushes + ["fn_%s(c);" % target]

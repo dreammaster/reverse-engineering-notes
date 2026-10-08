@@ -63,7 +63,6 @@ sub_25E66
 sub_38821
 sub_3946E
 changeTime
-worstCondition
 drawViewOutdoors
 doCombat
 prepareIndoorView
@@ -76,8 +75,6 @@ sub_27F8B
 sub_28103
 sub_282ED
 timeText
-checkPartyDead
-subtractHitPoints
 characterInfoInventory
 drawCharacterStats
 highlightChar
@@ -256,7 +253,6 @@ sub_28194
 clearViewFlags
 renderOutdoorView
 scanObjectsAhead
-allHaveGone
 attack
 block
 getMonsterDescriptions
@@ -354,7 +350,6 @@ attack2
 getMonsterDamage
 hitMonster
 monster_getTextColor
-charsCantAct
 sortCombatParty
 sub_37BA7
 sub_45A70

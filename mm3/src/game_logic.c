@@ -6,18 +6,44 @@ static Mm3Game game(void) { Mm3Game g = { DG }; return g; }
 static const Mm3Character *near_char(Cpu *c, int n) { return (const Mm3Character *)(DG + host_arg(c, n)); }
 static void ret32(Cpu *c, uint32_t v) { c->ax = (uint16_t)v; c->dx = (uint16_t)(v >> 16); }
 
-void host_getCurrentExperience(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_total(&g, near_char(c, 0))); }
-void host_nextExperienceLevel(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_for_next_level(&g, near_char(c, 0))); }
-void host_experienceToNextLevel(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_needed(&g, near_char(c, 0))); }
-void host_giveExperience(Cpu *c) { Mm3Game g = game(); mm3_give_experience(&g, host_arg(c, 0) | ((uint32_t)host_arg(c, 1) << 16)); }
+static void impl_getCurrentExperience(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_total(&g, near_char(c, 0))); }
+static void impl_nextExperienceLevel(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_for_next_level(&g, near_char(c, 0))); }
+static void impl_experienceToNextLevel(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_experience_needed(&g, near_char(c, 0))); }
+static void impl_giveExperience(Cpu *c) { Mm3Game g = game(); mm3_give_experience(&g, host_arg(c, 0) | ((uint32_t)host_arg(c, 1) << 16)); }
 
 /* ---- maze */
-void host_mazeNeighbourSlot(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_neighbour_slot(&g, host_arg(c, 0)); }
-void host_mazeGetWordRel(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_word(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
-void host_mazeGetWordWrap(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_word_wrapped(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
-void host_mazeGetFlagsRel(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_flags(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
-void host_mazeSetBits(Cpu *c) { Mm3Game g = game(); mm3_maze_set_bits(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2), host_arg(c, 3)); }
-void host_markCellVisited(Cpu *c) { Mm3Game g = game(); mm3_maze_mark_visited(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1)); }
-void host_isCellVisited(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_is_visited(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1)); }
-void host_setBit(Cpu *c) { mm3_set_bit(DG + host_arg(c, 0), host_arg(c, 1), host_arg(c, 2) != 0); }
-void host_isBitSet(Cpu *c) { c->ax = (uint16_t)mm3_is_bit_set(DG + host_arg(c, 0), host_arg(c, 1)); }
+static void impl_mazeNeighbourSlot(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_neighbour_slot(&g, host_arg(c, 0)); }
+static void impl_mazeGetWordRel(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_word(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
+static void impl_mazeGetWordWrap(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_word_wrapped(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
+static void impl_mazeGetFlagsRel(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_flags(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
+static void impl_mazeSetBits(Cpu *c) { Mm3Game g = game(); mm3_maze_set_bits(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2), host_arg(c, 3)); }
+static void impl_markCellVisited(Cpu *c) { Mm3Game g = game(); mm3_maze_mark_visited(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1)); }
+static void impl_isCellVisited(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_maze_is_visited(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1)); }
+static void impl_setBit(Cpu *c) { mm3_set_bit(DG + host_arg(c, 0), host_arg(c, 1), host_arg(c, 2) != 0); }
+static void impl_isBitSet(Cpu *c) { c->ax = (uint16_t)mm3_is_bit_set(DG + host_arg(c, 0), host_arg(c, 1)); }
+
+static void impl_worstCondition(Cpu *c) { c->ax = (uint16_t)mm3_worst_condition(near_char(c, 0)); }
+static void impl_checkPartyDead(Cpu *c) { Mm3Game g = game(); (void)c; mm3_check_party_dead(&g); }
+static void impl_allHaveGone(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_all_have_gone(&g); }
+static void impl_charsCantAct(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_chars_cant_act(&g); }
+static void impl_subtractHitPoints(Cpu *c) { Mm3Game g = game(); mm3_subtract_hit_points(&g, (Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
+
+/* host entry points: with MM3_SHADOW=1 every call is also run through the translated original and the results compared (game_diff.c) */
+void host_getCurrentExperience(Cpu *c) { game_shadow("getCurrentExperience", impl_getCurrentExperience, c, 1, 2); }
+void host_nextExperienceLevel(Cpu *c) { game_shadow("nextExperienceLevel", impl_nextExperienceLevel, c, 1, 2); }
+void host_experienceToNextLevel(Cpu *c) { game_shadow("experienceToNextLevel", impl_experienceToNextLevel, c, 1, 2); }
+void host_giveExperience(Cpu *c) { game_shadow("giveExperience", impl_giveExperience, c, 2, 0); }
+void host_mazeNeighbourSlot(Cpu *c) { game_shadow("mazeNeighbourSlot", impl_mazeNeighbourSlot, c, 1, 1); }
+void host_mazeGetWordRel(Cpu *c) { game_shadow("mazeGetWordRel", impl_mazeGetWordRel, c, 3, 1); }
+void host_mazeGetWordWrap(Cpu *c) { game_shadow("mazeGetWordWrap", impl_mazeGetWordWrap, c, 3, 1); }
+void host_mazeGetFlagsRel(Cpu *c) { game_shadow("mazeGetFlagsRel", impl_mazeGetFlagsRel, c, 3, 1); }
+void host_mazeSetBits(Cpu *c) { game_shadow("mazeSetBits", impl_mazeSetBits, c, 4, 0); }
+void host_markCellVisited(Cpu *c) { game_shadow("markCellVisited", impl_markCellVisited, c, 2, 0); }
+void host_isCellVisited(Cpu *c) { game_shadow("isCellVisited", impl_isCellVisited, c, 2, 1); }
+void host_setBit(Cpu *c) { game_shadow("setBit", impl_setBit, c, 3, 0); }
+void host_isBitSet(Cpu *c) { game_shadow("isBitSet", impl_isBitSet, c, 2, 1); }
+void host_worstCondition(Cpu *c) { game_shadow("worstCondition", impl_worstCondition, c, 1, 1); }
+void host_checkPartyDead(Cpu *c) { game_shadow("checkPartyDead", impl_checkPartyDead, c, 0, 0); }
+void host_allHaveGone(Cpu *c) { game_shadow("allHaveGone", impl_allHaveGone, c, 0, 1); }
+void host_charsCantAct(Cpu *c) { game_shadow("charsCantAct", impl_charsCantAct, c, 0, 1); }
+void host_subtractHitPoints(Cpu *c) { game_shadow("subtractHitPoints", impl_subtractHitPoints, c, 2, 0); }

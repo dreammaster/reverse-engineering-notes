@@ -13,6 +13,7 @@ void mm3_rng_seed(uint32_t seed);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
+H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -53,8 +54,33 @@ static void setup_visit(unsigned iter, uint16_t *a) { (void)iter; randomize_maze
 static void setup_bit(unsigned iter, uint16_t *a) { (void)iter; for (int i = 0; i < 64; i++) DG[0x5000 + i] = (uint8_t)rnd(256); a[0] = 0x5000; a[1] = rnd(300); a[2] = rnd(3); }
 static void setup_nb(unsigned iter, uint16_t *a) { (void)iter; randomize_maze(); a[0] = 40 + rnd(40); }
 
+static void randomize_conditions(void) {
+	randomize_party();
+	for (int i = 0; i < 8; i++) {
+		Mm3Character *ch = (Mm3Character *)(DG + 0xB9D6 + i * 0x12F);
+		for (int k = 0; k < 16; k++) ch->conditions[k] = rnd(4) ? 0 : (rnd(3) == 0 ? 1 + rnd(3) : 0);
+		if (rnd(3) == 0) ch->conditions[8 + rnd(8)] = 1;
+		ch->hp = (int16_t)((int)rnd(60) - 30); ch->level = 1 + rnd(20); ch->race = rnd(5);
+		for (int s = 0; s < 18; s++) { ch->slotId[s] = rnd(0x40); ch->slotPresent[s] = rnd(2); ch->slotFlags[s] = rnd(4) ? 0 : 0x40; }
+		for (int s = 0; s < 7; s++) ch->stat[s].permanent = 3 + rnd(40);
+		ch->birthYear = 440 + rnd(60);
+	}
+	DG[0xE8EA] = 1 + rnd(6); DG[0xACC1] = 1 + rnd(6);
+	for (int i = 0; i < 16; i++) { DG[0xB9C9 + i] = rnd(3) ? 0 : 1; DG[0xECC9 + i] = rnd(6); }
+	for (int i = 0; i < 3; i++) DG[0xC4A2 + i] = rnd(3) ? 0 : 1 + rnd(5);
+	DG[0xEC36] = 500; DG[0xEC37] = 2; DG[0x151] = rnd(2);
+}
+static void setup_conditions(unsigned iter, uint16_t *a) { (void)iter; (void)a; randomize_conditions(); }
+static void setup_char_cond(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; }
+static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
+
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "worstCondition", host_worstCondition, 1, 1, setup_char_cond },
+	{ "checkPartyDead", host_checkPartyDead, 0, 0, setup_conditions },
+	{ "allHaveGone", host_allHaveGone, 0, 1, setup_conditions },
+	{ "charsCantAct", host_charsCantAct, 0, 1, setup_conditions },
+	{ "subtractHitPoints", host_subtractHitPoints, 2, 0, setup_damage },
 	{ "mazeNeighbourSlot", host_mazeNeighbourSlot, 1, 1, setup_nb },
 	{ "mazeGetWordRel", host_mazeGetWordRel, 3, 1, setup_xy },
 	{ "mazeGetWordWrap", host_mazeGetWordWrap, 3, 1, setup_xy },
@@ -119,4 +145,39 @@ int game_difftest(const char *only, unsigned n) {
 		total_bad += bad;
 	}
 	return total_bad != 0;
+}
+
+/* Shadow mode: during normal play every call of a readable replacement is repeated by the translated original on the same data, and any
+ * difference in the results or the data segment is reported once per function.  (Slow: two 64 KB copies per call.) */
+void game_shadow(const char *name, void (*host)(Cpu *), Cpu *c, int nargs, int ret) {
+	static int enabled = -1;
+	if (enabled < 0) enabled = getenv("MM3_SHADOW") != NULL;
+	if (!enabled) { host(c); return; }
+	static uint8_t before[65536], after_host[65536];
+	uint16_t args[8];
+	for (int i = 0; i < nargs && i < 8; i++) args[i] = host_arg(c, i);
+	uint16_t sp = c->sp;
+	memcpy(before, DG, 65536);
+	host(c);
+	Cpu host_cpu = *c;
+	memcpy(after_host, DG, 65536);
+	memcpy(DG, before, 65536);
+	Cpu ref;
+	run_ref(name, args, nargs, &ref);
+	size_t diff_at = 0;
+	int same = !ret || (ref.ax == host_cpu.ax && (ret < 2 || ref.dx == host_cpu.dx));
+	for (size_t o = 0; same && o < 0xF000; o++) if (DG[o] != after_host[o]) { same = 0; diff_at = o; }
+	if (!same) {
+		static char reported[64][32]; static int nrep;
+		int seen = 0;
+		for (int i = 0; i < nrep; i++) if (!strcmp(reported[i], name)) seen = 1;
+		if (!seen && nrep < 64) {
+			snprintf(reported[nrep++], 32, "%s", name);
+			fprintf(stderr, "SHADOW MISMATCH %s(", name);
+			for (int i = 0; i < nargs; i++) fprintf(stderr, "%04X%s", args[i], i + 1 < nargs ? "," : "");
+			fprintf(stderr, "): translated ax=%04X dx=%04X, readable ax=%04X dx=%04X, data differs at %04zX\n", ref.ax, ref.dx, host_cpu.ax, host_cpu.dx, diff_at);
+		}
+	}
+	memcpy(DG, after_host, 65536);   /* continue with the readable version's result */
+	*c = host_cpu; c->sp = sp;
 }

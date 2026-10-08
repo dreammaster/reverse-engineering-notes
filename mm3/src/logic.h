@@ -26,7 +26,10 @@ enum {
 	MM3_DG_MAZE_CUR_SLOT = 0xC53E,    /* Maze_curSlot */
 	MM3_DG_MAZE_WRAP_MODE = 0x15B,    /* Maze_wrapMode: non-zero on maps that wrap around */
 	MM3_DG_BITSET_MASKS = 0x16F8,     /* mazeSetBits: word mask per field */
-	MM3_DG_BITSET_SHIFTS = 0x159C     /* ... and shift (byte, 0x58 bytes per field) */
+	MM3_DG_BITSET_SHIFTS = 0x159C,    /* ... and shift (byte, 0x58 bytes per field) */
+	MM3_DG_PARTY_DEAD_FLAG = 0x151,   /* byte_28841: set by checkPartyDead when no member can act */
+	MM3_DG_MONSTER_ROWS = 0xC4A2,     /* byte_34B92..94: monsters present in the first three rows ahead (also: groups in combat) */
+	MM3_DG_COMBAT_GONE = 0xB9C9       /* per combat slot: has acted this round */
 };
 
 #define MM3_NO_SLOT 0x1111
@@ -49,5 +52,12 @@ void mm3_maze_mark_visited(const Mm3Game *g, int x, int y);                  /* 
 unsigned mm3_maze_is_visited(const Mm3Game *g, int x, int y);                /* isCellVisited */
 void mm3_set_bit(uint8_t *bits, unsigned index, int value);                  /* setBit: bit 0 is the top bit of byte 0 */
 unsigned mm3_is_bit_set(const uint8_t *bits, unsigned index);                /* isBitSet */
+
+/* party condition checks */
+unsigned mm3_worst_condition(const Mm3Character *ch);                          /* worstCondition: index of the highest condition that is set, 16 = none */
+void mm3_check_party_dead(const Mm3Game *g);                                   /* checkPartyDead: sets byte_28841 */
+int mm3_all_have_gone(const Mm3Game *g);                                       /* allHaveGone: every active combat participant has acted */
+int mm3_chars_cant_act(const Mm3Game *g);                                      /* charsCantAct: every character is asleep/paralysed/unconscious ... */
+void mm3_subtract_hit_points(const Mm3Game *g, Mm3Character *ch, int amount);  /* subtractHitPoints */
 
 #endif
