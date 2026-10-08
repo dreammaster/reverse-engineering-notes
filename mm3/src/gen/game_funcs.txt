@@ -25,8 +25,6 @@ setWrapModeForMap
 showMessage
 showOverheadMap
 spellsDialog
-mazeGetWordRel
-mazeSetBits
 mazeUpdateSlot
 monstersRecover
 moveMonsters
@@ -106,9 +104,7 @@ sub_44843
 sub_44921
 buildActiveEffects
 charSavingThrow
-isBitSet
 sub_28249
-mazeGetFlagsRel
 sub_418F3
 Map_load
 loadMapData
@@ -116,8 +112,6 @@ sub_416F1
 sub_434A6
 sub_402AC
 sub_402F6
-isCellVisited
-mazeGetWordWrap
 sub_1B223
 sub_28135
 sub_425AB
@@ -207,7 +201,6 @@ sub_281D5
 sub_282E8
 sub_284F5
 sub_28540
-mazeNeighbourSlot
 sub_2819E
 monsterSavingThrow
 monstersAttack
@@ -242,7 +235,6 @@ sub_4BDAE
 sub_4EC06
 sub_280E5
 drawAutomapWrapped
-markCellVisited
 updateLight
 checkClasses
 finishCreation
@@ -331,7 +323,6 @@ sub_39930
 generateItem
 sub_3CE7A
 learnSpellDialog
-setBit
 subPartyTime
 sub_2810D
 sub_3C1F2

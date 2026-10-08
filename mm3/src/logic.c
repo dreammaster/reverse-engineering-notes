@@ -45,3 +45,81 @@ void mm3_give_experience(const Mm3Game *g, uint32_t amount) {
 		mm3_party_member(g, index)->experience += share;
 	}
 }
+
+/* ---- maze */
+static unsigned slot_base(unsigned slot) { return MM3_DG_MAZE_PAGES + slot * 0x340; }
+static unsigned slot_id(const Mm3Game *g, unsigned slot) { return g->dg[MM3_DG_MAZE_SLOT_IDS + slot]; }
+
+int mm3_maze_neighbour_slot(const Mm3Game *g, unsigned map_id) {
+	for (unsigned s = 0; s < 4; s++) if (slot_id(g, s) == map_id) return (int)s;
+	return MM3_NO_SLOT;
+}
+
+/* Party-relative (x, y) -> window coordinates 0..31 and the slot holding that cell: the window is the 2x2 block of pages; slot 0 is the
+ * north-west one and the other pages are found through the neighbour map ids in slot 0's header (south, then east).  Returns 0 when the cell is
+ * outside the window or its page is not loaded. */
+static int locate(const Mm3Game *g, int x, int y, unsigned *slot, int *cx, int *cy, int signed_range) {
+	unsigned cur = (int8_t)g->dg[MM3_DG_MAZE_CUR_SLOT];
+	x += g->dg[MM3_DG_MAZE_SLOT_X + cur]; y += g->dg[MM3_DG_MAZE_SLOT_Y + cur];
+	if (signed_range ? (x < 0 || y < 0 || x > 31 || y > 31) : ((unsigned)x > 31 || (unsigned)y > 31)) return 0;
+	unsigned s = 0;
+	if (y > 15) { int n = mm3_maze_neighbour_slot(g, g->dg[slot_base(s) + 0x308]); if (n == MM3_NO_SLOT) return 0; s = (unsigned)n; }
+	if (x > 15) { int n = mm3_maze_neighbour_slot(g, g->dg[slot_base(s) + 0x309]); if (n == MM3_NO_SLOT) return 0; s = (unsigned)n; }
+	*slot = s; *cx = x; *cy = y;
+	return 1;
+}
+
+unsigned mm3_maze_word_wrapped(const Mm3Game *g, int x, int y, unsigned mask) {
+	unsigned slot; int cx, cy;
+	if (!locate(g, x, y, &slot, &cx, &cy, 1)) return g->dg[MM3_DG_MAZE_WRAP_MODE] ? 0 : MM3_NO_SLOT;
+	return rd16(g, slot_base(slot) + (cy & 15) * 32 + (cx & 15) * 2) & mask;
+}
+
+unsigned mm3_maze_word(const Mm3Game *g, int x, int y, unsigned mask) {
+	unsigned slot; int cx, cy;
+	if (!locate(g, x, y, &slot, &cx, &cy, 1)) return g->dg[MM3_DG_MAZE_WRAP_MODE] ? 0 : MM3_NO_SLOT;
+	if (g->dg[MM3_DG_MAZE_WRAP_MODE]) {
+		/* maps 45-48 and 49-52 are neighbouring outdoor areas that do not connect across their shared border */
+		unsigned here = slot_id(g, (unsigned)(int8_t)g->dg[MM3_DG_MAZE_CUR_SLOT]), there = slot_id(g, slot);
+		if (here >= 45 && here <= 48 && there >= 49 && there <= 52) return 0;
+		if (here >= 49 && here <= 52 && there <= 48) return 0;
+	}
+	return rd16(g, slot_base(slot) + (cy & 15) * 32 + (cx & 15) * 2) & mask;
+}
+
+unsigned mm3_maze_flags(const Mm3Game *g, int x, int y, unsigned mask) {
+	unsigned slot; int cx, cy;
+	if (!locate(g, x, y, &slot, &cx, &cy, 1)) return g->dg[MM3_DG_MAZE_WRAP_MODE] ? 0 : MM3_NO_SLOT;
+	return g->dg[slot_base(slot) + 0x200 + (cy & 15) * 16 + (cx & 15)] & mask;
+}
+
+void mm3_maze_set_bits(const Mm3Game *g, int x, int y, unsigned field, unsigned value) {
+	unsigned slot = (unsigned)(int8_t)g->dg[MM3_DG_MAZE_CUR_SLOT];
+	if (y > 15) slot = (unsigned)mm3_maze_neighbour_slot(g, g->dg[slot_base(slot) + 0x308]);
+	if (x > 15) slot = (unsigned)mm3_maze_neighbour_slot(g, g->dg[slot_base(slot) + 0x309]);
+	unsigned at = slot_base(slot) + (y & 15) * 32 + (x & 15) * 2;
+	unsigned word = rd16(g, at) & rd16(g, MM3_DG_BITSET_MASKS + field * 2);
+	word |= (value << g->dg[MM3_DG_BITSET_SHIFTS + field * 0x58]) & 0xFFFF;
+	g->dg[at] = (uint8_t)word; g->dg[at + 1] = (uint8_t)(word >> 8);
+}
+
+void mm3_set_bit(uint8_t *bits, unsigned index, int value) {
+	unsigned mask = 0x80u >> (index & 7);
+	if (value) bits[index >> 3] |= (uint8_t)mask; else bits[index >> 3] &= (uint8_t)~mask;
+}
+
+unsigned mm3_is_bit_set(const uint8_t *bits, unsigned index) {
+	return (unsigned)(uint16_t)((int16_t)(int8_t)bits[index >> 3] & (0x80u >> (index & 7)));
+}
+
+void mm3_maze_mark_visited(const Mm3Game *g, int x, int y) {
+	unsigned slot; int cx, cy;
+	if (!locate(g, x, y, &slot, &cx, &cy, 1)) return;
+	mm3_set_bit(g->dg + slot_base(slot) + 0x320, (cy & 15) * 16 + (cx & 15), 1);
+}
+
+unsigned mm3_maze_is_visited(const Mm3Game *g, int x, int y) {
+	unsigned slot; int cx, cy;
+	if (!locate(g, x, y, &slot, &cx, &cy, 0)) return 0;
+	return mm3_is_bit_set(g->dg + slot_base(slot) + 0x320, (cy & 15) * 16 + (cx & 15));
+}

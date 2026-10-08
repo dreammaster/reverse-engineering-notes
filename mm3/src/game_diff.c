@@ -12,6 +12,7 @@ extern const RecompEntry recomp_entries_ref_gen[];
 void mm3_rng_seed(uint32_t seed);
 
 #define H(name) void host_##name(Cpu *c)
+H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -30,8 +31,39 @@ static void randomize_party(void) {
 static void setup_char(unsigned iter, uint16_t *a) { (void)iter; randomize_party(); a[0] = 0xB9D6 + rnd(6) * 0x12F; }
 static void setup_xp(unsigned iter, uint16_t *a) { (void)iter; randomize_party(); uint32_t v = rnd(3) ? rnd(100000) : rnd(0xFFFFFF); a[0] = (uint16_t)v; a[1] = (uint16_t)(v >> 16); }
 
+/* a random maze window: four slots with distinct map ids, headers pointing at loaded neighbours, random cells/flags/visited bits */
+static void randomize_maze(void) {
+	for (int s = 0; s < 4; s++) DG[0x274E + s] = 40 + s * 3 + rnd(2) * 20 + (rnd(5) == 0 ? 5 : 0);
+	for (int s = 0; s < 4; s++) { DG[0x2600 + s] = rnd(2) * 16; DG[0x2604 + s] = rnd(2) * 16; }
+	DG[0xC53E] = rnd(4); DG[0x15B] = rnd(2);
+	for (unsigned i = 0; i < 4 * 0x340; i++) DG[0xC554 + i] = (uint8_t)rnd(256);
+	for (int s = 0; s < 4; s++) {
+		DG[0xC554 + s * 0x340 + 0x308] = DG[0x274E + rnd(4)]; DG[0xC554 + s * 0x340 + 0x309] = DG[0x274E + rnd(4)];
+		if (rnd(8) == 0) DG[0xC554 + s * 0x340 + 0x308] = 99; /* a neighbour that is not loaded */
+	}
+	if (rnd(3) == 0) { int a = 45 + rnd(8); DG[0x274E + DG[0xC53E]] = a; DG[0x274E + rnd(4)] = 44 + rnd(10); }
+}
+static void setup_xy(unsigned iter, uint16_t *a) { (void)iter; randomize_maze(); a[0] = (uint16_t)(int16_t)((int)rnd(40) - 4); a[1] = (uint16_t)(int16_t)((int)rnd(40) - 4); a[2] = rnd(2) ? 0xFFFF : rnd(0x10000); }
+static void setup_xy_in(unsigned iter, uint16_t *a) {
+	(void)iter; randomize_maze();
+	for (int s = 0; s < 4; s++) { DG[0xC554 + s * 0x340 + 0x308] = DG[0x274E + rnd(4)]; DG[0xC554 + s * 0x340 + 0x309] = DG[0x274E + rnd(4)]; } /* all neighbours loaded */
+	a[0] = rnd(32); a[1] = rnd(32); a[2] = rnd(4); a[3] = rnd(2);
+}
+static void setup_visit(unsigned iter, uint16_t *a) { (void)iter; randomize_maze(); a[0] = (uint16_t)(int16_t)((int)rnd(40) - 4); a[1] = (uint16_t)(int16_t)((int)rnd(40) - 4); }
+static void setup_bit(unsigned iter, uint16_t *a) { (void)iter; for (int i = 0; i < 64; i++) DG[0x5000 + i] = (uint8_t)rnd(256); a[0] = 0x5000; a[1] = rnd(300); a[2] = rnd(3); }
+static void setup_nb(unsigned iter, uint16_t *a) { (void)iter; randomize_maze(); a[0] = 40 + rnd(40); }
+
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "mazeNeighbourSlot", host_mazeNeighbourSlot, 1, 1, setup_nb },
+	{ "mazeGetWordRel", host_mazeGetWordRel, 3, 1, setup_xy },
+	{ "mazeGetWordWrap", host_mazeGetWordWrap, 3, 1, setup_xy },
+	{ "mazeGetFlagsRel", host_mazeGetFlagsRel, 3, 1, setup_xy },
+	{ "mazeSetBits", host_mazeSetBits, 4, 0, setup_xy_in },
+	{ "markCellVisited", host_markCellVisited, 2, 0, setup_visit },
+	{ "isCellVisited", host_isCellVisited, 2, 1, setup_visit },
+	{ "setBit", host_setBit, 3, 0, setup_bit },
+	{ "isBitSet", host_isBitSet, 2, 1, setup_bit },
 	{ "getCurrentExperience", host_getCurrentExperience, 1, 2, setup_char },
 	{ "nextExperienceLevel", host_nextExperienceLevel, 1, 2, setup_char },
 	{ "experienceToNextLevel", host_experienceToNextLevel, 1, 2, setup_char },

@@ -2,3 +2,12 @@ getCurrentExperience
 nextExperienceLevel
 experienceToNextLevel
 giveExperience
+mazeNeighbourSlot
+mazeGetWordRel
+mazeGetWordWrap
+mazeGetFlagsRel
+mazeSetBits
+markCellVisited
+isCellVisited
+setBit
+isBitSet
