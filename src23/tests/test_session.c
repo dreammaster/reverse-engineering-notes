@@ -288,15 +288,16 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
         check(text, first == SessionCastDone && s->heldItem != 0 && second == SessionCastNoEffect);
     }
 
-    /* a splash spell (three rows at once) is not composed and costs nothing */
+    /* a splash spell casts like the others (nothing in front: the costs are paid and nothing happens) */
     unsigned splash = 0;
     for (unsigned id = 1; id <= s->spells.recordCount && !splash; id++) {
         const uint8_t *r = spellRecord(&s->spells, id);
         splash = r && spellSelectBranch(r) == SpellBranchProjectile && (spellGetU16(r, SpellFieldFlagsB) & SpellFlagsBSplash) ? id : 0;
     }
-    uint16_t mpBefore = partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints);
-    check("a splash projectile spell is reported unsupported and charges nothing",
-          splash && sessionCastBy(s, 0, splash, false) == SessionCastUnsupported && partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints) == mpBefore);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+    SessionCast splashResult = splash ? sessionCastBy(s, 0, splash, false) : SessionCastNotKnown;
+    check("a splash projectile spell casts (a miss into the dark is no effect)", splash && (splashResult == SessionCastDone || splashResult == SessionCastNoEffect));
 
     /* a plain projectile hits a monster that stands in the party's column of the view */
     unsigned shot = 0;

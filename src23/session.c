@@ -313,28 +313,65 @@ static void castStatDelta(GameSession *s, uint8_t *record, const EffectDef *def,
                                spellGetU16(spell, SpellFieldDrainAmount), clearMask);
 }
 
-/* The projectile family (ApplyEncodedItemEffect's loc_2C92A): the shot flies down the party's column of the view, nearest cell first, and hits the first monster; a
- * piercing one goes on. A cell the view hides (a wall) stops it. Only the centre column of the 51-cell buffer is modelled (the flight and its frames are the front end's). */
+/*
+ * GetMonsterAtViewportRow (yendor2.asm:23393): the viewport "depth" the spells use is the index into the 51-cell buffer (viewport.h); a cell with the monster marker
+ * (+6 bit 0x400, its +4 the monster's type) names the pool monster of that type. Hidden cells are not looked at.
+ */
+static uint8_t *monsterAtDepth(GameSession *s, const DungeonGridCell cells[ViewportCellCount], unsigned depth) {
+    if (depth >= ViewportCellCount || !(cells[depth].flags & 0x400)) {
+        return NULL;
+    }
+    int slot = monsterPoolFindType(s->pool, cells[depth].reserved4);
+    return slot >= 0 ? s->pool + (size_t)slot * MonsterRecordSize : NULL;
+}
+
+/*
+ * The projectile family (ApplyEncodedItemEffect's loc_2C92A): the shot flies down the party's column of the view through the depths 0x31, 0x2E, 0x2B, 0x28, 0x24, 0x19
+ * (cells 49, 46, 43, 40, 36, 25), stops at a wall (a cell the view hides) and hits the first monster; a piercing one goes on. A splash spell (FlagsB 0x400) instead
+ * runs ApplyAttackAlongCorridorLine over three runs of three cells around the impact -- the runs start at 24 / 35 / 39 for depth 0x24, 35 / 39 / 42 for 0x28, 39 / 42 / 45
+ * for 0x2B and 42 / 45 / 48 for the rest -- every monster there takes the attack and then the compounded second application, and the dead are reaped.
+ * The flight and its frames are the front end's.
+ */
 static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell) {
     ViewScene scene;
     DungeonGridCell cells[ViewportCellCount];
     sessionScene(s, &scene, cells);
     MonsterRewardStaging staging;
     memset(&staging, 0, sizeof(staging));
-    bool hit = false;
-    static const unsigned column[] = {46, 43, 40, 36, 25}; /* the centres of rows 5 to 1 of the 51-cell buffer (viewport.h) */
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    bool splash = (spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBSplash) != 0, hit = false;
+    static const unsigned column[] = {49, 46, 43, 40, 36, 25};
     for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]); i++) {
-        unsigned cell = column[i];
-        if (cells[cell].flags & ViewportCellHidden) {
+        unsigned depth = column[i];
+        if (depth != 49 && (cells[depth].flags & ViewportCellHidden)) {
             break;
         }
-        uint8_t *monster = scene.cellMonsters[cell];
+        uint8_t *monster = monsterAtDepth(s, cells, depth);
         if (!monster) {
             continue;
         }
         hit = true;
-        CombatProjectileHitOutcome outcome =
-            combatApplyProjectileHit(monster, caster, spell, s->scrollCast, &staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+        if (splash) {
+            unsigned starts[3] = {42, 45, 48};
+            if (depth == 36) {
+                starts[0] = 24, starts[1] = 35, starts[2] = 39;
+            } else if (depth == 40) {
+                starts[0] = 35, starts[1] = 39, starts[2] = 42;
+            } else if (depth == 43) {
+                starts[0] = 39, starts[1] = 42, starts[2] = 45;
+            }
+            for (unsigned run = 0; run < 3; run++) {
+                for (unsigned k = 0; k < 3; k++) {
+                    uint8_t *target = monsterAtDepth(s, cells, starts[run] + k);
+                    if (target) {
+                        combatApplySplashHit(target, caster, spell, s->scrollCast, &s->rng);
+                    }
+                }
+            }
+            combatReapDeadMapMonsters(s->pool, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid);
+            break;
+        }
+        CombatProjectileHitOutcome outcome = combatApplyProjectileHit(monster, caster, spell, s->scrollCast, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
         if (!outcome.continues) {
             break;
         }
@@ -344,25 +381,30 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
     return hit;
 }
 
-/* The attacks on what is in front of the party outside a combat: the screen-wide family (ScreenWide, Tremor, Rain, Turbulence: every monster of the centre column,
- * combatApplyScreenWideAttack) and the beam (the first one, combatApplyDamageToMapMonster). The animations are the front end's. */
+/* The attacks on what is in front of the party outside a combat: the screen-wide family (ScreenWide, Tremor, Rain, Turbulence: the monsters of every cell in the original's
+ * order -- depths 0x32, 0x30, then 0x2F down to 0 -- combatApplyScreenWideAttack) and the beam (the first monster down the centre column, combatApplyDamageToMapMonster). The
+ * animations are the front end's. */
 static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spell, bool beam) {
     ViewScene scene;
     DungeonGridCell cells[ViewportCellCount];
     sessionScene(s, &scene, cells);
-    static const unsigned column[] = {46, 43, 40, 36, 25};
     uint8_t *rowMonsters[CombatScreenAttackRows];
     memset(rowMonsters, 0, sizeof(rowMonsters));
     unsigned found = 0;
-    for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]); i++) {
-        if (cells[column[i]].flags & ViewportCellHidden) {
-            break;
-        }
-        if (scene.cellMonsters[column[i]]) {
-            rowMonsters[found++] = scene.cellMonsters[column[i]];
-            if (beam) {
+    if (beam) {
+        static const unsigned column[] = {46, 43, 40, 36, 25};
+        for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]) && !found; i++) {
+            if (cells[column[i]].flags & ViewportCellHidden) {
                 break;
             }
+            rowMonsters[0] = monsterAtDepth(s, cells, column[i]);
+            found = rowMonsters[0] != NULL;
+        }
+    } else {
+        for (unsigned row = 0; row < CombatScreenAttackRows; row++) { /* [0] depth 0x32, [1] 0x30, [2..49] 0x2F .. 0 */
+            unsigned depth = row == 0 ? 0x32 : row == 1 ? 0x30 : 0x2F - (row - 2);
+            rowMonsters[row] = monsterAtDepth(s, cells, depth);
+            found += rowMonsters[row] != NULL;
         }
     }
     MonsterRewardStaging staging;
@@ -381,6 +423,7 @@ static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spe
 }
 
 static bool castSupported(SpellBranch branch, const uint8_t *spell) {
+    (void)spell;
     switch (branch) {
     case SpellBranchSingleTarget: case SpellBranchWholeParty: case SpellBranchLightTimer: case SpellBranchHeldItem: case SpellBranchTeleportEngage:
     case SpellBranchLocationBookmark: case SpellBranchTriggerCurgameEvent: case SpellBranchRest: case SpellBranchKnock: case SpellBranchFacingLockOrEvent:
@@ -389,7 +432,7 @@ static bool castSupported(SpellBranch branch, const uint8_t *spell) {
     case SpellBranchScreenWide: case SpellBranchBeam: case SpellBranchTremor: case SpellBranchRain: case SpellBranchTurbulence:
         return true;
     case SpellBranchProjectile:
-        return !(spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBSplash);
+        return true;
     default:
         return false;
     }

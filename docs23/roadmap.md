@@ -55,7 +55,7 @@ IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell her
 
 **Story, travel and talk (2026-10-08)**: `sessionInteract` composes the use command (destinations with `travelArrival`, talkers, Chapter 3's scripted story events, Chapter 2's ending), `conversation.c` the
 NPC talk loop (validated by walking every NPC of both games to the end), `sessionSave` / `sessionLoad` the original's save layout; the **global quest flags are in the save header at +0xD2**
-(settling an old open question), the Chapter 2 "studio credits" function is the ending cinematic and both openings and the ending are scripts (`introstory.c`). Shops, the healer / trainer / challenge / mount services and the sell / enhance / repair topics are composed too (`sessionShop*`, `sessionTalkService`); the splash projectile spells and Chapter 3's ending (if any) are what is left of the main game.
+(settling an old open question), the Chapter 2 "studio credits" function is the ending cinematic and both openings and the ending are scripts (`introstory.c`). Shops, the healer / trainer / challenge / mount services and the sell / enhance / repair topics are composed too (`sessionShop*`, `sessionTalkService`); Chapter 3's ending (if any) is what is left of the main game.
 
 Still missing: Chapter 3's ending (if it has one; Chapter 2's ending is `introEndingScript`, both openings are scripts in `introstory.c`), the splash projectile spells and the non-restorative item uses in `session.c`
 (their decision modules exist; every other spell kind is composed since 2026-10-08), shop and dialog screens (`dialog.c`, `shop.c` hold the logic), input and timing glue for a real engine (the original is driven by DOS

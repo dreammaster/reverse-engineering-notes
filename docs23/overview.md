@@ -11500,4 +11500,4 @@ Chapter 2's *ending* (the Quartz Chamber parchment, reached by using the single 
 music tracks (`+0x52` / `+0x54`); the use command's dispatch order is door, destination, talker, story event; the conversation loop of `UseItem` (topic masks, type word, services keyed on the
 topic argument's bits 1 / 4 / 2 / quote) is `conversation.c` + `sessionTalk*` and was validated by walking every NPC of both games to the end; shops are the lock record's eight slots with
 `shopBuyPrice`; readable items take their text id from the consumable target entry's word 2; HandleGameCommand's item dispatch order is documented in `sessionUseItem`. Chapter 2's opening, story and
-ending and Chapter 3's opening are scripts for one player (`introstory.c`; `tools/intro_story`). Open: Chapter 3's ending (if any), the splash spells, the character-creation item source, ScummVM glue.
+ending and Chapter 3's opening are scripts for one player (`introstory.c`; `tools/intro_story`). Open: Chapter 3's ending (if any), the clue-book controller, ScummVM glue.
