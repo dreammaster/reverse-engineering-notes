@@ -36,6 +36,16 @@ checksums.
 | effects | `audio.c`, `voc.c` | 221 VOC samples, 8-bit PCM at 4-13 kHz: `Audio::makeVOCStream` or the parsed PCM into `Audio::RawStream`; the intro voice cues are sound-event ids |
 | timing | `gameclock.c` | the original's animation tick is a timer flag (UI flag `0x400`) at the animation-speed setting (`gamedialog.c`: 1 fast, 5 medium, 9 slow); the game clock advances once per real minute-timer tick |
 
+## The platform seam: `gameui.c`
+
+`src23/gameui.h` is the whole game as a platform-independent front end: `gameUiKey` (a key press; letters and digits are lower-case ASCII, the arrows and F-keys are `UiKey`
+values), `gameUiDraw` (a 320 x 200 frame of palette indices in `ui->screen`, the palette `gameUiPalette`), `gameUiStatus` (a line for a title bar) and a `GameUiHost` of five
+callbacks (sound effect, music track, the ending cinematic, store / fetch a save image). A ScummVM `Engine::run` therefore needs only: parse the pictures into a
+`ViewPictureFn`, build a `GameSession` from `WORLD.DAT` (`sessionNew`), map `Common::KeyCode` to `UiKey`, copy `ui->screen` through `OSystem::copyRectToScreen` with the palette
+(six-bit DAC values), call `sessionAdvanceTime` on a minute timer and `sessionTickAilments` as `gameUiKey` already does, feed the CMF tracks (`cmfplayer.c`, or ScummVM's AdLib
+driver) and VOC effects to the mixer, and run the cinematics of `introstory.h` (`introOpeningScript`, `introStoryScript`, `introEndingScript`, `introOpening3Script`) against its host
+interface. `tools/explore_sdl.c` is exactly that glue for SDL2, about 300 lines.
+
 ## Engine loop
 
 1. Title screen (`titlemenu.c`), character creation (`charcreate.c`, `chargen.c`, `newgame.c`) or a loaded save.

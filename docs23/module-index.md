@@ -36,6 +36,7 @@ line references). A `test` mark means `src23/tests/test_<module>.c` exists. Gene
 | `game` | Which of the two games sharing this engine a piece of data or behavior belongs to. |  |
 | `gameclock` | The in-game clock/calendar, and the "R rest" command's own decision logic (`RestPartyAndAdvanceClock`, yendor2.asm:25686, yendor3.asm:24173). | yes |
 | `gamedialog` | The pause / options dialog (RunGameDialog, yendor2.asm:26081; Chapter 3 the same). | yes |
+| `gameui` | The playable game as a platform-independent front end: the screens the original draws around a GameSession (the first-person view with the minimap and the four panels, the local map, the pause dialog, the hero sheets, the paper dolls, the NPC talk and the shop | yes |
 | `globalflags` | The quest/world-state flag bitfield (g_globalFlags, base 0x94D1), accessed only through GetGlobalFlagBitAndWord/SetGlobalFlag/ ClearGlobalFlag/TestGlobalFlag (yendor2.asm:42355 on) rather than direct bit-twiddling -- see file-formats.md's "Global quest/world-s | yes |
 | `interact` | TryInteractAtPosition (yendor2.asm:30813, instruction-identical in Chapter 3): the per-cell interaction dispatcher run on every movement step, plus a handful of other callers (UnlockDoorCommand, the map-editor debug overlay, click-to-travel). | yes |
 | `intro2` | Chapter 2's opening story (RunCharacterCreation, yendor2.asm:8381, called by InitGame and by the title screen's 'I' key before the party is created): ComposeCharacterPortrait (:9549) builds a tall backdrop, PlayCharacterCreationIntroAnimation (:8626) fades it  | yes |

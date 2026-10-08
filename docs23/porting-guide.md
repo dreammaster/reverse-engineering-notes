@@ -83,7 +83,7 @@ quest flags are in the header, `saveGlobalFlags`). Nothing in it draws, plays or
 are decision modules a front end wires in. `test_session.c` plays both games
 (random soak, a combat from the first spider to the end, a chest looted once).
 
-`src23/tools/explore_sdl.c` is a front end for it: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`), keys through
+`src23/gameui.c` draws the screens and maps the keys (see scummvm-plan.md, "The platform seam"); `src23/tools/explore_sdl.c` is the SDL2 shell around it: an SDL2 window (320x200 palette indices expanded to ARGB, the DAC values scaled `(v << 2) | (v >> 4)`), keys through
 `mainCommandForKey` with the original scan codes, the screen drawn from the frame picture, `viewRender`, `minimapDraw` and the four `statusPanelDraw` panels, with the local
 area map (M), the pause dialog (D), hero sheets (F1-F4) and paper dolls (P) as overlays, the clock keys (+ / -) to watch the lighting, and sound -- the area's music
 (`musicRegionChanged` -> `cmfplayer.c` through SDL's audio callback, looping) and Chapter 2's bump sound (effect 6, `_val33`). `EXPLORE_RANDOM=<n>` plays n random keys (a soak

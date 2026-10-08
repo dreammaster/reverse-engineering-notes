@@ -5,7 +5,7 @@
  * and plays sound (the area music through the OPL2 synthesizer, a couple of effects). It is the smallest "engine" built from the modules.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c \
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
@@ -35,35 +35,21 @@
 #include "audio.h"
 #include "cmfplayer.h"
 #include "exedata.h"
-#include "font.h"
-#include "gamedialog.h"
+#include "gameui.h"
 #include "introstory.h"
-#include "lighting.h"
-#include "localmap.h"
-#include "maininput.h"
-#include "minimap.h"
-#include "music.h"
-#include "paperdoll.h"
 #include "pictures_stdio.h"
 #include "pngwrite.h"
-#include "session.h"
-#include "statsheet.h"
-#include "statuspanel.h"
 #include "voc.h"
 
-typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls, OverlayTalk, OverlayShop } Overlay;
-
+static GameUi g_ui;
 static GameSession *g_session;
-static uint8_t g_screen[ViewScreenWidth * ViewScreenHeight];
-static uint8_t g_tables[ViewTablesSize];
-static unsigned g_overlayHero;
 
 /* Sound: the area music through the OPL2 synthesizer (opl.c), effects as VOC samples, both mixed in SDL's audio callback. */
 static uint8_t g_worldDat[5000000];
 static size_t g_worldSize;
 static CmfPlayer g_music;
 static bool g_musicOn;
-static unsigned g_musicTrack, g_lastMusicPage = 0xFFFF;
+static unsigned g_musicTrack;
 static SDL_AudioDeviceID g_audio;
 static int16_t g_effect[44100 * 3];
 static unsigned g_effectLength, g_effectPos;
@@ -93,7 +79,8 @@ static void audioCallback(void *userdata, Uint8 *stream, int bytes) {
     }
 }
 
-static void playMusic(unsigned track) {
+static void playMusic(void *ctx, unsigned track) {
+    (void)ctx;
     uint32_t offset, length;
     if (!g_audio) {
         return;
@@ -105,7 +92,8 @@ static void playMusic(unsigned track) {
 }
 
 /* Sound effect id (WORLD.DAT's VOC list) resampled to 44.1 kHz. */
-static void playEffect(unsigned id) {
+static void playEffect(void *ctx, unsigned id) {
+    (void)ctx;
     uint32_t offset, length;
     VocSound voc;
     if (!g_audio || !audioEffect(g_session->game, id, &offset, &length) || offset + length > g_worldSize || !vocOpen(&voc, g_worldDat + offset, length)) {
@@ -122,69 +110,24 @@ static void playEffect(unsigned id) {
     SDL_UnlockAudioDevice(g_audio);
 }
 
-static void drawTalk(void);
-static void drawShop(void);
-
-static void drawScene(ViewRenderer *renderer, PictureFile *pictures, Overlay overlay) {
-    GameSession *s = g_session;
-    ViewScene scene;
-    DungeonGridCell cells[ViewportCellCount];
-    sessionScene(s, &scene, cells);
-    if (getenv("EXPLORE_DEBUG")) {
-        for (unsigned i = 0; i < ViewportCellCount; i++) {
-            if (cells[i].flags & DungeonGridCellFlagOverlay) {
-                fprintf(stderr, "view cell %u: marker type %u flags %04X monster %s\n", i, (unsigned)cells[i].reserved4, (unsigned)cells[i].flags, scene.cellMonsters[i] ? "yes" : "no");
-            }
+/* SDL keys -> the UI's keys; letters and digits are their lower-case ASCII. */
+static UiKey uiKeyFor(SDL_Keycode key) {
+    switch (key) {
+    case SDLK_UP: return UiKeyUp;
+    case SDLK_DOWN: return UiKeyDown;
+    case SDLK_LEFT: return UiKeyLeft;
+    case SDLK_RIGHT: return UiKeyRight;
+    case SDLK_ESCAPE: return UiKeyEscape;
+    case SDLK_PLUS: case SDLK_KP_PLUS: case SDLK_EQUALS: return (UiKey)'+';
+    case SDLK_MINUS: case SDLK_KP_MINUS: return (UiKey)'-';
+    default:
+        if (key >= SDLK_F1 && key <= SDLK_F9) {
+            return (UiKey)(UiKeyF1 + (key - SDLK_F1));
         }
-    }
-    memset(g_screen, 0, sizeof(g_screen));
-    const uint8_t *frame = pictureFileGet(pictures, 0, 1);
-    for (unsigned row = 0; frame && row < 198; row++) {
-        memcpy(&g_screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
-    }
-    viewRender(renderer, &scene);
-    MinimapTile tiles[MinimapCells];
-    int16_t shades[LightingViewportCells];
-    lightingViewportTable(scene.gradient, shades);
-    minimapBuild(s->game, &s->grid, s->x, s->y, tiles);
-    minimapDraw(renderer, tiles, shades, s->facing);
-    for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
-        statusPanelDraw(renderer, panel, sessionPartyRecord(s, panel));
-    }
-    if (overlay == OverlayLocalMap) {
-        static LocalMapCell localCells[LocalMapColumns * LocalMapRows];
-        int c0, r0;
-        localMapBlockOrigin(s->x, s->y, &c0, &r0);
-        localMapFill(localCells, s->game, &s->map, &s->save, c0, r0);
-        memset(g_screen, 0, sizeof(g_screen));
-        localMapDraw(renderer, localCells, s->x, s->y, s->facing);
-    } else if (overlay == OverlayDetail) {
-        uint16_t roles[5];
-        for (unsigned i = 0; i < 5; i++) {
-            roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
+        if ((key >= SDLK_a && key <= SDLK_z) || (key >= SDLK_0 && key <= SDLK_9)) {
+            return (UiKey)key;
         }
-        detailSheetDraw(renderer, sessionPartyRecord(s, g_overlayHero), 6 + g_overlayHero, roles);
-    } else if (overlay == OverlayShop) {
-        memset(g_screen, 0, sizeof(g_screen));
-        drawShop();
-    } else if (overlay == OverlayTalk) {
-        memset(g_screen, 0, sizeof(g_screen));
-        drawTalk();
-    } else if (overlay == OverlayDolls) {
-        for (unsigned i = 0; i < 4; i++) {
-            paperDollDraw(renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
-        }
-    } else if (overlay == OverlayDialog) {
-        gameDialogDraw(renderer, GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagNewGame,
-                       DriverMusicAvailable | DriverSoundFxAvailable | DriverMusicOn, 5);
-    }
-}
-
-static void area(void) {
-    GameSession *s = g_session;
-    uint16_t track;
-    if (musicRegionChanged(&g_lastMusicPage, s->x, s->y, s->game, g_worldDat, g_worldSize, &track)) {
-        playMusic(track);
+        return UiKeyNone;
     }
 }
 
@@ -214,304 +157,40 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case '$': return SDLK_2;
     case '%': return SDLK_3;
     case '&': return SDLK_4;
+    case 'W': return SDLK_F5; /* save */
+    case 'O': return SDLK_F9; /* load */
     default: return SDLK_UNKNOWN;
     }
 }
 
-/* One key press: returns false to quit. */
-static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, SDL_Renderer *renderer, SDL_Texture *texture);
-static const char *g_dir;
-static PictureFile *g_pictures;
-static SDL_Renderer *g_renderer;
-static SDL_Texture *g_texture;
-
-/* The use command on the object ahead (sessionInteract): chests are looted, destinations travelled to, the Chapter 2 ending is played; the rest shows up in the window title. */
-static char g_talkText[1200];
-
-/* The NPC's text (the '%' marks a line break; ~ is the font's apostrophe), wrapped at 49 characters, and the topics that can be chosen. */
-static void drawTalk(void) {
-    GameSession *s = g_session;
-    int y = 10;
-    char line[64];
-    unsigned used = 0;
-    for (const char *p = g_talkText;; p++) { /* greedy word wrap at 48 characters; '%' forces a break */
-        bool end = *p == 0, brk = *p == '%', space = *p == ' ';
-        if (!end && !brk && !(space && used == 0)) {
-            line[used++] = *p == '~' ? '\'' : *p;
-        }
-        bool wrap = false;
-        if (!end && !brk && used >= 46 && space) {
-            wrap = true;
-        } else if (used >= 52) {
-            wrap = true;
-        }
-        if (end || brk || wrap) {
-            while (used > 0 && line[used - 1] == ' ') {
-                used--;
-            }
-            line[used] = 0;
-            if (used) {
-                fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, y, line, 0x8A, 0, FontTransparent);
-                y += 7;
-            }
-            used = 0;
-        }
-        if (end) {
-            break;
-        }
-    }
-    y = 120;
-    for (unsigned i = 0; i < s->talk.listedCount; i++) {
-        char name[DialogTopicNameSize + 1], row[32];
-        dialogTopicName(dialogTopic(&s->dialogs, s->talk.listed[i]), name);
-        snprintf(row, sizeof(row), "%u %s", i + 1, name);
-        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8 + (int)(i / 5) * 150, y + (int)(i % 5) * 8, row, 0x9B, 0, FontTransparent);
-    }
-}
-
-static unsigned g_shopLock;
-
-/* The stock of the shop a "buy" topic opened (sessionShopStock): number, name and price; the gold; the item on the cursor. */
-static void drawShop(void) {
-    GameSession *s = g_session;
-    SessionShopItem stock[LockContentSlots];
-    sessionShopStock(s, g_shopLock, stock);
-    char line[160], gold[12], name[ItemNameBufferSize], price[12];
-    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), gold);
-    snprintf(line, sizeof(line), "SHOP    GOLD %s", gold);
-    fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 10, line, 0x8A, 0, FontTransparent);
-    for (unsigned i = 0; i < LockContentSlots; i++) {
-        if (!stock[i].itemId) {
-            continue;
-        }
-        itemGetName(itemCatalogRecord(&s->items, stock[i].itemId), name);
-        bcd4Format(stock[i].price, price);
-        snprintf(line, sizeof(line), "%u %-28s %s", i + 1, name, price);
-        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 30 + (int)i * 8, line, 0x9B, 0, FontTransparent);
-    }
-    if (s->heldItem) {
-        itemGetName(itemCatalogRecord(&s->items, s->heldItem), name);
-        snprintf(line, sizeof(line), "ON THE CURSOR: %s  (S SELLS IT BACK, 1-4 STOWS IT)", name);
-        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 110, line, 0x8A, 0, FontTransparent);
-    } else {
-        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 110, "1-8 BUY, ESCAPE LEAVES", 0x8A, 0, FontTransparent);
-    }
-}
-
-static void talkStep(const ConversationStep *step, Overlay *overlay) {
-    GameSession *s = g_session;
-    if (step->topic) {
-        conversationText(&s->talk, step->topic, g_talkText, sizeof(g_talkText));
-        SessionService service = sessionTalkService(s, step, NULL);
-        if (service == SessionServiceNone && step->needsResolve) {
-            sessionTalkResolve(s, true);
-        }
-        if (service == SessionServiceNeedScreen && (step->flags & DialogTopicUseKey)) { /* a shop: the lock record named by the topic's argument */
-            g_shopLock = step->arg;
-            *overlay = OverlayShop;
-        }
-    }
-}
-
-static void useAhead(Overlay *overlay) {
-    GameSession *s = g_session;
-    SessionInteract use = sessionInteract(s);
-    switch (use.kind) {
-    case SessionInteractDoor:
-        sessionLoot(s);
-        break;
-    case SessionInteractTravelled:
-    case SessionInteractStoryEvent:
-        area();
-        break;
-    case SessionInteractTravelRefused:
-        snprintf(s->log, sizeof(s->log), "the way is closed (message %u)", use.messageId);
-        break;
-    case SessionInteractTravelPassword:
-        snprintf(s->log, sizeof(s->log), "this way asks for a password (prompt %u)", use.promptId);
-        break;
-    case SessionInteractTalker: {
-        ConversationStep first;
-        if (sessionTalkStart(s, use.value, 0, &first)) {
-            *overlay = OverlayTalk;
-            talkStep(&first, overlay);
-        }
-        break;
-    }
-    case SessionInteractStoryRefused:
-    case SessionInteractEndingNotReady:
-        snprintf(s->log, sizeof(s->log), "nothing happens (yet)");
-        break;
-    case SessionInteractEnding:
-        playIntro("ending", g_dir, g_pictures, g_renderer, g_texture);
-        s->clock.minutes = 480;
-        break;
-    default:
-        break;
-    }
-    if (s->pendingSound) {
-        playEffect(s->pendingSound);
-        s->pendingSound = 0;
-    }
-}
-
-/* F5 / F9: the session's save image (the original's SAVGAME file layout) to and from explore.sav in the current directory. */
-static void saveLoadKey(bool save) {
-    GameSession *s = g_session;
-    static uint8_t image[SaveFileSizeMax];
-    FILE *f;
-    if (save) {
-        size_t bytes = sessionSave(s, image, sizeof(image));
-        f = fopen("explore.sav", "wb");
-        if (f) {
-            fwrite(image, 1, bytes, f);
-            fclose(f);
-            snprintf(s->log, sizeof(s->log), "saved %u bytes to explore.sav", (unsigned)bytes);
-        }
-    } else if ((f = fopen("explore.sav", "rb")) != NULL) {
-        size_t bytes = fread(image, 1, sizeof(image), f);
-        fclose(f);
-        snprintf(s->log, sizeof(s->log), sessionLoad(s, image, bytes) ? "loaded explore.sav" : "explore.sav is not a save of this game");
-        area();
-    }
-}
-
-static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
-    GameSession *s = g_session;
-    if (*overlay == OverlayShop) { /* 1-8 buy a slot, S sells the cursor item back, 1-4 stow it when the hand is full, Escape leaves */
-        if (key == SDLK_ESCAPE) {
-            if (s->heldItem) {
-                sessionStowHeld(s, 0);
-            }
-            *overlay = OverlayTalk;
-        } else if (key == SDLK_s) {
-            sessionShopSell(s, g_shopLock);
-        } else if (key >= SDLK_1 && key <= SDLK_8) {
-            unsigned n = (unsigned)(key - SDLK_1);
-            if (s->heldItem && n < 4) {
-                sessionStowHeld(s, n);
-            } else {
-                sessionShopBuy(s, g_shopLock, n);
-            }
-        }
-        return true;
-    }
-    if (*overlay == OverlayTalk) { /* 1-9 choose a topic, Escape the last one listed (the way out) */
-        unsigned number = key == SDLK_ESCAPE ? 0 : key >= SDLK_1 && key <= SDLK_9 ? (unsigned)(key - SDLK_1 + 1) : 99;
-        if (number != 99) {
-            ConversationStep step = sessionTalkChoose(s, number);
-            talkStep(&step, overlay);
-            if (!s->talking) {
-                *overlay = OverlayNone;
-            }
-        }
-        return true;
-    }
-    if (key == SDLK_ESCAPE) {
-        if (*overlay != OverlayNone) {
-            *overlay = OverlayNone;
-            return true;
-        }
+/* The save image goes to explore.sav in the current directory. */
+static bool storeSave(void *ctx, const uint8_t *image, size_t size) {
+    (void)ctx;
+    FILE *f = fopen("explore.sav", "wb");
+    if (!f) {
         return false;
     }
-    if (key == SDLK_F5 || key == SDLK_F9) {
-        saveLoadKey(key == SDLK_F5);
-        return true;
+    bool ok = fwrite(image, 1, size, f) == size;
+    fclose(f);
+    return ok;
+}
+
+static size_t fetchSave(void *ctx, uint8_t *image, size_t capacity) {
+    (void)ctx;
+    FILE *f = fopen("explore.sav", "rb");
+    if (!f) {
+        return 0;
     }
-    if (key == SDLK_PLUS || key == SDLK_EQUALS || key == SDLK_KP_PLUS) {
-        s->clock.minutes = (uint16_t)((s->clock.minutes + 30) % 1440);
-        return true;
-    }
-    if (key == SDLK_MINUS || key == SDLK_KP_MINUS) {
-        s->clock.minutes = (uint16_t)((s->clock.minutes + 1440 - 30) % 1440);
-        return true;
-    }
-    if (*overlay != OverlayNone) {
-        return true;
-    }
-    if (s->combat.active) {
-        if (key == SDLK_a) {
-            sessionAttack(s);
-        } else if (key == SDLK_c) { /* the first attack spell the member can cast */
-            for (unsigned spell = 1; spell < 126; spell++) {
-                if (sessionCast(s, spell) == SessionCastDone) {
-                    break;
-                }
-            }
-        }
-        return true;
-    }
-    if (key == SDLK_c) { /* outside a combat: the next spell, in id order, that any member knows and can cast (support and exploration spells) */
-        static unsigned next = 1;
-        for (unsigned tried = 0; tried < 126; tried++, next = next % 125 + 1) {
-            bool cast = false;
-            for (unsigned member = 0; member < 4 && !cast; member++) {
-                SessionCast result = sessionCastBy(s, member, next, false);
-                cast = result == SessionCastDone || result == SessionCastNoEffect;
-            }
-            if (cast) {
-                next = next % 125 + 1;
-                area();
-                return true;
-            }
-        }
-        return true;
-    }
-    bool extended = true;
-    uint8_t code = 0;
-    if (key == SDLK_UP) {
-        code = 0x48;
-    } else if (key == SDLK_DOWN) {
-        code = 0x50;
-    } else if (key == SDLK_LEFT) {
-        code = ctrl ? 0x73 : 0x4B;
-    } else if (key == SDLK_RIGHT) {
-        code = ctrl ? 0x74 : 0x4D;
-    } else if (key >= SDLK_F1 && key <= SDLK_F4) {
-        code = (uint8_t)(0x3B + (key - SDLK_F1));
-    } else if (key >= SDLK_a && key <= SDLK_z) {
-        extended = false;
-        code = (uint8_t)(key - SDLK_a + 'A');
-    }
-    MainCommand command = mainCommandForKey(s->game, extended, code);
-    switch (command.action) {
-    case MainActionMove:
-        if (sessionMove(s, command.movement) == SessionStepBlocked && s->game == GameYendor2) {
-            playEffect(6); /* the bump sound, _val33 */
-        }
-        area();
-        break;
-    case MainActionRest:
-        sessionRest(s);
-        break;
-    case MainActionUnlockDoor: /* a demo skeleton key: every tier, as chest and door key at once */
-        sessionUnlock(s, 0xFFC0, 0);
-        break;
-    case MainActionAct: /* use the object ahead: loot the chest, take the road, ... */
-        useAhead(overlay);
-        break;
-    case MainActionLocalMap:
-        *overlay = OverlayLocalMap;
-        break;
-    case MainActionGameDialog:
-        *overlay = OverlayDialog;
-        break;
-    case MainActionMemberDetail:
-        g_overlayHero = command.index & 3;
-        *overlay = OverlayDetail;
-        break;
-    case MainActionPartyInventory:
-        *overlay = OverlayDolls;
-        break;
-    default:
-        break;
-    }
-    return true;
+    size_t bytes = fread(image, 1, capacity, f);
+    fclose(f);
+    return bytes;
 }
 
 /* ---- the cinematics (introstory.h): EXPLORE_INTRO=opening|story|ending plays one in the window before the game; Escape ends it --------------------------------- */
 static SDL_Renderer *g_introRenderer;
 static SDL_Texture *g_introTexture;
+static const char *g_dir;
+static PictureFile *g_pictures;
 static bool g_introEscape;
 static unsigned g_introDelayMs = 25;
 
@@ -555,16 +234,6 @@ static bool introEscapeFn(void *ctx) {
     return g_introEscape;
 }
 
-static void introSound(void *ctx, unsigned id) {
-    (void)ctx;
-    playEffect(id);
-}
-
-static void introMusic(void *ctx, unsigned track) {
-    (void)ctx;
-    playMusic(track);
-}
-
 static bool introSoundBusy(void *ctx) {
     (void)ctx;
     return g_effectPos < g_effectLength;
@@ -577,10 +246,11 @@ static void introWaitSound(void *ctx) {
     }
 }
 
-static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, SDL_Renderer *renderer, SDL_Texture *texture) {
+static bool playIntro(void *ctx, const char *kind) {
+    (void)ctx;
     GameKind game = g_session->game;
     char path[512];
-    snprintf(path, sizeof(path), "%s/%s", dir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
+    snprintf(path, sizeof(path), "%s/%s", g_dir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
     FILE *f = fopen(path, "rb");
     if (!f) {
         fprintf(stderr, "cannot open %s\n", path);
@@ -594,14 +264,13 @@ static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, 
         fprintf(stderr, "%s is not the game executable\n", path);
         return false;
     }
-    IntroAssets assets = {g_worldDat, g_worldSize, &exe, pictureFileGet, pictures, game};
+    IntroAssets assets = {g_worldDat, g_worldSize, &exe, pictureFileGet, g_pictures, game};
     static IntroStory story;
-    g_introRenderer = renderer;
-    g_introTexture = texture;
     if (getenv("EXPLORE_INTRO_MS")) {
         g_introDelayMs = (unsigned)atoi(getenv("EXPLORE_INTRO_MS"));
     }
-    IntroHost host = {NULL, introPresent, introSound, introMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
+    g_introEscape = false;
+    IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
     bool ok;
     if (game == GameYendor3) {
         ok = introOpening3Start(&story, &assets) && introOpening3Play(&story, &assets, &host);
@@ -612,7 +281,7 @@ static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, 
     } else {
         ok = introOpeningStart(&story, &assets) && introPlayAll(&story, &assets, &host);
     }
-    playMusic(0);
+    playMusic(NULL, 0);
     return ok || g_introEscape;
 }
 
@@ -623,33 +292,27 @@ int main(int argc, char **argv) {
     }
     GameKind game = atoi(argv[1]) == 3 ? GameYendor3 : GameYendor2;
     const char *dir = argv[2];
+    g_dir = dir;
     int scale = argc > 3 ? atoi(argv[3]) : 3;
     if (scale < 1) {
         scale = 3;
     }
     char path[512];
     snprintf(path, sizeof(path), "%s/WORLD.DAT", dir);
-    static uint8_t palette[PicturePaletteSize];
     FILE *f = fopen(path, "rb");
     g_worldSize = f ? fread(g_worldDat, 1, sizeof(g_worldDat), f) : 0;
     if (f) {
         fclose(f);
     }
-    if (!g_worldSize || viewTablesOffset(game) + sizeof(g_tables) > g_worldSize || pictureMasterPaletteOffset(game) + sizeof(palette) > g_worldSize) {
-        fprintf(stderr, "cannot read %s\n", path);
-        return 1;
-    }
-    memcpy(g_tables, g_worldDat + viewTablesOffset(game), sizeof(g_tables));
-    memcpy(palette, g_worldDat + pictureMasterPaletteOffset(game), sizeof(palette));
     snprintf(path, sizeof(path), "%s/PICTURES.VGA", dir);
-    PictureFile *pictures = pictureFileOpen(path, game);
-    if (!pictures) {
+    g_pictures = pictureFileOpen(path, game);
+    if (!g_pictures) {
         fprintf(stderr, "cannot open %s\n", path);
         return 1;
     }
     g_session = sessionNew(game, g_worldDat, g_worldSize);
     if (!g_session) {
-        fprintf(stderr, "cannot start a session\n");
+        fprintf(stderr, "cannot start a session (is %s/WORLD.DAT there?)\n", dir);
         return 1;
     }
     if (getenv("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
@@ -661,6 +324,17 @@ int main(int argc, char **argv) {
             g_session->facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
             sessionRebuild(g_session);
         }
+    }
+    GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave};
+    if (!gameUiInit(&g_ui, g_session, g_worldDat, g_worldSize, pictureFileGet, g_pictures, &uiHost)) {
+        fprintf(stderr, "the world data lacks the view tables\n");
+        return 1;
+    }
+    g_ui.debugMarkers = getenv("EXPLORE_DEBUG") != NULL;
+    const uint8_t *palette = gameUiPalette(&g_ui);
+    if (!palette) {
+        fprintf(stderr, "the world data lacks the master palette\n");
+        return 1;
     }
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
@@ -674,12 +348,13 @@ int main(int argc, char **argv) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError());
         return 1;
     }
+    g_introRenderer = sdl;
+    g_introTexture = texture;
     uint32_t colours[256];
     for (unsigned i = 0; i < 256; i++) {
         unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
         colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
     }
-    ViewRenderer renderer = {game, g_tables, pictureFileGet, pictures, g_screen, NULL};
     if (!getenv("EXPLORE_NOSOUND")) {
         SDL_AudioSpec want, have;
         SDL_zero(want);
@@ -690,19 +365,14 @@ int main(int argc, char **argv) {
         want.callback = audioCallback;
         g_audio = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
         if (g_audio) {
-            area();
+            gameUiAmbientMusic(&g_ui);
             SDL_PauseAudioDevice(g_audio, 0);
         }
     }
 
-    if (getenv("EXPLORE_INTRO") && !playIntro(getenv("EXPLORE_INTRO"), dir, pictures, sdl, texture)) {
+    if (getenv("EXPLORE_INTRO") && !playIntro(NULL, getenv("EXPLORE_INTRO"))) {
         return 1;
     }
-    g_dir = dir;
-    g_pictures = pictures;
-    g_renderer = sdl;
-    g_texture = texture;
-    Overlay overlay = OverlayNone;
     bool running = true, dirty = true;
     const char *script = getenv("EXPLORE_KEYS");
     static char randomScript[20001];
@@ -715,6 +385,8 @@ int main(int argc, char **argv) {
         script = randomScript;
     }
     const char *shotPath = getenv("EXPLORE_SHOT");
+    Uint32 lastMinute = 0;
+    unsigned clockMs = getenv("EXPLORE_CLOCK_MS") ? (unsigned)atoi(getenv("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
     while (running) {
         if (script && *script) { /* feed the next scripted key as a key press */
             SDL_Event press;
@@ -728,8 +400,8 @@ int main(int argc, char **argv) {
                 SDL_PushEvent(&press);
             }
         } else if (script && shotPath) {
-            drawScene(&renderer, pictures, overlay);
-            writePng(shotPath, g_screen, palette, ViewScreenWidth, ViewScreenHeight, 2);
+            gameUiDraw(&g_ui);
+            writePng(shotPath, g_ui.screen, palette, ViewScreenWidth, ViewScreenHeight, 2);
             if (g_session->log[0]) {
                 printf("log: %s\n", g_session->log);
             }
@@ -741,35 +413,32 @@ int main(int argc, char **argv) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN) {
-                running = handleKey(event.key.keysym.sym, (event.key.keysym.mod & KMOD_CTRL) != 0, &overlay) && running;
-                if (overlay == OverlayNone && !g_session->combat.active) {
-                    sessionTickAilments(g_session); /* once per command here; the original sweeps once per pass of its loop */
+                UiKey key = uiKeyFor(event.key.keysym.sym);
+                if (key != UiKeyNone) {
+                    running = gameUiKey(&g_ui, key, (event.key.keysym.mod & KMOD_CTRL) != 0) && running;
                 }
                 dirty = true;
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;
             }
         }
-        static Uint32 lastMinute;
-        unsigned clockMs = getenv("EXPLORE_CLOCK_MS") ? (unsigned)atoi(getenv("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
         if (clockMs && !g_session->combat.active && SDL_GetTicks() - lastMinute >= clockMs) {
             lastMinute = SDL_GetTicks();
             sessionAdvanceTime(g_session, 1);
             dirty = true;
         }
         if (dirty) {
-            drawScene(&renderer, pictures, overlay);
+            gameUiDraw(&g_ui);
             static uint32_t pixels[ViewScreenWidth * ViewScreenHeight];
             for (unsigned i = 0; i < ViewScreenWidth * ViewScreenHeight; i++) {
-                pixels[i] = colours[g_screen[i]];
+                pixels[i] = colours[g_ui.screen[i]];
             }
             SDL_UpdateTexture(texture, NULL, pixels, ViewScreenWidth * 4);
             SDL_RenderClear(sdl);
             SDL_RenderCopy(sdl, texture, NULL, NULL);
             SDL_RenderPresent(sdl);
             char title[256];
-            snprintf(title, sizeof(title), "Yendorian Tales - (%d, %d) clock %02u:%02u%s%s%s", g_session->x, g_session->y, g_session->clock.minutes / 60,
-                     g_session->clock.minutes % 60, g_session->combat.active ? " - COMBAT: A attacks" : "", g_session->log[0] ? " - " : "", g_session->log);
+            gameUiStatus(&g_ui, title, sizeof(title));
             SDL_SetWindowTitle(window, title);
             dirty = false;
         }
@@ -779,6 +448,6 @@ int main(int argc, char **argv) {
     SDL_DestroyWindow(window);
     SDL_Quit();
     sessionFree(g_session);
-    pictureFileClose(pictures);
+    pictureFileClose(g_pictures);
     return 0;
 }
