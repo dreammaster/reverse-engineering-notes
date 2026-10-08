@@ -249,8 +249,20 @@ void host_vdrv_0F_fade(Cpu *c) {
 }
 void host_vdrv_03_hideMouse(Cpu *c) { (void)c; cursor_on = 0; }
 void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg = host_arg(c, 2); cursor_on = 1; }
+/* The original's getMouse waits for the vertical retrace (70 Hz) before it returns: the game's delay loops (`getMouse` N times) rely on that
+ * for their duration, so wait for the next 1/70 s tick here and show the picture. */
+static void wait_retrace(void) {
+	static Uint64 next;
+	Uint64 now = SDL_GetPerformanceCounter(), freq = SDL_GetPerformanceFrequency(), period = freq / 70;
+	if (now < next) SDL_Delay((Uint32)((next - now) * 1000 / freq));
+	now = SDL_GetPerformanceCounter();
+	next = (next && now - next < period * 4) ? next + period : now + period;
+	video_present();
+}
+
 /* getMouse(&x, &y) -> buttons.  A scripted click ("mX:Y" in --keys) holds the button for a few polls, then releases */
 void host_vdrv_18_getMouse(Cpu *c) {
+	if (!headless) wait_retrace();
 	video_pump_events();
 	if (headless && !click_reads && script_wait <= 0 && script_pos < script_n && kq_head == kq_tail && (script_keys[script_pos] & 0x80000000u)) {
 		unsigned v = script_keys[script_pos++];
