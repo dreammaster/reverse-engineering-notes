@@ -36696,16 +36696,7 @@ sub_28185       proc far                ; CODE XREF: sub_3CE7A+112↓P
                 jmp     sub_416C7
 sub_28185       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_2818A       proc far                ; CODE XREF: exploreLoop+85B↓P
-                                        ; doCombat+2A3↓P
-                jmp     sub_424AB
-sub_2818A       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_gameInformation. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -36748,16 +36739,7 @@ sub_281A8       endp
 ; [00000005 BYTES: COLLAPSED FUNCTION j_loadMapGraphics. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_setWrapModeForMap. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_controlPanel. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_281BC(int, char *)
-sub_281BC       proc far
-                jmp     sub_4231C
-sub_281BC       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_buildActiveEffects. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_nextExperienceLevel. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_rest. PRESS NUMPAD+ TO EXPAND]
 
@@ -41418,7 +41400,7 @@ aAreYouSureYouW_1 db 'Are you sure you want Mr. Wizard',27h,'s Help?',0
                 db 0, 25h, 63h, 3
 aL024walkOnWate db 'l',0Ah
                 db 9,'024Walk on Water',0
-aSSSSSSS        db '%s%s%s%s%s%s%s',0   ; DATA XREF: sub_4231C+177↓o
+aSSSSSSS        db '%s%s%s%s%s%s%s',0   ; DATA XREF: buildActiveEffects+177↓o
                 db 3, 63h, 0Bh, 2 dup(30h), 31h, 0Ch, 32h, 37h, 4Dh, 69h
                 db 67h, 68h, 74h, 20h, 61h, 6Eh, 64h, 20h, 4Dh, 61h, 67h
                 db 69h, 63h, 20h, 3 dup(49h), 0Ch, 64h, 0Ah, 47h, 61h
@@ -66481,7 +66463,7 @@ loc_3F1A7:                              ; CODE XREF: exploreLoop+820↑j
                 call    j_showOverheadMap
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    sub_2818A
+                call    j_gameInformation
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
                 call    chargeStep
@@ -72826,11 +72808,12 @@ controlPanel    endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; builds the active-effects lines of the Game Information window: Light n, Fire/Elec/Cold/Poison-Acid resistance n, Levitate n, Walk on Water
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_4231C(int, char *)
-sub_4231C       proc far                ; CODE XREF: sub_281BC↑J
-                                        ; sub_424AB+3C↓p
+; int __cdecl __far buildActiveEffects(int, char *)
+buildActiveEffects proc far             ; CODE XREF: j_buildActiveEffects↑J
+                                        ; gameInformation+3C↓p
 
 var_D2          = byte ptr -0D2h
 var_B4          = byte ptr -0B4h
@@ -72871,7 +72854,7 @@ arg_2           = dword ptr  8
                 call    _sprintf
                 add     sp, 6
 
-loc_42365:                              ; CODE XREF: sub_4231C+30↑j
+loc_42365:                              ; CODE XREF: buildActiveEffects+30↑j
                 cmp     Party_fireResist, 0
                 jz      short loc_42392
                 inc     word ptr [si]
@@ -72884,10 +72867,10 @@ loc_42365:                              ; CODE XREF: sub_4231C+30↑j
                 jmp     short loc_42381
 ; ---------------------------------------------------------------------------
 
-loc_4237E:                              ; CODE XREF: sub_4231C+5B↑j
+loc_4237E:                              ; CODE XREF: buildActiveEffects+5B↑j
                 mov     ax, 1
 
-loc_42381:                              ; CODE XREF: sub_4231C+60↑j
+loc_42381:                              ; CODE XREF: buildActiveEffects+60↑j
                 push    ax              ; format
                 mov     ax, 34B4h
                 push    ax
@@ -72896,7 +72879,7 @@ loc_42381:                              ; CODE XREF: sub_4231C+60↑j
                 call    _sprintf
                 add     sp, 8
 
-loc_42392:                              ; CODE XREF: sub_4231C+4E↑j
+loc_42392:                              ; CODE XREF: buildActiveEffects+4E↑j
                 cmp     Party_elecResist, 0
                 jz      short loc_423BF
                 inc     word ptr [si]
@@ -72909,10 +72892,10 @@ loc_42392:                              ; CODE XREF: sub_4231C+4E↑j
                 jmp     short loc_423AE
 ; ---------------------------------------------------------------------------
 
-loc_423AB:                              ; CODE XREF: sub_4231C+88↑j
+loc_423AB:                              ; CODE XREF: buildActiveEffects+88↑j
                 mov     ax, 1
 
-loc_423AE:                              ; CODE XREF: sub_4231C+8D↑j
+loc_423AE:                              ; CODE XREF: buildActiveEffects+8D↑j
                 push    ax              ; format
                 mov     ax, 34CAh
                 push    ax
@@ -72921,7 +72904,7 @@ loc_423AE:                              ; CODE XREF: sub_4231C+8D↑j
                 call    _sprintf
                 add     sp, 8
 
-loc_423BF:                              ; CODE XREF: sub_4231C+7B↑j
+loc_423BF:                              ; CODE XREF: buildActiveEffects+7B↑j
                 cmp     Party_coldResist, 0
                 jz      short loc_423EC
                 inc     word ptr [si]
@@ -72934,10 +72917,10 @@ loc_423BF:                              ; CODE XREF: sub_4231C+7B↑j
                 jmp     short loc_423DB
 ; ---------------------------------------------------------------------------
 
-loc_423D8:                              ; CODE XREF: sub_4231C+B5↑j
+loc_423D8:                              ; CODE XREF: buildActiveEffects+B5↑j
                 mov     ax, 1
 
-loc_423DB:                              ; CODE XREF: sub_4231C+BA↑j
+loc_423DB:                              ; CODE XREF: buildActiveEffects+BA↑j
                 push    ax              ; format
                 mov     ax, 34E0h
                 push    ax
@@ -72946,7 +72929,7 @@ loc_423DB:                              ; CODE XREF: sub_4231C+BA↑j
                 call    _sprintf
                 add     sp, 8
 
-loc_423EC:                              ; CODE XREF: sub_4231C+A8↑j
+loc_423EC:                              ; CODE XREF: buildActiveEffects+A8↑j
                 cmp     Party_poisonResist, 0
                 jz      short loc_4241A
                 inc     word ptr [si]
@@ -72959,10 +72942,10 @@ loc_423EC:                              ; CODE XREF: sub_4231C+A8↑j
                 jmp     short loc_42408
 ; ---------------------------------------------------------------------------
 
-loc_42405:                              ; CODE XREF: sub_4231C+E2↑j
+loc_42405:                              ; CODE XREF: buildActiveEffects+E2↑j
                 mov     ax, 1
 
-loc_42408:                              ; CODE XREF: sub_4231C+E7↑j
+loc_42408:                              ; CODE XREF: buildActiveEffects+E7↑j
                 push    ax              ; format
                 mov     ax, 34F6h
                 push    ax
@@ -72971,7 +72954,7 @@ loc_42408:                              ; CODE XREF: sub_4231C+E7↑j
                 call    _sprintf
                 add     sp, 8
 
-loc_4241A:                              ; CODE XREF: sub_4231C+D5↑j
+loc_4241A:                              ; CODE XREF: buildActiveEffects+D5↑j
                 cmp     Party_levitate, 0
                 jz      short loc_4244A
                 inc     word ptr [si]
@@ -72986,10 +72969,10 @@ loc_4241A:                              ; CODE XREF: sub_4231C+D5↑j
                 jmp     short loc_42438
 ; ---------------------------------------------------------------------------
 
-loc_42435:                              ; CODE XREF: sub_4231C+112↑j
+loc_42435:                              ; CODE XREF: buildActiveEffects+112↑j
                 mov     ax, 1
 
-loc_42438:                              ; CODE XREF: sub_4231C+117↑j
+loc_42438:                              ; CODE XREF: buildActiveEffects+117↑j
                 push    ax              ; format
                 mov     ax, 3513h
                 push    ax
@@ -72998,7 +72981,7 @@ loc_42438:                              ; CODE XREF: sub_4231C+117↑j
                 call    _sprintf
                 add     sp, 8
 
-loc_4244A:                              ; CODE XREF: sub_4231C+103↑j
+loc_4244A:                              ; CODE XREF: buildActiveEffects+103↑j
                 cmp     Party_walkOnWater, 0
                 jz      short loc_42474
                 inc     word ptr [si]
@@ -73010,10 +72993,10 @@ loc_4244A:                              ; CODE XREF: sub_4231C+103↑j
                 jmp     short loc_42462
 ; ---------------------------------------------------------------------------
 
-loc_4245F:                              ; CODE XREF: sub_4231C+13C↑j
+loc_4245F:                              ; CODE XREF: buildActiveEffects+13C↑j
                 mov     ax, 1
 
-loc_42462:                              ; CODE XREF: sub_4231C+141↑j
+loc_42462:                              ; CODE XREF: buildActiveEffects+141↑j
                 push    ax              ; format
                 mov     ax, 352Dh
                 push    ax
@@ -73022,7 +73005,7 @@ loc_42462:                              ; CODE XREF: sub_4231C+141↑j
                 call    _sprintf
                 add     sp, 6
 
-loc_42474:                              ; CODE XREF: sub_4231C+133↑j
+loc_42474:                              ; CODE XREF: buildActiveEffects+133↑j
                 lea     ax, [bp+var_D2]
                 push    ax
                 lea     ax, [bp+var_B4]
@@ -73048,14 +73031,15 @@ loc_42474:                              ; CODE XREF: sub_4231C+133↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_4231C       endp
+buildActiveEffects endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; 'Game Information' window (key I): weekday, time of day (am/pm) and the active party effects, then waits for a key (stub sub_2818A)
 ; Attributes: bp-based frame
 
-sub_424AB       proc far                ; CODE XREF: sub_2818A↑J
+gameInformation proc far                ; CODE XREF: j_gameInformation↑J
 
 var_CA          = byte ptr -0CAh
 var_2           = word ptr -2
@@ -73083,7 +73067,7 @@ var_2           = word ptr -2
                 lea     ax, [bp+var_2]
                 push    ax              ; int
                 push    cs
-                call    near ptr sub_4231C
+                call    near ptr buildActiveEffects
                 pop     cx
                 pop     cx
                 push    ax
@@ -73097,10 +73081,10 @@ var_2           = word ptr -2
                 jmp     short loc_42504
 ; ---------------------------------------------------------------------------
 
-loc_42501:                              ; CODE XREF: sub_424AB+4F↑j
+loc_42501:                              ; CODE XREF: gameInformation+4F↑j
                 mov     ax, 61h ; 'a'
 
-loc_42504:                              ; CODE XREF: sub_424AB+54↑j
+loc_42504:                              ; CODE XREF: gameInformation+54↑j
                 push    ax
                 mov     ax, Party_minutes
                 mov     bx, 3Ch ; '<'
@@ -73114,18 +73098,18 @@ loc_42504:                              ; CODE XREF: sub_424AB+54↑j
                 jmp     short loc_42527
 ; ---------------------------------------------------------------------------
 
-loc_4251C:                              ; CODE XREF: sub_424AB+68↑j
+loc_4251C:                              ; CODE XREF: gameInformation+68↑j
                 or      si, si
                 jnz     short loc_42525
                 mov     ax, 0Ch
                 jmp     short loc_42527
 ; ---------------------------------------------------------------------------
 
-loc_42525:                              ; CODE XREF: sub_424AB+73↑j
+loc_42525:                              ; CODE XREF: gameInformation+73↑j
                 mov     ax, si
 
-loc_42527:                              ; CODE XREF: sub_424AB+6F↑j
-                                        ; sub_424AB+78↑j
+loc_42527:                              ; CODE XREF: gameInformation+6F↑j
+                                        ; gameInformation+78↑j
                 push    ax
                 mov     al, Party_day
                 mov     ah, 0
@@ -73161,10 +73145,10 @@ loc_42527:                              ; CODE XREF: sub_424AB+6F↑j
                 jmp     short loc_42574
 ; ---------------------------------------------------------------------------
 
-loc_42572:                              ; CODE XREF: sub_424AB+B8↑j
+loc_42572:                              ; CODE XREF: gameInformation+B8↑j
                 xor     ax, ax
 
-loc_42574:                              ; CODE XREF: sub_424AB+C5↑j
+loc_42574:                              ; CODE XREF: gameInformation+C5↑j
                 add     ax, 56h ; 'V'
                 push    ax
                 mov     ax, 0A0h
@@ -73187,7 +73171,7 @@ loc_42574:                              ; CODE XREF: sub_424AB+C5↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_424AB       endp
+gameInformation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -93476,7 +93460,7 @@ loc_4BA34:                              ; CODE XREF: doCombat+1CD↑j
                 pop     cx
                 jmp     short loc_4BA6B
 ; ---------------------------------------------------------------------------
-                call    sub_2818A
+                call    j_gameInformation
                 jmp     short loc_4BA6B
 ; ---------------------------------------------------------------------------
                 call    j_characterStatsDialog

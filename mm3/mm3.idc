@@ -14027,6 +14027,7 @@ static Bytes_2(void) {
 	set_name	(0X28180,	"j_loadMapData");
 	create_insn	(0X28185);
 	create_insn	(0X2818A);
+	set_name	(0X2818A,	"j_gameInformation");
 	create_insn	(0X2818F);
 	set_name	(0X2818F,	"j_getCurrentExperience");
 	create_insn	(0X28194);
@@ -14042,6 +14043,7 @@ static Bytes_2(void) {
 	create_insn	(0X281B7);
 	set_name	(0X281B7,	"j_controlPanel");
 	create_insn	(0X281BC);
+	set_name	(0X281BC,	"j_buildActiveEffects");
 	create_insn	(0X281C1);
 	set_name	(0X281C1,	"j_nextExperienceLevel");
 	create_insn	(0X281C6);
@@ -14750,8 +14752,6 @@ static Bytes_2(void) {
 	set_name	(0X29178,	"METAL_DAMAGE");
 	set_cmt	(0X2918F,	"indexed by item material (0B6h slot byte)",	0);
 	set_name	(0X2918F,	"METAL_LAC");
-	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
-	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
 }
 
 //------------------------------------------------------------------------
@@ -14761,6 +14761,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
+	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
 	create_word	(0X29218);
 	create_word	(0X2921A);
 	create_byte	(0X29262);
@@ -24554,6 +24556,7 @@ static Bytes_5(void) {
 	create_byte	(0X422D4);
 	make_array	(0X422D4,	0X48);
 	create_insn	(0X4231C);
+	set_name	(0X4231C,	"buildActiveEffects");
 	create_insn	(x=0X4231F);
 	op_hex		(x,	1);
 	create_insn	(x=0X42325);
@@ -24646,6 +24649,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X424A2);
 	op_stkvar	(x,	1);
 	create_insn	(0X424AB);
+	set_name	(0X424AB,	"gameInformation");
 	create_insn	(x=0X424AE);
 	op_hex		(x,	1);
 	create_insn	(x=0X424C4);
@@ -28402,12 +28406,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47279);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X47287);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4728A);
-	op_hex		(x,	1);
-	create_insn	(x=0X47290);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -28417,6 +28415,12 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47287);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4728A);
+	op_hex		(x,	1);
+	create_insn	(x=0X47290);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X47293);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4729C);
@@ -33460,9 +33464,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F1DB);
 	op_plain_offset	(x,	0,	0X4DE30);
 	op_plain_offset	(x,	128,	0X4DE30);
-	set_cmt	(0X4F1E0,	"jumptable 0004F1DB case 0",	1);
-	create_insn	(x=0X4F1E0);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -33472,6 +33473,9 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4F1E0,	"jumptable 0004F1DB case 0",	1);
+	create_insn	(x=0X4F1E0);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4F1E4);
 	op_stkvar	(x,	0);
 	set_cmt	(0X4F1EC,	"jumptable 0004F1DB case 1",	1);
@@ -38590,7 +38594,7 @@ static Functions_0(void) {
 	set_func_flags(0X28185,0x5482);
 	set_frame_size(0X28185, 0, 0, 0);
 	add_func    (0X2818A,0X2818F);
-	set_func_flags(0X2818A,0x5482);
+	set_func_flags(0X2818A,0x54c2);
 	set_frame_size(0X2818A, 0, 0, 0);
 	add_func    (0X2818F,0X28194);
 	set_func_flags(0X2818F,0x54c2);
@@ -38621,8 +38625,8 @@ static Functions_0(void) {
 	set_func_flags(0X281B7,0x54c2);
 	set_frame_size(0X281B7, 0, 0, 0);
 	add_func    (0X281BC,0X281C1);
-	set_func_flags(0X281BC,0x5482);
-	SetType(0X281BC, "int __cdecl __far sub_281BC(int, char *);");
+	set_func_flags(0X281BC,0x54c2);
+	SetType(0X281BC, "int __cdecl __far j_buildActiveEffects(int, char *);");
 	set_frame_size(0X281BC, 0, 0, 0);
 	add_func    (0X281C1,0X281C6);
 	set_func_flags(0X281C1,0x54c2);
@@ -39630,11 +39634,13 @@ static Functions_1(void) {
 	define_local_var(0X41F5D, 0X422D4, "[bp-0X24]", "s");
 	add_func    (0X4231C,0X424AB);
 	set_func_flags(0X4231C,0x5412);
-	SetType(0X4231C, "int __cdecl __far sub_4231C(int, char *);");
+	SetType(0X4231C, "int __cdecl __far buildActiveEffects(int, char *);");
+	set_func_cmt(0X4231C,	"builds the active-effects lines of the Game Information window: Light n, Fire/Elec/Cold/Poison-Acid resistance n, Levitate n, Walk on Water", 0);
 	set_frame_size(0X4231C, 0XD6, 2, 0);
 	define_local_var(0X4231C, 0X424AB, "[bp-0X1E]", "buffer");
 	add_func    (0X424AB,0X425AB);
 	set_func_flags(0X424AB,0x5412);
+	set_func_cmt(0X424AB,	"'Game Information' window (key I): weekday, time of day (am/pm) and the active party effects, then waits for a key (stub sub_2818A)", 0);
 	set_frame_size(0X424AB, 0XCE, 2, 0);
 	add_func    (0X425AB,0X4265B);
 	set_func_flags(0X425AB,0x5412);

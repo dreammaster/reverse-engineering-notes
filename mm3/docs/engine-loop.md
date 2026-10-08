@@ -28,7 +28,7 @@ runs the intro (`introSequence`), then the title/roster menu (`rosterMenu`) and 
 | `D` / 4 | `chargeStep`, `dismissCharacter` |
 | `V` / 5 | the quest log (`questLog`, stub `sub_282CA`; then the overhead map call as for `M`) |
 | `M` / 6 | `showOverheadMap` (map) |
-| `I` / 7 | `sub_2818A` + `chargeStep` |
+| `I` / 7 | `gameInformation` (stub `sub_2818A`): the "Game Information" window -- "Today is <weekday>day", the time, and the active effects Light, Fire, Elec, Cold, Poison/Acid resistance, Levitate, Walk on Water; then `chargeStep` |
 | space (20h) | pass one step of time (`chargeStep` only) |
 | `Q` / 8 | `characterStatsDialog` / `controlPanel` |
 | ESC (9) | `controlPanel` |

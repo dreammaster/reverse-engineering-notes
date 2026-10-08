@@ -685,3 +685,5 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 38147	textModeScreen	DOS text-mode screen (cprintf/clrscr/gotoxy with colours) used by the fatal-error and startup message paths
 432B9	loadMapData	loads the map's data files (MAZEnn.DAT/EVT/BIN through loadMazeDats and loadResourceByName) and resets the per-map state
 45790	questLog	quest log window: lists the active quests (QUEST.BIN 0-18) from the game flags 157+n (0-12), flag 170 clear (13) and start/done flag pairs (14-18); stub sub_282CA
+424AB	gameInformation	'Game Information' window (key I): weekday, time of day (am/pm) and the active party effects, then waits for a key (stub sub_2818A)
+4231C	buildActiveEffects	builds the active-effects lines of the Game Information window: Light n, Fire/Elec/Cold/Poison-Acid resistance n, Levitate n, Walk on Water
