@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "chest.h"
 #include "combat.h"
 #include "conversation.h"
 #include "dungeongrid.h"
@@ -193,6 +194,25 @@ bool sessionTravelPassword(GameSession *session, const char *typed);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);
+
+/*
+ * The shop screen of a "buy" topic (DialogTopicUseKey: UseKeyItem sets the buy mode and runs RunShopScreen on the lock record named by the topic's argument; the
+ * same record opened as a chest is free, sessionLoot). Stock is inexhaustible: `sessionShopStock` lists the eight slots with the price of each --
+ * shopBuyPrice of the item's base value for the haggling member (the first role assignment, else the first member: Bartering) -- and `sessionShopBuy` pays it and puts
+ * the item on the cursor (`heldItem`; the hand must be empty). `sessionShopSell` takes the cursor item back for shopSellPrice if the shop stocks that item
+ * (HandleShopCatalogSlotClick's buy-mode branch); `sessionStowHeld` moves the cursor item into a member's first free inventory slot.
+ */
+typedef struct {
+    uint16_t itemId, extra; /* 0 = empty slot */
+    uint8_t price[4];       /* packed BCD */
+} SessionShopItem;
+
+typedef enum { SessionShopBought, SessionShopSold, SessionShopHandFull, SessionShopEmpty, SessionShopNoGold, SessionShopNotStocked } SessionShop;
+
+unsigned sessionShopStock(GameSession *session, unsigned lockId, SessionShopItem out[LockContentSlots]);
+SessionShop sessionShopBuy(GameSession *session, unsigned lockId, unsigned slot);
+SessionShop sessionShopSell(GameSession *session, unsigned lockId);
+bool sessionStowHeld(GameSession *session, unsigned member);
 
 /*
  * The save image (savegame.h: the CURGAME / SAVGAMEn file of the original, byte for byte): sessionSave first copies the session's own state into the header (position,

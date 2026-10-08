@@ -51,7 +51,7 @@
 #include "statuspanel.h"
 #include "voc.h"
 
-typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls, OverlayTalk } Overlay;
+typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls, OverlayTalk, OverlayShop } Overlay;
 
 static GameSession *g_session;
 static uint8_t g_screen[ViewScreenWidth * ViewScreenHeight];
@@ -123,6 +123,7 @@ static void playEffect(unsigned id) {
 }
 
 static void drawTalk(void);
+static void drawShop(void);
 
 static void drawScene(ViewRenderer *renderer, PictureFile *pictures, Overlay overlay) {
     GameSession *s = g_session;
@@ -163,6 +164,9 @@ static void drawScene(ViewRenderer *renderer, PictureFile *pictures, Overlay ove
             roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
         }
         detailSheetDraw(renderer, sessionPartyRecord(s, g_overlayHero), 6 + g_overlayHero, roles);
+    } else if (overlay == OverlayShop) {
+        memset(g_screen, 0, sizeof(g_screen));
+        drawShop();
     } else if (overlay == OverlayTalk) {
         memset(g_screen, 0, sizeof(g_screen));
         drawTalk();
@@ -206,6 +210,10 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case '+': return SDLK_PLUS;
     case '-': return SDLK_MINUS;
     case '!': return SDLK_ESCAPE;
+    case '#': return SDLK_1; /* plain digit keys for the talk and shop overlays */
+    case '$': return SDLK_2;
+    case '%': return SDLK_3;
+    case '&': return SDLK_4;
     default: return SDLK_UNKNOWN;
     }
 }
@@ -261,13 +269,46 @@ static void drawTalk(void) {
     }
 }
 
-static void talkStep(const ConversationStep *step) {
+static unsigned g_shopLock;
+
+/* The stock of the shop a "buy" topic opened (sessionShopStock): number, name and price; the gold; the item on the cursor. */
+static void drawShop(void) {
+    GameSession *s = g_session;
+    SessionShopItem stock[LockContentSlots];
+    sessionShopStock(s, g_shopLock, stock);
+    char line[160], gold[12], name[ItemNameBufferSize], price[12];
+    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), gold);
+    snprintf(line, sizeof(line), "SHOP    GOLD %s", gold);
+    fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 10, line, 0x8A, 0, FontTransparent);
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        if (!stock[i].itemId) {
+            continue;
+        }
+        itemGetName(itemCatalogRecord(&s->items, stock[i].itemId), name);
+        bcd4Format(stock[i].price, price);
+        snprintf(line, sizeof(line), "%u %-28s %s", i + 1, name, price);
+        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 30 + (int)i * 8, line, 0x9B, 0, FontTransparent);
+    }
+    if (s->heldItem) {
+        itemGetName(itemCatalogRecord(&s->items, s->heldItem), name);
+        snprintf(line, sizeof(line), "ON THE CURSOR: %s  (S SELLS IT BACK, 1-4 STOWS IT)", name);
+        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 110, line, 0x8A, 0, FontTransparent);
+    } else {
+        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, 110, "1-8 BUY, ESCAPE LEAVES", 0x8A, 0, FontTransparent);
+    }
+}
+
+static void talkStep(const ConversationStep *step, Overlay *overlay) {
     GameSession *s = g_session;
     if (step->topic) {
         conversationText(&s->talk, step->topic, g_talkText, sizeof(g_talkText));
         SessionService service = sessionTalkService(s, step, NULL);
         if (service == SessionServiceNone && step->needsResolve) {
             sessionTalkResolve(s, true);
+        }
+        if (service == SessionServiceNeedScreen && (step->flags & DialogTopicUseKey)) { /* a shop: the lock record named by the topic's argument */
+            g_shopLock = step->arg;
+            *overlay = OverlayShop;
         }
     }
 }
@@ -292,8 +333,8 @@ static void useAhead(Overlay *overlay) {
     case SessionInteractTalker: {
         ConversationStep first;
         if (sessionTalkStart(s, use.value, &first)) {
-            talkStep(&first);
             *overlay = OverlayTalk;
+            talkStep(&first, overlay);
         }
         break;
     }
@@ -337,11 +378,29 @@ static void saveLoadKey(bool save) {
 
 static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     GameSession *s = g_session;
+    if (*overlay == OverlayShop) { /* 1-8 buy a slot, S sells the cursor item back, 1-4 stow it when the hand is full, Escape leaves */
+        if (key == SDLK_ESCAPE) {
+            if (s->heldItem) {
+                sessionStowHeld(s, 0);
+            }
+            *overlay = OverlayTalk;
+        } else if (key == SDLK_s) {
+            sessionShopSell(s, g_shopLock);
+        } else if (key >= SDLK_1 && key <= SDLK_8) {
+            unsigned n = (unsigned)(key - SDLK_1);
+            if (s->heldItem && n < 4) {
+                sessionStowHeld(s, n);
+            } else {
+                sessionShopBuy(s, g_shopLock, n);
+            }
+        }
+        return true;
+    }
     if (*overlay == OverlayTalk) { /* 1-9 choose a topic, Escape the last one listed (the way out) */
         unsigned number = key == SDLK_ESCAPE ? 0 : key >= SDLK_1 && key <= SDLK_9 ? (unsigned)(key - SDLK_1 + 1) : 99;
         if (number != 99) {
             ConversationStep step = sessionTalkChoose(s, number);
-            talkStep(&step);
+            talkStep(&step, overlay);
             if (!s->talking) {
                 *overlay = OverlayNone;
             }

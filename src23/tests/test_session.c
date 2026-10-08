@@ -537,6 +537,71 @@ static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(b);
 }
 
+static int plain(const char *formatted) { /* "19,563" -> 19563 */
+    int value = 0;
+    for (; *formatted; formatted++) {
+        if (*formatted >= '0' && *formatted <= '9') {
+            value = value * 10 + (*formatted - '0');
+        }
+    }
+    return value;
+}
+
+/* Shops: the stock of a buy topic's lock record, prices by bartering, buying, selling back, stowing. */
+static void testShop(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned lockId = 0;
+    SessionShopItem stock[LockContentSlots];
+    for (unsigned t = 0; t < s->dialogs.topicCount && !lockId; t++) {
+        const uint8_t *topic = dialogTopic(&s->dialogs, t);
+        if (topic && (dialogGetU16(topic, DialogTopicFlags) & DialogTopicUseKey)) {
+            unsigned id = dialogTopicU16(&s->dialogs, topic, DialogTopicArg);
+            if (sessionShopStock(s, id, stock) >= 2) {
+                lockId = id;
+            }
+        }
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: a shop topic names a lock record with stock", label);
+    check(text, lockId != 0);
+    if (!lockId) {
+        sessionFree(s);
+        return;
+    }
+    unsigned slot = 0;
+    while (slot < LockContentSlots && (!stock[slot].itemId || (stock[slot].price[0] | stock[slot].price[1] | stock[slot].price[2] | stock[slot].price[3]) == 0)) {
+        slot++;
+    }
+    if (slot == LockContentSlots) {
+        check("a stocked item has a price", false);
+        sessionFree(s);
+        return;
+    }
+    memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+    check("with no gold nothing can be bought", sessionShopBuy(s, lockId, slot) == SessionShopNoGold && !s->heldItem);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+    char before[12], after[12], price[12];
+    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), before);
+    check("with gold the item goes to the cursor and the gold goes down by its price", sessionShopBuy(s, lockId, slot) == SessionShopBought && s->heldItem == stock[slot].itemId);
+    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), after);
+    bcd4Format(stock[slot].price, price);
+    check("... the price is positive and the stock is still there", plain(before) - plain(after) == plain(price) && plain(price) > 0 && sessionShopStock(s, lockId, stock) >= 2);
+    check("a full hand buys nothing more", sessionShopBuy(s, lockId, slot) == SessionShopHandFull);
+    SessionShop sold = sessionShopSell(s, lockId);
+    char back[12];
+    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), back);
+    check("selling it back pays less than it cost", sold == SessionShopSold && !s->heldItem && plain(back) > plain(after) && plain(back) < plain(before));
+    sessionShopBuy(s, lockId, slot);
+    check("an item can be stowed in a member's inventory", sessionStowHeld(s, 1) && !s->heldItem);
+    s->heldItem = 0xFFFF;
+    check("an item the shop does not stock is not bought", sessionShopSell(s, lockId) == SessionShopNotStocked);
+    sessionFree(s);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: a session starts");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: a session starts");
@@ -550,6 +615,7 @@ int main(void) {
         if (worldI) {
             testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }

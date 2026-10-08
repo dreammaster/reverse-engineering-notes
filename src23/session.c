@@ -11,6 +11,7 @@
 #include "newgame.h"
 #include "consumable.h"
 #include "dialogservice.h"
+#include "shop.h"
 #include "party.h"
 #include "spelljump.h"
 #include "spellcast.h"
@@ -813,6 +814,103 @@ bool sessionLoad(GameSession *s, const uint8_t *data, size_t size) {
     s->heldItem = s->heldExtra = 0;
     sessionRebuild(s);
     return true;
+}
+
+/* The party member who haggles (g_partyRoleAssignment1, the speaker): the record id in the first role slot, else the first member. */
+static const uint8_t *haggler(GameSession *s) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments);
+    const uint8_t *record = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    return record ? record : sessionPartyRecord(s, 0);
+}
+
+static bool shopRecord(GameSession *s, unsigned lockId, LockRecord *lock) {
+    return lockCatalogRecord(&s->locks, lockId, lock);
+}
+
+unsigned sessionShopStock(GameSession *s, unsigned lockId, SessionShopItem out[LockContentSlots]) {
+    LockRecord lock;
+    memset(out, 0, sizeof(SessionShopItem) * LockContentSlots);
+    if (!shopRecord(s, lockId, &lock)) {
+        return 0;
+    }
+    ChestSlot slots[LockContentSlots];
+    chestSlots(&lock, 0, &s->items, slots);
+    uint16_t bartering = (uint16_t)partyGetStat(haggler(s), PartyStatBartering);
+    unsigned count = 0;
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        out[i].itemId = slots[i].itemId;
+        out[i].extra = slots[i].value;
+        const uint8_t *record = slots[i].itemId ? itemCatalogRecord(&s->items, slots[i].itemId) : NULL;
+        if (record) {
+            Bcd4 base;
+            memcpy(base, record + ItemFieldBaseValue, 4);
+            shopBuyPrice(base, bartering, out[i].price);
+            count++;
+        }
+    }
+    return count;
+}
+
+SessionShop sessionShopBuy(GameSession *s, unsigned lockId, unsigned slot) {
+    SessionShopItem stock[LockContentSlots];
+    if (slot >= LockContentSlots || !sessionShopStock(s, lockId, stock) || !stock[slot].itemId) {
+        return SessionShopEmpty;
+    }
+    if (s->heldItem) {
+        return SessionShopHandFull;
+    }
+    bool drained;
+    if (!shopPay(saveHeaderBcd4(&s->save, SaveHeaderGold), stock[slot].price, &drained)) {
+        return SessionShopNoGold;
+    }
+    s->heldItem = stock[slot].itemId;
+    s->heldExtra = stock[slot].extra;
+    say(s, "bought item %u", stock[slot].itemId);
+    return SessionShopBought;
+}
+
+SessionShop sessionShopSell(GameSession *s, unsigned lockId) {
+    SessionShopItem stock[LockContentSlots];
+    if (!s->heldItem) {
+        return SessionShopEmpty;
+    }
+    if (!sessionShopStock(s, lockId, stock)) {
+        return SessionShopNotStocked;
+    }
+    bool stocked = false;
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        stocked = stocked || stock[i].itemId == s->heldItem;
+    }
+    const uint8_t *record = itemCatalogRecord(&s->items, s->heldItem);
+    if (!stocked || !record) {
+        return SessionShopNotStocked;
+    }
+    Bcd4 base, price;
+    memcpy(base, record + ItemFieldBaseValue, 4);
+    shopSellPrice(base, (uint16_t)partyGetStat(haggler(s), PartyStatBartering), price);
+    bcd4Add(saveHeaderBcd4(&s->save, SaveHeaderGold), price);
+    say(s, "sold item %u", s->heldItem);
+    s->heldItem = s->heldExtra = 0;
+    return SessionShopSold;
+}
+
+bool sessionStowHeld(GameSession *s, unsigned member) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    if (!record || !s->heldItem) {
+        return false;
+    }
+    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
+    for (unsigned slot = 1; slot <= InventorySlotCount; slot++) {
+        uint8_t *cell = inventoryGroupSlot(group, slot);
+        if (cell && itemSlotId(cell) == 0) {
+            const uint8_t *item = itemCatalogRecord(&s->items, s->heldItem);
+            itemSlotSet(cell, s->heldItem, s->heldExtra);
+            inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) + (item ? item[ItemFieldWeight] | (item[ItemFieldWeight + 1] << 8) : 0)));
+            s->heldItem = s->heldExtra = 0;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool sessionTravelPassword(GameSession *s, const char *typed) {
