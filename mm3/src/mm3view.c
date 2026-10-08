@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "recomp.h"
 #include "view_glue.h"
 
 static int wall_style(const Mm3View *v, int x, int y, int side) { return (int)(mm3_page_wall(mm3_view_page(v), x, y, side) & 7); }
@@ -27,7 +28,7 @@ int main(int argc, char **argv) {
 	Mm3Cc cc, cur;
 	Mm3Dgroup dg;
 	Mm3View *v;
-	const char *shot = NULL;
+	const char *shot = NULL, *dump = NULL;
 	int args[5] = {1, 2, 5, 2, 0}, na = 0, quit = 0;
 	uint8_t screen[MM3_RAW_SIZE];
 	SDL_Window *win = NULL;
@@ -38,6 +39,7 @@ int main(int argc, char **argv) {
 	if (argc < 2) { fprintf(stderr, "usage: %s DATADIR [MAP [X Y FACING]] [--shot out.bmp]\n", argv[0]); return 2; }
 	for (int i = 2; i < argc; i++) {
 		if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
+		else if (!strcmp(argv[i], "--dump") && i + 1 < argc) dump = argv[++i];
 		else if (na < 4) args[na++] = atoi(argv[i]);
 	}
 	snprintf(path, sizeof path, "%s/MM3.CC", argv[1]);
@@ -49,6 +51,12 @@ int main(int argc, char **argv) {
 	v = mm3_view_create(&cc, &cur, &dg);
 	if (!v || mm3_view_set_map(v, (unsigned)args[0], args[1], args[2], args[3])) { fprintf(stderr, "cannot set up map %d\n", args[0]); return 1; }
 
+	if (dump) { /* write the data segment as the view code sees it (for tools/mm3_viewcheck.py) and stop */
+		FILE *f = fopen(dump, "wb");
+		if (!f || fwrite(DG, 1, 65536, f) != 65536) return 1;
+		fclose(f);
+		return 0;
+	}
 	if (SDL_Init(SDL_INIT_VIDEO)) { fprintf(stderr, "SDL: %s\n", SDL_GetError()); return 1; }
 	surf = SDL_CreateRGBSurfaceWithFormat(0, MM3_SCREEN_W, MM3_SCREEN_H, 32, SDL_PIXELFORMAT_ARGB8888);
 	if (!shot) {

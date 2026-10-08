@@ -47,4 +47,13 @@ void mm3_blit(uint8_t *surf, int surf_w, int surf_h, const Mm3Frame *f, int x, i
 /* Draw as the video module does: each layer at (x + its own offset), optionally mirrored horizontally within the layer. */
 void mm3_blit_layers(uint8_t *surf, int surf_w, int surf_h, const Mm3Frame *f, int x, int y, int mirror);
 
+/* The video module's blit with the record flags of the draw lists (vdrv_blitFrame, docs/view.md):
+ *   bit 0 mirrored, bit 1 clipped to the view window (columns 8-223), bits 8-9 distance scale 1-3 (rows and columns are thinned by
+ *   the bit patterns in `scale_patterns`: the words at offset 0B6Ah of the video module, index = scale).  Bit 15 (enlarge) is
+ *   not implemented. */
+void mm3_blit_ex(uint8_t *surf, int surf_w, int surf_h, const Mm3Frame *f, int x, int y, unsigned flags, const uint16_t scale_patterns[4]);
+
+/* The scale pattern words from the video module (MM3.CC member 8F99h at 0B6Ah). */
+int mm3_scale_patterns_load(uint16_t out[4], const Mm3Cc *mm3cc);
+
 #endif

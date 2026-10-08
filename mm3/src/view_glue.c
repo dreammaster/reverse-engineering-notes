@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mapbin.h"
 #include "view_host.h"
 
 /* DGROUP offsets (IDA linear - 286F0h, names/mm3.tsv) */
@@ -15,7 +16,17 @@ enum {
 	DG_ENV_TABLE = 0x30E1,              /* environment number by map id (map 1 at +1) */
 	DG_ENV_PREFIXES = 0x5A34,           /* near pointers to "twn", "cav", "dun", "cas", "sci" */
 	DG_WALL_SHEETS = 0xC4A6,            /* far pointer table, 4 bytes per sheet number */
-	DG_BACKGROUND = 0xECC4              /* word_373B4: far pointer to the view background */
+	DG_BACKGROUND = 0xECC4,             /* word_373B4: far pointer to the view background */
+	/* the live monster table of the map (170 words each) and the 12-byte object records (names/mm3.tsv, Map_load) */
+	DG_MON_X = 0xAEC4, DG_MON_Y = 0xAD70, DG_MON_ANIM = 0xB018, DG_MON_STATE = 0xB810, DG_MON_FIELD = 0xB2C0,
+	DG_MON_HP = 0xB414, DG_MON_ID = 0xB6BC, DG_MON_PICSEL = 0xB16C,
+	DG_OBJECTS = 0xA78E, DG_OBJECT_COUNT = 0xECE0, DG_MONSTER_COUNT = 0xED72,
+	DG_PIC_SLOTS = 0xE610,              /* 5 bytes: object picture ids of the map */
+	DG_OBJECT_SPRITES = 0xC540,         /* 5 far pointers (4 bytes each) */
+	DG_MONSTER_SPRITES = 0xA750,        /* 3 far pointers */
+	DG_OBJECT_NAMES = 0x58D4,           /* near pointers to the picture names (".pic") */
+	DG_MONSTER_NAMES = 0x5590,          /* near pointers to the monster picture names (".mon") */
+	DG_MAP_MONSTER_PICS = 0x274F        /* 3 bytes per map, map 1 at +3 */
 };
 
 #define MARKER_BASE 0x4000
@@ -35,6 +46,9 @@ struct Mm3View {
 	unsigned map_id;
 	SetSlot sets[MAX_SETS];
 	uint8_t *screen;
+	uint16_t scale_patterns[4];
+	Mm3MapBin bin;
+	uint32_t rng;
 };
 
 static uint16_t marker_for(unsigned dg_off) { return (uint16_t)(MARKER_BASE + (dg_off >> 1)); }
@@ -76,7 +90,7 @@ Mm3View *mm3_view_create(const Mm3Cc *mm3cc, const Mm3Cc *cur, const Mm3Dgroup *
 	Mm3View *v = calloc(1, sizeof(*v));
 	if (!v) return NULL;
 	v->cc = mm3cc; v->cur = cur; v->dgroup = dg;
-	if (mm3_palette_load(&v->pal, mm3cc)) { free(v); return NULL; }
+	if (mm3_palette_load(&v->pal, mm3cc) || mm3_scale_patterns_load(v->scale_patterns, mm3cc)) { free(v); return NULL; }
 	memcpy(DG, dg->data, MM3_DGROUP_SIZE);
 	return v;
 }
@@ -86,6 +100,67 @@ void mm3_view_destroy(Mm3View *v) {
 	for (int i = 0; i < MAX_SETS; i++)
 		if (v->sets[i].used) mm3_sprite_free(&v->sets[i].spr);
 	free(v);
+}
+
+static unsigned view_rnd(Mm3View *v, unsigned lo, unsigned hi) {
+	v->rng = v->rng * 1103515245u + 12345u;
+	return lo + ((v->rng >> 16) % (hi - lo + 1));
+}
+
+/* Put the map's monsters and objects into the data segment the way Map_load does, and load their pictures. */
+static void load_map_bin(Mm3View *v, unsigned map_id) {
+	char name[32];
+	size_t len;
+	uint8_t *d, *hp;
+	size_t hplen = 0;
+	snprintf(name, sizeof name, "MAZE%02u.BIN", map_id);
+	d = mm3_cc_read(v->cur, name, &len);
+	memset(&DG[DG_PIC_SLOTS], 0xFF, 5);
+	DG[DG_MONSTER_COUNT] = DG[DG_OBJECT_COUNT] = 0;
+	if (!d || mm3_mapbin_load(&v->bin, d, len, map_id, v->dgroup, NULL)) { free(d); return; }
+	free(d);
+	hp = mm3_cc_read(v->cc, "MONHP.DAT", &hplen);
+	for (unsigned i = 0; i < v->bin.monster_count; i++) {
+		const Mm3MapMonster *m = &v->bin.monsters[i];
+		wr16(DG, (uint16_t)(DG_MON_X + 2 * i), m->x);
+		wr16(DG, (uint16_t)(DG_MON_Y + 2 * i), m->y);
+		wr16(DG, (uint16_t)(DG_MON_ANIM + 2 * i), view_rnd(v, 0, m->anim_range));
+		wr16(DG, (uint16_t)(DG_MON_STATE + 2 * i), 0);
+		wr16(DG, (uint16_t)(DG_MON_FIELD + 2 * i), 0);
+		wr16(DG, (uint16_t)(DG_MON_HP + 2 * i), hp && hplen >= 2 * (size_t)(m->id + 1) ? (uint16_t)(hp[2 * m->id] | (hp[2 * m->id + 1] << 8)) : 1);
+		wr16(DG, (uint16_t)(DG_MON_ID + 2 * i), m->id);
+		wr16(DG, (uint16_t)(DG_MON_PICSEL + 2 * i), m->pic_sel);
+	}
+	free(hp);
+	DG[DG_MONSTER_COUNT] = (uint8_t)v->bin.monster_count;
+	memcpy(&DG[DG_PIC_SLOTS], v->bin.pic_slots, 5);
+	for (unsigned i = 0; i < v->bin.object_count; i++) {
+		const Mm3MapObject *o = &v->bin.objects[i];
+		uint16_t base = (uint16_t)(DG_OBJECTS + 12 * i);
+		wr16(DG, base, o->y);
+		wr16(DG, (uint16_t)(base + 2), o->x);
+		wr16(DG, (uint16_t)(base + 4), o->slot);
+		wr16(DG, (uint16_t)(base + 6), view_rnd(v, 0, o->anim_range));
+		wr16(DG, (uint16_t)(base + 8), o->pic);
+		wr16(DG, (uint16_t)(base + 10), 0);
+	}
+	DG[DG_OBJECT_COUNT] = (uint8_t)v->bin.object_count;
+	/* object pictures: five slots */
+	for (int i = 0; i < 5; i++) {
+		unsigned pic = DG[DG_PIC_SLOTS + i];
+		char nm[40];
+		if (pic == 0xFF) { wr16(DG, (uint16_t)(DG_OBJECT_SPRITES + 4 * i), 0); wr16(DG, (uint16_t)(DG_OBJECT_SPRITES + 4 * i + 2), 0); continue; }
+		snprintf(nm, sizeof nm, "%s.pic", (const char *)&DG[rd16(DG, (uint16_t)(DG_OBJECT_NAMES + 2 * pic))]);
+		bind_set(v, DG_OBJECT_SPRITES + 4 * i, nm);
+	}
+	/* monster pictures: three slots, maps below 66 */
+	for (int i = 0; i < 3; i++) {
+		unsigned id = DG[DG_MAP_MONSTER_PICS + map_id * 3 + i];
+		char nm[40];
+		if (map_id >= 66 || id == 0xFF) { wr16(DG, (uint16_t)(DG_MONSTER_SPRITES + 4 * i), 0); wr16(DG, (uint16_t)(DG_MONSTER_SPRITES + 4 * i + 2), 0); continue; }
+		snprintf(nm, sizeof nm, "%s.mon", (const char *)&DG[rd16(DG, (uint16_t)(DG_MONSTER_NAMES + 2 * id))]);
+		bind_set(v, DG_MONSTER_SPRITES + 4 * i, nm);
+	}
 }
 
 int mm3_facing_left(int f) { static const int t[4] = {3, 2, 0, 1}; return t[f & 3]; }
@@ -117,6 +192,8 @@ int mm3_view_set_map(Mm3View *v, unsigned map_id, int x, int y, int facing) {
 	DG[DG_WRAP_MODE] = 0;
 	wr16(DG, DG_PARTY_LIGHT, 999);
 	mm3_view_set_party(v, x, y, facing);
+	v->rng = 12345;
+	load_map_bin(v, map_id);
 
 	/* environment graphics (docs/view.md "Environment graphics"): four wall sheets, background */
 	env = DG[DG_ENV_TABLE + map_id];
@@ -170,9 +247,9 @@ static void draw_list(void *user, unsigned addr) {
 			int x = (int16_t)rd16(DG, (uint16_t)addr), y = (int16_t)rd16(DG, (uint16_t)(addr + 2));
 			unsigned flags = rd16(DG, (uint16_t)(addr + 4)), frame = rd16(DG, (uint16_t)(addr + 6));
 			addr += 8;
-			/* flag bit 0 = mirrored; bits 8-9 (distance scale) and bit 15 (enlarge) are not implemented yet */
+			/* flags: bit 0 mirrored, bit 1 clipped to the view window, bits 8-9 distance scale; bit 15 (enlarge) is not implemented */
 			if (cur && frame < cur->spr.count)
-				mm3_blit_layers(v->screen, MM3_SCREEN_W, MM3_SCREEN_H, &cur->spr.frames[frame], x, y, flags & 1);
+				mm3_blit_ex(v->screen, MM3_SCREEN_W, MM3_SCREEN_H, &cur->spr.frames[frame], x, y, flags, v->scale_patterns);
 		}
 	}
 }

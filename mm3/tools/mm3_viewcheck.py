@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Compare the draw lists of the translated C view pipeline (src/tests/view_run) with the original code in the emulator.
 
-usage: mm3_viewcheck.py MM3.EXE MM3.CUR VIEW_RUN [N] [SEED]
+usage: mm3_viewcheck.py MM3.EXE MM3.CUR VIEW_RUN [N] [SEED] [MM3VIEW DATADIR]
+With the last two arguments the data segment is built by the C glue (mm3view --dump: maze page, monsters, objects, sprite handles)
+instead of the Python setup, so monsters and objects are part of the comparison.
 Random positions on the indoor maps (1-40), all four facings; both run prepareIndoorView + renderIndoorView from the same
 DGROUP snapshot and the lists (sprite-set pointers and records) must be identical."""
 import os
@@ -43,6 +45,7 @@ def main():
     exe, cur, runner = sys.argv[1:4]
     n = int(sys.argv[4]) if len(sys.argv) > 4 else 100
     rnd = random.Random(int(sys.argv[5]) if len(sys.argv) > 5 else 7)
+    glue = (sys.argv[6], sys.argv[7]) if len(sys.argv) > 7 else None
     o = vo.ViewOracle(exe, cur)
     e = o.emu
     maps = [m for m in range(1, 41) if mm3_cc.name_id("MAZE%02d.DAT" % m) in o.members]
@@ -51,7 +54,12 @@ def main():
     nonempty = 0
     for idx in range(n):
         map_id, x, y, f = rnd.choice(maps), rnd.randrange(16), rnd.randrange(16), rnd.randrange(4)
-        o.setup(map_id, x, y, f)
+        if glue:
+            subprocess.run([glue[0], glue[1], str(map_id), str(x), str(y), str(f), "--dump", tmp + "/in.dg"], check=True)
+            e.reset_dgroup()
+            e.wbytes(0, open(tmp + "/in.dg", "rb").read())
+        else:
+            o.setup(map_id, x, y, f)
         # randomise the animation counters like a running game would have them
         e.wb(0x2884D - 0x286F0, rnd.randrange(3))
         e.wb(0x28875 - 0x286F0, rnd.randrange(2))

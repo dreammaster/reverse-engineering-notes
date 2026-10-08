@@ -192,3 +192,85 @@ void mm3_blit_layers(uint8_t *surf, int sw, int sh, const Mm3Frame *f, int x, in
 		}
 	}
 }
+
+int mm3_scale_patterns_load(uint16_t out[4], const Mm3Cc *cc) {
+	size_t len;
+	int idx = -1;
+	uint8_t *mod;
+	for (unsigned i = 0; i < cc->count; i++)
+		if (cc->entries[i].id == 0x8F99)
+			idx = (int)i;
+	if (idx < 0 || !(mod = mm3_cc_read_index(cc, idx, &len)))
+		return -1;
+	if (len < 0xB6A + 8) { free(mod); return -1; }
+	for (int i = 0; i < 4; i++)
+		out[i] = (uint16_t)(mod[0xB6A + 2 * i] | (mod[0xB6A + 2 * i + 1] << 8));
+	free(mod);
+	return 0;
+}
+
+/* One step of the pixel thinning register (sub_620D8 / the literal-run loop): the source pixel is kept when a 1 bit is shifted out
+ * of the register or when the register becomes empty, in which case it is reloaded. */
+static int thin_step(unsigned *reg, unsigned reload) {
+	unsigned carry = (*reg >> 15) & 1;
+	*reg = (*reg << 1) & 0xFFFF;
+	if (*reg == 0) {
+		*reg = reload;
+		return 1;
+	}
+	return (int)carry;
+}
+
+/* number of output pixels (or rows, sub_62136) for `count` source pixels, advancing the register */
+static int thin_count(unsigned *reg, unsigned reload, int count) {
+	int n = 0;
+	for (int i = 0; i < count; i++)
+		n += thin_step(reg, reload);
+	return n;
+}
+
+void mm3_blit_ex(uint8_t *surf, int sw, int sh, const Mm3Frame *f, int x, int y, unsigned flags, const uint16_t pat[4]) {
+	int mirror = flags & 1, clip = (flags & 2) != 0, scale = (flags >> 8) & 3;
+	for (int k = 0; k < f->nlayers; k++) {
+		const Mm3Layer *L = &f->layer[k];
+		unsigned P = scale ? pat[scale] : 0, R = (P << 1) & 0xFFFF;
+		unsigned vreg = P, hreg = P, hstart;
+		int base_x, out_y;
+		if (scale) {
+			base_x = x + thin_count(&hreg, R, mirror ? L->x_off + L->w : L->x_off);
+			out_y = y + thin_count(&vreg, R, L->y_off);
+		} else {
+			base_x = x + L->x_off;
+			out_y = y + L->y_off;
+		}
+		hstart = hreg; /* the horizontal register restarts from here on every row */
+		for (int r = 0; r < L->h; r++) {
+			const uint8_t *row = L->pixels + (size_t)r * L->w;
+			unsigned reg = hstart;
+			int dy, cnt = 0;
+			if (scale) { /* vertical thinning: a row is drawn when a 1 bit is shifted out; the register reloads when it runs empty */
+				unsigned carry = (vreg >> 15) & 1;
+				vreg = (vreg << 1) & 0xFFFF;
+				if (!carry)
+					continue;
+				if (vreg == 0)
+					vreg = R;
+			}
+			dy = out_y++;
+			if (dy < 0 || dy >= sh)
+				continue;
+			for (int c = 0; c < L->w; c++) {
+				int dx;
+				if (scale && !thin_step(&reg, R))
+					continue;
+				if (scale)
+					dx = mirror ? base_x - cnt : base_x + cnt;
+				else
+					dx = mirror ? base_x + (L->w - 1 - c) : base_x + c;
+				cnt++;
+				if (row[c] && dx >= 0 && dx < sw && (!clip || (dx >= 8 && dx < 224)))
+					surf[dy * sw + dx] = row[c];
+			}
+		}
+	}
+}
