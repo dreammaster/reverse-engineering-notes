@@ -119,6 +119,14 @@ uint8_t *saveHeaderBcd4(SaveGame *save, unsigned offset) {
     return save->bytes + offset;
 }
 
+uint8_t *saveGlobalFlags(SaveGame *save) {
+    return save->bytes + SaveHeaderGlobalFlags;
+}
+
+unsigned saveHeaderPlaceFlagsOffset(GameKind kind) {
+    return kind == GameYendor3 ? 0x1C : 0x1A;
+}
+
 uint16_t saveGetPartySlot(const SaveGame *save, unsigned slot) {
     if (slot >= SavePartyMemberSlots) {
         return 0;

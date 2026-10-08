@@ -9,13 +9,13 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
- * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S loot the chest ahead, M the local area map, D the pause
+ * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), M the local area map, D the pause
  * dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * EXPLORE_INTRO=opening|story|ending plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
@@ -35,6 +35,7 @@
 #include "audio.h"
 #include "cmfplayer.h"
 #include "exedata.h"
+#include "font.h"
 #include "gamedialog.h"
 #include "introstory.h"
 #include "lighting.h"
@@ -50,7 +51,7 @@
 #include "statuspanel.h"
 #include "voc.h"
 
-typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls } Overlay;
+typedef enum { OverlayNone, OverlayLocalMap, OverlayDialog, OverlayDetail, OverlayDolls, OverlayTalk } Overlay;
 
 static GameSession *g_session;
 static uint8_t g_screen[ViewScreenWidth * ViewScreenHeight];
@@ -121,6 +122,8 @@ static void playEffect(unsigned id) {
     SDL_UnlockAudioDevice(g_audio);
 }
 
+static void drawTalk(void);
+
 static void drawScene(ViewRenderer *renderer, PictureFile *pictures, Overlay overlay) {
     GameSession *s = g_session;
     ViewScene scene;
@@ -160,6 +163,9 @@ static void drawScene(ViewRenderer *renderer, PictureFile *pictures, Overlay ove
             roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
         }
         detailSheetDraw(renderer, sessionPartyRecord(s, g_overlayHero), 6 + g_overlayHero, roles);
+    } else if (overlay == OverlayTalk) {
+        memset(g_screen, 0, sizeof(g_screen));
+        drawTalk();
     } else if (overlay == OverlayDolls) {
         for (unsigned i = 0; i < 4; i++) {
             paperDollDraw(renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
@@ -205,8 +211,122 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
 }
 
 /* One key press: returns false to quit. */
+static bool playIntro(const char *kind, const char *dir, PictureFile *pictures, SDL_Renderer *renderer, SDL_Texture *texture);
+static const char *g_dir;
+static PictureFile *g_pictures;
+static SDL_Renderer *g_renderer;
+static SDL_Texture *g_texture;
+
+/* The use command on the object ahead (sessionInteract): chests are looted, destinations travelled to, the Chapter 2 ending is played; the rest shows up in the window title. */
+static char g_talkText[1200];
+
+/* The NPC's text (the '%' marks a line break; ~ is the font's apostrophe), wrapped at 49 characters, and the topics that can be chosen. */
+static void drawTalk(void) {
+    GameSession *s = g_session;
+    int y = 10;
+    char line[64];
+    unsigned used = 0;
+    for (const char *p = g_talkText;; p++) { /* greedy word wrap at 48 characters; '%' forces a break */
+        bool end = *p == 0, brk = *p == '%', space = *p == ' ';
+        if (!end && !brk && !(space && used == 0)) {
+            line[used++] = *p == '~' ? '\'' : *p;
+        }
+        bool wrap = false;
+        if (!end && !brk && used >= 46 && space) {
+            wrap = true;
+        } else if (used >= 52) {
+            wrap = true;
+        }
+        if (end || brk || wrap) {
+            while (used > 0 && line[used - 1] == ' ') {
+                used--;
+            }
+            line[used] = 0;
+            if (used) {
+                fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8, y, line, 0x8A, 0, FontTransparent);
+                y += 7;
+            }
+            used = 0;
+        }
+        if (end) {
+            break;
+        }
+    }
+    y = 120;
+    for (unsigned i = 0; i < s->talk.listedCount; i++) {
+        char name[DialogTopicNameSize + 1], row[32];
+        dialogTopicName(dialogTopic(&s->dialogs, s->talk.listed[i]), name);
+        snprintf(row, sizeof(row), "%u %s", i + 1, name);
+        fontDrawString(s->game, 0, g_screen, ViewScreenWidth, 8 + (int)(i / 5) * 150, y + (int)(i % 5) * 8, row, 0x9B, 0, FontTransparent);
+    }
+}
+
+static void talkStep(const ConversationStep *step) {
+    GameSession *s = g_session;
+    if (step->topic) {
+        conversationText(&s->talk, step->topic, g_talkText, sizeof(g_talkText));
+        SessionService service = sessionTalkService(s, step, NULL);
+        if (service == SessionServiceNone && step->needsResolve) {
+            sessionTalkResolve(s, true);
+        }
+    }
+}
+
+static void useAhead(Overlay *overlay) {
+    GameSession *s = g_session;
+    SessionInteract use = sessionInteract(s);
+    switch (use.kind) {
+    case SessionInteractDoor:
+        sessionLoot(s);
+        break;
+    case SessionInteractTravelled:
+    case SessionInteractStoryEvent:
+        area();
+        break;
+    case SessionInteractTravelRefused:
+        snprintf(s->log, sizeof(s->log), "the way is closed (message %u)", use.messageId);
+        break;
+    case SessionInteractTravelPassword:
+        snprintf(s->log, sizeof(s->log), "this way asks for a password (prompt %u)", use.promptId);
+        break;
+    case SessionInteractTalker: {
+        ConversationStep first;
+        if (sessionTalkStart(s, use.value, &first)) {
+            talkStep(&first);
+            *overlay = OverlayTalk;
+        }
+        break;
+    }
+    case SessionInteractStoryRefused:
+    case SessionInteractEndingNotReady:
+        snprintf(s->log, sizeof(s->log), "nothing happens (yet)");
+        break;
+    case SessionInteractEnding:
+        playIntro("ending", g_dir, g_pictures, g_renderer, g_texture);
+        s->clock.minutes = 480;
+        break;
+    default:
+        break;
+    }
+    if (s->pendingSound) {
+        playEffect(s->pendingSound);
+        s->pendingSound = 0;
+    }
+}
+
 static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     GameSession *s = g_session;
+    if (*overlay == OverlayTalk) { /* 1-9 choose a topic, Escape the last one listed (the way out) */
+        unsigned number = key == SDLK_ESCAPE ? 0 : key >= SDLK_1 && key <= SDLK_9 ? (unsigned)(key - SDLK_1 + 1) : 99;
+        if (number != 99) {
+            ConversationStep step = sessionTalkChoose(s, number);
+            talkStep(&step);
+            if (!s->talking) {
+                *overlay = OverlayNone;
+            }
+        }
+        return true;
+    }
     if (key == SDLK_ESCAPE) {
         if (*overlay != OverlayNone) {
             *overlay = OverlayNone;
@@ -283,8 +403,8 @@ static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
     case MainActionUnlockDoor: /* a demo skeleton key: every tier, as chest and door key at once */
         sessionUnlock(s, 0xFFC0, 0);
         break;
-    case MainActionAct: /* loot the chest ahead */
-        sessionLoot(s);
+    case MainActionAct: /* use the object ahead: loot the chest, take the road, ... */
+        useAhead(overlay);
         break;
     case MainActionLocalMap:
         *overlay = OverlayLocalMap;
@@ -494,13 +614,17 @@ int main(int argc, char **argv) {
     if (getenv("EXPLORE_INTRO") && !playIntro(getenv("EXPLORE_INTRO"), dir, pictures, sdl, texture)) {
         return 1;
     }
+    g_dir = dir;
+    g_pictures = pictures;
+    g_renderer = sdl;
+    g_texture = texture;
     Overlay overlay = OverlayNone;
     bool running = true, dirty = true;
     const char *script = getenv("EXPLORE_KEYS");
     static char randomScript[20001];
     if (getenv("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */
         unsigned n = (unsigned)atoi(getenv("EXPLORE_RANDOM"));
-        const char alphabet[] = "FFFFFFBLRLRQEAAATC";
+        const char alphabet[] = "FFFFFFBLRLRQEAAATCSS";
         for (unsigned i = 0; i < n && i < sizeof(randomScript) - 1; i++) {
             randomScript[i] = alphabet[rand() % (sizeof(alphabet) - 1)];
         }

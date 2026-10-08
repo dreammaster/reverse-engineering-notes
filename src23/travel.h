@@ -57,6 +57,29 @@ typedef struct {
 /* 1-based id, matching the value a WorldObjectFlagUnknown2000 record's own `value` field supplies. */
 bool travelDestinationLookup(GameKind game, unsigned id, TravelDestination *out);
 
+/*
+ * The arrival half of TravelToDestination (yendor2.asm:18170-18240, yendor3.asm:10081-10130), once the gate has been passed (2026-10-08):
+ *
+ *   Chapter 2: the arrival sound (if any); the low three bits of the place flags (word_36C79, save header +0x1A) are replaced: flags 0x8000 -> 4, else 0x4000 -> 2 (and
+ *     the light sources are ticked, TickTravelResourceAilments), else 0x1000 -> 1, else 0 (those bits pick the indoor lighting gradients A / B / C, lighting.h; the rest of
+ *     the word is the lit light sources and stays); the party's position and facing from the record -- except that a destination with flags 0x800 whose position is (98, 83)
+ *     sends the party to (378, 227) when the clock is at or before 07:00 or at or after 19:00 (the clock at 420 / 1140 minutes); the day and night tracks from rawA / rawB.
+ *   Chapter 3: the travel mode (ds:0CF33 = rawC), the arrival sound, the whole travel-flag word (ds:0CEF9, save header +0x1C) = rawD, position and facing, the day and night
+ *     tracks (ds:0CF2F / 0CF31 = rawA / rawB, save header +0x52 / +0x54).
+ * The window is then rebuilt and the cells around the party revealed.
+ */
+typedef struct {
+    int x, y;
+    uint16_t facing;
+    uint16_t sound;       /* 0 = none */
+    uint16_t placeFlags;  /* the new place-flag word (Chapter 3: the travel flags) */
+    uint16_t dayTrack, nightTrack;
+    uint16_t travelMode;  /* Chapter 3; 0 in Chapter 2 */
+    bool tickLights;      /* Chapter 2: the light sources burn one tick (flags 0x4000 destinations) */
+} TravelArrival;
+
+TravelArrival travelArrival(GameKind game, const TravelDestination *destination, uint16_t placeFlags, uint16_t clockMinutes);
+
 typedef enum {
     TravelUnlockAlreadyUnlocked,    /* proceed: no gate-table entry at all, or the global flag is already set */
     TravelUnlockDeniedWithMessage,  /* refused; messageId selects a canned rejection string (the gate row's own hasMsg) */

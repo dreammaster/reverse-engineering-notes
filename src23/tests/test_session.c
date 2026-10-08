@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -12,6 +12,8 @@
 
 #include "bcd4.h"
 #include "lightsource.h"
+#include "dialogservice.h"
+#include "globalflags.h"
 #include "spellcast.h"
 #include "session.h"
 
@@ -310,10 +312,211 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
     sessionFree(s);
 }
 
+static unsigned wordAt(const uint8_t *p) {
+    return (unsigned)(p[0] | (p[1] << 8));
+}
+
+/* The first world object whose flags include `flag` (and, if `value` is nonzero, with that value); false if there is none. */
+static bool findObject(const GameSession *s, unsigned flag, unsigned value, int *col, int *row) {
+    for (unsigned c = 0; c < WorldObjectColumns; c++) {
+        for (unsigned at = wordAt(s->objects.data + 2 * c);; at += 6) {
+            unsigned y = wordAt(s->objects.data + at);
+            if (y == 0xFFFF) {
+                break;
+            }
+            if ((wordAt(s->objects.data + at + 2) & flag) && (!value || wordAt(s->objects.data + at + 4) == value)) {
+                *col = (int)(c + WorldObjectColumnMin);
+                *row = (int)y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static void stand(GameSession *s, int col, int row) { /* one cell south of the object, looking north */
+    place(s, col, row + 1, SaveFacingNorth);
+}
+
+/* The use command: destinations, talkers and story events of both games. */
+static void testInteract(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[160];
+    int col, row;
+    snprintf(text, sizeof(text), "%s: nothing ahead means nothing happens", label);
+    place(s, 5, 5, SaveFacingNorth);
+    check(text, sessionInteract(s).kind == SessionInteractNothing);
+
+    /* a destination without a gate */
+    bool travelled = false;
+    for (unsigned id = 1; id <= travelDestinationCount(game) && !travelled; id++) {
+        TravelDestination d;
+        travelDestinationLookup(game, id, &d);
+        unsigned gate = game == GameYendor2 ? 0x2000u : 0xC000u;
+        int c, r;
+        if ((d.flags & gate) || !findObject(s, WorldObjectFlagUnknown2000, id, &c, &r)) {
+            continue;
+        }
+        stand(s, c, r);
+        SessionInteract use = sessionInteract(s);
+        TravelArrival a = travelArrival(game, &d, 0, 600);
+        travelled = use.kind == SessionInteractTravelled && s->x == a.x && s->y == a.y && s->facing == a.facing;
+    }
+    snprintf(text, sizeof(text), "%s: using an ungated destination object moves the party to its destination", label);
+    check(text, travelled);
+
+    snprintf(text, sizeof(text), "%s: a talker object reports its NPC", label);
+    check(text, findObject(s, WorldObjectFlagTalker, 0, &col, &row) && (stand(s, col, row), sessionInteract(s).kind == SessionInteractTalker));
+
+    /* a gated destination: refused or asking for a password until its flag is set */
+    bool gated = false;
+    for (unsigned id = 1; id <= travelDestinationCount(game) && !gated; id++) {
+        TravelDestination d;
+        travelDestinationLookup(game, id, &d);
+        unsigned gate = game == GameYendor2 ? 0x2000u : 0xC000u;
+        int c, r;
+        if (!(d.flags & gate) || !findObject(s, WorldObjectFlagUnknown2000, id, &c, &r)) {
+            continue;
+        }
+        TravelUnlockCheck unlock = travelCheckUnlock(game, id, d.flags, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+        if (unlock.outcome != TravelUnlockNeedsPassword && unlock.outcome != TravelUnlockDeniedWithMessage) {
+            continue;
+        }
+        stand(s, c, r);
+        int x = s->x, y = s->y;
+        SessionInteract use = sessionInteract(s);
+        gated = (unlock.outcome == TravelUnlockNeedsPassword ? use.kind == SessionInteractTravelPassword : use.kind == SessionInteractTravelRefused) && s->x == x && s->y == y;
+    }
+    snprintf(text, sizeof(text), "%s: a locked destination leaves the party where it is", label);
+    check(text, gated);
+
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    if (game == GameYendor2) {
+        check("Chapter 2: the Quartz Chamber object exists", findObject(s, WorldObjectFlagStoryEvent, 1, &col, &row));
+        stand(s, col, row);
+        SessionInteract before = sessionInteract(s);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, StoryEndingFlagA);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, StoryEndingFlagB);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, StoryEndingFlagC);
+        SessionInteract after = sessionInteract(s);
+        check("... it shows a message until the three quest flags are set, then the ending", before.kind == SessionInteractEndingNotReady && before.textOffset == 0x86AD && after.kind == SessionInteractEnding);
+    } else {
+        check("Chapter 3: event 1 exists", findObject(s, WorldObjectFlagStoryEvent, 1, &col, &row));
+        stand(s, col, row);
+        SessionInteract first = sessionInteract(s);
+        bool arrived = first.kind == SessionInteractStoryEvent && s->x == 397 && s->y == 94 && s->facing == SaveFacingWest && first.textLines == 3 && s->pendingSound == 0x21 &&
+                       globalFlagTest(flags, SaveHeaderGlobalFlagsSize, 5) && saveHeaderGetU16(&s->save, SaveHeaderTravelMode) == 2;
+        stand(s, col, row);
+        SessionInteract second = sessionInteract(s);
+        check("... it teleports the party to Thaine and only once", arrived && second.kind == SessionInteractNothing && s->x == col);
+
+        check("Chapter 3: event 3 exists", findObject(s, WorldObjectFlagStoryEvent, 3, &col, &row));
+        stand(s, col, row);
+        SessionInteract locked = sessionInteract(s);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, 0x2E);
+        stand(s, col, row);
+        SessionInteract open = sessionInteract(s);
+        check("... event 3 is locked until flag 0x2E, then moves the party and sets the travel flags",
+              locked.kind == SessionInteractStoryRefused && locked.textOffset == 0x7F00 && open.kind == SessionInteractStoryEvent && s->x == 638 && s->y == 36 && (s->travelFlags & 0x2000) &&
+                  saveHeaderGetU16(&s->save, saveHeaderPlaceFlagsOffset(GameYendor3)) == s->travelFlags);
+
+        /* events 5 and 6: the artifact realm, and the weapons that vanish on the way back */
+        findObject(s, WorldObjectFlagStoryEvent, 5, &col, &row);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, 0x91);
+        stand(s, col, row);
+        SessionInteract realm = sessionInteract(s);
+        check("Chapter 3: event 5 enters the artifact realm (flag 0x9D, travel flag 0x4000)",
+              realm.kind == SessionInteractStoryEvent && globalFlagTest(flags, SaveHeaderGlobalFlagsSize, 0x9D) && (s->travelFlags & 0x4000));
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 2), 0x17F, 1);
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 2), PartyGroupMain), 4), 0x181, 1);
+        findObject(s, WorldObjectFlagStoryEvent, 6, &col, &row);
+        stand(s, col, row);
+        SessionInteract back = sessionInteract(s);
+        unsigned left = itemSlotId(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 2)) +
+                        itemSlotId(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 2), PartyGroupMain), 4));
+        check("... event 6 takes the light weapons away, clears the realm flag and says so",
+              back.kind == SessionInteractStoryEvent && left == 0 && !globalFlagTest(flags, SaveHeaderGlobalFlagsSize, 0x9D) && back.textOffset == 0x9581 && !(s->travelFlags & 0x4000) &&
+                  s->x == 332 && s->y == 70);
+    }
+    sessionFree(s);
+}
+
+/* Conversations through the session: every NPC can be started and left with Escape, and the services that need no screen work. */
+static void testTalk(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[160];
+    unsigned started = 0, left = 0, total = 0;
+    for (unsigned id = 1; id < s->dialogs.npcCount; id++) {
+        if (!dialogNpc(&s->dialogs, id) || !dialogGetU16(dialogNpc(&s->dialogs, id), DialogNpcTopicCount)) {
+            continue;
+        }
+        total++;
+        ConversationStep step;
+        if (!sessionTalkStart(s, id, &step)) {
+            continue;
+        }
+        started++;
+        for (unsigned n = 0; n < 60 && s->talking; n++) {
+            step = sessionTalkChoose(s, 0);
+            if (step.needsResolve) {
+                sessionTalkResolve(s, true);
+            }
+        }
+        left += !s->talking;
+    }
+    snprintf(text, sizeof(text), "%s: every NPC (%u) can be talked to and left with Escape through the session", label, total);
+    check(text, total > 50 && started == total && left == total);
+    check("an NPC that does not exist cannot be started", !sessionTalkStart(s, 9999, NULL));
+
+    /* the typed services, on a conversation that is open */
+    ConversationStep dummy;
+    sessionTalkStart(s, 1, &dummy);
+    ConversationStep riddle;
+    memset(&riddle, 0, sizeof(riddle));
+    riddle.topic = 1;
+    riddle.flags = DialogTopicBuy;
+    riddle.arg = 1;
+    const char *answer = dialogRiddleAnswer(game, 1);
+    check("a riddle topic asks for the answer", sessionTalkService(s, &riddle, NULL) == SessionServiceNeedText);
+    check("... a wrong answer fails, the right one is done", sessionTalkService(s, &riddle, "NOT THE ANSWER") == SessionServiceFailed && answer && sessionTalkService(s, &riddle, answer) == SessionServiceDone);
+    ConversationStep buy = riddle;
+    buy.buy = true;
+    buy.arg = 3; /* NUORE */
+    memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 500);
+    memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 0, 4);
+    check("buying ore: 30 units cost 300 gold", sessionTalkService(s, &buy, "30") == SessionServiceDone && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 30) &&
+                                                  !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 31) && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 200) &&
+                                                  !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 201));
+    check("... and more than the gold affords is refused", sessionTalkService(s, &buy, "99") == SessionServiceFailed);
+    ConversationStep shop = riddle;
+    shop.flags = DialogTopicUseKey;
+    check("a shop topic is for the front end's screen", sessionTalkService(s, &shop, NULL) == SessionServiceNeedScreen);
+    sessionFree(s);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: a session starts");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: a session starts");
     testCombat("YENDOR2_GAME_DIR", "../../yendor2/game");
+    for (int g = 2; g <= 3; g++) {
+        const char *dirI = getenv(g == 2 ? "YENDOR2_GAME_DIR" : "YENDOR3_GAME_DIR");
+        char pathI[512];
+        snprintf(pathI, sizeof(pathI), "%s/WORLD.DAT", dirI ? dirI : (g == 2 ? "../../yendor2/game" : "../../yendor3/game"));
+        size_t sizeI;
+        uint8_t *worldI = readFile(pathI, &sizeI);
+        if (worldI) {
+            testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            free(worldI);
+        }
+    }
     for (int g = 2; g <= 3; g++) {
         const char *dir = getenv(g == 2 ? "YENDOR2_GAME_DIR" : "YENDOR3_GAME_DIR");
         char path[512];

@@ -80,8 +80,17 @@ typedef enum {
        "already triggered" bitmap and, separately, an EMS-backed 4-byte record whose own format isn't
        resolved -- see lockcatalog.h's "LoadCurgameRecord" note). Outcome classified by interact.h. */
     WorldObjectFlagCurgameRecord = 0x4000,
-    /* TryInteractAtPosition always reports a fixed errorCode=4 for this bit and never reads value for it. */
+    /*
+     * TryInteractAtPosition always reports a fixed errorCode=4 for this bit and never reads value for it (the window bake shows no marker). Using the object is
+     * what matters: `start` calls UseItem (dialog.h) with `value` as the NPC id -- every talker, shop and healer is such an object. (2026-10-08)
+     */
     WorldObjectFlagFixedResponse = 0x1000,
+    WorldObjectFlagTalker = 0x1000, /* the same bit, by its use */
+    /*
+     * 0x400: a scripted story event, tested last by `start` (after 0x8000, 0x2000 and 0x1000). Chapter 2 has one (value 1: the Quartz Chamber, which plays the ending
+     * cinematic once three quest flags are set), Chapter 3 six (values 1-6: scripted teleports; HandleScriptedStoryEventTrigger). See storyevent.h. (2026-10-08)
+     */
+    WorldObjectFlagStoryEvent = 0x400,
     /* value is a monster TYPE ID (see monsterpool.h's monsterSpawnFlagTest/Set/Clear -- confirmed by
        cross-referencing the despawn path, which clears the same CURGAME bitmap using a live monster's own
        type id, the same number space) -- a scripted/pre-placed monster-encounter marker. The majority flag

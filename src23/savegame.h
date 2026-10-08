@@ -94,8 +94,16 @@ enum {
     SaveHeaderGold = 0xB4,          /* Bcd4 */
     SaveHeaderOreCounter1 = 0xB8,   /* Bcd4 */
     SaveHeaderOreCounter2 = 0xBC,   /* Bcd4 */
+    SaveHeaderDayTrack = 0x52,      /* u16: the music track a destination sets for 07:00-19:00 (word_36CB1 / ds:0CF2F), 0 = by map page */
+    SaveHeaderNightTrack = 0x54,    /* u16: the same for the night (word_36CB3 / ds:0CF31) */
+    SaveHeaderTravelMode = 0x56,    /* u16, Chapter 3: a destination's small "travel mode" value (ds:0CF33) */
+    SaveHeaderGlobalFlags = 0xD2,   /* the quest / world-state flag bitfield g_globalFlags (DS:0x94D1 / 0xCFAF), SaveHeaderGlobalFlagsSize bytes: see globalflags.h */
+    SaveHeaderGlobalFlagsSize = 0x60,
     SaveHeaderPartySlots = 0x1EC    /* 4 x u16: 1-based party record id, 0 = empty */
 };
+
+/* The offset of the place-flag word: Chapter 2's word_36C79 (bits 1, 2, 4 pick the indoor light gradients, 0x200-0x4000 are the lit light sources) at +0x1A; Chapter 3's travel flags ds:0CEF9 (0x8000 / 0x4000 / 0x2000) at +0x1C. */
+unsigned saveHeaderPlaceFlagsOffset(GameKind kind);
 
 /* g_partyFacing values (ShowCompassDirection, yendor2.asm:30608). */
 typedef enum {
@@ -140,6 +148,9 @@ uint8_t *saveHeaderBcd4(SaveGame *save, unsigned offset);
 
 /* 1-based party record id in UI slot 0-3, or 0 if empty/out of range. */
 uint16_t saveGetPartySlot(const SaveGame *save, unsigned slot);
+
+/* g_globalFlags inside the header: pass to globalflags.h with SaveHeaderGlobalFlagsSize. */
+uint8_t *saveGlobalFlags(SaveGame *save);
 
 /* Copies the save's name into out (always NUL-terminated). */
 void saveGetName(const SaveGame *save, char out[SaveNameBufferSize]);

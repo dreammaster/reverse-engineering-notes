@@ -420,6 +420,37 @@ unsigned travelDestinationCount(GameKind game) {
     return game == GameYendor2 ? TravelDestinationCountYendor2 : TravelDestinationCountYendor3;
 }
 
+TravelArrival travelArrival(GameKind game, const TravelDestination *d, uint16_t placeFlags, uint16_t clockMinutes) {
+    TravelArrival a;
+    a.x = d->worldX;
+    a.y = d->worldY;
+    a.facing = d->facing;
+    a.sound = d->sound;
+    a.dayTrack = d->rawA;
+    a.nightTrack = d->rawB;
+    a.travelMode = d->rawC;
+    a.tickLights = false;
+    if (game == GameYendor3) {
+        a.placeFlags = d->rawD;
+        return a;
+    }
+    a.travelMode = 0;
+    a.placeFlags = (uint16_t)(placeFlags & 0xFFF8);
+    if (d->flags & 0x8000) {
+        a.placeFlags |= 4;
+    } else if (d->flags & 0x4000) {
+        a.tickLights = true;
+        a.placeFlags |= 2;
+    } else if (d->flags & 0x1000) {
+        a.placeFlags |= 1;
+    }
+    if ((d->flags & 0x800) && a.x == 98 && a.y == 83 && (clockMinutes <= 0x1A4 || clockMinutes >= 0x474)) {
+        a.x = 378;
+        a.y = 227;
+    }
+    return a;
+}
+
 bool travelDestinationLookup(GameKind game, unsigned id, TravelDestination *out) {
     unsigned count = travelDestinationCount(game);
     if (id < 1 || id > count) {

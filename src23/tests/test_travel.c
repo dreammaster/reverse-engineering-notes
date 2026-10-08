@@ -195,7 +195,40 @@ static void testExamineKey(void) {
     check("Chapter 2 has no such gate", travelExamineKey(GameYendor2, 12, g_flags, sizeof(g_flags), true) == TravelExamineTravels);
 }
 
+static void testArrival(void) {
+    TravelDestination d;
+    travelDestinationLookup(GameYendor2, 1, &d); /* flags 0x8000 */
+    TravelArrival a = travelArrival(GameYendor2, &d, 0x2003, 600);
+    check("Chapter 2: a 0x8000 destination sets place bit 4 and keeps the lit-light bits", a.placeFlags == 0x2004 && a.x == d.worldX && a.y == d.worldY && a.facing == d.facing && !a.tickLights);
+    travelDestinationLookup(GameYendor2, 4, &d); /* flags 0 with tracks 12 / 19 */
+    a = travelArrival(GameYendor2, &d, 0x0007, 600);
+    check("... flags 0 clears the three place bits and sets the day / night tracks", a.placeFlags == 0 && a.dayTrack == 0x0C && a.nightTrack == 0x13);
+    unsigned with4000 = 0, with1000 = 0, relocated = 0, found800 = 0;
+    for (unsigned id = 1; id <= travelDestinationCount(GameYendor2); id++) {
+        travelDestinationLookup(GameYendor2, id, &d);
+        a = travelArrival(GameYendor2, &d, 0, 600);
+        if (!(d.flags & 0x8000) && (d.flags & 0x4000)) {
+            with4000 += a.tickLights && a.placeFlags == 2;
+        } else if (!(d.flags & 0x8000) && (d.flags & 0x1000)) {
+            with1000 += !a.tickLights && a.placeFlags == 1;
+        }
+        if ((d.flags & 0x800) && d.worldX == 98 && d.worldY == 83) {
+            found800++;
+            TravelArrival night = travelArrival(GameYendor2, &d, 0, 100), day = travelArrival(GameYendor2, &d, 0, 600), dusk = travelArrival(GameYendor2, &d, 0, 0x474);
+            relocated += night.x == 378 && night.y == 227 && day.x == 98 && day.y == 83 && dusk.x == 378;
+        }
+    }
+    d.flags = 0x4000;
+    a = travelArrival(GameYendor2, &d, 0x0005, 600);
+    check("... 0x1000 destinations set bit 1 (the real data has no 0x4000 one: a synthetic one ticks the lights and sets bit 2)", with1000 > 0 && with4000 == 0 && a.tickLights && a.placeFlags == 2);
+    check("... a 0x800 destination at (98, 83) sends the party to (378, 227) at night and dawn only", found800 == 0 || relocated == found800);
+    travelDestinationLookup(GameYendor3, 1, &d);
+    a = travelArrival(GameYendor3, &d, 0x1234, 600);
+    check("Chapter 3: the place word is replaced by rawD and the travel mode comes from rawC", a.placeFlags == d.rawD && a.travelMode == d.rawC && !a.tickLights);
+}
+
 int main(void) {
+    testArrival();
     testDestinationCounts();
     testDestinationLookup();
     testCheckUnlockNoGateEntry();

@@ -7538,6 +7538,40 @@ State the original touches and the picture does not need: `g_gameClockMinutes = 
 `UpdateScrollingBannerWindow`, bit `0x8000` of `word_3295A` while the first panels are up (cleared at the first fade), and bit `0x800` of `g_uiScratchFlags3`
 (set at the start, cleared before the picture 10 fade, set again for the direct-to-VGA panel).
 
+### Using a world object: destinations, talkers, story events; where the global flags live (2026-10-08)
+
+**The dispatch.** The click on the view (`start`, yendor2.asm:1058E; Chapter 3 yendor3.asm:535) runs `ProbeFacingTile` and tests the found object's flags in this order: `0x8000` a door
+or chest (`UseAbilityCommand(value)`: open, search, loot), `0x2000` a destination (`TravelToDestination(value)`), `0x1000` a talker (`UseItem(value)`: NPC id `value`, dialog.h --
+every talker, shop and healer), `0x400` a story event. Nothing found: the status message at DS:0x7D71. `src23/session.c` `sessionInteract` is this dispatch.
+
+**Story events (`0x400`).** Chapter 2 has one such object (WORLD.DAT cell (340, 98), value 1: the Quartz Chamber): with the three global flags `0x69`, `0x6A`, `0x6B` all set `start` stops
+the music, plays sound event `_val30` and runs `PlayStudioCreditsIntro` -- Chapter 2's ending cinematic, see above -- then the intro picture and back to the title; without them it
+shows the two lines at DS:0x86AD ("YOU ARE NOT ..."). Chapter 3 has six (values 1-6; cells (40, 62) (69, 50) (352, 68) (487, 32) (603, 44) (635, 136)) handled by
+`HandleScriptedStoryEventTrigger` (yendor3.asm:21124), scripted teleports of the party with quest-flag guards and, for two of them, item conversions; the table (`storyevent.c`):
+
+| value | needs | does |
+|---|---|---|
+| 1 | not done (flag 5) | sets flag 5; sound 0x21; travel mode 2; to (397, 94) facing west; clears the day / night tracks; text "YOU HAVE ARRIVED IN THAINE." |
+| 2 | flag 0x1B (silent without) | travel flags &= 0x1FFC then \|= 0x2000; sound 0x54; mode 4; to (540, 121) facing south |
+| 3 | flag 0x2E (text "LOCKED" without) | mode 5; to (638, 36) facing west; travel flags \|= 0x2000 |
+| 4 | -- | mode 5; to (619, 37) facing north; travel flags \|= 0x2000; every item 0xC6 becomes 0xCD (`SwapItemInstanceEverywhere`); sound 0x2C; text "THE RINGS HAVE BEEN DRAINED." if any changed |
+| 5 | flag 0x91 ("LOCKED" without) | sets flag 0x9D (the artifact realm); mode 8; to (604, 123) facing east; travel flags \|= 0x4000; sound 0x2C |
+| 6 | -- | clears flag 0x9D; mode 2; to (332, 70) facing south; travel flags &= ~0x4000; holding item 0x183 sets flag 0x9E; every item 0x17F-0x181 (the SWORD / HAMMER / TRIDENT OF LIGHT) is removed; text "ALL OF YOUR NEW WEAPONS ARE GONE" if any went |
+
+**Travel arrival** (`TravelToDestination`, yendor2.asm:18170 / yendor3.asm:10081; `travelArrival`). Chapter 2: the sound; place flags (`word_36C79`) low three bits := 4 (record flags
+0x8000) / 2 (0x4000, and the lit lights tick) / 1 (0x1000) / 0 -- these bits are the indoor lighting gradients A / B / C of lighting.h, and the same word holds the lit
+light sources; position and facing, except that a 0x800 destination at (98, 83) becomes (378, 227) when the clock is at or before 07:00 or at or after 19:00; the destination's
+two music tracks (`word_36CB1` / `word_36CB3`, day 07:00-19:00 / night, overriding the map-page music, music.h). Chapter 3: travel mode `ds:0CF33` (the record's `rawC`), the whole
+travel-flag word `ds:0CEF9` := rawD, position and facing, tracks `ds:0CF2F` / `0CF31`. A locked destination (record flag `0x2000`; Chapter 3 `0xC000`) goes through
+`IsDestinationUnlocked` (`travelCheckUnlock`), which may ask for a password (`travelResolvePassword`).
+
+**The save header's globals** (the DS block `0x36C5F` / `0xCEDD`, 500 bytes = header record `+0x00` of the CURGAME / SAVGAME file; every one of these DS words is `header + (address - base)`):
+the place-flag word at `+0x1A` (Chapter 2) / `+0x1C` (Chapter 3: the travel flags); the day and night music tracks at `+0x52` / `+0x54`; the travel mode (Chapter 3) at `+0x56`;
+and **`g_globalFlags` at `+0xD2`** (DS:0x94D1 / 0xCFAF), at most 96 bytes -- the data from `+0x132` on is a palette-like table. That settles the long-open question "where are the
+quest flags saved": in the header, with everything else of the DS state block. `GrantMonsterRewards`' death flags, the topic flags of dialog.h and the story events above all index it;
+the highest index used by the dialog data is 183 (Chapter 2) / 224 (Chapter 3), well inside the 768 the 96 bytes hold. (Chapter 3's new-game header has `0xFF` bytes at `+0xF2`..`+0x10D`: 224
+flags set from the start.)
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "combat.h"
+#include "conversation.h"
 #include "dungeongrid.h"
 #include "game.h"
 #include "gameclock.h"
@@ -17,6 +18,8 @@
 #include "movement.h"
 #include "random.h"
 #include "spellrecord.h"
+#include "storyevent.h"
+#include "travel.h"
 #include "rest.h"
 #include "savegame.h"
 #include "viewport.h"
@@ -65,6 +68,12 @@ typedef struct GameSession {
     uint16_t facing; /* SaveFacing */
     GameClock clock;
     LightSourceState light; /* the carried and spell light timers (lightsource.h); the view's light tiers come from litFlags */
+    DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
+    Conversation talk;      /* the talk in progress (talking) or the last one */
+    bool talking;
+    uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
+    unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
+    unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
     uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
     SessionCombat combat;
     char log[96]; /* the last thing that happened, as the original's message area would say it */
@@ -125,6 +134,62 @@ SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned sp
  */
 typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
+
+/*
+ * The use command on the object ahead (the click on the view in `start`, yendor2.asm:1058E): the party's own cell first, else the next one; the object's flag picks
+ * what happens, in the original's order -- door 0x8000, destination 0x2000, talker 0x1000, story event 0x400.
+ *   Door          a lock or chest: sessionUnlock / sessionLoot
+ *   Travelled     a destination (travel.h): the party is there (sessionScene shows it; `pendingSound` holds the arrival sound; the place flags, the day / night tracks
+ *                 and, in Chapter 3, the travel mode are in the save header)
+ *   TravelRefused a locked destination; `messageId` is the canned rejection (travelCheckUnlock)
+ *   TravelPassword the destination asks for a password (`promptId`): answer with sessionTravelPassword
+ *   Talker        an NPC (`value` = the id, dialog.h)
+ *   StoryEvent    Chapter 3's scripted teleports (storyevent.h), carried out; `textOffset` / `textLines` name a message in the executable's data segment to show
+ *   StoryRefused  the event's condition is not met (`textOffset`: the one line it shows)
+ *   Ending        Chapter 2's Quartz Chamber with the three quest flags: play introEndingScript (the original also sets the clock to 08:00)
+ *   EndingNotReady the same without them: the two-line message at textOffset
+ */
+typedef enum {
+    SessionInteractNothing,
+    SessionInteractDoor,
+    SessionInteractTravelled,
+    SessionInteractTravelRefused,
+    SessionInteractTravelPassword,
+    SessionInteractTalker,
+    SessionInteractStoryEvent,
+    SessionInteractStoryRefused,
+    SessionInteractEnding,
+    SessionInteractEndingNotReady
+} SessionInteractKind;
+
+typedef struct {
+    SessionInteractKind kind;
+    unsigned value;
+    unsigned messageId, promptId;
+    unsigned textOffset, textLines;
+} SessionInteract;
+
+SessionInteract sessionInteract(GameSession *session);
+
+/*
+ * Talking (conversation.h; the loop of UseItem). sessionInteract reports SessionInteractTalker with the NPC id; sessionTalkStart then loads the NPC, runs its opening
+ * topic and lists the topics (`talk.listed`, up to ten; `sessionTalkChoose(n)` runs the n-th, 0 = Escape's choice, the last). Each step says what the topic asks of
+ * the caller (ConversationStep); sessionTalkService carries out the services that need no screen:
+ *   attribute / experience tomes (dialogservice.h), the ore purchase (`text` = the quantity typed) and the riddle answer (`text` = the answer): Done / Failed, and a
+ *   conditional topic is resolved with the outcome;
+ *   SessionServiceNeedText: the topic needs the typed text; SessionServiceNeedScreen: the healer, trainer, challenge, mount, shop, sell, enhance and repair services (their decision
+ *   modules are dialogservice.h, shop.h, chest.h; the choice of party member and item is the front end's); None: a plain topic.
+ * With NPC speaker mode set (conversationNeedsSpeaker) the original first asks which member speaks.
+ */
+typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen } SessionService;
+
+bool sessionTalkStart(GameSession *session, unsigned npcId, ConversationStep *first);
+ConversationStep sessionTalkChoose(GameSession *session, unsigned number);
+void sessionTalkResolve(GameSession *session, bool success);
+SessionService sessionTalkService(GameSession *session, const ConversationStep *step, const char *text);
+
+/* The typed password for the destination sessionInteract asked about; true (and the party travels) when it is right. */
+bool sessionTravelPassword(GameSession *session, const char *typed);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);

@@ -6,13 +6,19 @@
 
 #include "chest.h"
 #include "explore.h"
+#include "globalflags.h"
 #include "lighting.h"
 #include "newgame.h"
 #include "consumable.h"
+#include "dialogservice.h"
 #include "party.h"
 #include "spelljump.h"
 #include "spellcast.h"
+#include "storyevent.h"
+#include "travel.h"
 #include "windowbake.h"
+
+static uint16_t *placeWord(GameSession *s);
 
 GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     GameSession *s = calloc(1, sizeof(*s));
@@ -23,7 +29,7 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     saveGameInit(&s->save, game);
     if (!worldMapParseWorldDat(&s->map, game, worldDat, size) || !worldObjectTableParseWorldDat(&s->objects, game, worldDat, size) ||
         !lockCatalogParseWorldDat(&s->locks, game, worldDat, size) || !monsterCatalogParseWorldDat(&s->monsters, game, worldDat, size) ||
-        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !spellCatalogParseWorldDat(&s->spells, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
+        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !spellCatalogParseWorldDat(&s->spells, game, worldDat, size) || !dialogCatalogParseWorldDat(&s->dialogs, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
         free(s);
         return NULL;
     }
@@ -35,6 +41,7 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     s->facing = saveHeaderGetU16(&s->save, SaveHeaderFacing);
     s->clock.minutes = saveHeaderGetU16(&s->save, SaveHeaderClockMinutes);
     s->clock.day = s->clock.month = s->clock.year = 1;
+    *placeWord(s) = saveHeaderGetU16(&s->save, saveHeaderPlaceFlagsOffset(game));
     randomStart(&s->rng, 30, 50);
     ExploreReveal revealed;
     exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
@@ -82,7 +89,7 @@ static void combatCheckWipe(GameSession *s) {
 /* ProcessCombatRound after a combatant has acted: reap the dead, then the next combatant. */
 static void combatAfterAction(GameSession *s) {
     SessionCombat *c = &s->combat;
-    CombatRoundOutcome outcome = combatProcessRound(c->slots, c->order, c->count, c->defeated, &c->cursor, &c->staging, NULL, 0);
+    CombatRoundOutcome outcome = combatProcessRound(c->slots, c->order, c->count, c->defeated, &c->cursor, &c->staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
     if (outcome == CombatRoundNoMonstersLeft) {
         monsterRewardsAward(&s->save, s->game, &c->staging);
         memset(&c->staging, 0, sizeof(c->staging));
@@ -172,7 +179,7 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
 void sessionScene(GameSession *s, ViewScene *scene, DungeonGridCell cells[ViewportCellCount]) {
     viewportBuild(&s->grid, s->facing, s->x, s->y, cells);
     viewportComputeVisibility(s->game, cells);
-    LightingInput light = {s->game == GameYendor2 ? s->light.litFlags : (uint16_t)0, s->light.litFlags, s->clock.minutes, s->facing};
+    LightingInput light = {s->game == GameYendor2 ? s->light.litFlags : s->travelFlags, s->light.litFlags, s->clock.minutes, s->facing};
     memset(scene, 0, sizeof(*scene));
     bool reset;
     lightingComputeGradient(s->game, &light, 0, scene->gradient, &reset);
@@ -459,6 +466,302 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         combatRunMonsters(s);
     }
     return SessionUseDone;
+}
+
+/* The place-flag word of the game (Chapter 2: the one that also carries the lit light sources; Chapter 3: the travel flags), kept in step with the save header. */
+static uint16_t *placeWord(GameSession *s) {
+    return s->game == GameYendor2 ? &s->light.litFlags : &s->travelFlags;
+}
+
+static void storePlace(GameSession *s) {
+    saveHeaderSetU16(&s->save, saveHeaderPlaceFlagsOffset(s->game), *placeWord(s));
+}
+
+static bool flagSet(GameSession *s, int index) {
+    return globalFlagTest(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, (unsigned)index);
+}
+
+/* Puts the party at a new place: position and facing, a rebuilt window, the cells around it revealed. */
+static void arriveAt(GameSession *s, int x, int y, uint16_t facing) {
+    s->x = x;
+    s->y = y;
+    s->facing = facing;
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+    sessionRebuild(s);
+}
+
+static void travelTo(GameSession *s, unsigned destinationId) {
+    TravelDestination d;
+    if (!travelDestinationLookup(s->game, destinationId, &d)) {
+        return;
+    }
+    TravelArrival a = travelArrival(s->game, &d, *placeWord(s), s->clock.minutes);
+    *placeWord(s) = a.placeFlags;
+    storePlace(s);
+    saveHeaderSetU16(&s->save, SaveHeaderDayTrack, a.dayTrack);
+    saveHeaderSetU16(&s->save, SaveHeaderNightTrack, a.nightTrack);
+    if (s->game == GameYendor3) {
+        saveHeaderSetU16(&s->save, SaveHeaderTravelMode, a.travelMode);
+    }
+    s->pendingSound = a.sound;
+    arriveAt(s, a.x, a.y, a.facing);
+    say(s, "travelled to destination %u", destinationId);
+}
+
+/* Moves one item at a time from `from` to `to` (SwapItemInstanceEverywhere's loop; only the main inventories and the global slots are searched). */
+static unsigned swapItemEverywhere(GameSession *s, uint16_t from, uint16_t to) {
+    unsigned swapped = 0;
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+    for (;;) {
+        ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, from, from);
+        if (!r.found) {
+            return swapped;
+        }
+        uint8_t *record = r.inGlobalTable ? NULL : saveGamePartyRecordById(&s->save, r.partyRecordId);
+        uint8_t *slot = r.inGlobalTable ? globalSlots + r.slotOffset : record ? record + r.slotOffset : NULL;
+        if (!slot) {
+            return swapped;
+        }
+        itemSlotSet(slot, to, itemSlotExtra(slot));
+        swapped++;
+    }
+}
+
+/* Removes every item of the id range, spending a charge at a time (the SWORD / HAMMER / TRIDENT OF LIGHT). */
+static unsigned removeItemRange(GameSession *s, uint16_t low, uint16_t high) {
+    unsigned removed = 0;
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+    for (unsigned guard = 0; guard < 64; guard++) {
+        ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, low, high);
+        if (!r.found) {
+            break;
+        }
+        if (r.inGlobalTable) {
+            itemSlotConsumeGlobalCharge(&s->items, globalSlots + r.slotOffset);
+        } else {
+            uint8_t *record = saveGamePartyRecordById(&s->save, r.partyRecordId);
+            if (!record) {
+                break;
+            }
+            partyRemoveMultiStatEffect(record, itemEffectEntry(&s->items, itemCatalogRecord(&s->items, r.itemId)));
+            partyConsumeItemCharge(record, &s->items, record + r.slotOffset);
+        }
+        removed++;
+    }
+    return removed;
+}
+
+/* HandleScriptedStoryEventTrigger (Chapter 3), see storyevent.h. */
+static SessionInteract storyEventRun(GameSession *s, unsigned value) {
+    SessionInteract out;
+    memset(&out, 0, sizeof(out));
+    out.kind = SessionInteractNothing;
+    out.value = value;
+    const StoryEvent *e = storyEvent(s->game, value);
+    if (!e) {
+        return out;
+    }
+    if (e->doneFlag && flagSet(s, e->doneFlag)) {
+        return out;
+    }
+    if (e->requireFlag && !flagSet(s, e->requireFlag)) {
+        if (e->failTextOffset) {
+            out.kind = SessionInteractStoryRefused;
+            out.textOffset = e->failTextOffset;
+            out.textLines = 1;
+        }
+        return out;
+    }
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    if (e->doneFlag) {
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, (unsigned)e->doneFlag);
+    }
+    if (e->setFlag) {
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, (unsigned)e->setFlag);
+    }
+    if (e->clearFlag) {
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, (unsigned)e->clearFlag);
+    }
+    *placeWord(s) = (uint16_t)((*placeWord(s) & e->travelFlagsAnd) | e->travelFlagsOr);
+    storePlace(s);
+    saveHeaderSetU16(&s->save, SaveHeaderTravelMode, (uint16_t)e->travelMode);
+    if (e->clearTracks) {
+        saveHeaderSetU16(&s->save, SaveHeaderDayTrack, 0);
+        saveHeaderSetU16(&s->save, SaveHeaderNightTrack, 0);
+    }
+    unsigned changed = 0;
+    if (e->swapFrom) {
+        changed += swapItemEverywhere(s, e->swapFrom, e->swapTo);
+    }
+    if (e->checkItem) {
+        uint8_t globalSlots[24];
+        memset(globalSlots, 0, sizeof(globalSlots));
+        if (itemRangeAvailable(globalSlots, &s->save, e->checkItem, e->checkItem).found) {
+            globalFlagSet(flags, SaveHeaderGlobalFlagsSize, (unsigned)e->checkItemFlag);
+        }
+    }
+    if (e->removeLow) {
+        changed += removeItemRange(s, e->removeLow, e->removeHigh);
+    }
+    s->pendingSound = e->sound;
+    arriveAt(s, e->x, e->y, e->facing);
+    out.kind = SessionInteractStoryEvent;
+    if (e->doneTextOffset && (e->doneTextAlways || changed)) {
+        out.textOffset = e->doneTextOffset;
+        out.textLines = 3;
+    }
+    say(s, "story event %u", value);
+    return out;
+}
+
+SessionInteract sessionInteract(GameSession *s) {
+    SessionInteract out;
+    memset(&out, 0, sizeof(out));
+    if (s->combat.active || s->combat.wiped) {
+        return out;
+    }
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    if (probe.outcome == WorldObjectProbeNone) {
+        return out;
+    }
+    unsigned flags = probe.object.flags, value = probe.object.value;
+    out.value = value;
+    if (flags & WorldObjectFlagDoor) {
+        out.kind = SessionInteractDoor;
+        return out;
+    }
+    if (flags & WorldObjectFlagUnknown2000) { /* a destination: UseAbilityCommand's neighbour in start, then TravelToDestination */
+        TravelDestination d;
+        if (!travelDestinationLookup(s->game, value, &d)) {
+            return out;
+        }
+        unsigned gate = s->game == GameYendor2 ? 0x2000u : 0xC000u;
+        if (d.flags & gate) {
+            TravelUnlockCheck check = travelCheckUnlock(s->game, value, d.flags, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+            if (check.outcome == TravelUnlockNeedsPassword) {
+                out.kind = SessionInteractTravelPassword;
+                out.promptId = check.promptId;
+                s->pendingTravel = value;
+                return out;
+            }
+            if (check.outcome != TravelUnlockAlreadyUnlocked) {
+                out.kind = check.outcome == TravelUnlockDeniedSilent ? SessionInteractNothing : SessionInteractTravelRefused;
+                out.messageId = check.messageId;
+                return out;
+            }
+        }
+        travelTo(s, value);
+        out.kind = SessionInteractTravelled;
+        return out;
+    }
+    if (flags & WorldObjectFlagTalker) {
+        out.kind = SessionInteractTalker;
+        return out;
+    }
+    if (flags & WorldObjectFlagStoryEvent) {
+        if (s->game == GameYendor3) {
+            return storyEventRun(s, value);
+        }
+        if (value == 1) {
+            if (storyEndingReady(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize)) {
+                out.kind = SessionInteractEnding;
+            } else {
+                out.kind = SessionInteractEndingNotReady;
+                out.textOffset = 0x86AD;
+                out.textLines = 2;
+            }
+        }
+    }
+    return out;
+}
+
+bool sessionTalkStart(GameSession *s, unsigned npcId, ConversationStep *first) {
+    const uint8_t *npc = dialogNpc(&s->dialogs, npcId);
+    if (!npc || s->combat.active || s->combat.wiped) {
+        return false;
+    }
+    uint8_t globalSlots[24];
+    memset(globalSlots, 0, sizeof(globalSlots));
+    unsigned item = dialogGetU16(npc, DialogNpcRequiredItemRange);
+    bool held = item && itemRangeAvailable(globalSlots, &s->save, (uint16_t)item, (uint16_t)item).found;
+    s->talking = conversationStart(&s->talk, &s->dialogs, npcId, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, held, first);
+    if (s->talking && s->talk.ended) {
+        s->talking = false;
+    }
+    return s->talking || (first && first->ended);
+}
+
+ConversationStep sessionTalkChoose(GameSession *s, unsigned number) {
+    ConversationStep step = conversationChoose(&s->talk, number, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+    if (s->talk.ended) {
+        s->talking = false;
+    }
+    return step;
+}
+
+void sessionTalkResolve(GameSession *s, bool success) {
+    conversationResolve(&s->talk, success, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+}
+
+static void parseQuantity(const char *text, Bcd4 out) {
+    unsigned value = 0;
+    for (; text && *text >= '0' && *text <= '9' && value < 100000; text++) {
+        value = value * 10 + (unsigned)(*text - '0');
+    }
+    memset(out, 0, 4);
+    for (unsigned chunk = value; chunk > 0;) { /* up to 99,999: add in steps a u16 holds */
+        unsigned part = chunk > 9999 ? 9999 : chunk;
+        bcd4AddU16(out, (uint16_t)part);
+        chunk -= part;
+    }
+}
+
+SessionService sessionTalkService(GameSession *s, const ConversationStep *step, const char *text) {
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    const uint8_t *npc = s->talk.npc;
+    if (!npc || !step || !step->topic) {
+        return SessionServiceNone;
+    }
+    if (step->flags & DialogTopicAttributeBoost) {
+        return dialogApplyAttributeTome(npc, &s->save, flags, SaveHeaderGlobalFlagsSize).applied ? SessionServiceDone : SessionServiceFailed;
+    }
+    if (step->flags & DialogTopicExperienceBoost) {
+        return dialogApplyExperienceTome(npc, &s->save, s->game, flags, SaveHeaderGlobalFlagsSize).applied ? SessionServiceDone : SessionServiceFailed;
+    }
+    if (step->flags & DialogTopicBuy) {
+        if (!text) {
+            return SessionServiceNeedText;
+        }
+        bool ok;
+        if (step->buy) {
+            Bcd4 quantity;
+            parseQuantity(text, quantity);
+            ok = dialogBuyOre(step->arg, saveHeaderBcd4(&s->save, SaveHeaderGold), saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), quantity);
+        } else {
+            ok = dialogCheckRiddleAnswer(s->game, step->arg, text);
+        }
+        if (step->needsResolve) {
+            sessionTalkResolve(s, ok);
+        }
+        return ok ? SessionServiceDone : SessionServiceFailed;
+    }
+    if (step->flags & (DialogTopicRepair | DialogTopicEnhance | DialogTopicSell | DialogTopicUseKey | DialogTopicCheckKey) || step->typeService != DialogServiceNone) {
+        return SessionServiceNeedScreen;
+    }
+    return SessionServiceNone;
+}
+
+bool sessionTravelPassword(GameSession *s, const char *typed) {
+    if (!s->pendingTravel || !travelResolvePassword(s->game, s->pendingTravel, typed, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize)) {
+        return false;
+    }
+    unsigned id = s->pendingTravel;
+    s->pendingTravel = 0;
+    travelTo(s, id);
+    return true;
 }
 
 typedef struct {

@@ -22,12 +22,9 @@
  * a no-op) and the real death-flag table's indices (e.g. type id 15 ->
  * index 14 in Chapter 2) are exactly this index space.
  *
- * NOT confirmed: how many total flags exist, or whether g_globalFlags is
- * itself part of a CURGAME section (0x94D1 doesn't match any of
- * savegame.h's known section offsets) or purely in-memory/session-only --
- * left as an open question. This module operates on a caller-supplied
- * byte buffer rather than assuming a fixed size, so it stays correct
- * regardless of how that's eventually resolved.
+ * Where it is saved (found 2026-10-08): in the header record of CURGAME / SAVGAME, savegame.h's SaveHeaderGlobalFlags (+0xD2, SaveHeaderGlobalFlagsSize = 96 bytes: DS:0x94D1 in
+ * Chapter 2 and 0xCFAF in Chapter 3 are both exactly +0xD2 from the block that holds the party position at +0x98), saveGlobalFlags(). This module still operates on a
+ * caller-supplied buffer.
  */
 
 /* buffer must be at least ((index + 15) / 16) * 2 bytes; false (no-op) if it's too small for size. */
