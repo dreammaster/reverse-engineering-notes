@@ -26,6 +26,9 @@ typedef struct {
     int kind; /* 0 none, 1 map suffix, 2 level suffix */
 } LocationName;
 
+/* True if the block has a name (name index not 0): the blocks the clue book lists. */
+bool locationBlockNamed(GameKind game, const uint8_t *worldDat, size_t size, unsigned block);
+
 /* False if the block number or the file is out of range. */
 bool locationName(GameKind game, const uint8_t *worldDat, size_t size, unsigned block, const char *levelTemplate, const char *mapTemplate, LocationName *out);
 

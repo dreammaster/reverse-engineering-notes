@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "exedata.h"
 #include "game.h"
 #include "localmap.h"
 #include "location.h"
@@ -29,6 +30,9 @@ typedef struct {
     unsigned label;
     int screenX, screenY;    /* where the marker sits on the page */
 } ClueMapMarker;
+
+/* The heading of the map list (MAPS, DS:0x8871; Chapter 3 DS:0x8B92: the strings follow SPELL INFORMATION and MAGIC USER INFORMATION). */
+bool clueMapHeading(const ExeData *exe, GameKind game, char out[24]);
 
 /* The markers of map `mapId` (1-based); returns how many were stored (at most `max`). */
 unsigned clueMapMarkers(GameKind game, const uint8_t *worldDat, size_t size, unsigned mapId, ClueMapMarker *out, unsigned max);

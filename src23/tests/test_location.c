@@ -33,6 +33,7 @@ static void testSynthetic(void) {
     check("a level block", locationName(GameYendor2, world, sizeof(world), 5, " LEVEL X", " MAP X", &n) && strcmp(n.name, "SOME PLACE") == 0 && strcmp(n.suffix, " LEVEL 1") == 0 && n.kind == 2);
     check("a map block (character 1)", locationName(GameYendor2, world, sizeof(world), 6, " LEVEL X", " MAP X", &n) && strcmp(n.suffix, " MAP 3") == 0 && n.kind == 1);
     check("no suffix", locationName(GameYendor2, world, sizeof(world), 7, " LEVEL X", " MAP X", &n) && n.kind == 0 && n.suffix[0] == 0);
+    check("a block is named when its name index is not 0", locationBlockNamed(GameYendor2, world, sizeof(world), 5) && !locationBlockNamed(GameYendor2, world, sizeof(world), 8) && !locationBlockNamed(GameYendor2, world, sizeof(world), 120));
     check("out of range", !locationName(GameYendor2, world, sizeof(world), 120, " LEVEL X", " MAP X", &n) && !locationName(GameYendor2, world, 100, 0, "", "", &n));
 }
 

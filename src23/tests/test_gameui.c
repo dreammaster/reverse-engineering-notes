@@ -4,7 +4,7 @@
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
- *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../cluemonster.c ../cluespell.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
+ *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
  */
@@ -197,6 +197,19 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("Escape goes back to the list", ui.clueScreen == 1 && ui.clueList.count == types && ui.overlay == UiOverlayClue);
         gameUiKey(&ui, UiKeyEscape, false);
         check("and once more to the walk through", ui.clueScreen == 0 && ui.overlay == UiOverlayClue);
+        gameUiKey(&ui, UiKeyF1, false);
+        gameUiDraw(&ui);
+        unsigned maps = sum(ui.screen);
+        check("F1 lists the maps", ui.clueScreen == 1 && ui.clueCategory == 1 && ui.clueList.count > 14 && maps != list);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        unsigned mapPage = sum(ui.screen);
+        check("Enter shows the map page", ui.clueScreen == 2 && ui.clueMarker == -1 && mapPage != maps);
+        gameUiKey(&ui, UiKeyRight, false);
+        gameUiDraw(&ui);
+        check("Right picks a legend marker when the map has one", ui.clueMarker == 0 ? sum(ui.screen) != mapPage : sum(ui.screen) == mapPage);
+        gameUiKey(&ui, UiKeyEscape, false);
+        gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyF3, false);
         gameUiDraw(&ui);
         unsigned spells = sum(ui.screen);

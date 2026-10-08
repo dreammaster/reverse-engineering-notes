@@ -17,6 +17,10 @@ static unsigned u16(const uint8_t *p) {
     return p[0] | (unsigned)(p[1] << 8);
 }
 
+bool clueMapHeading(const ExeData *exe, GameKind game, char out[24]) {
+    return exeDataString(exe, game == GameYendor2 ? 0x8871 : 0x8B92, out, 24);
+}
+
 unsigned clueMapMarkers(GameKind game, const uint8_t *worldDat, size_t size, unsigned mapId, ClueMapMarker *out, unsigned max) {
     const Layout *l = game == GameYendor2 ? &kYendor2 : &kYendor3;
     unsigned count = 0;

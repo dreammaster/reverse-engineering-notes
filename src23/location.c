@@ -10,6 +10,11 @@ typedef struct {
 static const Layout kYendor2 = {460800, 461520, 120};
 static const Layout kYendor3 = {537600, 538440, 140};
 
+bool locationBlockNamed(GameKind game, const uint8_t *worldDat, size_t size, unsigned block) {
+    const Layout *l = game == GameYendor2 ? &kYendor2 : &kYendor3;
+    return block < l->blocks && l->records + 6 * (size_t)(block + 1) <= size && worldDat[l->records + 6 * (size_t)block + 4] != 0;
+}
+
 bool locationName(GameKind game, const uint8_t *worldDat, size_t size, unsigned block, const char *levelTemplate, const char *mapTemplate, LocationName *out) {
     const Layout *l = game == GameYendor2 ? &kYendor2 : &kYendor3;
     if (block >= l->blocks || l->records + 6 * (size_t)(block + 1) > size) {
