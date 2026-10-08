@@ -1150,7 +1150,8 @@ ITEMS" (0x8A at (8, 25) and (8, 31)): category 8 icon at (8, 42 + 16 row), label
 0x79E5 / 0x7A84 exit labels; Chapter 3 0x7D5A, 0x7D17 / 0x7DB6 (`dump_creation_item_strings.py`). The roll screen (`ShowCharacterStats`) is the new
 hero's character sheet with "SELECT AN" / "OPTION" (0x8A at (8, 25) and (8, 31); DS:0x7A11, Chapter 3 0x7D43), "ROLL ATTRIBUTES" (R highlighted) at
 (8, 51), "PICK ITEMS" (I highlighted) at (8, 69) (0x8572 / 0x8899) and the `QUIT "CREATE"` label; R rolls again, I accepts, Q quits creation.
-The summary menu (`ShowCharacterSummary`, the hub after the steps) lists KEEP CHARACTER (K, y 51), CLASS (C, 69), PORTRAIT (P, 78),
+The item pick always offers the same eight catalog items, constants `InitGlobals` loads (Chapter 2 `_val1`-`_val8` = 0x21E 0x19C 0x1A2 0x1A8 0x16A 0x138 6 0x36; Chapter 3 DS:0xF18-0xF26 =
+8 0xE 0x12 0x16 4 0x19 0x1C 0x1F, written with raw `ds:` operands); up to four are moved into the hero's slots (`src23/creation.c`, `creationMakeHero`). The summary menu (`ShowCharacterSummary`, the hub after the steps) lists KEEP CHARACTER (K, y 51), CLASS (C, 69), PORTRAIT (P, 78),
 ROLL ATTRIBUTES (R, 87), PICK ITEMS (I, 96), NAME CHARACTER (N, 105) at x = 8 under the same "SELECT AN / OPTION" header; K applies the secondary-class
 tier flags and writes the hero out, Q discards. The name prompt (`EditCharacterName`) shows "ENTER THE NAME" and `EditTextField` (`textfield.c`):
 a 13-byte buffer that really holds 12 characters (the 13th is typed into the terminator's slot, beeps and is lost), '-' as the cursor,
