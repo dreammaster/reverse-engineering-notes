@@ -265,7 +265,10 @@ restart:
 				addr = addr * 16 + (d & 15);
 			}
 			cur.p += 4;
+			ui->draw_ox = (ui->abs_d || ui->flag_b || ui->flag_k) ? 0 : w->left;
+			ui->draw_oy = (ui->abs_d || ui->flag_b || ui->flag_k) ? 0 : w->top;
 			if (ui->draw_list) ui->draw_list(ui->draw_list_user, addr);
+			ui->draw_ox = ui->draw_oy = 0;
 			break;
 		}
 		case 6: draw_glyph(ui, 0x20); break;

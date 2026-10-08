@@ -56,7 +56,7 @@ void game_exec_draw_list(unsigned addr) {
 			addr += 6;
 			if (!seg) break;
 		} else {
-			draw_frame(seg, rd16(DG, (uint16_t)(addr + 6)), (int16_t)rd16(DG, (uint16_t)addr), (int16_t)rd16(DG, (uint16_t)(addr + 2)), rd16(DG, (uint16_t)(addr + 4)));
+			draw_frame(seg, rd16(DG, (uint16_t)(addr + 6)), (int16_t)rd16(DG, (uint16_t)addr) + G.ui->draw_ox, (int16_t)rd16(DG, (uint16_t)(addr + 2)) + G.ui->draw_oy, rd16(DG, (uint16_t)(addr + 4)));
 			addr += 8;
 		}
 	}
@@ -75,9 +75,19 @@ static int init_sdl(void) {
 	return window && renderer && texture ? 0 : -1;
 }
 
+/* mouse: position in screen pixels, buttons (1 left, 2 right); the cursor sprite is drawn on the presented picture only */
+static int mouse_x = 160, mouse_y = 100, mouse_btn, mouse_seen, cursor_on, click_reads;
+static uint16_t cursor_seg, cursor_frame;
+
 void video_present(void) {
+	static uint8_t shown[MM3_SCREEN_W * MM3_SCREEN_H];
+	memcpy(shown, SCREEN_MEM, sizeof shown);
+	if (cursor_on && mouse_seen) {
+		Mm3Sprite *s = sprite_for_seg(cursor_seg);
+		if (s && cursor_frame < s->count) mm3_blit_ex(shown, MM3_SCREEN_W, MM3_SCREEN_H, &s->frames[cursor_frame], mouse_x, mouse_y, 0, G.scale_patterns);
+	}
 	for (int i = 0; i < MM3_SCREEN_W * MM3_SCREEN_H; i++) {
-		const uint8_t *c = G.palette.rgb[SCREEN_MEM[i]];
+		const uint8_t *c = G.palette.rgb[shown[i]];
 		pixels[i] = 0xFF000000u | (c[0] << 16) | (c[1] << 8) | c[2];
 	}
 	if (headless) return;
@@ -128,11 +138,20 @@ static unsigned bios_code(SDL_Keycode k, Uint16 mod) {
 void video_pump_events(void) {
 	SDL_Event e;
 	if (headless) {
-		if (script_pos < script_n && kq_head == kq_tail) push_key(script_keys[script_pos++]);
+		if (script_pos < script_n && kq_head == kq_tail && !(script_keys[script_pos] & 0x80000000u)) push_key(script_keys[script_pos++]);
 		return;
 	}
 	while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) exit(0);
+		if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+			int w, h;
+			SDL_GetWindowSize(window, &w, &h);
+			int px, py;
+			Uint32 b = SDL_GetMouseState(&px, &py);
+			mouse_x = px * MM3_SCREEN_W / (w ? w : 1); mouse_y = py * MM3_SCREEN_H / (h ? h : 1);
+			mouse_btn = (b & SDL_BUTTON_LMASK ? 1 : 0) | (b & SDL_BUTTON_RMASK ? 2 : 0);
+			mouse_seen = 1;
+		}
 		if (e.type == SDL_KEYDOWN) {
 			unsigned code = bios_code(e.key.keysym.sym, e.key.keysym.mod);
 			if (code) push_key(code);
@@ -176,6 +195,7 @@ static const char *far_str(Cpu *c, int n) { return (const char *)(SEGP(host_arg(
 void host_vdrv_06_closeWindows(Cpu *c) { mm3_ui_close_windows(G.ui, (int16_t)host_arg(c, 0)); }
 void host_vdrv_1E_openWindow(Cpu *c) {
 	uint16_t toff = host_arg(c, 8), tseg = host_arg(c, 9);
+	if (getenv("MM3_TEXTLOG") && (toff | tseg)) { const char *t = (const char *)(SEGP(tseg) + toff); fprintf(stderr, "WINDOW %d,%d %dx%d:", host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3)); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
 	mm3_ui_open_window(G.ui, host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4),
 		(toff | tseg) ? (const char *)(SEGP(tseg) + toff) : NULL);
 }
@@ -200,9 +220,22 @@ void host_vdrv_0C_showRaw(Cpu *c) { /* a 320x200 picture by name (near pointer) 
 	dos_free(seg);
 }
 void host_vdrv_0F_fade(Cpu *c) { (void)c; video_present(); }
-void host_vdrv_03_hideMouse(Cpu *c) { (void)c; }
-void host_vdrv_27_setCursor(Cpu *c) { (void)c; }
-void host_vdrv_18_getMouse(Cpu *c) { (void)c; c->ax = 0; }
+void host_vdrv_03_hideMouse(Cpu *c) { (void)c; cursor_on = 0; }
+void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg = host_arg(c, 2); cursor_on = 1; }
+/* getMouse(&x, &y) -> buttons.  A scripted click ("mX:Y" in --keys) holds the button for a few polls, then releases */
+void host_vdrv_18_getMouse(Cpu *c) {
+	video_pump_events();
+	if (headless && !click_reads && script_pos < script_n && kq_head == kq_tail && (script_keys[script_pos] & 0x80000000u)) {
+		unsigned v = script_keys[script_pos++];
+		mouse_x = (v >> 12) & 0xFFF; mouse_y = v & 0xFFF; mouse_seen = 1; click_reads = 4;
+	}
+	if (headless) mouse_btn = click_reads > 0;
+	if (click_reads > 0) click_reads--;
+	if (!cursor_on) { c->ax = 0; wr16(SEGP(host_arg(c, 1)), host_arg(c, 0), 0); wr16(SEGP(host_arg(c, 3)), host_arg(c, 2), 0); return; }
+	wr16(SEGP(host_arg(c, 1)), host_arg(c, 0), (uint16_t)mouse_x);
+	wr16(SEGP(host_arg(c, 3)), host_arg(c, 2), (uint16_t)mouse_y);
+	c->ax = (uint16_t)mouse_btn;
+}
 void host_vdrv_1B_animateCursor(Cpu *c) { (void)c; video_pump_events(); video_present(); if (!headless) SDL_Delay(2); }
 
 int video_init(int headless_mode) {

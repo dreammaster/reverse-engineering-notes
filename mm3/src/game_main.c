@@ -15,10 +15,11 @@ void call_loadMonsterData(Cpu *c);
 void call_loadSavedGame(Cpu *c);
 void call_exploreLoop(Cpu *c);
 void call_introSequence(Cpu *c);
+void call_rosterMenu(Cpu *c);
 
 int main(int argc, char **argv) {
 	Cpu c;
-	int headless = 0, intro = 0, at_n = 0;
+	int headless = 0, intro = 0, at_n = 0, roster_menu = 1;
 	unsigned at[4];
 	const char *shot = NULL;
 	unsigned keys[256];
@@ -28,9 +29,10 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[i], "--headless")) headless = 1;
 		else if (!strcmp(argv[i], "--intro")) intro = 1;
 		else if (!strcmp(argv[i], "--at") && i + 1 < argc) { at_n = sscanf(argv[++i], "%u,%u,%u,%u", &at[0], &at[1], &at[2], &at[3]); }
+		else if (!strcmp(argv[i], "--bare")) roster_menu = 0; /* skip rosterMenu: straight into exploreLoop without the full HUD */
 		else if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
 		else if (!strcmp(argv[i], "--keys") && i + 1 < argc) {
-			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) keys[nkeys++] = (unsigned)strtoul(t, NULL, 16);
+			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
 		}
 	}
 	if (game_init(argv[1]) || video_init(headless)) return 1;
@@ -55,6 +57,8 @@ int main(int argc, char **argv) {
 			if (idx != 0xFF) memcpy(DG + 0xB9D6 + i * 0x12F, roster + idx * 0x12F, 0x12F);
 		}
 	}
+	DG[0xA26] = 0; /* byte_29116: 0FFh makes rosterMenu end the program (set by the startup code) */
+	if (roster_menu) game_call(call_rosterMenu, &c, NULL, 0);
 	if (at_n == 4) { DG[0xE8F7] = at[0]; DG[0xE8F5] = at[1]; DG[0xE8F6] = at[2]; DG[0xE8F4] = at[3]; } /* --at MAP,X,Y,FACING */
 	game_call(call_exploreLoop, &c, NULL, 0);
 	if (shot) video_save_bmp(shot);

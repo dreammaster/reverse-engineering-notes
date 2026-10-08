@@ -48,6 +48,7 @@ typedef struct Mm3Ui {
 	uint8_t *owned_screen;
 	void (*draw_list)(void *user, unsigned dgroup_offset); /* control code 05: a draw list at that DGROUP offset (see view_glue.c) */
 	void *draw_list_user;
+	int draw_ox, draw_oy;         /* origin added to the coordinates of the list being drawn (the text area corner, or 0 after 03 'd'/'b'/'k') */
 	Mm3Font font;
 	uint8_t tiles[20][64];        /* window frame pieces (module offset 37D2h) */
 	uint8_t colour_entries[0xAA]; /* module offset 0B78h: 4 bytes per colour index */
