@@ -259,12 +259,45 @@ static void castStatDelta(GameSession *s, uint8_t *record, const EffectDef *def,
                                spellGetU16(spell, SpellFieldDrainAmount), clearMask);
 }
 
-static bool castSupported(SpellBranch branch) {
+/* The projectile family (ApplyEncodedItemEffect's loc_2C92A): the shot flies down the party's column of the view, nearest cell first, and hits the first monster; a
+ * piercing one goes on. A cell the view hides (a wall) stops it. Only the centre column of the 51-cell buffer is modelled (the flight and its frames are the front end's). */
+static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell) {
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    sessionScene(s, &scene, cells);
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+    bool hit = false;
+    static const unsigned column[] = {46, 43, 40, 36, 25}; /* the centres of rows 5 to 1 of the 51-cell buffer (viewport.h) */
+    for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]); i++) {
+        unsigned cell = column[i];
+        if (cells[cell].flags & ViewportCellHidden) {
+            break;
+        }
+        uint8_t *monster = scene.cellMonsters[cell];
+        if (!monster) {
+            continue;
+        }
+        hit = true;
+        CombatProjectileHitOutcome outcome =
+            combatApplyProjectileHit(monster, caster, spell, false, &staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+        if (!outcome.continues) {
+            break;
+        }
+    }
+    monsterRewardsAward(&s->save, s->game, &staging);
+    sessionRebuild(s);
+    return hit;
+}
+
+static bool castSupported(SpellBranch branch, const uint8_t *spell) {
     switch (branch) {
     case SpellBranchSingleTarget: case SpellBranchWholeParty: case SpellBranchLightTimer: case SpellBranchHeldItem: case SpellBranchTeleportEngage:
     case SpellBranchLocationBookmark: case SpellBranchTriggerCurgameEvent: case SpellBranchRest: case SpellBranchKnock: case SpellBranchFacingLockOrEvent:
     case SpellBranchAttackActiveMonster: case SpellBranchLifeForce: case SpellBranchAttackAllSlots:
         return true;
+    case SpellBranchProjectile:
+        return !(spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBSplash);
     default:
         return false;
     }
@@ -287,7 +320,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         return SessionCastNotKnown;
     }
     SpellBranch branch = spellSelectBranch(spell);
-    if (!castSupported(branch)) {
+    if (!castSupported(branch, spell)) {
         return SessionCastUnsupported;
     }
     if (!spellCanCast(spell, caster, &s->save, c->active)) {
@@ -342,6 +375,9 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         }
         break;
     }
+    case SpellBranchProjectile:
+        done = castProjectile(s, caster, spell);
+        break;
     case SpellBranchLightTimer:
         done = lightSourceArmSpellTimer(&s->light, spellGetU16(spell, SpellFieldTimerSlot), spellGetU16(spell, SpellFieldTimerDuration));
         break;

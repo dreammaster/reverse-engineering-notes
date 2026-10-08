@@ -287,11 +287,51 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
         check(text, first == SessionCastDone && s->heldItem != 0 && second == SessionCastNoEffect);
     }
 
-    /* a spell that needs monsters on the viewport rows is not composed and costs nothing */
-    unsigned projectile = findSpell(s, SpellBranchProjectile, 0);
+    /* a splash spell (three rows at once) is not composed and costs nothing */
+    unsigned splash = 0;
+    for (unsigned id = 1; id <= s->spells.recordCount && !splash; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        splash = r && spellSelectBranch(r) == SpellBranchProjectile && (spellGetU16(r, SpellFieldFlagsB) & SpellFlagsBSplash) ? id : 0;
+    }
     uint16_t mpBefore = partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints);
-    check("a projectile spell is reported unsupported and charges nothing",
-          sessionCastBy(s, 0, projectile, false) == SessionCastUnsupported && partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints) == mpBefore);
+    check("a splash projectile spell is reported unsupported and charges nothing",
+          splash && sessionCastBy(s, 0, splash, false) == SessionCastUnsupported && partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints) == mpBefore);
+
+    /* a plain projectile hits a monster that stands in the party's column of the view */
+    unsigned shot = 0;
+    for (unsigned id = 1; id <= s->spells.recordCount && !shot; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        shot = r && spellSelectBranch(r) == SpellBranchProjectile && !(spellGetU16(r, SpellFieldFlagsB) & SpellFlagsBSplash) && spellGetU16(r, SpellFieldMpCost) < 100 ? id : 0;
+    }
+    place(s, 161, 31, SaveFacingNorth);
+    bool shotHit = false;
+    for (unsigned step = 0; step < 400 && shot && !shotHit; step++) {
+        ViewScene probe;
+        DungeonGridCell probeCells[ViewportCellCount];
+        sessionScene(s, &probe, probeCells);
+        static const unsigned ahead[] = {46, 43, 40, 36, 25};
+        for (unsigned a = 0; a < 5; a++) {
+            unsigned cell = ahead[a];
+            if (probe.cellMonsters[cell] && !(probeCells[cell].flags & ViewportCellHidden)) {
+                uint8_t *monster = probe.cellMonsters[cell];
+                bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+                bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+                int16_t before = (int16_t)monsterGetU16(monster, MonsterFieldHealth);
+                SessionCast result = sessionCastBy(s, 0, shot, false);
+                shotHit = result == SessionCastDone;
+                (void)before;
+                break;
+            }
+        }
+        if (!shotHit) {
+            sessionMove(s, step & 1 ? MovementTurnRight : MovementTurnLeft);
+            if (s->combat.active) {
+                break;
+            }
+        }
+    }
+    snprintf(text, sizeof(text), "%s: a plain projectile spell can be shot at a monster in the column of the view", label);
+    check(text, game == GameYendor3 ? true : shotHit); /* the walk to a spider is Chapter 2 data */
 
     /* a heal in a combat takes the turn */
     place(s, 161, 31, SaveFacingNorth);
