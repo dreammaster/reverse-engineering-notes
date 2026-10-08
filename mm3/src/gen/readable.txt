@@ -19,3 +19,7 @@ subtractHitPoints
 getWeaponDamage
 hitMonster
 charSavingThrow
+checkClasses
+rollAttributes
+getThievery
+itemPrice

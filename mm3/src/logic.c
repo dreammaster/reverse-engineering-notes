@@ -237,3 +237,68 @@ int mm3_saving_throw(const Mm3Game *g, const Mm3Character *ch, int kind) {
 	}
 	return mm3_rnd(1, limit) <= chance;
 }
+
+/* ---- character creation */
+void mm3_check_classes(const int8_t s[7], uint8_t out[10]) {
+	enum { MIGHT, INT, PERS, END, SPEED, ACC, LUCK };
+	out[0] = s[MIGHT] >= 15;                                                         /* knight */
+	out[1] = s[MIGHT] >= 13 && s[PERS] >= 13 && s[END] >= 13;                        /* paladin */
+	out[2] = s[INT] >= 13 && s[ACC] >= 13;                                           /* archer */
+	out[3] = s[PERS] >= 13;                                                          /* cleric */
+	out[4] = s[INT] >= 13;                                                           /* sorcerer */
+	out[5] = s[LUCK] >= 13;                                                          /* robber */
+	out[6] = s[SPEED] >= 13 && s[ACC] >= 13;                                         /* ninja */
+	out[7] = s[END] >= 15;                                                           /* barbarian */
+	out[8] = s[INT] >= 15 && s[PERS] >= 15;                                          /* druid */
+	out[9] = s[INT] >= 12 && s[PERS] >= 12 && s[END] >= 12 && s[SPEED] >= 12;        /* ranger */
+}
+
+void mm3_roll_attributes(int8_t stats[7], uint8_t available[10]) {
+	for (int i = 0; i < 7; i++) stats[i] = 0;
+	for (int round = 0; round < 3; round++)
+		for (int i = 0; i < 7; i++) stats[i] = (int8_t)(stats[i] + (mm3_rnd(10, 79) & 0xFF) / 10);
+	mm3_check_classes(stats, available);
+}
+
+int mm3_thievery(const Mm3Game *g, const Mm3Character *ch) {
+	Mm3Rules rules = { g->dg };
+	int chance = mm3_char_level(ch) * 2;
+	if (ch->charClass == 6) chance += 15;        /* ninja */
+	else if (ch->charClass == 5) chance += 30;   /* robber */
+	if (ch->race == 1 || ch->race == 3) chance += 10;
+	else if (ch->race == 2) chance += 5;
+	else if (ch->race == 4) chance -= 10;
+	chance += mm3_item_scan(&rules, ch, 10);
+	if (!ch->skills[0]) chance = 0;              /* thievery skill */
+	chance = (int16_t)chance;
+	return chance < 1 ? 0 : chance;
+}
+
+/* ---- items */
+uint32_t mm3_item_price(const Mm3Game *g, const Mm3Character *ch, int slot, int mode, int discount) {
+	enum { DG_BASE_PRICE = 0xB16, DG_METAL_PRICE = 0xAB6, DG_ELEMENT_PRICE = 0xA4C, DG_ATTRIBUTE_PRICE = 0xACD, DG_SPELL_PRICE = 0xDAB, DG_DISCOUNT = 0x5B15 };
+	unsigned id = ch->slotId[slot];
+	if (id > 0x49 && id != 0x4B && id != 0x52) return 0;       /* only equipment and the two special items have a price */
+	int broken_sale = (int16_t)discount > 0x80 && mode == 2 ? 1 : (discount & 0x80);
+	discount &= 0x7F;
+	uint32_t base = id == 0x4B ? 2000 : id == 0x52 ? 1000 : (uint32_t)rd16(g, DG_BASE_PRICE + id * 2);
+	switch (ch->slotMetal[slot]) {   /* material: cheap metals divide the price, the others multiply it */
+	case 1: base /= 10; break;
+	case 2: base >>= 2; break;
+	case 3: base >>= 1; break;
+	case 4: base -= base >> 2; break;
+	default: base = (uint32_t)((int32_t)base * (int8_t)g->dg[DG_METAL_PRICE + ch->slotMetal[slot]]); break;
+	}
+	uint32_t element = (uint32_t)(int32_t)(int16_t)(g->dg[DG_ELEMENT_PRICE + ch->slotElement[slot]] * 100);
+	uint32_t attribute = (uint32_t)(int32_t)(int16_t)((int8_t)g->dg[DG_ATTRIBUTE_PRICE + ch->slotAttribute[slot]] * 100);
+	uint32_t spell = rd16(g, DG_SPELL_PRICE + ch->slotSpell[slot] * 2);
+	switch (mode) {
+	case 1: case 2: {
+		if ((ch->slotFlags[slot] & 0xC0) && broken_sale) base = element = attribute = spell = 0;  /* cursed or broken items sell for nothing */
+		uint32_t total = base + element + attribute + spell, divisor = g->dg[DG_DISCOUNT + discount];
+		return divisor ? total / divisor : 0xFFFFFFFFu;
+	}
+	case 3: case 4: case 5: case 6: return ch->slotFlags[slot] & 0x3F;
+	default: return 0;
+	}
+}

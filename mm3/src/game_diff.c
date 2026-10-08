@@ -13,7 +13,7 @@ void mm3_rng_seed(uint32_t seed);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -90,10 +90,21 @@ static void setup_combat(unsigned iter, uint16_t *a) {
 	a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(2);
 }
 static void setup_save(unsigned iter, uint16_t *a) { setup_combat(iter, a); a[1] = rnd(7); }
+static void setup_stats(unsigned iter, uint16_t *a) { (void)iter; for (int i = 0; i < 7; i++) DG[0x5100 + i] = (uint8_t)(rnd(5) ? 5 + rnd(14) : rnd(256)); for (int i = 0; i < 10; i++) DG[0x5200 + i] = (uint8_t)rnd(256); a[0] = 0x5100; a[1] = 0x5200; }
+static void setup_thief(unsigned iter, uint16_t *a) { setup_combat(iter, a); for (int i = 0; i < 6; i++) { Mm3Character *ch = (Mm3Character *)(DG + 0xB9D6 + i * 0x12F); ch->skills[0] = rnd(3) ? 1 : 0; ch->charClass = rnd(10); ch->race = rnd(5); } a[1] = 0; }
+static void setup_price(unsigned iter, uint16_t *a) {
+	setup_combat(iter, a);
+	for (int i = 0; i < 6; i++) { Mm3Character *ch = (Mm3Character *)(DG + 0xB9D6 + i * 0x12F); for (int s = 0; s < 18; s++) { ch->slotId[s] = rnd(0x58); ch->slotMetal[s] = rnd(14); ch->slotElement[s] = rnd(37); ch->slotAttribute[s] = rnd(73); ch->slotSpell[s] = rnd(0x4E); ch->slotFlags[s] = rnd(3) ? rnd(0x40) : (uint8_t)rnd(256); } }
+	a[1] = rnd(18); a[2] = rnd(8); a[3] = rnd(4) ? rnd(0x20) : rnd(0x200);
+}
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "itemPrice", host_itemPrice, 4, 2, setup_price },
+	{ "checkClasses", host_checkClasses, 2, 0, setup_stats },
+	{ "rollAttributes", host_rollAttributes, 2, 0, setup_stats },
+	{ "getThievery", host_getThievery, 1, 1, setup_thief },
 	{ "getWeaponDamage", host_getWeaponDamage, 2, 0, setup_combat },
 	{ "hitMonster", host_hitMonster, 2, 1, setup_combat },
 	{ "charSavingThrow", host_charSavingThrow, 2, 1, setup_save },

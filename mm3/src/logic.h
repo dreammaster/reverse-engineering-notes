@@ -80,4 +80,12 @@ void mm3_weapon_damage(const Mm3Game *g, const Mm3Character *ch, int ranged);  /
 int mm3_hit_monster(const Mm3Game *g, const Mm3Character *ch, int ranged);     /* hitMonster: does the attack hit the current target? */
 int mm3_saving_throw(const Mm3Game *g, const Mm3Character *ch, int kind);      /* charSavingThrow: 0 luck, 1 magic, 2 fire, 3 electricity, 4 cold, 5 poison, 6 energy */
 
+/* character creation (docs/rules.md) */
+void mm3_check_classes(const int8_t stats[7], uint8_t available[10]);          /* checkClasses: which classes the stats qualify for */
+void mm3_roll_attributes(int8_t stats[7], uint8_t available[10]);              /* rollAttributes: three rounds of rnd(10,79)/10 per stat, then checkClasses */
+int mm3_thievery(const Mm3Game *g, const Mm3Character *ch);                    /* getThievery: chance to pick locks etc. */
+
+/* items */
+uint32_t mm3_item_price(const Mm3Game *g, const Mm3Character *ch, int slot, int mode, int discount); /* itemPrice: 1 buy, 2 sell, 3-6 repair/identify fee, 0 nothing */
+
 #endif

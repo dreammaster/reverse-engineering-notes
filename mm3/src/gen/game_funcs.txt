@@ -16,7 +16,6 @@ characterStatsDialog
 controlPanel
 dismissCharacter
 gameInformation
-getThievery
 giveCharDamage
 questLog
 rest
@@ -232,9 +231,7 @@ sub_4EC06
 sub_280E5
 drawAutomapWrapped
 updateLight
-checkClasses
 finishCreation
-rollAttributes
 showClassAvailability
 sub_46566
 sub_466EC
@@ -270,7 +267,6 @@ sub_400DF
 currentTime
 timeToString
 itemName
-itemPrice
 itemsDialog
 sub_280F4
 sub_28630

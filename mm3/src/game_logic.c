@@ -32,6 +32,12 @@ static void impl_getWeaponDamage(Cpu *c) { Mm3Game g = game(); mm3_weapon_damage
 static void impl_hitMonster(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_hit_monster(&g, (const Mm3Character *)(DG + host_arg(c, 0)), host_arg(c, 1) != 0); }
 static void impl_charSavingThrow(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_saving_throw(&g, (const Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
 
+static void impl_checkClasses(Cpu *c) { mm3_check_classes((const int8_t *)(DG + host_arg(c, 0)), DG + host_arg(c, 1)); }
+static void impl_rollAttributes(Cpu *c) { mm3_roll_attributes((int8_t *)(DG + host_arg(c, 0)), DG + host_arg(c, 1)); }
+static void impl_getThievery(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_thievery(&g, near_char(c, 0)); }
+
+static void impl_itemPrice(Cpu *c) { Mm3Game g = game(); ret32(c, mm3_item_price(&g, near_char(c, 0), (int16_t)host_arg(c, 1), (int16_t)host_arg(c, 2), host_arg(c, 3))); }
+
 /* host entry points: with MM3_SHADOW=1 every call is also run through the translated original and the results compared (game_diff.c) */
 void host_getCurrentExperience(Cpu *c) { game_shadow("getCurrentExperience", impl_getCurrentExperience, c, 1, 2); }
 void host_nextExperienceLevel(Cpu *c) { game_shadow("nextExperienceLevel", impl_nextExperienceLevel, c, 1, 2); }
@@ -54,3 +60,7 @@ void host_subtractHitPoints(Cpu *c) { game_shadow("subtractHitPoints", impl_subt
 void host_getWeaponDamage(Cpu *c) { game_shadow("getWeaponDamage", impl_getWeaponDamage, c, 2, 0); }
 void host_hitMonster(Cpu *c) { game_shadow("hitMonster", impl_hitMonster, c, 2, 1); }
 void host_charSavingThrow(Cpu *c) { game_shadow("charSavingThrow", impl_charSavingThrow, c, 2, 1); }
+void host_checkClasses(Cpu *c) { game_shadow("checkClasses", impl_checkClasses, c, 2, 0); }
+void host_rollAttributes(Cpu *c) { game_shadow("rollAttributes", impl_rollAttributes, c, 2, 0); }
+void host_getThievery(Cpu *c) { game_shadow("getThievery", impl_getThievery, c, 1, 1); }
+void host_itemPrice(Cpu *c) { game_shadow("itemPrice", impl_itemPrice, c, 4, 2); }
