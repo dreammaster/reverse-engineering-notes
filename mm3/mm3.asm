@@ -7062,9 +7062,10 @@ MemFree         endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; scene list writer: objects, monsters and effect sprites of the 4th (farthest) row, scale flag 300h
 ; Attributes: bp-based frame
 
-sub_17439       proc far                ; CODE XREF: renderIndoorView+15E4↓P
+drawRow4Sprites proc far                ; CODE XREF: renderIndoorView+15E4↓P
                                         ; renderOutdoorView+11D6↓P
 
 var_2           = word ptr -2
@@ -7126,7 +7127,7 @@ arg_0           = word ptr  6
                 mov     ah, 0
                 mov     [si], ax
 
-loc_174AF:                              ; CODE XREF: sub_17439+F↑j
+loc_174AF:                              ; CODE XREF: drawRow4Sprites+F↑j
                 cmp     byte_33312, 0
                 jz      short loc_1751B
                 mov     al, byte_33312
@@ -7176,7 +7177,7 @@ loc_174AF:                              ; CODE XREF: sub_17439+F↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_1751B:                              ; CODE XREF: sub_17439+7B↑j
+loc_1751B:                              ; CODE XREF: drawRow4Sprites+7B↑j
                 cmp     byte_33313, 0
                 jz      short loc_17587
                 mov     al, byte_33313
@@ -7226,7 +7227,7 @@ loc_1751B:                              ; CODE XREF: sub_17439+7B↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17587:                              ; CODE XREF: sub_17439+E7↑j
+loc_17587:                              ; CODE XREF: drawRow4Sprites+E7↑j
                 cmp     byte_36FAA, 0
                 jz      short loc_175F7
                 mov     al, byte_36FAA
@@ -7277,7 +7278,7 @@ loc_17587:                              ; CODE XREF: sub_17439+E7↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_175F7:                              ; CODE XREF: sub_17439+153↑j
+loc_175F7:                              ; CODE XREF: drawRow4Sprites+153↑j
                 cmp     byte_37386, 0
                 jz      short loc_17667
                 mov     al, byte_37386
@@ -7328,13 +7329,13 @@ loc_175F7:                              ; CODE XREF: sub_17439+153↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17667:                              ; CODE XREF: sub_17439+1C3↑j
+loc_17667:                              ; CODE XREF: drawRow4Sprites+1C3↑j
                 cmp     byte_32E60, 0
                 jnz     short loc_17671
                 jmp     loc_17736
 ; ---------------------------------------------------------------------------
 
-loc_17671:                              ; CODE XREF: sub_17439+233↑j
+loc_17671:                              ; CODE XREF: drawRow4Sprites+233↑j
                 mov     al, byte_32E60
                 mov     ah, 0
                 dec     ax
@@ -7376,16 +7377,16 @@ loc_17671:                              ; CODE XREF: sub_17439+233↑j
                 jmp     short loc_176CD
 ; ---------------------------------------------------------------------------
 
-loc_176CB:                              ; CODE XREF: sub_17439+282↑j
+loc_176CB:                              ; CODE XREF: drawRow4Sprites+282↑j
                 xor     ax, ax
 
-loc_176CD:                              ; CODE XREF: sub_17439+290↑j
+loc_176CD:                              ; CODE XREF: drawRow4Sprites+290↑j
                 add     ax, 34h ; '4'
                 jmp     short loc_176F6
 ; ---------------------------------------------------------------------------
 
-loc_176D2:                              ; CODE XREF: sub_17439+268↑j
-                                        ; sub_17439+271↑j
+loc_176D2:                              ; CODE XREF: drawRow4Sprites+268↑j
+                                        ; drawRow4Sprites+271↑j
                 inc     si
                 inc     si
                 mov     bx, di
@@ -7401,13 +7402,13 @@ loc_176D2:                              ; CODE XREF: sub_17439+268↑j
                 jmp     short loc_176F3
 ; ---------------------------------------------------------------------------
 
-loc_176F1:                              ; CODE XREF: sub_17439+2A8↑j
+loc_176F1:                              ; CODE XREF: drawRow4Sprites+2A8↑j
                 xor     ax, ax
 
-loc_176F3:                              ; CODE XREF: sub_17439+2B6↑j
+loc_176F3:                              ; CODE XREF: drawRow4Sprites+2B6↑j
                 add     ax, 2Bh ; '+'
 
-loc_176F6:                              ; CODE XREF: sub_17439+297↑j
+loc_176F6:                              ; CODE XREF: drawRow4Sprites+297↑j
                 mov     [si], ax
                 inc     si
                 inc     si
@@ -7424,10 +7425,10 @@ loc_176F6:                              ; CODE XREF: sub_17439+297↑j
                 jmp     short loc_17719
 ; ---------------------------------------------------------------------------
 
-loc_17717:                              ; CODE XREF: sub_17439+2CE↑j
+loc_17717:                              ; CODE XREF: drawRow4Sprites+2CE↑j
                 xor     ax, ax
 
-loc_17719:                              ; CODE XREF: sub_17439+2DC↑j
+loc_17719:                              ; CODE XREF: drawRow4Sprites+2DC↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7442,13 +7443,13 @@ loc_17719:                              ; CODE XREF: sub_17439+2DC↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17736:                              ; CODE XREF: sub_17439+235↑j
+loc_17736:                              ; CODE XREF: drawRow4Sprites+235↑j
                 cmp     byte_32E63, 0
                 jnz     short loc_17740
                 jmp     loc_177FE
 ; ---------------------------------------------------------------------------
 
-loc_17740:                              ; CODE XREF: sub_17439+302↑j
+loc_17740:                              ; CODE XREF: drawRow4Sprites+302↑j
                 mov     al, byte_32E63
                 mov     ah, 0
                 dec     ax
@@ -7488,15 +7489,15 @@ loc_17740:                              ; CODE XREF: sub_17439+302↑j
                 jmp     short loc_17795
 ; ---------------------------------------------------------------------------
 
-loc_17793:                              ; CODE XREF: sub_17439+34A↑j
+loc_17793:                              ; CODE XREF: drawRow4Sprites+34A↑j
                 xor     ax, ax
 
-loc_17795:                              ; CODE XREF: sub_17439+358↑j
+loc_17795:                              ; CODE XREF: drawRow4Sprites+358↑j
                 add     ax, 20h ; ' '
                 jmp     short loc_177BE
 ; ---------------------------------------------------------------------------
 
-loc_1779A:                              ; CODE XREF: sub_17439+339↑j
+loc_1779A:                              ; CODE XREF: drawRow4Sprites+339↑j
                 inc     si
                 inc     si
                 mov     bx, di
@@ -7512,13 +7513,13 @@ loc_1779A:                              ; CODE XREF: sub_17439+339↑j
                 jmp     short loc_177BB
 ; ---------------------------------------------------------------------------
 
-loc_177B9:                              ; CODE XREF: sub_17439+370↑j
+loc_177B9:                              ; CODE XREF: drawRow4Sprites+370↑j
                 xor     ax, ax
 
-loc_177BB:                              ; CODE XREF: sub_17439+37E↑j
+loc_177BB:                              ; CODE XREF: drawRow4Sprites+37E↑j
                 add     ax, 19h
 
-loc_177BE:                              ; CODE XREF: sub_17439+35F↑j
+loc_177BE:                              ; CODE XREF: drawRow4Sprites+35F↑j
                 mov     [si], ax
                 inc     si
                 inc     si
@@ -7535,10 +7536,10 @@ loc_177BE:                              ; CODE XREF: sub_17439+35F↑j
                 jmp     short loc_177E1
 ; ---------------------------------------------------------------------------
 
-loc_177DF:                              ; CODE XREF: sub_17439+396↑j
+loc_177DF:                              ; CODE XREF: drawRow4Sprites+396↑j
                 xor     ax, ax
 
-loc_177E1:                              ; CODE XREF: sub_17439+3A4↑j
+loc_177E1:                              ; CODE XREF: drawRow4Sprites+3A4↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7553,13 +7554,13 @@ loc_177E1:                              ; CODE XREF: sub_17439+3A4↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_177FE:                              ; CODE XREF: sub_17439+304↑j
+loc_177FE:                              ; CODE XREF: drawRow4Sprites+304↑j
                 cmp     byte_32E64, 0
                 jnz     short loc_17808
                 jmp     loc_17897
 ; ---------------------------------------------------------------------------
 
-loc_17808:                              ; CODE XREF: sub_17439+3CA↑j
+loc_17808:                              ; CODE XREF: drawRow4Sprites+3CA↑j
                 mov     al, byte_32E64
                 mov     ah, 0
                 dec     ax
@@ -7595,10 +7596,10 @@ loc_17808:                              ; CODE XREF: sub_17439+3CA↑j
                 jmp     short loc_17854
 ; ---------------------------------------------------------------------------
 
-loc_17852:                              ; CODE XREF: sub_17439+409↑j
+loc_17852:                              ; CODE XREF: drawRow4Sprites+409↑j
                 xor     ax, ax
 
-loc_17854:                              ; CODE XREF: sub_17439+417↑j
+loc_17854:                              ; CODE XREF: drawRow4Sprites+417↑j
                 add     ax, 3Dh ; '='
                 mov     [si], ax
                 inc     si
@@ -7616,10 +7617,10 @@ loc_17854:                              ; CODE XREF: sub_17439+417↑j
                 jmp     short loc_1787A
 ; ---------------------------------------------------------------------------
 
-loc_17878:                              ; CODE XREF: sub_17439+42F↑j
+loc_17878:                              ; CODE XREF: drawRow4Sprites+42F↑j
                 xor     ax, ax
 
-loc_1787A:                              ; CODE XREF: sub_17439+43D↑j
+loc_1787A:                              ; CODE XREF: drawRow4Sprites+43D↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7634,13 +7635,13 @@ loc_1787A:                              ; CODE XREF: sub_17439+43D↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17897:                              ; CODE XREF: sub_17439+3CC↑j
+loc_17897:                              ; CODE XREF: drawRow4Sprites+3CC↑j
                 cmp     byte_3329E, 0
                 jnz     short loc_178A1
                 jmp     loc_17966
 ; ---------------------------------------------------------------------------
 
-loc_178A1:                              ; CODE XREF: sub_17439+463↑j
+loc_178A1:                              ; CODE XREF: drawRow4Sprites+463↑j
                 mov     al, byte_3329E
                 mov     ah, 0
                 dec     ax
@@ -7682,16 +7683,16 @@ loc_178A1:                              ; CODE XREF: sub_17439+463↑j
                 jmp     short loc_178FD
 ; ---------------------------------------------------------------------------
 
-loc_178FB:                              ; CODE XREF: sub_17439+4B2↑j
+loc_178FB:                              ; CODE XREF: drawRow4Sprites+4B2↑j
                 xor     ax, ax
 
-loc_178FD:                              ; CODE XREF: sub_17439+4C0↑j
+loc_178FD:                              ; CODE XREF: drawRow4Sprites+4C0↑j
                 add     ax, 91h
                 jmp     short loc_17926
 ; ---------------------------------------------------------------------------
 
-loc_17902:                              ; CODE XREF: sub_17439+498↑j
-                                        ; sub_17439+4A1↑j
+loc_17902:                              ; CODE XREF: drawRow4Sprites+498↑j
+                                        ; drawRow4Sprites+4A1↑j
                 inc     si
                 inc     si
                 mov     bx, di
@@ -7707,13 +7708,13 @@ loc_17902:                              ; CODE XREF: sub_17439+498↑j
                 jmp     short loc_17923
 ; ---------------------------------------------------------------------------
 
-loc_17921:                              ; CODE XREF: sub_17439+4D8↑j
+loc_17921:                              ; CODE XREF: drawRow4Sprites+4D8↑j
                 xor     ax, ax
 
-loc_17923:                              ; CODE XREF: sub_17439+4E6↑j
+loc_17923:                              ; CODE XREF: drawRow4Sprites+4E6↑j
                 add     ax, 9Bh
 
-loc_17926:                              ; CODE XREF: sub_17439+4C7↑j
+loc_17926:                              ; CODE XREF: drawRow4Sprites+4C7↑j
                 mov     [si], ax
                 inc     si
                 inc     si
@@ -7730,10 +7731,10 @@ loc_17926:                              ; CODE XREF: sub_17439+4C7↑j
                 jmp     short loc_17949
 ; ---------------------------------------------------------------------------
 
-loc_17947:                              ; CODE XREF: sub_17439+4FE↑j
+loc_17947:                              ; CODE XREF: drawRow4Sprites+4FE↑j
                 xor     ax, ax
 
-loc_17949:                              ; CODE XREF: sub_17439+50C↑j
+loc_17949:                              ; CODE XREF: drawRow4Sprites+50C↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7748,13 +7749,13 @@ loc_17949:                              ; CODE XREF: sub_17439+50C↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17966:                              ; CODE XREF: sub_17439+465↑j
+loc_17966:                              ; CODE XREF: drawRow4Sprites+465↑j
                 cmp     byte_332A1, 0
                 jnz     short loc_17970
                 jmp     loc_17A2E
 ; ---------------------------------------------------------------------------
 
-loc_17970:                              ; CODE XREF: sub_17439+532↑j
+loc_17970:                              ; CODE XREF: drawRow4Sprites+532↑j
                 mov     al, byte_332A1
                 mov     ah, 0
                 dec     ax
@@ -7794,15 +7795,15 @@ loc_17970:                              ; CODE XREF: sub_17439+532↑j
                 jmp     short loc_179C5
 ; ---------------------------------------------------------------------------
 
-loc_179C3:                              ; CODE XREF: sub_17439+57A↑j
+loc_179C3:                              ; CODE XREF: drawRow4Sprites+57A↑j
                 xor     ax, ax
 
-loc_179C5:                              ; CODE XREF: sub_17439+588↑j
+loc_179C5:                              ; CODE XREF: drawRow4Sprites+588↑j
                 add     ax, 0A4h
                 jmp     short loc_179EE
 ; ---------------------------------------------------------------------------
 
-loc_179CA:                              ; CODE XREF: sub_17439+569↑j
+loc_179CA:                              ; CODE XREF: drawRow4Sprites+569↑j
                 inc     si
                 inc     si
                 mov     bx, di
@@ -7818,13 +7819,13 @@ loc_179CA:                              ; CODE XREF: sub_17439+569↑j
                 jmp     short loc_179EB
 ; ---------------------------------------------------------------------------
 
-loc_179E9:                              ; CODE XREF: sub_17439+5A0↑j
+loc_179E9:                              ; CODE XREF: drawRow4Sprites+5A0↑j
                 xor     ax, ax
 
-loc_179EB:                              ; CODE XREF: sub_17439+5AE↑j
+loc_179EB:                              ; CODE XREF: drawRow4Sprites+5AE↑j
                 add     ax, 89h
 
-loc_179EE:                              ; CODE XREF: sub_17439+58F↑j
+loc_179EE:                              ; CODE XREF: drawRow4Sprites+58F↑j
                 mov     [si], ax
                 inc     si
                 inc     si
@@ -7841,10 +7842,10 @@ loc_179EE:                              ; CODE XREF: sub_17439+58F↑j
                 jmp     short loc_17A11
 ; ---------------------------------------------------------------------------
 
-loc_17A0F:                              ; CODE XREF: sub_17439+5C6↑j
+loc_17A0F:                              ; CODE XREF: drawRow4Sprites+5C6↑j
                 xor     ax, ax
 
-loc_17A11:                              ; CODE XREF: sub_17439+5D4↑j
+loc_17A11:                              ; CODE XREF: drawRow4Sprites+5D4↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7859,13 +7860,13 @@ loc_17A11:                              ; CODE XREF: sub_17439+5D4↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17A2E:                              ; CODE XREF: sub_17439+534↑j
+loc_17A2E:                              ; CODE XREF: drawRow4Sprites+534↑j
                 cmp     byte_332A2, 0
                 jnz     short loc_17A38
                 jmp     loc_17AC7
 ; ---------------------------------------------------------------------------
 
-loc_17A38:                              ; CODE XREF: sub_17439+5FA↑j
+loc_17A38:                              ; CODE XREF: drawRow4Sprites+5FA↑j
                 mov     al, byte_332A2
                 mov     ah, 0
                 dec     ax
@@ -7901,10 +7902,10 @@ loc_17A38:                              ; CODE XREF: sub_17439+5FA↑j
                 jmp     short loc_17A84
 ; ---------------------------------------------------------------------------
 
-loc_17A82:                              ; CODE XREF: sub_17439+639↑j
+loc_17A82:                              ; CODE XREF: drawRow4Sprites+639↑j
                 xor     ax, ax
 
-loc_17A84:                              ; CODE XREF: sub_17439+647↑j
+loc_17A84:                              ; CODE XREF: drawRow4Sprites+647↑j
                 add     ax, 0ADh
                 mov     [si], ax
                 inc     si
@@ -7922,10 +7923,10 @@ loc_17A84:                              ; CODE XREF: sub_17439+647↑j
                 jmp     short loc_17AAA
 ; ---------------------------------------------------------------------------
 
-loc_17AA8:                              ; CODE XREF: sub_17439+65F↑j
+loc_17AA8:                              ; CODE XREF: drawRow4Sprites+65F↑j
                 xor     ax, ax
 
-loc_17AAA:                              ; CODE XREF: sub_17439+66D↑j
+loc_17AAA:                              ; CODE XREF: drawRow4Sprites+66D↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -7940,13 +7941,13 @@ loc_17AAA:                              ; CODE XREF: sub_17439+66D↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17AC7:                              ; CODE XREF: sub_17439+5FC↑j
+loc_17AC7:                              ; CODE XREF: drawRow4Sprites+5FC↑j
                 cmp     byte_32E61, 0
                 jnz     short loc_17AD1
                 jmp     loc_17B5F
 ; ---------------------------------------------------------------------------
 
-loc_17AD1:                              ; CODE XREF: sub_17439+693↑j
+loc_17AD1:                              ; CODE XREF: drawRow4Sprites+693↑j
                 mov     al, byte_32E61
                 mov     ah, 0
                 dec     ax
@@ -7982,10 +7983,10 @@ loc_17AD1:                              ; CODE XREF: sub_17439+693↑j
                 jmp     short loc_17B1D
 ; ---------------------------------------------------------------------------
 
-loc_17B1B:                              ; CODE XREF: sub_17439+6D2↑j
+loc_17B1B:                              ; CODE XREF: drawRow4Sprites+6D2↑j
                 xor     ax, ax
 
-loc_17B1D:                              ; CODE XREF: sub_17439+6E0↑j
+loc_17B1D:                              ; CODE XREF: drawRow4Sprites+6E0↑j
                 inc     ax
                 inc     ax
                 mov     [si], ax
@@ -8004,10 +8005,10 @@ loc_17B1D:                              ; CODE XREF: sub_17439+6E0↑j
                 jmp     short loc_17B42
 ; ---------------------------------------------------------------------------
 
-loc_17B40:                              ; CODE XREF: sub_17439+6F7↑j
+loc_17B40:                              ; CODE XREF: drawRow4Sprites+6F7↑j
                 xor     ax, ax
 
-loc_17B42:                              ; CODE XREF: sub_17439+705↑j
+loc_17B42:                              ; CODE XREF: drawRow4Sprites+705↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -8022,13 +8023,13 @@ loc_17B42:                              ; CODE XREF: sub_17439+705↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17B5F:                              ; CODE XREF: sub_17439+695↑j
+loc_17B5F:                              ; CODE XREF: drawRow4Sprites+695↑j
                 cmp     byte_3329F, 0
                 jnz     short loc_17B69
                 jmp     loc_17BF8
 ; ---------------------------------------------------------------------------
 
-loc_17B69:                              ; CODE XREF: sub_17439+72B↑j
+loc_17B69:                              ; CODE XREF: drawRow4Sprites+72B↑j
                 mov     al, byte_3329F
                 mov     ah, 0
                 dec     ax
@@ -8064,10 +8065,10 @@ loc_17B69:                              ; CODE XREF: sub_17439+72B↑j
                 jmp     short loc_17BB5
 ; ---------------------------------------------------------------------------
 
-loc_17BB3:                              ; CODE XREF: sub_17439+76A↑j
+loc_17BB3:                              ; CODE XREF: drawRow4Sprites+76A↑j
                 xor     ax, ax
 
-loc_17BB5:                              ; CODE XREF: sub_17439+778↑j
+loc_17BB5:                              ; CODE XREF: drawRow4Sprites+778↑j
                 add     ax, 0C1h
                 mov     [si], ax
                 inc     si
@@ -8085,10 +8086,10 @@ loc_17BB5:                              ; CODE XREF: sub_17439+778↑j
                 jmp     short loc_17BDB
 ; ---------------------------------------------------------------------------
 
-loc_17BD9:                              ; CODE XREF: sub_17439+790↑j
+loc_17BD9:                              ; CODE XREF: drawRow4Sprites+790↑j
                 xor     ax, ax
 
-loc_17BDB:                              ; CODE XREF: sub_17439+79E↑j
+loc_17BDB:                              ; CODE XREF: drawRow4Sprites+79E↑j
                 add     ax, 3Eh ; '>'
                 mov     [si], ax
                 inc     si
@@ -8103,13 +8104,13 @@ loc_17BDB:                              ; CODE XREF: sub_17439+79E↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17BF8:                              ; CODE XREF: sub_17439+72D↑j
+loc_17BF8:                              ; CODE XREF: drawRow4Sprites+72D↑j
                 cmp     byte_32E38, 0
                 jnz     short loc_17C02
                 jmp     loc_17D1A
 ; ---------------------------------------------------------------------------
 
-loc_17C02:                              ; CODE XREF: sub_17439+7C4↑j
+loc_17C02:                              ; CODE XREF: drawRow4Sprites+7C4↑j
                 mov     al, byte_32E38
                 mov     ah, 0
                 dec     ax
@@ -8134,12 +8135,12 @@ loc_17C02:                              ; CODE XREF: sub_17439+7C4↑j
                 jmp     short loc_17C3F
 ; ---------------------------------------------------------------------------
 
-loc_17C38:                              ; CODE XREF: sub_17439+7DE↑j
+loc_17C38:                              ; CODE XREF: drawRow4Sprites+7DE↑j
                 xor     ax, ax
                 mov     [bp+var_2], ax
                 mov     cx, ax
 
-loc_17C3F:                              ; CODE XREF: sub_17439+7FD↑j
+loc_17C3F:                              ; CODE XREF: drawRow4Sprites+7FD↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -8171,8 +8172,8 @@ loc_17C3F:                              ; CODE XREF: sub_17439+7FD↑j
                 jmp     short loc_17C8C
 ; ---------------------------------------------------------------------------
 
-loc_17C80:                              ; CODE XREF: sub_17439+82E↑j
-                                        ; sub_17439+837↑j
+loc_17C80:                              ; CODE XREF: drawRow4Sprites+82E↑j
+                                        ; drawRow4Sprites+837↑j
                 inc     si
                 inc     si
                 mov     ax, cx
@@ -8180,7 +8181,7 @@ loc_17C80:                              ; CODE XREF: sub_17439+82E↑j
                 mov     [si], ax
                 mov     cx, 63h ; 'c'
 
-loc_17C8C:                              ; CODE XREF: sub_17439+845↑j
+loc_17C8C:                              ; CODE XREF: drawRow4Sprites+845↑j
                 inc     si
                 inc     si
                 mov     ax, [bp+var_2]
@@ -8231,7 +8232,7 @@ loc_17C8C:                              ; CODE XREF: sub_17439+845↑j
                 dec     ax
                 mov     [si], ax
 
-loc_17CF5:                              ; CODE XREF: sub_17439+89B↑j
+loc_17CF5:                              ; CODE XREF: drawRow4Sprites+89B↑j
                 cmp     byte_3345C, 0
                 jz      short loc_17D1A
                 inc     si
@@ -8251,14 +8252,14 @@ loc_17CF5:                              ; CODE XREF: sub_17439+89B↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17D1A:                              ; CODE XREF: sub_17439+7C6↑j
-                                        ; sub_17439+87A↑j ...
+loc_17D1A:                              ; CODE XREF: drawRow4Sprites+7C6↑j
+                                        ; drawRow4Sprites+87A↑j ...
                 cmp     byte_32E3A, 0
                 jnz     short loc_17D24
                 jmp     loc_17E35
 ; ---------------------------------------------------------------------------
 
-loc_17D24:                              ; CODE XREF: sub_17439+8E6↑j
+loc_17D24:                              ; CODE XREF: drawRow4Sprites+8E6↑j
                 mov     al, byte_32E3A
                 mov     ah, 0
                 dec     ax
@@ -8283,12 +8284,12 @@ loc_17D24:                              ; CODE XREF: sub_17439+8E6↑j
                 jmp     short loc_17D61
 ; ---------------------------------------------------------------------------
 
-loc_17D5A:                              ; CODE XREF: sub_17439+900↑j
+loc_17D5A:                              ; CODE XREF: drawRow4Sprites+900↑j
                 xor     ax, ax
                 mov     [bp+var_2], ax
                 mov     cx, ax
 
-loc_17D61:                              ; CODE XREF: sub_17439+91F↑j
+loc_17D61:                              ; CODE XREF: drawRow4Sprites+91F↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -8318,7 +8319,7 @@ loc_17D61:                              ; CODE XREF: sub_17439+91F↑j
                 jmp     short loc_17DA7
 ; ---------------------------------------------------------------------------
 
-loc_17D9B:                              ; CODE XREF: sub_17439+952↑j
+loc_17D9B:                              ; CODE XREF: drawRow4Sprites+952↑j
                 inc     si
                 inc     si
                 mov     ax, cx
@@ -8326,7 +8327,7 @@ loc_17D9B:                              ; CODE XREF: sub_17439+952↑j
                 mov     [si], ax
                 mov     cx, 51h ; 'Q'
 
-loc_17DA7:                              ; CODE XREF: sub_17439+960↑j
+loc_17DA7:                              ; CODE XREF: drawRow4Sprites+960↑j
                 inc     si
                 inc     si
                 mov     ax, [bp+var_2]
@@ -8377,7 +8378,7 @@ loc_17DA7:                              ; CODE XREF: sub_17439+960↑j
                 dec     ax
                 mov     [si], ax
 
-loc_17E10:                              ; CODE XREF: sub_17439+9B6↑j
+loc_17E10:                              ; CODE XREF: drawRow4Sprites+9B6↑j
                 cmp     byte_3345D, 0
                 jz      short loc_17E35
                 inc     si
@@ -8397,14 +8398,14 @@ loc_17E10:                              ; CODE XREF: sub_17439+9B6↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17E35:                              ; CODE XREF: sub_17439+8E8↑j
-                                        ; sub_17439+995↑j ...
+loc_17E35:                              ; CODE XREF: drawRow4Sprites+8E8↑j
+                                        ; drawRow4Sprites+995↑j ...
                 cmp     byte_32E3C, 0
                 jnz     short loc_17E3F
                 jmp     loc_17F30
 ; ---------------------------------------------------------------------------
 
-loc_17E3F:                              ; CODE XREF: sub_17439+A01↑j
+loc_17E3F:                              ; CODE XREF: drawRow4Sprites+A01↑j
                 mov     al, byte_32E3C
                 mov     ah, 0
                 dec     ax
@@ -8429,12 +8430,12 @@ loc_17E3F:                              ; CODE XREF: sub_17439+A01↑j
                 jmp     short loc_17E7C
 ; ---------------------------------------------------------------------------
 
-loc_17E75:                              ; CODE XREF: sub_17439+A1B↑j
+loc_17E75:                              ; CODE XREF: drawRow4Sprites+A1B↑j
                 xor     ax, ax
                 mov     [bp+var_2], ax
                 mov     cx, ax
 
-loc_17E7C:                              ; CODE XREF: sub_17439+A3A↑j
+loc_17E7C:                              ; CODE XREF: drawRow4Sprites+A3A↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0FFFFh
@@ -8504,7 +8505,7 @@ loc_17E7C:                              ; CODE XREF: sub_17439+A3A↑j
                 dec     ax
                 mov     [si], ax
 
-loc_17F0E:                              ; CODE XREF: sub_17439+AB7↑j
+loc_17F0E:                              ; CODE XREF: drawRow4Sprites+AB7↑j
                 cmp     byte_3345E, 0
                 jz      short loc_17F30
                 inc     si
@@ -8522,15 +8523,15 @@ loc_17F0E:                              ; CODE XREF: sub_17439+AB7↑j
                 mov     ah, 0
                 mov     [si], ax
 
-loc_17F30:                              ; CODE XREF: sub_17439+A03↑j
-                                        ; sub_17439+A96↑j ...
+loc_17F30:                              ; CODE XREF: drawRow4Sprites+A03↑j
+                                        ; drawRow4Sprites+A96↑j ...
                 mov     ax, si
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_17439       endp
+drawRow4Sprites endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25049,7 +25050,7 @@ loc_1F9CB:                              ; CODE XREF: renderIndoorView+15A8↑j
 loc_1F9EA:                              ; CODE XREF: renderIndoorView+155F↑j
                                         ; renderIndoorView+156E↑j ...
                 push    si
-                call    sub_17439
+                call    drawRow4Sprites
                 pop     cx
                 mov     si, ax
                 mov     [bp+var_2], 0
@@ -28635,7 +28636,7 @@ loc_215C2:                              ; CODE XREF: renderOutdoorView+1131↑j
 
 loc_2162F:                              ; CODE XREF: renderOutdoorView+119E↑j
                 push    si
-                call    sub_17439
+                call    drawRow4Sprites
                 pop     cx
                 mov     si, ax
                 mov     [bp+var_4], 0
@@ -37685,8 +37686,8 @@ word_2880C      dw 102h                 ; DATA XREF: sub_26F3D↑w
                 db 0, 0FFh
 word_28810      dw 2FEh                 ; DATA XREF: sub_26CB4+52↑w
                                         ; sub_26EF3+42↑r ...
-word_28812      dw 0F09h                ; DATA XREF: sub_17439+284↑r
-                                        ; sub_17439+2AA↑r ...
+word_28812      dw 0F09h                ; DATA XREF: drawRow4Sprites+284↑r
+                                        ; drawRow4Sprites+2AA↑r ...
 word_28814      dw 100h                 ; DATA XREF: sub_26CB4+A↑r
                                         ; sub_26CB4+56↑r ...
 word_28816      dw 302h                 ; DATA XREF: sub_26CB4+E↑r
@@ -45278,12 +45279,12 @@ byte_32E55      db 0                    ; DATA XREF: drawRow3Sprites+583↑r
                                         ; drawRow3Sprites+58A↑w
 byte_32E56      db 0                    ; DATA XREF: drawRow3Sprites+684↑r
                                         ; drawRow3Sprites+68B↑w
-byte_32E57      db 0                    ; DATA XREF: sub_17439+875↑r
-                                        ; sub_17439+87C↑w
-byte_32E58      db 0                    ; DATA XREF: sub_17439+990↑r
-                                        ; sub_17439+997↑w
-byte_32E59      db 0                    ; DATA XREF: sub_17439+A91↑r
-                                        ; sub_17439+A98↑w
+byte_32E57      db 0                    ; DATA XREF: drawRow4Sprites+875↑r
+                                        ; drawRow4Sprites+87C↑w
+byte_32E58      db 0                    ; DATA XREF: drawRow4Sprites+990↑r
+                                        ; drawRow4Sprites+997↑w
+byte_32E59      db 0                    ; DATA XREF: drawRow4Sprites+A91↑r
+                                        ; drawRow4Sprites+A98↑w
 Maze_evtData    dd 0                    ; DATA XREF: seg001:0324↑w
                                         ; seg001:032F↑r ...
                                         ; far pointer to the loaded maze%02u.evt
@@ -45331,12 +45332,12 @@ byte_32E75      db 0                    ; DATA XREF: drawRow3Sprites+5A4↑r
                                         ; drawRow3Sprites+5C2↑r
 byte_32E76      db 0                    ; DATA XREF: drawRow3Sprites+6A5↑r
                                         ; drawRow3Sprites+6C0↑r
-byte_32E77      db 0                    ; DATA XREF: sub_17439+896↑r
-                                        ; sub_17439+8B4↑r
-byte_32E78      db 0                    ; DATA XREF: sub_17439+9B1↑r
-                                        ; sub_17439+9CF↑r
-byte_32E79      db 0                    ; DATA XREF: sub_17439+AB2↑r
-                                        ; sub_17439+ACD↑r
+byte_32E77      db 0                    ; DATA XREF: drawRow4Sprites+896↑r
+                                        ; drawRow4Sprites+8B4↑r
+byte_32E78      db 0                    ; DATA XREF: drawRow4Sprites+9B1↑r
+                                        ; drawRow4Sprites+9CF↑r
+byte_32E79      db 0                    ; DATA XREF: drawRow4Sprites+AB2↑r
+                                        ; drawRow4Sprites+ACD↑r
 Maze_textData   dd 0                    ; DATA XREF: seg001:0404↑w
                                         ; runMazeEvent+211↑r ...
                                         ; far pointer to the loaded text%02u.maz
@@ -45619,12 +45620,12 @@ byte_3345A      db 0                    ; DATA XREF: drawRow3Sprites:loc_18502�
                                         ; drawRow3Sprites+5E8↑r
 byte_3345B      db 0                    ; DATA XREF: drawRow3Sprites:loc_18600↑r
                                         ; drawRow3Sprites+6E3↑r
-byte_3345C      db 0                    ; DATA XREF: sub_17439:loc_17CF5↑r
-                                        ; sub_17439+8DA↑r
-byte_3345D      db 0                    ; DATA XREF: sub_17439:loc_17E10↑r
-                                        ; sub_17439+9F5↑r
-byte_3345E      db 0                    ; DATA XREF: sub_17439:loc_17F0E↑r
-                                        ; sub_17439+AF0↑r
+byte_3345C      db 0                    ; DATA XREF: drawRow4Sprites:loc_17CF5↑r
+                                        ; drawRow4Sprites+8DA↑r
+byte_3345D      db 0                    ; DATA XREF: drawRow4Sprites:loc_17E10↑r
+                                        ; drawRow4Sprites+9F5↑r
+byte_3345E      db 0                    ; DATA XREF: drawRow4Sprites:loc_17F0E↑r
+                                        ; drawRow4Sprites+AF0↑r
                 align 2
 Maze_monY       db    0                 ; word[170]: y of each live map monster (second byte of the record)
                 db    0
@@ -49613,7 +49614,7 @@ Party_state     db    0                 ; 918-byte party block (MAZE.PTY), loade
                 db    0
                 db    0
                 db    0
-Party_eventFlags db    0                ; 53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)17439
+Party_eventFlags db    0                ; 53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)
                 db    0
                 db    0
                 db    0
@@ -49801,10 +49802,10 @@ byte_373C9      db 0                    ; DATA XREF: clearViewFlags+1FC↑w
 byte_373CA      db 0                    ; DATA XREF: clearViewFlags+1CA↑w
                                         ; prepareIndoorView:loc_1CCB7↑w ...
                 align 2
-word_373CC      dw 0                    ; DATA XREF: sub_17439+88B↑r
-                                        ; sub_17439+9A6↑r ...
-word_373CE      dw 0                    ; DATA XREF: sub_17439+888↑r
-                                        ; sub_17439+9A3↑r ...
+word_373CC      dw 0                    ; DATA XREF: drawRow4Sprites+88B↑r
+                                        ; drawRow4Sprites+9A6↑r ...
+word_373CE      dw 0                    ; DATA XREF: drawRow4Sprites+888↑r
+                                        ; drawRow4Sprites+9A3↑r ...
 Maze_objectCount db 0                   ; DATA XREF: sub_15B50:loc_1619A↑r
                                         ; renderIndoorView:loc_1E51D↑r ...
                                         ; byte, number of objects (MAZEnn.BIN object records, max 80)

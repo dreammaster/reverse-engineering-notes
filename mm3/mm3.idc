@@ -6209,6 +6209,7 @@ static Bytes_1(void) {
 	set_cmt	(0X17422,	"segp",	0);
 	set_cmt	(0X17426,	"size",	0);
 	create_insn	(0X17439);
+	set_name	(0X17439,	"drawRow4Sprites");
 	create_insn	(x=0X17440);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17465);
@@ -17834,7 +17835,7 @@ static Bytes_3(void) {
 	make_array	(0X36FF0,	0XEA);
 	set_cmt	(0X370DA,	"918-byte party block (MAZE.PTY), loaded by sub_26447",	0);
 	set_name	(0X370DA,	"Party_state");
-	set_cmt	(0X3731B,	"53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)17439",	0);
+	set_cmt	(0X3731B,	"53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)",	0);
 	set_name	(0X3731B,	"Party_eventFlags");
 	set_cmt	(0X37325,	"byte, 0-99",	0);
 	create_byte	(0X37325);
@@ -37780,6 +37781,7 @@ static Functions_0(void) {
 	define_local_var(0X1741A, 0X17439, "[bp-0X2]", "segp");
 	add_func    (0X17439,0X17F38);
 	set_func_flags(0X17439,0x5412);
+	set_func_cmt(0X17439,	"scene list writer: objects, monsters and effect sprites of the 4th (farthest) row, scale flag 300h", 0);
 	set_frame_size(0X17439, 0X2, 2, 0);
 	add_func    (0X17F38,0X1862A);
 	set_func_flags(0X17F38,0x5412);
@@ -39546,16 +39548,16 @@ static Functions_0(void) {
 	add_func    (0X40A6D,0X40AAC);
 	set_func_flags(0X40A6D,0x5412);
 	set_frame_size(0X40A6D, 0X2, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X40AAC,0X41474);
 	set_func_flags(0X40AAC,0x5412);
 	set_func_cmt(0X40AAC,	"delete character/hireling, \"Your Roster is full!\"", 0);
 	set_frame_size(0X40AAC, 0X60, 2, 0);
 	define_local_var(0X40AAC, 0X41474, "[bp-0X2E]", "s");
 	define_local_var(0X40AAC, 0X41474, "[bp-0XE]", "src");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X41500,0X41565);
 	set_func_flags(0X41500,0x5412);
 	set_frame_size(0X41500, 0X2, 2, 0);

@@ -663,7 +663,8 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 430A8	loadMapGraphics	loads the environment graphics of map n: ENV table 30E2 -> town/cave/dung/castle tile set and the four '<env>wl<n>.vga' wall sheets for indoor maps, the seven terrain sheets named by the page header bytes 00-06 (name table 5A46) for outdoor maps
 
 36FDA	Party_stateBase	start of the 918-byte MAZE.PTY block (same address as Party_count, +0); an older entry 'Party_state' at 370DA was +100h off and was removed
-3731B	Party_eventFlags	53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)17439	drawRow4Sprites	scene list writer: objects, monsters and effect sprites of the 4th (farthest) row, scale flag 300h
+3731B	Party_eventFlags	53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)
+17439	drawRow4Sprites	scene list writer: objects, monsters and effect sprites of the 4th (farthest) row, scale flag 300h
 17F38	drawRow3Sprites	scene list writer for the 3rd row (scale 200h)
 1862A	drawRow2Sprites	scene list writer for the 2nd row (scale 100h)
 18BF1	drawRow1Sprites	scene list writer for the adjacent row (full size)
