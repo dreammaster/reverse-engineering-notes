@@ -684,3 +684,4 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 47B8D	townBuildingIntro	shared opening of every town building: loads the building's picture sprites, prints the intro text, sets the cursor and shows the entry window; returns non-zero to enter
 38147	textModeScreen	DOS text-mode screen (cprintf/clrscr/gotoxy with colours) used by the fatal-error and startup message paths
 432B9	loadMapData	loads the map's data files (MAZEnn.DAT/EVT/BIN through loadMazeDats and loadResourceByName) and resets the per-map state
+45790	questLog	quest log window: lists the active quests (QUEST.BIN 0-18) from the game flags 157+n (0-12), flag 170 clear (13) and start/done flag pairs (14-18); stub sub_282CA

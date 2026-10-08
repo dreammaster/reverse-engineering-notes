@@ -36807,7 +36807,7 @@ sub_281DA       endp
 ; Attributes: thunk
 
 sub_281E4       proc far                ; CODE XREF: sub_3E729+3↓P
-                                        ; sub_45790+43↓P ...
+                                        ; questLog+43↓P ...
                 jmp     sub_42FF5
 sub_281E4       endp
 
@@ -37016,15 +37016,7 @@ stub08          segment para public 'CODE' use16
                 db 10h dup(0)           ; workarea
 ; [00000005 BYTES: COLLAPSED FUNCTION j_createCharacter. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_spellGoldPrice. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_282CA       proc far                ; CODE XREF: exploreLoop+84D↓P
-                jmp     sub_45790
-sub_282CA       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_questLog. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_trainCharacter. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -43698,8 +43690,8 @@ path            dw offset aMm3Cur       ; DATA XREF: openAndLoadCc+1A↑r
                 db 7Ch, 0A0h, 7Ch, 0ABh, 7Ch, 0B6h, 7Ch, 0BFh, 7Ch, 0C7h
                 db 7Ch, 0D5h, 7Ch, 0DEh, 7Ch, 0E5h, 7Ch, 0F8h, 7Ch, 3
                 db 7Dh, 14h, 7Dh, 20h, 7Dh, 2Eh, 7Dh
-word_2E100      dw 7D38h                ; DATA XREF: sub_45790+17F↓r
-                                        ; sub_45790+246↓r
+word_2E100      dw 7D38h                ; DATA XREF: questLog+17F↓r
+                                        ; questLog+246↓r
                 db 4Eh, 7Dh, 54h, 7Dh, 59h, 7Dh, 5Dh, 7Dh, 61h, 7Dh, 65h
                 db 7Dh, 6Bh, 7Dh, 70h, 7Dh, 75h, 7Dh, 79h, 7Dh, 7Fh, 7Dh
                 db 85h, 7Dh, 8Ah, 7Dh, 90h, 7Dh, 94h, 7Dh, 0E7h, 68h, 9Ah
@@ -66483,7 +66475,7 @@ loc_3F1A7:                              ; CODE XREF: exploreLoop+820↑j
                 call    j_dismissCharacter
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
-                call    sub_282CA
+                call    j_questLog
                 jmp     short loc_3F22F
 ; ---------------------------------------------------------------------------
                 call    j_showOverheadMap
@@ -80057,9 +80049,10 @@ ovl08           segment para public 'OVERLAY' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; quest log window: lists the active quests (QUEST.BIN 0-18) from the game flags 157+n (0-12), flag 170 clear (13) and start/done flag pairs (14-18); stub sub_282CA
 ; Attributes: bp-based frame
 
-sub_45790       proc far                ; CODE XREF: sub_282CA↑J
+questLog        proc far                ; CODE XREF: j_questLog↑J
 
 s               = byte ptr -1Ch
 var_7           = byte ptr -7
@@ -80095,24 +80088,24 @@ var_2           = word ptr -2
                 jmp     short loc_457E4
 ; ---------------------------------------------------------------------------
 
-loc_457DF:                              ; CODE XREF: sub_45790+38↑j
-                                        ; sub_45790+41↑j
+loc_457DF:                              ; CODE XREF: questLog+38↑j
+                                        ; questLog+41↑j
                 mov     [bp+var_6], 0
 
-loc_457E4:                              ; CODE XREF: sub_45790+4D↑j
+loc_457E4:                              ; CODE XREF: questLog+4D↑j
                 cmp     Party_map, 69h ; 'i'
                 jnz     short loc_457F0
                 mov     di, 40h ; '@'
                 jmp     short loc_457F8
 ; ---------------------------------------------------------------------------
 
-loc_457F0:                              ; CODE XREF: sub_45790+59↑j
+loc_457F0:                              ; CODE XREF: questLog+59↑j
                 mov     al, Party_map
                 mov     ah, 0
                 dec     ax
                 mov     di, ax
 
-loc_457F8:                              ; CODE XREF: sub_45790+5E↑j
+loc_457F8:                              ; CODE XREF: questLog+5E↑j
                 mov     ax, 3CFAh
                 push    ax
                 call    sub_28249
@@ -80174,7 +80167,7 @@ loc_457F8:                              ; CODE XREF: sub_45790+5E↑j
                 jmp     short loc_45905
 ; ---------------------------------------------------------------------------
 
-loc_45887:                              ; CODE XREF: sub_45790+17B↓j
+loc_45887:                              ; CODE XREF: questLog+17B↓j
                 mov     bx, [bp+var_2]
                 cmp     bx, 12h         ; switch 19 cases
                 ja      short def_45891 ; jumptable 00045891 default case
@@ -80182,7 +80175,7 @@ loc_45887:                              ; CODE XREF: sub_45790+17B↓j
                 jmp     cs:jpt_45891[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_45896:                              ; CODE XREF: sub_45790+101↑j
+loc_45896:                              ; CODE XREF: questLog+101↑j
                                         ; DATA XREF: ovl08:jpt_45891↓o
                 mov     ax, [bp+var_2]  ; jumptable 00045891 cases 0-12
                 add     ax, 9Dh
@@ -80197,7 +80190,7 @@ loc_45896:                              ; CODE XREF: sub_45790+101↑j
                 jmp     short loc_458F5
 ; ---------------------------------------------------------------------------
 
-loc_458AE:                              ; CODE XREF: sub_45790+101↑j
+loc_458AE:                              ; CODE XREF: questLog+101↑j
                                         ; DATA XREF: ovl08:jpt_45891↓o
                 mov     ax, 0AAh        ; jumptable 00045891 case 13
                 push    ax
@@ -80211,7 +80204,7 @@ loc_458AE:                              ; CODE XREF: sub_45790+101↑j
                 jmp     short loc_458F5
 ; ---------------------------------------------------------------------------
 
-loc_458C3:                              ; CODE XREF: sub_45790+101↑j
+loc_458C3:                              ; CODE XREF: questLog+101↑j
                                         ; DATA XREF: ovl08:jpt_45891↓o
                 mov     bx, [bp+var_2]  ; jumptable 00045891 cases 14-18
                 mov     al, [bx+3BD8h]
@@ -80236,25 +80229,25 @@ loc_458C3:                              ; CODE XREF: sub_45790+101↑j
                 or      ax, ax
                 jnz     short def_45891 ; jumptable 00045891 default case
 
-loc_458F5:                              ; CODE XREF: sub_45790+11C↑j
-                                        ; sub_45790+131↑j
+loc_458F5:                              ; CODE XREF: questLog+11C↑j
+                                        ; questLog+131↑j
                 lea     ax, [bp+s]
                 mov     bx, [bp+var_2]
                 add     bx, ax
                 mov     al, byte ptr [bp+var_2]
                 mov     [bx], al
 
-def_45891:                              ; CODE XREF: sub_45790+FD↑j
-                                        ; sub_45790+11A↑j ...
+def_45891:                              ; CODE XREF: questLog+FD↑j
+                                        ; questLog+11A↑j ...
                 inc     [bp+var_2]      ; jumptable 00045891 default case
 
-loc_45905:                              ; CODE XREF: sub_45790+F5↑j
+loc_45905:                              ; CODE XREF: questLog+F5↑j
                 cmp     [bp+var_2], 13h
                 jge     short loc_4590E
                 jmp     loc_45887
 ; ---------------------------------------------------------------------------
 
-loc_4590E:                              ; CODE XREF: sub_45790+179↑j
+loc_4590E:                              ; CODE XREF: questLog+179↑j
                 push    ds
                 push    word_2E100
                 call    vdrv_2D_printText
@@ -80267,7 +80260,7 @@ loc_4590E:                              ; CODE XREF: sub_45790+179↑j
                 jmp     loc_459E7
 ; ---------------------------------------------------------------------------
 
-loc_45927:                              ; CODE XREF: sub_45790+25D↓j
+loc_45927:                              ; CODE XREF: questLog+25D↓j
                 mov     bx, [bp+var_2]
                 mov     al, [bx+3BF0h]
                 mov     ah, 0
@@ -80280,10 +80273,10 @@ loc_45927:                              ; CODE XREF: sub_45790+25D↓j
                 jmp     short loc_45943
 ; ---------------------------------------------------------------------------
 
-loc_45941:                              ; CODE XREF: sub_45790+1AA↑j
+loc_45941:                              ; CODE XREF: questLog+1AA↑j
                 xor     ax, ax
 
-loc_45943:                              ; CODE XREF: sub_45790+1AF↑j
+loc_45943:                              ; CODE XREF: questLog+1AF↑j
                 add     si, ax
                 mov     ax, 12Ch
                 push    ax              ; maxlen
@@ -80337,8 +80330,8 @@ loc_45943:                              ; CODE XREF: sub_45790+1AF↑j
                 cmp     si, 0Fh
                 jnz     short loc_459E4
 
-loc_459BF:                              ; CODE XREF: sub_45790+223↑j
-                                        ; sub_45790+228↑j
+loc_459BF:                              ; CODE XREF: questLog+223↑j
+                                        ; questLog+228↑j
                 cmp     si, [bp+var_4]
                 jz      short loc_459E4
                 push    ds
@@ -80355,17 +80348,17 @@ loc_459BF:                              ; CODE XREF: sub_45790+223↑j
                 pop     cx
                 mov     [bp+var_4], si
 
-loc_459E4:                              ; CODE XREF: sub_45790+22D↑j
-                                        ; sub_45790+232↑j
+loc_459E4:                              ; CODE XREF: questLog+22D↑j
+                                        ; questLog+232↑j
                 inc     [bp+var_2]
 
-loc_459E7:                              ; CODE XREF: sub_45790+194↑j
+loc_459E7:                              ; CODE XREF: questLog+194↑j
                 cmp     [bp+var_2], 13h
                 jge     short loc_459F0
                 jmp     loc_45927
 ; ---------------------------------------------------------------------------
 
-loc_459F0:                              ; CODE XREF: sub_45790+25B↑j
+loc_459F0:                              ; CODE XREF: questLog+25B↑j
                 push    ds
                 mov     ax, 3D1Fh
                 push    ax
@@ -80391,7 +80384,7 @@ loc_459F0:                              ; CODE XREF: sub_45790+25B↑j
                 call    j_loadMapGraphics
                 pop     cx
 
-loc_45A25:                              ; CODE XREF: sub_45790+286↑j
+loc_45A25:                              ; CODE XREF: questLog+286↑j
                 call    getCommand
                 mov     ax, 1
                 push    ax
@@ -80406,10 +80399,10 @@ loc_45A25:                              ; CODE XREF: sub_45790+286↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_45790       endp
+questLog        endp
 
 ; ---------------------------------------------------------------------------
-jpt_45891       dw offset loc_45896     ; DATA XREF: sub_45790+101↑r
+jpt_45891       dw offset loc_45896     ; DATA XREF: questLog+101↑r
                 dw offset loc_45896     ; jump table for switch statement
                 dw offset loc_45896
                 dw offset loc_45896

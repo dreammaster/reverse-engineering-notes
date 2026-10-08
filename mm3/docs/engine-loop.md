@@ -26,7 +26,7 @@ runs the intro (`introSequence`), then the title/roster menu (`rosterMenu`) and 
 | `R` / 2 (and `%`-code 25h goes to `13E8h`) | `rest` |
 | `B` / 3 | bash the door/wall ahead (`chargeStep` + wall test) |
 | `D` / 4 | `chargeStep`, `dismissCharacter` |
-| `V` / 5 | `showOverheadMap` (after `sub_282CA`) |
+| `V` / 5 | the quest log (`questLog`, stub `sub_282CA`; then the overhead map call as for `M`) |
 | `M` / 6 | `showOverheadMap` (map) |
 | `I` / 7 | `sub_2818A` + `chargeStep` |
 | space (20h) | pass one step of time (`chargeStep` only) |

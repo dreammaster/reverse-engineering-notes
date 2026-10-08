@@ -14097,6 +14097,7 @@ static Bytes_2(void) {
 	create_insn	(0X282C5);
 	set_name	(0X282C5,	"j_spellGoldPrice");
 	create_insn	(0X282CA);
+	set_name	(0X282CA,	"j_questLog");
 	create_insn	(0X282CF);
 	set_name	(0X282CF,	"j_trainCharacter");
 	create_insn	(0X282D4);
@@ -26966,6 +26967,7 @@ static Bytes_5(void) {
 	create_byte	(0X4576D);
 	make_array	(0X4576D,	0X14);
 	create_insn	(0X45790);
+	set_name	(0X45790,	"questLog");
 	create_insn	(x=0X45793);
 	op_hex		(x,	1);
 	set_cmt	(0X45797,	"n",	0);
@@ -28406,8 +28408,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47290);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X47293);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -28417,6 +28417,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47293);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4729C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4729F);
@@ -38740,7 +38742,7 @@ static Functions_0(void) {
 	set_func_flags(0X282C5,0x54c2);
 	set_frame_size(0X282C5, 0, 0, 0);
 	add_func    (0X282CA,0X282CF);
-	set_func_flags(0X282CA,0x5482);
+	set_func_flags(0X282CA,0x54c2);
 	set_frame_size(0X282CA, 0, 0, 0);
 	add_func    (0X282CF,0X282D4);
 	set_func_flags(0X282CF,0x54c2);
@@ -39768,6 +39770,7 @@ static Functions_1(void) {
 	define_local_var(0X45431, 0X45586, "[bp-0X88]", "buffer");
 	add_func    (0X45790,0X45A4A);
 	set_func_flags(0X45790,0x5412);
+	set_func_cmt(0X45790,	"quest log window: lists the active quests (QUEST.BIN 0-18) from the game flags 157+n (0-12), flag 170 clear (13) and start/done flag pairs (14-18); stub sub_282CA", 0);
 	set_frame_size(0X45790, 0X20, 2, 0);
 	define_local_var(0X45790, 0X45A4A, "[bp-0X1C]", "s");
 	add_func    (0X45A70,0X45B9D);
