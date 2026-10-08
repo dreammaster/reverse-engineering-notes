@@ -602,6 +602,60 @@ static void testShop(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* A healer NPC: the hurt speaker asks for a quote, accepts it, and ends at full health with less gold. */
+static void testHealer(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned npcId = 0;
+    for (unsigned id = 1; id < s->dialogs.npcCount && !npcId; id++) {
+        const uint8_t *npc = dialogNpc(&s->dialogs, id);
+        if (npc && dialogGetU16(npc, DialogNpcTopicCount) && dialogServiceForType(dialogGreetingType(&s->dialogs, npc)) == DialogServiceHealer) {
+            npcId = id;
+        }
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: the data has a healer NPC", label);
+    check(text, npcId != 0);
+    if (!npcId) {
+        sessionFree(s);
+        return;
+    }
+    uint8_t *member = sessionPartyRecord(s, 1);
+    partySetStat(member, PartyStatHitPoints, 1);
+    memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+    ConversationStep step;
+    check("the healer talk starts for the hurt member", sessionTalkStart(s, npcId, 1, &step));
+    bool quoted = false, accepted = false;
+    for (unsigned n = 0; n < 12 && s->talking && !accepted; n++) {
+        unsigned pick = 0;
+        for (unsigned i = 0; i < s->talk.listedCount && !pick; i++) { /* the quote first, then the accept */
+            unsigned arg = dialogTopicU16(&s->dialogs, dialogTopic(&s->dialogs, s->talk.listed[i]), DialogTopicArg);
+            if (!quoted && (arg & 0xF000)) {
+                pick = i + 1;
+            } else if (quoted && (arg & 2)) {
+                pick = i + 1;
+            }
+        }
+        if (!pick) {
+            break;
+        }
+        step = sessionTalkChoose(s, pick);
+        SessionService result = sessionTalkService(s, &step, NULL);
+        if (!quoted) {
+            quoted = result == SessionServiceDone;
+        } else {
+            accepted = result == SessionServiceDone;
+        }
+    }
+    check("a quote fills the cost and the accept heals the member and charges the gold",
+          quoted && accepted && partyGetStat(member, PartyStatHitPoints) == partyGetStatMax(member, PartyStatHitPoints) && !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 19998));
+    sessionFree(s);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: a session starts");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: a session starts");
@@ -616,6 +670,7 @@ int main(void) {
             testInteract(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTalk(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
