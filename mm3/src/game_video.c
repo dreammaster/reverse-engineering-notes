@@ -179,7 +179,10 @@ void host_vdrv_1E_openWindow(Cpu *c) {
 	mm3_ui_open_window(G.ui, host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4),
 		(toff | tseg) ? (const char *)(SEGP(tseg) + toff) : NULL);
 }
-void host_vdrv_2D_printText(Cpu *c) { mm3_ui_print(G.ui, far_str(c, 0)); }
+void host_vdrv_2D_printText(Cpu *c) {
+	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
+	mm3_ui_print(G.ui, far_str(c, 0));
+}
 
 void host_vdrv_21_loadSprites(Cpu *c) { /* name far -> far pointer of the loaded resource in dx:ax */
 	uint16_t seg = game_load_resource(far_str(c, 0), NULL);

@@ -30,3 +30,10 @@ Not done yet (planned order): event effects (`If` tests, give/take, teleport, to
 Facing (settled from `exploreLoop`'s turn and step tables): 0 = north (+y), 1 = south (-y), 2 = east (+x), 3 = west (-x);
 turning left goes 0 -> 3 -> 1 -> 2 -> 0, turning right 0 -> 2 -> 1 -> 3 -> 0.  Wall nibble sides are N, E, S, W from the top nibble
 (`MM3_SIDE_*`); `mm3_facing_*` in `view_glue.c` has the helpers.
+
+## Running the recompiled game
+`make mm3game && ./mm3game ../data [--intro] [--at MAP,X,Y,FACING] [--headless --keys HEX,... --shot f.bmp]`
+Keys are BIOS codes (scan<<8|ascii, e.g. 4800 = Up, 1E41 = 'A', 3920 = Space).  Debug environment: `MM3_TRACE=1` (key log),
+`MM3_TEXTLOG=1` (every string given to the text engine), `MM3_SHOT_EVERY=N`/`MM3_SHOT_PREFIX` (screenshots while the game polls
+the keyboard), `MM3_IDLE=N` (headless idle limit).  Scripts: `tests/gamefuzz.sh`, `tests/combatfuzz.sh`, `tests/combatwin.sh`.
+Combat commands (table in the combat overlay): A attack, B block, C cast, F fight, I info, O, Q quick reference, R run, U use.
