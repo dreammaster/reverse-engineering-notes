@@ -693,6 +693,50 @@ static void testAilments(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(s);
 }
 
+/* Spell scrolls: cast without cost or knowledge, or studied. */
+static void testScrolls(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned scrolls = 0, cast = 0, studied = 0, studyable = 0;
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *target = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (!target || itemTargetKind(record) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+            continue;
+        }
+        uint8_t *slot = inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1);
+        itemSlotSet(slot, (uint16_t)id, 3);
+        if (sessionUseItem(s, 0, 1, 0) != SessionUseScroll) {
+            continue;
+        }
+        scrolls++;
+        memset(hero + PartyFieldFlagBankCA, 0, 32); /* knows nothing, every class bit, a high level: any scroll with a class mask can be studied */
+        partySetU16(hero, PartyFieldStatusFlags, 0x3F);
+        partySetU16(hero, PartyFieldLevel, 90);
+        SessionCast result = sessionUseScroll(s, 0, 1, false, 1);
+        cast += result == SessionCastDone || result == SessionCastNoEffect || result == SessionCastCannot || result == SessionCastUnsupported; /* the splash spells */
+        itemSlotSet(slot, (uint16_t)id, 3);
+        if (itemTargetWord(target, ItemTargetSlotFlags) & 0x200) {
+            const uint8_t *spell = spellRecord(&s->spells, itemTargetWord(target, 2));
+            for (unsigned m = 0; m < 1 && spell; m++) {
+                uint8_t *member = sessionPartyRecord(s, m);
+                if (spellCanLearn(spell, itemTargetWord(target, 2), member)) {
+                    studyable++;
+                    studied += sessionUseScroll(s, 0, 1, true, m) == SessionCastDone && !spellCanLearn(spell, itemTargetWord(target, 2), member);
+                    break;
+                }
+            }
+        }
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: %u spell scrolls all answer a cast, and the %u studyable ones teach their spell", label, scrolls, studyable);
+    check(text, scrolls > 0 && cast == scrolls && studied == studyable);
+    sessionFree(s);
+}
+
 /* Readable items: every item the game lets you read opens a text with at least one line. */
 static void testReading(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -924,6 +968,7 @@ int main(void) {
             testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTime(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testAilments(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testScrolls(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testReading(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

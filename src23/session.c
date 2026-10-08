@@ -324,7 +324,7 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
         }
         hit = true;
         CombatProjectileHitOutcome outcome =
-            combatApplyProjectileHit(monster, caster, spell, false, &staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+            combatApplyProjectileHit(monster, caster, spell, s->scrollCast, &staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
         if (!outcome.continues) {
             break;
         }
@@ -360,10 +360,10 @@ static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spe
     uint8_t *flags = saveGlobalFlags(&s->save);
     if (beam) {
         if (found) {
-            combatApplyDamageToMapMonster(rowMonsters[0], caster, spell, false, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+            combatApplyDamageToMapMonster(rowMonsters[0], caster, spell, s->scrollCast, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
         }
     } else {
-        combatApplyScreenWideAttack(NULL, rowMonsters, caster, spell, false, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+        combatApplyScreenWideAttack(NULL, rowMonsters, caster, spell, s->scrollCast, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
     }
     monsterRewardsAward(&s->save, s->game, &staging);
     sessionRebuild(s);
@@ -398,21 +398,23 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
     for (unsigned i = 0; i < knownCount && i < 256; i++) {
         knows = knows || known[i] == spellId;
     }
-    if (!knows) {
+    if (!knows && !s->scrollCast) {
         return SessionCastNotKnown;
     }
     SpellBranch branch = spellSelectBranch(spell);
     if (!castSupported(branch, spell)) {
         return SessionCastUnsupported;
     }
-    if (!spellCanCast(spell, caster, &s->save, c->active)) {
+    if (s->scrollCast ? !spellUsableInContext(spell, c->active) : !spellCanCast(spell, caster, &s->save, c->active)) {
         return SessionCastCannot;
     }
-    spellDeductCosts(spell, caster, &s->save);
+    if (!s->scrollCast) {
+        spellDeductCosts(spell, caster, &s->save);
+    }
     bool done = true;
     switch (branch) {
     case SpellBranchAttackAllSlots:
-        combatApplySpellAttackToActiveSlots(c->slots, caster, spell, false, &s->rng);
+        combatApplySpellAttackToActiveSlots(c->slots, caster, spell, s->scrollCast, &s->rng);
         break;
     case SpellBranchAttackActiveMonster:
     case SpellBranchLifeForce: {
@@ -424,7 +426,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         if (branch == SpellBranchLifeForce) {
             combatApplyLifeForceSpell(target, caster, spell, &s->save, s->game, monsterGetU16(target, MonsterFieldSaveDifficulty), &s->rng);
         } else {
-            CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, false, &s->rng);
+            CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, s->scrollCast, &s->rng);
             combatApplySpellAttack(target, spell, result);
             if (result.hasEffect) {
                 combatMarkSpellAttackHit(target, spell);
@@ -439,7 +441,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
             done = false;
         } else if (branch == SpellBranchSingleTarget) {
             if (spellGetU16(spell, SpellFieldFlagsA) & (SpellFlagsAPositionReset | SpellFlagsAIconBarPresetAmount)) {
-                castStatDelta(s, caster, &def, spell);
+                castStatDelta(s, s->scrollCast && sessionPartyRecord(s, s->scrollTarget) ? sessionPartyRecord(s, s->scrollTarget) : caster, &def, spell);
             } else {
                 done = false;
             }
@@ -580,6 +582,42 @@ bool sessionDocumentLine(GameSession *s, unsigned line, char out[DocumentLineBuf
     return documentGetLine(&s->documents, (DocumentCategory)s->readCategory, s->readId, line, out);
 }
 
+SessionCast sessionUseScroll(GameSession *s, unsigned userSlot, unsigned itemSlot, bool study, unsigned memberSlot) {
+    uint8_t *user = sessionPartyRecord(s, userSlot);
+    uint8_t *slot = user ? inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot) : NULL;
+    const uint8_t *item = slot && itemSlotId(slot) ? itemCatalogRecord(&s->items, itemSlotId(slot)) : NULL;
+    const uint8_t *target = item ? itemTargetEntry(&s->items, item) : NULL;
+    if (!target || itemTargetKind(item) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+        return SessionCastNotKnown;
+    }
+    unsigned spellId = itemTargetWord(target, 2);
+    const uint8_t *spell = spellRecord(&s->spells, spellId);
+    if (!spell) {
+        return SessionCastNotKnown;
+    }
+    if (study) { /* MarkIneligiblePartyMembers: only a member who does not know it, of a fitting class and level */
+        uint8_t *member = sessionPartyRecord(s, memberSlot);
+        if (!(itemTargetWord(target, ItemTargetSlotFlags) & 0x200) || !member || !spellCanLearn(spell, spellId, member)) {
+            return SessionCastCannot;
+        }
+        spellLearn(member, spellId);
+        partyConsumeItemCharge(user, &s->items, slot);
+        return SessionCastDone;
+    }
+    s->scrollCast = true;
+    s->scrollTarget = memberSlot;
+    SessionCast result = castSpell(s, userSlot, spellId, false);
+    s->scrollCast = false;
+    if (result == SessionCastDone || result == SessionCastNoEffect) {
+        partyConsumeItemCharge(user, &s->items, slot);
+        if (s->combat.active && s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster) {
+            combatAfterAction(s);
+            combatRunMonsters(s);
+        }
+    }
+    return result;
+}
+
 void sessionTickAilments(GameSession *s) {
     if (s->combat.wiped) {
         return;
@@ -661,6 +699,10 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         }
         travelTo(s, destination);
         return SessionUseTravelled;
+    }
+    /* a spell scroll (InteractWithContainer): the entry's flags 0x200 / 0x400, word 2 the spell; cast it (sessionUseScroll) or, with 0x200, study it */
+    if (target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+        return spellRecord(&s->spells, itemTargetWord(target, 2)) ? SessionUseScroll : SessionUseNoEffect;
     }
     /* a readable item (HandleGameCommand -> RunConversation): the target entry's flags 0x4000 / 0x2000 / 0x1000 / 0x800 pick the pool, its word 2 the entry, the reader's
      * Linguistics (against the difficulty bits 0x8 / 0x4 / 0x2 of word 1) how much of it is readable */

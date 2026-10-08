@@ -24,8 +24,8 @@
  * RunConversation+_4000/_2000/_1000/_800 in the disassembly). Each pool is
  * a small (id -> WORLD.DAT byte offset, line count) index table baked into
  * the executable itself (not WORLD.DAT) -- LookupConversationTextBlockOffset_*,
- * yendor2.asm:42441 on. The id itself comes from the triggering item's own
- * catalog data (not yet traced which field). Both games' four pools'
+ * yendor2.asm:42441 on. The id is the consumable target entry's word 2 (`mov bx, [bx+4]`
+ * of word_2E548; the pool is picked by the entry's word 1 bits 0x4000 / 0x2000 / 0x1000 / 0x800; session.c sessionUseItem). Both games' four pools'
  * *text* turned out to live in one small contiguous WORLD.DAT span each
  * (Ch2: 14,332 bytes at 0x15181C; Ch3: 11,986 bytes at 0x3C2030) even
  * though each pool has its own separate index table -- confirmed by every

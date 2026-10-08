@@ -82,6 +82,8 @@ typedef struct GameSession {
     DocumentCatalog documents; /* the readable texts (document.h) */
     unsigned readCategory, readId; /* the document the last SessionUseRead opened */
     DocumentReadability readability; /* how much of it the reader could read */
+    bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
+    unsigned scrollTarget;     /* its single-target recipient slot */
     AilmentClock ailments;  /* the counters of the periodic ailment sweep (ailment.h) */
     unsigned pendingFade;   /* 1 at 06:00, 2 at 18:00 (sessionAdvanceTime): the front end runs the dawn / dusk palette fade (palette.h) and clears it */
     unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
@@ -147,7 +149,7 @@ SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned sp
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
  * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -222,6 +224,13 @@ void sessionAdvanceTime(GameSession *session, unsigned minutes);
  * Call it once per pass of the front end's loop (not while it waits for a key).
  */
 void sessionTickAilments(GameSession *session);
+
+/*
+ * A spell scroll (sessionUseItem answers SessionUseScroll; InteractWithContainer, yendor2.asm:53446): cast it -- the scroll's spell (target entry word 2) runs with no cost, even
+ * for a member who does not know it, its attacks "already resolved", a single-target one on `memberSlot`, the context rules of the spell as for a cast, and the scroll spends a
+ * charge -- or, when the scroll allows it (entry flag 0x200), `study` it: `memberSlot` learns the spell if spellCanLearn says so (not known yet, class and level fit).
+ */
+SessionCast sessionUseScroll(GameSession *session, unsigned userSlot, unsigned itemSlot, bool study, unsigned memberSlot);
 
 /* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */
 bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentLineBufferSize]);
