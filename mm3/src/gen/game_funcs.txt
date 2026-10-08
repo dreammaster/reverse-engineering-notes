@@ -35,7 +35,6 @@ runMazeEvent
 shootAhead
 sub_25DFE
 sub_25E9E
-sub_26965
 sub_27F45
 sub_2803E
 sub_28130
@@ -63,7 +62,6 @@ sub_4087E
 protectionHandler
 sub_253D3
 sub_25E66
-sub_2698B
 sub_38821
 sub_3946E
 changeTime

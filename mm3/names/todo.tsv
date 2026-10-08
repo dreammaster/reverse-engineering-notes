@@ -51,3 +51,9 @@
 6371C	vdrv_updateScreen	after drawing: copies the changed rectangle to the video memory, redraws the mouse cursor, and clears one of the update-region flags 60E6A (q) / 60E69 (k) / 60E68 (b) / 60E67 (d) (evidence: reads the code; only the flag clearing is visible in the screen buffer)
 24FFB	vdrv_2A_introFrame	one frame of the intro: 75-particle starfield (arrays at module data +0/96h/12Ch/1C2h/258h, colour table 0E62h) + draw list at the argument, then copy to screen
 26978	soundDriverCall	cmd 0FFFEh restarts the song clock, 0FFFFh returns song position (intro scenes are timed by it); other values = song/sfx numbers
+2693F	soundDriverInit	API 0 of the sound driver: init(port) (hooks INT 08h, programs the PIT, resets the FM chip)
+26952	soundDriverRestore	API 3: restore the old INT 08h vector, silence the chip
+26965	soundDriverMusic	API 6: music command: far pointer to a song buffer starts it, 0:0 stops, FFFF:FFFF queries/clears (mode word C0h = start flag?)
+2698B	soundDriverSample	API 0Ch: digital sample player (Covox/Blaster drivers)
+38821	startSong	startSong(name, mode): copies the song name to ECE8h and (if byte_28849) calls soundDriverMusic; mode 0 then loads it via sub_387C6
+387C6	loadAndPlaySong	loads the song file named at ECE8h, copies it to the song buffer (word_332DC/E, 1890h bytes) and starts it if Option_music

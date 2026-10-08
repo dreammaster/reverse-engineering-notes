@@ -57,7 +57,7 @@ SDL_CFLAGS := $(shell pkg-config --cflags sdl2 2>/dev/null)
 SDL_LIBS := $(shell pkg-config --libs sdl2 2>/dev/null)
 
 viewer: viewer.c $(CORE) ui_text.c gfx.h cc.h ui_text.h
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ viewer.c $(CORE) ui_text.c $(SDL_LIBS)
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ viewer.c $(CORE) ui_text.c $(SDL_LIBS) -lm
 .PHONY: viewer
 
 tests/test_mapbin: tests/test_mapbin.c $(CORE) cc.h mapbin.h dgroup.h party.h
@@ -98,7 +98,7 @@ viewcheck: tests/view_run mm3view
 GLUE_SRC = view_glue.c cc.c maze.c party.c gfx.c dgroup.c mapbin.c $(VIEW_SRC)
 
 mm3view: mm3view.c $(GLUE_SRC) view_glue.h
-	$(CC) $(CFLAGS) -Wno-unused-label $(SDL_CFLAGS) -o $@ mm3view.c $(GLUE_SRC) $(SDL_LIBS)
+	$(CC) $(CFLAGS) -Wno-unused-label $(SDL_CFLAGS) -o $@ mm3view.c $(GLUE_SRC) $(SDL_LIBS) -lm
 .PHONY: mm3view
 
 tests/test_walk: tests/test_walk.c $(GLUE_SRC) view_glue.h
@@ -141,10 +141,10 @@ regen_game:
 .PHONY: regen_game
 
 # ---- the recompiled game
-GAME_SRC = recomp.c gen/game_gen.c rules.c game_rules.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
+GAME_SRC = recomp.c gen/game_gen.c rules.c game_rules.c x86.c opl.c game_sound.c game_machine.c game_files.c game_video.c ui_text.c font.c gfx.c cc.c
 
 mm3game: game_main.c $(GAME_SRC) game.h recomp.h
-	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS)
+	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS) -lm
 .PHONY: mm3game
 
 # ---- readable rules vs the translated originals

@@ -44,3 +44,13 @@ Combat commands (table in the combat overlay): A attack, B block, C cast, F figh
 characters (200,000+ checks, bit-exact, including the originals' 16/32-bit quirks).  `game_rules.c` exposes them as hosts and the
 names are listed in `gen/hosts.txt`, so `make regen_game` leaves the translated copies out of the game.  The same recipe applies to
 any other routine: write the readable function, add a differential test against `gen/*_gen.c`, then list it in `gen/hosts.txt`.
+
+## Sound
+`game_sound.c` runs the game's own `ADLIB.DRV` (from MM3.CC) in `x86.c` (a small 8086/186 interpreter over the same flat memory as the
+recompiled game): the API wrappers of the executable (`sub_2693F` init, `sub_26952` restore, `sub_26965` music, `soundDriverPlay` effects/tick
+counter, `sub_2698B` samples) are hosts that far-call the driver; its OPL register writes drive `opl.c` (a compact OPL2 emulator) and
+the samples go to SDL audio.  The driver's timer interrupt (PIT divisor 4006h = 72.8 Hz) is called from the audio callback; without an
+audio device the ticks follow the wall clock, headless runs use virtual time (`MM3_WAV=file.wav` then writes what would have played).
+`tests/x86_sound_check.sh` proves the interpreter bit-exact against Unicorn (60k+ register writes per song incl. all 151 effects);
+`tests/opl_render` renders a song offline.  The OPL emulator itself is approximate (envelope/key-scale curves are modelled, not
+cycle-exact; rhythm mode is not emulated) -- judge it by ear.  The sample (digital) drivers are not wired.

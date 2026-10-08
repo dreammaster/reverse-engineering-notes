@@ -176,6 +176,7 @@ void host__bioskey(Cpu *c) {
 	static int idle, polls, idle_limit, every = -1;
 	if (every < 0) { const char *e = getenv("MM3_SHOT_EVERY"), *l = getenv("MM3_IDLE"); every = e ? atoi(e) : 0; idle_limit = l ? atoi(l) : 3000; }
 	if (cmd == 1 && every && ++polls % every == 0) { char fn[256]; snprintf(fn, sizeof fn, "%s_%04d.bmp", getenv("MM3_SHOT_PREFIX") ? getenv("MM3_SHOT_PREFIX") : "build/poll", polls / every); video_save_bmp(fn); }
+	if (cmd == 1) sound_pump(headless);
 	if (headless && cmd == 1 && kq_head == kq_tail && script_pos >= script_n && ++idle > idle_limit) headless_finish();
 	if (kq_head != kq_tail) idle = 0;
 	for (;;) {
@@ -266,21 +267,13 @@ int video_init(int headless_mode) {
  * Arguments: far pointer to the draw list.  The original seeds respawns from the DOS clock; here: a small LCG. */
 #define NSTARS 75
 static struct { int16_t x, vx, y, vy; uint8_t col, target; } stars[NSTARS];
-/* soundDriverPlay: there is no sound driver yet, but the intro is timed by the music position: 0FFFEh restarts the song clock,
- * 0FFFFh reads it.  The clock advances 2 ticks per starfield frame (virtual time keeps headless runs reproducible). */
-static unsigned music_ticks;
-void host_soundDriverPlay(Cpu *c) {
-	unsigned cmd = host_arg(c, 0);
-	if (cmd == 0xFFFE) music_ticks = 0;
-	c->ax = cmd == 0xFFFF ? (uint16_t)music_ticks : 0;
-}
 static unsigned star_rng = 12345, star_parity;
 static int star_rand(void) { star_rng = star_rng * 1103515245u + 12345u; return (int)(star_rng >> 16); }
 
 void host_vdrv_2A_starfield(Cpu *c) {
 	static const uint8_t cols[4] = { 0x1F, 0x1F, 0x9F, 0xDF };
 	unsigned list = host_arg(c, 0);
-	star_parity ^= 1; music_ticks += 2;
+	star_parity ^= 1;
 	if (getenv("MM3_DUMPLIST")) { for (int k = 0; k < 20; k++) fprintf(stderr, "%04X ", rd16(DG, (uint16_t)(list + 2 * k))); fprintf(stderr, "\n"); }
 	memset(SCREEN_MEM, 0, 64000);
 	for (int i = 0; i < NSTARS; i++) {

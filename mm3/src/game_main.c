@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
 	}
 	if (game_init(argv[1]) || video_init(headless)) return 1;
 	if (cur_path) { Mm3Cc fresh; if (mm3_cc_open(&fresh, cur_path)) { fprintf(stderr, "cannot open %s\n", cur_path); return 1; } mm3_cc_close(&G.cur); G.cur = fresh; }
+	sound_init(headless);
 	video_set_key_script(keys, nkeys);
 	video_set_shot(shot);
 	memset(&c, 0, sizeof c);
@@ -50,6 +51,11 @@ int main(int argc, char **argv) {
 		uint16_t roster = dos_alloc(0x2382 + 16);
 		wr16(DG, 0xECA8, 0); wr16(DG, 0xECAA, roster); /* Roster_buffer (far pointer) */
 	}
+	{ /* _main allocates the buffer the song files are loaded into (word_332DC/E: far pointer) */
+		uint16_t seg = dos_alloc(0x1890);
+		wr16(DG, 0xABEC, 0); wr16(DG, 0xABEE, seg);
+	}
+	DG[0xE8F8] = DG[0xE8F9] = 1; /* Option_sfx, Option_music (set by _main before the intro) */
 	if (intro) game_call(call_introSequence, &c, NULL, 0);
 	game_call(call_loadMonsterData, &c, NULL, 0);
 	game_call(call_loadSavedGame, &c, NULL, 0);
