@@ -1022,6 +1022,12 @@ SessionInteract sessionInteract(GameSession *s) {
         if (!travelDestinationLookup(s->game, value, &d)) {
             return out;
         }
+        if (s->game == GameYendor2 && s->shareware && s->x == 0x200 && s->y == 0x2B && s->facing == SaveFacingSouth) { /* EnforceDemoBoundary comes before the destination's own checks */
+            out.kind = SessionInteractDemoLimit;
+            out.textOffset = 0x8FD2;
+            out.textLines = 2;
+            return out;
+        }
         unsigned gate = s->game == GameYendor2 ? 0x2000u : 0xC000u;
         if (d.flags & gate) {
             TravelUnlockCheck check = travelCheckUnlock(s->game, value, d.flags, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);

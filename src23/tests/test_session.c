@@ -429,6 +429,17 @@ static void testInteract(GameKind game, const uint8_t *world, size_t size, const
     snprintf(text, sizeof(text), "%s: using an ungated destination object moves the party to its destination", label);
     check(text, travelled);
 
+    if (game == GameYendor2) { /* the shareware boundary: the destination south of (0x200, 0x2B) */
+        place(s, 0x200, 0x2B, SaveFacingSouth);
+        SessionInteract open = sessionInteract(s);
+        place(s, 0x200, 0x2B, SaveFacingSouth);
+        s->shareware = true;
+        SessionInteract limited = sessionInteract(s);
+        s->shareware = false;
+        snprintf(text, sizeof(text), "%s: the demo boundary is refused with its message while the program is shareware", label);
+        check(text, open.kind != SessionInteractDemoLimit && limited.kind == SessionInteractDemoLimit && limited.textOffset == 0x8FD2 && limited.textLines == 2 && s->x == 0x200 && s->y == 0x2B);
+    }
+
     snprintf(text, sizeof(text), "%s: a talker object reports its NPC", label);
     check(text, findObject(s, WorldObjectFlagTalker, 0, &col, &row) && (stand(s, col, row), sessionInteract(s).kind == SessionInteractTalker));
 

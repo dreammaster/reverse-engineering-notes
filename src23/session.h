@@ -73,6 +73,7 @@ typedef struct GameSession {
     LightSourceState light; /* the carried and spell light timers (lightsource.h); the view's light tiers come from litFlags */
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
+    bool shareware;            /* the unregistered program: sessionInteract refuses the demo boundary (Chapter 2) */
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
     uint16_t serviceType;      /* the healer's last quoted type (word_3298E) / the challenge's outcome */
@@ -167,6 +168,8 @@ SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned item
  *   StoryRefused  the event's condition is not met (`textOffset`: the one line it shows)
  *   Ending        Chapter 2's Quartz Chamber with the three quest flags: play introEndingScript (the original also sets the clock to 08:00)
  *   EndingNotReady the same without them: the two-line message at textOffset
+ *   DemoLimit     the shareware program's boundary (EnforceDemoBoundary, yendor2.asm:867): the destination at (0x200, 0x2B) facing south is refused with the two-line
+ *                 message at textOffset (REGISTER TODAY!) while `shareware` is set (Chapter 2 only; a registered program, the default, takes it)
  */
 typedef enum {
     SessionInteractNothing,
@@ -178,7 +181,8 @@ typedef enum {
     SessionInteractStoryEvent,
     SessionInteractStoryRefused,
     SessionInteractEnding,
-    SessionInteractEndingNotReady
+    SessionInteractEndingNotReady,
+    SessionInteractDemoLimit
 } SessionInteractKind;
 
 typedef struct {

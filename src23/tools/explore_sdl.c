@@ -365,6 +365,7 @@ int main(int argc, char **argv) {
     }
     if (loadExe(game)) {
         gameUiSetExe(&g_ui, &g_exe);
+        g_session->shareware = getenv("EXPLORE_SHAREWARE") != NULL;
         g_ui.clueRegistered = getenv("EXPLORE_SHAREWARE") == NULL; /* the clue book opens every entry unless EXPLORE_SHAREWARE is set */
     }
     if (loadExe(game)) {

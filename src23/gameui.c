@@ -715,6 +715,20 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
 }
 
 /* The use command on the object ahead (sessionInteract): chests are looted, destinations travelled to, the Chapter 2 ending is played; the rest shows up in the status line. */
+/* A message the session names in the executable's data segment: its lines, joined, into the log. */
+static void showExeMessage(GameUi *ui, unsigned offset, unsigned lines) {
+    GameSession *s = ui->session;
+    s->log[0] = 0;
+    for (unsigned i = 0; ui->exe && i < lines; i++) {
+        char line[80];
+        if (!exeDataString(ui->exe, offset, line, sizeof(line))) {
+            break;
+        }
+        snprintf(s->log + strlen(s->log), sizeof(s->log) - strlen(s->log), "%s%s", i ? " " : "", line);
+        offset += (unsigned)strlen(line) + 1;
+    }
+}
+
 static void useAhead(GameUi *ui) {
     GameSession *s = ui->session;
     SessionInteract use = sessionInteract(s);
@@ -742,7 +756,12 @@ static void useAhead(GameUi *ui) {
     }
     case SessionInteractStoryRefused:
     case SessionInteractEndingNotReady:
-        snprintf(s->log, sizeof(s->log), "nothing happens (yet)");
+    case SessionInteractDemoLimit:
+        if (ui->exe && use.textOffset) {
+            showExeMessage(ui, use.textOffset, use.textLines ? use.textLines : 1);
+        } else {
+            snprintf(s->log, sizeof(s->log), "nothing happens (yet)");
+        }
         break;
     case SessionInteractEnding:
         if (ui->host.cinematic) {
