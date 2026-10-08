@@ -8,6 +8,7 @@
 #include "cluebook.h"
 #include "cluemonster.h"
 #include "cluepaged.h"
+#include "cluespell.h"
 #include "exedata.h"
 #include "session.h"
 #include "viewrender.h"
@@ -69,9 +70,10 @@ typedef struct {
     const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
     bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
     bool clueNag;          /* the reminder is showing on the page */
-    unsigned clueScreen;   /* 0 the walk through, 1 the monster list, 2 a monster's page (F6 / F2 / Enter) */
-    ClueList clueList;     /* the monster list's paging */
-    uint16_t clueTypes[256]; /* the monster type ids of the list, ascending */
+    unsigned clueCategory; /* 2 monsters, 3 spells: what the list and entry screens show */
+    unsigned clueScreen;   /* 0 the walk through, 1 the category's list, 2 an entry's page (F6 / F2, F3 / Enter) */
+    ClueList clueList;     /* the list's paging */
+    uint16_t clueTypes[256]; /* the ids of the list's entries (monster type, spell id), ascending */
     bool clueHelp;         /* the clue book shows its help screen (Tab), else the walk through */
     unsigned cluePage;     /* the walk through's page, 1-based */
     bool debugMarkers;     /* print the monster markers in view to stderr */
@@ -87,7 +89,7 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
  */
 void gameUiShowTitle(GameUi *ui);
 
-/* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. Today it shows the walk through (F6, I / Q turn pages), the monster statistics (F2: the list, Up / Down / I / Q to choose, Enter for the page) and the help screen (Tab). */
+/* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. Today it shows the walk through (F6, I / Q turn pages), the monster statistics (F2) and spell information (F3): the list, Up / Down / I / Q to choose, Enter for the page and the help screen (Tab). */
 void gameUiSetExe(GameUi *ui, const ExeData *exe);
 
 /* One key press; false = quit (Escape with no overlay open). */

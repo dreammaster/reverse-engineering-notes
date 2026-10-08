@@ -10,15 +10,15 @@
 #include "spellrecord.h"
 
 typedef struct {
-    unsigned header, costLabels, effectLabels, classNames, scroll, creation, training, all, one, visibleMonsters, visibleUndeads, monster, insect, undead,
+    unsigned heading, header, costLabels, effectLabels, classNames, scroll, creation, training, all, one, visibleMonsters, visibleUndeads, monster, insect, undead,
         character, plural, handToHand, straight, area, distance, outOfHand, anytime;
     unsigned costLabelCount;
     uint32_t indexBlock, lineBlock;
 } Addresses;
 
-static const Addresses kYendor2 = {0x8C9E, 0x8CAF, 0x8CC4, 0x79A3, 0x8CE6, 0x8D83, 0x8CDD, 0x8CED, 0x8CF1, 0x8D64, 0x8FC2, 0x8CF5, 0x8D75, 0x8D7C,
+static const Addresses kYendor2 = {0x8848, 0x8C9E, 0x8CAF, 0x8CC4, 0x79A3, 0x8CE6, 0x8D83, 0x8CDD, 0x8CED, 0x8CF1, 0x8D64, 0x8FC2, 0x8CF5, 0x8D75, 0x8D7C,
                                    0x8CFD, 0x8D07, 0x8D09, 0x8D19, 0x8D2C, 0x8D3A, 0x8D48, 0x8D5C, 3, 1458267, 1458767};
-static const Addresses kYendor3 = {0x8FBC, 0x8FCD, 0x8FDB, 0x7CD5, 0x8FFD, 0x909A, 0x8FF4, 0x9004, 0x9008, 0x907B, 0x92E1, 0x900C, 0x908C, 0x9093,
+static const Addresses kYendor3 = {0x8B69, 0x8FBC, 0x8FCD, 0x8FDB, 0x7CD5, 0x8FFD, 0x909A, 0x8FF4, 0x9004, 0x9008, 0x907B, 0x92E1, 0x900C, 0x908C, 0x9093,
                                    0x9014, 0x901E, 0x9020, 0x9030, 0x9043, 0x9051, 0x905F, 0x9073, 2, 4019761, 4020193};
 
 static bool loadPacked(const ExeData *exe, unsigned address, char (*out)[12], unsigned count, size_t width) {
@@ -44,7 +44,7 @@ bool clueSpellTextLoad(ClueSpellText *t, const ExeData *exe, GameKind game) {
         }
         address += (unsigned)strlen(t->costLabels[i]) + 1;
     }
-    return LOAD(header) && loadPacked(exe, a->effectLabels, t->effectLabels, 5, sizeof(t->effectLabels[0])) &&
+    return LOAD(heading) && LOAD(header) && loadPacked(exe, a->effectLabels, t->effectLabels, 5, sizeof(t->effectLabels[0])) &&
            loadPacked(exe, a->classNames, t->classNames, 6, sizeof(t->classNames[0])) && LOAD(scroll) && LOAD(creation) && LOAD(training) && LOAD(all) &&
            LOAD(one) && LOAD(visibleMonsters) && LOAD(visibleUndeads) && LOAD(monster) && LOAD(insect) && LOAD(undead) && LOAD(character) &&
            LOAD(plural) && LOAD(handToHand) && LOAD(straight) && LOAD(area) && LOAD(distance) && LOAD(outOfHand) && LOAD(anytime);

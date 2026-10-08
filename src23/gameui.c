@@ -5,6 +5,7 @@
 
 #include "cluebook.h"
 #include "cluemonster.h"
+#include "cluespell.h"
 #include "font.h"
 #include "gamedialog.h"
 #include "lighting.h"
@@ -127,12 +128,122 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe) {
     ui->exe = exe;
 }
 
-static void drawClueMonsters(GameUi *ui);
+/* The clue book's category screens (F2 monsters, F3 spells): a list page (the backdrop of picture 14, 14 names to a page) and an entry page. The entries are every distinct monster
+ * the catalog can spawn and every spell with a name; the original greys out what the party has not met or learnt, which no record is decoded for, so all show as known. */
+enum { ClueCategoryMonsters = 2, ClueCategorySpells = 3 };
+
+static void clueEntryName(const GameUi *ui, unsigned id, char out[MonsterNameBufferSize]) {
+    out[0] = 0;
+    if (ui->clueCategory == ClueCategorySpells) {
+        const uint8_t *record = spellRecord(&ui->session->spells, id);
+        if (record) {
+            char name[SpellNameFieldSize + 1];
+            spellGetName(record, name);
+            snprintf(out, MonsterNameBufferSize, "%s", name);
+        }
+        return;
+    }
+    uint8_t record[MonsterRecordSize];
+    if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
+        monsterGetName(record, out);
+    }
+}
+
+static void clueCategoryOpen(GameUi *ui, unsigned category) {
+    unsigned n = 0, capacity = sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]);
+    ui->clueCategory = category;
+    if (category == ClueCategorySpells) {
+        for (unsigned id = 1; id <= ui->session->spells.recordCount && n < capacity; id++) {
+            char name[MonsterNameBufferSize];
+            clueEntryName(ui, id, name);
+            if (name[0]) {
+                ui->clueTypes[n++] = (uint16_t)id;
+            }
+        }
+    } else {
+        bool seen[MonsterBlockCountMax + 1];
+        memset(seen, 0, sizeof(seen));
+        for (unsigned type = 1; type < ui->session->monsters.lookupCount && n < capacity; type++) {
+            unsigned block = monsterCatalogBlockIndex(&ui->session->monsters, type);
+            if (block && block <= MonsterBlockCountMax && !seen[block]) { /* the types that share a block are one entry */
+                seen[block] = true;
+                ui->clueTypes[n++] = (uint16_t)type;
+            }
+        }
+    }
+    clueListInit(&ui->clueList, n);
+    ui->clueScreen = 1;
+    ui->clueNag = false;
+    ui->clueHelp = false;
+}
+
+static void drawClueEntryList(GameUi *ui, const char *heading, uint16_t tab) {
+    GameKind game = ui->session->game;
+    memset(ui->screen, 0, sizeof(ui->screen));
+    viewDrawPicture(&ui->renderer, 0, game == GameYendor2 ? 14 : 6, 1, 1, false, 0);
+    fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, ui->clueCategory, (unsigned)strlen(heading)), 4, heading, 0x0D, 0, FontTransparent);
+    char names[ClueListRows][MonsterNameBufferSize];
+    ClueListRow rows[ClueListRows];
+    unsigned shown = 0;
+    for (unsigned i = ui->clueList.first; i < ui->clueList.count && shown < ClueListRows; i++, shown++) {
+        clueEntryName(ui, ui->clueTypes[i], names[shown]);
+        rows[shown].name = names[shown];
+        rows[shown].known = true;
+    }
+    clueEntryListDraw(&ui->renderer, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), true);
+    uint16_t flags = tab;
+    flags |= clueListCanPageUp(&ui->clueList) ? 0x100 : 0;
+    flags |= clueListCanPageDown(&ui->clueList) ? 0x80 : 0;
+    clueNavBarDraw(&ui->renderer, flags);
+}
+
+static void drawClueCategory(GameUi *ui) {
+    GameKind game = ui->session->game;
+    const ViewRenderer *r = &ui->renderer;
+    unsigned id = ui->clueTypes[ui->clueList.selected];
+    if (ui->clueCategory == ClueCategorySpells) {
+        ClueSpellText text;
+        uint16_t tab = (uint16_t)(ClueTabFirstBit >> 2);
+        if (!clueSpellTextLoad(&text, ui->exe, game)) {
+            return;
+        }
+        if (ui->clueScreen == 1) {
+            drawClueEntryList(ui, text.heading, tab);
+            return;
+        }
+        ClueSpellDescription description;
+        memset(&description, 0, sizeof(description));
+        unsigned first, count;
+        if (spellDescriptionRange(game, ui->worldDat, ui->worldSize, id, &first, &count) && count < 16) {
+            for (unsigned i = 0; i < count; i++) {
+                description.lines[i] = spellDescriptionLine(game, ui->worldDat, ui->worldSize, first + i);
+            }
+            description.lineCount = count;
+        }
+        clueSpellPageDraw(r, &text, spellRecord(&ui->session->spells, id), id, text.heading, tab, &description);
+        return;
+    }
+    ClueMonsterText text;
+    uint16_t tab = (uint16_t)(ClueTabFirstBit >> 1);
+    if (!clueMonsterTextLoad(&text, ui->exe, game)) {
+        return;
+    }
+    if (ui->clueScreen == 1) {
+        drawClueEntryList(ui, text.heading, tab);
+        return;
+    }
+    uint8_t record[MonsterRecordSize];
+    if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
+        char name[MonsterNameBufferSize];
+        monsterGetName(record, name);
+        clueMonsterPageDraw(r, &text, record, name, tab);
+    }
+}
 
 static void drawClue(GameUi *ui) {
     GameKind game = ui->session->game;
     if (ui->clueScreen) {
-        drawClueMonsters(ui);
+        drawClueCategory(ui);
         return;
     }
     if (ui->clueHelp) {
@@ -152,76 +263,15 @@ static void drawClue(GameUi *ui) {
     }
 }
 
-static void clueMonsterName(const GameUi *ui, unsigned typeId, char out[MonsterNameBufferSize]) {
-    uint8_t record[MonsterRecordSize];
-    out[0] = 0;
-    if (monsterRecordSpawn(record, &ui->session->monsters, typeId)) {
-        monsterGetName(record, out);
-    }
-}
-
-/* The monster list: every type the catalog can spawn (clue entries are the party's to discover in the original; no record of that is decoded, so all show as known). */
-static void clueMonstersOpen(GameUi *ui) {
-    unsigned n = 0;
-    bool seen[MonsterBlockCountMax + 1];
-    memset(seen, 0, sizeof(seen));
-    for (unsigned type = 1; type < ui->session->monsters.lookupCount && n < sizeof(ui->clueTypes) / sizeof(ui->clueTypes[0]); type++) {
-        unsigned block = monsterCatalogBlockIndex(&ui->session->monsters, type);
-        if (block && block <= MonsterBlockCountMax && !seen[block]) { /* the types that share a block are one entry */
-            seen[block] = true;
-            ui->clueTypes[n++] = (uint16_t)type;
-        }
-    }
-    clueListInit(&ui->clueList, n);
-    ui->clueScreen = 1;
-    ui->clueNag = false;
-}
-
-static void drawClueMonsters(GameUi *ui) {
-    GameKind game = ui->session->game;
-    ClueMonsterText text;
-    if (!clueMonsterTextLoad(&text, ui->exe, game)) {
-        return;
-    }
-    const ViewRenderer *r = &ui->renderer;
-    uint16_t tab = (uint16_t)(ClueTabFirstBit >> 1);
-    if (ui->clueScreen == 2) {
-        uint8_t record[MonsterRecordSize];
-        char name[MonsterNameBufferSize];
-        if (monsterRecordSpawn(record, &ui->session->monsters, ui->clueTypes[ui->clueList.selected])) {
-            monsterGetName(record, name);
-            clueMonsterPageDraw(r, &text, record, name, tab);
-        }
-        return;
-    }
-    memset(ui->screen, 0, sizeof(ui->screen));
-    viewDrawPicture(r, 0, game == GameYendor2 ? 14 : 6, 1, 1, false, 0);
-    fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, 2, (unsigned)strlen(text.heading)), 4, text.heading, 0x0D, 0, FontTransparent);
-    char names[ClueListRows][MonsterNameBufferSize];
-    ClueListRow rows[ClueListRows];
-    unsigned shown = 0;
-    for (unsigned i = ui->clueList.first; i < ui->clueList.count && shown < ClueListRows; i++, shown++) {
-        clueMonsterName(ui, ui->clueTypes[i], names[shown]);
-        rows[shown].name = names[shown];
-        rows[shown].known = true;
-    }
-    clueEntryListDraw(r, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), true);
-    uint16_t flags = tab;
-    flags |= clueListCanPageUp(&ui->clueList) ? 0x100 : 0;
-    flags |= clueListCanPageDown(&ui->clueList) ? 0x80 : 0;
-    clueNavBarDraw(r, flags);
-}
-
-static bool clueKey(GameUi *ui, UiKey key) { /* Tab help, F6 the walk through, I / Q turn its pages, Escape closes */
-    if (key == UiKeyF2) {
-        clueMonstersOpen(ui);
-        ui->clueHelp = false;
-    } else if (ui->clueScreen == 2) { /* a monster's page: Escape returns to the list */
+static bool clueKey(GameUi *ui, UiKey key) { /* F2 / F3 the monster / spell lists (Up Down I Q choose, Enter opens, Escape backs out), F6 the walk through (I / Q turn pages), Tab help, Escape closes */
+    if (key == UiKeyF2 || key == UiKeyF3) {
+        clueCategoryOpen(ui, key == UiKeyF2 ? ClueCategoryMonsters : ClueCategorySpells);
+    } else if (ui->clueScreen == 2) { /* an entry's page: Escape returns to the list */
         if (key == UiKeyEscape) {
             ui->clueScreen = 1;
         }
     } else if (ui->clueScreen == 1) {
-        if (key == UiKeyEscape) {
+        if (key == UiKeyEscape || key == UiKeyF6) {
             ui->clueScreen = 0;
             ui->cluePage = 1;
         } else if (key == 'i' || key == 'q') {
@@ -230,8 +280,6 @@ static bool clueKey(GameUi *ui, UiKey key) { /* Tab help, F6 the walk through, I
             clueListRowKey(&ui->clueList, key == UiKeyDown);
         } else if (key == UiKeyEnter && ui->clueList.count) {
             ui->clueScreen = 2;
-        } else if (key == UiKeyF6) {
-            ui->clueScreen = 0;
         }
     } else if (key == UiKeyEscape) {
         ui->overlay = UiOverlayNone;

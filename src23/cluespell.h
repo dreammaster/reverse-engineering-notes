@@ -34,6 +34,7 @@
  * Labels come from the executable (the addresses are in cluespell.c).
  */
 typedef struct {
+    char heading[24]; /* SPELL INFORMATION (DS:0x8848, Chapter 3 0x8B69) */
     char header[24];
     char costLabels[3][8];
     unsigned costLabelCount; /* 3 in Chapter 2, 2 in Chapter 3 */
