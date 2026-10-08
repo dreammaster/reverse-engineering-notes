@@ -1,10 +1,10 @@
 /*
- * Plays Chapter 2's story cinematic (introstory.h) headlessly and writes a contact sheet of stills: one after every card, picture and cell frame that follows
+ * Plays Chapter 2's story cinematic (or, with "ending", its ending) (introstory.h) headlessly and writes a contact sheet of stills: one after every card, picture and cell frame that follows
  * a fade, taken with the palette as it is at that moment (the sheet is a 3-3-2 colour approximation, since a PNG here has one palette).
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
- *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too]
+ *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,14 +40,15 @@ static void soundFn(void *ctx, unsigned id) {
 }
 
 /* a snapshot at every Escape poll that follows a card, picture, frame or fade: the stage is complete there */
-static bool g_drawn;
+static bool g_drawn, g_ending;
 
 static void mark(void *ctx, unsigned index, const IntroOp *op) {
     (void)ctx;
     if (op->kind == IntroOpCard || op->kind == IntroOpPicture || op->kind == IntroOpDrawFrame || op->kind == IntroOpFade16Up || op->kind == IntroOpFade || op->kind == IntroOpFadeFrames) {
         g_drawn = true;
     }
-    if (g_drawn && (op->kind == IntroOpPoll) && g_stills < MaxStills) {
+    bool shoot = g_ending ? (op->kind == IntroOpWait && op->a >= 20) || op->kind == IntroOpFadeOutAll : (g_drawn && op->kind == IntroOpPoll);
+    if (shoot && g_stills < MaxStills) {
         printf("still %u at op %u\n", g_stills, index);
         uint8_t *dst = g_still[g_stills++];
         for (unsigned i = 0; i < 320 * 200; i++) {
@@ -109,12 +110,13 @@ int main(int argc, char **argv) {
     IntroAssets assets = {world, worldSize, &exe, pictureFileGet, pictures};
     static IntroStory story;
     bool all = argc > 4 && strcmp(argv[4], "all") == 0;
-    if (!(all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
+    g_ending = argc > 4 && strcmp(argv[4], "ending") == 0;
+    if (!(g_ending ? introEndingStart(&story, &assets) : all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
         fprintf(stderr, "cannot start the story\n");
         return 1;
     }
     IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0};
-    bool finished = all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
+    bool finished = g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
     printf("story %s: %u ticks, %u sound events, %u stills\n", finished ? "finished" : "stopped", g_ticks, g_sounds, g_stills);
 
     unsigned rows = (g_stills + Columns - 1) / Columns;

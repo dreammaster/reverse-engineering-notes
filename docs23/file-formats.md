@@ -1307,8 +1307,8 @@ consistent with presenting the class-selection menu, though not
 fully disentangled) — it also calls `SetPaletteToWhite`, was
 `sub_16244`, a full-palette white flash, with a byte-for-byte
 duplicate `SetPaletteToWhiteAlt`, was `sub_11EBE`, called from
-`PlayStudioCreditsIntro` (the game's separate studio/publisher
-credits cinematic, `start`'s own intro sequence, since named)), then
+`PlayStudioCreditsIntro` (since renamed `PlayChapterEndingCinematic`: it is Chapter 2's ending, not a credits sequence --
+see "The ending of Chapter 2")), then
 always `FinalizeCharacterCreation` (was
 `sub_15267`, runs regardless of which step was reached). Matches the
 manual/string-survey's `CHARACTER CREATION`/`PICK A CLASS`/`MALE`/
@@ -5269,8 +5269,8 @@ and calls `SetPaletteRange` — called once per animation frame by
 or out smoothly. The full boot sequence is now mapped: `InitGame`
 calls `PlayTitleScreenSequence` (title picture + theme music, timed
 or skippable) then `ShowIntroPicture`; `start` separately calls
-`PlayStudioCreditsIntro` (an elaborate multi-scene animated credits
-cinematic — several picture reveals, multiple `DrawShadowedTextAlt`
+`PlayStudioCreditsIntro` (an elaborate multi-scene animated
+cinematic -- in fact Chapter 2's ending, see the section of that name — several picture reveals, multiple `DrawShadowedTextAlt`
 credit panels, sound cues, and two small effect helpers,
 `PlayCreditsWipeAnimation` and `PlayCreditsFrameAnimation`) plus its
 own separate call to `ShowIntroPicture` for the splash-screen logo
@@ -7489,6 +7489,37 @@ Light, jump and mark need nothing beyond what their modules already decode; `ses
 object ahead (`interactKnock`, `interactTriggerFacingCurgameEvent`, `interactResolveIfOutcome`), SAFE HAVEN as the rest command, CREATE FOOD / FORGE as an item on
 the (empty) cursor and the four LIFE FORCE spells against the engaged monster. Not composed: the projectile family, the screen-wide attacks and the beam / tremor /
 rain / turbulence spells (they act on the monsters in the viewport rows).
+
+## The ending of Chapter 2 (`PlayChapterEndingCinematic`, was `PlayStudioCreditsIntro`) (2026-10-08)
+
+The function that earlier notes called the studio / publisher credits cinematic (`sub_11A10`, yendor2.asm:2871-3063) is **Chapter 2's ending**. The text panels it
+draws, read from `SW.EXE` at run time (data-segment offsets `0xC98B`, `0xC9E3`, `0xCAEC`, `0xCC1F`, `0xCD41`), tell the story: the parchment found in the Quartz
+Chamber, Paltivar's letter signed by his followers, the teleport to Yendor, the audience with Zamora, who sends the party to Thaine; it closes on a "Book II" title
+and "Coming soon". `start` (:835-859) reaches it from the toolbar-icon click handler when global flags `0x69`, `0x6A` and `0x6B` are all set (otherwise it only
+shows a status message), after stopping the music and playing the sound event `_val30`; afterwards it calls `ShowIntroPicture` and goes back to the title
+loop. The two helpers were renamed `PlayEndingScrollWipeAnimation` and `PlayEndingFigureAnimation` (`ida_scripts/name_ending_cinematic.py`). No Chapter 3
+counterpart has been found (its ending, if it has one, is a different function).
+
+The script is `kEnding` in `src23/introstory.c` (`introEndingScript` / `introEndingStart` / `introEndingPlay`, run by the same player as the opening and the
+story; `tools/intro_story <game dir> out.png 0 ending` writes a contact sheet). It starts from the master palette (WORLD.DAT block 0) fully shown:
+
+1. wait 10, music track `0x14`, picture 7 of category 0 (a stone-floor backdrop) at (1, 1), wait 40, panel 0 (the parchment) at (24, 13), wait 100;
+2. `PlayCreditsWipeAnimation`: 65 steps, each redrawing picture 7 and then the top `1 + 3n` rows of picture 8 (the parchment scroll; the sub-rectangle starts at column
+   1, row 1 of the picture and is 318 wide, so its last pixel of each row is the next row's first one) with its bottom edge on row 198, so the scroll slides up from the
+   bottom edge. The original waits for three ticks only in the first step (its tick counter `word_32956` is never cleared inside the loop); the port uses two per step;
+3. fade out 20 rounds over colours 0-0x70, panel 1 (the letter, 12 lines at (62, 46)), wait 300, sound `0x0A`, the screen white, picture 9 (a castle among trees),
+   wait 20, "from white" fade, wait 40, panel 2 (the arrival, 10 lines at (112, 8)), wait 350;
+4. full fade out; picture 10 (a stone hall with a window and a banner) and the figure sprite (category 6 picture `0x21`, 56 x 136, at (124, 42)); full fade in; wait 40; panel 3 (the account
+   to Zamora, 6 lines at (6, 8), written straight to the video memory in the original); wait 350; panel 4 (Zamora's answer, 3 lines at (8, 181), colours 0x79 / 0x73,
+   **voiced** by sound event `0x46` when sound effects are on); `PlayCreditsFrameAnimation`: category 6 pictures `0x22`-`0x2F` at the same spot, two ticks each; sound events
+   `0x47` and `0x48` (each after the driver is idle); wait 100;
+5. fade out, clear, picture 100 of category 1 at (57, 49) (a small emblem); wait 30, fade in, wait 50, fade out;
+6. reload the master palette, fade out, picture 11 of category 0 (the "Yendorian Tales Book II" teaser), then three partial fades in (colours 0-0x3F, then 0x40-0x6F, then
+   0x6F-0xFE) with waits of 30 between them, wait 100 (and, with the music driver on, until the track ends), fade out.
+
+State the original touches and the picture does not need: `g_gameClockMinutes = 480` (08:00 -- the party wakes at that hour afterwards) and
+`UpdateScrollingBannerWindow`, bit `0x8000` of `word_3295A` while the first panels are up (cleared at the first fade), and bit `0x800` of `g_uiScratchFlags3`
+(set at the start, cleared before the picture 10 fade, set again for the direct-to-VGA panel).
 
 ## Not yet examined
 

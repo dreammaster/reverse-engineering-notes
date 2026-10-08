@@ -68,6 +68,16 @@ const IntroCard *introCards(void) {
     return kCards;
 }
 
+static const IntroEndingText kEndingTexts[IntroEndingTextCount] = {
+    {{0xC98B, 2, 0x18, 0x0D, IntroCardNoVoice}, 0x89, 0x83}, {{0xC9E3, 12, 0x3E, 0x2E, IntroCardNoVoice}, 0x89, 0x83},
+    {{0xCAEC, 10, 0x70, 0x08, IntroCardNoVoice}, 0x89, 0x83}, {{0xCC1F, 6, 0x06, 0x08, IntroCardNoVoice}, 0x89, 0x83},
+    {{0xCD41, 3, 0x08, 0xB5, 0x46}, 0x79, 0x73},
+};
+
+const IntroEndingText *introEndingTexts(void) {
+    return kEndingTexts;
+}
+
 bool introCardLine(const ExeData *exe, const IntroCard *card, unsigned index, char out[IntroCardLineMax]) {
     if (index >= card->lines) {
         return false;

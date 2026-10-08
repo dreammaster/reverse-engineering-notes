@@ -34,6 +34,9 @@
 #define SPARK(colour, frames, dim) {IntroOpSpark, (colour), (frames), (dim), 0}
 #define DOWNPAIR {IntroOpFadeDownPair, 0, 0, 0, 0}
 #define MUSIC(track) {IntroOpMusic, (track), 0, 0, 0}
+#define PICOP(cat, id, x, y) {IntroOpPictureOpaque, (cat), (id), (x), (y)}
+#define WIPE {IntroOpWipe, 0, 0, 0, 0}
+#define ENDTEXT(i) {IntroOpEndingText, (i), 0, 0, 0}
 
 /* Cell indices (intro2.c): 4 the guard, 5 the sorcerer, 6 the door. The numbers after the semicolons are the asm addresses of the original's calls. */
 static const IntroOp kStory[] = {
@@ -95,6 +98,35 @@ static const IntroOp kOpening[] = {
     WAITDRAW(20), DOWNPAIR
 };
 
+/*
+ * yendor2.asm:2871-3063. The flourish of PlayCreditsFrameAnimation (:3120) is unrolled: category 6 pictures 0x22-0x2F at (124, 42), two ticks each. The
+ * sound-driver waits (WaitForSoundDriverIdle before the voice cue and between sounds 0x47 and 0x48) are the host's; the clock set to 08:00 and the UI flag
+ * writes of the original are game state, not part of the picture.
+ */
+#define FLOURISH(id) PICTURE(6, (id), 124, 42), WAIT(2)
+static const IntroOp kEnding[] = {
+    WAIT(10), MUSIC(0x14), PICOP(0, 7, 1, 1), WAIT(40),   /* :2871 the scroll backdrop */
+    ENDTEXT(0), WAIT(100), WIPE,                          /* :2900 the parchment found in the chamber; the letter slides up */
+    FADE(0, 20, 0x71, 0), ENDTEXT(1), WAIT(300),
+    SOUND(0x0A), WHITE, PICOP(0, 9, 1, 1), WAIT(20),     /* the teleport: a flash, then the arrival at Yendor */
+    FADE(5, 63, 0xFF, 0), WAIT(40), ENDTEXT(2), WAIT(350),
+    FADEOUT, PICOP(0, 10, 1, 1), PICTURE(6, 0x21, 124, 42), /* the audience with Zamora */
+    FADE(1, 63, 256, 0), WAIT(40), ENDTEXT(3), WAIT(350), ENDTEXT(4),
+    FLOURISH(0x22), FLOURISH(0x23), FLOURISH(0x24), FLOURISH(0x25), FLOURISH(0x26), FLOURISH(0x27), FLOURISH(0x28),
+    FLOURISH(0x29), FLOURISH(0x2A), FLOURISH(0x2B), FLOURISH(0x2C), FLOURISH(0x2D), FLOURISH(0x2E), FLOURISH(0x2F),
+    SOUND(0x47), SOUND(0x48), WAIT(100),
+    FADEOUT, CLEAR, PICOP(1, 0x64, 57, 49), WAIT(30),    /* :3010 a small emblem */
+    FADE(1, 63, 256, 0), WAIT(50), FADEOUT,
+    PALETTE(0), FADEOUT, PICOP(0, 0xB, 1, 1), WAIT(10),  /* :3050 the next chapter's title, in three fades */
+    FADE(1, 63, 0x40, 0), WAIT(30), FADE(1, 63, 0x30, 0x40), WAIT(30), FADE(1, 63, 0x90, 0x6F), WAIT(100),
+    FADEOUT
+};
+
+const IntroOp *introEndingScript(unsigned *count) {
+    *count = (unsigned)(sizeof(kEnding) / sizeof(kEnding[0]));
+    return kEnding;
+}
+
 const IntroOp *introOpeningScript(unsigned *count) {
     *count = (unsigned)(sizeof(kOpening) / sizeof(kOpening[0]));
     return kOpening;
@@ -116,6 +148,21 @@ static void blitPicture(uint8_t *dest, const uint8_t *pixels, unsigned width, un
             uint8_t pixel = pixels[(firstRow + r) * width + c];
             if (dx >= 0 && dx < 320 && pixel != 0xFF) {
                 dest[dy * 320 + dx] = pixel;
+            }
+        }
+    }
+}
+
+static void blitOpaque(uint8_t *dest, const uint8_t *pixels, unsigned width, unsigned height, int x, int y) {
+    for (unsigned r = 0; r < height; r++) {
+        int dy = y + (int)r;
+        if (dy < 0 || dy >= 200) {
+            continue;
+        }
+        for (unsigned c = 0; c < width; c++) {
+            int dx = x + (int)c;
+            if (dx >= 0 && dx < 320) {
+                dest[dy * 320 + dx] = pixels[r * width + c];
             }
         }
     }
@@ -219,8 +266,7 @@ static void fade(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsign
     }
 }
 
-static void drawCard(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsigned index) {
-    const IntroCard *card = &introCards()[index];
+static void drawText(IntroStory *s, const IntroAssets *a, const IntroHost *h, const IntroCard *card, uint8_t foreground, uint8_t background) {
     if (h->soundEffectsOn && card->voice != IntroCardNoVoice) {
         if (h->sound) {
             h->sound(h->ctx, card->voice);
@@ -233,10 +279,44 @@ static void drawCard(IntroStory *s, const IntroAssets *a, const IntroHost *h, un
             break;
         }
         int y = card->y + (int)line * 6;
-        fontDrawString(GameYendor2, 0, s->screen, 320, card->x, y, text, 0x93, 0, FontTransparent);
-        fontDrawString(GameYendor2, 0, s->screen, 320, card->x - 1, y - 1, text, 0x98, 0, FontTransparent);
+        fontDrawString(GameYendor2, 0, s->screen, 320, card->x, y, text, background, 0, FontTransparent);
+        fontDrawString(GameYendor2, 0, s->screen, 320, card->x - 1, y - 1, text, foreground, 0, FontTransparent);
     }
     present(s, h);
+}
+
+static void drawCard(IntroStory *s, const IntroAssets *a, const IntroHost *h, unsigned index) {
+    drawText(s, a, h, &introCards()[index], 0x98, 0x93);
+}
+
+/* PlayCreditsWipeAnimation (yendor2.asm:3084): 65 steps, each the backdrop again and then the top 1 + 3n rows of picture 8 (from column 1, row 1 of it, 318 pixels
+ * per row -- the last one reads the next row's first pixel, as the original does) with its bottom edge on row 198. The original waits for three ticks only in the
+ * first step (its tick counter is never cleared in the loop); two ticks per step here. */
+static void wipe(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    const uint8_t *back = a->picture(a->pictureCtx, 0, 7), *scroll = a->picture(a->pictureCtx, 0, 8);
+    if (!back || !scroll) {
+        return;
+    }
+    for (int step = 0; step < 65; step++) {
+        blitOpaque(s->screen, back, 318, 198, 1, 1);
+        int top = 198 - 3 * step, rows = 1 + 3 * step;
+        for (int r = 0; r < rows; r++) {
+            int dy = top + r;
+            if (dy < 0 || dy >= 200) {
+                continue;
+            }
+            for (int c = 0; c < 318; c++) {
+                uint8_t pixel = scroll[(1 + r) * 318 + 1 + c];
+                if (pixel != 0xFF) {
+                    s->screen[dy * 320 + 1 + c] = pixel;
+                }
+            }
+        }
+        for (int t = 0; t < 2; t++) {
+            present(s, h);
+            tick(h);
+        }
+    }
 }
 
 static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, const IntroOp *ops, unsigned count) {
@@ -392,6 +472,20 @@ static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, c
                 h->music(h->ctx, (unsigned)op->a);
             }
             break;
+        case IntroOpPictureOpaque: {
+            const uint8_t *pixels = a->picture(a->pictureCtx, (unsigned)op->a, (unsigned)op->b);
+            if (pixels) {
+                blitOpaque(s->screen, pixels, kPictureSize[op->a][0], kPictureSize[op->a][1], op->c, op->d);
+            }
+            present(s, h);
+            break;
+        }
+        case IntroOpWipe:
+            wipe(s, a, h);
+            break;
+        case IntroOpEndingText:
+            drawText(s, a, h, &introEndingTexts()[op->a].card, introEndingTexts()[op->a].foreground, introEndingTexts()[op->a].background);
+            break;
         }
     }
     return true;
@@ -400,6 +494,25 @@ static bool runScript(IntroStory *s, const IntroAssets *a, const IntroHost *h, c
 bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     unsigned count;
     const IntroOp *ops = introStoryScript(&count);
+    return runScript(s, a, h, ops, count);
+}
+
+bool introEndingStart(IntroStory *s, const IntroAssets *a) {
+    if (a->worldSize < paletteBlockOffset(GameYendor2, 0) + PaletteBytes) {
+        return false;
+    }
+    memset(s->screen, 0, sizeof(s->screen));
+    memset(&s->fader, 0, sizeof(s->fader));
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(GameYendor2, 0), PaletteBytes);
+    memcpy(s->fader.dac, s->fader.target, PaletteBytes);
+    memcpy(s->fader.buffer, s->fader.target, PaletteBytes);
+    s->scrollY = 0;
+    return true;
+}
+
+bool introEndingPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    unsigned count;
+    const IntroOp *ops = introEndingScript(&count);
     return runScript(s, a, h, ops, count);
 }
 

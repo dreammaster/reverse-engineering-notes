@@ -1650,3 +1650,10 @@ Chapter 2 dispatches item ids 0x36-0x46 to `RestCharacter`, which restores a per
 entry's word 1; Chapter 3 only dispatches 0x1F-0x20 and its `RestCharacter` has dropped the HP branch (always magic). In both, magic needs a
 class id >= 4 after two "- 10 while > 9" reductions, otherwise the user is made Sick instead. The original's rounding adds 50 to the low word
 of the 32-bit product only (a carry is lost), then divides DX:AX by 100; `partyUsePercentRestorative` (`consumable.c`) reproduces it.
+
+## Correction (2026-10-08): `PlayStudioCreditsIntro` is Chapter 2's ending
+
+The "studio credits" cinematic that the Chapter 3 diffing could not find a counterpart for (rounds 9, 15 and 20 above) is not a credits sequence: its text is the
+ending of Chapter 2 (the parchment in the Quartz Chamber, Zamora, "coming soon" for Book II), shown when the three global flags 0x69-0x6B are set. That explains why
+Chapter 3 has no matching function: its ending, if it has one, is elsewhere. Renamed `PlayChapterEndingCinematic` (with `PlayEndingScrollWipeAnimation` and
+`PlayEndingFigureAnimation`) in `yendor2.idb`; the script is in `src23/introstory.c`. `DrawShadowedTextAlt` is the same shadowed column as `DrawShadowedText`.

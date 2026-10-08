@@ -84,6 +84,18 @@ typedef struct {
 
 enum { IntroCardCount = 9, IntroCardNoVoice = 0xFFFF, IntroCardLineMax = 64 };
 
+/*
+ * The five text panels of the ending cinematic (PlayStudioCreditsIntro, yendor2.asm:2871 -- a misleading name; see file-formats.md "The ending of Chapter 2"):
+ * DrawShadowedTextAlt, the same shadowed column as a story card, with its own colours (foreground at x - 1, y - 1 over the background colour at x, y).
+ */
+typedef struct {
+    IntroCard card;
+    uint8_t foreground, background;
+} IntroEndingText;
+
+enum { IntroEndingTextCount = 5 };
+const IntroEndingText *introEndingTexts(void);
+
 /* The nine cards of Chapter 2's story, in the order they appear. */
 const IntroCard *introCards(void);
 

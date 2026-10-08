@@ -47,7 +47,10 @@ typedef enum {
     IntroOpTitleFadeIn,  /* 63 rounds of RunPaletteFadeSequence over colours 0-0x3F and 0x80-0xFF, a cell frame each */
     IntroOpSpark,        /* a spark of colour a runs diagonally for b frames from (268, 8), 2 pixels down-left per frame; c frames more dimming 1 per frame */
     IntroOpFadeDownPair, /* 63 rounds of: 16 colours at 0x40 down, 0x30 colours at 0x50 down, a cell frame */
-    IntroOpMusic         /* music track a */
+    IntroOpMusic,        /* music track a */
+    IntroOpPictureOpaque, /* the same as IntroOpPicture but a plain copy (colour 0xFF is drawn too) */
+    IntroOpWipe,         /* PlayCreditsWipeAnimation: picture 8 of category 0 slides up from the bottom edge over picture 7, 65 steps */
+    IntroOpEndingText    /* ending text panel a (intro2.h, introEndingTexts) */
 } IntroOpKind;
 
 typedef struct {
@@ -60,6 +63,13 @@ const IntroOp *introStoryScript(unsigned *count);
 
 /* PlayCharacterCreationIntroAnimation (yendor2.asm:8626), the part before the story: the title card fades in, a spark crosses it, the flags and plaques light up. */
 const IntroOp *introOpeningScript(unsigned *count);
+
+/*
+ * Chapter 2's ending (PlayStudioCreditsIntro, yendor2.asm:2871-3063, reached from `start` when the party has read the Quartz Chamber's parchment -- three global
+ * flags 0x69-0x6B -- and clicked the toolbar icon): the parchment found in the chamber, the letter from the wizards' followers, the arrival at Yendor, the talk with
+ * Zamora, and a closing picture of the next chapter's title. introEndingStart begins from the in-game master palette (WORLD.DAT block 0) fully shown.
+ */
+const IntroOp *introEndingScript(unsigned *count);
 
 typedef struct {
     void *ctx;
@@ -98,6 +108,9 @@ bool introStoryStart(IntroStory *story, const IntroAssets *assets);
 
 /* The same, but with the screen black as it is when the opening begins (the title then fades in with `introOpeningScript`). */
 bool introOpeningStart(IntroStory *story, const IntroAssets *assets);
+
+bool introEndingStart(IntroStory *story, const IntroAssets *assets);
+bool introEndingPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
 /* Runs the story script; returns false when the host's escape ended it early. */
 bool introStoryPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);

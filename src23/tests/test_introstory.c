@@ -182,6 +182,45 @@ static void testPlay(void) {
     }
     bool darkMiddle = counts.haveAfterTitle && counts.afterTitle[0x50 * 3 + 20] == 0;
     check("after the title fade-in colours 0-0x3F show the target palette while 0x50-0x7F are still dark", titleVisible && darkMiddle);
+    /* the ending of Chapter 2 */
+    for (unsigned t = 0; t < IntroEndingTextCount; t++) {
+        const IntroCard *card = &introEndingTexts()[t].card;
+        size_t at = 0x21660 + card->textOffset;
+        for (unsigned line = 0; line < card->lines; line++) {
+            memcpy(image + at, "X", 2);
+            at += 2;
+        }
+    }
+    unsigned endingCount;
+    const IntroOp *ending = introEndingScript(&endingCount);
+    unsigned texts[IntroEndingTextCount] = {0}, wipes = 0;
+    for (unsigned i = 0; i < endingCount; i++) {
+        if (ending[i].kind == IntroOpEndingText) {
+            texts[ending[i].a]++;
+        }
+        wipes += ending[i].kind == IntroOpWipe;
+    }
+    bool eachText = true;
+    for (unsigned t = 0; t < IntroEndingTextCount; t++) {
+        eachText = eachText && texts[t] == 1;
+    }
+    check("the ending script shows each of its five text panels once and wipes once, and fades out at the end",
+          eachText && wipes == 1 && ending[endingCount - 1].kind == IntroOpFadeOutAll && endingCount > 60 && endingCount < 90);
+    ExeData exe2;
+    exeDataOpen(&exe2, GameYendor2, image, imageSize);
+    IntroAssets endAssets = {world, size, &exe2, picture, NULL};
+    check("the ending starts from the master palette, fully shown", introEndingStart(&story, &endAssets) && memcmp(story.fader.dac, story.fader.target, 768) == 0);
+    memset(&counts, 0, sizeof(counts));
+    host.soundEffectsOn = false;
+    finished = introEndingPlay(&story, &endAssets, &host);
+    check("it runs to the end", finished && counts.marks == endingCount);
+    check("it takes about 2400 animation ticks (waits 1630, the wipe 130, the fades 650) and ends on a black screen", counts.ticks > 2300 && counts.ticks < 2500 && counts.lastDac[300] == 0 && counts.lastDac[30] == 0);
+    check("its three sound events (the flash and the sequence 0x47, 0x48) play with sound effects off", counts.sounds == 3);
+    memset(&counts, 0, sizeof(counts));
+    host.soundEffectsOn = true;
+    introEndingStart(&story, &endAssets);
+    introEndingPlay(&story, &endAssets, &host);
+    check("with sound effects on the last panel plays its voice instead of drawing", counts.sounds == 4);
     free(world);
     free(image);
 }
