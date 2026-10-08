@@ -290,11 +290,49 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
     return hit;
 }
 
+/* The attacks on what is in front of the party outside a combat: the screen-wide family (ScreenWide, Tremor, Rain, Turbulence: every monster of the centre column,
+ * combatApplyScreenWideAttack) and the beam (the first one, combatApplyDamageToMapMonster). The animations are the front end's. */
+static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spell, bool beam) {
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    sessionScene(s, &scene, cells);
+    static const unsigned column[] = {46, 43, 40, 36, 25};
+    uint8_t *rowMonsters[CombatScreenAttackRows];
+    memset(rowMonsters, 0, sizeof(rowMonsters));
+    unsigned found = 0;
+    for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]); i++) {
+        if (cells[column[i]].flags & ViewportCellHidden) {
+            break;
+        }
+        if (scene.cellMonsters[column[i]]) {
+            rowMonsters[found++] = scene.cellMonsters[column[i]];
+            if (beam) {
+                break;
+            }
+        }
+    }
+    MonsterRewardStaging staging;
+    memset(&staging, 0, sizeof(staging));
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    if (beam) {
+        if (found) {
+            combatApplyDamageToMapMonster(rowMonsters[0], caster, spell, false, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+        }
+    } else {
+        combatApplyScreenWideAttack(NULL, rowMonsters, caster, spell, false, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
+    }
+    monsterRewardsAward(&s->save, s->game, &staging);
+    sessionRebuild(s);
+    return found > 0;
+}
+
 static bool castSupported(SpellBranch branch, const uint8_t *spell) {
     switch (branch) {
     case SpellBranchSingleTarget: case SpellBranchWholeParty: case SpellBranchLightTimer: case SpellBranchHeldItem: case SpellBranchTeleportEngage:
     case SpellBranchLocationBookmark: case SpellBranchTriggerCurgameEvent: case SpellBranchRest: case SpellBranchKnock: case SpellBranchFacingLockOrEvent:
     case SpellBranchAttackActiveMonster: case SpellBranchLifeForce: case SpellBranchAttackAllSlots:
+        return true;
+    case SpellBranchScreenWide: case SpellBranchBeam: case SpellBranchTremor: case SpellBranchRain: case SpellBranchTurbulence:
         return true;
     case SpellBranchProjectile:
         return !(spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBSplash);
@@ -377,6 +415,10 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
     }
     case SpellBranchProjectile:
         done = castProjectile(s, caster, spell);
+        break;
+    case SpellBranchScreenWide: case SpellBranchTremor: case SpellBranchRain: case SpellBranchTurbulence:
+    case SpellBranchBeam:
+        done = castColumnAttack(s, caster, spell, branch == SpellBranchBeam);
         break;
     case SpellBranchLightTimer:
         done = lightSourceArmSpellTimer(&s->light, spellGetU16(spell, SpellFieldTimerSlot), spellGetU16(spell, SpellFieldTimerDuration));

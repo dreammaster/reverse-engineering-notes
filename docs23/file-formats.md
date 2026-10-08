@@ -7504,7 +7504,7 @@ writer, and with both words zero the original would add 0 at offset 0.
 
 Light, jump and mark need nothing beyond what their modules already decode; `session.c` also composes the knock / curgame-event / lock-flag-0x40 spells over the
 object ahead (`interactKnock`, `interactTriggerFacingCurgameEvent`, `interactResolveIfOutcome`), SAFE HAVEN as the rest command, CREATE FOOD / FORGE as an item on
-the (empty) cursor and the four LIFE FORCE spells against the engaged monster. Not composed: the splash projectiles, the screen-wide attacks and the beam / tremor /
+the (empty) cursor and the four LIFE FORCE spells against the engaged monster. Not composed: the splash projectiles; the screen-wide attacks and the beam / tremor /
 rain / turbulence spells (they act on the monsters in the viewport rows).
 
 ## The ending of Chapter 2 (`PlayChapterEndingCinematic`, was `PlayStudioCreditsIntro`) (2026-10-08)

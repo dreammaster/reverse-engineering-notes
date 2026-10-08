@@ -330,6 +330,25 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
             }
         }
     }
+    /* every column attack (screen-wide, beam, tremor, rain, turbulence) casts without harm, with or without a monster in front */
+    unsigned columnCasts = 0, columnSpells = 0;
+    for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        SpellBranch b = r ? spellSelectBranch(r) : SpellBranchNone;
+        if (b == SpellBranchScreenWide || b == SpellBranchBeam || b == SpellBranchTremor || b == SpellBranchRain || b == SpellBranchTurbulence) {
+            bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+            bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+            partySetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints, 900);
+            columnSpells++;
+            SessionCast result = sessionCastBy(s, 0, id, false);
+            columnCasts += result == SessionCastDone || result == SessionCastNoEffect;
+            if (s->combat.active) {
+                break;
+            }
+        }
+    }
+    snprintf(text, sizeof(text), "%s: the %u column attacks all cast", label, columnSpells);
+    check(text, columnSpells > 0 && columnCasts == columnSpells);
     snprintf(text, sizeof(text), "%s: a plain projectile spell can be shot at a monster in the column of the view", label);
     check(text, game == GameYendor3 ? true : shotHit); /* the walk to a spider is Chapter 2 data */
 
