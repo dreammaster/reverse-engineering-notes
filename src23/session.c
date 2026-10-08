@@ -11,6 +11,7 @@
 #include "newgame.h"
 #include "consumable.h"
 #include "dialogservice.h"
+#include "maptrigger.h"
 #include "inventory.h"
 #include "relics.h"
 #include "shop.h"
@@ -22,6 +23,7 @@
 #include "windowbake.h"
 
 static uint16_t *placeWord(GameSession *s);
+static void arriveAt(GameSession *s, int x, int y, uint16_t facing);
 
 GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     GameSession *s = calloc(1, sizeof(*s));
@@ -149,6 +151,41 @@ static bool monstersTakeTurns(GameSession *s) {
     return s->combat.active;
 }
 
+/* ApplyMapTriggerEffect (yendor2.asm:17458): run for the cell the party stands on after every step -- a trap that hurts, steals or corrodes the members who can act, or (flag
+ * 0x4000) a teleport to the record's own cell. Returns what happened for the log. */
+static bool applyMapTrigger(GameSession *s) {
+    MapTriggerRecord record;
+    if (!mapTriggerFind(s->game, s->x, s->y, &record)) {
+        return false;
+    }
+    if (record.flags & 0x4000) {
+        arriveAt(s, record.rawA, record.rawB, s->facing);
+        say(s, "teleported by a trigger to column %u", (unsigned)record.rawA);
+        return true;
+    }
+    MapTriggerDecision decision = mapTriggerDecide(s->game, &record);
+    if (decision.outcome == MapTriggerNone) {
+        return false;
+    }
+    for (unsigned slot = 0; slot < 4; slot++) {
+        uint8_t *member = sessionPartyRecord(s, slot);
+        if (!member) {
+            break;
+        }
+        if (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated) {
+            continue;
+        }
+        if (decision.outcome == MapTriggerApplyEffect) {
+            mapTriggerApplyEffect(member, &s->save, s->game, decision.effectId, record.rawA, record.rawB, decision.requiresItemExclusion);
+        } else {
+            mapTriggerApplyCorrosion(member, &s->items, s->game, &decision);
+        }
+    }
+    snprintf(s->log, sizeof(s->log), "a trap goes off");
+    combatCheckWipe(s);
+    return true;
+}
+
 SessionStep sessionMove(GameSession *s, MovementAction action) {
     if (s->combat.active || s->combat.wiped) {
         return SessionStepBusy;
@@ -175,6 +212,9 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
     ExploreReveal revealed;
     exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
     sessionRebuild(s);
+    if (result == SessionStepMoved) {
+        applyMapTrigger(s);
+    }
     monstersTakeTurns(s);
     return result;
 }
