@@ -258,6 +258,7 @@ class Translator:
                 continue
             body.append((i, l))
         self.cur_seg = self.func_segment(fname) or 0
+        self.extend_tail(fname, e, body)
         self.cur_labels = {}
         for i, l in body:
             m = re.match(r"^(\w+):\s*$", l)
@@ -265,6 +266,7 @@ class Translator:
                 a = self.func_linear(m.group(1))
                 if a is not None:
                     self.cur_labels[a - self.cur_seg * 16] = m.group(1)
+        self.cur_fname = fname
         self.synth = {}
         self.add_table_labels(fname, body)
         out = ["static void fn_%s(Cpu *c) {" % fname, "\tuint32_t t_; (void)t_;", "\tFNTRACE(\"%s\");" % fname]
@@ -287,6 +289,36 @@ class Translator:
                 raise RuntimeError("%s: line %d %r: %s" % (fname, i + 1, l.strip(), ex))
         out.append("}")
         return "\n".join(out)
+
+    def extend_tail(self, fname, end, body):
+        """IDA sometimes ends a procedure at its computed `jmp cs:[bx+K]` and lists the handlers after `endp` as loose code
+        (up to the routine's last retf, followed by a separator line and data).  Append those lines to the body."""
+        if not any(re.search(r"jmp\s+(?:word ptr )?cs:\[bx\+", l) for _, l in body):
+            return
+        if not body or not re.search(r"jmp\s+(?:word ptr )?cs:\[bx\+", body[-1][1]):
+            return
+        j = end + 1
+        tail = []
+        while j < len(self.lines):
+            raw = self.lines[j]
+            l = raw.split(";")[0].rstrip()
+            if re.match(r"^\w+\s+proc\b", l) or re.match(r"^\w+\s+(db|dw|dd)\b", l):
+                break
+            if l.strip():
+                tail.append((j, l))
+                if re.match(r"^\s+(retf|retn|ret)\b", l):
+                    # a separator right after the return ends the routine; anything else is more handler code
+                    k = j + 1
+                    while k < len(self.lines) and not self.lines[k].strip():
+                        k += 1
+                    if re.match(r"^; -{20,}", self.lines[k]):
+                        k += 1
+                        while k < len(self.lines) and not self.lines[k].strip():
+                            k += 1
+                        if re.match(r"^\s+align\b|^\s+(db|dw|dd)\b", self.lines[k]) or not re.match(r"^\s+\w", self.lines[k]) and not re.match(r"^\w+:", self.lines[k]):
+                            break
+            j += 1
+        body.extend(tail)
 
     def add_table_labels(self, fname, body):
         """A computed `jmp cs:[bx+K]` dispatches through a table of handler offsets.  IDA leaves some handlers
@@ -393,11 +425,15 @@ class Translator:
                     val = {"es": "c->es", "ds": "c->ds", "ss": "STACK_SEG", "cs": "0"}[s["name"]]
                     return [self.wr(d, val)]
                 return ["/* segment move %s */" % rest]
+            if d["kind"] == "mem" and not d["size"]:
+                d["size"] = self.opsize(d, s)  # `mov [si+3], al`: the register decides the width
             return [self.wr(d, self.rd(s, self.opsize(d, s)))]
         if mn in ("add", "sub", "and", "or", "xor", "cmp", "adc", "sbb"):
             d = P(ops[0]); sz = self.opsize(d)
             s = P(ops[1], sz)
             sz = self.opsize(d, s)
+            if d["kind"] == "mem" and not d["size"]:
+                d["size"] = sz
             fn = {"add": "alu_add", "sub": "alu_sub", "cmp": "alu_sub", "and": "alu_and", "or": "alu_or", "xor": "alu_xor",
                   "adc": "alu_adc", "sbb": "alu_sbb"}[mn]
             expr = "%s(c, %s, %s, %d)" % (fn, self.rd(d, sz), self.rd(s, sz), sz)
@@ -474,7 +510,7 @@ class Translator:
             if m2 and not ops[0].startswith("cs:jpt"):
                 o = P(ops[0])
                 cases = "".join("case 0x%X: goto %s;" % (off, lab) for off, lab in sorted(self.cur_labels.items()))
-                return ["switch (CS16(0x%X, %s)) { %s default: abort(); }" % (self.cur_seg, o["addr"], cases)]
+                return ["{ uint16_t jt_ = CS16(0x%X, %s); switch (jt_) { %s default: recomp_bad_jump(\"%s\", 0x%X, jt_); } }" % (self.cur_seg, o["addr"], cases, self.cur_fname, self.cur_seg)]
             m = re.match(r"^cs:(jpt_\w+)\[bx\]$", ops[0])
             if m:
                 tab = self.jpt[m.group(1)]

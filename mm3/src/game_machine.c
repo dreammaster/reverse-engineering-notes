@@ -253,6 +253,7 @@ void host__sprintf(Cpu *c) {
 		case 's': {
 			const char *s = (const char *)dsp(host_arg(c, (int)ai++));
 			nlen = (int)strlen(s);
+			if (getenv("MM3_SPRINTF")) { fprintf(stderr, "  %%s arg at %04X len %d:", host_arg(c, (int)ai - 1), nlen); for (const char *q = s; *q && q < s + 20; q++) fprintf(stderr, " %02X", (unsigned char)*q); fputc(10, stderr); }
 			if (!left) for (int k = nlen; k < width; k++) *o++ = ' ';
 			memcpy(o, s, nlen); o += nlen;
 			if (left) for (int k = nlen; k < width; k++) *o++ = ' ';
@@ -265,6 +266,7 @@ void host__sprintf(Cpu *c) {
 		if (left) for (int k = nlen; k < width; k++) *o++ = ' ';
 	}
 	*o = 0;
+	if (getenv("MM3_SPRINTF")) fprintf(stderr, "SPRINTF fmt=[%s] -> [%s]\n", (const char *)dsp(host_arg(c, 1)), out);
 	c->ax = (uint16_t)(o - out);
 }
 

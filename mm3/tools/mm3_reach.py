@@ -24,7 +24,9 @@ def main():
     calls = {}
     for n, (s, e, k) in procs.items():
         cs = set()
-        for l in tr.lines[s:e]:
+        body = [(i, tr.lines[i].split(";")[0].rstrip()) for i in range(s + 1, e) if tr.lines[i].split(";")[0].strip()]
+        tr.extend_tail(n, e, body)
+        for l in [tr.lines[s]] + [b for _, b in body]:
             t = l.split(";")[0]
             m = re.search(r"\bcall\s+(?:near ptr |far ptr )?([\w@]+)", t)
             if m:

@@ -78,6 +78,7 @@ static int init_sdl(void) {
 /* mouse: position in screen pixels, buttons (1 left, 2 right); the cursor sprite is drawn on the presented picture only */
 static int mouse_x = 160, mouse_y = 100, mouse_btn, mouse_seen, cursor_on, click_reads;
 static uint16_t cursor_seg, cursor_frame;
+static int fade_level = 16; /* 0..16 brightness */
 
 void video_present(void) {
 	static uint8_t shown[MM3_SCREEN_W * MM3_SCREEN_H];
@@ -88,7 +89,7 @@ void video_present(void) {
 	}
 	for (int i = 0; i < MM3_SCREEN_W * MM3_SCREEN_H; i++) {
 		const uint8_t *c = G.palette.rgb[shown[i]];
-		pixels[i] = 0xFF000000u | (c[0] << 16) | (c[1] << 8) | c[2];
+		pixels[i] = 0xFF000000u | ((c[0] * fade_level / 16) << 16) | ((c[1] * fade_level / 16) << 8) | (c[2] * fade_level / 16);
 	}
 	if (headless) return;
 	SDL_UpdateTexture(texture, NULL, pixels, MM3_SCREEN_W * 4);
@@ -219,7 +220,16 @@ void host_vdrv_0C_showRaw(Cpu *c) { /* a 320x200 picture by name (near pointer) 
 	memcpy(SCREEN_MEM, SEGP(seg), size < 64000 ? size : 64000);
 	dos_free(seg);
 }
-void host_vdrv_0F_fade(Cpu *c) { (void)c; video_present(); }
+/* vdrv_0F_fade(0 = out / 1 = in, speed): the palette fades to black and back; the picture underneath may change while it is black.
+ * Headless runs skip the animation and stay at full brightness so screenshots always show the picture. */
+void host_vdrv_0F_fade(Cpu *c) {
+	int in = host_arg(c, 0) != 0;
+	if (!headless) {
+		for (int i = 0; i <= 16; i++) { fade_level = in ? i : 16 - i; video_present(); SDL_Delay(20); video_pump_events(); }
+	}
+	fade_level = in ? 16 : (headless ? 16 : 0);
+	video_present();
+}
 void host_vdrv_03_hideMouse(Cpu *c) { (void)c; cursor_on = 0; }
 void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg = host_arg(c, 2); cursor_on = 1; }
 /* getMouse(&x, &y) -> buttons.  A scripted click ("mX:Y" in --keys) holds the button for a few polls, then releases */

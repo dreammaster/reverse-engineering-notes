@@ -398,6 +398,7 @@ sub_44CC6
 doCharDamage
 stopAttack
 sub_281A3
+sub_281FD
 sub_47947
 sub_37CBB
 sub_404D5

@@ -184,6 +184,7 @@ static inline uint32_t alu_ror(Cpu *c, uint32_t a, unsigned n, int bits) {
 #endif
 
 /* a host routine that has not been written yet (see the weak definitions in generated code) */
+void recomp_bad_jump(const char *fn, unsigned seg, unsigned off); /* computed jump to a target that has no label */
 void recomp_unimplemented(const char *name, Cpu *c);
 
 typedef struct { const char *name; void (*fn)(Cpu *); } RecompEntry;
