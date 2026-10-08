@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -693,6 +693,31 @@ static void testAilments(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(s);
 }
 
+/* Readable items: every item the game lets you read opens a text with at least one line. */
+static void testReading(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned readable = 0, opened = 0;
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *target = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (!target || itemTargetKind(record) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7800) || (itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+            continue;
+        }
+        readable++;
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1), (uint16_t)id, 1);
+        char line[DocumentLineBufferSize];
+        opened += sessionUseItem(s, 0, 1, 0) == SessionUseRead && sessionDocumentLine(s, 0, line);
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: %u of %u readable items open a text", label, opened, readable);
+    check(text, readable > 0 && opened > 0 && opened * 10 >= readable * 8);
+    sessionFree(s);
+}
+
 /* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
 static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -703,7 +728,7 @@ static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const
     for (unsigned id = 1; id <= s->items.validItemCount; id++) {
         const uint8_t *record = itemCatalogRecord(&s->items, id);
         const uint8_t *target = record ? itemTargetEntry(&s->items, record) : NULL;
-        if (!target || !(itemTargetWord(target, 0) & 4) || (itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00) || !itemTargetWord(target, 2)) {
+        if (!target || itemTargetKind(record) != ItemTargetConsumable || !(itemTargetWord(target, 0) & 4) || (itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00) || !itemTargetWord(target, 2)) {
             continue;
         }
         TravelDestination d;
@@ -899,6 +924,7 @@ int main(void) {
             testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTime(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testAilments(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testReading(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

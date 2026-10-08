@@ -12,6 +12,7 @@
 #include "consumable.h"
 #include "ailment.h"
 #include "dialogservice.h"
+#include "document.h"
 #include "maptrigger.h"
 #include "inventory.h"
 #include "relics.h"
@@ -35,7 +36,7 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     saveGameInit(&s->save, game);
     if (!worldMapParseWorldDat(&s->map, game, worldDat, size) || !worldObjectTableParseWorldDat(&s->objects, game, worldDat, size) ||
         !lockCatalogParseWorldDat(&s->locks, game, worldDat, size) || !monsterCatalogParseWorldDat(&s->monsters, game, worldDat, size) ||
-        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !spellCatalogParseWorldDat(&s->spells, game, worldDat, size) || !dialogCatalogParseWorldDat(&s->dialogs, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
+        !itemCatalogParseWorldDat(&s->items, game, worldDat, size) || !spellCatalogParseWorldDat(&s->spells, game, worldDat, size) || !dialogCatalogParseWorldDat(&s->dialogs, game, worldDat, size) || !documentCatalogParseWorldDat(&s->documents, game, worldDat, size) || !saveGameNewGame(&s->save, game, worldDat, size)) {
         free(s);
         return NULL;
     }
@@ -575,6 +576,10 @@ static bool lightsActive(const GameSession *s) {
     return total != 0;
 }
 
+bool sessionDocumentLine(GameSession *s, unsigned line, char out[DocumentLineBufferSize]) {
+    return documentGetLine(&s->documents, (DocumentCategory)s->readCategory, s->readId, line, out);
+}
+
 void sessionTickAilments(GameSession *s) {
     if (s->combat.wiped) {
         return;
@@ -644,7 +649,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     bool done;
     const uint8_t *itemRec = itemCatalogRecord(&s->items, id);
     const uint8_t *target = itemRec ? itemTargetEntry(&s->items, itemRec) : NULL;
-    if (target && (itemTargetWord(target, 0) & 4) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00)) {
+    if (target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, 0) & 4) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00)) {
         /* ExamineTarget: a key to a destination (KEY OF PORT HOPE..., ANKH OF PORTALS, ATHANEUM KEY): the road opens when its gate flag is set */
         uint8_t globalSlots[24];
         memset(globalSlots, 0, sizeof(globalSlots));
@@ -656,6 +661,15 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         }
         travelTo(s, destination);
         return SessionUseTravelled;
+    }
+    /* a readable item (HandleGameCommand -> RunConversation): the target entry's flags 0x4000 / 0x2000 / 0x1000 / 0x800 pick the pool, its word 2 the entry, the reader's
+     * Linguistics (against the difficulty bits 0x8 / 0x4 / 0x2 of word 1) how much of it is readable */
+    if (target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, ItemTargetSlotFlags) & 0x7800) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+        unsigned word1 = itemTargetWord(target, ItemTargetSlotFlags);
+        s->readCategory = word1 & 0x4000 ? DocumentCategoryJournal : word1 & 0x2000 ? DocumentCategoryDocument : word1 & 0x1000 ? DocumentCategoryNote : DocumentCategoryUnused;
+        s->readId = itemTargetWord(target, 2);
+        s->readability = documentClassifyReadability(s->game, (uint16_t)word1, (int16_t)partyGetStat(user, PartyStatLinguistics));
+        return documentLineCount(s->game, (DocumentCategory)s->readCategory, s->readId) ? SessionUseRead : SessionUseNoEffect;
     }
     /* the light sources (HandleGameCommand: 8 / 0xE / 0xB light, 9 / 0xF / 0xC put out; ApplyStatusEffect, TickStatusEffects): the lit-item family steps to the next id */
     if (id == 8 || id == 0xE || id == 0xB || id == 9 || id == 0xF || id == 0xC) {
@@ -672,7 +686,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         return SessionUseDone;
     }
     /* Chapter 2's quest relics (DispatchItemAbilityCommand) */
-    if (s->game == GameYendor2 && !(target && (itemTargetWord(target, 0) & 4)) && relicClassify(id) != RelicActionNone) {
+    if (s->game == GameYendor2 && !(target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, 0) & 4)) && relicClassify(id) != RelicActionNone) {
         RelicAction action = relicClassify(id);
         uint8_t *flags = saveGlobalFlags(&s->save);
         if (action == RelicActionCharged) {

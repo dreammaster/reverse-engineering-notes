@@ -8,6 +8,7 @@
 #include "ailment.h"
 #include "combat.h"
 #include "conversation.h"
+#include "document.h"
 #include "dungeongrid.h"
 #include "game.h"
 #include "gameclock.h"
@@ -78,6 +79,9 @@ typedef struct GameSession {
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
     unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
+    DocumentCatalog documents; /* the readable texts (document.h) */
+    unsigned readCategory, readId; /* the document the last SessionUseRead opened */
+    DocumentReadability readability; /* how much of it the reader could read */
     AilmentClock ailments;  /* the counters of the periodic ailment sweep (ailment.h) */
     unsigned pendingFade;   /* 1 at 06:00, 2 at 18:00 (sessionAdvanceTime): the front end runs the dawn / dusk palette fade (palette.h) and clears it */
     unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
@@ -141,9 +145,9 @@ SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned sp
  * healers (consumable.h). The item's charge is spent only when it did something; in a combat the use takes the member's turn. SessionUseNothing: no item
  * there; SessionUseNoEffect: it would do nothing for that recipient (the original flashes a warning and spends nothing); SessionUseUnsupported: neither a restorative nor a
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
- * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
+ * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -218,6 +222,9 @@ void sessionAdvanceTime(GameSession *session, unsigned minutes);
  * Call it once per pass of the front end's loop (not while it waits for a key).
  */
 void sessionTickAilments(GameSession *session);
+
+/* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */
+bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentLineBufferSize]);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);
