@@ -70,12 +70,38 @@ void host_moveMonsters(Cpu *c) { (void)c; /* TODO: monster movement (not transla
 void host_playSoundEffect(Cpu *c) { (void)c; }
 void host_vdrv_0F_fade(Cpu *c) { (void)c; }
 void host_getCommand(Cpu *c) { (void)c; abort(); }
-void host_vdrv_06_closeWindows(Cpu *c) { (void)c; abort(); }
+void host_vdrv_06_closeWindows(Cpu *c) { (void)c; }
+void host_sub_28649(Cpu *c) { (void)c; /* overlay routine called when the map changes (not translated) */ }
+void host_sub_2819E(Cpu *c) { (void)c; /* overlay routine called when the map changes (not translated) */ }
+
+static MmViewMapOps map_ops;
+void mm3_view_set_map_ops(const MmViewMapOps *ops) { map_ops = *ops; }
+void host_j_loadMapData(Cpu *c) { if (map_ops.load_map_data) map_ops.load_map_data(map_ops.user, host_arg(c, 0)); }
+void host_j_loadMapGraphics(Cpu *c) { if (map_ops.load_map_graphics) map_ops.load_map_graphics(map_ops.user, host_arg(c, 0)); }
+void host_j_Map_load(Cpu *c) { if (map_ops.map_load) map_ops.map_load(map_ops.user, host_arg(c, 0)); }
 void host_vdrv_1E_openWindow(Cpu *c) { (void)c; abort(); }
 
 /* ---- entry points */
 void call_prepareIndoorView(Cpu *c);
 void call_renderIndoorView(Cpu *c);
+void call_drawViewOutdoors(Cpu *c);
+void call_mazeUpdateSlot(Cpu *c);
+
+void mm3_view_run_outdoor(void) {
+	Cpu c;
+	memset(&c, 0, sizeof c);
+	c.sp = 0xFF00;
+	PUSH(&c, 0); PUSH(&c, 0);
+	call_drawViewOutdoors(&c);
+}
+
+void mm3_view_update_slot(void) {
+	Cpu c;
+	memset(&c, 0, sizeof c);
+	c.sp = 0xFF00;
+	PUSH(&c, 0); PUSH(&c, 0);
+	call_mazeUpdateSlot(&c);
+}
 
 void mm3_view_run(void) {
 	Cpu c;

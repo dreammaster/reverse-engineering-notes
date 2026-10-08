@@ -26,7 +26,12 @@ enum {
 	DG_MONSTER_SPRITES = 0xA750,        /* 3 far pointers */
 	DG_OBJECT_NAMES = 0x58D4,           /* near pointers to the picture names (".pic") */
 	DG_MONSTER_NAMES = 0x5590,          /* near pointers to the monster picture names (".mon") */
-	DG_MAP_MONSTER_PICS = 0x274F        /* 3 bytes per map, map 1 at +3 */
+	DG_MAP_MONSTER_PICS = 0x274F,       /* 3 bytes per map, map 1 at +3 */
+	DG_TOWN_CLOSED = 0x4778, DG_PARTY_MINUTES = 0xEC42,
+	DG_START_SLOT = 0xD667,             /* byte_35D57: slot holding a page with a default start cell */
+	DG_TERRAIN_NAMES = 0x5A46,          /* near pointers: terrain sheet names ("mount", "ltree", ...) */
+	DG_WATER = 0xEC8C,                  /* word_3737C: water.vga */
+	DG_DAYNIGHT_NAMES = 0x5A6C          /* near pointers to "day.vga", "night.vga" */
 };
 
 #define MARKER_BASE 0x4000
@@ -171,44 +176,118 @@ void mm3_facing_step(int f, int *dx, int *dy) {
 }
 int mm3_facing_wall_side(int f) { static const int t[4] = {MM3_SIDE_N, MM3_SIDE_S, MM3_SIDE_E, MM3_SIDE_W}; return t[f & 3]; }
 
-int mm3_view_set_map(Mm3View *v, unsigned map_id, int x, int y, int facing) {
-	char name[32];
-	size_t len;
-	uint8_t *dat;
-	unsigned env;
-	char buf[32];
-	static const int sheet_numbers[4] = {1, 2, 4, 3};
-	snprintf(name, sizeof name, "MAZE%02u.DAT", map_id);
-	dat = mm3_cc_read(v->cur, name, &len);
-	if (!dat || len < MM3_PAGE_SIZE || mm3_page_load(&v->page, dat, len)) { free(dat); return -1; }
-	v->map_id = map_id;
-	memcpy(&DG[DG_SLOT_BASE], dat, DG_SLOT_STRIDE);
-	free(dat);
-	DG[DG_MAZE_CUR_SLOT] = 0;
-	DG[DG_MAZE_SLOT_IDS + 0] = (uint8_t)map_id;
-	DG[DG_MAZE_SLOT_IDS + 1] = DG[DG_MAZE_SLOT_IDS + 2] = DG[DG_MAZE_SLOT_IDS + 3] = 0xFF;
-	DG[DG_PARTY_MAP] = (uint8_t)map_id;
-	DG[DG_ENGINE_MODE] = 1;
-	DG[DG_WRAP_MODE] = 0;
-	wr16(DG, DG_PARTY_LIGHT, 999);
-	mm3_view_set_party(v, x, y, facing);
-	v->rng = 12345;
-	load_map_bin(v, map_id);
+static int map_has_day_night(unsigned m) { return m < 6 || (m >= 24 && m <= 28) || (m >= 41 && m <= 104) || m > 106; }
+static int map_is_outdoor(unsigned m) { return (m >= 41 && m <= 104) || m > 106; } /* setWrapModeForMap */
 
-	/* environment graphics (docs/view.md "Environment graphics"): four wall sheets, background */
-	env = DG[DG_ENV_TABLE + map_id];
-	snprintf(name, sizeof name, "%s", (const char *)&DG[rd16(DG, (uint16_t)(DG_ENV_PREFIXES + 2 * env))]);
-	for (int i = 0; i < 4; i++) {
-		snprintf(buf, sizeof buf, "%swl%d.vga", name, sheet_numbers[i]);
-		bind_set(v, DG_WALL_SHEETS + 4 * sheet_numbers[i], buf);
-	}
-	/* background: day/night picture on town maps, else <env>.sky (the day/night rule is not implemented: always day) */
-	if (map_id < 6 || (map_id >= 24 && map_id <= 28))
-		bind_set(v, DG_BACKGROUND, "DAY.VGA");
-	else {
-		snprintf(buf, sizeof buf, "%s.sky", name);
+/* Town_closed (night) from the time of day, as sub_43034 computes it */
+static void update_night(Mm3View *v) {
+	(void)v;
+	unsigned t = rd16(DG, DG_PARTY_MINUTES);
+	DG[DG_TOWN_CLOSED] = (t < 300 || t >= 1260) ? 1 : 0;
+}
+
+static void bind_background(Mm3View *v, unsigned map_id, const char *env_prefix) {
+	char buf[40];
+	if (map_has_day_night(map_id)) {
+		update_night(v);
+		bind_set(v, DG_BACKGROUND, DG[DG_TOWN_CLOSED] ? "NIGHT.VGA" : "DAY.VGA");
+	} else {
+		snprintf(buf, sizeof buf, "%s.sky", env_prefix);
 		bind_set(v, DG_BACKGROUND, buf);
 	}
+}
+
+/* loadMapGraphics: the environment's wall sheets (indoor) or the terrain sheets of the page headers plus water (outdoor) */
+static void load_map_graphics(Mm3View *v, unsigned map_id) {
+	char prefix[8], buf[40];
+	static const int sheet_numbers[4] = {1, 2, 4, 3};
+	unsigned env = DG[DG_ENV_TABLE + (map_id < 256 ? map_id : 0)];
+	snprintf(prefix, sizeof prefix, "%s", (const char *)&DG[rd16(DG, (uint16_t)(DG_ENV_PREFIXES + 2 * env))]);
+	if (!map_is_outdoor(map_id)) {
+		for (int i = 0; i < 4; i++) {
+			snprintf(buf, sizeof buf, "%swl%d.vga", prefix, sheet_numbers[i]);
+			bind_set(v, DG_WALL_SHEETS + 4 * sheet_numbers[i], buf);
+		}
+	} else {
+		unsigned slot_base = DG_SLOT_BASE + DG[DG_MAZE_CUR_SLOT] * DG_SLOT_STRIDE;
+		for (int i = 0; i < 7; i++) {
+			unsigned sel = DG[slot_base + 0x300 + i]; /* header bytes 0-6: terrain sheet selectors */
+			unsigned off = DG_WALL_SHEETS + 4 + 4 * i;
+			if (!sel) { wr16(DG, (uint16_t)off, 0); wr16(DG, (uint16_t)(off + 2), 0); continue; }
+			snprintf(buf, sizeof buf, "%s.vga", (const char *)&DG[rd16(DG, (uint16_t)(DG_TERRAIN_NAMES + 2 * sel))]);
+			bind_set(v, off, buf);
+		}
+		bind_set(v, DG_WATER, "water.vga");
+	}
+	bind_background(v, map_id, prefix);
+}
+
+/* loadMapData: the page of the map in slot 0 and its neighbours in the other slots (the slot order table is 0,0,0,2 at DGROUP 310Eh:
+ * slot 1 = east neighbour of slot 0, slot 2 = south neighbour of slot 0, slot 3 = east neighbour of slot 2) */
+static void load_map_data(Mm3View *v, unsigned map_id) {
+	static const int src_slot[4] = {0, 0, 0, 2};
+	unsigned format = map_id - 1;
+	memset(&DG[DG_MAZE_SLOT_IDS], 0, 4);
+	DG[DG_START_SLOT] = 0xFF;
+	for (int i = 0; i < 4; i++) {
+		unsigned id;
+		if (i == 0)
+			id = ++format;
+		else
+			id = DG[DG_SLOT_BASE + src_slot[i] * DG_SLOT_STRIDE + 0x300 + 8 + (i & 1)];
+		if (id && DG[DG_MAZE_SLOT_IDS + src_slot[i]] != 0xFF) {
+			char name[32];
+			size_t len;
+			uint8_t *dat;
+			snprintf(name, sizeof name, "MAZE%02u.DAT", id);
+			dat = mm3_cc_read(v->cur, name, &len);
+			if (dat && len >= DG_SLOT_STRIDE) {
+				memcpy(&DG[DG_SLOT_BASE + i * DG_SLOT_STRIDE], dat, DG_SLOT_STRIDE);
+				if (DG[DG_SLOT_BASE + i * DG_SLOT_STRIDE + 0x300 + 0x13] && DG[DG_START_SLOT] == 0xFF)
+					DG[DG_START_SLOT] = (uint8_t)i;
+				if (i == 0 && mm3_page_load(&v->page, dat, len) == 0) v->map_id = id;
+			} else {
+				id = 0;
+			}
+			free(dat);
+		} else {
+			id = 0;
+		}
+		DG[DG_MAZE_SLOT_IDS + i] = id ? (uint8_t)id : 0xFF;
+		format = id;
+	}
+}
+
+static Mm3View *g_view; /* the translated code reaches the glue through the map-change callbacks */
+static void cb_load_map_data(void *u, unsigned n) { load_map_data(u, n + 1); }
+static void cb_load_graphics(void *u, unsigned n) { load_map_graphics(u, n + 1); }
+static void cb_map_load(void *u, unsigned n) { load_map_bin(u, n + 1); }
+
+int mm3_view_set_map(Mm3View *v, unsigned map_id, int x, int y, int facing) {
+	static const MmViewMapOps ops = { 0, cb_load_map_data, cb_load_graphics, cb_map_load };
+	MmViewMapOps o = ops;
+	size_t len;
+	uint8_t *probe;
+	char name[32];
+	snprintf(name, sizeof name, "MAZE%02u.DAT", map_id);
+	probe = mm3_cc_read(v->cur, name, &len);
+	if (!probe) return -1;
+	free(probe);
+	g_view = v;
+	o.user = v;
+	mm3_view_set_map_ops(&o);
+	v->map_id = map_id;
+	DG[DG_MAZE_CUR_SLOT] = 0;
+	DG[DG_PARTY_MAP] = (uint8_t)map_id;
+	DG[DG_ENGINE_MODE] = 1;
+	DG[DG_WRAP_MODE] = map_is_outdoor(map_id) ? 1 : 0;
+	wr16(DG, DG_PARTY_LIGHT, 999);
+	if (!rd16(DG, DG_PARTY_MINUTES)) wr16(DG, DG_PARTY_MINUTES, 480);
+	v->rng = 12345;
+	load_map_data(v, map_id);
+	mm3_view_set_party(v, x, y, facing);
+	load_map_bin(v, map_id);
+	load_map_graphics(v, map_id);
 	/* HUD and effect sprite sets (names stored in the original at DGROUP 2E63h...) */
 	bind_set(v, 0xABDA, "global.icn");
 	bind_set(v, 0xC536, "gargoyle.brd");
@@ -221,6 +300,26 @@ int mm3_view_set_map(Mm3View *v, unsigned map_id, int x, int y, int facing) {
 	bind_set(v, 0xECDC, "charpow.icn");
 	return 0;
 }
+
+void mm3_view_set_minutes(Mm3View *v, unsigned minutes) {
+	wr16(DG, DG_PARTY_MINUTES, (uint16_t)minutes);
+	if (v->map_id && map_has_day_night(v->map_id)) {
+		char prefix[8];
+		unsigned env = DG[DG_ENV_TABLE + v->map_id];
+		snprintf(prefix, sizeof prefix, "%s", (const char *)&DG[rd16(DG, (uint16_t)(DG_ENV_PREFIXES + 2 * env))]);
+		bind_background(v, v->map_id, prefix);
+	}
+}
+
+/* After the party moved: re-evaluate the page slot (outdoor maps: crossing into a neighbouring page loads it). */
+void mm3_view_after_move(Mm3View *v) {
+	(void)v;
+	if (DG[DG_WRAP_MODE])
+		mm3_view_update_slot();
+}
+
+int mm3_view_outdoor(const Mm3View *v) { (void)v; return DG[DG_WRAP_MODE]; }
+int mm3_view_map(const Mm3View *v) { (void)v; return DG[DG_PARTY_MAP]; }
 
 void mm3_view_set_party(Mm3View *v, int x, int y, int facing) {
 	(void)v;
@@ -257,7 +356,7 @@ static void draw_list(void *user, unsigned addr) {
 void mm3_view_render(Mm3View *v, uint8_t *screen) {
 	v->screen = screen;
 	mm3_view_set_list_callback(draw_list, v);
-	mm3_view_run();
+	if (DG[DG_WRAP_MODE]) mm3_view_run_outdoor(); else mm3_view_run();
 }
 
 const Mm3Palette *mm3_view_palette(const Mm3View *v) { return &v->pal; }

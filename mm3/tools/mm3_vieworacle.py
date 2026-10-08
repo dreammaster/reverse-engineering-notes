@@ -21,7 +21,7 @@ ENGINE_MODE = 0xBF20
 WRAP_MODE = 0x015B
 
 LINEAR = {  # IDA linear addresses of routines (names/mm3.tsv); all far
-    "prepareIndoorView": 0x1C195, "renderIndoorView": 0x1E407,
+    "prepareIndoorView": 0x1C195, "renderIndoorView": 0x1E407, "drawViewOutdoors": 0x203FE,
     "moveMonsters": 0x1B358, "playSoundEffect": 0x1B16B, "vdrv_0F_fade": 0x24FBF, "freeSpriteSlot": 0x26685,
     "vdrv_2D_printText": 0x24FB5, "_sprintf": 0x11E1D,
 }
@@ -155,8 +155,11 @@ class ViewOracle:
 
     def render(self):
         self.lists, self.printed = [], []
-        self.emu.call_linear(LINEAR["prepareIndoorView"])
-        self.emu.call_linear(LINEAR["renderIndoorView"])
+        if self.emu.rb(WRAP_MODE):  # outdoor map
+            self.emu.call_linear(LINEAR["drawViewOutdoors"])
+        else:
+            self.emu.call_linear(LINEAR["prepareIndoorView"])
+            self.emu.call_linear(LINEAR["renderIndoorView"])
         return self.lists
 
 

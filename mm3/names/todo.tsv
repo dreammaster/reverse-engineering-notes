@@ -14,10 +14,13 @@
 333C0	Spr_hpbarsIcn	far pointer to hpbars.icn, name at DGROUP 2EA4h
 3343A	Spr_protectIcn	far pointer to protect.icn, name at DGROUP 2E98h
 34B92	Monsters_row1	non-zero when monsters stand in the first cell ahead; set by scanMonstersAhead; runMazeEvent skips the square's script (jumps to its exit with byte_34BF0 = 1) when it is set, drawView starts combat (evidence: docs/engine-loop.md, runMazeEvent+11Bh). byte_34B93 / byte_34B94 are rows 2 and 3 -> Monsters_row2 / Monsters_row3
+34B96	Spr_terrainSheets	outdoor maps: 7 far pointers (4 bytes each, from +4 = 34B9A) to the terrain sheets named by the selector bytes 0-6 of the current page header through the name table at DGROUP 5A46h; the same table holds the four wall sheets on indoor maps (see Spr_wallSheet1) (evidence: loadMapGraphics outdoor branch, view_glue.c reproduces it and the renderer output matches the original)
 34B9A	Spr_wallSheet1	far pointer to the nearest wall sheet <env>wl1.vga; the table of the four sheets starts at DGROUP C4A6h = linear 34B96 (Spr_wallSheets, 4 bytes per sheet number n: n = 1,2,3,4 -> <env>wl<n>.vga), so 34B9E = wl2, 34BA2 = wl3, 34BA6 = wl4 (evidence: loadMapGraphics sprintf '%swl%u.vga', drawWallFaces set records, emulated)
 34C22	Spr_restoreIcn	far pointer to restore.icn, name at DGROUP 2EAFh
 34C26	Spr_gargoyleBrd	far pointer to gargoyle.brd (border gargoyle frames), see Spr_globalIcn (name at DGROUP 2E6Eh)
+35D57	Maze_startSlot	byte: slot (0-3) of the first loaded page whose header byte 13h (default start cell) is non-zero, FFh if none; set by loadMapData (evidence: loadMapData+0xDB)
 36FB6	Spr_grabberBrd	far pointer to grabber.brd (border), name at DGROUP 2E7Bh
+3737C	Spr_water	far pointer to water.vga (outdoor maps), loaded by loadMapGraphics (name at DGROUP 363Ch)
 373A4	Evt_windowCount	number of message/NPC windows the running event script has opened (incremented by Display1/NPC, closed by vdrv_06_closeWindows(word_373A4) when the script ends) (evidence: runMazeEvent evt_op01, evt_op18)
 373B4	Spr_viewBackground	far pointer to the view background sprite set (day.vga / night.vga / <env>.sky), set by loadViewBackground; renderIndoorView copies it into the scene header word_35D60/62 (evidence: sub_43034 stores it; emulated renderIndoorView needs it non-zero or the draw list is empty)
 373CC	Spr_charpowIcn	far pointer to charpow.icn (spell effect sprites drawn by the row writers), name at DGROUP 2EBBh

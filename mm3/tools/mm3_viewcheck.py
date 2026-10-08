@@ -48,7 +48,8 @@ def main():
     glue = (sys.argv[6], sys.argv[7]) if len(sys.argv) > 7 else None
     o = vo.ViewOracle(exe, cur)
     e = o.emu
-    maps = [m for m in range(1, 41) if mm3_cc.name_id("MAZE%02d.DAT" % m) in o.members]
+    top = 104 if glue else 40  # the glue also sets up outdoor maps (41 and up)
+    maps = [m for m in range(1, top) if mm3_cc.name_id("MAZE%02d.DAT" % m) in o.members and m not in (104,)]
     tmp = tempfile.mkdtemp()
     bad = 0
     nonempty = 0

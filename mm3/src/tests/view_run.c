@@ -29,6 +29,6 @@ int main(int argc, char **argv) {
 	if (!f || fread(DG, 1, 65536, f) != 65536) return 2;
 	fclose(f);
 	mm3_view_set_list_callback(dump_list, NULL);
-	mm3_view_run();
+	if (DG[0x15B]) mm3_view_run_outdoor(); else mm3_view_run(); /* Maze_wrapMode: outdoor map */
 	return 0;
 }

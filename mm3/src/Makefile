@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun tests/view_run ccdump gfxsum viewer
+	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun tests/test_walk tests/view_run ccdump gfxsum viewer
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -79,7 +79,7 @@ evttest: tests/test_evtrun
 VIEW_SRC = view_host.c gen/view_gen.c
 VIEW_FUNCS = prepareIndoorView renderIndoorView drawWallFaces drawRow1Sprites drawRow2Sprites drawRow3Sprites drawRow4Sprites \
   drawHudPieces scanObjectsAhead scanMonstersAhead clearViewFlags updateLight mazeGetWordRel mazeGetFlagsRel mazeNeighbourSlot \
-  checkDrawListOverflow checkSkill
+  checkDrawListOverflow checkSkill drawViewOutdoors renderOutdoorView mazeUpdateSlot
 
 # regenerate gen/view_gen.c from the disassembly (only needed when mm3.asm / the translator change)
 regen:
@@ -100,3 +100,10 @@ GLUE_SRC = view_glue.c cc.c maze.c party.c gfx.c dgroup.c mapbin.c $(VIEW_SRC)
 mm3view: mm3view.c $(GLUE_SRC) view_glue.h
 	$(CC) $(CFLAGS) -Wno-unused-label $(SDL_CFLAGS) -o $@ mm3view.c $(GLUE_SRC) $(SDL_LIBS)
 .PHONY: mm3view
+
+tests/test_walk: tests/test_walk.c $(GLUE_SRC) view_glue.h
+	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/test_walk.c $(GLUE_SRC)
+
+walktest: tests/test_walk
+	tests/test_walk $(DATA)
+.PHONY: walktest

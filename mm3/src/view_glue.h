@@ -17,6 +17,13 @@ void mm3_view_destroy(Mm3View *v);
 /* Load a map (1-40: the indoor maps) and put the party on it.  Returns 0 on success. */
 int mm3_view_set_map(Mm3View *v, unsigned map_id, int x, int y, int facing);
 
+/* Time of day in minutes (day/night backgrounds: night before 05:00 and from 21:00). */
+void mm3_view_set_minutes(Mm3View *v, unsigned minutes);
+/* Call after the party moved: outdoor maps swap pages when the party crosses a page boundary. */
+void mm3_view_after_move(Mm3View *v);
+int mm3_view_outdoor(const Mm3View *v);
+int mm3_view_map(const Mm3View *v);
+
 /* Party state used by the view. */
 void mm3_view_set_party(Mm3View *v, int x, int y, int facing);
 int mm3_view_x(const Mm3View *v);

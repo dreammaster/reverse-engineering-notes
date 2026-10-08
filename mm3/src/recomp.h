@@ -87,7 +87,7 @@ static inline uint32_t alu_shl(Cpu *c, uint32_t a, unsigned n, int bits) {
 	if (!n) return a & msk(bits);
 	r = (n >= (unsigned)bits) ? 0 : (a << n) & msk(bits);
 	c->cf = n <= (unsigned)bits ? ((a >> (bits - n)) & 1) : 0;
-	c->of = ((r >> (bits - 1)) & 1) != c->cf;
+	c->of = (int)((r >> (bits - 1)) & 1) != c->cf;
 	set_zs(c, r, bits);
 	return r;
 }

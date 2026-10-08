@@ -239,6 +239,11 @@ class Translator:
                   "adc": "alu_adc", "sbb": "alu_sbb"}[mn]
             expr = "%s(c, %s, %s, %d)" % (fn, self.rd(d, sz), self.rd(s, sz), sz)
             return ["t_ = %s;" % expr] + ([] if mn == "cmp" else [self.wr(d, "t_")])
+        if mn == "test":
+            d = P(ops[0]); sz = self.opsize(d)
+            s = P(ops[1], sz)
+            sz = self.opsize(d, s)
+            return ["t_ = alu_and(c, %s, %s, %d); (void)t_;" % (self.rd(d, sz), self.rd(s, sz), sz)]
         if mn in ("inc", "dec"):
             d = P(ops[0]); sz = self.opsize(d)
             return ["t_ = alu_%s(c, %s, %d);" % (mn, self.rd(d, sz), sz), self.wr(d, "t_")]

@@ -9,3 +9,4 @@ tests/test_mapbin
 tests/test_evtrun
 tests/view_run
 mm3view
+tests/test_walk
