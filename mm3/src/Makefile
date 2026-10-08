@@ -2,7 +2,7 @@
 CC ?= cc
 CFLAGS ?= -std=c11 -Wall -Wextra -O2
 
-CORE = cc.c maze.c party.c events.c
+CORE = cc.c maze.c party.c events.c gfx.c
 
 test: tests/test_cc
 	python3 tests/gen_testdata.py build/testdata
@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real tests/test_state ccdump
+	rm -rf build tests/test_cc tests/test_real tests/test_state ccdump gfxsum viewer
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -41,3 +41,21 @@ tests/test_state: tests/test_state.c $(CORE) cc.h maze.h party.h events.h charac
 statetest: tests/test_state
 	tests/test_state $(DATA)/MM3.CUR
 .PHONY: statetest
+
+gfxsum: gfxsum.c $(CORE) gfx.h cc.h
+	$(CC) $(CFLAGS) -o $@ gfxsum.c $(CORE)
+
+# decode every graphics member of MM3.CC in C and in Python and compare
+gfxcheck: gfxsum
+	mkdir -p build
+	./gfxsum $(DATA)/MM3.CC > build/gfx_c.txt
+	python3 tests/gfxsum.py $(DATA)/MM3.CC > build/gfx_py.txt
+	diff build/gfx_c.txt build/gfx_py.txt && echo "graphics: identical ($$(wc -l < build/gfx_c.txt) members)"
+.PHONY: gfxcheck
+
+SDL_CFLAGS := $(shell pkg-config --cflags sdl2 2>/dev/null)
+SDL_LIBS := $(shell pkg-config --libs sdl2 2>/dev/null)
+
+viewer: viewer.c $(CORE) gfx.h cc.h
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ viewer.c $(CORE) $(SDL_LIBS)
+.PHONY: viewer
