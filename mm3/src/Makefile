@@ -2,7 +2,7 @@
 CC ?= cc
 CFLAGS ?= -std=c11 -Wall -Wextra -O2
 
-CORE = cc.c maze.c party.c events.c gfx.c dgroup.c mapbin.c
+CORE = cc.c maze.c party.c events.c gfx.c dgroup.c mapbin.c evtrun.c
 
 test: tests/test_cc
 	python3 tests/gen_testdata.py build/testdata
@@ -12,7 +12,7 @@ tests/test_cc: tests/test_cc.c $(CORE) cc.h maze.h
 	$(CC) $(CFLAGS) -o $@ tests/test_cc.c $(CORE)
 
 clean:
-	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin ccdump gfxsum viewer
+	rm -rf build tests/test_cc tests/test_real tests/test_state tests/test_mapbin tests/test_evtrun ccdump gfxsum viewer
 .PHONY: test clean
 
 ccdump: ccdump.c $(CORE) cc.h maze.h
@@ -67,3 +67,10 @@ tests/test_mapbin: tests/test_mapbin.c $(CORE) cc.h mapbin.h dgroup.h party.h
 mapbintest: tests/test_mapbin
 	tests/test_mapbin $(DATA)/MM3.CUR $(DATA)/DGROUP.BIN
 .PHONY: mapbintest
+
+tests/test_evtrun: tests/test_evtrun.c $(CORE) evtrun.h events.h
+	$(CC) $(CFLAGS) -o $@ tests/test_evtrun.c $(CORE)
+
+evttest: tests/test_evtrun
+	tests/test_evtrun $(DATA)/MM3.CUR
+.PHONY: evttest

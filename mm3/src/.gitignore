@@ -6,3 +6,4 @@ tests/test_state
 gfxsum
 viewer
 tests/test_mapbin
+tests/test_evtrun
