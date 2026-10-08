@@ -38,7 +38,7 @@ TGScene	done	39	166435	172880
 HashMap<int, std::list<TSceneActionArea*, std::allocator<TSceneActionArea*> >*, IntegerHash<int> >	todo	1	173228	173228
 TGCharacter	in-progress	76	175318	185835
 THAction	done	5	187010	187127
-TGObjectManager	in-progress	25	187194	189565
+TGObjectManager	done	25	187194	190177
 TTObject	todo	9	190187	1468584
 TTButton	stub	12	190202	1526063
 TGEventInfo	done	1	190217	190217

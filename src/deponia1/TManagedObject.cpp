@@ -13,6 +13,8 @@
 #include "datastruct/visionaire.h"
 #include "datastruct/vlist.h"
 #include "graphicslib/picture.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
 #include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
@@ -70,28 +72,51 @@ void TManagedObject::Prepare() {
 			anim->Prepare();
 }
 
+// Confirmed (asm lines 192706-193076). An active object first asks the script function registered for the hook
+// "renderObject" ("ObjectRenderHook", given the object): a true answer means the script has drawn it and nothing more
+// is done. Then the fade is stepped, and the primary animation is drawn (an animation that has a valid sprite, or is a
+// model or bones one; a bones one with the others mixed in) or, with none or an undrawable one, the picture; then the text.
+// The secondary animations that have a valid sprite are drawn last, at full alpha - also when the object is not active.
 void TManagedObject::Draw() {
-	if (!_active)
-		return;
-	UpdateAlpha();
-	if (_currentAnimation) {
-		if (_currentAnimation->IsSpriteIndexValid()) {
+	if (_active) {
+		if (!HookFunctionRender.empty()) {
+			static TArgument parameter;
+			static TArgument returnValue;
+
+			parameter.Set(_objRef);
+			returnValue.SetType(TArgType::kBool);
+
+			std::vector<TArgument *> arguments = {&parameter};
+			std::vector<TArgument *> results = {&returnValue};
+
+			LuaDebugName("ObjectRenderHook");
+
+			if (LuaExecuteFunction(HookFunctionRender, arguments, results) && returnValue.GetBool())
+				return;
+		}
+
+		UpdateAlpha();
+
+		if (_currentAnimation && (_currentAnimation->IsSpriteIndexValid() || _currentAnimation->IsModelAnimation() ||
+		                          _currentAnimation->IsBonesAnimation())) {
 			if (_currentAnimation->IsBonesAnimation())
 				_currentAnimation->DrawMixed(_alpha, _color, _animations);
 			else
 				_currentAnimation->Draw(_alpha, _color, GetDirection());
+		} else if (_picture) {
+			_picture->Draw(_alpha, _color);
 		}
-	} else if (_picture) {
-		_picture->Draw(_alpha, _color);
+
+		if (_text) {
+			_text->CalculateCurrentText();
+			if (_text)
+				_text->Draw(_alpha);
+		}
 	}
-	if (_text) {
-		_text->CalculateCurrentText();
-		if (_text)
-			_text->Draw(_alpha);
-	}
+
 	for (TGAnimation *anim : _animations)
 		if (anim->IsSpriteIndexValid())
-			anim->Draw(_alpha, _color, -1);
+			anim->Draw(1.0f, _color, -1);
 }
 
 void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &actionInfo) {
@@ -141,7 +166,7 @@ void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &
 }
 
 void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeActionExecution> &types,
-                                            const TGEventInfo &info, TGActionInfo &outAction) {
+        const TGEventInfo &info, TGActionInfo &outAction) {
 	outAction.flag4 = false;
 	outAction.flag5 = false;
 

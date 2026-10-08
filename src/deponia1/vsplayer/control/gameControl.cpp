@@ -208,10 +208,16 @@ bool TGameControl::Update() {
 	debugger.EndArea(ProfileArea::kValue4, -1);
 
 	if (!_engineEventHandlerNamesMainLoop.empty() && !MainLoopsPaused) {
-		// Real dispatch calls LuaExecuteFunction(name, {}, results) once per
-		// registered "mainLoop" handler name - LuaExecuteFunction/TArgument's
-		// full contract isn't reversed yet (same gap noted throughout this
-		// project, e.g. HandleMouseMove/HandleKeyEvent/HandleEngineEvent).
+		// (Confirmed, asm lines 470380-470449: each registered "mainLoop" function is called once, without
+		// arguments; the list is read by position, a handler may register others.)
+		LuaDebugName("MainLoop");
+
+		for (size_t i = 0; i < _engineEventHandlerNamesMainLoop.size(); i++) {
+			std::vector<TArgument *> arguments;
+			std::vector<TArgument *> results;
+
+			LuaExecuteFunction(std::string(wxString(_engineEventHandlerNamesMainLoop[i]).mb_str()), arguments, results);
+		}
 	}
 
 	TSteamSDK *steam = GetGameClientSDK()->GetSteam();
@@ -293,13 +299,8 @@ void TGameControl::DisplayInSceneConsole() {
 void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 	// Confirmed (Deponia_Linux.asm lines 471985-472461).
 	wxPoint hookPos = pos;
-	if (!_sceneMousePositionHookName.empty() && !isHolding) {
-		// Real dispatch calls LuaExecuteFunction("SceneMousePositionHook",
-		// {&posArg}, results), which may override hookPos via the first
-		// result's TArgument::GetPoint() - LuaExecuteFunction/TArgument's
-		// full contract isn't reversed yet (same gap noted in
-		// TMasterControl::ProcessMessage/HandleEngineEvent/HandleKeyEvent).
-	}
+	if (!_sceneMousePositionHookName.empty() && !isHolding)
+		hookPos = CallSceneMousePositionHook(pos);
 
 	// Confirmed: this always uses the raw, un-overridden pos, never hookPos
 	// (asm lines 472143-472146 read straight from the original argument).
@@ -449,13 +450,8 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	}
 
 	wxPoint hookPos = pos;
-	if (!_sceneMousePositionHookName.empty()) {
-		// Real dispatch calls LuaExecuteFunction("SceneMousePositionHook",
-		// {&posArg}, results), which may override hookPos via the first
-		// result's TArgument::GetPoint() - LuaExecuteFunction/TArgument's
-		// full contract isn't reversed yet (same gap noted in
-		// HandleMouseMove/ProcessMessage/HandleEngineEvent/HandleKeyEvent).
-	}
+	if (!_sceneMousePositionHookName.empty())
+		hookPos = CallSceneMousePositionHook(pos);
 
 	TGScene *scene = _ownedSceneControl.GetScene();
 	if (scene->IsMenu())
@@ -649,6 +645,26 @@ void TGameControl::UpdateCurrentObject() {
 	// at the {-1,-1} "no position yet" sentinel.
 	if (_lastMousePos.x != -1 || _lastMousePos.y != -1)
 		HandleMouseMove(_lastMousePos, false);
+}
+
+// Confirmed (asm lines 472097-472116 and 472725-472750): the Lua function registered for the hook "sceneMousePosition"
+// ("SceneMousePositionHook") is given the position of the mouse and answers with the one the scene is to use.
+wxPoint TGameControl::CallSceneMousePositionHook(const wxPoint &pos) {
+	TArgument position;
+	TArgument result;
+
+	position.Set(pos);
+	result.SetType(TArgType::kPoint);
+
+	std::vector<TArgument *> arguments = {&position};
+	std::vector<TArgument *> results = {&result};
+
+	LuaDebugName("SceneMousePositionHook");
+
+	if (LuaExecuteFunction(std::string(wxString(_sceneMousePositionHookName).mb_str()), arguments, results))
+		return result.GetPoint();
+
+	return pos;
 }
 
 void TGameControl::RegisterHookFunctionSceneMousePosition(const wxString &name) {
@@ -2290,14 +2306,8 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 }
 
 void TGameControl::HandleEngineEvent(const std::string &name, const std::string &arg) {
-	// Confirmed (asm lines 469160-469504): fires once per registered engine-
-	// event handler (TMasterControl::_engineEventHandlerNames, populated by
-	// RegisterEngineEventHandler), but only that vector's *size* is read -
-	// never any element's own name - and every firing dispatches to the same
-	// fixed Lua function name, "EngineEventHandler", not to each handler's
-	// own registered name. That registered name is apparently just a de-dup
-	// key (matching RegisterEngineEventHandler's own dedup-by-name check),
-	// not a per-handler Lua entry point.
+	// Confirmed (asm lines 469160-469504): each function registered for the engine events
+	// (RegisterEngineEventHandler) is called with the name of the event and its argument ("EngineEventHandler").
 	for (size_t i = 0; i < _engineEventHandlerNames.size(); i++) {
 		wxString convertedName;
 		toUTF(&convertedName, name.c_str());
@@ -2309,10 +2319,11 @@ void TGameControl::HandleEngineEvent(const std::string &name, const std::string 
 		TArgument argArg;
 		argArg.Set(convertedArg);
 
-		// Real dispatch calls LuaExecuteFunction("EngineEventHandler",
-		// {&nameArg, &argArg}, results) - LuaExecuteFunction/TArgument's full
-		// contract isn't reversed yet (same gap noted in
-		// TMasterControl::ProcessMessage).
+		std::vector<TArgument *> arguments = {&nameArg, &argArg};
+		std::vector<TArgument *> results;
+
+		LuaDebugName("EngineEventHandler");
+		LuaExecuteFunction(_engineEventHandlerNames[i], arguments, results);
 	}
 }
 
@@ -2331,32 +2342,38 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 	if (_console.HandleKeyEvent(msg, key, a, b))
 		return;
 
-	// Real dispatch calls LuaExecuteFunction("KeyEventHandler", {&msgArg,
-	// &nameArg, &aArg, &bArg}, results) once per registered keyboard
-	// handler, returning immediately if a handler's result reports it
-	// consumed the event - LuaExecuteFunction/TArgument's full contract
-	// isn't reversed yet (same gap noted in TMasterControl::ProcessMessage/
-	// TGameControl::HandleEngineEvent). `nameArg` comes from
-	// SDL_GetKeyName(a) instead of `key` for axis-move/msg==3 messages (the
-	// latter another of TKeyboardMessageEnum's unconfirmed values).
-	bool useSdlKeyName = msg == TKeyboardMessageEnum::kAxisMove || static_cast<int>(msg) == 3;
+	// Confirmed (asm lines 471068-471230): each function registered for the keys is called with the message, the name
+	// of the key (the text given for the messages 3 and 6, the name SDL has for the key code otherwise), the key code
+	// and the modifiers, and a true answer ends the handling.
+	bool useKey = msg == TKeyboardMessageEnum::kAxisMove || static_cast<int>(msg) == 3;
 	for (std::size_t i = 0; i < _keyboardEventHandlers.size(); i++) {
 		TArgument msgArg;
 		msgArg.Set(static_cast<int>(msg));
 
 		TArgument nameArg;
-		if (useSdlKeyName) {
+		if (useKey) {
+			nameArg.Set(key);
+		} else {
 			wxString converted;
 			toUTF(&converted, SDL_GetKeyName(a));
 			nameArg.Set(converted);
-		} else {
-			nameArg.Set(key);
 		}
 
 		TArgument aArg;
 		aArg.Set(a);
 		TArgument bArg;
 		bArg.Set(static_cast<int>(b));
+		TArgument result;
+		result.SetType(TArgType::kBool);
+
+		std::vector<TArgument *> arguments = {&msgArg, &nameArg, &aArg, &bArg};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("KeyEventHandler");
+
+		if (LuaExecuteFunction(std::string(_keyboardEventHandlers[i].name.mb_str()), arguments, results) &&
+		        result.GetBool())
+			return;
 	}
 
 	TVisObjRef game = _visionaire->GetGame();

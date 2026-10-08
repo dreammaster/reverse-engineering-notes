@@ -8,6 +8,8 @@
 #include "TTButton.h"
 #include "vsplayer/control/cursorControl.h"
 #include "vsplayer/control/gameControl.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
 #include "vstables/visionaireGame.h"
 #include "vstables/fieldIds.h"
 
@@ -258,6 +260,60 @@ TVisObjRef TGObjectManager::GetEventCommand() const {
 	return gameControl()->GetGameSystem()->GetGame().GetLink(kGameActiveCommand);
 }
 
+// Confirmed (asm lines 189563-190177): the text of the action line. When the scripts registered a function for the
+// hook "getActionText" ("GetActionTextHook", given the position of the mouse) its answer is the text. Without one:
+// nothing in a menu; else the name of the command (the active button) and a space, then - when an item is used and the
+// command has a conjunction ("use X with") - the item, the conjunction (each followed by a space), and the name of the
+// object saved or, without one, of the current object.
 wxString TGObjectManager::GetActionText() const {
-	return wxString();
+	wxString text;
+
+	if (!_actionTextHookName.IsEmpty()) {
+		TArgument position;
+		TArgument result;
+
+		position.Set(g_pGameControl->GetMousePos());
+		result.SetType(TArgType::kString);
+
+		std::vector<TArgument *> arguments = {&position};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("GetActionTextHook");
+
+		if (LuaExecuteFunction(std::string(_actionTextHookName.mb_str()), arguments, results))
+			text = result.GetString();
+
+		return text;
+	}
+
+	if (gameControl()->GetScene()->IsMenu())
+		return text;
+
+	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
+	TTButton command(game.GetLink(kGameActiveCommand));
+
+	text = command.GetLanguageName();
+
+	if (!text.IsEmpty())
+		text += L" ";
+
+	TTObject item(game.GetLink(kGameUsedItem));
+
+	if (!item.IsEmpty()) {
+		wxString conjunction = command.GetLanguageConjunctionName();
+
+		if (!conjunction.IsEmpty()) {
+			text += item.GetLanguageName();
+			text += L" ";
+			text += conjunction;
+			text += L" ";
+		}
+	}
+
+	if (_savedObject && !_savedObject->GetRef().IsEmpty())
+		text += _savedObject->GetLanguageName();
+	else if (_currentObject)
+		text += _currentObject->GetLanguageName();
+
+	return text;
 }

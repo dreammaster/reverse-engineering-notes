@@ -108,6 +108,8 @@ public:
 	void SkipCurrentText();
 	void UpdateCurrentObject();
 	void RegisterHookFunctionSceneMousePosition(const wxString &name);
+	/** Asks the script function of the hook "sceneMousePosition" for the position of the mouse in the scene. */
+	wxPoint CallSceneMousePositionHook(const wxPoint &pos);
 	TConsole *GetConsole();
 
 	int ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent button);

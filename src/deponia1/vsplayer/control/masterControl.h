@@ -131,7 +131,7 @@ void FillLoadingScreen(SLoadingScreen &screen, const TVisObjRef &source);
 
 struct TMouseEventHandler {
 	wxString name;
-	std::vector<unsigned int> mouseButtonFilter;  // empty = matches any message
+	std::vector<unsigned int> mouseButtonFilter;  // the messages it is called for (none: never called)
 };
 
 struct TKeyboardEventHandler {

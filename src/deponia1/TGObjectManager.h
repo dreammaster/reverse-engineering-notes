@@ -1,6 +1,6 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except GetActionText() - reaching all 25 manifest-
+// Confirmed in full - reaching all 25 manifest-
 // listed methods (Deponia_Linux.asm lines 187194-190177): tracks which
 // TManagedObject the mouse is currently hovering (_currentObject) and a
 // separate "saved" one (SaveCurrentObject()/ExecuteSavedObject(), used
@@ -16,15 +16,9 @@
 // dedicated pass on TManagedObject (TGEventInfo.h/TGActionInfo.h) - now
 // done, so all four are implemented in full here too.
 //
-// GetActionText() (asm lines 189563-190177, by far the largest method here)
-// is left as a confirmed-call-shape stub for a different reason: when the
-// registered hook name is empty, it falls back to formatting "<button's
-// language name> <object's own display text>" by calling an unidentified
-// TManagedObject virtual (vtable slot 0xB0 - itself ambiguous due to
-// identical-code-folding with an unrelated method, see TManagedObject.h);
-// when the hook name is set, it calls LuaExecuteFunction() directly - this
-// project's standing, deliberately-unreversed Lua-bridge-contract gap. Both
-// paths need their own dedicated follow-up.
+// GetActionText() (asm lines 189563-190177, by far the largest method here) asks the Lua function
+// registered for the hook "getActionText" or, without one, joins the names of the active command, of the
+// item that is used and of the object under the mouse.
 #pragma once
 
 #include "TGDetectInfo.h"
@@ -149,8 +143,7 @@ public:
 	// Confirmed (asm lines 189522-189562): the game's current "action" link
 	// (0x262).
 	TVisObjRef GetEventCommand() const;
-	// Confirmed call shape only (asm lines 189563-190177) - see this
-	// class's own header comment.
+	// Confirmed (asm lines 189563-190177) - see this class's own header comment.
 	wxString GetActionText() const;
 
 private:

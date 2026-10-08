@@ -391,15 +391,10 @@ public:
 			_animations.push_back(animation);
 	}
 
-	// Confirmed (asm lines 192704-192913) except the Lua "ObjectRenderHook"
-	// support at the top (skipped - the same standing Lua-bridge-contract
-	// gap used throughout this project; it would only ever trigger for a
-	// game script that registers TManagedObject::HookFunctionRender, which
-	// nothing in this reimplementation can do anyway). Updates the fade,
-	// then draws the primary animation (or DrawMixed() with the secondary
-	// list, for a bones animation) or the plain picture if there's no
-	// primary animation; then the text, if any; then every sprite-valid
-	// secondary animation on top.
+	// Confirmed (asm lines 192706-193076): asks the "renderObject" hook of the scripts first (see Draw() in
+	// TManagedObject.cpp), then updates the fade and draws the primary animation (or DrawMixed() with the
+	// secondary list, for a bones animation) or the picture, then the text, if any; the secondary animations
+	// that have a valid sprite are drawn last, whether the object is active or not.
 	// (Needs TPictureIO's and TGText's full definitions, so implemented in
 	// the .cpp.)
 	virtual void Draw();

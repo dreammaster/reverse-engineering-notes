@@ -18,6 +18,8 @@
 #include "graphicslib/picture.h"
 #include "vsplayer/animationGame.h"
 #include "vsplayer/control/gameControl.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 
@@ -787,13 +789,37 @@ static int countEqualDown(const std::vector<int> &values, int index) {
 // kind that is shown) whose direction is nearest to `direction`. The directions of an
 // animation list are in ascending order and the same direction can be there several
 // times (variants, one of which is chosen by kCharacterAnimIndex); the search wraps
-// round at 360. TODO: the original first asks the Lua function registered by
-// RegisterHookFunctionGetCharacterAnimationIndex() ("CharacterDirectionHook", with the
-// character, the kind and the direction) and uses its result unless it is -1 - the
-// same standing Lua-bridge gap as for the other hooks (see TGObjectManager.h).
+// round at 360. The Lua function registered by RegisterHookFunctionGetCharacterAnimationIndex()
+// ("CharacterDirectionHook", with the character, the kind and the direction) is asked first and
+// its answer is used unless it is -1.
 int TGCharacter::GetDirectionIndex(int direction, TCharacterAnimEnum kind) {
 	if (kind == TCharacterAnimEnum::kNone)
 		kind = (TCharacterAnimEnum)_objRef.GetInt(kCharacterAnimState);
+
+	if (!HookFunctionGetCharacterAnimationIndex.IsEmpty()) {
+		TArgument character;
+		TArgument kindArgument;
+		TArgument directionArgument;
+		TArgument result;
+
+		character.Set(_objRef);
+		kindArgument.Set(static_cast<int>(kind));
+		directionArgument.Set(direction);
+		result.SetType(TArgType::kInt);
+
+		std::vector<TArgument *> arguments = {&character, &kindArgument, &directionArgument};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("CharacterDirectionHook");
+
+		int index = -1;
+
+		if (LuaExecuteFunction(std::string(HookFunctionGetCharacterAnimationIndex.mb_str()), arguments, results))
+			index = result.GetInt();
+
+		if (index != -1)
+			return index;
+	}
 
 	const std::vector<int> *list = &_walkDirections;
 

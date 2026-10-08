@@ -10,9 +10,8 @@
 // All texts that are showing are in a list (s_vRunningTexts); when the game is stopped (a menu)
 // they are stopped with it (StopRunningTexts()) and go on afterwards (ContinueStoppedTexts()).
 // The scripts can hook into a text (the registered names of Lua functions: TextStarted,
-// TextStopped, the text itself, its position and its drawing); the Lua bridge is not
-// reconstructed, so they are only stored (and the event handlers are called through the
-// bridge's call shape).
+// TextStopped, the text itself, its position and its drawing); the hooks are called through the Lua
+// bridge (LuaExecuteFunction()).
 //
 // Original layout: TSText ends at +0x40; +0x40 whether the position was set by the data (THText
 // sets it), +0x48 the lines of the text (std::list<wxString>), +0x58 their widths, +0x70 the glyph

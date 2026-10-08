@@ -11,6 +11,7 @@
 #include "TManagedObject.h"
 #include "datastruct/visionaire.h"
 #include "vsplayer/control/gameControl.h"
+#include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/lua.h"
 #include "vstables/fieldIds.h"
 
@@ -305,13 +306,28 @@ void TGText::ClearText() {
 	NotifyOwnerTextFinished();
 }
 
-// Confirmed (asm lines 214513-214700). TODO: the original first calls the Lua function
-// registered by RegisterHookFunctionText() ("TextTextHook", with the text's record) and takes
-// the string it returns as the part to show - the same standing Lua-bridge gap as the other
-// hooks (the registered name is stored).
+// Confirmed (asm lines 214513-214798). When the scripts registered a function for the hook "text"
+// (RegisterHookFunctionText), it is called with the text's record and the string it returns is the
+// part of the text to show.
 void TGText::CalculateRestText() {
 	TSText::CalculateRestText();
 	_placed = false;
+
+	if (!HookFunctionText.IsEmpty()) {
+		TArgument record;
+		TArgument result;
+
+		record.Set(_active);
+		result.SetType(TArgType::kString);
+
+		std::vector<TArgument *> arguments = {&record};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("TextTextHook");
+
+		if (LuaExecuteFunction(std::string(HookFunctionText.mb_str()), arguments, results))
+			_active.SetValue(kTextCurrentText, result.GetString(), TSendEventEnum::kSendEvent);
+	}
 
 	if (!_active.GetStr(kTextCurrentText).IsEmpty())
 		SplitText();
@@ -338,12 +354,29 @@ void TGText::SplitText() {
 	}
 }
 
-// Confirmed (asm lines 214808-215345), except the script's position hook ("TextPositionHook",
-// with the text's record: a true answer means the script has set the position). The lines go
+// Confirmed (asm lines 214808-215345). The script's position hook ("TextPositionHook", with the text's record:
+// a true answer means the script has set the position and nothing more is done). The lines go
 // above the speaker, centred on its sprite; when they would not fit above it, beside it (on the
 // side with more room); and always inside the part of the scene that is shown (or the whole scene
 // for a background text). The position is kept as the centre of the lines.
 void TGText::CalculateTextPos() {
+	if (!HookFunctionSetTextPosition.IsEmpty()) {
+		TArgument record;
+		TArgument result;
+
+		record.Set(_active);
+		result.SetType(TArgType::kBool);
+
+		std::vector<TArgument *> arguments = {&record};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("TextPositionHook");
+
+		if (LuaExecuteFunction(std::string(HookFunctionSetTextPosition.mb_str()), arguments, results) &&
+		        result.GetBool())
+			return;
+	}
+
 	if (!_speaker || !g_pGameControl)
 		return;
 
@@ -411,10 +444,9 @@ void TGText::CalculateTextPos() {
 	_active.SetValue(kTextPosition, position, TSendEventEnum::kNoEvent);
 }
 
-// Confirmed (asm lines 215356-216250), except the scripts' drawing hook ("TextRenderHook":
-// with the lines, their widths, the position, the alignment, the alpha and the wrap flag; a true
-// answer means the script has drawn the text). Not drawn while the text is stopped, empty, or
-// its speaker is not in the scene that is shown.
+// Confirmed (asm lines 215356-216885). The scripts' drawing hook ("TextRenderHook", with the text's record, the
+// lines, their widths, the position, the alignment and the alpha; a true answer means the script has drawn the
+// text). Not drawn while the text is stopped, empty, or its speaker is not in the scene that is shown.
 void TGText::Draw(float scale) {
 	if (_stopped)
 		return;
@@ -441,12 +473,45 @@ void TGText::Draw(float scale) {
 		zoom = true;
 	}
 
+	bool drawnByScript = false;
+
+	if (!HookFunctionRender.IsEmpty()) {
+		TArgument record;
+		TArgument textLines;
+		TArgument widths;
+		TArgument position;
+		TArgument alignment;
+		TArgument alphaArgument;
+		TArgument result;
+		std::vector<TCharHolder> lines;
+
+		for (const wxString &line : _lines)
+			lines.push_back(TCharHolder(line.wc_str()));
+
+		record.Set(_active);
+		textLines.Set(lines);
+		widths.Set(_lineWidths);
+		position.Set(*_active.GetPoint(kTextPosition));
+		alignment.Set(_active.GetInt(kTextAlignment));
+		alphaArgument.Set(static_cast<double>(alpha));
+		result.SetType(TArgType::kBool);
+
+		std::vector<TArgument *> arguments = {&record, &textLines, &widths, &position, &alignment, &alphaArgument};
+		std::vector<TArgument *> results = {&result};
+
+		LuaDebugName("TextRenderHook");
+		drawnByScript = LuaExecuteFunction(std::string(HookFunctionRender.mb_str()), arguments, results) &&
+		                result.GetBool();
+	}
+
 	if (zoom)
 		TCFont::ZoomText = true;
 
 	// the lines are printed with automatic breaks unless the position comes from the data
-	g_pGameControl->GetFontManager()->PrintTextLines(_lines, _lineWidths, (TextAlignmentEnum)_active.GetInt(kTextAlignment),
-	        *_active.GetPoint(kTextPosition), alpha, !_positionSet, &_buffers);
+	if (!drawnByScript) {
+		g_pGameControl->GetFontManager()->PrintTextLines(_lines, _lineWidths, (TextAlignmentEnum)_active.GetInt(kTextAlignment),
+		        *_active.GetPoint(kTextPosition), alpha, !_positionSet, &_buffers);
+	}
 
 	if (zoom)
 		TCFont::ZoomText = false;

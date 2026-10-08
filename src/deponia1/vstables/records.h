@@ -325,6 +325,10 @@ public:
 	static void OnCreate(TVisionaireObject *object);
 	static void OnInit(TVisionaireObject *object);
 	static bool cmpY(const TVisionaireObject *a, const TVisionaireObject *b);
+
+	/** The name of the object as shown to the player: the text of its name (kObjectName), or the name it has in the
+	 *  data when that text is empty. Empty for an empty object. */
+	wxString GetLanguageName() const;
 };
 
 class TTOutfit : public TVisObjRef {

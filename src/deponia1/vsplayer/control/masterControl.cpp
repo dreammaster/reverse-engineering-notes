@@ -1,5 +1,6 @@
 #include "vsplayer/control/masterControl.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 
@@ -8,6 +9,7 @@
 #include "TSceneControl.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
 #include "vsplayer/control/gameController.h"
 #include "vstables/fieldIds.h"
 
@@ -382,35 +384,56 @@ void TMasterControl::RegisterKeyboardEventHandler(const wxString &name) {
 	_keyboardEventHandlers.push_back(TKeyboardEventHandler{name});
 }
 
+// Confirmed (asm lines 489262-489599): the functions registered for the mouse whose list of messages has this one
+// (a handler without a list is never called) are called with the message and the position ("MouseMoveHandler").
 void TMasterControl::ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos) {
-	for (auto &handler : _mouseEventHandlers) {
-		bool matches = handler.mouseButtonFilter.empty();
-		if (!matches) {
-			for (unsigned int filterVal : handler.mouseButtonFilter) {
-				if (static_cast<int>(filterVal) == static_cast<int>(msg)) {
-					matches = true;
-					break;
-				}
-			}
-		}
-		if (!matches)
+	for (size_t i = 0; i < _mouseEventHandlers.size(); i++) {
+		const TMouseEventHandler &handler = _mouseEventHandlers[i];
+
+		if (std::find(handler.mouseButtonFilter.begin(), handler.mouseButtonFilter.end(), static_cast<unsigned int>(msg)) ==
+		        handler.mouseButtonFilter.end())
 			continue;
 
 		TArgument msgArg;
 		msgArg.Set(static_cast<int>(msg));
 		TArgument posArg;
 		posArg.Set(pos);
-		// Real dispatch calls LuaExecuteFunction(handler.name, {&msgArg,
-		// &posArg}, results) - LuaExecuteFunction/TArgument's full contract
-		// isn't reversed yet.
+
+		std::vector<TArgument *> arguments = {&msgArg, &posArg};
+		std::vector<TArgument *> results;
+
+		LuaDebugName("MouseMoveHandler");
+		LuaExecuteFunction(std::string(handler.name.mb_str()), arguments, results);
 	}
 }
 
-void TMasterControl::ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos, float /*a*/, float /*b*/, int /*c*/) {
-	// Not traced in detail; presumed to follow the same dispatch pattern as
-	// the (msg, pos) overload with extra TArgument::Set() calls for the
-	// additional float/int payload (e.g. mouse wheel delta).
-	ProcessMessage(msg, pos);
+// Confirmed (asm lines 489607-490054): the same with the two numbers and the integer of the event (the wheel and
+// the like) after the position ("MouseEventHandler").
+void TMasterControl::ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos, float a, float b, int c) {
+	for (size_t i = 0; i < _mouseEventHandlers.size(); i++) {
+		const TMouseEventHandler &handler = _mouseEventHandlers[i];
+
+		if (std::find(handler.mouseButtonFilter.begin(), handler.mouseButtonFilter.end(), static_cast<unsigned int>(msg)) ==
+		        handler.mouseButtonFilter.end())
+			continue;
+
+		TArgument msgArg;
+		msgArg.Set(static_cast<int>(msg));
+		TArgument posArg;
+		posArg.Set(pos);
+		TArgument aArg;
+		aArg.Set(static_cast<double>(a));
+		TArgument bArg;
+		bArg.Set(static_cast<double>(b));
+		TArgument cArg;
+		cArg.Set(c);
+
+		std::vector<TArgument *> arguments = {&msgArg, &posArg, &aArg, &bArg, &cArg};
+		std::vector<TArgument *> results;
+
+		LuaDebugName("MouseEventHandler");
+		LuaExecuteFunction(std::string(handler.name.mb_str()), arguments, results);
+	}
 }
 
 void TMasterControl::GetWindowSize(int *width, int *height) const {
