@@ -7,7 +7,17 @@
 #include <stdint.h>
 #include "character.h"
 
-typedef struct { uint8_t *dg; uint8_t *mem; /* flat real-mode memory: far pointer seg:off = mem + seg*16 + off */ } Mm3Game;
+/* Routines of the translated game that the readable logic still calls (the UI-heavy parts of combat). */
+typedef struct {
+	void (*monster_ranged_attack)(unsigned monster_type_offset, unsigned x, unsigned y); /* sub_27F5E */
+	void (*monsters_attack)(void);                                                         /* monstersAttack */
+} Mm3Hooks;
+
+typedef struct {
+	uint8_t *dg;
+	uint8_t *mem; /* flat real-mode memory: far pointer seg:off = mem + seg*16 + off */
+	const Mm3Hooks *hooks;
+} Mm3Game;
 
 /* DGROUP offsets */
 enum {
@@ -57,7 +67,16 @@ enum {
 	MM3_DG_MON_GRID = 0x8EF4,             /* 32x32 bytes: how much of each cell is occupied */
 	MM3_DG_MON_SIZE = 0x1B20,             /* by monster type offset */
 	MM3_DG_MON_MOVED = 0xED74,
-	MM3_DG_MONSTERS_MOVE_FLAG = 0x15C, MM3_DG_MONSTERS_SEEN_FLAG = 0x14D
+	MM3_DG_MONSTERS_MOVE_FLAG = 0x15C, MM3_DG_MONSTERS_SEEN_FLAG = 0x14D,
+	MM3_DG_MAZE_MONSTER_COUNT = 0xED72,
+	MM3_DG_PARTY_X = 0xE8F5, MM3_DG_PARTY_Y = 0xE8F6, MM3_DG_PARTY_FACING = 0xE8F4,
+	MM3_DG_MON_RANGED = 0xF03A,            /* far pointer to the 'ranged attack' column */
+	MM3_DG_MON_ACTIVE = 0xB2C0,            /* word per monster: zero = does not act (unless Engine_mode is 5) */
+	MM3_DG_MON_SHOT = 0xEE1E,              /* byte per monster: has made a ranged attack this turn */
+	MM3_DG_MOVE_BLOCKED = 0xAA, MM3_DG_MOVE_SKIPPED = 0xAB, MM3_DG_MOVE_COMBAT = 0xAC, MM3_DG_MOVE_ATTACKED = 0x17F,
+	MM3_DG_STEP_WALL_ALONG = 0x1144, MM3_DG_STEP_WALL_ACROSS = 0x1175,  /* per window cell: which wall decides the straight step */
+	MM3_DG_STEP_DX = 0x101E, MM3_DG_STEP_DY = 0x1080, MM3_DG_STEP_STRAIGHT = 0x10E2,
+	MM3_DG_WALL_MASKS = 0x165
 };
 
 #define MM3_NO_SLOT 0x1111
@@ -104,5 +123,7 @@ uint32_t mm3_item_price(const Mm3Game *g, const Mm3Character *ch, int slot, int 
 int mm3_monster_resistance(const Mm3Game *g, int kind);                         /* getMonsterResistance: scaled resistance of the current target */
 int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell);       /* Spells_subSpellCost: 0 paid, 1 not enough spell points, 2 not enough gems */
 void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster);       /* moveMonsterBy */
+
+void mm3_move_monsters(const Mm3Game *g);                                       /* moveMonsters: the monsters near the party take a step towards it / shoot */
 
 #endif

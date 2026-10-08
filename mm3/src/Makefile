@@ -138,7 +138,7 @@ rulescheck: tests/rules_run
 regen_game:
 	mkdir -p build
 	cat gen/hosts.txt gen/readable.txt > build/hosts_all.txt
-	python3 ../tools/mm3_reach.py ../mm3.asm exploreLoop,loadMonsterData,loadSavedGame,rosterMenu,introSequence,copyPartyToRoster build/hosts_all.txt > gen/game_funcs.txt
+	python3 ../tools/mm3_reach.py ../mm3.asm exploreLoop,loadMonsterData,loadSavedGame,rosterMenu,introSequence,copyPartyToRoster,monstersAttack,sub_27F5E build/hosts_all.txt > gen/game_funcs.txt
 	ASM2C_READABLE=gen/readable.txt ASM2C_WEAK_HOSTS=1 python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/game_gen.c $$(cat gen/game_funcs.txt | tr '\n' ' ')
 .PHONY: regen_game
 

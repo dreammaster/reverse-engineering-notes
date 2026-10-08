@@ -26,3 +26,4 @@ itemPrice
 getMonsterResistance
 Spells_subSpellCost
 moveMonsterBy
+moveMonsters

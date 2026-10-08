@@ -360,3 +360,57 @@ void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster) {
 	}
 	dg[MM3_DG_MONSTERS_SEEN_FLAG] = 1;
 }
+
+/* Monsters near the party act in a window of 7 columns x 7 rows around it.  Each awake monster steps one cell towards the party: diagonally when the
+ * walls on both axes are open, straight when only one is, not at all when both are blocked; "along"/"across" depend on which way the party faces. */
+void mm3_move_monsters(const Mm3Game *g) {
+	uint8_t *dg = g->dg;
+	dg[MM3_DG_MOVE_ATTACKED] = 0;
+	if (dg[MM3_DG_MOVE_BLOCKED]) { dg[MM3_DG_MOVE_SKIPPED] = 1; return; }
+	memset(dg + MM3_DG_MON_GRID, 0, 0x400);
+	memset(dg + 0xA75E, 0, 12); memset(dg + 0xAD63, 0, 12);
+	memset(dg + MM3_DG_MON_MOVED, 0, 0xAA); memset(dg + MM3_DG_MON_SHOT, 0, 0xAA);
+	memset(dg + 0xC4D8, 0xFF, 0x24);
+	dg[MM3_DG_MONSTERS_SEEN_FLAG] = 0;
+	int px = dg[MM3_DG_PARTY_X], py = dg[MM3_DG_PARTY_Y], facing = dg[MM3_DG_PARTY_FACING];
+	unsigned count = dg[MM3_DG_MAZE_MONSTER_COUNT];
+	for (unsigned m = 0; m < count; m++)                                    /* occupancy of every cell */
+		if (rd16(g, MM3_DG_MON_Y + m * 2) < 32) {
+			unsigned cell = MM3_DG_MON_GRID + ((rd16(g, MM3_DG_MON_Y + m * 2) << 5) + rd16(g, MM3_DG_MON_X + m * 2));
+			dg[cell & 0xFFFF] = (uint8_t)(dg[cell & 0xFFFF] + dg[MM3_DG_MON_SIZE + rd16(g, MM3_DG_MON_COLUMN_OFFSET + m * 2)]);
+		}
+	for (int pass = 0; pass < 2; pass++) {
+		int k = -1;
+		for (int row = 3; row > -4; row--)
+			for (int col = -3; col < 4; col++) {
+				k++;
+				unsigned cx = (uint16_t)(px + col), cy = (uint16_t)(py + row);
+				for (unsigned m = 0; m < count; m++) {
+					if (rd16(g, MM3_DG_MON_Y + m * 2) != cy || rd16(g, MM3_DG_MON_X + m * 2) != cx) continue;
+					if (rd16(g, MM3_DG_MON_ACTIVE + m * 2) == 0 && dg[MM3_DG_ENGINE_MODE] != 5) continue;
+					if (dg[MM3_DG_MON_MOVED + m]) continue;
+					/* a monster in line with the party that has a ranged attack uses it (once) */
+					if ((px == (int)cx || py == (int)cy) && g->mem[(unsigned)rd16(g, MM3_DG_MON_RANGED + 2) * 16 + (uint16_t)(rd16(g, MM3_DG_MON_RANGED) + rd16(g, MM3_DG_MON_COLUMN_OFFSET + m * 2))] != 0
+					    && !dg[MM3_DG_MON_SHOT + m] && m + 1 != dg[MM3_DG_MONSTER_ROWS] && m + 1 != dg[MM3_DG_MONSTER_ROWS + 1] && m + 1 != dg[MM3_DG_MONSTER_ROWS + 2]
+					    && rd16(g, MM3_DG_MON_ASLEEP + m * 2) == 0) {
+						g->hooks->monster_ranged_attack(rd16(g, MM3_DG_MON_COLUMN_OFFSET + m * 2), cx, cy);
+						dg[MM3_DG_MON_SHOT + m] = 1;
+					}
+					int axis = facing >> 1;
+					if (axis > 1) continue;
+					unsigned along = rd16(g, MM3_DG_WALL_MASKS + dg[MM3_DG_STEP_WALL_ALONG + k] * 2), across = rd16(g, MM3_DG_WALL_MASKS + dg[MM3_DG_STEP_WALL_ACROSS + k] * 2);
+					int blocked_along = mm3_maze_word(g, (int16_t)cx, (int16_t)cy, along) != 0, blocked_across = mm3_maze_word(g, (int16_t)cx, (int16_t)cy, across) != 0;
+					int step; /* 0 none, 1 diagonal, 2 straight */
+					if (axis == 0) step = !blocked_along ? 1 : (blocked_across ? 0 : 2);
+					else step = !blocked_across ? 2 : (blocked_along ? 0 : 1);
+					if (step == 1) mm3_move_monster_by(g, (int16_t)rd16(g, MM3_DG_STEP_DX + k * 2), (int16_t)rd16(g, MM3_DG_STEP_DY + k * 2), (int)m);
+					else if (step == 2) {
+						int16_t d = (int16_t)rd16(g, MM3_DG_STEP_STRAIGHT + k * 2);
+						if (k < 0x15 || k > 0x1B) mm3_move_monster_by(g, 0, d, (int)m);   /* the rows nearest the party step sideways ... */
+						else mm3_move_monster_by(g, d, 0, (int)m);                         /* ... the middle band steps forwards */
+					}
+				}
+			}
+	}
+	if (dg[MM3_DG_MOVE_COMBAT]) g->hooks->monsters_attack();
+}

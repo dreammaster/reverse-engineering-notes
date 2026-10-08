@@ -4,6 +4,8 @@ loadSavedGame
 rosterMenu
 introSequence
 copyPartyToRoster
+monstersAttack
+sub_27F5E
 chargeStep
 checkSkill
 drawParty
@@ -26,7 +28,6 @@ showOverheadMap
 spellsDialog
 mazeUpdateSlot
 monstersRecover
-moveMonsters
 playSoundEffect
 runMazeEvent
 shootAhead
@@ -61,6 +62,8 @@ sub_253D3
 sub_25E66
 sub_38821
 sub_3946E
+doMonsterTurn
+sub_3853A
 changeTime
 drawViewOutdoors
 doCombat
@@ -197,8 +200,6 @@ sub_284F5
 sub_28540
 sub_2819E
 monsterSavingThrow
-monstersAttack
-sub_27F5E
 getElapsedTime
 arenaEvent
 endingCutscene
@@ -241,6 +242,8 @@ sub_41A2F
 sub_4EBE3
 sub_12436
 sub_387C6
+doCharDamage
+stopAttack
 addTime
 mapHasDayNight
 sub_28194
@@ -303,8 +306,6 @@ sub_41633
 sub_45BD1
 sub_4C19A
 sub_4C106
-doMonsterTurn
-sub_3853A
 townBuildingIntro
 townMenuInput
 sub_27FBD
@@ -334,6 +335,7 @@ sub_43D1B
 sub_284C8
 sub_400B4
 sub_41991
+sub_27F72
 GiveBankInterest
 resetBlacksmithWares
 resetTemps
@@ -357,8 +359,6 @@ sub_4EE43
 sub_37D3E
 sub_3BC65
 sub_44CC6
-doCharDamage
-stopAttack
 sub_281A3
 sub_281FD
 sub_47947
@@ -371,6 +371,7 @@ sub_4033B
 sub_37BF1
 formatNumber
 sub_4BDC4
+sub_37B59
 getDamageScale
 getElementalCategory
 sub_27F9A
@@ -380,8 +381,6 @@ getEquipSlotName
 canEquip
 getAttributeCategory
 ipause_5
-sub_27F72
 sub_37B7D
 sub_40383
 sub_3E08F
-sub_37B59

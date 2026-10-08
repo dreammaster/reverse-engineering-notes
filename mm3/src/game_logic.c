@@ -2,7 +2,13 @@
 #include "game.h"
 #include "logic.h"
 
-static Mm3Game game(void) { Mm3Game g = { DG, MEM }; return g; }
+void call_sub_27F5E(Cpu *c);
+void call_monstersAttack(Cpu *c);
+static Cpu *hook_cpu; /* the CPU of the host call in progress: the hooks run translated routines on its stack */
+static void hook_ranged_attack(unsigned type_offset, unsigned x, unsigned y) { uint16_t args[3] = { (uint16_t)type_offset, (uint16_t)x, (uint16_t)y }; game_call(call_sub_27F5E, hook_cpu, args, 3); }
+static void hook_monsters_attack(void) { game_call(call_monstersAttack, hook_cpu, NULL, 0); }
+static const Mm3Hooks hooks = { hook_ranged_attack, hook_monsters_attack };
+static Mm3Game game(void) { Mm3Game g = { DG, MEM, &hooks }; return g; }
 static const Mm3Character *near_char(Cpu *c, int n) { return (const Mm3Character *)(DG + host_arg(c, n)); }
 static void ret32(Cpu *c, uint32_t v) { c->ax = (uint16_t)v; c->dx = (uint16_t)(v >> 16); }
 
@@ -42,6 +48,8 @@ static void impl_getMonsterResistance(Cpu *c) { Mm3Game g = game(); c->ax = (uin
 static void impl_Spells_subSpellCost(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_spend_spell_cost(&g, (Mm3Character *)(DG + host_arg(c, 0)), (int16_t)host_arg(c, 1)); }
 static void impl_moveMonsterBy(Cpu *c) { Mm3Game g = game(); mm3_move_monster_by(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1), host_arg(c, 2)); }
 
+static void impl_moveMonsters(Cpu *c) { Mm3Game g = game(); hook_cpu = c; mm3_move_monsters(&g); }
+
 /* host entry points: with MM3_SHADOW=1 every call is also run through the translated original and the results compared (game_diff.c) */
 void host_getCurrentExperience(Cpu *c) { game_shadow("getCurrentExperience", impl_getCurrentExperience, c, 1, 2); }
 void host_nextExperienceLevel(Cpu *c) { game_shadow("nextExperienceLevel", impl_nextExperienceLevel, c, 1, 2); }
@@ -71,3 +79,4 @@ void host_itemPrice(Cpu *c) { game_shadow("itemPrice", impl_itemPrice, c, 4, 2);
 void host_getMonsterResistance(Cpu *c) { game_shadow("getMonsterResistance", impl_getMonsterResistance, c, 1, 1); }
 void host_Spells_subSpellCost(Cpu *c) { game_shadow("Spells_subSpellCost", impl_Spells_subSpellCost, c, 2, 1); }
 void host_moveMonsterBy(Cpu *c) { game_shadow("moveMonsterBy", impl_moveMonsterBy, c, 3, 0); }
+void host_moveMonsters(Cpu *c) { game_shadow("moveMonsters", impl_moveMonsters, c, 0, 0); }

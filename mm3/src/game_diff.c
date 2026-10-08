@@ -14,7 +14,7 @@ uint32_t mm3_rng_get(void);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(moveMonsters); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -121,10 +121,29 @@ static void setup_movemon(unsigned iter, uint16_t *a) {
 	DG[0x15C] = rnd(2); DG[0x14D] = rnd(2);
 	a[0] = (uint16_t)((int)rnd(3) - 1); a[1] = (uint16_t)((int)rnd(3) - 1); a[2] = rnd(8);
 }
+static void setup_moveall(unsigned iter, uint16_t *a) {
+	(void)a; setup_movemon(iter, a);
+	DG[0xE8F5] = 8 + rnd(16); DG[0xE8F6] = 8 + rnd(16); DG[0xE8F4] = rnd(4);
+	DG[0xED72] = 1 + rnd(8); DG[0xAA] = rnd(8) == 0; DG[0xAC] = 0; DG[0xC520] = rnd(6) == 0 ? 5 : 1;
+	for (int m = 0; m < 8; m++) {
+		wr16(DG, 0xAD70 + m * 2, DG[0xE8F6] - 3 + rnd(7)); wr16(DG, 0xAEC4 + m * 2, DG[0xE8F5] - 3 + rnd(7));
+		wr16(DG, 0xB2C0 + m * 2, rnd(3) ? 1 : 0); wr16(DG, 0xB810 + m * 2, rnd(4) == 0); wr16(DG, 0xB6BC + m * 2, rnd(80));
+	}
+	for (int i = 0; i < 0xAA; i++) { DG[0xED74 + i] = 0; DG[0xEE1E + i] = 0; }
+	for (int i = 0; i < 3; i++) DG[0xC4A2 + i] = rnd(2) ? 0 : 1 + rnd(8);
+	for (int i = 0; i < 9; i++) wr16(DG, 0x165 + i * 2, rnd(65536));
+	for (int i = 0; i < 49; i++) { DG[0x1144 + i] = rnd(9); DG[0x1175 + i] = rnd(9); }
+	/* the maze: one page, all neighbours loaded */
+	randomize_maze();
+	for (int s = 0; s < 4; s++) { DG[0xC554 + s * 0x340 + 0x308] = DG[0x274E + rnd(4)]; DG[0xC554 + s * 0x340 + 0x309] = DG[0x274E + rnd(4)]; }
+	for (int col = 0; col < 8; col++) { uint16_t at = (uint16_t[]){ 0xF03A, 0, 0, 0, 0, 0, 0, 0 }[col]; if (at) { wr16(DG, at, 0x4000); wr16(DG, at + 2, 0x9000); } }
+	for (int i = 0; i < 80; i++) MEM[0x90000 + 0x4000 + i] = rnd(3) == 0 ? 1 : 0;
+}
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "moveMonsters", host_moveMonsters, 0, 0, setup_moveall },
 	{ "getMonsterResistance", host_getMonsterResistance, 1, 1, setup_resist },
 	{ "Spells_subSpellCost", host_Spells_subSpellCost, 2, 1, setup_spellcost },
 	{ "moveMonsterBy", host_moveMonsterBy, 3, 0, setup_movemon },
