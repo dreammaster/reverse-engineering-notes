@@ -44,6 +44,7 @@ turning left goes 0 -> 3 -> 1 -> 2 -> 0, turning right 0 -> 2 -> 1 -> 3 -> 0.  W
 Keys are BIOS codes (scan<<8|ascii, e.g. 4800 = Up, 1E41 = 'A', 3920 = Space).  Debug environment: `MM3_TRACE=1` (key log),
 `MM3_TEXTLOG=1` (every string given to the text engine), `MM3_SHOT_EVERY=N`/`MM3_SHOT_PREFIX` (screenshots while the game polls
 the keyboard), `MM3_IDLE=N` (headless idle limit).  Scripts: `tests/gamefuzz.sh`, `tests/combatfuzz.sh`, `tests/combatwin.sh`.
+Window: Alt+Enter / F11 toggles full screen; the picture is shown with 4:3 pixel aspect like a DOS monitor (`MM3_SQUARE=1`: square pixels).
 Combat commands (table in the combat overlay): A attack, B block, C cast, F fight, I info, O, Q quick reference, R run, U use.
 
 ## Hand-written replacements for translated routines (the hybrid step)

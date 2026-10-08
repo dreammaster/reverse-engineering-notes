@@ -68,9 +68,9 @@ static void ui_draw_list(void *user, unsigned addr) { (void)user; game_exec_draw
 static int init_sdl(void) {
 	if (getenv("MM3_HEADLESS")) { headless = 1; return 0; }
 	if (SDL_Init(SDL_INIT_VIDEO)) { fprintf(stderr, "SDL: %s\n", SDL_GetError()); return -1; }
-	window = SDL_CreateWindow("Might and Magic III", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, MM3_SCREEN_W * 3, MM3_SCREEN_H * 3, SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Might and Magic III", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, MM3_SCREEN_W * 3, (getenv("MM3_SQUARE") ? MM3_SCREEN_H : 240) * 3, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	SDL_RenderSetLogicalSize(renderer, MM3_SCREEN_W, MM3_SCREEN_H);
+	SDL_RenderSetLogicalSize(renderer, MM3_SCREEN_W, getenv("MM3_SQUARE") ? MM3_SCREEN_H : 240); /* 320x200 on a 4:3 monitor: pixels are 1.2 times as tall as wide (MM3_SQUARE=1: square pixels) */
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, MM3_SCREEN_W, MM3_SCREEN_H);
 	return window && renderer && texture ? 0 : -1;
 }
@@ -94,7 +94,8 @@ void video_present(void) {
 	if (headless) return;
 	SDL_UpdateTexture(texture, NULL, pixels, MM3_SCREEN_W * 4);
 	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, texture, NULL, NULL);
+	SDL_Rect whole = { 0, 0, MM3_SCREEN_W, getenv("MM3_SQUARE") ? MM3_SCREEN_H : 240 };
+	SDL_RenderCopy(renderer, texture, NULL, &whole);
 	SDL_RenderPresent(renderer);
 }
 
@@ -151,7 +152,7 @@ void video_pump_events(void) {
 			SDL_GetWindowSize(window, &w, &h);
 			int px, py;
 			Uint32 b = SDL_GetMouseState(&px, &py);
-			mouse_x = px * MM3_SCREEN_W / (w ? w : 1); mouse_y = py * MM3_SCREEN_H / (h ? h : 1);
+			{ float lx, ly; SDL_RenderWindowToLogical(renderer, px, py, &lx, &ly); mouse_x = (int)lx; mouse_y = (int)(ly * MM3_SCREEN_H / (getenv("MM3_SQUARE") ? MM3_SCREEN_H : 240)); (void)w; (void)h; }
 			mouse_btn = (b & SDL_BUTTON_LMASK ? 1 : 0) | (b & SDL_BUTTON_RMASK ? 2 : 0);
 			mouse_seen = 1;
 		}
