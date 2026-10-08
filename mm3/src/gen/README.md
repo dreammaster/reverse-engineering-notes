@@ -13,3 +13,12 @@ segment (DGROUP) as a 64 KB array `DG[]`, so its behaviour is the original's, bi
   that maps cleanly to a table); the same check proves each replacement equivalent.
 
 Naming: routine names are those of `names/mm3.tsv`; data is addressed by DGROUP offset (see `../README.md`).
+
+## Bundles
+
+* `view_gen.c` -- the 3D view (`make regen`); verified by `make viewcheck`.
+* `rules_gen.c` -- character rules and event conditions (`make regen_rules`); verified by `make rulescheck`, which runs the overlay code
+  in the emulator (`tools/mm3_emu.py` loads the 13 Borland overlays at IDA's addresses and emulates the overlay manager's `int 3Fh`).
+
+Translator lessons recorded so far: stack locals keep their declared byte/word size; jump tables may hold several entries per line;
+`jmp $+2` is a no-op; far calls to host routines push no return address (arguments start at sp); uninitialised stack locals read as 0.

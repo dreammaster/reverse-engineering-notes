@@ -39,17 +39,22 @@ class Translator:
                 self.datasize[m.group(1)] = {"db": 8, "dw": 16, "dd": 32}[m.group(2)]
         self.jpt = {}
         for i, l in enumerate(self.lines):
-            m = re.match(r"^(jpt_\w+)\s+dw offset (\w+)", l)
-            if m:
-                tab = [m.group(2)]
-                j = i + 1
-                while True:
-                    mm = re.match(r"^\s+dw offset (\w+)", self.lines[j])
-                    if not mm:
-                        break
-                    tab.append(mm.group(1))
+            m = re.match(r"^(jpt_\w+)\s+dw (.*)$", l)
+            if not m:
+                continue
+            tab = re.findall(r"offset (\w+)", m.group(2).split(";")[0])
+            j = i + 1
+            while True:
+                t = self.lines[j]
+                if re.match(r"^\s+;", t):      # comment-only line inside the table
                     j += 1
-                self.jpt[m.group(1)] = tab
+                    continue
+                mm = re.match(r"^\s+dw (.*)$", t)
+                if not mm or "offset" not in mm.group(1):
+                    break
+                tab.extend(re.findall(r"offset (\w+)", mm.group(1).split(";")[0]))
+                j += 1
+            self.jpt[m.group(1)] = tab
 
     # ---- symbols
     def sym_addr(self, name):
@@ -109,9 +114,11 @@ class Translator:
         seg = "DS"
         if t.startswith("cs:"):
             raise ValueError("cs-relative operand not supported: " + text)
+        es_prefix = t.startswith("es:")
         if m:
             parts = re.findall(r"([+-]?)\s*([A-Za-z_]\w*|[0-9][0-9A-Fa-f]*h?)", m.group(1))
             regs, disp, ss = [], 0, False
+            local_size = None
             for sign, tok in parts:
                 if tok in REG16:
                     regs.append(tok)
@@ -119,15 +126,19 @@ class Translator:
                         ss = True
                 elif tok in locals_:
                     disp += (-1 if sign == "-" else 1) * locals_[tok]
+                    local_size = getattr(self, "local_sizes", {}).get(tok)
                 else:
                     disp += (-1 if sign == "-" else 1) * self.parse_num(tok if tok[0].isdigit() else "0")
             addr = " + ".join(["c->%s" % r for r in regs] + [str(disp)]) if regs or disp else "0"
-            return {"kind": "mem", "size": size or hint_size, "addr": "(uint16_t)(%s)" % addr, "seg": "ST" if ss else "DG"}
+            if local_size and local_size > 16:  # a dword local: accessed as words through `word ptr [bp+var]`, never sized implicitly
+                local_size = None
+            return {"kind": "mem", "size": size or local_size or hint_size, "addr": "(uint16_t)(%s)" % addr, "seg": "ES" if es_prefix else ("ST" if ss else "DG")}
         m = re.match(r"^([A-Za-z_]\w*)(?:\s*\+\s*([0-9A-Fa-f]+h?|\d+))?(?:\s*-\s*([0-9A-Fa-f]+h?|\d+))?$", t)
         if m:
             name = m.group(1)
             if name in locals_:
-                return {"kind": "mem", "size": size or hint_size or 16, "addr": "(uint16_t)(c->bp + %d)" % locals_[name], "seg": "ST"}
+                ls = getattr(self, "local_sizes", {}).get(name)
+                return {"kind": "mem", "size": size or (ls if ls and ls <= 16 else None) or hint_size or 16, "addr": "(uint16_t)(c->bp + %d)" % locals_[name], "seg": "ST"}
             a = self.sym_addr(name)
             if m.group(2):
                 a += self.parse_num(m.group(2))
@@ -147,6 +158,8 @@ class Translator:
             return "((c->%s >> %d) & 0xFF)" % (r, sh)
         sz = o["size"] or size or 16
         if o["kind"] == "mem":
+            if o["seg"] == "ES":
+                return "ES%d(c, %s)" % (sz, o["addr"])
             return "%s%d(%s)" % (o["seg"], sz, o["addr"])
         raise ValueError(o)
 
@@ -158,6 +171,8 @@ class Translator:
             mask = 0xFF << sh
             return "c->%s = (uint16_t)((c->%s & 0x%04X) | (((%s) & 0xFF) << %d));" % (r, r, 0xFFFF ^ mask, val, sh)
         if o["kind"] == "mem":
+            if o["seg"] == "ES":
+                return "ES%d_SET(c, %s, %s);" % (o["size"] or 16, o["addr"], val)
             return "%s%d_SET(%s, %s);" % (o["seg"], o["size"] or 16, o["addr"], val)
         raise ValueError(o)
 
@@ -174,22 +189,24 @@ class Translator:
     def translate(self, fname, translated):
         s, e, kind = self.procs[fname]
         locals_ = {}
+        self.local_sizes = {}
         body = []
         for i in range(s + 1, e):
             raw = self.lines[i]
             l = raw.split(";")[0].rstrip()
             if not l.strip():
                 continue
-            m = re.match(r"^(\w+)\s*=\s*(?:byte|word|dword|ffblk|\w+) ptr\s+(-?[0-9A-Fa-f]+h?)", l)
+            m = re.match(r"^(\w+)\s*=\s*(byte|word|dword|ffblk|\w+) ptr\s+(-?[0-9A-Fa-f]+h?)", l)
             if m:
-                locals_[m.group(1)] = self.parse_num(m.group(2))
+                locals_[m.group(1)] = self.parse_num(m.group(3))
+                self.local_sizes[m.group(1)] = {"byte": 8, "word": 16, "dword": 32}.get(m.group(2))
                 continue
             body.append((i, l))
         out = ["static void fn_%s(Cpu *c) {" % fname, "\tuint32_t t_; (void)t_;"]
         for i, l in body:
             m = re.match(r"^(\w+):\s*$", l)
             if m:
-                out.append("%s:;" % m.group(1))
+                out.append("%s: RTRACE(c, \"%s\");" % (m.group(1), m.group(1)))
                 continue
             m = re.match(r"^\s+(\w+)(?:\s+(.*))?$", l)
             if not m:
@@ -225,10 +242,19 @@ class Translator:
         P = lambda t, h=None: self.operand(t, L, h)
         if mn in ("nop", "align", "cld"):
             return []
+        if mn == "les" or mn == "lds":
+            d = P(ops[0]); s = P(ops[1], 32)
+            seg = "es" if mn == "les" else "ds"
+            return [self.wr(d, "%s16(%s)" % (s["seg"], s["addr"])), "c->%s = %s16((uint16_t)(%s + 2));" % (seg, s["seg"], s["addr"])]
         if mn == "mov":
             d = P(ops[0]); sz = self.opsize(d)
             s = P(ops[1], sz)
             if d["kind"] == "seg" or s["kind"] == "seg":
+                if d["kind"] == "seg" and d["name"] in ("es", "ds"):
+                    return ["c->%s = (uint16_t)(%s);" % (d["name"], self.rd(s, 16))]
+                if s["kind"] == "seg" and s["name"] in ("es", "ds", "ss", "cs"):
+                    val = {"es": "c->es", "ds": "c->ds", "ss": "STACK_SEG", "cs": "0"}[s["name"]]
+                    return [self.wr(d, val)]
                 return ["/* segment move %s */" % rest]
             return [self.wr(d, self.rd(s, self.opsize(d, s)))]
         if mn in ("add", "sub", "and", "or", "xor", "cmp", "adc", "sbb"):
@@ -250,6 +276,10 @@ class Translator:
         if mn == "neg":
             d = P(ops[0]); sz = self.opsize(d)
             return ["t_ = alu_sub(c, 0, %s, %d);" % (self.rd(d, sz), sz), self.wr(d, "t_")]
+        if mn in ("rcl", "rcr", "rol", "ror"):
+            d = P(ops[0]); sz = self.opsize(d)
+            cnt = "c->cx & 0xFF" if ops[1] == "cl" else str(self.parse_num(ops[1]))
+            return ["t_ = alu_%s(c, %s, %s, %d);" % (mn, self.rd(d, sz), cnt, sz), self.wr(d, "t_")]
         if mn in ("shl", "sal", "shr", "sar"):
             d = P(ops[0]); sz = self.opsize(d)
             cnt = "c->cx & 0xFF" if ops[1] == "cl" else str(self.parse_num(ops[1]))
@@ -265,6 +295,11 @@ class Translator:
                 raise ValueError("8-bit imul")
             return ["{ int32_t r_ = (int32_t)(int16_t)c->ax * (int32_t)(int16_t)%s; c->ax = (uint16_t)r_; c->dx = (uint16_t)((uint32_t)r_ >> 16); "
                     "c->cf = c->of = (r_ != (int16_t)r_); }" % self.rd(s, 16)]
+        if mn == "mul":
+            s = P(ops[0]); sz = self.opsize(s)
+            if sz == 16:
+                return ["{ uint32_t r_ = (uint32_t)c->ax * (uint32_t)%s; c->ax = (uint16_t)r_; c->dx = (uint16_t)(r_ >> 16); c->cf = c->of = (c->dx != 0); }" % self.rd(s, 16)]
+            return ["{ uint16_t r_ = (uint16_t)((c->ax & 0xFF) * %s); c->ax = r_; c->cf = c->of = ((r_ >> 8) != 0); }" % self.rd(s, 8)]
         if mn == "idiv":
             s = P(ops[0]); sz = self.opsize(s)
             if sz != 16:
@@ -278,12 +313,15 @@ class Translator:
             return ["{ uint32_t n_ = ((uint32_t)c->dx << 16) | c->ax; uint16_t d_ = %s; c->ax = (uint16_t)(n_ / d_); c->dx = (uint16_t)(n_ %% d_); }" % self.rd(s, 16)]
         if mn == "push":
             if ops[0] in ("cs", "ds", "es", "ss"):
-                return ["PUSH(c, 0); /* push %s */" % ops[0]]
+                val = {"cs": "0", "ds": "c->ds", "es": "c->es", "ss": "STACK_SEG"}[ops[0]]
+                return ["PUSH(c, %s); /* push %s */" % (val, ops[0])]
             s = P(ops[0], 16)
             return ["PUSH(c, %s);" % self.rd(s, 16)]
         if mn == "pop":
             d = P(ops[0])
             if d["kind"] == "seg":
+                if d["name"] in ("es", "ds"):
+                    return ["c->%s = POP(c);" % d["name"]]
                 return ["POP(c); /* pop %s */" % ops[0]]
             return [self.wr(d, "POP(c)")]
         if mn == "lea":
@@ -298,6 +336,8 @@ class Translator:
                 cases = "".join("case %d: goto %s;" % (i, t) for i, t in enumerate(tab))
                 return ["switch (c->bx >> 1) { %s default: abort(); }" % cases]
             target = re.sub(r"^(short |near ptr |far ptr )", "", ops[0])
+            if target == "$+2":  # short jump to the next instruction: a no-op
+                return []
             if target in self.procs:
                 return ["fn_%s(c); return;" % target] if target in translated else ["host_%s(c); c->sp += %d; return;" % (target, 4 if kind == "far" else 2)]
             return ["goto %s;" % target]
@@ -311,11 +351,14 @@ class Translator:
             return ["if (%s) goto %s;" % (cond, target)]
         if mn == "call":
             target = re.sub(r"^(near ptr |far ptr )", "", ops[0])
-            if target not in self.procs and not re.match(r"^\w+$", target):
+            if target.startswith("j_") and target[2:] in translated:  # overlay thunk of a routine we translate
+                target = target[2:]
+            if target not in self.procs and not re.match(r"^[\w@]+$", target):
                 raise ValueError("indirect call")
+            target_c = target.replace("@", "_AT")
             far_call = "far ptr" in ops[0] or (("near ptr" not in ops[0]) and self.procs.get(target, [0, 0, "near"])[2] == "far")
             if target not in translated:
-                return ["host_%s(c); /* no return address is pushed for host routines: args start at sp */" % target]
+                return ["host_%s(c); /* no return address is pushed for host routines: args start at sp */" % target_c]
             pushes = ["PUSH(c, 0); PUSH(c, 0);"] if far_call else ["PUSH(c, 0);"]
             return pushes + ["fn_%s(c);" % target]
         raise ValueError("unsupported instruction " + mn)

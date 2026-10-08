@@ -76,7 +76,7 @@ evttest: tests/test_evtrun
 .PHONY: evttest
 
 # ---- translated 3D view pipeline (see gen/README.md)
-VIEW_SRC = view_host.c gen/view_gen.c
+VIEW_SRC = recomp.c view_host.c gen/view_gen.c
 VIEW_FUNCS = prepareIndoorView renderIndoorView drawWallFaces drawRow1Sprites drawRow2Sprites drawRow3Sprites drawRow4Sprites \
   drawHudPieces scanObjectsAhead scanMonstersAhead clearViewFlags updateLight mazeGetWordRel mazeGetFlagsRel mazeNeighbourSlot \
   checkDrawListOverflow checkSkill drawViewOutdoors renderOutdoorView mazeUpdateSlot
@@ -117,3 +117,19 @@ uifuzz: tests/ui_run
 	python3 ../tools/mm3_ui_fuzz.py ../data/MM3.EXE $(DATA) tests/ui_run 150 2
 	MM3_FUZZ_ITEMS=70 python3 ../tools/mm3_ui_fuzz.py ../data/MM3.EXE $(DATA) tests/ui_run 60 5
 .PHONY: uifuzz
+
+# ---- translated game rules (character stats, event conditions); see gen/README.md
+RULES_FUNCS = ifProc getMaxSP getMaxHP getArmorClass getStat getAge isBitSet checkSkill conditionMod getCurrentLevel itemScan \
+  statBonus getAttributeCategory getElementalCategory
+RULES_SRC = recomp.c rules_host.c gen/rules_gen.c
+
+regen_rules:
+	python3 ../tools/asm2c.py ../mm3.asm ../mm3.idc gen/rules_gen.c $(RULES_FUNCS)
+.PHONY: regen_rules
+
+tests/rules_run: tests/rules_run.c $(RULES_SRC) recomp.h
+	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/rules_run.c $(RULES_SRC)
+
+rulescheck: tests/rules_run
+	python3 ../tools/mm3_rules_check.py ../data/MM3.EXE $(DATA) tests/rules_run 300
+.PHONY: rulescheck

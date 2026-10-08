@@ -4,21 +4,40 @@
 #define MM3_RECOMP_H
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct {
 	uint16_t ax, bx, cx, dx, si, di, bp, sp;
+	uint16_t es, ds; /* segment registers: ds is the data segment unless a routine loads another one */
 	int cf, zf, sf, of;
 } Cpu;
+
+#define DSEG 0x286F      /* DGROUP */
+#define STACK_SEG 0x9000 /* the program stack (STK[]) */
 
 extern uint8_t DG[65536];  /* DGROUP (segment 286Fh) */
 extern uint8_t STK[65536]; /* the program stack */
 
 static inline uint8_t rd8(const uint8_t *m, uint16_t a) { return m[a]; }
 static inline uint16_t rd16(const uint8_t *m, uint16_t a) { return (uint16_t)(m[a] | (m[(uint16_t)(a + 1)] << 8)); }
-static inline void wr8(uint8_t *m, uint16_t a, uint32_t v) { m[a] = (uint8_t)v; }
-static inline void wr16(uint8_t *m, uint16_t a, uint32_t v) { m[a] = (uint8_t)v; m[(uint16_t)(a + 1)] = (uint8_t)(v >> 8); }
+#ifdef RECOMP_TRACE
+extern uint8_t STK[65536];
+#define TRACE_STK(m, a, v) do { if ((m) == STK) fprintf(stderr, "W %04X %02X\n", (unsigned)(a), (unsigned)((v) & 0xFF)); } while (0)
+#else
+#define TRACE_STK(m, a, v) ((void)0)
+#endif
+static inline void wr8(uint8_t *m, uint16_t a, uint32_t v) { TRACE_STK(m, a, v); m[a] = (uint8_t)v; }
+static inline void wr16(uint8_t *m, uint16_t a, uint32_t v) { TRACE_STK(m, a, v); TRACE_STK(m, (uint16_t)(a + 1), v >> 8); m[a] = (uint8_t)v; m[(uint16_t)(a + 1)] = (uint8_t)(v >> 8); }
+
+/* Memory behind a segment value (far pointers): DGROUP, the stack, and buffers registered by the host (roster, loaded files ...). */
+uint8_t *recomp_seg_mem(uint16_t seg);
+void recomp_register_segment(uint16_t seg, uint8_t *mem); /* make a host buffer reachable through a far pointer */
+#define ES8(c, a) rd8(recomp_seg_mem((c)->es), a)
+#define ES16(c, a) rd16(recomp_seg_mem((c)->es), a)
+#define ES8_SET(c, a, v) wr8(recomp_seg_mem((c)->es), a, v)
+#define ES16_SET(c, a, v) wr16(recomp_seg_mem((c)->es), a, v)
 
 #define DG8(a) rd8(DG, a)
 #define DG16(a) rd16(DG, a)
@@ -114,6 +133,35 @@ static inline uint32_t alu_sar(Cpu *c, uint32_t a, unsigned n, int bits) {
 	set_zs(c, r, bits);
 	return r;
 }
+
+static inline uint32_t alu_rcl(Cpu *c, uint32_t a, unsigned n, int bits) {
+	a &= msk(bits);
+	for (n &= 31; n; n--) { uint32_t out = (a >> (bits - 1)) & 1; a = ((a << 1) | (uint32_t)c->cf) & msk(bits); c->cf = (int)out; }
+	return a;
+}
+static inline uint32_t alu_rcr(Cpu *c, uint32_t a, unsigned n, int bits) {
+	a &= msk(bits);
+	for (n &= 31; n; n--) { uint32_t out = a & 1; a = (a >> 1) | ((uint32_t)c->cf << (bits - 1)); c->cf = (int)out; }
+	return a;
+}
+static inline uint32_t alu_rol(Cpu *c, uint32_t a, unsigned n, int bits) {
+	a &= msk(bits);
+	for (n &= 31; n; n--) { uint32_t out = (a >> (bits - 1)) & 1; a = ((a << 1) | out) & msk(bits); c->cf = (int)out; }
+	return a;
+}
+static inline uint32_t alu_ror(Cpu *c, uint32_t a, unsigned n, int bits) {
+	a &= msk(bits);
+	for (n &= 31; n; n--) { uint32_t out = a & 1; a = (a >> 1) | (out << (bits - 1)); c->cf = (int)out; }
+	return a;
+}
+
+#ifdef RECOMP_TRACE
+#include <stdio.h>
+/* debugging aid: register state at every label, to diff against the emulator (tools/mm3_trace_diff.py) */
+#define RTRACE(c, name) fprintf(stderr, "%s %04X %04X %04X %04X %04X %04X\n", name, (c)->ax, (c)->bx, (c)->cx, (c)->dx, (c)->si, (c)->di)
+#else
+#define RTRACE(c, name) ((void)0)
+#endif
 
 typedef struct { const char *name; void (*fn)(Cpu *); } RecompEntry;
 

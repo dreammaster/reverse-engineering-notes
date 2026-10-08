@@ -49,6 +49,7 @@ class Emu:
         self.watches = {}     # linear address -> handler(emu), called without changing the execution
         self.insn_count = 0
         self.stop_at = None
+        self._load_overlays(f)
         self.uc.hook_add(UC_HOOK_CODE, self._code_hook)
         self.uc.hook_add(UC_HOOK_INTR, self._intr_hook)
         self._port3da = 0
@@ -65,8 +66,35 @@ class Emu:
             return 0x09 if self._port3da else 0x00
         return 0
 
+    # ---- Borland overlays (VROOMM): all 13 are loaded at the addresses IDA uses; the manager's `int 3Fh` thunks jump into them
+    def _load_overlays(self, exe_bytes):
+        fb = exe_bytes.find(b"FBOV")
+        table = IMAGE_LINEAR + (0x27DA0 - IMAGE_LINEAR)  # linear address of the segment table
+        for k, (stub, sel) in enumerate(zip(STUB_SEGMENTS, OVERLAY_SEGMENTS)):
+            d = bytes(self.uc.mem_read(stub * 16, 16))
+            off = struct.unpack_from("<I", d, 4)[0]
+            size, relb, _ = struct.unpack_from("<HHH", d, 8)
+            body = bytearray(exe_bytes[fb + 0x10 + off: fb + 0x10 + off + size + relb])
+            for r in struct.unpack_from("<%dH" % (relb // 2), body, size):
+                v = struct.unpack_from("<H", body, r)[0]
+                para = struct.unpack("<H", bytes(self.uc.mem_read(0x27DA0 + v, 2)))[0]
+                struct.pack_into("<H", body, r, para)
+            self.uc.mem_write(sel * 16, bytes(body[:size]))
+
     # ---- DOS: the few calls the video module makes (INT 21h on a temp file), the rest is ignored
     def _intr_hook(self, uc, intno, user):
+        if intno == 0x3F:  # overlay thunk: `call stubNN:thunk` -> int 3Fh, dw offset, db 0; continue in the overlay.
+            # (Unicorn calls this hook before any interrupt frame is pushed: CS:IP are those after the int instruction, the stack still
+            # holds the far return address of the original call.)
+            cs = uc.reg_read(UC_X86_REG_CS)
+            ip = uc.reg_read(UC_X86_REG_IP)
+            off = struct.unpack("<H", bytes(uc.mem_read(cs * 16 + ip, 2)))[0]
+            k = STUB_SEGMENTS.index(cs)
+            uc.reg_write(UC_X86_REG_CS, OVERLAY_SEGMENTS[k])
+            uc.reg_write(UC_X86_REG_IP, off)
+            self.stop_at = "redirect"
+            uc.emu_stop()
+            return
         if intno != 0x21:
             return
         ah = (uc.reg_read(UC_X86_REG_AX) >> 8) & 0xFF
@@ -168,6 +196,7 @@ class Emu:
 
     def call(self, seg, off, args=(), far=True, max_insns=20_000_000, ds=DSEG, **regs):
         uc = self.uc
+        uc.mem_write(STACK_SEG * 16, bytes(0x10000))  # deterministic: no stale stack contents (uninitialised locals read as 0)
         uc.reg_write(UC_X86_REG_SS, STACK_SEG)
         sp = 0xFF00
         words = list(args)[::-1]
@@ -206,8 +235,10 @@ class Emu:
         return self.call(seg, linear - seg * 16, args, **kw)
 
 
-# IDA segment selectors of the root code segments (mm3.idc)
-CODE_SEGMENTS = [0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511]
+# IDA segment selectors (mm3.idc): root code segments, the overlay stubs and the 13 overlays
+STUB_SEGMENTS = [0x27F2, 0x27FD, 0x2800, 0x2806, 0x280C, 0x2816, 0x2821, 0x282A, 0x2831, 0x2839, 0x2843, 0x2861, 0x2867]
+OVERLAY_SEGMENTS = [0x378C, 0x3993, 0x3BC3, 0x3DD2, 0x3F49, 0x4150, 0x435A, 0x4579, 0x4790, 0x49B6, 0x4BD9, 0x4DE3, 0x4FF6]
+CODE_SEGMENTS = sorted([0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511] + OVERLAY_SEGMENTS)
 
 
 def segment_of(linear):

@@ -4,9 +4,6 @@
 
 #include "view_host.h"
 
-uint8_t DG[65536];
-uint8_t STK[65536];
-
 static MmViewListFn list_callback;
 static void *list_user;
 
