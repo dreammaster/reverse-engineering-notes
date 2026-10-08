@@ -9,6 +9,7 @@
 #include "game.h"
 #include "gameclock.h"
 #include "interact.h"
+#include "lightsource.h"
 #include "item.h"
 #include "lockcatalog.h"
 #include "monster.h"
@@ -63,6 +64,8 @@ typedef struct GameSession {
     int x, y;
     uint16_t facing; /* SaveFacing */
     GameClock clock;
+    LightSourceState light; /* the carried and spell light timers (lightsource.h); the view's light tiers come from litFlags */
+    uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
     SessionCombat combat;
     char log[96]; /* the last thing that happened, as the original's message area would say it */
 } GameSession;
@@ -91,13 +94,29 @@ RestOutcome sessionRest(GameSession *session);
 InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uint16_t heldKeyFlags);
 
 /*
- * A combat spell for the party member whose turn it is: the member must know it (the ability bank), the context, the nuore / ore and the MP must allow it
- * (spellCanCast), and it must be one of the two attack kinds the combat decoding covers -- SpellFlagsBAttackPath (the first live monster) or
- * SpellFlagsBAttackAllSlots (every live monster). The costs are paid, the attack resolved and applied (combat.h), and the turn passes like an attack. The other
- * spell kinds (healing, light, jump, mark, summon...) are decided by their own modules but not composed here: SessionCastUnsupported.
+ * A spell cast by a party member (RunAlchemyScreen: the costs are paid first -- DeductAlchemySpellCosts -- then ApplyEncodedItemEffect runs the branch
+ * spellSelectBranch picks). The member must know it (the ability bank), the context, the nuore / ore and the MP must allow it (spellCanCast). In a combat the
+ * caster is the member whose turn it is (sessionCast) and the cast takes the turn like an attack; outside one the caster is named (sessionCastBy).
+ *
+ * Composed branches:
+ *   attack      SpellFlagsBAttackPath (the first live monster), SpellFlagsBAttackAllSlots (every live monster), the LIFE FORCE spells (the caster or the whole
+ *               party pays); combat only
+ *   heal / cure FlagsB single target (the caster; HEAL, CURE POISON, RESURRECT, FEET OF FEATHERS...) and whole party (PARTY HEAL...): effect 18, a capped
+ *               stat delta -- the record's 0x22 is the delta, 0x24 / 0x26 the byte offsets of the stat and its maximum in the party record (82 / 146 = hit
+ *               points), 0x28 the mask ANDed into the status flags (party.h, partyApplyIconBarStatDelta); Chapter 3 skips a cursed member for the whole party
+ *   light       MINER'S LIGHT I / II, INFINITE ILLUMINATION arm a light timer (lightsource.h)
+ *   jump        JUMP OVER / JUMP THROUGH move the party if the path allows it (spelljump.h); a monster on the landing cell is left to the next monster pass
+ *   mark        MARK OR RETURN: `returnToMark` false saves the position in the caster's record, true restores it (the original asks with a confirm prompt)
+ *   knock       UNLOCK MAGIC (interactKnock), DISPEL ILLUSION (the curgame event), SAFE UNLOCK (lock flag 0x40 / priced / curgame flag 0x40) on the object ahead
+ *   rest        SAFE HAVEN (sessionRest)
+ *   held item   CREATE FOOD / FORGE put the item on the cursor if it is empty
+ * SessionCastNoEffect: the costs were paid and nothing happened (a blocked jump, nothing ahead to open, nothing marked, a full cursor). Not composed
+ * (SessionCastUnsupported, nothing paid): the projectile family, the screen-wide attacks, the beam / tremor / rain / turbulence spells -- they need monsters
+ * on the viewport rows, which the session keeps in the pool.
  */
-typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported } SessionCast;
+typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported, SessionCastNoEffect } SessionCast;
 SessionCast sessionCast(GameSession *session, unsigned spellId);
+SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned spellId, bool returnToMark);
 
 /*
  * Using a restorative from a member's main inventory (slot 1-8) on a recipient member (0-3): the healing / magic / cure items and, in Chapter 2, the percentage

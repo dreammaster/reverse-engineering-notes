@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -11,6 +11,8 @@
 #include <string.h>
 
 #include "bcd4.h"
+#include "lightsource.h"
+#include "spellcast.h"
 #include "session.h"
 
 static int g_failureCount = 0;
@@ -180,10 +182,149 @@ static void testCombat(const char *envName, const char *defaultDir) {
     free(world);
 }
 
+static unsigned findSpell(GameSession *s, SpellBranch branch, unsigned skip) {
+    for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        if (r && spellSelectBranch(r) == branch && spellGetU16(r, SpellFieldMpCost) > 0 && skip-- == 0) {
+            return id;
+        }
+    }
+    return 0;
+}
+
+/* The support and exploration spells: every hero knows everything and has the points for it. */
+static void testSpells(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    for (unsigned m = 0; m < 4; m++) {
+        uint8_t *hero = sessionPartyRecord(s, m);
+        for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+            spellLearn(hero, id);
+        }
+        partySetStat(hero, PartyStatMagicPoints, 900);
+    }
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+    char text[160];
+
+    unsigned heal = findSpell(s, SpellBranchSingleTarget, 0), partyHeal = findSpell(s, SpellBranchWholeParty, 0);
+    uint8_t *hero = sessionPartyRecord(s, 1);
+    partySetStat(hero, PartyStatHitPoints, 1);
+    uint16_t before = partyGetStat(hero, PartyStatHitPoints), mp = partyGetStat(hero, PartyStatMagicPoints);
+    SessionCast cast = sessionCastBy(s, 1, heal, false);
+    snprintf(text, sizeof(text), "%s: a single-target heal raises the caster's hit points and costs magic points", label);
+    check(text, cast == SessionCastDone && partyGetStat(hero, PartyStatHitPoints) > before && partyGetStat(hero, PartyStatMagicPoints) < mp);
+    for (unsigned m = 0; m < 4; m++) {
+        partySetStat(sessionPartyRecord(s, m), PartyStatHitPoints, 1);
+    }
+    cast = sessionCastBy(s, 0, partyHeal, false);
+    bool all = cast == SessionCastDone;
+    for (unsigned m = 0; m < 4; m++) {
+        all = all && partyGetStat(sessionPartyRecord(s, m), PartyStatHitPoints) > 1;
+    }
+    snprintf(text, sizeof(text), "%s: the whole-party heal reaches every member", label);
+    check(text, all);
+
+    unsigned light = 0;
+    for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        light = light ? light : (spellSelectBranch(r) == SpellBranchLightTimer ? id : 0);
+    }
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    sessionScene(s, &scene, cells);
+    int16_t dark = scene.gradient[0];
+    s->clock.minutes = 0; /* midnight */
+    sessionScene(s, &scene, cells);
+    dark = scene.gradient[0];
+    cast = sessionCastBy(s, 0, light, false);
+    sessionScene(s, &scene, cells);
+    snprintf(text, sizeof(text), "%s: a light spell lights the view and the timer runs out with the clock", label);
+    check(text, cast == SessionCastDone && s->light.litFlags != 0 && scene.gradient[0] > dark);
+    s->light.timers[0] = s->light.timers[1] = s->light.timers[2] = s->light.timers[3] = s->light.timers[4] = s->light.timers[5] = 1;
+    lightSourceTickTimers(&s->light, 600);
+    check("... (all timers expire)", (s->light.litFlags & 0x1F8) == 0);
+
+    /* the mark: saved, the party walks away, returned */
+    place(s, 161, 31, SaveFacingNorth);
+    unsigned mark = findSpell(s, SpellBranchLocationBookmark, 0);
+    cast = sessionCastBy(s, 0, mark, false);
+    s->x += 3;
+    s->y += 2;
+    sessionRebuild(s);
+    SessionCast back = sessionCastBy(s, 0, mark, true);
+    snprintf(text, sizeof(text), "%s: MARK saves the position and RETURN brings the party back", label);
+    check(text, cast == SessionCastDone && back == SessionCastDone && s->x == 161 && s->y == 31);
+
+    /* the jump: the walk-through spell either moves the party two cells or finds the way blocked */
+    unsigned jump = findSpell(s, SpellBranchTeleportEngage, 0);
+    unsigned jumped = 0, wrong = 0;
+    for (unsigned turn = 0; turn < 4; turn++) {
+        int cx = s->x, cy = s->y;
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+        cast = sessionCastBy(s, 0, jump, false);
+        int moved = abs(s->x - cx) + abs(s->y - cy);
+        jumped += cast == SessionCastDone;
+        wrong += !((cast == SessionCastDone && moved == 2) || (cast == SessionCastNoEffect && moved == 0));
+        place(s, cx, cy, s->facing);
+        sessionMove(s, MovementTurnRight);
+    }
+    snprintf(text, sizeof(text), "%s: a jump moves the party two cells or does nothing, and works in some direction", label);
+    check(text, jumped >= 1 && wrong == 0);
+
+    /* created items land on the cursor once */
+    unsigned held = findSpell(s, SpellBranchHeldItem, 0);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+    if (held) {
+        SessionCast first = sessionCastBy(s, 0, held, false), second = sessionCastBy(s, 0, held, false);
+        snprintf(text, sizeof(text), "%s: a created item lands on the empty cursor and not on a full one", label);
+        check(text, first == SessionCastDone && s->heldItem != 0 && second == SessionCastNoEffect);
+    }
+
+    /* a spell that needs monsters on the viewport rows is not composed and costs nothing */
+    unsigned projectile = findSpell(s, SpellBranchProjectile, 0);
+    uint16_t mpBefore = partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints);
+    check("a projectile spell is reported unsupported and charges nothing",
+          sessionCastBy(s, 0, projectile, false) == SessionCastUnsupported && partyGetStat(sessionPartyRecord(s, 0), PartyStatMagicPoints) == mpBefore);
+
+    /* a heal in a combat takes the turn */
+    place(s, 161, 31, SaveFacingNorth);
+    unsigned turns = 0;
+    while (!s->combat.active && turns < 300) {
+        sessionScene(s, &scene, cells);
+        sessionMove(s, turns & 1 ? MovementTurnRight : MovementTurnLeft);
+        turns++;
+    }
+    if (s->combat.active && !s->combat.order[s->combat.cursor].isMonster) {
+        unsigned actor = s->combat.order[s->combat.cursor].index;
+        partySetStat(sessionPartyRecord(s, actor), PartyStatHitPoints, 1);
+        uint16_t hp = partyGetStat(sessionPartyRecord(s, actor), PartyStatHitPoints);
+        unsigned wrongSlot = (actor + 1) % 4;
+        check("in a combat only the member whose turn it is can cast", sessionCastBy(s, wrongSlot, heal, false) == SessionCastCannot);
+        check("a heal in a combat works and the turn passes", sessionCastBy(s, actor, heal, false) == SessionCastDone && partyGetStat(sessionPartyRecord(s, actor), PartyStatHitPoints) != hp);
+    }
+    sessionFree(s);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2: a session starts");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3: a session starts");
     testCombat("YENDOR2_GAME_DIR", "../../yendor2/game");
+    for (int g = 2; g <= 3; g++) {
+        const char *dir = getenv(g == 2 ? "YENDOR2_GAME_DIR" : "YENDOR3_GAME_DIR");
+        char path[512];
+        snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : (g == 2 ? "../../yendor2/game" : "../../yendor3/game"));
+        size_t size;
+        uint8_t *world = readFile(path, &size);
+        if (world) {
+            testSpells(g == 2 ? GameYendor2 : GameYendor3, world, size, g == 2 ? "Chapter 2" : "Chapter 3");
+            free(world);
+        }
+    }
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

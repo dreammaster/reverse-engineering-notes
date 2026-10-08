@@ -7460,6 +7460,36 @@ by something not visible statically; the savegame's event bitmap offset 0 for Ch
 (`monsterPoolSpawn`, which sets its spawn flag), one already there only gets `monsterTryActivateByDistance`; either way the pool record is what the view draws in that cell.
 `src23/tools/explore_sdl.c` runs the whole chain (bake, refresh, scan, `viewRender`, `monsterPoolTakeTurn` after every step) on both games' real maps.
 
+### Casting a spell from end to end; the healing spells' record fields (2026-10-08)
+
+`RunAlchemyScreen` (yendor2.asm:24615) ends a cast like this (:25027-25056): after the optional Mark / Return prompt (`ShowConfirmPrompt` message `0x22`; "Mark" sets
+`g_uiScratchFlags1` bit `0x80` and plays sound `0x34`, "Return" clears it and plays `0x0B`; cancel aborts before anything is paid), `SelectPartyRecordById` makes the
+member whose screen it is the current record, **`DeductAlchemySpellCosts` runs first, and only then `LoadClueBookSpellEntry` + `ApplyEncodedItemEffect`** -- so a spell
+whose effect finds nothing to do (a blocked jump, nothing ahead to unlock) has still been paid for. `src23/session.c` (`sessionCastBy`) composes exactly that order.
+
+**The single-target and whole-party branches are the capped stat delta of `ApplyIconBarStatDelta`** (yendor2.asm:14068, the third dispatch of
+`ApplyEffectAndDrawIconBar`). The icon-bar slot's words come straight from the spell record: slot `+0xE` = record `+0x22` (the delta), `+0x10` = `+0x24` and
+`+0x12` = `+0x26` (byte offsets into the party record of the stat and of its maximum), `+0xC` = the recipient; the effect id (record **`+0x20`**, `word_332DA`,
+18 in every healing / curing record, `SpellFieldEffectId`) only supplies the mode bits (`0x100` = add, capped at the maximum). After the add the routine ANDs
+record `+0x28` into the recipient's status flags (`[rec+0x1C]`, unless the resist word `+0x4C` has `0xC0` set) -- that is the "cure" half. Real data:
+
+| spell | `+0x22` delta | `+0x24` / `+0x26` | `+0x28` mask |
+|---|---|---|---|
+| HEAL / IMPROVE HEALTH / GREAT HEAL / RESTORE HEALTH / PERFECT HEALTH | 10 / 50 / 500 / 150 (Ch3 200) / 9999 | 82 / 146 = hit points / maximum | `0xFFFF` (PERFECT HEALTH `0x007F`) |
+| PARTY HEAL / PARTY REJUVINATION / HARDY PARTY (whole party) | 100 / 200 / 600 | 82 / 146 | `0xFFFF` |
+| CURE POISON, DISEASE ANTIDOTE, REMOVE JINX / HEX / CURSE, CURE PARALYSIS, UNSTONE, THAW | 0 | 0 / 0 | one status bit cleared (`0x3FFF`, `0xDFFF`, `0xFDFF`, `0xFEFF`, `0xFF7F`, `0xEFFF`, `0xFBFF`, `0xF7FF`) |
+| RESURRECT | 2 | 82 / 0 (uncapped) | `0xFFBF` (clears Dead) |
+| FEET OF FEATHERS / ARMS OF GIANTS | 10 (Ch3 5) / 15 (Ch3 5) | 62 / 126, 60 / 124 = a stat and its maximum | `0x0000` -- the original ANDs 0 into the status word, so these two also clear every ailment of the caster (reproduced) |
+
+So the "single target" spells act on the casting member only (the alchemy screen is per member), and the unexplained "word_332DC / word_332DE" pair of earlier notes is
+this delta and stat offset. The curse gate of `ResetOrCopyTargetPositionFields` (a cursed caster zeroes both words) is not modelled: its global flag has no found
+writer, and with both words zero the original would add 0 at offset 0.
+
+Light, jump and mark need nothing beyond what their modules already decode; `session.c` also composes the knock / curgame-event / lock-flag-0x40 spells over the
+object ahead (`interactKnock`, `interactTriggerFacingCurgameEvent`, `interactResolveIfOutcome`), SAFE HAVEN as the rest command, CREATE FOOD / FORGE as an item on
+the (empty) cursor and the four LIFE FORCE spells against the engaged monster. Not composed: the projectile family, the screen-wide attacks and the beam / tremor /
+rain / turbulence spells (they act on the monsters in the viewport rows).
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

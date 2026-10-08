@@ -10,6 +10,7 @@
 #include "newgame.h"
 #include "consumable.h"
 #include "party.h"
+#include "spelljump.h"
 #include "spellcast.h"
 #include "windowbake.h"
 
@@ -171,7 +172,7 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
 void sessionScene(GameSession *s, ViewScene *scene, DungeonGridCell cells[ViewportCellCount]) {
     viewportBuild(&s->grid, s->facing, s->x, s->y, cells);
     viewportComputeVisibility(s->game, cells);
-    LightingInput light = {0, 0, s->clock.minutes, s->facing};
+    LightingInput light = {s->game == GameYendor2 ? s->light.litFlags : (uint16_t)0, s->light.litFlags, s->clock.minutes, s->facing};
     memset(scene, 0, sizeof(*scene));
     bool reset;
     lightingComputeGradient(s->game, &light, 0, scene->gradient, &reset);
@@ -202,12 +203,68 @@ bool sessionAttack(GameSession *s) {
     return true;
 }
 
-SessionCast sessionCast(GameSession *s, unsigned spellId) {
-    SessionCombat *c = &s->combat;
-    if (!c->active || c->cursor >= c->count || c->order[c->cursor].isMonster) {
-        return SessionCastNoCombat;
+typedef struct {
+    GameSession *session;
+} JumpCtx;
+
+static bool jumpCell(void *ctx, int col, int row, uint16_t *wallType, uint16_t *floorType) {
+    GameSession *s = ((JumpCtx *)ctx)->session;
+    if (!movementInBounds(s->game, (uint16_t)col, (uint16_t)row)) {
+        return false;
     }
-    uint8_t *caster = sessionPartyRecord(s, c->order[c->cursor].index);
+    *wallType = worldMapTileA(&s->map, (unsigned)row, (unsigned)col);
+    *floorType = worldMapTileB(&s->map, (unsigned)row, (unsigned)col);
+    return true;
+}
+
+/* The object ahead (the party cell, else the next one) as the interact.h branches want it: the record, its lock or curgame flags and the "already" bit. */
+static bool castOnFacing(GameSession *s, SpellBranch branch) {
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    if (probe.outcome == WorldObjectProbeNone) {
+        return false;
+    }
+    bool isLock = (probe.object.flags & WorldObjectFlagDoor) != 0;
+    LockRecord lock;
+    memset(&lock, 0, sizeof(lock));
+    uint16_t curgameFlags = 0, ignored = 0;
+    if (isLock) {
+        lockCatalogRecord(&s->locks, probe.object.value, &lock);
+    } else if (probe.object.flags & WorldObjectFlagCurgameRecord) {
+        lockCatalogCurgameRecord(&s->locks, probe.object.value, &curgameFlags, &ignored);
+    }
+    bool already = interactBitmapTest(&s->save, interactWorldObjectBitIndex(s->game, &probe.object));
+    bool lockDone = isLock && already, curgameDone = !isLock && already;
+    if (branch == SpellBranchKnock) {
+        return interactKnock(&s->save, s->game, &probe.object, &lock, lockDone, curgameFlags, curgameDone, false);
+    }
+    if (branch == SpellBranchTriggerCurgameEvent) {
+        return interactTriggerFacingCurgameEvent(&s->save, s->game, &probe.object, &lock, lockDone, curgameFlags, curgameDone, false);
+    }
+    static const InteractOutcome qualifying[] = {InteractOutcomeLockFlag40, InteractOutcomeLockPriced, InteractOutcomeCurgameFlag40};
+    return interactResolveIfOutcome(&s->save, s->game, &probe.object, &lock, lockDone, curgameFlags, curgameDone, false, qualifying, 3);
+}
+
+/* The healing / curing branches: effect 18 is a capped stat delta read from the record (see session.h). */
+static void castStatDelta(GameSession *s, uint8_t *record, const EffectDef *def, const uint8_t *spell) {
+    uint16_t clearMask = (spellGetU16(spell, SpellFieldResistFlags) & 0xC0) ? 0xFFFF : spellGetU16(spell, SpellFieldPositionResetFlags);
+    partyApplyIconBarStatDelta(record, s->game, def->modeFlags, spellGetU16(spell, SpellFieldInflictedStatus), spellGetU16(spell, SpellFieldInflictedMagnitude),
+                               spellGetU16(spell, SpellFieldDrainAmount), clearMask);
+}
+
+static bool castSupported(SpellBranch branch) {
+    switch (branch) {
+    case SpellBranchSingleTarget: case SpellBranchWholeParty: case SpellBranchLightTimer: case SpellBranchHeldItem: case SpellBranchTeleportEngage:
+    case SpellBranchLocationBookmark: case SpellBranchTriggerCurgameEvent: case SpellBranchRest: case SpellBranchKnock: case SpellBranchFacingLockOrEvent:
+    case SpellBranchAttackActiveMonster: case SpellBranchLifeForce: case SpellBranchAttackAllSlots:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spellId, bool returnToMark) {
+    SessionCombat *c = &s->combat;
+    uint8_t *caster = sessionPartyRecord(s, casterSlot);
     const uint8_t *spell = spellRecord(&s->spells, spellId);
     if (!caster || !spell) {
         return SessionCastNotKnown;
@@ -221,34 +278,150 @@ SessionCast sessionCast(GameSession *s, unsigned spellId) {
     if (!knows) {
         return SessionCastNotKnown;
     }
-    if (!spellCanCast(spell, caster, &s->save, true)) {
-        return SessionCastCannot;
-    }
-    unsigned flagsB = spellGetU16(spell, SpellFieldFlagsB);
-    unsigned resist = spellGetU16(spell, SpellFieldResistFlags);
-    bool single = (flagsB & SpellFlagsBAttackPath) && !(resist & (SpellResistLifeForceCaster | SpellResistLifeForceParty));
-    bool all = (flagsB & SpellFlagsBAttackAllSlots) != 0;
-    if (!single && !all) {
+    SpellBranch branch = spellSelectBranch(spell);
+    if (!castSupported(branch)) {
         return SessionCastUnsupported;
     }
+    if (!spellCanCast(spell, caster, &s->save, c->active)) {
+        return SessionCastCannot;
+    }
     spellDeductCosts(spell, caster, &s->save);
-    if (all) {
+    bool done = true;
+    switch (branch) {
+    case SpellBranchAttackAllSlots:
         combatApplySpellAttackToActiveSlots(c->slots, caster, spell, false, &s->rng);
-    } else {
+        break;
+    case SpellBranchAttackActiveMonster:
+    case SpellBranchLifeForce: {
         unsigned slot = 0;
-        if (combatSelectActiveMonster(c->order, c->count, c->defeated, &slot)) {
-            uint8_t *target = c->slots + (size_t)slot * MonsterRecordSize;
+        if (!combatSelectActiveMonster(c->order, c->count, c->defeated, &slot)) {
+            break;
+        }
+        uint8_t *target = c->slots + (size_t)slot * MonsterRecordSize;
+        if (branch == SpellBranchLifeForce) {
+            combatApplyLifeForceSpell(target, caster, spell, &s->save, s->game, monsterGetU16(target, MonsterFieldSaveDifficulty), &s->rng);
+        } else {
             CombatSpellAttackResult result = combatResolveSpellAttack(target, caster, spell, false, &s->rng);
             combatApplySpellAttack(target, spell, result);
             if (result.hasEffect) {
                 combatMarkSpellAttackHit(target, spell);
             }
         }
+        break;
     }
-    snprintf(s->log, sizeof(s->log), "party member %u casts spell %u", c->order[c->cursor].index + 1, spellId);
-    combatAfterAction(s);
-    combatRunMonsters(s);
-    return SessionCastDone;
+    case SpellBranchSingleTarget:
+    case SpellBranchWholeParty: {
+        EffectDef def;
+        if (!effectGetDef(s->game, spellGetU16(spell, SpellFieldEffectId), &def)) {
+            done = false;
+        } else if (branch == SpellBranchSingleTarget) {
+            if (spellGetU16(spell, SpellFieldFlagsA) & (SpellFlagsAPositionReset | SpellFlagsAIconBarPresetAmount)) {
+                castStatDelta(s, caster, &def, spell);
+            } else {
+                done = false;
+            }
+        } else {
+            for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+                uint16_t id = saveGetPartySlot(&s->save, slot);
+                if (id == 0) {
+                    break;
+                }
+                uint8_t *record = saveGamePartyRecordById(&s->save, id);
+                if (record && !(s->game == GameYendor3 && (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusCursed))) {
+                    castStatDelta(s, record, &def, spell);
+                }
+            }
+        }
+        break;
+    }
+    case SpellBranchLightTimer:
+        done = lightSourceArmSpellTimer(&s->light, spellGetU16(spell, SpellFieldTimerSlot), spellGetU16(spell, SpellFieldTimerDuration));
+        break;
+    case SpellBranchHeldItem:
+        if (s->heldItem == 0) {
+            uint16_t bound = spellCreatedItemRollBound(spell);
+            SpellCreatedItem created = spellCreatedItem(spell, bound ? (uint16_t)randomInRange(&s->rng, bound) : 0);
+            s->heldItem = created.itemId;
+            s->heldExtra = created.extra;
+        } else {
+            done = false;
+        }
+        break;
+    case SpellBranchTeleportEngage: {
+        JumpCtx ctx = {s};
+        SpellJumpResult jump = spellResolveJump(s->game, spell, s->facing, s->x, s->y, jumpCell, &ctx);
+        if (jump.ok) {
+            s->x = jump.col;
+            s->y = jump.row;
+            ExploreReveal revealed;
+            exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+            sessionRebuild(s);
+            monstersTakeTurns(s);
+        }
+        done = jump.ok;
+        break;
+    }
+    case SpellBranchLocationBookmark:
+        if (!returnToMark) {
+            CombatLocationBookmark mark = {(int16_t)s->x, (int16_t)s->y, s->facing, 0, 0, 0, 0};
+            combatSaveLocationBookmark(caster, spellGetU16(spell, SpellFieldBookmarkOffset), mark);
+        } else {
+            CombatLocationBookmark mark;
+            done = combatRestoreLocationBookmark(caster, spellGetU16(spell, SpellFieldBookmarkOffset), &mark);
+            if (done) {
+                s->x = mark.worldX;
+                s->y = mark.worldY;
+                s->facing = mark.facing;
+                ExploreReveal revealed;
+                exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+                sessionRebuild(s);
+            }
+        }
+        break;
+    case SpellBranchKnock:
+    case SpellBranchTriggerCurgameEvent:
+    case SpellBranchFacingLockOrEvent:
+        done = castOnFacing(s, branch);
+        if (done) {
+            sessionRebuild(s);
+        }
+        break;
+    case SpellBranchRest:
+        sessionRest(s);
+        break;
+    default:
+        done = false;
+        break;
+    }
+    snprintf(s->log, sizeof(s->log), "party member %u casts spell %u%s", casterSlot + 1, spellId, done ? "" : " (nothing happens)");
+    return done ? SessionCastDone : SessionCastNoEffect;
+}
+
+SessionCast sessionCast(GameSession *s, unsigned spellId) {
+    SessionCombat *c = &s->combat;
+    if (!c->active || c->cursor >= c->count || c->order[c->cursor].isMonster) {
+        return SessionCastNoCombat;
+    }
+    SessionCast result = castSpell(s, c->order[c->cursor].index, spellId, false);
+    if (result == SessionCastDone || result == SessionCastNoEffect) {
+        combatAfterAction(s);
+        combatRunMonsters(s);
+    }
+    return result;
+}
+
+SessionCast sessionCastBy(GameSession *s, unsigned casterSlot, unsigned spellId, bool returnToMark) {
+    SessionCombat *c = &s->combat;
+    if (c->wiped) {
+        return SessionCastNoCombat;
+    }
+    if (c->active) {
+        if (c->cursor >= c->count || c->order[c->cursor].isMonster || c->order[c->cursor].index != casterSlot) {
+            return SessionCastCannot;
+        }
+        return sessionCast(s, spellId);
+    }
+    return castSpell(s, casterSlot, spellId, returnToMark);
 }
 
 SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot) {
@@ -308,6 +481,9 @@ RestOutcome sessionRest(GameSession *s) {
     RestCtx ctx = {s};
     RestOutcome out = restParty(&s->save, &s->clock, &s->items, globalSlots, false, false, false, restMonsters, &ctx);
     s->clock.minutes %= 1440;
+    if (!out.refused) {
+        lightSourceTickTimers(&s->light, out.minutes);
+    }
     if (out.refused) {
         snprintf(s->log, sizeof(s->log), "you cannot rest here");
     } else if (out.interrupted) {

@@ -99,6 +99,9 @@ typedef enum {
      */
     SpellFieldTargetTypeId = 0x1E,
 
+    /* word_332DA: the effect id (effect.h) ApplyEncodedItemEffect's single-target and whole-party branches apply -- 18 in every healing / curing record. */
+    SpellFieldEffectId = 0x20,
+
     /*
      * word_332DC/word_332DE: an already-resolved inflicted-status/magnitude
      * pair, used verbatim (never rolled) by ApplyEncodedItemEffect's

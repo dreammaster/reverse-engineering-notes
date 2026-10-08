@@ -9,11 +9,12 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
+ *       ../lightsource.c ../spelljump.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
  *
- * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can: the party starts with none of the ore the spells cost, so loot a chest first),
+ * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S loot the chest ahead, M the local area map, D the pause
  * dialog, P the paper dolls, F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
@@ -231,6 +232,22 @@ static bool handleKey(SDL_Keycode key, bool ctrl, Overlay *overlay) {
         }
         return true;
     }
+    if (key == SDLK_c) { /* outside a combat: the next spell, in id order, that any member knows and can cast (support and exploration spells) */
+        static unsigned next = 1;
+        for (unsigned tried = 0; tried < 126; tried++, next = next % 125 + 1) {
+            bool cast = false;
+            for (unsigned member = 0; member < 4 && !cast; member++) {
+                SessionCast result = sessionCastBy(s, member, next, false);
+                cast = result == SessionCastDone || result == SessionCastNoEffect;
+            }
+            if (cast) {
+                next = next % 125 + 1;
+                area();
+                return true;
+            }
+        }
+        return true;
+    }
     bool extended = true;
     uint8_t code = 0;
     if (key == SDLK_UP) {
@@ -368,7 +385,7 @@ int main(int argc, char **argv) {
     static char randomScript[20001];
     if (getenv("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */
         unsigned n = (unsigned)atoi(getenv("EXPLORE_RANDOM"));
-        const char alphabet[] = "FFFFFFBLRLRQEAAAT";
+        const char alphabet[] = "FFFFFFBLRLRQEAAATC";
         for (unsigned i = 0; i < n && i < sizeof(randomScript) - 1; i++) {
             randomScript[i] = alphabet[rand() % (sizeof(alphabet) - 1)];
         }
