@@ -155,13 +155,15 @@ void host__bioskey(Cpu *c) {
 	if (kq_head != kq_tail) idle = 0;
 	for (;;) {
 		video_pump_events();
-		if (cmd == 1 || kq_head != kq_tail) break;
+		if (cmd != 0 || kq_head != kq_tail) break;
 		video_present();
 		if (headless) headless_finish();
 		SDL_Delay(5);
 	}
+	if (cmd == 2) { c->ax = 0; return; } /* shift-key status */
 	if (kq_head == kq_tail) { c->ax = 0; return; }
 	c->ax = (uint16_t)keyq[kq_head];
+	if (cmd == 0 && getenv("MM3_TRACE")) fprintf(stderr, "key %04X\n", c->ax);
 	if (cmd == 0) kq_head = (kq_head + 1) % KEYQ;
 }
 

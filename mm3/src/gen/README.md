@@ -22,3 +22,9 @@ Naming: routine names are those of `names/mm3.tsv`; data is addressed by DGROUP 
 
 Translator lessons recorded so far: stack locals keep their declared byte/word size; jump tables may hold several entries per line;
 `jmp $+2` is a no-op; far calls to host routines push no return address (arguments start at sp); uninitialised stack locals read as 0.
+
+## Computed jumps through `cs:` tables
+`jmp cs:[bx+K]` dispatch tables (e.g. the 36-entry command table of `exploreLoop`) point at handlers IDA left
+unlabelled.  `asm2c.py` reads the real table from `data/IMAGE.BIN`, disassembles the function with `objdump` to get
+each instruction's address, and adds `ul_<addr>` labels at the handlers.  `make regen_game` therefore needs
+`data/IMAGE.BIN` (derive it with `tools/mm3_image.py`) and binutils.

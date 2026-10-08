@@ -21,6 +21,7 @@ DGROUP_LINEAR = 0x286F0
 
 class Translator:
     def __init__(self, asm_path, idc_path):
+        self.asm_path = asm_path
         self.lines = open(asm_path, encoding="latin1").read().split("\n")
         self.names = {}
         for m in re.finditer(r'set_name\s*\(0[Xx]([0-9A-Fa-f]+),\s*"([^"]+)"', open(idc_path, encoding="latin1").read()):
@@ -264,8 +265,12 @@ class Translator:
                 a = self.func_linear(m.group(1))
                 if a is not None:
                     self.cur_labels[a - self.cur_seg * 16] = m.group(1)
+        self.synth = {}
+        self.add_table_labels(fname, body)
         out = ["static void fn_%s(Cpu *c) {" % fname, "\tuint32_t t_; (void)t_;", "\tFNTRACE(\"%s\");" % fname]
         for i, l in body:
+            if i in self.synth:
+                out.append("%s: RTRACE(c, \"%s\");" % (self.synth[i], self.synth[i]))
             m = re.match(r"^(\w+):\s*$", l)
             if m:
                 out.append("%s: RTRACE(c, \"%s\");" % (m.group(1), m.group(1)))
@@ -282,6 +287,70 @@ class Translator:
                 raise RuntimeError("%s: line %d %r: %s" % (fname, i + 1, l.strip(), ex))
         out.append("}")
         return "\n".join(out)
+
+    def add_table_labels(self, fname, body):
+        """A computed `jmp cs:[bx+K]` dispatches through a table of handler offsets.  IDA leaves some handlers
+        unlabelled, so read the real table from the image, work out every instruction's address with objdump and
+        add a label (self.synth: body line -> name) at each handler that has none."""
+        jl = [i for i, l in body if re.search(r"jmp\s+(?:word ptr )?cs:\[bx\+", l)]
+        if not jl:
+            return
+        import subprocess
+        import tempfile
+        img = open(os.path.join(os.path.dirname(os.path.abspath(self.asm_path)), "data", "IMAGE.BIN"), "rb").read()
+        start = self.func_linear(fname)
+        base = self.cur_seg * 16
+        targets = set()
+        for i in jl:
+            line = dict(body)[i]
+            k = self.parse_num(re.search(r"\[bx\+(\w+)\]", line).group(1))
+            n = tab = None
+            for j, l2 in reversed([x for x in body if x[0] < i]):
+                m = re.match(r"^\s+mov\s+cx,\s*(\w+)", l2)
+                if m and n is None:
+                    n = self.parse_num(m.group(1))
+                m = re.match(r"^\s+mov\s+bx,\s*(\w+)", l2)
+                if m and tab is None:
+                    tab = self.parse_num(m.group(1))
+                if n is not None and tab is not None:
+                    break
+            if n is None or tab is None:
+                continue
+            for t in range(n):
+                at = base + tab + k + 2 * t - 0x10000
+                targets.add(int.from_bytes(img[at:at + 2], "little"))
+        missing = {t for t in targets if t not in self.cur_labels}
+        if not missing:
+            return
+        end = base + max(list(self.cur_labels) + list(missing)) + 0x200
+        with tempfile.NamedTemporaryFile(suffix=".bin") as f:
+            f.write(img[start - 0x10000:end - 0x10000])
+            f.flush()
+            dis = subprocess.run(["objdump", "-D", "-b", "binary", "-m", "i8086", "-M", "intel", "--adjust-vma=0x%x" % start, f.name],
+                                 capture_output=True, text=True).stdout
+        # objdump wraps long instructions onto continuation lines (no mnemonic); an instruction starts at a line with one
+        starts = []
+        for m in re.finditer(r"^\s*([0-9a-f]+):\t([0-9a-f ]+?)\s*(\t.*)?$", dis, re.M):
+            if m.group(3) and m.group(3).strip():
+                starts.append(int(m.group(1), 16))
+        nxt = {a: b for a, b in zip(starts, starts[1:])}
+        cur = start
+        for i, l in body:
+            m = re.match(r"^(\w+):\s*$", l)
+            if m:
+                a = self.func_linear(m.group(1))
+                if a is not None:
+                    cur = a
+                continue
+            if re.match(r"^\s*(align|assume)", l):
+                continue
+            off = cur - base
+            if off in missing and off not in self.cur_labels:
+                self.synth[i] = "ul_%05X" % cur
+                self.cur_labels[off] = self.synth[i]
+            if cur not in nxt:
+                break
+            cur = nxt[cur]
 
     def split_ops(self, rest):
         depth, cur, ops = 0, "", []
