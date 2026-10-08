@@ -274,6 +274,9 @@ bool sessionPickUp(GameSession *session, unsigned member, unsigned slotNumber, u
 size_t sessionSave(GameSession *session, uint8_t *out, size_t capacity);
 bool sessionLoad(GameSession *session, const uint8_t *data, size_t size);
 
+/* Replaces the four active members with characters made elsewhere (chargen.h: partyChooseClass, partyRollAttributes...; charcreate.c's screens); the party keeps its start position. */
+void sessionSetParty(GameSession *session, const uint8_t records[4][SavePartyRecordSize]);
+
 /* One of the four active party members' records (0-3), or NULL. */
 uint8_t *sessionPartyRecord(GameSession *session, unsigned slot);
 

@@ -693,6 +693,23 @@ static void testAilments(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(s);
 }
 
+static void testSetParty(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    static uint8_t made[4][SavePartyRecordSize];
+    for (unsigned i = 0; i < 4; i++) {
+        memcpy(made[i], sessionPartyRecord(s, i), SavePartyRecordSize);
+        memcpy(made[i], "NEWHERO", 8); /* the name field */
+    }
+    sessionSetParty(s, (const uint8_t(*)[SavePartyRecordSize])made);
+    char text[160];
+    snprintf(text, sizeof(text), "%s: characters made elsewhere replace the four members", label);
+    check(text, memcmp(sessionPartyRecord(s, 2), "NEWHERO", 8) == 0 && memcmp(sessionPartyRecord(s, 0), "NEWHERO", 8) == 0);
+    sessionFree(s);
+}
+
 /* Spell scrolls: cast without cost or knowledge, or studied. */
 static void testScrolls(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -968,6 +985,7 @@ int main(void) {
             testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testTime(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testAilments(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testSetParty(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testScrolls(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testReading(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

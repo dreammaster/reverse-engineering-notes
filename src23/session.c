@@ -66,6 +66,16 @@ void sessionRebuild(GameSession *s) {
     monsterPoolRefreshWindow(s->pool, &s->grid, &s->save);
 }
 
+void sessionSetParty(GameSession *s, const uint8_t records[4][SavePartyRecordSize]) {
+    for (unsigned slot = 0; slot < 4; slot++) {
+        uint8_t *dest = sessionPartyRecord(s, slot);
+        if (dest) {
+            memcpy(dest, records[slot], SavePartyRecordSize);
+        }
+    }
+    sessionRebuild(s);
+}
+
 uint8_t *sessionPartyRecord(GameSession *s, unsigned slot) {
     unsigned id = slot < 4 ? saveHeaderGetU16(&s->save, SaveHeaderPartySlots + 2 * slot) : 0;
     return id ? saveGamePartyRecordById(&s->save, id) : NULL;
