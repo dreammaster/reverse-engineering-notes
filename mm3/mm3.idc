@@ -6428,6 +6428,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17EBC);
 	op_hex		(x,	1);
 	create_insn	(0X17F38);
+	set_name	(0X17F38,	"drawRow3Sprites");
 	create_insn	(x=0X17F3F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17F64);
@@ -6559,6 +6560,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X185AE);
 	op_hex		(x,	1);
 	create_insn	(0X1862A);
+	set_name	(0X1862A,	"drawRow2Sprites");
 	create_insn	(x=0X18631);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X18656);
@@ -6664,6 +6666,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18B75);
 	op_hex		(x,	1);
 	create_insn	(0X18BF1);
+	set_name	(0X18BF1,	"drawRow1Sprites");
 	create_insn	(x=0X18BF8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X18C26);
@@ -8380,6 +8383,7 @@ static Bytes_1(void) {
 	set_name	(0X1B669,	"drawView");
 	create_insn	(0X1B67A);
 	create_insn	(0X1B6D1);
+	set_name	(0X1B6D1,	"drawHudPieces");
 	create_insn	(0X1B74A);
 	create_insn	(0X1B789);
 	create_insn	(0X1B7EB);
@@ -9977,12 +9981,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	0,	0X1B660);
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1D9B5,	"jpt_1D0BD");
-	set_cmt	(0X1D9C3,	"jump table for switch statement",	0);
-	create_word	(x=0X1D9C3);
-	make_array	(x,	0X7);
-	op_plain_offset	(x,	0,	0X1B660);
-	op_plain_offset	(x,	128,	0X1B660);
-	set_name	(0X1D9C3,	"jpt_1D050");
 }
 
 //------------------------------------------------------------------------
@@ -9992,6 +9990,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1D9C3,	"jump table for switch statement",	0);
+	create_word	(x=0X1D9C3);
+	make_array	(x,	0X7);
+	op_plain_offset	(x,	0,	0X1B660);
+	op_plain_offset	(x,	128,	0X1B660);
+	set_name	(0X1D9C3,	"jpt_1D050");
 	set_cmt	(0X1D9D1,	"jump table for switch statement",	0);
 	create_word	(x=0X1D9D1);
 	make_array	(x,	0X7);
@@ -10149,6 +10153,7 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	128,	0X1B660);
 	set_name	(0X1DB2F,	"jpt_1C2AA");
 	create_insn	(0X1DB3D);
+	set_name	(0X1DB3D,	"drawWallFaces");
 	create_insn	(x=0X1DB44);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DB6E);
@@ -12943,6 +12948,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X26679,	"handle",	0);
 	create_insn	(0X26685);
+	set_name	(0X26685,	"freeSpriteSlot");
 	create_insn	(x=0X26689);
 	op_stkvar	(x,	1);
 	create_insn	(0X266AB);
@@ -14026,6 +14032,7 @@ static Bytes_2(void) {
 	create_insn	(0X281A3);
 	create_insn	(0X281A8);
 	create_insn	(0X281AD);
+	set_name	(0X281AD,	"j_loadMapGraphics");
 	create_insn	(0X281B2);
 	set_name	(0X281B2,	"j_setWrapModeForMap");
 	create_insn	(0X281B7);
@@ -14090,14 +14097,18 @@ static Bytes_2(void) {
 	set_name	(0X282CF,	"j_trainCharacter");
 	create_insn	(0X282D4);
 	create_insn	(0X282D9);
+	set_name	(0X282D9,	"j_guildSpellShop");
 	create_insn	(0X282DE);
 	create_insn	(0X282E3);
 	create_insn	(0X282E8);
 	create_insn	(0X282ED);
 	create_insn	(0X282F2);
 	create_insn	(0X282F7);
+	set_name	(0X282F7,	"j_rollAttributes");
 	create_insn	(0X282FC);
+	set_name	(0X282FC,	"j_showClassAvailability");
 	create_insn	(0X28301);
+	set_name	(0X28301,	"j_finishCreation");
 	create_insn	(0X28306);
 	set_name	(0X28306,	"j_checkClasses");
 	MakeStruct	(0X28310,	"_stub_descr");
@@ -14112,6 +14123,7 @@ static Bytes_2(void) {
 	create_insn	(0X2834E);
 	set_name	(0X2834E,	"j_townBank");
 	create_insn	(0X28353);
+	set_name	(0X28353,	"j_townMenuInput");
 	create_insn	(0X28358);
 	set_name	(0X28358,	"j_townGuild");
 	create_insn	(0X2835D);
@@ -14738,6 +14750,15 @@ static Bytes_2(void) {
 	create_byte	(0X29262);
 	create_word	(0X29264);
 	create_word	(0X29266);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29377,	"indexed by item id",	0);
 	set_name	(0X29377,	"ARMOR_STRENGTHS");
 	set_cmt	(0X293C0,	"indexed by item id: number of dice",	0);
@@ -14749,15 +14770,6 @@ static Bytes_2(void) {
 	set_cmt	(0X29551,	"10 bytes, indexed by class (Xeen Res.BASE_HP_BY_CLASS)",	0);
 	set_name	(0X29551,	"BASE_HP_BY_CLASS");
 	create_byte	(0X29556);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2956F);
 	create_word	(0X29571);
 	create_strlit	(0X29573,	0X1A);
@@ -17779,9 +17791,9 @@ static Bytes_3(void) {
 	create_byte	(0X36FBA);
 	make_array	(0X36FBA,	0X20);
 	set_name	(0X36FBA,	"Save_name");
-	set_cmt	(0X36FDA,	"byte, number of characters in the party (first byte of MAZE.PTY)",	0);
+	set_cmt	(0X36FDA,	"start of the 918-byte MAZE.PTY block (same address as Party_count, +0); an older entry 'Party_state' at 370DA was +100h off and was removed",	0);
 	create_byte	(0X36FDA);
-	set_name	(0X36FDA,	"Party_count");
+	set_name	(0X36FDA,	"Party_stateBase");
 	create_byte	(0X36FDB);
 	create_byte	(0X36FDC);
 	make_array	(0X36FDC,	0X8);
@@ -17822,6 +17834,8 @@ static Bytes_3(void) {
 	make_array	(0X36FF0,	0XEA);
 	set_cmt	(0X370DA,	"918-byte party block (MAZE.PTY), loaded by sub_26447",	0);
 	set_name	(0X370DA,	"Party_state");
+	set_cmt	(0X3731B,	"53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)17439",	0);
+	set_name	(0X3731B,	"Party_eventFlags");
 	set_cmt	(0X37325,	"byte, 0-99",	0);
 	create_byte	(0X37325);
 	set_name	(0X37325,	"Party_day");
@@ -18084,6 +18098,15 @@ static Bytes_3(void) {
 	set_cmt	(0X37742,	"far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37742);
 	set_name	(0X37742,	"Mon_acid");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37746,	"far pointer to the monnuma.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37746);
 	set_name	(0X37746,	"Mon_numa");
@@ -18099,15 +18122,6 @@ static Bytes_3(void) {
 	set_cmt	(0X37756,	"far pointer to the montrea.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37756);
 	set_name	(0X37756,	"Mon_trea");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3775A,	"far pointer to the mondmgn.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3775A);
 	set_name	(0X3775A,	"Mon_dmgn");
@@ -22799,6 +22813,15 @@ static Bytes_4(void) {
 	set_cmt	(0X3FBA3,	"int",	0);
 	create_insn	(x=0X3FBA3);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3FBAB);
 	op_hex		(x,	1);
 	create_insn	(0X3FBB0);
@@ -22854,15 +22877,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3FC51);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X3FC57,	"buffer",	0);
 	set_cmt	(0X3FC5B,	"int",	0);
 	set_cmt	(0X3FC5C,	"int",	0);
@@ -25328,6 +25342,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X4308F);
 	op_hex		(x,	1);
 	create_insn	(0X430A8);
+	set_name	(0X430A8,	"loadMapGraphics");
 	create_insn	(x=0X430AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X430B4);
@@ -27321,6 +27336,7 @@ static Bytes_5(void) {
 	op_plain_offset	(x,	128,	0X45790);
 	set_name	(0X45F17,	"jpt_45C8F");
 	create_insn	(0X45F29);
+	set_name	(0X45F29,	"guildSpellShop");
 	create_insn	(x=0X45F2C);
 	op_hex		(x,	1);
 	set_cmt	(0X45F30,	"src",	0);
@@ -27725,6 +27741,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X4682A);
 	op_hex		(x,	1);
 	create_insn	(0X46847);
+	set_name	(0X46847,	"finishCreation");
 	create_insn	(x=0X4684A);
 	op_hex		(x,	1);
 	create_insn	(x=0X4684F);
@@ -27934,6 +27951,7 @@ static Bytes_5(void) {
 	op_plain_offset	(x,	128,	0X45790);
 	set_name	(0X46C0D,	"jpt_46B49");
 	create_insn	(0X46C21);
+	set_name	(0X46C21,	"rollAttributes");
 	create_insn	(x=0X46C27);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46C2A);
@@ -27964,6 +27982,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X46C8C);
 	op_stkvar	(x,	0);
 	create_insn	(0X46C9B);
+	set_name	(0X46C9B,	"showClassAvailability");
 	create_insn	(x=0X46C9E);
 	op_hex		(x,	1);
 	create_insn	(x=0X46CA2);
@@ -28398,6 +28417,15 @@ static Bytes_5(void) {
 	set_cmt	(0X472C4,	"dest",	0);
 	create_insn	(x=0X472CE);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X472D3);
 	op_hex		(x,	1);
 	create_insn	(x=0X472DB);
@@ -28468,15 +28496,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X473C2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473C5,	"int",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X473C6);
 	op_stkvar	(x,	1);
 	set_cmt	(0X473C9,	"char",	0);
@@ -28841,6 +28860,7 @@ static Bytes_6(void) {
 	create_insn	(0X479DD);
 	create_insn	(0X479F1);
 	create_insn	(0X47A33);
+	set_name	(0X47A33,	"townMenuInput");
 	create_insn	(x=0X47A6C);
 	op_hex		(x,	1);
 	create_insn	(0X47A76);
@@ -33445,6 +33465,15 @@ static Bytes_6(void) {
 	set_cmt	(0X4F202,	"jumptable 0004F1DB case 3",	1);
 	create_insn	(x=0X4F202);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X4F20B,	"jumptable 0004F1DB default case",	1);
 	set_name	(0X4F20B,	"def_4F1DB");
 	create_insn	(x=0X4F210);
@@ -33503,15 +33532,6 @@ static Bytes_6(void) {
 	set_cmt	(0X4F371,	"s",	0);
 	create_insn	(x=0X4F377);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4F381);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4F386);
@@ -36071,6 +36091,7 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(0X61572);
 	create_insn	(0X615B6);
+	set_name	(0X615B6,	"vdrv_printTextEngine");
 	create_insn	(x=0X615DF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X615E6);
@@ -36202,6 +36223,7 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(0X61B9A);
 	create_insn	(0X61BB8);
+	set_name	(0X61BB8,	"vdrv_runDrawList");
 	create_insn	(0X61BD5);
 	create_insn	(0X61BD6);
 	create_insn	(x=0X61BF4);
@@ -36248,6 +36270,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X61D63);
 	op_hex		(x,	1);
 	create_insn	(0X61D70);
+	set_name	(0X61D70,	"vdrv_blitFrame");
 	create_insn	(x=0X61D75);
 	op_hex		(x,	1);
 	create_insn	(x=0X61D79);
@@ -37760,12 +37783,15 @@ static Functions_0(void) {
 	set_frame_size(0X17439, 0X2, 2, 0);
 	add_func    (0X17F38,0X1862A);
 	set_func_flags(0X17F38,0x5412);
+	set_func_cmt(0X17F38,	"scene list writer for the 3rd row (scale 200h)", 0);
 	set_frame_size(0X17F38, 0X2, 2, 0);
 	add_func    (0X1862A,0X18BF1);
 	set_func_flags(0X1862A,0x5412);
+	set_func_cmt(0X1862A,	"scene list writer for the 2nd row (scale 100h)", 0);
 	set_frame_size(0X1862A, 0X2, 2, 0);
 	add_func    (0X18BF1,0X19038);
 	set_func_flags(0X18BF1,0x5412);
+	set_func_cmt(0X18BF1,	"scene list writer for the adjacent row (full size)", 0);
 	set_frame_size(0X18BF1, 0X2, 2, 0);
 	add_func    (0X19038,0X190C9);
 	set_func_flags(0X19038,0x5412);
@@ -37824,6 +37850,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B669, 0, 2, 0);
 	add_func    (0X1B6D1,0X1B925);
 	set_func_flags(0X1B6D1,0x5412);
+	set_func_cmt(0X1B6D1,	"scene list writer for the compass (Direction Sense) and the secret-door indicator (Spot Secret Doors)", 0);
 	set_frame_size(0X1B6D1, 0X2, 2, 0);
 	add_func    (0X1B925,0X1B99E);
 	set_func_flags(0X1B925,0x5412);
@@ -37871,6 +37898,7 @@ static Functions_0(void) {
 	set_frame_size(0X1C195, 0X8, 2, 0);
 	add_func    (0X1DB3D,0X1E407);
 	set_func_flags(0X1DB3D,0x5412);
+	set_func_cmt(0X1DB3D,	"scene list writer: the wall face records (wl sheets) from the per-face flag bytes set by prepareIndoorView", 0);
 	set_frame_size(0X1DB3D, 0X2, 2, 0);
 	add_func    (0X1E407,0X203FE);
 	set_func_flags(0X1E407,0x5412);
@@ -38118,6 +38146,7 @@ static Functions_0(void) {
 	define_local_var(0X26665, 0X26685, "[bp+0X6]", "path");
 	add_func    (0X26685,0X266AB);
 	set_func_flags(0X26685,0x5412);
+	set_func_cmt(0X26685,	"frees the far-pointer sprite resource in the slot and clears the slot", 0);
 	set_frame_size(0X26685, 0X2, 2, 0);
 	add_func    (0X266AB,0X26716);
 	set_func_flags(0X266AB,0x5412);
@@ -38569,7 +38598,7 @@ static Functions_0(void) {
 	set_func_flags(0X281A8,0x5482);
 	set_frame_size(0X281A8, 0, 0, 0);
 	add_func    (0X281AD,0X281B2);
-	set_func_flags(0X281AD,0x5482);
+	set_func_flags(0X281AD,0x54c2);
 	set_frame_size(0X281AD, 0, 0, 0);
 	add_func    (0X281B2,0X281B7);
 	set_func_flags(0X281B2,0x54c2);
@@ -38708,8 +38737,8 @@ static Functions_0(void) {
 	set_func_flags(0X282D4,0x5482);
 	set_frame_size(0X282D4, 0, 0, 0);
 	add_func    (0X282D9,0X282DE);
-	set_func_flags(0X282D9,0x5482);
-	SetType(0X282D9, "int __cdecl __far sub_282D9(int, int);");
+	set_func_flags(0X282D9,0x54c2);
+	SetType(0X282D9, "int __cdecl __far j_guildSpellShop(int, int);");
 	set_frame_size(0X282D9, 0, 0, 0);
 	add_func    (0X282DE,0X282E3);
 	set_func_flags(0X282DE,0x5482);
@@ -38728,15 +38757,15 @@ static Functions_0(void) {
 	SetType(0X282F2, "int __cdecl __far sub_282F2(int);");
 	set_frame_size(0X282F2, 0, 0, 0);
 	add_func    (0X282F7,0X282FC);
-	set_func_flags(0X282F7,0x5482);
+	set_func_flags(0X282F7,0x54c2);
 	set_frame_size(0X282F7, 0, 0, 0);
 	add_func    (0X282FC,0X28301);
-	set_func_flags(0X282FC,0x5482);
-	SetType(0X282FC, "int __cdecl __far sub_282FC(int, int, char *buffer, char);");
+	set_func_flags(0X282FC,0x54c2);
+	SetType(0X282FC, "int __cdecl __far j_showClassAvailability(int, int, char *buffer, char);");
 	set_frame_size(0X282FC, 0, 0, 0);
 	add_func    (0X28301,0X28306);
-	set_func_flags(0X28301,0x5482);
-	SetType(0X28301, "int __cdecl __far sub_28301(char, char, char, char, int, void *s);");
+	set_func_flags(0X28301,0x54c2);
+	SetType(0X28301, "int __cdecl __far j_finishCreation(char, char, char, char, int, void *s);");
 	set_frame_size(0X28301, 0, 0, 0);
 	add_func    (0X28306,0X2830B);
 	set_func_flags(0X28306,0x54c2);
@@ -38766,7 +38795,7 @@ static Functions_0(void) {
 	set_func_flags(0X2834E,0x54c2);
 	set_frame_size(0X2834E, 0, 0, 0);
 	add_func    (0X28353,0X28358);
-	set_func_flags(0X28353,0x5482);
+	set_func_flags(0X28353,0x54c2);
 	set_frame_size(0X28353, 0, 0, 0);
 	add_func    (0X28358,0X2835D);
 	set_func_flags(0X28358,0x54c2);
@@ -39523,6 +39552,10 @@ static Functions_0(void) {
 	set_frame_size(0X40AAC, 0X60, 2, 0);
 	define_local_var(0X40AAC, 0X41474, "[bp-0X2E]", "s");
 	define_local_var(0X40AAC, 0X41474, "[bp-0XE]", "src");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X41500,0X41565);
 	set_func_flags(0X41500,0x5412);
 	set_frame_size(0X41500, 0X2, 2, 0);
@@ -39544,10 +39577,6 @@ static Functions_0(void) {
 	set_func_flags(0X416C7,0x5412);
 	set_frame_size(0X416C7, 0XA, 2, 0);
 	define_local_var(0X416C7, 0X416F1, "[bp-0XA]", "buffer");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X416F1,0X416FF);
 	set_func_flags(0X416F1,0x5412);
 	set_frame_size(0X416F1, 0, 2, 0);
@@ -39617,6 +39646,7 @@ static Functions_1(void) {
 	set_frame_size(0X43034, 0X2, 2, 0);
 	add_func    (0X430A8,0X432B9);
 	set_func_flags(0X430A8,0x5412);
+	set_func_cmt(0X430A8,	"loads the environment graphics of map n: ENV table 30E2 -> town/cave/dung/castle tile set and the four '<env>wl<n>.vga' wall sheets for indoor maps, the seven terrain sheets named by the page header bytes 00-06 (name table 5A46) for outdoor maps", 0);
 	set_frame_size(0X430A8, 0X16, 2, 0);
 	define_local_var(0X430A8, 0X432B9, "[bp-0X14]", "buffer");
 	add_func    (0X432B9,0X4346B);
@@ -39742,7 +39772,8 @@ static Functions_1(void) {
 	set_frame_size(0X45C21, 0X10, 2, 0);
 	add_func    (0X45F29,0X464B4);
 	set_func_flags(0X45F29,0x5412);
-	SetType(0X45F29, "int __cdecl __far sub_45F29(int, int);");
+	SetType(0X45F29, "int __cdecl __far guildSpellShop(int, int);");
+	set_func_cmt(0X45F29,	"guild spell purchase list (scroll.icn): offers the spells trainCharacter allows for the character, price spellGoldPrice", 0);
 	set_frame_size(0X45F29, 0X42, 2, 0);
 	define_local_var(0X45F29, 0X464B4, "[bp-0X3E]", "s");
 	add_func    (0X46566,0X466B6);
@@ -39755,7 +39786,8 @@ static Functions_1(void) {
 	set_frame_size(0X466EC, 0X4, 2, 0);
 	add_func    (0X46847,0X46B1B);
 	set_func_flags(0X46847,0x5412);
-	SetType(0X46847, "int __cdecl __far sub_46847(char, char, char, char, int, void *s);");
+	SetType(0X46847, "int __cdecl __far finishCreation(char, char, char, char, int, void *s);");
+	set_func_cmt(0X46847,	"creation: name entry (10 chars) and construction of the 12Fh-byte record (racial resistances, spells, skills, age 18)", 0);
 	set_frame_size(0X46847, 0X1E, 2, 0);
 	define_local_var(0X46847, 0X46B1B, "[bp+0X10]", "s");
 	add_func    (0X46B2D,0X46C0D);
@@ -39764,10 +39796,12 @@ static Functions_1(void) {
 	set_frame_size(0X46B2D, 0X4, 2, 0);
 	add_func    (0X46C21,0X46C9B);
 	set_func_flags(0X46C21,0x5412);
+	set_func_cmt(0X46C21,	"creation: seven attributes = sum of three rnd(10,79)/10, then checkClasses", 0);
 	set_frame_size(0X46C21, 0X2, 2, 0);
 	add_func    (0X46C9B,0X46DD0);
 	set_func_flags(0X46C9B,0x5412);
-	SetType(0X46C9B, "int __cdecl __far sub_46C9B(int, int, char *buffer, char);");
+	SetType(0X46C9B, "int __cdecl __far showClassAvailability(int, int, char *buffer, char);");
+	set_func_cmt(0X46C9B,	"creation: draws each class icon available or greyed from the rolled attributes", 0);
 	set_frame_size(0X46C9B, 0X10, 2, 0);
 	define_local_var(0X46C9B, 0X46DD0, "[bp+0XA]", "buffer");
 	add_func    (0X46DE4,0X46E49);
@@ -39794,6 +39828,7 @@ static Functions_1(void) {
 	set_frame_size(0X47947, 0, 2, 0);
 	add_func    (0X47A33,0X47B8D);
 	set_func_flags(0X47A33,0x5412);
+	set_func_cmt(0X47A33,	"town building input: mouse/keyboard dispatcher returning a command code (C9h+n = party slot n, 1Bh = ESC)", 0);
 	set_frame_size(0X47A33, 0X2, 2, 0);
 	add_func    (0X47B8D,0X47E61);
 	set_func_flags(0X47B8D,0x1410);
@@ -40536,6 +40571,7 @@ static Functions_1(void) {
 	set_frame_size(0X61572, 0, 0, 0);
 	add_func    (0X615B6,0X619C3);
 	set_func_flags(0X615B6,0x5412);
+	set_func_cmt(0X615B6,	"video module text engine behind API 2Dh: control codes 01-0Dh; code 05h runs a draw list (sub_61BB8)", 0);
 	set_frame_size(0X615B6, 0, 2, 0);
 	add_func    (0X619C4,0X61A1B);
 	set_func_flags(0X619C4,0x5400);
@@ -40557,6 +40593,7 @@ static Functions_1(void) {
 	set_frame_size(0X61B42, 0, 0, 0);
 	add_func    (0X61BB8,0X61C10);
 	set_func_flags(0X61BB8,0x5400);
+	set_func_cmt(0X61BB8,	"video module draw-list interpreter: FFFF,off,seg selects a sprite set (seg 0 ends), else records x,y,flags,frame", 0);
 	set_frame_size(0X61BB8, 0, 0, 0);
 	add_func    (0X61C10,0X61C5C);
 	set_func_flags(0X61C10,0x5402);
@@ -40572,6 +40609,7 @@ static Functions_1(void) {
 	set_frame_size(0X61CDA, 0, 0, 0);
 	add_func    (0X61D70,0X61DAE);
 	set_func_flags(0X61D70,0x5400);
+	set_func_cmt(0X61D70,	"video module: draws one sprite frame (two layers) with the flag variants (mirror, scale 1-3, enlarge)", 0);
 	set_frame_size(0X61D70, 0, 0, 0);
 	add_func    (0X61DAE,0X61E21);
 	set_func_flags(0X61DAE,0x5400);

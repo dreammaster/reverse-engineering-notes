@@ -663,4 +663,18 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 430A8	loadMapGraphics	loads the environment graphics of map n: ENV table 30E2 -> town/cave/dung/castle tile set and the four '<env>wl<n>.vga' wall sheets for indoor maps, the seven terrain sheets named by the page header bytes 00-06 (name table 5A46) for outdoor maps
 
 36FDA	Party_stateBase	start of the 918-byte MAZE.PTY block (same address as Party_count, +0); an older entry 'Party_state' at 370DA was +100h off and was removed
-3731B	Party_eventFlags	53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)
+3731B	Party_eventFlags	53 bytes (MAZE.PTY +341h..+375h): byte flags set by events (mode 23); entries 0-9 are the availability flags of the hirelings (roster slots 20-29)17439	drawRow4Sprites	scene list writer: objects, monsters and effect sprites of the 4th (farthest) row, scale flag 300h
+17F38	drawRow3Sprites	scene list writer for the 3rd row (scale 200h)
+1862A	drawRow2Sprites	scene list writer for the 2nd row (scale 100h)
+18BF1	drawRow1Sprites	scene list writer for the adjacent row (full size)
+1DB3D	drawWallFaces	scene list writer: the wall face records (wl sheets) from the per-face flag bytes set by prepareIndoorView
+1B6D1	drawHudPieces	scene list writer for the compass (Direction Sense) and the secret-door indicator (Spot Secret Doors)
+615B6	vdrv_printTextEngine	video module text engine behind API 2Dh: control codes 01-0Dh; code 05h runs a draw list (sub_61BB8)
+61BB8	vdrv_runDrawList	video module draw-list interpreter: FFFF,off,seg selects a sprite set (seg 0 ends), else records x,y,flags,frame
+61D70	vdrv_blitFrame	video module: draws one sprite frame (two layers) with the flag variants (mirror, scale 1-3, enlarge)
+45F29	guildSpellShop	guild spell purchase list (scroll.icn): offers the spells trainCharacter allows for the character, price spellGoldPrice
+46847	finishCreation	creation: name entry (10 chars) and construction of the 12Fh-byte record (racial resistances, spells, skills, age 18)
+46C21	rollAttributes	creation: seven attributes = sum of three rnd(10,79)/10, then checkClasses
+46C9B	showClassAvailability	creation: draws each class icon available or greyed from the rolled attributes
+47A33	townMenuInput	town building input: mouse/keyboard dispatcher returning a command code (C9h+n = party slot n, 1Bh = ESC)
+26685	freeSpriteSlot	frees the far-pointer sprite resource in the slot and clears the slot
