@@ -1,2 +1,4 @@
 build/
 tests/test_cc
+ccdump
+tests/test_real

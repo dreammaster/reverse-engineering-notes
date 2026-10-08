@@ -8,7 +8,11 @@ each rule comes from.
 |---|---|
 | `cc.c/.h` | `.CC` archive reader: TOC cipher, filename hash, LZHUF decoder (port of `tools/mm3_cc.py`) |
 | `maze.c/.h` | `MAZEnn.DAT` pages (walls, flags, header), `MAZEnn.EVT` event records, `TEXTnn.MAZ` strings |
+| `ccdump.c` | list/extract a `.CC`; `make crosscheck` diffs it against `tools/mm3_cc.py` on the real archives (`DATA=../data`) |
 | `tests/` | `make test` -- round-trips a synthetic ciphered/LZHUF archive built by `gen_testdata.py` (which reuses the Python reference) and checks the parsers |
+
+Verified on the real game files (`../data`): all 558 `MM3.CC` and 240 `MM3.CUR` members extract byte-identical to the Python tool, and
+`make realtest` parses every `MAZEnn.DAT`/`.EVT` (10,831 events, records tile each file exactly).
 
 Not done yet (planned order): event interpreter, party/character data (`docs/character.h`), `MAZE.BIN` monsters/objects,
 rules (combat, spells, town), SDL front end (VGA palette, `.VGA`/`.OUT` sprite codec from `tools/mm3_gfx.py`),
