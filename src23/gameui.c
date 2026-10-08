@@ -121,6 +121,46 @@ static void drawShop(GameUi *ui) {
     }
 }
 
+void gameUiSetExe(GameUi *ui, const ExeData *exe) {
+    ui->exe = exe;
+}
+
+static void drawClue(GameUi *ui) {
+    GameKind game = ui->session->game;
+    if (ui->clueHelp) {
+        ClueHelpText help;
+        if (clueHelpTextLoad(&help, ui->exe, game)) {
+            clueHelpDraw(&ui->renderer, &help, ClueTabFirstBit);
+        }
+        return;
+    }
+    CluePagedText text;
+    if (cluePagedTextLoad(&text, ui->exe, game)) {
+        cluePagedDraw(&ui->renderer, &text, cluePagedPage(game, ui->worldDat, ui->worldSize, ui->cluePage), ui->cluePage, (uint16_t)((ClueTabFirstBit >> 5) | cluePagedNavFlags(game, ui->cluePage)));
+        ClueHelpText help;
+        if (ui->clueNag && clueHelpTextLoad(&help, ui->exe, game)) {
+            clueNagDraw(&ui->renderer, &help);
+        }
+    }
+}
+
+static bool clueKey(GameUi *ui, UiKey key) { /* Tab help, F6 the walk through, I / Q turn its pages, Escape closes */
+    if (key == UiKeyEscape) {
+        ui->overlay = UiOverlayNone;
+    } else if (key == 9 /* Tab */) {
+        ui->clueHelp = !ui->clueHelp;
+    } else if (key == UiKeyF6) {
+        ui->clueHelp = false;
+    } else if ((key == 'i' || key == 'q') && !ui->clueHelp) {
+        CluePagedResult result = cluePagedNavigate(ui->session->game, &ui->cluePage, (uint8_t)(key == 'i' ? 'I' : 'Q'), 0, ui->clueRegistered);
+        ui->clueNag = result == CluePagedNag;
+        if (result == CluePagedNag) {
+            effect(ui, 3);
+        }
+    }
+    return true;
+}
+
 void gameUiShowTitle(GameUi *ui) {
     ui->overlay = UiOverlayTitle;
 }
@@ -184,6 +224,9 @@ void gameUiDraw(GameUi *ui) {
     case UiOverlayTalk:
         memset(ui->screen, 0, sizeof(ui->screen));
         drawTalk(ui);
+        break;
+    case UiOverlayClue:
+        drawClue(ui);
         break;
     case UiOverlayDolls:
         for (unsigned i = 0; i < 4; i++) {
@@ -359,7 +402,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         code = ctrl ? 0x73 : 0x4B;
     } else if (key == UiKeyRight) {
         code = ctrl ? 0x74 : 0x4D;
-    } else if (key >= UiKeyF1 && key <= UiKeyF4) {
+    } else if (key >= UiKeyF1 && key <= UiKeyF8) {
         code = (uint8_t)(0x3B + (key - UiKeyF1));
     } else if (key >= 'a' && key <= 'z') {
         extended = false;
@@ -384,6 +427,14 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         break;
     case MainActionLocalMap:
         ui->overlay = UiOverlayLocalMap;
+        break;
+    case MainActionClueBook:
+        if (ui->exe) {
+            ui->overlay = UiOverlayClue;
+            ui->clueHelp = false;
+            ui->clueNag = false;
+            ui->cluePage = 1;
+        }
         break;
     case MainActionGameDialog:
         ui->overlay = UiOverlayDialog;
@@ -420,6 +471,9 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     }
     if (ui->overlay == UiOverlayTalk) {
         return talkKey(ui, key);
+    }
+    if (ui->overlay == UiOverlayClue) {
+        return clueKey(ui, key);
     }
     if (key == UiKeyEscape) {
         if (ui->overlay != UiOverlayNone) {

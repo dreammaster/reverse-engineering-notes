@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -118,6 +118,7 @@ static UiKey uiKeyFor(SDL_Keycode key) {
     case SDLK_LEFT: return UiKeyLeft;
     case SDLK_RIGHT: return UiKeyRight;
     case SDLK_ESCAPE: return UiKeyEscape;
+    case SDLK_TAB: return (UiKey)9;
     case SDLK_PLUS: case SDLK_KP_PLUS: case SDLK_EQUALS: return (UiKey)'+';
     case SDLK_MINUS: case SDLK_KP_MINUS: return (UiKey)'-';
     default:
@@ -157,6 +158,11 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case '$': return SDLK_2;
     case '%': return SDLK_3;
     case '&': return SDLK_4;
+    case 'Y': return SDLK_F8; /* the clue book; X = F6 (walk through), Z = Tab (help), I / J = I / Q (turn pages) */
+    case 'X': return SDLK_F6;
+    case 'Z': return SDLK_TAB;
+    case 'I': return SDLK_i;
+    case 'J': return SDLK_q;
     case 'W': return SDLK_F5; /* save */
     case 'O': return SDLK_F9; /* load */
     default: return SDLK_UNKNOWN;
@@ -246,9 +252,10 @@ static void introWaitSound(void *ctx) {
     }
 }
 
-static bool playIntro(void *ctx, const char *kind) {
-    (void)ctx;
-    GameKind game = g_session->game;
+static ExeData g_exe;
+
+/* The executable (SW.EXE / REGISTER.EXE): its data segment holds the cinematic and clue book texts. */
+static bool loadExe(GameKind game) {
     char path[512];
     snprintf(path, sizeof(path), "%s/%s", g_dir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
     FILE *f = fopen(path, "rb");
@@ -259,9 +266,18 @@ static bool playIntro(void *ctx, const char *kind) {
     static uint8_t exeBytes[400000];
     size_t exeSize = fread(exeBytes, 1, sizeof(exeBytes), f);
     fclose(f);
-    ExeData exe;
-    if (!exeDataOpen(&exe, game, exeBytes, exeSize)) {
+    if (!exeDataOpen(&g_exe, game, exeBytes, exeSize)) {
         fprintf(stderr, "%s is not the game executable\n", path);
+        return false;
+    }
+    return true;
+}
+
+static bool playIntro(void *ctx, const char *kind) {
+    (void)ctx;
+    GameKind game = g_session->game;
+    ExeData exe = g_exe;
+    if (!exe.data) {
         return false;
     }
     IntroAssets assets = {g_worldDat, g_worldSize, &exe, pictureFileGet, g_pictures, game};
@@ -331,6 +347,12 @@ int main(int argc, char **argv) {
     if (!gameUiInit(&g_ui, g_session, g_worldDat, g_worldSize, pictureFileGet, g_pictures, &uiHost)) {
         fprintf(stderr, "the world data lacks the view tables\n");
         return 1;
+    }
+    if (loadExe(game)) {
+        gameUiSetExe(&g_ui, &g_exe);
+    }
+    if (loadExe(game)) {
+        gameUiSetExe(&g_ui, &g_exe);
     }
     g_ui.debugMarkers = getenv("EXPLORE_DEBUG") != NULL;
     if (getenv("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */

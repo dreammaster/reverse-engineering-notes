@@ -4,7 +4,7 @@
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
- *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c && ./test_gameui
+ *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
  */
@@ -140,6 +140,51 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiDraw(&ui);
     check("P shows the paper dolls", ui.overlay == UiOverlayDolls);
     gameUiKey(&ui, UiKeyEscape, false);
+    snprintf(path, sizeof(path), "%s/%s", dir ? dir : defaultDir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
+    size_t exeSize;
+    uint8_t *exeBytes = readFile(path, &exeSize);
+    static ExeData exe;
+    if (exeBytes && exeDataOpen(&exe, game, exeBytes, exeSize)) {
+        gameUiKey(&ui, UiKeyF8, false);
+        check("F8 does nothing without the executable", ui.overlay == UiOverlayNone);
+        gameUiSetExe(&ui, &exe);
+        gameUiKey(&ui, UiKeyF8, false);
+        gameUiDraw(&ui);
+        unsigned page1 = sum(ui.screen);
+        check("F8 opens the clue book on the walk through's first page", ui.overlay == UiOverlayClue && ui.cluePage == 1 && page1 > 0);
+        gameUiKey(&ui, 'q', false);
+        gameUiDraw(&ui);
+        check("Q turns to page 2, which draws differently", ui.cluePage == 2 && sum(ui.screen) != page1);
+        gameUiKey(&ui, 'i', false);
+        gameUiKey(&ui, 'i', false);
+        check("I does not go before page 1", ui.cluePage == 1);
+        for (unsigned i = 0; i < 6; i++) {
+            gameUiKey(&ui, 'q', false);
+        }
+        check("the unregistered walk through stops at page 6 with the reminder", ui.cluePage == CluePagedFreePages + 1 && ui.clueNag);
+        gameUiDraw(&ui);
+        unsigned nag = sum(ui.screen);
+        ui.clueRegistered = true;
+        gameUiKey(&ui, 'q', false);
+        gameUiDraw(&ui);
+        check("registered, it goes on and the reminder goes away", ui.cluePage == CluePagedFreePages + 2 && !ui.clueNag && sum(ui.screen) != nag);
+        ui.clueRegistered = false;
+        while (ui.cluePage > 1) {
+            gameUiKey(&ui, 'i', false);
+        }
+        gameUiKey(&ui, 9, false);
+        gameUiDraw(&ui);
+        unsigned help = sum(ui.screen);
+        check("Tab shows the help screen", ui.clueHelp && help != page1);
+        gameUiKey(&ui, UiKeyF6, false);
+        check("F6 goes back to the walk through", !ui.clueHelp);
+        gameUiKey(&ui, 'e', false);
+        check("the game keys are swallowed inside the clue book", ui.overlay == UiOverlayClue);
+        check("Escape closes the clue book without quitting", gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayNone);
+    } else {
+        printf("SKIP clue book (%s not found)\n", path);
+        g_skipCount++;
+    }
     gameUiKey(&ui, UiKeyF5, false);
     int sx = s->x;
     gameUiKey(&ui, UiKeyLeft, false);

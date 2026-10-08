@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "cluebook.h"
+#include "cluepaged.h"
+#include "exedata.h"
 #include "session.h"
 #include "viewrender.h"
 
@@ -18,7 +21,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -61,6 +64,11 @@ typedef struct {
     unsigned shopLock;     /* the lock record of the shop being shown */
     unsigned lastMusicPage;
     unsigned castNext;     /* the next spell id the C key tries outside a combat */
+    const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
+    bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
+    bool clueNag;          /* the reminder is showing on the page */
+    bool clueHelp;         /* the clue book shows its help screen (Tab), else the walk through */
+    unsigned cluePage;     /* the walk through's page, 1-based */
     bool debugMarkers;     /* print the monster markers in view to stderr */
 } GameUi;
 
@@ -73,6 +81,9 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
  * builds heroes; sessionSetParty installs them).
  */
 void gameUiShowTitle(GameUi *ui);
+
+/* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. Today it shows the walk through (F6, I / Q turn pages) and the help screen (Tab). */
+void gameUiSetExe(GameUi *ui, const ExeData *exe);
 
 /* One key press; false = quit (Escape with no overlay open). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);

@@ -46,6 +46,10 @@ callbacks (sound effect, music track, the ending cinematic, store / fetch a save
 driver) and VOC effects to the mixer, and run the cinematics of `introstory.h` (`introOpeningScript`, `introStoryScript`, `introEndingScript`, `introOpening3Script`) against its host
 interface. `tools/explore_sdl.c` is exactly that glue for SDL2, about 300 lines.
 
+The clue book (F8) opens when the platform hands the UI the executable with `gameUiSetExe` (its texts live in the data segment; `ExeData`): today it shows the walk through (F6; I / Q turn the pages; the
+shareware limit after page 5 is `clueRegistered`, which a ScummVM front end would set) and the help screen (Tab). The category lists (maps, monsters, spells, items) are the remaining clue-book work; the page
+renderers for them exist (`cluemap.c`, `cluemonster.c`, `cluespell.c`, `clueitem.c`, `cluetransport.c`), only the controller does not.
+
 ## Engine loop
 
 1. Title screen (`titlemenu.c`), character creation (`charcreate.c`, `chargen.c`, `newgame.c`) or a loaded save.
