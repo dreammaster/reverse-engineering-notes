@@ -512,6 +512,61 @@ SessionCast sessionCastBy(GameSession *s, unsigned casterSlot, unsigned spellId,
     return castSpell(s, casterSlot, spellId, returnToMark);
 }
 
+/* TickWorldAilments (yendor2.asm:27798): the light sources burn down one unit -- the global slots, every member's eight main slots, the spell timers. */
+static void worldTick(GameSession *s) {
+    for (unsigned member = 0; member < 4; member++) {
+        uint8_t *record = sessionPartyRecord(s, member);
+        for (unsigned slot = 1; record && slot <= InventorySlotCount; slot++) {
+            lightSourceTickItemSlot(&s->light, inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), slot), 1);
+        }
+    }
+    lightSourceTickTimers(&s->light, 1);
+}
+
+static bool lightsActive(const GameSession *s) {
+    unsigned total = 0;
+    for (unsigned i = 0; i < LightSourceCount; i++) {
+        total += s->light.litCount[i];
+    }
+    for (unsigned i = 0; i < LightSpellTimerCount; i++) {
+        total += s->light.timers[i];
+    }
+    return total != 0;
+}
+
+void sessionAdvanceTime(GameSession *s, unsigned minutes) {
+    for (unsigned n = 0; n < minutes; n++) {
+        GameClock *c = &s->clock;
+        c->minutes++;
+        if (c->minutes == 0x5A1) { /* the per-minute AdvanceGameClock: a new day (the original's bounds, 1441, are reproduced) */
+            for (unsigned i = 0; i < SavePartyRecordCount; i++) {
+                uint8_t *record = saveGamePartyRecord(&s->save, i);
+                if (record) {
+                    partyResetDailyAbilityCharges(record);
+                }
+            }
+            c->minutes = 1;
+            if (++c->day == 31) {
+                c->day = 1;
+                if (++c->month == 13) {
+                    c->year++;
+                    c->month = 1;
+                }
+            }
+        } else if (c->minutes == 0x168 || c->minutes == 0x438) { /* 06:00 and 18:00: the day / night palette fade */
+            s->pendingFade = c->minutes == 0x168 ? 1 : 2;
+        }
+        if (lightsActive(s)) { /* every fifth minute while anything burns */
+            if (s->worldTickCountdown != 0 && --s->worldTickCountdown == 0) {
+                worldTick(s);
+            }
+            if (s->worldTickCountdown == 0) {
+                s->worldTickCountdown = 5;
+            }
+        }
+    }
+}
+
 static void travelTo(GameSession *s, unsigned destinationId);
 
 SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot) {

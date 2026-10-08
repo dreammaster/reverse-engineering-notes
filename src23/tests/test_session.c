@@ -642,6 +642,35 @@ static void testEquip(GameKind game, const uint8_t *world, size_t size, const ch
     sessionFree(s);
 }
 
+/* Time: a day rolls the calendar and recharges abilities, the dawn and dusk fades are asked for, and burning lights burn down. */
+static void testTime(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[160];
+    s->clock.minutes = 359;
+    s->clock.day = 30;
+    s->clock.month = 12;
+    s->clock.year = 5;
+    partySetU16(sessionPartyRecord(s, 0), PartyFieldAbilityCharge, 7);
+    sessionAdvanceTime(s, 1);
+    bool dawn = s->pendingFade == 1;
+    s->pendingFade = 0;
+    s->clock.minutes = 1079;
+    sessionAdvanceTime(s, 1);
+    bool dusk = s->pendingFade == 2;
+    s->clock.minutes = 1440;
+    sessionAdvanceTime(s, 1);
+    snprintf(text, sizeof(text), "%s: 06:00 and 18:00 ask for the palette fades, midnight rolls the day and the abilities recharge", label);
+    check(text, dawn && dusk && s->clock.minutes == 1 && s->clock.day == 1 && s->clock.month == 1 && s->clock.year == 6 && partyGetU16(sessionPartyRecord(s, 0), PartyFieldAbilityCharge) == 0);
+    s->light.timers[0] = 12;
+    s->light.litFlags |= 0x8000 | 0x100;
+    sessionAdvanceTime(s, 70);
+    check("a spell light timer counts down in five-minute steps and goes out", s->light.timers[0] == 0 && !(s->light.litFlags & 0x100));
+    sessionFree(s);
+}
+
 /* The keys to destinations: shown closed until their gate flag is set, then they take the party there. */
 static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -846,6 +875,7 @@ int main(void) {
             testShop(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testLightsAndRelics(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testEquip(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testTime(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

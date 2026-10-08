@@ -77,6 +77,8 @@ typedef struct GameSession {
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
     unsigned pendingTravel; /* a destination waiting for its password (SessionInteractTravelPassword) */
+    unsigned pendingFade;   /* 1 at 06:00, 2 at 18:00 (sessionAdvanceTime): the front end runs the dawn / dusk palette fade (palette.h) and clears it */
+    unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
     unsigned pendingMusic;  /* a music track a command asked for (the pan flute); the front end plays it and clears it */
     unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
     uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
@@ -200,6 +202,13 @@ SessionService sessionTalkService(GameSession *session, const ConversationStep *
 
 /* The typed password for the destination sessionInteract asked about; true (and the party travels) when it is right. */
 bool sessionTravelPassword(GameSession *session, const char *typed);
+
+/*
+ * Game time passing, minute by minute as AdvanceGameClock does (the original is driven by a timer; the front end decides how fast): the clock and calendar (a day is 1440
+ * minutes, 30-day months, the original's 1441 bound reproduced), the daily ability charges reset at a new day, `pendingFade` set at 06:00 and 18:00, and, every fifth
+ * minute while a light burns, TickWorldAilments: the lit candles and torches and the spell timers burn down. (sessionRest advances the clock by itself.)
+ */
+void sessionAdvanceTime(GameSession *session, unsigned minutes);
 
 /* Takes every slot still in the chest ahead; returns how many. */
 unsigned sessionLoot(GameSession *session);

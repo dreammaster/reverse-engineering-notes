@@ -23,7 +23,7 @@
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, K, S, A, P, 1 2, + -, ESC as '!') the
  * keys are played at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display;
- * SDL_AUDIODRIVER=dummy or EXPLORE_NOSOUND=1 silences it). EXPLORE_RANDOM=<n> plays n random keys, EXPLORE_START=x,y,N|E|S|W starts elsewhere, EXPLORE_DEBUG=1
+ * SDL_AUDIODRIVER=dummy or EXPLORE_NOSOUND=1 silences it). EXPLORE_CLOCK_MS=<n> lets one game minute pass every n ms (sessionAdvanceTime), EXPLORE_RANDOM=<n> plays n random keys, EXPLORE_START=x,y,N|E|S|W starts elsewhere, EXPLORE_DEBUG=1
  * lists the monster markers in view.
  */
 #include <stdio.h>
@@ -746,6 +746,13 @@ int main(int argc, char **argv) {
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;
             }
+        }
+        static Uint32 lastMinute;
+        unsigned clockMs = getenv("EXPLORE_CLOCK_MS") ? (unsigned)atoi(getenv("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
+        if (clockMs && !g_session->combat.active && SDL_GetTicks() - lastMinute >= clockMs) {
+            lastMinute = SDL_GetTicks();
+            sessionAdvanceTime(g_session, 1);
+            dirty = true;
         }
         if (dirty) {
             drawScene(&renderer, pictures, overlay);
