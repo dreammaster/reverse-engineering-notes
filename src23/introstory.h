@@ -137,6 +137,10 @@ bool introOpeningStart(IntroStory *story, const IntroAssets *assets);
 
 bool introEndingStart(IntroStory *story, const IntroAssets *assets);
 
+/* Chapter 2's credits (the title menu's R and what follows the ending): the table of credit screens is read from the executable (DS:0xC2FB). Chapter 3's routine is not scripted: false. */
+bool introCreditsStart(IntroStory *story, const IntroAssets *assets);
+bool introCreditsPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
+
 /* Chapter 3's opening: starts from the master palette (block 0) shown on a black screen. */
 bool introOpening3Start(IntroStory *story, const IntroAssets *assets);
 bool introOpening3Play(IntroStory *story, const IntroAssets *assets, const IntroHost *host);

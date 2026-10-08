@@ -18,7 +18,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -66,6 +66,13 @@ typedef struct {
 
 /* worldDat must stay valid for the life of the UI. False if the view tables are missing from it. */
 bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_t worldSize, ViewPictureFn picture, void *pictureCtx, const GameUiHost *host);
+
+/*
+ * The title menu (titlemenu.h: PICTURES category 0 picture 2 with its five commands baked in) as the first screen: E enters the game (the overlay closes), I plays the opening
+ * cinematic through the host ("opening"), R the credits ("credits"; Chapter 2), Escape or Ctrl+Q quits. The roster, the world map and character creation screens are not driven from here (creation.h
+ * builds heroes; sessionSetParty installs them).
+ */
+void gameUiShowTitle(GameUi *ui);
 
 /* One key press; false = quit (Escape with no overlay open). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);

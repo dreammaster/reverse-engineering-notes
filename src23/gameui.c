@@ -14,6 +14,7 @@
 #include "pictures.h"
 #include "statsheet.h"
 #include "statuspanel.h"
+#include "titlemenu.h"
 
 bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_t worldSize, ViewPictureFn picture, void *pictureCtx, const GameUiHost *host) {
     memset(ui, 0, sizeof(*ui));
@@ -120,8 +121,20 @@ static void drawShop(GameUi *ui) {
     }
 }
 
+void gameUiShowTitle(GameUi *ui) {
+    ui->overlay = UiOverlayTitle;
+}
+
 void gameUiDraw(GameUi *ui) {
     GameSession *s = ui->session;
+    if (ui->overlay == UiOverlayTitle) {
+        memset(ui->screen, 0, sizeof(ui->screen));
+        const uint8_t *menu = ui->renderer.picture(ui->renderer.pictureCtx, 0, TitleMenuPicture);
+        for (unsigned row = 0; menu && row < 198; row++) {
+            memcpy(&ui->screen[(row + 1) * ViewScreenWidth + 1], &menu[row * 318], 318);
+        }
+        return;
+    }
     ViewScene scene;
     DungeonGridCell cells[ViewportCellCount];
     sessionScene(s, &scene, cells);
@@ -391,6 +404,17 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
+    if (ui->overlay == UiOverlayTitle) {
+        if (key == 'e') {
+            ui->overlay = UiOverlayNone;
+            gameUiAmbientMusic(ui);
+        } else if ((key == 'i' || key == 'r') && ui->host.cinematic) {
+            ui->host.cinematic(ui->host.ctx, key == 'i' ? "opening" : "credits");
+        } else if (key == UiKeyEscape || (key == 'q' && ctrl)) {
+            return false;
+        }
+        return true;
+    }
     if (ui->overlay == UiOverlayShop) {
         return shopKey(ui, key);
     }

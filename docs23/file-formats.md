@@ -7573,6 +7573,17 @@ quest flags saved": in the header, with everything else of the DS state block. `
 the highest index used by the dialog data is 183 (Chapter 2) / 224 (Chapter 3), well inside the 768 the 96 bytes hold. (Chapter 3's new-game header has `0xFF` bytes at `+0xF2`..`+0x10D`: 224
 flags set from the start.)
 
+### The title menu's names, and Chapter 2's credits (2026-10-08)
+
+The five lines of the title picture read **Character Creation (C), Assemble a Party (A), Enter the Game (E), Credits (R), Introduction (I)**, with `CTRL Q - QUIT`, `CTRL M - MUSIC` and
+`CTRL S - SOUND` along the bottom: so `titlemenu.h`'s "intro picture" (R, `ShowIntroPicture`) is the **credits** and its "character creation" (I, `RunCharacterCreation`) is the
+**Introduction** -- the cinematic of "The opening story" above -- while C is the roster / creation hub (`ShowPartyMembers`). Chapter 2's `ShowIntroPicture` (yendor2.asm:2545) is the
+script `credits()` in `src23/introstory.c` (`introCreditsStart` / `introCreditsPlay`; `tools/intro_story <dir> out.png 0 credits`): music track 1, picture 5 of category 0, palette block
+3 faded in over 63 rounds (16 colours at 0x40 and 0x30 at 0x50 together), then the table at DS:0xC2FB (six bytes a screen: lines, ticks, near pointer to the NUL-separated lines; 0xFFFF
+ends) -- the colours 0xE0-0xEF fade down, rows 84-193 are cleared, the lines are written at (40, 87) in 0xE0 and again at (39, 86) in 0xEB, the colours fade up and the screen stays for
+its ticks; Escape ends it anywhere. The credit names (designers, voices, portrait models, actors, special thanks) are in `SW.EXE`; Chapter 3's routine (yendor3.asm:9324) draws picture 11
+at (240, 0) with the table at DS:0xA919 in colour 0xF9 and is not scripted.
+
 ## Not yet examined
 
 - `SBFMDRV.COM` — third-party(?) Sound Blaster FM driver, likely not

@@ -221,6 +221,29 @@ static void testPlay(void) {
     introEndingStart(&story, &endAssets);
     introEndingPlay(&story, &endAssets, &host);
     check("with sound effects on the last panel plays its voice instead of drawing", counts.sounds == 4);
+    /* the credits: a table of two screens at DS:0xC2FB */
+    static const unsigned table[] = {2, 5, 0xC400, 1, 3, 0xC420, 0xFFFF, 0, 0};
+    for (unsigned i = 0; i < sizeof(table) / sizeof(table[0]); i++) {
+        image[0x21660 + 0xC2FB + i * 2] = (uint8_t)(table[i] & 0xFF);
+        image[0x21660 + 0xC2FB + i * 2 + 1] = (uint8_t)(table[i] >> 8);
+    }
+    image[0x21660 + 0xC400] = 'A';
+    image[0x21660 + 0xC402] = 'B';
+    memcpy(image + 0x21660 + 0xC420, "C", 2);
+    ExeData exe3;
+    exeDataOpen(&exe3, GameYendor2, image, imageSize);
+    IntroAssets creditAssets = {world, size, &exe3, picture, NULL, GameYendor2};
+    memset(&counts, 0, sizeof(counts));
+    host.soundEffectsOn = false;
+    host.escape = onEscape;
+    check("the credits start from the master palette", introCreditsStart(&story, &creditAssets));
+    finished = introCreditsPlay(&story, &creditAssets, &host);
+    check("they run through both screens (music 1, about 480 ticks: the fades, 126 rounds of the pair and the 8 ticks of waiting) and end on black", finished && counts.music == 1 && counts.ticks > 400 && counts.ticks < 600 && counts.lastDac[30] == 0);
+    memset(&counts, 0, sizeof(counts));
+    counts.escapeAfter = 1;
+    introCreditsStart(&story, &creditAssets);
+    finished = introCreditsPlay(&story, &creditAssets, &host);
+    check("Escape ends them early", !finished);
     free(world);
     free(image);
 }

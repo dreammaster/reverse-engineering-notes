@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -18,12 +18,12 @@
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), M the local area map, D the pause
  * dialog, P the paper dolls, F5 saves / F9 loads explore.sav (the original save-file layout), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
- * EXPLORE_INTRO=opening|story|ending plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
+ * EXPLORE_INTRO=opening|story|ending|credits plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
  * the milliseconds per tick, 25 by default; EXPLORE_INTRO_SOUND=1 plays the voices instead of drawing the text); Escape ends it.
  *
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, K, S, A, P, 1 2, + -, ESC as '!') the
  * keys are played at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display;
- * SDL_AUDIODRIVER=dummy or EXPLORE_NOSOUND=1 silences it). EXPLORE_CLOCK_MS=<n> lets one game minute pass every n ms (sessionAdvanceTime), EXPLORE_RANDOM=<n> plays n random keys, EXPLORE_START=x,y,N|E|S|W starts elsewhere, EXPLORE_DEBUG=1
+ * SDL_AUDIODRIVER=dummy or EXPLORE_NOSOUND=1 silences it). EXPLORE_TITLE=1 starts on the title menu, EXPLORE_CLOCK_MS=<n> lets one game minute pass every n ms (sessionAdvanceTime), EXPLORE_RANDOM=<n> plays n random keys, EXPLORE_START=x,y,N|E|S|W starts elsewhere, EXPLORE_DEBUG=1
  * lists the monster markers in view.
  */
 #include <stdio.h>
@@ -276,6 +276,8 @@ static bool playIntro(void *ctx, const char *kind) {
         ok = introOpening3Start(&story, &assets) && introOpening3Play(&story, &assets, &host);
     } else if (strcmp(kind, "ending") == 0) {
         ok = introEndingStart(&story, &assets) && introEndingPlay(&story, &assets, &host);
+    } else if (strcmp(kind, "credits") == 0) {
+        ok = introCreditsStart(&story, &assets) && introCreditsPlay(&story, &assets, &host);
     } else if (strcmp(kind, "story") == 0) {
         ok = introStoryStart(&story, &assets) && introStoryPlay(&story, &assets, &host);
     } else {
@@ -331,6 +333,9 @@ int main(int argc, char **argv) {
         return 1;
     }
     g_ui.debugMarkers = getenv("EXPLORE_DEBUG") != NULL;
+    if (getenv("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */
+        gameUiShowTitle(&g_ui);
+    }
     const uint8_t *palette = gameUiPalette(&g_ui);
     if (!palette) {
         fprintf(stderr, "the world data lacks the master palette\n");

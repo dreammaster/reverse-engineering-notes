@@ -110,8 +110,14 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     char text[160];
     snprintf(text, sizeof(text), "%s: the UI starts on a session with the world's view tables and palette", label);
     check(text, s && gameUiInit(&ui, s, world, size, picture, NULL, &host) && gameUiPalette(&ui));
+    gameUiShowTitle(&ui);
+    gameUiDraw(&ui);
+    unsigned titleSum = sum(ui.screen);
+    check("the title menu draws picture 2 and swallows the game keys", titleSum > 0 && (gameUiKey(&ui, UiKeyUp, false), s->x == s->x) && ui.overlay == UiOverlayTitle);
+    check("E enters the game", gameUiKey(&ui, 'e', false) && ui.overlay == UiOverlayNone);
     gameUiDraw(&ui);
     unsigned first = sum(ui.screen);
+    check("the game frame differs from the title", first != titleSum);
     check("the first frame draws something", first > 0);
     int x = s->x, y = s->y;
     unsigned moved = 0;

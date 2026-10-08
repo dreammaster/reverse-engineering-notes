@@ -758,6 +758,89 @@ bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     return runScript(s, a, h, ops, count);
 }
 
+/*
+ * ShowIntroPicture (yendor2.asm:2545), the title menu's R "Credits" (and what `start` shows after the ending): music track 1; picture 5 of category 0 (the stone backdrop) at (1, 1);
+ * palette block 3 faded in over 63 rounds, 16 colours at 0x40 and 0x30 at 0x50 together; then the credit screens of the table at DS:0xC2FB (six bytes each: the number of lines, the
+ * ticks to stay, the near pointer to the NUL-separated lines; 0xFFFF ends it): the colours 0xE0-0xEF fade down, the lower region (rows 84-193) is cleared, the lines are written at
+ * (40, 87) in 0xE0 and again at (39, 86) in 0xEB (a shadow), the colours fade up, and the screen stays for its ticks (Escape ends it all at any point). Afterwards block 0 is
+ * the palette again and the screen fades out. Chapter 2's; Chapter 3's routine (yendor3.asm:9324) draws picture 11 at (240, 0) and the same table in colour 0xF9 and is not scripted.
+ */
+static bool credits(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    if (h->music) {
+        h->music(h->ctx, 1);
+    }
+    const uint8_t *backdrop = a->picture(a->pictureCtx, 0, 5);
+    if (backdrop) {
+        blitOpaque(s->screen, backdrop, 318, 198, 1, 1);
+    }
+    present(s, h);
+    if (a->worldSize >= paletteBlockOffset(a->game, 3) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 3), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    paletteFadeInPrepare(&s->fader);
+    bool stopped = escaped(h);
+    if (!stopped) {
+        FadeCtx ctx = {s, a, h, false};
+        for (unsigned round = 0; round < 63; round++) {
+            paletteFadeRange(&s->fader, 6, 1, 16, 0x40, onFadeRound, &ctx);
+            paletteFadeRange(&s->fader, 6, 1, 0x30, 0x50, onFadeRound, &ctx);
+        }
+        memset(s->fader.out, 0, PaletteBytes);
+        stopped = escaped(h);
+    }
+    for (unsigned at = 0xC2FB; !stopped && exeDataU16(a->exe, at) != 0xFFFF; at += 6) {
+        IntroCard card = {exeDataU16(a->exe, at + 4), exeDataU16(a->exe, at), 40, 87, IntroCardNoVoice};
+        unsigned ticks = exeDataU16(a->exe, at + 2);
+        fade(s, a, h, 3, 63, 16, 0xE0, false);
+        memset(s->screen + 84 * 320, 0, (size_t)110 * 320);
+        for (unsigned line = 0; line < card.lines; line++) {
+            char text[IntroCardLineMax];
+            if (!introCardLine(a->exe, &card, line, text)) {
+                break;
+            }
+            fontDrawString(a->game, 0, s->screen, 320, 40, 87 + (int)line * 6, text, 0xE0, 0, FontTransparent);
+            fontDrawString(a->game, 0, s->screen, 320, 39, 86 + (int)line * 6, text, 0xEB, 0, FontTransparent);
+        }
+        present(s, h);
+        if (escaped(h)) {
+            break;
+        }
+        fade(s, a, h, 4, 63, 16, 0xE0, false);
+        for (unsigned t = 0; t < ticks; t++) {
+            waitTicks(s, h, 1);
+            if (escaped(h)) {
+                stopped = true;
+                break;
+            }
+        }
+    }
+    fade(s, a, h, 3, 63, 16, 0xE0, false);
+    fade(s, a, h, 0, 63, 256, 0, false);
+    if (a->worldSize >= paletteBlockOffset(a->game, 0) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    return !stopped;
+}
+
+bool introCreditsStart(IntroStory *s, const IntroAssets *a) {
+    if (a->game != GameYendor2 || a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
+        return false;
+    }
+    memset(s->screen, 0, sizeof(s->screen));
+    memset(&s->fader, 0, sizeof(s->fader));
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
+    memcpy(s->fader.dac, s->fader.target, PaletteBytes);
+    memcpy(s->fader.buffer, s->fader.target, PaletteBytes);
+    s->scrollY = 0;
+    return true;
+}
+
+bool introCreditsPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    return credits(s, a, h);
+}
+
 bool introEndingStart(IntroStory *s, const IntroAssets *a) {
     if (a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
         return false;

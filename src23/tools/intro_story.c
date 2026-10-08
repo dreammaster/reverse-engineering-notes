@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
- *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir)]
+ *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir) | credits: Chapter 2's credits]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,7 +48,7 @@ static void soundFn(void *ctx, unsigned id) {
 }
 
 /* a snapshot at every Escape poll that follows a card, picture, frame or fade: the stage is complete there */
-static bool g_drawn, g_ending, g_chapter3;
+static bool g_drawn, g_ending, g_chapter3, g_credits;
 
 static void snapshot(void) {
     if (g_stills >= MaxStills) {
@@ -103,6 +103,7 @@ int main(int argc, char **argv) {
     }
     fclose(f);
     g_chapter3 = argc > 4 && strcmp(argv[4], "opening3") == 0;
+    g_credits = argc > 4 && strcmp(argv[4], "credits") == 0;
     snprintf(path, sizeof(path), "%s/%s", argv[1], g_chapter3 ? "REGISTER.EXE" : "SW.EXE");
     f = fopen(path, "rb");
     if (!f) {
@@ -138,12 +139,12 @@ int main(int argc, char **argv) {
     static IntroStory story;
     bool all = argc > 4 && strcmp(argv[4], "all") == 0;
     g_ending = argc > 4 && strcmp(argv[4], "ending") == 0;
-    if (!(g_chapter3 ? introOpening3Start(&story, &assets) : g_ending ? introEndingStart(&story, &assets) : all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
+    if (!(g_credits ? introCreditsStart(&story, &assets) : g_chapter3 ? introOpening3Start(&story, &assets) : g_ending ? introEndingStart(&story, &assets) : all ? introOpeningStart(&story, &assets) : introStoryStart(&story, &assets))) {
         fprintf(stderr, "cannot start the story\n");
         return 1;
     }
     IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0, NULL, NULL};
-    bool finished = g_chapter3 ? introOpening3Play(&story, &assets, &host) : g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
+    bool finished = g_credits ? introCreditsPlay(&story, &assets, &host) : g_chapter3 ? introOpening3Play(&story, &assets, &host) : g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
     printf("story %s: %u ticks, %u sound events, %u stills\n", finished ? "finished" : "stopped", g_ticks, g_sounds, g_stills);
 
     unsigned rows = (g_stills + Columns - 1) / Columns;
