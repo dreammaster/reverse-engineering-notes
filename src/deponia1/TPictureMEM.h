@@ -9,6 +9,8 @@
 // base chain (TPictureMEM : public TSprite).
 #pragma once
 
+#include <stdint.h>
+
 #include "TSprite.h"
 
 struct TPictureMemBlock;
@@ -19,6 +21,12 @@ public:
 	virtual ~TPictureMEM() = default;
 
 	void ClearMemData();
+
+	// Confirmed call shape only (ImageEmitter::CreateWithImage(), Deponia_Linux.asm line 697672): the 32-bit pixels
+	// (width * height of them, 0xAABBGGRR) of the loaded picture; null here, as the decoders are not reconstructed.
+	const uint32_t *GetMemoryData() const {
+		return nullptr;
+	}
 
 	// Confirmed call shapes only (TGScene::GetTint()/SetCurrentLightmap(),
 	// Deponia_Linux.asm lines 168383-171104) - a lightmap's pixel lookup (the

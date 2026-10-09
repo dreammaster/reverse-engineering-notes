@@ -3555,6 +3555,40 @@ non-zero offset puts the sound at the offset `Play` was given, not at the one pa
 a stream on but never off; `PlaySound` is `TSoundFFMPEG::Play(file, volume, balance, loop, streamed, fadeIn, type,
 offset)` (the earlier order of its arguments was wrong). The fades are described at the top of `TSoundBase.h`.
 
+## The particle emitters (graphicslib/particleHaduken.cpp, vscommon/scripting/particles.cpp)
+
+`ParticleContainer` is a pool of 80-byte `Particle`s (a free slot has `_age == -1`) that one `Emitter` fills; the emitter
+kinds are Emitter (no place), Point, Line, Box, Square (a ring of half-size `radius`, hole `innerRadius`), Circle and Image
+(the pixels of a picture with alpha >= 128, with their colours when `imageType` is not "alpha"). Everything about a particle
+is a curve of the emitter: the MinMax ones are read at the emitter's phase when the particle is born and mixed by a random
+number (the order of the random numbers is the original's: life, visibility, size, angularVelocity, weight, rotation, spin,
+motionRandomness, then place, direction, velocity), the `*OverLife` ones at `age / life` on every step. A step is
+`0.0166` s for the emitter and `0.016` s for a particle. The generator is the one global `generator` (xorshift64*, seeded
+with a fixed number, so the first particles of every run are the same). Things the asm shows:
+
+- `FloatCurveEvaluater::eval` follows the first segment *backwards* for a time before the first point (so a curve that does
+  not begin at 0 goes below its first value at 0); after the last point it holds the last value. A segment of no length is
+  one long. The array format is `time, value, time, value ...`; a MinMax array is two of those cut by `-10000` (odd length)
+  or in the middle (even length).
+- `ParticleContainer::Update(usePhase, pos, phase, updateChildren)` is also called for the children of a particle with the
+  age of the particle as the phase. The container the script makes is updated with `(false, 0, 0, true)`. With `usePhase`
+  true the container either moves its particles (children true) or makes new ones (false), never both; the combination is
+  not used by any caller found. New particles take a random hue as their colour first (so `colorOverLife` is not needed
+  to get coloured ones).
+- A free slot is reused only while `_count < _maximum`; when the pool is full of just-dead particles a new step appends
+  new slots, so the vector grows a little beyond `maximum`.
+- `particles_updateValue` reads the stack at index 4 for `warmup`, whatever index it is given (right in `new`, where the
+  value is the 4th entry, wrong for `ps.warmup = 5`, which reads the 4th argument of `__newindex`: nothing). The log of an
+  unknown `emitterType` names the key ("emitter"), not the kind.
+- The script keys are: container `creationRate`, `maximum`, `warmup`, `transferMode` ("add" or "blend"), `imageChoice`
+  (a number: the pictures go round every n seconds; a string: by chance), `images`, `imageCenter`, `emitter`; emitter
+  `emitterType` (line, basic, circle, square, box, point, image), `image`, `imageType`, `center`, `length`, `angle`, `radius`,
+  `innerRadius`, `sizeX`, `sizeY`, `loops`, `duration`, `directionToRotation`, `directionToRotationOffset` and the curves.
+
+Not reconstructed (in TODO.md): `ParticleContainer::Draw` (vertex buffers through `particlePipeline`), the Serialize
+functions (editor only), and the texture atlas that `images` with more than one picture makes (`MaxRectsBinPack`).
+`TGScene::BeginScene` and `TGObject::SetActive` now build the container from field 0x326 through `LuaDoString`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

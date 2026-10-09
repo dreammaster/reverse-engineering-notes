@@ -10,6 +10,8 @@
 #include "TMSavegameArea.h"
 #include "TSceneActionArea.h"
 #include "graphicslib/graphics.h"
+#include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/particles.h"
 #include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
@@ -858,17 +860,12 @@ void TGScene::SetScene() {
 	gameControl()->ResetState();
 }
 
-// Confirmed (asm lines 172880-173218) except the Lua branch that builds a
-// particle container from a script expression ("return particleSystem:new(
-// <field 0x326>)" through LuaDoString(), the userdata it returns adopted as
-// _particleContainer) - skipped, the same standing Lua-bridge gap used
-// throughout this project; a scene with a non-empty field 0x326 therefore
-// gets no particles here. Starts the scene: background, objects and texts
-// set up, its particle effect (field 0x1B9, the container flag aside - an
-// empty script name falls through to a plain TGParticleSystem initialised
-// from the scene) started, running animations continued, and the scene's
-// own "scene started" actions (every action link of field 0x14F whose type
-// field 0x9F is 31) executed.
+// Confirmed (asm lines 172880-173218). Starts the scene: background, objects and texts
+// set up, its particle effect (field 0x1B9) started - a script (field 0x326) builds the
+// container ("return particleSystem:new(<script>)" through LuaDoString(), the container of the
+// userdata it returns taken over), else a plain TGParticleSystem initialised from the scene --
+// running animations continued, and the scene's own "scene started" actions (every action
+// link of field 0x14F whose type field 0x9F is 31) executed.
 void TGScene::BeginScene() {
 	InitialiseBackground();
 	SetScene();
@@ -876,12 +873,25 @@ void TGScene::BeginScene() {
 
 	TVisObjRef particleLink = _ref.GetLink(kSceneParticleSystem);
 	_hasParticles = !particleLink.IsEmpty();
-	if (_hasParticles && _ref.GetStrHolder(kParticleContainerSettings).size() == 0) {
-		_particleSystem.Init(particleLink, wxString());
-		int windowWidth, windowHeight;
-		gameControl()->GetWindowSize(&windowWidth, &windowHeight);
-		_particleSystem.SetWindowSize(windowWidth, windowHeight);
-		_particleTimer.SetTime();
+	if (_hasParticles) {
+		if (_ref.GetStrHolder(kParticleContainerSettings).size() != 0) {
+			delete _particleContainer;
+			_particleContainer = nullptr;
+
+			std::string code = "return particleSystem:new(";
+
+			code += _ref.GetStrHolder(kParticleContainerSettings).mb_str();
+			code += ")";
+			LuaDoString(code);
+			_particleContainer = takeParticleContainer();
+			_particlesFromLua = (_particleContainer != nullptr);
+		} else {
+			_particleSystem.Init(particleLink, wxString());
+			int windowWidth, windowHeight;
+			gameControl()->GetWindowSize(&windowWidth, &windowHeight);
+			_particleSystem.SetWindowSize(windowWidth, windowHeight);
+			_particleTimer.SetTime();
+		}
 	}
 
 	_snoopState = 0;

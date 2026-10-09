@@ -175,8 +175,3 @@ void ConvertToLua(const TVList &objects) {
 		lua_settable(L, -3);
 	}
 }
-
-// Not reconstructed yet (the particles): nothing is put into Lua.
-int luaopen_Particles(lua_State *) {
-	return 0;
-}

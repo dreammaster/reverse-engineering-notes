@@ -7,6 +7,12 @@
 
 #include "graphicslib/shader.h"
 
+/** A texture of the backend (the particle container keeps one for all of its pictures; only its destructor is known). */
+class TSubSysTexture {
+public:
+	virtual ~TSubSysTexture() {}
+};
+
 class TSubSys {
 public:
 	virtual ~TSubSys() {}

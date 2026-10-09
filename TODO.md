@@ -90,9 +90,6 @@ assert-confirmed).
 
 Left out:
 
-- the particle container built from a script expression (`SetActive()` runs
-  `return particleSystem:new(<kParticleContainerSettings>)` through `LuaDoString()` and
-  adopts the userdata it returns) - needs the Lua bridge, like `TGScene::BeginScene()`;
 - the draw calls of the particle effect through the `graphics` backend (translate by the
   negated float scroll position times the scroll factor, an optional multiply with the
   global matrix, `ParticleContainer::Draw()`/the particle system draw, and the scroll
@@ -103,6 +100,13 @@ Left out:
   nothing else is known to use it).
 
 `TGObject` stays `in-progress` in `manifest/proprietary_classes.tsv` until then.
+
+### The older particle system (particleSystem.cpp)
+
+`TParticleSystem` and `TParticleEmitter` (asm 766025-771351), `TGParticleSystem` and `TGParticleEmitter` (asm
+1378274-1380801), and the table types `TTParticles` and `TTParticleContainer` (asm 1469492-1470952) are not reconstructed;
+`TGParticleSystem.cpp` has empty stand-ins for the three methods that the scene and the objects call. (The emitters of
+the `particleSystem:new{}` containers are done: see NOTES.md.)
 
 ### TGInterface: the matrix transform of the cursor position
 
@@ -132,7 +136,7 @@ constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the ta
 commands, and the 49 commands of the player with `InitPlayerCommands()` (`vsplayer/scripting/playerCommands.cpp`).
 Missing:
 
-- `TGameControl::InitScripts()` has to call `InitPlayerCommands()`. That function calls the part of `InitDrawLua()`
+- `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/deponia1/NOTES.md`. That function calls the part of `InitDrawLua()`
   that is done (`sha1`, `system`, `setDelay`: `luaSystem.cpp`); missing are the rest of it - the Box2D bindings
   (`tolua_b2_open`), the `graphics` object with its sprites, framebuffers, buffers and movies (`graphics_*`, `sprite_*`,
   `framebuffer_*`, `buffer_*`, `movie_*`: asm 438459-448600, all about the GL backend) - the `steam` object (asm
@@ -141,7 +145,7 @@ Missing:
   reconstructed and nothing sets `g_subSys`: `shaderCompile` and `shaderUniform` keep the shader list but make no
   shaders, `system.systemInfo().gpu` is empty, `getGPUMem()` has only the base number, `system.cacheContents` is
   empty. `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are stubs for the same reason.
-- `luaopen_Particles`. `Init()` in `AppFunctions.cpp` (asm 493088, 4300 lines: the config file `LoadConfigFile`, the window, the game, `InitPlayerCommands()`), `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) and `ParseCommandLine` are still stubs; `ShowFrame()` (the SDL event loop and a frame) is done.
+- The particle container's `Draw()` (`particlePipeline` and the vertex buffers), the texture atlas of `images` with more than one picture and the Serialize functions (editor only): `graphicslib/particleHaduken.cpp`, `vscommon/scripting/particles.cpp`. `Init()` in `AppFunctions.cpp` (asm 493088, 4300 lines; its sequence is written down in NOTES.md, it needs the GL window and `LoadAndInitGame` to run), `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) and `ParseCommandLine` are still stubs; `ShowFrame()` (the SDL event loop and a frame) is done.
 - `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
   never called.
 

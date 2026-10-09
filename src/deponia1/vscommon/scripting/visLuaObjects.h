@@ -49,6 +49,7 @@ TSprite **CheckSprite(lua_State *state, int index);
 int CreateSprite(lua_State *state);
 /** Pushes a new sprite for the scripts that is a copy of `sprite`. */
 void CreateTSprite(lua_State *state, const TSprite &sprite);
+/** Makes the global `particleSystem` (particles.cpp). */
 int luaopen_Particles(lua_State *state);
 int lua_debugerror(lua_State *state);
 

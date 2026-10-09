@@ -3,6 +3,8 @@
 #include "AppGlobals.h"
 #include "TGDetectInfo.h"
 #include "TGScene.h"
+#include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/particles.h"
 #include "vstables/records.h"
 #include "graphicslib/graphics.h"
 #include "vsplayer/animationGame.h"
@@ -215,9 +217,10 @@ void TGObject::DrawSnoopAnimation() {
 	matricesActive = savedMatrices;
 }
 
-// Confirmed (asm lines 259145-259300), except that the particle container that a script
-// expression builds ("return particleSystem:new(<kParticleContainerSettings>)", through
-// LuaDoString()) is skipped, the same standing Lua-bridge gap as in TGScene::BeginScene().
+// Confirmed (asm lines 259145-259300). Switching on an object with particles: a script (field
+// 0x326) builds the container ("return particleSystem:new(<script>)" through LuaDoString(),
+// the container of the userdata it returns taken over), else a plain TGParticleSystem is
+// initialised from the particle system the object links to.
 void TGObject::SetActive(bool active) {
 	if (_active == active)
 		return;
@@ -229,6 +232,13 @@ void TGObject::SetActive(bool active) {
 			// the container from the script
 			delete _particleContainer;
 			_particleContainer = nullptr;
+
+			std::string code = "return particleSystem:new(";
+
+			code += particleSystem.GetStrHolder(kParticleContainerSettings).mb_str();
+			code += ")";
+			LuaDoString(code);
+			_particleContainer = takeParticleContainer();
 			_particlesFromScript = true;
 		} else {
 			_particleSystem.Init(particleSystem, wxString());
