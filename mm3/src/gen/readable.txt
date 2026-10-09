@@ -28,3 +28,4 @@ Spells_subSpellCost
 moveMonsterBy
 moveMonsters
 setSpeedTable
+stopAttack

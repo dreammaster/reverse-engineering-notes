@@ -454,3 +454,25 @@ void mm3_set_speed_table(Mm3Game *g) {
 		for (int k = 0; k < (int)party + groups; k++)
 			if ((int8_t)dg[MM3_DG_SPEED_ORDER + k] == prev) { dg[MM3_DG_CURRENT_SLOT] = (uint8_t)k; break; }
 }
+
+/* stopAttack(dx, dy): is the straight line from the party to the cell (dx, dy) away (one of them is 0) free of walls?
+ * 0 when blocked.  Otherwise 1, or distance+1 when the party faces along that line (so callers can tell a shot ahead). */
+int mm3_line_clear(const Mm3Game *g, int dx, int dy) {
+	unsigned px = g->dg[MM3_DG_PARTY_X], py = g->dg[MM3_DG_PARTY_Y], facing = g->dg[MM3_DG_PARTY_FACING];
+	#define WALL(x, y, m) mm3_maze_word(g, (int16_t)(x), (int16_t)(y), (m))
+	if (dx > 0) {
+		for (int s = 1; s <= dx; s++) if (WALL(px + s, py, 0x8)) return 0;
+		return facing == 2 ? dx + 1 : 1;
+	}
+	if (dx < 0) {
+		for (int s = dx; s != 0; s++) if (WALL(px + s, py, 0x800)) return 0;
+		return facing == 3 ? -dx + 1 : 1;
+	}
+	if (dy > 0) {
+		for (int s = 1; s <= dy; s++) if (WALL(px, py + s, 0x80)) return 0;
+		return facing == 0 ? dy + 1 : 1;
+	}
+	for (int s = dy; s != 0; s++) if (WALL(px, py + s, 0x8000)) return 0;
+	return facing == 1 ? -dy + 1 : 1;
+	#undef WALL
+}

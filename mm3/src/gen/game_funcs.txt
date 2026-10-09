@@ -243,7 +243,6 @@ sub_4EBE3
 sub_12436
 sub_387C6
 doCharDamage
-stopAttack
 addTime
 mapHasDayNight
 sub_28194
