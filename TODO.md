@@ -55,6 +55,20 @@ all left out for the same reason:
 start functions use) are reconstructed; `TCAnimation::IsModelAnimation()`/
 `IsBonesAnimation()` (the instance tests) are fixed `false`.
 
+### TVisionaireGame::UpdateVersion: the upgrades of older projects
+
+`src/deponia1/vstables/visionaireGame.cpp`; original `TVisionaireGame::UpdateVersion(int version, bool allAtOnce)`, asm
+1508677-1523438 (14000 lines).
+
+The player upgrades the data of a game exported by an older editor on load. The function is a series of statements
+`if (version <= N) { fix }` in ascending N (GCC threaded them into 45 entry points, one per version range:
+`loc_93839F` for 0x63 ... `loc_92F588` for 0xAD-0xBA; the dispatch is the `cmp [version], 63h` ... chain at asm 1509343-1509687, and
+a second one, `cmp version, 0B3h/0B6h/0B8h`, in the tail), and a tail that every version gets. Only the tail is reconstructed
+(it is what a game of the current version 0xBA gets); a game with a version below 0xB9 (the fixes of 0x63-0xB8 are about
+4000 lines of asm) is accepted as it is, with a warning in the log. Deponia 1 may well be of the current version; other
+Visionaire games (Edna & Harvey ...) are probably not. The tool that finds the entry of each version is in the history of
+this work (a small interpreter of the dispatch chain); the `cmp`s are on `[rsp+...+var_C54]`.
+
 ### TGAnimation: the debugger overlay
 
 `GetAnimationDetails()`, `PrintRunningAnimations()` and `DrawAnimation()` (asm
