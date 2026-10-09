@@ -5,8 +5,9 @@
 // (addDrawFunc), ask about fonts, animations and characters, and draw by themselves.
 //
 // Done here are the functions that are about the engine (the fonts, the animations, the scroll position, the shaders'
-// uniforms ...). The ones that need the video card - drawing sprites, boxes and lines, the buffers and framebuffers, the
-// sprite objects, movies, loading pictures from memory, the Box2D debug drawing - are in the tables with the name they have, and log that they are not reconstructed when a script calls them.
+// uniforms, the sprite objects, drawing sprites, boxes, lines and animations, loading pictures). The ones that need the video
+// card itself - the buffers and framebuffers, movies, `clear`, the Box2D debug drawing - are in the tables with the name they
+// have, and log that they are not reconstructed when a script calls them.
 #include <string.h>
 
 #include <algorithm>
@@ -18,14 +19,18 @@
 #include "TFramebuffer.h"
 #include "TGCharacter.h"
 #include "TGScene.h"
+#include "TPaintControl.h"
+#include "TPictureFormat.h"
 #include "Easing.h"
 #include "Tween.h"
 #include "common/lua/lauxlib.h"
 #include "graphicslib/graphics.h"
 #include "graphicslib/noise1234.h"
+#include "graphicslib/picture.h"
 #include "graphicslib/shader.h"
 #include "graphicslib/subsys.h"
 #include "vscommon/cfont.h"
+#include "vscommon/objAccess.h"
 #include "vscommon/scripting/luaConversion.h"
 #include "vscommon/scripting/visLua.h"
 #include "vscommon/scripting/visLuaObjects.h"
@@ -54,14 +59,6 @@ static void notReconstructed(const char *name) {
 		return 0; \
 	}
 
-BACKEND_FUNCTION(drawSprite)
-BACKEND_FUNCTION(drawSpriteWithNineRect)
-BACKEND_FUNCTION(drawBox)
-BACKEND_FUNCTION(drawLine)
-BACKEND_FUNCTION(loadFromFile)
-BACKEND_FUNCTION(loadMemoryJPG)
-BACKEND_FUNCTION(loadMemoryPNG)
-BACKEND_FUNCTION(loadMemoryWEBP)
 BACKEND_FUNCTION(movieOpen)
 BACKEND_FUNCTION(drawIndexed)
 BACKEND_FUNCTION(setupOffsets)
@@ -69,17 +66,10 @@ BACKEND_FUNCTION(createIndexBuffer)
 BACKEND_FUNCTION(createBuffer)
 BACKEND_FUNCTION(createFramebuffer)
 BACKEND_FUNCTION(bindFramebuffer)
-BACKEND_FUNCTION(instantiateAnimation)
-BACKEND_FUNCTION(drawAnimation)
 BACKEND_FUNCTION(clear)
 BACKEND_FUNCTION(createBox2DDebugRender)
 
 // The methods of the sprite, framebuffer, buffer and movie objects, which are the backend's.
-BACKEND_FUNCTION(sprite_new)
-BACKEND_FUNCTION(sprite_clear)
-BACKEND_FUNCTION(sprite_index)
-BACKEND_FUNCTION(sprite_newindex)
-BACKEND_FUNCTION(sprite_call)
 BACKEND_FUNCTION(framebuffer_bind)
 BACKEND_FUNCTION(buffer_bind)
 BACKEND_FUNCTION(buffer_update)
@@ -92,6 +82,393 @@ BACKEND_FUNCTION(movie_pause)
 BACKEND_FUNCTION(movie_resume)
 BACKEND_FUNCTION(movie_index)
 BACKEND_FUNCTION(movie_newindex)
+
+static const char *const kSpriteMetatable = "Visionaire.Sprite";
+
+/** The functions of the class Sprite (the table is below, the functions look themselves up in it). */
+static const luaL_Reg *spriteFunctions();
+
+/** The picture of the Sprite userdata at `index` (an error for anything else). */
+static TPictureIO *checkSprite(lua_State *state, int index) {
+	return *static_cast<TPictureIO **>(luaL_checkudata(state, index, kSpriteMetatable));
+}
+
+/** Pushes a new Sprite userdata that holds `picture`. */
+static void pushSprite(lua_State *state, TPictureIO *picture) {
+	TPictureIO **userdata = static_cast<TPictureIO **>(lua_newuserdata(state, sizeof(TPictureIO *)));
+
+	*userdata = picture;
+	lua_getfield(state, LUA_REGISTRYINDEX, kSpriteMetatable);
+	lua_setmetatable(state, -2);
+}
+
+/** Draws with a paint control of its own (the position of the scene does not count), as every script draw function does. */
+class ScriptPaintControl {
+public:
+	ScriptPaintControl(TPaintControl &control) : _previous(TPaintControl::GetCurrent()) {
+		control.SetCurrent();
+	}
+	~ScriptPaintControl() {
+		if (_previous)
+			_previous->SetCurrent();
+	}
+
+private:
+	TPaintControl *_previous;
+};
+
+// Confirmed (asm lines 440172-440228): Sprite.new() makes an empty picture (the table the function was called on, the first
+// argument, is taken off).
+static int graphics_sprite_new(lua_State *state) {
+	lua_remove(state, 1);
+	pushSprite(state, new TPictureIO());
+	return 1;
+}
+
+// Confirmed (asm lines 442482-442527)
+static int graphics_sprite_clear(lua_State *state) {
+	checkSprite(state, 1)->Clear();
+	return 0;
+}
+
+// Confirmed (asm lines 440499-440734): the functions of the class by their name, else the properties of the picture.
+static int graphics_sprite_index(lua_State *state) {
+	const char *name = (lua_type(state, 2) == LUA_TSTRING) ? lua_tolstring(state, 2, nullptr) : nullptr;
+
+	if (name) {
+		for (const luaL_Reg *entry = spriteFunctions(); entry->name; entry++) {
+			if (strcmp(entry->name, name) == 0) {
+				lua_pushcclosure(state, entry->func, 0);
+				return 1;
+			}
+		}
+	}
+
+	TPictureIO *sprite = checkSprite(state, 1);
+
+	if (!name) {
+		lua_pushnil(state);
+		return 1;
+	}
+
+	if (strcmp(name, "position") == 0) {
+		ConvertToLua(sprite->GetPosition());
+	} else if (strcmp(name, "rotation") == 0) {
+		lua_pushnumber(state, sprite->GetRotation());
+	} else if (strcmp(name, "scale") == 0 || strcmp(name, "scaleX") == 0) {
+		lua_pushnumber(state, sprite->GetScaleX());
+	} else if (strcmp(name, "scaleY") == 0) {
+		lua_pushnumber(state, sprite->GetScaleY());
+	} else if (strcmp(name, "shaderSet") == 0) {
+		lua_pushinteger(state, sprite->GetShader());
+	} else if (strcmp(name, "rotationCenter") == 0) {
+		ConvertToLua(sprite->GetRotationCenter());
+	} else if (strcmp(name, "size") == 0) {
+		lua_pushnumber(state, sprite->GetSize());
+	} else if (strcmp(name, "width") == 0) {
+		lua_pushnumber(state, sprite->GetWidth());
+	} else if (strcmp(name, "height") == 0) {
+		lua_pushnumber(state, sprite->GetHeight());
+	} else {
+		lua_pushnil(state);
+	}
+
+	return 1;
+}
+
+// Confirmed (asm lines 442254-442482): sprite.path = "..." (a string), sprite.position / rotationCenter = {x, y} (a table),
+// sprite.shaderSet / rotation / scale / scaleX / scaleY / matrixId = n (a number). `scale` sets the scale of both axes.
+// Anything else is let go without a word.
+static int graphics_sprite_newindex(lua_State *state) {
+	TPictureIO *sprite = checkSprite(state, 1);
+	const char *name = lua_tolstring(state, 2, nullptr);
+	int valueType = lua_type(state, 3);
+
+	if (!name)
+		return 0;
+
+	if (valueType == LUA_TSTRING) {
+		if (strcmp(name, "path") == 0)
+			sprite->SetPath(TCharHolder(lua_tolstring(state, 3, nullptr)));
+	} else if (valueType == LUA_TTABLE) {
+		wxPoint point;
+
+		if (strcmp(name, "position") == 0) {
+			ConvertFromLua(point, 3);
+			sprite->SetPosition(point, -1.0f);
+		} else if (strcmp(name, "rotationCenter") == 0) {
+			ConvertFromLua(point, 3);
+			sprite->SetRotationCenter(point);
+		}
+	} else if (valueType == LUA_TNUMBER) {
+		if (strcmp(name, "shaderSet") == 0) {
+			sprite->SetShader(static_cast<int>(lua_tointeger(state, 3)));
+		} else if (strcmp(name, "rotation") == 0) {
+			sprite->SetRotation(static_cast<float>(lua_tonumber(state, 3)));
+		} else if (strcmp(name, "scale") == 0) {
+			sprite->SetScale(static_cast<float>(lua_tonumber(state, 3)), static_cast<float>(lua_tonumber(state, 3)));
+		} else if (strcmp(name, "scaleX") == 0) {
+			sprite->SetScaleX(static_cast<float>(lua_tonumber(state, 3)));
+		} else if (strcmp(name, "scaleY") == 0) {
+			sprite->SetScaleY(static_cast<float>(lua_tonumber(state, 3)));
+		} else if (strcmp(name, "matrixId") == 0) {
+			sprite->SetMatrixId(static_cast<int>(lua_tonumber(state, 3)));
+		}
+	}
+
+	return 0;
+}
+
+// Confirmed (asm lines 438474-438488): a Sprite called like a function does nothing.
+static int graphics_sprite_call(lua_State *) {
+	return 0;
+}
+
+// Confirmed (asm lines 442740-442790)
+static int graphics_sprite_gc(lua_State *state) {
+	TPictureIO **sprite = static_cast<TPictureIO **>(luaL_checkudata(state, 1, kSpriteMetatable));
+
+	delete *sprite;
+	*sprite = nullptr;
+	return 0;
+}
+
+// Confirmed (asm lines 442527-442644): graphics.drawSprite(sprite [, alpha = 1 [, colour = 0xFFFFFF]]) draws the picture
+// where it is (its position, rotation, scale ...) with the paint control of its own.
+static int graphics_drawSprite(lua_State *state) {
+	static TPaintControl control;
+	ScriptPaintControl paint(control);
+	TPictureIO *sprite = checkSprite(state, 1);
+	double alpha = luaL_optnumber(state, 2, 1.0);
+	double color = luaL_optnumber(state, 3, 16777215.0);
+
+	if (sprite->RefreshSprite(false))
+		sprite->Draw(static_cast<float>(alpha), static_cast<unsigned int>(static_cast<int>(color)));
+
+	return 0;
+}
+
+// Confirmed (asm lines 441595-442254): graphics.drawSpriteWithNineRect(sprite, destRect, nineRect [, colour = 0xFFFFFF
+// [, alpha = 1]]): the picture is stretched over `destRect` in nine parts, the four corners keep their size. `nineRect`
+// holds the widths of the borders of the picture: x the left, y the top, width the right, height the bottom one. The
+// parts are drawn in the order top left, top, top right, left, middle, right, bottom left, bottom, bottom right.
+static int graphics_drawSpriteWithNineRect(lua_State *state) {
+	static TPaintControl control;
+	ScriptPaintControl paint(control);
+	TPictureIO *sprite = checkSprite(state, 1);
+	wxRect dest;
+	wxRect nine;
+
+	if (!ConvertFromLua(dest, 2))
+		{
+		lua_pushstring(state, "destRect invalid");
+		return lua_error(state);
+	}
+
+	if (!ConvertFromLua(nine, 3))
+		{
+		lua_pushstring(state, "ninerect invalid");
+		return lua_error(state);
+	}
+
+	unsigned int color = static_cast<unsigned int>(luaL_optinteger(state, 4, 0xFFFFFF));
+	float alpha = static_cast<float>(luaL_optnumber(state, 5, 1.0));
+
+	if (!sprite->RefreshSprite(false))
+		return 0;
+
+	const int width = sprite->GetWidth();
+	const int height = sprite->GetHeight();
+	const int left = nine.x;
+	const int top = nine.y;
+	const int right = nine.width;
+	const int bottom = nine.height;
+
+	// the middle part of the picture, and of the destination (never negative)
+	const int middleWidth = width - right - left;
+	const int middleHeight = height - bottom - top;
+	const int destMiddleWidth = std::max(0, dest.width - (left + right));
+	const int destMiddleHeight = std::max(0, dest.height - (top + bottom));
+
+	// the edges of the destination: after the left border, after the middle, after the top border, after the middle
+	const int destX1 = dest.x + left;
+	const int destX2 = destX1 + destMiddleWidth;
+	const int destX3 = dest.x + dest.width;
+	const int destY1 = dest.y + top;
+	const int destY2 = destY1 + destMiddleHeight;
+	const int destY3 = dest.y + dest.height;
+
+	const int sourceX[3] = {0, left, width - right};
+	const int sourceW[3] = {left, middleWidth, right};
+	const int sourceY[3] = {0, top, height - bottom};
+	const int sourceH[3] = {top, middleHeight, bottom};
+	const int destX[3] = {dest.x, destX1, destX2};
+	const int destW[3] = {left, destMiddleWidth, destX3 - destX2};
+	const int destY[3] = {dest.y, destY1, destY2};
+	const int destH[3] = {top, destMiddleHeight, destY3 - destY2};
+
+	for (int row = 0; row < 3; row++) {
+		for (int column = 0; column < 3; column++) {
+			wxRect source;
+			FloatRect target;
+			wxPoint center;
+
+			center.x = -1;
+			center.y = -1;
+			source.x = sourceX[column];
+			source.y = sourceY[row];
+			source.width = sourceW[column];
+			source.height = sourceH[row];
+			target.x = static_cast<float>(destX[column]);
+			target.y = static_cast<float>(destY[row]);
+			target.width = static_cast<float>(destW[column]);
+			target.height = static_cast<float>(destH[row]);
+			graphics->Draw(sprite->GetSpriteHandle(), source, target, alpha, false, color, -1, 0.0f, center, 1.0f, 1.0f, 1);
+		}
+	}
+
+	return 0;
+}
+
+// Confirmed (asm lines 439476-439554): graphics.drawBox(x, y, width, height, colour [, alpha = 1]) fills a rectangle.
+static int graphics_drawBox(lua_State *state) {
+	wxRect rect;
+
+	rect.x = static_cast<int>(luaL_checkinteger(state, 1));
+	rect.y = static_cast<int>(luaL_checkinteger(state, 2));
+	rect.width = static_cast<int>(luaL_checkinteger(state, 3));
+	rect.height = static_cast<int>(luaL_checkinteger(state, 4));
+
+	unsigned int color = static_cast<unsigned int>(luaL_checkinteger(state, 5));
+
+	graphics->DrawBox(rect, color, static_cast<float>(luaL_optnumber(state, 6, 1.0)));
+	return 0;
+}
+
+// Confirmed (asm lines 439398-439476): graphics.drawLine(x1, y1, x2, y2, colour [, alpha = 1])
+static int graphics_drawLine(lua_State *state) {
+	wxPoint from;
+	wxPoint to;
+
+	from.x = static_cast<int>(luaL_checkinteger(state, 1));
+	from.y = static_cast<int>(luaL_checkinteger(state, 2));
+	to.x = static_cast<int>(luaL_checkinteger(state, 3));
+	to.y = static_cast<int>(luaL_checkinteger(state, 4));
+
+	unsigned int color = static_cast<unsigned int>(luaL_checkinteger(state, 5));
+
+	graphics->DrawLine(from, to, color, static_cast<float>(luaL_optnumber(state, 6, 1.0)));
+	return 0;
+}
+
+// Confirmed (asm lines 447048-447358): graphics.loadFromFile("path") loads a picture; "vispath:" in front of the path is
+// left off. The answer is the Sprite, nil when the picture cannot be loaded.
+static int graphics_loadFromFile(lua_State *state) {
+	TPictureIO *picture = new TPictureIO();
+
+	pushSprite(state, picture);
+
+	wxString path;
+
+	toUTF(&path, luaL_checklstring(state, 1, nullptr));
+
+	if (path.StartsWith(wxString(L"vispath:")))
+		path = path.Mid(8, -1);
+
+	wxFileName file(path.ToStdWstring());
+
+	file.NormalizePath();
+
+	if (!picture->LoadPicture(file, TPictureIO::eLoadSetting::Normal)) {
+		lua_settop(state, -2);
+		lua_pushnil(state);
+	}
+
+	return 1;
+}
+
+/** A Sprite made of the picture in the string at the first place, which `format` reads (the Sprite is the answer even when
+ *  the picture could not be read). */
+static int loadMemoryPicture(lua_State *state, TPictureFormat &format) {
+	TPictureIO *picture = new TPictureIO();
+
+	pushSprite(state, picture);
+
+	size_t length = 0;
+	const char *data = luaL_checklstring(state, 1, &length);
+	int width = 0;
+	int height = 0;
+
+	if (format.ReadHeader(const_cast<char *>(data), length, &width, &height) && format.ReadData(*picture))
+		picture->CreateSprite(false);
+
+	return 1;
+}
+
+// Confirmed (asm lines 443741-443885, 443560-443641, 442984-443087): graphics.loadMemoryPNG / loadMemoryJPG / loadMemoryWEBP
+// ("file contents") make a Sprite from the picture in the string. (The original decodes a JPG straight with jpgd and hands
+// the pixels to CreateSprite(pixels, width, height, 4); the result is the same.)
+static int graphics_loadMemoryPNG(lua_State *state) {
+	TPicturePNG format;
+
+	return loadMemoryPicture(state, format);
+}
+
+static int graphics_loadMemoryJPG(lua_State *state) {
+	TPictureJPG format;
+
+	return loadMemoryPicture(state, format);
+}
+
+static int graphics_loadMemoryWEBP(lua_State *state) {
+	TPictureWebP format;
+
+	return loadMemoryPicture(state, format);
+}
+
+// Confirmed (asm lines 445380-445502): graphics.drawAnimation(animation [, alpha = 1 [, colour = 0xFFFFFF]]) draws the
+// frame an animation is on.
+static int graphics_drawAnimation(lua_State *state) {
+	LuaVisionaireObject *object = CheckVisionaireObject(state, 1, true);
+	float alpha = static_cast<float>(luaL_optnumber(state, 1, 1.0));
+	unsigned int color = static_cast<unsigned int>(luaL_optinteger(state, 2, 0xFFFFFF));
+	TVisObjRef ref(object->object);
+	TGAnimation *animation = TGAnimation::GetAnimationByObject(ref);
+
+	if (animation) {
+		animation->Draw(alpha, color, -1);
+	} else if (wxLog::loglevel >= 0) {
+		wxString id = IdStr(*object->object);
+
+		wxLog::logexpanded(L"graphics_drawAnimation: Animation %s not found", id.wc_str());
+	}
+
+	return 0;
+}
+
+// Confirmed (asm lines 445502-445659): graphics.instantiateAnimation(animation [, reverse = 0 [, scale = 100]]) starts a new
+// animation of the data object (that nothing owns), and answers the object that holds its state; nothing when it cannot be
+// started.
+static int graphics_instantiateAnimation(lua_State *state) {
+	LuaVisionaireObject *object = CheckVisionaireObject(state, 1, true);
+	lua_Integer reverse = luaL_optinteger(state, 1, 0);
+	lua_Integer scale = luaL_optinteger(state, 2, 100);
+	TVisObjRef ref(object->object);
+	TGAnimation *animation = TGAnimation::StartLuaAnimation(ref, reverse == 1, static_cast<float>(scale));
+
+	if (animation) {
+		CreateVisionaireObject(state, animation->GetState());
+		return 1;
+	}
+
+	if (wxLog::loglevel >= 0) {
+		wxString id = IdStr(ref);
+
+		wxLog::logexpanded(L"Can't start animation %s", id.wc_str());
+	}
+
+	return 0;
+}
 
 /** The shader of the script's number (from 1), null when there is none. */
 static TShader *shaderByNumber(lua_Integer number) {
@@ -682,9 +1059,13 @@ static const luaL_Reg graphics_sprite[] = {
 	{"__index", graphics_sprite_index},
 	{"__newindex", graphics_sprite_newindex},
 	{"__call", graphics_sprite_call},
-	{"__gc", graphics_gc},
+	{"__gc", graphics_sprite_gc},
 	{nullptr, nullptr}
 };
+
+static const luaL_Reg *spriteFunctions() {
+	return graphics_sprite;
+}
 
 static const luaL_Reg graphics_framebuffer[] = {
 	{"bind", graphics_framebuffer_bind},

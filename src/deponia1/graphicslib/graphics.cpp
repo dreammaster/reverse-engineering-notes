@@ -69,6 +69,12 @@ void TGraphicsInterface::CalculateDisplayedArea(const wxSize &windowSize, const 
 	displayedArea->height = windowSize.height;
 }
 
+void TGraphicsInterface::DrawBox(const wxRect &/*rect*/, unsigned int /*color*/, float /*alpha*/) {
+}
+
+void TGraphicsInterface::DrawLine(const wxPoint &/*from*/, const wxPoint &/*to*/, unsigned int /*color*/, float /*alpha*/) {
+}
+
 bool TGraphicsInterface::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wxRect *displayedArea) {
 	CalculateDisplayedArea(windowSize, renderSize, displayedArea);
 	return true;

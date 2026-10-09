@@ -129,10 +129,10 @@ Missing:
 
 - `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/deponia1/NOTES.md`. That function
   calls `InitDrawLua()` (`sha1`, `graphics`, `system`, `setDelay`: `luaSystem.cpp`, `luaGraphics.cpp`). Missing are the Box2D
-  bindings (`tolua_b2_open`, tolua++), the functions of `graphics` that draw (`drawSprite`, `drawBox`, `drawLine`, `drawIndexed`,
-  `clear`, `loadFromFile`, `loadMemoryJPG/PNG/WEBP`, `movieOpen`, `setupOffsets`, `instantiateAnimation`, `drawAnimation`,
-  `createBuffer`, `createIndexBuffer`, `createFramebuffer`, `bindFramebuffer`, `createBox2DDebugRender`) and the methods of the
-  Sprite, TFramebuffer, TBuffer and TMovie objects (asm 438459-448600, all about the GL backend; they are in the tables as
+  bindings (`tolua_b2_open`, tolua++), the functions of `graphics` that need the card itself (`drawIndexed`, `clear`,
+  `movieOpen`, `setupOffsets`, `createBuffer`, `createIndexBuffer`, `createFramebuffer`, `bindFramebuffer`,
+  `createBox2DDebugRender`; the Sprite object and the other draw functions are done) and the methods of the
+  TFramebuffer, TBuffer and TMovie objects (asm 438459-448600, all about the GL backend; they are in the tables as
   stubs that log); the `steam` and `galaxy` objects (asm 284483-288180, glue for the Steam and GOG SDKs) and the libraries `utf8`,
   `luacurl`, `rex_pcre` and `lfs` that the original has built in.
 - The GL backend (`g_subSys`, 299 uses in the asm; `graphicslib/subsys.h` has the two slots the commands use) is not

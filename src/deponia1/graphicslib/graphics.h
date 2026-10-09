@@ -130,6 +130,11 @@ public:
 	virtual void Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha, bool mirrored,
 	                  const unsigned int &color, int shader, float rotation, const wxPoint &rotationCenter, float scaleX,
 	                  float scaleY, int matrixId);
+	/** Slot 0xD8 (TGraphicsOGL::DrawBox(const wxRect &, uint, float)): fills the rectangle with `color` (0xAABBGGRR) and
+	 *  `alpha`. The backend's. */
+	virtual void DrawBox(const wxRect &rect, unsigned int color, float alpha);
+	/** Slot 0xF0 (TGraphicsOGL::DrawLine(const wxPoint &, const wxPoint &, uint, float)): a line. The backend's. */
+	virtual void DrawLine(const wxPoint &from, const wxPoint &to, unsigned int color, float alpha);
 	/** Slot 0x78 (TGraphicsOGL::DrawWithLightMap): the same, the picture multiplied by `lightMap` (the light map's pixels,
 	 *  moved by `offset`). */
 	virtual void DrawWithLightMap(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha,

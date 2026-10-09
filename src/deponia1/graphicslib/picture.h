@@ -138,6 +138,21 @@ public:
 	void SetScaleY(float scaleY) {
 		_scaleY = scaleY;
 	}
+	float GetRotation() const {
+		return _rotation;
+	}
+	const wxPoint &GetRotationCenter() const {
+		return _rotationCenter;
+	}
+	int GetShader() const {
+		return _shader;
+	}
+	float GetScaleX() const {
+		return _scaleX;
+	}
+	float GetScaleY() const {
+		return _scaleY;
+	}
 	void SetMatrixId(int matrixId) {
 		_matrixId = matrixId;
 	}

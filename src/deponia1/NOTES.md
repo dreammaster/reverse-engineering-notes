@@ -3617,9 +3617,24 @@ functions (editor only), and the texture atlas that `images` with more than one 
 the scene and its hooks - and `invMatrix1` is for the mouse), to add Lua functions that `TMasterControl::Draw` calls
 (`addDrawFunc(name [, 0 after the scene | 1 after the interfaces | -1 before the scene])`, run with `LuaDoString(name, name)`),
 to ask about the engine (fonts, animations and characters, the scroll position, `evalTween` with the same easings as the
-commands, `performLinebreaks`) and to draw (`drawSprite`, `drawBox`, `drawLine`, `drawIndexed`, framebuffers, buffers, shaders;
-those need the backend and are only stubs here, listed in the tables with their names). `lightmapCallback` and
+commands, `performLinebreaks`) and to draw (`drawSprite`, `drawSpriteWithNineRect`, `drawBox`, `drawLine`,
+`drawAnimation`, `instantiateAnimation`, `loadFromFile`, `loadMemoryPNG/JPG/WEBP` are done, through the `TGraphicsInterface`
+virtuals; `drawIndexed`, `setupOffsets`, `clear`, the buffers, framebuffers, movies and the Box2D debug render need the GL
+backend and are only stubs here, listed in the tables with their names). `lightmapCallback` and
 `shaderCallback` set the names of Lua functions that `TGScene::GetTint` and the shader call. Things the asm shows:
+
+- The Sprite userdata holds a `TPictureIO*` (0xE8 bytes): `Sprite.new()` (the table it is called on is removed from the stack),
+  `graphics.loadFromFile("path")` (a `vispath:` in front is dropped; nil when the picture cannot be loaded) and
+  `loadMemory*("bytes")` (which answer the Sprite even when the bytes could not be decoded) make them. The properties are
+  `path`, `position`, `rotation`, `scale` (reads the x scale; writes both), `scaleX`, `scaleY`, `shaderSet`, `rotationCenter`,
+  `matrixId` (write only), `size` (the scale percentage), `width`, `height`; a Sprite's own functions are found before the
+  properties; any other key is nil on reading and ignored on writing. Every draw function sets a paint control of its own
+  (a `static TPaintControl` in the function) as the current one for the call, so the scroll of the scene does not move the
+  picture.
+- `drawSpriteWithNineRect(sprite, destRect, nineRect [, colour [, alpha]])`: `nineRect` is four border widths - x left, y top,
+  width right, height bottom - of the picture; nine calls of the backend's Draw (top left, top, top right, left, middle,
+  right, bottom left, bottom, bottom right, never turned, scale 1, shader -1, matrix 1); the middle parts of the destination
+  are never smaller than 0 (so the right and bottom parts get what is left).
 
 - `graphics.noise` is the simplex noise (1 or 2 numbers) and `noise2` the Perlin noise (1 to 4), `Noise1234` and
   `SimplexNoise1234`, Gustavson's public domain library; the constants and the permutation are the binary's.
