@@ -1,6 +1,9 @@
 #include "TSpriteHandle.h"
 
 TSpriteHandle::~TSpriteHandle() {
+	for (TSpritePartHandle *part : parts)
+		delete part;
+
 	delete[] transparencyBitmap;
 }
 

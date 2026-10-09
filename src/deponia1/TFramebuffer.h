@@ -4,4 +4,7 @@
 class TFramebuffer {
 public:
 	TFramebuffer() = default;
+
+	int width = 0;   // +0x08 (read by TPictureIO::CreateFromFramebuffer())
+	int height = 0;  // +0x0C
 };

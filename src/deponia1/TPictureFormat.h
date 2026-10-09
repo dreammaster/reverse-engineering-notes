@@ -1,26 +1,14 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
-// TPictureIO::GetFormat picks one of these based on file magic bytes
-// (checked first: "RIFF....WEBP" -> WebP, PNG signature -> PNG) or,
-// failing that, a single-letter format-hint string ('P'->PNG, 'W'->WebP,
-// 'J'->JPG, 'G'->GIF, and a final 'P' check that - per the disassembly -
-// is only reachable after the first 'P' check already failed, so it can
-// seemingly never match; reproduced as observed rather than "fixed" - see
-// NOTES.md).
 //
-// The base class itself is confirmed in full (Deponia_Linux.asm lines
-// 771397-771454, all 4 of its own methods: ctor/dtor x2/GetFormat) - a
-// vtable pointer plus one int (a format code, confirmed read directly by
-// GetFormat(); default-constructed to 0, but no confirmed evidence ties any
-// particular nonzero value to a specific format, so subclasses don't set
-// one here). ReadHeader()/ReadData()/Write() are genuinely abstract in the
-// original (only ever called through subclass overrides, never given a
-// body of their own) - declared pure virtual here with the confirmed
-// signatures (asm lines 739426-739476) so a future pass has the right
-// shape to implement against, but none of the actual decoders are reversed:
-// they wrap the real vendored libpng/libwebp/jpgd libraries (manifest/
-// vendor_libraries.tsv) which should be linked directly rather than
-// reimplemented - the stub bodies below just return failure so existing
-// callers (TPictureIO::GetFormat()) keep compiling against real instances.
+// TPictureIO::GetFormat() picks one of these from the first four bytes of the file ("RIFF" -> WebP, "?PNG" -> PNG, whatever the
+// first byte is) or, failing that, from the first three letters of the extension (PNG, WEB[P], JPG, GIF, PCX; any case).
+//
+// The base class is confirmed in full (Deponia_Linux.asm lines 771397-771454 and 739426-739476): a vtable pointer plus one int
+// (a format code; PNG sets 3). A format reads the header (the size) and the pixels of a picture from a TFile (ReadHeader() and
+// ReadData() of the first form) or from memory (the second form: `data`/`size`), and writes a picture (Write()). The decoders
+// wrap the vendored libpng, jpgd, libwebp, giflib and the PCX reader (manifest/vendor_libraries.tsv); they are not
+// reconstructed: a ScummVM port gives the formats its own image decoders (Image::PNGDecoder, Image::JPEGDecoder, ...). The
+// stubs below fail, so no picture can be loaded yet.
 #pragma once
 
 class TPictureMEM;
@@ -36,80 +24,64 @@ public:
 		return _format;
 	}
 
+	/** The size of the picture in `file`. */
+	virtual bool ReadHeader(TFile &file, int *outWidth, int *outHeight) = 0;
+	/** The size of the picture in `size` bytes at `data`. */
 	virtual bool ReadHeader(char *data, unsigned long size, int *outWidth, int *outHeight) = 0;
+	/** The pixels of the picture in `file` into `picture` (made by InitMemory(true): RGBA). */
+	virtual bool ReadData(TFile &file, TPictureMEM &picture) = 0;
+	/** The pixels of the picture whose header was read with the memory form. */
 	virtual bool ReadData(TPictureMEM &picture) = 0;
-	virtual bool Write(const wxFileName &file, TPictureMEM &picture, int a, int b, int c, bool d) = 0;
+	/** Writes `picture` (`width` x `height`, `bytesPerPixel` bytes to a pixel; `flag`: the picture is a loaded image) to a file. */
+	virtual bool Write(const wxFileName &file, TPictureMEM &picture, int width, int height, int bytesPerPixel, bool flag) = 0;
 
 protected:
 	int _format = 0;
 };
 
-class TPicturePNG : public TPictureFormat {
+/** A format whose decoder is not reconstructed. */
+class TPictureFormatStub : public TPictureFormat {
 public:
-	bool ReadHeader(char */*data*/, unsigned long /*size*/, int */*outWidth*/, int */*outHeight*/) override {
+	bool ReadHeader(TFile &, int *, int *) override {
 		return false;
 	}
-	bool ReadData(TPictureMEM &/*picture*/) override {
+	bool ReadHeader(char *, unsigned long, int *, int *) override {
 		return false;
 	}
-	bool Write(const wxFileName &/*file*/, TPictureMEM &/*picture*/, int /*a*/, int /*b*/, int /*c*/,
-	           bool /*d*/) override {
+	bool ReadData(TFile &, TPictureMEM &) override {
+		return false;
+	}
+	bool ReadData(TPictureMEM &) override {
+		return false;
+	}
+	bool Write(const wxFileName &, TPictureMEM &, int, int, int, bool) override {
 		return false;
 	}
 };
 
-class TPictureWebP : public TPictureFormat {
+class TPicturePNG : public TPictureFormatStub {
 public:
-	bool ReadHeader(char */*data*/, unsigned long /*size*/, int */*outWidth*/, int */*outHeight*/) override {
-		return false;
+	TPicturePNG() {
+		_format = 3;
 	}
-	bool ReadData(TPictureMEM &/*picture*/) override {
-		return false;
+
+	/** The PNG colour type of the header that was read (6: RGBA). */
+	int GetColorType() const {
+		return _colorType;
 	}
-	bool Write(const wxFileName &/*file*/, TPictureMEM &/*picture*/, int /*a*/, int /*b*/, int /*c*/,
-	           bool /*d*/) override {
-		return false;
-	}
+
+private:
+	int _colorType = 0;
 };
 
-class TPictureJPG : public TPictureFormat {
-public:
-	bool ReadHeader(char */*data*/, unsigned long /*size*/, int */*outWidth*/, int */*outHeight*/) override {
-		return false;
-	}
-	bool ReadData(TPictureMEM &/*picture*/) override {
-		return false;
-	}
-	bool Write(const wxFileName &/*file*/, TPictureMEM &/*picture*/, int /*a*/, int /*b*/, int /*c*/,
-	           bool /*d*/) override {
-		return false;
-	}
+class TPictureWebP : public TPictureFormatStub {
 };
 
-class TPictureGIF : public TPictureFormat {
-public:
-	bool ReadHeader(char */*data*/, unsigned long /*size*/, int */*outWidth*/, int */*outHeight*/) override {
-		return false;
-	}
-	bool ReadData(TPictureMEM &/*picture*/) override {
-		return false;
-	}
-	bool Write(const wxFileName &/*file*/, TPictureMEM &/*picture*/, int /*a*/, int /*b*/, int /*c*/,
-	           bool /*d*/) override {
-		return false;
-	}
+class TPictureJPG : public TPictureFormatStub {
 };
 
-class TPicturePCX : public TPictureFormat {
-public:
-	bool ReadHeader(char */*data*/, unsigned long /*size*/, int */*outWidth*/, int */*outHeight*/) override {
-		return false;
-	}
-	bool ReadData(TPictureMEM &/*picture*/) override {
-		return false;
-	}
-	bool Write(const wxFileName &/*file*/, TPictureMEM &/*picture*/, int /*a*/, int /*b*/, int /*c*/,
-	           bool /*d*/) override {
-		return false;
-	}
+class TPictureGIF : public TPictureFormatStub {
+};
+
+class TPicturePCX : public TPictureFormatStub {
 };

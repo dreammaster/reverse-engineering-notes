@@ -252,7 +252,7 @@ jpgd::DCT_Upsample::P_Q<7, 8>	todo	1	746566	746566
 jpgd::DCT_Upsample::R_S<7, 8>	todo	1	747029	747029
 jpgd::DCT_Upsample::P_Q<8, 8>	todo	1	747465	747465
 jpgd::DCT_Upsample::R_S<8, 8>	todo	1	748024	748024
-TSpriteCache	todo	13	749371	751855
+TSpriteCache	done	13	749371	751855
 TPicturePNG	stub	10	753445	756750
 TPictureMEM	in-progress	22	756823	759239
 TPictureWebP	stub	9	759351	761648

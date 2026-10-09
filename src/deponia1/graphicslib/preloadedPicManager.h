@@ -9,6 +9,8 @@ class TPictureIO;
 class TPreloadedPicManager {
 public:
 	void StopPreloading(TPictureIO *picture);
+	// asm 779878-780419: the picture is taken out of the manager (it was made a sprite); nothing is queued here.
+	void ReleasePicture(TPictureIO *picture);
 	// Confirmed call shape only (TCAnimation::PreloadSprites): queues a picture
 	// for the background loader; not reconstructed (the picture is loaded when it
 	// is first drawn).

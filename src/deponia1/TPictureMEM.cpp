@@ -30,6 +30,27 @@ void TPictureMEM::ClearMemData() {
 	_pitch = 0;
 }
 
+// Confirmed (asm lines 787111-787123, in TPictureIO::CreateSprite()): the pixels are freed, unless they are in a memory block.
+void TPictureMEM::ReleasePixels() {
+	if (_data) {
+		if (!_memBlock)
+			delete[] _data;
+
+		_data = nullptr;
+	}
+
+	_memBlock = nullptr;
+}
+
+// Confirmed (asm lines 787250-787284, in TPictureIO::CreateSprite(void *, ...)): the fields that the caller sets.
+void TPictureMEM::TakePixels(char *data, int width, int height, int bytesPerPixel) {
+	_bytesPerPixel = static_cast<signed char>(bytesPerPixel);
+	_pitch = bytesPerPixel * width;
+	_data = reinterpret_cast<uint8_t *>(data);
+	_width = width;
+	_height = height;
+}
+
 // Confirmed (asm lines 756986-757003)
 void TPictureMEM::SetMemoryBlock(TPictureMemBlock *block) {
 	_memBlock = block;
@@ -420,12 +441,12 @@ bool TPictureMEM::CopyFrom(const TPictureMEM &source, const wxRect &srcRect, con
                            const unsigned int &color) {
 	SetImageSize(size.width, size.height);
 
-	bool hasAlpha = source.IsMemoryImage() ? true : (source.GetTransparency() == eTransparencyMode::kColorKey);
+	bool hasAlpha = source.IsLoadedImage() ? true : (source.GetTransparency() == eTransparencyMode::kColorKey);
 
 	if (!InitMemory(hasAlpha))
 		return false;
 
-	SetMemoryImage();
+	SetLoadedImage();
 
 	unsigned char red = static_cast<unsigned char>(color);
 	unsigned char green = static_cast<unsigned char>(color >> 8);
@@ -449,7 +470,7 @@ bool TPictureMEM::CopyFrom(const TPictureMEM &source, const wxRect &srcRect, con
 bool TPictureMEM::CopyFrom(const TPictureMEM &source, const wxRect &srcRect) {
 	bool hasAlpha;
 
-	if (source.IsMemoryImage() && source.GetTransparency() == eTransparencyMode::kAlpha)
+	if (source.IsLoadedImage() && source.GetTransparency() == eTransparencyMode::kAlpha)
 		hasAlpha = true;
 	else
 		hasAlpha = (GetTransparency() == eTransparencyMode::kColorKey);
@@ -457,7 +478,7 @@ bool TPictureMEM::CopyFrom(const TPictureMEM &source, const wxRect &srcRect) {
 	if (!InitMemory(hasAlpha))
 		return false;
 
-	SetMemoryImage();
+	SetLoadedImage();
 	return Paste(source, srcRect, wxPoint{0, 0});
 }
 
@@ -471,7 +492,7 @@ bool TPictureMEM::ResizeImage(const TPictureMEM &source, const wxPoint &size, bo
 		return false;
 
 	_flipped = flipped;
-	SetMemoryImage();
+	SetLoadedImage();
 	_bytesPerPixel = source._bytesPerPixel;
 	_pitch = _bytesPerPixel * size.x;
 	_rgbOrder = source._rgbOrder;

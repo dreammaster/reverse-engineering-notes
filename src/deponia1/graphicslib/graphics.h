@@ -12,6 +12,7 @@
 #include "TSpriteHandle.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
+#include "graphicslib/spriteCache.h"
 
 class TPreloadedPicManager;
 struct TPictureMemBlock;
@@ -27,7 +28,14 @@ public:
 	virtual ~TGraphicsInterface() = default;
 
 	TPreloadedPicManager *GetPreloadedPicManager();
+	/** The sprite cache (see TSpriteCache; the base class keeps it at +0x08 and passes the calls below on to it). */
+	TSpriteCache *GetSpriteCache() {
+		return &_spriteCache;
+	}
 	TSpriteHandle *GetSpriteFromCache(const wxString &name);
+	void AddToCache(const wxString &name, TSpriteHandle *sprite);
+	void PrintCacheContents(std::list<wxString> &lines);
+	void ClearCache();
 	// Confirmed call shape only (TGScene::SetCurrentLightmap(), Deponia_
 	// Linux.asm line 168383+) - the shared memory block a scene's lightmap
 	// picture decodes into; not reversed beyond that call shape.
@@ -35,7 +43,7 @@ public:
 	// Confirmed call shape only (TMSavegame::~TMSavegame()/SetActive()/
 	// SaveGame(), Deponia_Linux.asm lines 159388-163700) - evicts a named
 	// sprite from the sprite cache; not reversed beyond that call shape.
-	void RemoveFromCache(const wxString &name);
+	bool RemoveFromCache(const wxString &name);
 	// Confirmed call shapes only (TMSavegame::SaveSnapShot(), Deponia_Linux.
 	// asm lines 162236-162327): the shared memory block frame captures decode
 	// into, and the current frame's captured picture (a virtual slot, +0x128
@@ -75,11 +83,17 @@ public:
 	// changed, UpdateCache() is called to react to it. Not reversed beyond
 	// that call shape.
 	int GetCacheSpriteCount() const;
-	void UpdateCache();
+	bool UpdateCache();
 
 	// vtable slot 0x90 in the original; called with a TSpriteHandle* whose
 	// refcount just reached zero.
 	virtual void OnSpriteHandleReleased(TSpriteHandle *handle);
+	/** Slot 0x40 (TGraphicsOGL::FinishDraw() is empty; the sprite cache calls it before it lets go of the sprites). */
+	virtual void FinishDraw();
+	/** Makes the sprite (the backend's texture) of `width` x `height` pixels of `bytesPerPixel` bytes from `data` and puts the
+	 *  handle in `sprite`; false if it cannot be made. Here only the handle is made, with the memory the pixels take. */
+	virtual bool CreateSprite(TSpriteHandle **sprite, const char *data, int width, int height, int bytesPerPixel, int pitch,
+	                          bool flag);
 
 	// Called from TMasterControl::Draw/Signal/PlayAVI (vtable slots
 	// 0x30/0x38/0x178 there); real parameter meaning not recovered.
@@ -135,6 +149,7 @@ public:
 private:
 	int _width = 0;
 	int _height = 0;
+	TSpriteCache _spriteCache;
 	TPreloadedPicManager *_preloadedPicManager = nullptr;
 };
 

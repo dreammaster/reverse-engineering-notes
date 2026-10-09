@@ -10,7 +10,21 @@ int defaultShader = 0;
 void ShaderCallback(int /*shader*/, TVisObjRef */*ref*/) {
 }
 
-void TGraphicsInterface::RemoveFromCache(const wxString &/*name*/) {
+// Confirmed (asm lines 762206-762223): the calls of the sprite cache, passed on.
+bool TGraphicsInterface::RemoveFromCache(const wxString &name) {
+	return _spriteCache.RemoveFromCache(name);
+}
+
+void TGraphicsInterface::AddToCache(const wxString &name, TSpriteHandle *sprite) {
+	_spriteCache.AddToCache(name, sprite);
+}
+
+void TGraphicsInterface::PrintCacheContents(std::list<wxString> &lines) {
+	_spriteCache.PrintCacheContents(lines);
+}
+
+void TGraphicsInterface::ClearCache() {
+	_spriteCache.Clear();
 }
 
 void TGraphicsInterface::GetPicsMemSettings(bool &rgbOrder, bool &flipped) {
@@ -66,11 +80,28 @@ bool TGraphicsInterface::IsFullscreen() {
 	return false;
 }
 
-TSpriteHandle *TGraphicsInterface::GetSpriteFromCache(const wxString &/*name*/) {
-	return nullptr;
+TSpriteHandle *TGraphicsInterface::GetSpriteFromCache(const wxString &name) {
+	return _spriteCache.GetSprite(name);
 }
 
-void TGraphicsInterface::OnSpriteHandleReleased(TSpriteHandle */*handle*/) {
+// Confirmed (asm lines 776655-776718, TGraphicsInterface::FreeSprite()): the handle is deleted (with its parts; the texture
+// of the backend is the backend's to free before).
+void TGraphicsInterface::OnSpriteHandleReleased(TSpriteHandle *handle) {
+	delete handle;
+}
+
+void TGraphicsInterface::FinishDraw() {
+}
+
+bool TGraphicsInterface::CreateSprite(TSpriteHandle **sprite, const char */*data*/, int width, int height, int bytesPerPixel,
+                                      int /*pitch*/, bool /*flag*/) {
+	TSpriteHandle *handle = new TSpriteHandle();
+
+	handle->width = width;
+	handle->height = height;
+	handle->SetMemorySize(width * height * bytesPerPixel);
+	*sprite = handle;
+	return true;
 }
 
 void TGraphicsInterface::Draw(TSpriteHandle */*sprite*/, const wxRect &/*sourceRect*/, const FloatRect &/*destRect*/,
@@ -225,12 +256,14 @@ void TGraphicsInterface::SetFilters(TInterpolationEnum /*a*/, TInterpolationEnum
 void TGraphicsInterface::PreallocateTextures(int /*count*/) {
 }
 
-void TGraphicsInterface::SetCacheSize(int /*size*/) {
+void TGraphicsInterface::SetCacheSize(int size) {
+	_spriteCache.SetCacheSize(size);
 }
 
 int TGraphicsInterface::GetCacheSpriteCount() const {
-	return 0;
+	return static_cast<int>(_spriteCache.GetSpriteCount());
 }
 
-void TGraphicsInterface::UpdateCache() {
+bool TGraphicsInterface::UpdateCache() {
+	return _spriteCache.UpdateCache();
 }

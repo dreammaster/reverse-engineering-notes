@@ -12,27 +12,12 @@
 // adjustment, and TPictureIO also calls TSprite::Set/operator==/
 // SetImageSize the same way - only explained by that inheritance chain).
 //
-// Depth varies a lot by method, same as TMasterControl/TComposedFile:
-//   - Fully traced: ctor x2, dtor, Set, Clear, SetParallax,
-//     TestCacheFileTime, LoadSpriteFromCache, RetryFailedPicturesLoad, and
-//     GetFormat's format-detection logic (magic-byte sniffing for
-//     RIFF/WEBP and the PNG signature, falling back to a single-letter
-//     format-hint code: 'P'->PNG, 'W'->WebP, 'J'->JPG, 'G'->GIF, and a
-//     final 'P' check for PCX that - per the disassembly - can only be
-//     reached after the *first* 'P' check already failed, so it appears
-//     unreachable; reproduced as observed, not "fixed").
-//   - The five common "release the current sprite handle, notify the
-//     graphics backend, clear the loaded pixel data" sequences repeated
-//     nearly verbatim across the dtor/ctor/Set/Clear were factored into one
-//     private ReleaseSpriteHandle() helper rather than duplicated.
-//   - Everything else (the actual PNG/WebP/JPG/GIF/PCX decode pipeline -
-//     ReadPictureFile/LoadHeader, preloading - FinishPreloaderRead/
-//     CleanupPreloader/PreparePreloaderLoad, and all OpenGL-facing drawing -
-//     Draw*/CreateSpriteTexture/PreparePaint) has correct signatures and
-//     member layout to compile against, but stub bodies - each of those is
-//     its own substantial reversing effort (real vendored libpng/libwebp/
-//     jpgd decoders, real OpenGL call sequences) that wasn't done this
-//     pass.
+// What is reconstructed: the loading of a picture (GetFormat(), LoadHeader(), ReadPictureFile(), LoadPicture(), LoadRect(),
+// the preloader calls PreparePreloaderLoad()/FinishPreloaderRead()/CleanupPreloader(), RetryFailedPicturesLoad()), the sprite
+// (CreateSprite(), the cache, the transparency bitmap, IsTransparent()), the drawing calls (PreparePaint(), Draw*() - which hand
+// the work to the backend, TGraphicsInterface::Draw()) and saving (SavePicture()). Not reconstructed: the decoders of the
+// formats (TPictureFormat), the thread that preloads pictures (TPreloadedPicManager: nothing is ever queued) and so
+// RefreshSprite(), which waits for it, and the backend (graphics) that makes the textures.
 #pragma once
 
 #include <vector>
@@ -50,7 +35,9 @@ class TPaintControl;
 class TPictureIO : public TPictureMEM {
 public:
 	enum class ePreloadingStatus { NotPreloading, Preloading, Preloaded };
-	enum class eLoadSetting { Normal, ForceReload };
+	/** LoadPicture(): Normal looks in the sprite cache first, ForceReload reads the file again; MemoryOnly (the original passes 2)
+	 *  reads the pixels and makes no sprite. */
+	enum class eLoadSetting { Normal, ForceReload, MemoryOnly };
 
 	TPictureIO();
 	TPictureIO(const TSprite &sprite, bool ownsSprite);
@@ -78,23 +65,28 @@ public:
 	bool GetFormat(TFile &file, TPictureFormat **outFormat, const wxString &formatHint) const;
 	bool LoadHeader(TFile &file, TPictureFormat **outFormat);
 	bool ReadPictureFile();
-	void EnsureSizeValid();
+	/** Reads the size of the picture from its file if it is not known yet (a picture that has none is marked as failed). */
+	bool EnsureSizeValid();
 	bool LoadRect(TSprite &sprite);
 
 	bool CreateFromFramebuffer(TFramebuffer *framebuffer);
 	bool CreateSprite(bool preload);
+	/** The picture is these pixels (the picture takes them over). */
 	bool CreateSprite(void *pixels, int width, int height, int bpp);
 	bool CreateEmptySprite(int width, int height, int bpp, bool preload);
 	bool CreateSpriteTexture(const wxFileName &file);
 
 	bool FinishPreloaderRead(int result);
 	void CleanupPreloader();
-	void PreparePreloaderLoad(wxFileName file);
+	/** Opens the file and reads the header on the thread of the game, the data is read by FinishPreloaderRead(): the size
+	 *  (height << 32 | width), or -1 if the file cannot be read. */
+	unsigned long long PreparePreloaderLoad(wxFileName file);
 	bool LoadPicture(wxFileName file, eLoadSetting loadSetting);
 	bool RefreshSprite(bool force);
 
 	bool IsTransparent(const wxPoint &point) const;
-	bool SavePicture(const wxFileName &file, bool overwrite) const;
+	/** Writes the picture as a PNG (`webp`: as a WebP). */
+	bool SavePicture(const wxFileName &file, bool webp) const;
 	bool WritePicture(TPictureFormat &format, const wxFileName &file) const;
 
 	wxRect GetDestRect() const;
@@ -158,6 +150,8 @@ private:
 	// reset the transient flags" sequence shared (near-verbatim in the
 	// original) by the destructor, both constructors, Set(), and Clear().
 	void ReleaseSpriteHandle();
+	/** Notes the picture for RetryFailedPicturesLoad() (once). */
+	void noteFailedLoad();
 
 	static std::vector<TPictureIO *> _loadFailedPics;
 	static wxCriticalSection RetryFailedPicturesSection;
@@ -170,7 +164,8 @@ private:
 	bool _ownsSprite = false;  // +0xA4, set from the (TSprite,bool) ctor's bool param (CreateSprite() makes the transparency bitmap when it is set)
 	int _parallaxX = 0;
 	int _parallaxY = 0;
-	int _field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
+	TFile *_preloadFile = nullptr;           // +0x78, the file a preload reads from
+	TPictureFormat *_preloadFormat = nullptr;  // +0x80, the format of it
 	int _preloadPriority = -1;  // +0xB0
 	ePreloadingStatus _preloadingStatus = ePreloadingStatus::NotPreloading;  // +0xB4, guarded by _mutexStatus
 	TPicturePreloader *_preloader = nullptr;  // +0xB8

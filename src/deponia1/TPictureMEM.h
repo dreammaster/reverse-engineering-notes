@@ -45,6 +45,20 @@ public:
 	 *  go: the buffer is new[] of the caller's). `hasAlpha`: 4 bytes to a pixel; `rgbOrder`; the last flag of the
 	 *  original is not used. A picture with alpha is flipped. */
 	void SetMemoryData(char *data, int width, int height, bool hasAlpha, bool rgbOrder, bool flag);
+	/** The picture forgets its pixels without freeing them (they belong to someone else now). */
+	void DropMemData() {
+		_data = nullptr;
+	}
+	/** Frees the pixels of the picture (if it has no memory block) and lets go of the block. */
+	void ReleasePixels();
+	/** The picture is these `width` x `height` pixels (`bytesPerPixel` bytes each); they are not copied. */
+	void TakePixels(char *data, int width, int height, int bytesPerPixel);
+	TPictureMemBlock *GetMemoryBlock() const {
+		return _memBlock;
+	}
+	int GetPitch() const {
+		return _pitch;
+	}
 	/** The pixels (null when there are none). */
 	char *GetMemoryData() const {
 		return reinterpret_cast<char *>(_data);

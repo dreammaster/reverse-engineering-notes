@@ -43,6 +43,9 @@ public:
 	int GetMemorySize() const {
 		return _memorySize;
 	}
+	void SetMemorySize(int size) {
+		_memorySize = size;
+	}
 
 	~TSpriteHandle();
 
@@ -57,5 +60,5 @@ public:
 
 private:
 	int _memorySize = 0;
-	int _refCount = 0;
+	int _refCount = 1;  // +0x78 (the constructor makes it 1: the reference of whoever made the handle)
 };

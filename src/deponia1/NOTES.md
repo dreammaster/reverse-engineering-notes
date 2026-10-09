@@ -3938,3 +3938,27 @@ The matrix transforms of the cursor (`invMatrix1`, `matrix1`) are in `AppGlobals
   original), `Paste()` copies with colour conversion (a colour key becomes alpha 0). `ResizeImage()` is bilinear, the original
   uses libswscale (Lanczos).
 
+## Loading a picture and the sprite cache (TPictureIO, TSpriteCache)
+
+- `TPictureIO::LoadPicture(file, setting)` (asm 789745): sets the path, a failed picture (`_flag90`) fails at once, the pixels go
+  to the main memory block, `Normal` looks in the sprite cache by `GetSpriteName()` (`path_0_<transparency>_<colorkey>_<flagC0>`),
+  else `ReadPictureFile()` (open the file through the composed files, `GetFormat()`, `ReadHeader()`, `InitMemory(true)`,
+  `ReadData()`) and `CreateSprite(setting != Normal)`; `MemoryOnly` (the original's 2) makes no sprite. Every picture is noted for
+  `RetryFailedPicturesLoad()` (which clears the failed flag of all of them and empties the list). `GetFormat()`: the first four
+  bytes (`RIFF` -> WebP, `?PNG` -> PNG), else the first 3 letters of the extension (PNG, WEB, JPG, GIF, PCX).
+  `LoadHeader()` marks the picture as a loaded image (flag bit 0 of the sprite) and a transparency of "any" becomes alpha.
+- `CreateSprite(preload)` (asm 786983): the backend makes the sprite from the pixels (`TGraphicsInterface::CreateSprite()`, here
+  a handle with the memory size), a sprite with a colour key or alpha transparency gets its transparency bitmap (when the picture
+  was made with `ownsSprite`: `+0xA4`), it goes in the cache (the cache adds its own reference); without `preload` the pixels
+  are freed and the memory block let go. `IsTransparent(point)` looks at the bit of the 4 x 4 block in that bitmap.
+- Drawing: `PreparePaint()` gives the part of the sprite (`0, 0, size`, moved when mirrored) and where it is on the screen
+  (`position + origin - parallax * scroll / 100 - scroll`, floats, size times the scale); `Draw()`, `DrawWithDestRect()`,
+  `DrawWithSrcRect()` (used for text: inside a batch the backend ignores rotation and scale, the original passes scale (1, 0))
+  and `DrawWithLightMap()` call the backend (`TGraphicsInterface::Draw()`/`DrawWithLightMap()`, slots 0x70/0x78; no-ops here).
+- `TSpriteCache` (asm 749371): a case-insensitive map of name -> sprite plus a queue (newest first); the cache holds one reference.
+  `UpdateCache()` (every frame when the number of sprites changed): when the unused sprites (reference count 1) take more than
+  the size of the cache (default 40 MB; `SetCacheSize(MB)` 20..500, the limit left is 90%), the oldest unused ones are thrown out
+  until they are no more than the limit. `GetSprite()` finds the place case-insensitively but then wants the same letters.
+- Not reconstructed: the decoders (`TPictureFormat` and its PNG/WebP/JPG/GIF/PCX stubs fail, so no picture loads), the thread
+  that preloads pictures (`TPreloadedPicManager`; `RefreshSprite()` is the case that nothing is queued) and the OpenGL backend.
+

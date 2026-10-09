@@ -309,10 +309,11 @@ static int system_index(lua_State *state) {
 	} else if (std::strcmp(name, "frameTime") == 0) {
 		lua_pushinteger(state, static_cast<lua_Integer>(fps));
 	} else if (std::strcmp(name, "cacheContents") == 0) {
-		// The names of the sprites in the cache of the graphics, a line each. TODO: the sprite cache
-		// (TGraphicsInterface::GetSpriteCache()->PrintCacheContents()) is not reconstructed.
+		// The sprite cache of the graphics as lines of text (asm lines 288385-288440), a line each.
 		std::list<wxString> contents;
 		std::wstring text;
+
+		graphics->GetSpriteCache()->PrintCacheContents(contents);
 
 		for (const wxString &line : contents) {
 			text += line.ToStdWstring();
