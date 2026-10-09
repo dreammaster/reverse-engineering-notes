@@ -48,7 +48,7 @@ TGAction	done	33	194786	211541
 TVisObjTween	done	4	212286	481002
 TGText	in-progress	31	212567	215356
 TSText	done	15	216919	1460684
-THCharacter	todo	5	217481	218783
+THCharacter	done	5	217481	218783
 THItem	done	5	218884	219148
 THScene	done	7	219228	219814
 TGScrollButton	done	5	219879	220036
@@ -57,10 +57,10 @@ TConsole	stub	61	223417	242869
 THInterface	done	5	246907	247172
 TGActionArea	done	3	247238	247279
 TGWaySystem	done	21	247325	253067
-THGameControl	todo	6	256950	258050
+THGameControl	done	6	256950	258050
 TGObject	in-progress	13	258159	259458
 THAnimation	done	5	259729	260077
-TSceneActionArea	todo	4	260143	260601
+TSceneActionArea	done	4	260143	260601
 TGItem	done	9	260668	261228
 TGCommand	done	5	261322	261584
 StringHashMap<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int (*)(lua_State*), char const*, StringHash<char const*> >	todo	1	289025	289025

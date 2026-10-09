@@ -214,7 +214,7 @@ public:
 	void UpdateActionAreas();
 	void AlignToObject(const TVisObjRef &object);
 
-private:
+protected:
 	std::list<TGInterface *> _interfaces;        // +0xC0
 	std::vector<TGItem *> _items;                // +0xD0 (not used so far)
 	wxRealPoint _realPosition;                   // +0xE8, the position with its fractions

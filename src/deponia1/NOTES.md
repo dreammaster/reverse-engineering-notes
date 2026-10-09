@@ -3883,3 +3883,30 @@ is `SDL_TEXTINPUT` in real SDL2.
   `main`).
 - `wxString`/`wxFileName`'s true field layout - deferred until we're
   implementing them for real rather than stubbing them.
+
+## THCharacter: the character's data object drives the running character
+
+`THCharacter` (`THCharacter.{h,cpp}`, asm 217481-218850) is a `TGCharacter` that is also a `TEventHandlerInterface` (second
+vtable at +0x398). It listens to the character's data object and to the outfit it wears, and `OnEvent(event, field, object)`
+takes a change over when it happens (the new value is read from the data; `object` is the value that was replaced, which only
+the links to the outfit and the scene use):
+- the position (also the float position; the standing animation and the walk stop, the size is set again, the scene scrolls to the
+  character), the destination (`SetFreeDestination`), a destination object (its position plus its offset, written to the
+  destination without an event), the state (2: stops walking), the direction, the visibility (at once, or timed for the dest
+  visibility), the scale and the scale factor (`SetCurrentSize`), active, the walking sound, the comment set, the follow reach;
+- the outfit: the old one is not listened to any more, the new one is, then `SetCurrentOutfit`. A change of the speed of the
+  outfit empties `kAnimationWalkSteps` of its walk animations (they are measured again); of its talk animations is read and
+  not used (the original gets the list and its size and does nothing with them);
+- the items (the character that is played: all its interfaces get them), the interfaces (the character that is played makes
+  them again; a command of the interfaces that is not the character's own is set again with the event);
+- the active command of the character becomes the game's;
+- the scene: the data link is put back to the old scene (`object`) without an event, and the game changes the scene itself,
+  at the first object of the new scene or where the character is: `TSceneControl::ChangeScene` for the character that is
+  played, `TGScene::SetCharacter` for another;
+- the follow character: none stops the walk; else the action character is cleared, a character in the same scene is walked
+  to and the follow timer restarts.
+
+The matrix transforms of the cursor (`invMatrix1`, `matrix1`) are in `AppGlobals` (`transformByInverseMatrix`,
+`transformByMatrix`): the mouse position of `TGameControl`, and `IsInside()`/`GetObject()` of `TGObject`, `TMCharacter` and
+`TGInterface` move the point back through the inverse matrix (round the scroll position for objects and characters);
+`TGObject::DrawSnoopAnimation` moves the position of the animation forward through `matrix1`.
