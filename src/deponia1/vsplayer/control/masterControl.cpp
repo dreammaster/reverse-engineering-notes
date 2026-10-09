@@ -13,20 +13,6 @@
 #include "vsplayer/control/gameController.h"
 #include "vstables/fieldIds.h"
 
-// Draw-hook script lists: plain globals in the original (cs:luaDrawBeforeScene
-// etc.), populated by a registration mechanism separate from the generic
-// Register*EventHandler methods below (never observed being written to in
-// what's been reversed so far, so they stay empty here).
-static std::vector<std::string> s_luaDrawBeforeScene;
-static std::vector<std::string> s_luaDrawAfterScene;
-static std::vector<std::string> s_luaDrawAfterInterfaces;
-
-// LuaDoString(std::string const&, std::string const&) - the scripting
-// bridge itself isn't reversed; this is a placeholder so Draw()'s hook
-// loops compile and are structurally faithful.
-static void LuaDoStringStub(const std::string &/*script*/, const std::string &/*chunkName*/) {
-}
-
 TMasterControl::TMasterControl() {
 	_cursorControl = new TCursorControl();
 	_gameController = new TGameController();
@@ -157,13 +143,13 @@ bool TMasterControl::Draw(bool showActionText) {
 	}
 
 	if (!showActionText) {
-		for (const std::string &script : s_luaDrawBeforeScene)
-			LuaDoStringStub(script, script);
+		for (const std::string &script : luaDrawBeforeScene)
+			LuaDoString(script, script);
 
 		_sceneControl->Draw();
 
-		for (const std::string &script : s_luaDrawAfterScene)
-			LuaDoStringStub(script, script);
+		for (const std::string &script : luaDrawAfterScene)
+			LuaDoString(script, script);
 
 		TVisObjRef game = _visionaire->GetGame();
 		// Field id 0x313, meaning not resolved: picks one of three render
@@ -210,8 +196,8 @@ bool TMasterControl::Draw(bool showActionText) {
 			}
 		}
 
-		for (const std::string &script : s_luaDrawAfterInterfaces)
-			LuaDoStringStub(script, script);
+		for (const std::string &script : luaDrawAfterInterfaces)
+			LuaDoString(script, script);
 
 		if (drawMode != 0) {
 			graphics->SetMatrixMode(false, false);

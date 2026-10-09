@@ -52,6 +52,11 @@ public:
 	/** Slot 0x00: the font object changed: the font that this one stands for is read again, and a TrueType font is made again. */
 	void OnEvent(TEventEnum event, int field, TVisionaireObject *object) override;
 
+	/** The font object that this font was made from. */
+	const TVisObjRef &GetFontObject() const {
+		return _font;
+	}
+
 	/** Called every frame by ShowFrame (asm 497798): makes the Freetype font again when it has to be. */
 	void CheckFreetypeFont();
 

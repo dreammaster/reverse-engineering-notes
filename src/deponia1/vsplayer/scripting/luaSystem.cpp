@@ -403,16 +403,18 @@ int lua_setDelay(lua_State *state) {
 	return 0;
 }
 
-// Confirmed (asm lines 447452-447586, a part of it): `InitDrawLua` makes the Lua side of the drawing - the Box2D
-// physics (tolua_b2_open), the `graphics` object with its sprites, framebuffers, buffers and movies - and the global
-// `sha1`, `system` and `setDelay`. TODO: only the last three are here; the drawing functions need the GL backend
-// (see TODO.md), the Box2D bindings are a third-party library.
+// Confirmed (asm lines 447452-447586): `InitDrawLua` makes the Lua side of the drawing - the Box2D physics (tolua_b2_open: not
+// reconstructed, a third-party library), the classes of the sprites, framebuffers, buffers and movies, the global `sha1`, the
+// object `graphics`, the object `system` and the global `setDelay`.
 void InitDrawLua(lua_State *state) {
 	lua_settop(state, 0);
+
+	luaopen_Graphics(state);
 
 	lua_pushcclosure(state, lua_sha1, 0);
 	lua_setfield(state, LUA_GLOBALSINDEX, "sha1");
 
+	luaopen_GraphicsObject(state);
 	lua_open_system(state);
 
 	lua_pushcclosure(state, lua_setDelay, 0);

@@ -14,7 +14,12 @@ unsigned long getGPUMem();
 /** The memory the process takes (asm 144468: the Linux build answers 0). */
 unsigned long getProcessMem();
 
-/** The part of the Lua side of the drawing that is not about the video card: `sha1`, `system`, `setDelay` (asm 447452). */
+/** The classes of the drawing (sprite, framebuffer, buffer, movie) and the global `graphics` (luaGraphics.cpp). */
+void luaopen_Graphics(lua_State *state);
+void luaopen_GraphicsObject(lua_State *state);
+
+/** The Lua side of the drawing (asm 447452): the classes of the drawing, `sha1`, `graphics`, `system`, `setDelay`. The
+ *  Box2D bindings (tolua_b2_open, a third-party library) are not here. */
 void InitDrawLua(lua_State *state);
 int lua_sha1(lua_State *state);
 int lua_setDelay(lua_State *state);

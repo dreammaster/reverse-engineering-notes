@@ -23,6 +23,9 @@ public:
 	virtual void WindowResized(int width, int height, bool fullscreen) = 0;
 	/** Slot 0x100 (`system.systemInfo().gpu`): the name of the video card. */
 	virtual std::string GetGPUName() = 0;
+
+	/** +0x10 (graphics.isUpsideDown): whether the picture of the backend is upside down. */
+	bool _isUpsideDown = false;
 };
 
 extern TSubSys *g_subSys;

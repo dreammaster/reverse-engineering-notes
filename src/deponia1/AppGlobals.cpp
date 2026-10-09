@@ -48,6 +48,18 @@ float startspeed = 0.1f;
 
 bool matricesActive = false;
 
+std::vector<float> matrix1;
+std::vector<float> matrix2;
+std::vector<float> textMatrix;
+std::vector<float> invMatrix1;
+std::vector<int> fontShaderIndizes;
+int fontShader = 0;
+std::vector<std::string> luaDrawBeforeScene;
+std::vector<std::string> luaDrawAfterScene;
+std::vector<std::string> luaDrawAfterInterfaces;
+float b2xoffset = 0.0f;
+float b2yoffset = 0.0f;
+
 wxString passw;
 
 bool EngineUpdatePaused = false;

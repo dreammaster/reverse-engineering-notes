@@ -141,11 +141,14 @@ constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the ta
 commands, and the 49 commands of the player with `InitPlayerCommands()` (`vsplayer/scripting/playerCommands.cpp`).
 Missing:
 
-- `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/deponia1/NOTES.md`. That function calls the part of `InitDrawLua()`
-  that is done (`sha1`, `system`, `setDelay`: `luaSystem.cpp`); missing are the rest of it - the Box2D bindings
-  (`tolua_b2_open`), the `graphics` object with its sprites, framebuffers, buffers and movies (`graphics_*`, `sprite_*`,
-  `framebuffer_*`, `buffer_*`, `movie_*`: asm 438459-448600, all about the GL backend) - the `steam` object (asm
-  286850-288180) and the libraries `utf8`, `luacurl`, `rex_pcre` and `lfs` that the original has built in.
+- `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/deponia1/NOTES.md`. That function
+  calls `InitDrawLua()` (`sha1`, `graphics`, `system`, `setDelay`: `luaSystem.cpp`, `luaGraphics.cpp`). Missing are the Box2D
+  bindings (`tolua_b2_open`, tolua++), the functions of `graphics` that draw (`drawSprite`, `drawBox`, `drawLine`, `drawIndexed`,
+  `clear`, `loadFromFile`, `loadMemoryJPG/PNG/WEBP`, `movieOpen`, `setupOffsets`, `instantiateAnimation`, `drawAnimation`,
+  `createBuffer`, `createIndexBuffer`, `createFramebuffer`, `bindFramebuffer`, `createBox2DDebugRender`) and the methods of the
+  Sprite, TFramebuffer, TBuffer and TMovie objects (asm 438459-448600, all about the GL backend; they are in the tables as
+  stubs that log); the `steam` and `galaxy` objects (asm 284483-288180, glue for the Steam and GOG SDKs) and the libraries `utf8`,
+  `luacurl`, `rex_pcre` and `lfs` that the original has built in.
 - The GL backend (`g_subSys`, 299 uses in the asm; `graphicslib/subsys.h` has the two slots the commands use) is not
   reconstructed and nothing sets `g_subSys`: `shaderCompile` and `shaderUniform` keep the shader list but make no
   shaders, `system.systemInfo().gpu` is empty, `getGPUMem()` has only the base number, `system.cacheContents` is

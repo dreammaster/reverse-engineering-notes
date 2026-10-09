@@ -3,6 +3,11 @@
 // InitPlayerCommands() calls them all.
 #pragma once
 
+#include <functional>
+
+/** The easing of the scripts' number (0 to 32, the globals `easeBackIn` ... of SetEnums); an unknown number is linear. */
+std::function<double(double)> easingByNumber(int number);
+
 void Register_CmdCreateEvent();
 void Register_CmdCreateHapticEffectCondition();
 void Register_CmdCreateHapticEffectConstant();

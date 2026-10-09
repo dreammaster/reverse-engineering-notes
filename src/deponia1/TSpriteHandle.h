@@ -24,6 +24,17 @@
 // than being guessed at here.
 #pragma once
 
+#include <vector>
+
+/** One part of the texture of a sprite (the sprites are cut up when a texture cannot be as big as they are): the
+ *  rectangle of the part in the picture. The rest of it - the texture and its coordinates - is the backend's. */
+struct TSpritePartHandle {
+	int left = 0;
+	int top = 0;
+	int right = 0;
+	int bottom = 0;
+};
+
 class TSpriteHandle {
 public:
 	void AddRef();
@@ -35,6 +46,8 @@ public:
 
 	int width = 0;
 	int height = 0;
+	/** +0x08: the parts (owned by the handle in the original; a backend that cuts sprites up fills this). */
+	std::vector<TSpritePartHandle *> parts;
 
 private:
 	int _memorySize = 0;

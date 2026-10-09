@@ -1823,7 +1823,7 @@ bool CmdReplaceGame::Redo() {
 // Confirmed (asm lines 407771-408355): the number of an easing in the scripts (the ease... globals of
 // SetEnums: Back, Bounce, Circ, Cubic, Elastic, Linear, None, Quad, Quart, Quint and Sine, each In, Out and InOut) is
 // the function of Easing.h; a number outside 0 to 32 is not an easing.
-static std::function<double(double)> easingByNumber(int number) {
+std::function<double(double)> easingByNumber(int number) {
 	static double (*const kEasings[])(double) = {
 		Easing::BackIn, Easing::BackOut, Easing::BackInOut,
 		Easing::BounceIn, Easing::BounceOut, Easing::BounceInOut,

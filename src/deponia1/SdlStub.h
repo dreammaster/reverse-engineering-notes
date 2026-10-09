@@ -375,6 +375,9 @@ extern "C" {
 	float SDL_GetWindowBrightness(SDL_Window *window);
 	int SDL_SetWindowBrightness(SDL_Window *window, float brightness);
 	int SDL_PushEvent(SDL_Event *event);
+	char *SDL_GetClipboardText(void);
+	int SDL_SetClipboardText(const char *text);
+	void SDL_free(void *memory);
 	void SDL_WarpMouseInWindow(SDL_Window *window, int x, int y);
 	void SDL_PumpEvents(void);
 	int SDL_PeepEvents(SDL_Event *events, int numevents, int action, Uint32 minType, Uint32 maxType);

@@ -39,6 +39,10 @@ public:
 	virtual void CompileFromMemory(const std::string &data, const char *name) = 0;
 	/** Slot 0x20: makes the shader from the two sources of the script (`second`, then `first`: argument 2, 1). */
 	virtual void Compile(const std::string &second, const std::string &first, int param1, int param2) = 0;
+	/** Slots 0x28 and 0x30 (graphics.shaderUse calls them one after the other; the names are invented): the shader is made the one
+	 *  that draws. */
+	virtual void Use() = 0;
+	virtual void AfterUse() = 0;
 	/** Slots 0x48 and 0x50: an integer or a float uniform. */
 	virtual void SetUniform(const char *name, int value) = 0;
 	virtual void SetUniform(const char *name, float value) = 0;
@@ -51,6 +55,14 @@ public:
 	virtual void SetUniformMatrix4(const char *name, const float *values) = 0;
 	/** Slot 0xB0: a uniform that is a texture, given by the path of its file. */
 	virtual void SetUniformTexture(const char *name, const char *path) = 0;
+	/** Slot 0xB8: a uniform that is the texture of a framebuffer object of the scripts. */
+	virtual void SetUniformFramebuffer(const char *name, class TFramebuffer *framebuffer) = 0;
+	/** Slot 0xC8 (graphics.shaderAttrib): the place of an attribute of the shader. */
+	virtual int GetAttrib(const char *name) = 0;
+
+	/** The Lua functions that the shader calls (graphics.shaderDrawCallback and shaderCallback). */
+	std::string _drawCallback;  // +0x08
+	std::string _callback;      // +0x10
 };
 
 /** The shaders that the scripts made (`shader_list`); the number a script knows is the position in it, from 1. */

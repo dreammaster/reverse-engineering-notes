@@ -10,6 +10,7 @@
 #include "TMSavegameArea.h"
 #include "TSceneActionArea.h"
 #include "graphicslib/graphics.h"
+#include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/lua.h"
 #include "vscommon/scripting/particles.h"
 #include "vsplayer/control/gameControl.h"
@@ -757,15 +758,13 @@ void TGScene::SetSavegames() {
 	setSavegamesActive();
 }
 
-// Confirmed (asm lines 171104-171805) except the optional Lua "lightmap
-// callback" override at its end (skipped - the same standing Lua-bridge
-// gap used throughout this project; it would only ever trigger for a game
-// script that registers one, passing the pixel's colour channels and the
-// object to a Lua function that may replace the result). Colours a position
-// by the scene's lightmap: with no lightmap, the plain brightness as a grey;
-// otherwise the lightmap's pixel (clamped inside it) at the position scaled
-// to the lightmap's size.
-unsigned int TGScene::GetTint(const TVisObjRef &/*object*/, const wxPoint &pos) const {
+std::string TGScene::LuaLightmapCallback;
+
+// Confirmed (asm lines 171104-171805). Colours a position by the scene's lightmap: with no lightmap, the plain brightness
+// as a grey; otherwise the lightmap's pixel (clamped inside it) at the position scaled to the lightmap's size. With a
+// lightmap callback the Lua function is given the object and the three channels of that colour (0 to 1; red is the low
+// byte) and answers three numbers that become the colour (no alpha); when it fails the colour stays.
+unsigned int TGScene::GetTint(const TVisObjRef &object, const wxPoint &pos) const {
 	if (_lightmap.IsEmpty()) {
 		unsigned int level = static_cast<unsigned char>(static_cast<int>(255.0f * _brightness));
 		return 0xFF000000 | level | (level << 8) | (level << 16);
@@ -782,7 +781,39 @@ unsigned int TGScene::GetTint(const TVisObjRef &/*object*/, const wxPoint &pos) 
 	else if (y >= _lightmap.GetHeight())
 		y = _lightmap.GetHeight() - 1;
 
-	return _lightmap.GetPixel(wxPoint{x, y}, _brightness);
+	unsigned int color = _lightmap.GetPixel(wxPoint{x, y}, _brightness);
+
+	if (LuaLightmapCallback.empty())
+		return color;
+
+	TArgument objectArgument;
+	TArgument red;
+	TArgument green;
+	TArgument blue;
+	TArgument resultRed;
+	TArgument resultGreen;
+	TArgument resultBlue;
+
+	objectArgument.Set(object);
+	red.Set((color & 0xFF) / 255.0);
+	green.Set(((color >> 8) & 0xFF) / 255.0);
+	blue.Set(((color >> 16) & 0xFF) / 255.0);
+	resultRed.SetType(TArgType::kFloat);
+	resultGreen.SetType(TArgType::kFloat);
+	resultBlue.SetType(TArgType::kFloat);
+
+	std::vector<TArgument *> arguments = {&objectArgument, &red, &green, &blue};
+	std::vector<TArgument *> results = {&resultRed, &resultGreen, &resultBlue};
+
+	if (LuaExecuteFunction(LuaLightmapCallback, arguments, results)) {
+		int r = static_cast<int>(resultRed.GetFloat() * 255.0f);
+		int g = static_cast<int>(resultGreen.GetFloat() * 255.0f);
+		int b = static_cast<int>(resultBlue.GetFloat() * 255.0f);
+
+		color = (static_cast<unsigned char>(b) << 16) | (static_cast<unsigned char>(g) << 8) | static_cast<unsigned char>(r);
+	}
+
+	return color;
 }
 
 void TGScene::appendToDrawList(TManagedObject *object) {

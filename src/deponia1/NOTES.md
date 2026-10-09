@@ -3589,6 +3589,26 @@ Not reconstructed (in TODO.md): `ParticleContainer::Draw` (vertex buffers throug
 functions (editor only), and the texture atlas that `images` with more than one picture makes (`MaxRectsBinPack`).
 `TGScene::BeginScene` and `TGObject::SetActive` now build the container from field 0x326 through `LuaDoString`.
 
+## The Lua object `graphics` (vsplayer/scripting/luaGraphics.cpp)
+
+`InitDrawLua` makes the classes Sprite, TFramebuffer, TBuffer and TMovie, the globals `sha1`, `graphics`, `system` and
+`setDelay`. The scripts use `graphics` to put a matrix on the drawing (`graphics.matrix1 = {9 numbers}`, also `matrix2`,
+`textMatrix`, `invMatrix1`; the engine draws through them while `matricesActive` is set - `TMasterControl::Draw` sets it for
+the scene and its hooks - and `invMatrix1` is for the mouse), to add Lua functions that `TMasterControl::Draw` calls
+(`addDrawFunc(name [, 0 after the scene | 1 after the interfaces | -1 before the scene])`, run with `LuaDoString(name, name)`),
+to ask about the engine (fonts, animations and characters, the scroll position, `evalTween` with the same easings as the
+commands, `performLinebreaks`) and to draw (`drawSprite`, `drawBox`, `drawLine`, `drawIndexed`, framebuffers, buffers, shaders;
+those need the backend and are only stubs here, listed in the tables with their names). `lightmapCallback` and
+`shaderCallback` set the names of Lua functions that `TGScene::GetTint` and the shader call. Things the asm shows:
+
+- `graphics.noise` is the simplex noise (1 or 2 numbers) and `noise2` the Perlin noise (1 to 4), `Noise1234` and
+  `SimplexNoise1234`, Gustavson's public domain library; the constants and the permutation are the binary's.
+- `graphics.shaderUniform(shader, name, value)`: a name that begins `_i_` is an integer uniform, `_t_` a texture (the value is
+  the path of a picture or a framebuffer object); a table of 2, 3, 4, 9 or 16 numbers is a vector or a matrix. A table for a
+  `_t_` name, or any other kind of value for it, is an error or a log message.
+- `getAnimationSize` and the other animation functions take a character (table id 0: its current animation), or an object of the
+  animation tables 9 and 0x1A.
+
 ## The particle systems of the editor (graphicslib/particleSystem.cpp)
 
 The data (kParticleContainer / kParticle...) describes a system of emitters; `TGParticleSystem::Init` makes a `TGParticleEmitter`

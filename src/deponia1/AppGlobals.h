@@ -34,6 +34,23 @@ extern wxFileName g_logfile;
 
 extern std::FILE *LogFile;
 
+// Confirmed real, named globals of the Lua object `graphics` (graphics_newindex, asm 438488): the matrices that the scripts set
+// (9 numbers each, or none: nothing is drawn through a matrix - see matricesActive) and the font and shader numbers. The
+// scripts that draw (luaDrawBeforeScene and the others) are lists of the names of Lua functions that TMasterControl::Draw()
+// runs before the scene, after it and after the interfaces.
+extern std::vector<float> matrix1;
+extern std::vector<float> matrix2;
+extern std::vector<float> textMatrix;
+extern std::vector<float> invMatrix1;
+extern std::vector<int> fontShaderIndizes;
+extern int fontShader;
+extern std::vector<std::string> luaDrawBeforeScene;
+extern std::vector<std::string> luaDrawAfterScene;
+extern std::vector<std::string> luaDrawAfterInterfaces;
+// Confirmed real, named globals (graphics.box2DOffset, asm 440260): where the origin of the Box2D world is in the game.
+extern float b2xoffset;
+extern float b2yoffset;
+
 extern int AppStatus;
 extern int isProgramLooping;
 extern int eMouseMessage;

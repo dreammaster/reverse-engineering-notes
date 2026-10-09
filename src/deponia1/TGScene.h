@@ -83,9 +83,12 @@ public:
 	float GetBrightness() const {
 		return _brightness;
 	}
-	// Per-pixel lightmap colour at a screen position, tinted for `object`
-	// (the Lua "lightmap callback" override is not modeled, see the .cpp).
+	// Per-pixel lightmap colour at a screen position, tinted for `object`; with a Lua lightmap callback (set by
+	// graphics.lightmapCallback) the function may replace the colour.
 	unsigned int GetTint(const TVisObjRef &object, const wxPoint &pos) const;
+
+	/** The name of the Lua function that may change the colour of a lightmap pixel (empty: none). */
+	static std::string LuaLightmapCallback;
 
 	// Confirmed TManagedObject* (TGameControl::ReattachSceneObjectTexts
 	// calls TManagedObject::SetText() directly on the result, asm lines
