@@ -376,7 +376,9 @@ void TMatrix4::SetProjection(float nearPlane, float farPlane, float halfSize) {
 	_m[0] = k;
 	_m[5] = k;
 
-	for (int i : {1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 15})
+	for (int i : {
+	            1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 15
+	        })
 		_m[i] = zero;
 
 	_m[10] = (halfSize * farPlane) / (nearPlane * span) * k;
@@ -394,7 +396,9 @@ void TMatrix4::SetProjection(float nearPlane, float farPlane, float width, float
 	_m[10] = farPlane / span;
 	_m[0] = twiceNear / width;
 
-	for (int i : {1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 15})
+	for (int i : {
+	            1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 15
+	        })
 		_m[i] = 0.0f;
 
 	_m[14] = -farPlane / span * nearPlane;

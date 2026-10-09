@@ -101,12 +101,13 @@ Left out:
 
 `TGObject` stays `in-progress` in `manifest/proprietary_classes.tsv` until then.
 
-### The older particle system (particleSystem.cpp)
+### The particle systems of the editor (particleSystem.cpp, particlesGame.cpp)
 
-`TParticleSystem` and `TParticleEmitter` (asm 766025-771351), `TGParticleSystem` and `TGParticleEmitter` (asm
-1378274-1380801), and the table types `TTParticles` and `TTParticleContainer` (asm 1469492-1470952) are not reconstructed;
-`TGParticleSystem.cpp` has empty stand-ins for the three methods that the scene and the objects call. (The emitters of
-the `particleSystem:new{}` containers are done: see NOTES.md.)
+`TParticleEmitter`/`TParticleSystem` (`graphicslib/particleSystem.cpp`) and `TGParticleEmitter`/`TGParticleSystem`
+(`vsplayer/particlesGame.cpp`) are done, except `TGParticleEmitter::Save()` and `Load()` (asm 1378389-1378934,
+1379800-1380801: the editor writes an emitter to a file and reads it) and the drawing (`TGraphicsOGL::Draw(TParticleSystem&, bool, bool)`
+and `Draw(TParticleEmitter&, ...)`, `SetParticleMaterial`: asm 708150, 714258, 719135). A backend draws the particles of
+`TParticleEmitter::_particles` with the rules at the top of `particleSystem.h`.
 
 ### TGInterface: the matrix transform of the cursor position
 

@@ -30,7 +30,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "TGParticleSystem.h"
+#include "vsplayer/particlesGame.h"
+#include "graphicslib/particleHaduken.h"
 #include "TPaintControl.h"
 #include "TTimer.h"
 #include "WxStub.h"

@@ -257,13 +257,13 @@ TPicturePNG	stub	10	753445	756750
 TPictureMEM	stub	22	756823	759239
 TPictureWebP	stub	9	759351	761648
 TGraphicsInterface	stub	38	761692	779132
-TParticleEmitter	todo	12	766025	771112
-TParticleSystem	todo	8	766096	771351
-TVector3D	todo	11	766335	767008
-kexVec3	todo	10	766711	1374068
-TMatrix3	todo	13	767045	767700
-idMat3	todo	2	767217	767742
-TMatrix4	todo	21	767828	769325
+TParticleEmitter	done	12	766025	771112
+TParticleSystem	done	8	766096	771351
+TVector3D	done	11	766335	767008
+kexVec3	done	10	766711	1374068
+TMatrix3	done	13	767045	767700
+idMat3	done	2	767217	767742
+TMatrix4	done	21	767828	769325
 TCutRect	todo	7	771519	772531
 TSpriteHandle	in-progress	7	772635	775729
 MaxRectsBinPack	todo	20	773548	1445275
@@ -325,8 +325,8 @@ AnimationNode	todo	1	1371017	1371017
 Light	todo	8	1373667	1373832
 Camera	todo	10	1373848	1374386
 Tools	todo	2	1374466	1374734
-TGParticleSystem	todo	4	1378274	1380801
-TGParticleEmitter	todo	6	1378290	1379800
+TGParticleSystem	done	4	1378274	1380801
+TGParticleEmitter	in-progress	6	1378290	1379800
 TFontManager	done	16	1388826	1390109
 TPointSize	done	5	1390459	1390856
 TCFont	in-progress	16	1391446	1397049
@@ -515,4 +515,4 @@ p2t::Triangle	todo	29	2400171	2401611
 p2t::AdvancingFront	todo	5	2401742	2401904
 rda::launch	todo	3	2529804	2530392
 TXMLFileWriter	todo	5	2986850	2987099
-RadixSort	todo	6	2987143	2987454
+RadixSort	done	6	2987143	2987454

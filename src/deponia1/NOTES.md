@@ -3589,6 +3589,23 @@ Not reconstructed (in TODO.md): `ParticleContainer::Draw` (vertex buffers throug
 functions (editor only), and the texture atlas that `images` with more than one picture makes (`MaxRectsBinPack`).
 `TGScene::BeginScene` and `TGObject::SetActive` now build the container from field 0x326 through `LuaDoString`.
 
+## The particle systems of the editor (graphicslib/particleSystem.cpp)
+
+The data (kParticleContainer / kParticle...) describes a system of emitters; `TGParticleSystem::Init` makes a `TGParticleEmitter`
+for each particle object of the container and a texture for it, and `TGParticleEmitter::Init` reads all of the fields
+(type, tiles, position, box or point, spread angles, force, size, colour, the 100-number curves) and then runs the emitter for
+`LeadTime * 40` steps. A step (`TParticleEmitter::IncTime`) moves the particles, lets the force work on their speed
+(a force that is constant, to a point, or one that falls with the square of the distance, each kept by the factor
+`kParticleForceBlend`), blends their colour through the active stages by the curves, and lets go of those whose life is over (the
+last particle takes the place); then it makes new ones (`perTime` a step, with the remainder kept) with the direction
+in a cone round the emitter's direction, a position in the box or at the point (scaled by the pixel scale of the window, y
+upside down), a size, a colour, and a life. The random numbers are an LCG with the bits 10 to 25 of the seed
+(`Rand0()`), seeded with the time when an emitter is made; their order within a particle is fixed (two angles, colour,
+speed, the three of a box, size, the tile, life), so the same seed makes the same particles. The particles are sorted by depth
+(z) with a `RadixSort` (baselib/sort.cpp, Terdiman's, which keeps the ranks of the last sort) when `kParticleMaterialMode`
+is 0. `SetDirection` makes the matrix that turns the cone round z into the emitter's direction as the transpose of
+pitch times yaw. The 3D maths (`vector3d.h`) is row-vector maths with the translation in the last row of a `TMatrix4`.
+
 ## Fonts (vscommon/cfont.cpp, TCFont)
 
 A `TCFont` is one of three things: a font that stands for another (field `kFontFont` links to it; every call goes to that font, and

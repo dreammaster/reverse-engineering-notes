@@ -26,7 +26,8 @@
 // through inline setters.
 #pragma once
 
-#include "TGParticleSystem.h"
+#include "vsplayer/particlesGame.h"
+#include "graphicslib/particleHaduken.h"
 #include "TMObject.h"
 #include "TTimer.h"
 
