@@ -31,7 +31,9 @@ exploration of every map, inns/shops/guilds (all events), the HUD buttons and mo
 music and sound effects.  The game logic is the original code, statically translated (`gen/game_gen.c`, ~415 routines, regenerate with
 `make regen_game`); everything it calls out to is hand-written here: allocator/DOS/stdio (`game_machine.c`, `game_files.c`), video, keyboard and
 mouse (`game_video.c`, `ui_text.c`), sound (`game_sound.c`, `x86.c`, `opl.c`).  Pieces are being replaced by readable C verified against
-the translation (`rules.c` so far).  Not done: the digital-sample drivers and PC-speaker/Roland sound, the screen-transition effect
+the translation: `rules.c` and, in `logic.c`, about 55 game routines (experience, maze cells, combat rolls and turn order, monster movement,
+item generation and prices, spell costs, party clock, bank interest ...), each checked by `tests/difftest.sh NAME` and `MM3_SHADOW=1`.
+Routines that are mostly text/window glue (`trainCharacter`, `canEquip`, `buildActiveEffects`, `identifyOrFix`) were left translated.  Not done: the digital-sample drivers and PC-speaker/Roland sound, the screen-transition effect
 (`vdrv_00`), a cycle-exact OPL, the original's random number generator, the `_main` start-up/copy-protection path (the bring-up in
 `game_main.c` replaces it), and readable rewrites of the remaining ~400 translated routines.
 
