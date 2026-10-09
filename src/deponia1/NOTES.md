@@ -3499,7 +3499,42 @@ to and from Lua tables. What the scripts see:
   `-tc/--compression`, `-ns/--nosounds`, `-nv/--novideos`, `--prof/--profile`, `-r/--resolution`,
   `-utw/--usetexforwidescreen`, `-ll/--loglevel`, `-lf/--logfile`, `--savegame`, `-g/--graphics`, `-l/--language`,
   `-uld/--uselocaldir`, `-dbo/--depthbufferopt`, `--device`, `-p/--password`, `-sc/--scene`, `-deb/--debugger`, and the
-  input file. `Init()` (asm 493088, 4300 lines) is not reconstructed.
+  input file. `Init()` is described below.
+- `Init(appName, surfaceSize, renderSize, argc, argv, parser)` (asm 493088, 4300 lines; `AppFunctions.cpp` keeps a stub) is
+  the start-up of the player, in this order:
+  1. The defaults: all six volumes 100, resolution mode 1 (Auto), sounds and videos on, intro on, the `Vflags` global 0x2004,
+     the log level 2 (Warning); SDL's touch-to-mouse events are turned off.
+  2. The command line (the options above): the input file is the first parameter. `-ll` takes E(rror), W(arning), I(nfo)
+     or M(ax) (0 to 3); `-r` takes G(ame) (0), A(uto) (1) or `WxH` (3; `ConvertStringToSize`, else it is logged and the
+     mode stays); `-lf` opens the log file (`fopen(.., "w")` into the global `LogFile`; `x_assert(LogFile != NULL)`);
+     `-deb` is `host:port` for the TCP debugger (`debugger_addr`, `debugger_port`); `-p` with a debugger address is
+     `profile` (`profile`, `profileAreas`); `-sc` is `FirstSceneName`; `-uld` calls `TStandardPaths::SetUseLocalDir(false)`
+     when not given. (The wide-string labels IDA made for the option names are not reliable; which letter belongs to which
+     flag of `Init` was only checked for the ones named here.)
+  3. With no input file, `<resources dir>` + the default file name is used. `LoadConfigFile` is called, then the command
+     line is applied over it (so the command line wins).
+  4. `THGameControl` (0xA98 bytes) is made, `TVisionaire::SetVisPlayerMode(true)`, and `TGameControl::PreLoad(file,
+     password, ...)`; on failure "Loading game from file '...' failed!" is logged and `Init` is false.
+  5. The game's company and name (fields 0x2BC and 0x2BD) go to `TStandardPaths::InitGameAndCompanyName` and
+     `TMSavegame::InitSaveGamePath`; `messages.log` is opened in the log dir; the version ("5.0.4A5 build date Feb 8
+     2019") and the time of the preload are logged.
+  6. `TGraphicsSubSystemGL`, `TGraphicsOGL`; `TSoundInterface::SetVolume` with the volumes of the config; `EnableMovies`;
+     `InitPlayerCommands(visionaire, configDir, resourcesDir, logDir)`; with `-nv`/`-ns` the sounds are disabled
+     (`DisableSounds(true)`); the TCP debugger is activated when there is an address.
+  7. The size of the game window is `kGameWindowResolution` (0x7E), `g_displayedArea` is (0, 0, w, h); `GameMinDownTime` is
+     `kGameHoldTime` (0x179). With the fullscreen flag `Vflags |= 1`, and in the Game/Auto modes the desktop mode is
+     taken when it is wider than the ratio in `qword_D6F578`; `Vflags |= 2` for graphics device 1 or 4; `Vflags |= 0x20` with
+     texture compression. `CreateWindowGL(renderSize, surfaceSize, flags)` makes the window; if that fails, it is logged.
+  8. Then: `SDL_DisableScreenSaver`, `SDL_ShowCursor(0)`, (with `LockCursor`) `SDL_SetRelativeMouseMode(1)`,
+     `TPreloadedPicManager::Pause`, `TGameControl::LoadAndInitGame(file, password, "", true)`, `Continue`; the time that took is
+     logged; `THGameControl::RegisterEventHandler`.
+  9. With intros on, `PlayAVI(kGameIntro (0xE0), kGameFullScreenIntro (0xF7), 3)`. A `--savegame` number (>= 0) makes a
+     `TMSavegame` and `TGameControl::LoadGame`; else `InitAfterLoadingScreen` and `ExecuteStartingAction`.
+  10. With `-sc`: the scene is looked up in table 4 (`TVisionaire::GetTable(4)`) by `FirstSceneName`; the actions are run
+      (`ContinueRunningActions`, `DeleteFinishedActions`, 10 ms sleeps, at most 200 turns - else "Change to scene took longer
+      because the ..." is logged); the first object of the scene with a positive `kObjectPosition` (0x153) becomes the
+      character, and `TSceneControl::ChangeScene(character, scene, false, -1)` (a scene without one: `ShowScene`).
+  The window and graphics parts need a GL backend, so `Init` stays a stub until there is one.
 - `ShowFrame()` (asm 497745, `AppFunctions.cpp`) is the main loop: the SDL events become messages of the game (a
   mouse message is a number: 1 move, 2 double click, 3 left down, 4 left up, 5 long click, 6 hold, 8/9 right down/up,
   10/11 middle down/up, 12/13 wheel up/down; a key message: 1 down, 2 up, 3 text, 4/5 controller button hit/release,
