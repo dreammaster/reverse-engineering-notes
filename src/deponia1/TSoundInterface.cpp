@@ -191,6 +191,12 @@ void TSoundInterface::Continue(TSoundTypeEnum /*type*/) {
 void TSoundInterface::Pause(TSoundTypeEnum /*type*/) {
 }
 
+void TSoundInterface::PauseAll() {
+}
+
+void TSoundInterface::BusValuesUpdate() {
+}
+
 void TSoundInterface::ContinueAll() {
 }
 

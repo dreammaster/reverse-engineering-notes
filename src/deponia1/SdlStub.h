@@ -244,6 +244,27 @@ constexpr Uint32 SDL_MOUSEWHEEL = 0x403u;
 constexpr Uint32 SDL_CONTROLLERAXISMOTION = 0x650u;
 constexpr Uint32 SDL_CONTROLLERBUTTONDOWN = 0x651u;
 constexpr Uint32 SDL_CONTROLLERBUTTONUP = 0x652u;
+constexpr Uint32 SDL_CONTROLLERDEVICEADDED = 0x653u;
+constexpr Uint32 SDL_CONTROLLERDEVICEREMOVED = 0x654u;
+constexpr Uint32 SDL_CONTROLLERDEVICEREMAPPED = 0x655u;
+constexpr Uint32 SDL_QUIT = 0x100u;
+constexpr Uint32 SDL_WINDOWEVENT = 0x200u;
+
+// SDL_WindowEvent::event
+constexpr Uint8 SDL_WINDOWEVENT_SHOWN = 1;
+constexpr Uint8 SDL_WINDOWEVENT_HIDDEN = 2;
+constexpr Uint8 SDL_WINDOWEVENT_RESIZED = 5;
+constexpr Uint8 SDL_WINDOWEVENT_SIZE_CHANGED = 6;
+constexpr Uint8 SDL_WINDOWEVENT_ENTER = 10;
+constexpr Uint8 SDL_WINDOWEVENT_LEAVE = 11;
+constexpr Uint8 SDL_WINDOWEVENT_FOCUS_GAINED = 12;
+constexpr Uint8 SDL_WINDOWEVENT_FOCUS_LOST = 13;
+
+constexpr Uint32 SDL_WINDOW_FULLSCREEN = 0x1u;
+constexpr Uint32 SDL_WINDOW_FULLSCREEN_DESKTOP = 0x1001u;
+constexpr int KMOD_CTRL = 0xC0;
+constexpr int KMOD_ALT = 0x300;
+constexpr int SDL_GETEVENT = 2;
 
 struct SDL_MouseMotionEvent {
 	Uint32 type;
@@ -310,8 +331,36 @@ struct SDL_ControllerAxisEvent {
 	Uint16 padding4;
 };
 
+struct SDL_WindowEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	Uint8 event;
+	Uint8 padding1;
+	Uint8 padding2;
+	Uint8 padding3;
+	Sint32 data1;
+	Sint32 data2;
+};
+
+struct SDL_TextInputEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Uint32 windowID;
+	char text[32];
+};
+
+struct SDL_ControllerDeviceEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	Sint32 which;
+};
+
 union SDL_Event {
 	Uint32 type;
+	SDL_WindowEvent window;
+	SDL_TextInputEvent text;
+	SDL_ControllerDeviceEvent cdevice;
 	SDL_MouseMotionEvent motion;
 	SDL_MouseButtonEvent button;
 	SDL_MouseWheelEvent wheel;
@@ -327,4 +376,10 @@ extern "C" {
 	int SDL_SetWindowBrightness(SDL_Window *window, float brightness);
 	int SDL_PushEvent(SDL_Event *event);
 	void SDL_WarpMouseInWindow(SDL_Window *window, int x, int y);
+	void SDL_PumpEvents(void);
+	int SDL_PeepEvents(SDL_Event *events, int numevents, int action, Uint32 minType, Uint32 maxType);
+	int SDL_WaitEvent(SDL_Event *event);
+	int SDL_GetModState(void);
+	void SDL_GetWindowSize(SDL_Window *window, int *w, int *h);
+	Uint32 SDL_GetWindowFlags(SDL_Window *window);
 }

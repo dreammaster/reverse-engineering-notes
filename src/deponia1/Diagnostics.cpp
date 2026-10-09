@@ -17,6 +17,9 @@ void TDiagnostic::EndFixedRegion() {
 void TCPDebuggerClient::BeginArea(ProfileArea /*area*/, const std::string &/*name*/, int /*frame*/) {
 }
 
+void TCPDebuggerClient::NextFrame() {
+}
+
 void TCPDebuggerClient::EndArea(ProfileArea /*area*/, int /*frame*/) {
 }
 

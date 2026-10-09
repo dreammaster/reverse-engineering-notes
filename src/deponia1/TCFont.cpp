@@ -34,3 +34,6 @@ void TCFont::PrintTextLines(const std::list<wxString> &/*lines*/, const std::vec
                             TextAlignmentEnum /*alignment*/, const wxPoint &/*pos*/, float /*scale*/, int /*a*/,
                             bool /*b*/, std::vector<GLCharBuffer *> */*buffers*/) {
 }
+
+void TCFont::CheckFreetypeFont() {
+}

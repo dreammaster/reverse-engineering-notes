@@ -32,6 +32,7 @@ public:
 enum class ProfileArea {
 	kValue1 = 1, // used once, bracketing sprite/picture creation
 	kValue2 = 2, // the Lua scripts (visLua.cpp)
+	kValue3 = 3, // drawing a frame (ShowFrame)
 	kValue4 = 4, // used for every other observed section
 };
 
@@ -39,6 +40,7 @@ class TCPDebuggerClient {
 public:
 	void BeginArea(ProfileArea area, const std::string &name, int frame);
 	void EndArea(ProfileArea area, int frame);
+	void NextFrame();
 };
 
 extern TCPDebuggerClient debugger;

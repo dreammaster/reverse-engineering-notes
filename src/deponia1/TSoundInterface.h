@@ -99,6 +99,9 @@ public:
 	/** Slots 0x20 and 0x28: lets the sounds of a kind go on / pauses them (`system.pauseAllSounds` ...). */
 	virtual void Continue(TSoundTypeEnum type);
 	virtual void Pause(TSoundTypeEnum type);
+	/** Slots 0x38 and 0xD0: pauses all sounds (the window lost the focus); updates the values of the audio busses (each frame). */
+	virtual void PauseAll();
+	virtual void BusValuesUpdate();
 	virtual void ContinueAll();
 	virtual void CleanUp();
 	/** Stops the sound of `file`. */

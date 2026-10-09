@@ -135,6 +135,10 @@ public:
 
 	// Walking.
 	/** Walks to `destination` (a way is searched; none found: stays where it is). */
+	/** Whether the walk animation waits for a steady direction (+0xB8; ShowFrame sets it while a controller walks the character). */
+	void SetHarmonizeWalk(bool harmonize) {
+		_harmonizeWalk = harmonize;
+	}
 	void SetFreeDestination(wxPoint destination, bool keepDestinationObject, bool noWayPoints,
 	                        bool useTriangles);
 	/** The per-frame step along the way. */

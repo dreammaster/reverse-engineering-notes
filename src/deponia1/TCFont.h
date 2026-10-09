@@ -31,6 +31,10 @@ public:
 
 	TCFont(TVisObjRef &font, TFontManager *manager);
 
+	/** Called every frame by ShowFrame (asm 497798): makes the Freetype font again when it has to be (TODO: the
+	 *  Freetype fonts, TFreetypeFont, are not reconstructed, nothing is done). */
+	void CheckFreetypeFont();
+
 	int GetLineHeight() const;
 	void GetTextDimension(const wxString &text, wxPoint &outSize) const;
 	void GetTextDimension(const std::list<wxString> &lines, wxPoint &outSize) const;

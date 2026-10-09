@@ -40,6 +40,15 @@ void TGraphicsInterface::CreateSavegameScreenshot(bool /*flag*/) {
 void TGraphicsInterface::ClearSavegameScreenshot(bool /*flag*/) {
 }
 
+void TGraphicsInterface::CalculateDisplayedArea(const wxSize &windowSize, const wxSize &/*renderSize*/,
+        wxRect *displayedArea) {
+	// TODO: the GL backend (not reconstructed) keeps the aspect ratio; here the whole window is used.
+	displayedArea->x = 0;
+	displayedArea->y = 0;
+	displayedArea->width = windowSize.width;
+	displayedArea->height = windowSize.height;
+}
+
 void TGraphicsInterface::ToggleWindowMode() {
 }
 

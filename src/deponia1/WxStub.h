@@ -410,6 +410,11 @@ struct wxRealPoint {
 struct wxSize {
 	int width = 0;
 	int height = 0;
+
+	void Set(int newWidth, int newHeight) {
+		width = newWidth;
+		height = newHeight;
+	}
 };
 
 struct wxPoint {

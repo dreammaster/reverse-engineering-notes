@@ -53,6 +53,9 @@ public:
 	// Confirmed call shapes only (CmdToggleWindowMode/CmdSetWindowSize/CmdGetWindowMode, asm lines 388874-388967):
 	// slots 0x158 (changes between the window and the full screen), 0x160 (the size of the window, in windowed mode)
 	// and 0x168 (whether the window is a full screen one) of the unmodeled GL backend.
+	/** Slot 0x28 (a window event of ShowFrame): works out the part of the window where the game is drawn (the window
+	 *  less the bars of the aspect ratio), from the size of the window and the resolution of the game. */
+	virtual void CalculateDisplayedArea(const wxSize &windowSize, const wxSize &renderSize, wxRect *displayedArea);
 	virtual void ToggleWindowMode();
 	virtual bool SetWindowSize(int width, int height);
 	virtual bool IsFullscreen();

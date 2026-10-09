@@ -69,6 +69,11 @@ public:
 	int GetLineHeight() const;
 	void PerformAutoLineBreak(const wxString &text, std::list<wxString> &outLines);
 
+	/** All the fonts (ShowFrame asks each one every frame whether its Freetype font has to be made again). */
+	const std::vector<TCFont *> &GetFonts() const {
+		return _fonts;
+	}
+
 	// Confirmed (asm lines 1389422-1389433).
 	int GetFontCount() const {
 		return static_cast<int>(_fonts.size());

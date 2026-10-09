@@ -142,7 +142,7 @@ Missing:
   reconstructed and nothing sets `g_subSys`: `shaderCompile` and `shaderUniform` keep the shader list but make no
   shaders, `system.systemInfo().gpu` is empty, `getGPUMem()` has only the base number, `system.cacheContents` is
   empty. `graphics->ToggleWindowMode()`, `SetWindowSize()` and `IsFullscreen()` are stubs for the same reason.
-- `luaopen_Particles`. `Init()` in `AppFunctions.cpp` (asm 493088, calls `InitPlayerCommands()`) and `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) are still stubs.
+- `luaopen_Particles`. `Init()` in `AppFunctions.cpp` (asm 493088, 4300 lines: the config file `LoadConfigFile`, the window, the game, `InitPlayerCommands()`), `CleanUp()` (asm 492124, calls `ClosePlayerCommands()`) and `ParseCommandLine` are still stubs; `ShowFrame()` (the SDL event loop and a frame) is done.
 - `CreateObjectPath()` (asm 1387666) is only needed by the editor; `maxlen(const wxString &)` (asm 1400772) is
   never called.
 

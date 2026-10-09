@@ -2045,18 +2045,16 @@ void TGameControl::InitGameActions() {
 		// Confirmed arithmetic, not confirmed meaning: classifies keyCode
 		// against TKeyboardMessageEnum's raw values (masterControl.h) -
 		// kControllerButtonHit(4) if it's a controller-button pseudo-code,
-		// else kKeyUp(1); or, if (keyCode - 10000) names a valid key/button
-		// instead, kControllerButtonRelease(5)/2 respectively. This is where
-		// TKeyboardMessageEnum's otherwise-unobserved values 2 and 3 could
-		// come from, though 3 is never actually produced here.
+		// else kKeyDown(1); or, if (keyCode - 10000) names a valid key/button
+		// instead, kControllerButtonRelease(5)/kKeyUp(2) respectively.
 		bool isControllerCode = keyCode >= 1000001 && keyCode <= 1000015;
 		int msg = isControllerCode ? static_cast<int>(TKeyboardMessageEnum::kControllerButtonHit)
-		          : static_cast<int>(TKeyboardMessageEnum::kKeyUp);
+		          : static_cast<int>(TKeyboardMessageEnum::kKeyDown);
 		for (int validCode : validKeyCodes) {
 			if (keyCode != validCode + 10000)
 				continue;
 			bool shiftedControllerCode = validCode >= 1000001 && validCode <= 1000015;
-			msg = shiftedControllerCode ? static_cast<int>(TKeyboardMessageEnum::kControllerButtonRelease) : 2;
+			msg = shiftedControllerCode ? static_cast<int>(TKeyboardMessageEnum::kControllerButtonRelease) : static_cast<int>(TKeyboardMessageEnum::kKeyUp);
 			break;
 		}
 
@@ -2345,7 +2343,7 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 	// Confirmed (asm lines 471068-471230): each function registered for the keys is called with the message, the name
 	// of the key (the text given for the messages 3 and 6, the name SDL has for the key code otherwise), the key code
 	// and the modifiers, and a true answer ends the handling.
-	bool useKey = msg == TKeyboardMessageEnum::kAxisMove || static_cast<int>(msg) == 3;
+	bool useKey = msg == TKeyboardMessageEnum::kAxisMove || msg == TKeyboardMessageEnum::kText;
 	for (std::size_t i = 0; i < _keyboardEventHandlers.size(); i++) {
 		TArgument msgArg;
 		msgArg.Set(static_cast<int>(msg));

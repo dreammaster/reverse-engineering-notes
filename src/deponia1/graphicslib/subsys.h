@@ -13,6 +13,8 @@ public:
 
 	/** Slot 0x20 (shaderCompile): makes a shader of the backend. */
 	virtual TShader *CreateShader() = 0;
+	/** Slot 0xD8 (the window changed its size): the new size and whether the window is a full screen one. */
+	virtual void WindowResized(int width, int height, bool fullscreen) = 0;
 	/** Slot 0x100 (`system.systemInfo().gpu`): the name of the video card. */
 	virtual std::string GetGPUName() = 0;
 };

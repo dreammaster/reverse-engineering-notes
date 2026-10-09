@@ -83,16 +83,20 @@ enum class TMouseMessageEnum {
 	kValue12 = 12, // confirmed wheel-related, direction unresolved
 	kValue13 = 13, // confirmed wheel-related, direction unresolved
 };
-// Confirmed to have at least 7 distinct values (TGameControl::
-// HandleControllerButtonHit/Release pass literal 4/5, and HandleControllerAxis
-// passes literal 6, as this same enum's type - Deponia_Linux.asm lines
-// 471722-471975) - values 2 and 3 haven't been observed at any call site yet.
+// What happened at the keyboard or a controller (Deponia_Linux.asm: ShowFrame, lines 497745-498889, makes the
+// messages of the SDL events; TGameControl::HandleControllerButtonHit/Release/Axis make 4, 5 and 6). The values 1 and 2
+// were named kKeyDown = 0 and kKeyUp = 1 before ShowFrame was read: 1 is the key going down and 2 going up (the game
+// actions of a key have 1, with 10000 added to the key code 2, and the escape key that skips a cutscene is a 2).
 enum class TKeyboardMessageEnum {
-	kKeyDown = 0,
-	kKeyUp = 1,
+	kKeyDown = 1,
+	kKeyUp = 2,
+	kText = 3,
 	kControllerButtonHit = 4,
 	kControllerButtonRelease = 5,
 	kAxisMove = 6,
+	kControllerAdded = 7,
+	kControllerRemoved = 8,
+	kControllerRemapped = 9,
 };
 
 // Field order/sizes are recovered from TMasterControl::SetLoadingScreen's

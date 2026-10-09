@@ -40,6 +40,14 @@ extern int eMouseMessage;
 extern unsigned char byte_11F8B01;
 extern unsigned char byte_11F8B02;
 
+// Confirmed real, named globals of the main loop (ShowFrame, Deponia_Linux.asm lines 497745-498889): the position of
+// the mouse in the game's coordinates, the number of fingers on a touch screen, whether the left button is down and
+// has not been counted as a long click yet, and the time of the last multi-finger gesture.
+extern wxPoint mousePos;
+extern int numFingers;
+extern int bLeftButtonPressed;
+extern unsigned int lastMultigestureTicks;
+
 extern TMasterControl *g_pGameControl;
 // Confirmed an exported, recovered global (asm line 26933): the part of the window where the game is drawn
 // (the window less the bars of the aspect ratio); set by Init() and CreateWindowGL() (mainSDL, not reconstructed).
