@@ -3495,46 +3495,66 @@ to and from Lua tables. What the scripts see:
   MusicVolume/SoundVolume/SpeechVolume/MovieVolume/GlobalVolume/Brightness (0-100; a bad brightness is logged),
   UseTextureCompression/LockCursor (Enabled|Disabled), LogLevel (Error|Warning|Info|Max), Device (OGL|DX9|DX11),
   Password. A name it does not know, or a line without `=`, makes the answer false but the rest is read.
-- The command line (`ParseCommandLine`, asm 492894, the table of `wxCmdLineParser`): `-w/--window`, `-re/--resizeable`,
-  `-tc/--compression`, `-ns/--nosounds`, `-nv/--novideos`, `--prof/--profile`, `-r/--resolution`,
-  `-utw/--usetexforwidescreen`, `-ll/--loglevel`, `-lf/--logfile`, `--savegame`, `-g/--graphics`, `-l/--language`,
-  `-uld/--uselocaldir`, `-dbo/--depthbufferopt`, `--device`, `-p/--password`, `-sc/--scene`, `-deb/--debugger`, and the
-  input file. `Init()` is described below.
-- `Init(appName, surfaceSize, renderSize, argc, argv, parser)` (asm 493088, 4300 lines; `AppFunctions.cpp` keeps a stub) is
-  the start-up of the player, in this order:
-  1. The defaults: all six volumes 100, resolution mode 1 (Auto), sounds and videos on, intro on, the `Vflags` global 0x2004,
-     the log level 2 (Warning); SDL's touch-to-mouse events are turned off.
-  2. The command line (the options above): the input file is the first parameter. `-ll` takes E(rror), W(arning), I(nfo)
-     or M(ax) (0 to 3); `-r` takes G(ame) (0), A(uto) (1) or `WxH` (3; `ConvertStringToSize`, else it is logged and the
-     mode stays); `-lf` opens the log file (`fopen(.., "w")` into the global `LogFile`; `x_assert(LogFile != NULL)`);
-     `-deb` is `host:port` for the TCP debugger (`debugger_addr`, `debugger_port`); `-p` with a debugger address is
-     `profile` (`profile`, `profileAreas`); `-sc` is `FirstSceneName`; `-uld` calls `TStandardPaths::SetUseLocalDir(false)`
-     when not given. (The wide-string labels IDA made for the option names are not reliable; which letter belongs to which
-     flag of `Init` was only checked for the ones named here.)
-  3. With no input file, `<resources dir>` + the default file name is used. `LoadConfigFile` is called, then the command
-     line is applied over it (so the command line wins).
-  4. `THGameControl` (0xA98 bytes) is made, `TVisionaire::SetVisPlayerMode(true)`, and `TGameControl::PreLoad(file,
-     password, ...)`; on failure "Loading game from file '...' failed!" is logged and `Init` is false.
-  5. The game's company and name (fields 0x2BC and 0x2BD) go to `TStandardPaths::InitGameAndCompanyName` and
-     `TMSavegame::InitSaveGamePath`; `messages.log` is opened in the log dir; the version ("5.0.4A5 build date Feb 8
-     2019") and the time of the preload are logged.
-  6. `TGraphicsSubSystemGL`, `TGraphicsOGL`; `TSoundInterface::SetVolume` with the volumes of the config; `EnableMovies`;
-     `InitPlayerCommands(visionaire, configDir, resourcesDir, logDir)`; with `-nv`/`-ns` the sounds are disabled
-     (`DisableSounds(true)`); the TCP debugger is activated when there is an address.
-  7. The size of the game window is `kGameWindowResolution` (0x7E), `g_displayedArea` is (0, 0, w, h); `GameMinDownTime` is
-     `kGameHoldTime` (0x179). With the fullscreen flag `Vflags |= 1`, and in the Game/Auto modes the desktop mode is
-     taken when it is wider than the ratio in `qword_D6F578`; `Vflags |= 2` for graphics device 1 or 4; `Vflags |= 0x20` with
-     texture compression. `CreateWindowGL(renderSize, surfaceSize, flags)` makes the window; if that fails, it is logged.
-  8. Then: `SDL_DisableScreenSaver`, `SDL_ShowCursor(0)`, (with `LockCursor`) `SDL_SetRelativeMouseMode(1)`,
-     `TPreloadedPicManager::Pause`, `TGameControl::LoadAndInitGame(file, password, "", true)`, `Continue`; the time that took is
-     logged; `THGameControl::RegisterEventHandler`.
+- The command line (`ParseCommandLine`, asm 492894, now real in `AppFunctions.cpp` with `wxCmdLineParser` in `WxStub.cpp`):
+  the table has the entries (short name, long name): `-w --window`, `-re --resizeable`, `-tc --compression`,
+  `-ns --nosounds`, `-nv --novideos` (the switches), `-prof --profile`, `-r --resolution`, `-utw --usetexforwidescreen`,
+  `-ll --loglevel`, `-lf --logfile`, `-s --savegame` (a number), `-g --graphics`, `-l --language`, `-uld --uselocaldir`,
+  `-dbo --depthbufferopt`, `-dev --device`, `-p --password`, `-sc --scene`, `-deb --debugger`, and the one input file.
+  The short names are several letters long; the (wxWidgets 3) strings of the table are narrow. Things the asm shows: a
+  command line of only the name of the program is not parsed at all, and the input file has no `wxCMD_LINE_PARAM_OPTIONAL`
+  flag, so as soon as there is any argument the file is mandatory. `-g`, `-dev`, `-dbo` and `-uld` are in the table but
+  `Init` never asks for them (it calls `SetUseLocalDir(false)` whatever is given), and `main()` takes `-lf` (not `-l`, which
+  is the language) for the log file.
+- `Init(appName, surfaceSize, renderSize, argc, argv, parser)` (asm 493088, 4300 lines; `AppFunctions.cpp`) is the start-up
+  of the player, in this order:
+  1. The defaults: all volumes 100, brightness 100, resolution mode Auto, full screen, sounds, videos and the intro on, the
+     `Vflags` global 0x2004 (the flags of the SDL window: shown + high DPI; later 1 full screen, 2 OpenGL, 0x20 resizable),
+     the log level 2 (Info); `SDL_EventState(SDL_TEXTINPUT, SDL_ENABLE)`.
+  2. The command line, in this order: the input file (the first parameter); `-w` (window; full screen off), `-re`, `-tc`,
+     `-ns`, `-nv`, `-p` (replaces `passw`), `-r` (`Desktop`, `Game`, `Auto` - mode 2, 0, 1 - or `WxH` through
+     `ConvertStringToSize` into the window size, mode 3; else it is logged), `-utw` (`true`/`false`), `-ll` (`Error`,
+     `Warning`, `Info`, `Max`: 0 to 3), `-lf` (opens `g_logfile`, which `main()` already took from the same option, again
+     with `fopen(.., "w")`), `--savegame` (a number), `--language`, `-deb host:port` (`debugger_addr`, `debugger_port`),
+     `-prof lua|frame` (`profile` / `profileAreas`; both only when there is a debugger address - the original tests the
+     address, not the value), `-sc` (`FirstSceneName`). What the command line gave is not read from config.ini later (a
+     null place for `LoadConfigFile`); the other settings are, and so can override `-tc`.
+  3. With no input file `<resources dir>/config.ini` is read first (it may name the game: `File =`; its `Password` replaces
+     `passw`). `THGameControl` (0xA98 bytes) is made, `TVisionaire::SetVisPlayerMode(true)`, and `TGameControl::PreLoad(file,
+     warning, true)`; on failure "Loading game from file '...' failed!" is logged and `Init` is false.
+  4. The game's company and name (fields 0x2BC and 0x2BD) go to `TStandardPaths::InitGameAndCompanyName` (with the name
+     of the file as the third string) and `TMSavegame::InitSaveGamePath`; the title of the window is the game's name (else
+     the file's); without `-lf` `messages.log` is opened in the log dir (`x_assert(LogFile == NULL ...)`; with `-lf`
+     `x_assert(LogFile != NULL ...)`); the version ("5.0.1", build 1189, "Feb  8 2019") and the time of the preload are logged.
+  5. The user's own `config.ini` (config dir) is read. A command line `-r` with a window and a mode other than `WxH` only
+     logs "can only be used in fullscreen mode"; nothing else is done about it.
+  6. The graphics device is forced to OpenGL (what config.ini said is overwritten). `TGraphicsSubSystemGL` and
+     `TGraphicsOGL(callback = null, textureForWidescreen, nearestNeighbor, picBufferSize, preloadThreads, preloadedBufferSize,
+     fullscreen, resizeable, textureCompression, true, gameResolution, windowSize)` are made - here
+     `CreateGraphicsBackend()` (not reconstructed). `TSoundInterface::SetVolume` with the volumes, `DisableSounds(true)` with
+     `-ns`, `EnableMovies(false)` with `-nv`, `InitPlayerCommands(visionaire, configDir, resourcesDir, logDir)`, the TCP
+     debugger when there is an address.
+  7. `renderSize` is the game's `kGameWindowResolution` (0x7E), `g_displayedArea` is (0, 0, w, h); the window has that size
+     unless the mode is `WxH`; `GameMinDownTime` is `kGameHoldTime` (0x179). Full screen: `Vflags |= 1`, and with a
+     desktop wider than 1.5 (Auto mode) or Desktop mode the window has the desktop's size. `Vflags |= 0x20` when resizeable.
+     `CreateWindowGL(surfaceSize, renderSize, brightness)` makes the window; if that fails "Unable to open screen surface."
+     is logged and `Init` is false.
+  8. Then: `SetRelativeMouseMode(1)` (with `LockCursor`), `SDL_DisableScreenSaver`, `SDL_ShowCursor(0)`,
+     `TPreloadedPicManager::Pause`, `TGameControl::LoadAndInitGame(file, "", language, true)` (the third string is the
+     *language*), `Continue`; the time that took is logged; `THGameControl::RegisterEventHandler`.
   9. With intros on, `PlayAVI(kGameIntro (0xE0), kGameFullScreenIntro (0xF7), 3)`. A `--savegame` number (>= 0) makes a
-     `TMSavegame` and `TGameControl::LoadGame`; else `InitAfterLoadingScreen` and `ExecuteStartingAction`.
-  10. With `-sc`: the scene is looked up in table 4 (`TVisionaire::GetTable(4)`) by `FirstSceneName`; the actions are run
-      (`ContinueRunningActions`, `DeleteFinishedActions`, 10 ms sleeps, at most 200 turns - else "Change to scene took longer
-      because the ..." is logged); the first object of the scene with a positive `kObjectPosition` (0x153) becomes the
-      character, and `TSceneControl::ChangeScene(character, scene, false, -1)` (a scene without one: `ShowScene`).
-  The window and graphics parts need a GL backend, so `Init` stays a stub until there is one.
+     `TMSavegame(false, 0, -1, -1, game)` - always slot 0, whatever the number was - and `TGameControl::LoadGame`; else
+     `InitAfterLoadingScreen` and `ExecuteStartingAction`.
+  10. With `-sc`: `SetMatrixMode(true, false)`, `ResetMatrix(true, true)` on the backend; the actions of the start run out
+      (`ContinueRunningActions`, `DeleteFinishedActions`, 10 ms sleeps, at most 200 turns - else "Change to scene took
+      longer because the action '%s' failed to become idle." is logged); the scene is looked up in table 4 by
+      `FirstSceneName`; the first object of the scene (`kSceneObjects`) with a positive `kObjectPosition` (0x153) is the
+      target, and `TSceneControl::ChangeScene(currentCharacter, target, false, -1)` (a scene without one: `ShowScene`).
+  `Init` returns true after that. The window and the graphics need a backend: the reconstructed `SdlStub` cannot make a
+  window and `CreateGraphicsBackend()` fails, so the smoke test (`pbuild -r`) ends with "Init failed" (-1).
+- `CleanUp(forceExit)` (asm 492124): `collectProfileData`, with `forceExit` the five volumes go to `WriteVolume`, the game
+  control is deleted, then `ClosePlayerCommands`, `TVisionaire::CleanUp`, the game data are deleted (not by the destructor of
+  `TMasterControl`), the backend's cache is cleared and the backend deleted, the log target and `LogFile` closed,
+  `SDL_DestroyWindow`, `wxUninitialize`. `TerminateApplication()` pushes `SDL_QUIT` (exit 1 if it cannot).
 - `ShowFrame()` (asm 497745, `AppFunctions.cpp`) is the main loop: the SDL events become messages of the game (a
   mouse message is a number: 1 move, 2 double click, 3 left down, 4 left up, 5 long click, 6 hold, 8/9 right down/up,
   10/11 middle down/up, 12/13 wheel up/down; a key message: 1 down, 2 up, 3 text, 4/5 controller button hit/release,

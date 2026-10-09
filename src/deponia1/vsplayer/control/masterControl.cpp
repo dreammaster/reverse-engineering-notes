@@ -40,7 +40,8 @@ TMasterControl::~TMasterControl() {
 	delete _soundManager;
 	delete _fontManager;
 	delete _gameClientSDK;
-	delete _visionaire;
+	// (The game data are not deleted here: the owner of the game control, CleanUp(), deletes them after the game control
+	// and TVisionaire::CleanUp(); asm 488513-488946 has no such delete.)
 }
 
 void TMasterControl::QuitGame() {

@@ -13,8 +13,10 @@ int SDL_Init(Uint32 /*flags*/) {
 void SDL_Quit(void) {
 }
 
+static const char *g_error = "";
+
 const char *SDL_GetError(void) {
-	return "";
+	return g_error;
 }
 
 Uint32 SDL_GetTicks(void) {
@@ -228,5 +230,48 @@ float SDL_GetWindowBrightness(SDL_Window */*window*/) {
 }
 
 int SDL_SetWindowBrightness(SDL_Window */*window*/, float /*brightness*/) {
+	return 0;
+}
+
+int SDL_GL_SetAttribute(int /*attr*/, int /*value*/) {
+	return 0;
+}
+
+int SDL_GL_GetAttribute(int /*attr*/, int *value) {
+	*value = 0;
+	return 0;
+}
+
+// The stub has no video: no window can be made.
+SDL_Window *SDL_CreateWindow(const char */*title*/, int /*x*/, int /*y*/, int /*w*/, int /*h*/, Uint32 /*flags*/) {
+	g_error = "The SDL stub has no video";
+	return nullptr;
+}
+
+void SDL_DestroyWindow(SDL_Window */*window*/) {
+}
+
+SDL_GLContext SDL_GL_CreateContext(SDL_Window */*window*/) {
+	return nullptr;
+}
+
+int SDL_GL_SetSwapInterval(int /*interval*/) {
+	return 0;
+}
+
+void SDL_DisableScreenSaver(void) {
+}
+
+// A desktop of 1920 x 1080.
+int SDL_GetDesktopDisplayMode(int /*displayIndex*/, SDL_DisplayMode *mode) {
+	mode->format = SDL_PIXELFORMAT_RGB888;
+	mode->w = 1920;
+	mode->h = 1080;
+	mode->refresh_rate = 60;
+	mode->driverdata = nullptr;
+	return 0;
+}
+
+int SDL_SetRelativeMouseMode(int /*enabled*/) {
 	return 0;
 }

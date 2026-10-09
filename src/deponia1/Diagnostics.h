@@ -41,6 +41,21 @@ public:
 	void BeginArea(ProfileArea area, const std::string &name, int frame);
 	void EndArea(ProfileArea area, int frame);
 	void NextFrame();
+	/** Confirmed call shape only (Init(), asm 494700): connects to the debugger at `address`:`port`. The network debugger is
+	 *  not reconstructed (TODO.md), so nothing connects. */
+	void Activate(const char *address, int port);
 };
 
 extern TCPDebuggerClient debugger;
+
+// Confirmed recovered globals that the command line of the player sets (Init(), asm 493841 and 495185-495240): the
+// address and port of the debugger (`-deb host:port`), and whether the profiler is on (`-prof lua` for the Lua profile,
+// `-prof frame` for the areas of a frame; both need an address).
+extern std::string debugger_addr;
+extern int debugger_port;
+extern bool profile;
+extern bool profileAreas;
+
+/** Confirmed call shape only (CleanUp(), asm 126189-127244): writes what the profiler has collected when the player ends.
+ *  The profiler is not reconstructed (TODO.md), so this does nothing. */
+void collectProfileData();

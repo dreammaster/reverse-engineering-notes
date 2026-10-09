@@ -262,6 +262,20 @@ constexpr Uint8 SDL_WINDOWEVENT_FOCUS_LOST = 13;
 
 constexpr Uint32 SDL_WINDOW_FULLSCREEN = 0x1u;
 constexpr Uint32 SDL_WINDOW_FULLSCREEN_DESKTOP = 0x1001u;
+constexpr Uint32 SDL_WINDOW_OPENGL = 0x2u;
+constexpr Uint32 SDL_WINDOW_SHOWN = 0x4u;
+constexpr Uint32 SDL_WINDOW_RESIZABLE = 0x20u;
+constexpr Uint32 SDL_WINDOW_ALLOW_HIGHDPI = 0x2000u;
+constexpr int SDL_WINDOWPOS_CENTERED = 0x2FFF0000;
+
+// SDL_GLattr
+constexpr int SDL_GL_RED_SIZE = 0;
+constexpr int SDL_GL_GREEN_SIZE = 1;
+constexpr int SDL_GL_BLUE_SIZE = 2;
+constexpr int SDL_GL_ALPHA_SIZE = 3;
+constexpr int SDL_GL_DOUBLEBUFFER = 5;
+constexpr int SDL_GL_DEPTH_SIZE = 6;
+constexpr int SDL_GL_ACCELERATED_VISUAL = 15;
 constexpr int KMOD_CTRL = 0xC0;
 constexpr int KMOD_ALT = 0x300;
 constexpr int SDL_GETEVENT = 2;
@@ -371,6 +385,15 @@ union SDL_Event {
 };
 
 extern "C" {
+	int SDL_GL_SetAttribute(int attr, int value);
+	int SDL_GL_GetAttribute(int attr, int *value);
+	SDL_Window *SDL_CreateWindow(const char *title, int x, int y, int w, int h, Uint32 flags);
+	void SDL_DestroyWindow(SDL_Window *window);
+	SDL_GLContext SDL_GL_CreateContext(SDL_Window *window);
+	int SDL_GL_SetSwapInterval(int interval);
+	void SDL_DisableScreenSaver(void);
+	int SDL_GetDesktopDisplayMode(int displayIndex, SDL_DisplayMode *mode);
+	int SDL_SetRelativeMouseMode(int enabled);
 	void SDL_SetWindowTitle(SDL_Window *window, const char *title);
 	float SDL_GetWindowBrightness(SDL_Window *window);
 	int SDL_SetWindowBrightness(SDL_Window *window, float brightness);

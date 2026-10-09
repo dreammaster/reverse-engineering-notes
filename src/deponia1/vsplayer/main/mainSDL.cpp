@@ -55,8 +55,8 @@ int main(int argc, char **argv, char **/*envp*/) {
 
 	if (argc > 1) {
 		wxString value;
-		if (cmdLineParser.Found(wxString(L"l"), &value)) {
-			// -l <path>: caller-specified log file overrides the default.
+		if (cmdLineParser.Found(wxString(L"lf"), &value)) {
+			// -lf <path>: caller-specified log file overrides the default.
 			wxFileName fn(value.ToStdWstring());
 			g_logfile = fn;
 			LogFile = std::fopen(static_cast<const char *>(g_logfile.GetFullPath().mb_str()), "w");

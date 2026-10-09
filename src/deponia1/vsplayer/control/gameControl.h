@@ -213,7 +213,7 @@ public:
 	// empty) and, confusingly, as a language name to search for later in
 	// the same function - reproduced as observed rather than split into two
 	// parameters.
-	bool LoadAndInitGame(wxString &filePath, const wxString &extra, wxString gameName, bool isEditor);
+	bool LoadAndInitGame(wxString &filePath, const wxString &extra, wxString language, bool isEditor);
 	bool ReplaceGame(wxFileName file, bool isEditor);
 	void HandleEngineEvent(const std::string &name, const std::string &arg);
 	void HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key, int a, unsigned short b);

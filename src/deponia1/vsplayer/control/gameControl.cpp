@@ -2138,7 +2138,7 @@ bool TGameControl::Init() {
 	return true;
 }
 
-bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wxString gameName, bool isEditor) {
+bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wxString language, bool isEditor) {
 	// Confirmed (asm lines 467635-468496) - see the header declaration's own
 	// comment for the parameter-naming corrections this pass made. Field ids
 	// 0x224/0x225 (graphics filter modes), 0x2E7/0x29D (texture cache
@@ -2184,9 +2184,9 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	TDiagnostic::EndFixedRegion();
 	graphics->SetCacheSize(game.GetInt(kGamePictureCacheSize));
 
-	if (gameName.ToStdWstring().empty()) {
+	if (language.ToStdWstring().empty()) {
 		TVisObjRef link = game.GetLink(kGameStandardLanguage);
-		gameName = link.GetName().GetFullPath();
+		language = link.GetName().GetFullPath();
 	}
 
 	TVList languageList;
@@ -2194,7 +2194,7 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	if (!languageList.empty()) {
 		TVisionaireObject *match = nullptr;
 		for (TVisionaireObject *obj : languageList) {
-			if (obj->GetName() == gameName) {
+			if (obj->GetName() == language) {
 				match = obj;
 				break;
 			}

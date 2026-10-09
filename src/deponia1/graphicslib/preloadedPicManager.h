@@ -8,6 +8,10 @@ class TPictureIO;
 
 class TPreloadedPicManager {
 public:
+	/** Pause() and Continue() stop and restart the background loader around the loading of the game (Init(), asm 494901 and
+	 *  494932). There is no loader thread here (the pictures are loaded when they are first drawn), so they do nothing. */
+	void Pause();
+	void Continue();
 	void StopPreloading(TPictureIO *picture);
 	// asm 779878-780419: the picture is taken out of the manager (it was made a sprite); nothing is queued here.
 	void ReleasePicture(TPictureIO *picture);

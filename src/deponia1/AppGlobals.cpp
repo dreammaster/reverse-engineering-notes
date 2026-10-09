@@ -8,8 +8,9 @@ SDL_Window *VSPlayerWindow = nullptr;
 SDL_GLContext VSPlayerContext = nullptr;
 
 wxString strAppName;
-wxSize surfaceSize;
-wxSize renderSize;
+// 1280 x 720 to begin with (the static initialization in main, asm 500281-500290).
+wxSize surfaceSize = {0x500, 0x2D0};
+wxSize renderSize = {0x500, 0x2D0};
 bool g_unlockAspect = false;
 const wchar_t *g_loadingState = L"Loading";
 wxString passwd;
@@ -26,12 +27,8 @@ int eMouseMessage = 0;
 unsigned char byte_11F8B01 = 0;
 unsigned char byte_11F8B02 = 0;
 
-// The real binary sets this up during earlier static/game initialization;
-// for the stub build we just give main() a live object to call through.
-// TMasterControl is abstract; TGameControl (98 methods, not yet
-// reconstructed - see vsplayer/control/gameControl.h) is the real concrete
-// class the binary instantiates here.
-TMasterControl *g_pGameControl = new THGameControl();
+// Made by Init() (THGameControl) and deleted by CleanUp().
+TMasterControl *g_pGameControl = nullptr;
 int GameMinDownTime = 0;
 int g_traceFlags = 0;
 
@@ -61,7 +58,10 @@ std::vector<std::string> luaDrawAfterInterfaces;
 float b2xoffset = 0.0f;
 float b2yoffset = 0.0f;
 
-wxString passw;
+wxString passw("ykgT6QsrRNv9XR");
+unsigned int Vflags = 0;
+wxString FirstSceneName;
+wxString VSPlayerTitle(L"Visionaire Player");
 
 bool EngineUpdatePaused = false;
 

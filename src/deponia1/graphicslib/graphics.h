@@ -68,6 +68,10 @@ public:
 	/** Slot 0x28 (a window event of ShowFrame): works out the part of the window where the game is drawn (the window
 	 *  less the bars of the aspect ratio), from the size of the window and the resolution of the game. */
 	virtual void CalculateDisplayedArea(const wxSize &windowSize, const wxSize &renderSize, wxRect *displayedArea);
+	/** Slot 0x18 (CreateWindowGL, asm 492404): the backend takes the window that was just made (its OpenGL state is set up
+	 *  here) and works out the part of it where the game is drawn (into `displayedArea`). False when it cannot. Here only
+	 *  the area is worked out. */
+	virtual bool InitGraphics(const wxSize &windowSize, wxSize &renderSize, wxRect *displayedArea);
 	virtual void ToggleWindowMode();
 	virtual bool SetWindowSize(int width, int height);
 	virtual bool IsFullscreen();

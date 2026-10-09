@@ -69,6 +69,11 @@ void TGraphicsInterface::CalculateDisplayedArea(const wxSize &windowSize, const 
 	displayedArea->height = windowSize.height;
 }
 
+bool TGraphicsInterface::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wxRect *displayedArea) {
+	CalculateDisplayedArea(windowSize, renderSize, displayedArea);
+	return true;
+}
+
 void TGraphicsInterface::ToggleWindowMode() {
 }
 

@@ -23,4 +23,14 @@ void TCPDebuggerClient::NextFrame() {
 void TCPDebuggerClient::EndArea(ProfileArea /*area*/, int /*frame*/) {
 }
 
+void TCPDebuggerClient::Activate(const char */*address*/, int /*port*/) {
+}
+
+void collectProfileData() {
+}
+
 TCPDebuggerClient debugger;
+std::string debugger_addr;
+int debugger_port = -1;
+bool profile = false;
+bool profileAreas = false;

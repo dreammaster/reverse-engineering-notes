@@ -6,9 +6,11 @@
 #include <cstdarg>
 #include <cstdio>
 #include <ctime>
+#include <cwctype>
 #include <direct.h>
 #include <filesystem>
 #include <sys/stat.h>
+#include <string>
 #include <thread>
 
 int wxLog::loglevel = 0;
@@ -16,9 +18,43 @@ int wxLog::loglevel = 0;
 void wxLog::SetVerbose(bool /*verbose*/) {
 }
 
-void wxLog::SetActiveTarget(wxLogStderr */*target*/) {
-	// Real wxWidgets takes ownership of the previous target and deletes it;
-	// the stub intentionally does nothing with the pointer.
+static wxLogStderr *g_activeLogTarget = nullptr;
+
+wxLogStderr *wxLog::SetActiveTarget(wxLogStderr *target) {
+	wxLogStderr *previous = g_activeLogTarget;
+
+	g_activeLogTarget = target;
+	return previous;
+}
+
+// The text as UTF-8 (the log file is a narrow stream).
+static std::string toUtf8(const std::wstring &text) {
+	std::string out;
+
+	for (size_t i = 0; i < text.size(); i++) {
+		unsigned long c = text[i];
+
+		if (c >= 0xD800 && c < 0xDC00 && i + 1 < text.size() && text[i + 1] >= 0xDC00 && text[i + 1] < 0xE000)
+			c = 0x10000 + ((c - 0xD800) << 10) + (text[++i] - 0xDC00);
+
+		if (c < 0x80) {
+			out += static_cast<char>(c);
+		} else if (c < 0x800) {
+			out += static_cast<char>(0xC0 | (c >> 6));
+			out += static_cast<char>(0x80 | (c & 0x3F));
+		} else if (c < 0x10000) {
+			out += static_cast<char>(0xE0 | (c >> 12));
+			out += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+			out += static_cast<char>(0x80 | (c & 0x3F));
+		} else {
+			out += static_cast<char>(0xF0 | (c >> 18));
+			out += static_cast<char>(0x80 | ((c >> 12) & 0x3F));
+			out += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+			out += static_cast<char>(0x80 | (c & 0x3F));
+		}
+	}
+
+	return out;
 }
 
 void wxLog::logexpanded(const wchar_t *fmt, ...) {
@@ -38,13 +74,36 @@ void wxLog::logexpanded(const wchar_t *fmt, ...) {
 
 	va_list args;
 	va_start(args, fmt);
-	std::vfwprintf(stderr, portableFmt.c_str(), args);
+
+	std::wstring text(1024, 0);
+	va_list copy;
+	va_copy(copy, args);
+	int length = std::vswprintf(&text[0], text.size(), portableFmt.c_str(), copy);
+	va_end(copy);
+
+	if (length < 0)
+		length = 0;
+
+	text.resize(static_cast<size_t>(length));
 	va_end(args);
+
+	std::fputws(text.c_str(), stderr);
 	std::fputws(L"\n", stderr);
+
+	// the active target (the message log file of the player)
+	if (g_activeLogTarget && g_activeLogTarget->GetFile() && g_activeLogTarget->GetFile() != stderr) {
+		std::string line = toUtf8(text) + "\n";
+
+		std::fwrite(line.data(), 1, line.size(), g_activeLogTarget->GetFile());
+		std::fflush(g_activeLogTarget->GetFile());
+	}
 }
 
 bool wxInitialize() {
 	return true;
+}
+
+void wxUninitialize() {
 }
 
 wxString wxConvertMB2WX(const char *s) {
@@ -318,5 +377,231 @@ bool wxFileName::MakeRelativeTo(const wxFileName &base) {
 	for (std::size_t pos = common; (pos = dir.find(L'/', pos)) != std::wstring::npos; pos++)
 		result += L"../";
 	_fullPath = result + path.substr(common);
+	return true;
+}
+
+// ---- wxCmdLineParser -------------------------------------------------------------------------------------------------
+
+static bool isOptionChar(wchar_t c) {
+	return std::iswalnum(c) || c == L'_';
+}
+
+void wxCmdLineParser::SetCmdLine(int argc, char **argv) {
+	_args.clear();
+	_programName = (argc > 0) ? wxConvertMB2WX(argv[0]).ToStdWstring() : std::wstring();
+
+	for (int i = 1; i < argc; i++)
+		_args.push_back(wxConvertMB2WX(argv[i]).ToStdWstring());
+}
+
+void wxCmdLineParser::SetDesc(const wxCmdLineEntryDesc *desc) {
+	_options.clear();
+	_paramDescs.clear();
+
+	for (; desc->kind != wxCMD_LINE_NONE; desc++) {
+		if (desc->kind == wxCMD_LINE_PARAM) {
+			_paramDescs.push_back(*desc);
+		} else if (desc->kind == wxCMD_LINE_SWITCH || desc->kind == wxCMD_LINE_OPTION) {
+			Option option;
+
+			option.desc = *desc;
+			_options.push_back(option);
+		}
+	}
+}
+
+wxCmdLineParser::Option *wxCmdLineParser::find(const std::wstring &name, bool shortName) {
+	for (Option &option : _options) {
+		const char *candidate = shortName ? option.desc.shortName : option.desc.longName;
+
+		if (candidate && *candidate && wxString(candidate).ToStdWstring() == name)
+			return &option;
+	}
+
+	return nullptr;
+}
+
+const wxCmdLineParser::Option *wxCmdLineParser::find(const wxString &name) const {
+	auto self = const_cast<wxCmdLineParser *>(this);
+	Option *option = self->find(name.ToStdWstring(), true);
+
+	return option ? option : self->find(name.ToStdWstring(), false);
+}
+
+// The value of an option, converted to what its description says; false (with the text of the error) when it is not a
+// number although it should be.
+bool wxCmdLineParser::store(Option &option, const std::wstring &value, std::wstring &error) {
+	option.present = true;
+	option.text = value;
+
+	if (option.desc.type == wxCMD_LINE_VAL_NUMBER) {
+		wxString text(value);
+
+		if (!text.ToLong(&option.number, 10)) {
+			error = L"'" + value + L"' is not a correct numeric value for option '" +
+			        wxString(option.desc.longName ? option.desc.longName : option.desc.shortName).ToStdWstring() + L"'.";
+			return false;
+		}
+	}
+
+	return true;
+}
+
+int wxCmdLineParser::Parse(bool giveUsage) {
+	std::vector<std::wstring> errors;
+	_params.clear();
+
+	for (Option &option : _options) {
+		option.present = false;
+		option.text.clear();
+		option.number = 0;
+	}
+
+	for (size_t i = 0; i < _args.size(); i++) {
+		const std::wstring &arg = _args[i];
+
+		if (arg.size() < 2 || arg[0] != L'-') {
+			size_t maxParams = _paramDescs.size();
+			bool multiple = !_paramDescs.empty() && (_paramDescs.back().flags & wxCMD_LINE_PARAM_MULTIPLE);
+
+			if (_params.size() < maxParams || multiple)
+				_params.push_back(arg);
+			else
+				errors.push_back(L"Unexpected parameter '" + arg + L"'");
+
+			continue;
+		}
+
+		const bool isLong = arg.size() > 2 && arg[1] == L'-';
+		size_t nameStart = isLong ? 2 : 1;
+		size_t nameEnd = nameStart;
+
+		while (nameEnd < arg.size() && isOptionChar(arg[nameEnd]))
+			nameEnd++;
+
+		const std::wstring name = arg.substr(nameStart, nameEnd - nameStart);
+		Option *option = find(name, !isLong);
+
+		if (!option) {
+			errors.push_back(std::wstring(isLong ? L"Unknown long option '" : L"Unknown option '") + name + L"'");
+			continue;
+		}
+
+		if (option->desc.kind == wxCMD_LINE_SWITCH) {
+			option->present = true;
+			continue;
+		}
+
+		// An option: the value follows after '=' or ':', or is the next argument (when the separator is not required).
+		std::wstring value;
+		bool haveValue = false;
+
+		if (nameEnd < arg.size() && (arg[nameEnd] == L'=' || arg[nameEnd] == L':')) {
+			value = arg.substr(nameEnd + 1);
+			haveValue = true;
+		} else if (nameEnd < arg.size()) {
+			errors.push_back(L"Unexpected characters following option '" + name + L"'.");
+			continue;
+		} else if (!(option->desc.flags & wxCMD_LINE_NEEDS_SEPARATOR) && i + 1 < _args.size()) {
+			value = _args[++i];
+			haveValue = true;
+		}
+
+		if (!haveValue) {
+			errors.push_back(L"Option '" + name + L"' requires a value.");
+			continue;
+		}
+
+		std::wstring error;
+
+		if (!store(*option, value, error))
+			errors.push_back(error);
+	}
+
+	for (const Option &option : _options) {
+		if ((option.desc.flags & wxCMD_LINE_OPTION_MANDATORY) && !option.present) {
+			const char *name = option.desc.longName ? option.desc.longName : option.desc.shortName;
+
+			errors.push_back(L"The required option '" + wxString(name).ToStdWstring() + L"' was not specified.");
+		}
+	}
+
+	for (size_t i = _params.size(); i < _paramDescs.size(); i++) {
+		if (!(_paramDescs[i].flags & wxCMD_LINE_PARAM_OPTIONAL)) {
+			errors.push_back(L"The required parameter '" + wxString(_paramDescs[i].description).ToStdWstring() +
+			                 L"' was not specified.");
+			break;
+		}
+	}
+
+	if (errors.empty())
+		return 0;
+
+	for (const std::wstring &error : errors)
+		std::fwprintf(stderr, L"%ls\n", error.c_str());
+
+	if (giveUsage)
+		Usage();
+
+	return static_cast<int>(errors.size());
+}
+
+void wxCmdLineParser::Usage() const {
+	std::wstring line = L"Usage: " + _programName;
+
+	for (const Option &option : _options) {
+		const char *name = option.desc.shortName && *option.desc.shortName ? option.desc.shortName : option.desc.longName;
+		std::wstring text = std::wstring(L"-") + wxString(name).ToStdWstring();
+
+		if (option.desc.kind == wxCMD_LINE_OPTION)
+			text += L" <" + std::wstring(option.desc.type == wxCMD_LINE_VAL_NUMBER ? L"num" : L"str") + L">";
+
+		line += (option.desc.flags & wxCMD_LINE_OPTION_MANDATORY) ? L" " + text : L" [" + text + L"]";
+	}
+
+	for (const wxCmdLineEntryDesc &param : _paramDescs) {
+		std::wstring text = L"<" + wxString(param.description).ToStdWstring() + L">";
+
+		line += (param.flags & wxCMD_LINE_PARAM_OPTIONAL) ? L" [" + text + L"]" : L" " + text;
+	}
+
+	std::fwprintf(stderr, L"%ls\n\n", line.c_str());
+
+	for (const Option &option : _options) {
+		std::wstring names;
+
+		if (option.desc.shortName && *option.desc.shortName)
+			names += L"-" + wxString(option.desc.shortName).ToStdWstring();
+
+		if (option.desc.longName && *option.desc.longName)
+			names += (names.empty() ? L"" : L", ") + std::wstring(L"--") + wxString(option.desc.longName).ToStdWstring();
+
+		std::fwprintf(stderr, L"  %-24ls %ls\n", names.c_str(), wxString(option.desc.description).wc_str());
+	}
+}
+
+bool wxCmdLineParser::Found(const wxString &name) const {
+	const Option *option = find(name);
+
+	return option && option->present;
+}
+
+bool wxCmdLineParser::Found(const wxString &name, wxString *value) const {
+	const Option *option = find(name);
+
+	if (!option || !option->present || option->desc.kind != wxCMD_LINE_OPTION)
+		return false;
+
+	*value = wxString(option->text);
+	return true;
+}
+
+bool wxCmdLineParser::Found(const wxString &name, long *value) const {
+	const Option *option = find(name);
+
+	if (!option || !option->present || option->desc.kind != wxCMD_LINE_OPTION)
+		return false;
+
+	*value = option->number;
 	return true;
 }

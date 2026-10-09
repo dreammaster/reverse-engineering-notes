@@ -14,3 +14,4 @@ src/*/messages.log
 
 # parallel build output (tools/pbuild.py)
 build/
+/userdata/

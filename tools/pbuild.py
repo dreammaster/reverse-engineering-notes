@@ -3,7 +3,7 @@
 a time). Objects and dependency files go to build/<game>-<bits>/ (ignored by git).
 Usage: tools/pbuild.py [game] [-32] [-r]    e.g. tools/pbuild.py deponia1 -32 -r
   -32  build with the 32-bit MinGW (C:\\mingw32); default is C:\\mingw64
-  -r   run the program afterwards (the smoke test: it must exit with 0)"""
+  -r   run the program afterwards (the smoke test: it must exit with 0, or -1 = Init failed: there is no game file)"""
 import os
 import subprocess
 import sys
@@ -91,4 +91,8 @@ if "-r" in sys.argv:
     env["PATH"] = os.path.dirname(CXX) + os.pathsep + env["PATH"]
     code = subprocess.run([exe], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
     print("smoke test exit code", code)
-    sys.exit(code)
+    # main() returns -1 (255, or 4294967295 on Windows) when Init() cannot load a game: there is no game file here, so
+    # that is the expected end of the smoke test; any other code is a failure (a crash gives a big number).
+    if code in (0, 255, 0xFFFFFFFF):
+        sys.exit(0)
+    sys.exit(code if 0 < code < 256 else 1)

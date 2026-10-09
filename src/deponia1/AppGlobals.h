@@ -133,10 +133,18 @@ extern bool matricesActive;
 
 // Confirmed a real, named global (TGameControl::PreLoad, Deponia_Linux.asm
 // lines 464021/464281/464473) - the password passed to
-// TComposedFileManager's container-init calls. Never seen written anywhere
-// reversed so far; presumably set during earlier static/game
-// initialization, like g_pGameControl itself.
+// TComposedFileManager's container-init calls. It begins as the engine's own
+// password (the static initialization in main, asm 500255) and is replaced by
+// the Password of config.ini or the `-p` option of the command line.
 extern wxString passw;
+
+// Confirmed recovered globals (asm 5295755, 5295702, 5295736), set by Init() and read by CreateWindowGL() and main():
+// the flags of the window of the player (the SDL window flags: 1 full screen, 2 OpenGL, 4 shown, 0x20 resizable, 0x2000
+// high DPI; 0x2004 to begin with), the scene `-sc` asks to start in, and the title of the window ("Visionaire Player",
+// else the name of the game).
+extern unsigned int Vflags;
+extern wxString FirstSceneName;
+extern wxString VSPlayerTitle;
 
 // Confirmed a real, named global (TGameControl::HandleMouseMove,
 // Deponia_Linux.asm line 472208) - gates whether the hovered-interface-object

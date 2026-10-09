@@ -8,6 +8,19 @@
 
 #include "AppGlobals.h"
 #include "Diagnostics.h"
+#include "THGameControl.h"
+#include "TGAction.h"
+#include "TSceneControl.h"
+#include "TMSavegame.h"
+#include "TSoundFFMPEG.h"
+#include "TStandardPaths.h"
+#include "datastruct/table.h"
+#include "datastruct/visionaire.h"
+#include "graphicslib/graphicsBackend.h"
+#include "graphicslib/preloadedPicManager.h"
+#include "baselib/xmlCommon.h"
+#include "vscommon/scripting/command.h"
+#include "vsplayer/main/appConfig.h"
 #include "vscommon/cfont.h"
 #include "TGCharacter.h"
 #include "TTimer.h"
@@ -18,19 +31,599 @@
 #include "vscommon/fontManager.h"
 #include "vstables/fieldIds.h"
 
+// Confirmed (asm lines 492124-492247): ends the player. With `forceExit` the volumes go back to config.ini; the game
+// control, the commands and the data are let go, the graphics backend's cache is cleared and the backend deleted, the log
+// closes and the window goes.
+static const char *const kSourceFile = "/home/simon/Documents/jenkins/branchPillars/src/vsplayer/main/mainSDL.cpp";
+
 void CleanUp(bool forceExit) {
-	std::printf("[stub] CleanUp(%s)\n", forceExit ? "true" : "false");
+	collectProfileData();
+
+	if (g_pGameControl) {
+		TGameControl *control = dynamic_cast<TGameControl *>(g_pGameControl);
+		TSoundFFMPEG *sound = g_pGameControl->GetSoundManager();
+
+		if (sound && forceExit)
+			WriteVolume(sound->GetMusicVolume(), sound->GetSoundVolume(), sound->GetSpeechVolume(), sound->GetMovieVolume(),
+			            sound->GetGlobalVolume());
+
+		TVisionaireGame *visionaire = control ? control->GetVisionaire() : nullptr;
+
+		delete g_pGameControl;
+		g_pGameControl = nullptr;
+		ClosePlayerCommands();
+		TVisionaire::CleanUp();
+		delete visionaire;
+	} else {
+		ClosePlayerCommands();
+		TVisionaire::CleanUp();
+	}
+
+	if (graphics) {
+		graphics->ClearCache();
+		delete graphics;
+		graphics = nullptr;
+	}
+
+	delete wxLog::SetActiveTarget(nullptr);
+
+	if (LogFile)
+		std::fclose(LogFile);
+
+	SDL_DestroyWindow(VSPlayerWindow);
+	wxUninitialize();
 }
 
-bool ParseCommandLine(int /*argc*/, char **/*argv*/, wxCmdLineParser &/*parser*/) {
-	// Stub: pretend the command line always parses successfully.
+// Confirmed (asm lines 491982-492100): asks the main loop to end with an SDL_QUIT event; when that cannot be pushed the
+// program ends at once.
+void TerminateApplication() {
+	SDL_Event event;
+
+	std::memset(&event, 0, sizeof(event));
+	event.type = SDL_QUIT;
+
+	if (SDL_PushEvent(&event) == -1) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"SDL_QUIT event can't be pushed: %s\n", wxString(SDL_GetError()).wc_str());
+
+		std::exit(1);
+	}
+}
+
+// Confirmed (asm lines 492271-492892): makes the window of the player and its OpenGL context, and asks the backend to work
+// out the part of the window where the game is drawn (into g_displayedArea). `windowSize` is the size of the window,
+// `renderSize` that of the game; `brightness` is 0 to 100. False (with the cause in the log) when it fails.
+// The original also calls SDL_GetRenderer() and SDL_RenderFillRect() on the window after setting the swap interval; a
+// window with an OpenGL context has no renderer, so that call can only fail and is left out.
+bool CreateWindowGL(const wxSize &windowSize, wxSize &renderSize, long brightness) {
+	TDiagnostic::BeginFixedRegion(wxString(L"GL Window"));
+
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	wxString title = VSPlayerTitle;
+
+	VSPlayerWindow = SDL_CreateWindow(static_cast<const char *>(title.mb_str()), SDL_WINDOWPOS_CENTERED,
+	                                  SDL_WINDOWPOS_CENTERED, windowSize.width, windowSize.height, Vflags);
+
+	if (!VSPlayerWindow) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"problem with SDL_SetVideoMode (%d, %d): %s. Make sure your screen color depth is set to 32 "
+			                   L"bit.", windowSize.width, windowSize.height, wxString(SDL_GetError()).wc_str());
+
+		return false;
+	}
+
+	// the context is made by the OpenGL backend's sub system
+	if (g_subSys && !VSPlayerContext)
+		VSPlayerContext = SDL_GL_CreateContext(VSPlayerWindow);
+
+	TDiagnostic::EndFixedRegion();
+
+
+
+	if (!graphics->InitGraphics(windowSize, renderSize, &g_displayedArea)) {
+		if (wxLog::loglevel >= 0) {
+			wxLog::logexpanded(L"problem with initialization of graphics interface: %s", wxString(SDL_GetError()).wc_str());
+			wxLog::logexpanded(L"Make sure graphics driver is up-to-date.");
+		}
+
+		return false;
+	}
+
+	if (g_subSys) {
+		if (!VSPlayerContext)
+			VSPlayerContext = SDL_GL_CreateContext(VSPlayerWindow);
+
+		SDL_GL_SetSwapInterval(1);
+	}
+
+	TDiagnostic::EndFixedRegion();
+
+	int red = 0, green = 0, blue = 0, alpha = 0, depth = 0, doubleBuffer = 0, accelerated = 0;
+
+	SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &red);
+	SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &green);
+	SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &blue);
+	SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &alpha);
+	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
+	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffer);
+	SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &accelerated);
+
+	if (wxLog::loglevel > 1)
+		wxLog::logexpanded(L"red, green, blue, alpha, depth size: <%d, %d, %d, %d, %d>, doublebuffer <%d>, accelerated <%d>", red,
+		                   green, blue, alpha, depth, doubleBuffer, accelerated);
+
+	float brightnessFactor = static_cast<float>(brightness) / 100.0f;
+
+	if (brightnessFactor != 1.0f && SDL_SetWindowBrightness(VSPlayerWindow, brightnessFactor) != 0 && wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"Unable to set brightness: %s", wxString(SDL_GetError()).wc_str());
+
 	return true;
 }
 
-bool Init(const wxString &/*appName*/, wxSize &/*surfaceSize*/, wxSize &/*renderSize*/, int /*argc*/,
-          char **/*argv*/, wxCmdLineParser &/*parser*/) {
-	// Stub: pretend startup always succeeds so the reconstructed main() can
-	// be smoke-tested end to end.
+// The options of the command line (the table that ParseCommandLine() of the original builds on its stack, asm 492892-493075).
+// Short names are several letters long here (-tc, -ll ...). The one parameter, the input file, is mandatory.
+static const wxCmdLineEntryDesc kCommandLineOptions[] = {
+	{wxCMD_LINE_SWITCH, "w", "window", "no full screen", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_SWITCH, "re", "resizeable", "window is resizeable", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_SWITCH, "tc", "compression", "texture compression", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_SWITCH, "ns", "nosounds", "disable sounds", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_SWITCH, "nv", "novideos", "disable videos", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "prof", "profile", "profiling mode", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "r", "resolution", "resolution of full screen mode (game|auto|desktop) or window size in windowed "
+	                                       "mode (e.g. 640x480 for a game with resolution 320x240)",
+	 wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "utw", "usetexforwidescreen", "Defines if internally a texture is used for widescreen support "
+	                                                   "(r=auto|desktop). Currently in development because both techniques make "
+	                                                   "problem on some hardware. Possible settings: true|false",
+	 wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "ll", "loglevel", "log level for log messages (error|warning|info)", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "lf", "logfile", "optional path and filename for log file. this can be useful to create a log file "
+	                                      "before the input file is loaded. Otherwise the log file is created after the input "
+	                                      "file was loaded.",
+	 wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "s", "savegame", "load savegame", wxCMD_LINE_VAL_NUMBER, 0},
+	{wxCMD_LINE_OPTION, "g", "graphics", "graphics interface", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "l", "language", "game language", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "uld", "uselocaldir", "use local directory (default) for savegames, otherwise a common directory "
+	                                           "will be used (true|false)",
+	 wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "dbo", "depthbufferopt", "", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "dev", "device", "graphics device: dx11 | dx9 | gl", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "p", "password", "", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "sc", "scene", "name of start scene", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_OPTION, "deb", "debugger", "debugger adress", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_PARAM, nullptr, nullptr, "input file", wxCMD_LINE_VAL_STRING, 0},
+	{wxCMD_LINE_NONE, nullptr, nullptr, nullptr, wxCMD_LINE_VAL_STRING, 0}
+};
+
+// Confirmed (asm lines 492892-493078): a command line of just the name of the program is not looked at; else it is
+// parsed against the table above. False when it is wrong (or help was asked for).
+bool ParseCommandLine(int argc, char **argv, wxCmdLineParser &parser) {
+	if (argc <= 1)
+		return true;
+
+	parser.SetCmdLine(argc, argv);
+	parser.SetDesc(kCommandLineOptions);
+	return parser.Parse() == 0;
+}
+
+static bool isNoCase(const wxString &text, const wchar_t *expected) {
+	return text.CmpNoCase(wxString(expected)) == 0;
+}
+
+// Confirmed (asm lines 493088-496900, ~4300 lines): the start-up of the player. See NOTES.md ("The player's start-up") for
+// the order of things. `surfaceSize` is the size of the window and `renderSize` that of the game, both are set here. The
+// original's repeated copies of the clean-up of its strings at every exit are not repeated.
+//
+// Not as in the original: the OpenGL backend is made by CreateGraphicsBackend(), because it is not reconstructed. The
+// command line options -uld (uselocaldir), -dbo, -g and -dev are in the table but Init() does not look at them (it calls
+// TStandardPaths::SetUseLocalDir(false) whatever is given), and config.ini cannot choose the graphics device: it is
+// always OpenGL after the file was read.
+bool Init(const wxString &/*appName*/, wxSize &surfaceSize, wxSize &renderSize, int argc, char **/*argv*/,
+          wxCmdLineParser &parser) {
+	wxString file;
+	wxString language;
+	bool fullscreen = true;
+	bool intro = true;
+	bool resizeable = false;
+	bool textureCompression = false;
+	bool lockCursor = false;
+	bool textureForWidescreen = true;
+	eResolution resolutionMode = eResolution::kAuto;
+	eGraphicsInterface device = static_cast<eGraphicsInterface>(0);
+	eLogLevel logLevel = eLogLevel::kInfo;
+	long musicVolume = 100, soundVolume = 100, speechVolume = 100, movieVolume = 100, globalVolume = 100;
+	long brightness = 100;
+	long savegame = -1;
+
+	// what the command line gave (it wins over config.ini)
+	bool windowGiven = false;
+	bool resizeableGiven = false;
+	bool resolutionGiven = false;
+	bool textureForWidescreenGiven = false;
+	bool logLevelGiven = false;
+	bool logFileGiven = false;
+	bool languageGiven = false;
+	bool noSounds = false;
+	bool noVideos = false;
+
+	SDL_EventState(SDL_TEXTINPUT, SDL_ENABLE);
+	Vflags = 0x2004;
+	wxLog::SetLogLevel(static_cast<int>(logLevel));
+
+	if (argc > 1) {
+		if (parser.GetParamCount() > 0)
+			file = parser.GetParam(0);
+
+		if (parser.Found(wxString(L"w"))) {
+			fullscreen = false;
+			windowGiven = true;
+		}
+
+		if (parser.Found(wxString(L"re"))) {
+			resizeable = true;
+			resizeableGiven = true;
+		}
+
+		if (parser.Found(wxString(L"tc")))
+			textureCompression = true;
+
+		noSounds = parser.Found(wxString(L"ns"));
+		noVideos = parser.Found(wxString(L"nv"));
+
+		wxString value;
+
+		if (parser.Found(wxString(L"p"), &value))
+			passw = value;
+
+		if (parser.Found(wxString(L"r"), &value)) {
+			if (isNoCase(value, L"Desktop")) {
+				resolutionMode = eResolution::kDesktop;
+			} else if (isNoCase(value, L"Game")) {
+				resolutionMode = eResolution::kGame;
+			} else if (isNoCase(value, L"Auto")) {
+				resolutionMode = eResolution::kAuto;
+			} else if (ConvertStringToSize(value, surfaceSize)) {
+				resolutionMode = eResolution::kSize;
+			} else if (wxLog::loglevel > 0) {
+				wxLog::logexpanded(L"Invalid value for command line parameter 'resolution'.");
+			}
+
+			resolutionGiven = true;
+		}
+
+		if (parser.Found(wxString(L"utw"), &value)) {
+			if (isNoCase(value, L"true")) {
+				textureForWidescreen = true;
+			} else if (isNoCase(value, L"false")) {
+				textureForWidescreen = false;
+			} else if (wxLog::loglevel > 0) {
+				wxLog::logexpanded(L"Invalid value for command line parameter 'usetexforwidescreen'.");
+			}
+
+			textureForWidescreenGiven = true;
+		}
+
+		if (parser.Found(wxString(L"ll"), &value)) {
+			if (isNoCase(value, L"Error")) {
+				logLevel = eLogLevel::kError;
+			} else if (isNoCase(value, L"Warning")) {
+				logLevel = eLogLevel::kWarning;
+			} else if (isNoCase(value, L"Info")) {
+				logLevel = eLogLevel::kInfo;
+			} else if (isNoCase(value, L"Max")) {
+				logLevel = eLogLevel::kMax;
+			} else if (wxLog::loglevel > 0) {
+				wxLog::logexpanded(L"Invalid value for command line parameter 'loglevel'.");
+			}
+
+			logLevelGiven = true;
+		}
+
+		// main() has already taken the name of the log file into g_logfile; the file is opened again here
+		if (parser.Found(wxString(L"lf"), &value)) {
+			LogFile = std::fopen(static_cast<const char *>(g_logfile.GetFullPath().mb_str()), "w");
+			logFileGiven = true;
+		}
+
+		long number;
+
+		if (parser.Found(wxString(L"savegame"), &number))
+			savegame = number;
+
+		if (parser.Found(wxString(L"language"), &language))
+			languageGiven = true;
+
+		if (parser.Found(wxString(L"deb"), &value) && value.Contains(wxString(L":"))) {
+			int colon = value.Find(wxString(L":"));
+
+			debugger_addr = static_cast<const char *>(value.Mid(0, colon).mb_str());
+			debugger_port = static_cast<int>(dtol(static_cast<const char *>(value.Mid(colon + 1).mb_str())));
+		}
+
+		// both need the address of the debugger (the original tests the address, not the value)
+		if (parser.Found(wxString(L"prof"), &value) && !debugger_addr.empty()) {
+			if (value.ToStdWstring() == L"lua")
+				profile = true;
+
+			if (value.ToStdWstring() == L"frame")
+				profileAreas = true;
+		}
+
+		parser.Found(wxString(L"sc"), &FirstSceneName);
+	}
+
+	TStandardPaths::SetUseLocalDir(false);
+
+	// The settings of config.ini: those the command line gave are not looked for (a null place).
+	TConfigTargets targets;
+
+	targets.fullscreen = windowGiven ? nullptr : &fullscreen;
+	targets.resizeable = resizeableGiven ? nullptr : &resizeable;
+	targets.intro = &intro;
+	targets.resolution = resolutionGiven ? nullptr : &resolutionMode;
+	targets.textureForWidescreen = textureForWidescreenGiven ? nullptr : &textureForWidescreen;
+	targets.resolutionSize = &surfaceSize;
+	targets.logLevel = logLevelGiven ? nullptr : &logLevel;
+	targets.language = languageGiven ? nullptr : &language;
+	targets.musicVolume = &musicVolume;
+	targets.soundVolume = &soundVolume;
+	targets.speechVolume = &speechVolume;
+	targets.movieVolume = &movieVolume;
+	targets.globalVolume = &globalVolume;
+	targets.brightness = &brightness;
+	targets.textureCompression = &textureCompression;
+	targets.device = &device;
+	targets.lockCursor = &lockCursor;
+
+	if (file.IsEmpty()) {
+		// no input file: the config.ini next to the program may name the game (File = ...)
+		TConfigTargets first = targets;
+
+		first.file = &file;
+		first.password = &passw;
+		LoadConfigFile(standardPaths.GetResourcesDir(false) + wxString(L"/config.ini"), first);
+	}
+
+	wxLog::SetLogLevel(static_cast<int>(logLevel));
+
+	THGameControl *gameControl = new THGameControl();
+
+	g_pGameControl = gameControl;
+	TVisionaire::SetVisPlayerMode(true);
+
+	TTimer timer;
+
+	timer.SetTime();
+
+	wxString warning;
+
+	if (!gameControl->PreLoad(file, warning, true)) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"%s", (wxString(L"Loading game from file '") + file + wxString(L"' failed!")).wc_str());
+
+		return false;
+	}
+
+	long preloadTime = timer.GetTime();
+
+	timer.SetTime();
+
+	TVisObjRef game = gameControl->GetVisionaire()->GetGame();
+	wxFileName gameFile(file.ToStdWstring());
+
+	gameFile.NormalizePath();
+
+	wxString fileName = gameFile.GetName();
+	wxString companyName = game.GetStr(kGameCompanyName);
+	wxString gameName = game.GetStr(kGameGameName);
+
+	VSPlayerTitle = gameName.IsEmpty() ? fileName : gameName;
+	TStandardPaths::InitGameAndCompanyName(companyName, gameName, fileName);
+	TMSavegame::InitSaveGamePath();
+
+	if (!logFileGiven) {
+		wxFileName logFile(standardPaths.GetLogFileDir() + L"messages.log");
+
+		logFile.NormalizePath();
+		g_logfile = logFile;
+
+		if (LogFile) {
+			std::fclose(LogFile);
+			LogFile = nullptr;
+		}
+
+		x_assert(true, "LogFile == NULL", kSourceFile, 0x368);
+		LogFile = std::fopen(static_cast<const char *>(g_logfile.GetFullPath().mb_str()), "w");
+		wxLog::SetVerbose(true);
+		delete wxLog::SetActiveTarget(new wxLogStderr(LogFile));
+	} else {
+		x_assert(LogFile != nullptr, "LogFile != NULL", kSourceFile, 0x375);
+	}
+
+	if (wxLog::loglevel > 1) {
+		wxLog::logexpanded(L"Engine Version: %s (Build %d from Build date: %s)", L"5.0.1", 1189, L"Feb  8 2019");
+		wxLog::logexpanded(L"Time needed for preloading game: %ld msec", preloadTime);
+	}
+
+	// the settings of the user's own config.ini (the directory of the game); what the command line gave stays
+	LoadConfigFile(wxString(standardPaths.GetConfigDir()) + wxString(L"/config.ini"), targets);
+
+	if (!fullscreen && resolutionGiven && resolutionMode != eResolution::kSize && wxLog::loglevel > 0)
+		wxLog::logexpanded(L"The command line parameter 'resolution' can only be used in fullscreen mode. Parameter is ignored.");
+
+	// the size of the picture of the game; the window has that size unless the command line gave one
+	const wxPoint *gameResolution = game.GetPoint(kGameWindowResolution);
+
+	renderSize.Set(gameResolution->x, gameResolution->y);
+	g_displayedArea.x = 0;
+	g_displayedArea.y = 0;
+	g_displayedArea.width = renderSize.width;
+	g_displayedArea.height = renderSize.height;
+
+	// config.ini cannot choose the graphics device: it is OpenGL from here on
+	device = eGraphicsInterface::kOpenGL;
+
+	TGraphicsStartup startup;
+
+	startup.picBufferSize = game.GetInt(kGamePicBufferSize);
+	startup.preloadPicThreads = game.GetInt(kGamePreloadPicThreads);
+	startup.preloadedPicBufferSize = game.GetInt(kGamePreloadedPicBufferSize);
+	startup.nearestNeighbor = game.GetBool(kGameNearestNeighborInterpolation);
+	startup.gameResolution = renderSize;
+	startup.windowSize = surfaceSize;
+	startup.textureForWidescreen = textureForWidescreen;
+	startup.fullscreen = fullscreen;
+	startup.resizeable = resizeable;
+	startup.textureCompression = textureCompression;
+
+	if (!CreateGraphicsBackend(startup))
+		return false;
+
+	gameControl->GetSoundManager()->SetVolume(static_cast<int>(musicVolume), static_cast<int>(soundVolume),
+	                                          static_cast<int>(speechVolume), static_cast<int>(movieVolume),
+	                                          static_cast<int>(globalVolume));
+
+	if (noSounds)
+		gameControl->GetSoundManager()->DisableSounds(true);
+
+	if (noVideos)
+		gameControl->EnableMovies(false);
+
+	InitPlayerCommands(gameControl->GetVisionaire(), wxString(standardPaths.GetConfigDir()),
+	                   standardPaths.GetResourcesDir(true), wxString(standardPaths.GetLogFileDir()));
+
+	if (!debugger_addr.empty())
+		debugger.Activate(debugger_addr.c_str(), debugger_port);
+
+	if (resolutionMode != eResolution::kSize)
+		surfaceSize = renderSize;
+
+	GameMinDownTime = game.GetInt(kGameHoldTime);
+
+	if (fullscreen) {
+		SDL_DisplayMode desktop;
+
+		Vflags |= SDL_WINDOW_FULLSCREEN;
+		SDL_GetDesktopDisplayMode(0, &desktop);
+
+		double ratio = static_cast<double>(desktop.w) / static_cast<double>(desktop.h);
+
+		if ((ratio > 1.5 && resolutionMode == eResolution::kAuto) || resolutionMode == eResolution::kDesktop)
+			surfaceSize.Set(desktop.w, desktop.h);
+	}
+
+	if (resizeable)
+		Vflags |= SDL_WINDOW_RESIZABLE;
+
+	if (device == eGraphicsInterface::kOpenGL)
+		Vflags |= SDL_WINDOW_OPENGL;
+
+	if (!CreateWindowGL(surfaceSize, renderSize, brightness)) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"Unable to open screen surface.");
+
+		return false;
+	}
+
+	if (lockCursor)
+		SDL_SetRelativeMouseMode(1);
+
+	SDL_DisableScreenSaver();
+	SDL_ShowCursor(0);
+
+	graphics->GetPreloadedPicManager()->Pause();
+
+	// (the language the game starts in goes to LoadAndInitGame)
+	if (!gameControl->LoadAndInitGame(file, warning, language, true))
+		return false;
+
+	graphics->GetPreloadedPicManager()->Continue();
+
+	if (wxLog::loglevel > 1)
+		wxLog::logexpanded(L"Time needed for loading game: %ld msec", timer.GetTime());
+
+	gameControl->RegisterEventHandler();
+
+	if (intro) {
+		wxFileName introFile = game.GetPath(kGameIntro);
+
+		gameControl->PlayAVI(introFile, game.GetBool(kGameFullScreenIntro), static_cast<HandleSoundsEnum>(3));
+	}
+
+	if (savegame < 0) {
+		gameControl->InitAfterLoadingScreen();
+		gameControl->ExecuteStartingAction();
+	} else {
+		// whatever the number was, it is the savegame of slot 0 that is loaded
+		TMSavegame *savegameToLoad = new TMSavegame(false, 0, -1, -1, gameControl->GetVisionaire());
+
+		gameControl->LoadGame(savegameToLoad);
+		delete savegameToLoad;
+	}
+
+	if (!FirstSceneName.IsEmpty()) {
+		// `-sc`: go to the scene. First the actions of the start run out (at most 200 turns of 10 ms).
+		graphics->SetMatrixMode(true, false);
+		graphics->ResetMatrix(true, true);
+
+		TVList actions;
+
+		TGAction::GetActions(actions);
+
+		for (int turns = 0; actions.size() != 0;) {
+			TGAction::ContinueRunningActions(false);
+			TGAction::DeleteFinishedActions();
+			TGAction::GetActions(actions);
+			wxMilliSleep(10);
+
+			if (++turns == 200) {
+				if (actions.size() != 0 && wxLog::loglevel > 0)
+					wxLog::logexpanded(L"Change to scene took longer because the action '%s' failed to become idle.",
+					                   wxString(actions.at(0)->GetName().mb_str()).wc_str());
+
+				break;
+			}
+		}
+
+		TTable *scenes = nullptr;
+
+		gameControl->GetVisionaire()->GetTable(kScene, &scenes);
+
+		TVisObjRef scene;
+
+		if (scenes->GetByName(FirstSceneName, scene)) {
+			// the first object of the scene that has a place is where the character goes
+			TVList objects;
+
+			scene.GetLinks(kSceneObjects, static_cast<TypeOrder>(0), objects);
+
+			TVisObjRef target;
+
+			for (TVisionaireObject *object : objects) {
+				const wxPoint *position = object->GetPoint(kObjectPosition);
+
+				if (position->x > 0 && position->y > 0) {
+					target = TVisObjRef(object);
+					break;
+				}
+			}
+
+			if (target.IsEmpty())
+				gameControl->GetSceneControl()->ShowScene(scene, false, false);
+			else
+				gameControl->GetSceneControl()->ChangeScene(gameControl->GetCurrentCharacter()->GetRef(), target, false, -1);
+		}
+	}
+
 	return true;
 }
 

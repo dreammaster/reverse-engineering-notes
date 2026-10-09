@@ -155,6 +155,9 @@ public:
 	// 1436104, 1439132) - real wxString::Mid(first, count) returns the
 	// substring starting at `first`, `count` characters long (or to the end
 	// if `count` is negative, matching wxWidgets' own npos-as-"-1" idiom).
+	wxString Mid(int first) const {
+		return Mid(first, -1);
+	}
 	wxString Mid(int first, int count) const {
 		if (first < 0 || static_cast<std::size_t>(first) > _data.size())
 			return wxString();
@@ -526,15 +529,86 @@ struct FloatRect {
 	float height = 0.0f;
 };
 
+// The kinds of the entries of a command line description (wxCmdLineEntryType) ...
+enum wxCmdLineEntryType {
+	wxCMD_LINE_SWITCH = 0,
+	wxCMD_LINE_OPTION = 1,
+	wxCMD_LINE_PARAM = 2,
+	wxCMD_LINE_USAGE_TEXT = 3,
+	wxCMD_LINE_NONE = 4
+};
+
+// ... the type of the value of an option or parameter (wxCmdLineParamType) ...
+enum wxCmdLineParamType {
+	wxCMD_LINE_VAL_STRING = 0,
+	wxCMD_LINE_VAL_NUMBER = 1,
+	wxCMD_LINE_VAL_DATE = 2,
+	wxCMD_LINE_VAL_DOUBLE = 3,
+	wxCMD_LINE_VAL_NONE = 4
+};
+
+// ... and the flags (wxCMD_LINE_OPTION_MANDATORY ...). A parameter without wxCMD_LINE_PARAM_OPTIONAL is mandatory.
+constexpr int wxCMD_LINE_OPTION_MANDATORY = 0x01;
+constexpr int wxCMD_LINE_PARAM_OPTIONAL = 0x02;
+constexpr int wxCMD_LINE_PARAM_MULTIPLE = 0x04;
+constexpr int wxCMD_LINE_OPTION_HELP = 0x08;
+constexpr int wxCMD_LINE_NEEDS_SEPARATOR = 0x10;
+
+// One entry of the description of a command line (as in wxWidgets 3: narrow strings).
+struct wxCmdLineEntryDesc {
+	wxCmdLineEntryType kind;
+	const char *shortName;
+	const char *longName;
+	const char *description;
+	wxCmdLineParamType type;
+	int flags;
+};
+
+/** The parser of the command line, as wxWidgets' wxCmdLineParser (the part the engine uses): a switch or an option is
+ *  given by its short name (`-w`, `-ll warning`, `-ll=warning`) or its long name (`--window`, `--loglevel=warning`);
+ *  what is not an option is a parameter. Parse() returns 0 when the line is correct, else the number of the errors
+ *  (which it says on stderr with the usage); a mandatory parameter that is missing is an error. */
 class wxCmdLineParser {
 public:
 	wxCmdLineParser() = default;
 	~wxCmdLineParser() = default;
 
-	// Stub always reports the option as not present.
-	bool Found(const wxString &/*name*/, wxString */*value*/) const {
-		return false;
+	void SetCmdLine(int argc, char **argv);
+	/** `desc` ends with an entry of the kind wxCMD_LINE_NONE; the strings must stay alive. */
+	void SetDesc(const wxCmdLineEntryDesc *desc);
+	int Parse(bool giveUsage = true);
+	void Usage() const;
+
+	/** The switch or option is on the command line (by short or long name). */
+	bool Found(const wxString &name) const;
+	/** The option is on the command line; its value is put into `value`. */
+	bool Found(const wxString &name, wxString *value) const;
+	bool Found(const wxString &name, long *value) const;
+
+	size_t GetParamCount() const {
+		return _params.size();
 	}
+	wxString GetParam(size_t n = 0) const {
+		return (n < _params.size()) ? wxString(_params[n]) : wxString();
+	}
+
+private:
+	struct Option {
+		wxCmdLineEntryDesc desc;
+		bool present = false;
+		std::wstring text;
+		long number = 0;
+	};
+
+	Option *find(const std::wstring &name, bool shortName);
+	const Option *find(const wxString &name) const;
+	bool store(Option &option, const std::wstring &value, std::wstring &error);
+
+	std::vector<std::wstring> _args; ///< the arguments without the name of the program
+	std::wstring _programName;
+	std::vector<Option> _options;
+	std::vector<wxCmdLineEntryDesc> _paramDescs;
+	std::vector<std::wstring> _params;
 };
 
 class wxFile {
@@ -594,19 +668,29 @@ public:
 	static int loglevel;
 
 	static void SetVerbose(bool verbose);
-	static void SetActiveTarget(class wxLogStderr *target);
+	static void SetLogLevel(int level) {
+		loglevel = level;
+	}
+	/** Makes `target` the place the messages go to; returns the one before (whose owner the caller becomes). */
+	static class wxLogStderr *SetActiveTarget(class wxLogStderr *target);
 	static void logexpanded(const wchar_t *fmt, ...);
 };
 
+/** A log target that writes to a file (stderr for wxLogStderr() without one). */
 class wxLogStderr {
 public:
 	explicit wxLogStderr(std::FILE *fp) : _fp(fp) {}
+
+	std::FILE *GetFile() const {
+		return _fp;
+	}
 
 private:
 	std::FILE *_fp;
 };
 
 bool wxInitialize();
+void wxUninitialize();
 
 // Confirmed call shapes only (CmdGetProperty::Redo(), Deponia_Linux.asm lines 398051-398150): the language of the
 // system. The stub knows none (wxLANGUAGE_UNKNOWN).
