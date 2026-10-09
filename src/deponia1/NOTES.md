@@ -3487,6 +3487,27 @@ to and from Lua tables. What the scripts see:
   shader objects behind `shaderCompile`/`shaderUniform` (the GL backend; `graphicslib/shader.h` has what the
   commands use).
 
+## The player's start-up: config.ini, the command line and the main loop
+
+- `vsplayer/main/appConfig.cpp` is `LoadConfigFile()` (asm 500424): `config.ini` has lines `Name = value` (names in any
+  case, the value is the first word; a line that begins with ' or # is a comment): Language, File (a path, in "" when it
+  has spaces), Fullscreen/Resizeable/Intro/UseTextureForWidescreen (Yes|No), Resolution (Game|Auto|Desktop|WxH),
+  MusicVolume/SoundVolume/SpeechVolume/MovieVolume/GlobalVolume/Brightness (0-100; a bad brightness is logged),
+  UseTextureCompression/LockCursor (Enabled|Disabled), LogLevel (Error|Warning|Info|Max), Device (OGL|DX9|DX11),
+  Password. A name it does not know, or a line without `=`, makes the answer false but the rest is read.
+- The command line (`ParseCommandLine`, asm 492894, the table of `wxCmdLineParser`): `-w/--window`, `-re/--resizeable`,
+  `-tc/--compression`, `-ns/--nosounds`, `-nv/--novideos`, `--prof/--profile`, `-r/--resolution`,
+  `-utw/--usetexforwidescreen`, `-ll/--loglevel`, `-lf/--logfile`, `--savegame`, `-g/--graphics`, `-l/--language`,
+  `-uld/--uselocaldir`, `-dbo/--depthbufferopt`, `--device`, `-p/--password`, `-sc/--scene`, `-deb/--debugger`, and the
+  input file. `Init()` (asm 493088, 4300 lines) is not reconstructed.
+- `ShowFrame()` (asm 497745, `AppFunctions.cpp`) is the main loop: the SDL events become messages of the game (a
+  mouse message is a number: 1 move, 2 double click, 3 left down, 4 left up, 5 long click, 6 hold, 8/9 right down/up,
+  10/11 middle down/up, 12/13 wheel up/down; a key message: 1 down, 2 up, 3 text, 4/5 controller button hit/release,
+  6 axis, 7/8/9 controller added/removed/remapped). A click shorter than `GameMinDownTime` and less than 449 ms after the
+  one before is a double click, a longer one is a long click; control or three fingers on the touch screen make the
+  left button a right one. A controller can move the mouse (`movex`, `movey`) and walk the character (`charmovex`,
+  `charmovey`).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
