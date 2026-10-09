@@ -254,7 +254,7 @@ jpgd::DCT_Upsample::P_Q<8, 8>	todo	1	747465	747465
 jpgd::DCT_Upsample::R_S<8, 8>	todo	1	748024	748024
 TSpriteCache	todo	13	749371	751855
 TPicturePNG	stub	10	753445	756750
-TPictureMEM	stub	22	756823	759239
+TPictureMEM	in-progress	22	756823	759239
 TPictureWebP	stub	9	759351	761648
 TGraphicsInterface	stub	38	761692	779132
 TParticleEmitter	done	12	766025	771112
@@ -266,7 +266,7 @@ idMat3	done	2	767217	767742
 TMatrix4	done	21	767828	769325
 TCutRect	todo	7	771519	772531
 TSpriteHandle	in-progress	7	772635	775729
-MaxRectsBinPack	todo	20	773548	1445275
+MaxRectsBinPack	in-progress	20	773548	1445275
 TTextureHandle	todo	1	776718	776718
 TPreloadedPicManager	stub	15	779878	781717
 TPictureIO	in-progress	43	785258	791178

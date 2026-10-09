@@ -3910,3 +3910,31 @@ The matrix transforms of the cursor (`invMatrix1`, `matrix1`) are in `AppGlobals
 `transformByMatrix`): the mouse position of `TGameControl`, and `IsInside()`/`GetObject()` of `TGObject`, `TMCharacter` and
 `TGInterface` move the point back through the inverse matrix (round the scroll position for objects and characters);
 `TGObject::DrawSnoopAnimation` moves the position of the animation forward through `matrix1`.
+
+## Printing text, the pixels of a picture (TCFont, TPictureMEM, the atlas)
+
+- `TCFont::PrintText()` / `PrintTextLines()` (asm 1396036-1398227): a font of a picture draws its letters one by one between
+  `graphics->BeginBatch()` and `EndBatch()` (the backend slots 0x110/0x118): the position moves by the letter's `_advance` (a
+  signed byte) and by the spacing of the pair (the pair `(current << 16) + previous` of the kerning first, then the previous
+  letter alone, else the letter spacing of the font; `spacingBetween()`), each letter is drawn at `position + _offsetX/_offsetY`
+  (the edges `EnsureSpriteLoaded()` took off) with `TPictureIO::DrawWithSrcRect(_rect, alpha, color)`; a space is not drawn. A new
+  line (CR, LF or the two in either order) puts the position at `GetTextStartPos()` for the next line and `lineHeight +
+  kVerticalLetterSpacing` lower. With the text matrix on and the matrices active, the position (relative to the scroll) goes
+  through `textMatrix`. Quirks kept: `PrintText()` works out the line widths only for pairs of CR/LF and walks the widths by two;
+  `PrintTextLines()` moves a right-aligned text to `scroll - width` where the other alignments use `scroll + width`, and does the
+  moving inside the screen (`wrap`) only when the text matrix is on. A TrueType font hands the text to `TFreetypeFont::
+  RenderString()` (an empty stub) with the colour swapped in and back (`_color`/`_previousColor`).
+- `TCFont::EnsureSpriteLoaded()` (asm 1395566-1396036): once, while the picture has no sprite: loads the picture, takes the
+  transparent edges off every letter (`TGraphicsInterface::RemoveTransparentEdges()`, which looks at the alpha byte of 4-byte
+  pixels; it also keeps the original's mistakes: the first pixel of the whole picture decides whether top and left are looked at,
+  and a rectangle narrowed by exactly one column at the left does not lose its empty lines at the bottom), packs them with
+  `MaxRectsBinPack` (512 x 4096, bottom-left rule, `graphicslib/maxRectsBinPack.cpp`) and makes the atlas (512 wide) the picture
+  of the font. The letter's `_rect` is then its place in the atlas.
+- `TPictureMEM` (`TPictureMEM.cpp`, asm 756823-759239) is the pixel buffer under `TPictureIO`: `_data` (3 or 4 bytes a pixel),
+  `_pitch`, `_rgbOrder` and `_flipped` (the settings of the backend, `GetPicsMemSettings()`; with `SetMemoryData()` a picture with
+  alpha counts as flipped), an optional `TPictureMemBlock` (the engine's two big buffers) instead of `new[]`. `GetPixel()`
+  is the lightmap lookup of the scene (0x00BBGGRR scaled by the brightness), `GetAlphaAt()` does not turn the lines of a flipped
+  picture, `CreateTransparencyBitmap()` takes every 4th pixel of every 4th line (and compares the colour key as R, B, G: the
+  original), `Paste()` copies with colour conversion (a colour key becomes alpha 0). `ResizeImage()` is bilinear, the original
+  uses libswscale (Lanczos).
+

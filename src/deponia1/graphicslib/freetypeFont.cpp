@@ -23,3 +23,8 @@ int TFreetypeFont::StringLength(const std::string &/*utf8*/) {
 
 void TFreetypeFont::CheckFillRate() {
 }
+
+// TODO: asm 1588876 (RenderString -> RenderString_i): the glyphs are drawn through Freetype and the GL textures.
+void TFreetypeFont::RenderString(float /*x*/, float /*y*/, const std::string &/*utf8*/, float /*scale*/,
+                                 int /*firstLetter*/, int /*lastLetter*/, GLCharBuffer */*buffer*/, bool /*flag*/) {
+}

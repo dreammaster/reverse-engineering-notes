@@ -6,9 +6,10 @@
 //  - a font of a picture: kFontLetters are the places of the letters in the picture kFontSprite, kFontAlphabet the
 //    characters they are, kFontKerning pairs of characters with a closer or wider spacing.
 //
-// Not reconstructed: PrintText(), PrintTextLines() and EnsureSpriteLoaded(), which draw (the letters of a picture font
-// through TPictureIO::DrawWithSrcRect, a TrueType font through TFreetypeFont::RenderString and GLCharBuffer, both with the
-// text matrix and the scroll of the paint control), and TFreetypeFont (see graphicslib/freetypeFont.h).
+// PrintText() and PrintTextLines() draw: the letters of a picture font one by one through TPictureIO::DrawWithSrcRect (between
+// BeginBatch() and EndBatch() of the graphics), a TrueType font through TFreetypeFont::RenderString and GLCharBuffer - both
+// with the text matrix and the scroll of the paint control. EnsureSpriteLoaded() makes the picture of a font into an atlas
+// of the letters with their transparent edges taken off. Not reconstructed: TFreetypeFont (see graphicslib/freetypeFont.h).
 #pragma once
 
 #include <list>
@@ -34,10 +35,10 @@ public:
 /** One letter of a font of a picture (0x18 bytes in the map of the font). */
 struct TLetter {
 	wchar_t _char = 0;          // +0x00
-	wxRect _rect;               // +0x04, where the letter is in the picture of the font
+	wxRect _rect;               // +0x04, where the letter is in the picture of the font (after EnsureSpriteLoaded(): in the atlas)
 	signed char _advance = 0;   // +0x14, how far the next letter is (the width of the letter)
-	bool _flag1 = false;        // +0x15
-	bool _flag2 = false;        // +0x16
+	signed char _offsetX = 0;   // +0x15, how many columns EnsureSpriteLoaded() took off at the left of the letter
+	signed char _offsetY = 0;   // +0x16, how many lines it took off at the top
 };
 
 class TCFont : public TEventHandlerInterface {
@@ -78,11 +79,17 @@ public:
 	void SplitIntoLines(const wxString &text, std::list<wxString> &outLines, int maxWidth);
 	/** SplitIntoLines() with the width of the font's line (kFontLineWidth) when the font breaks lines (kFontAutoLineBreak). */
 	void PerformAutoLineBreak(const wxString &text, std::list<wxString> &outLines);
-	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale, int color,
+	/** Draws `text` with `pos` as the point it is aligned to; `alpha` how opaque; `color` -1: the colour the font has. A font
+	 *  that stands for another passes it on, with its own colour. */
+	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color,
 	               GLCharBuffer *buffer);
+	/** Draws the lines (`lineWidths` are their widths, from GetTextDimension()), one below the other. With `wrap` (and the
+	 *  text matrix on) the text is moved inside the screen. */
 	void PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-	                    TextAlignmentEnum alignment, const wxPoint &pos, float scale, int color, bool wrap,
+	                    TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap,
 	                    std::vector<GLCharBuffer *> *buffers);
+	/** Loads the picture of a font of a picture and puts its letters, with the transparent edges taken off, into one
+	 *  picture 512 pixels wide (an atlas); the letters get their place in it. Done once. */
 	void EnsureSpriteLoaded();
 
 private:

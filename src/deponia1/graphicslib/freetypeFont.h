@@ -10,6 +10,8 @@
 
 #include "WxStub.h"
 
+class GLCharBuffer;
+
 class TFreetypeFont {
 public:
 	/** One glyph of the font (the original keeps them in a HashMap<int, Character>). */
@@ -31,7 +33,15 @@ public:
 	/** Called every frame: starts a new glyph texture when the one in use is full. */
 	void CheckFillRate();
 
-	int _lineHeight = 0;       // +0xC4
+	/** Draws `utf8` at (`x`, `y`), `scale` times as big, into the glyph buffer `buffer` if there is one (the two numbers
+	 *  that the game passes -1 are the first and the last letter to draw). Not reconstructed: nothing is drawn. */
+	void RenderString(float x, float y, const std::string &utf8, float scale, int firstLetter, int lastLetter,
+	                  GLCharBuffer *buffer, bool flag);
+
+	int _lineHeight = 30;      // +0xC4 (the constructor makes it 30; CreateFont() reads the real one)
+	float _alpha = 1.0f;       // +0xD0, how opaque the glyphs are drawn (TCFont::PrintText() sets it)
+	int _color = 0xFFFFFF;     // +0xE0, the colour of the glyphs
+	int _previousColor = 0;    // +0x120, the colour that was used before
 	int _letterSpacing = 0;    // +0xF0
 	bool _spacingFlag = false; // +0xF7, set by TCFont together with _letterSpacing
 

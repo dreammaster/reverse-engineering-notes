@@ -186,6 +186,15 @@ public:
 			_flags &= static_cast<std::uint8_t>(~kMirroredFlag);
 	}
 
+	// Bit 0 of the flags byte: TPictureMEM sets it when it has made its pixels itself (CopyFrom(), ResizeImage()) and
+	// CopyFrom() asks it of its source (asm lines 758785-758947).
+	bool IsMemoryImage() const {
+		return (_flags & kMemoryImageFlag) != 0;
+	}
+	void SetMemoryImage() {
+		_flags |= kMemoryImageFlag;
+	}
+
 	// Confirmed (asm lines 584489-584513): stored as a 16-bit value,
 	// sign-extended back to int by GetPause().
 	void SetPause(int value) {
@@ -196,6 +205,7 @@ public:
 	}
 
 private:
+	static constexpr std::uint8_t kMemoryImageFlag = 0x01;
 	static constexpr std::uint8_t kMirroredFlag = 0x02;
 
 	TCharHolder _name;                   // +0x08

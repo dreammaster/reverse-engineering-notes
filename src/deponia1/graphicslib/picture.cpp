@@ -245,8 +245,12 @@ void TPictureIO::PreparePaint(wxRect &destRect, FloatRect &srcRect) {
 	srcRect = FloatRect{0.0f, 0.0f, static_cast<float>(_width), static_cast<float>(_height)};
 }
 
+// Confirmed (asm lines 789051-789078)
 unsigned long TPictureIO::GetSpriteMemSize() const {
-	return static_cast<unsigned long>(_width) * static_cast<unsigned long>(_height) * 4;
+	if (!_spriteHandle)
+		return 0;
+
+	return static_cast<unsigned long>(graphics->GetSpriteMemSize(_spriteHandle));
 }
 
 TSpriteHandle *TPictureIO::GetSpriteHandle() const {

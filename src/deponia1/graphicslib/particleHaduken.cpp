@@ -556,7 +556,7 @@ void ImageEmitter::CreateWithImage(const char *path, int mode) {
 	_width = picture.GetWidth();
 	_height = picture.GetHeight();
 
-	const uint32_t *pixels = picture.GetMemoryData();
+	const uint32_t *pixels = reinterpret_cast<const uint32_t *>(picture.GetMemoryData());
 
 	if (pixels) {
 		for (int y = 0; y < _height; y++) {

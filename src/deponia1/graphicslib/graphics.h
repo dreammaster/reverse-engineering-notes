@@ -42,6 +42,10 @@ public:
 	// of the unmodeled GL backend's vtable - null when nothing was captured);
 	// not reversed beyond those call shapes.
 	TPictureMemBlock *GetMainMemBlock();
+	/** Confirmed (asm 762363-762383, bytes +0x270 and +0x272 of the backend): how the pixels of a picture that is made in
+	 *  memory are laid out for the backend: `rgbOrder` (red, green, blue; else the other way round) and `flipped` (the lines
+	 *  begin at the bottom). The OpenGL backend sets them; here they are what a TPictureMEM starts with. */
+	void GetPicsMemSettings(bool &rgbOrder, bool &flipped);
 	virtual TPictureMEM *GetCapturedFrame();
 	// Confirmed call shapes only (CmdCreateScreenshot::Redo(), Deponia_Linux.asm lines 392054-392180): three more
 	// slots of the unmodeled GL backend. Slot 0xC8 captures the screen into a picture (false: it failed); slot
@@ -82,8 +86,41 @@ public:
 	virtual void SetMatrixMode(bool a, bool b);
 	virtual void ResetMatrix(bool a, bool b);
 	virtual void Flip();
+	/** Slots 0x110 and 0x118 (TGraphicsOGL::BeginBatch()/EndBatch()): the drawing calls in between are put together to
+	 *  one (a text is drawn letter by letter between the two). */
+	virtual void BeginBatch();
+	virtual void EndBatch();
+
+	/** The size of the picture that the game is drawn on (+0x1F4, +0x1F8; the backend sets them). */
+	int GetWidth() const {
+		return _width;
+	}
+	int GetHeight() const {
+		return _height;
+	}
+	void SetSize(int width, int height) {
+		_width = width;
+		_height = height;
+	}
+
+	/** Confirmed (asm 772807-773531, two overloads): narrows the rectangle `left`, `top`, `width`, `height` of a picture of
+	 *  4-byte pixels (`rgba`, alpha the last byte) to what has something in it - the lines at the top and the bottom and
+	 *  the columns at the left and the right that are transparent are taken off. On return `left` and `top` are how much
+	 *  was taken off at those sides, `width` and `height` the new size. The first form looks at the rectangle at
+	 *  (`originX`, `originY`) of a picture that is `pitch` pixels wide (everything is left as it is if the very first
+	 *  pixel of the picture, not of the rectangle, has alpha: the original looks there); the second at a picture
+	 *  that is `width` wide.
+	 *  NOTE: the original does not take off the transparent lines at the bottom if the rectangle was narrowed by exactly
+	 *  one column at the left (it tests the end of the scan with the wrong number); this is kept. */
+	void RemoveTransparentEdges(int &left, int &top, int &width, int &height, int pitch, int originY, int originX,
+	                            const char *rgba);
+	void RemoveTransparentEdges(int &left, int &top, int &width, int &height, const char *rgba);
+	/** The memory a sprite handle takes (the handle's own number). */
+	int GetSpriteMemSize(TSpriteHandle *handle) const;
 
 private:
+	int _width = 0;
+	int _height = 0;
 	TPreloadedPicManager *_preloadedPicManager = nullptr;
 };
 

@@ -1,6 +1,14 @@
 #include "vscommon/cfont.h"
 
+#include <algorithm>
+#include <cstring>
+
+#include "AppGlobals.h"
 #include "Diagnostics.h"
+#include "TPaintControl.h"
+#include "graphicslib/graphics.h"
+#include "graphicslib/maxRectsBinPack.h"
+#include "graphicslib/vector3d.h"
 #include "datastruct/visionaireobject.h"
 #include "vstables/fieldIds.h"
 
@@ -195,8 +203,8 @@ void TCFont::loadPictureFont(const TVisObjRef &font) {
 		letter._char = c;
 		letter._rect = rect;
 		letter._advance = static_cast<signed char>(rect.GetWidth());
-		letter._flag1 = false;
-		letter._flag2 = false;
+		letter._offsetX = 0;
+		letter._offsetY = 0;
 	}
 
 	if (used < _atlasRects.size() && wxLog::loglevel > 1) {
@@ -223,8 +231,8 @@ void TCFont::loadPictureFont(const TVisObjRef &font) {
 	space._char = L' ';
 	space._rect = wxRect();
 	space._advance = static_cast<signed char>(spaceWidth);
-	space._flag1 = false;
-	space._flag2 = false;
+	space._offsetX = 0;
+	space._offsetY = 0;
 
 	loadKerning(font);
 }
@@ -604,42 +612,470 @@ void TCFont::GetTextDimension(const std::list<wxString> &lines, wxPoint &outSize
 	}
 }
 
-// Confirmed (asm lines 1396036-1396230 for the font that stands for another). A font that stands for another prints
-// with its own colour; the rest is the drawing (the letters of a picture through TPictureIO::DrawWithSrcRect, a TrueType
-// font through Freetype and GLCharBuffer, both with the text matrix and the scroll of the paint control) and is not
-// reconstructed.
-void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale, int /*color*/,
+// Confirmed (asm lines 1396036-1397049). A font that stands for another prints with its own colour. A TrueType font
+// hands the whole text to Freetype. A font of a picture draws the letters one by one: the position of the next letter is
+// moved by the width of the letter (a signed byte) and the spacing (of the pair of letters, else the letter spacing of the
+// font), a letter is drawn `offset` further in because its transparent edges were taken off, a new line (CR, LF, or the two
+// of them in any order) begins at the position for the next line of the text (see GetTextStartPos()) and `lineHeight +
+// vertical letter spacing` lower. With the text matrix on (and the matrices active) the position goes through it first.
+// NOTE: the widths of the lines are worked out before for the alignments other than left; a new line that is only a CR or
+// only a LF is not seen there but is one when the text is drawn (the original); and the cursor in the widths moves by two at
+// every new line (also the original), so the third line of a right or centred text is put at the left (x_assert).
+void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color,
                        GLCharBuffer *buffer) {
 	if (!_base.IsEmpty()) {
 		TCFont *font = _manager->GetFont(_base);
 
 		if (font)
-			font->PrintText(text, alignment, pos, scale, _font.GetInt(kFontColor), buffer);
+			font->PrintText(text, alignment, pos, alpha, _font.GetInt(kFontColor), buffer);
 
 		return;
 	}
 
-	// TODO: asm 1396230-1397049
+	float posX = static_cast<float>(pos.x);
+	float posY = static_cast<float>(pos.y);
+
+	if (textMatrix.size() == 9 && matricesActive) {
+		const wxPoint &scroll = TPictureIO::s_pPaintControl->GetScrollPos();
+		idMat3 matrix;
+		idVec3 vector;
+
+		for (int i = 0; i < 9; i++)
+			matrix._m[i] = textMatrix[i];
+
+		vector.x = static_cast<float>(pos.x - scroll.x);
+		vector.y = static_cast<float>(pos.y - scroll.y);
+		vector.z = 1.0f;
+
+		idVec3 moved = matrix * vector;
+
+		posX = static_cast<float>(scroll.x) + moved.x;
+		posY = static_cast<float>(scroll.y) + moved.y;
+	}
+
+	if (_freetype) {
+		if (color != -1) {
+			_freetype->_previousColor = _freetype->_color;
+			_freetype->_color = color;
+		}
+
+		_freetype->_alpha = alpha;
+
+		const wxPoint &scroll = TPictureIO::s_pPaintControl->GetScrollPos();
+
+		posX -= static_cast<float>(scroll.x);
+		posY -= static_cast<float>(scroll.y);
+		_freetype->RenderString(posX, posY, toUtf8(text), 1.0f, -1, -1, buffer, false);
+
+		// (the colour of the font is the one to use next, and the one of this text the one before)
+		_freetype->_previousColor = _freetype->_color;
+		_freetype->_color = _font.GetInt(kFontColor);
+		return;
+	}
+
+	EnsureSpriteLoaded();
+	_letterSpacing = _font.GetInt(kFontLetterSpacing);
+
+	std::vector<int> lineWidths;
+	wxPoint dimension;
+	int startX;
+
+	if (alignment == TextAlignmentEnum::kLeft) {
+		startX = static_cast<int>(posX);
+		posX = static_cast<float>(startX);
+	} else {
+		GetTextDimension(text, dimension);
+
+		// the width of each line
+		size_t lineStart = 0;
+		size_t i = 0;
+
+		for (; i < text.Length(); i++) {
+			wchar_t c = text.GetChar(i);
+			size_t lineEnd = i;
+			bool pair = false;
+
+			if (c == 0x0D)
+				pair = (text.GetChar(i + 1) == 0x0A);
+			else if (c == 0x0A)
+				pair = (text.GetChar(i + 1) == 0x0D);
+
+			if (!pair)
+				continue;
+
+			wxPoint size;
+
+			GetTextDimension(text.Mid(static_cast<int>(lineStart), static_cast<int>(lineEnd - lineStart)), size);
+			lineWidths.push_back(size.x);
+			lineStart = i + 2;
+			i++;
+		}
+
+		if (lineStart < i) {
+			wxPoint size;
+
+			GetTextDimension(text.Mid(static_cast<int>(lineStart), -1), size);
+			lineWidths.push_back(size.x);
+		}
+
+		startX = static_cast<int>(posX);
+		posX = static_cast<float>(GetTextStartPos(alignment, startX, lineWidths.empty() ? 0 : lineWidths[0], dimension.x));
+	}
+
+	size_t cursor = 0;
+	wchar_t previous = 0;
+
+	graphics->BeginBatch();
+
+	for (size_t i = 0; i < text.Length(); i++) {
+		wchar_t c = text.GetChar(i);
+
+		if (c == 0x0A || c == 0x0D) {
+			// a new line; the two characters of a pair are one
+			wchar_t other = (c == 0x0A) ? 0x0D : 0x0A;
+
+			if (text.GetChar(i + 1) == other)
+				i++;
+
+			int width = 0;
+
+			if (cursor == lineWidths.size()) {
+				x_assert(alignment == TextAlignmentEnum::kLeft, "eAlignment == eAlignLeft", kSourceFile, 0x159);
+			} else if (cursor + 1 == lineWidths.size()) {
+				cursor = lineWidths.size();
+				x_assert(alignment == TextAlignmentEnum::kLeft, "eAlignment == eAlignLeft", kSourceFile, 0x159);
+			} else {
+				width = lineWidths[cursor + 1];
+				cursor += 2;
+			}
+
+			posY += static_cast<float>(_lineHeight + _font.GetInt(kVerticalLetterSpacing));
+			posX = static_cast<float>(GetTextStartPos(alignment, startX, width, dimension.x));
+			previous = 0;
+			continue;
+		}
+
+		TLetter letter = GetLetter(c);
+
+		if (previous != 0)
+			posX += static_cast<float>(spacingBetween(c, previous));
+
+		if (letter._char != L' ') {
+			wxPoint where;
+
+			where.x = static_cast<int>(posX + static_cast<float>(letter._offsetX));
+			where.y = static_cast<int>(posY + static_cast<float>(letter._offsetY));
+			_picture.SetPosition(where, -1.0f);
+			_picture.DrawWithSrcRect(letter._rect, alpha, static_cast<unsigned int>(color));
+		}
+
+		posX += static_cast<float>(letter._advance);
+		previous = c;
+	}
+
+	graphics->EndBatch();
 }
 
-// Confirmed (asm lines 1397049-1397440 for the font that stands for another): as PrintText(); the buffers are not
-// passed on.
+// Confirmed (asm lines 1397049-1398227). As PrintText() for the lines of a text (their widths are given). With the text
+// matrix on, the position goes through it and, if `wrap`, is moved so that the text stays inside the screen; with ZoomText
+// the sizes are the first number of the matrix times as big (for a TrueType font; a picture font does not zoom). The
+// letters of a picture font are put at whole pixels. A TrueType font gets each line from Freetype, aligned by the widths
+// times the zoom.
+// NOTE: the moving inside the screen of a right-aligned text puts its right edge at the left of the screen
+// (scroll - width) when it would stick out there, where the other alignments use scroll + width (the original).
 void TCFont::PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-                            TextAlignmentEnum alignment, const wxPoint &pos, float scale, int /*color*/, bool wrap,
-                            std::vector<GLCharBuffer *> */*buffers*/) {
+                            TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap,
+                            std::vector<GLCharBuffer *> *buffers) {
 	if (!_base.IsEmpty()) {
 		TCFont *font = _manager->GetFont(_base);
 
 		if (font)
-			font->PrintTextLines(lines, lineWidths, alignment, pos, scale, _font.GetInt(kFontColor), wrap, nullptr);
+			font->PrintTextLines(lines, lineWidths, alignment, pos, alpha, _font.GetInt(kFontColor), wrap, nullptr);
 
 		return;
 	}
 
-	// TODO: asm 1397440-1398227
+	float posX = static_cast<float>(pos.x);
+	float posY = static_cast<float>(pos.y);
+	float zoom = 1.0f;
+
+	if (textMatrix.size() == 9 && matricesActive) {
+		const wxPoint scroll = TPictureIO::s_pPaintControl->GetScrollPos();
+		idMat3 matrix;
+		idVec3 vector;
+
+		for (int i = 0; i < 9; i++)
+			matrix._m[i] = textMatrix[i];
+
+		vector.x = static_cast<float>(pos.x - scroll.x);
+		vector.y = static_cast<float>(pos.y - scroll.y);
+		vector.z = zoom;
+
+		idVec3 moved = matrix * vector;
+		float scrollX = static_cast<float>(scroll.x);
+		float scrollY = static_cast<float>(scroll.y);
+
+		posX = scrollX + moved.x;
+		posY = scrollY + moved.y;
+
+		if (ZoomText)
+			zoom = textMatrix[0];
+
+		if (wrap) {
+			for (size_t i = 0; i < lineWidths.size(); i++) {
+				float width = static_cast<float>(lineWidths[i]);
+				float right = static_cast<float>(graphics->GetWidth() + scroll.x);
+
+				switch (alignment) {
+				case TextAlignmentEnum::kLeft: {
+					float scaled = width * zoom;
+
+					if (posX + scaled > right)
+						posX = right - scaled;
+
+					posX = std::max(scrollX, posX);
+					break;
+				}
+				case TextAlignmentEnum::kCenter: {
+					float half = width * zoom * 0.5f;
+
+					if (posX + half > right)
+						posX = right - half;
+
+					if (scrollX > posX - half)
+						posX = half + scrollX;
+
+					break;
+				}
+				case TextAlignmentEnum::kRight: {
+					float scaled = width * zoom;
+
+					if (posX > right)
+						posX = right;
+
+					if (scrollX > posX - scaled)
+						posX = scrollX - scaled;
+
+					break;
+				}
+				default:
+					break;
+				}
+
+				// (not above the screen, and not so low that a line would be under it)
+				posY = std::max(scrollY, posY);
+
+				float bottom = static_cast<float>(graphics->GetHeight() + scroll.y);
+
+				if (posY > bottom) {
+					TCFont *font = this;
+					int lineHeight = 0;
+
+					while (font) {
+						if (font->_base.IsEmpty()) {
+							int height = font->_freetype ? font->_freetype->_lineHeight : font->_lineHeight;
+
+							lineHeight = height + font->_font.GetInt(kVerticalLetterSpacing);
+							break;
+						}
+
+						font = font->_manager->GetFont(font->_base);
+					}
+
+					posY = static_cast<float>(graphics->GetHeight() + scroll.y - lineHeight);
+				}
+			}
+		}
+	}
+
+	if (_freetype) {
+		const wxPoint &origin = TPictureIO::s_pPaintControl->GetOrigin();
+		float x = static_cast<float>(origin.x) + posX;
+		float y = static_cast<float>(origin.y) + posY;
+
+		if (color != -1) {
+			_freetype->_previousColor = _freetype->_color;
+			_freetype->_color = color;
+		}
+
+		_freetype->_alpha = alpha;
+
+		// the widest line (times the zoom)
+		int widest = 0;
+
+		for (size_t i = 0; i < lineWidths.size(); i++) {
+			float scaled = static_cast<float>(lineWidths[i]) * zoom;
+
+			if (scaled > static_cast<float>(widest))
+				widest = static_cast<int>(scaled);
+		}
+
+		const wxPoint scroll = TPictureIO::s_pPaintControl->GetScrollPos();
+
+		y -= static_cast<float>(scroll.y);
+
+		if (!lines.empty()) {
+			int startX = static_cast<int>(x);
+			size_t index = 0;
+
+			for (auto line = lines.begin(); line != lines.end(); ++line, index++) {
+				GLCharBuffer *buffer = nullptr;
+
+				if (buffers) {
+					if (buffers->size() <= index)
+						buffers->push_back(new GLCharBuffer());
+
+					buffer = (*buffers)[index];
+				}
+
+				int width = static_cast<int>(static_cast<float>(lineWidths[index]) * zoom);
+
+				if (alignment == TextAlignmentEnum::kLeft)
+					width = lineWidths[index];
+
+				int lineX = GetTextStartPos(alignment, startX, width, widest);
+
+				_freetype->RenderString(static_cast<float>(lineX - scroll.x), y, toUtf8(*line), zoom, -1, -1, buffer, true);
+				y += static_cast<float>(_freetype->_lineHeight + _font.GetInt(kVerticalLetterSpacing));
+			}
+		}
+
+		_freetype->_previousColor = _freetype->_color;
+		_freetype->_color = _font.GetInt(kFontColor);
+		return;
+	}
+
+	EnsureSpriteLoaded();
+	_letterSpacing = _font.GetInt(kFontLetterSpacing);
+
+	int widest = 0;
+
+	for (int width : lineWidths)
+		widest = std::max(widest, width);
+
+	graphics->BeginBatch();
+
+	if (!lineWidths.empty()) {
+		int startX = static_cast<int>(posX);
+		int y = static_cast<int>(posY);
+		auto line = lines.begin();
+
+		for (size_t index = 0; index < lineWidths.size() && line != lines.end(); index++, ++line) {
+			int x = GetTextStartPos(alignment, startX, lineWidths[index], widest);
+			wchar_t previous = 0;
+
+			for (size_t i = 0; i < line->Length(); i++) {
+				wchar_t c = line->GetChar(i);
+				TLetter letter = GetLetter(c);
+
+				if (previous != 0)
+					x += spacingBetween(c, previous);
+
+				if (letter._char != L' ') {
+					wxPoint where;
+
+					where.x = x + letter._offsetX;
+					where.y = y + letter._offsetY;
+					_picture.SetPosition(where, -1.0f);
+					_picture.DrawWithSrcRect(letter._rect, alpha, static_cast<unsigned int>(color));
+				}
+
+				x += letter._advance;
+				previous = c;
+			}
+
+			y += _lineHeight + _font.GetInt(kVerticalLetterSpacing);
+		}
+	}
+
+	graphics->EndBatch();
 }
 
-// TODO: loads the picture of the font and puts the letters, with their transparent edges taken off, into a texture
-// (MaxRectsBinPack, asm 1395566-1396036).
+// Confirmed (asm lines 1395566-1396036). The picture of the font is loaded and each letter that the alphabet names is
+// narrowed to what has something in it (RemoveTransparentEdges: the letter's rectangle in the font object's list is
+// replaced by the narrowed one, its `_offsetX/Y` are what was taken off at the left and the top); the letters are put
+// into an atlas 512 pixels wide with the bottom-left rule and the picture of the font becomes the atlas. A letter's
+// `_rect` is then where it is in the atlas. Done once, while the picture has no sprite.
+// NOTE: the original reads the pixels of the picture without looking; nothing is done here if there are none (the
+// decoders of the pictures are not reconstructed). The picture owns the atlas afterwards (the original frees it itself when
+// the picture has a memory block, else the picture does).
 void TCFont::EnsureSpriteLoaded() {
+	if (_picture.GetSpriteHandle())
+		return;
+
+	if (!_picture.LoadPicture(_picture.GetPath(), static_cast<TPictureIO::eLoadSetting>(2)))
+		return;
+
+	const char *data = _picture.GetMemoryData();
+
+	if (!data || _picture.GetBytesPerPixel() != 4)
+		return;
+
+	wxString alphabet = _font.GetStr(kFontAlphabet);
+	int bytesPerPixel = _picture.GetBytesPerPixel();
+	MaxRectsBinPack packer;
+
+	packer.Init(512, 4096, false);
+	_atlasRects.clear();
+	_atlasHeight = 0;
+
+	size_t index = 0;
+
+	for (wxRect &rect : _letterRects) {
+		if (alphabet.Length() <= index)
+			continue;
+
+		int left = 0;
+		int top = 0;
+		int width = rect.width;
+		int height = rect.height;
+
+		graphics->RemoveTransparentEdges(left, top, width, height, _picture.GetWidth(), rect.y, rect.x, data);
+		rect.x += left;
+		rect.y += top;
+		rect.width = width;
+		rect.height = height;
+
+		int bestY = 0;
+		int bestX = 0;
+		wxRect node = packer.FindPositionForNewNodeBottomLeft(rect.GetWidth(), rect.GetHeight(), bestY, bestX);
+
+		packer.PlaceRect(node);
+		_atlasHeight = std::max(_atlasHeight, node.y + node.height);
+		_atlasRects.push_back(node);
+
+		wchar_t c = alphabet.GetChar(index);
+		auto it = _letters.find(c);
+
+		if (it == _letters.end()) {
+			TLetter fresh;
+
+			fresh._char = c;
+			it = _letters.insert(std::make_pair(c, fresh)).first;
+		}
+
+		it->second._offsetX = static_cast<signed char>(left);
+		it->second._offsetY = static_cast<signed char>(top);
+		it->second._rect = node;
+		index++;
+	}
+
+	char *atlas = new char[static_cast<size_t>(_atlasHeight) * 512 * bytesPerPixel]();
+
+	for (size_t i = 0; i < _atlasRects.size(); i++) {
+		const wxRect &source = _letterRects[i];
+		const wxRect &target = _atlasRects[i];
+
+		for (int row = 0; row < source.height; row++) {
+			std::memcpy(atlas + (static_cast<size_t>(target.y + row) * 512 + target.x) * bytesPerPixel,
+			            data + (static_cast<size_t>(source.y + row) * _picture.GetWidth() + source.x) * bytesPerPixel,
+			            static_cast<size_t>(target.width) * bytesPerPixel);
+		}
+	}
+
+	bool rgbOrder = _picture.IsRgbOrder();
+
+	_picture.ClearMemData();
+	_picture.SetMemoryData(atlas, 512, _atlasHeight, true, rgbOrder, true);
+	_picture.CreateSprite(false);
 }
