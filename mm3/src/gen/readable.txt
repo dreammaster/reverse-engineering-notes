@@ -29,3 +29,4 @@ moveMonsterBy
 moveMonsters
 setSpeedTable
 stopAttack
+generateItem

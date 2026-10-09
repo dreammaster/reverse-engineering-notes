@@ -14,7 +14,7 @@ uint32_t mm3_rng_get(void);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(moveMonsters); H(setSpeedTable); H(stopAttack); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(moveMonsters); H(setSpeedTable); H(stopAttack); H(generateItem); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -156,10 +156,15 @@ static void setup_line(unsigned iter, uint16_t *a) {
 	DG[0xE8F5] = rnd(32); DG[0xE8F6] = rnd(32); DG[0xE8F4] = rnd(4);
 	int d = (int)rnd(9) - 4; a[0] = rnd(2) ? (uint16_t)(int16_t)d : 0; a[1] = a[0] ? 0 : (uint16_t)(int16_t)d;
 }
+static void setup_genitem(unsigned iter, uint16_t *a) {
+	(void)iter; randomize_party();
+	a[0] = rnd(8); a[1] = 0xB9D6 + rnd(6) * 0x12F; a[2] = 0x286F; a[3] = rnd(9);
+}
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "generateItem", host_generateItem, 4, 0, setup_genitem },
 	{ "stopAttack", host_stopAttack, 2, 1, setup_line },
 	{ "setSpeedTable", host_setSpeedTable, 0, 0, setup_speed },
 	{ "moveMonsters", host_moveMonsters, 0, 0, setup_moveall },

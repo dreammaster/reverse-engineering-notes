@@ -127,6 +127,7 @@ int mm3_monster_resistance(const Mm3Game *g, int kind);                         
 int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell);       /* Spells_subSpellCost: 0 paid, 1 not enough spell points, 2 not enough gems */
 void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster);       /* moveMonsterBy */
 
+void mm3_generate_item(Mm3Game *g, unsigned level, uint8_t *buf, unsigned slot);   /* generateItem */
 int mm3_line_clear(const Mm3Game *g, int dx, int dy);                          /* stopAttack */
 void mm3_set_speed_table(Mm3Game *g);                                           /* setSpeedTable: turn order of a combat round */
 void mm3_move_monsters(const Mm3Game *g);                                       /* moveMonsters: the monsters near the party take a step towards it / shoot */

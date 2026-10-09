@@ -308,7 +308,6 @@ townBuildingIntro
 townMenuInput
 sub_27FBD
 sub_39930
-generateItem
 sub_3CE7A
 learnSpellDialog
 subPartyTime

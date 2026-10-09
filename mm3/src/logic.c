@@ -476,3 +476,81 @@ int mm3_line_clear(const Mm3Game *g, int dx, int dy) {
 	return facing == 1 ? -dy + 1 : 1;
 	#undef WALL
 }
+
+/* ---- items */
+/* generateItem(level, buffer, slot): fills inventory slot `slot` of a character-shaped buffer with a random item of treasure
+ * level 1..6 (docs/items.md): the item id from two d100 rolls, then one to three enchantment categories (element, attribute,
+ * metal, spell), each drawn from the per-tier tables in the data segment.  The order of the rnd() calls is the original's. */
+void mm3_generate_item(Mm3Game *g, unsigned level, uint8_t *buf, unsigned slot) {
+	enum { F_FLAGS = 0x90, F_ID = 0xDC, F_METAL = 0xB6, F_ELEMENT = 0xA3, F_ATTR = 0xC9, F_SPELL = 0xEF, F_ENCH7D = 0x7D };
+	const uint8_t *dg = g->dg;
+	#define FIELD(off) buf[(uint16_t)(slot + (off))]
+	static const uint8_t clear_fields[] = { F_FLAGS, F_ENCH7D, F_SPELL, F_ID, F_ATTR, F_METAL, F_ELEMENT };
+	for (unsigned i = 0; i < sizeof clear_fields; i++) FIELD(clear_fields[i]) = 0;
+	level &= 0xFF;
+	if (level == 0) level = 1;
+	int cat[3] = { 0, 0, 0 }, tier[3] = { 0, 0, 0 };
+	int r1 = mm3_rnd(1, 100), r2 = mm3_rnd(1, 100), id;
+	if (r1 <= 35)      id = r2 <= 30 ? mm3_rnd(1, 6) : r2 <= 60 ? mm3_rnd(7, 17) : r2 <= 85 ? mm3_rnd(18, 29) : mm3_rnd(30, 33);
+	else if (r1 <= 60) id = r2 <= 70 ? mm3_rnd(34, 41) : 42;
+	else if (r2 <= 10) id = mm3_rnd(43, 45);
+	else if (r2 <= 20) id = 46;
+	else if (r2 <= 35) id = 47;
+	else if (r2 <= 45) id = 48;
+	else if (r2 <= 55) id = mm3_rnd(49, 51);
+	else if (r2 <= 65) id = 52;
+	else if (r2 <= 75) id = mm3_rnd(53, 57);
+	else if (r2 <= 80) id = mm3_rnd(58, 60);
+	else               id = mm3_rnd(61, 69);
+	FIELD(F_ID) = (uint8_t)id;
+
+	int count;
+	if (level == 6) {
+		count = 1; cat[0] = mm3_rnd(1, 4); tier[0] = 5;
+	} else {
+		int r = mm3_rnd(1, 100);
+		count = r <= 95 ? 1 : r <= 99 ? 2 : 3;
+		if (count == 1) {
+			int c = mm3_rnd(1, 100);
+			tier[0] = level - 1;
+			if (id >= 0x3D && c <= 90) cat[0] = 4;
+			else cat[0] = c <= 93 ? 3 : c <= 96 ? 1 : c <= 99 ? 2 : 4;
+		} else {
+			if (count == 3) { cat[2] = mm3_rnd(1, 4); tier[2] = mm3_rnd(0, level - 1); }
+			tier[1] = mm3_rnd(0, level - 1);
+			do cat[1] = mm3_rnd(1, 4); while (cat[1] == cat[2]);
+			tier[0] = level - 1;
+			do cat[0] = mm3_rnd(1, 4); while (cat[0] == cat[1] || cat[0] == cat[2]);
+		}
+	}
+	for (int i = 0; i < count; i++) {
+		unsigned t = (unsigned)tier[i] * 2;
+		int r, kind, v;
+		switch (cat[i]) {
+		case 1: /* element */
+			r = mm3_rnd(1, 100);
+			kind = r <= 25 ? 0 : r <= 45 ? 1 : r <= 60 ? 2 : r <= 75 ? 3 : r <= 95 ? 4 : 5;
+			v = mm3_rnd(dg[0x3698 + kind * 12 + t], dg[0x3699 + kind * 12 + t]);
+			FIELD(F_ELEMENT) = (uint8_t)(v + dg[0x36E0 + kind]);
+			break;
+		case 2: /* attribute */
+			r = mm3_rnd(1, 100);
+			kind = r <= 15 ? 0 : r <= 25 ? 1 : r <= 35 ? 2 : r <= 50 ? 3 : r <= 65 ? 4 : r <= 80 ? 5 : r <= 85 ? 6 : r <= 90 ? 7 : r <= 95 ? 8 : 9;
+			v = mm3_rnd(dg[0x36E6 + kind * 12 + t], dg[0x36E7 + kind * 12 + t]);
+			FIELD(F_ATTR) = (uint8_t)(v + dg[0x375E + kind]);
+			break;
+		case 3: /* metal */
+			r = mm3_rnd(1, 100);
+			kind = (level == 6 || r > 70) ? 1 : 0;
+			v = mm3_rnd(dg[0x3768 + kind * 12 + t], dg[0x3769 + kind * 12 + t]);
+			FIELD(F_METAL) = (uint8_t)(v + dg[0x3780 + kind]);
+			break;
+		case 4: /* spell: also gets 6..15 charges */
+			FIELD(F_SPELL) = (uint8_t)mm3_rnd(dg[0x3782 + level], dg[0x3789 + level]);
+			FIELD(F_FLAGS) = (uint8_t)(mm3_rnd(1, 10) + 5);
+			break;
+		default: break;
+		}
+	}
+	#undef FIELD
+}
