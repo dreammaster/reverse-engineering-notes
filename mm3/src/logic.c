@@ -554,3 +554,30 @@ void mm3_generate_item(Mm3Game *g, unsigned level, uint8_t *buf, unsigned slot) 
 	}
 	#undef FIELD
 }
+
+/* ---- small table lookups */
+/* spellGoldPrice(spell, shift): guild price; spells costing SP <= 0 (per level) cost |SP| * 500, others SP * 100; `shift` doubles it per step (half casters) */
+unsigned mm3_spell_gold_price(const Mm3Game *g, unsigned spell, unsigned shift) {
+	int sp = (int16_t)rd16(g, MM3_DG_SPELL_SP_COST + spell * 2);
+	uint16_t price = (uint16_t)(sp < 0 ? sp * -500 : sp * 100);
+	return (uint16_t)(price << (shift & 31));
+}
+/* sub_45BD1(spell, level): spell points it costs a caster of `level` (level-scaled spells have a negative table entry) */
+unsigned mm3_spell_points(const Mm3Game *g, unsigned spell, int level) {
+	int sp = (int16_t)rd16(g, MM3_DG_SPELL_SP_COST + spell * 2);
+	return (uint16_t)(sp < 0 ? -(int16_t)(sp * level) : sp);
+}
+/* getDamageScale: 0..3 bucket of a damage amount (<10, <50, <200, more) */
+int mm3_damage_scale(unsigned damage) { return damage < 10 ? 0 : damage < 50 ? 1 : damage < 200 ? 2 : 3; }
+/* getElementalCategory / getAttributeCategory: index of the first entry of an ascending threshold table that is >= value */
+int mm3_table_category(const Mm3Game *g, unsigned table, int value) {
+	int i = 0;
+	while ((int)g->dg[table + i] < value) i++;
+	return i;
+}
+/* getNumSkills(character): how many of the 18 skill bytes (+27h) are non-zero */
+int mm3_num_skills(const Mm3Character *ch) {
+	int n = 0;
+	for (int i = 0; i < 18; i++) if (((const uint8_t *)ch)[0x27 + i]) n++;
+	return n;
+}

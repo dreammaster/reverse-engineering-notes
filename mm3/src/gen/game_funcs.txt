@@ -272,7 +272,6 @@ sub_28630
 sub_28635
 sub_2863A
 sub_51DAB
-getNumSkills
 sub_5122D
 sub_27F40
 sub_286D6
@@ -296,12 +295,10 @@ showErrorMessage
 sub_4C027
 sub_4BF12
 sub_2824E
-spellGoldPrice
 trainCharacter
 sub_40248
 sub_40280
 sub_41633
-sub_45BD1
 sub_4C19A
 sub_4C106
 townBuildingIntro
@@ -369,14 +366,11 @@ sub_37BF1
 formatNumber
 sub_4BDC4
 sub_37B59
-getDamageScale
-getElementalCategory
 sub_27F9A
 sub_28108
 sub_280B2
 getEquipSlotName
 canEquip
-getAttributeCategory
 ipause_5
 sub_37B7D
 sub_40383

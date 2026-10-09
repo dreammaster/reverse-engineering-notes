@@ -30,3 +30,9 @@ moveMonsters
 setSpeedTable
 stopAttack
 generateItem
+spellGoldPrice
+sub_45BD1
+getDamageScale
+getElementalCategory
+getAttributeCategory
+getNumSkills

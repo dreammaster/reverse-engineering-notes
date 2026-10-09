@@ -128,6 +128,11 @@ int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell);       /
 void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster);       /* moveMonsterBy */
 
 void mm3_generate_item(Mm3Game *g, unsigned level, uint8_t *buf, unsigned slot);   /* generateItem */
+unsigned mm3_spell_gold_price(const Mm3Game *g, unsigned spell, unsigned shift);  /* spellGoldPrice */
+unsigned mm3_spell_points(const Mm3Game *g, unsigned spell, int level);           /* sub_45BD1 */
+int mm3_damage_scale(unsigned damage);                                            /* getDamageScale */
+int mm3_table_category(const Mm3Game *g, unsigned table, int value);              /* getElementalCategory (table FCCh) / getAttributeCategory (FBCh) */
+int mm3_num_skills(const Mm3Character *ch);                                       /* getNumSkills */
 int mm3_line_clear(const Mm3Game *g, int dx, int dy);                          /* stopAttack */
 void mm3_set_speed_table(Mm3Game *g);                                           /* setSpeedTable: turn order of a combat round */
 void mm3_move_monsters(const Mm3Game *g);                                       /* moveMonsters: the monsters near the party take a step towards it / shoot */
