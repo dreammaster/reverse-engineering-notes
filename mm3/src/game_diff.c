@@ -14,7 +14,7 @@ uint32_t mm3_rng_get(void);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(moveMonsters); H(setSpeedTable); H(stopAttack); H(generateItem); H(spellGoldPrice); H(sub_45BD1); H(getDamageScale); H(getElementalCategory); H(getAttributeCategory); H(getNumSkills); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(moveMonsters); H(setSpeedTable); H(stopAttack); H(generateItem); H(subPartyTime); H(GiveBankInterest); H(spellGoldPrice); H(sub_45BD1); H(getDamageScale); H(getElementalCategory); H(getAttributeCategory); H(getNumSkills); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -165,6 +165,8 @@ static void setup_spellpts(unsigned iter, uint16_t *a) { (void)iter; a[0] = rnd(
 static void setup_dmgscale(unsigned iter, uint16_t *a) { (void)iter; a[0] = rnd(3) ? rnd(300) : rnd(65536); }
 static void setup_category(unsigned iter, uint16_t *a) { (void)iter; a[0] = rnd(40); }
 static void setup_numskills(unsigned iter, uint16_t *a) { (void)iter; randomize_party(); a[0] = 0xB9D6 + rnd(6) * 0x12F; }
+static void setup_subtime(unsigned iter, uint16_t *a) { (void)iter; DG[0xEC35] = rnd(256); wr16(DG, 0xEC42, rnd(1440)); a[0] = rnd(4) ? rnd(3000) : rnd(60000); }
+static void setup_bank(unsigned iter, uint16_t *a) { (void)iter; (void)a; for (int i = 0; i < 8; i++) DG[0xEC4C + i] = rnd(3) ? rnd(256) : 0; if (rnd(2)) { wr16(DG, 0xEC4E, 0); wr16(DG, 0xEC52, 0); } }
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
@@ -175,6 +177,8 @@ static const DiffCase cases[] = {
 	{ "getElementalCategory", host_getElementalCategory, 1, 1, setup_category },
 	{ "getAttributeCategory", host_getAttributeCategory, 1, 1, setup_category },
 	{ "getNumSkills", host_getNumSkills, 1, 1, setup_numskills },
+	{ "subPartyTime", host_subPartyTime, 1, 0, setup_subtime },
+	{ "GiveBankInterest", host_GiveBankInterest, 0, 0, setup_bank },
 	{ "generateItem", host_generateItem, 4, 0, setup_genitem },
 	{ "stopAttack", host_stopAttack, 2, 1, setup_line },
 	{ "setSpeedTable", host_setSpeedTable, 0, 0, setup_speed },

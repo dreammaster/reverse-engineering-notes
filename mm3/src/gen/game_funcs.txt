@@ -307,7 +307,6 @@ sub_27FBD
 sub_39930
 sub_3CE7A
 learnSpellDialog
-subPartyTime
 sub_2810D
 sub_3C1F2
 sub_25EF3
@@ -330,7 +329,6 @@ sub_284C8
 sub_400B4
 sub_41991
 sub_27F72
-GiveBankInterest
 resetBlacksmithWares
 resetTemps
 drawRow1Sprites

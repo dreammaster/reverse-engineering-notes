@@ -70,6 +70,7 @@ enum {
 	MM3_DG_CURRENT_SLOT = 0x150,           /* byte_28840: combat slot whose turn it is (FFh = none) */
 	MM3_DG_SPEED_ORDER = 0xAD54,           /* 12 bytes: slots in turn order */
 	MM3_DG_MON_SPEED = 0xF02E,             /* far pointer to the monster speed column */
+	MM3_DG_PARTY_DAY = 0xEC35, MM3_DG_PARTY_MINUTES = 0xEC42, MM3_DG_BANK_GOLD = 0xEC4C, /* gems follow at +4 */
 	MM3_DG_MONSTERS_MOVE_FLAG = 0x15C, MM3_DG_MONSTERS_SEEN_FLAG = 0x14D,
 	MM3_DG_MAZE_MONSTER_COUNT = 0xED72,
 	MM3_DG_PARTY_X = 0xE8F5, MM3_DG_PARTY_Y = 0xE8F6, MM3_DG_PARTY_FACING = 0xE8F4,
@@ -133,6 +134,8 @@ unsigned mm3_spell_points(const Mm3Game *g, unsigned spell, int level);         
 int mm3_damage_scale(unsigned damage);                                            /* getDamageScale */
 int mm3_table_category(const Mm3Game *g, unsigned table, int value);              /* getElementalCategory (table FCCh) / getAttributeCategory (FBCh) */
 int mm3_num_skills(const Mm3Character *ch);                                       /* getNumSkills */
+void mm3_sub_party_time(Mm3Game *g, unsigned minutes);                            /* subPartyTime */
+void mm3_bank_interest(Mm3Game *g);                                               /* GiveBankInterest */
 int mm3_line_clear(const Mm3Game *g, int dx, int dy);                          /* stopAttack */
 void mm3_set_speed_table(Mm3Game *g);                                           /* setSpeedTable: turn order of a combat round */
 void mm3_move_monsters(const Mm3Game *g);                                       /* moveMonsters: the monsters near the party take a step towards it / shoot */

@@ -36,3 +36,5 @@ getDamageScale
 getElementalCategory
 getAttributeCategory
 getNumSkills
+subPartyTime
+GiveBankInterest

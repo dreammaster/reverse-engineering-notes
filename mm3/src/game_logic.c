@@ -54,6 +54,8 @@ static void impl_getDamageScale(Cpu *c) { c->ax = (uint16_t)mm3_damage_scale(hos
 static void impl_getElementalCategory(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_table_category(&g, 0xFCC, (int16_t)host_arg(c, 0)); }
 static void impl_getAttributeCategory(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_table_category(&g, 0xFBC, (int16_t)host_arg(c, 0)); }
 static void impl_getNumSkills(Cpu *c) { c->ax = (uint16_t)mm3_num_skills((const Mm3Character *)(DG + host_arg(c, 0))); }
+static void impl_subPartyTime(Cpu *c) { Mm3Game g = game(); mm3_sub_party_time(&g, host_arg(c, 0)); }
+static void impl_GiveBankInterest(Cpu *c) { (void)c; Mm3Game g = game(); mm3_bank_interest(&g); }
 static void impl_generateItem(Cpu *c) { Mm3Game g = game(); mm3_generate_item(&g, host_arg(c, 0) & 0xFF, SEGP(host_arg(c, 2)) + host_arg(c, 1), host_arg(c, 3)); }
 static void impl_stopAttack(Cpu *c) { Mm3Game g = game(); c->ax = (uint16_t)mm3_line_clear(&g, (int16_t)host_arg(c, 0), (int16_t)host_arg(c, 1)); }
 static void impl_setSpeedTable(Cpu *c) { (void)c; Mm3Game g = game(); mm3_set_speed_table(&g); }
@@ -94,6 +96,8 @@ void host_getDamageScale(Cpu *c) { game_shadow("getDamageScale", impl_getDamageS
 void host_getElementalCategory(Cpu *c) { game_shadow("getElementalCategory", impl_getElementalCategory, c, 1, 1); }
 void host_getAttributeCategory(Cpu *c) { game_shadow("getAttributeCategory", impl_getAttributeCategory, c, 1, 1); }
 void host_getNumSkills(Cpu *c) { game_shadow("getNumSkills", impl_getNumSkills, c, 1, 1); }
+void host_subPartyTime(Cpu *c) { game_shadow("subPartyTime", impl_subPartyTime, c, 1, 0); }
+void host_GiveBankInterest(Cpu *c) { game_shadow("GiveBankInterest", impl_GiveBankInterest, c, 0, 0); }
 void host_generateItem(Cpu *c) { game_shadow("generateItem", impl_generateItem, c, 4, 0); }
 void host_stopAttack(Cpu *c) { game_shadow("stopAttack", impl_stopAttack, c, 2, 1); }
 void host_setSpeedTable(Cpu *c) { game_shadow("setSpeedTable", impl_setSpeedTable, c, 0, 0); }

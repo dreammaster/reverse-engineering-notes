@@ -4,6 +4,7 @@
 #include "rules.h"
 
 static unsigned rd16(const Mm3Game *g, unsigned off) { return g->dg[off] | (g->dg[off + 1] << 8); }
+static void wr16(uint8_t *dg, unsigned off, unsigned v) { dg[off] = (uint8_t)v; dg[off + 1] = (uint8_t)(v >> 8); }
 
 Mm3Character *mm3_party_member(const Mm3Game *g, unsigned index) {
 	return (Mm3Character *)(g->dg + MM3_DG_PARTY_CHARS + index * sizeof(Mm3Character));
@@ -580,4 +581,24 @@ int mm3_num_skills(const Mm3Character *ch) {
 	int n = 0;
 	for (int i = 0; i < 18; i++) if (((const uint8_t *)ch)[0x27 + i]) n++;
 	return n;
+}
+
+/* ---- party clock and bank */
+/* subPartyTime(minutes): moves the party clock back.  The original meant to borrow a day when the minutes go negative, but its
+ * test looks at the zero-extended day byte and so never fires: the minutes just wrap up by a day's worth and the day drops by one. */
+void mm3_sub_party_time(Mm3Game *g, unsigned minutes) {
+	int16_t m = (int16_t)(rd16(g, MM3_DG_PARTY_MINUTES) - minutes);
+	while (m < 0) {
+		m = (int16_t)(m + 1440);
+		g->dg[MM3_DG_PARTY_DAY]--;
+	}
+	wr16((uint8_t *)g->dg, MM3_DG_PARTY_MINUTES, (uint16_t)m);
+}
+/* GiveBankInterest: 1% on the gold and gems in the bank */
+void mm3_bank_interest(Mm3Game *g) {
+	for (unsigned at = MM3_DG_BANK_GOLD; at <= MM3_DG_BANK_GOLD + 4; at += 4) {
+		uint32_t v = rd16(g, at) | ((uint32_t)rd16(g, at + 2) << 16);
+		v += v / 100;
+		wr16((uint8_t *)g->dg, at, (uint16_t)v); wr16((uint8_t *)g->dg, at + 2, (uint16_t)(v >> 16));
+	}
 }
