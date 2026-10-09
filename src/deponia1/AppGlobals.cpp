@@ -72,6 +72,7 @@ int bLeftButtonPressed = 0;
 unsigned int lastMultigestureTicks = 0xFFFFFFFFu;
 bool CanLoseFocus = true;
 bool g_bMoviePauseAllowed = true;
+wxCriticalSection g_loadingScreenLock;
 float fps = 0.0f;
 int lastFrameTime = 0;
 

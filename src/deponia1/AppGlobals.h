@@ -164,5 +164,9 @@ extern bool MainLoopsPaused;
 // frames per second and the time the last frame took in milliseconds (`system.frameTime`, `system.lastFrameTime`).
 extern bool CanLoseFocus;
 extern bool g_bMoviePauseAllowed;
+
+// Confirmed a real, named global (asm: g_loadingScreenLock): the loading screen draws from a thread of its own while the
+// game loads; whoever else changes the matrices of the graphics at that time holds this (TMovie::Finish()).
+extern wxCriticalSection g_loadingScreenLock;
 extern float fps;
 extern int lastFrameTime;

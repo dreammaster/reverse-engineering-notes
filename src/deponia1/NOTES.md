@@ -3563,6 +3563,36 @@ to and from Lua tables. What the scripts see:
   left button a right one. A controller can move the mouse (`movex`, `movey`) and walk the character (`charmovex`,
   `charmovey`).
 
+## The movies (TMovie.{h,cpp}, TMasterControl::PlayAVI / VideoFrame / MovieEvent)
+
+The original plays a movie with its own port of ffplay (`VideoState`, 0x102550 bytes at `TMovie+0x60`; demuxer, decoders, the
+audio thread, subtitles, keys); that is FFmpeg's code and sits behind `TMoviePlayer` (`CreateMoviePlayer()`, nothing until the
+port gives one; `g_createMoviePlayer` is the hook). Everything the engine does around it is reconstructed:
+
+- `PlayAVI(file, skippable, handleSounds)` does not play the movie, it starts it: `TMovie::Initialize(false)`, `SetMatrixMode(true,
+  false)` on the backend, the scene and the interfaces are drawn once, then `PlayCutScene(file, ...)` with the subtitle font (the
+  video subtitle font of the game, else the font of the action texts), `kGameVideoSubtitlePosition/Language`,
+  `kGameVideoAudioLanguage`, `kGameVideosEncrypted`, `kGameWindowResolution`, the pause screen (`kGameVideoPauseScreen`, loaded
+  into a `TPictureIO` when it has a name) and `kGameShowBlackScreenAfterVideo`. The sounds: `handleSounds` 0 and 1 `PauseAll()`, 2
+  leaves them, 3 `CleanUp()` (the part "play video" makes it 3 when the next part changes the scene or the character, else 1).
+  The two functions of the movie (`DrawInterfaces`, `MovieEvent`) are set and the movie is "playing" (`IsVideoPlaying`) whatever
+  `PlayCutScene` said; the main loop calls `VideoFrame()` for every frame: `TMovie::OneFrame()` is true while it goes on; when it is
+  over the pause screen is deleted (the original forgets to null it) and with `handleSounds == 1` `ContinueAll()` is called.
+- `TMovie::PlayCutScene` finds the file: with `encrypted` the header of a movie in a composed file (".v<n>") is unscrambled with the
+  key "VIS4MOVPWS" for the time of the movie (`Finish` scrambles it again); else a movie in a container is played from the
+  container (`GetComposedMovieFileName`), anything else from the file; if the player cannot open it, the unscrambling is tried
+  (for good) before giving up. The volume of a movie is the lower of the movie volume and the global volume. `Finish()` takes the
+  movie out of `openMovies` (every `TMovie` is in it from its constructor on, also the master control's), removes the temporary
+  file, scrambles the header again, closes the player and, with the black screen flag, does `SetMatrixMode(true, false)` and
+  `ResetMatrix(true, true)` under `g_loadingScreenLock`.
+- `MovieEvent(SDL_Event*)`: a controller that is added, removed or remapped goes to the game controller and `HandleKeyEvent` (7, 8,
+  9); other events go to the Lua function `movieEvent(name, ...)` if the script has one: "mouseDown"/"mouseUp" with the position,
+  "touchDown"/"touchUp" with the position (the original truncates the 0 to 1 coordinates of the finger to integers: nearly always
+  0), "controllerDown"/"controllerUp" with the key of the button and the number of the controller; anything else has the name "".
+- The Lua side: `graphics.movieOpen(path)` (a `TMovie` userdata; the movie the script draws itself with `movie:draw(x, y, w, h)`,
+  `pause`, `resume`, `seek`, `getTime`, `getDuration`, `finish`, `width`, `height`, and the properties `color = {r, g, b, a}`,
+  `loop`, `blend`); `graphics.openedVideos()` lists `{video, file, callstack}` of every open movie.
+
 ## The sound engine (TSoundInterface, TSoundBase, TSoundFFMPEG)
 
 `TSoundInterface` (mmedialib/sound.cpp) has the volumes and the background music; `TSoundBase` (mmedialib/soundBase.cpp)

@@ -415,6 +415,24 @@ struct wxRealPoint {
 	float y = 0.0f;
 };
 
+// A colour of four bytes, red first (the layout of wxColour in the original: Set() stores them in this order).
+struct wxColour {
+	unsigned char red = 0;
+	unsigned char green = 0;
+	unsigned char blue = 0;
+	unsigned char alpha = 255;
+
+	wxColour() = default;
+	wxColour(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) : red(r), green(g), blue(b), alpha(a) {}
+
+	void Set(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) {
+		red = r;
+		green = g;
+		blue = b;
+		alpha = a;
+	}
+};
+
 struct wxSize {
 	int width = 0;
 	int height = 0;

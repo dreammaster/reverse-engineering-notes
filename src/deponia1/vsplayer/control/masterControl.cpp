@@ -10,6 +10,9 @@
 #include "graphicslib/graphics.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/lua.h"
+#include "graphicslib/picture.h"
+#include "vscommon/objAccess.h"
+#include "vsplayer/control/gameControl.h"
 #include "vsplayer/control/gameController.h"
 #include "vstables/fieldIds.h"
 
@@ -258,56 +261,214 @@ void TMasterControl::ScrollUpdate() {
 	}
 }
 
-int TMasterControl::PlayAVI(const wxFileName &file, bool /*skippable*/, HandleSoundsEnum /*handleSounds*/) {
-	// Gathers ~20 configuration fields from the "Game" object (subtitle
-	// text/position, letterbox picture overlay, colors) via TVisObjRef,
-	// then presumably calls into TMovie's real playback API and pumps
-	// events until the clip finishes or is skipped. TMovie's actual Play()
-	// signature isn't known (only Initialize/OneFrame are reversed), so
-	// this stops short of a full reconstruction - see NOTES.md.
+// Confirmed (asm lines 487099-487890): starts a movie. It is played by the main loop (VideoFrame(), once for each frame while
+// IsVideoPlaying()). The sounds are paused (0, 1), left alone (2) or stopped (3) meanwhile; the settings of the player are
+// the subtitle font (the video subtitle font of the game, else the font of the action texts), position and language, the
+// language of the sound, whether the file is encrypted, the picture shown when the movie is paused, and whether the
+// screen goes black afterwards. The answer is that of TMovie::PlayCutScene() (false: it cannot be played - the next
+// VideoFrame() ends it); the movie is "playing" in any case.
+int TMasterControl::PlayAVI(const wxFileName &file, bool skippable, HandleSoundsEnum handleSounds) {
 	if (!_moviesEnabled)
 		return 0;
+
 	if (!file.IsOk())
 		return 0;
 
 	_movie.Initialize(false);
-	graphics->ResetMatrix(true, false);
+	graphics->SetMatrixMode(true, false);
 	_sceneControl->Draw();
 	DrawInterfaces();
 	SetCurrent();
 
-	while (!_movie.OneFrame()) {
-		// Real loop pumps SDL events for a skip key/click and re-renders;
-		// not reconstructed.
+	TVisObjRef game = _visionaire->GetGame();
+	TVisObjRef subtitleFont = game.GetLink(kGameVideoSubtitleFont);
+
+	if (subtitleFont.IsEmpty())
+		subtitleFont = _visionaire->GetGame().GetLink(kGameActionTextFont);
+
+	TMovieSettings settings;
+
+	settings.subtitlePosition = *game.GetPoint(kGameVideoSubtitlePosition);
+	settings.subtitleLanguage = game.GetStr(kGameVideoSubtitleLanguage);
+	settings.audioLanguage = game.GetStr(kGameVideoAudioLanguage);
+
+	switch (static_cast<int>(handleSounds)) {
+	case 2:
+		break;
+
+	case 3:
+		_soundManager->CleanUp();
+		break;
+
+	default:
+		if (static_cast<unsigned int>(handleSounds) <= 1)
+			_soundManager->PauseAll();
+
+		break;
 	}
-	return 1;
+
+	bool encrypted = game.GetBool(kGameVideosEncrypted);
+
+	settings.videoResolution = *game.GetPoint(kGameWindowResolution);
+
+	// the picture of the pause screen (the file is the game's own; a game without one has no name for it)
+	wxFileName pauseFile = game.GetPath(kGameVideoPauseScreen);
+
+	if (!pauseFile.GetName().IsEmpty()) {
+		_pauseScreen = new TPictureIO();
+
+		pauseFile.NormalizePath();
+		_pauseScreen->LoadPicture(pauseFile, TPictureIO::eLoadSetting::Normal);
+	}
+
+	bool showBlackScreenAfter = game.GetBool(kGameShowBlackScreenAfterVideo);
+
+	settings.skippable = skippable;
+	settings.pauseScreen = _pauseScreen;
+	settings.fontManager = _fontManager;
+	settings.fontId = PackVisId(subtitleFont.GetId());
+	settings.soundManager = _soundManager;
+
+	bool started = _movie.PlayCutScene(file, settings, encrypted, showBlackScreenAfter);
+
+	_movie._drawFunction = [this] { DrawInterfaces(); };
+	_movie._eventFunction = [this](void *event) { MovieEvent(event); };
+	_videoPlaying = true;
+	_handleSounds = static_cast<int>(handleSounds);
+	return started ? 1 : 0;
 }
 
 bool TMasterControl::IsVideoPlaying() const {
 	return _videoPlaying;
 }
 
+// Confirmed (asm lines 487920-487970): one frame of the movie. When it is over the pause screen is let go, and the sounds
+// that were paused go on (only when they were paused, 1).
+// (The original does not forget the pause screen after deleting it, and a later movie without one would delete it again.)
 bool TMasterControl::VideoFrame() {
 	if (_movie.OneFrame())
 		return true;
 
 	_videoPlaying = false;
-	// _movieEventHandler's real type/virtual interface isn't reversed;
-	// the original calls its vtable slot 1 here.
+	delete _pauseScreen;
+	_pauseScreen = nullptr;
 
-	if (/* field +0x4C, likely TPaintControl-internal state - not resolved */ false) {
+	if (_handleSounds == 1)
 		_soundManager->ContinueAll();
-	}
+
 	return false;
 }
 
+// Confirmed (asm lines 490064-490700): an event of the mouse, a touch screen or a controller while a movie plays. A
+// controller that is added, removed or remapped is told to the game controller and the key handler (7, 8, 9); everything
+// else is given to the script function movieEvent(name, ...) if there is one: "mouseDown" / "mouseUp" with the place
+// as a point, "touchDown" / "touchUp" with the place as a point (of the position as the integer part of the
+// 0 to 1 numbers the screen gives), "controllerDown" / "controllerUp" with the key of the button (as
+// TGameControl::ConvertControllerButtonToSymKey() has it) and the number of the controller. (Another kind of event is
+// given with the name "".)
 void TMasterControl::MovieEvent(void *sdlEvent) {
-	// This turned out to double as the SDL controller-hotplug handler (its
-	// body calls TGameController::AddGameController/RemoveGameController
-	// per the disassembly's CODE XREFs), alongside video-overlay event
-	// handling. Full reconstruction needs the real SDL_Event layout and
-	// TMovie's event model, neither reversed yet.
-	(void)sdlEvent;
+	SDL_Event *event = static_cast<SDL_Event *>(sdlEvent);
+	TGameControl *control = static_cast<TGameControl *>(g_pGameControl);
+
+	switch (event->type) {
+	case SDL_CONTROLLERDEVICEREMOVED: {
+		unsigned short id = static_cast<unsigned short>(event->cdevice.which);
+
+		control->HandleKeyEvent(TKeyboardMessageEnum::kControllerRemoved, wxString(), 0, id);
+		control->GetGameController()->RemoveGameController(event->cdevice.which);
+		return;
+	}
+
+	case SDL_CONTROLLERDEVICEREMAPPED:
+		control->HandleKeyEvent(TKeyboardMessageEnum::kControllerRemapped, wxString(), 0,
+		                        static_cast<unsigned short>(event->cdevice.which));
+		return;
+
+	case SDL_CONTROLLERDEVICEADDED: {
+		int index = control->GetGameController()->AddGameController(event->cdevice.which);
+
+		control->HandleKeyEvent(TKeyboardMessageEnum::kControllerAdded, wxString(), 0, static_cast<unsigned short>(index));
+		return;
+	}
+
+	default:
+		break;
+	}
+
+	lua_getfield(L, LUA_GLOBALSINDEX, "movieEvent");
+
+	bool exists = lua_type(L, -1) == LUA_TFUNCTION;
+
+	lua_settop(L, -2);
+
+	if (!exists)
+		return;
+
+	const char *name = "";
+
+	switch (event->type) {
+	case SDL_CONTROLLERBUTTONDOWN:
+		name = "controllerDown";
+		break;
+
+	case SDL_CONTROLLERBUTTONUP:
+		name = "controllerUp";
+		break;
+
+	case SDL_MOUSEBUTTONDOWN:
+		name = "mouseDown";
+		break;
+
+	case SDL_MOUSEBUTTONUP:
+		name = "mouseUp";
+		break;
+
+	case SDL_FINGERDOWN:
+		name = "touchDown";
+		break;
+
+	case SDL_FINGERUP:
+		name = "touchUp";
+		break;
+
+	default:
+		break;
+	}
+
+	TArgument nameArgument;
+	TArgument secondArgument;
+	TArgument thirdArgument;
+
+	nameArgument.Set(wxString(name));
+
+	if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
+		wxPoint position;
+
+		position.x = event->button.x;
+		position.y = event->button.y;
+		secondArgument.Set(position);
+	} else if (event->type == SDL_FINGERDOWN || event->type == SDL_FINGERUP) {
+		wxPoint position;
+
+		position.x = static_cast<int>(event->tfinger.x);
+		position.y = static_cast<int>(event->tfinger.y);
+		secondArgument.Set(position);
+	} else {
+		secondArgument.Set(static_cast<TGameControl *>(this)->ConvertControllerButtonToSymKey(event->cbutton));
+	}
+
+	std::vector<TArgument *> arguments;
+	std::vector<TArgument *> results;
+
+	arguments.push_back(&nameArgument);
+	arguments.push_back(&secondArgument);
+
+	if (event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP) {
+		thirdArgument.Set(static_cast<int>(event->cbutton.which));
+		arguments.push_back(&thirdArgument);
+	}
+
+	LuaExecuteFunction(std::string("movieEvent"), arguments, results);
 }
 
 bool TMasterControl::UnregisterEngineEventHandler(const wxString &name) {

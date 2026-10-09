@@ -19,6 +19,7 @@
 #include "TFramebuffer.h"
 #include "TGCharacter.h"
 #include "TGScene.h"
+#include "TMovie.h"
 #include "TPaintControl.h"
 #include "TPictureFormat.h"
 #include "Easing.h"
@@ -59,7 +60,6 @@ static void notReconstructed(const char *name) {
 		return 0; \
 	}
 
-BACKEND_FUNCTION(movieOpen)
 BACKEND_FUNCTION(drawIndexed)
 BACKEND_FUNCTION(setupOffsets)
 BACKEND_FUNCTION(createIndexBuffer)
@@ -73,15 +73,6 @@ BACKEND_FUNCTION(createBox2DDebugRender)
 BACKEND_FUNCTION(framebuffer_bind)
 BACKEND_FUNCTION(buffer_bind)
 BACKEND_FUNCTION(buffer_update)
-BACKEND_FUNCTION(movie_draw)
-BACKEND_FUNCTION(movie_finish)
-BACKEND_FUNCTION(movie_seek)
-BACKEND_FUNCTION(movie_getDuration)
-BACKEND_FUNCTION(movie_getTime)
-BACKEND_FUNCTION(movie_pause)
-BACKEND_FUNCTION(movie_resume)
-BACKEND_FUNCTION(movie_index)
-BACKEND_FUNCTION(movie_newindex)
 
 static const char *const kSpriteMetatable = "Visionaire.Sprite";
 
@@ -465,6 +456,233 @@ static int graphics_instantiateAnimation(lua_State *state) {
 		wxString id = IdStr(ref);
 
 		wxLog::logexpanded(L"Can't start animation %s", id.wc_str());
+	}
+
+	return 0;
+}
+
+static const char *const kMovieMetatable = "Visionaire.TMovie";
+
+/** The functions of the class TMovie (the table is below, movie_index() looks itself up in it). */
+static const luaL_Reg *movieFunctions();
+
+/** The pointer to the movie of the TMovie userdata at `index` (an error for anything else); the movie is null once it is let go. */
+static TMovie **checkMovie(lua_State *state, int index) {
+	return static_cast<TMovie **>(luaL_checkudata(state, index, kMovieMetatable));
+}
+
+// Confirmed (asm lines 446320-447048): graphics.movieOpen("path") starts a movie that the script draws itself (movie:draw()),
+// with the settings of the game for the subtitles. The answer is the movie, also when it cannot be played.
+static int graphics_movieOpen(lua_State *state) {
+	TMovie **userdata = static_cast<TMovie **>(lua_newuserdata(state, sizeof(TMovie *)));
+	TMovie *movie = new TMovie();
+
+	*userdata = movie;
+	lua_getfield(state, LUA_REGISTRYINDEX, kMovieMetatable);
+	lua_setmetatable(state, -2);
+
+	const char *name = luaL_checklstring(state, 1, nullptr);
+	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
+	TMovieSettings settings;
+
+	settings.subtitlePosition = *game.GetPoint(kGameVideoSubtitlePosition);
+	settings.subtitleLanguage = game.GetStr(kGameVideoSubtitleLanguage);
+	settings.audioLanguage = game.GetStr(kGameVideoAudioLanguage);
+
+	wxString path;
+
+	toUTF(&path, name);
+	movie->Initialize(false);
+
+	if (path.StartsWith(wxString(L"vispath:")))
+		path = path.Mid(8, -1);
+
+	TVisObjRef subtitleFont = game.GetLink(kGameVideoSubtitleFont);
+
+	if (subtitleFont.IsEmpty())
+		subtitleFont = game.GetLink(kGameActionTextFont);
+
+	movie->SetInScene();
+	settings.fontId = PackVisId(subtitleFont.GetId());
+	settings.fontManager = gameControl()->GetFontManager();
+
+	wxFileName file(path.ToStdWstring());
+
+	file.NormalizePath();
+	movie->PlayCutScene(file, settings, false, false);
+
+	// where the script opened it (for openedVideos)
+	lua_getfield(state, LUA_GLOBALSINDEX, "debug");
+	lua_pushstring(state, "traceback");
+	lua_gettable(state, -2);
+	lua_remove(state, -2);
+	lua_pcall(state, 0, 1, 0);
+
+	wxString callstack;
+
+	toUTF(&callstack, lua_tolstring(state, -1, nullptr));
+	movie->_callstack = callstack;
+	lua_settop(state, -2);
+	return 1;
+}
+
+// Confirmed (asm lines 440847-441099): a table of the movies that are open ({video = name in the game, file = what is played,
+// callstack = where the script opened it}).
+static int graphics_openedVideos(lua_State *state) {
+	lua_createtable(state, 0, 0);
+
+	lua_Integer number = 1;
+
+	for (TMovie *movie : TMovie::s_openMovies) {
+		lua_pushinteger(state, number++);
+		lua_createtable(state, 0, 0);
+		lua_pushstring(state, "video");
+		lua_pushstring(state, movie->_file.GetFullPath().mb_str());
+		lua_settable(state, -3);
+		lua_pushstring(state, "file");
+		lua_pushstring(state, movie->_path.mb_str());
+		lua_settable(state, -3);
+		lua_pushstring(state, "callstack");
+		lua_pushstring(state, movie->_callstack.mb_str());
+		lua_settable(state, -3);
+		lua_settable(state, -3);
+	}
+
+	return 1;
+}
+
+// Confirmed (asm lines 441099-441176): movie:draw([x = 0 [, y = 0 [, width = -1 [, height = -1]]]]) shows the picture of the
+// movie at once; true when there was one.
+static int graphics_movie_draw(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+	double x = luaL_optnumber(state, 2, 0.0);
+	double y = luaL_optnumber(state, 3, 0.0);
+	double width = luaL_optnumber(state, 4, -1.0);
+	double height = luaL_optnumber(state, 5, -1.0);
+
+	lua_pushboolean(state, *movie && (*movie)->NowaitDraw(static_cast<float>(x), static_cast<float>(y),
+	                                                      static_cast<float>(width), static_cast<float>(height)));
+	return 1;
+}
+
+// Confirmed (asm lines 445082-445231 and 445231-445380): the movie ends and goes; the same when the script lets go of it.
+static int graphics_movie_finish(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+
+	if (*movie) {
+		(*movie)->Finish();
+		delete *movie;
+		*movie = nullptr;
+	}
+
+	return 0;
+}
+
+// Confirmed (asm lines 441176-441226)
+static int graphics_movie_seek(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+	double seconds = luaL_checknumber(state, 2);
+
+	if (*movie)
+		(*movie)->Seek(static_cast<float>(seconds));
+	return 0;
+}
+
+// Confirmed (asm lines 441406-441456 and 441456-441505)
+static int graphics_movie_getDuration(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+
+	lua_pushnumber(state, *movie ? (*movie)->GetDuration() : 0.0);
+	return 1;
+}
+
+static int graphics_movie_getTime(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+
+	lua_pushnumber(state, *movie ? (*movie)->GetTime() : 0.0);
+	return 1;
+}
+
+// Confirmed (asm lines 441505-441595): the original answers 1 value, whatever is on top of the stack (the movie itself).
+static int graphics_movie_pause(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+
+	if (*movie)
+		(*movie)->Pause();
+
+	return 1;
+}
+
+static int graphics_movie_resume(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+
+	if (*movie)
+		(*movie)->Resume();
+
+	return 1;
+}
+
+// Confirmed (asm lines 440360-440499): the functions of the class by their name, and the size of the movie.
+static int graphics_movie_index(lua_State *state) {
+	int keyType = lua_type(state, 2);
+	const char *name = lua_tolstring(state, 2, nullptr);
+
+	if (keyType == LUA_TSTRING) {
+		for (const luaL_Reg *entry = movieFunctions(); entry->name; entry++) {
+			if (strcmp(entry->name, name) == 0) {
+				lua_pushcclosure(state, entry->func, 0);
+				return 1;
+			}
+		}
+	}
+
+	TMovie **movie = checkMovie(state, 1);
+
+	if (!*movie || keyType != LUA_TSTRING)
+		return 0;
+
+	if (strcmp(name, "width") == 0) {
+		lua_pushnumber(state, (*movie)->GetWidth());
+		return 1;
+	}
+
+	if (strcmp(name, "height") == 0) {
+		lua_pushnumber(state, (*movie)->GetHeight());
+		return 1;
+	}
+
+	return 0;
+}
+
+// Confirmed (asm lines 441226-441406): movie.color = {red, green, blue, alpha}, movie.loop = true, movie.blend = n.
+static int graphics_movie_newindex(lua_State *state) {
+	TMovie **movie = checkMovie(state, 1);
+	const char *name = lua_tolstring(state, 2, nullptr);
+	int valueType = lua_type(state, 3);
+
+	if (!*movie || !name)
+		return 0;
+
+	if (valueType == LUA_TNUMBER) {
+		if (strcmp(name, "blend") == 0)
+			(*movie)->SetBlend(static_cast<int>(lua_tonumber(state, 3)));
+	} else if (valueType == LUA_TTABLE) {
+		if (strcmp(name, "color") == 0) {
+			long channel[4];
+
+			for (int i = 0; i < 4; i++) {
+				lua_pushinteger(state, i + 1);
+				lua_gettable(state, -2);
+				channel[i] = static_cast<long>(lua_tointeger(state, -1));
+				lua_settop(state, -2);
+			}
+
+			(*movie)->SetColour(wxColour(static_cast<unsigned char>(channel[0]), static_cast<unsigned char>(channel[1]),
+			                             static_cast<unsigned char>(channel[2]), static_cast<unsigned char>(channel[3])));
+		}
+	} else if (valueType == LUA_TBOOLEAN) {
+		if (strcmp(name, "loop") == 0)
+			(*movie)->SetLoop(lua_toboolean(state, 3) != 0);
 	}
 
 	return 0;
@@ -1045,13 +1263,6 @@ static int graphics_removeDrawFunc(lua_State *state) {
 	return 0;
 }
 
-// Confirmed (asm lines 440847-441099): a table with an entry for each movie that is open ({video = path, ...}); no movie is open
-// here (the movies are not reconstructed).
-static int graphics_openedVideos(lua_State *state) {
-	lua_createtable(state, 0, 0);
-	return 1;
-}
-
 // Confirmed (asm lines 3144349-3144560, the tables of functions)
 static const luaL_Reg graphics_sprite[] = {
 	{"new", graphics_sprite_new},
@@ -1090,9 +1301,13 @@ static const luaL_Reg graphics_movie[] = {
 	{"resume", graphics_movie_resume},
 	{"__index", graphics_movie_index},
 	{"__newindex", graphics_movie_newindex},
-	{"__gc", graphics_gc},
+	{"__gc", graphics_movie_finish},
 	{nullptr, nullptr}
 };
+
+static const luaL_Reg *movieFunctions() {
+	return graphics_movie;
+}
 
 static const luaL_Reg graphics_meths[] = {
 	{"drawFont", graphics_drawFont},

@@ -248,6 +248,8 @@ constexpr Uint32 SDL_CONTROLLERDEVICEADDED = 0x653u;
 constexpr Uint32 SDL_CONTROLLERDEVICEREMOVED = 0x654u;
 constexpr Uint32 SDL_CONTROLLERDEVICEREMAPPED = 0x655u;
 constexpr Uint32 SDL_QUIT = 0x100u;
+constexpr Uint32 SDL_FINGERDOWN = 0x700u;
+constexpr Uint32 SDL_FINGERUP = 0x701u;
 constexpr Uint32 SDL_WINDOWEVENT = 0x200u;
 
 // SDL_WindowEvent::event
@@ -370,11 +372,24 @@ struct SDL_ControllerDeviceEvent {
 	Sint32 which;
 };
 
+struct SDL_TouchFingerEvent {
+	Uint32 type;
+	Uint32 timestamp;
+	std::int64_t touchId;
+	std::int64_t fingerId;
+	float x;
+	float y;
+	float dx;
+	float dy;
+	float pressure;
+};
+
 union SDL_Event {
 	Uint32 type;
 	SDL_WindowEvent window;
 	SDL_TextInputEvent text;
 	SDL_ControllerDeviceEvent cdevice;
+	SDL_TouchFingerEvent tfinger;
 	SDL_MouseMotionEvent motion;
 	SDL_MouseButtonEvent button;
 	SDL_MouseWheelEvent wheel;

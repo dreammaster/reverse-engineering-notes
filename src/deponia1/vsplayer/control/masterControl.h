@@ -53,7 +53,9 @@
 class TSceneControl;
 class TGameController;
 
-enum class HandleSoundsEnum { kStop, kPause, kContinue };
+/** What happens to the sounds while a movie plays (the "handle sounds" of the part "play video", asm 487099): 0 and 1 pause them
+ *  all (and let them go on when the movie is over - only for 1), 2 leaves them alone, 3 stops them all. */
+enum class HandleSoundsEnum { kDefault = 0, kPause = 1, kContinue = 2, kStop = 3 };
 // Confirmed to have at least 14 values, 0-13 (TGameControl::HandleMouseUp's
 // switch dispatches on 2, 4, 5, 9, 11, 12, 13 distinctly and treats 0, 1, 3,
 // 6, 7, 8, 10 identically as "no special handling," Deponia_Linux.asm lines
@@ -287,7 +289,8 @@ private:
 	TFontManager *_fontManager = nullptr;
 	TGameClientSDK *_gameClientSDK = nullptr;
 
-	void *_movieEventHandler = nullptr;  // +0xC0 in the original; real type/purpose unconfirmed
+	TPictureIO *_pauseScreen = nullptr;  // +0xC0, the picture of kGameVideoPauseScreen for the movie that plays (deleted when it is over)
+	int _handleSounds = 0;               // +0x4C, the HandleSoundsEnum of the movie that plays
 	bool _videoPlaying = false;          // +0xB8
 	int _loadingScreenCachedWidth = 0;   // +0x248
 	int _loadingScreenCachedHeight = 0;  // +0x24C
