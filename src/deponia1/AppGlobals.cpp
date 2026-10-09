@@ -1,6 +1,7 @@
 #include "AppGlobals.h"
 
 #include "THGameControl.h"
+#include "graphicslib/vector3d.h"
 #include "vsplayer/control/gameControl.h"
 
 SDL_Window *VSPlayerWindow = nullptr;
@@ -75,3 +76,38 @@ float fps = 0.0f;
 int lastFrameTime = 0;
 
 wxRect g_displayedArea;
+
+bool hasInverseMatrix() {
+	return invMatrix1.size() == 9;
+}
+
+static idVec3 transformThrough(const std::vector<float> &numbers, const wxPoint &point) {
+	idMat3 matrix;
+
+	for (int i = 0; i < 9; i++)
+		matrix._m[i] = numbers[i];
+
+	idVec3 vector;
+	vector.x = (float)point.x;
+	vector.y = (float)point.y;
+	vector.z = 1.0f;
+
+	return matrix * vector;
+}
+
+wxPoint transformByInverseMatrix(const wxPoint &point) {
+	idVec3 result = transformThrough(invMatrix1, point);
+	wxPoint transformed;
+
+	transformed.x = (int)result.x;
+	transformed.y = (int)result.y;
+	return transformed;
+}
+
+bool hasMatrix() {
+	return matrix1.size() == 9;
+}
+
+idVec3 transformByMatrix(const wxPoint &point) {
+	return transformThrough(matrix1, point);
+}

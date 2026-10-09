@@ -19,8 +19,8 @@
 // Fading: the interface fades in and out (kInterfaceVisibility/kInterfaceDestVisibility/
 // kInterfaceTimeToDestVisibility); its alpha goes to all its buttons and items.
 //
-// Not reconstructed (see TODO.md): the transformation of the mouse position through a matrix
-// (GetObject()/IsInside() while the interface is drawn through one).
+// GetObject()/IsInside() move the position of the cursor back through invMatrix1 while the
+// interface is drawn through a matrix (kInterfaceMatrixId).
 //
 // Original layout: +0x48 the record, +0x50 the alpha, +0x54 where the fade started, +0x58 where
 // it goes to, +0x5C its time, +0x60 its timer, +0x70 the bounds, +0x80 the border polygon,

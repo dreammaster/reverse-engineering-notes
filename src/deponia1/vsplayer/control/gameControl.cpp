@@ -457,14 +457,12 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	if (scene->IsMenu())
 		scene->SelectSavegame(hookPos);
 
-	// Confirmed (asm lines 472782-473133): when a 3x3 transform matrix is
-	// active on a global matrix stack (gated by two globals, invMatrix1 and
-	// qword_1209B08, neither reversed), hookPos is transformed through it
-	// (idMat3::operator*(idVec3 const&), also not reversed) before use below
-	// - presumably a rotatable/zoomable scene camera feature. Left as a
-	// flagged gap rather than guessed; the untransformed hookPos is used
-	// unconditionally.
+	// Confirmed (asm lines 472782-473133): while a matrix is set for the drawing (invMatrix1, 9 numbers),
+	// the position goes back through it, as the row vector (x, y, 1), before it is used below.
 	wxPoint clickPos = hookPos;
+
+	if (hasInverseMatrix())
+		clickPos = transformByInverseMatrix(hookPos);
 
 	bool objEmpty = _objectManager.IsCurrentObjectEmpty();
 

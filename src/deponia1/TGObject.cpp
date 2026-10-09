@@ -172,14 +172,22 @@ void TGObject::AnimationStopped(TGAnimation *animation) {
 		TManagedObject::AnimationStopped(animation);
 }
 
-// Confirmed (asm lines 258763-258921). TODO (low priority, see /TODO.md): while the object
-// is drawn through a matrix (kObjectMatrixId, with an inverse matrix set) the original
-// first moves the point back through that matrix.
+// Confirmed (asm lines 258763-258921). An object that is drawn through a matrix (kObjectMatrixId,
+// while invMatrix1 is set) has the point moved back through it first - round the scroll position
+// of the scene, so that the matrix works on the point as it is on the screen.
 bool TGObject::IsInside(const wxPoint &position, const TGDetectInfo &info) const {
 	if (!info.flagA)
 		return false;
 
 	wxPoint local = position - *_objRef.GetPoint(kObjectOffset);
+
+	if (_sprite.GetMatrixId() != 0 && hasInverseMatrix()) {
+		const wxPoint &scroll = gameControl()->GetScene()->GetScrollPos();
+
+		local -= scroll;
+		local = transformByInverseMatrix(local);
+		local += gameControl()->GetScene()->GetScrollPos();
+	}
 
 	// an object that scrolls on its own is further along by that part of the scroll position
 	if (_scrolls) {
@@ -192,14 +200,34 @@ bool TGObject::IsInside(const wxPoint &position, const TGDetectInfo &info) const
 	return TManagedObject::IsInside(local);
 }
 
-// Confirmed (asm lines 258931-259137). TODO (low priority, see /TODO.md): the matrix
-// transform of the position.
+// Confirmed (asm lines 258931-259137). The animation of an object that is drawn through a matrix
+// (kObjectMatrixId, while matrix1 is set) has its position moved through the matrix: the centre of
+// the picture, less the scroll position, goes through it, and the position is got back from that.
 void TGObject::DrawSnoopAnimation() {
 	if (!_active || !_snoopAnimation || !_snoopAnimation->IsSpriteIndexValid())
 		return;
 
 	TGScene *scene = gameControl()->GetScene();
 	wxPoint position = *_objRef.GetPoint(kObjectSnoopAnimationPos);
+
+	if (_sprite.GetMatrixId() != 0 && hasMatrix()) {
+		const wxPoint scroll = scene->GetScrollPos();
+		TPictureIO *picture = _snoopAnimation->GetCurrentSprite();
+
+		picture->RefreshSprite(false);
+
+		int halfHeight = picture->GetHeight() / 2;
+		int halfWidth = picture->GetWidth() / 2;
+		wxPoint centre;
+
+		centre.x = halfWidth - scroll.x + position.x;
+		centre.y = halfHeight - scroll.y + position.y;
+
+		idVec3 moved = transformByMatrix(centre);
+
+		position.x = (int)((float)scroll.x + moved.x - (float)halfWidth);
+		position.y = (int)((float)scroll.y + moved.y - (float)halfHeight);
+	}
 
 	if (_scrolls) {
 		const wxPoint &scroll = scene->GetScrollPos();

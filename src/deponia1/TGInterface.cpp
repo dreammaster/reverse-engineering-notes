@@ -289,13 +289,22 @@ TManagedObject *TGInterface::GetObject(const TVisObjRef &object) const {
 	return nullptr;
 }
 
-// Confirmed (asm lines 139195-139400). TODO (low priority, see /TODO.md): while the interface
-// is drawn through a matrix the original first moves the position back through it.
+/** An interface that is drawn through a matrix (kInterfaceMatrixId, while invMatrix1 is set - unless the game draws
+ *  the interfaces alone, kGameShaderExclude 1) has the position of the cursor moved back through it first. */
+static wxPoint moveBackThroughMatrix(const TVisObjRef &interface, const wxPoint &pos) {
+	if (interface.GetParent().GetInt(kGameShaderExclude) != 1 && interface.GetInt(kInterfaceMatrixId) != 0 &&
+	    hasInverseMatrix())
+		return transformByInverseMatrix(pos);
+
+	return pos;
+}
+
+// Confirmed (asm lines 139195-139400)
 TManagedObject *TGInterface::GetObject(const wxPoint &pos) const {
 	if (!IsActive())
 		return nullptr;
 
-	wxPoint position = GetRelativePoint(pos);
+	wxPoint position = GetRelativePoint(moveBackThroughMatrix(_ref, pos));
 	int scroll = _ref.GetInt(kInterfaceItemsScrollPosition);
 	long placeHolders = 0;
 
@@ -317,9 +326,9 @@ TManagedObject *TGInterface::GetObject(const wxPoint &pos) const {
 	return nullptr;
 }
 
-// Confirmed (asm lines 139532-139680). TODO (low priority, see /TODO.md): the matrix.
+// Confirmed (asm lines 139532-139680)
 bool TGInterface::IsInside(const wxPoint &pos) const {
-	wxPoint position = pos - GetOrigin();
+	wxPoint position = moveBackThroughMatrix(_ref, pos) - GetOrigin();
 
 	if (!IsActive())
 		return false;

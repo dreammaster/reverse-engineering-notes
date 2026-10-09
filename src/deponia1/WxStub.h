@@ -450,6 +450,13 @@ struct wxPoint {
 		y += other.y;
 		return *this;
 	}
+	// Confirmed a real free operator-= (TGObject::IsInside(), Deponia_Linux.asm line 258814 -
+	// `_ZmIR7wxPointRKS_`), the component-wise difference in place.
+	wxPoint &operator-=(const wxPoint &other) {
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
 };
 
 struct wxRect {

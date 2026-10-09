@@ -10,6 +10,7 @@
 #include "SdlStub.h"
 #include "TStandardPaths.h"
 #include "WxStub.h"
+#include "graphicslib/vector3d.h"
 
 class TMasterControl;
 
@@ -42,6 +43,16 @@ extern std::vector<float> matrix1;
 extern std::vector<float> matrix2;
 extern std::vector<float> textMatrix;
 extern std::vector<float> invMatrix1;
+
+/** The point, moved through invMatrix1 (as the row vector x, y, 1 times the matrix; the numbers cut to whole ones). Not
+ *  called unless invMatrix1 is set - the callers test hasInverseMatrix(). */
+wxPoint transformByInverseMatrix(const wxPoint &point);
+/** invMatrix1 is set (it has the 9 numbers). */
+bool hasInverseMatrix();
+/** matrix1 is set (it has the 9 numbers). */
+bool hasMatrix();
+/** The point, moved through matrix1 (as transformByInverseMatrix(), for the drawing; the numbers are not cut). */
+idVec3 transformByMatrix(const wxPoint &point);
 extern std::vector<int> fontShaderIndizes;
 extern int fontShader;
 extern std::vector<std::string> luaDrawBeforeScene;

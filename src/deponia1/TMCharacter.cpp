@@ -2,12 +2,15 @@
 
 #include <cstring>
 
+#include "AppGlobals.h"
 #include "Diagnostics.h"
 #include "TGDetectInfo.h"
+#include "TGScene.h"
 #include "TTText.h"
 #include "graphicslib/picture.h"
 #include "vscommon/canimation.h"
 #include "vsplayer/animationGame.h"
+#include "vsplayer/control/gameControl.h"
 #include "vstables/fieldIds.h"
 
 static const char *const kSourceFile = "/home/simon/Documents/jenkins/branchPillars/src/vsplayer/characterManaged.cpp";
@@ -49,6 +52,12 @@ void TMCharacter::SetAnimation(TGAnimation *animation) {
 	_currentAnimation = animation;
 }
 
+// TGameControl implements everything used from it here, but g_pGameControl is only
+// declared as TMasterControl* (AppGlobals.h) - the same cast the other classes use.
+static TGameControl *gameControl() {
+	return static_cast<TGameControl *>(g_pGameControl);
+}
+
 // Confirmed (asm lines 138081-138143)
 bool TMCharacter::IsInside(const wxPoint &position, const TGDetectInfo &info) const {
 	if (!info.flagB)
@@ -58,13 +67,19 @@ bool TMCharacter::IsInside(const wxPoint &position, const TGDetectInfo &info) co
 	return IsInside(position);
 }
 
-// Confirmed (asm lines 138144-138399). TODO (low priority, see /TODO.md): while the
-// scene is drawn through a matrix (a character with kCharacterMatrixId 1 and an inverse
-// matrix set), the original first moves the point back through that matrix; not
-// reconstructed.
-bool TMCharacter::IsInside(const wxPoint &position) const {
+// Confirmed (asm lines 138144-138399). A character that is drawn through a matrix (kCharacterMatrixId 1,
+// while invMatrix1 is set) has the point moved back through it first, round the scroll position of the scene.
+bool TMCharacter::IsInside(const wxPoint &point) const {
 	if (!_active)
 		return false;
+
+	wxPoint position = point;
+
+	if (hasInverseMatrix() && _objRef.GetInt(kCharacterMatrixId) == 1) {
+		position -= gameControl()->GetScene()->GetScrollPos();
+		position = transformByInverseMatrix(position);
+		position += gameControl()->GetScene()->GetScrollPos();
+	}
 
 	wxRect rect = GetCurrentSpriteRect();
 

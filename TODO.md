@@ -62,7 +62,7 @@ lines 154252-156548) list the running animations as text lines and draw a
 thumbnail of each in the debugger overlay. Not reconstructed (not declared at
 all); the manifest keeps them `todo`.
 
-### TGCharacter and TMCharacter: Spine skeletons and the matrix transform
+### TGCharacter and TMCharacter: Spine skeletons and the matrix of the drawing
 
 `src/deponia1/TGCharacter.{h,cpp}`, `src/deponia1/TMCharacter.{h,cpp}`; original
 `src/vsplayer/characterManaged.cpp` and the character file of `vsplayer`.
@@ -75,15 +75,13 @@ Left out, for the same reason as the model/Spine items above:
   ending them by kind, `GetCurrentSpriteRect()` (the skeleton's size, scaled by
   `kAnimationSize`), `SetSpritePosition()`/`UpdateSpriteRect()`/`Draw()` positioning
   a model or skeleton animation;
-- the matrix transform: `TMCharacter::IsInside()` moves the point back through the
-  inverse matrix while a character is drawn through one (`kCharacterMatrixId` 1),
-  and `TGCharacter::Draw()` works with a matrix of its own (the part reconstructed
-  only turns the global matrices off for a character that has none);
+- the matrix transform of `TGCharacter::Draw()`, which works with a matrix of its own (the part
+  reconstructed only turns the global matrices off for a character that has none);
 
 `TGCharacter` stays `in-progress` in `manifest/proprietary_classes.tsv` until the
 Spine branches are done.
 
-### TGObject: particles, shaders and the matrix transform
+### TGObject: particles and shaders
 
 `src/deponia1/TGObject.{h,cpp}`; original `src/vsplayer/` (object file, not
 assert-confirmed).
@@ -94,8 +92,6 @@ Left out:
   negated float scroll position times the scroll factor, an optional multiply with the
   global matrix, `ParticleContainer::Draw()`/the particle system draw, and the scroll
   fields the particle system is given at +0x2E0/+0x2E4);
-- the matrix transform of `IsInside()` and `DrawSnoopAnimation()` while the object is drawn
-  through a matrix (`kObjectMatrixId`, the global `invMatrix1`/`matrix1` with 9 entries);
 - the second `TPictureIO` at +0x1B8 (cleared when an object with particles is deactivated;
   nothing else is known to use it).
 
@@ -108,15 +104,6 @@ Left out:
 1379800-1380801: the editor writes an emitter to a file and reads it) and the drawing (`TGraphicsOGL::Draw(TParticleSystem&, bool, bool)`
 and `Draw(TParticleEmitter&, ...)`, `SetParticleMaterial`: asm 708150, 714258, 719135). A backend draws the particles of
 `TParticleEmitter::_particles` with the rules at the top of `particleSystem.h`.
-
-### TGInterface: the matrix transform of the cursor position
-
-`src/deponia1/TGInterface.cpp`; original `src/vsplayer/interfaceGame.cpp`.
-
-`GetObject(const wxPoint &)` and `IsInside()` first move the position back through the global
-inverse matrix (`invMatrix1`, nine entries) when the interface is drawn through a matrix
-(`kInterfaceMatrixId` not 0, and its parent's `kGameShaderExclude` is not 1); not
-reconstructed. `TGInterface` stays `in-progress` until then.
 
 ### The text engine: the speech and the glyphs
 
