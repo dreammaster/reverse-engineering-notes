@@ -66,6 +66,10 @@ public:
 	unsigned long GetCount() const {
 		return _objects.size();
 	}
+	/** All the objects, ordered by id (the references are the table's own). */
+	const std::vector<TVisionaireObject *> &GetObjects() const {
+		return _objects;
+	}
 	/** The object at a position of the id-ordered list. */
 	bool GetObjectAtPosition(TVisionaireObject **object, int position) const;
 

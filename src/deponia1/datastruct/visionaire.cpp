@@ -3,7 +3,10 @@
 #include <algorithm>
 
 #include "Diagnostics.h"
+#include <EventHandler.h>
+#include "LoadSaveProgressEvent.h"
 #include "TXMLNames.h"
+#include "baselib/xmlWriter.h"
 #include "datastruct/link.h"
 #include "TComposedFileManager.h"
 #include "TTimer.h"
@@ -803,9 +806,143 @@ void TVisionaire::SetVisPlayerMode(bool playerMode) {
 	IsVisPlayerMode = playerMode;
 }
 
-// Not reconstructed yet: writing a savegame / reading project and savegame
-// files (asm lines 616818-619850 and 619961-655304).
-void TVisionaire::SaveSaveGame(TProjectFileWriter &/*writer*/) {
+/** The order in which the tables are written when the data are scrambled (asm ScrambledSortOrder, 0x25 table numbers). */
+static const int ScrambledSortOrder[0x25] = {3, 16, -1, 0, 25, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 31, 14,
+                                             15, 17, 18, 19, 20, 21, 34, 22, 23, 24, 26, 35, 27, 28, 29, 30, 32, 33};
+
+// Confirmed (asm lines 608353-608417): table `first` goes before `second` in the order above.
+static bool ScrambledSorting(TTable *first, TTable *second) {
+	int firstPosition = -1;
+	int secondPosition = -1;
+
+	for (int i = 0; i < 0x25; i++) {
+		if (ScrambledSortOrder[i] == first->GetIdentifier())
+			firstPosition = i;
+
+		if (ScrambledSortOrder[i] == second->GetIdentifier())
+			secondPosition = i;
+	}
+
+	x_assert(secondPosition != -1 && firstPosition != -1, "newPosT1 != -1 && newPosT2 != -1", kSourceFile, 0x55C);
+	return firstPosition < secondPosition;
+}
+
+// Confirmed (asm lines 616654-616818): the tables are put in the scrambled order and every type group scrambles its fields
+// (with the description of its table as the seed). Used when the data are written as XML.
+void TVisionaire::SetScrambled() {
+	std::sort(_tableList.begin(), _tableList.end(), ScrambledSorting);
+
+	for (TTable *table : _tables) {
+		if (table && table->GetTypeGroup())
+			table->GetTypeGroup()->SetScrambled(table->GetDescription());
+	}
+}
+
+// Confirmed (asm lines 616818-617211 and its constant-argument clone 618630-618973). Writes the project or a savegame to
+// `writer`. A savegame (and not `forceXml`) is written in the binary format (BinarySave(), into the buffer of the writer);
+// else it is XML: the tag of the file (kSaveGame, or kVisionaireAdventure with the project type and the revision), the
+// version, the main object ("Game"), then every table. `handler` gets the progress events of the editor.
+bool TVisionaire::SaveData(TProjectFileWriter &writer, EventHandler *handler, bool forceXml) {
+	if (writer.IsSaveGame() && !forceXml)
+		return BinarySave(wxFileName(), handler, true, &writer);
+
+	int rootTag = writer.IsSaveGame() ? kSaveGame : kVisionaireAdventure;
+
+	writer.StartTag(rootTag);
+
+	if (!writer.IsSaveGame()) {
+		writer.AddAttribute(kProjectType, _projectType);
+		writer.AddAttribute(kRevision, _revision);
+	}
+
+	InitWithVersion(_version);
+
+	if (TXMLNames::IsScrambled())
+		SetScrambled();
+
+	writer.SetVersion(_version, _version);
+	writer.AddAttribute(kVersion, _version);
+	writer.FinishAttributes(true);
+
+	x_assert(!_mainObject->IsEmpty(), "MainObject->IsEmpty() == false", kSourceFile, 0x32F);
+
+	if (_mainObject->IsEmpty()) {
+		x_assert(false, "false", kSourceFile, 0x341);
+		return false;
+	}
+
+	TTypeGroup *typeGroup = _mainObject->GetData()->GetTypeGroupPtrNonConst();
+
+	if (!typeGroup) {
+		x_assert(false, "false", kSourceFile, 0x341);
+		return false;
+	}
+
+	if (handler)
+		handler->AddPendingEvent(new LoadSaveProgressEvent(-1, true));
+
+	typeGroup->SetupNeededTypes(writer.IsSaveGame(), false, true);
+
+	if (!_mainObject->GetData()->Serialize(writer)) {
+		x_assert(false, "false", kSourceFile, 0x33B);
+		return false;
+	}
+
+	for (TTable *table : _tableList) {
+		if (handler)
+			handler->AddPendingEvent(new LoadSaveProgressEvent(table->GetIdentifier(), true));
+
+		TTypeGroup *tableTypeGroup = table->GetTypeGroup();
+
+		if (!tableTypeGroup) {
+			x_assert(false, "false", kSourceFile, 0x352);
+			continue;
+		}
+
+		tableTypeGroup->SetupNeededTypes(writer.IsSaveGame(), false, true);
+		table->Serialize(writer);
+	}
+
+	writer.FinishTag(rootTag);
+	return true;
+}
+
+// Confirmed (asm lines 619088-619106 and 618630). A savegame: the writer is set to write one, the data are written (binary, into
+// the buffer of the writer) and the writer finishes (TXMLStringWriter::FinishWrite() compresses and encrypts the buffer as the
+// content flags of the file say).
+bool TVisionaire::SaveSaveGame(TProjectFileWriter &writer) {
+	writer.SetSaveGame(true);
+
+	if (!SaveData(writer, nullptr, false))
+		return false;
+
+	writer.FinishWrite();
+	return true;
+}
+
+// Confirmed (asm lines 620666-620683): nothing to do before saving (TVisionaireGame::BeforeSave() is the editor's).
+bool TVisionaire::BeforeSave() {
+	return true;
+}
+
+// Confirmed (asm lines 618973-619088): the game data as XML text (empty if BeforeSave() fails or the data cannot be written).
+wxString TVisionaire::SaveDataGameToString() {
+	if (!BeforeSave())
+		return wxString();
+
+	TXMLStringWriter writer;
+
+	writer.SetSaveGame(false);
+
+	if (!SaveData(writer, nullptr, false))
+		return wxString();
+
+	writer.FinishWrite();
+	writer.GetBufferNonConst().AppendByte(0);
+	wxString text;
+
+	toUTF(&text, reinterpret_cast<const char *>(writer.GetBuffer().GetData()));
+	return text;
 }
 
 // Confirmed (asm lines 619961-620665). `saveGame` is 0 for game data and 1 for a

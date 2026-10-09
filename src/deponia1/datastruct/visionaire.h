@@ -223,13 +223,25 @@ public:
 
 	// Loading and saving (still to be reconstructed from the project readers
 	// and writers; see NOTES.md).
-	void SaveSaveGame(TProjectFileWriter &writer);
+	/** Writes the project or a savegame to `writer` (`forceXml`: also a savegame as XML). */
+	bool SaveData(TProjectFileWriter &writer, EventHandler *handler, bool forceXml);
+	bool SaveSaveGame(TProjectFileWriter &writer);
+	/** Puts the tables and the fields in the scrambled order (see SaveData()). */
+	void SetScrambled();
+	/** Called before the game data are saved (the editor's TVisionaireGame sorts things); false stops the saving. */
+	virtual bool BeforeSave();
+	/** The game data as XML text. */
+	wxString SaveDataGameToString();
 
 	bool Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame, TLoadingTypeEnum type,
 	          int *outFlag, TSignalSlot *slot, EventHandler *handler);
 	/** Reads a binary (VBIN) project or savegame (datastruct/binaryProjectReader.cpp). */
 	bool BinaryLoad(TVedFile &file, TLoadingTypeEnum type, TSignalSlot *slot, int *outVersion,
 	                EventHandler *handler);
+	/** Writes the project (`saveGame` false) or a savegame (true) in the binary format that BinaryLoad() reads
+	 *  (datastruct/binaryProjectReader.cpp). With `writer` (the savegame writer of the game) the file goes into its
+	 *  buffer, else into `file` (compressed). */
+	bool BinarySave(const wxFileName &file, EventHandler *handler, bool saveGame, TProjectFileWriter *writer);
 
 protected:
 	int tableIndex(const TId &id) const;

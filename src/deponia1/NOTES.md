@@ -3962,3 +3962,26 @@ The matrix transforms of the cursor (`invMatrix1`, `matrix1`) are in `AppGlobals
 - Not reconstructed: the decoders (`TPictureFormat` and its PNG/WebP/JPG/GIF/PCX stubs fail, so no picture loads), the thread
   that preloads pictures (`TPreloadedPicManager`; `RefreshSprite()` is the case that nothing is queued) and the OpenGL backend.
 
+## Writing the data: BinarySave, SaveSaveGame and the schema of a VBIN file
+
+- `TVisionaire::BinarySave(file, handler, saveGame, writer)` (asm 655305-657820, `datastruct/binaryProjectReader.cpp`) writes what `BinaryLoad()`
+  reads. The payload (in the global `membuf`): the schema through `writeStructure()` (u16 id, u16 number of children, the children):
+  root `0x64` with the children `0x35`, `0x36`, `0x11` (project type, revision, version), the `Game` object `0x74` (its children are the
+  ids of the fields it stores) and one node for each table whose type fits (`IsFittingSaveGameType(saveGame)`): the id is the table's
+  description and it has ONE child, the node of the type (the description of its type group), whose children are `0x0C`, `0x0D`, `0x0E`,
+  `0x37` (name, id, order, last modified) and the ids of the fields (`SetupNeededTypes(saveGame, linkOnly = false, skipTemp = true)`).
+  (The first port of `BinaryLoad()` read the fields from the children of the table node; they are the children of ITS FIRST CHILD.)
+  Then three ints (project type, revision, version), the fields of the Game object (`saveObject()`), and for each table: `0x06054AB5`,
+  the number of records that are not temporary and have data, and per record the name (`TCharHolder`), the id, the order and the
+  time stamp (24 bits, sign-extended, as ints) and the fields. The `save()` family mirrors `load()` (a path is normalised first).
+- The file: with a `writer` (a savegame: `TVisionaire::SaveSaveGame()`; the writer is the game's `TXMLStringWriter`, the original
+  calls its virtual `GetBufferNonConst()` through a `TProjectFileWriter *`) the buffer of the writer gets `"VBIN"`, the number of
+  records, the length and the length again (uncompressed; `TMSavegame` then compresses/encrypts the buffer into the composed file),
+  else (the editor's project) a file with `"VBIN"`, the number of records, the length, the compressed length and the zlib data.
+- `SaveData(writer, handler, forceXml)` (asm 616818): a savegame is binary unless forced; the XML form is `<kSaveGame>` or
+  `<kVisionaireAdventure projecttype revision>` with the version, the Game object and every table (`TDataGroup::Serialize`,
+  `TTable::Serialize`), the data scrambled first when `TXMLNames::IsScrambled()` (`SetScrambled()`: the tables in the order of
+  `ScrambledSortOrder`, every type group scrambles its fields). `SaveDataGameToString()` gives that XML as text.
+  Not reconstructed: `SaveDataGame(file, handler)` (the editor's project file with the `.bak` renaming; needs `TXMLFileWriter`) and
+  `TVisionaireGame::BeforeSave()` (the editor's tidying of the outfits' walk animations).
+
