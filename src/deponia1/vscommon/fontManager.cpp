@@ -1,7 +1,7 @@
 #include "vscommon/fontManager.h"
 
 #include "AppGlobals.h"
-#include "TCFont.h"
+#include "vscommon/cfont.h"
 #include "TSignalData.h"
 #include "datastruct/visionaireobject.h"
 

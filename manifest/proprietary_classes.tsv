@@ -329,7 +329,7 @@ TGParticleSystem	todo	4	1378274	1380801
 TGParticleEmitter	todo	6	1378290	1379800
 TFontManager	done	16	1388826	1390109
 TPointSize	done	5	1390459	1390856
-TCFont	todo	16	1391446	1397049
+TCFont	in-progress	16	1391446	1397049
 TSyntaxDocArray	todo	7	1409666	1415006
 TExampleDocArray	todo	7	1410025	1415280
 HashMap<TId, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >*, TIdHash>	todo	1	1428982	1428982

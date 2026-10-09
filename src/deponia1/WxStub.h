@@ -60,6 +60,11 @@ public:
 	const std::wstring &ToStdWstring() const {
 		return _data;
 	}
+	// Confirmed call shape only (TCFont, Deponia_Linux.asm line 1394558): real wxString::GetChar() is the
+	// character at `index` (the terminating 0 one past the end).
+	wchar_t GetChar(size_t index) const {
+		return (index < _data.size()) ? _data[index] : L'\0';
+	}
 	const wchar_t *wc_str() const {
 		return _data.c_str();
 	}

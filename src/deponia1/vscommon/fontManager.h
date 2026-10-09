@@ -28,7 +28,11 @@
 #include "datastruct/visobjref.h"
 #include "datastruct/vlist.h"
 
-enum class TextAlignmentEnum { kLeft, kCenter, kRight };
+/** Confirmed values (TCFont::GetTextStartPos(), asm 1392196; the data and the actions use the same numbers): 0 left, 1 right,
+ *  2 centre; 3 to 5 are for a text in a box of a given width (names invented): 3 the box is centred on the point and the
+ *  text starts at its left edge, 4 the box is centred on the point and the text ends at its right edge, 5 the text is
+ *  centred in a box that starts at the point. */
+enum class TextAlignmentEnum { kLeft = 0, kRight = 1, kCenter = 2, kBoxLeft = 3, kBoxRight = 4, kBoxCenter = 5 };
 class GLCharBuffer;
 class TCFont;
 struct TSignalData;

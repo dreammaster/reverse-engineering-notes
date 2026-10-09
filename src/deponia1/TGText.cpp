@@ -5,7 +5,7 @@
 
 #include "AppGlobals.h"
 #include "Diagnostics.h"
-#include "TCFont.h"
+#include "vscommon/cfont.h"
 #include "TGCharacter.h"
 #include "TGScene.h"
 #include "TManagedObject.h"

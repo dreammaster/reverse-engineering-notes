@@ -8,7 +8,7 @@
 
 #include "AppGlobals.h"
 #include "Diagnostics.h"
-#include "TCFont.h"
+#include "vscommon/cfont.h"
 #include "TGCharacter.h"
 #include "TTimer.h"
 #include "graphicslib/graphics.h"

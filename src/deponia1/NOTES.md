@@ -3589,6 +3589,30 @@ Not reconstructed (in TODO.md): `ParticleContainer::Draw` (vertex buffers throug
 functions (editor only), and the texture atlas that `images` with more than one picture makes (`MaxRectsBinPack`).
 `TGScene::BeginScene` and `TGObject::SetActive` now build the container from field 0x326 through `LuaDoString`.
 
+## Fonts (vscommon/cfont.cpp, TCFont)
+
+A `TCFont` is one of three things: a font that stands for another (field `kFontFont` links to it; every call goes to that font, and
+`GetLineHeight` follows the chain), a TrueType font (`kFontTrueTypeFont`: a `TFreetypeFont`, made again by `OnEvent` when the font
+object changes), or a font of a picture (`kFontLetters` are the rectangles of the letters in the picture `kFontSprite`,
+`kFontAlphabet` the characters, `kFontSpaceWidth` the advance of the space, which has no rectangle). The advance of a letter is the
+width of its rectangle (a signed byte); a character that is not in the font has the advance of the first one in the map. Things the
+asm shows:
+
+- Kerning (`kFontKerning`): pairs separated by `|`, each `letters=value`. One letter: the kerning of the *previous* letter whatever
+  follows it; two letters `pq`: previous `p`, current `q` (the key is `(q << 16) + p`). The spacing is then minus the value instead of
+  the font's letter spacing. A malformed pair that has no `=` or too many throws away all of the kerning; an unreadable number only
+  skips that pair. `SplitIntoLines` and `GetTextDimension` use the pair when there is one and the previous letter alone only
+  otherwise; `GetCharSpacing` (no caller found) looks the single letter up last and lets it win.
+- `SplitIntoLines` (picture font): a line ends at a CR or LF - together with the next character when that is a CR or LF too, so two
+  LFs in a row are one break and a blank line is lost (`GetTextDimension` swallows only CRLF and LFCR) - or when the width reaches
+  `maxWidth` and there was a space (the line is cut there, and the scan goes on from the letter after the space). A text that ends
+  with a line break gets a last empty line. The TrueType branch (UTF-8, Freetype advances) has two quirks: after a cut at a space
+  the letters that follow the space are not measured again, and a line after a line break begins with the line break character.
+- `TextAlignmentEnum` is 0 left, 1 right, 2 centre, and 3 to 5 for a text in a box (see `GetTextStartPos`); the enum had left,
+  centre and right in that order before, which was wrong for the numbers the data uses.
+- The loader logs (level 2) when the alphabet is shorter than the list of rectangles (not when it is longer), when there is no
+  rectangle at all, and (level 1) for bad kerning.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

@@ -119,11 +119,15 @@ reconstructed. `TGInterface` stays `in-progress` until then.
 
 ### The text engine: the speech and the glyphs
 
-`src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`.
+`src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`, `src/deponia1/vscommon/cfont.cpp`.
 
 - The sound manager's side of the speech signals (`TSignalData.h`: `kSignalSpeech*`).
-- Printing the glyphs: `TFontManager::PrintTextLines()` and `TCFont` (the buffers a text keeps are
-  `GLCharBuffer`s).
+- Printing the glyphs: `TCFont::PrintText()` / `PrintTextLines()` (asm 1396036-1398227: the letters of a picture font through
+  `TPictureIO::DrawWithSrcRect`, a TrueType font through `TFreetypeFont::RenderString`, with the text matrix and the scroll of
+  the paint control; the buffers a text keeps are `GLCharBuffer`s) and `TCFont::EnsureSpriteLoaded()` (asm 1395566-1396036: the
+  letters of the font picture with their transparent edges taken off, packed into a texture).
+- `TFreetypeFont` (asm 1582405-1589320, `graphicslib/freetypeFont.h`): no TrueType font can be made, so the width of a text in
+  a TrueType font is 0. The metrics of the layout (`TCFont::SplitIntoLines`, `GetTextDimension`) are done for both kinds of fonts.
 
 `TGText` stays `in-progress` in `manifest/proprietary_classes.tsv` until the glyphs are printed (the Lua hooks are done).
 
