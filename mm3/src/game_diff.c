@@ -14,7 +14,7 @@ uint32_t mm3_rng_get(void);
 
 #define H(name) void host_##name(Cpu *c)
 H(mazeNeighbourSlot); H(mazeGetWordRel); H(mazeGetWordWrap); H(mazeGetFlagsRel); H(mazeSetBits); H(markCellVisited); H(isCellVisited); H(setBit); H(isBitSet);
-H(moveMonsters); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
+H(moveMonsters); H(setSpeedTable); H(getMonsterResistance); H(Spells_subSpellCost); H(moveMonsterBy); H(itemPrice); H(checkClasses); H(rollAttributes); H(getThievery); H(getWeaponDamage); H(hitMonster); H(charSavingThrow); H(worstCondition); H(checkPartyDead); H(allHaveGone); H(charsCantAct); H(subtractHitPoints);
 H(getCurrentExperience); H(nextExperienceLevel); H(experienceToNextLevel); H(giveExperience);
 
 static uint32_t rs = 1;
@@ -139,10 +139,22 @@ static void setup_moveall(unsigned iter, uint16_t *a) {
 	for (int col = 0; col < 8; col++) { uint16_t at = (uint16_t[]){ 0xF03A, 0, 0, 0, 0, 0, 0, 0 }[col]; if (at) { wr16(DG, at, 0x4000); wr16(DG, at + 2, 0x9000); } }
 	for (int i = 0; i < 80; i++) MEM[0x90000 + 0x4000 + i] = rnd(3) == 0 ? 1 : 0;
 }
+static void setup_speed(unsigned iter, uint16_t *a) {
+	(void)a; randomize_party();
+	DG[0xACC1] = 1 + rnd(6);
+	for (int i = 0; i < 8; i++) DG[0xECC9 + i] = rnd(6);
+	for (int i = 0; i < 3; i++) DG[0xC4A2 + i] = rnd(2) ? 0 : 1 + rnd(8);
+	for (int m = 0; m < 9; m++) wr16(DG, 0xB6BC + m * 2, rnd(80));
+	wr16(DG, 0xF02E, 0x4000); wr16(DG, 0xF030, 0x9000);
+	for (int i = 0; i < 80; i++) MEM[0x90000 + 0x4000 + i] = rnd(40);
+	for (int i = 0; i < 12; i++) DG[0xAD54 + i] = rnd(10);
+	DG[0x150] = (iter % 4 == 0) ? 0xFF : rnd(DG[0xACC1] + 3);
+}
 static void setup_damage(unsigned iter, uint16_t *a) { (void)iter; randomize_conditions(); a[0] = 0xB9D6 + rnd(6) * 0x12F; a[1] = rnd(80); }
 
 typedef struct { const char *name; void (*host)(Cpu *); int nargs, ret; void (*setup)(unsigned, uint16_t *); } DiffCase;
 static const DiffCase cases[] = {
+	{ "setSpeedTable", host_setSpeedTable, 0, 0, setup_speed },
 	{ "moveMonsters", host_moveMonsters, 0, 0, setup_moveall },
 	{ "getMonsterResistance", host_getMonsterResistance, 1, 1, setup_resist },
 	{ "Spells_subSpellCost", host_Spells_subSpellCost, 2, 1, setup_spellcost },

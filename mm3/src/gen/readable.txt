@@ -27,3 +27,4 @@ getMonsterResistance
 Spells_subSpellCost
 moveMonsterBy
 moveMonsters
+setSpeedTable

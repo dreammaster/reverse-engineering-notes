@@ -256,7 +256,6 @@ getMonsterDescriptions
 nextChar
 quickFight
 run
-setSpeedTable
 sub_27F63
 sub_282DE
 checkDrawListOverflow

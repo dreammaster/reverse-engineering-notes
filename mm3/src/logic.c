@@ -414,3 +414,43 @@ void mm3_move_monsters(const Mm3Game *g) {
 	}
 	if (dg[MM3_DG_MOVE_COMBAT]) g->hooks->monsters_attack();
 }
+
+/* ---- combat order */
+/* setSpeedTable: builds the turn order of a combat round.  The party members (by their speed stat) and the up to three monster
+ * groups (by the monster speed column) are ranked fastest first into the 12 byte table at AD54h (slot numbers: 0..partySize-1
+ * are the party in combat order, partySize.. the groups); ties keep the lower slot first.  The "current slot" (byte_28840) is
+ * re-found in the new order so the character whose turn it was stays current. */
+void mm3_set_speed_table(Mm3Game *g) {
+	uint8_t *dg = g->dg;
+	Mm3Rules rules = { dg };
+	int8_t cur = (int8_t)dg[MM3_DG_CURRENT_SLOT];
+	int had_current = dg[MM3_DG_CURRENT_SLOT] != 0xFF;
+	int prev = (int8_t)dg[(uint16_t)(MM3_DG_SPEED_ORDER + cur)];
+	int16_t speed[12];
+	memset(dg + MM3_DG_SPEED_ORDER, 0xFF, 12);
+	for (int i = 0; i < 12; i++) speed[i] = -1;
+	int n = 0, fastest = 0;
+	unsigned party = dg[MM3_DG_COMBAT_PARTY_SIZE];
+	for (; (unsigned)n < party; n++) {
+		const Mm3Character *ch = (const Mm3Character *)(dg + MM3_DG_PARTY_CHARS + dg[MM3_DG_COMBAT_ORDER + n] * sizeof(Mm3Character));
+		speed[n] = (int16_t)mm3_char_stat(&rules, ch, MM3_STAT_SPEED, 0);
+		if (speed[n] > fastest) fastest = speed[n];
+	}
+	const uint8_t *col = g->mem + (unsigned)rd16(g, MM3_DG_MON_SPEED + 2) * 16;
+	int groups = 0;
+	for (int r = 0; r < 3; r++) {
+		unsigned m = dg[MM3_DG_MONSTER_ROWS + r];
+		if (!m) continue;
+		groups++;
+		speed[n] = col[(uint16_t)(rd16(g, MM3_DG_MON_SPEED) + rd16(g, MM3_DG_MON_COLUMN_OFFSET + (m - 1) * 2))]; /* groups are numbered from 1 */
+		if (speed[n] > fastest) fastest = speed[n];
+		n++;
+	}
+	int out = 0;
+	for (int s = fastest; s >= 0; s--)
+		for (unsigned k = 0; k < party + 3; k++)
+			if (speed[k] == s) dg[(uint16_t)(MM3_DG_SPEED_ORDER + out++)] = (uint8_t)k;
+	if (had_current && (int8_t)dg[(uint16_t)(MM3_DG_SPEED_ORDER + (int8_t)dg[MM3_DG_CURRENT_SLOT])] != prev)
+		for (int k = 0; k < (int)party + groups; k++)
+			if ((int8_t)dg[MM3_DG_SPEED_ORDER + k] == prev) { dg[MM3_DG_CURRENT_SLOT] = (uint8_t)k; break; }
+}

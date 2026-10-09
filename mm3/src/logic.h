@@ -67,6 +67,9 @@ enum {
 	MM3_DG_MON_GRID = 0x8EF4,             /* 32x32 bytes: how much of each cell is occupied */
 	MM3_DG_MON_SIZE = 0x1B20,             /* by monster type offset */
 	MM3_DG_MON_MOVED = 0xED74,
+	MM3_DG_CURRENT_SLOT = 0x150,           /* byte_28840: combat slot whose turn it is (FFh = none) */
+	MM3_DG_SPEED_ORDER = 0xAD54,           /* 12 bytes: slots in turn order */
+	MM3_DG_MON_SPEED = 0xF02E,             /* far pointer to the monster speed column */
 	MM3_DG_MONSTERS_MOVE_FLAG = 0x15C, MM3_DG_MONSTERS_SEEN_FLAG = 0x14D,
 	MM3_DG_MAZE_MONSTER_COUNT = 0xED72,
 	MM3_DG_PARTY_X = 0xE8F5, MM3_DG_PARTY_Y = 0xE8F6, MM3_DG_PARTY_FACING = 0xE8F4,
@@ -124,6 +127,7 @@ int mm3_monster_resistance(const Mm3Game *g, int kind);                         
 int mm3_spend_spell_cost(const Mm3Game *g, Mm3Character *ch, int spell);       /* Spells_subSpellCost: 0 paid, 1 not enough spell points, 2 not enough gems */
 void mm3_move_monster_by(const Mm3Game *g, int dx, int dy, int monster);       /* moveMonsterBy */
 
+void mm3_set_speed_table(Mm3Game *g);                                           /* setSpeedTable: turn order of a combat round */
 void mm3_move_monsters(const Mm3Game *g);                                       /* moveMonsters: the monsters near the party take a step towards it / shoot */
 
 #endif
