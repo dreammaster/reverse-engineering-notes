@@ -44,8 +44,14 @@ public:
 		return _memorySize;
 	}
 
-	int width = 0;
-	int height = 0;
+	~TSpriteHandle();
+
+	/** +0x20: a bit for every 4th pixel of every 4th line, set where the picture is transparent (see
+	 *  TPictureMEM::CreateTransparencyBitmap()); `bitmapRowBytes` (+0x28) bytes to a line. Null: no hit testing by pixel. */
+	unsigned char *transparencyBitmap = nullptr;
+	int bitmapRowBytes = 0;
+	int width = 0;   // +0x2C
+	int height = 0;  // +0x30
 	/** +0x08: the parts (owned by the handle in the original; a backend that cuts sprites up fills this). */
 	std::vector<TSpritePartHandle *> parts;
 

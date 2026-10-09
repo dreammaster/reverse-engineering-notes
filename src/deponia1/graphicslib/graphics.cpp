@@ -73,6 +73,17 @@ TSpriteHandle *TGraphicsInterface::GetSpriteFromCache(const wxString &/*name*/) 
 void TGraphicsInterface::OnSpriteHandleReleased(TSpriteHandle */*handle*/) {
 }
 
+void TGraphicsInterface::Draw(TSpriteHandle */*sprite*/, const wxRect &/*sourceRect*/, const FloatRect &/*destRect*/,
+                              float /*alpha*/, bool /*mirrored*/, const unsigned int &/*color*/, int /*shader*/,
+                              float /*rotation*/, const wxPoint &/*rotationCenter*/, float /*scaleX*/, float /*scaleY*/,
+                              int /*matrixId*/) {
+}
+
+void TGraphicsInterface::DrawWithLightMap(TSpriteHandle */*sprite*/, const wxRect &/*sourceRect*/,
+                                          const FloatRect &/*destRect*/, float /*alpha*/, bool /*mirrored*/,
+                                          void */*lightMap*/, const wxPoint &/*offset*/) {
+}
+
 void TGraphicsInterface::BeginBatch() {
 }
 

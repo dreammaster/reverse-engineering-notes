@@ -1,5 +1,9 @@
 #include "TSpriteHandle.h"
 
+TSpriteHandle::~TSpriteHandle() {
+	delete[] transparencyBitmap;
+}
+
 void TSpriteHandle::AddRef() {
 	++_refCount;
 }

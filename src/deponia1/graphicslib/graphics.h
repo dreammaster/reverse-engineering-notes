@@ -103,6 +103,20 @@ public:
 		_height = height;
 	}
 
+	/** Slot 0x70 (TGraphicsOGL::Draw(void *, ...), asm 715317-716895): draws the part `sourceRect` (pixels of the sprite) of the
+	 *  sprite on the screen at `destRect`, `alpha` opaque, `mirrored`, with `color` (0xAABBGGRR; the picture is multiplied
+	 *  by it, premultiplied with the alpha), with the shader number `shader` (-1: the default), turned by `rotation` and
+	 *  scaled by `scaleX`/`scaleY` about `rotationCenter` (-1 for a coordinate: the middle of the rectangle), through the
+	 *  matrix `matrixId` (1 or more: through the matrices that the scripts set). While a batch is open (BeginBatch()) the
+	 *  quads are collected and rotation, scale and matrix are not used. The backend's.  */
+	virtual void Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha, bool mirrored,
+	                  const unsigned int &color, int shader, float rotation, const wxPoint &rotationCenter, float scaleX,
+	                  float scaleY, int matrixId);
+	/** Slot 0x78 (TGraphicsOGL::DrawWithLightMap): the same, the picture multiplied by `lightMap` (the light map's pixels,
+	 *  moved by `offset`). */
+	virtual void DrawWithLightMap(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha,
+	                              bool mirrored, void *lightMap, const wxPoint &offset);
+
 	/** Confirmed (asm 772807-773531, two overloads): narrows the rectangle `left`, `top`, `width`, `height` of a picture of
 	 *  4-byte pixels (`rgba`, alpha the last byte) to what has something in it - the lines at the top and the bottom and
 	 *  the columns at the left and the right that are transparent are taken off. On return `left` and `top` are how much

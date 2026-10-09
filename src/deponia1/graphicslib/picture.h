@@ -98,7 +98,12 @@ public:
 	bool WritePicture(TPictureFormat &format, const wxFileName &file) const;
 
 	wxRect GetDestRect() const;
-	void PreparePaint(wxRect &destRect, FloatRect &srcRect);
+	/** Confirmed (asm 788872-789051): works out where the picture is drawn. `sourceRect` is the part of the sprite (all of
+	 *  it: 0, 0, the image size; mirrored: moved to the other side), `destRect` where it is on the screen (the position of
+	 *  the picture plus the origin of the paint control, less its scroll position times the parallax and its scroll
+	 *  position, in floats; the size is the image size times the scale); the rectangle in screen pixels is kept in
+	 *  GetDestRect(). Needs the current paint control. */
+	void PreparePaint(wxRect &sourceRect, FloatRect &destRect);
 	unsigned long GetSpriteMemSize() const;
 	TSpriteHandle *GetSpriteHandle() const;
 
@@ -162,7 +167,7 @@ private:
 	TSpriteHandle *_spriteHandle = nullptr;
 	bool _flag90 = false;
 	wxRect _destRect;      // +0x94-0xA0 in the original - guessed from GetDestRect()
-	bool _ownsSprite = false;  // +0xA4, set from the (TSprite,bool) ctor's bool param
+	bool _ownsSprite = false;  // +0xA4, set from the (TSprite,bool) ctor's bool param (CreateSprite() makes the transparency bitmap when it is set)
 	int _parallaxX = 0;
 	int _parallaxY = 0;
 	int _field78 = 0;      // reset (only) when Set() is called with an unchanged sprite
