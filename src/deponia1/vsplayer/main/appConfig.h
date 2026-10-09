@@ -57,3 +57,10 @@ bool ConvertStringToSize(const wxString &text, wxSize &size);
 
 /** Reads the settings file at `path` into the places; false when there is no such file or a line has no `=`. */
 bool LoadConfigFile(const wxString &path, const TConfigTargets &targets);
+
+/** Confirmed (asm 503046-504200): writes the five volumes (0 to 100) into config.ini in the config directory
+ *  (MusicVolume, SoundVolume, SpeechVolume, MovieVolume, GlobalVolume, the order of the arguments): the lines of the old file that
+ *  begin with one of the five names (in any case) are left out and the five new lines are put at the end, through a temporary
+ *  file config.tmp (the old file is moved to config.tmp2 while the new one takes its place, then that is deleted). The file and
+ *  the directory are made if they do not exist. */
+void WriteVolume(int music, int sound, int speech, int movie, int global);

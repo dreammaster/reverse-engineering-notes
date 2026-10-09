@@ -1,10 +1,14 @@
 #include "vsplayer/main/appConfig.h"
 
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 #include <cwctype>
 #include <fstream>
 #include <string>
 
 #include "AppGlobals.h"
+#include "TStandardPaths.h"
 
 static bool equalNoCase(const std::wstring &a, const wchar_t *b) {
 	size_t length = std::wcslen(b);
@@ -263,4 +267,75 @@ bool LoadConfigFile(const wxString &path, const TConfigTargets &targets) {
 	}
 
 	return !lineWithoutEquals;
+}
+
+// Confirmed (asm lines 503046-504200)
+void WriteVolume(int music, int sound, int speech, int movie, int global) {
+	TStandardPaths paths;
+	std::wstring directory = paths.GetConfigDir();
+	std::wstring path = directory + L"config.ini";
+	std::string narrowPath = static_cast<const char *>(wxString(path).mb_str());
+
+	// (no file: the directory and an empty file are made)
+	{
+		std::ifstream probe(narrowPath.c_str());
+
+		if (!probe.is_open()) {
+			if (!wxDir::Exists(wxString(directory))) {
+				if (!wxFileName::Mkdir(wxString(directory), 0777, 0) && wxLog::loglevel >= 0)
+					wxLog::logexpanded(L"cannot create directory (%s) for logfile", directory.c_str());
+			}
+
+			std::ofstream create(narrowPath.c_str());
+		}
+	}
+
+	std::ifstream input(narrowPath.c_str());
+
+	if (!input.is_open())
+		return;
+
+	std::string temporaryPath = static_cast<const char *>(wxString(directory + L"config.tmp").mb_str());
+	std::ofstream output(temporaryPath.c_str());
+
+	if (!output.is_open())
+		return;
+
+	static const char *const kNames[5] = {"musicvolume", "soundvolume", "speechvolume", "movievolume", "globalvolume"};
+	std::string line;
+
+	while (std::getline(input, line)) {
+		if (!line.empty() && line.back() == '\r')
+			line.pop_back();
+
+		std::string lower = line;
+
+		for (char &c : lower)
+			c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+
+		bool replaced = false;
+
+		for (const char *name : kNames) {
+			if (lower.compare(0, std::strlen(name), name) == 0)
+				replaced = true;
+		}
+
+		if (!replaced)
+			output << line << "\n";
+	}
+
+	output << "MusicVolume = " << music << "\n";
+	output << "SoundVolume = " << sound << "\n";
+	output << "SpeechVolume = " << speech << "\n";
+	output << "MovieVolume = " << movie << "\n";
+	output << "GlobalVolume = " << global << "\n";
+	input.close();
+	output.close();
+
+	// the new file takes the place of the old one
+	std::string swapPath = static_cast<const char *>(wxString(directory + L"config.tmp2").mb_str());
+
+	std::rename(narrowPath.c_str(), swapPath.c_str());
+	std::rename(temporaryPath.c_str(), narrowPath.c_str());
+	std::remove(swapPath.c_str());
 }
