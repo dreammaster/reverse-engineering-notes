@@ -59,7 +59,7 @@ void THScene::OnEvent(TEventEnum /*event*/, int field, TVisionaireObject * /*obj
 		sounds->FinishSoundFade();
 		g_pGameControl->GetSoundManager()->Play(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
 		                                        scene.GetInt(kSceneMusicBalance), true, TSoundTypeEnum::kMusic, true, 0);
-		g_pGameControl->GetSoundManager()->StartSoundFade(TFadeEnum::kValue4, 3000, false);
+		g_pGameControl->GetSoundManager()->StartSoundFade(TFadeEnum::kToNew, 3000, false);
 		break;
 	}
 	case kSceneBrightness: {

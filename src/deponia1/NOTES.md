@@ -3508,6 +3508,18 @@ to and from Lua tables. What the scripts see:
   left button a right one. A controller can move the mouse (`movex`, `movey`) and walk the character (`charmovex`,
   `charmovey`).
 
+## The sound engine (TSoundInterface, TSoundBase, TSoundFFMPEG)
+
+`TSoundInterface` (mmedialib/sound.cpp) has the volumes and the background music; `TSoundBase` (mmedialib/soundBase.cpp)
+keeps a list of `TSoundItem`s and does what does not depend on how a sound is played; `TSoundFFMPEG` makes the items
+(`TFFMPEGSoundItem`, with an OpenAL stream in the original - here a `TSoundStream` from `CreateStream()`). A sound has
+an id (a counter), a name (the file up to a `#`), and flags: paused, stopped (a streamed sound that is over and kept
+for the same file), streamed (kept), dead (over, to be let go by `Update()`), and its state in a fade. Things the asm
+shows: the balance that `GetBalance` gives is the pan (-1 to 1) cut to an integer, so nearly always 0; `SetStats` with a
+non-zero offset puts the sound at the offset `Play` was given, not at the one passed; `SetStats` can switch the loop of
+a stream on but never off; `PlaySound` is `TSoundFFMPEG::Play(file, volume, balance, loop, streamed, fadeIn, type,
+offset)` (the earlier order of its arguments was wrong). The fades are described at the top of `TSoundBase.h`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

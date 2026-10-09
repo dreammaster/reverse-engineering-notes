@@ -19,7 +19,7 @@ static wxString musicName(const wxFileName &file) {
 
 // Confirmed (asm lines 1106061-1106085)
 TSoundInterface::TSoundInterface()
-	: _disabled(false), _flag(false), _field0C(0), _soundVolume(100), _musicVolume(100), _speechVolume(100),
+	: _disabled(false), _muted(false), _soundFade(0), _fadeDuration(0.0f), _soundVolume(100), _musicVolume(100), _speechVolume(100),
 	  _movieVolume(100), _globalVolume(100) {
 }
 
@@ -44,7 +44,7 @@ void TSoundInterface::Signal(const TSignalData &signal, TSignalData &result) {
 		break;
 	case kSignalSoundFlag:
 		result.type = kSignalSoundFlag;
-		result.value = _flag;
+		result.value = _muted;
 		break;
 	case kSignalSoundMute:
 		Mute(signal.value != 0);
@@ -98,7 +98,7 @@ int TSoundInterface::Play(const wxFileName &file, int volume, int balance, bool 
 
 	if (type != TSoundTypeEnum::kMusic) {
 		// a sound: the speech (2) and the walking sound (3) are told to the engine as such
-		return PlaySound(file, volume, balance, loop, type == TSoundTypeEnum::kSound2, (int)type, false, value);
+		return PlaySound(file, volume, balance, loop, type == TSoundTypeEnum::kSound2, false, type, value);
 	}
 
 	if (musicName(file).Cmp(musicName(_backgroundMusic)) == 0) {
@@ -114,7 +114,7 @@ int TSoundInterface::Play(const wxFileName &file, int volume, int balance, bool 
 		FadeOut(_backgroundMusic);
 
 	_backgroundMusic = file;
-	return PlaySound(_backgroundMusic, volume, balance, true, false, 0, flag, value);
+	return PlaySound(_backgroundMusic, volume, balance, true, false, flag, TSoundTypeEnum::kMusic, value);
 }
 
 // Confirmed (asm lines 1106703-1106745)
@@ -158,7 +158,7 @@ void TSoundInterface::SetVolume(int music, int sound, int speech, int movie, int
 	if ((unsigned int)global <= 100)
 		_globalVolume = global;
 
-	VolumesChanged();
+	AdjustVolume(music, sound, speech, movie, global);
 }
 
 // Confirmed (asm lines 1107204-1107268)
@@ -276,14 +276,31 @@ bool TSoundInterface::IsSoundSystemReady() const {
 }
 
 int TSoundInterface::PlaySound(const wxFileName &/*file*/, int /*volume*/, int /*balance*/, bool /*loop*/,
-                               bool /*walking*/, int /*type*/, bool /*flag*/, int /*value*/) {
+                               bool /*streamed*/, bool /*fadeIn*/, TSoundTypeEnum /*type*/, int /*offset*/) {
 	return -1;
 }
 
 void TSoundInterface::FadeOut(const wxFileName &/*file*/) {
 }
 
-void TSoundInterface::VolumesChanged() {
+void TSoundInterface::AdjustVolume(int /*music*/, int /*sound*/, int /*speech*/, int /*movie*/, int /*global*/) {
+}
+
+void TSoundInterface::Update() {
+}
+
+void TSoundInterface::BusActivate(TVList */*busses*/) {
+}
+
+wxString TSoundInterface::GetExistingSoundFromID(int /*id*/) const {
+	return wxString();
+}
+
+float TSoundInterface::GetSampleAvg(int /*id*/) const {
+	return 0.0f;
+}
+
+void TSoundInterface::PrintSounds(std::list<wxString> &/*lines*/) const {
 }
 
 void TSoundInterface::Play(const wxFileName &/*file*/) {

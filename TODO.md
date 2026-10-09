@@ -117,8 +117,7 @@ reconstructed. `TGInterface` stays `in-progress` until then.
 
 `src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`.
 
-- The sound manager's side of the speech signals (`TSignalData.h`: `kSignalSpeech*`) - `TSoundBase`
-  and `TSoundFFMPEG` are not reconstructed.
+- The sound manager's side of the speech signals (`TSignalData.h`: `kSignalSpeech*`).
 - Printing the glyphs: `TFontManager::PrintTextLines()` and `TCFont` (the buffers a text keeps are
   `GLCharBuffer`s).
 
@@ -154,6 +153,9 @@ missing elsewhere:
 - The Lua bridge is partly there (see below): the script commands 137 and 138 now run their text through
   `LuaDoString()`, but nothing starts the Lua state yet (`InitPlayerCommands()` is not called), and the drawing
   functions of the scripts (`InitDrawLua()`) are missing.
-- The sound engine (`TSoundBase`, `TSoundFFMPEG`): the commands call the sound manager the way the
-  original does, but nothing plays (see `TSoundInterface.h` for the virtual surface).
+- The sound engine: `TSoundBase` (the list of the sounds, pause/mute, the fades) and the bookkeeping of
+  `TSoundFFMPEG` are done (`TSoundBase.cpp`, `TSoundFFMPEG.cpp`), but nothing plays: the streams
+  (`soundengine::Stream`, OpenAL buffers, the FFmpeg decoding, `AudioDataSourceFFMPEG`, the thread that calls `Update()`)
+  and the audio busses (`soundengine::AudioBus`, `BusActivate`/`BusValuesUpdate`) are not reconstructed.
+  `TSoundFFMPEG::CreateStream()` is where a backend (ScummVM's mixer) gives the engine a `TSoundStream`.
 - Command 122 (0x7A) is an if (`IsIFActionPart`) that has no entry in the jump table: it does nothing.

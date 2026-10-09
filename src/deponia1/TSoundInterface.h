@@ -7,8 +7,8 @@
 // bottom, which the engine implements. TMasterControl's own TSoundFFMPEG* _soundManager is passed
 // as a TSoundInterface* (TGameControl::LoadAndInitGame, Deponia_Linux.asm lines 468227-468230).
 //
-// The sound engine is not reconstructed yet, so each of the engine's methods does nothing and
-// answers "no sound". Their places in the vtable (TSoundBase's, Deponia_Linux.asm line 3437456,
+// TSoundBase (TSoundBase.h) is the engine that keeps the list of the sounds; here the methods of the engine do
+// nothing and answer "no sound". Their places in the vtable (TSoundBase's, Deponia_Linux.asm line 3437456,
 // whose entries carry their symbols; the slot is the offset / 8):
 //   0x00 Signal(TSignalData const &, TSignalData &), 0x08/0x10 destructors,
 //   0x18 Mute(bool), 0x20 Continue(TSoundTypeEnum), 0x28 Pause(TSoundTypeEnum), 0x30 ContinueAll(),
@@ -22,17 +22,22 @@
 //   0xB8 GetSampleAvg(int) const, 0xC0 IsLoop(int) const, 0xC8 BusActivate(TVList *),
 //   0xD0 BusValuesUpdate(), 0xD8 FinishSoundFade(), 0xE0 StartSoundFade(TFadeEnum, int, bool),
 //   0xE8 UpdateSoundFade(bool), 0xF0 PrintSounds(std::list<wxString> &) const,
-//   0xF8 Keep(wxFileName const &), 0x100 (the engine's), 0x108 (whether the sound system works),
-//   0x110 (plays a sound), 0x118 FadeOut(wxFileName const &), 0x120 (the volumes changed), 0x128.
+//   0xF8 Keep(wxFileName const &), 0x100 Update() (TSoundFFMPEG's), 0x108 IsSoundInitialized() (the sound system
+//   works), 0x110 Play() (plays a sound, TSoundFFMPEG::Play), 0x118 FadeOut(wxFileName const &),
+//   0x120 AdjustVolume(music, sound, speech, movie, global) (the volumes changed), 0x128 SetStats(TSoundItem *, ...).
 //
-// Original layout: +0x08 whether sounds are turned off, +0x09 a flag (answers kSignalSoundFlag),
-// +0x0C an int (0), +0x10 a timer, +0x28 the background music's file, +0x30 the volume of the sounds,
+// Original layout: +0x08 whether sounds are turned off, +0x09 whether the sounds are muted (answers
+// kSignalSoundFlag), +0x0C the fade that is running (TFadeEnum, 0: none), +0x10 the timer of the fade, +0x20 the time
+// of the fade in milliseconds (float), +0x28 the background music's file, +0x30 the volume of the sounds,
 // +0x34 of the music, +0x38 of the speech, +0x3C of the movies, +0x40 of all (percent).
 #pragma once
+
+#include <list>
 
 #include "TSignalSlot.h"
 #include "TTimer.h"
 #include "WxStub.h"
+#include "datastruct/vlist.h"
 
 // The kinds of sound (what volume they play with: AdjustToGeneralVolume()). Named by the volume
 // they are adjusted with: 0 the music (the background music of a scene, THScene), 1 the sounds (of the
@@ -47,9 +52,17 @@ enum class TSoundTypeEnum {
 	kGlobal = 5
 };
 
-// How a sound is faded (StartSoundFade()); only 4 (a new background music, THScene) has been seen.
+// How a sound is faded (StartSoundFade(); TSoundBase::GetFadeTypeAsString() has the names): the new sounds
+// fade in, the old ones out, or both one after the other, or the old ones out while the new ones come in (a new
+// background music, THScene). For a sound itself the value says what it is doing in the fade (kNone, kIn: it is
+// new, kOut: it goes) or kKeep: it is kept (Keep()).
 enum class TFadeEnum {
-	kValue4 = 4
+	kNone = 0,
+	kIn = 1,
+	kOut = 2,
+	kInAndOut = 3,
+	kToNew = 4,
+	kKeep = 10
 };
 
 class TSoundInterface : public TSignalSlot {
@@ -102,6 +115,8 @@ public:
 	/** Slots 0x38 and 0xD0: pauses all sounds (the window lost the focus); updates the values of the audio busses (each frame). */
 	virtual void PauseAll();
 	virtual void BusValuesUpdate();
+	/** Slot 0xC8: the audio busses of the game (a list of bus objects) are the active ones. */
+	virtual void BusActivate(TVList *busses);
 	virtual void ContinueAll();
 	virtual void CleanUp();
 	/** Stops the sound of `file`. */
@@ -122,6 +137,12 @@ public:
 	virtual int GetOffset(int id) const;
 	virtual int GetDuration(int id) const;
 	virtual bool IsLoop(int id) const;
+	/** Slots 0x68 and 0xB8: the name of the file of a sound that plays or is paused (empty: none); the average
+	 *  volume of the samples that play now. */
+	virtual wxString GetExistingSoundFromID(int id) const;
+	virtual float GetSampleAvg(int id) const;
+	/** Slot 0xF0: the lines of text that tell what sounds there are (for the console). */
+	virtual void PrintSounds(std::list<wxString> &lines) const;
 	/** Changes the volume and the balance of a sound that is playing, and its kind. */
 	virtual void SetStats(const wxFileName &file, int volume, int balance, TSoundTypeEnum type, bool flag, int value);
 	virtual bool IsPlaying(const wxFileName &file) const;
@@ -130,15 +151,19 @@ public:
 	virtual void UpdateSoundFade(bool update);
 	/** Keeps the sound of `file` loaded after it has played. */
 	virtual void Keep(const wxFileName &file);
+	/** Slot 0x100: the engine goes on (the sounds that have ended are let go). */
+	virtual void Update();
 	/** Whether the sound system works (a game without one has no speech). */
 	virtual bool IsSoundSystemReady() const;
-	/** The sound engine plays `file`; the id (-1: none). See Play() for the arguments. */
-	virtual int PlaySound(const wxFileName &file, int volume, int balance, bool loop, bool walking, int type,
-	                      bool flag, int value);
+	/** Slot 0x110: the sound engine plays `file`; the id (-1: none). `streamed`: the sound is kept when it is over and
+	 *  used again for the same file (the walking sound); `fadeIn`: it starts silently, to be faded in. See Play() for
+	 *  the others. */
+	virtual int PlaySound(const wxFileName &file, int volume, int balance, bool loop, bool streamed, bool fadeIn,
+	                      TSoundTypeEnum type, int offset);
 	/** The sound of `file` fades out. */
 	virtual void FadeOut(const wxFileName &file);
-	/** The volumes have changed. */
-	virtual void VolumesChanged();
+	/** Slot 0x120: the volumes have changed (-1: that one has not). */
+	virtual void AdjustVolume(int music, int sound, int speech, int movie, int global);
 
 	// Confirmed virtual (a distinct vtable slot from the ones named above
 	// - TLoadingControl::EndLoading, Deponia_Linux.asm lines 483759-483761)
@@ -148,9 +173,10 @@ public:
 
 protected:
 	bool _disabled;               // +0x08
-	bool _flag;                   // +0x09
-	int _field0C;                 // +0x0C
-	TTimer _timer;                // +0x10
+	bool _muted;                  // +0x09
+	int _soundFade;               // +0x0C, the fade that runs (TFadeEnum)
+	TTimer _timer;                // +0x10, since the fade began
+	float _fadeDuration;          // +0x20, milliseconds
 	wxFileName _backgroundMusic;  // +0x28
 	int _soundVolume;             // +0x30
 	int _musicVolume;             // +0x34
