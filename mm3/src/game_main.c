@@ -58,6 +58,9 @@ int main(int argc, char **argv) {
 		uint16_t seg = dos_alloc(0x1890);
 		wr16(DG, 0xABEC, 0); wr16(DG, 0xABEE, seg);
 	}
+	/* _main's copy-protection prompt (copy.bin) opens a window of text colour 0; closing a window restores the window state but not the glyph
+	 * colours, so for the rest of the game text printed outside a window (the town signs) is white */
+	mm3_ui_select_colour(G.ui, 0);
 	DG[0xE8F8] = DG[0xE8F9] = 1; /* Option_sfx, Option_music (set by _main before the intro) */
 	if (intro) game_call(call_introSequence, &c, NULL, 0);
 	game_call(call_loadMonsterData, &c, NULL, 0);

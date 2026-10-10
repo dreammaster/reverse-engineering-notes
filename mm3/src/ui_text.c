@@ -93,6 +93,7 @@ static int measure_char(Mm3Ui *ui, Cursor *c, uint16_t *bx, unsigned *last) {
 static void draw_glyph(Mm3Ui *ui, unsigned ch) {
 	unsigned y = ui->win.cy;
 	unsigned idx = (ch | ui->alt_font) & 0xFF;
+	if (getenv("MM3_GLYPHLOG") && ch == 'F') fprintf(stderr, "glyph F colours %02X %02X %02X alt %02X\n", ui->glyph_colours[1], ui->glyph_colours[2], ui->glyph_colours[3], ui->alt_font);
 	if (ch >= 'g' && (ch == 'g' || ch == 'p' || ch == 'q' || ch == 'y'))
 		y++;
 	for (int r = 0; r < 8; r++) {
@@ -431,6 +432,8 @@ void mm3_ui_close_windows(Mm3Ui *ui, int n) {
 		*win = ui->stack[ui->depth];
 	}
 }
+
+void mm3_ui_select_colour(Mm3Ui *ui, unsigned index) { select_colour(ui, index); }
 
 /* ---- setup */
 

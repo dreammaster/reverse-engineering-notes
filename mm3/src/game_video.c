@@ -214,12 +214,12 @@ static const char *far_str(Cpu *c, int n) { return (const char *)(SEGP(host_arg(
 void host_vdrv_06_closeWindows(Cpu *c) { mm3_ui_close_windows(G.ui, (int16_t)host_arg(c, 0)); }
 void host_vdrv_1E_openWindow(Cpu *c) {
 	uint16_t toff = host_arg(c, 8), tseg = host_arg(c, 9);
-	if (getenv("MM3_TEXTLOG") && (toff | tseg)) { const char *t = (const char *)(SEGP(tseg) + toff); fprintf(stderr, "WINDOW %d,%d %dx%d:", host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3)); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
+	if (getenv("MM3_TEXTLOG") && (toff | tseg)) { const char *t = (const char *)(SEGP(tseg) + toff); fprintf(stderr, "WINDOW %d,%d %dx%d col %d:", host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4)); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
 	mm3_ui_open_window(G.ui, host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4),
 		(toff | tseg) ? (const char *)(SEGP(tseg) + toff) : NULL);
 }
 void host_vdrv_2D_printText(Cpu *c) {
-	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
+	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fprintf(stderr, " [col %u gl %02X %02X %02X]", G.ui->win.colour, G.ui->glyph_colours[1], G.ui->glyph_colours[2], G.ui->glyph_colours[3]); fputc('\n', stderr); }
 	mm3_ui_print(G.ui, far_str(c, 0));
 }
 

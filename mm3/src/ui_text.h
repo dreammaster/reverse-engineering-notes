@@ -73,6 +73,8 @@ void mm3_ui_set_screen(Mm3Ui *ui, uint8_t *screen);
 
 void mm3_ui_print(Mm3Ui *ui, const char *text);
 /* vdrv_1E_openWindow: x, y, width, height in pixels, text colour index, text printed in the new window (may be NULL). */
+/* glyph colours of text colour index `index` (what opening a window of that colour leaves behind, even after it is closed) */
+void mm3_ui_select_colour(Mm3Ui *ui, unsigned index);
 void mm3_ui_open_window(Mm3Ui *ui, int x, int y, int w, int h, int colour, const char *text);
 void mm3_ui_close_windows(Mm3Ui *ui, int n);
 
