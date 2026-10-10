@@ -54,6 +54,13 @@ int main() {
 		TVisObjRef part2 = game.CreateObject(8, action, kActionActionParts);
 		part2.SetValue(kActionPartCommand, kCommandWait, TSendEventEnum::kNoEvent);
 		part2.SetValue(kActionPartInt, 30, TSendEventEnum::kNoEvent);
+		TVisObjRef ways = game.CreateObject(29, scene, kSceneWaySystems);
+		std::vector<wxPoint> border = {{0, 0}, {640, 0}, {640, 480}, {0, 480}};
+		ways.SetValue(kWaySystemBorder, border, TSendEventEnum::kNoEvent);
+		scene.SetLink(kSceneCurrentWaySystem, ways, true);
+		TVisObjRef outfit = game.CreateObject(17, hero, kCharacterOutfits);
+		outfit.SetValue(kOutfitCharacterSpeed, 100, TSendEventEnum::kNoEvent);
+		hero.SetLink(kCharacterCurrentOutfit, outfit, true);
 		TVisObjRef counter = game.CreateObject(20, scene, kSceneValues);
 		counter.SetName(TCharHolder("Counter"));
 		TVisObjRef partValue = game.CreateObject(8, action, kActionActionParts);
@@ -61,6 +68,20 @@ int main() {
 		partValue.SetLink(kActionPartLink, counter, true);
 		partValue.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
 		partValue.SetValue(kActionPartAltInt, 5, TSendEventEnum::kNoEvent);
+		auto addPart = [&](int command, TVisObjRef link, int intValue, int altInt) {
+			TVisObjRef part = game.CreateObject(8, action, kActionActionParts);
+			part.SetValue(kActionPartCommand, command, TSendEventEnum::kNoEvent);
+			if (!link.IsEmpty())
+				part.SetLink(kActionPartLink, link, true);
+			part.SetValue(kActionPartInt, intValue, TSendEventEnum::kNoEvent);
+			part.SetValue(kActionPartAltInt, altInt, TSendEventEnum::kNoEvent);
+			return part;
+		};
+		addPart(kCommandIfValue, counter, 0, 5);
+		addPart(kCommandSetValue, counter, 0, 7);
+		addPart(kCommandElse, TVisObjRef(), 0, 0);
+		addPart(kCommandSetValue, counter, 0, 99);
+		addPart(kCommandEndIf, TVisObjRef(), 0, 0);
 		TVisObjRef part3 = game.CreateObject(8, action, kActionActionParts);
 		part3.SetValue(kActionPartCommand, kCommandCharacterGoTo, TSendEventEnum::kNoEvent);
 		part3.SetLink(kActionPartLink, hero, true);
@@ -84,7 +105,7 @@ int main() {
 		font.SetValue(kFontLetters, rects, TSendEventEnum::kNoEvent);
 		font.SetValue(kFontAlphabet, wxString(L"abcdefghijklmnopqrstuvwxyz"), TSendEventEnum::kNoEvent);
 		gameRef.SetLink(kGameActionTextFont, font, true);
-		TVisObjRef text = game.CreateObject(14, gameRef, kGameTexts);
+		TVisObjRef text = game.CreateObject(14, hero, kCharacterTexts);
 		text.SetName(TCharHolder("Hello"));
 		TVisObjRef partText = game.CreateObject(8, action, kActionActionParts);
 		partText.SetValue(kActionPartCommand, kCommandShowText, TSendEventEnum::kNoEvent);
