@@ -194,6 +194,7 @@ void TTDialogPart::OnCreate(TVisionaireObject *object) {
 }
 
 void TTDialogPart::OnInit(TVisionaireObject *object) {
+	object->SetValue(kDialogPartAvailable, true, TSendEventEnum::kNoEvent);
 }
 
 // Confirmed (TTDialogPart::GenerateName(), asm lines 1465352-1465760): the position (counted from 1)
@@ -377,6 +378,7 @@ void TTScene::OnInit(TVisionaireObject *object) {
 }
 
 void TTScript::OnCreate(TVisionaireObject *object) {
+	object->SetValue(kScriptType, 1, TSendEventEnum::kSendEvent);
 }
 
 void TTScript::OnInit(TVisionaireObject *object) {

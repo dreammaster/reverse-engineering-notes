@@ -114,151 +114,251 @@ void TMasterControl::EnableMovies(bool enable) {
 	_moviesEnabled = enable;
 }
 
+// Confirmed (asm lines 485602-485732): every interface in the list is drawn, from the last to the first (the list is
+// walked backwards), if it is shown always, or the game does not hide the interfaces and no movie plays. The whole is
+// skipped only in a scene that is a menu when the game hides the interfaces in the menus and no movie plays.
 void TMasterControl::DrawInterfaces() {
-	// The original gates this on several TVisObjRef::GetBool() field-id
-	// checks (ids 0x274, 0x315, 0x1DF, 0x124) whose meaning isn't resolved
-	// (see datastruct/visobjref.h) - reproduced structurally: only draw the
-	// registered interfaces when the game data says to.
 	TVisObjRef game = _visionaire->GetGame();
-	TVisObjRef link = game.GetLink(kGameCurrentScene);
-	bool shouldDraw = link.IsEmpty() ? link.GetBool(kSceneIsMenu) : !link.GetBool(kGameAutoHideInterfacesInMenu);
-	if (!shouldDraw)
+	TVisObjRef scene = game.GetLink(kGameCurrentScene);
+	// (an empty scene reads as no menu)
+	const bool draw = !game.GetBool(kGameAutoHideInterfacesInMenu) || _videoPlaying || !scene.GetBool(kSceneIsMenu);
+
+	if (!draw)
 		return;
 
-	for (TGInterface *interface : _activeInterfaces)
-		interface->Draw();
+	for (auto it = _activeInterfaces.rbegin(); it != _activeInterfaces.rend(); ++it) {
+		TGInterface *interface = *it;
+
+		if (interface->GetRef().GetBool(kInterfaceShowAlways) || (!game.GetBool(kGameHideInterfaces) && !_videoPlaying))
+			interface->Draw();
+	}
 }
 
-bool TMasterControl::Draw(bool showActionText) {
-	wxPoint savedScrollPos{};
+// Confirmed (asm lines 486009-486597): one frame. With `lock` (the main loop) it holds g_loadingScreenLock while it
+// draws, brackets the drawing with the backend's BeforeDrawScene()/AfterDrawScene() and shows the frame in the end (the
+// loading screen thread calls it without). The scene and what the scripts draw before and after it, the interfaces, the
+// texts or the dialog (the part of the game that is on top), the action text near the cursor - or in the rectangle of the
+// game, and the cursor. The setting kGameShaderExclude (0-3) says which of the three parts is drawn through the matrices
+// of the scripts. An earthquake shakes the scroll position for the time of the frame.
+void TMasterControl::Draw(bool lock) {
+	if (lock)
+		g_loadingScreenLock.Enter();
+
+	wxPoint savedScrollPos;
+
 	if (_earthquakeActive) {
 		TPaintControl *scene = _sceneControl->GetScene();
+
 		savedScrollPos = scene->GetScrollPos();
 
 		if (_earthquakeTimer.GetTime() > _earthquakeJitterInterval) {
-			int range = _earthquakeAmount * 2;
-			_earthquakeOffsetX = range ? (std::rand() % range - _earthquakeAmount) : 0;
-			_earthquakeOffsetY = range ? (std::rand() % range - _earthquakeAmount) : 0;
+			_earthquakeOffsetX = (_earthquakeAmount != 0) ? std::rand() % (_earthquakeAmount * 2) - _earthquakeAmount : 0;
+			_earthquakeOffsetY = (_earthquakeAmount != 0) ? std::rand() % (_earthquakeAmount * 2) - _earthquakeAmount : 0;
 			_earthquakeTimer.SetTime();
 		}
 
-		wxPoint jittered{savedScrollPos.x - _earthquakeOffsetX, savedScrollPos.y - _earthquakeOffsetY};
-		_sceneControl->GetScene()->SetScrollPos(jittered);
+		scene->SetScrollPos(wxPoint{savedScrollPos.x - _earthquakeOffsetX, savedScrollPos.y - _earthquakeOffsetY});
 	}
 
-	if (!showActionText) {
-		for (const std::string &script : luaDrawBeforeScene)
-			LuaDoString(script, script);
+	matricesActive = true;
 
-		_sceneControl->Draw();
+	if (lock)
+		graphics->BeforeDrawScene(true, 0);
 
-		for (const std::string &script : luaDrawAfterScene)
-			LuaDoString(script, script);
+	for (size_t i = 0; i < luaDrawBeforeScene.size(); i++)
+		LuaDoString(luaDrawBeforeScene[i], luaDrawBeforeScene[i]);
 
-		TVisObjRef game = _visionaire->GetGame();
-		// Field id 0x313, meaning not resolved: picks one of three render
-		// paths below (interfaces-only / scene-without-action-text / normal
-		// with action text). The original tracks this in a local it also
-		// reuses for the action-text positioning mode further down (its
-		// `r13d`) - split into two clearly-named locals here instead.
-		int drawMode = game.GetInt(kGameShaderExclude);
+	_sceneControl->Draw();
 
-		if (drawMode == 1) {
-			graphics->SetMatrixMode(false, true);
-			graphics->ResetMatrix(false, false);
-			DrawInterfaces();
-		} else {
-			if (drawMode == 2) {
-				graphics->SetMatrixMode(true, false);
-				graphics->ResetMatrix(false, false);
-			}
-			TPaintControl *scene = _sceneControl->GetScene();
-			if (scene->IsActive() && !DisplayTexts()) {
-				SetCurrent();
-				if (_cursorControl->IsActive())
-					_cursorControl->Draw();
-			}
-			if (drawMode != 2 && !DisplayDialog()) {
-				// Action-text overlay: fetch the currently-hovered object's
-				// display text and draw it near the cursor, clamped to the
-				// window bounds. The original also supports a second,
-				// rect-relative positioning mode (selected by a value this
-				// reconstruction doesn't determine) - not reproduced here.
-				// Field id 0x24D recovered from the disassembly; its real
-				// meaning needs the data-schema system to name properly.
-				TVisObjRef link = game.GetLink(kGameActionTextFont);
-				_fontManager->SetCurrentFont(link);
-				wxString text = _objectManager.GetActionText();
-				wxPoint textSize;
-				_fontManager->GetTextDimension(text, textSize);
-				wxPoint drawPos = _cursorControl->GetPositionNextToCursor();
-				if (drawPos.x + textSize.x > _windowWidth)
-					drawPos.x = _windowWidth - textSize.x;
-				if (drawPos.y + textSize.y > _windowHeight)
-					drawPos.y = _windowHeight - textSize.y;
-				_fontManager->PrintText(text, TextAlignmentEnum::kLeft, drawPos, 1.0f);
-			}
+	for (size_t i = 0; i < luaDrawAfterScene.size(); i++)
+		LuaDoString(luaDrawAfterScene[i], luaDrawAfterScene[i]);
+
+	TVisObjRef game = _visionaire->GetGame();
+	const int shaderExclude = game.GetInt(kGameShaderExclude);
+
+	if (shaderExclude == 1) {
+		graphics->AfterDrawScene(false, true);
+		graphics->BeforeDrawScene(false, 0);
+		matricesActive = false;
+		DrawInterfaces();
+	} else {
+		DrawInterfaces();
+
+		if (shaderExclude == 2) {
+			graphics->AfterDrawScene(false, true);
+			graphics->BeforeDrawScene(false, 0);
+			matricesActive = false;
 		}
+	}
 
-		for (const std::string &script : luaDrawAfterInterfaces)
-			LuaDoString(script, script);
+	bool cursorDrawn = false;
 
-		if (drawMode != 0) {
-			graphics->SetMatrixMode(false, false);
-			graphics->ResetMatrix(false, false);
+	if (_sceneControl->GetScene()->IsActive() && !DisplayTexts()) {
+		SetCurrent();
+
+		const int actionTextMode = game.GetInt(kGameDrawActionText);
+
+		if (!DisplayDialog() && actionTextMode != 0 && _cursorControl->IsActive()) {
+			TVisObjRef font = _visionaire->GetGame().GetLink(kGameActionTextFont);
+
+			_fontManager->SetCurrentFont(font);
+			_cursorControl->Draw();
+
+			wxString text = _objectManager.GetActionText();
+			wxPoint size;
+			wxPoint position;
+
+			_fontManager->GetTextDimension(text, size);
+
+			if (actionTextMode == 1) {
+				// next to the cursor, but inside the window
+				position = _cursorControl->GetPositionNextToCursor();
+
+				if (position.x + size.x > _windowWidth)
+					position.x = _windowWidth - size.x;
+
+				if (position.y + size.y > _windowHeight)
+					position.y = _windowHeight - size.y;
+			} else if (actionTextMode == 2) {
+				// in the middle of the rectangle of the game, at its top
+				const wxRect &rect = *_visionaire->GetGame().GetRect(kGameActionTextRect);
+
+				position.x = rect.GetLeft() + rect.GetWidth() / 2 - size.x / 2;
+				position.y = rect.GetTop();
+			}
+
+			_fontManager->PrintText(text, TextAlignmentEnum::kLeft, position, 1.0f, nullptr);
+			cursorDrawn = true;
 		}
-		DisplayInSceneConsole();
 	}
 
-	if (showActionText) {
-		graphics->Flip();
+	for (size_t i = 0; i < luaDrawAfterInterfaces.size(); i++)
+		LuaDoString(luaDrawAfterInterfaces[i], luaDrawAfterInterfaces[i]);
+
+	if (shaderExclude == 3) {
+		graphics->AfterDrawScene(false, true);
+		graphics->BeforeDrawScene(false, 0);
+		matricesActive = false;
 	}
-	return true;
+
+	if (!cursorDrawn) {
+		SetCurrent();
+
+		if (_cursorControl->IsActive())
+			_cursorControl->Draw();
+	}
+
+	matricesActive = false;
+	DisplayInSceneConsole();
+
+	if (lock) {
+		graphics->AfterDrawScene(false, shaderExclude == 0);
+		graphics->SetDirectToScreen();
+		DisplayConsole();
+		debugger.EndArea(ProfileArea::kValue3, -1);
+		graphics->Swap();
+	} else {
+		graphics->SetDirectToScreen();
+		DisplayConsole();
+	}
+
+	if (_earthquakeActive)
+		_sceneControl->GetScene()->SetScrollPos(savedScrollPos);
+
+	if (lock) {
+		lastFrameEnd = SDL_GetTicks();
+		g_loadingScreenLock.Leave();
+	}
 }
 
+// Confirmed (asm lines 486695-487099): the scroll of the scene towards the edge of the window that the mouse is near
+// (kGameCursorHorizontalScrollDistance/VerticalScrollDistance pixels from it). The speed (xspeed, yspeed) is eased in
+// with startspeed when the game has smooth scrolling, else it is 1 or -1 at once; in the middle of the window it eases
+// out to 0. The time since the last call (500 ms at most, else 1) is multiplied by the game's scroll speed.
+// (In the original the vertical speed that eases out does not move the scene, and the horizontal one only while it is
+// positive.)
 void TMasterControl::ScrollUpdate() {
-	// Camera edge-scroll easing: accelerate/decelerate the horizontal scroll
-	// toward the mouse cursor when it's near a window edge. Structure
-	// (worktop bounds check, exponential ease toward a target speed,
-	// AdjustWindowHorizontal) is confirmed from the disassembly; the exact
-	// tuning constants (start speed, easing factor) are gameplay-feel
-	// values that can't be verified without running the original, so
-	// they're approximated here rather than transcribed byte-for-byte.
 	if (_quitGame)
 		return;
 
 	TVisObjRef game = _visionaire->GetGame();
+
 	_easeDirectionFlag = game.GetBool(kGameSmoothScrolling);
 	_isScrolling = false;
 
 	TPaintControl *scene = _sceneControl->GetScene();
-	if (!scene->IsScrollable())
-		return;
 
-	int worktopWidth = scene->GetWorktopWidth();
-	FloatPoint floatScroll = scene->GetFloatScrollPos();
-	(void)floatScroll;  // used by the real easing formula; not reproduced here (see below)
-	int targetX = game.GetInt(kGameCursorHorizontalScrollDistance);   // field id not resolved - a scroll target x position
-	int edgeMargin = game.GetInt(kGameCursorVerticalScrollDistance);  // field id not resolved - an edge-scroll trigger margin
+	if (scene->IsScrollable()) {
+		const int worktopWidth = scene->GetWorktopWidth();
+		const int worktopHeight = scene->GetWorktopHeight();
+		const FloatPoint scroll = scene->GetFloatScrollPos();
+		const int distanceX = game.GetInt(kGameCursorHorizontalScrollDistance);
+		const int distanceY = game.GetInt(kGameCursorVerticalScrollDistance);
+		const bool smooth = _easeDirectionFlag;
 
-	constexpr float kMaxSpeed = 1.0f;
+		if (distanceX >= _mousePos.x || _mousePos.x >= _windowWidth - distanceX || distanceY >= _mousePos.y ||
+		    _mousePos.y >= _windowHeight - distanceY)
+			_isScrolling = true;
 
-	if (targetX >= _mousePos.x || worktopWidth - targetX <= _mousePos.x) {
-		_isScrolling = true;
-	}
-	bool nearEdge = _mousePos.x < edgeMargin || _mousePos.x > worktopWidth - edgeMargin;
+		float step = 1.0f;
 
-	if (_isScrolling || nearEdge) {
-		if (_scrollTimer.GetTime() > 500) {
-			_scrollTimer.SetTime();
+		if (_scrollTimer.GetTime() <= 500)
+			step = (float)_scrollTimer.GetTime() * _timingValueSeconds;
+
+		const double start = startspeed;
+		const double rest = 1.0 - start;
+
+		if (_mousePos.x >= _windowWidth - distanceX && (float)worktopWidth > (float)_windowWidth + scroll.x) {
+			xspeed = (float)(rest * xspeed + start);
+
+			if (!smooth)
+				xspeed = 1.0f;
+
+			scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
+		} else if (distanceX >= _mousePos.x && scroll.x > 0.0f) {
+			xspeed = (float)(rest * xspeed - start);
+
+			if (!smooth)
+				xspeed = -1.0f;
+
+			scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
+		} else {
+			xspeed = (float)(0.0 * start + (double)xspeed * rest);
+
+			if (!smooth)
+				xspeed = 0.0f;
+			else if (xspeed > 0.0f)
+				scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
 		}
-		// xspeed is a real shared global (not a TMasterControl-only value) -
-		// TGameControl::MoveScene eases the exact same variable for its own,
-		// unrelated destination-scroll movement (see its own comment).
-		float targetSpeed = _easeDirectionFlag ? -kMaxSpeed : kMaxSpeed;
-		xspeed = targetSpeed + (xspeed - targetSpeed) * startspeed;
-		scene->AdjustWindowHorizontal(xspeed * 0.001f);
+
+		if (_mousePos.y >= _windowHeight - distanceY && (float)worktopHeight > (float)_windowHeight + scroll.y) {
+			if (smooth)
+				yspeed = (float)((double)yspeed * rest + start);
+			else
+				yspeed = 1.0f;
+
+			scene->AdjustWindowVertical(yspeed * step + scroll.y);
+		} else if (distanceY >= _mousePos.y && scroll.y > 0.0f) {
+			if (smooth)
+				yspeed = (float)((double)yspeed * rest - start);
+			else
+				yspeed = -1.0f;
+
+			scene->AdjustWindowVertical(scroll.y + yspeed * step);
+		} else {
+			const double decay = start * 0.0;
+
+			yspeed = (float)((double)yspeed * rest + decay);
+
+			if (!smooth)
+				xspeed = 0.0f;
+
+			if (yspeed > 0.0f)
+				yspeed = (float)((double)yspeed * rest + decay);
+		}
 	}
+
+	_scrollTimer.SetTime();
 }
 
 // Confirmed (asm lines 487099-487890): starts a movie. It is played by the main loop (VideoFrame(), once for each frame while
@@ -275,7 +375,7 @@ int TMasterControl::PlayAVI(const wxFileName &file, bool skippable, HandleSounds
 		return 0;
 
 	_movie.Initialize(false);
-	graphics->SetMatrixMode(true, false);
+	graphics->AfterDrawScene(true, false);
 	_sceneControl->Draw();
 	DrawInterfaces();
 	SetCurrent();
@@ -553,6 +653,23 @@ void TMasterControl::ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos) {
 		LuaDebugName("MouseMoveHandler");
 		LuaExecuteFunction(std::string(handler.name.mb_str()), arguments, results);
 	}
+
+	// then the game itself: the position is the mouse's, and the message is a move (1), a hold (6) or one of the
+	// clicks and wheel turns (2, 4, 5, 9, 11, 12, 13); the others (the button going down ...) are for the scripts only
+	_mousePos = pos;
+
+	const unsigned int number = static_cast<unsigned int>(msg);
+
+	if (number <= 0xD) {
+		const unsigned int mask = 1u << number;
+
+		if (mask & 0x3A34)
+			HandleMouseUp(pos, msg);
+		else if (mask & 0x40)
+			HandleMouseHolding(pos);
+		else if (mask & 0x2)
+			HandleMouseMove(pos, false);
+	}
 }
 
 // Confirmed (asm lines 489607-490054): the same with the two numbers and the integer of the event (the wheel and
@@ -626,9 +743,9 @@ void TMasterControl::Signal(const TSignalData &signal, TSignalData &result) {
 	case kSignalLoadingProgress:
 		if (_loadingControl) {
 			_loadingControl->UpdateStatus(signal.loadingCurrent, signal.loadingTotal);
-			graphics->ResetMatrix(true, false);
+			graphics->BeforeDrawScene(true, 0);
 			_loadingControl->Draw();
-			graphics->SetMatrixMode(true, true);
+			graphics->AfterDrawScene(true, true);
 		}
 		return;
 	default:

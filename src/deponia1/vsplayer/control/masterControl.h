@@ -188,7 +188,7 @@ public:
 	// TPaintControl::Draw() reached via the secondary vtable) - so making
 	// that explicit rather than suppressing the compiler's warning.
 	using TPaintControl::Draw;
-	bool Draw(bool showActionText);
+	void Draw(bool lock);
 	void DrawInterfaces();
 	void ScrollUpdate();
 
@@ -268,6 +268,10 @@ protected:
 	// protected rather than private for the same reason as the other
 	// TGameControl-reads-directly fields above.
 	bool _easeDirectionFlag = false;
+
+	// +0x250: the scroll speed of the game (kGameScrollSpeed) in 1/1000: a time in milliseconds times this is the step
+	// ScrollUpdate() and TGameControl::MoveScene() move the scene by.
+	float _timingValueSeconds = 0.0f;
 
 	// TGameControl reads this directly (SaveEventHandlers, Deponia_Linux.asm
 	// lines 457678-457702: iterates it via raw begin()/end() pointers to

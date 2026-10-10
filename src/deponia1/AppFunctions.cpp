@@ -572,8 +572,8 @@ bool Init(const wxString &/*appName*/, wxSize &surfaceSize, wxSize &renderSize, 
 
 	if (!FirstSceneName.IsEmpty()) {
 		// `-sc`: go to the scene. First the actions of the start run out (at most 200 turns of 10 ms).
-		graphics->SetMatrixMode(true, false);
-		graphics->ResetMatrix(true, true);
+		graphics->AfterDrawScene(true, false);
+		graphics->BeforeDrawScene(true, 1);
 
 		TVList actions;
 

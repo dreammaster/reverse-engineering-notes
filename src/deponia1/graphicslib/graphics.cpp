@@ -252,13 +252,16 @@ void TGraphicsInterface::RemoveTransparentEdges(int &left, int &top, int &width,
 	RemoveTransparentEdges(left, top, width, height, width, 0, 0, rgba);
 }
 
-void TGraphicsInterface::SetMatrixMode(bool /*a*/, bool /*b*/) {
+void TGraphicsInterface::BeforeDrawScene(bool /*a*/, int /*b*/) {
 }
 
-void TGraphicsInterface::ResetMatrix(bool /*a*/, bool /*b*/) {
+void TGraphicsInterface::AfterDrawScene(bool /*a*/, bool /*b*/) {
 }
 
-void TGraphicsInterface::Flip() {
+void TGraphicsInterface::Swap() {
+}
+
+void TGraphicsInterface::SetDirectToScreen() {
 }
 
 void TGraphicsInterface::SetFilters(TInterpolationEnum /*a*/, TInterpolationEnum /*b*/) {

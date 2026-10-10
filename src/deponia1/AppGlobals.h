@@ -168,5 +168,8 @@ extern bool g_bMoviePauseAllowed;
 // Confirmed a real, named global (asm: g_loadingScreenLock): the loading screen draws from a thread of its own while the
 // game loads; whoever else changes the matrices of the graphics at that time holds this (TMovie::Finish()).
 extern wxCriticalSection g_loadingScreenLock;
+// Confirmed a real, named global (asm: lastFrameEnd): SDL_GetTicks() at the end of the last frame that
+// TMasterControl::Draw(true) drew; the loading screen thread pumps the SDL events itself when it is older than 100 ms.
+extern unsigned int lastFrameEnd;
 extern float fps;
 extern int lastFrameTime;

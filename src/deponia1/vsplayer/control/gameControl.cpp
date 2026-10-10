@@ -1160,11 +1160,10 @@ const TGDialog *TGameControl::GetDialog() const {
 }
 
 void TGameControl::StartDialog(const TVisObjRef &dialog) {
-	// Confirmed (asm lines 460983-461073): surprisingly, only takes effect
-	// when a dialog is ALREADY active (_dialog not empty) - a no-op
-	// otherwise. Field ids 0x11B (the current character's cursor link) and
-	// 0x1DC (the game's active-dialog link) are unresolved.
-	if (_dialog.IsEmpty())
+	// Confirmed (asm lines 460983-461073): only a game without a dialog starts one (the test in the asm is
+	// "is the dialog empty": the rest of the function is reached by the jnz). Field ids 0x11B (the
+	// character's dialog cursor) and 0x1DC (the game's dialog link).
+	if (!_dialog.IsEmpty())
 		return;
 
 	TVisObjRef cursorLink = _currentCharacter->GetRef().GetLink(kCharacterDialogCursor);

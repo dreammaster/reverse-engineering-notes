@@ -320,11 +320,6 @@ protected:
 	// Confirmed present and cleared by ResetState() (asm line 460940); real
 	// purpose (what populates it) not identified.
 	TVList _pendingItems;
-	// Confirmed present (TGameControl::LoadAndInitGame, asm lines 468092-
-	// 468100): a game-data int (field 0xF6) divided by 1000.0, matching the
-	// project's established milliseconds-to-seconds pattern (TTimer::
-	// GetTime() is milliseconds) - real purpose not identified.
-	float _timingValueSeconds = 0.0f;
 	// Confirmed present, set to the same value as _currentCharacter right
 	// when it changes (TGameControl::ChangeCharacter, asm lines
 	// 465849-466072; also set by InitCharacters, asm lines 466201-466735) -

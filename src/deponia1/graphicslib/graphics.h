@@ -99,11 +99,17 @@ public:
 	virtual bool CreateSprite(TSpriteHandle **sprite, const char *data, int width, int height, int bytesPerPixel, int pitch,
 	                          bool flag);
 
-	// Called from TMasterControl::Draw/Signal/PlayAVI (vtable slots
-	// 0x30/0x38/0x178 there); real parameter meaning not recovered.
-	virtual void SetMatrixMode(bool a, bool b);
-	virtual void ResetMatrix(bool a, bool b);
-	virtual void Flip();
+	// The calls of TMasterControl::Draw/Signal/PlayAVI that bracket the drawing of a frame (the names are those of
+	// TGraphicsOGL's vtable). The meaning of the parameters is not recovered: the OpenGL backend sets up its frame buffers
+	// and shader matrices in them.
+	/** Slot 0x30 (TGraphicsOGL::BeforeDrawScene(bool, int)). */
+	virtual void BeforeDrawScene(bool a, int b);
+	/** Slot 0x38 (TGraphicsOGL::AfterDrawScene(bool, bool)). */
+	virtual void AfterDrawScene(bool a, bool b);
+	/** Slot 0x48 (TGraphicsOGL::Swap()): the frame is shown (the buffers are swapped). */
+	virtual void Swap();
+	/** Slot 0x178 (TGraphicsOGL::SetDirectToScreen()): the drawing goes to the screen again, with the matrix of the window. */
+	virtual void SetDirectToScreen();
 	/** Slots 0x110 and 0x118 (TGraphicsOGL::BeginBatch()/EndBatch()): the drawing calls in between are put together to
 	 *  one (a text is drawn letter by letter between the two). */
 	virtual void BeginBatch();

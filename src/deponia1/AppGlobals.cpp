@@ -73,6 +73,7 @@ unsigned int lastMultigestureTicks = 0xFFFFFFFFu;
 bool CanLoseFocus = true;
 bool g_bMoviePauseAllowed = true;
 wxCriticalSection g_loadingScreenLock;
+unsigned int lastFrameEnd = 0;
 float fps = 0.0f;
 int lastFrameTime = 0;
 

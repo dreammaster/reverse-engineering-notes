@@ -139,8 +139,8 @@ void TMovie::Finish() {
 	if (_blackScreenAfter) {
 		wxCriticalSectionLocker lock(g_loadingScreenLock);
 
-		graphics->SetMatrixMode(true, false);
-		graphics->ResetMatrix(true, true);
+		graphics->AfterDrawScene(true, false);
+		graphics->BeforeDrawScene(true, 1);
 	}
 }
 
