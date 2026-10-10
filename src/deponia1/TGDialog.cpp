@@ -248,10 +248,10 @@ void TGDialog::HandleMouseWheel(TMouseMessageEnum msg) {
 	if (_wheelTimer.GetTime() <= 9)
 		return;
 
-	if (msg == TMouseMessageEnum::kValue12) {
+	if (msg == TMouseMessageEnum::kWheelUp) {
 		if (_canScrollUp)
 			_hoverUp = true;
-	} else if (msg == TMouseMessageEnum::kValue13) {
+	} else if (msg == TMouseMessageEnum::kWheelDown) {
 		if (_canScrollDown)
 			_hoverDown = true;
 	}

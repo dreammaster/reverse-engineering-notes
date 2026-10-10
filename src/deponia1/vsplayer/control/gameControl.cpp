@@ -136,13 +136,12 @@ bool TGameControl::Update() {
 	if (!EngineUpdatePaused)
 		_ownedSceneControl.GetScene()->UpdateSnoopAnimAlpha();
 
-	// Confirmed (asm lines 469761-469767): two virtual calls (vtable slots
-	// 0x100, then 0xE8 with a literal `false` argument) through a pointer
-	// field not confidently identified with any currently-modeled member -
-	// TGameController itself has no vtable (fully reversed already, see
-	// gameController.h), so this isn't it despite the field's proximity to
-	// other TMasterControl pointer members; left unimplemented rather than
-	// guessed at.
+	// Confirmed (asm lines 469761-469767): the sound manager (TMasterControl +0x178) is updated - the streams it plays -
+	// and its running fade is carried on (vtable slots 0x100 Update() and 0xE8 UpdateSoundFade(false)).
+	debugger.BeginArea(ProfileArea::kValue4, "Sounds", -1);
+	GetSoundManager()->Update();
+	GetSoundManager()->UpdateSoundFade(false);
+	debugger.EndArea(ProfileArea::kValue4, -1);
 
 	debugger.BeginArea(ProfileArea::kValue1, "create <sprite path>", -1);
 	for (TPictureIO *picture : graphics->GetPreloadedPicManager()->GetPreloadedPictures())
@@ -302,9 +301,10 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 	if (!_sceneMousePositionHookName.empty() && !isHolding)
 		hookPos = CallSceneMousePositionHook(pos);
 
-	// Confirmed: this always uses the raw, un-overridden pos, never hookPos
-	// (asm lines 472143-472146 read straight from the original argument).
-	GetCursorControl()->SetCursorPosition(pos.x, pos.y);
+	// Confirmed: the cursor goes to the raw, un-overridden pos, never hookPos (asm lines 472143-472146 read
+	// straight from the original argument) - but not while the button is held.
+	if (!isHolding)
+		GetCursorControl()->SetCursorPosition(pos.x, pos.y);
 	if (!GetCursorControl()->IsActive())
 		return;
 
@@ -345,7 +345,7 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 	}
 
 	if (_hoveredInterfaceObjects.empty() && !EngineUpdatePaused)
-		_objectManager.MouseMove(_ownedSceneControl.GetScene()->GetObject(pos));
+		_objectManager.MouseMove(_ownedSceneControl.GetScene()->GetObject(hookPos));
 
 	// Confirmed (asm lines 472218-472259): anything in the previous hover
 	// set no longer present in the new one fires a "mouse left" action via
@@ -366,15 +366,15 @@ void TGameControl::HandleMouseMove(const wxPoint &pos, bool isHolding) {
 void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	// Confirmed (Deponia_Linux.asm lines 472489-473301, ~810 lines).
 	if (!GetCursorControl()->IsActive()) {
-		if (msg == TMouseMessageEnum::kLeftUp || msg == TMouseMessageEnum::kRightUp)
+		if (msg == TMouseMessageEnum::kLeftDoubleClick || msg == TMouseMessageEnum::kLeftUp)
 			SkipCurrentText();
 		return;
 	}
 
 	if (!_dialog.IsEmpty()) {
-		if (msg == TMouseMessageEnum::kLeftUp || msg == TMouseMessageEnum::kRightUp)
+		if (msg == TMouseMessageEnum::kLeftDoubleClick || msg == TMouseMessageEnum::kLeftUp)
 			_dialog.HandleMouseClick();
-		else if (msg == TMouseMessageEnum::kValue12 || msg == TMouseMessageEnum::kValue13)
+		else if (msg == TMouseMessageEnum::kWheelUp || msg == TMouseMessageEnum::kWheelDown)
 			_dialog.HandleMouseWheel(msg);
 		return;
 	}
@@ -383,7 +383,7 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	// Field ids 0x283/0x1FC gate two "ignore this mouse-up entirely" states;
 	// real meaning of both flags/values is unresolved.
 	int stateFlag = game.GetInt(kGameDisableInteractionDuringAnim);
-	int charFlag = _previousCharacter->GetRef().GetInt(kCharacterAnimState);
+	int charFlag = _currentCharacter->GetRef().GetInt(kCharacterAnimState);
 	if ((stateFlag == 2 && (charFlag == 4 || charFlag == 5)) || (stateFlag == 1 && charFlag == 4))
 		return;
 
@@ -395,29 +395,29 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	// scene-hook/hover dispatch with handled left false.
 	bool handled = false;
 	switch (msg) {
-	case TMouseMessageEnum::kLeftUp: {
+	case TMouseMessageEnum::kLeftDoubleClick: {
 		TVisObjRef link = game.GetLink(kGameLeftDblClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		handled = true;
 		break;
 	}
-	case TMouseMessageEnum::kRightUp: {
+	case TMouseMessageEnum::kLeftUp: {
 		TVisObjRef link = game.GetLink(kGameLeftClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		handled = true;
 		break;
 	}
-	case TMouseMessageEnum::kValue5: {
+	case TMouseMessageEnum::kLeftLongClick: {
+		// (the objects do not hear of it: only the action of the game)
 		TVisObjRef link = game.GetLink(kGameLeftHoldAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
-		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
 		handled = game.GetInt(kGameLeftHoldBehaviour) == 1;
 		break;
 	}
-	case TMouseMessageEnum::kValue9: {
+	case TMouseMessageEnum::kRightUp: {
 		if (GetCursorControl()->IsActiveMoveObject()) {
 			_objectManager.RemoveItem(true);
 		} else {
@@ -429,7 +429,7 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 		handled = game.GetInt(kGameRightClickBehaviour) == 1;
 		break;
 	}
-	case TMouseMessageEnum::kValue11: {
+	case TMouseMessageEnum::kMiddleUp: {
 		TVisObjRef link = game.GetLink(kGameMiddleClickAction);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
@@ -437,9 +437,9 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 		handled = game.GetInt(kGameMiddleClickBehaviour) == 1;
 		break;
 	}
-	case TMouseMessageEnum::kValue12:
-	case TMouseMessageEnum::kValue13: {
-		TVisObjRef link = game.GetLink(msg == TMouseMessageEnum::kValue12 ? 0x2FF : 0x300);
+	case TMouseMessageEnum::kWheelUp:
+	case TMouseMessageEnum::kWheelDown: {
+		TVisObjRef link = game.GetLink(msg == TMouseMessageEnum::kWheelUp ? 0x2FF : 0x300);
 		if (!link.IsEmpty())
 			TGAction::AddRunningAction(link);
 		_objectManager.HandleEvent(TGAction::ConvertToEvent(msg));
@@ -476,9 +476,9 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	// block below it's paired with a different gate (paused/handled here,
 	// walkability below).
 	if (objEmpty && !EngineUpdatePaused && handled) {
-		if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
+		if (_currentCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 			wxPoint relPos = scene->GetRelativePoint(clickPos);
-			_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kNoEvent);
+			_currentCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
 		}
 	}
 
@@ -490,9 +490,9 @@ void TGameControl::HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) {
 	}
 	if (EngineUpdatePaused)
 		return;
-	if (_previousCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
+	if (_currentCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef()) {
 		wxPoint relPos = scene->GetRelativePoint(clickPos);
-		_previousCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kNoEvent);
+		_currentCharacter->GetRef().SetValue(kCharacterDestination, relPos, TSendEventEnum::kSendEvent);
 	}
 }
 
@@ -949,14 +949,16 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 	int offsetX = game.GetInt(kGameHorizontalScrollDistance);
 	int offsetY = game.GetInt(kGameVerticalScrollDistance);
 
-	// Horizontal: right-scroll and left-scroll are checked independently (not
-	// mutually exclusive in the disassembly - a right-scroll match doesn't
-	// skip the left-scroll check below it).
+	// Horizontal: the left-scroll is only looked at when the right-scroll did not start.
+	bool scrollRight = false;
+
 	if (static_cast<float>(worktopWidth) > visibleSize.width + scrollPos.x) {
-		if (static_cast<float>(charRect.GetRight() + offsetX) - scrollPos.x > visibleSize.width)
+		if (static_cast<float>(charRect.GetRight() + offsetX) - scrollPos.x > visibleSize.width) {
 			game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kNoEvent);
+			scrollRight = true;
+		}
 	}
-	if (scrollPos.x > 0.0f) {
+	if (!scrollRight && scrollPos.x > 0.0f) {
 		if (static_cast<float>(charRect.GetLeft() - offsetX) - scrollPos.x < 0.0f)
 			game.SetValue(kGameScrollDirectionHorizontal, 1, TSendEventEnum::kNoEvent);
 	}
@@ -975,103 +977,287 @@ void TGameControl::ScrollToCharacterIfNeeded(const TVisObjRef &character) {
 	}
 }
 
-void TGameControl::MoveScene() {
-	// Confirmed (asm lines 459288-460538+): a large scroll-to-target easing
-	// function, structurally similar to TMasterControl::ScrollUpdate (and
-	// sharing its xspeed/yspeed/startspeed globals and _easeDirectionFlag)
-	// but driving the scene toward a stored target point (field 0x1D7)
-	// instead of the mouse cursor. Approximated the same way ScrollUpdate
-	// already is: the gating logic, target point, and the confirmed
-	// formulas (exponential ease toward +-1 or a distance-clamped
-	// speedDownX/Y, using a delta time derived from _timingValueSeconds)
-	// are faithful, but the exact decision tree for which side to approach
-	// from per axis - keyed on fields 0x1D9/0x1DA (0=auto, 1/2=forced
-	// left/right, 3/4=forced up/down, matching ScrollToCharacterIfNeeded's
-	// own codes) and a two-tier "is there room to scroll, and if so which
-	// side" structure - is simplified into one merged condition per axis
-	// rather than transcribed branch-by-branch, since it's gameplay-feel-
-	// specific and can't be verified without running the original. Field
-	// ids 0x1D8 ("unconditional movement" override) and 0x257 (a character
-	// facing-angle check gating one sub-case, skipped here) are as
-	// confirmed but not further pursued.
+// Confirmed (asm lines 459288-460538): the scroll of the scene after the character, or - when the game has a point to
+// scroll to (kGameScrollTo) - to that point. Nothing moves while the mouse scrolls the scene (IsScrolling()), without a
+// current character in the scene that is shown, in a menu, or while the scene fades. The speed (xspeed, yspeed) eases in
+// and out with startspeed when the game has smooth scrolling, else it is 1, -1 or 0 at once. Returns whether the scene
+// was moved.
+//
+// To a point: horizontally with the eased speed (at most speedDownX, the smaller of what is left to scroll and what is
+// left to the point, in 1/40 of a step), vertically a whole step at a time. The point is reached when it is less than a
+// step away. Then the setting is cleared and the scene scrolls with the mouse again as the scene says.
+//
+// After the character: kGameScrollDirectionHorizontal/Vertical say what the scene does (0 nothing, 1 left, 2 right; 0 nothing,
+// 3 up, 4 down). A character that comes within the scroll distance (kGameHorizontalScrollDistance/VerticalScrollDistance) of
+// an edge of the window starts the scroll, if its direction (kCharacterDirection, in degrees) does not point away from
+// that edge or it stands still; it goes on until the character is in the middle or the scene cannot go further, or until
+// the character walks away from that side.
+bool TGameControl::MoveScene() {
 	static TTimer scrollTimer;
 
 	TVisObjRef game = _visionaire->GetGame();
-	bool overrideGate = game.GetBool(kGameScrollTo);
-
-	if (!overrideGate) {
-		if (IsScrolling()) {
-			scrollTimer.SetTime();
-			return;
-		}
-		if (_currentCharacter == nullptr)
-			return;
-		TVisObjRef charSceneLink = _currentCharacter->GetRef().GetLink(kCharacterScene);
-		if (!(charSceneLink == _ownedSceneControl.GetScene()->GetRef()))
-			return;
-	}
-
 	TGScene *scene = _ownedSceneControl.GetScene();
-	if (scene->IsMenu())
-		return;
-	if (_previousCharacter == nullptr || _ownedSceneControl.FadingToNewScene())
-		return;
 
-	const FloatPoint &scrollPos = scene->GetFloatScrollPos();
-	int worktopWidth = scene->GetWorktopWidth();
-	int worktopHeight = scene->GetWorktopHeight();
-	const wxSize &visibleSize = scene->GetVisibleSize();
-	const wxPoint *target = game.GetPoint(kGameScrollToPoint);
-
-	wxPoint charPos = _previousCharacter->GetPosition();
-	wxRect charRect = _previousCharacter->GetCurrentSpriteRect();
-	if (charRect.IsEmpty()) {
-		charRect.SetLeft(charPos.x);
-		charRect.SetWidth(0);
-		charRect.SetTop(charPos.y);
-		charRect.SetHeight(0);
-	}
-
-	double elapsedMs = static_cast<double>(scrollTimer.GetTime());
-	float dt = (elapsedMs > 500.0) ? 1.0f : static_cast<float>(elapsedMs) * _timingValueSeconds;
-
-	int horizState = game.GetInt(kGameScrollDirectionHorizontal);
-	float targetLeft = static_cast<float>(target->x) - static_cast<float>(visibleSize.width) / 2.0f;
-	if (horizState != 0 || static_cast<float>(worktopWidth) > scrollPos.x + static_cast<float>(visibleSize.width)) {
-		float distance = targetLeft - scrollPos.x;
-		if (std::fabs(distance) > 1.0f && dt > 0.0f) {
-			float maxSpeed = std::min(1.0f, std::fabs(distance) / dt * 0.025f);
-			speedDownX = maxSpeed;
-			float targetSpeed = _easeDirectionFlag ? -1.0f : (distance < 0.0f ? -maxSpeed : maxSpeed);
-			xspeed = targetSpeed + (xspeed - targetSpeed) * startspeed;
-			scene->AdjustWindowHorizontal(xspeed * dt);
-		} else {
-			xspeed = 0.0f;
-			if (horizState != 0 && _previousCharacter->IsWalking())
-				game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kNoEvent);
+	if (!game.GetBool(kGameScrollTo)) {
+		if (IsScrolling() || _currentCharacter == nullptr ||
+		    !(_currentCharacter->GetRef().GetLink(kCharacterScene) == scene->GetRef())) {
+			scrollTimer.SetTime();
+			return false;
 		}
 	}
 
-	int vertState = game.GetInt(kGameScrollDirectionVertical);
-	float targetTop = static_cast<float>(target->y) - static_cast<float>(visibleSize.height) / 2.0f;
-	if (vertState == 3 || vertState == 4 ||
-	        static_cast<float>(worktopHeight) > scrollPos.y + static_cast<float>(visibleSize.height)) {
-		float distance = targetTop - scrollPos.y;
-		if (std::fabs(distance) > 1.0f && dt > 0.0f) {
-			float maxSpeed = std::min(1.0f, std::fabs(distance) / dt * 0.025f);
-			speedDownY = maxSpeed;
-			float targetSpeed = _easeDirectionFlag ? -1.0f : (distance < 0.0f ? -maxSpeed : maxSpeed);
-			yspeed = targetSpeed + (yspeed - targetSpeed) * startspeed;
-			scene->AdjustWindowVertical(yspeed * dt);
+	if (scene->IsMenu() || _previousCharacter == nullptr || _ownedSceneControl.FadingToNewScene()) {
+		scrollTimer.SetTime();
+		return false;
+	}
+
+	const FloatPoint scroll = scene->GetFloatScrollPos();
+	const int worktopWidth = scene->GetWorktopWidth();
+	const int worktopHeight = scene->GetWorktopHeight();
+	const wxSize visible = scene->GetVisibleSize();
+	const wxPoint target = *game.GetPoint(kGameScrollToPoint);
+	const wxPoint position = _previousCharacter->GetPosition();
+	wxRect rect = _previousCharacter->GetCurrentSpriteRect();
+
+	if (rect.IsEmpty()) {
+		rect.SetLeft(position.x);
+		rect.SetWidth(0);
+		rect.SetTop(position.y);
+		rect.SetHeight(0);
+	}
+
+	// the time since the last time, in the units of the scroll speed of the game
+	float step = 1.0f;
+
+	if (scrollTimer.GetTime() <= 500)
+		step = (float)scrollTimer.GetTime() * _timingValueSeconds;
+
+	const int horizontalDistance = game.GetInt(kGameHorizontalScrollDistance);
+	const int verticalDistance = game.GetInt(kGameVerticalScrollDistance);
+	const bool smooth = _smoothScrolling;
+	const double start = startspeed;
+	const double rest = 1.0 - start;
+	const float visibleWidth = (float)visible.width;
+	const float visibleHeight = (float)visible.height;
+	bool moved = false;
+
+	if (game.GetBool(kGameScrollTo)) {
+		// to the point
+		const float targetX = (float)target.x;
+
+		if ((float)worktopWidth > visibleWidth + scroll.x && targetX > scroll.x) {
+			if (target.x < (int)(step + scroll.x)) {
+				xspeed = 0.0f;
+				scene->AdjustWindowHorizontal(targetX);
+			} else {
+				float room = ((float)worktopWidth - (visibleWidth + scroll.x)) / step;
+				float distance = std::fabs(targetX - scroll.x) / step;
+
+				room = (float)((double)room * 0.025);
+				distance = (float)((double)distance * 0.025);
+
+				const float limit = (room < 1.0f) ? room : 1.0f;
+
+				speedDownX = (distance < limit) ? distance : limit;
+				xspeed = (float)((double)speedDownX * start + rest * (double)xspeed);
+
+				if (!smooth)
+					xspeed = 1.0f;
+
+				scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
+				moved = true;
+			}
+		} else if (scroll.x > 0.0f && scroll.x > targetX) {
+			if (target.x > (int)(scroll.x - step)) {
+				xspeed = 0.0f;
+				scene->AdjustWindowHorizontal(targetX);
+			} else {
+				float room = scroll.x / step;
+				float distance = std::fabs(targetX - scroll.x) / step;
+
+				room = (float)((double)room * 0.025);
+				distance = (float)((double)distance * 0.025);
+
+				const float limit = (room < 1.0f) ? room : 1.0f;
+
+				speedDownX = (distance < limit) ? distance : limit;
+				xspeed = (float)(rest * (double)xspeed - (double)speedDownX * start);
+
+				if (!smooth)
+					xspeed = -1.0f;
+
+				scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
+				moved = true;
+			}
+		}
+
+		const float targetY = (float)target.y;
+
+		if ((float)worktopHeight > visibleHeight + scroll.y && targetY > scroll.y) {
+			const float next = step + scroll.y;
+
+			if (target.y < (int)next) {
+				scene->AdjustWindowVertical(targetY);
+			} else {
+				scene->AdjustWindowVertical(next);
+				moved = true;
+			}
+		} else if (scroll.y > 0.0f && scroll.y > targetY) {
+			const float next = scroll.y - step;
+
+			if (target.y > (int)next) {
+				scene->AdjustWindowVertical(targetY);
+			} else {
+				scene->AdjustWindowVertical(next);
+				moved = true;
+			}
+		}
+
+		if (!moved) {
+			// it is there
+			game.SetValue(kGameScrollTo, false, TSendEventEnum::kNoEvent);
+			scene->SetIsScrollable(scene->GetRef().GetBool(kSceneScrollOnEdges));
+		}
+	} else if (!game.GetBool(kGameScrollCenterCharacter)) {
+		// (the scene stays where it is)
+	} else {
+		// after the character
+		const unsigned int angle = (unsigned int)_previousCharacter->GetRef().GetInt(kCharacterDirection);
+		const int angleNumber = (int)angle;
+
+		if (game.GetInt(kGameScrollDirectionHorizontal) == 0) {
+			bool started = false;
+
+			if ((float)worktopWidth > visibleWidth + scroll.x &&
+			    (float)(rect.GetRight() + horizontalDistance) - scroll.x > visibleWidth &&
+			    (!(angle - 0x5B <= 0xB2) || !_previousCharacter->IsWalking())) {
+				game.SetValue(kGameScrollDirectionHorizontal, 2, TSendEventEnum::kNoEvent);
+				started = true;
+			}
+
+			if (!started && scroll.x > 0.0f && 0.0f > (float)(rect.GetLeft() - horizontalDistance) - scroll.x &&
+			    (angle - 0x5A <= 0xB4 || !_previousCharacter->IsWalking()))
+				game.SetValue(kGameScrollDirectionHorizontal, 1, TSendEventEnum::kNoEvent);
 		} else {
-			yspeed = 0.0f;
-			if ((vertState == 3 || vertState == 4) && _previousCharacter->IsWalking())
-				game.SetValue(kGameScrollDirectionVertical, vertState, TSendEventEnum::kNoEvent);
+			const bool away = (game.GetInt(kGameScrollDirectionHorizontal) == 2) ? (angle - 0x5B <= 0xB2) : !(angle - 0x5A <= 0xB4);
+
+			if (away && _previousCharacter->IsWalking())
+				game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kNoEvent);
+		}
+
+		if (game.GetInt(kGameScrollDirectionVertical) == 0) {
+			bool started = false;
+
+			if (scroll.y > 0.0f && 0.0f > (float)(rect.GetTop() - verticalDistance) - scroll.y &&
+			    (!(angleNumber > 0xB4) || !_previousCharacter->IsWalking())) {
+				game.SetValue(kGameScrollDirectionVertical, 3, TSendEventEnum::kNoEvent);
+				started = true;
+			}
+
+			if (!started && (float)worktopHeight > visibleHeight + scroll.y &&
+			    (float)(rect.GetBottom() + verticalDistance) - scroll.y > visibleHeight &&
+			    (!(angleNumber <= 0xB3) || !_previousCharacter->IsWalking()))
+				game.SetValue(kGameScrollDirectionVertical, 4, TSendEventEnum::kNoEvent);
+		} else {
+			const bool away = (game.GetInt(kGameScrollDirectionVertical) == 3) ? (angle - 0xB5 <= 0xB2) : (angle - 1 <= 0xB2);
+
+			if (away && _previousCharacter->IsWalking())
+				game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kNoEvent);
+		}
+
+		// then the scene moves as the states say
+		const int horizontal = game.GetInt(kGameScrollDirectionHorizontal);
+
+		if (horizontal == 0) {
+			xspeed = (float)(0.0 * start + rest * (double)xspeed);
+
+			if (!smooth)
+				xspeed = 0.0f;
+			else if (xspeed != 0.0f)
+				scene->AdjustWindowHorizontal(xspeed * step + scroll.x);
+		} else if (horizontal == 1) {
+			if (scroll.x > 0.0f && 0.0f > (float)(position.x - (visible.width >> 1)) - scroll.x) {
+				float room = scroll.x / step;
+
+				room = (float)((double)room * 0.025);
+				speedDownX = (room < 1.0f) ? room : 1.0f;
+				xspeed = (float)(rest * (double)xspeed - (double)speedDownX * start);
+
+				if (!smooth)
+					xspeed = -1.0f;
+
+				scene->AdjustWindowHorizontal(step * xspeed + scroll.x);
+				moved = true;
+			} else {
+				game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kNoEvent);
+			}
+		} else if (horizontal == 2) {
+			if ((float)worktopWidth > scroll.x + visibleWidth &&
+			    (float)((visible.width >> 1) + position.x) - scroll.x > visibleWidth) {
+				float room = ((float)worktopWidth - (scroll.x + visibleWidth)) / step;
+
+				room = (float)((double)room * 0.025);
+				speedDownX = (1.0f > room) ? room : 1.0f;
+				xspeed = (float)((double)speedDownX * start + rest * (double)xspeed);
+
+				if (!smooth)
+					xspeed = 1.0f;
+
+				scene->AdjustWindowHorizontal(step * xspeed + scroll.x);
+				moved = true;
+			} else {
+				game.SetValue(kGameScrollDirectionHorizontal, 0, TSendEventEnum::kNoEvent);
+			}
+		}
+
+		const int vertical = game.GetInt(kGameScrollDirectionVertical);
+
+		if (vertical == 0) {
+			yspeed = (float)(0.0 * start + rest * (double)yspeed);
+
+			if (!smooth)
+				yspeed = 0.0f;
+			else if (yspeed != 0.0f)
+				scene->AdjustWindowVertical(scroll.y + yspeed * step);
+		} else if (vertical == 3) {
+			if (scroll.y > 0.0f && 0.0f > (float)(((rect.GetBottom() + rect.GetTop()) >> 1) - (visible.height >> 1)) - scroll.y) {
+				float room = scroll.y / step;
+
+				room = (float)((double)room * 0.025);
+				speedDownY = (1.0f > room) ? room : 1.0f;
+				yspeed = (float)(rest * (double)yspeed - (double)speedDownY * start);
+
+				if (!smooth)
+					yspeed = -1.0f;
+
+				scene->AdjustWindowVertical(yspeed * step + scroll.y);
+				moved = true;
+			} else {
+				game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kNoEvent);
+			}
+		} else if (vertical == 4) {
+			if ((float)worktopHeight > visibleHeight + scroll.y &&
+			    (float)(((rect.GetBottom() + rect.GetTop()) >> 1) + (visible.height >> 1)) - scroll.y > visibleHeight) {
+				float room = ((float)worktopHeight - (visibleHeight + scroll.y)) / step;
+
+				room = (float)((double)room * 0.025);
+				speedDownY = (1.0f > room) ? room : 1.0f;
+				yspeed = (float)((double)speedDownY * start + rest * (double)yspeed);
+
+				if (!smooth)
+					yspeed = 1.0f;
+
+				scene->AdjustWindowVertical(scroll.y + yspeed * step);
+				moved = true;
+			} else {
+				game.SetValue(kGameScrollDirectionVertical, 0, TSendEventEnum::kNoEvent);
+			}
 		}
 	}
 
 	game.SetValue(kGameScrollPosition, scene->GetScrollPos(), TSendEventEnum::kNoEvent);
 	scrollTimer.SetTime();
+	return moved;
 }
 
 void TGameControl::CenterScene() {

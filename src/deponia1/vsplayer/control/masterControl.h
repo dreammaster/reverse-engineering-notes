@@ -56,34 +56,27 @@ class TGameController;
 /** What happens to the sounds while a movie plays (the "handle sounds" of the part "play video", asm 487099): 0 and 1 pause them
  *  all (and let them go on when the movie is over - only for 1), 2 leaves them alone, 3 stops them all. */
 enum class HandleSoundsEnum { kDefault = 0, kPause = 1, kContinue = 2, kStop = 3 };
-// Confirmed to have at least 14 values, 0-13 (TGameControl::HandleMouseUp's
-// switch dispatches on 2, 4, 5, 9, 11, 12, 13 distinctly and treats 0, 1, 3,
-// 6, 7, 8, 10 identically as "no special handling," Deponia_Linux.asm lines
-// 472554-472834 and the jpt_61B832 jump table) - kLeftUp=2/kRightUp=4 are
-// confirmed (both HandleMouseUp's dialog-active and dialog-empty paths key
-// off exactly these two values for "button released"/"click"). 12 and 13
-// are confirmed to be the two mouse-wheel-direction messages instead (the
-// dialog-active path dispatches both straight to TGDialog::HandleMouseWheel,
-// asm lines 472590-472595) - the previous "kWheel=5" placeholder this enum
-// carried had no supporting evidence and is removed; 5 is a real, distinct
-// HandleMouseUp case with no confirmed name. Values 6-11 (besides 9 and 11,
-// which HandleMouseUp also handles distinctly but without a resolved name)
-// are placeholders only.
+// What the mouse did, as ShowFrame() (AppFunctions.cpp) makes it a message for the game (asm 497745-498889): the move
+// (1, every frame), the left button going down (3) and up (4: a short click; 2: a second one within 449 ms, a double
+// click; 5: after it was held for GameMinDownTime), the left button held (6, once, when it has been down that long),
+// the right button (8 down, 9 up; a ctrl-click or three fingers is one too), the middle button (10, 11) and the wheel
+// (12 up, 13 down). TGameControl::HandleMouseUp() is called for 2, 4, 5, 9, 11, 12 and 13, HandleMouseHolding() for 6
+// and HandleMouseMove() for 1 (TMasterControl::ProcessMessage()); 7 is not made by anything that is reconstructed.
 enum class TMouseMessageEnum {
-	kMove = 0,
-	kLeftDown = 1,
-	kLeftUp = 2,
-	kRightDown = 3,
-	kRightUp = 4,
-	kValue5 = 5,
-	kValue6 = 6,
+	kNone = 0,
+	kMove = 1,
+	kLeftDoubleClick = 2,
+	kLeftDown = 3,
+	kLeftUp = 4,
+	kLeftLongClick = 5,
+	kLeftHold = 6,
 	kValue7 = 7,
-	kValue8 = 8,
-	kValue9 = 9,
-	kValue10 = 10,
-	kValue11 = 11,
-	kValue12 = 12, // confirmed wheel-related, direction unresolved
-	kValue13 = 13, // confirmed wheel-related, direction unresolved
+	kRightDown = 8,
+	kRightUp = 9,
+	kMiddleDown = 10,
+	kMiddleUp = 11,
+	kWheelUp = 12,
+	kWheelDown = 13,
 };
 // What happened at the keyboard or a controller (Deponia_Linux.asm: ShowFrame, lines 497745-498889, makes the
 // messages of the SDL events; TGameControl::HandleControllerButtonHit/Release/Axis make 4, 5 and 6). The values 1 and 2
@@ -256,18 +249,10 @@ protected:
 	// element's content.
 	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
 
-	// Set from a TVisObjRef::GetBool(kGameSmoothScrolling) field at the top of every
-	// ScrollUpdate() call, then read back inside its easing formula to pick
-	// which of two target speeds to ease toward - real meaning (some kind
-	// of "scrolling direction/mode" flag) not resolved. +0x254 in the
-	// original; unrelated to _moviesEnabled (+0x288) despite both being a
-	// lone bool set near the start of a method. TGameControl also reads it
-	// directly at the same offset (MoveScene, Deponia_Linux.asm line 459500
-	// and others) as a gate between its own eased xspeed/yspeed value and a
-	// fixed snap-to value - same field, same role, different caller, so
-	// protected rather than private for the same reason as the other
-	// TGameControl-reads-directly fields above.
-	bool _easeDirectionFlag = false;
+	// +0x254: whether the game scrolls smoothly (kGameSmoothScrolling): set at the top of every ScrollUpdate() call and
+	// read by that and by TGameControl::MoveScene(), which eases the speed in and out when it is set and moves at once
+	// when it is not.
+	bool _smoothScrolling = false;
 
 	// +0x250: the scroll speed of the game (kGameScrollSpeed) in 1/1000: a time in milliseconds times this is the step
 	// ScrollUpdate() and TGameControl::MoveScene() move the scene by.

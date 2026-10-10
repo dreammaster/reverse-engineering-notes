@@ -283,7 +283,7 @@ void TMasterControl::ScrollUpdate() {
 
 	TVisObjRef game = _visionaire->GetGame();
 
-	_easeDirectionFlag = game.GetBool(kGameSmoothScrolling);
+	_smoothScrolling = game.GetBool(kGameSmoothScrolling);
 	_isScrolling = false;
 
 	TPaintControl *scene = _sceneControl->GetScene();
@@ -294,7 +294,7 @@ void TMasterControl::ScrollUpdate() {
 		const FloatPoint scroll = scene->GetFloatScrollPos();
 		const int distanceX = game.GetInt(kGameCursorHorizontalScrollDistance);
 		const int distanceY = game.GetInt(kGameCursorVerticalScrollDistance);
-		const bool smooth = _easeDirectionFlag;
+		const bool smooth = _smoothScrolling;
 
 		if (distanceX >= _mousePos.x || _mousePos.x >= _windowWidth - distanceX || distanceY >= _mousePos.y ||
 		    _mousePos.y >= _windowHeight - distanceY)

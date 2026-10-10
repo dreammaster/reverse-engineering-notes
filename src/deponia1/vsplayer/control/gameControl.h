@@ -135,7 +135,7 @@ public:
 		return _lastHookMousePos;
 	}
 	void ScrollToCharacterIfNeeded(const TVisObjRef &character);
-	void MoveScene();
+	bool MoveScene();
 	void CenterScene();
 	void SetOnScrollDestination();
 	void HandleCharacters();
