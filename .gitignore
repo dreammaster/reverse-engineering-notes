@@ -13,3 +13,5 @@ mm2/src/build/
 mm3/build/
 mm3/data/DGROUP.BIN
 mm3/data/IMAGE.BIN
+mm3/src/mm3game.exe
+mm3/src/SDL2.dll

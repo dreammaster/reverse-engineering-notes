@@ -13,6 +13,14 @@ make mm3game           # needs SDL2 dev headers and libm
 bash tests/difftest.sh # every readable routine vs the translated original (expect "0 mismatches" on every line)
 bash tests/shadowcheck.sh; bash tests/combatwin.sh; bash tests/gamefuzz2.sh 30   # silent/OK = pass
 ```
+### Windows (MinGW) build used on the author's machine
+```
+python -m pip install unicorn          # needed by tools/mm3_image.py
+python ../tools/mm3_dgroup.py ../data/MM3.EXE ../data/DGROUP.BIN; python ../tools/mm3_image.py ../data/MM3.EXE ../data/IMAGE.BIN
+mingw32-make mm3game CC=gcc SDL_CFLAGS="-IC:/sdk/SDL2-2.32.10/include/SDL2" SDL_LIBS="-LC:/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2"
+copy C:\sdk\SDL2-2.32.10in\SDL2.dll .   &  mkdir build   (for tests/gamefuzz2.sh)
+```
+
 Report any line that says MISMATCH, any `rc=` line from the fuzz scripts, or a build error.
 
 ## 1. Start-up  (`./mm3game ../data`)

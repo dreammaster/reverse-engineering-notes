@@ -13,6 +13,12 @@
 #include <unistd.h>
 #include "game.h"
 
+#ifdef _WIN32
+#define MM3_MKDIR(d) mkdir(d)
+#else
+#define MM3_MKDIR(d) mkdir(d, 0755)
+#endif
+
 #define MAXF 16
 static FILE *files[MAXF];
 static char file_path[MAXF][512];
@@ -24,7 +30,7 @@ static const uint8_t *dsp(uint16_t off) { return DG + off; }
  * untouched; reads look there first. */
 static const char *save_dir(void) {
 	static const char *dir;
-	if (!dir) { dir = getenv("MM3_SAVE_DIR"); if (!dir) dir = "mm3-saves"; mkdir(dir, 0755); }
+	if (!dir) { dir = getenv("MM3_SAVE_DIR"); if (!dir) dir = "mm3-saves"; MM3_MKDIR(dir); }
 	return dir;
 }
 
