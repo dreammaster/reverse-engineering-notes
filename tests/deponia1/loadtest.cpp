@@ -105,8 +105,13 @@ int main() {
 		font.SetValue(kFontLetters, rects, TSendEventEnum::kNoEvent);
 		font.SetValue(kFontAlphabet, wxString(L"abcdefghijklmnopqrstuvwxyz"), TSendEventEnum::kNoEvent);
 		gameRef.SetLink(kGameActionTextFont, font, true);
-		TVisObjRef text = game.CreateObject(14, hero, kCharacterTexts);
+		TVisObjRef noParent;
+		TVisObjRef text = game.CreateObject(14, noParent, -1);
 		text.SetName(TCharHolder("Hello"));
+		std::vector<TTextLanguage> texts(1);
+		texts[0].text = TCharHolder("hello world");
+		texts[0].languageId = PackVisId(language.GetId());
+		text.SetValue(kTextTextLanguages, texts, TSendEventEnum::kNoEvent);
 		TVisObjRef partText = game.CreateObject(8, action, kActionActionParts);
 		partText.SetValue(kActionPartCommand, kCommandShowText, TSendEventEnum::kNoEvent);
 		partText.SetLink(kActionPartLink, text, true);
