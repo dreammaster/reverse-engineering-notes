@@ -16,3 +16,6 @@ src/*/messages.log
 build/
 /userdata/
 tests/deponia1/work/
+/hero.sav
+/roundtrip.ved
+*.sav
