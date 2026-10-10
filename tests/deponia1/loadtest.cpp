@@ -44,6 +44,22 @@ int main() {
 		hero.SetLink(kCharacterStartObject, startObject, true);
 		gameRef.SetLink(kGameFirstCharacter, hero, true);
 
+		// an interface with a button that sets the counter
+		TVisObjRef clickAction = game.CreateObject(7, gameRef, kGameActions);
+		clickAction.SetName(TCharHolder("Click"));
+		TVisObjRef clickPart = game.CreateObject(8, clickAction, kActionActionParts);
+		clickPart.SetValue(kActionPartCommand, kCommandSetValue, TSendEventEnum::kNoEvent);
+		TVisObjRef interface = game.CreateObject(1, gameRef, kGameInterfaces);
+		interface.SetName(TCharHolder("Bar"));
+		interface.SetValue(kInterfaceSize, 100, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> bar = {{0, 0}, {200, 0}, {200, 200}, {0, 200}};
+		interface.SetValue(kInterfaceBorder, bar, TSendEventEnum::kNoEvent);
+		TVisObjRef button = game.CreateObject(2, interface, kInterfaceButtons);
+		button.SetName(TCharHolder("Go"));
+		std::vector<wxPoint> square = {{10, 10}, {60, 10}, {60, 60}, {10, 60}};
+		button.SetValue(kButtonPolygon, square, TSendEventEnum::kNoEvent);
+		button.SetLink(kButtonActions, clickAction, true);
+		hero.SetLink(kCharacterInterfaces, interface, true);
 		// the start action: change the scene to the start object, wait, walk the character to a place, end
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -77,6 +93,22 @@ int main() {
 			part.SetValue(kActionPartAltInt, altInt, TSendEventEnum::kNoEvent);
 			return part;
 		};
+		// an item goes to the hero
+		TVisObjRef item = game.CreateObject(6, gameRef, kGameItems);
+		item.SetName(TCharHolder("Key"));
+		item.SetValue(kObjectIsItem, true, TSendEventEnum::kNoEvent);
+		TVisObjRef partItem = addPart(kCommandCharacterItem, item, 0, 0);
+		partItem.SetLink(kActionPartAltLink, hero, true);
+		// a dialog with one answer
+		TVisObjRef dialog = game.CreateObject(11, hero, kCharacterDialogs);
+		dialog.SetName(TCharHolder("Chat"));
+		TVisObjRef dialogPart = game.CreateObject(12, dialog, kDialogDialogParts);
+		dialogPart.SetValue(kDialogPartAvailable, true, TSendEventEnum::kNoEvent);
+		addPart(kCommandStartDialog, dialog, 0, 0);
+		addPart(kCommandEndDialog, TVisObjRef(), 0, 0);
+		clickPart.SetLink(kActionPartLink, counter, true);
+		clickPart.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+		clickPart.SetValue(kActionPartAltInt, 42, TSendEventEnum::kNoEvent);
 		addPart(kCommandIfValue, counter, 0, 5);
 		addPart(kCommandSetValue, counter, 0, 7);
 		addPart(kCommandElse, TVisObjRef(), 0, 0);
@@ -211,6 +243,24 @@ int main() {
 		LuaDoString("hero = Characters['Hero']; hero.Position = {x = 7, y = 8}");
 		TVisObjRef afterLua = control->GetCurrentCharacter()->GetRef();
 		printf("hero set by lua at %d,%d" "\n", afterLua.GetPoint(kCharacterPosition)->x, afterLua.GetPoint(kCharacterPosition)->y);
+		printf("interfaces: all %d active %d" "\n", (int)control->GetAllInterfaces().size(), (int)control->GetActiveInterfaces().size());
+		for (TGInterface *iface : control->GetActiveInterfaces()) {
+			printf("origin %d,%d worktop %dx%d visible %dx%d " "interface: active %d inside(30,30) %d inside(300,300) %d" "\n", iface->GetOrigin().x, iface->GetOrigin().y, iface->GetWorktopWidth(), iface->GetWorktopHeight(), iface->GetVisibleSize().width, iface->GetVisibleSize().height, (int)iface->IsActive(), (int)iface->IsInside(wxPoint{30, 30}), (int)iface->IsInside(wxPoint{300, 300}));
+		}
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{30, 30});
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(3), wxPoint{30, 30});
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(4), wxPoint{30, 30});
+		for (int i = 0; i < 30; i++) {
+			TGAction::ContinueRunningActions(false);
+			control->Update();
+			control->Draw(true);
+			wxMilliSleep(10);
+		}
+		{
+			TVList items;
+			control->GetCurrentCharacter()->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
+			printf("items of the hero: %d" "\n", (int)items.size());
+		}
 		{
 			TVisObjRef sceneRef = control->GetCurrentCharacter()->GetRef().GetLink(kCharacterStartObject).GetParent();
 			TVList values;
