@@ -1,7 +1,6 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except GetComposedFileInfo()'s own filename-suffix
-// parsing and Export() (Deponia_Linux.asm lines 516915-519803, all 17
+// Confirmed in full (Deponia_Linux.asm lines 516915-519803, all 17
 // manifest-listed methods reached, see each method's own comment below for
 // its exact asm range). A pure static manager coordinating several global
 // TComposedFile instances: one "main" container, one "savegame" container,
@@ -21,13 +20,13 @@
 class TFile;
 class TMemoryFile;
 
-// Confirmed fields (TComposedFileManager::GetComposedFile/
-// GetComposedFileInfo, Deponia_Linux.asm lines 517790-518473): `index`
-// (long, +0x08) and `containerType` (TContainerTypeEnum, +0x10) - what
-// `index` selects depends on `containerType`; see GetComposedFile()'s own
-// comment.
+// Confirmed fields (TComposedFileManager::GetComposedFile/GetComposedFileInfo/GetMemoryFile, Deponia_Linux.asm lines
+// 517790-518700): `entryIndex` (long, +0x00) is the number of the file in its container, `volume` (long, +0x08) which
+// container of its kind (-1: the only one; the scene, character and interface containers are numbered when there are
+// several, a manual or a movie by its number), `containerType` (TContainerTypeEnum, +0x10) the kind.
 struct TComposedFileInfo {
-	long index = 0;
+	long entryIndex = 0;
+	long volume = 0;
 	TContainerTypeEnum containerType = TContainerTypeEnum::kType0;
 };
 
@@ -69,15 +68,7 @@ public:
 	// open here) and checks the first 4 bytes for the "VIS3" magic.
 	static bool IsComposedFile(const wxFileName &file);
 
-	// Confirmed call shape (asm lines 517944-518473) but NOT the exact
-	// suffix grammar: parses a trailing "#..." suffix off `file`'s
-	// extension to populate `outInfo` - a multi-branch length- and
-	// character-position-based parser, distinguishing at least a bare
-	// "#NNN#vvv"-style suffix from a longer "#NNNmSS#vvv"-style one with an
-	// embedded container-type letter - not decoded to the byte level.
-	// Always returns false here, so every caller below falls back to
-	// treating its argument as a plain file rather than a composed-file
-	// reference.
+	// Confirmed in full (asm lines 517944-518473): the reference to a container file in the extension of `file`, see the .cpp.
 	static bool GetComposedFileInfo(const wxFileName &file, TComposedFileInfo &outInfo);
 	// Confirmed in full (asm lines 517790-517936): dispatches on
 	// info.containerType to the matching global container(s). For the

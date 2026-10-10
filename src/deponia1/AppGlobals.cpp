@@ -13,7 +13,7 @@ wxSize surfaceSize = {0x500, 0x2D0};
 wxSize renderSize = {0x500, 0x2D0};
 bool g_unlockAspect = false;
 const wchar_t *g_loadingState = L"Loading";
-wxString passwd;
+wxString passwd(L"SAVEGAMEPWD30");
 
 TStandardPaths standardPaths;
 

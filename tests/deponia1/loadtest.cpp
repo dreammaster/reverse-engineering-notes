@@ -5,9 +5,12 @@
 #include "THGameControl.h"
 #include "TSceneControl.h"
 #include "TGAction.h"
+#include "TMSavegame.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/objAccess.h"
+#include "vscommon/scripting/command.h"
 #include "vscommon/scripting/visLua.h"
+#include "vstables/eCommand.h"
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 
@@ -41,6 +44,49 @@ int main() {
 		hero.SetLink(kCharacterStartObject, startObject, true);
 		gameRef.SetLink(kGameFirstCharacter, hero, true);
 
+		// the start action: change the scene to the start object, wait, walk the character to a place, end
+		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
+		action.SetName(TCharHolder("Start"));
+		TVisObjRef part1 = game.CreateObject(8, action, kActionActionParts);
+		part1.SetValue(kActionPartCommand, kCommandChangeScene, TSendEventEnum::kNoEvent);
+		part1.SetLink(kActionPartLink, startObject, true);
+		part1.SetLink(kActionPartAltLink, hero, true);
+		TVisObjRef part2 = game.CreateObject(8, action, kActionActionParts);
+		part2.SetValue(kActionPartCommand, kCommandWait, TSendEventEnum::kNoEvent);
+		part2.SetValue(kActionPartInt, 30, TSendEventEnum::kNoEvent);
+		TVisObjRef part3 = game.CreateObject(8, action, kActionActionParts);
+		part3.SetValue(kActionPartCommand, kCommandCharacterGoTo, TSendEventEnum::kNoEvent);
+		part3.SetLink(kActionPartLink, hero, true);
+		part3.SetValue(kActionPartInt, 300, TSendEventEnum::kNoEvent);
+		part3.SetValue(kActionPartAltInt, 300, TSendEventEnum::kNoEvent);
+		// a language, a font and a text the hero says
+		TVisObjRef language = game.CreateObject(18, gameRef, kGameLanguages);
+		language.SetName(TCharHolder("English"));
+		gameRef.SetLink(kGameStandardLanguage, language, true);
+		TVisObjRef font = game.CreateObject(3, gameRef, kGameFontLinks);
+		font.SetName(TCharHolder("Font"));
+		std::vector<wxRect> rects;
+		for (int i = 0; i < 26; i++) {
+			wxRect r;
+			r.x = i * 8;
+			r.y = 0;
+			r.width = 8;
+			r.height = 12;
+			rects.push_back(r);
+		}
+		font.SetValue(kFontLetters, rects, TSendEventEnum::kNoEvent);
+		font.SetValue(kFontAlphabet, wxString(L"abcdefghijklmnopqrstuvwxyz"), TSendEventEnum::kNoEvent);
+		gameRef.SetLink(kGameActionTextFont, font, true);
+		TVisObjRef text = game.CreateObject(14, gameRef, kGameTexts);
+		text.SetName(TCharHolder("Hello"));
+		TVisObjRef partText = game.CreateObject(8, action, kActionActionParts);
+		partText.SetValue(kActionPartCommand, kCommandShowText, TSendEventEnum::kNoEvent);
+		partText.SetLink(kActionPartLink, text, true);
+		partText.SetLink(kActionPartAltLink, hero, true);
+		TVisObjRef part4 = game.CreateObject(8, action, kActionActionParts);
+		part4.SetValue(kActionPartCommand, kCommandEndAction, TSendEventEnum::kNoEvent);
+		gameRef.SetLink(kGameStartAction, action, true);
+
 		wxFileName out(L"synthetic.dat");
 		CHECK(game.BinarySave(out, nullptr, false, nullptr));
 	}
@@ -59,6 +105,7 @@ int main() {
 	CHECK(control->PreLoad(file, warning, true));
 	printf("PreLoad done\n");
 
+	InitPlayerCommands(control->GetVisionaire(), wxString(L"."), wxString(L"."), wxString(L"."));
 	wxString language;
 
 	printf("LoadAndInitGame\n");
@@ -77,6 +124,7 @@ int main() {
 			TGAction::ContinueRunningActions(false);
 			control->Update();
 			control->Draw(true);
+			wxMilliSleep(10);
 			control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{50 + i, 60});
 		}
 		control->ProcessMessage(static_cast<TMouseMessageEnum>(3), wxPoint{300, 300});
@@ -103,10 +151,25 @@ int main() {
 				TGAction::ContinueRunningActions(false);
 				control->Update();
 				control->Draw(true);
+				wxMilliSleep(10);
 			}
 		}
 		TVisObjRef cur = control->GetCurrentCharacter()->GetRef();
 		printf("hero at %d,%d\n", cur.GetPoint(kCharacterPosition)->x, cur.GetPoint(kCharacterPosition)->y);
+		// save the running game and load it again
+		TMSavegame::InitSaveGamePath();
+		control->SaveGame(1);
+		{
+			TMSavegame check(true, 1, 0, 0, control->GetVisionaire());
+			CHECK(check.Exists());
+			printf("savegame exists: %d" "\n", (int)check.Exists());
+		}
+		control->GetCurrentCharacter()->GetRef().SetValue(kCharacterPosition, wxPoint{5, 6}, TSendEventEnum::kNoEvent);
+		bool loadedAgain = control->LoadGame(1);
+		printf("LoadGame -> %d" "\n", (int)loadedAgain);
+		TVisObjRef again = control->GetCurrentCharacter()->GetRef();
+		printf("hero after load at %d,%d" "\n", again.GetPoint(kCharacterPosition)->x, again.GetPoint(kCharacterPosition)->y);
+		CHECK(loadedAgain);
 		printf("frames done\n");
 	}
 

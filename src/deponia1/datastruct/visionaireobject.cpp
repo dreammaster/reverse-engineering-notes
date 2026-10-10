@@ -598,20 +598,32 @@ bool TVisionaireObject::SetValue(int field, const TVList &objects, bool notify) 
 	return true;
 }
 
-// Confirmed (asm lines 592146-592315): plain forwards to the record.
+// Confirmed (asm lines 592146-592315): forwards to the record - an object that was removed (it has no record) answers false.
 bool TVisionaireObject::ClearLink(int field, bool notify) {
+	if (!isValid())
+		return false;
+
 	return _data->ClearLink(field, notify);
 }
 
 bool TVisionaireObject::SetLinkAnyObject(int field, bool notify) {
+	if (!isValid())
+		return false;
+
 	return _data->SetLinkAnyObject(field, notify);
 }
 
 bool TVisionaireObject::SetLink(int field, const TId &id, bool notify) {
+	if (!isValid())
+		return false;
+
 	return _data->SetLink(field, id, notify);
 }
 
 bool TVisionaireObject::RemoveLink(int field, const TId &id, bool notify) {
+	if (!isValid())
+		return false;
+
 	return _data->RemoveLink(field, id, notify);
 }
 

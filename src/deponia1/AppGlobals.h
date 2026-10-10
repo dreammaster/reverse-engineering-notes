@@ -99,8 +99,8 @@ extern const wchar_t *g_loadingState;
 // Confirmed a real, named global (recovered symbol; IDA types it wxFileName
 // but every use, TMSavegame::SetActive()/CheckVisPaths(), passes it where a
 // `wxString const&` is expected - the ICF-folded-type pattern described in
-// NOTES.md) - the empty "no password" string savegame loading tries after
-// its own SAVEGAMEPWD30 attempt.
+// NOTES.md) - the password of the savegame files, "SAVEGAMEPWD30" (the static
+// initialization of TMSavegame.cpp, asm 165558).
 extern wxString passwd;
 
 // Set by TGameController::ControllerAxisMouseMove/ControllerAxisCharacterMove

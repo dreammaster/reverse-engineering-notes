@@ -2601,7 +2601,7 @@ bool TGameControl::Load() {
 			continue;
 
 		TVisObjRef objRef(obj);
-		THText *newText = new THText(textLink, objRef);
+		THText *newText = new THText(objRef, textLink);
 		newText->Load();
 
 		TVisObjRef sceneTarget = newText->GetTarget().GetLink(kTextOwner);

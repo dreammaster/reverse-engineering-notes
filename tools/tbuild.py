@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Incremental parallel build of the reconstructed sources + one test (tests/deponia1/<name>.cpp).
-Usage: tools/tbuild.py <name.cpp> [-32] [-r]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work)"""
+Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-r]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work)"""
 import os
 import subprocess
 import sys
@@ -10,9 +10,9 @@ SRC = r"C:\dev\visionnaire\src\deponia1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCR = os.path.join(ROOT, "tests", "deponia1")
 bits = 32 if "-32" in sys.argv else 64
-OBJ = os.path.join(ROOT, "build", "tests-%d" % bits)
+OBJ = os.path.join(ROOT, "build", "tests-%d%s" % (bits, "g" if "-g" in sys.argv else ""))
 CXX = r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe"
-FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-MMD"]
+FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-MMD"] + (["-g"] if "-g" in sys.argv else [])
 LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp", "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
 LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.listdir(r"C:\dev\scummvm\common\lua")) if f.endswith(".cpp") and f not in LUA_EXCLUDE] + ["C:/dev/visionnaire/tools/luashim/luashim.cpp"]
 
@@ -70,7 +70,7 @@ with ThreadPoolExecutor(12) as ex:
 if failed:
     sys.exit(1)
 exe = os.path.join(OBJ, os.path.basename(test)[:-4] + ".exe")
-r = subprocess.run([CXX, "-o", exe] + [o for _, o in sources], capture_output=True, text=True)
+r = subprocess.run([CXX] + (["-g"] if "-g" in sys.argv else []) + ["-o", exe] + [o for _, o in sources], capture_output=True, text=True)
 if r.returncode != 0:
     print(r.stderr[:4000])
     sys.exit(1)
