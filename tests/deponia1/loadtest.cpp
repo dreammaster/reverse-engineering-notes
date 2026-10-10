@@ -54,6 +54,13 @@ int main() {
 		TVisObjRef part2 = game.CreateObject(8, action, kActionActionParts);
 		part2.SetValue(kActionPartCommand, kCommandWait, TSendEventEnum::kNoEvent);
 		part2.SetValue(kActionPartInt, 30, TSendEventEnum::kNoEvent);
+		TVisObjRef counter = game.CreateObject(20, scene, kSceneValues);
+		counter.SetName(TCharHolder("Counter"));
+		TVisObjRef partValue = game.CreateObject(8, action, kActionActionParts);
+		partValue.SetValue(kActionPartCommand, kCommandSetValue, TSendEventEnum::kNoEvent);
+		partValue.SetLink(kActionPartLink, counter, true);
+		partValue.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+		partValue.SetValue(kActionPartAltInt, 5, TSendEventEnum::kNoEvent);
 		TVisObjRef part3 = game.CreateObject(8, action, kActionActionParts);
 		part3.SetValue(kActionPartCommand, kCommandCharacterGoTo, TSendEventEnum::kNoEvent);
 		part3.SetLink(kActionPartLink, hero, true);
@@ -170,6 +177,22 @@ int main() {
 		TVisObjRef again = control->GetCurrentCharacter()->GetRef();
 		printf("hero after load at %d,%d" "\n", again.GetPoint(kCharacterPosition)->x, again.GetPoint(kCharacterPosition)->y);
 		CHECK(loadedAgain);
+		// scripts see the game
+		LuaDoString("local h = Characters['Hero']; luaName = tostring(h) .. ' ' .. tostring(h and h.Position and h.Position.x)");
+		lua_getfield(L, LUA_GLOBALSINDEX, "luaName");
+		printf("lua: %s" "\n", lua_tostring(L, -1));
+		lua_settop(L, 0);
+		LuaDoString("hero = Characters['Hero']; hero.Position = {x = 7, y = 8}");
+		TVisObjRef afterLua = control->GetCurrentCharacter()->GetRef();
+		printf("hero set by lua at %d,%d" "\n", afterLua.GetPoint(kCharacterPosition)->x, afterLua.GetPoint(kCharacterPosition)->y);
+		{
+			TVisObjRef sceneRef = control->GetCurrentCharacter()->GetRef().GetLink(kCharacterStartObject).GetParent();
+			TVList values;
+			sceneRef.GetLinks(kSceneValues, TypeOrder::kValue0, values);
+			printf("values in the scene: %d" "\n", (int)values.size());
+			if (!values.empty())
+				printf("Counter = %d" "\n", TVisObjRef(values.front()).GetInt(kValueInt));
+		}
 		printf("frames done\n");
 	}
 
