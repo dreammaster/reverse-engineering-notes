@@ -42,6 +42,20 @@ static void run_isr(void) { /* the driver's INT 08h handler */
 	cpu = save;
 }
 
+/* digital speech of the intro (S1.S..S7.S): unsigned 8-bit samples at 1193182/149 = 8008 Hz (what BLASTER.DRV's sample ISR plays),
+ * mixed over the music; the game polls the player state (API 0Ch with offset 1) until the sample has ended */
+#define SAMPLE_RATE 8008.0
+static uint8_t *smp_buf; static uint32_t smp_len; static double smp_pos; static int smp_playing;
+static void smp_mix(int16_t *out, int n) {
+	for (int i = 0; i < n && smp_playing; i++) {
+		uint32_t p = (uint32_t)smp_pos;
+		if (p >= smp_len) { smp_playing = 0; break; }
+		int v = out[i] + ((int)smp_buf[p] - 128) * 160;
+		out[i] = v > 32767 ? 32767 : v < -32768 ? -32768 : v;
+		smp_pos += SAMPLE_RATE / OPL_RATE;
+	}
+}
+
 static double tick_samples(void) { return (double)OPL_RATE * pit_div / 1193182.0; }
 
 static void audio_cb(void *u, Uint8 *stream, int len) {
@@ -53,6 +67,7 @@ static void audio_cb(void *u, Uint8 *stream, int len) {
 		int chunk = (int)samples_to_tick + 1;
 		if (chunk > n) chunk = n;
 		opl_samples(&opl, out, chunk);
+		smp_mix(out, chunk);
 		out += chunk; n -= chunk; samples_to_tick -= chunk;
 	}
 }
@@ -89,10 +104,10 @@ static void wav_tick(void) {
 /* timer interrupts for the no-audio-device and headless cases */
 void sound_pump(int headless_polls) {
 	if (!sound_on || dev) return;
-	if (headless_polls) { static int np; if (getenv("MM3_SNDLOG") && ++np % 500 == 0) fprintf(stderr, "pump %d word_F=%u\n", np, rd16(SEGP(drv_seg), 0xF)); for (int i = 0; i < 2; i++) { run_isr(); if (wav_buf || getenv("MM3_WAV")) wav_tick(); } return; }
+	if (headless_polls) { static int np; if (getenv("MM3_SNDLOG") && ++np % 500 == 0) fprintf(stderr, "pump %d word_F=%u\n", np, rd16(SEGP(drv_seg), 0xF)); for (int i = 0; i < 2; i++) { run_isr(); smp_pos += tick_samples() * SAMPLE_RATE / OPL_RATE; if (wav_buf || getenv("MM3_WAV")) wav_tick(); } return; }
 	Uint32 now = SDL_GetTicks();
 	double due = (now - last_ms) * 1193182.0 / 1000.0 / pit_div;
-	if (due >= 1.0) { int n = (int)due > 8 ? 8 : (int)due; for (int i = 0; i < n; i++) run_isr(); last_ms = now; }
+	if (due >= 1.0) { int n = (int)due > 8 ? 8 : (int)due; for (int i = 0; i < n; i++) { run_isr(); smp_pos += tick_samples() * SAMPLE_RATE / OPL_RATE; } last_ms = now; }
 }
 
 int sound_init(int headless) {
@@ -139,4 +154,18 @@ void host_soundDriverPlay(Cpu *c) {
 	if (id == 0xFFFF) sound_pump(headless_mode);
 	c->ax = drv_call(9, (uint16_t[]){ id }, 1);
 }
-void host_sub_2698B(Cpu *c) { c->ax = drv_call(0x0C, (uint16_t[]){ host_arg(c, 0), host_arg(c, 1), host_arg(c, 2) }, 3); }
+/* API 0Ch: (offset, segment, length) starts a sample, (0, 0, 0) stops it, (1, 0, 0) returns non-zero while one is playing */
+void host_sub_2698B(Cpu *c) {
+	uint16_t off = host_arg(c, 0), seg = host_arg(c, 1), len = host_arg(c, 2);
+	if (dev) SDL_LockAudioDevice(dev);
+	if (seg) {
+		free(smp_buf);
+		smp_len = len; smp_buf = malloc(len ? len : 1); memcpy(smp_buf, SEGP(seg) + off, len);
+		smp_pos = 0; smp_playing = 1;
+		c->ax = 1;
+	} else if (off == 1) {
+		if (!dev && smp_playing && smp_pos >= smp_len) smp_playing = 0;
+		c->ax = smp_playing;
+	} else { smp_playing = 0; c->ax = 0; }
+	if (dev) SDL_UnlockAudioDevice(dev);
+}

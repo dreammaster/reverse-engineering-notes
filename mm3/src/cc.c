@@ -1,6 +1,7 @@
 #include "cc.h"
 
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -315,5 +316,6 @@ uint8_t *mm3_cc_read_index(const Mm3Cc *cc, int index, size_t *out_len) {
 }
 
 uint8_t *mm3_cc_read(const Mm3Cc *cc, const char *name, size_t *out_len) {
+	if (getenv("MM3_RESLOG")) fprintf(stderr, "[res %6.2f] %s\n", clock() / (double)CLOCKS_PER_SEC, name);
 	return mm3_cc_read_index(cc, mm3_cc_find(cc, name), out_len);
 }

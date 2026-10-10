@@ -224,8 +224,14 @@ void host_vdrv_2D_printText(Cpu *c) {
 }
 
 void host_vdrv_21_loadSprites(Cpu *c) { /* name far -> far pointer of the loaded resource in dx:ax */
-	uint16_t seg = game_load_resource(far_str(c, 0), NULL);
+	const char *name = far_str(c, 0);
+	uint32_t size = 0;
+	uint16_t seg = game_load_resource(name, &size);
 	if (!seg) exit(4);
+	/* the intro title sheets took seconds to read and unpack on a period PC and the picture on screen stays up meanwhile; keep that pacing */
+	if (!headless && ((!strncmp(name, "itit", 4) && name[4] >= '4') || !strncmp(name, "comet", 5) || !strncmp(name, "itxt", 4))) {
+		for (uint32_t ms = size / 70; ms > 0; ms -= ms > 20 ? 20 : ms) { SDL_Delay(ms > 20 ? 20 : ms); video_pump_events(); }
+	}
 	c->dx = seg; c->ax = 0;
 }
 void host_vdrv_24_freeSprites(Cpu *c) { uint16_t seg = host_arg(c, 1); game_sprite_free_cache(seg); dos_free(seg); }
