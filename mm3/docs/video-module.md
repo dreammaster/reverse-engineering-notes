@@ -25,7 +25,7 @@ is loaded into the database as segment `vdrv` (`60000h`, `ida_scripts/load_drive
 | `21h` | `vdrv_21_loadSprites` | load a sprite resource by name (returns a far pointer) |
 | `24h` | `vdrv_24_freeSprites` | free it |
 | `27h` | `vdrv_27_setCursor` | install the mouse cursor sprite (far pointer to a sprite set + frame), reset the mouse driver (`int 33h`) and set its range; the earlier name `showScreen` was wrong |
-| `2Ah` | `vdrv_2A_starfield` | 74-particle starfield / comet transition effect driven by a far callback (intro, transitions) |
+| `2Ah` | `vdrv_2A_introFrame` | 74-particle starfield / comet transition effect driven by a far callback (intro, transitions) |
 | `2Dh` | `vdrv_2D_printText` | print a string with the in-text control codes; **control code `05h` + four hex digits runs a draw list**, which is how the 3D view and the party HUD are drawn (full table and the list format in `view.md`) |
 | `30h` | `vdrv_30_init` | module initialiser (called from `sub_24F1A` with the game's callback table) |
 

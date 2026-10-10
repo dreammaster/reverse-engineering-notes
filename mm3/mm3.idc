@@ -11711,6 +11711,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X22527);
 	op_stkvar	(x,	1);
 	create_insn	(0X22534);
+	set_name	(0X22534,	"dosAllocOrDie");
 	create_insn	(x=0X22538);
 	op_hex		(x,	1);
 	create_insn	(x=0X2253A);
@@ -11852,6 +11853,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X22736);
 	op_hex		(x,	0);
 	create_insn	(0X22740);
+	set_name	(0X22740,	"ccLoadMember");
 	create_insn	(x=0X2278E);
 	op_hex		(x,	1);
 	create_insn	(0X22794);
@@ -12028,7 +12030,7 @@ static Bytes_2(void) {
 	create_insn	(0X24FF2);
 	set_name	(0X24FF2,	"vdrv_00_transition");
 	create_insn	(0X24FFB);
-	set_name	(0X24FFB,	"vdrv_2A_starfield");
+	set_name	(0X24FFB,	"vdrv_2A_introFrame");
 	create_insn	(0X25005);
 	create_insn	(0X2500F);
 	set_name	(0X2500F,	"ccOpen");
@@ -12283,6 +12285,7 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	128,	0X25110);
 	set_name	(0X253C5,	"jpt_252EF");
 	create_insn	(0X253D3);
+	set_name	(0X253D3,	"readKey");
 	set_cmt	(0X253DC,	"cmd",	0);
 	set_cmt	(0X253E8,	"cmd",	0);
 	create_insn	(x=0X253F1);
@@ -12519,6 +12522,7 @@ static Bytes_2(void) {
 	set_cmt	(0X25E3D,	"cmd",	0);
 	set_cmt	(0X25E5D,	"cmd",	0);
 	create_insn	(0X25E66);
+	set_name	(0X25E66,	"delayFrames");
 	create_insn	(x=0X25E6A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X25E7C);
@@ -12987,15 +12991,19 @@ static Bytes_2(void) {
 	make_array	(0X268E7,	0X56);
 	create_word	(0X2693D);
 	create_insn	(0X2693F);
+	set_name	(0X2693F,	"soundDriverInit");
 	create_insn	(0X26948);
 	create_insn	(0X26952);
+	set_name	(0X26952,	"soundDriverRestore");
 	create_insn	(0X2695B);
 	create_insn	(0X26965);
+	set_name	(0X26965,	"soundDriverMusic");
 	create_insn	(0X2696E);
 	create_insn	(0X26978);
-	set_name	(0X26978,	"soundDriverPlay");
+	set_name	(0X26978,	"soundDriverCall");
 	create_insn	(0X26981);
 	create_insn	(0X2698B);
+	set_name	(0X2698B,	"soundDriverSample");
 	create_insn	(0X26994);
 	create_word	(x=0X2699E);
 	op_seg		(x,	0);
@@ -13914,8 +13922,10 @@ static Bytes_2(void) {
 	MakeStruct	(0X27F20,	"_stub_descr");
 	create_insn	(0X27F40);
 	create_insn	(0X27F45);
+	set_name	(0X27F45,	"j_startSong");
 	create_insn	(0X27F4A);
 	create_insn	(0X27F4F);
+	set_name	(0X27F4F,	"j_bossKey");
 	create_insn	(0X27F54);
 	set_name	(0X27F54,	"j_resetBlacksmithWares");
 	create_insn	(0X27F59);
@@ -13927,11 +13937,14 @@ static Bytes_2(void) {
 	create_insn	(0X27F6D);
 	create_insn	(0X27F72);
 	create_insn	(0X27F77);
+	set_name	(0X27F77,	"j_pollSkipKey");
 	create_insn	(0X27F7C);
 	create_insn	(0X27F81);
 	set_name	(0X27F81,	"j_getEquipSlotName");
 	create_insn	(0X27F86);
+	set_name	(0X27F86,	"j_exitGame");
 	create_insn	(0X27F8B);
+	set_name	(0X27F8B,	"j_loadAndPlaySong");
 	create_insn	(0X27F90);
 	set_name	(0X27F90,	"j_equipItem");
 	create_insn	(0X27F95);
@@ -14031,6 +14044,7 @@ static Bytes_2(void) {
 	create_insn	(0X2818F);
 	set_name	(0X2818F,	"j_getCurrentExperience");
 	create_insn	(0X28194);
+	set_name	(0X28194,	"j_loadViewBackground");
 	create_insn	(0X28199);
 	set_name	(0X28199,	"j_confirmDialog");
 	create_insn	(0X2819E);
@@ -14527,21 +14541,29 @@ static Bytes_2(void) {
 	create_byte	(0X2883E);
 	create_byte	(0X2883F);
 	create_byte	(0X28840);
+	set_cmt	(0X28841,	"1 when checkPartyDead finds no party member able to act (all worstCondition values 11-15), 0 otherwise; runMazeEvent ends the script when it is set (evidence: checkPartyDead at 15270 sets it, evt_op13 tests it)",	0);
 	create_byte	(0X28841);
+	set_name	(0X28841,	"Party_dead");
 	create_byte	(0X28842);
 	create_byte	(0X28843);
 	create_byte	(0X28844);
 	create_byte	(0X28845);
 	create_byte	(0X28846);
 	create_byte	(0X28847);
+	set_cmt	(0X28848,	"byte: sound effects available",	0);
 	create_byte	(0X28848);
+	set_name	(0X28848,	"sfxDeviceAvailable");
+	set_cmt	(0X28849,	"byte: music available (startSong and loadAndPlaySong test it)",	0);
 	create_byte	(0X28849);
+	set_name	(0X28849,	"musicDeviceAvailable");
 	create_byte	(0X2884A);
 	set_cmt	(0X2884B,	"byte; non-zero = off-map cells wrap/return 0 instead of 1111h",	0);
 	create_byte	(0X2884B);
 	set_name	(0X2884B,	"Maze_wrapMode");
 	create_byte	(0X2884C);
+	set_cmt	(0X2884D,	"byte 0-2; renderIndoorView increments it modulo 3 before drawing; lamp-wall faces (style 3) use frame 1 + this value (flicker) (evidence: renderIndoorView+0xAC, emulated with all three values)",	0);
 	create_byte	(0X2884D);
+	set_name	(0X2884D,	"View_lampPhase");
 	create_byte	(0X2884E);
 	create_byte	(0X2884F);
 	create_byte	(0X28850);
@@ -14554,7 +14576,9 @@ static Bytes_2(void) {
 	create_byte	(0X28871);
 	create_byte	(0X28872);
 	create_word	(0X28873);
+	set_cmt	(0X28875,	"byte; flips (xor 1) on every step/turn in exploreLoop; renderIndoorView ORs it into the flags of most wall records (alternating mirrored blits: the shimmer of the walls) and into word_35D76 of the scene header (evidence: exploreLoop xor sites, drawWallFaces 'flags = n | byte_28875', checked by emulating renderIndoorView with it 0/1)",	0);
 	create_byte	(0X28875);
+	set_name	(0X28875,	"View_animToggle");
 	create_byte	(0X28876);
 	make_array	(0X28876,	0X2);
 	create_word	(0X28878);
@@ -14647,6 +14671,15 @@ static Bytes_2(void) {
 	create_word	(0X28CE9);
 	create_word	(0X28CEB);
 	create_word	(0X28CED);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X28CEF);
 	create_byte	(0X28CF1);
 	make_array	(0X28CF1,	0X2);
@@ -14740,8 +14773,12 @@ static Bytes_2(void) {
 	create_word	(0X290FD);
 	create_byte	(0X290FF);
 	make_array	(0X290FF,	0X16);
+	set_cmt	(0X29115,	"byte: number of *.mm3 files found by getFiles",	0);
 	create_byte	(0X29115);
+	set_name	(0X29115,	"saveFileCount");
+	set_cmt	(0X29116,	"byte: index of the current saved game in the 13-byte name table at E836h (FFh = none)",	0);
 	create_byte	(0X29116);
+	set_name	(0X29116,	"currentSaveIndex");
 	set_cmt	(0X29117,	"indexed by elemental material (0A3h slot byte)",	0);
 	set_name	(0X29117,	"ELEMENTAL_RESISTANCES");
 	create_byte	(0X29118);
@@ -14752,15 +14789,6 @@ static Bytes_2(void) {
 	set_name	(0X29178,	"METAL_DAMAGE");
 	set_cmt	(0X2918F,	"indexed by item material (0B6h slot byte)",	0);
 	set_name	(0X2918F,	"METAL_LAC");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X291BD,	"indexed by attribute material (0C9h slot byte)",	0);
 	set_name	(0X291BD,	"ATTRIBUTE_BONUSES");
 	create_word	(0X29218);
@@ -17404,7 +17432,9 @@ static Bytes_3(void) {
 	set_cmt	(0X32E68,	"byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set",	0);
 	create_byte	(0X32E68);
 	set_name	(0X32E68,	"Town_closed");
+	set_cmt	(0X32E6A,	"far pointer to fecp.brd (border ornaments), name at DGROUP 2E8Fh",	0);
 	create_word	(0X32E6A);
+	set_name	(0X32E6A,	"Spr_fecpBrd");
 	create_word	(0X32E6C);
 	create_byte	(0X32E6E);
 	create_byte	(0X32E6F);
@@ -17455,7 +17485,9 @@ static Bytes_3(void) {
 	create_word	(0X332B6);
 	create_byte	(0X332B8);
 	make_array	(0X332B8,	0X12);
+	set_cmt	(0X332CA,	"far pointer (offset, segment) to the sprite set global.icn: the view window frame / HUD pieces, loaded after the roster menu (name string at DGROUP 2E63h) (evidence: loader at rosterMenu+0x2E, HUD draw list of drawHudPieces)",	0);
 	create_word	(0X332CA);
+	set_name	(0X332CA,	"Spr_globalIcn");
 	create_word	(0X332CC);
 	create_byte	(0X332CE);
 	create_byte	(0X332CF);
@@ -17471,7 +17503,9 @@ static Bytes_3(void) {
 	create_byte	(0X332D9);
 	create_byte	(0X332DA);
 	create_byte	(0X332DB);
+	set_cmt	(0X332DC,	"far pointer (word_332DC/word_332DE) to the 1890h-byte buffer the song files are loaded into (allocated by _main)",	0);
 	create_word	(0X332DC);
+	set_name	(0X332DC,	"songBuffer");
 	create_word	(0X332DE);
 	create_byte	(0X332E0);
 	create_byte	(0X332E1);
@@ -17512,7 +17546,9 @@ static Bytes_3(void) {
 	create_byte	(0X33304);
 	create_byte	(0X33305);
 	create_byte	(0X33306);
+	set_cmt	(0X33308,	"far pointer to bat.brd (border), name at DGROUP 2E87h",	0);
 	create_word	(0X33308);
+	set_name	(0X33308,	"Spr_batBrd");
 	create_word	(0X3330A);
 	create_byte	(0X3330C);
 	create_byte	(0X3330D);
@@ -17545,13 +17581,17 @@ static Bytes_3(void) {
 	create_byte	(0X333BA);
 	create_word	(0X333BC);
 	create_byte	(0X333BE);
+	set_cmt	(0X333C0,	"far pointer to hpbars.icn, name at DGROUP 2EA4h",	0);
 	create_word	(0X333C0);
+	set_name	(0X333C0,	"Spr_hpbarsIcn");
 	create_word	(0X333C2);
 	create_byte	(0X333C4);
 	create_byte	(0X333C5);
 	create_byte	(0X333C6);
 	make_array	(0X333C6,	0X74);
+	set_cmt	(0X3343A,	"far pointer to protect.icn, name at DGROUP 2E98h",	0);
 	create_word	(0X3343A);
+	set_name	(0X3343A,	"Spr_protectIcn");
 	create_word	(0X3343C);
 	create_byte	(0X3343E);
 	create_byte	(0X3343F);
@@ -17653,15 +17693,21 @@ static Bytes_3(void) {
 	create_byte	(0X34B8D);
 	create_word	(0X34B8E);
 	create_word	(0X34B90);
+	set_cmt	(0X34B92,	"non-zero when monsters stand in the first cell ahead; set by scanMonstersAhead; runMazeEvent skips the square's script (jumps to its exit with byte_34BF0 = 1) when it is set, drawView starts combat (evidence: docs/engine-loop.md, runMazeEvent+11Bh). byte_34B93 / byte_34B94 are rows 2 and 3 -> Monsters_row2 / Monsters_row3",	0);
 	create_byte	(0X34B92);
+	set_name	(0X34B92,	"Monsters_row1");
 	create_byte	(0X34B93);
 	create_byte	(0X34B94);
 	create_byte	(0X34B95);
+	set_cmt	(0X34B96,	"outdoor maps: 7 far pointers (4 bytes each, from +4 = 34B9A) to the terrain sheets named by the selector bytes 0-6 of the current page header through the name table at DGROUP 5A46h; the same table holds the four wall sheets on indoor maps (see Spr_wallSheet1) (evidence: loadMapGraphics outdoor branch, view_glue.c reproduces it and the renderer output matches the original)",	0);
 	create_byte	(0X34B96);
+	set_name	(0X34B96,	"Spr_terrainSheets");
 	create_byte	(0X34B97);
 	create_byte	(0X34B98);
 	create_byte	(0X34B99);
+	set_cmt	(0X34B9A,	"far pointer to the nearest wall sheet <env>wl1.vga; the table of the four sheets starts at DGROUP C4A6h = linear 34B96 (Spr_wallSheets, 4 bytes per sheet number n: n = 1,2,3,4 -> <env>wl<n>.vga), so 34B9E = wl2, 34BA2 = wl3, 34BA6 = wl4 (evidence: loadMapGraphics sprintf '%swl%u.vga', drawWallFaces set records, emulated)",	0);
 	create_word	(0X34B9A);
+	set_name	(0X34B9A,	"Spr_wallSheet1");
 	create_word	(0X34B9C);
 	create_word	(0X34B9E);
 	create_word	(0X34BA0);
@@ -17721,9 +17767,13 @@ static Bytes_3(void) {
 	create_byte	(0X34C1D);
 	create_word	(0X34C1E);
 	create_word	(0X34C20);
+	set_cmt	(0X34C22,	"far pointer to restore.icn, name at DGROUP 2EAFh",	0);
 	create_word	(0X34C22);
+	set_name	(0X34C22,	"Spr_restoreIcn");
 	create_word	(0X34C24);
+	set_cmt	(0X34C26,	"far pointer to gargoyle.brd (border gargoyle frames), see Spr_globalIcn (name at DGROUP 2E6Eh)",	0);
 	create_word	(0X34C26);
+	set_name	(0X34C26,	"Spr_gargoyleBrd");
 	create_word	(0X34C28);
 	create_byte	(0X34C2A);
 	create_byte	(0X34C2B);
@@ -17749,7 +17799,9 @@ static Bytes_3(void) {
 	make_array	(0X35946,	0X40F);
 	create_byte	(0X35D55);
 	create_byte	(0X35D56);
+	set_cmt	(0X35D57,	"byte: slot (0-3) of the first loaded page whose header byte 13h (default start cell) is non-zero, FFh if none; set by loadMapData (evidence: loadMapData+0xDB)",	0);
 	create_byte	(0X35D57);
+	set_name	(0X35D57,	"Maze_startSlot");
 	create_byte	(0X35D58);
 	create_byte	(0X35D59);
 	create_byte	(0X35D5A);
@@ -17794,7 +17846,9 @@ static Bytes_3(void) {
 	create_byte	(0X36FB1);
 	create_word	(0X36FB2);
 	create_word	(0X36FB4);
+	set_cmt	(0X36FB6,	"far pointer to grabber.brd (border), name at DGROUP 2E7Bh",	0);
 	create_word	(0X36FB6);
+	set_name	(0X36FB6,	"Spr_grabberBrd");
 	create_word	(0X36FB8);
 	set_cmt	(0X36FBA,	"31 bytes, MAZE.NAM (\"Default Characters\")",	0);
 	create_byte	(0X36FBA);
@@ -17864,6 +17918,15 @@ static Bytes_3(void) {
 	set_cmt	(0X37330,	"word (+356h) (action 17)",	0);
 	create_word	(0X37330);
 	set_name	(0X37330,	"Party_poisonResist");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X37332,	"word, minutes into the day",	0);
 	create_word	(0X37332);
 	set_name	(0X37332,	"Party_minutes");
@@ -17902,7 +17965,9 @@ static Bytes_3(void) {
 	create_byte	(0X37378);
 	create_byte	(0X37379);
 	create_byte	(0X3737A);
+	set_cmt	(0X3737C,	"far pointer to water.vga (outdoor maps), loaded by loadMapGraphics (name at DGROUP 363Ch)",	0);
 	create_word	(0X3737C);
+	set_name	(0X3737C,	"Spr_water");
 	create_word	(0X3737E);
 	create_byte	(0X37380);
 	create_byte	(0X37381);
@@ -17936,12 +18001,16 @@ static Bytes_3(void) {
 	create_byte	(0X373A0);
 	create_byte	(0X373A1);
 	create_byte	(0X373A2);
+	set_cmt	(0X373A4,	"number of message/NPC windows the running event script has opened (incremented by Display1/NPC, closed by vdrv_06_closeWindows(word_373A4) when the script ends) (evidence: runMazeEvent evt_op01, evt_op18)",	0);
 	create_word	(0X373A4);
+	set_name	(0X373A4,	"Evt_windowCount");
 	create_byte	(0X373A6);
 	make_array	(0X373A6,	0X8);
 	create_dword	(0X373AE);
 	create_byte	(0X373B2);
+	set_cmt	(0X373B4,	"far pointer to the view background sprite set (day.vga / night.vga / <env>.sky), set by loadViewBackground; renderIndoorView copies it into the scene header word_35D60/62 (evidence: sub_43034 stores it; emulated renderIndoorView needs it non-zero or the draw list is empty)",	0);
 	create_word	(0X373B4);
+	set_name	(0X373B4,	"Spr_viewBackground");
 	create_word	(0X373B6);
 	create_byte	(0X373B8);
 	create_byte	(0X373B9);
@@ -17955,7 +18024,9 @@ static Bytes_3(void) {
 	create_byte	(0X373C8);
 	create_byte	(0X373C9);
 	create_byte	(0X373CA);
+	set_cmt	(0X373CC,	"far pointer to charpow.icn (spell effect sprites drawn by the row writers), name at DGROUP 2EBBh",	0);
 	create_word	(0X373CC);
+	set_name	(0X373CC,	"Spr_charpowIcn");
 	create_word	(0X373CE);
 	set_cmt	(0X373D0,	"byte, number of objects (MAZEnn.BIN object records, max 80)",	0);
 	create_byte	(0X373D0);
@@ -18102,15 +18173,6 @@ static Bytes_3(void) {
 	set_cmt	(0X3773E,	"far pointer to the moncold.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X3773E);
 	set_name	(0X3773E,	"Mon_cold");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X37742,	"far pointer to the monacid.dat column (90 entries), loaded by loadMonsterData",	0);
 	create_dword	(0X37742);
 	set_name	(0X37742,	"Mon_acid");
@@ -18176,6 +18238,7 @@ static Bytes_4(void) {
 	create_byte	(0X37840);
 	make_array	(0X37840,	0X80);
 	create_insn	(0X378C0);
+	set_name	(0X378C0,	"bossKey");
 	create_insn	(x=0X378CF);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -18818,6 +18881,7 @@ static Bytes_4(void) {
 	create_insn	(0X387B7);
 	create_insn	(0X387C0);
 	create_insn	(0X387C6);
+	set_name	(0X387C6,	"loadAndPlaySong");
 	create_insn	(x=0X387C9);
 	op_hex		(x,	1);
 	create_insn	(x=0X387D8);
@@ -18837,6 +18901,7 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X38821,	"src",	0);
 	create_insn	(0X38821);
+	set_name	(0X38821,	"startSong");
 	set_cmt	(0X3882B,	"dest",	0);
 	create_insn	(x=0X38833);
 	op_stkvar	(x,	0);
@@ -19043,6 +19108,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X3945C);
 	op_stkvar	(x,	1);
 	create_insn	(0X3946E);
+	set_name	(0X3946E,	"pollSkipKey");
 	set_cmt	(0X39475,	"cmd",	0);
 	create_insn	(0X39498);
 	create_insn	(0X3949A);
@@ -19225,6 +19291,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X398F3);
 	op_stkvar	(x,	1);
 	create_insn	(0X39900);
+	set_name	(0X39900,	"exitGame");
 	set_cmt	(0X39910,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X39910);
 	op_hex		(x,	0);
@@ -22359,6 +22426,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3F567);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3F56A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3F572);
@@ -22809,15 +22885,6 @@ static Bytes_4(void) {
 	set_cmt	(0X3FB7E,	"int",	0);
 	create_insn	(x=0X3FB7E);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3FB86);
 	op_hex		(x,	1);
 	create_insn	(0X3FB8B);
@@ -25339,6 +25406,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X43001);
 	op_hex		(x,	1);
 	create_insn	(0X43034);
+	set_name	(0X43034,	"loadViewBackground");
 	create_insn	(x=0X43038);
 	op_stkvar	(x,	1);
 	create_insn	(0X43062);
@@ -27955,6 +28023,15 @@ static Bytes_5(void) {
 	create_insn	(0X46BFA);
 	set_cmt	(0X46C00,	"jumptable 00046B49 default case",	1);
 	set_name	(0X46C00,	"def_46B49");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X46C09);
 	set_cmt	(0X46C0D,	"jump table for switch statement",	0);
 	create_word	(x=0X46C0D);
@@ -28404,15 +28481,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47279);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47287);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4728A);
@@ -33015,6 +33083,15 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X4E761,	"int",	0);
 	set_cmt	(0X4E763,	"__int32",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4E764);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4E767,	"char",	0);
@@ -33462,15 +33539,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4F1DB);
 	op_plain_offset	(x,	0,	0X4DE30);
 	op_plain_offset	(x,	128,	0X4DE30);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X4F1E0,	"jumptable 0004F1DB case 0",	1);
 	create_insn	(x=0X4F1E0);
 	op_stkvar	(x,	1);
@@ -35834,7 +35902,9 @@ static Bytes_7(void) {
 	create_byte	(0X60036);
 	make_array	(0X60036,	0X466);
 	create_byte	(0X6049C);
-	make_array	(0X6049C,	0X520);
+	make_array	(0X6049C,	0X200);
+	set_cmt	(0X6069C,	"200 words: offset of each screen row (row * 320), built by vdrv_init",	0);
+	set_name	(0X6069C,	"vdrv_rowTable");
 	create_word	(0X609BC);
 	create_word	(0X609BE);
 	create_word	(0X609C0);
@@ -35853,9 +35923,13 @@ static Bytes_7(void) {
 	create_word	(0X609FA);
 	create_word	(0X609FC);
 	create_word	(0X609FE);
+	set_cmt	(0X60A00,	"word: number of open windows (the saved states are at 60A22h + 20h * n) (evidence: vdrv_openWindow / vdrv_closeWindows, verified by src/ui_text.c against the module)",	0);
 	create_word	(0X60A00);
+	set_name	(0X60A00,	"vdrv_winDepth");
 	make_array	(0X60A02,	0X2);
+	set_cmt	(0X60A04,	"word: current window state, 16 words from 60A02h (saved on window open): x, y (60A06), width (60A08), height (60A0A), text colour index (60A0C), fill pattern word (60A0E), cursor x (60A10), cursor y (60A12), alignment byte 0 left / 1 right / 2 centre (60A14), stop flag byte 0 / 80h (60A15), text area left (60A16), right (60A18), top (60A1A), bottom (60A1C), default colour (60A1E), default fill (60A20). NOTE: inside the vdrv segment IDA shows many of these as DGROUP names (byte_290FF+1 = cursor x, word_290FD+1 = fill, byte_29262 = alt font ...); they are all module-segment (cs) fields -- set the segment register assumption of vdrv to cs",	0);
 	create_word	(0X60A04);
+	set_name	(0X60A04,	"vdrv_winX");
 	create_word	(0X60A06);
 	create_word	(0X60A08);
 	create_word	(0X60A0A);
@@ -35907,20 +35981,30 @@ static Bytes_7(void) {
 	create_word	(0X60B68);
 	create_byte	(0X60B6A);
 	make_array	(0X60B6A,	0X8);
+	set_cmt	(0X60B72,	"byte: 0 normal font, 80h alternate font (OR-ed into the glyph number); printed as control code 01 / 02",	0);
 	create_byte	(0X60B72);
+	set_name	(0X60B72,	"vdrv_altFont");
+	set_cmt	(0X60B74,	"4 bytes: palette index of glyph pixel values 0-3 (0 = transparent); loaded from vdrv_colourTable by vdrv_selectTextColour",	0);
 	create_word	(0X60B74);
+	set_name	(0X60B74,	"vdrv_glyphColours");
 	create_word	(0X60B76);
+	set_cmt	(0X60B78,	"4 bytes per text colour index (0Ch control code): 0, then three palette indices (0AAh bytes)",	0);
 	create_byte	(0X60B78);
 	make_array	(0X60B78,	0XA8);
+	set_name	(0X60B78,	"vdrv_colourTable");
+	set_cmt	(0X60C20,	"word: fill pattern (two pixels) of newly opened windows (F0F0h)",	0);
 	create_word	(0X60C20);
+	set_name	(0X60C20,	"vdrv_windowFill");
 	create_byte	(0X60C22);
 	make_array	(0X60C22,	0X244);
 	create_byte	(0X60E66);
 	create_word	(0X60E67);
 	create_byte	(0X60E69);
 	create_byte	(0X60E6A);
+	set_cmt	(0X60E6B,	"10 bytes: characters a line may be broken at (newline, space, '-', '/' ...)",	0);
 	create_byte	(0X60E6B);
 	make_array	(0X60E6B,	0XA);
+	set_name	(0X60E6B,	"vdrv_breakChars");
 	create_byte	(0X60E75);
 	create_byte	(0X60E76);
 	make_array	(0X60E76,	0X2);
@@ -35932,6 +36016,7 @@ static Bytes_7(void) {
 	create_word	(0X60E8E);
 	create_word	(0X60E90);
 	create_insn	(0X60E92);
+	set_name	(0X60E92,	"vdrv_drawSprite");
 	create_insn	(x=0X60E9B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X60E9E);
@@ -36175,6 +36260,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X619B6);
 	op_hex		(x,	1);
 	create_insn	(0X619C4);
+	set_name	(0X619C4,	"vdrv_measureChar");
 	create_insn	(0X619E0);
 	create_insn	(x=0X619E4);
 	op_hex		(x,	1);
@@ -36182,6 +36268,7 @@ static Bytes_7(void) {
 	create_insn	(0X619FF);
 	create_insn	(0X61A0F);
 	create_insn	(0X61A1C);
+	set_name	(0X61A1C,	"vdrv_newLine");
 	create_insn	(x=0X61A22);
 	op_hex		(x,	1);
 	create_insn	(x=0X61A44);
@@ -36203,14 +36290,17 @@ static Bytes_7(void) {
 	create_insn	(x=0X61AE3);
 	op_hex		(x,	1);
 	create_insn	(0X61AF0);
+	set_name	(0X61AF0,	"vdrv_selectTextColour");
 	create_insn	(x=0X61AF4);
 	op_hex		(x,	1);
 	create_insn	(x=0X61AF6);
 	op_hex		(x,	1);
 	create_insn	(0X61B08);
+	set_name	(0X61B08,	"vdrv_nextTextChar");
 	create_insn	(x=0X61B13);
 	op_hex		(x,	1);
 	create_insn	(0X61B16);
+	set_name	(0X61B16,	"vdrv_parseDigits");
 	create_insn	(x=0X61B2B);
 	op_hex		(x,	1);
 	create_insn	(x=0X61B2F);
@@ -36267,6 +36357,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X61CBA);
 	op_hex		(x,	1);
 	create_insn	(0X61CDA);
+	set_name	(0X61CDA,	"vdrv_fillWindowPattern");
 	create_insn	(x=0X61CF9);
 	op_hex		(x,	1);
 	create_insn	(x=0X61CFB);
@@ -36621,6 +36712,7 @@ static Bytes_7(void) {
 	create_insn	(0X62802);
 	create_insn	(0X62815);
 	create_insn	(0X62820);
+	set_name	(0X62820,	"vdrv_init");
 	create_insn	(x=0X6286D);
 	op_hex		(x,	1);
 	create_insn	(x=0X62875);
@@ -36677,6 +36769,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X629ED);
 	op_hex		(x,	0);
 	create_insn	(0X629F6);
+	set_name	(0X629F6,	"vdrv_shutdown");
 	create_insn	(x=0X629FD);
 	op_hex		(x,	1);
 	set_cmt	(0X629FF,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -36693,6 +36786,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X62A10);
 	op_hex		(x,	0);
 	create_insn	(0X62A14);
+	set_name	(0X62A14,	"vdrv_waitRetrace");
 	set_cmt	(0X62A1C,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	set_cmt	(0X62A22,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	create_insn	(0X62A2A);
@@ -36775,6 +36869,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X632DE);
 	op_hex		(x,	1);
 	create_insn	(0X63370);
+	set_name	(0X63370,	"vdrv_openWindowImpl");
 	create_insn	(0X63386);
 	create_insn	(x=0X633BA);
 	op_stkvar	(x,	1);
@@ -36820,10 +36915,12 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(0X635CA);
 	create_insn	(0X635D4);
+	set_name	(0X635D4,	"vdrv_drawFrameTile");
 	create_insn	(x=0X635EC);
 	op_hex		(x,	1);
 	create_insn	(0X63618);
 	create_insn	(0X6361E);
+	set_name	(0X6361E,	"vdrv_closeWindowsImpl");
 	create_insn	(x=0X63626);
 	op_stkvar	(x,	0);
 	create_insn	(0X6362E);
@@ -36846,6 +36943,7 @@ static Bytes_7(void) {
 	op_hex		(x,	0);
 	create_insn	(0X636BC);
 	create_insn	(0X636CA);
+	set_name	(0X636CA,	"vdrv_fillTextArea");
 	create_insn	(0X636E4);
 	create_insn	(x=0X636F8);
 	op_hex		(x,	1);
@@ -36854,6 +36952,7 @@ static Bytes_7(void) {
 	create_insn	(x=0X63710);
 	op_hex		(x,	1);
 	create_insn	(0X6371C);
+	set_name	(0X6371C,	"vdrv_updateScreen");
 	create_insn	(0X6373E);
 	create_insn	(0X6375C);
 	create_insn	(0X6377A);
@@ -37934,6 +38033,7 @@ static Functions_0(void) {
 	set_frame_size(0X22524, 0, 2, 0);
 	add_func    (0X22534,0X225D6);
 	set_func_flags(0X22534,0x5402);
+	set_func_cmt(0X22534,	"bx = bytes; allocates (bx+15)>>4 paragraphs through DOS INT 21h/48h (last-fit strategy 5801h on DOS 3+), returns the segment in ax; on failure prints \"Might and Magic ]I[ ran out of memory!\" and exits (evidence: reads the code; called by allocFar and ccLoadMember)", 0);
 	set_frame_size(0X22534, 0, 0, 0);
 	add_func    (0X22632,0X22636);
 	set_func_flags(0X22632,0x5402);
@@ -37947,6 +38047,7 @@ static Functions_0(void) {
 	set_frame_size(0X226C6, 0, 2, 0);
 	add_func    (0X22740,0X22B30);
 	set_func_flags(0X22740,0x5402);
+	set_func_cmt(0X22740,	"core of loadResourceByName: ax = name near ptr, bx = its segment, cx = destination segment (0 = allocate with dosAllocOrDie); hashes the name (rol 9 + char, the .CC filename hash), looks the id up in the open archive TOC, seeks and reads the member (stored, or LZHUF through the 4-byte header when the first four name characters differ from the 4-byte string at cs:0652h); returns the segment in bx and the size in DGROUP n (evidence: reads the code, same hash as tools/mm3_cc.py name_id)", 0);
 	set_frame_size(0X22740, 0X2, 0, 0);
 	add_func    (0X24ECC,0X24F12);
 	set_func_flags(0X24ECC,0x5412);
@@ -38017,7 +38118,7 @@ static Functions_0(void) {
 	set_frame_size(0X24FF2, 0, 0, 0);
 	add_func    (0X24FFB,0X25005);
 	set_func_flags(0X24FFB,0x5402);
-	set_func_cmt(0X24FFB,	"API 2Ah: 74-particle starfield/comet transition effect with a far callback (intro and screen transitions)", 0);
+	set_func_cmt(0X24FFB,	"one frame of the intro: 75-particle starfield (arrays at module data +0/96h/12Ch/1C2h/258h, colour table 0E62h) + draw list at the argument, then copy to screen", 0);
 	set_frame_size(0X24FFB, 0, 0, 0);
 	add_func    (0X2500F,0X25024);
 	set_func_flags(0X2500F,0x5412);
@@ -38078,6 +38179,7 @@ static Functions_0(void) {
 	set_frame_size(0X252CF, 0X2, 2, 0);
 	add_func    (0X253D3,0X254BA);
 	set_func_flags(0X253D3,0x5412);
+	set_func_cmt(0X253D3,	"_bioskey wrapper: fills the shift/ctrl/alt words (word_28CE7..28CED), maps F-keys to codes C9h..D2h and keypad keys through the table at 0x8..; returns the command byte", 0);
 	set_frame_size(0X253D3, 0X2, 2, 0);
 	add_func    (0X254BA,0X25C0E);
 	set_func_flags(0X254BA,0x5412);
@@ -38101,6 +38203,7 @@ static Functions_0(void) {
 	set_frame_size(0X25E20, 0, 2, 0);
 	add_func    (0X25E66,0X25E9E);
 	set_func_flags(0X25E66,0x5412);
+	set_func_cmt(0X25E66,	"delayFrames(n): calls vdrv_18_getMouse n times; each call waits for the 70 Hz retrace, so n = number of video frames (the intro and message delays use it)", 0);
 	set_frame_size(0X25E66, 0X2, 2, 0);
 	add_func    (0X25E9E,0X25EF3);
 	set_func_flags(0X25E9E,0x5412);
@@ -38179,19 +38282,23 @@ static Functions_0(void) {
 	set_frame_size(0X268BE, 0, 2, 0);
 	add_func    (0X2693F,0X26952);
 	set_func_flags(0X2693F,0x5402);
+	set_func_cmt(0X2693F,	"API 0 of the sound driver: init(port) (hooks INT 08h, programs the PIT, resets the FM chip)", 0);
 	set_frame_size(0X2693F, 0, 0, 0);
 	add_func    (0X26952,0X26965);
 	set_func_flags(0X26952,0x5402);
+	set_func_cmt(0X26952,	"API 3: restore the old INT 08h vector, silence the chip", 0);
 	set_frame_size(0X26952, 0, 0, 0);
 	add_func    (0X26965,0X26978);
 	set_func_flags(0X26965,0x5402);
+	set_func_cmt(0X26965,	"API 6: music command: far pointer to a song buffer starts it, 0:0 stops, FFFF:FFFF queries/clears (mode word C0h = start flag?)", 0);
 	set_frame_size(0X26965, 0, 0, 0);
 	add_func    (0X26978,0X2698B);
 	set_func_flags(0X26978,0x5402);
-	set_func_cmt(0X26978,	"far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id", 0);
+	set_func_cmt(0X26978,	"cmd 0FFFEh restarts the song clock, 0FFFFh returns song position (intro scenes are timed by it); other values = song/sfx numbers", 0);
 	set_frame_size(0X26978, 0, 0, 0);
 	add_func    (0X2698B,0X2699E);
 	set_func_flags(0X2698B,0x5402);
+	set_func_cmt(0X2698B,	"API 0Ch: digital sample player (Covox/Blaster drivers)", 0);
 	set_frame_size(0X2698B, 0, 0, 0);
 	add_func    (0X269A9,0X26AD9);
 	set_func_flags(0X269A9,0x5456);
@@ -38352,14 +38459,14 @@ static Functions_0(void) {
 	SetType(0X27F40, "int __cdecl __far sub_27F40(int, int, char *buffer);");
 	set_frame_size(0X27F40, 0, 0, 0);
 	add_func    (0X27F45,0X27F4A);
-	set_func_flags(0X27F45,0x5482);
-	SetType(0X27F45, "int __cdecl __far sub_27F45(int, char);");
+	set_func_flags(0X27F45,0x54c2);
+	SetType(0X27F45, "int __cdecl __far j_startSong(int, char);");
 	set_frame_size(0X27F45, 0, 0, 0);
 	add_func    (0X27F4A,0X27F4F);
 	set_func_flags(0X27F4A,0x5482);
 	set_frame_size(0X27F4A, 0, 0, 0);
 	add_func    (0X27F4F,0X27F54);
-	set_func_flags(0X27F4F,0x5482);
+	set_func_flags(0X27F4F,0x54c2);
 	set_frame_size(0X27F4F, 0, 0, 0);
 	add_func    (0X27F54,0X27F59);
 	set_func_flags(0X27F54,0x54c2);
@@ -38383,7 +38490,7 @@ static Functions_0(void) {
 	set_func_flags(0X27F72,0x5482);
 	set_frame_size(0X27F72, 0, 0, 0);
 	add_func    (0X27F77,0X27F7C);
-	set_func_flags(0X27F77,0x5482);
+	set_func_flags(0X27F77,0x54c2);
 	set_frame_size(0X27F77, 0, 0, 0);
 	add_func    (0X27F7C,0X27F81);
 	set_func_flags(0X27F7C,0x5482);
@@ -38392,9 +38499,9 @@ static Functions_0(void) {
 	set_func_flags(0X27F81,0x54c2);
 	set_frame_size(0X27F81, 0, 0, 0);
 	add_func    (0X27F86,0X27F8B);
-	set_func_flags(0X27F86,0x1481);
+	set_func_flags(0X27F86,0x14c1);
 	add_func    (0X27F8B,0X27F90);
-	set_func_flags(0X27F8B,0x5482);
+	set_func_flags(0X27F8B,0x54c2);
 	set_frame_size(0X27F8B, 0, 0, 0);
 	add_func    (0X27F90,0X27F95);
 	set_func_flags(0X27F90,0x54c2);
@@ -38598,7 +38705,7 @@ static Functions_0(void) {
 	set_func_flags(0X2818F,0x54c2);
 	set_frame_size(0X2818F, 0, 0, 0);
 	add_func    (0X28194,0X28199);
-	set_func_flags(0X28194,0x5482);
+	set_func_flags(0X28194,0x54c2);
 	set_frame_size(0X28194, 0, 0, 0);
 	add_func    (0X28199,0X2819E);
 	set_func_flags(0X28199,0x54c2);
@@ -39276,6 +39383,7 @@ static Functions_0(void) {
 	set_frame_size(0X286E5, 0, 0, 0);
 	add_func    (0X378C0,0X379F2);
 	set_func_flags(0X378C0,0x5412);
+	set_func_cmt(0X378C0,	"F10 'boss key': saves the screen to boss.$$$, goes to text mode (not reproduced in the port)", 0);
 	set_frame_size(0X378C0, 0, 2, 0);
 	add_func    (0X379F2,0X37B49);
 	set_func_flags(0X379F2,0x5412);
@@ -39351,11 +39459,13 @@ static Functions_0(void) {
 	set_frame_size(0X385BD, 0X2, 2, 0);
 	add_func    (0X387C6,0X38821);
 	set_func_flags(0X387C6,0x5412);
+	set_func_cmt(0X387C6,	"loads the song file named at ECE8h, copies it to the song buffer (word_332DC/E, 1890h bytes) and starts it if Option_music", 0);
 	set_frame_size(0X387C6, 0X4, 2, 0);
 	define_local_var(0X387C6, 0X38821, "[bp-0X4]", "src");
 	add_func    (0X38821,0X3886C);
 	set_func_flags(0X38821,0x5412);
-	SetType(0X38821, "int __cdecl __far sub_38821(int, char);");
+	SetType(0X38821, "int __cdecl __far startSong(int, char);");
+	set_func_cmt(0X38821,	"startSong(name, mode): copies the song name to ECE8h and (if byte_28849) calls soundDriverMusic; mode 0 then loads it via sub_387C6", 0);
 	set_frame_size(0X38821, 0, 2, 0);
 	add_func    (0X3886C,0X388A9);
 	set_func_flags(0X3886C,0x5412);
@@ -39369,6 +39479,7 @@ static Functions_0(void) {
 	set_frame_size(0X39437, 0, 2, 0);
 	add_func    (0X3946E,0X394A9);
 	set_func_flags(0X3946E,0x5412);
+	set_func_cmt(0X3946E,	"returns 1 when ESC is pressed, Ctrl-Q (11h) exits via sub_39900; used by the intro scenes", 0);
 	set_frame_size(0X3946E, 0X2, 2, 0);
 	add_func    (0X394A9,0X3956E);
 	set_func_flags(0X394A9,0x5412);
@@ -39381,6 +39492,7 @@ static Functions_0(void) {
 	set_frame_size(0X3956E, 0X2, 2, 0);
 	add_func    (0X39900,0X39921);
 	set_func_flags(0X39900,0x1411);
+	set_func_cmt(0X39900,	"shuts down the video and sound modules (sub_250F8, sub_26952), sets text mode 3, prints \"Thank you for playing Might and Magic ]I[\" and ends the program with INT 21h/4Ch; used for fatal errors such as \"Max Monsters Exceeded\" (evidence: reads the code)", 0);
 	set_frame_size(0X39900, 0, 2, 0);
 	add_func    (0X39930,0X3998B);
 	set_func_flags(0X39930,0x5412);
@@ -39455,6 +39567,10 @@ static Functions_0(void) {
 	add_func    (0X3E08F,0X3E0A0);
 	set_func_flags(0X3E08F,0x5412);
 	set_frame_size(0X3E08F, 0, 2, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X3E0A0,0X3E113);
 	set_func_flags(0X3E0A0,0x5412);
 	set_func_cmt(0X3E0A0,	"jester.bin \"Joke of the Day\"", 0);
@@ -39542,10 +39658,6 @@ static Functions_0(void) {
 	add_func    (0X40465,0X404D5);
 	set_func_flags(0X40465,0x5412);
 	set_frame_size(0X40465, 0X4, 2, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X404D5,0X40506);
 	set_func_flags(0X404D5,0x5412);
 	set_frame_size(0X404D5, 0X2, 2, 0);
@@ -39662,6 +39774,7 @@ static Functions_1(void) {
 	set_frame_size(0X42FF5, 0X2, 2, 0);
 	add_func    (0X43034,0X430A8);
 	set_func_flags(0X43034,0x5412);
+	set_func_cmt(0X43034,	"loads the view background sprite set into word_373B4: day.vga or night.vga on town / open-air maps (picked by Town_closed, which it recomputes from the time), else '<env prefix>.sky' (evidence: reads the code; called by loadMapGraphics)", 0);
 	set_frame_size(0X43034, 0X2, 2, 0);
 	add_func    (0X430A8,0X432B9);
 	set_func_flags(0X430A8,0x5412);
@@ -40549,6 +40662,7 @@ static Functions_1(void) {
 	set_frame_size(0X60030, 0, 0, 0);
 	add_func    (0X60E92,0X60F3B);
 	set_func_flags(0X60E92,0x5412);
+	set_func_cmt(0X60E92,	"target of vdrv_api_15 / vdrv_15_drawSprite: frame argument -> offset table, calls vdrv_blitFrame for the frame's layers (evidence: vdrv_api_15 jumps here, reads the frame index table and calls vdrv_blitFrame)", 0);
 	set_frame_size(0X60E92, 0, 2, 0);
 	add_func    (0X60F3C,0X60FBF);
 	set_func_flags(0X60F3C,0x5412);
@@ -40598,18 +40712,23 @@ static Functions_1(void) {
 	set_frame_size(0X615B6, 0, 2, 0);
 	add_func    (0X619C4,0X61A1B);
 	set_func_flags(0X619C4,0x5400);
+	set_func_cmt(0X619C4,	"text engine: adds the width of the next character to bx (space 4 / 3 alt, control codes 08 and 0C handled), carry set and the character un-read when it ends the measured text (evidence: verified by src/ui_text.c)", 0);
 	set_frame_size(0X619C4, 0, 0, 0);
 	add_func    (0X61A1C,0X61AEF);
 	set_func_flags(0X61A1C,0x5400);
+	set_func_cmt(0X61A1C,	"text engine: skips spaces, cursor to the left edge, down 10 rows (9 in the alternate font); when the text area is full either returns carry ('f' mode) or scrolls the text area up and clears the bottom rows with the fill pattern (evidence: verified by src/ui_text.c)", 0);
 	set_frame_size(0X61A1C, 0, 0, 0);
 	add_func    (0X61AF0,0X61B07);
 	set_func_flags(0X61AF0,0x5400);
+	set_func_cmt(0X61AF0,	"copies the 4 colour bytes of text colour index [60A0C] from vdrv_colourTable into vdrv_glyphColours", 0);
 	set_frame_size(0X61AF0, 0, 0, 0);
 	add_func    (0X61B08,0X61B16);
 	set_func_flags(0X61B08,0x5400);
+	set_func_cmt(0X61B08,	"text engine helper: returns the next character of the string (far pointer dword_60B2C) & 7Fh and advances the pointer (evidence: reads the code)", 0);
 	set_frame_size(0X61B08, 0, 0, 0);
 	add_func    (0X61B16,0X61B41);
 	set_func_flags(0X61B16,0x5400);
+	set_func_cmt(0X61B16,	"text engine helper: reads cx decimal digits from the string (space counts as 0), returns the number in ax, carry set when a non-digit is found; used for the 3-digit and 2-digit arguments of control codes 04h, 07h, 09h, 0Bh, 0Ch (evidence: reads the code)", 0);
 	set_frame_size(0X61B16, 0, 0, 0);
 	add_func    (0X61B42,0X61BB7);
 	set_func_flags(0X61B42,0x5400);
@@ -40629,6 +40748,7 @@ static Functions_1(void) {
 	set_frame_size(0X61CB0, 0, 0, 0);
 	add_func    (0X61CDA,0X61D70);
 	set_func_flags(0X61CDA,0x5400);
+	set_func_cmt(0X61CDA,	"text engine: fills the text window area with the dither pattern selected by mode 1-4 (print code 'm' + digit) (evidence: reads the code)", 0);
 	set_frame_size(0X61CDA, 0, 0, 0);
 	add_func    (0X61D70,0X61DAE);
 	set_func_flags(0X61D70,0x5400);
@@ -40684,30 +40804,38 @@ static Functions_1(void) {
 	set_frame_size(0X62722, 0, 0, 0);
 	add_func    (0X62820,0X629F5);
 	set_func_flags(0X62820,0x5402);
+	set_func_cmt(0X62820,	"target of vdrv_api_30 (vdrv_30_init): stores the game's callback table, picks the video mode, builds the row-offset table at 069Ch, allocates 1110h bytes and loads the font member FO.T (id 8D92h; name string 'fo.t' at module offset 0E7Fh) (evidence: reads the code; the routine also contains copy-protection checksum loops)", 0);
 	set_frame_size(0X62820, 0, 0, 0);
 	add_func    (0X629F6,0X62A14);
 	set_func_flags(0X629F6,0x5402);
+	set_func_cmt(0X629F6,	"target of vdrv_api_12: frees the two screen/font buffers (word_609F8, word_609FE) and closes the cc file handle (evidence: reads the code)", 0);
 	set_frame_size(0X629F6, 0, 0, 0);
 	add_func    (0X62A14,0X62A2A);
 	set_func_flags(0X62A14,0x5400);
+	set_func_cmt(0X62A14,	"waits for the VGA vertical retrace (port 3DAh status polling)", 0);
 	set_frame_size(0X62A14, 0, 0, 0);
 	add_func    (0X62A2A,0X6336F);
 	set_func_flags(0X62A2A,0x5400);
 	set_frame_size(0X62A2A, 0X6, 0, 0);
 	add_func    (0X63370,0X635D4);
 	set_func_flags(0X63370,0x5412);
+	set_func_cmt(0X63370,	"target of vdrv_api_1E / vdrv_1E_openWindow: pushes the current 32-byte window state (0A02h) onto the 7-deep window stack at 0A22h, installs the new rectangle/colours from the arguments and saves the background (evidence: reads the code)", 0);
 	set_frame_size(0X63370, 0, 2, 0);
 	add_func    (0X635D4,0X6361D);
 	set_func_flags(0X635D4,0x5400);
+	set_func_cmt(0X635D4,	"draws the 8x8 window frame piece number si (module data at 37D2h, 64 bytes each, 0 = transparent) at the text cursor and advances the cursor by 8", 0);
 	set_frame_size(0X635D4, 0, 0, 0);
 	add_func    (0X6361E,0X636C9);
 	set_func_flags(0X6361E,0x5412);
+	set_func_cmt(0X6361E,	"target of vdrv_api_06: pops N windows: restores the saved background of the current window rectangle from the temp file (mm3.$$$) and the previous window state", 0);
 	set_frame_size(0X6361E, 0, 2, 0);
 	add_func    (0X636CA,0X6371B);
 	set_func_flags(0X636CA,0x5400);
+	set_func_cmt(0X636CA,	"fills the text area (60A16..60A18 x 60A1A..60A1C) with the fill pattern word; the routine begins with clc, so the 'stc = whole window' variant below it is never reached", 0);
 	set_frame_size(0X636CA, 0, 0, 0);
 	add_func    (0X6371C,0X637D2);
 	set_func_flags(0X6371C,0x5400);
+	set_func_cmt(0X6371C,	"after drawing: copies the changed rectangle to the video memory, redraws the mouse cursor, and clears one of the update-region flags 60E6A (q) / 60E69 (k) / 60E68 (b) / 60E67 (d) (evidence: reads the code; only the flag clearing is visible in the screen buffer)", 0);
 	set_frame_size(0X6371C, 0, 0, 0);
 	append_func_tail(0X26E8D,0X10257,0X10274);
 	append_func_tail(0X26F3D,0X10257,0X10274);

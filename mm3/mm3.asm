@@ -333,7 +333,7 @@ sub_11E75       endp
 ; Attributes: bp-based frame
 
 sub_12436       proc far                ; CODE XREF: seg001:00AB↓P
-                                        ; sub_253D3+DB↓P ...
+                                        ; readKey+DB↓P ...
 
 arg_0           = word ptr  6
 
@@ -1647,7 +1647,7 @@ _main:                                  ; CODE XREF: start+108↑P
                 jz      short loc_14C7C
                 dec     ax
                 jz      short loc_14C33
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
                 cmp     ax, 8043h
                 jz      short loc_14C2C
@@ -1890,7 +1890,7 @@ loc_14D95:                              ; CODE XREF: seg001:015D↑j
 
 loc_14D9C:                              ; CODE XREF: seg001:015D↑j
                                         ; DATA XREF: seg001:jpt_14D3D↓o
-                mov     byte_28848, 1   ; jumptable 00014D3D case 5
+                mov     sfxDeviceAvailable, 1 ; jumptable 00014D3D case 5
                 jmp     short loc_14DB3
 ; ---------------------------------------------------------------------------
 
@@ -1976,10 +1976,10 @@ loc_14E3B:                              ; CODE XREF: seg001:0254↑j
                 xor     ax, ax
 
 loc_14E3D:                              ; CODE XREF: seg001:0259↑j
-                mov     byte_28849, al
+                mov     musicDeviceAvailable, al
                 cmp     byte_332A5, 0
                 jz      short loc_14E4E
-                mov     byte_28849, 0
+                mov     musicDeviceAvailable, 0
                 jmp     short loc_14E72
 ; ---------------------------------------------------------------------------
 
@@ -1997,7 +1997,7 @@ loc_14E4E:                              ; CODE XREF: seg001:0265↑j
                 mov     dh, 0
                 add     dx, ax
                 push    dx
-                call    sub_2693F
+                call    soundDriverInit
                 pop     cx
 
 loc_14E72:                              ; CODE XREF: seg001:026C↑j
@@ -2006,7 +2006,7 @@ loc_14E72:                              ; CODE XREF: seg001:026C↑j
                 call    allocFar
                 pop     cx
                 mov     word_332DE, dx
-                mov     word_332DC, ax
+                mov     songBuffer, ax
                 mov     al, 1
                 mov     Option_sfx, al
                 mov     Option_music, al
@@ -2488,7 +2488,7 @@ loc_15298:                              ; CODE XREF: checkPartyDead+23↑j
 
 loc_152B7:                              ; CODE XREF: checkPartyDead+41↑j
                                         ; DATA XREF: seg002:jpt_152B2↓o
-                mov     byte_28841, 0   ; jumptable 000152B2 cases 0-10,16
+                mov     Party_dead, 0   ; jumptable 000152B2 cases 0-10,16
                 jmp     short loc_152D6
 ; ---------------------------------------------------------------------------
 
@@ -2511,7 +2511,7 @@ loc_152CB:                              ; CODE XREF: checkPartyDead+55↑j
                 mov     ah, 0
                 cmp     ax, si
                 jg      short loc_1528A
-                mov     byte_28841, 1
+                mov     Party_dead, 1
 
 loc_152D6:                              ; CODE XREF: checkPartyDead+4B↑j
                 pop     di
@@ -2665,7 +2665,7 @@ loc_153AE:                              ; CODE XREF: addTime+88↑j
                 push    ax
                 call    sub_281E9
                 pop     cx
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jnz     short loc_153DF
                 call    drawParty
 
@@ -4539,9 +4539,9 @@ var_2           = word ptr -2
                 mov     byte_32E5F, al
                 mov     byte_32E37, al
                 mov     byte_34B97, al
-                mov     byte_34B96, al
+                mov     Spr_terrainSheets, al
                 mov     byte_34B95, al
-                mov     byte_34B92, al
+                mov     Monsters_row1, al
                 xor     cx, cx
                 jmp     loc_1692B
 ; ---------------------------------------------------------------------------
@@ -4583,13 +4583,13 @@ loc_16220:                              ; CODE XREF: scanMonstersAhead+787↓j
                 jnz     short loc_162AC
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1628A
                 mov     al, cl
                 inc     al
-                mov     byte_34B92, al
+                mov     Monsters_row1, al
                 jmp     short loc_162AC
 ; ---------------------------------------------------------------------------
 
@@ -4722,13 +4722,13 @@ loc_16372:                              ; CODE XREF: scanMonstersAhead+1BC↑j
 loc_1638D:                              ; CODE XREF: scanMonstersAhead+1D7↑j
                 mov     bx, [bp+var_8]
                 mov     word ptr [bx], 1
-                mov     al, byte_34B96
+                mov     al, Spr_terrainSheets
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_163A4
                 mov     al, cl
                 inc     al
-                mov     byte_34B96, al
+                mov     Spr_terrainSheets, al
 
 loc_163A4:                              ; CODE XREF: scanMonstersAhead+18E↑j
                                         ; scanMonstersAhead+1A7↑j ...
@@ -5440,7 +5440,7 @@ scanMonstersAhead endp
 ; Attributes: bp-based frame
 
 mapHasDayNight  proc far                ; CODE XREF: changeTime+415↓p
-                                        ; sub_43034+11↓P
+                                        ; loadViewBackground+11↓P
                 push    bp
                 mov     bp, sp
                 cmp     Party_map, 6
@@ -6019,7 +6019,7 @@ loc_16DA6:                              ; CODE XREF: changeTime+42E↑j
                 mov     al, Party_map
                 mov     ah, 0
                 push    ax
-                call    sub_28194
+                call    j_loadViewBackground
                 pop     cx
 
 loc_16DBC:                              ; CODE XREF: changeTime+41A↑j
@@ -6040,7 +6040,7 @@ chargeStep      proc far                ; CODE XREF: exploreLoop+302↓P
                 push    bp
                 mov     bp, sp
                 push    si
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jnz     short loc_16DF1
                 cmp     Maze_wrapMode, 0
                 jz      short loc_16DD7
@@ -6721,7 +6721,7 @@ loc_171FF:                              ; CODE XREF: drawParty+EE↑j
                 inc     si
                 inc     si
                 mov     ax, word_3343C
-                mov     dx, word_3343A
+                mov     dx, Spr_protectIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -6841,7 +6841,7 @@ loc_172D3:                              ; CODE XREF: drawParty+1D7↑j
                 inc     si
                 inc     si
                 mov     ax, word_34C24
-                mov     dx, word_34C22
+                mov     dx, Spr_restoreIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -6887,7 +6887,7 @@ loc_1731F:                              ; CODE XREF: drawParty+208↑j
                 jl      short loc_17301
 
 loc_17324:                              ; CODE XREF: drawParty+1DE↑j
-                mov     ax, word_333C0
+                mov     ax, Spr_hpbarsIcn
                 or      ax, word_333C2
                 jnz     short loc_17330
                 jmp     loc_173F6
@@ -6898,7 +6898,7 @@ loc_17330:                              ; CODE XREF: drawParty+234↑j
                 inc     si
                 inc     si
                 mov     ax, word_333C2
-                mov     dx, word_333C0
+                mov     dx, Spr_hpbarsIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -8208,7 +8208,7 @@ loc_17C8C:                              ; CODE XREF: drawRow4Sprites+845↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -8354,7 +8354,7 @@ loc_17DA7:                              ; CODE XREF: drawRow4Sprites+960↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -8483,7 +8483,7 @@ loc_17E7C:                              ; CODE XREF: drawRow4Sprites+A3A↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -9129,7 +9129,7 @@ loc_1837E:                              ; CODE XREF: drawRow3Sprites+438↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -9275,7 +9275,7 @@ loc_18499:                              ; CODE XREF: drawRow3Sprites+553↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -9404,7 +9404,7 @@ loc_1856E:                              ; CODE XREF: drawRow3Sprites+62D↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -9626,13 +9626,13 @@ loc_18710:                              ; CODE XREF: drawRow2Sprites+7B↑j
                 mov     [si], ax
 
 loc_18780:                              ; CODE XREF: drawRow2Sprites+EB↑j
-                cmp     byte_34B96, 0
+                cmp     Spr_terrainSheets, 0
                 jnz     short loc_1878A
                 jmp     loc_18819
 ; ---------------------------------------------------------------------------
 
 loc_1878A:                              ; CODE XREF: drawRow2Sprites+15B↑j
-                mov     al, byte_34B96
+                mov     al, Spr_terrainSheets
                 mov     ah, 0
                 dec     ax
                 mov     di, ax
@@ -9890,7 +9890,7 @@ loc_18946:                              ; CODE XREF: drawRow2Sprites+30E↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10037,7 +10037,7 @@ loc_18A60:                              ; CODE XREF: drawRow2Sprites+429↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10166,7 +10166,7 @@ loc_18B35:                              ; CODE XREF: drawRow2Sprites+502↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10392,7 +10392,7 @@ loc_18D26:                              ; CODE XREF: drawRow1Sprites+130↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10543,7 +10543,7 @@ loc_18E55:                              ; CODE XREF: drawRow1Sprites+25F↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10605,13 +10605,13 @@ loc_18EA6:                              ; CODE XREF: drawRow1Sprites+283↑j
 
 loc_18EE0:                              ; CODE XREF: drawRow1Sprites+1CC↑j
                                         ; drawRow1Sprites+261↑j ...
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jnz     short loc_18EEA
                 jmp     loc_19030
 ; ---------------------------------------------------------------------------
 
 loc_18EEA:                              ; CODE XREF: drawRow1Sprites+2F4↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 dec     ax
                 mov     cx, ax
@@ -10711,7 +10711,7 @@ loc_18FA0:                              ; CODE XREF: drawRow1Sprites+3AA↑j
                 inc     si
                 inc     si
                 mov     ax, word_373CE
-                mov     dx, word_373CC
+                mov     dx, Spr_charpowIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -10923,7 +10923,7 @@ arg_0           = word ptr  6
                 add     ax, 3
                 push    ax
                 push    word_332CC
-                push    word_332CA
+                push    Spr_globalIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
 
@@ -10940,7 +10940,7 @@ loc_1910F:                              ; CODE XREF: highlightChar+18↑j
                 mov     ax, 2
                 push    ax
                 push    word_332CC
-                push    word_332CA
+                push    Spr_globalIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     al, byte ptr [bp+arg_0]
@@ -11733,7 +11733,7 @@ loc_196CD:                              ; CODE XREF: runMazeEvent+AE↑j
                 mov     al, 0
                 mov     byte_333BE, al
                 mov     ah, 0
-                mov     word_373A4, ax
+                mov     Evt_windowCount, ax
                 mov     [bp+var_2], ax
                 mov     [bp+var_8], ax
                 mov     byte_37383, al
@@ -11759,7 +11759,7 @@ loc_196CD:                              ; CODE XREF: runMazeEvent+AE↑j
                 pop     cx
 
 loc_1971E:                              ; CODE XREF: runMazeEvent+18EE↓j
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_1972D
                 mov     byte_34BF0, 1
                 jmp     evt_op18        ; jumptable 0001984B case 18
@@ -11923,7 +11923,7 @@ loc_1985E:                              ; CODE XREF: runMazeEvent+24F↑j
                 push    ax              ; buffer
                 call    _sprintf
                 add     sp, 6
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_19890
 
 loc_19881:                              ; CODE XREF: runMazeEvent+2FC↓j
@@ -11958,7 +11958,7 @@ loc_19890:                              ; CODE XREF: runMazeEvent+277↑j
                 push    ax
                 call    vdrv_1E_openWindow
                 add     sp, 14h
-                inc     word_373A4
+                inc     Evt_windowCount
                 jmp     evt_op13        ; jumptable 0001984B default case, case 13
 ; ---------------------------------------------------------------------------
 
@@ -11973,15 +11973,15 @@ evt_op01:                               ; CODE XREF: runMazeEvent+243↑j
 loc_198D0:                              ; CODE XREF: runMazeEvent+2C1↑j
                 cmp     byte_332D3, 0
                 jz      short loc_198E9
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
                 xor     ax, ax
-                mov     word_373A4, ax
+                mov     Evt_windowCount, ax
                 mov     byte_332D3, al
 
 loc_198E9:                              ; CODE XREF: runMazeEvent+2CD↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_19907
                 mov     ax, 0E610h
                 push    ax              ; format
@@ -12016,7 +12016,7 @@ loc_19907:                              ; CODE XREF: runMazeEvent+2E6↑j
                 push    ax
                 call    vdrv_1E_openWindow
                 add     sp, 14h
-                inc     word_373A4
+                inc     Evt_windowCount
                 jmp     evt_op13        ; jumptable 0001984B default case, case 13
 ; ---------------------------------------------------------------------------
 
@@ -12069,16 +12069,16 @@ evt_op05:                               ; CODE XREF: runMazeEvent+243↑j
                 call    drawView
 
 loc_1998A:                              ; CODE XREF: runMazeEvent+37B↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_199AA
                 mov     al, byte_332D3
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_199AA
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
 
 loc_199AA:                              ; CODE XREF: runMazeEvent+387↑j
                                         ; runMazeEvent+390↑j
@@ -12098,7 +12098,7 @@ loc_199AA:                              ; CODE XREF: runMazeEvent+387↑j
                 push    ax              ; dest
                 call    _strncpy_0
                 add     sp, 0Ah
-                push    word_373A4      ; int
+                push    Evt_windowCount ; int
                 les     bx, Maze_evtData
                 mov     al, es:[bx+si+9]
                 cbw
@@ -12121,14 +12121,14 @@ loc_199AA:                              ; CODE XREF: runMazeEvent+387↑j
                 mov     [bp+var_2], ax
 
 loc_19A0A:                              ; CODE XREF: runMazeEvent+3F3↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_19A14
                 jmp     evt_op13        ; jumptable 0001984B default case, case 13
 ; ---------------------------------------------------------------------------
 
 loc_19A14:                              ; CODE XREF: runMazeEvent+407↑j
-                inc     word_373A4
-                mov     ax, word_373A4
+                inc     Evt_windowCount
+                mov     ax, Evt_windowCount
                 mov     byte_332D3, al
                 jmp     evt_op13        ; jumptable 0001984B default case, case 13
 ; ---------------------------------------------------------------------------
@@ -12276,7 +12276,7 @@ loc_19AF7:                              ; CODE XREF: runMazeEvent+4EA↑j
                 push    ax
                 call    vdrv_1E_openWindow
                 add     sp, 14h
-                inc     word_373A4
+                inc     Evt_windowCount
                 mov     al, byte_34BB6
                 mov     ah, 0
                 mov     dx, 0Ch
@@ -12336,10 +12336,10 @@ loc_19B8F:                              ; CODE XREF: runMazeEvent+579↑j
                 mov     byte_34C1B, 0
 
 loc_19B9D:                              ; CODE XREF: runMazeEvent+58E↑j
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
                 mov     ax, 1
                 push    ax
                 call    updateAutomap
@@ -12888,14 +12888,14 @@ loc_1A098:                              ; CODE XREF: runMazeEvent+A7D↑j
                 mov     [bp+var_4A], ax
 
 loc_1A09B:                              ; CODE XREF: runMazeEvent+A4D↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_1A0B8
                 cmp     [bp+var_10], 43h ; 'C'
                 jnz     short loc_1A0B8
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
 
 loc_1A0B8:                              ; CODE XREF: runMazeEvent+A98↑j
                                         ; runMazeEvent+A9E↑j
@@ -13253,10 +13253,10 @@ loc_1A362:                              ; CODE XREF: runMazeEvent+D55↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A36B:                              ; CODE XREF: runMazeEvent+D5E↑j
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
                 mov     ax, 1
                 push    ax
                 call    updateAutomap
@@ -13378,10 +13378,10 @@ loc_1A45D:                              ; CODE XREF: runMazeEvent+E4E↑j
                 push    ax
                 call    mazeSetBits
                 add     sp, 8
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
                 mov     ax, 1
                 push    ax
                 call    updateAutomap
@@ -13398,16 +13398,16 @@ evt_op15:                               ; CODE XREF: runMazeEvent+243↑j
                 les     bx, Maze_evtData ; event opcode 15: SetChar (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 cmp     byte ptr es:[bx+si+6], 8
                 jle     short loc_1A4E2
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_1A4CA
                 mov     al, byte_332D3
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_1A4CA
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
 
 loc_1A4CA:                              ; CODE XREF: runMazeEvent+EA7↑j
                                         ; runMazeEvent+EB0↑j
@@ -13960,12 +13960,12 @@ loc_1A96F:                              ; CODE XREF: runMazeEvent+1321↑j
                 call    drawView
 
 loc_1A97D:                              ; CODE XREF: runMazeEvent+136E↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_1A994
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
 
 loc_1A994:                              ; CODE XREF: runMazeEvent+137A↑j
                 cmp     [bp+var_A], 0
@@ -14152,12 +14152,12 @@ evt_op22:                               ; CODE XREF: runMazeEvent+243↑j
                 call    drawView
 
 loc_1AB07:                              ; CODE XREF: runMazeEvent+14F8↑j
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_1AB1E
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
 
 loc_1AB1E:                              ; CODE XREF: runMazeEvent+1504↑j
                 mov     ax, [bp+var_A]
@@ -14503,7 +14503,7 @@ loc_1ADCB:                              ; CODE XREF: runMazeEvent+14E3↑j
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 mov     al, 1
@@ -14612,7 +14612,7 @@ loc_1AEE0:                              ; CODE XREF: runMazeEvent+17C0↑j
 
 evt_op13:                               ; CODE XREF: runMazeEvent+23E↑j
                                         ; runMazeEvent+243↑j ...
-                cmp     byte_28841, 0   ; event opcode 13: ? (name from the Xeen opcode of the same number; unverified)
+                cmp     Party_dead, 0   ; event opcode 13: ? (name from the Xeen opcode of the same number; unverified)
                 jnz     short evt_op18  ; jumptable 0001984B case 18
                 inc     [bp+var_2]
                 jmp     loc_1971E
@@ -14632,10 +14632,10 @@ evt_op18:                               ; CODE XREF: runMazeEvent+122↑j
                                         ; runMazeEvent+243↑j ...
                 cmp     [bp+var_16], 0  ; event opcode 18: Exit (name from the Xeen opcode of the same number; operand layout verified against every shipped MAZEnn.EVT)
                 jz      short loc_1AF28
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
                 mov     ax, 1
                 push    ax
                 call    updateAutomap
@@ -14699,7 +14699,7 @@ loc_1AF90:                              ; CODE XREF: runMazeEvent+1981↑j
                 push    ax
                 call    freeSpriteSlot
                 pop     cx
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
                 cmp     [bp+var_8], 1
@@ -14863,7 +14863,7 @@ loc_1B181:                              ; CODE XREF: playSoundEffect+C↑j
 
 loc_1B18E:                              ; CODE XREF: playSoundEffect+14↑j
                 push    si
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
 
 loc_1B195:                              ; CODE XREF: playSoundEffect+1A↑j
@@ -15322,7 +15322,7 @@ loc_1B4D0:                              ; CODE XREF: moveMonsters+16C↑j
                 jnz     short loc_1B542
                 mov     ax, [bp+var_2]
                 inc     ax
-                mov     dl, byte_34B92
+                mov     dl, Monsters_row1
                 mov     dh, 0
                 cmp     ax, dx
                 jz      short loc_1B542
@@ -15557,7 +15557,7 @@ loc_1B67A:                              ; CODE XREF: drawView+8↑j
 
 loc_1B684:                              ; CODE XREF: drawView+F↑j
                 mov     byte_333BE, 1
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jnz     short loc_1B69E
                 cmp     byte_34B93, 0
                 jnz     short loc_1B69E
@@ -15609,7 +15609,7 @@ drawHudPieces   proc far                ; CODE XREF: renderIndoorView+1F5D↓P
                 inc     si
                 inc     si
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -15672,7 +15672,7 @@ loc_1B74D:                              ; CODE XREF: drawHudPieces+77↑j
                 inc     si
                 inc     si
                 mov     ax, word_34C28
-                mov     dx, word_34C26
+                mov     dx, Spr_gargoyleBrd
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -15716,7 +15716,7 @@ loc_1B78F:                              ; CODE XREF: drawHudPieces+B6↑j
                 inc     si
                 inc     si
                 mov     ax, word_36FB8
-                mov     dx, word_36FB6
+                mov     dx, Spr_grabberBrd
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -15767,7 +15767,7 @@ loc_1B7F1:                              ; CODE XREF: drawHudPieces+118↑j
                 inc     si
                 inc     si
                 mov     ax, word_3330A
-                mov     dx, word_33308
+                mov     dx, Spr_batBrd
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -15818,7 +15818,7 @@ loc_1B853:                              ; CODE XREF: drawHudPieces+17A↑j
                 inc     si
                 inc     si
                 mov     ax, word_32E6C
-                mov     dx, word_32E6A
+                mov     dx, Spr_fecpBrd
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -15940,7 +15940,7 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     al, byte_35D57
+                mov     al, Maze_startSlot
                 cbw
                 or      ax, ax
                 jz      short loc_1B93F
@@ -15976,7 +15976,7 @@ loc_1B963:                              ; CODE XREF: setPartyStartCell+37↑j
 
 loc_1B968:                              ; CODE XREF: setPartyStartCell+24↑j
                                         ; setPartyStartCell+30↑j
-                mov     al, byte_35D57
+                mov     al, Maze_startSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -15985,7 +15985,7 @@ loc_1B968:                              ; CODE XREF: setPartyStartCell+24↑j
                 and     al, 0Fh
                 add     al, byte ptr [bp+var_2]
                 mov     Party_x, al
-                mov     al, byte_35D57
+                mov     al, Maze_startSlot
                 cbw
                 mov     dx, 340h
                 imul    dx
@@ -20934,7 +20934,7 @@ loc_1DBC2:                              ; CODE XREF: drawWallFaces+68↑j
                 mov     word ptr [si], 28h ; '('
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     dx, 2
                 or      dx, ax
@@ -21013,7 +21013,7 @@ loc_1DC50:                              ; CODE XREF: drawWallFaces+F7↑j
                 mov     word ptr [si], 2
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -21102,7 +21102,7 @@ loc_1DCF9:                              ; CODE XREF: drawWallFaces+19F↑j
                 mov     word ptr [si], 28h ; '('
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     dx, 2
                 or      dx, ax
@@ -21181,7 +21181,7 @@ loc_1DD87:                              ; CODE XREF: drawWallFaces+22E↑j
                 mov     word ptr [si], 3
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -21242,7 +21242,7 @@ loc_1DDF9:                              ; CODE XREF: drawWallFaces+29F↑j
                 mov     word ptr [si], 28h ; '('
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -21319,7 +21319,7 @@ loc_1DE82:                              ; CODE XREF: drawWallFaces+329↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -21361,7 +21361,7 @@ loc_1DEC6:                              ; CODE XREF: drawWallFaces+297↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E71h]
@@ -21382,7 +21382,7 @@ loc_1DEF7:                              ; CODE XREF: drawWallFaces+397↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E77h]
@@ -21410,7 +21410,7 @@ loc_1DF21:                              ; CODE XREF: drawWallFaces+390↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -21434,7 +21434,7 @@ loc_1DF57:                              ; CODE XREF: drawWallFaces+3F2↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -21573,7 +21573,7 @@ loc_1E06A:                              ; CODE XREF: drawWallFaces+528↑j
                 inc     si
                 inc     si
                 mov     ax, word_34B9C
-                mov     dx, word_34B9A
+                mov     dx, Spr_wallSheet1
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -21623,7 +21623,7 @@ loc_1E0CD:                              ; CODE XREF: drawWallFaces+574↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     dx, 2
                 or      dx, ax
@@ -21679,7 +21679,7 @@ loc_1E141:                              ; CODE XREF: drawWallFaces+5E8↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     dx, 2
                 or      dx, ax
@@ -21718,7 +21718,7 @@ loc_1E18A:                              ; CODE XREF: drawWallFaces+630↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -21738,12 +21738,12 @@ loc_1E1AF:                              ; CODE XREF: drawWallFaces+652↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -21761,7 +21761,7 @@ loc_1E1D8:                              ; CODE XREF: drawWallFaces+677↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -21781,7 +21781,7 @@ loc_1E1FC:                              ; CODE XREF: drawWallFaces+6A0↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -21819,7 +21819,7 @@ loc_1E241:                              ; CODE XREF: drawWallFaces+6E8↑j
                 mov     word ptr [si], 18h
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -21841,7 +21841,7 @@ loc_1E263:                              ; CODE XREF: drawWallFaces+64A↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E73h]
@@ -21862,7 +21862,7 @@ loc_1E28B:                              ; CODE XREF: drawWallFaces+72B↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E75h]
@@ -21885,7 +21885,7 @@ loc_1E2B5:                              ; CODE XREF: drawWallFaces+753↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -21909,7 +21909,7 @@ loc_1E2E2:                              ; CODE XREF: drawWallFaces+77D↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -22116,14 +22116,14 @@ loc_1E426:                              ; CODE XREF: renderIndoorView+D↑j
                 cwd
                 idiv    bx
                 mov     byte ptr word_28812+1, dl
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 inc     al
-                mov     byte_2884D, al
+                mov     View_lampPhase, al
                 mov     ah, 0
                 mov     bx, 3
                 cwd
                 idiv    bx
-                mov     byte_2884D, dl
+                mov     View_lampPhase, dl
                 mov     [bp+var_2], 0
                 jmp     short loc_1E4B9
 ; ---------------------------------------------------------------------------
@@ -22227,11 +22227,11 @@ loc_1E51D:                              ; CODE XREF: renderIndoorView+C1↑j
                 mov     al, byte_28870
                 mov     ah, 0
                 mov     word_35D68, ax
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     word_35D76, ax
                 mov     ax, word_373B6
-                mov     dx, word_373B4
+                mov     dx, Spr_viewBackground
                 mov     word_35D62, ax
                 mov     word_35D60, dx
                 mov     ax, word_34BA8
@@ -22436,7 +22436,7 @@ loc_1E6D8:                              ; CODE XREF: renderIndoorView+26B↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E6Bh]
@@ -22457,7 +22457,7 @@ loc_1E724:                              ; CODE XREF: renderIndoorView+2FA↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E7Dh]
@@ -22666,7 +22666,7 @@ loc_1E89E:                              ; CODE XREF: renderIndoorView+431↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -22690,7 +22690,7 @@ loc_1E8EF:                              ; CODE XREF: renderIndoorView+4C0↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -22809,7 +22809,7 @@ loc_1E9B6:                              ; CODE XREF: renderIndoorView+592↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -22972,7 +22972,7 @@ loc_1EAD4:                              ; CODE XREF: renderIndoorView+6B0↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -22995,7 +22995,7 @@ loc_1EAF9:                              ; CODE XREF: renderIndoorView+6D2↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -23610,7 +23610,7 @@ loc_1EF91:                              ; CODE XREF: renderIndoorView+B6D↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -23633,7 +23633,7 @@ loc_1EFB6:                              ; CODE XREF: renderIndoorView+B8F↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -23800,7 +23800,7 @@ loc_1F0E8:                              ; CODE XREF: renderIndoorView+CC4↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -23823,7 +23823,7 @@ loc_1F10D:                              ; CODE XREF: renderIndoorView+CE6↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -23982,7 +23982,7 @@ loc_1F233:                              ; CODE XREF: renderIndoorView+E0F↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -24005,7 +24005,7 @@ loc_1F258:                              ; CODE XREF: renderIndoorView+E31↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -24160,7 +24160,7 @@ loc_1F36A:                              ; CODE XREF: renderIndoorView+F46↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -24183,7 +24183,7 @@ loc_1F38F:                              ; CODE XREF: renderIndoorView+F68↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -24350,7 +24350,7 @@ loc_1F4C1:                              ; CODE XREF: renderIndoorView+109D↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -24373,7 +24373,7 @@ loc_1F4E6:                              ; CODE XREF: renderIndoorView+10BF↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -24532,7 +24532,7 @@ loc_1F60C:                              ; CODE XREF: renderIndoorView+11E8↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -24555,7 +24555,7 @@ loc_1F631:                              ; CODE XREF: renderIndoorView+120A↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -24686,7 +24686,7 @@ loc_1F71F:                              ; CODE XREF: renderIndoorView+12FB↑j
                 mov     word ptr [si], 3Ch ; '<'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -24709,7 +24709,7 @@ loc_1F744:                              ; CODE XREF: renderIndoorView+131D↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -24813,7 +24813,7 @@ loc_1F7EC:                              ; CODE XREF: renderIndoorView+12DB↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E6Dh]
@@ -24834,7 +24834,7 @@ loc_1F82F:                              ; CODE XREF: renderIndoorView+1405↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E7Bh]
@@ -24941,7 +24941,7 @@ loc_1F8E6:                              ; CODE XREF: renderIndoorView+145B↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -24965,7 +24965,7 @@ loc_1F92E:                              ; CODE XREF: renderIndoorView+14FF↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -25285,7 +25285,7 @@ loc_1FB91:                              ; CODE XREF: renderIndoorView+176D↑j
                 mov     word ptr [si], 2
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -25418,7 +25418,7 @@ loc_1FC89:                              ; CODE XREF: renderIndoorView+1865↑j
                 mov     word ptr [si], 34h ; '4'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -25477,7 +25477,7 @@ loc_1FCF1:                              ; CODE XREF: renderIndoorView+18CE↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -25580,7 +25580,7 @@ loc_1FDA8:                              ; CODE XREF: renderIndoorView+1984↑j
                 mov     word ptr [si], 34h ; '4'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     dx, 2
                 or      dx, ax
@@ -25623,7 +25623,7 @@ loc_1FDF4:                              ; CODE XREF: renderIndoorView+19D0↑j
                 mov     word ptr [si], 3
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -25756,7 +25756,7 @@ loc_1FEEC:                              ; CODE XREF: renderIndoorView+1AC8↑j
                 mov     word ptr [si], 34h ; '4'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -25797,7 +25797,7 @@ loc_1FF33:                              ; CODE XREF: renderIndoorView+1B0F↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -25902,7 +25902,7 @@ loc_1FFF3:                              ; CODE XREF: renderIndoorView+1BCF↑j
                 mov     word ptr [si], 34h ; '4'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -25943,7 +25943,7 @@ loc_2003A:                              ; CODE XREF: renderIndoorView+1C16↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_2884D
+                mov     al, View_lampPhase
                 mov     ah, 0
                 inc     ax
                 mov     [si], ax
@@ -26072,7 +26072,7 @@ loc_2011B:                              ; CODE XREF: renderIndoorView+1CC0↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E6Fh]
@@ -26093,7 +26093,7 @@ loc_20155:                              ; CODE XREF: renderIndoorView+1D2B↑j
                 mov     word ptr [si], 0
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+0E79h]
@@ -26172,7 +26172,7 @@ loc_201DA:                              ; CODE XREF: renderIndoorView+1D7F↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -26196,7 +26196,7 @@ loc_20219:                              ; CODE XREF: renderIndoorView+1DEA↑j
                 mov     word ptr [si], 1
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -26335,7 +26335,7 @@ loc_2033A:                              ; CODE XREF: renderIndoorView+1E4F↑j
 ; ---------------------------------------------------------------------------
 
 loc_20343:                              ; CODE XREF: renderIndoorView+1F37↑j
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_2035D
                 mov     ax, 96h
                 push    ax              ; c
@@ -26665,11 +26665,11 @@ loc_20592:                              ; CODE XREF: renderOutdoorView+E3↑j
                 mov     ax, word_29E14
                 mov     word_35D76, ax
                 mov     ax, word_373B6
-                mov     dx, word_373B4
+                mov     dx, Spr_viewBackground
                 mov     word_35D62, ax
                 mov     word_35D60, dx
                 mov     ax, word_3737E
-                mov     dx, word_3737C
+                mov     dx, Spr_water
                 mov     word_35D70, ax
                 mov     word_35D6E, dx
                 mov     ax, 70h ; 'p'
@@ -26719,12 +26719,12 @@ loc_20592:                              ; CODE XREF: renderOutdoorView+E3↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1728h]
@@ -26779,12 +26779,12 @@ loc_20677:                              ; CODE XREF: renderOutdoorView+1D8↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+172Ah]
@@ -26839,12 +26839,12 @@ loc_206F6:                              ; CODE XREF: renderOutdoorView+257↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+172Ch]
@@ -26899,12 +26899,12 @@ loc_20775:                              ; CODE XREF: renderOutdoorView+2D6↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+172Eh]
@@ -26959,12 +26959,12 @@ loc_207F4:                              ; CODE XREF: renderOutdoorView+355↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27022,12 +27022,12 @@ loc_20878:                              ; CODE XREF: renderOutdoorView+3D4↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27085,12 +27085,12 @@ loc_208FC:                              ; CODE XREF: renderOutdoorView+458↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27148,12 +27148,12 @@ loc_20980:                              ; CODE XREF: renderOutdoorView+4DC↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27211,7 +27211,7 @@ loc_20A04:                              ; CODE XREF: renderOutdoorView+560↑j
                 mov     word ptr [si], 43h ; 'C'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -27266,12 +27266,12 @@ loc_20A78:                              ; CODE XREF: renderOutdoorView+5E4↑j
                 mov     word ptr [si], 49h ; 'I'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1730h]
@@ -27326,12 +27326,12 @@ loc_20AF7:                              ; CODE XREF: renderOutdoorView+658↑j
                 mov     word ptr [si], 49h ; 'I'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1732h]
@@ -27386,12 +27386,12 @@ loc_20B76:                              ; CODE XREF: renderOutdoorView+6D7↑j
                 mov     word ptr [si], 49h ; 'I'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27449,12 +27449,12 @@ loc_20BFA:                              ; CODE XREF: renderOutdoorView+756↑j
                 mov     word ptr [si], 49h ; 'I'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27512,7 +27512,7 @@ loc_20C7E:                              ; CODE XREF: renderOutdoorView+7DA↑j
                 mov     word ptr [si], 49h ; 'I'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -27567,12 +27567,12 @@ loc_20CF2:                              ; CODE XREF: renderOutdoorView+85E↑j
                 mov     word ptr [si], 51h ; 'Q'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1734h]
@@ -27627,12 +27627,12 @@ loc_20D71:                              ; CODE XREF: renderOutdoorView+8D2↑j
                 mov     word ptr [si], 51h ; 'Q'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1736h]
@@ -27687,12 +27687,12 @@ loc_20DF0:                              ; CODE XREF: renderOutdoorView+951↑j
                 mov     word ptr [si], 51h ; 'Q'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27750,12 +27750,12 @@ loc_20E74:                              ; CODE XREF: renderOutdoorView+9D0↑j
                 mov     word ptr [si], 51h ; 'Q'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27813,7 +27813,7 @@ loc_20EF8:                              ; CODE XREF: renderOutdoorView+A54↑j
                 mov     word ptr [si], 51h ; 'Q'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -27868,12 +27868,12 @@ loc_20F6C:                              ; CODE XREF: renderOutdoorView+AD8↑j
                 mov     word ptr [si], 5Dh ; ']'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+1738h]
@@ -27928,12 +27928,12 @@ loc_20FEB:                              ; CODE XREF: renderOutdoorView+B4C↑j
                 mov     word ptr [si], 5Dh ; ']'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -27991,7 +27991,7 @@ loc_2106F:                              ; CODE XREF: renderOutdoorView+BCB↑j
                 mov     word ptr [si], 5Dh ; ']'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -28046,12 +28046,12 @@ loc_210E3:                              ; CODE XREF: renderOutdoorView+C4F↑j
                 mov     word ptr [si], 6Dh ; 'm'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     bx, ax
                 mov     al, [bx+173Ah]
@@ -28106,12 +28106,12 @@ loc_21162:                              ; CODE XREF: renderOutdoorView+CC3↑j
                 mov     word ptr [si], 6Dh ; 'm'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 neg     ax
                 sbb     ax, ax
@@ -28169,7 +28169,7 @@ loc_211E6:                              ; CODE XREF: renderOutdoorView+D42↑j
                 mov     word ptr [si], 6Dh ; 'm'
                 inc     si
                 inc     si
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 mov     ah, 0
                 mov     [si], ax
                 inc     si
@@ -30319,7 +30319,7 @@ loc_223D6:                              ; CODE XREF: renderOutdoorView+1F77↑j
                 inc     si
                 inc     si
                 mov     word ptr [si], 0
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_22402
                 mov     ax, 96h
                 push    ax              ; c
@@ -30501,7 +30501,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 mov     bx, [bp+arg_0]
                 push    cs
-                call    near ptr sub_22534
+                call    near ptr dosAllocOrDie
                 mov     dx, bx
                 sub     ax, ax
                 pop     bp
@@ -30511,8 +30511,9 @@ allocFar        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; bx = bytes; allocates (bx+15)>>4 paragraphs through DOS INT 21h/48h (last-fit strategy 5801h on DOS 3+), returns the segment in ax; on failure prints "Might and Magic ]I[ ran out of memory!" and exits (evidence: reads the code; called by allocFar and ccLoadMember)
 
-sub_22534       proc far                ; CODE XREF: allocFar+7↑p
+dosAllocOrDie   proc far                ; CODE XREF: allocFar+7↑p
                                         ; sub_22636+53↓p ...
                 push    es
                 add     bx, 0Fh
@@ -30551,7 +30552,7 @@ sub_22534       proc far                ; CODE XREF: allocFar+7↑p
                 jmp     short loc_2257E
 ; ---------------------------------------------------------------------------
 
-loc_22568:                              ; CODE XREF: sub_22534+13↑j
+loc_22568:                              ; CODE XREF: dosAllocOrDie+13↑j
                 mov     bx, 2
                 mov     ax, 5801h
                 int     21h             ; DOS - 3+ - GET/SET MEMORY ALLOCATION STRATEGY
@@ -30567,7 +30568,7 @@ loc_22568:                              ; CODE XREF: sub_22534+13↑j
                 int     21h             ; DOS - 3+ - GET/SET MEMORY ALLOCATION STRATEGY
                                         ; AL = function code: set allocation strategy
 
-loc_2257E:                              ; CODE XREF: sub_22534+32↑j
+loc_2257E:                              ; CODE XREF: dosAllocOrDie+32↑j
                 popf
                 pop     bx
                 pop     es
@@ -30581,13 +30582,13 @@ loc_22584:                              ; CODE XREF: sub_22636:loc_226C2↓j
                 jmp     short loc_22596
 ; ---------------------------------------------------------------------------
 
-loc_22589:                              ; CODE XREF: sub_22534+4D↑j
+loc_22589:                              ; CODE XREF: dosAllocOrDie+4D↑j
                 mov     si, 0E7h
                 mov     cs:word_2262C, cs
                 mov     cs:word_2262E, si
 
-loc_22596:                              ; CODE XREF: sub_22534+53↑j
-                call    sub_26952
+loc_22596:                              ; CODE XREF: dosAllocOrDie+53↑j
+                call    soundDriverRestore
                 push    cs
                 call    near ptr sub_250F8
                 mov     ax, 3
@@ -30600,7 +30601,7 @@ loc_22596:                              ; CODE XREF: sub_22534+53↑j
                 mov     ds, cs:word_2262C
                 mov     si, cs:word_2262E
 
-loc_225B6:                              ; CODE XREF: sub_22534+94↓j
+loc_225B6:                              ; CODE XREF: dosAllocOrDie+94↓j
                 lodsb
                 or      al, al
                 jz      short loc_225CA
@@ -30621,7 +30622,7 @@ loc_225B6:                              ; CODE XREF: sub_22534+94↓j
                 jmp     short loc_225B6
 ; ---------------------------------------------------------------------------
 
-loc_225CA:                              ; CODE XREF: sub_22534+85↑j
+loc_225CA:                              ; CODE XREF: dosAllocOrDie+85↑j
                 mov     dx, 100h
                 mov     ah, 2
                 int     10h             ; - VIDEO - SET CURSOR POSITION
@@ -30629,17 +30630,17 @@ loc_225CA:                              ; CODE XREF: sub_22534+85↑j
                                         ; BH = page number
                 mov     ax, 4C02h
                 int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
-sub_22534       endp                    ; AL = exit code
+dosAllocOrDie   endp                    ; AL = exit code
 
 ; ---------------------------------------------------------------------------
                 retf
 ; ---------------------------------------------------------------------------
 aMightAndMagicI db 'Might and Magic ]I[ ran out of memory!',0
 aMightAndMagicI_0 db 'Might and Magic ]I[ encountered a disk error!',0
-word_2262C      dw 0                    ; DATA XREF: sub_22534+58↑w
-                                        ; sub_22534+78↑r ...
-word_2262E      dw 0                    ; DATA XREF: sub_22534+5D↑w
-                                        ; sub_22534+7D↑r ...
+word_2262C      dw 0                    ; DATA XREF: dosAllocOrDie+58↑w
+                                        ; dosAllocOrDie+78↑r ...
+word_2262E      dw 0                    ; DATA XREF: dosAllocOrDie+5D↑w
+                                        ; dosAllocOrDie+7D↑r ...
 word_22630      dw 0                    ; DATA XREF: ccOpen+D↓w
                                         ; ccClose↓r ...
 
@@ -30706,7 +30707,7 @@ loc_22639:                              ; CODE XREF: sub_22632+2↑j
                 push    bx
                 push    bx
                 push    cs
-                call    near ptr sub_22534
+                call    near ptr dosAllocOrDie
                 mov     cs:[si+644h], bx
                 mov     ds, bx
                 assume ds:dseg
@@ -30844,8 +30845,9 @@ writeResource   endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; core of loadResourceByName: ax = name near ptr, bx = its segment, cx = destination segment (0 = allocate with dosAllocOrDie); hashes the name (rol 9 + char, the .CC filename hash), looks the id up in the open archive TOC, seeks and reads the member (stored, or LZHUF through the 4-byte header when the first four name characters differ from the 4-byte string at cs:0652h); returns the segment in bx and the size in DGROUP n (evidence: reads the code, same hash as tools/mm3_cc.py name_id)
 
-sub_22740       proc far                ; CODE XREF: sub_24F1A+F↓p
+ccLoadMember    proc far                ; CODE XREF: sub_24F1A+F↓p
                                         ; loadResourceByName+C↓p ...
                 push    bp
                 push    ds
@@ -30863,26 +30865,26 @@ sub_22740       proc far                ; CODE XREF: sub_24F1A+F↓p
                 mov     cl, 4
                 mov     dx, 7F60h
 
-loc_22762:                              ; CODE XREF: sub_22740+36↓j
+loc_22762:                              ; CODE XREF: ccLoadMember+36↓j
                 lodsb
                 and     al, dh
                 cmp     al, dl
                 jb      short loc_2276B
                 sub     al, 20h ; ' '
 
-loc_2276B:                              ; CODE XREF: sub_22740+27↑j
+loc_2276B:                              ; CODE XREF: ccLoadMember+27↑j
                 cmp     al, cs:[bx+652h]
                 jz      short loc_22775
                 mov     bp, 2
 
-loc_22775:                              ; CODE XREF: sub_22740+30↑j
+loc_22775:                              ; CODE XREF: ccLoadMember+30↑j
                 inc     bx
                 loop    loc_22762
                 sub     si, 4
                 sub     ax, ax
                 sub     bx, bx
 
-loc_2277F:                              ; CODE XREF: sub_22740+52↓j
+loc_2277F:                              ; CODE XREF: ccLoadMember+52↓j
                 lodsb
                 or      ax, ax
                 jz      short loc_22794
@@ -30891,14 +30893,14 @@ loc_2277F:                              ; CODE XREF: sub_22740+52↓j
                 jb      short loc_2278C
                 sub     al, 20h ; ' '
 
-loc_2278C:                              ; CODE XREF: sub_22740+48↑j
+loc_2278C:                              ; CODE XREF: ccLoadMember+48↑j
                 xchg    bl, bh
                 rol     bx, 1
                 add     bx, ax
                 jmp     short loc_2277F
 ; ---------------------------------------------------------------------------
 
-loc_22794:                              ; CODE XREF: sub_22740+42↑j
+loc_22794:                              ; CODE XREF: ccLoadMember+42↑j
                 mov     ds, word ptr cs:[bp+644h]
                 sub     si, si
                 lodsw
@@ -30906,18 +30908,18 @@ loc_22794:                              ; CODE XREF: sub_22740+42↑j
                 mov     di, 8
                 nop
 
-loc_227A2:                              ; CODE XREF: sub_22740+68↓j
+loc_227A2:                              ; CODE XREF: ccLoadMember+68↓j
                 cmp     bx, [si]
                 jz      short loc_227AD
                 add     si, di
                 loop    loc_227A2
 
-loc_227AA:                              ; CODE XREF: sub_22740+86↓j
-                                        ; sub_22740+BE↓j ...
+loc_227AA:                              ; CODE XREF: ccLoadMember+86↓j
+                                        ; ccLoadMember+BE↓j ...
                 jmp     loc_22584
 ; ---------------------------------------------------------------------------
 
-loc_227AD:                              ; CODE XREF: sub_22740+64↑j
+loc_227AD:                              ; CODE XREF: ccLoadMember+64↑j
                 sub     cx, cx
                 lodsw
                 lodsw
@@ -30941,10 +30943,10 @@ loc_227AD:                              ; CODE XREF: sub_22740+64↑j
                 or      ax, ax
                 jnz     short loc_227E8
                 push    cs
-                call    near ptr sub_22534
+                call    near ptr dosAllocOrDie
                 mov     ax, bx
 
-loc_227E8:                              ; CODE XREF: sub_22740+A0↑j
+loc_227E8:                              ; CODE XREF: ccLoadMember+A0↑j
                 mov     cs:word_22B48, ax
                 mov     ds, ax
                 sub     dx, dx
@@ -30959,7 +30961,7 @@ loc_227E8:                              ; CODE XREF: sub_22740+A0↑j
                 jmp     loc_22924
 ; ---------------------------------------------------------------------------
 
-loc_22808:                              ; CODE XREF: sub_22740+8F↑j
+loc_22808:                              ; CODE XREF: ccLoadMember+8F↑j
                 push    cs
                 pop     ds
                 assume ds:seg007
@@ -30984,10 +30986,10 @@ loc_22808:                              ; CODE XREF: sub_22740+8F↑j
                 or      ax, ax
                 jnz     short loc_22841
                 push    cs
-                call    near ptr sub_22534
+                call    near ptr dosAllocOrDie
                 mov     ax, bx
 
-loc_22841:                              ; CODE XREF: sub_22740+F9↑j
+loc_22841:                              ; CODE XREF: ccLoadMember+F9↑j
                 mov     cs:word_22B48, ax
                 mov     ds, ax
                 mov     cx, cs:word_22B3E
@@ -31004,7 +31006,7 @@ loc_22841:                              ; CODE XREF: sub_22740+F9↑j
                 jmp     loc_227AA
 ; ---------------------------------------------------------------------------
 
-loc_22865:                              ; CODE XREF: sub_22740+120↑j
+loc_22865:                              ; CODE XREF: ccLoadMember+120↑j
                 mov     ax, cs
                 mov     ds, ax
                 assume ds:seg007
@@ -31021,7 +31023,7 @@ loc_22865:                              ; CODE XREF: sub_22740+120↑j
                 mov     bp, 2
                 nop
 
-loc_22886:                              ; CODE XREF: sub_22740+155↓j
+loc_22886:                              ; CODE XREF: ccLoadMember+155↓j
                 stosw
                 mov     [bx+2082h], bx
                 mov     si, bx
@@ -31036,7 +31038,7 @@ loc_22886:                              ; CODE XREF: sub_22740+155↓j
                 mov     di, 2
                 nop
 
-loc_228A6:                              ; CODE XREF: sub_22740+182↓j
+loc_228A6:                              ; CODE XREF: ccLoadMember+182↓j
                 mov     ax, [bx+16B4h]
                 add     ax, [bx+16B6h]
                 mov     [si+16B4h], ax
@@ -31059,8 +31061,8 @@ loc_228A6:                              ; CODE XREF: sub_22740+182↓j
                 assume es:nothing
                 mov     word_22B32, cx
 
-loc_228E8:                              ; CODE XREF: sub_22740+348↓j
-                                        ; sub_22740+3ED↓j
+loc_228E8:                              ; CODE XREF: ccLoadMember+348↓j
+                                        ; ccLoadMember+3ED↓j
                 mov     ax, word_22B32
                 cmp     ax, word_22B52
                 jnb     short loc_22920
@@ -31069,14 +31071,14 @@ loc_228E8:                              ; CODE XREF: sub_22740+348↓j
                 mov     dx, 4E6h
                 nop
 
-loc_228FA:                              ; CODE XREF: sub_22740+1D0↓j
+loc_228FA:                              ; CODE XREF: ccLoadMember+1D0↓j
                 cmp     bx, dx
                 jnb     short loc_22912
                 sub     cx, cx
                 shl     word_22B4C, 1
                 jz      short loc_2292A
 
-loc_22906:                              ; CODE XREF: sub_22740+1FE↓j
+loc_22906:                              ; CODE XREF: ccLoadMember+1FE↓j
                 rcl     cx, 1
                 shl     cx, 1
                 add     bx, cx
@@ -31084,7 +31086,7 @@ loc_22906:                              ; CODE XREF: sub_22740+1FE↓j
                 jmp     short loc_228FA
 ; ---------------------------------------------------------------------------
 
-loc_22912:                              ; CODE XREF: sub_22740+1BC↑j
+loc_22912:                              ; CODE XREF: ccLoadMember+1BC↑j
                 sub     bx, dx
                 push    bx
                 cmp     word_24088, 8000h
@@ -31092,10 +31094,10 @@ loc_22912:                              ; CODE XREF: sub_22740+1BC↑j
                 jmp     loc_229F2
 ; ---------------------------------------------------------------------------
 
-loc_22920:                              ; CODE XREF: sub_22740+1AF↑j
+loc_22920:                              ; CODE XREF: ccLoadMember+1AF↑j
                 mov     bx, word_22B48
 
-loc_22924:                              ; CODE XREF: sub_22740+C5↑j
+loc_22924:                              ; CODE XREF: ccLoadMember+C5↑j
                 pop     di
                 pop     si
                 pop     es
@@ -31105,7 +31107,7 @@ loc_22924:                              ; CODE XREF: sub_22740+C5↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2292A:                              ; CODE XREF: sub_22740+1C4↑j
+loc_2292A:                              ; CODE XREF: ccLoadMember+1C4↑j
                 mov     si, word_28D46
                 add     word_28D46, 2
                 mov     ax, es:[si]
@@ -31116,7 +31118,7 @@ loc_2292A:                              ; CODE XREF: sub_22740+1C4↑j
                 jmp     short loc_22906
 ; ---------------------------------------------------------------------------
 
-loc_22940:                              ; CODE XREF: sub_22740+1DB↑j
+loc_22940:                              ; CODE XREF: ccLoadMember+1DB↑j
                 push    bx
                 sub     di, di
                 sub     bx, bx
@@ -31125,7 +31127,7 @@ loc_22940:                              ; CODE XREF: sub_22740+1DB↑j
                 mov     si, 2
                 nop
 
-loc_2294E:                              ; CODE XREF: sub_22740+22C↓j
+loc_2294E:                              ; CODE XREF: ccLoadMember+22C↓j
                 cmp     [bx+22F6h], dx
                 jb      short loc_2296A
                 mov     ax, [bx+16B4h]
@@ -31137,7 +31139,7 @@ loc_2294E:                              ; CODE XREF: sub_22740+22C↓j
                 add     di, si
                 nop
 
-loc_2296A:                              ; CODE XREF: sub_22740+212↑j
+loc_2296A:                              ; CODE XREF: ccLoadMember+212↑j
                 add     bx, si
                 loop    loc_2294E
                 sub     bx, bx
@@ -31146,7 +31148,7 @@ loc_2296A:                              ; CODE XREF: sub_22740+212↑j
                 std
                 nop
 
-loc_22978:                              ; CODE XREF: sub_22740+28B↓j
+loc_22978:                              ; CODE XREF: ccLoadMember+28B↓j
                 push    cx
                 mov     ax, [bx+16B4h]
                 add     ax, [bx+16B6h]
@@ -31154,7 +31156,7 @@ loc_22978:                              ; CODE XREF: sub_22740+28B↓j
                 mov     bp, di
                 nop
 
-loc_22988:                              ; CODE XREF: sub_22740+24F↓j
+loc_22988:                              ; CODE XREF: ccLoadMember+24F↓j
                 dec     bp
                 dec     bp
                 cmp     ax, ds:[bp+16B4h]
@@ -31199,7 +31201,7 @@ loc_22988:                              ; CODE XREF: sub_22740+24F↓j
                 add     dx, cx
                 shr     cx, 1
 
-loc_229DE:                              ; CODE XREF: sub_22740+2AF↓j
+loc_229DE:                              ; CODE XREF: ccLoadMember+2AF↓j
                 mov     di, [bx+22F6h]
                 add     di, si
                 cmp     di, dx
@@ -31207,7 +31209,7 @@ loc_229DE:                              ; CODE XREF: sub_22740+2AF↓j
                 stosw
                 nop
 
-loc_229EA:                              ; CODE XREF: sub_22740+2A6↑j
+loc_229EA:                              ; CODE XREF: ccLoadMember+2A6↑j
                 stosw
                 inc     ax
                 inc     ax
@@ -31216,10 +31218,10 @@ loc_229EA:                              ; CODE XREF: sub_22740+2A6↑j
                 loop    loc_229DE
                 pop     bx
 
-loc_229F2:                              ; CODE XREF: sub_22740+1DD↑j
+loc_229F2:                              ; CODE XREF: ccLoadMember+1DD↑j
                 mov     bx, [bx+2082h]
 
-loc_229F6:                              ; CODE XREF: sub_22740+31C↓j
+loc_229F6:                              ; CODE XREF: ccLoadMember+31C↓j
                 inc     word ptr [bx+16B4h]
                 mov     dx, [bx+16B4h]
                 cmp     dx, [bx+16B6h]
@@ -31229,7 +31231,7 @@ loc_229F6:                              ; CODE XREF: sub_22740+31C↓j
                 add     bp, cx
                 nop
 
-loc_22A0C:                              ; CODE XREF: sub_22740+2D3↓j
+loc_22A0C:                              ; CODE XREF: ccLoadMember+2D3↓j
                 add     bp, cx
                 cmp     dx, ds:[bp+16B4h]
                 ja      short loc_22A0C
@@ -31244,7 +31246,7 @@ loc_22A0C:                              ; CODE XREF: sub_22740+2D3↓j
                 mov     [si+1B9Eh], bp
                 nop
 
-loc_22A38:                              ; CODE XREF: sub_22740+2F1↑j
+loc_22A38:                              ; CODE XREF: ccLoadMember+2F1↑j
                 mov     di, ds:[bp+22F6h]
                 mov     ds:[bp+22F6h], si
                 mov     [di+1B9Ch], bx
@@ -31252,11 +31254,11 @@ loc_22A38:                              ; CODE XREF: sub_22740+2F1↑j
                 jnb     short loc_22A50
                 mov     [di+1B9Eh], bx
 
-loc_22A50:                              ; CODE XREF: sub_22740+30A↑j
+loc_22A50:                              ; CODE XREF: ccLoadMember+30A↑j
                 mov     [bx+22F6h], di
                 mov     bx, bp
 
-loc_22A56:                              ; CODE XREF: sub_22740+2C2↑j
+loc_22A56:                              ; CODE XREF: ccLoadMember+2C2↑j
                 mov     bx, [bx+1B9Ch]
                 or      bx, bx
                 jnz     short loc_229F6
@@ -31277,7 +31279,7 @@ loc_22A56:                              ; CODE XREF: sub_22740+2C2↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_22A8C:                              ; CODE XREF: sub_22740+370↓j
+loc_22A8C:                              ; CODE XREF: ccLoadMember+370↓j
                 mov     si, word_28D46
                 add     word_28D46, 2
                 mov     ax, es:[si]
@@ -31285,26 +31287,26 @@ loc_22A8C:                              ; CODE XREF: sub_22740+370↓j
                 stc
                 nop
 
-loc_22A9C:                              ; CODE XREF: sub_22740+360↓j
+loc_22A9C:                              ; CODE XREF: ccLoadMember+360↓j
                 rcl     ax, 1
                 rcl     bx, 1
                 loop    loc_22A9C
                 jmp     short loc_22AB6
 ; ---------------------------------------------------------------------------
 
-loc_22AA4:                              ; CODE XREF: sub_22740+325↑j
+loc_22AA4:                              ; CODE XREF: ccLoadMember+325↑j
                 mov     bp, bx
                 mov     cx, 8
                 sub     bx, bx
                 mov     ax, word_28D4C
 
-loc_22AAE:                              ; CODE XREF: sub_22740+374↓j
+loc_22AAE:                              ; CODE XREF: ccLoadMember+374↓j
                 shl     ax, 1
                 jz      short loc_22A8C
                 rcl     bx, 1
                 loop    loc_22AAE
 
-loc_22AB6:                              ; CODE XREF: sub_22740+362↑j
+loc_22AB6:                              ; CODE XREF: ccLoadMember+362↑j
                 mov     word_28D4C, ax
                 sub     ax, ax
                 mov     al, [bx+28DCh]
@@ -31316,19 +31318,19 @@ loc_22AB6:                              ; CODE XREF: sub_22740+362↑j
                 dec     dx
                 nop
 
-loc_22ACC:                              ; CODE XREF: sub_22740+398↓j
+loc_22ACC:                              ; CODE XREF: ccLoadMember+398↓j
                 dec     dx
                 jz      short loc_22AF0
                 shl     word_28D4C, 1
                 jz      short loc_22ADA
                 nop
 
-loc_22AD6:                              ; CODE XREF: sub_22740+3AE↓j
+loc_22AD6:                              ; CODE XREF: ccLoadMember+3AE↓j
                 rcl     bx, 1
                 jmp     short loc_22ACC
 ; ---------------------------------------------------------------------------
 
-loc_22ADA:                              ; CODE XREF: sub_22740+393↑j
+loc_22ADA:                              ; CODE XREF: ccLoadMember+393↑j
                 mov     si, word_28D46
                 add     word_28D46, 2
                 mov     ax, es:[si]
@@ -31339,7 +31341,7 @@ loc_22ADA:                              ; CODE XREF: sub_22740+393↑j
                 jmp     short loc_22AD6
 ; ---------------------------------------------------------------------------
 
-loc_22AF0:                              ; CODE XREF: sub_22740+38D↑j
+loc_22AF0:                              ; CODE XREF: ccLoadMember+38D↑j
                 pop     ax
                 and     bl, 3Fh
                 or      al, bl
@@ -31351,7 +31353,7 @@ loc_22AF0:                              ; CODE XREF: sub_22740+38D↑j
                 mov     cx, bx
                 sub     cx, 0FDh
 
-loc_22B08:                              ; CODE XREF: sub_22740+3EB↓j
+loc_22B08:                              ; CODE XREF: ccLoadMember+3EB↓j
                 and     si, dx
                 mov     al, [si+672h]
                 mov     di, word_28D4A
@@ -31366,42 +31368,42 @@ loc_22B08:                              ; CODE XREF: sub_22740+3EB↓j
                 inc     si
                 loop    loc_22B08
                 jmp     loc_228E8
-sub_22740       endp
+ccLoadMember    endp
 
 ; ---------------------------------------------------------------------------
-word_22B30      dw 0                    ; DATA XREF: sub_22740+194↑w
-word_22B32      dw 0                    ; DATA XREF: sub_22740+1A4↑w
-                                        ; sub_22740:loc_228E8↑r
+word_22B30      dw 0                    ; DATA XREF: ccLoadMember+194↑w
+word_22B32      dw 0                    ; DATA XREF: ccLoadMember+1A4↑w
+                                        ; ccLoadMember:loc_228E8↑r
 word_22B34      dw 0                    ; DATA XREF: seg007:0017↑r
                                         ; writeResource:loc_226F8↑r
 word_22B36      dw 0                    ; DATA XREF: seg007:000E↑r
 word_22B38      dw 0                    ; DATA XREF: seg007:0029↑r
                                         ; writeResource+56↑r ...
 word_22B3A      dw 0                    ; DATA XREF: seg007:0020↑r
-                                        ; sub_22740+D0↑r ...
-word_22B3C      dw 0                    ; DATA XREF: sub_22740+B0↑r
-word_22B3E      dw 0                    ; DATA XREF: sub_22740+107↑r
-word_22B40      dw 0                    ; DATA XREF: sub_22740+5↑w
-                                        ; sub_22740+9A↑r ...
+                                        ; ccLoadMember+D0↑r ...
+word_22B3C      dw 0                    ; DATA XREF: ccLoadMember+B0↑r
+word_22B3E      dw 0                    ; DATA XREF: ccLoadMember+107↑r
+word_22B40      dw 0                    ; DATA XREF: ccLoadMember+5↑w
+                                        ; ccLoadMember+9A↑r ...
                 db 4Dh, 41h, 5Ah, 45h
-word_22B46      dw 0                    ; DATA XREF: sub_22740+112↑w
-word_22B48      dw 0                    ; DATA XREF: sub_22740:loc_227E8↑w
-                                        ; sub_22740+C0↑r ...
-word_22B4A      dw 0                    ; DATA XREF: sub_22740+12D↑w
-word_22B4C      dw 0                    ; DATA XREF: sub_22740+130↑w
-                                        ; sub_22740+1C0↑w
-word_22B4E      dw 0                    ; DATA XREF: sub_22740+184↑r
-word_22B50      dw 0                    ; DATA XREF: sub_22740+DB↑r
-word_22B52      dw 0                    ; DATA XREF: sub_22740+E2↑w
-                                        ; sub_22740+1AB↑r
+word_22B46      dw 0                    ; DATA XREF: ccLoadMember+112↑w
+word_22B48      dw 0                    ; DATA XREF: ccLoadMember:loc_227E8↑w
+                                        ; ccLoadMember+C0↑r ...
+word_22B4A      dw 0                    ; DATA XREF: ccLoadMember+12D↑w
+word_22B4C      dw 0                    ; DATA XREF: ccLoadMember+130↑w
+                                        ; ccLoadMember+1C0↑w
+word_22B4E      dw 0                    ; DATA XREF: ccLoadMember+184↑r
+word_22B50      dw 0                    ; DATA XREF: ccLoadMember+DB↑r
+word_22B52      dw 0                    ; DATA XREF: ccLoadMember+E2↑w
+                                        ; ccLoadMember+1AB↑r
                 db 6 dup(0), 2 dup(6Dh), 33h, 2Eh, 63h, 75h, 72h, 0, 2 dup(6Dh)
                 db 33h, 2Eh, 2 dup(63h), 1520h dup(0)
-word_24088      dw 0                    ; DATA XREF: sub_22740+1D5↑r
-word_2408A      dw 0                    ; DATA XREF: sub_22740+18D↑w
+word_24088      dw 0                    ; DATA XREF: ccLoadMember+1D5↑r
+word_2408A      dw 0                    ; DATA XREF: ccLoadMember+18D↑w
                 db 4E4h dup(0)
-word_24570      dw 0                    ; DATA XREF: sub_22740+188↑w
+word_24570      dw 0                    ; DATA XREF: ccLoadMember+188↑w
                 db 758h dup(0)
-word_24CCA      dw 0                    ; DATA XREF: sub_22740+1B2↑r
+word_24CCA      dw 0                    ; DATA XREF: ccLoadMember+1B2↑r
                 db 20h dup(3), 30h dup(4), 40h dup(5), 30h dup(6), 30h dup(7)
                 db 10h dup(8), 20h dup(0), 10h dup(1), 10h dup(2), 10h dup(3)
                 db 8 dup(4), 8 dup(5), 8 dup(6), 8 dup(7), 8 dup(8), 8 dup(9)
@@ -31489,7 +31491,7 @@ arg_4           = word ptr  0Ah
                 mov     bx, cs
                 sub     cx, cx
                 push    cs
-                call    near ptr sub_22740
+                call    near ptr ccLoadMember
                 mov     cs:word_24F63, bx
                 mov     di, [bp+arg_4]
                 mov     ax, seg seg007
@@ -31594,7 +31596,7 @@ vdrv_18_getMouse endp ; sp-analysis failed
 
 ; API 03h: hides the mouse cursor
 
-vdrv_03_hideMouse proc far              ; CODE XREF: sub_378C0+80↓P
+vdrv_03_hideMouse proc far              ; CODE XREF: bossKey+80↓P
                                         ; endingCutscene+43↓P ...
                 push    cs:word_24F63
                 mov     ax, 3
@@ -31697,7 +31699,7 @@ arg_2           = word ptr  8
                 mov     bx, [bp+arg_2]
                 sub     cx, cx
                 push    cs
-                call    near ptr sub_22740
+                call    near ptr ccLoadMember
                 mov     dx, bx
                 sub     ax, ax
                 pop     bp
@@ -31720,15 +31722,15 @@ vdrv_00_transition endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
-; API 2Ah: 74-particle starfield/comet transition effect with a far callback (intro and screen transitions)
+; one frame of the intro: 75-particle starfield (arrays at module data +0/96h/12Ch/1C2h/258h, colour table 0E62h) + draw list at the argument, then copy to screen
 
-vdrv_2A_starfield proc far              ; CODE XREF: introSequence+AD↓P
+vdrv_2A_introFrame proc far             ; CODE XREF: introSequence+AD↓P
                                         ; introSequence+128↓P ...
                 push    cs:word_24F63
                 mov     ax, 2Ah ; '*'
                 push    ax
                 retf
-vdrv_2A_starfield endp ; sp-analysis failed
+vdrv_2A_introFrame endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 push    cs:word_24F63
@@ -31977,8 +31979,8 @@ byte_250E4      db 0                    ; DATA XREF: sub_250A8+3↑w
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_250F8       proc far                ; CODE XREF: sub_22534+68↑p
-                                        ; sub_39900+3↓P
+sub_250F8       proc far                ; CODE XREF: dosAllocOrDie+68↑p
+                                        ; exitGame+3↓P
                 cmp     cs:byte_250E4, 0
                 jz      short locret_25116
                 push    ds
@@ -32426,10 +32428,11 @@ jpt_252EF       dw offset loc_252F4     ; DATA XREF: sub_252CF+20↑r
 
 ; =============== S U B R O U T I N E =======================================
 
+; _bioskey wrapper: fills the shift/ctrl/alt words (word_28CE7..28CED), maps F-keys to codes C9h..D2h and keypad keys through the table at 0x8..; returns the command byte
 ; Attributes: bp-based frame
 
-sub_253D3       proc far                ; CODE XREF: getCommand+68F↓p
-                                        ; sub_378C0+99↓P ...
+readKey         proc far                ; CODE XREF: getCommand+68F↓p
+                                        ; bossKey+99↓P ...
 
 var_2           = word ptr -2
 
@@ -32468,12 +32471,12 @@ var_2           = word ptr -2
                 jmp     loc_254B4
 ; ---------------------------------------------------------------------------
 
-loc_25428:                              ; CODE XREF: sub_253D3+47↑j
+loc_25428:                              ; CODE XREF: readKey+47↑j
                 cmp     si, 0F400h
                 jnz     short loc_25431
                 mov     si, 4D36h
 
-loc_25431:                              ; CODE XREF: sub_253D3+59↑j
+loc_25431:                              ; CODE XREF: readKey+59↑j
                 test    si, 0FFh
                 jz      short loc_25465
                 mov     ax, si
@@ -32489,13 +32492,13 @@ loc_25431:                              ; CODE XREF: sub_253D3+59↑j
                 cmp     [bp+var_2], 4E00h
                 jnz     short loc_25484
 
-loc_2545F:                              ; CODE XREF: sub_253D3+75↑j
-                                        ; sub_253D3+7C↑j ...
+loc_2545F:                              ; CODE XREF: readKey+75↑j
+                                        ; readKey+7C↑j ...
                 inc     word_28CEF
                 jmp     short loc_25484
 ; ---------------------------------------------------------------------------
 
-loc_25465:                              ; CODE XREF: sub_253D3+62↑j
+loc_25465:                              ; CODE XREF: readKey+62↑j
                 mov     cl, 8
                 sar     si, cl
                 cmp     si, 3Bh ; ';'
@@ -32506,15 +32509,15 @@ loc_25465:                              ; CODE XREF: sub_253D3+62↑j
                 jmp     short loc_25484
 ; ---------------------------------------------------------------------------
 
-loc_25479:                              ; CODE XREF: sub_253D3+99↑j
-                                        ; sub_253D3+9E↑j
+loc_25479:                              ; CODE XREF: readKey+99↑j
+                                        ; readKey+9E↑j
                 inc     word_28CEF
                 mov     al, [si-7AE3h]
                 cbw
                 mov     si, ax
 
-loc_25484:                              ; CODE XREF: sub_253D3+8A↑j
-                                        ; sub_253D3+90↑j ...
+loc_25484:                              ; CODE XREF: readKey+8A↑j
+                                        ; readKey+90↑j ...
                 and     si, 0FFh
                 cmp     word_28CED, 0
                 jz      short loc_2549E
@@ -32525,28 +32528,28 @@ loc_25484:                              ; CODE XREF: sub_253D3+8A↑j
                 cmp     si, 11h
                 jnz     short loc_254A5
 
-loc_2549E:                              ; CODE XREF: sub_253D3+BA↑j
-                                        ; sub_253D3+BF↑j ...
+loc_2549E:                              ; CODE XREF: readKey+BA↑j
+                                        ; readKey+BF↑j ...
                 cmp     word_28CEB, 0
                 jz      short loc_254A8
 
-loc_254A5:                              ; CODE XREF: sub_253D3+C9↑j
+loc_254A5:                              ; CODE XREF: readKey+C9↑j
                 mov     si, 0FFh
 
-loc_254A8:                              ; CODE XREF: sub_253D3+D0↑j
+loc_254A8:                              ; CODE XREF: readKey+D0↑j
                 mov     ax, si
                 and     ax, 0FFh
                 push    ax
                 call    sub_12436
                 pop     cx
 
-loc_254B4:                              ; CODE XREF: sub_253D3+52↑j
+loc_254B4:                              ; CODE XREF: readKey+52↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_253D3       endp
+readKey         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32576,12 +32579,12 @@ loc_254C2:                              ; CODE XREF: getCommand+686↓j
                 mov     dx, 0FFFFh
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 or      ax, ax
                 jnz     short loc_254E1
-                call    sub_27F8B
+                call    j_loadAndPlaySong
 
 loc_254E1:                              ; CODE XREF: getCommand+D↑j
                                         ; getCommand+20↑j
@@ -32701,7 +32704,7 @@ loc_255CC:                              ; CODE XREF: getCommand+109↑j
 
 loc_255DD:                              ; CODE XREF: getCommand+102↑j
                                         ; getCommand+110↑j ...
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jz      short loc_255EA
 
 loc_255E4:                              ; CODE XREF: getCommand+29E↓j
@@ -33363,7 +33366,7 @@ loc_25B43:                              ; CODE XREF: getCommand+67D↑j
                                         ; getCommand+684↑j
                 mov     byte_34054, 0
                 push    cs
-                call    near ptr sub_253D3
+                call    near ptr readKey
                 mov     di, ax
                 cmp     di, 0D2h
                 jnz     short loc_25B64
@@ -33371,7 +33374,7 @@ loc_25B43:                              ; CODE XREF: getCommand+67D↑j
                 cbw
                 or      ax, ax
                 jnz     short loc_25B64
-                call    sub_27F4F
+                call    j_bossKey
                 jmp     loc_254C2
 ; ---------------------------------------------------------------------------
 
@@ -33833,9 +33836,10 @@ ipause_5        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; delayFrames(n): calls vdrv_18_getMouse n times; each call waits for the 70 Hz retrace, so n = number of video frames (the intro and message delays use it)
 ; Attributes: bp-based frame
 
-sub_25E66       proc far                ; CODE XREF: introSequence+C7↓P
+delayFrames     proc far                ; CODE XREF: introSequence+C7↓P
                                         ; sub_466EC+151↓P ...
 
 arg_0           = word ptr  6
@@ -33845,7 +33849,7 @@ arg_0           = word ptr  6
                 push    si
                 mov     si, [bp+arg_0]
 
-loc_25E6D:                              ; CODE XREF: sub_25E66+33↓j
+loc_25E6D:                              ; CODE XREF: delayFrames+33↓j
                 push    ds
                 mov     ax, 0ACCCh
                 push    ax
@@ -33859,17 +33863,17 @@ loc_25E6D:                              ; CODE XREF: sub_25E66+33↓j
                 cmp     Engine_mode, 3
                 jnz     short loc_25E98
 
-loc_25E8E:                              ; CODE XREF: sub_25E66+1F↑j
+loc_25E8E:                              ; CODE XREF: delayFrames+1F↑j
                 call    drawView
                 mov     byte_2886E, 0
 
-loc_25E98:                              ; CODE XREF: sub_25E66+26↑j
+loc_25E98:                              ; CODE XREF: delayFrames+26↑j
                 dec     si
                 jnz     short loc_25E6D
                 pop     si
                 pop     bp
                 retf
-sub_25E66       endp
+delayFrames     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33954,7 +33958,7 @@ arg_0           = word ptr  6
                 mov     si, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_25F34
 ; ---------------------------------------------------------------------------
@@ -33975,7 +33979,7 @@ loc_25F16:                              ; CODE XREF: sub_25EF3+5F↓j
 loc_25F34:                              ; CODE XREF: sub_25EF3+21↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, si
                 jge     short loc_25F5F
@@ -34090,7 +34094,7 @@ loc_25FD5:                              ; CODE XREF: openAndLoadCc+B↑j
 
 loc_25FFE:                              ; CODE XREF: openAndLoadCc+66↓j
                                         ; openAndLoadCc+98↓j ...
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_26003:                              ; CODE XREF: openAndLoadCc+39↑j
@@ -34232,7 +34236,7 @@ loc_26101:                              ; CODE XREF: saveGame+D↑j
                 jnz     short loc_2611B
 
 loc_26116:                              ; CODE XREF: saveGame+72↓j
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_2611B:                              ; CODE XREF: saveGame+27↑j
@@ -34255,7 +34259,7 @@ loc_2611B:                              ; CODE XREF: saveGame+27↑j
                 pop     cx
                 mov     ax, 85F8h
                 push    ax
-                mov     al, byte_29116
+                mov     al, currentSaveIndex
                 cbw
                 mov     dx, 0Dh
                 imul    dx
@@ -34384,7 +34388,7 @@ var_2           = word ptr -2
 loc_26231:                              ; CODE XREF: loadGame+D↑j
                 mov     ax, 85F5h
                 push    ax
-                mov     al, byte_29116
+                mov     al, currentSaveIndex
                 cbw
                 mov     dx, 0Dh
                 imul    dx
@@ -34398,7 +34402,7 @@ loc_26231:                              ; CODE XREF: loadGame+D↑j
                 jnz     short loc_26254
 
 loc_2624F:                              ; CODE XREF: loadGame+72↓j
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_26254:                              ; CODE XREF: loadGame+30↑j
@@ -35030,7 +35034,7 @@ path            = dword ptr  6
                 mov     bp, sp
                 sub     sp, 2Ch
                 push    si              ; n
-                mov     byte_29115, 0
+                mov     saveFileCount, 0
                 mov     ax, 82h
                 push    ax              ; c
                 xor     ax, ax
@@ -35052,8 +35056,8 @@ path            = dword ptr  6
 loc_266DE:                              ; CODE XREF: getFiles+64↓j
                 lea     ax, [bp+ffblk.ff_name]
                 push    ax
-                mov     al, byte_29115
-                inc     byte_29115
+                mov     al, saveFileCount
+                inc     saveFileCount
                 cbw
                 mov     dx, 0Dh
                 imul    dx
@@ -35071,7 +35075,7 @@ loc_26704:                              ; CODE XREF: getFiles+31↑j
                 mov     si, ax
                 or      si, si
                 jnz     short loc_26711
-                cmp     byte_29115, 0Ah
+                cmp     saveFileCount, 0Ah
                 jl      short loc_266DE
 
 loc_26711:                              ; CODE XREF: getFiles+5D↑j
@@ -35300,7 +35304,7 @@ arg_0           = word ptr  6
                 mov     ax, cs:[bx+37h]
                 mov     bx, cs
                 sub     cx, cx
-                call    sub_22740
+                call    ccLoadMember
                 mov     cs:word_2693D, bx
                 mov     ax, bx
                 pop     di
@@ -35322,96 +35326,100 @@ sub_268BE       endp
                 db 6Dh, 2Eh, 64h, 72h, 76h, 0, 64h, 65h, 6Dh, 6Fh, 2Eh
                 db 64h, 72h, 76h, 3 dup(0)
 word_2693D      dw 0                    ; DATA XREF: sub_268BE+1A↑w
-                                        ; sub_2693F↓r ...
+                                        ; soundDriverInit↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
+; API 0 of the sound driver: init(port) (hooks INT 08h, programs the PIT, resets the FM chip)
 
-sub_2693F       proc far                ; CODE XREF: seg001:028C↑P
+soundDriverInit proc far                ; CODE XREF: seg001:028C↑P
                 cmp     cs:word_2693D, 0
                 jnz     short loc_26948
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26948:                              ; CODE XREF: sub_2693F+6↑j
+loc_26948:                              ; CODE XREF: soundDriverInit+6↑j
                 push    cs:word_2693D
                 mov     ax, 0
                 push    ax
                 retf
-sub_2693F       endp ; sp-analysis failed
+soundDriverInit endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; API 3: restore the old INT 08h vector, silence the chip
 
-sub_26952       proc far                ; CODE XREF: sub_22534:loc_22596↑P
-                                        ; sub_39900+8↓P
+soundDriverRestore proc far             ; CODE XREF: dosAllocOrDie:loc_22596↑P
+                                        ; exitGame+8↓P
                 cmp     cs:word_2693D, 0
                 jnz     short loc_2695B
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2695B:                              ; CODE XREF: sub_26952+6↑j
+loc_2695B:                              ; CODE XREF: soundDriverRestore+6↑j
                 push    cs:word_2693D
                 mov     ax, 3
                 push    ax
                 retf
-sub_26952       endp ; sp-analysis failed
+soundDriverRestore endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; API 6: music command: far pointer to a song buffer starts it, 0:0 stops, FFFF:FFFF queries/clears (mode word C0h = start flag?)
 
-sub_26965       proc far                ; CODE XREF: runMazeEvent+17DD↑P
+soundDriverMusic proc far               ; CODE XREF: runMazeEvent+17DD↑P
                                         ; getCommand+17↑P ...
                 cmp     cs:word_2693D, 0
                 jnz     short loc_2696E
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2696E:                              ; CODE XREF: sub_26965+6↑j
+loc_2696E:                              ; CODE XREF: soundDriverMusic+6↑j
                 push    cs:word_2693D
                 mov     ax, 6
                 push    ax
                 retf
-sub_26965       endp ; sp-analysis failed
+soundDriverMusic endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
-; far-jumps (push segment, push 9, retf) into API function 9 of the loaded sound driver module (segment word at cs:2693D) with the effect id
+; cmd 0FFFEh restarts the song clock, 0FFFFh returns song position (intro scenes are timed by it); other values = song/sfx numbers
 
-soundDriverPlay proc far                ; CODE XREF: playSoundEffect+24↑P
+soundDriverCall proc far                ; CODE XREF: playSoundEffect+24↑P
                                         ; sub_25EF3+1B↑P ...
                 cmp     cs:word_2693D, 0
                 jnz     short loc_26981
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26981:                              ; CODE XREF: soundDriverPlay+6↑j
+loc_26981:                              ; CODE XREF: soundDriverCall+6↑j
                 push    cs:word_2693D
                 mov     ax, 9
                 push    ax
                 retf
-soundDriverPlay endp ; sp-analysis failed
+soundDriverCall endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; API 0Ch: digital sample player (Covox/Blaster drivers)
 
-sub_2698B       proc far                ; CODE XREF: introSequence+846↓P
+soundDriverSample proc far              ; CODE XREF: introSequence+846↓P
                                         ; introSequence+8BC↓P ...
                 cmp     cs:word_2693D, 0
                 jnz     short loc_26994
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26994:                              ; CODE XREF: sub_2698B+6↑j
+loc_26994:                              ; CODE XREF: soundDriverSample+6↑j
                 push    cs:word_2693D
                 mov     ax, 0Ch
                 push    ax
                 retf
-sub_2698B       endp ; sp-analysis failed
+soundDriverSample endp ; sp-analysis failed
 
 seg009          ends
 
@@ -36167,17 +36175,7 @@ sub_27F40       proc far                ; CODE XREF: Awards_show+4C6↓P
                 jmp     sub_37D3E
 sub_27F40       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-; int __cdecl __far sub_27F45(int, char)
-sub_27F45       proc far                ; CODE XREF: endingCutscene+2E↓P
-                                        ; arenaEvent+14↓P ...
-                jmp     sub_38821
-sub_27F45       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_startSong. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36187,16 +36185,7 @@ sub_27F4A       proc far
                 jmp     sub_38399
 sub_27F4A       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_27F4F       proc far                ; CODE XREF: getCommand+6A2↑P
-                                        ; townMenuInput+14A↓P
-                jmp     sub_378C0
-sub_27F4F       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_bossKey. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_resetBlacksmithWares. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_getDiskFree. PRESS NUMPAD+ TO EXPAND]
 
@@ -36238,15 +36227,7 @@ sub_27F72       proc far                ; CODE XREF: doCharDamage+304↓P
                 jmp     sub_37B59
 sub_27F72       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_27F77       proc far
-                jmp     sub_3946E
-sub_27F77       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_pollSkipKey. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -36258,26 +36239,8 @@ sub_27F7C       proc far                ; CODE XREF: giveTreasure+288↓P
 sub_27F7C       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_getEquipSlotName. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn thunk
-
-sub_27F86       proc near               ; CODE XREF: seg001:002C↑P
-                                        ; openAndLoadCc:loc_25FFE↑P ...
-                jmp     far ptr sub_39900
-sub_27F86       endp
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_27F8B       proc far                ; CODE XREF: getCommand+22↑P
-                                        ; townMenuInput+21↓P
-                jmp     sub_387C6
-sub_27F8B       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_exitGame. PRESS NUMPAD+ TO EXPAND]
+; [00000005 BYTES: COLLAPSED FUNCTION j_loadAndPlaySong. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_equipItem. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -36698,15 +36661,7 @@ sub_28185       endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_gameInformation. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_getCurrentExperience. PRESS NUMPAD+ TO EXPAND]
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28194       proc far                ; CODE XREF: changeTime+443↑P
-                jmp     sub_43034
-sub_28194       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_loadViewBackground. PRESS NUMPAD+ TO EXPAND]
 ; [00000005 BYTES: COLLAPSED FUNCTION j_confirmDialog. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -37586,7 +37541,7 @@ byte_287A0      db 0                    ; DATA XREF: itemsDialog:def_4E051↓r
 byte_287A1      db 0FFh                 ; DATA XREF: guildSpellShop+530↓w
                                         ; spellsDialog:loc_4F7D6↓r ...
 byte_287A2      db 0                    ; DATA XREF: getCommand+69A↑r
-                                        ; sub_378C0+A↓w ...
+                                        ; bossKey+A↓w ...
 byte_287A3      db 0                    ; DATA XREF: exploreLoop:loc_3EADC↓r
                                         ; exploreLoop+19F↓w ...
 byte_287A4      db 0                    ; DATA XREF: exploreLoop+1A4↓w
@@ -37597,10 +37552,10 @@ byte_287A6      db 0                    ; DATA XREF: scanObjectsAhead+DF↑w
                                         ; scanObjectsAhead:loc_15C36↑r ...
 byte_287A7      db 0                    ; DATA XREF: castItemSpell:loc_50231↓w
                                         ; characterInfoDialog:loc_50540↓r ...
-word_287A8      dw 0                    ; DATA XREF: sub_253D3+42↑r
-                                        ; sub_253D3+49↑w ...
+word_287A8      dw 0                    ; DATA XREF: readKey+42↑r
+                                        ; readKey+49↑w ...
 byte_287AA      db 0                    ; DATA XREF: getCommand:loc_254C2↑r
-                                        ; sub_387C6:loc_38818↓w ...
+                                        ; loadAndPlaySong:loc_38818↓w ...
 byte_287AB      db 0                    ; DATA XREF: exploreLoop:loc_3ECFA↓w
                                         ; exploreLoop+37D↓r
                 db 1, 2 dup(6Ch), 71h, 67h, 75h, 63h, 7Ah, 5Eh, 2 dup(3Eh)
@@ -37647,8 +37602,9 @@ byte_2883F      db 0                    ; DATA XREF: getCommand+137↑r
                                         ; getCommand+13E↑r ...
 byte_28840      db 0                    ; DATA XREF: nextChar:loc_4B03E↓r
                                         ; nextChar+98↓w ...
-byte_28841      db 0                    ; DATA XREF: checkPartyDead:loc_152B7↑w
+Party_dead      db 0                    ; DATA XREF: checkPartyDead:loc_152B7↑w
                                         ; checkPartyDead+60↑w ...
+                                        ; 1 when checkPartyDead finds no party member able to act (all worstCondition values 11-15), 0 otherwise; runMazeEvent ends the script when it is set (evidence: checkPartyDead at 15270 sets it, evt_op13 tests it)
 byte_28842      db 0                    ; DATA XREF: seg001:loc_14D8E↑w
                                         ; seg001:024F↑r
 byte_28843      db 0                    ; DATA XREF: seg001:loc_14DA3↑w
@@ -37661,17 +37617,20 @@ byte_28846      db 0                    ; DATA XREF: seg001:loc_14D49↑w
                                         ; seg001:0241↑r
 byte_28847      db 0                    ; DATA XREF: seg001:loc_14D95↑w
                                         ; seg001:0248↑r
-byte_28848      db 0                    ; DATA XREF: seg001:loc_14D9C↑w
+sfxDeviceAvailable db 0                 ; DATA XREF: seg001:loc_14D9C↑w
                                         ; controlPanel+15F↓r ...
-byte_28849      db 0                    ; DATA XREF: seg001:loc_14E3D↑w
+                                        ; byte: sound effects available
+musicDeviceAvailable db 0               ; DATA XREF: seg001:loc_14E3D↑w
                                         ; seg001:0267↑w ...
+                                        ; byte: music available (startSong and loadAndPlaySong test it)
                 db 1
 Maze_wrapMode   db 0                    ; DATA XREF: updateAutomap+C7↑r
                                         ; chargeStep+B↑r ...
                                         ; byte; non-zero = off-map cells wrap/return 0 instead of 1111h
 byte_2884C      db 1                    ; DATA XREF: moveMonsterBy+4F↑r
-byte_2884D      db 0                    ; DATA XREF: drawWallFaces+12E↑r
+View_lampPhase  db 0                    ; DATA XREF: drawWallFaces+12E↑r
                                         ; drawWallFaces+265↑r ...
+                                        ; byte 0-2; renderIndoorView increments it modulo 3 before drawing; lamp-wall faces (style 3) use frame 1 + this value (flicker) (evidence: renderIndoorView+0xAC, emulated with all three values)
 byte_2884E      db 0FEh                 ; DATA XREF: highlightChar+3↑r
                                         ; highlightChar+C↑r ...
 byte_2884F      db 0FFh                 ; DATA XREF: sub_402AC+3↓r
@@ -37694,8 +37653,9 @@ byte_28872      db 0                    ; DATA XREF: getCommand:loc_254E1↑r
                                         ; controlPanel+230↓r ...
 word_28873      dw 0                    ; DATA XREF: MemFree+18↑w
                                         ; openMm3Cc+1B5↓r ...
-byte_28875      db 0                    ; DATA XREF: drawWallFaces+9A↑r
+View_animToggle db 0                    ; DATA XREF: drawWallFaces+9A↑r
                                         ; drawWallFaces+1D1↑r ...
+                                        ; byte; flips (xor 1) on every step/turn in exploreLoop; renderIndoorView ORs it into the flags of most wall records (alternating mirrored blits: the shimmer of the walls) and into word_35D76 of the scene header (evidence: exploreLoop xor sites, drawWallFaces 'flags = n | byte_28875', checked by emulating renderIndoorView with it 0/1)
                 db 2 dup(0FFh)
 word_28878      dw 0                    ; DATA XREF: pickSaveSlot+73↓w
                                         ; guildSpellShop+68↓w ...
@@ -37846,16 +37806,16 @@ word_28BDE      dw 0E3h                 ; DATA XREF: sub_46566+A↓w
                 db 36h, 59h, 7Ch, 9Fh, 13h, 36h, 59h, 7Ch, 9Fh, 13h, 36h
                 db 59h, 7Ch, 9Fh, 13h, 36h, 59h, 7Ch, 9Fh, 1Eh dup(20h)
                 db 5 dup(18h), 1Eh dup(20h), 5 dup(14h)
-word_28CE7      dw 0                    ; DATA XREF: sub_253D3+29↑w
+word_28CE7      dw 0                    ; DATA XREF: readKey+29↑w
                                         ; getCommand+19C↑w
-word_28CE9      dw 0                    ; DATA XREF: sub_253D3+21↑w
+word_28CE9      dw 0                    ; DATA XREF: readKey+21↑w
                                         ; getCommand+19F↑w
-word_28CEB      dw 0                    ; DATA XREF: sub_253D3+39↑w
-                                        ; sub_253D3:loc_2549E↑r ...
-word_28CED      dw 0                    ; DATA XREF: sub_253D3+31↑w
-                                        ; sub_253D3+B5↑r ...
-word_28CEF      dw 0                    ; DATA XREF: sub_253D3+3C↑w
-                                        ; sub_253D3:loc_2545F↑w ...
+word_28CEB      dw 0                    ; DATA XREF: readKey+39↑w
+                                        ; readKey:loc_2549E↑r ...
+word_28CED      dw 0                    ; DATA XREF: readKey+31↑w
+                                        ; readKey+B5↑r ...
+word_28CEF      dw 0                    ; DATA XREF: readKey+3C↑w
+                                        ; readKey:loc_2545F↑w ...
                 db 2 dup(0FFh)
 word_28CF3      dw 0                    ; DATA XREF: sub_511C8+2A↓w
 word_28CF5      dw 0                    ; DATA XREF: sub_511C8+27↓w
@@ -37863,19 +37823,19 @@ word_28CF5      dw 0                    ; DATA XREF: sub_511C8+27↓w
                 db 3Eh, 3 dup(0), 4, 0, 2, 0, 55h, 3 dup(0), 6, 0, 2, 0
                 db 6Ch, 3 dup(0), 8, 0, 35h, 0, 10h, 3 dup(0), 0Ah, 0
                 db 35h, 0, 27h, 3 dup(0), 0Ch, 0, 35h
-word_28D30      dw 3E00h                ; DATA XREF: sub_22740+332↑r
-                                        ; sub_22740+336↑w ...
-word_28D32      dw 0                    ; DATA XREF: sub_22740+344↑w
-                                        ; sub_22740+3E6↑w
+word_28D30      dw 3E00h                ; DATA XREF: ccLoadMember+332↑r
+                                        ; ccLoadMember+336↑w ...
+word_28D32      dw 0                    ; DATA XREF: ccLoadMember+344↑w
+                                        ; ccLoadMember+3E6↑w
                 db 0, 0Eh, 0, 35h, 0, 55h, 3 dup(0), 10h, 0, 35h, 0, 6Ch
                 db 3 dup(0), 12h
-word_28D46      dw 6800h                ; DATA XREF: sub_22740:loc_2292A↑r
-                                        ; sub_22740+1EE↑w ...
+word_28D46      dw 6800h                ; DATA XREF: ccLoadMember:loc_2292A↑r
+                                        ; ccLoadMember+1EE↑w ...
                 db 0, 10h
-word_28D4A      dw 0                    ; DATA XREF: sub_22740+327↑r
-                                        ; sub_22740+32E↑w ...
-word_28D4C      dw 1400h                ; DATA XREF: sub_22740+1FB↑w
-                                        ; sub_22740+36B↑r ...
+word_28D4A      dw 0                    ; DATA XREF: ccLoadMember+327↑r
+                                        ; ccLoadMember+32E↑w ...
+word_28D4C      dw 1400h                ; DATA XREF: ccLoadMember+1FB↑w
+                                        ; ccLoadMember+36B↑r ...
                 db 0, 68h, 0, 27h, 3 dup(0), 16h, 0, 68h, 0, 3Eh, 3 dup(0)
                 db 18h, 0, 68h, 0, 55h, 3 dup(0), 1Ah, 0, 68h, 0, 6Ch
                 db 3 dup(0), 1Ch, 0, 0A9h, 0, 10h, 3 dup(0), 1Eh, 0, 0A9h
@@ -37986,15 +37946,15 @@ word_290DD      dw 4Eh                  ; DATA XREF: confirmDialog+93↓w
 word_290DF      dw 2Dh                  ; DATA XREF: confirmDialog+9C↓w
                                         ; confirmDialog+EB↓w
 byte_290E1      db 2 dup(0), 2, 0, 2 dup(0FFh), 4 dup(0), 2 dup(0FFh)
-                                        ; DATA XREF: sub_62820+1BB↓r
-                                        ; sub_62820+1A5↓w ...
+                                        ; DATA XREF: vdrv_init+1BB↓r
+                                        ; vdrv_init+1A5↓w ...
 word_290ED      dw 0                    ; DATA XREF: sub_3CE7A+4E↓w
                                         ; townBuildingIntro+137↓w ...
 word_290EF      dw 0                    ; DATA XREF: sub_3CE7A+4B↓w
                                         ; townBuildingIntro+134↓w ...
 byte_290F1      db 0E8h, 0, 4Dh, 5 dup(0), 2 dup(0FFh)
-                                        ; DATA XREF: sub_63370+129↓r
-                                        ; sub_63370+153↓r ...
+                                        ; DATA XREF: vdrv_openWindowImpl+129↓r
+                                        ; vdrv_openWindowImpl+153↓r ...
 word_290FB      dw 0                    ; DATA XREF: sub_3CE7A+40↓w
                                         ; townBuildingIntro+21D↓w ...
 word_290FD      dw 0                    ; DATA XREF: sub_3CE7A+3D↓w
@@ -38003,10 +37963,12 @@ byte_290FF      db 0EAh, 0, 4Dh, 5 dup(0), 5, 1, 4Dh, 3 dup(0), 2, 0, 2 dup(0FFh
                                         ; DATA XREF: vdrv_printTextEngine+19E↓w
                                         ; vdrv_printTextEngine+1AA↓w ...
                 db 4 dup(0)
-byte_29115      db 0                    ; DATA XREF: getFiles+7↑w
+saveFileCount   db 0                    ; DATA XREF: getFiles+7↑w
                                         ; getFiles+37↑r ...
-byte_29116      db 0FFh                 ; DATA XREF: saveGame+59↑r
+                                        ; byte: number of *.mm3 files found by getFiles
+currentSaveIndex db 0FFh                ; DATA XREF: saveGame+59↑r
                                         ; loadGame+18↑r ...
+                                        ; byte: index of the current saved game in the 13-byte name table at E836h (FFh = none)
 ELEMENTAL_RESISTANCES:                  ; indexed by elemental material (0A3h slot byte)
                 align 2
                 db 5, 7, 9, 0Ch, 0Fh, 14h, 19h, 1Eh, 5, 7, 9, 0Ch, 0Fh
@@ -38198,10 +38160,10 @@ ATTRIBUTE_BONUSES db    0               ; indexed by attribute material (0C9h sl
                 db    0
                 db  0Ah
                 db    0
-word_29218      dw 96h                  ; DATA XREF: sub_63370+23A↓r
-                                        ; sub_63370+24C↓r
-word_2921A      dw 1Eh                  ; DATA XREF: sub_63370+23D↓r
-                                        ; sub_63370+248↓r
+word_29218      dw 96h                  ; DATA XREF: vdrv_openWindowImpl+23A↓r
+                                        ; vdrv_openWindowImpl+24C↓r
+word_2921A      dw 1Eh                  ; DATA XREF: vdrv_openWindowImpl+23D↓r
+                                        ; vdrv_openWindowImpl+248↓r
                 db  3Ch ; <
                 db    0
                 db    8
@@ -38275,8 +38237,8 @@ word_2921A      dw 1Eh                  ; DATA XREF: sub_63370+23D↓r
 byte_29262      db 64h                  ; DATA XREF: vdrv_printTextEngine+1A3↓r
                                         ; vdrv_printTextEngine+1CC↓w ...
                 db    0
-word_29264      dw 64h                  ; DATA XREF: sub_61AF0+C↓w
-word_29266      dw 28h                  ; DATA XREF: sub_61AF0+13↓w
+word_29264      dw 64h                  ; DATA XREF: vdrv_selectTextColour+C↓w
+word_29266      dw 28h                  ; DATA XREF: vdrv_selectTextColour+13↓w
                 db 0FAh
                 db    0
                 db  96h
@@ -38741,7 +38703,7 @@ BASE_HP_BY_CLASS db  0Ah                ; 10 bytes, indexed by class (Xeen Res.B
                 db    7
                 db    5
                 db    4
-byte_29556      db 8                    ; DATA XREF: sub_63370+243↓w
+byte_29556      db 8                    ; DATA XREF: vdrv_openWindowImpl+243↓w
                 db    7
                 db  0Ch
                 db    6
@@ -40082,11 +40044,11 @@ word_29EA5      dw 10h                  ; DATA XREF: introSequence+907↓w
                 db 4 dup(0), 1Ah, 23h, 25h, 29h, 5 dup(0), 12h, 25h, 29h
                 db 27h, 5 dup(0), 32h, 2Ch, 2Dh, 3Bh, 2 dup(0)
 a007sorryBossKe db 0Bh,'007Sorry,  Boss Key only works in',0Ah
-                                        ; DATA XREF: sub_378C0+F↓o
+                                        ; DATA XREF: bossKey+F↓o
                 db '256 color mode!',0
-aC              db 'C:\>',0             ; DATA XREF: sub_378C0+8F↓o
-aDelBoss        db 'del boss.$$$',0     ; DATA XREF: sub_378C0+A3↓o
-                                        ; sub_378C0+126↓o
+aC              db 'C:\>',0             ; DATA XREF: bossKey+8F↓o
+aDelBoss        db 'del boss.$$$',0     ; DATA XREF: bossKey+A3↓o
+                                        ; bossKey+126↓o
 aPowDIcn        db 'pow%d.icn',0        ; DATA XREF: monstersAttack+44↓o
 aCombatIcn      db 'combat.icn',0       ; DATA XREF: sub_37BA7+E↓o
 aSFileIsMissing db 0Ah                  ; DATA XREF: sub_37E7A+12↓o
@@ -40199,7 +40161,7 @@ aC_4            db 3,'c'                ; DATA XREF: getEquipSlotName+65↓o
 aYouCannotEquip db 'You cannot equip two of the same items!',0
                                         ; DATA XREF: equipItem+64↓o
 aThankYouForPla db 'Thank you for playing Might and Magic ]I[',0Ah
-                                        ; DATA XREF: sub_39900+12↓o
+                                        ; DATA XREF: exitGame+12↓o
                 db 0Ah
                 db 0Dh,0
                 align 2
@@ -43219,8 +43181,8 @@ QUEST_ITEM_NAMES db    3                ; 'Precious Pearl of Youth and Beauty', 
                 db 68h, 2Fh, 68h, 3Bh, 68h, 45h, 68h, 4Ch, 68h, 51h, 68h
                 db 57h, 68h
 ; char *off_2DC72
-off_2DC72       dw offset aBoss         ; DATA XREF: sub_378C0+4B↓r
-                                        ; sub_378C0+5E↓r ...
+off_2DC72       dw offset aBoss         ; DATA XREF: bossKey+4B↓r
+                                        ; bossKey+5E↓r ...
                                         ; "boss.$$$"
                 db 64h, 68h, 69h, 68h, 71h, 68h
 ; char *off_2DC7A
@@ -45242,11 +45204,12 @@ byte_32E64      db 0                    ; DATA XREF: scanMonstersAhead+23↑w
 word_32E66      dw 0                    ; DATA XREF: getCommand:loc_25671↑r
                                         ; getCommand+1BE↑r ...
 Town_closed     db 0                    ; DATA XREF: changeTime:loc_16DA6↑r
-                                        ; sub_43034:loc_43064↓w ...
+                                        ; loadViewBackground:loc_43064↓w ...
                                         ; byte: 1 while it is night (Party_minutes < 300 or >= 1260, i.e. 21:00-05:00); town buildings refuse entry when set
                 align 2
-word_32E6A      dw 0                    ; DATA XREF: drawHudPieces+1A1↑r
+Spr_fecpBrd     dw 0                    ; DATA XREF: drawHudPieces+1A1↑r
                                         ; rosterMenu+CD↓w
+                                        ; far pointer to fecp.brd (border ornaments), name at DGROUP 2E8Fh
 word_32E6C      dw 0                    ; DATA XREF: drawHudPieces+19E↑r
                                         ; rosterMenu+C9↓w
 byte_32E6E      db 0                    ; DATA XREF: drawRow1Sprites+3C9↑r
@@ -45330,8 +45293,9 @@ word_332B4      dw 0                    ; DATA XREF: drawRow1Sprites+158↑r
 word_332B6      dw 0                    ; DATA XREF: drawRow1Sprites+287↑r
                                         ; drawRow1Sprites+2BE↑r
                 db 12h dup(0)
-word_332CA      dw 0                    ; DATA XREF: highlightChar+3A↑r
+Spr_globalIcn   dw 0                    ; DATA XREF: highlightChar+3A↑r
                                         ; highlightChar+61↑r ...
+                                        ; far pointer (offset, segment) to the sprite set global.icn: the view window frame / HUD pieces, loaded after the roster menu (name string at DGROUP 2E63h) (evidence: loader at rosterMenu+0x2E, HUD draw list of drawHudPieces)
 word_332CC      dw 0                    ; DATA XREF: highlightChar+36↑r
                                         ; highlightChar+5D↑r ...
 byte_332CE      db 0                    ; DATA XREF: clearViewFlags+A5↑w
@@ -45362,11 +45326,12 @@ byte_332DA      db 0                    ; DATA XREF: clearViewFlags+21C↑w
                                         ; prepareIndoorView:loc_1C567↑w ...
 byte_332DB      db 0                    ; DATA XREF: clearViewFlags+219↑w
                                         ; prepareIndoorView:loc_1C773↑w ...
-; void *word_332DC
-word_332DC      dw 0                    ; DATA XREF: seg001:02A0↑w
-                                        ; sub_378C0+C4↓r ...
+; void *songBuffer
+songBuffer      dw 0                    ; DATA XREF: seg001:02A0↑w
+                                        ; bossKey+C4↓r ...
+                                        ; far pointer (word_332DC/word_332DE) to the 1890h-byte buffer the song files are loaded into (allocated by _main)
 word_332DE      dw 0                    ; DATA XREF: seg001:029C↑w
-                                        ; sub_378C0+C0↓r ...
+                                        ; bossKey+C0↓r ...
 byte_332E0      db 0                    ; DATA XREF: clearViewFlags+124↑w
                                         ; prepareIndoorView+3EC↑w ...
 byte_332E1      db 0                    ; DATA XREF: clearViewFlags+121↑w
@@ -45446,8 +45411,9 @@ byte_33305      db 0                    ; DATA XREF: scanObjectsAhead+32↑w
 byte_33306      db 0                    ; DATA XREF: scanObjectsAhead+2F↑w
                                         ; scanObjectsAhead:loc_15EDD↑r ...
                 align 2
-word_33308      dw 0                    ; DATA XREF: drawHudPieces+13F↑r
+Spr_batBrd      dw 0                    ; DATA XREF: drawHudPieces+13F↑r
                                         ; rosterMenu+BA↓w
+                                        ; far pointer to bat.brd (border), name at DGROUP 2E87h
 word_3330A      dw 0                    ; DATA XREF: drawHudPieces+13C↑r
                                         ; rosterMenu+B6↓w
 byte_3330C      db 0                    ; DATA XREF: clearViewFlags+61↑w
@@ -45506,16 +45472,18 @@ word_333BC      dw 0                    ; DATA XREF: getCommand+1C5↑r
 byte_333BE      db 0                    ; DATA XREF: runMazeEvent+C7↑w
                                         ; runMazeEvent:evt_op32↑r ...
                 align 2
-word_333C0      dw 0                    ; DATA XREF: drawParty:loc_17324↑r
+Spr_hpbarsIcn   dw 0                    ; DATA XREF: drawParty:loc_17324↑r
                                         ; drawParty+242↑r ...
+                                        ; far pointer to hpbars.icn, name at DGROUP 2EA4h
 word_333C2      dw 0                    ; DATA XREF: drawParty+230↑r
                                         ; drawParty+23F↑r ...
                 db 0
 byte_333C5      db 0                    ; DATA XREF: clearViewFlags+58↑w
                                         ; prepareIndoorView:loc_1D4DA↑r ...
                 db 74h dup(0)
-word_3343A      dw 0                    ; DATA XREF: drawParty+111↑r
+Spr_protectIcn  dw 0                    ; DATA XREF: drawParty+111↑r
                                         ; rosterMenu+E0↓w ...
+                                        ; far pointer to protect.icn, name at DGROUP 2E98h
 word_3343C      dw 0                    ; DATA XREF: drawParty+10E↑r
                                         ; rosterMenu+DC↓w ...
 byte_3343E      db 0                    ; DATA XREF: scanObjectsAhead+20B↑r
@@ -48698,24 +48666,27 @@ word_34B8E      dw 0                    ; DATA XREF: createCharacter+1E↓w
                                         ; createCharacter+24↓r
 word_34B90      dw 0                    ; DATA XREF: createCharacter+1A↓w
                                         ; createCharacter+21↓r
-byte_34B92      db 0                    ; DATA XREF: scanMonstersAhead+6B↑w
+Monsters_row1   db 0                    ; DATA XREF: scanMonstersAhead+6B↑w
                                         ; scanMonstersAhead+CB↑r ...
+                                        ; non-zero when monsters stand in the first cell ahead; set by scanMonstersAhead; runMazeEvent skips the square's script (jumps to its exit with byte_34BF0 = 1) when it is set, drawView starts combat (evidence: docs/engine-loop.md, runMazeEvent+11Bh). byte_34B93 / byte_34B94 are rows 2 and 3 -> Monsters_row2 / Monsters_row3
 byte_34B93      db 0                    ; DATA XREF: scanMonstersAhead+47↑w
                                         ; scanMonstersAhead:loc_1628A↑r ...
 byte_34B94      db 0                    ; DATA XREF: scanMonstersAhead+2F↑w
                                         ; scanMonstersAhead:loc_1629C↑r ...
 byte_34B95      db 0                    ; DATA XREF: scanMonstersAhead+68↑w
                                         ; scanMonstersAhead+142↑r ...
-byte_34B96      db 0                    ; DATA XREF: scanMonstersAhead+65↑w
+Spr_terrainSheets db 0                  ; DATA XREF: scanMonstersAhead+65↑w
                                         ; scanMonstersAhead+1E7↑r ...
+                                        ; outdoor maps: 7 far pointers (4 bytes each, from +4 = 34B9A) to the terrain sheets named by the selector bytes 0-6 of the current page header through the name table at DGROUP 5A46h; the same table holds the four wall sheets on indoor maps (see Spr_wallSheet1) (evidence: loadMapGraphics outdoor branch, view_glue.c reproduces it and the renderer output matches the original)
 byte_34B97      db 0                    ; DATA XREF: scanMonstersAhead+62↑w
                                         ; scanMonstersAhead+268↑r ...
 byte_34B98      db 0                    ; DATA XREF: scanMonstersAhead+44↑w
                                         ; scanMonstersAhead:loc_16301↑r ...
 byte_34B99      db 0                    ; DATA XREF: scanMonstersAhead+2C↑w
                                         ; scanMonstersAhead:loc_16313↑r ...
-word_34B9A      dw 0                    ; DATA XREF: drawWallFaces+538↑r
+Spr_wallSheet1  dw 0                    ; DATA XREF: drawWallFaces+538↑r
                                         ; loadSaveDialog+7B↓r ...
+                                        ; far pointer to the nearest wall sheet <env>wl1.vga; the table of the four sheets starts at DGROUP C4A6h = linear 34B96 (Spr_wallSheets, 4 bytes per sheet number n: n = 1,2,3,4 -> <env>wl<n>.vga), so 34B9E = wl2, 34BA2 = wl3, 34BA6 = wl4 (evidence: loadMapGraphics sprintf '%swl%u.vga', drawWallFaces set records, emulated)
 word_34B9C      dw 0                    ; DATA XREF: drawWallFaces+535↑r
                                         ; loadSaveDialog+7E↓r ...
 word_34B9E      dw 0                    ; DATA XREF: drawWallFaces+15↑r
@@ -48815,12 +48786,14 @@ word_34C1E      dw 0                    ; DATA XREF: drawParty+83↑r
                                         ; sub_42EA9+FE↓w
 word_34C20      dw 0                    ; DATA XREF: drawParty+80↑r
                                         ; sub_42EA9+FA↓w
-word_34C22      dw 0                    ; DATA XREF: drawParty+1E9↑r
+Spr_restoreIcn  dw 0                    ; DATA XREF: drawParty+1E9↑r
                                         ; rosterMenu+106↓w ...
+                                        ; far pointer to restore.icn, name at DGROUP 2EAFh
 word_34C24      dw 0                    ; DATA XREF: drawParty+1E6↑r
                                         ; rosterMenu+102↓w ...
-word_34C26      dw 0                    ; DATA XREF: drawHudPieces+89↑r
+Spr_gargoyleBrd dw 0                    ; DATA XREF: drawHudPieces+89↑r
                                         ; rosterMenu+94↓w
+                                        ; far pointer to gargoyle.brd (border gargoyle frames), see Spr_globalIcn (name at DGROUP 2E6Eh)
 word_34C28      dw 0                    ; DATA XREF: drawHudPieces+86↑r
                                         ; rosterMenu+90↓w
 byte_34C2A      db 0                    ; DATA XREF: clearViewFlags+35↑w
@@ -48850,8 +48823,9 @@ byte_35D55      db 0                    ; DATA XREF: clearViewFlags+240↑w
                                         ; prepareIndoorView:loc_1CEC9↑w ...
 byte_35D56      db 0                    ; DATA XREF: clearViewFlags+22B↑w
                                         ; prepareIndoorView:loc_1C80C↑w ...
-byte_35D57      db 0                    ; DATA XREF: setPartyStartCell+6↑r
+Maze_startSlot  db 0                    ; DATA XREF: setPartyStartCell+6↑r
                                         ; setPartyStartCell:loc_1B968↑r ...
+                                        ; byte: slot (0-3) of the first loaded page whose header byte 13h (default start cell) is non-zero, FFh if none; set by loadMapData (evidence: loadMapData+0xDB)
 byte_35D58      db 0                    ; DATA XREF: clearViewFlags+148↑w
                                         ; prepareIndoorView+D4E↑w ...
 byte_35D59      db 0                    ; DATA XREF: clearViewFlags+133↑w
@@ -48926,8 +48900,9 @@ word_36FB2      dw 0                    ; DATA XREF: seg001:0180↑r
                                         ; seg001:0422↑w ...
 word_36FB4      dw 0                    ; DATA XREF: seg001:017C↑r
                                         ; seg001:041E↑w ...
-word_36FB6      dw 0                    ; DATA XREF: drawHudPieces+DD↑r
+Spr_grabberBrd  dw 0                    ; DATA XREF: drawHudPieces+DD↑r
                                         ; rosterMenu+A7↓w
+                                        ; far pointer to grabber.brd (border), name at DGROUP 2E7Bh
 word_36FB8      dw 0                    ; DATA XREF: drawHudPieces+DA↑r
                                         ; rosterMenu+A3↓w
 Save_name       db 20h dup(0)           ; 31 bytes, MAZE.NAM ("Default Characters")
@@ -49057,8 +49032,9 @@ byte_37379      db 0                    ; DATA XREF: clearViewFlags+1B8↑w
 byte_3737A      db 0                    ; DATA XREF: clearViewFlags+1A9↑w
                                         ; prepareIndoorView:loc_1CC1E↑w ...
                 align 2
-word_3737C      dw 0                    ; DATA XREF: renderOutdoorView+193↑r
+Spr_water       dw 0                    ; DATA XREF: renderOutdoorView+193↑r
                                         ; loadMapGraphics+158↓w
+                                        ; far pointer to water.vga (outdoor maps), loaded by loadMapGraphics (name at DGROUP 363Ch)
 word_3737E      dw 0                    ; DATA XREF: renderOutdoorView+190↑r
                                         ; loadMapGraphics+154↓w
 byte_37380      db 0                    ; DATA XREF: seg001:0103↑w
@@ -49125,17 +49101,19 @@ byte_373A1      db 0                    ; DATA XREF: clearViewFlags+D1↑w
 byte_373A2      db 0                    ; DATA XREF: clearViewFlags+C5↑w
                                         ; prepareIndoorView:loc_1D79A↑w ...
                 align 2
-; int word_373A4
-word_373A4      dw 0                    ; DATA XREF: addTime+B4↑r
+; int Evt_windowCount
+Evt_windowCount dw 0                    ; DATA XREF: addTime+B4↑r
                                         ; runMazeEvent+CC↑w ...
+                                        ; number of message/NPC windows the running event script has opened (incremented by Display1/NPC, closed by vdrv_06_closeWindows(word_373A4) when the script ends) (evidence: runMazeEvent evt_op01, evt_op18)
                 db 8 dup(0)
 dword_373AE     dd 0                    ; DATA XREF: sub_37BF1+18↓r
                                         ; sub_37D3E+24↓r ...
 byte_373B2      db 0                    ; DATA XREF: getCommand+305↑w
                                         ; getCommand:loc_258B4↑r ...
                 align 2
-word_373B4      dw 0                    ; DATA XREF: renderIndoorView+168↑r
+Spr_viewBackground dw 0                 ; DATA XREF: renderIndoorView+168↑r
                                         ; renderOutdoorView+185↑r ...
+                                        ; far pointer to the view background sprite set (day.vga / night.vga / <env>.sky), set by loadViewBackground; renderIndoorView copies it into the scene header word_35D60/62 (evidence: sub_43034 stores it; emulated renderIndoorView needs it non-zero or the draw list is empty)
 word_373B6      dw 0                    ; DATA XREF: renderIndoorView+165↑r
                                         ; renderOutdoorView+182↑r ...
 byte_373B8      db 0                    ; DATA XREF: sub_252CF+9D↑w
@@ -49160,8 +49138,9 @@ byte_373C9      db 0                    ; DATA XREF: clearViewFlags+1FC↑w
 byte_373CA      db 0                    ; DATA XREF: clearViewFlags+1CA↑w
                                         ; prepareIndoorView:loc_1CCB7↑w ...
                 align 2
-word_373CC      dw 0                    ; DATA XREF: drawRow4Sprites+88B↑r
+Spr_charpowIcn  dw 0                    ; DATA XREF: drawRow4Sprites+88B↑r
                                         ; drawRow4Sprites+9A6↑r ...
+                                        ; far pointer to charpow.icn (spell effect sprites drawn by the row writers), name at DGROUP 2EBBh
 word_373CE      dw 0                    ; DATA XREF: drawRow4Sprites+888↑r
                                         ; drawRow4Sprites+9A3↑r ...
 Maze_objectCount db 0                   ; DATA XREF: scanObjectsAhead:loc_1619A↑r
@@ -49407,8 +49386,8 @@ Mon_hp          dd 0                    ; DATA XREF: runMazeEvent+F9D↑r
                                         ; loadMonsterData+13↑w ...
                                         ; far pointer to the monhp.dat column (90 entries), loaded by loadMonsterData
 ; size_t n
-n               dw 0                    ; DATA XREF: sub_22740+96↑w
-                                        ; sub_22740+EB↑w ...
+n               dw 0                    ; DATA XREF: ccLoadMember+96↑w
+                                        ; ccLoadMember+EB↑w ...
                 db 9Ah dup(0)
 word_37812      dw 0                    ; DATA XREF: sub_104DD+17↑w
 word_37814      dw 0                    ; DATA XREF: sub_104DD+40↑w
@@ -49455,9 +49434,10 @@ ovl01           segment para public 'OVERLAY' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; F10 'boss key': saves the screen to boss.$$$, goes to text mode (not reproduced in the port)
 ; Attributes: bp-based frame
 
-sub_378C0       proc far                ; CODE XREF: sub_27F4F↑J
+bossKey         proc far                ; CODE XREF: j_bossKey↑J
                 push    bp
                 mov     bp, sp
                 cmp     word_34C0E, 0
@@ -49471,18 +49451,18 @@ sub_378C0       proc far                ; CODE XREF: sub_27F4F↑J
                 jmp     loc_379F0
 ; ---------------------------------------------------------------------------
 
-loc_378E1:                              ; CODE XREF: sub_378C0+8↑j
-                cmp     byte_28849, 0
+loc_378E1:                              ; CODE XREF: bossKey+8↑j
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_378F5
                 xor     ax, ax
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
 
-loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
+loc_378F5:                              ; CODE XREF: bossKey+26↑j
                 mov     ax, 40h ; '@'
                 push    ax
                 xor     ax, ax
@@ -49521,7 +49501,7 @@ loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
                 push    ax              ; str
                 call    _cputs
                 pop     cx
-                call    sub_253D3
+                call    readKey
                 cmp     ax, 11h
                 jnz     short loc_37972
                 mov     ax, offset aDelBoss ; "del boss.$$$"
@@ -49529,23 +49509,23 @@ loc_378F5:                              ; CODE XREF: sub_378C0+26↑j
                 call    _system
                 pop     cx
                 push    cs
-                call    sub_39900
+                call    exitGame
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_37972:                              ; CODE XREF: sub_378C0+A1↑j
-                cmp     byte_28849, 0
+loc_37972:                              ; CODE XREF: bossKey+A1↑j
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_3798F
                 cmp     Option_music, 0
                 jz      short loc_3798F
                 push    word_332DE
-                push    word_332DC
-                call    sub_26965
+                push    songBuffer
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
 
-loc_3798F:                              ; CODE XREF: sub_378C0+B7↑j
-                                        ; sub_378C0+BE↑j
+loc_3798F:                              ; CODE XREF: bossKey+B7↑j
+                                        ; bossKey+BE↑j
                 mov     ax, 13h
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
@@ -49586,10 +49566,10 @@ loc_3798F:                              ; CODE XREF: sub_378C0+B7↑j
                 call    _system
                 pop     cx
 
-loc_379F0:                              ; CODE XREF: sub_378C0+1E↑j
+loc_379F0:                              ; CODE XREF: bossKey+1E↑j
                 pop     bp
                 retf
-sub_378C0       endp
+bossKey         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49877,7 +49857,7 @@ sub_37BA7       proc far                ; CODE XREF: sub_27F63↑J
                 mov     word_319E8, dx
                 mov     word_319E6, ax
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     word_29071, ax
                 mov     word_2906F, dx
                 mov     ax, word_319E8
@@ -51662,10 +51642,11 @@ resetBlacksmithWares endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; loads the song file named at ECE8h, copies it to the song buffer (word_332DC/E, 1890h bytes) and starts it if Option_music
 ; Attributes: bp-based frame
 
-sub_387C6       proc far                ; CODE XREF: sub_27F8B↑J
-                                        ; sub_38821+46↓p
+loadAndPlaySong proc far                ; CODE XREF: j_loadAndPlaySong↑J
+                                        ; startSong+46↓p
 
 src             = dword ptr -4
 
@@ -51684,7 +51665,7 @@ src             = dword ptr -4
                 push    word ptr [bp+src+2]
                 push    word ptr [bp+src] ; src
                 push    word_332DE
-                push    word_332DC      ; dest
+                push    songBuffer      ; dest
                 call    _memcpy_0
                 add     sp, 0Ah
                 lea     ax, [bp+src]
@@ -51694,25 +51675,26 @@ src             = dword ptr -4
                 cmp     Option_music, 0
                 jz      short loc_38818
                 push    word_332DE
-                push    word_332DC
-                call    sub_26965
+                push    songBuffer
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
 
-loc_38818:                              ; CODE XREF: sub_387C6+41↑j
+loc_38818:                              ; CODE XREF: loadAndPlaySong+41↑j
                 mov     byte_287AA, 0
                 mov     sp, bp
                 pop     bp
                 retf
-sub_387C6       endp
+loadAndPlaySong endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; startSong(name, mode): copies the song name to ECE8h and (if byte_28849) calls soundDriverMusic; mode 0 then loads it via sub_387C6
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_38821(int, char)
-sub_38821       proc far                ; CODE XREF: sub_27F45↑J
+; int __cdecl __far startSong(int, char)
+startSong       proc far                ; CODE XREF: j_startSong↑J
                                         ; introSequence+3B↓p ...
 
 arg_0           = word ptr  6
@@ -51733,7 +51715,7 @@ arg_2           = byte ptr  8
                 call    _strcpy
                 pop     cx
                 pop     cx
-                cmp     byte_28849, 0
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_3886A
                 mov     al, [bp+arg_2]
                 mov     ah, 0
@@ -51741,7 +51723,7 @@ arg_2           = byte ptr  8
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 cmp     [bp+arg_2], 0
@@ -51750,15 +51732,15 @@ arg_2           = byte ptr  8
                 jmp     short loc_3886A
 ; ---------------------------------------------------------------------------
 
-loc_38866:                              ; CODE XREF: sub_38821+3C↑j
+loc_38866:                              ; CODE XREF: startSong+3C↑j
                 push    cs
-                call    near ptr sub_387C6
+                call    near ptr loadAndPlaySong
 
-loc_3886A:                              ; CODE XREF: sub_38821+25↑j
-                                        ; sub_38821+43↑j
+loc_3886A:                              ; CODE XREF: startSong+25↑j
+                                        ; startSong+43↑j
                 pop     bp
                 retf
-sub_38821       endp
+startSong       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51786,7 +51768,7 @@ sub_3886C       proc far                ; CODE XREF: sub_27F7C↑J
                 add     ax, 3
                 push    ax
                 push    word_332CC
-                push    word_332CA
+                push    Spr_globalIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     byte_2884E, 0FFh
@@ -51825,14 +51807,14 @@ var_2           = word ptr -2
                 mov     word_2A71A, ax
                 mov     word_2A70C, ax
                 mov     word_2A714, 6Fh ; 'o'
-                cmp     byte_28849, 0
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_388E9
                 mov     al, 0
                 push    ax              ; char
                 mov     ax, offset aMm3themeM_0 ; "mm3theme.m"
                 push    ax              ; int
                 push    cs
-                call    near ptr sub_38821
+                call    near ptr startSong
                 pop     cx
                 pop     cx
 
@@ -51880,7 +51862,7 @@ loc_388E9:                              ; CODE XREF: introSequence+31↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 4
@@ -51892,7 +51874,7 @@ loc_388E9:                              ; CODE XREF: introSequence+31↑j
                 pop     cx
                 mov     ax, 78h ; 'x'
                 push    ax
-                call    sub_25E66
+                call    delayFrames
                 pop     cx
                 mov     si, 1
                 jmp     short loc_389F2
@@ -51900,7 +51882,7 @@ loc_388E9:                              ; CODE XREF: introSequence+31↑j
 
 loc_3897B:                              ; CODE XREF: introSequence+14E↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_389AF
@@ -51938,12 +51920,12 @@ loc_389AF:                              ; CODE XREF: introSequence+D9↑j
 loc_389C2:                              ; CODE XREF: introSequence+10D↑j
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -51979,7 +51961,7 @@ loc_389F9:                              ; CODE XREF: introSequence+14C↑j
 
 loc_38A0B:                              ; CODE XREF: introSequence+196↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38A17
@@ -51990,12 +51972,12 @@ loc_38A17:                              ; CODE XREF: introSequence+169↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52019,7 +52001,7 @@ loc_38A3C:                              ; CODE XREF: introSequence+160↑j
 
 loc_38A53:                              ; CODE XREF: introSequence+1DE↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38A5F
@@ -52030,12 +52012,12 @@ loc_38A5F:                              ; CODE XREF: introSequence+1B1↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 2
@@ -52102,7 +52084,7 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 4
@@ -52176,14 +52158,14 @@ loc_38A84:                              ; CODE XREF: introSequence+1A8↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_38BF1
 ; ---------------------------------------------------------------------------
 
 loc_38BC5:                              ; CODE XREF: introSequence+355↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38BE5
@@ -52205,14 +52187,14 @@ loc_38BE5:                              ; CODE XREF: introSequence+323↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38BF1:                              ; CODE XREF: introSequence+31A↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38BC5
@@ -52222,7 +52204,7 @@ loc_38BF1:                              ; CODE XREF: introSequence+31A↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     ax, 25h ; '%'
                 push    ax
@@ -52233,21 +52215,21 @@ loc_38BF1:                              ; CODE XREF: introSequence+31A↑j
 
 loc_38C24:                              ; CODE XREF: introSequence+39D↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jnz     short loc_38BCE
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38C39:                              ; CODE XREF: introSequence+379↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38C24
@@ -52256,7 +52238,7 @@ loc_38C39:                              ; CODE XREF: introSequence+379↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -52267,7 +52249,7 @@ loc_38C39:                              ; CODE XREF: introSequence+379↑j
 
 loc_38C65:                              ; CODE XREF: introSequence+3E1↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38C71
@@ -52278,14 +52260,14 @@ loc_38C71:                              ; CODE XREF: introSequence+3C3↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38C7D:                              ; CODE XREF: introSequence+3BA↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38C65
@@ -52296,14 +52278,14 @@ loc_38C7D:                              ; CODE XREF: introSequence+3BA↑j
                 mov     word_2A718, 1
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_38CC4
 ; ---------------------------------------------------------------------------
 
 loc_38CAC:                              ; CODE XREF: introSequence+428↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38CB8
@@ -52314,14 +52296,14 @@ loc_38CB8:                              ; CODE XREF: introSequence+40A↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38CC4:                              ; CODE XREF: introSequence+401↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38CAC
@@ -52330,14 +52312,14 @@ loc_38CC4:                              ; CODE XREF: introSequence+401↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_38CFF
 ; ---------------------------------------------------------------------------
 
 loc_38CE7:                              ; CODE XREF: introSequence+463↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38CF3
@@ -52348,14 +52330,14 @@ loc_38CF3:                              ; CODE XREF: introSequence+445↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38CFF:                              ; CODE XREF: introSequence+43C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38CE7
@@ -52370,14 +52352,14 @@ loc_38CFF:                              ; CODE XREF: introSequence+43C↑j
                 mov     word_2A718, 2
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_38D50
 ; ---------------------------------------------------------------------------
 
 loc_38D38:                              ; CODE XREF: introSequence+4B4↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38D44
@@ -52388,14 +52370,14 @@ loc_38D44:                              ; CODE XREF: introSequence+496↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38D50:                              ; CODE XREF: introSequence+48D↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 16Ch
                 jl      short loc_38D38
@@ -52404,7 +52386,7 @@ loc_38D50:                              ; CODE XREF: introSequence+48D↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 xor     ax, ax
                 push    ax
@@ -52415,7 +52397,7 @@ loc_38D50:                              ; CODE XREF: introSequence+48D↑j
 
 loc_38D7C:                              ; CODE XREF: introSequence+4F8↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38D88
@@ -52426,14 +52408,14 @@ loc_38D88:                              ; CODE XREF: introSequence+4DA↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38D94:                              ; CODE XREF: introSequence+4D1↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 0DAh
                 jl      short loc_38D7C
@@ -52442,7 +52424,7 @@ loc_38D94:                              ; CODE XREF: introSequence+4D1↑j
 
 loc_38DA5:                              ; CODE XREF: introSequence+521↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38DB1
@@ -52453,14 +52435,14 @@ loc_38DB1:                              ; CODE XREF: introSequence+503↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_38DBD:                              ; CODE XREF: introSequence+4FA↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 0DAh
                 jl      short loc_38DA5
@@ -52484,7 +52466,7 @@ loc_38DBD:                              ; CODE XREF: introSequence+4FA↑j
 
 loc_38DFE:                              ; CODE XREF: introSequence+589↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38E0A
@@ -52495,12 +52477,12 @@ loc_38E0A:                              ; CODE XREF: introSequence+55C↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52524,7 +52506,7 @@ loc_38E2F:                              ; CODE XREF: introSequence+553↑j
 
 loc_38E46:                              ; CODE XREF: introSequence+5D1↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38E52
@@ -52535,12 +52517,12 @@ loc_38E52:                              ; CODE XREF: introSequence+5A4↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52564,7 +52546,7 @@ loc_38E77:                              ; CODE XREF: introSequence+59B↑j
 
 loc_38E8E:                              ; CODE XREF: introSequence+619↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38E9A
@@ -52575,12 +52557,12 @@ loc_38E9A:                              ; CODE XREF: introSequence+5EC↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52608,7 +52590,7 @@ loc_38EBF:                              ; CODE XREF: introSequence+5E3↑j
 
 loc_38EE0:                              ; CODE XREF: introSequence+66B↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38EEC
@@ -52619,12 +52601,12 @@ loc_38EEC:                              ; CODE XREF: introSequence+63E↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52640,7 +52622,7 @@ loc_38F11:                              ; CODE XREF: introSequence+635↑j
                 jl      short loc_38EE0
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_38F3A
 ; ---------------------------------------------------------------------------
@@ -52649,11 +52631,11 @@ loc_38F22:                              ; CODE XREF: introSequence+69E↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38F3A
@@ -52664,7 +52646,7 @@ loc_38F3A:                              ; CODE XREF: introSequence+677↑j
                                         ; introSequence+68C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_38F22
@@ -52680,7 +52662,7 @@ loc_38F3A:                              ; CODE XREF: introSequence+677↑j
 
 loc_38F67:                              ; CODE XREF: introSequence+6F2↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_38F73
@@ -52691,12 +52673,12 @@ loc_38F73:                              ; CODE XREF: introSequence+6C5↑j
                 mov     word_2A718, si
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 5
@@ -52753,7 +52735,7 @@ loc_38F98:                              ; CODE XREF: introSequence+6BC↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 xor     si, si
@@ -52764,7 +52746,7 @@ loc_39022:                              ; CODE XREF: introSequence+7C2↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -52798,14 +52780,14 @@ loc_39068:                              ; CODE XREF: introSequence+777↑j
                 jl      short loc_39022
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_390B5
 ; ---------------------------------------------------------------------------
 
 loc_39079:                              ; CODE XREF: introSequence+819↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_390A9
@@ -52840,14 +52822,14 @@ loc_390A9:                              ; CODE XREF: introSequence+7D7↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_390B5:                              ; CODE XREF: introSequence+7CE↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 50h ; 'P'
                 jl      short loc_39079
@@ -52858,7 +52840,7 @@ loc_390B5:                              ; CODE XREF: introSequence+7CE↑j
 loc_390C9:                              ; CODE XREF: introSequence+922↓j
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 mov     bx, si
@@ -52869,7 +52851,7 @@ loc_390C9:                              ; CODE XREF: introSequence+922↓j
                 shl     bx, 1
                 push    word ptr [bx-10DAh]
                 push    word ptr [bx-10DCh]
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_390F7:                              ; CODE XREF: introSequence+8C8↓j
@@ -52884,7 +52866,7 @@ loc_390F7:                              ; CODE XREF: introSequence+8C8↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, si
@@ -52924,7 +52906,7 @@ loc_3915D:                              ; CODE XREF: introSequence+8AC↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_39173
@@ -52942,14 +52924,14 @@ loc_39173:                              ; CODE XREF: introSequence+8C6↑j
                 jz      short loc_391AD
 
 loc_39188:                              ; CODE XREF: introSequence+8D6↑j
-                call    sub_253D3
+                call    readKey
                 mov     [bp+var_2], ax
                 xor     ax, ax
                 push    ax
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 cmp     [bp+var_2], 11h
                 jz      short loc_391A8
@@ -52958,7 +52940,7 @@ loc_39188:                              ; CODE XREF: introSequence+8D6↑j
 
 loc_391A8:                              ; CODE XREF: introSequence+8FA↑j
                 push    cs
-                call    sub_39900
+                call    exitGame
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
@@ -52970,7 +52952,7 @@ loc_391AD:                              ; CODE XREF: introSequence+8DD↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     si
@@ -52985,14 +52967,14 @@ loc_391CE:                              ; CODE XREF: introSequence+920↑j
                 mov     word_2A718, 0
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_391F8
 ; ---------------------------------------------------------------------------
 
 loc_391E0:                              ; CODE XREF: introSequence+95C↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_391EC
@@ -53003,14 +52985,14 @@ loc_391EC:                              ; CODE XREF: introSequence+93E↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_391F8:                              ; CODE XREF: introSequence+935↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 50h ; 'P'
                 jl      short loc_391E0
@@ -53042,7 +53024,7 @@ loc_39226:                              ; CODE XREF: introSequence+96A↑j
                 mov     ax, offset aMm3themeM_0 ; "mm3theme.m"
                 push    ax              ; int
                 push    cs
-                call    near ptr sub_38821
+                call    near ptr startSong
                 pop     cx
                 pop     cx
 
@@ -53106,7 +53088,7 @@ loc_3928B:                              ; CODE XREF: introSequence+A20↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     si
@@ -53116,14 +53098,14 @@ loc_392C6:                              ; CODE XREF: introSequence+9E0↑j
                 jl      short loc_3928B
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_392EF
 ; ---------------------------------------------------------------------------
 
 loc_392D7:                              ; CODE XREF: introSequence+A53↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_392E3
@@ -53134,14 +53116,14 @@ loc_392E3:                              ; CODE XREF: introSequence+A35↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_392EF:                              ; CODE XREF: introSequence+A2C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 78h ; 'x'
                 jl      short loc_392D7
@@ -53160,14 +53142,14 @@ loc_39306:                              ; CODE XREF: introSequence+B2C↓j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_39382
 ; ---------------------------------------------------------------------------
 
 loc_39327:                              ; CODE XREF: introSequence+AE6↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jz      short loc_39333
@@ -53179,7 +53161,7 @@ loc_39333:                              ; CODE XREF: introSequence+A85↑j
                 jz      short loc_39376
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 0B4h
                 jle     short loc_3934B
@@ -53219,14 +53201,14 @@ loc_39376:                              ; CODE XREF: introSequence+A8C↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_39382:                              ; CODE XREF: introSequence+A7C↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 168h
                 jl      short loc_39327
@@ -53237,28 +53219,28 @@ loc_39382:                              ; CODE XREF: introSequence+A7C↑j
                 mov     word_2A70E, ax
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 jmp     short loc_393C0
 ; ---------------------------------------------------------------------------
 
 loc_393AB:                              ; CODE XREF: introSequence+B24↓j
                 push    cs
-                call    near ptr sub_3946E
+                call    near ptr pollSkipKey
                 nop
                 or      ax, ax
                 jnz     short loc_39400
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_393C0:                              ; CODE XREF: introSequence+B00↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cmp     ax, 64h ; 'd'
                 jl      short loc_393AB
@@ -53358,14 +53340,14 @@ loc_3943C:                              ; CODE XREF: protectionHandler+2D↓j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
 loc_39448:                              ; CODE XREF: protectionHandler+3↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cwd
                 mov     word_37600, dx
@@ -53390,9 +53372,10 @@ protectionHandler endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; returns 1 when ESC is pressed, Ctrl-Q (11h) exits via sub_39900; used by the intro scenes
 ; Attributes: bp-based frame
 
-sub_3946E       proc far                ; CODE XREF: sub_27F77↑J
+pollSkipKey     proc far                ; CODE XREF: j_pollSkipKey↑J
                                         ; introSequence+D3↑p ...
                 push    bp
                 mov     bp, sp
@@ -53406,34 +53389,34 @@ sub_3946E       proc far                ; CODE XREF: sub_27F77↑J
                 cmp     word_287A8, 0
                 jz      short loc_394A4
 
-loc_39487:                              ; CODE XREF: sub_3946E+10↑j
-                call    sub_253D3
+loc_39487:                              ; CODE XREF: pollSkipKey+10↑j
+                call    readKey
                 mov     si, ax
                 cmp     si, 11h
                 jnz     short loc_3949A
                 push    cs
-                call    sub_39900
+                call    exitGame
 ; ---------------------------------------------------------------------------
                 align 2
                 jmp     short loc_394A4
 ; ---------------------------------------------------------------------------
 
-loc_3949A:                              ; CODE XREF: sub_3946E+23↑j
+loc_3949A:                              ; CODE XREF: pollSkipKey+23↑j
                 cmp     si, 1Bh
                 jnz     short loc_394A4
                 mov     ax, 1
                 jmp     short loc_394A6
 ; ---------------------------------------------------------------------------
 
-loc_394A4:                              ; CODE XREF: sub_3946E+17↑j
-                                        ; sub_3946E+2A↑j ...
+loc_394A4:                              ; CODE XREF: pollSkipKey+17↑j
+                                        ; pollSkipKey+2A↑j ...
                 xor     ax, ax
 
-loc_394A6:                              ; CODE XREF: sub_3946E+34↑j
+loc_394A6:                              ; CODE XREF: pollSkipKey+34↑j
                 pop     si
                 pop     bp
                 retf
-sub_3946E       endp
+pollSkipKey     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -54109,14 +54092,15 @@ equipItem       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; shuts down the video and sound modules (sub_250F8, sub_26952), sets text mode 3, prints "Thank you for playing Might and Magic ]I[" and ends the program with INT 21h/4Ch; used for fatal errors such as "Max Monsters Exceeded" (evidence: reads the code)
 ; Attributes: noreturn bp-based frame
 
-sub_39900       proc near               ; CODE XREF: sub_27F86↑J
-                                        ; sub_378C0+AE↑p ...
+exitGame        proc near               ; CODE XREF: j_exitGame↑J
+                                        ; bossKey+AE↑p ...
                 push    bp
                 mov     bp, sp
                 call    sub_250F8
-                call    sub_26952
+                call    soundDriverRestore
                 mov     ax, 3
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
@@ -54126,7 +54110,7 @@ sub_39900       proc near               ; CODE XREF: sub_27F86↑J
                 pop     cx
                 mov     ax, 4C00h
                 int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
-sub_39900       endp                    ; AL = exit code
+exitGame        endp                    ; AL = exit code
 
 ; ---------------------------------------------------------------------------
                 pop     bp
@@ -54185,7 +54169,7 @@ loc_39954:                              ; CODE XREF: sub_39930+20↑j
 loc_39964:                              ; CODE XREF: sub_39930+7↑j
                 mov     ax, 0FFFFh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 cwd
                 mov     word_37600, dx
@@ -54246,13 +54230,13 @@ arg_2           = word ptr  8
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                cmp     byte_28849, 0
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_399C0
                 mov     al, 0
                 push    ax              ; char
                 mov     ax, 2389h
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
 
@@ -55004,13 +54988,13 @@ loc_39FC9:                              ; CODE XREF: endingCutscene+AAE↓j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 push    word_37602
                 push    word_37616
                 push    word_37614
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3A02D:                              ; CODE XREF: endingCutscene+71B↓j
@@ -55068,7 +55052,7 @@ loc_3A094:                              ; CODE XREF: endingCutscene+701↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3A02D
@@ -55124,7 +55108,7 @@ loc_3A103:                              ; CODE XREF: endingCutscene+799↓j
                 jz      short loc_3A0E6
 
 loc_3A118:                              ; CODE XREF: endingCutscene+784↑j
-                call    sub_253D3
+                call    readKey
                 mov     [bp+var_6], ax
                 cmp     [bp+var_6], 31h ; '1'
                 jl      short loc_3A103
@@ -55290,13 +55274,13 @@ loc_3A243:                              ; CODE XREF: endingCutscene+894↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 push    word_37604
                 push    word_3761A
                 push    word_37618
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3A2A0:                              ; CODE XREF: endingCutscene+98E↓j
@@ -55354,7 +55338,7 @@ loc_3A307:                              ; CODE XREF: endingCutscene+974↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3A2A0
@@ -55384,13 +55368,13 @@ loc_3A348:                              ; CODE XREF: endingCutscene+99A↑j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 push    word_37606
                 push    word_3761E
                 push    word_3761C
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3A386:                              ; CODE XREF: endingCutscene+A74↓j
@@ -55448,7 +55432,7 @@ loc_3A3ED:                              ; CODE XREF: endingCutscene+A5A↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3A386
@@ -55544,7 +55528,7 @@ loc_3A4B3:                              ; CODE XREF: endingCutscene+C3E↓j
                 mov     word_2A730, 16h
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 mov     bx, si
@@ -55555,7 +55539,7 @@ loc_3A4B3:                              ; CODE XREF: endingCutscene+C3E↓j
                 shl     bx, 1
                 push    word ptr [bx-10DAh]
                 push    word ptr [bx-10DCh]
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3A4E7:                              ; CODE XREF: endingCutscene+BF6↓j
@@ -55627,7 +55611,7 @@ loc_3A56D:                              ; CODE XREF: endingCutscene+BDA↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_3A584
@@ -55802,13 +55786,13 @@ loc_3A6AF:                              ; CODE XREF: endingCutscene+D00↑j
                 mov     word_2A70E, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 push    word_37602
                 push    word_37616
                 push    word_37614
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3A6F8:                              ; CODE XREF: endingCutscene+DE6↓j
@@ -55866,7 +55850,7 @@ loc_3A75F:                              ; CODE XREF: endingCutscene+DCC↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3A6F8
@@ -56191,13 +56175,13 @@ loc_3A9CB:                              ; CODE XREF: endingCutscene+101A↑j
                 mov     word_2A72A, dx
                 mov     ax, 0FFFEh
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
                 mov     word_37638, 0
                 push    word_37604
                 push    word_3761A
                 push    word_37618
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
 
 loc_3AA76:                              ; CODE XREF: endingCutscene+1164↓j
@@ -56255,7 +56239,7 @@ loc_3AADD:                              ; CODE XREF: endingCutscene+114A↑j
                 mov     dx, 1
                 push    ax
                 push    dx
-                call    sub_2698B
+                call    soundDriverSample
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_3AA76
@@ -56317,8 +56301,8 @@ loc_3AB2F:                              ; CODE XREF: endingCutscene+1191↑j
                 call    freeSpriteSlot
                 pop     cx
                 push    word_332DE
-                push    word_332DC
-                call    sub_26965
+                push    songBuffer
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 push    ds
@@ -57840,7 +57824,7 @@ loc_3B8A0:                              ; CODE XREF: endingCutscene+1F06↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 mov     ax, 40h ; '@'
@@ -57867,7 +57851,7 @@ loc_3B987:                              ; CODE XREF: endingCutscene+1FF5↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     si
@@ -57897,7 +57881,7 @@ loc_3B9C5:                              ; CODE XREF: endingCutscene+2033↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     [bp+var_4]
@@ -57912,7 +57896,7 @@ loc_3B9E7:                              ; CODE XREF: endingCutscene+2055↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     si
@@ -57971,7 +57955,7 @@ loc_3BA67:                              ; CODE XREF: endingCutscene+2092↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 xor     di, di
@@ -58021,7 +58005,7 @@ loc_3BAC0:                              ; CODE XREF: endingCutscene+212E↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 inc     di
@@ -58107,7 +58091,7 @@ loc_3BB5F:                              ; CODE XREF: endingCutscene+21CD↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
                 or      di, di
@@ -58145,7 +58129,7 @@ loc_3BBBA:                              ; CODE XREF: endingCutscene+2228↑j
                 push    ds
                 mov     ax, 201Ch
                 push    ax
-                call    vdrv_2A_starfield
+                call    vdrv_2A_introFrame
                 pop     cx
                 pop     cx
 
@@ -60891,7 +60875,7 @@ loc_3CE9F:                              ; CODE XREF: sub_3CE7A+21↑j
                 mov     word_290FD, ax
                 mov     word_290FB, dx
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     word_290EF, ax
                 mov     word_290ED, dx
                 mov     ax, 9FBh
@@ -61490,7 +61474,7 @@ loc_3D24C:                              ; CODE XREF: setValue+21↑j
                                         ; DATA XREF: ovl03:jpt_3CFCE↓o
                 mov     al, byte ptr [bp+arg_2] ; jumptable 0003CFCE case 84
                 mov     Party_facing, al
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jnz     short def_3CFCE ; jumptable 0003CFCE default case, cases 7,13-15,19-24,26-33,36,44,66-68,75,78,80-82,86-93
                 mov     ax, 1
                 push    ax
@@ -62408,7 +62392,7 @@ format          = dword ptr  0Ah
                 push    ax              ; buffer
                 call    _sprintf
                 add     sp, 6
-                cmp     word_373A4, 0
+                cmp     Evt_windowCount, 0
                 jz      short loc_3D804
                 cmp     byte_332D3, 0
                 jz      short loc_3D836
@@ -63733,7 +63717,7 @@ format          = dword ptr -2
                 push    ax              ; char
                 mov     ax, offset aCombatM ; "combat.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 cmp     Maze_monsterCount, 0
@@ -64417,7 +64401,7 @@ arg_0           = word ptr  6
                 call    sub_280E5
                 mov     al, 0
                 mov     Maze_wrapMode, al
-                mov     byte_28841, al
+                mov     Party_dead, al
                 call    sub_2819E
                 mov     ax, 0ABDAh
                 push    ax
@@ -65154,9 +65138,9 @@ loc_3EC7B:                              ; CODE XREF: exploreLoop+2E2↑j
 
 def_3EC64:                              ; CODE XREF: exploreLoop+2DE↑j
                                         ; exploreLoop+2EB↑j ...
-                xor     byte_28875, 1   ; jumptable 0003EC64 default case
+                xor     View_animToggle, 1 ; jumptable 0003EC64 default case
                 call    chargeStep
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
 
 def_3F05F:                              ; CODE XREF: exploreLoop+196↑j
                                         ; exploreLoop+6D8↓j ...
@@ -65171,7 +65155,7 @@ def_3F05F:                              ; CODE XREF: exploreLoop+196↑j
                 cmp     byte_2886D, 3
                 jz      short def_3F0D5 ; jumptable 0003F0D5 default case
                                         ; jumptable 0003F153 default case
-                mov     al, byte_28875
+                mov     al, View_animToggle
                 xor     al, 1
                 mov     byte_28870, al
 
@@ -65187,7 +65171,7 @@ def_3F0D5:                              ; CODE XREF: exploreLoop+113↑j
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 cmp     Maze_wrapMode, 0
                 jz      short loc_3ECFA
                 mov     ax, 70h ; 'p'
@@ -65937,7 +65921,7 @@ loc_3F22F:                              ; CODE XREF: exploreLoop+9F↑j
 loc_3F24A:                              ; CODE XREF: exploreLoop+8B2↑j
                                         ; exploreLoop+8C6↑j
                 call    monstersRecover
-                mov     al, byte_28841
+                mov     al, Party_dead
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_3F25B
@@ -65987,13 +65971,13 @@ loc_3F29C:                              ; CODE XREF: exploreLoop+915↑j
                 mov     dx, [bp+var_A]
                 mov     word_2AF48, ax
                 mov     word_2AF46, dx
-                cmp     byte_28849, 0
+                cmp     musicDeviceAvailable, 0
                 jz      short loc_3F2CF
                 xor     ax, ax
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
 
@@ -66087,7 +66071,7 @@ loc_3F380:                              ; CODE XREF: exploreLoop+917↑j
                 push    ax              ; char
                 mov     ax, offset aMm3themeM_1 ; "mm3theme.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
 
@@ -69179,7 +69163,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_332CC, dx
-                mov     word_332CA, ax
+                mov     Spr_globalIcn, ax
                 push    ds
                 mov     ax, 2E6Eh
                 push    ax
@@ -69187,7 +69171,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_34C28, dx
-                mov     word_34C26, ax
+                mov     Spr_gargoyleBrd, ax
                 push    ds
                 mov     ax, 2E7Bh
                 push    ax
@@ -69195,7 +69179,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_36FB8, dx
-                mov     word_36FB6, ax
+                mov     Spr_grabberBrd, ax
                 push    ds
                 mov     ax, 2E87h
                 push    ax
@@ -69203,7 +69187,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_3330A, dx
-                mov     word_33308, ax
+                mov     Spr_batBrd, ax
                 push    ds
                 mov     ax, 2E8Fh
                 push    ax
@@ -69211,7 +69195,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_32E6C, dx
-                mov     word_32E6A, ax
+                mov     Spr_fecpBrd, ax
                 push    ds
                 mov     ax, 2E98h
                 push    ax
@@ -69219,7 +69203,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_3343C, dx
-                mov     word_3343A, ax
+                mov     Spr_protectIcn, ax
                 push    ds
                 mov     ax, 2EA4h
                 push    ax
@@ -69227,7 +69211,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_333C2, dx
-                mov     word_333C0, ax
+                mov     Spr_hpbarsIcn, ax
                 push    ds
                 mov     ax, 2EAFh
                 push    ax
@@ -69235,7 +69219,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_34C24, dx
-                mov     word_34C22, ax
+                mov     Spr_restoreIcn, ax
                 push    ds
                 mov     ax, 2EBBh
                 push    ax
@@ -69243,7 +69227,7 @@ var_2           = word ptr -2
                 pop     cx
                 pop     cx
                 mov     word_373CE, dx
-                mov     word_373CC, ax
+                mov     Spr_charpowIcn, ax
                 call    MemFree
                 call    drawHudPieces
                 mov     al, 0
@@ -69285,9 +69269,9 @@ var_2           = word ptr -2
                 mov     word_29033, dx
 
 loc_40C33:                              ; CODE XREF: rosterMenu+700↓j
-                cmp     byte_29116, 0FFh
+                cmp     currentSaveIndex, 0FFh
                 jnz     short loc_40C3F
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_40C3F:                              ; CODE XREF: rosterMenu+18C↑j
@@ -69342,7 +69326,7 @@ loc_40CA7:                              ; CODE XREF: rosterMenu+1EC↑j
                 push    ax              ; char
                 mov     ax, 2ECFh
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     [bp+var_6], 1
@@ -70186,7 +70170,7 @@ loc_413AD:                              ; CODE XREF: rosterMenu+77E↑j
                 call    playSoundEffect
                 jmp     short loc_413DA
 ; ---------------------------------------------------------------------------
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
                 sub     [bp+var_2], 0C9h
                 mov     ax, [bp+var_2]
@@ -70599,7 +70583,7 @@ sub_41689       proc far                ; CODE XREF: sub_281FD↑J
                 mov     word_319E8, dx
                 mov     word_319E6, ax
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     word_29071, ax
                 mov     word_2906F, dx
                 mov     ax, word_319E8
@@ -71542,7 +71526,7 @@ loc_41D23:                              ; CODE XREF: loadSaveDialog+27↑j
 
 loc_41D63:                              ; CODE XREF: loadSaveDialog+12↑j
                 call    MemFree
-                mov     ax, word_34B9A
+                mov     ax, Spr_wallSheet1
                 or      ax, word_34B9C
                 jz      short loc_41D82
                 cmp     word_28873, 14h
@@ -71554,7 +71538,7 @@ loc_41D63:                              ; CODE XREF: loadSaveDialog+12↑j
 
 loc_41D82:                              ; CODE XREF: loadSaveDialog+82↑j
                                         ; loadSaveDialog+89↑j
-                cmp     byte_29116, 0FFh
+                cmp     currentSaveIndex, 0FFh
                 jnz     short loc_41D8C
                 jmp     loc_41EEB
 ; ---------------------------------------------------------------------------
@@ -71923,7 +71907,7 @@ loc_4207E:                              ; CODE XREF: controlPanel+11A↑j
 loc_42080:                              ; CODE XREF: controlPanel+11F↑j
                                         ; controlPanel+168↓j
                 push    ax
-                call    soundDriverPlay
+                call    soundDriverCall
                 pop     cx
 
 loc_42087:                              ; CODE XREF: controlPanel+164↓j
@@ -71943,11 +71927,11 @@ loc_42087:                              ; CODE XREF: controlPanel+164↓j
                 jz      short loc_420C7
                 mov     byte_287AA, 0
                 push    word_332DE
-                push    word_332DC
-                call    sub_26965
+                push    songBuffer
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
-                cmp     byte_28848, 0
+                cmp     sfxDeviceAvailable, 0
                 jz      short loc_42087
                 xor     ax, ax
                 jmp     short loc_42080
@@ -71958,7 +71942,7 @@ loc_420C7:                              ; CODE XREF: controlPanel+149↑j
                 xor     dx, dx
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 jmp     short loc_42087
@@ -72010,15 +71994,15 @@ loc_42127:                              ; CODE XREF: controlPanel+1BD↑j
                 push    ax              ; path
                 call    getFiles
                 pop     cx
-                cmp     byte_29115, 0
+                cmp     saveFileCount, 0
                 jnz     short loc_42145
                 jmp     loc_4229B
 ; ---------------------------------------------------------------------------
 
 loc_42145:                              ; CODE XREF: controlPanel+1E3↑j
-                cmp     byte_29115, 1
+                cmp     saveFileCount, 1
                 jnz     short loc_42153
-                mov     byte_29116, 0
+                mov     currentSaveIndex, 0
                 jmp     short loc_42169
 ; ---------------------------------------------------------------------------
 
@@ -72032,7 +72016,7 @@ loc_42153:                              ; CODE XREF: controlPanel+1ED↑j
 
 loc_42163:                              ; CODE XREF: controlPanel+201↑j
                 mov     al, byte ptr [bp+var_6]
-                mov     byte_29116, al
+                mov     currentSaveIndex, al
 
 loc_42169:                              ; CODE XREF: controlPanel+1F4↑j
                 mov     [bp+var_A], 1
@@ -72069,7 +72053,7 @@ loc_42189:                              ; CODE XREF: controlPanel+1C8↑j
                 pop     cx
                 or      ax, ax
                 jz      short loc_421B3
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
                 jmp     loc_4224E
 ; ---------------------------------------------------------------------------
@@ -74012,7 +73996,7 @@ dest            = byte ptr -10h
                 push    ax              ; char
                 mov     ax, 0ECE8h
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 lea     ax, [bp+dest]
@@ -74074,9 +74058,10 @@ sub_42FF5       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; loads the view background sprite set into word_373B4: day.vga or night.vga on town / open-air maps (picked by Town_closed, which it recomputes from the time), else '<env prefix>.sky' (evidence: reads the code; called by loadMapGraphics)
 ; Attributes: bp-based frame
 
-sub_43034       proc far                ; CODE XREF: sub_28194↑J
+loadViewBackground proc far             ; CODE XREF: j_loadViewBackground↑J
                                         ; loadMapGraphics+166↓p
 
 arg_0           = word ptr  6
@@ -74100,11 +74085,11 @@ arg_0           = word ptr  6
                 jmp     short loc_43064
 ; ---------------------------------------------------------------------------
 
-loc_43062:                              ; CODE XREF: sub_43034+20↑j
-                                        ; sub_43034+28↑j
+loc_43062:                              ; CODE XREF: loadViewBackground+20↑j
+                                        ; loadViewBackground+28↑j
                 mov     al, 1
 
-loc_43064:                              ; CODE XREF: sub_43034+2C↑j
+loc_43064:                              ; CODE XREF: loadViewBackground+2C↑j
                 mov     Town_closed, al
                 push    ds
                 mov     ah, 0
@@ -74114,7 +74099,7 @@ loc_43064:                              ; CODE XREF: sub_43034+2C↑j
                 jmp     short loc_43097
 ; ---------------------------------------------------------------------------
 
-loc_43074:                              ; CODE XREF: sub_43034+18↑j
+loc_43074:                              ; CODE XREF: loadViewBackground+18↑j
                 mov     al, [si+30E1h]
                 mov     ah, 0
                 shl     ax, 1
@@ -74130,16 +74115,16 @@ loc_43074:                              ; CODE XREF: sub_43034+18↑j
                 mov     ax, 0E73Ch
                 push    ax
 
-loc_43097:                              ; CODE XREF: sub_43034+3E↑j
+loc_43097:                              ; CODE XREF: loadViewBackground+3E↑j
                 call    vdrv_21_loadSprites
                 pop     cx
                 pop     cx
                 mov     word_373B6, dx
-                mov     word_373B4, ax
+                mov     Spr_viewBackground, ax
                 pop     si
                 pop     bp
                 retf
-sub_43034       endp
+loadViewBackground endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74311,7 +74296,7 @@ loc_431EB:                              ; CODE XREF: loadMapGraphics+E1↑j
                 pop     cx
                 pop     cx
                 mov     word_3737E, dx
-                mov     word_3737C, ax
+                mov     Spr_water, ax
                 call    MemFree
 
 loc_43208:                              ; CODE XREF: loadMapGraphics+DC↑j
@@ -74319,7 +74304,7 @@ loc_43208:                              ; CODE XREF: loadMapGraphics+DC↑j
                 inc     ax
                 push    ax
                 push    cs
-                call    near ptr sub_43034
+                call    near ptr loadViewBackground
                 pop     cx
                 call    MemFree
                 mov     ax, 0ECE8h
@@ -74395,7 +74380,7 @@ loc_43268:                              ; CODE XREF: loadMapGraphics+187↑j
                 push    ax              ; char
                 mov     ax, 0ECE8h
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 lea     ax, [bp+buffer]
@@ -74407,7 +74392,7 @@ loc_43268:                              ; CODE XREF: loadMapGraphics+187↑j
                 pop     cx
 
 loc_432A4:                              ; CODE XREF: loadMapGraphics+1DD↑j
-                cmp     byte_28848, 0
+                cmp     sfxDeviceAvailable, 0
                 jz      short loc_432B4
                 xor     ax, ax
                 push    ax
@@ -74441,7 +74426,7 @@ format          = dword ptr  6
                 sub     sp, 1Ah
                 push    si              ; n
                 call    loadMazeDats
-                mov     byte_35D57, 0FFh
+                mov     Maze_startSlot, 0FFh
                 mov     ax, 4
                 push    ax              ; c
                 xor     ax, ax
@@ -74531,10 +74516,10 @@ loc_43325:                              ; CODE XREF: loadMapData+67↑j
                 mov     bx, ax
                 cmp     byte ptr [bx-3799h], 0
                 jz      short loc_433AA
-                cmp     byte_35D57, 0FFh
+                cmp     Maze_startSlot, 0FFh
                 jnz     short loc_433AA
                 mov     al, byte ptr [bp+var_2]
-                mov     byte_35D57, al
+                mov     Maze_startSlot, al
                 jmp     short loc_433AA
 ; ---------------------------------------------------------------------------
 
@@ -75165,7 +75150,7 @@ loc_437D9:                              ; CODE XREF: Map_load+13C↑j
                 push    ax
                 call    j_showMessage
                 pop     cx
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_43818:                              ; CODE XREF: Map_load+146↑j
@@ -75270,7 +75255,7 @@ loc_438A0:                              ; CODE XREF: Map_load+203↑j
                 push    ax
                 call    j_showMessage
                 pop     cx
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
                 jmp     loc_43985
 ; ---------------------------------------------------------------------------
@@ -75542,10 +75527,10 @@ arg_4           = word ptr  0Ah
                 push    di
                 mov     si, [bp+arg_0]
                 mov     di, [bp+arg_4]
-                push    word_373A4
+                push    Evt_windowCount
                 call    vdrv_06_closeWindows
                 pop     cx
-                mov     word_373A4, 0
+                mov     Evt_windowCount, 0
                 xor     ax, ax
                 mov     [bp+var_8], ax
                 mov     [bp+var_A], ax
@@ -75741,7 +75726,7 @@ loc_43C4D:                              ; CODE XREF: giveCharDamage+143↑j
                 push    ax
                 push    [bp+var_4]
                 push    word_373CE
-                push    word_373CC
+                push    Spr_charpowIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     bx, [bp+var_10]
@@ -76076,7 +76061,7 @@ loc_43E37:                              ; CODE XREF: giveTreasure+26↑j
 ; ---------------------------------------------------------------------------
 
 loc_43E41:                              ; CODE XREF: giveTreasure+30↑j
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_43E4B
                 jmp     loc_442B5
 ; ---------------------------------------------------------------------------
@@ -76088,7 +76073,7 @@ loc_43E4B:                              ; CODE XREF: giveTreasure+3A↑j
 ; ---------------------------------------------------------------------------
 
 loc_43E55:                              ; CODE XREF: giveTreasure+44↑j
-                cmp     byte_34B96, 0
+                cmp     Spr_terrainSheets, 0
                 jz      short loc_43E5F
                 jmp     loc_442B5
 ; ---------------------------------------------------------------------------
@@ -78316,7 +78301,7 @@ loc_44E64:                              ; CODE XREF: pickSaveSlot+EC↓j
                 inc     di
 
 loc_44EA4:                              ; CODE XREF: pickSaveSlot+A4↑j
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 cmp     ax, di
                 jg      short loc_44E64
@@ -78745,7 +78730,7 @@ loc_451C6:                              ; CODE XREF: pickSaveSlot+403↑j
                 inc     si
                 mov     ax, si
                 push    ax
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 add     ax, 0FFF6h
                 pop     dx
@@ -78755,7 +78740,7 @@ loc_451C6:                              ; CODE XREF: pickSaveSlot+403↑j
 ; ---------------------------------------------------------------------------
 
 loc_451DE:                              ; CODE XREF: pickSaveSlot+41B↑j
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 add     ax, 0FFF6h
                 mov     si, ax
@@ -78776,7 +78761,7 @@ loc_451F9:                              ; CODE XREF: pickSaveSlot+436↑j
                 dec     di
                 mov     ax, di
                 push    ax
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 pop     dx
                 cmp     dx, ax
@@ -78849,7 +78834,7 @@ loc_4526F:                              ; CODE XREF: pickSaveSlot+4A8↑j
                 mov     ax, si
                 add     ax, 0Ah
                 push    ax
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 pop     dx
                 cmp     dx, ax
@@ -78858,7 +78843,7 @@ loc_4526F:                              ; CODE XREF: pickSaveSlot+4A8↑j
 ; ---------------------------------------------------------------------------
 
 loc_45297:                              ; CODE XREF: pickSaveSlot+4D4↑j
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 add     ax, 0FFF6h
                 mov     si, ax
@@ -78993,7 +78978,7 @@ var_1           = byte ptr -1
                 push    bp
                 mov     bp, sp
                 sub     sp, 12h
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 push    ax              ; format
                 mov     ax, 3ACAh
@@ -79029,7 +79014,7 @@ loc_453F5:                              ; CODE XREF: sub_453C5+66↓j
                 cmp     ax, 0FFFFh
                 jnz     short loc_45421
                 mov     al, [bp+var_1]
-                mov     byte_29115, al
+                mov     saveFileCount, al
                 jmp     short loc_4542D
 ; ---------------------------------------------------------------------------
 
@@ -79038,7 +79023,7 @@ loc_45421:                              ; CODE XREF: sub_453C5+52↑j
 
 loc_45424:                              ; CODE XREF: sub_453C5+2E↑j
                 mov     al, [bp+var_1]
-                cmp     al, byte_29115
+                cmp     al, saveFileCount
                 jl      short loc_453F5
 
 loc_4542D:                              ; CODE XREF: sub_453C5+28↑j
@@ -79126,7 +79111,7 @@ loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
                 call    _sprintf
                 add     sp, 6
                 call    j_setButtons_41D
-                mov     byte_29116, 0
+                mov     currentSaveIndex, 0
                 or      di, di
                 jz      short loc_45502
                 push    ss
@@ -79178,7 +79163,7 @@ loc_45502:                              ; CODE XREF: sub_45431+A0↑j
                 mov     si, ax
                 cmp     si, 11h
                 jnz     short loc_4553F
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_4553F:                              ; CODE XREF: sub_45431+107↑j
@@ -79222,7 +79207,7 @@ sub_45431       endp
                 push    ax
                 call    getFiles
                 pop     cx
-                cmp     byte_29115, 0Ah
+                cmp     saveFileCount, 0Ah
                 jl      short loc_455EB
                 push    ds
                 mov     ax, offset aYouHaveReached ; "You have reached the maximum number of "...
@@ -79279,7 +79264,7 @@ loc_455EB:                              ; CODE XREF: ovl07:1FF5↑j
 loc_455FB:                              ; CODE XREF: ovl07:2056↑j
                 push    cs
                 call    near ptr sub_453C5
-                mov     al, byte_29115
+                mov     al, saveFileCount
                 cbw
                 push    ax
                 mov     ax, 3ACAh
@@ -79325,11 +79310,11 @@ loc_4563C:                              ; CODE XREF: ovl07:2095↑j
                 push    ax
                 call    getFiles
                 pop     cx
-                cmp     byte_29115, 0
+                cmp     saveFileCount, 0
                 jz      short loc_456B8
-                cmp     byte_29115, 1
+                cmp     saveFileCount, 1
                 jnz     short loc_45691
-                mov     byte_29116, 0
+                mov     currentSaveIndex, 0
                 jmp     short loc_456A6
 ; ---------------------------------------------------------------------------
 
@@ -79344,7 +79329,7 @@ loc_45691:                              ; CODE XREF: ovl07:20E8↑j
 
 loc_456A0:                              ; CODE XREF: ovl07:20FB↑j
                 mov     al, [bp-2]
-                mov     byte_29116, al
+                mov     currentSaveIndex, al
 
 loc_456A6:                              ; CODE XREF: ovl07:20EF↑j
                 mov     ax, 1
@@ -79406,7 +79391,7 @@ loc_45711:                              ; CODE XREF: ovl07:2185↓j
                 jnz     short loc_45711
                 jmp     loc_45564
 ; ---------------------------------------------------------------------------
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
                 jmp     loc_45564
 ; ---------------------------------------------------------------------------
@@ -79433,7 +79418,7 @@ loc_45758:                              ; CODE XREF: ovl07:21B1↑j
                 call    j_setButtons_41D
                 cmp     si, 1Bh
                 jnz     short loc_45767
-                call    far ptr sub_27F86
+                call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
 loc_45767:                              ; CODE XREF: ovl07:21C0↑j
@@ -79487,7 +79472,7 @@ var_2           = word ptr -2
                 call    MemFree
                 cmp     word_28873, 1Eh
                 jnb     short loc_457DF
-                mov     ax, word_34B9A
+                mov     ax, Spr_wallSheet1
                 or      ax, word_34B9C
                 jz      short loc_457DF
                 call    sub_281E4
@@ -81622,7 +81607,7 @@ loc_46819:                              ; CODE XREF: sub_466EC+128↑j
                 pop     cx
                 mov     ax, 3
                 push    ax
-                call    sub_25E66
+                call    delayFrames
                 pop     cx
                 pop     di
                 pop     si
@@ -84050,7 +84035,7 @@ loc_479FF:                              ; CODE XREF: sub_47947+63↑j
                 jnz     short loc_47A31
                 mov     ax, 3
                 push    ax
-                call    sub_25E66
+                call    delayFrames
                 pop     cx
 
 loc_47A31:                              ; CODE XREF: sub_47947+DE↑j
@@ -84084,12 +84069,12 @@ loc_47A3A:                              ; CODE XREF: townMenuInput+136↓j
                 mov     dx, 0FFFFh
                 push    ax
                 push    dx
-                call    sub_26965
+                call    soundDriverMusic
                 pop     cx
                 pop     cx
                 or      ax, ax
                 jnz     short loc_47A59
-                call    sub_27F8B
+                call    j_loadAndPlaySong
 
 loc_47A59:                              ; CODE XREF: townMenuInput+C↑j
                                         ; townMenuInput+1F↑j
@@ -84245,11 +84230,11 @@ loc_47B54:                              ; CODE XREF: townMenuInput+40↑j
 loc_47B6C:                              ; CODE XREF: townMenuInput+12D↑j
                                         ; townMenuInput+134↑j
                 mov     byte_34054, 0
-                call    sub_253D3
+                call    readKey
                 mov     si, ax
                 cmp     ax, 0D2h
                 jnz     short loc_47B85
-                call    sub_27F4F
+                call    j_bossKey
                 jmp     loc_47A3A
 ; ---------------------------------------------------------------------------
 
@@ -84418,13 +84403,13 @@ loc_47C92:                              ; CODE XREF: townBuildingIntro+DD↑j
 loc_47CB5:                              ; CODE XREF: townBuildingIntro+103↑j
                 call    drawHudPieces
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     word_290EF, ax
                 mov     word_290ED, dx
                 cmp     si, 7
                 jge     short loc_47CD6
                 mov     dx, word_332CC
-                mov     ax, word_332CA
+                mov     ax, Spr_globalIcn
                 jmp     short loc_47CDD
 ; ---------------------------------------------------------------------------
 
@@ -85023,7 +85008,7 @@ loc_48183:                              ; CODE XREF: townBank+D↑j
                 push    ax
                 call    j_showMessage
                 pop     cx
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 mov     ax, 6
                 push    ax
                 call    sub_27F6D
@@ -85036,7 +85021,7 @@ loc_4819F:                              ; CODE XREF: townBank+15↑j
                 push    ax              ; char
                 mov     ax, offset aBankM ; "bank.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 97h
@@ -85375,7 +85360,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_27F6D
                 pop     cx
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 jmp     loc_48669
 ; ---------------------------------------------------------------------------
 
@@ -85384,7 +85369,7 @@ loc_48492:                              ; CODE XREF: townGuild+E↑j
                 push    ax              ; char
                 mov     ax, offset aGuildM ; "guild.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 98h
@@ -85432,7 +85417,7 @@ loc_484E5:                              ; CODE XREF: townGuild+7A↑j
                 xor     ax, ax
                 push    ax
                 push    word_332CC
-                push    word_332CA
+                push    Spr_globalIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 call    sub_28144
@@ -85628,7 +85613,7 @@ townInn         proc far                ; CODE XREF: j_townInn↑J
                 push    ax              ; char
                 mov     ax, offset aTowninnM ; "towninn.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 99h
@@ -85785,7 +85770,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_27F6D
                 pop     cx
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 jmp     loc_48CAD
 ; ---------------------------------------------------------------------------
 
@@ -85795,7 +85780,7 @@ loc_487E8:                              ; CODE XREF: townTavern+E↑j
                 push    ax              ; char
                 mov     ax, offset aHonkyM ; "honky.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 9Ah
@@ -86460,7 +86445,7 @@ var_2           = word ptr -2
                 push    ax              ; char
                 mov     ax, 48CEh
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 9Bh
@@ -87206,7 +87191,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_27F6D
                 pop     cx
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 jmp     loc_496C8
 ; ---------------------------------------------------------------------------
 
@@ -87241,7 +87226,7 @@ loc_49392:                              ; CODE XREF: townTraining+D↑j
                 push    ax              ; char
                 mov     ax, offset aGroundsM ; "grounds.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 9Ch
@@ -87550,7 +87535,7 @@ loc_49651:                              ; CODE XREF: townTraining+2D6↑j
                 pop     cx
                 pop     cx
                 mov     word_333C2, dx
-                mov     word_333C0, ax
+                mov     Spr_hpbarsIcn, ax
                 push    ds
                 mov     ax, 4A0Ah
                 push    ax
@@ -87558,7 +87543,7 @@ loc_49651:                              ; CODE XREF: townTraining+2D6↑j
                 pop     cx
                 pop     cx
                 mov     word_34C24, dx
-                mov     word_34C22, ax
+                mov     Spr_restoreIcn, ax
                 push    ds
                 mov     ax, 4A16h
                 push    ax
@@ -87566,7 +87551,7 @@ loc_49651:                              ; CODE XREF: townTraining+2D6↑j
                 pop     cx
                 pop     cx
                 mov     word_3343C, dx
-                mov     word_3343A, ax
+                mov     Spr_protectIcn, ax
                 mov     al, Party_stateBase
                 mov     ah, 0
                 push    ax
@@ -87579,7 +87564,7 @@ loc_49651:                              ; CODE XREF: townTraining+2D6↑j
                 pop     cx
                 pop     cx
                 mov     word_373CE, dx
-                mov     word_373CC, ax
+                mov     Spr_charpowIcn, ax
                 xor     ax, ax
                 push    ax
                 push    ax
@@ -87664,7 +87649,7 @@ var_2           = word ptr -2
                 push    ax
                 call    sub_27F6D
                 pop     cx
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 jmp     loc_498DC
 ; ---------------------------------------------------------------------------
 
@@ -87673,7 +87658,7 @@ loc_4975A:                              ; CODE XREF: townSmithy+C↑j
                 push    ax              ; char
                 mov     ax, offset aDungeonM ; "dungeon.m"
                 push    ax              ; int
-                call    sub_27F45
+                call    j_startSong
                 pop     cx
                 pop     cx
                 mov     ax, 9Dh
@@ -88038,7 +88023,7 @@ loc_49A84:                              ; CODE XREF: loadHireFaces+144↑j
                 or      di, di
                 jnz     short loc_49ACE
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     word_290EF, ax
                 mov     word_290ED, dx
                 mov     ax, 4401h
@@ -88640,7 +88625,7 @@ loc_49ED6:                              ; CODE XREF: attack2+226↑j
 
 loc_49F1A:                              ; CODE XREF: attack2+38A↑j
                                         ; DATA XREF: ovl10:jpt_49F15↓o
-                mov     byte_34B92, 0   ; jumptable 00049F15 case 0
+                mov     Monsters_row1, 0 ; jumptable 00049F15 case 0
                 jmp     short def_49F15 ; jumptable 00049F15 default case
 ; ---------------------------------------------------------------------------
 
@@ -88711,9 +88696,9 @@ loc_49F67:                              ; CODE XREF: attack2+38A↑j
 def_49F15:                              ; CODE XREF: attack2+386↑j
                                         ; attack2+394↑j ...
                 call    drawView        ; jumptable 00049F15 default case
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_49F85
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 add     al, 0FFh
                 mov     Combat_target, al
                 mov     byte_3771B, 0
@@ -89659,7 +89644,7 @@ allHaveGone     proc far                ; CODE XREF: j_allHaveGone↑J
                 mov     bp, sp
                 push    si
                 push    di
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jbe     short loc_4A557
                 mov     ax, 1
                 jmp     short loc_4A559
@@ -90170,7 +90155,7 @@ loc_4A86A:                              ; CODE XREF: doCharDamage+5D↑j
                 push    ax
                 push    [bp+var_2]
                 push    word_373CE
-                push    word_373CC
+                push    Spr_charpowIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     bx, [bp+arg_0]
@@ -90620,7 +90605,7 @@ arg_0           = word ptr  6
 ; ---------------------------------------------------------------------------
 
 loc_4AB97:                              ; CODE XREF: doMonsterTurn+21↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 jmp     short loc_4ABA4
 ; ---------------------------------------------------------------------------
 
@@ -90990,7 +90975,7 @@ loc_4ADD5:                              ; CODE XREF: doMonsterTurn+221↑j
                 jg      short loc_4AD8B
                 cmp     [bp+var_4], 0
                 jnz     short loc_4ADF1
-                mov     byte_28841, 1
+                mov     Party_dead, 1
                 mov     Engine_mode, 1
                 jmp     loc_4AF19
 ; ---------------------------------------------------------------------------
@@ -91279,7 +91264,7 @@ var_2           = word ptr -2
                 dec     sp
                 push    si
                 push    di              ; n
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jbe     short loc_4AFBE
                 mov     ax, 1
                 jmp     short loc_4AFC0
@@ -91320,7 +91305,7 @@ loc_4AFE0:                              ; CODE XREF: nextChar+31↑j
 ; ---------------------------------------------------------------------------
 
 loc_4AFED:                              ; CODE XREF: nextChar+3D↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4B008
@@ -91349,7 +91334,7 @@ loc_4B011:                              ; CODE XREF: nextChar+5B↑j
 loc_4B019:                              ; CODE XREF: nextChar+64↑j
                                         ; nextChar+EC↓j ...
                 call    checkPartyDead
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jz      short loc_4B027
                 jmp     short loc_4B011
 ; ---------------------------------------------------------------------------
@@ -91461,14 +91446,14 @@ def_4B0CC:                              ; CODE XREF: nextChar+F5↑j
                 push    cs
                 call    near ptr doMonsterTurn
                 pop     cx
-                mov     al, byte_28841
+                mov     al, Party_dead
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4B0FF
                 call    checkPartyDead
 
 loc_4B0FF:                              ; CODE XREF: nextChar+14D↑j
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jnz     short loc_4B109
                 jmp     loc_4B019
 ; ---------------------------------------------------------------------------
@@ -92099,9 +92084,9 @@ var_1           = byte ptr -1
                 mov     [bp+var_7A], al
                 mov     [bp+var_52], al
                 mov     [bp+buffer], al
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_4B4C7
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 dec     ax
                 push    ax
@@ -92109,7 +92094,7 @@ var_1           = byte ptr -1
                 call    near ptr monster_getTextColor
                 pop     cx
                 mov     [bp+var_1], al
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 shl     ax, 1
                 mov     bx, ax
@@ -92207,7 +92192,7 @@ loc_4B55B:                              ; CODE XREF: getMonsterDescriptions+D0�
 
 loc_4B56E:                              ; CODE XREF: getMonsterDescriptions+E8↑j
                                         ; getMonsterDescriptions+EF↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 add     al, 0FFh
                 mov     Combat_target, al
                 mov     byte_3771B, 0
@@ -92330,13 +92315,13 @@ loc_4B645:                              ; CODE XREF: setSpeedTable+58↑j
                 mov     ah, 0
                 cmp     ax, [bp+var_2]
                 jg      short loc_4B609
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_4B68A
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 lea     ax, [bp+s]
                 add     bx, ax
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 shl     ax, 1
                 les     dx, Mon_spd
@@ -92452,7 +92437,7 @@ loc_4B738:                              ; CODE XREF: setSpeedTable+154↑j
                 cbw
                 cmp     ax, [bp+var_6]
                 jz      short loc_4B7AF
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jbe     short loc_4B760
                 mov     ax, 1
                 jmp     short loc_4B762
@@ -92567,7 +92552,7 @@ var_2           = word ptr -2
                 mov     byte_32E4E, al
                 mov     byte_3771B, al
                 mov     byte_3771C, al
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 add     al, 0FFh
                 mov     Combat_target, al
                 xor     ax, ax
@@ -92597,7 +92582,7 @@ loc_4B834:                              ; CODE XREF: doCombat+70↑j
                 mov     byte_2884E, al
                 push    cs
                 call    near ptr nextChar
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jz      short loc_4B861
                 jmp     loc_4BCC0
 ; ---------------------------------------------------------------------------
@@ -92639,7 +92624,7 @@ loc_4B872:                              ; CODE XREF: doCombat+B1↑j
                 add     sp, 14h
 
 loc_4B8AD:                              ; CODE XREF: doCombat+414↓j
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_4B8CB
                 mov     al, Combat_target
                 mov     ah, 0
@@ -92770,7 +92755,7 @@ loc_4B965:                              ; CODE XREF: doCombat+1A9↑j
 
 loc_4B971:                              ; CODE XREF: doCombat+1B5↑j
                 mov     byte_2886E, 1
-                xor     byte_28875, 1
+                xor     View_animToggle, 1
                 jmp     loc_4BAE5
 ; ---------------------------------------------------------------------------
                 push    cs
@@ -92902,9 +92887,9 @@ loc_4BA6F:                              ; CODE XREF: doCombat+1EC↑j
                 pop     cx
                 jmp     short loc_4BAE5
 ; ---------------------------------------------------------------------------
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_4BAE5
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 add     al, 0FFh
                 mov     Combat_target, al
                 mov     byte_3771B, 0
@@ -93010,7 +92995,7 @@ loc_4BB4E:                              ; CODE XREF: doCombat+377↑j
                 pop     cx
 
 loc_4BB71:                              ; CODE XREF: doCombat+338↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4BBB6
@@ -93027,7 +93012,7 @@ loc_4BB71:                              ; CODE XREF: doCombat+338↑j
                 call    changeTime
                 pop     cx
                 call    drawView
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4BBB6
@@ -93043,7 +93028,7 @@ loc_4BB71:                              ; CODE XREF: doCombat+338↑j
 loc_4BBB6:                              ; CODE XREF: doCombat+3C3↑j
                                         ; doCombat+3CC↑j ...
                 call    checkPartyDead
-                cmp     byte_28841, 0
+                cmp     Party_dead, 0
                 jnz     short loc_4BBCC
                 cmp     Engine_mode, 2
                 jnz     short loc_4BBCC
@@ -93055,7 +93040,7 @@ loc_4BBCC:                              ; CODE XREF: doCombat+278↑j
                 mov     Engine_mode, 1
                 cmp     byte_3771C, 0
                 jz      short loc_4BC48
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jnz     short loc_4BBED
                 cmp     byte_34B93, 0
                 jnz     short loc_4BBED
@@ -93065,7 +93050,7 @@ loc_4BBCC:                              ; CODE XREF: doCombat+278↑j
 loc_4BBED:                              ; CODE XREF: doCombat+428↑j
                                         ; doCombat+42F↑j
                 call    checkPartyDead
-                mov     al, byte_28841
+                mov     al, Party_dead
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4BC48
@@ -94973,7 +94958,7 @@ var_2           = word ptr -2
                 sub     sp, 98h
                 push    si
                 push    di
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 mov     ah, 0
                 or      ax, ax
                 jnz     short loc_4C942
@@ -95013,13 +94998,13 @@ loc_4C958:                              ; CODE XREF: Spell_24_IdentifyMonster+E7
 ; ---------------------------------------------------------------------------
 
 loc_4C96A:                              ; CODE XREF: Spell_24_IdentifyMonster+45↑j
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jnz     short loc_4C974
                 jmp     loc_4C9F8
 ; ---------------------------------------------------------------------------
 
 loc_4C974:                              ; CODE XREF: Spell_24_IdentifyMonster+58↑j
-                mov     al, byte_34B92
+                mov     al, Monsters_row1
                 jmp     short loc_4C98F
 ; ---------------------------------------------------------------------------
 
@@ -100343,7 +100328,7 @@ arg_0           = word ptr  6
                 inc     si
                 inc     si
                 mov     ax, word_332CC
-                mov     dx, word_332CA
+                mov     dx, Spr_globalIcn
                 mov     [si+2], ax
                 mov     [si], dx
                 inc     si
@@ -100544,7 +100529,7 @@ loc_4F022:                              ; CODE XREF: bash+60↑j
                 xor     ax, ax
                 push    ax
                 push    word_373CE
-                push    word_373CC
+                push    Spr_charpowIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 cmp     [bp+var_6], 0
@@ -100562,7 +100547,7 @@ loc_4F022:                              ; CODE XREF: bash+60↑j
                 xor     ax, ax
                 push    ax
                 push    word_373CE
-                push    word_373CC
+                push    Spr_charpowIcn
                 call    vdrv_15_drawSprite
                 add     sp, 0Ch
                 mov     ax, 2
@@ -100958,13 +100943,13 @@ loc_4F34E:                              ; CODE XREF: spellAttackAhead+EB↑j
                 push    ax              ; s
                 call    _memset
                 add     sp, 6
-                cmp     byte_34B92, 0
+                cmp     Monsters_row1, 0
                 jz      short loc_4F396
                 mov     al, [bp+var_B]
                 mov     ah, 0
                 lea     dx, [bp+s]
                 add     ax, dx
-                mov     dl, byte_34B92
+                mov     dl, Monsters_row1
                 mov     bx, ax
                 mov     [bx], dl
                 inc     [bp+var_B]
@@ -103153,7 +103138,7 @@ arg_0           = word ptr  6
                 call    MemFree
                 cmp     word_28873, 1Eh
                 jnb     short loc_5032E
-                mov     ax, word_34B9A
+                mov     ax, Spr_wallSheet1
                 or      ax, word_34B9C
                 jz      short loc_5032E
                 call    sub_281E4
@@ -103526,7 +103511,7 @@ loc_50607:                              ; CODE XREF: characterInfoInventory+21�
                 call    MemFree
                 cmp     word_28873, 0Ah
                 jnb     short loc_50642
-                mov     ax, word_34B9A
+                mov     ax, Spr_wallSheet1
                 or      ax, word_34B9C
                 jz      short loc_50642
                 call    sub_281E4
@@ -107192,7 +107177,7 @@ vdrv_api_03     endp
 ; Attributes: thunk
 
 vdrv_api_06     proc far
-                jmp     near ptr sub_6361E
+                jmp     near ptr vdrv_closeWindowsImpl
 vdrv_api_06     endp
 
 ; [00000003 BYTES: COLLAPSED FUNCTION vdrv_api_09. PRESS NUMPAD+ TO EXPAND]
@@ -107220,7 +107205,7 @@ vdrv_api_0F     endp
 ; Attributes: thunk
 
 vdrv_api_12     proc far
-                jmp     near ptr sub_629F6
+                jmp     near ptr vdrv_shutdown
 vdrv_api_12     endp
 
 
@@ -107229,7 +107214,7 @@ vdrv_api_12     endp
 ; Attributes: thunk
 
 vdrv_api_15     proc far
-                jmp     near ptr sub_60E92
+                jmp     near ptr vdrv_drawSprite
 vdrv_api_15     endp
 
 
@@ -107256,7 +107241,7 @@ vdrv_api_1B     endp
 ; Attributes: thunk
 
 vdrv_api_1E     proc far
-                jmp     near ptr sub_63370
+                jmp     near ptr vdrv_openWindowImpl
 vdrv_api_1E     endp
 
 
@@ -107310,7 +107295,7 @@ vdrv_api_2D     endp
 ; Attributes: thunk
 
 vdrv_api_30     proc far
-                jmp     near ptr sub_62820
+                jmp     near ptr vdrv_init
 vdrv_api_30     endp
 
 ; ---------------------------------------------------------------------------
@@ -107430,9 +107415,809 @@ vdrv_api_30     endp
                 db 1Ah, 0Eh, 26h, 18h, 0Dh, 23h, 16h, 0Ch, 20h, 15h, 0Ah
                 db 1Dh, 13h, 9, 1Ah, 11h, 8, 17h, 0Fh, 7, 14h, 0Dh, 6
                 db 11h, 0Ch, 5, 0Eh, 0Ah, 3, 0Bh, 8, 3, 9, 6, 2, 6, 4
-                db 1, 3 dup(3Fh), 320h dup(0)
-word_609BC      dw 0                    ; DATA XREF: sub_62820+16↓w
-                                        ; sub_62820+173↓r
+                db 1, 3 dup(3Fh)
+vdrv_rowTable   db    0                 ; 200 words: offset of each screen row (row * 320), built by vdrv_init
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+word_609BC      dw 0                    ; DATA XREF: vdrv_init+16↓w
+                                        ; vdrv_init+173↓r
 word_609BE      dw 0                    ; DATA XREF: sub_60F3C+43↓r
                                         ; sub_60FC0+33↓r ...
 word_609C0      dw 236h                 ; DATA XREF: sub_6125C:loc_61296↓r
@@ -107441,22 +108226,22 @@ word_609C2      dw 0B289h               ; DATA XREF: sub_60FC0+96↓r
                                         ; sub_60FC0+BD↓r ...
 word_609C4      dw 13CAh                ; DATA XREF: sub_60FC0:loc_61052↓r
                                         ; sub_60FC0+C7↓w ...
-word_609C6      dw 0                    ; DATA XREF: sub_63370+8D↓r
-                                        ; sub_6361E+32↓w
-word_609C8      dw 0                    ; DATA XREF: sub_63370+95↓r
-                                        ; sub_6361E+3A↓w
-word_609CA      dw 0                    ; DATA XREF: sub_63370+84↓r
-                                        ; sub_6361E+22↓w ...
-word_609CC      dw 0                    ; DATA XREF: sub_629F6+13↓r
-                                        ; sub_63370+9D↓r ...
+word_609C6      dw 0                    ; DATA XREF: vdrv_openWindowImpl+8D↓r
+                                        ; vdrv_closeWindowsImpl+32↓w
+word_609C8      dw 0                    ; DATA XREF: vdrv_openWindowImpl+95↓r
+                                        ; vdrv_closeWindowsImpl+3A↓w
+word_609CA      dw 0                    ; DATA XREF: vdrv_openWindowImpl+84↓r
+                                        ; vdrv_closeWindowsImpl+22↓w ...
+word_609CC      dw 0                    ; DATA XREF: vdrv_shutdown+13↓r
+                                        ; vdrv_openWindowImpl+9D↓r ...
                 db 20h dup(0)
 dword_609EE     dd 0                    ; DATA XREF: sub_60F3C+13↓r
-                                        ; sub_62820+A↓w ...
+                                        ; vdrv_init+A↓w ...
 dword_609F2     dd 0                    ; DATA XREF: sub_6125C+11↓r
                                         ; vdrv:12F9↓r ...
 word_609F6      dw 0A000h               ; DATA XREF: sub_60F3C+50↓r
                                         ; sub_60FC0+155↓r ...
-word_609F8      dw 0                    ; DATA XREF: sub_60E92+1F↓r
+word_609F8      dw 0                    ; DATA XREF: vdrv_drawSprite+1F↓r
                                         ; sub_60F3C+1A↓w ...
 word_609FA      dw 0                    ; DATA XREF: vdrv_runDrawList+11↓w
                                         ; vdrv_runDrawList+48↓r
@@ -107464,19 +108249,21 @@ word_609FC      dw 0                    ; DATA XREF: sub_60F3C+1F↓w
                                         ; sub_60F3C+67↓r
 word_609FE      dw 0                    ; DATA XREF: vdrv_printTextEngine+4C↓r
                                         ; vdrv_printTextEngine+33B↓r ...
-word_60A00      dw 0                    ; DATA XREF: sub_63370+B↓r
-                                        ; sub_63370+18↓r ...
+vdrv_winDepth   dw 0                    ; DATA XREF: vdrv_openWindowImpl+B↓r
+                                        ; vdrv_openWindowImpl+18↓r ...
+                                        ; word: number of open windows (the saved states are at 60A22h + 20h * n) (evidence: vdrv_openWindow / vdrv_closeWindows, verified by src/ui_text.c against the module)
                 align 4
-word_60A04      dw 0                    ; DATA XREF: sub_63370+F9↓r
-                                        ; sub_6361E+5D↓r ...
-word_60A06      dw 0                    ; DATA XREF: sub_63370+B0↓r
-                                        ; sub_6361E+4F↓r ...
-word_60A08      dw 140h                 ; DATA XREF: sub_63370+A8↓r
-                                        ; sub_6361E+47↓r ...
-word_60A0A      dw 0C8h                 ; DATA XREF: sub_63370+AC↓r
-                                        ; sub_6361E+4B↓r ...
+vdrv_winX       dw 0                    ; DATA XREF: vdrv_openWindowImpl+F9↓r
+                                        ; vdrv_closeWindowsImpl+5D↓r ...
+                                        ; word: current window state, 16 words from 60A02h (saved on window open): x, y (60A06), width (60A08), height (60A0A), text colour index (60A0C), fill pattern word (60A0E), cursor x (60A10), cursor y (60A12), alignment byte 0 left / 1 right / 2 centre (60A14), stop flag byte 0 / 80h (60A15), text area left (60A16), right (60A18), top (60A1A), bottom (60A1C), default colour (60A1E), default fill (60A20). NOTE: inside the vdrv segment IDA shows many of these as DGROUP names (byte_290FF+1 = cursor x, word_290FD+1 = fill, byte_29262 = alt font ...); they are all module-segment (cs) fields -- set the segment register assumption of vdrv to cs
+word_60A06      dw 0                    ; DATA XREF: vdrv_openWindowImpl+B0↓r
+                                        ; vdrv_closeWindowsImpl+4F↓r ...
+word_60A08      dw 140h                 ; DATA XREF: vdrv_openWindowImpl+A8↓r
+                                        ; vdrv_closeWindowsImpl+47↓r ...
+word_60A0A      dw 0C8h                 ; DATA XREF: vdrv_openWindowImpl+AC↓r
+                                        ; vdrv_closeWindowsImpl+4B↓r ...
 word_60A0C      dw 1                    ; DATA XREF: vdrv_printTextEngine:loc_619AD↓w
-                                        ; sub_63370+66↓r
+                                        ; vdrv_openWindowImpl+66↓r
 word_60A0E      dw 8888h                ; DATA XREF: vdrv_printTextEngine+27A↓r
                                         ; vdrv_printTextEngine+36A↓r ...
 word_60A10      dw 0                    ; DATA XREF: vdrv_printTextEngine+51↓r
@@ -107496,13 +108283,13 @@ word_60A1A      dw 0                    ; DATA XREF: sub_60F3C+C↓w
 word_60A1C      dw 0C8h                 ; DATA XREF: vdrv_printTextEngine+3D9↓r
                                         ; vdrv_printTextEngine+3DF↓r ...
 word_60A1E      dw 1                    ; DATA XREF: vdrv_printTextEngine+3F4↓r
-                                        ; sub_63370+69↓w
-word_60A20      dw 8080h                ; DATA XREF: sub_63370+6F↓w
+                                        ; vdrv_openWindowImpl+69↓w
+word_60A20      dw 8080h                ; DATA XREF: vdrv_openWindowImpl+6F↓w
                 align 8
                 db 40h, 1, 0C8h, 0, 1, 0, 2 dup(80h), 8 dup(0), 40h, 1
                 db 2 dup(0), 0C8h, 0, 1, 0, 2 dup(80h), 0E0h dup(0)
-word_60B22      dw 0                    ; DATA XREF: sub_62820+39↓w
-                                        ; sub_63370+BC↓r
+word_60B22      dw 0                    ; DATA XREF: vdrv_init+39↓w
+                                        ; vdrv_openWindowImpl+BC↓r
                 db 8 dup(0)
 dword_60B2C     dd 0                    ; DATA XREF: vdrv_printTextEngine+2C↓w
                                         ; vdrv_printTextEngine+47↓r ...
@@ -107558,14 +108345,16 @@ word_60B66      dw 0                    ; DATA XREF: sub_61312+33↓w
 word_60B68      dw 0                    ; DATA XREF: sub_61DAE+D↓w
                                         ; sub_61DAE+6A↓w ...
                 db 2 dup(0FFh), 6Dh, 0DBh, 29h, 0A5h, 21h, 84h
-byte_60B72      db 0                    ; DATA XREF: vdrv_printTextEngine+11E↓r
+vdrv_altFont    db 0                    ; DATA XREF: vdrv_printTextEngine+11E↓r
                                         ; vdrv_printTextEngine+280↓r ...
+                                        ; byte: 0 normal font, 80h alternate font (OR-ed into the glyph number); printed as control code 01 / 02
                 align 2
-word_60B74      dw 4000h                ; DATA XREF: vdrv_printTextEngine+362↓r
+vdrv_glyphColours dw 4000h              ; DATA XREF: vdrv_printTextEngine+362↓r
                                         ; vdrv_printTextEngine+37E↓w ...
+                                        ; 4 bytes: palette index of glyph pixel values 0-3 (0 = transparent); loaded from vdrv_colourTable by vdrv_selectTextColour
 word_60B76      dw 2030h                ; DATA XREF: vdrv_printTextEngine+366↓r
                                         ; vdrv_printTextEngine+372↓w ...
-                db 0, 1, 3, 5, 0, 7, 9, 0Bh, 0, 0Eh, 10h, 12h, 0, 14h
+vdrv_colourTable db 0, 1, 3, 5, 0, 7, 9, 0Bh, 0, 0Eh, 10h, 12h, 0, 14h ; 4 bytes per text colour index (0Ch control code): 0, then three palette indices (0AAh bytes)
                 db 16h, 18h, 0, 1Bh, 1Dh, 1Fh, 0, 20h, 21h, 22h, 0, 29h
                 db 2Ah, 2Bh, 0, 2Fh, 30h, 31h, 0, 36h, 37h, 38h, 0, 39h
                 db 3Ah, 3Bh, 0, 3Ch, 3Dh, 3Eh, 0, 40h, 41h, 42h, 0, 44h
@@ -107580,7 +108369,8 @@ word_60B76      dw 2030h                ; DATA XREF: vdrv_printTextEngine+366↓
                 db 0, 0DBh, 0DCh, 0DDh, 0, 0E0h, 0E1h, 0E2h, 0, 0E7h, 0E8h
                 db 0E9h, 0, 0EBh, 0ECh, 0EDh, 0, 0F0h, 0F1h, 0F2h, 0, 0F7h
                 db 0F8h, 0F9h, 0, 0FBh, 0FCh, 0FDh
-word_60C20      dw 0F0F0h               ; DATA XREF: sub_63370+60↓r
+vdrv_windowFill dw 0F0F0h               ; DATA XREF: vdrv_openWindowImpl+60↓r
+                                        ; word: fill pattern (two pixels) of newly opened windows (F0F0h)
                 db 240h dup(0), 2 dup(1Fh), 9Fh, 0DFh
 byte_60E66      db 0                    ; DATA XREF: vdrv_printTextEngine+D↓r
                                         ; vdrv_printTextEngine:loc_619B6↓w
@@ -107589,8 +108379,8 @@ word_60E67      dw 0                    ; DATA XREF: vdrv_printTextEngine+7↓w
 byte_60E69      db 0                    ; DATA XREF: vdrv_printTextEngine+1FA↓w
                                         ; vdrv_runDrawList+25↓r ...
 byte_60E6A      db 0                    ; DATA XREF: vdrv_printTextEngine+1EF↓w
-                                        ; sub_6371C+4↓r ...
-                db 0Ah, 3 dup(20h), 2Dh, 20h, 2Fh, 3 dup(20h)
+                                        ; vdrv_updateScreen+4↓r ...
+vdrv_breakChars db 0Ah, 3 dup(20h), 2Dh, 20h, 2Fh, 3 dup(20h) ; 10 bytes: characters a line may be broken at (newline, space, '-', '/' ...)
 byte_60E75      db 0                    ; DATA XREF: sub_613DA+A↓r
                                         ; sub_613DA+19↓w ...
                 db 0, 0FFh
@@ -107609,9 +108399,10 @@ word_60E90      dw 0                    ; DATA XREF: sub_62722:loc_62750↓w
 
 ; =============== S U B R O U T I N E =======================================
 
+; target of vdrv_api_15 / vdrv_15_drawSprite: frame argument -> offset table, calls vdrv_blitFrame for the frame's layers (evidence: vdrv_api_15 jumps here, reads the frame index table and calls vdrv_blitFrame)
 ; Attributes: bp-based frame
 
-sub_60E92       proc far                ; CODE XREF: vdrv_api_15↑j
+vdrv_drawSprite proc far                ; CODE XREF: vdrv_api_15↑j
 
 arg_2           = word ptr  8
 arg_4           = word ptr  0Ah
@@ -107663,7 +108454,7 @@ arg_A           = word ptr  10h
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_60EE0:                              ; CODE XREF: sub_60E92+33↑j
+loc_60EE0:                              ; CODE XREF: vdrv_drawSprite+33↑j
                 mov     si, ax
                 lodsw
                 add     ax, [bp+arg_6]
@@ -107675,7 +108466,7 @@ loc_60EE0:                              ; CODE XREF: sub_60E92+33↑j
                 ja      short loc_60EF3
                 mov     bx, ax
 
-loc_60EF3:                              ; CODE XREF: sub_60E92+5D↑j
+loc_60EF3:                              ; CODE XREF: vdrv_drawSprite+5D↑j
                 lodsw
                 add     ax, [bp+arg_6]
                 mov     dx, [di]
@@ -107686,7 +108477,7 @@ loc_60EF3:                              ; CODE XREF: sub_60E92+5D↑j
                 ja      short loc_60F04
                 mov     dx, ax
 
-loc_60F04:                              ; CODE XREF: sub_60E92+6E↑j
+loc_60F04:                              ; CODE XREF: vdrv_drawSprite+6E↑j
                 sub     dx, bx
                 push    bx
                 lodsw
@@ -107699,7 +108490,7 @@ loc_60F04:                              ; CODE XREF: sub_60E92+6E↑j
                 ja      short loc_60F18
                 mov     bx, ax
 
-loc_60F18:                              ; CODE XREF: sub_60E92+82↑j
+loc_60F18:                              ; CODE XREF: vdrv_drawSprite+82↑j
                 lodsw
                 add     ax, [bp+arg_8]
                 mov     cx, [di]
@@ -107708,12 +108499,12 @@ loc_60F18:                              ; CODE XREF: sub_60E92+82↑j
                 ja      short loc_60F27
                 mov     cx, ax
 
-loc_60F27:                              ; CODE XREF: sub_60E92+91↑j
+loc_60F27:                              ; CODE XREF: vdrv_drawSprite+91↑j
                 sub     cx, bx
                 pop     ax
 
-loc_60F2A:                              ; CODE XREF: sub_60E92+4B↑j
-                call    sub_62A14
+loc_60F2A:                              ; CODE XREF: vdrv_drawSprite+4B↑j
+                call    vdrv_waitRetrace
                 call    sub_62A2A
                 call    sub_614B2
                 call    sub_61572
@@ -107722,7 +108513,7 @@ loc_60F2A:                              ; CODE XREF: sub_60E92+4B↑j
                 pop     ds
                 pop     bp
                 retf
-sub_60E92       endp
+vdrv_drawSprite endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -107760,7 +108551,7 @@ arg_2           = word ptr  8
                 mov     ax, [bp+arg_0]
                 mov     word ptr cs:dword_60B34, ax
                 call    vdrv_runDrawList
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 cmp     cs:word_609BE, 0
                 jnz     short loc_60FB0
                 mov     ds, cs:word_609F8
@@ -107941,7 +108732,7 @@ loc_610FB:                              ; CODE XREF: sub_60FC0+130↑j
 
 loc_61102:                              ; CODE XREF: sub_60FC0+13D↑j
                 call    vdrv_runDrawList
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 cmp     cs:word_609BE, 0
                 jnz     short loc_61128
                 mov     ds, cs:word_609F8
@@ -108018,7 +108809,7 @@ loc_61164:                              ; CODE XREF: sub_61138+47↓j
                 mov     cl, 4
 
 loc_61175:                              ; CODE XREF: sub_61138+40↓j
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 loop    loc_61175
                 pop     cx
                 int     10h             ; - VIDEO -
@@ -108097,11 +108888,11 @@ sub_61138       endp
 
 
 sub_611E4       proc near               ; CODE XREF: sub_61138+7A↑p
-                                        ; sub_62820+78↓p
+                                        ; vdrv_init+78↓p
                 mov     cx, 10h
                 mov     si, 36h ; '6'
                 mov     bx, 3C8h
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 mov     dx, bx
                 sub     al, al
                 out     dx, al
@@ -108232,7 +109023,7 @@ arg_2           = word ptr  8
                 call    cs:dword_609F2
                 cmp     cs:word_609BE, 0
                 jnz     short loc_61296
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 mov     ds, cs:word_609F8
                 mov     es, cs:word_609F6
                 sub     si, si
@@ -108293,7 +109084,7 @@ loc_612AC:                              ; CODE XREF: sub_6125C+78↓j
                 sub     bx, bx
                 mov     cx, 0C8h
                 mov     dx, 140h
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 call    sub_62A2A
                 pop     di
                 pop     si
@@ -108580,7 +109371,7 @@ arg_4           = dword ptr  0Ah
                 jz      short loc_61489
                 call    sub_61534
                 call    sub_614B2
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 call    sub_61572
                 mov     ax, cs:word_60B40
                 les     di, [bp+arg_0]
@@ -108599,7 +109390,7 @@ loc_61484:                              ; CODE XREF: sub_61456+40↓j
 ; ---------------------------------------------------------------------------
 
 loc_61489:                              ; CODE XREF: sub_61456+C↑j
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 sub     ax, ax
                 les     di, [bp+arg_0]
                 stosw
@@ -108629,7 +109420,7 @@ sub_61498       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_614B2       proc near               ; CODE XREF: sub_60E92+9E↑p
+sub_614B2       proc near               ; CODE XREF: vdrv_drawSprite+9E↑p
                                         ; sub_61138+76↑p ...
                 push    bp
                 push    ds
@@ -108701,7 +109492,7 @@ sub_614B2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_61534       proc near               ; CODE XREF: sub_60E92+6↑p
+sub_61534       proc near               ; CODE XREF: vdrv_drawSprite+6↑p
                                         ; sub_61138+73↑p ...
                 push    bp
                 push    ds
@@ -108745,7 +109536,7 @@ sub_61534       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_61572       proc near               ; CODE XREF: sub_60E92+A1↑p
+sub_61572       proc near               ; CODE XREF: vdrv_drawSprite+A1↑p
                                         ; sub_61138+7D↑p ...
                 cmp     cs:byte_60E75, 0
                 jz      short locret_615B4
@@ -108779,7 +109570,7 @@ sub_61572       endp
 ; Attributes: bp-based frame
 
 vdrv_printTextEngine proc far           ; CODE XREF: vdrv_api_2D↑j
-                                        ; sub_63370+251↓p
+                                        ; vdrv_openWindowImpl+251↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -108823,7 +109614,7 @@ loc_615F6:                              ; CODE XREF: vdrv_printTextEngine:loc_61
 
 loc_6161A:                              ; CODE XREF: vdrv_printTextEngine+5C↑j
                                         ; vdrv_printTextEngine+6F↓j ...
-                call    sub_619C4
+                call    vdrv_measureChar
                 jb      short loc_61639
                 cmp     byte ptr cs:word_60E67, 0
                 jnz     short loc_6161A
@@ -108872,7 +109663,7 @@ loc_61674:                              ; CODE XREF: vdrv_printTextEngine+A9↑j
                 jz      short loc_616A6
                 cmp     ax, cs:word_60A16
                 jz      short loc_616A6
-                call    sub_61A1C
+                call    vdrv_newLine
                 jnb     short loc_6169F
                 test    cs:byte_60A15, 80h
                 jnz     short loc_616A2
@@ -108900,7 +109691,7 @@ loc_616AB:                              ; CODE XREF: vdrv_printTextEngine+93↑j
                 nop
 
 loc_616BC:                              ; CODE XREF: vdrv_printTextEngine+114↓j
-                call    sub_619C4
+                call    vdrv_measureChar
                 jb      short loc_616DD
                 mov     ax, word ptr cs:dword_60B2C
                 cmp     ax, cs:word_60B3C
@@ -108908,7 +109699,7 @@ loc_616BC:                              ; CODE XREF: vdrv_printTextEngine+114↓
                 cmp     dl, 20h ; ' '
                 jnz     short loc_616DD
                 sub     bx, 4
-                test    cs:byte_60B72, 80h
+                test    cs:vdrv_altFont, 80h
                 jz      short loc_616DD
                 inc     bx
 
@@ -108952,7 +109743,7 @@ loc_6170E:                              ; CODE XREF: vdrv_printTextEngine+FB↑j
                 jz      short loc_61737
                 cmp     word_60B38, 0
                 jz      short loc_61737
-                call    sub_61A1C
+                call    vdrv_newLine
                 jnb     short loc_61737
                 test    cs:byte_60A15, 80h
                 jnz     short loc_6173A
@@ -108968,7 +109759,7 @@ loc_6173A:                              ; CODE XREF: vdrv_printTextEngine+17F↑
                 align 2
 
 loc_6173E:                              ; CODE XREF: vdrv_printTextEngine+163↑j
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 mov     bx, cs
                 mov     ds, bx
                 cmp     al, 20h ; ' '
@@ -108998,7 +109789,7 @@ loc_61766:                              ; CODE XREF: vdrv_printTextEngine:loc_61
                 ja      short loc_6170E
                 jnz     short loc_6177E
                 clc
-                call    sub_636CA
+                call    vdrv_fillTextArea
                 mov     ax, word ptr byte_290FF+7
                 mov     word ptr byte_290FF+1, ax
                 mov     ax, word ptr byte_290FF+0Bh
@@ -109024,7 +109815,7 @@ loc_6178A:                              ; CODE XREF: vdrv_printTextEngine+1CA↑
 loc_61796:                              ; CODE XREF: vdrv_printTextEngine+1D6↑j
                 dec     al
                 jnz     short loc_6180E
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 mov     bx, cs
                 mov     ds, bx
                 assume ds:vdrv
@@ -109073,10 +109864,10 @@ loc_617DA:                              ; CODE XREF: vdrv_printTextEngine+21A↑
 loc_617E5:                              ; CODE XREF: vdrv_printTextEngine+226↑j
                 cmp     al, 6Dh ; 'm'
                 jnz     short loc_617F6
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 sub     ah, ah
                 sub     al, 30h ; '0'
-                call    sub_61CDA
+                call    vdrv_fillWindowPattern
                 jmp     short loc_6180B
 ; ---------------------------------------------------------------------------
                 align 2
@@ -109099,7 +109890,7 @@ loc_6180E:                              ; CODE XREF: vdrv_printTextEngine+1E2↑
                 dec     al
                 jnz     short loc_6185E
                 mov     cx, 3
-                call    sub_61B16
+                call    vdrv_parseDigits
                 mov     dx, ax
                 mov     ax, cs
                 mov     ds, ax
@@ -109111,7 +109902,7 @@ loc_6180E:                              ; CODE XREF: vdrv_printTextEngine+1E2↑
                 add     di, word_60A10
                 mov     ax, word_60A0E
                 mov     bp, 9
-                cmp     byte_60B72, 0
+                cmp     vdrv_altFont, 0
                 jz      short loc_6183E
                 dec     bp
 
@@ -109178,7 +109969,7 @@ loc_618A4:                              ; CODE XREF: vdrv_printTextEngine+2E6↑
                 dec     al
                 jnz     short loc_618BE
                 mov     cx, 3
-                call    sub_61B16
+                call    vdrv_parseDigits
                 jb      short loc_618B4
                 mov     ah, al
                 jnb     short loc_618B7
@@ -109195,7 +109986,7 @@ loc_618B7:                              ; CODE XREF: vdrv_printTextEngine+2FC↑
 loc_618BE:                              ; CODE XREF: vdrv_printTextEngine+2F0↑j
                 dec     al
                 jnz     short loc_61941
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 mov     bx, cs
                 mov     ds, bx
                 assume ds:vdrv
@@ -109203,7 +109994,7 @@ loc_618BE:                              ; CODE XREF: vdrv_printTextEngine+2F0↑
                 jnz     short loc_618E1
                 sub     al, al
                 sub     word_60A10, 2
-                test    byte_60B72, 80h
+                test    vdrv_altFont, 80h
                 jz      short loc_61902
                 inc     word_60A10
                 jmp     short loc_61902
@@ -109216,7 +110007,7 @@ loc_618E1:                              ; CODE XREF: vdrv_printTextEngine+315↑
 
 loc_618E7:                              ; CODE XREF: vdrv_printTextEngine+32D↑j
                 mov     bl, al
-                or      al, byte_60B72
+                or      al, vdrv_altFont
                 mov     ah, 10h
                 mov     si, ax
                 mov     ds, word_609FE
@@ -109240,14 +110031,14 @@ loc_61910:                              ; CODE XREF: vdrv_printTextEngine+354↑
                 or      al, al
                 jz      short loc_6193E
                 push    word_60A10
-                push    word_60B74
+                push    vdrv_glyphColours
                 push    word_60B76
                 mov     bx, word_60A0E
-                mov     byte ptr word_60B74+1, bl
+                mov     byte ptr vdrv_glyphColours+1, bl
                 mov     word_60B76, bx
                 call    sub_61B42
                 pop     cs:word_60B76
-                pop     cs:word_60B74
+                pop     cs:vdrv_glyphColours
                 pop     cs:word_60A10
 
 loc_6193E:                              ; CODE XREF: vdrv_printTextEngine+35C↑j
@@ -109258,7 +110049,7 @@ loc_61941:                              ; CODE XREF: vdrv_printTextEngine+30A↑
                 dec     al
                 jnz     short loc_61966
                 mov     cx, 3
-                call    sub_61B16
+                call    vdrv_parseDigits
                 cmp     byte ptr word_60E67, 0
                 jnz     short loc_6195F
                 add     ax, word_60A16
@@ -109276,7 +110067,7 @@ loc_6195F:                              ; CODE XREF: vdrv_printTextEngine+39A↑
 loc_61966:                              ; CODE XREF: vdrv_printTextEngine+38D↑j
                 dec     al
                 jnz     short loc_6197A
-                call    sub_61A1C
+                call    vdrv_newLine
                 jnb     short loc_61977
                 test    cs:byte_60A15, 80h
                 jnz     short loc_619B6
@@ -109289,7 +110080,7 @@ loc_6197A:                              ; CODE XREF: vdrv_printTextEngine+3B2↑
                 dec     al
                 jnz     short loc_6199E
                 mov     cx, 3
-                call    sub_61B16
+                call    vdrv_parseDigits
                 cmp     byte ptr word_60E67, 0
                 jnz     short loc_61998
                 add     ax, word_60A1A
@@ -109307,20 +110098,20 @@ loc_6199E:                              ; CODE XREF: vdrv_printTextEngine+3C6↑
                 dec     al
                 jnz     short loc_619B6
                 mov     cx, 2
-                call    sub_61B16
+                call    vdrv_parseDigits
                 jnb     short loc_619AD
                 mov     ax, word_60A1E
 
 loc_619AD:                              ; CODE XREF: vdrv_printTextEngine+3F2↑j
                 mov     word_60A0C, ax
-                call    sub_61AF0
+                call    vdrv_selectTextColour
                 jmp     loc_6170E
 ; ---------------------------------------------------------------------------
 
 loc_619B6:                              ; CODE XREF: vdrv_printTextEngine:loc_616A2↑j
                                         ; vdrv_printTextEngine:loc_6173A↑j ...
                 shr     byte_60E66, 1
-                call    sub_6371C
+                call    vdrv_updateScreen
                 pop     di
                 pop     si
                 pop     es
@@ -109335,40 +110126,41 @@ vdrv_printTextEngine endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; text engine: adds the width of the next character to bx (space 4 / 3 alt, control codes 08 and 0C handled), carry set and the character un-read when it ends the measured text (evidence: verified by src/ui_text.c)
 
-sub_619C4       proc near               ; CODE XREF: vdrv_printTextEngine:loc_6161A↑p
+vdrv_measureChar proc near              ; CODE XREF: vdrv_printTextEngine:loc_6161A↑p
                                         ; vdrv_printTextEngine:loc_616BC↑p
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 mov     dl, al
                 cmp     al, 20h ; ' '
                 jbe     short loc_619E0
-                or      al, cs:byte_60B72
+                or      al, cs:vdrv_altFont
                 mov     ah, 10h
                 mov     di, ax
                 mov     al, es:[di]
                 nop
 
-loc_619DA:                              ; CODE XREF: sub_619C4+26↓j
-                                        ; sub_619C4+2A↓j
+loc_619DA:                              ; CODE XREF: vdrv_measureChar+26↓j
+                                        ; vdrv_measureChar+2A↓j
                 sub     ah, ah
                 add     bx, ax
                 clc
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_619E0:                              ; CODE XREF: sub_619C4+7↑j
+loc_619E0:                              ; CODE XREF: vdrv_measureChar+7↑j
                 jnz     short loc_619F0
                 mov     al, 4
-                test    cs:byte_60B72, 80h
+                test    cs:vdrv_altFont, 80h
                 jz      short loc_619DA
                 dec     al
                 jmp     short loc_619DA
 ; ---------------------------------------------------------------------------
 
-loc_619F0:                              ; CODE XREF: sub_619C4:loc_619E0↑j
+loc_619F0:                              ; CODE XREF: vdrv_measureChar:loc_619E0↑j
                 cmp     al, 8
                 jnz     short loc_619FF
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 cmp     al, 20h ; ' '
                 jnz     short loc_61A0F
                 dec     bx
@@ -109377,39 +110169,40 @@ loc_619F0:                              ; CODE XREF: sub_619C4:loc_619E0↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_619FF:                              ; CODE XREF: sub_619C4+2E↑j
+loc_619FF:                              ; CODE XREF: vdrv_measureChar+2E↑j
                 cmp     al, 0Ch
                 jnz     short loc_61A14
-                call    sub_61B08
+                call    vdrv_nextTextChar
                 cmp     al, 64h ; 'd'
                 jz      short loc_61A0D
-                call    sub_61B08
+                call    vdrv_nextTextChar
 
-loc_61A0D:                              ; CODE XREF: sub_619C4+44↑j
+loc_61A0D:                              ; CODE XREF: vdrv_measureChar+44↑j
                 clc
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61A0F:                              ; CODE XREF: sub_619C4+35↑j
+loc_61A0F:                              ; CODE XREF: vdrv_measureChar+35↑j
                 dec     word ptr cs:dword_60B2C
 
-loc_61A14:                              ; CODE XREF: sub_619C4+3D↑j
+loc_61A14:                              ; CODE XREF: vdrv_measureChar+3D↑j
                 dec     word ptr cs:dword_60B2C
                 stc
                 retn
-sub_619C4       endp
+vdrv_measureChar endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; text engine: skips spaces, cursor to the left edge, down 10 rows (9 in the alternate font); when the text area is full either returns carry ('f' mode) or scrolls the text area up and clears the bottom rows with the fill pattern (evidence: verified by src/ui_text.c)
 
-sub_61A1C       proc near               ; CODE XREF: vdrv_printTextEngine+DC↑p
+vdrv_newLine    proc near               ; CODE XREF: vdrv_printTextEngine+DC↑p
                                         ; vdrv_printTextEngine+174↑p ...
                 lds     si, cs:dword_60B2C
 
-loc_61A21:                              ; CODE XREF: sub_61A1C+A↓j
+loc_61A21:                              ; CODE XREF: vdrv_newLine+A↓j
                 lodsb
                 and     al, 7Fh
                 cmp     al, 20h ; ' '
@@ -109424,14 +110217,14 @@ loc_61A21:                              ; CODE XREF: sub_61A1C+A↓j
                 jz      short loc_61A3E
                 mov     ax, 74h ; 't'
 
-loc_61A3E:                              ; CODE XREF: sub_61A1C+1D↑j
+loc_61A3E:                              ; CODE XREF: vdrv_newLine+1D↑j
                 mov     word_60A10, ax
                 mov     dx, 0Ah
-                test    byte_60B72, 80h
+                test    vdrv_altFont, 80h
                 jz      short loc_61A4C
                 dec     dx
 
-loc_61A4C:                              ; CODE XREF: sub_61A1C+2D↑j
+loc_61A4C:                              ; CODE XREF: vdrv_newLine+2D↑j
                 add     word_60A12, dx
                 cmp     byte ptr word_60E67, 0
                 jnz     short loc_61A6D
@@ -109446,20 +110239,20 @@ loc_61A4C:                              ; CODE XREF: sub_61A1C+2D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61A6D:                              ; CODE XREF: sub_61A1C+39↑j
-                                        ; sub_61A1C+45↑j
+loc_61A6D:                              ; CODE XREF: vdrv_newLine+39↑j
+                                        ; vdrv_newLine+45↑j
                 clc
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61A6F:                              ; CODE XREF: sub_61A1C+4D↑j
+loc_61A6F:                              ; CODE XREF: vdrv_newLine+4D↑j
                 push    dx
                 push    ds
                 sub     dx, ax
                 push    dx
                 push    dx
                 clc
-                call    sub_6371C
+                call    vdrv_updateScreen
                 call    sub_61534
                 pop     dx
                 mov     ax, word_60A16
@@ -109478,7 +110271,7 @@ loc_61A6F:                              ; CODE XREF: sub_61A1C+4D↑j
                 mov     ds, word_609F8
                 assume ds:dseg
 
-loc_61AA8:                              ; CODE XREF: sub_61A1C+A9↓j
+loc_61AA8:                              ; CODE XREF: vdrv_newLine+A9↓j
                 push    cx
                 mov     si, cs:[bp+0]
                 add     si, ax
@@ -109503,7 +110296,7 @@ loc_61AA8:                              ; CODE XREF: sub_61A1C+A9↓j
                 mov     ax, word_290FD+1
                 nop
 
-loc_61AD8:                              ; CODE XREF: sub_61A1C+CF↓j
+loc_61AD8:                              ; CODE XREF: vdrv_newLine+CF↓j
                 push    cx
                 mov     di, [bx]
                 add     di, si
@@ -109517,16 +110310,17 @@ loc_61AD8:                              ; CODE XREF: sub_61A1C+CF↓j
                 loop    loc_61AD8
                 stc
                 retn
-sub_61A1C       endp
+vdrv_newLine    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; copies the 4 colour bytes of text colour index [60A0C] from vdrv_colourTable into vdrv_glyphColours
 
-sub_61AF0       proc near               ; CODE XREF: vdrv_printTextEngine+3FA↑p
-                                        ; sub_63370+237↓p
+vdrv_selectTextColour proc near         ; CODE XREF: vdrv_printTextEngine+3FA↑p
+                                        ; vdrv_openWindowImpl+237↓p
                 mov     si, word_290FB+1
                 shl     si, 1
                 shl     si, 1
@@ -109535,41 +110329,43 @@ sub_61AF0       proc near               ; CODE XREF: vdrv_printTextEngine+3FA↑
                 mov     ax, [si+0B7Ah]
                 mov     word_29266, ax
                 retn
-sub_61AF0       endp
+vdrv_selectTextColour endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; text engine helper: returns the next character of the string (far pointer dword_60B2C) & 7Fh and advances the pointer (evidence: reads the code)
 
-sub_61B08       proc near               ; CODE XREF: vdrv_printTextEngine:loc_6173E↑p
+vdrv_nextTextChar proc near             ; CODE XREF: vdrv_printTextEngine:loc_6173E↑p
                                         ; vdrv_printTextEngine+1E4↑p ...
                 lds     si, cs:dword_60B2C
                 inc     word ptr cs:dword_60B2C
                 lodsb
                 and     al, 7Fh
                 retn
-sub_61B08       endp
+vdrv_nextTextChar endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; text engine helper: reads cx decimal digits from the string (space counts as 0), returns the number in ax, carry set when a non-digit is found; used for the 3-digit and 2-digit arguments of control codes 04h, 07h, 09h, 0Bh, 0Ch (evidence: reads the code)
 
-sub_61B16       proc near               ; CODE XREF: vdrv_printTextEngine+25F↑p
+vdrv_parseDigits proc near              ; CODE XREF: vdrv_printTextEngine+25F↑p
                                         ; vdrv_printTextEngine+2F5↑p ...
                 push    ds
                 sub     ah, ah
                 sub     bx, bx
                 nop
 
-loc_61B1C:                              ; CODE XREF: sub_61B16+21↓j
-                call    sub_61B08
+loc_61B1C:                              ; CODE XREF: vdrv_parseDigits+21↓j
+                call    vdrv_nextTextChar
                 cmp     al, 20h ; ' '
                 jnz     short loc_61B25
                 mov     al, 30h ; '0'
 
-loc_61B25:                              ; CODE XREF: sub_61B16+B↑j
+loc_61B25:                              ; CODE XREF: vdrv_parseDigits+B↑j
                 sub     al, 30h ; '0'
                 cmp     al, 9
                 ja      short loc_61B3E
@@ -109586,11 +110382,11 @@ loc_61B25:                              ; CODE XREF: sub_61B16+B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61B3E:                              ; CODE XREF: sub_61B16+13↑j
+loc_61B3E:                              ; CODE XREF: vdrv_parseDigits+13↑j
                 pop     ds
                 stc
                 retn
-sub_61B16       endp
+vdrv_parseDigits endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -109622,7 +110418,7 @@ loc_61B60:                              ; CODE XREF: sub_61B42+C↑j
                 shl     di, 1
                 mov     di, cs:[di+69Ch]
                 add     di, cs:word_60A10
-                or      al, cs:byte_60B72
+                or      al, cs:vdrv_altFont
                 sub     ah, ah
                 push    ax
                 mov     ds, cs:word_609FE
@@ -109745,7 +110541,7 @@ loc_61C2F:                              ; CODE XREF: sub_61C10+16↑j
                 mov     bx, cs:word_60A12
                 mov     cx, 8
                 mov     dx, cx
-                call    sub_62A14
+                call    vdrv_waitRetrace
                 call    sub_62A2A
                 call    sub_61572
                 pop     di
@@ -109766,7 +110562,7 @@ sub_61C5C       proc near               ; CODE XREF: sub_61C10+29↑p
                 shl     di, 1
                 mov     di, cs:[di+69Ch]
                 add     di, cs:word_60A10
-                or      al, cs:byte_60B72
+                or      al, cs:vdrv_altFont
                 sub     ah, ah
                 mov     ds, cs:word_609FE
                 assume ds:nothing
@@ -109835,8 +110631,9 @@ sub_61CB0       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; text engine: fills the text window area with the dither pattern selected by mode 1-4 (print code 'm' + digit) (evidence: reads the code)
 
-sub_61CDA       proc near               ; CODE XREF: vdrv_printTextEngine+23A↑p
+vdrv_fillWindowPattern proc near        ; CODE XREF: vdrv_printTextEngine+23A↑p
                 dec     ax
                 js      short locret_61D1B
                 mov     bp, ax
@@ -109853,10 +110650,10 @@ sub_61CDA       proc near               ; CODE XREF: vdrv_printTextEngine+23A↑
                 shr     dx, 1
                 mov     bp, 3
 
-loc_61D00:                              ; CODE XREF: sub_61CDA+3F↓j
+loc_61D00:                              ; CODE XREF: vdrv_fillWindowPattern+3F↓j
                 mov     cx, dx
 
-loc_61D02:                              ; CODE XREF: sub_61CDA+2B↓j
+loc_61D02:                              ; CODE XREF: vdrv_fillWindowPattern+2B↓j
                 stosb
                 add     di, bp
                 loop    loc_61D02
@@ -109865,7 +110662,7 @@ loc_61D02:                              ; CODE XREF: sub_61CDA+2B↓j
                 dec     di
                 mov     cx, dx
 
-loc_61D0E:                              ; CODE XREF: sub_61CDA+37↓j
+loc_61D0E:                              ; CODE XREF: vdrv_fillWindowPattern+37↓j
                 stosb
                 add     di, bp
                 loop    loc_61D0E
@@ -109875,26 +110672,26 @@ loc_61D0E:                              ; CODE XREF: sub_61CDA+37↓j
                 dec     bx
                 jnz     short loc_61D00
 
-locret_61D1B:                           ; CODE XREF: sub_61CDA+1↑j
+locret_61D1B:                           ; CODE XREF: vdrv_fillWindowPattern+1↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61D1C:                              ; CODE XREF: sub_61CDA+19↑j
+loc_61D1C:                              ; CODE XREF: vdrv_fillWindowPattern+19↑j
                 dec     bp
                 jns     short loc_61D34
 
-loc_61D1F:                              ; CODE XREF: sub_61CDA+57↓j
+loc_61D1F:                              ; CODE XREF: vdrv_fillWindowPattern+57↓j
                 mov     cx, dx
                 nop
 
-loc_61D22:                              ; CODE XREF: sub_61CDA+4A↓j
+loc_61D22:                              ; CODE XREF: vdrv_fillWindowPattern+4A↓j
                 stosb
                 inc     di
                 loop    loc_61D22
                 add     di, si
                 mov     cx, dx
 
-loc_61D2A:                              ; CODE XREF: sub_61CDA+52↓j
+loc_61D2A:                              ; CODE XREF: vdrv_fillWindowPattern+52↓j
                 inc     di
                 stosb
                 loop    loc_61D2A
@@ -109904,17 +110701,17 @@ loc_61D2A:                              ; CODE XREF: sub_61CDA+52↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61D34:                              ; CODE XREF: sub_61CDA+43↑j
+loc_61D34:                              ; CODE XREF: vdrv_fillWindowPattern+43↑j
                 dec     bp
                 jns     short loc_61D63
                 shr     bx, 1
                 shr     dx, 1
 
-loc_61D3B:                              ; CODE XREF: sub_61CDA+86↓j
+loc_61D3B:                              ; CODE XREF: vdrv_fillWindowPattern+86↓j
                 mov     cx, dx
                 nop
 
-loc_61D3E:                              ; CODE XREF: sub_61CDA+67↓j
+loc_61D3E:                              ; CODE XREF: vdrv_fillWindowPattern+67↓j
                 stosw
                 inc     di
                 stosb
@@ -109927,7 +110724,7 @@ loc_61D3E:                              ; CODE XREF: sub_61CDA+67↓j
                 mov     cx, dx
                 nop
 
-loc_61D50:                              ; CODE XREF: sub_61CDA+79↓j
+loc_61D50:                              ; CODE XREF: vdrv_fillWindowPattern+79↓j
                 inc     di
                 stosb
                 stosw
@@ -109942,25 +110739,25 @@ loc_61D50:                              ; CODE XREF: sub_61CDA+79↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_61D63:                              ; CODE XREF: sub_61CDA+5B↑j
+loc_61D63:                              ; CODE XREF: vdrv_fillWindowPattern+5B↑j
                 shl     bx, 1
                 nop
 
-loc_61D66:                              ; CODE XREF: sub_61CDA+93↓j
+loc_61D66:                              ; CODE XREF: vdrv_fillWindowPattern+93↓j
                 mov     cx, dx
                 rep stosw
                 add     di, si
                 dec     bx
                 jnz     short loc_61D66
                 retn
-sub_61CDA       endp
+vdrv_fillWindowPattern endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; video module: draws one sprite frame (two layers) with the flag variants (mirror, scale 1-3, enlarge)
 
-vdrv_blitFrame  proc near               ; CODE XREF: sub_60E92+27↑p
+vdrv_blitFrame  proc near               ; CODE XREF: vdrv_drawSprite+27↑p
                                         ; sub_614B2+79↑p ...
 
 ; FUNCTION CHUNK AT 1EDC SIZE 00000009 BYTES
@@ -111936,8 +112733,9 @@ sub_62722       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; target of vdrv_api_30 (vdrv_30_init): stores the game's callback table, picks the video mode, builds the row-offset table at 069Ch, allocates 1110h bytes and loads the font member FO.T (id 8D92h; name string 'fo.t' at module offset 0E7Fh) (evidence: reads the code; the routine also contains copy-protection checksum loops)
 
-sub_62820       proc far                ; CODE XREF: vdrv_api_30↑j
+vdrv_init       proc far                ; CODE XREF: vdrv_api_30↑j
                 cld
                 mov     bp, cs
                 mov     ds, bp
@@ -111956,10 +112754,10 @@ sub_62820       proc far                ; CODE XREF: vdrv_api_30↑j
                 assume ds:dseg
                 sub     si, si
 
-loc_62848:                              ; CODE XREF: sub_62820+2D↓j
+loc_62848:                              ; CODE XREF: vdrv_init+2D↓j
                 inc     si
 
-loc_62849:                              ; CODE XREF: sub_62820+35↓j
+loc_62849:                              ; CODE XREF: vdrv_init+35↓j
                 cmp     word ptr [si], 6661h
                 jnz     short loc_62848
                 inc     si
@@ -111973,23 +112771,23 @@ loc_62849:                              ; CODE XREF: sub_62820+35↓j
                 sub     dx, dx
                 mov     cx, 340h
 
-loc_62865:                              ; CODE XREF: sub_62820:loc_62879↓j
+loc_62865:                              ; CODE XREF: vdrv_init:loc_62879↓j
                 lodsb
                 cmp     al, 9Ah
                 jnz     short loc_6286D
                 add     si, 4
 
-loc_6286D:                              ; CODE XREF: sub_62820+48↑j
+loc_6286D:                              ; CODE XREF: vdrv_init+48↑j
                 test    al, 80h
                 jnz     short loc_62875
                 sub     dx, ax
                 jnz     short loc_62879
 
-loc_62875:                              ; CODE XREF: sub_62820+4F↑j
+loc_62875:                              ; CODE XREF: vdrv_init+4F↑j
                 ror     dx, 1
                 mov     ah, al
 
-loc_62879:                              ; CODE XREF: sub_62820+53↑j
+loc_62879:                              ; CODE XREF: vdrv_init+53↑j
                 loop    loc_62865
                 push    dx
                 mov     ds, bp
@@ -112009,7 +112807,7 @@ loc_62879:                              ; CODE XREF: sub_62820+53↑j
                 jmp     loc_6298E
 ; ---------------------------------------------------------------------------
 
-loc_6289E:                              ; CODE XREF: sub_62820+65↑j
+loc_6289E:                              ; CODE XREF: vdrv_init+65↑j
                 dec     si
                 jns     short loc_628CC
                 mov     cx, 32h ; '2'
@@ -112018,7 +112816,7 @@ loc_6289E:                              ; CODE XREF: sub_62820+65↑j
                 mov     bx, 2000h
                 mov     di, 82Ch
 
-loc_628B0:                              ; CODE XREF: sub_62820+9C↓j
+loc_628B0:                              ; CODE XREF: vdrv_init+9C↓j
                 stosw
                 add     ax, bx
                 stosw
@@ -112035,7 +112833,7 @@ loc_628B0:                              ; CODE XREF: sub_62820+9C↓j
                 jmp     loc_62967
 ; ---------------------------------------------------------------------------
 
-loc_628CC:                              ; CODE XREF: sub_62820+7F↑j
+loc_628CC:                              ; CODE XREF: vdrv_init+7F↑j
                 dec     si
                 jns     short loc_628D7
                 mov     ax, 0Eh
@@ -112044,7 +112842,7 @@ loc_628CC:                              ; CODE XREF: sub_62820+7F↑j
                 jmp     loc_62967
 ; ---------------------------------------------------------------------------
 
-loc_628D7:                              ; CODE XREF: sub_62820+AD↑j
+loc_628D7:                              ; CODE XREF: vdrv_init+AD↑j
                 dec     si
                 jns     short loc_62922
                 mov     cx, 0C8h
@@ -112052,7 +112850,7 @@ loc_628D7:                              ; CODE XREF: sub_62820+AD↑j
                 sub     bp, 193h
                 mov     di, 82Ch
 
-loc_628E6:                              ; CODE XREF: sub_62820+C9↓j
+loc_628E6:                              ; CODE XREF: vdrv_init+C9↓j
                 stosw
                 add     ax, bp
                 loop    loc_628E6
@@ -112060,13 +112858,13 @@ loc_628E6:                              ; CODE XREF: sub_62820+C9↓j
                 jmp     short loc_62956
 ; ---------------------------------------------------------------------------
 
-loc_628F0:                              ; CODE XREF: sub_62820+103↓j
+loc_628F0:                              ; CODE XREF: vdrv_init+103↓j
                 mov     cx, 64h ; 'd'
                 sub     ax, ax
                 add     bp, 1DF5h
                 mov     di, 82Ch
 
-loc_628FC:                              ; CODE XREF: sub_62820+E3↓j
+loc_628FC:                              ; CODE XREF: vdrv_init+E3↓j
                 stosw
                 add     ax, 2000h
                 stosw
@@ -112087,7 +112885,7 @@ loc_628FC:                              ; CODE XREF: sub_62820+E3↓j
                 jmp     short loc_6296F
 ; ---------------------------------------------------------------------------
 
-loc_62922:                              ; CODE XREF: sub_62820+B8↑j
+loc_62922:                              ; CODE XREF: vdrv_init+B8↑j
                 dec     si
                 jns     short loc_628F0
                 mov     cx, 0C8h
@@ -112095,7 +112893,7 @@ loc_62922:                              ; CODE XREF: sub_62820+B8↑j
                 sub     bp, 16Bh
                 mov     di, 82Ch
 
-loc_62931:                              ; CODE XREF: sub_62820+114↓j
+loc_62931:                              ; CODE XREF: vdrv_init+114↓j
                 stosw
                 add     ax, bp
                 loop    loc_62931
@@ -112103,7 +112901,7 @@ loc_62931:                              ; CODE XREF: sub_62820+114↓j
                 sub     bx, bx
                 mov     di, 236h
 
-loc_6293E:                              ; CODE XREF: sub_62820+12A↓j
+loc_6293E:                              ; CODE XREF: vdrv_init+12A↓j
                 mov     ax, bx
                 shr     ax, 1
                 shr     ax, 1
@@ -112116,7 +112914,7 @@ loc_6293E:                              ; CODE XREF: sub_62820+12A↓j
                 mov     cs:word_609C0, ax
                 mov     ax, 0Eh
 
-loc_62956:                              ; CODE XREF: sub_62820+CE↑j
+loc_62956:                              ; CODE XREF: vdrv_init+CE↑j
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
                 mov     dx, 3CEh
@@ -112131,20 +112929,20 @@ loc_62956:                              ; CODE XREF: sub_62820+CE↑j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
 
-loc_62967:                              ; CODE XREF: sub_62820+A9↑j
-                                        ; sub_62820+B4↑j
+loc_62967:                              ; CODE XREF: vdrv_init+A9↑j
+                                        ; vdrv_init+B4↑j
                 mov     dx, 336h
                 mov     ax, 1002h
                 int     10h             ; - VIDEO - SET ALL PALETTE REGISTERS (Jr, PS, TANDY 1000, EGA, VGA)
                                         ; ES:DX -> 17-byte palette register list
 
-loc_6296F:                              ; CODE XREF: sub_62820+100↑j
+loc_6296F:                              ; CODE XREF: vdrv_init+100↑j
                 mov     bx, cs:word_609C0
                 mov     cx, 500h
                 mov     di, 37D2h
                 mov     si, di
 
-loc_6297C:                              ; CODE XREF: sub_62820+15F↓j
+loc_6297C:                              ; CODE XREF: vdrv_init+15F↓j
                 lodsb
                 xlat
                 stosb
@@ -112153,13 +112951,13 @@ loc_6297C:                              ; CODE XREF: sub_62820+15F↓j
                 mov     di, 0B78h
                 mov     si, di
 
-loc_62989:                              ; CODE XREF: sub_62820+16C↓j
+loc_62989:                              ; CODE XREF: vdrv_init+16C↓j
                 lodsb
                 xlat
                 stosb
                 loop    loc_62989
 
-loc_6298E:                              ; CODE XREF: sub_62820+7B↑j
+loc_6298E:                              ; CODE XREF: vdrv_init+7B↑j
                 pop     cx
                 add     cx, 5
                 push    ds
@@ -112170,13 +112968,13 @@ loc_6298E:                              ; CODE XREF: sub_62820+7B↑j
                 sub     bp, bp
                 mov     bx, 6571h
 
-loc_629A1:                              ; CODE XREF: sub_62820+18A↓j
+loc_629A1:                              ; CODE XREF: vdrv_init+18A↓j
                 lodsb
                 ror     bx, 1
                 jb      short loc_629A8
                 shl     ax, 1
 
-loc_629A8:                              ; CODE XREF: sub_62820+184↑j
+loc_629A8:                              ; CODE XREF: vdrv_init+184↑j
                 sub     bp, ax
                 loop    loc_629A1
                 add     bp, 8969h
@@ -112185,7 +112983,7 @@ loc_629A8:                              ; CODE XREF: sub_62820+184↑j
                 mov     di, 69Ch
                 mov     cx, 0C8h
 
-loc_629B9:                              ; CODE XREF: sub_62820+19C↓j
+loc_629B9:                              ; CODE XREF: vdrv_init+19C↓j
                 stosw
                 add     ax, bp
                 loop    loc_629B9
@@ -112212,17 +113010,18 @@ loc_629B9:                              ; CODE XREF: sub_62820+19C↓j
                 jb      short locret_629F4
                 mov     word ptr byte_29081+3Bh, ax
 
-locret_629F4:                           ; CODE XREF: sub_62820+1CF↑j
+locret_629F4:                           ; CODE XREF: vdrv_init+1CF↑j
                 retf
-sub_62820       endp
+vdrv_init       endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; target of vdrv_api_12: frees the two screen/font buffers (word_609F8, word_609FE) and closes the cc file handle (evidence: reads the code)
 
-sub_629F6       proc far                ; CODE XREF: vdrv_api_12↑j
+vdrv_shutdown   proc far                ; CODE XREF: vdrv_api_12↑j
                 push    ds
                 push    cs
                 pop     ds
@@ -112244,13 +113043,14 @@ sub_629F6       proc far                ; CODE XREF: vdrv_api_12↑j
                 pop     ds
                 assume ds:dseg
                 retf
-sub_629F6       endp
+vdrv_shutdown   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; waits for the VGA vertical retrace (port 3DAh status polling)
 
-sub_62A14       proc near               ; CODE XREF: sub_60E92:loc_60F2A↑p
+vdrv_waitRetrace proc near              ; CODE XREF: vdrv_drawSprite:loc_60F2A↑p
                                         ; sub_60F3C+40↑p ...
                 push    ax
                 push    dx
@@ -112258,7 +113058,7 @@ sub_62A14       proc near               ; CODE XREF: sub_60E92:loc_60F2A↑p
                 mov     ah, 8
                 nop
 
-loc_62A1C:                              ; CODE XREF: sub_62A14+B↓j
+loc_62A1C:                              ; CODE XREF: vdrv_waitRetrace+B↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -112268,7 +113068,7 @@ loc_62A1C:                              ; CODE XREF: sub_62A14+B↓j
                 jnz     short loc_62A1C
                 nop
 
-loc_62A22:                              ; CODE XREF: sub_62A14+11↓j
+loc_62A22:                              ; CODE XREF: vdrv_waitRetrace+11↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -112279,13 +113079,13 @@ loc_62A22:                              ; CODE XREF: sub_62A14+11↓j
                 pop     dx
                 pop     ax
                 retn
-sub_62A14       endp
+vdrv_waitRetrace endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_62A2A       proc near               ; CODE XREF: sub_60E92+9B↑p
+sub_62A2A       proc near               ; CODE XREF: vdrv_drawSprite+9B↑p
                                         ; sub_60F3C+7E↑p ...
                 push    ds
                 push    es
@@ -113166,9 +113966,10 @@ sub_62A2A       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; target of vdrv_api_1E / vdrv_1E_openWindow: pushes the current 32-byte window state (0A02h) onto the 7-deep window stack at 0A22h, installs the new rectangle/colours from the arguments and saves the background (evidence: reads the code)
 ; Attributes: bp-based frame
 
-sub_63370       proc far                ; CODE XREF: vdrv_api_1E↑j
+vdrv_openWindowImpl proc far            ; CODE XREF: vdrv_api_1E↑j
 
 arg_0           = word ptr  6
 arg_C           = word ptr  12h
@@ -113182,23 +113983,23 @@ arg_C           = word ptr  12h
                 mov     ax, cs
                 mov     ds, ax
                 assume ds:vdrv
-                cmp     word_60A00, 7
+                cmp     vdrv_winDepth, 7
                 jb      short loc_63386
                 jmp     loc_635CE
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_63386:                              ; CODE XREF: sub_63370+10↑j
+loc_63386:                              ; CODE XREF: vdrv_openWindowImpl+10↑j
                 mov     es, ax
                 assume es:vdrv
-                mov     di, cs:word_60A00
+                mov     di, cs:vdrv_winDepth
                 mov     cl, 5
                 shl     di, cl
                 add     di, 0A22h
                 mov     si, 0A02h
                 mov     cx, 10h
                 rep movsw
-                inc     word_60A00
+                inc     vdrv_winDepth
                 cmp     cs:word_609BE, 0
                 jz      short loc_633B7
                 mov     si, word_60A0E
@@ -113206,10 +114007,10 @@ loc_63386:                              ; CODE XREF: sub_63370+10↑j
                 lodsw
                 mov     word_60A0E, si
 
-loc_633B7:                              ; CODE XREF: sub_63370+37↑j
+loc_633B7:                              ; CODE XREF: vdrv_openWindowImpl+37↑j
                 mov     si, 0Ah
 
-loc_633BA:                              ; CODE XREF: sub_63370+54↓j
+loc_633BA:                              ; CODE XREF: vdrv_openWindowImpl+54↓j
                 mov     ax, [bp+si+arg_0]
                 mov     [si+0A04h], ax
                 sub     si, 2
@@ -113219,7 +114020,7 @@ loc_633BA:                              ; CODE XREF: sub_63370+54↓j
                 mov     bp, sp
                 mov     word ptr [bp+2], 6123h
                 pop     bp
-                mov     ax, word_60C20
+                mov     ax, vdrv_windowFill
                 mov     word_60A0E, ax
                 mov     ax, word_60A0C
                 mov     word_60A1E, ax
@@ -113227,7 +114028,7 @@ loc_633BA:                              ; CODE XREF: sub_63370+54↓j
                 mov     word_60A20, ax
                 mov     si, 6
 
-loc_633E5:                              ; CODE XREF: sub_63370+7F↓j
+loc_633E5:                              ; CODE XREF: vdrv_openWindowImpl+7F↓j
                 mov     ax, [bp+si+arg_C]
                 mov     [si+0B24h], ax
                 sub     si, 2
@@ -113257,10 +114058,10 @@ loc_633E5:                              ; CODE XREF: sub_63370+7F↓j
                 assume ds:dseg
                 mov     si, 200h
 
-loc_63433:                              ; CODE XREF: sub_63370+C8↓j
+loc_63433:                              ; CODE XREF: vdrv_openWindowImpl+C8↓j
                 inc     si
 
-loc_63434:                              ; CODE XREF: sub_63370+D0↓j
+loc_63434:                              ; CODE XREF: vdrv_openWindowImpl+D0↓j
                 cmp     word ptr [si], 6B49h
                 jnz     short loc_63433
                 inc     si
@@ -113273,32 +114074,32 @@ loc_63434:                              ; CODE XREF: sub_63370+D0↓j
                 sub     dx, dx
                 mov     cx, 48h ; 'H'
 
-loc_6344B:                              ; CODE XREF: sub_63370:loc_6345F↓j
+loc_6344B:                              ; CODE XREF: vdrv_openWindowImpl:loc_6345F↓j
                 lodsb
                 cmp     al, 9Ah
                 jnz     short loc_63453
                 add     si, 4
 
-loc_63453:                              ; CODE XREF: sub_63370+DE↑j
+loc_63453:                              ; CODE XREF: vdrv_openWindowImpl+DE↑j
                 test    al, 80h
                 jnz     short loc_6345D
                 add     dx, ax
                 xchg    ah, al
                 jnz     short loc_6345F
 
-loc_6345D:                              ; CODE XREF: sub_63370+E5↑j
+loc_6345D:                              ; CODE XREF: vdrv_openWindowImpl+E5↑j
                 sub     dx, ax
 
-loc_6345F:                              ; CODE XREF: sub_63370+EB↑j
+loc_6345F:                              ; CODE XREF: vdrv_openWindowImpl+EB↑j
                 loop    loc_6344B
                 pop     si
                 pop     ds
                 sub     si, dx
                 nop
 
-loc_63466:                              ; CODE XREF: sub_63370+11D↓j
+loc_63466:                              ; CODE XREF: vdrv_openWindowImpl+11D↓j
                 mov     dx, cs:[bx]
-                add     dx, cs:word_60A04
+                add     dx, cs:vdrv_winX
                 mov     cx, si
                 push    ds
                 push    bx
@@ -113329,13 +114130,13 @@ loc_63466:                              ; CODE XREF: sub_63370+11D↓j
                 sub     ax, 10h
                 mov     word ptr byte_290FF+0Dh, ax
                 stc
-                call    sub_636CA
+                call    vdrv_fillTextArea
                 mov     ax, word ptr byte_290F1+3
                 mov     word ptr byte_290FF+1, ax
                 mov     ax, word ptr byte_290F1+5
                 mov     word ptr byte_290FF+3, ax
                 sub     si, si
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 mov     cx, word ptr byte_290F1+7
                 sub     cx, 9
                 shr     cx, 1
@@ -113344,24 +114145,24 @@ loc_63466:                              ; CODE XREF: sub_63370+11D↓j
                 jz      short loc_634F6
                 mov     dx, 1
 
-loc_634E6:                              ; CODE XREF: sub_63370:loc_634F4↓j
+loc_634E6:                              ; CODE XREF: vdrv_openWindowImpl:loc_634F4↓j
                 mov     si, dx
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 inc     dx
                 cmp     dx, 5
                 jnz     short loc_634F4
                 mov     dx, 1
 
-loc_634F4:                              ; CODE XREF: sub_63370+17F↑j
+loc_634F4:                              ; CODE XREF: vdrv_openWindowImpl+17F↑j
                 loop    loc_634E6
 
-loc_634F6:                              ; CODE XREF: sub_63370+171↑j
+loc_634F6:                              ; CODE XREF: vdrv_openWindowImpl+171↑j
                 mov     ax, word ptr byte_290F1+3
                 add     ax, word ptr byte_290F1+7
                 sub     ax, 8
                 mov     word ptr byte_290FF+1, ax
                 mov     si, 5
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 mov     cx, word ptr byte_290F1+9
                 sub     cx, 9
                 shr     cx, 1
@@ -113371,28 +114172,28 @@ loc_634F6:                              ; CODE XREF: sub_63370+171↑j
                 mov     dx, 6
                 nop
 
-loc_6351C:                              ; CODE XREF: sub_63370:loc_6354A↓j
+loc_6351C:                              ; CODE XREF: vdrv_openWindowImpl:loc_6354A↓j
                 add     word ptr byte_290FF+3, 8
                 mov     ax, word ptr byte_290F1+3
                 mov     word ptr byte_290FF+1, ax
                 mov     si, dx
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 mov     ax, word ptr byte_290F1+3
                 add     ax, word ptr byte_290F1+7
                 sub     ax, 8
                 mov     word ptr byte_290FF+1, ax
                 mov     si, dx
                 add     si, 4
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 inc     dx
                 cmp     dx, 0Ah
                 jnz     short loc_6354A
                 mov     dx, 6
 
-loc_6354A:                              ; CODE XREF: sub_63370+1D5↑j
+loc_6354A:                              ; CODE XREF: vdrv_openWindowImpl+1D5↑j
                 loop    loc_6351C
 
-loc_6354C:                              ; CODE XREF: sub_63370+1A6↑j
+loc_6354C:                              ; CODE XREF: vdrv_openWindowImpl+1A6↑j
                 mov     ax, word ptr byte_290F1+3
                 mov     word ptr byte_290FF+1, ax
                 mov     ax, word ptr byte_290F1+5
@@ -113400,7 +114201,7 @@ loc_6354C:                              ; CODE XREF: sub_63370+1A6↑j
                 sub     ax, 8
                 mov     word ptr byte_290FF+3, ax
                 mov     si, 0Eh
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 mov     cx, word ptr byte_290F1+7
                 sub     cx, 9
                 shr     cx, 1
@@ -113410,29 +114211,29 @@ loc_6354C:                              ; CODE XREF: sub_63370+1A6↑j
                 mov     dx, 0Fh
                 nop
 
-loc_63578:                              ; CODE XREF: sub_63370:loc_63586↓j
+loc_63578:                              ; CODE XREF: vdrv_openWindowImpl:loc_63586↓j
                 mov     si, dx
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 inc     dx
                 cmp     dx, 13h
                 jnz     short loc_63586
                 mov     dx, 0Fh
 
-loc_63586:                              ; CODE XREF: sub_63370+211↑j
+loc_63586:                              ; CODE XREF: vdrv_openWindowImpl+211↑j
                 loop    loc_63578
 
-loc_63588:                              ; CODE XREF: sub_63370+202↑j
+loc_63588:                              ; CODE XREF: vdrv_openWindowImpl+202↑j
                 mov     ax, word ptr byte_290F1+3
                 add     ax, word ptr byte_290F1+7
                 sub     ax, 8
                 mov     word ptr byte_290FF+1, ax
                 mov     si, 13h
-                call    sub_635D4
+                call    vdrv_drawFrameTile
                 mov     ax, word ptr byte_290FF+7
                 mov     word ptr byte_290FF+1, ax
                 mov     ax, word ptr byte_290FF+0Bh
                 mov     word ptr byte_290FF+3, ax
-                call    sub_61AF0
+                call    vdrv_selectTextColour
                 mov     ax, word_29218
                 or      ax, word_2921A
                 jz      short loc_635CA
@@ -113446,12 +114247,12 @@ loc_63588:                              ; CODE XREF: sub_63370+202↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_635CA:                              ; CODE XREF: sub_63370+241↑j
+loc_635CA:                              ; CODE XREF: vdrv_openWindowImpl+241↑j
                 stc
-                call    sub_6371C
+                call    vdrv_updateScreen
 
-loc_635CE:                              ; CODE XREF: sub_63370+12↑j
-                                        ; sub_63370+257↑j
+loc_635CE:                              ; CODE XREF: vdrv_openWindowImpl+12↑j
+                                        ; vdrv_openWindowImpl+257↑j
                 pop     di
                 pop     si
                 pop     es
@@ -113459,14 +114260,15 @@ loc_635CE:                              ; CODE XREF: sub_63370+12↑j
                 pop     ds
                 pop     bp
                 retf
-sub_63370       endp
+vdrv_openWindowImpl endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws the 8x8 window frame piece number si (module data at 37D2h, 64 bytes each, 0 = transparent) at the text cursor and advances the cursor by 8
 
-sub_635D4       proc near               ; CODE XREF: sub_63370+161↑p
-                                        ; sub_63370+178↑p ...
+vdrv_drawFrameTile proc near            ; CODE XREF: vdrv_openWindowImpl+161↑p
+                                        ; vdrv_openWindowImpl+178↑p ...
                 push    ds
                 push    cx
                 mov     ax, cs
@@ -113484,19 +114286,19 @@ sub_635D4       proc near               ; CODE XREF: sub_63370+161↑p
                 mov     bx, 8
                 nop
 
-loc_63602:                              ; CODE XREF: sub_635D4+3F↓j
+loc_63602:                              ; CODE XREF: vdrv_drawFrameTile+3F↓j
                 mov     cx, 8
                 nop
 
-loc_63606:                              ; CODE XREF: sub_635D4+38↓j
-                                        ; sub_635D4+45↓j
+loc_63606:                              ; CODE XREF: vdrv_drawFrameTile+38↓j
+                                        ; vdrv_drawFrameTile+45↓j
                 lodsb
                 or      al, al
                 jz      short loc_63618
                 stosb
                 loop    loc_63606
 
-loc_6360E:                              ; CODE XREF: sub_635D4+47↓j
+loc_6360E:                              ; CODE XREF: vdrv_drawFrameTile+47↓j
                 add     di, 138h
                 dec     bx
                 jnz     short loc_63602
@@ -113506,20 +114308,21 @@ loc_6360E:                              ; CODE XREF: sub_635D4+47↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_63618:                              ; CODE XREF: sub_635D4+35↑j
+loc_63618:                              ; CODE XREF: vdrv_drawFrameTile+35↑j
                 inc     di
                 loop    loc_63606
                 jmp     short loc_6360E
-sub_635D4       endp
+vdrv_drawFrameTile endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; target of vdrv_api_06: pops N windows: restores the saved background of the current window rectangle from the temp file (mm3.$$$) and the previous window state
 ; Attributes: bp-based frame
 
-sub_6361E       proc far                ; CODE XREF: vdrv_api_06↑j
+vdrv_closeWindowsImpl proc far          ; CODE XREF: vdrv_api_06↑j
 
 arg_0           = word ptr  6
 
@@ -113531,19 +114334,19 @@ arg_0           = word ptr  6
                 push    di
                 nop
 
-loc_63626:                              ; CODE XREF: sub_6361E+9A↓j
+loc_63626:                              ; CODE XREF: vdrv_closeWindowsImpl+9A↓j
                 dec     [bp+arg_0]
                 jns     short loc_6362E
                 jmp     loc_636C3
 ; ---------------------------------------------------------------------------
 
-loc_6362E:                              ; CODE XREF: sub_6361E+B↑j
-                dec     cs:word_60A00
+loc_6362E:                              ; CODE XREF: vdrv_closeWindowsImpl+B↑j
+                dec     cs:vdrv_winDepth
                 jns     short loc_63638
                 jmp     loc_636BC
 ; ---------------------------------------------------------------------------
 
-loc_63638:                              ; CODE XREF: sub_6361E+15↑j
+loc_63638:                              ; CODE XREF: vdrv_closeWindowsImpl+15↑j
                 call    sub_61534
                 push    bp
                 mov     ax, cs
@@ -113568,9 +114371,9 @@ loc_63638:                              ; CODE XREF: sub_6361E+15↑j
                 add     bx, 69Ch
                 nop
 
-loc_63678:                              ; CODE XREF: sub_6361E+78↓j
+loc_63678:                              ; CODE XREF: vdrv_closeWindowsImpl+78↓j
                 mov     dx, cs:[bx]
-                add     dx, cs:word_60A04
+                add     dx, cs:vdrv_winX
                 mov     cx, si
                 push    ds
                 push    bx
@@ -113588,8 +114391,8 @@ loc_63678:                              ; CODE XREF: sub_6361E+78↓j
                 jnz     short loc_63678
                 pop     bp
                 stc
-                call    sub_6371C
-                mov     si, cs:word_60A00
+                call    vdrv_updateScreen
+                mov     si, cs:vdrv_winDepth
                 mov     cl, 5
                 shl     si, cl
                 add     si, 0A22h
@@ -113605,10 +114408,10 @@ loc_63678:                              ; CODE XREF: sub_6361E+78↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_636BC:                              ; CODE XREF: sub_6361E+17↑j
-                mov     cs:word_60A00, 0
+loc_636BC:                              ; CODE XREF: vdrv_closeWindowsImpl+17↑j
+                mov     cs:vdrv_winDepth, 0
 
-loc_636C3:                              ; CODE XREF: sub_6361E+D↑j
+loc_636C3:                              ; CODE XREF: vdrv_closeWindowsImpl+D↑j
                 pop     di
                 pop     si
                 pop     es
@@ -113617,22 +114420,23 @@ loc_636C3:                              ; CODE XREF: sub_6361E+D↑j
                 assume ds:dseg
                 pop     bp
                 retf
-sub_6361E       endp
+vdrv_closeWindowsImpl endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; fills the text area (60A16..60A18 x 60A1A..60A1C) with the fill pattern word; the routine begins with clc, so the 'stc = whole window' variant below it is never reached
 
-sub_636CA       proc near               ; CODE XREF: vdrv_printTextEngine+1B7↑p
-                                        ; sub_63370+150↑p
+vdrv_fillTextArea proc near             ; CODE XREF: vdrv_printTextEngine+1B7↑p
+                                        ; vdrv_openWindowImpl+150↑p
                 clc
                 mov     ax, cs
                 mov     ds, ax
                 assume ds:vdrv
                 jnb     short loc_636E4
-                mov     si, word_60A04
+                mov     si, vdrv_winX
                 mov     dx, word_60A08
                 mov     bp, word_60A0A
                 mov     bx, word_60A06
@@ -113640,7 +114444,7 @@ sub_636CA       proc near               ; CODE XREF: vdrv_printTextEngine+1B7↑
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_636E4:                              ; CODE XREF: sub_636CA+5↑j
+loc_636E4:                              ; CODE XREF: vdrv_fillTextArea+5↑j
                 mov     si, word_60A16
                 mov     bx, word_60A1A
                 mov     dx, word_60A18
@@ -113648,14 +114452,14 @@ loc_636E4:                              ; CODE XREF: sub_636CA+5↑j
                 mov     bp, word_60A1C
                 sub     bp, bx
 
-loc_636F8:                              ; CODE XREF: sub_636CA+17↑j
+loc_636F8:                              ; CODE XREF: vdrv_fillTextArea+17↑j
                 shl     bx, 1
                 add     bx, 69Ch
                 mov     es, word_609F8
                 mov     ax, word_60A0E
                 nop
 
-loc_63706:                              ; CODE XREF: sub_636CA+4E↓j
+loc_63706:                              ; CODE XREF: vdrv_fillTextArea+4E↓j
                 mov     di, [bx]
                 add     di, si
                 mov     cx, dx
@@ -113667,16 +114471,17 @@ loc_63706:                              ; CODE XREF: sub_636CA+4E↓j
                 dec     bp
                 jnz     short loc_63706
                 retn
-sub_636CA       endp
+vdrv_fillTextArea endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; after drawing: copies the changed rectangle to the video memory, redraws the mouse cursor, and clears one of the update-region flags 60E6A (q) / 60E69 (k) / 60E68 (b) / 60E67 (d) (evidence: reads the code; only the flag clearing is visible in the screen buffer)
 
-sub_6371C       proc near               ; CODE XREF: vdrv_printTextEngine+404↑p
-                                        ; sub_61A1C+5A↑p ...
+vdrv_updateScreen proc near             ; CODE XREF: vdrv_printTextEngine+404↑p
+                                        ; vdrv_newLine+5A↑p ...
                 pushf
                 call    sub_614B2
                 cmp     cs:byte_60E6A, 0
@@ -113690,7 +114495,7 @@ sub_6371C       proc near               ; CODE XREF: vdrv_printTextEngine+404↑
                 jmp     loc_637C8
 ; ---------------------------------------------------------------------------
 
-loc_6373E:                              ; CODE XREF: sub_6371C+A↑j
+loc_6373E:                              ; CODE XREF: vdrv_updateScreen+A↑j
                 cmp     cs:byte_60E69, 0
                 jz      short loc_6375C
                 mov     cs:byte_60E69, 0
@@ -113703,7 +114508,7 @@ loc_6373E:                              ; CODE XREF: sub_6371C+A↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_6375C:                              ; CODE XREF: sub_6371C+28↑j
+loc_6375C:                              ; CODE XREF: vdrv_updateScreen+28↑j
                 cmp     byte ptr cs:word_60E67+1, 0
                 jz      short loc_6377A
                 mov     byte ptr cs:word_60E67+1, 0
@@ -113716,7 +114521,7 @@ loc_6375C:                              ; CODE XREF: sub_6371C+28↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_6377A:                              ; CODE XREF: sub_6371C+46↑j
+loc_6377A:                              ; CODE XREF: vdrv_updateScreen+46↑j
                 cmp     byte ptr cs:word_60E67, 0
                 jz      short loc_63798
                 mov     byte ptr cs:word_60E67, 0
@@ -113729,7 +114534,7 @@ loc_6377A:                              ; CODE XREF: sub_6371C+46↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_63798:                              ; CODE XREF: sub_6371C+64↑j
+loc_63798:                              ; CODE XREF: vdrv_updateScreen+64↑j
                 popf
                 jb      short loc_637B4
                 mov     ax, cs:word_60A16
@@ -113741,20 +114546,20 @@ loc_63798:                              ; CODE XREF: sub_6371C+64↑j
                 jmp     short loc_637C8
 ; ---------------------------------------------------------------------------
 
-loc_637B4:                              ; CODE XREF: sub_6371C+7D↑j
-                mov     ax, cs:word_60A04
+loc_637B4:                              ; CODE XREF: vdrv_updateScreen+7D↑j
+                mov     ax, cs:vdrv_winX
                 mov     bx, cs:word_60A06
                 mov     cx, cs:word_60A0A
                 mov     dx, cs:word_60A08
                 nop
 
-loc_637C8:                              ; CODE XREF: sub_6371C+1F↑j
-                                        ; sub_6371C+3D↑j ...
-                call    sub_62A14
+loc_637C8:                              ; CODE XREF: vdrv_updateScreen+1F↑j
+                                        ; vdrv_updateScreen+3D↑j ...
+                call    vdrv_waitRetrace
                 call    sub_62A2A
                 call    sub_61572
                 retn
-sub_6371C       endp
+vdrv_updateScreen endp
 
 ; ---------------------------------------------------------------------------
                 align 4
