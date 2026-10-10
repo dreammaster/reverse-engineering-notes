@@ -2889,15 +2889,21 @@ current directory to the file's when asked), posts the "ProgressLoad",
 + `UpdateVersionGame` (the short cascade of savegame fixes, fully reconstructed).
 `TGameControl`'s `_visionaire` is now a TVisionaireGame*.
 
-`UpdateVersion` (asm 1508677, 14000 lines, a cascade of fixes by file version) is only
-partly reconstructed: found by walking its control flow with the version fixed at 0xBA
-(tools/ scratch script, not kept), which leaves the steps every version gets - objects
+`UpdateVersion` (asm 1508677, 14000 lines, a cascade of fixes by file version) is cut into
+its parts with the scripts in tools/updateversion/ (a small interpreter of the `cmp version`
+chain: the instructions version V runs minus those V+1 runs are the fix numbered V). The order
+is: the fixes 0x63-0xAC (visionaireGameUpgrade.cpp, `applyVersionFixes`; each fix a function
+of the number, run if `version <= N`, oldest first), the steps every version gets - objects
 at (-1,-1) moved to their way system's first point, random TTValues rolled, the game's
 scroll distances derived from the window resolution and, unless the file was loaded in
 one go (type 2), mirrored animations rebuilt from their source, minimum pauses, and the
-"game needs a first character" check. The conversions of files below version 0xB9
-(and the rejection of < 99) are the missing part: such files get a log warning. If the
-game data turns out to be older than 0xB9 this needs the other branches.
+"game needs a first character" check - and last the fixes 0xB3-0xB8 (`applyLateVersionFixes`,
+run even for a type 2 load). The fix 0x9F is the only one that looks at the version itself
+(a file above 0x8E has the shadow translucency to convert). A fix reads fields that only
+exist for old files: they are in the record types only after `InitWithVersion(old)`, so a
+test must call that on a game before making the one it uses. Missing: the fix of 0x71 and
+the step of 0xB3 (see TODO.md); such files get a log warning, and < 99 are rejected as in
+the original.
 
 `TTAnimation::SetMirrored` and `TTValue::SetRandomValue` are written by hand
 (TTAnimation.cpp, TTValue.cpp; declared through tools/gen_records.py's EXTRA_METHODS).

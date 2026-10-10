@@ -97,6 +97,9 @@ public:
 	bool IsLinkRemovalSuppressed() const {
 		return _shuttingDown;
 	}
+	void SetLinkRemovalSuppressed(bool suppressed) {
+		_shuttingDown = suppressed;
+	}
 	void SetDirty() {
 		_modified = true;
 	}

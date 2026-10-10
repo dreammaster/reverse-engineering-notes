@@ -1,4 +1,5 @@
 #include "vstables/visionaireGame.h"
+#include "vstables/visionaireGameUpgrade.h"
 
 #include <EventHandler.h>
 
@@ -283,10 +284,11 @@ bool TVisionaireGame::UpdateVersionGame(int version) {
 	return true;
 }
 
-// Confirmed in part (asm lines 1508677-1523438, a 14000-line function): the
-// project upgrade. It is a cascade of fixes keyed to the file version; the
-// ones every version gets are reconstructed (read off the code path for the
-// current version, 0xBA, which no per-version fix applies to):
+// Confirmed (asm lines 1508677-1523438, a 14000-line function): the project upgrade. The code is
+// laid out as a chain of "if (version <= N) fix" for N from 0x63 up (the compiler threaded them into
+// one jump table of entries); the fixes of the file versions up to 0xAC are in visionaireGameUpgrade.cpp
+// and run first, oldest first. Then comes the part every version gets (read off the code path for
+// the current version, 0xBA, which no per-version fix applies to):
 //
 //  - a TTObject at the "unset" position (-1, -1) that isn't an item is put at
 //    the first point of its scene's current way system;
@@ -295,12 +297,15 @@ bool TVisionaireGame::UpdateVersionGame(int version) {
 //  - (unless `allAtOnce`) every animation with a mirror link takes over that
 //    animation's content, marked mirrored, and gets a minimum pause; the
 //    "set an item" action parts get a minimum int; and a game that has scenes
-//    must have a first character.
+//    must have a first character;
 //
-// NOT reconstructed: the fixes for file versions below 0xB9 (the file carries
-// their version numbers 0x63-0xB8: a long series of conversions of older
-// projects). Such a file is accepted as it is, with a warning in the log; and
-// games older than version 99 are rejected as in the original.
+// and last the fixes for the file versions 0xB3-0xB8 (the smooth scrolling and the steps of the walk).
+//
+// NOT reconstructed: the upgrade step of version 0x71 (about 1300 lines of the asm), and the step of
+// version 0xB3 (it makes the lists of the files an editor packs into its containers, the
+// kGameContainers/kGameBuildRules settings that only the editor's build reads). A file that old is
+// accepted without them, with a warning in the log; and games older than version 99 are rejected as in
+// the original.
 bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 	TVList list;
 	TVisObjRef game = GetGame();
@@ -311,8 +316,8 @@ bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 		return false;
 	}
 
-	if (version < 0xB9 && wxLog::loglevel >= 0)
-		wxLog::logexpanded(L"TVisionaireGame::UpdateVersion: the upgrade steps for version %d are not reconstructed", version);
+	if (version <= 0xAC)
+		applyVersionFixes(*this, version);
 
 	// objects
 	GetList(6, list, false);
@@ -351,8 +356,10 @@ bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 	game.SetValue(kGameHorizontalScrollDistance, horizontal, TSendEventEnum::kNoEvent);
 	game.SetValue(kGameVerticalScrollDistance, vertical, TSendEventEnum::kNoEvent);
 
-	if (allAtOnce)
+	if (allAtOnce) {
+		applyLateVersionFixes(*this, version);
 		return true;
+	}
 
 	// animations that mirror another one
 	GetList(9, list, false);
@@ -395,5 +402,6 @@ bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 		return false;
 	}
 
+	applyLateVersionFixes(*this, version);
 	return true;
 }

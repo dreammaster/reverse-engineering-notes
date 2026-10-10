@@ -196,6 +196,60 @@ void TTDialogPart::OnCreate(TVisionaireObject *object) {
 void TTDialogPart::OnInit(TVisionaireObject *object) {
 }
 
+// Confirmed (TTDialogPart::GenerateName(), asm lines 1465352-1465760): the position (counted from 1)
+// of each dialog part on the way up, as "n.", the outermost first, a space, and the text of the
+// part - when it is longer than 80 characters, its first 77 and "...".
+wxString TTDialogPart::GenerateName() const {
+	std::wstring name;
+	TVisObjRef child(*this);
+	TVisObjRef parent = GetParent();
+
+	while (!parent.IsEmpty()) {
+		const int table = parent.GetId()[3];
+
+		if (table != 11 && table != 12)
+			break;
+
+		if (table == 12) {
+			child = parent;
+		} else {
+			TVList parts;
+			int position = 0;
+
+			parent.GetLinks(kDialogDialogParts, TypeOrder::kValue1, parts);
+
+			for (TVisionaireObject *part : parts) {
+				position++;
+
+				if (TVisObjRef(part) == child) {
+					wchar_t number[16];
+
+					swprintf(number, 16, L"%d.", position);
+					name = number + name;
+					break;
+				}
+			}
+		}
+
+		parent = parent.GetParent();
+	}
+
+	name += L" ";
+
+	TTText text(GetLink(kDialogPartText));
+
+	if (!text.IsEmpty()) {
+		std::wstring line = text.GetTextString().ToStdWstring();
+
+		if (line.size() > 0x50)
+			line = line.substr(0, 0x4D) + L"...";
+
+		name += line;
+	}
+
+	return wxString(name);
+}
+
 void TTEvent::OnCreate(TVisionaireObject *object) {
 }
 

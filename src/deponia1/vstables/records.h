@@ -211,6 +211,10 @@ public:
 	explicit TTDialogPart(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}
 
+	/** The name an editor gives the part: the position of each dialog part on the way to it ("1.2."),
+	 *  then the start of its text. */
+	wxString GenerateName() const;
+
 	static TTypeGroup &GetTypeGroup();
 	static void InitType(int versionLow, int versionHigh);
 	static void OnCreate(TVisionaireObject *object);
