@@ -1944,11 +1944,9 @@ std::list<TGInterface *> TGameControl::GetAllInterfaces() const {
 }
 
 bool TGameControl::InitCharacters() {
-	// Confirmed (asm lines 466201-466735). Field id 0x137 (a character's
-	// scene link), 0xDE (walk speed, default 0x10E when unset), 0x153 (a
-	// start position), 0x12F (the game's starting-character link), 0x1D4/
-	// 0x263/0x205/0x262 (matching ChangeCharacter/SetCharacterActiveCommand's
-	// field ids) are all unresolved.
+	// Confirmed (asm lines 466201-466735): every character is put in the scene of its start object (kCharacterStartObject), at
+	// the place (kObjectPosition) and with the direction (kObjectDirection, 0x10E when unset) of that object; the character
+	// the game starts with (kGameFirstCharacter) becomes the current one.
 	TVList characterList;
 	_visionaire->GetList(0, characterList, false);
 	if (characterList.empty()) {
@@ -1958,17 +1956,19 @@ bool TGameControl::InitCharacters() {
 	}
 
 	for (TVisionaireObject *object : characterList) {
+		// (the place and the direction are those of the object the character starts at, not of the character)
 		TVisObjRef ref(object);
-		TVisObjRef parent = ref.GetLink(kCharacterStartObject).GetParent();
+		TVisObjRef startObject = ref.GetLink(kCharacterStartObject);
+		TVisObjRef parent = startObject.GetParent();
 		THCharacter *character = new THCharacter(ref, parent);
 
-		wxPoint pos = *ref.GetPoint(kObjectPosition);
-		int walkSpeed = ref.GetInt(kObjectDirection);
-		if (walkSpeed == -1)
-			walkSpeed = 0x10E;
+		wxPoint pos = *startObject.GetPoint(kObjectPosition);
+		int direction = startObject.GetInt(kObjectDirection);
+		if (direction == -1)
+			direction = 0x10E;
 
 		character->Init();
-		character->AssignToScene(parent, pos, walkSpeed);
+		character->AssignToScene(parent, pos, direction);
 
 		_characters.push_back(character);
 		_charactersByHash[PackVisId(character->GetRef().GetId())] = character;
