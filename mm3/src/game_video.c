@@ -254,6 +254,17 @@ void host_vdrv_0F_fade(Cpu *c) {
 	fade_level = in ? 16 : (headless ? 16 : 0);
 	video_present();
 }
+/* _main after the intro: the title picture (control.raw) is put on the black screen and faded in; titleMenu(0) then opens its windows over it */
+void video_show_title(void) {
+	uint32_t size = 0;
+	uint16_t seg = game_load_resource("control.raw", &size);
+	if (!seg) return;
+	fade_level = headless ? 16 : 0;
+	memcpy(SCREEN_MEM, SEGP(seg), size < 64000 ? size : 64000);
+	dos_free(seg);
+	video_present();
+	if (!headless) for (int i = 0; i <= 16; i++) { fade_level = i; video_present(); SDL_Delay(20); video_pump_events(); }
+}
 void host_vdrv_03_hideMouse(Cpu *c) { (void)c; cursor_on = 0; }
 void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg = host_arg(c, 2); cursor_on = 1; }
 /* The original's getMouse waits for the vertical retrace (70 Hz) before it returns: the game's delay loops (`getMouse` N times) rely on that
@@ -294,7 +305,7 @@ int video_init(int headless_mode) {
 	return 0;
 }
 
-/* vdrv_2A_starfield: one frame of the intro's particle effect.  A 75-particle field bursts out of the screen centre
+/* vdrv_2A_introFrame: one frame of the intro's particle effect.  A 75-particle field bursts out of the screen centre
  * (positions/velocities are 16-bit fixed point, >>6 gives the pixel; velocity grows by 1/16 per frame, a particle is
  * respawned when it leaves 5000h x 3200h or its colour has faded to the target), then the draw list passed in is drawn on top.
  * Arguments: far pointer to the draw list.  The original seeds respawns from the DOS clock; here: a small LCG. */
@@ -303,7 +314,7 @@ static struct { int16_t x, vx, y, vy; uint8_t col, target; } stars[NSTARS];
 static unsigned star_rng = 12345, star_parity;
 static int star_rand(void) { star_rng = star_rng * 1103515245u + 12345u; return (int)(star_rng >> 16); }
 
-void host_vdrv_2A_starfield(Cpu *c) {
+void host_vdrv_2A_introFrame(Cpu *c) {
 	static const uint8_t cols[4] = { 0x1F, 0x1F, 0x9F, 0xDF };
 	unsigned list = host_arg(c, 0);
 	star_parity ^= 1;

@@ -1862,7 +1862,7 @@ loc_14D50:                              ; CODE XREF: seg001:015D↑j
 
 loc_14D6F:                              ; CODE XREF: seg001:01AC↓j
                 push    word ptr [bp-6]
-                call    far ptr sub_28280
+                call    far ptr j_titleMenu
                 pop     cx
                 mov     word ptr [bp-6], 1
 
@@ -35092,7 +35092,7 @@ getFiles        endp
 ; Attributes: bp-based frame
 
 loadMonsterData proc far                ; CODE XREF: sub_15006+9↑P
-                                        ; sub_45431+15↓P
+                                        ; titleMenu+15↓P
                 push    bp
                 mov     bp, sp
                 push    ds
@@ -36898,15 +36898,7 @@ sub_2827B       proc far
                 jmp     sub_43DC8
 sub_2827B       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: thunk
-
-sub_28280       proc near               ; CODE XREF: seg001:0192↑P
-                jmp     far ptr sub_45431
-sub_28280       endp
-
+; [00000005 BYTES: COLLAPSED FUNCTION j_titleMenu. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -41408,8 +41400,8 @@ aSSSSSSS        db '%s%s%s%s%s%s%s',0   ; DATA XREF: buildActiveEffects+177↓o
                 db 7, 4, 8, 5, 9, 8, 3 dup(9), 1, 4, 2, 6, 4, 7, 6, 0Ah
                 db 9, 3 dup(0Dh), 0, 9, 0, 1, 10h, 1Fh, 29h, 33h, 3Dh
                 db 0, 0Fh, 1Eh, 28h, 32h, 3Ch, 4Bh, 2 dup(0FFh)
-word_2BE82      dw 0                    ; DATA XREF: sub_45431+7B↓w
-word_2BE84      dw 0                    ; DATA XREF: sub_45431+78↓w
+word_2BE82      dw 0                    ; DATA XREF: titleMenu+7B↓w
+word_2BE84      dw 0                    ; DATA XREF: titleMenu+78↓w
                 db 0Ah, 0, 12h, 5 dup(0), 0Ah, 0, 2Bh, 3 dup(0), 2, 0
                 db 2 dup(0FFh), 4 dup(0), 5Dh, 0, 5Dh, 0, 2 dup(0FFh)
                 db 55h, 6Eh, 2 dup(86h), 2 dup(14h), 6Dh, 61h, 7Ah, 65h
@@ -43599,7 +43591,7 @@ word_2DFA0      dw 780Dh                ; DATA XREF: learnSpellDialog+21E↓r
                 db 45h, 78h, 4Ah, 78h, 51h, 78h, 59h, 78h, 60h, 78h, 67h
                 db 78h, 6Dh, 78h, 76h, 78h, 7Bh, 78h, 81h, 78h, 87h, 78h
                 db 8Bh, 78h, 97h, 78h, 0A3h, 78h, 0B1h, 78h
-word_2DFC0      dw 78B9h                ; DATA XREF: sub_45431+D2↓r
+word_2DFC0      dw 78B9h                ; DATA XREF: titleMenu+D2↓r
 ; char *path
 path            dw offset aMm3Cur       ; DATA XREF: openAndLoadCc+1A↑r
                                         ; openAndLoadCc+2D↑r ...
@@ -79036,9 +79028,10 @@ sub_453C5       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; title screen and main menu (arg 0 = first call from _main: copyright dialogs then the menu with the two buttons; arg 1 = after exploreLoop returned: the menu again); _main loops titleMenu, then rosterMenu + exploreLoop (repeat while exploreLoop returns 2) (evidence: _main at 14D6F, reads the code)
 ; Attributes: bp-based frame
 
-sub_45431       proc near               ; CODE XREF: sub_28280↑J
+titleMenu       proc near               ; CODE XREF: j_titleMenu↑J
 
 buffer          = byte ptr -88h
 var_4           = word ptr -4
@@ -79055,7 +79048,7 @@ arg_2           = word ptr  6
                 jnz     short loc_4544B
                 call    loadMonsterData
 
-loc_4544B:                              ; CODE XREF: sub_45431+13↑j
+loc_4544B:                              ; CODE XREF: titleMenu+13↑j
                 or      di, di
                 jz      short loc_4548F
                 call    vdrv_03_hideMouse
@@ -79066,11 +79059,11 @@ loc_4544B:                              ; CODE XREF: sub_45431+13↑j
                 jmp     short loc_45465
 ; ---------------------------------------------------------------------------
 
-loc_45461:                              ; CODE XREF: sub_45431+28↑j
+loc_45461:                              ; CODE XREF: titleMenu+28↑j
                 push    ds
                 mov     ax, 3AE1h
 
-loc_45465:                              ; CODE XREF: sub_45431+2E↑j
+loc_45465:                              ; CODE XREF: titleMenu+2E↑j
                 push    ax
                 call    vdrv_0C_showRaw
                 pop     cx
@@ -79089,7 +79082,7 @@ loc_45465:                              ; CODE XREF: sub_45431+2E↑j
                 call    vdrv_27_setCursor
                 add     sp, 6
 
-loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
+loc_4548F:                              ; CODE XREF: titleMenu+1C↑j
                 push    ds
                 mov     ax, 3AEDh
                 push    ax
@@ -79138,7 +79131,7 @@ loc_4548F:                              ; CODE XREF: sub_45431+1C↑j
                 jmp     short loc_4554C
 ; ---------------------------------------------------------------------------
 
-loc_45502:                              ; CODE XREF: sub_45431+A0↑j
+loc_45502:                              ; CODE XREF: titleMenu+A0↑j
                 push    ds
                 push    word_2DFC0
                 mov     ax, 6
@@ -79166,7 +79159,7 @@ loc_45502:                              ; CODE XREF: sub_45431+A0↑j
                 call    far ptr j_exitGame
 ; ---------------------------------------------------------------------------
 
-loc_4553F:                              ; CODE XREF: sub_45431+107↑j
+loc_4553F:                              ; CODE XREF: titleMenu+107↑j
                 push    ss
                 lea     ax, [bp+buffer]
                 push    ax
@@ -79174,13 +79167,13 @@ loc_4553F:                              ; CODE XREF: sub_45431+107↑j
                 pop     cx
                 pop     cx
 
-loc_4554C:                              ; CODE XREF: sub_45431+CF↑j
+loc_4554C:                              ; CODE XREF: titleMenu+CF↑j
                 mov     word_34C12, 37ACh
                 mov     word_34C14, 37B2h
                 mov     word_34C16, 37B4h
                 mov     word_34C18, 37B6h
 
-loc_45564:                              ; CODE XREF: sub_45431+14F↓j
+loc_45564:                              ; CODE XREF: titleMenu+14F↓j
                                         ; ovl07:2048↓j ...
                 call    getCommand
                 mov     si, ax
@@ -79188,7 +79181,7 @@ loc_45564:                              ; CODE XREF: sub_45431+14F↓j
                 mov     cx, 5
                 mov     bx, 21CDh
 
-loc_45574:                              ; CODE XREF: sub_45431+14D↓j
+loc_45574:                              ; CODE XREF: titleMenu+14D↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_4]
                 jz      short loc_45582
@@ -79198,9 +79191,9 @@ loc_45574:                              ; CODE XREF: sub_45431+14D↓j
                 jmp     short loc_45564
 ; ---------------------------------------------------------------------------
 
-loc_45582:                              ; CODE XREF: sub_45431+149↑j
+loc_45582:                              ; CODE XREF: titleMenu+149↑j
                 jmp     word ptr cs:[bx+0Ah]
-sub_45431       endp
+titleMenu       endp
 
 ; ---------------------------------------------------------------------------
                 mov     ax, 3B45h

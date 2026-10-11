@@ -14104,6 +14104,7 @@ static Bytes_2(void) {
 	set_name	(0X28276,	"j_dismissCharacter");
 	create_insn	(0X2827B);
 	create_insn	(0X28280);
+	set_name	(0X28280,	"j_titleMenu");
 	create_insn	(0X28285);
 	create_insn	(0X2828A);
 	create_insn	(0X2828F);
@@ -14669,8 +14670,6 @@ static Bytes_2(void) {
 	make_array	(0X28BE0,	0X107);
 	create_word	(0X28CE7);
 	create_word	(0X28CE9);
-	create_word	(0X28CEB);
-	create_word	(0X28CED);
 }
 
 //------------------------------------------------------------------------
@@ -14680,6 +14679,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X28CEB);
+	create_word	(0X28CED);
 	create_word	(0X28CEF);
 	create_byte	(0X28CF1);
 	make_array	(0X28CF1,	0X2);
@@ -17915,9 +17916,6 @@ static Bytes_3(void) {
 	set_cmt	(0X3732E,	"word (+354h) (action 73)",	0);
 	create_word	(0X3732E);
 	set_name	(0X3732E,	"Party_coldResist");
-	set_cmt	(0X37330,	"word (+356h) (action 17)",	0);
-	create_word	(0X37330);
-	set_name	(0X37330,	"Party_poisonResist");
 }
 
 //------------------------------------------------------------------------
@@ -17927,6 +17925,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X37330,	"word (+356h) (action 17)",	0);
+	create_word	(0X37330);
+	set_name	(0X37330,	"Party_poisonResist");
 	set_cmt	(0X37332,	"word, minutes into the day",	0);
 	create_word	(0X37332);
 	set_name	(0X37332,	"Party_minutes");
@@ -22420,12 +22421,6 @@ static Bytes_4(void) {
 	set_cmt	(0X3F54F,	"buffer",	0);
 	create_insn	(x=0X3F555);
 	op_hex		(x,	1);
-	set_cmt	(0X3F55B,	"jumptable 0003F4CF case 7",	1);
-	create_insn	(0X3F55B);
-	create_insn	(x=0X3F55F);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X3F567);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -22435,6 +22430,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X3F55B,	"jumptable 0003F4CF case 7",	1);
+	create_insn	(0X3F55B);
+	create_insn	(x=0X3F55F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X3F567);
+	op_hex		(x,	1);
 	create_insn	(x=0X3F56A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3F572);
@@ -26980,6 +26981,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X45424);
 	op_stkvar	(x,	1);
 	create_insn	(0X45431);
+	set_name	(0X45431,	"titleMenu");
 	create_insn	(x=0X45434);
 	op_hex		(x,	1);
 	create_insn	(x=0X4543A);
@@ -28020,9 +28022,6 @@ static Bytes_5(void) {
 	create_insn	(0X46BDD);
 	set_cmt	(0X46BDF,	"jumptable 00046B49 case 9",	1);
 	create_insn	(0X46BDF);
-	create_insn	(0X46BFA);
-	set_cmt	(0X46C00,	"jumptable 00046B49 default case",	1);
-	set_name	(0X46C00,	"def_46B49");
 }
 
 //------------------------------------------------------------------------
@@ -28032,6 +28031,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(0X46BFA);
+	set_cmt	(0X46C00,	"jumptable 00046B49 default case",	1);
+	set_name	(0X46C00,	"def_46B49");
 	create_insn	(0X46C09);
 	set_cmt	(0X46C0D,	"jump table for switch statement",	0);
 	create_word	(x=0X46C0D);
@@ -33077,12 +33079,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4E753);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4E756);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4E75C);
-	op_stkvar	(x,	0);
-	set_cmt	(0X4E761,	"int",	0);
-	set_cmt	(0X4E763,	"__int32",	0);
 }
 
 //------------------------------------------------------------------------
@@ -33092,6 +33088,12 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4E756);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4E75C);
+	op_stkvar	(x,	0);
+	set_cmt	(0X4E761,	"int",	0);
+	set_cmt	(0X4E763,	"__int32",	0);
 	create_insn	(x=0X4E764);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4E767,	"char",	0);
@@ -38833,7 +38835,7 @@ static Functions_0(void) {
 	set_func_flags(0X2827B,0x5482);
 	set_frame_size(0X2827B, 0, 0, 0);
 	add_func    (0X28280,0X28285);
-	set_func_flags(0X28280,0x1480);
+	set_func_flags(0X28280,0x14c0);
 	add_func    (0X28285,0X2828A);
 	set_func_flags(0X28285,0x5482);
 	set_frame_size(0X28285, 0, 0, 0);
@@ -39883,6 +39885,7 @@ static Functions_1(void) {
 	define_local_var(0X453C5, 0X45431, "[bp-0X12]", "buffer");
 	add_func    (0X45431,0X45586);
 	set_func_flags(0X45431,0x1410);
+	set_func_cmt(0X45431,	"title screen and main menu (arg 0 = first call from _main: copyright dialogs then the menu with the two buttons; arg 1 = after exploreLoop returned: the menu again); _main loops titleMenu, then rosterMenu + exploreLoop (repeat while exploreLoop returns 2) (evidence: _main at 14D6F, reads the code)", 0);
 	set_frame_size(0X45431, 0X8C, 2, 0);
 	define_local_var(0X45431, 0X45586, "[bp-0X88]", "buffer");
 	add_func    (0X45790,0X45A4A);

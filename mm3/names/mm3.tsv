@@ -749,3 +749,4 @@ D62	EQUIP_FORBID	byte per item id: bit (class-2) set = that class cannot equip (
 332DC	songBuffer	far pointer (word_332DC/word_332DE) to the 1890h-byte buffer the song files are loaded into (allocated by _main)
 28848	sfxDeviceAvailable	byte: sound effects available
 28849	musicDeviceAvailable	byte: music available (startSong and loadAndPlaySong test it)
+45431	titleMenu	title screen and main menu (arg 0 = first call from _main: copyright dialogs then the menu with the two buttons; arg 1 = after exploreLoop returned: the menu again); _main loops titleMenu, then rosterMenu + exploreLoop (repeat while exploreLoop returns 2) (evidence: _main at 14D6F, reads the code)

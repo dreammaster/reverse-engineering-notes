@@ -144,18 +144,18 @@ int sound_init(int headless) {
 }
 
 /* hosts for the driver's API wrappers (seg009 of the executable): API 0 init, 3 restore, 6 music, 9 effect, 0Ch sample */
-void host_sub_2693F(Cpu *c) { c->ax = drv_call(0, (uint16_t[]){ host_arg(c, 0) }, 1); }
-void host_sub_26952(Cpu *c) { c->ax = drv_call(3, NULL, 0); }
-void host_sub_26965(Cpu *c) { c->ax = drv_call(6, (uint16_t[]){ host_arg(c, 0), host_arg(c, 1) }, 2); }
+void host_soundDriverInit(Cpu *c) { c->ax = drv_call(0, (uint16_t[]){ host_arg(c, 0) }, 1); }
+void host_soundDriverRestore(Cpu *c) { c->ax = drv_call(3, NULL, 0); }
+void host_soundDriverMusic(Cpu *c) { c->ax = drv_call(6, (uint16_t[]){ host_arg(c, 0), host_arg(c, 1) }, 2); }
 /* effect id, or 0FFFFh = read the tick counter (the intro and the copy-protection delays wait on it, so a query also lets time pass
  * when there is no audio thread) */
-void host_soundDriverPlay(Cpu *c) {
+void host_soundDriverCall(Cpu *c) {
 	uint16_t id = host_arg(c, 0);
 	if (id == 0xFFFF) sound_pump(headless_mode);
 	c->ax = drv_call(9, (uint16_t[]){ id }, 1);
 }
 /* API 0Ch: (offset, segment, length) starts a sample, (0, 0, 0) stops it, (1, 0, 0) returns non-zero while one is playing */
-void host_sub_2698B(Cpu *c) {
+void host_soundDriverSample(Cpu *c) {
 	uint16_t off = host_arg(c, 0), seg = host_arg(c, 1), len = host_arg(c, 2);
 	if (dev) SDL_LockAudioDevice(dev);
 	if (seg) {
