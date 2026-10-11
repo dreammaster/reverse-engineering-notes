@@ -24,10 +24,13 @@ copy C:\sdk\SDL2-2.32.10in\SDL2.dll .   &  mkdir build   (for tests/gamefuzz2.s
 Report any line that says MISMATCH, any `rc=` line from the fuzz scripts, or a build error.
 
 ## 1. Start-up  (`./mm3game ../data`)
-- [ ] Window opens, resizable, **4:3 shape** (320x200 picture stretched like a DOS monitor); `MM3_SQUARE=1` gives square pixels.
-- [ ] Alt+Enter and F11 toggle full screen and back; the picture stays sharp and keeps its aspect.
-- [ ] With `--intro`: intro animation (starfield, title) runs at a believable speed, not too fast/slow; no flicker or garbage.
-- [ ] Roster/save-slot menu appears; with no save a new game from MM3.CUR is created (`./mm3-saves/SAVE00.MM3`).
+In a window the full original flow runs: intro (with the digital speech), title picture, copyright dialog, the "Might and Magic III Options" menu
+(Start a New Game / Load a Saved Game), then the roster menu and the game.  Flags: `--nointro`, `--notitle` (straight into the current save),
+`--title` (play the title menu in headless test runs, which skip it by default).
+- [ ] Window opens, resizable, **4:3 shape**; `MM3_SQUARE=1` gives square pixels.  Alt+Enter and F11 toggle full screen.
+- [ ] Intro: starfield, title, speech scenes and credits at a believable speed; no flicker or garbage.
+- [ ] Title menu: Start a New Game asks for a name and lists it afterwards in Load a Saved Game; Esc / Ctrl-Q leave.
+- [ ] A saved game loads (title menu and the control panel's Load, which returns to the title menu); saves are in `./mm3-saves`.
 - [ ] `data/MM3.CUR` is **not** modified (check `git status` afterwards).
 
 ## 2. Mouse and keyboard
