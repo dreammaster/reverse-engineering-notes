@@ -171,6 +171,11 @@ static const char *shot_path;
 void video_set_shot(const char *path) { shot_path = path; }
 
 static void headless_finish(void) {
+	if (getenv("MM3_DUMPMON")) { /* debugging: the party and the monsters near it */
+		int px = DG[0xE8F5], py = DG[0xE8F6];
+		fprintf(stderr, "countdown 2886F=%u engine mode %u 2884C=%u\n", DG[0x17F], DG[0xC520], DG[0x15C]); fprintf(stderr, "party map %u at %d,%d facing %u\n", DG[0xE8F7], px, py, DG[0xE8F4]);
+		for (unsigned i = 0; i < DG[0xED72]; i++) { int x = rd16(DG, 0xAEC4 + 2 * i), y = rd16(DG, 0xAD70 + 2 * i); if (abs(x - px) < 8 && abs(y - py) < 8) fprintf(stderr, "  monster %u id %u at %d,%d hp %u state %u active %u\n", i, rd16(DG, 0xB6BC + 2 * i), x, y, rd16(DG, 0xB414 + 2 * i), rd16(DG, 0xB810 + 2 * i), rd16(DG, 0xB2C0 + 2 * i)); }
+	}
 	if (shot_path) video_save_bmp(shot_path);
 	fprintf(stderr, "headless run finished (the game is waiting for input)\n");
 	exit(0);
@@ -221,6 +226,15 @@ void host_vdrv_1E_openWindow(Cpu *c) {
 void host_vdrv_2D_printText(Cpu *c) {
 	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fprintf(stderr, " [col %u gl %02X %02X %02X]", G.ui->win.colour, G.ui->glyph_colours[1], G.ui->glyph_colours[2], G.ui->glyph_colours[3]); fputc('\n', stderr); }
 	mm3_ui_print(G.ui, far_str(c, 0));
+	/* The original drew straight into video memory, so every redraw of the 3D view (05h + D66Eh) was visible at once and, on a PC of the time, took
+	 * a few tens of milliseconds: the projectile animations of shooting and spells are just a series of such redraws.  Show each view redraw and pace them. */
+	if (!headless && strstr(far_str(c, 0), "\005" "D66E")) {
+		static Uint32 last;
+		Uint32 now = SDL_GetTicks();
+		if (now - last < 40) SDL_Delay(40 - (now - last));
+		video_present(); video_pump_events();
+		last = SDL_GetTicks();
+	}
 }
 
 void host_vdrv_21_loadSprites(Cpu *c) { /* name far -> far pointer of the loaded resource in dx:ax */
