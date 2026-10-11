@@ -11,7 +11,7 @@ is loaded into the database as segment `vdrv` (`60000h`, `ida_scripts/load_drive
 
 | Offset | Wrapper | Role (from the code of each entry) |
 |---|---|---|
-| `00h` | `vdrv_00_transition` | copies the screen to a buffer and installs a far-pointer callback (screen transitions) |
+| `00h` | `vdrv_00_transition` | draws the list given as argument into an off-screen copy of the screen, waits for the retrace and copies the result over the screen in one go (VGA): no visible effect, so "screens just appear" is the original behaviour too |
 | `03h` | `vdrv_03_hideMouse` | hide the cursor |
 | `06h` | `vdrv_06_closeWindows` | pop N windows of the 7-deep window stack, restoring the saved background |
 | `09h` | -- | `retf` (unused) |

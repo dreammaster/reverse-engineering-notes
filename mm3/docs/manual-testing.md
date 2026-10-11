@@ -68,7 +68,7 @@ Report any line that says MISMATCH, any `rc=` line from the fuzz scripts, or a b
 - [ ] Optional: `MM3_WAV=out.wav ./mm3game ../data --intro` dumps the audio so you can send or compare it.
 
 ## 9. Known gaps (do not report as bugs)
-Digital-sample drivers, PC-speaker/Roland music, rhythm-mode drums, the screen-transition effect (`vdrv_00`: screens just appear), the
+PC-speaker/Roland music, rhythm-mode drums (the intro's digital speech *is* played now), the
 original copy-protection/`_main` start-up (replaced by `game_main.c`), cycle-exact OPL.
 
 ## What to send back
