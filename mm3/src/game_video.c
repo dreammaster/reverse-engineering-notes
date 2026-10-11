@@ -173,7 +173,7 @@ void video_set_shot(const char *path) { shot_path = path; }
 static void headless_finish(void) {
 	if (getenv("MM3_DUMPMON")) { /* debugging: the party and the monsters near it */
 		int px = DG[0xE8F5], py = DG[0xE8F6];
-		fprintf(stderr, "countdown 2886F=%u engine mode %u 2884C=%u\n", DG[0x17F], DG[0xC520], DG[0x15C]); fprintf(stderr, "party map %u at %d,%d facing %u\n", DG[0xE8F7], px, py, DG[0xE8F4]);
+		{ fprintf(stderr, "rows 34B92..34B9A:"); for (int k = 0xC4A2; k < 0xC4AB; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, " | 32E37..:"); for (int k = 0xA747; k < 0xA750; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, " | 32E60..:"); for (int k = 0xA770; k < 0xA77A; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, "\n"); } fprintf(stderr, "countdown 2886F=%u engine mode %u 2884C=%u\n", DG[0x17F], DG[0xC520], DG[0x15C]); fprintf(stderr, "party map %u at %d,%d facing %u\n", DG[0xE8F7], px, py, DG[0xE8F4]);
 		for (unsigned i = 0; i < DG[0xED72]; i++) { int x = rd16(DG, 0xAEC4 + 2 * i), y = rd16(DG, 0xAD70 + 2 * i); if (abs(x - px) < 8 && abs(y - py) < 8) fprintf(stderr, "  monster %u id %u at %d,%d hp %u state %u active %u\n", i, rd16(DG, 0xB6BC + 2 * i), x, y, rd16(DG, 0xB414 + 2 * i), rd16(DG, 0xB810 + 2 * i), rd16(DG, 0xB2C0 + 2 * i)); }
 	}
 	if (shot_path) video_save_bmp(shot_path);

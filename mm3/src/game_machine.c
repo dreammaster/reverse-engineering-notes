@@ -168,7 +168,7 @@ void host_dosAllocOrDie(Cpu *c) {
 	c->ax = seg;
 }
 void host_allocFar(Cpu *c) { uint16_t seg = dos_alloc(host_arg(c, 0)); c->dx = seg; c->ax = 0; }
-void host_MemFree(Cpu *c) { (void)c; wr16(DG, 0x1B7, 0xFFF); /* word_28873: free paragraphs / 64: plenty */ }
+void host_MemFree(Cpu *c) { (void)c; wr16(DG, 0x183, 0xFFF); /* word_28873: free paragraphs / 64: plenty */ }
 
 /* ---- C runtime (Borland helper routines: register or stack conventions as noted) */
 void host_LXMUL_AT(Cpu *c) { uint32_t r = (((uint32_t)c->dx << 16) | c->ax) * (((uint32_t)c->cx << 16) | c->bx); c->ax = (uint16_t)r; c->dx = (uint16_t)(r >> 16); }
