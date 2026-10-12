@@ -343,3 +343,17 @@ timed delays. Everything else in the handlers is per-object conditionals over th
 
 Other helpers identified along the way: `move_to_current_room?`, `value_in_list?`,
 `load_pic_sequence?`, `journal_*`. The journal table is `_journal_table` (22-byte records).
+
+## 9. Video modes and handler classes (sixth pass)
+
+**Video**: `graphics_mode(n)` accepts 3 and 5 only. Mode 3 = BIOS mode 13h, 320x200x256
+(`_video_pitch` 320); **mode 5 = VESA 0x101, 640x480x256** (`_video_pitch` 0x280; via
+`VESA_set_mode(0x101)`, else "ERROR: Unable to establish VESA graphics"). `startup` always calls
+`graphics_mode(5)`. The main picture viewport is **528x293** (0x210 x 0x125) in mode 5
+(264x122 in mode 3). INI keys `XMOUSE` and `NOCYCLE` (disable palette cycling).
+
+**Handler classes** (`retail_handler_features.tsv`, 715 handler functions = 637 object + 78
+verb): 403 only print text (wprintf/print_obj, no state change), 274 change state (flags, object
+moves, room changes, journal, score, combat, cutscenes), 26 are tiny stubs, 12 other. So
+~56 % of the content logic is pure message selection; the remaining ~44 % is the part a
+port must get exactly right.
