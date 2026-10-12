@@ -154,3 +154,8 @@ def main():
 
 
 main()
+
+# Headless (idat) has no interactive loop; exit explicitly. Leave the GUI open.
+import ida_kernwin
+if not ida_kernwin.is_idaq():
+    idc.qexit(0)

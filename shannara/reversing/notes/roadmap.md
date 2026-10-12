@@ -86,14 +86,18 @@ runtime behavior in this binary."
    IDA session — was open during this pass). Picture decoding is now fully
    unblocked for reimplementation. Encoder side (`CXBUF2BUFCOMPRESS` etc.)
    left untraced — only matters if the port ever needs to *write* the format.
-2. **Check `..\Shannara.idb` vs. the demo IDB** — establish whether it's the
-   full game and whether structures/names from this demo pass transfer
-   directly. This likely reframes how much more demo-specific work is worth
-   doing vs. pivoting straight to the full game IDB.
-3. **Cross-reference the Xanth BinDiff** to validate the engine/game-specific
-   split already inferred from name prefixes alone. (`..\xanth\` is present
-   again as of 2026-08-28: `Xanth.idb`, `Xanth.BinExport`,
-   `Shannara Demo.BinExport`, `xanth_vs_Shannara Demo.BinDiff`.)
+2. ~~**Check `Shannara.idb` vs. the demo IDB**~~ — **DONE** (2026-10-12), see
+   [`analysis/retail_game_layer.md`](../analysis/retail_game_layer.md). Retail is
+   the full game (SHANNARA.LE, 2,286 fns); same engine but a *different build*
+   (sizes differ, Watcom `name_` symbols). Shared-engine names are already
+   ~fully transferred; the ~1,100 unnamed game-layer functions at
+   `0x10000-0x75000` are the real work. First retail findings (object table,
+   attribute bits, bitsets, noun-phrase formatter, `run_command?`) applied via
+   `scripts/apply_retail_findings.py`. LZH renames (`apply_lzh_findings.py`)
+   also applied to the demo IDB.
+3. ~~**Cross-reference the Xanth BinDiff**~~ — dropped. `Xanth.idb` is a 16-bit
+   RTLink-flattened EXE (mnemonic matching vs 32-bit Shannara gives 0 hits) and
+   the `.BinDiff` file is no longer in `..\xanth\`.
 4. **`sub_167334`'s diagonal-line branch** (past the axis-aligned special
    case) — only partially traced; matters if pixel-exact rendering parity is
    a goal.
@@ -119,3 +123,12 @@ python parse_asm.py "..\..\Shannara Demo.asm"
 Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
+
+## Retail next steps (see `analysis/retail_game_layer.md` sec.3)
+
+- Name `run_command?` callees and the object-list helpers; locate handler
+  dispatch (retail analogue of Gateway's `proc_table`) - decides whether room/NPC
+  logic is compiled code or data.
+- Map message strings to function regions (NPC/room clusters).
+- Local-only retail export: `Shannara.asm` (15 MB, git-ignored). Regenerate with
+  `idat.exe` + `ida_loader.gen_file(OFILE_ASM, ...)` on a *copy* of the IDB.

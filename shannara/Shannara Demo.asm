@@ -1,278 +1,3 @@
-; ---------------------------------------------------------------------------
-
-Pic             struc ; (sizeof=0x1B, mappedto_1)
-                                        ; XREF: clear_pics+18/o
-                                        ; set_list_region_pics+6/o ...
-signature       dw ?                    ; XREF: display_pic+13/r
-                                        ; unload_pic+4/w ... ; HIGH conf: magic const 0xA712 (42770). Validates the struct is a live Pic slot; checked on entry by load_pic/display_pic/clear_pic/set_pic_vector. NOTE: unload_pic re-writes this same constant rather than clearing it - it is NOT an 'active' bool.
-picId           dw ?                    ; XREF: unload_pic+9/w
-                                        ; load_mouse_cursor+22/r ; MED-HIGH conf: picture index within its file, passed as load_pic's 2nd (edx) param; reset to 0 by unload_pic/clear_pic.
-frameCount      db ?                    ; XREF: get_pic_gxdata+5/r
-                                        ; get_pic_gxdata+25/r ... ; HIGH conf: 0 = static single image, >0 = animated with N frames. Used as the loop bound in clear_pic's gxDestroyVirtual loop and as the modulo count in get_pic_gxdata.
-_active         db ?                    ; XREF: load_pic+16E/w
-                                        ; display_pic+1E/r ...
-colorDepth      db ?                    ; XREF: load_pic+176/w ; MEDIUM conf: loaded from the low byte of global dword_1A915C (on-disk pic-dir entry) in load_pic; read again in display_pic as a register arg to gxVirtualDisplay.
-field_7         db ?                    ; XREF: load_pic+172/w ; LOW conf, left unrenamed: set to 1 once on successful load_pic, never cleared by unload_pic/clear_pic - maybe an 'everLoaded' flag.
-field_8         db ?                    ; XREF: load_pic+15A/w
-                                        ; unload_pic+13/w ... ; Unrenamed: set from global byte_1A9166 in load_pic, cleared by unload_pic/clear_pic. Purpose unclear.
-field_9         db ?                    ; XREF: load_pic+162/w
-                                        ; unload_pic+17/w ; Unrenamed: set from global byte_1A9167 in load_pic, cleared by unload_pic/clear_pic. Purpose unclear, paired with field_8.
-_gxVirtual      dw ?                    ; XREF: get_pic_gxdata+B/o
-                                        ; get_pic_gxdata:loc_15F052/r ...
-nextFrameTime   dd ?                    ; XREF: get_pic_gxdata+1A/r
-                                        ; get_pic_gxdata+42/w ... ; HIGH conf: get_pic_gxdata reads/writes this as `dword ptr [edx+Pic._nextTime]` (compared against get_clock(), advanced by get_pic_delay()) - it was mis-declared as a word overlapping what used to be field_E/field_F; merged here to the true dword size/offset (0xC-0xF).
-frameHeaders    dd ?                    ; XREF: get_pic_gxdata+50/r
-                                        ; clear_pic:loc_15F908/r ... ; HIGH conf: pointer to an array of per-frame gx-virtual-header records (stride 0x11=17 bytes), indexed by the current-frame counter packed into _gxVirtual's high byte. Used in get_pic_gxdata to fetch the active frame, and in clear_pic to gxDestroyVirtual each one.
-_vector         dd ?                    ; XREF: set_pic_vector+17/w
-                                        ; click_button+11D/r ... ; Set via set_pic_vector(pic,val), only when frameCount>1 - likely an animation-complete trigger/callback id.
-field_18        dw ?                    ; XREF: _color_cycle_interrupt+9C/o
-                                        ; click_button+138/r ... ; Unrenamed: evidence inconclusive (only reached through offset-aliased array accesses in get_data_from_list).
-isCompressed    db ?                    ; XREF: load_pic+FF/w
-                                        ; load_pic+134/r ... ; HIGH conf: set in load_pic when width*height (from fixed-point dword_1A9160) != the stored uncompressed dataSize (dword_1A9158); gates the gxVirtualDecompress call.
-Pic             ends
-
-; ---------------------------------------------------------------------------
-
-PicCache        struc ; (sizeof=0x1408, mappedto_18)
-                                        ; XREF: close_pictures?:loc_15EB74/o
-                                        ; close_pictures?+1F/t ...
-lastUsed        dw ?                    ; XREF: open_pic+A/w
-                                        ; read_pic_dir:loc_15EBFF/r ... ; HIGH conf: LRU age counter. read_pic_dir builds a per-slot 'age+1' table and evicts the max; the matched slot's value is reset to 0 on a cache hit.
-fileNum         dw ?                    ; XREF: close_pictures?+1F/t
-                                        ; open_pic+1C/w ... ; HIGH conf: picture file number currently cached in this slot; 0xFFFF = empty. Set in open_pic's close path and read_pic_dir's load path.
-_fp             dd ?                    ; XREF: open_pic+16/r
-                                        ; open_pic+30/w ...
-_buffer         db 5120 dup(?)          ; XREF: read_pic_dir+12E/o
-                                        ; load_palette+43/o
-PicCache        ends
-
-; ---------------------------------------------------------------------------
-
-Region          struc ; (sizeof=0x20, mappedto_12)
-                                        ; XREF: make_region+44/o
-                                        ; make_region+63/o
-regionType      db ?                    ; XREF: make_region+9D/w
-                                        ; kill_region+1/r ; HIGH conf: 7-way switch selector in make_region (0/1=clickable/display_region, 3/4=up/down arrow buttons, 3&6=list-elevator widget setup); also read in move_region (`cmp ah,3`) to gate elevator-point updates.
-flags           db ?                    ; XREF: make_region+A7/w ; HIGH conf: bit 0x80 = hidden/skip - tested in make_region before display_pic_at, and in get_region/get_region_xy to skip hit-testing.
-x1              dd ?                    ; XREF: make_region+85/w ; HIGH conf: left edge. move_region/resize_region treat field_2/field_6/field_A/field_E as one rectangle, shifted by (dx,dy) deltas on move.
-y1              dd ?                    ; XREF: make_region+8C/w ; HIGH conf: top edge - see x1's comment.
-x2              dd ?                    ; XREF: make_region+8F/w ; HIGH conf: right edge - see x1's comment.
-y2              dd ?                    ; XREF: make_region+96/w ; HIGH conf: bottom edge - see x1's comment.
-elevatorItemHeight dw ?                 ; XREF: make_region+12E/w
-                                        ; remove_pic_regions+1C/w ; LOW-MED conf: initialised from the low word of make_region's last stack param, only set up for regionType 3/6 (list elevator widget).
-field_14        dd ?                    ; XREF: make_region:loc_1782B5/w ; Unrenamed: initialised to 0 for regionType 3/6, no further usage found.
-elevatorCount   dd ?                    ; XREF: make_region+11C/w ; HIGH conf: loop bound in move_region (`cmp ebx,ecx` where ecx=this field).
-elevatorPoints  dd ?                    ; XREF: make_region+127/w
-                                        ; kill_region+6/r ; HIGH conf: pointer to an array of {x,y} dword pairs, each adjusted by (dx,dy) in move_region (`add [ecx+eax],esi` / `add [ecx+eax+4],edi`, stride 8).
-Region          ends
-
-; ---------------------------------------------------------------------------
-
-FILE            struc ; (sizeof=0x1A, copyof_5) ; XREF: printf+9/o
-                                        ; __InitFiles+62/o ...
-_ptr            dd ?                    ; offset
-_cnt            dd ?
-_base           dd ?                    ; offset
-_flag           dd ?                    ; XREF: __InitFiles:loc_177DFB/r
-_handle         dd ?
-_bufsize        dd ?
-_ungotten       db ?
-_tmpfchar       db ?
-FILE            ends
-
-; ---------------------------------------------------------------------------
-
-Font            struc ; (sizeof=0x1B, mappedto_2)
-                                        ; XREF: close_fonts+7/t
-                                        ; close_fonts+C/o ...
-lastUsed        dw ?                    ; XREF: close_font+6/r
-                                        ; set_font:loc_168E56/r ... ; HIGH conf: LRU age counter for the 2-slot font cache - identical pattern to PicCache.lastUsed (set_font builds an age+1 table, resets the matched slot to 0 on hit).
-field_2         db ?                    ; XREF: clear_pic:loc_15F91F/w ; Unrenamed: no clear evidence of purpose found.
-_grafx_mode     db ?                    ; XREF: set_font+38/r
-_fontNum        dd ?                    ; XREF: clear_pic+49/w
-                                        ; close_font+14/w ... ; Only the LOW BYTE (offset+0) is ever read/written via `byte ptr`: 0xFE = closing in progress (close_font), 0xFF = none loaded. Bytes +1..+3 of this dword are separate font-header bytes read by get_file_char() in set_font (byte+3 in particular is 'bytesPerRow', multiplied into the glyphBitmap size calc) - they are NOT really part of one 32-bit fontNum value, kept as dd only because that was the original declared type/size.
-firstChar       db ?                    ; XREF: clear_pic+4D/w
-                                        ; get_font_height+C/r ... ; HIGH conf: 4th get_file_char() byte read while loading a font resource. `dl=[9]-bl=[8]; inc edx` computes charCount = lastChar-firstChar+1.
-lastChar        db ?                    ; XREF: clear_pic+51/w
-                                        ; print_font_char+180/r ; HIGH conf: 5th get_file_char() byte - see firstChar's comment.
-lineSpacing     db ?                    ; MEDIUM conf: 6th get_file_char() byte. get_font_height() returns charHeight+lineSpacing when charHeight>1 - extra vertical space added on top of the glyph bitmap height.
-charHeight      db ?                    ; XREF: get_font_height+6/r ; HIGH conf: 7th get_file_char() byte. Glyph bitmap row count - used directly in get_font_height and in the glyphBitmap buffer-size multiply in set_font.
-charWidth       db ?                    ; HIGH conf (via get_char_width): 8th get_file_char() byte. If >=0, used as the fixed/base char width (+charSpacing); if <0, per-char widths instead come from the charWidths table. Default 'no font loaded' value is 8.
-charSpacing     db ?                    ; XREF: print_font_char+148/r ; HIGH conf (via get_char_width): 9th get_file_char() byte. If >=0, a flat value added to every char's width (fixed or table-based). If <0, switches to the advanced charKerningTable (packed nibbles) instead of a flat spacing value.
-field_E         db ?                    ; Unrenamed: 10th get_file_char() byte, no usage found beyond being read.
-charWidths      dd ?                    ; XREF: close_font+11/r
-                                        ; close_font+23/w ; HIGH conf: new_handle()-allocated table of (lastChar-firstChar+2) bytes, one per-char pixel width; used throughout get_char_width when charWidth<0.
-charKerningTable dd ?                   ; XREF: close_font:loc_168DE2/r
-                                        ; close_font+38/w ; MED-HIGH conf: new_handle()-allocated table of (lastChar-firstChar+2) bytes; each byte's high+low nibble are added to the charWidths-table value when charSpacing<0 - a packed left/right bearing adjustment per character.
-glyphBitmap     dd ?                    ; XREF: close_font:loc_168DF7/r
-                                        ; close_font+4D/w ... ; HIGH conf: new_handle()-allocated buffer of size charCount*bytesPerRow*charHeight; holds the actual 1bpp glyph bitmap data read from the font file.
-Font            ends
-
-; ---------------------------------------------------------------------------
-
-Display         struc ; (sizeof=0x10, mappedto_7)
-                                        ; XREF: dseg02:_display/r
-_ptr            dd ?
-stride          dd ?                    ; XREF: gxVideoAddr+6/r ; HIGH conf (via gxVideoAddr): `addr = [pixelsPP] + y*stride + x` - bytes-per-scanline; only the low word is ever read.
-pixelsPP        dd ?                    ; XREF: gxUpdateDisplay+D7/r
-                                        ; gxUpdateDisplay+2C2/r ... ; Confirmed as a pointer-to-pointer: gxClearVirtual/gxVideoAddr both do `mov eax,[eax+Display.pixelsPP]` then `mov eax,[eax]` to reach the actual pixel buffer base address.
-_count          dd ?                    ; XREF: gxClearVirtual+B/r ; Confirmed HIGH conf as the memset byte-count = total virtual buffer size (gxClearVirtual).
-Display         ends
-
-; ---------------------------------------------------------------------------
-
-WindowBuffer    struc ; (sizeof=0x10, mappedto_9)
-                                        ; XREF: dseg02:_w_buffer/r
-buffer          db 16 dup(?)            ; XREF: make_xwindow+C2/w
-                                        ; flush_window_buffer+41/w ...
-WindowBuffer    ends
-
-; ---------------------------------------------------------------------------
-
-MemoryBlock     struc ; (sizeof=0xC, mappedto_13)
-_ptr            dd ?                    ; XREF: set_pointer_type+D/r
-                                        ; find_master+1C/o ...
-handleIndex     dw ?                    ; HIGH conf: new_handle() sets this to get_handle_num()'s result and stores the real pointer at `_handle_table[handleIndex]`; resize_handle reads it back via `sar dword@[eax+2],0x10` to re-derive the same index - double indirection so blocks can move during compact_memory.
-size            dd ?                    ; XREF: get_handle_size+11/r
-_flags          db ?                    ; XREF: set_handle_type+F/r
-                                        ; set_handle_type+1E/w ...
-_type           db ?                    ; XREF: set_pointer_type:loc_15974B/w
-MemoryBlock     ends
-
-; ---------------------------------------------------------------------------
-
-AILPreferences  struc ; (sizeof=0x48, mappedto_10)
-                                        ; XREF: dseg02:_AIL_preference/r
-preference      dd 18 dup(?)            ; XREF: _AIL_API_set_preference+4/r
-                                        ; _AIL_API_set_preference+F/w ... ; Confirmed NOT a heterogeneous struct: _AIL_API_set_preference(index,value) does `_AIL_preference.field_0[index*4] = value` - i.e. every one of the 18 original field_N members was really one flat S32 preference[18] array (matches the real Miles/AIL SDK's public AIL_preference[] design), indexed by AIL_PREF_xxx enum constants from that era's AIL SDK headers. Per-index names were deliberately NOT guessed here - cross-check a period AIL SDK header before naming individual indices.
-AILPreferences  ends
-
-; ---------------------------------------------------------------------------
-
-videoconfig     struc ; (sizeof=0x16, mappedto_16)
-                                        ; XREF: dseg02:__ConfigBuffer/r
-numXPixels      dw ?                    ; XREF: _L2clearscreen:loc_17DFD4/r
-                                        ; _L2clearscreen+A5/r ... ; VERY HIGH conf: this is the public, documented Microsoft C `struct videoconfig` (GRAPH.H, returned by _getvideoconfig()) - 11 shorts = 22 = 0x16 bytes, an exact size match, and the field usage in _GetState/_GrInit/_InitState independently confirms the mapping (BIOS 0040:4A columns, BIOS 0040:84 rows, int10h AH=0Fh mode, __AdapTab/__MonTab/__MemoryTab lookups).
-numYPixels      dw ?                    ; XREF: _L2clearscreen+54/r
-                                        ; _L2clearscreen:loc_17E02E/r ...
-numTextCols     dw ?                    ; XREF: _L2clearscreen+48/r
-                                        ; _clearscreen:loc_17E0AA/r ...
-numTextRows     dw ?                    ; XREF: _L2clearscreen+5B/r
-                                        ; _clearscreen+58/r ...
-numColors       dw ?                    ; XREF: _GetState+72/w
-                                        ; _GrInit+23/w ...
-bitsPerPixel    dw ?                    ; XREF: _GetState+16/w
-                                        ; _GrInit+2A/w
-numVideoPages   dw ?                    ; XREF: _CalcNumPages:loc_17E340/w
-                                        ; _GetState:loc_17E447/w ...
-mode            dw ?                    ; XREF: _TxtClear+13/r
-                                        ; _GetState+85/w ...
-adapter         dw ?                    ; XREF: _GetState+BB/w
-                                        ; _GetState+F1/r
-monitor         dw ?                    ; XREF: _GetState+A3/w
-memory          dw ?                    ; XREF: _CalcNumPages+38/r
-                                        ; _GetState+B4/w ...
-videoconfig     ends
-
-; ---------------------------------------------------------------------------
-
-ColorCylce      struc ; (sizeof=0x10, mappedto_17)
-                                        ; XREF: dseg02:_p_cycle/r
-counter         dd ?                    ; XREF: display_palette+6D/w
-                                        ; _color_cycle_interrupt+37/r ... ; MEDIUM conf: always reset to 0 in display_palette's swap step; exact purpose beyond that is unclear.
-activeStart     db ?                    ; XREF: display_palette+7F/w
-                                        ; _color_cycle_interrupt+54/r ; HIGH conf: active/live start palette index, copied from pendingStart each display_palette call.
-activeEnd       db ?                    ; XREF: display_palette+8B/w
-                                        ; _color_cycle_interrupt+45/r ; HIGH conf: active/live end palette index, copied from pendingEnd.
-activeRate      dd ?                    ; XREF: display_palette+73/w
-                                        ; display_palette+91/r ... ; HIGH conf: active/live cycle rate, copied from pendingRate; if nonzero after the swap, _cycling_on is set to 1.
-pendingStart    db ?                    ; XREF: set_color_cycle+12/w
-                                        ; display_palette+79/r ; HIGH conf: set by set_color_cycle(idx, start=al, end=dl, rate=ebx) - the al param.
-pendingEnd      db ?                    ; XREF: set_color_cycle+18/w
-                                        ; display_palette+85/r ; HIGH conf: set by set_color_cycle - the dl param.
-pendingRate     dd ?                    ; XREF: set_color_cycle+C/w
-                                        ; display_palette+67/r ... ; HIGH conf: set by set_color_cycle - the ebx param; consumed and cleared to 0 by display_palette.
-ColorCylce      ends
-
-; ---------------------------------------------------------------------------
-
-FlixEntry       struc ; (sizeof=0x10, mappedto_11)
-                                        ; XREF: flix_play+6A/o
-                                        ; flix_play+105/o ...
-frame           dd ?                    ; XREF: flix_play+186/r ; HIGH conf: low word is compared against a running tick counter in flix_play's dispatch loop, gating when this entry executes. High word is separately reused by opcodes 1/12 (load_dib) as a fileType selector (==0xC -> load_pcx, else load_gif) - kept as one dd since the two halves' meaning is opcode-dependent.
-arg1            dw ?                    ; MEDIUM conf: used as the musicId/soundId argument for opcode 5 (load_music)/8 (load_sound) in flix_play's pre-scan loop; likely an opcode-dependent parameter slot.
-param           dd ?                    ; XREF: flix_play+FD/r
-                                        ; flix_play:loc_1571BD/r ; HIGH conf: code always accesses `dword ptr [ebp+FlixEntry.field_6]`, spanning what used to be two separate word members. Used as a raw function pointer for opcode 0 (`call dword ptr [eax+field_6]`), and as a filename/resource-id dword for opcodes 1/12 (load_dib) and 3 (q_open) - a generic tagged-union data slot.
-arg2            dw ?                    ; LOW-MED conf: opcode 3 (q_open) reads this and range-checks 1..4 before deciding whether to black/clear the screen - an opcode-specific flag/mode.
-field_C         dw ?
-                db ? ; undefined
-field_F         db ?
-FlixEntry       ends
-
-; ---------------------------------------------------------------------------
-
-QHeader         struc ; (sizeof=0x1A, mappedto_19)
-                                        ; XREF: dseg02:_qheader/r
-signature       dw ?                    ; XREF: q_open+56/r ; HIGH conf: q_open validates `cmp _qheader.field_0, 0x6839h` right after reading the header, rejects the file on mismatch.
-field_2         dw ?                    ; Unrenamed: no usage found.
-blocksWide      dw ?                    ; XREF: init_addr_tbl+3B/r
-                                        ; q_open+BD/r ... ; HIGH conf: block-grid column count. q_load/init_addr_tbl multiply it with blockWidth/blockHeight/blocksHigh to compute the total frame-buffer size; qinfo.maxCol = this-1.
-blocksHigh      dw ?                    ; XREF: init_addr_tbl+62/r
-                                        ; q_open+8A/r ... ; HIGH conf: block-grid row count - same evidence pattern as blocksWide; qinfo.maxRow = this-1.
-blockWidth      db ?                    ; XREF: q_load+65/r
-                                        ; q_load+15B/r ... ; HIGH conf: per-block pixel width, multiplied into every frame-buffer-size calc in q_load alongside blocksWide/blocksHigh/blockHeight.
-blockHeight     db ?                    ; XREF: q_open+91/r
-                                        ; q_load+79/r ... ; HIGH conf: per-block pixel height - same evidence; also `blockHeight*blocksHigh` is used directly for the on-screen height calc (_q_y2) in q_open.
-field_A         dw ?                    ; Unrenamed: no usage found.
-field_C         dd ?                    ; XREF: q_load:loc_15BEF6/r ; Unrenamed: no usage found in the code read.
-frameRate       db 6 dup(?)             ; XREF: flix_play+7E/w
-                                        ; flix_play+162/w ... ; MED-HIGH conf: only byte 0 of this 6-byte array is read, as the divisor `audioSampleRate / frameRate = qaudio_buffer_size` (audio bytes per video frame); defaults to 5 if the file stores 0. Kept as a 6-byte array since only byte 0's role is evidenced - bytes 1-5 remain unaccounted for.
-audioSampleRate dd ?                    ; XREF: q_open+1A4/r
-                                        ; q_open+213/r ... ; HIGH conf: passed directly to _AIL_set_sample_playback_rate() in q_open.
-QHeader         ends
-
-; ---------------------------------------------------------------------------
-
-QInfo           struc ; (sizeof=0x8, mappedto_21)
-                                        ; XREF: dseg02:_qinfo/r
-minCol          dw ?                    ; XREF: q_open+117/w
-                                        ; q_load+409/r ; MEDIUM conf: initialised to 0 in q_open, combined with QHeader fields in q_load's per-frame loop-bound computation - a block-column origin.
-minRow          dw ?                    ; XREF: q_open+129/w
-                                        ; q_load+3F0/r ; MEDIUM conf: initialised to 0, parallels minCol's role for rows.
-maxCol          dw ?                    ; XREF: q_open+DA/w
-                                        ; q_open+E2/r ... ; HIGH conf: set to `QHeader.blocksWide - 1` in q_open, i.e. last valid block-column index.
-maxRow          dw ?                    ; XREF: q_open+F1/w
-                                        ; q_open+153/r ... ; HIGH conf: set to `QHeader.blocksHigh - 1` in q_open, last valid block-row index.
-QInfo           ends
-
-; ---------------------------------------------------------------------------
-
-QMap            struc ; (sizeof=0x2, mappedto_20)
-                                        ; XREF: dseg02:_q_qmap_table/r
-field_0         db ?                    ; XREF: sub_1652E0+8A/r
-                                        ; sub_1652E0+17E/r ... ; LOW conf, left unrenamed: byte used to index dword_18B2BC[]/dword_18B6BC[] bit-plane expansion tables inside the block decompressor (sub_1652E0) - genuinely deep codec internals, not confidently nameable without further RE.
-field_1         db ?                    ; XREF: sub_1652E0+63/r
-                                        ; sub_1652E0+303/r ... ; LOW conf, left unrenamed: second index, same role as field_0.
-QMap            ends
-
-; ---------------------------------------------------------------------------
-
-; enum FileType, mappedto_6
-FTYPE_PIC        = 0
-FTYPE_RGN        = 1
-FTYPE_FNT        = 2
-FTYPE_MUS        = 3                    ; XREF: init_audio+118/s
-FTYPE_SAV_READ   = 4
-FTYPE_SAV_WRITE  = 5                    ; XREF: open_file+8/s
-FTYPE_VOC        = 6
-FTYPE_Q          = 7
-
-; ---------------------------------------------------------------------------
-
-; enum MEMFLAG, mappedto_14, bitfield
-MEMFLAG_HAS_TYPE  = 20h                 ; XREF: set_handle_type+1B/s
-                                        ; set_handle_type+2D/s ...
-
 ;
 ; +-------------------------------------------------------------------------+
 ; |      This file was generated by The Interactive Disassembler (IDA)      |
@@ -12043,17 +11768,17 @@ loc_15D401:                             ; CODE XREF: gxVirtualDecompress+34↑j
                 mov     eax, [esi+8]
                 mov     edx, [eax]
                 mov     eax, ptr
-                push    edx             ; arg_C
+                push    edx             ; src
                 mov     ebx, [eax]
                 xor     edx, edx
                 xor     eax, eax
                 mov     dx, [esi+4]
                 mov     ax, [esi+6]
                 imul    eax, edx
-                push    ebx             ; arg_8
-                push    eax             ; arg_4
+                push    ebx             ; dst
+                push    eax             ; dstLen
                 mov     ecx, [esi+0Ch]
-                push    ecx             ; arg_0
+                push    ecx             ; srcLen
                 call    CXBUF2BUFEXPAND
                 mov     eax, ptr        ; ptr
                 call    unlock_handle
@@ -35186,7 +34911,7 @@ loc_169A24:                             ; CODE XREF: CXBUF2BUFINIT+8↑j
 loc_169A2A:                             ; CODE XREF: CXBUF2BUFINIT+12↑j
                 xor     edx, edx
                 mov     ecx, 0FFFFFFFFh
-                mov     dword_1A9F28, edx
+                mov     _cx_InBytesLeft, edx
                 mov     _cx_lOriginal_Size, edx
                 mov     _cx_lCRC, ecx
                 call    cx_BuildCRCTable
@@ -35297,7 +35022,7 @@ loc_169B07:                             ; CODE XREF: CXBUF2BUFCOMPRESS+4B↑j
 ; ---------------------------------------------------------------------------
 
 loc_169B1A:                             ; CODE XREF: CXBUF2BUFCOMPRESS+6F↑j
-                mov     eax, dword_1A9F28
+                mov     eax, _cx_InBytesLeft
                 pop     esi
                 retn    0Ch
 CXBUF2BUFCOMPRESS endp ; sp-analysis failed
@@ -35326,7 +35051,7 @@ arg_8           = dword ptr  0Ch
                 mov     _cx_InBuf, eax
                 mov     _cx_lOriginal_Size, ecx
                 mov     eax, [esp+0Ch+arg_4]
-                mov     dword_1A9F28, ecx
+                mov     _cx_InBytesLeft, ecx
                 mov     _cx_OutBuf, eax
                 mov     eax, [esp+0Ch+arg_0]
                 mov     _cx_lCRC, esi
@@ -35442,26 +35167,26 @@ ENCODE_BUF      endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA -lh4- buffer-to-buffer decompressor (per-block STATIC canonical Huffman + 4 KB LZSS window; NOT adaptive lzhuf.c, NOT RLE). Signature (args pushed R-to-L at the gxVirtualDecompress call site): int CXBUF2BUFEXPAND(u32 srcLen, u32 dstLen, void *dst, const void *src). srcLen -> dword_1A9F28 (input EOF countdown); dstLen = pic w*h. Returns 0 ok / -3 alloc fail / -1 produced-size mismatch. CRC is computed but NOT checked on this path. Full spec: reversing/analysis/lzh_decode_spec.md
 
-; int __cdecl CXBUF2BUFEXPAND(int arg_0, int arg_4, int arg_8, int arg_C)
+; int __cdecl CXBUF2BUFEXPAND(unsigned int srcLen, unsigned int dstLen, void *dst, const void *src)
 CXBUF2BUFEXPAND proc near               ; CODE XREF: gxVirtualDecompress+7D↑p
 
 var_14E         = dword ptr -14Eh
 var_14A         = dword ptr -14Ah
 var_14          = dword ptr -14h
 a2              = dword ptr -10h
-arg_0           = dword ptr  4
-arg_4           = dword ptr  8
-arg_8           = dword ptr  0Ch
-arg_C           = dword ptr  10h
+srcLen          = dword ptr  4
+dstLen          = dword ptr  8
+dst             = dword ptr  0Ch
+src             = dword ptr  10h
 
                 push    esi
                 push    edi
                 push    ebp
                 sub     esp, 168h
-                mov     edx, [esp+174h+arg_0]
-                mov     ebp, [esp+174h+arg_4]
+                mov     edx, [esp+174h+srcLen]
+                mov     ebp, [esp+174h+dstLen]
                 mov     eax, 1000h
                 call    cx_malloc
                 mov     [esp+174h+a2], eax
@@ -35472,15 +35197,15 @@ arg_C           = dword ptr  10h
 ; ---------------------------------------------------------------------------
 
 loc_169CEA:                             ; CODE XREF: CXBUF2BUFEXPAND+2A↑j
-                mov     eax, [esp+174h+arg_C]
+                mov     eax, [esp+174h+src]
                 mov     [esp+174h+var_14], ebp
-                mov     dword_1A9F28, edx
+                mov     _cx_InBytesLeft, edx
                 mov     [esp+174h+var_14E], edx
                 mov     [esp+174h+var_14A], ebp
                 xor     edx, edx
                 mov     _cx_InBuf, eax
                 mov     _cx_lOriginal_Size, edx
-                call    decode_start
+                call    lzh_decode_start
                 test    ebp, ebp
                 jz      loc_169DA9
 
@@ -35500,12 +35225,12 @@ loc_169D38:                             ; CODE XREF: CXBUF2BUFEXPAND+80↑j
                 mov     eax, esp
                 mov     esi, [esp+174h+a2]
                 mov     edx, ebp        ; a1
-                mov     edi, [esp+174h+arg_8]
-                call    decode_
+                mov     edi, [esp+174h+dst]
+                call    lzh_decode
                 mov     ecx, ds
                 mov     edx, ds
                 mov     eax, ebp
-                mov     ebx, [esp+174h+arg_8]
+                mov     ebx, [esp+174h+dst]
                 push    ds
                 push    es
                 push    edi
@@ -35527,7 +35252,7 @@ loc_169D38:                             ; CODE XREF: CXBUF2BUFEXPAND+80↑j
                 mov     ecx, _cx_lOriginal_Size
                 add     ebx, ebp
                 add     ecx, ebp
-                mov     [esp+174h+arg_8], ebx
+                mov     [esp+174h+dst], ebx
                 mov     _cx_lOriginal_Size, ecx
                 sub     esi, ebp
                 mov     [esp+174h+var_14], esi
@@ -59044,7 +58769,7 @@ arg_0           = dword ptr  4
                 mov     ecx, [esp+0Ch+arg_0]
                 xor     edx, edx
                 mov     esi, 0FFFFFFFFh
-                mov     dword_1A9F28, edx
+                mov     _cx_InBytesLeft, edx
                 mov     _cx_lOriginal_Size, edx
                 mov     _cx_lCRC, esi
                 call    cx_BuildCRCTable
@@ -59145,7 +58870,7 @@ loc_175D5E:                             ; CODE XREF: ENCODE+AC↑j
                                         ; ENCODE+B9↑j
                 call    huf_encode_end
                 call    deallocate_memory
-                mov     eax, dword_1A9F28
+                mov     eax, _cx_InBytesLeft
                 mov     [ecx+26h], eax
                 mov     eax, _cx_lOriginal_Size
                 mov     [ecx+2Ah], eax
@@ -59294,7 +59019,7 @@ write_pt_len    proc near               ; CODE XREF: send_block+73↓p
                 jle     short loc_175E7F
 
 loc_175E71:                             ; CODE XREF: write_pt_len+19↓j
-                cmp     byte ptr (_cx_left+7F5h)[esi], 0
+                cmp     byte ptr (_lzh_left+7F5h)[esi], 0
                 jnz     short loc_175E7F
                 dec     esi
                 test    esi, esi
@@ -59935,7 +59660,7 @@ huf_encode_end  endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA huf.c fillbuf(n): consume n bits from the 32-bit MSB-first bitbuf (_cx_bitbuf / _cx_nBit_Buffer), refilling a byte at a time from read_byte() while dword_1A9F28 (compressed bytes remaining) > 0, CRC-32'ing each byte. See reversing/analysis/lzh_decode_spec.md sec.4
 
 ; int __usercall fillbuf@<eax>(int a1@<eax>)
 fillbuf         proc near               ; CODE XREF: getbits+15↓p
@@ -59953,10 +59678,10 @@ var_1C          = dword ptr -1Ch
                 sub     esp, 4
                 mov     [esp+1Ch+var_1C], eax
                 mov     cl, byte ptr [esp+1Ch+var_1C]
-                mov     edx, _cx_nBit_Buffer
+                mov     edx, _cx_bitbuf
                 shl     edx, cl
                 mov     ebx, _cx_bitcount
-                mov     _cx_nBit_Buffer, edx
+                mov     _cx_bitbuf, edx
                 cmp     eax, ebx
                 jbe     short loc_1764D8
 
@@ -59967,15 +59692,15 @@ loc_176467:                             ; CODE XREF: fillbuf+96↓j
                 mov     [esp+1Ch+var_1C], edi
                 mov     eax, _cx_subbitbuf
                 mov     cl, byte ptr [esp+1Ch+var_1C]
-                mov     ebp, _cx_nBit_Buffer
+                mov     ebp, _cx_bitbuf
                 shl     eax, cl
                 or      ebp, eax
-                mov     eax, dword_1A9F28
-                mov     _cx_nBit_Buffer, ebp
+                mov     eax, _cx_InBytesLeft
+                mov     _cx_bitbuf, ebp
                 test    eax, eax
                 jz      short loc_1764C1
                 lea     ebx, [eax-1]
-                mov     dword_1A9F28, ebx
+                mov     _cx_InBytesLeft, ebx
                 call    read_byte
                 mov     ecx, _cx_lCRC
                 push    ecx             ; arg_4
@@ -60002,10 +59727,10 @@ loc_1764D8:                             ; CODE XREF: fillbuf+25↑j
                 sub     _cx_bitcount, eax
                 mov     eax, _cx_subbitbuf
                 mov     cl, byte ptr _cx_bitcount
-                mov     ebp, _cx_nBit_Buffer
+                mov     ebp, _cx_bitbuf
                 shr     eax, cl
                 or      ebp, eax
-                mov     _cx_nBit_Buffer, ebp
+                mov     _cx_bitbuf, ebp
                 add     esp, 4
                 pop     ebp
                 pop     edi
@@ -60021,7 +59746,7 @@ fillbuf         endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA huf.c getbits(n): v = bitbuf >> (32-n); fillbuf(n); return v. n in 1..32. See reversing/analysis/lzh_decode_spec.md sec.4
 
 ; int __usercall getbits@<eax>(int a1@<eax>)
 getbits         proc near               ; CODE XREF: read_pt_len+A↓p
@@ -60031,7 +59756,7 @@ getbits         proc near               ; CODE XREF: read_pt_len+A↓p
                 test    eax, eax
                 jz      short loc_176524
                 mov     ecx, 20h ; ' '
-                mov     edx, _cx_nBit_Buffer
+                mov     edx, _cx_bitbuf
                 sub     ecx, eax
                 shr     edx, cl
                 call    fillbuf
@@ -60081,7 +59806,7 @@ var_18          = dword ptr -18h
 ; ---------------------------------------------------------------------------
 
 loc_176564:                             ; CODE XREF: putbits+15↑j
-                mov     eax, dword_1A9F28
+                mov     eax, _cx_InBytesLeft
                 cmp     eax, _cx_lOriginal_Size
                 jnb     short loc_1765AA
                 sub     [esp+18h+var_18], edx
@@ -60096,10 +59821,10 @@ loc_176564:                             ; CODE XREF: putbits+15↑j
                 push    eax             ; arg_4
                 push    edx             ; arg_0
                 call    CX_COMPUTECRC32
-                mov     edx, dword_1A9F28
+                mov     edx, _cx_InBytesLeft
                 inc     edx
                 mov     _cx_lCRC, eax
-                mov     dword_1A9F28, edx
+                mov     _cx_InBytesLeft, edx
                 jmp     short loc_1765B4
 ; ---------------------------------------------------------------------------
 
@@ -60116,7 +59841,7 @@ loc_1765B4:                             ; CODE XREF: putbits+80↑j
 ; ---------------------------------------------------------------------------
 
 loc_1765C5:                             ; CODE XREF: putbits+92↑j
-                mov     eax, dword_1A9F28
+                mov     eax, _cx_InBytesLeft
                 cmp     eax, _cx_lOriginal_Size
                 jnb     short loc_1765FA
                 lea     ecx, [ebx-8]
@@ -60129,7 +59854,7 @@ loc_1765C5:                             ; CODE XREF: putbits+92↑j
                 push    edx             ; arg_0
                 call    CX_COMPUTECRC32
                 mov     _cx_lCRC, eax
-                inc     dword_1A9F28
+                inc     _cx_InBytesLeft
                 jmp     short loc_176604
 ; ---------------------------------------------------------------------------
 
@@ -60167,7 +59892,7 @@ init_getbits    proc near               ; CODE XREF: huf_decode_start+3↓p
                 push    edx
                 xor     edx, edx
                 mov     eax, 20h ; ' '  ; a1
-                mov     _cx_nBit_Buffer, edx
+                mov     _cx_bitbuf, edx
                 mov     _cx_subbitbuf, edx
                 mov     _cx_bitcount, edx
                 call    fillbuf
@@ -60607,23 +60332,24 @@ cx_memset       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Resets the LZH decoder: huf_decode_start() (init_getbits + blocksize=0) then _lzh_decode_j = 0. See reversing/analysis/lzh_decode_spec.md
 
-decode_start    proc near               ; CODE XREF: CXBUF2BUFEXPAND+5F↑p
+lzh_decode_start proc near              ; CODE XREF: CXBUF2BUFEXPAND+5F↑p
                 push    edx
                 xor     edx, edx
                 call    huf_decode_start
-                mov     _cx_lBytesLeft?, edx
+                mov     _lzh_decode_j, edx
                 pop     edx
                 retn
-decode_start    endp
+lzh_decode_start endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA -lh4- sliding-window expansion, chunked decode(count, buffer) form. buffer (the 4 KB work buf from CXBUF2BUFEXPAND) doubles as the dictionary. _lzh_decode_i (was dword_1AB020) = static copy cursor; _lzh_decode_j (was _cx_lBytesLeft?) = bytes still owed from an in-progress match, carried across calls. See reversing/analysis/lzh_decode_spec.md sec.5
 
-; int __usercall decode@<eax>(int a1@<edx>, int a2@<ebx>)
-decode_         proc near               ; CODE XREF: CXBUF2BUFEXPAND+9D↑p
+; int __usercall lzh_decode@<eax>(int a1@<edx>, int a2@<ebx>)
+lzh_decode      proc near               ; CODE XREF: CXBUF2BUFEXPAND+9D↑p
 
 var_10          = dword ptr -10h
 
@@ -60636,29 +60362,29 @@ var_10          = dword ptr -10h
                 xor     edx, edx
                 lea     edi, [ebx+esi]
 
-loc_17688F:                             ; CODE XREF: decode_+48↓j
-                mov     ecx, _cx_lBytesLeft?
+loc_17688F:                             ; CODE XREF: lzh_decode+48↓j
+                mov     ecx, _lzh_decode_j
                 dec     ecx
-                mov     _cx_lBytesLeft?, ecx
+                mov     _lzh_decode_j, ecx
                 test    ecx, ecx
                 jl      short loc_1768CA
-                mov     ecx, dword_1AB020
+                mov     ecx, _lzh_decode_i
                 mov     cl, [ecx+ebx]
                 mov     [eax], cl
-                mov     ecx, dword_1AB020
+                mov     ecx, _lzh_decode_i
                 inc     ecx
                 inc     eax
                 and     ecx, 0FFFh
                 inc     edx
-                mov     dword_1AB020, ecx
+                mov     _lzh_decode_i, ecx
                 cmp     eax, edi
                 jz      loc_176942
                 jmp     short loc_17688F
 ; ---------------------------------------------------------------------------
 
-loc_1768CA:                             ; CODE XREF: decode_+1E↑j
-                                        ; decode_+66↓j ...
-                call    decode_c
+loc_1768CA:                             ; CODE XREF: lzh_decode+1E↑j
+                                        ; lzh_decode+66↓j ...
+                call    lzh_decode_c
                 mov     [esp+10h+var_10], eax
                 lea     ecx, [ebx+edx]
                 cmp     eax, 0FFh
@@ -60671,44 +60397,44 @@ loc_1768CA:                             ; CODE XREF: decode_+1E↑j
                 jmp     short loc_1768CA
 ; ---------------------------------------------------------------------------
 
-loc_1768E8:                             ; CODE XREF: decode_+5A↑j
+loc_1768E8:                             ; CODE XREF: lzh_decode+5A↑j
                 sub     eax, 0FDh
                 mov     edi, edx
-                mov     _cx_lBytesLeft?, eax
-                call    decode_p
+                mov     _lzh_decode_j, eax
+                call    lzh_decode_p
                 sub     edi, eax
                 lea     eax, [edi-1]
                 and     eax, 0FFFh
                 lea     edi, [ebx+esi]
-                mov     dword_1AB020, eax
+                mov     _lzh_decode_i, eax
                 mov     eax, ecx
 
-loc_17690D:                             ; CODE XREF: decode_+C0↓j
-                mov     ecx, _cx_lBytesLeft?
+loc_17690D:                             ; CODE XREF: lzh_decode+C0↓j
+                mov     ecx, _lzh_decode_j
                 dec     ecx
-                mov     _cx_lBytesLeft?, ecx
+                mov     _lzh_decode_j, ecx
                 test    ecx, ecx
                 jl      short loc_1768CA
-                mov     ecx, dword_1AB020
+                mov     ecx, _lzh_decode_i
                 mov     cl, [ecx+ebx]
                 mov     [eax], cl
-                mov     ecx, dword_1AB020
+                mov     ecx, _lzh_decode_i
                 inc     ecx
                 inc     eax
                 and     ecx, 0FFFh
                 inc     edx
-                mov     dword_1AB020, ecx
+                mov     _lzh_decode_i, ecx
                 cmp     eax, edi
                 jnz     short loc_17690D
 
-loc_176942:                             ; CODE XREF: decode_+42↑j
-                                        ; decode_+64↑j
+loc_176942:                             ; CODE XREF: lzh_decode+42↑j
+                                        ; lzh_decode+64↑j
                 add     esp, 4
                 pop     edi
                 pop     esi
                 pop     ecx
                 retn
-decode_         endp
+lzh_decode      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74615,11 +74341,11 @@ _fmemmove       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA huf.c read_pt_len(nn=eax, nbit=edx, i_special=ebx). Builds pt_len[] + pt_table[256]. Called with (19,5,3) for the NT code-length alphabet and (13,4,-1) for the NP distance alphabet. See lzh_decode_spec.md sec.8
 
 ; int __usercall read_pt_len@<eax>(int a1@<eax>, int a2@<edx>, int a3@<ebx>)
-read_pt_len     proc near               ; CODE XREF: decode_c+2A↓p
-                                        ; decode_c+43↓p
+read_pt_len     proc near               ; CODE XREF: lzh_decode_c+2A↓p
+                                        ; lzh_decode_c+43↓p
                 push    ecx
                 push    esi
                 push    edi
@@ -74641,7 +74367,7 @@ read_pt_len     proc near               ; CODE XREF: decode_c+2A↓p
 loc_17D2B4:                             ; CODE XREF: read_pt_len+2F↓j
                 inc     eax
                 xor     bl, bl
-                mov     byte ptr (_cx_left+7F5h)[eax], bl
+                mov     byte ptr (_lzh_left+7F5h)[eax], bl
                 cmp     eax, esi
                 jl      short loc_17D2B4
 
@@ -74662,14 +74388,14 @@ loc_17D2DA:                             ; CODE XREF: read_pt_len+13↑j
                 jle     loc_17D34E
 
 loc_17D2E4:                             ; CODE XREF: read_pt_len+AF↓j
-                mov     edx, _cx_nBit_Buffer
+                mov     edx, _cx_bitbuf
                 shr     edx, 1Dh
                 cmp     edx, 7
                 jnz     short loc_17D30D
                 mov     eax, 10000000h
-                test    byte ptr _cx_nBit_Buffer+3, 10h
+                test    byte ptr _cx_bitbuf+3, 10h
                 jz      short loc_17D30D
-                mov     ebp, _cx_nBit_Buffer
+                mov     ebp, _cx_bitbuf
 
 loc_17D306:                             ; CODE XREF: read_pt_len+7B↓j
                 shr     eax, 1
@@ -74691,7 +74417,7 @@ loc_17D319:                             ; CODE XREF: read_pt_len+80↑j
 loc_17D31C:                             ; CODE XREF: read_pt_len+87↑j
                 inc     ebx
                 call    fillbuf
-                mov     byte ptr (_cx_left+7F5h)[ebx], dl
+                mov     byte ptr (_lzh_left+7F5h)[ebx], dl
                 cmp     ebx, ecx
                 jnz     short loc_17D33D
                 mov     eax, 2          ; a1
@@ -74712,7 +74438,7 @@ loc_17D33D:                             ; CODE XREF: read_pt_len+9A↑j
 loc_17D343:                             ; CODE XREF: read_pt_len+AB↑j
                 inc     ebx
                 xor     al, al
-                mov     byte ptr (_cx_left+7F5h)[ebx], al
+                mov     byte ptr (_lzh_left+7F5h)[ebx], al
                 jmp     short loc_17D338
 ; ---------------------------------------------------------------------------
 
@@ -74722,7 +74448,7 @@ loc_17D34E:                             ; CODE XREF: read_pt_len+4E↑j
                 jge     short loc_17D35D
                 inc     ebx
                 xor     cl, cl
-                mov     byte ptr (_cx_left+7F5h)[ebx], cl
+                mov     byte ptr (_lzh_left+7F5h)[ebx], cl
                 jmp     short loc_17D34E
 ; ---------------------------------------------------------------------------
 
@@ -74731,7 +74457,7 @@ loc_17D35D:                             ; CODE XREF: read_pt_len+C0↑j
                 mov     ebx, 8          ; a3
                 mov     edx, offset _pt_len ; a2
                 mov     eax, esi        ; a1
-                call    sub_17DCC0
+                call    make_table
 
 loc_17D373:                             ; CODE XREF: read_pt_len+42↑j
                 pop     ebp
@@ -74744,8 +74470,9 @@ read_pt_len     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; LHA huf.c read_c_len(): builds c_len[510] + c_table[4096], decoding each length through the pt tree just built by read_pt_len(19,5,3). CBIT=9. See reversing/analysis/lzh_decode_spec.md sec.8
 
-read_c_len      proc near               ; CODE XREF: decode_c+2F↓p
+read_c_len      proc near               ; CODE XREF: lzh_decode_c+2F↓p
                 push    ebx
                 push    ecx
                 push    edx
@@ -74784,25 +74511,25 @@ loc_17D3C4:                             ; CODE XREF: read_c_len+13↑j
                 xor     esi, esi
 
 loc_17D3D0:                             ; CODE XREF: read_c_len+FD↓j
-                mov     edx, _cx_nBit_Buffer
+                mov     edx, _cx_bitbuf
                 shr     edx, 18h
                 mov     dx, _pt_table[edx*2]
                 and     edx, 0FFFFh
                 cmp     edx, 13h
                 jl      short loc_17D41A
                 mov     eax, 800000h
-                mov     edi, _cx_nBit_Buffer
+                mov     edi, _cx_bitbuf
 
 loc_17D3F7:                             ; CODE XREF: read_c_len+A0↓j
                 add     edx, edx
                 test    eax, edi
                 jz      short loc_17D406
-                mov     dx, _cx_right[edx]
+                mov     dx, _lzh_right[edx]
                 jmp     short loc_17D40D
 ; ---------------------------------------------------------------------------
 
 loc_17D406:                             ; CODE XREF: read_c_len+83↑j
-                mov     dx, _cx_left[edx]
+                mov     dx, _lzh_left[edx]
 
 loc_17D40D:                             ; CODE XREF: read_c_len+8C↑j
                 and     edx, 0FFFFh
@@ -74872,7 +74599,7 @@ loc_17D48E:                             ; CODE XREF: read_c_len+109↑j
                 mov     ebx, 0Ch        ; a3
                 mov     edx, offset _c_len ; a2
                 mov     eax, 1FEh       ; a1
-                call    sub_17DCC0
+                call    make_table
 
 loc_17D4A7:                             ; CODE XREF: read_c_len+44↑j
                 pop     edi
@@ -74888,8 +74615,9 @@ read_c_len      endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; LHA huf.c decode_c(): returns 0..255 literal or 256..509 length code. On block boundary (blocksize==0) reads blocksize=getbits(16) then the 3 code-length tables: read_pt_len(19,5,3), read_c_len(), read_pt_len(13,4,-1). 12-bit fast lookup via _c_table, overflow via _lzh_left/_lzh_right. See reversing/analysis/lzh_decode_spec.md sec.6
 
-decode_c        proc near               ; CODE XREF: decode_:loc_1768CA↑p
+lzh_decode_c    proc near               ; CODE XREF: lzh_decode:loc_1768CA↑p
                 push    ebx
                 push    ecx
                 push    edx
@@ -74908,8 +74636,8 @@ decode_c        proc near               ; CODE XREF: decode_:loc_1768CA↑p
                 mov     eax, 0Dh        ; a1
                 call    read_pt_len
 
-loc_17D4F8:                             ; CODE XREF: decode_c+A↑j
-                mov     eax, _cx_nBit_Buffer
+loc_17D4F8:                             ; CODE XREF: lzh_decode_c+A↑j
+                mov     eax, _cx_bitbuf
                 mov     ebx, _cx_blocksize
                 xor     edx, edx
                 shr     eax, 14h
@@ -74919,26 +74647,26 @@ loc_17D4F8:                             ; CODE XREF: decode_c+A↑j
                 cmp     edx, 1FEh
                 jb      short loc_17D550
                 mov     eax, 80000h
-                mov     ecx, _cx_nBit_Buffer
+                mov     ecx, _cx_bitbuf
 
-loc_17D52A:                             ; CODE XREF: decode_c+9E↓j
+loc_17D52A:                             ; CODE XREF: lzh_decode_c+9E↓j
                 add     edx, edx
                 test    eax, ecx
                 jz      short loc_17D539
-                mov     dx, _cx_right[edx]
+                mov     dx, _lzh_right[edx]
                 jmp     short loc_17D540
 ; ---------------------------------------------------------------------------
 
-loc_17D539:                             ; CODE XREF: decode_c+7E↑j
-                mov     dx, _cx_left[edx]
+loc_17D539:                             ; CODE XREF: lzh_decode_c+7E↑j
+                mov     dx, _lzh_left[edx]
 
-loc_17D540:                             ; CODE XREF: decode_c+87↑j
+loc_17D540:                             ; CODE XREF: lzh_decode_c+87↑j
                 and     edx, 0FFFFh
                 shr     eax, 1
                 cmp     edx, 1FEh
                 jnb     short loc_17D52A
 
-loc_17D550:                             ; CODE XREF: decode_c+6D↑j
+loc_17D550:                             ; CODE XREF: lzh_decode_c+6D↑j
                 xor     eax, eax
                 mov     al, _c_len[edx] ; a1
                 call    fillbuf
@@ -74947,44 +74675,45 @@ loc_17D550:                             ; CODE XREF: decode_c+6D↑j
                 pop     ecx
                 pop     ebx
                 retn
-decode_c        endp
+lzh_decode_c    endp
 
 ; ---------------------------------------------------------------------------
                 align 4
 
 ; =============== S U B R O U T I N E =======================================
 
+; LHA huf.c decode_p(): returns match distance-1 (0..4094). 8-bit fast lookup via _pt_table; if code c != 0 then result = (1<<(c-1)) + getbits(c-1). NP=13. See reversing/analysis/lzh_decode_spec.md sec.7
 
-decode_p        proc near               ; CODE XREF: decode_+74↑p
+lzh_decode_p    proc near               ; CODE XREF: lzh_decode+74↑p
                 push    ecx
                 push    edx
-                mov     eax, _cx_nBit_Buffer
+                mov     eax, _cx_bitbuf
                 shr     eax, 18h
                 xor     ecx, ecx
                 mov     cx, _pt_table[eax*2]
                 cmp     ecx, 0Dh
                 jb      short loc_17D5AB
                 mov     eax, 800000h
-                mov     edx, _cx_nBit_Buffer
+                mov     edx, _cx_bitbuf
 
-loc_17D588:                             ; CODE XREF: decode_p+45↓j
+loc_17D588:                             ; CODE XREF: lzh_decode_p+45↓j
                 add     ecx, ecx
                 test    eax, edx
                 jz      short loc_17D597
-                mov     cx, _cx_right[ecx]
+                mov     cx, _lzh_right[ecx]
                 jmp     short loc_17D59E
 ; ---------------------------------------------------------------------------
 
-loc_17D597:                             ; CODE XREF: decode_p+28↑j
-                mov     cx, _cx_left[ecx]
+loc_17D597:                             ; CODE XREF: lzh_decode_p+28↑j
+                mov     cx, _lzh_left[ecx]
 
-loc_17D59E:                             ; CODE XREF: decode_p+31↑j
+loc_17D59E:                             ; CODE XREF: lzh_decode_p+31↑j
                 and     ecx, 0FFFFh
                 shr     eax, 1
                 cmp     ecx, 0Dh
                 jnb     short loc_17D588
 
-loc_17D5AB:                             ; CODE XREF: decode_p+17↑j
+loc_17D5AB:                             ; CODE XREF: lzh_decode_p+17↑j
                 xor     eax, eax
                 mov     al, _pt_len[ecx] ; a1
                 call    fillbuf
@@ -74997,20 +74726,21 @@ loc_17D5AB:                             ; CODE XREF: decode_p+17↑j
                 call    getbits
                 lea     ecx, [edx+eax]
 
-loc_17D5D0:                             ; CODE XREF: decode_p+56↑j
+loc_17D5D0:                             ; CODE XREF: lzh_decode_p+56↑j
                 mov     eax, ecx
                 pop     edx
                 pop     ecx
                 retn
-decode_p        endp
+lzh_decode_p    endp
 
 ; ---------------------------------------------------------------------------
                 align 4
 
 ; =============== S U B R O U T I N E =======================================
 
+; LHA huf.c decode_start helper: init_getbits() + _cx_blocksize = 0. See reversing/analysis/lzh_decode_spec.md
 
-huf_decode_start proc near              ; CODE XREF: decode_start+3↑p
+huf_decode_start proc near              ; CODE XREF: lzh_decode_start+3↑p
                 push    edx
                 xor     edx, edx
                 call    init_getbits
@@ -75057,11 +74787,11 @@ loc_17D61B:                             ; CODE XREF: count_len+9↑j
                 mov     ebx, dword_18D8CC
                 xor     eax, eax
                 inc     ebx
-                mov     ax, _cx_left[edx] ; a1
+                mov     ax, _lzh_left[edx] ; a1
                 mov     dword_18D8CC, ebx
                 call    count_len
                 xor     eax, eax
-                mov     ax, _cx_right[edx] ; a1
+                mov     ax, _lzh_right[edx] ; a1
                 call    count_len
                 dec     dword_18D8CC
                 pop     esi
@@ -75455,8 +75185,8 @@ loc_17D985:                             ; CODE XREF: make_tree+126↑j
                 mov     word_1AE648, si
                 call    downheap
                 mov     eax, _cx_heapsize
-                mov     _cx_left[ecx], bx
-                mov     _cx_right[ecx], dx
+                mov     _lzh_left[ecx], bx
+                mov     _lzh_right[ecx], dx
                 cmp     eax, 1
                 jg      loc_17D919
                 mov     eax, [esp+20h+var_14]
@@ -75953,10 +75683,10 @@ __STK           endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LHA maketbl.c make_table(nchar, bitlen, tablebits, table): canonical-Huffman fast-lookup table builder; extends into _lzh_left/_lzh_right for codes longer than tablebits. Called as make_table(nn,pt_len,8,pt_table) and make_table(510,c_len,12,c_table). NOT a CRT/graphics-lib internal (corrects drawing_primitives.md). See reversing/analysis/lzh_decode_spec.md sec.9
 
-; int __usercall sub_17DCC0@<eax>(int a1@<eax>, int a2@<edx>, int a3@<ebx>, int a4@<ecx>)
-sub_17DCC0      proc near               ; CODE XREF: read_pt_len+DE↑p
+; int __usercall make_table@<eax>(int a1@<eax>, int a2@<edx>, int a3@<ebx>, int a4@<ecx>)
+make_table      proc near               ; CODE XREF: read_pt_len+DE↑p
                                         ; read_c_len+12A↑p
 
 var_9A          = word ptr -9Ah
@@ -75985,7 +75715,7 @@ var_10          = dword ptr -10h
                 mov     [esp+98h+var_10], ecx
                 mov     eax, 2
 
-loc_17DCDF:                             ; CODE XREF: sub_17DCC0+2C↓j
+loc_17DCDF:                             ; CODE XREF: make_table+2C↓j
                 add     eax, 2
                 xor     edx, edx
                 mov     [esp+eax+98h+var_76], dx
@@ -75998,7 +75728,7 @@ loc_17DCDF:                             ; CODE XREF: sub_17DCC0+2C↓j
                 mov     eax, esi
                 lea     ecx, [ebx+esi]
 
-loc_17DCFD:                             ; CODE XREF: sub_17DCC0+50↓j
+loc_17DCFD:                             ; CODE XREF: make_table+50↓j
                 xor     ebx, ebx
                 mov     bl, [eax]
                 mov     di, [esp+ebx*2+98h+var_74]
@@ -76009,7 +75739,7 @@ loc_17DCFD:                             ; CODE XREF: sub_17DCC0+50↓j
                 cmp     eax, ecx
                 jb      short loc_17DCFD
 
-loc_17DD12:                             ; CODE XREF: sub_17DCC0+36↑j
+loc_17DD12:                             ; CODE XREF: make_table+36↑j
                 mov     edx, 1
                 xor     eax, eax
                 mov     ebx, edx
@@ -76018,7 +75748,7 @@ loc_17DD12:                             ; CODE XREF: sub_17DCC0+36↑j
                 mov     eax, 2
                 add     ebx, 10h
 
-loc_17DD2A:                             ; CODE XREF: sub_17DCC0+88↓j
+loc_17DD2A:                             ; CODE XREF: make_table+88↓j
                 mov     cl, bl
                 mov     di, [esp+eax+98h+var_74]
                 shl     edi, cl
@@ -76045,7 +75775,7 @@ loc_17DD2A:                             ; CODE XREF: sub_17DCC0+88↓j
                 add     ebx, eax
                 mov     eax, 2
 
-loc_17DD75:                             ; CODE XREF: sub_17DCC0+DA↓j
+loc_17DD75:                             ; CODE XREF: make_table+DA↓j
                 mov     ecx, [esp+98h+var_2C]
                 mov     di, [esp+eax+98h+var_98]
                 add     eax, 2
@@ -76060,13 +75790,13 @@ loc_17DD75:                             ; CODE XREF: sub_17DCC0+DA↓j
                 cmp     edx, ebp
                 jbe     short loc_17DD75
 
-loc_17DD9C:                             ; CODE XREF: sub_17DCC0+A0↑j
+loc_17DD9C:                             ; CODE XREF: make_table+A0↑j
                 lea     ebx, ds:0[edx*2]
                 mov     eax, edx
                 neg     eax
                 add     eax, 10h
 
-loc_17DDAC:                             ; CODE XREF: sub_17DCC0+104↓j
+loc_17DDAC:                             ; CODE XREF: make_table+104↓j
                 cmp     edx, 10h
                 ja      short loc_17DDC6
                 mov     edi, 1
@@ -76079,7 +75809,7 @@ loc_17DDAC:                             ; CODE XREF: sub_17DCC0+104↓j
                 jmp     short loc_17DDAC
 ; ---------------------------------------------------------------------------
 
-loc_17DDC6:                             ; CODE XREF: sub_17DCC0+EF↑j
+loc_17DDC6:                             ; CODE XREF: make_table+EF↑j
                 mov     eax, [esp+98h+var_28]
                 xor     edx, edx
                 mov     cl, byte ptr [esp+98h+var_2C]
@@ -76097,7 +75827,7 @@ loc_17DDC6:                             ; CODE XREF: sub_17DCC0+EF↑j
                 lea     eax, ds:0[edx*2]
                 add     ecx, ecx
 
-loc_17DDFC:                             ; CODE XREF: sub_17DCC0+14B↓j
+loc_17DDFC:                             ; CODE XREF: make_table+14B↓j
                 mov     ebx, eax
                 add     ebx, edi
                 inc     edx
@@ -76106,8 +75836,8 @@ loc_17DDFC:                             ; CODE XREF: sub_17DCC0+14B↓j
                 cmp     eax, ecx
                 jnz     short loc_17DDFC
 
-loc_17DE0D:                             ; CODE XREF: sub_17DCC0+119↑j
-                                        ; sub_17DCC0+12A↑j
+loc_17DE0D:                             ; CODE XREF: make_table+119↑j
+                                        ; make_table+12A↑j
                 mov     edi, [esp+98h+var_20]
                 mov     ecx, 0Fh
                 mov     ebp, [esp+98h+var_28]
@@ -76120,7 +75850,7 @@ loc_17DE0D:                             ; CODE XREF: sub_17DCC0+119↑j
                 jbe     loc_17DF63
                 mov     [esp+98h+var_24], esi
 
-loc_17DE38:                             ; CODE XREF: sub_17DCC0+29D↓j
+loc_17DE38:                             ; CODE XREF: make_table+29D↓j
                 mov     edx, [esp+98h+var_24]
                 xor     eax, eax
                 mov     al, [edx]
@@ -76150,7 +75880,7 @@ loc_17DE38:                             ; CODE XREF: sub_17DCC0+29D↓j
                 add     eax, esi
                 add     ebx, esi
 
-loc_17DEA6:                             ; CODE XREF: sub_17DCC0+1F6↓j
+loc_17DEA6:                             ; CODE XREF: make_table+1F6↓j
                 add     eax, 2
                 inc     edx
                 mov     [eax-2], cx
@@ -76159,7 +75889,7 @@ loc_17DEA6:                             ; CODE XREF: sub_17DCC0+1F6↓j
                 jmp     short loc_17DEA6
 ; ---------------------------------------------------------------------------
 
-loc_17DEB8:                             ; CODE XREF: sub_17DCC0+1AF↑j
+loc_17DEB8:                             ; CODE XREF: make_table+1AF↑j
                 xor     esi, esi
                 mov     si, [esp+edx+98h+var_98]
                 mov     cl, byte ptr [esp+98h+var_2C]
@@ -76173,48 +75903,48 @@ loc_17DEB8:                             ; CODE XREF: sub_17DCC0+1AF↑j
                 jz      short loc_17DF26
                 lea     ebx, ds:0[edi*2]
 
-loc_17DEE0:                             ; CODE XREF: sub_17DCC0+264↓j
+loc_17DEE0:                             ; CODE XREF: make_table+264↓j
                 mov     cx, [eax]
                 test    cx, cx
                 jnz     short loc_17DEFD
-                mov     _cx_left[ebx], cx
-                mov     _cx_right[ebx], cx
+                mov     _lzh_left[ebx], cx
+                mov     _lzh_right[ebx], cx
                 add     ebx, 2
                 mov     [eax], di
                 inc     edi
 
-loc_17DEFD:                             ; CODE XREF: sub_17DCC0+226↑j
+loc_17DEFD:                             ; CODE XREF: make_table+226↑j
                 test    esi, ebp
                 jz      short loc_17DF12
                 mov     ax, [eax]
                 and     eax, 0FFFFh
                 add     eax, eax
-                add     eax, offset _cx_right
+                add     eax, offset _lzh_right
                 jmp     short loc_17DF21
 ; ---------------------------------------------------------------------------
 
-loc_17DF12:                             ; CODE XREF: sub_17DCC0+23F↑j
+loc_17DF12:                             ; CODE XREF: make_table+23F↑j
                 mov     ax, [eax]
                 and     eax, 0FFFFh
                 add     eax, eax
-                add     eax, offset _cx_left
+                add     eax, offset _lzh_left
 
-loc_17DF21:                             ; CODE XREF: sub_17DCC0+250↑j
+loc_17DF21:                             ; CODE XREF: make_table+250↑j
                 add     esi, esi
                 dec     edx
                 jnz     short loc_17DEE0
 
-loc_17DF26:                             ; CODE XREF: sub_17DCC0+217↑j
+loc_17DF26:                             ; CODE XREF: make_table+217↑j
                 mov     edx, [esp+98h+var_18]
                 mov     [eax], dx
 
-loc_17DF30:                             ; CODE XREF: sub_17DCC0+1C4↑j
-                                        ; sub_17DCC0+1F0↑j
+loc_17DF30:                             ; CODE XREF: make_table+1C4↑j
+                                        ; make_table+1F0↑j
                 mov     eax, [esp+98h+var_1C]
                 mov     edx, [esp+98h+var_14]
                 mov     [esp+eax*2+98h+var_98], dx
 
-loc_17DF3F:                             ; CODE XREF: sub_17DCC0+186↑j
+loc_17DF3F:                             ; CODE XREF: make_table+186↑j
                 mov     ebx, [esp+98h+var_24]
                 mov     ecx, [esp+98h+var_18]
                 mov     esi, [esp+98h+var_20]
@@ -76225,13 +75955,13 @@ loc_17DF3F:                             ; CODE XREF: sub_17DCC0+186↑j
                 cmp     ecx, esi
                 jb      loc_17DE38
 
-loc_17DF63:                             ; CODE XREF: sub_17DCC0+16E↑j
+loc_17DF63:                             ; CODE XREF: make_table+16E↑j
                 add     esp, 8Ch
                 pop     ebp
                 pop     edi
                 pop     esi
                 retn
-sub_17DCC0      endp
+make_table      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -83670,7 +83400,7 @@ XMI_type        dd ?                    ; DATA XREF: AILXMIDI_start_+BD↑o
                                         ; _XMI_serve+1A0↑w ...
 _type           db 200h dup(   ?)       ; DATA XREF: _AIL_API_init_sequence+1E5↑o
                                         ; _AIL_API_init_sequence+1FB↑o ...
-dword_1A9F28    dd ?                    ; DATA XREF: CXBUF2BUFINIT+21↑w
+_cx_InBytesLeft dd ?                    ; DATA XREF: CXBUF2BUFINIT+21↑w
                                         ; CXBUF2BUFCOMPRESS:loc_169B1A↑r ...
 _cx_lCompressed_Size dd          ?      ; DATA XREF: ENCODE_BUF+51↑r
                                         ; get_next_match+43↑r ...
@@ -83684,7 +83414,7 @@ _cx_lOriginal_Size dd          ?        ; DATA XREF: CXBUF2BUFINIT+27↑w
 _cx_hArc        dd ?
 _cx_hTmp        dd ?
 _cx_hOut        dd ?
-_cx_nBit_Buffer dd ?                    ; DATA XREF: fillbuf+F↑r
+_cx_bitbuf      dd ?                    ; DATA XREF: fillbuf+F↑r
                                         ; fillbuf+1D↑w ...
 _cx_pTemporary_Filename dd ?
 _cx_OutBuf      dd ?                    ; DATA XREF: ENCODE_BUF+28↑w
@@ -83727,10 +83457,10 @@ _cx_bitcount    dd ?                    ; DATA XREF: fillbuf+17↑r
                                         ; fillbuf+2A↑r ...
 _cx_subbitbuf   dd ?                    ; DATA XREF: fillbuf+34↑r
                                         ; fillbuf+70↑w ...
-_cx_lBytesLeft? dd ?                    ; DATA XREF: decode_start+8↑w
-                                        ; decode_:loc_17688F↑r ...
-dword_1AB020    dd ?                    ; DATA XREF: decode_+20↑r
-                                        ; decode_+2B↑r ...
+_lzh_decode_j   dd ?                    ; DATA XREF: lzh_decode_start+8↑w
+                                        ; lzh_decode:loc_17688F↑r ...
+_lzh_decode_i   dd ?                    ; DATA XREF: lzh_decode+20↑r
+                                        ; lzh_decode+2B↑r ...
 _The_time       db 24h dup(   ?)        ; DATA XREF: gmtime+1↑o
 ____Argc        dd ?                    ; DATA XREF: __CMain+3B↑r
                                         ; __Init_Argv+A8↑w
@@ -83798,17 +83528,17 @@ byte_1AB1B8     db 50h dup(   ?)        ; DATA XREF: get_data_from_list+7B↑w
 ___minreal      dd ?                    ; DATA XREF: RationalAlloc_+59↑w
                                         ; RationalAlloc_+6C↑r ...
 _c_table        dw 1000h dup(     ?)    ; DATA XREF: read_c_len:loc_17D48E↑o
-                                        ; decode_c+59↑r
+                                        ; lzh_decode_c+59↑r
 _pt_table       dw 100h dup(     ?)     ; DATA XREF: read_pt_len:loc_17D35D↑o
                                         ; read_c_len+61↑r ...
-_cx_blocksize   dd ?                    ; DATA XREF: decode_c+3↑r
-                                        ; decode_c+20↑w ...
+_cx_blocksize   dd ?                    ; DATA XREF: lzh_decode_c+3↑r
+                                        ; lzh_decode_c+20↑w ...
 _c_len          db 1FEh dup(   ?)       ; DATA XREF: count_t_freq+35↑r
                                         ; count_t_freq:loc_175DDD↑r ...
-_cx_right       dw 3FBh dup(     ?)     ; DATA XREF: read_c_len+85↑r
-                                        ; decode_c+80↑r ...
-_cx_left        dw 3FBh dup(     ?)     ; DATA XREF: read_c_len:loc_17D406↑r
-                                        ; decode_c:loc_17D539↑r ...
+_lzh_right      dw 3FBh dup(     ?)     ; DATA XREF: read_c_len+85↑r
+                                        ; lzh_decode_c+80↑r ...
+_lzh_left       dw 3FBh dup(     ?)     ; DATA XREF: read_c_len:loc_17D406↑r
+                                        ; lzh_decode_c:loc_17D539↑r ...
 ; int pt_len
 _pt_len         db 16h dup(   ?)        ; DATA XREF: write_pt_len+2A↑r
                                         ; write_pt_len+5A↑r ...
