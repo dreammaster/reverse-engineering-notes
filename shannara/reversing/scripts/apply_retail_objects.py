@@ -172,6 +172,10 @@ RENAMES = [
     (0x1EDB0, "describe_room?", "(room=ax, phase=dx): refreshes the view if the room picture changed (event 0x20) then sends `phase` (9 first visit, 0Ah revisit, 0Bh/0Ch verbosity modes) to the room handler."),
     (0x1A5C8, "object_get_points?", "(obj=ax) -> score value stored in the object (dword +0Ch type 1, +15h type 2, ...); awarded once via add_score?."),
     (0x1A618, "object_set_points?", "(obj, value): inverse of object_get_points? (go_to_room? zeroes it after awarding)."),
+    (0x1BC20, "overlay_visible?",
+     "(entry=eax) -> 1 if the 12-byte overlay entry {s16 obj; s16 container; s16 picId; s16 attr; void *cond} should be "
+     "drawn: cond(obj) != 0 if present; obj in `container` (object_parent_is); obj has `attr`; plain entries defer to "
+     "sub_21ED0(obj)."),
     (0x1B470, "object_move?",
      "(obj=ax, newParent=dx, slot=ebx): unlinks obj from its current parent's child list (walking the sibling chain), "
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),

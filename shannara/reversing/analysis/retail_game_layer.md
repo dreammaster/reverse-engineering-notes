@@ -385,3 +385,26 @@ Reading `go_to_room?` and the 63 room handlers' dispatch chains pins down the li
 (Handlers of non-room objects mostly dispatch on 3/4/6 with the verb in `dword_CD918`, as the
 verb is not a parameter.) `go_to_room?` also awards the room's stored points once
 (`object_get_points?` -> `add_score?` -> `object_set_points?`) and sets attr 5 (visited).
+
+## 11. Room overlays (eighth pass)
+
+A room's clickable/visible objects are drawn as **overlay pictures** on the room picture. Each
+room handler owns static tables of 12-byte entries and passes them to
+`setup_pic_regions?(table, count)` (on `0x16`, the draw phase) and `disable_pic_regions?` (to
+hide):
+
+```
+struct Overlay {            // 12 bytes
+    s16 obj;                // object shown
+    s16 container;          // if non-zero: obj must be inside this object (object_parent_is)
+    s16 picId;              // (pic file << 8) | entry   - the overlay sprite
+    s16 attr;               // if non-zero: obj must have this attribute bit
+    void (*cond)(int obj);  // optional extra visibility test (returns non-zero to draw)
+};
+```
+
+`overlay_visible?` (`0x1BC20`) evaluates an entry; `setup_pic_regions?` keeps a per-entry "drawn" byte
+in `byte_CD51C[128]`, loads each newly visible entry's picture with `load_pic_in` (retrying after
+`stop_music` to free memory) and removes entries that stopped being visible. Skipped when the UI
+lock `byte_ADE24` is set. `retail_overlays.tsv` lists all 108 distinct tables used by handlers
+(e.g. start room 88: object 11 -> picture 0x1409 = file 20 entry 9, object 48 -> 0x1407, ...).
