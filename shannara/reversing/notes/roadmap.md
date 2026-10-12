@@ -124,11 +124,21 @@ Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
 
-## Retail next steps (see `analysis/retail_game_layer.md` sec.3)
+## Retail status (updated 2026-10-12, see `analysis/retail_game_layer.md`)
 
-- Name `run_command?` callees and the object-list helpers; locate handler
-  dispatch (retail analogue of Gateway's `proc_table`) - decides whether room/NPC
-  logic is compiled code or data.
-- Map message strings to function regions (NPC/room clusters).
-- Local-only retail export: `Shannara.asm` (15 MB, git-ignored). Regenerate with
-  `idat.exe` + `ida_loader.gen_file(OFILE_ASM, ...)` on a *copy* of the IDB.
+Done: object model + 744 object records (`retail_objects.tsv`), 640 object handlers and 78
+verb defaults named (`objh_NNN`, `verbdef_NN_<Verb>`; tables `retail_object_handlers.tsv`,
+`retail_verb_handlers.tsv`), rooms/pics/music (`retail_rooms.tsv`), the whole savegame schema
+(`retail_save_regions.tsv`), OBJECT.DAT / SHANSTR.DAT structure, FLC inventory, the
+handler "script API" ranking, ~100 framework functions (working names ending in `?`).
+
+Next:
+- Still unnamed: 468 framework functions (74 KB), see `retail_function_map.tsv`
+  (sort by callers). High-value ones left: `sub_19BC0`, `sub_1A834`/`sub_1A768`
+  (object dword property setters), `sub_196B8`/`sub_19778` (party stat math), `sub_669C4`,
+  `sub_23560`, `sub_1F984`, `sub_22D50` (dialog text layout), combat engine 0x13000-0x17000.
+- Pic file container (`load_palette`/`load_pic`/`sub_77FEC`/blit writers) and the Q/gx
+  rendering path: needs real data files to validate; none on this machine.
+- Per-handler semantics: classify the 640 handlers (text-only vs state-changing).
+- Phase codes 0x0D-0x0F, 0x18, 0x1A-0x1E meanings (partially known: 0x18 = game restored).
+- `Shannara.asm` is local-only (git-ignored); regenerate with `unfold_functions.py` first.
