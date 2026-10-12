@@ -408,3 +408,31 @@ in `byte_CD51C[128]`, loads each newly visible entry's picture with `load_pic_in
 `stop_music` to free memory) and removes entries that stopped being visible. Skipped when the UI
 lock `byte_ADE24` is set. `retail_overlays.tsv` lists all 108 distinct tables used by handlers
 (e.g. start room 88: object 11 -> picture 0x1409 = file 20 entry 9, object 48 -> 0x1407, ...).
+
+## 12. Picture file container (ninth pass; structure from code, not validated against data)
+
+`load_palette(picId, frame)` -> `sub_77FEC(fileNo)`: a picture id is `(file << 8) | entry`. Each
+picture file begins with a **0xC00-byte directory = 256 entries x 12 bytes** (read in one
+`read_file`); up to 4 directories are cached (`unk_D13D8` ring, 0xC00 each; their derived
+data-length tables in `unk_D03D8`, 0x400 each). Entry layout (copied to `dword_D4438..D4440`):
+
+| Offset | Meaning |
+|---|---|
+| `+0` u32 | file offset of this picture's data (0 = unused entry; ends the directory scan) |
+| `+4` u8 | frame count (the per-frame offset table is `count*4` bytes) |
+| `+5` u8 | flags: `0x10` = a 768-byte (0x300) palette follows the frame table; `0x20` / `0x40` select the `Pic.field_5` mode 4 / 3 used by `load_pic` |
+| `+6` u16 | stored into `Pic.field_A` (a dimension; the pixel-buffer creation uses it) |
+| `+8` u16 | stored into `Pic._nextTime` (animation delay) |
+| `+10`, `+11` u8 | stored into `Pic.field_E`, `Pic.field_F` |
+
+Derived: payload length = next entry's offset - this offset - `count*4` - (palette ? 0x300 : 0); for the
+last entry the file size is used. `load_palette`: if the requested frame > 0 it seeks to `offset + (frame-1)*4`
+and reads two u32 (`dword_CA1C0`, `dword_CA1C4` -> `Pic.field_6`, `Pic.field_8`); if the entry has
+a palette it seeks to `offset + count*4` and reads 0x300 bytes into `_default_palette`
+(`_palette_loaded = 1`). `load_pic` then allocates the gx buffer (`gxCreateVirtual`) and streams the
+frame data through `sub_85754` -> `sub_90E90` (a plain callback copy, `pic_file_read` as reader; the
+writer callbacks `loc_855DC` / `loc_85634` / `loc_856C4` blit rows).
+
+Open questions needing real picture files: meaning of the two u32 per frame, the bit layout of
+flags 0x20/0x40 (likely pixel format / compression), and whether the frame data is raw or RLE.
+The demo build used LZH for the same job (see `lzh_decode_spec.md`); retail does not appear to.
