@@ -261,3 +261,57 @@ room (non-zero refuses), previous/current room update, reparent the party, light
 new room, redraw.
 
 Vocabulary helpers: `verb_get_name`, `verb_get_flags`, `object_get_display_name?`.
+
+## 7. Data files and asset inventory (fifth pass)
+
+Strings embedded in the exe name every external file the retail game opens:
+
+| File | Used for |
+|---|---|
+| `LEGEND.INI`, `MDI.INI`, `DIG.INI` | configuration / Miles driver lists (INI keys `PICDATA`, `VOCDATA`, `SAVEDATA`, root `C:\MOS\`) |
+| `OBJECT.DAT` | object text pool (see below) |
+| `SHANSTR.DAT` | compressed message strings (see below) |
+| `RESTART.DAT`, `HELP.DAT`, `JOURNAL.nnn` / `*.SAV` | restart snapshot, help/tutorial snapshot, save games (see section 6) |
+| `*.FLC` | **Autodesk FLIC animations**: `OPEN1-5`, `STILL06`, `SHR_9/14/1113/1819/2024/2729/3032`, `SHANNARA`, `LECPFIXD`, `book2/3`, `badbook7`, `1455a9`, and numbered clips `7700`...`9595` (about 60). Standard format, so ScummVM's FLIC decoder applies. |
+| picture files | opened by number through `load_palette` (file = `picId >> 8`), path from INI `PICDATA` |
+| voice / sound / music | INI `VOCDATA`; Miles AIL (`.XMI`/digital) |
+
+**OBJECT.DAT** (`load_object_dat?`): `u16 poolSize; char pool[poolSize]` - the NUL-terminated
+object names/descriptions. Object records reference it by 1-based byte offset
+(`+0` name, `+4` description).
+
+**SHANSTR.DAT** (`init_string_file?`, `load_string_`, `decode_string?`): message-id =
+`(block << 16) | index`. File layout, from the loader:
+
+```
+u16  nBlocks
+{ u16 stringCount; u32 dataBytes } blocks[nBlocks]        // 6-byte descriptors
+u16  compressedLen[stringCount] per block                 // stored block after block, read on demand
+u16  N1;  u16 huffTree[N1]                                // binary tree as u16 pairs, root = last pair
+u16  K (<=128); u16 phraseOffsets[K]; u16 poolSize; u8 phrasePool[poolSize]
+...  per-block compressed string data
+```
+Each string is a bitstream (LSB first) walked through `huffTree` (a negative entry is a
+leaf, symbol = `-v-1`); symbols `>= 0x80` expand phrase `sym-0x80` from the phrase table,
+smaller ones are literal bytes, symbol 0 terminates. Decoded strings go into a small LRU
+text cache (`dword_CD500`, 32 entries) addressed through `load_string_` (ids with top
+byte `0xF0` are cache slot references). Structure only: no data file is available here to
+validate the bit-level details.
+
+### Framework function map
+
+`retail_function_map.tsv` lists all 2,347 functions with size, caller and callee counts and a
+role. Code volume by role: **object handlers 637 fns / 263 KB**, verb defaults 78 / 11 KB,
+named game-layer framework 89 / 42 KB, unnamed game-layer framework 468 / 74 KB, engine
+and libraries 1,075 / 149 KB. i.e. roughly two thirds of the game layer is per-object
+content logic and one third is framework.
+
+Framework landmarks named in this pass (all working names, see `apply_retail_objects.py`):
+input `get_event` / `dispatch_event?` -> `handle_key_event?` (with debug keys),
+`handle_click_event?`, `handle_move_event?`, `popup_window_event?`; commands
+`run_command?` / `build_command_line?` / `verb_get_name`; rooms `go_to_room?`,
+`refresh_room?`, `get_room_pic_id`, `set_room_music?`; party `party_has_member?`,
+`party_add_member?`; dialog `speak?` / `show_dialog?` / `load_string_`; combat
+`start_encounter?`, `clone_combatant?`, `add_combatants?`, `combat_help_menu?`; UI
+`save_restore_dialog?`, `options_dialog?`, `describe_contents?`; cutscenes
+`play_cutscene?` (FLC); state `serialize_state?`, `load_game?`, `save_game?`.

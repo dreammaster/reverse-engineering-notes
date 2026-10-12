@@ -1,0 +1,2348 @@
+address	name	size	callers	callees	role
+0x10010	main_	339	1	25	game layer (named)
+0x10163	__close_	52	2	2	game layer (named)
+0x101a0	sub_101A0	72	4	2	game layer (unnamed)
+0x101e8	sub_101E8	101	3	2	game layer (unnamed)
+0x10250	sub_10250	202	3	8	game layer (unnamed)
+0x1031c	sub_1031C	120	3	2	game layer (unnamed)
+0x10394	sub_10394	70	2	3	game layer (unnamed)
+0x103dc	sub_103DC	37	3	1	game layer (unnamed)
+0x10404	sub_10404	199	9	8	game layer (unnamed)
+0x104cc	disable_button_?	68	2	4	game layer (named)
+0x10510	sub_10510	67	1	1	game layer (unnamed)
+0x10554	sub_10554	91	2	2	game layer (unnamed)
+0x105b0	sub_105B0	388	3	6	game layer (unnamed)
+0x10734	sub_10734	57	8	1	game layer (unnamed)
+0x10770	sub_10770	840	6	20	game layer (unnamed)
+0x10ab8	sub_10AB8	104	15	5	game layer (unnamed)
+0x10b20	sub_10B20	68	1	2	game layer (unnamed)
+0x10b64	sub_10B64	11	1	0	game layer (unnamed)
+0x10b70	sub_10B70	475	11	12	game layer (unnamed)
+0x10d4c	sub_10D4C	96	2	4	game layer (unnamed)
+0x10dac	sub_10DAC	449	12	8	game layer (unnamed)
+0x10f70	sub_10F70	48	6	2	game layer (unnamed)
+0x10fa0	sub_10FA0	177	2	5	game layer (unnamed)
+0x11054	popup_window_event?	1022	1	30	game layer (named)
+0x11454	send_event?	21	18	1	game layer (named)
+0x1146c	send_event_code?	10	31	1	game layer (named)
+0x11478	refresh_room?	445	54	21	game layer (named)
+0x11638	wait_ticks?	229	2	10	game layer (named)
+0x11720	delay?	10	190	1	game layer (named)
+0x1172c	delay_animate?	13	184	1	game layer (named)
+0x1173c	dispatch_event?	356	6	15	game layer (named)
+0x118a0	sub_118A0	3	1	0	game layer (unnamed)
+0x118a4	sub_118A4	984	2	33	game layer (unnamed)
+0x11c7c	sub_11C7C	132	2	5	game layer (unnamed)
+0x11d00	sub_11D00	120	2	1	game layer (unnamed)
+0x123d0	sub_123D0	265	1	13	game layer (unnamed)
+0x124dc	handle_key_event?	1541	1	27	game layer (named)
+0x12ae4	handle_move_event?	401	1	7	game layer (named)
+0x12c78	handle_click_event?	1574	1	29	game layer (named)
+0x132a0	sub_132A0	74	1	4	game layer (unnamed)
+0x132ec	sub_132EC	933	15	28	game layer (unnamed)
+0x136a8	sub_136A8	120	2	4	game layer (unnamed)
+0x13720	sub_13720	477	1	8	game layer (unnamed)
+0x13900	sub_13900	275	1	5	game layer (unnamed)
+0x13a20	sub_13A20	41	7	4	game layer (unnamed)
+0x13a50	sub_13A50	91	2	0	game layer (unnamed)
+0x13ac4	sub_13AC4	442	1	17	game layer (unnamed)
+0x13c80	sub_13C80	90	1	0	game layer (unnamed)
+0x13cdc	add_combatants?	127	43	1	game layer (named)
+0x13d5c	sub_13D5C	120	4	3	game layer (unnamed)
+0x13dd4	sub_13DD4	92	2	2	game layer (unnamed)
+0x13e30	sub_13E30	220	1	5	game layer (unnamed)
+0x13f0c	sub_13F0C	231	1	7	game layer (unnamed)
+0x14010	capture_keyboard?	576	1	18	game layer (named)
+0x14250	sub_14250	307	2	9	game layer (unnamed)
+0x14384	sub_14384	47	1	2	game layer (unnamed)
+0x143b4	sub_143B4	113	1	1	game layer (unnamed)
+0x14438	sub_14438	826	1	19	game layer (unnamed)
+0x14774	sub_14774	60	5	1	game layer (unnamed)
+0x147b0	sub_147B0	12	2	0	game layer (unnamed)
+0x14808	sub_14808	811	2	2	game layer (unnamed)
+0x14b34	release_keyboard	51	9	1	game layer (named)
+0x14b68	sub_14B68	102	1	3	game layer (unnamed)
+0x14bd0	sub_14BD0	126	2	0	game layer (unnamed)
+0x14c50	sub_14C50	68	1	0	game layer (unnamed)
+0x14c94	sub_14C94	38	1	1	game layer (unnamed)
+0x14cbc	sub_14CBC	12	1	0	game layer (unnamed)
+0x14cc8	sub_14CC8	439	2	5	game layer (unnamed)
+0x14e80	load_display	77	3	6	game layer (named)
+0x14ed0	sub_14ED0	590	6	2	game layer (unnamed)
+0x15120	sub_15120	85	14	1	game layer (unnamed)
+0x15178	sub_15178	35	2	2	game layer (unnamed)
+0x1519c	sub_1519C	97	1	3	game layer (unnamed)
+0x15200	sub_15200	141	1	2	game layer (unnamed)
+0x15290	sub_15290	110	1	2	game layer (unnamed)
+0x15300	sub_15300	89	3	3	game layer (unnamed)
+0x1535c	sub_1535C	234	13	5	game layer (unnamed)
+0x15448	sub_15448	96	3	3	game layer (unnamed)
+0x154a8	sub_154A8	353	5	10	game layer (unnamed)
+0x1560c	sub_1560C	260	1	6	game layer (unnamed)
+0x15710	sub_15710	69	1	0	game layer (unnamed)
+0x15758	clone_combatant?	54	69	1	game layer (named)
+0x15790	sub_15790	12	2	0	game layer (unnamed)
+0x1579c	sub_1579C	70	2	1	game layer (unnamed)
+0x157e4	sub_157E4	71	4	5	game layer (unnamed)
+0x1582c	sub_1582C	29	1	0	game layer (unnamed)
+0x1584c	sub_1584C	29	6	1	game layer (unnamed)
+0x158ac	sub_158AC	511	2	2	game layer (unnamed)
+0x15aac	sub_15AAC	81	1	2	game layer (unnamed)
+0x15b08	reset_bevel_style?	68	1	0	game layer (named)
+0x15b4c	sub_15B4C	68	1	0	game layer (unnamed)
+0x15b90	sub_15B90	61	1	0	game layer (unnamed)
+0x15bd0	sub_15BD0	68	1	0	game layer (unnamed)
+0x15c24	sub_15C24	212	9	4	game layer (unnamed)
+0x15cf8	sub_15CF8	14	0	1	game layer (unnamed)
+0x15d08	sub_15D08	239	0	2	game layer (unnamed)
+0x15df8	sub_15DF8	327	0	1	game layer (unnamed)
+0x15f40	sub_15F40	423	0	3	game layer (unnamed)
+0x160e8	sub_160E8	288	0	4	game layer (unnamed)
+0x16208	sub_16208	953	0	6	game layer (unnamed)
+0x165c4	sub_165C4	354	0	3	game layer (unnamed)
+0x16728	sub_16728	569	0	4	game layer (unnamed)
+0x16964	sub_16964	93	0	1	game layer (unnamed)
+0x169c4	sub_169C4	197	0	3	game layer (unnamed)
+0x16a8c	sub_16A8C	55	0	2	game layer (unnamed)
+0x16ac4	sub_16AC4	227	0	3	game layer (unnamed)
+0x16bbc	sub_16BBC	1192	0	11	game layer (unnamed)
+0x17064	sub_17064	128	0	1	game layer (unnamed)
+0x170e4	sub_170E4	214	0	1	game layer (unnamed)
+0x171bc	sub_171BC	235	10	2	game layer (unnamed)
+0x17310	start_encounter?	2440	17	21	game layer (named)
+0x17ca0	objh_001	646	0	5	object handler
+0x17f28	objh_009	805	0	6	object handler
+0x18250	objh_002	1051	0	12	object handler
+0x1866c	objh_003	1219	0	12	object handler
+0x18b30	objh_004	3	0	0	object handler
+0x18b34	objh_005	1165	0	15	object handler
+0x18fc4	objh_008	448	0	4	object handler
+0x19184	objh_006	519	0	5	object handler
+0x1938c	objh_007	441	0	3	object handler
+0x19548	party_has_member?	73	47	1	game layer (named)
+0x19594	party_add_member?	101	43	2	game layer (named)
+0x195fc	party_add_member_slot?	157	40	6	game layer (named)
+0x196b8	sub_196B8	192	23	2	game layer (unnamed)
+0x19778	sub_19778	185	23	2	game layer (unnamed)
+0x19868	sub_19868	774	8	3	game layer (unnamed)
+0x19b70	sub_19B70	79	1	2	game layer (unnamed)
+0x19bc0	sub_19BC0	88	72	2	game layer (unnamed)
+0x19c40	sub_19C40	116	11	1	game layer (unnamed)
+0x19cb4	sub_19CB4	144	14	1	game layer (unnamed)
+0x19d44	sub_19D44	54	1	0	game layer (unnamed)
+0x19d7c	sub_19D7C	61	1	0	game layer (unnamed)
+0x19dbc	sub_19DBC	471	2	6	game layer (unnamed)
+0x19fb4	object_get_name?	113	7	1	game layer (named)
+0x1a03c	object_get_desc?	114	1	1	game layer (named)
+0x1a0c4	object_get_data_ptr?	62	1	0	game layer (named)
+0x1a104	object_attr_locate?	125	3	1	game layer (named)
+0x1a184	object_has_attr	44	320	1	game layer (named)
+0x1a1b0	object_set_attr	38	74	1	game layer (named)
+0x1a1d8	object_clear_attr	40	64	1	game layer (named)
+0x1a200	object_get_location?	82	29	0	game layer (named)
+0x1a254	object_set_location?	75	1	0	game layer (named)
+0x1a2a0	object_get_slot?	76	4	0	game layer (named)
+0x1a2ec	object_set_slot?	71	1	0	game layer (named)
+0x1a348	object_get_list_head?	161	15	0	game layer (named)
+0x1a400	object_set_list_head?	155	2	0	game layer (named)
+0x1a49c	object_get_next_sibling?	74	16	0	game layer (named)
+0x1a4e8	object_set_next_sibling?	70	2	0	game layer (named)
+0x1a530	object_get_prop_dword?	77	6	0	game layer (named)
+0x1a580	sub_1A580	71	14	0	game layer (unnamed)
+0x1a5c8	sub_1A5C8	77	3	0	game layer (unnamed)
+0x1a618	sub_1A618	71	3	0	game layer (unnamed)
+0x1a660	sub_1A660	71	1	0	game layer (unnamed)
+0x1a6fc	sub_1A6FC	85	15	0	game layer (unnamed)
+0x1a768	sub_1A768	81	26	0	game layer (unnamed)
+0x1a7cc	sub_1A7CC	86	6	0	game layer (unnamed)
+0x1a834	sub_1A834	82	23	0	game layer (unnamed)
+0x1a89c	sub_1A89C	117	5	0	game layer (unnamed)
+0x1a914	sub_1A914	55	4	0	game layer (unnamed)
+0x1a94c	sub_1A94C	53	4	0	game layer (unnamed)
+0x1a998	object_get_handler_index	90	1	0	game layer (named)
+0x1aa18	read_array?	42	12	2	game layer (named)
+0x1aa74	init_string_file?	782	1	8	game layer (named)
+0x1ad84	sub_1AD84	69	1	2	game layer (unnamed)
+0x1adcc	sub_1ADCC	291	2	1	game layer (unnamed)
+0x1aef0	decode_string?	304	1	1	game layer (named)
+0x1b020	load_string_	968	25	7	game layer (named)
+0x1b3f0	sub_1B3F0	127	2	5	game layer (unnamed)
+0x1b470	object_move?	216	205	9	game layer (named)
+0x1b588	object_parent_is	18	301	1	game layer (named)
+0x1b59c	sub_1B59C	42	2	2	game layer (unnamed)
+0x1b5c8	object_is_within	36	19	1	game layer (named)
+0x1b5f0	sub_1B5F0	433	3	3	game layer (unnamed)
+0x1b7b0	run_command?	534	176	5	game layer (named)
+0x1b9c8	sub_1B9C8	586	1	23	game layer (unnamed)
+0x1bc20	sub_1BC20	127	3	3	game layer (unnamed)
+0x1bca0	disable_pic_regions?	63	58	3	game layer (named)
+0x1bce0	sub_1BCE0	406	51	8	game layer (unnamed)
+0x1bf2c	sub_1BF2C	57	2	0	game layer (unnamed)
+0x1bf68	sub_1BF68	145	1	3	game layer (unnamed)
+0x1bffc	sub_1BFFC	49	1	1	game layer (unnamed)
+0x1c088	sub_1C088	24	1	0	game layer (unnamed)
+0x1c0a0	sub_1C0A0	22	3	0	game layer (unnamed)
+0x1c0b8	sub_1C0B8	16	1	0	game layer (unnamed)
+0x1c0e8	print_obj	2147	2660	8	game layer (named)
+0x1c94c	sub_1C94C	202	5	5	game layer (unnamed)
+0x1ca18	sub_1CA18	367	2	7	game layer (unnamed)
+0x1cb88	describe_contents?	1096	1	11	game layer (named)
+0x1d1cc	sub_1D1CC	18	2	1	game layer (unnamed)
+0x1d1e0	sub_1D1E0	170	5	1	game layer (unnamed)
+0x1d28c	sub_1D28C	148	2	1	game layer (unnamed)
+0x1d320	nullsub_1	1	2	0	game layer (named)
+0x1d324	get_room_pic_id	1190	3	8	game layer (named)
+0x1d7cc	sub_1D7CC	59	1	0	game layer (unnamed)
+0x1d818	sub_1D818	277	1	4	game layer (unnamed)
+0x1d970	sub_1D970	61	1	2	game layer (unnamed)
+0x1d9b0	sub_1D9B0	84	1	8	game layer (unnamed)
+0x1da04	sub_1DA04	147	1	8	game layer (unnamed)
+0x1e110	sub_1E110	1723	1	7	game layer (unnamed)
+0x1e23c	run_default_verb_handler?	35	1	1	game layer (named)
+0x1e260	verb_get_name	38	1	0	game layer (named)
+0x1e288	object_get_display_name?	54	10	2	game layer (named)
+0x1e2c0	sub_1E2C0	17	2	0	game layer (unnamed)
+0x1e2d4	verb_get_flags	47	1	0	game layer (named)
+0x1e304	build_command_line?	2597	3	16	game layer (named)
+0x1edb0	sub_1EDB0	95	1	5	game layer (unnamed)
+0x1ee10	go_to_room?	706	89	17	game layer (named)
+0x1f0e4	sub_1F0E4	490	8	11	game layer (unnamed)
+0x1f3c0	sub_1F3C0	139	2	3	game layer (unnamed)
+0x1f44c	sub_1F44C	72	15	2	game layer (unnamed)
+0x1f494	sub_1F494	157	46	8	game layer (unnamed)
+0x1f534	sub_1F534	30	17	1	game layer (unnamed)
+0x1f554	sub_1F554	28	1	2	game layer (unnamed)
+0x1f580	sub_1F580	189	23	12	game layer (unnamed)
+0x1f640	sub_1F640	162	3	15	game layer (unnamed)
+0x1f6e4	sub_1F6E4	25	16	1	game layer (unnamed)
+0x1f700	sub_1F700	20	1	1	game layer (unnamed)
+0x1f720	sub_1F720	155	1	9	game layer (unnamed)
+0x1f7bc	sub_1F7BC	103	1	4	game layer (unnamed)
+0x1f824	sub_1F824	44	1	2	game layer (unnamed)
+0x1f850	sub_1F850	53	1	1	game layer (unnamed)
+0x1f888	sub_1F888	16	0	0	game layer (unnamed)
+0x1f898	sub_1F898	233	1	15	game layer (unnamed)
+0x1f984	sub_1F984	641	22	25	game layer (unnamed)
+0x1fc08	sub_1FC08	65	1	0	game layer (unnamed)
+0x1fc4c	sub_1FC4C	342	0	13	game layer (unnamed)
+0x1fdbc	combat_help_menu?	185	1	2	game layer (named)
+0x1fe8c	sub_1FE8C	234	1	3	game layer (unnamed)
+0x1ff8c	sub_1FF8C	191	1	2	game layer (unnamed)
+0x20050	sub_20050	199	7	1	game layer (unnamed)
+0x20190	sub_20190	379	6	4	game layer (unnamed)
+0x2030c	sub_2030C	16	1	1	game layer (unnamed)
+0x2031c	sub_2031C	116	3	1	game layer (unnamed)
+0x20390	play_music_entry?	400	30	8	game layer (named)
+0x20520	sub_20520	156	5	5	game layer (unnamed)
+0x205bc	set_room_music?	90	4	1	game layer (named)
+0x20784	clear_keys?	445	18	8	game layer (named)
+0x207d4	init_music	187	1	9	game layer (named)
+0x21aa0	sub_21AA0	23	4	24	game layer (unnamed)
+0x21ac0	sub_21AC0	49	8	1	game layer (unnamed)
+0x21af4	call_object_handler?	94	40	1	game layer (named)
+0x21b60	load_object_dat?	103	1	5	game layer (named)
+0x21bc8	sub_21BC8	29	2	2	game layer (unnamed)
+0x21be8	startup	387	1	26	game layer (named)
+0x21d78	openAutorun	61	1	2	game layer (named)
+0x21dc0	sub_21DC0	271	2	4	game layer (unnamed)
+0x21ed0	sub_21ED0	14	1	1	game layer (unnamed)
+0x21eec	sub_21EEC	58	5	2	game layer (unnamed)
+0x21f30	bitset_test	80	571	0	game layer (named)
+0x21f80	bitset_set	68	194	0	game layer (named)
+0x21fc4	bitset_clear	70	80	0	game layer (named)
+0x2200c	sub_2200C	34	29	0	game layer (unnamed)
+0x22030	sub_22030	102	0	1	game layer (unnamed)
+0x2211c	update_room_light?	128	15	2	game layer (named)
+0x221c4	sub_221C4	384	2	13	game layer (unnamed)
+0x22344	sub_22344	185	3	6	game layer (unnamed)
+0x22400	sub_22400	148	4	10	game layer (unnamed)
+0x22494	sub_22494	163	1	10	game layer (unnamed)
+0x22538	options_dialog?	1176	1	34	game layer (named)
+0x229d0	sub_229D0	615	1	18	game layer (unnamed)
+0x22c40	sub_22C40	272	1	7	game layer (unnamed)
+0x22d50	sub_22D50	827	20	21	game layer (unnamed)
+0x2308c	sub_2308C	454	17	9	game layer (unnamed)
+0x23254	sub_23254	202	21	10	game layer (unnamed)
+0x23320	sub_23320	20	1	1	game layer (unnamed)
+0x23334	sub_23334	553	8	13	game layer (unnamed)
+0x23560	sub_23560	191	24	8	game layer (unnamed)
+0x23838	sub_23838	144	4	3	game layer (unnamed)
+0x238c8	sub_238C8	782	1	22	game layer (unnamed)
+0x23ec4	sub_23EC4	59	3	2	game layer (unnamed)
+0x23f00	sub_23F00	66	1	4	game layer (unnamed)
+0x23f44	set_mouse_cursor	56	5	1	game layer (named)
+0x23f7c	sub_23F7C	182	4	3	game layer (unnamed)
+0x2405c	save_io_block?	212	5	4	game layer (named)
+0x240d4	serialize_state?	313	4	5	game layer (named)
+0x24210	save_game?	484	6	15	game layer (named)
+0x243f4	load_game?	691	11	24	game layer (named)
+0x24658	sub_24658	117	3	1	game layer (unnamed)
+0x246d0	sub_246D0	121	1	2	game layer (unnamed)
+0x2474c	sub_2474C	65	5	1	game layer (unnamed)
+0x24790	sub_24790	831	1	11	game layer (unnamed)
+0x24ad0	sub_24AD0	317	1	8	game layer (unnamed)
+0x24c10	sub_24C10	73	1	1	game layer (unnamed)
+0x24c5c	sub_24C5C	68	1	1	game layer (unnamed)
+0x24ca0	sub_24CA0	90	3	2	game layer (unnamed)
+0x24cfc	sub_24CFC	56	2	4	game layer (unnamed)
+0x24d34	save_restore_dialog?	1661	1	41	game layer (named)
+0x253b4	sub_253B4	60	2	6	game layer (unnamed)
+0x253f0	sub_253F0	89	1	5	game layer (unnamed)
+0x2544c	sub_2544C	107	2	3	game layer (unnamed)
+0x254b8	sub_254B8	36	4	1	game layer (unnamed)
+0x254dc	sub_254DC	21	1	1	game layer (unnamed)
+0x254f4	sub_254F4	15	2	2	game layer (unnamed)
+0x25504	sub_25504	92	7	5	game layer (unnamed)
+0x25560	sub_25560	51	7	1	game layer (unnamed)
+0x255b4	sub_255B4	46	20	1	game layer (unnamed)
+0x255e4	sub_255E4	85	1	0	game layer (unnamed)
+0x256d0	sub_256D0	207	1	0	game layer (unnamed)
+0x25b60	sub_25B60	36	3	0	game layer (unnamed)
+0x25b84	flagbyte_ptr?	124	10	0	game layer (named)
+0x25c24	flagbyte_test1?	34	66	1	game layer (named)
+0x25c48	flagbyte_set0?	33	100	1	game layer (named)
+0x25c6c	sub_25C6C	102	4	0	game layer (unnamed)
+0x25cd4	sub_25CD4	275	1	8	game layer (unnamed)
+0x25e58	sub_25E58	747	4	16	game layer (unnamed)
+0x26144	sub_26144	107	3	3	game layer (unnamed)
+0x261b0	sub_261B0	353	3	3	game layer (unnamed)
+0x26314	sub_26314	173	2	7	game layer (unnamed)
+0x263c4	sub_263C4	48	2	3	game layer (unnamed)
+0x26414	show_dialog?	6323	599	60	game layer (named)
+0x27f14	sub_27F14	91	19	4	game layer (unnamed)
+0x27f70	sub_27F70	80	12	1	game layer (unnamed)
+0x27fc0	sub_27FC0	131	49	6	game layer (unnamed)
+0x28044	sub_28044	326	38	8	game layer (unnamed)
+0x281a4	sub_281A4	161	8	3	game layer (unnamed)
+0x28248	sub_28248	180	2	2	game layer (unnamed)
+0x28340	sub_28340	902	1	9	game layer (unnamed)
+0x286c8	sub_286C8	128	2	5	game layer (unnamed)
+0x28748	sub_28748	25	12	2	game layer (unnamed)
+0x28764	sub_28764	150	12	4	game layer (unnamed)
+0x28858	play_cutscene?	6258	12	40	game layer (named)
+0x2a0cc	sub_2A0CC	77	0	0	game layer (unnamed)
+0x2a11c	sub_2A11C	85	0	0	game layer (unnamed)
+0x2a174	sub_2A174	30	0	1	game layer (unnamed)
+0x2a194	sub_2A194	21	0	0	game layer (unnamed)
+0x2a1ac	sub_2A1AC	21	0	0	game layer (unnamed)
+0x2a1c4	sub_2A1C4	30	0	1	game layer (unnamed)
+0x2a1f0	sub_2A1F0	34	4	2	game layer (unnamed)
+0x2a214	verbdef_16	62	0	3	verb default
+0x2a254	verbdef_15_Wear	158	0	5	verb default
+0x2a3a4	verbdef_05_Cook	291	0	6	verb default
+0x2a5bc	verbdef_10_Go_to	459	0	6	verb default
+0x2a788	verbdef_24_Sit_on	199	0	3	verb default
+0x2a850	verbdef_07_Look_at	26	1	1	verb default
+0x2a86c	verbdef_03_Mix	922	0	8	verb default
+0x2acb8	verbdef_04_Pick	638	0	11	verb default
+0x2af38	sub_2AF38	460	1	4	game layer (unnamed)
+0x2b104	verbdef_02_Put_out	973	0	5	verb default
+0x2b4d4	sub_2B4D4	320	1	7	game layer (unnamed)
+0x2b614	verbdef_01_Talk_to	552	0	11	verb default
+0x2b83c	verbdef_06_Tear	108	0	2	verb default
+0x2b9a0	verbdef_62_Attack	84	1	2	verb default
+0x2b9f4	verbdef_31_Break	484	0	3	verb default
+0x2bbd8	verbdef_32_Burn	332	0	4	verb default
+0x2bd24	verbdef_33_Carve	202	0	4	verb default
+0x2bdf0	verbdef_34_Cast	106	0	2	verb default
+0x2be5c	verbdef_72_Catch	33	0	1	verb default
+0x2be80	verbdef_65_Climb	109	0	2	verb default
+0x2bef0	verbdef_08_Climb_in	104	0	2	verb default
+0x2bf58	verbdef_66_Climb_on	79	0	2	verb default
+0x2bfa8	verbdef_67_Close	114	0	2	verb default
+0x2c01c	verbdef_35_Cross	59	0	2	verb default
+0x2c058	verbdef_36_Cut	114	0	2	verb default
+0x2c0cc	verbdef_37_Draw	443	0	6	verb default
+0x2c288	verbdef_63_Drink	69	0	2	verb default
+0x2c2d0	verbdef_23_Drink_from	59	0	2	verb default
+0x2c30c	verbdef_70_Eat	122	0	3	verb default
+0x2c388	verbdef_19_Enter	129	0	2	verb default
+0x2c40c	verbdef_09_Exit	59	0	2	verb default
+0x2c448	verbdef_18_Fill	64	0	2	verb default
+0x2c488	verbdef_38_Fill	64	0	2	verb default
+0x2c4c8	verbdef_74_Fish_in	64	0	2	verb default
+0x2c508	verbdef_39_Fix	44	0	2	verb default
+0x2c534	verbdef_40_Follow	44	0	2	verb default
+0x2c560	verbdef_69_Gag	39	0	2	verb default
+0x2c588	verbdef_79_Give	39	0	2	verb default
+0x2c5b0	verbdef_11_Hug	59	0	2	verb default
+0x2c5ec	verbdef_41_Invoke	64	0	2	verb default
+0x2c62c	verbdef_42_Jump_over	123	0	2	verb default
+0x2c6a8	verbdef_43_Kill	64	0	2	verb default
+0x2c6e8	verbdef_44_Knock_on	84	0	2	verb default
+0x2c73c	verbdef_28_Lasso	64	0	2	verb default
+0x2c804	verbdef_75_Lean_on	114	0	2	verb default
+0x2c878	verbdef_71_Lie_on	89	0	2	verb default
+0x2c8d4	verbdef_78_Lift	19	0	1	verb default
+0x2c8e8	verbdef_53_Light	159	0	2	verb default
+0x2c988	verbdef_45_Light	182	0	3	verb default
+0x2ca40	verbdef_27_Listen_to	182	0	3	verb default
+0x2caf8	verbdef_46_Look	69	0	2	verb default
+0x2cb40	verbdef_47_Mold	44	0	2	verb default
+0x2cb6c	verbdef_48_Move	117	0	2	verb default
+0x2ccd4	verbdef_25_Oil	44	0	2	verb default
+0x2cd00	verbdef_64_Open	64	0	2	verb default
+0x2cd40	verbdef_68_Pour	33	0	1	verb default
+0x2cd64	verbdef_49_Pry	64	0	2	verb default
+0x2cda4	verbdef_50_Pull	89	0	2	verb default
+0x2ce00	verbdef_29_Pump	39	0	2	verb default
+0x2ce28	verbdef_77_Push	39	0	2	verb default
+0x2ce50	verbdef_26_Put	64	0	2	verb default
+0x2ce90	verbdef_51_Read	146	0	4	verb default
+0x2cf24	verbdef_13_Remove	89	0	2	verb default
+0x2cf80	verbdef_14_Ring	238	0	8	verb default
+0x2d070	verbdef_52_Search	64	0	2	verb default
+0x2d0b0	verbdef_54_Shoot	19	0	1	verb default
+0x2d1ac	verbdef_22_Show	43	0	2	verb default
+0x2d1d8	verbdef_55_Smell	89	0	2	verb default
+0x2d234	verbdef_56_Swing_from	79	0	2	verb default
+0x2d284	verbdef_73_Take	39	0	2	verb default
+0x2d2ac	verbdef_57_Throw	44	0	2	verb default
+0x2d2d8	verbdef_30_Tie	149	0	2	verb default
+0x2d370	verbdef_58_Turn	109	0	2	verb default
+0x2d3e0	verbdef_21_Touch	76	0	2	verb default
+0x2d42c	verbdef_59_Unlock	109	0	2	verb default
+0x2d49c	verbdef_60_Use	123	0	3	verb default
+0x2d518	verbdef_20_Wade_in	59	0	2	verb default
+0x2d554	verbdef_76_Wait	64	0	2	verb default
+0x2d594	verbdef_17_Write_in	288	0	7	verb default
+0x2d6b4	verbdef_61	192	0	4	verb default
+0x2d780	objh_083	130	0	1	object handler
+0x2d804	objh_084	336	0	4	object handler
+0x2d954	objh_085	70	0	2	object handler
+0x2d99c	objh_088	116	0	2	object handler
+0x2da10	objh_089	66	0	1	object handler
+0x2da54	objh_090	159	0	2	object handler
+0x2daf4	objh_092	66	0	1	object handler
+0x2db38	objh_095	66	0	1	object handler
+0x2db7c	objh_096	172	0	2	object handler
+0x2dc28	objh_097	91	0	2	object handler
+0x2dc84	objh_178	37	0	1	object handler
+0x2dcac	objh_179	37	0	1	object handler
+0x2dcd4	objh_180	120	0	2	object handler
+0x2dd4c	objh_181	102	0	1	object handler
+0x2ddb4	objh_182	52	0	1	object handler
+0x2dde8	objh_183	86	0	2	object handler
+0x2de40	objh_184	37	0	1	object handler
+0x2de68	objh_185	37	0	1	object handler
+0x2de90	objh_187	37	0	1	object handler
+0x2deb8	objh_188	37	0	1	object handler
+0x2dee0	sub_2DEE0	269	0	1	game layer (unnamed)
+0x2dff0	objh_081	1091	0	25	object handler
+0x2e434	sub_2E434	140	1	4	game layer (unnamed)
+0x2e4c0	sub_2E4C0	576	10	25	game layer (unnamed)
+0x2e700	objh_087	342	0	5	object handler
+0x2e858	objh_082	240	0	3	object handler
+0x2e948	objh_086	380	0	4	object handler
+0x2eac4	sub_2EAC4	20	0	0	game layer (unnamed)
+0x2ead8	sub_2EAD8	27	0	0	game layer (unnamed)
+0x2eaf4	sub_2EAF4	20	0	0	game layer (unnamed)
+0x2eb08	sub_2EB08	20	0	0	game layer (unnamed)
+0x2eb1c	sub_2EB1C	20	0	0	game layer (unnamed)
+0x2eb30	objh_091	1172	0	23	object handler
+0x2efc4	sub_2EFC4	55	1	2	game layer (unnamed)
+0x2effc	sub_2EFFC	31	0	1	game layer (unnamed)
+0x2f01c	sub_2F01C	33	0	1	game layer (unnamed)
+0x2f040	objh_093	361	0	3	object handler
+0x2f1ac	objh_094	787	0	12	object handler
+0x2f4c0	objh_098	149	0	8	object handler
+0x2f558	sub_2F558	20	0	0	game layer (unnamed)
+0x2f56c	sub_2F56C	20	0	0	game layer (unnamed)
+0x2f580	sub_2F580	20	0	0	game layer (unnamed)
+0x2f594	objh_177	524	0	7	object handler
+0x2f7a0	sub_2F7A0	25	1	1	game layer (unnamed)
+0x2f7bc	sub_2F7BC	59	0	1	game layer (unnamed)
+0x2f7f8	sub_2F7F8	187	7	7	game layer (unnamed)
+0x2f8b4	objh_189	644	0	7	object handler
+0x2fb38	objh_186	388	0	8	object handler
+0x2fcc0	objh_102	44	0	1	object handler
+0x2fcec	objh_104	148	0	2	object handler
+0x2fd80	objh_105	90	0	1	object handler
+0x2fddc	objh_106	90	0	1	object handler
+0x2fe38	objh_107	111	0	2	object handler
+0x2fea8	objh_108	86	0	2	object handler
+0x2ff00	objh_109	66	0	1	object handler
+0x2ff44	objh_113	116	0	2	object handler
+0x2ffb8	objh_114	143	0	2	object handler
+0x30048	objh_115	95	0	2	object handler
+0x300a8	objh_116	93	0	1	object handler
+0x30108	objh_117	122	0	2	object handler
+0x30184	objh_118	235	0	2	object handler
+0x30270	objh_119	1017	0	3	object handler
+0x3066c	objh_120	266	0	2	object handler
+0x30778	objh_121	192	0	2	object handler
+0x30838	objh_122	153	0	2	object handler
+0x308d4	objh_123	276	0	2	object handler
+0x309e8	objh_124	215	0	2	object handler
+0x30ac0	objh_125	170	0	2	object handler
+0x30b6c	objh_126	198	0	2	object handler
+0x30c34	objh_127	63	0	1	object handler
+0x30c74	objh_128	170	0	2	object handler
+0x30d20	objh_129	271	0	2	object handler
+0x30e30	objh_130	137	0	2	object handler
+0x30ebc	objh_131	37	0	1	object handler
+0x30ee4	objh_134	158	0	2	object handler
+0x30f84	objh_136	37	0	1	object handler
+0x30fac	objh_137	312	0	2	object handler
+0x310e4	objh_138	199	0	2	object handler
+0x311ac	objh_139	251	0	3	object handler
+0x312a8	objh_140	166	0	2	object handler
+0x31350	objh_141	80	0	2	object handler
+0x313a0	objh_142	85	0	2	object handler
+0x313f8	objh_143	92	0	2	object handler
+0x31454	objh_144	86	0	2	object handler
+0x314ac	objh_145	63	0	1	object handler
+0x314ec	objh_146	111	0	2	object handler
+0x3155c	objh_147	111	0	2	object handler
+0x315cc	objh_148	111	0	2	object handler
+0x3163c	objh_149	111	0	2	object handler
+0x316ac	objh_152	277	0	2	object handler
+0x317c4	objh_153	405	0	5	object handler
+0x3195c	objh_154	80	0	2	object handler
+0x319ac	objh_156	147	0	2	object handler
+0x31a40	objh_158	518	0	3	object handler
+0x31c48	objh_160	325	0	2	object handler
+0x31d90	objh_161	325	0	2	object handler
+0x31ed8	objh_162	142	0	2	object handler
+0x31f68	objh_163	37	0	1	object handler
+0x31f90	objh_164	270	0	2	object handler
+0x320a0	objh_165	148	0	2	object handler
+0x32134	objh_168	37	0	1	object handler
+0x3215c	objh_169	146	0	2	object handler
+0x321f0	objh_170	93	0	1	object handler
+0x32250	objh_171	93	0	1	object handler
+0x322b0	objh_172	198	0	2	object handler
+0x32378	objh_174	83	0	2	object handler
+0x323cc	objh_175	37	0	1	object handler
+0x323f4	objh_176	76	0	2	object handler
+0x32440	sub_32440	24	1	1	game layer (unnamed)
+0x32478	objh_099	1183	0	22	object handler
+0x32918	sub_32918	55	1	2	game layer (unnamed)
+0x32950	objh_100	461	0	4	object handler
+0x32b20	sub_32B20	14	0	0	game layer (unnamed)
+0x32b30	objh_101	305	0	4	object handler
+0x32c64	objh_103	329	0	6	object handler
+0x32db0	sub_32DB0	20	0	0	game layer (unnamed)
+0x32dc4	sub_32DC4	27	1	0	game layer (unnamed)
+0x32de0	sub_32DE0	50	0	2	game layer (unnamed)
+0x32e58	objh_110	1715	0	18	object handler
+0x3350c	sub_3350C	25	0	0	game layer (unnamed)
+0x33528	sub_33528	33	0	1	game layer (unnamed)
+0x3354c	sub_3354C	34	0	1	game layer (unnamed)
+0x33570	objh_111	580	0	8	object handler
+0x337b4	sub_337B4	32	0	1	game layer (unnamed)
+0x337d4	objh_057	577	0	6	object handler
+0x33a18	objh_112	835	0	13	object handler
+0x33d5c	objh_132	1114	0	23	object handler
+0x341b8	sub_341B8	35	1	2	game layer (unnamed)
+0x341dc	objh_133	871	0	6	object handler
+0x34544	objh_135	428	0	7	object handler
+0x346f0	objh_150	1355	0	17	object handler
+0x34c3c	sub_34C3C	110	1	3	game layer (unnamed)
+0x34cc8	objh_151	476	0	4	object handler
+0x34ea4	sub_34EA4	52	0	1	game layer (unnamed)
+0x34ed8	objh_157	204	0	5	object handler
+0x34fa4	objh_155	422	1	5	object handler
+0x3514c	objh_159	557	0	15	object handler
+0x3537c	sub_3537C	8	1	0	game layer (unnamed)
+0x35384	sub_35384	40	0	1	game layer (unnamed)
+0x353ac	sub_353AC	16	0	0	game layer (unnamed)
+0x353bc	sub_353BC	18	2	1	game layer (unnamed)
+0x353d0	sub_353D0	17	1	1	game layer (unnamed)
+0x353e4	objh_166	1177	0	20	object handler
+0x35880	sub_35880	106	1	7	game layer (unnamed)
+0x358ec	objh_167	476	0	3	object handler
+0x35ac8	objh_173	409	0	5	object handler
+0x35da8	sub_35DA8	41	3	2	game layer (unnamed)
+0x35dd4	sub_35DD4	41	2	2	game layer (unnamed)
+0x35e00	sub_35E00	32	0	1	game layer (unnamed)
+0x35e20	sub_35E20	32	0	1	game layer (unnamed)
+0x35e40	sub_35E40	62	0	2	game layer (unnamed)
+0x35eb4	objh_190	1852	0	28	object handler
+0x365f0	sub_365F0	22	0	0	game layer (unnamed)
+0x36608	sub_36608	20	0	0	game layer (unnamed)
+0x3661c	sub_3661C	27	1	1	game layer (unnamed)
+0x36638	sub_36638	69	1	3	game layer (unnamed)
+0x36680	objh_193	562	0	4	object handler
+0x368b4	objh_194	1017	0	11	object handler
+0x36cb0	sub_36CB0	151	2	7	game layer (unnamed)
+0x36d48	objh_192	1161	0	7	object handler
+0x371ec	objh_204	1368	0	12	object handler
+0x37744	objh_205	668	0	10	object handler
+0x379f8	objh_206	1188	0	20	object handler
+0x37e9c	objh_208	743	0	12	object handler
+0x38184	sub_38184	27	0	0	game layer (unnamed)
+0x381a0	objh_209	719	0	6	object handler
+0x38470	sub_38470	26	0	1	game layer (unnamed)
+0x384ac	objh_212	1846	0	24	object handler
+0x38be4	sub_38BE4	88	1	1	game layer (unnamed)
+0x38c3c	sub_38C3C	25	0	0	game layer (unnamed)
+0x38c58	objh_191	579	0	4	object handler
+0x38e9c	objh_195	452	0	3	object handler
+0x39060	objh_196	418	0	2	object handler
+0x39204	objh_197	604	0	7	object handler
+0x39460	objh_198	98	0	1	object handler
+0x394c4	objh_199	142	0	2	object handler
+0x39554	objh_200	98	0	1	object handler
+0x395b8	objh_201	391	0	3	object handler
+0x39740	objh_202	381	0	2	object handler
+0x398c0	objh_203	185	0	3	object handler
+0x3997c	objh_207	401	0	5	object handler
+0x39b10	objh_210	188	0	2	object handler
+0x39bcc	objh_211	220	0	2	object handler
+0x39ca8	objh_213	287	0	2	object handler
+0x39dc8	objh_214	198	0	2	object handler
+0x39e90	objh_215	405	0	3	object handler
+0x3a028	objh_216	475	0	2	object handler
+0x3a204	objh_217	196	0	2	object handler
+0x3a2c8	objh_220	143	0	2	object handler
+0x3a358	objh_221	112	0	2	object handler
+0x3a3c8	objh_226	74	0	1	object handler
+0x3a414	objh_227	383	0	2	object handler
+0x3a594	objh_228	145	0	2	object handler
+0x3a628	objh_229	214	0	2	object handler
+0x3a700	objh_230	179	0	2	object handler
+0x3a7b4	objh_232	128	0	2	object handler
+0x3a834	objh_234	443	0	2	object handler
+0x3a9f0	objh_235	505	0	2	object handler
+0x3abec	objh_236	129	0	3	object handler
+0x3ac70	objh_237	74	0	1	object handler
+0x3acbc	objh_238	147	0	4	object handler
+0x3ad50	objh_239	74	0	1	object handler
+0x3ad9c	objh_241	364	0	6	object handler
+0x3af08	objh_242	584	0	6	object handler
+0x3b150	objh_248	604	0	5	object handler
+0x3b3ac	objh_249	219	0	2	object handler
+0x3b488	objh_250	80	0	2	object handler
+0x3b4d8	objh_251	475	0	4	object handler
+0x3b6b4	objh_252	306	0	3	object handler
+0x3b7e8	objh_253	162	0	2	object handler
+0x3b88c	objh_254	88	0	2	object handler
+0x3b8e4	objh_255	140	0	3	object handler
+0x3b970	objh_257	232	0	2	object handler
+0x3ba58	objh_260	289	0	2	object handler
+0x3bb7c	objh_261	251	0	2	object handler
+0x3bc78	objh_263	242	0	4	object handler
+0x3bd6c	objh_265	71	0	2	object handler
+0x3bdb4	objh_266	132	0	2	object handler
+0x3be38	objh_267	198	0	2	object handler
+0x3bf00	objh_268	96	0	2	object handler
+0x3bf60	objh_269	319	0	7	object handler
+0x3c0a0	objh_270	148	0	2	object handler
+0x3c134	objh_271	134	0	2	object handler
+0x3c1bc	objh_273	264	0	2	object handler
+0x3c2c4	objh_277	37	0	1	object handler
+0x3c2ec	objh_278	37	0	1	object handler
+0x3c314	objh_279	37	0	1	object handler
+0x3c33c	objh_280	187	0	2	object handler
+0x3c3f8	objh_281	37	0	1	object handler
+0x3c420	objh_282	37	0	1	object handler
+0x3c4ac	objh_275	536	0	1	object handler
+0x3c7f8	objh_218	2292	0	20	object handler
+0x3d0ec	objh_219	417	0	7	object handler
+0x3d290	sub_3D290	20	0	0	game layer (unnamed)
+0x3d2a4	objh_225	36	0	1	object handler
+0x3d2c8	objh_222	36	0	1	object handler
+0x3d2ec	objh_224	36	0	1	object handler
+0x3d310	objh_223	36	0	1	object handler
+0x3d334	sub_3D334	456	0	3	game layer (unnamed)
+0x3d4fc	objh_231	1228	0	21	object handler
+0x3d9c8	sub_3D9C8	65	1	2	game layer (unnamed)
+0x3da0c	objh_233	688	0	8	object handler
+0x3dcbc	objh_240	1020	0	11	object handler
+0x3e0b8	objh_243	379	0	6	object handler
+0x3e234	objh_244	516	0	11	object handler
+0x3e438	objh_245	1866	0	26	object handler
+0x3eb84	objh_246	630	0	3	object handler
+0x3edfc	sub_3EDFC	49	0	2	game layer (unnamed)
+0x3ee30	objh_247	505	0	7	object handler
+0x3f02c	sub_3F02C	84	1	9	game layer (unnamed)
+0x3f080	sub_3F080	145	1	6	game layer (unnamed)
+0x3f114	sub_3F114	67	1	4	game layer (unnamed)
+0x3f158	objh_256	1740	0	27	object handler
+0x3f824	objh_258	699	0	22	object handler
+0x3fae0	sub_3FAE0	330	3	16	game layer (unnamed)
+0x3fc2c	objh_259	1716	0	37	object handler
+0x402e0	objh_262	779	0	7	object handler
+0x405ec	sub_405EC	18	0	1	game layer (unnamed)
+0x40600	sub_40600	28	0	1	game layer (unnamed)
+0x4061c	sub_4061C	28	0	1	game layer (unnamed)
+0x40638	sub_40638	18	0	1	game layer (unnamed)
+0x4064c	objh_264	892	1	16	object handler
+0x409c8	objh_272	971	0	8	object handler
+0x40d94	objh_274	197	0	4	object handler
+0x40e78	sub_40E78	18	2	1	game layer (unnamed)
+0x40e8c	sub_40E8C	41	0	2	game layer (unnamed)
+0x40eb8	sub_40EB8	41	0	2	game layer (unnamed)
+0x40ee4	objh_276	834	0	20	object handler
+0x41228	sub_41228	165	0	3	game layer (unnamed)
+0x412d0	sub_412D0	124	4	3	game layer (unnamed)
+0x4134c	objh_283	952	0	21	object handler
+0x41908	sub_41908	32	0	1	game layer (unnamed)
+0x41928	objh_284	1530	0	17	object handler
+0x41f24	objh_285	883	0	6	object handler
+0x42298	sub_42298	45	0	2	game layer (unnamed)
+0x422c8	objh_288	1772	0	11	object handler
+0x429b4	objh_289	1225	0	9	object handler
+0x42e80	sub_42E80	100	0	2	game layer (unnamed)
+0x42ee4	sub_42EE4	68	2	1	game layer (unnamed)
+0x42f28	sub_42F28	22	0	1	game layer (unnamed)
+0x42f40	sub_42F40	58	0	1	game layer (unnamed)
+0x42f94	objh_294	1749	0	24	object handler
+0x4366c	objh_299	1178	0	5	object handler
+0x43b08	objh_300	1287	0	13	object handler
+0x44010	sub_44010	18	1	1	game layer (unnamed)
+0x44024	objh_301	2308	0	26	object handler
+0x44928	sub_44928	14	0	0	game layer (unnamed)
+0x44938	sub_44938	34	0	1	game layer (unnamed)
+0x4495c	objh_302	390	0	5	object handler
+0x44ae4	objh_303	1117	0	7	object handler
+0x44f44	objh_304	694	0	5	object handler
+0x451fc	objh_305	582	0	3	object handler
+0x45444	objh_320	960	0	19	object handler
+0x45804	objh_321	325	0	2	object handler
+0x4594c	objh_325	785	0	15	object handler
+0x45c60	objh_329	1095	0	21	object handler
+0x460a8	objh_328	672	0	6	object handler
+0x46348	objh_327	2217	0	17	object handler
+0x46bf4	sub_46BF4	28	0	1	game layer (unnamed)
+0x46c10	sub_46C10	18	0	1	game layer (unnamed)
+0x46c24	sub_46C24	28	0	1	game layer (unnamed)
+0x46c40	objh_331	896	0	11	object handler
+0x46fc0	sub_46FC0	33	0	1	game layer (unnamed)
+0x46fe4	sub_46FE4	34	0	1	game layer (unnamed)
+0x47008	objh_336	1606	0	12	object handler
+0x47650	objh_337	1222	0	10	object handler
+0x47b18	sub_47B18	306	0	2	game layer (unnamed)
+0x47c4c	sub_47C4C	54	0	1	game layer (unnamed)
+0x47c84	objh_338	902	0	7	object handler
+0x4800c	objh_339	2580	0	22	object handler
+0x48a20	objh_286	108	0	2	object handler
+0x48a8c	objh_287	522	0	2	object handler
+0x48c98	objh_290	392	0	2	object handler
+0x48e20	objh_291	519	0	4	object handler
+0x49028	objh_292	1103	0	3	object handler
+0x49478	objh_293	697	0	2	object handler
+0x49734	objh_295	313	0	3	object handler
+0x49870	objh_296	528	0	4	object handler
+0x49a80	objh_297	627	0	2	object handler
+0x49cf4	objh_298	80	0	2	object handler
+0x49d44	objh_306	530	0	2	object handler
+0x49f58	objh_307	360	0	2	object handler
+0x4a0c0	objh_308	408	0	2	object handler
+0x4a258	objh_309	316	0	3	object handler
+0x4a394	objh_310	240	0	3	object handler
+0x4a484	objh_311	477	0	3	object handler
+0x4a664	objh_312	220	0	3	object handler
+0x4a740	objh_313	220	0	3	object handler
+0x4a81c	objh_314	287	0	3	object handler
+0x4a93c	objh_315	714	0	3	object handler
+0x4ac08	objh_316	338	0	5	object handler
+0x4ad5c	objh_317	37	0	1	object handler
+0x4ad84	objh_318	285	0	2	object handler
+0x4aea4	objh_319	37	0	1	object handler
+0x4aecc	objh_322	301	0	2	object handler
+0x4affc	objh_323	248	0	2	object handler
+0x4b0f4	objh_324	397	0	2	object handler
+0x4b284	objh_326	613	0	3	object handler
+0x4b4ec	objh_330	549	0	3	object handler
+0x4b714	objh_332	37	0	1	object handler
+0x4b73c	objh_333	851	0	4	object handler
+0x4ba90	objh_334	292	0	3	object handler
+0x4bbb4	objh_335	600	0	2	object handler
+0x4be0c	objh_340	404	0	4	object handler
+0x4c394	sub_4C394	28	0	1	game layer (unnamed)
+0x4c3b0	sub_4C3B0	38	0	0	game layer (unnamed)
+0x4c3d8	sub_4C3D8	38	0	0	game layer (unnamed)
+0x4c400	objh_341	2003	0	31	object handler
+0x4cbd4	sub_4CBD4	27	0	0	game layer (unnamed)
+0x4cbf0	sub_4CBF0	36	0	2	game layer (unnamed)
+0x4cc14	sub_4CC14	33	1	1	game layer (unnamed)
+0x4cc38	objh_342	948	0	9	object handler
+0x4cfec	objh_343	454	0	5	object handler
+0x4d1b4	sub_4D1B4	7	0	0	game layer (unnamed)
+0x4d1bc	objh_346	1082	0	22	object handler
+0x4d5f8	sub_4D5F8	112	0	7	game layer (unnamed)
+0x4d678	sub_4D678	352	0	11	game layer (unnamed)
+0x4d7d8	sub_4D7D8	12	0	0	game layer (unnamed)
+0x4d7e4	objh_347	706	0	7	object handler
+0x4daa8	sub_4DAA8	20	0	0	game layer (unnamed)
+0x4dad0	objh_350	1678	0	22	object handler
+0x4e160	sub_4E160	6	0	0	game layer (unnamed)
+0x4e17c	objh_355	1357	0	26	object handler
+0x4e6cc	objh_356	687	0	7	object handler
+0x4e97c	sub_4E97C	54	0	1	game layer (unnamed)
+0x4e9b4	sub_4E9B4	33	0	1	game layer (unnamed)
+0x4e9d8	objh_357	373	0	4	object handler
+0x4eb50	objh_361	959	0	11	object handler
+0x4ef10	sub_4EF10	18	0	1	game layer (unnamed)
+0x4ef24	sub_4EF24	28	0	1	game layer (unnamed)
+0x4ef58	objh_362	922	0	17	object handler
+0x4f2f4	objh_393	90	0	2	object handler
+0x4f350	objh_363	128	0	2	object handler
+0x4f3e8	objh_374	1298	0	26	object handler
+0x4f8fc	objh_375	1070	0	4	object handler
+0x4fd2c	objh_378	671	0	7	object handler
+0x4ffcc	poll_key?	31	0	0	game layer (named)
+0x4ffec	poll_scan_code	8	0	0	game layer (named)
+0x50020	objh_383	1862	0	20	object handler
+0x50768	objh_384	70	0	1	object handler
+0x507b0	sub_507B0	65	1	1	game layer (unnamed)
+0x5084c	objh_392	1031	0	11	object handler
+0x50c54	sub_50C54	36	0	0	game layer (unnamed)
+0x50c88	sub_50C88	76	0	1	game layer (unnamed)
+0x50cd4	sub_50CD4	47	0	0	game layer (unnamed)
+0x50d04	sub_50D04	47	0	0	game layer (unnamed)
+0x50d34	objh_376	254	0	2	object handler
+0x50e34	objh_377	247	0	2	object handler
+0x50f2c	objh_379	279	0	2	object handler
+0x51044	objh_344	140	0	2	object handler
+0x510d0	objh_345	317	0	2	object handler
+0x51210	objh_348	368	0	3	object handler
+0x51380	objh_349	350	0	2	object handler
+0x514e0	objh_351	442	0	3	object handler
+0x5169c	objh_352	64	0	1	object handler
+0x516dc	objh_353	64	0	1	object handler
+0x5171c	objh_354	560	0	5	object handler
+0x5194c	objh_358	250	0	2	object handler
+0x51a48	objh_359	70	0	1	object handler
+0x51a90	objh_360	514	0	3	object handler
+0x51c94	objh_364	269	0	2	object handler
+0x51da4	objh_365	554	0	2	object handler
+0x51fd0	objh_366	158	0	1	object handler
+0x52070	objh_367	220	0	2	object handler
+0x5214c	objh_368	388	0	2	object handler
+0x522d0	objh_369	154	0	1	object handler
+0x5236c	objh_370	220	0	2	object handler
+0x52448	objh_371	387	0	2	object handler
+0x525cc	objh_372	270	0	2	object handler
+0x526dc	objh_373	181	0	1	object handler
+0x52794	objh_380	567	0	2	object handler
+0x529cc	objh_381	567	0	2	object handler
+0x52c04	objh_382	619	0	2	object handler
+0x52e70	objh_386	294	0	3	object handler
+0x52f98	objh_385	555	0	2	object handler
+0x531c4	objh_387	480	0	2	object handler
+0x533a4	objh_388	445	0	2	object handler
+0x53564	objh_389	481	0	3	object handler
+0x53748	objh_390	90	0	2	object handler
+0x537a4	objh_391	344	0	2	object handler
+0x53928	sub_53928	19	1	0	game layer (unnamed)
+0x5393c	sub_5393C	22	1	0	game layer (unnamed)
+0x53954	objh_398	875	0	15	object handler
+0x53cc0	objh_397	557	0	2	object handler
+0x53ef0	objh_407	563	0	3	object handler
+0x54124	objh_408	452	0	4	object handler
+0x542e8	sub_542E8	20	0	0	game layer (unnamed)
+0x542fc	sub_542FC	20	0	0	game layer (unnamed)
+0x54310	sub_54310	20	0	0	game layer (unnamed)
+0x54324	sub_54324	20	0	0	game layer (unnamed)
+0x54338	sub_54338	20	0	0	game layer (unnamed)
+0x5434c	sub_5434C	20	0	0	game layer (unnamed)
+0x54360	objh_403	804	0	18	object handler
+0x54684	sub_54684	630	1	23	game layer (unnamed)
+0x54944	objh_409	227	0	10	object handler
+0x54a28	objh_399	937	0	5	object handler
+0x54dd4	objh_400	669	0	4	object handler
+0x55074	objh_401	244	0	2	object handler
+0x55168	objh_402	464	0	3	object handler
+0x55338	objh_404	311	0	3	object handler
+0x55470	objh_405	533	0	3	object handler
+0x55688	objh_406	44	0	1	object handler
+0x556c0	objh_411	684	0	7	object handler
+0x5596c	sub_5596C	28	0	1	game layer (unnamed)
+0x55988	sub_55988	16	0	0	game layer (unnamed)
+0x55998	sub_55998	16	0	0	game layer (unnamed)
+0x559a8	sub_559A8	18	0	1	game layer (unnamed)
+0x559bc	sub_559BC	18	0	1	game layer (unnamed)
+0x559e4	objh_410	835	0	10	object handler
+0x55d28	sub_55D28	28	0	1	game layer (unnamed)
+0x55d44	sub_55D44	50	0	1	game layer (unnamed)
+0x55d78	sub_55D78	59	1	1	game layer (unnamed)
+0x55db4	sub_55DB4	17	0	1	game layer (unnamed)
+0x55dc8	sub_55DC8	18	0	1	game layer (unnamed)
+0x55ddc	sub_55DDC	28	0	1	game layer (unnamed)
+0x55e20	objh_422	875	0	13	object handler
+0x5618c	sub_5618C	40	0	1	game layer (unnamed)
+0x561b4	sub_561B4	40	1	1	game layer (unnamed)
+0x561dc	sub_561DC	59	1	1	game layer (unnamed)
+0x5622c	objh_425	618	0	12	object handler
+0x56498	sub_56498	101	0	2	game layer (unnamed)
+0x56500	sub_56500	28	0	1	game layer (unnamed)
+0x5651c	sub_5651C	28	0	1	game layer (unnamed)
+0x5654c	objh_431	1057	0	14	object handler
+0x56970	objh_442	839	0	18	object handler
+0x56ccc	objh_447	1512	0	22	object handler
+0x572b4	objh_394	340	0	2	object handler
+0x57408	objh_395	321	0	2	object handler
+0x5754c	objh_396	626	0	3	object handler
+0x577c0	objh_412	622	0	2	object handler
+0x57a30	objh_413	44	0	1	object handler
+0x57a5c	objh_414	341	0	4	object handler
+0x57bb4	objh_415	521	0	3	object handler
+0x57dc0	objh_416	332	0	3	object handler
+0x57f0c	objh_417	642	0	3	object handler
+0x58190	objh_418	373	0	3	object handler
+0x58308	objh_419	247	0	4	object handler
+0x58400	objh_420	655	0	3	object handler
+0x58690	objh_421	590	0	3	object handler
+0x588e0	objh_423	314	0	2	object handler
+0x58a1c	objh_424	301	0	2	object handler
+0x58b4c	objh_426	498	0	2	object handler
+0x58d40	objh_427	44	0	1	object handler
+0x58d6c	objh_428	487	0	2	object handler
+0x58f54	objh_429	511	0	2	object handler
+0x59154	objh_430	601	0	2	object handler
+0x593b0	objh_432	538	0	2	object handler
+0x595cc	objh_433	856	0	3	object handler
+0x59924	objh_434	500	0	2	object handler
+0x59b18	objh_435	285	0	2	object handler
+0x59c38	objh_436	318	0	2	object handler
+0x59d78	objh_437	715	0	3	object handler
+0x5a044	objh_438	388	0	3	object handler
+0x5a1c8	objh_439	457	0	2	object handler
+0x5a394	objh_440	447	0	2	object handler
+0x5a554	objh_441	191	0	2	object handler
+0x5a614	objh_443	449	0	3	object handler
+0x5a7d8	objh_444	423	0	3	object handler
+0x5a980	objh_445	367	0	2	object handler
+0x5aaf0	objh_446	457	0	3	object handler
+0x5acbc	objh_448	489	0	3	object handler
+0x5aea8	objh_449	389	0	3	object handler
+0x5b030	objh_450	400	0	2	object handler
+0x5b1c0	objh_451	399	0	2	object handler
+0x5b350	sub_5B350	24	3	1	game layer (unnamed)
+0x5b368	sub_5B368	16	0	0	game layer (unnamed)
+0x5b38c	objh_452	508	0	9	object handler
+0x5b588	sub_5B588	81	1	0	game layer (unnamed)
+0x5b5dc	objh_458	663	0	11	object handler
+0x5b874	sub_5B874	78	3	3	game layer (unnamed)
+0x5b930	objh_459	652	0	13	object handler
+0x5bbbc	sub_5BBBC	83	0	5	game layer (unnamed)
+0x5bc10	sub_5BC10	63	0	5	game layer (unnamed)
+0x5bc50	sub_5BC50	48	0	4	game layer (unnamed)
+0x5bc80	objh_460	738	0	14	object handler
+0x5bf64	sub_5BF64	22	0	0	game layer (unnamed)
+0x5bf7c	sub_5BF7C	16	0	0	game layer (unnamed)
+0x5bf8c	sub_5BF8C	16	0	0	game layer (unnamed)
+0x5bf9c	objh_461	624	0	13	object handler
+0x5c20c	sub_5C20C	27	1	1	game layer (unnamed)
+0x5c228	sub_5C228	18	0	1	game layer (unnamed)
+0x5c23c	sub_5C23C	58	0	1	game layer (unnamed)
+0x5c278	sub_5C278	49	0	2	game layer (unnamed)
+0x5c2ac	sub_5C2AC	72	0	2	game layer (unnamed)
+0x5c2f4	sub_5C2F4	72	0	2	game layer (unnamed)
+0x5c33c	sub_5C33C	54	0	2	game layer (unnamed)
+0x5c374	sub_5C374	77	0	2	game layer (unnamed)
+0x5c3c4	sub_5C3C4	77	0	2	game layer (unnamed)
+0x5c414	objh_467	609	0	16	object handler
+0x5c678	sub_5C678	27	1	1	game layer (unnamed)
+0x5c694	sub_5C694	27	1	1	game layer (unnamed)
+0x5c6b0	sub_5C6B0	18	0	1	game layer (unnamed)
+0x5c6c4	sub_5C6C4	46	0	1	game layer (unnamed)
+0x5c6f4	sub_5C6F4	29	0	1	game layer (unnamed)
+0x5c714	get_gr_op?	8	0	0	game layer (named)
+0x5c71c	objh_478	855	0	22	object handler
+0x5ca74	sub_5CA74	131	3	3	game layer (unnamed)
+0x5cbe8	sub_5CBE8	16	0	0	game layer (unnamed)
+0x5cbf8	objh_489	3204	0	30	object handler
+0x5d87c	sub_5D87C	101	1	1	game layer (unnamed)
+0x5d8e4	sub_5D8E4	19	1	0	game layer (unnamed)
+0x5d8f8	sub_5D8F8	19	1	0	game layer (unnamed)
+0x5d90c	sub_5D90C	117	1	1	game layer (unnamed)
+0x5d984	sub_5D984	29	0	1	game layer (unnamed)
+0x5e1a0	objh_453	362	0	3	object handler
+0x5e30c	objh_454	169	0	2	object handler
+0x5e3b8	objh_455	44	0	1	object handler
+0x5e3e4	objh_456	44	0	1	object handler
+0x5e410	objh_457	44	0	1	object handler
+0x5e43c	objh_462	70	0	1	object handler
+0x5e484	objh_463	93	0	2	object handler
+0x5e4e4	objh_464	368	0	4	object handler
+0x5e654	objh_465	241	0	7	object handler
+0x5e748	objh_466	159	0	1	object handler
+0x5e7e8	objh_470	1662	0	14	object handler
+0x5ee68	objh_469	748	0	9	object handler
+0x5f154	objh_468	70	0	1	object handler
+0x5f19c	objh_471	44	0	1	object handler
+0x5f1c8	objh_472	70	0	1	object handler
+0x5f210	objh_473	44	0	1	object handler
+0x5f23c	objh_474	131	0	3	object handler
+0x5f2c0	objh_475	132	0	2	object handler
+0x5f344	objh_476	73	0	1	object handler
+0x5f390	objh_477	88	0	1	object handler
+0x5f3e8	objh_479	853	0	14	object handler
+0x5f740	objh_480	470	0	5	object handler
+0x5f918	objh_481	521	0	7	object handler
+0x5fb24	objh_482	102	0	1	object handler
+0x5fb8c	objh_483	136	0	1	object handler
+0x5fc14	objh_484	44	0	1	object handler
+0x5fc40	objh_485	192	0	3	object handler
+0x5fd00	objh_486	132	0	2	object handler
+0x5fd84	objh_487	142	0	1	object handler
+0x5fe14	objh_488	44	0	1	object handler
+0x5fe40	objh_490	302	0	2	object handler
+0x5ff70	objh_491	264	0	2	object handler
+0x60078	objh_492	166	0	1	object handler
+0x60120	objh_493	156	0	2	object handler
+0x601bc	objh_494	70	0	1	object handler
+0x60204	objh_495	70	0	1	object handler
+0x6024c	objh_496	752	0	4	object handler
+0x6053c	objh_497	73	0	1	object handler
+0x60588	objh_498	73	0	1	object handler
+0x605d4	objh_499	78	0	1	object handler
+0x60624	objh_501	356	0	2	object handler
+0x60788	objh_502	476	0	10	object handler
+0x60964	objh_503	625	0	6	object handler
+0x60bd8	objh_504	1103	0	12	object handler
+0x61028	objh_505	493	0	9	object handler
+0x61218	objh_506	44	0	1	object handler
+0x61244	objh_507	862	0	8	object handler
+0x615a4	objh_508	428	0	3	object handler
+0x61750	sub_61750	361	0	13	game layer (unnamed)
+0x61918	objh_509	995	0	12	object handler
+0x61cfc	sub_61CFC	36	0	0	game layer (unnamed)
+0x61d7c	objh_511	1400	0	27	object handler
+0x622f4	sub_622F4	20	0	0	game layer (unnamed)
+0x62350	objh_512	396	0	13	object handler
+0x624f0	objh_513	879	0	18	object handler
+0x62860	sub_62860	495	3	12	game layer (unnamed)
+0x62a50	sub_62A50	13	1	1	game layer (unnamed)
+0x62a60	sub_62A60	13	1	1	game layer (unnamed)
+0x62a70	sub_62A70	73	0	4	game layer (unnamed)
+0x62abc	objh_521	881	0	17	object handler
+0x62e30	objh_525	201	0	7	object handler
+0x62efc	objh_524	465	0	9	object handler
+0x630d0	sub_630D0	138	2	5	game layer (unnamed)
+0x6315c	objh_526	648	0	8	object handler
+0x6342c	objh_531	247	0	11	object handler
+0x63524	sub_63524	54	0	2	game layer (unnamed)
+0x6355c	objh_532	1012	0	10	object handler
+0x63950	sub_63950	47	1	2	game layer (unnamed)
+0x63980	objh_533	1145	0	17	object handler
+0x63dfc	sub_63DFC	20	0	0	game layer (unnamed)
+0x63e10	sub_63E10	20	0	0	game layer (unnamed)
+0x63e24	sub_63E24	28	0	1	game layer (unnamed)
+0x63e40	sub_63E40	18	0	1	game layer (unnamed)
+0x63e54	sub_63E54	6	0	0	game layer (unnamed)
+0x63e5c	objh_570	688	0	13	object handler
+0x6410c	sub_6410C	186	3	8	game layer (unnamed)
+0x641c8	sub_641C8	34	0	1	game layer (unnamed)
+0x641ec	objh_571	584	0	12	object handler
+0x64434	objh_572	239	0	6	object handler
+0x64544	objh_575	1346	0	12	object handler
+0x64a88	objh_573	241	0	5	object handler
+0x64b9c	objh_576	414	0	5	object handler
+0x64d3c	objh_577	1028	0	20	object handler
+0x65140	objh_583	47	0	1	object handler
+0x65170	objh_584	191	0	1	object handler
+0x65230	sub_65230	58	0	1	game layer (unnamed)
+0x652b4	objh_585	623	0	15	object handler
+0x65524	objh_516	105	0	2	object handler
+0x65590	objh_517	165	0	2	object handler
+0x65638	objh_518	418	0	3	object handler
+0x657dc	objh_519	123	1	3	object handler
+0x65858	objh_520	87	0	3	object handler
+0x658b0	objh_510	217	0	3	object handler
+0x6598c	objh_514	608	0	9	object handler
+0x65bec	objh_515	131	0	3	object handler
+0x65c70	objh_522	65	0	1	object handler
+0x65cb4	objh_523	99	0	3	object handler
+0x65d18	objh_527	281	0	4	object handler
+0x65e34	objh_528	304	0	4	object handler
+0x65f64	objh_529	36	0	1	object handler
+0x65f88	objh_530	36	0	1	object handler
+0x65fac	objh_534	92	0	2	object handler
+0x66008	objh_535	87	0	1	object handler
+0x66060	objh_536	61	0	2	object handler
+0x660a0	objh_537	36	0	1	object handler
+0x660c4	objh_538	36	0	1	object handler
+0x660e8	objh_539	36	0	1	object handler
+0x6610c	objh_540	61	0	2	object handler
+0x6614c	objh_541	36	0	1	object handler
+0x66170	objh_542	36	0	1	object handler
+0x66194	objh_543	36	0	1	object handler
+0x661b8	objh_544	36	0	1	object handler
+0x661dc	objh_545	36	0	1	object handler
+0x66200	objh_546	61	0	2	object handler
+0x66240	objh_547	36	0	1	object handler
+0x66264	objh_548	61	0	2	object handler
+0x662a4	objh_549	36	0	1	object handler
+0x662c8	objh_550	36	0	1	object handler
+0x662ec	objh_551	36	0	1	object handler
+0x66310	objh_552	36	0	1	object handler
+0x66334	objh_553	36	0	1	object handler
+0x66358	objh_554	36	0	1	object handler
+0x6637c	objh_555	36	0	1	object handler
+0x663a0	objh_556	61	0	2	object handler
+0x663e0	objh_557	36	0	1	object handler
+0x66404	objh_558	36	0	1	object handler
+0x66428	objh_559	36	0	1	object handler
+0x6644c	objh_560	36	0	1	object handler
+0x66470	objh_561	36	0	1	object handler
+0x66494	objh_562	36	0	1	object handler
+0x664b8	objh_563	56	0	2	object handler
+0x664f0	objh_564	36	0	1	object handler
+0x66514	objh_565	36	0	1	object handler
+0x66538	objh_566	36	0	1	object handler
+0x6655c	objh_567	36	0	1	object handler
+0x66580	objh_568	36	0	1	object handler
+0x665a4	objh_569	217	0	6	object handler
+0x66680	objh_574	36	0	1	object handler
+0x666a4	objh_578	36	0	1	object handler
+0x666c8	objh_579	36	0	1	object handler
+0x666ec	objh_580	36	0	1	object handler
+0x66748	objh_581	36	0	1	object handler
+0x6676c	objh_582	36	0	1	object handler
+0x66790	sub_66790	77	1	2	game layer (unnamed)
+0x667e0	speak?	481	93	5	game layer (named)
+0x669c4	sub_669C4	603	25	4	game layer (unnamed)
+0x66cec	objh_587	1790	0	11	object handler
+0x67410	sub_67410	716	1	15	game layer (unnamed)
+0x676dc	objh_602	46	0	2	object handler
+0x6770c	objh_632	103	0	3	object handler
+0x67774	objh_625	3	0	0	object handler
+0x67788	objh_594	255	0	7	object handler
+0x67888	objh_591	104	0	6	object handler
+0x678f0	objh_600	67	0	1	object handler
+0x67964	objh_635	277	0	2	object handler
+0x67a7c	objh_636	87	0	2	object handler
+0x67b00	objh_637	426	0	7	object handler
+0x67cac	objh_638	46	0	1	object handler
+0x67d14	objh_639	305	0	2	object handler
+0x67e80	objh_640	320	0	2	object handler
+0x67fc0	objh_588	64	0	1	object handler
+0x68000	objh_606	46	0	1	object handler
+0x68030	objh_628	43	0	2	object handler
+0x6805c	objh_620	316	0	5	object handler
+0x68198	objh_619	179	0	4	object handler
+0x6824c	objh_621	202	0	4	object handler
+0x68318	objh_589	46	0	2	object handler
+0x68348	objh_593	66	0	3	object handler
+0x6838c	objh_624	46	0	2	object handler
+0x683bc	objh_629	54	0	4	object handler
+0x683f4	objh_630	114	0	1	object handler
+0x68468	objh_631	33	0	2	object handler
+0x6848c	objh_592	40	0	2	object handler
+0x684b4	objh_596	259	0	8	object handler
+0x685b8	objh_598	6	0	0	object handler
+0x685c0	objh_590	40	0	2	object handler
+0x685e8	objh_633	58	0	2	object handler
+0x68624	objh_634	88	0	4	object handler
+0x6867c	objh_617	115	0	4	object handler
+0x686f0	objh_595	62	0	4	object handler
+0x68730	objh_597	55	0	2	object handler
+0x68768	objh_599	55	0	2	object handler
+0x687a0	objh_601	40	0	2	object handler
+0x687c8	objh_605	48	0	2	object handler
+0x687f8	objh_603	20	0	1	object handler
+0x6880c	objh_607	40	0	2	object handler
+0x68834	objh_608	40	0	2	object handler
+0x6885c	objh_609	62	0	3	object handler
+0x6889c	objh_610	62	0	3	object handler
+0x688dc	objh_611	40	0	2	object handler
+0x68904	objh_618	40	0	2	object handler
+0x6892c	objh_612	40	0	2	object handler
+0x68954	objh_613	40	0	2	object handler
+0x6897c	objh_614	40	0	2	object handler
+0x689a4	objh_615	40	0	2	object handler
+0x689cc	objh_616	40	0	2	object handler
+0x689f4	objh_622	74	0	3	object handler
+0x68a40	objh_623	106	0	2	object handler
+0x68aac	objh_626	129	0	3	object handler
+0x68b30	objh_627	55	0	2	object handler
+0x68b70	sub_68B70	61	1	2	game layer (unnamed)
+0x68be8	sub_68BE8	365	8	5	game layer (unnamed)
+0x68d58	sub_68D58	123	7	2	game layer (unnamed)
+0x68dd4	sub_68DD4	131	1	1	game layer (unnamed)
+0x68e58	sub_68E58	82	1	5	game layer (unnamed)
+0x68eac	sub_68EAC	550	1	4	game layer (unnamed)
+0x690d4	sub_690D4	248	1	1	game layer (unnamed)
+0x691cc	sub_691CC	61	2	0	game layer (unnamed)
+0x6920c	sub_6920C	287	1	2	game layer (unnamed)
+0x6932c	sub_6932C	60	2	1	game layer (unnamed)
+0x69368	sub_69368	69	11	3	game layer (unnamed)
+0x693b0	sub_693B0	512	4	5	game layer (unnamed)
+0x695e8	sub_695E8	719	1	3	game layer (unnamed)
+0x698b8	sub_698B8	1546	2	21	game layer (unnamed)
+0x69ec4	sub_69EC4	56	4	0	game layer (unnamed)
+0x69f1c	sub_69F1C	96	9	1	game layer (unnamed)
+0x69f7c	sub_69F7C	13	2	0	game layer (unnamed)
+0x69f8c	sub_69F8C	180	10	1	game layer (unnamed)
+0x6a040	sub_6A040	108	1	0	game layer (unnamed)
+0x6a0ac	sub_6A0AC	21	1	1	game layer (unnamed)
+0x6a0c4	sub_6A0C4	1851	2	26	game layer (unnamed)
+0x6a800	sub_6A800	13	7	1	game layer (unnamed)
+0x6a83c	sub_6A83C	991	1	10	game layer (unnamed)
+0x6acd8	sub_6ACD8	32	3	1	game layer (unnamed)
+0x6acf8	sub_6ACF8	53	3	4	game layer (unnamed)
+0x6ad30	sub_6AD30	1161	2	17	game layer (unnamed)
+0x6b1c0	objh_011	347	0	12	object handler
+0x6b31c	objh_012	1030	0	11	object handler
+0x6b724	objh_013	1176	0	10	object handler
+0x6bbbc	objh_014	44	0	1	object handler
+0x6bbe8	objh_015	44	0	1	object handler
+0x6bc14	objh_016	265	0	5	object handler
+0x6bd20	objh_017	225	0	5	object handler
+0x6be38	objh_018	267	0	5	object handler
+0x6bf44	objh_019	269	0	5	object handler
+0x6c054	objh_020	61	0	2	object handler
+0x6c094	objh_021	1645	0	8	object handler
+0x6c704	objh_022	502	0	8	object handler
+0x6c8fc	objh_023	480	0	4	object handler
+0x6cadc	objh_024	44	0	1	object handler
+0x6cb08	objh_025	819	0	9	object handler
+0x6ce3c	objh_026	1668	0	12	object handler
+0x6d4c0	objh_027	540	0	5	object handler
+0x6d6dc	objh_028	44	0	1	object handler
+0x6d708	objh_029	89	0	2	object handler
+0x6d764	objh_030	1095	0	10	object handler
+0x6dbac	objh_031	1070	0	7	object handler
+0x6dfdc	objh_032	267	0	3	object handler
+0x6e0e8	objh_033	222	0	3	object handler
+0x6e1c8	objh_035	44	0	1	object handler
+0x6e1f4	objh_036	121	0	2	object handler
+0x6e270	objh_037	161	0	2	object handler
+0x6e314	objh_038	122	0	1	object handler
+0x6e390	objh_039	339	0	2	object handler
+0x6e4e4	objh_040	571	0	7	object handler
+0x6e720	objh_041	1485	0	20	object handler
+0x6ecf0	sub_6ECF0	37	1	1	game layer (unnamed)
+0x6ed18	objh_042	44	0	1	object handler
+0x6ed64	objh_043	389	0	8	object handler
+0x6eeec	objh_044	63	0	1	object handler
+0x6ef2c	objh_045	44	0	1	object handler
+0x6ef58	objh_046	164	0	2	object handler
+0x6effc	objh_047	285	0	2	object handler
+0x6f11c	objh_048	617	0	4	object handler
+0x6f388	objh_049	626	0	9	object handler
+0x6f5fc	objh_050	418	0	4	object handler
+0x6f7a0	objh_051	44	0	1	object handler
+0x6f7cc	objh_052	1141	0	12	object handler
+0x6fc44	objh_053	720	0	2	object handler
+0x6ff14	objh_054	577	0	8	object handler
+0x70158	objh_055	201	0	4	object handler
+0x70224	objh_056	636	0	8	object handler
+0x704a0	objh_058	601	0	7	object handler
+0x706fc	sub_706FC	33	0	1	game layer (unnamed)
+0x70720	objh_059	632	0	8	object handler
+0x70998	objh_061	1905	0	10	object handler
+0x7110c	objh_010	989	0	9	object handler
+0x714ec	objh_062	132	0	3	object handler
+0x71570	objh_063	300	0	8	object handler
+0x7169c	objh_064	828	0	8	object handler
+0x719d8	objh_034	44	0	1	object handler
+0x71a04	objh_065	276	0	7	object handler
+0x71b18	objh_066	425	0	6	object handler
+0x71cc4	objh_067	698	0	6	object handler
+0x71fbc	objh_068	44	0	1	object handler
+0x71fe8	objh_069	1885	0	10	object handler
+0x72748	objh_070	2025	0	20	object handler
+0x72f34	objh_071	390	0	5	object handler
+0x730bc	objh_060	537	0	11	object handler
+0x732d8	objh_072	44	0	1	object handler
+0x73304	objh_073	230	0	3	object handler
+0x733ec	objh_074	120	0	2	object handler
+0x73464	objh_075	298	0	5	object handler
+0x73590	objh_076	1094	0	3	object handler
+0x739d8	objh_077	44	0	1	object handler
+0x73a04	objh_078	147	0	2	object handler
+0x73a98	objh_079	103	0	2	object handler
+0x73b00	objh_080	213	0	2	object handler
+0x73be8	sub_73BE8	12	1	0	game layer (unnamed)
+0x73bf4	sub_73BF4	108	2	0	game layer (unnamed)
+0x73c60	sub_73C60	87	9	0	game layer (unnamed)
+0x73cb8	sub_73CB8	98	5	1	game layer (unnamed)
+0x73d1c	sub_73D1C	434	5	17	game layer (unnamed)
+0x73ed0	sub_73ED0	173	1	11	game layer (unnamed)
+0x73f80	sub_73F80	231	1	7	game layer (unnamed)
+0x74068	sub_74068	111	1	3	game layer (unnamed)
+0x740d8	sub_740D8	99	1	1	game layer (unnamed)
+0x7413c	sub_7413C	102	3	5	game layer (unnamed)
+0x741e4	sub_741E4	1126	1	19	game layer (unnamed)
+0x7464c	sub_7464C	35	9	0	game layer (unnamed)
+0x74670	sub_74670	403	7	10	game layer (unnamed)
+0x74804	sub_74804	87	5	6	game layer (unnamed)
+0x7485c	sub_7485C	47	3	0	game layer (unnamed)
+0x7488c	sub_7488C	48	2	0	game layer (unnamed)
+0x748bc	sub_748BC	86	1	2	game layer (unnamed)
+0x74914	sub_74914	1113	4	20	game layer (unnamed)
+0x74d70	sub_74D70	142	1	8	game layer (unnamed)
+0x74e00	sub_74E00	142	1	8	game layer (unnamed)
+0x74e90	sub_74E90	231	2	7	game layer (unnamed)
+0x74fac	sub_74FAC	157	2	2	game layer (unnamed)
+0x7504c	sub_7504C	56	1	0	engine/library
+0x75084	sub_75084	36	2	0	engine/library
+0x750a8	sub_750A8	14	8	0	engine/library
+0x750b8	sub_750B8	97	1	1	engine/library
+0x7511c	init_lists?	39	2	1	engine/library
+0x75144	sub_75144	121	1	0	engine/library
+0x751c0	sub_751C0	126	2	3	engine/library
+0x75240	sub_75240	91	1	2	engine/library
+0x7529c	sub_7529C	83	105	3	engine/library
+0x752f0	sub_752F0	68	47	3	engine/library
+0x75334	sub_75334	331	1	21	engine/library
+0x75480	sub_75480	190	2	4	engine/library
+0x75540	sub_75540	154	1	4	engine/library
+0x755dc	sub_755DC	136	1	4	engine/library
+0x75664	sub_75664	49	12	0	engine/library
+0x75698	sub_75698	26	6	1	engine/library
+0x756b4	read_file_uint16	26	6	1	engine/library
+0x756d0	close_pictures?	181	1	3	engine/library
+0x75788	sub_75788	368	2	6	engine/library
+0x758f8	sub_758F8	58	1	2	engine/library
+0x75934	sub_75934	58	1	2	engine/library
+0x75970	sub_75970	58	3	2	engine/library
+0x759ac	sub_759AC	35	2	2	engine/library
+0x75c14	sub_75C14	154	2	3	engine/library
+0x75cb0	sub_75CB0	285	1	23	engine/library
+0x75dd0	sub_75DD0	93	2	1	engine/library
+0x75e30	sub_75E30	397	4	4	engine/library
+0x75fc0	sub_75FC0	137	4	6	engine/library
+0x7604c	sub_7604C	427	7	8	engine/library
+0x761f8	sub_761F8	142	8	5	engine/library
+0x762a8	sub_762A8	1321	2	8	engine/library
+0x767d4	sub_767D4	42	4	0	engine/library
+0x76800	_setjmp_	53	2	0	engine/library
+0x768a0	init_audio	1517	1	19	engine/library
+0x76e90	kill_music	85	1	2	engine/library
+0x76ee8	kill_sound	85	1	2	engine/library
+0x76f40	kill_audio	81	0	5	engine/library
+0x76f94	kill_voice	61	2	2	engine/library
+0x76fd4	set_music	56	2	1	engine/library
+0x7700c	set_voice	23	2	0	engine/library
+0x77024	music_on	6	5	0	engine/library
+0x7702c	sound_on	6	4	0	engine/library
+0x77034	voice_on	6	17	0	engine/library
+0x7703c	purge_sound	67	0	1	engine/library
+0x77080	purge_music	67	0	1	engine/library
+0x770c4	in_audio_cache	79	11	0	engine/library
+0x77114	clear_audio_cache	117	5	4	engine/library
+0x7718c	get_audio_cache	99	1	1	engine/library
+0x771f0	get_music_id	74	1	0	engine/library
+0x7723c	load_music_id	100	1	5	engine/library
+0x772a0	get_sound_id	72	3	0	engine/library
+0x772e8	load_sound_id	100	1	5	engine/library
+0x7734c	update_audio_cache	187	5	7	engine/library
+0x77408	get_music_volume	6	1	0	engine/library
+0x77410	set_music_volume	107	4	2	engine/library
+0x7747c	sub_7747C	39	0	0	engine/library
+0x774a4	start_music	64	10	2	engine/library
+0x774e4	update_sound_volume	59	18	2	engine/library
+0x77564	update_music	200	2	7	engine/library
+0x7762c	sub_7762C	49	6	1	engine/library
+0x77660	fade_music	45	4	2	engine/library
+0x77690	stop_music	92	18	4	engine/library
+0x776ec	make_voice?	541	200	15	engine/library
+0x7790c	set_sound_callback	6	5	0	engine/library
+0x77914	update_sound	16	2	0	engine/library
+0x77924	_default_sample_callback	77	0	3	engine/library
+0x77974	make_sound	252	104	11	engine/library
+0x77a70	update_music_volume	57	30	2	engine/library
+0x77aac	load_music	54	7	1	engine/library
+0x77ae4	sub_77AE4	49	26	1	engine/library
+0x77b84	stop_sound	148	50	3	engine/library
+0x77c18	AIL_alloc	28	2	2	engine/library
+0x77c34	j_kill_pointer	5	5	0	engine/library
+0x77c3c	AIL_free	33	7	2	engine/library
+0x77c60	_MEM_alloc_lock	33	24	2	engine/library
+0x77c84	_MEM_free_lock	60	2	2	engine/library
+0x77cc0	_MEM_free_DOS	9	8	0	engine/library
+0x77ccc	_VMM_lock_range	107	11	1	engine/library
+0x77d38	_VMM_unlock_range	107	7	1	engine/library
+0x77da4	_VMM_lock	21	38	1	engine/library
+0x77dbc	_VMM_unlock	21	29	1	engine/library
+0x77dd4	_FILE_read	125	2	6	engine/library
+0x77e54	_FILE_size	43	3	3	engine/library
+0x77e80	init_graphics	110	1	6	engine/library
+0x77ef0	init_pictures?	29	0	4	engine/library
+0x77f10	sub_77F10	112	1	2	engine/library
+0x77f80	open_pic	43	2	2	engine/library
+0x77fac	sub_77FAC	64	1	0	engine/library
+0x77fec	sub_77FEC	385	1	3	engine/library
+0x78170	sub_78170	17	1	0	engine/library
+0x78184	load_palette	384	6	6	engine/library
+0x78304	set_color_cycle	31	3	0	engine/library
+0x78324	reset_color_cycle	37	5	0	engine/library
+0x7834c	init_palette	154	35	0	engine/library
+0x783e8	display_palette	186	14	2	engine/library
+0x784a4	sub_784A4	96	11	2	engine/library
+0x78504	push_pic_offset	38	18	0	engine/library
+0x7852c	pop_pic_offset	21	18	0	engine/library
+0x78544	set_offsets?	12	54	0	engine/library
+0x78550	select_pic_window	59	50	1	engine/library
+0x7858c	sub_7858C	13	2	0	engine/library
+0x7859c	sub_7859C	54	1	1	engine/library
+0x786e8	sub_786E8	10	6	1	engine/library
+0x786f4	sub_786F4	101	48	5	engine/library
+0x7875c	load_pic_in	50	5	4	engine/library
+0x78790	put_pic_in	377	1	1	engine/library
+0x7890c	sub_7890C	224	1	0	engine/library
+0x789ec	load_pic	609	22	9	engine/library
+0x78c50	sub_78C50	92	5	1	engine/library
+0x78cac	save_display	313	21	4	engine/library
+0x78de8	sub_78DE8	231	2	2	engine/library
+0x78edc	sub_78EDC	201	1	3	engine/library
+0x78fa8	display_pic_at	8	8	0	engine/library
+0x78fb0	display_pic	221	45	3	engine/library
+0x790b0	get_pic_delay	68	4	1	engine/library
+0x790f4	sub_790F4	254	13	15	engine/library
+0x791f4	sub_791F4	121	12	7	engine/library
+0x79270	sub_79270	125	12	7	engine/library
+0x792f0	sub_792F0	42	2	3	engine/library
+0x7931c	sub_7931C	53	2	3	engine/library
+0x79354	unload_pic	28	39	0	engine/library
+0x79370	sub_79370	30	6	1	engine/library
+0x79390	clear_pic	67	64	1	engine/library
+0x793d4	clear_pics	34	8	1	engine/library
+0x793f8	init_animation?	38	1	2	engine/library
+0x79420	sub_79420	435	83	9	engine/library
+0x7960c	sub_7960C	37	1	0	engine/library
+0x79660	sub_79660	109	10	1	engine/library
+0x796d0	stop_animation	73	57	1	engine/library
+0x7971c	update_animation	429	15	3	engine/library
+0x79a30	unload_pics	110	55	2	engine/library
+0x79aa0	init_windows	33	1	2	engine/library
+0x79ac4	make_xwindow	241	28	3	engine/library
+0x79bb8	set_window_font	54	17	2	engine/library
+0x79c24	remove_window	130	12	3	engine/library
+0x79ca8	remove_windows	105	12	4	engine/library
+0x79d14	clear_window	109	8	3	engine/library
+0x79d84	_clear_window	109	3	3	engine/library
+0x79df4	sub_79DF4	69	1	0	engine/library
+0x79e3c	sub_79E3C	44	1	0	engine/library
+0x79e68	get_window_xy	47	7	0	engine/library
+0x79e98	sub_79E98	73	5	0	engine/library
+0x79ee4	get_current_xy	47	12	0	engine/library
+0x79f14	set_window_xy	63	21	1	engine/library
+0x79f54	select_window	47	35	1	engine/library
+0x79f84	enable_window_buffer	28	5	0	engine/library
+0x79fa0	disable_window_buffer	52	3	1	engine/library
+0x79fd4	flush_window_buffer	90	2	1	engine/library
+0x7a030	set_window_pause	55	1	1	engine/library
+0x7a068	release_window_pause	24	2	0	engine/library
+0x7a080	set_window_margins	153	2	2	engine/library
+0x7a11c	sub_7A11C	207	4	9	engine/library
+0x7a1ec	write_window_cr	424	4	12	engine/library
+0x7a394	write_window	809	9	23	engine/library
+0x7a6d0	sub_7A6D0	265	8	5	engine/library
+0x7a7dc	sub_7A7DC	41	2	0	engine/library
+0x7a830	_write_window	19	1	1	engine/library
+0x7a844	get_write_width	23	2	1	engine/library
+0x7a85c	get_window_y2	376	8	3	engine/library
+0x7a9d4	sub_7A9D4	1261	3	12	engine/library
+0x7aec4	wputchar	35	68	1	engine/library
+0x7aee8	wprintf	1287	3411	5	engine/library
+0x7b3f0	winput	529	1	13	engine/library
+0x7b604	pop_up_error	133	11	7	engine/library
+0x7b68c	pop_up	582	1	18	engine/library
+0x7b8d4	pop_off	159	3	9	engine/library
+0x7b980	sub_7B980	49	22	2	engine/library
+0x7b9b4	sub_7B9B4	49	10	2	engine/library
+0x7b9e8	sub_7B9E8	49	3	2	engine/library
+0x7ba20	set_procs	24	1	0	engine/library
+0x7ba38	sub_7BA38	56	1	0	engine/library
+0x7ba70	sub_7BA70	21	6	1	engine/library
+0x7ba88	sub_7BA88	25	11	1	engine/library
+0x7baa4	get_event	380	21	5	engine/library
+0x7bc20	start	716	0	3	engine/library
+0x7beec	__GETDS	9	3	0	engine/library
+0x7befd	__set_errno_	12	20	1	engine/library
+0x7bf20	__set_doserrno_	12	1	1	engine/library
+0x7bf33	__IOMode_	85	4	1	engine/library
+0x7bf88	__SetIOMode_	21	3	0	engine/library
+0x7bfa0	sub_7BFA0	28	0	1	engine/library
+0x7bfbc	init_background	146	4	4	engine/library
+0x7c050	kill_background	24	3	1	engine/library
+0x7c068	is_background	16	3	0	engine/library
+0x7c078	draw_background	354	21	8	engine/library
+0x7c1e0	_init_regions_	53	1	0	engine/library
+0x7c218	set_list_region_pics_	43	1	0	engine/library
+0x7c244	set_region_color_	16	25	0	engine/library
+0x7c254	display_region_	221	3	2	engine/library
+0x7c334	make_region_	370	18	5	engine/library
+0x7c4a8	remove_regions_	186	6	3	engine/library
+0x7c564	move_region_	146	3	0	engine/library
+0x7c638	clear_region_	162	1	4	engine/library
+0x7c6dc	_clear_region_	125	1	4	engine/library
+0x7c75c	remake_region_	112	3	1	engine/library
+0x7c7cc	move_elevator_box_	129	2	4	engine/library
+0x7c850	click_region_toggle_	121	4	1	engine/library
+0x7c8cc	sub_7C8CC	178	2	1	engine/library
+0x7c980	get_region_	288	17	2	engine/library
+0x7caa0	get_region_xy_	134	9	0	engine/library
+0x7cba4	make_button_	182	15	7	engine/library
+0x7cc5c	enable_button_	234	1	8	engine/library
+0x7cdd8	click_button_	639	6	15	engine/library
+0x7d058	sub_7D058	173	1	2	engine/library
+0x7d11c	sub_7D11C	110	1	3	engine/library
+0x7d18c	sub_7D18C	108	2	2	engine/library
+0x7d1f8	sub_7D1F8	273	2	5	engine/library
+0x7d30c	new_region_	134	2	3	engine/library
+0x7d394	update_region_	167	1	0	engine/library
+0x7d43c	add_to_region_	107	2	2	engine/library
+0x7d4a8	in_region_	503	2	0	engine/library
+0x7d6a0	kill_region_	25	1	1	engine/library
+0x7d6bc	init_pic_regions_	6	3	0	engine/library
+0x7d6c4	remove_pic_regions_	36	3	1	engine/library
+0x7d6e8	enable_pic_object_	53	4	0	engine/library
+0x7d720	disable_pic_object_	53	10	0	engine/library
+0x7d758	enable_pic_region_	38	2	0	engine/library
+0x7d780	disable_pic_region_	38	2	0	engine/library
+0x7d7d4	sub_7D7D4	41	12	0	engine/library
+0x7d800	sub_7D800	42	1	0	engine/library
+0x7d82c	make_pic_region_	118	0	3	engine/library
+0x7d8a4	sub_7D8A4	749	2	8	engine/library
+0x7dba0	strcmp_	161	6	0	engine/library
+0x7dc50	init_mouse_subroutine_	116	1	7	engine/library
+0x7dcc4	init_mouse_subroutine	36	2	2	engine/library
+0x7dce8	sub_7DCE8	81	2	3	engine/library
+0x7dd3c	sub_7DD3C	36	1	3	engine/library
+0x7dd60	init_mouse	138	1	4	engine/library
+0x7ddec	mouse_get_pos?	47	0	1	engine/library
+0x7de1c	_mouse_interrupt	343	0	9	engine/library
+0x7df74	sub_7DF74	176	1	2	engine/library
+0x7e024	reset_mouse_limits	37	2	1	engine/library
+0x7e04c	sub_7E04C	103	8	2	engine/library
+0x7e0d4	sub_7E0D4	89	2	0	engine/library
+0x7e130	sub_7E130	273	2	0	engine/library
+0x7e244	sub_7E244	82	2	2	engine/library
+0x7e298	sub_7E298	82	4	2	engine/library
+0x7e2ec	sub_7E2EC	230	32	5	engine/library
+0x7e3d4	_hide_mouse	107	33	1	engine/library
+0x7e440	hidden_inside	109	3	0	engine/library
+0x7e4b0	sub_7E4B0	60	2	0	engine/library
+0x7e4ec	push_mouse_inside	106	19	3	engine/library
+0x7e558	push_mouse	43	37	2	engine/library
+0x7e584	pop_mouse	98	56	1	engine/library
+0x7e5e8	sub_7E5E8	82	1	1	engine/library
+0x7e63c	sub_7E63C	71	2	2	engine/library
+0x7e684	sub_7E684	166	4	2	engine/library
+0x7e72c	get_mouse	192	10	2	engine/library
+0x7e7ec	get_mouse_button	12	13	1	engine/library
+0x7e7f8	mouse_wait	10	10	1	engine/library
+0x7e804	reset_click	76	1	2	engine/library
+0x7e850	get_click_count	107	1	2	engine/library
+0x7e8c0	init_fonts	122	2	1	engine/library
+0x7e93c	close_fonts	27	4	1	engine/library
+0x7e958	close_font	99	2	1	engine/library
+0x7e9bc	sub_7E9BC	65	1	1	engine/library
+0x7ea00	set_font	848	43	10	engine/library
+0x7ed50	get_font	6	1	0	engine/library
+0x7ed58	set_font_size_fields	57	0	2	engine/library
+0x7ed94	load_font_palette?	402	0	5	engine/library
+0x7ef28	set_tab_width	20	2	0	engine/library
+0x7ef3c	get_font_height	35	10	0	engine/library
+0x7ef60	get_char_width	131	15	0	engine/library
+0x7efe4	get_string_width	44	20	2	engine/library
+0x7f010	get_font_color	18	1	0	engine/library
+0x7f024	set_font_color	12	28	0	engine/library
+0x7f030	set_font_outline	16	22	0	engine/library
+0x7f040	sub_7F040	26	0	0	engine/library
+0x7f05c	set_font_position	12	19	0	engine/library
+0x7f068	print_font	66	17	3	engine/library
+0x7f0ac	print_font_char	1848	1	6	engine/library
+0x7f7e4	toggle_cursor	37	3	1	engine/library
+0x7f80c	text_cursor	30	10	1	engine/library
+0x7f830	gxVideoPtr	96	22	1	engine/library
+0x7f890	sub_7F890	56	13	0	engine/library
+0x7f8c8	sub_7F8C8	101	4	4	engine/library
+0x7f930	sub_7F930	101	3	4	engine/library
+0x7f998	sub_7F998	51	33	1	engine/library
+0x7f9cc	sub_7F9CC	12	10	0	engine/library
+0x7f9d8	sub_7F9D8	38	12	0	engine/library
+0x7fa00	sub_7FA00	24	5	0	engine/library
+0x7fa18	gxSetCtr	47	29	1	engine/library
+0x7fa48	gxVideoScreen	6	14	0	engine/library
+0x7fa50	graphics_mode	312	2	8	engine/library
+0x7fb88	sub_7FB88	35	3	1	engine/library
+0x7fbac	sub_7FBAC	34	1	1	engine/library
+0x7fbe8	sub_7FBE8	61	2	3	engine/library
+0x7fc28	kill_ini?	37	3	2	engine/library
+0x7fc50	sub_7FC50	6	3	0	engine/library
+0x7fc58	gxSetModeState	39	20	0	engine/library
+0x7fcac	sub_7FCAC	234	1	5	engine/library
+0x7fd98	sub_7FD98	250	3	8	engine/library
+0x7ffe8	set_palette_range	108	2	1	engine/library
+0x80054	set_palette	17	13	1	engine/library
+0x80068	fade_in_palette	91	12	1	engine/library
+0x800c4	fade_out_palette	142	12	2	engine/library
+0x80154	black_palette	49	4	2	engine/library
+0x80188	reset_palette	80	2	1	engine/library
+0x801d8	gxClearDisplay	12	8	1	engine/library
+0x801e4	sub_801E4	29	38	1	engine/library
+0x8021c	draw_rect	116	29	2	engine/library
+0x80290	scroll_up	139	1	4	engine/library
+0x8031c	set_bevel_style	46	1	0	engine/library
+0x80390	draw_bevel	119	33	1	engine/library
+0x80408	_draw_bevel	1484	3	9	engine/library
+0x80a54	change_color?	211	4	5	engine/library
+0x80b28	draw_xor	107	2	3	engine/library
+0x80ba0	sub_80BA0	139	1	6	engine/library
+0x80c2c	sub_80C2C	60	1	1	engine/library
+0x80c68	sub_80C68	187	1	3	engine/library
+0x80d24	sub_80D24	124	1	5	engine/library
+0x80da0	sub_80DA0	71	1	1	engine/library
+0x80df0	release_memory	23	0	1	engine/library
+0x80e08	kill_all	12	0	1	engine/library
+0x80e14	get_alloc_limits	590	1	3	engine/library
+0x81064	init_memory	722	2	17	engine/library
+0x81338	add_purge_routine	45	1	1	engine/library
+0x81368	set_purge_routine	21	3	0	engine/library
+0x81380	set_handle_type	59	10	1	engine/library
+0x813bc	get_pointer_type	18	1	1	engine/library
+0x813d0	set_pointer_type	68	21	1	engine/library
+0x81414	insert_master	234	6	2	engine/library
+0x81500	delete_master	95	2	2	engine/library
+0x81560	purge_block	203	1	2	engine/library
+0x8162c	purge_memory	41	5	2	engine/library
+0x81658	get_master	470	3	2	engine/library
+0x81830	find_master	66	10	0	engine/library
+0x81874	compact_memory	182	7	1	engine/library
+0x8192c	get_handle_num	71	1	0	engine/library
+0x81974	new_handle	74	7	3	engine/library
+0x819c0	sub_819C0	35	0	1	engine/library
+0x81a3c	kill_handle	83	9	2	engine/library
+0x81a90	lock_handle	77	4	1	engine/library
+0x81ae0	unlock_handle	77	6	1	engine/library
+0x81b30	new_real_pointer	30	6	2	engine/library
+0x81b50	new_pointer	27	38	2	engine/library
+0x81b90	resize_pointer	83	6	5	engine/library
+0x81be4	kill_pointer	46	49	2	engine/library
+0x81dc8	freemem_block	81	5	0	engine/library
+0x81e1c	freemem_min	93	2	0	engine/library
+0x81e7c	memsetx	19	5	0	engine/library
+0x81e90	sub_81E90	20	5	0	engine/library
+0x81ea4	memcpynotn	44	3	0	engine/library
+0x81ed0	critical_error_handler	25	0	1	engine/library
+0x81eec	release_errors	28	0	1	engine/library
+0x81f08	trap_errors	56	2	3	engine/library
+0x81f60	game_abort	46	7	6	engine/library
+0x82014	str_match	54	4	1	engine/library
+0x8204c	xtoi	86	1	0	engine/library
+0x82124	set_timeout	17	3	1	engine/library
+0x82138	timeout	20	3	1	engine/library
+0x8214c	msleep	52	15	1	engine/library
+0x82180	_update_timer	8	0	0	engine/library
+0x82188	sub_82188	37	0	2	engine/library
+0x821b0	init_timer	95	1	6	engine/library
+0x82210	get_clock	20	49	1	engine/library
+0x82230	ctrl_break_handle	29	0	1	engine/library
+0x82250	release_break	51	0	1	engine/library
+0x82284	capture_break	95	2	3	engine/library
+0x822e4	key_hit	33	14	1	engine/library
+0x82308	get_key	161	9	1	engine/library
+0x823c8	set_next_music_id	10	3	0	engine/library
+0x823d4	test_key	42	2	2	engine/library
+0x82400	sub_82400	14	8	1	engine/library
+0x82410	sub_82410	10	3	1	engine/library
+0x82440	init_lists_	79	2	4	engine/library
+0x82490	close_lists_	48	1	2	engine/library
+0x824c0	make_list_	625	4	8	engine/library
+0x82734	remake_list_	265	2	5	engine/library
+0x82840	remove_list_	115	2	0	engine/library
+0x828b4	get_list_num_	18	13	0	engine/library
+0x828c8	sub_828C8	20	0	1	engine/library
+0x828dc	update_current_list_	36	1	1	engine/library
+0x82900	select_list_	113	2	1	engine/library
+0x82974	select_from_list_	152	1	4	engine/library
+0x82a0c	get_list_ptr_	23	8	1	engine/library
+0x82a24	get_list_size_	20	1	1	engine/library
+0x82a38	sub_82A38	22	0	1	engine/library
+0x82a50	sub_82A50	24	0	1	engine/library
+0x82a68	get_list_page_size_	25	4	1	engine/library
+0x82a84	get_data_from_list_	170	4	2	engine/library
+0x82b30	move_list_elevator_	187	1	4	engine/library
+0x82bec	move_list_to_char_	195	3	3	engine/library
+0x82cb0	move_list_ptr_to_	33	3	2	engine/library
+0x82cd4	move_list_ptr_	274	14	5	engine/library
+0x82de8	print_list_	167	3	5	engine/library
+0x82e90	display_list_	651	15	8	engine/library
+0x83130	click_list_	413	3	14	engine/library
+0x832fc	key_list_	190	3	4	engine/library
+0x833ba	stricmp_	57	5	0	engine/library
+0x833f3	toupper_	14	12	0	engine/library
+0x83401	getch_	29	1	0	engine/library
+0x83420	sub_83420	65	1	0	engine/library
+0x83464	sub_83464	30	2	0	engine/library
+0x83484	grMoveTo?	16	11	0	engine/library
+0x83494	sub_83494	57	18	1	engine/library
+0x834d0	sub_834D0	1289	7	8	engine/library
+0x839dc	gxDirtyDisplay	606	11	8	engine/library
+0x83c3c	gxSaveColors	19	11	0	engine/library
+0x83c50	sub_83C50	9	1	0	engine/library
+0x83c5c	sub_83C5C	9	1	0	engine/library
+0x83ca0	sub_83CA0	74	3	1	engine/library
+0x83cea	initrandnext	6	2	0	engine/library
+0x83cf0	rand_	36	32	1	engine/library
+0x83d14	srand_	16	1	1	engine/library
+0x83d30	sub_83D30	97	2	2	engine/library
+0x83d94	sub_83D94	39	1	2	engine/library
+0x83dbc	sub_83DBC	23	2	0	engine/library
+0x83dd4	sub_83DD4	116	3	0	engine/library
+0x83e48	sub_83E48	100	4	1	engine/library
+0x83eac	sub_83EAC	92	2	1	engine/library
+0x83f08	sub_83F08	137	2	1	engine/library
+0x83f94	sub_83F94	86	1	1	engine/library
+0x83fec	sub_83FEC	247	2	0	engine/library
+0x840e4	sub_840E4	203	1	2	engine/library
+0x841b0	sub_841B0	190	1	2	engine/library
+0x84270	sub_84270	278	1	3	engine/library
+0x84388	sub_84388	148	1	2	engine/library
+0x8441c	sub_8441C	94	1	1	engine/library
+0x8447c	sub_8447C	276	6	7	engine/library
+0x84590	sub_84590	51	9	3	engine/library
+0x845f8	sub_845F8	141	1	6	engine/library
+0x84688	sub_84688	170	7	4	engine/library
+0x84734	sub_84734	41	1	3	engine/library
+0x84760	sub_84760	79	1	4	engine/library
+0x847b0	sub_847B0	66	1	2	engine/library
+0x84830	init_addr_tbl	116	2	0	engine/library
+0x848a4	q_init	127	2	5	engine/library
+0x84924	q_open	602	2	11	engine/library
+0x84b80	q_load	1323	3	8	engine/library
+0x850ac	q_expand	46	3	1	engine/library
+0x850dc	sub_850DC	108	2	3	engine/library
+0x85148	q_close	50	5	1	engine/library
+0x8517c	q_kill?	94	4	3	engine/library
+0x851da	mem_putc_	19	0	0	engine/library
+0x851ed	sprintf_	48	30	1	engine/library
+0x85220	memset_	24	51	1	engine/library
+0x85238	memmove_	76	25	0	engine/library
+0x85290	fp_open	42	18	2	engine/library
+0x852bc	fp_FILE_	8	1	0	engine/library
+0x852c4	fp_close	75	20	2	engine/library
+0x85310	fp_set_bufsiz	143	2	4	engine/library
+0x853a0	fp_read	66	28	2	engine/library
+0x853e4	fp_write	66	6	2	engine/library
+0x85428	fp_seek	12	14	0	engine/library
+0x85434	fp_tell	12	3	0	engine/library
+0x85440	fp_size	5	3	0	engine/library
+0x85454	fp_getc	12	2	0	engine/library
+0x85460	fp_printf	45	1	1	engine/library
+0x85490	fp_fgets	12	1	0	engine/library
+0x8549c	printf_	34	38	1	engine/library
+0x854be	unknown_libname_1	87	4	0	engine/library
+0x85515	cget_file_	78	0	1	engine/library
+0x85563	uncget_file_	8	0	0	engine/library
+0x8556b	vfscanf_	39	1	1	engine/library
+0x85592	fscanf_	33	1	1	engine/library
+0x855c0	pic_file_read	26	0	1	engine/library
+0x85614	sub_85614	31	2	1	engine/library
+0x85754	sub_85754	36	1	1	engine/library
+0x857ec	init_ini_info	398	2	10	engine/library
+0x8597c	match	41	3	0	engine/library
+0x859a8	eos	29	3	1	engine/library
+0x859c8	strskip	64	1	2	engine/library
+0x85a08	copy_ini	58	1	1	engine/library
+0x85a44	_get_ini	140	2	5	engine/library
+0x85b6c	get_ini	64	21	1	engine/library
+0x85bd2	fflush_	16	2	1	engine/library
+0x85be2	time_	45	5	2	engine/library
+0x85c0f	__null_int23_exit_	1	4	0	engine/library
+0x85c10	_null_exit_rtn_	22	21	2	engine/library
+0x85c28	_exit_	22	1	1	engine/library
+0x85c40	setShanPtr	6	1	0	engine/library
+0x85c48	extractPath	48	4	0	engine/library
+0x85c78	exists	23	1	1	engine/library
+0x85c90	get_file_path	77	5	1	engine/library
+0x85ce0	get_file_name	58	4	2	engine/library
+0x85d1c	open_file	32	7	2	engine/library
+0x85d3c	get_file_size	5	1	0	engine/library
+0x85d44	seek_file	10	5	1	engine/library
+0x85d50	get_file_char	5	20	0	engine/library
+0x85d58	get_file_int	40	12	1	engine/library
+0x85d80	read_file	5	12	0	engine/library
+0x85d9c	read_file_line	57	1	1	engine/library
+0x85e14	close_file	5	7	0	engine/library
+0x85e1e	open_	36	0	1	engine/library
+0x85e42	sopen_	453	3	5	engine/library
+0x86007	__set_binary_	101	0	3	engine/library
+0x8606c	_Full_at_exit_rtn_	55	0	0	engine/library
+0x860a3	atexit_	60	9	0	engine/library
+0x860df	strupr_	31	6	0	engine/library
+0x860fe	copypart_	51	3	0	engine/library
+0x86131	_splitpath_	157	1	1	engine/library
+0x861ce	pickup_	18	3	0	engine/library
+0x861e0	_makepath_	203	2	1	engine/library
+0x862ac	video_sync	43	4	0	engine/library
+0x862e0	sub_862E0	107	2	4	engine/library
+0x8634c	vesaCheckBank	14	4	0	engine/library
+0x8635c	gxCreateVirtual	62	6	2	engine/library
+0x8639c	gxSetVirtualHeader	39	1	1	engine/library
+0x863c4	sub_863C4	31	3	1	engine/library
+0x863e4	gxDisplayDisplay	432	2	4	engine/library
+0x86594	gxDisplayVirtual	195	1	1	engine/library
+0x86658	sub_86658	194	11	5	engine/library
+0x8671c	sub_8671C	46	1	1	engine/library
+0x8674c	gxVirtualDisplay	800	7	7	engine/library
+0x86a6c	sub_86A6C	495	1	2	engine/library
+0x86c5c	unknown_libname_2	29	2	2	engine/library
+0x86c79	unknown_libname_3	28	1	3	engine/library
+0x86c98	sub_86C98	35	2	0	engine/library
+0x86cbb	sub_86CBB	35	1	0	engine/library
+0x86cde	sub_86CDE	6	6	0	engine/library
+0x86ce4	sub_86CE4	6	1	0	engine/library
+0x86cea	strerror_	23	2	0	engine/library
+0x86d01	unlink_	31	5	1	engine/library
+0x86d20	tolower_	14	10	0	engine/library
+0x86d2e	_localtime_	81	2	3	engine/library
+0x86d7f	localtime_	13	5	1	engine/library
+0x86d90	_color_cycle_interrupt	236	0	1	engine/library
+0x86e7c	disable_color_cycling	37	0	2	engine/library
+0x86ea4	enable_color_cycling	129	1	5	engine/library
+0x86f26	j___clock_	5	2	0	engine/library
+0x86f2b	strstr_	194	5	0	engine/library
+0x86fed	strnicmp_	87	16	0	engine/library
+0x87044	strlwr_	31	4	0	engine/library
+0x87063	strdup_	69	1	1	engine/library
+0x870a8	nullsub_3	1	1	0	engine/library
+0x870a9	AILDEBUG_start	168	1	2	engine/library
+0x87151	_TIME_callback	108	0	0	engine/library
+0x871bd	TIME_write	166	111	3	engine/library
+0x87263	_AIL_startup	380	1	15	engine/library
+0x873df	_AIL_shutdown	147	1	5	engine/library
+0x87472	_AIL_set_preference	250	25	4	engine/library
+0x8756c	_AIL_lock	5	15	0	engine/library
+0x87571	_AIL_unlock	5	17	0	engine/library
+0x87576	_AIL_get_real_vect	235	1	4	engine/library
+0x87661	_AIL_set_real_vect	121	3	4	engine/library
+0x876da	_AIL_set_USE16_ISR	125	0	4	engine/library
+0x87764	_AIL_restore_USE16_ISR	116	4	4	engine/library
+0x877d8	_AIL_disable_interrupts	5	2	0	engine/library
+0x877dd	_AIL_restore_interrupts	14	4	1	engine/library
+0x877eb	_AIL_call_driver	278	43	4	engine/library
+0x87901	_AIL_delay	109	4	4	engine/library
+0x8796e	_AIL_background	5	2	0	engine/library
+0x87973	_AIL_read_INI	857	2	4	engine/library
+0x87ccc	_AIL_register_timer	235	6	4	engine/library
+0x87db7	_AIL_set_timer_user	243	3	4	engine/library
+0x87eaa	_AIL_set_timer_period	118	4	4	engine/library
+0x87f20	_AIL_set_timer_frequency	118	5	4	engine/library
+0x87f96	AIL_set_timer_divisor	118	0	4	engine/library
+0x8800c	_AIL_interrupt_divisor	222	0	4	engine/library
+0x880ea	_AIL_start_timer	109	7	4	engine/library
+0x88157	_AIL_start_all_timers	98	0	4	engine/library
+0x881b9	_AIL_stop_timer	109	4	4	engine/library
+0x88226	_AIL_stop_all_timers	98	0	4	engine/library
+0x88288	_AIL_release_timer_handle	109	7	4	engine/library
+0x882f5	_AIL_release_all_timers	98	1	4	engine/library
+0x88357	_AIL_get_IO_environment	229	2	4	engine/library
+0x8843c	_AIL_install_driver	243	4	4	engine/library
+0x8852f	_AIL_uninstall_driver	109	7	4	engine/library
+0x8859c	_AIL_install_DIG_INI	241	1	4	engine/library
+0x8868d	_AIL_install_DIG_driver_file	237	2	4	engine/library
+0x8877a	_AIL_uninstall_DIG_driver	109	0	4	engine/library
+0x887e7	_AIL_allocate_sample_handle	229	5	4	engine/library
+0x888cc	_AIL_allocate_file_sample	255	0	4	engine/library
+0x889cb	_AIL_release_sample_handle	109	5	4	engine/library
+0x88a38	_AIL_init_sample	109	6	4	engine/library
+0x88aa5	_AIL_set_sample_file	244	0	4	engine/library
+0x88bab	_AIL_set_sample_address	143	6	4	engine/library
+0x88c2d	_AIL_set_sample_type	143	9	4	engine/library
+0x88caf	_AIL_start_sample	109	4	4	engine/library
+0x88d1c	_AIL_stop_sample	109	3	4	engine/library
+0x88d89	_AIL_resume_sample	109	0	4	engine/library
+0x88df6	_AIL_end_sample	109	3	4	engine/library
+0x88e63	_AIL_set_sample_playback_rate	118	9	4	engine/library
+0x88ed9	_AIL_set_sample_volume	118	6	4	engine/library
+0x88f4f	_AIL_set_sample_pan	118	2	4	engine/library
+0x88fc5	_AIL_send_sysex_message	118	1	4	engine/library
+0x8903b	_AIL_sample_status	229	7	4	engine/library
+0x89801	_AIL_sample_buffer_ready	229	3	4	engine/library
+0x898e6	_AIL_load_sample_buffer	143	3	4	engine/library
+0x89caa	_AIL_register_EOS_callback	237	3	4	engine/library
+0x8a0d8	_AIL_install_MDI_INI	229	1	4	engine/library
+0x8a1bd	_AIL_install_MDI_driver_file	237	2	4	engine/library
+0x8a2aa	_AIL_uninstall_MDI_driver	109	0	4	engine/library
+0x8a317	_AIL_allocate_sequence_handle	229	1	4	engine/library
+0x8a3fc	_AIL_release_sequence_handle	109	1	4	engine/library
+0x8a469	_AIL_init_sequence	267	1	4	engine/library
+0x8a562	_AIL_start_sequence	109	1	4	engine/library
+0x8a5cf	_AIL_stop_sequence	109	6	4	engine/library
+0x8a6a9	_AIL_end_sequence	109	1	4	engine/library
+0x8a798	_AIL_set_sequence_volume	143	5	4	engine/library
+0x8ae78	_AIL_MDI_driver_type	249	1	4	engine/library
+0x8af71	_AIL_set_GTL_filename_prefix	109	1	4	engine/library
+0x8b59f	_AIL_sequence_position	264	1	4	engine/library
+0x8b6a7	_AIL_branch_index	118	1	4	engine/library
+0x8b80a	_AIL_register_trigger_callback	237	0	4	engine/library
+0x8b8f7	_AIL_register_sequence_callback	237	1	4	engine/library
+0x8bad1	_AIL_register_event_callback	237	2	4	engine/library
+0x8bbbe	_AIL_register_timbre_callback	237	2	4	engine/library
+0x8be90	_AIL_lock_channel	229	2	4	engine/library
+0x8bf75	_AIL_release_channel	118	2	4	engine/library
+0x8bfeb	_AIL_map_sequence_channel	143	2	4	engine/library
+0x8c3de	sub_8C3DE	42	0	1	engine/library
+0x8c408	int386_	27	18	2	engine/library
+0x8c430	__STOSB	49	1	1	engine/library
+0x8c467	__STOSD	108	5	0	engine/library
+0x8c4d3	mem_putc__0	19	0	0	engine/library
+0x8c4e6	vsprintf_	21	2	1	engine/library
+0x8c4fb	__CMain	69	1	3	engine/library
+0x8c54a	__InitRtns	75	1	0	engine/library
+0x8c595	__FiniRtns	79	1	0	engine/library
+0x8c5e4	nullsub_4	1	1	0	engine/library
+0x8c5e5	__Init_Argv_	189	0	2	engine/library
+0x8c6a2	_SplitParms_	233	2	0	engine/library
+0x8c78b	isatty_	30	5	0	engine/library
+0x8c7a9	int386x_	25	5	1	engine/library
+0x8c7c2	memcpy_	37	18	0	engine/library
+0x8c7e7	fprintf_	33	256	1	engine/library
+0x8c808	_nfree_	94	7	1	engine/library
+0x8c870	free	82	5	2	engine/library
+0x8c914	DPMI_real_call	79	1	1	engine/library
+0x8c964	DPMI_real_alloc	63	1	1	engine/library
+0x8c9a4	DPMI_real_free	49	1	1	engine/library
+0x8c9d8	DPMI_real_freemem	78	1	2	engine/library
+0x8ca26	getenv_	90	10	1	engine/library
+0x8ca80	cget_string_	41	0	0	engine/library
+0x8caa9	uncget_string_	4	0	0	engine/library
+0x8caad	vsscanf_	39	1	1	engine/library
+0x8cad4	sscanf_	33	5	1	engine/library
+0x8caf5	_nmalloc_	227	10	3	engine/library
+0x8cbd8	_dos_setvect_	43	6	0	engine/library
+0x8cc03	_dos_getvect_	52	3	0	engine/library
+0x8cc37	kbhit	23	1	0	engine/library
+0x8cc4e	strncpy_	37	5	0	engine/library
+0x8cc90	sub_8CC90	8137	1	0	engine/library
+0x8ec4f	__prtf_	641	3	2	engine/library
+0x8eed0	getprintspecs_	307	1	1	engine/library
+0x8f003	evalflags_	91	1	0	engine/library
+0x8f05e	far_strlen_	36	2	0	engine/library
+0x8f082	far_other_strlen_	35	1	0	engine/library
+0x8f0a5	fmt4hex_	97	2	1	engine/library
+0x8f106	FixedPoint_Format_	219	1	1	engine/library
+0x8f1e1	float_format_	7	1	1	engine/library
+0x8f1e8	formstring_	1097	1	9	engine/library
+0x8f631	zupstr_	24	2	1	engine/library
+0x8f649	__open_flags_	180	1	2	engine/library
+0x8f6fd	__doopen_	200	2	6	engine/library
+0x8f7c5	_fsopen_	27	1	2	engine/library
+0x8f7e0	fopen_	10	3	1	engine/library
+0x8f7ea	close_file_	104	1	2	engine/library
+0x8f852	freopen_	36	0	2	engine/library
+0x8f876	fclose_	47	3	1	engine/library
+0x8f8a5	__shutdown_stream_	21	2	2	engine/library
+0x8f8ba	__hex_	12	3	0	engine/library
+0x8f8c6	__MkTmpFile_	105	1	2	engine/library
+0x8f92f	__doclose_	137	2	7	engine/library
+0x8f9b8	setvbuf_	103	3	2	engine/library
+0x8fa1f	fgetc_	137	4	2	engine/library
+0x8faa8	__filbuf_	47	2	1	engine/library
+0x8fad7	__fill_buffer_	171	4	4	engine/library
+0x8fb82	fread_	458	1	4	engine/library
+0x8fd4c	fputc_	164	4	3	engine/library
+0x8fdf0	fwrite_	487	1	5	engine/library
+0x8ffd7	__update_buffer_	66	2	0	engine/library
+0x90019	fseek_	252	2	5	engine/library
+0x90115	ftell_	48	2	1	engine/library
+0x90145	filelength_	61	1	1	engine/library
+0x90182	j___fprtf_	5	1	0	engine/library
+0x90187	fgets_	99	2	1	engine/library
+0x901ea	file_putc_	17	0	1	engine/library
+0x901fb	__fprtf_	133	3	3	engine/library
+0x90280	ungetc_	130	1	1	engine/library
+0x90302	__scnf_	545	2	8	engine/library
+0x90523	get_opt_	217	2	0	engine/library
+0x905fc	scan_white_	53	1	0	engine/library
+0x90631	scan_char_	134	1	0	engine/library
+0x906b7	scan_string_	238	1	1	engine/library
+0x907a5	report_scan_	94	2	0	engine/library
+0x90803	makelist_	67	1	1	engine/library
+0x90846	scan_arb_	230	1	1	engine/library
+0x9092c	scan_float_	734	1	3	engine/library
+0x90c0a	scan_int_	504	1	2	engine/library
+0x90e02	radix_value_	39	2	1	engine/library
+0x90e29	cgetw_	35	15	0	engine/library
+0x90e90	sub_90E90	119	2	0	engine/library
+0x90f08	__flush_	191	9	3	engine/library
+0x90fc7	flushall_	5	1	0	engine/library
+0x90fcc	__flushall_	47	1	1	engine/library
+0x90ffb	__getctime_	195	1	0	engine/library
+0x910be	mktime_	340	2	4	engine/library
+0x91212	access_	59	1	1	engine/library
+0x9124d	_dosret0_	7	1	0	engine/library
+0x91254	_dosretax_	5	2	0	engine/library
+0x91259	__set_errno_dos_	102	9	2	engine/library
+0x912c0	VESA_set_mode	370	1	4	engine/library
+0x91434	VESA_set_bank	122	1	2	engine/library
+0x914ae	__doserror_	19	2	1	engine/library
+0x914c1	tryOSTimeZone_	1	0	0	engine/library
+0x914c2	tzset_	19	2	1	engine/library
+0x914d5	parse_time_	38	9	0	engine/library
+0x914fb	parse_offset_	278	2	1	engine/library
+0x91611	parse_rule_	242	2	1	engine/library
+0x91703	__parse_tz_	143	1	2	engine/library
+0x91792	__brktime_	277	4	1	engine/library
+0x918a7	_gmtime_	28	1	1	engine/library
+0x918c3	gmtime_	13	0	1	engine/library
+0x918d0	__leapyear_	59	7	0	engine/library
+0x9190b	calc_yday_	229	2	2	engine/library
+0x919f0	check_order_	40	1	1	engine/library
+0x91a18	__isindst_	691	2	3	engine/library
+0x91ccb	time_less_	48	2	0	engine/library
+0x91cfb	clock_value_	91	2	1	engine/library
+0x91d56	__clock_init_	11	0	1	engine/library
+0x91d61	__clock_	33	1	1	engine/library
+0x91d84	_AIL_API_lock	13	2	0	engine/library
+0x91d91	_AIL_API_unlock	13	2	0	engine/library
+0x91d9e	_API_timer	294	0	0	engine/library
+0x91ec4	_set_PIT_divisor	48	2	0	engine/library
+0x91ef4	_set_PIT_period	51	1	1	engine/library
+0x91f27	_program_timers	101	1	3	engine/library
+0x91f8c	_AILA_startup	238	1	2	engine/library
+0x9207a	_AILA_shutdown	59	1	1	engine/library
+0x920b5	_AIL_API_get_real_vect	44	1	0	engine/library
+0x920e1	_AIL_API_set_real_vect	39	1	0	engine/library
+0x9215d	_AIL_API_set_USE16_ISR	534	1	0	engine/library
+0x92373	_AIL_API_restore_USE16_ISR	69	1	0	engine/library
+0x923b8	_AIL_API_disable_interrupts	4	1	0	engine/library
+0x923bc	_AIL_API_restore_interrupts	21	1	0	engine/library
+0x92423	_AIL_API_call_driver	218	1	2	engine/library
+0x924fd	_AIL_API_delay	61	1	0	engine/library
+0x9253a	_AIL_API_background	12	170	0	engine/library
+0x92546	_AIL_API_register_timer	71	2	2	engine/library
+0x9258d	_AIL_API_set_timer_user	40	1	2	engine/library
+0x925b5	_AIL_API_release_timer_handle	39	1	2	engine/library
+0x925dc	_AIL_API_release_all_timers	36	1	3	engine/library
+0x92600	_AIL_API_start_timer	48	2	2	engine/library
+0x92630	_AIL_API_start_all_timers	36	1	3	engine/library
+0x92654	_AIL_API_stop_timer	48	1	2	engine/library
+0x92684	_AIL_API_stop_all_timers	36	1	3	engine/library
+0x926a8	_AIL_API_set_timer_period	48	1	3	engine/library
+0x926d8	_AIL_API_set_timer_frequency	48	2	3	engine/library
+0x92708	_AIL_API_set_timer_divisor	66	1	3	engine/library
+0x9274a	_AIL_API_interrupt_divisor	12	1	0	engine/library
+0x92756	_AILA_VMM_lock	37	1	1	engine/library
+0x9277b	AIL_start	137	1	2	engine/library
+0x92804	_AIL_driver_server	79	0	3	engine/library
+0x92853	_ASC_val	161	4	2	engine/library
+0x928f4	_AIL_API_read_INI	712	1	8	engine/library
+0x92bbc	_AIL_API_set_preference	25	1	0	engine/library
+0x92bd5	_AIL_API_install_driver	558	1	13	engine/library
+0x92e03	_AIL_API_uninstall_driver	163	1	6	engine/library
+0x92ea6	_AIL_API_get_IO_environment	113	1	3	engine/library
+0x92f17	_AIL_API_startup	274	2	2	engine/library
+0x93029	_AIL_API_shutdown	45	1	3	engine/library
+0x93056	AIL_end	135	0	2	engine/library
+0x930dd	setbuf_	29	1	1	engine/library
+0x930fa	convDec_	51	6	0	engine/library
+0x9312d	_asctime_	233	2	1	engine/library
+0x93216	_ctime_	25	0	2	engine/library
+0x93234	asctime_	13	1	1	engine/library
+0x93241	strcpy_	31	2	0	engine/library
+0x93260	AILSS_start_	191	1	3	engine/library
+0x933a0	_SS_build_amplitude_tables	786	5	0	engine/library
+0x936c0	_SS_serve	520	0	6	engine/library
+0x938f0	_SS_configure_buffers	1149	1	3	engine/library
+0x93d70	_SS_attempt_DIG_detection	249	3	1	engine/library
+0x93e70	_SS_destroy_DIG_driver	170	0	7	engine/library
+0x93f20	_SS_construct_DIG_driver	1557	2	17	engine/library
+0x94540	_AIL_API_install_DIG_driver_file	118	1	6	engine/library
+0x945c0	_AIL_API_install_DIG_driver_image	60	1	3	engine/library
+0x94600	_AIL_API_install_DIG_INI	117	1	2	engine/library
+0x94680	_AIL_API_uninstall_DIG_driver	16	1	1	engine/library
+0x94690	_AIL_API_active_sample_count	44	1	0	engine/library
+0x946c0	_AIL_API_allocate_sample_handle	108	1	3	engine/library
+0x94730	_AIL_API_release_sample_handle	16	1	0	engine/library
+0x94740	_AIL_API_init_sample	196	1	1	engine/library
+0x94810	_AIL_API_sequence_tempo	13	1	0	engine/library
+0x94820	_AIL_API_set_sample_address	37	1	0	engine/library
+0x94850	_AIL_API_set_sample_type	42	1	1	engine/library
+0x94880	_AIL_API_sample_playback_rate	13	1	0	engine/library
+0x94890	_AIL_API_set_sample_playback_rate	16	1	0	engine/library
+0x948a0	_AIL_API_sample_volume	13	1	0	engine/library
+0x948b0	_AIL_API_set_sample_volume	30	1	1	engine/library
+0x948d0	_AIL_API_sequence_volume	13	1	0	engine/library
+0x948e0	_AIL_API_set_sample_pan	30	1	1	engine/library
+0x94900	_AIL_API_sample_position	19	1	0	engine/library
+0x94920	_AIL_API_set_sample_position	28	1	0	engine/library
+0x94940	_AIL_API_sample_loop_count	18	1	0	engine/library
+0x94960	_AIL_API_set_sample_loop_count	16	1	0	engine/library
+0x94970	_AIL_API_start_sample	121	1	1	engine/library
+0x949f0	_AIL_API_stop_sample	22	1	0	engine/library
+0x94a10	_AIL_API_resume_sample	86	1	1	engine/library
+0x94a70	_AIL_API_end_sample	70	1	0	engine/library
+0x94ac0	_AIL_API_register_SOB_callback	28	1	0	engine/library
+0x94ae0	_AIL_API_register_EOB_callback	28	1	0	engine/library
+0x94b00	_AIL_API_register_EOS_callback	28	1	0	engine/library
+0x94b20	_AIL_API_set_sample_user_data	32	1	0	engine/library
+0x94b40	_AIL_API_sample_user_data	23	1	0	engine/library
+0x94b60	sub_94B60	63	1	1	engine/library
+0x94ba0	sub_94BA0	8	1	0	engine/library
+0x94bc0	_AIL_API_minimum_sample_buffer_size	152	1	0	engine/library
+0x94c60	_AIL_API_load_sample_buffer	132	1	1	engine/library
+0x94cf0	_AIL_API_sample_buffer_ready	84	1	0	engine/library
+0x94d50	AILSS_end_	184	0	2	engine/library
+0x94e08	AILSFILE_start_	44	1	1	engine/library
+0x94e34	_AIL_VOC_block_len	10	5	0	engine/library
+0x94e3e	_AIL_VOC_terminate	54	1	1	engine/library
+0x94e9c	_AIL_process_VOC_block	621	3	6	engine/library
+0x95109	_AIL_VOC_EOS	16	0	1	engine/library
+0x95119	_AIL_process_WAV_image	234	2	4	engine/library
+0x95203	_AIL_API_allocate_file_sample	299	1	7	engine/library
+0x9532e	_AIL_API_set_sample_file	216	1	3	engine/library
+0x95406	_AIL_API_register_EOF_callback	28	1	0	engine/library
+0x95422	AILSFILE_end_	42	0	1	engine/library
+0x95450	AILXMIDI_start_	262	1	2	engine/library
+0x955c0	_XMI_flush_buffer	77	4	1	engine/library
+0x95610	_XMI_MIDI_message	280	21	1	engine/library
+0x957f0	_XMI_read_VLN	45	4	0	engine/library
+0x95860	_XMI_find_sequence	276	1	1	engine/library
+0x95980	_XMI_read_log?	408	1	0	engine/library
+0x95b20	_XMI_write_log	449	1	0	engine/library
+0x95cf0	_XMI_send_channel_voice_message	1154	25	8	engine/library
+0x96180	_XMI_flush_note_queue	198	1	4	engine/library
+0x96250	_XMI_flush_channel_notes	176	1	2	engine/library
+0x96300	_XMI_refresh_channel	567	2	1	engine/library
+0x96540	_XMI_init_sequence_state	180	4	1	engine/library
+0x96620	_XMI_update_volume	61	3	1	engine/library
+0x96660	_XMI_serve?	1963	0	8	engine/library
+0x96e10	_XMI_attempt_MDI_detection	206	3	1	engine/library
+0x96ee0	_XMI_destroy_MDI_driver	96	0	3	engine/library
+0x96f40	_XMI_construct_MDI_driver	1698	2	15	engine/library
+0x975f0	_AIL_API_install_MDI_driver_file	118	1	6	engine/library
+0x97670	_AIL_API_install_MDI_driver_image	60	1	3	engine/library
+0x976b0	_AIL_API_install_MDI_INI	117	1	2	engine/library
+0x97730	_AIL_API_uninstall_MDI_driver	16	1	1	engine/library
+0x97740	sub_97740	156	1	1	engine/library
+0x977e0	_AIL_API_set_GTL_filename_prefix	120	1	0	engine/library
+0x97860	_AIL_API_allocate_sequence_handle	120	1	3	engine/library
+0x978e0	_AIL_API_release_sequence_handle	27	1	1	engine/library
+0x97900	_AIL_API_init_sequence	946	1	7	engine/library
+0x97cc0	_AIL_API_start_sequence	51	1	2	engine/library
+0x97d00	_AIL_API_stop_sequence	193	1	3	engine/library
+0x97dd0	_AIL_API_resume_sequence	142	1	2	engine/library
+0x97e60	sub_97E60	47	1	1	engine/library
+0x97e90	_AIL_API_set_sequence_loop_count	16	1	0	engine/library
+0x97ea0	_AIL_API_set_sequence_tempo	105	1	0	engine/library
+0x97f10	_AIL_API_set_sequence_volume	128	1	1	engine/library
+0x97f90	sub_97F90	13	1	0	engine/library
+0x97fa0	_AIL_API_sequence_loop_count	18	1	0	engine/library
+0x97fc0	sub_97FC0	13	1	0	engine/library
+0x97fd0	sub_97FD0	13	1	0	engine/library
+0x97fe0	sub_97FE0	75	1	1	engine/library
+0x98030	sub_98030	11	1	0	engine/library
+0x98040	_AIL_API_timbre_status	52	1	1	engine/library
+0x98080	_AIL_API_install_timbre	251	1	3	engine/library
+0x98180	_AIL_API_protect_timbre	62	1	1	engine/library
+0x981c0	_AIL_API_unprotect_timbre	59	1	1	engine/library
+0x98200	_AIL_API_active_sequence_count	44	1	0	engine/library
+0x98230	CXBUFCRC32	43	1	1	engine/library
+0x98260	_AIL_API_channel_notes	58	1	0	engine/library
+0x982a0	_AIL_API_sequence_position	110	1	0	engine/library
+0x98310	_AIL_API_branch_index	140	1	0	engine/library
+0x983a0	_AIL_API_register_prefix_callback	22	1	0	engine/library
+0x983c0	_AIL_API_register_trigger_callback	22	1	0	engine/library
+0x983e0	sub_983E0	22	1	0	engine/library
+0x98400	_AIL_API_register_sequence_callback	22	1	0	engine/library
+0x98420	_AIL_API_register_event_callback	21	1	0	engine/library
+0x98440	_AIL_API_register_timbre_callback	21	1	0	engine/library
+0x98460	_AIL_API_set_sequence_user_data	32	1	0	engine/library
+0x98480	_AIL_API_sequence_user_data	23	1	0	engine/library
+0x984a0	_AIL_API_register_ICA_array	16	1	0	engine/library
+0x984b0	_AIL_API_lock_channel	415	1	2	engine/library
+0x98650	_AIL_API_release_channel	295	1	3	engine/library
+0x98780	_AIL_API_map_sequence_channel	52	1	0	engine/library
+0x987c0	_AIL_API_true_sequence_channel	24	1	0	engine/library
+0x987e0	_AIL_API_send_channel_voice_message	235	1	3	engine/library
+0x988d0	_AIL_API_send_sysex_message	132	1	3	engine/library
+0x98960	AILXMIDI_start_?	244	0	2	engine/library
+0x98c54	AILXDIG_start_	44	1	1	engine/library
+0x98c80	_XMI_write_log_	437	1	0	engine/library
+0x98e35	WVL_search_	41	3	0	engine/library
+0x98e5e	XDIG_set_volume_	108	2	2	engine/library
+0x98eca	XDIG_set_pitch_	266	3	1	engine/library
+0x98fd4	sub_98FD4	37	0	1	engine/library
+0x98ff9	_XDIG_MIDI_trap	1012	0	10	engine/library
+0x993ed	_AIL_API_create_wave_synthesizer	376	1	5	engine/library
+0x99565	_AIL_API_destroy_wave_synthesizer	91	1	4	engine/library
+0x995b9	AILXDIG_end_	42	0	1	engine/library
+0x995e3	segread_	40	1	0	engine/library
+0x9960b	stackavail_	9	2	0	engine/library
+0x99614	__CommonInit_	11	1	0	engine/library
+0x99620	__int386x_	56	1	1	engine/library
+0x99658	sub_99658	37	1	0	engine/library
+0x9967d	_DoINTR_	77	0	1	engine/library
+0x996ca	sub_996CA	52	1	0	engine/library
+0x999fe	__MemAllocator	163	1	0	engine/library
+0x99aa6	__MemFree	272	1	0	engine/library
+0x99bb2	__unlink_	63	2	0	engine/library
+0x99bf1	__FreeDPMIBlocks_	94	2	1	engine/library
+0x99c4f	__ReAllocDPMIBlock_	259	0	4	engine/library
+0x99d52	__LinkUpNewMHeap_	116	3	0	engine/library
+0x99dc6	__LastFree_	78	1	0	engine/library
+0x99e14	RationalAlloc_	211	1	1	engine/library
+0x99ee7	__CreateNewNHeap_	175	1	4	engine/library
+0x99f96	__ExpandDGROUP_	324	1	5	engine/library
+0x9a0da	__AdjustAmount_	119	2	1	engine/library
+0x9a151	__nmemneed	3	1	0	engine/library
+0x9a179	utoa_	74	1	0	engine/library
+0x9a1c3	itoa_	27	3	1	engine/library
+0x9a1de	_no_support_loaded_	18	2	1	engine/library
+0x9a215	ultoa_	73	2	0	engine/library
+0x9a25e	ltoa_	27	2	1	engine/library
+0x9a279	__allocfp_	168	1	3	engine/library
+0x9a321	__freefp_	57	2	0	engine/library
+0x9a378	__chktty_	49	3	1	engine/library
+0x9a3a9	sub_9A3A9	6	1	0	engine/library
+0x9a3af	lseek_	65	10	1	engine/library
+0x9a3f0	j_unlink_	5	1	0	engine/library
+0x9a3f5	__ioalloc_	119	7	2	engine/library
+0x9a46c	getche_	29	1	0	engine/library
+0x9a489	__qread_	31	2	1	engine/library
+0x9a4a8	write_	465	1	5	engine/library
+0x9a679	tell_	17	2	1	engine/library
+0x9a68a	__FDFS	76	1	0	engine/library
+0x9a6d6	__InitFiles_	120	0	2	engine/library
+0x9a74e	__full_io_exit_	42	0	2	engine/library
+0x9a75f	docloseall_	82	1	1	engine/library
+0x9a7b1	__qwrite_	124	1	3	engine/library
+0x9a82d	intdos_	76	1	1	engine/library
+0x9a879	strlen_	25	8	0	engine/library
+0x9ac94	_DC_0	17	2	0	engine/library
+0x9aca5	_DC_1	12	2	0	engine/library
+0x9acb1	_DC_16	31	1	0	engine/library
+0x9acd0	_DC_17	20	1	0	engine/library
+0x9ace4	_DC_18	31	1	0	engine/library
+0x9ad03	_DC_19	20	1	0	engine/library
+0x9ad17	_DC_24	29	1	0	engine/library
+0x9ad34	_DC_25	18	1	0	engine/library
+0x9ad46	_DC_26	29	1	0	engine/library
+0x9ad63	_DC_27	18	1	0	engine/library
+0x9ad75	_DC_32	20	1	0	engine/library
+0x9ad89	_DC_33	15	1	0	engine/library
+0x9ad98	_DC_36	22	1	0	engine/library
+0x9adae	_DC_37	17	1	0	engine/library
+0x9adbf	_DC_48	33	1	0	engine/library
+0x9ade0	_DC_49	22	1	0	engine/library
+0x9adf6	_DC_50	33	1	0	engine/library
+0x9ae17	_DC_51	22	1	0	engine/library
+0x9ae2d	_DC_52	37	1	0	engine/library
+0x9ae52	_DC_53	26	1	0	engine/library
+0x9ae6c	_DC_54	37	1	0	engine/library
+0x9ae91	_DC_55	26	1	0	engine/library
+0x9aeab	_DC_56	35	1	0	engine/library
+0x9aece	_DC_57	24	1	0	engine/library
+0x9aee6	_DC_58	35	1	0	engine/library
+0x9af09	_DC_59	24	1	0	engine/library
+0x9af21	_DC_60	39	1	0	engine/library
+0x9af48	_DC_61	28	1	0	engine/library
+0x9af64	_DC_62	39	1	0	engine/library
+0x9af8b	_DC_63	28	1	0	engine/library
+0x9afa7	_DC_64	45	1	0	engine/library
+0x9afd4	_DC_65	40	1	0	engine/library
+0x9affc	_DC_80	89	1	0	engine/library
+0x9b055	_DC_81	78	1	0	engine/library
+0x9b0a3	_DC_82	89	1	0	engine/library
+0x9b0fc	_DC_83	78	1	0	engine/library
+0x9b14a	_DC_88	87	1	0	engine/library
+0x9b1a1	_DC_89	76	1	0	engine/library
+0x9b1ed	_DC_90	87	1	0	engine/library
+0x9b244	_DC_91	76	1	0	engine/library
+0x9b290	_DC_96	48	1	0	engine/library
+0x9b2c0	_DC_97	43	1	0	engine/library
+0x9b2eb	_DC_100	50	1	0	engine/library
+0x9b31d	_DC_101	45	1	0	engine/library
+0x9b34a	_DC_112	91	1	0	engine/library
+0x9b3a5	_DC_113	80	1	0	engine/library
+0x9b3f5	_DC_114	91	1	0	engine/library
+0x9b450	_DC_115	80	1	0	engine/library
+0x9b4a0	_DC_116	95	1	0	engine/library
+0x9b4ff	_DC_117	84	1	0	engine/library
+0x9b553	_DC_118	95	1	0	engine/library
+0x9b5b2	_DC_119	84	1	0	engine/library
+0x9b606	_DC_120	93	1	0	engine/library
+0x9b663	_DC_121	82	1	0	engine/library
+0x9b6b5	_DC_122	93	1	0	engine/library
+0x9b712	_DC_123	82	1	0	engine/library
+0x9b764	_DC_124	97	1	0	engine/library
+0x9b7c5	_DC_125	86	1	0	engine/library
+0x9b81b	_DC_126	97	1	0	engine/library
+0x9b87c	_DC_127	86	1	0	engine/library
+0x9b8d2	_M_0	33	2	0	engine/library
+0x9b8f3	_M_1	36	2	0	engine/library
+0x9b917	_M_3	50	1	0	engine/library
+0x9b949	_M_7	50	1	0	engine/library
+0x9b97b	_M_8	36	1	0	engine/library
+0x9b99f	_M_9	39	1	0	engine/library
+0x9b9c6	_M_11	52	1	0	engine/library
+0x9b9fa	_M_15	52	1	0	engine/library
+0x9ba2e	_M_16	28	1	0	engine/library
+0x9ba4a	_M_17	31	1	0	engine/library
+0x9ba69	_M_19	39	1	0	engine/library
+0x9ba90	_M_23	39	1	0	engine/library
+0x9bab7	_M_24	31	1	0	engine/library
+0x9bad6	_M_25	34	1	0	engine/library
+0x9baf8	_M_27	41	1	0	engine/library
+0x9bb21	_M_31	41	1	0	engine/library
+0x9bb4a	_M_32	44	1	0	engine/library
+0x9bb76	_M_33	47	1	0	engine/library
+0x9bba5	_M_35	64	1	0	engine/library
+0x9bbe5	_M_39	64	1	0	engine/library
+0x9bc25	_M_40	50	1	0	engine/library
+0x9bc57	_M_41	53	1	0	engine/library
+0x9bc8c	_M_43	66	1	0	engine/library
+0x9bcce	_M_47	66	1	0	engine/library
+0x9bd10	_M_48	39	1	0	engine/library
+0x9bd37	_M_49	42	1	0	engine/library
+0x9bd61	_M_51	53	1	0	engine/library
+0x9bd96	_M_55	53	1	0	engine/library
+0x9bdcb	_M_56	45	1	0	engine/library
+0x9bdf8	_M_57	48	1	0	engine/library
+0x9be28	_M_59	55	1	0	engine/library
+0x9be5f	_M_63	55	1	0	engine/library
+0x9be96	_M_64	28	1	0	engine/library
+0x9beb2	_M_65	38	1	0	engine/library
+0x9bed8	_M_67	42	1	0	engine/library
+0x9bf02	_M_71	43	1	0	engine/library
+0x9bf2d	_M_75	42	1	0	engine/library
+0x9bf57	_M_79	43	1	0	engine/library
+0x9bf82	_M_104	42	1	0	engine/library
+0x9bfac	sub_9BFAC	58	1	0	engine/library
+0x9bfe6	sub_9BFE6	67	1	0	engine/library
+0x9c029	sub_9C029	68	1	0	engine/library
+0x9c06d	sub_9C06D	67	1	0	engine/library
+0x9c0b0	sub_9C0B0	68	1	0	engine/library
+0x9c0f4	_M_73	37	1	0	engine/library
+0x9c119	_M_42	53	1	0	engine/library
+0x9c14e	sub_9C14E	56	1	0	engine/library
+0x9c186	sub_9C186	57	1	0	engine/library
+0x9c1bf	sub_9C1BF	56	1	0	engine/library
+0x9c1f7	sub_9C1F7	57	1	0	engine/library
+0x9c230	_M_96	39	1	0	engine/library
+0x9c257	_M_97	49	1	0	engine/library
+0x9c288	_M_99	56	1	0	engine/library
+0x9c2c0	_M_103	57	1	0	engine/library
+0x9c2f9	_M_107	56	1	0	engine/library
+0x9c331	_M_111	57	1	0	engine/library
+0x9c36a	_M_46	56	1	0	engine/library
+0x9c3a2	sub_9C3A2	72	1	0	engine/library
+0x9c3ea	sub_9C3EA	81	1	0	engine/library
+0x9c43b	sub_9C43B	82	1	0	engine/library
+0x9c48d	sub_9C48D	81	1	0	engine/library
+0x9c4de	sub_9C4DE	82	1	0	engine/library
+0x9c530	_M_105	51	1	0	engine/library
+0x9c563	sub_9C563	67	1	0	engine/library
+0x9c5a6	sub_9C5A6	70	1	0	engine/library
+0x9c5ec	sub_9C5EC	71	1	0	engine/library
+0x9c633	sub_9C633	70	1	0	engine/library
+0x9c679	sub_9C679	71	1	0	engine/library
+0x9c6c0	_AILSSA_merge	539	1	2	engine/library
+0x9c8db	_AILSSA_DMA_copy	147	9	2	engine/library
+0x9c96e	_AILSSA_flush_buffer	44	5	0	engine/library
+0x9c99a	_AILSSA_VMM_lock	47	1	1	engine/library
+0x9c9c9	strncmp_	41	8	0	engine/library
+0x9c9f2	__setenvp_	212	0	3	engine/library
+0x9cad6	sbrk_	191	0	2	engine/library
+0x9cb95	__brk_	200	2	1	engine/library
+0x9cc5c	__fatal_runtime_error_	29	3	2	engine/library
+0x9cc7a	sub_9CC7A	8	0	0	engine/library
+0x9cc92	__GRO	3	0	0	engine/library
+0x9cc95	__STK	30	1	0	engine/library
+0x9ccb3	__STKOVERFLOW_	15	2	1	engine/library
+0x9ccc2	__EnterWVIDEO_	38	1	0	engine/library
+0xa25b8	sub_A25B8	4162	1	0	engine/library
+0xa26b8	sub_A26B8	77	0	0	engine/library
+0xa2840	sub_A2840	44	1	0	engine/library

@@ -121,6 +121,39 @@ RENAMES = [
      "(mode=eax): 2 = restore a JOURNAL.nnn ('There are no saved games to restore.' if none), 3 = undo from the in-memory "
      "snapshot (dword_C2738), 4 = HELP.DAT, 5 = RESTART.DAT; on success sends PHASE 0x18 to the current room, clears "
      "flag 7 in unk_CD8AC and longjmps to restart_jmp with the mode (main_ then prints '[Undone.]' for 3)."),
+    (0x21B60, "load_object_dat?",
+     "Opens OBJECT.DAT ('Can't open file OBJECT.DAT' -> game_abort): reads u16 poolSize then poolSize bytes into _text_pool "
+     "(NUL-terminated object names/descriptions, referenced by 1-based offsets from the object records)."),
+    (0x1AA74, "init_string_file?",
+     "Opens SHANSTR.DAT and loads the string-table index: u16 nBlocks; {u16 count; u32 dataBytes}[nBlocks]; per-string "
+     "compressed lengths; a Huffman tree (u16 N1 + u16 tree[N1]); a phrase table (u16 K<=128 offsets + u16 poolSize + "
+     "pool); then allocates the string cache (0xC00 bytes, shrinking by 0x100 down to 0x400)."),
+    (0x1AA18, "read_array?", "(dst=eax, elemSize=edx, count=ebx, fp=ecx): fp_read(count*size); prints '[Disk read error]' on a short read; returns elements read."),
+    (0x1AEF0, "decode_string?",
+     "(dst=eax, compressedLen=edx, fp=ebx, tree=ecx, K, phrasePtrs, ...): decodes one SHANSTR.DAT string. LSB-first bits, "
+     "Huffman tree stored as u16 pairs (negative = leaf, symbol = -v-1); symbols >= 0x80 expand phrase table entry "
+     "sym-0x80, others are literal bytes; symbol 0 ends the string."),
+    (0x28858, "play_cutscene?",
+     "6 KB switch over cutscene ids: plays Autodesk .FLC animations (7700.FLC, 8530.flc ... 9595.flc, OPEN1-5.FLC, SHR_*.FLC) "
+     "with fade_in/out_palette, load_music/start_music, make_sound."),
+    (0x1E304, "build_command_line?", "Builds the on-screen command text ('Look at Jak', 'Look around', ' the ' ...) using get_string_width/set_font_outline."),
+    (0x24D34, "save_restore_dialog?", "'Save Game' / 'Restore Game' list dialog: Ok/Cancel/Delete, 'Overwrite the saved game?' / 'Delete the saved game?'."),
+    (0x124DC, "handle_key_event?", "dispatch_event? case 1: keyboard handler incl. debug keys ('Version: %s', 'Free memory: %s', 'Animation %sabled')."),
+    (0x12C78, "handle_click_event?", "dispatch_event? case 4: mouse press -> region hit-testing / buttons."),
+    (0x12AE4, "handle_move_event?", "dispatch_event? cases 2/8: mouse release/move -> region hover."),
+    (0x22538, "options_dialog?", "Music / Sound / Voice volume+toggle dialog with Cancel."),
+    (0x1CB88, "describe_contents?", "Prints 'You see ... here', 'holding', 'wearing' lists for an object's children."),
+    (0x1FDBC, "combat_help_menu?", "'Combat Help' menu: How do I give orders? / pick an opponent? / Keyboard shortcuts / What am I supposed to do?"),
+    (0x11054, "popup_window_event?", "dispatch_event? cases 0x10/0x20/0x40: builds a bevelled popup window (make_xwindow, draw_bevel, set_font)."),
+    (0x17310, "start_encounter?", "2.4 KB combat setup: 26-case switch on encounter id, clones enemy templates (clone_combatant?) and adds them (add_combatants?); prints 'You have fallen in battle...' on defeat."),
+    (0x15758, "clone_combatant?", "Allocates and copies a 0x3F8-byte combatant template, setting word +4Ah = 1."),
+    (0x13CDC, "add_combatants?", "(slot, c1, c2, ... 0): inserts combatant blocks into the battle table at dword_CCA44 (23 slots)."),
+    (0x667E0, "speak?",
+     "(speaker/dialog id=eax, kind=dx, textId=ebx): kinds 0x400-0xC02 select a party character via party_has_member?; if present "
+     "show_dialog?(id, kind) (voiced/graphical line), else falls back to printing load_string_(textId). 93 callers (NPC speech)."),
+    (0x19548, "party_has_member?", "(n=ax): n==3 always 1; else scans the 24 x 8-byte table dword_ADB84/ADB88 for key n and returns object_parent_is(entry object, 2)."),
+    (0x19594, "party_add_member?", "(key): finds the key in the party table and object_move?s its object into object 2, slot 1; refreshes the party UI."),
+    (0x195FC, "party_add_member_slot?", "(key, slot): like party_add_member? with an explicit slot; also fixes the selection and posts event 0x10."),
     (0x1B470, "object_move?",
      "(obj=ax, newParent=dx, slot=ebx): unlinks obj from its current parent's child list (walking the sibling chain), "
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),
