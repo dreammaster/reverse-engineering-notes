@@ -26,6 +26,13 @@ FORCE = [
 
 # Mis-named by library matching; verified from the code.
 FORCE += [
+    (0x14010, "combat_loop?",
+     "WAS 'capture_keyboard?' (a demo-name guess that does not fit). Sets game flag 8, stores the caller's hook in "
+     "_old_keyboard_vector, sends events 0x10/0x40, iterates the 23-slot combatant table dword_CCA44 (sub_14C50 / sub_14C94) "
+     "- the combat UI/turn loop. 576 bytes, 18 callees."),
+    (0x14B34, "combat_hook_notify?",
+     "WAS 'release_keyboard'. Calls the combat hook (_old_keyboard_vector) with code 7; on failure clears word +40h of the "
+     "combatant and re-adds it via sub_1535C."),
     (0x1A530, "object_get_prop_dword?",
      "WAS '_L1OutCode_' (false library match). (obj=ax) -> dword at +11h (type 2) / +14h (type 3) / +15h (type 5), "
      "0 for types 1,4 / invalid. Used as a boolean-ish object property test in handlers."),
