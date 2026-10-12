@@ -433,6 +433,12 @@ a palette it seeks to `offset + count*4` and reads 0x300 bytes into `_default_pa
 frame data through `sub_85754` -> `sub_90E90` (a plain callback copy, `pic_file_read` as reader; the
 writer callbacks `loc_855DC` / `loc_85634` / `loc_856C4` blit rows).
 
+Writers: the stream callback pair writes rows with plain `sub_85614` (byte copy; handles VESA bank wrap
+through `gxSetCtr`) or, when the XOR flag is set, `sub_81E90` (destination ^= source) - i.e. **pixels are raw
+8-bit, and animation frames can be XOR deltas** against the previous frame. A separate sprite blitter
+(`sub_83FEC`, called with `ebx == 0x40` for a 1-byte/pixel variant, else 4) walks a `{skip, count}`
+run structure; it is the display-side transparency path and was not traced.
+
 Open questions needing real picture files: meaning of the two u32 per frame, the bit layout of
 flags 0x20/0x40 (likely pixel format / compression), and whether the frame data is raw or RLE.
 The demo build used LZH for the same job (see `lzh_decode_spec.md`); retail does not appear to.
