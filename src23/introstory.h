@@ -137,7 +137,7 @@ bool introOpeningStart(IntroStory *story, const IntroAssets *assets);
 
 bool introEndingStart(IntroStory *story, const IntroAssets *assets);
 
-/* Chapter 2's credits (the title menu's R and what follows the ending): the table of credit screens is read from the executable (DS:0xC2FB). Chapter 3's routine is not scripted: false. */
+/* The credits (the title menu's R and what follows Chapter 2's ending): the table of credit screens is read from the executable (Chapter 2 DS:0xC2FB, Chapter 3 DS:0xA919 with its own picture and layout). */
 bool introCreditsStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 

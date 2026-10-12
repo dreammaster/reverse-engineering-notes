@@ -303,12 +303,12 @@ static bool playIntro(void *ctx, const char *kind) {
     g_introEscape = false;
     IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
     bool ok;
-    if (game == GameYendor3) {
+    if (strcmp(kind, "credits") == 0) {
+        ok = introCreditsStart(&story, &assets) && introCreditsPlay(&story, &assets, &host);
+    } else if (game == GameYendor3) {
         ok = introOpening3Start(&story, &assets) && introOpening3Play(&story, &assets, &host);
     } else if (strcmp(kind, "ending") == 0) {
         ok = introEndingStart(&story, &assets) && introEndingPlay(&story, &assets, &host);
-    } else if (strcmp(kind, "credits") == 0) {
-        ok = introCreditsStart(&story, &assets) && introCreditsPlay(&story, &assets, &host);
     } else if (strcmp(kind, "story") == 0) {
         ok = introStoryStart(&story, &assets) && introStoryPlay(&story, &assets, &host);
     } else {

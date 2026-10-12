@@ -7590,7 +7590,9 @@ script `credits()` in `src23/introstory.c` (`introCreditsStart` / `introCreditsP
 3 faded in over 63 rounds (16 colours at 0x40 and 0x30 at 0x50 together), then the table at DS:0xC2FB (six bytes a screen: lines, ticks, near pointer to the NUL-separated lines; 0xFFFF
 ends) -- the colours 0xE0-0xEF fade down, rows 84-193 are cleared, the lines are written at (40, 87) in 0xE0 and again at (39, 86) in 0xEB, the colours fade up and the screen stays for
 its ticks; Escape ends it anywhere. The credit names (designers, voices, portrait models, actors, special thanks) are in `SW.EXE`; Chapter 3's routine (yendor3.asm:9324) draws picture 11
-at (240, 0) with the table at DS:0xA919 in colour 0xF9 and is not scripted.
+at (240, 0) with the table at DS:0xA919 in colour 0xF9 and is scripted too (2026-10-13, `credits3()`, below).
+
+**Chapter 3's credits** (`ShowIntroPicture` yendor3.asm:9324, setup `sub_150BE`): the screen is cleared, palette block 3 is the fade target (63 rounds to black), then picture 11 of category 0 -- the villain, 318 x 198 -- is drawn at (240, 0). `DrawPicture` (yendor3.asm:46541) does not clip: it copies 318 bytes a row into the linear 320-byte-stride video memory, so everything right of x = 320 wraps into the next row and the picture shows scrolled round by 80 pixels, with the figure in the middle and the credits on the right (the intended design; `blitWrapped` reproduces it). The colours 0-239 fade in (mode 1, 63 rounds). The table at DS:0xA919 has three screens of 27 lines of 25 characters (lines, ticks, pointer; 0xFFFF ends): the colours 0xF0-0xFF fade down (mode 3), the lines are drawn opaque from (160, 18) 6 pixels apart in 0xF9 (the padding spaces wipe the previous screen's text; `sub_1504A` also clears 27 rows there), the colours fade up (mode 4) and the screen waits its ticks (35, 20, 25); Escape ends everything; the master palette and a fade out follow. The names are in `REGISTER.EXE`.
 
 ## Not yet examined
 

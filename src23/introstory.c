@@ -763,7 +763,7 @@ bool introStoryPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
  * palette block 3 faded in over 63 rounds, 16 colours at 0x40 and 0x30 at 0x50 together; then the credit screens of the table at DS:0xC2FB (six bytes each: the number of lines, the
  * ticks to stay, the near pointer to the NUL-separated lines; 0xFFFF ends it): the colours 0xE0-0xEF fade down, the lower region (rows 84-193) is cleared, the lines are written at
  * (40, 87) in 0xE0 and again at (39, 86) in 0xEB (a shadow), the colours fade up, and the screen stays for its ticks (Escape ends it all at any point). Afterwards block 0 is
- * the palette again and the screen fades out. Chapter 2's; Chapter 3's routine (yendor3.asm:9324) draws picture 11 at (240, 0) and the same table in colour 0xF9 and is not scripted.
+ * the palette again and the screen fades out. Chapter 2's; Chapter 3's is credits3 below.
  */
 static bool credits(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     if (h->music) {
@@ -824,8 +824,68 @@ static bool credits(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     return !stopped;
 }
 
+/*
+ * Chapter 3's ShowIntroPicture (yendor3.asm:9324, setup sub_150BE): the screen cleared, palette block 3 as the target and faded to black over 63 rounds; picture 11 of category 0 (the
+ * villain) is drawn at (240, 0) -- DrawPicture does not clip, it copies 318 bytes a row into the linear 320-byte-stride screen, so the part right of x = 320 wraps into the next row and the
+ * picture shows scrolled round by 80 pixels (blitWrapped) -- and the colours 0-239 fade in over 63 rounds. Then the table at DS:0xA919 (six bytes a screen: lines, ticks, near pointer to
+ * the NUL-separated lines): the colours 0xF0-0xFF fade down, the 27 lines of 25 characters (blank ones too: they are drawn opaque and wipe the last screen's text) are written from (160, 18) 6 pixels
+ * apart in 0xF9, the colours fade up, and the screen stays for its ticks (Escape ends it all at any point). Afterwards the master palette is the target and the screen fades out.
+ */
+static void blitWrapped(uint8_t *dest, const uint8_t *pixels, unsigned width, unsigned height, int x, int y) {
+    for (unsigned r = 0; r < height; r++) {
+        size_t at = (size_t)(y + (int)r) * 320 + (size_t)x;
+        for (unsigned c = 0; c < width && at + c < 320 * 200; c++) {
+            dest[at + c] = pixels[r * width + c];
+        }
+    }
+}
+
+static bool credits3(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    if (a->worldSize >= paletteBlockOffset(a->game, 3) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 3), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    const uint8_t *villain = a->picture(a->pictureCtx, 0, 11);
+    if (villain) {
+        blitWrapped(s->screen, villain, 318, 198, 240, 0);
+    }
+    present(s, h);
+    fade(s, a, h, 1, 63, 240, 0, false);
+    bool stopped = escaped(h);
+    for (unsigned at = 0xA919; !stopped && exeDataU16(a->exe, at) != 0xFFFF; at += 6) {
+        IntroCard card = {exeDataU16(a->exe, at + 4), exeDataU16(a->exe, at), 160, 18, IntroCardNoVoice};
+        unsigned ticks = exeDataU16(a->exe, at + 2);
+        fade(s, a, h, 3, 63, 16, 0xF0, false);
+        for (unsigned line = 0; line < card.lines; line++) {
+            char text[IntroCardLineMax];
+            if (!introCardLine(a->exe, &card, line, text)) {
+                break;
+            }
+            fontDrawString(a->game, 0, s->screen, 320, 160, 18 + (int)line * 6, text, 0xF9, 0, FontOpaque);
+        }
+        present(s, h);
+        if (escaped(h)) {
+            break;
+        }
+        fade(s, a, h, 4, 63, 16, 0xF0, false);
+        for (unsigned t = 0; t < ticks; t++) {
+            waitTicks(s, h, 1);
+            if (escaped(h)) {
+                stopped = true;
+                break;
+            }
+        }
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    if (a->worldSize >= paletteBlockOffset(a->game, 0) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    return !stopped;
+}
+
 bool introCreditsStart(IntroStory *s, const IntroAssets *a) {
-    if (a->game != GameYendor2 || a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
+    if (a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
         return false;
     }
     memset(s->screen, 0, sizeof(s->screen));
@@ -838,7 +898,7 @@ bool introCreditsStart(IntroStory *s, const IntroAssets *a) {
 }
 
 bool introCreditsPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
-    return credits(s, a, h);
+    return a->game == GameYendor3 ? credits3(s, a, h) : credits(s, a, h);
 }
 
 bool introEndingStart(IntroStory *s, const IntroAssets *a) {

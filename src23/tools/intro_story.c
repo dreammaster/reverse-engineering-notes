@@ -4,7 +4,7 @@
  *
  * Build and run (from src23/tools):
  *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
- *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir) | credits: Chapter 2's credits]
+ *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir) | credits: Chapter 2's credits | credits3: Chapter 3's (pass its game dir)]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,8 +102,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     fclose(f);
-    g_chapter3 = argc > 4 && strcmp(argv[4], "opening3") == 0;
-    g_credits = argc > 4 && strcmp(argv[4], "credits") == 0;
+    g_chapter3 = argc > 4 && (strcmp(argv[4], "opening3") == 0 || strcmp(argv[4], "credits3") == 0);
+    g_credits = argc > 4 && (strcmp(argv[4], "credits") == 0 || strcmp(argv[4], "credits3") == 0);
     snprintf(path, sizeof(path), "%s/%s", argv[1], g_chapter3 ? "REGISTER.EXE" : "SW.EXE");
     f = fopen(path, "rb");
     if (!f) {

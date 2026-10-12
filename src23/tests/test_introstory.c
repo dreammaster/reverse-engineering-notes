@@ -329,6 +329,24 @@ static void testOpening3(void) {
     introOpening3Start(&story, &assets);
     finished = introOpening3Play(&story, &assets, &host);
     check("Escape ends it early", !finished && counts.polls == 5);
+    /* Chapter 3's credits: a table of two screens at DS:0xA919 */
+    static const unsigned table[] = {2, 5, 0xA950, 1, 3, 0xA970, 0xFFFF, 0, 0};
+    for (unsigned i = 0; i < sizeof(table) / sizeof(table[0]); i++) {
+        image[0x21DB0 + 0xA919 + i * 2] = (uint8_t)(table[i] & 0xFF);
+        image[0x21DB0 + 0xA919 + i * 2 + 1] = (uint8_t)(table[i] >> 8);
+    }
+    image[0x21DB0 + 0xA950] = 'A';
+    image[0x21DB0 + 0xA952] = 'B';
+    memcpy(image + 0x21DB0 + 0xA970, "C", 2);
+    memset(&counts, 0, sizeof(counts));
+    check("Chapter 3's credits start", introCreditsStart(&story, &assets));
+    finished = introCreditsPlay(&story, &assets, &host);
+    check("they run through both screens and end on black", finished && counts.ticks > 300 && counts.ticks < 450 && counts.lastDac[30] == 0);
+    memset(&counts, 0, sizeof(counts));
+    counts.escapeAfter = 1;
+    introCreditsStart(&story, &assets);
+    finished = introCreditsPlay(&story, &assets, &host);
+    check("Escape ends them early", !finished);
     free(world);
     free(image);
 }
