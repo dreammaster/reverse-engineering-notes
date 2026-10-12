@@ -154,6 +154,21 @@ RENAMES = [
     (0x19548, "party_has_member?", "(n=ax): n==3 always 1; else scans the 24 x 8-byte table dword_ADB84/ADB88 for key n and returns object_parent_is(entry object, 2)."),
     (0x19594, "party_add_member?", "(key): finds the key in the party table and object_move?s its object into object 2, slot 1; refreshes the party UI."),
     (0x195FC, "party_add_member_slot?", "(key, slot): like party_add_member? with an explicit slot; also fixes the selection and posts event 0x10."),
+    (0x1F44C, "add_score?", "(points=eax, spaceBefore=edx, newlineAfter=ebx): dword_ADEAC (_score) += points; prints '[%d point%s]'."),
+    (0x1F494, "move_to_current_room?",
+     "(obj=ax): unless sub_1B3F0(obj, room)==2, object_move?(obj, current room, 0), then sets attrs 5, 10, 6 and clears 7; "
+     "returns 1. 25 handlers."),
+    (0x1F534, "move_to_current_room_as?", "(obj, who): temporarily sets word_ADE98 (acting character) = who around move_to_current_room?."),
+    (0x2200C, "value_in_list?", "cdecl varargs: value_in_list?(v, a, b, ... , -100): 1 if v is one of the listed values (terminator 0xFFFFFF9C)."),
+    (0x7529C, "journal_add_entry?",
+     "(id=ax): adds one journal/notebook entry (sub_751C0), re-renders the page (journal_render_page?) and refreshes the "
+     "table pointer. 65 handlers call it."),
+    (0x752F0, "journal_add_entries?", "cdecl varargs: journal_add_entries?(id1, id2, ..., 0): marks each entry then re-renders."),
+    (0x751C0, "journal_mark_entry?", "(id=ax): finds the entry (journal_find_entry?) in off_C6688 (22-byte records) and sets its 'seen' bit (+12h bit 0), fixing its list state."),
+    (0x75664, "journal_find_entry?", "(key=ax) -> 1-based index of the 22-byte journal record whose key (word +2) matches, 0 if none."),
+    (0x74670, "journal_render_page?", "(entry, ...): formats an entry via load_string_(record+4) and the format at off_C6690, draws its picture (load_pic record+6) and text in the journal window."),
+    (0x79420, "load_pic_sequence?", "(firstPicId=eax, count=edx, ...): loads `count` consecutive pictures into a handle-backed sequence slot (_next_sequence < 5, 0x18 bytes per Pic); returns slot or -1."),
+    (0x1BCE0, "setup_pic_regions?", "(list=eax, count=edx): counterpart of disable_pic_regions?: loads each 12-byte entry's picture (load_pic_in) and enables its hotspot; skipped when byte_ADE24 (UI lock) is set. 48 handlers."),
     (0x1B470, "object_move?",
      "(obj=ax, newParent=dx, slot=ebx): unlinks obj from its current parent's child list (walking the sibling chain), "
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),
@@ -177,6 +192,8 @@ DATA = [
     (0x23BE0, "_save_regions"),        # 92 x {void *ptr; u32 size} - extra state saved by serialize_state?
     (0x23EC0, "_save_region_count"),
     (0xCD8AC, "_game_flags"),          # 100-byte bitset (800 flags), bitset_test/set/clear
+    (0xADEAC, "_score"),               # dword; add_score? adds, prints '[%d point%s]'
+    (0xC6688, "_journal_table"),       # pointer to 22-byte journal records
     (0xADE94, "_current_room"),        # room object id in the HIGH word
 ]
 

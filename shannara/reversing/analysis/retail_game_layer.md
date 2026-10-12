@@ -315,3 +315,31 @@ input `get_event` / `dispatch_event?` -> `handle_key_event?` (with debug keys),
 `start_encounter?`, `clone_combatant?`, `add_combatants?`, `combat_help_menu?`; UI
 `save_restore_dialog?`, `options_dialog?`, `describe_contents?`; cutscenes
 `play_cutscene?` (FLC); state `serialize_state?`, `load_game?`, `save_game?`.
+
+## 8. The handler "script API" (what a port must provide)
+
+Counting the calls made by the 715 handler functions (objh_* and verbdef_*), the
+engine services they actually use, most used first (handlers using it / total calls):
+
+| Service | Handlers | Calls | Meaning |
+|---|---|---|---|
+| `wprintf` | 656 | 3,245 | print message text to the game window |
+| `print_obj` | 455 | 2,603 | article/pronoun/name insertion (`%s`) |
+| `show_dialog?` | 136 | 468 | pop-up/voiced dialog line |
+| `bitset_test` / `bitset_set` / `bitset_clear` | 130 / 100 / 48 | 463 / 173 / 68 | `_game_flags` |
+| `run_command?` | 127 | 171 | issue a nested command |
+| `object_parent_is` / `object_has_attr` / `object_move?` | 100 / 93 / 84 | 227 / 200 / 188 | object tree and attributes |
+| `make_voice?` / `make_sound` | 93 / 44 | 150 / 71 | speech and effects |
+| `journal_add_entry?` | 65 | 99 | notebook/journal entries |
+| `delay?` / `delay_animate?` | 63 / 65 | 137 / 160 | timed pauses |
+| `go_to_room?` | 56 | 76 | room transition |
+| `disable_pic_regions?` / `setup_pic_regions?` | 53 / 48 | 57 / 50 | room hotspots |
+| `speak?`, `party_*`, `refresh_room?`, `flagbyte_*`, `play_music_entry?`, `add_score?`, `start_encounter?`, `play_cutscene?` | 5-35 each | | speech, party, redraw, state bytes, music, score, combat, FLC |
+
+A port's handler runtime therefore needs: a text window with `%s` object-name insertion,
+the object tree + attribute bits, the 800-bit flag set, a small per-room state-byte
+store, voice/sound/music, a dialog popup, hotspots, the journal and party systems, and
+timed delays. Everything else in the handlers is per-object conditionals over those.
+
+Other helpers identified along the way: `move_to_current_room?`, `value_in_list?`,
+`load_pic_sequence?`, `journal_*`. The journal table is `_journal_table` (22-byte records).
