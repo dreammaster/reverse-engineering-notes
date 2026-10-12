@@ -169,6 +169,9 @@ RENAMES = [
     (0x74670, "journal_render_page?", "(entry, ...): formats an entry via load_string_(record+4) and the format at off_C6690, draws its picture (load_pic record+6) and text in the journal window."),
     (0x79420, "load_pic_sequence?", "(firstPicId=eax, count=edx, ...): loads `count` consecutive pictures into a handle-backed sequence slot (_next_sequence < 5, 0x18 bytes per Pic); returns slot or -1."),
     (0x1BCE0, "setup_pic_regions?", "(list=eax, count=edx): counterpart of disable_pic_regions?: loads each 12-byte entry's picture (load_pic_in) and enables its hotspot; skipped when byte_ADE24 (UI lock) is set. 48 handlers."),
+    (0x1EDB0, "describe_room?", "(room=ax, phase=dx): refreshes the view if the room picture changed (event 0x20) then sends `phase` (9 first visit, 0Ah revisit, 0Bh/0Ch verbosity modes) to the room handler."),
+    (0x1A5C8, "object_get_points?", "(obj=ax) -> score value stored in the object (dword +0Ch type 1, +15h type 2, ...); awarded once via add_score?."),
+    (0x1A618, "object_set_points?", "(obj, value): inverse of object_get_points? (go_to_room? zeroes it after awarding)."),
     (0x1B470, "object_move?",
      "(obj=ax, newParent=dx, slot=ebx): unlinks obj from its current parent's child list (walking the sibling chain), "
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),

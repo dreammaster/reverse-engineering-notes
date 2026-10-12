@@ -357,3 +357,31 @@ verb): 403 only print text (wprintf/print_obj, no state change), 274 change stat
 moves, room changes, journal, score, combat, cutscenes), 26 are tiny stubs, 12 other. So
 ~56 % of the content logic is pure message selection; the remaining ~44 % is the part a
 port must get exactly right.
+
+## 10. Handler phases, resolved (seventh pass)
+
+Reading `go_to_room?` and the 63 room handlers' dispatch chains pins down the lifecycle phases
+(the `eax` argument of every handler). Room handlers test, in order of frequency: 1 (56 of 63),
+0x0E (56), 0x17 (54), 0x0F (53), 0x16 (52), 8 (55), 9 (48), 0x0D (48), 0x18 (30).
+
+| Phase | Sent by | Meaning |
+|---|---|---|
+| 1-6 | `run_command?` | command pipeline (1 room/actor pre-hook, 2 actor, 3/5 container of dobj/iobj, **4 dobj, 6 iobj**) |
+| 7 | event 0x200 handler | notification/idle |
+| 8 | `verbdef_07_Look_at` | "look at" notification |
+| 9 | `describe_room?` (first visit) | describe room, first time (room attr 5 = "visited" not set) |
+| 0x0A | `describe_room?` (revisit) | describe room again (attr 5 set); also sent by `main_` after a restore |
+| 0x0B / 0x0C | `describe_room?` | verbosity variants chosen by `byte_ADE9A` (2 -> 0Bh, 0 -> 0Ch) |
+| 0x0D | `go_to_room?` | arrived (before description) |
+| 0x0E | `go_to_room?` | arrival finished (after description) |
+| 0x0F | `go_to_room?` | about to leave; a non-zero return vetoes the move |
+| 0x16 | `refresh_room?` | draw hook; non-zero = handler drew the scene itself |
+| 0x17 | `main_` / popup event | (re)start / init |
+| 0x18 | `load_game?` | game was restored |
+| 0x19 | `sub_1DA04` | post-start notification |
+| 0x1A | `go_to_room?` | a following object (`unk_AE81E`) has been moved in with the party |
+| 0x1B, 0x1D, 0x1E | `sub_19DBC`, `sub_1E304` | not yet traced |
+
+(Handlers of non-room objects mostly dispatch on 3/4/6 with the verb in `dword_CD918`, as the
+verb is not a parameter.) `go_to_room?` also awards the room's stored points once
+(`object_get_points?` -> `add_score?` -> `object_set_points?`) and sets attr 5 (visited).
