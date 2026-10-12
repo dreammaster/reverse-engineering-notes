@@ -332,12 +332,12 @@ static void drawClueItemPage(GameUi *ui, unsigned id, uint16_t tab) {
     }
     const uint8_t *entry = itemTargetEntry(catalog, record);
     ItemTargetKind kind = itemTargetKind(record);
-    if (entry && kind == ItemTargetWearable) {
+    if (ui->clueCategory >= 13 && ui->clueCategory <= 16) { /* groups 3-6: duration, healing or the ability info */
+        clueInfoRowDraw(&ui->renderer, &text, game, shown, record, entry, itemEffectEntry(catalog, record));
+    } else if (entry && kind == ItemTargetWearable) {
         clueArmorRowDraw(&ui->renderer, &text, entry, itemEffectEntry(catalog, record));
     } else if (entry && kind == ItemTargetWeapon) {
         clueWeaponRowDraw(&ui->renderer, &text, entry);
-    } else if (entry && kind == ItemTargetConsumable) {
-        clueHealingRowDraw(&ui->renderer, &text, game, entry);
     }
 }
 

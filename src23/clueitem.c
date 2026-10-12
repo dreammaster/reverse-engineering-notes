@@ -23,6 +23,13 @@ static const TextAddresses kYendor2 = {0x8A82, 0x8A8E, 0x8A96, 0x8AA2, 0x8AAB, 0
 static const TextAddresses kYendor3 = {0x8DA1, 0x8DAD, 0x8DB5, 0x8DC1, 0x8DCA, 0x8DD0, 0x8DE0, 0x8DEA, 0x8DF4, 0x8DF9, 0x8DFD, 0x8E07,
                                        0x8E0B, 0x8E0E, 0x8E62, 0x8E6C, 0, /* no HEALTH- */ 0x8E7C, 0x8E83, 0x7FAE, 0x7E56, 0x7E63, 0x80F4, 0x81B7};
 
+typedef struct {
+    unsigned strength, dexterity, damage, poison, undead, area, restores, percentMagic, percentHealth, cures, curesWhat, converts, convertsWhat;
+} AbilityAddresses;
+
+static const AbilityAddresses kAbility2 = {0x88D0, 0x8923, 0x893A, 0x88DA, 0x88E1, 0x8C5D, 0x8C53, 0x88FA, 0x88E8, 0x8C63, 0x8C6A, 0x8C80, 0x8C8A};
+static const AbilityAddresses kAbility3 = {0x8BF1, 0x8C44, 0x8C5B, 0x8BFB, 0x8C02, 0x8F7B, 0x8F71, 0x8C1B, 0x8C09, 0x8F81, 0x8F88, 0, 0};
+
 static bool load(const ExeData *exe, unsigned address, char *out, size_t capacity) {
     if (address == 0) {
         out[0] = 0;
@@ -48,6 +55,16 @@ bool clueItemTextLoad(ClueItemText *t, const ExeData *exe, GameKind game) {
         if (!exeDataString(exe, game == GameYendor2 ? kHeadings[i].yendor2 : kHeadings[i].yendor3, t->headings[kHeadings[i].category], sizeof(t->headings[0]))) {
             return false;
         }
+    }
+    const AbilityAddresses *b = game == GameYendor2 ? &kAbility2 : &kAbility3;
+    ClueAbilityText *ab = &t->ability;
+    if (!(load(exe, b->strength, ab->strength, sizeof(ab->strength)) && load(exe, b->dexterity, ab->dexterity, sizeof(ab->dexterity)) &&
+          load(exe, b->damage, ab->damage, sizeof(ab->damage)) && load(exe, b->poison, ab->poison, sizeof(ab->poison)) && load(exe, b->undead, ab->undead, sizeof(ab->undead)) &&
+          load(exe, b->area, ab->area, sizeof(ab->area)) && load(exe, b->restores, ab->restores, sizeof(ab->restores)) &&
+          load(exe, b->percentMagic, ab->percentMagic, sizeof(ab->percentMagic)) && load(exe, b->percentHealth, ab->percentHealth, sizeof(ab->percentHealth)) &&
+          load(exe, b->cures, ab->cures, sizeof(ab->cures)) && load(exe, b->curesWhat, ab->curesWhat, sizeof(ab->curesWhat)) &&
+          load(exe, b->converts, ab->converts, sizeof(ab->converts)) && load(exe, b->convertsWhat, ab->convertsWhat, sizeof(ab->convertsWhat)))) {
+        return false;
     }
     return load(exe, a->baseValue, t->baseValue, sizeof(t->baseValue)) && load(exe, a->weight, t->weight, sizeof(t->weight)) &&
            load(exe, a->absorption, t->absorption, sizeof(t->absorption)) && load(exe, a->fitsIn, t->fitsIn, sizeof(t->fitsIn)) &&
@@ -197,6 +214,80 @@ void clueHealingRowDraw(const ViewRenderer *r, const ClueItemText *t, GameKind g
 void clueDurationRowDraw(const ViewRenderer *r, const ClueItemText *t, const uint8_t *entry) {
     labeledNumber(r, 103, 57, t->duration, 10 * itemTargetWord(entry, 2), 0, 0x59);
     put(r, 181, 57, t->minutes, 0x0D);
+}
+
+typedef struct {
+    unsigned id, amount;
+    char kind; /* 'u' undead, 'p' poison, 'a' 3 x 3, 0 nothing -- the damage rows; 'm' percent of magic, 'h' percent of health -- the restore rows */
+} AbilityRow;
+
+static const AbilityRow kDamage2[] = {{0x1B, 50, 'u'}, {0x19, 60, 0}, {0x1A, 35, 'p'}, {0x240, 40, 'a'}};
+static const AbilityRow kDamage3[] = {{0x3F, 85, 'u'}, {0x3D, 60, 0}, {0x3E, 35, 'p'}, {0x3C, 40, 'a'}};
+static const AbilityRow kRestore2[] = {{0x1D, 50, 'm'}, {0x17, 100, 'm'}, {0x12, 25, 'h'}, {0x13, 50, 'm'}, {0x14, 100, 'm'}};
+static const AbilityRow kRestore3[] = {{0x37, 50, 'm'}, {0x38, 100, 'm'}, {0x34, 25, 'h'}, {0x35, 50, 'm'}, {0x36, 100, 'm'}};
+
+static const AbilityRow *findRow(const AbilityRow *rows, unsigned count, unsigned id) {
+    for (unsigned i = 0; i < count; i++) {
+        if (rows[i].id == id) {
+            return &rows[i];
+        }
+    }
+    return NULL;
+}
+
+static void abilityNumber(const ViewRenderer *r, unsigned amount) {
+    char number[16];
+    clueFormatNumber(amount, 0, number);
+    put(r, 157, 57, number, 0x59);
+}
+
+/* ShowItemAbilityEffectInfo. */
+static void abilityRowDraw(const ViewRenderer *r, const ClueAbilityText *t, GameKind game, unsigned id, const uint8_t *consumable, const uint8_t *effect) {
+    const bool chapter2 = game == GameYendor2;
+    if (effect) { /* the first pair of the effect entry: field offset, amount */
+        bool dexterity = itemTargetWord(effect, 0) == 0x3E;
+        labeledNumber(r, dexterity ? 97 : 103, 57, dexterity ? t->dexterity : t->strength, itemTargetWord(effect, 1), 0, 0x59);
+        return;
+    }
+    if (consumable && (itemTargetWord(consumable, 0) & 1)) {
+        const AbilityRow *row = chapter2 ? findRow(kDamage2, 4, id) : findRow(kDamage3, 4, id);
+        if (row) {
+            put(r, 115, 57, t->damage, 0x0A);
+            abilityNumber(r, row->amount);
+            const char *word = row->kind == 'u' ? t->undead : row->kind == 'p' ? t->poison : row->kind == 'a' ? t->area : NULL;
+            if (word) {
+                put(r, 175, 57, word, 0xA7);
+            }
+            return;
+        }
+    }
+    const AbilityRow *row = chapter2 ? findRow(kRestore2, 5, id) : findRow(kRestore3, 5, id);
+    if (row) {
+        put(r, 103, 57, t->restores, 0x0A);
+        abilityNumber(r, row->amount);
+        put(r, row->amount < 100 ? 175 : 181, 57, row->kind == 'h' ? t->percentHealth : t->percentMagic, 0xA7);
+    } else if (id == (chapter2 ? 0x18u : 0x39u)) {
+        put(r, 121, 57, t->cures, 0x0A);
+        put(r, 157, 57, t->curesWhat, 0x59);
+    } else if (chapter2 && id == 0x1C) {
+        put(r, 103, 57, t->converts, 0x0A);
+        put(r, 157, 57, t->convertsWhat, 0x59);
+    }
+}
+
+void clueInfoRowDraw(const ViewRenderer *r, const ClueItemText *t, GameKind game, unsigned itemId, const uint8_t *record, const uint8_t *consumable, const uint8_t *effect) {
+    const bool chapter2 = game == GameYendor2;
+    if (itemGetU16(record, ItemFieldFlags) & 0x1000) {
+        if (consumable) {
+            clueDurationRowDraw(r, t, consumable);
+        }
+    } else if (chapter2 ? (itemId >= 0x36 && itemId <= 0x46) : (itemId >= 0x1F && itemId <= 0x20)) {
+        if (consumable) {
+            clueHealingRowDraw(r, t, game, consumable);
+        }
+    } else if (itemId == (chapter2 ? 0x240u : 0x3Cu) || (chapter2 ? (itemId >= 0x12 && itemId <= 0x1D) : (itemId >= 0x34 && itemId <= 0x3F))) {
+        abilityRowDraw(r, &t->ability, game, itemId, consumable, effect);
+    }
 }
 
 static unsigned subIconTargetWord1(const ItemCatalog *catalog, const uint8_t *record) {

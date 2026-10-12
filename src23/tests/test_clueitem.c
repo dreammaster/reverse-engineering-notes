@@ -71,6 +71,19 @@ static ClueItemText makeText(void) {
     strcpy(t.magic, "MAGIC");
     strcpy(t.percent, "PCT");
     strcpy(t.headings[12], "ARMOR");
+    strcpy(t.ability.strength, "STRENGTH-");
+    strcpy(t.ability.dexterity, "DEXTERITY-");
+    strcpy(t.ability.damage, "DAMAGE-");
+    strcpy(t.ability.poison, "POISON");
+    strcpy(t.ability.undead, "UNDEAD");
+    strcpy(t.ability.area, "3 X 3");
+    strcpy(t.ability.restores, "RESTORES-");
+    strcpy(t.ability.percentMagic, "PERCENT OF MAGIC");
+    strcpy(t.ability.percentHealth, "PERCENT OF HEALTH");
+    strcpy(t.ability.cures, "CURES-");
+    strcpy(t.ability.curesWhat, "SICK");
+    strcpy(t.ability.converts, "CONVERTS-");
+    strcpy(t.ability.convertsWhat, "ORE");
     return t;
 }
 
@@ -151,6 +164,38 @@ static void testDraw(void) {
     memset(screen, 0xEE, sizeof(screen));
     clueDurationRowDraw(&r, &t, potion);
     check("duration: DUR- label, 50 minutes in 0x59, MIN in 0xD", anyColour(screen, 103, 57, 125, 63, 0x0A) && anyColour(screen, 157, 57, 170, 63, 0x59) && anyColour(screen, 181, 57, 200, 63, 0x0D));
+
+    /* the dispatcher of item groups 3-6 */
+    uint8_t record[ItemRecordSize];
+    memset(record, 0, sizeof(record));
+    uint8_t consumable[8] = {1, 0, 0, 0, 0, 0, 0, 0}, none[16] = {0};
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x1A, record, consumable, NULL);
+    check("ability: DAMAGE- 35 and POISON for Chapter 2's id 0x1A", anyColour(screen, 115, 57, 140, 63, 0x0A) && anyColour(screen, 157, 57, 170, 63, 0x59) && anyColour(screen, 175, 57, 205, 63, 0xA7));
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x12, record, NULL, NULL);
+    check("ability: RESTORES- 25 PERCENT OF HEALTH for id 0x12", anyColour(screen, 103, 57, 130, 63, 0x0A) && anyColour(screen, 157, 57, 170, 63, 0x59) && anyColour(screen, 175, 57, 250, 63, 0xA7));
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x14, record, NULL, NULL);
+    check("a hundred percent moves the words to x = 181", !anyColour(screen, 175, 57, 180, 63, 0xA7) && anyColour(screen, 181, 57, 250, 63, 0xA7));
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x18, record, NULL, NULL);
+    check("CURES- at x = 121 with what it cures", anyColour(screen, 121, 57, 150, 63, 0x0A) && anyColour(screen, 157, 57, 180, 63, 0x59));
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor3, 0x39, record, NULL, NULL);
+    check("Chapter 3's cure item is id 0x39", anyColour(screen, 121, 57, 150, 63, 0x0A));
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor3, 0x1C, record, NULL, NULL);
+    check("an id outside the ranges draws nothing", !anyColour(screen, 0, 50, 320, 70, 0x0A));
+    memset(screen, 0xEE, sizeof(screen));
+    none[0] = 0x3E;
+    none[2] = 7;
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x12, record, consumable, none);
+    check("an effect entry wins: DEXTERITY- (field 0x3E) with its amount", anyColour(screen, 97, 57, 130, 63, 0x0A) && anyColour(screen, 157, 57, 165, 63, 0x59));
+    record[ItemFieldFlags + 1] = 0x10;
+    memset(screen, 0xEE, sizeof(screen));
+    clueInfoRowDraw(&r, &t, GameYendor2, 0x12, record, potion, NULL);
+    check("flag 0x1000 shows the duration row first", anyColour(screen, 103, 57, 125, 63, 0x0A) && anyColour(screen, 181, 57, 200, 63, 0x0D));
 }
 
 static void testReal(GameKind game, const char *envName, const char *defaultDir, const char *name, const char *label) {

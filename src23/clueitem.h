@@ -34,7 +34,14 @@
  *   duration   DURATION- at (103, 57), 10 x entry word 2 and MINUTES at x = 181 in 0xD
  * (The row of sub-icon selectors under armor / weapon pages is positioned by a table the game fills in at run time; not drawn here.)
  */
+/* The ability info texts (ShowItemAbilityEffectInfo); `converts` and `convertsWhat` are Chapter 2's only. */
 typedef struct {
+    char strength[16], dexterity[16], damage[12], poison[12], undead[12], area[12], restores[16], percentMagic[24], percentHealth[24], cures[12], curesWhat[28], converts[12],
+        convertsWhat[28];
+} ClueAbilityText;
+
+typedef struct {
+    ClueAbilityText ability;
     char baseValue[16], weight[12], absorption[16], fitsIn[12], adds[8], characterPanel[20], anyPanel[16], backpack[12], box[8], bag[8];
     char twoHanded[12], yes[6], no[6], skill[10], duration[12], minutes[10], health[10], magic[10], percent[10], damage[10], protections[16];
     char protectionNames[9][16];
@@ -56,6 +63,20 @@ void clueArmorRowDraw(const ViewRenderer *r, const ClueItemText *text, const uin
 void clueWeaponRowDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *weaponEntry);
 void clueHealingRowDraw(const ViewRenderer *r, const ClueItemText *text, GameKind game, const uint8_t *consumableEntry);
 void clueDurationRowDraw(const ViewRenderer *r, const ClueItemText *text, const uint8_t *consumableEntry);
+
+/*
+ * The row under the common part of a page of item groups 3-6 (RunClueBookItemDetailWithAbilityInfo yendor2.asm:5162; Chapter 3 the same with its own ids): an item with flag 0x1000
+ * shows the duration row; else the healing items (Chapter 2 catalog ids 0x36-0x46, Chapter 3 0x1F-0x20) the healing row; else the ability items (Chapter 2 0x12-0x1D and 0x240, Chapter 3
+ * 0x34-0x3F and 0x3C) ShowItemAbilityEffectInfo at y = 57:
+ *   an item with an effect entry shows its first pair: STRENGTH- / DEXTERITY- (the first pair's field offset 0x3E picks DEXTERITY) with the amount at x = 157;
+ *   else with bit 0 set in the consumable entry's first word: DAMAGE- (x = 115) and the amount at x = 157 in 0x59, by id (Chapter 2 0x1B 50 UNDEAD, 0x19 60, 0x1A 35 POISON, 0x240 40
+ *     3 X 3; Chapter 3 0x3F 85 UNDEAD, 0x3D 60, 0x3E 35 POISON, 0x3C 40 3 X 3), the word after it at x = 175 in 0xA7;
+ *   else RESTORES- (x = 103) and a percentage at x = 157 with PERCENT OF MAGIC or PERCENT OF HEALTH after it (x = 175, 181 from 100): Chapter 2 0x1D 50, 0x17 100, 0x12 25 (health),
+ *     0x13 50, 0x14 100; Chapter 3 0x37 50, 0x38 100, 0x34 25 (health), 0x35 50, 0x36 100; Chapter 2 0x18 and Chapter 3 0x39 CURES- (x = 121) SICK, POISON, DISEASE; Chapter 2 0x1C
+ *     CONVERTS- MAGIC ORE AND NUORE.
+ * `effectEntry` is the item's effect entry (itemEffectEntry), NULL if it has none; `consumableEntry` the target entry, NULL if it has none.
+ */
+void clueInfoRowDraw(const ViewRenderer *r, const ClueItemText *text, GameKind game, unsigned itemId, const uint8_t *itemRecord, const uint8_t *consumableEntry, const uint8_t *effectEntry);
 
 /*
  * The "+N" sub-icon row under an armour, ring or weapon page (ListCompatibleClueBookItems yendor2.asm:7143, DrawSubIconSelectorRow :7428, the click in
