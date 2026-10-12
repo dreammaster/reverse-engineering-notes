@@ -84,9 +84,9 @@ bitset_clear`: 1-based bit index, LSB-first inside each byte
 (`n-1 → byte (n-1)>>3, bit (n-1)&7`, `0` is a no-op/false). These are the
 game-flag primitives.
 
-### 2.3 `format_noun_phrase?` — `0x1C0E8` (≈2,495 callers)
+### 2.3 `print_obj` — `0x1C0E8` (≈2,495 callers; real name, from its own error string)
 
-The single most-called routine in the binary. A **grammar helper** that turns
+The single most-called routine in the binary (debug string `print_obj: not enough storage` gives its real name; it was `print_obj` in the first pass). A **grammar helper** that turns
 (object id, form selector) into a word for `%s` inserts in message text
 ("You already have%s.", "%s glad that this dark, foreboding figure…"). The
 selector (low 3 bits of the first argument; object id in the upper 16)
@@ -149,3 +149,84 @@ mouse pushed/popped. Working name only; not traced.
 3. Extract the message strings with their referencing function to map NPC/room
    logic regions (e.g. Allanon lines cluster together).
 4. Retail `Shannara.asm` is exported locally (15 MB, git-ignored) for grepping.
+
+## 4. Object model, in full (second pass)
+
+**744 objects**, ids 1..744, in five types: type 1 = 69, type 2 = 192, type 3 = 19,
+type 4 = 429, type 5 = 35. Records live in the initialised data segment
+(`byte_20918[(id-1)*5]` -> `{u8 type; u32 ptr}`), so their *initial state* is in
+the exe; names/descriptions are not:
+
+| Offset | Meaning |
+|---|---|
+| `+0` (dword) | name: 1-based offset into the **runtime text pool** `unk_CD9D0` (loaded from a data file; `object_get_name?`) |
+| `+4` (dword) | description: same pool (`object_get_desc?`), 0 = none |
+| `+0Ah/+0Bh` (word) | location (parent id): `+0Ah` types 2,5 (and 1,4 by the shared accessor family), `+0Bh` type 3 |
+| `+0Ch/+0Dh` (byte) | slot: which child list of the parent it is in |
+| `+0Dh/+0Eh` (word) | next sibling in that list |
+| handler index (dword) | type 1 `+10h`, type 2 `+25h`, type 3 `+2Ch`, type 4 `+14h`, type 5 `+2Dh` |
+
+Children are kept as **singly linked lists in typed slots**: a parent holds
+`byte_20891[(type-1)*3]` list heads (`object_get_list_head?` / `set`), each child
+knows its parent, slot and next sibling; `object_move?` (`0x1B470`) unlinks and
+re-inserts at the head. This is a classic IF containment tree (room -> items,
+inventory, exits...).
+
+**Verified**: 695 of 744 objects carry a handler index; the indices span exactly
+1..640 with 640 distinct values (several objects share a generic handler, e.g.
+index 275 serves 25 type-4 objects). Full table: `retail_object_handlers.tsv`
+(handler, address, size, owning objects, first strings).
+
+### Handler phases (`call_object_handler?(obj, phase)`)
+
+A handler is `int handler(int phase)` (phase in `eax`), returns 1 when it handled
+the event. Phases observed at call sites:
+
+| Phase | Where | Meaning |
+|---|---|---|
+| 1-6 | `run_command?` | command pipeline: 1 = room/actor-location pre, 2 = actor, 3 = dobj's container, **4 = dobj**, 5 = iobj's container, **6 = iobj** |
+| 7 | `sub_1B9C8` (event 0x200) | event/idle notification |
+| 8 | `verbdef_07_Look_at` | look-at notification |
+| 9, 0x19 | `sub_1DA04` (start / after restore) | room entry / (re)start |
+| 0x0A | `main_` after restore | restore notification |
+| 0x0D-0x0F, 0x1A | `sub_1EE10`, `sub_6A0C4` | object-level actions (not yet traced) |
+| 0x16, 0x17 | `main_`, `sub_11478`, `sub_11054` | init / restart |
+| 0x18 | 8 sites incl. `objh_259`, `objh_533` | most common non-command phase (not yet traced) |
+| 0x1B, 0x1D, 0x1E | `sub_19DBC`, `sub_1E304` | not yet traced |
+
+### Verb vocabulary
+
+Verb table = 13-byte records at `0x1DAA8`: `{u8 flags; u32 verbId; char *name; char
+*preposition}`, 77 named verbs ("Attack with", "Look at", "Talk to", "Give to",
+"Put on" ...); ids 1-80, with **16** and **61** having default handlers but no menu
+entry. Default handlers are in `dword_1DE98` (79 `{verbId, fn}` pairs); the same
+function serves ids 31 (Break) and 80 (Kiss). See `retail_verb_handlers.tsv`; the
+functions are named `verbdef_NN_<Verb>`.
+
+### Main loop (`main_` / `startup`)
+
+`startup`: `openAutorun`, `init_memory` (needs >= 1400 KB free), `init_ini_info` (INI
+`LEGEND.INI`; keys `PICDATA`, `VOCDATA`, `SAVEDATA`, root `C:\MOS\`), `set_procs`,
+`setShanPtr("shan")`, `init_audio/music/graphics`, `init_lists_(31)`. `main_`:
+`startup`, `setjmp(restart_jmp)` (restart codes 1-5; 3 = undo -> prints
+`[Undone.]`, 2 = restore, 5 = ...), then the loop `select_pic_window(1)`,
+`update_animation`, `get_event(0x1FFF, &ev)`, `dispatch_event?(&ev)`. Phases 0x16/0x17
+(and 0x0A after restore) are sent to the player object at (re)start.
+
+### Pictures in the retail build
+
+Retail's pic loader differs from the demo's: `load_palette(picId)` selects file
+`picId >> 8` (re-opening `_pic_fp` when it changes) and entry `picId & 0xFF`
+from a per-file directory (`dword_D43F4`, 12-byte entries `{u32 offset; u32 hdr; u32
+hdr2}`), seeks to the entry's palette/header, then `load_pic` creates the gx buffer
+and streams pixel data through `sub_85754` -> `sub_90E90`, a plain read/write
+callback copy loop (`pic_file_read` as the reader), i.e. **no LZH in this path**;
+the writer callbacks (`loc_855DC`, `loc_85634`, `loc_856C4`) do the blit. Not
+validated against real data: **no Shannara data files exist on this machine**.
+
+### Mislabelled names found in the game layer
+
+Library-name matching left false names in the game layer: `_L1OutCode_` (0x1A530) is an
+object property getter; `_L0BlockClip_` (0x68AAC) and `find_rgb2?` (0x67774) are object
+handlers (626, 625); `set_gr_op` (0x5C714) is a getter. Treat any non-`sub_`
+name below `0x75000` with suspicion.
