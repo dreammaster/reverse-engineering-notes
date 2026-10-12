@@ -230,3 +230,34 @@ Library-name matching left false names in the game layer: `_L1OutCode_` (0x1A530
 object property getter; `_L0BlockClip_` (0x68AAC) and `find_rgb2?` (0x67774) are object
 handlers (626, 625); `set_gr_op` (0x5C714) is a getter. Treat any non-`sub_`
 name below `0x75000` with suspicion.
+
+## 5. Object types, rooms and the room transition (third pass)
+
+Relationships measured over all 744 records (`retail_objects.tsv`):
+
+| Type | Count | Evidence |
+|---|---|---|
+| 1 | 69 | **Rooms/locations.** Hold a child-list head at `+0Ah`; have no location; all 68 entries of the room->picture and room->music tables are type 1. |
+| 2 | 192 | Located in rooms (51), in type-5 objects (16 = carried), or unplaced (117). Items and some actors. |
+| 3 | 19 | Two child-list slots; located in rooms (8) / unplaced (9). Containers/doors (inferred). |
+| 4 | 429 | **Never located**, no parent; handler offset `+14h` is the record end. Scenery/noun props available to commands (inferred). |
+| 5 | 35 | Located in rooms (34); three child slots. Characters (inferred). |
+
+`retail_objects.tsv` lists every record (id, type, record address, name/desc text
+offsets, location, slot, next sibling, handler index and function, raw bytes).
+Record sizes are 36/44/48/24/52 bytes for types 1-5.
+
+**Current room** = high word of `dword_ADE94` (now `_current_room`); initial value
+88. The same word is the object that `run_command?` and the lifecycle phases are
+sent to first, so **room handlers (`objh_*` owned by type-1 objects) receive phases
+1, 2, 9, 0x0A, 0x0D, 0x0F, 0x16, 0x17, 0x19**. Pictures: `get_room_pic_id` consults
+`_room_pic_table` (68 rooms; id = `file<<8 | entry`, files 20-34 = 0x14-0x22, `0x32` =
+blank) and then hard-coded game-flag overrides; music: `_room_music_table`.
+`retail_rooms.tsv` has both tables.
+
+`go_to_room?` (`0x1EE10`, ~85 callers) is the room transition: phase 0x0F to the old
+room (non-zero refuses), previous/current room update, reparent the party, lighting
+(`update_room_light?` prints "It's light."/"It's dark."), music, phase 0x0D to the
+new room, redraw.
+
+Vocabulary helpers: `verb_get_name`, `verb_get_flags`, `object_get_display_name?`.
