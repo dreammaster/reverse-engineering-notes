@@ -97,17 +97,41 @@ female) and comparing against the two player-character ids
 text is full of bare `%s` — the engine assembles sentences from object
 attributes, which a reimplementation must reproduce exactly.
 
-### 2.4 `run_command?` — `0x1B7B0`
+### 2.4 Command dispatch and per-object handlers (high confidence on mechanism)
 
-Verb–object dispatch entry: `(verb=eax, dobj=dx, iobj=bx)`. Maintains a
-re-entrancy counter (`dword_ADE20`) and a repeat guard (`dword_CD518`; after 4
-identical consecutive commands prints *"Perhaps now is not the best time to
-try…"*), stores the current command in `dword_CD918` (verb) /
-`dword_CD924+2` (dobj) / `dword_CD92C+2` (iobj), then walks per-object
-"handler present" checks (`sub_21AF4(obj, 1..6)` for the player, dobj and
-iobj) before falling back to a default response (`sub_1E23C`). Strings such as
-*"No input verb"*, *"Take which Object?"*, *"Give orders to…"* confirm this is
-a verb + noun interface, consistent with the Later-engine classification.
+`run_command?` (`0x1B7B0`): `(verb=eax, dobj=dx, iobj=bx)`. Maintains a re-entrancy
+counter (`dword_ADE20`) and a repeat guard (`dword_CD518`; after 4 identical
+consecutive commands prints *"Perhaps now is not the best time to try..."*),
+stores the current command in `dword_CD918` (verb) / `dword_CD924+2` (dobj) /
+`dword_CD92C+2` (iobj), then offers the command to object handlers in order
+(player, dobj, iobj, phases 1-6) via `call_object_handler?`, stopping when one
+returns non-zero, and finally falls back to `run_default_verb_handler?`. Strings
+such as *"No input verb"*, *"Take which Object?"*, *"Give orders to..."* confirm a
+verb + noun interface (Later engine).
+
+**Handlers are compiled code behind function-pointer tables** (answers roadmap
+question 2 — this is the Shannara analogue of Gateway's `proc_table`):
+
+- `0x21AF4 call_object_handler?(obj, arg)`: `h = sub_1A998(obj)` (1-based, max
+  `0x280` = 640); table `(h-1)>>9` (0 = `off_AFF58`, 1 = `off_B0758`), slot
+  `(h-1)&0x1FF`; calls the DWORD code pointer with `eax = arg`.
+- `0x21AC0`: tiny special-case table `word_AFF50` of 6-byte `{u16 obj; u32 fn}` entries.
+- `0x1E23C run_default_verb_handler?(verb)`: linear search of 8-byte
+  `{u32 verbId; u32 fn}` entries at `dword_1DE98` (79 entries).
+- `0x1E110`: a large `switch` on the verb id (0x15-0x4B), with out-of-line chunks.
+- `0x1A0C4 object_get_data_ptr?(obj)`: data record + 8 (attribute bitmap base).
+
+**Measured table contents** (read from the IDB): `off_AFF58` = 512 distinct code
+pointers (`0x17CA0-0x73B00`); `off_B0758` = 128 valid code pointers then
+unrelated data (so the handler count is exactly `512 + 128 = 640 = 0x280`,
+639 distinct targets); `dword_1DE98` = 79 `{verbId, fn}` pairs, verb ids
+1-80 (78 distinct functions). So there are **640 object handlers and 79 default
+verb responses** to reimplement/name - the concrete size of the port's logic
+surface.
+
+Consequence for the port: like Gateway, **no interpretable script format** —
+each handler is real machine code to be read and reimplemented, though the
+object model, attribute bits, flags and the dispatch tables give the skeleton.
 
 ### 2.5 `show_dialog?` — `0x26414`
 
@@ -117,14 +141,11 @@ mouse pushed/popped. Working name only; not traced.
 
 ## 3. Next steps (retail)
 
-1. Name the callees of `run_command?` (`sub_21AF4`, `sub_1E110`, `sub_1E23C`) and
-   the object-list helpers (`sub_1A0C4`, `sub_1A254/2A0/2EC/348/400/49C/4E8`,
+1. Name `sub_1A998` (object -> handler index), `sub_1E110`, and the object-list helpers (`sub_1A254/2A0/2EC/348/400/49C/4E8`,
    `sub_10F70`) — `sub_1B470` looks like an object *move/reparent* using a
    child/sibling list.
-2. Find where per-object handlers are registered/dispatched (the
-   handler-existence flags consulted by `run_command?`); that is the retail
-   analogue of Gateway's `proc_table`/`Logic_call` and decides whether the
-   room/NPC logic is compiled code (as in Gateway) or data.
+2. Dump the two handler tables (`off_AFF58`, `off_B0758`, 512 entries each) and the
+   verb table (`dword_1DE98`) and name/enumerate the handlers per object.
 3. Extract the message strings with their referencing function to map NPC/room
    logic regions (e.g. Allanon lines cluster together).
 4. Retail `Shannara.asm` is exported locally (15 MB, git-ignored) for grepping.

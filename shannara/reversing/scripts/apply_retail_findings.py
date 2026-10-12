@@ -47,8 +47,20 @@ RENAMES = [
     (0x1B7B0, "run_command?",
      "run_command(verb=eax, dobj=dx, iobj=bx). Re-entrancy counter ADE20, repeat guard CD518 "
      "('Perhaps now is not the best time to try...'), stores the current verb/dobj/iobj in "
-     "CD918/CD924/CD92C, then consults per-object handler-existence flags via sub_21AF4(obj,1..6) "
-     "before falling back to sub_1E23C(verb) (default response)."),
+     "CD918/CD924/CD92C, then offers the command to the object handlers: call_object_handler?"
+     "(obj, phase) with phase 1..6 for the player / dobj / iobj, in order, stopping as soon as one "
+     "returns non-zero; if none claims it, falls back to run_default_verb_handler?(verb)."),
+    (0x21AF4, "call_object_handler?",
+     "(obj=ax, arg=dx): handler = sub_1A998(obj) (1-based, max 0x280); table = (handler-1)>>9 "
+     "(0 -> off_AFF58, 1 -> off_B0758), slot = (handler-1)&1FF; calls the DWORD code pointer with "
+     "eax=arg and returns its result (0 if obj has no handler). Per-object behaviour is COMPILED "
+     "CODE reached through two 512-entry function-pointer tables, like Gateway's proc_table."),
+    (0x1E23C, "run_default_verb_handler?",
+     "(verb=eax): linear search of the 8-byte {u32 verbId; u32 fn} table at dword_1DE98 (79 "
+     "entries); calls the matching default-response function, else returns 0."),
+    (0x1A0C4, "object_get_data_ptr?",
+     "(obj=ax) -> data record pointer + 8 for object types 1..5 (jump table), else 0. Base of the "
+     "attribute bitmap used by object_attr_locate?."),
     (0x26414, "show_dialog?",
      "Large (6 KB) UI routine called ~588 times: hides mouse, sets font 10 / color FF, builds a "
      "text window (push_mouse, sub_82410, sub_7E2EC) from a table at word_BBA0E (6-byte entries). "
