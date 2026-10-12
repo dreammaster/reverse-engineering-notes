@@ -1,0 +1,93 @@
+index	address	bytes	current name
+0	0xadea4	4	dword_ADEA4
+1	0xae81e	1	unk_AE81E
+2	0xade96	2	
+3	0xadeac	4	dword_ADEAC
+4	0xcd928	2	dword_CD928
+5	0xade9c	4	dword_ADE9C
+6	0xadea0	4	dword_ADEA0
+7	0xa7e54	2	word_A7E54
+8	0xadb7c	2	word_ADB7C
+9	0xadb84	200	dword_ADB84
+10	0xadc4c	350	dword_ADC4C
+11	0xcd91e	2	
+12	0xbacc2	3403	unk_BACC2
+13	0xc09d2	1037	unk_C09D2
+14	0xc1e8e	282	unk_C1E8E
+15	0xaf370	2904	unk_AF370
+16	0xcd8ac	100	unk_CD8AC
+17	0xade24	1	byte_ADE24
+18	0xc666c	2	
+19	0xc6670	4	dword_C6670
+20	0xc6674	1	byte_C6674
+21	0xc6675	1	byte_C6675
+22	0xa7e14	4	dword_A7E14
+23	0xc667e	2	word_C667E
+24	0xc6680	2	unk_C6680
+25	0xc4756	2	
+26	0xc4944	4	dword_C4944
+27	0xc4948	2	word_C4948
+28	0xc4b48	4	dword_C4B48
+29	0xc4b4c	1	byte_C4B4C
+30	0xcfc48	4	dword_CFC48
+31	0xc4e68	1	byte_C4E68
+32	0xc51cc	2	word_C51CC
+33	0xcfc60	4	dword_CFC60
+34	0xc51d0	4	dword_C51D0
+35	0xc51d4	1	_last_scan_down
+36	0xc51d6	2	
+37	0xc51d8	2	word_C51D8
+38	0xc53d4	4	dword_C53D4
+39	0xc53d8	4	dword_C53D8
+40	0xc53dc	4	dword_C53DC
+41	0xc53e0	4	dword_C53E0
+42	0xc53e4	4	dword_C53E4
+43	0xc53e8	4	dword_C53E8
+44	0xc5640	4	dword_C5640
+45	0xc5644	4	dword_C5644
+46	0xc5648	4	dword_C5648
+47	0xc564c	4	dword_C564C
+48	0xc5650	4	dword_C5650
+49	0xc5654	1	byte_C5654
+50	0xc5655	1	_gr_op?
+51	0xc4754	1	dword_C4754
+52	0xc5656	1	byte_C5656
+53	0xc5658	4	dword_C5658
+54	0xc565c	4	dword_C565C
+55	0xc5660	4	dword_C5660
+56	0xc5664	4	dword_C5664
+57	0xc5668	4	dword_C5668
+58	0xc566c	4	dword_C566C
+59	0xc5670	4	dword_C5670
+60	0xc5674	4	dword_C5674
+61	0xc5eb4	4	dword_C5EB4
+62	0xc5ebc	4	dword_C5EBC
+63	0xc5eb8	4	dword_C5EB8
+64	0xc5ec0	2	word_C5EC0
+65	0xd0298	2	dword_D0298
+66	0xc603c	4	dword_C603C
+67	0xc6040	4	dword_C6040
+68	0xd02a0	2	dword_D02A0
+69	0xd029e	2	
+70	0xd029c	2	dword_D029C
+71	0xd029a	2	
+72	0xd02a4	2	word_D02A4
+73	0xd02a2	2	
+74	0xc6044	2	word_C6044
+75	0xc6048	4	dword_C6048
+76	0xcfe64	760	byte_CFE64
+77	0xc604c	19	unk_C604C
+78	0xd0292	2	
+79	0xd0290	2	dword_D0290
+80	0xd028e	2	
+81	0xd0294	2	dword_D0294
+82	0xc6062	204	word_C6062
+83	0xd0296	2	
+84	0xd028c	2	dword_D028C
+85	0xd025c	4	dword_D025C
+86	0xc6130	4	dword_C6130
+87	0xa7e88	20	word_A7E88
+88	0xa7e9c	2	
+89	0xae9f4	4	dword_AE9F4
+90	0xae9f8	4	dword_AE9F8
+91	0xc5b40	4	dword_C5B40

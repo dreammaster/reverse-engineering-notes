@@ -105,6 +105,22 @@ RENAMES = [
     (0x1E260, "verb_get_name", "(verbId=eax) -> char* from _verb_vocab (13-byte records), '<NULL>' if unknown."),
     (0x1E2D4, "verb_get_flags", "(verbId=eax) -> first byte of the _verb_vocab record, default 1."),
     (0x1E288, "object_get_display_name?", "(obj=ax) -> description if present else name; '<NULL>' if invalid id."),
+    (0x2405C, "save_io_block?",
+     "(ptr=eax, size=edx, handle=ebx, op=ecx): the single I/O primitive of the save system. op 2 = fp_write, "
+     "10 (0Ah) = fp_read, 3 = memmove INTO a memory snapshot (undo), 11 (0Bh) = memmove OUT of it; the memory "
+     "handle holds a cursor. A short file transfer longjmps to unk_CF484 (error)."),
+    (0x240D4, "serialize_state?",
+     "(op=eax, handle=edx) -> 0 ok / -1 error ('Write error: ...'/'Read error: ...'). Streams, in order: for op 2/0Ah a "
+     "0x20-byte header (byte_CF464, save title); every object's record, the first byte_20892[(type-1)*3] bytes (33/41/48/24/49 "
+     "for types 1-5); the 92 registered regions at _save_regions (dword_23EC0 count); 4 bytes at dword_ADDEC; 0x30 bytes "
+     "at byte_CCBB8."),
+    (0x24210, "save_game?",
+     "(mode=eax): mode 2 = write JOURNAL.nnn via sprintf('JOURNAL.%03d') in the SAVEDATA dir; 1/4 other targets; calls "
+     "serialize_state?."),
+    (0x243F4, "load_game?",
+     "(mode=eax): 2 = restore a JOURNAL.nnn ('There are no saved games to restore.' if none), 3 = undo from the in-memory "
+     "snapshot (dword_C2738), 4 = HELP.DAT, 5 = RESTART.DAT; on success sends PHASE 0x18 to the current room, clears "
+     "flag 7 in unk_CD8AC and longjmps to restart_jmp with the mode (main_ then prints '[Undone.]' for 3)."),
     (0x1B470, "object_move?",
      "(obj=ax, newParent=dx, slot=ebx): unlinks obj from its current parent's child list (walking the sibling chain), "
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),
@@ -125,6 +141,9 @@ DATA = [
     (0x1DE98, "_verb_default_table"),  # 79 x {u32 verbId; u32 fn}
     (0x1CFE4, "_room_pic_table"),      # 68 x {u16 room; u32 picId}
     (0xAE9FC, "_room_music_table"),    # 68 x {u16 room; u32 trackRef}
+    (0x23BE0, "_save_regions"),        # 92 x {void *ptr; u32 size} - extra state saved by serialize_state?
+    (0x23EC0, "_save_region_count"),
+    (0xCD8AC, "_game_flags"),          # 100-byte bitset (800 flags), bitset_test/set/clear
     (0xADE94, "_current_room"),        # room object id in the HIGH word
 ]
 
