@@ -23,6 +23,15 @@ recursion's consumers (`partyFindItemDeep` finds, nothing yet consumes in a bag)
 notes: list the real data that reaches a code path before decoding it; subtract the data-segment base from
 IDA `word_XXXXX` names; write helper scripts with the editor tool, not shell heredocs.
 
+## Snapshot, 2026-10-13 (newest)
+
+89 test suites, all passing (`src23/README.md` for the build: CMake or `tests/run_all.py`). Since the 2026-10-07 snapshot the front end is complete: `gameui.c` drives the title menu (character
+creation wizard `creationwizard.c`, the roster, the cinematics), the whole main screen, shops, conversations, the pause dialog and the **clue book** (walk through, maps, monsters with their
+animation, spells, magic users, items with the ability rows, the attribute-enhancer legend, transportation; the lists are the executable's own, `clueentries.c`, with the shareware locks).
+Every cinematic is a script: both openings, Chapter 2's ending, both credits, both boot titles (Chapter 3's VESA logo excepted: it is a block run through what looks like copy
+protection). The shareware demo boundary is `SessionInteractDemoLimit`. `tests/test_soak.c` feeds random keys through every screen of both games. Open: the VESA logo, and Chapter 1 (a different,
+unanalysed engine). The ScummVM engine itself is deliberately not written here (see `scummvm-plan.md`).
+
 ## Snapshot, 2026-10-07 (newest; supersedes the paragraphs above where they disagree)
 
 82 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):
