@@ -476,6 +476,11 @@ int main(int argc, char **argv) {
             sessionAdvanceTime(g_session, 1);
             dirty = true;
         }
+        static Uint32 lastAnimation;
+        if (!script && SDL_GetTicks() - lastAnimation >= 110) { /* the animation tick: two BIOS clock counts */
+            lastAnimation = SDL_GetTicks();
+            dirty = gameUiAnimate(&g_ui) || dirty;
+        }
         if (dirty) {
             gameUiDraw(&g_ui);
             static uint32_t pixels[ViewScreenWidth * ViewScreenHeight];

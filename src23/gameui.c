@@ -225,7 +225,21 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
         }
     } else {
         ui->clueScreen = 2;
+        if (category == 2 && monsterRecordSpawn(ui->clueMonster, &ui->session->monsters, id)) {
+            clueMonsterAnimStart(ui->clueMonster, &ui->clueAnim);
+        }
     }
+}
+
+bool gameUiAnimate(GameUi *ui) {
+    if (ui->overlay != UiOverlayClue || ui->clueScreen != 2 || ui->clueCategory != 2) {
+        return false;
+    }
+    unsigned sound = clueMonsterAnimStep(ui->clueMonster, &ui->clueAnim);
+    if (sound) {
+        effect(ui, sound);
+    }
+    return true;
 }
 
 static void clueBack(GameUi *ui) { /* Escape: one level up */
@@ -389,11 +403,10 @@ static void drawClueCategory(GameUi *ui) {
         drawClueMapPage(ui, entry->id, tab);
     } else if (category == 2) {
         ClueMonsterText text;
-        uint8_t record[MonsterRecordSize];
-        if (clueMonsterTextLoad(&text, ui->exe, game) && monsterRecordSpawn(record, &ui->session->monsters, entry->id)) {
+        if (clueMonsterTextLoad(&text, ui->exe, game)) {
             char name[MonsterNameBufferSize];
-            monsterGetName(record, name);
-            clueMonsterPageDraw(&ui->renderer, &text, record, name, tab);
+            monsterGetName(ui->clueMonster, name);
+            clueMonsterPageDraw(&ui->renderer, &text, ui->clueMonster, name, tab);
         }
     } else if (category <= 10) {
         drawClueSpellPage(ui, entry->id, tab, category != 3);

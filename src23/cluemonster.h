@@ -26,7 +26,7 @@
  * DESTROY (modeFlags 0x200) and PROJECTILE / WEAPON / SHIELD (0x800 / 0x400 / 0x200), each word followed by ", " with the last two characters cut; with no
  * special attack (and no area flag) only the label shows. The label starts at x = (35 - length) * 6 when the words are longer than 8 characters, so the line ends
  * at the right edge, and the words follow 90 pixels later.
- * The sprite is drawn as its first idle frame (MonsterFieldSpriteBase; category 2 at (8, 7), or category 3 at (6, 33) for the alternate large layout); the
+ * The sprite is drawn as the record's current frame (MonsterFieldAnim, the sprite base when that is 0; clueMonsterAnimStep animates it; category 2 at (8, 7), or category 3 at (6, 33) for the alternate large layout); the
  * animation (a frame counter that cycles idle frames, then plays the attack frames and its sound) and the palette remap are not.
  * The label and mark texts come from the executable (the tables in cluemonster.c hold their data-segment addresses).
  */
@@ -49,6 +49,17 @@ bool clueMonsterTextLoad(ClueMonsterText *text, const ExeData *exe, GameKind gam
 void clueMonsterAttackWords(const ClueMonsterText *text, GameKind game, const uint8_t *monsterRecord, char out[160], bool *hasWords);
 
 /* The page for a monster record (MonsterRecordSize bytes) with its display name. */
+/*
+ * The sprite's animation (the tail of ShowClueBookMonsterDetail, yendor2.asm:6712; the page is redrawn on every animation tick, and during an attack every 2 ticks): after each drawing a
+ * counter (starting at 1) goes up; below 73 the idle animation steps (monsterAdvanceAnimation); at 73 the attack begins (the frame jumps to base + 6, MonsterStateAttacking is set, then it
+ * steps); at 74 the monster's hit sound (MonsterFieldHitSound) plays instead of a step; up to 79 the attack frames step (to base + 8); after 79 the counter is 1 again, the attack state is cleared
+ * (and 0xF000 with it: the original ANDs the state with 0x0FFB) and the frame is the base. Returns the sound id to play, 0 for none.
+ */
+unsigned clueMonsterAnimStep(uint8_t *monsterRecord, unsigned *counter);
+
+/* Starts a page's animation: the frame is the sprite base, the counter 1. */
+void clueMonsterAnimStart(uint8_t *monsterRecord, unsigned *counter);
+
 void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *text, const uint8_t *monsterRecord, const char *name, uint16_t navFlags);
 
 #endif

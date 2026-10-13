@@ -55,7 +55,7 @@ The clue book (F8) opens when the platform hands the UI the executable with `gam
 
 The lists are the executable's own. Their entries carry a flag for what the shareware program opens: the others are dim and answered with the registration reminder unless
 `clueRegistered` is set (a ScummVM front end would set it; Chapter 3's REGISTER.EXE is the registered program and has no locked entries; `explore_sdl` sets it unless `EXPLORE_SHAREWARE` is
-given). Not done: item group 2 (the attribute enhancers: the original's screen only waits for a key), the monster animation, and Chapter 3's list backdrop
+given). Not done: item group 2 (the attribute enhancers: the original's screen only waits for a key), and Chapter 3's list backdrop
 is assumed to be picture 6.
 
 The title menu (`gameUiShowTitle`) drives all five commands: C is character creation (`creationwizard.c`: class, portrait, roll, items, name, summary, over the screens of `charcreate.c`; the

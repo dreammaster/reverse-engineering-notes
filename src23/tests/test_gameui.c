@@ -251,6 +251,12 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiDraw(&ui);
         unsigned monster = sum(ui.screen);
         check("Enter shows the monster's statistics page", ui.clueScreen == 2 && monster != list);
+        unsigned frame0 = monsterGetU16(ui.clueMonster, MonsterFieldAnim);
+        bool animated = false;
+        for (unsigned i = 0; i < 12 && !animated; i++) {
+            animated = gameUiAnimate(&ui) && monsterGetU16(ui.clueMonster, MonsterFieldAnim) != frame0;
+        }
+        check("the monster page animates (the platform's tick)", animated || (monsterGetU16(ui.clueMonster, MonsterFieldFlags) & (MonsterFlagAnimCycle | MonsterFlagAnimPingPong)) == 0);
         gameUiKey(&ui, UiKeyEscape, false);
         check("Escape goes back to the list", ui.clueScreen == 1 && ui.clueList.count == types && ui.overlay == UiOverlayClue);
         gameUiKey(&ui, UiKeyEscape, false);

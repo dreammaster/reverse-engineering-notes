@@ -142,6 +142,31 @@ void clueMonsterAttackWords(const ClueMonsterText *t, GameKind game, const uint8
     }
 }
 
+void clueMonsterAnimStart(uint8_t *m, unsigned *counter) {
+    monsterRecordStartAnimation(m, 0);
+    *counter = 1;
+}
+
+unsigned clueMonsterAnimStep(uint8_t *m, unsigned *counter) {
+    unsigned base = monsterGetU16(m, MonsterFieldSpriteBase), state = monsterGetU16(m, MonsterFieldState);
+    unsigned sound = 0;
+    (*counter)++;
+    if (*counter == 0x49) {
+        monsterSetU16(m, MonsterFieldAnim, (uint16_t)(base + 6));
+        monsterSetU16(m, MonsterFieldState, (uint16_t)(state | MonsterStateAttacking));
+        monsterAdvanceAnimation(m);
+    } else if (*counter < 0x49 || (*counter != 0x4A && *counter <= 0x4F)) {
+        monsterAdvanceAnimation(m);
+    } else if (*counter == 0x4A) {
+        sound = monsterGetU16(m, MonsterFieldHitSound);
+    } else {
+        *counter = 1;
+        monsterSetU16(m, MonsterFieldState, (uint16_t)(state & 0x0FFB));
+        monsterSetU16(m, MonsterFieldAnim, (uint16_t)base);
+    }
+    return sound;
+}
+
 void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *t, const uint8_t *m, const char *name, uint16_t navFlags) {
     memset(r->screen, 0, (size_t)ViewScreenWidth * ViewScreenHeight);
     viewDrawPicture(r, 0, r->game == GameYendor2 ? 13 : 6, 1, 1, false, 0);
@@ -152,7 +177,8 @@ void clueMonsterPageDraw(const ViewRenderer *r, const ClueMonsterText *t, const 
         /* the sprite: its first idle frame, category 2 at (8, 7) or, for the alternate large sprites, category 3 at (6, 33); the palette remap of
            MonsterFlagRemapPalette is not applied */
         bool large = (monsterGetU16(m, MonsterFieldFlags) & MonsterFlagAltSprite) != 0;
-        viewDrawPicture(r, large ? 3 : 2, monsterGetU16(m, MonsterFieldSpriteBase), large ? 6 : 8, large ? 33 : 7, true, 0);
+        unsigned frame = monsterGetU16(m, MonsterFieldAnim);
+        viewDrawPicture(r, large ? 3 : 2, frame ? frame : monsterGetU16(m, MonsterFieldSpriteBase), large ? 6 : 8, large ? 33 : 7, true, 0);
     }
 
     const MonsterRow *rows = r->game == GameYendor2 ? kYendor2Rows : kYendor3Rows;

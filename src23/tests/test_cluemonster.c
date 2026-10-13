@@ -156,7 +156,43 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     free(data);
 }
 
+static void testAnimation(void) {
+    uint8_t m[MonsterRecordSize];
+    memset(m, 0, sizeof(m));
+    monsterSetU16(m, MonsterFieldSpriteBase, 100);
+    monsterSetU16(m, MonsterFieldFlags, MonsterFlagAnimCycle);
+    monsterSetU16(m, MonsterFieldHitSound, 7);
+    unsigned counter;
+    clueMonsterAnimStart(m, &counter);
+    check("the animation starts on the sprite base with the counter at 1", monsterGetU16(m, MonsterFieldAnim) == 100 && counter == 1);
+    unsigned sounds = 0, maxIdle = 0, steps = 0;
+    bool attackSeen = false, soundAt74 = false;
+    for (unsigned i = 0; i < 90; i++) {
+        unsigned s = clueMonsterAnimStep(m, &counter);
+        sounds += s != 0;
+        soundAt74 = soundAt74 || (s == 7 && counter == 0x4A);
+        unsigned frame = monsterGetU16(m, MonsterFieldAnim);
+        if (frame > 105) {
+            attackSeen = true;
+        } else if (frame > maxIdle) {
+            maxIdle = frame;
+        }
+        steps++;
+    }
+    check("the idle frames cycle through base..base+5", maxIdle == 105);
+    check("the attack runs to base + 8 once per 79-step round", attackSeen && monsterGetU16(m, MonsterFieldAnim) >= 100);
+    check("the hit sound plays once, at counter 74", sounds == 1 && soundAt74 && steps == 90);
+    monsterSetU16(m, MonsterFieldHitSound, 0);
+    unsigned silent = 0;
+    for (unsigned i = 0; i < 160; i++) {
+        silent += clueMonsterAnimStep(m, &counter);
+    }
+    check("a monster without a hit sound is silent", silent == 0);
+    check("the attack state is cleared at the end of a round", (monsterGetU16(m, MonsterFieldState) & MonsterStateAttacking) == 0 || counter > 0x48);
+}
+
 int main(void) {
+    testAnimation();
     testDraw();
     testAttackWords();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "SW.EXE", "Chapter 2: the monster page labels load from SW.EXE");

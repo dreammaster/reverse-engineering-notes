@@ -83,6 +83,8 @@ typedef struct {
     ClueList clueList;     /* the list's paging */
     ClueEntry clueEntries[ClueEntriesMax]; /* the list's entries */
     unsigned clueParent;   /* the row chosen in the list one level up (a class, an item group), to return to */
+    uint8_t clueMonster[MonsterRecordSize]; /* the monster page's record, animated */
+    unsigned clueAnim;     /* its animation counter (cluemonster.h) */
     unsigned clueSub;      /* the item page's "+N" variant */
     bool clueHelp;         /* the clue book shows its help screen (Tab), else the walk through */
     unsigned cluePage;     /* the walk through's page, 1-based */
@@ -105,6 +107,10 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe);
 
 /* One key press; false = quit (Escape with no overlay open). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);
+
+/* One animation step of what is on screen: today the monster page of the clue book (cluemonster.h clueMonsterAnimStep; the hit sound goes to the host). The platform calls it once per
+ * animation tick (the speed of the pause dialog; the original steps an attacking monster every 2 ticks) and redraws; true when the screen changed. */
+bool gameUiAnimate(GameUi *ui);
 
 /* Renders the current screen (the view and panels, or the open overlay) into ui->screen. */
 void gameUiDraw(GameUi *ui);
