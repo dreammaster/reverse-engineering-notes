@@ -7575,6 +7575,10 @@ quest flags saved": in the header, with everything else of the DS state block. `
 the highest index used by the dialog data is 183 (Chapter 2) / 224 (Chapter 3), well inside the 768 the 96 bytes hold. (Chapter 3's new-game header has `0xFF` bytes at `+0xF2`..`+0x10D`: 224
 flags set from the start.)
 
+### The attribute enhancers legend (2026-10-13)
+
+Item group 2 of the clue book is not a list: `WaitForKeypress` draws `ShowConsumableItemTypeLegend` (yendor2.asm:5534; Chapter 3 :13269), six rows 12 pixels apart from y = 41 -- the kind's icon (category 8) at (28, y), its name at (47, y + 6) in 0xCA, and "PERMANENTLY ADD n TO AN ATTRIBUTE / TO A SKILL" after it (x = 47 + 6 * (length + 1), the digit 96 pixels on). Chapter 2: POTIONS 2 / SCROLLS 4 / WANDS 6 attribute points, VIALS 1 / PARCHMENTS 3 / RODS 5 skill points; Chapter 3: SCROLLS and PARCHMENTS 3, WANDS and RODS 5, GEMS and STONES 7 (attribute, skill each). `clueLegendDraw` in `clueitem.c`.
+
 ### The monster page animation (2026-10-13)
 
 `ShowClueBookMonsterDetail` (yendor2.asm:6712) ends by drawing the sprite from the record's current frame (+0x08) and stepping a counter (word_32938, starting at 1): below 73 `AdvanceMonsterAnimationFrame` steps the idle cycle; at 73 the frame jumps to base + 6 with the attacking bit (state +0x0C & 4) and steps; at 74 the hit sound (+0x5C) plays instead of a step; to 79 the attack frames step (to base + 8); after 79 the counter is 1, the state is ANDed with 0x0FFB and the frame is the base again. It is redrawn on every animation tick (the 0x400 flag) and every 2 ticks while attacking. `clueMonsterAnimStep` is that, `gameUiAnimate` the platform's tick (`explore_sdl` calls it every 110 ms).

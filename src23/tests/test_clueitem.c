@@ -198,6 +198,26 @@ static void testDraw(void) {
     check("flag 0x1000 shows the duration row first", anyColour(screen, 103, 57, 125, 63, 0x0A) && anyColour(screen, 181, 57, 200, 63, 0x0D));
 }
 
+static void testLegend(void) {
+    ClueLegendText t;
+    memset(&t, 0, sizeof(t));
+    strcpy(t.title, "TITLE");
+    strcpy(t.heading, "HEADING");
+    for (unsigned i = 0; i < 6; i++) {
+        strcpy(t.names[i], i == 3 ? "VIALS" : "POTIONS");
+    }
+    strcpy(t.add, "ADD");
+    strcpy(t.toAn, "TO AN");
+    strcpy(t.attribute, "ATTR");
+    strcpy(t.toA, "TO A");
+    strcpy(t.skill, "SKILL");
+    static uint8_t screen[320 * 200];
+    ViewRenderer r = {GameYendor2, NULL, pic, NULL, screen, NULL};
+    clueLegendDraw(&r, &t, 0x8000);
+    check("the legend: title and heading in 0xD, six rows with names in 0xCA", anyColour(screen, 6, 4, 40, 10, 0x0D) && anyColour(screen, 47, 47, 80, 53, 0xCA) && anyColour(screen, 47, 83, 80, 89, 0xCA) && anyColour(screen, 47, 107, 80, 113, 0xCA));
+    check("the sentence follows the name: ADD in 0x0A, the digit in 0x59, ATTR (a skill row says SKILL) in 0xA7", anyColour(screen, 95, 47, 112, 53, 0x0A) && anyColour(screen, 191, 47, 200, 53, 0x59) && anyColour(screen, 245, 47, 290, 53, 0xA7));
+}
+
 static void testReal(GameKind game, const char *envName, const char *defaultDir, const char *name, const char *label) {
     const char *dir = getenv(envName);
     char path[512];
@@ -259,6 +279,7 @@ static void testSubIcons(void) {
 }
 
 int main(void) {
+    testLegend();
     testFormatting();
     testDraw();
     testSubIcons();

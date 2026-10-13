@@ -104,4 +104,21 @@ unsigned clueSubIconClick(unsigned region, unsigned firstItemId, uint16_t *selec
 
 void clueSubIconRowDraw(const ViewRenderer *r, unsigned count, uint16_t selectionMask);
 
+/*
+ * Item group 2, "ATTRIBUTE ENHANCERS" (WaitForKeypress -> ShowConsumableItemTypeLegend, yendor2.asm:5534; Chapter 3 :13269): not an item list but a legend of six kinds of consumable.
+ * The usual clue backdrop (picture 13, Chapter 3 6), the group's title at (6, 4) and INVENTORY ITEMS at the top right (colour 0xD), the navigation bar, and six rows 12 pixels apart from y = 41:
+ * the kind's icon (category 8) at (28, y), its name at (47, y + 6) in 0xCA, and the sentence from x = 47 + 6 * (length + 1) in 0x0A: PERMANENTLY ADD, a digit in 0x59 at +96, then TO AN / TO A and
+ * ATTRIBUTE / SKILL (0xA7 at +36 / +30 after the "TO"). The digit is how many points the kind adds. Chapter 2: POTIONS (icon 0xDA, attribute, 2), SCROLLS (0xF1, attribute, 4), WANDS (0xF3, attribute,
+ * 6), VIALS (0xF0, skill, 1), PARCHMENTS (0xF2, skill, 3), RODS (0xF4, skill, 5). Chapter 3: SCROLLS (0x6C, attribute, 3), PARCHMENTS (0x6D, skill, 3), WANDS (0x6E, attribute, 5), RODS (0x6F,
+ * skill, 5), GEMS (0x70, attribute, 7), STONES (0x71, skill, 7). The texts come from the executable.
+ */
+typedef struct {
+    char title[24], heading[24];
+    char names[6][16];
+    char add[20], toAn[8], attribute[12], toA[8], skill[8];
+} ClueLegendText;
+
+bool clueLegendLoad(ClueLegendText *text, const ExeData *exe, GameKind game);
+void clueLegendDraw(const ViewRenderer *r, const ClueLegendText *text, uint16_t navFlags);
+
 #endif

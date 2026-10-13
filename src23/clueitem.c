@@ -290,6 +290,52 @@ void clueInfoRowDraw(const ViewRenderer *r, const ClueItemText *t, GameKind game
     }
 }
 
+typedef struct {
+    unsigned title, heading, names[6], add, toAn, attribute, toA, skill;
+    uint16_t icons[6];
+    char digits[6];
+    bool attributeRow[6];
+} LegendAddresses;
+
+static const LegendAddresses kLegend2 = {0x8A0D, 0x88C0, {0x8A54, 0x8B21, 0x8B29, 0x8B2F, 0x8B35, 0x8B40}, 0x8AF6, 0x8B06, 0x8B0C, 0x8B16, 0x8B1B,
+                                         {0xDA, 0xF1, 0xF3, 0xF0, 0xF2, 0xF4}, {'2', '4', '6', '1', '3', '5'}, {true, true, true, false, false, false}};
+static const LegendAddresses kLegend3 = {0x8D30, 0x8BE1, {0x931D, 0x8E40, 0x8E4B, 0x8E51, 0x8E56, 0x8E5B}, 0x8E15, 0x8E25, 0x8E2B, 0x8E35, 0x8E3A,
+                                         {0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71}, {'3', '3', '5', '5', '7', '7'}, {true, false, true, false, true, false}};
+
+bool clueLegendLoad(ClueLegendText *t, const ExeData *exe, GameKind game) {
+    const LegendAddresses *a = game == GameYendor2 ? &kLegend2 : &kLegend3;
+    memset(t, 0, sizeof(*t));
+    for (unsigned i = 0; i < 6; i++) {
+        if (!exeDataString(exe, a->names[i], t->names[i], sizeof(t->names[i]))) {
+            return false;
+        }
+    }
+    return exeDataString(exe, a->title, t->title, sizeof(t->title)) && exeDataString(exe, a->heading, t->heading, sizeof(t->heading)) &&
+           exeDataString(exe, a->add, t->add, sizeof(t->add)) && exeDataString(exe, a->toAn, t->toAn, sizeof(t->toAn)) &&
+           exeDataString(exe, a->attribute, t->attribute, sizeof(t->attribute)) && exeDataString(exe, a->toA, t->toA, sizeof(t->toA)) &&
+           exeDataString(exe, a->skill, t->skill, sizeof(t->skill));
+}
+
+void clueLegendDraw(const ViewRenderer *r, const ClueLegendText *t, uint16_t navFlags) {
+    const LegendAddresses *a = r->game == GameYendor2 ? &kLegend2 : &kLegend3;
+    memset(r->screen, 0, (size_t)ViewScreenWidth * ViewScreenHeight);
+    viewDrawPicture(r, 0, r->game == GameYendor2 ? 13 : 6, 1, 1, false, 0);
+    put(r, 6, 4, t->title, 0x0D);
+    put(r, clueHeadingX(r->game, 11, (unsigned)strlen(t->heading)), 4, t->heading, 0x0D);
+    clueNavBarDraw(r, navFlags);
+    for (unsigned row = 0; row < 6; row++) {
+        int y = 41 + 12 * (int)row;
+        viewDrawPicture(r, 8, a->icons[row], 28, y, true, 0);
+        put(r, 47, y + 6, t->names[row], 0xCA);
+        int x = 47 + 6 * ((int)strlen(t->names[row]) + 1);
+        char digit[2] = {a->digits[row], 0};
+        put(r, x, y + 6, t->add, 0x0A);
+        put(r, x + 96, y + 6, digit, 0x59);
+        put(r, x + 102, y + 6, a->attributeRow[row] ? t->toAn : t->toA, 0x0A);
+        put(r, x + 102 + (a->attributeRow[row] ? 36 : 30), y + 6, a->attributeRow[row] ? t->attribute : t->skill, 0xA7);
+    }
+}
+
 static unsigned subIconTargetWord1(const ItemCatalog *catalog, const uint8_t *record) {
     const uint8_t *entry = record ? itemTargetEntry(catalog, record) : NULL;
     return entry ? itemTargetWord(entry, ItemTargetSlotFlags) : 0;

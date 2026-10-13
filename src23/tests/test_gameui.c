@@ -325,6 +325,13 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("group 7 is the transportation page", ui.clueScreen == 2 && ui.clueCategory == 11 && sum(ui.screen) != groups);
         gameUiKey(&ui, UiKeyEscape, false);
         check("Escape returns from it to the group list", ui.clueScreen == 1 && ui.clueList.selected == 6);
+        gameUiKey(&ui, UiKeyF5, false);
+        gameUiKey(&ui, UiKeyDown, false);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiDraw(&ui);
+        unsigned legend = sum(ui.screen);
+        check("group 2 shows the legend of the attribute enhancers", ui.clueScreen == 2 && ui.clueCategory == 11 && legend != groups);
+        gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
         check("and then to the walk through", ui.clueScreen == 0);
         gameUiKey(&ui, 'e', false);

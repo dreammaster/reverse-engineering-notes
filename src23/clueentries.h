@@ -16,7 +16,7 @@
  *   1 map locations (the map id, block n - 1: location.h)   2 monsters (the monster type id)   3 spells (spell id)   4 the six magic user classes (1-6: the first packed string table)
  *   5-10 the spells of class 1-6 (spell id; chosen from category 4: category 4 + class)   11 the eight item groups (1-8: the second packed string table)
  *   12 armor and rings, 13 jewels and artifacts, 14 scrolls and quartz, 15 potions, 16 supplies and food, 17 weapons (item catalog ids; item group 2, the attribute enhancers, has
- *   no list in the program -- its screen only waits for a key -- and group 7 is the transportation page).
+ *   no list -- its screen is the legend of clueitem.h -- and group 7 is the transportation page).
  * The two packed string tables (NUL-separated, read in order) hold the class names ("MONK / CLERIC / PRIEST", ...) and the item group names; BuildClueEntryText walks them with
  * AdvanceToNextPackedString.
  */

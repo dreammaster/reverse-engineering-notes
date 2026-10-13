@@ -139,12 +139,12 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe) {
 /*
  * The clue book's category screens, from the entry lists the executable carries (clueentries.h). A list page (the backdrop of picture 14, 14 names to a page) shows one category's entries,
  * Enter opens the selected one: a page for the maps (1), monsters (2), spells (3, 5-10) and items (12-17), the spell list of a class from the class list (4 -> 5-10), the item list of a
- * group from the group list (11 -> 12-17; group 7 is the transportation page, group 2 -- the attribute enhancers -- has nothing). Escape backs out one level. Entries without the
+ * group from the group list (11 -> 12-17; group 7 is the transportation page, group 2 -- the attribute enhancers -- the legend of the six consumable kinds). Escape backs out one level. Entries without the
  * shareware flag are dim and refused with the registration reminder unless the program is registered (clueRegistered).
  */
 enum { ClueNameSize = ClueEntryTextSize + 16 };
 
-static unsigned clueItemGroupCategory(unsigned group) { /* the item group's list: 1 -> 12 ... 6 -> 16, 8 -> 17 (2 and 7 have none) */
+static unsigned clueItemGroupCategory(unsigned group) { /* the item group's list: 1 -> 12 ... 6 -> 16, 8 -> 17 (2 and 7 are screens of their own) */
     static const unsigned kCategory[9] = {0, 12, 0, 13, 14, 15, 16, 0, 17};
     return group < 9 ? kCategory[group] : 0;
 }
@@ -220,7 +220,7 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
         ui->clueParent = ui->clueList.selected;
         if (next) {
             clueListOpen(ui, next);
-        } else if (id == 7) {
+        } else if (id == 7 || id == 2) { /* the transportation page, the attribute enhancers legend */
             ui->clueScreen = 2;
         }
     } else {
@@ -389,9 +389,14 @@ static void drawClueCategory(GameUi *ui) {
         }
         return;
     }
-    if (category == 11) { /* group 7: the transportation page */
+    if (category == 11) { /* group 7: the transportation page; group 2: the legend of the attribute enhancers */
         static ClueTransportData transport;
-        if (clueTransportLoad(&transport, ui->exe, game)) {
+        static ClueLegendText legend;
+        if (entry && entry->id == 2) {
+            if (clueLegendLoad(&legend, ui->exe, game)) {
+                clueLegendDraw(&ui->renderer, &legend, tab);
+            }
+        } else if (clueTransportLoad(&transport, ui->exe, game)) {
             clueTransportPageDraw(&ui->renderer, &transport, tab);
         }
         return;
