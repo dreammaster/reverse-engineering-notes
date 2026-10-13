@@ -339,6 +339,15 @@ static void testOpening3(void) {
     introOpening3Start(&story, &assets);
     finished = introOpening3Play(&story, &assets, &host);
     check("Escape ends it early", !finished && counts.polls == 5);
+    memset(&counts, 0, sizeof(counts));
+    check("Chapter 3's boot title starts", introSplashStart(&story, &assets));
+    finished = introSplashPlay(&story, &assets, &host);
+    check("it plays music 8 then stops it, sound 0x5E once, and takes about 80 ticks plus the two fades", finished && counts.sounds == 1 && counts.music == 0 && counts.ticks > 15 + 11 + 54 + 100 && counts.ticks < 15 + 11 + 54 + 300);
+    memset(&counts, 0, sizeof(counts));
+    counts.escapeAfter = 1;
+    introSplashStart(&story, &assets);
+    finished = introSplashPlay(&story, &assets, &host);
+    check("Escape skips it", !finished);
     /* Chapter 3's credits: a table of two screens at DS:0xA919 */
     static const unsigned table[] = {2, 5, 0xA950, 1, 3, 0xA970, 0xFFFF, 0, 0};
     for (unsigned i = 0; i < sizeof(table) / sizeof(table[0]); i++) {

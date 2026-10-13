@@ -904,7 +904,7 @@ bool introCreditsPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
 /*
  * Chapter 2's boot title (PlayTitleScreenSequence, yendor2.asm:31040; each step is skippable with Escape): palette block 1 is the target and the screen is black, picture 0 of category 0 (the
  * SmithWare logo) is drawn at (1, 1), music track 3 starts, the palette fades in over 63 rounds and the picture stays for 216 ticks (0xD8 BIOS clock counts), then the screen fades out.
- * Chapter 3's boot sequence is a different, animated one (sub_20DC4, yendor3.asm:30192) and is not scripted.
+ * Chapter 3's boot sequence is splash3 below.
  */
 static bool splash(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     if (a->worldSize >= paletteBlockOffset(a->game, 1) + PaletteBytes) {
@@ -931,8 +931,67 @@ static bool splash(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     return !stopped;
 }
 
+/*
+ * Chapter 3's boot sequence (sub_20DC4, yendor3.asm:30192, run before the title menu and before character creation; the command line switch that sets DS:0x5374 bit 0x8000 shortens it, which is
+ * not modelled): forced music track 8; a 640 x 480 VESA logo for 72 ticks (sub_258A8: a block of WORLD.DAT written out and run through a helper that looks like the original's
+ * copy protection -- not reproduced, nor its wait); then, in the 320 x 200 mode, palette block 1 is the target on a black screen, picture 0 of category 0 is drawn at (1, 1) and picture 34 of
+ * category 1 (210 x 105) at (92, 39); 15 ticks later the palette fades in (63 rounds), sound event 0x5E plays and pictures 35-45 of category 1 follow at the same place, a tick each (the
+ * logo animation); picture 0 is drawn over it again and the screen stays 54 ticks; the music stops and the screen fades out. Escape ends it at any wait.
+ */
+static bool splash3(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    if (h->music) {
+        h->music(h->ctx, 8);
+    }
+    if (a->worldSize >= paletteBlockOffset(a->game, 1) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 1), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    const uint8_t *back = a->picture(a->pictureCtx, 0, 0);
+    if (back) {
+        blitOpaque(s->screen, back, 318, 198, 1, 1);
+    }
+    const uint8_t *frame = a->picture(a->pictureCtx, 1, 34);
+    if (frame) {
+        blitOpaque(s->screen, frame, 210, 105, 92, 39);
+    }
+    present(s, h);
+    bool stopped = false;
+    for (unsigned t = 0; t < 15 && !stopped; t++) {
+        waitTicks(s, h, 1);
+        stopped = escaped(h);
+    }
+    if (!stopped) {
+        fade(s, a, h, 1, 63, 256, 0, false);
+        if (h->sound) {
+            h->sound(h->ctx, 0x5E);
+        }
+        for (unsigned id = 35; id <= 45 && !stopped; id++) {
+            frame = a->picture(a->pictureCtx, 1, id);
+            if (frame) {
+                blitOpaque(s->screen, frame, 210, 105, 92, 39);
+            }
+            present(s, h);
+            waitTicks(s, h, 1);
+            stopped = escaped(h);
+        }
+        if (back && !stopped) {
+            blitOpaque(s->screen, back, 318, 198, 1, 1);
+            present(s, h);
+        }
+        for (unsigned t = 0; t < 54 && !stopped; t++) {
+            waitTicks(s, h, 1);
+            stopped = escaped(h);
+        }
+    }
+    if (h->music) {
+        h->music(h->ctx, 0);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    return !stopped;
+}
+
 bool introSplashStart(IntroStory *s, const IntroAssets *a) {
-    if (a->game != GameYendor2 || a->worldSize < paletteBlockOffset(a->game, 1) + PaletteBytes) {
+    if (a->worldSize < paletteBlockOffset(a->game, 1) + PaletteBytes) {
         return false;
     }
     memset(s->screen, 0, sizeof(s->screen));
@@ -945,7 +1004,7 @@ bool introSplashStart(IntroStory *s, const IntroAssets *a) {
 }
 
 bool introSplashPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
-    return splash(s, a, h);
+    return a->game == GameYendor3 ? splash3(s, a, h) : splash(s, a, h);
 }
 
 bool introEndingStart(IntroStory *s, const IntroAssets *a) {

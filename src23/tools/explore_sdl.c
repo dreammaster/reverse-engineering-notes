@@ -416,7 +416,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (getenv("EXPLORE_SPLASH") && game == GameYendor2) { /* the boot title (Chapter 2) before the title menu */
+    if (getenv("EXPLORE_SPLASH")) { /* the boot title before the title menu */
         playIntro(NULL, "splash");
     }
     if (getenv("EXPLORE_INTRO") && !playIntro(NULL, getenv("EXPLORE_INTRO"))) {

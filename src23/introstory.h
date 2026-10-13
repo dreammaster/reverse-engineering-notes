@@ -141,7 +141,7 @@ bool introEndingStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
-/* Chapter 2's boot title (PlayTitleScreenSequence): the logo picture for 216 ticks over music track 3. Chapter 3's is not scripted: false. */
+/* The boot title: Chapter 2's (PlayTitleScreenSequence) is the logo picture for 216 ticks over music track 3; Chapter 3's an animated logo (its VESA logo excepted). */
 bool introSplashStart(IntroStory *story, const IntroAssets *assets);
 bool introSplashPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
