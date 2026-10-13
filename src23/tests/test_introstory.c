@@ -244,6 +244,16 @@ static void testPlay(void) {
     introCreditsStart(&story, &creditAssets);
     finished = introCreditsPlay(&story, &creditAssets, &host);
     check("Escape ends them early", !finished);
+    memset(&counts, 0, sizeof(counts));
+    host.escape = onEscape;
+    check("the boot title starts", introSplashStart(&story, &creditAssets));
+    finished = introSplashPlay(&story, &creditAssets, &host);
+    check("it plays music 3, waits 216 ticks between two 63-round fades and ends on black", finished && counts.music == 3 && counts.ticks > 216 + 100 && counts.ticks < 216 + 300 && counts.lastDac[30] == 0);
+    memset(&counts, 0, sizeof(counts));
+    counts.escapeAfter = 1;
+    introSplashStart(&story, &creditAssets);
+    finished = introSplashPlay(&story, &creditAssets, &host);
+    check("Escape skips the boot title", !finished);
     free(world);
     free(image);
 }

@@ -303,7 +303,9 @@ static bool playIntro(void *ctx, const char *kind) {
     g_introEscape = false;
     IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
     bool ok;
-    if (strcmp(kind, "credits") == 0) {
+    if (strcmp(kind, "splash") == 0) {
+        ok = introSplashStart(&story, &assets) && introSplashPlay(&story, &assets, &host);
+    } else if (strcmp(kind, "credits") == 0) {
         ok = introCreditsStart(&story, &assets) && introCreditsPlay(&story, &assets, &host);
     } else if (game == GameYendor3) {
         ok = introOpening3Start(&story, &assets) && introOpening3Play(&story, &assets, &host);
@@ -414,6 +416,9 @@ int main(int argc, char **argv) {
         }
     }
 
+    if (getenv("EXPLORE_SPLASH") && game == GameYendor2) { /* the boot title (Chapter 2) before the title menu */
+        playIntro(NULL, "splash");
+    }
     if (getenv("EXPLORE_INTRO") && !playIntro(NULL, getenv("EXPLORE_INTRO"))) {
         return 1;
     }

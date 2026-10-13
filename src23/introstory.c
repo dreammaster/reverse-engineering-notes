@@ -901,6 +901,53 @@ bool introCreditsPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     return a->game == GameYendor3 ? credits3(s, a, h) : credits(s, a, h);
 }
 
+/*
+ * Chapter 2's boot title (PlayTitleScreenSequence, yendor2.asm:31040; each step is skippable with Escape): palette block 1 is the target and the screen is black, picture 0 of category 0 (the
+ * SmithWare logo) is drawn at (1, 1), music track 3 starts, the palette fades in over 63 rounds and the picture stays for 216 ticks (0xD8 BIOS clock counts), then the screen fades out.
+ * Chapter 3's boot sequence is a different, animated one (sub_20DC4, yendor3.asm:30192) and is not scripted.
+ */
+static bool splash(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    if (a->worldSize >= paletteBlockOffset(a->game, 1) + PaletteBytes) {
+        memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 1), PaletteBytes);
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    const uint8_t *logo = a->picture(a->pictureCtx, 0, 0);
+    if (logo) {
+        blitOpaque(s->screen, logo, 318, 198, 1, 1);
+    }
+    present(s, h);
+    if (h->music) {
+        h->music(h->ctx, 3);
+    }
+    bool stopped = escaped(h);
+    if (!stopped) {
+        fade(s, a, h, 1, 63, 256, 0, false);
+        for (unsigned t = 0; t < 216 && !stopped; t++) {
+            waitTicks(s, h, 1);
+            stopped = escaped(h);
+        }
+    }
+    fade(s, a, h, 0, 63, 256, 0, false);
+    return !stopped;
+}
+
+bool introSplashStart(IntroStory *s, const IntroAssets *a) {
+    if (a->game != GameYendor2 || a->worldSize < paletteBlockOffset(a->game, 1) + PaletteBytes) {
+        return false;
+    }
+    memset(s->screen, 0, sizeof(s->screen));
+    memset(&s->fader, 0, sizeof(s->fader));
+    memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 0), PaletteBytes);
+    memcpy(s->fader.dac, s->fader.target, PaletteBytes);
+    memcpy(s->fader.buffer, s->fader.target, PaletteBytes);
+    s->scrollY = 0;
+    return true;
+}
+
+bool introSplashPlay(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
+    return splash(s, a, h);
+}
+
 bool introEndingStart(IntroStory *s, const IntroAssets *a) {
     if (a->worldSize < paletteBlockOffset(a->game, 0) + PaletteBytes) {
         return false;

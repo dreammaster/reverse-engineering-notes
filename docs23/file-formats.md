@@ -7575,6 +7575,10 @@ quest flags saved": in the header, with everything else of the DS state block. `
 the highest index used by the dialog data is 183 (Chapter 2) / 224 (Chapter 3), well inside the 768 the 96 bytes hold. (Chapter 3's new-game header has `0xFF` bytes at `+0xF2`..`+0x10D`: 224
 flags set from the start.)
 
+### Chapter 2's boot title (2026-10-13)
+
+`PlayTitleScreenSequence` (yendor2.asm:31040) is `splash()` in `introstory.c` (`introSplashStart` / `introSplashPlay`; `explore_sdl` with `EXPLORE_SPLASH=1`): each step can be skipped with Escape; palette block 1 is the fade target on a black screen, picture 0 of category 0 (the SmithWare logo) is drawn at (1, 1), music track 3 starts, the palette fades in over 63 rounds and the logo stays 216 BIOS clock counts (0xD8, about 12 seconds), then the screen fades out. Chapter 3's boot (`sub_20DC4`, yendor3.asm:30192, music 8) is an animated logo and is not scripted.
+
 ### The shareware demo boundary (2026-10-09)
 
 `EnforceDemoBoundary` (yendor2.asm:867, called from `start` just before `TravelToDestination`) refuses the destination object the party faces at world cell (0x200, 0x2B) facing south (0x4000) unless bit 1 of `g_uiScratchFlags4` (the "registered" flag; the clue book tests bit 0) is set: it draws the two-line message at DS:0x8FD2 ("REGISTER" / "TODAY!") at (240, 96) in colour 0x8A and cancels the travel. It comes before the destination's own gate and password checks. `sessionInteract` reports it as `SessionInteractDemoLimit` while `GameSession.shareware` is set (default off; `explore_sdl` sets it with `EXPLORE_SHAREWARE`, together with the clue book's shareware locks). Chapter 3's REGISTER.EXE is the registered program.

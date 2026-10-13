@@ -141,6 +141,10 @@ bool introEndingStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
+/* Chapter 2's boot title (PlayTitleScreenSequence): the logo picture for 216 ticks over music track 3. Chapter 3's is not scripted: false. */
+bool introSplashStart(IntroStory *story, const IntroAssets *assets);
+bool introSplashPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
+
 /* Chapter 3's opening: starts from the master palette (block 0) shown on a black screen. */
 bool introOpening3Start(IntroStory *story, const IntroAssets *assets);
 bool introOpening3Play(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
