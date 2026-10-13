@@ -682,7 +682,9 @@ void gameUiDraw(GameUi *ui) {
         for (unsigned i = 0; i < 5; i++) {
             roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
         }
-        detailSheetDraw(&ui->renderer, sessionPartyRecord(s, ui->hero), 6 + ui->hero, roles);
+        if (sessionPartyRecord(s, ui->hero)) { /* an empty slot has no sheet */
+            detailSheetDraw(&ui->renderer, sessionPartyRecord(s, ui->hero), 6 + ui->hero, roles);
+        }
         break;
     }
     case UiOverlayShop:
@@ -698,7 +700,9 @@ void gameUiDraw(GameUi *ui) {
         break;
     case UiOverlayDolls:
         for (unsigned i = 0; i < 4; i++) {
-            paperDollDraw(&ui->renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
+            if (sessionPartyRecord(s, i)) {
+                paperDollDraw(&ui->renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
+            }
         }
         break;
     case UiOverlayDialog:
