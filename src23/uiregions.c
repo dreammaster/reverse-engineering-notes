@@ -394,9 +394,7 @@ static const UiRegion kYendor2ClueScroll[] = {
     {171, 280, 167, 173, 2}
 };
 
-static const UiRegion kYendor2ClueNav[] = {
-
-};
+static const UiRegion kYendor2ClueNav[] = {{0, 0, 0, 0, 0}}; /* no regions (the table is built at run time; the count below is 0) */
 
 static const UiRegion kYendor3DungeonMain[] = {
     {8, 231, 8, 143, 1},
@@ -787,9 +785,7 @@ static const UiRegion kYendor3ClueScroll[] = {
     {171, 280, 167, 173, 2}
 };
 
-static const UiRegion kYendor3ClueNav[] = {
-
-};
+static const UiRegion kYendor3ClueNav[] = {{0, 0, 0, 0, 0}}; /* no regions (the table is built at run time; the count below is 0) */
 
 static const struct { const UiRegion *rows; unsigned count; } kYendor2Tables[UiRegionTableCount] = {
     {kYendor2DungeonMain, 6},
