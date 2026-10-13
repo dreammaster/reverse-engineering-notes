@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../pcx.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl <2|3> <game dir> [scale]
@@ -241,6 +241,40 @@ static void introPresent(void *ctx, const uint8_t *screen, const uint8_t *dac) {
     SDL_RenderPresent(g_introRenderer);
 }
 
+/* Chapter 3's 640 x 480 boot logo: its own texture, letter-boxed into the window. */
+static void introHires(void *ctx, const uint8_t *picture, unsigned width, unsigned height, const uint8_t *palette) {
+    (void)ctx;
+    static uint32_t pixels[640 * 480];
+    uint32_t colours[256];
+    if (width > 640 || height > 480) {
+        return;
+    }
+    for (unsigned i = 0; i < 256; i++) {
+        unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
+        colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
+    }
+    for (unsigned i = 0; i < width * height; i++) {
+        pixels[i] = colours[picture[i]];
+    }
+    SDL_Texture *texture = SDL_CreateTexture(g_introRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, (int)width, (int)height);
+    if (!texture) {
+        return;
+    }
+    SDL_UpdateTexture(texture, NULL, pixels, (int)width * 4);
+    int outW, outH;
+    SDL_GetRendererOutputSize(g_introRenderer, &outW, &outH);
+    int fitW = outW, fitH = outW * (int)height / (int)width;
+    if (fitH > outH) {
+        fitH = outH;
+        fitW = outH * (int)width / (int)height;
+    }
+    SDL_Rect where = {(outW - fitW) / 2, (outH - fitH) / 2, fitW, fitH};
+    SDL_RenderClear(g_introRenderer);
+    SDL_RenderCopy(g_introRenderer, texture, NULL, &where);
+    SDL_RenderPresent(g_introRenderer);
+    SDL_DestroyTexture(texture);
+}
+
 static void introTick(void *ctx) {
     (void)ctx;
     introPump();
@@ -301,7 +335,7 @@ static bool playIntro(void *ctx, const char *kind) {
         g_introDelayMs = (unsigned)atoi(getenv("EXPLORE_INTRO_MS"));
     }
     g_introEscape = false;
-    IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy};
+    IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy, introHires};
     bool ok;
     if (strcmp(kind, "splash") == 0) {
         ok = introSplashStart(&story, &assets) && introSplashPlay(&story, &assets, &host);

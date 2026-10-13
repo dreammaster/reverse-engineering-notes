@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_introstory test_introstory.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c && ./test_introstory
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_introstory test_introstory.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pcx.c && ./test_introstory
  *
  * The run also uses yendor2/game/WORLD.DAT's palette block when present (skipped otherwise; YENDOR2_GAME_DIR overrides); the pictures are synthetic.
  */
@@ -47,6 +47,17 @@ static void onPresent(void *ctx, const uint8_t *screen, const uint8_t *dac) {
 static void onMusic(void *ctx, unsigned track) {
     Counts *c = ctx;
     c->music = track;
+}
+
+static unsigned g_hires, g_hiresWidth, g_hiresHeight;
+
+static void onHires(void *ctx, const uint8_t *pixels, unsigned width, unsigned height, const uint8_t *palette) {
+    (void)ctx;
+    (void)pixels;
+    (void)palette;
+    g_hires++;
+    g_hiresWidth = width;
+    g_hiresHeight = height;
 }
 
 static void onTick(void *ctx) {
@@ -139,7 +150,7 @@ static void testPlay(void) {
     check("the story starts", introStoryStart(&story, &assets));
     Counts counts;
     memset(&counts, 0, sizeof(counts));
-    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, NULL};
+    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, NULL, NULL};
     bool finished = introStoryPlay(&story, &assets, &host);
     unsigned count;
     introStoryScript(&count);
@@ -321,7 +332,7 @@ static void testOpening3(void) {
     check("it starts on a black screen with the master palette shown", introOpening3Start(&story, &assets) && story.screen[100] == 0);
     Counts counts;
     memset(&counts, 0, sizeof(counts));
-    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, onBusy};
+    IntroHost host = {&counts, onPresent, onSound, onMusic, onTick, onEscape, onMark, false, NULL, onBusy, NULL};
     bool finished = introOpening3Play(&story, &assets, &host);
     check("it runs to the end", finished && counts.marks == count);
     check("it ends on black (colours 0-254 are dark)", ({ bool dark = true; for (unsigned i = 0; i < 255 * 3; i++) { dark = dark && counts.lastDac[i] == 0; } dark; }));
@@ -340,9 +351,16 @@ static void testOpening3(void) {
     finished = introOpening3Play(&story, &assets, &host);
     check("Escape ends it early", !finished && counts.polls == 5);
     memset(&counts, 0, sizeof(counts));
+    image[0x21DB0 + 0xB20B] = 0xB7; /* the logo's offset, 0x41EAB7 */
+    image[0x21DB0 + 0xB20C] = 0xEA;
+    image[0x21DB0 + 0xB20D] = 0x41;
+    host.hires = onHires;
+    g_hires = 0;
     check("Chapter 3's boot title starts", introSplashStart(&story, &assets));
     finished = introSplashPlay(&story, &assets, &host);
-    check("it plays music 8 then stops it, sound 0x5E once, and takes about 80 ticks plus the two fades", finished && counts.sounds == 1 && counts.music == 0 && counts.ticks > 15 + 11 + 54 + 100 && counts.ticks < 15 + 11 + 54 + 300);
+    check("the PCX logo is handed to the host once, 640 x 480", g_hires == 1 && g_hiresWidth == 640 && g_hiresHeight == 480);
+    host.hires = NULL;
+    check("it plays music 8 then stops it, sound 0x5E once, and takes about 150 ticks plus the two fades (the logo's wait included)", finished && counts.sounds == 1 && counts.music == 0 && counts.ticks > 72 + 15 + 11 + 54 + 100 && counts.ticks < 72 + 15 + 11 + 54 + 300);
     memset(&counts, 0, sizeof(counts));
     counts.escapeAfter = 1;
     introSplashStart(&story, &assets);

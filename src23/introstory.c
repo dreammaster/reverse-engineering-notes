@@ -4,6 +4,7 @@
 
 #include "font.h"
 #include "palette.h"
+#include "pcx.h"
 
 #define SCROLL(n) {IntroOpScroll, (n), 0, 0, 0}
 #define FRAME {IntroOpDrawFrame, 0, 0, 0, 0}
@@ -933,14 +934,32 @@ static bool splash(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
 
 /*
  * Chapter 3's boot sequence (sub_20DC4, yendor3.asm:30192, run before the title menu and before character creation; the command line switch that sets DS:0x5374 bit 0x8000 shortens it, which is
- * not modelled): forced music track 8; a 640 x 480 VESA logo for 72 ticks (sub_258A8: a block of WORLD.DAT written out and run through a helper that looks like the original's
- * copy protection -- not reproduced, nor its wait); then, in the 320 x 200 mode, palette block 1 is the target on a black screen, picture 0 of category 0 is drawn at (1, 1) and picture 34 of
+ * not modelled): forced music track 8; a 640 x 480 VESA logo for 72 ticks (sub_258A8: a PCX file, pcx.h; the host shows it through `hires`, and the wait is kept without one); then, in the 320 x 200 mode, palette block 1 is the target on a black screen, picture 0 of category 0 is drawn at (1, 1) and picture 34 of
  * category 1 (210 x 105) at (92, 39); 15 ticks later the palette fades in (63 rounds), sound event 0x5E plays and pictures 35-45 of category 1 follow at the same place, a tick each (the
  * logo animation); picture 0 is drawn over it again and the screen stays 54 ticks; the music stops and the screen fades out. Escape ends it at any wait.
  */
 static bool splash3(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
     if (h->music) {
         h->music(h->ctx, 8);
+    }
+    bool stopped = false;
+    static uint8_t logo[640 * 480];
+    uint8_t logoPalette[PcxPaletteSize];
+    size_t logoAt, logoSize;
+    unsigned logoWidth, logoHeight;
+    if (h->hires && pcxLogoLocation(a->exe, a->game, &logoAt, &logoSize) && logoAt + logoSize <= a->worldSize &&
+        pcxDecode(a->worldDat + logoAt, logoSize, logo, sizeof(logo), &logoWidth, &logoHeight, logoPalette)) {
+        h->hires(h->ctx, logo, logoWidth, logoHeight, logoPalette);
+    }
+    for (unsigned t = 0; t < 72 && !stopped; t++) {
+        waitTicks(s, h, 1);
+        stopped = escaped(h);
+    }
+    if (stopped) {
+        if (h->music) {
+            h->music(h->ctx, 0);
+        }
+        return false;
     }
     if (a->worldSize >= paletteBlockOffset(a->game, 1) + PaletteBytes) {
         memcpy(s->fader.target, a->worldDat + paletteBlockOffset(a->game, 1), PaletteBytes);
@@ -955,7 +974,6 @@ static bool splash3(IntroStory *s, const IntroAssets *a, const IntroHost *h) {
         blitOpaque(s->screen, frame, 210, 105, 92, 39);
     }
     present(s, h);
-    bool stopped = false;
     for (unsigned t = 0; t < 15 && !stopped; t++) {
         waitTicks(s, h, 1);
         stopped = escaped(h);

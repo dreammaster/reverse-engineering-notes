@@ -7,7 +7,7 @@ repository: the tests and tools read `WORLD.DAT`, `PICTURES.VGA` and the executa
 
 ## Build and test
 
-CMake (a static library of every module, 89 test programs, the tools):
+CMake (a static library of every module, 90 test programs, the tools):
 
     cmake -S . -B build
     cmake --build build

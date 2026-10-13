@@ -3,7 +3,7 @@
  * a fade, taken with the palette as it is at that moment (the sheet is a 3-3-2 colour approximation, since a PNG here has one palette).
  *
  * Build and run (from src23/tools):
- *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c
+ *   gcc -Wall -Wextra -std=c99 -I .. -o intro_story intro_story.c ../introstory.c ../intro2.c ../palettefade.c ../palette.c ../exedata.c ../font.c ../pictures.c ../pictures_stdio.c ../pcx.c
  *   ./intro_story <game dir> <out.png> [sound effects on: 0|1] [all: the opening too | ending: the ending cinematic instead | opening3: Chapter 3 (pass its game dir) | credits: Chapter 2's credits | credits3: Chapter 3's (pass its game dir) | splash / splash3: the boot title]
  */
 #include <stdio.h>
@@ -26,6 +26,16 @@ static void present(void *ctx, const uint8_t *screen, const uint8_t *dac) {
     (void)ctx;
     memcpy(g_lastScreen, screen, sizeof(g_lastScreen));
     memcpy(g_lastDac, dac, sizeof(g_lastDac));
+}
+
+static const char *g_logoPath;
+
+/* Chapter 3's 640 x 480 boot logo: written beside the sheet as <out>.logo.png. */
+static void hires(void *ctx, const uint8_t *pixels, unsigned width, unsigned height, const uint8_t *palette) {
+    (void)ctx;
+    char path[600];
+    snprintf(path, sizeof(path), "%s.logo.png", g_logoPath);
+    writePng(path, pixels, palette, width, height, 1);
 }
 
 static void snapshot(void);
@@ -102,6 +112,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     fclose(f);
+    g_logoPath = argv[2];
     g_chapter3 = argc > 4 && (strcmp(argv[4], "opening3") == 0 || strcmp(argv[4], "credits3") == 0 || strcmp(argv[4], "splash3") == 0);
     g_splash = argc > 4 && (strcmp(argv[4], "splash") == 0 || strcmp(argv[4], "splash3") == 0);
     g_credits = argc > 4 && (strcmp(argv[4], "credits") == 0 || strcmp(argv[4], "credits3") == 0);
@@ -144,7 +155,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot start the story\n");
         return 1;
     }
-    IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0, NULL, NULL};
+    IntroHost host = {NULL, present, soundFn, NULL, tickFn, noEscape, mark, argc > 3 && atoi(argv[3]) != 0, NULL, NULL, hires};
     bool finished = g_splash ? introSplashPlay(&story, &assets, &host) : g_credits ? introCreditsPlay(&story, &assets, &host) : g_chapter3 ? introOpening3Play(&story, &assets, &host) : g_ending ? introEndingPlay(&story, &assets, &host) : all ? introPlayAll(&story, &assets, &host) : introStoryPlay(&story, &assets, &host);
     printf("story %s: %u ticks, %u sound events, %u stills\n", finished ? "finished" : "stopped", g_ticks, g_sounds, g_stills);
 

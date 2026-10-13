@@ -108,6 +108,8 @@ typedef struct {
     void (*waitSound)(void *ctx);
     /* Chapter 3: true while a sound event is still playing (word_2E494 != 0); NULL = never */
     bool (*soundBusy)(void *ctx);
+    /* Chapter 3's boot logo: a 640 x 480 picture (pcx.h) with its six-bit palette, shown instead of the 320 x 200 screen until the next `present`; NULL = the host cannot show it */
+    void (*hires)(void *ctx, const uint8_t *pixels, unsigned width, unsigned height, const uint8_t *palette);
 } IntroHost;
 
 typedef struct {
@@ -141,7 +143,7 @@ bool introEndingStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsStart(IntroStory *story, const IntroAssets *assets);
 bool introCreditsPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
-/* The boot title: Chapter 2's (PlayTitleScreenSequence) is the logo picture for 216 ticks over music track 3; Chapter 3's an animated logo (its VESA logo excepted). */
+/* The boot title: Chapter 2's (PlayTitleScreenSequence) is the logo picture for 216 ticks over music track 3; Chapter 3's the 640 x 480 PCX logo (IntroHost.hires) for 72 ticks and then an animated logo. */
 bool introSplashStart(IntroStory *story, const IntroAssets *assets);
 bool introSplashPlay(IntroStory *story, const IntroAssets *assets, const IntroHost *host);
 
