@@ -386,7 +386,7 @@ static void usage(const char *program) {
             "  --shareware     the unregistered program (the demo boundary, the clue book's locked entries)\n"
             "  --no-sound      silence\n"
             "  --clock-ms N    one game minute passes every N real milliseconds (0, the default, only + / - and resting move the clock)\n"
-            "Keys: arrows walk and turn, F1-F4 the heroes, F5 / F9 save / load, F8 the clue book, M the map, P the paper dolls, Esc the pause dialog; on the title menu C creates a\n"
+            "Keys: arrows walk and turn, F1-F4 the heroes, F5 / F9 save / load, F8 the clue book, M the map, P the paper dolls, D the pause dialog, Esc backs out; the mouse works too; on the title menu C creates a\n"
             "character, A assembles the party, E enters the game, I plays the introduction, R the credits. The older form  %s <2|3> <game dir> [scale]  still works.\n",
             program, program);
 }
@@ -597,6 +597,13 @@ int main(int argc, char **argv) {
                 UiKey key = uiKeyFor(event.key.keysym.sym);
                 if (key != UiKeyNone) {
                     running = gameUiKey(&g_ui, key, (event.key.keysym.mod & KMOD_CTRL) != 0) && running;
+                }
+                dirty = true;
+            } else if (event.type == SDL_MOUSEBUTTONDOWN && (event.button.button == SDL_BUTTON_LEFT || event.button.button == SDL_BUTTON_RIGHT)) {
+                int winW, winH;
+                SDL_GetWindowSize(window, &winW, &winH);
+                if (winW > 0 && winH > 0) { /* window pixels -> the 320 x 200 screen */
+                    running = gameUiClick(&g_ui, event.button.x * ViewScreenWidth / winW, event.button.y * ViewScreenHeight / winH, event.button.button == SDL_BUTTON_RIGHT) && running;
                 }
                 dirty = true;
             } else if (event.type == SDL_WINDOWEVENT) {

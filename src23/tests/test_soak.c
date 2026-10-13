@@ -8,7 +8,7 @@
  *       ../cluebook.c ../titlemenu.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c \
  *       ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_soak
  *
- * A soak test of the whole front end: a long run of pseudo-random key presses (every UiKey the platform can send, with and without Ctrl, plus the animation tick and a drawing of the
+ * A soak test of the whole front end: a long run of pseudo-random key presses and mouse clicks (every UiKey the platform can send, with and without Ctrl, plus the animation tick and a drawing of the
  * screen now and then) through the title menu, the roster, character creation, the clue book, the dialogs, shops and conversations, the combat and the walking, for each game. It
  * checks that nothing crashes, that the screen buffer and the party stay sane, and that the front end never answers "quit" except for Escape / Ctrl+Q at the top. Needs WORLD.DAT and
  * the executable of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override; SOAK_KEYS sets the number of keys per run, default 20000).
@@ -151,10 +151,17 @@ static void soakGame(GameKind game, const char *envName, const char *defaultDir,
         if (ui.overlay == UiOverlayNone && next(5000) == 0) { /* now and then a game minute passes, like the platform's timer */
             sessionAdvanceTime(s, 1);
         }
-        bool running = gameUiKey(&ui, key, ctrl);
+        bool running;
+        UiOverlay was = ui.overlay;
+        if (next(4) == 0) { /* a mouse click anywhere on the 320 x 200 screen */
+            key = UiKeyNone;
+            running = gameUiClick(&ui, (int)next(320), (int)next(200), next(6) == 0);
+        } else {
+            running = gameUiKey(&ui, key, ctrl);
+        }
         if (!running) {
             quits++;
-            bool allowed = key == UiKeyEscape || (key == 'q' && ctrl);
+            bool allowed = key == UiKeyEscape || (key == 'q' && ctrl) || key == UiKeyNone || (was == UiOverlayDialog && key == 'd'); /* a click can hit the dialog's DOS option */
             quitEarly = quitEarly || !allowed;
             if (title) {
                 gameUiShowTitle(&ui); /* start over: the platform would have ended */
@@ -183,7 +190,7 @@ static void soakGame(GameKind game, const char *envName, const char *defaultDir,
     char text[160];
     snprintf(text, sizeof(text), "%s (%s start, seed %llu): %u random keys leave the front end sane (positions, party slots, cursors)", label, title ? "title" : "game", seed, keys);
     check(text, sane && partyOk);
-    check("it only ever quits on Escape or Ctrl+Q", !quitEarly);
+    check("it only ever quits on Escape, Ctrl+Q or the pause dialog's DOS option", !quitEarly);
     unsigned reached = 0;
     for (unsigned o = 0; o < 16; o++) {
         reached += overlays[o] > 0;

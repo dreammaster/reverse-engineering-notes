@@ -74,6 +74,8 @@ typedef struct {
     const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
     CreationWizard wizard; /* the character creation under way (UiOverlayCreate) */
     unsigned wizardSlot;   /* the roster record it will be stored in */
+    unsigned driverFlags;  /* the pause dialog's switches (gamedialog.h: music available / on, sound effects available / on) */
+    unsigned animationSpeed; /* 1 fast, 5 medium, 9 slow: what the platform should use for its animation tick */
     unsigned rosterCursor; /* the roster screen's slot (0-8) */
     bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
     bool clueNag;          /* the reminder is showing on the page */
@@ -111,6 +113,11 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);
 /* One animation step of what is on screen: today the monster page of the clue book (cluemonster.h clueMonsterAnimStep; the hit sound goes to the host). The platform calls it once per
  * animation tick (the speed of the pause dialog; the original steps an attacking monster every 2 ticks) and redraws; true when the screen changed. */
 bool gameUiAnimate(GameUi *ui);
+
+/* A mouse click at (x, y) in the 320 x 200 screen (`right` for the right button): the same commands as the keys, through the original's click regions (uiregions.h) -- the title menu, the roster
+ * (a face selects, a check box puts the hero in or out of the party, DONE returns), the creation wizard's lists, the clue book (tabs, entries, page arrows, legend markers), the pause dialog,
+ * conversations and shops, and on the main screen the icon row, the walk pad, the map panel and the party panels. The right button backs out of an overlay. False = quit. */
+bool gameUiClick(GameUi *ui, int x, int y, bool right);
 
 /* Renders the current screen (the view and panels, or the open overlay) into ui->screen. */
 void gameUiDraw(GameUi *ui);

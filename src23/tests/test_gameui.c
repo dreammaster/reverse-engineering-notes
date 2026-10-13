@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "gameui.h"
+#include "gamedialog.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -164,6 +165,66 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiKey(&ui, 'c', false);
     gameUiKey(&ui, 'q', false);
     check("Q abandons a creation: nothing is stored", ui.overlay == UiOverlayTitle && saveGamePartyRecord(&s->save, 1)[PartyFieldClass] == 0);
+
+    /* the mouse: the same flows through clicks */
+    gameUiClick(&ui, 100, 45, false);
+    check("a click on the title's first line opens character creation", ui.overlay == UiOverlayCreate && ui.wizard.step == CreationStepClass);
+    gameUiClick(&ui, 20, 190, false);
+    check("a click on QUIT \"CREATE\" abandons it", ui.overlay == UiOverlayTitle);
+    gameUiClick(&ui, 100, 45, false);
+    gameUiClick(&ui, 20, 54, false);
+    check("a click on a class picks it", ui.wizard.step == CreationStepPortrait && partyGetU16(ui.wizard.record, PartyFieldClass) == 1);
+    gameUiClick(&ui, 20, 50, false);
+    check("a click on a face picks the portrait", ui.wizard.step == CreationStepRoll);
+    gameUiClick(&ui, 20, 72, false);
+    check("PICK ITEMS goes on to the items", ui.wizard.step == CreationStepItems);
+    gameUiClick(&ui, 20, 50, false);
+    gameUiClick(&ui, 20, 179, false);
+    check("a click takes an item and NAME CHARACTER goes on", ui.wizard.taken == 1 && ui.wizard.step == CreationStepName);
+    for (const char *k = "zed#"; *k; k++) {
+        gameUiKey(&ui, *k == '#' ? UiKeyEnter : (UiKey)*k, false);
+    }
+    gameUiClick(&ui, 20, 54, false);
+    made = saveGamePartyRecord(&s->save, 1);
+    check("KEEP CHARACTER keeps the hero in the next free slot", ui.overlay == UiOverlayTitle && made[PartyFieldClass] == 1 && memcmp(made + PartyFieldName, "ZED", 4) == 0);
+    gameUiClick(&ui, 100, 70, false);
+    check("the second title line assembles the party", ui.overlay == UiOverlayRoster);
+    unsigned slotsBefore = rosterSlotSumCheck(s);
+    gameUiClick(&ui, 259, 92, false);
+    check("a click on a check box takes a hero out of the party", rosterSlotSumCheck(s) != slotsBefore && ui.rosterCursor == 5);
+    gameUiClick(&ui, 259, 92, false);
+    check("and another puts it back", rosterSlotSumCheck(s) == slotsBefore);
+    gameUiClick(&ui, 240, 192, false);
+    check("DONE returns to the title", ui.overlay == UiOverlayTitle);
+    gameUiClick(&ui, 100, 100, false);
+    check("the third line enters the game", ui.overlay == UiOverlayNone);
+    uint16_t facing0 = s->facing;
+    gameUiClick(&ui, 254, 169, false);
+    check("a click on the walk pad's turn-left arrow turns the party", s->facing != facing0);
+    gameUiClick(&ui, 299, 169, false);
+    check("and turn-right turns it back", s->facing == facing0);
+    gameUiClick(&ui, 303, 75, false);
+    check("the icon row's last button opens the pause dialog", ui.overlay == UiOverlayDialog);
+    gameUiClick(&ui, 100, 106, false);
+    check("a click on the MUSIC option switches the music off", !(ui.driverFlags & DriverMusicOn));
+    gameUiClick(&ui, 140, 106, false);
+    check("and SOUND FX", !(ui.driverFlags & DriverSoundFxOn));
+    gameUiClick(&ui, 100, 106, false);
+    gameUiClick(&ui, 140, 106, false);
+    check("a second click switches them back on", (ui.driverFlags & (DriverMusicOn | DriverSoundFxOn)) == (DriverMusicOn | DriverSoundFxOn));
+    gameUiClick(&ui, 170, 120, false);
+    check("RETURN closes the dialog", ui.overlay == UiOverlayNone);
+    gameUiKey(&ui, 'd', false);
+    check("D opens the pause dialog again", ui.overlay == UiOverlayDialog);
+    gameUiClick(&ui, 10, 10, true);
+    check("the right button backs out of it", ui.overlay == UiOverlayNone);
+    gameUiClick(&ui, 270, 30, false);
+    check("a click on the map panel opens the local map, any click closes it", ui.overlay == UiOverlayLocalMap && (gameUiClick(&ui, 5, 5, false), ui.overlay == UiOverlayNone));
+    gameUiClick(&ui, 20, 160, false);
+    check("a click on a party portrait opens that hero's sheet", ui.overlay == UiOverlayDetail);
+    gameUiClick(&ui, 180, 116, false);
+    check("RETURN on the sheet closes it", ui.overlay == UiOverlayNone);
+    gameUiShowTitle(&ui);
     check("E enters the game", gameUiKey(&ui, 'e', false) && ui.overlay == UiOverlayNone);
     gameUiDraw(&ui);
     unsigned first = sum(ui.screen);

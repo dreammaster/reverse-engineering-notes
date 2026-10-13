@@ -27,7 +27,9 @@ Just the game: `cmake --build build --target explore_sdl`, giving `build/tools/y
 It starts like the original: the boot title, then the title menu (C creates a hero, A assembles the party, E enters, I the introduction, R the credits). `--no-title` goes straight into the game,
 `--game 2|3` forces the chapter, `--shareware` plays the unregistered program, `--no-sound` and `--clock-ms N` do what they say. The old form `explore_sdl <2|3> <game dir> [scale]` still works.
 
-Keys are the original's (arrows, F1-F4 member sheets, F5/F9 save and load, F8 the clue book, M map, P paper dolls, Esc the pause dialog); `EXPLORE_TITLE=1` starts on the title menu,
+Keys are the original's (arrows, F1-F4 member sheets, F5/F9 save and load, F8 the clue book, M map, P paper dolls, D the pause dialog, Esc backs out of a screen and, on the main screen, leaves);
+the mouse works as in the original (the title menu, the roster's check boxes and DONE, character creation, the clue book, the pause dialog, conversations and shops, and on the main screen the walk pad, the icon
+row, the map panel and the party panels; the right button backs out of a screen); `EXPLORE_TITLE=1` starts on the title menu,
 `EXPLORE_SPLASH=1` plays the boot title first, `EXPLORE_INTRO=opening|story|ending|credits|splash` a cinematic, `EXPLORE_SHAREWARE=1` the unregistered program, `EXPLORE_KEYS` /
 `EXPLORE_SHOT` a scripted run with a screenshot (see the header). `tests/test_soak.c` feeds random keys through every screen of both games.
 

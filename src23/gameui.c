@@ -47,6 +47,8 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
     }
     ui->lastMusicPage = 0xFFFF;
     ui->castNext = 1;
+    ui->driverFlags = DriverMusicAvailable | DriverMusicOn | DriverSoundFxAvailable | DriverSoundFxOn;
+    ui->animationSpeed = 5;
     return true;
 }
 
@@ -56,7 +58,7 @@ const uint8_t *gameUiPalette(const GameUi *ui) {
 }
 
 static void effect(GameUi *ui, unsigned id) {
-    if (ui->host.effect && id) {
+    if (ui->host.effect && id && (ui->driverFlags & DriverSoundFxOn)) {
         ui->host.effect(ui->host.ctx, id);
     }
 }
@@ -64,7 +66,7 @@ static void effect(GameUi *ui, unsigned id) {
 void gameUiAmbientMusic(GameUi *ui) {
     GameSession *s = ui->session;
     uint16_t track;
-    if (musicRegionChanged(&ui->lastMusicPage, s->x, s->y, s->game, ui->worldDat, ui->worldSize, &track) && ui->host.music) {
+    if ((ui->driverFlags & DriverMusicOn) && musicRegionChanged(&ui->lastMusicPage, s->x, s->y, s->game, ui->worldDat, ui->worldSize, &track) && ui->host.music) {
         ui->host.music(ui->host.ctx, track);
     }
 }
@@ -706,8 +708,7 @@ void gameUiDraw(GameUi *ui) {
         }
         break;
     case UiOverlayDialog:
-        gameDialogDraw(&ui->renderer, GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagNewGame,
-                       DriverMusicAvailable | DriverSoundFxAvailable | DriverMusicOn, 5);
+        gameDialogDraw(&ui->renderer, GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagDos, ui->driverFlags, ui->animationSpeed);
         break;
     default:
         break;
@@ -819,6 +820,51 @@ static void saveLoad(GameUi *ui, bool save) {
             gameUiAmbientMusic(ui);
         }
     }
+}
+
+/* The pause dialog (gamedialog.h): S / L save and load (the one slot the host keeps), M / F the music and sound effect switches, A the animation speed, D leaves for good, R or Escape returns.
+ * NEW GAME is not offered (it is the platform's to restart). */
+static bool dialogAct(GameUi *ui, GameDialogOption option) {
+    unsigned uiFlags = GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagDos | GameDialogFlagSave | GameDialogFlagLoad;
+    bool changed;
+    if (!gameDialogOptionEnabled(option, uiFlags, ui->driverFlags)) {
+        return true;
+    }
+    switch (option) {
+    case GameDialogSave:
+    case GameDialogLoad:
+        saveLoad(ui, option == GameDialogSave);
+        ui->overlay = UiOverlayNone;
+        break;
+    case GameDialogMusic:
+        ui->driverFlags = gameDialogToggleMusic(ui->driverFlags, &changed);
+        if (changed && !(ui->driverFlags & DriverMusicOn) && ui->host.music) {
+            ui->host.music(ui->host.ctx, 0);
+        } else if (changed) {
+            ui->lastMusicPage = 0xFFFF; /* start the area's music again */
+            gameUiAmbientMusic(ui);
+        }
+        break;
+    case GameDialogSoundFx:
+        ui->driverFlags = gameDialogToggleSoundFx(ui->driverFlags, &changed);
+        break;
+    case GameDialogAnimation:
+        ui->animationSpeed = gameDialogNextAnimationSpeed(ui->animationSpeed);
+        break;
+    case GameDialogDos:
+        return false;
+    case GameDialogReturn:
+        ui->overlay = UiOverlayNone;
+        break;
+    default:
+        break;
+    }
+    return true;
+}
+
+static bool dialogKey(GameUi *ui, UiKey key) {
+    GameDialogOption option = key == UiKeyEscape ? GameDialogReturn : key >= 'a' && key <= 'z' ? gameDialogKeyOption((uint8_t)(key - 32)) : GameDialogNone;
+    return dialogAct(ui, option);
 }
 
 static bool shopKey(GameUi *ui, UiKey key) { /* 1-8 buy a slot, S sells the cursor item back, 1-4 stow it when the hand is full, Escape leaves */
@@ -971,6 +1017,9 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
         }
         return true;
     }
+    if (ui->overlay == UiOverlayDialog) {
+        return dialogKey(ui, key);
+    }
     if (ui->overlay == UiOverlayCreate) {
         return wizardKey(ui, key);
     }
@@ -1013,4 +1062,222 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
         sessionTickAilments(s); /* once per command; the original sweeps once per pass of its loop */
     }
     return running;
+}
+
+/* ---- the mouse ---- */
+
+static bool inRect(int x, int y, int x0, int y0, int x1, int y1) {
+    return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+}
+
+static bool press(GameUi *ui, int key) {
+    return gameUiKey(ui, (UiKey)key, false);
+}
+
+static bool titleClick(GameUi *ui, int x, int y) {
+    static const char kKeys[5] = {'c', 'a', 'e', 'r', 'i'}; /* the regions in order: creation, assemble, enter, credits, introduction */
+    unsigned region = uiRegionHit(ui->session->game, UiRegionsTitleMenu, x, y);
+    return region >= 1 && region <= 5 ? press(ui, kKeys[region - 1]) : true;
+}
+
+static bool rosterClick(GameUi *ui, int x, int y) { /* 1-9 a hero's face, name or class selects it, 10-18 its check box (de)selects it, 19 DONE */
+    unsigned region = uiRegionHit(ui->session->game, UiRegionsPartyRoster, x, y);
+    if (region >= 1 && region <= 9) {
+        ui->rosterCursor = region - 1;
+    } else if (region >= 10 && region <= 18) {
+        ui->rosterCursor = region - 10;
+        press(ui, UiKeyEnter);
+    } else if (region == 19) {
+        press(ui, 'd');
+    }
+    return true;
+}
+
+static bool createClick(GameUi *ui, int x, int y) {
+    CreationWizard *w = &ui->wizard;
+    int key = 0;
+    if (inRect(x, y, 8, 185, 127, 191) && w->step != CreationStepName) { /* QUIT "CREATE" under every step */
+        key = 'q';
+    }
+    switch (w->step) {
+    case CreationStepClass:
+        for (unsigned id = 1; id <= 9 && !key; id++) {
+            static const char kHotkeys[] = "fmroapgdk";
+            int top = ((id - 1) / 3 == 0 ? 51 : (id - 1) / 3 == 1 ? 96 : 141) + 9 * (int)((id - 1) % 3);
+            if (inRect(x, y, 8, top, 127, top + 8)) {
+                key = kHotkeys[id - 1];
+            }
+        }
+        break;
+    case CreationStepPortrait:
+        for (int cell = 0; cell < 9 && !key; cell++) {
+            if (inRect(x, y, 8 + 33 * (cell % 3), 42 + 33 * (cell / 3), 39 + 33 * (cell % 3), 73 + 33 * (cell / 3))) {
+                key = '1' + cell;
+            }
+        }
+        if (!key && inRect(x, y, 8, 150, 55, 156)) {
+            key = w->gender == 2 ? 'm' : 'f';
+        }
+        break;
+    case CreationStepRoll:
+        if (inRect(x, y, 8, 51, 127, 59)) {
+            key = 'r';
+        } else if (inRect(x, y, 8, 69, 127, 77)) {
+            key = 'i';
+        }
+        break;
+    case CreationStepItems: {
+        unsigned region = uiRegionHit(ui->session->game, UiRegionsCharacterInventory, x, y);
+        if (region >= 1 && region <= 8) {
+            key = '0' + (int)region;
+        } else if (inRect(x, y, 8, 176, 127, 182)) {
+            key = 'n';
+        }
+        break;
+    }
+    case CreationStepSummary:
+        for (unsigned i = 0; i < 6 && !key; i++) {
+            static const char kOptions[] = "kcprin";
+            static const int kY[6] = {51, 69, 78, 87, 96, 105};
+            if (inRect(x, y, 8, kY[i], 127, kY[i] + 8)) {
+                key = kOptions[i];
+            }
+        }
+        break;
+    default:
+        break;
+    }
+    return key ? press(ui, key) : true;
+}
+
+static bool clueClick(GameUi *ui, int x, int y) {
+    GameKind game = ui->session->game;
+    unsigned tab = uiRegionHit(game, UiRegionsClueCategories, x, y);
+    if (tab >= 2 && tab <= 7) { /* the tabs: maps, monsters, spells, magic users, items, the walk through */
+        return press(ui, UiKeyF1 + (int)(tab - 2));
+    }
+    if (tab == 8) { /* EXIT */
+        ui->overlay = UiOverlayNone;
+        return true;
+    }
+    unsigned scroll = uiRegionHit(game, UiRegionsClueScroll, x, y);
+    if (scroll && (ui->clueScreen == 1 || ui->clueScreen == 0)) {
+        return press(ui, scroll == 1 ? 'i' : 'q');
+    }
+    if (ui->clueScreen == 1) {
+        unsigned row = uiRegionHit(game, UiRegionsClueEntries, x, y);
+        if (row && ui->clueList.first + row - 1 < ui->clueList.count) {
+            ui->clueList.selected = ui->clueList.first + row - 1;
+            press(ui, UiKeyEnter);
+        }
+    } else if (ui->clueScreen == 2 && ui->clueCategory == 1) { /* a legend marker of a map */
+        ClueMapMarker markers[ClueMapMarkersMax];
+        const ClueEntry *entry = clueSelected(ui);
+        unsigned count = entry ? clueMapMarkers(game, ui->worldDat, ui->worldSize, entry->id, markers, ClueMapMarkersMax) : 0;
+        int hit = clueMapMarkerAt(markers, count, x, y);
+        if (hit >= 0) {
+            ui->clueMarker = hit;
+        }
+    } else if (ui->clueScreen == 2 && ui->clueCategory >= 12) { /* the "+N" icons under an item */
+        const ClueEntry *entry = clueSelected(ui);
+        uint16_t mask;
+        unsigned count = entry ? clueSubIconCount(&ui->session->items, entry->id, &mask) : 0;
+        for (unsigned i = 0; i < count; i++) {
+            uint16_t region[5];
+            clueSubIconRegion(i, region);
+            if (inRect(x, y, region[0], region[2], region[1], region[3])) {
+                ui->clueSub = i;
+            }
+        }
+    }
+    return true;
+}
+
+static bool dialogClick(GameUi *ui, int x, int y) {
+    return dialogAct(ui, gameDialogRegionOption(uiRegionHit(ui->session->game, UiRegionsGameDialog, x, y)));
+}
+
+static bool talkClick(GameUi *ui, int x, int y) { /* the topic rows drawTalk lists: five to a column from y = 120 */
+    GameSession *s = ui->session;
+    for (unsigned i = 0; i < s->talk.listedCount && i < 9; i++) {
+        int x0 = 8 + (int)(i / 5) * 150, y0 = 120 + (int)(i % 5) * 8;
+        if (inRect(x, y, x0, y0, x0 + 140, y0 + 7)) {
+            return press(ui, '1' + (int)i);
+        }
+    }
+    return true;
+}
+
+static bool shopClick(GameUi *ui, int x, int y) { /* the stock rows of drawShop, and the cursor line that sells the item back */
+    for (int i = 0; i < 8; i++) {
+        if (inRect(x, y, 8, 30 + 8 * i, 300, 37 + 8 * i)) {
+            return press(ui, '1' + i);
+        }
+    }
+    if (ui->session->heldItem && inRect(x, y, 8, 110, 300, 117)) {
+        return press(ui, 's');
+    }
+    return true;
+}
+
+static bool mainClick(GameUi *ui, int x, int y, bool right) {
+    GameSession *s = ui->session;
+    GameKind game = s->game;
+    if (right) {
+        return true;
+    }
+    unsigned pad = uiRegionHit(game, UiRegionsDirectionPad, x, y);
+    if (pad) { /* the walk pad: turn left, forward, turn right, strafe left, back, strafe right */
+        static const UiKey kKeys[6] = {UiKeyLeft, UiKeyUp, UiKeyRight, UiKeyLeft, UiKeyDown, UiKeyRight};
+        return gameUiKey(ui, kKeys[pad - 1], pad == 4 || pad == 6);
+    }
+    unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
+    if (region == 2) {
+        return press(ui, 'm');
+    }
+    if (region == 3) { /* the icon row: act (attack in a combat), alchemy, rest, the pause dialog */
+        unsigned icon = uiRegionHit(game, UiRegionsDungeonIconRow, x, y);
+        return icon == 1 ? press(ui, s->combat.active ? 'a' : 's') : icon == 3 ? press(ui, 'r') : icon == 4 ? press(ui, 'd') : true;
+    }
+    if (region == 6) { /* a party panel: its portrait or name bar opens that hero's sheet */
+        unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y);
+        unsigned member = panel / 10, part = panel % 10;
+        if (panel && (part == 1 || part == 8) && member < 4) {
+            return press(ui, UiKeyF1 + (int)member);
+        }
+    }
+    return true;
+}
+
+bool gameUiClick(GameUi *ui, int x, int y, bool right) {
+    if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
+        return press(ui, UiKeyEscape);
+    }
+    switch (ui->overlay) {
+    case UiOverlayTitle:
+        return titleClick(ui, x, y);
+    case UiOverlayRoster:
+        return rosterClick(ui, x, y);
+    case UiOverlayCreate:
+        return createClick(ui, x, y);
+    case UiOverlayClue:
+        return clueClick(ui, x, y);
+    case UiOverlayDialog:
+        return dialogClick(ui, x, y);
+    case UiOverlayTalk:
+        return talkClick(ui, x, y);
+    case UiOverlayShop:
+        return shopClick(ui, x, y);
+    case UiOverlayLocalMap:
+    case UiOverlayDolls:
+        ui->overlay = UiOverlayNone; /* any click closes them */
+        return true;
+    case UiOverlayDetail:
+        if (uiRegionHit(ui->session->game, UiRegionsMemberDetail, x, y) == 1) { /* RETURN */
+            ui->overlay = UiOverlayNone;
+        }
+        return true;
+    default:
+        return mainClick(ui, x, y, right);
+    }
 }
