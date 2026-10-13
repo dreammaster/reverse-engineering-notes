@@ -17,9 +17,15 @@ or, with gcc and Python only (each test's header comment holds its own gcc line;
 
     python tests/run_all.py
 
-`explore_sdl` needs SDL2 (CMake builds it when `find_package(SDL2)` succeeds; its header has the gcc line):
+The playable game is `yendor` (the `explore_sdl` target; it needs SDL2, and CMake builds it when `find_package(SDL2)` succeeds -- otherwise pass `-DSDL2_DIR=<SDL2>/lib/cmake/SDL2`).
+Just the game: `cmake --build build --target explore_sdl`, giving `build/tools/yendor` (with `SDL2.dll` beside it on Windows). Point it at a game folder; the chapter is found from the executable in it:
 
-    ./explore_sdl <2|3> <game dir> [scale]
+    build/tools/yendor ../yendor3/game
+    build/tools/yendor --scale 4 --no-splash /games/yendor2
+    build/tools/yendor --help
+
+It starts like the original: the boot title, then the title menu (C creates a hero, A assembles the party, E enters, I the introduction, R the credits). `--no-title` goes straight into the game,
+`--game 2|3` forces the chapter, `--shareware` plays the unregistered program, `--no-sound` and `--clock-ms N` do what they say. The old form `explore_sdl <2|3> <game dir> [scale]` still works.
 
 Keys are the original's (arrows, F1-F4 member sheets, F5/F9 save and load, F8 the clue book, M map, P paper dolls, Esc the pause dialog); `EXPLORE_TITLE=1` starts on the title menu,
 `EXPLORE_SPLASH=1` plays the boot title first, `EXPLORE_INTRO=opening|story|ending|credits|splash` a cinematic, `EXPLORE_SHAREWARE=1` the unregistered program, `EXPLORE_KEYS` /

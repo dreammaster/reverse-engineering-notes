@@ -6,6 +6,7 @@ project(yendor23 C)
 # tools/explore_sdl.c needs SDL2.
 #
 #   cmake -S . -B build && cmake --build build && ctest --test-dir build --output-on-failure
+#   cmake --build build --target explore_sdl      (just the game: build/tools/yendor, needs SDL2; -DSDL2_DIR=<SDL2>/lib/cmake/SDL2 if it is not found)
 #
 # The tests that read game data look for ../../yendor2/game and ../../yendor3/game (or YENDOR2_GAME_DIR / YENDOR3_GAME_DIR) and skip
 # themselves when the files are not there.
@@ -52,6 +53,15 @@ foreach(tool_source ${YENDOR23_TOOLS})
   target_link_libraries(${tool_name} yendor23)
   set_target_properties(${tool_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tools)
   if(tool_name STREQUAL "explore_sdl")
-    target_link_libraries(${tool_name} SDL2::SDL2)
+    # the playable game: build/tools/yendor  (yendor <game dir>; see README.md)
+    set_target_properties(${tool_name} PROPERTIES OUTPUT_NAME yendor)
+    if(TARGET SDL2::SDL2main)
+      target_link_libraries(${tool_name} SDL2::SDL2main SDL2::SDL2)
+    else()
+      target_link_libraries(${tool_name} SDL2::SDL2)
+    endif()
+    if(WIN32)
+      add_custom_command(TARGET ${tool_name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:${tool_name}>)
+    endif()
   endif()
 endforeach()

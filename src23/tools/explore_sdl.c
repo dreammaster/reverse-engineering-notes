@@ -12,7 +12,8 @@
  *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../pcx.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
- *   ./explore_sdl <2|3> <game dir> [scale]
+ *   ./explore_sdl [options] <game dir>      (--help lists them: --game 2|3, --scale N, --no-splash, --no-title, --shareware, --no-sound, --clock-ms N; the chapter is found from the folder)
+ *   ./explore_sdl <2|3> <game dir> [scale]  (the older form: starts in the game, not on the title menu)
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), M the local area map, D the pause
@@ -301,6 +302,27 @@ static void introWaitSound(void *ctx) {
     }
 }
 
+/* The settings: the EXPLORE_* environment variables (the scripted and headless runs) and the command line flags, which set the same names. */
+static const char *g_override[24][2];
+static unsigned g_overrideCount;
+
+static void setOpt(const char *name, const char *value) {
+    if (g_overrideCount < sizeof(g_override) / sizeof(g_override[0])) {
+        g_override[g_overrideCount][0] = name;
+        g_override[g_overrideCount][1] = value;
+        g_overrideCount++;
+    }
+}
+
+static const char *opt(const char *name) {
+    for (unsigned i = 0; i < g_overrideCount; i++) {
+        if (strcmp(g_override[i][0], name) == 0) {
+            return g_override[i][1];
+        }
+    }
+    return getenv(name);
+}
+
 static ExeData g_exe;
 
 /* The executable (SW.EXE / REGISTER.EXE): its data segment holds the cinematic and clue book texts. */
@@ -331,11 +353,11 @@ static bool playIntro(void *ctx, const char *kind) {
     }
     IntroAssets assets = {g_worldDat, g_worldSize, &exe, pictureFileGet, g_pictures, game};
     static IntroStory story;
-    if (getenv("EXPLORE_INTRO_MS")) {
-        g_introDelayMs = (unsigned)atoi(getenv("EXPLORE_INTRO_MS"));
+    if (opt("EXPLORE_INTRO_MS")) {
+        g_introDelayMs = (unsigned)atoi(opt("EXPLORE_INTRO_MS"));
     }
     g_introEscape = false;
-    IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, getenv("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy, introHires};
+    IntroHost host = {NULL, introPresent, playEffect, playMusic, introTick, introEscapeFn, NULL, opt("EXPLORE_INTRO_SOUND") != NULL, introWaitSound, introSoundBusy, introHires};
     bool ok;
     if (strcmp(kind, "splash") == 0) {
         ok = introSplashStart(&story, &assets) && introSplashPlay(&story, &assets, &host);
@@ -354,15 +376,91 @@ static bool playIntro(void *ctx, const char *kind) {
     return ok || g_introEscape;
 }
 
-int main(int argc, char **argv) {
-    if (argc < 3) {
-        fprintf(stderr, "usage: %s <2|3> <game dir> [scale]\n", argv[0]);
-        return 2;
+static void usage(const char *program) {
+    fprintf(stderr,
+            "usage: %s [options] <game dir>\n"
+            "  <game dir>      the folder with WORLD.DAT, PICTURES.VGA and SW.EXE (Chapter 2) or REGISTER.EXE (Chapter 3); the chapter is found from the files\n"
+            "  --game 2|3      the chapter, when the folder has both or neither executable\n"
+            "  --scale N       the window is N times 320 x 200 (default 3)\n"
+            "  --no-splash     skip the boot title        --no-title   start in the game, not on the title menu\n"
+            "  --shareware     the unregistered program (the demo boundary, the clue book's locked entries)\n"
+            "  --no-sound      silence\n"
+            "  --clock-ms N    one game minute passes every N real milliseconds (0, the default, only + / - and resting move the clock)\n"
+            "Keys: arrows walk and turn, F1-F4 the heroes, F5 / F9 save / load, F8 the clue book, M the map, P the paper dolls, Esc the pause dialog; on the title menu C creates a\n"
+            "character, A assembles the party, E enters the game, I plays the introduction, R the credits. The older form  %s <2|3> <game dir> [scale]  still works.\n",
+            program, program);
+}
+
+static bool fileExists(const char *dir, const char *name) {
+    char path[512];
+    snprintf(path, sizeof(path), "%s/%s", dir, name);
+    FILE *f = fopen(path, "rb");
+    if (f) {
+        fclose(f);
     }
-    GameKind game = atoi(argv[1]) == 3 ? GameYendor3 : GameYendor2;
-    const char *dir = argv[2];
+    return f != NULL;
+}
+
+int main(int argc, char **argv) {
+    const char *dir = NULL;
+    int chapter = 0, scale = 3;
+    if (argc >= 3 && (strcmp(argv[1], "2") == 0 || strcmp(argv[1], "3") == 0)) { /* the older form: <2|3> <game dir> [scale] */
+        chapter = atoi(argv[1]);
+        dir = argv[2];
+        scale = argc > 3 ? atoi(argv[3]) : 3;
+    } else {
+        for (int i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "--game") == 0 && i + 1 < argc) {
+                chapter = atoi(argv[++i]);
+            } else if (strcmp(argv[i], "--scale") == 0 && i + 1 < argc) {
+                scale = atoi(argv[++i]);
+            } else if (strcmp(argv[i], "--clock-ms") == 0 && i + 1 < argc) {
+                setOpt("EXPLORE_CLOCK_MS", argv[++i]);
+            } else if (strcmp(argv[i], "--no-splash") == 0) {
+                setOpt("EXPLORE_NOSPLASHFLAG", "1");
+            } else if (strcmp(argv[i], "--no-title") == 0) {
+                setOpt("EXPLORE_NOTITLEFLAG", "1");
+            } else if (strcmp(argv[i], "--shareware") == 0) {
+                setOpt("EXPLORE_SHAREWARE", "1");
+            } else if (strcmp(argv[i], "--no-sound") == 0) {
+                setOpt("EXPLORE_NOSOUND", "1");
+            } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+                usage(argv[0]);
+                return 0;
+            } else if (argv[i][0] == '-' && argv[i][1] == '-') {
+                fprintf(stderr, "unknown option %s\n", argv[i]);
+                usage(argv[0]);
+                return 2;
+            } else if (!dir) {
+                dir = argv[i];
+            } else {
+                usage(argv[0]);
+                return 2;
+            }
+        }
+        if (!dir) {
+            usage(argv[0]);
+            return 2;
+        }
+        if (chapter == 0) { /* the chapter is whichever executable is in the folder */
+            bool two = fileExists(dir, "SW.EXE"), three = fileExists(dir, "REGISTER.EXE");
+            chapter = three && !two ? 3 : two && !three ? 2 : 0;
+            if (!chapter) {
+                fprintf(stderr, "cannot tell the chapter from %s (SW.EXE for Chapter 2, REGISTER.EXE for Chapter 3): use --game 2|3\n", dir);
+                return 1;
+            }
+        }
+        if (!opt("EXPLORE_KEYS") && !opt("EXPLORE_SHOT") && !opt("EXPLORE_RANDOM") && !opt("EXPLORE_INTRO")) { /* interactive: the original's flow */
+            if (!opt("EXPLORE_NOTITLEFLAG")) {
+                setOpt("EXPLORE_TITLE", "1");
+                if (!opt("EXPLORE_NOSPLASHFLAG")) {
+                    setOpt("EXPLORE_SPLASH", "1");
+                }
+            }
+        }
+    }
+    GameKind game = chapter == 3 ? GameYendor3 : GameYendor2;
     g_dir = dir;
-    int scale = argc > 3 ? atoi(argv[3]) : 3;
     if (scale < 1) {
         scale = 3;
     }
@@ -384,10 +482,10 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot start a session (is %s/WORLD.DAT there?)\n", dir);
         return 1;
     }
-    if (getenv("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
+    if (opt("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
         int sx, sy;
         char dirChar = 'N';
-        if (sscanf(getenv("EXPLORE_START"), "%d,%d,%c", &sx, &sy, &dirChar) >= 2) {
+        if (sscanf(opt("EXPLORE_START"), "%d,%d,%c", &sx, &sy, &dirChar) >= 2) {
             g_session->x = sx;
             g_session->y = sy;
             g_session->facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
@@ -401,14 +499,14 @@ int main(int argc, char **argv) {
     }
     if (loadExe(game)) {
         gameUiSetExe(&g_ui, &g_exe);
-        g_session->shareware = getenv("EXPLORE_SHAREWARE") != NULL;
-        g_ui.clueRegistered = getenv("EXPLORE_SHAREWARE") == NULL; /* the clue book opens every entry unless EXPLORE_SHAREWARE is set */
+        g_session->shareware = opt("EXPLORE_SHAREWARE") != NULL;
+        g_ui.clueRegistered = opt("EXPLORE_SHAREWARE") == NULL; /* the clue book opens every entry unless EXPLORE_SHAREWARE is set */
     }
     if (loadExe(game)) {
         gameUiSetExe(&g_ui, &g_exe);
     }
-    g_ui.debugMarkers = getenv("EXPLORE_DEBUG") != NULL;
-    if (getenv("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */
+    g_ui.debugMarkers = opt("EXPLORE_DEBUG") != NULL;
+    if (opt("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */
         gameUiShowTitle(&g_ui);
     }
     const uint8_t *palette = gameUiPalette(&g_ui);
@@ -435,7 +533,7 @@ int main(int argc, char **argv) {
         unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
         colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
     }
-    if (!getenv("EXPLORE_NOSOUND")) {
+    if (!opt("EXPLORE_NOSOUND")) {
         SDL_AudioSpec want, have;
         SDL_zero(want);
         want.freq = 44100;
@@ -450,26 +548,26 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (getenv("EXPLORE_SPLASH")) { /* the boot title before the title menu */
+    if (opt("EXPLORE_SPLASH")) { /* the boot title before the title menu */
         playIntro(NULL, "splash");
     }
-    if (getenv("EXPLORE_INTRO") && !playIntro(NULL, getenv("EXPLORE_INTRO"))) {
+    if (opt("EXPLORE_INTRO") && !playIntro(NULL, opt("EXPLORE_INTRO"))) {
         return 1;
     }
     bool running = true, dirty = true;
-    const char *script = getenv("EXPLORE_KEYS");
+    const char *script = opt("EXPLORE_KEYS");
     static char randomScript[20001];
-    if (getenv("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */
-        unsigned n = (unsigned)atoi(getenv("EXPLORE_RANDOM"));
+    if (opt("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */
+        unsigned n = (unsigned)atoi(opt("EXPLORE_RANDOM"));
         const char alphabet[] = "FFFFFFBLRLRQEAAATCSS";
         for (unsigned i = 0; i < n && i < sizeof(randomScript) - 1; i++) {
             randomScript[i] = alphabet[rand() % (sizeof(alphabet) - 1)];
         }
         script = randomScript;
     }
-    const char *shotPath = getenv("EXPLORE_SHOT");
+    const char *shotPath = opt("EXPLORE_SHOT");
     Uint32 lastMinute = 0;
-    unsigned clockMs = getenv("EXPLORE_CLOCK_MS") ? (unsigned)atoi(getenv("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
+    unsigned clockMs = opt("EXPLORE_CLOCK_MS") ? (unsigned)atoi(opt("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
     while (running) {
         if (script && *script) { /* feed the next scripted key as a key press */
             SDL_Event press;
