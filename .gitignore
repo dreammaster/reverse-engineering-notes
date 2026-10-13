@@ -14,3 +14,7 @@ yendor3/game/
 src23/tests/*.exe
 src1/tests/*.exe
 src23/tools/*.exe
+
+# CMake build trees
+build/
+src23/build/

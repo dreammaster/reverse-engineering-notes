@@ -121,7 +121,7 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiShowTitle(&ui);
     gameUiDraw(&ui);
     unsigned titleSum = sum(ui.screen);
-    check("the title menu draws picture 2 and swallows the game keys", titleSum > 0 && (gameUiKey(&ui, UiKeyUp, false), s->x == s->x) && ui.overlay == UiOverlayTitle);
+    check("the title menu draws picture 2 and swallows the game keys", titleSum > 0 && (gameUiKey(&ui, UiKeyUp, false), s->x == 166 || s->x == 460) && ui.overlay == UiOverlayTitle);
     gameUiKey(&ui, 'a', false);
     gameUiDraw(&ui);
     unsigned rosterSum = sum(ui.screen);

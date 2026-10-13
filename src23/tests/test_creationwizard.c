@@ -87,11 +87,11 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     check("F switches to the female portraits", w.gender == 2 && partyGetU16(w.record, 0x10) == 2 && w.step == CreationStepPortrait);
     keys(&w, "3");
     check("a digit picks the portrait: the face and body pictures", w.step == CreationStepRoll && partyGetU16(w.record, 0x14) == charCreateBodyPicture(2, 3) && partyGetU16(w.record, 0x12) == charCreateFacePicture(2, 3));
-    unsigned before = partyGetStat(w.record, PartyStatStrength) * 1000 + partyGetStat(w.record, PartyStatDexterity);
+    unsigned before = (unsigned)(partyGetStat(w.record, PartyStatStrength) * 1000 + partyGetStat(w.record, PartyStatDexterity));
     bool changed = false;
     for (unsigned i = 0; i < 8 && !changed; i++) {
         keys(&w, "r");
-        changed = partyGetStat(w.record, PartyStatStrength) * 1000 + partyGetStat(w.record, PartyStatDexterity) != before;
+        changed = (unsigned)(partyGetStat(w.record, PartyStatStrength) * 1000 + partyGetStat(w.record, PartyStatDexterity)) != before;
     }
     check("R rolls the attributes again", changed && w.step == CreationStepRoll);
     keys(&w, "i");

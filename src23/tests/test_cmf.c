@@ -25,7 +25,7 @@ static void check(const char *label, bool ok) {
 }
 
 static void testSynthetic(void) {
-    uint8_t t[64];
+    uint8_t t[80];
     memset(t, 0, sizeof(t));
     memcpy(t, "CTMF", 4);
     t[4] = 1;
