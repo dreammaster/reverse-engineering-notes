@@ -208,6 +208,7 @@ void creationWizardDraw(const CreationWizard *w, const ViewRenderer *r) {
     case CreationStepPortrait:
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 8, 25, "PICK A PORTRAIT", 0x8A, 0, FontTransparent);
         charCreatePortraitGridDraw(r, w->gender);
+        charCreateGenderLabelDraw(r, w->gender);
         charCreateExitLabelDraw(r, false);
         break;
     case CreationStepRoll:

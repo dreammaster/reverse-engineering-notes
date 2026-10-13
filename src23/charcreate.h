@@ -27,6 +27,10 @@ void charCreateChoosePortrait(uint8_t *partyRecord, unsigned gender, unsigned po
 /* The 3 x 3 grid of faces for `gender`. */
 void charCreatePortraitGridDraw(const ViewRenderer *r, unsigned gender);
 
+/* The label that switches the gender (ShowCharacterEquipment :36596): at (8, 150), opaque on colour 0x33, the first character (the M or F key) in 0x7B and the rest in 0xF; it names the
+ * OTHER gender -- "FEMALE" while the male portraits show, "MALE  " (padded) for the female ones. The screen's heading "PICK A PORTRAIT" is at (8, 25) in 0x8A. */
+void charCreateGenderLabelDraw(const ViewRenderer *r, unsigned gender);
+
 /*
  * The class step (ShowCharacterSkills, yendor2.asm:35989 -- misnamed): "PICK A CLASS" at (8, 25) in colour 0x8A and the nine classes in three
  * groups, each with a header in 0x8A at x = 8: "NON-MAGIC USERS:" (y 42) FIGHTER / MERCHANT / ROGUE, "CLERIC TYPES:" (y 87) MONK / ALCHEMIST /

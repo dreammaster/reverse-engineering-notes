@@ -32,6 +32,14 @@ void charCreatePortraitGridDraw(const ViewRenderer *r, unsigned gender) {
     }
 }
 
+void charCreateGenderLabelDraw(const ViewRenderer *r, unsigned gender) {
+    const char *text = gender == 2 ? "MALE  " : "FEMALE";
+    int x = 8;
+    for (unsigned i = 0; text[i]; i++) {
+        x = fontDrawChar(r->game, 0, r->screen, ViewScreenWidth, x, 150, (unsigned char)text[i], i == 0 ? 0x7B : 0xF, 0x33, FontOpaque);
+    }
+}
+
 void charCreateClassPickDraw(const ViewRenderer *r) {
     static const char kHotkeys[10] = "FMROAPGDK";
     static const char *const kHeaders[3] = {"NON-MAGIC USERS:", "CLERIC TYPES:", "WIZARD TYPES:"};

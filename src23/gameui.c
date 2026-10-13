@@ -270,7 +270,7 @@ static void clueBack(GameUi *ui) { /* Escape: one level up */
 static void drawClueList(GameUi *ui, const char *heading) {
     GameKind game = ui->session->game;
     memset(ui->screen, 0, sizeof(ui->screen));
-    viewDrawPicture(&ui->renderer, 0, game == GameYendor2 ? 14 : 6, 1, 1, false, 0);
+    viewDrawPicture(&ui->renderer, 0, game == GameYendor2 ? 14 : 7, 1, 1, false, 0);
     fontDrawString(game, 0, ui->screen, ViewScreenWidth, clueHeadingX(game, ui->clueCategory <= 3 ? ui->clueCategory : ui->clueCategory <= 10 ? 4 : 11, (unsigned)strlen(heading)), 4, heading, 0x0D, 0, FontTransparent);
     char names[ClueListRows][ClueNameSize];
     ClueListRow rows[ClueListRows];

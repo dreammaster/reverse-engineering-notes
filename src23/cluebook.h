@@ -58,7 +58,7 @@ int clueHeadingX(GameKind game, unsigned category, unsigned length);
  * ScrollClueEntryListPageUp/Down, RecomputeClueEntryPageBounds; the original keeps byte pointers into a list of 4-byte entries, here they are entry
  * indices). A page shows ClueListRows (14) entries from `first` to `last`. The up / down hints of the navigation bar (bits 0x100 / 0x80) are set when
  * the list is longer than a page and `first` is not the first entry / `last` is not the final one. The list page's backdrop is category 0
- * picture 14 (the item and monster pages use 13).
+ * picture 14 (the item and monster pages use 13; Chapter 3: 7 and 6, DrawMessageBox's picture id in word 0xE98).
  *
  * Keys: I and Q page up / down (the selection keeps its row in the page; with no further page they jump to the first / last row of this one),
  * H and P move the selection one row, turning the page at the edge (the new page's last / first row is selected). The return value is the original's
