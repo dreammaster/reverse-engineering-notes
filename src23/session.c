@@ -198,9 +198,39 @@ static bool applyMapTrigger(GameSession *s) {
     return true;
 }
 
+enum { DoorSound = 5 /* _val30, both chapters */ };
+
+/* One step in the direction of `move`; the second step of a door is not checked (loc_11598 adds the delta unconditionally) beyond keeping the party on the map. */
+static void stepUnchecked(GameSession *s, MovementResult move) {
+    int nx = s->x + move.deltaCol, ny = s->y + move.deltaRow;
+    if (movementInBounds(s->game, (uint16_t)nx, (uint16_t)ny)) {
+        s->x = nx;
+        s->y = ny;
+    }
+}
+
+SessionStep sessionDoorFinish(GameSession *s) {
+    if (!s->doorOpening) {
+        return SessionStepBlocked;
+    }
+    s->doorOpening = false;
+    MovementResult move = movementApply(MovementForward, s->facing);
+    stepUnchecked(s, move);
+    stepUnchecked(s, move);
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+    sessionRebuild(s);
+    applyMapTrigger(s);
+    monstersTakeTurns(s);
+    return SessionStepMoved;
+}
+
 SessionStep sessionMove(GameSession *s, MovementAction action) {
     if (s->combat.active || s->combat.wiped) {
         return SessionStepBusy;
+    }
+    if (s->doorOpening) { /* a door that was left opening is passed first */
+        sessionDoorFinish(s);
     }
     SessionStep result = SessionStepTurned;
     MovementResult move = movementApply(action, s->facing);
@@ -212,7 +242,18 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
             bool isDoor = cell && (cell->flags & 0x6000);
             MovementCellOutcome outcome =
                 movementClassifyCell(s->game, worldMapTileA(&s->map, (unsigned)ny, (unsigned)nx), worldMapTileB(&s->map, (unsigned)ny, (unsigned)nx), isDoor, false);
-            if (outcome == MovementCellClear || outcome == MovementCellSpecial) {
+            if (outcome == MovementCellSpecial && action == MovementForward) { /* the door opens first */
+                s->doorOpening = true;
+                s->pendingSound = DoorSound;
+                return SessionStepDoorOpening;
+            }
+            if (outcome == MovementCellSpecial) { /* entered any other way: the sound and the two steps at once */
+                s->pendingSound = DoorSound;
+                s->x = nx;
+                s->y = ny;
+                stepUnchecked(s, move);
+                result = SessionStepMoved;
+            } else if (outcome == MovementCellClear) {
                 s->x = nx;
                 s->y = ny;
                 result = SessionStepMoved;
@@ -240,6 +281,22 @@ void sessionScene(GameSession *s, ViewScene *scene, DungeonGridCell cells[Viewpo
     lightingComputeGradient(s->game, &light, 0, scene->gradient, &reset);
     scene->cells = cells;
     scene->facing = s->facing;
+    if (s->doorOpening) { /* HandleSpecialCellEntry's frame: the door cell ahead (cell 46) becomes the scratch tile type -- the door's legend with its wall picture + 1 (open) and the floor and ceiling of
+                             the cell beyond it (cell 43) */
+        MovementResult step = movementApply(MovementForward, s->facing);
+        const DungeonGridCell *door = dungeonGridCellAtWorldPos(&s->grid, s->x + step.deltaCol, s->y + step.deltaRow);
+        const uint16_t *doorLegend, *beyondLegend;
+        if (door && worldMapWallLegend(s->game, door->wallType, &doorLegend) && worldMapWallLegend(s->game, cells[43].wallType, &beyondLegend)) {
+            scene->scratchType = s->game == GameYendor2 ? 60 : 400;
+            scene->scratchLegend[0] = beyondLegend[0];
+            scene->scratchLegend[1] = beyondLegend[1];
+            scene->scratchLegend[2] = (uint16_t)(doorLegend[2] + 1);
+            for (unsigned i = 3; i < 6; i++) {
+                scene->scratchLegend[i] = doorLegend[i];
+            }
+            cells[46].wallType = scene->scratchType;
+        }
+    }
     for (unsigned i = 0; s->combat.active && i < CombatMonsterSlotCount; i++) {
         uint8_t *slot = s->combat.slots + (size_t)i * MonsterRecordSize;
         scene->combatMonsters[i] = monsterGetU16(slot, MonsterFieldType) ? slot : NULL;

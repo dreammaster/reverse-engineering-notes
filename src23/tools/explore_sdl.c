@@ -581,6 +581,9 @@ int main(int argc, char **argv) {
                 SDL_PushEvent(&press);
             }
         } else if (script && shotPath) {
+            if (!opt("EXPLORE_DOORFRAME")) { /* EXPLORE_DOORFRAME=1: the picture of a door that is still opening */
+                gameUiSettle(&g_ui); /* otherwise it is passed before the picture */
+            }
             gameUiDraw(&g_ui);
             writePng(shotPath, g_ui.screen, palette, ViewScreenWidth, ViewScreenHeight, 2);
             if (g_session->log[0]) {

@@ -72,6 +72,12 @@ typedef struct {
      */
     uint8_t *cellMonsters[ViewportCellCount];
     uint8_t *combatMonsters[3];
+    /*
+     * The scratch tile type of a door opening (HandleSpecialCellEntry: Chapter 2 type 60, legend entry DS:0xE821; Chapter 3 type 400): a cell whose wallType is `scratchType`
+     * uses `scratchLegend` (the six legend words) instead of the tile table. 0 = none.
+     */
+    uint16_t scratchType;
+    uint16_t scratchLegend[6];
 } ViewScene;
 
 /*

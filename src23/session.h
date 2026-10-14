@@ -73,6 +73,7 @@ typedef struct GameSession {
     LightSourceState light; /* the carried and spell light timers (lightsource.h); the view's light tiers come from litFlags */
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
+    bool doorOpening;          /* a door is opening (sessionMove returned SessionStepDoorOpening): sessionScene draws the opening frame until sessionDoorFinish */
     bool shareware;            /* the unregistered program: sessionInteract refuses the demo boundary (Chapter 2) */
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
@@ -102,10 +103,21 @@ void sessionFree(GameSession *session);
 /* RefreshDungeonMapWindow: grid + markers + monsters. Called by the commands below; a front end calls it once after loading a save. */
 void sessionRebuild(GameSession *session);
 
-typedef enum { SessionStepMoved, SessionStepTurned, SessionStepBlocked, SessionStepBusy } SessionStep;
+typedef enum { SessionStepMoved, SessionStepTurned, SessionStepBlocked, SessionStepBusy, SessionStepDoorOpening } SessionStep;
 
-/* One movement command. SessionStepBusy: a combat is on (or the party is wiped) and nothing moves. */
+/*
+ * One movement command. SessionStepBusy: a combat is on (or the party is wiped) and nothing moves.
+ *
+ * Doors (HandleSpecialCellEntry, yendor2.asm:2480; Chapter 3 :6116): a door tile (wall types 6-11, Chapter 3 200-299, the cell not locked or trapped) is not stood on: the party passes it, two
+ * cells in one command (the entry step and then the command's own step). Walking forward into one is SessionStepDoorOpening: nothing has moved yet, `doorOpening` is set, `pendingSound` is
+ * the door sound (5), and sessionScene shows the frame of the door opening (the door cell drawn with a scratch tile -- the open door picture, the floor and ceiling of the cell beyond it); the
+ * front end shows that frame for a moment and then calls sessionDoorFinish, which makes the two steps. Any other way into a door (backing, strafing) plays the sound and makes the two
+ * steps at once. The second step is not checked (the original does not).
+ */
 SessionStep sessionMove(GameSession *session, MovementAction action);
+
+/* Completes an opening door: the two steps, the reveal, the map triggers and the monsters' turn. A no-op (SessionStepBlocked) when no door is opening. */
+SessionStep sessionDoorFinish(GameSession *session);
 
 /* The view cells, their occlusion and the monsters to draw (spawning the ones that come into view, monsterPoolEncounterScan); fills `scene` for viewRender. */
 void sessionScene(GameSession *session, ViewScene *scene, DungeonGridCell cells[ViewportCellCount]);

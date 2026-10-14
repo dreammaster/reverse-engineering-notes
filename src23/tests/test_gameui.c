@@ -220,6 +220,22 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     check("the right button backs out of it", ui.overlay == UiOverlayNone);
     gameUiClick(&ui, 270, 30, false);
     check("a click on the map panel opens the local map, any click closes it", ui.overlay == UiOverlayLocalMap && (gameUiClick(&ui, 5, 5, false), ui.overlay == UiOverlayNone));
+    if (game == GameYendor2) { /* the inn's door: the opening frame, then the party is two cells on after two animation ticks */
+        s->x = 170;
+        s->y = 36;
+        s->facing = SaveFacingEast;
+        sessionRebuild(s);
+        gameUiKey(&ui, UiKeyUp, false);
+        bool opening = s->doorOpening && s->x == 170;
+        gameUiAnimate(&ui);
+        bool stillOpening = s->doorOpening;
+        gameUiAnimate(&ui);
+        check("a walk into a door shows it opening for two animation ticks, then passes it", opening && stillOpening && !s->doorOpening && s->x == 172);
+        s->x = 166;
+        s->y = 36;
+        s->facing = SaveFacingWest;
+        sessionRebuild(s);
+    }
     gameUiClick(&ui, 20, 160, false);
     check("a click on a party portrait opens that hero's sheet", ui.overlay == UiOverlayDetail);
     gameUiClick(&ui, 180, 116, false);

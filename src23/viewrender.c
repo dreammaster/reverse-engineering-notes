@@ -464,8 +464,13 @@ void viewDrawPicture(const ViewRenderer *r, unsigned category, unsigned id, int 
 
 static const uint16_t kEmptyLegend[6] = {0, 0, 0, 0, 0, 0};
 
+static const ViewScene *g_scene; /* the scene being drawn: its scratch tile type (a door opening) has no entry in the tile table */
+
 static const uint16_t *wallLegend(GameKind game, uint16_t type) {
     const uint16_t *words;
+    if (g_scene && g_scene->scratchType && type == g_scene->scratchType) {
+        return g_scene->scratchLegend;
+    }
     return worldMapWallLegend(game, type, &words) ? words : kEmptyLegend;
 }
 
@@ -694,9 +699,11 @@ static void drawVanishingPoint(const Scene *sc) {
 
 void viewRender(const ViewRenderer *r, const ViewScene *scene) {
     Scene sc = {r, scene, {0}, {0}};
+    g_scene = scene;
     drawFloorAndCeiling(r, scene);
     for (unsigned row = 0; row < ViewportRowCount - 1; row++) {
         drawRow(&sc, row);
     }
     drawVanishingPoint(&sc);
+    g_scene = NULL;
 }

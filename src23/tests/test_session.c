@@ -429,6 +429,29 @@ static void testInteract(GameKind game, const uint8_t *world, size_t size, const
     snprintf(text, sizeof(text), "%s: using an ungated destination object moves the party to its destination", label);
     check(text, travelled);
 
+    if (game == GameYendor2) { /* the inn's front door at (171, 36): walking forward opens it, and the party passes two cells */
+        place(s, 170, 36, SaveFacingEast);
+        SessionStep first = sessionMove(s, MovementForward);
+        ViewScene scene;
+        DungeonGridCell cells[ViewportCellCount];
+        sessionScene(s, &scene, cells);
+        bool framed = s->doorOpening && s->pendingSound == 5 && s->x == 170 && scene.scratchType == 60 && cells[46].wallType == 60 && scene.scratchLegend[2] == 62;
+        s->pendingSound = 0;
+        SessionStep second = sessionDoorFinish(s);
+        snprintf(text, sizeof(text), "%s: walking into a door opens it first (the frame has the open door picture), then the party steps two cells", label);
+        check(text, first == SessionStepDoorOpening && framed && second == SessionStepMoved && !s->doorOpening && s->x == 172 && s->y == 36);
+        place(s, 172, 36, SaveFacingEast);
+        SessionStep back = sessionMove(s, MovementBackward);
+        snprintf(text, sizeof(text), "%s: backing into a door passes it at once, two cells, with its sound", label);
+        check(text, back == SessionStepMoved && s->x == 170 && s->pendingSound == 5 && !s->doorOpening);
+        s->pendingSound = 0;
+        place(s, 170, 36, SaveFacingEast);
+        sessionMove(s, MovementForward);
+        SessionStep next = sessionMove(s, MovementTurnLeft);
+        snprintf(text, sizeof(text), "%s: another command passes a door that is still opening first", label);
+        check(text, next == SessionStepTurned && !s->doorOpening && s->x == 172);
+        place(s, 170, 36, SaveFacingEast);
+    }
     if (game == GameYendor2) { /* the shareware boundary: the destination south of (0x200, 0x2B) */
         place(s, 0x200, 0x2B, SaveFacingSouth);
         SessionInteract open = sessionInteract(s);

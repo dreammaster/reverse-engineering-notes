@@ -233,7 +233,24 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
     }
 }
 
+void gameUiSettle(GameUi *ui) {
+    if (ui->session->doorOpening) {
+        sessionDoorFinish(ui->session);
+        ui->doorTicks = 0;
+        gameUiAmbientMusic(ui);
+    }
+}
+
 bool gameUiAnimate(GameUi *ui) {
+    if (ui->session->doorOpening) { /* the frame of the door opening has been shown for a moment: pass it */
+        if (ui->doorTicks > 0) {
+            ui->doorTicks--;
+        }
+        if (ui->doorTicks == 0) {
+            gameUiSettle(ui);
+        }
+        return true;
+    }
     if (ui->overlay != UiOverlayClue || ui->clueScreen != 2 || ui->clueCategory != 2) {
         return false;
     }
@@ -948,8 +965,17 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     MainCommand command = mainCommandForKey(s->game, extended, code);
     switch (command.action) {
     case MainActionMove:
-        if (sessionMove(s, command.movement) == SessionStepBlocked && s->game == GameYendor2) {
-            effect(ui, 6); /* the bump sound, _val33 */
+        {
+            SessionStep step = sessionMove(s, command.movement);
+            if (step == SessionStepBlocked && s->game == GameYendor2) {
+                effect(ui, 6); /* the bump sound, _val33 */
+            } else if (step == SessionStepDoorOpening) {
+                ui->doorTicks = 2; /* the opening frame stays for two animation ticks */
+            }
+            if (s->pendingSound) {
+                effect(ui, s->pendingSound);
+                s->pendingSound = 0;
+            }
         }
         gameUiAmbientMusic(ui);
         break;
@@ -993,6 +1019,9 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
+    if (s->doorOpening) { /* any key passes a door that is still opening first */
+        gameUiSettle(ui);
+    }
     if (ui->overlay == UiOverlayTitle) {
         if (key == 'e') {
             if (!titleCanEnter(rosterSlotSum(ui))) {
