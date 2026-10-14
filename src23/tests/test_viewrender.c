@@ -311,7 +311,7 @@ int main(void) {
     testMonster();
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 720, 0x3C32DEEF, "Chapter 2: the inn, facing west by day (inspected render)");
     testReal(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", 166, 36, SaveFacingWest, 1200, 0x7898374D, "Chapter 2: the same view at night");
-    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 166, 36, SaveFacingWest, 720, 0x04C83A87, "Chapter 3: a log wall by day (inspected render)");
+    testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 166, 36, SaveFacingWest, 720, 0xD9A353EF, "Chapter 3: a log wall by day (inspected render; the party stands inside a wall type, so the doorway rule picks the floor ahead)");
     testReal(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", 460, 46, SaveFacingNorth, 540, 0x9FC5F5C8, "Chapter 3: the castle gate and its cobbled approach (inspected render)");
 
     if (g_failureCount == 0) {

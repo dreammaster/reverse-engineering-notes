@@ -529,11 +529,28 @@ static void drawFloorAndCeiling(const ViewRenderer *r, const ViewScene *s) {
     bool ch3 = r->game == GameYendor3;
     const DungeonGridCell *party = &s->cells[49];
     const uint16_t *legend = wallLegend(r->game, party->wallType);
-    unsigned ceiling = legend[1];
+    unsigned ceiling = legend[1], floor = legend[0];
+    bool doorway = false;
+    if (floor == 0 && legend[2] != 0) {
+        /* The party stands in a doorway (a door type is a wall type: it has a wall picture and no floor or ceiling of its own, so its floor word is the water picture 0). The
+         * original opens a door with a scratch legend entry that takes the floor and ceiling of the cell beyond it (HandleSpecialCellEntry, yendor2.asm:2480); standing in the
+         * doorway the same is done here: the floor and ceiling of the nearest cell ahead that has them. (Decision of the port: the original's own drawing of this case was not found.) */
+        static const unsigned kAhead[] = {46, 43, 40, 36};
+        for (unsigned i = 0; i < sizeof(kAhead) / sizeof(kAhead[0]) && floor == 0; i++) {
+            const DungeonGridCell *ahead = &s->cells[kAhead[i]];
+            if (!(ahead->flags & HiddenFlag)) {
+                const uint16_t *al = wallLegend(r->game, ahead->wallType);
+                if (al[2] == 0 && al[0] != 0) {
+                    floor = al[0];
+                    ceiling = al[1];
+                }
+            }
+        }
+        doorway = floor != 0;
+    }
     if (ceiling == 0 && !(s->facing & 0x8000) && !(s->facing & 0x4000)) {
         ceiling = 1;
     }
-    unsigned floor = legend[0];
     unsigned ceilingBase = ch3 ? ceiling & 1 : ceiling, floorBase = ch3 ? floor & 1 : floor;
 
     copyPicture(r, CategoryCeiling, ceilingBase, 8, 8);
@@ -551,6 +568,9 @@ static void drawFloorAndCeiling(const ViewRenderer *r, const ViewScene *s) {
                 }
                 const uint16_t *cl = wallLegend(r->game, cell->wallType);
                 unsigned id;
+                if (doorway && i == 49) { /* the doorway's own floor and ceiling are the base */
+                    continue;
+                }
                 if (isFloor) {
                     id = cl[0];
                     if (ch3) {
