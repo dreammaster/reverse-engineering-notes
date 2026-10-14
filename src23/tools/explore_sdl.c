@@ -208,12 +208,58 @@ static size_t fetchSave(void *ctx, uint8_t *image, size_t capacity) {
     return bytes;
 }
 
+/* The six save slots of the pause dialog are the original's own files, SAVGAME1 .. SAVGAME6 in the game folder (a save is a copy of CURGAME, savegame.h), so the saves of the DOS game load here
+ * and the other way round. */
+static const char *g_dir;
+
+static FILE *slotFile(unsigned slot, const char *mode) {
+    char path[600];
+    snprintf(path, sizeof(path), "%s/SAVGAME%u", g_dir, slot + 1);
+    return fopen(path, mode);
+}
+
+static bool slotName(void *ctx, unsigned slot, char *name, size_t capacity) {
+    (void)ctx;
+    FILE *f = slotFile(slot, "rb");
+    if (!f) {
+        return false;
+    }
+    char header[SaveNameBufferSize] = {0};
+    size_t bytes = fread(header, 1, SaveNameMaxLength, f);
+    fclose(f);
+    if (bytes == 0) {
+        return false;
+    }
+    snprintf(name, capacity, "%s", header);
+    return true;
+}
+
+static bool slotWrite(void *ctx, unsigned slot, const uint8_t *image, size_t size) {
+    (void)ctx;
+    FILE *f = slotFile(slot, "wb");
+    if (!f) {
+        return false;
+    }
+    bool ok = fwrite(image, 1, size, f) == size;
+    return fclose(f) == 0 && ok;
+}
+
+static size_t slotRead(void *ctx, unsigned slot, uint8_t *image, size_t capacity) {
+    (void)ctx;
+    FILE *f = slotFile(slot, "rb");
+    if (!f) {
+        return 0;
+    }
+    size_t bytes = fread(image, 1, capacity, f);
+    fclose(f);
+    return bytes;
+}
+
 /* ---- the cinematics (introstory.h): EXPLORE_INTRO=opening|story|ending plays one in the window before the game; Escape ends it --------------------------------- */
 static SDL_Renderer *g_introRenderer;
 static SDL_Texture *g_introTexture;
-static const char *g_dir;
 static PictureFile *g_pictures;
-static bool g_introEscape;
+static bool g_introEscape, g_quit;
 static unsigned g_introDelayMs = 25;
 
 static void introPump(void) {
@@ -221,6 +267,7 @@ static void introPump(void) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             g_introEscape = true;
+            g_quit = g_quit || event.type == SDL_QUIT;
         }
     }
 }
@@ -382,7 +429,7 @@ static void usage(const char *program) {
             "  <game dir>      the folder with WORLD.DAT, PICTURES.VGA and SW.EXE (Chapter 2) or REGISTER.EXE (Chapter 3); the chapter is found from the files\n"
             "  --game 2|3      the chapter, when the folder has both or neither executable\n"
             "  --scale N       the window is N times 320 x 200 (default 3)\n"
-            "  --no-splash     skip the boot title        --no-title   start in the game, not on the title menu\n"
+            "  --no-splash     skip the boot title and the introduction        --no-title   start in the game: no start-up sequence at all\n"
             "  --shareware     the unregistered program (the demo boundary, the clue book's locked entries)\n"
             "  --no-sound      silence\n"
             "  --clock-ms N    one game minute passes every N real milliseconds (0, the default, only + / - and resting move the clock)\n"
@@ -452,7 +499,7 @@ int main(int argc, char **argv) {
         }
         if (!opt("EXPLORE_KEYS") && !opt("EXPLORE_SHOT") && !opt("EXPLORE_RANDOM") && !opt("EXPLORE_INTRO")) { /* interactive: the original's flow */
             if (!opt("EXPLORE_NOTITLEFLAG")) {
-                setOpt("EXPLORE_TITLE", "1");
+                setOpt("EXPLORE_BOOT", "1");
                 if (!opt("EXPLORE_NOSPLASHFLAG")) {
                     setOpt("EXPLORE_SPLASH", "1");
                 }
@@ -492,7 +539,7 @@ int main(int argc, char **argv) {
             sessionRebuild(g_session);
         }
     }
-    GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave};
+    GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave, slotName, slotWrite, slotRead};
     if (!gameUiInit(&g_ui, g_session, g_worldDat, g_worldSize, pictureFileGet, g_pictures, &uiHost)) {
         fprintf(stderr, "the world data lacks the view tables\n");
         return 1;
@@ -506,7 +553,9 @@ int main(int argc, char **argv) {
         gameUiSetExe(&g_ui, &g_exe);
     }
     g_ui.debugMarkers = opt("EXPLORE_DEBUG") != NULL;
-    if (opt("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */
+    if (opt("EXPLORE_BOOT")) { /* the original's start: the dialog with LOAD / NEW GAME / DOS when there are saves, else the title menu of a new game (EXPLORE_SPLASH: the boot title and the introduction first) */
+        gameUiBoot(&g_ui);
+    } else if (opt("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */
         gameUiShowTitle(&g_ui);
     }
     const uint8_t *palette = gameUiPalette(&g_ui);
@@ -548,13 +597,16 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (opt("EXPLORE_SPLASH")) { /* the boot title before the title menu */
+    if (opt("EXPLORE_SPLASH")) { /* the boot title, then the introduction (Escape in the boot title skips it as well: InitGame); Escape in the introduction goes on to the dialog */
         playIntro(NULL, "splash");
+        if (!g_introEscape) {
+            playIntro(NULL, "opening");
+        }
     }
     if (opt("EXPLORE_INTRO") && !playIntro(NULL, opt("EXPLORE_INTRO"))) {
         return 1;
     }
-    bool running = true, dirty = true;
+    bool running = !g_quit, dirty = true;
     const char *script = opt("EXPLORE_KEYS");
     static char randomScript[20001];
     if (opt("EXPLORE_RANDOM")) { /* EXPLORE_RANDOM=<n>: n random keys (a soak test; EXPLORE_SHOT still writes the last screen) */

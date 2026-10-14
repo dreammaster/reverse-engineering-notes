@@ -11,6 +11,7 @@
 #include "cluespell.h"
 #include "cluetransport.h"
 #include "creationwizard.h"
+#include "explore.h"
 #include "font.h"
 #include "gamedialog.h"
 #include "lighting.h"
@@ -644,6 +645,66 @@ void gameUiShowTitle(GameUi *ui) {
     ui->overlay = UiOverlayTitle;
 }
 
+static void slotsRefresh(GameUi *ui);
+static void dialogOpen(GameUi *ui, unsigned flags);
+
+void gameUiBoot(GameUi *ui) {
+    slotsRefresh(ui);
+    for (unsigned i = 0; i < SaveSlotCount; i++) {
+        if (ui->slots[i].used) {
+            ui->boot = UiBootSaves;
+            dialogOpen(ui, GameDialogFlagLoad | GameDialogFlagNewGame | GameDialogFlagDos);
+            return;
+        }
+    }
+    sessionNewGame(ui->session, ui->worldDat, ui->worldSize);
+    ui->boot = UiBootTitle;
+    ui->overlay = UiOverlayTitle;
+}
+
+/* The pause dialog as it is drawn in each of its modes. */
+static void dialogDraw(GameUi *ui) {
+    const ViewRenderer *r = &ui->renderer;
+    bool slotList = ui->dialogMode == UiDialogSlots || ui->dialogMode == UiDialogName || (ui->dialogMode == UiDialogPrompt && (ui->dialogPrompt == GameDialogPromptSave || ui->dialogPrompt == GameDialogPromptLoad));
+    if (ui->dialogMode == UiDialogMenu) {
+        gameDialogDraw(r, ui->dialogFlags, ui->driverFlags, ui->animationSpeed);
+        return;
+    }
+    gameDialogStyleDraw(r, ui->dialogOption, ui->driverFlags);
+    if (!slotList) {
+        gameDialogPromptDraw(r, ui->dialogPrompt);
+        return;
+    }
+    gameDialogSlotsDraw(r, ui->slots);
+    if (ui->dialogSlot >= 0) {
+        gameDialogSlotMark(r, (unsigned)ui->dialogSlot, true);
+        if (ui->dialogOption == GameDialogSave) { /* the name being made: with the cursor while it is typed */
+            char text[TextFieldMaxSize + 2];
+            snprintf(text, sizeof(text), "%s%s", ui->dialogName.text, ui->dialogMode == UiDialogName ? "-" : " ");
+            gameDialogSlotText(r, (unsigned)ui->dialogSlot, "                        ", false);
+            gameDialogSlotText(r, (unsigned)ui->dialogSlot, text, false);
+        }
+    }
+    if (ui->dialogMode == UiDialogPrompt) {
+        gameDialogPromptDraw(r, ui->dialogPrompt);
+    }
+}
+
+/* What the original has up behind the dialog while it starts: the frame of the main screen, with the party's panels when a new game has been started and not before. */
+static void bootBackdrop(GameUi *ui) {
+    memset(ui->screen, 0, sizeof(ui->screen));
+    const uint8_t *frame = ui->renderer.picture(ui->renderer.pictureCtx, 0, 1);
+    for (unsigned row = 0; frame && row < 198; row++) {
+        memcpy(&ui->screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
+    }
+    viewDrawPicture(&ui->renderer, 6, 0x15, 0xF8, 9, true, 0); /* RestoreAndRedrawFixedStatusIcon: the chapter plate (the minimap covers it in the game) */
+    if (ui->boot == UiBootOptions) {
+        for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
+            statusPanelDraw(&ui->renderer, panel, sessionPartyRecord(ui->session, panel));
+        }
+    }
+}
+
 void gameUiDraw(GameUi *ui) {
     GameSession *s = ui->session;
     if (ui->overlay == UiOverlayRoster) {
@@ -652,6 +713,11 @@ void gameUiDraw(GameUi *ui) {
     }
     if (ui->overlay == UiOverlayCreate) {
         creationWizardDraw(&ui->wizard, &ui->renderer);
+        return;
+    }
+    if (ui->overlay == UiOverlayDialog && (ui->boot == UiBootSaves || ui->boot == UiBootOptions)) {
+        bootBackdrop(ui);
+        dialogDraw(ui);
         return;
     }
     if (ui->overlay == UiOverlayTitle) {
@@ -725,7 +791,7 @@ void gameUiDraw(GameUi *ui) {
         }
         break;
     case UiOverlayDialog:
-        gameDialogDraw(&ui->renderer, GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagDos, ui->driverFlags, ui->animationSpeed);
+        dialogDraw(ui);
         break;
     default:
         break;
@@ -839,19 +905,211 @@ static void saveLoad(GameUi *ui, bool save) {
     }
 }
 
-/* The pause dialog (gamedialog.h): S / L save and load (the one slot the host keeps), M / F the music and sound effect switches, A the animation speed, D leaves for good, R or Escape returns.
- * NEW GAME is not offered (it is the platform's to restart). */
+/* ---- the pause dialog (gamedialog.h; RunGameDialog, yendor2.asm:26081) ---- */
+
+enum { InGameDialogFlags = GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagDos | GameDialogFlagNewGame | GameDialogFlagLoad | GameDialogFlagSave };
+
+/* findSavegame: which of SAVGAME1-6 exist and the name each holds. */
+static void slotsRefresh(GameUi *ui) {
+    for (unsigned i = 0; i < SaveSlotCount; i++) {
+        SaveSlotEntry *slot = &ui->slots[i];
+        slot->used = ui->host.slotName && ui->host.slotName(ui->host.ctx, i, slot->name, sizeof(slot->name));
+        if (!slot->used) {
+            slot->name[0] = 0;
+            slot->highlighted = false;
+        }
+    }
+}
+
+static void dialogOpen(GameUi *ui, unsigned flags) {
+    slotsRefresh(ui);
+    ui->overlay = UiOverlayDialog;
+    ui->dialogFlags = flags;
+    ui->dialogMode = UiDialogMenu;
+    ui->dialogSlot = -1;
+}
+
+/* The dialog is left for the game (RETURN, or a save or a load that has been made). */
+static void dialogLeave(GameUi *ui) {
+    ui->overlay = UiOverlayNone;
+    ui->dialogMode = UiDialogMenu;
+    if (ui->boot != UiBootNone) {
+        ui->boot = UiBootNone;
+        ui->lastMusicPage = 0xFFFF;
+        gameUiAmbientMusic(ui);
+    }
+}
+
+static void slotHighlight(GameUi *ui, unsigned slot) { /* HighlightGameDialogMenuEntry */
+    for (unsigned i = 0; i < SaveSlotCount; i++) {
+        ui->slots[i].highlighted = i == slot;
+    }
+}
+
+/* The question's yes: SaveCurrentGameToSlot with the name chosen (copied as a string, so a shorter name leaves the tail of the old one), or the load of the chosen slot. */
+static void dialogSave(GameUi *ui) {
+    GameSession *s = ui->session;
+    static uint8_t image[SaveFileSizeMax];
+    unsigned slot = (unsigned)ui->dialogSlot;
+    memcpy(s->save.bytes + SaveHeaderName, ui->dialogName.text, ui->dialogName.length + 1);
+    size_t bytes = sessionSave(s, image, sizeof(image));
+    if (ui->host.slotWrite && ui->host.slotWrite(ui->host.ctx, slot, image, bytes)) {
+        ui->slots[slot].used = true;
+        snprintf(ui->slots[slot].name, sizeof(ui->slots[slot].name), "%.24s", ui->dialogName.text);
+        slotHighlight(ui, slot);
+        snprintf(s->log, sizeof(s->log), "saved in slot %u", slot + 1);
+        dialogLeave(ui);
+    } else {
+        snprintf(s->log, sizeof(s->log), "could not save");
+        ui->dialogMode = UiDialogSlots;
+        ui->dialogSlot = -1;
+    }
+}
+
+static void dialogLoad(GameUi *ui) {
+    GameSession *s = ui->session;
+    static uint8_t image[SaveFileSizeMax];
+    size_t bytes = ui->host.slotRead ? ui->host.slotRead(ui->host.ctx, (unsigned)ui->dialogSlot, image, sizeof(image)) : 0;
+    if (bytes && sessionLoad(s, image, bytes)) {
+        ExploreReveal revealed; /* InitializeDungeonLevel: RevealCellsAroundPlayer */
+        exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+        sessionRebuild(s);
+        slotHighlight(ui, (unsigned)ui->dialogSlot);
+        s->log[0] = 0;
+        dialogLeave(ui);
+    } else {
+        snprintf(s->log, sizeof(s->log), "that is not a save of this game");
+        ui->dialogMode = UiDialogSlots;
+        ui->dialogSlot = -1;
+    }
+}
+
+/* ConfirmNewGame's yes: RunTitleScreen starts a new game (InitializeNewGameWorldState) and the title menu is up; its E goes on into the game. */
+static void startNewGame(GameUi *ui) {
+    if (sessionNewGame(ui->session, ui->worldDat, ui->worldSize)) {
+        ui->dialogMode = UiDialogMenu;
+        ui->overlay = UiOverlayTitle;
+    } else {
+        ui->dialogMode = UiDialogMenu;
+    }
+}
+
+static bool dialogPromptAnswer(GameUi *ui, bool yes) {
+    switch (ui->dialogPrompt) {
+    case GameDialogPromptDos:
+        if (yes) {
+            return false;
+        }
+        break;
+    case GameDialogPromptNewGame:
+        if (yes) {
+            startNewGame(ui);
+            return true;
+        }
+        break;
+    case GameDialogPromptSave:
+        if (yes) {
+            dialogSave(ui);
+        } else { /* back to choosing a slot */
+            ui->dialogMode = UiDialogSlots;
+            ui->dialogSlot = -1;
+        }
+        return true;
+    case GameDialogPromptLoad:
+        if (yes) {
+            dialogLoad(ui);
+        } else {
+            ui->dialogMode = UiDialogSlots;
+            ui->dialogSlot = -1;
+        }
+        return true;
+    }
+    ui->dialogMode = UiDialogMenu;
+    return true;
+}
+
+static void dialogAsk(GameUi *ui, GameDialogPrompt prompt) {
+    ui->dialogMode = UiDialogPrompt;
+    ui->dialogPrompt = prompt;
+}
+
+/* SelectGameDialogOption's pick of a row of the slot list. */
+static void dialogChooseSlot(GameUi *ui, unsigned slot) {
+    if (slot >= SaveSlotCount) {
+        return;
+    }
+    if (ui->dialogOption == GameDialogLoad) {
+        if (!ui->slots[slot].used) {
+            effect(ui, 3); /* nothing to load */
+            return;
+        }
+        effect(ui, 4);
+        ui->dialogSlot = (int)slot;
+        dialogAsk(ui, GameDialogPromptLoad);
+        return;
+    }
+    effect(ui, 4);
+    ui->dialogSlot = (int)slot;
+    ui->dialogMode = UiDialogName;
+    textFieldInit(&ui->dialogName, 24);
+    ui->dialogNameKept = ui->slots[slot].used;
+    if (ui->dialogNameKept) { /* the slot's name with the cursor after it */
+        snprintf(ui->dialogName.text, sizeof(ui->dialogName.text), "%s", ui->slots[slot].name);
+        ui->dialogName.length = (unsigned)strlen(ui->dialogName.text);
+    }
+}
+
+static void dialogNameKey(GameUi *ui, UiKey key) {
+    if (key == UiKeyEscape) {
+        ui->dialogMode = UiDialogSlots;
+        ui->dialogSlot = -1;
+        return;
+    }
+    if (ui->dialogNameKept) {
+        if (key == UiKeyEnter) {
+            dialogAsk(ui, GameDialogPromptSave);
+            return;
+        }
+        textFieldInit(&ui->dialogName, 24); /* the first key replaces the old name */
+        ui->dialogNameKept = false;
+    }
+    int ascii = key >= 8 && key < 128 ? (int)key : 0;
+    if (ascii >= 'a' && ascii <= 'z') {
+        ascii -= 32; /* the keyboard poll gives upper case */
+    }
+    switch (ascii ? textFieldKey(&ui->dialogName, (uint8_t)ascii) : TextFieldEditing) {
+    case TextFieldConfirmed:
+        dialogAsk(ui, GameDialogPromptSave);
+        break;
+    case TextFieldCancelled:
+        ui->dialogMode = UiDialogSlots;
+        ui->dialogSlot = -1;
+        break;
+    case TextFieldBeep:
+        effect(ui, 3);
+        break;
+    default:
+        break;
+    }
+}
+
+/* The pause dialog (gamedialog.h): S / L list the six save slots (1-6 or a click choose one; a save asks for a name, then both ask before they go ahead), N starts a new game on the title menu
+ * after the question, M / F the music and sound effect switches, A the animation speed, D asks whether to leave for DOS, R or Escape returns. The caller's flag word says which options exist. */
 static bool dialogAct(GameUi *ui, GameDialogOption option) {
-    unsigned uiFlags = GameDialogFlagReturn | GameDialogFlagAnimation | GameDialogFlagDos | GameDialogFlagSave | GameDialogFlagLoad;
     bool changed;
-    if (!gameDialogOptionEnabled(option, uiFlags, ui->driverFlags)) {
+    if (!gameDialogOptionEnabled(option, ui->dialogFlags, ui->driverFlags)) {
         return true;
     }
     switch (option) {
     case GameDialogSave:
     case GameDialogLoad:
-        saveLoad(ui, option == GameDialogSave);
-        ui->overlay = UiOverlayNone;
+        ui->dialogMode = UiDialogSlots;
+        ui->dialogOption = option;
+        ui->dialogSlot = -1;
+        break;
+    case GameDialogNewGame:
+        ui->dialogOption = option;
+        dialogAsk(ui, GameDialogPromptNewGame);
         break;
     case GameDialogMusic:
         ui->driverFlags = gameDialogToggleMusic(ui->driverFlags, &changed);
@@ -869,9 +1127,11 @@ static bool dialogAct(GameUi *ui, GameDialogOption option) {
         ui->animationSpeed = gameDialogNextAnimationSpeed(ui->animationSpeed);
         break;
     case GameDialogDos:
-        return false;
+        ui->dialogOption = option;
+        dialogAsk(ui, GameDialogPromptDos);
+        break;
     case GameDialogReturn:
-        ui->overlay = UiOverlayNone;
+        dialogLeave(ui);
         break;
     default:
         break;
@@ -880,6 +1140,24 @@ static bool dialogAct(GameUi *ui, GameDialogOption option) {
 }
 
 static bool dialogKey(GameUi *ui, UiKey key) {
+    switch (ui->dialogMode) {
+    case UiDialogSlots:
+        if (key >= '1' && key <= '6') {
+            dialogChooseSlot(ui, (unsigned)(key - '1'));
+        } else if (key == UiKeyEscape || key == (ui->dialogOption == GameDialogSave ? 's' : 'l')) {
+            ui->dialogMode = UiDialogMenu;
+        }
+        return true;
+    case UiDialogName:
+        dialogNameKey(ui, key);
+        return true;
+    case UiDialogPrompt: {
+        int answer = gameDialogPromptKey(key >= 'a' && key <= 'z' ? (uint8_t)(key - 32) : (uint8_t)key);
+        return answer < 0 ? true : dialogPromptAnswer(ui, answer == 1);
+    }
+    default:
+        break;
+    }
     GameDialogOption option = key == UiKeyEscape ? GameDialogReturn : key >= 'a' && key <= 'z' ? gameDialogKeyOption((uint8_t)(key - 32)) : GameDialogNone;
     return dialogAct(ui, option);
 }
@@ -1001,7 +1279,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         }
         break;
     case MainActionGameDialog:
-        ui->overlay = UiOverlayDialog;
+        dialogOpen(ui, InGameDialogFlags);
         break;
     case MainActionMemberDetail:
         ui->hero = command.index & 3;
@@ -1028,7 +1306,16 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
                 effect(ui, 3);
                 return true;
             }
+            if (ui->boot == UiBootTitle) { /* a first start without saves: the options dialog comes before the game */
+                ui->boot = UiBootOptions;
+                dialogOpen(ui, GameDialogFlagSave | GameDialogFlagDos | GameDialogFlagAnimation | GameDialogFlagReturn);
+                return true;
+            }
             ui->overlay = UiOverlayNone;
+            if (ui->boot != UiBootNone) {
+                ui->boot = UiBootNone;
+                ui->lastMusicPage = 0xFFFF;
+            }
             gameUiAmbientMusic(ui);
         } else if (key == 'a') {
             rosterSyncFlags(ui);
@@ -1041,8 +1328,17 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
             }
         } else if ((key == 'i' || key == 'r') && ui->host.cinematic) {
             ui->host.cinematic(ui->host.ctx, key == 'i' ? "opening" : "credits");
-        } else if (key == UiKeyEscape || (key == 'q' && ctrl)) {
+        } else if (key == 'q' && ctrl) { /* Ctrl+Q, the only way out: Escape does nothing on the title menu */
             return false;
+        } else if (key == UiKeyEnter || (key == 'm' && ctrl)) { /* the music switch (RunTitleScreen: Enter, which is Ctrl+M, as the picture says), and Ctrl+S the sound effects */
+            bool changed;
+            ui->driverFlags = gameDialogToggleMusic(ui->driverFlags, &changed);
+            if (changed && !(ui->driverFlags & DriverMusicOn) && ui->host.music) {
+                ui->host.music(ui->host.ctx, 0);
+            }
+        } else if (key == 's' && ctrl) {
+            bool changed;
+            ui->driverFlags = gameDialogToggleSoundFx(ui->driverFlags, &changed);
         }
         return true;
     }
@@ -1223,7 +1519,24 @@ static bool clueClick(GameUi *ui, int x, int y) {
 }
 
 static bool dialogClick(GameUi *ui, int x, int y) {
-    return dialogAct(ui, gameDialogRegionOption(uiRegionHit(ui->session->game, UiRegionsGameDialog, x, y)));
+    unsigned region = uiRegionHit(ui->session->game, UiRegionsGameDialog, x, y);
+    switch (ui->dialogMode) {
+    case UiDialogSlots:
+        if (region >= 1 && region <= SaveSlotCount) {
+            dialogChooseSlot(ui, region - 1);
+        } else if (region == (ui->dialogOption == GameDialogSave ? 7u : 8u)) { /* the option's own button gives it up */
+            ui->dialogMode = UiDialogMenu;
+        }
+        return true;
+    case UiDialogName:
+        return true;
+    case UiDialogPrompt: {
+        int answer = gameDialogPromptClick(x, y);
+        return answer < 0 ? true : dialogPromptAnswer(ui, answer == 1);
+    }
+    default:
+        return dialogAct(ui, gameDialogRegionOption(region));
+    }
 }
 
 static bool talkClick(GameUi *ui, int x, int y) { /* the topic rows drawTalk lists: five to a column from y = 120 */

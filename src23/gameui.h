@@ -12,6 +12,8 @@
 #include "cluepaged.h"
 #include "creationwizard.h"
 #include "cluespell.h"
+#include "gamedialog.h"
+#include "textfield.h"
 #include "exedata.h"
 #include "session.h"
 #include "viewrender.h"
@@ -55,7 +57,17 @@ typedef struct {
     bool (*cinematic)(void *ctx, const char *kind); /* play "ending" (introstory.h); false when it could not */
     bool (*store)(void *ctx, const uint8_t *image, size_t size); /* F5: write the save image */
     size_t (*fetch)(void *ctx, uint8_t *image, size_t capacity); /* F9: read it back; 0 when there is none */
+    /* The six save slots of the pause dialog (SAVGAME1 .. SAVGAME6 beside the game's files, savegame.h; each is a whole save image): */
+    bool (*slotName)(void *ctx, unsigned slot, char *name, size_t capacity); /* false when the slot file does not exist, else the name saved in it (the header's first string) */
+    bool (*slotWrite)(void *ctx, unsigned slot, const uint8_t *image, size_t size);
+    size_t (*slotRead)(void *ctx, unsigned slot, uint8_t *image, size_t capacity); /* 0 when it cannot be read */
 } GameUiHost;
+
+/* Where the start-up (gameUiBoot) has got to: the dialog with LOAD / NEW GAME / DOS that opens when there are saves, the title menu when there are none, then the options dialog before the game. */
+typedef enum { UiBootNone, UiBootSaves, UiBootTitle, UiBootOptions } UiBoot;
+
+/* What the pause dialog is doing: showing its options, a slot list of SAVE or LOAD, a name being typed for a save, or asking a question. */
+typedef enum { UiDialogMenu, UiDialogSlots, UiDialogName, UiDialogPrompt } UiDialogMode;
 
 typedef struct {
     GameSession *session;
@@ -76,6 +88,15 @@ typedef struct {
     unsigned wizardSlot;   /* the roster record it will be stored in */
     unsigned doorTicks;    /* animation ticks until an opening door (session.h) is passed */
     unsigned driverFlags;  /* the pause dialog's switches (gamedialog.h: music available / on, sound effects available / on) */
+    UiBoot boot;
+    unsigned dialogFlags;  /* the options the open dialog enables (the GameDialogFlag bits, the original's g_uiScratchFlags1) */
+    UiDialogMode dialogMode;
+    GameDialogOption dialogOption; /* SAVE or LOAD (the slot list, the name, the question), DOS or NEW GAME (the question) */
+    GameDialogPrompt dialogPrompt;
+    int dialogSlot;        /* the chosen slot row, -1 none */
+    TextField dialogName;  /* the name of the save being made */
+    bool dialogNameKept;   /* the slot's own name is showing with the cursor: Enter keeps it, any other key starts a new one */
+    SaveSlotEntry slots[SaveSlotCount];
     unsigned animationSpeed; /* 1 fast, 5 medium, 9 slow: what the platform should use for its animation tick */
     unsigned rosterCursor; /* the roster screen's slot (0-8) */
     bool clueRegistered;   /* the program counts as registered: the walk through goes past page 5 (else page 6 is refused with the reminder, as in the shareware) */
@@ -105,10 +126,18 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
  */
 void gameUiShowTitle(GameUi *ui);
 
+/*
+ * The start-up the original runs after its boot title and the introduction (InitGame, yendor2.asm:3266): when any of the six save files exists, the pause dialog opens with only LOAD, NEW GAME
+ * and DOS (nothing is drawn behind it but the empty frame): LOAD lists the slots, NEW GAME (after the question) starts a new game on the title menu, DOS leaves. When there are none, the new game
+ * goes straight to the title menu (UiBootTitle) and its E (enter the game) opens the dialog with SAVE, DOS, ANIMATION and RETURN, which RETURN leaves for the game. A new game has an empty party:
+ * E is refused until one is assembled with A.
+ */
+void gameUiBoot(GameUi *ui);
+
 /* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. It has the walk through (F6, I / Q turn pages), the help screen (Tab) and the category lists F1 maps, F2 monsters, F3 spells, F4 magic users (a class, then its spells), F5 items (a group, then its items): Up / Down / I / Q choose, Enter opens, Escape backs out; the entries are the executable's own lists (clueentries.h). */
 void gameUiSetExe(GameUi *ui, const ExeData *exe);
 
-/* One key press; false = quit (Escape with no overlay open). */
+/* One key press; false = quit (Escape with no overlay open, DOS in the dialog, Ctrl+Q on the title menu). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);
 
 /* One animation step of what is on screen: today the monster page of the clue book (cluemonster.h clueMonsterAnimStep; the hit sound goes to the host). The platform calls it once per

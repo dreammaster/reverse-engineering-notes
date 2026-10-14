@@ -24,19 +24,23 @@ Just the game: `cmake --build build --target explore_sdl`, giving `build/tools/y
     build/tools/yendor --scale 4 --no-splash /games/yendor2
     build/tools/yendor --help
 
-It starts like the original: the boot title, then the title menu (C creates a hero, A assembles the party, E enters, I the introduction, R the credits). `--no-title` goes straight into the game,
-`--game 2|3` forces the chapter, `--shareware` plays the unregistered program, `--no-sound` and `--clock-ms N` do what they say. The old form `explore_sdl <2|3> <game dir> [scale]` still works.
+It starts like the original (InitGame): the boot title, then the introduction (Escape in either skips what is left of them), then, when the folder has a save (`SAVGAME1` .. `SAVGAME6`, the original's own
+files, so the DOS game's saves load here), the dialog with LOAD / NEW GAME / DOS -- NEW GAME, after its question, goes to the title menu; with no save it goes to the title menu at once and, after E, to
+the dialog with SAVE / DOS / ANIMATION / RETURN. A new game has no party: A assembles one from the four heroes (E beeps until then); C creates a hero, I plays the introduction, R the credits, Ctrl+Q leaves.
+`--no-splash` skips the boot title and the introduction, `--no-title` goes straight into the game with no start-up at all, `--game 2|3` forces the chapter, `--shareware` plays the unregistered program,
+`--no-sound` and `--clock-ms N` do what they say. The old form `explore_sdl <2|3> <game dir> [scale]` still works.
 
-Keys are the original's (arrows, F1-F4 member sheets, F5/F9 save and load, F8 the clue book, M map, P paper dolls, D the pause dialog, Esc backs out of a screen and, on the main screen, leaves);
+Keys are the original's (arrows, F1-F4 member sheets, F8 the clue book, M map, P paper dolls, D the pause dialog with its six save slots, Esc backs out of a screen and, on the main screen, leaves; F5/F9 are an
+extra quick save and load to `explore.sav`);
 the mouse works as in the original (the title menu, the roster's check boxes and DONE, character creation, the clue book, the pause dialog, conversations and shops, and on the main screen the walk pad, the icon
-row, the map panel and the party panels; the right button backs out of a screen); `EXPLORE_TITLE=1` starts on the title menu,
-`EXPLORE_SPLASH=1` plays the boot title first, `EXPLORE_INTRO=opening|story|ending|credits|splash` a cinematic, `EXPLORE_SHAREWARE=1` the unregistered program, `EXPLORE_KEYS` /
+row, the map panel and the party panels; the right button backs out of a screen); `EXPLORE_BOOT=1` runs the start-up above in a scripted run, `EXPLORE_TITLE=1` starts on the title menu,
+`EXPLORE_SPLASH=1` plays the boot title and the introduction first, `EXPLORE_INTRO=opening|story|ending|credits|splash` a cinematic, `EXPLORE_SHAREWARE=1` the unregistered program, `EXPLORE_KEYS` /
 `EXPLORE_SHOT` a scripted run with a screenshot (see the header). `tests/test_soak.c` feeds random keys through every screen of both games.
 
 ## Layout
 
-* `gameui.h` is the whole game as a platform-independent front end: `gameUiKey`, `gameUiDraw`, `gameUiAnimate`, `gameUiStatus` and a `GameUiHost` of callbacks (effect, music, cinematic, save
-  image). A new platform only has to supply input, a 320 x 200 palette screen, a clock, sound and files.
+* `gameui.h` is the whole game as a platform-independent front end: `gameUiBoot`, `gameUiKey`, `gameUiDraw`, `gameUiAnimate`, `gameUiStatus` and a `GameUiHost` of callbacks (effect, music, cinematic, save
+  image, the six save slots). A new platform only has to supply input, a 320 x 200 palette screen, a clock, sound and files.
 * `session.h` is the engine core (movement, combat, spells, items, talk, shops, saves, time) with no display in it; `introstory.h` the cinematics as scripts; `creationwizard.h` character
   creation; the `clue*.h` modules the clue book; every other header documents the original routine it reimplements (with the IDA address).
 * `tools/` has renderers (`render_view`, `intro_story`, `intro_sheet`), a sound dumper (`cmf_wav`), a headless walker and a parser fuzzer.

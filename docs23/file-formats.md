@@ -7587,6 +7587,36 @@ Item group 2 of the clue book is not a list: `WaitForKeypress` draws `ShowConsum
 
 `PlayTitleScreenSequence` (yendor2.asm:31040) is `splash()` in `introstory.c` (`introSplashStart` / `introSplashPlay`; `explore_sdl` with `EXPLORE_SPLASH=1`): each step can be skipped with Escape; palette block 1 is the fade target on a black screen, picture 0 of category 0 (the SmithWare logo) is drawn at (1, 1), music track 3 starts, the palette fades in over 63 rounds and the logo stays 216 BIOS clock counts (0xD8, about 12 seconds), then the screen fades out. Chapter 3's boot (`sub_20DC4`, yendor3.asm:30192) is `splash3()`: forced music 8; a 640 x 480 VESA logo for 72 ticks (`sub_258A8`; not protection after all but a **PCX file**, the publisher's logo "SPECTRUM PACIFIC PUBLISHING": 29214 bytes (0x721E) at the dword at DS:0xB20B = WORLD.DAT 0x41EAB7, which `sub_25A4E` writes out as LOGO.PCX (DS:0xF9F4) and `sub_258DB` decodes straight into VESA mode 0x101 -- the row width is the header's BytesPerLine, the run length data is `size - 0x380` bytes from byte 128, a byte from 0xC0 is a run of (byte - 0xC0), and the palette is the last 768 bytes shifted right by two; `pcx.c`, shown through `IntroHost.hires`); then palette block 1 on black, picture 0 of category 0 at (1, 1) and picture 34 of category 1 (210 x 105) at (92, 39), 15 ticks, the 63-round fade in, sound event 0x5E and pictures 35-45 of category 1 as the logo animation (a tick each), picture 0 again for 54 ticks, music off and a fade out. A command line switch (DS:0x5374 bit 0x8000) shortens it; not modelled. The same routine runs before character creation (`InitGame`). Chapter 2 has no PCX logo.
 
+### Start-up: InitGame, the save slots and the pause dialog (2026-10-14)
+
+`InitGame` (yendor2.asm:3266; Chapter 3 :26791, the same shape) runs once before the main loop:
+
+1. `findSavegame` (:3407) looks for `SAVGAME1`..`SAVGAME6` in the game folder; each one found sets `g_uiScratchFlags1` bit 0x4000 and its name (the header's first string, at most 24 characters)
+   replaces the slot's initial `        - EMPTY -       ` in the 27-byte-per-slot table at DS:0x6CBE.
+2. Unless the debug bit 0x8000 is set: the boot title (`PlayTitleScreenSequence`), then -- if Escape was not pressed -- `RunCharacterCreation` (the opening animation, whatever its name) and, if
+   Escape was still not pressed, `ShowIntroPicture` (the story text; Chapter 3 has a 20-tick pause instead). **Escape in the boot title skips the introduction as well**; Escape in the animation skips only
+   the story.
+3. **No save (0x4000 clear): `RunTitleScreen`** (the title menu); with a save it is skipped. `RunTitleScreen` starts with `InitializeNewGameWorldState` unless 0x4000 or `g_uiScratchFlags2` 0x400 is set,
+   so a new game (empty party: the four slot words are zeroed, bit 0x800 of every record's `+0x15C` is cleared) begins there. Its keys: C, A, E (refused with the beep, effect 3, while the four party slots sum
+   to 0), R, I, and **Enter (= Ctrl+M) the music, Ctrl+S the sound effects, Ctrl+Q (0x11) leaves** -- Escape is not handled.
+4. The main screen's frame (picture 1) is drawn, with the four party panels only when there is no save, and `RestoreAndRedrawFixedStatusIcon` puts the chapter plate (category 6 picture 0x15 at (0xF8, 9):
+   "CHAPTER II" / "THE TYRANTS OF THAINE") over the minimap area.
+5. `RunGameDialog` runs with flags `0x71` when there is a save (LOAD 0x40, NEW GAME 0x20, DOS 0x10, 0x01 fade) and `0x9D` when there is none (SAVE 0x80, DOS 0x10, ANIMATION 0x08, RETURN 0x04). Whatever
+   ends it (RETURN, a save, a load, NEW GAME's title menu) starts the game (`InitializeDungeonLevel`: reveal round the party, redraw); DOS (after its question) exits. In the game the dialog is
+   opened with 0xFE: every option.
+
+The dialog's slot list (`SelectGameDialogOption`, :26861; region table DS:0x5CD0, rows 1-6 at x 39-201, y 27 + 11k): the chosen option's label is written again in 0x8A and every other label in 6
+(`GameDialog_drawButtons`, style 1 SAVE, 2 LOAD, 3 DOS, 4 NEW GAME), then the six names at (x + 12, y + 1) in 0x0F on 4 (0x7B for the slot last used: `HighlightGameDialogMenuEntry`). Keys 1-6 or a click choose a
+row (a check box, picture 9 / 0x12, appears at its corner); Escape, the option's letter or its own button give up. LOAD: an empty row beeps (effect 3); an occupied one asks `ShowConfirmPrompt 3`. SAVE: sound 4, then
+the name is edited in place (`EditTextField`, 24): an occupied row shows its name with the '-' cursor, Enter keeps it, any other key starts a new name; Escape cancels; then `ShowConfirmPrompt 2`; yes copies the
+name into the header (`StpCpy`, so a shorter name leaves the old tail), `SaveCurrentGameToSlot`, and the dialog ends. NEW GAME and DOS ask `ShowConfirmPrompt 0x1F` / `1`; NEW GAME's yes clears 0x4000 and
+0x2000 of the flags and calls `RunTitleScreen`, and whatever that returns ends the dialog with 0xFE. A confirmation prompt (DS:0xA787, the same text in both chapters) is drawn in the message area: the question in
+0x8A at (240, 96), `    YES` in 0xAA at (240, 120), `    NO` in 0x5B at (240, 132); Y / Enter yes, N / Escape no; the click table DS:0x5D5E has one 6-pixel row per region from y = 96, YES is region 5, any of 6-7 no.
+The prompt texts: 1 "DO YOU WANT TO EXIT TO DOS NOW?", 2 "... SAVE THIS GAME NOW?", 3 "... LOAD THIS GAME NOW?", 0x1F "START A NEW GAME NOW?".
+
+Reimplemented in `src23/gameui.c` (`gameUiBoot`, the dialog modes `UiDialogMenu / Slots / Name / Prompt`) over `gamedialog.c` (drawing) and `sessionNewGame`; the platform keeps the slot files
+(`explore_sdl.c`: `SAVGAMEn` in the game folder, byte-identical to the DOS game's, so its saves load in both).
+
 ### Doors: HandleSpecialCellEntry (2026-10-14)
 
 A door tile is a wall type in `_val32`..`_val31` (Chapter 2 types 6-11, Chapter 3 200-299; `movementIsSpecialWallType`): a wall picture and floor and ceiling words of 0, so the party is never meant to *stand* on one (that gave a water-blue floor). `HandleMovementInput` (yendor2.asm:2288) sends a move whose destination is such a cell, and not locked or trapped (cell flags 0x6000), to `HandleSpecialCellEntry` (yendor2.asm:2480; Chapter 3 :6116), which

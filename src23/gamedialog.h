@@ -96,4 +96,37 @@ void gameDialogSlotsDraw(const ViewRenderer *r, const SaveSlotEntry slots[SaveSl
 /* The slot (0-5) whose row contains the click (UiRegionsGameDialog results 1-6), or -1. */
 int gameDialogSlotForRegion(unsigned region);
 
+/* An empty slot's name as the table at DS:0x6CBE starts out (findSavegame replaces it with the name in the save file). */
+extern const char gameDialogEmptySlotName[];
+
+/*
+ * The dialog while one of its options is under way (GameDialog_drawButtons, yendor2.asm:26968, "style" 1 SAVE, 2 LOAD, 3 DOS, 4 NEW GAME): the panel, `lit` written again in 0x8A and every
+ * other option -- the rest of the four, MUSIC, SOUND FX, RETURN and ANIMATION -- in the dull colour 6; the two check boxes stay as they were drawn.
+ */
+void gameDialogStyleDraw(const ViewRenderer *r, GameDialogOption lit, unsigned driverFlags);
+
+/* The check box beside a slot row: checked (picture 9 / 0x12) while it is the chosen one, unchecked (0x11) after it is given up. */
+void gameDialogSlotMark(const ViewRenderer *r, unsigned slot, bool checked);
+
+/* One slot row's text (the name being typed, say) in 0x0F, or 0x7B when `highlighted`, opaque on colour 4. */
+void gameDialogSlotText(const ViewRenderer *r, unsigned slot, const char *text, bool highlighted);
+
+/*
+ * The confirmation prompts (ShowConfirmPrompt, yendor2.asm:18567; the table of messages at DS:0xA787, the same text in both chapters), shown in the message area of the right-hand panel:
+ * the question in 0x8A at (240, 96) in lines of 6 pixels, "    YES" in 0xAA at (240, 120) and "    NO" in 0x5B at (240, 132). Y or Enter answers yes, N or Escape no; a click on the YES row (region
+ * 5 of the table at DS:0x5D5E, y 120-125) is yes and one on the NO rows (126-137) no.
+ */
+typedef enum {
+    GameDialogPromptDos = 1,      /* DO YOU WANT TO EXIT TO DOS NOW? */
+    GameDialogPromptSave = 2,     /* DO YOU WANT TO SAVE THIS GAME NOW? */
+    GameDialogPromptLoad = 3,     /* DO YOU WANT TO LOAD THIS GAME NOW? */
+    GameDialogPromptNewGame = 31  /* START A NEW GAME NOW? */
+} GameDialogPrompt;
+
+void gameDialogPromptDraw(const ViewRenderer *r, GameDialogPrompt prompt);
+
+/* 1 yes, 0 no, -1 not an answer. */
+int gameDialogPromptKey(uint8_t key);
+int gameDialogPromptClick(int x, int y);
+
 #endif

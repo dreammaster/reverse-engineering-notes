@@ -31,6 +31,11 @@ animation, spells, magic users, items with the ability rows, the attribute-enhan
 Every cinematic is a script: both openings, Chapter 2's ending, both credits, both boot titles (Chapter 3's 640 x 480 logo is a PCX file, `pcx.c`). The shareware demo boundary is `SessionInteractDemoLimit`. `tests/test_soak.c` feeds random keys through every screen of both games. Open: Chapter 1 (a different,
 unanalysed engine). The ScummVM engine itself is deliberately not written here (see `scummvm-plan.md`).
 
+Update 2026-10-14 (from testing the standalone against the DOS game): mouse support, the door mechanism (`HandleSpecialCellEntry`: the door opens, the party passes two cells) and the **start-up
+sequence of `InitGame`** are in -- boot title, introduction, then the LOAD / NEW GAME / DOS dialog when a `SAVGAMEn` exists (else the title menu of a new game with an empty party, then the options
+dialog), the six save slots with their names and the confirmation prompts, `sessionNewGame` (`file-formats.md`, "Start-up: InitGame"). The in-game NEW GAME option works. Escape no longer quits from the title
+menu (Ctrl+Q does), as in the original.
+
 ## Snapshot, 2026-10-07 (newest; supersedes the paragraphs above where they disagree)
 
 82 test suites, all passing. The decoded-and-reimplemented set now also covers the whole visible game (see [porting-guide.md](porting-guide.md)):

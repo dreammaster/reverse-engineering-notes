@@ -112,9 +112,29 @@ int main(void) {
     slots[2].used = slots[2].highlighted = true;
     memset(screen, 0xEE, sizeof(screen));
     gameDialogSlotsDraw(&r, slots);
-    check("slot names are written at (row x + 12, row y + 1): 0x0F normally, 0x7B highlighted, nothing for an empty slot",
-          anyColour(screen, 51, 28, 90, 34, 0x0F) && anyColour(screen, 51, 50, 90, 56, 0x7B) && !anyColour(screen, 51, 39, 90, 45, 0x0F) && screen[28 * 320 + 55] != 0xEE);
+    check("slot names are written at (row x + 12, row y + 1): 0x0F normally, 0x7B highlighted",
+          anyColour(screen, 51, 28, 90, 34, 0x0F) && anyColour(screen, 51, 50, 90, 56, 0x7B) && screen[28 * 320 + 55] != 0xEE);
+    check("an empty slot reads \"- EMPTY -\", indented by eight blanks (its glyphs start at x = 51 + 8 * 6)", !anyColour(screen, 51, 39, 98, 45, 0x0F) && anyColour(screen, 99, 39, 150, 45, 0x0F));
     check("slot rows map to regions 1-6", gameDialogSlotForRegion(1) == 0 && gameDialogSlotForRegion(6) == 5 && gameDialogSlotForRegion(7) == -1 && gameDialogSlotForRegion(0) == -1);
+
+    memset(screen, 0xEE, sizeof(screen));
+    gameDialogStyleDraw(&r, GameDialogLoad, DriverMusicOn);
+    check("while LOAD is under way its label is lit (0x8A) and the other options are dull (colour 6)",
+          anyColour(screen, 81, 95, 105, 101, 0x8A) && !anyColour(screen, 81, 95, 105, 101, 6) && anyColour(screen, 44, 95, 70, 101, 6) && anyColour(screen, 118, 95, 170, 101, 6) &&
+              anyColour(screen, 64, 107, 100, 113, 6) && anyColour(screen, 166, 119, 210, 125, 6) && screen[106 * 320 + 97] == 0x40 + 72 + 0x12);
+    gameDialogSlotMark(&r, 2, true);
+    check("a chosen row's box is checked (picture 9 / 0x12) at the row's corner", screen[49 * 320 + 40] == 0x40 + 72 + 0x12);
+    gameDialogSlotMark(&r, 2, false);
+    check("... and unchecked (0x11) when it is given up", screen[49 * 320 + 40] == 0x40 + 72 + 0x11);
+
+    memset(screen, 0xEE, sizeof(screen));
+    gameDialogPromptDraw(&r, GameDialogPromptNewGame);
+    check("a confirmation prompt: the question in 0x8A at (240, 96), YES in 0xAA at (240, 120), NO in 0x5B at (240, 132), over a cleared message area",
+          screen[110 * 320 + 310] == 4 && anyColour(screen, 240, 96, 312, 108, 0x8A) && anyColour(screen, 240, 120, 312, 126, 0xAA) && anyColour(screen, 240, 132, 312, 138, 0x5B));
+    check("the keys: Y or Enter yes, N or Escape no", gameDialogPromptKey('Y') == 1 && gameDialogPromptKey(0x0D) == 1 && gameDialogPromptKey('N') == 0 && gameDialogPromptKey(0x1B) == 0 && gameDialogPromptKey('X') == -1);
+    check("the clicks: the YES row (120-125) is yes, the NO rows (126-137) no, the rest nothing",
+          gameDialogPromptClick(270, 122) == 1 && gameDialogPromptClick(270, 128) == 0 && gameDialogPromptClick(270, 134) == 0 && gameDialogPromptClick(100, 122) == -1 && gameDialogPromptClick(270, 140) == -1 &&
+              gameDialogPromptClick(270, 110) == -1);
     if (g_failureCount == 0) {
         printf("\nAll tests passed.\n");
         return 0;

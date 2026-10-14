@@ -432,9 +432,198 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     free(world);
 }
 
+/* The six save slots as the platform keeps them: images in memory. */
+static uint8_t g_slotImage[SaveSlotCount][SaveFileSizeMax];
+static size_t g_slotSize[SaveSlotCount];
+
+static bool onSlotName(void *ctx, unsigned slot, char *name, size_t capacity) {
+    (void)ctx;
+    if (!g_slotSize[slot]) {
+        return false;
+    }
+    snprintf(name, capacity, "%.24s", (const char *)g_slotImage[slot]);
+    return true;
+}
+
+static bool onSlotWrite(void *ctx, unsigned slot, const uint8_t *image, size_t size) {
+    (void)ctx;
+    memcpy(g_slotImage[slot], image, size);
+    g_slotSize[slot] = size;
+    return true;
+}
+
+static size_t onSlotRead(void *ctx, unsigned slot, uint8_t *image, size_t capacity) {
+    (void)ctx;
+    if (!g_slotSize[slot] || g_slotSize[slot] > capacity) {
+        return 0;
+    }
+    memcpy(image, g_slotImage[slot], g_slotSize[slot]);
+    return g_slotSize[slot];
+}
+
+static void typeText(GameUi *ui, const char *text) {
+    for (; *text; text++) {
+        gameUiKey(ui, *text == '#' ? UiKeyEnter : *text == '<' ? UiKeyBackspace : (UiKey)*text, false);
+    }
+}
+
+/* The party of the four ready-made heroes, through the roster screen. */
+static void assembleParty(GameUi *ui) {
+    gameUiKey(ui, 'a', false);
+    for (unsigned i = 5; i < 9; i++) {
+        ui->rosterCursor = i;
+        gameUiKey(ui, UiKeyEnter, false);
+    }
+    gameUiKey(ui, UiKeyEscape, false);
+}
+
+/* The start-up (gameUiBoot): the title menu of a new game when there are no saves and the options dialog before the game; the dialog with LOAD / NEW GAME / DOS when there are; the six slots. */
+static void testBoot(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        printf("SKIP %s boot (%s not found)\n", label, path);
+        g_skipCount++;
+        return;
+    }
+    char text[200];
+    memset(g_slotSize, 0, sizeof(g_slotSize));
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead};
+    static GameUi ui;
+    GameSession *s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    int startX = s->x, startY = s->y;
+
+    gameUiBoot(&ui); /* no saves */
+    snprintf(text, sizeof(text), "%s boot: with no saves the new game is on the title menu, with an empty party", label);
+    check(text, ui.overlay == UiOverlayTitle && ui.boot == UiBootTitle && rosterSlotSumCheck(s) == 0);
+    unsigned beeps = g_effects;
+    gameUiKey(&ui, 'e', false);
+    check("E is refused until a party is assembled", ui.overlay == UiOverlayTitle && g_effects > beeps);
+    check("Escape does nothing on the title menu (Ctrl+Q leaves)", gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayTitle && !gameUiKey(&ui, 'q', true));
+    bool musicBefore = (ui.driverFlags & DriverMusicOn) != 0;
+    gameUiKey(&ui, UiKeyEnter, false);
+    gameUiKey(&ui, 's', true);
+    check("Enter on the title menu switches the music, Ctrl+S the sound effects", musicBefore && !(ui.driverFlags & DriverMusicOn) && !(ui.driverFlags & DriverSoundFxOn));
+    ui.driverFlags |= DriverMusicOn | DriverSoundFxOn;
+    assembleParty(&ui);
+    gameUiKey(&ui, 'e', false);
+    snprintf(text, sizeof(text), "%s boot: E on a first start opens the dialog with SAVE, DOS, ANIMATION and RETURN", label);
+    check(text, ui.overlay == UiOverlayDialog && ui.boot == UiBootOptions && ui.dialogFlags == (GameDialogFlagSave | GameDialogFlagDos | GameDialogFlagAnimation | GameDialogFlagReturn));
+    gameUiDraw(&ui);
+    unsigned options = sum(ui.screen);
+    gameUiKey(&ui, 'l', false);
+    check("LOAD is not offered", ui.dialogMode == UiDialogMenu);
+    gameUiKey(&ui, 's', false);
+    gameUiDraw(&ui);
+    check("S lists the six slots", ui.dialogMode == UiDialogSlots && ui.dialogOption == GameDialogSave && sum(ui.screen) != options);
+    gameUiKey(&ui, '3', false);
+    check("choosing a slot asks for a name", ui.dialogMode == UiDialogName && ui.dialogSlot == 2 && !ui.dialogNameKept);
+    typeText(&ui, "hi#");
+    check("Enter on the name asks to save", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptSave && strcmp(ui.dialogName.text, "HI") == 0);
+    gameUiDraw(&ui);
+    gameUiKey(&ui, 'n', false);
+    check("N goes back to choosing a slot", ui.dialogMode == UiDialogSlots && !g_slotSize[2]);
+    gameUiKey(&ui, '3', false);
+    typeText(&ui, "yo<");
+    typeText(&ui, "#");
+    check("Backspace and a name again", ui.dialogMode == UiDialogPrompt && strcmp(ui.dialogName.text, "Y") == 0);
+    gameUiKey(&ui, 'y', false);
+    snprintf(text, sizeof(text), "%s boot: Y saves the game in the slot under that name and the game starts", label);
+    check(text, g_slotSize[2] == (size_t)(game == GameYendor3 ? SaveFileSizeYendor3 : SaveFileSizeYendor2) && strcmp((const char *)g_slotImage[2], "Y") == 0 && ui.overlay == UiOverlayNone && ui.boot == UiBootNone &&
+                    ui.slots[2].used && ui.slots[2].highlighted);
+
+    /* in the game: the dialog has every option */
+    s->x += 2;
+    gameUiKey(&ui, 'd', false);
+    check("the pause dialog offers SAVE, LOAD, NEW GAME, DOS, ANIMATION and RETURN", ui.overlay == UiOverlayDialog && ui.dialogFlags == (GameDialogFlagSave | GameDialogFlagLoad | GameDialogFlagNewGame | GameDialogFlagDos | GameDialogFlagAnimation | GameDialogFlagReturn));
+    gameUiKey(&ui, 's', false);
+    gameUiKey(&ui, '3', false);
+    check("an occupied slot shows its name with the cursor: Enter keeps it", ui.dialogMode == UiDialogName && ui.dialogNameKept && strcmp(ui.dialogName.text, "Y") == 0);
+    gameUiKey(&ui, UiKeyEnter, false);
+    check("... and asks to save", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptSave);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("Escape answers no", ui.dialogMode == UiDialogSlots);
+    gameUiKey(&ui, '3', false);
+    gameUiKey(&ui, 'q', false);
+    check("any other key starts a new name", !ui.dialogNameKept && strcmp(ui.dialogName.text, "Q") == 0);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("Escape gives the name up", ui.dialogMode == UiDialogSlots && ui.dialogSlot == -1);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("and Escape the slot list", ui.dialogMode == UiDialogMenu && ui.overlay == UiOverlayDialog);
+    gameUiKey(&ui, 'l', false);
+    unsigned beepsBefore = g_effects;
+    gameUiKey(&ui, '4', false);
+    check("LOAD refuses an empty slot with the beep", ui.dialogMode == UiDialogSlots && g_effects > beepsBefore);
+    gameUiKey(&ui, '3', false);
+    check("an occupied one asks to load", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptLoad);
+    gameUiKey(&ui, 'y', false);
+    snprintf(text, sizeof(text), "%s boot: Y loads the slot -- the party is back where it was saved", label);
+    check(text, ui.overlay == UiOverlayNone && s->x == startX && s->y == startY);
+    gameUiKey(&ui, 'd', false);
+    gameUiKey(&ui, 'd', false);
+    check("DOS asks first", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptDos);
+    gameUiKey(&ui, 'n', false);
+    check("N stays", ui.dialogMode == UiDialogMenu && ui.overlay == UiOverlayDialog);
+    gameUiKey(&ui, 'd', false);
+    check("Y leaves", !gameUiKey(&ui, 'y', false));
+    sessionFree(s);
+
+    /* a second start: there is a save now */
+    s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    gameUiBoot(&ui);
+    snprintf(text, sizeof(text), "%s boot: with a save the dialog opens with only LOAD, NEW GAME and DOS", label);
+    check(text, ui.overlay == UiOverlayDialog && ui.boot == UiBootSaves && ui.dialogFlags == (GameDialogFlagLoad | GameDialogFlagNewGame | GameDialogFlagDos));
+    gameUiDraw(&ui);
+    unsigned saves = sum(ui.screen);
+    gameUiKey(&ui, 'r', false);
+    gameUiKey(&ui, UiKeyEscape, false);
+    gameUiKey(&ui, 's', false);
+    gameUiDraw(&ui);
+    check("RETURN, Escape and SAVE do nothing", ui.overlay == UiOverlayDialog && ui.dialogMode == UiDialogMenu && sum(ui.screen) == saves);
+    gameUiKey(&ui, 'n', false);
+    check("N asks to start a new game", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptNewGame);
+    gameUiDraw(&ui);
+    check("... the question is in the message area", sum(ui.screen) != saves);
+    gameUiKey(&ui, 'n', false);
+    gameUiKey(&ui, 'l', false);
+    gameUiKey(&ui, '3', false);
+    gameUiKey(&ui, 'y', false);
+    check("LOAD, slot 3, Y goes into the game", ui.overlay == UiOverlayNone && ui.boot == UiBootNone && s->x == startX && rosterSlotSumCheck(s) != 0);
+    gameUiKey(&ui, 'd', false);
+    gameUiKey(&ui, 'n', false);
+    gameUiKey(&ui, 'y', false);
+    snprintf(text, sizeof(text), "%s boot: NEW GAME in the game starts over on the title menu with an empty party at the start", label);
+    check(text, ui.overlay == UiOverlayTitle && rosterSlotSumCheck(s) == 0 && s->x == startX && s->y == startY && ui.boot == UiBootNone);
+    assembleParty(&ui);
+    gameUiKey(&ui, 'e', false);
+    check("E goes straight into the game", ui.overlay == UiOverlayNone);
+    gameUiKey(&ui, 'd', false);
+    gameUiKey(&ui, 'l', false);
+    gameUiClick(&ui, 100, 53, false);
+    check("a click on a slot row chooses it (the third holds a save, so it asks)", ui.dialogMode == UiDialogPrompt && ui.dialogPrompt == GameDialogPromptLoad && ui.dialogSlot == 2);
+    gameUiClick(&ui, 270, 122, false);
+    check("a click on YES loads it", ui.overlay == UiOverlayNone);
+    gameUiKey(&ui, 'd', false);
+    gameUiKey(&ui, 'l', false);
+    gameUiClick(&ui, 100, 53, false);
+    gameUiClick(&ui, 270, 134, false);
+    check("a click on NO goes back to the slots", ui.dialogMode == UiDialogSlots);
+    gameUiClick(&ui, 85, 97, false); /* the LOAD button itself gives the list up */
+    check("a click on the LOAD button leaves the slot list", ui.dialogMode == UiDialogMenu);
+    sessionFree(s);
+    free(world);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testBoot(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testBoot(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

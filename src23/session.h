@@ -292,6 +292,13 @@ bool sessionPickUp(GameSession *session, unsigned member, unsigned slotNumber, u
 size_t sessionSave(GameSession *session, uint8_t *out, size_t capacity);
 bool sessionLoad(GameSession *session, const uint8_t *data, size_t size);
 
+/*
+ * The title screen's New Game (InitializeNewGameWorldState, newgame.h): the game starts over from the template in the world data -- the roster of ready-made heroes, the start position and
+ * clock, nothing explored but the cells round the start -- and, unlike sessionNew, with no party: the four slots are empty until the player assembles one (the title's E is refused until
+ * then). False when the world data lacks the template.
+ */
+bool sessionNewGame(GameSession *session, const uint8_t *worldDat, size_t size);
+
 /* Replaces the four active members with characters made elsewhere (chargen.h: partyChooseClass, partyRollAttributes...; charcreate.c's screens); the party keeps its start position. */
 void sessionSetParty(GameSession *session, const uint8_t records[4][SavePartyRecordSize]);
 

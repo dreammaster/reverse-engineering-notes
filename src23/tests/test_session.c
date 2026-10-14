@@ -879,6 +879,16 @@ static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const
         check("... and Chapter 3's travel flags", b->travelFlags == 0x2000);
     }
     check("a save of the other game is refused", !sessionLoad(b, (const uint8_t *)"short", 5));
+    int startX = b->x;
+    int startY = b->y;
+    GameSession *fresh = sessionNew(game, world, size);
+    int originX = fresh->x, originY = fresh->y;
+    sessionFree(fresh);
+    snprintf(text, sizeof(text), "%s: a new game starts over at the start with an empty party, nothing held and the first day", label);
+    check(text, sessionNewGame(b, world, size) && b->x == originX && b->y == originY && (b->x != startX || b->y != startY) && sessionPartyRecord(b, 0) == NULL && sessionPartyRecord(b, 3) == NULL &&
+                    b->clock.day == 1 && b->heldItem == 0 && !globalFlagTest(saveGlobalFlags(&b->save), SaveHeaderGlobalFlagsSize, 77) && !b->doorOpening);
+    check("... with the roster of ready-made heroes still in the file", saveGamePartyRecord(&b->save, 5) && partyGetU16(saveGamePartyRecord(&b->save, 5), PartyFieldLevel) != 0);
+    check("a too-short world is refused", !sessionNewGame(b, world, 100));
     sessionFree(a);
     sessionFree(b);
 }

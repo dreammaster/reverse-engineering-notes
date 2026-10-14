@@ -1446,9 +1446,29 @@ bool sessionLoad(GameSession *s, const uint8_t *data, size_t size) {
     memcpy(s->pool, saveGameSection(&s->save, SaveSectionMonsters), sizeof(s->pool));
     memset(&s->combat, 0, sizeof(s->combat));
     s->talking = false;
+    s->doorOpening = false;
     s->pendingTravel = 0;
     s->pendingSound = 0;
     s->heldItem = s->heldExtra = 0;
+    sessionRebuild(s);
+    return true;
+}
+
+bool sessionNewGame(GameSession *s, const uint8_t *worldDat, size_t size) {
+    SaveGame fresh;
+    saveGameInit(&fresh, s->game);
+    if (!saveGameNewGame(&fresh, s->game, worldDat, size)) {
+        return false;
+    }
+    static uint8_t image[SaveFileSizeMax];
+    size_t bytes = saveGameStore(&fresh, image, sizeof(image));
+    if (!bytes || !sessionLoad(s, image, bytes)) {
+        return false;
+    }
+    s->clock.day = s->clock.month = s->clock.year = 1;
+    s->log[0] = 0;
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
     sessionRebuild(s);
     return true;
 }

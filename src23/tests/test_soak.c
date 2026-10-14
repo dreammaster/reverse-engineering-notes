@@ -161,7 +161,7 @@ static void soakGame(GameKind game, const char *envName, const char *defaultDir,
         }
         if (!running) {
             quits++;
-            bool allowed = key == UiKeyEscape || (key == 'q' && ctrl) || key == UiKeyNone || (was == UiOverlayDialog && key == 'd'); /* a click can hit the dialog's DOS option */
+            bool allowed = key == UiKeyEscape || (key == 'q' && ctrl) || key == UiKeyNone || (was == UiOverlayDialog && (key == 'y' || key == UiKeyEnter)); /* the dialog's DOS option, once its question is answered (a click can do it too) */
             quitEarly = quitEarly || !allowed;
             if (title) {
                 gameUiShowTitle(&ui); /* start over: the platform would have ended */
@@ -190,7 +190,7 @@ static void soakGame(GameKind game, const char *envName, const char *defaultDir,
     char text[160];
     snprintf(text, sizeof(text), "%s (%s start, seed %llu): %u random keys leave the front end sane (positions, party slots, cursors)", label, title ? "title" : "game", seed, keys);
     check(text, sane && partyOk);
-    check("it only ever quits on Escape, Ctrl+Q or the pause dialog's DOS option", !quitEarly);
+    check("it only ever quits on Escape, Ctrl+Q or the pause dialog's DOS question answered yes", !quitEarly);
     unsigned reached = 0;
     for (unsigned o = 0; o < 16; o++) {
         reached += overlays[o] > 0;
