@@ -56,6 +56,16 @@ typedef struct {
 } SessionCombat;
 
 /*
+ * What the last fight or shot earned (ShowLootAndAwardExperience, yendor2.asm:33826): when the staged experience is not zero the rewards are added to the party's counters
+ * and members and the front end shows them in the text panel -- GOLD COINS, MAGIC ORE and NUORE when they are not zero, and EXPERIENCE -- until the next command. `pending` is
+ * set by every victory (a combat, a shot, a spell) and cleared by the front end.
+ */
+typedef struct {
+    bool pending;
+    Bcd4 gold, ore, nuore, experience;
+} SessionLoot;
+
+/*
  * The ranged shot, the S key and the first icon of the row (HandleRangedOrCombatAction with g_uiScratchFlags3 bit 0x100, yendor2.asm:23769; Chapter 2 only -- Chapter 3's routine has not been
  * identified): every member who can act (status bits 0x1C40 clear) and carries a weapon that classifies as one (item.h itemClassifyServiceTier) shoots it, which counts as a use of it (the
  * wear counter ticks, partyTickEquippedItemDurability; a weapon that breaks does not shoot). The shots fly together down the party's column of the view -- the four weapon slices of picture
@@ -98,6 +108,7 @@ typedef struct GameSession {
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
     bool doorOpening;          /* a door is opening (sessionMove returned SessionStepDoorOpening): sessionScene draws the opening frame until sessionDoorFinish */
+    SessionLoot loot;          /* the rewards of the last victory, for the text panel */
     SessionShot shot;          /* the ranged shot in flight (sessionShootStart): sessionScene draws it, sessionShootStep moves it */
     bool shareware;            /* the unregistered program: sessionInteract refuses the demo boundary (Chapter 2) */
     bool talking;

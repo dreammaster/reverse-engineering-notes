@@ -18,6 +18,7 @@
 #include "localmap.h"
 #include "maininput.h"
 #include "minimap.h"
+#include "monsterpanel.h"
 #include "music.h"
 #include "paperdoll.h"
 #include "party.h"
@@ -25,6 +26,7 @@
 #include "roster.h"
 #include "statsheet.h"
 #include "statuspanel.h"
+#include "textpanel.h"
 #include "titlemenu.h"
 #include "uiregions.h"
 
@@ -251,6 +253,78 @@ static void pressButton(GameUi *ui, unsigned picture, int x, int y, unsigned tic
 }
 
 enum { IconRowY = 67, IconShootX = 239, IconAlchemyX = 258, IconRestX = 277, IconDialogX = 296 };
+
+/* g_monsterDetailRevealTier (UpdatePartyAverageStatTiers, yendor2.asm:19028): the average of the record word +0x58 over the members who can act. */
+static unsigned monsterRevealTier(GameSession *s) {
+    unsigned sum = 0, count = 0;
+    for (unsigned slot = 0; slot < 4; slot++) {
+        const uint8_t *member = sessionPartyRecord(s, slot);
+        if (!member) {
+            break;
+        }
+        if (!(partyGetU16(member, PartyFieldStatusFlags) & 0x1C40)) {
+            sum += partyGetU16(member, 0x58);
+            count++;
+        }
+    }
+    return count ? sum / count : 0;
+}
+
+/* DrawMonsterInfoPanels: the combat's three monsters, by name (and by what the party has revealed), in the right-hand panel; the one the next attack falls on is in 0x8A. */
+static void combatPanelsDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    SessionCombat *c = &s->combat;
+    unsigned active = CombatMonsterSlotCount;
+    combatSelectActiveMonster(c->order, c->count, c->defeated, &active);
+    unsigned tier = monsterRevealTier(s);
+    textPanelClear(&ui->renderer, true);
+    for (unsigned i = 0; i < MonsterPanelCount && i < CombatMonsterSlotCount; i++) {
+        uint8_t *monster = c->slots + (size_t)i * MonsterRecordSize;
+        if (monsterGetU16(monster, MonsterFieldType)) {
+            monsterPanelDraw(&ui->renderer, i, monster, i == active, tier);
+        }
+    }
+}
+
+/* ShowLootAndAwardExperience's panel: GOLD COINS always, MAGIC ORE and NUORE when there are any, EXPERIENCE lower down. */
+static void lootDraw(GameUi *ui) {
+    const ViewRenderer *r = &ui->renderer;
+    const SessionLoot *loot = &ui->session->loot;
+    static const uint8_t zero[4] = {0, 0, 0, 0};
+    char number[12];
+    int y = 96;
+    textPanelClear(r, false);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "GOLD COINS:", 0x8A, 4, FontOpaque);
+    bcd4Format(loot->gold, number);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
+    y += 18;
+    if (memcmp(loot->ore, zero, 4) != 0) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "MAGIC ORE: ", 0x8A, 4, FontOpaque);
+        bcd4Format(loot->ore, number);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
+        y += 12;
+    }
+    if (memcmp(loot->nuore, zero, 4) != 0) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "NUORE: ", 0x8A, 4, FontOpaque);
+        bcd4Format(loot->nuore, number);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
+    }
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 144, "EXPERIENCE:", 0x7B, 4, FontOpaque);
+    bcd4Format(loot->experience, number);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 150, number, 0x0F, 4, FontOpaque);
+}
+
+/* DrawPartyStatusIcon: while a member is to act in a combat (HandleDungeonInput) the 32 x 32 selection frame (category 7 picture 0) is drawn over his or her face. */
+static void actingFrameDraw(GameUi *ui) {
+    SessionCombat *c = &ui->session->combat;
+    if (c->cursor < c->count && !c->order[c->cursor].isMonster) {
+        static const int kX[4] = {8, 0x42, 0x7C, 0xB6};
+        unsigned member = c->order[c->cursor].index;
+        if (member < 4) {
+            viewDrawPicture(&ui->renderer, 7, 0, kX[member], 0x94, true, 0);
+        }
+    }
+}
 
 void gameUiSettle(GameUi *ui) {
     GameSession *s = ui->session;
@@ -790,6 +864,10 @@ void gameUiDraw(GameUi *ui) {
     if (ui->overlay == UiOverlayNone) {
         if (s->combat.active) { /* DrawAndCacheStatusIcon: the swords take the shoot icon's place in a combat */
             viewDrawPicture(&ui->renderer, 8, 3, IconShootX, IconRowY, false, 0);
+            combatPanelsDraw(ui);
+            actingFrameDraw(ui);
+        } else if (s->loot.pending) {
+            lootDraw(ui);
         }
         if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
             viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
@@ -1253,6 +1331,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
                 }
             }
         }
+        playPending(ui);
         return true;
     }
     if (key == 'c') { /* outside a combat: the next spell, in id order, that any member knows and can cast (support and exploration spells) */
@@ -1365,6 +1444,7 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     if (s->doorOpening || s->shot.active) { /* any key finishes a door that is still opening, or a shot, first */
         gameUiSettle(ui);
     }
+    s->loot.pending = false; /* the loot panel stays until the next command */
     if (ui->overlay == UiOverlayTitle) {
         if (key == 'e') {
             if (!titleCanEnter(rosterSlotSum(ui))) {
@@ -1657,6 +1737,7 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
 }
 
 bool gameUiClick(GameUi *ui, int x, int y, bool right) {
+    ui->session->loot.pending = false; /* the loot panel stays until the next command */
     if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
         return press(ui, UiKeyEscape);
     }

@@ -104,12 +104,28 @@ static void combatCheckWipe(GameSession *s) {
     }
 }
 
+/* The rewards of a victory go to the party; when there is experience they are also kept to be shown (ShowLootAndAwardExperience) and the "treasure" sound (_val16, 7) is asked for. */
+static void awardLoot(GameSession *s, const MonsterRewardStaging *staging) {
+    monsterRewardsAward(&s->save, s->game, staging);
+    static const uint8_t zero[4] = {0, 0, 0, 0};
+    if (memcmp(staging->experience, zero, 4) != 0) {
+        s->loot.pending = true;
+        memcpy(s->loot.gold, staging->gold, 4);
+        memcpy(s->loot.ore, staging->ore, 4);
+        memcpy(s->loot.nuore, staging->nuore, 4);
+        memcpy(s->loot.experience, staging->experience, 4);
+        if (!s->pendingSound) {
+            s->pendingSound = 7;
+        }
+    }
+}
+
 /* ProcessCombatRound after a combatant has acted: reap the dead, then the next combatant. */
 static void combatAfterAction(GameSession *s) {
     SessionCombat *c = &s->combat;
     CombatRoundOutcome outcome = combatProcessRound(c->slots, c->order, c->count, c->defeated, &c->cursor, &c->staging, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
     if (outcome == CombatRoundNoMonstersLeft) {
-        monsterRewardsAward(&s->save, s->game, &c->staging);
+        awardLoot(s, &c->staging);
         memset(&c->staging, 0, sizeof(c->staging));
         c->active = false;
         snprintf(s->log, sizeof(s->log), "victory: the loot and experience are in the party's totals");
@@ -470,7 +486,7 @@ bool sessionShootStart(GameSession *s) {
 
 static void shotEnd(GameSession *s) { /* the common epilogue (loc_1D747): the loot, the monsters' turn */
     SessionShot *shot = &s->shot;
-    monsterRewardsAward(&s->save, s->game, &shot->staging);
+    awardLoot(s, &shot->staging);
     memset(&shot->staging, 0, sizeof(shot->staging));
     shot->active = shot->fighting = shot->shown = false;
     memset(shot->picture, 0, sizeof(shot->picture));
@@ -623,7 +639,7 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
             break;
         }
     }
-    monsterRewardsAward(&s->save, s->game, &staging);
+    awardLoot(s, &staging);
     sessionRebuild(s);
     return hit;
 }
@@ -664,7 +680,7 @@ static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spe
     } else {
         combatApplyScreenWideAttack(NULL, rowMonsters, caster, spell, s->scrollCast, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
     }
-    monsterRewardsAward(&s->save, s->game, &staging);
+    awardLoot(s, &staging);
     sessionRebuild(s);
     return found > 0;
 }

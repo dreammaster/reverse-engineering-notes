@@ -166,6 +166,10 @@ static void testCombat(const char *envName, const char *defaultDir) {
     check("the attack spell is cast by the heroes who know it (and refused when the MP are gone), the others swing", casts > 0 && casts + refused <= swings);
     check("the combat ends one way or the other", !s->combat.active);
     if (!s->combat.wiped) {
+        static const uint8_t none[4] = {0, 0, 0, 0};
+        check("a won combat keeps what it earned for the text panel (experience, the loot) and asks for the treasure sound", s->loot.pending && memcmp(s->loot.experience, none, 4) != 0);
+    }
+    if (!s->combat.wiped) {
         check("a won combat leaves the monster out of the pool and the move command free again", sessionMove(s, MovementTurnLeft) == SessionStepTurned);
     } else {
         check("a wiped party cannot move", sessionMove(s, MovementTurnLeft) == SessionStepBusy);
