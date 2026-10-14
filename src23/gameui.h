@@ -87,6 +87,9 @@ typedef struct {
     CreationWizard wizard; /* the character creation under way (UiOverlayCreate) */
     unsigned wizardSlot;   /* the roster record it will be stored in */
     unsigned doorTicks;    /* animation ticks until an opening door (session.h) is passed */
+    unsigned pressTicks;   /* animation ticks the pressed button below stays down */
+    unsigned pressPicture; /* category 8 picture of the pressed button (the pad arrows 18..28, the icon row 2, 4, 6, 8, 10) */
+    int pressX, pressY;    /* where it is drawn: the button's corner */
     unsigned driverFlags;  /* the pause dialog's switches (gamedialog.h: music available / on, sound effects available / on) */
     UiBoot boot;
     unsigned dialogFlags;  /* the options the open dialog enables (the GameDialogFlag bits, the original's g_uiScratchFlags1) */
@@ -140,11 +143,11 @@ void gameUiSetExe(GameUi *ui, const ExeData *exe);
 /* One key press; false = quit (Escape with no overlay open, DOS in the dialog, Ctrl+Q on the title menu). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);
 
-/* One animation step of what is on screen: today the monster page of the clue book (cluemonster.h clueMonsterAnimStep; the hit sound goes to the host). The platform calls it once per
+/* One animation step of what is on screen: a shot in flight (session.h SessionShot: the sound it asks for is played here), a pressed button coming up, a door opening, or the monster page of the clue book (cluemonster.h clueMonsterAnimStep; the hit sound goes to the host). The platform calls it once per
  * animation tick (the speed of the pause dialog; the original steps an attacking monster every 2 ticks) and redraws; true when the screen changed. */
 bool gameUiAnimate(GameUi *ui);
 
-/* Finishes what an animation tick would (a door that is opening is passed now): for a platform that is about to take a screenshot or save. */
+/* Finishes what animation ticks would (a door that is opening is passed now, a shot in flight is over): for a platform that is about to take a screenshot or save. */
 void gameUiSettle(GameUi *ui);
 
 /* A mouse click at (x, y) in the 320 x 200 screen (`right` for the right button): the same commands as the keys, through the original's click regions (uiregions.h) -- the title menu, the roster

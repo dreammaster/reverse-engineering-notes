@@ -339,6 +339,29 @@ static unsigned rowMaskTable(unsigned layer) {
     }
 }
 
+static void blitLayer(const Blit *b, unsigned layer, unsigned depth, unsigned frame) {
+    switch (layer) {
+    case 1:
+        patchSprite(b, Val12, depth, 70);
+        break;
+    case 2:
+        patchSprite(b, Val13, depth, 8);
+        break;
+    case 3:
+        columnSprite(b, depth, true);
+        break;
+    case 4:
+        columnSprite(b, depth, false);
+        break;
+    case 6:
+        stripSprite(b, depth, frame);
+        break;
+    default:
+        rowMaskSprite(b, rowMaskTable(layer), depth);
+        break;
+    }
+}
+
 static void drawSpriteRemapped(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade,
                                bool transparent, unsigned frame, const uint8_t *remap, unsigned effect) {
     Blit b;
@@ -353,26 +376,23 @@ static void drawSpriteRemapped(const ViewRenderer *r, unsigned layer, unsigned c
         }
         b.remap = b.remapWords[0] != 0;
     }
-    switch (layer) {
-    case 1:
-        patchSprite(&b, Val12, depth, 70);
-        break;
-    case 2:
-        patchSprite(&b, Val13, depth, 8);
-        break;
-    case 3:
-        columnSprite(&b, depth, true);
-        break;
-    case 4:
-        columnSprite(&b, depth, false);
-        break;
-    case 6:
-        stripSprite(&b, depth, frame);
-        break;
-    default:
-        rowMaskSprite(&b, rowMaskTable(layer), depth);
-        break;
+    blitLayer(&b, layer, depth, frame);
+}
+
+/* AnimateProjectileStep: the weapons' slices, put together in a 210 x 105 buffer, drawn through the layer 7 tables at the cell `depth`. */
+static void drawProjectile(const ViewRenderer *r, const ViewScene *scene) {
+    enum { Width = 210, Height = 105, Slice = 53 };
+    static const unsigned kSliceX[4] = {0, 0x36, 0x69, 0x9D};
+    static uint8_t composite[Width * Height];
+    memset(composite, 0xFF, sizeof(composite));
+    for (unsigned slot = 0; slot < 4; slot++) {
+        const uint8_t *source = scene->projectilePictures[slot] ? r->picture(r->pictureCtx, 1, scene->projectilePictures[slot]) : NULL;
+        for (unsigned row = 0; source && row < Height; row++) {
+            memcpy(&composite[row * Width + kSliceX[slot]], &source[row * Width + kSliceX[slot]], Slice);
+        }
     }
+    Blit b = {r, composite, Width, Width * Height, 0, true, 0, false, {0}};
+    blitLayer(&b, 7, scene->projectileDepth, 0);
 }
 
 void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, unsigned id, unsigned depth, int8_t shade, bool transparent,
@@ -705,5 +725,8 @@ void viewRender(const ViewRenderer *r, const ViewScene *scene) {
         drawRow(&sc, row);
     }
     drawVanishingPoint(&sc);
+    if (scene->projectileDepth) {
+        drawProjectile(r, scene);
+    }
     g_scene = NULL;
 }

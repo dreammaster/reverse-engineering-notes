@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
@@ -14,6 +14,7 @@
 
 #include "gameui.h"
 #include "gamedialog.h"
+#include "uiregions.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -259,6 +260,52 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiDraw(&ui);
     bool mapShown = ui.overlay == UiOverlayLocalMap && sum(ui.screen) != before;
     check("M opens the local map, Escape closes it without quitting", mapShown && gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayNone);
+    /* the buttons show pressed: the walk pad's arrow while the move runs, the shoot icon while a shot flies */
+    {
+        unsigned padCount;
+        const uint16_t(*pad)[5] = uiRegionEntries(game, UiRegionsDirectionPad, &padCount);
+        gameUiAnimate(&ui);
+        gameUiKey(&ui, UiKeyLeft, false);
+        gameUiDraw(&ui);
+        bool down = pad && padCount >= 6 && ui.pressTicks == 1 && ui.pressPicture == 18 && ui.screen[pad[0][2] * ViewScreenWidth + pad[0][0]] == 0x20 + 8 * 7 + 18 % 5;
+        gameUiAnimate(&ui);
+        gameUiDraw(&ui);
+        check("the turn-left arrow is drawn pressed (category 8 picture 18) for a tick after the key, then comes up", down && ui.pressTicks == 0 && ui.screen[pad[0][2] * ViewScreenWidth + pad[0][0]] != 0x20 + 8 * 7 + 18 % 5);
+        gameUiKey(&ui, UiKeyRight, false);
+        gameUiAnimate(&ui);
+        s->x = game == GameYendor2 ? 172 : s->x;
+        if (game == GameYendor2) {
+            s->y = 36;
+            s->facing = SaveFacingEast;
+            sessionRebuild(s);
+        }
+        gameUiKey(&ui, 's', false);
+        gameUiDraw(&ui);
+        bool flying = s->shot.active && ui.screen[67 * ViewScreenWidth + 239] == 0x20 + 8 * 7 + 2 % 5;
+        unsigned ticks = 0;
+        while (s->shot.active && ticks < 80) {
+            gameUiAnimate(&ui);
+            ticks++;
+        }
+        gameUiDraw(&ui);
+        snprintf(text, sizeof(text), "%s: S shoots (Chapter 2 only): the shoot icon is pressed while the shot flies, and the shot ends", label);
+        check(text, game == GameYendor3 ? !s->shot.active : (flying && !s->shot.active && ticks > 0));
+        gameUiKey(&ui, ' ', false);
+        check("Space uses what is ahead (the inn's wall: nothing happens; in Chapter 3 it may open a talk)", ui.overlay == UiOverlayNone || game == GameYendor3);
+        for (unsigned close = 0; close < 4 && ui.overlay != UiOverlayNone; close++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
+        check("so does the right button on the view", gameUiClick(&ui, 100, 100, true) && (ui.overlay == UiOverlayNone || game == GameYendor3));
+        for (unsigned close = 0; close < 4 && ui.overlay != UiOverlayNone; close++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
+        if (game == GameYendor2) {
+            s->x = 166;
+            s->y = 36;
+            s->facing = SaveFacingWest;
+            sessionRebuild(s);
+        }
+    }
     gameUiKey(&ui, UiKeyF2, false);
     gameUiDraw(&ui);
     check("F2 opens the second hero's sheet", ui.overlay == UiOverlayDetail && ui.hero == 1);

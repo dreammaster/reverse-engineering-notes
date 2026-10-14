@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
  *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
  *
@@ -847,6 +847,80 @@ static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(s);
 }
 
+/* The S key: the ranged shot (Chapter 2). */
+static void testShot(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    if (game != GameYendor2) {
+        check("Chapter 3's shot is not decoded: S does nothing", !sessionShootStart(s));
+        sessionFree(s);
+        return;
+    }
+    /* the four heroes carry slings (0x21E, in the weapon slot): the shot flies as four rocks (picture 0x51) down the column of the view and is deflected by the wall */
+    place(s, 172, 36, SaveFacingEast);
+    unsigned wear = partyGetU16(sessionPartyRecord(s, 0), 0xBE);
+    check("S starts a shot with the shoot sound (0x1D)", sessionShootStart(s) && s->shot.active && s->pendingSound == 0x1D);
+    check("... which counts as a use of each weapon (the wear counter ticks)", partyGetU16(sessionPartyRecord(s, 0), 0xBE) == wear + 1);
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    sessionScene(s, &scene, cells);
+    check("the first frame is the picture of four rocks at the party's own cell (49)", scene.projectileDepth == 49 && scene.projectilePictures[0] == 0x51 && scene.projectilePictures[3] == 0x51);
+    check("a second shot cannot start meanwhile", !sessionShootStart(s));
+    unsigned steps = 0, depthAtEnd = 0;
+    bool deflected = false;
+    s->pendingSound = 0;
+    while (s->shot.active && steps < 60) {
+        sessionShootStep(s);
+        sessionScene(s, &scene, cells);
+        depthAtEnd = scene.projectileDepth ? scene.projectileDepth : depthAtEnd;
+        deflected = deflected || s->pendingSound == 6;
+        s->pendingSound = 0;
+        steps++;
+    }
+    snprintf(text, sizeof(text), "%s: the shot is stopped by the wall ahead (sound 6) and is over", label);
+    check(text, !s->shot.active && deflected && steps < 12 && depthAtEnd >= 25 && depthAtEnd <= 46);
+
+    /* a monster in the column: the members shoot it one after the other */
+    place(s, 161, 31, SaveFacingNorth);
+    bool fought = false;
+    unsigned sounds = 0;
+    for (unsigned turn = 0; turn < 400 && !fought && !s->combat.active; turn++) {
+        sessionScene(s, &scene, cells);
+        static const unsigned column[] = {46, 43, 40, 36, 25};
+        bool clear = false;
+        for (unsigned i = 0; i < 5 && !clear; i++) {
+            if (cells[column[i]].flags & ViewportCellHidden) {
+                break;
+            }
+            if (scene.cellMonsters[column[i]]) {
+                clear = true;
+            }
+        }
+        if (clear) {
+            if (sessionShootStart(s)) {
+                for (unsigned step = 0; step < 80 && s->shot.active; step++) {
+                    sessionShootStep(s);
+                    sounds += s->pendingSound == 0x0D || s->pendingSound == 0x1E;
+                    s->pendingSound = 0;
+                }
+                fought = sounds > 0;
+            }
+            if (!fought) {
+                place(s, 161, 31, SaveFacingNorth);
+            }
+        }
+        if (!fought) {
+            sessionMove(s, turn & 1 ? MovementTurnRight : MovementTurnLeft);
+        }
+    }
+    snprintf(text, sizeof(text), "%s: a shot at a monster in the column is fought (a hit sound 0x0D or a miss 0x1E per member) and ends", label);
+    check(text, fought && !s->shot.active);
+    sessionFree(s);
+}
+
 /* Saving and loading: the state of the session goes into a save image and comes back in a fresh session. */
 static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *a = sessionNew(game, world, size), *b = sessionNew(game, world, size);
@@ -1036,6 +1110,7 @@ int main(void) {
             testKeyItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testShot(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

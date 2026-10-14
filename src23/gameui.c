@@ -234,15 +234,49 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
     }
 }
 
-void gameUiSettle(GameUi *ui) {
-    if (ui->session->doorOpening) {
-        sessionDoorFinish(ui->session);
-        ui->doorTicks = 0;
-        gameUiAmbientMusic(ui);
+/* The sounds a session step asked for (pendingSound), played now. */
+static void playPending(GameUi *ui) {
+    if (ui->session->pendingSound) {
+        effect(ui, ui->session->pendingSound);
+        ui->session->pendingSound = 0;
     }
 }
 
+/* A button of the main screen drawn pressed (the original draws the pressed picture while the command runs: HandleMovementInput's DrawMovementFeedbackIcon, the icon row's own routines). */
+static void pressButton(GameUi *ui, unsigned picture, int x, int y, unsigned ticks) {
+    ui->pressPicture = picture;
+    ui->pressX = x;
+    ui->pressY = y;
+    ui->pressTicks = ticks;
+}
+
+enum { IconRowY = 67, IconShootX = 239, IconAlchemyX = 258, IconRestX = 277, IconDialogX = 296 };
+
+void gameUiSettle(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (s->doorOpening) {
+        sessionDoorFinish(s);
+        ui->doorTicks = 0;
+        gameUiAmbientMusic(ui);
+    }
+    while (s->shot.active) {
+        sessionShootStep(s);
+        playPending(ui);
+    }
+    ui->pressTicks = 0;
+}
+
 bool gameUiAnimate(GameUi *ui) {
+    bool changed = false;
+    if (ui->pressTicks > 0) { /* a pressed button comes up */
+        ui->pressTicks--;
+        changed = true;
+    }
+    if (ui->session->shot.active) { /* the shot: one frame (or one fight) per tick */
+        sessionShootStep(ui->session);
+        playPending(ui);
+        return true;
+    }
     if (ui->session->doorOpening) { /* the frame of the door opening has been shown for a moment: pass it */
         if (ui->doorTicks > 0) {
             ui->doorTicks--;
@@ -253,7 +287,7 @@ bool gameUiAnimate(GameUi *ui) {
         return true;
     }
     if (ui->overlay != UiOverlayClue || ui->clueScreen != 2 || ui->clueCategory != 2) {
-        return false;
+        return changed;
     }
     unsigned sound = clueMonsterAnimStep(ui->clueMonster, &ui->clueAnim);
     if (sound) {
@@ -665,6 +699,7 @@ void gameUiBoot(GameUi *ui) {
 /* The pause dialog as it is drawn in each of its modes. */
 static void dialogDraw(GameUi *ui) {
     const ViewRenderer *r = &ui->renderer;
+    viewDrawPicture(r, 8, 10, IconDialogX, IconRowY, false, 0); /* RunGameDialog: the dialog's icon is down while it is open */
     bool slotList = ui->dialogMode == UiDialogSlots || ui->dialogMode == UiDialogName || (ui->dialogMode == UiDialogPrompt && (ui->dialogPrompt == GameDialogPromptSave || ui->dialogPrompt == GameDialogPromptLoad));
     if (ui->dialogMode == UiDialogMenu) {
         gameDialogDraw(r, ui->dialogFlags, ui->driverFlags, ui->animationSpeed);
@@ -751,6 +786,16 @@ void gameUiDraw(GameUi *ui) {
     minimapDraw(&ui->renderer, tiles, shades, s->facing);
     for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
         statusPanelDraw(&ui->renderer, panel, sessionPartyRecord(s, panel));
+    }
+    if (ui->overlay == UiOverlayNone) {
+        if (s->combat.active) { /* DrawAndCacheStatusIcon: the swords take the shoot icon's place in a combat */
+            viewDrawPicture(&ui->renderer, 8, 3, IconShootX, IconRowY, false, 0);
+        }
+        if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
+            viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
+        } else if (ui->pressTicks > 0) {
+            viewDrawPicture(&ui->renderer, 8, ui->pressPicture, ui->pressX, ui->pressY, false, 0);
+        }
     }
     switch (ui->overlay) {
     case UiOverlayLocalMap: {
@@ -1199,6 +1244,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     if (s->combat.active) {
         if (key == 'a') {
+            pressButton(ui, 4, IconShootX, IconRowY, 2);
             sessionAttack(s);
         } else if (key == 'c') { /* the first attack spell the member can cast */
             for (unsigned spell = 1; spell < 126; spell++) {
@@ -1236,6 +1282,9 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         code = ctrl ? 0x74 : 0x4D;
     } else if (key >= UiKeyF1 && key <= UiKeyF8) {
         code = (uint8_t)(0x3B + (key - UiKeyF1));
+    } else if (key == ' ') {
+        extended = false;
+        code = ' ';
     } else if (key >= 'a' && key <= 'z') {
         extended = false;
         code = (uint8_t)(key - 'a' + 'A');
@@ -1244,6 +1293,13 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     switch (command.action) {
     case MainActionMove:
         {
+            unsigned pad = command.movement == MovementTurnLeft ? 0 : command.movement == MovementForward ? 1 : command.movement == MovementTurnRight ? 2 : command.movement == MovementStrafeLeft ? 3
+                           : command.movement == MovementBackward ? 4 : 5;
+            unsigned regionCount;
+            const uint16_t(*pads)[5] = uiRegionEntries(s->game, UiRegionsDirectionPad, &regionCount);
+            if (pads && pad < regionCount) { /* the pressed arrow: category 8 pictures 18, 20, 22, 24, 26, 28 at the button's corner */
+                pressButton(ui, 18 + 2 * pad, pads[pad][0], pads[pad][2], 1);
+            }
             SessionStep step = sessionMove(s, command.movement);
             if (step == SessionStepBlocked && s->game == GameYendor2) {
                 effect(ui, 6); /* the bump sound, _val33 */
@@ -1258,12 +1314,21 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         gameUiAmbientMusic(ui);
         break;
     case MainActionRest:
+        pressButton(ui, 8, IconRestX, IconRowY, 2);
         sessionRest(s);
+        break;
+    case MainActionAlchemy:
+        pressButton(ui, 6, IconAlchemyX, IconRowY, 2); /* the alchemy screen itself is not in the standalone */
         break;
     case MainActionUnlockDoor: /* a demo skeleton key: every tier, as chest and door key at once */
         sessionUnlock(s, 0xFFC0, 0);
         break;
-    case MainActionAct:
+    case MainActionAct: /* S: the party shoots its weapons down the corridor */
+        if (sessionShootStart(s)) {
+            playPending(ui);
+        }
+        break;
+    case MainActionExamine: /* Space, or the right button on the view: use what is ahead */
         useAhead(ui);
         break;
     case MainActionLocalMap:
@@ -1297,7 +1362,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
-    if (s->doorOpening) { /* any key passes a door that is still opening first */
+    if (s->doorOpening || s->shot.active) { /* any key finishes a door that is still opening, or a shot, first */
         gameUiSettle(ui);
     }
     if (ui->overlay == UiOverlayTitle) {
@@ -1565,8 +1630,8 @@ static bool shopClick(GameUi *ui, int x, int y) { /* the stock rows of drawShop,
 static bool mainClick(GameUi *ui, int x, int y, bool right) {
     GameSession *s = ui->session;
     GameKind game = s->game;
-    if (right) {
-        return true;
+    if (right) { /* the right button on the view uses what is ahead (the same as Space) */
+        return uiRegionHit(game, UiRegionsDungeonMain, x, y) == 1 ? press(ui, ' ') : true;
     }
     unsigned pad = uiRegionHit(game, UiRegionsDirectionPad, x, y);
     if (pad) { /* the walk pad: turn left, forward, turn right, strafe left, back, strafe right */

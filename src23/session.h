@@ -55,6 +55,30 @@ typedef struct {
     MonsterRewardStaging staging;
 } SessionCombat;
 
+/*
+ * The ranged shot, the S key and the first icon of the row (HandleRangedOrCombatAction with g_uiScratchFlags3 bit 0x100, yendor2.asm:23769; Chapter 2 only -- Chapter 3's routine has not been
+ * identified): every member who can act (status bits 0x1C40 clear) and carries a weapon that classifies as one (item.h itemClassifyServiceTier) shoots it, which counts as a use of it (the
+ * wear counter ticks, partyTickEquippedItemDurability; a weapon that breaks does not shoot). The shots fly together down the party's column of the view -- the four weapon slices of picture
+ * 0x51 (rocks, for the sling ids 0x21E-0x223) or 0x50 (arrows) as one sprite at the cells 49, 46, 43, 40, 36, 25 (ShotRows), one frame per animation tick -- and what is in the way is classified
+ * at each cell from 46 on (ClassifyObstacleAtViewportRow): clear, a wall (1) or an object (2) -- the shot is deflected (sound 6) -- a feature (3, nothing), or a monster (4), which is
+ * fought one member at a time, first member first: combatResolveAttack(its Absorption, the shooter's EquipRating1 and 2), thrownApplyResolvedDamage; a miss sounds 0x1E, a hit 0xD (and the
+ * monster flashes); the member's slice leaves the picture; a monster that dies is reaped and the rest of the shots go on to the next cell. The fights and the flight use one step each
+ * (sessionShootStep, per animation tick; `wait` ticks between the sounds); the end awards the loot (monsterRewardsAward) and lets the monsters take their turn.
+ */
+typedef struct {
+    bool active;
+    bool fighting;          /* a monster has been reached: the shooters take it on one per step */
+    bool shown;             /* the picture is on the screen (it goes with the first hit's redraw and comes back when the flight goes on) */
+    unsigned row;           /* index into ShotRows of the cell the picture is at */
+    unsigned wait;          /* animation ticks the next step waits */
+    unsigned attacks;       /* g_attacksRemaining: members whose shot has not been fought yet */
+    uint8_t weapon[4][2];   /* per party slot: the weapon item id (u16, low byte first; 0 = not shooting) */
+    uint8_t picture[4];     /* per slot: the picture id of its slice (0x50 / 0x51) while it is in flight, else 0 */
+    uint8_t pending[4];     /* per slot: 1 = still to shoot at a monster */
+    unsigned target;        /* the pool record index of the monster being fought */
+    MonsterRewardStaging staging;
+} SessionShot;
+
 typedef struct GameSession {
     GameKind game;
     WorldMap map;
@@ -74,6 +98,7 @@ typedef struct GameSession {
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
     bool doorOpening;          /* a door is opening (sessionMove returned SessionStepDoorOpening): sessionScene draws the opening frame until sessionDoorFinish */
+    SessionShot shot;          /* the ranged shot in flight (sessionShootStart): sessionScene draws it, sessionShootStep moves it */
     bool shareware;            /* the unregistered program: sessionInteract refuses the demo boundary (Chapter 2) */
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
@@ -124,6 +149,12 @@ void sessionScene(GameSession *session, ViewScene *scene, DungeonGridCell cells[
 
 /* The current party member's melee attack on the first live monster of the combat; the monsters then act until it is a party member's turn again. */
 bool sessionAttack(GameSession *session);
+
+/* The S key: false when nobody shoots (no weapon, a combat or another shot is on, Chapter 3); else the shot is under way (`shot.active`, sound 0x1D in `pendingSound`). */
+bool sessionShootStart(GameSession *session);
+
+/* One animation tick of the shot (see SessionShot); false once it is over. Sounds go to `pendingSound` one at a time. */
+bool sessionShootStep(GameSession *session);
 
 RestOutcome sessionRest(GameSession *session);
 

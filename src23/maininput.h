@@ -13,7 +13,8 @@
  * A key whose table entry is zero is ignored. Mouse clicks reach the same commands through the click regions (uiregions.h).
  *
  *   key        command                           notes
- *   Space      examine the facing tile           ProbeFacingTile, then a status panel message if nothing is there
+ *   Space      use what is ahead                 ProbeFacingTile, then the dispatch on the object's flags (door, destination, talker, story event: the same as the right button on the
+ *                                                view); a status panel message if nothing is there
  *   1-4        party member panel                HandlePartyStatusPanelInput (index 0-3)
  *   F1-F4      member detail screen              RunPartyMemberDetailScreen (index 0-3)
  *   F5         toggle the monster / status panel mode (bits 0x8000 / 0x4000 / 0x1000 of the panel mode word)
@@ -21,7 +22,8 @@
  *   Up/Down    walk forward / back               HandleMovementInput (extended scan 0x48 / 0x50)
  *   Left/Right turn left / right                 (0x4B / 0x4D);  Ctrl+Left / Ctrl+Right (0x73 / 0x74) strafe
  *   A          attack / ranged action            only while a combat is active (flag 0x1000 of g_uiScratchFlags4)
- *   S          act outside combat                the same handler with flag 0x100 set; only when no combat is active
+ *   S          the ranged shot                   the same handler with flag 0x100 set; only when no combat is active: every member shoots his or her weapon down the corridor
+ *                                                (session.h SessionShot); the first icon of the icon row
  *   C          alchemy screen
  *   D          pause dialog                      (gamedialog.h)
  *   K          unlock a door                     needs the key item (id below)

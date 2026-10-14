@@ -9,6 +9,7 @@
 #include "globalflags.h"
 #include "lighting.h"
 #include "newgame.h"
+#include "thrown.h"
 #include "consumable.h"
 #include "ailment.h"
 #include "dialogservice.h"
@@ -272,6 +273,20 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
     return result;
 }
 
+enum {
+    ShotRowCount = 6,
+    ShotSound = 0x1D,      /* _val19 */
+    ShotMissSound = 0x1E,  /* _val43 */
+    ShotHitSound = 0x0D,   /* word_329E6 */
+    ShotDeflectSound = 6,  /* _val33 */
+    ShotMessageTicks = 3,  /* ShowCombatMessageOrWait: six BIOS ticks, three of ours */
+    ShotWeaponSlot = 0x13A,
+    ShotSlingFirst = 0x21E,
+    ShotSlingLast = 0x223,
+    ShotCannotAct = 0x1C40 /* dead, paralysed, frozen, stoned */
+};
+static const unsigned kShotRows[ShotRowCount] = {49, 46, 43, 40, 36, 25};
+
 void sessionScene(GameSession *s, ViewScene *scene, DungeonGridCell cells[ViewportCellCount]) {
     viewportBuild(&s->grid, s->facing, s->x, s->y, cells);
     viewportComputeVisibility(s->game, cells);
@@ -300,6 +315,10 @@ void sessionScene(GameSession *s, ViewScene *scene, DungeonGridCell cells[Viewpo
     for (unsigned i = 0; s->combat.active && i < CombatMonsterSlotCount; i++) {
         uint8_t *slot = s->combat.slots + (size_t)i * MonsterRecordSize;
         scene->combatMonsters[i] = monsterGetU16(slot, MonsterFieldType) ? slot : NULL;
+    }
+    if (s->shot.active && s->shot.shown) { /* the picture of the shot, at the cell it has reached */
+        scene->projectileDepth = kShotRows[s->shot.row];
+        memcpy(scene->projectilePictures, s->shot.picture, sizeof(scene->projectilePictures));
     }
     monsterPoolEncounterScan(s->pool, &s->monsters, &s->save, s->game, s->facing, (uint16_t)s->x, (uint16_t)s->y, (uint16_t)s->grid.originRow, (uint16_t)s->grid.originCol,
                              cells, scene->cellMonsters, &s->rng);
@@ -380,6 +399,177 @@ static uint8_t *monsterAtDepth(GameSession *s, const DungeonGridCell cells[Viewp
     }
     int slot = monsterPoolFindType(s->pool, cells[depth].reserved4);
     return slot >= 0 ? s->pool + (size_t)slot * MonsterRecordSize : NULL;
+}
+
+/* ---- the ranged shot ---- */
+
+static unsigned shotWeapon(const SessionShot *shot, unsigned slot) {
+    return (unsigned)shot->weapon[slot][0] | ((unsigned)shot->weapon[slot][1] << 8);
+}
+
+/* ClassifyObstacleAtViewportRow (yendor2.asm:1936): 0 clear, 1 wall, 2 an object in the way, 3 a feature, 4 a monster (`*monster` then points at it). */
+static unsigned shotClassify(GameSession *s, const DungeonGridCell cells[ViewportCellCount], unsigned depth, uint8_t **monster) {
+    const DungeonGridCell *cell = &cells[depth];
+    *monster = monsterAtDepth(s, cells, depth);
+    if (*monster) {
+        return 4;
+    }
+    if (cell->flags & 0x800) {
+        return 3;
+    }
+    if (cell->wallType >= 2 && cell->wallType <= 15) {
+        return 1;
+    }
+    unsigned object = cell->floorType;
+    if (object == 0) {
+        return 0;
+    }
+    if (object < 0x11 || (object > 0x14 && object < 0x3F) || object > 0x43) {
+        return 2;
+    }
+    return 0;
+}
+
+bool sessionShootStart(GameSession *s) {
+    SessionShot *shot = &s->shot;
+    if (s->game != GameYendor2 || s->combat.active || s->combat.wiped || shot->active || s->doorOpening) {
+        return false;
+    }
+    memset(shot, 0, sizeof(*shot));
+    for (unsigned slot = 0; slot < 4; slot++) {
+        uint8_t *member = sessionPartyRecord(s, slot);
+        if (!member) {
+            break; /* the scan stops at the first empty slot */
+        }
+        if (partyGetU16(member, PartyFieldStatusFlags) & ShotCannotAct) {
+            continue;
+        }
+        unsigned weapon = partyGetU16(member, ShotWeaponSlot);
+        const uint8_t *record = weapon ? itemCatalogRecord(&s->items, weapon) : NULL;
+        ItemServiceTier tier;
+        if (!record || !itemClassifyServiceTier(record, &tier)) {
+            continue;
+        }
+        if (partyTickEquippedItemDurability(member, &s->items, s->game, ShotWeaponSlot, &s->rng) != PartyItemDurabilityUnchanged) {
+            continue; /* it broke */
+        }
+        shot->weapon[slot][0] = (uint8_t)weapon;
+        shot->weapon[slot][1] = (uint8_t)(weapon >> 8);
+        shot->picture[slot] = weapon >= ShotSlingFirst && weapon <= ShotSlingLast ? 0x51 : 0x50;
+        shot->pending[slot] = 1;
+        shot->attacks++;
+    }
+    if (!shot->attacks) {
+        return false;
+    }
+    shot->active = shot->shown = true;
+    shot->row = 0;
+    s->pendingSound = ShotSound;
+    return true;
+}
+
+static void shotEnd(GameSession *s) { /* the common epilogue (loc_1D747): the loot, the monsters' turn */
+    SessionShot *shot = &s->shot;
+    monsterRewardsAward(&s->save, s->game, &shot->staging);
+    memset(&shot->staging, 0, sizeof(shot->staging));
+    shot->active = shot->fighting = shot->shown = false;
+    memset(shot->picture, 0, sizeof(shot->picture));
+    sessionRebuild(s);
+    monstersTakeTurns(s);
+}
+
+/* ResolveAttackOrAbilityAction's ranged branch for the first member still to shoot, against the monster at pool index `target`. True when it hit. */
+static bool shotFight(GameSession *s, unsigned slot, uint8_t *monster) {
+    uint8_t *member = sessionPartyRecord(s, slot);
+    const uint8_t *record = itemCatalogRecord(&s->items, shotWeapon(&s->shot, slot));
+    const uint8_t *entry = record ? itemTargetEntry(&s->items, record) : NULL;
+    ThrownEffect effect;
+    memset(&effect, 0, sizeof(effect));
+    effect.typeFlags = thrownWeaponTypeFlags(entry ? itemTargetWord(entry, 1) : 0, entry ? itemTargetWord(entry, 4) : 0);
+    effect.damage = member ? combatResolveAttack(monsterGetU16(monster, MonsterFieldAbsorption), (uint16_t)partyGetStat(member, PartyStatEquipRating1),
+                                                  (uint16_t)partyGetStat(member, PartyStatEquipRating2), &s->rng)
+                           : 0;
+    return thrownApplyResolvedDamage(monster, &effect);
+}
+
+bool sessionShootStep(GameSession *s) {
+    SessionShot *shot = &s->shot;
+    if (!shot->active) {
+        return false;
+    }
+    if (shot->wait) {
+        shot->wait--;
+        return true;
+    }
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    sessionScene(s, &scene, cells);
+    uint8_t *monster = NULL;
+    if (!shot->fighting) { /* the flight: the next cell, and what is in it */
+        if (shot->row + 1 >= ShotRowCount) {
+            shotEnd(s);
+            return false;
+        }
+        shot->row++;
+        shot->shown = true;
+        unsigned found = shotClassify(s, cells, kShotRows[shot->row], &monster);
+        if (found == 0) {
+            if (shot->row + 1 >= ShotRowCount) { /* the last cell was clear too: the shot is over after its frame */
+                shot->wait = 0;
+            }
+            return true;
+        }
+        if (found == 1 || found == 2) {
+            s->pendingSound = ShotDeflectSound;
+            shotEnd(s);
+            return false;
+        }
+        if (found == 3) {
+            shotEnd(s);
+            return false;
+        }
+        shot->fighting = true;
+        shot->target = (unsigned)(monster - s->pool) / MonsterRecordSize;
+        return true; /* the picture is at the monster; the first shot is fought on the next tick */
+    }
+    monster = s->pool + (size_t)shot->target * MonsterRecordSize;
+    unsigned slot = 0;
+    while (slot < 4 && !shot->pending[slot]) {
+        slot++;
+    }
+    if (slot >= 4 || monsterGetU16(monster, MonsterFieldType) == 0) {
+        shotEnd(s);
+        return false;
+    }
+    shot->attacks--; /* ResetWeaponSlotDisplayCache: the slice of the member that shoots leaves the picture, except for the last one */
+    if (shot->attacks != 0) {
+        shot->picture[slot] = 0;
+    }
+    bool hit = shotFight(s, slot, monster);
+    shot->pending[slot] = 0;
+    shot->wait = ShotMessageTicks;
+    s->pendingSound = hit ? ShotHitSound : ShotMissSound;
+    snprintf(s->log, sizeof(s->log), "party member %u %s", slot + 1, hit ? "hits" : "misses");
+    if (hit) {
+        shot->shown = false; /* the redraw that shows the hit (the monster's flash) takes the picture off the screen */
+    }
+    if (hit && monsterGetU16(monster, MonsterFieldHealth) == 0) { /* dead: reaped, and the rest of the shots fly on */
+        uint8_t *flags = saveGlobalFlags(&s->save);
+        combatReapDeadMapMonsters(s->pool, &shot->staging, flags, SaveHeaderGlobalFlagsSize, &s->grid);
+        sessionRebuild(s);
+        shot->fighting = false;
+        shot->shown = true;
+        if (shot->attacks == 0 || shot->row + 1 >= ShotRowCount) {
+            shotEnd(s);
+            return false;
+        }
+        return true;
+    }
+    if (shot->attacks == 0) {
+        shotEnd(s);
+        return false;
+    }
+    return true;
 }
 
 /*

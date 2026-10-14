@@ -78,6 +78,14 @@ typedef struct {
      */
     uint16_t scratchType;
     uint16_t scratchLegend[6];
+    /*
+     * A shot in flight (HandleRangedOrCombatAction's AnimateProjectileStep, yendor2.asm:50244): the 210 x 105 picture the members' weapons make up -- each of the four party slots
+     * contributes its 53-pixel-wide slice (x = 0, 54, 105, 157) of category 1 picture `projectilePictures[slot]` (0 = that slot is not in flight): 0x51 four rocks for a sling,
+     * 0x50 four arrows for any other weapon -- drawn over the finished view like a monster sprite (layer 7) at the buffer cell `projectileDepth`, so it shrinks as it goes
+     * away. projectileDepth 0 = no shot.
+     */
+    unsigned projectileDepth;
+    uint8_t projectilePictures[4];
 } ViewScene;
 
 /*
@@ -118,7 +126,7 @@ void viewDrawSprite(const ViewRenderer *r, unsigned layer, unsigned category, un
  */
 void viewDrawPicture(const ViewRenderer *r, unsigned category, unsigned id, int x, int y, bool transparent, int8_t shade);
 
-/* The ceiling, floor and every cell's patches, walls, features (monsters are not drawn). */
+/* The ceiling, floor and every cell's patches, walls, features, the monsters and a shot in flight (ViewScene). */
 void viewRender(const ViewRenderer *r, const ViewScene *scene);
 
 #endif

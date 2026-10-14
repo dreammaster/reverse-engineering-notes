@@ -5,7 +5,7 @@
  * and plays sound (the area music through the OPL2 synthesizer, a couple of effects). It is the smallest "engine" built from the modules.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../session.c ../windowbake.c ../interact.c ../lockcatalog.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
@@ -16,7 +16,7 @@
  *   ./explore_sdl <2|3> <game dir> [scale]  (the older form: starts in the game, not on the title menu)
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
- * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, S use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), M the local area map, D the pause
+ * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, Space (or the right button on the view) use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), S shoot: in Chapter 2 the heroes fire their weapons down the corridor (four rocks fly away), M the local area map, D the pause
  * dialog, P the paper dolls, F5 saves / F9 loads explore.sav (the original save-file layout), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * EXPLORE_INTRO=opening|story|ending|credits plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
@@ -25,7 +25,7 @@
  * Headless check: with EXPLORE_KEYS set (F B L R forward / back / turn left / turn right, Q E strafe, M map, T rest, D dialog, K, S, A, P, 1 2, + -, ESC as '!') the
  * keys are played at start and the final screen is written to the PNG named by EXPLORE_SHOT, then the program exits (SDL_VIDEODRIVER=dummy needs no display;
  * SDL_AUDIODRIVER=dummy or EXPLORE_NOSOUND=1 silences it). EXPLORE_TITLE=1 starts on the title menu, EXPLORE_CLOCK_MS=<n> lets one game minute pass every n ms (sessionAdvanceTime), EXPLORE_RANDOM=<n> plays n random keys, EXPLORE_START=x,y,N|E|S|W starts elsewhere, EXPLORE_DEBUG=1
- * lists the monster markers in view.
+ * lists the monster markers in view, EXPLORE_TICKS=<n> lets n animation ticks pass before the picture (a shot in flight, a pressed button).
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -633,7 +633,11 @@ int main(int argc, char **argv) {
                 SDL_PushEvent(&press);
             }
         } else if (script && shotPath) {
-            if (!opt("EXPLORE_DOORFRAME")) { /* EXPLORE_DOORFRAME=1: the picture of a door that is still opening */
+            if (opt("EXPLORE_TICKS")) { /* EXPLORE_TICKS=n: n animation ticks pass first (a shot in flight, a pressed button) */
+                for (int tick = atoi(opt("EXPLORE_TICKS")); tick > 0; tick--) {
+                    gameUiAnimate(&g_ui);
+                }
+            } else if (!opt("EXPLORE_DOORFRAME")) { /* EXPLORE_DOORFRAME=1: the picture of a door that is still opening */
                 gameUiSettle(&g_ui); /* otherwise it is passed before the picture */
             }
             gameUiDraw(&g_ui);
