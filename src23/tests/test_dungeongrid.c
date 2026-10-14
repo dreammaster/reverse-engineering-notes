@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_dungeongrid test_dungeongrid.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../savegame_stdio.c && ./test_dungeongrid
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_dungeongrid test_dungeongrid.c ../dungeongrid.c ../movement.c ../worldmap.c ../worldmap_stdio.c ../savegame.c ../savegame_stdio.c ../explore.c && ./test_dungeongrid
  *
  * Real-data checks read WORLD.DAT/CURGAME from yendor2/game and
  * yendor3/game (gitignored; skipped if absent). Set YENDOR2_GAME_DIR /
@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "explore.h"
 
 #include "dungeongrid.h"
 #include "movement.h"
@@ -184,7 +186,10 @@ static void testRealYendor2(void) {
               worldMapTileA(&map, (unsigned)partyY, (unsigned)partyX));
     checkI32("...and its floorType too", own->floorType, worldMapTileB(&map, (unsigned)partyY, (unsigned)partyX));
 
-    /* A freshly-started save should have at least some explored cells right around the party's start. */
+    /* A pristine CURGAME has an empty explored map (the game reveals the cells around the party when it starts), so reveal them as it does and see that the grid reads them. */
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&save, partyX, partyY, SaveFacingWest, &revealed);
+    dungeonGridBuild(&grid, GameYendor2, &map, &save, partyX, partyY);
     bool anyExplored = false;
     for (int r = 0; r < DungeonGridSize && !anyExplored; r++) {
         for (int c = 0; c < DungeonGridSize; c++) {
