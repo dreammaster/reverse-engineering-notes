@@ -2775,7 +2775,7 @@ bool TGameControl::Load() {
 	// 0x2AC target).
 	TVisObjRef currentTextTarget = game2.GetLink(kGameCurrentText);
 	TVList textTargets;
-	_visionaire->GetList(kPoint, textTargets, false);
+	_visionaire->GetList(24, textTargets, false);  // (table 24: the active texts)
 	for (TVisionaireObject *obj : textTargets) {
 		TVisObjRef textLink(obj->GetLink(kTextSavedObject));
 		if (textLink.IsEmpty())

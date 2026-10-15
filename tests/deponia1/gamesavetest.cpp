@@ -9,6 +9,7 @@
 #include "TMSavegame.h"
 #include "vsplayer/animationGame.h"
 #include "fakepictures.h"
+#include "TTText.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/objAccess.h"
 #include "vscommon/scripting/command.h"
@@ -113,6 +114,43 @@ int main() {
 		mark("step_b = (step_b or 0) + 1");
 		addPart(kCommandWait, 2);
 		mark("step_c = (step_c or 0) + 1");
+
+		// a language, a font and a text the hero says (the text is long: 30 letters take their time)
+		TVisObjRef language = game.CreateObject(18, gameRef, kGameLanguages);
+		language.SetName(TCharHolder("English"));
+		gameRef.SetLink(kGameStandardLanguage, language, true);
+		TVisObjRef font = game.CreateObject(3, gameRef, kGameFontLinks);
+		font.SetName(TCharHolder("Font"));
+		std::vector<wxRect> rects;
+		for (int k = 0; k < 26; k++) {
+			wxRect r;
+			r.x = k * 8;
+			r.y = 0;
+			r.width = 8;
+			r.height = 12;
+			rects.push_back(r);
+		}
+		font.SetValue(kFontLetters, rects, TSendEventEnum::kNoEvent);
+		font.SetValue(kFontAlphabet, wxString(L"abcdefghijklmnopqrstuvwxyz"), TSendEventEnum::kNoEvent);
+		gameRef.SetLink(kGameActionTextFont, font, true);
+		TVisObjRef noParent;
+		TVisObjRef text = game.CreateObject(14, noParent, -1);
+		text.SetName(TCharHolder("Hello"));
+		std::vector<TTextLanguage> texts(1);
+		texts[0].text = TCharHolder("a very long text that takes a while to be said by the hero in the hall");
+		texts[0].languageId = PackVisId(language.GetId());
+		text.SetValue(kTextTextLanguages, texts, TSendEventEnum::kNoEvent);
+
+		TVisObjRef sayAction = game.CreateObject(7, gameRef, kGameActions);
+		sayAction.SetName(TCharHolder("Say"));
+		TVisObjRef sayPart = game.CreateObject(8, sayAction, kActionActionParts);
+		sayPart.SetValue(kActionPartCommand, kCommandShowText, TSendEventEnum::kNoEvent);
+		sayPart.SetLink(kActionPartLink, text, true);
+		sayPart.SetLink(kActionPartAltLink, hero, true);
+		sayPart.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+		TVisObjRef saidPart = game.CreateObject(8, sayAction, kActionActionParts);
+		saidPart.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		saidPart.SetValue(kActionPartString, wxString("said = (said or 0) + 1"), TSendEventEnum::kNoEvent);
 
 		wxFileName out(L"savegame.dat");
 		CHECK(game.BinarySave(out, nullptr, false, nullptr));
@@ -275,6 +313,32 @@ int main() {
 		int runningLoaded = (int)TGAnimation::GetRunningAnimations().size();
 		printf("animations running after the load: %d\n", runningLoaded);
 		CHECK(runningLoaded == runningBefore);
+
+		// a text is said when the game is saved and loaded again
+		TGAction::AddRunningAction(actionByName("Say"));
+		frames(20);
+		printf("saying: said %d\n", count("said"));
+		CHECK(count("said") == 0);
+		control->SaveGame(6);
+
+		for (int i = 0; i < 3000 && count("said") == 0; i++)
+			frames(1);
+		CHECK(count("said") == 1);
+
+		// (the text of a character comes back as a text of the scene, shown by the character, with the time it had been
+		// shown; the action does not wait for it any more, as IsTextActive() only knows the current text)
+		CHECK(control->LoadGame(6));
+		{
+			TVList activeTexts;
+
+			control->GetVisionaire()->GetList(24, activeTexts, false);
+			printf("active texts in the table: %d\n", (int)activeTexts.size());
+			CHECK(activeTexts.size() == 1);
+		}
+		frames(20);
+		printf("loaded while saying: said %d\n", count("said"));
+		CHECK(count("said") == 2);
+		frames(400);
 	}
 
 	printf("%d failures\n", failures);
