@@ -26,6 +26,7 @@
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/id.h"
 #include <cstdio>
+#include <cwchar>
 #include "vscommon/scripting/lua.h"
 #include "vstables/fieldIds.h"
 
@@ -1781,11 +1782,9 @@ bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor)
 	// sniffs the file to decide whether it's a password-protected container
 	// (extension "vis"/"exe"/"ved", or a "VIS3" magic header) or a plain
 	// data file, then loads it either via TComposedFileManager or directly
-	// via TVisionaire::Load. The "extension + entry index" temp filename
-	// built for the container case approximates a custom (non-printf)
-	// wxString::privFormat pattern (data at address 0xD6CC20) that wasn't
-	// fully decoded - functionally equivalent, not byte-for-byte the same
-	// string. The rare sub-case where field 0x323's string list comes back
+	// via TVisionaire::Load. The name of the data file of a container is
+	// the file with the extension "<ext>#v#-01#<index of the last entry, 5
+	// digits>#". The rare sub-case where field 0x323's string list comes back
 	// empty (a 5-pair TComposedFileManager::Init overload, asm lines
 	// 464411-464478) is implemented from its confirmed field ids alone,
 	// without independently verifying how those 5 (path, int) pairs are
@@ -1827,7 +1826,9 @@ bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor)
 		int entryIndex = (numEntries == 0) ? 0 : (numEntries - 1);
 
 		wxFileName altFile(filePath.ToStdWstring());
-		wxString newExt = altFile.GetExt() + wxString(std::to_wstring(entryIndex));
+		wchar_t indexText[32];
+		swprintf(indexText, 32, L"%05ld", static_cast<long>(entryIndex));
+		wxString newExt = altFile.GetExt() + wxString(L"#v#-01#") + wxString(indexText) + wxString(L"#");
 		altFile.SetExt(newExt);
 		filePath = altFile.GetFullPath();
 	} else {
