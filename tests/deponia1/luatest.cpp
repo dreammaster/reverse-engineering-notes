@@ -118,8 +118,7 @@ int main() {
 		frames(5);
 		printf("tween started: hero at %d,%d\n", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
 		frames(80);
-		printf("tween over: hero at %d,%d
-", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
+		printf("tween over: hero at %d,%d\n", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
 		CHECK(hero.GetPoint(kCharacterPosition)->x == 300);
 		CHECK(hero.GetPoint(kCharacterPosition)->y == 300);
 		run("Characters['Hero']:to(400, {AnimIndex = 7})");
