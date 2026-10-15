@@ -4066,3 +4066,36 @@ The matrix transforms of the cursor (`invMatrix1`, `matrix1`) are in `AppGlobals
   Not reconstructed: `SaveDataGame(file, handler)` (the editor's project file with the `.bak` renaming; needs `TXMLFileWriter`) and
   `TVisionaireGame::BeforeSave()` (the editor's tidying of the outfits' walk animations).
 
+
+## What the made-up games found (tests/deponia1)
+
+Facts about the original that were wrong in the first transcription and that a test now pins (see `tests/deponia1/README.md`):
+
+- Every `SetValue(field, value, event)` and `SetLink(field, link, flag)` has an event / flag that is the `ecx` (`edx` for
+  `ClearLink`) of the call; `kForce = 0`, `kSendEvent = 1`, `kNoEvent = 2`. `tools/eventcheck.py` compares them with the
+  assembly by function; `TGScene::SetCharacter`, `TGObjectManager::RemoveItem/SetItem`, `TGameControl::Save`,
+  `AdjustInterfacesOnScreen` and `ExecuteMatchingAction` had the wrong one.
+- What the mouse finds depends on the active command (`TGObjectManager::GetDetectInfo`): its `kButtonUse` is 0 (objects and
+  characters), 1 (characters only) or 2 (objects only); without an active command only objects. A character is clickable only
+  with a command whose use is 0 or 1, and its `kCharacterActionDestPosition` of (-1, -1) means "within one and a half sprite
+  widths" (`TGCharacter::IsReached`).
+- `TMCharacter::IsInside` uses the rectangle of the sprite: its top left is the position of the character minus the offset of
+  the sprite (an animation of the editor has the foot of the character at the offset).
+- A cursor (`TCursorControl`) has two animations (active / inactive) and is linked to buttons (`kButtonCursor`); the image is
+  the active one while the mouse is on a button that is a command (`IsCurrentObjectDetectable`), else the inactive one. An
+  unknown cursor id leaves the image as it is.
+- A spoken text (`kTextOwner` is the speaker) comes back after a load as a text of the scene, shown by the character; the
+  action part that waited for it does not wait any more (`IsTextActive` only knows the current text).
+- The pause tags of a text (`<p>`, `<pt>`, `<pa>`, `<p5>`, `<p5s>`, `<p500ms>`, see `TSText::CalculateRestText`): `<pt>` is
+  130 ms per letter, the time of the tags with a number or the length is divided by the text speed (`kGameTextSpeed`, percent).
+- Containers (`TComposedFile`): `GetMemoryFile` / `Open` give the stored bytes. Compressed (flag 1) and encrypted (flag 2)
+  entries are taken apart by whoever reads them (XML reader, picture headers), not by the container.
+- Lua: the flags of a command are a table with a key `flags` (any value) plus the flags (`getTime({flags = true, reset = true})`,
+  `startSound(file, {flags = true, volume = 70})`); the text of `setDelay(ms, text)` is a piece of Lua code (or a function);
+  an object's relative path starts with a dot (`d:getObject('.ObjectAnimations[Blink]')`).
+- Lua stack: `LuaDoString(code, chunkName)` of the original removes the entry below the top whether the script worked or not;
+  that damages the stack of Lua 5.1 (the function slot at its base) and the next `debug.traceback` crashes. Done differently
+  here (a WORKAROUND comment says how).
+- The Loading table is loaded twice (`PreLoad` type 0 and `LoadAndInitGame` type 1) and the second pass makes duplicates:
+  the assertion `ObjectsHash.size() == Objects.size()` (table.cpp:650) and "table 21 not in sync" in every log is the
+  original's, not a bug of the port.
