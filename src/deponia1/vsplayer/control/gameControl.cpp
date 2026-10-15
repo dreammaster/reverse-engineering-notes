@@ -1634,7 +1634,7 @@ void TGameControl::Save() {
 
 	TVisObjRef sceneLink = _currentCharacter->GetRef().GetLink(kCharacterScene);
 	wxString saveName = TMSavegame::MakeSaveGameName(sceneLink);
-	game.SetValue(kGameSaveGameName, saveName, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameSaveGameName, saveName, TSendEventEnum::kSendEvent);
 
 	TVisObjRef lastScene;
 	wxPoint lastPos{};
@@ -2002,7 +2002,7 @@ void TGameControl::AdjustInterfacesOnScreen(bool force, TPaintControl *scene) {
 			}
 
 			wxPoint pos{x, y};
-			interface->GetRef().SetValue(kInterfacePosition, pos, TSendEventEnum::kNoEvent);
+			interface->GetRef().SetValue(kInterfacePosition, pos, TSendEventEnum::kSendEvent);
 			interface->SetOrigin(x, y);
 
 			int worktopHeight = interface->GetWorktopHeight();
