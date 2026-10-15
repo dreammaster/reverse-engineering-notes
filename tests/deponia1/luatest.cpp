@@ -140,6 +140,66 @@ int main() {
 		frames(10);
 		CHECK(number("main_loops") == before);
 
+		// the methods of the objects (the constants VName are the fields)
+		run("local h = Characters['Hero']; "
+		    "api = {}; "
+		    "api.empty = h:isEmpty(); api.any = h:isAnyObject(); api.name = h:getName(); "
+		    "api.same = (h == Characters['Hero']); "
+		    "api.constant = VCharacterAnimIndex; "
+		    "api.position = h:getPoint(VCharacterPosition); "
+		    "api.scene = h:getLink(VCharacterScene):getName(); "
+		    "api.items = #h:getLinks(VCharacterItems); "
+		    "api.border = #Scenes['Hall']:getLink(VSceneCurrentWaySystem):getPoints(VWaySystemBorder); "
+		    "api.id = h:getId(); "
+		    "api.int = h:getInt(VCharacterAnimIndex); "
+		    "api.float = h:getFloat(VCharacterSize); "
+		    "api.bool = h:getBool(VCharacterScale); "
+		    "h:setValue(VCharacterAnimIndex, 9); api.int_set = h:getInt(VCharacterAnimIndex); "
+		    "h:setName('Hero2'); api.renamed = h:getName(); h:setName('Hero'); api.renamed_back = h:getName()");
+		lua_getglobal(L, "api");
+		auto field = [&](const char *name) {
+			lua_getfield(L, -1, name);
+		};
+		field("empty");
+		CHECK(lua_isboolean(L, -1) && !lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		field("any");
+		CHECK(lua_isboolean(L, -1) && !lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		field("name");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Hero");
+		lua_pop(L, 1);
+		field("same");
+		CHECK(lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		field("constant");
+		CHECK(lua_tointeger(L, -1) == kCharacterAnimIndex);
+		lua_pop(L, 1);
+		field("position");
+		lua_getfield(L, -1, "x");
+		CHECK(lua_tointeger(L, -1) == hero.GetPoint(kCharacterPosition)->x);
+		lua_pop(L, 2);
+		field("scene");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Hall");
+		lua_pop(L, 1);
+		field("items");
+		CHECK(lua_tointeger(L, -1) == 0);
+		lua_pop(L, 1);
+		field("border");
+		CHECK(lua_tointeger(L, -1) == 4);
+		lua_pop(L, 1);
+		field("int_set");
+		CHECK(lua_tointeger(L, -1) == 9);
+		lua_pop(L, 1);
+		field("renamed");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Hero2");
+		lua_pop(L, 1);
+		field("renamed_back");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Hero");
+		lua_pop(L, 1);
+		lua_settop(L, 0);
+		CHECK(hero.GetInt(kCharacterAnimIndex) == 9);
+
 		// the other commands
 		run("inside = isPointInsidePolygon({x = 5, y = 5}, {{x = 0, y = 0}, {x = 10, y = 0}, {x = 10, y = 10}, {x = 0, y = 10}}); outside = isPointInsidePolygon({x = 50, y = 5}, {{x = 0, y = 0}, {x = 10, y = 0}, {x = 10, y = 10}, {x = 0, y = 10}})");
 		printf("inside %s, outside %s\n", number("inside") != -1e9 ? "set" : "nil", number("outside") != -1e9 ? "set" : "nil");
