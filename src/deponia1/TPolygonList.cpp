@@ -92,7 +92,8 @@ void CreatePointListFromPolygons(const TPolygonList &polygons, std::vector<wxPoi
 	}
 }
 
-// Confirmed (asm lines 1375355-1375588)
+// Confirmed (asm lines 1375355-1375476): no points make an empty rectangle (this overload does not
+// complain about it, the vector overload does).
 wxRect GetBoundingBox(const TPolygonList &polygons) {
 	bool any = false;
 	int minX = 0, minY = 0, maxX = 0, maxY = 0;
@@ -119,8 +120,6 @@ wxRect GetBoundingBox(const TPolygonList &polygons) {
 		result.y = minY;
 		result.width = maxX - minX + 1;
 		result.height = maxY - minY + 1;
-	} else {
-		x_assert(false, "false", kSourceFile, 0xAB);
 	}
 	return result;
 }

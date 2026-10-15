@@ -226,24 +226,33 @@ TVisObjRef TGObjectManager::GetCurrentObject() const {
 	return gameControl()->GetGameSystem()->GetEmptyObject();
 }
 
+// Confirmed (asm lines 189354-189445): what the active command (the button) lets the mouse find: nothing active -
+// everything but no character; its use 2 - the same; 0 - objects and characters, 1 - characters only; and unless
+// the button is to be used on the current character too, the current character is the one that is left out.
 void TGObjectManager::GetDetectInfo(TGDetectInfo &info) const {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	if (game.GetLink(kGameActiveCommand).IsEmpty()) {
+	TVisObjRef command = game.GetLink(kGameActiveCommand);
+
+	if (command.IsEmpty()) {
 		info.flagA = true;
 		info.flagB = false;
 		return;
 	}
-	int type = game.GetInt(kButtonUse);
+
+	int type = command.GetInt(kButtonUse);
+
 	if (type == 2) {
 		info.flagA = true;
 		info.flagB = false;
 		return;
 	}
+
 	if (type != 0 && type != 1)
 		return;
+
 	info.flagA = (type == 0);
 	info.flagB = true;
-	if (!game.GetBool(kButtonUseOnCurrentCharacter))
+	if (!command.GetBool(kButtonUseOnCurrentCharacter))
 		info.character = gameControl()->GetCurrentCharacter()->GetRef();
 }
 

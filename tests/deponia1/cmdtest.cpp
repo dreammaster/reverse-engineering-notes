@@ -219,7 +219,7 @@ int main() {
 		script.SetValue(kScriptScript, wxString(L"trace = (trace or '') .. 'script '"), TSendEventEnum::kNoEvent);
 		TVisObjRef language = game.CreateObject(18, gameRef, kGameLanguages);
 		language.SetName(TCharHolder("German"));
-		TVisObjRef commentSet = game.CreateObject(16, gameRef, kCommentSets);
+		TVisObjRef commentSet = game.CreateObject(16, hero, kCharacterCommentSets);
 		commentSet.SetName(TCharHolder("Jokes"));
 
 		a = makeAction("ScrollObject");

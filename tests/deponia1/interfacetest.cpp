@@ -94,7 +94,8 @@ int main() {
 		TVisObjRef key = game.CreateObject(6, gameRef, kGameItems);
 		key.SetName(TCharHolder("Key"));
 		key.SetValue(kObjectIsItem, true, TSendEventEnum::kNoEvent);
-		TVisObjRef keySprite = game.CreateObject(13, gameRef, kSprites);
+		TVisObjRef noParent;
+		TVisObjRef keySprite = game.CreateObject(13, noParent, -1);
 		TSprite keyPicture;
 		keyPicture.SetPath(TCharHolder("pics/key.png"));
 		keySprite.SetValue(kSpriteSprite, keyPicture, TSendEventEnum::kNoEvent);
