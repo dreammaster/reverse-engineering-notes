@@ -62,6 +62,14 @@ int main() {
 		rockScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		rockScript.SetValue(kActionPartString, wxString("rock_clicked = (rock_clicked or 0) + 1"), TSendEventEnum::kNoEvent);
 
+		// an action of the game that a key starts
+		TVisObjRef keyAction = game.CreateObject(7, gameRef, kGameActions);
+		keyAction.SetName(TCharHolder("KeyK"));
+		keyAction.SetValue(kActionExecutionType, 'k', TSendEventEnum::kNoEvent);
+		TVisObjRef keyScript = game.CreateObject(8, keyAction, kActionActionParts);
+		keyScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		keyScript.SetValue(kActionPartString, wxString("key_pressed = (key_pressed or 0) + 1"), TSendEventEnum::kNoEvent);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -122,6 +130,13 @@ int main() {
 		printf("hero after the click on the rock at %d,%d (destination %d,%d, object %d)\n", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y, hero.GetPoint(kCharacterDestination)->x, hero.GetPoint(kCharacterDestination)->y, (int)!hero.GetLink(kCharacterDestinationObject).IsEmpty());
 		lua_getfield(L, LUA_GLOBALSINDEX, "rock_clicked");
 		printf("rock clicked: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+
+		control->HandleKeyEvent(TKeyboardMessageEnum::kKeyDown, wxString(), 'k', 0);
+		frames(10);
+		lua_getfield(L, LUA_GLOBALSINDEX, "key_pressed");
+		printf("key pressed: %d\n", (int)lua_tointeger(L, -1));
 		CHECK(lua_tointeger(L, -1) == 1);
 		lua_settop(L, 0);
 
