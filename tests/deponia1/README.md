@@ -42,6 +42,7 @@ Every test prints `<n> failures`.
 | cmdtexttest | the commands for texts: at a point (waiting and in the background), at an object, skip, clear, wait for talking |
 | cursortest | the cursor of a command: loaded and linked to the command, active over a button, inactive over the floor, set by id |
 | luacmdtest | the Lua commands of the player: start / stop an action and an animation, volumes, cursor position, getObject / getTime / getProperty, hooks, created events; a script that fails |
+| texttagtest | the pause tags of a text (`<p2>`, `<p500ms>`, `<pt>`, `<p>`): the time of each part, and the player's text speed |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
