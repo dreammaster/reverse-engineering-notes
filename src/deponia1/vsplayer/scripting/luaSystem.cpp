@@ -386,8 +386,8 @@ int lua_sha1(lua_State *state) {
 	return 1;
 }
 
-// Confirmed (asm lines 443641-443733): setDelay(milliseconds, function or name): runs the function (the Lua function
-// itself, kept by a reference) or the global function of that name after the time.
+// Confirmed (asm lines 443641-443733): setDelay(milliseconds, function or code): runs the function (the Lua function
+// itself, kept by a reference) or the piece of Lua code of the text after the time.
 int lua_setDelay(lua_State *state) {
 	int delay = static_cast<int>(luaL_checkinteger(state, 1));
 	int type = lua_type(state, 2);

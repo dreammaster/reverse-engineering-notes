@@ -74,6 +74,20 @@ int main() {
 		blink.SetValue(kAnimationPosition, wxPoint{100, 100}, TSendEventEnum::kNoEvent);
 		blink.SetValue(kAnimationNumberOfLoops, 0, TSendEventEnum::kNoEvent);
 
+		// a language and a text
+		TVisObjRef language = game.CreateObject(18, gameRef, kGameLanguages);
+		language.SetName(TCharHolder("English"));
+		gameRef.SetLink(kGameStandardLanguage, language, true);
+		TVisObjRef noParent;
+		TVisObjRef greeting = game.CreateObject(14, noParent, -1);
+		greeting.SetName(TCharHolder("Greeting"));
+		std::vector<TTextLanguage> texts(1);
+		texts[0].text = TCharHolder("good day");
+		texts[0].languageId = PackVisId(language.GetId());
+		greeting.SetValue(kTextTextLanguages, texts, TSendEventEnum::kNoEvent);
+		hero.SetLink(kCharacterName, greeting, true);
+		door.SetValue(kObjectPolygon, std::vector<wxPoint>{{480, 230}, {520, 230}, {520, 270}, {480, 270}}, TSendEventEnum::kNoEvent);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -221,6 +235,102 @@ int main() {
 		    "area = getProperty('display_resolution')");
 		CHECK(text("platform") == "linux");
 		printf("steam %d, language %s\n", flag("steam"), text("lang").c_str());
+
+		// sha1, setDelay (a function and the name of a function), and the object system
+		run("sha = sha1('abc'); delayed = 0; setDelay(50, function() delayed = delayed + 1 end); "
+		    "function delayedByName() delayed = delayed + 10 end; setDelay(50, 'delayedByName()')");
+		CHECK(text("sha") == "a9993e364706816aba3e25717850c26c9cd0d89d");
+		CHECK(number("delayed") == 0);
+		frames(100);
+		printf("delayed calls: %g\n", number("delayed"));
+		CHECK(number("delayed") == 11);
+		run("sys_frame = system.frameTime; sys_mem = system.memoryUsed; sys_vram = system.vramUsed; "
+		    "sys_count = system.joystickCount(); sys_controllers = system.controllerCount(); "
+		    "sys_modes = type(system.getDisplayModes()); sys_info = type(system.systemInfo()); sys_none = system.nonsense");
+		CHECK(number("sys_frame") != -1e9);
+		CHECK(number("sys_vram") == 17);
+		CHECK(number("sys_none") == -1e9);
+		CHECK(text("sys_modes") == "table");
+		CHECK(text("sys_info") == "table");
+
+		// the actions stop while they are paused, and go on
+		run("long_b = nil; startAction(Actions['Long'])");
+		frames(20);
+		run("system.pauseCurrentActions()");
+		frames(500);
+		CHECK(number("long_b") == -1e9);
+		run("system.resumeAllActions()");
+		frames(500);
+		CHECK(number("long_b") == 1);
+
+		// the animations, the sounds
+		run("startAnimation(Animations['Blink']); system.pauseCurrentAnimations()");
+		frames(10);
+		run("system.resumeAllAnimations(); stopAnimation(Animations['Blink'])");
+		run("system.pauseAllSounds(); system.pauseBackgroundMusic(); system.resumeAllSounds(); system.resumeBackgroundMusic()");
+
+		// the settings that are set with the object
+		run("system.moviePauseAllowed = false; system.pauseOnFocusLost = false; system.pauseMainLoops = true; system.pauseMainLoops = false");
+		// the engine update (the scene and the characters; the actions go on) can be paused
+		TVisObjRef hero = control->GetCurrentCharacter()->GetRef();
+
+		run("system.pauseEngineUpdate = true; Characters['Hero']:setValue(VCharacterDestination, {x = 300, y = 300})");
+
+		wxPoint standing = *hero.GetPoint(kCharacterPosition);
+
+		frames(100);
+		CHECK(*hero.GetPoint(kCharacterPosition) == standing);
+		run("system.pauseEngineUpdate = false");
+		frames(600);
+		printf("hero walked from %d,%d to %d,%d\n", standing.x, standing.y, hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
+		CHECK(hero.GetPoint(kCharacterPosition)->x == 300 && hero.GetPoint(kCharacterPosition)->y == 300);
+
+		// the methods of the objects that read what a field holds
+		run("local h = Characters['Hero']; local d = Objects['Door']; "
+		    "api2 = {}; "
+		    "api2.text = h:getTextStr(VCharacterName); "
+		    "api2.text_english = h:getTextStr(VCharacterName, " "1); "
+		    "api2.parent = d:getParent():getName(); "
+		    "api2.by_path = d:getObject('.ObjectAnimations[Blink]'):getName(); "
+		    "api2.points = #d:getPoints(VObjectPolygon); "
+		    "api2.rect = type(Scenes['Hall']:getRect(VSceneScrollableArea)); "
+		    "api2.path = type(h:getPath(VCharacterWalkingSound)); "
+		    "api2.str = Actions['Long']:getLinks(VActionActionParts)[1]:getStr(VActionPartString); "
+		    "api2.same = (d == Objects['Door']); api2.different = (d ~= h); "
+		    "h:setTextStr(VCharacterName, 'good evening'); api2.changed = h:getTextStr(VCharacterName); "
+		    "h:clearLink(VCharacterName); api2.cleared = h:getLink(VCharacterName):isEmpty()");
+		lua_getglobal(L, "api2");
+		auto field2 = [&](const char *name) {
+			lua_getfield(L, -1, name);
+		};
+		field2("text");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "good day");
+		lua_pop(L, 1);
+		field2("parent");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Hall");
+		lua_pop(L, 1);
+		field2("by_path");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "Blink");
+		lua_pop(L, 1);
+		field2("points");
+		CHECK(lua_tointeger(L, -1) == 4);
+		lua_pop(L, 1);
+		field2("str");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "long_a = (long_a or 0) + 1");
+		lua_pop(L, 1);
+		field2("same");
+		CHECK(lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		field2("different");
+		CHECK(lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		field2("changed");
+		CHECK(lua_isstring(L, -1) && std::string(lua_tostring(L, -1)) == "good evening");
+		lua_pop(L, 1);
+		field2("cleared");
+		CHECK(lua_toboolean(L, -1));
+		lua_pop(L, 1);
+		lua_settop(L, 0);
 
 		// a hook for the text of the action line, and one that does not exist
 		run("function actionLineText(pos) return 'hooked' end; registerHookFunction('getActionText', 'actionLineText')");
