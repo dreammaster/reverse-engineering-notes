@@ -935,8 +935,9 @@ void TGActionPartExecutor::cmdPreloadCharacter() {
 }
 
 // Confirmed (asm lines 200823-201022, 207640-207647): a text is shown at an object (the second
-// link), with the game's object font, at a point (the integers), left (0), right (1) or centered
-// (2) - when the alignment is none of these it is left and a message is logged.
+// link), with the game's object font, at a point (the integers), left (0), centered (1) or right
+// (2) as the editor lists them - when the alignment is none of these it is left and a message is
+// logged.
 void TGActionPartExecutor::cmdShowObjectText() {
 	TTText text(link());
 	TVisObjRef object = altLink();
@@ -951,10 +952,10 @@ void TGActionPartExecutor::cmdShowObjectText() {
 	case 0:
 		break;
 	case 1:
-		alignment = TextAlignmentEnum::kRight;
+		alignment = TextAlignmentEnum::kCenter;
 		break;
 	case 2:
-		alignment = TextAlignmentEnum::kCenter;
+		alignment = TextAlignmentEnum::kRight;
 		break;
 	default:
 		if (wxLog::loglevel > 0) {
