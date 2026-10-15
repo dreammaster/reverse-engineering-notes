@@ -6,6 +6,8 @@
 #include "TSceneControl.h"
 #include "TGAction.h"
 #include "graphicslib/graphics.h"
+#include "TGInterface.h"
+#include "TGPlaceHolder.h"
 #include "vscommon/objAccess.h"
 #include "vscommon/scripting/command.h"
 #include "vscommon/scripting/visLua.h"
@@ -27,6 +29,7 @@ int main() {
 
 	useFakePictures();
 	writeFakePicture("pics/bar.png", 200, 200);
+	writeFakePicture("pics/key.png", 40, 40);
 
 	{
 		TVisionaireGame game;
@@ -72,6 +75,44 @@ int main() {
 		std::vector<wxPoint> square = {{10, 10}, {60, 10}, {60, 60}, {10, 60}};
 		button.SetValue(kButtonPolygon, square, TSendEventEnum::kNoEvent);
 		button.SetLink(kButtonActions, clickAction, true);
+		// a place holder for the items of the hero and a command to use them
+		TVisObjRef holder = game.CreateObject(2, interface, kInterfaceButtons);
+		holder.SetName(TCharHolder("Slot"));
+		holder.SetValue(kButtonType, 0, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> slot = {{70, 10}, {130, 10}, {130, 60}, {70, 60}};
+		holder.SetValue(kButtonPolygon, slot, TSendEventEnum::kNoEvent);
+		TVisObjRef useCommand = game.CreateObject(2, interface, kInterfaceButtons);
+		useCommand.SetName(TCharHolder("Use"));
+		useCommand.SetValue(kButtonType, 3, TSendEventEnum::kNoEvent);
+		useCommand.SetValue(kButtonCommandType, 1, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> useArea = {{10, 100}, {60, 100}, {60, 150}, {10, 150}};
+		useCommand.SetValue(kButtonPolygon, useArea, TSendEventEnum::kNoEvent);
+		interface.SetLink(kInterfaceStandardCommand, useCommand, true);
+
+		// the key: an item with a picture
+		TVisObjRef key = game.CreateObject(6, gameRef, kGameItems);
+		key.SetName(TCharHolder("Key"));
+		key.SetValue(kObjectIsItem, true, TSendEventEnum::kNoEvent);
+		TVisObjRef keySprite = game.CreateObject(13, gameRef, kSprites);
+		TSprite keyPicture;
+		keyPicture.SetPath(TCharHolder("pics/key.png"));
+		keySprite.SetValue(kSpriteSprite, keyPicture, TSendEventEnum::kNoEvent);
+		key.SetLink(kObjectSprite, keySprite, true);
+
+		// a rock in the scene: the key used on it runs a script
+		TVisObjRef rock = game.CreateObject(6, scene, kSceneObjects);
+		rock.SetName(TCharHolder("Rock"));
+		rock.SetValue(kObjectPosition, wxPoint{400, 300}, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> rockPolygon = {{380, 280}, {420, 280}, {420, 320}, {380, 320}};
+		rock.SetValue(kObjectPolygon, rockPolygon, TSendEventEnum::kNoEvent);
+		TVisObjRef rockAction = game.CreateObject(7, rock, kObjectActions);
+		rockAction.SetName(TCharHolder("UseKeyOnRock"));
+		rockAction.SetValue(kActionExecutionType, 6, TSendEventEnum::kNoEvent);
+		rockAction.SetLink(kActionCommand, useCommand, true);
+		rockAction.SetLink(kActionFixture, key, true);
+		TVisObjRef rockScript = game.CreateObject(8, rockAction, kActionActionParts);
+		rockScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		rockScript.SetValue(kActionPartString, wxString("key_used = (key_used or 0) + 1"), TSendEventEnum::kNoEvent);
 		hero.SetLink(kCharacterInterfaces, interface, true);
 
 		// the start of the game: the scene is shown
@@ -81,6 +122,11 @@ int main() {
 		change.SetValue(kActionPartCommand, kCommandChangeScene, TSendEventEnum::kNoEvent);
 		change.SetLink(kActionPartLink, startObject, true);
 		change.SetLink(kActionPartAltLink, hero, true);
+		TVisObjRef giveKey = game.CreateObject(8, action, kActionActionParts);
+		giveKey.SetValue(kActionPartCommand, kCommandCharacterItem, TSendEventEnum::kNoEvent);
+		giveKey.SetLink(kActionPartLink, key, true);
+		giveKey.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+		giveKey.SetLink(kActionPartAltLink, hero, true);
 		gameRef.SetLink(kGameStartAction, action, true);
 
 		wxFileName out(L"click.dat");
@@ -123,7 +169,6 @@ int main() {
 		};
 
 		frames(20);
-
 		printf("interfaces: all %d active %d\n", (int)control->GetAllInterfaces().size(), (int)control->GetActiveInterfaces().size());
 
 		for (TGInterface *interface : control->GetActiveInterfaces()) {
@@ -133,9 +178,39 @@ int main() {
 			CHECK(!interface->IsInside(wxPoint{300, 300}));
 		}
 
+		{
+			TVList items;
+			control->GetCurrentCharacter()->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
+			printf("items of the hero: %d\n", (int)items.size());
+			CHECK(items.size() == 1);
+		}
+		for (TGInterface *interface : control->GetActiveInterfaces()) {
+			TManagedObject *inSlot = interface->GetObject(wxPoint{100, 30});
+			printf("object at the slot: %p, active command: %s\n", (void *)inSlot, interface->GetActiveCommand().IsEmpty() ? "none" : "set");
+			CHECK(inSlot != nullptr);
+			CHECK(!interface->GetActiveCommand().IsEmpty());
+		}
+
 		click(30, 30);
 		lua_getfield(L, LUA_GLOBALSINDEX, "button_clicked");
 		printf("button clicked: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+
+		// the command "use" is chosen, then the item is clicked: it is the used one
+		click(30, 125);
+		click(100, 30);
+		{
+			TVisObjRef g = control->GetVisionaire()->GetGame();
+			printf("used item set: %d picked %d\n", (int)!g.GetLink(kGameUsedItem).IsEmpty(), (int)g.GetBool(kGameUsedItemPicked));
+			CHECK(!g.GetLink(kGameUsedItem).IsEmpty());
+		}
+
+		// the key is used on the rock (the hero walks there first, so there is time for it)
+		click(400, 300);
+		frames(300);
+		lua_getfield(L, LUA_GLOBALSINDEX, "key_used");
+		printf("key used on the rock: %d\n", (int)lua_tointeger(L, -1));
 		CHECK(lua_tointeger(L, -1) == 1);
 		lua_settop(L, 0);
 	}

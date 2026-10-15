@@ -174,19 +174,22 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 	bool matched = false;
 	for (TVisionaireObject *candidateObj : candidates.items) {
 		TVisObjRef actionRef(candidateObj);
-		TVisObjRef commandLink = actionRef.GetLink(kActionFixture);
+		// the object (or item) the action is for
+		TVisObjRef fixture = actionRef.GetLink(kActionFixture);
 		int actionType = actionRef.GetInt(kActionExecutionType);
-		bool isAnyObjectCmd = commandLink.IsAnyObject();
-		bool cmdEmpty = commandLink.IsEmpty();
+		bool isAnyObjectCmd = fixture.IsAnyObject();
+		bool cmdEmpty = fixture.IsEmpty();
 		bool notAnyObjectIfEmpty = cmdEmpty ? !isAnyObjectCmd : false;
-		TTButton button(commandLink.GetLink(kActionCommand));
+		TVisObjRef commandRef = actionRef.GetLink(kActionCommand);
+		TTButton button(commandRef);
 
+		// (the command of the action is the active one, or one of its group)
 		bool linkedMatch;
 		if (button.IsCommand() && (button == info.command)) {
 			linkedMatch = true;
 		} else {
 			TVList linkedItems;
-			commandLink.GetList(kButtonGroup, linkedItems);
+			commandRef.GetList(kButtonGroup, linkedItems);
 			linkedMatch = false;
 			for (TVisionaireObject *item : linkedItems.items) {
 				if (info.command == *item) {
@@ -212,7 +215,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 				case 26:
 				case 27:
 				case 28:
-					if (actionType == tv && (commandLink == info.action || isAnyObjectCmd)) {
+					if (actionType == tv && (fixture == info.action || isAnyObjectCmd)) {
 						if ((tv == 25 || tv == 26 || tv == 27 || tv == 28) && isAnyObjectCmd)
 							outAction.flagA = true;
 						caseMatched = true;
@@ -223,7 +226,7 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 						caseMatched = true;
 					break;
 				case 11:
-					if (shortcut10 && (commandLink == info.action || isAnyObjectCmd))
+					if (shortcut10 && (fixture == info.action || isAnyObjectCmd))
 						caseMatched = true;
 					break;
 				case 18:
@@ -231,14 +234,14 @@ void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeA
 						caseMatched = true;
 					break;
 				case 19:
-					if (shortcut18 && (commandLink == info.action || isAnyObjectCmd))
+					if (shortcut18 && (fixture == info.action || isAnyObjectCmd))
 						caseMatched = true;
 					break;
 				case 21:
 				case 22:
 				case 23:
 				case 24:
-					if (actionType == tv && linkedMatch && (commandLink == info.action || isAnyObjectCmd)) {
+					if (actionType == tv && linkedMatch && (fixture == info.action || isAnyObjectCmd)) {
 						if (isAnyObjectCmd)
 							outAction.flagA = true;
 						caseMatched = true;
