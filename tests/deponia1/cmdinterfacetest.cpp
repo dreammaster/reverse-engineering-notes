@@ -117,6 +117,25 @@ int main() {
 		std::vector<wxPoint> rockPolygon = {{380, 280}, {420, 280}, {420, 320}, {380, 320}};
 		rock.SetValue(kObjectPolygon, rockPolygon, TSendEventEnum::kNoEvent);
 
+		// names: a language, and texts for the commands and the rock
+		TVisObjRef language = game.CreateObject(18, gameRef, kGameLanguages);
+		language.SetName(TCharHolder("English"));
+		gameRef.SetLink(kGameStandardLanguage, language, true);
+		TVisObjRef noParent;
+		auto makeText = [&](const char *name, const char *content) {
+			TVisObjRef text = game.CreateObject(14, noParent, -1);
+			text.SetName(TCharHolder(name));
+			std::vector<TTextLanguage> texts(1);
+			texts[0].text = TCharHolder(content);
+			texts[0].languageId = PackVisId(language.GetId());
+			text.SetValue(kTextTextLanguages, texts, TSendEventEnum::kNoEvent);
+			return text;
+		};
+		useCommand.SetLink(kButtonName, makeText("UseName", "Use"), true);
+		lookCommand.SetLink(kButtonName, makeText("LookName", "Look at"), true);
+		lookCommand.SetLink(kButtonConjunction, makeText("LookWith", "with"), true);
+		rock.SetLink(kObjectName, makeText("RockName", "rock"), true);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -327,6 +346,26 @@ int main() {
 		frames(5);
 		run("ObjectUnder");
 		printf("with the mouse on the rock: %s\n", trace().c_str());
+
+		// the action line: the command and the object the mouse is on
+		printf("action line: '%ls'\n", control->GetObjectManager()->GetActionText().wc_str());
+		CHECK(control->GetObjectManager()->GetActionText().ToStdWstring() == L"Use rock");
+		run("SetLook");
+		CHECK(control->GetObjectManager()->GetActionText().ToStdWstring() == L"Look at rock");
+		run("SetStandard");
+
+		// an item in the hand and a command with a conjunction: "look at the key with rock"
+		run("SetLook");
+		control->GetObjectManager()->SetItem(byName("Rock", 6), false);
+		printf("action line with an item: '%ls'\n", control->GetObjectManager()->GetActionText().wc_str());
+		CHECK(control->GetObjectManager()->GetActionText().ToStdWstring() == L"Look at rock with rock");
+		control->GetObjectManager()->RemoveItem(false);
+		run("SetStandard");
+
+		// away from the rock the line is the command only
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{600, 100});
+		frames(5);
+		CHECK(control->GetObjectManager()->GetActionText().ToStdWstring() == L"Use ");
 	}
 
 	printf("%d failures\n", failures);
