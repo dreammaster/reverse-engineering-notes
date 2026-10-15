@@ -1,12 +1,7 @@
-// Not yet assert-confirmed to a specific file; stays at the top level.
-// A standard RFC 1321 MD5 implementation - needed for real
-// TMemoryBuffer::Decrypt()/Encrypt(), which key a repeating-XOR cipher off
-// MD5(password). MD5 itself is a public, fully-specified algorithm, not
-// proprietary engine logic, so this is a faithful implementation rather
-// than a recovered one.
+// A standard RFC 1321 MD5 (the original is the usual md5 class with a Transform() per block), needed for
+// TMemoryBuffer::Decrypt()/Encrypt(), which key a repeating-XOR cipher off the text of MD5(password).
 #pragma once
 
-// Confirmed call shape (TMemoryBuffer::Decrypt, Deponia_Linux.asm line
-// 551743): returns a malloc()'d 16-byte raw binary digest (matching the
-// free() the caller applies to it), not a hex string.
-unsigned char *MD5String(const char *data, unsigned long length);
+// Confirmed (asm lines 555941-556215): the MD5 digest of the data as text - 32 lowercase hexadecimal digits, in a string
+// made with strdup() (free() it). TMemoryBuffer::Decrypt() XORs with the first 16 characters of it.
+char *MD5String(const char *data, unsigned long length);

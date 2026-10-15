@@ -3,7 +3,9 @@
 
 #include "AppGlobals.h"
 #include "TPaintControl.h"
+#include "MD5.h"
 #include "TPolygonList.h"
+#include "TMemoryBuffer.h"
 #include "graphicslib/graphics.h"
 #include "graphicslib/picture.h"
 #include "vsplayer/scripting/luaSystem.h"
@@ -41,6 +43,33 @@ public:
 };
 
 int main() {
+	{
+		// MD5 as text, and the cipher that repeats the first 16 characters of it
+		char *empty = MD5String("", 0);
+		char *abc = MD5String("abc", 3);
+		char *longer = MD5String("The quick brown fox jumps over the lazy dog", 43);
+
+		CHECK(std::string(empty) == "d41d8cd98f00b204e9800998ecf8427e");
+		CHECK(std::string(abc) == "900150983cd24fb0d6963f7d28e17f72");
+		CHECK(std::string(longer) == "9e107d9d372bb6826bd81d3542a419d6");
+		std::free(empty);
+		std::free(abc);
+		std::free(longer);
+
+		TMemoryBuffer buffer;
+		const char plain[] = "0123456789abcdef0123456789abcdef-tail";
+
+		buffer.AppendData(plain, sizeof(plain));
+		CHECK(buffer.Encrypt(wxString(L"abc"), nullptr, 0));
+		// the key is "900150983cd24fb0", the first 16 characters of the text of the digest of "abc"
+		CHECK(buffer.GetData()[0] == ('0' ^ '9'));
+		CHECK(buffer.GetData()[1] == ('1' ^ '0'));
+		CHECK(buffer.GetData()[15] == ('f' ^ '0'));
+		CHECK(buffer.GetData()[16] == ('0' ^ '9'));
+		CHECK(buffer.Decrypt(wxString(L"abc"), nullptr, 0));
+		CHECK(std::string((const char *)buffer.GetData()) == plain);
+	}
+
 	{
 		// the scan-line test of a point in a polygon: a square and a "U" with the notch on top
 		std::vector<wxPoint> square = {{10, 10}, {50, 10}, {50, 50}, {10, 50}};

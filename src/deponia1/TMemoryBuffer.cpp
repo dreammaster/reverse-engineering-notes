@@ -200,25 +200,33 @@ bool TMemoryBuffer::Compress() {
 	return false;
 }
 
+// Confirmed (asm lines 551698-551816): the bytes are XORed with the first 16 characters of the text of the MD5 of the
+// key (the hexadecimal digits, see MD5String()), over and over. The original reads them from the first on every call and
+// only counts the bytes with `cursor` (a count of 16 sends it back to the first); the callers all give no cursor.
 bool TMemoryBuffer::Decrypt(const wxString &key, unsigned long *cursor, unsigned long offset) {
 	if (key.IsEmpty())
 		return true;
 
 	std::string narrowKey(static_cast<const char *>(key.mb_str()));
-	unsigned char *digest = MD5String(narrowKey.c_str(), static_cast<unsigned long>(narrowKey.size()));
+	const unsigned char *digest = reinterpret_cast<const unsigned char *>(MD5String(narrowKey.c_str(), static_cast<unsigned long>(narrowKey.size())));
 
 	unsigned char *target = _data + offset;
-	unsigned long pos = cursor ? *cursor : 0;
+	unsigned long count = cursor ? *cursor : 0;
+	const unsigned char *next = digest;
+
 	for (unsigned long i = 0; i < _len; i++) {
-		if (pos == 16)
-			pos = 0;
-		target[i] ^= digest[pos];
-		pos++;
+		if (count == 16) {
+			next = digest;
+			count = 1;
+		} else {
+			count++;
+		}
+		target[i] ^= *next++;
 	}
 	if (cursor)
-		*cursor = pos;
+		*cursor = count;
 
-	std::free(digest);
+	std::free(const_cast<unsigned char *>(digest));
 	return true;
 }
 
