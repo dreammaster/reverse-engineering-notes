@@ -15,6 +15,9 @@ class TPictureMEM;
 class TFile;
 class wxFileName;
 
+/** The kinds of picture the engine reads and writes. */
+enum class TPictureKind { kPNG, kWebP, kJPG, kGIF, kPCX };
+
 class TPictureFormat {
 public:
 	TPictureFormat() = default;
@@ -85,3 +88,11 @@ class TPictureGIF : public TPictureFormatStub {
 
 class TPicturePCX : public TPictureFormatStub {
 };
+
+/** The port's decoders: when this is set, it is asked for the decoder of every picture the engine opens (or nullptr for
+ *  the stub, which fails to read); the engine deletes what it is given. (In the ScummVM port it makes the decoders of the
+ *  image classes of ScummVM; the tests use it to read pictures of their own.) */
+extern TPictureFormat *(*g_createPictureFormat)(TPictureKind kind);
+
+/** The decoder for `kind`: the port's, or the stub. */
+TPictureFormat *CreatePictureFormat(TPictureKind kind);

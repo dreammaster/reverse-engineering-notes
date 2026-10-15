@@ -177,6 +177,30 @@ bool TPictureIO::LoadSpriteFromCache() {
 	return true;
 }
 
+TPictureFormat *(*g_createPictureFormat)(TPictureKind kind) = nullptr;
+
+TPictureFormat *CreatePictureFormat(TPictureKind kind) {
+	if (g_createPictureFormat) {
+		if (TPictureFormat *format = g_createPictureFormat(kind))
+			return format;
+	}
+
+	switch (kind) {
+	case TPictureKind::kPNG:
+		return new TPicturePNG();
+	case TPictureKind::kWebP:
+		return new TPictureWebP();
+	case TPictureKind::kJPG:
+		return new TPictureJPG();
+	case TPictureKind::kGIF:
+		return new TPictureGIF();
+	case TPictureKind::kPCX:
+		return new TPicturePCX();
+	}
+
+	return nullptr;
+}
+
 // Confirmed (asm lines 786442-786901). The format is told from the first four bytes of the file: "RIFF" is a WebP, and "PNG" in
 // the last three bytes is a PNG (whatever the first byte is); else from the first three letters of the extension that `name` has.
 bool TPictureIO::GetFormat(TFile &file, TPictureFormat **outFormat, const wxString &name) const {
@@ -197,27 +221,27 @@ bool TPictureIO::GetFormat(TFile &file, TPictureFormat **outFormat, const wxStri
 
 		if (riff && magic[1] == 'I') {
 			if (magic[2] == 'F' && magic[3] == 'F') {
-				*outFormat = new TPictureWebP();
+				*outFormat = CreatePictureFormat(TPictureKind::kWebP);
 				return true;
 			}
 		} else if (magic[1] == 'P') {
 			if (magic[2] == 'N' && magic[3] == 'G') {
-				*outFormat = new TPicturePNG();
+				*outFormat = CreatePictureFormat(TPictureKind::kPNG);
 				return true;
 			}
 		}
 	}
 
 	if (extension.CmpNoCase(wxString(L"PNG")) == 0)
-		*outFormat = new TPicturePNG();
+		*outFormat = CreatePictureFormat(TPictureKind::kPNG);
 	else if (extension.CmpNoCase(wxString(L"WEB")) == 0)
-		*outFormat = new TPictureWebP();
+		*outFormat = CreatePictureFormat(TPictureKind::kWebP);
 	else if (extension.CmpNoCase(wxString(L"JPG")) == 0)
-		*outFormat = new TPictureJPG();
+		*outFormat = CreatePictureFormat(TPictureKind::kJPG);
 	else if (extension.CmpNoCase(wxString(L"GIF")) == 0)
-		*outFormat = new TPictureGIF();
+		*outFormat = CreatePictureFormat(TPictureKind::kGIF);
 	else if (extension.CmpNoCase(wxString(L"PCX")) == 0)
-		*outFormat = new TPicturePCX();
+		*outFormat = CreatePictureFormat(TPictureKind::kPCX);
 
 	return *outFormat != nullptr;
 }
@@ -600,7 +624,7 @@ bool TPictureIO::IsTransparent(const wxPoint &point) const {
 
 // Confirmed (asm lines 788735-788822)
 bool TPictureIO::SavePicture(const wxFileName &file, bool webp) const {
-	TPictureFormat *format = webp ? static_cast<TPictureFormat *>(new TPictureWebP()) : new TPicturePNG();
+	TPictureFormat *format = CreatePictureFormat(webp ? TPictureKind::kWebP : TPictureKind::kPNG);
 	bool result = WritePicture(*format, file);
 
 	delete format;
