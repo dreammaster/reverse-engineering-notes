@@ -75,6 +75,8 @@ int main() {
 			animation.SetValue(kAnimationNumberOfLoops, loops, TSendEventEnum::kNoEvent);
 			return animation;
 		};
+		TVisObjRef snoop = makeAnimation("Snoop", 0);
+		startObject.SetLink(kObjectSnoopAnimation, snoop, true);
 		TVisObjRef twice = makeAnimation("Twice", 2);
 		TVisObjRef forever = makeAnimation("Forever", 0);
 
@@ -134,6 +136,10 @@ int main() {
 		addPart(a, kCommandSetLastFrame, forever, 1);
 		a = makeAction("Preload");
 		addPart(a, kCommandPreloadAnimation, forever, 0);
+		a = makeAction("SnoopOn");
+		addPart(a, kCommandSnoopAnimations, none, 0, 300);
+		a = makeAction("SnoopOff");
+		addPart(a, kCommandSnoopAnimations, none, 1, 300);
 		a = makeAction("Unload");
 		addPart(a, kCommandPreloadAnimation, forever, 1);
 
@@ -230,6 +236,27 @@ int main() {
 		frames(30);
 		run("Unload");
 		run("Preload");
+
+		// the snoop animations of the objects fade in with the time of the part, and out again
+		TGScene *scene = control->GetScene();
+		int before = (int)TGAnimation::GetRunningAnimations().size();
+
+		CHECK(scene->GetSnoopAnimAlpha() == 0.0f);
+		run("SnoopOn", 5);
+		for (int i = 0; i < 10; i++)
+			frames(1);
+		float midway = scene->GetSnoopAnimAlpha();
+
+		printf("snoop alpha early: %g, animations %d (before %d)\n", midway, (int)TGAnimation::GetRunningAnimations().size(), before);
+		CHECK((int)TGAnimation::GetRunningAnimations().size() == before + 1);
+		frames(150);
+		CHECK(scene->GetSnoopAnimAlpha() == 1.0f);
+		CHECK(midway <= 1.0f);
+		run("SnoopOff", 5);
+		frames(150);
+		printf("snoop alpha at the end: %g, animations %d\n", scene->GetSnoopAnimAlpha(), (int)TGAnimation::GetRunningAnimations().size());
+		CHECK(scene->GetSnoopAnimAlpha() == 0.0f);
+		CHECK((int)TGAnimation::GetRunningAnimations().size() == before);
 		run("HideForever", 20);
 		printf("animations running at the end: %d\n", (int)TGAnimation::GetRunningAnimations().size());
 	}
