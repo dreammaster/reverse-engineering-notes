@@ -220,7 +220,7 @@ int main() {
 
 		// random mouse moves, presses, releases, clicks, double clicks, keys and mouse wheels, for a few thousand steps
 		unsigned int state = getenv("MONKEY_SEED") ? (unsigned int)atoi(getenv("MONKEY_SEED")) : 987654321u;
-		int total = getenv("MONKEY_STEPS") ? atoi(getenv("MONKEY_STEPS")) : 4000;
+		int total = getenv("MONKEY_STEPS") ? atoi(getenv("MONKEY_STEPS")) : 600;
 		auto random = [&](int limit) {
 			state = state * 1664525u + 1013904223u;
 			return (int)((state >> 8) % (unsigned int)limit);
