@@ -112,13 +112,9 @@ extern int charmovex;
 extern int charmovey;
 extern int stopped_char;
 
-// Confirmed real, named globals (not anonymous dword_XXX symbols) used by
-// TGameControl::MoveScene's scroll-easing physics, Deponia_Linux.asm lines
-// 459288-460538+ - eased horizontal/vertical scroll speed, their
-// distance-clamped maximums, and the fixed ease factor (confirmed 0.1,
-// matching TMasterControl::ScrollUpdate's own already-approximated
-// kEaseFactor). Nothing writes startspeed anywhere reversed so far, despite
-// it being a real mutable global rather than a true constant in the binary.
+// Confirmed real, named globals (not anonymous dword_XXX symbols) used by TMasterControl::ScrollUpdate() and
+// TGameControl::MoveScene() (asm lines 486695-487099, 459288-460538): the eased horizontal and vertical scroll speed,
+// the maximum that the point being scrolled to allows (speedDownX/Y), and the ease factor startspeed (0.1).
 extern float xspeed;
 extern float yspeed;
 extern float speedDownX;
