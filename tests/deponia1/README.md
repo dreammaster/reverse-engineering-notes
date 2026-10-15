@@ -35,6 +35,7 @@ Every test prints `<n> failures`.
 | menutest | a menu scene is shown while an action waits: the action is stopped for the time of the menu |
 | cmdtest | the commands of an action that no other test runs: turn, place, walk, outfit, items, follow, scroll, move object, the switches of the game, a cutscene |
 | cmdinterfacetest | the commands that work on interfaces: the active command, show / hide / fade an interface, another interface, the object under the mouse |
+| talktest | a click on a second character in the scene: the hero walks to it and its action runs on arrival (a command that is used on characters is needed) |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
