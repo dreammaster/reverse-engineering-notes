@@ -196,6 +196,31 @@ int main() {
 		CHECK(count("step_a") == 1);
 		CHECK(count("step_b") == 1);
 		CHECK(count("step_c") == 1);
+
+		// a walk is going on when the game is saved: after the load the character goes on
+		TVisObjRef hero = control->GetCurrentCharacter()->GetRef();
+
+		hero.SetValue(kCharacterDestination, wxPoint{500, 100}, TSendEventEnum::kSendEvent);
+		frames(40);
+
+		wxPoint walking = *hero.GetPoint(kCharacterPosition);
+
+		printf("walking at %d,%d\n", walking.x, walking.y);
+		CHECK(walking.x > 100 && walking.x < 500);
+		control->SaveGame(4);
+		frames(600);
+		CHECK(hero.GetPoint(kCharacterPosition)->x == 500);
+
+		CHECK(control->LoadGame(4));
+		hero = control->GetCurrentCharacter()->GetRef();
+
+		wxPoint loaded = *hero.GetPoint(kCharacterPosition);
+
+		printf("loaded at %d,%d\n", loaded.x, loaded.y);
+		CHECK(loaded.x == walking.x && loaded.y == walking.y);
+		frames(600);
+		printf("arrived at %d,%d\n", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
+		CHECK(hero.GetPoint(kCharacterPosition)->x == 500 && hero.GetPoint(kCharacterPosition)->y == 100);
 	}
 
 	printf("%d failures\n", failures);

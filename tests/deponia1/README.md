@@ -27,6 +27,8 @@ Every test prints `<n> failures`.
 | waytest | walking around a wall along the way points; the free walk (controller) against a wall |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
+| charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
+| gamesavetest | a game saved while an action waits and a character walks, and loaded again; the global script variables |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested

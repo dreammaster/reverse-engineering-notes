@@ -1687,7 +1687,7 @@ void TGameControl::SaveGame(int slot) {
 	// debug/profiling instrumentation, like the two unused timers above).
 	wxFileName fileName;
 	int nr = savegame->GetSavegameNr();
-	fileName.SetFullName(wxString(L"vtp_saveddata" + std::to_wstring(nr) + L".xml"));
+	fileName.SetFullName(wxString(L"vtp_savedata" + std::to_wstring(nr) + L".xml"));
 
 	TXMLStringWriter xmlWriter;
 	_visionaire->SaveSaveGame(xmlWriter);
