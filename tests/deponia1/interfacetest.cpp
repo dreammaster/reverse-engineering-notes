@@ -85,6 +85,7 @@ int main() {
 		useCommand.SetName(TCharHolder("Use"));
 		useCommand.SetValue(kButtonType, 3, TSendEventEnum::kNoEvent);
 		useCommand.SetValue(kButtonCommandType, 1, TSendEventEnum::kNoEvent);
+		useCommand.SetValue(kButtonDraggable, true, TSendEventEnum::kNoEvent);
 		std::vector<wxPoint> useArea = {{10, 100}, {60, 100}, {60, 150}, {10, 150}};
 		useCommand.SetValue(kButtonPolygon, useArea, TSendEventEnum::kNoEvent);
 		interface.SetLink(kInterfaceStandardCommand, useCommand, true);
@@ -110,6 +111,13 @@ int main() {
 		rockAction.SetValue(kActionExecutionType, 6, TSendEventEnum::kNoEvent);
 		rockAction.SetLink(kActionCommand, useCommand, true);
 		rockAction.SetLink(kActionFixture, key, true);
+		TVisObjRef dropAction = game.CreateObject(7, rock, kObjectActions);
+		dropAction.SetName(TCharHolder("DropKeyOnRock"));
+		dropAction.SetValue(kActionExecutionType, 3, TSendEventEnum::kNoEvent);
+		dropAction.SetLink(kActionFixture, key, true);
+		TVisObjRef dropScript = game.CreateObject(8, dropAction, kActionActionParts);
+		dropScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		dropScript.SetValue(kActionPartString, wxString("key_dropped = (key_dropped or 0) + 1"), TSendEventEnum::kNoEvent);
 		TVisObjRef rockScript = game.CreateObject(8, rockAction, kActionActionParts);
 		rockScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		rockScript.SetValue(kActionPartString, wxString("key_used = (key_used or 0) + 1"), TSendEventEnum::kNoEvent);
@@ -267,6 +275,31 @@ int main() {
 		CHECK(lua_tointeger(L, -2) == 1);
 		CHECK(lua_tointeger(L, -1) > 350);
 		lua_settop(L, 0);
+
+		// the items are dragged: the item sticks to the cursor and is dropped on the rock
+		control->GetVisionaire()->GetGame().SetValue(kGameDraggableItems, true, TSendEventEnum::kNoEvent);
+		control->GetVisionaire()->GetGame().SetValue(kGameCommandBehaviour, 0, TSendEventEnum::kNoEvent);
+		click(30, 125);
+		click(100, 30);
+		{
+			TVisObjRef g = control->GetVisionaire()->GetGame();
+
+			printf("dragged: used item set %d picked %d\n", (int)!g.GetLink(kGameUsedItem).IsEmpty(), (int)g.GetBool(kGameUsedItemPicked));
+			CHECK(!g.GetLink(kGameUsedItem).IsEmpty());
+			CHECK(g.GetBool(kGameUsedItemPicked));
+		}
+		click(400, 300);
+		frames(300);
+		lua_getfield(L, LUA_GLOBALSINDEX, "key_dropped");
+		printf("key dropped on the rock: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+		{
+			TVisObjRef g = control->GetVisionaire()->GetGame();
+
+			printf("after the drop: used item set %d picked %d\n", (int)!g.GetLink(kGameUsedItem).IsEmpty(), (int)g.GetBool(kGameUsedItemPicked));
+			CHECK(g.GetLink(kGameUsedItem).IsEmpty());
+		}
 
 		// the items scroll: one place holder shows one of the three
 		auto shownItem = [&]() {
