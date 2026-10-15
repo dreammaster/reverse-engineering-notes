@@ -1067,15 +1067,18 @@ void TGCharacter::AnimationStopped(TGAnimation *animation) {
 		StopCharacterAnim(_animKinds[0], true);
 	}
 
-	// (the animations shown besides the first one, each with its kind)
-	for (size_t i = 0; i < _animations.size(); i++) {
-		if (_animations[i] == animation) {
-			_animations.erase(_animations.begin() + i);
-
-			if (i + 1 < _animKinds.size())
-				_animKinds.erase(_animKinds.begin() + i + 1);
-			break;
+	// (the animations shown besides the first one, each with its kind.) Every entry of the animation is taken
+	// out, and each time the SECOND of the kinds, whichever entry it was - the original does it that way.
+	for (size_t i = 0; i < _animations.size();) {
+		if (_animations[i] != animation) {
+			i++;
+			continue;
 		}
+
+		_animations.erase(_animations.begin() + i);
+
+		if (_animKinds.size() > 1)
+			_animKinds.erase(_animKinds.begin() + 1);
 	}
 
 	if (_state == 4) {
