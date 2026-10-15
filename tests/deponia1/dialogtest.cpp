@@ -158,7 +158,10 @@ int main() {
 			control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{20, 5});
 			control->ProcessMessage(static_cast<TMouseMessageEnum>(3), wxPoint{20, 5});
 			control->ProcessMessage(static_cast<TMouseMessageEnum>(4), wxPoint{20, 5});
-			frames(30);
+			frames(5);
+			// what is said is read first (it takes a time), then the dialog is there again
+			for (int wait = 0; wait < 3000 && control->GetDialog()->IsEmpty(); wait++)
+				frames(1);
 			printf("dialog active after click %d: %d hovered %d\n", click, (int)!control->GetDialog()->IsEmpty(), control->GetDialog()->GetCurrentDialogPart());
 		}
 		lua_getfield(L, LUA_GLOBALSINDEX, "picked_hello");

@@ -17,6 +17,7 @@ void TSAction::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kActionActionPartIndex, -1, TSendEventEnum::kNoEvent);
 	object->SetValue(kActionContinueWaitForEndIfElse, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kActionTimerStarted, false, TSendEventEnum::kNoEvent);
+	object->SetValue(kActionActionPartStarted, false, TSendEventEnum::kNoEvent);
 }
 
 void TSAction::OnInit(TVisionaireObject *object) {
@@ -30,6 +31,7 @@ void TSAnimation::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kFrameCount, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kAnimationSize, 0.0f, TSendEventEnum::kNoEvent);
 	object->SetValue(kAnimationWaitingTime, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kAnimationStartedByUser, false, TSendEventEnum::kNoEvent);
 }
 
 void TSAnimation::OnInit(TVisionaireObject *object) {
@@ -56,6 +58,7 @@ void TTActionPart::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kActionPartCommand, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kActionPartAltInt, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kActionPartAltInt2, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
 }
 
 void TTActionPart::OnInit(TVisionaireObject *object) {
@@ -73,6 +76,7 @@ void TTAnimation::OnInit(TVisionaireObject *object) {
 
 void TTAnimationFrame::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kAnimationFrameSoundVolume, 100, TSendEventEnum::kSendEvent);
+	object->SetValue(kAnimationFrameSoundBalance, 0, TSendEventEnum::kSendEvent);
 }
 
 void TTAnimationFrame::OnInit(TVisionaireObject *object) {
@@ -132,6 +136,7 @@ void TTCharacter::OnInit(TVisionaireObject *object) {
 	object->SetValue(kCharacterSize, 0.0f, TSendEventEnum::kNoEvent);
 	object->SetValue(kCharacterMatrixId, 1, TSendEventEnum::kSendEvent);
 	object->SetValue(kCharacterShaderSet, -1, TSendEventEnum::kSendEvent);
+	object->SetValue(kCharacterLightmapActive, true, TSendEventEnum::kSendEvent);
 }
 
 void TTCommentSet::OnCreate(TVisionaireObject *object) {
@@ -152,6 +157,7 @@ void TTCommentSetEntry::OnInit(TVisionaireObject *object) {
 
 void TTCondition::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kConditionIsVariable, true, TSendEventEnum::kSendEvent);
+	object->SetValue(kConditionOperator, 0, TSendEventEnum::kSendEvent);
 }
 
 void TTCondition::OnInit(TVisionaireObject *object) {
@@ -294,6 +300,7 @@ void TTInterface::OnInit(TVisionaireObject *object) {
 	object->SetValue(kInterfaceDestVisibility, 100, TSendEventEnum::kNoEvent);
 	object->SetValue(kInterfaceTimeToDestVisibility, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kInterfaceItemsScrollPosition, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kInterfaceMatrixId, 1, TSendEventEnum::kSendEvent);
 }
 
 void TTInterfaceClass::OnCreate(TVisionaireObject *object) {
@@ -348,6 +355,7 @@ void TTOutfit::OnInit(TVisionaireObject *object) {
 void TTParticleContainer::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kParticleContainerLeadTime, 0, TSendEventEnum::kSendEvent);
 	object->SetValue(kParticleContainerCameraZPosition, -3.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleContainerCameraZoom, 0.6666667f, TSendEventEnum::kSendEvent);
 }
 
 void TTParticleContainer::OnInit(TVisionaireObject *object) {
@@ -375,6 +383,7 @@ void TTScene::OnCreate(TVisionaireObject *object) {
 
 void TTScene::OnInit(TVisionaireObject *object) {
 	object->SetValue(kSceneBrightness, 100, TSendEventEnum::kSendEvent);
+	object->SetValue(kSceneShaderSet, -1, TSendEventEnum::kSendEvent);
 }
 
 void TTScript::OnCreate(TVisionaireObject *object) {
