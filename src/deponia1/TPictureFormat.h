@@ -9,6 +9,13 @@
 // wrap the vendored libpng, jpgd, libwebp, giflib and the PCX reader (manifest/vendor_libraries.tsv); they are not
 // reconstructed: a ScummVM port gives the formats its own image decoders (Image::PNGDecoder, Image::JPEGDecoder, ...). The
 // stubs below fail, so no picture can be loaded yet.
+//
+// What a port's decoders must do besides decoding: a picture in a composed file may have the content flag "PNG header
+// encrypted" (TFile::IsPNGHeaderEncrypted(), see the notes of baselib/file.h): then the width and height that the header
+// holds - two big-endian longs, which the engine's own writer encrypts with TMemoryBuffer::Encrypt() under the name of the
+// file (TFile::GetOriginalPath().GetName()) - have to be decrypted with TMemoryBuffer::Decrypt() before they are used. The
+// PNG reader does it in its read callback for the bytes 0x10 to 0x17 of the file (userReadData(), asm lines 754615-754780),
+// the WebP reader in ReadHeader() (asm lines 759993-760330) and ReadData() (asm lines 760905-761400).
 #pragma once
 
 class TPictureMEM;
