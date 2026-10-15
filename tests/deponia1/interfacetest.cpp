@@ -113,6 +113,19 @@ int main() {
 		TVisObjRef rockScript = game.CreateObject(8, rockAction, kActionActionParts);
 		rockScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		rockScript.SetValue(kActionPartString, wxString("key_used = (key_used or 0) + 1"), TSendEventEnum::kNoEvent);
+		// a statue: the "use" command on it runs a script, once the hero is there
+		TVisObjRef statue = game.CreateObject(6, scene, kSceneObjects);
+		statue.SetName(TCharHolder("Statue"));
+		statue.SetValue(kObjectPosition, wxPoint{500, 400}, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> statuePolygon = {{480, 380}, {520, 380}, {520, 420}, {480, 420}};
+		statue.SetValue(kObjectPolygon, statuePolygon, TSendEventEnum::kNoEvent);
+		TVisObjRef statueAction = game.CreateObject(7, statue, kObjectActions);
+		statueAction.SetName(TCharHolder("UseStatue"));
+		statueAction.SetValue(kActionExecutionType, 6, TSendEventEnum::kNoEvent);
+		statueAction.SetLink(kActionCommand, useCommand, true);
+		TVisObjRef statueScript = game.CreateObject(8, statueAction, kActionActionParts);
+		statueScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		statueScript.SetValue(kActionPartString, wxString("statue_used = (statue_used or 0) + 1; statue_hero_x = Characters['Hero'].Position.x"), TSendEventEnum::kNoEvent);
 		hero.SetLink(kCharacterInterfaces, interface, true);
 
 		// the start of the game: the scene is shown
@@ -212,6 +225,21 @@ int main() {
 		lua_getfield(L, LUA_GLOBALSINDEX, "key_used");
 		printf("key used on the rock: %d\n", (int)lua_tointeger(L, -1));
 		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+
+		// the use command on the statue: the hero walks there, the script runs when it is there
+		click(30, 125);
+		click(500, 400);
+		lua_getfield(L, LUA_GLOBALSINDEX, "statue_used");
+		printf("statue used at once: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_isnil(L, -1));
+		lua_settop(L, 0);
+		frames(400);
+		lua_getfield(L, LUA_GLOBALSINDEX, "statue_used");
+		lua_getfield(L, LUA_GLOBALSINDEX, "statue_hero_x");
+		printf("statue used: %d, hero at x %d\n", (int)lua_tointeger(L, -2), (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -2) == 1);
+		CHECK(lua_tointeger(L, -1) > 350);
 		lua_settop(L, 0);
 	}
 
