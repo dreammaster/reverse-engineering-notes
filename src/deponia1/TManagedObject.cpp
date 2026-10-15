@@ -315,15 +315,13 @@ void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionE
 	} else {
 		switch (info.mouseEvent) {
 		case 4:
-			if (sceneFlag124) {
-				outTypes.push_back(TypeActionExecution::kValue15);
-			} else {
-				outTypes.push_back(TypeActionExecution::kValue0);
+			if (!sceneFlag124) {
+				outTypes.push_back(TypeActionExecution::kValue14);
 				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
-				if (game.GetInt(kGameRightClickBehaviour))
+				if (game.GetInt(kGameLeftHoldBehaviour))
 					outAction.flagB = true;
-				outTypes.push_back(TypeActionExecution::kValue16);
 			}
+			outTypes.push_back(TypeActionExecution::kValue15);
 			break;
 		case 1:
 			outTypes.push_back(TypeActionExecution::kValue7);
@@ -397,6 +395,11 @@ void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionE
 		outAction.flag7 = false;
 }
 
+// Confirmed (asm lines 193750-194360). The actions of the object are tested for what the event is; an event
+// that is a press or a hold (3, 4) that no action took is tried again as a click (1); an item that is used
+// on the object that has no action for it may have the action itself (the actions of the item are tested,
+// with the object as the one the item is used on). An action that changed the active command is told to
+// the post execution (flag9).
 void TManagedObject::ExecuteEvent(TGEventInfo &info) {
 	HandlePreExecution(info);
 
@@ -409,6 +412,9 @@ void TManagedObject::ExecuteEvent(TGEventInfo &info) {
 			AlignCharacter(info.character->GetRef());
 	}
 
+	TGameControl *gameControl = static_cast<TGameControl *>(g_pGameControl);
+	TVisObjRef activeCommand = gameControl->GetGameSystem()->GetGame().GetLink(kGameActiveCommand);
+
 	TVList actionList;
 	GetActionList(actionList);
 	ExecuteMatchingAction(actionList, types, info, outAction);
@@ -416,10 +422,17 @@ void TManagedObject::ExecuteEvent(TGEventInfo &info) {
 	bool handled = outAction.flag4 || outAction.flag5;
 
 	if (!handled && (info.mouseEvent == 3 || info.mouseEvent == 4)) {
-		TGEventInfo retryInfo = info;
-		retryInfo.flag8 = true;
-		GetActionsToTest(retryInfo, types, outAction);
-		ExecuteMatchingAction(actionList, types, retryInfo, outAction);
+		TGEventInfo clickInfo;
+
+		clickInfo.action = info.action;
+		clickInfo.command = info.command;
+		clickInfo.mouseEvent = 1;
+		clickInfo.flag8 = info.flag8;
+		clickInfo.character = info.character;
+
+		types.clear();
+		GetActionsToTest(clickInfo, types, outAction);
+		ExecuteMatchingAction(actionList, types, clickInfo, outAction);
 		handled = outAction.flag4 || outAction.flag5;
 	}
 
@@ -448,14 +461,25 @@ void TManagedObject::ExecuteEvent(TGEventInfo &info) {
 			}
 		}
 		if (!newTypes.empty()) {
-			TVList altActionList;
-			info.action.GetList(kObjectActions, altActionList);
-			ExecuteMatchingAction(altActionList, newTypes, info, outAction);
+			TVList itemActions;
+			info.action.GetList(kObjectActions, itemActions);
+
+			TGEventInfo itemInfo;
+
+			itemInfo.action = _objRef;
+			itemInfo.command = info.command;
+			itemInfo.mouseEvent = info.mouseEvent;
+			itemInfo.flag8 = info.flag8;
+			itemInfo.character = info.character;
+
+			ExecuteMatchingAction(itemActions, newTypes, itemInfo, outAction);
 		}
 	}
 
+	outAction.flag9 = !(gameControl->GetGameSystem()->GetGame().GetLink(kGameActiveCommand) == activeCommand);
+
 	if (!_skipFinalPostExecution) {
-		bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(kSceneIsMenu);
+		bool sceneFlag124 = gameControl->GetScene()->GetRef().GetBool(kSceneIsMenu);
 		if (!sceneFlag124)
 			HandlePostExecution(info, outAction);
 	}
