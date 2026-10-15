@@ -24,7 +24,7 @@ void TGObjectManager::ResetEventInfo() {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	game.ClearLink(kGameUsedItem, true);
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
 void TGObjectManager::ResetCurrentObject() {
@@ -32,6 +32,7 @@ void TGObjectManager::ResetCurrentObject() {
 	game.ClearLink(kGameUsedItem, true);
 }
 
+// Confirmed (asm lines 187359-187456)
 void TGObjectManager::RemoveItem(const TVisObjRef &item) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	if (!(game.GetLink(kGameUsedItem) == item))
@@ -40,9 +41,10 @@ void TGObjectManager::RemoveItem(const TVisObjRef &item) {
 	if (!game.GetBool(kGameUsedItemPicked))
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
+// Confirmed (asm lines 187457-187543)
 void TGObjectManager::RemoveItem(bool keepIfNotHeld) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	bool held = game.GetBool(kGameUsedItemPicked);
@@ -52,13 +54,14 @@ void TGObjectManager::RemoveItem(bool keepIfNotHeld) {
 	if (!held)
 		return;
 	g_pGameControl->GetCursorControl()->ReleaseMoveObject();
-	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kNoEvent);
+	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
+// Confirmed (asm lines 187544-187630)
 void TGObjectManager::SetItem(const TVisObjRef &item, bool held) {
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
 	game.SetLink(kGameUsedItem, item, true);
-	game.SetValue(kGameUsedItemPicked, held && !item.IsEmpty(), TSendEventEnum::kNoEvent);
+	game.SetValue(kGameUsedItemPicked, held && !item.IsEmpty(), TSendEventEnum::kSendEvent);
 	if (held)
 		g_pGameControl->GetCursorControl()->SetMoveObject(item);
 	else
