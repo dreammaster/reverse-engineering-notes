@@ -37,6 +37,7 @@ Every test prints `<n> failures`.
 | cmdinterfacetest | the commands that work on interfaces: the active command, show / hide / fade an interface, another interface, the object under the mouse |
 | talktest | a click on a second character in the scene: the hero walks to it and its action runs on arrival (a command that is used on characters is needed) |
 | condtest | objects with conditions (variables, AND / OR, negated, nested): active when the condition is true, following it when a script changes a variable |
+| cmdanimtest | the commands for animations: show and wait for the end, move (to, more, less), first and last frame, preload, hide |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
