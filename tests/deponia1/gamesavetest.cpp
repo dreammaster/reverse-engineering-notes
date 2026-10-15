@@ -1,0 +1,203 @@
+#include <cmath>
+#include <cstdio>
+
+#include "AppGlobals.h"
+#include "TStandardPaths.h"
+#include "THGameControl.h"
+#include "TSceneControl.h"
+#include "TGAction.h"
+#include "TMSavegame.h"
+#include "graphicslib/graphics.h"
+#include "vscommon/objAccess.h"
+#include "vscommon/scripting/command.h"
+#include "vscommon/scripting/visLua.h"
+#include "vstables/eCommand.h"
+#include "vstables/fieldIds.h"
+#include "vstables/visionaireGame.h"
+
+static int failures = 0;
+#define CHECK(c) do { if (!(c)) { printf("FAIL line %d: %s\n", __LINE__, #c); failures++; } } while (0)
+
+class NullGraphics : public TGraphicsInterface {
+};
+
+// A game is saved while an action waits and loaded again: the action goes on where it was.
+int main() {
+	setvbuf(stdout, nullptr, _IONBF, 0);
+	wxLog::loglevel = 2;
+
+	{
+		TVisionaireGame game;
+		game.NewGame();
+		TVisObjRef gameRef = game.GetGame();
+		gameRef.SetValue(kGameWindowResolution, wxPoint{640, 480}, TSendEventEnum::kNoEvent);
+		gameRef.SetValue(kGameCompanyName, wxString(L"Test Company"), TSendEventEnum::kNoEvent);
+		gameRef.SetValue(kGameGameName, wxString(L"Test Game"), TSendEventEnum::kNoEvent);
+
+		TVisObjRef scene = game.CreateObject(4, gameRef, kGameSceneLinks);
+		scene.SetName(TCharHolder("Hall"));
+		TVisObjRef hero = game.CreateObject(0, gameRef, kGameCharacterLinks);
+		hero.SetName(TCharHolder("Hero"));
+		TVisObjRef startObject = game.CreateObject(6, scene, kSceneObjects);
+		startObject.SetName(TCharHolder("Start"));
+		startObject.SetValue(kObjectPosition, wxPoint{100, 200}, TSendEventEnum::kNoEvent);
+		hero.SetLink(kCharacterStartObject, startObject, true);
+		gameRef.SetLink(kGameFirstCharacter, hero, true);
+
+		TVisObjRef ways = game.CreateObject(29, scene, kSceneWaySystems);
+		std::vector<wxPoint> border = {{0, 0}, {640, 0}, {640, 480}, {0, 480}};
+		ways.SetValue(kWaySystemBorder, border, TSendEventEnum::kNoEvent);
+		scene.SetLink(kSceneCurrentWaySystem, ways, true);
+		TVisObjRef outfit = game.CreateObject(17, hero, kCharacterOutfits);
+		outfit.SetValue(kOutfitCharacterSpeed, 100, TSendEventEnum::kNoEvent);
+		hero.SetLink(kCharacterCurrentOutfit, outfit, true);
+
+		// the start of the game: the scene is shown
+		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
+		action.SetName(TCharHolder("Start"));
+		TVisObjRef change = game.CreateObject(8, action, kActionActionParts);
+		change.SetValue(kActionPartCommand, kCommandChangeScene, TSendEventEnum::kNoEvent);
+		change.SetLink(kActionPartLink, startObject, true);
+		change.SetLink(kActionPartAltLink, hero, true);
+		gameRef.SetLink(kGameStartAction, action, true);
+
+		// a long action: mark, wait, mark, wait, mark
+		TVisObjRef longAction = game.CreateObject(7, gameRef, kGameActions);
+		longAction.SetName(TCharHolder("Long"));
+		auto addPart = [&](int command, int value) {
+			TVisObjRef part = game.CreateObject(8, longAction, kActionActionParts);
+			part.SetValue(kActionPartCommand, command, TSendEventEnum::kNoEvent);
+			part.SetValue(kActionPartInt, value, TSendEventEnum::kNoEvent);
+			part.SetValue(kActionPartAltInt, 1, TSendEventEnum::kNoEvent);
+			return part;
+		};
+		auto mark = [&](const char *code) {
+			TVisObjRef part = addPart(kCommandRunPartScript, 0);
+			part.SetValue(kActionPartString, wxString(code), TSendEventEnum::kNoEvent);
+		};
+		mark("step_a = (step_a or 0) + 1");
+		addPart(kCommandWait, 2);
+		mark("step_b = (step_b or 0) + 1");
+		addPart(kCommandWait, 2);
+		mark("step_c = (step_c or 0) + 1");
+
+		wxFileName out(L"savegame.dat");
+		CHECK(game.BinarySave(out, nullptr, false, nullptr));
+	}
+
+	graphics = new NullGraphics();
+	THGameControl *control = new THGameControl();
+	g_pGameControl = control;
+	TVisionaire::SetVisPlayerMode(true);
+
+	wxString file(L"savegame.dat");
+	wxString warning;
+
+	CHECK(control->PreLoad(file, warning, true));
+	InitPlayerCommands(control->GetVisionaire(), wxString(L"."), wxString(L"."), wxString(L"."));
+	wxString language;
+	bool loaded = control->LoadAndInitGame(file, warning, language, true);
+
+	CHECK(loaded);
+	if (loaded) {
+		control->RegisterEventHandler();
+		control->InitAfterLoadingScreen();
+		control->ExecuteStartingAction();
+
+		auto frames = [&](int count) {
+			for (int i = 0; i < count; i++) {
+				TGAction::ContinueRunningActions(false);
+				control->Update();
+				control->Draw(true);
+				wxMilliSleep(5);
+			}
+		};
+		auto click = [&](int x, int y) {
+			control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{x, y});
+			frames(3);
+			control->ProcessMessage(static_cast<TMouseMessageEnum>(3), wxPoint{x, y});
+			control->ProcessMessage(static_cast<TMouseMessageEnum>(4), wxPoint{x, y});
+		};
+
+		auto count = [&](const char *name) {
+			lua_getfield(L, LUA_GLOBALSINDEX, name);
+			int result = lua_isnil(L, -1) ? 0 : (int)lua_tointeger(L, -1);
+
+			lua_settop(L, 0);
+			return result;
+		};
+		auto actionByName = [&](const char *wanted) {
+			TVList actions;
+
+			control->GetVisionaire()->GetGame().GetLinks(kGameActions, TypeOrder::kValue0, actions);
+			for (TVisionaireObject *object : actions) {
+				TVisObjRef ref(object);
+
+				if (std::string(ref.GetName().c_str().mb_str()) == wanted)
+					return ref;
+			}
+			return TVisObjRef();
+		};
+
+		frames(20);
+
+		TMSavegame::InitSaveGamePath();
+
+		// the action is started and is in its first wait (the waits are 2 seconds)
+		TGAction::AddRunningAction(actionByName("Long"));
+		frames(30);
+		printf("running: a %d, b %d, c %d\n", count("step_a"), count("step_b"), count("step_c"));
+		CHECK(count("step_a") == 1);
+		CHECK(count("step_b") == 0);
+
+		// a variable of the scripts of each kind
+		LuaDoString("saved_number = 42; saved_text = 'hello'; saved_flag = true; saved_table = {answer = 7, list = {1, 2, 3}}");
+
+		// saved in the first wait
+		control->SaveGame(3);
+
+		LuaDoString("saved_number = 0; saved_text = 'changed'; saved_flag = false; saved_table = nil");
+
+		// the action goes on to its end
+		for (int i = 0; i < 2000 && count("step_c") == 0; i++)
+			frames(1);
+		printf("finished: a %d, b %d, c %d\n", count("step_a"), count("step_b"), count("step_c"));
+		CHECK(count("step_a") == 1);
+		CHECK(count("step_b") == 1);
+		CHECK(count("step_c") == 1);
+
+		// loaded: the action is in its first wait again, and goes on from there without its first part
+		CHECK(control->LoadGame(3));
+		lua_pushnil(L);
+		lua_setfield(L, LUA_GLOBALSINDEX, "step_b");
+		lua_pushnil(L);
+		lua_setfield(L, LUA_GLOBALSINDEX, "step_c");
+		LuaDoString("saved_text_copy = tostring(saved_text); saved_number_copy = saved_number; saved_flag_copy = tostring(saved_flag)");
+		lua_getfield(L, LUA_GLOBALSINDEX, "saved_text_copy");
+		std::string text = lua_tostring(L, -1) ? lua_tostring(L, -1) : "?";
+		lua_settop(L, 0);
+		lua_getfield(L, LUA_GLOBALSINDEX, "saved_flag_copy");
+		std::string flag = lua_tostring(L, -1) ? lua_tostring(L, -1) : "?";
+		lua_settop(L, 0);
+		printf("loaded variables: number %d, text %s, flag %s\n", count("saved_number_copy"), text.c_str(), flag.c_str());
+		CHECK(count("saved_number") == 42);
+		CHECK(text == "hello");
+		CHECK(flag == "true");
+		LuaDoString("saved_ok = (saved_flag == true) and saved_table ~= nil and saved_table.answer == 7 and #saved_table.list == 3 and saved_table.list[3] == 3");
+		lua_getfield(L, LUA_GLOBALSINDEX, "saved_ok");
+		CHECK(lua_toboolean(L, -1));
+		lua_settop(L, 0);
+		frames(10);
+		printf("loaded: a %d, b %d, c %d\n", count("step_a"), count("step_b"), count("step_c"));
+		CHECK(count("step_b") == 0);
+		for (int i = 0; i < 2000 && count("step_c") == 0; i++)
+			frames(1);
+		printf("finished again: a %d, b %d, c %d\n", count("step_a"), count("step_b"), count("step_c"));
+		CHECK(count("step_a") == 1);
+		CHECK(count("step_b") == 1);
+		CHECK(count("step_c") == 1);
+	}
+
+	printf("%d failures\n", failures);
+	return failures ? 1 : 0;
+}

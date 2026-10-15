@@ -192,17 +192,23 @@ TVisionaireObject *TTable::GetActiveObject(const TId &id) {
 	return nullptr;
 }
 
-// Confirmed (asm lines 666378-666505)
+// Confirmed (asm lines 666378-666505): the record is made at once; a table that has a field for the object it
+// stands for (the active tables) links it to `id` - an empty id is reported (the text of the message says that
+// the table does not store active objects), and then the record is left without a link.
 TVisionaireObject *TTable::CreateActiveObject(const TId &id) {
-	if (_activeLinkField == -1) {
+	TVisionaireObject *object = CreateObject(nullptr, -1, true);
+
+	if (_activeLinkField == -1)
+		return object;
+
+	if (id.getId() == -1 && id.getTable() == 0xFF) {
 		x_assert(false, "false", kSourceFile, 0x2A4);
 		if (wxLog::loglevel > 0)
 			wxLog::logexpanded(L"TTable::CreateActiveObject: table %ls (id: %d) does not store active objects",
 			                   TXMLNames::GetString(_description).c_str(), _description);
-		return nullptr;
+		return object;
 	}
 
-	TVisionaireObject *object = CreateObject(nullptr, -1, false);
 	object->SetLink(_activeLinkField, id, false);
 	return object;
 }
