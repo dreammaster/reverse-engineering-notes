@@ -15,6 +15,7 @@
 #include "graphicslib/spriteCache.h"
 
 class TPreloadedPicManager;
+class TSignalSlot;
 struct TPictureMemBlock;
 class TPictureMEM;
 
@@ -110,6 +111,37 @@ public:
 	virtual void Swap();
 	/** Slot 0x178 (TGraphicsOGL::SetDirectToScreen()): the drawing goes to the screen again, with the matrix of the window. */
 	virtual void SetDirectToScreen();
+
+	/** Confirmed (asm 763382-764646): the transition between two scenes, played to its end before it returns. `effect` is the
+	 *  setting of the game (kGameFadeEffect): 1 the new scene comes out of the dark, 2 it goes into the dark, 4 and 11 the old
+	 *  one dissolves into the new one (the backend draws both: it reads GetFadeEffect() and GetFadeProgress()), 5 and 6 the same
+	 *  with the progress eased in and out, 8 and 9 an iris that closes (8) or opens (9) round the middle of the screen; 0, 10 and
+	 *  the others do nothing, 3 and 7 are asserts. For `time` milliseconds, each turn: the game is updated and drawn through
+	 *  `game`, the sounds go on through `sound` (kSignalSoundFade). `first` and `second` are sprite handles that are let go
+	 *  when it is over. A backend that draws the transitions itself overrides this. */
+	virtual void FadeIn(int effect, int time, TSpriteHandle *first, TSpriteHandle *second, TSignalSlot *sound, TSignalSlot *game);
+	/** The effect the transition draws now, how far it is (0 to 1), and whether the backend drew something for it
+	 *  (+0x278, +0x280, +0x284; the backend sets the last one, Swap() clears it). */
+	int GetFadeEffect() const {
+		return _fadeEffect;
+	}
+	float GetFadeProgress() const {
+		return _fadeProgress;
+	}
+	void SetFadeDrawn(bool drawn) {
+		_fadeDrawn = drawn;
+	}
+	/** The size of the surface (+0x20C, +0x210): the whole screen, as the transitions cover it. */
+	int GetSurfaceWidth() const {
+		return _surfaceWidth;
+	}
+	int GetSurfaceHeight() const {
+		return _surfaceHeight;
+	}
+	void SetSurfaceSize(int width, int height) {
+		_surfaceWidth = width;
+		_surfaceHeight = height;
+	}
 	/** Slots 0x110 and 0x118 (TGraphicsOGL::BeginBatch()/EndBatch()): the drawing calls in between are put together to
 	 *  one (a text is drawn letter by letter between the two). */
 	virtual void BeginBatch();
@@ -164,6 +196,12 @@ public:
 private:
 	int _width = 0;
 	int _height = 0;
+	int _surfaceWidth = 0;   // +0x20C
+	int _surfaceHeight = 0;  // +0x210
+	int _fadeEffect = 0;     // +0x278
+	int _fadeAux = 0;        // +0x27C
+	float _fadeProgress = 0.0f;  // +0x280
+	bool _fadeDrawn = false;     // +0x284
 	TSpriteCache _spriteCache;
 	TPreloadedPicManager *_preloadedPicManager = nullptr;
 };

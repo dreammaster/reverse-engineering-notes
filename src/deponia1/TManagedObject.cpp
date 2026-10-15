@@ -41,7 +41,8 @@ int GetAngle(float dx, float dy) {
 }
 
 void TManagedObject::ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event) {
-	_objRef.SetLink(kCharacterDestinationObject, character->GetRef(), true);
+	// (the character has the object as the destination it is going to, and does what the click says when it is there)
+	character->GetRef().SetLink(kCharacterDestinationObject, _objRef, true);
 	static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->SaveEventInfo(event);
 }
 

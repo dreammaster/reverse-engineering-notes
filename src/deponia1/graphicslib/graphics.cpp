@@ -1,6 +1,17 @@
 #include "graphicslib/graphics.h"
 
+#include <algorithm>
+#include <cmath>
+
+#include "AppGlobals.h"
+#include "Diagnostics.h"
+#include "Easing.h"
+#include "TSignalData.h"
+#include "TSignalSlot.h"
 #include "TSpriteHandle.h"
+#include "TTimer.h"
+#include "Tween.h"
+#include "SdlStub.h"
 #include "graphicslib/preloadedPicManager.h"
 
 TGraphicsInterface *graphics = new TGraphicsInterface();
@@ -262,6 +273,269 @@ void TGraphicsInterface::Swap() {
 }
 
 void TGraphicsInterface::SetDirectToScreen() {
+}
+
+// Confirmed (asm 763382-764646). The frames of the transitions are made in this loop and nowhere else: while it runs, the game
+// is updated (kSignalGameEvent) and drawn (kSignalDraw) through `game` - every turn the backend is asked to begin a frame
+// (BeforeDrawScene), what it draws for the effect is up to it, and a frame that it did not draw for the effect is shown with
+// AfterDrawScene(true, true). g_loadingScreenLock is held for the time of a frame (all of the effects 4 and 11).
+// (The original also takes the events of SDL out of the queue every turn of 4, 5, 6 and 11.)
+void TGraphicsInterface::FadeIn(int effect, int time, TSpriteHandle *first, TSpriteHandle *second, TSignalSlot *sound,
+                                TSignalSlot *game) {
+	TTimer timer;
+	TSignalData signal;
+	TSignalData result;
+	const float duration = (float)time;
+	const wxRect screen{0, 0, _surfaceWidth, _surfaceHeight};
+
+	signal.type = kSignalSoundFade;
+	signal.value = 0;
+
+	// the game goes on and is drawn
+	auto step = [&]() {
+		TSignalData update;
+		TSignalData draw;
+
+		update.type = kSignalGameEvent;
+		game->Signal(update, result);
+		draw.type = kSignalDraw;
+		game->Signal(draw, result);
+	};
+	// the frame is shown (the backend says whether it drew something for the effect)
+	auto show = [&]() {
+		AfterDrawScene(true, !_fadeDrawn);
+	};
+	// the sounds go on
+	auto sounds = [&]() {
+		if (sound) {
+			signal.type = kSignalSoundFade;
+			sound->Signal(signal, result);
+		}
+	};
+
+	switch (effect) {
+	case 1:
+	case 2:
+		if (effect == 1) {
+			// the scene is drawn once, and covered
+			g_loadingScreenLock.Enter();
+			BeforeDrawScene(true, 0);
+			AfterDrawScene(true, true);
+			BeforeDrawScene(true, 0);
+			step();
+			FinishDraw();
+			DrawBox(screen, 0, 1.0f);
+			show();
+			g_loadingScreenLock.Leave();
+		}
+
+		timer.SetTime();
+
+		do {
+			float alpha = (float)timer.GetTime() / duration;
+
+			alpha = (effect == 1) ? std::max(0.0f, 1.0f - alpha) : std::min(1.0f, alpha);
+
+			g_loadingScreenLock.Enter();
+			BeforeDrawScene(true, 0);
+			step();
+			FinishDraw();
+			DrawBox(screen, 0, alpha);
+			show();
+			lastFrameEnd = SDL_GetTicks();
+			g_loadingScreenLock.Leave();
+		} while (timer.GetTime() < time);
+
+		if (effect == 2) {
+			g_loadingScreenLock.Enter();
+			BeforeDrawScene(true, 0);
+			DrawBox(screen, 0, 1.0f);
+			AfterDrawScene(true, true);
+			g_loadingScreenLock.Leave();
+		}
+		break;
+	case 4:
+	case 11:
+		g_loadingScreenLock.Enter();
+		timer.SetTime();
+
+		do {
+			float progress = (float)timer.GetTime() / duration;
+
+			if (progress < 0.0f)
+				progress = 0.0f;
+
+			_fadeProgress = progress;
+			_fadeAux = 0;
+			_fadeEffect = effect;
+			BeforeDrawScene(true, 0);
+			step();
+			sounds();
+			show();
+			lastFrameEnd = SDL_GetTicks();
+		} while (timer.GetTime() < time);
+
+		g_loadingScreenLock.Leave();
+		break;
+	case 5:
+	case 6: {
+		// the same, the progress eased in and out
+		Tween tween(0.0, 1.0, (double)duration, Easing::QuadInOut, false, false);
+		double last = 0.0;
+
+		timer.SetTime();
+
+		do {
+			g_loadingScreenLock.Enter();
+			BeforeDrawScene(true, 0);
+			tween.Update((float)((double)timer.GetTime() - last));
+			_fadeAux = 0;
+			_fadeEffect = effect;
+			_fadeProgress = (float)tween.GetValue();
+			last = (double)timer.GetTime();
+
+			TSignalData update;
+			TSignalData draw;
+			TSignalData interfaces;
+
+			update.type = kSignalGameEvent;
+			game->Signal(update, result);
+			draw.type = kSignalDraw;
+			game->Signal(draw, result);
+			interfaces.type = kSignalDrawInterfaces;
+			game->Signal(interfaces, result);
+			sounds();
+			show();
+			lastFrameEnd = SDL_GetTicks();
+			g_loadingScreenLock.Leave();
+		} while (timer.GetTime() < time);
+		break;
+	}
+	case 8:
+	case 9: {
+		// an iris: a black picture with a round hole in the middle (made here) is drawn bigger or smaller over the scene
+		const int maskSize = 256;
+		std::vector<char> mask((size_t)maskSize * maskSize * 4);
+		size_t at = 0;
+
+		for (int y = 127; y >= -128; y--) {
+			for (int x = 127; x >= -128; x--) {
+				const bool outside = (x * x + y * y > 0x3F00);
+
+				mask[at++] = 0;
+				mask[at++] = 0;
+				mask[at++] = 0;
+				mask[at++] = outside ? (char)0xFF : 0;
+			}
+		}
+
+		TSpriteHandle *sprite = nullptr;
+
+		g_loadingScreenLock.Enter();
+
+		if (CreateSprite(&sprite, mask.data(), maskSize, maskSize, 4, maskSize * 4, true)) {
+			g_loadingScreenLock.Leave();
+			timer.SetTime();
+
+			const int centreX = _surfaceWidth / 2;
+			const int centreY = _surfaceHeight / 2;
+			const float biggest = (float)_surfaceWidth * 1.2f;
+			const int biggestHalf = (int)biggest / 2;
+			const wxRect source{0, 0, maskSize, maskSize};
+
+			do {
+				g_loadingScreenLock.Enter();
+
+				int size;
+
+				if (effect == 8)
+					size = (int)(biggest - (float)timer.GetTime() / duration * biggest);
+				else
+					size = (int)((float)timer.GetTime() / duration * biggest);
+
+				int half = 0;
+
+				if (size >= 0) {
+					half = size >> 1;
+
+					if ((float)size > biggest)
+						half = biggestHalf;
+				}
+
+				wxRect iris;
+
+				iris.x = centreX - half;
+				iris.y = centreY - half;
+				iris.width = half * 2;
+				iris.height = half * 2;
+
+				BeforeDrawScene(true, 0);
+				step();
+
+				FloatRect target;
+				const unsigned int white = 0xFFFFFFFF;
+				const wxPoint noCentre{-1, -1};
+
+				target.x = (float)iris.x;
+				target.y = (float)iris.y;
+				target.width = (float)iris.width;
+				target.height = (float)iris.height;
+				Draw(sprite, source, target, 1.0f, false, white, -1, 0.0f, noCentre, 1.0f, 1.0f, 1);
+
+				// the rest of the screen is black
+				if (iris.GetTop() > 0)
+					DrawBox(wxRect{0, 0, _surfaceWidth, iris.GetTop()}, 0, 1.0f);
+
+				if (iris.GetBottom() < _surfaceHeight)
+					DrawBox(wxRect{0, iris.GetBottom(), _surfaceWidth, _surfaceHeight - iris.GetBottom()}, 0, 1.0f);
+
+				if (iris.GetLeft() > 0)
+					DrawBox(wxRect{0, 0, iris.GetLeft(), _surfaceHeight}, 0, 1.0f);
+
+				if (iris.GetRight() < _surfaceWidth)
+					DrawBox(wxRect{iris.GetRight(), 0, _surfaceWidth - iris.GetRight(), _surfaceHeight}, 0, 1.0f);
+
+				show();
+				lastFrameEnd = SDL_GetTicks();
+				g_loadingScreenLock.Leave();
+			} while (timer.GetTime() < time);
+
+			if (effect == 8) {
+				g_loadingScreenLock.Enter();
+				BeforeDrawScene(true, 0);
+				AfterDrawScene(true, true);
+				g_loadingScreenLock.Leave();
+			}
+
+			g_loadingScreenLock.Enter();
+			OnSpriteHandleReleased(sprite);
+			g_loadingScreenLock.Leave();
+		} else {
+			g_loadingScreenLock.Leave();
+		}
+		break;
+	}
+	case 3:
+		x_assert(false, "false", "/home/simon/Documents/jenkins/branchPillars/src/graphicslib/graphics.cpp", 0x208);
+		break;
+	case 7:
+		x_assert(false, "false", "/home/simon/Documents/jenkins/branchPillars/src/graphicslib/graphics.cpp", 0x2A9);
+		break;
+	default:
+		break;
+	}
+
+	if (sound) {
+		signal.type = kSignalSoundFade;
+		signal.value = 1;
+		sound->Signal(signal, result);
+	}
+
+	if (first)
+		OnSpriteHandleReleased(first);
+
+	if (second)
+		OnSpriteHandleReleased(second);
 }
 
 void TGraphicsInterface::SetFilters(TInterpolationEnum /*a*/, TInterpolationEnum /*b*/) {

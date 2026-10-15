@@ -39,6 +39,7 @@
 #include "TMovie.h"
 #include "TPaintControl.h"
 #include "TSignalData.h"
+#include "TSignalSlot.h"
 #include "TSoundFFMPEG.h"
 #include "TSprite.h"
 #include "TTimer.h"
@@ -137,12 +138,12 @@ struct TKeyboardEventHandler {
 	wxString name;
 };
 
-class TMasterControl : public TPaintControl {
+class TMasterControl : public TSignalSlot, public TPaintControl {
 public:
 	TMasterControl();
 	virtual ~TMasterControl();
 
-	virtual void Signal(const TSignalData &signal, TSignalData &result);
+	void Signal(const TSignalData &signal, TSignalData &result) override;
 
 	// The 8 pure virtuals from the original vtable (offsets 0x18-0x50);
 	// TGameControl provides the real overrides (confirmed from

@@ -1,7 +1,6 @@
 // Not yet assert-confirmed to a specific file; stays at the top level.
 //
-// Confirmed in full except ToScene() (Deponia_Linux.asm lines 453942-
-// 455638, reaching all 15 manifest-listed methods): owns two scenes - the
+// Confirmed in full (Deponia_Linux.asm lines 453942-455638, reaching all 15 manifest-listed methods): owns two scenes - the
 // current one and, during a cross-fade transition, the one being faded
 // out - plus the game-data reference and scroll position to restore when a
 // save next needs "what was the last playable (non-menu) scene showing".
@@ -15,15 +14,8 @@
 // interface (IsMenu()/GetRef()/SetRef()/GetScrollPos()/Draw()); THScene's
 // own RegisterEvents() is what ToScene() will call.
 //
-// ToScene() is the actual scene-transition implementation (sound handling,
-// swapping the current/old scene pointers, registering the new scene's
-// events, cursor/animation bookkeeping) - by itself longer than every
-// other method in this class combined, and pulling in several more
-// not-yet-modeled dependencies (THScene::RegisterEvents(),
-// TSoundInterface, TMasterControl::GetSoundManager()). Left as a
-// confirmed-signature stub; every other method here is implemented in
-// full around it, since their own logic doesn't depend on what it
-// actually does internally.
+// ToScene() is the scene change: the fade effect of the game, the music and the audio busses of the scene, the new
+// scene begun and the old one ended (or kept under the new one while it is faded in: Draw()).
 #pragma once
 
 #include "TGScene.h"
@@ -108,7 +100,7 @@ private:
 	// Confirmed call shape only (TSceneControl::ChangeScene/ShowScene,
 	// Deponia_Linux.asm lines 454129-454879) - see this class's own header
 	// comment.
-	void ToScene(bool immediate, TVisObjRef &scene, const TVisObjRef &character, const wxPoint &pos,
+	void ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &character, const wxPoint &pos,
 	             int direction, bool flag);
 
 	// Confirmed (Deponia_Linux.asm lines 60E8F0-60E9B6): {-1, -1}.

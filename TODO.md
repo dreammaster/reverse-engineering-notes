@@ -177,3 +177,11 @@ missing elsewhere:
   and the audio busses (`soundengine::AudioBus`, `BusActivate`/`BusValuesUpdate`) are not reconstructed.
   `TSoundFFMPEG::CreateStream()` is where a backend (ScummVM's mixer) gives the engine a `TSoundStream`.
 - Command 122 (0x7A) is an if (`IsIFActionPart`) that has no entry in the jump table: it does nothing.
+
+## TGraphicsInterface::FadeIn: what the backend draws
+
+`src/deponia1/graphicslib/graphics.cpp`. The time loop, the signals to the game (update, draw) and to the sounds, and the
+black-box fades (effects 1 and 2) and the iris (8 and 9) are reconstructed from asm 763382-764646. The pictures of the
+dissolve (effects 4, 5, 6 and 11) are the backend's: it reads `GetFadeEffect()`/`GetFadeProgress()` and calls
+`SetFadeDrawn(true)` when it drew them (the ScummVM port gives them). The 3D/GL parts of the original `TGraphicsOGL`
+(`BeforeDrawScene`, `AfterDrawScene`, `Swap`, `SetDirectToScreen`) are only declared.
