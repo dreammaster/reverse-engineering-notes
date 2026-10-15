@@ -510,11 +510,8 @@ void TGameControl::HandleMouseHolding(const wxPoint &/*pos*/) {
 }
 
 void TGameControl::UpdateTexts() {
-	// Confirmed (asm lines 456183-456282): field id 0x211 (matches
-	// IsTextActive/IsNoTextDisplayed's usage) gates whether each text needs
-	// recalculating. If _currentText still reads as "displayed" after
-	// recalculating, its tail is exactly ClearCurrentText()'s body
-	// (matching field id 0x1DD).
+	// Confirmed (asm lines 456183-456282): every text that is active is recalculated (it
+	// goes on to its next part or ends); the text that is shown is dropped once it has ended.
 	for (TGText *text : _activeTexts) {
 		if (text->GetTarget().GetBool(kTextActive))
 			text->CalculateCurrentText();
@@ -522,7 +519,7 @@ void TGameControl::UpdateTexts() {
 
 	if (_currentText != nullptr && _currentText->GetTarget().GetBool(kTextActive)) {
 		_currentText->CalculateCurrentText();
-		if (_currentText->GetTarget().GetBool(kTextActive))
+		if (!_currentText->GetTarget().GetBool(kTextActive))
 			ClearCurrentText();
 	}
 }
@@ -1404,7 +1401,7 @@ void TGameControl::StartText(const TVisObjRef &text, TGCharacter *character, Tex
 
 	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, text);
 	TVisObjRef emptyObject = _visionaire->GetEmptyObject();
-	_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, true, false);
+	_currentText = new THText(activeObject, text, character, emptyObject, alignment, target, pos, false, true);
 
 	if (_currentText->GetTarget().GetBool(kTextActive)) {
 		TVisObjRef game = _visionaire->GetGame();
