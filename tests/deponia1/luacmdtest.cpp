@@ -332,6 +332,23 @@ int main() {
 		lua_pop(L, 1);
 		lua_settop(L, 0);
 
+		// sounds: started, found by the file, its properties read and changed, paused, stopped
+		run("sid = startSound('sounds/step.ogg', {flags = true, volume = 70, balance = -20, loop = true}); "
+		    "found_id = getSoundId('sounds/step.ogg'); "
+		    "p_volume = getSoundProperty(sid, 'volume'); p_balance = getSoundProperty(sid, 'balance'); "
+		    "p_loop = getSoundProperty(sid, 'loop'); p_playing = getSoundProperty(sid, 'playing'); "
+		    "changed = setSoundProperty(sid, {flags = true, volume = 40, loop = false}); "
+		    "p_volume2 = getSoundProperty(sid, 'volume'); p_loop2 = getSoundProperty(sid, 'loop'); "
+		    "toggled = toggleSoundPause(sid); p_paused = getSoundProperty(sid, 'paused'); "
+		    "stopped = stopSound(sid); gone = getSoundId('sounds/step.ogg'); "
+		    "none = getSoundProperty(-1, 'volume')");
+		printf("sound %g: found %g, volume %g, balance %g, loop %d, playing %d; changed %d, volume %g, loop %d; toggled %d, paused %d; stopped %d, then %g, no sound %g\n",
+		       number("sid"), number("found_id"), number("p_volume"), number("p_balance"), flag("p_loop"), flag("p_playing"), flag("changed"),
+		       number("p_volume2"), flag("p_loop2"), flag("toggled"), flag("p_paused"), flag("stopped"), number("gone"), number("none"));
+		// (there is no sound device here: the sound is not started, every answer is -1 or false)
+		CHECK(number("sid") == -1);
+		CHECK(number("none") == -1);
+
 		// a hook for the text of the action line, and one that does not exist
 		run("function actionLineText(pos) return 'hooked' end; registerHookFunction('getActionText', 'actionLineText')");
 		TVisObjRef door;
