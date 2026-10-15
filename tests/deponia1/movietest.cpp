@@ -68,7 +68,6 @@ int main() {
 	wxLog::loglevel = 2;
 
 	TVisionaireGame game;
-	game.NewGame();
 	InitObjectAccess(&game);
 	InitLua(&game, wxString(L"C:/app"), wxString(), wxString());
 	luaopen_Graphics(L);

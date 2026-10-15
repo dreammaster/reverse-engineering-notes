@@ -32,7 +32,6 @@ int main() {
 	
 	{
 		TVisionaireGame game;
-		game.NewGame();
 		TVisObjRef gameRef = game.GetGame();
 		gameRef.SetValue(kGameWindowResolution, wxPoint{640, 480}, TSendEventEnum::kNoEvent);
 		gameRef.SetValue(kGameCompanyName, wxString(L"Test Company"), TSendEventEnum::kNoEvent);

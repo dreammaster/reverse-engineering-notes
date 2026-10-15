@@ -145,7 +145,50 @@ void TTInterface::OnCreate(TVisionaireObject *object) {
 		object->SetLink(kInterfaceInterfaceClass, classes.front()->GetTId(), false);
 }
 
-void TTOutfit::OnCreate(TVisionaireObject * /*object*/) {
+// Confirmed (asm lines 1478613-1479177; editor only): a new outfit walks and stands in the four directions (front, back,
+// left, right), and has the defaults of the 3D model shown with it and of the random animations.
+void TTOutfit::OnCreate(TVisionaireObject *object) {
+	TVisObjRef outfit(object);
+	TVisionaire *visionaire = object->GetVisionaire();
+
+	object->SetValue(kOutfitCharacterSpeed, 350, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitSlideWalkAnimation, true, TSendEventEnum::kSendEvent);
+
+	static const struct {
+		int direction;
+		const wchar_t *name;
+	} kDirections[] = {
+		{270, L"front"}, {90, L"back"}, {180, L"left"}, {0, L"right"}
+	};
+	static const int kLists[] = {kOutfitWalkAnimations, kOutfitStandingAnimations};
+
+	for (int list : kLists) {
+		for (const auto &direction : kDirections) {
+			TVisObjRef animation = visionaire->CreateObject(9, outfit, list);
+
+			animation.SetValue(kAnimationDirection, direction.direction, TSendEventEnum::kSendEvent);
+			animation.SetName(TCharHolder(direction.name));
+		}
+	}
+
+	object->SetValue(kOutfitCameraHeight, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitCameraAngle, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitLightPosX, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitLightPosY, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitLightPosZ, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitLightColor, 0x8E9999, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelScaleFactor, 100, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelShadowVisibility, 50, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelShadow, 2, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelUseToonShading, false, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelToonNuances, 3, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelShowOutline, false, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelOutlineColor, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelOutlineWidth, 5, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitAmbientLightColor, 0x667F7F, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitModelAmbientOcclusion, 50, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitRandomMinTime, 10000, TSendEventEnum::kSendEvent);
+	object->SetValue(kOutfitRandomMaxTime, 30000, TSendEventEnum::kSendEvent);
 }
 
 void TTParticles::OnCreate(TVisionaireObject * /*object*/) {

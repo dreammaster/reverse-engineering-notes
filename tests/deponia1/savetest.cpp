@@ -14,7 +14,6 @@ int main() {
 	wxLog::loglevel = 2;
 
 	TVisionaireGame game;
-	game.NewGame();
 	TVisObjRef gameRef = game.GetGame();
 	TVisObjRef font = game.CreateObject(3, gameRef, 0x75);
 	font.SetName(TCharHolder("RoundTrip"));

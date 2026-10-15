@@ -34,7 +34,6 @@ int main() {
 
 	{
 		TVisionaireGame game;
-		game.NewGame();
 		TVisObjRef gameRef = game.GetGame();
 		gameRef.SetValue(kGameWindowResolution, wxPoint{640, 480}, TSendEventEnum::kNoEvent);
 		gameRef.SetValue(kGameCompanyName, wxString(L"Test Company"), TSendEventEnum::kNoEvent);
@@ -59,12 +58,20 @@ int main() {
 		outfit.SetValue(kOutfitCharacterSpeed, 100, TSendEventEnum::kNoEvent);
 		hero.SetLink(kCharacterCurrentOutfit, outfit, true);
 
-		// walking and standing, for four directions
+		// walking and standing, for four directions: the animations that a new outfit comes with get their pictures
 		for (int kind = 0; kind < 2; kind++) {
-			for (int direction = 0; direction < 360; direction += 90) {
-				TVisObjRef anim = game.CreateObject(9, outfit, kind == 0 ? kOutfitWalkAnimations : kOutfitStandingAnimations);
-				anim.SetName(TCharHolder(kind == 0 ? "Walk" : "Stand"));
+			TVList animations;
+
+			outfit.GetLinks(kind == 0 ? kOutfitWalkAnimations : kOutfitStandingAnimations, TypeOrder::kValue0, animations);
+			int direction = 0;
+
+			for (TVisionaireObject *object : animations) {
+				TVisObjRef anim(object);
+
+				// (the engine wants the directions of a list in ascending order, a new outfit has them as front, back, left, right)
 				anim.SetValue(kAnimationDirection, direction, TSendEventEnum::kNoEvent);
+				direction += 90;
+
 				std::vector<TSprite> sprites(3);
 				for (int i = 0; i < 3; i++) {
 					sprites[i].SetPath(TCharHolder(i == 0 ? "pics/h1.png" : i == 1 ? "pics/h2.png" : "pics/h3.png"));
@@ -72,7 +79,7 @@ int main() {
 				}
 				anim.SetValue(kAnimationSprites, sprites, TSendEventEnum::kNoEvent);
 				if (kind == 0)
-					anim.SetValue(kAnimationWalkSteps, std::vector<float>{6.0f, 6.0f, 6.0f}, TSendEventEnum::kNoEvent);
+					anim.SetValue(kAnimationWalkSteps, std::vector<float>{150.0f, 150.0f, 150.0f}, TSendEventEnum::kNoEvent);
 			}
 		}
 
