@@ -18,6 +18,10 @@ for name in sys.argv[2:]:
     for line in lines[start:start + 2000]:
         if re.match(r"^\s*;", line):
             continue
+        if re.match(r"^\s*align", line):
+            while len(data) % 4:
+                data.append(0)
+            continue
         match = re.match(r"^(?:[A-Za-z_][A-Za-z0-9_]*\s+)?\s*(db|dw|dd)\s+([^;]*)", line)
         if not match:
             break
@@ -26,7 +30,10 @@ for name in sys.argv[2:]:
             token = token.strip()
             if not token:
                 continue
-            value = int(token[:-1], 16) if token.endswith("h") else int(token, 0) if re.match(r"^-?\d+$|^0x", token) else None
+            if len(token) == 3 and token[0] == "'" and token[2] == "'":
+                value = ord(token[1])
+            else:
+                value = int(token[:-1], 16) if token.endswith("h") else int(token, 0) if re.match(r"^-?\d+$|^0x", token) else None
             if value is None:
                 continue
             data += (value & ((1 << (8 * size)) - 1)).to_bytes(size, "little")
