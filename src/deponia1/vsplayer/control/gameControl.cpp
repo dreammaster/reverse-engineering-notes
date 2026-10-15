@@ -2557,15 +2557,16 @@ void TGameControl::HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key,
 			return;
 	}
 
+	// Confirmed (asm lines 471400-471520): outside of a cutscene a key starts the game action of the key, unless the cursor is
+	// hidden; in a cutscene the escape key (released: 2) skips it.
 	TVisObjRef game = _visionaire->GetGame();
-	if (!game.GetLink(kGameCutsceneAction).IsEmpty()) {
+	if (game.GetLink(kGameCutsceneAction).IsEmpty()) {
 		TVisObjRef game2 = _visionaire->GetGame();
-		if (!game2.GetBool(kGameHideCursor))
+		if (!game2.GetBool(kGameHideCursor)) {
 			StartGameAction(msg, key, a, b);
-		return;
-	}
-
-	if (a == 0x1B && static_cast<int>(msg) == 2) {
+			return;
+		}
+	} else if (a == 0x1B && static_cast<int>(msg) == 2) {
 		TGAction::SkipCutscene();
 		return;
 	}
