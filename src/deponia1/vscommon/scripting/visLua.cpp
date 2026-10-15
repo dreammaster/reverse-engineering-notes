@@ -208,10 +208,16 @@ void LuaDoString(const std::string &code, const std::string &chunkName) {
 
 		int status = lua_pcall(L, 0, 0, lua_gettop(L) - 1);
 
-		lua_remove(L, -2);
-
+		// WORKAROUND: the original removes the stack entry below the top here whether the script worked or not. Without
+		// an error nothing but the error handler is on the stack, and the entry below is the function slot of the
+		// base of the stack: with the stack of Lua 5.1 the handler is then copied into it, and the next traceback
+		// (debug.traceback in debugerror) reads a Lua function where there is none and crashes. So only an error
+		// has the message above the handler; a script that worked just drops the handler.
 		if (status != 0) {
+			lua_remove(L, -2);
 			logScriptError(lua_tolstring(L, -1, nullptr), code);
+			lua_settop(L, -2);
+		} else {
 			lua_settop(L, -2);
 		}
 
