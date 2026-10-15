@@ -124,8 +124,10 @@ bool TTText::ReplaceValues(wxString &text, TVisionaire *visionaire) {
 			break;
 
 		size_t end = string.find(L">", begin);
-		if (end == std::wstring::npos)
+		if (end == std::wstring::npos) {
+			text = wxString(string);
 			return false;
+		}
 
 		// <v=name> or <vi=name> (an integer), <vs=name> (a string)
 		bool isInteger = true;
@@ -137,6 +139,7 @@ bool TTText::ReplaceValues(wxString &text, TVisionaire *visionaire) {
 			isInteger = string[begin + 2] == L'i';
 			nameStart = begin + 4;
 		} else {
+			text = wxString(string);
 			return false;
 		}
 

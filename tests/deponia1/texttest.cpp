@@ -8,6 +8,7 @@
 #include "TSceneControl.h"
 #include "TGAction.h"
 #include "TGCharacter.h"
+#include "TTText.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/objAccess.h"
 #include "vscommon/scripting/command.h"
@@ -200,6 +201,37 @@ int main() {
 		CHECK(frame > 20);
 		frames(30);
 		CHECK(hero.GetInt(kCharacterAnimState) == (int)TCharacterAnimEnum::kStand);
+	}
+
+	// the placeholders of a text: <v=name> (an integer), <vi=name>, <vs=name> (a string); a missing value is '?'
+	{
+		TVisionaireGame game;
+		TVisObjRef gameRef = game.GetGame();
+		TVisObjRef scene = game.CreateObject(4, gameRef, kGameSceneLinks);
+		TVisObjRef gold = game.CreateObject(20, scene, kSceneValues);
+		gold.SetName(TCharHolder("Gold"));
+		gold.SetValue(kValueInt, 42, TSendEventEnum::kNoEvent);
+		gold.SetValue(kValueString, wxString(L"lots"), TSendEventEnum::kNoEvent);
+
+		wxString text(L"I have <v=Gold> (<vi=Gold>, <vs=Gold>) and <v=Silver>.");
+
+		CHECK(TTText::ReplaceValues(text, &game));
+		CHECK(text.ToStdWstring() == L"I have 42 (42, lots) and '?'.");
+
+		// a malformed tag stops the replacing, what was replaced before it stays
+		wxString bad(L"<v=Gold> <vx=Gold>");
+
+		CHECK(!TTText::ReplaceValues(bad, &game));
+		CHECK(bad.ToStdWstring() == L"42 <vx=Gold>");
+
+		wxString open(L"a <v=Gold");
+
+		CHECK(!TTText::ReplaceValues(open, &game));
+
+		wxString plain(L"no tags");
+
+		CHECK(TTText::ReplaceValues(plain, &game));
+		CHECK(plain.ToStdWstring() == L"no tags");
 	}
 
 	printf("%d failures\n", failures);
