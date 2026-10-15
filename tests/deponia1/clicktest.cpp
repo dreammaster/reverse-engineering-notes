@@ -78,6 +78,14 @@ int main() {
 		upScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		upScript.SetValue(kActionPartString, wxString("key_released = (key_released or 0) + 1"), TSendEventEnum::kNoEvent);
 
+		// the action that a long click (the button held) starts
+		TVisObjRef holdAction = game.CreateObject(7, gameRef, kGameActions);
+		holdAction.SetName(TCharHolder("Hold"));
+		TVisObjRef holdScript = game.CreateObject(8, holdAction, kActionActionParts);
+		holdScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		holdScript.SetValue(kActionPartString, wxString("hold_seen = (hold_seen or 0) + 1"), TSendEventEnum::kNoEvent);
+		gameRef.SetLink(kGameLeftHoldingAction, holdAction, true);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -139,6 +147,13 @@ int main() {
 		lua_getfield(L, LUA_GLOBALSINDEX, "rock_clicked");
 		printf("rock clicked: %d\n", (int)lua_tointeger(L, -1));
 		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(6), wxPoint{300, 300});
+		frames(10);
+		lua_getfield(L, LUA_GLOBALSINDEX, "hold_seen");
+		printf("hold action: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -1) >= 1);
 		lua_settop(L, 0);
 
 		control->HandleKeyEvent(TKeyboardMessageEnum::kKeyDown, wxString(), 'k', 0);
