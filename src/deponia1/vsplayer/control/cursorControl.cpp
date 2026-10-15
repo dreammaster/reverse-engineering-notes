@@ -25,7 +25,18 @@ TCursorControl::~TCursorControl() {
 	}
 }
 
-void TCursorControl::GetSCursor(const TVisObjRef &/*source*/, SCursor &/*out*/) {
+// Confirmed (asm lines 484045-484379): the images of the cursor are the animations the cursor object links (the active
+// one, kCursorActiveAnimation, and the inactive one) - played once (no loops) and named after the cursor and the state.
+void TCursorControl::GetSCursor(const TVisObjRef &source, SCursor &out) {
+	out.id = PackVisId(source.GetId());
+
+	out.downImage = source.GetLink(kCursorActiveAnimation);
+	out.downImage.SetValue(kAnimationNumberOfLoops, 0, TSendEventEnum::kSendEvent);
+	out.downImage.SetName(TCharHolder(wxString(source.GetName().c_str().ToStdWstring() + L" (active)")));
+
+	out.upImage = source.GetLink(kCursorInactiveAnimation);
+	out.upImage.SetValue(kAnimationNumberOfLoops, 0, TSendEventEnum::kSendEvent);
+	out.upImage.SetName(TCharHolder(wxString(source.GetName().c_str().ToStdWstring() + L" (inactive)")));
 }
 
 void TCursorControl::AnimationStopped(TGAnimation *animation) {
@@ -34,7 +45,7 @@ void TCursorControl::AnimationStopped(TGAnimation *animation) {
 }
 
 wxString TCursorControl::GetOwnerName() const {
-	return wxString();
+	return wxString(L"C");
 }
 
 TId TCursorControl::GetOwnerId() const {
@@ -69,7 +80,7 @@ void TCursorControl::setActiveCursorImage(bool useActiveImage) {
 		_currentAnimation = nullptr;
 	}
 	TVisObjRef &image = useActiveImage ? cursor->downImage : cursor->upImage;
-	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 1.0f, -1);
+	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 100.0f, -1);
 }
 
 void TCursorControl::SetActiveCursor() {
@@ -108,6 +119,9 @@ void TCursorControl::SetMoveObject(const TVisObjRef &item) {
 }
 
 void TCursorControl::ReleaseMoveObject() {
+	if (!_heldItem)
+		return;
+
 	delete _heldItem;
 	_heldItem = nullptr;
 	bool detectable = gameControl()->GetObjectManager()->IsCurrentObjectDetectable();
@@ -152,7 +166,7 @@ void TCursorControl::SetCursor(bool useActiveImage, int cursorId, bool byId) {
 	SCursor *cursor = *_activeCursor;
 	cursor->active = useActiveImage;
 	TVisObjRef &image = useActiveImage ? cursor->downImage : cursor->upImage;
-	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 1.0f, -1);
+	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 100.0f, -1);
 }
 
 void TCursorControl::SetCursor(int cursorId, bool byId) {

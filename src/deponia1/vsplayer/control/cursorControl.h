@@ -1,7 +1,7 @@
 // Original path confirmed via x_assert() calls (not yet reconstructed):
 // src/vsplayer/control/cursorControl.cpp - see manifest/source_layout.tsv.
 //
-// Confirmed in full except GetSCursor() (Deponia_Linux.asm lines
+// Confirmed in full (Deponia_Linux.asm lines
 // 483805-485469): a TPaintControl that independently implements the real,
 // named TAnimationOwner interface (confirmed via its own `_ZThn72_`-style
 // this-adjusting thunks - see TAnimationOwner.h) for its own cursor
@@ -10,15 +10,8 @@
 // playing, and can hold a TGItem being dragged (drawn/positioned at the
 // cursor instead of its own spot while held).
 //
-// GetSCursor() builds a new SCursor's images and linked-ids list by name-
-// based resource lookup (string concatenation against two unidentified
-// wide-string table suffixes, plus a virtual TManagedObject-family call at
-// vtable slot 0xB0 - the same slot left ambiguous by identical-code-folding
-// on TManagedObject.h's own cross-check); left as a confirmed-call-shape
-// stub. LoadCursor()/LinkButtonCursor() - the two real entry points that
-// use it - are both implemented in full around that one stub, since their
-// own dedup/lookup logic doesn't depend on what GetSCursor() actually
-// fills in.
+// GetSCursor() takes the two animations of a cursor object (the active and the inactive one) as the
+// images of the new SCursor and names them after the cursor.
 #pragma once
 
 #include <vector>
