@@ -7,6 +7,8 @@
 #include "TSceneControl.h"
 #include "TGAction.h"
 #include "TMSavegame.h"
+#include "vsplayer/animationGame.h"
+#include "fakepictures.h"
 #include "graphicslib/graphics.h"
 #include "vscommon/objAccess.h"
 #include "vscommon/scripting/command.h"
@@ -25,6 +27,10 @@ class NullGraphics : public TGraphicsInterface {
 int main() {
 	setvbuf(stdout, nullptr, _IONBF, 0);
 	wxLog::loglevel = 2;
+
+	useFakePictures();
+	writeFakePicture("pics/a.png", 20, 20);
+	writeFakePicture("pics/b.png", 20, 20);
 
 	{
 		TVisionaireGame game;
@@ -60,6 +66,33 @@ int main() {
 		change.SetLink(kActionPartLink, startObject, true);
 		change.SetLink(kActionPartAltLink, hero, true);
 		gameRef.SetLink(kGameStartAction, action, true);
+
+		// an animation of the start object that an action shows (it never ends)
+		TVisObjRef blink = game.CreateObject(9, startObject, kObjectAnimations);
+		blink.SetName(TCharHolder("Blink"));
+		std::vector<TSprite> blinkSprites(2);
+		blinkSprites[0].SetPath(TCharHolder("pics/a.png"));
+		blinkSprites[0].SetPause(40);
+		blinkSprites[1].SetPath(TCharHolder("pics/b.png"));
+		blinkSprites[1].SetPause(40);
+		blink.SetValue(kAnimationSprites, blinkSprites, TSendEventEnum::kNoEvent);
+		blink.SetValue(kAnimationPosition, wxPoint{100, 100}, TSendEventEnum::kNoEvent);
+		blink.SetValue(kAnimationNumberOfLoops, 0, TSendEventEnum::kNoEvent);
+
+		TVisObjRef showBlink = game.CreateObject(7, gameRef, kGameActions);
+		showBlink.SetName(TCharHolder("ShowBlink"));
+		TVisObjRef showPart = game.CreateObject(8, showBlink, kActionActionParts);
+		showPart.SetValue(kActionPartCommand, kCommandShowAnimation, TSendEventEnum::kNoEvent);
+		showPart.SetLink(kActionPartLink, blink, true);
+		showPart.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+		showPart.SetValue(kActionPartAltInt2, 0, TSendEventEnum::kNoEvent);
+
+		TVisObjRef hideBlink = game.CreateObject(7, gameRef, kGameActions);
+		hideBlink.SetName(TCharHolder("HideBlink"));
+		TVisObjRef hidePart = game.CreateObject(8, hideBlink, kActionActionParts);
+		hidePart.SetValue(kActionPartCommand, kCommandShowAnimation, TSendEventEnum::kNoEvent);
+		hidePart.SetLink(kActionPartLink, blink, true);
+		hidePart.SetValue(kActionPartInt, 1, TSendEventEnum::kNoEvent);
 
 		// a long action: mark, wait, mark, wait, mark
 		TVisObjRef longAction = game.CreateObject(7, gameRef, kGameActions);
@@ -221,6 +254,27 @@ int main() {
 		frames(600);
 		printf("arrived at %d,%d\n", hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
 		CHECK(hero.GetPoint(kCharacterPosition)->x == 500 && hero.GetPoint(kCharacterPosition)->y == 100);
+
+		// an animation that an action shows is running when the game is saved: it runs again after the load, even
+		// if it was hidden meanwhile
+		TGAction::AddRunningAction(actionByName("ShowBlink"));
+		frames(20);
+		int runningBefore = (int)TGAnimation::GetRunningAnimations().size();
+		printf("animations running: %d\n", runningBefore);
+		CHECK(runningBefore >= 1);
+		control->SaveGame(5);
+
+		TGAction::AddRunningAction(actionByName("HideBlink"));
+		frames(20);
+		int runningHidden = (int)TGAnimation::GetRunningAnimations().size();
+		printf("animations running after hiding: %d\n", runningHidden);
+		CHECK(runningHidden < runningBefore);
+
+		CHECK(control->LoadGame(5));
+		frames(20);
+		int runningLoaded = (int)TGAnimation::GetRunningAnimations().size();
+		printf("animations running after the load: %d\n", runningLoaded);
+		CHECK(runningLoaded == runningBefore);
 	}
 
 	printf("%d failures\n", failures);
