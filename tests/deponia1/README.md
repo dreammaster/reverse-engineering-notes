@@ -38,6 +38,7 @@ Every test prints `<n> failures`.
 | talktest | a click on a second character in the scene: the hero walks to it and its action runs on arrival (a command that is used on characters is needed) |
 | condtest | objects with conditions (variables, AND / OR, negated, nested): active when the condition is true, following it when a script changes a variable |
 | cmdanimtest | the commands for animations: show and wait for the end, move (to, more, less), first and last frame, preload, hide |
+| cmdtexttest | the commands for texts: at a point (waiting and in the background), at an object, skip, clear, wait for talking |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested

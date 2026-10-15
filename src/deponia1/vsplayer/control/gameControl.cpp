@@ -1437,8 +1437,8 @@ void TGameControl::StartBackgroundText(const TVisObjRef &text, TGCharacter *char
 }
 
 void TGameControl::ReattachSceneObjectTexts() {
-	// Confirmed (asm lines 461599-461666): field id 0x2AC, and the id-byte-3
-	// check ("== 6") meaning are both unresolved.
+	// Confirmed (asm lines 461599-461666): the texts of the scene whose owner is an object (table 6)
+	// are given to the object again.
 	for (TGText *text : _sceneTexts) {
 		TVisObjRef linked = text->GetTarget().GetLink(kTextOwner);
 		if (linked.GetId()[3] != 6)
@@ -1546,28 +1546,28 @@ void TGameControl::ClearObjectText(const TVisObjRef &object) {
 	}
 }
 
-void TGameControl::StartObjectText(const TVisObjRef &object, const TVisObjRef &text, TextAlignmentEnum alignment,
+void TGameControl::StartObjectText(const TVisObjRef &text, const TVisObjRef &object, TextAlignmentEnum alignment,
                                    const TVisObjRef &target, const wxPoint &pos) {
 	// Confirmed (asm lines 462233-462396): clears any existing scene text
-	// targeting `text`, creates a new THText and adds it to _sceneTexts,
+	// of the object, creates a new THText and adds it to _sceneTexts,
 	// then attaches it to whichever managed object claims `text` - the
 	// scene itself, the current character (only tried when the object id's
 	// 4th byte is 0 - meaning unconfirmed), or failing that, whichever
 	// active interface recognizes it. Type id 0x18 (passed to
 	// CreateActiveObject) and the two trailing THText constructor bools
 	// are unresolved.
-	ClearObjectText(text);
+	ClearObjectText(object);
 
-	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, object);
-	THText *newText = new THText(activeObject, object, nullptr, text, alignment, target, pos, true, false);
+	TVisObjRef activeObject = _visionaire->CreateActiveObject(0x18, text);
+	THText *newText = new THText(activeObject, text, nullptr, object, alignment, target, pos, true, false);
 	_sceneTexts.push_back(newText);
 
-	TManagedObject *managed = _ownedSceneControl.GetScene()->GetObject(text);
+	TManagedObject *managed = _ownedSceneControl.GetScene()->GetObject(object);
 	if (managed == nullptr && object.GetId()[3] == 0)
-		managed = GetCharacterPointerEx(text);
+		managed = GetCharacterPointerEx(object);
 	if (managed == nullptr) {
 		for (TGInterface *interface : _activeInterfaces) {
-			managed = interface->GetObject(text);
+			managed = interface->GetObject(object);
 			if (managed != nullptr)
 				break;
 		}

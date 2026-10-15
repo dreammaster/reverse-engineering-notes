@@ -156,7 +156,7 @@ public:
 	void ClearCurrentText();
 	void ClearText(const TVisObjRef &text);
 	void ClearObjectText(const TVisObjRef &object);
-	void StartObjectText(const TVisObjRef &object, const TVisObjRef &text, TextAlignmentEnum alignment,
+	void StartObjectText(const TVisObjRef &text, const TVisObjRef &object, TextAlignmentEnum alignment,
 	                     const TVisObjRef &target, const wxPoint &pos);
 	// Confirmed (asm line 462534, `lea rax,[rdi+0A80h]; retn`): returns the
 	// member itself, not a by-value copy - the manifest's inferred by-value
