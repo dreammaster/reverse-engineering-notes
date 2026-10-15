@@ -2190,12 +2190,9 @@ bool TGameControl::InitCharacters() {
 
 void TGameControl::InitGameActions() {
 	// Confirmed (asm lines 466743-467222). Builds _gameActions from the
-	// game's list of action-definition objects (field id 0x13E). Field ids
-	// 0x9F (an action's bound key code), 0xA2 (a per-action list of
-	// "condition" objects), and that list's own 0xB3 (a condition's type)/
-	// 0xF2 fields are unresolved beyond the type-id constants 0x6B/0x99 seen
-	// compared against 0xB3 below - the real Visionaire schema they come from
-	// hasn't been reversed.
+	// game's list of actions (kGameActions, 0x13E): the key code is the
+	// action's kActionExecutionType (0x9F); a code of (key + 10000) is the
+	// release of that key, and the action keeps the key itself.
 	_gameActions.clear();
 
 	TVList links;
@@ -2225,11 +2222,9 @@ void TGameControl::InitGameActions() {
 		TVisObjRef actionRef(object);
 		int keyCode = actionRef.GetInt(kActionExecutionType);
 
-		// Confirmed arithmetic, not confirmed meaning: classifies keyCode
-		// against TKeyboardMessageEnum's raw values (masterControl.h) -
-		// kControllerButtonHit(4) if it's a controller-button pseudo-code,
-		// else kKeyDown(1); or, if (keyCode - 10000) names a valid key/button
-		// instead, kControllerButtonRelease(5)/kKeyUp(2) respectively.
+		// The message of the action: kControllerButtonHit if it is a
+		// controller-button pseudo-code, else kKeyDown; or, if (keyCode - 10000)
+		// names a valid key/button instead, kControllerButtonRelease/kKeyUp.
 		bool isControllerCode = keyCode >= 1000001 && keyCode <= 1000015;
 		int msg = isControllerCode ? static_cast<int>(TKeyboardMessageEnum::kControllerButtonHit)
 		          : static_cast<int>(TKeyboardMessageEnum::kKeyDown);
@@ -2238,6 +2233,8 @@ void TGameControl::InitGameActions() {
 				continue;
 			bool shiftedControllerCode = validCode >= 1000001 && validCode <= 1000015;
 			msg = shiftedControllerCode ? static_cast<int>(TKeyboardMessageEnum::kControllerButtonRelease) : static_cast<int>(TKeyboardMessageEnum::kKeyUp);
+			// the action keeps the key itself: the 10000 only says that it is the release of the key
+			keyCode = validCode;
 			break;
 		}
 

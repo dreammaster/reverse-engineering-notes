@@ -70,6 +70,14 @@ int main() {
 		keyScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		keyScript.SetValue(kActionPartString, wxString("key_pressed = (key_pressed or 0) + 1"), TSendEventEnum::kNoEvent);
 
+		// an action of the game that the release of a key starts (the key + 10000)
+		TVisObjRef upAction = game.CreateObject(7, gameRef, kGameActions);
+		upAction.SetName(TCharHolder("KeyJ"));
+		upAction.SetValue(kActionExecutionType, 'j' + 10000, TSendEventEnum::kNoEvent);
+		TVisObjRef upScript = game.CreateObject(8, upAction, kActionActionParts);
+		upScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
+		upScript.SetValue(kActionPartString, wxString("key_released = (key_released or 0) + 1"), TSendEventEnum::kNoEvent);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -137,6 +145,18 @@ int main() {
 		frames(10);
 		lua_getfield(L, LUA_GLOBALSINDEX, "key_pressed");
 		printf("key pressed: %d\n", (int)lua_tointeger(L, -1));
+		CHECK(lua_tointeger(L, -1) == 1);
+		lua_settop(L, 0);
+
+		control->HandleKeyEvent(TKeyboardMessageEnum::kKeyDown, wxString(), 'j', 0);
+		frames(10);
+		lua_getfield(L, LUA_GLOBALSINDEX, "key_released");
+		CHECK(lua_isnil(L, -1));
+		lua_settop(L, 0);
+		control->HandleKeyEvent(TKeyboardMessageEnum::kKeyUp, wxString(), 'j', 0);
+		frames(10);
+		lua_getfield(L, LUA_GLOBALSINDEX, "key_released");
+		printf("key released: %d\n", (int)lua_tointeger(L, -1));
 		CHECK(lua_tointeger(L, -1) == 1);
 		lua_settop(L, 0);
 
