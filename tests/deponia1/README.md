@@ -39,6 +39,7 @@ Every test prints `<n> failures`.
 | condtest | objects with conditions (variables, AND / OR, negated, nested): active when the condition is true, following it when a script changes a variable |
 | cmdanimtest | the commands for animations: show and wait for the end, move (to, more, less), first and last frame, preload, hide |
 | cmdtexttest | the commands for texts: at a point (waiting and in the background), at an object, skip, clear, wait for talking |
+| cursortest | the cursor of a command: loaded and linked to the command, active over a button, inactive over the floor, set by id |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested

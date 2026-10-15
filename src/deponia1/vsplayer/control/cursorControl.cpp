@@ -83,10 +83,12 @@ void TCursorControl::setActiveCursorImage(bool useActiveImage) {
 	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 100.0f, -1);
 }
 
+// Confirmed (asm lines 484562-484616)
 void TCursorControl::SetActiveCursor() {
 	setActiveCursorImage(true);
 }
 
+// Confirmed (asm lines 484617-484671)
 void TCursorControl::SetInactiveCursor() {
 	setActiveCursorImage(false);
 }
@@ -147,6 +149,7 @@ static bool matchesCursorId(SCursor *cursor, int cursorId, bool byId) {
 	return false;
 }
 
+// Confirmed (asm lines 484379-484530)
 void TCursorControl::SetCursor(bool useActiveImage, int cursorId, bool byId) {
 	_activeCursor = _cursors.end();
 	for (std::vector<SCursor *>::iterator it = _cursors.begin(); it != _cursors.end(); ++it) {
@@ -156,19 +159,22 @@ void TCursorControl::SetCursor(bool useActiveImage, int cursorId, bool byId) {
 		}
 	}
 
+	// (a cursor that is not known leaves the image that is shown as it is)
+	if (_activeCursor == _cursors.end())
+		return;
+
 	if (_currentAnimation) {
 		TGAnimation::HideAnimation(_currentAnimation->GetDataObject());
 		_currentAnimation = nullptr;
 	}
 
-	if (_activeCursor == _cursors.end())
-		return;
 	SCursor *cursor = *_activeCursor;
 	cursor->active = useActiveImage;
 	TVisObjRef &image = useActiveImage ? cursor->downImage : cursor->upImage;
 	_currentAnimation = TGAnimation::StartAnimation(image, this, false, 100.0f, -1);
 }
 
+// Confirmed (asm lines 484531-484561)
 void TCursorControl::SetCursor(int cursorId, bool byId) {
 	bool useActiveImage = _activeCursor != _cursors.end() && (*_activeCursor)->active;
 	SetCursor(useActiveImage, cursorId, byId);
