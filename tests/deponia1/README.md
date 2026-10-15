@@ -29,6 +29,8 @@ Every test prints `<n> failures`.
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
 | gamesavetest | a game saved while an action waits and a character walks, and loaded again; the global script variables |
+| skiptest | a cutscene (walk, text, wait, change of scene) is skipped with the escape key |
+| controltest | IF / ELSE / END IF (nested), GOTO, values, conditions and arithmetic of an action |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
