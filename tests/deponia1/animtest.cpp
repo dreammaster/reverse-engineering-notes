@@ -13,6 +13,8 @@
 #include "vstables/eCommand.h"
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
+#include "fakepictures.h"
+#include <chrono>
 
 static int failures = 0;
 #define CHECK(c) do { if (!(c)) { printf("FAIL line %d: %s\n", __LINE__, #c); failures++; } } while (0)
@@ -23,6 +25,11 @@ class NullGraphics : public TGraphicsInterface {
 int main() {
 	setvbuf(stdout, nullptr, _IONBF, 0);
 	wxLog::loglevel = 2;
+
+	useFakePictures();
+	writeFakePicture("pics/a.png", 32, 32);
+	writeFakePicture("pics/b.png", 32, 32);
+	writeFakePicture("pics/c.png", 32, 32);
 
 	{
 		TVisionaireGame game;
@@ -84,20 +91,20 @@ int main() {
 			TVisObjRef part = addPart(kCommandRunPartScript, 0, 0, nullptr);
 			part.SetValue(kActionPartString, wxString(text), TSendEventEnum::kNoEvent);
 		};
-		mark("print('mark 1')");
+		mark("mark1 = true");
 		showAnimation(false, true);
-		mark("print('mark 2')");
+		mark("mark2 = true");
 		addPart(kCommandWait, 10, 0, nullptr);
 		showAnimation(false, false);
 		addPart(kCommandWait, 30, 0, nullptr);
 		showAnimation(true, false);
-		mark("print('mark 3')");
+		mark("mark3 = true");
 		TVisObjRef visibility = addPart(kCommandSetObjectVisibility, 0, 0, nullptr);
 		visibility.SetLink(kActionPartLink, startObject, true);
 		addPart(kCommandEarthquake, 100, 5, nullptr);
 		addPart(kCommandFade, 0, 0, nullptr);
 		addPart(kCommandWait, 20, 0, nullptr);
-		mark("print('mark 4')");
+		mark("mark4 = true");
 		addPart(kCommandEndAction, 0, 0, nullptr);
 		gameRef.SetLink(kGameStartAction, action, true);
 
@@ -124,12 +131,33 @@ int main() {
 		control->InitAfterLoadingScreen();
 		control->ExecuteStartingAction();
 
-		for (int i = 0; i < 100; i++) {
+		auto now = []() {
+			return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();
+		};
+		double seen[5] = {0, 0, 0, 0, 0};
+
+		for (int i = 0; i < 200; i++) {
 			TGAction::ContinueRunningActions(false);
 			control->Update();
 			control->Draw(true);
 			wxMilliSleep(5);
+
+			for (int mark = 1; mark <= 4; mark++) {
+				char name[16];
+
+				std::snprintf(name, sizeof(name), "mark%d", mark);
+				lua_getfield(L, LUA_GLOBALSINDEX, name);
+
+				if (seen[mark] == 0 && lua_toboolean(L, -1))
+					seen[mark] = now();
+
+				lua_settop(L, 0);
+			}
 		}
+
+		printf("the animation took %.0f ms (3 pictures of 40 ms), marks at %.0f %.0f %.0f %.0f\n", seen[2] - seen[1], seen[1], seen[2], seen[3], seen[4]);
+		CHECK(seen[1] != 0 && seen[4] != 0);
+		CHECK(seen[2] - seen[1] >= 60);
 		printf("frames done\n");
 	}
 
