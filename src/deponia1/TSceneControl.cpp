@@ -157,10 +157,8 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 			sounds->StartSoundFade(TFadeEnum::kOut, fadeTime, true);
 			graphics->FadeIn(2, fadeTime, nullptr, nullptr, sounds, control);
 		} else {
-			if (effect == 3 || effect == 7) {
-				sounds->StartSoundFade(TFadeEnum::kIn, fadeTime / 2, true);
+			if (effect == 3 || effect == 7)
 				sounds->StartSoundFade(TFadeEnum::kOut, fadeTime / 2, true);
-			}
 
 			if (effect == 3)
 				graphics->FadeIn(2, fadeTime / 2, nullptr, nullptr, sounds, control);
