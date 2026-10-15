@@ -126,6 +126,25 @@ int main() {
 		TVisObjRef statueScript = game.CreateObject(8, statueAction, kActionActionParts);
 		statueScript.SetValue(kActionPartCommand, kCommandRunPartScript, TSendEventEnum::kNoEvent);
 		statueScript.SetValue(kActionPartString, wxString("statue_used = (statue_used or 0) + 1; statue_hero_x = Characters['Hero'].Position.x"), TSendEventEnum::kNoEvent);
+		// scroll buttons for the items (one place holder shows one of three items)
+		interface.SetValue(kInterfaceScrollStepSize, 1, TSendEventEnum::kNoEvent);
+		TVisObjRef scrollBack = game.CreateObject(2, interface, kInterfaceButtons);
+		scrollBack.SetName(TCharHolder("Back"));
+		scrollBack.SetValue(kButtonType, 1, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> backArea = {{140, 70}, {190, 70}, {190, 120}, {140, 120}};
+		scrollBack.SetValue(kButtonPolygon, backArea, TSendEventEnum::kNoEvent);
+		TVisObjRef scrollForward = game.CreateObject(2, interface, kInterfaceButtons);
+		scrollForward.SetName(TCharHolder("Forward"));
+		scrollForward.SetValue(kButtonType, 2, TSendEventEnum::kNoEvent);
+		std::vector<wxPoint> forwardArea = {{140, 10}, {190, 10}, {190, 60}, {140, 60}};
+		scrollForward.SetValue(kButtonPolygon, forwardArea, TSendEventEnum::kNoEvent);
+		TVisObjRef coin = game.CreateObject(6, gameRef, kGameItems);
+		coin.SetName(TCharHolder("Coin"));
+		coin.SetValue(kObjectIsItem, true, TSendEventEnum::kNoEvent);
+		TVisObjRef rope = game.CreateObject(6, gameRef, kGameItems);
+		rope.SetName(TCharHolder("Rope"));
+		rope.SetValue(kObjectIsItem, true, TSendEventEnum::kNoEvent);
+
 		hero.SetLink(kCharacterInterfaces, interface, true);
 
 		// the start of the game: the scene is shown
@@ -140,6 +159,13 @@ int main() {
 		giveKey.SetLink(kActionPartLink, key, true);
 		giveKey.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
 		giveKey.SetLink(kActionPartAltLink, hero, true);
+		for (TVisObjRef extra : {coin, rope}) {
+			TVisObjRef give = game.CreateObject(8, action, kActionActionParts);
+			give.SetValue(kActionPartCommand, kCommandCharacterItem, TSendEventEnum::kNoEvent);
+			give.SetLink(kActionPartLink, extra, true);
+			give.SetValue(kActionPartInt, 0, TSendEventEnum::kNoEvent);
+			give.SetLink(kActionPartAltLink, hero, true);
+		}
 		gameRef.SetLink(kGameStartAction, action, true);
 
 		wxFileName out(L"click.dat");
@@ -195,7 +221,7 @@ int main() {
 			TVList items;
 			control->GetCurrentCharacter()->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
 			printf("items of the hero: %d\n", (int)items.size());
-			CHECK(items.size() == 1);
+			CHECK(items.size() == 3);
 		}
 		for (TGInterface *interface : control->GetActiveInterfaces()) {
 			TManagedObject *inSlot = interface->GetObject(wxPoint{100, 30});
@@ -241,6 +267,35 @@ int main() {
 		CHECK(lua_tointeger(L, -2) == 1);
 		CHECK(lua_tointeger(L, -1) > 350);
 		lua_settop(L, 0);
+
+		// the items scroll: one place holder shows one of the three
+		auto shownItem = [&]() {
+			for (TGInterface *iface : control->GetActiveInterfaces()) {
+				TManagedObject *object = iface->GetObject(wxPoint{100, 30});
+
+				if (object)
+					return std::string(object->GetRef().GetName().c_str().mb_str());
+			}
+			return std::string("-");
+		};
+
+		printf("shown: %s\n", shownItem().c_str());
+		CHECK(shownItem() == "Key");
+		click(160, 30);
+		printf("after forward: %s\n", shownItem().c_str());
+		CHECK(shownItem() == "Coin");
+		click(160, 30);
+		CHECK(shownItem() == "Rope");
+		click(160, 30);
+		printf("at the end: %s\n", shownItem().c_str());
+		CHECK(shownItem() == "Rope");
+		click(160, 90);
+		CHECK(shownItem() == "Coin");
+		click(160, 90);
+		CHECK(shownItem() == "Key");
+		click(160, 90);
+		printf("back at the start: %s\n", shownItem().c_str());
+		CHECK(shownItem() == "Key");
 	}
 
 	printf("%d failures\n", failures);
