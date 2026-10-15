@@ -742,13 +742,13 @@ void TGameControl::UpdateAspectRatio() {
 	TVisObjRef game = _visionaire->GetGame();
 	const wxPoint *aspectPoint = game.GetPoint(kGameWindowResolution);
 	if (g_unlockAspect) {
-		_aspectWidth = renderSize.width;
-		_aspectHeight = renderSize.height;
+		_windowWidth = renderSize.width;
+		_windowHeight = renderSize.height;
 	} else {
-		_aspectWidth = aspectPoint->x;
-		_aspectHeight = aspectPoint->y;
+		_windowWidth = aspectPoint->x;
+		_windowHeight = aspectPoint->y;
 	}
-	InitControl(_aspectWidth, _aspectHeight);
+	InitControl(_windowWidth, _windowHeight);
 }
 
 void TGameControl::InitAfterLoadingScreen() {
@@ -2334,14 +2334,14 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 
 	const wxPoint *aspectPoint = game.GetPoint(kGameWindowResolution);
 	if (g_unlockAspect) {
-		_aspectWidth = renderSize.width;
-		_aspectHeight = renderSize.height;
+		_windowWidth = renderSize.width;
+		_windowHeight = renderSize.height;
 	} else {
-		_aspectWidth = aspectPoint->x;
-		_aspectHeight = aspectPoint->y;
+		_windowWidth = aspectPoint->x;
+		_windowHeight = aspectPoint->y;
 	}
-	InitControl(_aspectWidth, _aspectHeight);
-	_loadingControl->InitControl(_aspectWidth, _aspectHeight);
+	InitControl(_windowWidth, _windowHeight);
+	_loadingControl->InitControl(_windowWidth, _windowHeight);
 	if (isEditor)
 		ShowLoadingScreen();
 

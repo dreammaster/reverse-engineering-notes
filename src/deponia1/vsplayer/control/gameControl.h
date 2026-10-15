@@ -307,15 +307,12 @@ protected:
 	// compared against TGraphicsInterface::GetCacheSpriteCount() each frame
 	// to detect when the sprite cache needs refreshing.
 	int _spriteCacheCount = 0;
-	// Confirmed via UpdateAspectRatio (asm lines 457414-457458): the last
-	// resolved aspect width/height, and (via UpdateCurrentObject, asm lines
-	// 456964-456999) the last mouse position re-dispatched through
-	// HandleMouseMove, defaulting to a {-1,-1} "no position yet" sentinel.
+	// Confirmed (via UpdateCurrentObject, asm lines 456964-456999): the last mouse position re-dispatched through
+	// HandleMouseMove, defaulting to a {-1,-1} "no position yet" sentinel. (The resolved aspect width and height of
+	// UpdateAspectRatio, asm lines 457414-457458, are the window size of TMasterControl.)
 	// Confirmed written by HandleMouseMove itself (asm line 472189) from the
 	// raw, un-overridden position argument - see _lastHookMousePos below for
 	// the distinct hook-adjusted field written right alongside it.
-	int _aspectWidth = 0;
-	int _aspectHeight = 0;
 	wxPoint _lastMousePos{-1, -1};
 	// Confirmed present and cleared by ResetState() (asm line 460940); real
 	// purpose (what populates it) not identified.

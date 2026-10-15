@@ -31,6 +31,7 @@ Every test prints `<n> failures`.
 | gamesavetest | a game saved while an action waits and a character walks, and loaded again; the global script variables |
 | skiptest | a cutscene (walk, text, wait, change of scene) is skipped with the escape key |
 | controltest | IF / ELSE / END IF (nested), GOTO, values, conditions and arithmetic of an action |
+| scrolltest | a scene twice as wide as the window: the view follows the walking character to both ends |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
@@ -46,7 +47,7 @@ Reading the disassembly of a function whose result is wrong in a test has found,
 `StartDialog`, `TGameControl::UpdateTexts` dropping a text that is still active, `StartText` with the flags of
 speech and background swapped, `ExecuteMatchingAction` reading the command from the fixture, `GetActionsToTest`
 with the wrong event 4, `ExecuteEvent` without the retry of a press as a click and without the item fallback,
-`InitGameActions` storing the wrong key for a key release, `ToScene`/`FadeIn`/`MoveScene`/`ScrollUpdate` being
+`InitGameActions` storing the wrong key for a key release, the window size being 0 (two members that are one field in the original), script variables never saved (`CreateActiveObject`), `ToScene`/`FadeIn`/`MoveScene`/`ScrollUpdate` being
 stubs or approximations, an approximated `IsPointInsidePolygon`. The older "Confirmed (asm lines ...)" comments
 are not proof: a test that does not do what a script of the game would do is the way to find the rest.
 Test data that is wrong looks the same as an engine bug: `kActionPartInt` is not 0 by default (it makes an item be

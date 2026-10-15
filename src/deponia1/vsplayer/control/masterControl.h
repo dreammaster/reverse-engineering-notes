@@ -265,14 +265,17 @@ protected:
 	// _engineEventHandlerNames/_keyboardEventHandlers above.
 	std::vector<TMouseEventHandler> _mouseEventHandlers;
 
+	// +0xE8, +0xEC: the size of the game's window (the resolution of the game, or the render size when the aspect ratio
+	// is unlocked); GetWindowSize() answers them, TGameControl::LoadAndInitGame() sets them.
+	int _windowWidth = 0;
+	int _windowHeight = 0;
+
 private:
 	TMovie _movie;
 	TGObjectManager _objectManager;
 	TSprite _sprite1;
 	TSprite _sprite2;
 
-	int _windowWidth = 0;
-	int _windowHeight = 0;
 	SLoadingScreen _loadingScreen;
 	TCursorControl *_cursorControl = nullptr;
 	TGameController *_gameController = nullptr;
