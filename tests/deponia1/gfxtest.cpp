@@ -3,6 +3,7 @@
 
 #include "AppGlobals.h"
 #include "TPaintControl.h"
+#include "TPolygonList.h"
 #include "graphicslib/graphics.h"
 #include "graphicslib/picture.h"
 #include "vsplayer/scripting/luaSystem.h"
@@ -40,6 +41,33 @@ public:
 };
 
 int main() {
+	{
+		// the scan-line test of a point in a polygon: a square and a "U" with the notch on top
+		std::vector<wxPoint> square = {{10, 10}, {50, 10}, {50, 50}, {10, 50}};
+		CHECK(IsPointInsidePolygon(wxPoint{30, 30}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{5, 30}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{55, 30}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{30, 5}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{30, 55}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{10, 30}, square));
+		CHECK(!IsPointInsidePolygon(wxPoint{50, 30}, square));
+
+		std::vector<wxPoint> notch = {{0, 0}, {30, 0}, {30, 20}, {20, 20}, {20, 10}, {10, 10}, {10, 20}, {0, 20}};
+		CHECK(IsPointInsidePolygon(wxPoint{5, 5}, notch));
+		CHECK(IsPointInsidePolygon(wxPoint{25, 15}, notch));
+		CHECK(!IsPointInsidePolygon(wxPoint{15, 15}, notch));
+		CHECK(IsPointInsidePolygon(wxPoint{15, 5}, notch));
+
+		std::vector<wxPoint> twoPoints = {{0, 0}, {10, 10}};
+		CHECK(!IsPointInsidePolygon(wxPoint{5, 5}, twoPoints));
+
+		// a diamond: the row of the left and right vertices touches them
+		std::vector<wxPoint> diamond = {{20, 0}, {40, 20}, {20, 40}, {0, 20}};
+		CHECK(IsPointInsidePolygon(wxPoint{20, 20}, diamond));
+		CHECK(IsPointInsidePolygon(wxPoint{5, 20}, diamond));
+		CHECK(!IsPointInsidePolygon(wxPoint{2, 5}, diamond));
+	}
+
 	setvbuf(stdout, nullptr, _IONBF, 0);
 	wxLog::loglevel = 2;
 

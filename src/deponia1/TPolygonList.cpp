@@ -411,27 +411,59 @@ bool IsPointInsidePolygon(const wxPoint &point, const TPolygonList &polygons) {
 	return (count & 1) != 0;
 }
 
-// Approximation of asm lines 1377180-1377690: that is a float scan-line
-// algorithm (it collects the x of every edge crossing the point's row, sorts
-// them and tests whether the point's x falls between a pair of them); this is
-// the even-odd rule, which gives the same answer except for points exactly on
-// an edge or vertex. A polygon needs at least three points.
+// Confirmed (asm lines 1377180-1377690): a scan-line test in floats. The x of every crossing of the row of the point is
+// collected (an edge counts when the row is reached at 0 < t <= 1 of it; a vertex that is only touched by the row, with
+// both neighbours on the same side, counts twice; a horizontal edge on the row adds its start), the crossings are sorted,
+// and the point is inside when it is strictly between the crossings of a pair.
 bool IsPointInsidePolygon(const wxPoint &point, const std::vector<wxPoint> &polygon) {
-	if (polygon.size() < 3)
+	int count = static_cast<int>(polygon.size());
+
+	if (count <= 2)
 		return false;
 
-	bool inside = false;
-	for (size_t i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
-		const wxPoint &a = polygon[i];
-		const wxPoint &b = polygon[j];
+	float px = static_cast<float>(point.x);
+	float py = static_cast<float>(point.y);
+	std::vector<float> crossings;
 
-		if ((a.y > point.y) != (b.y > point.y)) {
-			double intersectX = a.x + static_cast<double>(point.y - a.y) / (b.y - a.y) * (b.x - a.x);
-			if (point.x < intersectX)
-				inside = !inside;
+	for (int i = 0; i < count; i++) {
+		bool last = (i == count - 1);
+		const wxPoint &a = polygon[i];
+		const wxPoint &b = polygon[last ? 0 : i + 1];
+		const wxPoint &c = polygon[last ? 1 : (i + 1 == count - 1 ? 0 : i + 2)];
+
+		float ax = static_cast<float>(a.x);
+		float ay = static_cast<float>(a.y);
+		float dy = static_cast<float>(b.y) - ay;
+
+		if (dy == 0.0f) {
+			if (ay == py)
+				crossings.push_back(ax);
+			continue;
 		}
+
+		float t = (py - ay) / dy;
+		if (!(t > 0.0f) || 1.0f < t)
+			continue;
+
+		float dx = static_cast<float>(b.x) - ax;
+		float cy = static_cast<float>(c.y);
+
+		if (t == 1.0f && ((py > ay && py > cy) || (ay > py && cy > py)))
+			crossings.push_back(dx + ax);
+		crossings.push_back(dx * t + ax);
 	}
-	return inside;
+
+	std::sort(crossings.begin(), crossings.end());
+
+	bool inside = false;
+	for (float crossing : crossings) {
+		if (!inside && crossing >= px)
+			return false;
+		if (crossing > px)
+			return inside;
+		inside = !inside;
+	}
+	return false;
 }
 
 // Confirmed (asm lines 248161-248190)
