@@ -21,6 +21,7 @@ Every test prints `<n> failures`.
 | clitest, gfxtest, movietest, soundtest | command line, graphics helpers (and the polygon test), movie, sound |
 | animtest | animations of objects (fake pictures, timing) |
 | dialogtest | a dialog with answers |
+| dialog2test | dialogs that lead to others: a part that is used up and returns to the dialog, one that goes to another dialog and one back, one that ends the dialog |
 | clicktest | clicks on an object and the floor, keys (`HandleKeyEvent`, key release) |
 | fadetest | every fade effect of a scene change |
 | interfacetest | an interface with a button, an item in a place holder, the use command, an item used on an object, a command on a statue after a walk |
