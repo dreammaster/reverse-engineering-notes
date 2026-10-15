@@ -13,6 +13,11 @@ does anything else (creates sub-objects, branches, ...) is written out as far as
 it can be understood and marked with a FIXME comment listing what is missing, so
 it can be finished by hand; the list is printed at the end.
 
+Known defect: when a function ends in a tail call (a final `jmp ...SetValue`, which a
+compiler makes of the last statement) that statement is lost. src/deponia1 was fixed by hand;
+tools/check_callbacks.py compares the fields of the generated functions with the
+disassembly and finds such losses. Do not run this over a hand-edited recordCallbacks.cpp.
+
 Writes src/<game>/vstables/recordCallbacks.cpp.
 
 Usage: python tools/gen_callbacks.py <GameName>_Linux.asm [game dir]

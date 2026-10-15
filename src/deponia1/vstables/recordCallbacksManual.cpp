@@ -9,6 +9,9 @@
 
 #include "vstables/records.h"
 
+#include <cstdlib>
+#include <ctime>
+
 #include "TTAction.h"
 #include "TTButton.h"
 #include "TTScene.h"
@@ -64,13 +67,82 @@ void TTCharacter::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kCharacterActionDestPosition, wxPoint{-1, -1}, TSendEventEnum::kNoEvent);
 }
 
-// Not reconstructed (editor only; asm lines 1461061-1461702): the defaults of
-// a new game object, including a random game id.
-void TTGame::OnCreate(TVisionaireObject * /*object*/) {
+// Confirmed (asm lines 1461061-1461702; editor only, but the test games are made with it): the defaults of a new game
+// object - the loading record, the language, the first interface classes, the sizes of the picture buffers and a random
+// game id.
+void TTGame::OnCreate(TVisionaireObject *object) {
+	TVisObjRef game(object);
+	TVisionaire *visionaire = object->GetVisionaire();
+
+	visionaire->CreateObject(21, game, kGameLoading);
+	object->SetValue(kGameFadeDelay, 600, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameFadeEffect, 3, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameWindowResolution, wxPoint{640, 480}, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameScrollSpeed, 300, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameHoldTime, 600, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameMinificationFilter, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameMagnificationFilter, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameLeftHoldBehaviour, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameMiddleClickBehaviour, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameRightClickBehaviour, 0, TSendEventEnum::kNoEvent);
+
+	TVisObjRef language = visionaire->CreateObject(18, game, kGameLanguages);
+
+	object->SetLink(kGameStandardLanguage, language.GetObjectPointer()->GetTId(), false);
+	object->SetValue(kGameCommandBehaviour, 2, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameAlwaysAllowSkipText, false, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameDrawActionText, 1, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameSceneComposedFiles, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameCharacterComposedFiles, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameInterfaceComposedFiles, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameGameComposedFiles, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameMovieComposedFiles, 2, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameSpeakerTextAlignment, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameTextAlignment, 2, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameKeepCharacterSpritesDuringMenus, true, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameDisableInteractionDuringAnim, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameAutoHideInterfacesInMenu, true, TSendEventEnum::kNoEvent);
+
+	static const wchar_t *const kInterfaceClassNames[] = {
+		L"MainInterface", L"Inventory", L"SecondaryInterface", L"OptionsInterface", L"Miscellaneous"
+	};
+
+	for (const wchar_t *name : kInterfaceClassNames) {
+		TVisObjRef interfaceClass = visionaire->CreateObject(31, game, kGameInterfaceClasses);
+
+		interfaceClass.SetValue(kInterfaceClassName, wxString(name), TSendEventEnum::kSendEvent);
+	}
+
+	object->SetValue(kGamePictureCacheSize, 40, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameCursorHorizontalScrollDistance, 5, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameCursorVerticalScrollDistance, 5, TSendEventEnum::kNoEvent);
+	object->SetValue(kGamePreloadPicThreads, 3, TSendEventEnum::kNoEvent);
+	object->SetValue(kGamePreloadedPicBufferSize, 0x4000, TSendEventEnum::kNoEvent);
+	object->SetValue(kGamePicBufferSize, 0x1D4C0, TSendEventEnum::kNoEvent);
+	object->SetValue(kSpeakerSoundPanFactor, 8, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameExecuteCalledActionImmediately, true, TSendEventEnum::kNoEvent);
+
+	// the id of the game is a random number
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+	int identifier = std::rand();
+
+	object->SetValue(kGameId, CONVTOSTR(identifier), TSendEventEnum::kNoEvent);
 }
 
-// Not reconstructed (editor only).
-void TTInterface::OnCreate(TVisionaireObject * /*object*/) {
+// Confirmed (asm lines 1466337-1466431; editor only): a new interface moves by one, scrolls its items by one and is
+// visible, and takes the first interface class of the game.
+void TTInterface::OnCreate(TVisionaireObject *object) {
+	object->SetValue(kInterfaceDisplacement, 1, TSendEventEnum::kNoEvent);
+	object->SetValue(kInterfaceScrollStepSize, 1, TSendEventEnum::kNoEvent);
+	object->SetValue(kInterfaceDisplacement, 1, TSendEventEnum::kNoEvent);
+	object->SetValue(kInterfaceVisible, true, TSendEventEnum::kNoEvent);
+
+	TVList classes;
+
+	object->GetVisionaire()->GetGame().GetLinks(kGameInterfaceClasses, TypeOrder::kValue1, classes);
+	if (!classes.empty())
+		object->SetLink(kInterfaceInterfaceClass, classes.front()->GetTId(), false);
 }
 
 void TTOutfit::OnCreate(TVisionaireObject * /*object*/) {

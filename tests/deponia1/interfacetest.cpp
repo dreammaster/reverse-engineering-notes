@@ -70,6 +70,7 @@ int main() {
 		interface.SetValue(kInterfaceSprite, barBackground, TSendEventEnum::kNoEvent);
 		std::vector<wxPoint> bar = {{0, 0}, {200, 0}, {200, 200}, {0, 200}};
 		interface.SetValue(kInterfaceBorder, bar, TSendEventEnum::kNoEvent);
+		interface.SetValue(kInterfaceDisplacement, 4, TSendEventEnum::kNoEvent);  // fixed, at its offset (0,0)
 		TVisObjRef button = game.CreateObject(2, interface, kInterfaceButtons);
 		button.SetName(TCharHolder("Go"));
 		std::vector<wxPoint> square = {{10, 10}, {60, 10}, {60, 60}, {10, 60}};

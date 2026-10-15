@@ -37,6 +37,7 @@ int main() {
 		game.NewGame();
 		TVisObjRef gameRef = game.GetGame();
 		gameRef.SetValue(kGameWindowResolution, wxPoint{640, 480}, TSendEventEnum::kNoEvent);
+		gameRef.SetValue(kGameFadeEffect, 0, TSendEventEnum::kNoEvent);
 		gameRef.SetValue(kGameCompanyName, wxString(L"Test Company"), TSendEventEnum::kNoEvent);
 		gameRef.SetValue(kGameGameName, wxString(L"Test Game"), TSendEventEnum::kNoEvent);
 
