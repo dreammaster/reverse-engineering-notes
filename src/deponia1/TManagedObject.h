@@ -255,15 +255,10 @@ public:
 	// definition, so implemented in the .cpp.)
 	virtual void Prepare();
 
-	// Confirmed (asm lines 191082-191099): TId from the game-data
-	// reference's packed id - approximated via the project's existing
-	// PackVisId() helper (the original instead reinterprets TVisObjRef::
-	// GetId()'s return as an existing TId object outright, implying TId
-	// and the packed id are somehow layout-compatible in the original;
-	// neither TId's nor TVisObjRef's real fields are known, so that aliasing
-	// trick isn't reproduced).
+	// Confirmed (asm lines 191082-191099): the id of the game-data reference, copied as the TId it is (its three
+	// bytes of id and the byte of the table).
 	TId GetOwnerId() const override {
-		return TId(PackVisId(_objRef.GetId()), 0);
+		return TId(PackVisId(_objRef.GetId()), _objRef.GetId()[3]);
 	}
 	// Confirmed (asm lines 191107-191124): the game-data reference's own
 	// name.
