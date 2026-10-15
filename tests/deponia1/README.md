@@ -32,6 +32,7 @@ Every test prints `<n> failures`.
 | skiptest | a cutscene (walk, text, wait, change of scene) is skipped with the escape key |
 | controltest | IF / ELSE / END IF (nested), GOTO, values, conditions and arithmetic of an action |
 | scrolltest | a scene twice as wide as the window: the view follows the walking character to both ends |
+| menutest | a menu scene is shown while an action waits: the action is stopped for the time of the menu |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
