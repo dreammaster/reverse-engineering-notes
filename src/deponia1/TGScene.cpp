@@ -669,7 +669,7 @@ void TGScene::SetCharacter(const TVisObjRef &character, const TVisObjRef &scene,
 	TVisObjRef characterScene = character.GetLink(kCharacterScene);
 
 	if (scene.IsEmpty() || scene == characterScene) {
-		gameControl()->GetCharacter(character)->GetRef().SetValue(kCharacterPosition, pos, TSendEventEnum::kNoEvent);
+		gameControl()->GetCharacter(character)->GetRef().SetValue(kCharacterPosition, pos, TSendEventEnum::kSendEvent);
 		return;
 	}
 
@@ -695,9 +695,9 @@ void TGScene::SetCharacter(const TVisObjRef &character, const TVisObjRef &scene,
 	if (sceneParent == characterScene) {
 		wxPoint pos = *scene.GetPoint(kObjectPosition);
 		TVisObjRef &characterRef = gameControl()->GetCharacter(character)->GetRef();
-		characterRef.SetValue(kCharacterPosition, pos, TSendEventEnum::kNoEvent);
+		characterRef.SetValue(kCharacterPosition, pos, TSendEventEnum::kSendEvent);
 		if (direction != -1)
-			characterRef.SetValue(kCharacterDirection, direction, TSendEventEnum::kNoEvent);
+			characterRef.SetValue(kCharacterDirection, direction, TSendEventEnum::kSendEvent);
 		return;
 	}
 

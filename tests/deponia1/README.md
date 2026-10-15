@@ -33,6 +33,7 @@ Every test prints `<n> failures`.
 | controltest | IF / ELSE / END IF (nested), GOTO, values, conditions and arithmetic of an action |
 | scrolltest | a scene twice as wide as the window: the view follows the walking character to both ends |
 | menutest | a menu scene is shown while an action waits: the action is stopped for the time of the menu |
+| cmdtest | the commands of an action that no other test runs: turn, place, walk, outfit, items, follow, scroll, move object, the switches of the game, a cutscene |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
@@ -49,7 +50,7 @@ Reading the disassembly of a function whose result is wrong in a test has found,
 speech and background swapped, `ExecuteMatchingAction` reading the command from the fixture, `GetActionsToTest`
 with the wrong event 4, `ExecuteEvent` without the retry of a press as a click and without the item fallback,
 `MD5String` returning the 16 raw bytes where the original returns the 32 hex characters (the key of the whole cipher of the containers), `InitGameActions` storing the wrong key for a key release, the window size being 0 (two members that are one field in the original), script variables never saved (`CreateActiveObject`), `ToScene`/`FadeIn`/`MoveScene`/`ScrollUpdate` being
-stubs or approximations, an approximated `IsPointInsidePolygon`. The older "Confirmed (asm lines ...)" comments
+stubs or approximations, an approximated `IsPointInsidePolygon`, `TGScene::SetCharacter` setting the position and direction without the event. The older "Confirmed (asm lines ...)" comments
 are not proof: a test that does not do what a script of the game would do is the way to find the rest.
 Test data that is wrong looks the same as an engine bug: `kActionPartInt` is not 0 by default (it makes an item be
 taken instead of given, a text be shown in the background ...), and a scene point belongs to the way system
