@@ -43,6 +43,7 @@ Every test prints `<n> failures`.
 | cursortest | the cursor of a command: loaded and linked to the command, active over a button, inactive over the floor, set by id |
 | luacmdtest | the Lua commands of the player: start / stop an action and an animation, volumes, cursor position, getObject / getTime / getProperty, hooks, created events; a script that fails |
 | texttagtest | the pause tags of a text (`<p2>`, `<p500ms>`, `<pt>`, `<p>`): the time of each part, and the player's text speed |
+| containertest | a container written with entries of every kind (plain, compressed, encrypted, both) and read back through the manager (memory file and file object); the wrong password |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
 
 ## Finding what is not tested
