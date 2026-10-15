@@ -2583,6 +2583,16 @@ the first 0x12C bytes - a composed file's header), 8 PNG header encrypted,
 0x10 compressed chunks (the original names bit 4
 `CONTENTFLAG_ENCRYPTED_HEADER` in an assert string).
 
+The cipher (`TMemoryBuffer::Decrypt()`/`Encrypt()`, one function, asm lines 551698-551816) XORs the bytes with
+the first 16 *characters* of the text of the MD5 of the key: `MD5String()` (asm lines 555941-556215) returns the 32
+lowercase hexadecimal digits (`sprintf "%02x"` per byte of the digest, then `strdup`), not the 16 raw bytes - an
+earlier version of this port used the raw bytes, which would have decoded no real container. The key stream is
+read from its first character on every call; the optional cursor only counts the bytes (a count of 16 sends it
+back to the first), so a call with a cursor that is not 0 does not continue the stream of the call before (every
+caller passes no cursor). The keys are: a container's directory - the key of the container; the PNG/WebP width and
+height of an entry with the content flag 8 - the name (without extension) of the entry; savegames -
+`SAVEGAMEPWD30`; the game's container - `passw`.
+
 `PasteFile()`/`PasteData()` are the composed-file writer's appenders. Chunked
 mode writes 2 MiB chunks, each compressed (and encrypted if asked) and preceded
 by an (uncompressed length, stored length) pair, and *always* ends with a
