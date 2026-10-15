@@ -27,9 +27,12 @@ void TGObjectManager::ResetEventInfo() {
 	game.SetValue(kGameUsedItemPicked, false, TSendEventEnum::kSendEvent);
 }
 
+// Confirmed (asm lines 187318-187358): the object under the mouse is let go.
 void TGObjectManager::ResetCurrentObject() {
+	_currentObject = nullptr;
+
 	TVisObjRef game = gameControl()->GetGameSystem()->GetGame();
-	game.ClearLink(kGameUsedItem, true);
+	game.ClearLink(kGameCurrentObject, true);
 }
 
 // Confirmed (asm lines 187359-187456)
