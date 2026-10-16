@@ -3,8 +3,9 @@
 Retail tries `NAME.Q` before `NAME.FLC` (see retail_game_layer.md section 13), so this is the main cutscene format.
 **The block decoder is verified**: `scripts/q_decode_ref.py` matches the real machine code (run under unicorn by
 `scripts/q_emulate.py`) on thousands of random streams (`scripts/q_fuzz.py`: pixels and consumed bytes identical;
-frame sizes 3x2 to 160x2, full frames, windows (types 3/4) and raw mode (type 7)). The container layer below is
-from reading `q_open`/`q_load` only (not fuzzed; no .Q files on this machine).
+frame sizes 3x2 to 160x2, full frames, windows (types 3/4) and raw mode (type 7)). The container layer is verified the same way: `scripts/q_container_test.py` builds synthetic .Q files (all chunk types, windows, composite
+snapshots, raw mode), runs the real `q_open`/`q_load`/`q_expand` under unicorn with the file I/O stubbed, and compares every frame with a
+Python player that follows this document (80 files, 0 mismatches). No real .Q files exist on this machine.
 
 ## File and chunks (container, from code)
 Header 0x1A bytes: `+0 u16 0x6839`, `+4 u16 blocksWide`, `+6 u16 blocksHigh`, `+8 u8 blockWidth`, `+9 u8 blockHeight`
@@ -14,7 +15,9 @@ Then 6-byte prefixes `{u16 type; u32 size}` followed by `size` bytes; the next p
 payload. Types: 0 audio-only chunk; 1 palette (0x300); 2 full frame; 3 and 4 partial frame with an 8-byte trailer
 `{minCol, minRow, maxCol, maxRow}` (u16s) after the payload; 5 pattern table (<= 0x100 bytes -> `qmap`);
 6 snapshot current frame as the "composite" background; 7 switch to raw mode; 0xFFFF end (seek to the loop offset).
-A frame chunk payload = `audioBytes` (rate/fps) then the block stream. Window semantics as implemented:
+**The size field of frame chunks (types 2/3/4) does NOT include the audio bytes**: the chunk occupies `size + audioBytes` bytes (`audioBytes` =
+rate/fps), audio first, then `size` bytes of block stream, then (types 3/4) the 8-byte window trailer, then the next prefix. Type 0 and the
+other types use `size` as is. (Found by the container test: the first draft assumed size covered the audio.) Quirk: `qloop1/qloop2` persist, so a type-2 frame after a windowed frame reuses the last window. Window semantics as implemented:
 `maxCol+1` blocks per row starting at `minCol`, `maxRow` rows starting at `minRow` (full frame: maxCol=W-1, maxRow=H).
 
 ## Block stream (verified)

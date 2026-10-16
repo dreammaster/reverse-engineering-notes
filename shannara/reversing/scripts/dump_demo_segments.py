@@ -13,7 +13,7 @@ for s in idautils.Segments():
     # uninitialised parts come back as zeros / None
     open("seg_%X.bin"%st,"wb").write(data)
 names={}
-for n in ["_qloop1","_qloop2","_q_qmap_table","dword_18B2BC","dword_18B6BC","_Q_RAW_LABEL1","_Q_RAW_LABEL2","_Q_RAW_LABEL3","_Q_RAW_LABEL4","_Q_RAW_LABEL5","_Q_RAW_LABEL6","_Q_RAW_LABEL7","_qblock_addr_table","_video_buffer","off_18B17C","jpt_1652D3","jpt_1655A3","jpt_166323","jpt_1663E3","sub_1652E0","q_expand","init_addr_tbl","q_open","q_load","_qheader","_qinfo","_qbuffer","_qprefix","_next_qprefix","_composite_buffer","_composite_addr_tbl","dword_18BABC","dword_18B12C","_qaudio_buffer_size"]:
+for n in ["_qloop1","_qloop2","_q_qmap_table","dword_18B2BC","dword_18B6BC","_Q_RAW_LABEL1","_Q_RAW_LABEL2","_Q_RAW_LABEL3","_Q_RAW_LABEL4","_Q_RAW_LABEL5","_Q_RAW_LABEL6","_Q_RAW_LABEL7","_qblock_addr_table","_video_buffer","off_18B17C","jpt_1652D3","jpt_1655A3","jpt_166323","jpt_1663E3","sub_1652E0","q_expand","init_addr_tbl","q_open","q_load","_qheader","_qinfo","_qbuffer","_qprefix","_next_qprefix","_composite_buffer","_composite_addr_tbl","dword_18BABC","dword_18B12C","_qaudio_buffer_size","fp_open","fp_read","fp_seek","fp_close","fp_set_bufsiz","new_pointer","kill_pointer","q_close","q_kill","_voice_supported","_qpalette","_qbuffer_orig","_q_fp","_new_palette","_next_qframe","_qframe","_composite_buffer","_q_y1","_q_y2"]:
     names[n]=idc.get_name_ea_simple(n)
 json.dump({"segs":segs,"names":names},open("segs.json","w"))
 if not ida_kernwin.is_idaq(): idc.qexit(0)
