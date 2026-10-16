@@ -137,3 +137,13 @@ ported by hand.
   4, 0xB, 8, 5, 7, 9, ..., into the fight), `sub_13C80`/`sub_13F0C` (pre/post fight), `sub_14250` (UI event
   handler called from `dispatch_event?`) are unnamed.
 - `_old_keyboard_vector` should be renamed `_combat_hook` (left alone to avoid touching every reference).
+
+## 6. Where fights and cutscenes are triggered (from `retail_story_events.tsv`)
+
+Encounter ids passed to `start_encounter?` by handlers (object id:type in brackets): 9 (`objh_063`, obj 69), 0x19 (`objh_194`, obj 202),
+4 (`objh_341`, obj 379), 8 (`objh_374`, 412), 5 (`objh_392`, 430), 0x0A (`objh_442`, 480), 0x0B (`objh_512`, 551), 0x0C (`objh_521`, 560),
+6 (`objh_596`, 674); encounter 0x0E is started from `play_cutscene?` case 7 (section 14 of `retail_game_layer.md`). Ids 0-3, 7, 0x0D and
+0x0F-0x18 are not started by any handler directly (0-3, 7, 0x0D are probably tutorial/other scripted starts via `play_cutscene?` or
+timed events; the 0x0F-0x18 group all share the generic party preamble `sub_171BC` and have no hook). Story cutscenes `play_cutscene?(id)`
+are triggered by `objh_258` (id 1), `objh_409` (4), `objh_513` (6), `objh_577` (7, 8, 9, 10 in sequence), `objh_629` (2), `objh_637` (3);
+ids 0, 5 and 11 come from other callers (`sub_221C4`, the intro).
