@@ -616,3 +616,16 @@ further in; word at `+0Ah` carries an id for the audio events). A per-UI-mode ho
 
 So audio is also driven through the event queue (music and voice requests are posted as events), which is why handlers can
 issue them without blocking. The remaining steps from `build_command_line?` to `run_command?` (section 2.4) are not yet traced.
+
+## 19. The turn clock and timed events (nineteenth pass)
+
+`advance_time?(turns, askContinue)` (`0x19DBC`, was `sub_19DBC`) is the game clock. Each turn it (1) sends **handler phase 0x1B** to the
+current room (so rooms can react to time passing), then (2) walks the 16-entry **timed-event list** at `byte_CCBB8`
+(`{u8 eventId; i16 countdown}`, count `dword_ADDEC`, saved in the savegame): positive countdowns are decremented; an entry at 0
+runs `fire_timed_event?(id)` and is removed unless the event rescheduled itself. `schedule_event?(id, delay)` (`0x19C40`, was
+`state_pair_set?`) adds an entry. `fire_timed_event?` (`0x1F700`) dispatches ids **1-8** (`funcs_1F709`):
+2 `sub_62A70`, 3 `sub_4D5F8`, 4 `sub_4D678` (damages a party member with voiced messages), 5 `sub_61750`, 6 `sub_5BBBC`,
+7 `sub_5BC10`, 8 `sub_5BC50` (1 is a null slot). The lethal ones end in `game_over_screen?` (`0x1F580`). Waiting ("%s a while.")
+calls `advance_time?` with a turn count and, for long waits, asks "Do you want to continue..." between turns. So the game has
+exactly eight scripted timers (hunger-/poison-/cold-style countdowns); porting them means eight small functions plus this list.
+Phase 0x1B in the phase table (section 10) is therefore "a turn passed".

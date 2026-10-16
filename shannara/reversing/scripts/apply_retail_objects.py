@@ -71,6 +71,16 @@ FORCE += [
     (0x1A834, "object_set_default_verb?", "(obj=ax, verb=edx): setter for the default verb (was object_set_prop_b?)."),
 ]
 
+# Timed events / turn clock (nineteenth pass)
+FORCE += [
+    (0x19C40, "schedule_event?", "(eventId=al, delay=dx): schedule timed event eventId (1-8, see fire_timed_event?) delay turns from now in the 16-entry list at byte_CCBB8 {u8 id; i16 countdown} (count dword_ADDEC, part of the savegame); an id already queued is left alone; prints an overflow message when full. Was state_pair_set?."),
+]
+RENAMES += [
+    (0x19DBC, "advance_time?", "(turns=eax, askContinue=edx): the game clock. For each turn: sends PHASE 0x1B to the current room (turn notification), then walks the timed-event list at byte_CCBB8: positive countdowns are decremented, a countdown of 0 fires fire_timed_event?(id) and removes the entry (a rescheduling event keeps it). Long waits ask 'Do you want to continue...' (sub_254DC). Called by the Wait command ('%s a while.') and by handlers."),
+    (0x1F700, "fire_timed_event?", "(id=eax, ...): dispatches timed event 1-8 through funcs_1F709: 2 sub_62A70, 3 sub_4D5F8, 4 sub_4D678 (damages a character with voice lines), 5 sub_61750, 6 sub_5BBBC, 7 sub_5BC10, 8 sub_5BC50; each prints its message and usually reschedules itself with schedule_event?."),
+    (0x1F580, "game_over_screen?", "Used by the lethal timed events: background fade, the death/ending screen with restore options (load_game?)."),
+]
+
 RENAMES = [
     (0x19FB4, "object_get_name?",
      "(obj=ax) -> char* into the runtime string pool unk_CD9D0 at (record[+0] - 1); 0 if none. The pool is "
@@ -307,7 +317,6 @@ RENAMES += [
     (0x28858, "play_cutscene?", "play_cutscene?(id 0-11): the story-cutscene script - sends phase 0x18 to the current room, picks music from dword_C4614[id] (play_music_entry?), then a 12-case switch (jpt_289D6) that plays clips with play_video_wait?(name, flags) / play_video_voiced?(voiceMsgId, name) (names are 'NNNN.flc' strings; video_open? really tries NNNN.Q first), show_dialog?, make_voice?, party healing/damage and, in case 7, start_encounter?(14). Case 11 is the full-screen (640x480) narrated slideshow. See retail_game_layer.md section 14."),
     (0x196B8, "party_heal_percent?", "(percent=eax): for each of the 24 character-table slots (slot 0 always, others only if inside object 2 = party; character 7 skipped while flag 0x0D is set) HP = min(maxHP, HP + ceil(maxHP*percent/100)). _char_stats record: +2 HP, +4 max HP (14-byte stride)."),
     (0x19778, "character_damage?", "(charObj=ax, amount=edx, redraw=bl) -> new HP or -1: finds the character-table entry whose id == charObj, HP = clamp(HP - amount, 0, maxHP) (negative amount heals); character 7 immune while flag 0x0D is set; optionally refreshes the status display (sub_10DAC)."),
-    (0x19C40, "state_pair_set?", "(key=al, value=dx): adds {u8 key; u16 value} to the 16-entry list at byte_CCBB8 (count dword_ADDEC; saved in the savegame) unless the key exists; prints the overflow message when full."),
 ]
 
 DATA += [
