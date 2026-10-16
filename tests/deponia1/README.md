@@ -30,6 +30,7 @@ Every test prints `<n> failures`.
 | dialog2test | dialogs that lead to others: a part that is used up and returns to the dialog, one that goes to another dialog and one back, one that ends the dialog |
 | areatest | the action areas of a scene: the way in and the way out run once; an area for another character does not |
 | charitemtest | items from a character to another (GiveItemTo, ReceiveItem needing an interface, GiveAllItemsTo), StandingAt, GetCurrentDimension, AlignToObject, the turn action |
+| cmd3test | the commands SetFont, SetLightMap, SetItem, Save/Execute/ClearSavedObject, SetCursor, SetObjectActive (the active command stays on) and IfLanguage |
 | clicktest | clicks on an object and the floor, keys (`HandleKeyEvent`, key release) |
 | commenttest | an object without actions clicked with a command: the hero says the comment for it |
 | fadetest | every fade effect of a scene change |
