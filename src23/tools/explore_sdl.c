@@ -578,6 +578,7 @@ int main(int argc, char **argv) {
     g_introRenderer = sdl;
     g_introTexture = texture;
     uint32_t colours[256];
+    unsigned colourStamp = g_ui.paletteStamp;
     for (unsigned i = 0; i < 256; i++) {
         unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
         colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
@@ -681,6 +682,13 @@ int main(int argc, char **argv) {
         }
         if (dirty) {
             gameUiDraw(&g_ui);
+            if (colourStamp != g_ui.paletteStamp) { /* the cycled colours (gameUiPalette) moved on */
+                colourStamp = g_ui.paletteStamp;
+                for (unsigned i = 0xD0; i < 0xE0; i++) {
+                    unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
+                    colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
+                }
+            }
             static uint32_t pixels[ViewScreenWidth * ViewScreenHeight];
             for (unsigned i = 0; i < ViewScreenWidth * ViewScreenHeight; i++) {
                 pixels[i] = colours[g_ui.screen[i]];

@@ -260,6 +260,30 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiDraw(&ui);
     bool mapShown = ui.overlay == UiOverlayLocalMap && sum(ui.screen) != before;
     check("M opens the local map, Escape closes it without quitting", mapShown && gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayNone);
+    /* the timer interrupt's palette cycle: the colours 0xD0-0xDF turn in groups of four (0xDB is the acting member's frame, 0xD0-0xD3 the water), the rest stay */
+    {
+        const uint8_t *pal = gameUiPalette(&ui);
+        unsigned seen = 0, stamp0 = ui.paletteStamp;
+        uint8_t first[3], other[3];
+        memcpy(first, pal + 0xDB * 3, 3);
+        memcpy(other, pal + 0x20 * 3, 3);
+        uint8_t values[8][3];
+        for (unsigned tick = 0; tick < 40; tick++) {
+            gameUiAnimate(&ui);
+            bool known = false;
+            for (unsigned k = 0; k < seen; k++) {
+                known = known || memcmp(values[k], pal + 0xDB * 3, 3) == 0;
+            }
+            if (!known && seen < 8) {
+                memcpy(values[seen++], pal + 0xDB * 3, 3);
+            }
+        }
+        snprintf(text, sizeof(text), "%s: the palette cycle turns colour 0xDB through four values (one rotation every 5 BIOS ticks) and leaves the other colours alone", label);
+        check(text, seen == 4 && ui.paletteStamp - stamp0 == 16 && memcmp(pal + 0x20 * 3, other, 3) == 0);
+        while (ui.cycleStep != 0) {
+            gameUiAnimate(&ui);
+        }
+    }
     /* the buttons show pressed: the walk pad's arrow while the move runs, the shoot icon while a shot flies */
     {
         unsigned padCount;

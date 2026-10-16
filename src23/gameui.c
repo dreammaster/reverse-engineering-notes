@@ -52,12 +52,33 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
     ui->castNext = 1;
     ui->driverFlags = DriverMusicAvailable | DriverMusicOn | DriverSoundFxAvailable | DriverSoundFxOn;
     ui->animationSpeed = 5;
+    uint32_t offset = pictureMasterPaletteOffset(session->game);
+    if (offset + PicturePaletteSize <= worldSize) {
+        memcpy(ui->palette, worldDat + offset, sizeof(ui->palette));
+    }
     return true;
 }
 
 const uint8_t *gameUiPalette(const GameUi *ui) {
     uint32_t offset = pictureMasterPaletteOffset(ui->session->game);
-    return offset + PicturePaletteSize <= ui->worldSize ? ui->worldDat + offset : NULL;
+    return offset + PicturePaletteSize <= ui->worldSize ? ui->palette : NULL;
+}
+
+/* AnimatePaletteCycle: the colours 0xD0-0xDF, in four groups of four, each group turned by `step` colours (the master palette is the source every time). */
+static void paletteCycle(GameUi *ui) {
+    uint32_t offset = pictureMasterPaletteOffset(ui->session->game);
+    if (offset + PicturePaletteSize > ui->worldSize) {
+        return;
+    }
+    const uint8_t *base = ui->worldDat + offset + 0xD0 * 3;
+    uint8_t *dest = ui->palette + 0xD0 * 3;
+    for (unsigned group = 0; group < 4; group++) {
+        for (unsigned colour = 0; colour < 4; colour++) {
+            memcpy(dest + (group * 4 + colour) * 3, base + (group * 4 + (colour + ui->cycleStep) % 4) * 3, 3);
+        }
+    }
+    ui->cycleStep = (ui->cycleStep + 1) % 4;
+    ui->paletteStamp++;
 }
 
 static void effect(GameUi *ui, unsigned id) {
@@ -342,6 +363,12 @@ void gameUiSettle(GameUi *ui) {
 
 bool gameUiAnimate(GameUi *ui) {
     bool changed = false;
+    ui->cycleTicks += 2; /* one animation tick is two BIOS ticks; the timer interrupt rotates the colours every five */
+    while (ui->cycleTicks >= 5) {
+        ui->cycleTicks -= 5;
+        paletteCycle(ui);
+        changed = true;
+    }
     if (ui->pressTicks > 0) { /* a pressed button comes up */
         ui->pressTicks--;
         changed = true;

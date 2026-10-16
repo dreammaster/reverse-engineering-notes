@@ -87,6 +87,10 @@ typedef struct {
     CreationWizard wizard; /* the character creation under way (UiOverlayCreate) */
     unsigned wizardSlot;   /* the roster record it will be stored in */
     unsigned doorTicks;    /* animation ticks until an opening door (session.h) is passed */
+    uint8_t palette[768];  /* the palette on screen: the master palette, with entries 0xD0-0xDF cycled (gameUiAnimate) */
+    unsigned paletteStamp; /* counts the changes of `palette`: a platform that has converted it reconverts when this moves */
+    unsigned cycleStep;    /* which of the four rotations of the cycled colours is next (0-3) */
+    unsigned cycleTicks;   /* BIOS ticks (18.2 a second) since the last rotation; one comes every 5 */
     unsigned pressTicks;   /* animation ticks the pressed button below stays down */
     unsigned pressPicture; /* category 8 picture of the pressed button (the pad arrows 18..28, the icon row 2, 4, 6, 8, 10) */
     int pressX, pressY;    /* where it is drawn: the button's corner */
@@ -158,7 +162,12 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right);
 /* Renders the current screen (the view and panels, or the open overlay) into ui->screen. */
 void gameUiDraw(GameUi *ui);
 
-/* The master palette: 256 x 3 six-bit DAC values inside the world data; NULL if it is not there. */
+/*
+ * The palette to show: 256 x 3 six-bit DAC values, the master palette in the world data, whose entries 0xD0-0xDF are cycled the way the original's timer interrupt does
+ * (AnimatePaletteCycle, yendor2.asm:28023, every 5 ticks while a fade has finished): each of the four groups of four colours (0xD0-0xD3, 0xD4-0xD7, 0xD8-0xDB, 0xDC-0xDF) is rotated
+ * by one colour more at every step, 0, 1, 2, 3 and round again. Those colours are the ones the picture shading leaves alone (water, lava, the acting member's frame -- colour 0xDB --
+ * and the like), so they shimmer. gameUiAnimate steps it and changes `paletteStamp`; NULL if the world data has no palette.
+ */
 const uint8_t *gameUiPalette(const GameUi *ui);
 
 /* Starts the area's music when the party has moved to a page with another track (call after loading or placing the party). */
