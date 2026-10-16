@@ -379,6 +379,38 @@ int main() {
 		}
 		run("unregisterEventHandler('keyEvent', 'onCtl')");
 
+		// the game client (Steam, GOG Galaxy): there is none here, so nothing is done and the answers say so
+		run("gc_init = initGameClient('id', 'secret'); gc_stat = getGameClientStat('stat'); gc_set = setGameClientStat('stat', 5); "
+		    "gc_reset = resetGameClientStats(true); gc_reset2 = resetGameClientStats(); gc_ach = getGameClientAchievement('ach'); "
+		    "gc_set_ach = setGameClientAchievement('ach'); "
+		    "gc_clear_ach = setGameClientAchievement('ach', {flags = true, clear = true}); "
+		    "gc_clear_short = setGameClientAchievement('ach', {flags = true, clr = true}); "
+		    "ok2, gc_browser = pcall(startDefaultBrowser, 'http://example.com')");
+		CHECK(flag("gc_init") == 0);
+		CHECK(number("gc_stat") == -1 || number("gc_stat") == 0);
+		CHECK(flag("gc_set") == 0);
+		CHECK(flag("gc_reset") == 0 && flag("gc_reset2") == 0);
+		CHECK(flag("gc_ach") == 0 && flag("gc_set_ach") == 0 && flag("gc_clear_ach") == 0 && flag("gc_clear_short") == 0);
+		printf("game client: init %d stat %g set %d reset %d achievement %d browser %d\n", flag("gc_init"), number("gc_stat"), flag("gc_set"),
+		       flag("gc_reset"), flag("gc_ach"), flag("gc_browser"));
+
+		// the window and the controllers: the commands run (the window is not a real one)
+		run("w_title = setWindowTitle('A title'); w_bright = getWindowBrightness(); w_set = setWindowBrightness(80); "
+		    "w_mode = getWindowMode(); w_size = setWindowSize({x = 800, y = 600}); w_toggle = toggleWindowMode(); "
+		    "h_rumble = startHapticRumble(50, 100); h_stop = stopHapticRumble(); h_effect = startHapticEffect(3); "
+		    "h_stop_effect = stopHapticEffect(-1); "
+		    "h_constant = createHapticEffectConstant('constant', 100, 0, 50, 0, 0, 0, 0, 'none'); "
+		    "h_constant2 = createHapticEffectConstant('constant', 100, 0, 50, 10, 20, 10, 20, 'polar', 9000); "
+		    "h_periodic = createHapticEffectPeriodic('sine', 100, 0, 50, 100, 0, 0, 0, 0, 0, 0, 'cartesian', 1, 0, 0); "
+		    "h_condition = createHapticEffectCondition('spring', 100, 0, 100, 100, 100, 100, 0, 0); "
+		    "h_ramp = createHapticEffectRamp('ramp', 100, 0, 0, 100, 0, 0, 0, 0, 'spherical', 1, 2); "
+		    "h_lr = createHapticEffectLeftRight('leftright', 100, 50, 50)");
+		printf("window: title %s brightness %g set %d mode %d size %d toggle %d | haptic: rumble %d stop %d effect %d stop-effect %d constant %g leftright %g\n",
+		       text("w_title").c_str(), number("w_bright"), flag("w_set"), flag("w_mode"), flag("w_size"), flag("w_toggle"),
+		       flag("h_rumble"), flag("h_stop"), flag("h_effect"), flag("h_stop_effect"), number("h_constant"), number("h_lr"));
+		CHECK(flag("h_rumble") == 0 && flag("h_stop") == 0 && flag("h_effect") == 0);
+		CHECK(number("h_constant") == -1 && number("h_lr") == -1 && number("h_periodic") == -1);
+
 		// the sprite of the scripts: made from a path, with a position and a size from the picture
 		run("sp = createSprite('pics/a.png'); sp_path = sp:getPath(); sp:setPosition({x = 5, y = 7}); p = sp:getPosition(); "
 		    "sp_x = p.x; sp_y = p.y; sz = sp:getSize(); sp_w = sz.x; sp_h = sz.y; sp_text = tostring(sp); "
