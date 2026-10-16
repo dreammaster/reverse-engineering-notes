@@ -1,5 +1,9 @@
 #include <cstdio>
 
+// (the buttons of an interface and the pictures of a button are looked at from outside)
+#define private public
+#define protected public
+
 #include "AppGlobals.h"
 #include "TStandardPaths.h"
 #include "THGameControl.h"
@@ -15,6 +19,9 @@
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 #include "fakepictures.h"
+#include "THButton.h"
+#undef private
+#undef protected
 
 static int failures = 0;
 #define CHECK(c) do { if (!(c)) { printf("FAIL line %d: %s\n", __LINE__, #c); failures++; } } while (0)
@@ -330,6 +337,39 @@ int main() {
 		click(160, 90);
 		printf("back at the start: %s\n", shownItem().c_str());
 		CHECK(shownItem() == "Key");
+
+		// a change of a field of a button is taken over by its two pictures
+		{
+			THButton *live = nullptr;
+
+			for (TGInterface *iface : control->GetActiveInterfaces()) {
+				for (TMButton *candidate : iface->_buttons) {
+					if (!live)
+						live = dynamic_cast<THButton *>(candidate);
+				}
+			}
+
+			CHECK(live != nullptr);
+			if (live) {
+				TVisObjRef data = live->GetRef();
+
+				data.SetValue(kButtonRotation, 30.0f, TSendEventEnum::kSendEvent);
+				data.SetValue(kButtonRotationCenter, wxPoint{5, 6}, TSendEventEnum::kSendEvent);
+				data.SetValue(kButtonShaderSet, 3, TSendEventEnum::kSendEvent);
+				data.SetValue(kButtonMatrixId, 2, TSendEventEnum::kSendEvent);
+				data.SetValue(kButtonScale, 2.0f, TSendEventEnum::kSendEvent);
+				CHECK(live->_activePicture.GetRotation() == 30.0f);
+				CHECK(live->_inactivePicture.GetRotation() == 30.0f);
+				CHECK(live->_activePicture.GetRotationCenter() == (wxPoint{5, 6}));
+				CHECK(live->_activePicture.GetShader() == 3);
+				CHECK(live->_inactivePicture.GetMatrixId() == 2);
+				CHECK(live->_activePicture.GetScaleX() == 2.0f);
+				CHECK(live->_inactivePicture.GetScaleY() == 2.0f);
+				data.SetValue(kButtonScaleX, 3.0f, TSendEventEnum::kSendEvent);
+				CHECK(live->_activePicture.GetScaleX() == 3.0f);
+				CHECK(live->_activePicture.GetScaleY() == 2.0f);
+			}
+		}
 	}
 
 	printf("%d failures\n", failures);
