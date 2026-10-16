@@ -324,6 +324,51 @@ int main() {
 		printf("mouse hook calls: %g\n", number("hook_calls"));
 		CHECK(number("hook_calls") >= 2);
 
+		// the handlers of the mouse, the keys and the engine events; the game lists them, and they stop being called
+		run("mouse_events = 0; key_events = 0; engine_events = 0; engine_name = ''; "
+		    "function onMouse(kind, p) mouse_events = mouse_events + 1 end; "
+		    "function onKey(t, c, code, mod) key_events = key_events + 1; return false end; "
+		    "function onEngine(n, a) engine_events = engine_events + 1; engine_name = n .. ':' .. a end; "
+		    "registerEventHandler('mouseEvent', 'onMouse', {1}); registerEventHandler('keyEvent', 'onKey'); "
+		    "registerEventHandler('engineEvent', 'onEngine')");
+
+		auto fireAll = [&]() {
+			control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{70, 80});
+			control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{75, 85});
+			control->HandleKeyEvent(TKeyboardMessageEnum::kKeyDown, wxString(), 'k', 0);
+			control->PushEngineEvent("ping", "pong");
+			frames(3);
+		};
+
+		fireAll();
+		printf("events: mouse %g, key %g, engine %g (%s)\n", number("mouse_events"), number("key_events"), number("engine_events"),
+		       text("engine_name").c_str());
+		CHECK(number("mouse_events") >= 2);
+		CHECK(number("key_events") >= 1);
+		CHECK(number("engine_events") == 1);
+		CHECK(text("engine_name") == "ping:pong");
+
+		{
+			control->SaveEventHandlers();
+
+			wxString registered = control->GetVisionaire()->GetGame().GetStr(kGameRegisteredEventHandlers);
+
+			printf("registered: %ls\n", registered.wc_str());
+			CHECK(registered.ToStdWstring().find(L"mouseEvent:onMouse") != std::wstring::npos);
+			CHECK(registered.ToStdWstring().find(L"keyEvent:onKey") != std::wstring::npos);
+			CHECK(registered.ToStdWstring().find(L"engineEvent:onEngine") != std::wstring::npos);
+		}
+
+		run("unregisterEventHandler('mouseEvent', 'onMouse'); unregisterEventHandler('keyEvent', 'onKey'); "
+		    "unregisterEventHandler('engineEvent', 'onEngine')");
+
+		double mouseBefore = number("mouse_events"), keyBefore = number("key_events"), engineBefore = number("engine_events");
+
+		fireAll();
+		CHECK(number("mouse_events") == mouseBefore);
+		CHECK(number("key_events") == keyBefore);
+		CHECK(number("engine_events") == engineBefore);
+
 		// an animation made by a script (nothing owns it), and found by its name and id
 		run("instance = graphics.instantiateAnimation(Animations['Blink']); instance_empty = instance:isEmpty()");
 		frames(5);
