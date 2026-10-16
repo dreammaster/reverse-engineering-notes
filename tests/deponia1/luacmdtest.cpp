@@ -90,8 +90,10 @@ int main() {
 
 		// lists of each kind for the methods of the objects that read them
 		blink.SetValue(kAnimationWalkSteps, std::vector<float>{1.5f, 2.5f}, TSendEventEnum::kNoEvent);
-		outfit.SetValue(kOutfitWalkCyclePoints, std::vector<int>{4, 5, 6}, TSendEventEnum::kNoEvent);
-		outfit.SetValue(kOutfitModelFiles, std::vector<TCharHolder>{TCharHolder("a.obj"), TCharHolder("b.obj")}, TSendEventEnum::kNoEvent);
+				outfit.SetPathList(kOutfitModelFiles, std::vector<TCharHolder>{TCharHolder("a.obj"), TCharHolder("b.obj")}, TSendEventEnum::kNoEvent);
+		TVisObjRef other = game.CreateObject(14, noParent, -1);
+		other.SetName(TCharHolder("Other"));
+		other.SetValue(kTextTextLanguages, texts, TSendEventEnum::kNoEvent);
 
 		TVisObjRef listFont = game.CreateObject(3, gameRef, kGameFontLinks);
 		listFont.SetName(TCharHolder("ListFont"));
@@ -359,6 +361,53 @@ int main() {
 		CHECK(listField("first_float") == 2.5);
 		CHECK(listField("rects") == 4);
 		CHECK(listField("texts") == 1);
+		lua_settop(L, 0);
+
+		// the lists are set from Lua, and read back
+		run("local font = Fonts['ListFont']; font:setValue(VFontLetters, {{x = 1, y = 2, width = 3, height = 4}})");
+		run("local b = Animations['Blink']; local sp = b:getSprites(VAnimationSprites); sp[1].pause = 99; sp[2].path = 'pics/c.png'; "
+		    "b:setValue(VAnimationSprites, sp); local sp2 = b:getSprites(VAnimationSprites); "
+		    "local font = Fonts['ListFont']; font:setValue(VFontLetters, {{x = 1, y = 2, width = 3, height = 4}}); "
+		    "local rects = font:getRects(VFontLetters); "
+		    "local greeting = Texts['Other']; greeting:setValue(VTextTextLanguages, {{text = 'hi', sound = 'hi.ogg', language = 5}, "
+		    "{text = 'ho', sound = '', language = 6}}); local texts = greeting:getTexts(VTextTextLanguages); "
+		    // (the lists of numbers and of paths are read by the scripts but not set)
+		    "local out = Characters['Hero']:getLink(VCharacterCurrentOutfit); "
+		    "local ok_ints = pcall(function() out:setValue(VOutfitModelFiles, {'q.obj'}) end); "
+		    "local ok_floats = pcall(function() Animations['Blink']:setValue(VAnimationWalkSteps, {0.5}) end); "
+		    "local fl = Animations['Blink']:getFloats(VAnimationWalkSteps); "
+		    "local paths = out:getPaths(VOutfitModelFiles); "
+		    "conv = {sprites = #sp2, pause = sp2[1].pause, path = sp2[2].path, floats = #fl, float2 = fl[2], "
+		    "paths = #paths, path2 = paths[2], rects = #rects, rect_height = rects[1].height, texts = #texts, text1 = texts[1].text, "
+		    "sound1 = texts[1].sound, language2 = texts[2].language, set_ints = ok_ints, set_floats = ok_floats}");
+		lua_getglobal(L, "conv");
+		auto convField = [&](const char *name) {
+			lua_getfield(L, -1, name);
+			double result = lua_isnumber(L, -1) ? lua_tonumber(L, -1) : -1e9;
+
+			lua_pop(L, 1);
+			return result;
+		};
+		auto convText = [&](const char *name) {
+			lua_getfield(L, -1, name);
+			std::string result = lua_isstring(L, -1) ? lua_tostring(L, -1) : "(none)";
+
+			lua_pop(L, 1);
+			return result;
+		};
+		CHECK(convField("sprites") == 2);
+		CHECK(convField("pause") == 99);
+		CHECK(convText("path") == "pics/c.png");
+		CHECK(convField("floats") == 2);
+		CHECK(convField("float2") == 2.5);
+		CHECK(convField("paths") == 2);
+		CHECK(convText("path2") == "b.obj");
+		CHECK(convField("rects") == 1);
+		CHECK(convField("rect_height") == 4);
+		CHECK(convField("texts") == 2);
+		CHECK(convText("text1") == "hi");
+		CHECK(convText("sound1") == "hi.ogg");
+		CHECK(convField("language2") == 6);
 		lua_settop(L, 0);
 
 		// the tweens: a number the script names, a field of an object, and the method `to` of the objects
