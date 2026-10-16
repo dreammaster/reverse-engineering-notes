@@ -535,3 +535,23 @@ id plus the few side effects (healing, `start_encounter?`, party changes) - ther
 Related helpers named in this pass: `party_heal_percent?` (`0x196B8`), `character_damage?` (`0x19778`; the character
 table is 24 x 8-byte records at `dword_ADB84` with `_char_stats` 14-byte records in the same order), `state_pair_set?`
 (`0x19C40`, a 16-entry `{u8 key, u16 value}` list at `byte_CCBB8` that is part of the savegame).
+
+## 15. Dialog descriptor table (fourteenth pass)
+
+Every `show_dialog?(dialogId, ...)`, `play_video_voiced?(dialogId, clip)` and voice call takes a **dialog id** that indexes a
+table of **6-byte descriptors** at `word_BBA0E` (`dseg`, 3,403 valid entries, ids 0-3402; the bytes after it are `0x0101`
+fill). Dump: `retail_dialog_table.tsv` (index, w0, w1, w2).
+
+| Word | Meaning (from the dump and the `show_dialog?` code) |
+|---|---|
+| `w0` | layout/speaker: high byte = speaker/portrait index (4-37 seen), low byte = style flags (`0x80` = bit tested into `byte_C2875`); the special values `0x100`/`0x200`/`0x300` select the three dialog layouts that `show_dialog?` caches in `byte_C2871-C2874` |
+| `w1` | the line's text message id (a `SHANSTR.DAT` message, section 7) |
+| `w2` | continuation: the index of the next descriptor in the conversation; `0xFFFF` ends it, `0x8000` ends it with a special close, and 1,326 entries simply point at `index + 1` |
+
+So a conversation is a linked list of lines, each with its own speaker/portrait and text id; scripts only name the first
+entry. `show_dialog?` (`0x26414`, 6,323 bytes, 599 callers) is the interpreter: it hides the mouse, builds the dialog window
+for the layout, loads the speaker's portrait animation (`load_pic_sequence?`, `update_animation`), prints the text, starts the
+voice (`voice_on`), waits for a click or key, then follows `w2`. A per-dialog state byte (`flagbyte_ptr?(dialogId)`: bit 0 =
+enabled, bit 1 = already shown) is part of the savegame state bytes, which is how repeat conversations are suppressed.
+Not yet traced: the exact text-layout and portrait-animation rules, and how voice file names are derived (the `make_voice?`
+argument is also a dialog id).
