@@ -51,6 +51,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | matrixtest | the matrices the scripts set (graphics.invMatrix1, graphics.matrix1): the click goes back through the inverse one, points go through the matrix |
 | partsimtest | the particle emitter simulation: counts, fractions, box and point geometry, directions and cones, forces, stage colours, size curve, particle kinds, depth sorting, the systems |
 | luaparttest | the particle systems the scripts make with particleSystem:new{}: container and emitter settings, the kinds of emitter, assignments, curves (min/max pairs, appended), warm-up, pictures, image emitters |
+| datatest | the typed values of the fields: the text of each kind, sizes in memory, comparison, copy, clear, and reading from characters (T/F flags, ints, paths) |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
