@@ -224,6 +224,44 @@ int main() {
 		// nobody talks
 		run("WaitTalking", 5);
 		CHECK(trace() == "not-talking ");
+
+		// the scripts are told when a text starts and stops, and may change what is shown, where it is put and how it is drawn
+		LuaDoString("events = ''; hook_calls = ''; "
+		            "function onTextStarted(t) events = events .. 'started ' end; "
+		            "function onTextStopped(t) events = events .. 'stopped ' end; "
+		            "function textTextHook(t) hook_calls = hook_calls .. 'text '; return 'hookedtext' end; "
+		            "function positionHook(t) hook_calls = hook_calls .. 'position '; return true end; "
+		            "function renderHook(t, lines, widths, pos, alignment, alpha) "
+		            "hook_calls = hook_calls .. 'render:' .. #lines .. ' '; return true end; "
+		            "registerEventHandler('textStarted', 'onTextStarted'); registerEventHandler('textStopped', 'onTextStopped'); "
+		            "registerHookFunction('textText', 'textTextHook'); registerHookFunction('setTextPosition', 'positionHook'); "
+		            "registerHookFunction('textRender', 'renderHook')",
+		            "hooks");
+		run("ObjectText", 20);
+		{
+			lua_getfield(L, LUA_GLOBALSINDEX, "events");
+			std::string events = lua_tostring(L, -1) ? lua_tostring(L, -1) : "";
+			lua_getfield(L, LUA_GLOBALSINDEX, "hook_calls");
+			std::string calls = lua_tostring(L, -1) ? lua_tostring(L, -1) : "";
+			lua_settop(L, 0);
+			printf("events: %s| hook calls: %s\n", events.c_str(), calls.c_str());
+			CHECK(events.find("started") != std::string::npos);
+			CHECK(calls.find("text ") != std::string::npos);
+			CHECK(calls.find("position ") != std::string::npos);
+			CHECK(calls.find("render:") != std::string::npos);
+			CHECK(calls.find("render:1 ") != std::string::npos);
+		}
+		run("ClearObjectText", 5);
+		{
+			lua_getfield(L, LUA_GLOBALSINDEX, "events");
+			std::string events = lua_tostring(L, -1) ? lua_tostring(L, -1) : "";
+			lua_settop(L, 0);
+			CHECK(events.find("stopped") != std::string::npos);
+		}
+		LuaDoString("registerHookFunction('textText', ''); registerHookFunction('setTextPosition', ''); "
+		            "registerHookFunction('textRender', ''); registerEventHandler('textStarted', ''); "
+		            "registerEventHandler('textStopped', '')",
+		            "unhook");
 	}
 
 	printf("%d failures\n", failures);
