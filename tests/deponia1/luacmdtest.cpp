@@ -88,6 +88,24 @@ int main() {
 		hero.SetLink(kCharacterName, greeting, true);
 		door.SetValue(kObjectPolygon, std::vector<wxPoint>{{480, 230}, {520, 230}, {520, 270}, {480, 270}}, TSendEventEnum::kNoEvent);
 
+		// lists of each kind for the methods of the objects that read them
+		blink.SetValue(kAnimationWalkSteps, std::vector<float>{1.5f, 2.5f}, TSendEventEnum::kNoEvent);
+		outfit.SetValue(kOutfitWalkCyclePoints, std::vector<int>{4, 5, 6}, TSendEventEnum::kNoEvent);
+		outfit.SetValue(kOutfitModelFiles, std::vector<TCharHolder>{TCharHolder("a.obj"), TCharHolder("b.obj")}, TSendEventEnum::kNoEvent);
+
+		TVisObjRef listFont = game.CreateObject(3, gameRef, kGameFontLinks);
+		listFont.SetName(TCharHolder("ListFont"));
+		std::vector<wxRect> letters;
+		for (int i = 0; i < 4; i++) {
+			wxRect r;
+			r.x = i * 8;
+			r.y = 0;
+			r.width = 8;
+			r.height = 12;
+			letters.push_back(r);
+		}
+		listFont.SetValue(kFontLetters, letters, TSendEventEnum::kNoEvent);
+
 		// the start of the game: the scene is shown
 		TVisObjRef action = game.CreateObject(7, gameRef, kGameActions);
 		action.SetName(TCharHolder("Start"));
@@ -318,6 +336,30 @@ int main() {
 		if (!running.empty())
 			CHECK(!TGAnimation::GetAnimationById(PackVisId(TVisObjRef(running.at(0)).GetId())).IsEmpty() || true);
 		run("stopAnimation(Animations['Blink'])");
+
+		// the lists of the fields
+		run("local b = Animations['Blink']; "
+		    "lists = {sprites = #b:getSprites(VAnimationSprites), floats = b:getFloats(VAnimationWalkSteps), "
+		    "rects = #Fonts['ListFont']:getRects(VFontLetters), "
+		    "texts = #Texts['Greeting']:getTexts(VTextTextLanguages)}; "
+		    "lists.first_float = lists.floats[2]; lists.float_count = #lists.floats; "
+		    "local o = Outfits and Outfits[1]; lists.has_outfits = (o ~= nil)");
+		lua_getglobal(L, "lists");
+		auto listField = [&](const char *name) {
+			lua_getfield(L, -1, name);
+			double result = lua_isnumber(L, -1) ? lua_tonumber(L, -1) : -1e9;
+
+			lua_pop(L, 1);
+			return result;
+		};
+		printf("lists: sprites %g, floats %g (second %g), rects %g, texts %g\n", listField("sprites"), listField("float_count"),
+		       listField("first_float"), listField("rects"), listField("texts"));
+		CHECK(listField("sprites") == 2);
+		CHECK(listField("float_count") == 2);
+		CHECK(listField("first_float") == 2.5);
+		CHECK(listField("rects") == 4);
+		CHECK(listField("texts") == 1);
+		lua_settop(L, 0);
 
 		// the tweens: a number the script names, a field of an object, and the method `to` of the objects
 		run("tw = -1; tweenTable = {value = -1}; startTween('tw', 0, 100, 3000, easeLinearIn); "

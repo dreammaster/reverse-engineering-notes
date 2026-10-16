@@ -159,6 +159,34 @@ int main() {
 				known = true;
 		}
 		CHECK(known);
+
+		// an earthquake shakes the picture for the time of a frame: what the particles are moved by changes, and the scroll
+		// position of the scene is the same after the frame
+		wxPoint stable = control->GetScene()->GetScrollPos();
+
+		recorder->offsets.clear();
+		control->StartEarthquake(20, 1);
+
+		bool shaken = false;
+
+		for (int i = 0; i < 20; i++) {
+			TGAction::ContinueRunningActions(false);
+			control->Update();
+			control->Draw(true);
+			wxMilliSleep(5);
+
+			CHECK(control->GetScene()->GetScrollPos() == stable);
+		}
+
+		for (const wxPoint &offset : recorder->offsets) {
+			if (offset.x != 0 && offset.x != -stable.x)
+				shaken = true;
+		}
+		CHECK(shaken);
+		control->StopEarthquake();
+		recorder->offsets.clear();
+		control->Draw(true);
+		CHECK(recorder->offsets.size() >= 2 && recorder->offsets[0].x == -stable.x);
 	}
 
 	printf("%d failures\n", failures);
