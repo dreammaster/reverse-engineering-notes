@@ -425,7 +425,7 @@ void TGActionPartExecutor::cmdCharacterGoToPoint() {
 }
 
 // Confirmed (asm lines 203979-203991, 205651-205662): a savegame (the one of the second integer, or
-// the one that was used last) is deleted.
+// the one that is selected in the scene) is deleted.
 void TGActionPartExecutor::cmdDeleteSavegame() {
 	if (_part.GetInt(kActionPartInt) == 0)
 		gameControl()->DeleteSavegame(-1);
@@ -434,8 +434,8 @@ void TGActionPartExecutor::cmdDeleteSavegame() {
 }
 
 // Confirmed (asm lines 203316-203336, 206270-206279, 207023-207031, 207174-207184, 207550-207574,
-// 208707-208717, 209201-209211, 210973-210983): IF a savegame exists (0 the last one, 1 the autosave,
-// 2 the second autosave, 3 the one of the second integer).
+// 208707-208717, 209201-209211, 210973-210983): IF a savegame exists (0 the one that is selected in
+// the scene, 1 the one at the place that was clicked on, 2 any at all, 3 the one of the second integer).
 void TGActionPartExecutor::cmdIfSavegame() {
 	int slot;
 
