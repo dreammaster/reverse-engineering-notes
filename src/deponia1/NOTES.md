@@ -2911,8 +2911,7 @@ one go (type 2), mirrored animations rebuilt from their source, minimum pauses, 
 run even for a type 2 load). The fix 0x9F is the only one that looks at the version itself
 (a file above 0x8E has the shadow translucency to convert). A fix reads fields that only
 exist for old files: they are in the record types only after `InitWithVersion(old)`, so a
-test must call that on a game before making the one it uses. Missing: the fix of 0x71 and
-the step of 0xB3 (see TODO.md); such files get a log warning, and < 99 are rejected as in
+test must call that on a game before making the one it uses. Missing: the step of 0xB3 (see TODO.md); such files get a log warning, and < 99 are rejected as in
 the original.
 
 `TTAnimation::SetMirrored` and `TTValue::SetRandomValue` are written by hand

@@ -62,11 +62,10 @@ start functions use) are reconstructed; `TCAnimation::IsModelAnimation()`/
 
 The player upgrades the data of a game exported by an older editor on load. The function is a series of statements
 `if (version <= N) { fix }` in ascending N (GCC threaded them into jump chains on `cmp [version], imm`). Reconstructed:
-every fix of 0x63-0xAC except 0x71 (`applyVersionFixes()`), the tail every version gets, and the fixes 0xB6 and 0xB8
+every fix of 0x63-0xAC (`applyVersionFixes()`), the tail every version gets, and the fixes 0xB6 and 0xB8
 (`applyLateVersionFixes()`). The scripts that cut the function back into its fixes are in `tools/updateversion/`.
 Not reconstructed, each logs a warning when a file of that version is loaded:
 
-- the fix of version 0x71 (about 1300 instructions in the dump; `python tools/updateversion/uvdump.py 71`);
 - the step of 0xB3 (asm `loc_92FCCE`): it builds the lists of the files an editor packs into its containers
   (`\eScenes;.vs<3i>`, `\eActionParts(VActionPartCommand=66);.vv<3c>;copy` ...) from the container counts and paths
   of the game settings; only the editor's build reads the result.

@@ -16,6 +16,7 @@ Every test prints `<n> failures`.
 | test | what it covers |
 | --- | --- |
 | upgradetest | `UpdateVersion` (the upgrades of older projects) |
+| upgrade71test | the upgrade of version 0x71: the interfaces of the characters become the game's, with a class each |
 | loadtest | load, save and load again, actions, items, scripts, a text, a dialog |
 | savetest | `SaveSaveGame` / `LoadSaveGame` |
 | clitest, gfxtest, movietest, soundtest | command line, graphics helpers (and the polygon test), movie, sound |

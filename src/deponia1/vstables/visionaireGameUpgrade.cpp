@@ -677,6 +677,281 @@ void fix70(TVisionaireGame &game) {
 	});
 }
 
+/** The place of `target` among the links of `field` of `owner` (-1 when it is not one of them). */
+int linkPosition(const TVisObjRef &owner, int field, const TVisObjRef &target) {
+	TVList links;
+	int position = 0;
+
+	owner.GetLinks(field, TypeOrder::kValue1, links);
+
+	for (TVisionaireObject *link : links) {
+		if (target == *link)
+			return position;
+
+		position++;
+	}
+
+	return -1;
+}
+
+/**
+ * The `field` links of `copy`, an interface copied from `old`, in order. WORKAROUND: the copy of an object takes over the
+ * links to the children of the original together with the copies of the children (CopyObject() copies the content with
+ * its parent links first); those links to the children of the old interface are left out, so that the place of a button
+ * in the old interface is its place in the copy.
+ */
+void copiedLinks(const TVisObjRef &copy, const TVisObjRef &old, int field, TVList &out) {
+	TVList links;
+
+	copy.GetLinks(field, TypeOrder::kValue1, links);
+
+	const TId oldId = old.GetObjectPointer()->GetTId();
+
+	for (TVisionaireObject *link : links) {
+		const TId parentId = link->GetParentId();
+
+		if (parentId.getId() == oldId.getId() && parentId.getTable() == oldId.getTable())
+			continue;
+
+		out.push_back(link);
+	}
+}
+
+/**
+ * The link `linkField` of `holder` pointed at the link of `position` among the `field` links of an interface that has
+ * been copied: it points at the same place in the copy. (`line` is the line of the assert of the original.)
+ */
+void moveLinkToCopy(TVisObjRef &holder, int linkField, const TVisObjRef &old, const TVisObjRef &copy, int field, int position, int line) {
+	TVList links;
+
+	copiedLinks(copy, old, field, links);
+
+	if ((size_t)position >= links.size()) {
+		x_assert(false, "false", kUpgradeSourceFile, line);
+		return;
+	}
+
+	TVisObjRef target(links.at(position));
+
+	holder.SetLink(linkField, target, false);
+}
+
+/** What `holder` links in `linkField` is a part of the old interface (a button, a condition, a value): the copy's. */
+void moveToCopy(TVisObjRef &holder, int linkField, const TVisObjRef &old, const TVisObjRef &copy, int field, int line) {
+	TVisObjRef link = holder.GetLink(linkField);
+
+	if (link.IsEmpty())
+		return;
+
+	int position = linkPosition(old, field, link);
+
+	if (position >= 0)
+		moveLinkToCopy(holder, linkField, old, copy, field, position, line);
+}
+
+/**
+ * The interfaces: before this version each character had its own, now they are kept by the game and have a class
+ * (the main interface, the inventory, ...). The interface of a character is copied to the game and gets the class of
+ * its place in the list (the first is the main interface, the second the inventory, any other 'Miscellaneous'); what
+ * pointed at the old interface and its buttons, conditions and values points at the copy; the old one goes. The action
+ * parts that show or hide an interface (0x70, 0x38) point at a class instead of a place in the list.
+ */
+void fix71(TVisionaireGame &game) {
+	TVisObjRef gameRef = game.GetGame();
+	const wchar_t *const names[] = {L"MainInterface", L"Inventory", L"SecondaryInterface", L"OptionsInterface", L"Miscellaneous"};
+	TVisObjRef classes[5];
+
+	for (int i = 0; i < 5; i++) {
+		classes[i] = game.CreateObject(31, gameRef, kGameInterfaceClasses);
+		classes[i].SetValue(kInterfaceClassName, wxString(names[i]), Event::kSendEvent);
+	}
+
+	TVisObjRef &mainClass = classes[0];
+	TVisObjRef &inventoryClass = classes[1];
+	TVisObjRef &miscClass = classes[4];
+
+	forEach(game, 0, [&](TVisObjRef &character) {
+		TVList interfaces;
+		TVList kept;
+		int place = 1;
+
+		character.GetLinks(kCharacterInterfaces, TypeOrder::kValue1, interfaces);
+
+		for (TVisionaireObject *object : interfaces) {
+			TVisObjRef old(object);
+			TVisObjRef copy;
+
+			if (old.GetParent().GetId()[3] == 0) {
+				copy = game.CopyObject(old, gameRef, kGameInterfaces);
+			} else {
+				// (already the game's own: it stays, and nothing is moved)
+				copy = old;
+				old.Clear();
+			}
+
+			kept.push_back(copy);
+
+			if (place == 1)
+				copy.SetLink(kInterfaceInterfaceClass, mainClass, false);
+			else if (place == 2)
+				copy.SetLink(kInterfaceInterfaceClass, inventoryClass, false);
+			else
+				copy.SetLink(kInterfaceInterfaceClass, miscClass, false);
+
+			place++;
+
+			if (old.IsEmpty())
+				continue;
+
+			TVList parts;
+			TVList actions;
+			TVList interfaceList;
+			TVList objects;
+			TVList buttons;
+
+			game.GetList(8, parts, false);
+
+			for (TVisionaireObject *partObject : parts) {
+				TVisObjRef part(partObject);
+				const int command = part.GetInt(kActionPartCommand);
+
+				if (command == 0x70 || command == 0x38 || command == 0x5A) {
+					if (part.GetLink(kActionPartLink) == old)
+						part.SetLink(kActionPartLink, copy, false);
+				} else if (command == 0x2D || command == 0x5F || command == 0x69) {
+					moveToCopy(part, kActionPartLink, old, copy, kInterfaceButtons, 0x8DD);
+				}
+			}
+
+			game.GetList(7, actions, false);
+
+			for (TVisionaireObject *actionObject : actions) {
+				TVisObjRef action(actionObject);
+
+				moveToCopy(action, kActionCommand, old, copy, kInterfaceButtons, 0x8FE);
+			}
+
+			game.GetList(1, interfaceList, false);
+
+			for (TVisionaireObject *interfaceObject : interfaceList) {
+				TVisObjRef other(interfaceObject);
+
+				moveToCopy(other, kInterfaceStandardCommand, old, copy, kInterfaceButtons, 0x91D);
+			}
+
+			for (TVisionaireObject *partObject : parts) {
+				TVisObjRef part(partObject);
+
+				moveToCopy(part, kActionPartLink, old, copy, kInterfaceConditions, 0x93B);
+				moveToCopy(part, kActionPartLink, old, copy, kInterfaceValues, 0x94F);
+				moveToCopy(part, kActionPartAltLink, old, copy, kInterfaceConditions, 0x967);
+				moveToCopy(part, kActionPartAltLink, old, copy, kInterfaceValues, 0x97B);
+			}
+
+			game.GetList(6, objects, false);
+
+			for (TVisionaireObject *objectObject : objects) {
+				TVisObjRef gameObject(objectObject);
+
+				moveToCopy(gameObject, kObjectCondition, old, copy, kInterfaceConditions, 0x99B);
+			}
+
+			game.GetList(2, buttons, false);
+
+			for (TVisionaireObject *buttonObject : buttons) {
+				TVisObjRef button(buttonObject);
+
+				moveToCopy(button, kButtonCondition, old, copy, kInterfaceConditions, 0x9BB);
+			}
+
+			// the groups of buttons
+			for (TVisionaireObject *buttonObject : buttons) {
+				TVisObjRef button(buttonObject);
+				TVList group;
+				TVList moved;
+				bool changed = false;
+
+				button.GetLinks(kButtonGroup, TypeOrder::kValue1, group);
+
+				if (group.empty())
+					continue;
+
+				for (TVisionaireObject *memberObject : group) {
+					TVisObjRef member(memberObject);
+					int position = linkPosition(old, kInterfaceButtons, member);
+
+					if (position < 0) {
+						moved.push_back(member);
+						continue;
+					}
+
+					TVList copied;
+
+					copiedLinks(copy, old, kInterfaceButtons, copied);
+
+					if ((size_t)position < copied.size()) {
+						TVisObjRef target(copied.at(position));
+
+						moved.push_back(target);
+					} else {
+						x_assert(false, "false", kUpgradeSourceFile, 0x9E1);
+					}
+
+					changed = true;
+				}
+
+				if (changed)
+					button.SetValue(kButtonGroup, moved, false);
+			}
+
+			old.Remove();
+		}
+
+		character.SetValue(kCharacterInterfaces, kept, false);
+	});
+
+	// the action parts that show and hide an interface name its class, not the place of the interface in the list
+	forEach(game, 8, [&](TVisObjRef &part) {
+		const int command = part.GetInt(kActionPartCommand);
+
+		if (command == 0x5A) {
+			part.ClearLink(kActionPartAltLink, false);
+			part.SetValue(kActionPartInt, 0, Event::kNoEvent);
+			return;
+		}
+
+		if (command != 0x70 && command != 0x38)
+			return;
+
+		TVisObjRef link = part.GetLink(kActionPartLink);
+
+		if (link.IsEmpty()) {
+			const int place = part.GetInt(kActionPartInt);
+
+			if (place == 1)
+				part.SetLink(kActionPartLink, mainClass, false);
+			else if (place == 2)
+				part.SetLink(kActionPartLink, inventoryClass, false);
+			else
+				part.SetLink(kActionPartLink, miscClass, false);
+		} else {
+			TVisObjRef interfaceClass = link.GetLink(kInterfaceInterfaceClass);
+
+			if (interfaceClass.IsEmpty())
+				part.SetLink(kActionPartLink, miscClass, false);
+			else
+				part.SetLink(kActionPartLink, interfaceClass, false);
+		}
+
+		const int altInt = part.GetInt(kActionPartAltInt);
+		const int altInt2 = part.GetInt(kActionPartAltInt2);
+
+		part.SetValue(kActionPartInt, altInt, Event::kNoEvent);
+		part.SetValue(kActionPartAltInt, (command == 0x70) ? altInt2 : 0, Event::kNoEvent);
+		part.SetValue(kActionPartAltInt2, 0, Event::kNoEvent);
+	});
+}
+
 void fix72(TVisionaireGame &game) {
 	forEach(game, 0, [](TVisObjRef &character) {
 		character.SetValue(kCharacterTint, -1, Event::kNoEvent);
@@ -1138,8 +1413,8 @@ void applyVersionFixes(TVisionaireGame &game, int version) {
 		fix6f(game);
 	if (version <= 0x70)
 		fix70(game);
-	if (version <= 0x71 && wxLog::loglevel >= 0)
-		wxLog::logexpanded(L"TVisionaireGame::UpdateVersion: the upgrade step for version 113 is not reconstructed");
+	if (version <= 0x71)
+		fix71(game);
 	if (version <= 0x72)
 		fix72(game);
 	if (version <= 0x75)
