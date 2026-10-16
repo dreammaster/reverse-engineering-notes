@@ -629,3 +629,26 @@ runs `fire_timed_event?(id)` and is removed unless the event rescheduled itself.
 calls `advance_time?` with a turn count and, for long waits, asks "Do you want to continue..." between turns. So the game has
 exactly eight scripted timers (hunger-/poison-/cold-style countdowns); porting them means eight small functions plus this list.
 Phase 0x1B in the phase table (section 10) is therefore "a turn passed".
+
+## 20. SHANSTR.DAT: complete layout and lookup (twentieth pass; from `init_string_file?`, `load_string_`, `decode_string?`)
+
+Message ids are `(block << 16) | index`; engine calls pass them as `0xF0000000 | id` (e.g. `wprintf(0xF00D0006)` = block 0x0D, string 6),
+the `0xF0` top byte meaning "SHANSTR id, not a char*". `init_string_file?` reads, in order:
+
+```
+u16  nBlocks
+struct { u16 stringCount; u32 dataBytes; } block[nBlocks];     // 6 bytes each
+u16  lengths[sum(stringCount)];                                 // compressed length of every string, block after block (position remembered as lenBase)
+u16  treeWords;  u16 tree[treeWords];                           // Huffman tree (negative = leaf, symbol = -v-1; root = last pair)
+u16  K;                                                          // number of phrases, <= 128
+if K > 0 { u16 phraseOffset[K]; u16 poolSize; u8 pool[poolSize]; }   // phrase i = NUL-terminated string at pool + phraseOffset[i]
+... string data begins here (dataBase = file position after the phrase pool)
+```
+Lookup of `(b, i)`: valid if `b < nBlocks` and `i < stringCount[b]`; the length table of block `b` is read from
+`lenBase + 2 * sum(stringCount[0..b-1])` (one block's table is cached); the compressed string starts at
+`dataBase + sum(dataBytes[0..b-1]) + sum(lengths[b][0..i-1])` and is `lengths[b][i]` bytes long; `decode_string?` (section 16) expands it,
+a NUL is appended, and the text goes into a 32-entry LRU cache (`dword_CD3E8`, with a shared text arena `dword_CD500`; ids already
+cached are returned without I/O). Bits are consumed LSB-first. This is a complete, portable description - the remaining risk is only
+that no real `SHANSTR.DAT` has been available to confirm field widths against actual bytes.
+Also noted: `wprintf` formats such ids with `%s` inserts filled by `print_obj` (section 2.3), so a port's text layer is
+"decode id -> printf with object-name arguments".
