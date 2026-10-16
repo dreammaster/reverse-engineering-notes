@@ -466,3 +466,35 @@ run structure; it is the display-side transparency path and was not traced.
 Open questions needing real picture files: meaning of the two u32 per frame, the bit layout of
 flags 0x20/0x40 (likely pixel format / compression), and whether the frame data is raw or RLE.
 The demo build used LZH for the same job (see `lzh_decode_spec.md`); retail does not appear to.
+
+## 13. Video playback and object property accessors (twelfth pass)
+
+**Videos are looked up as `NAME.Q` first, then `NAME.FLC`.** `video_open?` (`0x22D50`) builds both paths with
+`_splitpath_`/`_makepath_` from the INI data directory, opens `.Q` (state type `0x2000`) and falls back to `.FLC`
+(`0x1000`); `strupr_` is applied to the name. So the in-house Q codec traced in the demo is a first-class
+cutscene format in retail, not only a demo artefact, and ScummVM's FLIC decoder is only the fallback. Player state
+is a `0x6D0`-byte struct: `+8/+0Ah` current/last frame, `+0Ch` type, `+0Eh` flags (bit 0 palette saved, bit 5
+background saved), `+10h` saved-background pic, `+28h` saved palette (`0x300`), `+328h` FLC player / `+32Ch`
+Q state, `+338h` FLC frame delay, `+6CCh` optional per-frame callback. Frame pacing is wall-clock based
+(`get_clock`): Q delay = `(1000 + fps/2) / fps` ms (fps = Q header byte), FLC delay = header speed; an
+adaptive average (`dword_CF450/CF458/CF460`) corrects drift; minimum 10 ms.
+
+| Function | Role |
+|---|---|
+| `video_open?(vid, name, rect, flags)` | flag `0x20` saves the screen under the video, `0x01` saves the palette |
+| `video_play?(vid, frames, flags)` | returns 0 finished / 1 callback stop / 2 error / 3 aborted by input |
+| `video_close?(vid)` | closes the stream, restores background + palette |
+| `play_video?(name, flags, delay)`, `play_video_wait?(name, flags, delay)`, `play_video_voiced?` | the wrappers handlers call (24 / 49 / 38 callers) |
+
+**Object property accessors** (all take the 1-based object id, switch on the object type via `_object_table`):
+
+| Function | Offsets in the record, by type |
+|---|---|
+| `object_get/set_prop_a?` | t1 `+14h`, t2 `+19h`, t3 `+20h`, t5 `+21h` (none for t4) |
+| `object_get/set_prop_b?` | t2 `+1Dh`, t3 `+24h`, t4 `+0Ch`, t5 `+25h` (none for t1) |
+| `object_get/set_prop_dword?` | t2 `+11h`, t3 `+14h`, t5 `+15h` |
+| `object_get_list_slot?` | index property t1 `+1Dh`, t2 `+21h`, t3 `+28h`, t4 `+10h`, t5 `+29h` into a pool at `unk_AF370` (save region 15, 2,904 bytes) of 0-terminated dword lists; `object_list_append?` adds to one |
+
+What properties A/B/dword *mean* is not established (handlers use them as small per-object variables, e.g. after a
+scripted event); `object_carrier?` (`0x19BC0`, 72 callers) maps an item to the character-table entry carrying it
+(24 x 8-byte records at `dword_ADB84`, also in the save regions).

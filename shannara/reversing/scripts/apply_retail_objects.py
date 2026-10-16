@@ -277,6 +277,25 @@ RENAMES += [
     (0x14B68, "combat_do_attack?", "(c=eax): marker, hook code 5, state +40h=1, plays attack animation 1 + rand()%3 (22-byte animation records at [c+4]: 0 idle, 1-3 attack, 4 defend, 5 hit, 6 death)."),
 ]
 
+# Video playback and object property accessors (twelfth pass, see analysis/retail_game_layer.md section 13)
+RENAMES += [
+    (0x22D50, "video_open?", "(vid=eax 0x6D0-byte player state, name=edx, rect=ebx, flags=ecx): tries NAME.Q (Q codec, state type 0x2000 at +0Ch) then NAME.FLC (type 0x1000) via _splitpath_/_makepath_; flag 0x20 saves the background (save_display into vid+10h), flag 1 saves the 0x300-byte palette (vid+28h); sets frame delay (Q: (1000+fps/2)/fps ms, FLC: header speed)."),
+    (0x2308C, "video_play?", "(vid=eax, frames=edx (-1 = all), flags=ebx): plays frames with get_clock pacing (0x40 = video_sync, 0x10/0x02 = key-abort behaviour); optional per-frame callback at vid+6CCh. Returns 0 finished, 1 callback stopped, 2 error/bad range, 3 aborted by the player (sub_13A20 input test)."),
+    (0x23254, "video_close?", "(vid=eax): closes the FLC/Q stream, restores the saved background and palette (fade_in_palette)."),
+    (0x23560, "play_video?", "(name=eax, flags=edx, delayAfter=ebx): flush_events?, video_open?, set up the palette/window, video_play?, optional delay?, video_close?. 24 callers (cutscenes called from handlers)."),
+    (0x27FC0, "play_video_wait?", "(name=eax, flags=edx, delay=ebx) -> 1 if the player aborted: _hide_mouse, video_open?, video_play?, delay?, video_close?, restore mouse. 49 callers."),
+    (0x28044, "play_video_voiced?", "Like play_video_wait? but with make_voice?/make_sound narration around three video_open?/video_play? segments."),
+    (0x1F6E4, "flush_events?", "Drains the event queue (get_event(7,...) until empty)."),
+    (0x19BC0, "object_carrier?", "(obj=ax) -> id of the character-table entry (24 x 8-byte records at dword_ADB84, id word at +4) whose id equals the object's location, provided it is the first record or is inside object 2; 0 if none. 72 callers (used to say who carries something)."),
+    (0x1A6FC, "object_get_prop_a?", "(obj=ax) -> dword property A: type1 +14h, type2 +19h, type3 +20h, type5 +21h; 0 for type 4."),
+    (0x1A768, "object_set_prop_a?", "(obj=ax, value=edx): setter for property A (see object_get_prop_a?)."),
+    (0x1A7CC, "object_get_prop_b?", "(obj=ax) -> dword property B: type2 +1Dh, type3 +24h, type4 +0Ch, type5 +25h; 0 for type 1."),
+    (0x1A834, "object_set_prop_b?", "(obj=ax, value=edx): setter for property B."),
+    (0x1A580, "object_set_prop_dword?", "(obj=ax, value=edx): setter paired with object_get_prop_dword?: type2 +11h, type3 +14h, type5 +15h."),
+    (0x1A89C, "object_get_list_slot?", "(obj=ax) -> address of the object's list head in the pool at unk_AF370 (index property: type1 +1Dh, type2 +21h, type3 +28h, type4 +10h, type5 +29h; slot = AF370 + (index-1)*4), or unk_ADDF4 when the index is 0."),
+    (0x255B4, "object_list_append?", "(obj=ax, value=edx) -> 1 if appended: finds the end of the object's 0-terminated dword list (object_get_list_slot?) and stores value there if the next slot is free."),
+]
+
 DATA += [
     (0xCCA44, "_combatants"),            # 23 x pointer to 0x3F8-byte combatant blocks, 0-terminated
     (0xADC4C, "_char_stats"),            # 0x15E bytes = 25 x 14-byte per-character stat records (save region 10)
