@@ -729,3 +729,10 @@ scales x by 1/2 and y by 5/12. Region ids are what `handle_click_event?` hands t
   starts, last value = end of file 0xED000). Not further decoded.
 - **This retail release's voices** are not in the `.VOC` container: `Vocs.zip` holds 3,066 numbered MP3 files (`0002.mp3` ... `3701.mp3`), i.e. the
   dialog/voice ids index MP3s instead of the original PCM archive (a re-encoding made by the CD ripper's `mp3setup`).
+
+## 26. Videos and INI (twenty-sixth pass)
+
+`FLICS.UHA` ... `FLICS7.UHA` unpack (UHARC inside DOSBox) to standard **FLC files** (`0xAF12` magic, 640x480, 8 bpp): names such as `1910.FLC`, `9110.FLC`,
+`9120.FLC`, `9220.FLC`, `9400.FLC`, `9420.FLC`, `9541.FLC`, `9591.FLC` - exactly the clip names `play_cutscene?` passes (section 14), so the `.Q`-first
+lookup of section 13 falls through to these FLCs in this release. `LEGEND.INI` carries `MOUSE=`, `PICDATA=`, `VOCDATA=`, `SAVEDATA=` and **`FLCDATA=`** (the video
+directory), i.e. five directory keys; `video_open?` builds its path from `FLCDATA`.
