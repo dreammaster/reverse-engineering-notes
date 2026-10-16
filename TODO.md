@@ -95,10 +95,10 @@ assert-confirmed).
 
 Left out:
 
-- the draw calls of the particle effect through the `graphics` backend (translate by the
-  negated float scroll position times the scroll factor, an optional multiply with the
-  global matrix, `ParticleContainer::Draw()`/the particle system draw, and the scroll
-  fields the particle system is given at +0x2E0/+0x2E4);
+- what the backend does with the particle effect: the object (and the scene) tell it to move
+  (`SetOffset()`: the negated float scroll position times the scroll factor), multiply its matrix
+  (`MultiplyByMatrix1()`) and draw (`Draw(TParticleSystem &)`, `ParticleContainer::Draw()`); the calls and the scroll
+  fields of the particle system (+0x2E0/+0x2E4) are done (`particletest`), the drawing is the backend's;
 - the second `TPictureIO` at +0x1B8 (cleared when an object with particles is deactivated;
   nothing else is known to use it).
 
@@ -116,7 +116,7 @@ and `Draw(TParticleEmitter&, ...)`, `SetParticleMaterial`: asm 708150, 714258, 7
 
 `src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`, `src/deponia1/vscommon/cfont.cpp`.
 
-- The sound manager's side of the speech signals (`TSignalData.h`: `kSignalSpeech*`).
+- (The sound manager's side of the speech signals is done: `TSoundInterface::Signal()`.)
 - Printing the glyphs is done (`TCFont::PrintText()`, `PrintTextLines()`, `EnsureSpriteLoaded()`: see NOTES.md), but it draws through
   `TPictureIO::DrawWithSrcRect()`, `graphics->BeginBatch()/EndBatch()` and `TFreetypeFont::RenderString()`, which are backend
   and Freetype (not reconstructed), and `EnsureSpriteLoaded()` needs the picture decoders (nothing loads a picture yet).

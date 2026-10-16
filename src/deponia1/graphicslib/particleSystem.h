@@ -134,8 +134,8 @@ public:
 
 	std::vector<TParticleEmitter *> _emitters;   // +0x08
 	std::vector<TPictureIO *> _textures;          // +0x20
-	float _unknown38 = 0.0f;                      // +0x38
-	float _unknown3C = 0.0f;                      // +0x3C
+	float _scrollX = 0.0f;                        // +0x38, the scroll position of the scene when it was drawn last
+	float _scrollY = 0.0f;                        // +0x3C (negated)
 	float _cameraZ = -3.0f;                       // +0x40
 	float _cameraZoom = 0.66666669f;              // +0x44
 	float _windowWidth = 0.0f;                    // +0x48

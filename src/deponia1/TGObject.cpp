@@ -87,11 +87,9 @@ int TGObject::GetCenter() const {
 	return _center + _objRef.GetPoint(kObjectOffset)->y;
 }
 
-// Confirmed (asm lines 258252-258535), except the drawing of the particle effect through
-// the graphics backend (translating by the scroll position, the matrix multiplication
-// and the draw calls), which is skipped like in TGScene::Draw(); the container's own
-// update and the particle system's fixed-step catch-up are kept. TODO (low priority, see
-// /TODO.md): the shader, the matrix id and the particle drawing.
+// Confirmed (asm lines 258252-258535). The particle effect is drawn through the backend's SetOffset() and
+// Draw(TParticleSystem &) and the container's Draw(), which draw nothing here (the GL backend's). TODO (low priority,
+// see /TODO.md): the particle drawing of the backend.
 void TGObject::Draw() {
 	// the colour is the scene's brightness
 	float brightness = gameControl()->GetScene()->GetBrightness();
@@ -126,7 +124,14 @@ void TGObject::Draw() {
 	if (_active && _hasParticles) {
 		if (_particlesFromScript && _particleContainer) {
 			_particleContainer->Update(false, vec2(), 0.016666668f, true);
+
+			// moved by the scroll position of the scene, faster than it by the object's own percent
+			const FloatPoint &scroll = gameControl()->GetScene()->GetFloatScrollPos();
+
+			graphics->SetOffset(-((float)(_scrollX + 100) * scroll.x) / 100.0f, -((float)(_scrollY + 100) * scroll.y) / 100.0f);
+			graphics->MultiplyByMatrix1();
 			_particleContainer->Draw();
+			graphics->SetOffset(0.0f, 0.0f);
 		} else {
 			long elapsed = _particleTimer.GetTime();
 
@@ -139,6 +144,12 @@ void TGObject::Draw() {
 				_particleTimer.SetTime();
 				_particleTimer.AdjustTimer(-elapsed);
 			}
+
+			const wxPoint &scroll = gameControl()->GetScene()->GetScrollPos();
+
+			_particleSystem._scrollX = (float)scroll.x;
+			_particleSystem._scrollY = (float)-scroll.y;
+			graphics->Draw(_particleSystem, false, true);
 		}
 	}
 

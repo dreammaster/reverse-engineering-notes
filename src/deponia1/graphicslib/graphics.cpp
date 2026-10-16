@@ -18,6 +18,43 @@ TGraphicsInterface *graphics = new TGraphicsInterface();
 
 int defaultShader = 0;
 
+TGraphicsInterface::TGraphicsInterface() {
+	_matrix.Identity();
+}
+
+void TGraphicsInterface::MultiplyByMatrix1() {
+	if (!matricesActive || matrix1.size() != 9)
+		return;
+
+	const std::vector<float> &m = matrix1;
+	TMatrix4 other;
+
+	other._m[0] = m[0];
+	other._m[1] = m[1];
+	other._m[2] = 0.0f;
+	other._m[3] = m[2];
+	other._m[4] = m[3];
+	other._m[5] = m[4];
+	other._m[6] = 0.0f;
+	other._m[7] = m[5];
+	other._m[8] = 0.0f;
+	other._m[9] = 0.0f;
+	other._m[10] = 1.0f;
+	other._m[11] = 0.0f;
+	other._m[12] = m[6];
+	other._m[13] = m[7];
+	other._m[14] = 0.0f;
+	other._m[15] = m[8];
+
+	_matrix = other * _matrix;
+}
+
+void TGraphicsInterface::SetOffset(float /*x*/, float /*y*/) {
+}
+
+void TGraphicsInterface::Draw(TParticleSystem &/*system*/, bool /*first*/, bool /*second*/) {
+}
+
 void ShaderCallback(int /*shader*/, TVisObjRef */*ref*/) {
 }
 

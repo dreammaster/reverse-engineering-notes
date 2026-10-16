@@ -13,11 +13,13 @@
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
 #include "graphicslib/spriteCache.h"
+#include "graphicslib/vector3d.h"
 
 class TPreloadedPicManager;
 class TSignalSlot;
 struct TPictureMemBlock;
 class TPictureMEM;
+class TParticleSystem;
 
 // Confirmed 2 raw-int parameters read straight from game data (field ids
 // 0x224/0x225), never a named constant - real values/meaning not resolved
@@ -26,6 +28,7 @@ enum class TInterpolationEnum : int {};
 
 class TGraphicsInterface {
 public:
+	TGraphicsInterface();
 	virtual ~TGraphicsInterface() = default;
 
 	TPreloadedPicManager *GetPreloadedPicManager();
@@ -178,6 +181,20 @@ public:
 	virtual void DrawWithLightMap(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha,
 	                              bool mirrored, void *lightMap, const wxPoint &offset);
 
+	/** Slot 0x58 (TGraphicsOGL::SetOffset(float, float)): what is drawn after this is moved by (`x`, `y`) pixels; (0, 0) puts
+	 *  it back. The objects and the scene with particles move by the negated scroll position. The backend's. */
+	virtual void SetOffset(float x, float y);
+	/** Slot 0x88 (TGraphicsOGL::Draw(TParticleSystem &, bool, bool)): draws the particles of the emitters. The backend's. */
+	virtual void Draw(TParticleSystem &system, bool first, bool second);
+	/** The matrix of the drawing (+0x43C of the backend): an object drawn through a matrix multiplies it by its own. */
+	TMatrix4 &GetMatrix() {
+		return _matrix;
+	}
+	/** Confirmed (TGScene::Draw(), TGObject::Draw()): with the matrices on and `matrix1` set, the matrix of the drawing is
+	 *  multiplied by the one `matrix1` stands for (its nine numbers as a 3 x 3 in the corners of a 4 x 4). Used before the
+	 *  particles are drawn. */
+	void MultiplyByMatrix1();
+
 	/** Confirmed (asm 772807-773531, two overloads): narrows the rectangle `left`, `top`, `width`, `height` of a picture of
 	 *  4-byte pixels (`rgba`, alpha the last byte) to what has something in it - the lines at the top and the bottom and
 	 *  the columns at the left and the right that are transparent are taken off. On return `left` and `top` are how much
@@ -204,6 +221,7 @@ private:
 	bool _fadeDrawn = false;     // +0x284
 	TSpriteCache _spriteCache;
 	TPreloadedPicManager *_preloadedPicManager = nullptr;
+	TMatrix4 _matrix;  // +0x43C
 };
 
 extern TGraphicsInterface *graphics;

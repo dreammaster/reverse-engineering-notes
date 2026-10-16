@@ -68,14 +68,8 @@ void TGScene::Prepare() {
 	g_loadingState = L"Loading";
 }
 
-// Confirmed (asm lines 166568-166997) except the particle-drawing branch's
-// own calls into the unmodeled `graphics` global (vtable slots 0x58 -
-// translate by the scene's negated float scroll position, before and after
-// - and 0x88 - draw a TParticleSystem - plus an optional TMatrix4 multiply
-// against the global matrix1 when matricesActive is set), which are skipped,
-// same as this project's other not-yet-integrated external dependencies.
-// ParticleContainer's own Update() and the particle system's fixed-step
-// IncTime() catch-up loop are kept.
+// Confirmed (asm lines 166568-166997). The particle effect is drawn through the backend's SetOffset() (by the
+// negated scroll position, before and after) and Draw(TParticleSystem &), which draw nothing here (the GL backend's).
 void TGScene::Draw() {
 	if (!IsActive())
 		return;
@@ -116,6 +110,13 @@ void TGScene::Draw() {
 	if (_hasParticles) {
 		if (_particlesFromLua && _particleContainer) {
 			_particleContainer->Update(false, vec2(), 0.016666668f, true);
+
+			const FloatPoint &scroll = gameControl()->GetScene()->GetFloatScrollPos();
+
+			graphics->SetOffset(-scroll.x, -scroll.y);
+			graphics->MultiplyByMatrix1();
+			_particleContainer->Draw();
+			graphics->SetOffset(0.0f, 0.0f);
 		} else {
 			long elapsed = _particleTimer.GetTime();
 			if (elapsed > 24) {
@@ -126,6 +127,8 @@ void TGScene::Draw() {
 				_particleTimer.SetTime();
 				_particleTimer.AdjustTimer(-elapsed);
 			}
+
+			graphics->Draw(_particleSystem, false, true);
 		}
 	}
 
@@ -905,13 +908,13 @@ void TGScene::BeginScene() {
 	TVisObjRef particleLink = _ref.GetLink(kSceneParticleSystem);
 	_hasParticles = !particleLink.IsEmpty();
 	if (_hasParticles) {
-		if (_ref.GetStrHolder(kParticleContainerSettings).size() != 0) {
+		if (particleLink.GetStrHolder(kParticleContainerSettings).size() != 0) {
 			delete _particleContainer;
 			_particleContainer = nullptr;
 
 			std::string code = "return particleSystem:new(";
 
-			code += _ref.GetStrHolder(kParticleContainerSettings).mb_str();
+			code += particleLink.GetStrHolder(kParticleContainerSettings).mb_str();
 			code += ")";
 			LuaDoString(code);
 			_particleContainer = takeParticleContainer();
