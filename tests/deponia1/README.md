@@ -55,6 +55,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | luaparttest | the particle systems the scripts make with particleSystem:new{}: container and emitter settings, the kinds of emitter, assignments, curves (min/max pairs, appended), warm-up, pictures, image emitters |
 | datatest | the typed values of the fields: the text of each kind, sizes in memory, comparison, copy, clear, and reading from characters (T/F flags, ints, paths) |
 | cmdqueuetest | the commands that can be undone (the editor's): the queue, undo and redo one by one and as a group, deleting, the console text, wrong commands |
+| canimtest | the playing of the pictures of an animation: forwards, backwards, by chance, loops, the pause of each picture, the wait of a loop by chance, the questions |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
