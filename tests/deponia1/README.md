@@ -31,6 +31,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | dialogtest | a dialog with answers |
 | dialog2test | dialogs that lead to others: a part that is used up and returns to the dialog, one that goes to another dialog and one back, one that ends the dialog |
 | dialogscrolltest | a dialog of fourteen answers in an area of five: the mouse wheel scrolls a line (up to the first, down to the last), and the last answer is picked |
+| replacetest | replaceGame("other.dat") from a script: a file that is not there fails, another game replaces the first and its start action runs |
 | areatest | the action areas of a scene: the way in and the way out run once; an area for another character does not |
 | charitemtest | items from a character to another (GiveItemTo, ReceiveItem needing an interface, GiveAllItemsTo), StandingAt, GetCurrentDimension, AlignToObject, the turn action |
 | cmd3test | the commands SetFont, SetLightMap, SetItem, Save/Execute/ClearSavedObject, SetCursor, SetObjectActive (the active command stays on) and IfLanguage |
