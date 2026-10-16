@@ -20,6 +20,7 @@
 #include "vstables/visionaireGame.h"
 #include "fakepictures.h"
 #include "THButton.h"
+#include "THItem.h"
 #undef private
 #undef protected
 
@@ -337,6 +338,30 @@ int main() {
 		click(160, 90);
 		printf("back at the start: %s\n", shownItem().c_str());
 		CHECK(shownItem() == "Key");
+
+		// the same for an item in a slot: scale, and the visibility kept between 0 and 100
+		for (TGInterface *iface : control->GetActiveInterfaces()) {
+			THItem *item = dynamic_cast<THItem *>(iface->GetObject(wxPoint{100, 30}));
+
+			CHECK(item != nullptr);
+			if (!item)
+				continue;
+
+			TVisObjRef data = item->GetRef();
+
+			data.SetValue(kObjectVisibility, 250, TSendEventEnum::kSendEvent);
+			CHECK(data.GetInt(kObjectVisibility) == 100);
+			CHECK(item->_alpha == 1.0f);
+			data.SetValue(kObjectVisibility, -20, TSendEventEnum::kSendEvent);
+			CHECK(data.GetInt(kObjectVisibility) == 0);
+			CHECK(item->_alpha == 0.0f);
+			data.SetValue(kObjectVisibility, 40, TSendEventEnum::kSendEvent);
+			CHECK(item->_alpha == 0.4f);
+			data.SetValue(kObjectScale, 1.5f, TSendEventEnum::kSendEvent);
+			CHECK(data.GetFloat(kObjectScaleX) == 1.5f && data.GetFloat(kObjectScaleY) == 1.5f);
+			CHECK(item->_sprite.GetScaleX() == 1.5f);
+			data.SetValue(kObjectVisibility, 100, TSendEventEnum::kSendEvent);
+		}
 
 		// a change of a field of a button is taken over by its two pictures
 		{
