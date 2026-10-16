@@ -1,0 +1,430 @@
+handler	objects(id:type)	call	args
+objh_002	4:5	object_move?	eax=3Bh, edx=4
+objh_003	5:5	journal_add_entry?	eax=7Eh, edx=51h
+objh_003	5:5	object_move?	eax=49h, edx=0, ebx=0
+objh_005	7:5	object_move?	edx=166h, ebx=1
+objh_005	7:5	go_to_room?	eax=165h
+objh_005	7:5	object_move?	eax=1Dh, edx=7, ebx=0
+objh_005	7:5	party_add_member?	eax=7, edx=600h
+objh_005	7:5	go_to_room?	eax=141h
+objh_005	7:5	add_score?	eax=0, edx=1
+objh_006	8:5	object_move?	eax=off_C51C8+2, edx=8, ebx=0
+objh_006	8:5	go_to_room?	eax=1AEh
+objh_009	11:5	journal_add_entry?	eax=0C7h
+objh_010	12:2;27:2;28:2;33:2;53:2;82:2	journal_add_entry?	eax=7Fh
+objh_011	13:2	journal_add_entry?	eax=1Eh, edx=1Ah
+objh_012	14:2	object_move?	eax=46h, edx=0, ebx=0
+objh_013	15:2	object_move?	eax=0Eh, edx=4
+objh_013	15:2	object_move?	eax=46h, edx=0
+objh_013	15:2	object_move?	eax=0Eh, edx=4, ebx=0
+objh_013	15:2	object_move?	eax=46h, edx=0, ebx=0
+objh_013	15:2	object_move?	eax=0Eh, edx=4
+objh_013	15:2	object_move?	eax=0Eh, edx=4
+objh_016	18:2	journal_add_entry?	eax=20h
+objh_017	19:2	object_move?	eax=13h, ebx=0
+objh_019	21:2	journal_add_entry?	eax=27h
+objh_021	23:2	object_move?	eax=3Eh, edx=0, ebx=0
+objh_021	23:2	object_move?	eax=17h, ebx=0
+objh_022	24:2	journal_add_entry?	eax=26h
+objh_025	29:2	add_score?	eax=0, ebx=0
+objh_026	30:3	add_score?	eax=0
+objh_026	30:3	object_move?	edx=0
+objh_026	30:3	add_score?	eax=0
+objh_030	35:2	object_move?	eax=57h, edx=23h, ebx=1
+objh_030	35:2	object_move?	eax=4Dh, edx=23h, ebx=1
+objh_030	35:2	add_score?	eax=0, edx=1, ebx=0
+objh_041	46:2	object_move?	eax=43h, edx=_current_room, ebx=0
+objh_041	46:2	go_to_room?	eax=17Bh
+objh_041	46:2	journal_add_entry?	eax=8Eh
+objh_049	55:2	object_move?	eax=37h, edx=5, ebx=0
+objh_049	55:2	object_move?	eax=37h, ebx=0
+objh_049	55:2	object_move?	eax=37h, edx=5, ebx=0
+objh_056	62:2	object_move?	eax=3Eh, edx=3, ebx=0
+objh_056	62:2	object_move?	eax=3Eh, ebx=0
+objh_057	63:2	journal_add_entry?	eax=1Bh
+objh_060	66:2	object_move?	eax=42h, edx=0
+objh_061	67:2;573:2	go_to_room?	eax=262h
+objh_063	69:2	object_move?	eax=45h, edx=0
+objh_063	69:2	start_encounter?	eax=9
+objh_063	69:2	party_add_member?	eax=8
+objh_063	69:2	party_add_member?	eax=4
+objh_063	69:2	party_add_member?	eax=5
+objh_063	69:2	party_add_member?	eax=7
+objh_063	69:2	go_to_room?	eax=1CCh
+objh_063	69:2	journal_add_entry?	eax=0B4h
+objh_069	75:3	journal_add_entry?	eax=0BDh
+objh_069	75:3	journal_add_entry?	eax=0BDh
+objh_070	76:3	journal_add_entry?	eax=53h
+objh_070	76:3	object_move?	eax=3Dh
+objh_070	76:3	journal_add_entry?	eax=54h
+objh_070	76:3	object_move?	eax=2Dh, edx=0
+objh_070	76:3	object_move?	eax=3Dh, edx=0, ebx=0
+objh_070	76:3	journal_add_entry?	eax=40h, edx=10h
+objh_075	81:2	object_move?	edx=3, ebx=0
+objh_091	98:1	object_move?	edx=4, ebx=1, ecx=9
+objh_091	98:1	party_add_member?	eax=4
+objh_091	98:1	go_to_room?	eax=283h
+objh_094	101:2	add_score?	eax=0, edx=0
+objh_098	105:1	go_to_room?	eax=6Ah
+objh_099	106:1	journal_add_entry?	eax=17h
+objh_099	106:1	journal_add_entry?	eax=19h
+objh_110	117:1	object_move?	eax=76h, edx=0
+objh_110	117:1	object_move?	eax=0Dh, edx=76h, ebx=0
+objh_110	117:1	journal_add_entry?	eax=1Ah, ecx=0F00h
+objh_110	117:1	journal_add_entry?	eax=1Dh, ecx=0A4h
+objh_111	118:5	journal_add_entry?	eax=1Ch, edx=18h
+objh_111	118:5	object_move?	eax=18h, edx=76h
+objh_112	119:4	journal_add_entry?	eax=1Fh, ebx=0
+objh_112	119:4	object_move?	eax=15h
+objh_112	119:4	object_move?	eax=12h, edx=0, ebx=0
+objh_112	119:4	go_to_room?	eax=0ADh
+objh_132	139:1	object_move?	eax=8Ch, edx=0B8h, ebx=0, ecx=15h
+objh_132	139:1	party_add_member?	eax=4
+objh_132	139:1	object_move?	eax=36h, edx=3
+objh_132	139:1	journal_add_entry?	eax=22h
+objh_132	139:1	journal_add_entry?	eax=21h
+objh_135	142:4	object_move?	edx=0, ebx=0, stack=[?, ?]
+objh_135	142:4	object_move?	eax=12h, edx=8Bh, ebx=0
+objh_159	166:4	object_move?	eax=36h, edx=4
+objh_159	166:4	party_add_member?	eax=4
+objh_159	166:4	go_to_room?	eax=283h
+objh_166	173:1	object_move?	eax=40h, edx=0, ebx=0
+objh_166	173:1	object_move?	eax=0Bh, edx=0ADh, ebx=0
+objh_166	173:1	journal_add_entry?	eax=25h
+objh_166	173:1	object_move?	eax=4
+objh_166	173:1	party_add_member?	eax=4
+objh_173	180:4	object_move?	eax=40h, edx=0ADh, ebx=0
+objh_186	193:4	journal_add_entry?	eax=2Ch
+objh_186	193:4	go_to_room?	eax=283h
+objh_190	198:1	add_score?	eax=0, ebx=0
+objh_190	198:1	go_to_room?	eax=0E6h
+objh_190	198:1	object_move?	eax=50h, edx=0, ebx=0
+objh_190	198:1	journal_add_entry?	eax=30h
+objh_190	198:1	go_to_room?	eax=0E6h
+objh_193	201:5	journal_add_entry?	eax=2Fh
+objh_194	202:5	start_encounter?	eax=19h
+objh_212	224:1	journal_add_entry?	eax=31h
+objh_212	224:1	go_to_room?	eax=0DAh
+objh_212	224:1	party_add_member?	eax=5, edx=5
+objh_212	224:1	object_move?	eax=56h
+objh_212	224:1	go_to_room?	eax=0C6h
+objh_212	224:1	journal_add_entry?	eax=33h
+objh_212	224:1	party_add_member?	eax=5
+objh_212	224:1	journal_add_entry?	eax=32h, edx=2Eh
+objh_212	224:1	object_move?	eax=34h, edx=0, ebx=0
+objh_212	224:1	party_add_member?	eax=5
+objh_212	224:1	journal_add_entry?	eax=34h
+objh_212	224:1	go_to_room?	eax=0C6h
+objh_218	230:1	journal_add_entry?	eax=38h
+objh_218	230:1	go_to_room?	eax=0F3h
+objh_218	230:1	journal_add_entry?	eax=3Ah
+objh_218	230:1	go_to_room?	eax=114h
+objh_219	231:5	journal_add_entry?	eax=39h, edx=1300h
+objh_219	231:5	go_to_room?	eax=0F3h
+objh_231	243:1	object_move?	eax=6, edx=_current_room, ebx=0
+objh_231	243:1	object_move?	eax=6, edx=1, ebx=0
+objh_231	243:1	journal_add_entry?	eax=3Bh
+objh_231	243:1	go_to_room?	eax=0E6h
+objh_231	243:1	journal_add_entry?	eax=3Eh
+objh_231	243:1	party_add_member?	eax=6
+objh_231	243:1	go_to_room?	eax=0E0h
+objh_233	245:4	journal_add_entry?	eax=3Dh
+objh_233	245:4	journal_add_entry?	eax=3Ch
+objh_240	252:3	add_score?	eax=0, edx=1
+objh_244	256:4	object_move?	eax=31h, edx=0
+objh_244	256:4	journal_add_entry?	eax=3Dh
+objh_244	256:4	journal_add_entry?	eax=3Ch, stack=[msg(8:59)]
+objh_244	256:4	add_score?	eax=0, edx=1, ebx=0
+objh_245	257:1	journal_add_entry?	eax=3Fh
+objh_245	257:1	object_move?	eax=55h, edx=5, ebx=0
+objh_245	257:1	object_move?	eax=37h, edx=5, ebx=0
+objh_245	257:1	journal_add_entry?	eax=41h
+objh_245	257:1	object_move?	eax=102h, edx=0, ebx=0
+objh_245	257:1	journal_add_entry?	eax=47h
+objh_245	257:1	object_move?	eax=2Dh, edx=0, ebx=0
+objh_245	257:1	object_move?	eax=102h, edx=101h, ebx=1
+objh_247	259:4	object_move?	edx=101h, ebx=0
+objh_256	268:1	journal_add_entry?	eax=48h
+objh_258	270:4	play_cutscene?	eax=1
+objh_264	276:1	journal_add_entry?	eax=52h
+objh_265	277:4	go_to_room?	eax=11Fh
+objh_272	284:3;285:4	journal_add_entry?	eax=51h
+objh_272	284:3;285:4	journal_add_entry?	eax=51h
+objh_272	284:3;285:4	journal_add_entry?	eax=51h
+objh_276	313:1	journal_add_entry?	eax=55h
+objh_283	320:4	object_move?	eax=1Eh, edx=0, ebx=0
+objh_283	320:4	object_move?	eax=0Bh
+objh_283	320:4	party_add_member?	eax=6
+objh_283	320:4	object_move?	eax=47h
+objh_283	320:4	go_to_room?	eax=283h
+objh_284	321:1	journal_add_entry?	eax=5Dh
+objh_284	321:1	object_move?	eax=146h, edx=_current_room, ebx=0
+objh_284	321:1	object_move?	eax=43h, edx=3, ebx=0
+objh_284	321:1	object_move?	eax=4Ah, edx=3, ebx=0
+objh_284	321:1	journal_add_entry?	eax=61h
+objh_284	321:1	object_move?	eax=21h, edx=0, ebx=0
+objh_284	321:1	object_move?	eax=0Ch, edx=0, ebx=0
+objh_284	321:1	object_move?	eax=1Bh, edx=0, ebx=0
+objh_284	321:1	journal_add_entry?	eax=64h
+objh_284	321:1	go_to_room?	eax=283h
+objh_284	321:1	object_move?	eax=29h, edx=142h, ebx=1
+objh_284	321:1	journal_add_entry?	eax=62h
+objh_284	321:1	object_move?	eax=1Ch, edx=3, ebx=0
+objh_284	321:1	journal_add_entry?	eax=63h
+objh_284	321:1	object_move?	eax=43h, edx=_current_room, ebx=0
+objh_284	321:1	go_to_room?	eax=14Bh
+objh_285	322:5	object_move?	eax=29h, edx=142h, ebx=1
+objh_288	325:3	object_move?	eax=17h, edx=145h, ebx=1
+objh_288	325:3	object_move?	eax=3Eh
+objh_288	325:3	object_move?	eax=17h
+objh_288	325:3	object_move?	eax=24h, edx=_current_room, ebx=0
+objh_288	325:3	object_move?	eax=1Bh, edx=145h, ebx=1
+objh_289	326:2	go_to_room?	eax=16Ah
+objh_289	326:2	go_to_room?	eax=141h
+objh_294	331:1	object_move?	eax=146h, edx=_current_room, ebx=0
+objh_294	331:1	party_add_member?	eax=5
+objh_294	331:1	journal_add_entry?	eax=66h
+objh_294	331:1	object_move?	eax=52h, edx=_current_room, ebx=0
+objh_294	331:1	object_move?	eax=46h, edx=4, ebx=1
+objh_294	331:1	journal_add_entry?	eax=67h
+objh_300	337:4	object_move?	eax=46h, edx=_current_room, ebx=0
+objh_300	337:4	journal_add_entry?	eax=65h
+objh_300	337:4	journal_add_entry?	eax=66h
+objh_301	338:1	party_add_member?	eax=7
+objh_301	338:1	go_to_room?	eax=165h
+objh_320	357:1	object_move?	eax=4Ah, edx=166h, ebx=1
+objh_320	357:1	object_move?	eax=29h, edx=3, ebx=0
+objh_320	357:1	journal_add_entry?	eax=78h
+objh_320	357:1	object_move?	eax=1Ch, edx=166h, ebx=1
+objh_320	357:1	object_move?	eax=44h, edx=3, ebx=0
+objh_320	357:1	go_to_room?	eax=152h
+objh_320	357:1	journal_add_entry?	eax=7Ah
+objh_320	357:1	go_to_room?	eax=152h
+objh_327	364:4;365:4	object_move?	eax=49h, edx=0, ebx=0
+objh_327	364:4;365:4	journal_add_entry?	eax=7Ch, edx=8
+objh_328	366:3	object_move?	eax=16Eh, edx=0, ebx=0
+objh_328	366:3	journal_add_entry?	eax=7Bh
+objh_328	366:3	object_move?	eax=16Eh, edx=0, ebx=0
+objh_328	366:3	journal_add_entry?	eax=7Bh
+objh_329	367:2	add_score?	eax=0, edx=1
+objh_329	367:2	journal_add_entry?	eax=7Dh
+objh_331	369:1	object_move?	eax=35h, edx=_current_room, ebx=0
+objh_336	374:4	object_move?	eax=35h, edx=_current_room
+objh_337	375:4	object_move?	eax=35h, edx=_current_room
+objh_339	377:3	go_to_room?	eax=178h
+objh_339	377:3	go_to_room?	eax=178h
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	edx=179h, ebx=1
+objh_339	377:3	object_move?	eax=35h, edx=3
+objh_339	377:3	object_move?	eax=52h, edx=3, ebx=0
+objh_339	377:3	object_move?	eax=21h, edx=3, ebx=0
+objh_339	377:3	object_move?	eax=0Ch, edx=3, ebx=0
+objh_339	377:3	object_move?	eax=1Bh, edx=3, ebx=0
+objh_339	377:3	object_move?	eax=1Ch, edx=3, ebx=0
+objh_339	377:3	add_score?	eax=0, edx=0
+objh_339	377:3	journal_add_entry?	eax=80h
+objh_341	379:1	journal_add_entry?	eax=84h
+objh_341	379:1	party_add_member?	eax=4
+objh_341	379:1	party_add_member?	eax=5
+objh_341	379:1	party_add_member?	eax=7
+objh_341	379:1	party_add_member?	eax=0Ah
+objh_341	379:1	party_add_member?	eax=8, edx=402h
+objh_341	379:1	object_move?	eax=2Eh, edx=8
+objh_341	379:1	go_to_room?	eax=283h
+objh_341	379:1	object_move?	eax=43h, ebx=0
+objh_341	379:1	object_move?	eax=13h, edx=_current_room, ebx=0
+objh_341	379:1	journal_add_entry?	eax=86h
+objh_341	379:1	start_encounter?	eax=4, edx=1
+objh_341	379:1	party_add_member?	eax=5, edx=0
+objh_342	380:4	object_move?	eax=13h, edx=_current_room, ebx=0
+objh_342	380:4	journal_add_entry?	eax=85h
+objh_346	384:1	journal_add_entry?	eax=8Bh
+objh_346	384:1	journal_add_entry?	eax=90h
+objh_346	384:1	journal_add_entry?	eax=8Eh
+objh_346	384:1	journal_add_entry?	eax=8Ch
+objh_346	384:1	journal_add_entry?	eax=8Fh
+objh_347	385:5	journal_add_entry?	eax=8Dh
+objh_350	388:1	object_move?	eax=55h, edx=0, ebx=0
+objh_350	388:1	object_move?	eax=51h, edx=5, ebx=0
+objh_350	388:1	journal_add_entry?	eax=91h
+objh_355	393:1	party_add_member?	eax=8
+objh_355	393:1	object_move?	eax=48h, ebx=0
+objh_355	393:1	journal_add_entry?	eax=95h
+objh_355	393:1	object_move?	eax=48h
+objh_355	393:1	journal_add_entry?	eax=94h
+objh_355	393:1	go_to_room?	eax=1AEh
+objh_356	394:5	object_move?	eax=44h, edx=0, ebx=0
+objh_356	394:5	journal_add_entry?	eax=92h
+objh_356	394:5	go_to_room?	eax=190h
+objh_361	399:4	object_move?	eax=57h
+objh_361	399:4	object_move?	eax=22h, edx=8
+objh_361	399:4	go_to_room?	eax=1AEh
+objh_362	400:1	object_move?	eax=191h, edx=_current_room, ebx=0
+objh_362	400:1	party_add_member?	eax=4
+objh_362	400:1	party_add_member?	eax=5
+objh_362	400:1	go_to_room?	eax=1A5h
+objh_374	412:1	object_move?	eax=19Dh, edx=_current_room, ebx=0
+objh_374	412:1	start_encounter?	eax=8
+objh_374	412:1	journal_add_entry?	eax=98h
+objh_374	412:1	go_to_room?	eax=1A5h
+objh_378	416:5	object_move?	edx=0, ebx=0
+objh_383	421:1	object_move?	eax=19Dh, edx=_current_room, ebx=0
+objh_383	421:1	object_move?	eax=1A6h, edx=_current_room, ebx=0
+objh_383	421:1	party_add_member?	eax=4
+objh_383	421:1	party_add_member?	eax=5
+objh_383	421:1	party_add_member?	eax=0Ah
+objh_383	421:1	object_move?	eax=2Eh, edx=1A6h
+objh_383	421:1	go_to_room?	eax=19Ch
+objh_383	421:1	object_move?	eax=1A6h, edx=1AEh, ebx=0
+objh_383	421:1	object_move?	eax=19Dh, edx=1AEh, ebx=0
+objh_383	421:1	party_add_member?	eax=8
+objh_383	421:1	go_to_room?	eax=1AEh
+objh_383	421:1	journal_add_entry?	eax=9Ch
+objh_383	421:1	go_to_room?	eax=1AEh
+objh_383	421:1	object_move?	eax=2Eh, edx=8, ebx=1
+objh_383	421:1	party_add_member?	eax=7
+objh_383	421:1	party_add_member?	eax=8
+objh_383	421:1	object_move?	eax=48h, edx=0, ebx=0
+objh_383	421:1	go_to_room?	eax=283h
+objh_392	430:1	object_move?	eax=1AFh, edx=_current_room, ebx=0, stack=[?, ?, ?, ?, ?]
+objh_392	430:1	object_move?	eax=191h, edx=_current_room, ebx=0
+objh_392	430:1	object_move?	eax=7, edx=_current_room, ebx=0
+objh_392	430:1	object_move?	eax=1A6h, edx=_current_room, ebx=0
+objh_392	430:1	object_move?	eax=19Dh, edx=_current_room, ebx=0
+objh_392	430:1	go_to_room?	eax=1A5h
+objh_392	430:1	go_to_room?	eax=19Ch
+objh_392	430:1	object_move?	eax=1Fh, edx=0
+objh_392	430:1	go_to_room?	eax=19Ch
+objh_392	430:1	object_move?	eax=22h, edx=0, ebx=0
+objh_392	430:1	go_to_room?	eax=19Ch
+objh_392	430:1	object_move?	eax=2Ch, edx=0, ebx=0
+objh_392	430:1	go_to_room?	eax=19Ch
+objh_392	430:1	start_encounter?	eax=5, edx=1A00h
+objh_392	430:1	go_to_room?	eax=1A5h
+objh_398	436:1	journal_add_entry?	eax=0A5h
+objh_398	436:1	party_add_member?	eax=7
+objh_398	436:1	object_move?	eax=0Dh, edx=0, ebx=0
+objh_398	436:1	add_score?	eax=0
+objh_409	447:1	play_cutscene?	eax=4, edx=3
+objh_409	447:1	object_move?	eax=38h, ebx=0
+objh_409	447:1	go_to_room?	eax=1CCh
+objh_422	460:1	object_move?	eax=4, edx=0, ebx=0
+objh_422	460:1	object_move?	eax=5, edx=0, ebx=0
+objh_422	460:1	object_move?	eax=7, edx=0, ebx=0
+objh_422	460:1	object_move?	eax=8, edx=0, ebx=0
+objh_422	460:1	object_move?	eax=4Bh, edx=0, ebx=0
+objh_422	460:1	go_to_room?	
+objh_422	460:1	journal_add_entry?	eax=0BCh
+objh_422	460:1	journal_add_entry?	eax=0BBh, ecx=0
+objh_422	460:1	go_to_room?	
+objh_425	463:1	journal_add_entry?	eax=0BDh
+objh_431	469:1	journal_add_entry?	eax=0BEh
+objh_431	469:1	object_move?	eax=25h, edx=1D5h
+objh_431	469:1	journal_add_entry?	eax=0BFh
+objh_431	469:1	go_to_room?	eax=1CCh
+objh_442	480:1	start_encounter?	eax=0Ah
+objh_442	480:1	go_to_room?	eax=283h
+objh_447	485:1	object_move?	eax=38h, edx=0, ebx=0
+objh_447	485:1	journal_add_entry?	eax=0C3h
+objh_447	485:1	go_to_room?	eax=1E0h
+objh_452	490:1	object_move?	eax=43h, edx=7, ebx=0
+objh_453	491:4	go_to_room?	eax=1F0h
+objh_458	496:1	go_to_room?	eax=1F1h
+objh_459	497:1	journal_add_entry?	eax=0CCh
+objh_460	498:5	journal_add_entry?	eax=0CDh
+objh_460	498:5	go_to_room?	eax=1F3h
+objh_461	499:1	object_move?	eax=43h, edx=3
+objh_461	499:1	object_move?	edx=1FBh
+objh_465	503:4	go_to_room?	eax=1F9h
+objh_469	507:3	object_move?	edx=3
+objh_470	508:3	object_move?	eax=43h, ebx=1, ecx=37h
+objh_470	508:3	object_move?	eax=1FCh, edx=204h, ebx=0
+objh_470	508:3	go_to_room?	eax=204h, ebx=36h
+objh_478	516:1	object_move?	eax=2Bh
+objh_478	516:1	party_add_member?	eax=9
+objh_479	517:4	journal_add_entry?	eax=0D5h, edx=87h
+objh_481	519:4	object_move?	eax=1FCh, edx=21Ah
+objh_481	519:4	go_to_room?	eax=21Ah
+objh_489	527:1	journal_add_entry?	eax=0D6h, edx=47h
+objh_489	527:1	journal_add_entry?	eax=0D7h, edx=8
+objh_489	527:1	object_move?	eax=11h, edx=216h, ebx=1
+objh_489	527:1	object_move?	eax=11h, edx=216h, ebx=1
+objh_489	527:1	object_move?	eax=28h, edx=216h, ebx=1
+objh_489	527:1	party_add_member?	eax=9
+objh_489	527:1	object_move?	eax=4Fh, ebx=0
+objh_502	540:4	journal_add_entry?	eax=0DAh, ebx=52h
+objh_503	541:4	journal_add_entry?	eax=0DBh, ebx=54h
+objh_505	543:4	journal_add_entry?	eax=0DCh, ecx=57h
+objh_509	547:1	object_move?	eax=0Bh, edx=_current_room
+objh_509	547:1	object_move?	eax=4Fh, edx=9, ebx=0
+objh_509	547:1	object_move?	eax=0Bh, edx=225h, ebx=0
+objh_509	547:1	object_move?	ebx=0
+objh_511	549:1	object_move?	eax=226h, edx=_current_room, ebx=0
+objh_511	549:1	object_move?	eax=47h, edx=_current_room, ebx=0
+objh_511	549:1	object_move?	eax=47h, edx=3
+objh_511	549:1	object_move?	eax=226h, edx=0, ebx=0
+objh_511	549:1	go_to_room?	eax=227h
+objh_512	551:1	object_move?	eax=0Bh, edx=227h, ebx=0
+objh_512	551:1	start_encounter?	eax=0Bh, edx=0C00h
+objh_512	551:1	go_to_room?	eax=228h
+objh_513	552:1	play_cutscene?	eax=6
+objh_521	560:1	start_encounter?	eax=0Ch
+objh_521	560:1	object_move?	eax=234h, edx=_current_room, ebx=0
+objh_521	560:1	object_move?	eax=43h, ebx=0
+objh_524	563:2	object_move?	eax=233h, edx=235h
+objh_524	563:2	go_to_room?	eax=235h
+objh_524	563:2	go_to_room?	
+objh_525	564:2	object_move?	eax=234h, edx=0
+objh_528	567:4	go_to_room?	eax=23Bh
+objh_531	570:1	journal_add_entry?	eax=0E4h
+objh_531	570:1	object_move?	eax=233h
+objh_531	570:1	object_move?	eax=43h, ebx=0
+objh_531	570:1	object_move?	eax=8, edx=0, ebx=0
+objh_531	570:1	go_to_room?	eax=23Bh
+objh_532	571:1	object_move?	eax=23Ch, edx=_current_room
+objh_532	571:1	object_move?	edx=0, ebx=0
+objh_532	571:1	object_move?	eax=43h, edx=3, ebx=0
+objh_533	572:2	object_move?	eax=43h, edx=0, ebx=0
+objh_533	572:2	object_move?	eax=23Dh, edx=_current_room, ebx=0
+objh_533	572:2	object_move?	eax=43h, ebx=0
+objh_533	572:2	object_move?	eax=9, edx=0
+objh_533	572:2	object_move?	eax=23Eh, edx=0, ebx=0
+objh_533	572:2	object_move?	eax=261h, edx=_current_room, ebx=0
+objh_570	610:1	journal_add_entry?	eax=0E5h, edx=12h
+objh_571	611:4	journal_add_entry?	eax=0E6h
+objh_571	611:4	go_to_room?	eax=278h
+objh_572	612:4	party_add_member?	eax=5
+objh_575	615:4;616:4;617:4;618:2;619:2;620:4;621:4;622:4;623:4	object_move?	eax=26Ah, edx=0, ebx=0
+objh_575	615:4;616:4;617:4;618:2;619:2;620:4;621:4;622:4;623:4	object_move?	eax=26Bh, edx=262h, ebx=0
+objh_577	632:1	journal_add_entry?	eax=0E5h
+objh_577	632:1	play_cutscene?	eax=7, edx=14h
+objh_577	632:1	play_cutscene?	eax=8, ebx=15h
+objh_577	632:1	play_cutscene?	eax=9
+objh_577	632:1	play_cutscene?	eax=0Ah
+objh_577	632:1	go_to_room?	eax=281h
+objh_585	641:1	object_move?	eax=0Bh, edx=_current_room, ebx=0
+objh_585	641:1	object_move?	eax=282h, edx=1, ebx=0
+objh_585	641:1	object_move?	eax=282h, edx=_current_room, ebx=0
+objh_585	641:1	object_move?	eax=0Bh, edx=1, ebx=0
+objh_585	641:1	object_move?	eax=47h, edx=_current_room
+objh_589	663:2	go_to_room?	eax=141h
+objh_591	667:2;722:2	go_to_room?	eax=0C6h
+objh_593	671:2	go_to_room?	eax=1EAh
+objh_594	672:2	go_to_room?	eax=0B8h
+objh_596	674:2	object_move?	eax=7, edx=8, ebx=0
+objh_596	674:2	start_encounter?	eax=6, edx=0Dh, ebx=1
+objh_602	682:2	go_to_room?	eax=69h
+objh_624	718:2	go_to_room?	eax=1B4h
+objh_629	728:2	play_cutscene?	eax=2, edx=0Ah
+objh_631	730:2	go_to_room?	eax=1BFh, edx=14h, stack=[?]
+objh_632	731:2	go_to_room?	eax=62h, edx=24Eh
+objh_637	736:2	play_cutscene?	eax=3
+verbdef_01_Talk_to		object_move?	ebx=0
+verbdef_01_Talk_to		add_score?	
+verbdef_10_Go_to		object_move?	
+verbdef_14_Ring		object_move?	
+verbdef_17_Write_in		object_move?	
