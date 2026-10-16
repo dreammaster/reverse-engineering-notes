@@ -667,3 +667,24 @@ Also noted: `wprintf` formats such ids with `%s` inserts filled by `print_obj` (
   then optional `u8 widths[lastChar+1]`, `u8 spacing[lastChar+1]`, then `(last-first+1) * bytesPerRow * height` glyph bytes. The size formula
   matches 10 fonts exactly and the three 8-bit fonts (`SHAN015-017`) with a few unread trailing bytes; rendered text is correct.
 - **Q videos** (demo): see `q_codec_spec.md` - real files decode completely.
+
+## 22. Picture files, validated on the real data (twenty-second pass)
+
+`PICS.UHA` (UHARC archive, extracted inside DOSBox with the bundled `UHARC.EXE`, a DOS/PMODE-W program) holds the `SHANnnn.PIC` files.
+Verified on 3 files (500+ entries) and spot-checked on the rest; `scripts/pic_scan.py` checks the arithmetic on every entry:
+
+- **Directory**: 12-byte entries from file offset 0 until the first entry's data offset (e.g. 219 entries when the first picture starts at
+  2,628); `+0 u32 offset`, `+4 u8 hasOffset` (0 or 1 - the "frame count" of section 12 is only ever 0 or 1), `+5 u8 flags`, `+6 u16 width`,
+  `+8 u16 height` (confirmed: the first entries are 528x293 = the main picture window, or 640x480 / 1092x293 panoramas), `+10 u8`, `+11 u8`
+  (+10 is 2 for a few entries, otherwise 0).
+- **Entry data at `offset`**: `{i16 x, i16 y}` placement offset if `hasOffset`; a 768-byte palette (6-bit VGA components, scale x4) if
+  `flags & 0x10`; then **exactly `width*height` raw 8-bit pixels** (no compression). `span = next offset - offset` equals
+  `4*hasOffset + 768*palette + w*h` for every entry examined.
+- **Flags**: bit 0x10 palette; **0x40 = XOR sprite** (index 0 leaves the background unchanged, other pixels are XORed onto the background at
+  `(x, y)`; verified: SHAN020 entry 9 XORed onto entry 3 reveals Allanon, smoothness metric 33 vs 93 unXORed); **0x20 = index 254 is
+  transparent** (a face portrait with dithered 254 pixels; likely, not proven); the low bits (`0x05`, `0x03`, `0x01`) are always set and unexplained.
+- Rooms: an entry 528x293 with a palette is the room backdrop; the following entries are its overlay sprites (these are the `Overlay.picId`
+  entries of section 11).
+
+Example result: `SHAN020` entry 0 is the overworld map (Arborlon, Druid's Keep, Hall of Kings, Tyrsis, Leah, Shady Vale), entry 3 the willow
+glade with the XOR sprite of Allanon.
