@@ -124,25 +124,25 @@ Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
 
-## Retail status (updated 2026-10-16, see `analysis/retail_game_layer.md` and `analysis/retail_combat.md`)
+## Retail status (updated 2026-10-16, passes 10-20; see `analysis/retail_game_layer.md` sections 13-20 and `retail_combat.md`)
 
-Done: object model + 744 object records (`retail_objects.tsv`), 640 object handlers and 78 verb defaults
-named (`objh_NNN`, `verbdef_NN_<Verb>`), rooms/pics/music, the savegame schema (section 6 written up
-2026-10-16), OBJECT.DAT / SHANSTR.DAT structure, FLC inventory, the handler "script API" ranking, handler
-classification (403 text-only / 274 state-changing), lifecycle phases, room overlay tables, the picture file
-container (structure only), and - new - the **combat engine skeleton** (combatant block, 19 templates,
-23-slot table, outcome rule, 15 per-encounter AI hooks named `enc_ai_NN?`).
+Done since the first retail passes: combat engine (combatant block, hook protocol with codes 0-10, default damage/target rules,
+animation records of type pic/FLC/Q), video playback (`.Q` tried before `.FLC`), the 12-cutscene script `play_cutscene?`, the
+dialog descriptor table (linked lines), SHANSTR.DAT full layout + lookup + decoder, data-file naming (`shanNNN.EXT`),
+voice-file container, event dispatch, command-line builder with phases 0x1D/0x1E, turn clock + eight timed events (phase 0x1B),
+object property accessors (property B = default verb), `retail_handler_digest.txt` (all 715 handlers as call/compare digests).
+Q video codec: block decoder + container are reimplemented in Python and **verified against the real code under unicorn**
+(`q_codec_spec.md`, `scripts/q_decode_ref.py`, `q_fuzz.py`, `q_container_test.py`).
 
 Next, roughly in value order:
-- **Combat internals** (`retail_combat.md` section 4): the 15 `enc_ai_NN?` callbacks and the action routines
-  (`sub_14808`, `sub_14774`, `sub_14438`, `sub_14ED0`, `sub_16208`, `sub_16BBC`) hold damage/hit/magic logic.
-- Other unnamed high-value framework functions (`retail_function_map.tsv`, sort by callers): `sub_19BC0`,
-  `sub_1A834`/`sub_1A768` (object dword property setters), `sub_196B8`/`sub_19778` (party stat math),
-  `sub_669C4`, `sub_23560`, `sub_1F984`, `sub_22D50` (dialog text layout).
-- Phase codes 0x1B, 0x1D, 0x1E (`sub_19DBC`, `sub_1E304`) still untraced.
-- Pic file container / Q-gx rendering path: needs real data files to validate; none on this machine.
-- Rename `_old_keyboard_vector` to `_combat_hook` (leftover demo name; it is the combat AI hook).
-- `Shannara.asm` is local-only (git-ignored); regenerate with `unfold_functions.py` then `export_asm.py`.
+- Port work: C++ versions of the verified pieces (Q decoder, LHA -lh4- decoder, SHANSTR decoder) - all have specs.
+- Combat internals: the 15 `enc_hook_NN?` bodies, `sub_16208`, `sub_16BBC`, "Give orders to..." menu (`sub_158AC`).
+- `show_dialog?` layout + portrait animation; `describe_contents?`; the eight timed events' exact rules; journal UI.
+- Remaining unnamed high-caller helpers (`retail_function_map.tsv`): `sub_1BCE0`, `sub_27FC0` family wrappers, `sub_10DAC` (status redraw), `sub_1F984` (modal window), `sub_669C4`.
+- Pic file container / FLC path still need real data files (none on this machine); the same unicorn approach could validate
+  `load_palette`/`load_pic` and `init_string_file?` with synthetic files if desired.
+- Rename `_old_keyboard_vector` to `_combat_hook`; regenerate `retail_function_map.tsv` (it predates many renames).
+- `Shannara.asm` is local-only (git-ignored); regenerate with `scripts/apply_to_idb.sh ... --export`.
 
 ## Housekeeping log
 
