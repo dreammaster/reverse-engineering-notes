@@ -1,13 +1,14 @@
 """
-Applies this reversing pass's findings back into the IDA database:
-renames + explanatory comments for functions resolved in
-reversing/analysis/entry_and_init_flow.md, drawing_primitives.md, and
-compression_lzhuf.md.
+Applies the demo-side findings of the first reversing pass back into the IDA
+database: renames + explanatory comments for functions resolved in
+reversing/analysis/entry_and_init_flow.md and drawing_primitives.md.
+(The compression findings live in apply_lzh_findings.py; the first draft's
+"LZHUF" comments were wrong - the codec is LHA -lh4- - and were removed.)
 
 Run this INSIDE IDA (File > Script file..., Alt+F7) against
 `Shannara Demo.idb` while it's open in the GUI, or headlessly via:
 
-    idat64 -A -S"apply_re_findings.py" "Shannara Demo.idb"
+    idat.exe -A -S"reversing/scripts/apply_re_findings.py" "Shannara Demo.idb"  (IDA1/32-bit: idat, not idat64)
 
 Idempotent - safe to run more than once (renames/comments just get
 overwritten with the same values). Only touches functions that already
@@ -97,20 +98,6 @@ COMMENTS_ONLY = [
      "never read - neither is a real parameter, despite superficially "
      "looking like ones at the call site. See "
      "reversing/analysis/entry_and_init_flow.md"),
-    # --- compression_lzhuf.md ---
-    ("CXBUF2BUFEXPAND",
-     "LZHUF (LZSS + adaptive Huffman) decompressor - matches Yoshizaki's "
-     "classic lzhuf.c/LHA algorithm by exact internal function names "
-     "(fillbuf/getbits/decode_start/read_pt_len/read_c_len/decode_c/"
-     "decode_p, all present in this binary). Called from "
-     "gxVirtualDecompress whenever Pic.isCompressed is set - this is NOT "
-     "simple RLE, correcting an earlier analysis pass. Signature (from the "
-     "call site): CXBUF2BUFEXPAND(dstSize, srcSize, srcPtr, dstPtr). See "
-     "reversing/analysis/compression_lzhuf.md"),
-    ("gxVirtualDecompress",
-     "Decompression path is LZHUF via CXBUF2BUFEXPAND, NOT RLE (correction "
-     "to an earlier analysis pass which assumed RLE). See "
-     "reversing/analysis/compression_lzhuf.md"),
 ]
 
 
@@ -130,3 +117,8 @@ def main():
 
 
 main()
+
+# Headless (idat) has no interactive loop; exit explicitly. Leave the GUI open.
+import ida_kernwin
+if not ida_kernwin.is_idaq():
+    idc.qexit(0)

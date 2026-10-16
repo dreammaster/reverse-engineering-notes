@@ -527,7 +527,7 @@ loc_1574BB:                             ; CODE XREF: flix_play+15↑j
 flix_play       endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
-funcs_104F1     dd offset nullsub_1     ; DATA XREF: sub_1574EC+5↓r
+funcs_104F1     dd offset nullsub_1     ; DATA XREF: music_to_sound_automatch+5↓r
                 dd offset nullsub_1     ; jump table for switch statement
                 dd offset nullsub_1
                 dd offset loc_1574F9
@@ -540,11 +540,11 @@ funcs_104F1     dd offset nullsub_1     ; DATA XREF: sub_1574EC+5↓r
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; Not really a function - a hardcoded jump-table correlation table mapping a chosen _music[] index (eax) to a suggested _sound[] index: 0/1/2 -> 0, 3..9 -> idx-1, else -1 (no auto-match). Called from setup_demo. See reversing/analysis/entry_and_init_flow.md
 ; Attributes: library function
 
-; int __usercall sub_1574EC@<eax>(int a1@<eax>)
-sub_1574EC      proc near               ; CODE XREF: setup_demo+135↓p
+; int __usercall music_to_sound_automatch@<eax>(int a1@<eax>)
+music_to_sound_automatch proc near      ; CODE XREF: setup_demo+135↓p
                 cmp     eax, 9          ; switch 10 cases
                 ja      short def_1574F1 ; W?seekoff$:streambuf$n(lii)l
                                         ; doubtful name
@@ -553,21 +553,21 @@ sub_1574EC      proc near               ; CODE XREF: setup_demo+135↓p
 ; ---------------------------------------------------------------------------
 
 ; int __usercall loc_1574F9@<eax>(int a1@<eax>)
-loc_1574F9:                             ; CODE XREF: sub_1574EC+5↑j
+loc_1574F9:                             ; CODE XREF: music_to_sound_automatch+5↑j
                                         ; DATA XREF: cseg01:funcs_104F1↑o
                 dec     eax             ; jumptable 001574F1 cases 3-9
                 retn
 ; ---------------------------------------------------------------------------
 
-def_1574F1:                             ; CODE XREF: sub_1574EC+3↑j
+def_1574F1:                             ; CODE XREF: music_to_sound_automatch+3↑j
                 mov     eax, 0FFFFFFFFh ; W?seekoff$:streambuf$n(lii)l
                                         ; doubtful name
                                         ; jumptable 001574F1 default case
 
-nullsub_1:                              ; CODE XREF: sub_1574EC+5↑j
+nullsub_1:                              ; CODE XREF: music_to_sound_automatch+5↑j
                                         ; DATA XREF: cseg01:funcs_104F1↑o
                 retn                    ; jumptable 001574F1 cases 0-2
-sub_1574EC      endp
+music_to_sound_automatch endp
 
 ; ---------------------------------------------------------------------------
                 align 4
@@ -792,7 +792,7 @@ loc_1576E8:                             ; CODE XREF: setup_demo+F1↑j
                 mov     eax, (_music+4)[eax*8] ; a1
                 call    add_ini
                 mov     eax, edx        ; a1
-                call    sub_1574EC
+                call    music_to_sound_automatch
                 mov     edx, eax
                 test    eax, eax
                 jl      short loc_157742
@@ -5926,7 +5926,7 @@ freemem_min     endp
 ; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
 
 ; int __usercall memsetx@<eax>(int a1@<ebx>)
-memsetx         proc near               ; CODE XREF: sub_167334+1BA↓p
+memsetx         proc near               ; CODE XREF: draw_line+1BA↓p
                                         ; draw_rect_+187↓p
                 push    ecx
 
@@ -8743,7 +8743,7 @@ init_addr_tbl   endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; Phase-2 auto-signature undercounts params (reported as a1@edx only - a documented instance of the 'undercounts params read after the function's first branch' limitation). Real signature: q_init(edx=yOrigin, ebx=palette ptr). The incoming ecx (main passes the LOOPING flag here) is pushed/popped unused, and incoming eax is never read - neither is a real parameter, despite superficially looking like ones at the call site. See reversing/analysis/entry_and_init_flow.md
 
 ; int __usercall q_init@<eax>(int a1@<edx>)
 q_init          proc near               ; CODE XREF: main+D1↑p
@@ -10374,7 +10374,7 @@ loc_15C6E4:                             ; CODE XREF: _draw_bevel+78↑j
                 call    grMoveTo?
                 mov     edx, ebx        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+22Ch+var_28]
                 inc     eax
                 movsx   ebx, ax
@@ -10384,7 +10384,7 @@ loc_15C6E4:                             ; CODE XREF: _draw_bevel+78↑j
                 mov     edx, ebx        ; a2
                 mov     eax, ecx        ; a1
                 mov     esi, [esp+202h]
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+22Ch+var_24]
                 mov     ebx, [esp+22Ch+var_24+2]
                 dec     eax
@@ -10396,7 +10396,7 @@ loc_15C6E4:                             ; CODE XREF: _draw_bevel+78↑j
                 call    grMoveTo?
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+22Ch+var_2E+2]
                 inc     eax
                 movsx   ecx, ax
@@ -10405,7 +10405,7 @@ loc_15C6E4:                             ; CODE XREF: _draw_bevel+78↑j
                 call    grMoveTo?
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 jmp     short loc_15C7C2
 ; ---------------------------------------------------------------------------
 
@@ -10448,11 +10448,11 @@ loc_15C7C2:                             ; CODE XREF: _draw_bevel+2F8↑j
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
                 mov     ecx, [esp+22Ch+var_2E]
-                call    sub_1672D0
+                call    line_to
                 sar     ecx, 10h
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, 6
                 jmp     short loc_15C891
 ; ---------------------------------------------------------------------------
@@ -10474,11 +10474,11 @@ loc_15C83A:                             ; CODE XREF: _draw_bevel+34C↑j
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
                 mov     ecx, [esp+22Ch+var_2E]
-                call    sub_1672D0
+                call    line_to
                 sar     ecx, 10h
                 mov     edx, esi        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, 0Fh        ; a1
 
 loc_15C891:                             ; CODE XREF: _draw_bevel+3A0↑j
@@ -10488,11 +10488,11 @@ loc_15C891:                             ; CODE XREF: _draw_bevel+3A0↑j
                 call    grMoveTo?
                 mov     edx, ebx        ; a2
                 mov     eax, ecx        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     edx, [esp+22Ch+a2+2]
                 mov     eax, ecx        ; a1
                 sar     edx, 10h        ; a2
-                call    sub_1672D0
+                call    line_to
 
 loc_15C8BA:                             ; CODE XREF: _draw_bevel+239↑j
                                         ; _draw_bevel+3A5↑j
@@ -11768,17 +11768,17 @@ loc_15D401:                             ; CODE XREF: gxVirtualDecompress+34↑j
                 mov     eax, [esi+8]
                 mov     edx, [eax]
                 mov     eax, ptr
-                push    edx             ; src
+                push    edx             ; arg_C
                 mov     ebx, [eax]
                 xor     edx, edx
                 xor     eax, eax
                 mov     dx, [esi+4]
                 mov     ax, [esi+6]
                 imul    eax, edx
-                push    ebx             ; dst
-                push    eax             ; dstLen
+                push    ebx             ; arg_8
+                push    eax             ; arg_4
                 mov     ecx, [esi+0Ch]
-                push    ecx             ; srcLen
+                push    ecx             ; arg_0
                 call    CXBUF2BUFEXPAND
                 mov     eax, ptr        ; ptr
                 call    unlock_handle
@@ -12665,7 +12665,7 @@ loc_15DBE5:                             ; CODE XREF: gxVirtualVirtual+24B↑j
 
 loc_15DBF9:                             ; CODE XREF: gxVirtualVirtual+1A5↑j
                                         ; DATA XREF: cseg01:jpt_15DB29↑o
-                call    sub_167CF4      ; jumptable 0015DB29 case 5
+                call    get_gr_color    ; jumptable 0015DB29 case 5
                 mov     ch, al
 
 loc_15DC00:                             ; CODE XREF: gxVirtualVirtual+2BF↓j
@@ -14758,6 +14758,7 @@ strupr          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; STUB / dead code: `xor eax,eax; mov eax,eax; ret` - always returns 0. The incoming filename-pointer parameter (eax) is completely unused. Called twice from init_dib_file. Possibly a compiled-out DIB-cache lookup hook, or an unconditionally-false check in this build - worth checking whether the full-game binary has real logic at the equivalent location. See reversing/analysis/drawing_primitives.md
 
 sub_15E930      proc near               ; CODE XREF: init_dib_file+E↑p
                                         ; init_dib_file+39↑p ...
@@ -30492,10 +30493,10 @@ grMoveTo?       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; LineTo-style primitive: draws from the current pen position (_cpx/_cpy) to (eax,edx) via draw_line, then updates _cpx/_cpy to the new point. Called from _draw_bevel and draw_rect_. See reversing/analysis/drawing_primitives.md
 
-; int __usercall sub_1672D0@<eax>(int a1@<eax>, int a2@<edx>)
-sub_1672D0      proc near               ; CODE XREF: _draw_bevel+288↑p
+; int __usercall line_to@<eax>(int a1@<eax>, int a2@<edx>)
+line_to         proc near               ; CODE XREF: _draw_bevel+288↑p
                                         ; _draw_bevel+2AC↑p ...
                 push    ebx
                 push    ecx
@@ -30509,7 +30510,7 @@ sub_1672D0      proc near               ; CODE XREF: _draw_bevel+288↑p
                 mov     eax, dword ptr _clipx1
                 sar     edx, 10h        ; a2
                 sar     eax, 10h        ; a1
-                call    sub_167334
+                call    draw_line
                 mov     _cpx, si
                 mov     _cpy, di
                 xor     eax, eax
@@ -30518,16 +30519,16 @@ sub_1672D0      proc near               ; CODE XREF: _draw_bevel+288↑p
                 pop     ecx
                 pop     ebx
                 retn
-sub_1672D0      endp
+line_to         endp
 
 ; ---------------------------------------------------------------------------
                 align 4
-jpt_1674AD      dd offset loc_1674B5    ; DATA XREF: sub_167334+179↓r
+jpt_1674AD      dd offset loc_1674B5    ; DATA XREF: draw_line+179↓r
                 dd offset def_1674AD    ; jump table for switch statement
                 dd offset def_1674AD
                 dd offset loc_1674E2
                 dd offset def_1674AD
-jpt_16768D      dd offset loc_167695    ; DATA XREF: sub_167334+359↓r
+jpt_16768D      dd offset loc_167695    ; DATA XREF: draw_line+359↓r
                 dd offset def_1674AD    ; jump table for switch statement
                 dd offset def_1674AD
                 dd offset loc_1676B0
@@ -30535,10 +30536,10 @@ jpt_16768D      dd offset loc_167695    ; DATA XREF: sub_167334+359↓r
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; Clipped line-draw primitive. Distinguishes _gr_op==0 (direct write w/ _gr_color) vs !=0 (XOR). Axis-aligned case fully traced; the diagonal/Bresenham branch (past loc_167424) was NOT fully traced this pass. See reversing/analysis/drawing_primitives.md
 
-; int __usercall sub_167334@<eax>(int a1@<eax>, int a2@<edx>, int a3@<ebx>, int a4@<ecx>)
-sub_167334      proc near               ; CODE XREF: sub_1672D0+1F↑p
+; int __usercall draw_line@<eax>(int a1@<eax>, int a2@<edx>, int a3@<ebx>, int a4@<ecx>)
+draw_line       proc near               ; CODE XREF: line_to+1F↑p
                                         ; draw_rect_+52↓p ...
 
 var_1C          = dword ptr -1Ch
@@ -30565,7 +30566,7 @@ var_10          = dword ptr -10h
                 mov     word ptr [esp+1Ch+var_10], cx
                 mov     word ptr [esp+1Ch+var_14], ax
 
-loc_16737C:                             ; CODE XREF: sub_167334+3C↑j
+loc_16737C:                             ; CODE XREF: draw_line+3C↑j
                 mov     eax, [esp+1Ch+var_10]
                 mov     di, _clipy1
                 cmp     ax, di
@@ -30574,7 +30575,7 @@ loc_16737C:                             ; CODE XREF: sub_167334+3C↑j
                 jg      loc_1674D9
                 mov     word ptr [esp+1Ch+var_10], di
 
-loc_16739C:                             ; CODE XREF: sub_167334+56↑j
+loc_16739C:                             ; CODE XREF: draw_line+56↑j
                 mov     eax, [esp+1Ch+var_14]
                 mov     bx, _clipy2
                 cmp     ax, bx
@@ -30583,7 +30584,7 @@ loc_16739C:                             ; CODE XREF: sub_167334+56↑j
                 jl      loc_1674D9
                 mov     word ptr [esp+1Ch+var_14], bx
 
-loc_1673BC:                             ; CODE XREF: sub_167334+76↑j
+loc_1673BC:                             ; CODE XREF: draw_line+76↑j
                 mov     ebx, [esp+1Ch+var_14]
                 mov     edx, [esp+1Ch+var_14+2]
                 movsx   eax, si         ; a1
@@ -30596,7 +30597,7 @@ loc_1673BC:                             ; CODE XREF: sub_167334+76↑j
                 test    dx, dx
                 jnz     short loc_167401
 
-loc_1673E2:                             ; CODE XREF: sub_167334+CB↓j
+loc_1673E2:                             ; CODE XREF: draw_line+CB↓j
                 mov     ecx, ebx
                 dec     ebx
                 test    cx, cx
@@ -30608,8 +30609,8 @@ loc_1673E2:                             ; CODE XREF: sub_167334+CB↓j
                 jmp     short loc_1673E2
 ; ---------------------------------------------------------------------------
 
-loc_167401:                             ; CODE XREF: sub_167334+AC↑j
-                                        ; sub_167334+EE↓j
+loc_167401:                             ; CODE XREF: draw_line+AC↑j
+                                        ; draw_line+EE↓j
                 mov     ecx, ebx
                 dec     ebx
                 test    cx, cx
@@ -30623,7 +30624,7 @@ loc_167401:                             ; CODE XREF: sub_167334+AC↑j
                 jmp     short loc_167401
 ; ---------------------------------------------------------------------------
 
-loc_167424:                             ; CODE XREF: sub_167334+15↑j
+loc_167424:                             ; CODE XREF: draw_line+15↑j
                 cmp     dx, cx
                 jnz     loc_1674F5
                 mov     eax, [esp+1Ch+var_10]
@@ -30637,7 +30638,7 @@ loc_167424:                             ; CODE XREF: sub_167334+15↑j
                 mov     esi, ebx
                 mov     ebx, eax
 
-loc_167456:                             ; CODE XREF: sub_167334+11A↑j
+loc_167456:                             ; CODE XREF: draw_line+11A↑j
                 mov     cx, _clipx1
                 cmp     si, cx
                 jge     short loc_16746D
@@ -30645,7 +30646,7 @@ loc_167456:                             ; CODE XREF: sub_167334+11A↑j
                 jl      loc_1674D9
                 mov     esi, ecx
 
-loc_16746D:                             ; CODE XREF: sub_167334+12C↑j
+loc_16746D:                             ; CODE XREF: draw_line+12C↑j
                 mov     di, _clipx2
                 cmp     bx, di
                 jle     short loc_167484
@@ -30653,7 +30654,7 @@ loc_16746D:                             ; CODE XREF: sub_167334+12C↑j
                 jg      loc_1674D9
                 mov     ebx, edi
 
-loc_167484:                             ; CODE XREF: sub_167334+143↑j
+loc_167484:                             ; CODE XREF: draw_line+143↑j
                 mov     edx, [esp+1Ch+var_14+2]
                 movsx   eax, si         ; a1
                 sar     edx, 10h
@@ -30668,15 +30669,15 @@ loc_167484:                             ; CODE XREF: sub_167334+143↑j
                 jmp     cs:jpt_1674AD[edx*4] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1674B5:                             ; CODE XREF: sub_167334+179↑j
+loc_1674B5:                             ; CODE XREF: draw_line+179↑j
                                         ; DATA XREF: cseg01:jpt_1674AD↑o
                 mov     edx, dword ptr _cpy ; jumptable 001674AD case 0
                 movsx   ebx, bx         ; count
                 sar     edx, 10h        ; val
                 call    memset
 
-def_1674AD:                             ; CODE XREF: sub_167334+B4↑j
-                                        ; sub_167334+D3↑j ...
+def_1674AD:                             ; CODE XREF: draw_line+B4↑j
+                                        ; draw_line+D3↑j ...
                 mov     edx, [esp+1Ch+var_18+2] ; jumptable 001674AD default case, cases 1,2,4
                                         ; jumptable 0016768D default case, cases 1,2,4
                 mov     eax, [esp+1Ch+var_14+2]
@@ -30684,8 +30685,8 @@ def_1674AD:                             ; CODE XREF: sub_167334+B4↑j
                 sar     eax, 10h        ; v1
                 call    gxDirtyDisplay
 
-loc_1674D9:                             ; CODE XREF: sub_167334+22↑j
-                                        ; sub_167334+2F↑j ...
+loc_1674D9:                             ; CODE XREF: draw_line+22↑j
+                                        ; draw_line+2F↑j ...
                 xor     eax, eax
                 add     esp, 10h
                 pop     ebp
@@ -30694,7 +30695,7 @@ loc_1674D9:                             ; CODE XREF: sub_167334+22↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1674E2:                             ; CODE XREF: sub_167334+179↑j
+loc_1674E2:                             ; CODE XREF: draw_line+179↑j
                                         ; DATA XREF: cseg01:jpt_1674AD↑o
                 mov     edx, dword ptr _cpy ; jumptable 001674AD case 3
                 movsx   ebx, bx         ; a1
@@ -30704,7 +30705,7 @@ loc_1674E2:                             ; CODE XREF: sub_167334+179↑j
                                         ; jumptable 0016768D default case, cases 1,2,4
 ; ---------------------------------------------------------------------------
 
-loc_1674F5:                             ; CODE XREF: sub_167334+F3↑j
+loc_1674F5:                             ; CODE XREF: draw_line+F3↑j
                 movsx   edx, bx
                 cwde
                 sub     edx, eax
@@ -30733,7 +30734,7 @@ loc_1674F5:                             ; CODE XREF: sub_167334+F3↑j
                 mov     word ptr [esp+1Ch+var_10], dx
                 mov     word ptr [esp+1Ch+var_14], ax
 
-loc_16753E:                             ; CODE XREF: sub_167334+1F0↑j
+loc_16753E:                             ; CODE XREF: draw_line+1F0↑j
                 mov     cx, _clipx1
                 cmp     si, cx
                 jge     short loc_16757B
@@ -30751,15 +30752,15 @@ loc_16753E:                             ; CODE XREF: sub_167334+1F0↑j
                 jmp     short loc_167574
 ; ---------------------------------------------------------------------------
 
-loc_16756B:                             ; CODE XREF: sub_167334+22A↑j
+loc_16756B:                             ; CODE XREF: draw_line+22A↑j
                 mov     esi, edx
                 sub     esi, eax
                 mov     word ptr [esp+1Ch+var_10], si
 
-loc_167574:                             ; CODE XREF: sub_167334+235↑j
+loc_167574:                             ; CODE XREF: draw_line+235↑j
                 mov     si, _clipx1
 
-loc_16757B:                             ; CODE XREF: sub_167334+214↑j
+loc_16757B:                             ; CODE XREF: draw_line+214↑j
                 mov     ax, _clipx2
                 cmp     bx, ax
                 jle     short loc_1675B7
@@ -30775,15 +30776,15 @@ loc_16757B:                             ; CODE XREF: sub_167334+214↑j
                 jmp     short loc_1675B0
 ; ---------------------------------------------------------------------------
 
-loc_1675A7:                             ; CODE XREF: sub_167334+266↑j
+loc_1675A7:                             ; CODE XREF: draw_line+266↑j
                 mov     eax, edi
                 add     eax, ebx
                 mov     word ptr [esp+1Ch+var_14], ax
 
-loc_1675B0:                             ; CODE XREF: sub_167334+271↑j
+loc_1675B0:                             ; CODE XREF: draw_line+271↑j
                 mov     bx, _clipx2
 
-loc_1675B7:                             ; CODE XREF: sub_167334+250↑j
+loc_1675B7:                             ; CODE XREF: draw_line+250↑j
                 mov     eax, [esp+1Ch+var_10]
                 mov     ecx, [esp+1Ch+var_14]
                 cmp     ax, cx
@@ -30799,7 +30800,7 @@ loc_1675B7:                             ; CODE XREF: sub_167334+250↑j
                 mov     word ptr [esp+1Ch+var_10], di
                 add     esi, eax
 
-loc_1675E8:                             ; CODE XREF: sub_167334+29A↑j
+loc_1675E8:                             ; CODE XREF: draw_line+29A↑j
                 mov     eax, [esp+1Ch+var_14]
                 mov     di, _clipy2
                 cmp     ax, di
@@ -30811,12 +30812,12 @@ loc_1675E8:                             ; CODE XREF: sub_167334+29A↑j
                 mov     word ptr [esp+1Ch+var_14], di
                 sub     ebx, eax
 
-loc_167610:                             ; CODE XREF: sub_167334+2C2↑j
+loc_167610:                             ; CODE XREF: draw_line+2C2↑j
                 mov     ecx, 281h
                 jmp     short loc_167664
 ; ---------------------------------------------------------------------------
 
-loc_167617:                             ; CODE XREF: sub_167334+28E↑j
+loc_167617:                             ; CODE XREF: draw_line+28E↑j
                 mov     di, _clipy1
                 cmp     cx, di
                 jge     short loc_167637
@@ -30827,7 +30828,7 @@ loc_167617:                             ; CODE XREF: sub_167334+28E↑j
                 mov     word ptr [esp+1Ch+var_14], di
                 sub     ebx, eax
 
-loc_167637:                             ; CODE XREF: sub_167334+2ED↑j
+loc_167637:                             ; CODE XREF: draw_line+2ED↑j
                 mov     eax, [esp+1Ch+var_10]
                 mov     di, _clipy2
                 cmp     ax, di
@@ -30839,10 +30840,10 @@ loc_167637:                             ; CODE XREF: sub_167334+2ED↑j
                 mov     word ptr [esp+1Ch+var_10], di
                 add     esi, eax
 
-loc_16765F:                             ; CODE XREF: sub_167334+311↑j
+loc_16765F:                             ; CODE XREF: draw_line+311↑j
                 mov     ecx, 0FFFFFD81h
 
-loc_167664:                             ; CODE XREF: sub_167334+2E1↑j
+loc_167664:                             ; CODE XREF: draw_line+2E1↑j
                 mov     edx, [esp+1Ch+var_14+2]
                 movsx   eax, si         ; a1
                 sar     edx, 10h
@@ -30857,8 +30858,8 @@ loc_167664:                             ; CODE XREF: sub_167334+2E1↑j
                 jmp     cs:jpt_16768D[edx*4] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_167695:                             ; CODE XREF: sub_167334+359↑j
-                                        ; sub_167334+37A↓j
+loc_167695:                             ; CODE XREF: draw_line+359↑j
+                                        ; draw_line+37A↓j
                                         ; DATA XREF: ...
                 mov     esi, ebx        ; jumptable 0016768D case 0
                 dec     ebx
@@ -30872,8 +30873,8 @@ loc_167695:                             ; CODE XREF: sub_167334+359↑j
                 jmp     short loc_167695 ; jumptable 0016768D case 0
 ; ---------------------------------------------------------------------------
 
-loc_1676B0:                             ; CODE XREF: sub_167334+359↑j
-                                        ; sub_167334+395↓j
+loc_1676B0:                             ; CODE XREF: draw_line+359↑j
+                                        ; draw_line+395↓j
                                         ; DATA XREF: ...
                 mov     edx, ebx        ; jumptable 0016768D case 3
                 dec     ebx
@@ -30887,21 +30888,21 @@ loc_1676B0:                             ; CODE XREF: sub_167334+359↑j
                 jmp     short loc_1676B0 ; jumptable 0016768D case 3
 ; ---------------------------------------------------------------------------
 
-loc_1676CB:                             ; CODE XREF: sub_167334+1E7↑j
+loc_1676CB:                             ; CODE XREF: draw_line+1E7↑j
                 mov     cx, _clipx1
                 cmp     si, cx
                 jge     short loc_1676E0
                 cmp     bx, cx
                 jl      loc_1674D9
 
-loc_1676E0:                             ; CODE XREF: sub_167334+3A1↑j
+loc_1676E0:                             ; CODE XREF: draw_line+3A1↑j
                 mov     ax, _clipx2
                 cmp     si, ax
                 jle     short loc_1676F4
                 cmp     bx, ax
                 jg      loc_1674D9
 
-loc_1676F4:                             ; CODE XREF: sub_167334+3B5↑j
+loc_1676F4:                             ; CODE XREF: draw_line+3B5↑j
                 mov     ecx, [esp+1Ch+var_14]
                 mov     eax, [esp+1Ch+var_10]
                 mov     edi, ebx
@@ -30928,7 +30929,7 @@ loc_1676F4:                             ; CODE XREF: sub_167334+3B5↑j
                 jmp     short loc_16777A
 ; ---------------------------------------------------------------------------
 
-loc_167740:                             ; CODE XREF: sub_167334+3D8↑j
+loc_167740:                             ; CODE XREF: draw_line+3D8↑j
                 cmp     si, _clipx2
                 jle     short loc_16777F
                 mov     eax, dword ptr word_1A9372
@@ -30948,10 +30949,10 @@ loc_167740:                             ; CODE XREF: sub_167334+3D8↑j
                 sub     eax, edx
                 mov     si, _clipx2
 
-loc_16777A:                             ; CODE XREF: sub_167334+40A↑j
+loc_16777A:                             ; CODE XREF: draw_line+40A↑j
                 mov     word ptr [esp+1Ch+var_10], ax
 
-loc_16777F:                             ; CODE XREF: sub_167334+413↑j
+loc_16777F:                             ; CODE XREF: draw_line+413↑j
                 cmp     bx, _clipx1
                 jge     short loc_1677BA
                 mov     edx, dword ptr _clipx2
@@ -30972,7 +30973,7 @@ loc_16777F:                             ; CODE XREF: sub_167334+413↑j
                 jmp     short loc_1677F3
 ; ---------------------------------------------------------------------------
 
-loc_1677BA:                             ; CODE XREF: sub_167334+452↑j
+loc_1677BA:                             ; CODE XREF: draw_line+452↑j
                 cmp     bx, _clipx2
                 jle     short loc_1677F8
                 mov     edx, dword ptr word_1A9372
@@ -30991,10 +30992,10 @@ loc_1677BA:                             ; CODE XREF: sub_167334+452↑j
                 sub     eax, edx
                 mov     bx, _clipx2
 
-loc_1677F3:                             ; CODE XREF: sub_167334+484↑j
+loc_1677F3:                             ; CODE XREF: draw_line+484↑j
                 mov     word ptr [esp+1Ch+var_14], ax
 
-loc_1677F8:                             ; CODE XREF: sub_167334+48D↑j
+loc_1677F8:                             ; CODE XREF: draw_line+48D↑j
                 mov     eax, [esp+1Ch+var_10]
                 mov     dx, _clipy1
                 cmp     ax, dx
@@ -31002,7 +31003,7 @@ loc_1677F8:                             ; CODE XREF: sub_167334+48D↑j
                 cmp     dx, word ptr [esp+1Ch+var_14]
                 jg      loc_1674D9
 
-loc_167813:                             ; CODE XREF: sub_167334+4D2↑j
+loc_167813:                             ; CODE XREF: draw_line+4D2↑j
                 mov     eax, [esp+1Ch+var_10]
                 mov     dx, _clipy2
                 cmp     ax, dx
@@ -31010,7 +31011,7 @@ loc_167813:                             ; CODE XREF: sub_167334+4D2↑j
                 cmp     dx, word ptr [esp+1Ch+var_14]
                 jl      loc_1674D9
 
-loc_16782E:                             ; CODE XREF: sub_167334+4ED↑j
+loc_16782E:                             ; CODE XREF: draw_line+4ED↑j
                 mov     eax, [esp+1Ch+var_10]
                 cmp     ax, _clipy1
                 jge     short loc_16787D
@@ -31036,7 +31037,7 @@ loc_16782E:                             ; CODE XREF: sub_167334+4ED↑j
                 jmp     short loc_1678C4
 ; ---------------------------------------------------------------------------
 
-loc_16787D:                             ; CODE XREF: sub_167334+505↑j
+loc_16787D:                             ; CODE XREF: draw_line+505↑j
                 cmp     ax, _clipy2
                 jle     short loc_1678C4
                 mov     edx, [esp+1Ch+var_14+2]
@@ -31059,8 +31060,8 @@ loc_16787D:                             ; CODE XREF: sub_167334+505↑j
                 jg      short loc_1678C4
                 mov     esi, eax
 
-loc_1678C4:                             ; CODE XREF: sub_167334+543↑j
-                                        ; sub_167334+547↑j ...
+loc_1678C4:                             ; CODE XREF: draw_line+543↑j
+                                        ; draw_line+547↑j ...
                 mov     eax, [esp+1Ch+var_14]
                 cmp     ax, _clipy1
                 jge     short loc_167913
@@ -31086,7 +31087,7 @@ loc_1678C4:                             ; CODE XREF: sub_167334+543↑j
                 jmp     short loc_16795B
 ; ---------------------------------------------------------------------------
 
-loc_167913:                             ; CODE XREF: sub_167334+59B↑j
+loc_167913:                             ; CODE XREF: draw_line+59B↑j
                 cmp     ax, _clipy2
                 jle     short loc_16795B
                 mov     edx, [esp+1Ch+var_18+2]
@@ -31109,8 +31110,8 @@ loc_167913:                             ; CODE XREF: sub_167334+59B↑j
                 jg      short loc_16795B
                 mov     ebx, ecx
 
-loc_16795B:                             ; CODE XREF: sub_167334+5D9↑j
-                                        ; sub_167334+5DD↑j ...
+loc_16795B:                             ; CODE XREF: draw_line+5D9↑j
+                                        ; draw_line+5DD↑j ...
                 mov     edi, [esp+1Ch+var_14]
                 mov     eax, [esp+1Ch+var_10]
                 mov     ecx, ebx
@@ -31124,10 +31125,10 @@ loc_16795B:                             ; CODE XREF: sub_167334+5D9↑j
                 jmp     short loc_167983
 ; ---------------------------------------------------------------------------
 
-loc_16797B:                             ; CODE XREF: sub_167334+638↑j
+loc_16797B:                             ; CODE XREF: draw_line+638↑j
                 mov     [esp+1Ch+var_18], 280h
 
-loc_167983:                             ; CODE XREF: sub_167334+645↑j
+loc_167983:                             ; CODE XREF: draw_line+645↑j
                 test    cx, cx
                 jge     short loc_167994
                 mov     edx, 0FFFFFFFFh
@@ -31136,10 +31137,10 @@ loc_167983:                             ; CODE XREF: sub_167334+645↑j
                 jmp     short loc_16799B
 ; ---------------------------------------------------------------------------
 
-loc_167994:                             ; CODE XREF: sub_167334+652↑j
+loc_167994:                             ; CODE XREF: draw_line+652↑j
                 mov     [esp+1Ch+var_1C], 1
 
-loc_16799B:                             ; CODE XREF: sub_167334+65E↑j
+loc_16799B:                             ; CODE XREF: draw_line+65E↑j
                 mov     edx, [esp+1Ch+var_14+2]
                 movsx   eax, si         ; a1
                 sar     edx, 10h
@@ -31155,8 +31156,8 @@ loc_16799B:                             ; CODE XREF: sub_167334+65E↑j
                 cmp     word ptr [esp+1Ch+var_18], 0
                 jle     short loc_1679ED
 
-loc_1679C8:                             ; CODE XREF: sub_167334+6AE↓j
-                                        ; sub_167334+6B7↓j
+loc_1679C8:                             ; CODE XREF: draw_line+6AE↓j
+                                        ; draw_line+6B7↓j
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31172,8 +31173,8 @@ loc_1679C8:                             ; CODE XREF: sub_167334+6AE↓j
                 jmp     short loc_1679C8
 ; ---------------------------------------------------------------------------
 
-loc_1679ED:                             ; CODE XREF: sub_167334+692↑j
-                                        ; sub_167334+6D3↓j ...
+loc_1679ED:                             ; CODE XREF: draw_line+692↑j
+                                        ; draw_line+6D3↓j ...
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31189,12 +31190,12 @@ loc_1679ED:                             ; CODE XREF: sub_167334+692↑j
                 jmp     short loc_1679ED
 ; ---------------------------------------------------------------------------
 
-loc_167A12:                             ; CODE XREF: sub_167334+68A↑j
+loc_167A12:                             ; CODE XREF: draw_line+68A↑j
                 cmp     word ptr [esp+1Ch+var_18], 0
                 jle     short loc_167A3F
 
-loc_167A1A:                             ; CODE XREF: sub_167334+700↓j
-                                        ; sub_167334+709↓j
+loc_167A1A:                             ; CODE XREF: draw_line+700↓j
+                                        ; draw_line+709↓j
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31210,8 +31211,8 @@ loc_167A1A:                             ; CODE XREF: sub_167334+700↓j
                 jmp     short loc_167A1A
 ; ---------------------------------------------------------------------------
 
-loc_167A3F:                             ; CODE XREF: sub_167334+6E4↑j
-                                        ; sub_167334+725↓j ...
+loc_167A3F:                             ; CODE XREF: draw_line+6E4↑j
+                                        ; draw_line+725↓j ...
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31227,7 +31228,7 @@ loc_167A3F:                             ; CODE XREF: sub_167334+6E4↑j
                 jmp     short loc_167A3F
 ; ---------------------------------------------------------------------------
 
-loc_167A64:                             ; CODE XREF: sub_167334+67B↑j
+loc_167A64:                             ; CODE XREF: draw_line+67B↑j
                 mov     esi, edi
                 mov     edx, [esp+1Ch+var_1C]
                 inc     esi
@@ -31236,8 +31237,8 @@ loc_167A64:                             ; CODE XREF: sub_167334+67B↑j
                 cmp     word ptr [esp+1Ch+var_18], 0
                 jle     short loc_167A9F
 
-loc_167A77:                             ; CODE XREF: sub_167334+764↓j
-                                        ; sub_167334+769↓j
+loc_167A77:                             ; CODE XREF: draw_line+764↓j
+                                        ; draw_line+769↓j
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31253,8 +31254,8 @@ loc_167A77:                             ; CODE XREF: sub_167334+764↓j
                 jmp     short loc_167A77
 ; ---------------------------------------------------------------------------
 
-loc_167A9F:                             ; CODE XREF: sub_167334+741↑j
-                                        ; sub_167334+78C↓j ...
+loc_167A9F:                             ; CODE XREF: draw_line+741↑j
+                                        ; draw_line+78C↓j ...
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31270,12 +31271,12 @@ loc_167A9F:                             ; CODE XREF: sub_167334+741↑j
                 jmp     short loc_167A9F
 ; ---------------------------------------------------------------------------
 
-loc_167AC7:                             ; CODE XREF: sub_167334+739↑j
+loc_167AC7:                             ; CODE XREF: draw_line+739↑j
                 cmp     word ptr [esp+1Ch+var_18], 0
                 jle     short loc_167AF7
 
-loc_167ACF:                             ; CODE XREF: sub_167334+7BC↓j
-                                        ; sub_167334+7C1↓j
+loc_167ACF:                             ; CODE XREF: draw_line+7BC↓j
+                                        ; draw_line+7C1↓j
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31291,8 +31292,8 @@ loc_167ACF:                             ; CODE XREF: sub_167334+7BC↓j
                 jmp     short loc_167ACF
 ; ---------------------------------------------------------------------------
 
-loc_167AF7:                             ; CODE XREF: sub_167334+799↑j
-                                        ; sub_167334+7E4↓j ...
+loc_167AF7:                             ; CODE XREF: draw_line+799↑j
+                                        ; draw_line+7E4↓j ...
                 dec     esi
                 cmp     si, 0FFFFh
                 jz      def_1674AD      ; jumptable 001674AD default case, cases 1,2,4
@@ -31306,7 +31307,7 @@ loc_167AF7:                             ; CODE XREF: sub_167334+799↑j
                 dec     eax
                 sub     ebx, edi
                 jmp     short loc_167AF7
-sub_167334      endp
+draw_line       endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -31361,7 +31362,7 @@ loc_167B66:                             ; CODE XREF: draw_rect_+26↑j
                 mov     eax, ebp        ; a1
                 mov     ecx, esi        ; a4
                 mov     edx, esi        ; a2
-                call    sub_167334
+                call    draw_line
                 mov     eax, [esp+18h+var_10]
                 cmp     ax, word ptr [esp+18h+var_14]
                 jge     def_167C7A      ; jumptable 00167C7A default case, cases 1,2,4
@@ -31371,7 +31372,7 @@ loc_167B66:                             ; CODE XREF: draw_rect_+26↑j
                 mov     eax, ebp        ; a1
                 mov     ecx, edi        ; a4
                 mov     edx, edi        ; a2
-                call    sub_167334
+                call    draw_line
                 mov     eax, edi
                 sub     eax, esi
                 cmp     eax, 1
@@ -31380,12 +31381,12 @@ loc_167B66:                             ; CODE XREF: draw_rect_+26↑j
                 mov     ebx, ebp        ; a3
                 mov     edx, esi        ; a2
                 mov     eax, ebp        ; a1
-                call    sub_167334
+                call    draw_line
                 mov     ebx, [esp+18h+a3] ; a3
                 mov     ecx, edi        ; a4
                 mov     edx, esi        ; a2
                 mov     eax, ebx        ; a1
-                call    sub_167334
+                call    draw_line
                 jmp     def_167C7A      ; jumptable 00167C7A default case, cases 1,2,4
 ; ---------------------------------------------------------------------------
 
@@ -31497,25 +31498,26 @@ draw_rect_      endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; Sets the global _gr_op raster-op/write-mode selector (0-4). Sibling setter to set_gr_color. Identified in an RE pass - see reversing/analysis/drawing_primitives.md
 
-; int __usercall sub_167CE8@<eax>(int a1@<eax>)
-sub_167CE8      proc near
+; int __usercall set_gr_op@<eax>(int a1@<eax>)
+set_gr_op       proc near
                 mov     _gr_op, ax
                 xor     eax, eax
                 retn
-sub_167CE8      endp
+set_gr_op       endp
 
 ; ---------------------------------------------------------------------------
                 align 4
 
 ; =============== S U B R O U T I N E =======================================
 
+; Returns the current _gr_color pen color. Called from gxVirtualVirtual to save/restore pen color around a blit. See reversing/analysis/drawing_primitives.md
 
-sub_167CF4      proc near               ; CODE XREF: gxVirtualVirtual:loc_15DBF9↑p
+get_gr_color    proc near               ; CODE XREF: gxVirtualVirtual:loc_15DBF9↑p
                 mov     ax, _gr_color
                 retn
-sub_167CF4      endp
+get_gr_color    endp
 
 ; ---------------------------------------------------------------------------
                 align 4
@@ -31537,10 +31539,10 @@ set_gr_color    endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; get_pixel(x=ax, y=dx): clip-tests against _clipx1/_clipx2/_clipy1/_clipy2, then gxVideoAddr + byte read. Returns 0 if outside the clip rect. See reversing/analysis/drawing_primitives.md
 
-; int __usercall sub_167D08@<eax>(int a1@<eax>)
-sub_167D08      proc near
+; int __usercall get_pixel@<eax>(int a1@<eax>)
+get_pixel       proc near
                 cmp     ax, _clipx1
                 jl      short loc_167D2C
                 cmp     ax, _clipx2
@@ -31550,24 +31552,24 @@ sub_167D08      proc near
                 cmp     dx, _clipy2
                 jle     short loc_167D2F
 
-loc_167D2C:                             ; CODE XREF: sub_167D08+7↑j
-                                        ; sub_167D08+10↑j ...
+loc_167D2C:                             ; CODE XREF: get_pixel+7↑j
+                                        ; get_pixel+10↑j ...
                 xor     eax, eax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_167D2F:                             ; CODE XREF: sub_167D08+22↑j
+loc_167D2F:                             ; CODE XREF: get_pixel+22↑j
                 movsx   edx, dx
                 cwde                    ; a1
                 call    gxVideoAddr
                 mov     al, [eax]
                 xor     ah, ah
                 retn
-sub_167D08      endp
+get_pixel       endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
-jpt_167D8E      dd offset loc_167D96    ; DATA XREF: sub_167D54+3A↓r
+jpt_167D8E      dd offset loc_167D96    ; DATA XREF: put_pixel+3A↓r
                 dd offset def_167D8E    ; jump table for switch statement
                 dd offset def_167D8E
                 dd offset loc_167DA3
@@ -31575,10 +31577,10 @@ jpt_167D8E      dd offset loc_167D96    ; DATA XREF: sub_167D54+3A↓r
 
 ; =============== S U B R O U T I N E =======================================
 
-; Phase-2 auto-inferred signature (LOW confidence): parameter COUNT and register/stack bindings are derived from the actual disassembly, but names are generic placeholders (a1/a2/...) - no naming hint was found. Verify against the real call sites before relying on this.
+; put_pixel(x=ax, y=cx, color=bl): clip-tested; dispatches on _gr_op (0=direct write, 3=XOR, 1/2/4=no pixel write but still calls gxDirtyDisplay). See reversing/analysis/drawing_primitives.md
 
-; int __usercall sub_167D54@<eax>(int a1@<eax>, int a2@<edx>)
-sub_167D54      proc near
+; int __usercall put_pixel@<eax>(int a1@<eax>, int a2@<edx>)
+put_pixel       proc near
                 push    ecx
                 mov     ecx, edx
                 cmp     ax, _clipx1
@@ -31596,7 +31598,7 @@ sub_167D54      proc near
                 jmp     cs:jpt_167D8E[edx*4] ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_167D96:                             ; CODE XREF: sub_167D54+3A↑j
+loc_167D96:                             ; CODE XREF: put_pixel+3A↑j
                                         ; DATA XREF: cseg01:jpt_167D8E↑o
                 movsx   edx, cx         ; jumptable 00167D8E case 0
                 cwde                    ; a1
@@ -31605,25 +31607,25 @@ loc_167D96:                             ; CODE XREF: sub_167D54+3A↑j
                 jmp     short def_167D8E ; jumptable 00167D8E default case, cases 1,2,4
 ; ---------------------------------------------------------------------------
 
-loc_167DA3:                             ; CODE XREF: sub_167D54+3A↑j
+loc_167DA3:                             ; CODE XREF: put_pixel+3A↑j
                                         ; DATA XREF: cseg01:jpt_167D8E↑o
                 movsx   edx, cx         ; jumptable 00167D8E case 3
                 cwde                    ; a1
                 call    gxVideoAddr
                 xor     [eax], bl
 
-def_167D8E:                             ; CODE XREF: sub_167D54+32↑j
-                                        ; sub_167D54+3A↑j ...
+def_167D8E:                             ; CODE XREF: put_pixel+32↑j
+                                        ; put_pixel+3A↑j ...
                 movsx   eax, cx         ; jumptable 00167D8E default case, cases 1,2,4
                 mov     edx, eax        ; v2
                 call    gxDirtyDisplay
 
-loc_167DB8:                             ; CODE XREF: sub_167D54+A↑j
-                                        ; sub_167D54+13↑j ...
+loc_167DB8:                             ; CODE XREF: put_pixel+A↑j
+                                        ; put_pixel+13↑j ...
                 xor     eax, eax
                 pop     ecx
                 retn
-sub_167D54      endp
+put_pixel       endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -65216,10 +65218,10 @@ loc_178B62:                             ; CODE XREF: click_button+21↑j
                 call    grMoveTo?
                 mov     edx, esi        ; a2
                 mov     eax, edi        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+44h]  ; a1
                 mov     edx, esi        ; a2
-                call    sub_1672D0
+                call    line_to
                 cmp     _grafx_mode, 5
                 jnz     short loc_178D1A
                 mov     eax, [esp+78h+var_28]
@@ -65235,12 +65237,12 @@ loc_178B62:                             ; CODE XREF: click_button+21↑j
                 movsx   esi, ax
                 mov     edx, esi        ; a2
                 mov     eax, edi        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+78h+var_2C]
                 dec     eax
                 mov     edx, esi        ; a2
                 cwde                    ; a1
-                call    sub_1672D0
+                call    line_to
 
 loc_178D1A:                             ; CODE XREF: click_button+1A9↑j
                 mov     eax, 6          ; a1
@@ -65256,12 +65258,12 @@ loc_178D1A:                             ; CODE XREF: click_button+1A9↑j
                 call    grMoveTo?
                 mov     edx, esi        ; a2
                 mov     eax, edi        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+78h+var_24]
                 inc     eax
                 movsx   edx, ax         ; a2
                 mov     eax, edi        ; a1
-                call    sub_1672D0
+                call    line_to
                 cmp     _grafx_mode, 5
                 jnz     short loc_178D9D
                 mov     eax, [esp+78h+var_28]
@@ -65277,12 +65279,12 @@ loc_178D1A:                             ; CODE XREF: click_button+1A9↑j
                 movsx   esi, ax
                 mov     edx, edi        ; a2
                 mov     eax, esi        ; a1
-                call    sub_1672D0
+                call    line_to
                 mov     eax, [esp+78h+var_24]
                 add     eax, 2
                 movsx   edx, ax         ; a2
                 mov     eax, esi        ; a1
-                call    sub_1672D0
+                call    line_to
 
 loc_178D9D:                             ; CODE XREF: click_button+226↑j
                 call    pop_mouse
@@ -83146,24 +83148,24 @@ byte_1A936C     db ?                    ; DATA XREF: _AIL_startup+99↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_1A9372     dw ?                    ; DATA XREF: sub_167334+415↑r
-                                        ; sub_167334+48F↑r
+word_1A9372     dw ?                    ; DATA XREF: draw_line+415↑r
+                                        ; draw_line+48F↑r
 _clipx2         dw ?                    ; DATA XREF: gxSetClipRegion+9DF1↑w
-                                        ; sub_167334+28↑r ...
+                                        ; draw_line+28↑r ...
 _clipx1         dw ?                    ; DATA XREF: gxSetClipRegion:loc_1672A0↑w
-                                        ; sub_1672D0+14↑r ...
+                                        ; line_to+14↑r ...
 _cpx            dw ?                    ; DATA XREF: grMoveTo?↑w
-                                        ; sub_1672D0+E↑r ...
+                                        ; line_to+E↑r ...
 _cpy            dw ?                    ; DATA XREF: grMoveTo?+6↑w
-                                        ; sub_1672D0+2B↑w ...
-_gr_color       dw ?                    ; DATA XREF: sub_167334+BF↑r
-                                        ; sub_167334+D9↑r ...
-_gr_op          dw ?                    ; DATA XREF: sub_167334+A1↑r
-                                        ; sub_167334+161↑r ...
+                                        ; line_to+2B↑w ...
+_gr_color       dw ?                    ; DATA XREF: draw_line+BF↑r
+                                        ; draw_line+D9↑r ...
+_gr_op          dw ?                    ; DATA XREF: draw_line+A1↑r
+                                        ; draw_line+161↑r ...
 _clipy2         dw ?                    ; DATA XREF: gxSetClipRegion+9DF8↑w
-                                        ; sub_167334+6C↑r ...
+                                        ; draw_line+6C↑r ...
 _clipy1         dw ?                    ; DATA XREF: gxSetClipRegion+9DEA↑w
-                                        ; sub_167334+4C↑r ...
+                                        ; draw_line+4C↑r ...
                 align 10h
 _click_time     dd ?                    ; DATA XREF: reset_click+56↑w
                                         ; get_click_count+5B↑r ...
