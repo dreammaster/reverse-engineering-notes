@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdio>
+#include <list>
 #include <string>
 
 #include "AppGlobals.h"
@@ -222,6 +223,40 @@ int main() {
 		TVisObjRef running = control->GetVisionaire()->GetActiveObject(26, TId(PackVisId(forever.GetId()), forever.GetId()[3]));
 
 		CHECK(!running.IsEmpty());
+
+		// what the debugger shows of it
+		{
+			std::list<wxString> lines;
+
+			TGAnimation::PrintRunningAnimations(lines, false);
+			for (const wxString &line : lines)
+				printf("  | %ls\n", line.wc_str());
+			CHECK(lines.size() >= 8);
+			CHECK(lines.front().ToStdWstring() == L"Running Animations:");
+
+			bool foundName = false, foundState = false, foundType = false;
+
+			for (const wxString &line : lines) {
+				if (line.ToStdWstring().find(L"Animation \"Forever\" (active id:") == 0)
+					foundName = true;
+				if (line.ToStdWstring() == L"active: true, stopped: f, preloaded: f")
+					foundState = true;
+				if (line.ToStdWstring() == L"Animation type: object animation")
+					foundType = true;
+			}
+			CHECK(foundName);
+			CHECK(foundState);
+			CHECK(foundType);
+
+			std::list<wxString> none;
+			wxPoint where{10, 10};
+
+			TGAnimation::DrawAnimation(0, where, 0xFF00FF00, 1.0f, none, true);
+			CHECK(where.y == 10 + 256);
+			CHECK(!none.empty());
+			TGAnimation::DrawAnimation(1000, where, 0xFF00FF00, 1.0f, none, true);
+			CHECK(none.back().ToStdWstring() == L"Invalid Animation");
+		}
 		printf("running animation at %d,%d\n", running.GetPoint(kAnimationCurrentPosition)->x, running.GetPoint(kAnimationCurrentPosition)->y);
 		run("MoveTo");
 		CHECK(running.GetPoint(kAnimationCurrentPosition)->x == 300 && running.GetPoint(kAnimationCurrentPosition)->y == 200);

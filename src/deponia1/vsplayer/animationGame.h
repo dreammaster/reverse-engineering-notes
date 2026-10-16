@@ -22,9 +22,7 @@
 // deleted by ContinueAnimations() on the next frame unless it was preloaded
 // (kAnimationPreloaded), in which case it stays in the list to be shown again.
 //
-// TODO (low priority, see /TODO.md): the diagnostic overlay of the debugger
-// (GetAnimationDetails(), PrintRunningAnimations(), DrawAnimation()) and the 3D
-// model and Spine skeleton branches are not reconstructed.
+// TODO (low priority, see /TODO.md): the 3D model and Spine skeleton branches are not reconstructed.
 #pragma once
 
 #include <list>
@@ -155,6 +153,15 @@ public:
 	 *  starts / stops. */
 	static wxString GetEventHandlerAnimStarted();
 	static wxString GetEventHandlerAnimStopped();
+
+	/** The lines of text the debugger shows for the animation at `position` of the running ones (added to `lines`). */
+	static void GetAnimationDetails(std::list<TGAnimation *>::iterator position, std::list<wxString> &lines);
+	/** The details of all running animations (with `onlyPreloaded` only the preloaded ones that are not cursors). */
+	static void PrintRunningAnimations(std::list<wxString> &lines, bool onlyPreloaded);
+	/** Draws the running animation number `index` in a 256 by 256 frame at `position` (and moves that down by a frame)
+	 *  and adds its details to `lines`. */
+	static void DrawAnimation(int index, wxPoint &position, unsigned int color, float alpha, std::list<wxString> &lines,
+	                          bool drawFirstSprite);
 
 	static unsigned long GetAnimationCount();
 	/** The memory the pictures of all running animations take. */

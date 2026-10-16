@@ -862,3 +862,192 @@ long TGAnimation::GetSizeOfAllAnimations() {
 std::list<TGAnimation *> &TGAnimation::GetRunningAnimations() {
 	return RunningAnimations;
 }
+
+namespace {
+
+wxString formatText(const wchar_t *format, ...) {
+	wchar_t buffer[512];
+	va_list args;
+
+	va_start(args, format);
+	vswprintf(buffer, 512, format, args);
+	va_end(args);
+
+	return wxString(buffer);
+}
+
+const wchar_t *trueFalse(bool value) {
+	// (the original prints "f" for false)
+	return value ? L"true" : L"f";
+}
+
+}
+
+// Confirmed (asm lines 154252-155872): the lines the debugger shows for a running animation: its names and ids, the
+// sprite and the loop, who owns it, its state, the memory its pictures take, and what kind of animation it is.
+void TGAnimation::GetAnimationDetails(std::list<TGAnimation *>::iterator position, std::list<wxString> &lines) {
+	TGAnimation *animation = *position;
+	TVisObjRef dataObject = animation->GetDataObject();
+	TVisObjRef owner = dataObject.GetParent();
+	wxString name = wxString(animation->_state.GetName());
+
+	lines.push_back(formatText(L"Animation \"%ls\" (active id: %d, data id: %d)", name.wc_str(),
+	                           PackVisId(animation->_state.GetId()), PackVisId(animation->_data.GetId())));
+
+	wxString text;
+	const int spriteIndex = animation->_state.GetInt(kAnimationCurrentSpriteIndex);
+
+	if (spriteIndex >= 0)
+		text = formatText(L"Sprite-index: %d/%d, ", spriteIndex + 1, (int)animation->_sprites.size());
+	else
+		text = wxString(L"Sprite-index: invalid, ");
+
+	const int loopsDone = animation->_state.GetInt(kAnimationLoops);
+	const int loops = animation->GetDataObject().GetInt(kAnimationNumberOfLoops);
+
+	if (loops == 0)
+		text += wxString(L"endless loop");
+	else
+		text += formatText(L"loop: %d/%d", loops - loopsDone + 1, loops);
+	lines.push_back(text);
+
+	for (TAnimationOwner *animationOwner : animation->_owners) {
+		text = wxString(L"Owner: ") + animationOwner->GetOwnerName();
+
+		TId id = animationOwner->GetOwnerId();
+
+		if (id.getId() != -1) {
+			const wxString &table = gameControl()->GetVisionaire()->GetTableNamePlural(id.getTable(), true);
+
+			text += formatText(L" (id: %d, table: %ls)", id.getId(), table.wc_str());
+		}
+		lines.push_back(text);
+	}
+
+	lines.push_back(formatText(L"active: %ls, stopped: %ls, preloaded: %ls", trueFalse(animation->_state.GetBool(kAnimationActive)),
+	                           trueFalse(animation->_stopped), trueFalse(animation->_state.GetBool(kAnimationPreloaded))));
+
+	long size = 0;
+
+	for (TPictureIO *sprite : animation->_sprites)
+		size += (int)sprite->GetSpriteMemSize();
+
+	text = wxString(L"Animation size in graphics memory: ");
+	if (size > 9999999)
+		text += formatText(L"%d MB", (int)(size >> 20));
+	else if (size > 9999)
+		text += formatText(L"%d KB", (int)(size >> 10));
+	else
+		text += formatText(L"%d bytes", (int)size);
+	lines.push_back(text);
+
+	text = wxString(L"Animation type: ");
+
+	const int table = owner.GetId()[3];
+
+	if (table == 6) {
+		text += wxString(owner.GetBool(kObjectIsItem) ? L"item animation" : L"object animation");
+	} else if (table == 0x11) {
+		switch (animation->GetDataObject().GetParentField()) {
+		case 0x10B:
+			text += wxString(L"walk animation");
+			break;
+		case 0x10C:
+			text += wxString(L"talk animation");
+			break;
+		case 0x141:
+			text += wxString(L"random animation");
+			break;
+		case 0x17F:
+			text += wxString(L"standing animation");
+			break;
+		case 0x10D:
+			text += wxString(L"character animation");
+			break;
+		default:
+			text += wxString(L"undefined outfit animation");
+			break;
+		}
+	} else if (table == 0xF) {
+		text += wxString(L"cursor animation");
+	} else if (table == 2) {
+		text += wxString(L"button animation");
+	} else {
+		text += wxString(L"unknown");
+	}
+	lines.push_back(text);
+}
+
+// Confirmed (asm lines 155873-156223): the details of every running animation, a blank line after each (with
+// `onlyPreloaded` only the preloaded ones that are not cursors).
+void TGAnimation::PrintRunningAnimations(std::list<wxString> &lines, bool onlyPreloaded) {
+	if (RunningAnimations.empty()) {
+		lines.push_back(wxString(L"No Animations Running"));
+		return;
+	}
+
+	lines.push_back(wxString(L"Running Animations:"));
+
+	for (std::list<TGAnimation *>::iterator it = RunningAnimations.begin(); it != RunningAnimations.end(); ++it) {
+		if (onlyPreloaded) {
+			TVisObjRef owner = (*it)->GetDataObject().GetParent();
+			bool preloaded = owner.GetId()[3] == 0xF ? false : (*it)->_state.GetBool(kAnimationPreloaded);
+
+			if (!preloaded)
+				continue;
+		}
+
+		GetAnimationDetails(it, lines);
+		lines.push_back(wxString(L""));
+	}
+}
+
+// Confirmed (asm lines 156255-156548): the running animation number `index` in a frame of 256 by 256 pixels at
+// `position` (the sprite shown now, or with `drawFirstSprite` the first when it shows none), its details go to
+// `lines`; `position` moves down by a frame.
+void TGAnimation::DrawAnimation(int index, wxPoint &position, unsigned int color, float alpha, std::list<wxString> &lines,
+                                bool drawFirstSprite) {
+	if (index < 0 || index >= (int)RunningAnimations.size()) {
+		lines.push_back(wxString(L"Invalid Animation"));
+		return;
+	}
+
+	wxRect rect;
+
+	rect.SetLeft(position.x);
+	rect.SetTop(position.y);
+	rect.SetWidth(0x100);
+	rect.SetHeight(0x100);
+
+	wxRect frame = rect;
+
+	frame.SetLeft(rect.x - 1);
+	frame.SetTop(rect.y - 1);
+	frame.SetRight(rect.GetRight() + 1);
+	frame.SetBottom(rect.GetBottom() + 1);
+	graphics->DrawBox(frame, color, alpha);
+
+	std::list<TGAnimation *>::iterator it = RunningAnimations.begin();
+
+	std::advance(it, index);
+
+	TGAnimation *animation = *it;
+	TPictureIO *sprite = nullptr;
+
+	if (animation->_state.GetBool(kAnimationActive) && animation->IsSpriteIndexValid())
+		sprite = animation->_sprites[animation->_state.GetInt(kAnimationCurrentSpriteIndex)];
+	else if (drawFirstSprite && !animation->_sprites.empty())
+		sprite = animation->_sprites.front();
+
+	if (sprite) {
+		if (sprite->GetWidth() <= 0xFF)
+			rect.SetWidth(sprite->GetWidth());
+		if (sprite->GetHeight() <= 0xFF)
+			rect.SetHeight(sprite->GetHeight());
+
+		sprite->DrawWithDestRect(rect, 1.0f, 0xFFFFFFFF);
+	}
+
+	GetAnimationDetails(it, lines);
+	position.y += 0x100;
+}

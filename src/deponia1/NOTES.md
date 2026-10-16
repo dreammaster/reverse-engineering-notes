@@ -3058,8 +3058,9 @@ Things worth knowing:
   matrix id setters (its fields at +0xC4..+0xDC were misnamed as a "load rect" before;
   +0xC8/+0xCC is the rotation centre, (-1, -1) when none) and its preload priority now
   starts at -1.
-- Not reconstructed (see `TODO.md`): the model/Spine branches, and the debugger
-  overlay (`GetAnimationDetails`, `PrintRunningAnimations`, `DrawAnimation`).
+- Not reconstructed (see `TODO.md`): the model/Spine branches. The debugger overlay
+  (`GetAnimationDetails`, `PrintRunningAnimations`, `DrawAnimation`) is done: lines of text, and a frame with the
+  current sprite; a false flag prints as "f", as in the original.
 
 Tooling added along the way: `tools/asmview.py` prints a range of the `.asm` without
 the noise (labels kept, XREF comments, push/pop and string-refcount code dropped with

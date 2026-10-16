@@ -69,13 +69,6 @@ Nothing of `UpdateVersion` is left out.
 The fixes have no data to be tested with (Deponia 1 is of the current version 0xBA); `tests/deponia1/upgradetest.cpp`
 runs them on a made-up game of an old version. Other Visionaire games (Edna & Harvey ...) are probably older.
 
-### TGAnimation: the debugger overlay
-
-`GetAnimationDetails()`, `PrintRunningAnimations()` and `DrawAnimation()` (asm
-lines 154252-156548) list the running animations as text lines and draw a
-thumbnail of each in the debugger overlay. Not reconstructed (not declared at
-all); the manifest keeps them `todo`.
-
 ### TGCharacter and TMCharacter: Spine skeletons and the matrix of the drawing
 
 `src/deponia1/TGCharacter.{h,cpp}`, `src/deponia1/TMCharacter.{h,cpp}`; original
