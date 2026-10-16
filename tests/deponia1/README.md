@@ -44,6 +44,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | way2test | the way round the end of a bar when no way point can be seen (shortestPath) |
 | way3test | a wall that can be passed at both ends: the way goes along the way points (one with two relations); CheckPosition puts a position next to the floor on it |
 | polytest | the polygon helpers: the list that owns its polygons, point lists with separators, bounding boxes, lines and points against polygons, the shortest path round corners and holes |
+| easingtest | the easing equations of the tweens: 0 to 1, Out mirrors In, the halves of InOut, the known values, the exponential |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
