@@ -652,3 +652,18 @@ cached are returned without I/O). Bits are consumed LSB-first. This is a complet
 that no real `SHANSTR.DAT` has been available to confirm field widths against actual bytes.
 Also noted: `wprintf` formats such ids with `%s` inserts filled by `print_obj` (section 2.3), so a port's text layer is
 "decode id -> printf with object-name arguments".
+
+## 21. Validated against the real retail files (twenty-first pass; data in `game/`, not committed)
+
+- **SHANSTR.DAT**: `scripts/shanstr.py` parses it with the section 20 layout: 20 blocks, 7,719 strings, 432-word tree, 128 phrases;
+  the computed end of the last block equals the file size (332,731) exactly, and **all strings decode to clean text** ending in exactly one
+  NUL. One refinement to the decoder rule: decoding stops after a NUL only once *all input bytes have been loaded* (padding bits in the
+  last byte are ignored), which is what the engine's `bytesLeft == 0 && lastSymbol == 0` test does. Strings contain `%s` inserts and
+  `\v`/`\r` control characters as expected.
+- **OBJECT.DAT**: `u16 6758` + a 6,758-byte NUL-separated pool of 761 names, exactly the file size; entries 1.. are `limbo`, `party`,
+  `Jak Ohmsford`, `me`, `Shella`, ... so object id N's name is the string at the record's 1-based offset (matches the object table).
+- **FNT fonts** (`scripts/fnt_read.py`): 10 header bytes `[0] ? [1] bits/pixel (1 mono, 8 colour; 0xFE = transparent) [2] bytesPerRow
+  [3] firstChar [4] lastChar [5] lineSpacing [6] charHeight [7] charWidth (0xFF = width table) [8] charSpacing (0xFF = spacing table) [9] ?`,
+  then optional `u8 widths[lastChar+1]`, `u8 spacing[lastChar+1]`, then `(last-first+1) * bytesPerRow * height` glyph bytes. The size formula
+  matches 10 fonts exactly and the three 8-bit fonts (`SHAN015-017`) with a few unread trailing bytes; rendered text is correct.
+- **Q videos** (demo): see `q_codec_spec.md` - real files decode completely.
