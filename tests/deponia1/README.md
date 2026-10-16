@@ -49,6 +49,7 @@ Every test prints `<n> failures`.
 | controltest | IF / ELSE / END IF (nested), GOTO, values, conditions and arithmetic of an action |
 | scrolltest | a scene twice as wide as the window: the view follows the walking character to both ends |
 | menutest | a menu scene is shown while an action waits: the action is stopped for the time of the menu |
+| menu2test | going to a menu freezes the game: a text and a wait go on with the time they had left when the game is entered again |
 | cmdtest | the commands of an action that no other test runs: turn, place, walk, outfit, items, follow, scroll, move object, the switches of the game, a cutscene |
 | cmdinterfacetest | the commands that work on interfaces: the active command, show / hide / fade an interface, another interface, the object under the mouse |
 | talktest | a click on a second character in the scene: the hero walks to it and its action runs on arrival (a command that is used on characters is needed) |
