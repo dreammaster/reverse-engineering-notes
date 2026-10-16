@@ -706,3 +706,13 @@ glade with the XOR sprite of Allanon.
   load it should treat a short file as "missing trailing regions keep their defaults".
 - The final 52 bytes are `dword_ADDEC = 12` followed by 48 zero bytes (the timed-event list is empty although the count is 12, so that
   count is not simply "number of queued events" at snapshot time).
+
+## 24. Region files (`SHANnnn.RGN`), validated (twenty-fourth pass)
+
+Read from `sub_7D8A4` (picture region loader, called with a pic id; file number = `picId >> 8`, directory entry = `picId & 0xFF`) and verified on
+all 12 retail `.RGN` files (`scripts/rgn_read.py`: every region list ends exactly at the next list's offset): **directory of 6-byte
+entries `{u16 dataOffset, u16 baseId, u16 count}`** (one per picture entry; ends at the smallest non-zero offset; `dataOffset` 0 = none,
+entries with `count` 0 may alias another entry's offset), then at `dataOffset` `count` regions `{i16 id; i16 type; ...}` where type 2 = rectangle
+`{x1,y1,x2,y2}` and any other type = polygon with `type` vertices `{x,y}`. `baseId` becomes the id of the whole-picture region (kind 3).
+These are the clickable hotspot shapes of the room pictures; the loader adds the picture window offset and, in the 320x200 mode,
+scales x by 1/2 and y by 5/12. Region ids are what `handle_click_event?` hands to the hotspot code (region kind `0x64`).
