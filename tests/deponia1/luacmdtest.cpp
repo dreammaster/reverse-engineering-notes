@@ -348,6 +348,37 @@ int main() {
 		CHECK(number("engine_events") == 1);
 		CHECK(text("engine_name") == "ping:pong");
 
+		// the buttons and the axes of a game controller come to the handlers of the keys: a button as a key code above the
+		// ones of the keyboard (-1 for a button the engine does not know), an axis by its name and from -100 to 100
+		run("ctl_log = ''; function onCtl(t, c, code, mod) ctl_log = ctl_log .. t .. ':' .. c .. ':' .. code .. ':' .. mod .. ' '; "
+		    "return false end; registerEventHandler('keyEvent', 'onCtl')");
+
+		{
+			SDL_ControllerButtonEvent button = {};
+
+			button.button = 3;
+			control->HandleControllerButtonHit(button, 1);
+			control->HandleControllerButtonRelease(button, 1);
+			button.button = 20;
+			control->HandleControllerButtonHit(button, 2);
+			control->HandleControllerAxis(SDL_CONTROLLER_AXIS_LEFTX, 16384, 0);
+			control->HandleControllerAxis(SDL_CONTROLLER_AXIS_RIGHTY, -32768, 3);
+			control->HandleControllerAxis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT, 32767, 2);
+			control->HandleControllerAxis(SDL_CONTROLLER_AXIS_INVALID, 1000, 0);
+
+			std::string log = text("ctl_log");
+
+			printf("controller: %s\n", log.c_str());
+			CHECK(log.find(":1000004:1 ") != std::string::npos);
+			CHECK(log.find(":-1:2 ") != std::string::npos);
+			CHECK(log.find("LEFTX:50:0 ") != std::string::npos);
+			CHECK(log.find("RIGHTY:-100:3 ") != std::string::npos);
+			CHECK(log.find("TRIGGERRIGHT:99:2 ") != std::string::npos);
+			CHECK(log.find("1000004") != log.rfind("1000004"));
+			CHECK(log.find(":1000") == log.find(":1000004"));
+		}
+		run("unregisterEventHandler('keyEvent', 'onCtl')");
+
 		{
 			control->SaveEventHandlers();
 
