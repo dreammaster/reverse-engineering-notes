@@ -75,11 +75,6 @@ FORCE += [
 FORCE += [
     (0x19C40, "schedule_event?", "(eventId=al, delay=dx): schedule timed event eventId (1-8, see fire_timed_event?) delay turns from now in the 16-entry list at byte_CCBB8 {u8 id; i16 countdown} (count dword_ADDEC, part of the savegame); an id already queued is left alone; prints an overflow message when full. Was state_pair_set?."),
 ]
-RENAMES += [
-    (0x19DBC, "advance_time?", "(turns=eax, askContinue=edx): the game clock. For each turn: sends PHASE 0x1B to the current room (turn notification), then walks the timed-event list at byte_CCBB8: positive countdowns are decremented, a countdown of 0 fires fire_timed_event?(id) and removes the entry (a rescheduling event keeps it). Long waits ask 'Do you want to continue...' (sub_254DC). Called by the Wait command ('%s a while.') and by handlers."),
-    (0x1F700, "fire_timed_event?", "(id=eax, ...): dispatches timed event 1-8 through funcs_1F709: 2 sub_62A70, 3 sub_4D5F8, 4 sub_4D678 (damages a character with voice lines), 5 sub_61750, 6 sub_5BBBC, 7 sub_5BC10, 8 sub_5BC50; each prints its message and usually reschedules itself with schedule_event?."),
-    (0x1F580, "game_over_screen?", "Used by the lethal timed events: background fade, the death/ending screen with restore options (load_game?)."),
-]
 
 RENAMES = [
     (0x19FB4, "object_get_name?",
@@ -253,6 +248,12 @@ RENAMES += [
 
 
 # (address, name) - data labels; only applied over auto names
+RENAMES += [
+    (0x19DBC, "advance_time?", "(turns=eax, askContinue=edx): the game clock. For each turn: sends PHASE 0x1B to the current room (turn notification), then walks the timed-event list at byte_CCBB8: positive countdowns are decremented, a countdown of 0 fires fire_timed_event?(id) and removes the entry (a rescheduling event keeps it). Long waits ask 'Do you want to continue...' (sub_254DC). Called by the Wait command ('%s a while.') and by handlers."),
+    (0x1F700, "fire_timed_event?", "(id=eax, ...): dispatches timed event 1-8 through funcs_1F709: 2 sub_62A70, 3 sub_4D5F8, 4 sub_4D678 (damages a character with voice lines), 5 sub_61750, 6 sub_5BBBC, 7 sub_5BC10, 8 sub_5BC50; each prints its message and usually reschedules itself with schedule_event?."),
+    (0x1F580, "game_over_screen?", "Used by the lethal timed events: background fade, the death/ending screen with restore options (load_game?)."),
+]
+
 DATA = [
     (0x20918, "_object_table"),        # 744 x {u8 type; u32 recordPtr}
     (0x217A0, "_object_count"),

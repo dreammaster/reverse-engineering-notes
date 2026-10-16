@@ -11,7 +11,8 @@ if tasklist | grep -qi "ida.exe\|ida64.exe"; then echo "IDA is running - close i
 WORK="$(mktemp -d)"; ROOT="$(pwd)"
 cp "$IDB" "$WORK/work.idb"
 mkdir -p "$WORK/reversing" && cp -r reversing/scripts reversing/analysis "$WORK/reversing/"
-( cd "$WORK" && timeout 280 "$IDAT" -A -S"reversing/scripts/$(basename "$SCRIPT")" work.idb > run.log 2>&1 ) || { echo "script run failed/timed out"; tail -20 "$WORK/run.log"; exit 1; }
+( cd "$WORK" && timeout 280 "$IDAT" -A -L"ida.log" -S"reversing/scripts/$(basename "$SCRIPT")" work.idb > run.log 2>&1 ) || { echo "script run failed/timed out"; grep -A6 Traceback "$WORK/ida.log" || tail -20 "$WORK/ida.log"; exit 1; }
+if grep -q Traceback "$WORK/ida.log"; then echo "script raised an exception:"; grep -A6 Traceback "$WORK/ida.log"; exit 1; fi
 grep -E "renamed|skipped|WARN|Traceback|Error" "$WORK/run.log" | head -20 || true
 STAMP=$(date +%Y%m%d_%H%M%S)
 cp "$IDB" "reversing/backups/$(basename "$IDB" .idb).$STAMP.bak"
