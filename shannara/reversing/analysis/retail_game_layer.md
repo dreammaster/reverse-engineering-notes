@@ -716,3 +716,16 @@ entries with `count` 0 may alias another entry's offset), then at `dataOffset` `
 `{x1,y1,x2,y2}` and any other type = polygon with `type` vertices `{x,y}`. `baseId` becomes the id of the whole-picture region (kind 3).
 These are the clickable hotspot shapes of the room pictures; the loader adds the picture window offset and, in the 320x200 mode,
 scales x by 1/2 and y by 5/12. Region ids are what `handle_click_event?` hands to the hotspot code (region kind `0x64`).
+
+## 25. Music and voice archives, validated (twenty-fifth pass)
+
+- **`SHAN001.MUS` (retail) and `Demo001.mus` (demo)**: `u16 count` followed by `count` entries `{u32 offset; u16 size}` (6 bytes; `get_music_id`
+  returns the offset through a pointer and the size in `ax`). `count` includes a terminator entry (`offset = file size`, `size 0`), so the retail
+  file holds 78 tracks and the demo 15. Offsets are 4 KB aligned, and **every entry is a complete XMIDI file** (`FORM....XDIR` + `INFO` + `CAT ` `XMID`
+  `FORM`...; `size == 22 + 8 + CATsize`, checked for all 93 tracks). They can be fed straight to an XMIDI player; `start_music(id)` and the
+  `0x400` event use the id as the index.
+- **Demo `Demo001.voc`**: a different, older layout (not the retail `u32 count + u32 offsets` of section 17): byte 0 = track count (7), then
+  `u32` values counting **256-byte blocks** (`0x10, 0x10, 0x330, 0x3e0, 0x5a0, 0x850, 0xed0`: block 0x10 = file offset 0x1000 where raw unsigned 8-bit PCM
+  starts, last value = end of file 0xED000). Not further decoded.
+- **This retail release's voices** are not in the `.VOC` container: `Vocs.zip` holds 3,066 numbered MP3 files (`0002.mp3` ... `3701.mp3`), i.e. the
+  dialog/voice ids index MP3s instead of the original PCM archive (a re-encoding made by the CD ripper's `mp3setup`).
