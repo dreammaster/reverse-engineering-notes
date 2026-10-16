@@ -555,3 +555,22 @@ voice (`voice_on`), waits for a click or key, then follows `w2`. A per-dialog st
 enabled, bit 1 = already shown) is part of the savegame state bytes, which is how repeat conversations are suppressed.
 Not yet traced: the exact text-layout and portrait-animation rules, and how voice file names are derived (the `make_voice?`
 argument is also a dialog id).
+
+## 16. Corrections and details from re-reading the string and picture code (fifteenth pass)
+
+**Picture directory entry (section 12), revised reading of `load_pic`**: `dword_D4438..` is the copied 12-byte entry; the code tests
+`word at +6` and `word at +8` for zero ("empty picture": marks the slot active without creating a buffer) and passes them to
+`gxCreateVirtual` as the buffer's two dimensions, so **`+6` is most likely the width and `+8` the height**, not an "animation
+delay" as section 12 first assumed (the same words are also copied into Pic fields that the demo-derived `Pic` struct names
+`field_A` / `_nextTime`, but the retail build lays `Pic` out differently - the struct applied to retail is wrong for these
+offsets). Flags: `+5 & 0x10` palette present, `& 0x20` -> pic mode 4, `& 0x40` -> pic mode 3 (else 0). With `_grafx_mode == 5` and
+`sub_7858C() == 3` the picture is additionally scaled to 1.6x width (x2 pixel doubling path via `sub_7890C`). Still unvalidated
+against real files.
+
+**SHANSTR string decoding (section 7), confirmed from `decode_string?` (`0x1AF0C`-ish)**: `decode_string?(dst, bytesLeft, file,
+tree, treeWords, phrasePtrs, phraseCount)`. Bits are read LSB first from the stream (`read_array?` one byte at a time); the
+current node starts at the *last* pair of the u16 `tree` (`treeWords - 2`) and `child = tree[node | bit]`; a negative value is a
+leaf with symbol `-v-1`. Symbols `>= 0x80` with `sym - 0x80 < phraseCount` copy the NUL-terminated phrase `phrasePtrs[sym-0x80]`
+(so phrase text is not NUL-expanded recursively); every other symbol is written as one byte (symbol 0 therefore emits the string's
+terminating NUL). Decoding stops when the compressed length is used up *and* the last symbol was 0; the return value is the
+number of output bytes. Pure and easy to port - the only unknowns left are the exact file offsets of the tree/phrase sections.
