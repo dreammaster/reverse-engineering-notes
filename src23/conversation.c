@@ -114,6 +114,11 @@ void conversationResolve(Conversation *conv, bool success, uint8_t *globalFlags,
     conversationList(conv, globalFlags, flagsSize);
 }
 
+unsigned conversationRows(const Conversation *conv, unsigned topic, char rows[][DialogLineChars + 1], unsigned maxRows) {
+    const uint8_t *t = dialogTopic(conv->catalog, topic);
+    return t ? dialogTopicRows(conv->catalog, conv->npc, t, rows, maxRows) : 0;
+}
+
 size_t conversationText(const Conversation *conv, unsigned topic, char *out, size_t capacity) {
     const uint8_t *t = dialogTopic(conv->catalog, topic);
     return t ? dialogTopicText(conv->catalog, conv->npc, t, out, capacity) : 0;

@@ -13,6 +13,7 @@
 #include "creationwizard.h"
 #include "cluespell.h"
 #include "gamedialog.h"
+#include "palette.h"
 #include "textfield.h"
 #include "exedata.h"
 #include "session.h"
@@ -80,6 +81,9 @@ typedef struct {
     UiOverlay overlay;
     unsigned hero;         /* the hero of the detail sheet */
     char talkText[1200];   /* what the NPC last said */
+    char talkRows[16][DialogLineChars + 1]; /* the same in the rows the screen draws it in */
+    unsigned talkRowCount;
+    bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
     unsigned shopLock;     /* the lock record of the shop being shown */
     unsigned lastMusicPage;
     unsigned castNext;     /* the next spell id the C key tries outside a combat */
@@ -91,6 +95,9 @@ typedef struct {
     unsigned paletteStamp; /* counts the changes of `palette`: a platform that has converted it reconverts when this moves */
     unsigned cycleStep;    /* which of the four rotations of the cycled colours is next (0-3) */
     unsigned cycleTicks;   /* BIOS ticks (18.2 a second) since the last rotation; one comes every 5 */
+    DayNightFade fade;     /* the dawn / dusk fade of the sky colours 0xE0-0xFF under way (palette.h) */
+    bool fadeActive;
+    unsigned fadeTicks;    /* BIOS ticks since its last step; one step comes every 91 */
     unsigned pressTicks;   /* animation ticks the pressed button below stays down */
     unsigned pressPicture; /* category 8 picture of the pressed button (the pad arrows 18..28, the icon row 2, 4, 6, 8, 10) */
     int pressX, pressY;    /* where it is drawn: the button's corner */
@@ -167,6 +174,10 @@ void gameUiDraw(GameUi *ui);
  * (AnimatePaletteCycle, yendor2.asm:28023, every 5 ticks while a fade has finished): each of the four groups of four colours (0xD0-0xD3, 0xD4-0xD7, 0xD8-0xDB, 0xDC-0xDF) is rotated
  * by one colour more at every step, 0, 1, 2, 3 and round again. Those colours are the ones the picture shading leaves alone (water, lava, the acting member's frame -- colour 0xDB --
  * and the like), so they shimmer. gameUiAnimate steps it and changes `paletteStamp`; NULL if the world data has no palette.
+ *
+ * The sky colours 0xE0-0xFF follow the game clock (AdvanceDayNightPaletteFade, yendor2.asm:28157): when the session's clock reaches 06:00 or 18:00 (GameSession.pendingFade) a fade of
+ * 113 steps starts, one step -- a sliding window of the palette's sunrise ramp -- every 91 BIOS ticks (five seconds), so dawn and dusk each take about nine minutes of real time; a game
+ * loaded, started or moved in time shows the palette of its hour at once.
  */
 const uint8_t *gameUiPalette(const GameUi *ui);
 

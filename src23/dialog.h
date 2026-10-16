@@ -216,6 +216,12 @@ void dialogTopicName(const uint8_t *topic, char *out);
 size_t dialogTopicText(const DialogCatalog *catalog, const uint8_t *npc, const uint8_t *topic, char *out, size_t capacity);
 
 /*
+ * The same text as the rows the original draws it in (BuildItemUseMessage, yendor2.asm:20814: the topic's `lines` records of 34 bytes, one NUL-terminated string per row, 6 pixels
+ * apart): each row up to its NUL, '%' and '~' as stored (the font draws them as the quotation mark and the apostrophe). Returns the number of rows written (at most maxRows).
+ */
+unsigned dialogTopicRows(const DialogCatalog *catalog, const uint8_t *npc, const uint8_t *topic, char rows[][DialogLineChars + 1], unsigned maxRows);
+
+/*
  * The topic the conversation opens on, as an absolute index (LoadItemData's
  * word_2E550 choice): the NPC's 2nd topic if flagA, else 3rd if flagB, else
  * 4th if flagC, else the 1st. The flags are the caller's evaluation of the

@@ -5,7 +5,7 @@
  * and plays sound (the area music through the OPL2 synthesizer, a couple of effects). It is the smallest "engine" built from the modules.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
@@ -17,7 +17,7 @@
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
  * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, Space (or the right button on the view) use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), S shoot: in Chapter 2 the heroes fire their weapons down the corridor (four rocks fly away), M the local area map, D the pause
- * dialog, P the paper dolls, F5 saves / F9 loads explore.sav (the original save-file layout), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
+ * dialog, P the paper dolls, F7 saves / F9 loads explore.sav (the original save-file layout; F5 is the top-right panel), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * EXPLORE_INTRO=opening|story|ending|credits plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets
  * the milliseconds per tick, 25 by default; EXPLORE_INTRO_SOUND=1 plays the voices instead of drawing the text); Escape ends it.
@@ -171,7 +171,7 @@ static SDL_Keycode scriptKey(char c, Uint16 *mod) {
     case 'N': return SDLK_RETURN;
     case 'I': return SDLK_i;
     case 'J': return SDLK_q;
-    case 'W': return SDLK_F5; /* save */
+    case 'W': return SDLK_F7; /* save */
     case 'O': return SDLK_F9; /* load */
     case '_': return SDLK_SPACE;
     case '<': return SDLK_BACKSPACE;
@@ -432,7 +432,7 @@ static void usage(const char *program) {
             "  --no-splash     skip the boot title and the introduction        --no-title   start in the game: no start-up sequence at all\n"
             "  --shareware     the unregistered program (the demo boundary, the clue book's locked entries)\n"
             "  --no-sound      silence\n"
-            "  --clock-ms N    one game minute passes every N real milliseconds (0, the default, only + / - and resting move the clock)\n"
+            "  --clock-ms N    one game minute passes every N real milliseconds (5000, the default, is the original's pace -- a day is two hours; 0 stops the clock: only + / - and resting move it)\n"
             "Keys: arrows walk and turn, F1-F4 the heroes, F5 / F9 save / load, F8 the clue book, M the map, P the paper dolls, D the pause dialog, Esc backs out; the mouse works too; on the title menu C creates a\n"
             "character, A assembles the party, E enters the game, I plays the introduction, R the credits. The older form  %s <2|3> <game dir> [scale]  still works.\n",
             program, program);
@@ -620,7 +620,7 @@ int main(int argc, char **argv) {
     }
     const char *shotPath = opt("EXPLORE_SHOT");
     Uint32 lastMinute = 0;
-    unsigned clockMs = opt("EXPLORE_CLOCK_MS") ? (unsigned)atoi(opt("EXPLORE_CLOCK_MS")) : 0; /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
+    unsigned clockMs = opt("EXPLORE_CLOCK_MS") ? (unsigned)atoi(opt("EXPLORE_CLOCK_MS")) : script ? 0 : 5000; /* the original's clock: a game minute every 91 BIOS ticks, five seconds */ /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
     while (running) {
         if (script && *script) { /* feed the next scripted key as a key press */
             SDL_Event press;
@@ -670,7 +670,7 @@ int main(int argc, char **argv) {
                 dirty = true;
             }
         }
-        if (clockMs && !g_session->combat.active && SDL_GetTicks() - lastMinute >= clockMs) {
+        if (clockMs && !g_session->combat.active && g_ui.overlay == UiOverlayNone && SDL_GetTicks() - lastMinute >= clockMs) {
             lastMinute = SDL_GetTicks();
             sessionAdvanceTime(g_session, 1);
             dirty = true;
@@ -684,7 +684,7 @@ int main(int argc, char **argv) {
             gameUiDraw(&g_ui);
             if (colourStamp != g_ui.paletteStamp) { /* the cycled colours (gameUiPalette) moved on */
                 colourStamp = g_ui.paletteStamp;
-                for (unsigned i = 0xD0; i < 0xE0; i++) {
+                for (unsigned i = 0xD0; i < 0x100; i++) { /* the cycled colours and the sky */
                     unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
                     colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
                 }

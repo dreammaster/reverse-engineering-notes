@@ -121,6 +121,26 @@ size_t dialogTopicText(const DialogCatalog *catalog, const uint8_t *npc, const u
     return trimmed;
 }
 
+unsigned dialogTopicRows(const DialogCatalog *catalog, const uint8_t *npc, const uint8_t *topic, char rows[][DialogLineChars + 1], unsigned maxRows) {
+    unsigned lines = dialogTopicU16(catalog, topic, DialogTopicTextLines);
+    unsigned first = dialogGetU16(npc, DialogNpcFirstLine) + dialogTopicU16(catalog, topic, DialogTopicTextOffset) / DialogLineSize;
+    unsigned count = 0;
+    for (unsigned i = 0; i < lines && count < maxRows; i++) {
+        const uint8_t *line = dialogLine(catalog, first + i);
+        if (!line) {
+            break;
+        }
+        unsigned length = 0;
+        while (length < DialogLineChars && line[length] != 0) {
+            rows[count][length] = (char)line[length];
+            length++;
+        }
+        rows[count][length] = '\0';
+        count++;
+    }
+    return count;
+}
+
 void dialogNpcFee(const uint8_t *npc, uint8_t fee[4]) {
     memcpy(fee, npc + DialogNpcFee, 4);
 }

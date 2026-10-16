@@ -71,4 +71,7 @@ void conversationResolve(Conversation *conv, bool success, uint8_t *globalFlags,
 /* The text the topic shows (dialogTopicText), at most capacity - 1 characters; '%' marks a line break and '~' is the font's apostrophe. */
 size_t conversationText(const Conversation *conv, unsigned topic, char *out, size_t capacity);
 
+/* The topic's text in the rows it is drawn in (dialogTopicRows). */
+unsigned conversationRows(const Conversation *conv, unsigned topic, char rows[][DialogLineChars + 1], unsigned maxRows);
+
 #endif

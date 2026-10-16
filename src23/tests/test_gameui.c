@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
@@ -14,6 +14,7 @@
 
 #include "gameui.h"
 #include "gamedialog.h"
+#include "pictures.h"
 #include "uiregions.h"
 
 static int g_failureCount = 0;
@@ -219,8 +220,21 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     check("D opens the pause dialog again", ui.overlay == UiOverlayDialog);
     gameUiClick(&ui, 10, 10, true);
     check("the right button backs out of it", ui.overlay == UiOverlayNone);
-    gameUiClick(&ui, 270, 30, false);
-    check("a click on the map panel opens the local map, any click closes it", ui.overlay == UiOverlayLocalMap && (gameUiClick(&ui, 5, 5, false), ui.overlay == UiOverlayNone));
+    {
+        unsigned modeBits = saveHeaderGetU16(&s->save, 0x20) & 0x7000;
+        gameUiClick(&ui, 270, 30, false);
+        unsigned afterClick = saveHeaderGetU16(&s->save, 0x20) & 0x7000;
+        gameUiDraw(&ui);
+        unsigned resources = sum(ui.screen);
+        gameUiClick(&ui, 270, 30, false);
+        unsigned back = saveHeaderGetU16(&s->save, 0x20) & 0x7000;
+        gameUiDraw(&ui);
+        check("a click on the top-right panel (the chapter plate of a new game) shows the resource panel, another click goes back", modeBits == 0x2000 && afterClick == 0x1000 && back != 0x1000 && resources != sum(ui.screen));
+        gameUiKey(&ui, UiKeyF5, false);
+        unsigned cycled = saveHeaderGetU16(&s->save, 0x20) & 0x7000;
+        gameUiKey(&ui, UiKeyF5, false);
+        check("F5 cycles the panel: the plate (or the minimap) -> the resources -> back", cycled == 0x1000 && (saveHeaderGetU16(&s->save, 0x20) & 0x7000) != 0x1000);
+    }
     if (game == GameYendor2) { /* the inn's door: the opening frame, then the party is two cells on after two animation ticks */
         s->x = 170;
         s->y = 36;
@@ -284,6 +298,31 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
             gameUiAnimate(&ui);
         }
     }
+    /* the sky follows the clock: the master palette's sky colours by day, the end of the dusk fade at night, a fade of 113 steps (one per 91 BIOS ticks) from 06:00 and 18:00 */
+    {
+        const uint8_t *pal = gameUiPalette(&ui);
+        const uint8_t *master = world + pictureMasterPaletteOffset(game);
+        unsigned saved = s->clock.minutes;
+        s->clock.minutes = 359;
+        sessionAdvanceTime(s, 1);
+        bool dawnAsked = s->pendingFade == 1;
+        unsigned calls = 0;
+        gameUiAnimate(&ui);
+        bool started = ui.fadeActive && memcmp(pal + 0xE0 * 3, master + 0xE0 * 3, 96) != 0;
+        while (ui.fadeActive && calls < 6000) {
+            gameUiAnimate(&ui);
+            calls++;
+        }
+        snprintf(text, sizeof(text), "%s: the clock reaching 06:00 starts the dawn fade of the sky colours, 113 steps, ending on the master palette's", label);
+        check(text, dawnAsked && started && !ui.fadeActive && calls > 113 * 40 && memcmp(pal + 0xE0 * 3, master + 0xE0 * 3, 96) == 0);
+        s->clock.minutes = 1320;
+        gameUiKey(&ui, '+', false);
+        bool night = memcmp(pal + 0xE0 * 3, master + 0xE0 * 3, 96) != 0;
+        s->clock.minutes = 700;
+        gameUiKey(&ui, '+', false);
+        check("a time set by hand shows the sky of its hour at once (dark at night, the master palette's by day)", night && memcmp(pal + 0xE0 * 3, master + 0xE0 * 3, 96) == 0);
+        s->clock.minutes = (uint16_t)saved;
+    }
     /* the buttons show pressed: the walk pad's arrow while the move runs, the shoot icon while a shot flies */
     {
         unsigned padCount;
@@ -329,6 +368,29 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
             s->facing = SaveFacingWest;
             sessionRebuild(s);
         }
+    }
+    if (game == GameYendor2) { /* the mayor, one step from the start: the scroll with his face and the greeting in rows, the topics after a key */
+        s->x = 166;
+        s->y = 36;
+        s->facing = SaveFacingWest;
+        sessionRebuild(s);
+        gameUiKey(&ui, UiKeyUp, false);
+        gameUiKey(&ui, ' ', false);
+        gameUiDraw(&ui);
+        check("Space in front of the mayor opens his conversation: the greeting in rows, no topic list yet", ui.overlay == UiOverlayTalk && ui.talkRowCount >= 7 && !ui.talkListShown && strncmp(ui.talkRows[0], "AS YOU APPROACH", 15) == 0);
+        gameUiKey(&ui, UiKeyEnter, false);
+        check("a key lets the greeting go and the topics are listed", ui.overlay == UiOverlayTalk && ui.talkListShown && s->talk.listedCount >= 2);
+        gameUiDraw(&ui);
+        check("the first topic's name is drawn at (58, 32) in colour 0x8A", ui.screen[34 * ViewScreenWidth + 59] == 0x8A || ui.screen[33 * ViewScreenWidth + 59] == 0x8A || ui.screen[35 * ViewScreenWidth + 60] == 0x8A || ui.screen[36 * ViewScreenWidth + 59] == 0x8A);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape picks the last topic (BYE) and the conversation ends", ui.overlay == UiOverlayNone || ui.overlay == UiOverlayTalk);
+        while (ui.overlay == UiOverlayTalk) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
+        s->x = 166;
+        s->y = 36;
+        s->facing = SaveFacingWest;
+        sessionRebuild(s);
     }
     gameUiKey(&ui, UiKeyF2, false);
     gameUiDraw(&ui);
@@ -489,12 +551,12 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         printf("SKIP clue book (%s not found)\n", path);
         g_skipCount++;
     }
-    gameUiKey(&ui, UiKeyF5, false);
+    gameUiKey(&ui, UiKeyF7, false);
     int sx = s->x;
     gameUiKey(&ui, UiKeyLeft, false);
     s->x += 3;
     gameUiKey(&ui, UiKeyF9, false);
-    check("F5 hands the save image to the host and F9 loads it back", g_stored == 1 && s->x == sx);
+    check("F7 hands the save image to the host and F9 loads it back", g_stored == 1 && s->x == sx);
     char status[200];
     gameUiStatus(&ui, status, sizeof(status));
     check("the status line names the position", strstr(status, "Yendorian Tales") && strstr(status, "clock"));

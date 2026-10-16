@@ -28,9 +28,9 @@ It starts like the original (InitGame): the boot title, then the introduction (E
 files, so the DOS game's saves load here), the dialog with LOAD / NEW GAME / DOS -- NEW GAME, after its question, goes to the title menu; with no save it goes to the title menu at once and, after E, to
 the dialog with SAVE / DOS / ANIMATION / RETURN. A new game has no party: A assembles one from the four heroes (E beeps until then); C creates a hero, I plays the introduction, R the credits, Ctrl+Q leaves.
 `--no-splash` skips the boot title and the introduction, `--no-title` goes straight into the game with no start-up at all, `--game 2|3` forces the chapter, `--shareware` plays the unregistered program,
-`--no-sound` and `--clock-ms N` do what they say. The old form `explore_sdl <2|3> <game dir> [scale]` still works.
+`--no-sound` does what it says; `--clock-ms N` sets the pace of the game clock (default 5000: a game minute every five seconds as in the original, so the sky changes at 06:00 and 18:00 over about nine minutes each; 0 stops it). The old form `explore_sdl <2|3> <game dir> [scale]` still works.
 
-Keys are the original's (arrows, F1-F4 member sheets, F8 the clue book, M map, P paper dolls, S shoot (Chapter 2: the party's weapons fly down the corridor), Space or the right button on the view use what is ahead, D the pause dialog with its six save slots, Esc backs out of a screen and, on the main screen, leaves; F5/F9 are an
+Keys are the original's (arrows, F1-F4 member sheets, F8 the clue book, M map, P paper dolls, S shoot (Chapter 2: the party's weapons fly down the corridor), Space or the right button on the view use what is ahead, D the pause dialog with its six save slots, Esc backs out of a screen and, on the main screen, leaves; F5 cycles the top-right panel -- plate, minimap, resources; F7/F9 are an
 extra quick save and load to `explore.sav`);
 the mouse works as in the original (the title menu, the roster's check boxes and DONE, character creation, the clue book, the pause dialog, conversations and shops, and on the main screen the walk pad, the icon
 row, the map panel and the party panels; the right button backs out of a screen); `EXPLORE_BOOT=1` runs the start-up above in a scripted run, `EXPLORE_TITLE=1` starts on the title menu,

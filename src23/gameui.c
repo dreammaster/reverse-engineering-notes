@@ -16,6 +16,7 @@
 #include "gamedialog.h"
 #include "lighting.h"
 #include "localmap.h"
+#include "mapview.h"
 #include "maininput.h"
 #include "minimap.h"
 #include "monsterpanel.h"
@@ -29,6 +30,8 @@
 #include "textpanel.h"
 #include "titlemenu.h"
 #include "uiregions.h"
+
+static void paletteSyncToClock(GameUi *ui);
 
 bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_t worldSize, ViewPictureFn picture, void *pictureCtx, const GameUiHost *host) {
     memset(ui, 0, sizeof(*ui));
@@ -56,6 +59,7 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
     if (offset + PicturePaletteSize <= worldSize) {
         memcpy(ui->palette, worldDat + offset, sizeof(ui->palette));
     }
+    paletteSyncToClock(ui);
     return true;
 }
 
@@ -64,20 +68,56 @@ const uint8_t *gameUiPalette(const GameUi *ui) {
     return offset + PicturePaletteSize <= ui->worldSize ? ui->palette : NULL;
 }
 
-/* AnimatePaletteCycle: the colours 0xD0-0xDF, in four groups of four, each group turned by `step` colours (the master palette is the source every time). */
+/* The world data's palette block 2 (the sunrise ramp and the cycled colours), or NULL. */
+static const uint8_t *paletteBlock2(const GameUi *ui) {
+    uint32_t offset = paletteBlockOffset(ui->session->game, 2);
+    return offset + PaletteBytes <= ui->worldSize ? ui->worldDat + offset : NULL;
+}
+
+/* AnimatePaletteCycle: the colours 0xD0-0xDF are block 2's colours 144-159, in four groups of four, each group turned by `cycleStep` colours. */
 static void paletteCycle(GameUi *ui) {
-    uint32_t offset = pictureMasterPaletteOffset(ui->session->game);
-    if (offset + PicturePaletteSize > ui->worldSize) {
+    const uint8_t *block2 = paletteBlock2(ui);
+    if (!block2) {
         return;
     }
-    const uint8_t *base = ui->worldDat + offset + 0xD0 * 3;
-    uint8_t *dest = ui->palette + 0xD0 * 3;
-    for (unsigned group = 0; group < 4; group++) {
-        for (unsigned colour = 0; colour < 4; colour++) {
-            memcpy(dest + (group * 4 + colour) * 3, base + (group * 4 + (colour + ui->cycleStep) % 4) * 3, 3);
-        }
-    }
+    paletteCycleFrame(block2, ui->cycleStep, ui->palette + CycleDacStart * 3);
     ui->cycleStep = (ui->cycleStep + 1) % 4;
+    ui->paletteStamp++;
+}
+
+/* The sky colours for the game's hour at once: the master palette's (the end of the dawn fade) from 06:00 to 18:00, else the end of the dusk fade. Cancels a fade under way. */
+static void paletteSyncToClock(GameUi *ui) {
+    const uint8_t *block2 = paletteBlock2(ui);
+    uint32_t master = pictureMasterPaletteOffset(ui->session->game);
+    if (!block2 || master + PicturePaletteSize > ui->worldSize) {
+        return;
+    }
+    unsigned minutes = ui->session->clock.minutes;
+    if (minutes >= 360 && minutes < 1080) {
+        memcpy(ui->palette + DayNightDacStart * 3, ui->worldDat + master + DayNightDacStart * 3, DayNightWindowBytes);
+    } else {
+        DayNightFade fade;
+        uint8_t window[DayNightWindowBytes];
+        dayNightFadeBegin(&fade, 1080);
+        while (dayNightFadeStep(&fade, block2, window)) {
+        }
+        memcpy(ui->palette + DayNightDacStart * 3, window, sizeof(window));
+    }
+    ui->fadeActive = false;
+    ui->session->pendingFade = 0;
+    ui->paletteStamp++;
+}
+
+/* AdvanceDayNightPaletteFade: one window of the sunrise ramp into the sky colours. */
+static void paletteFadeStep(GameUi *ui) {
+    const uint8_t *block2 = paletteBlock2(ui);
+    uint8_t window[DayNightWindowBytes];
+    if (!block2) {
+        ui->fadeActive = false;
+        return;
+    }
+    ui->fadeActive = dayNightFadeStep(&ui->fade, block2, window);
+    memcpy(ui->palette + DayNightDacStart * 3, window, sizeof(window));
     ui->paletteStamp++;
 }
 
@@ -96,38 +136,25 @@ void gameUiAmbientMusic(GameUi *ui) {
 }
 
 /* The NPC's text (the '%' marks a line break; ~ is the font's apostrophe), word-wrapped, and the topics that can be chosen. */
+/*
+ * The conversation (UseItem, yendor2.asm:13168): over the view, DrawItemUseConfirmDialog's frame -- category 1 picture 3, the brown scroll, at (15, 23) -- with the speaker's face (category 7,
+ * the NPC header's first word) at (21, 31); BuildItemUseMessage writes the topic's rows in 0x0D from (22, 67), 6 pixels apart; and, once the greeting has been read (a key or a click),
+ * DrawEligibleItemList the topic names to the right of the face in 0x8A: five to a column at x = 58 and x = 142 from y = 32.
+ */
 static void drawTalk(GameUi *ui) {
     GameSession *s = ui->session;
-    int y = 10;
-    char line[64];
-    unsigned used = 0;
-    for (const char *p = ui->talkText;; p++) {
-        bool end = *p == 0, brk = *p == '%', space = *p == ' ';
-        if (!end && !brk && !(space && used == 0)) {
-            line[used++] = *p == '~' ? '\'' : *p;
-        }
-        bool wrap = (!end && !brk && used >= 46 && space) || used >= 52;
-        if (end || brk || wrap) {
-            while (used > 0 && line[used - 1] == ' ') {
-                used--;
-            }
-            line[used] = 0;
-            if (used) {
-                fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8, y, line, 0x8A, 0, FontTransparent);
-                y += 7;
-            }
-            used = 0;
-        }
-        if (end) {
-            break;
-        }
+    const ViewRenderer *r = &ui->renderer;
+    viewDrawPicture(r, 1, 3, 15, 23, true, 0);
+    if (s->talk.npc) {
+        viewDrawPicture(r, 7, dialogGetU16(s->talk.npc, 0), 21, 31, true, 0);
     }
-    y = 120;
-    for (unsigned i = 0; i < s->talk.listedCount; i++) {
-        char name[DialogTopicNameSize + 1], row[32];
+    for (unsigned i = 0; i < ui->talkRowCount; i++) {
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
+    }
+    for (unsigned i = 0; ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
+        char name[DialogTopicNameSize + 1];
         dialogTopicName(dialogTopic(&s->dialogs, s->talk.listed[i]), name);
-        snprintf(row, sizeof(row), "%u %s", i + 1, name);
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8 + (int)(i / 5) * 150, y + (int)(i % 5) * 8, row, 0x9B, 0, FontTransparent);
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, i < 5 ? 58 : 142, 32 + 6 * (int)(i % 5), name, 0x8A, 0, FontTransparent);
     }
 }
 
@@ -335,6 +362,75 @@ static void lootDraw(GameUi *ui) {
     fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 150, number, 0x0F, 4, FontOpaque);
 }
 
+/*
+ * The panel at the top right (mapview.h's map-flags word, saved in the header at +0x20 as word_36C7F): the chapter plate (0x2000: a new game, and what a party that cannot map
+ * is left with), the minimap (0x4000, only for a party whose Mapping average reaches 50) or the resource panel (0x1000: the slot grid, category 6 picture 0x14, and the three
+ * counters in the text panel). F5 and a click on it cycle them (start's loc_103BA and the F5 handler, :505).
+ */
+enum { MapFlagsOffset = 0x20, PanelModeBits = 0x7000 };
+
+static uint16_t panelFlags(GameUi *ui) {
+    GameSession *s = ui->session;
+    PartyStatAverages averages = partyAverageStatTiers(&s->save);
+    bool redraw;
+    uint16_t flags = mapviewApplyTiers(saveHeaderGetU16(&s->save, MapFlagsOffset), averages.mapping, &redraw);
+    saveHeaderSetU16(&s->save, MapFlagsOffset, flags);
+    return flags;
+}
+
+static void panelSet(GameUi *ui, uint16_t flags) {
+    saveHeaderSetU16(&ui->session->save, MapFlagsOffset, flags);
+}
+
+static void panelEnterResources(GameUi *ui, uint16_t flags) { /* ShowResourceDepletedOverlay */
+    panelSet(ui, (uint16_t)((flags & 0x8FFF) | MapFlagHidden));
+}
+
+/* The F5 key: a party that can map goes minimap -> resources -> minimap, one that cannot plate -> resources -> plate. */
+static void panelCycle(GameUi *ui) {
+    uint16_t flags = panelFlags(ui);
+    if (flags & MapFlagLargeCapable) {
+        if (flags & MapFlagLarge) {
+            panelEnterResources(ui, flags);
+        } else {
+            panelSet(ui, (uint16_t)((flags & 0x8FFF) | MapFlagLarge));
+        }
+    } else if (flags & MapFlagSmall) {
+        panelEnterResources(ui, flags);
+    } else {
+        panelSet(ui, (uint16_t)((flags & 0x8FFF) | MapFlagSmall));
+    }
+    effect(ui, 2);
+}
+
+/* A left click on the panel: from the minimap or the plate to the resource panel, from there back. */
+static void panelClick(GameUi *ui) {
+    uint16_t flags = panelFlags(ui);
+    if (flags & MapFlagHidden) {
+        flags = (uint16_t)(flags & 0xEFFF);
+        panelSet(ui, (uint16_t)(flags | ((flags & MapFlagLargeCapable) ? MapFlagLarge : MapFlagSmall)));
+    } else {
+        panelEnterResources(ui, flags);
+    }
+    effect(ui, 2);
+}
+
+/* The resource panel's counters (DrawResourceCounterPanel, :41134): GOLD COINS, MAGIC ORE and NUORE, each label over its amount, 18 pixels apart from y = 96. */
+static void resourcesDraw(GameUi *ui) {
+    const ViewRenderer *r = &ui->renderer;
+    SaveGame *save = &ui->session->save;
+    static const char *const kLabels[3] = {"GOLD COINS:", "MAGIC ORE: ", "NUORE: "};
+    const Bcd4 *amounts[3] = {(const Bcd4 *)saveHeaderBcd4(save, SaveHeaderGold), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter1), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter2)};
+    char number[12];
+    viewDrawPicture(r, 6, 0x14, 0xF8, 9, true, 0);
+    textPanelClear(r, false);
+    for (unsigned i = 0; i < 3; i++) {
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 96 + 18 * (int)i, kLabels[i], 0x8A, 4, FontOpaque);
+        bcd4Format(*amounts[i], number);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 102 + 18 * (int)i, number, 0x0F, 4, FontOpaque);
+    }
+}
+
 /* DrawPartyStatusIcon: while a member is to act in a combat (HandleDungeonInput) the 32 x 32 selection frame (category 7 picture 0) is drawn over his or her face. */
 static void actingFrameDraw(GameUi *ui) {
     SessionCombat *c = &ui->session->combat;
@@ -368,6 +464,20 @@ bool gameUiAnimate(GameUi *ui) {
         ui->cycleTicks -= 5;
         paletteCycle(ui);
         changed = true;
+    }
+    if (ui->session->pendingFade) { /* the clock reached 06:00 or 18:00: the sky starts to change */
+        dayNightFadeBegin(&ui->fade, ui->session->pendingFade == 2 ? 1080 : 360);
+        ui->session->pendingFade = 0;
+        ui->fadeActive = true;
+        ui->fadeTicks = 91;
+    }
+    if (ui->fadeActive) {
+        ui->fadeTicks += 2;
+        if (ui->fadeTicks >= 91) {
+            ui->fadeTicks = 0;
+            paletteFadeStep(ui);
+            changed = true;
+        }
     }
     if (ui->pressTicks > 0) { /* a pressed button comes up */
         ui->pressTicks--;
@@ -793,6 +903,7 @@ void gameUiBoot(GameUi *ui) {
         }
     }
     sessionNewGame(ui->session, ui->worldDat, ui->worldSize);
+    paletteSyncToClock(ui);
     ui->boot = UiBootTitle;
     ui->overlay = UiOverlayTitle;
 }
@@ -880,11 +991,16 @@ void gameUiDraw(GameUi *ui) {
         memcpy(&ui->screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
     }
     viewRender(&ui->renderer, &scene);
-    MinimapTile tiles[MinimapCells];
-    int16_t shades[LightingViewportCells];
-    lightingViewportTable(scene.gradient, shades);
-    minimapBuild(s->game, &s->grid, s->x, s->y, tiles);
-    minimapDraw(&ui->renderer, tiles, shades, s->facing);
+    uint16_t panel = panelFlags(ui);
+    if ((panel & MapFlagHidden) == 0 && (panel & MapFlagLarge)) {
+        MinimapTile tiles[MinimapCells];
+        int16_t shades[LightingViewportCells];
+        lightingViewportTable(scene.gradient, shades);
+        minimapBuild(s->game, &s->grid, s->x, s->y, tiles);
+        minimapDraw(&ui->renderer, tiles, shades, s->facing);
+    } else if ((panel & MapFlagHidden) == 0) {
+        viewDrawPicture(&ui->renderer, 6, 0x15, 0xF8, 9, true, 0); /* the chapter plate */
+    }
     for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
         statusPanelDraw(&ui->renderer, panel, sessionPartyRecord(s, panel));
     }
@@ -895,6 +1011,8 @@ void gameUiDraw(GameUi *ui) {
             actingFrameDraw(ui);
         } else if (s->loot.pending) {
             lootDraw(ui);
+        } else if (panel & MapFlagHidden) {
+            resourcesDraw(ui);
         }
         if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
             viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
@@ -927,7 +1045,6 @@ void gameUiDraw(GameUi *ui) {
         drawShop(ui);
         break;
     case UiOverlayTalk:
-        memset(ui->screen, 0, sizeof(ui->screen));
         drawTalk(ui);
         break;
     case UiOverlayClue:
@@ -960,6 +1077,7 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
         return;
     }
     conversationText(&s->talk, step->topic, ui->talkText, sizeof(ui->talkText));
+    ui->talkRowCount = conversationRows(&s->talk, step->topic, ui->talkRows, sizeof(ui->talkRows) / sizeof(ui->talkRows[0]));
     SessionService service = sessionTalkService(s, step, NULL);
     if (service == SessionServiceNone && step->needsResolve) {
         sessionTalkResolve(s, true);
@@ -1006,6 +1124,7 @@ static void useAhead(GameUi *ui) {
         ConversationStep first;
         if (sessionTalkStart(s, use.value, 0, &first)) {
             ui->overlay = UiOverlayTalk;
+            ui->talkListShown = false; /* the greeting first */
             talkStep(ui, &first);
         }
         break;
@@ -1050,6 +1169,7 @@ static void saveLoad(GameUi *ui, bool save) {
         size_t bytes = ui->host.fetch(ui->host.ctx, image, sizeof(image));
         if (bytes) {
             snprintf(s->log, sizeof(s->log), sessionLoad(s, image, bytes) ? "loaded" : "that is not a save of this game");
+            paletteSyncToClock(ui);
             gameUiAmbientMusic(ui);
         }
     }
@@ -1126,6 +1246,7 @@ static void dialogLoad(GameUi *ui) {
         sessionRebuild(s);
         slotHighlight(ui, (unsigned)ui->dialogSlot);
         s->log[0] = 0;
+        paletteSyncToClock(ui);
         dialogLeave(ui);
     } else {
         snprintf(s->log, sizeof(s->log), "that is not a save of this game");
@@ -1137,6 +1258,7 @@ static void dialogLoad(GameUi *ui) {
 /* ConfirmNewGame's yes: RunTitleScreen starts a new game (InitializeNewGameWorldState) and the title menu is up; its E goes on into the game. */
 static void startNewGame(GameUi *ui) {
     if (sessionNewGame(ui->session, ui->worldDat, ui->worldSize)) {
+        paletteSyncToClock(ui);
         ui->dialogMode = UiDialogMenu;
         ui->overlay = UiOverlayTitle;
     } else {
@@ -1332,15 +1454,23 @@ static bool shopKey(GameUi *ui, UiKey key) { /* 1-8 buy a slot, S sells the curs
     return true;
 }
 
-static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out) */
+static void talkChoose(GameUi *ui, unsigned number) { /* topic `number` of the list (0 = the last one: the way out) */
     GameSession *s = ui->session;
+    ConversationStep step = sessionTalkChoose(s, number);
+    talkStep(ui, &step);
+    if (!s->talking && ui->overlay == UiOverlayTalk) {
+        ui->overlay = UiOverlayNone;
+    }
+}
+
+static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out); the first key only lets the greeting go and shows the list */
+    if (!ui->talkListShown) {
+        ui->talkListShown = true;
+        return true;
+    }
     unsigned number = key == UiKeyEscape ? 0 : key >= '1' && key <= '9' ? (unsigned)(key - '1' + 1) : 99;
     if (number != 99) {
-        ConversationStep step = sessionTalkChoose(s, number);
-        talkStep(ui, &step);
-        if (!s->talking && ui->overlay == UiOverlayTalk) {
-            ui->overlay = UiOverlayNone;
-        }
+        talkChoose(ui, number);
     }
     return true;
 }
@@ -1422,6 +1552,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     case MainActionRest:
         pressButton(ui, 8, IconRestX, IconRowY, 2);
         sessionRest(s);
+        paletteSyncToClock(ui); /* eight hours have gone by */
         break;
     case MainActionAlchemy:
         pressButton(ui, 6, IconAlchemyX, IconRowY, 2); /* the alchemy screen itself is not in the standalone */
@@ -1539,16 +1670,22 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
         }
         return false;
     }
-    if (key == UiKeyF5 || key == UiKeyF9) {
-        saveLoad(ui, key == UiKeyF5);
+    if (key == UiKeyF7 || key == UiKeyF9) { /* a quick save and load of the one slot the host keeps (not the original's: F5 is the panel) */
+        saveLoad(ui, key == UiKeyF7);
+        return true;
+    }
+    if (key == UiKeyF5 && ui->overlay == UiOverlayNone && !s->combat.active) {
+        panelCycle(ui);
         return true;
     }
     if (key == '+' || key == '=') {
         s->clock.minutes = (uint16_t)((s->clock.minutes + 30) % 1440);
+        paletteSyncToClock(ui);
         return true;
     }
     if (key == '-') {
         s->clock.minutes = (uint16_t)((s->clock.minutes + 1440 - 30) % 1440);
+        paletteSyncToClock(ui);
         return true;
     }
     if (ui->overlay != UiOverlayNone) {
@@ -1711,12 +1848,17 @@ static bool dialogClick(GameUi *ui, int x, int y) {
     }
 }
 
-static bool talkClick(GameUi *ui, int x, int y) { /* the topic rows drawTalk lists: five to a column from y = 120 */
+static bool talkClick(GameUi *ui, int x, int y) { /* the click table at DS:0x6458: the topic rows drawTalk lists, five to a column (x 58-135 and 142-220, 6 pixels each from y = 32) */
     GameSession *s = ui->session;
-    for (unsigned i = 0; i < s->talk.listedCount && i < 9; i++) {
-        int x0 = 8 + (int)(i / 5) * 150, y0 = 120 + (int)(i % 5) * 8;
-        if (inRect(x, y, x0, y0, x0 + 140, y0 + 7)) {
-            return press(ui, '1' + (int)i);
+    if (!ui->talkListShown) {
+        ui->talkListShown = true;
+        return true;
+    }
+    for (unsigned i = 0; i < s->talk.listedCount && i < ConversationListMax; i++) {
+        int x0 = i < 5 ? 58 : 142, y0 = 32 + (int)(i % 5) * 6;
+        if (inRect(x, y, x0, y0, x0 + 77, y0 + 5)) {
+            talkChoose(ui, i + 1);
+            return true;
         }
     }
     return true;
@@ -1746,8 +1888,11 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
         return gameUiKey(ui, kKeys[pad - 1], pad == 4 || pad == 6);
     }
     unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
-    if (region == 2) {
-        return press(ui, 'm');
+    if (region == 2) { /* the top-right panel: the plate or the minimap, then the resource panel */
+        if (!s->combat.active) {
+            panelClick(ui);
+        }
+        return true;
     }
     if (region == 3) { /* the icon row: act (attack in a combat), alchemy, rest, the pause dialog */
         unsigned icon = uiRegionHit(game, UiRegionsDungeonIconRow, x, y);

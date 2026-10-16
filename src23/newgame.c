@@ -21,6 +21,7 @@ bool saveGameNewGame(SaveGame *save, GameKind game, const uint8_t *worldDat, siz
         partySetU16(record, PartyFieldUiFlags, (uint16_t)(partyGetU16(record, PartyFieldUiFlags) & 0xF7FF));
     }
 
+    saveHeaderSetU16(save, 0x20, 0x2000); /* word_36C7F: the top-right panel shows the chapter plate (the map-flags word's "small" mode; mapview.h) */
     if (game == GameYendor3) {
         saveHeaderSetU16(save, SaveHeaderFacing, SaveFacingNorth);
         saveHeaderSetU16(save, SaveHeaderWorldX, 460);
