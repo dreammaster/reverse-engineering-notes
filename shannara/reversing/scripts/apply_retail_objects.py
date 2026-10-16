@@ -296,6 +296,14 @@ RENAMES += [
     (0x255B4, "object_list_append?", "(obj=ax, value=edx) -> 1 if appended: finds the end of the object's 0-terminated dword list (object_get_list_slot?) and stores value there if the next slot is free."),
 ]
 
+# Cutscene script and party stat helpers (thirteenth pass, retail_game_layer.md section 14)
+RENAMES += [
+    (0x28858, "play_cutscene?", "play_cutscene?(id 0-11): the story-cutscene script - sends phase 0x18 to the current room, picks music from dword_C4614[id] (play_music_entry?), then a 12-case switch (jpt_289D6) that plays clips with play_video_wait?(name, flags) / play_video_voiced?(voiceMsgId, name) (names are 'NNNN.flc' strings; video_open? really tries NNNN.Q first), show_dialog?, make_voice?, party healing/damage and, in case 7, start_encounter?(14). Case 11 is the full-screen (640x480) narrated slideshow. See retail_game_layer.md section 14."),
+    (0x196B8, "party_heal_percent?", "(percent=eax): for each of the 24 character-table slots (slot 0 always, others only if inside object 2 = party; character 7 skipped while flag 0x0D is set) HP = min(maxHP, HP + ceil(maxHP*percent/100)). _char_stats record: +2 HP, +4 max HP (14-byte stride)."),
+    (0x19778, "character_damage?", "(charObj=ax, amount=edx, redraw=bl) -> new HP or -1: finds the character-table entry whose id == charObj, HP = clamp(HP - amount, 0, maxHP) (negative amount heals); character 7 immune while flag 0x0D is set; optionally refreshes the status display (sub_10DAC)."),
+    (0x19C40, "state_pair_set?", "(key=al, value=dx): adds {u8 key; u16 value} to the 16-entry list at byte_CCBB8 (count dword_ADDEC; saved in the savegame) unless the key exists; prints the overflow message when full."),
+]
+
 DATA += [
     (0xCCA44, "_combatants"),            # 23 x pointer to 0x3F8-byte combatant blocks, 0-terminated
     (0xADC4C, "_char_stats"),            # 0x15E bytes = 25 x 14-byte per-character stat records (save region 10)

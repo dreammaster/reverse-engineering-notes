@@ -498,3 +498,40 @@ adaptive average (`dword_CF450/CF458/CF460`) corrects drift; minimum 10 ms.
 What properties A/B/dword *mean* is not established (handlers use them as small per-object variables, e.g. after a
 scripted event); `object_carrier?` (`0x19BC0`, 72 callers) maps an item to the character-table entry carrying it
 (24 x 8-byte records at `dword_ADB84`, also in the save regions).
+
+## 14. Story cutscenes: `play_cutscene?` (thirteenth pass)
+
+`play_cutscene?` (`0x28858`, 6,258 bytes, 12 callers, all from handlers/`sub_221C4`) is **not** a generic player but the
+script of the game's **12 story cutscenes** (`id` 0-11, anything else returns at once). Common prologue: counts the
+cutscene in a per-id "seen" word table (`word_A7E88`), computes the 640x480 centering rectangle (`dword_CFC06...`; id 11 uses
+the full screen), sends **phase 0x18** to the current room, waits 1 s, stops the music, then starts the cutscene's music with
+`play_music_entry?(dword_C4614[id], 0x10)` and jumps through the 12-entry table `jpt_289D6`. Each case is straight-line
+code: clips with `play_video_wait?(name, flags)`, narrated clips with `play_video_voiced?(voiceMsgId, name)` (the id is a
+`SHANSTR` message that also names the voice file), `show_dialog?`, `make_voice?`/`make_sound` (a sound-effect id doubles
+as the voice message id), palette fades, and a few state changes. File names are stored as `"NNNN.flc"` strings, but
+`video_open?` discards the extension and tries `NNNN.Q` first (section 13).
+
+| id | Clips (in order) | Notes |
+|---|---|---|
+| 0 | `9100`, then 9 voiced lines (msgs `0xC7A-0xC82`) alternating `9120` / `9110`, `9130`, sound `0xDE2`, `9140` | party healed 100 % first (`party_heal_percent?(100)`) |
+| 1 | `9500`; voices `0xD4A`, `0xD4B` | short |
+| 2 | `9500`, `9590`, voiced `0xC83-0xC85` on `9591`, `9592` | heal 100 % |
+| 3 | voiced `0xC87-0xC8A` alternating `9220` / `9110` | heal 100 % |
+| 4 | `9500`, `9540`, voiced `0xC8D-0xC92` on `9541`, `9542` | |
+| 5 | voiced `0xC98-0xC9A` (`9120`/`9110`), `9130`, `9140` | heal 100 % |
+| 6 | voiced `0xC9B-0xCA1` over `9420`/`9110`/`9400`, `9130`, `9440` | |
+| 7 | dialog/voiced exchange on `9110`, `8550`, `8530`, voices `0xAA0`, `0xAA1`, then **`start_encounter?(14)`** and a fixed HP change on character 3 | cutscene that leads into the boss fight with `enc_hook_14?` |
+| 8 | long travel montage: `9500`, then for each of five places a triple (`9590`, `9570`, `9580`, `9560`, `9550` plus their `...2` variants) with a voice line and a dialog each, ends `9595` and a voiced exchange on `9110` | |
+| 9 | `8585` | |
+| 10 | `8590`, `8560`, `8580` | |
+| 11 | full-screen (640x480) narrated slideshow: voices `0xD86-0xD8E` with palette fade out/in and `load_music` between images, then `party_add_member?(4)` and a run of `show_dialog?` | probably the opening sequence (it adds a party member and hands over to play) |
+
+Clip-number families seen: `91xx`/`92xx`/`94xx` (talking-head dialogue scenes, the `...0`/`...1` pairs alternate speakers),
+`95xx` (travel/montage), `85xx` (short story beats). Sound-effect ids `0xDE2`, `0xDB2`, `0xDB3` accompany scene
+transitions. Reimplementing this function means a data-driven list of `(clip, voiceMsg, dialogMsg, flags)` steps per
+id plus the few side effects (healing, `start_encounter?`, party changes) - there are no loops or branching beyond the
+`ret`-on-abort checks after each clip.
+
+Related helpers named in this pass: `party_heal_percent?` (`0x196B8`), `character_damage?` (`0x19778`; the character
+table is 24 x 8-byte records at `dword_ADB84` with `_char_stats` 14-byte records in the same order), `state_pair_set?`
+(`0x19C40`, a 16-entry `{u8 key, u16 value}` list at `byte_CCBB8` that is part of the savegame).
