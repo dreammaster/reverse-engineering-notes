@@ -47,6 +47,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | easingtest | the easing equations of the tweens: 0 to 1, Out mirrors In, the halves of InOut, the known values, the exponential |
 | basetest | the string handle (comparisons, ranges, copies), the growing byte buffer (numbers big end first, texts, zlib, the cipher) and the sprite description (reload needed, transparency, Lua text) |
 | compmgrtest | the container manager: the main, game, scene, character, interface and movie containers, files by their references, volumes that are not there, export, the movie header, clean up |
+| sound2test | the sound engine with streams that play nothing: playing, pausing, muting, stopping and keeping, the volumes, the fades, the console lines |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
