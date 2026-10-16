@@ -32,6 +32,7 @@ Every test prints `<n> failures`.
 | charitemtest | items from a character to another (GiveItemTo, ReceiveItem needing an interface, GiveAllItemsTo), StandingAt, GetCurrentDimension, AlignToObject, the turn action |
 | cmd3test | the commands SetFont, SetLightMap, SetItem, Save/Execute/ClearSavedObject, SetCursor, SetObjectActive (the active command stays on) and IfLanguage |
 | cmd4test | the commands Autosave (saved at or after the part, loaded again, a slot above 99), IfSavegame, DeleteSavegame and GameSave |
+| cmd5test | ShowCharacter, PreloadCharacter (a character in the shown scene is left alone), and the lists of running actions (by name, by id, printed, finished) |
 | savemenutest | a menu scene with places for savegames: selecting by click or script, saving over (with the screenshot), reading the disk when the menu is entered, scrolling pages, deleting, loading |
 | clicktest | clicks on an object and the floor, keys (`HandleKeyEvent`, key release) |
 | commenttest | an object without actions clicked with a command: the hero says the comment for it |

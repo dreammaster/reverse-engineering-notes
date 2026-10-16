@@ -36,12 +36,22 @@ static bool traceActions() {
 	return (g_traceFlags & 2) && wxLog::loglevel > 1;
 }
 
+// (the formats are the original's, where %s is a wide string: see wxLog::logexpanded)
 static wxString format(const wchar_t *fmt, ...) {
+	std::wstring portableFmt;
+
+	for (const wchar_t *p = fmt; *p; ++p) {
+		portableFmt += *p;
+
+		if (*p == L'%' && p[1] == L's')
+			portableFmt += L'l';
+	}
+
 	wchar_t buffer[1024];
 	va_list args;
 
 	va_start(args, fmt);
-	vswprintf(buffer, 1024, fmt, args);
+	vswprintf(buffer, 1024, portableFmt.c_str(), args);
 	va_end(args);
 	return wxString(buffer);
 }
