@@ -749,3 +749,17 @@ Verified by reconstructing conversations: dialog 0xC7A (first voiced line of cut
 destroying Jak Ohmsford..." / "YOU FOOL! THIS MORTAL CREATURE SEEKS TO RESTORE THE SWORD OF SHANNARA...") and 0xB7C the narration "You all cross the Ferry to the
 island city of Kern...". The voice for a line is the track with the same dialog id in the voice file (section 17). `scripts/dialog_view.py` prints conversations from
 real data. Message texts in the earlier doc sections that were called "message id = (block<<16)|index" are the same ids after the `F0` prefix.
+
+## 28. Help menu and the tutorial replay script (twenty-eighth pass)
+
+The `0x1000` event (F1) runs `help_menu?` (`0x1FE8C`): a `choice_dialog?` titled "Help" with five entries (What is an Adventure game?, On-line tutorial, Keyboard
+shortcuts, Helpful Hints, "OK, I've had enough"); the text entries page through SHANSTR block 17 (`0xF011000D`...`0xF0110017`) with `show_help_page?`
+(`0x1F984`). The tutorial entry calls `tutorial_start?("shan000.hLP", 1)` (`0x1F7BC`): it **saves the player's game with `save_game?(4)` (this is what `HELP.DAT` is - a
+runtime backup, so the copy shipped in the release is a stale leftover from development, which explains its slightly older shape, section 23)**, opens the script,
+loads the clean `RESTART` snapshot (`load_game?(5)`) and starts the replay.
+
+`SHAN000.HLP` (67,768 bytes, CRLF text, 2,523 lines) is a **recorded input script**, not data: 2,484 event lines `DDDDD TTTT XXX YYY BBB` plus 38 caption lines.
+`DDDDD` = delay (mostly 40 ticks between mouse samples), `TTTT` = event type in hex as in the dispatcher (`0008` mouse move: 2,299 lines; `0002` move: 128; `0004` click
+with button `BBB` = 1: 18; `4000` = caption follows; `8000` = end), `XXX YYY` = pointer position. A caption line is `x, y, width, text` (e.g. the opening "Welcome to the on-line
+tutorial for Shannara..."). The tutorial therefore plays a canned game session through the normal event path with the pointer driven by the file; a port can replay it
+the same way (or skip it).

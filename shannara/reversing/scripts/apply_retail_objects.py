@@ -254,6 +254,13 @@ RENAMES += [
     (0x1F580, "game_over_screen?", "Used by the lethal timed events: background fade, the death/ending screen with restore options (load_game?)."),
 ]
 
+# Help menu / tutorial (twenty-eighth pass)
+RENAMES += [
+    (0x1FE8C, "help_menu?", "Event 0x1000 (F1 help): choice_dialog? 'Help' with 5 entries - What is an Adventure game?, On-line tutorial, Keyboard shortcuts, Helpful Hints, OK. Entry 2 starts the tutorial (tutorial_start?('shan000.hLP', 1)); the others page through help texts (SHANSTR block 17, ids 0xF011000D-0xF0110017) with show_help_page?."),
+    (0x1F7BC, "tutorial_start?", "(scriptName=eax, mode=edx): mode 1 saves the player's game (save_game?(4) = HELP.DAT), opens the replay script ('r'), loads the RESTART snapshot (load_game?(5)) and arms the replay (dword_AE858). SHAN000.HLP is the recorded-input script, see analysis/retail_game_layer.md section 28."),
+    (0x1F984, "show_help_page?", "(messageId=eax): modal window with the help text, waits for a click/key (get_clock, key_hit, mouse_wait)."),
+]
+
 DATA = [
     (0x20918, "_object_table"),        # 744 x {u8 type; u32 recordPtr}
     (0x217A0, "_object_count"),
