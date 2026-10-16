@@ -604,7 +604,7 @@ further in; word at `+0Ah` carries an id for the audio events). A per-UI-mode ho
 |---|---|
 | `0x01` | `handle_key_event?` (typed keys, debug keys) |
 | `0x02`, `0x08` | `handle_move_event?` (mouse movement / hover over regions) |
-| `0x04` | `handle_click_event?` (region hit-test via `get_region_`, then a switch on the region kind: 1 = scroll arrows/list, 3, 5, 6, 7, 8 = verb/object/inventory widgets, 9, 0x64 = picture hotspots) |
+| `0x04` | `handle_click_event?` (region hit-test via `get_region_`, then a switch on the region kind - values 1, 3, 5, 6, 7, 8, 9 and 0x64 occur; kind 1 with sub-kinds 4/5 handles the two scroll arrows (adds/subtracts 5 from `dword_A7EA0`) and a list scroll; the other kinds are not yet traced) |
 | `0x10`, `0x20`, `0x40` | `popup_window_event?` (window open/close notifications; a 0x10 event is swallowed while `word_A7E5C` is non-zero) |
 | `0x80`, `0x100` | `sub_10B20(param)`, `sub_132A0(param)` (window refresh / redraw requests) |
 | `0x200` | `sub_1B9C8` = idle/notification, sends handler phase 7 |
@@ -613,5 +613,4 @@ further in; word at `+0Ah` carries an id for the audio events). A per-UI-mode ho
 | `0x1000` | `sub_1FE8C` |
 
 So audio is also driven through the event queue (music and voice requests are posted as events), which is why handlers can
-issue them without blocking. Click handling shares the verb-object command line with `run_command?` (section 2.4): a click on
-a verb widget sets the pending verb, a click on an object/inventory widget supplies `dobj`/`iobj` and calls `run_command?`.
+issue them without blocking. How clicks turn into `run_command?` calls (section 2.4) is not yet traced.
