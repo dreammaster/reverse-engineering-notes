@@ -688,3 +688,21 @@ Verified on 3 files (500+ entries) and spot-checked on the rest; `scripts/pic_sc
 
 Example result: `SHAN020` entry 0 is the overworld map (Arborlon, Druid's Keep, Hall of Kings, Tyrsis, Leah, Shady Vale), entry 3 the willow
 glade with the XOR sprite of Allanon.
+
+## 23. Savegame layout checked against the shipped `HELP.DAT` (twenty-third pass)
+
+`HELP.DAT` (32,660 bytes) is a savegame-format snapshot (loaded by `load_game?(4)`). Against the section 6 schema:
+
+- bytes `0..0x1F` are the 0x20-byte header (all zero here); the **object record prefixes follow immediately and line up for all 744
+  objects** (they end at 0x5A40 = 0x20 + 23,072; object 1 is `01 00 00 00 00 00 00 00 00 00 82 02 ...`, identical to the exe's initial
+  record, and 488 of the 744 records equal their initial state, the rest differ as expected for a mid-game snapshot);
+- the 92 extra regions then decode plausibly in table order: region 2 (high word of `_current_room`) = 0x58 = **88, the start room**; region 9
+  (the 25 x 8-byte character table) starts `34 00 00 00 03 00 00 00 35 00 00 00 ...` (character object ids 0x34, 0x35, ...); region 10
+  (`_char_stats`, 25 x 14 bytes) starts `03 00 64 00 64 00 3c 00 0a 00 3c 00` = HP 100 / max 100 for the first character (HP at +2, max at +4 as
+  assumed); regions 12-14 (the 3,403 + 1,037 + 282 byte per-dialog/state flag bytes) are all `01` = "enabled" as expected;
+- **the file is 8 bytes shorter than the 32,668 the current engine expects** (header 0x20 + 23,072 + 9,512 + 4 + 0x30). Dropping the last two
+  4-byte regions before the tail (`dword_AE9F4`, `dword_AE9F8`, regions 89 and 90; the latter is set by `start_encounter?`) makes the byte count
+  and the tail alignment fit exactly, so this `HELP.DAT` was most likely written by a build that predates those two variables. A port that wants to
+  load it should treat a short file as "missing trailing regions keep their defaults".
+- The final 52 bytes are `dword_ADDEC = 12` followed by 48 zero bytes (the timed-event list is empty although the count is 12, so that
+  count is not simply "number of queued events" at snapshot time).
