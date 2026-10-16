@@ -2907,12 +2907,11 @@ of the number, run if `version <= N`, oldest first), the steps every version get
 at (-1,-1) moved to their way system's first point, random TTValues rolled, the game's
 scroll distances derived from the window resolution and, unless the file was loaded in
 one go (type 2), mirrored animations rebuilt from their source, minimum pauses, and the
-"game needs a first character" check - and last the fixes 0xB3-0xB8 (`applyLateVersionFixes`,
+"game needs a first character" check - and last the fixes 0xB3-0xB8 (`applyLateVersionFixes`; the 0xB3 step writes the editor's build rules),
 run even for a type 2 load). The fix 0x9F is the only one that looks at the version itself
 (a file above 0x8E has the shadow translucency to convert). A fix reads fields that only
 exist for old files: they are in the record types only after `InitWithVersion(old)`, so a
-test must call that on a game before making the one it uses. Missing: the step of 0xB3 (see TODO.md); such files get a log warning, and < 99 are rejected as in
-the original.
+test must call that on a game before making the one it uses. Games older than 99 are rejected as in the original.
 
 `TTAnimation::SetMirrored` and `TTValue::SetRandomValue` are written by hand
 (TTAnimation.cpp, TTValue.cpp; declared through tools/gen_records.py's EXTRA_METHODS).

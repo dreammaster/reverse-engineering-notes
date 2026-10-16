@@ -1335,6 +1335,35 @@ void fixac(TVisionaireGame &game) {
 }
 
 
+/**
+ * The rules with which the editor's build packs the files of the game into its containers: for each kind of composed
+ * file that has more than one container, a rule made of the kind of file, the path of the composed file and how the
+ * files are numbered. (asm loc_92FCCE; the string of the original goes through the narrow characters and back.)
+ */
+void fixb3(TVisionaireGame &game) {
+	TVisObjRef gameRef = game.GetGame();
+	const int sceneFiles = gameRef.GetInt(kGameSceneComposedFiles);
+	const int characterFiles = gameRef.GetInt(kGameCharacterComposedFiles);
+	const int movieFiles = gameRef.GetInt(kGameMovieComposedFiles);
+	const int interfaceFiles = gameRef.GetInt(kGameInterfaceComposedFiles);
+	const int gameFiles = gameRef.GetInt(kGameGameComposedFiles);
+	std::vector<TCharHolder> rules;
+
+	auto addRule = [&](int files, const wchar_t *kind, int pathField, const wchar_t *suffix) {
+		if (files > 1)
+			rules.push_back(TCharHolder(wxString(kind) + gameRef.GetPath(pathField).GetFullPath() + wxString(suffix)));
+	};
+
+	addRule(movieFiles, L"\\eActionParts(VActionPartCommand=66);", kGameMovieComposedFile, L".vv<3c>;copy");
+	addRule(sceneFiles, L"\\eScenes;", kGameSceneComposedFile, L".vs<3i>");
+	addRule(characterFiles, L"\\eCharacters;", kGameCharacterComposedFile, L".vc<3i>");
+	addRule(interfaceFiles, L"\\eInterfaces;", kGameInterfaceComposedFile, L".vc<3i>");
+	addRule(gameFiles, L"\\eObjects;", kGameGameComposedFile, L".vi<3i>");
+	rules.push_back(TCharHolder(wxString(L"\\eGame;<Main.vis>")));
+
+	gameRef.SetValue(kGameBuildRules, rules, Event::kSendEvent);
+}
+
 void fixb6(TVisionaireGame &game) {
 	game.GetGame().SetValue(kGameSmoothScrolling, true, Event::kSendEvent);
 }
@@ -1476,8 +1505,8 @@ void applyVersionFixes(TVisionaireGame &game, int version) {
 }
 
 void applyLateVersionFixes(TVisionaireGame &game, int version) {
-	if (version <= 0xB3 && wxLog::loglevel >= 0)
-		wxLog::logexpanded(L"TVisionaireGame::UpdateVersion: the container build rules of version 179 are not reconstructed");
+	if (version <= 0xB3)
+		fixb3(game);
 	if (version <= 0xB6)
 		fixb6(game);
 	if (version <= 0xB8)

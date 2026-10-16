@@ -301,10 +301,7 @@ bool TVisionaireGame::UpdateVersionGame(int version) {
 //
 // and last the fixes for the file versions 0xB3-0xB8 (the smooth scrolling and the steps of the walk).
 //
-// NOT reconstructed: the step of version 0xB3 (it makes the lists of the files an editor packs into its containers, the
-// kGameContainers/kGameBuildRules settings that only the editor's build reads). A file that old is
-// accepted without them, with a warning in the log; and games older than version 99 are rejected as in
-// the original.
+// Games older than version 99 are rejected as in the original.
 bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 	TVList list;
 	TVisObjRef game = GetGame();

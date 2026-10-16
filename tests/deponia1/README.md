@@ -16,6 +16,7 @@ Every test prints `<n> failures`.
 | test | what it covers |
 | --- | --- |
 | upgradetest | `UpdateVersion` (the upgrades of older projects) |
+| upgradeb3test | the upgrade of version 0xB3: the build rules for the containers |
 | upgrade71test | the upgrade of version 0x71: the interfaces of the characters become the game's, with a class each |
 | loadtest | load, save and load again, actions, items, scripts, a text, a dialog |
 | savetest | `SaveSaveGame` / `LoadSaveGame` |
