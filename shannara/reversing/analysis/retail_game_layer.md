@@ -591,6 +591,27 @@ file offsets (`_voice_dir_cache`); track `i` spans `[dir[i], dir[i+1])` (`get_so
 `make_voice?` and `make_sound` ids index it directly. `make_voice?` streams the track in `_voice_buffer_size` chunks through
 a Miles AIL sample with double buffering (`_AIL_sample_buffer_ready` / `_AIL_load_sample_buffer`); `make_sound` loads the whole
 track into a locked handle and plays it once (`_AIL_set_sample_address`, EOS callback). Sample type / rate come from the
-sound driver defaults; the audio data are raw PCM tracks (the code scans them for 0x7F-0x81 bytes, i.e. the middle of unsigned
-8-bit samples, to find silence), and `get_sound_id` returns 0 when `_sound_supported` is 0. Voices are only played when the INI
+sound driver defaults; the data are streamed as-is to the AIL buffers (the code also counts bytes in 0x7F-0x81, purpose not established), and `get_sound_id` returns 0 when `_sound_supported` is 0. Voices are only played when the INI
 enables them (`_voice_enabled`), and `make_voice?` first checks `sub_13A20` (abort/skip input) so a click skips the line.
+
+## 18. Event dispatch (seventeenth pass)
+
+`dispatch_event?(ev)` (`0x1173x`) routes the event record filled by `get_event(mask, &ev)` (`dword type` at `+0`, parameters
+further in; word at `+0Ah` carries an id for the audio events). A per-UI-mode hook table (`off_A7E84`, indexed by the high word of
+`dword_A7E9A`, entries `funcs_11780[]`) is offered the event first; a return of 1 consumes it. Otherwise by type:
+
+| Event type | Handler |
+|---|---|
+| `0x01` | `handle_key_event?` (typed keys, debug keys) |
+| `0x02`, `0x08` | `handle_move_event?` (mouse movement / hover over regions) |
+| `0x04` | `handle_click_event?` (region hit-test via `get_region_`, then a switch on the region kind: 1 = scroll arrows/list, 3, 5, 6, 7, 8 = verb/object/inventory widgets, 9, 0x64 = picture hotspots) |
+| `0x10`, `0x20`, `0x40` | `popup_window_event?` (window open/close notifications; a 0x10 event is swallowed while `word_A7E5C` is non-zero) |
+| `0x80`, `0x100` | `sub_10B20(param)`, `sub_132A0(param)` (window refresh / redraw requests) |
+| `0x200` | `sub_1B9C8` = idle/notification, sends handler phase 7 |
+| `0x400` | `start_music(id = word at +0Ah)` |
+| `0x800` | `make_voice?(id)` then `sub_82400` (queued voice playback) |
+| `0x1000` | `sub_1FE8C` |
+
+So audio is also driven through the event queue (music and voice requests are posted as events), which is why handlers can
+issue them without blocking. Click handling shares the verb-object command line with `run_command?` (section 2.4): a click on
+a verb widget sets the pending verb, a click on an object/inventory widget supplies `dobj`/`iobj` and calls `run_command?`.
