@@ -65,6 +65,12 @@ FORCE += [
     (0x170E4, "enc_hook_14?", "Scripted combat event hook for encounter 14 (start_encounter? passes it to combat_loop?, stored in _old_keyboard_vector). Called as hook(combatant, code); returns -1 for the default behaviour, anything else overrides. Codes: 0 with combatant NULL = fight start (edx=0) / round tick (edx=round no.), 1 turn start, 2 choose target, 3 roll damage (return value = damage), 4 combatant damaged, 5 attack starts, 6 defend, 7 idle/pick action, 8 flee attempt, 10 animation finished. Data xref only."),
 ]
 
+# Default verb property (eighteenth pass: build_command_line? uses property B as the object's default verb)
+FORCE += [
+    (0x1A7CC, "object_get_default_verb?", "(obj=ax) -> the object's default verb id (was object_get_prop_b?): type2 +1Dh, type3 +24h, type4 +0Ch, type5 +25h; 0 for type 1. build_command_line? uses it to pick the verb for a click on the object."),
+    (0x1A834, "object_set_default_verb?", "(obj=ax, verb=edx): setter for the default verb (was object_set_prop_b?)."),
+]
+
 RENAMES = [
     (0x19FB4, "object_get_name?",
      "(obj=ax) -> char* into the runtime string pool unk_CD9D0 at (record[+0] - 1); 0 if none. The pool is "
@@ -168,7 +174,7 @@ RENAMES = [
     (0x28858, "play_cutscene?",
      "6 KB switch over cutscene ids: plays Autodesk .FLC animations (7700.FLC, 8530.flc ... 9595.flc, OPEN1-5.FLC, SHR_*.FLC) "
      "with fade_in/out_palette, load_music/start_music, make_sound."),
-    (0x1E304, "build_command_line?", "Builds the on-screen command text ('Look at Jak', 'Look around', ' the ' ...) using get_string_width/set_font_outline."),
+    (0x1E304, "build_command_line?", "Builds/validates the pending command and its on-screen text ('Look at Jak' ...): picks a default verb from the object (object_get_default_verb?, attribute tests), consults the 12-byte override table at dword_ADED4 {verb, obj, obj}, verb_get_flags (0 = no object, 1 = dobj, 2 = dobj+iobj), stores verb/dobj/iobj in dword_CD918 / CD924+2 / CD92C+2, sends PHASE 0x1D to the dobj handler and 0x1E to the iobj handler (return 2 cancels, other non-zero = handled), then lays out the text with get_string_width/set_font_outline."),
     (0x24D34, "save_restore_dialog?", "'Save Game' / 'Restore Game' list dialog: Ok/Cancel/Delete, 'Overwrite the saved game?' / 'Delete the saved game?'."),
     (0x124DC, "handle_key_event?", "dispatch_event? case 1: keyboard handler incl. debug keys ('Version: %s', 'Free memory: %s', 'Animation %sabled')."),
     (0x12C78, "handle_click_event?", "dispatch_event? case 4: mouse press -> region hit-testing / buttons."),

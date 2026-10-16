@@ -192,7 +192,8 @@ the event. Phases observed at call sites:
 | 0x0D-0x0F, 0x1A | `sub_1EE10`, `sub_6A0C4` | object-level actions (not yet traced) |
 | 0x16, 0x17 | `main_`, `sub_11478`, `sub_11054` | init / restart |
 | 0x18 | 8 sites incl. `objh_259`, `objh_533` | most common non-command phase (not yet traced) |
-| 0x1B, 0x1D, 0x1E | `sub_19DBC`, `sub_1E304` | not yet traced |
+| 0x1B | `sub_19DBC` | not yet traced |
+| 0x1D / 0x1E | `build_command_line?` (`0x1E304`) | the command being assembled is offered to the direct object's handler (0x1D) and the indirect object's (0x1E) with verb/dobj/iobj already in `dword_CD918` / `CD924+2` / `CD92C+2`; return 2 cancels the command, any other non-zero = handled |
 
 ### Verb vocabulary
 
@@ -404,7 +405,8 @@ Reading `go_to_room?` and the 63 room handlers' dispatch chains pins down the li
 | 0x18 | `load_game?` | game was restored |
 | 0x19 | `sub_1DA04` | post-start notification |
 | 0x1A | `go_to_room?` | a following object (`unk_AE81E`) has been moved in with the party |
-| 0x1B, 0x1D, 0x1E | `sub_19DBC`, `sub_1E304` | not yet traced |
+| 0x1B | `sub_19DBC` | not yet traced |
+| 0x1D / 0x1E | `build_command_line?` (`0x1E304`) | the command being assembled is offered to the direct object's handler (0x1D) and the indirect object's (0x1E) with verb/dobj/iobj already in `dword_CD918` / `CD924+2` / `CD92C+2`; return 2 cancels the command, any other non-zero = handled |
 
 (Handlers of non-room objects mostly dispatch on 3/4/6 with the verb in `dword_CD918`, as the
 verb is not a parameter.) `go_to_room?` also awards the room's stored points once
@@ -491,7 +493,7 @@ adaptive average (`dword_CF450/CF458/CF460`) corrects drift; minimum 10 ms.
 | Function | Offsets in the record, by type |
 |---|---|
 | `object_get/set_prop_a?` | t1 `+14h`, t2 `+19h`, t3 `+20h`, t5 `+21h` (none for t4) |
-| `object_get/set_prop_b?` | t2 `+1Dh`, t3 `+24h`, t4 `+0Ch`, t5 `+25h` (none for t1) |
+| `object_get/set_default_verb?` (was prop B) | t2 `+1Dh`, t3 `+24h`, t4 `+0Ch`, t5 `+25h` (none for t1): the verb `build_command_line?` uses when the object is clicked |
 | `object_get/set_prop_dword?` | t2 `+11h`, t3 `+14h`, t5 `+15h` |
 | `object_get_list_slot?` | index property t1 `+1Dh`, t2 `+21h`, t3 `+28h`, t4 `+10h`, t5 `+29h` into a pool at `unk_AF370` (save region 15, 2,904 bytes) of 0-terminated dword lists; `object_list_append?` adds to one |
 
