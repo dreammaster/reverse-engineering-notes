@@ -31,6 +31,7 @@ Every test prints `<n> failures`.
 | fadetest | every fade effect of a scene change |
 | interfacetest | an interface with a button, an item in a place holder, the use command, an item used on an object, a command on a statue after a walk |
 | waytest | walking around a wall along the way points; the free walk (controller) against a wall |
+| way2test | the way round the end of a bar when no way point can be seen (shortestPath) |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
