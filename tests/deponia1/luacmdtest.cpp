@@ -379,6 +379,24 @@ int main() {
 		}
 		run("unregisterEventHandler('keyEvent', 'onCtl')");
 
+		// the sprite of the scripts: made from a path, with a position and a size from the picture
+		run("sp = createSprite('pics/a.png'); sp_path = sp:getPath(); sp:setPosition({x = 5, y = 7}); p = sp:getPosition(); "
+		    "sp_x = p.x; sp_y = p.y; sz = sp:getSize(); sp_w = sz.x; sp_h = sz.y; sp_text = tostring(sp); "
+		    "sp:setPath('pics/b.png'); sp_path2 = sp:getPath(); sp:setPath(5); sp_path3 = sp:getPath(); sp:setPosition(7); "
+		    "sp_missing = createSprite('pics/none.png'):getSize().x; sp_empty = tostring(createSprite(''))");
+		printf("sprite: %s %g,%g %gx%g | %s | %s | %s | %g %g\n", text("sp_path").c_str(), number("sp_x"), number("sp_y"), number("sp_w"),
+		       number("sp_h"), text("sp_text").c_str(), text("sp_path2").c_str(), text("sp_empty").c_str(), number("sp_missing"), 0.0);
+		CHECK(text("sp_path").find("a.png") != std::string::npos);
+		CHECK(number("sp_x") == 5 && number("sp_y") == 7);
+		CHECK(number("sp_w") == 20 && number("sp_h") == 20);
+		CHECK(text("sp_text").find("Sprite: path") != std::string::npos);
+		CHECK(text("sp_text").find("pos (5,7)") != std::string::npos);
+		CHECK(text("sp_path2").find("b.png") != std::string::npos);
+		CHECK(text("sp_path3") == text("sp_path2"));
+		CHECK(text("sp_empty") == "Sprite: Empty");
+		// (a picture that does not load has the size -1)
+		CHECK(number("sp_missing") == -1);
+
 		{
 			control->SaveEventHandlers();
 
