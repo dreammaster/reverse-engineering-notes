@@ -185,6 +185,15 @@ int main() {
 		}
 		gameRef.SetLink(kGameStartAction, action, true);
 
+		// an action that takes the key from the hero
+		TVisObjRef takeAction = game.CreateObject(7, gameRef, kGameActions);
+		takeAction.SetName(TCharHolder("TakeKey"));
+		TVisObjRef take = game.CreateObject(8, takeAction, kActionActionParts);
+		take.SetValue(kActionPartCommand, kCommandCharacterItem, TSendEventEnum::kNoEvent);
+		take.SetLink(kActionPartLink, key, true);
+		take.SetValue(kActionPartInt, 1, TSendEventEnum::kNoEvent);
+		take.SetLink(kActionPartAltLink, hero, true);
+
 		wxFileName out(L"click.dat");
 		CHECK(game.BinarySave(out, nullptr, false, nullptr));
 	}
@@ -338,6 +347,35 @@ int main() {
 		click(160, 90);
 		printf("back at the start: %s\n", shownItem().c_str());
 		CHECK(shownItem() == "Key");
+
+		// the key is held and taken from the hero by an action: it is not the used item any more, it is not in the hand, it is gone from
+		// the slot (and the object under the mouse is not the one that is gone)
+		click(30, 125);
+		click(100, 30);
+		{
+			TVisObjRef g = control->GetVisionaire()->GetGame();
+
+			CHECK(g.GetBool(kGameUsedItemPicked));
+			CHECK(shownItem() == "Key");
+
+			TVisObjRef taking;
+
+			control->GetVisionaire()->GetObjectByName(wxString(L"TakeKey"), 7, taking);
+			TGAction::AddRunningAction(taking);
+			frames(10);
+
+			CHECK(g.GetLink(kGameUsedItem).IsEmpty());
+			CHECK(!g.GetBool(kGameUsedItemPicked));
+
+			TVList items;
+
+			control->GetCurrentCharacter()->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
+			CHECK(items.size() == 2);
+			printf("after taking the key: shown %s, %d items\n", shownItem().c_str(), (int)items.size());
+			CHECK(shownItem() == "Coin");
+			CHECK(g.GetLink(kGameCurrentObject).IsEmpty() ||
+			      std::string(g.GetLink(kGameCurrentObject).GetName().c_str().mb_str()) != "Key");
+		}
 
 		// the same for an item in a slot: scale, and the visibility kept between 0 and 100
 		for (TGInterface *iface : control->GetActiveInterfaces()) {
