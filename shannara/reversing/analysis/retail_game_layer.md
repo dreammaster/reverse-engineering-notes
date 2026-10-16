@@ -574,3 +574,23 @@ leaf with symbol `-v-1`. Symbols `>= 0x80` with `sym - 0x80 < phraseCount` copy 
 (so phrase text is not NUL-expanded recursively); every other symbol is written as one byte (symbol 0 therefore emits the string's
 terminating NUL). Decoding stops when the compressed length is used up *and* the last symbol was 0; the return value is the
 number of output bytes. Pure and easy to port - the only unknowns left are the exact file offsets of the tree/phrase sections.
+
+## 17. Data file naming and the voice file (sixteenth pass)
+
+`get_file_name(type, number)` = `sprintf("%s%03d.%s", _shanPtr, number, ext)` with `_shanPtr` = `"shan"` (set by `setShanPtr("shan")`
+in `startup`) and `ext` from `_file_path_8[type]`: **PIC, RGN, FNT, MUS, SAV, SAV, VOC, Q** for types 0-7 (`FTYPE_*`).
+`get_file_path` then prepends the directory chosen by the INI (`PICDATA` for pictures; `VOCDATA` supplies the voice/sound
+directory, `SAVEDATA` the save directory; entries in `_filePaths[type]`) as `"%s%s"`. So the retail files are
+`shan020.PIC` ... (picture file number = `picId >> 8`), `shan001.VOC`-style voice files, `shanNNN.SAV` saves, etc. Videos are
+the exception: they are opened by their own base name (`9100`, ...) plus `.Q` / `.FLC` (section 13). `open_file` opens mode
+`"wb"` for type 5 (SAV write) and `"rb"` otherwise.
+
+**Voice/sound file (`open_file(6)`, kept open in `_voice_fp`)**: `u32 trackCount` followed by `trackCount` u32 absolute
+file offsets (`_voice_dir_cache`); track `i` spans `[dir[i], dir[i+1])` (`get_sound_id(id, &offset)` returns the length as
+`dir[i+1] - dir[i]`, so the directory needs an end sentinel as its last entry; ids `< 0` or `>= trackCount` give 0). Dialog,
+`make_voice?` and `make_sound` ids index it directly. `make_voice?` streams the track in `_voice_buffer_size` chunks through
+a Miles AIL sample with double buffering (`_AIL_sample_buffer_ready` / `_AIL_load_sample_buffer`); `make_sound` loads the whole
+track into a locked handle and plays it once (`_AIL_set_sample_address`, EOS callback). Sample type / rate come from the
+sound driver defaults; the audio data are raw PCM tracks (the code scans them for 0x7F-0x81 bytes, i.e. the middle of unsigned
+8-bit samples, to find silence), and `get_sound_id` returns 0 when `_sound_supported` is 0. Voices are only played when the INI
+enables them (`_voice_enabled`), and `make_voice?` first checks `sub_13A20` (abort/skip input) so a click skips the line.
