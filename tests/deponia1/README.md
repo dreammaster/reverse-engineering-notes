@@ -48,6 +48,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | basetest | the string handle (comparisons, ranges, copies), the growing byte buffer (numbers big end first, texts, zlib, the cipher) and the sprite description (reload needed, transparency, Lua text) |
 | compmgrtest | the container manager: the main, game, scene, character, interface and movie containers, files by their references, volumes that are not there, export, the movie header, clean up |
 | sound2test | the sound engine with streams that play nothing: playing, pausing, muting, stopping and keeping, the volumes, the fades, the console lines |
+| matrixtest | the matrices the scripts set (graphics.invMatrix1, graphics.matrix1): the click goes back through the inverse one, points go through the matrix |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
