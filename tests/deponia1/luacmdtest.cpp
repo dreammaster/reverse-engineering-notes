@@ -285,6 +285,52 @@ int main() {
 		printf("hero walked from %d,%d to %d,%d\n", standing.x, standing.y, hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
 		CHECK(hero.GetPoint(kCharacterPosition)->x == 300 && hero.GetPoint(kCharacterPosition)->y == 300);
 
+		// the tweens: a number the script names, a field of an object, and the method `to` of the objects
+		run("tw = -1; tweenTable = {value = -1}; startTween('tw', 0, 100, 3000, easeLinearIn); "
+		    "startTween('tweenTable.value', 10, 20, 3000, easeQuadOut)");
+		frames(20);
+		printf("tween under way: %g\n", number("tw"));
+		CHECK(number("tw") >= 0 && number("tw") < 100);
+		frames(400);
+		CHECK(number("tw") == 100);
+		lua_getglobal(L, "tweenTable");
+		lua_getfield(L, -1, "value");
+		CHECK(lua_tonumber(L, -1) == 20);
+		lua_settop(L, 0);
+
+		// the same name starts again
+		run("startTween('tw', 5, 6, 100, easeLinearIn); startTween('tw', 50, 60, 100, easeLinearIn)");
+		frames(300);
+		CHECK(number("tw") == 60);
+
+		// an easing that is not one: the command fails
+		run("tw = -1; startTween('tw', 0, 100, 100, 99)");
+		frames(50);
+		CHECK(number("tw") == -1);
+
+		TVisObjRef tweenDoor;
+
+		control->GetVisionaire()->GetObjectByName(wxString(L"Door"), 6, tweenDoor);
+		run("startObjectTween(Objects['Door'], VObjectVisibility, 100, 40, 200, easeLinearIn, false, false)");
+		frames(300);
+		CHECK(tweenDoor.GetInt(kObjectVisibility) == 40);
+		run("startObjectTween(Objects['Door'], VObjectOffset, {x = 0, y = 0}, {x = 30, y = 40}, 200, easeCubicInOut)");
+		frames(300);
+		CHECK(tweenDoor.GetPoint(kObjectOffset)->x == 30 && tweenDoor.GetPoint(kObjectOffset)->y == 40);
+		run("Objects['Door']:to(200, {VObjectVisibility = 70}, easeSineInOut)");
+		frames(300);
+		CHECK(tweenDoor.GetInt(kObjectVisibility) == 70);
+		// a tween that is over is gone: the field can be set again
+		tweenDoor.SetValue(kObjectVisibility, 55, TSendEventEnum::kNoEvent);
+		frames(5);
+		CHECK(tweenDoor.GetInt(kObjectVisibility) == 55);
+		tweenDoor.SetValue(kObjectVisibility, 70, TSendEventEnum::kNoEvent);
+		// (an object has one tween: the second `to` replaces the first)
+		run("Objects['Door']:to(200, {VObjectVisibility = 10}, easeSineInOut); Objects['Door']:to(200, {VObjectOffset = {x = 5, y = 6}})");
+		frames(300);
+		CHECK(tweenDoor.GetInt(kObjectVisibility) == 70);
+		CHECK(tweenDoor.GetPoint(kObjectOffset)->x == 5 && tweenDoor.GetPoint(kObjectOffset)->y == 6);
+
 		// the methods of the objects that read what a field holds
 		run("local h = Characters['Hero']; local d = Objects['Door']; "
 		    "api2 = {}; "

@@ -158,9 +158,12 @@ bool TGameControl::Update() {
 	if (!EngineUpdatePaused) {
 		double deltaMs = static_cast<double>(SDL_GetTicks() - _lastUpdateTicks);
 
-		for (TVisObjTween &tween : _visObjTweens) {
-			if (!tween.update(deltaMs))
-				break;
+		// (a tween that is over is taken out; the one after it is next)
+		for (auto it = _visObjTweens.begin(); it != _visObjTweens.end();) {
+			if (!it->update(deltaMs))
+				it = _visObjTweens.erase(it);
+			else
+				++it;
 		}
 
 		// Confirmed (asm lines 469910-470176): each tween the scripts named sets the Lua variable of
