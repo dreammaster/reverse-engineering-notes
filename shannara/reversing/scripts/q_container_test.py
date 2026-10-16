@@ -118,6 +118,8 @@ class Player:
             body = self.pos + 6
             if t == 0xFFFF:
                 return None
+            if t in (6, 7):          # no payload (real files carry a meaningless size of 768)
+                size = 0
             if t in (2, 3, 4):
                 size += self.audio          # the size field does not count the audio bytes
             payload = d[body: body + size]

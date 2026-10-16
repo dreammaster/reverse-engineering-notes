@@ -68,6 +68,24 @@ class Gen:
                 return f()
         return cands[-1][1]()
 
+    def _rawblock(self):
+        r = self.r
+        kind = r.random()
+        if kind < 0.5:
+            return bytes([self.pc()]) + bytes(r.randrange(256) for _ in range(15))
+        if kind < 0.75:
+            k = r.choice((1, 2))
+            ncol = k + 2
+            bits = r.getrandbits(32)
+            if k == 1:      # only indices 0..2 are meaningful with 3 colours, keep 3 out
+                bits = sum((r.randrange(3) << (2 * i)) for i in range(16))
+            return bytes([0xF8 | k]) + bits.to_bytes(4, "little") + bytes(r.randrange(256) for _ in range(ncol))
+        k = r.choice((3, 4, 5, 6))
+        ncol = k + 2
+        lo = sum(r.randrange(ncol) << (3 * i) for i in range(8))
+        hi = sum(r.randrange(ncol) << (3 * i) for i in range(8))
+        return bytes([0xF8 | k]) + lo.to_bytes(3, "little") + hi.to_bytes(3, "little") + bytes(r.randrange(256) for _ in range(ncol))
+
     def _mot_ok(self, dst, b):
         m = self.d.mot[b]
         return 0 <= dst + m and abs(m) < 0x20000 and dst + m + 3 * 640 + 8 < VIDEO_SIZE - 0x10000
@@ -106,8 +124,15 @@ class Gen:
         rem = d.cols + 1
         raw = d.raw_mode or st in (T0, SKIP, COMP_COPY, COMP_OVL)
         if raw:
-            n = r.randrange(1, rem + 1)
-            body = b"".join(bytes([self.pc()]) + bytes(r.randrange(256) for _ in range(15)) for _ in range(n))
+            term = rem >= 2 and r.random() < 0.15
+            n = r.randrange(1, (rem - 1 if term else rem) + 1)
+            body = b""
+            stop = r.randrange(0, n) if term else None
+            for k in range(n):
+                if k == stop:
+                    body += bytes([r.choice((0xF8, 0xFF)), r.randrange(256)])
+                    break
+                body += self._rawblock()
             return bytes([0xFB, n]) + body
         if rem < 2:
             return bytes([0xFF])

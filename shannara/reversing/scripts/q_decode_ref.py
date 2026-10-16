@@ -15,7 +15,12 @@ ROW = PITCH * 4  # bytes per block row (0xA00)
 T0, SKIP, BACK, BLK4, SOLID, FWD, MOTION, ABS, BLK3, COMP_COPY, COMP_OVL = range(11)
 
 
-def load_tables(dump_dir):
+def load_tables(dump_dir=None):
+    """(hi, lo, motion). Without a dump dir the copy saved in q_tables.json (taken from the exe data segment) is used."""
+    if dump_dir is None:
+        import json, os
+        t = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "q_tables.json")))
+        return t["hi"], t["lo"], t["motion"]
     """mask tables and motion offsets live in the exe's data segment"""
     import json, os
     meta = json.load(open(os.path.join(dump_dir, "segs.json")))
@@ -241,6 +246,62 @@ class QDecoder:
         self.p += 2
         self.run_done(n)
 
+    def raw_run(self, n):
+        """`FB n` in the raw states: n blocks, each raw (16 bytes), 2-bit (F9/FA) or 3-bit (FB-FE) palettised, or a terminator."""
+        s = self.s
+        pos = self.p + 2
+        d = self.dst
+        row_i = self.row_i
+        # the engine accounts for all n blocks up front
+        self.cols -= n
+        self.idx += n
+        k = 0
+        terminated = False
+        while k < n:
+            b = s[pos]
+            if b < 0xF8:
+                rows = [bytes(s[pos + y * 4: pos + y * 4 + 4]) for y in range(4)]
+                pos += 16
+            elif b in (0xF9, 0xFA):
+                bits = int.from_bytes(s[pos + 1: pos + 5], "little")
+                cols = s[pos + 5: pos + 5 + (b & 7) + 2]
+                px = [cols[(bits >> (2 * i)) & 3] if ((bits >> (2 * i)) & 3) < len(cols) else 0 for i in range(16)]
+                rows = [bytes(px[y * 4: y * 4 + 4]) for y in range(4)]
+                pos += 5 + (b & 7) + 2
+            elif 0xFB <= b <= 0xFE:
+                lo = int.from_bytes(s[pos + 1: pos + 5], "little")
+                hi = int.from_bytes(s[pos + 4: pos + 8], "little")
+                cols = s[pos + 7: pos + 7 + (b & 7) + 2]
+                px = [cols[(lo >> (3 * i)) & 7] for i in range(8)] + [cols[(hi >> (3 * i)) & 7] for i in range(8)]
+                rows = [bytes(px[y * 4: y * 4 + 4]) for y in range(4)]
+                pos += 7 + (b & 7) + 2
+            else:                                       # F8 / FF: skip one block and leave the run
+                pos += 2
+                d += 4
+                self.cols -= 1
+                self.idx += 1
+                terminated = True
+                break
+            self.put_block(d, rows)
+            d += 4
+            k += 1
+        self.p = pos
+        self.dst = d
+        self.run_end_raw()
+
+    def run_end_raw(self):
+        if self.cols == -1:                  # row finished
+            self.cols = self.max_col
+            self.rows -= 1
+            self.idx += self.W - self.max_col - 1
+            if self.rows == 0:
+                self.done = True
+                return
+            self.row_i += 1
+            self.rowstart += ROW
+            self.dst = self.rowstart
+        self.state = T0
+
     def run_done(self, n):
         self.next_block(n)
         if not self.done:
@@ -253,10 +314,8 @@ class QDecoder:
         q = self.p + 2
         s = self.s
         if self.raw_mode or st in (T0, SKIP, COMP_COPY, COMP_OVL):
-            for k in range(n):
-                rows = [bytes(s[q + 16 * k + y * 4: q + 16 * k + y * 4 + 4]) for y in range(4)]
-                self.put_block(d + 4 * k, rows)
-            self.p = q + 16 * n
+            self.raw_run(n)
+            return
         elif st == SOLID:
             for k in range(n):
                 self.put_block(d + 4 * k, [bytes([s[q + k]]) * 4] * 4)

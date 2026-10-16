@@ -1,5 +1,10 @@
 # Q video codec (demo `q_open`/`q_load`/`q_expand`, block decoder `sub_1652E0`)
 
+**Confirmed on real data (2026-10-16):** `scripts/q_play.py` decodes the demo's `Logosvga.q` (79 frames) and `Brona_2.q` (191 frames) completely,
+every frame consuming exactly its chunk, and the frames are the correct pictures (Legend logo animation, the Brona/sword scene). Real files
+use only chunk types 1, 7, 5, 2 (no audio in the .Q: `audioSampleRate` = 0; sound is a separate VOC), 640x480 (160x120 blocks), 10 fps.
+Type 6/7 chunks carry a size field of 768 but **no payload**. Decoder tables are saved in `scripts/q_tables.json`.
+
 Retail tries `NAME.Q` before `NAME.FLC` (see retail_game_layer.md section 13), so this is the main cutscene format.
 **The block decoder is verified**: `scripts/q_decode_ref.py` matches the real machine code (run under unicorn by
 `scripts/q_emulate.py`) on thousands of random streams (`scripts/q_fuzz.py`: pixels and consumed bytes identical;
@@ -48,5 +53,12 @@ same source block n times; after COMP_COPY = composite co-located n blocks; afte
 FB after SOLID = n colour bytes; BACK/FWD/MOTION = n offset bytes; ABS = n u16 indices; BLK4 = n x (b2 b3) with the
 previous colours; BLK3 = n patterns, each qmap index (<80) or `b2 b3` (b2 >= 80), previous colours; at start/SKIP/composite
 states or in raw mode = n raw 16-byte blocks. Exact code: `q_decode_ref.py`. Row ends reset the state.
+
+## Raw runs contain richer blocks (found on real data)
+In a raw run (`FB n` in the raw states, or any `FB` once a type-7 chunk was seen) each of the `n` blocks starts with a byte `b`:
+`b < F8` = 16 raw pixel bytes; `F9`/`FA` = 2-bit palettised block `[b][u32 bits][b&7+2 colours]` (pixel i = colour[(bits >> 2i) & 3], row-major, 8 or 9 bytes);
+`FB..FE` = 3-bit palettised block `[b][u32 at +1 (pixels 0-7)][u32 at +4 (pixels 8-15)][(b&7)+2 colours]` (pixel i = colour[3 bits of its dword], 7 + b&7 + 2 bytes);
+`F8`/`FF` = terminator: 2 bytes, skip one block and leave the run (the engine counts n+1 blocks, so the encoder only uses it consistently).
+Both the raw and palettised forms are fuzz-verified against the real decoder.
 
 Open: palette use / audio sync follow `flix_play` (demo) and `video_play?` (retail); real .Q files would validate the container.
