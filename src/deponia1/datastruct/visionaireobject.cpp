@@ -400,8 +400,9 @@ TVisionaireObject *TVisionaireObject::GetLink(int field) const {
 		return nullptr;
 
 	const TLink &link = GetRefLink(_data->GetValue(field, eTypeData::kLink));
+	// (an "any object" link is the object of the game that stands for any)
 	if (link.IsAnyLink())
-		return nullptr;
+		return _visionaire->GetAnyObject().GetObjectPointer();
 	if (link.GetId().getId() == -1 && link.GetId().getTable() == 0xFF)
 		return nullptr;
 	return _visionaire->GetObjectById(link.GetId());
