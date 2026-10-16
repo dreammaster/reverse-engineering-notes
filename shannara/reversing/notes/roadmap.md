@@ -124,25 +124,23 @@ Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
 
-## Retail status (updated 2026-10-16, passes 10-20; see `analysis/retail_game_layer.md` sections 13-20 and `retail_combat.md`)
+## Retail status (updated 2026-10-16, passes 10-28; see `analysis/retail_game_layer.md` sections 13-28, `retail_combat.md`, `q_codec_spec.md`, `demo_script.md`)
 
-Done since the first retail passes: combat engine (combatant block, hook protocol with codes 0-10, default damage/target rules,
-animation records of type pic/FLC/Q), video playback (`.Q` tried before `.FLC`), the 12-cutscene script `play_cutscene?`, the
-dialog descriptor table (linked lines), SHANSTR.DAT full layout + lookup + decoder, data-file naming (`shanNNN.EXT`),
-voice-file container, event dispatch, command-line builder with phases 0x1D/0x1E, turn clock + eight timed events (phase 0x1B),
-object property accessors (property B = default verb), `retail_handler_digest.txt` (all 715 handlers as call/compare digests).
-Q video codec: block decoder + container are reimplemented in Python and **verified against the real code under unicorn**
-(`q_codec_spec.md`, `scripts/q_decode_ref.py`, `q_fuzz.py`, `q_container_test.py`).
+**Real data is now available** (`game/` = retail files, `demo/` = demo files, both git-ignored; `game_out/` = local extraction/outputs, ignored). Validated against it:
+Q videos (decoded completely), SHANSTR.DAT (all 7,719 strings), OBJECT.DAT, FNT fonts, PIC containers (raw 8 bpp, XOR sprites, offsets, palettes; `PICS.UHA` unpacked
+with the bundled UHARC inside DOSBox), RGN hotspot files, MUS (XMIDI archive), FLC videos (standard), HELP.DAT/savegame layout, the whole dialog pipeline
+(descriptor -> id table -> SHANSTR), the tutorial replay script. The demo's four `FlixEntry` scripts are decoded (`demo_script.md`). Ready-to-use readers:
+`q_play.py`, `shanstr.py`, `fnt_read.py`, `pic_scan.py` (+ `load_entry`, `composite_xor`), `rgn_read.py`, `dialog_view.py`, `make_handler_notes.py`.
 
 Next, roughly in value order:
-- Port work: C++ versions of the verified pieces (Q decoder, LHA -lh4- decoder, SHANSTR decoder) - all have specs.
-- Combat internals: the 15 `enc_hook_NN?` bodies, `sub_16208`, `sub_16BBC`, "Give orders to..." menu (`sub_158AC`).
-- `show_dialog?` layout + portrait animation; `describe_contents?`; the eight timed events' exact rules; journal UI.
-- Remaining unnamed high-caller helpers (`retail_function_map.tsv`): `sub_1BCE0`, `sub_27FC0` family wrappers, `sub_10DAC` (status redraw), `sub_1F984` (modal window), `sub_669C4`.
-- Pic file container / FLC path still need real data files (none on this machine); the same unicorn approach could validate
-  `load_palette`/`load_pic` and `init_string_file?` with synthetic files if desired.
-- Rename `_old_keyboard_vector` to `_combat_hook`; regenerate `retail_function_map.tsv` (it predates many renames).
-- `Shannara.asm` is local-only (git-ignored); regenerate with `scripts/apply_to_idb.sh ... --export`.
+- Port work: C++ versions of the verified pieces (Q decoder, SHANSTR decoder, PIC/RGN/FNT readers, XMIDI directory); all have specs and Python references.
+- Not yet validated: LHA `-lh4-` picture path (the demo/retail files here do not use it), retail `.VOC` voices (this release ships MP3s instead), `Q` audio (the demo's `.q`
+  files carry none), the 0x20 pic flag (index 254 transparent) and the unexplained low flag bits.
+- Combat internals: the 15 `enc_hook_NN?` bodies, `sub_16208`, `sub_16BBC`, the "Give orders to..." menu (`sub_158AC`), the eight timed events' rules.
+- `show_dialog?` layout (portrait frames: which PIC entries animate a talker), `describe_contents?`, journal UI.
+- UHA extraction of the other archives (`FLICS2-7.UHA`) if all FLC names are wanted; `Vocs.zip` mp3 numbering vs dialog ids.
+- Rename `_old_keyboard_vector` to `_combat_hook`; regenerate `retail_function_map.tsv`.
+- Workflow: `scripts/apply_to_idb.sh <idb> <script> [--export out.asm]`; local text notes via `make_handler_notes.py` + `apply_handler_notes.py` (re-run after any rename pass, which resets handler comments).
 
 ## Housekeeping log
 
