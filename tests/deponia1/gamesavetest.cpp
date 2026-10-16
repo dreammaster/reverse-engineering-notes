@@ -339,6 +339,17 @@ int main() {
 		printf("loaded while saying: said %d\n", count("said"));
 		CHECK(count("said") == 2);
 		frames(400);
+
+		// the savegames that were made exist, the others do not, and a deleted one is gone
+		CHECK(control->SavegameExists(3));
+		CHECK(control->SavegameExists(6));
+		CHECK(!control->SavegameExists(40));
+		// (only the bookmarks of the scripts were made: no savegame of the menu)
+		CHECK(!control->SavegameExists(-3));
+		CHECK(control->DeleteSavegame(5));
+		CHECK(!control->SavegameExists(5));
+		CHECK(control->SavegameExists(4));
+		CHECK(!control->DeleteSavegame(5));
 	}
 
 	printf("%d failures\n", failures);

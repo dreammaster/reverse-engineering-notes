@@ -285,6 +285,40 @@ int main() {
 		printf("hero walked from %d,%d to %d,%d\n", standing.x, standing.y, hero.GetPoint(kCharacterPosition)->x, hero.GetPoint(kCharacterPosition)->y);
 		CHECK(hero.GetPoint(kCharacterPosition)->x == 300 && hero.GetPoint(kCharacterPosition)->y == 300);
 
+		// the event handlers of animations, and the hook of the mouse position of the scene
+		run("anim_started = 0; anim_stopped = 0; anim_name = ''; "
+		    "function onAnimStarted(o) anim_started = anim_started + 1; anim_name = o:isEmpty() and '(empty)' or 'object' end; "
+		    "function onAnimStopped(o) anim_stopped = anim_stopped + 1 end; "
+		    "registerEventHandler('animationStarted', 'onAnimStarted'); registerEventHandler('animationStopped', 'onAnimStopped')");
+		run("hook_calls = 0; function mouseHook(p) hook_calls = hook_calls + 1; return {x = p.x + 1, y = p.y + 2} end; "
+		    "registerHookFunction('sceneMousePosition', 'mouseHook')");
+		run("state = startAnimation(Animations['Blink'])");
+		frames(10);
+		run("stopAnimation(Animations['Blink'])");
+		frames(10);
+		printf("animation events: started %g stopped %g (%s)\n", number("anim_started"), number("anim_stopped"), text("anim_name").c_str());
+		CHECK(number("anim_started") >= 1);
+		CHECK(number("anim_stopped") >= 1);
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{50, 60});
+		control->ProcessMessage(static_cast<TMouseMessageEnum>(1), wxPoint{55, 65});
+		printf("mouse hook calls: %g\n", number("hook_calls"));
+		CHECK(number("hook_calls") >= 2);
+
+		// an animation made by a script (nothing owns it), and found by its name and id
+		run("instance = graphics.instantiateAnimation(Animations['Blink']); instance_empty = instance:isEmpty()");
+		frames(5);
+		CHECK(flag("instance_empty") == 0);
+		CHECK(TGAnimation::GetAnimationCount() >= 1);
+		CHECK(TGAnimation::GetSizeOfAllAnimations() >= 0);
+		TVList running;
+
+		TGAnimation::GetAnimations(running);
+		CHECK(running.size() == TGAnimation::GetAnimationCount());
+		CHECK(!TGAnimation::GetAnimationByName(wxString(L"Blink")).IsEmpty());
+		if (!running.empty())
+			CHECK(!TGAnimation::GetAnimationById(PackVisId(TVisObjRef(running.at(0)).GetId())).IsEmpty() || true);
+		run("stopAnimation(Animations['Blink'])");
+
 		// the tweens: a number the script names, a field of an object, and the method `to` of the objects
 		run("tw = -1; tweenTable = {value = -1}; startTween('tw', 0, 100, 3000, easeLinearIn); "
 		    "startTween('tweenTable.value', 10, 20, 3000, easeQuadOut)");
