@@ -18,6 +18,8 @@ Every test prints `<n> failures`.
 | upgradetest | `UpdateVersion` (the upgrades of older projects) |
 | upgradeb3test | the upgrade of version 0xB3: the build rules for the containers |
 | particletest | the particles of a scene and of its objects: what the backend is told |
+| upgrade63test | the first upgrades (0x63 and after): visibilities, renumbered commands, swapped links, fonts, texts, dialog parts |
+| zlibtest | the zlib stand-in: streams made by the real zlib (fixed, dynamic, stored), refused bad streams |
 | upgrade71test | the upgrade of version 0x71: the interfaces of the characters become the game's, with a class each |
 | loadtest | load, save and load again, actions, items, scripts, a text, a dialog |
 | savetest | `SaveSaveGame` / `LoadSaveGame` |

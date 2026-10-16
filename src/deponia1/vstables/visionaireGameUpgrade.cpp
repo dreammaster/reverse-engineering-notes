@@ -205,10 +205,10 @@ void fix64(TVisionaireGame &game) {
 
 		if (command == 1 || command == 2) {
 			part.SetValue(kActionPartCommand, 0x8B, Event::kNoEvent);
-			part.SetValue(kActionPartInt, command == 1, Event::kNoEvent);
+			part.SetValue(kActionPartInt, (int)(command == 1), Event::kNoEvent);
 		} else if (command == 3 || command == 4) {
 			part.SetValue(kActionPartCommand, 0x8C, Event::kNoEvent);
-			part.SetValue(kActionPartInt, command == 3, Event::kNoEvent);
+			part.SetValue(kActionPartInt, (int)(command == 3), Event::kNoEvent);
 		}
 	});
 
@@ -314,13 +314,13 @@ void fix68(TVisionaireGame &game) {
 		case 0x29:
 		case 0x2A:
 			part.SetValue(kActionPartCommand, 0x8D, Event::kNoEvent);
-			part.SetValue(kActionPartInt, command == 0x29, Event::kNoEvent);
+			part.SetValue(kActionPartInt, (int)(command == 0x29), Event::kNoEvent);
 			break;
 
 		case 0x2B:
 		case 0x2C:
 			part.SetValue(kActionPartCommand, 0x8E, Event::kNoEvent);
-			part.SetValue(kActionPartInt, command == 0x2B, Event::kNoEvent);
+			part.SetValue(kActionPartInt, (int)(command == 0x2B), Event::kNoEvent);
 			break;
 
 		default:
@@ -469,7 +469,7 @@ void fix6c(TVisionaireGame &game) {
 			part.SetValue(kActionPartInt, b, Event::kNoEvent);
 			part.SetValue(kActionPartAltInt, a, Event::kNoEvent);
 		} else if (command == 0x8B || command == 0x8C) {
-			part.SetValue(kActionPartInt, part.GetInt(kActionPartInt) == 0, Event::kNoEvent);
+			part.SetValue(kActionPartInt, (int)(part.GetInt(kActionPartInt) == 0), Event::kNoEvent);
 		}
 	});
 }

@@ -153,8 +153,12 @@ bool TDataGroup::SetValue(int field, const void *value, eTypeData type, TSendEve
 	if (typeData.GetType() != type) {
 		bool stringOrPath = (type == eTypeData::kPath && typeData.GetType() == eTypeData::kString) ||
 		                    (type == eTypeData::kString && typeData.GetType() == eTypeData::kPath);
-		if (!stringOrPath)
+		if (!stringOrPath) {
+			// (not in the original, which refuses without a word: this tells which field a script or a fix set as the wrong type)
+			if (wxLog::loglevel > 0)
+				wxLog::logexpanded(L"TDataGroup::SetValue: the field %ls is of another type", TXMLNames::GetString(field).c_str());
 			return false;
+		}
 	}
 
 	// ValueInt (0x148) and ValueFloat (0x325) hold the same number twice.
