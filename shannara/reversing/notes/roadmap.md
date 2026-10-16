@@ -124,21 +124,30 @@ Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
 
-## Retail status (updated 2026-10-12, see `analysis/retail_game_layer.md`)
+## Retail status (updated 2026-10-16, see `analysis/retail_game_layer.md` and `analysis/retail_combat.md`)
 
-Done: object model + 744 object records (`retail_objects.tsv`), 640 object handlers and 78
-verb defaults named (`objh_NNN`, `verbdef_NN_<Verb>`; tables `retail_object_handlers.tsv`,
-`retail_verb_handlers.tsv`), rooms/pics/music (`retail_rooms.tsv`), the whole savegame schema
-(`retail_save_regions.tsv`), OBJECT.DAT / SHANSTR.DAT structure, FLC inventory, the
-handler "script API" ranking, ~100 framework functions (working names ending in `?`).
+Done: object model + 744 object records (`retail_objects.tsv`), 640 object handlers and 78 verb defaults
+named (`objh_NNN`, `verbdef_NN_<Verb>`), rooms/pics/music, the savegame schema (section 6 written up
+2026-10-16), OBJECT.DAT / SHANSTR.DAT structure, FLC inventory, the handler "script API" ranking, handler
+classification (403 text-only / 274 state-changing), lifecycle phases, room overlay tables, the picture file
+container (structure only), and - new - the **combat engine skeleton** (combatant block, 19 templates,
+23-slot table, outcome rule, 15 per-encounter AI hooks named `enc_ai_NN?`).
 
-Next:
-- Still unnamed: 468 framework functions (74 KB), see `retail_function_map.tsv`
-  (sort by callers). High-value ones left: `sub_19BC0`, `sub_1A834`/`sub_1A768`
-  (object dword property setters), `sub_196B8`/`sub_19778` (party stat math), `sub_669C4`,
-  `sub_23560`, `sub_1F984`, `sub_22D50` (dialog text layout), combat engine 0x13000-0x17000.
-- Pic file container (`load_palette`/`load_pic`/`sub_77FEC`/blit writers) and the Q/gx
-  rendering path: needs real data files to validate; none on this machine.
-- Per-handler semantics: classify the 640 handlers (text-only vs state-changing).
-- Phase codes 0x0D-0x0F, 0x18, 0x1A-0x1E meanings (partially known: 0x18 = game restored).
-- `Shannara.asm` is local-only (git-ignored); regenerate with `unfold_functions.py` first.
+Next, roughly in value order:
+- **Combat internals** (`retail_combat.md` section 4): the 15 `enc_ai_NN?` callbacks and the action routines
+  (`sub_14808`, `sub_14774`, `sub_14438`, `sub_14ED0`, `sub_16208`, `sub_16BBC`) hold damage/hit/magic logic.
+- Other unnamed high-value framework functions (`retail_function_map.tsv`, sort by callers): `sub_19BC0`,
+  `sub_1A834`/`sub_1A768` (object dword property setters), `sub_196B8`/`sub_19778` (party stat math),
+  `sub_669C4`, `sub_23560`, `sub_1F984`, `sub_22D50` (dialog text layout).
+- Phase codes 0x1B, 0x1D, 0x1E (`sub_19DBC`, `sub_1E304`) still untraced.
+- Pic file container / Q-gx rendering path: needs real data files to validate; none on this machine.
+- Rename `_old_keyboard_vector` to `_combat_hook` (leftover demo name; it is the combat AI hook).
+- `Shannara.asm` is local-only (git-ignored); regenerate with `unfold_functions.py` then `export_asm.py`.
+
+## Housekeeping log
+
+- 2026-10-16: the first-pass demo renames (`set_gr_op`, `get_pixel`, `put_pixel`, `draw_line`, `line_to`,
+  `get_gr_color`, `music_to_sound_automatch`, plus comments on `sub_15E930` and `q_init`) were finally applied to
+  `Shannara Demo.idb` via `apply_re_findings.py` (the August attempt hung: the script lacked `idc.qexit(0)`).
+  The script's stale "LZHUF" comments were dropped - `apply_lzh_findings.py` carries the correct LHA `-lh4-` ones.
+  `Shannara Demo.asm` re-exported. New helper `scripts/export_asm.py`.

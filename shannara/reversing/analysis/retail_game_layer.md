@@ -262,6 +262,30 @@ new room, redraw.
 
 Vocabulary helpers: `verb_get_name`, `verb_get_flags`, `object_get_display_name?`.
 
+## 6. Savegame schema (fourth pass; written up late - the table is `retail_save_regions.tsv`)
+
+All persistence goes through one primitive, `save_io_block?` (`0x2405C`: `ptr=eax, size=edx,
+handle=ebx, op=ecx`): op 2 = `fp_write`, 0x0A = `fp_read`, 3 = `memmove` INTO an in-memory snapshot
+(undo), 0x0B = `memmove` OUT of it. A short transfer longjmps to the error label `unk_CF484`.
+`serialize_state?` (`0x240D4`, `op=eax, handle=edx`, 0 ok / -1 error) streams, in this order:
+
+1. 0x20-byte header (`byte_CF464`, the save title) - file saves only;
+2. every object's record **prefix** - the first `byte_20892[(type-1)*3]` bytes (33/41/48/24/49 for
+   types 1-5), i.e. location, slot, sibling, attribute bitmaps and child-list heads; the rest of each
+   record is static;
+3. the 92 registered extra regions in `_save_regions` (`{void *ptr; u32 size}`, count
+   `_save_region_count`) - the `_game_flags` bitset, party/combat state, journal, per-room state bytes...
+   (`retail_save_regions.tsv`; several are large: 3,403 / 2,904 / 1,037 bytes);
+4. 4 bytes at `dword_ADDEC`, then 0x30 bytes at `byte_CCBB8`.
+
+Total file size is 32,668 bytes. `save_game?` (`0x24210`) mode 2 writes `JOURNAL.nnn`
+(`sprintf("JOURNAL.%03d")`, `SAVEDATA` dir); `load_game?` (`0x243F4`) mode 2 restores one, 3 = undo from
+the memory snapshot, 4 = `HELP.DAT`, 5 = `RESTART.DAT`; on success it sends **phase 0x18** to the current
+room, clears flag 7 of `unk_CD8AC` and longjmps to `restart_jmp` with the mode (`main_` prints
+`[Undone.]` for 3). Consequence for a port: the world state is exactly "object record prefixes + 92 byte
+regions", so saves can be implemented as a flat dump of the port's own equivalents - but only
+original-format compatibility needs the exact layout above.
+
 ## 7. Data files and asset inventory (fifth pass)
 
 Strings embedded in the exe name every external file the retail game opens:

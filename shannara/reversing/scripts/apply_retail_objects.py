@@ -40,6 +40,11 @@ FORCE += [
      "WAS 'set_gr_op' (demo name copied wrongly): body is `xor eax,eax; mov al,_gr_op?; retn` - a getter."),
 ]
 
+# Mis-named by library matching (false demo match): must override the existing name
+FORCE += [
+    (0x15B08, "combat_stats_set_a?", "WAS 'reset_bevel_style?' (false demo match). Rewrites party template 0 (0xABB7C): +4 ptr unk_A8948, +8=0x519, +0Ah=0x46, +0Ch=0x2D, +0Eh=0x1E. Chosen by start_encounter? when object 0x2F is inside object 3; else combat_stats_set_b?."),
+]
+
 RENAMES = [
     (0x19FB4, "object_get_name?",
      "(obj=ax) -> char* into the runtime string pool unk_CD9D0 at (record[+0] - 1); 0 if none. The pool is "
@@ -188,6 +193,43 @@ RENAMES = [
      "sets its location/slot, and pushes it onto the head of newParent's list `slot` (newParent==0 only unlinks)."),
 ]
 
+# Combat engine (tenth pass, see analysis/retail_combat.md)
+RENAMES += [
+    (0x132EC, "choice_dialog?",
+     "Generic modal button dialog: (promptStringId=eax, option labels=edx...) -> 1-based choice. Used for 'Quit?', 'Restore?', 'Help', 'Combat Help', 'Give orders to...', 'Overwrite/Delete the saved game?', 'You have fallen in battle...'. 15 callers."),
+    (0x17310, "start_encounter?",
+     "start_encounter?(encounterId 0-25): snapshots the 0x15E-byte character-stat block _char_stats (dword_ADC4C), builds the combatant list with clone_combatant?/add_combatants? (party templates 0xABB7C.., enemy templates 0xA8FD4.. in _combatant_templates, stride 0x3F8), passes the per-encounter AI hook (enc_ai_NN?) to combat_loop?; on result -1 shows 'You have fallen in battle' (Try again / Restore). Returns the combat_loop? result (1 = victory). See analysis/retail_combat.md."),
+    (0x13CDC, "add_combatants?",
+     "add_combatants?(initNow, c1, c2, ..., 0): puts each combatant block into the first free slot of _combatants (dword_CCA44, 23 slots). initNow != 0 initialises it immediately (combat_init_combatant?, reinforcements); 0 defers it (+4Ch=0) until combat_loop? runs combat_init_all?."),
+    (0x15758, "clone_combatant?",
+     "clone_combatant?(template=eax) -> heap copy of a 0x3F8-byte combatant template with word +4Ah = 1."),
+    (0x14C50, "combat_pick_ready?", "(table=eax, now=edx) -> first combatant in slot order with HP(+3Ah)!=0 and now >= +46h (next-action time); reschedules it to now + (word at +2 = action period). Returns 0 if none."),
+    (0x14C94, "combat_init_all?", "(table=eax): runs combat_init_combatant? on every slot of the combatant table."),
+    (0x14CBC, "combatant_id_is_party?", "(combatant=eax) -> word +0 < 100 (ids 0-99 = party members indexing _char_stats, >= 100 = monsters)."),
+    (0x14CC8, "combat_init_combatant?",
+     "Initialises one combatant: clears +44h/+46h/+4Eh, +18h=1; party member (id<100): +38h=0, copies on-screen rects from unk_A7FF8[slot*8] into +1Eh/+26h, HP +3Ah/max +3Ch from _char_stats[id*14+2/+4]; monster: +38h=1, HP 100 default, rects from unk_A7F20; calls combat_hook_notify?, sets +4Ch=1."),
+    (0x14BD0, "combat_check_outcome?", "(table=eax) -> 0 = both sides still have living (+3Ah!=0) combatants, -1 = only monsters (+38h!=0) survive (defeat), 1 = no monsters alive (victory)."),
+    (0x15CF8, "enc_ai_00?", "Per-encounter AI hook for encounter 0: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x15D08, "enc_ai_01?", "Per-encounter AI hook for encounter 1: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x15DF8, "enc_ai_02?", "Per-encounter AI hook for encounter 2: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x15F40, "enc_ai_03?", "Per-encounter AI hook for encounter 3: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16208, "enc_ai_04?", "Per-encounter AI hook for encounter 4: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x165C4, "enc_ai_05?", "Per-encounter AI hook for encounter 5: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16728, "enc_ai_06?", "Per-encounter AI hook for encounter 6: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16964, "enc_ai_07?", "Per-encounter AI hook for encounter 7: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x160E8, "enc_ai_08?", "Per-encounter AI hook for encounter 8: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x169C4, "enc_ai_09?", "Per-encounter AI hook for encounter 9: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16A8C, "enc_ai_10?", "Per-encounter AI hook for encounter 10: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16AC4, "enc_ai_11?", "Per-encounter AI hook for encounter 11: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x16BBC, "enc_ai_12?", "Per-encounter AI hook for encounter 12: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x17064, "enc_ai_13?", "Per-encounter AI hook for encounter 13: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x170E4, "enc_ai_14?", "Per-encounter AI hook for encounter 14: passed by start_encounter? to combat_loop? (stored in _old_keyboard_vector); called with (combatant, code), code 5/7 = choose action/target. Never called directly (data xref only)."),
+    (0x15B4C, "combat_stats_set_b?", "Alternative to combat_stats_set_a?: template 0xABB7C <- ptr unk_A88AC, +8=0x518, +0Ah=0x32, +0Ch=0x28, +0Eh=0x14."),
+    (0x15B90, "combat_stats_set_c?", "Rewrites party template 5 (0xACF54): ptr unk_A8C54, +8=0x51E, +0Ah=0x46, +0Ch=+0Eh=0x3C. Chosen when object 0x39 is inside object 5."),
+    (0x15BD0, "combat_stats_set_d?", "Alternative to combat_stats_set_c?: ptr unk_A8BB8, +8=0x51D, +0Ah=0x46, +0Ch=0x3C, +0Eh=0x23."),
+]
+
+
 
 # (address, name) - data labels; only applied over auto names
 DATA = [
@@ -209,6 +251,12 @@ DATA = [
     (0xADEAC, "_score"),               # dword; add_score? adds, prints '[%d point%s]'
     (0xC6688, "_journal_table"),       # pointer to 22-byte journal records
     (0xADE94, "_current_room"),        # room object id in the HIGH word
+]
+
+DATA += [
+    (0xCCA44, "_combatants"),            # 23 x pointer to 0x3F8-byte combatant blocks, 0-terminated
+    (0xADC4C, "_char_stats"),            # 0x15E bytes = 25 x 14-byte per-character stat records (save region 10)
+    (0xA8FD4, "_combatant_templates"),   # 19 x 0x3F8: 11 enemy templates, then 8 party templates at 0xABB7C
 ]
 
 
