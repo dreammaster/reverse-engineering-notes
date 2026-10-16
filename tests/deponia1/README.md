@@ -49,6 +49,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | compmgrtest | the container manager: the main, game, scene, character, interface and movie containers, files by their references, volumes that are not there, export, the movie header, clean up |
 | sound2test | the sound engine with streams that play nothing: playing, pausing, muting, stopping and keeping, the volumes, the fades, the console lines |
 | matrixtest | the matrices the scripts set (graphics.invMatrix1, graphics.matrix1): the click goes back through the inverse one, points go through the matrix |
+| partsimtest | the particle emitter simulation: counts, fractions, box and point geometry, directions and cones, forces, stage colours, size curve, particle kinds, depth sorting, the systems |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
