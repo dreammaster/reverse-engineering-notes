@@ -191,7 +191,11 @@ bool wxFileName::MakeAbsolute() {
 
 bool wxFile::Open(const wxString &path, int mode) {
 	Close();
+	// (mode 2 is for writing: the header of a file is changed in place by TFile::DecryptHeader(), and a file is made
+	// by TFile::WriteToFile(): the file is opened for reading and writing, and made if it is not there)
 	_handle = std::fopen(static_cast<const char *>(path.mb_str()), mode == 2 ? "r+b" : "rb");
+	if (!_handle && mode == 2)
+		_handle = std::fopen(static_cast<const char *>(path.mb_str()), "w+b");
 	return _handle != nullptr;
 }
 

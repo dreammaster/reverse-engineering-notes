@@ -306,7 +306,8 @@ bool TComposedFileManager::Export(const wxFileName &file, const wxFileName &/*ou
 	TComposedFile *composedFile = GetComposedFile(info);
 	if (!composedFile)
 		return false;
-	return composedFile->Export(info.entryIndex, outName, file.GetExt(), file.GetName());
+	// (the name comes first, then the extension: the asm gets GetName() into the third argument and GetExt() into the fourth)
+	return composedFile->Export(info.entryIndex, outName, file.GetName(), file.GetExt());
 }
 
 // The extension of the file of a volume of the movies: "vv" and the number of the volume with three digits ("vv000"), as
