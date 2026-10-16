@@ -736,3 +736,16 @@ scales x by 1/2 and y by 5/12. Region ids are what `handle_click_event?` hands t
 `9120.FLC`, `9220.FLC`, `9400.FLC`, `9420.FLC`, `9541.FLC`, `9591.FLC` - exactly the clip names `play_cutscene?` passes (section 14), so the `.Q`-first
 lookup of section 13 falls through to these FLCs in this release. `LEGEND.INI` carries `MOUSE=`, `PICDATA=`, `VOCDATA=`, `SAVEDATA=` and **`FLCDATA=`** (the video
 directory), i.e. five directory keys; `video_open?` builds its path from `FLCDATA`.
+
+## 27. The complete dialog pipeline, validated (twenty-seventh pass)
+
+A dialog id (what `show_dialog?`, `play_video_voiced?` and the cutscene script pass) is the index of a 6-byte descriptor `{w0, w1, w2}` (section 15). **`w1` is not a
+string index**: it indexes a table of u32 message ids at `dword_B66F0` (`sub_25B60`; dumped to `retail_dialog_text_ids.tsv`, 4,4xx entries; values below 0x8000
+index the table, `w1 >= 0x8000` calls a function from a pointer table instead - texts generated at run time). A message id is `0xF0000000 | block << 16 | index` and
+resolves through `SHANSTR.DAT` (block 0 alone holds 3,937 strings; blocks 1-19 hold 2-508 each). `w0 >> 8` is the **portrait/talker index** (the party members use
+ids 3-9 = their object ids: 3 Jak, 4 Shella, 5 Brendel, 6 Balinor, 7 Davio, 8 Telsek, 9 Geeka; others are NPC portraits, e.g. 0x0D the Shifter and 0x24 the
+Warlock Lord in cutscene 0); `w0 & 0xFF` is a style/layout value (0 or 2 in the examples). `w2` is the next descriptor (0xFFFF / 0x8000 = end).
+Verified by reconstructing conversations: dialog 0xC7A (first voiced line of cutscene 0) is the Shifter/Warlock Lord exchange ("Forgive me, Master, for not
+destroying Jak Ohmsford..." / "YOU FOOL! THIS MORTAL CREATURE SEEKS TO RESTORE THE SWORD OF SHANNARA...") and 0xB7C the narration "You all cross the Ferry to the
+island city of Kern...". The voice for a line is the track with the same dialog id in the voice file (section 17). `scripts/dialog_view.py` prints conversations from
+real data. Message texts in the earlier doc sections that were called "message id = (block<<16)|index" are the same ids after the `F0` prefix.
