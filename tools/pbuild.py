@@ -16,7 +16,8 @@ bits = 32 if "-32" in sys.argv else 64
 SRC = os.path.join(ROOT, "src", game)
 OBJ = os.path.join(ROOT, "build", "%s-%d" % (game, bits))
 CXX = (r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe")
-FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-MMD"]
+# (the 32-bit build counts in SSE like the 64-bit one: the x87 registers round differently)
+FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-MMD"] + (["-msse2", "-mfpmath=sse"] if bits == 32 else [])
 
 # The Lua of the engine is ScummVM's (common/lua, Lua 5.1): the reconstructed code includes it as
 # "common/lua/lua.h". For a stand-alone build its core is compiled here, with tools/luashim for what it

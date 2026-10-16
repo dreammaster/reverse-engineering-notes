@@ -13,7 +13,9 @@ SCR = os.path.join(ROOT, "tests", "deponia1")
 bits = 32 if "-32" in sys.argv else 64
 OBJ = os.path.join(ROOT, "build", "tests-%d%s" % (bits, "g" if "-g" in sys.argv else "c" if "-c" in sys.argv else ""))
 CXX = r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe"
-FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-MMD"] + (["-g"] if "-g" in sys.argv else []) + (["--coverage", "-O0"] if "-c" in sys.argv else [])
+# (the 32-bit build counts in SSE like the 64-bit one and the original: the x87 registers round differently, which changes
+# the results of the comparisons in the geometry)
+FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-MMD"] + (["-msse2", "-mfpmath=sse"] if bits == 32 else []) + (["-g"] if "-g" in sys.argv else []) + (["--coverage", "-O0"] if "-c" in sys.argv else [])
 LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp", "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
 LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.listdir(r"C:\dev\scummvm\common\lua")) if f.endswith(".cpp") and f not in LUA_EXCLUDE] + ["C:/dev/visionnaire/tools/luashim/luashim.cpp"]
 

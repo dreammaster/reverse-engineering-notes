@@ -11,7 +11,9 @@ python tools/tbuild.py <test>.cpp [-32] [-g] [-c] [-r]
 
 Builds the sources and the test into `build/tests-<bits>[g|c]/`; `-r` runs it in `tests/deponia1/work`, `-g` builds
 for gdb (`PATH=/c/mingw64/bin:$PATH gdb -batch -x cmds build/tests-64g/<test>.exe`), `-c` builds with gcov.
-Every test prints `<n> failures`.
+Every test prints `<n> failures`. The 32-bit build (`-32`) counts in SSE (`-msse2 -mfpmath=sse`) like the 64-bit one: the x87 registers round
+differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then give another way round a corner.
+(The objects are not rebuilt when the flags change: delete `build/tests-32` after changing them.)
 
 | test | what it covers |
 | --- | --- |
@@ -41,6 +43,7 @@ Every test prints `<n> failures`.
 | waytest | walking around a wall along the way points; the free walk (controller) against a wall |
 | way2test | the way round the end of a bar when no way point can be seen (shortestPath) |
 | way3test | a wall that can be passed at both ends: the way goes along the way points (one with two relations); CheckPosition puts a position next to the floor on it |
+| polytest | the polygon helpers: the list that owns its polygons, point lists with separators, bounding boxes, lines and points against polygons, the shortest path round corners and holes |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
