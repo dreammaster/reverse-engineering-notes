@@ -49,6 +49,12 @@ def main():
     items = [k + 1 for k in range(n) if types[k] == 2]
     base = g.snapshot()
     ops, expect = [], []
+    conds = set()       # overlay condition callbacks (called with the region's object field in eax)
+    for r in load_tsv("retail_overlays.tsv"):
+        fn = int(r["conditionFn"], 16)
+        if fn:
+            conds.add((fn, int(r["obj"]) & 0xFFFFFFFF))
+    conds = sorted(conds)
 
     def state_hash():
         h = 1469598103934665603
@@ -92,6 +98,14 @@ def main():
             continue
         if not scope:
             scope = [rng.randrange(1, n + 1)]
+        for fn, arg in conds:
+            snap = g.snapshot()
+            try:
+                r = g.call(fn, eax=arg, edx=0)
+            except Exception:
+                g.restore(snap)
+                continue
+            checked("call %d %d 0" % (fn, arg), r)
         for _ in range(per):
             vid, nobj = rng.choice(verbs)
             pick = lambda: rng.choice(scope) if rng.random() < 0.8 else rng.randrange(1, n + 1)

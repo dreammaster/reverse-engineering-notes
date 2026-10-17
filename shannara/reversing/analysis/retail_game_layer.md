@@ -891,3 +891,8 @@ This test found a genuine gap: **room 538's handler (0x5D9B8) was never transpil
 bounded control-flow walk for `cb_*` entries IDA refuses to turn into functions (re-decoding mis-aligned jump targets), and the handler's 574 instructions are transpiled; the
 oracle and the native engine then agree on that room's arrival text under every flag assignment tried. (Also learnt: a restored oracle must zero the grown heap so uninitialised
 allocations read as zero, like a native restore.)
+
+Overlay condition callbacks: scanning the data section for code pointers that the recompiler had not covered found four more routines that IDA never turned into functions
+(`0x1D1B0`, `0x418D0`, `0x5B8D4`, `0x5CB18` - the `conditionFn` column of `retail_overlays.tsv`: "is flag 6 clear", "is flag 0x5B set and the party in room 36", region-id switches ...).
+They are used by the picture-region setup (22 overlays use `0x5CB18` alone) and are now transpiled (`cb_*` entries via the control-flow walk) and checked by `state_diff.py`
+(a `call ADDR EAX 0` operation for every distinct (function, region-field) pair under random flag/room/item states): 0 mismatches. Total: 1,263 translated game-layer functions.

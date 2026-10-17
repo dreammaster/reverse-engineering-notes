@@ -84,9 +84,7 @@ def main():
         items = None
         if name.startswith("cb_"):
             # callback label that IDA left outside any function (`mov edx, offset loc_220E0`): make it a function, skip if it is not code
-            if not idc.is_code(idc.get_full_flags(fea)):
-                continue
-            if not ida_funcs.get_func(fea):
+            if idc.is_code(idc.get_full_flags(fea)) and not ida_funcs.get_func(fea):
                 ida_funcs.add_func(fea)
             if not ida_funcs.get_func(fea):
                 items = walk_items(fea)     # IDA refuses (the body overlaps other chunks): follow the control flow instead
