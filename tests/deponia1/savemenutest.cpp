@@ -301,6 +301,18 @@ int main() {
 
 		// (the menu is not a scene to play in: the game goes on in the one before)
 		CHECK(!control->GetScene()->IsMenu());
+
+		// the savegames of the menu scene are let go (the files stay): the scene lists them again when it is entered
+		run("GoMenu");
+		CHECK(number("system.savegamesCount") == 3);
+		control->GetScene()->SetActiveSavegames();
+		CHECK(number("system.savegamesCount") == 3);
+		control->GetScene()->ClearSavegames();
+		CHECK(number("system.savegamesCount") == 0);
+		CHECK(onDisk().size() == 3);
+		run("GoHall");
+		run("GoMenu");
+		CHECK(number("system.savegamesCount") == 3);
 		clean();
 	}
 
