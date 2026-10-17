@@ -14,6 +14,7 @@ other than `FormatError`, no STL streams) so they can be dropped into an engine 
 | `src/objectdat.h` | `OBJECT.DAT` name/description string pool (761 strings) | section 21 |
 | `src/le.h`, `src/retail_data.h` | DOS/4GW `LE` loader (linear address -> file bytes, no fixups) and the exe's initial static tables: **744 object records** and the room picture/music tables, read straight from the user's `SHANNARA.EXE` | sections 4, 5, 11, 29 |
 | `src/savestate.h` | the complete mutable game state and its 32,668-byte savegame/undo format (objects + 92 regions); loads the shipped `HELP.DAT` (legacy 32,660 bytes) and round-trips it byte for byte | sections 6, 23 |
+| `src/world.h` | the object world model every handler uses: containment tree (location/slot/next/child lists, `move`), attribute bits, the 800 game flags | disassembly of `object_*`, `bitset_*`; **differentially tested against the real machine code** |
 | `src/qvideo.h` | `.Q` block video (the demo's cutscene format): container + 4x4 block decoder incl. composite and raw modes | `q_decode_ref.py`, `q_play.py`, `analysis/q_codec_spec.md` |
 
 Not ported yet: LHA `-lh4-` (no real file uses it), the savegame schema, FLC/MP3 glue.
@@ -33,9 +34,10 @@ g++ -std=c++17 -O2 -Wall -Wextra -Iport/src port/src/*.cpp -o port/build/shan_to
 ```
 python port/tests/verify.py      # every real file: 7,719 strings, 29 PIC, 12 RGN, 13 FNT, 270 Q frames, MUS, OBJECT.DAT, 744 object records (needs game/, demo/, game_out/pics)
 python port/tests/fuzz_q.py 1200 7   # random valid Q streams: C++ vs Python decoder, pixels and consumed bytes
+python port/tests/world_fuzz.py 6000 1   # random object-tree/attribute/flag operations: C++ World vs the ORIGINAL functions of SHANNARA.EXE run under unicorn
 ```
 
-Status when written: `verify.py` 63 checks, 0 failed; `fuzz_q.py` 300 (seed 1) + 1,200 (seed 7) vectors, 0 mismatches. The Python
+Status when written: `verify.py` 63 checks, 0 failed; `fuzz_q.py` 300 (seed 1) + 1,200 (seed 7) vectors, 0 mismatches; `world_fuzz.py` 6,000 operations x 2 seeds, 0 mismatches (the original code is executed from the exe by `reversing/scripts/retail_emu.py`, which applies the LE fixups). The Python
 Q decoder was itself fuzz-verified against the real machine code under unicorn, so the chain is
 real code -> Python reference -> C++.
 

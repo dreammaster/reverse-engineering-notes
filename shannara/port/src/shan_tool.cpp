@@ -13,6 +13,7 @@
 #include "savestate.h"
 #include "rgn.h"
 #include "shanstr.h"
+#include "world.h"
 
 #include <cstdio>
 #include <cstring>
@@ -222,6 +223,42 @@ static int cmdSave(char **argv) {
 	return 0;
 }
 
+// world EXE OPSFILE: replays "op a b c" lines on the World model over the exe's initial state; prints "i op result statehash"
+// (hash = saved object record prefixes in id order, then the 100-byte flag set), as tests/world_fuzz.py computes it for the original code.
+static int cmdWorld(char **argv) {
+	LeExe exe(readFile(argv[2]));
+	SaveState st = SaveState::initial(exe);
+	World w(exe, st);
+	FILE *f = fopen(argv[3], "r");
+	if (!f)
+		return 1;
+	char op[32];
+	int a, b, c, i = 0;
+	while (fscanf(f, "%31s %d %d %d", op, &a, &b, &c) == 4) {
+		int res = 0;
+		if (!strcmp(op, "loc")) res = w.location(a) & 0xFFFF;
+		else if (!strcmp(op, "slot")) res = w.slot(a) & 0xFF;
+		else if (!strcmp(op, "next")) res = w.nextSibling(a) & 0xFFFF;
+		else if (!strcmp(op, "head")) res = w.listHead(a, b) & 0xFFFF;
+		else if (!strcmp(op, "move")) w.move(a, b, c);
+		else if (!strcmp(op, "has")) res = w.hasAttr(a, b);
+		else if (!strcmp(op, "setattr")) w.setAttr(a, b);
+		else if (!strcmp(op, "clrattr")) w.clearAttr(a, b);
+		else if (!strcmp(op, "parentis")) res = w.parentIs(a, b);
+		else if (!strcmp(op, "within")) res = w.isWithin(a, b);
+		else if (!strcmp(op, "flag")) res = w.flag(a);
+		else if (!strcmp(op, "setflag")) w.setFlag(a, true);
+		else if (!strcmp(op, "clrflag")) w.setFlag(a, false);
+		uint64_t h = 1469598103934665603ull;
+		for (const ObjectRecord &o : st.objects)
+			h = fnv(o.raw.data(), SaveState::objectPrefix(o.type), h);
+		h = fnv(st.at(0xCD8AC), 100, h);
+		printf("%d %s %d %016llx\n", i++, op, res, (unsigned long long)h);
+	}
+	fclose(f);
+	return 0;
+}
+
 int main(int argc, char **argv) {
 	if (argc < 3) {
 		fprintf(stderr, "usage: shan_tool shanstr|pic|rgn|fnt|q FILE [...]\n");
@@ -237,6 +274,7 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[1], "mus")) return cmdMus(argv);
 		if (!strcmp(argv[1], "objdat")) return cmdObj(argv);
 		if (!strcmp(argv[1], "objects")) return cmdObjects(argv);
+		if (!strcmp(argv[1], "world") && argc >= 4) return cmdWorld(argv);
 		if (!strcmp(argv[1], "save") && argc >= 4) return cmdSave(argv);
 	} catch (const std::exception &e) {
 		fprintf(stderr, "error: %s\n", e.what());

@@ -784,3 +784,19 @@ which checks the whole chain *room object -> picture id -> overlay table -> spri
 Whole-game check: rendering the base background of all 67 rooms in `retail_rooms.tsv` (room 643 is the blank placeholder) succeeds for every
 room and every image is recognisable scene art (castle gates, interiors, forests, mountains, caves, character portraits); a handful of
 dark interiors come out nearly black with the background's own palette, as expected for night/cave rooms.
+
+## 30. The world model re-implemented and checked against the real code (thirtieth pass)
+
+`port/src/world.{h,cpp}` ports the object helpers (`object_get_location?`/`set`, slot, next sibling, list heads, `object_move?`, `object_parent_is`,
+`object_is_within`, `object_has_attr`/`set`/`clear`, `bitset_*` on `_game_flags`) and `port/src/savestate.*`, `retail_data.*`, `le.*` read the initial
+state straight from `SHANNARA.EXE`. To test it without a game session, `reversing/scripts/retail_emu.py` runs the *real* functions of the executable under
+unicorn: it parses the LE container (page map, object table) **and applies its fixups** (the object table's record pointers are stored unrelocated in the file:
+`01 58 09 01 00` = type 1, offset 0x10958 in the data object; every internal-reference fixup adds the target object's base), maps the objects at their link
+addresses and calls the functions with Watcom register arguments. `port/tests/world_fuzz.py` then executes thousands of random operations on both (invalid ids
+and attributes 0-24 included; moves are restricted to avoid cycles, which the original does not check) and compares every result and a hash of all saved object
+state plus the flag set after every step: **12,000 operations, 0 mismatches.**
+
+Facts established on the way: there are exactly **24 attribute descriptors** (`0x208A0`-`0x20918`; attribute ids 25+ would read the object table as descriptors
+and are undefined); `sub_10F70` (the UI "selection" helper called at the end of `object_move?`) is the only external dependency of the tree operations and
+is stubbed as "current selection word at `0xA7E54`"; the executable keeps its object table and most static tables in the *code* object (`0x10000-0x9CCE8`), the
+object records themselves in the data object, and the BSS tail of the data object (above `0xCD000`, e.g. `_game_flags`) is zero at start.
