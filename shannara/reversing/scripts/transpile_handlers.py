@@ -270,6 +270,21 @@ def main():
     names = sorted(funcs, key=lambda n: funcs[n]["ea"])
     per = 60
     files = []
+    # code addresses used as immediates (callbacks such as `mov edx, offset loc_220E0`) that land in the middle of a function need an entry point too
+    owner = {}
+    for n, v in funcs.items():
+        for r in v["insns"]:
+            owner.setdefault(r["ea"], n)
+    for n, v in list(funcs.items()):
+        for r in v["insns"]:
+            if r["mn"] in ("mov", "push", "lea", "cmp"):
+                for op in r["ops"]:
+                    if op["t"] == 5 and op["val"] in owner and op["val"] not in g.entries and r["ea"] != op["val"]:
+                        tgt = op["val"]
+                        o = funcs[owner[tgt]]
+                        funcs["tail_%X" % tgt] = {"ea": tgt, "insns": [x for x in o["insns"] if x["ea"] >= tgt]}
+                        g.entries[tgt] = "tail_%X" % tgt
+    names = sorted(funcs, key=lambda n: funcs[n]["ea"])
     texts = {}
     skipped = {}
     for n in names:

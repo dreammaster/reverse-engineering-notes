@@ -61,7 +61,7 @@ public:
 		traceLog.push_back(b);
 	}
 	std::vector<uint32_t> trace; // addresses of the functions currently executing (kept after an exception for diagnosis)
-	std::vector<std::string> unknownShimCalls; // names of boundary functions that had no specific shim (they were no-ops)
+	std::map<std::string, uint64_t> unknownShimCalls; // boundary functions that had no specific shim (no-ops) -> call counts
 
 	// flag helpers: results are written back by the generated code
 	template <typename T> T add(T a, T b) { T r = (T)(a + b); setAdd(a, b, r); return r; }

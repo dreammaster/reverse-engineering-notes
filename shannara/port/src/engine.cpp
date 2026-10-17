@@ -1,5 +1,6 @@
 #include "engine.h"
 #include <cctype>
+#include <cstdlib>
 #include <cstring>
 
 namespace shannara {
@@ -21,6 +22,8 @@ Engine::Engine(const std::string &exePath, const std::string &gameDir) : _str(re
 	Cursor c(d);
 	size_t n = c.u16();
 	_m->writeBytes(0xCD9D0, c.ptr(), n);
+	if (const char *cs = getenv("SHAN_CLOCK_STEP"))
+		_clockStep = (uint32_t)atoi(cs);
 	installShims();
 }
 
@@ -105,6 +108,9 @@ void Engine::installShims() {
 		mm.eax = (uint32_t)s.size();
 		mm.esp += 4;
 	});
+	// the game's timing loops spin on the clock; by default it stays at 0 like the oracle's stub (parity tests). Set SHAN_CLOCK_STEP=7 to let it advance on every read so waits terminate
+	for (const char *n : {"get_clock", "j___clock_", "__clock_", "clock_"})
+		m.setShim(n, [this](Machine &mm) { _clock += _clockStep; mm.eax = _clock; mm.finishShim("get_clock"); });
 	m.setShim("new_pointer", [](Machine &mm) {
 		uint32_t size = mm.eax;
 		uint32_t p = mm.heapPtr;
@@ -115,6 +121,7 @@ void Engine::installShims() {
 	// pure C runtime routines (the oracle runs the original code for these; semantics are the standard ones)
 	m.setShim("memmove_", [](Machine &mm) {
 		uint32_t dst = mm.eax, src = mm.edx, n = mm.ebx;
+		if (n > Machine::kMemSize) throw FormatError("memmove size");
 		std::vector<uint8_t> tmp(n);
 		for (uint32_t i = 0; i < n; i++) tmp[i] = mm.r8(src + i);
 		for (uint32_t i = 0; i < n; i++) mm.w8(dst + i, tmp[i]);

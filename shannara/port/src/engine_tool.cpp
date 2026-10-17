@@ -39,8 +39,7 @@ int main(int argc, char **argv) {
 			printf("\n");
 			return 0;
 		}
-		if (getenv("ENGINE_TRACE_FILE"))
-			e.machine().tracing = true;
+		int traceFrom = getenv("ENGINE_TRACE_FROM") ? atoi(getenv("ENGINE_TRACE_FROM")) : 0;
 		FILE *f = fopen(argv[3], "r");
 		if (!f)
 			return 1;
@@ -49,6 +48,7 @@ int main(int argc, char **argv) {
 		while (fscanf(f, "%31s %d %d %d", op, &v, &d, &i) == 4) {
 			std::string err;
 			uint32_t r = 0;
+			e.machine().tracing = getenv("ENGINE_TRACE_FILE") && k >= traceFrom;
 			try {
 				if (!strcmp(op, "cmd")) {
 					r = e.command(v, d, i);
@@ -85,11 +85,8 @@ int main(int argc, char **argv) {
 			fclose(t);
 		}
 		fprintf(stderr, "no-op shims called:");
-		std::map<std::string, int> cnt;
-		for (auto &n : e.machine().unknownShimCalls)
-			cnt[n]++;
-		for (auto &kv : cnt)
-			fprintf(stderr, " %s(%d)", kv.first.c_str(), kv.second);
+		for (auto &kv : e.machine().unknownShimCalls)
+			fprintf(stderr, " %s(%llu)", kv.first.c_str(), (unsigned long long)kv.second);
 		fprintf(stderr, "\n");
 	} catch (const std::exception &x) {
 		fprintf(stderr, "error: %s\n", x.what());

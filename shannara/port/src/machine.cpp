@@ -42,7 +42,7 @@ void Machine::callShim(uint32_t addr) {
 		return;
 	}
 	// default: a no-op that returns 0 and pops the return slot plus any callee-cleaned arguments
-	unknownShimCalls.push_back(name);
+	unknownShimCalls[name]++;
 	auto r = _retn.find(addr);
 	eax = 0;
 	esp += 4 + (r != _retn.end() ? (uint32_t)r->second : 0);

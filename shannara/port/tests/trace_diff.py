@@ -21,6 +21,14 @@ TOOL = os.path.join(ROOT, "port", "build", "engine_tool.exe")
 
 
 def main():
+    prefix = []
+    if sys.argv[1] == "--ops":      # --ops FILE INDEX: replay the first INDEX lines of FILE untraced, then trace line INDEX
+        lines = [l for l in open(sys.argv[2]).read().splitlines() if l.strip()]
+        idx = int(sys.argv[3])
+        prefix, last = lines[:idx], lines[idx]
+        sys.argv = [sys.argv[0]] + last.split()[1:4]
+        kind = last.split()[0]
+        assert kind == "cmd", "only cmd lines can be traced"
     v, d, i = (int(x) for x in sys.argv[1:4])
     g = Game(os.path.join(ROOT, "game", "SHANNARA.EXE"), os.path.join(ROOT, "game", "SHANSTR.DAT"))
     log = []
@@ -32,13 +40,28 @@ def main():
         log.append("%x %x %x %x %x %x %x %x %x" % (addr, uc.reg_read(UC_X86_REG_EAX), uc.reg_read(UC_X86_REG_ECX), uc.reg_read(UC_X86_REG_EDX),
                                                    uc.reg_read(UC_X86_REG_EBX), uc.reg_read(UC_X86_REG_ESI), uc.reg_read(UC_X86_REG_EDI),
                                                    uc.reg_read(UC_X86_REG_EBP), uc.reg_read(UC_X86_REG_ESP)))
+    for line in prefix:
+        p = line.split()
+        if p[0] == "cmd":
+            g.command(int(p[1]), int(p[2]), int(p[3]))
+        elif p[0] == "flag":
+            a = 0xCD8AC + ((int(p[1]) - 1) >> 3)
+            b = 1 << ((int(p[1]) - 1) & 7)
+            g.w8(a, (g.r8(a) | b) if int(p[2]) else (g.r8(a) & ~b & 0xFF))
+        elif p[0] == "move":
+            g.call(0x1B470, eax=int(p[1]), edx=int(p[2]), ebx=int(p[3]))
+        elif p[0] == "goto":
+            g.call(0x1EE10, eax=int(p[1]))
+        elif p[0] == "attr":
+            g.call(0x1A1B0 if int(p[3]) else 0x1A1D8, eax=int(p[1]), edx=int(p[2]))
+        g.text()
     g.uc.hook_add(UC_HOOK_CODE, tr, begin=0x10000, end=0x75000)   # the transpiled (game-logic) range
     g.command(v, d, i)
     print("oracle text:", repr(g.text()), "instructions traced:", len(log))
     ops = os.path.join(ROOT, "port", "build", "one.txt")
-    open(ops, "w").write("cmd %d %d %d\n" % (v, d, i))
+    open(ops, "w").write("\n".join(prefix + ["cmd %d %d %d" % (v, d, i)]) + "\n")
     tf = os.path.join(ROOT, "port", "build", "trace_cpp.txt")
-    env = dict(os.environ, ENGINE_TRACE_FILE=tf)
+    env = dict(os.environ, ENGINE_TRACE_FILE=tf, ENGINE_TRACE_FROM=str(len(prefix)))
     p = subprocess.run([TOOL, os.path.join(ROOT, "game", "SHANNARA.EXE"), os.path.join(ROOT, "game"), ops], capture_output=True, text=True, env=env)
     print("C++ result:", p.stdout.strip()[:160])
     cpp = open(tf).read().split("\n")[:-1]

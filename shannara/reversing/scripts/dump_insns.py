@@ -15,6 +15,7 @@ import idautils
 import idc
 import ida_bytes
 import ida_nalt
+import ida_funcs
 
 O_VOID, O_REG, O_MEM, O_PHRASE, O_DISPL, O_IMM, O_FAR, O_NEAR = 0, 1, 2, 3, 4, 5, 6, 7
 
@@ -45,6 +46,14 @@ def main():
     out = {}
     for name, hx in names:
         fea = int(hx, 16)
+        if name.startswith("cb_"):
+            # callback label that IDA left outside any function (`mov edx, offset loc_220E0`): make it a function, skip if it is not code
+            if not idc.is_code(idc.get_full_flags(fea)):
+                continue
+            if not ida_funcs.get_func(fea):
+                ida_funcs.add_func(fea)
+            if not ida_funcs.get_func(fea):
+                continue
         insns = []
         for h in idautils.FuncItems(fea):
             insn = ida_ua.insn_t()

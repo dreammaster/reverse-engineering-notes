@@ -38,6 +38,7 @@ private:
 	std::vector<uint8_t> _snapMem;
 	uint32_t _snapHeap = 0;
 	size_t _snapOut = 0;
+	uint32_t _clock = 0, _clockStep = 0; // see SHAN_CLOCK_STEP
 };
 
 } // namespace shannara
