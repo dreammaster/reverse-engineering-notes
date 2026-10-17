@@ -66,6 +66,8 @@ are derived from the game's own code, so they are **git-ignored**; the generator
 
 ```
 python port/tests/engine_diff.py 3000 11      # random commands + flag/object/room/attribute changes: C++ engine vs the unicorn oracle (return value, state hash, text)
+python port/tests/matrix_diff.py 7 game_out/cov.txt   # every verb x every 7th object (1 = all, ~1 h): C++ vs oracle; writes instruction coverage
+python port/tests/coverage_report.py game_out/cov.txt   # fraction of handler code the run executed
 python port/tests/trace_diff.py VERB DOBJ IOBJ  # first instruction-level divergence between oracle and C++ for one command (register trace)
 ```
 

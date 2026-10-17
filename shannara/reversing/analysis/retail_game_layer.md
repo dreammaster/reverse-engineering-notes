@@ -875,3 +875,9 @@ division error and no jump-table fault; 641 operations (574 of them the `Wait` v
 instruction budget (`Machine::budget`, 30 M instructions) and are reported as `EXC instruction budget exhausted`. Parity with the oracle was re-checked after every runtime change
 (about 30,000 operations over ten seeds). Callback labels that IDA left outside any function (`mov edx, offset loc_220E0`, 4 blocks) needed their own entry points; the seed that exposed
 this showed a dark-cave room description differing ("You can't see a thing in here.") because the original's light test calls such a callback.
+
+Exhaustive matrix (`port/tests/matrix_diff.py`, `coverage_report.py`): every one of the 78 verbs against every object 1-744 plus "no object" (two-object verbs also against six
+indirect objects), each from the start state with the engine state restored between commands, on both the oracle and the native engine: **153,019 commands, 0 mismatches** in
+return value, state hash and text. With `SHAN_COVERAGE` the native engine records the executed instruction addresses: this matrix reaches **631 of 637 object handlers
+(99 %) but only 30 % of their instructions** (the rest is guarded by game state: flags, locations, party, combat), whereas a 6,000-operation random-state fuzz reaches 11 % of the handlers.
+So the remaining coverage has to come from state-driven scenarios (play-throughs, flag sweeps), which is where the next verification effort goes.
