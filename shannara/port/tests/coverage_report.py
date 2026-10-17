@@ -19,12 +19,18 @@ def main():
     funcs = json.load(open(jpath))
     classes = {}
     never = []
+    handler_eas = set()
+    tsv = os.path.join(ROOT, "reversing", "analysis", "retail_object_handlers.tsv")
+    for l in open(tsv).read().splitlines()[1:]:
+        f = l.split("\t")
+        if len(f) > 1 and f[1].startswith("0x"):
+            handler_eas.add(int(f[1], 16))
     for name, v in funcs.items():
         eas = [r["ea"] for r in v["insns"]]
         if not eas:
             continue
         hit = sum(1 for e in eas if e in cov)
-        cls = "object handlers" if re.match(r"objh_", name) else "verb handlers" if re.match(r"verb_|vh_", name) else "other"
+        cls = "object handlers" if v["ea"] in handler_eas else "verb handlers" if re.match(r"verb_|vh_", name) else "other"
         c = classes.setdefault(cls, [0, 0, 0, 0])
         c[0] += 1
         c[1] += hit > 0

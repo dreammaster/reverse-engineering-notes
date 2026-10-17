@@ -28,7 +28,9 @@ def main():
         prefix, last = lines[:idx], lines[idx]
         sys.argv = [sys.argv[0]] + last.split()[1:4]
         kind = last.split()[0]
-        assert kind == "cmd", "only cmd lines can be traced"
+        assert kind in ("cmd", "goto"), "only cmd and goto lines can be traced"
+    else:
+        kind = "cmd"
     v, d, i = (int(x) for x in sys.argv[1:4])
     g = Game(os.path.join(ROOT, "game", "SHANNARA.EXE"), os.path.join(ROOT, "game", "SHANSTR.DAT"))
     log = []
@@ -40,9 +42,12 @@ def main():
         log.append("%x %x %x %x %x %x %x %x %x" % (addr, uc.reg_read(UC_X86_REG_EAX), uc.reg_read(UC_X86_REG_ECX), uc.reg_read(UC_X86_REG_EDX),
                                                    uc.reg_read(UC_X86_REG_EBX), uc.reg_read(UC_X86_REG_ESI), uc.reg_read(UC_X86_REG_EDI),
                                                    uc.reg_read(UC_X86_REG_EBP), uc.reg_read(UC_X86_REG_ESP)))
+    base = g.snapshot()
     for line in prefix:
         p = line.split()
-        if p[0] == "cmd":
+        if p[0] == "reset":
+            g.restore(base)
+        elif p[0] == "cmd":
             g.command(int(p[1]), int(p[2]), int(p[3]))
         elif p[0] == "flag":
             a = 0xCD8AC + ((int(p[1]) - 1) >> 3)
@@ -56,10 +61,13 @@ def main():
             g.call(0x1A1B0 if int(p[3]) else 0x1A1D8, eax=int(p[1]), edx=int(p[2]))
         g.text()
     g.uc.hook_add(UC_HOOK_CODE, tr, begin=0x10000, end=0x75000)   # the transpiled (game-logic) range
-    g.command(v, d, i)
+    if kind == "goto":
+        g.call(0x1EE10, eax=v)
+    else:
+        g.command(v, d, i)
     print("oracle text:", repr(g.text()), "instructions traced:", len(log))
     ops = os.path.join(ROOT, "port", "build", "one.txt")
-    open(ops, "w").write("\n".join(prefix + ["cmd %d %d %d" % (v, d, i)]) + "\n")
+    open(ops, "w").write("\n".join(prefix + ["%s %d %d %d" % (kind, v, d, i)]) + "\n")
     tf = os.path.join(ROOT, "port", "build", "trace_cpp.txt")
     env = dict(os.environ, ENGINE_TRACE_FILE=tf, ENGINE_TRACE_FROM=str(len(prefix)))
     p = subprocess.run([TOOL, os.path.join(ROOT, "game", "SHANNARA.EXE"), os.path.join(ROOT, "game"), ops], capture_output=True, text=True, env=env)

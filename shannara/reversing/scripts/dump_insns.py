@@ -41,11 +41,47 @@ def operand(insn, ea, i):
     return d
 
 
+def walk_items(fea):
+    """addresses of the code reachable from fea by fall-through and jumps (calls are not followed); data bytes that jumps land on are made code"""
+    seen, stack = set(), [fea]
+    nxt = ida_funcs.get_next_func(fea)
+    limit = nxt.start_ea if nxt else 0x9D000    # the body ends before the next function; jumps out of the span are tail jumps into other functions
+    while stack:
+        ea = stack.pop()
+        if ea in seen or ea < fea or ea >= limit:
+            continue
+        fl = idc.get_full_flags(ea)
+        if not (idc.is_code(fl) and idc.is_head(fl)):
+            idc.del_items(ea, 0, 8)         # IDA's own analysis mis-aligned this (jump target inside what it decoded as other instructions/data)
+            idc.create_insn(ea)
+        insn = ida_ua.insn_t()
+        n = ida_ua.decode_insn(insn, ea)
+        if n == 0:
+            continue
+        seen.add(ea)
+        mn = idc.print_insn_mnem(ea)
+        tgt = [insn.ops[0].addr & 0xFFFFFFFF] if insn.ops[0].type in (O_NEAR, O_FAR) else []
+        if mn == "retn":
+            continue
+        if mn == "jmp":
+            if insn.ops[0].type in (O_MEM, O_DISPL, O_PHRASE):
+                base = insn.ops[0].addr & 0xFFFFFFFF
+                si = ida_nalt.get_switch_info(ea)
+                cnt = si.get_jtable_size() if si else 0
+                tgt = [idc.get_wide_dword(base + 4 * k) for k in range(cnt)]
+            stack.extend(tgt)
+            continue
+        stack.extend(tgt)
+        stack.append(ea + n)
+    return sorted(seen)
+
+
 def main():
     names = [l.split() for l in open(idc.ARGV[1]).read().split("\n") if l.strip()]
     out = {}
     for name, hx in names:
         fea = int(hx, 16)
+        items = None
         if name.startswith("cb_"):
             # callback label that IDA left outside any function (`mov edx, offset loc_220E0`): make it a function, skip if it is not code
             if not idc.is_code(idc.get_full_flags(fea)):
@@ -53,15 +89,17 @@ def main():
             if not ida_funcs.get_func(fea):
                 ida_funcs.add_func(fea)
             if not ida_funcs.get_func(fea):
-                continue
+                items = walk_items(fea)     # IDA refuses (the body overlaps other chunks): follow the control flow instead
+                if not items:
+                    continue
         insns = []
-        for h in idautils.FuncItems(fea):
+        for h in (items if items is not None else idautils.FuncItems(fea)):
             insn = ida_ua.insn_t()
             n = ida_ua.decode_insn(insn, h)
             if n == 0:
                 insns.append({"ea": h, "size": 1, "mn": "db", "ops": [], "text": idc.generate_disasm_line(h, 0)})
                 continue
-            mn = idc.print_insn_mnem(h)
+            mn = idc.print_insn_mnem(h) or insn.get_canon_mnem()
             ops = []
             for i in range(6):
                 if insn.ops[i].type == O_VOID:

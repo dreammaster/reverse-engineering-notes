@@ -881,3 +881,13 @@ indirect objects), each from the start state with the engine state restored betw
 return value, state hash and text. With `SHAN_COVERAGE` the native engine records the executed instruction addresses: this matrix reaches **631 of 637 object handlers
 (99 %) but only 30 % of their instructions** (the rest is guarded by game state: flags, locations, party, combat), whereas a 6,000-operation random-state fuzz reaches 11 % of the handlers.
 So the remaining coverage has to come from state-driven scenarios (play-throughs, flag sweeps), which is where the next verification effort goes.
+
+State-driven verification (`port/tests/state_diff.py`): each scenario restores the start state, randomises the 800 game flags (density 5-95 %), goes to a random room, puts items into the
+room and the party's hands and runs 40 commands on objects in scope. 300 scenarios (9,101 commands, 93,053 replayed operations): **0 mismatches**; together with the matrix and the
+random fuzz the union covers **633 of 638 object handlers and 37.8 % of their instructions** (the remaining branches need real play state: party members, combat results, quest progress ordering).
+
+This test found a genuine gap: **room 538's handler (0x5D9B8) was never transpiled** - IDA had never made it a function (it is reached only from the handler table; its jump into
+`unk_5DA37` lands in the middle of what IDA decoded as `db 83h` + `cmp eax, imm`, the real instruction there is `cmp dword ptr [0C5670h], 5Dh`). `dump_insns.py` now falls back to a
+bounded control-flow walk for `cb_*` entries IDA refuses to turn into functions (re-decoding mis-aligned jump targets), and the handler's 574 instructions are transpiled; the
+oracle and the native engine then agree on that room's arrival text under every flag assignment tried. (Also learnt: a restored oracle must zero the grown heap so uninitialised
+allocations read as zero, like a native restore.)

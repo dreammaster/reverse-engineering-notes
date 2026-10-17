@@ -250,6 +250,8 @@ class Game(RetailEmu):
 
     def restore(self, snap):
         mem, heap, nout, nlog = snap
+        if self.heap > heap[2]:     # heap grown since the snapshot: clear it so uninitialised allocations read as zero, as after a native restore
+            self.uc.mem_write(heap[2], bytes(self.heap - heap[2]))
         for a, data in mem:
             self.uc.mem_write(a, data)
         self.uc.mem_write(heap[0], heap[1])
