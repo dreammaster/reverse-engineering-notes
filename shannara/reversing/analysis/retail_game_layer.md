@@ -763,3 +763,20 @@ loads the clean `RESTART` snapshot (`load_game?(5)`) and starts the replay.
 with button `BBB` = 1: 18; `4000` = caption follows; `8000` = end), `XXX YYY` = pointer position. A caption line is `x, y, width, text` (e.g. the opening "Welcome to the on-line
 tutorial for Shannara..."). The tutorial therefore plays a canned game session through the normal event path with the pointer driven by the file; a port can replay it
 the same way (or skip it).
+
+## 29. Room composition validated on real graphics (twenty-ninth pass)
+
+`scripts/compose_room.py ROOM out.png [--all] [--bg ENTRY]` renders a room from the tables alone (`retail_rooms.tsv` for the background,
+the handler's `retail_overlays.tsv` table for the sprites, `PIC` frame offsets for positions) and the result is a correct picture,
+which checks the whole chain *room object -> picture id -> overlay table -> sprite entry -> position* against real data:
+
+- Room 88 (the start room) draws entry 1 of `SHAN020.PIC` (a forest). `get_room_pic_id` swaps it for **entry 3** once game flag 22
+  (`0x16`) is set - the flag test sits in the hard-coded overrides after `_room_pic_table` - and that second background (willow
+  and river) is the one the overlay table was written for: Allanon (object 11, entry 9 at (49, 63)), a creature (object 0, entry 10 at
+  (400, 48)), a book, a sword and small props line up exactly with the scene.
+- **XOR sprites (`flags & 0x40`) must be composited onto the background they were authored for.** Applied to the wrong background
+  (entry 1) the result is coloured noise, which is what a single wrong `bg` index looks like. Index 0 is "unchanged", everything else is
+  `destination ^= sprite pixel`; the sprite's palette (`flags & 0x10`) is identical to the background's, so no palette switch is needed.
+- Frame offsets: the `(x, y)` read from the start of an entry's frame table are the sprite's position in the 528 x 293 picture.
+- Overlay visibility (container / attribute / condition function) really is what `overlay_visible?` says: only the overlays whose
+  conditions hold in the story state (Allanon, container 88) appear in the normal render, the others need `--all`.
