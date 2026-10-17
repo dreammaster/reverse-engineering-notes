@@ -1,0 +1,99 @@
+// engine_tool EXE GAMEDIR OPSFILE: replays "cmd VERB DOBJ IOBJ" lines on the transpiled engine (state carries over between lines) and prints
+// "i result statehash [text]" - the format tests/engine_diff.py produces for the unicorn oracle.
+#include "engine.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+using namespace shannara;
+
+static std::string esc(const std::string &s) {
+	std::string o;
+	char b[8];
+	for (unsigned char c : s) {
+		if (c >= 0x20 && c < 0x7F && c != '\\')
+			o.push_back((char)c);
+		else if (c == '\n')
+			o += "\\n";
+		else {
+			snprintf(b, sizeof b, "\\x%02x", c);
+			o += b;
+		}
+	}
+	return o;
+}
+
+int main(int argc, char **argv) {
+	if (argc < 4) {
+		fprintf(stderr, "usage: engine_tool EXE GAMEDIR OPSFILE\n");
+		return 2;
+	}
+	try {
+		Engine e(argv[1], argv[2]);
+		if (!strcmp(argv[3], "--peek") && argc >= 6) {
+			uint32_t a = (uint32_t)strtoul(argv[4], nullptr, 0);
+			int n = atoi(argv[5]);
+			for (int k = 0; k < n; k++)
+				printf("%02x", e.machine().r8(a + k));
+			printf("\n");
+			return 0;
+		}
+		if (getenv("ENGINE_TRACE_FILE"))
+			e.machine().tracing = true;
+		FILE *f = fopen(argv[3], "r");
+		if (!f)
+			return 1;
+		char op[32];
+		int v, d, i, k = 0;
+		while (fscanf(f, "%31s %d %d %d", op, &v, &d, &i) == 4) {
+			std::string err;
+			uint32_t r = 0;
+			try {
+				if (!strcmp(op, "cmd")) {
+					r = e.command(v, d, i);
+				} else if (!strcmp(op, "flag")) { // flag N 0|1: set / clear game flag N
+					uint32_t addr = 0xCD8AC + (uint32_t)((v - 1) >> 3);
+					uint8_t bit = (uint8_t)(1 << ((v - 1) & 7));
+					e.machine().w8(addr, d ? (e.machine().r8(addr) | bit) : (e.machine().r8(addr) & ~bit));
+				} else if (!strcmp(op, "move")) { // move OBJ PARENT SLOT (object_move?)
+					e.callFunction(0x1B470, (uint32_t)v, (uint32_t)d, (uint32_t)i);
+				} else if (!strcmp(op, "goto")) { // goto ROOM (go_to_room?)
+					r = e.callFunction(0x1EE10, (uint32_t)v);
+				} else if (!strcmp(op, "attr")) { // attr OBJ ATTR 0|1
+					e.callFunction(i ? 0x1A1B0 : 0x1A1D8, (uint32_t)v, (uint32_t)d);
+				}
+			} catch (const std::exception &x) {
+				err = std::string("EXC ") + x.what();
+				if (getenv("ENGINE_TRACE")) {
+					for (uint32_t a : e.machine().trace)
+						err += " " + std::to_string(a);
+					fprintf(stderr, "exception trace:");
+					for (uint32_t a : e.machine().trace)
+						fprintf(stderr, " %X", a);
+					fprintf(stderr, "\n");
+				}
+				e.machine().trace.clear();
+			}
+			printf("%d %u %016llx [%s]\n", k++, r, (unsigned long long)e.stateHash(), esc(e.takeText() + err).c_str());
+		}
+		fclose(f);
+		if (getenv("ENGINE_TRACE_FILE")) {
+			FILE *t = fopen(getenv("ENGINE_TRACE_FILE"), "w");
+			for (auto &l : e.machine().traceLog)
+				fprintf(t, "%s\n", l.c_str());
+			fclose(t);
+		}
+		fprintf(stderr, "no-op shims called:");
+		std::map<std::string, int> cnt;
+		for (auto &n : e.machine().unknownShimCalls)
+			cnt[n]++;
+		for (auto &kv : cnt)
+			fprintf(stderr, " %s(%d)", kv.first.c_str(), kv.second);
+		fprintf(stderr, "\n");
+	} catch (const std::exception &x) {
+		fprintf(stderr, "error: %s\n", x.what());
+		return 1;
+	}
+	return 0;
+}

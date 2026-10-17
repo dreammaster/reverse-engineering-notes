@@ -21,6 +21,10 @@ LeExe::LeExe(Bytes file) : _d(std::move(file)) {
 		throw FormatError("no LE header found");
 	auto u32at = [&](size_t off) { Cursor c(_d, off); return c.u32(); };
 	uint32_t pages = u32at(hdr + 0x14);
+	_pages = pages;
+	_hdr = hdr;
+	_fixupPageTab = hdr + u32at(hdr + 0x68);
+	_fixupRecTab = hdr + u32at(hdr + 0x6C);
 	_pageSize = u32at(hdr + 0x28);
 	_eip = u32at(hdr + 0x1C);
 	uint32_t objTab = u32at(hdr + 0x40), nObj = u32at(hdr + 0x44), pageMap = u32at(hdr + 0x48);
@@ -38,6 +42,76 @@ LeExe::LeExe(Bytes file) : _d(std::move(file)) {
 	for (uint32_t i = 0; i < pages; i++) {
 		uint32_t e = u32at(hdr + pageMap + 4 * i);
 		_pageMap.push_back(((e & 0xFF) << 16) | (((e >> 8) & 0xFF) << 8) | ((e >> 16) & 0xFF)); // big-endian 24-bit page number
+	}
+}
+
+void LeExe::mapInto(uint8_t *mem, size_t memSize) const {
+	for (const Object &o : _objects) {
+		for (uint32_t p = 0; p < o.pages; p++) {
+			uint32_t logical = o.firstPage - 1 + p;
+			size_t off = _dataPages + (size_t)(_pageMap[logical] - 1) * _pageSize;
+			uint32_t dst = o.base + p * _pageSize;
+			for (uint32_t k = 0; k < _pageSize; k++) {
+				if (dst + k >= memSize)
+					throw FormatError("image does not fit in memory");
+				mem[dst + k] = off + k < _d.size() ? _d[off + k] : 0;
+			}
+		}
+	}
+	// internal-reference fixups, page by page
+	for (const Object &o : _objects) {
+		for (uint32_t p = 0; p < o.pages; p++) {
+			uint32_t logical = o.firstPage - 1 + p;
+			Cursor a(_d, _fixupPageTab + 4 * logical), b(_d, _fixupPageTab + 4 * (logical + 1));
+			size_t pos = _fixupRecTab + a.u32(), end = _fixupRecTab + b.u32();
+			uint32_t pageAddr = o.base + p * _pageSize;
+			Cursor c(_d, pos);
+			while (c.pos() < end) {
+				uint8_t src = c.u8(), flags = c.u8();
+				bool list = (src & 0x20) != 0;
+				int count = 0;
+				int16_t single = 0;
+				if (list)
+					count = c.u8();
+				else
+					single = c.s16();
+				if (flags & 3)
+					throw FormatError("unsupported fixup target kind");
+				int obj = (flags & 0x40) ? c.u16() : c.u8();
+				int kind = src & 0xF;
+				uint32_t tgt = 0;
+				if (kind != 2)
+					tgt = (flags & 0x10) ? c.u32() : c.u16();
+				if (flags & 4)
+					tgt += (flags & 0x20) ? c.u32() : c.u16();
+				std::vector<int16_t> offs;
+				if (list) {
+					for (int i = 0; i < count; i++)
+						offs.push_back(c.s16());
+				} else {
+					offs.push_back(single);
+				}
+				if (obj < 1 || obj > (int)_objects.size())
+					throw FormatError("fixup target object out of range");
+				uint32_t value = _objects[obj - 1].base + tgt;
+				for (int16_t so : offs) {
+					int64_t at = (int64_t)pageAddr + so;
+					if (at < 0 || at + 4 > (int64_t)memSize)
+						continue;
+					if (kind == 7) {
+						for (int k = 0; k < 4; k++)
+							mem[at + k] = (value >> (8 * k)) & 0xFF;
+					} else if (kind == 8) {
+						uint32_t v = value - (pageAddr + so + 4);
+						for (int k = 0; k < 4; k++)
+							mem[at + k] = (v >> (8 * k)) & 0xFF;
+					} else if (kind == 5) {
+						mem[at] = value & 0xFF;
+						mem[at + 1] = (value >> 8) & 0xFF;
+					}
+				}
+			}
+		}
 	}
 }
 

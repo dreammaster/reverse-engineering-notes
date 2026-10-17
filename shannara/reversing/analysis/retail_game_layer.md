@@ -851,3 +851,21 @@ the irregular form AND the whole verb appended again with an `s` ("want to goesw
 `port/src/text.{h,cpp}` reproduces all of it. `port/tests/text_fuzz.py` calls the original under `retail_game.Game` and the C++ port with the same random sequences (all forms and flags,
 valid/invalid objects, 40 verbs including 130-character ones, random attribute changes) and compares the returned string, the print-now text and a hash of the whole object state after
 every call: **12,000 calls, 0 mismatches.** (A NULL verb pointer is undefined in the original - it scans address 0 - so the fuzz never passes one.)
+
+## 33. A static recompiler and a native engine core (thirty-third pass)
+
+The handlers use only ~45 distinct x86 mnemonics (84,818 instructions in the 715 handlers; 100,559 in their 948-function call closure; every call is direct except
+`call_object_handler?`'s table dispatch and a combat hook; 73 jump tables), so the whole game layer can be translated mechanically.
+`reversing/scripts/dump_insns.py` (IDAPython) writes the decoded instructions with structured operands, `transpile_handlers.py` turns each into C++ over
+`port/src/machine.h` (registers, flags, stack, flat memory image with the LE fixups applied; jumps -> `goto`, jump tables -> `switch`, calls ->
+`m.push(ret); m.call(addr)`), and `port/build_engine.sh` builds `engine_tool.exe`. All **1,258 game-layer functions** translate (the one exception is a DOS `int 21h` helper);
+calls to the engine/library region and the UI helpers go to shims, which default to no-ops that pop the callee-cleaned arguments (`retn N`).
+
+Verification: `port/tests/engine_diff.py` runs the same random sequences (verb x object x object commands interleaved with flag changes, object moves, room
+changes and attribute flips) on the unicorn oracle and on the native engine and compares the return value, a hash of all saved state and the text for every step:
+**12,000 operations over four seeds, 0 mismatches.** `trace_diff.py` found the two real transpiler bugs in minutes by comparing register traces: (1) IDA numbers the byte
+registers 16-23 (`dl` is 18, not 2), (2) for one-operand `idiv`/`div`/`imul` IDA lists the implicit `eax` first (`idiv esi` -> `[eax, esi]`).
+
+The generated sources contain the game's own logic and are not committed; the generator, runtime, shims and tests are. This gives a native, fast reference of the
+verified behaviour (`Engine::command("Take", 35)` -> "You take the fishing pole.") to port handler by handler into readable code, with the transpiled version as the
+oracle for each ported function.
