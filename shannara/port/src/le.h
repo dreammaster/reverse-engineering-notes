@@ -9,7 +9,8 @@ namespace shannara {
 class LeExe {
 public:
 	explicit LeExe(Bytes file);
-	// Copies n bytes at linear address `addr` into dst; throws FormatError if any byte is outside the loaded objects.
+	// Copies n bytes at linear address `addr` into dst (zeros for the uninitialised tail of an object); throws FormatError if any byte is
+	// outside the loaded objects.
 	void read(uint32_t addr, void *dst, size_t n) const;
 	uint8_t u8(uint32_t addr) const { uint8_t v; read(addr, &v, 1); return v; }
 	uint16_t u16(uint32_t addr) const { uint8_t b[2]; read(addr, b, 2); return b[0] | (b[1] << 8); }

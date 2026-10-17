@@ -186,5 +186,22 @@ if os.path.exists(exe):
     check("room tables from SHANNARA.EXE", gr == wr, str(next(((a, b) for a, b in zip(gr, wr) if a != b), (len(gr), len(wr)))))
     print("SHANNARA.EXE: %d object records, %d rooms read through the LE page map" % (len(objs), len(rooms)))
 
+# ---- savegame (HELP.DAT) over the exe's initial state --------------------------------------------------------------------
+helpdat = os.path.join(ROOT, "game", "HELP.DAT")
+if os.path.exists(exe) and os.path.exists(helpdat):
+    d = open(helpdat, "rb").read()
+    prefix = {1: 33, 2: 41, 3: 48, 4: 24, 5: 49}
+    same = 0
+    pos = 0x20
+    for r in tsv:
+        n = prefix[int(r[1])]
+        same += d[pos:pos + n] == bytes.fromhex(r[11])[:n]
+        pos += n
+    out = run("save", exe, helpdat)
+    ok = (out[0].startswith("size %d legacy 1 room 88 " % len(d)) and out[1].startswith("objects equal to initial %d of 744" % same)
+          and out[2] == "roundtrip identical 1 full size 32668" and pos == 0x20 + 23072)
+    check("HELP.DAT savegame", ok, "; ".join(out))
+    print("HELP.DAT: %d of 744 object records equal the initial state; %s" % (same, out[0]))
+
 print("\n%d checks, %d failed" % (checks, fails))
 sys.exit(1 if fails else 0)

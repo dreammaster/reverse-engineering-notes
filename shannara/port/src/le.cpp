@@ -47,16 +47,19 @@ void LeExe::read(uint32_t addr, void *dst, size_t n) const {
 		uint32_t a = addr + (uint32_t)k;
 		bool found = false;
 		for (const Object &o : _objects) {
-			if (a < o.base || a >= o.base + o.pages * _pageSize)
+			if (a < o.base || a >= o.base + (o.size > o.pages * _pageSize ? o.size : o.pages * _pageSize))
 				continue;
 			uint32_t rel = a - o.base;
+			if (rel >= o.pages * _pageSize) { // virtual size beyond the file-backed pages: zero-initialised data (BSS)
+				out[k] = 0;
+				found = true;
+				break;
+			}
 			uint32_t logical = o.firstPage - 1 + rel / _pageSize;
 			if (logical >= _pageMap.size())
 				throw FormatError("page index outside the page map");
 			size_t off = _dataPages + (size_t)(_pageMap[logical] - 1) * _pageSize + rel % _pageSize;
-			if (off >= _d.size())
-				throw FormatError("page data past end of file");
-			out[k] = _d[off];
+			out[k] = off < _d.size() ? _d[off] : 0; // the final page is only partly stored; the rest is zero-filled
 			found = true;
 			break;
 		}

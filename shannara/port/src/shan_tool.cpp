@@ -10,6 +10,7 @@
 #include "pic.h"
 #include "qvideo.h"
 #include "retail_data.h"
+#include "savestate.h"
 #include "rgn.h"
 #include "shanstr.h"
 
@@ -200,6 +201,27 @@ static int cmdObjects(char **argv) {
 	return 0;
 }
 
+// save EXE SAVEFILE: loads a savegame over the exe's initial state and reports on it.
+static int cmdSave(char **argv) {
+	LeExe exe(readFile(argv[2]));
+	SaveState init = SaveState::initial(exe);
+	SaveState s = init;
+	Bytes file = readFile(argv[3]);
+	s.load(file);
+	int sameObjects = 0, sameRegions = 0, flags = 0;
+	for (size_t i = 0; i < s.objects.size(); i++)
+		sameObjects += !memcmp(s.objects[i].raw.data(), init.objects[i].raw.data(), SaveState::objectPrefix(s.objects[i].type));
+	for (int r = 0; r < SaveState::kRegionCount; r++)
+		sameRegions += s.regions[r] == init.regions[r];
+	for (int n = 1; n <= 800; n++)
+		flags += s.gameFlag(n);
+	bool legacy = file.size() == SaveState::kLegacySize;
+	printf("size %zu legacy %d room %d score %u flags set %d\n", file.size(), legacy, s.currentRoom(), s.score(), flags);
+	printf("objects equal to initial %d of %zu, regions equal to initial %d of %d\n", sameObjects, s.objects.size(), sameRegions, SaveState::kRegionCount);
+	printf("roundtrip identical %d full size %zu\n", s.save(legacy) == file, s.save(false).size());
+	return 0;
+}
+
 int main(int argc, char **argv) {
 	if (argc < 3) {
 		fprintf(stderr, "usage: shan_tool shanstr|pic|rgn|fnt|q FILE [...]\n");
@@ -215,6 +237,7 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[1], "mus")) return cmdMus(argv);
 		if (!strcmp(argv[1], "objdat")) return cmdObj(argv);
 		if (!strcmp(argv[1], "objects")) return cmdObjects(argv);
+		if (!strcmp(argv[1], "save") && argc >= 4) return cmdSave(argv);
 	} catch (const std::exception &e) {
 		fprintf(stderr, "error: %s\n", e.what());
 		return 1;
