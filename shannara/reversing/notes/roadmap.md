@@ -133,7 +133,8 @@ with the bundled UHARC inside DOSBox), RGN hotspot files, MUS (XMIDI archive), F
 `q_play.py`, `shanstr.py`, `fnt_read.py`, `pic_scan.py` (+ `load_entry`, `composite_xor`), `rgn_read.py`, `dialog_view.py`, `make_handler_notes.py`.
 
 Next, roughly in value order:
-- Port work: C++ versions of the verified pieces (Q decoder, SHANSTR decoder, PIC/RGN/FNT readers, XMIDI directory); all have specs and Python references.
+- Port work: **started** - `port/` has C++17 readers for SHANSTR, PIC, RGN, FNT and the Q decoder/container, differentially tested against the Python references (`port/tests/verify.py`: 57 checks on every real file; `fuzz_q.py`: 1,500 random streams, 0 mismatches). Still to port: XMIDI directory, `OBJECT.DAT`, FLC/MP3 glue, the object/handler runtime (the 715 handlers are the bulk).
+- Room rendering from the tables is validated (`compose_room.py`, section 29): all 67 room backgrounds and the overlay/XOR-sprite model.
 - Not yet validated: LHA `-lh4-` picture path (the demo/retail files here do not use it), retail `.VOC` voices (this release ships MP3s instead), `Q` audio (the demo's `.q`
   files carry none), the 0x20 pic flag (index 254 transparent) and the unexplained low flag bits.
 - Combat internals: the 15 `enc_hook_NN?` bodies, `sub_16208`, `sub_16BBC`, the "Give orders to..." menu (`sub_158AC`), the eight timed events' rules.

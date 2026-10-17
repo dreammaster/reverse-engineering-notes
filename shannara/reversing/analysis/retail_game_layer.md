@@ -780,3 +780,7 @@ which checks the whole chain *room object -> picture id -> overlay table -> spri
 - Frame offsets: the `(x, y)` read from the start of an entry's frame table are the sprite's position in the 528 x 293 picture.
 - Overlay visibility (container / attribute / condition function) really is what `overlay_visible?` says: only the overlays whose
   conditions hold in the story state (Allanon, container 88) appear in the normal render, the others need `--all`.
+
+Whole-game check: rendering the base background of all 67 rooms in `retail_rooms.tsv` (room 643 is the blank placeholder) succeeds for every
+room and every image is recognisable scene art (castle gates, interiors, forests, mountains, caves, character portraits); a handful of
+dark interiors come out nearly black with the background's own palette, as expected for night/cave rooms.
