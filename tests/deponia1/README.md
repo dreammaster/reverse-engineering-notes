@@ -78,6 +78,8 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | containertest | a container written with entries of every kind (plain, compressed, encrypted, both) and read back through the manager (memory file and file object); the wrong password |
 | monkeytest | random mouse, key and wheel input on the interface game (600 steps; `MONKEY_SEED` and `MONKEY_STEPS` choose others - seeds 1-8 with 6000 steps were clean) |
 | luatest | scripting commands: `object:to()`, event handlers, `isPointInsidePolygon` |
+| texttest2 | the single text of a stopped game: `ContinueStoppedText`, `SetOwner`/`DetachOwner` |
+| ttexttest | the text of a language (found, made), the languages of text and speech, `TTAnimation::SetMirrored`, `TTSprite::SetPosition` |
 
 ## Finding what is not tested
 
