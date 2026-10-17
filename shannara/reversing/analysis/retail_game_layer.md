@@ -913,3 +913,8 @@ no-op/stubbed boundary function, `name eax edx ebx ecx` plus the callee-cleaned 
 Comparing the streams found two more gaps in the recompiled core: `save_game?` (a boundary function the oracle ran for real) and a shared helper at 0x4C194 that five "Talk to"
 handlers call (IDA mis-decoded `31 c9` after `mov ebx, eax` as `db 31h; leave`, so it was never a function). The extra entry points that IDA does not know are kept in
 `reversing/scripts/extra_entries.txt` (`name hexaddress`, dumped with the control-flow walk of `dump_insns.py`) and appended to the function list when generating the instruction JSON.
+
+Strictest check so far (`state_diff.py` compares, after EVERY operation, the hash of all 92 savegame regions - party, journal, score, timers, UI selections, everything `serialize_state?`
+streams - in addition to the object/flag hash, the text and the boundary events): seeds 4 and 5, 300 scenarios x 40 commands each (97,990 commands, 284,776 operations,
+6,113 boundary events): **0 mismatches** after one more entry point was added (`0x6516C`, the shared "return 0" tail that several objects' handler-table entries point at; the no-op shim
+behaved identically, but now the code runs as the original does). `extra_entries.txt` now lists 7 entry points IDA does not know.

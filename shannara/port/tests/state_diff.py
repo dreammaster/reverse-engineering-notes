@@ -48,7 +48,14 @@ def main():
     rooms = [int(r["room(obj id)"]) for r in load_tsv("retail_rooms.tsv")]
     items = [k + 1 for k in range(n) if types[k] == 2]
     base = g.snapshot()
-    ops, expect, evs = [], [], []
+    ops, expect, evs, rhs = [], [], [], []
+    regions = [(int(r["address"], 16), int(r["bytes"])) for r in load_tsv("retail_save_regions.tsv")]
+
+    def region_hash():
+        h = 1469598103934665603
+        for a, n_ in regions:
+            h = fnv(g.rb(a, n_), h)
+        return h
 
     def take_events():
         e = list(g.events)
@@ -71,10 +78,12 @@ def main():
         ops.append(line)
         expect.append(None)
         evs.append(take_events())
+        rhs.append(region_hash())
 
     def checked(line, r):
         ops.append(line)
         evs.append(take_events())
+        rhs.append(region_hash())
         expect.append("%d %d %016x [%s]" % (len(ops) - 1, r & 0xFFFFFFFF, state_hash(), esc(g.text())))
 
     import time
@@ -101,7 +110,7 @@ def main():
             scope = [k for k in range(1, n + 1) if k != here and (g.call(0x1B5C8, eax=here, edx=k) & 0xFF or g.call(0x1B5C8, eax=3, edx=k) & 0xFF)]
         except Exception:
             cut = max(i for i, o in enumerate(ops) if o.startswith("reset"))
-            del ops[cut:], expect[cut:], evs[cut:]
+            del ops[cut:], expect[cut:], evs[cut:], rhs[cut:]
             take_events()
             continue
         take_events()
@@ -141,10 +150,15 @@ def main():
     pairs = [(a, e, ops[k]) for k, (a, e) in enumerate(zip(out, expect)) if e is not None]
     bad = [x for x in pairs if x[0] != x[1]]
     print("commands:", len(pairs), "lines:", len(out), "of", len(ops), "mismatches:", len(bad) + abs(len(out) - len(ops)))
-    native_ev = {}
+    native_ev, native_rh = {}, {}
     for l in open(evpath).read().splitlines():
         k, rest = l.split(" ", 1)
-        native_ev.setdefault(int(k), []).append(rest)
+        if rest.startswith("@region "):
+            native_rh[int(k)] = int(rest.split()[1], 16)
+        else:
+            native_ev.setdefault(int(k), []).append(rest)
+    rh_bad = [k for k in range(len(ops)) if native_rh.get(k) != rhs[k]]
+    print("savegame-region hashes compared:", len(ops), "mismatches:", len(rh_bad), "(first at op %s: %s)" % (rh_bad[0], ops[rh_bad[0]]) if rh_bad else "")
     names = {x.split()[0] for v in native_ev.values() for x in v}
     ev_bad, ev_total, oracle_only = [], 0, set()
     for k in range(len(ops)):
@@ -159,7 +173,7 @@ def main():
         print("  op      :", o, "(%d vs %d events, first difference at %d)" % (len(a), len(b), first), "\n  C++     :", a[first:first + 3], "\n  original:", b[first:first + 3])
     for a, b, o in bad[:8]:
         print("  op      :", o, "\n  C++     :", a[:200], "\n  original:", b[:200])
-    sys.exit(1 if bad or ev_bad or len(out) != len(ops) else 0)
+    sys.exit(1 if bad or ev_bad or rh_bad or len(out) != len(ops) else 0)
 
 
 main()

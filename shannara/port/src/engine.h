@@ -23,6 +23,8 @@ public:
 	std::string rawOutput() const { return _out; }
 	// hash of the saved state: every object record prefix and the 100-byte flag set
 	uint64_t stateHash();
+	// hash of all 92 savegame regions (party, journal, score, timers, UI selections ... - everything serialize_state? streams)
+	uint64_t regionHash();
 	void snapshot();
 	void restore();
 

@@ -219,6 +219,15 @@ uint64_t Engine::stateHash() {
 	return fnv(m.ptr(0xCD8AC), 100, h);
 }
 
+#include "save_regions.inc"
+
+uint64_t Engine::regionHash() {
+	uint64_t h = 1469598103934665603ull;
+	for (auto &r : kSaveRegions)
+		h = fnv(_m->ptr(r.addr), r.size, h);
+	return h;
+}
+
 void Engine::snapshot() {
 	_snapMem = _m->mem;
 	_snapHeap = _m->heapPtr;

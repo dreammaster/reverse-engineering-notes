@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
 				e.machine().trace.clear();
 			}
 			if (evf) {
+				fprintf(evf, "%d @region %016llx\n", k, (unsigned long long)e.regionHash());
 				for (auto &ev : e.machine().events)
 					fprintf(evf, "%d %s\n", k, ev.c_str());
 				e.machine().events.clear();
