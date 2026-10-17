@@ -12,6 +12,7 @@ the demo (`DEMO.LE`) is a smaller build of the same engine.
 | `reversing/analysis/*_spec.md`, `retail_combat.md` | codec specs (Q video, LHA -lh4-), combat |
 | `reversing/notes/roadmap.md` | status and next steps (read first) |
 | `reversing/scripts/` | IDAPython rename/export scripts (`apply_*.py`, `unfold_functions.py`, `dump_insns.py`), readers, the unicorn oracle (`retail_emu.py`, `retail_game.py`), the recompiler (`transpile_handlers.py`) |
+| `reversing/scripts/pseudo_c.py` | readable pseudo-C (calls with resolved arguments, conditions as expressions) for any function set - local reading aid for hand-porting (`game_out/handlers_pseudo.c`, git-ignored) |
 | `port/` | C++17: resource readers, world model, `print_obj`, savegame, **transpiled engine core**, tests - see `port/README.md` |
 | `Shannara.idb`, `Shannara Demo.idb` | IDA databases (git-ignored); `Shannara.asm` local text export (git-ignored, 15 MB) |
 | `game/`, `demo/`, `game_out/` | the game's own files and local extractions (git-ignored) |
