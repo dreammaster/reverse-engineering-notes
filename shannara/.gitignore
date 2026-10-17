@@ -2,3 +2,5 @@ game/
 demo/
 demo_out/
 game_out*
+port/build/
+port/build-cmake/
