@@ -49,6 +49,7 @@ enum {
     MapFlagLocalMap = 0x0200,
     MapFlagExtended = 0x0400,
     MapFlagCoordinates = 0x0800,
+    MapFlagCompass = 0x0400, /* the Mapping average has reached 45: the compass direction is written in the panel (ShowCompassDirection) */
     MapFlagHidden = 0x1000,
     MapFlagSmall = 0x2000,
     MapFlagLarge = 0x4000,

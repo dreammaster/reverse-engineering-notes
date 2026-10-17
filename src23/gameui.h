@@ -29,7 +29,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -48,7 +48,9 @@ typedef enum {
     UiKeyF6,
     UiKeyF7,
     UiKeyF8,
-    UiKeyF9
+    UiKeyF9,
+    UiKeyPageUp = 0x120,
+    UiKeyPageDown
 } UiKey;
 
 typedef struct {
@@ -70,6 +72,19 @@ typedef enum { UiBootNone, UiBootSaves, UiBootTitle, UiBootOptions } UiBoot;
 /* What the pause dialog is doing: showing its options, a slot list of SAVE or LOAD, a name being typed for a save, or asking a question. */
 typedef enum { UiDialogMenu, UiDialogSlots, UiDialogName, UiDialogPrompt } UiDialogMode;
 
+/* What the alchemy screen is doing: showing its list, waiting for the portrait a single-target spell is for, or asking whether to mark or return. */
+typedef enum { UiAlchemyList, UiAlchemyTarget, UiAlchemyMark } UiAlchemyMode;
+
+enum { UiAlchemyMax = 128, UiPanelRunMax = 8 };
+
+/* A piece of text written into the message area of the right-hand panel: where, in which colour, over the panel (opaque) or not. */
+typedef struct {
+    int x, y;
+    uint8_t colour;
+    bool opaque;
+    char text[16];
+} PanelRun;
+
 typedef struct {
     GameSession *session;
     ViewRenderer renderer;
@@ -86,7 +101,16 @@ typedef struct {
     bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
     unsigned shopLock;     /* the lock record of the shop being shown */
     unsigned lastMusicPage;
-    unsigned castNext;     /* the next spell id the C key tries outside a combat */
+    PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
+    unsigned panelRunCount;
+    bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
+    UiAlchemyMode alchemyMode;
+    unsigned alchemyCaster; /* the party slot (0-3) whose spells the screen lists */
+    unsigned alchemyCount;  /* the list: the spells the caster knows, in id order */
+    unsigned alchemyIds[UiAlchemyMax];
+    bool alchemyOk[UiAlchemyMax]; /* castable now (shown white, else grey) */
+    unsigned alchemySelected;
+    unsigned alchemySpell;  /* the spell waiting for its target / mark answer */
     const ExeData *exe;    /* the executable's data segment (the clue book's texts); NULL = no clue book */
     CreationWizard wizard; /* the character creation under way (UiOverlayCreate) */
     unsigned wizardSlot;   /* the roster record it will be stored in */
@@ -150,6 +174,14 @@ void gameUiBoot(GameUi *ui);
 
 /* Hands the UI the executable (it must stay valid) so that F8, the clue book, can open. It has the walk through (F6, I / Q turn pages), the help screen (Tab) and the category lists F1 maps, F2 monsters, F3 spells, F4 magic users (a class, then its spells), F5 items (a group, then its items): Up / Down / I / Q choose, Enter opens, Escape backs out; the entries are the executable's own lists (clueentries.h). */
 void gameUiSetExe(GameUi *ui, const ExeData *exe);
+
+/*
+ * The alchemy screen (RunAlchemyScreen, yendor2.asm:24614; the second icon, the C key; UiOverlayAlchemy): the dialog frame over the view lists, 13 to a page, the spells the member knows -- white when
+ * they can be cast now (enough MP, ore and nuore; not a combat-only spell outside a combat nor the reverse), grey when not -- with their MP, NUORE and MAGIC ORE costs, and the status panel shows
+ * the member's MP and the party's two ore counters. Up / Down move the selection, I / PageUp and Q / PageDown turn the page, F1-F4 (or a click on a portrait; not in a combat, where the caster is the
+ * member whose turn it is) change the member, Space or Enter casts the selected spell, a click selects a row and a second click on it casts (the original casts on a held button), Escape, C or the
+ * right button leave. A spell for one member (SpellFlagsASingleTarget) first asks which: a portrait click or F1-F4; the location spell asks MARK or RETURN. Casting pays the costs and closes the screen.
+ */
 
 /* One key press; false = quit (Escape with no overlay open, DOS in the dialog, Ctrl+Q on the title menu). */
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl);

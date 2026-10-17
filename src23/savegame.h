@@ -97,6 +97,7 @@ enum {
     SaveHeaderDayTrack = 0x52,      /* u16: the music track a destination sets for 07:00-19:00 (word_36CB1 / ds:0CF2F), 0 = by map page */
     SaveHeaderNightTrack = 0x54,    /* u16: the same for the night (word_36CB3 / ds:0CF31) */
     SaveHeaderTravelMode = 0x56,    /* u16, Chapter 3: a destination's small "travel mode" value (ds:0CF33) */
+    SaveHeaderLastCaster = 0x6E,    /* u16: the party record id of the member who last cast on the alchemy screen (word_36CCD; DeductAlchemySpellCosts), the caster it opens on next time */
     SaveHeaderGlobalFlags = 0xD2,   /* the quest / world-state flag bitfield g_globalFlags (DS:0x94D1 / 0xCFAF), SaveHeaderGlobalFlagsSize bytes: see globalflags.h */
     SaveHeaderGlobalFlagsSize = 0x60,
     SaveHeaderPartySlots = 0x1EC    /* 4 x u16: 1-based party record id, 0 = empty */

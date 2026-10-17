@@ -55,29 +55,29 @@ static void testCount(void) {
 
 static void testFindChapter2(void) {
     MapTriggerRecord r;
-    check("Chapter 2: world row 19 matches (a default entry)", mapTriggerFind(GameYendor2, 999, 19, &r));
+    check("Chapter 2: floor type 19 matches (a default entry)", mapTriggerFind(GameYendor2, 999, 19, &r));
     checkI32("...effect id (rawA)", r.rawA, 12);
-    check("...matches on Y, not X (worldX is irrelevant)", !r.matchIsX);
+    check("...matches on the floor type, not the wall type (which is irrelevant)", !r.matchesWall);
     checkU32("...flags", r.flags, 0x0000);
 
-    check("Chapter 2: world row 65 matches (a teleport entry)", mapTriggerFind(GameYendor2, 0, 65, &r));
+    check("Chapter 2: floor type 65 matches (a teleport entry)", mapTriggerFind(GameYendor2, 0, 65, &r));
     checkU32("...flags", r.flags, 0x4000);
 
-    check("Chapter 2: world row 67 matches (the corrosion entry)", mapTriggerFind(GameYendor2, 0, 67, &r));
+    check("Chapter 2: floor type 67 matches (the corrosion entry)", mapTriggerFind(GameYendor2, 0, 67, &r));
     checkU32("...flags", r.flags, 0x0200);
     checkI32("...rawA is the corrosion slot offset", r.rawA, 322);
 
-    check("Chapter 2: an unmatched row finds nothing", !mapTriggerFind(GameYendor2, 0, 500, &r));
+    check("Chapter 2: an unmatched type finds nothing", !mapTriggerFind(GameYendor2, 0, 500, &r));
 }
 
 static void testFindChapter3(void) {
     MapTriggerRecord r;
-    check("Chapter 3: world column 332 matches (an X-axis default entry)", mapTriggerFind(GameYendor3, 332, 0, &r));
-    check("...matches on X, not Y", r.matchIsX);
+    check("Chapter 3: wall type 332 matches (a wall-type default entry)", mapTriggerFind(GameYendor3, 332, 0, &r));
+    check("...matches on the wall type, not the floor type", r.matchesWall);
     checkU32("...flags include the item-exclusion bit", r.flags, 0x8001);
     checkI32("...effect id (rawA)", r.rawA, 12);
 
-    check("Chapter 3: world row 157 matches (a plain default entry, no exclusion bit)",
+    check("Chapter 3: floor type 157 matches (a plain default entry, no exclusion bit)",
           mapTriggerFind(GameYendor3, 0, 157, &r));
     checkU32("...flags", r.flags, 0x0000);
     checkI32("...effect id", r.rawA, 46);

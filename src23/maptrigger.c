@@ -11,7 +11,7 @@
    the teleport branch's own extra Chapter 3 fields aren't needed since teleport isn't decided further here. */
 typedef struct {
     int coord;
-    bool matchIsX;
+    bool matchesWall;
     uint16_t flags;
     int16_t rawA;
     int16_t rawB;
@@ -56,15 +56,15 @@ unsigned mapTriggerCount(GameKind game) {
                                 : sizeof(g_triggersYendor3) / sizeof(g_triggersYendor3[0]);
 }
 
-bool mapTriggerFind(GameKind game, int worldX, int worldY, MapTriggerRecord *out) {
+bool mapTriggerFind(GameKind game, uint16_t wallType, uint16_t floorType, MapTriggerRecord *out) {
     const RawTriggerEntry *table = (game == GameYendor2) ? g_triggersYendor2 : g_triggersYendor3;
     unsigned count = mapTriggerCount(game);
     for (unsigned i = 0; i < count; i++) {
         const RawTriggerEntry *e = &table[i];
-        int value = e->matchIsX ? worldX : worldY;
+        int value = e->matchesWall ? wallType : floorType;
         if (value == e->coord) {
             out->coord = e->coord;
-            out->matchIsX = e->matchIsX;
+            out->matchesWall = e->matchesWall;
             out->flags = e->flags;
             out->rawA = e->rawA;
             out->rawB = e->rawB;

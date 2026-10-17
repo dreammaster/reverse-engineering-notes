@@ -198,9 +198,15 @@ static bool engageMonsterOnPartyCell(GameSession *s) {
 
 /* ApplyMapTriggerEffect (yendor2.asm:17458): run for the cell the party stands on after every step -- a trap that hurts, steals or corrodes the members who can act, or (flag
  * 0x4000) a teleport to the record's own cell. Returns what happened for the log. */
+/* The trigger-table entry for the cell the party stands on (IsPositionInTriggerList: matched on the cell's wall and floor types). */
+static bool partyCellTrigger(const GameSession *s, MapTriggerRecord *record) {
+    const DungeonGridCell *cell = dungeonGridCellAtWorldPos(&s->grid, s->x, s->y);
+    return cell && mapTriggerFind(s->game, cell->wallType, cell->floorType, record);
+}
+
 static bool applyMapTrigger(GameSession *s) {
     MapTriggerRecord record;
-    if (!mapTriggerFind(s->game, s->x, s->y, &record)) {
+    if (!partyCellTrigger(s, &record)) {
         return false;
     }
     if (record.flags & 0x4000) {
@@ -779,7 +785,8 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
             done = false;
         } else if (branch == SpellBranchSingleTarget) {
             if (spellGetU16(spell, SpellFieldFlagsA) & (SpellFlagsAPositionReset | SpellFlagsAIconBarPresetAmount)) {
-                castStatDelta(s, s->scrollCast && sessionPartyRecord(s, s->scrollTarget) ? sessionPartyRecord(s, s->scrollTarget) : caster, &def, spell);
+                uint8_t *recipient = s->scrollCast ? sessionPartyRecord(s, s->scrollTarget) : s->castTarget ? sessionPartyRecord(s, s->castTarget - 1) : NULL;
+                castStatDelta(s, recipient ? recipient : caster, &def, spell);
             } else {
                 done = false;
             }
@@ -879,6 +886,13 @@ SessionCast sessionCast(GameSession *s, unsigned spellId) {
         combatAfterAction(s);
         combatRunMonsters(s);
     }
+    return result;
+}
+
+SessionCast sessionCastOn(GameSession *s, unsigned casterSlot, unsigned spellId, bool returnToMark, unsigned targetSlot) {
+    s->castTarget = targetSlot + 1;
+    SessionCast result = sessionCastBy(s, casterSlot, spellId, returnToMark);
+    s->castTarget = 0;
     return result;
 }
 
@@ -1895,7 +1909,10 @@ RestOutcome sessionRest(GameSession *s) {
     uint8_t globalSlots[24];
     memset(globalSlots, 0, sizeof(globalSlots));
     RestCtx ctx = {s};
-    RestOutcome out = restParty(&s->save, &s->clock, &s->items, globalSlots, false, false, false, restMonsters, &ctx);
+    MapTriggerRecord trigger;
+    RestOutcome out = restParty(&s->save, &s->clock, &s->items, globalSlots, s->heldItem != 0, false, partyCellTrigger(s, &trigger), restMonsters, &ctx);
+    s->rest = out;
+    s->restReport = !out.refused || out.noRest;
     s->clock.minutes %= 1440;
     if (!out.refused) {
         lightSourceTickTimers(&s->light, out.minutes);

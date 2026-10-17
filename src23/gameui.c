@@ -8,6 +8,7 @@
 #include "clueitem.h"
 #include "cluemap.h"
 #include "cluemonster.h"
+#include "alchemylist.h"
 #include "cluespell.h"
 #include "cluetransport.h"
 #include "creationwizard.h"
@@ -25,6 +26,7 @@
 #include "party.h"
 #include "pictures.h"
 #include "roster.h"
+#include "spellcast.h"
 #include "statsheet.h"
 #include "statuspanel.h"
 #include "textpanel.h"
@@ -52,7 +54,6 @@ bool gameUiInit(GameUi *ui, GameSession *session, const uint8_t *worldDat, size_
         ui->host = *host;
     }
     ui->lastMusicPage = 0xFFFF;
-    ui->castNext = 1;
     ui->driverFlags = DriverMusicAvailable | DriverMusicOn | DriverSoundFxAvailable | DriverSoundFxOn;
     ui->animationSpeed = 5;
     uint32_t offset = pictureMasterPaletteOffset(session->game);
@@ -441,6 +442,320 @@ static void actingFrameDraw(GameUi *ui) {
             viewDrawPicture(&ui->renderer, 7, 0, kX[member], 0x94, true, 0);
         }
     }
+}
+
+/*
+ * The message area of the right-hand panel: what a command wrote there stays until the next one begins (ClearStatusPanelIfDirty, yendor2.asm:11485, which every command calls first); the compass
+ * direction in the header band above it is written again each time (ShowCompassDirection, :30607: "   NORTH" ... in white at (241, 87), when the party's Mapping average has reached 45, outside a combat).
+ */
+static void panelRun(GameUi *ui, int x, int y, uint8_t colour, bool opaque, const char *text) {
+    if (ui->panelRunCount < UiPanelRunMax) {
+        PanelRun *run = &ui->panelRuns[ui->panelRunCount++];
+        run->x = x;
+        run->y = y;
+        run->colour = colour;
+        run->opaque = opaque;
+        snprintf(run->text, sizeof(run->text), "%s", text);
+    }
+}
+
+static void panelRunsDraw(GameUi *ui) {
+    for (unsigned i = 0; i < ui->panelRunCount; i++) {
+        const PanelRun *run = &ui->panelRuns[i];
+        fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, run->x, run->y, run->text, run->colour, 4, run->opaque ? FontOpaque : FontTransparent);
+    }
+}
+
+static void compassDraw(GameUi *ui) {
+    static const char *const kNames[4] = {"   NORTH", "   SOUTH", "    EAST", "    WEST"};
+    uint16_t facing = ui->session->facing;
+    fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 241, 87, kNames[facing & 0x8000 ? 0 : facing & 0x4000 ? 1 : facing & 0x1000 ? 2 : 3], 0x0F, 4, FontTransparent);
+}
+
+/*
+ * The result of a rest (RestPartyAndAdvanceClock, :25686), written the way the original does it: "X HOURS PASS" and "X FOOD EATEN" in 0x8A over the cleared area from (240, 96), 6 pixels apart,
+ * the two X's then overwritten with the real numbers in white; an interrupted rest writes the hours reached and, from y = 108, "YOUR REST IS INTERRUPTED" (and waits for a key before the combat
+ * shows); where the party cannot rest, "YOU CAN NOT REST HERE" (transparent) and the refusal sound.
+ */
+static void restReport(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (!s->restReport) {
+        return;
+    }
+    s->restReport = false;
+    const RestOutcome *rest = &s->rest;
+    char digit[2] = {0, 0};
+    ui->panelRunCount = 0;
+    if (rest->noRest) {
+        panelRun(ui, 240, 96, 0x8A, false, "YOU CAN NOT");
+        panelRun(ui, 240, 102, 0x8A, false, "REST HERE");
+        effect(ui, 3);
+    } else if (rest->interrupted) {
+        digit[0] = (char)('0' + rest->hour % 10);
+        panelRun(ui, 240, 96, 0x8A, true, "X HOURS PASS");
+        panelRun(ui, 240, 96, 0x0F, true, digit);
+        panelRun(ui, 240, 108, 0x8A, true, "YOUR REST IS");
+        panelRun(ui, 240, 114, 0x8A, true, "INTERRUPTED");
+        ui->restPause = true;
+    } else {
+        panelRun(ui, 240, 96, 0x8A, true, "X HOURS PASS");
+        panelRun(ui, 240, 102, 0x8A, true, "X FOOD EATEN");
+        digit[0] = (char)('0' + rest->hour % 10);
+        panelRun(ui, 240, 96, 0x0F, true, digit);
+        digit[0] = (char)('0' + rest->fed % 10);
+        panelRun(ui, 240, 102, 0x0F, true, digit);
+    }
+}
+
+/* ---- the alchemy screen ---- */
+
+static bool alchemyMember(const GameUi *ui, unsigned slot) { /* a member with magic points to spend: the record word +0x94 (maximum MP) is not zero */
+    const uint8_t *member = sessionPartyRecord(ui->session, slot);
+    return member && partyGetStatMax(member, PartyStatMagicPoints) != 0;
+}
+
+/* BuildAlchemySpellList: the spells the caster knows, each marked castable by CheckSpellCastability (none are when the caster cannot act); the spell chosen last stays selected. */
+static void alchemyBuild(GameUi *ui) {
+    GameSession *s = ui->session;
+    uint8_t *caster = sessionPartyRecord(s, ui->alchemyCaster);
+    unsigned known[256];
+    unsigned found = caster ? partyKnownAbilityIds(caster, s->game, known, 256) : 0;
+    bool able = caster && !(partyGetU16(caster, PartyFieldStatusFlags) & PartyStatusIncapacitated);
+    ui->alchemyCount = 0;
+    for (unsigned i = 0; i < found && i < 256 && ui->alchemyCount < UiAlchemyMax; i++) {
+        const uint8_t *spell = spellRecord(&s->spells, known[i]);
+        if (!spell) {
+            continue;
+        }
+        ui->alchemyIds[ui->alchemyCount] = known[i];
+        ui->alchemyOk[ui->alchemyCount] = able && spellCanCast(spell, caster, &s->save, s->combat.active);
+        ui->alchemyCount++;
+    }
+    ui->alchemySelected = 0;
+    unsigned last = caster ? partyGetU16(caster, PartyFieldLastAlchemySpell) : 0;
+    for (unsigned i = 0; last && i < ui->alchemyCount; i++) {
+        if (ui->alchemyIds[i] == last) {
+            ui->alchemySelected = i;
+        }
+    }
+}
+
+/* The start of RunAlchemyScreen: outside a combat the caster is the one used last if he or she still has magic points, else the first member who has; in a combat it is the member whose turn it is. */
+static void alchemyOpen(GameUi *ui) {
+    GameSession *s = ui->session;
+    SessionCombat *c = &s->combat;
+    unsigned slot = 0;
+    if (c->active) {
+        if (c->cursor >= c->count || c->order[c->cursor].isMonster) {
+            return;
+        }
+        slot = c->order[c->cursor].index;
+        if (!alchemyMember(ui, slot)) {
+            effect(ui, 3);
+            return;
+        }
+    } else {
+        unsigned cached = saveHeaderGetU16(&s->save, SaveHeaderLastCaster);
+        bool found = false;
+        for (unsigned i = 0; i < 4 && !found; i++) {
+            if (cached && saveGetPartySlot(&s->save, i) == cached && alchemyMember(ui, i)) {
+                slot = i;
+                found = true;
+            }
+        }
+        for (unsigned i = 0; i < 4 && !found; i++) {
+            if (alchemyMember(ui, i)) {
+                slot = i;
+                found = true;
+            }
+        }
+        if (!found) {
+            effect(ui, 3);
+            return;
+        }
+    }
+    ui->alchemyCaster = slot;
+    alchemyBuild(ui);
+    if (!ui->alchemyCount) {
+        effect(ui, 3);
+        return;
+    }
+    ui->alchemyMode = UiAlchemyList;
+    ui->overlay = UiOverlayAlchemy;
+    effect(ui, 1);
+}
+
+static void alchemyClose(GameUi *ui) {
+    ui->overlay = UiOverlayNone;
+    ui->alchemyMode = UiAlchemyList;
+    effect(ui, 1);
+}
+
+/* The costs are paid and the spell takes effect (DeductAlchemySpellCosts, then ApplyEncodedItemEffect); the screen is left. */
+static void alchemyFinish(GameUi *ui, unsigned spellId, bool returnToMark, int targetSlot) {
+    GameSession *s = ui->session;
+    saveHeaderSetU16(&s->save, SaveHeaderLastCaster, saveGetPartySlot(&s->save, ui->alchemyCaster));
+    ui->overlay = UiOverlayNone;
+    ui->alchemyMode = UiAlchemyList;
+    if (targetSlot >= 0) {
+        sessionCastOn(s, ui->alchemyCaster, spellId, returnToMark, (unsigned)targetSlot);
+    } else {
+        sessionCastBy(s, ui->alchemyCaster, spellId, returnToMark);
+    }
+    playPending(ui);
+    paletteSyncToClock(ui); /* SAFE HAVEN rests */
+    gameUiAmbientMusic(ui);
+}
+
+/* Space, Enter or a held click on the selected spell (loc_1DFAD): a grey one does nothing; the member's last choice is remembered; some spells ask first. */
+static void alchemyCast(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (!ui->alchemyCount || !ui->alchemyOk[ui->alchemySelected]) {
+        return;
+    }
+    unsigned id = ui->alchemyIds[ui->alchemySelected];
+    const uint8_t *spell = spellRecord(&s->spells, id);
+    uint8_t *caster = sessionPartyRecord(s, ui->alchemyCaster);
+    if (!spell || !caster) {
+        return;
+    }
+    partySetU16(caster, PartyFieldLastAlchemySpell, (uint16_t)id);
+    ui->alchemySpell = id;
+    if (spellGetU16(spell, SpellFieldFlagsA) & SpellFlagsASingleTarget) {
+        ui->alchemyMode = UiAlchemyTarget;
+    } else if (spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBLocationBookmark) {
+        ui->alchemyMode = UiAlchemyMark;
+    } else {
+        alchemyFinish(ui, id, false, -1);
+    }
+}
+
+static void alchemyChooseMember(GameUi *ui, unsigned slot) { /* F1-F4 or a portrait: another member's list, if he or she has magic points (else the refusal beep) */
+    if (ui->session->combat.active || !sessionPartyRecord(ui->session, slot)) {
+        return;
+    }
+    if (!alchemyMember(ui, slot)) {
+        effect(ui, 3);
+        return;
+    }
+    ui->alchemyCaster = slot;
+    alchemyBuild(ui);
+}
+
+static void alchemyMoveTo(GameUi *ui, unsigned index) {
+    if (ui->alchemyCount) {
+        ui->alchemySelected = index < ui->alchemyCount ? index : ui->alchemyCount - 1;
+    }
+}
+
+static void alchemyPage(GameUi *ui, bool forward) { /* I / PageUp and Q / PageDown (loc_1E163 ... loc_1E18F) */
+    unsigned page = ui->alchemySelected / AlchemyListRows, pages = (ui->alchemyCount + AlchemyListRows - 1) / AlchemyListRows;
+    if (!forward) {
+        alchemyMoveTo(ui, page == 0 ? 0 : ui->alchemySelected - AlchemyListRows);
+    } else {
+        alchemyMoveTo(ui, page + 1 >= pages ? ui->alchemyCount - 1 : ui->alchemySelected + AlchemyListRows);
+    }
+}
+
+static void alchemyMark(GameUi *ui, bool returnToMark) {
+    effect(ui, returnToMark ? 0x0B : 0x34);
+    alchemyFinish(ui, ui->alchemySpell, returnToMark, -1);
+}
+
+static bool alchemyKey(GameUi *ui, UiKey key) {
+    if (ui->alchemyMode == UiAlchemyTarget) { /* ConfirmAlchemyInteraction: the portrait the spell is for (message 0x12: nothing but the click) */
+        if (key >= UiKeyF1 && key <= UiKeyF4 && sessionPartyRecord(ui->session, (unsigned)(key - UiKeyF1))) {
+            alchemyFinish(ui, ui->alchemySpell, false, (int)(key - UiKeyF1));
+        } else if (key == UiKeyEscape) {
+            ui->alchemyMode = UiAlchemyList;
+        }
+        return true;
+    }
+    if (ui->alchemyMode == UiAlchemyMark) { /* message 0x22: MARK or RETURN (the keys M and R are a convenience; the original answers to clicks only) */
+        if (key == 'm') {
+            alchemyMark(ui, false);
+        } else if (key == 'r') {
+            alchemyMark(ui, true);
+        } else if (key == UiKeyEscape) {
+            ui->alchemyMode = UiAlchemyList;
+        }
+        return true;
+    }
+    if (key == UiKeyEscape || key == 'c') {
+        alchemyClose(ui);
+    } else if (key == ' ' || key == UiKeyEnter) {
+        alchemyCast(ui);
+    } else if (key == UiKeyUp) {
+        alchemyMoveTo(ui, ui->alchemySelected ? ui->alchemySelected - 1 : 0);
+    } else if (key == UiKeyDown) {
+        alchemyMoveTo(ui, ui->alchemySelected + 1);
+    } else if (key == 'i' || key == UiKeyPageUp) {
+        alchemyPage(ui, false);
+    } else if (key == 'q' || key == UiKeyPageDown) {
+        alchemyPage(ui, true);
+    } else if (key >= UiKeyF1 && key <= UiKeyF4) {
+        alchemyChooseMember(ui, (unsigned)(key - UiKeyF1));
+    }
+    return true;
+}
+
+/* The status panel's texts come from the executable (exedata.h) when it is there. */
+static void alchemyLabel(const GameUi *ui, unsigned offset2, unsigned offset3, const char *fallback, char *out, size_t capacity) {
+    unsigned offset = ui->session->game == GameYendor2 ? offset2 : offset3;
+    if (!ui->exe || !offset || !exeDataString(ui->exe, offset, out, capacity)) {
+        snprintf(out, capacity, "%s", fallback);
+    }
+}
+
+static void alchemyDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    const ViewRenderer *r = &ui->renderer;
+    static char names[AlchemyListRows][SpellNameFieldSize + 1];
+    AlchemyRow rows[AlchemyListRows];
+    unsigned page = ui->alchemySelected / AlchemyListRows, pages = (ui->alchemyCount + AlchemyListRows - 1) / AlchemyListRows;
+    unsigned first = page * AlchemyListRows, shown = ui->alchemyCount > first ? ui->alchemyCount - first : 0;
+    shown = shown > AlchemyListRows ? AlchemyListRows : shown;
+    for (unsigned i = 0; i < shown; i++) {
+        const uint8_t *spell = spellRecord(&s->spells, ui->alchemyIds[first + i]);
+        spellGetName(spell, names[i]);
+        rows[i].name = names[i];
+        rows[i].colour = ui->alchemyOk[first + i] ? 0x0F : 6;
+        rows[i].mp = spellGetU16(spell, SpellFieldMpCost);
+        rows[i].nuore = spellGetU16(spell, SpellFieldNuoreCost);
+        rows[i].ore = spellGetU16(spell, SpellFieldOreCost);
+    }
+    alchemyListDraw(r, rows, shown, (int)(ui->alchemySelected - first));
+    if (page > 0) { /* the scroll arrows: glyphs 'a' and 'b' at y = 119 */
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 0xA5, 0x77, "a", 0x0F, 0, FontTransparent);
+    }
+    if (page + 1 < pages) {
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 0xB0, 0x77, "b", 0x0F, 0, FontTransparent);
+    }
+    const uint8_t *caster = sessionPartyRecord(s, ui->alchemyCaster);
+    char blank[16], magic[16], label1[16], label2[16];
+    alchemyLabel(ui, 0x7955, 0x7C87, "            ", blank, sizeof(blank));
+    alchemyLabel(ui, 0x7B15, 0x7E47, "MAGIC:", magic, sizeof(magic));
+    alchemyLabel(ui, 0x7C61, 0, "MAGIC ORE: ", label1, sizeof(label1));
+    alchemyLabel(ui, 0x7C6D, 0x7F9A, "NUORE: ", label2, sizeof(label2));
+    AlchemyPanelText text = {blank, magic, s->game == GameYendor2 ? label1 : NULL, label2};
+    if (caster) {
+        alchemyStatusPanelDraw(r, &text, (const char *)caster + PartyFieldName, partyGetStat(caster, PartyStatMagicPoints), partyGetStatMax(caster, PartyStatMagicPoints),
+                               saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), saveHeaderBcd4(&s->save, SaveHeaderOreCounter2));
+    }
+    if (ui->alchemyMode == UiAlchemyMark) { /* message 0x22 */
+        textPanelClear(r, false);
+        static const char *const kAsk[3] = {"DO YOU WANT", "TO MARK OR", "RETURN?"};
+        for (unsigned i = 0; i < 3; i++) {
+            fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 96 + 6 * (int)i, kAsk[i], 0x0F, 4, FontTransparent);
+        }
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 120, "MARK", 0x8A, 4, FontTransparent);
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 132, "RETURN", 0x8A, 4, FontTransparent);
+    }
+    if (ui->alchemyMode == UiAlchemyList) { /* the caster's portrait carries the selection frame (DrawPartyStatusIconRow) */
+        static const int kX[4] = {8, 0x42, 0x7C, 0xB6};
+        viewDrawPicture(r, 7, 0, kX[ui->alchemyCaster & 3], 0x94, true, 0);
+    }
+    viewDrawPicture(r, 8, 6, IconAlchemyX, IconRowY, false, 0); /* ShowAlchemyIconActive: the icon stays down */
 }
 
 void gameUiSettle(GameUi *ui) {
@@ -1007,13 +1322,18 @@ void gameUiDraw(GameUi *ui) {
     if (ui->overlay == UiOverlayNone) {
         if (s->combat.active) { /* DrawAndCacheStatusIcon: the swords take the shoot icon's place in a combat */
             viewDrawPicture(&ui->renderer, 8, 3, IconShootX, IconRowY, false, 0);
-            combatPanelsDraw(ui);
+            if (!ui->restPause) {
+                combatPanelsDraw(ui);
+            }
             actingFrameDraw(ui);
         } else if (s->loot.pending) {
             lootDraw(ui);
         } else if (panel & MapFlagHidden) {
             resourcesDraw(ui);
+        } else if (panel & MapFlagCompass) {
+            compassDraw(ui);
         }
+        panelRunsDraw(ui);
         if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
             viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
         } else if (ui->pressTicks > 0) {
@@ -1046,6 +1366,9 @@ void gameUiDraw(GameUi *ui) {
         break;
     case UiOverlayTalk:
         drawTalk(ui);
+        break;
+    case UiOverlayAlchemy:
+        alchemyDraw(ui);
         break;
     case UiOverlayClue:
         drawClue(ui);
@@ -1481,29 +1804,10 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         if (key == 'a') {
             pressButton(ui, 4, IconShootX, IconRowY, 2);
             sessionAttack(s);
-        } else if (key == 'c') { /* the first attack spell the member can cast */
-            for (unsigned spell = 1; spell < 126; spell++) {
-                if (sessionCast(s, spell) == SessionCastDone) {
-                    break;
-                }
-            }
+        } else if (key == 'c') { /* the alchemy screen, for the member whose turn it is */
+            alchemyOpen(ui);
         }
         playPending(ui);
-        return true;
-    }
-    if (key == 'c') { /* outside a combat: the next spell, in id order, that any member knows and can cast (support and exploration spells) */
-        for (unsigned tried = 0; tried < 126; tried++, ui->castNext = ui->castNext % 125 + 1) {
-            bool cast = false;
-            for (unsigned member = 0; member < 4 && !cast; member++) {
-                SessionCast result = sessionCastBy(s, member, ui->castNext, false);
-                cast = result == SessionCastDone || result == SessionCastNoEffect;
-            }
-            if (cast) {
-                ui->castNext = ui->castNext % 125 + 1;
-                gameUiAmbientMusic(ui);
-                return true;
-            }
-        }
         return true;
     }
     bool extended = true;
@@ -1555,7 +1859,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         paletteSyncToClock(ui); /* eight hours have gone by */
         break;
     case MainActionAlchemy:
-        pressButton(ui, 6, IconAlchemyX, IconRowY, 2); /* the alchemy screen itself is not in the standalone */
+        alchemyOpen(ui);
         break;
     case MainActionUnlockDoor: /* a demo skeleton key: every tier, as chest and door key at once */
         sessionUnlock(s, 0xFFC0, 0);
@@ -1596,7 +1900,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     return true;
 }
 
-bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
+static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
     if (s->doorOpening || s->shot.active) { /* any key finishes a door that is still opening, or a shot, first */
@@ -1663,6 +1967,9 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->overlay == UiOverlayClue) {
         return clueKey(ui, key);
     }
+    if (ui->overlay == UiOverlayAlchemy) {
+        return alchemyKey(ui, key);
+    }
     if (key == UiKeyEscape) {
         if (ui->overlay != UiOverlayNone) {
             ui->overlay = UiOverlayNone;
@@ -1695,6 +2002,18 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->overlay == UiOverlayNone && !s->combat.active) {
         sessionTickAilments(s); /* once per command; the original sweeps once per pass of its loop */
     }
+    return running;
+}
+
+bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
+    if (ui->restPause) { /* the interrupted rest's message is read: any key lets the combat show */
+        ui->restPause = false;
+        ui->panelRunCount = 0;
+        return true;
+    }
+    ui->panelRunCount = 0; /* the next command clears the message area */
+    bool running = keyDispatch(ui, key, ctrl);
+    restReport(ui);
     return running;
 }
 
@@ -1876,6 +2195,44 @@ static bool shopClick(GameUi *ui, int x, int y) { /* the stock rows of drawShop,
     return true;
 }
 
+/* The alchemy screen's click regions (the table at DS:0x67AC): the 13 rows, 14 the close button, 15 / 16 the arrows; a portrait (the party panel table's regions 1, 11, 21, 31) names a member. */
+static bool alchemyClick(GameUi *ui, int x, int y) {
+    GameKind game = ui->session->game;
+    unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y);
+    int member = panel && panel % 10 == 1 && panel / 10 < 4 ? (int)(panel / 10) : -1;
+    if (ui->alchemyMode == UiAlchemyTarget) {
+        if (member >= 0 && sessionPartyRecord(ui->session, (unsigned)member)) {
+            alchemyFinish(ui, ui->alchemySpell, false, member);
+        }
+        return true;
+    }
+    if (ui->alchemyMode == UiAlchemyMark) {
+        unsigned row = uiRegionHit(game, UiRegionsConfirmList, x, y);
+        if (row == 5 || row == 7) {
+            alchemyMark(ui, row == 7);
+        }
+        return true;
+    }
+    unsigned region = uiRegionHit(game, UiRegionsAlchemy, x, y);
+    if (region == 14) {
+        alchemyClose(ui);
+    } else if (region == 15 || region == 16) {
+        alchemyPage(ui, region == 16);
+    } else if (region >= 1 && region <= AlchemyListRows) {
+        unsigned index = ui->alchemySelected / AlchemyListRows * AlchemyListRows + region - 1;
+        if (index < ui->alchemyCount) {
+            if (index == ui->alchemySelected) {
+                alchemyCast(ui);
+            } else {
+                ui->alchemySelected = index;
+            }
+        }
+    } else if (member >= 0) {
+        alchemyChooseMember(ui, (unsigned)member);
+    }
+    return true;
+}
+
 static bool mainClick(GameUi *ui, int x, int y, bool right) {
     GameSession *s = ui->session;
     GameKind game = s->game;
@@ -1896,7 +2253,7 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     }
     if (region == 3) { /* the icon row: act (attack in a combat), alchemy, rest, the pause dialog */
         unsigned icon = uiRegionHit(game, UiRegionsDungeonIconRow, x, y);
-        return icon == 1 ? press(ui, s->combat.active ? 'a' : 's') : icon == 3 ? press(ui, 'r') : icon == 4 ? press(ui, 'd') : true;
+        return icon == 1 ? press(ui, s->combat.active ? 'a' : 's') : icon == 2 ? press(ui, 'c') : icon == 3 ? press(ui, 'r') : icon == 4 ? press(ui, 'd') : true;
     }
     if (region == 6) { /* a party panel: its portrait or name bar opens that hero's sheet */
         unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y);
@@ -1908,7 +2265,7 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     return true;
 }
 
-bool gameUiClick(GameUi *ui, int x, int y, bool right) {
+static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     ui->session->loot.pending = false; /* the loot panel stays until the next command */
     if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
         return press(ui, UiKeyEscape);
@@ -1928,6 +2285,8 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right) {
         return talkClick(ui, x, y);
     case UiOverlayShop:
         return shopClick(ui, x, y);
+    case UiOverlayAlchemy:
+        return alchemyClick(ui, x, y);
     case UiOverlayLocalMap:
     case UiOverlayDolls:
         ui->overlay = UiOverlayNone; /* any click closes them */
@@ -1940,4 +2299,16 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right) {
     default:
         return mainClick(ui, x, y, right);
     }
+}
+
+bool gameUiClick(GameUi *ui, int x, int y, bool right) {
+    if (ui->restPause) { /* the interrupted rest's message is read: any click lets the combat show */
+        ui->restPause = false;
+        ui->panelRunCount = 0;
+        return true;
+    }
+    ui->panelRunCount = 0;
+    bool running = clickDispatch(ui, x, y, right);
+    restReport(ui);
+    return running;
 }

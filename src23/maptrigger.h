@@ -10,7 +10,9 @@
 #include "savegame.h"
 
 /*
- * IsPositionInTriggerList's own table (both games) plus
+ * IsPositionInTriggerList's own table (both games) -- matched against the *type words of the party's own cell* (yendor2.asm:17680: es:[si] is the cell's wall type and es:[si+2] its floor
+ * type, with si the party's cell offset; an entry with bit 0x8000 of its +2 compares the wall type, the others the floor type; corrected 2026-10-17: it was read as the world's X / Y, which
+ * no entry ever matched -- the Chapter 2 values 17-20 and 63-67 are floor types, Chapter 3's 332-337 wall types) plus
  * ApplyMapTriggerEffect's dispatch (yendor2.asm:17458,
  * yendor3.asm:19629, confirmed instruction-identical except one real,
  * currently-dormant Chapter 3 addition noted below) -- called once
@@ -32,8 +34,8 @@
 unsigned mapTriggerCount(GameKind game);
 
 typedef struct {
-    int coord;      /* the x-or-y value to match */
-    bool matchIsX;   /* true: compare against worldX; false: compare against worldY (the record's own +2 bit 0x8000) */
+    int coord;      /* the cell type value to match */
+    bool matchesWall; /* true: compare against the cell's wall type; false: against its floor type (the record's own +2 bit 0x8000) */
     uint16_t flags;  /* raw +2 -- selects which branch applies, see mapTriggerDecide */
     int16_t rawA;    /* +4 -- meaning depends on flags: teleport destX (not modeled) / gold-ore theft amount's
                          high BCD digit pair / corrosion's own party-record slot offset / the default branch's
@@ -44,8 +46,8 @@ typedef struct {
                          in this project) */
 } MapTriggerRecord;
 
-/* First matching entry (linear scan, matching the original's own first-match-wins order), false if none. */
-bool mapTriggerFind(GameKind game, int worldX, int worldY, MapTriggerRecord *out);
+/* First matching entry (linear scan, matching the original's own first-match-wins order) for a cell with these type words, false if none. */
+bool mapTriggerFind(GameKind game, uint16_t wallType, uint16_t floorType, MapTriggerRecord *out);
 
 typedef enum {
     MapTriggerNone,          /* flags bit 0x4000 (teleport) or 0x2000 (ailment tick) -- deliberately not

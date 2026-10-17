@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "gameui.h"
+#include "spellcast.h"
 #include "gamedialog.h"
 #include "pictures.h"
 #include "uiregions.h"
@@ -566,6 +567,157 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
 }
 
 /* The six save slots as the platform keeps them: images in memory. */
+static unsigned countColour(const uint8_t *screen, int x0, int y0, int x1, int y1, uint8_t colour) {
+    unsigned count = 0;
+    for (int y = y0; y <= y1; y++) {
+        for (int x = x0; x <= x1; x++) {
+            count += screen[y * ViewScreenWidth + x] == colour;
+        }
+    }
+    return count;
+}
+
+static unsigned findBranchSpell(GameSession *s, SpellBranch branch) {
+    for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+        const uint8_t *r = spellRecord(&s->spells, id);
+        if (r && spellSelectBranch(r) == branch && spellGetU16(r, SpellFieldMpCost) > 0) {
+            return id;
+        }
+    }
+    return 0;
+}
+
+/* The compass in the panel's header, a rest's message in its message area, and the alchemy screen (the spell list, its keys and clicks, the casting). */
+static void testPanelAndAlchemy(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world || game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    static GameUi ui;
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch};
+    char text[200];
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+
+    gameUiDraw(&ui);
+    unsigned west = countColour(ui.screen, 241, 87, 312, 92, 0x0F);
+    gameUiKey(&ui, UiKeyUp, false); /* a step: the facing stays west */
+    gameUiKey(&ui, UiKeyLeft, false);
+    gameUiDraw(&ui);
+    unsigned south = countColour(ui.screen, 241, 87, 312, 92, 0x0F);
+    snprintf(text, sizeof(text), "%s: the compass direction is written white in the panel's header, and changes with the facing", label);
+    check(text, west > 0 && south > 0 && s->facing == SaveFacingSouth && south != west);
+
+    gameUiKey(&ui, 'r', false);
+    gameUiDraw(&ui);
+    unsigned message = countColour(ui.screen, 240, 96, 312, 107, 0x8A) + countColour(ui.screen, 240, 96, 312, 107, 0x0F);
+    check("R writes the result of the rest in the message area (HOURS PASS / FOOD EATEN)", message > 20 && s->rest.hour == 8 && !s->restReport);
+    gameUiKey(&ui, UiKeyLeft, false);
+    gameUiDraw(&ui);
+    check("the next command clears the message", countColour(ui.screen, 240, 96, 312, 107, 0x8A) + countColour(ui.screen, 240, 96, 312, 107, 0x0F) == 0);
+
+    /* the alchemy screen: the first member with magic points (slot 1: the first hero has none), a list that is all grey without nuore */
+    gameUiKey(&ui, 'c', false);
+    check("C opens the alchemy screen on the first member who has magic points, with the spells he or she knows", ui.overlay == UiOverlayAlchemy && ui.alchemyCaster == 1 && ui.alchemyCount == 2 && !ui.alchemyOk[0] && !ui.alchemyOk[1]);
+    gameUiDraw(&ui);
+    check("... the list's frame is on screen", countColour(ui.screen, 15, 23, 230, 130, 0) < 200 * 100);
+    gameUiKey(&ui, ' ', false);
+    check("a spell that cannot be cast does nothing", ui.overlay == UiOverlayAlchemy && ui.alchemyMode == UiAlchemyList);
+    gameUiKey(&ui, UiKeyF3, false);
+    check("F3 changes to the third member's spells", ui.alchemyCaster == 2 && ui.alchemyCount == 2);
+    gameUiKey(&ui, UiKeyF1, false);
+    check("the first hero has no magic points: refused, nothing changes", ui.alchemyCaster == 2);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("Escape closes it", ui.overlay == UiOverlayNone);
+    gameUiClick(&ui, 265, 73, false);
+    check("a click on the second icon opens it", ui.overlay == UiOverlayAlchemy);
+    gameUiClick(&ui, 100, 40, true);
+    check("the right button closes it", ui.overlay == UiOverlayNone);
+
+    /* casting a heal on another member: nuore and magic points are paid, the one chosen is healed, the caster remembered */
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 50);
+    uint8_t *caster = sessionPartyRecord(s, 1), *patient = sessionPartyRecord(s, 3);
+    partySetStat(caster, PartyStatHitPoints, 2);
+    partySetStat(patient, PartyStatHitPoints, 1);
+    uint16_t mp = partyGetStat(caster, PartyStatMagicPoints);
+    gameUiKey(&ui, 'c', false);
+    check("with nuore the heal is castable", ui.overlay == UiOverlayAlchemy && ui.alchemyCaster == 1 && ui.alchemyOk[0] && ui.alchemyIds[0] == 1);
+    gameUiKey(&ui, ' ', false);
+    check("a heal asks for the portrait it is for", ui.overlay == UiOverlayAlchemy && ui.alchemyMode == UiAlchemyTarget);
+    gameUiDraw(&ui);
+    gameUiClick(&ui, 195, 160, false); /* the fourth member's portrait (x 182-212) */
+    check("a click on the fourth member's portrait heals that member and closes the screen",
+          ui.overlay == UiOverlayNone && partyGetStat(patient, PartyStatHitPoints) > 1 && partyGetStat(caster, PartyStatHitPoints) == 2);
+    snprintf(text, sizeof(text), "%s: casting paid 3 magic points and 2 nuore, and the caster is remembered", label);
+    check(text, partyGetStat(caster, PartyStatMagicPoints) == mp - 3 && saveHeaderBcd4(&s->save, SaveHeaderOreCounter2)[3] == 0x48 && saveHeaderGetU16(&s->save, SaveHeaderLastCaster) == saveGetPartySlot(&s->save, 1));
+    gameUiKey(&ui, 'c', false);
+    check("the screen opens on the member who cast last", ui.alchemyCaster == 1 && ui.alchemySelected == 0);
+    gameUiKey(&ui, UiKeyF3, false);
+    gameUiKey(&ui, UiKeyEscape, false);
+    gameUiKey(&ui, 'c', false);
+    check("... only until he or she is chosen over", ui.alchemyCaster == 1);
+    gameUiKey(&ui, UiKeyEscape, false);
+    sessionFree(s);
+
+    /* every spell known: pages of 13, the arrows, and the location spell's MARK / RETURN */
+    s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    uint8_t *mage = sessionPartyRecord(s, 1);
+    for (unsigned id = 1; id <= s->spells.recordCount; id++) {
+        spellLearn(mage, id);
+    }
+    partySetStat(mage, PartyStatMagicPoints, 900);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
+    bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
+    gameUiKey(&ui, 'c', false);
+    check("all the spells are listed", ui.alchemyCount == s->spells.recordCount);
+    gameUiKey(&ui, 'q', false);
+    check("Q turns to the next page of 13, keeping the row", ui.alchemySelected == 13);
+    gameUiDraw(&ui);
+    check("the page arrows show (up and down)", countColour(ui.screen, 0xA5, 0x77, 0xAC, 0x7D, 0x0F) > 0 && countColour(ui.screen, 0xB0, 0x77, 0xB7, 0x7D, 0x0F) > 0);
+    for (unsigned i = 0; i < 20; i++) {
+        gameUiKey(&ui, 'q', false);
+    }
+    check("the last page ends on the last spell", ui.alchemySelected == ui.alchemyCount - 1);
+    gameUiKey(&ui, UiKeyPageUp, false);
+    gameUiKey(&ui, UiKeyUp, false);
+    check("PageUp and Up go back", ui.alchemySelected == ui.alchemyCount - 1 - 13 - 1);
+    gameUiKey(&ui, 'i', false);
+    for (unsigned i = 0; i < 20; i++) {
+        gameUiKey(&ui, 'i', false);
+    }
+    check("the first page's PageUp lands on the first spell", ui.alchemySelected == 0);
+
+    unsigned mark = findBranchSpell(s, SpellBranchLocationBookmark);
+    unsigned markIndex = 0;
+    for (unsigned i = 0; i < ui.alchemyCount; i++) {
+        markIndex = ui.alchemyIds[i] == mark ? i : markIndex;
+    }
+    gameUiKey(&ui, UiKeyEscape, false);
+    int markX = s->x, markY = s->y;
+    for (unsigned round = 0; round < 2; round++) {
+        gameUiKey(&ui, 'c', false);
+        ui.alchemySelected = markIndex;
+        gameUiKey(&ui, UiKeyEnter, false);
+        check(round ? "the location spell asks again, to return" : "the location spell asks MARK or RETURN", ui.alchemyMode == UiAlchemyMark);
+        gameUiDraw(&ui);
+        gameUiClick(&ui, 250, round ? 134 : 122, false); /* the MARK row, then the RETURN row */
+        if (!round) {
+            check("MARK closes the screen", ui.overlay == UiOverlayNone);
+            s->x += 2;
+            s->y += 1;
+            sessionRebuild(s);
+        }
+    }
+    check("RETURN brings the party back to the marked cell", ui.overlay == UiOverlayNone && s->x == markX && s->y == markY);
+    sessionFree(s);
+    free(world);
+}
+
 static uint8_t g_slotImage[SaveSlotCount][SaveFileSizeMax];
 static size_t g_slotSize[SaveSlotCount];
 
@@ -757,6 +909,7 @@ int main(void) {
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testBoot(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testBoot(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testPanelAndAlchemy(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

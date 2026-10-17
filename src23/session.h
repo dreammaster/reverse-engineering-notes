@@ -122,6 +122,9 @@ typedef struct GameSession {
     DocumentReadability readability; /* how much of it the reader could read */
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
+    unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
+    RestOutcome rest;          /* the last rest (sessionRest) ... */
+    bool restReport;           /* ... and whether the front end has still to show it in the message area */
     AilmentClock ailments;  /* the counters of the periodic ailment sweep (ailment.h) */
     unsigned pendingFade;   /* 1 at 06:00, 2 at 18:00 (sessionAdvanceTime): the front end runs the dawn / dusk palette fade (palette.h) and clears it */
     unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
@@ -171,6 +174,10 @@ bool sessionShootStart(GameSession *session);
 /* One animation tick of the shot (see SessionShot); false once it is over. Sounds go to `pendingSound` one at a time. */
 bool sessionShootStep(GameSession *session);
 
+/*
+ * The R command (rest.h). Sets `rest` and `restReport` (the front end shows "X HOURS PASS / X FOOD EATEN", "YOUR REST IS INTERRUPTED" or "YOU CAN NOT REST HERE" and clears the flag) unless nothing happened at
+ * all (an item on the cursor: the original returns at once). A spot of the map-trigger table (maptrigger.h: IsPositionInTriggerList, also feeding ApplyMapTriggerEffect) refuses the rest.
+ */
 RestOutcome sessionRest(GameSession *session);
 
 /* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. */
@@ -202,6 +209,9 @@ InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uin
 typedef enum { SessionCastDone, SessionCastNoCombat, SessionCastNotKnown, SessionCastCannot, SessionCastUnsupported, SessionCastNoEffect } SessionCast;
 SessionCast sessionCast(GameSession *session, unsigned spellId);
 SessionCast sessionCastBy(GameSession *session, unsigned casterSlot, unsigned spellId, bool returnToMark);
+
+/* The same with the recipient of a single-target spell (SpellFlagsASingleTarget: the alchemy screen asks for a portrait first) named: a party slot 0-3. */
+SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned spellId, bool returnToMark, unsigned targetSlot);
 
 /*
  * Using a restorative from a member's main inventory (slot 1-8) on a recipient member (0-3): the healing / magic / cure items and, in Chapter 2, the percentage

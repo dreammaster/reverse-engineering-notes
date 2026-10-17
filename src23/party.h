@@ -85,6 +85,7 @@ typedef enum {
     PartyFieldWearMain = 0xBE,    /* u16 wear counter for equipment slot 0xA (main weapon) */
     PartyFieldWearSecond = 0xC0,  /* u16 wear counter for equipment slot 0xC */
     PartyFieldWearThird = 0xC2,   /* u16 wear counter for equipment slot 0xD */
+    PartyFieldLastAlchemySpell = 0xC8, /* u16: the spell id last chosen on the alchemy screen (RunAlchemyScreen keeps it selected next time) */
     PartyFieldFlagBankCA = 0xCA,  /* 16 words = 256 flags: known spells/abilities */
     PartyFieldFlagBank10C = 0x10C, /* 6 words = 96 flags: per-character one-time events */
     PartyFieldInventory = 0x118,  /* main InventoryGroup (34 bytes) */

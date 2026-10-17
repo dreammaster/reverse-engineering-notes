@@ -4040,6 +4040,11 @@ stride (`DS:0xD1C9`) carries 2 more data words (`+4`/`+6`) beyond the
 coordinate/flags pair; Chapter 3's 20-byte stride (`DS:0xB71F`) carries
 considerably more.
 
+**Correction (2026-10-17): what the table is matched against.** `IsPositionInTriggerList` loads `ax = es:[si]` and `bx = es:[si+2]` with `si` the party's cell offset (`word_328D2`) in the
+dungeon grid -- the cell's **wall type and floor type**, not the world X / Y the notes above (and `mapTriggerFind`) assumed: an entry whose `+2` has bit `0x8000` is compared with the wall type,
+every other with the floor type. The real values bear it out (Chapter 2: 17-20 and 63-67, floor types; Chapter 3: 332-337, wall types; the world's Y never goes below 24, so no Chapter 2 entry could
+ever have matched a row). `mapTriggerFind(game, wallType, floorType, ...)` now takes the cell's types; with the old reading no trap, corrosion tile or teleporter ever fired.
+
 **`ApplyMapTriggerEffect`'s Chapter 2 dispatch** (on the matched
 entry's own `[+2]` flags field, tested high-bit-first): `0x4000` =
 teleport (`[+4]`/`[+6]` → `g_partyWorldX`/`Y` directly, full redraw,
@@ -6672,6 +6677,35 @@ This is what a doorway shows: a monster that is aware but sits behind a closed d
 special wall for it, but the cell behind is ordinary floor); the door opens, the two steps end on that very cell, and the scan starts the combat. `session.c`'s `engageMonsterOnPartyCell`
 and `movedOnto` do this for the door's two steps, the ordinary steps and the jump spell; before this the monster just stayed on the party's cell, undrawn and unengaged, until the next step.
 
+### The alchemy screen, the compass and the rest messages (`RunAlchemyScreen`, `ShowCompassDirection`, `RestPartyAndAdvanceClock`; decoded 2026-10-17)
+
+**The compass** (`ShowCompassDirection`, yendor2.asm:30607): outside a combat, and when the panel-flags word (`word_36C7F`, the header's `+0x20`) has bit `0x400` -- the party's Mapping average has
+reached 45 (`mapview.h`) -- the facing is written in white (`0x0F`, transparent) at (241, 87), the panel's header band: `"   NORTH"`, `"   SOUTH"`, `"    EAST"`, `"    WEST"` (the strings at
+DS:0x78CE, 9 bytes apart, the same in both chapters; north is tested first, then south, east, else west). Every command that clears the panel (`ClearStatusPanelIfDirty`, called first by the movement,
+rest, alchemy and other commands; it erases the header band and the 72 x 60 message area at (240, 96)) writes it again after, so it is always there while idle.
+
+**The message area** keeps what the last command wrote until the next one starts. **A rest** writes, in `0x8A` over the cleared area, the strings of DS:0x7D3E -- `"X HOURS PASS"` at (240, 96)
+and `"X FOOD EATEN"` 6 pixels below -- and then overwrites each `X` with the real digit in white (`word_38808` / `word_3880A`, the hour reached -- 8 -- and the number of camping foods eaten).
+An interrupted rest writes the first string with the hour reached and, from y = 108, `"YOUR REST IS"` / `"INTERRUPTED"` (DS:0x7D58), then waits for a key (`loc_1E808`) before the combat shows;
+`IsRestingAllowedHere` refusing writes `"YOU CAN NOT"` / `"REST HERE"` (DS:0x7DA5, `0x8A`, transparent) with sound 3. A held item on the cursor ends the command at once, silently. `sessionRest` records
+the result (`GameSession.rest`, `restReport`) and the front end writes it (`gameui.c` `restReport`).
+
+**The alchemy screen** (the second icon, the `C` key; in a combat it is the acting member's): `RunAlchemyScreen` (:24614). Outside a combat `RestoreOrSelectAlchemyCaster` picks the member who cast last
+(`word_36CCD`, the header's `+0x6E`, written by `DeductAlchemySpellCosts`) if he or she has a nonzero maximum MP (record `+0x94`), else the first member who has; none -> `FlashStatusWarning` (sound 3
+and a cursor flash). `BuildAlchemySpellList` lists the ids 1..125 (Chapter 3: 107) whose bit is set in the record's flag bank (`+0xCA`), 13 to a page (a 4-byte entry each: id and a colour word,
+6 = grey, 0xF = castable by `CheckSpellCastability`: not for an incapacitated caster, `FlagsA & 0x400` spells not in a combat, attack spells (`FlagsB & 0x3000`) not outside one, and the MP / nuore /
+ore costs affordable), none -> the same warning; the member's last choice (`+0xC8`) is the selected row, else the first. The screen draws `DrawAlchemyConfirmDialogBackground` (category 1 picture 4, (15, 23)),
+the rows (`alchemyListDraw`), the page arrows (font glyphs `a` at (0xA5, 0x77) and `b` at (0xB0, 0x77) when there is a page before / after), the status panel (`alchemyStatusPanelDraw`) and the icon pressed
+(category 8 picture 6 at (0x102, 0x43)); the caster's portrait carries the selection frame. Input: Esc or `C` leave (sound 1); Space / Enter cast; Up / Down (scan codes `H` / `P`) move one row, `I` / `Q`
+(PageUp / PageDown) a page (the first page's `I` goes to the first row, the last page's `Q` to the last); F1-F4 pick the member (not in a combat; one without MP: sound 3). Mouse (`PollKeyboardInput`
+codes: 3 a click, 6 the left button held for 6 ticks, 7 a right click, 0xA the right held): a click on a row (region table DS:0x67AC, rows 1-13) selects it, **holding it casts**, region 14 (CLOSE), the
+arrows 15 / 16 and the right click leave or turn the page; a click on a portrait (the party panel table's regions 1 / 11 / 21 / 31) picks that member. The standalone has no held click: a second click on
+the selected row casts. A grey selected row does nothing. Casting: the choice is stored in `+0xC8`; a `FlagsA & 0x8000` spell asks for its recipient (`ShowConfirmPrompt` message `0x12`: a blank prompt and a
+click on a portrait or F1-F4; Esc or the right button give up); the location spell (`FlagsB & 0x20`) asks message `0x22` ("DO YOU WANT / TO MARK OR / RETURN?", `0x0F`, and MARK `0x8A` at (240, 120) and
+RETURN at (240, 132); a click on the row of region 5 / 7 of the confirm table, Esc or a right click give up; MARK plays sound 0x34 and RETURN 0x0B). Then the costs are paid (`DeductAlchemySpellCosts`), the
+screen is left, and `ApplyEncodedItemEffect` runs. `gameui.c` (`alchemyOpen`, `alchemyKey`, `alchemyClick`, `alchemyDraw`) does all this over `sessionCastBy` / `sessionCastOn`; the keys `M` / `R` also answer
+the MARK / RETURN question (the original answers to the mouse only).
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI
@@ -7515,8 +7549,9 @@ record `+0x28` into the recipient's status flags (`[rec+0x1C]`, unless the resis
 | RESURRECT | 2 | 82 / 0 (uncapped) | `0xFFBF` (clears Dead) |
 | FEET OF FEATHERS / ARMS OF GIANTS | 10 (Ch3 5) / 15 (Ch3 5) | 62 / 126, 60 / 124 = a stat and its maximum | `0x0000` -- the original ANDs 0 into the status word, so these two also clear every ailment of the caster (reproduced) |
 
-So the "single target" spells act on the casting member only (the alchemy screen is per member), and the unexplained "word_332DC / word_332DE" pair of earlier notes is
-this delta and stat offset. The curse gate of `ResetOrCopyTargetPositionFields` (a cursed caster zeroes both words) is not modelled: its global flag has no found
+So the unexplained "word_332DC / word_332DE" pair of earlier notes is this delta and stat offset. (**Correction 2026-10-17:** the recipient of a single-target spell is *not* always the caster: the
+alchemy screen first asks which portrait it is for -- `ConfirmAlchemyInteraction`, message `0x12` -- and `ApplyEncodedItemEffect`'s single-target branch (`loc_2C1CF`) takes the chosen record
+(`word_33318`) and its slot (`word_3331C`); `sessionCastOn` carries that choice.) The curse gate of `ResetOrCopyTargetPositionFields` (a cursed caster zeroes both words) is not modelled: its global flag has no found
 writer, and with both words zero the original would add 0 at offset 0.
 
 Light, jump and mark need nothing beyond what their modules already decode; `session.c` also composes the knock / curgame-event / lock-flag-0x40 spells over the

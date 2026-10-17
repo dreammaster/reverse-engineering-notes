@@ -5,7 +5,7 @@
  * and plays sound (the area music through the OPL2 synthesizer, a couple of effects). It is the smallest "engine" built from the modules.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../alchemylist.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
@@ -118,6 +118,8 @@ static UiKey uiKeyFor(SDL_Keycode key) {
     case SDLK_DOWN: return UiKeyDown;
     case SDLK_LEFT: return UiKeyLeft;
     case SDLK_RIGHT: return UiKeyRight;
+    case SDLK_PAGEUP: return UiKeyPageUp;
+    case SDLK_PAGEDOWN: return UiKeyPageDown;
     case SDLK_ESCAPE: return UiKeyEscape;
     case SDLK_TAB: return (UiKey)9;
     case SDLK_BACKSPACE: return UiKeyBackspace;
