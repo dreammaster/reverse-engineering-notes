@@ -141,6 +141,7 @@ Next, roughly in value order:
 - `show_dialog?` layout (portrait frames: which PIC entries animate a talker), `describe_contents?`, journal UI.
 - UHA extraction of the other archives (`FLICS2-7.UHA`) if all FLC names are wanted; `Vocs.zip` mp3 numbering vs dialog ids.
 - Rename `_old_keyboard_vector` to `_combat_hook`.
+- **Native engine core** (section 33, `port/`): all game-layer functions are statically recompiled to C++ and verified against the oracle; `play_tool` plays the real logic. Next: combat (`start_encounter?`), dialogs/cutscenes, save/load shims; then readable hand ports of handlers checked against it.
 - **Headless oracle** (`retail_game.py`, section 31): drive the real handlers, extend the stub set to more systems (combat, dialogs), build per-room walkthrough transcripts, and use it as the reference for C++ handler ports. The verb table was re-decoded with it (names fixed).
 - Workflow: `scripts/apply_to_idb.sh <idb> <script> [--export out.asm]`; local text notes via `make_handler_notes.py` + `apply_handler_notes.py` (re-run after any rename pass, which resets handler comments).
 
