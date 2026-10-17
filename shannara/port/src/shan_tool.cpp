@@ -9,6 +9,7 @@
 #include "objectdat.h"
 #include "pic.h"
 #include "qvideo.h"
+#include "retail_data.h"
 #include "rgn.h"
 #include "shanstr.h"
 
@@ -176,6 +177,29 @@ static int cmdQVec(char **argv) {
 	return 0;
 }
 
+// objects EXE: one tab-separated line per object, same columns as reversing/analysis/retail_objects.tsv (id type record nameOff descOff
+// location slot next handler raw); then the room tables.
+static int cmdObjects(char **argv) {
+	LeExe exe(readFile(argv[2]));
+	RetailTables t = RetailTables::load(exe);
+	uint32_t addr = 0xB0958;
+	for (const ObjectRecord &r : t.objects) {
+		printf("%d\t%d\t0x%x\t%u\t%u\t", r.id, r.type, addr, r.nameOffset(), r.descOffset());
+		if (r.hasLocation())
+			printf("%d\t%d\t%d\t", r.location(), r.slot(), r.nextSibling());
+		else
+			printf("\t\t\t");
+		printf("%u\t", r.handlerIndex());
+		for (uint8_t b : r.raw)
+			printf("%02x", b);
+		printf("\n");
+		addr += (uint32_t)r.raw.size();
+	}
+	for (const RoomInfo &ri : t.rooms)
+		printf("room\t%d\t0x%x\t%d\n", ri.room, ri.picId, ri.music);
+	return 0;
+}
+
 int main(int argc, char **argv) {
 	if (argc < 3) {
 		fprintf(stderr, "usage: shan_tool shanstr|pic|rgn|fnt|q FILE [...]\n");
@@ -190,6 +214,7 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[1], "qvec")) return cmdQVec(argv);
 		if (!strcmp(argv[1], "mus")) return cmdMus(argv);
 		if (!strcmp(argv[1], "objdat")) return cmdObj(argv);
+		if (!strcmp(argv[1], "objects")) return cmdObjects(argv);
 	} catch (const std::exception &e) {
 		fprintf(stderr, "error: %s\n", e.what());
 		return 1;

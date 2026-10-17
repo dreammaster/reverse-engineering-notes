@@ -9,6 +9,8 @@ add_library(shannara STATIC
 	src/pic.cpp
 	src/rgn.cpp
 	src/fnt.cpp
+	src/le.cpp
+	src/retail_data.cpp
 	src/mus.cpp
 	src/objectdat.cpp
 	src/qvideo.cpp)

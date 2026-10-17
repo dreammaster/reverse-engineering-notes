@@ -170,5 +170,21 @@ if os.path.exists(path):
     check("OBJECT.DAT", run("objdat", path) == exp, str(exp[:2]))
     print("OBJECT.DAT: pool", n, "bytes,", pool.count(b"\0"), "strings")
 
+# ---- SHANNARA.EXE static tables (LE reader) vs the IDA-derived tables ------------------------------------------------------
+exe = os.path.join(ROOT, "game", "SHANNARA.EXE")
+if os.path.exists(exe):
+    lines = run("objects", exe)
+    objs = [l.split("\t") for l in lines if not l.startswith("room\t")]
+    rooms = [l.split("\t") for l in lines if l.startswith("room\t")]
+    tsv = [l.rstrip("\n").split("\t") for l in open(os.path.join(ROOT, "reversing", "analysis", "retail_objects.tsv"), encoding="utf-8")][1:]
+    want = [[r[0], r[1], r[2], r[3], r[4], r[5], r[7], r[8], r[9], r[11]] for r in tsv]
+    got = [[o[0], o[1], o[2], o[3], o[4], o[5], o[6], o[7], o[8], o[9]] for o in objs]
+    check("object records from SHANNARA.EXE", got == want, str(next(((a, b) for a, b in zip(got, want) if a != b), (len(got), len(want)))))
+    rtsv = [l.rstrip("\n").split("\t") for l in open(os.path.join(ROOT, "reversing", "analysis", "retail_rooms.tsv"), encoding="utf-8")][1:]
+    gr = [[r[1], r[2], r[3]] for r in rooms]
+    wr = [[r[0], r[1], r[4]] for r in rtsv]
+    check("room tables from SHANNARA.EXE", gr == wr, str(next(((a, b) for a, b in zip(gr, wr) if a != b), (len(gr), len(wr)))))
+    print("SHANNARA.EXE: %d object records, %d rooms read through the LE page map" % (len(objs), len(rooms)))
+
 print("\n%d checks, %d failed" % (checks, fails))
 sys.exit(1 if fails else 0)
