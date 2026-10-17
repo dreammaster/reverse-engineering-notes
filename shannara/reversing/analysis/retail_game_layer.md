@@ -896,3 +896,20 @@ Overlay condition callbacks: scanning the data section for code pointers that th
 (`0x1D1B0`, `0x418D0`, `0x5B8D4`, `0x5CB18` - the `conditionFn` column of `retail_overlays.tsv`: "is flag 6 clear", "is flag 0x5B set and the party in room 36", region-id switches ...).
 They are used by the picture-region setup (22 overlays use `0x5CB18` alone) and are now transpiled (`cb_*` entries via the control-flow walk) and checked by `state_diff.py`
 (a `call ADDR EAX 0` operation for every distinct (function, region-field) pair under random flag/room/item states): 0 mismatches. Total: 1,263 translated game-layer functions.
+
+## 34. The engine boundary as an event stream (thirty-fourth pass)
+
+`retail_boundary_calls.tsv` lists the 280 functions the game layer calls but that are not part of it (engine/library region 0x75000+; name, call sites, calling functions,
+callee-cleaned argument bytes, and whether the native engine implements them or treats them as no-ops). Ranked by call sites: `wprintf` (3,401 - the text channel, native),
+`make_voice?` (200, one per spoken line), `make_sound` (103), `journal_add_entry?` (100), `load_pic_sequence?` (83), `stop_animation`, `unload_pics`, `select_pic_window`,
+`journal_add_entries?`, `stop_sound`, `set_offsets?`, `clear_pic`, `init_palette`, `select_window`, `update_music_volume`, `rand_`, `display_pic` ... The game layer never draws
+or plays anything itself; it states what should happen through these calls, so a re-implementation needs exactly this interface.
+
+Both implementations now record that stream: `Machine::events` (native, `SHAN_EVENTS=file` in `engine_tool`) and `Game.events` (oracle stubs) log, for every call of a
+no-op/stubbed boundary function, `name eax edx ebx ecx` plus the callee-cleaned stack arguments. `state_diff.py` compares the two streams operation by operation:
+**47,892 commands under random flags/rooms/items, 2,989 boundary events, 0 mismatches** (text, state and event stream all identical). Examples of what the stream carries:
+`set_room_music? <room> ...`, `send_event_code? 0x20 9 <room> 3`, `journal_add_entry? <entry> ...`, `show_dialog? <dialog id> 0x700 ...`, `make_voice? <voice id> ...`.
+
+Comparing the streams found two more gaps in the recompiled core: `save_game?` (a boundary function the oracle ran for real) and a shared helper at 0x4C194 that five "Talk to"
+handlers call (IDA mis-decoded `31 c9` after `mov ebx, eax` as `db 31h; leave`, so it was never a function). The extra entry points that IDA does not know are kept in
+`reversing/scripts/extra_entries.txt` (`name hexaddress`, dumped with the control-flow walk of `dump_insns.py`) and appended to the function list when generating the instruction JSON.

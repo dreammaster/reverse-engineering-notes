@@ -23,7 +23,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 from retail_emu import RetailEmu   # noqa: E402
 import shanstr                      # noqa: E402
-from unicorn.x86_const import UC_X86_REG_ESP, UC_X86_REG_EAX   # noqa: E402
+from unicorn.x86_const import UC_X86_REG_ESP, UC_X86_REG_EAX, UC_X86_REG_EDX, UC_X86_REG_EBX, UC_X86_REG_ECX   # noqa: E402
 
 ANALYSIS = os.path.join(ROOT, "reversing", "analysis")
 
@@ -33,7 +33,7 @@ CRT_KEEP = {"memmove_", "memset_", "memcpy_", "strcmp_", "stricmp_", "sprintf_",
 STUB_GAME = set()      # game-layer addresses (hex ints) forced to no-op stubs, filled in as needed
 # game-layer routines that only drive the UI / audio / timing and have no game-state effect (stubbed by name)
 STUB_NAMES = {"delay?", "delay_animate?", "wait_ticks?", "show_dialog?", "make_voice?", "make_sound", "refresh_room?", "send_event?",
-              "send_event_code?", "dispatch_event?", "play_music_entry?", "set_room_music?", "journal_render_page?", "setup_pic_regions?",
+              "send_event_code?", "dispatch_event?", "play_music_entry?", "set_room_music?", "journal_render_page?", "setup_pic_regions?", "save_game?",
               "disable_pic_regions?", "load_pic_sequence?", "play_cutscene?", "describe_contents_ui?", "sub_73D1C", "sub_101A0", "sub_22D50", "sub_10FA0"}
 VERB_FLAGS = {}
 
@@ -53,6 +53,7 @@ class Game(RetailEmu):
         self.uc.mem_map(self.heap, 0x400000)
         self.calls = []
         self.callers = []   # (stubbed function, calling function+offset) for every stub call
+        self.events = []    # engine-boundary stream: "name eax edx ebx ecx args..." per stubbed call (mirrors Machine::events of the native engine)
         fmap = load_tsv("retail_function_map.tsv")
         self.names = {int(r["address"], 16): r["name"] for r in fmap}
         self.byname = {r["name"]: int(r["address"], 16) for r in fmap}
@@ -107,6 +108,8 @@ class Game(RetailEmu):
         self.calls.append(name)
         self.callers.append((name, self._func_at(self.r32(self.reg(UC_X86_REG_ESP)))))
         n = self.retn.get(name, 0)
+        args = "".join(" %x" % self._stack(k) for k in range(min(n // 4, 8)))
+        self.events.append("%s %x %x %x %x%s" % (name, self.reg(UC_X86_REG_EAX), self.reg(UC_X86_REG_EDX), self.reg(UC_X86_REG_EBX), self.reg(UC_X86_REG_ECX), args))
         if n:       # callee-popped arguments: the hook machinery pops the return address, we pop the arguments below it
             from unicorn.x86_const import UC_X86_REG_ESP as SP
             self.uc.reg_write(SP, self.reg(SP) + n)

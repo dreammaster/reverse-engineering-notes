@@ -48,7 +48,12 @@ def main():
     rooms = [int(r["room(obj id)"]) for r in load_tsv("retail_rooms.tsv")]
     items = [k + 1 for k in range(n) if types[k] == 2]
     base = g.snapshot()
-    ops, expect = [], []
+    ops, expect, evs = [], [], []
+
+    def take_events():
+        e = list(g.events)
+        del g.events[:]
+        return e
     conds = set()       # overlay condition callbacks (called with the region's object field in eax)
     for r in load_tsv("retail_overlays.tsv"):
         fn = int(r["conditionFn"], 16)
@@ -65,9 +70,11 @@ def main():
     def setup(line):
         ops.append(line)
         expect.append(None)
+        evs.append(take_events())
 
     def checked(line, r):
         ops.append(line)
+        evs.append(take_events())
         expect.append("%d %d %016x [%s]" % (len(ops) - 1, r & 0xFFFFFFFF, state_hash(), esc(g.text())))
 
     import time
@@ -93,9 +100,11 @@ def main():
                 checked("move %d %d 0" % (o, par), 0)
             scope = [k for k in range(1, n + 1) if k != here and (g.call(0x1B5C8, eax=here, edx=k) & 0xFF or g.call(0x1B5C8, eax=3, edx=k) & 0xFF)]
         except Exception:
-            ops[:] = ops[:max(i for i, o in enumerate(ops) if o.startswith("reset"))]
-            expect[:] = expect[:len(ops)]
+            cut = max(i for i, o in enumerate(ops) if o.startswith("reset"))
+            del ops[cut:], expect[cut:], evs[cut:]
+            take_events()
             continue
+        take_events()
         if not scope:
             scope = [rng.randrange(1, n + 1)]
         for fn, arg in conds:
@@ -104,6 +113,7 @@ def main():
                 r = g.call(fn, eax=arg, edx=0)
             except Exception:
                 g.restore(snap)
+                take_events()
                 continue
             checked("call %d %d 0" % (fn, arg), r)
         for _ in range(per):
@@ -116,11 +126,14 @@ def main():
                 r = g.command(vid, d, i)
             except Exception:
                 g.restore(snap)
+                take_events()
                 continue
             checked("cmd %d %d %d" % (vid, d, i), r)
     path = os.path.join(ROOT, "port", "build", "state_ops.txt")
     open(path, "w").write("\n".join(ops) + "\n")
     env = dict(os.environ)
+    evpath = os.path.join(ROOT, "port", "build", "state_events.txt")
+    env["SHAN_EVENTS"] = evpath
     if cov:
         env["SHAN_COVERAGE"] = cov
     p = subprocess.run([TOOL, os.path.join(ROOT, "game", "SHANNARA.EXE"), os.path.join(ROOT, "game"), path], capture_output=True, text=True, env=env)
@@ -128,9 +141,25 @@ def main():
     pairs = [(a, e, ops[k]) for k, (a, e) in enumerate(zip(out, expect)) if e is not None]
     bad = [x for x in pairs if x[0] != x[1]]
     print("commands:", len(pairs), "lines:", len(out), "of", len(ops), "mismatches:", len(bad) + abs(len(out) - len(ops)))
+    native_ev = {}
+    for l in open(evpath).read().splitlines():
+        k, rest = l.split(" ", 1)
+        native_ev.setdefault(int(k), []).append(rest)
+    names = {x.split()[0] for v in native_ev.values() for x in v}
+    ev_bad, ev_total, oracle_only = [], 0, set()
+    for k in range(len(ops)):
+        want = [x for x in evs[k] if x.split()[0] in names]
+        oracle_only |= {x.split()[0] for x in evs[k]} - names
+        ev_total += len(want)
+        if want != native_ev.get(k, []):
+            ev_bad.append((ops[k], native_ev.get(k, []), want))
+    print("boundary events compared:", ev_total, "mismatches:", len(ev_bad), "| stubbed only in the oracle (not compared):", sorted(oracle_only))
+    for o, a, b in ev_bad[:5]:
+        first = next((j for j in range(max(len(a), len(b))) if j >= len(a) or j >= len(b) or a[j] != b[j]), 0)
+        print("  op      :", o, "(%d vs %d events, first difference at %d)" % (len(a), len(b), first), "\n  C++     :", a[first:first + 3], "\n  original:", b[first:first + 3])
     for a, b, o in bad[:8]:
         print("  op      :", o, "\n  C++     :", a[:200], "\n  original:", b[:200])
-    sys.exit(1 if bad or len(out) != len(ops) else 0)
+    sys.exit(1 if bad or ev_bad or len(out) != len(ops) else 0)
 
 
 main()

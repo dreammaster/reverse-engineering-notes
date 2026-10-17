@@ -43,6 +43,8 @@ int main(int argc, char **argv) {
 		if (getenv("SHAN_COVERAGE"))
 			e.machine().enableCoverage();
 		e.snapshot();
+		FILE *evf = getenv("SHAN_EVENTS") ? fopen(getenv("SHAN_EVENTS"), "w") : nullptr; // engine-boundary event stream: "op name eax edx ebx ecx args" per no-op shim call
+		e.machine().logEvents = evf != nullptr;
 		int traceFrom = getenv("ENGINE_TRACE_FROM") ? atoi(getenv("ENGINE_TRACE_FROM")) : 0;
 		FILE *f = fopen(argv[3], "r");
 		if (!f)
@@ -83,9 +85,16 @@ int main(int argc, char **argv) {
 				}
 				e.machine().trace.clear();
 			}
+			if (evf) {
+				for (auto &ev : e.machine().events)
+					fprintf(evf, "%d %s\n", k, ev.c_str());
+				e.machine().events.clear();
+			}
 			printf("%d %u %016llx [%s]\n", k++, r, (unsigned long long)e.stateHash(), esc(e.takeText() + err).c_str());
 		}
 		fclose(f);
+		if (evf)
+			fclose(evf);
 		if (getenv("ENGINE_TRACE_FILE")) {
 			FILE *t = fopen(getenv("ENGINE_TRACE_FILE"), "w");
 			for (auto &l : e.machine().traceLog)

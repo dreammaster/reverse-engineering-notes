@@ -54,7 +54,7 @@ party, journal, score ...) can be run natively without any emulator:
 
 ```
 python reversing/scripts/make_retn_map.py Shannara.asm game_out/retn_map.txt   # callee-cleaned argument sizes of library functions
-python reversing/scripts/dump_insns.py ...                      # IDAPython: decoded instructions of the game-layer functions -> JSON (needs Shannara.idb)
+python reversing/scripts/dump_insns.py ...                      # (function list + reversing/scripts/extra_entries.txt) IDAPython: decoded instructions of the game-layer functions -> JSON (needs Shannara.idb)
 python reversing/scripts/transpile_handlers.py insns_all.json port/gen game_out/retn_map.txt     # static recompiler -> port/gen/*.cpp
 bash port/build_engine.sh                                       # port/build/engine_tool.exe  (~25 s)
 port/build/engine_tool.exe game/SHANNARA.EXE game ops.txt       # lines: cmd VERB DOBJ IOBJ | flag N 0|1 | move OBJ PARENT SLOT | goto ROOM | attr OBJ ATTR 0|1
