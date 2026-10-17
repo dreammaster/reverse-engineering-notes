@@ -20,7 +20,7 @@ FORCE = [
      "REAL NAME (debug string 'print_obj: not enough storage'). print_obj(flags_and_obj, actor): builds "
      "article/pronoun + object name (+ plural 'es'/'s') into a rotating 128-byte buffer (unk_CD69C, index "
      "dword_ADE34); flag 0x80 prints it via wprintf instead, 0x20 appends '.', sets object attr 6 afterwards. "
-     "Upper 16 bits of arg_0 = object id, low 3 bits = form (the/a/he/your...). Name text comes from "
+     "print_obj(flags, obj[, verb]) cdecl: flags low 3 bits = form (the/a/he/your...), 0x10 capital, 0x20 period, 0x40 conjugated verb, 0x80 print now. Name text comes from "
      "object_get_name?(obj)."),
 ]
 

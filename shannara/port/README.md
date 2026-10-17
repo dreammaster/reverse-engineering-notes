@@ -15,6 +15,7 @@ other than `FormatError`, no STL streams) so they can be dropped into an engine 
 | `src/le.h`, `src/retail_data.h` | DOS/4GW `LE` loader (linear address -> file bytes, no fixups) and the exe's initial static tables: **744 object records** and the room picture/music tables, read straight from the user's `SHANNARA.EXE` | sections 4, 5, 11, 29 |
 | `src/savestate.h` | the complete mutable game state and its 32,668-byte savegame/undo format (objects + 92 regions); loads the shipped `HELP.DAT` (legacy 32,660 bytes) and round-trips it byte for byte | sections 6, 23 |
 | `src/world.h` | the object world model every handler uses: containment tree (location/slot/next/child lists, `move`), attribute bits, the 800 game flags | disassembly of `object_*`, `bitset_*`; **differentially tested against the real machine code** |
+| `src/text.h` | `print_obj`: articles, pronouns, names and verb conjugation for the `%s` inserts in every message | disassembly of `print_obj` (0x1C0E8); **verified against the real function** (`text_fuzz.py`, 12,000 calls) |
 | `src/qvideo.h` | `.Q` block video (the demo's cutscene format): container + 4x4 block decoder incl. composite and raw modes | `q_decode_ref.py`, `q_play.py`, `analysis/q_codec_spec.md` |
 
 Not ported yet: LHA `-lh4-` (no real file uses it), the savegame schema, FLC/MP3 glue.
@@ -34,6 +35,7 @@ g++ -std=c++17 -O2 -Wall -Wextra -Iport/src port/src/*.cpp -o port/build/shan_to
 ```
 python port/tests/verify.py      # every real file: 7,719 strings, 29 PIC, 12 RGN, 13 FNT, 270 Q frames, MUS, OBJECT.DAT, 744 object records (needs game/, demo/, game_out/pics)
 python port/tests/fuzz_q.py 1200 7   # random valid Q streams: C++ vs Python decoder, pixels and consumed bytes
+python port/tests/text_fuzz.py 9000 5    # print_obj: C++ Text vs the ORIGINAL print_obj under unicorn
 python port/tests/world_fuzz.py 6000 1   # random object-tree/attribute/flag operations: C++ World vs the ORIGINAL functions of SHANNARA.EXE run under unicorn
 ```
 

@@ -11,6 +11,7 @@ public:
 	// `exe` supplies the static attribute descriptor and slot-count tables; `state` is the mutable state this model edits.
 	World(const LeExe &exe, SaveState &state);
 
+	SaveState &state() { return _s; }
 	int objectCount() const { return (int)_s.objects.size(); }
 	bool valid(int obj) const { return obj > 0 && obj <= objectCount(); }
 

@@ -89,7 +89,7 @@ game-flag primitives.
 The single most-called routine in the binary (debug string `print_obj: not enough storage` gives its real name; it was `print_obj` in the first pass). A **grammar helper** that turns
 (object id, form selector) into a word for `%s` inserts in message text
 ("You already have%s.", "%s glad that this dark, foreboding figure…"). The
-selector (low 3 bits of the first argument; object id in the upper 16)
+selector (low 3 bits of the first argument `flags`; the object id is the SECOND argument - an earlier reading took it from the first argument's upper word, which was wrong)
 picks article/pronoun/possessive: `the / some / a / an`, `he / she / it /
 they`, `your / their …`, using `object_has_attr` bits (including bit `0x16` =
 female) and comparing against the two player-character ids
@@ -836,3 +836,18 @@ Findings and corrections it produced:
 - `scripts/oracle_matrix.py OUT.tsv` runs every verb against a set of objects from the start state: **2,324 commands in 17 seconds, no emulation errors**, with
   return value, state changes (object fields, game flags) and text per command. It is the behavioural reference for re-implementing the handlers (kept local: it
   contains the game's text).
+
+## 32. `print_obj` ported and verified (thirty-second pass)
+
+Signature (cdecl): `print_obj(uint32 flags, int obj [, const char *verb])`; returns a pointer into a rotating 128-byte buffer (`unk_CD69C`), or NULL for an invalid object
+and in print-now mode. `flags`: bits 0-2 form (0 nothing, 1 name only, 2 `the`/none + name, 3 `a`/`an`/`some`/none + name, 4 subject pronoun, 5 possessive, 6 object pronoun, 7
+reflexive), `0x10` capitalise, `0x20` append `.`, `0x40` append a verb conjugated for the subject, `0x80` print through `wprintf` instead of returning. Attributes used:
+1 plural-ish / mass, 2 proper noun (no article), 3 plural (with 1 clear), 4 vowel sound ("an"), 6 "mentioned" (set on every call), 0x16 female (type-5 objects only). The two
+player characters (`word_ADEB0`/`ADEB2`, both Jak at start) always read "you"/"your"/"yourself"; object 46's name is computed (`sub_6ECF0`: "dark object" until attribute 6 is set, then "Black Irix").
+Verb conjugation: plural or "you" subjects keep the verb; otherwise irregulars are/were/have/do/go -> is/was/has/does/goes (matched as the last word), endings `ry`/`ly` -> `ies`,
+`ss`/`zz`/`sh`/`ch` -> `es`, else `s`; everything is capped at 126 characters. Quirk: a multi-word verb whose irregular last word is preceded by 5 or more characters ("want to go") gets
+the irregular form AND the whole verb appended again with an `s` ("want to goeswant to gos") because the copy loop counter doubles as the match test.
+
+`port/src/text.{h,cpp}` reproduces all of it. `port/tests/text_fuzz.py` calls the original under `retail_game.Game` and the C++ port with the same random sequences (all forms and flags,
+valid/invalid objects, 40 verbs including 130-character ones, random attribute changes) and compares the returned string, the print-now text and a hash of the whole object state after
+every call: **12,000 calls, 0 mismatches.** (A NULL verb pointer is undefined in the original - it scans address 0 - so the fuzz never passes one.)

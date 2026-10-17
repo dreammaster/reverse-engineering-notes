@@ -39,7 +39,7 @@ RENAMES = [
     (0x1C0E8, "format_noun_phrase?",
      "Grammar helper called from ~2500 sites. Selector (low 3 bits of arg_0) picks the form: 2 the/some/a, "
      "3 a/an/some, 4 he/she/it/they (or 'you' pronoun form when obj is a player char), 5 your/their/..., "
-     "etc. Object id is the upper 16 bits of arg_0 (sar 10h); attribute bits queried through "
+     "etc. The object id is the second cdecl argument; attribute bits queried through "
      "object_has_attr (1=plural?, 2=?, 3=mass/proper?, 4=vowel?, 16h=female). Compares against "
      "word_ADEB0/word_ADEB2 (player characters) to emit 'your'. Used to build %s inserts such as "
      "'You already have%s.'"),

@@ -13,6 +13,7 @@
 #include "savestate.h"
 #include "rgn.h"
 #include "shanstr.h"
+#include "text.h"
 #include "world.h"
 
 #include <cstdio>
@@ -259,6 +260,63 @@ static int cmdWorld(char **argv) {
 	return 0;
 }
 
+static std::string esc(const std::string &s) {
+	std::string o;
+	char b[8];
+	for (unsigned char c : s) {
+		if (c >= 0x20 && c < 0x7F && c != '\\')
+			o.push_back((char)c);
+		else {
+			snprintf(b, sizeof b, "\\x%02x", c);
+			o += b;
+		}
+	}
+	return o;
+}
+
+// textops EXE OBJECT.DAT OPSFILE: lines "po FLAGS OBJ VERB|-|_" (print_obj; '-' = NULL verb, '_' = empty verb), "setattr OBJ ATTR", "clrattr OBJ ATTR";
+// prints "i op result printedNow statehash" like tests/text_fuzz.py does for the original code.
+static int cmdTextOps(char **argv) {
+	LeExe exe(readFile(argv[2]));
+	ObjectDat names(readFile(argv[3]));
+	SaveState st = SaveState::initial(exe);
+	World w(exe, st);
+	Text t(exe, names, w);
+	FILE *f = fopen(argv[4], "r");
+	if (!f)
+		return 1;
+	char line[512];
+	int i = 0;
+	while (fgets(line, sizeof line, f)) {
+		char op[32] = {};
+		int a = 0, b = 0;
+		std::string res = "-", printedNow = "-";
+		char rest[256] = {};
+		if (sscanf(line, "%31s %d %d %255[^\n]", op, &a, &b, rest) < 3)
+			continue;
+		if (!strcmp(op, "po")) {
+			std::string verb = rest, out, printed;
+			bool hasVerb = verb != "-";
+			if (verb == "_")
+				verb.clear();
+			bool ok = t.printObj((uint32_t)a, b, hasVerb ? verb.c_str() : nullptr, out, &printed);
+			res = ok ? esc(out) : "NULL";
+			if (!ok && (a & 0x80) && w.valid(b))
+				printedNow = esc(printed);
+		} else if (!strcmp(op, "setattr")) {
+			w.setAttr(a, b);
+		} else if (!strcmp(op, "clrattr")) {
+			w.clearAttr(a, b);
+		}
+		uint64_t h = 1469598103934665603ull;
+		for (const ObjectRecord &o : st.objects)
+			h = fnv(o.raw.data(), SaveState::objectPrefix(o.type), h);
+		printf("%d %s [%s] [%s] %016llx\n", i++, op, res.c_str(), printedNow.c_str(), (unsigned long long)h);
+	}
+	fclose(f);
+	return 0;
+}
+
 int main(int argc, char **argv) {
 	if (argc < 3) {
 		fprintf(stderr, "usage: shan_tool shanstr|pic|rgn|fnt|q FILE [...]\n");
@@ -275,6 +333,7 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[1], "objdat")) return cmdObj(argv);
 		if (!strcmp(argv[1], "objects")) return cmdObjects(argv);
 		if (!strcmp(argv[1], "world") && argc >= 4) return cmdWorld(argv);
+		if (!strcmp(argv[1], "textops") && argc >= 5) return cmdTextOps(argv);
 		if (!strcmp(argv[1], "save") && argc >= 4) return cmdSave(argv);
 	} catch (const std::exception &e) {
 		fprintf(stderr, "error: %s\n", e.what());

@@ -13,6 +13,7 @@ add_library(shannara STATIC
 	src/retail_data.cpp
 	src/savestate.cpp
 	src/world.cpp
+	src/text.cpp
 	src/mus.cpp
 	src/objectdat.cpp
 	src/qvideo.cpp)
