@@ -145,8 +145,8 @@ RENAMES = [
      "Redraws the main view: gets get_room_pic_id for the current room, load_pic into stru_CC6FC (purging memory and "
      "retrying on failure), sends phase 0x16 to the room handler (drawing hook; nonzero = it drew), then palette/"
      "display. 54 callers."),
-    (0x1E260, "verb_get_name", "(verbId=eax) -> char* from _verb_vocab (13-byte records), '<NULL>' if unknown."),
-    (0x1E2D4, "verb_get_flags", "(verbId=eax) -> first byte of the _verb_vocab record, default 1."),
+    (0x1E260, "verb_get_name", "(verbId=eax) -> char* from _verb_vocab (13-byte records {char *name; char *prep; u8 flags; u32 id} from 0x1DAA0), '<NULL>' if unknown."),
+    (0x1E2D4, "verb_get_flags", "(verbId=eax) -> flags byte (+8) of the _verb_vocab record, default 1: 0 = no object (Look, Wait), 1 = one object, 2 = two objects (verb + preposition)."),
     (0x1E288, "object_get_display_name?", "(obj=ax) -> description if present else name; '<NULL>' if invalid id."),
     (0x2405C, "save_io_block?",
      "(ptr=eax, size=edx, handle=ebx, op=ecx): the single I/O primitive of the save system. op 2 = fp_write, "
@@ -270,7 +270,7 @@ DATA = [
     (0xCD9D0, "_text_pool"),           # runtime-loaded name/description strings
     (0xAFF58, "_object_handlers_a"),   # 512 code pointers (handler 1-512)
     (0xB0758, "_object_handlers_b"),   # 128 code pointers (handler 513-640)
-    (0x1DAA8, "_verb_vocab"),          # 13-byte {u8 flags; u32 id; char *name; char *prep}
+    (0x1DAA0, "_verb_vocab"),          # 13-byte {char *name; char *prep; u8 flags; u32 id}
     (0x1DE98, "_verb_default_table"),  # 79 x {u32 verbId; u32 fn}
     (0x1CFE4, "_room_pic_table"),      # 68 x {u16 room; u32 picId}
     (0xAE9FC, "_room_music_table"),    # 68 x {u16 room; u32 trackRef}
@@ -374,6 +374,9 @@ def main():
     for ea, name in DATA:
         cur = idc.get_name(ea)
         if cur == name or not cur or cur.startswith(("byte_", "word_", "dword_", "unk_", "off_", "stru_", "loc_")):
+            holder = idc.get_name_ea_simple(name)
+            if holder != idc.BADADDR and holder != ea:      # the label sits on a wrong address (earlier mistake): free it
+                idc.set_name(holder, "byte_%X" % holder, idc.SN_NOWARN)
             idc.set_name(ea, name, idc.SN_NOWARN)
         else:
             RESULTS.append(f"SKIP  data {ea:#x}: already {cur!r}")
@@ -400,8 +403,8 @@ def main():
         full = (vname + (" " + prep if prep else "")) or "(no menu entry)"
         rename(ea, "verbdef_%02d%s" % (int(verb), label),
                f"Default response for verb {verb} '{full}' (flags byte {flags or '-'}); table dword_1DE98 via "
-               f"run_default_verb_handler?. Verb vocabulary table: 13-byte records at 0x1DAA8 "
-               f"{{u8 flags; u32 verbId; char* name; char* preposition}}.", "table", True)
+               f"run_default_verb_handler?. Verb vocabulary table: 13-byte records at 0x1DAA0 "
+               f"{{char* name; char* preposition; u8 flags; u32 verbId}}.", "table", True)
 
     ok = sum(r.startswith("OK") for r in RESULTS)
     skip = sum(r.startswith("SKIP") for r in RESULTS)

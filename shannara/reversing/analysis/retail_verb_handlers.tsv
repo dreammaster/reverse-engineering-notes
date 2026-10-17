@@ -1,80 +1,80 @@
 verb	addr	name	preposition	flags
-1	0x2b614	Talk to		1
-2	0x2b104	Put out		2
-3	0x2a86c	Mix	with	1
-4	0x2acb8	Pick		1
-5	0x2a3a4	Cook		1
-6	0x2b83c	Tear		1
-7	0x2a850	Look at		0
-8	0x2bef0	Climb in		1
-9	0x2c40c	Exit		1
-10	0x2a5bc	Go to		2
-11	0x2c5b0	Hug		1
-13	0x2cf24	Remove		1
-14	0x2cf80	Ring		1
-15	0x2a254	Wear		0
+1	0x2b614	Take		1
+2	0x2b104	Put	on	2
+3	0x2a86c	Look at		1
+4	0x2acb8	Open		1
+5	0x2a3a4	Close		1
+6	0x2b83c	Talk to		1
+7	0x2a850	Look		0
+8	0x2bef0	Climb		1
+9	0x2c40c	Enter		1
+10	0x2a5bc	Give	to	2
+11	0x2c5b0	Go to		1
+13	0x2cf24	Read		1
+14	0x2cf80	Remove		1
+15	0x2a254	Wait		0
 16	0x2a214			
-17	0x2d594	Write in		1
-18	0x2c448	Fill	with	1
-19	0x2c388	Enter		1
-20	0x2d518	Wade in		1
-21	0x2d3e0	Touch		2
-22	0x2d1ac	Show	to	2
-23	0x2c2d0	Drink from		1
-24	0x2a788	Sit on		2
-25	0x2ccd4	Oil	with	2
-26	0x2ce50	Put	on	1
-27	0x2ca40	Listen to		2
-28	0x2c73c	Lasso	with	1
-29	0x2ce00	Pump		1
-30	0x2d2d8	Tie	to	2
-31	0x2b9f4	Break		2
-32	0x2bbd8	Burn		1
-33	0x2bd24	Carve	with	1
-34	0x2bdf0	Cast	at	2
-35	0x2c01c	Cross		1
-36	0x2c058	Cut	with	1
-37	0x2c0cc	Draw		2
-38	0x2c488	Fill	from	2
-39	0x2c508	Fix		2
-40	0x2c534	Follow		1
-41	0x2c5ec	Invoke	on	1
-42	0x2c62c	Jump over		2
-43	0x2c6a8	Kill		1
-44	0x2c6e8	Knock on		1
-45	0x2c988	Light	with	1
-46	0x2caf8	Look		1
-47	0x2cb40	Mold	with	2
-48	0x2cb6c	Move	with	2
-49	0x2cd64	Pry	with	2
-50	0x2cda4	Pull		2
-51	0x2ce90	Read		1
-52	0x2d070	Search		1
-53	0x2c8e8	Light		1
-54	0x2d0b0	Shoot	at	1
-55	0x2d1d8	Smell		1
-56	0x2d234	Swing from		1
-57	0x2d2ac	Throw	at	1
-58	0x2d370	Turn		1
-59	0x2d42c	Unlock	with	1
-60	0x2d49c	Use		2
-61	0x2d6b4			
-62	0x2b9a0	Attack	with	2
-63	0x2c288	Drink		1
-64	0x2cd00	Open		2
-65	0x2be80	Climb		2
-66	0x2bf58	Climb on		1
-67	0x2bfa8	Close		1
-68	0x2cd40	Pour	on	1
-69	0x2c560	Gag	with	1
-70	0x2c30c	Eat		1
-71	0x2c878	Lie on		1
-72	0x2be5c	Catch	with	2
-73	0x2d284	Take		1
-74	0x2c4c8	Fish in	with	2
-75	0x2c804	Lean on		2
-76	0x2d554	Wait		1
-77	0x2ce28	Push		1
-78	0x2c8d4	Lift		1
-79	0x2c588	Give	to	2
-80	0x2b9f4	Kiss		1
+17	0x2d594	Wear		1
+18	0x2c448	Exit		1
+19	0x2c388	Eat		1
+20	0x2d518	Use		1
+21	0x2d3e0	Tie	to	2
+22	0x2d1ac	Shoot	at	2
+23	0x2c2d0	Drink		1
+24	0x2a788	Show	to	2
+25	0x2ccd4	Move	with	2
+26	0x2ce50	Push		1
+27	0x2ca40	Light	with	2
+28	0x2c73c	Knock on		1
+29	0x2ce00	Pull		1
+30	0x2d2d8	Throw	at	2
+31	0x2b9f4	Attack	with	2
+32	0x2bbd8	Break		1
+33	0x2bd24	Burn		1
+34	0x2bdf0	Carve	with	2
+35	0x2c01c	Cook		1
+36	0x2c058	Cross		1
+37	0x2c0cc	Cut	with	2
+38	0x2c488	Fill	with	2
+39	0x2c508	Fish in	with	2
+40	0x2c534	Fix		1
+41	0x2c5ec	Hug		1
+42	0x2c62c	Invoke	on	2
+43	0x2c6a8	Jump over		1
+44	0x2c6e8	Kiss		1
+45	0x2c988	Light		1
+46	0x2caf8	Listen to		1
+47	0x2cb40	Mix	with	2
+48	0x2cb6c	Mold	with	2
+49	0x2cd64	Pour	on	2
+50	0x2cda4	Pry	with	2
+51	0x2ce90	Put out		1
+52	0x2d070	Ring		1
+53	0x2c8e8	Lift		1
+54	0x2d0b0	Search		1
+55	0x2d1d8	Sit on		1
+56	0x2d234	Smell		1
+57	0x2d2ac	Tear		1
+58	0x2d370	Touch		1
+59	0x2d42c	Turn		1
+60	0x2d49c	Unlock	with	2
+61	0x2d6b4	Write in		1
+62	0x2b9a0	Attach	to	2
+63	0x2c288	Draw		1
+64	0x2cd00	Oil	with	2
+65	0x2be80	Catch	with	2
+66	0x2bf58	Climb in		1
+67	0x2bfa8	Climb on		1
+68	0x2cd40	Pick		1
+69	0x2c560	Follow		1
+70	0x2c30c	Drink from		1
+71	0x2c878	Lean on		1
+72	0x2be5c	Cast	at	2
+73	0x2d284	Swing from		1
+74	0x2c4c8	Fill	from	2
+75	0x2c804	Lasso	with	2
+76	0x2d554	Wade in		1
+77	0x2ce28	Pump		1
+78	0x2c8d4	Lie on		1
+79	0x2c588	Gag	with	2
+80	0x2b9f4	Kill		1

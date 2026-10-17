@@ -40052,7 +40052,7 @@ loc_67FA6:
 def_67E9E:
   return
 
-== verbdef_01_Talk_to
+== verbdef_01_Take
   sub_1B3F0(edx=3, ebx=0, stack=[?, ?])
   cmp eax, 1
   jnz loc_2B658
@@ -40107,7 +40107,7 @@ loc_2B82C:
   wprintf(stack=[msg(2:37), ?])
   return
 
-== verbdef_02_Put_out
+== verbdef_02_Put
   cmp word ptr dword_CD92C, 0
   jz loc_2B11D
   jmp loc_2B122
@@ -40205,13 +40205,13 @@ loc_2B409:
 loc_2B4C6:
   return
 
-== verbdef_03_Mix
+== verbdef_03_Look_at
   cmp ax, word ptr _current_room+2
   jz loc_2A881
   test ax, ax
   jnz loc_2A88B
 loc_2A881:
-  verbdef_07_Look_at(stack=[?])
+  verbdef_07_Look(stack=[?])
   jmp loc_2ABFF
 loc_2A88B:
   cmp dword_CD510, 5
@@ -40303,7 +40303,7 @@ loc_2ABF7:
 loc_2ABFF:
   return
 
-== verbdef_04_Pick
+== verbdef_04_Open
   cmp edx, 1
   jnz loc_2AD2D
   cmp ax, word ptr _current_room+2
@@ -40380,7 +40380,7 @@ loc_2AF26:
 loc_2AF2E:
   return
 
-== verbdef_05_Cook
+== verbdef_05_Close
   object_has_attr(edx=0Dh, stack=[?])
   test eax, eax
   jz loc_2A49F
@@ -40416,7 +40416,7 @@ loc_2A4B8:
 loc_2A4C0:
   return
 
-== verbdef_06_Tear
+== verbdef_06_Talk_to
   cmp dword_CD510, 5
   jnz loc_2B881
   print_obj(stack=[6, ?])
@@ -40429,11 +40429,11 @@ loc_2B881:
 loc_2B8A2:
   return
 
-== verbdef_07_Look_at
+== verbdef_07_Look
   call_object_handler?(eax=_current_room, edx=8, stack=[?])
   return
 
-== verbdef_08_Climb_in
+== verbdef_08_Climb
   cmp ax, 0CEh
   jb loc_2BF31
   cmp ax, 0D0h
@@ -40453,13 +40453,13 @@ loc_2BF31:
   wprintf(stack=[msg(3:19), ?])
   return
 
-== verbdef_09_Exit
+== verbdef_09_Enter
   print_obj(stack=[2, ?])
   print_obj(stack=[11h, ?, ?])
   wprintf(stack=[msg(3:31), ?])
   return
 
-== verbdef_10_Go_to
+== verbdef_10_Give
   object_has_attr(edx=10h, stack=[?, ?])
   test eax, eax
   jz loc_2A639
@@ -40506,20 +40506,20 @@ loc_2A777:
 loc_2A77F:
   return
 
-== verbdef_11_Hug
+== verbdef_11_Go_to
   print_obj(stack=[2, ?])
   print_obj(stack=[11h, ?, ?])
   wprintf(stack=[msg(3:38), ?])
   return
 
-== verbdef_13_Remove
+== verbdef_13_Read
   print_obj(stack=[40h, ?, "learn"])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, "scan", ?])
   wprintf(stack=[msg(3:64), ?])
   return
 
-== verbdef_14_Ring
+== verbdef_14_Remove
   object_carrier?(stack=[?, ?])
   test eax, eax
   jz loc_2D04F
@@ -40544,7 +40544,7 @@ loc_2D04F:
   run_command?(eax=1)
   return
 
-== verbdef_15_Wear
+== verbdef_15_Wait
 loc_2A264:
   sub_19D44(edx=0, ebx=0, ecx=0, stack=[?, ?, ?, ?])
   test eax, eax
@@ -40579,7 +40579,7 @@ loc_2A22B:
 loc_2A24C:
   return
 
-== verbdef_17_Write_in
+== verbdef_17_Wear
   object_carrier?(stack=[?, ?])
   test eax, eax
   jz loc_2D68B
@@ -40606,13 +40606,13 @@ loc_2D68B:
   wprintf(stack=[msg(3:88), ?])
   return
 
-== verbdef_18_Fill
+== verbdef_18_Exit
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "are", ?])
   wprintf(stack=["%sn't in%s.", ?])
   return
 
-== verbdef_19_Enter
+== verbdef_19_Eat
   print_obj(stack=[44h, ?, "have"])
   print_obj(stack=[54h, ?, offset unk_A4334, ?])
   print_obj(stack=[5, ?, ?])
@@ -40621,13 +40621,13 @@ loc_2D68B:
   wprintf(stack=[msg(3:30), ?])
   return
 
-== verbdef_20_Wade_in
+== verbdef_20_Use
   print_obj(stack=[2, ?])
   print_obj(stack=[11h, ?, ?])
   wprintf(stack=[msg(3:85), ?])
   return
 
-== verbdef_21_Touch
+== verbdef_21_Tie
   cmp ax, 212h
   jb loc_2D419
   cmp ax, 215h
@@ -40639,7 +40639,7 @@ loc_2D419:
   wprintf(stack=[msg(3:81)])
   return
 
-== verbdef_22_Show
+== verbdef_22_Shoot
   object_carrier?()
   test eax, eax
   jz loc_2D1C4
@@ -40649,13 +40649,13 @@ loc_2D1C9:
   wprintf(stack=[msg(3:73), msg(3:72)])
   return
 
-== verbdef_23_Drink_from
+== verbdef_23_Drink
   print_obj(stack=[2, ?])
   print_obj(stack=[11h, ?, ?])
   wprintf(stack=[msg(3:28), ?])
   return
 
-== verbdef_24_Sit_on
+== verbdef_24_Show
   object_has_attr(edx=17h, stack=[?])
   test eax, eax
   jz loc_2A802
@@ -40681,18 +40681,18 @@ loc_2A840:
 loc_2A848:
   return
 
-== verbdef_25_Oil
+== verbdef_25_Move
   print_obj(stack=[52h, ?, offset unk_A4334])
   wprintf(stack=["%sn't budge.", ?])
   return
 
-== verbdef_26_Put
+== verbdef_26_Push
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "push", ?])
   wprintf(stack=[msg(3:63), ?])
   return
 
-== verbdef_27_Listen_to
+== verbdef_27_Light
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, offset unk_A4330, ?])
   wprintf(stack=["%s to light%s", ?])
@@ -40711,18 +40711,18 @@ loc_2CACE:
   wprintf(stack=[msg(3:53), ?])
   return
 
-== verbdef_28_Lasso
+== verbdef_28_Knock_on
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "knock", ?])
   wprintf(stack=[msg(3:45), ?])
   return
 
-== verbdef_29_Pump
+== verbdef_29_Pull
   print_obj(stack=[2, ?])
   wprintf(stack=[msg(3:61), ?])
   return
 
-== verbdef_30_Tie
+== verbdef_30_Throw
   print_obj(stack=[2, ?])
   print_obj(stack=[44h, ?, "keep", ?])
   print_obj(stack=[4, ?, ?])
@@ -40732,7 +40732,7 @@ loc_2CACE:
   wprintf(stack=[msg(3:78), ?])
   return
 
-== verbdef_31_Break
+== verbdef_31_Attack
   cmp ax, 0CEh
   jb loc_2BA28
   cmp ax, 0D0h
@@ -40787,7 +40787,7 @@ loc_2BB97:
 loc_2BBD1:
   return
 
-== verbdef_32_Burn
+== verbdef_32_Break
   object_has_attr(edx=17h, stack=[?])
   test eax, eax
   jz loc_2BC26
@@ -40822,7 +40822,7 @@ loc_2BCE8:
 loc_2BD1D:
   return
 
-== verbdef_33_Carve
+== verbdef_33_Burn
   object_has_attr(edx=17h, stack=[?])
   test eax, eax
   jz loc_2BD72
@@ -40845,7 +40845,7 @@ loc_2BDDF:
   wprintf(stack=[msg(3:12), ?])
   return
 
-== verbdef_34_Cast
+== verbdef_34_Carve
   cmp eax, 5
   jnz loc_2BE1D
   print_obj(stack=[52h, ?, "are"])
@@ -40865,13 +40865,13 @@ loc_2BE4C:
 loc_2BE54:
   return
 
-== verbdef_35_Cross
+== verbdef_35_Cook
   print_obj(stack=[1, ?])
   print_obj(stack=[2, ?, ?])
   wprintf(stack=[msg(3:22), ?])
   return
 
-== verbdef_36_Cut
+== verbdef_36_Cross
   print_obj(stack=[40h, ?, "come"])
   print_obj(stack=[40h, ?, "look", ?])
   print_obj(stack=[2, ?, ?])
@@ -40879,7 +40879,7 @@ loc_2BE54:
   wprintf(stack=[msg(3:23), ?])
   return
 
-== verbdef_37_Draw
+== verbdef_37_Cut
   object_carrier?(stack=[?, ?])
   test eax, eax
   jz loc_2C13E
@@ -40971,23 +40971,23 @@ loc_2C245:
   wprintf(stack=[msg(3:32), ?])
   return
 
-== verbdef_39_Fix
+== verbdef_39_Fish_in
   print_obj(stack=[41h, ?, "are"])
   wprintf(stack=[msg(3:34), ?])
   return
 
-== verbdef_40_Follow
+== verbdef_40_Fix
   print_obj(stack=[52h, ?, offset unk_A4334])
   wprintf(stack=[msg(3:35), ?])
   return
 
-== verbdef_41_Invoke
+== verbdef_41_Hug
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "give", ?])
   wprintf(stack=[msg(3:39), ?])
   return
 
-== verbdef_42_Jump_over
+== verbdef_42_Invoke
   cmp eax, 9
   jnz loc_2C648
   wprintf(stack=[msg(3:40)])
@@ -41005,13 +41005,13 @@ loc_2C680:
 loc_2C6A1:
   return
 
-== verbdef_43_Kill
+== verbdef_43_Jump_over
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "jump", ?])
   wprintf(stack=[msg(3:43), ?])
   return
 
-== verbdef_44_Knock_on
+== verbdef_44_Kiss
   print_obj(stack=[4, ?])
   print_obj(stack=[11h, ?, ?])
   print_obj(stack=[51h, ?, "lean", ?])
@@ -41037,18 +41037,18 @@ loc_2CA16:
   wprintf(stack=[msg(3:53), ?])
   return
 
-== verbdef_46_Look
+== verbdef_46_Listen_to
   print_obj(stack=[40h, ?, "hear"])
   print_obj(stack=[51h, ?, "stop", ?])
   wprintf(stack=[msg(3:54), ?])
   return
 
-== verbdef_47_Mold
+== verbdef_47_Mix
   print_obj(stack=[41h, ?, offset unk_A4334])
   wprintf(stack=[msg(3:55), ?])
   return
 
-== verbdef_48_Move
+== verbdef_48_Mold
   cmp word ptr dword_CD92C, 0
   jz loc_2CB83
   cmp eax, 3
@@ -41064,20 +41064,20 @@ loc_2CBA6:
 loc_2CBDB:
   return
 
-== verbdef_49_Pry
+== verbdef_49_Pour
   print_obj(stack=[44h, ?, "have"])
   print_obj(stack=[1, ?, ?])
   wprintf(stack=[msg(3:59), ?])
   return
 
-== verbdef_50_Pull
+== verbdef_50_Pry
   print_obj(stack=[40h, ?, "meet"])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, "attempt", ?])
   wprintf(stack=[msg(3:60), ?])
   return
 
-== verbdef_51_Read
+== verbdef_51_Put_out
   object_has_attr(edx=9, stack=[?])
   test eax, eax
   jz loc_2CEF5
@@ -41092,13 +41092,13 @@ loc_2CEF5:
 loc_2CF1B:
   return
 
-== verbdef_52_Search
+== verbdef_52_Ring
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "ring", ?])
   wprintf(stack=[msg(3:66), ?])
   return
 
-== verbdef_53_Light
+== verbdef_53_Lift
   print_obj(stack=[6, ?])
   print_obj(stack=[44h, ?, "put", ?])
   print_obj(stack=[44h, ?, "are", ?])
@@ -41108,30 +41108,30 @@ loc_2CF1B:
   wprintf(stack=[msg(3:51), ?])
   return
 
-== verbdef_54_Shoot
+== verbdef_54_Search
   wprintf(stack=[msg(3:67)])
   return
 
-== verbdef_55_Smell
+== verbdef_55_Sit_on
   print_obj(stack=[40h, ?, "stand"])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, (offset aIsssit+3), ?])
   wprintf(stack=[msg(3:74), ?])
   return
 
-== verbdef_56_Swing_from
+== verbdef_56_Smell
   print_obj(stack=[6, ?])
   print_obj(stack=[1, ?, ?])
   print_obj(stack=[12h, ?, ?])
   wprintf(stack=[msg(3:75), ?])
   return
 
-== verbdef_57_Throw
+== verbdef_57_Tear
   print_obj(stack=[41h, ?, "are"])
   wprintf(stack=[msg(3:77), ?])
   return
 
-== verbdef_58_Turn
+== verbdef_58_Touch
   print_obj(stack=[4, ?])
   print_obj(stack=[44h, ?, "feel", ?])
   print_obj(stack=[2, ?, ?])
@@ -41139,7 +41139,7 @@ loc_2CF1B:
   wprintf(stack=[msg(3:79), ?])
   return
 
-== verbdef_59_Unlock
+== verbdef_59_Turn
   print_obj(stack=[6, ?])
   print_obj(stack=[40h, ?, "turn", ?])
   print_obj(stack=[2, ?, ?])
@@ -41147,7 +41147,7 @@ loc_2CF1B:
   wprintf(stack=[msg(3:82), ?])
   return
 
-== verbdef_60_Use
+== verbdef_60_Unlock
   object_has_attr(edx=0Eh, stack=[?])
   test eax, eax
   jnz loc_2D4D6
@@ -41161,7 +41161,7 @@ loc_2D4D6:
 loc_2D510:
   return
 
-== verbdef_61
+== verbdef_61_Write_in
   cmp eax, 30h
   jnz loc_2D72C
   cmp eax, 3
@@ -41186,26 +41186,26 @@ loc_2D75F:
 loc_2D76C:
   return
 
-== verbdef_62_Attack
+== verbdef_62_Attach
   print_obj(stack=[2, ?])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, "attempt", ?])
   wprintf(stack=[msg(3:0), ?])
   return
 
-== verbdef_63_Drink
+== verbdef_63_Draw
   print_obj(stack=[44h, ?, "sheathe"])
   print_obj(stack=[51h, ?, "start", ?])
   wprintf(stack=[msg(3:27), ?])
   return
 
-== verbdef_64_Open
+== verbdef_64_Oil
   print_obj(stack=[2, ?])
   print_obj(stack=[51h, ?, "pour", ?])
   wprintf(stack=[msg(3:58), ?])
   return
 
-== verbdef_65_Climb
+== verbdef_65_Catch
   print_obj(stack=[44h, ?, offset unk_A4334])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[2, ?, ?])
@@ -41213,14 +41213,14 @@ loc_2D76C:
   wprintf(stack=[msg(3:16), ?])
   return
 
-== verbdef_66_Climb_on
+== verbdef_66_Climb_in
   print_obj(stack=[22h, ?])
   print_obj(stack=[7, ?, ?])
   print_obj(stack=[11h, ?, ?])
   wprintf(stack=[msg(3:20), ?])
   return
 
-== verbdef_67_Close
+== verbdef_67_Climb_on
   print_obj(stack=[40h, ?, offset unk_A4338])
   print_obj(stack=[40h, ?, "take", ?])
   print_obj(stack=[2, ?, ?])
@@ -41228,16 +41228,16 @@ loc_2D76C:
   wprintf(stack=[msg(3:21), ?])
   return
 
-== verbdef_68_Pour
+== verbdef_68_Pick
   run_command?(eax=1, stack=[?, ?])
   return
 
-== verbdef_69_Gag
+== verbdef_69_Follow
   print_obj(stack=[2, ?])
   wprintf(stack=[msg(3:36), ?])
   return
 
-== verbdef_70_Eat
+== verbdef_70_Drink_from
   object_has_attr(edx=0Bh, stack=[?])
   test eax, eax
   jz loc_2C359
@@ -41252,29 +41252,29 @@ loc_2C377:
   wprintf(stack=[msg(3:29), ?])
   return
 
-== verbdef_71_Lie_on
+== verbdef_71_Lean_on
   print_obj(stack=[40h, ?, "stand"])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[51h, ?, "lean", ?])
   wprintf(stack=[msg(3:49), ?])
   return
 
-== verbdef_72_Catch
+== verbdef_72_Cast
   run_command?(eax=1Eh, stack=[?, ?])
   return
 
-== verbdef_73_Take
+== verbdef_73_Swing_from
   print_obj(stack=[11h, ?])
   wprintf(stack=[msg(3:76), ?])
   return
 
-== verbdef_74_Fish_in
+== verbdef_74_Fill
   print_obj(stack=[22h, ?])
   print_obj(stack=[51h, ?, "decide", ?])
   wprintf(stack=[msg(3:33), ?])
   return
 
-== verbdef_75_Lean_on
+== verbdef_75_Lasso
   print_obj(stack=[40h, ?, "miss"])
   print_obj(stack=[2, ?, ?])
   print_obj(stack=[40h, ?, "toss", ?])
@@ -41282,22 +41282,22 @@ loc_2C377:
   wprintf(stack=[msg(3:48), ?])
   return
 
-== verbdef_76_Wait
+== verbdef_76_Wade_in
   print_obj(stack=[22h, ?])
   print_obj(stack=[51h, ?, "have", ?])
   wprintf(stack=[msg(3:86), ?])
   return
 
-== verbdef_77_Push
+== verbdef_77_Pump
   print_obj(stack=[2, ?])
   wprintf(stack=[msg(3:62), ?])
   return
 
-== verbdef_78_Lift
+== verbdef_78_Lie_on
   wprintf(stack=[msg(3:50)])
   return
 
-== verbdef_79_Give
+== verbdef_79_Gag
   print_obj(stack=[2, ?])
   wprintf(stack=[msg(3:37), ?])
   return

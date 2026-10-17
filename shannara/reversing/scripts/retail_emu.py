@@ -183,7 +183,12 @@ class RetailEmu:
         uc.reg_write(UC_X86_REG_ECX, ecx & 0xFFFFFFFF)
         for r in (UC_X86_REG_ESI, UC_X86_REG_EDI, UC_X86_REG_EBP):
             uc.reg_write(r, 0)
-        uc.emu_start(addr, RET, count=self.max_insns)
+        ctx = uc.context_save()
+        try:
+            uc.emu_start(addr, RET, count=self.max_insns)
+        except Exception:
+            uc.context_restore(ctx)     # leave the CPU usable after an emulation fault (memory is not rolled back)
+            raise
         if uc.reg_read(UC_X86_REG_EIP) != RET:
             raise RuntimeError("function at 0x%X did not return (instruction budget exhausted?)" % addr)
         return uc.reg_read(UC_X86_REG_EAX)

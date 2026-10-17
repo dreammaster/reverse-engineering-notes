@@ -186,7 +186,7 @@ the event. Phases observed at call sites:
 |---|---|---|
 | 1-6 | `run_command?` | command pipeline: 1 = room/actor-location pre, 2 = actor, 3 = dobj's container, **4 = dobj**, 5 = iobj's container, **6 = iobj** |
 | 7 | `sub_1B9C8` (event 0x200) | event/idle notification |
-| 8 | `verbdef_07_Look_at` | look-at notification |
+| 8 | `verbdef_07_Look` | look-around notification |
 | 9, 0x19 | `sub_1DA04` (start / after restore) | room entry / (re)start |
 | 0x0A | `main_` after restore | restore notification |
 | 0x0D-0x0F, 0x1A | `sub_1EE10`, `sub_6A0C4` | object-level actions (not yet traced) |
@@ -197,12 +197,15 @@ the event. Phases observed at call sites:
 
 ### Verb vocabulary
 
-Verb table = 13-byte records at `0x1DAA8`: `{u8 flags; u32 verbId; char *name; char
-*preposition}`, 77 named verbs ("Attack with", "Look at", "Talk to", "Give to",
-"Put on" ...); ids 1-80, with **16** and **61** having default handlers but no menu
-entry. Default handlers are in `dword_1DE98` (79 `{verbId, fn}` pairs); the same
-function serves ids 31 (Break) and 80 (Kiss). See `retail_verb_handlers.tsv`; the
-functions are named `verbdef_NN_<Verb>`.
+Verb table = 13-byte records at `0x1DAA0`: `{char *name; char *preposition; u8 flags; u32 verbId}` - **78 verbs**, ids 1-80 ("Take" = 1, "Put on" =
+2, "Look at" = 3, "Open" = 4, "Close" = 5, "Talk to" = 6, "Look" = 7, ... "Kill" = 80; the full list is `retail_verb_handlers.tsv`). `flags` is the number of objects the
+verb takes: 0 = none (Look, Wait), 1 = direct object, 2 = direct + indirect with the preposition ("Attach to", "Put on", "Give to"). Id 16 has a default handler
+but no vocabulary entry. Default handlers are in `dword_1DE98` (79 `{verbId, fn}` pairs); the same function serves ids 31 ("Attack with") and 80 ("Kill").
+The functions are named `verbdef_NN_<Verb>`.
+
+*Correction (headless-oracle pass):* earlier passes read this table from `0x1DAA8`, which paired every verb id with the *next* record's name (the id is the last field of
+a record, not the second); the names `verbdef_NN_<Verb>` and `retail_verb_handlers.tsv` were wrong until the real `verb_get_name` (run under unicorn) gave
+`1 = Take, 7 = Look, 46 = Listen to, 73 = Swing from` and exposed the shift.
 
 ### Main loop (`main_` / `startup`)
 
@@ -393,7 +396,7 @@ Reading `go_to_room?` and the 63 room handlers' dispatch chains pins down the li
 |---|---|---|
 | 1-6 | `run_command?` | command pipeline (1 room/actor pre-hook, 2 actor, 3/5 container of dobj/iobj, **4 dobj, 6 iobj**) |
 | 7 | event 0x200 handler | notification/idle |
-| 8 | `verbdef_07_Look_at` | "look at" notification |
+| 8 | `verbdef_07_Look` | "look" (no object) notification |
 | 9 | `describe_room?` (first visit) | describe room, first time (room attr 5 = "visited" not set) |
 | 0x0A | `describe_room?` (revisit) | describe room again (attr 5 set); also sent by `main_` after a restore |
 | 0x0B / 0x0C | `describe_room?` | verbosity variants chosen by `byte_ADE9A` (2 -> 0Bh, 0 -> 0Ch) |
@@ -800,3 +803,36 @@ Facts established on the way: there are exactly **24 attribute descriptors** (`0
 and are undefined); `sub_10F70` (the UI "selection" helper called at the end of `object_move?`) is the only external dependency of the tree operations and
 is stubbed as "current selection word at `0xA7E54`"; the executable keeps its object table and most static tables in the *code* object (`0x10000-0x9CCE8`), the
 object records themselves in the data object, and the BSS tail of the data object (above `0xCD000`, e.g. `_game_flags`) is zero at start.
+
+## 31. A headless oracle: the real game logic running without a display (thirty-first pass)
+
+`scripts/retail_game.py` (`Game`) executes the original `SHANNARA.EXE` under unicorn (via `retail_emu.py`) with every UI / audio / graphics / file routine
+stubbed and the game text captured, so commands can be issued and the original's responses and state changes observed:
+
+```python
+g = Game("game/SHANNARA.EXE", "game/SHANSTR.DAT")
+g.command("Take", 35); g.text()      # "You take the fishing pole."   (the pole's location becomes 3 = Jak)
+g.command("Look");     g.text()      # the start room's description
+```
+
+How it works: functions of the engine/library region (>= `0x75000`) become no-op stubs that also pop their callee-cleaned arguments (`retn N`, parsed from the
+listing) except a whitelist of pure C-runtime routines; `wprintf`/`wputchar`/`sprintf_` are replaced by Python (a `wprintf` first argument >= `0xF0000000` is a
+SHANSTR id, `%s` pointers are read from emulated memory, a NULL pointer prints `(null)`); `new_pointer` is a bump allocator; a handful of game-layer UI helpers
+(`delay?`, `show_dialog?`, `refresh_room?`, `setup_pic_regions?`, the journal screen ...) are stubbed by name. State that `startup` would have established is
+set by hand: the `OBJECT.DAT` name pool at `0xCD9D0`, and the acting character (`command()` writes `word_CD92C` and `word_ADE98`, what `sub_1B9C8` does when
+a command is issued from the UI). `snapshot()`/`restore()` copy the code/data objects and the heap (0.0 s) so alternatives can be explored from one state.
+
+Findings and corrections it produced:
+- **The verb vocabulary was misread in earlier passes** (section 4): records are `{char *name; char *prep; u8 flags; u32 id}` starting at `0x1DAA0`, not `0x1DAA8`;
+  reading from the wrong base paired every id with the *next* record's name. The engine's own `verb_get_name` gave `1 = Take, 7 = Look, 46 = Listen to, 73 =
+  Swing from`, which exposed it. The `verbdef_NN_<Verb>` functions, `retail_verb_handlers.tsv`, the handler digest and the IDB comments were regenerated.
+  `flags` = number of objects: 0 (Look, Wait), 1, 2 (verb + preposition). Real behaviour now reads correctly, e.g. `Take 35` = "You take the fishing pole.",
+  `Look at 35` = "Your long, stout oaken fishing pole doubles as a walking stick.", `Talk to 3` = "Talking to other people is more rewarding than holding
+  dialogues with yourself.", `Look at 4` = "Shella is slightly injured.".
+- Calling conventions confirmed on running code: `sprintf_(buf, fmt, args...)` is plain cdecl (all arguments on the stack); `wprintf(fmt-or-id, args...)` cdecl; the
+  command's actor lives in the *low word* of `dword_CD92C` (`print_obj(0x51, [CD928+2 >> 16], verb)` prints the subject), the direct and indirect objects in the words
+  at `0xCD926` / `0xCD92E`.
+- The C runtime's `__prtf_` cannot run under unicorn (it saves/restores segment registers); hooking `sprintf_` avoids it.
+- `scripts/oracle_matrix.py OUT.tsv` runs every verb against a set of objects from the start state: **2,324 commands in 17 seconds, no emulation errors**, with
+  return value, state changes (object fields, game flags) and text per command. It is the behavioural reference for re-implementing the handlers (kept local: it
+  contains the game's text).

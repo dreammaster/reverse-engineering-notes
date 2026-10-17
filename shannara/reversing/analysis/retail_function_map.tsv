@@ -39,7 +39,7 @@ address	name	size	callers	callees	role
 0x12ae4	handle_move_event?	401	1	7	game layer (named)
 0x12c78	handle_click_event?	1574	1	29	game layer (named)
 0x132a0	sub_132A0	74	1	4	game layer (unnamed)
-0x132ec	sub_132EC	933	15	28	game layer (unnamed)
+0x132ec	choice_dialog?	933	15	28	game layer (named)
 0x136a8	sub_136A8	120	2	4	game layer (unnamed)
 0x13720	sub_13720	477	1	8	game layer (unnamed)
 0x13900	sub_13900	275	1	5	game layer (unnamed)
@@ -52,34 +52,34 @@ address	name	size	callers	callees	role
 0x13dd4	sub_13DD4	92	2	2	game layer (unnamed)
 0x13e30	sub_13E30	220	1	5	game layer (unnamed)
 0x13f0c	sub_13F0C	231	1	7	game layer (unnamed)
-0x14010	capture_keyboard?	576	1	18	game layer (named)
+0x14010	combat_loop?	576	1	18	game layer (named)
 0x14250	sub_14250	307	2	9	game layer (unnamed)
 0x14384	sub_14384	47	1	2	game layer (unnamed)
-0x143b4	sub_143B4	113	1	1	game layer (unnamed)
-0x14438	sub_14438	826	1	19	game layer (unnamed)
-0x14774	sub_14774	60	5	1	game layer (unnamed)
+0x143b4	combat_begin_turn?	113	1	1	game layer (named)
+0x14438	combat_player_input?	826	1	19	game layer (named)
+0x14774	combat_do_defend?	60	5	1	game layer (named)
 0x147b0	sub_147B0	12	2	0	game layer (unnamed)
-0x14808	sub_14808	811	2	2	game layer (unnamed)
-0x14b34	release_keyboard	51	9	1	game layer (named)
-0x14b68	sub_14B68	102	1	3	game layer (unnamed)
-0x14bd0	sub_14BD0	126	2	0	game layer (unnamed)
-0x14c50	sub_14C50	68	1	0	game layer (unnamed)
-0x14c94	sub_14C94	38	1	1	game layer (unnamed)
-0x14cbc	sub_14CBC	12	1	0	game layer (unnamed)
-0x14cc8	sub_14CC8	439	2	5	game layer (unnamed)
+0x14808	combat_choose_target?	811	2	2	game layer (named)
+0x14b34	combat_hook_notify?	51	9	1	game layer (named)
+0x14b68	combat_do_attack?	102	1	3	game layer (named)
+0x14bd0	combat_check_outcome?	126	2	0	game layer (named)
+0x14c50	combat_pick_ready?	68	1	0	game layer (named)
+0x14c94	combat_init_all?	38	1	1	game layer (named)
+0x14cbc	combatant_id_is_party?	12	1	0	game layer (named)
+0x14cc8	combat_init_combatant?	439	2	5	game layer (named)
 0x14e80	load_display	77	3	6	game layer (named)
-0x14ed0	sub_14ED0	590	6	2	game layer (unnamed)
-0x15120	sub_15120	85	14	1	game layer (unnamed)
-0x15178	sub_15178	35	2	2	game layer (unnamed)
+0x14ed0	combat_draw_hp_bar?	590	6	2	game layer (named)
+0x15120	combat_draw_marker?	85	14	1	game layer (named)
+0x15178	combat_refresh_combatant?	35	2	2	game layer (named)
 0x1519c	sub_1519C	97	1	3	game layer (unnamed)
-0x15200	sub_15200	141	1	2	game layer (unnamed)
-0x15290	sub_15290	110	1	2	game layer (unnamed)
-0x15300	sub_15300	89	3	3	game layer (unnamed)
-0x1535c	sub_1535C	234	13	5	game layer (unnamed)
-0x15448	sub_15448	96	3	3	game layer (unnamed)
-0x154a8	sub_154A8	353	5	10	game layer (unnamed)
-0x1560c	sub_1560C	260	1	6	game layer (unnamed)
-0x15710	sub_15710	69	1	0	game layer (unnamed)
+0x15200	combat_roll_damage?	141	1	2	game layer (named)
+0x15290	combat_apply_damage?	110	1	2	game layer (named)
+0x15300	combat_step_anim?	89	3	3	game layer (named)
+0x1535c	combat_set_anim?	234	13	5	game layer (named)
+0x15448	combat_stop_anim?	96	3	3	game layer (named)
+0x154a8	combat_draw_anim_frame?	353	5	10	game layer (named)
+0x1560c	combat_next_anim_frame?	260	1	6	game layer (named)
+0x15710	anim_is_finished?	69	1	0	game layer (named)
 0x15758	clone_combatant?	54	69	1	game layer (named)
 0x15790	sub_15790	12	2	0	game layer (unnamed)
 0x1579c	sub_1579C	70	2	1	game layer (unnamed)
@@ -88,26 +88,26 @@ address	name	size	callers	callees	role
 0x1584c	sub_1584C	29	6	1	game layer (unnamed)
 0x158ac	sub_158AC	511	2	2	game layer (unnamed)
 0x15aac	sub_15AAC	81	1	2	game layer (unnamed)
-0x15b08	reset_bevel_style?	68	1	0	game layer (named)
-0x15b4c	sub_15B4C	68	1	0	game layer (unnamed)
-0x15b90	sub_15B90	61	1	0	game layer (unnamed)
-0x15bd0	sub_15BD0	68	1	0	game layer (unnamed)
+0x15b08	combat_stats_set_a?	68	1	0	game layer (named)
+0x15b4c	combat_stats_set_b?	68	1	0	game layer (named)
+0x15b90	combat_stats_set_c?	61	1	0	game layer (named)
+0x15bd0	combat_stats_set_d?	68	1	0	game layer (named)
 0x15c24	sub_15C24	212	9	4	game layer (unnamed)
-0x15cf8	sub_15CF8	14	0	1	game layer (unnamed)
-0x15d08	sub_15D08	239	0	2	game layer (unnamed)
-0x15df8	sub_15DF8	327	0	1	game layer (unnamed)
-0x15f40	sub_15F40	423	0	3	game layer (unnamed)
-0x160e8	sub_160E8	288	0	4	game layer (unnamed)
-0x16208	sub_16208	953	0	6	game layer (unnamed)
-0x165c4	sub_165C4	354	0	3	game layer (unnamed)
-0x16728	sub_16728	569	0	4	game layer (unnamed)
-0x16964	sub_16964	93	0	1	game layer (unnamed)
-0x169c4	sub_169C4	197	0	3	game layer (unnamed)
-0x16a8c	sub_16A8C	55	0	2	game layer (unnamed)
-0x16ac4	sub_16AC4	227	0	3	game layer (unnamed)
-0x16bbc	sub_16BBC	1192	0	11	game layer (unnamed)
-0x17064	sub_17064	128	0	1	game layer (unnamed)
-0x170e4	sub_170E4	214	0	1	game layer (unnamed)
+0x15cf8	enc_hook_00?	14	0	1	game layer (named)
+0x15d08	enc_hook_01?	239	0	2	game layer (named)
+0x15df8	enc_hook_02?	327	0	1	game layer (named)
+0x15f40	enc_hook_03?	423	0	3	game layer (named)
+0x160e8	enc_hook_08?	288	0	4	game layer (named)
+0x16208	enc_hook_04?	953	0	6	game layer (named)
+0x165c4	enc_hook_05?	354	0	3	game layer (named)
+0x16728	enc_hook_06?	569	0	4	game layer (named)
+0x16964	enc_hook_07?	93	0	1	game layer (named)
+0x169c4	enc_hook_09?	197	0	3	game layer (named)
+0x16a8c	enc_hook_10?	55	0	2	game layer (named)
+0x16ac4	enc_hook_11?	227	0	3	game layer (named)
+0x16bbc	enc_hook_12?	1192	0	11	game layer (named)
+0x17064	enc_hook_13?	128	0	1	game layer (named)
+0x170e4	enc_hook_14?	214	0	1	game layer (named)
 0x171bc	sub_171BC	235	10	2	game layer (unnamed)
 0x17310	start_encounter?	2440	17	21	game layer (named)
 0x17ca0	objh_001	646	0	5	object handler
@@ -122,16 +122,16 @@ address	name	size	callers	callees	role
 0x19548	party_has_member?	73	47	1	game layer (named)
 0x19594	party_add_member?	101	43	2	game layer (named)
 0x195fc	party_add_member_slot?	157	40	6	game layer (named)
-0x196b8	sub_196B8	192	23	2	game layer (unnamed)
-0x19778	sub_19778	185	23	2	game layer (unnamed)
+0x196b8	party_heal_percent?	192	23	2	game layer (named)
+0x19778	character_damage?	185	23	2	game layer (named)
 0x19868	sub_19868	774	8	3	game layer (unnamed)
 0x19b70	sub_19B70	79	1	2	game layer (unnamed)
-0x19bc0	sub_19BC0	88	72	2	game layer (unnamed)
-0x19c40	sub_19C40	116	11	1	game layer (unnamed)
+0x19bc0	object_carrier?	88	72	2	game layer (named)
+0x19c40	schedule_event?	116	11	1	game layer (named)
 0x19cb4	sub_19CB4	144	14	1	game layer (unnamed)
 0x19d44	sub_19D44	54	1	0	game layer (unnamed)
 0x19d7c	sub_19D7C	61	1	0	game layer (unnamed)
-0x19dbc	sub_19DBC	471	2	6	game layer (unnamed)
+0x19dbc	advance_time?	471	2	6	game layer (named)
 0x19fb4	object_get_name?	113	7	1	game layer (named)
 0x1a03c	object_get_desc?	114	1	1	game layer (named)
 0x1a0c4	object_get_data_ptr?	62	1	0	game layer (named)
@@ -148,15 +148,15 @@ address	name	size	callers	callees	role
 0x1a49c	object_get_next_sibling?	74	16	0	game layer (named)
 0x1a4e8	object_set_next_sibling?	70	2	0	game layer (named)
 0x1a530	object_get_prop_dword?	77	6	0	game layer (named)
-0x1a580	sub_1A580	71	14	0	game layer (unnamed)
-0x1a5c8	sub_1A5C8	77	3	0	game layer (unnamed)
-0x1a618	sub_1A618	71	3	0	game layer (unnamed)
+0x1a580	object_set_prop_dword?	71	14	0	game layer (named)
+0x1a5c8	object_get_points?	77	3	0	game layer (named)
+0x1a618	object_set_points?	71	3	0	game layer (named)
 0x1a660	sub_1A660	71	1	0	game layer (unnamed)
-0x1a6fc	sub_1A6FC	85	15	0	game layer (unnamed)
-0x1a768	sub_1A768	81	26	0	game layer (unnamed)
-0x1a7cc	sub_1A7CC	86	6	0	game layer (unnamed)
-0x1a834	sub_1A834	82	23	0	game layer (unnamed)
-0x1a89c	sub_1A89C	117	5	0	game layer (unnamed)
+0x1a6fc	object_get_prop_a?	85	15	0	game layer (named)
+0x1a768	object_set_prop_a?	81	26	0	game layer (named)
+0x1a7cc	object_get_default_verb?	86	6	0	game layer (named)
+0x1a834	object_set_default_verb?	82	23	0	game layer (named)
+0x1a89c	object_get_list_slot?	117	5	0	game layer (named)
 0x1a914	sub_1A914	55	4	0	game layer (unnamed)
 0x1a94c	sub_1A94C	53	4	0	game layer (unnamed)
 0x1a998	object_get_handler_index	90	1	0	game layer (named)
@@ -174,9 +174,9 @@ address	name	size	callers	callees	role
 0x1b5f0	sub_1B5F0	433	3	3	game layer (unnamed)
 0x1b7b0	run_command?	534	176	5	game layer (named)
 0x1b9c8	sub_1B9C8	586	1	23	game layer (unnamed)
-0x1bc20	sub_1BC20	127	3	3	game layer (unnamed)
+0x1bc20	overlay_visible?	127	3	3	game layer (named)
 0x1bca0	disable_pic_regions?	63	58	3	game layer (named)
-0x1bce0	sub_1BCE0	406	51	8	game layer (unnamed)
+0x1bce0	setup_pic_regions?	406	51	8	game layer (named)
 0x1bf2c	sub_1BF2C	57	2	0	game layer (unnamed)
 0x1bf68	sub_1BF68	145	1	3	game layer (unnamed)
 0x1bffc	sub_1BFFC	49	1	1	game layer (unnamed)
@@ -204,29 +204,29 @@ address	name	size	callers	callees	role
 0x1e2c0	sub_1E2C0	17	2	0	game layer (unnamed)
 0x1e2d4	verb_get_flags	47	1	0	game layer (named)
 0x1e304	build_command_line?	2597	3	16	game layer (named)
-0x1edb0	sub_1EDB0	95	1	5	game layer (unnamed)
+0x1edb0	describe_room?	95	1	5	game layer (named)
 0x1ee10	go_to_room?	706	89	17	game layer (named)
 0x1f0e4	sub_1F0E4	490	8	11	game layer (unnamed)
 0x1f3c0	sub_1F3C0	139	2	3	game layer (unnamed)
-0x1f44c	sub_1F44C	72	15	2	game layer (unnamed)
-0x1f494	sub_1F494	157	46	8	game layer (unnamed)
-0x1f534	sub_1F534	30	17	1	game layer (unnamed)
+0x1f44c	add_score?	72	15	2	game layer (named)
+0x1f494	move_to_current_room?	157	46	8	game layer (named)
+0x1f534	move_to_current_room_as?	30	17	1	game layer (named)
 0x1f554	sub_1F554	28	1	2	game layer (unnamed)
-0x1f580	sub_1F580	189	23	12	game layer (unnamed)
+0x1f580	game_over_screen?	189	23	12	game layer (named)
 0x1f640	sub_1F640	162	3	15	game layer (unnamed)
-0x1f6e4	sub_1F6E4	25	16	1	game layer (unnamed)
-0x1f700	sub_1F700	20	1	1	game layer (unnamed)
+0x1f6e4	flush_events?	25	16	1	game layer (named)
+0x1f700	fire_timed_event?	20	1	1	game layer (named)
 0x1f720	sub_1F720	155	1	9	game layer (unnamed)
-0x1f7bc	sub_1F7BC	103	1	4	game layer (unnamed)
+0x1f7bc	tutorial_start?	103	1	4	game layer (named)
 0x1f824	sub_1F824	44	1	2	game layer (unnamed)
 0x1f850	sub_1F850	53	1	1	game layer (unnamed)
 0x1f888	sub_1F888	16	0	0	game layer (unnamed)
 0x1f898	sub_1F898	233	1	15	game layer (unnamed)
-0x1f984	sub_1F984	641	22	25	game layer (unnamed)
+0x1f984	show_help_page?	641	22	25	game layer (named)
 0x1fc08	sub_1FC08	65	1	0	game layer (unnamed)
 0x1fc4c	sub_1FC4C	342	0	13	game layer (unnamed)
 0x1fdbc	combat_help_menu?	185	1	2	game layer (named)
-0x1fe8c	sub_1FE8C	234	1	3	game layer (unnamed)
+0x1fe8c	help_menu?	234	1	3	game layer (named)
 0x1ff8c	sub_1FF8C	191	1	2	game layer (unnamed)
 0x20050	sub_20050	199	7	1	game layer (unnamed)
 0x20190	sub_20190	379	6	4	game layer (unnamed)
@@ -250,7 +250,7 @@ address	name	size	callers	callees	role
 0x21f30	bitset_test	80	571	0	game layer (named)
 0x21f80	bitset_set	68	194	0	game layer (named)
 0x21fc4	bitset_clear	70	80	0	game layer (named)
-0x2200c	sub_2200C	34	29	0	game layer (unnamed)
+0x2200c	value_in_list?	34	29	0	game layer (named)
 0x22030	sub_22030	102	0	1	game layer (unnamed)
 0x2211c	update_room_light?	128	15	2	game layer (named)
 0x221c4	sub_221C4	384	2	13	game layer (unnamed)
@@ -260,12 +260,12 @@ address	name	size	callers	callees	role
 0x22538	options_dialog?	1176	1	34	game layer (named)
 0x229d0	sub_229D0	615	1	18	game layer (unnamed)
 0x22c40	sub_22C40	272	1	7	game layer (unnamed)
-0x22d50	sub_22D50	827	20	21	game layer (unnamed)
-0x2308c	sub_2308C	454	17	9	game layer (unnamed)
-0x23254	sub_23254	202	21	10	game layer (unnamed)
+0x22d50	video_open?	827	20	21	game layer (named)
+0x2308c	video_play?	454	17	9	game layer (named)
+0x23254	video_close?	202	21	10	game layer (named)
 0x23320	sub_23320	20	1	1	game layer (unnamed)
 0x23334	sub_23334	553	8	13	game layer (unnamed)
-0x23560	sub_23560	191	24	8	game layer (unnamed)
+0x23560	play_video?	191	24	8	game layer (named)
 0x23838	sub_23838	144	4	3	game layer (unnamed)
 0x238c8	sub_238C8	782	1	22	game layer (unnamed)
 0x23ec4	sub_23EC4	59	3	2	game layer (unnamed)
@@ -294,7 +294,7 @@ address	name	size	callers	callees	role
 0x254f4	sub_254F4	15	2	2	game layer (unnamed)
 0x25504	sub_25504	92	7	5	game layer (unnamed)
 0x25560	sub_25560	51	7	1	game layer (unnamed)
-0x255b4	sub_255B4	46	20	1	game layer (unnamed)
+0x255b4	object_list_append?	46	20	1	game layer (named)
 0x255e4	sub_255E4	85	1	0	game layer (unnamed)
 0x256d0	sub_256D0	207	1	0	game layer (unnamed)
 0x25b60	sub_25B60	36	3	0	game layer (unnamed)
@@ -311,8 +311,8 @@ address	name	size	callers	callees	role
 0x26414	show_dialog?	6323	599	60	game layer (named)
 0x27f14	sub_27F14	91	19	4	game layer (unnamed)
 0x27f70	sub_27F70	80	12	1	game layer (unnamed)
-0x27fc0	sub_27FC0	131	49	6	game layer (unnamed)
-0x28044	sub_28044	326	38	8	game layer (unnamed)
+0x27fc0	play_video_wait?	131	49	6	game layer (named)
+0x28044	play_video_voiced?	326	38	8	game layer (named)
 0x281a4	sub_281A4	161	8	3	game layer (unnamed)
 0x28248	sub_28248	180	2	2	game layer (unnamed)
 0x28340	sub_28340	902	1	9	game layer (unnamed)
@@ -328,85 +328,85 @@ address	name	size	callers	callees	role
 0x2a1c4	sub_2A1C4	30	0	1	game layer (unnamed)
 0x2a1f0	sub_2A1F0	34	4	2	game layer (unnamed)
 0x2a214	verbdef_16	62	0	3	verb default
-0x2a254	verbdef_15_Wear	158	0	5	verb default
-0x2a3a4	verbdef_05_Cook	291	0	6	verb default
-0x2a5bc	verbdef_10_Go_to	459	0	6	verb default
-0x2a788	verbdef_24_Sit_on	199	0	3	verb default
-0x2a850	verbdef_07_Look_at	26	1	1	verb default
-0x2a86c	verbdef_03_Mix	922	0	8	verb default
-0x2acb8	verbdef_04_Pick	638	0	11	verb default
+0x2a254	verbdef_15_Wait	158	0	5	verb default
+0x2a3a4	verbdef_05_Close	291	0	6	verb default
+0x2a5bc	verbdef_10_Give	459	0	6	verb default
+0x2a788	verbdef_24_Show	199	0	3	verb default
+0x2a850	verbdef_07_Look	26	1	1	verb default
+0x2a86c	verbdef_03_Look_at	922	0	8	verb default
+0x2acb8	verbdef_04_Open	638	0	11	verb default
 0x2af38	sub_2AF38	460	1	4	game layer (unnamed)
-0x2b104	verbdef_02_Put_out	973	0	5	verb default
+0x2b104	verbdef_02_Put	973	0	5	verb default
 0x2b4d4	sub_2B4D4	320	1	7	game layer (unnamed)
-0x2b614	verbdef_01_Talk_to	552	0	11	verb default
-0x2b83c	verbdef_06_Tear	108	0	2	verb default
-0x2b9a0	verbdef_62_Attack	84	1	2	verb default
-0x2b9f4	verbdef_31_Break	484	0	3	verb default
-0x2bbd8	verbdef_32_Burn	332	0	4	verb default
-0x2bd24	verbdef_33_Carve	202	0	4	verb default
-0x2bdf0	verbdef_34_Cast	106	0	2	verb default
-0x2be5c	verbdef_72_Catch	33	0	1	verb default
-0x2be80	verbdef_65_Climb	109	0	2	verb default
-0x2bef0	verbdef_08_Climb_in	104	0	2	verb default
-0x2bf58	verbdef_66_Climb_on	79	0	2	verb default
-0x2bfa8	verbdef_67_Close	114	0	2	verb default
-0x2c01c	verbdef_35_Cross	59	0	2	verb default
-0x2c058	verbdef_36_Cut	114	0	2	verb default
-0x2c0cc	verbdef_37_Draw	443	0	6	verb default
-0x2c288	verbdef_63_Drink	69	0	2	verb default
-0x2c2d0	verbdef_23_Drink_from	59	0	2	verb default
-0x2c30c	verbdef_70_Eat	122	0	3	verb default
-0x2c388	verbdef_19_Enter	129	0	2	verb default
-0x2c40c	verbdef_09_Exit	59	0	2	verb default
-0x2c448	verbdef_18_Fill	64	0	2	verb default
+0x2b614	verbdef_01_Take	552	0	11	verb default
+0x2b83c	verbdef_06_Talk_to	108	0	2	verb default
+0x2b9a0	verbdef_62_Attach	84	1	2	verb default
+0x2b9f4	verbdef_31_Attack	484	0	3	verb default
+0x2bbd8	verbdef_32_Break	332	0	4	verb default
+0x2bd24	verbdef_33_Burn	202	0	4	verb default
+0x2bdf0	verbdef_34_Carve	106	0	2	verb default
+0x2be5c	verbdef_72_Cast	33	0	1	verb default
+0x2be80	verbdef_65_Catch	109	0	2	verb default
+0x2bef0	verbdef_08_Climb	104	0	2	verb default
+0x2bf58	verbdef_66_Climb_in	79	0	2	verb default
+0x2bfa8	verbdef_67_Climb_on	114	0	2	verb default
+0x2c01c	verbdef_35_Cook	59	0	2	verb default
+0x2c058	verbdef_36_Cross	114	0	2	verb default
+0x2c0cc	verbdef_37_Cut	443	0	6	verb default
+0x2c288	verbdef_63_Draw	69	0	2	verb default
+0x2c2d0	verbdef_23_Drink	59	0	2	verb default
+0x2c30c	verbdef_70_Drink_from	122	0	3	verb default
+0x2c388	verbdef_19_Eat	129	0	2	verb default
+0x2c40c	verbdef_09_Enter	59	0	2	verb default
+0x2c448	verbdef_18_Exit	64	0	2	verb default
 0x2c488	verbdef_38_Fill	64	0	2	verb default
-0x2c4c8	verbdef_74_Fish_in	64	0	2	verb default
-0x2c508	verbdef_39_Fix	44	0	2	verb default
-0x2c534	verbdef_40_Follow	44	0	2	verb default
-0x2c560	verbdef_69_Gag	39	0	2	verb default
-0x2c588	verbdef_79_Give	39	0	2	verb default
-0x2c5b0	verbdef_11_Hug	59	0	2	verb default
-0x2c5ec	verbdef_41_Invoke	64	0	2	verb default
-0x2c62c	verbdef_42_Jump_over	123	0	2	verb default
-0x2c6a8	verbdef_43_Kill	64	0	2	verb default
-0x2c6e8	verbdef_44_Knock_on	84	0	2	verb default
-0x2c73c	verbdef_28_Lasso	64	0	2	verb default
-0x2c804	verbdef_75_Lean_on	114	0	2	verb default
-0x2c878	verbdef_71_Lie_on	89	0	2	verb default
-0x2c8d4	verbdef_78_Lift	19	0	1	verb default
-0x2c8e8	verbdef_53_Light	159	0	2	verb default
+0x2c4c8	verbdef_74_Fill	64	0	2	verb default
+0x2c508	verbdef_39_Fish_in	44	0	2	verb default
+0x2c534	verbdef_40_Fix	44	0	2	verb default
+0x2c560	verbdef_69_Follow	39	0	2	verb default
+0x2c588	verbdef_79_Gag	39	0	2	verb default
+0x2c5b0	verbdef_11_Go_to	59	0	2	verb default
+0x2c5ec	verbdef_41_Hug	64	0	2	verb default
+0x2c62c	verbdef_42_Invoke	123	0	2	verb default
+0x2c6a8	verbdef_43_Jump_over	64	0	2	verb default
+0x2c6e8	verbdef_44_Kiss	84	0	2	verb default
+0x2c73c	verbdef_28_Knock_on	64	0	2	verb default
+0x2c804	verbdef_75_Lasso	114	0	2	verb default
+0x2c878	verbdef_71_Lean_on	89	0	2	verb default
+0x2c8d4	verbdef_78_Lie_on	19	0	1	verb default
+0x2c8e8	verbdef_53_Lift	159	0	2	verb default
 0x2c988	verbdef_45_Light	182	0	3	verb default
-0x2ca40	verbdef_27_Listen_to	182	0	3	verb default
-0x2caf8	verbdef_46_Look	69	0	2	verb default
-0x2cb40	verbdef_47_Mold	44	0	2	verb default
-0x2cb6c	verbdef_48_Move	117	0	2	verb default
-0x2ccd4	verbdef_25_Oil	44	0	2	verb default
-0x2cd00	verbdef_64_Open	64	0	2	verb default
-0x2cd40	verbdef_68_Pour	33	0	1	verb default
-0x2cd64	verbdef_49_Pry	64	0	2	verb default
-0x2cda4	verbdef_50_Pull	89	0	2	verb default
-0x2ce00	verbdef_29_Pump	39	0	2	verb default
-0x2ce28	verbdef_77_Push	39	0	2	verb default
-0x2ce50	verbdef_26_Put	64	0	2	verb default
-0x2ce90	verbdef_51_Read	146	0	4	verb default
-0x2cf24	verbdef_13_Remove	89	0	2	verb default
-0x2cf80	verbdef_14_Ring	238	0	8	verb default
-0x2d070	verbdef_52_Search	64	0	2	verb default
-0x2d0b0	verbdef_54_Shoot	19	0	1	verb default
-0x2d1ac	verbdef_22_Show	43	0	2	verb default
-0x2d1d8	verbdef_55_Smell	89	0	2	verb default
-0x2d234	verbdef_56_Swing_from	79	0	2	verb default
-0x2d284	verbdef_73_Take	39	0	2	verb default
-0x2d2ac	verbdef_57_Throw	44	0	2	verb default
-0x2d2d8	verbdef_30_Tie	149	0	2	verb default
-0x2d370	verbdef_58_Turn	109	0	2	verb default
-0x2d3e0	verbdef_21_Touch	76	0	2	verb default
-0x2d42c	verbdef_59_Unlock	109	0	2	verb default
-0x2d49c	verbdef_60_Use	123	0	3	verb default
-0x2d518	verbdef_20_Wade_in	59	0	2	verb default
-0x2d554	verbdef_76_Wait	64	0	2	verb default
-0x2d594	verbdef_17_Write_in	288	0	7	verb default
-0x2d6b4	verbdef_61	192	0	4	verb default
+0x2ca40	verbdef_27_Light	182	0	3	verb default
+0x2caf8	verbdef_46_Listen_to	69	0	2	verb default
+0x2cb40	verbdef_47_Mix	44	0	2	verb default
+0x2cb6c	verbdef_48_Mold	117	0	2	verb default
+0x2ccd4	verbdef_25_Move	44	0	2	verb default
+0x2cd00	verbdef_64_Oil	64	0	2	verb default
+0x2cd40	verbdef_68_Pick	33	0	1	verb default
+0x2cd64	verbdef_49_Pour	64	0	2	verb default
+0x2cda4	verbdef_50_Pry	89	0	2	verb default
+0x2ce00	verbdef_29_Pull	39	0	2	verb default
+0x2ce28	verbdef_77_Pump	39	0	2	verb default
+0x2ce50	verbdef_26_Push	64	0	2	verb default
+0x2ce90	verbdef_51_Put_out	146	0	4	verb default
+0x2cf24	verbdef_13_Read	89	0	2	verb default
+0x2cf80	verbdef_14_Remove	238	0	8	verb default
+0x2d070	verbdef_52_Ring	64	0	2	verb default
+0x2d0b0	verbdef_54_Search	19	0	1	verb default
+0x2d1ac	verbdef_22_Shoot	43	0	2	verb default
+0x2d1d8	verbdef_55_Sit_on	89	0	2	verb default
+0x2d234	verbdef_56_Smell	79	0	2	verb default
+0x2d284	verbdef_73_Swing_from	39	0	2	verb default
+0x2d2ac	verbdef_57_Tear	44	0	2	verb default
+0x2d2d8	verbdef_30_Throw	149	0	2	verb default
+0x2d370	verbdef_58_Touch	109	0	2	verb default
+0x2d3e0	verbdef_21_Tie	76	0	2	verb default
+0x2d42c	verbdef_59_Turn	109	0	2	verb default
+0x2d49c	verbdef_60_Unlock	123	0	3	verb default
+0x2d518	verbdef_20_Use	59	0	2	verb default
+0x2d554	verbdef_76_Wade_in	64	0	2	verb default
+0x2d594	verbdef_17_Wear	288	0	7	verb default
+0x2d6b4	verbdef_61_Write_in	192	0	4	verb default
 0x2d780	objh_083	130	0	1	object handler
 0x2d804	objh_084	336	0	4	object handler
 0x2d954	objh_085	70	0	2	object handler
@@ -1261,7 +1261,7 @@ address	name	size	callers	callees	role
 0x7413c	sub_7413C	102	3	5	game layer (unnamed)
 0x741e4	sub_741E4	1126	1	19	game layer (unnamed)
 0x7464c	sub_7464C	35	9	0	game layer (unnamed)
-0x74670	sub_74670	403	7	10	game layer (unnamed)
+0x74670	journal_render_page?	403	7	10	game layer (named)
 0x74804	sub_74804	87	5	6	game layer (unnamed)
 0x7485c	sub_7485C	47	3	0	game layer (unnamed)
 0x7488c	sub_7488C	48	2	0	game layer (unnamed)
@@ -1277,15 +1277,15 @@ address	name	size	callers	callees	role
 0x750b8	sub_750B8	97	1	1	engine/library
 0x7511c	init_lists?	39	2	1	engine/library
 0x75144	sub_75144	121	1	0	engine/library
-0x751c0	sub_751C0	126	2	3	engine/library
+0x751c0	journal_mark_entry?	126	2	3	engine/library
 0x75240	sub_75240	91	1	2	engine/library
-0x7529c	sub_7529C	83	105	3	engine/library
-0x752f0	sub_752F0	68	47	3	engine/library
+0x7529c	journal_add_entry?	83	105	3	engine/library
+0x752f0	journal_add_entries?	68	47	3	engine/library
 0x75334	sub_75334	331	1	21	engine/library
 0x75480	sub_75480	190	2	4	engine/library
 0x75540	sub_75540	154	1	4	engine/library
 0x755dc	sub_755DC	136	1	4	engine/library
-0x75664	sub_75664	49	12	0	engine/library
+0x75664	journal_find_entry?	49	12	0	engine/library
 0x75698	sub_75698	26	6	1	engine/library
 0x756b4	read_file_uint16	26	6	1	engine/library
 0x756d0	close_pictures?	181	1	3	engine/library
@@ -1396,7 +1396,7 @@ address	name	size	callers	callees	role
 0x79390	clear_pic	67	64	1	engine/library
 0x793d4	clear_pics	34	8	1	engine/library
 0x793f8	init_animation?	38	1	2	engine/library
-0x79420	sub_79420	435	83	9	engine/library
+0x79420	load_pic_sequence?	435	83	9	engine/library
 0x7960c	sub_7960C	37	1	0	engine/library
 0x79660	sub_79660	109	10	1	engine/library
 0x796d0	stop_animation	73	57	1	engine/library

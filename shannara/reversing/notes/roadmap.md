@@ -140,7 +140,8 @@ Next, roughly in value order:
 - Combat internals: the 15 `enc_hook_NN?` bodies, `sub_16208`, `sub_16BBC`, the "Give orders to..." menu (`sub_158AC`), the eight timed events' rules.
 - `show_dialog?` layout (portrait frames: which PIC entries animate a talker), `describe_contents?`, journal UI.
 - UHA extraction of the other archives (`FLICS2-7.UHA`) if all FLC names are wanted; `Vocs.zip` mp3 numbering vs dialog ids.
-- Rename `_old_keyboard_vector` to `_combat_hook`; regenerate `retail_function_map.tsv`.
+- Rename `_old_keyboard_vector` to `_combat_hook`.
+- **Headless oracle** (`retail_game.py`, section 31): drive the real handlers, extend the stub set to more systems (combat, dialogs), build per-room walkthrough transcripts, and use it as the reference for C++ handler ports. The verb table was re-decoded with it (names fixed).
 - Workflow: `scripts/apply_to_idb.sh <idb> <script> [--export out.asm]`; local text notes via `make_handler_notes.py` + `apply_handler_notes.py` (re-run after any rename pass, which resets handler comments).
 
 ## Housekeeping log
