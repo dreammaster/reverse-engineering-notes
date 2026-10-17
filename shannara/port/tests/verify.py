@@ -139,5 +139,36 @@ for path in sorted(glob.glob(os.path.join(ROOT, "demo", "*.q"))):
     print("Q %s: %d frames %s" % (os.path.basename(path), len(py), "identical" if got == py else "DIFFERENT"))
 print("Q files checked:", n)
 
+# ---- MUS (XMIDI archives) -------------------------------------------------------------------------------------------------
+for path in (os.path.join(ROOT, "game", "SHAN001.MUS"), os.path.join(ROOT, "demo", "Demo001.mus")):
+    if not os.path.exists(path):
+        continue
+    d = open(path, "rb").read()
+    count, = struct.unpack_from("<H", d, 0)
+    py = []
+    for i in range(count):
+        off, size = struct.unpack_from("<IH", d, 2 + 6 * i)
+        if size:
+            py.append("%d off=%d size=%d hash=%016x" % (len(py), off, size, fnv(d[off:off + size])))
+            assert d[off:off + 4] == b"FORM" and d[off + 8:off + 12] == b"XDIR" and size == 30 + struct.unpack_from(">I", d, off + 26)[0]
+    lines = run("mus", path)
+    check(os.path.basename(path), lines[0] == "tracks %d valid xmidi %d" % (len(py), len(py)) and lines[1:] == py, lines[0])
+    print("MUS %s: %d tracks" % (os.path.basename(path), len(py)))
+
+# ---- OBJECT.DAT ----------------------------------------------------------------------------------------------------------
+path = os.path.join(ROOT, "game", "OBJECT.DAT")
+if os.path.exists(path):
+    d = open(path, "rb").read()
+    n, = struct.unpack_from("<H", d, 0)
+    pool = d[2:2 + n]
+    names = pool.split(b"\0")[:5]
+    exp = ["pool %d strings %d" % (n, pool.count(b"\0"))]
+    off = 1
+    for nm in names:
+        exp.append("%d %s" % (off, nm.decode("latin-1")))
+        off += len(nm) + 1
+    check("OBJECT.DAT", run("objdat", path) == exp, str(exp[:2]))
+    print("OBJECT.DAT: pool", n, "bytes,", pool.count(b"\0"), "strings")
+
 print("\n%d checks, %d failed" % (checks, fails))
 sys.exit(1 if fails else 0)

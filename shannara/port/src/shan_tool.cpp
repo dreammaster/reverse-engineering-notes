@@ -5,6 +5,8 @@
 //   shan_tool fnt FILE                    header summary and a glyph checksum
 //   shan_tool q FILE                      per-frame checksums of the decoded 640-pitch image and palette
 #include "fnt.h"
+#include "mus.h"
+#include "objectdat.h"
 #include "pic.h"
 #include "qvideo.h"
 #include "rgn.h"
@@ -122,6 +124,29 @@ static int cmdQ(char **argv) {
 	return 0;
 }
 
+static int cmdMus(char **argv) {
+	MusFile m(readFile(argv[2]));
+	int valid = 0;
+	for (int i = 0; i < m.trackCount(); i++)
+		valid += m.track(i).validXmidi;
+	printf("tracks %d valid xmidi %d\n", m.trackCount(), valid);
+	for (int i = 0; i < m.trackCount(); i++)
+		printf("%d off=%u size=%u hash=%016llx\n", i, m.track(i).offset, m.track(i).size, (unsigned long long)fnv(m.data(i), m.track(i).size));
+	return 0;
+}
+
+static int cmdObj(char **argv) {
+	ObjectDat o(readFile(argv[2]));
+	printf("pool %zu strings %d\n", o.poolSize(), o.stringCount());
+	uint32_t off = 1;
+	for (int i = 0; i < 5; i++) {
+		std::string t = o.text(off);
+		printf("%u %s\n", off, t.c_str());
+		off += (uint32_t)t.size() + 1;
+	}
+	return 0;
+}
+
 // Differential fuzz vectors written by tests/fuzz_q.py: u32 W,H,minCol,minRow,maxCol,maxRow, u8 raw+3 pad, qmap[256],
 // video0 (H*0xA00 + 4*640 bytes), comp (same size), u32 streamLen, stream.
 static int cmdQVec(char **argv) {
@@ -163,6 +188,8 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[1], "fnt")) return cmdFnt(argv);
 		if (!strcmp(argv[1], "q")) return cmdQ(argv);
 		if (!strcmp(argv[1], "qvec")) return cmdQVec(argv);
+		if (!strcmp(argv[1], "mus")) return cmdMus(argv);
+		if (!strcmp(argv[1], "objdat")) return cmdObj(argv);
 	} catch (const std::exception &e) {
 		fprintf(stderr, "error: %s\n", e.what());
 		return 1;

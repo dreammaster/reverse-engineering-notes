@@ -10,9 +10,11 @@ other than `FormatError`, no STL streams) so they can be dropped into an engine 
 | `src/pic.h` | `SHANxxx.PIC` containers: directory, frame offsets, palette, raw 8-bpp pixels, XOR sprites | `pic_scan.py`, section 12/22 |
 | `src/rgn.h` | `SHANxxx.RGN` hotspot rectangles and polygons | `rgn_read.py` |
 | `src/fnt.h` | `SHANxxx.FNT` bitmap fonts (mono and 8-bit colour, proportional tables) | `fnt_read.py` |
+| `src/mus.h` | `SHAN001.MUS` / `Demo001.mus` music archives (each track a complete XMIDI file) | analysis section 25 |
+| `src/objectdat.h` | `OBJECT.DAT` name/description string pool (761 strings) | section 21 |
 | `src/qvideo.h` | `.Q` block video (the demo's cutscene format): container + 4x4 block decoder incl. composite and raw modes | `q_decode_ref.py`, `q_play.py`, `analysis/q_codec_spec.md` |
 
-Not ported yet: XMIDI directory (`.MUS`), LHA `-lh4-` (no real file uses it), savegame/`OBJECT.DAT`, retail `.VOC`.
+Not ported yet: LHA `-lh4-` (no real file uses it), the savegame schema, the object table (lives in the exe), FLC/MP3 glue.
 
 ## Build
 
@@ -22,7 +24,7 @@ cmake -S port -B port/build-cmake && cmake --build port/build-cmake
 g++ -std=c++17 -O2 -Wall -Wextra -Iport/src port/src/*.cpp -o port/build/shan_tool.exe
 ```
 
-`shan_tool` is a small front end: `shan_tool shanstr|pic|rgn|fnt|q FILE`, plus `qvec` for the fuzz vectors.
+`shan_tool` is a small front end: `shan_tool shanstr|pic|rgn|fnt|q|mus|objdat FILE`, plus `qvec` for the fuzz vectors.
 
 ## Tests (differential, against the verified Python references)
 
@@ -31,7 +33,7 @@ python port/tests/verify.py      # every real file: 7,719 strings, 29 PIC, 12 RG
 python port/tests/fuzz_q.py 1200 7   # random valid Q streams: C++ vs Python decoder, pixels and consumed bytes
 ```
 
-Status when written: `verify.py` 57 checks, 0 failed; `fuzz_q.py` 300 (seed 1) + 1,200 (seed 7) vectors, 0 mismatches. The Python
+Status when written: `verify.py` 60 checks, 0 failed; `fuzz_q.py` 300 (seed 1) + 1,200 (seed 7) vectors, 0 mismatches. The Python
 Q decoder was itself fuzz-verified against the real machine code under unicorn, so the chain is
 real code -> Python reference -> C++.
 
