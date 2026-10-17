@@ -9,5 +9,7 @@ done
 ls port/gen/*.cpp | xargs -P 8 -I{} sh -c 'g++ -std=c++17 -O1 -w -Iport/src -c {} -o port/build/gen/$(basename {} .cpp).o'
 wait
 g++ -std=c++17 -O1 -w -Iport/src -c port/src/engine_tool.cpp -o port/build/rt/engine_tool.o
-g++ port/build/rt/*.o port/build/gen/*.o -o port/build/engine_tool.exe
-echo built port/build/engine_tool.exe
+g++ -std=c++17 -O1 -w -Iport/src -c port/src/play_tool.cpp -o port/build/play_tool.o
+g++ -static-libstdc++ -static-libgcc $(ls port/build/rt/*.o | grep -v engine_tool.o) port/build/gen/*.o port/build/play_tool.o -o port/build/play_tool.exe
+g++ -static-libstdc++ -static-libgcc $(ls port/build/rt/*.o) port/build/gen/*.o -o port/build/engine_tool.exe
+echo built port/build/engine_tool.exe and port/build/play_tool.exe

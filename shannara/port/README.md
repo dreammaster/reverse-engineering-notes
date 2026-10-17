@@ -53,6 +53,7 @@ The game logic itself (all 1,258 translatable functions of the game layer: comma
 party, journal, score ...) can be run natively without any emulator:
 
 ```
+python reversing/scripts/make_retn_map.py Shannara.asm game_out/retn_map.txt   # callee-cleaned argument sizes of library functions
 python reversing/scripts/dump_insns.py ...                      # IDAPython: decoded instructions of the game-layer functions -> JSON (needs Shannara.idb)
 python reversing/scripts/transpile_handlers.py insns_all.json port/gen game_out/retn_map.txt     # static recompiler -> port/gen/*.cpp
 bash port/build_engine.sh                                       # port/build/engine_tool.exe  (~25 s)
@@ -71,3 +72,7 @@ python port/tests/trace_diff.py VERB DOBJ IOBJ  # first instruction-level diverg
 Status: 12,000 operations over four seeds plus earlier runs, 0 mismatches. The shims for everything outside the game layer (graphics, sound, input, timing,
 file I/O) are no-ops, exactly like the oracle's stubs, except `wprintf`/`wputchar`/`sprintf_` (text capture with SHANSTR ids and `%s`), `new_pointer` and a few C
 runtime routines. Not yet covered: combat (`start_encounter?`), save/load (`load_game?`), cutscenes and dialog popups (stubbed on both sides).
+
+`port/build/play_tool.exe game/SHANNARA.EXE game [script]` is a text front end for the same engine: type `look`, `take stick`, `put stick on pole`,
+`talk to shella`, `inv`, `here`, `goto 98`, `verbs` ... (verb names come from the game's own vocabulary; the responses are the original game's). Example
+transcript from the start: `take stick` -> "You pick up the stick."; `put stick on pole` -> "You tie the stick to the end of your fishing pole using some fishing line."
