@@ -54,6 +54,11 @@ public:
 	void call(uint32_t addr);      // transpiled function or shim (the caller already pushed the dummy return address)
 	void callShim(uint32_t addr);  // boundary function
 	bool tracing = false;
+	int64_t budget = INT64_MAX; // instructions left before a runaway loop is aborted (reset per command by Engine)
+	void tick(uint32_t ea) {
+		if (tracing) traceInsn(ea);
+		if (--budget < 0) throw FormatError("instruction budget exhausted");
+	}
 	std::vector<std::string> traceLog; // "ea eax ecx edx ebx esi edi ebp esp" per executed transpiled instruction (when tracing)
 	void traceInsn(uint32_t ea) {
 		char b[160];

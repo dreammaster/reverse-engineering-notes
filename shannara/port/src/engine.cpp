@@ -174,6 +174,7 @@ uint32_t Engine::command(int verb, int dobj, int iobj, int actor) {
 	m.w16(0xCD92C, (uint16_t)actor);
 	m.w16(0xADE98, (uint16_t)actor);
 	m.esp = Machine::kStackTop;
+	m.budget = 30000000;
 	m.eax = (uint32_t)verb;
 	m.edx = (uint32_t)dobj;
 	m.ebx = (uint32_t)iobj;
@@ -186,6 +187,7 @@ uint32_t Engine::command(int verb, int dobj, int iobj, int actor) {
 uint32_t Engine::callFunction(uint32_t addr, uint32_t eax, uint32_t edx, uint32_t ebx, uint32_t ecx) {
 	Machine &m = *_m;
 	m.esp = Machine::kStackTop;
+	m.budget = 30000000;
 	m.eax = eax;
 	m.edx = edx;
 	m.ebx = ebx;

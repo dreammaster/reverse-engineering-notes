@@ -238,7 +238,7 @@ class Gen:
         labels = set()
         body = []
         for r in insns:
-            body.append((r["ea"], "  // %s\n  if (m.tracing) m.traceInsn(0x%Xu);\n  %s" % (r["text"].replace("\n", " ").replace("*/", "* /"), r["ea"], self.insn(r, labels, fn_eas, name))))
+            body.append((r["ea"], "  // %s\n  m.tick(0x%Xu);\n  %s" % (r["text"].replace("\n", " ").replace("*/", "* /"), r["ea"], self.insn(r, labels, fn_eas, name))))
         out = ["// %s @ 0x%X" % (name, v["ea"]), "static void f_%X(Machine &m) {" % v["ea"]]
         for ea, text in body:
             if ea in labels:

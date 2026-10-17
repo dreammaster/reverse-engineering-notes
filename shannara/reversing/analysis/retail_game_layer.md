@@ -869,3 +869,9 @@ registers 16-23 (`dl` is 18, not 2), (2) for one-operand `idiv`/`div`/`imul` IDA
 The generated sources contain the game's own logic and are not committed; the generator, runtime, shims and tests are. This gives a native, fast reference of the
 verified behaviour (`Engine::command("Take", 35)` -> "You take the fishing pole.") to port handler by handler into readable code, with the transpiled version as the
 oracle for each ported function.
+
+Robustness: a 60,000-operation native stress run (random verbs x random objects 1-744, room changes, flag flips, object moves; 3 m 45 s) ends with no memory-access fault, no
+division error and no jump-table fault; 641 operations (574 of them the `Wait` verb, which spins on the turn clock / input events that the headless shims never deliver) hit the per-command
+instruction budget (`Machine::budget`, 30 M instructions) and are reported as `EXC instruction budget exhausted`. Parity with the oracle was re-checked after every runtime change
+(about 30,000 operations over ten seeds). Callback labels that IDA left outside any function (`mov edx, offset loc_220E0`, 4 blocks) needed their own entry points; the seed that exposed
+this showed a dark-cave room description differing ("You can't see a thing in here.") because the original's light test calls such a callback.

@@ -25,6 +25,7 @@ static std::string esc(const std::string &s) {
 }
 
 int main(int argc, char **argv) {
+	setvbuf(stdout, nullptr, _IOLBF, 0);
 	if (argc < 4) {
 		fprintf(stderr, "usage: engine_tool EXE GAMEDIR OPSFILE\n");
 		return 2;
