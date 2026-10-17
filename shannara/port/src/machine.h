@@ -55,7 +55,10 @@ public:
 	void callShim(uint32_t addr);  // boundary function
 	bool tracing = false;
 	int64_t budget = INT64_MAX; // instructions left before a runaway loop is aborted (reset per command by Engine)
+	std::vector<uint8_t> coverage; // optional: one byte per code address (allocated by enableCoverage)
+	void enableCoverage() { coverage.assign(0xA0000, 0); }
 	void tick(uint32_t ea) {
+		if (!coverage.empty() && ea < coverage.size()) coverage[ea] = 1;
 		if (tracing) traceInsn(ea);
 		if (--budget < 0) throw FormatError("instruction budget exhausted");
 	}

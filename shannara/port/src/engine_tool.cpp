@@ -40,6 +40,9 @@ int main(int argc, char **argv) {
 			printf("\n");
 			return 0;
 		}
+		if (getenv("SHAN_COVERAGE"))
+			e.machine().enableCoverage();
+		e.snapshot();
 		int traceFrom = getenv("ENGINE_TRACE_FROM") ? atoi(getenv("ENGINE_TRACE_FROM")) : 0;
 		FILE *f = fopen(argv[3], "r");
 		if (!f)
@@ -51,7 +54,9 @@ int main(int argc, char **argv) {
 			uint32_t r = 0;
 			e.machine().tracing = getenv("ENGINE_TRACE_FILE") && k >= traceFrom;
 			try {
-				if (!strcmp(op, "cmd")) {
+				if (!strcmp(op, "reset")) {
+					e.restore();
+				} else if (!strcmp(op, "cmd")) {
 					r = e.command(v, d, i);
 				} else if (!strcmp(op, "flag")) { // flag N 0|1: set / clear game flag N
 					uint32_t addr = 0xCD8AC + (uint32_t)((v - 1) >> 3);
@@ -84,6 +89,13 @@ int main(int argc, char **argv) {
 			for (auto &l : e.machine().traceLog)
 				fprintf(t, "%s\n", l.c_str());
 			fclose(t);
+		}
+		if (getenv("SHAN_COVERAGE")) {
+			FILE *c = fopen(getenv("SHAN_COVERAGE"), "w");
+			for (size_t a = 0; a < e.machine().coverage.size(); a++)
+				if (e.machine().coverage[a])
+					fprintf(c, "%zx\n", a);
+			fclose(c);
 		}
 		fprintf(stderr, "no-op shims called:");
 		for (auto &kv : e.machine().unknownShimCalls)
