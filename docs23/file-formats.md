@@ -6658,6 +6658,20 @@ otherwise the record's position, `+6` cell offset and the grid's cell flag `0x40
 floor types 0x27-0x2A, lets trait `0x10` through, and needs `0x08` for floor 0x25; Chapter 3 instead blocks everything with trait `0x02`;
 finally the player's `ClassifyFloorType`/`IsCellTypeImpassable` pair decides.
 
+### The party's step: engaging a monster on the new cell, and when the monsters move (`HandleMovementInput`, yendor2.asm:2003; decoded 2026-10-17)
+
+The tail of `HandleMovementInput` (`loc_11598`, :2349) -- and `HandleSpecialCellEntry`'s door steps before it -- runs, in this order, after the party's position has been changed:
+`RevealCellsAroundPlayer`; **if the flags `g_uiScratchFlags1 & 0x1800` ("moved": set by forward, backward and the strafes, not by the turns) are set, the 80 monster slots are
+searched for the first whose cell word (+6) equals the party's new cell (`word_328D2`)** -- no awareness or state is looked at, and no check that the monster could walk there. A match
+is copied to combat slot 0 and removed from the pool (`g_uiScratchFlags4 |= 0x1000`, the cell's `0x400` marker and occupant cleared, its `+0x92` word ORed into `g_uiScratchFlags4`): the combat begins and
+`ProcessLevelMonsters` is skipped. Otherwise redraw, then `ProcessLevelMonsters`, `ProcessSideTrapsOnMovement`, and finally `ApplyMapTriggerEffect` (which runs in either case). A turn on
+the spot has no "moved" flag, and a refused step returns early (`loc_11589`), so **neither gives the monsters a pass**: they only move when the party does. The jump spells run the same scan on
+the landing cell (`ApplyEncodedItemEffect`, `loc_2C4F5`, with that `+0x92` word masked `& 0xE000`).
+
+This is what a doorway shows: a monster that is aware but sits behind a closed door walks up to the cell behind it as the party arrives in front (the doorway cell itself is a `IsMonsterStepBlocked`
+special wall for it, but the cell behind is ordinary floor); the door opens, the two steps end on that very cell, and the scan starts the combat. `session.c`'s `engageMonsterOnPartyCell`
+and `movedOnto` do this for the door's two steps, the ordinary steps and the jump spell; before this the monster just stayed on the party's cell, undrawn and unengaged, until the next step.
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

@@ -144,12 +144,12 @@ static void testCombat(const char *envName, const char *defaultDir) {
     ViewScene scene;
     DungeonGridCell cells[ViewportCellCount];
     unsigned turns = 0;
-    while (!s->combat.active && turns < 300) { /* turn on the spot and let them come */
+    while (!s->combat.active && turns < 300) { /* pace up and down and let them come (a turn on the spot gives the monsters no pass) */
         sessionScene(s, &scene, cells);
-        sessionMove(s, turns & 1 ? MovementTurnRight : MovementTurnLeft);
+        sessionMove(s, turns & 1 ? MovementBackward : MovementForward);
         turns++;
     }
-    check("monsters reach a standing party and start a combat", s->combat.active);
+    check("monsters reach a pacing party and start a combat", s->combat.active);
     bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 50); /* the spell costs nuore (and some need ore) */
     bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 50);
     unsigned swings = 0, casts = 0, refused = 0;
@@ -926,6 +926,49 @@ static void testShot(GameKind game, const uint8_t *world, size_t size, const cha
 }
 
 /* Saving and loading: the state of the session goes into a save image and comes back in a fresh session. */
+/* The worker ant in the one-cell room behind the doorway at (175, 42) (Chapter 2, three cells south of the party's start): it comes up to the cell behind the door as the party reaches
+ * the door, the door's two steps end on its cell, and HandleMovementInput's scan of the pool for a monster on the party's cell starts the combat. */
+static const uint8_t *antAt(GameSession *s, int x, int y) {
+    for (unsigned slot = 0; slot < MonsterPoolSize; slot++) {
+        const uint8_t *m = s->pool + (size_t)slot * MonsterRecordSize;
+        if (monsterGetU16(m, MonsterFieldType) && (int)monsterGetU16(m, MonsterFieldWorldX) == x && (int)monsterGetU16(m, MonsterFieldWorldY) == y) {
+            return m;
+        }
+    }
+    return NULL;
+}
+
+static void testDoorwayEngage(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    if (game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    place(s, 175, 40, SaveFacingSouth);
+    sessionScene(s, &scene, cells); /* the ant is spawned (and noticed) as the view is drawn */
+    check("the ant is in the pool behind the door, three cells on", antAt(s, 175, 44) != NULL);
+    check("a step toward the door: no combat yet", sessionMove(s, MovementForward) == SessionStepMoved && s->x == 175 && s->y == 41 && !s->combat.active);
+    sessionScene(s, &scene, cells);
+    bool behindDoor = antAt(s, 175, 43) != NULL;
+    snprintf(text, sizeof(text), "%s: the ant has come up to the cell behind the doorway (the doorway's far side is not a blocked cell for it)", label);
+    check(text, behindDoor);
+    const uint8_t *before = antAt(s, 175, 43);
+    sessionMove(s, MovementTurnLeft);
+    sessionMove(s, MovementTurnRight);
+    check("turning on the spot gives the monsters no turn (ProcessLevelMonsters is only called when the party moved)", antAt(s, 175, 43) == before && s->x == 175 && s->y == 41);
+    check("the door opens first", sessionMove(s, MovementForward) == SessionStepDoorOpening && !s->combat.active && s->x == 175 && s->y == 41);
+    check("... the ant has not moved while it opens", antAt(s, 175, 43) == before);
+    sessionDoorFinish(s);
+    check("the two steps end on the ant's cell, and that is combat with it: the pool no longer holds it", s->x == 175 && s->y == 43 && s->combat.active && antAt(s, 175, 43) == NULL &&
+                                                                                                          monsterGetU16(s->combat.slots, MonsterFieldWorldX) == 175);
+    sessionFree(s);
+}
+
 static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *a = sessionNew(game, world, size), *b = sessionNew(game, world, size);
     if (!a || !b) {
@@ -1115,6 +1158,7 @@ int main(void) {
             testHealer(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShot(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testDoorwayEngage(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

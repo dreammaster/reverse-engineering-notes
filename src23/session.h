@@ -149,10 +149,14 @@ typedef enum { SessionStepMoved, SessionStepTurned, SessionStepBlocked, SessionS
  * the door sound (5), and sessionScene shows the frame of the door opening (the door cell drawn with a scratch tile -- the open door picture, the floor and ceiling of the cell beyond it); the
  * front end shows that frame for a moment and then calls sessionDoorFinish, which makes the two steps. Any other way into a door (backing, strafing) plays the sound and makes the two
  * steps at once. The second step is not checked (the original does not).
+ *
+ * After a step that moved the party (HandleMovementInput, loc_11598 on) a monster standing on the party's new cell is engaged at once (it need not be aware, and it could not have walked there:
+ * a doorway's second step ends on the cell of a monster that has come up behind it), otherwise the monsters take their turns (ProcessLevelMonsters), and then the cell's trigger fires. A turn
+ * on the spot and a step that is refused give the monsters no turn: the original calls ProcessLevelMonsters only when its "moved" flags (0x1800) are set.
  */
 SessionStep sessionMove(GameSession *session, MovementAction action);
 
-/* Completes an opening door: the two steps, the reveal, the map triggers and the monsters' turn. A no-op (SessionStepBlocked) when no door is opening. */
+/* Completes an opening door: the two steps, the reveal, then what follows any step (above): the engagement, the monsters' turn and the map triggers. A no-op (SessionStepBlocked) when no door is opening. */
 SessionStep sessionDoorFinish(GameSession *session);
 
 /* The view cells, their occlusion and the monsters to draw (spawning the ones that come into view, monsterPoolEncounterScan); fills `scene` for viewRender. */

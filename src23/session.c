@@ -180,6 +180,22 @@ static bool monstersTakeTurns(GameSession *s) {
     return s->combat.active;
 }
 
+/*
+ * The party has moved onto a cell: a monster standing on it is engaged at once (HandleMovementInput, loc_115C8 on, and the same scan in the jump spell, loc_2C4F5): the 80 pool slots are
+ * searched for the first whose cell is the party's, and it goes to a combat slot -- aware or not, and whether it could have walked there or not. This is what happens when the party's
+ * two steps through a doorway end on the cell of a monster that came up behind it. True when combat has begun.
+ */
+static bool engageMonsterOnPartyCell(GameSession *s) {
+    for (unsigned slot = 0; slot < MonsterPoolSize; slot++) {
+        uint8_t *record = s->pool + (size_t)slot * MonsterRecordSize;
+        if (monsterGetU16(record, MonsterFieldType) != 0 && (int)monsterGetU16(record, MonsterFieldWorldX) == s->x && (int)monsterGetU16(record, MonsterFieldWorldY) == s->y) {
+            combatStart(s, record);
+            return true;
+        }
+    }
+    return false;
+}
+
 /* ApplyMapTriggerEffect (yendor2.asm:17458): run for the cell the party stands on after every step -- a trap that hurts, steals or corrodes the members who can act, or (flag
  * 0x4000) a teleport to the record's own cell. Returns what happened for the log. */
 static bool applyMapTrigger(GameSession *s) {
@@ -226,6 +242,14 @@ static void stepUnchecked(GameSession *s, MovementResult move) {
     }
 }
 
+/* What follows a step of the party (HandleMovementInput, loc_11598 on): a monster on the new cell is engaged, else the monsters take their turns (ProcessLevelMonsters), and then the cell's trigger. */
+static void movedOnto(GameSession *s) {
+    if (!engageMonsterOnPartyCell(s)) {
+        monstersTakeTurns(s);
+    }
+    applyMapTrigger(s);
+}
+
 SessionStep sessionDoorFinish(GameSession *s) {
     if (!s->doorOpening) {
         return SessionStepBlocked;
@@ -237,8 +261,7 @@ SessionStep sessionDoorFinish(GameSession *s) {
     ExploreReveal revealed;
     exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
     sessionRebuild(s);
-    applyMapTrigger(s);
-    monstersTakeTurns(s);
+    movedOnto(s);
     return SessionStepMoved;
 }
 
@@ -282,10 +305,9 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
     ExploreReveal revealed;
     exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
     sessionRebuild(s);
-    if (result == SessionStepMoved) {
-        applyMapTrigger(s);
+    if (result == SessionStepMoved) { /* a turn or a step that was refused does not give the monsters a turn: ProcessLevelMonsters is only called when flags 0x1800 say the party moved */
+        movedOnto(s);
     }
-    monstersTakeTurns(s);
     return result;
 }
 
@@ -804,7 +826,9 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
             ExploreReveal revealed;
             exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
             sessionRebuild(s);
-            monstersTakeTurns(s);
+            if (!engageMonsterOnPartyCell(s)) { /* a monster on the landing cell is fought at once (loc_2C4F5) */
+                monstersTakeTurns(s);
+            }
         }
         done = jump.ok;
         break;
