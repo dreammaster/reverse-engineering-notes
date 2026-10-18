@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the third-party libraries of third_party/ (the versions of the original, see THIRD_PARTY.md) as static libraries:
 build/third_party/<bits>/lib<name>.a with the headers they need staying where they are in third_party/.
-Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp; default all)"""
+Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype; default all)"""
 import os
 import re
 import subprocess
@@ -66,6 +66,17 @@ def libs():
     opusfile_files = [os.path.join(TP, "opusfile", "src", f) for f in ("info.c", "internal.c", "opusfile.c", "stream.c")]
     ogg_files = [os.path.join(ogg, "src", f) for f in ("bitwise.c", "framing.c")]
 
+    ft = os.path.join(TP, "freetype", "src")
+    # the modules of the default ftmodule.h (what builds/unix compiles), each as its one source file
+    freetype_files = [os.path.join(ft, f) for f in (
+        "base/ftsystem.c", "base/ftdebug.c", "base/ftinit.c", "base/ftbase.c", "base/ftbbox.c", "base/ftbitmap.c",
+        "base/ftfntfmt.c", "base/ftfstype.c", "base/ftgasp.c", "base/ftglyph.c", "base/ftgxval.c", "base/ftlcdfil.c",
+        "base/ftmm.c", "base/ftotval.c", "base/ftpatent.c", "base/ftpfr.c", "base/ftstroke.c", "base/ftsynth.c",
+        "base/fttype1.c", "base/ftwinfnt.c", "autofit/autofit.c", "bdf/bdf.c", "cff/cff.c", "cid/type1cid.c",
+        "gzip/ftgzip.c", "lzw/ftlzw.c", "pcf/pcf.c", "pfr/pfr.c", "psaux/psaux.c", "pshinter/pshinter.c",
+        "psnames/psmodule.c", "raster/raster.c", "sfnt/sfnt.c", "smooth/smooth.c", "truetype/truetype.c", "type1/type1.c",
+        "type42/type42.c", "winfonts/winfnt.c")]
+
     opus_inc = [os.path.join(opus, d) for d in ("include", "celt", "silk", "silk/float", "src")]
     return {
         "ogg": (ogg_files, [os.path.join(ogg, "include"), gen], []),
@@ -73,6 +84,7 @@ def libs():
                                         '-DPACKAGE_VERSION="1.1"', "-Wno-unused-variable"]),
         "opusfile": (opusfile_files, [os.path.join(TP, "opusfile", "include"), os.path.join(opus, "include"),
                                       os.path.join(ogg, "include"), gen], ["-DOP_HAVE_LRINTF", "-DOP_ENABLE_ASSERTIONS=0"]),
+        "freetype": (freetype_files, [os.path.join(TP, "freetype", "include")], ["-DFT2_BUILD_LIBRARY"]),
         "webp": (webp_files, [os.path.join(webp, "src"), webp], []),
     }
 

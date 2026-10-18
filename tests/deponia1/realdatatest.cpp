@@ -17,6 +17,7 @@
 #include "TComposedFileManager.h"
 #include "baselib/file.h"
 #include "graphicslib/picture.h"
+#include "graphicslib/freetypeFont.h"
 #include "TSprite.h"
 #include "vstables/records.h"
 #include "datastruct/visionaireobject.h"
@@ -221,6 +222,37 @@ int main(int argc, char **argv) {
 				printf("pixel %d: %d %d %d %d\n", i, p[0], p[1], p[2], p[3]);
 			}
 		}
+	}
+	if (loaded) {
+		// the TrueType and OpenType fonts of the data (Chinese, Korean, Arabic): each is made, a line is as wide as its letters
+		TVList fonts;
+		int made = 0;
+
+		control->GetVisionaire()->GetList(3, fonts, false);
+		for (TVisionaireObject *font : fonts) {
+			wxFileName path = font->GetPath(kFontTrueTypeFontPath);
+
+			if (path.GetFullPath().IsEmpty())
+				continue;
+
+			TFreetypeFont freetype;
+			bool ok = freetype.CreateFont(path.GetFullPath(), font->GetFloat(kFontSize), 0xFFFFFFFF, font->GetBool(kFontBorder),
+			                              font->GetFloat(kFontBorderSize), 0xFF000000, false, wxPoint());
+
+			CHECK(ok);
+			if (!ok)
+				continue;
+
+			int one = freetype.StringLength("W");
+			int two = freetype.StringLength("WW");
+
+			CHECK(one > 0 && two == 2 * one);
+			CHECK(freetype.StringLength("W\nWWW") == 3 * one);
+			CHECK(freetype.GetChar(0x20)->_advance > 0);
+			made++;
+		}
+		printf("freetype: %d fonts made\n", made);
+		CHECK(made >= 12);
 	}
 	(void)argc;
 	(void)argv;

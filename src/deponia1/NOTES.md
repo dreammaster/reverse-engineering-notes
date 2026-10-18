@@ -3835,6 +3835,21 @@ game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel an
   then runs to its end; a click on the platform makes the character walk. A real device replaces `CreateStream`.
 - Still missing: a movie player.
 
+## TFreetypeFont: the TrueType and OpenType fonts (graphicslib/freetypeFont.cpp, third_party/freetype)
+
+FreeType 2.8.0 is in third_party/ (`tools/build_third_party.py freetype`). The 12 fonts of the data with a font file (SourceHanSans CN, TW,
+KR and DejaVuSans for Arabic, each in three sizes) are made, so the menus of Chinese and Korean show their text.
+What the asm gives (CreateFont, GetChar, StringLength): the file is read through the composed files and kept once for every font
+that names it; the face is set to `size * 64` (26.6); the line height is the size; the glyph is loaded with FT_LOAD_RENDER (no
+outline) or FT_LOAD_NO_BITMAP (with an outline: stroked with FT_Stroker, round caps and joins, radius 64 times the outline size);
+the space is `size / 4.2` plus the letter spacing, taken the first time it is asked for (the spacing is set after the first measure:
+`StringLength("abc")` of TCFont), the tab two spaces and the spacing, a line break has no width; `StringLength` is the longest line
+and a line break lets the next line start with the spacing.
+Different on purpose: the glyphs are sprites of the graphics backend (TGraphicsInterface::CreateSprite) drawn with Draw(), shadow
+first (black), then the outline, then the glyph; the original puts them in GL textures (TSpritePartTexture) and draws quads in
+batches of its shaders. The original renders LCD (3 bytes a pixel, averaged to the alpha): here 8 bit coverage.
+Not done: the shaping with HarfBuzz (itemize, hb_shape): Arabic is drawn letter by letter, in the order of the string.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

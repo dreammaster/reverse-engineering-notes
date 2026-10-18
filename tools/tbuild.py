@@ -17,11 +17,11 @@ CXX = r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe"
 # the results of the comparisons in the geometry)
 TP = os.path.join(ROOT, "third_party")
 TPLIB = os.path.join(ROOT, "build", "third_party", str(bits))
-FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-I", os.path.join(TP, "libwebp", "src"), "-I", os.path.join(TP, "opusfile", "include"), "-I", os.path.join(TP, "opus", "include"), "-I", os.path.join(TP, "ogg", "include"), "-I", os.path.join(TPLIB, "gen"), "-MMD"] + (["-msse2", "-mfpmath=sse"] if bits == 32 else []) + (["-g"] if "-g" in sys.argv else []) + (["--coverage", "-O0"] if "-c" in sys.argv else [])
+FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "-I", os.path.join(TP, "libwebp", "src"), "-I", os.path.join(TP, "opusfile", "include"), "-I", os.path.join(TP, "opus", "include"), "-I", os.path.join(TP, "ogg", "include"), "-I", os.path.join(TP, "freetype", "include"), "-I", os.path.join(TPLIB, "gen"), "-MMD"] + (["-msse2", "-mfpmath=sse"] if bits == 32 else []) + (["-g"] if "-g" in sys.argv else []) + (["--coverage", "-O0"] if "-c" in sys.argv else [])
 LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp", "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
 LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.listdir(r"C:\dev\scummvm\common\lua")) if f.endswith(".cpp") and f not in LUA_EXCLUDE] + ["C:/dev/visionnaire/tools/luashim/luashim.cpp"]
 
-if not os.path.exists(os.path.join(TPLIB, "libwebp.a")):
+if not (os.path.exists(os.path.join(TPLIB, "libwebp.a")) and os.path.exists(os.path.join(TPLIB, "libfreetype.a"))):
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_third_party.py")] + (["-32"] if bits == 32 else []), check=True)
 test = [a for a in sys.argv[1:] if not a.startswith("-")][0]
 test = os.path.join(SCR, test) if not os.path.isabs(test) else test
@@ -77,7 +77,7 @@ with ThreadPoolExecutor(12) as ex:
 if failed:
     sys.exit(1)
 exe = os.path.join(OBJ, os.path.basename(test)[:-4] + ".exe")
-r = subprocess.run([CXX] + (["-g"] if "-g" in sys.argv else []) + (["--coverage"] if "-c" in sys.argv else []) + ["-o", exe] + [o for _, o in sources] + [os.path.join(TPLIB, "lib" + n + ".a") for n in ("opusfile", "opus", "ogg", "webp")], capture_output=True, text=True)
+r = subprocess.run([CXX] + (["-g"] if "-g" in sys.argv else []) + (["--coverage"] if "-c" in sys.argv else []) + ["-o", exe] + [o for _, o in sources] + [os.path.join(TPLIB, "lib" + n + ".a") for n in ("opusfile", "opus", "ogg", "webp", "freetype")], capture_output=True, text=True)
 if r.returncode != 0:
     print(r.stderr[:4000])
     sys.exit(1)
