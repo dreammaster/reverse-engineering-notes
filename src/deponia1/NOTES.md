@@ -3775,6 +3775,23 @@ reading it:
   loading progress (0 of 12, the kSignalLoadingProgress) once. The document and its text stay between the passes (type 0 keeps
   them, 1 and 2 free them). `xmltest` writes a project as XML, reads it again and checks that the text written again is the same.
 
+## The real game data (Deponia 1 for Linux, GOG)
+
+`tests/deponia1/realdatatest.cpp` loads `data.vis` through the player's own path (PreLoad, LoadAndInitGame) and
+`datainventory.cpp` lists what the data uses; both run from the game directory (`.../data/noarch/game`) and are not part of the
+automatic suite. What the real data found that the made-up games could not:
+
+- `LoadAndInitGame` calls `LoadDataGame` with the flag "relative to the file" false (asm 467807, `xor r8d, r8d`); with true the
+  second pass looked for the container entry name (`data.vis#v#-01#03108#`) as a file and failed.
+- The literal at `asc_D3900C` is the wide string `<br/>` (the label of its first character was read as `<`): the line break of
+  scripts, dialog texts and action texts. Scripts did not parse before.
+- The strings of the data are UTF-8: `wxString(const char *)` now decodes it and `mb_str()` encodes it (the stub widened the bytes).
+- The Loadings table is read again in the second pass of the binary reader, so `TTable` logs "not in sync, recreating index" for
+  table 21 (the original has the same assert and message).
+- Still failing: the scripts use `os`, `io` and `require("lfs")` (LuaJIT had them; the ScummVM Lua build does not), FreeType fonts
+  cannot be made, `videos/video.vv` is not a container (the 42 files are Matroska with VP8 and Vorbis).
+- Pictures are all WebP, sounds all Ogg Opus; no model or Spine animation. The libraries and their versions: `THIRD_PARTY.md`.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

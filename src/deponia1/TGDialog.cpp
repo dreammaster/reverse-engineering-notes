@@ -346,7 +346,7 @@ void TGDialog::SetDialog(const TVisObjRef &dialog) {
 		// (the Replace comes before the pause tags are looked for - and takes the '<' of them -, as in the original)
 		wxString text = TTText(part.GetLink(kDialogPartText)).GetTextString();
 
-		text.Replace(wxString(L"<"), wxString(L"\n"), true);
+		text.Replace(wxString(L"<br/>"), wxString(L"\n"), true);
 		TTText::ReplaceValues(text, GetVisionaire());
 
 		std::wstring plain = text.ToStdWstring();

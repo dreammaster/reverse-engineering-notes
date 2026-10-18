@@ -40,7 +40,9 @@ class wxString {
 public:
 	wxString() = default;
 	wxString(const wchar_t *s) : _data(s) {}
-	wxString(const char *s) : _data(s, s + std::char_traits<char>::length(s)) {}
+	// Like wxString(const char *) on Linux with a UTF-8 locale (the game data's strings are UTF-8); bytes that are
+	// not valid UTF-8 are taken as Latin-1 characters.
+	wxString(const char *s) : _data(decodeUtf8(s, std::char_traits<char>::length(s))) {}
 	wxString(const std::wstring &s) : _data(s) {}
 
 	// Confirmed call shape only (TMSavegame::GetExistingSaveGames, Deponia_
@@ -179,9 +181,91 @@ public:
 		std::string _narrow;
 	};
 
+	// (UTF-8, as mb_str() gives on Linux with a UTF-8 locale)
 	CharBuffer mb_str() const {
-		std::string narrow(_data.begin(), _data.end());
-		return CharBuffer(std::move(narrow));
+		return CharBuffer(encodeUtf8(_data));
+	}
+
+	static std::wstring decodeUtf8(const char *s, std::size_t length) {
+		std::wstring result;
+
+		result.reserve(length);
+		for (std::size_t i = 0; i < length;) {
+			unsigned char c = static_cast<unsigned char>(s[i]);
+			unsigned long code = c;
+			int extra = 0;
+
+			if (c >= 0xF0 && c < 0xF8) {
+				extra = 3;
+				code = c & 0x07;
+			} else if (c >= 0xE0) {
+				extra = 2;
+				code = c & 0x0F;
+			} else if (c >= 0xC0) {
+				extra = 1;
+				code = c & 0x1F;
+			}
+			if (c >= 0xF8 || (c >= 0x80 && c < 0xC0))
+				extra = -1;
+
+			bool valid = extra >= 0;
+
+			if (extra > 0) {
+				valid = i + extra < length;
+				for (int k = 1; valid && k <= extra; k++) {
+					unsigned char next = static_cast<unsigned char>(s[i + k]);
+
+					if ((next & 0xC0) != 0x80)
+						valid = false;
+					else
+						code = (code << 6) | (next & 0x3F);
+				}
+			}
+			if (!valid || extra < 0) {
+				result += static_cast<wchar_t>(c);
+				i++;
+				continue;
+			}
+			if (code >= 0x10000 && sizeof(wchar_t) == 2) {
+				code -= 0x10000;
+				result += static_cast<wchar_t>(0xD800 + (code >> 10));
+				result += static_cast<wchar_t>(0xDC00 + (code & 0x3FF));
+			} else {
+				result += static_cast<wchar_t>(code);
+			}
+			i += extra + 1;
+		}
+		return result;
+	}
+
+	static std::string encodeUtf8(const std::wstring &text) {
+		std::string result;
+
+		for (std::size_t i = 0; i < text.size(); i++) {
+			unsigned long code = static_cast<unsigned long>(text[i]) & 0xFFFFFFFFUL;
+
+			if (sizeof(wchar_t) == 2 && code >= 0xD800 && code < 0xDC00 && i + 1 < text.size() &&
+			    static_cast<unsigned long>(text[i + 1]) >= 0xDC00 && static_cast<unsigned long>(text[i + 1]) < 0xE000) {
+				code = 0x10000 + ((code - 0xD800) << 10) + (static_cast<unsigned long>(text[i + 1]) - 0xDC00);
+				i++;
+			}
+			if (code < 0x80) {
+				result += static_cast<char>(code);
+			} else if (code < 0x800) {
+				result += static_cast<char>(0xC0 | (code >> 6));
+				result += static_cast<char>(0x80 | (code & 0x3F));
+			} else if (code < 0x10000) {
+				result += static_cast<char>(0xE0 | (code >> 12));
+				result += static_cast<char>(0x80 | ((code >> 6) & 0x3F));
+				result += static_cast<char>(0x80 | (code & 0x3F));
+			} else {
+				result += static_cast<char>(0xF0 | (code >> 18));
+				result += static_cast<char>(0x80 | ((code >> 12) & 0x3F));
+				result += static_cast<char>(0x80 | ((code >> 6) & 0x3F));
+				result += static_cast<char>(0x80 | (code & 0x3F));
+			}
+		}
+		return result;
 	}
 
 	// Confirmed call shape only (TCharHolder::Lower, Deponia_Linux.asm line

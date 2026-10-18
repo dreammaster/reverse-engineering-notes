@@ -343,7 +343,7 @@ void TGText::SplitText() {
 
 	wxString text = _active.GetStr(kTextCurrentText);
 
-	text.Replace(L"<", L"\n", true);
+	text.Replace(L"<br/>", L"\n", true);
 	g_pGameControl->GetFontManager()->PerformAutoLineBreak(text, _lines);
 
 	for (const wxString &line : _lines) {

@@ -892,7 +892,7 @@ void TGameControl::InitScripts() {
 			continue;
 
 		wxString script = object->GetStr(kScriptScript);
-		script.Replace(wxString(L"<"), wxString(L"\n"), true);
+		script.Replace(wxString(L"<br/>"), wxString(L"\n"), true);
 
 		std::string scriptNarrow(static_cast<const char *>(script.mb_str()));
 		std::string chunkName = IdStrStd(object->GetId());
@@ -2352,7 +2352,7 @@ bool TGameControl::LoadAndInitGame(wxString &filePath, const wxString &extra, wx
 	wxFileName resolvedFile(filePath.ToStdWstring());
 	resolvedFile.NormalizePath();
 	TSignalSlot *slot = isEditor ? reinterpret_cast<TSignalSlot *>(this) : nullptr;
-	bool loaded = _visionaire->LoadDataGame(resolvedFile, extra, TLoadingTypeEnum::kValue1, true, slot, nullptr);
+	bool loaded = _visionaire->LoadDataGame(resolvedFile, extra, TLoadingTypeEnum::kValue1, false, slot, nullptr);
 
 	if (!loaded) {
 		if (wxLog::loglevel >= 0) {

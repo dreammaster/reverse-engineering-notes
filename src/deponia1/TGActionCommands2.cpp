@@ -552,10 +552,10 @@ void TGActionPartExecutor::cmdSetTextSpeed() {
 }
 
 // A script of the game's own Lua is run: `currentAction` is the action while it runs. The
-// scripts are the text with a '<' for each new line.
+// scripts are the text with a <br/> for each new line.
 static void runScript(const TVisObjRef &action, wxString code, const std::uint8_t *id) {
 	LuaSetCurrentAction(action);
-	code.Replace(wxString(L"<"), wxString(L"\n"), true);
+	code.Replace(wxString(L"<br/>"), wxString(L"\n"), true);
 	LuaDoString(std::string(code.mb_str()), IdStrStd(id));
 	LuaSetCurrentAction(TVisObjRef());
 }
