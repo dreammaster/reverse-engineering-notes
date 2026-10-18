@@ -3790,6 +3790,11 @@ automatic suite. What the real data found that the made-up games could not:
   table 21 (the original has the same assert and message).
 - Still failing: the scripts use `os`, `io` and `require("lfs")` (LuaJIT had them; the ScummVM Lua build does not), FreeType fonts
   cannot be made, `videos/video.vv` is not a container (the 42 files are Matroska with VP8 and Vorbis).
+- `PreLoad` passed the container counts to `TComposedFileManager::Init` in the wrong order (the original evaluates the
+  arguments from the last to the first: game, scene, character, interface, movie): no scene container was ever opened.
+- Pictures: `TPictureWebP` (libwebp 0.5.0, third_party/) decodes all 14940 animation pictures of the data; a picture with the
+  flag at +0x70 gets its colours multiplied by the alpha. Sounds: `soundengine::AudioDataSourceOggOpus` (libopusfile)
+  decodes the Ogg Opus sounds; the length in milliseconds agrees with the bytes decoded.
 - Pictures are all WebP, sounds all Ogg Opus; no model or Spine animation. The libraries and their versions: `THIRD_PARTY.md`.
 
 ## Reformatted to ScummVM's code conventions

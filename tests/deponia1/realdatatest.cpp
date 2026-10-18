@@ -12,6 +12,8 @@
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 #include "datastruct/table.h"
+#include "soundengine/audioDataSource.h"
+#include "TMemoryBuffer.h"
 #include "TComposedFileManager.h"
 #include "baselib/file.h"
 #include "graphicslib/picture.h"
@@ -147,6 +149,63 @@ int main(int argc, char **argv) {
 
 			printf("scene volume %d: open %d length %ld\n", volume, (int)opened, opened ? (long)probe.GetFileLength() : -1L);
 		}
+	}
+	if (loaded) {
+		// the sounds: Ogg Opus, decoded by the data source of the sound engine
+		TVList parts;
+		int opened = 0;
+		int unopened = 0;
+		long long bytes = 0;
+		long long milliseconds = 0;
+
+		control->GetVisionaire()->GetList(8, parts, false);
+		for (TVisionaireObject *object : parts) {
+			wxFileName path = object->GetPath(kActionPartPath);
+			std::wstring full = path.GetFullPath().ToStdWstring();
+
+			if (full.find(L".opus#") == std::wstring::npos)
+				continue;
+			if (opened + unopened >= (getenv("REALDATA_ALL") ? 100000 : 60))
+				break;
+
+			TFile file;
+			TMemoryBuffer data;
+
+			if (!TComposedFileManager::Open(file, path)) {
+				unopened++;
+				continue;
+			}
+			file.ReadToBuf(data, 0);
+
+			soundengine::AudioDataSource *source = soundengine::AudioDataSource::TestOpen(reinterpret_cast<char *>(data.GetData()), data.GetLen());
+
+			if (!source) {
+				unopened++;
+				continue;
+			}
+
+			std::vector<char> pcm(1 << 16);
+			int made;
+			long long total = 0;
+
+			while ((made = source->FillBuffer(pcm.data(), pcm.size())) > 0)
+				total += made;
+			// (the duration in milliseconds against the bytes of 16 bit samples at 48000 a second)
+			long long expected = (long long)source->GetDuration() * 48 * source->GetChannels() * 2;
+
+			CHECK(made == 0);
+			CHECK(total >= expected - 2 * 48 * source->GetChannels() * 2 && total <= expected + 2 * 48 * source->GetChannels() * 2);
+			bytes += total;
+			milliseconds += source->GetDuration();
+			opened++;
+			if (opened <= 2)
+				printf("sound %ls: %d channels, %d ms, %lld bytes\n", path.GetFullName().wc_str(), source->GetChannels(), source->GetDuration(), total);
+			source->Seek(1000);
+			CHECK(source->GetOffset() >= 900 && source->GetOffset() <= 1100 || source->GetDuration() < 1000);
+			delete source;
+		}
+		printf("opus: %d opened, %d not, %lld ms, %lld bytes\n", opened, unopened, milliseconds, bytes);
+		CHECK(unopened == 0);
 	}
 	(void)argc;
 	(void)argv;
