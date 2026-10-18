@@ -118,6 +118,13 @@ public:
 	bool IsRgbOrder() const {
 		return _rgbOrder;
 	}
+	bool IsFlipped() const {
+		return _flipped;
+	}
+	/** The flag at +0x70 (set by the constructor): the WebP reader multiplies the colours by the alpha when it is set. */
+	bool IsField70() const {
+		return _field70;
+	}
 
 protected:
 	int _width = 0;                       // +0x60
@@ -128,7 +135,7 @@ private:
 	uint8_t *_data = nullptr;               // +0x58
 	signed char _bytesPerPixel = 0;         // +0x68
 	int _pitch = 0;                         // +0x6C, how many bytes a line has
-	bool _field70 = true;                   // +0x70 (set by the constructor, not read)
+	bool _field70 = true;                   // +0x70 (set by the constructor; the WebP reader reads it)
 	bool _flipped = false;                  // +0x71, the lines are stored from the bottom (SetMemoryData() stores 2)
 	bool _rgbOrder = true;                  // +0x72
 };

@@ -1865,11 +1865,13 @@ bool TGameControl::PreLoad(wxString &filePath, wxString &warning, bool isEditor)
 	if (!strings.empty()) {
 		TComposedFileManager::Init(_gamePath, passw, strings);
 	} else {
-		TComposedFileManager::Init(_gamePath, passw, currentRef.GetInt(kGameMovieComposedFiles), wxFileName(currentRef.GetPath(kGameMovieComposedFile)),
-		                           currentRef.GetInt(kGameInterfaceComposedFiles), wxFileName(currentRef.GetPath(kGameInterfaceComposedFile)),
-		                           currentRef.GetInt(kGameCharacterComposedFiles), wxFileName(currentRef.GetPath(kGameCharacterComposedFile)),
+		// (the order of the parameters of Init(): the game's, the scenes', the characters', the interfaces' and the movies'
+		// containers; the arguments are evaluated from the last to the first in the original: asm 464380-464478)
+		TComposedFileManager::Init(_gamePath, passw, currentRef.GetInt(kGameGameComposedFiles), wxFileName(currentRef.GetPath(kGameGameComposedFile)),
 		                           currentRef.GetInt(kGameSceneComposedFiles), wxFileName(currentRef.GetPath(kGameSceneComposedFile)),
-		                           currentRef.GetInt(kGameGameComposedFiles), wxFileName(currentRef.GetPath(kGameGameComposedFile)));
+		                           currentRef.GetInt(kGameCharacterComposedFiles), wxFileName(currentRef.GetPath(kGameCharacterComposedFile)),
+		                           currentRef.GetInt(kGameInterfaceComposedFiles), wxFileName(currentRef.GetPath(kGameInterfaceComposedFile)),
+		                           currentRef.GetInt(kGameMovieComposedFiles), wxFileName(currentRef.GetPath(kGameMovieComposedFile)));
 	}
 
 	return true;

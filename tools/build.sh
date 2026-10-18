@@ -22,6 +22,8 @@ src_dir="$repo_root/src/$game"
 out_exe="$src_dir/${game}.exe"
 obj_dir="$repo_root/build/$game"
 scummvm="${SCUMMVM_DIR:-/c/dev/scummvm}"
+tp="$repo_root/third_party"
+tplib="$repo_root/build/third_party/64"
 
 if [ ! -d "$src_dir" ]; then
     echo "no such source dir: $src_dir" >&2
@@ -40,6 +42,11 @@ if [ -d "$scummvm/common/lua" ]; then
     sources+=("$repo_root/tools/luashim/luashim.cpp")
 fi
 echo "Building ${#sources[@]} source files with $gxx ..." >&2
+
+# the third-party libraries (third_party/, THIRD_PARTY.md) as static libraries
+if [ ! -f "$tplib/libwebp.a" ]; then
+    python "$repo_root/tools/build_third_party.py" >&2
+fi
 
 mkdir -p "$obj_dir"
 objects=()
@@ -60,10 +67,10 @@ compile() {
     local src="${1%%|*}" obj="${1##*|}" flags=(-std=c++17 -Wall -Wextra)
     mkdir -p "$(dirname "$obj")"
     case "$src" in "$SRC_DIR"/*) ;; *) flags=(-std=c++17 -w) ;; esac
-    "$GXX" "${flags[@]}" -I "$SRC_DIR" -I "$SCUMMVM" "${EXTRA[@]}" -c "$src" -o "$obj"
+    "$GXX" "${flags[@]}" -I "$SRC_DIR" -I "$SCUMMVM" -I "$TP/libwebp/src" -I "$TP/opusfile/include" -I "$TP/opus/include" -I "$TP/ogg/include" -I "$TPLIB/gen" "${EXTRA[@]}" -c "$src" -o "$obj"
 }
 export -f compile
-export GXX="$gxx" SRC_DIR="$src_dir" SCUMMVM="$scummvm"
+export GXX="$gxx" SRC_DIR="$src_dir" SCUMMVM="$scummvm" TP="$tp" TPLIB="$tplib"
 EXTRA=("${extra_args[@]}")
 export EXTRA
 
@@ -72,5 +79,5 @@ if [ ${#jobs[@]} -gt 0 ]; then
     printf '%s\n' "${jobs[@]}" | xargs -P "$(nproc 2>/dev/null || echo 4)" -I{} bash -c 'compile "$1"' _ {}
 fi
 
-"$gxx" -o "$out_exe" "${objects[@]}" "${extra_args[@]}"
+"$gxx" -o "$out_exe" "${objects[@]}" "$tplib/libopusfile.a" "$tplib/libopus.a" "$tplib/libogg.a" "$tplib/libwebp.a" "${extra_args[@]}"
 echo "Built $out_exe" >&2

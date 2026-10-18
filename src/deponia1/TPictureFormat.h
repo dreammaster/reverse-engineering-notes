@@ -84,7 +84,27 @@ private:
 	int _colorType = 0;
 };
 
-class TPictureWebP : public TPictureFormatStub {
+/** WebP, read and written with libwebp (third_party/libwebp, TPictureWebP.cpp). Layout of the original: the format code
+ *  (+0x08, 5), the size of the data (+0x0C), the picture's size (+0x10, +0x14) and the file data that was read (+0x18). */
+class TPictureWebP : public TPictureFormat {
+public:
+	TPictureWebP();
+	~TPictureWebP() override;
+
+	/** Frees the data of the file. */
+	bool CleanUp();
+
+	bool ReadHeader(TFile &file, int *outWidth, int *outHeight) override;
+	bool ReadHeader(char *data, unsigned long size, int *outWidth, int *outHeight) override;
+	bool ReadData(TFile &file, TPictureMEM &picture) override;
+	bool ReadData(TPictureMEM &picture) override;
+	bool Write(const wxFileName &file, TPictureMEM &picture, int width, int height, int bytesPerPixel, bool flag) override;
+
+private:
+	int _size = 0;                      // +0x0C
+	int _width = 0;                     // +0x10
+	int _height = 0;                    // +0x14
+	unsigned char *_data = nullptr;     // +0x18
 };
 
 class TPictureJPG : public TPictureFormatStub {
