@@ -172,3 +172,25 @@ black-box fades (effects 1 and 2) and the iris (8 and 9) are reconstructed from 
 dissolve (effects 4, 5, 6 and 11) are the backend's: it reads `GetFadeEffect()`/`GetFadeProgress()` and calls
 `SetFadeDrawn(true)` when it drew them (the ScummVM port gives them). The 3D/GL parts of the original `TGraphicsOGL`
 (`BeforeDrawScene`, `AfterDrawScene`, `Swap`, `SetDirectToScreen`) are only declared.
+
+## The rest: what the check of the manifest found (editor, debug and sound-engine code)
+
+Found by looking for methods of the manifest that no C++ source defines. None of it is on the way of playing Deponia 1.
+
+- The audio busses (`soundengine::AudioBus`, `MixBus`, `AudioSourceBus`, `RandomBus`, `SyncBus`, `AudioBusBridge`, `Automation`,
+  `BlendTrack`; asm 1078446-1089418, about 100 methods, with rapidjson for the `Settings` of a bus). `TSceneControl` calls
+  `TSoundBase::BusActivate()` with the busses of the scene and the main loop calls `BusValuesUpdate()`; both do nothing here. A
+  game whose data has audio busses (data version 184 and later may; whether Deponia 1 does is not known) needs them, and the
+  streams (`soundengine::Stream`, the `AudioDataSource` family) under them, which are the sound backend's.
+- The editor's version control and merge of projects: `TTable::ImportNewObjects()`, `MergeObjects()` and
+  `FixOrderOfImportedObject()` (empty, asm 663941-664216), and the "approximate" ones (`GetNewObjects()`, `GetDeletedObjects()`,
+  `GetChangedObjects()`, `GetConflictedObjectsCount()`, `TVisionaire::EndMerge()`, the merge of two projects at asm 614496-614807),
+  and `TVisionaireClipboard` (14 methods: copy, paste and undo of objects; `LoadFromString()` could use `TXMLProjectReader` now).
+- The editor's list labels `TTActionPart::GetNameInList()` and `TTText::GetNameInList()` (a long switch over the command / the
+  language; the plain name stands in), and the console prints `TTScene::PrintScenes()`, `TTCharacter::PrintCharacters()`,
+  `TTCondition::PrintConditions()`, `TTValue::PrintValues()`.
+- The debug console `TConsole` (61 methods) and the GUI toolkit it and the editor are made of (`Component`, `Container`, `Label`,
+  `Button`, `ListBox`, `TextBox`, `ScriptEditor`, the skins and the CSS parser: about 900 methods).
+- The profiler and the debugger connection (`collectProfileData()`, `TCPDebuggerClient/Server`, `TDiagnostic`).
+- `TTScene::GetLoadingRect()` is done but reads a field (0x87) that the scene of the current data does not have: it always gives
+  (-1, -1, -1, -1).
