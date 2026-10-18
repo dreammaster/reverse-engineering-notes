@@ -3730,6 +3730,22 @@ asm shows:
 - The loader logs (level 2) when the alphabet is shorter than the list of rectangles (not when it is longer), when there is no
   rectangle at all, and (level 1) for bad kerning.
 
+## The emitter file (TGParticleEmitter::Save and Load, vsplayer/particlesFile.cpp)
+
+The editor writes the settings of a particle object to a file and reads it back. The file is a raw dump of an int array
+(1 MB buffer): the version (6), 28 header fields, the four colour curves (100 float+int pairs each), the force (an int and
+seven floats), the size curve, the texture path in 32-bit characters (null terminated: what follows moves with the length,
+so the file layout is fixed in ints, not in `wchar_t`, which is 16 bits on Windows), the active stages, the tiles curve and
+the largest tile. A curve whose floats are not 100 long is written as defaults (0 for the colour curves, 1 for the size and
+tiles curves; the first and last point set).
+
+Faithful oddities, all kept (`particlefiletest`): the count of the write ends after the largest tile, so the camera floats
+that `Save()` puts in the buffer are not in the file, and `Load()` of a version 6 file reads them from the zeroed buffer;
+the second float of the camera is written over the first. `Save()` reads the position from `kParticlePosX/Y` (int) but
+`Load()` sets `kParticleXPos/YPos` (float fields since the upgrade 0x97): the data refuses the int and logs it, so the
+position is not restored; the same for the two rotations of the force (int fields set as floats). `Load()` of an older file
+stops early and sets defaults: 1 has no path, 2 no active stages, 3 no tiles curve, 4 no largest tile, 5 no camera.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

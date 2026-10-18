@@ -107,8 +107,7 @@ Left out:
 ### The particle systems of the editor (particleSystem.cpp, particlesGame.cpp)
 
 `TParticleEmitter`/`TParticleSystem` (`graphicslib/particleSystem.cpp`) and `TGParticleEmitter`/`TGParticleSystem`
-(`vsplayer/particlesGame.cpp`) are done, except `TGParticleEmitter::Save()` and `Load()` (asm 1378389-1378934,
-1379800-1380801: the editor writes an emitter to a file and reads it) and the drawing (`TGraphicsOGL::Draw(TParticleSystem&, bool, bool)`
+(`vsplayer/particlesGame.cpp`, `particlesFile.cpp`) are done, except the drawing (`TGraphicsOGL::Draw(TParticleSystem&, bool, bool)`
 and `Draw(TParticleEmitter&, ...)`, `SetParticleMaterial`: asm 708150, 714258, 719135). A backend draws the particles of
 `TParticleEmitter::_particles` with the rules at the top of `particleSystem.h`.
 
