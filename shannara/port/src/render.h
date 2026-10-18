@@ -15,7 +15,7 @@ struct Image {
 
 struct RenderInfo {
 	int room = 0, picId = 0;
-	int tables = 0, entries = 0, drawn = 0;
+	int tables = 0, entries = 0, drawn = 0, skippedPlain = 0, skippedBounds = 0;
 };
 
 // Draws the current room (the engine's current-room word) into an image. Runs the room's draw phase, which has no effect on the saved state.

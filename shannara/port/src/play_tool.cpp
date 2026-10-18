@@ -118,7 +118,7 @@ public:
 				RenderInfo ri;
 				Image img = renderRoom(_e, _picDir, &ri);
 				writePng(lineIn.substr(5), img);
-				printf("room %d, picture 0x%04X, %dx%d, %d of %d overlay entries drawn%s\n", ri.room, ri.picId, img.w, img.h, ri.drawn, ri.entries, h0 == _e.regionHash() ? "" : " (WARNING: the draw phase changed the saved state)");
+				printf("room %d, picture 0x%04X, %dx%d, %d of %d overlay entries drawn (visible but skipped: %d plain, %d out of bounds)%s\n", ri.room, ri.picId, img.w, img.h, ri.drawn, ri.entries, ri.skippedPlain, ri.skippedBounds, h0 == _e.regionHash() ? "" : " (WARNING: the draw phase changed the saved state)");
 			} catch (const std::exception &x) { printf("[%s]\n", x.what()); }
 			_e.takeText();
 			return;

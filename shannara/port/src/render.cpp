@@ -99,11 +99,23 @@ Image renderRoom(Engine &e, const std::string &picDir, RenderInfo *info) {
 			const PicEntry &pe = f.entries()[picId & 0xFF];
 			PicImage sp = f.load(picId & 0xFF);
 			int x = sp.offsets.empty() ? 0 : sp.offsets[0].x, y = sp.offsets.empty() ? 0 : sp.offsets[0].y;
-			if (!pe.isXorSprite() || x < 0 || y < 0 || x + pe.w > W || y + pe.h > H)
-				continue; // plain (non-XOR) overlays are not reproduced yet
+			if (x < 0 || y < 0 || x + pe.w > W || y + pe.h > H) {
+				ri.skippedBounds++;
+				continue;
+			}
 			if (sp.hasPalette)
 				memcpy(pal, sp.palette, 768);
-			PicFile::compositeXor(img, W, sp.pixels.data(), x, y, pe.w, pe.h);
+			if (pe.isXorSprite()) {
+				PicFile::compositeXor(img, W, sp.pixels.data(), x, y, pe.w, pe.h);
+			} else { // plain sprite (characters, props): copied over the picture; with flag 0x20 colour index 254 is transparent
+				for (int yy = 0; yy < pe.h; yy++)
+					for (int xx = 0; xx < pe.w; xx++) {
+						uint8_t v = sp.pixels[(size_t)yy * pe.w + xx];
+						if ((pe.flags & 0x20) && v == 254)
+							continue;
+						img[(size_t)(y + yy) * W + x + xx] = v;
+					}
+			}
 			ri.drawn++;
 		}
 	}
