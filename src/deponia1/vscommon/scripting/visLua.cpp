@@ -1,4 +1,5 @@
 #include "vscommon/scripting/visLua.h"
+#include "vscommon/scripting/luaStdLibs.h"
 
 #include <string>
 #include <unordered_set>
@@ -90,6 +91,7 @@ bool IsInternalGlobalVar(const wxString &name) {
 void InitLua(TVisionaireGame *game, const wxString &appDir, const wxString &resourcesDir, const wxString &unused) {
 	L = luaL_newstate();
 	luaL_openlibs(L);
+	OpenLuaStdLibs(L);
 
 	lua_pushcclosure(L, LuaPrint, 0);
 	lua_setfield(L, LUA_GLOBALSINDEX, "print");

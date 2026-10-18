@@ -3788,7 +3788,9 @@ automatic suite. What the real data found that the made-up games could not:
 - The strings of the data are UTF-8: `wxString(const char *)` now decodes it and `mb_str()` encodes it (the stub widened the bytes).
 - The Loadings table is read again in the second pass of the binary reader, so `TTable` logs "not in sync, recreating index" for
   table 21 (the original has the same assert and message).
-- Still failing: the scripts use `os`, `io` and `require("lfs")` (LuaJIT had them; the ScummVM Lua build does not), FreeType fonts
+- The scripts use `os`, `io` and `require("lfs")`, which LuaJIT has and the core of ScummVM's Lua does not: `vscommon/scripting/luaStdLibs.cpp`
+  makes `io`, `os`, `package`/`require` (path `./?.lua;./lua/?.lua`) and `lfs` (preloaded) on the C and C++ library, tested by
+  `luastdtest`; all 95 scripts of the game now load without an error. Still failing: FreeType fonts
   cannot be made, `videos/video.vv` is not a container (the 42 files are Matroska with VP8 and Vorbis).
 - `PreLoad` passed the container counts to `TComposedFileManager::Init` in the wrong order (the original evaluates the
   arguments from the last to the first: game, scene, character, interface, movie): no scene container was ever opened.
