@@ -131,6 +131,21 @@ int main() {
 		"lfs");
 	CHECK(isTrue("lfs_ok"));
 
+	std::ofstream("luastd_dofile.lua") << "dofile_ran = (dofile_ran or 0) + 1\nreturn 7, 8\n";
+	LuaDoString(
+		"-- dofile and loadfile read the file themselves\n"
+		"local a, b = dofile('luastd_dofile.lua')\n"
+		"assert(a == 7 and b == 8 and dofile_ran == 1)\n"
+		"local chunk = assert(loadfile('luastd_dofile.lua'))\n"
+		"assert(chunk() == 7 and dofile_ran == 2)\n"
+		"local none, message = loadfile('luastd_no_such.lua')\n"
+		"assert(none == nil and message:find('luastd_no_such'))\n"
+		"assert(not pcall(dofile, 'luastd_no_such.lua'))\n"
+		"dofile_ok = true\n",
+		"dofile");
+	CHECK(isTrue("dofile_ok"));
+
+	std::remove("luastd_dofile.lua");
 	std::remove("luastd_module.lua");
 	std::remove("luastd_nothing.lua");
 

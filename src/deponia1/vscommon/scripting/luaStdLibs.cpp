@@ -997,6 +997,37 @@ static int loadFileChunk(lua_State *state, const char *fileName) {
 	return luaL_loadbuffer(state, text.data() + skip, text.size() - skip, chunkName.c_str());
 }
 
+// loadfile([name]) and dofile([name]): ScummVM's luaL_loadfile reads through its own file classes (the shim has none), so the
+// two functions of the base library are replaced by ones that read the file here.
+static int base_loadfile(lua_State *state) {
+	const char *name = luaL_optstring(state, 1, nullptr);
+
+	if (!name) {
+		lua_pushnil(state);
+		lua_pushliteral(state, "loadfile without a name is not supported");
+		return 2;
+	}
+	if (loadFileChunk(state, name) == 0)
+		return 1;
+
+	lua_pushnil(state);
+	lua_insert(state, -2);
+	return 2;
+}
+
+static int base_dofile(lua_State *state) {
+	const char *name = luaL_optstring(state, 1, nullptr);
+	int top = lua_gettop(state);
+
+	if (!name)
+		return luaL_error(state, "dofile without a name is not supported");
+	if (loadFileChunk(state, name) != 0)
+		return lua_error(state);
+
+	lua_call(state, 0, LUA_MULTRET);
+	return lua_gettop(state) - top;
+}
+
 // require(name): the module is in package.loaded, or made by a loader: package.preload[name], else the file that package.path
 // finds. The loader is called with the name; what it returns (or true) is kept in package.loaded.
 static int require(lua_State *state) {
@@ -1095,6 +1126,10 @@ static void openPackage(lua_State *state) {
 
 	lua_pushcfunction(state, require);
 	lua_setfield(state, LUA_GLOBALSINDEX, "require");
+	lua_pushcfunction(state, base_loadfile);
+	lua_setfield(state, LUA_GLOBALSINDEX, "loadfile");
+	lua_pushcfunction(state, base_dofile);
+	lua_setfield(state, LUA_GLOBALSINDEX, "dofile");
 }
 
 void OpenLuaStdLibs(lua_State *state) {

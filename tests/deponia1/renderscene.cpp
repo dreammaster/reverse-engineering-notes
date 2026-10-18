@@ -21,7 +21,7 @@
 //   renderscene <out directory> [frames [every [reduce]]]     (frames to run, a picture every `every` frames, made `reduce` times smaller)
 int main(int argc, char **argv) {
 	setvbuf(stdout, nullptr, _IONBF, 0);
-	wxLog::loglevel = 1;
+	wxLog::loglevel = getenv("RENDER_LOG") ? atoi(getenv("RENDER_LOG")) : 1;
 
 	std::string outDir = argc > 1 ? argv[1] : ".";
 	int frames = argc > 2 ? atoi(argv[2]) : 120;
@@ -59,6 +59,95 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
+	if (getenv("RENDER_ACTION")) {
+		TVisObjRef action = getenv("RENDER_ACTION")[0] >= '1' && getenv("RENDER_ACTION")[0] <= '9'
+			? TVisObjRef(control->GetVisionaire()->GetObjectById(TId(atoi(getenv("RENDER_ACTION")), 7)))
+			: TVisObjRef(control->GetVisionaire()->GetGame().GetLink(kGameStartAction));
+		TVList parts;
+
+		printf("start action '%s'", static_cast<const char *>(wxString(action.GetName()).mb_str()));
+		putchar(10);
+		action.GetLinks(kActionActionParts, TypeOrder::kValue1, parts);
+		for (TVisionaireObject *part : parts) {
+			printf("  command %d int %d string '%s' link '%s'", part->GetInt(kActionPartCommand), part->GetInt(kActionPartInt),
+			       static_cast<const char *>(wxString(part->GetStr(kActionPartString)).mb_str()),
+			       static_cast<const char *>(wxString(part->GetLink(kActionPartLink) ? part->GetLink(kActionPartLink)->GetName() : TCharHolder()).mb_str()));
+			putchar(10);
+		}
+		return 0;
+	}
+
+	if (getenv("RENDER_FIND")) {
+		// the actions that go to a scene whose name starts with the argument
+		std::string wanted = getenv("RENDER_FIND");
+		TVList actions;
+
+		control->GetVisionaire()->GetList(7, actions, false);
+		for (TVisionaireObject *action : actions) {
+			TVList parts;
+
+			TVisObjRef(action).GetLinks(kActionActionParts, TypeOrder::kValue1, parts);
+			for (TVisionaireObject *part : parts) {
+				int command = part->GetInt(kActionPartCommand);
+
+				if (command != 10 && command != 46)
+					continue;
+
+				TVisObjRef target(part->GetLink(kActionPartLink));
+
+				if (target.IsEmpty())
+					continue;
+
+				TVisObjRef scene = target.GetParent();
+				std::string name(static_cast<const char *>(wxString(scene.GetName()).mb_str()));
+
+				if (name.compare(0, wanted.size(), wanted) == 0) {
+					printf("action %d '%s' -> scene '%s' (command %d)", action->GetId24(), static_cast<const char *>(wxString(action->GetName()).mb_str()), name.c_str(), command);
+					putchar(10);
+				}
+			}
+		}
+		return 0;
+	}
+
+	if (getenv("RENDER_DUMP")) {
+		std::string wanted = getenv("RENDER_DUMP");
+		TVList scenes;
+		TVisObjRef first(control->GetVisionaire()->GetGame().GetLink(kGameFirstScene));
+
+		printf("first scene '%s', first character '%s'", static_cast<const char *>(wxString(first.GetName()).mb_str()),
+		       static_cast<const char *>(wxString(TVisObjRef(control->GetVisionaire()->GetGame().GetLink(kGameFirstCharacter)).GetName()).mb_str()));
+		putchar(10);
+		control->GetVisionaire()->GetList(4, scenes, false);
+		for (TVisionaireObject *scene : scenes) {
+			std::string name(static_cast<const char *>(wxString(scene->GetName()).mb_str()));
+
+			if (name.compare(0, wanted.size(), wanted) != 0)
+				continue;
+
+			printf("scene '%s'", name.c_str());
+			putchar(10);
+
+			TVList objects;
+			TVList actions;
+
+			TVisObjRef(scene).GetLinks(kSceneActions, TypeOrder::kValue1, actions);
+			for (TVisionaireObject *action : actions) {
+				printf("  scene action %d '%s' type %d", action->GetId24(), static_cast<const char *>(wxString(action->GetName()).mb_str()), action->GetInt(kActionExecutionType));
+				putchar(10);
+			}
+			TVisObjRef(scene).GetLinks(kSceneObjects, TypeOrder::kValue1, objects);
+			for (TVisionaireObject *object : objects) {
+				TVList objectActions;
+
+				TVisObjRef(object).GetLinks(kObjectActions, TypeOrder::kValue1, objectActions);
+				printf("  object '%s' condition %d, %d actions", static_cast<const char *>(wxString(object->GetName()).mb_str()), (int)object->GetInt(kObjectCondition), (int)objectActions.size());
+				putchar(10);
+			}
+		}
+		return 0;
+	}
+
 	control->RegisterEventHandler();
 	control->InitAfterLoadingScreen();
 	control->ExecuteStartingAction();
@@ -91,10 +180,25 @@ int main(int argc, char **argv) {
 				break;
 			}
 		}
+		if (frame == 5 && getenv("RENDER_RUN")) {
+			// starts the action with this id
+			TVisObjRef action(control->GetVisionaire()->GetObjectById(TId(atoi(getenv("RENDER_RUN")), 7)));
+
+			printf("running action '%s'\n", static_cast<const char *>(wxString(action.GetName()).mb_str()));
+			TGAction::AddRunningAction(action);
+		}
 		TGAction::ContinueRunningActions(false);
 		control->Update();
 		control->Draw(true);
 
+		if (getenv("RENDER_RUNNING") && frame % every == every - 1) {
+			std::list<wxString> lines;
+
+			TGAction::PrintRunningActions(lines);
+			for (const wxString &line : lines)
+				printf("  running: %s", static_cast<const char *>(line.mb_str()));
+			putchar(10);
+		}
 		if (frame % every == every - 1) {
 			std::string name = outDir + "/frame_" + std::to_string(frame + 1) + ".png";
 			TGScene *scene = control->GetScene();
