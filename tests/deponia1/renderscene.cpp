@@ -187,6 +187,37 @@ int main(int argc, char **argv) {
 			printf("running action '%s'\n", static_cast<const char *>(wxString(action.GetName()).mb_str()));
 			TGAction::AddRunningAction(action);
 		}
+		if (getenv("RENDER_CLICK")) {
+			// RENDER_CLICK=frame:x:y,frame:x:y... clicks with the left button at the position (of the 1920x1080 frame)
+			std::string clicks = getenv("RENDER_CLICK");
+			size_t at = 0;
+
+			while (at < clicks.size()) {
+				int clickFrame = 0, x = 0, y = 0, used = 0;
+
+				if (sscanf(clicks.c_str() + at, "%d:%d:%d%n", &clickFrame, &x, &y, &used) < 3)
+					break;
+				at += used;
+				if (at < clicks.size() && clicks[at] == ',')
+					at++;
+				if (clickFrame == frame) {
+					printf("click %d, %d\n", x, y);
+					wxPoint point;
+
+					point.x = x;
+					point.y = y;
+					control->HandleMouseMove(point, false);
+					control->HandleMouseUp(point, TMouseMessageEnum::kLeftDown);
+					control->HandleMouseUp(point, TMouseMessageEnum::kLeftUp);
+				}
+			}
+		}
+		if (control->IsVideoPlaying()) {
+			// (the main loop only runs the movie while one plays; without a player it ends at once)
+			control->VideoFrame();
+			wxMilliSleep(16);
+			continue;
+		}
 		TGAction::ContinueRunningActions(false);
 		control->Update();
 		control->Draw(true);
