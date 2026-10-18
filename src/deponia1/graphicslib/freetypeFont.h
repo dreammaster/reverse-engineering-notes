@@ -9,10 +9,9 @@
 // What is not: the original puts the glyphs into textures of the GL backend and draws quads in the batches of the
 // shaders (TSpritePartTexture, TGraphicsOGL::BindIndizesBuffer, region, GLCharBuffer); here each glyph is a sprite of the
 // graphics backend and is drawn by TGraphicsInterface::Draw(), so every backend can show the text. The original also
-// shapes the text with HarfBuzz (itemize(), hb_shape(): the ligatures and the shapes of the letters of Arabic, the order of
-// the letters of a right-to-left run); here a glyph is the one the character maps to, in the order of the string
-// (TODO: HarfBuzz, third_party/harfbuzz). The font that the original keeps for characters this one has not (+0x110) is
-// not done either.
+// shapes the text with HarfBuzz (itemize(), hb_shape(), third_party/harfbuzz 1.8.8): the text is cut into runs of one script, each
+// is shaped in its direction (the ligatures and the forms of the letters of Arabic) and a line with a right-to-left run is laid
+// out from the right. The font that the original keeps for characters this one has not (+0x110) is not done.
 #pragma once
 
 #include <map>
@@ -25,6 +24,7 @@ class GLCharBuffer;
 class TSpriteHandle;
 
 struct FT_FaceRec_;
+struct hb_font_t;
 
 class TFreetypeFont {
 public:
@@ -81,6 +81,7 @@ private:
 
 	FontFile *_file = nullptr;
 	FT_FaceRec_ *_face = nullptr;
+	hb_font_t *_shaper = nullptr;  // HarfBuzz's font for the face (hb_ft_font_create)
 	bool _valid = false;       // +0xF4
 	int _size = 0;             // +0x108
 	bool _border = false;      // +0xD8

@@ -3848,7 +3848,10 @@ and a line break lets the next line start with the spacing.
 Different on purpose: the glyphs are sprites of the graphics backend (TGraphicsInterface::CreateSprite) drawn with Draw(), shadow
 first (black), then the outline, then the glyph; the original puts them in GL textures (TSpritePartTexture) and draws quads in
 batches of its shaders. The original renders LCD (3 bytes a pixel, averaged to the alpha): here 8 bit coverage.
-Not done: the shaping with HarfBuzz (itemize, hb_shape): Arabic is drawn letter by letter, in the order of the string.
+HarfBuzz 1.8.8 shapes the text as in the original (itemize: runs of one script; hb_shape in the direction of the run, the language
+"ar" for Arabic): the joined forms and the ligatures of Arabic, the lines with a right-to-left letter laid out from the right (their
+runs in the opposite order). `StringLength` measures per character, not shaped, as the original does: an Arabic line is a little
+narrower than its measure.
 
 ## Reformatted to ScummVM's code conventions
 

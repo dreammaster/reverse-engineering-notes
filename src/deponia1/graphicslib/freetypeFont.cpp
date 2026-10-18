@@ -17,6 +17,9 @@
 #include FT_GLYPH_H
 #include FT_STROKER_H
 
+#include <hb-ft.h>
+#include <hb.h>
+
 // The font files that are in use, by path (the original's font_cache: a file is read once for all the fonts that name it).
 struct TFreetypeFont::FontFile {
 	std::vector<unsigned char> data;
@@ -51,6 +54,9 @@ TFreetypeFont::TFreetypeFont() {
 
 TFreetypeFont::~TFreetypeFont() {
 	clear();
+
+	if (_shaper)
+		hb_font_destroy(_shaper);
 
 	if (_face)
 		FT_Done_Face(_face);
@@ -135,6 +141,11 @@ bool TFreetypeFont::CreateFont(const wxString &path, float size, int color, bool
 
 	_maxBearingY = 0;
 
+	if (_shaper) {
+		hb_font_destroy(_shaper);
+		_shaper = nullptr;
+	}
+
 	if (_face) {
 		FT_Done_Face(_face);
 		_face = nullptr;
@@ -167,6 +178,7 @@ bool TFreetypeFont::CreateFont(const wxString &path, float size, int color, bool
 	_size = static_cast<int>(size);
 
 	FT_Set_Char_Size(_face, 0, static_cast<FT_F26Dot6>(size * 64.0f), 0, 0);
+	_shaper = hb_ft_font_create(_face, nullptr);
 	_lineHeight = _size;
 	return true;
 }
@@ -326,13 +338,68 @@ int TFreetypeFont::StringLength(const std::string &utf8) {
 void TFreetypeFont::CheckFillRate() {
 }
 
-// Confirmed in the structure (asm lines 1586955-1588876, RenderString_i): the characters are placed one after the other from
-// the pen, the top of the line is `y` and the baseline `_maxBearingY` below it; a shadow (the glyphs moved by the shadow
-// offset, times the scale) is drawn first, then the outline in its colour and then the glyphs. The original draws quads of
-// the glyph textures in a batch; here each glyph is drawn by the backend. A line break goes down by the line height.
+/** A run of the text of one script (the original's IItem, made by itemize(): asm 1585986). */
+struct Run {
+	size_t begin;
+	size_t end;
+	hb_script_t script;
+	hb_direction_t direction;
+};
+
+/** The text cut into runs: a character of no script of its own (a space, a digit, a mark) goes with the run before it (or the one
+ *  after it at the start of the line); the direction of a run is that of its script. */
+static std::vector<Run> itemize(const std::vector<unsigned> &codes) {
+	hb_unicode_funcs_t *unicode = hb_unicode_funcs_get_default();
+	std::vector<hb_script_t> scripts(codes.size());
+	hb_script_t last = HB_SCRIPT_INVALID;
+
+	for (size_t i = 0; i < codes.size(); i++) {
+		hb_script_t script = hb_unicode_script(unicode, codes[i]);
+
+		if (script == HB_SCRIPT_COMMON || script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_UNKNOWN)
+			script = last;
+		else
+			last = script;
+
+		scripts[i] = script;
+	}
+
+	// (the characters at the start that had no script to follow take the first one that has)
+	hb_script_t next = HB_SCRIPT_COMMON;
+
+	for (size_t i = codes.size(); i > 0; i--) {
+		if (scripts[i - 1] == HB_SCRIPT_INVALID)
+			scripts[i - 1] = next;
+		else
+			next = scripts[i - 1];
+	}
+
+	std::vector<Run> runs;
+
+	for (size_t i = 0; i < codes.size(); i++) {
+		if (!runs.empty() && runs.back().script == scripts[i]) {
+			runs.back().end = i + 1;
+			continue;
+		}
+
+		hb_direction_t direction = hb_script_get_horizontal_direction(scripts[i]);
+
+		runs.push_back({i, i + 1, scripts[i], direction == HB_DIRECTION_RTL ? HB_DIRECTION_RTL : HB_DIRECTION_LTR});
+	}
+
+	return runs;
+}
+
+// Confirmed in the structure (asm lines 1586955-1588876, RenderString_i): each line is cut into runs of one script (itemize),
+// each run is shaped (hb_shape, in its direction and script, the language of Arabic given) and the glyphs are put one after
+// the other from the pen: the top of the line is `y` and the baseline `_maxBearingY` below it. A line with a right-to-left
+// letter is laid out from the right: its runs go in the opposite order (and each in its own direction). A shadow (the glyphs
+// moved by the shadow offset, times the scale) is drawn first, then the outline in its colour and then the glyphs. The original
+// draws quads of the glyph textures in a batch; here each glyph is drawn by the backend. A line break goes down by the
+// line height.
 void TFreetypeFont::RenderString(float x, float y, const std::string &utf8, float scale, int firstLetter, int lastLetter,
                                  GLCharBuffer * /*buffer*/, bool /*flag*/) {
-	if (!_valid || !graphics || utf8.empty())
+	if (!_valid || !graphics || !_shaper || utf8.empty())
 		return;
 
 	struct Placed {
@@ -342,34 +409,83 @@ void TFreetypeFont::RenderString(float x, float y, const std::string &utf8, floa
 	};
 
 	std::vector<Placed> placed;
-	float left = std::floor(x);
-	float penX = left;
+	std::vector<unsigned> all;
+
+	for (size_t pos = 0; pos < utf8.size();)
+		all.push_back(decodeUtf8(utf8, pos));
+
+	const float left = std::floor(x);
 	float penY = std::floor(y);
-	size_t pos = 0;
-	int index = 0;
+	size_t lineStart = 0;
 
-	while (pos < utf8.size()) {
-		unsigned code = decodeUtf8(utf8, pos);
-		Character *character = GetChar(code);
-
-		if (code == 0x0A) {
-			penX = left;
-			penY += static_cast<float>(_lineHeight) * scale;
-			index++;
+	for (size_t lineEnd = 0; lineEnd <= all.size(); lineEnd++) {
+		if (lineEnd < all.size() && all[lineEnd] != 0x0A)
 			continue;
+
+		std::vector<unsigned> codes(all.begin() + lineStart, all.begin() + lineEnd);
+		std::vector<Run> runs = itemize(codes);
+
+		// the base direction of the line is that of its first letter of a script with a direction of its own
+		bool rightToLeft = false;
+
+		for (const Run &run : runs) {
+			if (run.script != HB_SCRIPT_COMMON && run.script != HB_SCRIPT_INVALID) {
+				rightToLeft = (run.direction == HB_DIRECTION_RTL);
+				break;
+			}
 		}
 
-		bool shown = (firstLetter < 0 || index >= firstLetter) && (lastLetter < 0 || index <= lastLetter);
+		if (rightToLeft)
+			std::reverse(runs.begin(), runs.end());
 
-		if (shown && code != 0x20 && code != 0x09 && code != 0x0D)
-			placed.push_back({character, penX, penY});
+		float penX = left;
 
-		if (code == 0x20)
-			penX += static_cast<float>(static_cast<double>(_size) / 4.2 + _letterSpacing) * scale;
-		else
-			penX += static_cast<float>(character->_advance + _letterSpacing) * scale;
+		for (const Run &run : runs) {
+			hb_buffer_t *buffer = hb_buffer_create();
 
-		index++;
+			hb_buffer_add_utf32(buffer, codes.data() + run.begin, static_cast<int>(run.end - run.begin), 0,
+			                    static_cast<int>(run.end - run.begin));
+			hb_buffer_set_direction(buffer, run.direction);
+			hb_buffer_set_script(buffer, run.script);
+
+			if (run.script == HB_SCRIPT_ARABIC)
+				hb_buffer_set_language(buffer, hb_language_from_string("ar", -1));
+
+			hb_shape(_shaper, buffer, nullptr, 0);
+
+			unsigned int count = 0;
+			hb_glyph_info_t *infos = hb_buffer_get_glyph_infos(buffer, &count);
+			hb_glyph_position_t *positions = hb_buffer_get_glyph_positions(buffer, &count);
+
+			for (unsigned int i = 0; i < count; i++) {
+				size_t at = run.begin + infos[i].cluster;
+				unsigned code = codes[at];
+				int index = static_cast<int>(lineStart + at);
+
+				if (code == 0x20 || code == 0x09) {
+					float width = (code == 0x20) ? static_cast<float>(static_cast<double>(_size) / 4.2) : static_cast<float>(GetChar(code)->_advance);
+
+					penX += (width + static_cast<float>(_letterSpacing)) * scale;
+					continue;
+				}
+
+				bool shown = (firstLetter < 0 || index >= firstLetter) && (lastLetter < 0 || index <= lastLetter);
+
+				if (shown && code != 0x0D) {
+					Character *character = glyph(infos[i].codepoint);
+
+					placed.push_back({character, penX + static_cast<float>(positions[i].x_offset) / 64.0f * scale,
+					                  penY - static_cast<float>(positions[i].y_offset) / 64.0f * scale});
+				}
+
+				penX += (static_cast<float>(positions[i].x_advance) / 64.0f + static_cast<float>(_letterSpacing)) * scale;
+			}
+
+			hb_buffer_destroy(buffer);
+		}
+
+		penY += static_cast<float>(_lineHeight) * scale;
+		lineStart = lineEnd + 1;
 	}
 
 	// (the baseline: `_maxBearingY` can grow while the glyphs above are made, so it is read after the loop)

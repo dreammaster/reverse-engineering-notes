@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the third-party libraries of third_party/ (the versions of the original, see THIRD_PARTY.md) as static libraries:
 build/third_party/<bits>/lib<name>.a with the headers they need staying where they are in third_party/.
-Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype; default all)"""
+Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz; default all)"""
 import os
 import re
 import subprocess
@@ -13,6 +13,7 @@ TP = os.path.join(ROOT, "third_party")
 bits = 32 if "-32" in sys.argv else 64
 BIN = r"C:\mingw64\bin" if bits == 64 else r"C:\mingw32\bin"
 CC = os.path.join(BIN, "gcc.exe")
+CXX = os.path.join(BIN, "g++.exe")
 AR = os.path.join(BIN, "ar.exe")
 OUT = os.path.join(ROOT, "build", "third_party", str(bits))
 
@@ -77,6 +78,13 @@ def libs():
         "psnames/psmodule.c", "raster/raster.c", "sfnt/sfnt.c", "smooth/smooth.c", "truetype/truetype.c", "type1/type1.c",
         "type42/type42.c", "winfonts/winfnt.c")]
 
+    hb = os.path.join(TP, "harfbuzz", "src")
+    h = read_mk(os.path.join(hb, "Makefile.sources"))
+    # the library as the original has it: the base and the OpenType shapers, the UCDN Unicode functions and the FreeType glue
+    harfbuzz_files = [os.path.join(hb, f) for f in h["HB_BASE_sources"] + h["HB_FALLBACK_sources"] + h["HB_OT_sources"] +
+                      h["HB_FT_sources"] + h["HB_UCDN_sources"] if f.endswith(".cc")]
+    harfbuzz_files.append(os.path.join(hb, "hb-ucdn", "ucdn.c"))
+
     opus_inc = [os.path.join(opus, d) for d in ("include", "celt", "silk", "silk/float", "src")]
     return {
         "ogg": (ogg_files, [os.path.join(ogg, "include"), gen], []),
@@ -85,6 +93,8 @@ def libs():
         "opusfile": (opusfile_files, [os.path.join(TP, "opusfile", "include"), os.path.join(opus, "include"),
                                       os.path.join(ogg, "include"), gen], ["-DOP_HAVE_LRINTF", "-DOP_ENABLE_ASSERTIONS=0"]),
         "freetype": (freetype_files, [os.path.join(TP, "freetype", "include")], ["-DFT2_BUILD_LIBRARY"]),
+        "harfbuzz": (harfbuzz_files, [hb, os.path.join(hb, "hb-ucdn"), os.path.join(TP, "freetype", "include")],
+                     ["-DHAVE_OT", "-DHAVE_FALLBACK", "-DHAVE_UCDN", "-DHAVE_FREETYPE", "-DHB_NO_MT"]),
         "webp": (webp_files, [os.path.join(webp, "src"), webp], []),
     }
 
@@ -103,7 +113,9 @@ def compile_one(item):
     os.makedirs(os.path.dirname(obj), exist_ok=True)
     if os.path.exists(obj) and os.path.getmtime(obj) >= os.path.getmtime(src):
         return None
-    cmd = [CC, "-O2", "-w", "-c", src, "-o", obj] + defs + flags_for(src)
+    cmd = [CXX if src.endswith(".cc") else CC, "-O2", "-w", "-c", src, "-o", obj] + defs + flags_for(src)
+    if src.endswith(".cc"):
+        cmd += ["-std=c++11", "-fno-exceptions", "-fno-rtti", "-fno-threadsafe-statics"]
     for i in incs:
         cmd += ["-I", i]
     r = subprocess.run(cmd, capture_output=True, text=True)
