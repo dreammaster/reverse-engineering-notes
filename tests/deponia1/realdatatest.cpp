@@ -207,6 +207,21 @@ int main(int argc, char **argv) {
 		printf("opus: %d opened, %d not, %lld ms, %lld bytes\n", opened, unopened, milliseconds, bytes);
 		CHECK(unopened == 0);
 	}
+	if (loaded) {
+		TPictureIO lightmap;
+		wxFileName lpath(L"data/assets/scenes/ch1/1001/1001_lightmap.webp#s#000#00002#");
+
+		bool ok = lightmap.LoadPicture(lpath, TPictureIO::eLoadSetting::ForceReload);
+
+		printf("lightmap %d: %dx%d\n", (int)ok, lightmap.GetMemWidth(), lightmap.GetMemHeight());
+		if (ok && lightmap.GetMemoryData()) {
+			for (int i = 0; i < 4; i++) {
+				const unsigned char *p = reinterpret_cast<const unsigned char *>(lightmap.GetLine(lightmap.GetMemHeight() / 2)) + (lightmap.GetMemWidth() / 5 * (i + 1)) * 4;
+
+				printf("pixel %d: %d %d %d %d\n", i, p[0], p[1], p[2], p[3]);
+			}
+		}
+	}
 	(void)argc;
 	(void)argv;
 	printf("%d failures\n", failures);

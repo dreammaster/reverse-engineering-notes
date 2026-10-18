@@ -3799,6 +3799,19 @@ automatic suite. What the real data found that the made-up games could not:
   decodes the Ogg Opus sounds; the length in milliseconds agrees with the bytes decoded.
 - Pictures are all WebP, sounds all Ogg Opus; no model or Spine animation. The libraries and their versions: `THIRD_PARTY.md`.
 
+## The software backend and the headless render (graphicslib/softwareGraphics.cpp, tests/deponia1/renderscene.cpp)
+
+`TSoftwareGraphics` is a `TGraphicsInterface` that draws into a picture in memory (the sprites are kept as the RGBA pixels they
+were made from; `Draw()` scales, turns, mirrors and blends premultiplied, `DrawBox()`, `DrawLine()`, `Swap()` keeps the frame,
+`SavePNG()` writes it). It stands in for the OpenGL backend (not reconstructed) so that the game runs without a window. Not done:
+shaders, the light map of `DrawWithLightMap`, particles, the matrices of the scripts, the transitions between scenes.
+
+`renderscene <out directory> [frames [every [reduce]]]`, run from the game directory, loads the real data, runs the start action and
+writes a PNG every `every` frames; `RENDER_SCENE=<the first letters of a scene name>` goes to a scene after 10 frames (and sets its
+brightness to 100: the start action of the game puts the scenes in the dark and its own actions fade them in), `RENDER_LIST=1`
+lists the scenes, `RENDER_TRACE=1` prints the first draw calls of a frame. Scenes of the chapters 1 to 3 draw with their
+layers, the animated objects and the characters of the scene (`1001`, `1007`, `1013`, `2001`, `3001` looked at).
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
