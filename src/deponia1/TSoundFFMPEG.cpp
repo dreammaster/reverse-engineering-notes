@@ -119,10 +119,7 @@ bool TSoundFFMPEG::IsSoundSystemReady() const {
 	return false;
 }
 
-TSoundStream *TSoundFFMPEG::CreateStream(const wxFileName &/*file*/, bool /*loop*/) {
-	// TODO: the OpenAL/FFmpeg streams (soundengine::Stream, asm 1050000-1060000) are not reconstructed.
-	return nullptr;
-}
+// (CreateStream() is in TSoundSilent.cpp: a stream that goes by the clock and plays nothing.)
 
 void TSoundFFMPEG::ApplyListenerVolume(float /*volume*/) {
 }

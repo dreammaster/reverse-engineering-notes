@@ -3830,8 +3830,10 @@ game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel an
   not come back by name from a savegame; the scripts rely on that (`charAniExtension` would lose its metatable).
 - "RunningActions.size() == ActionIdToRunningAction.size()" at the first line of `DeleteFinishedActions` is seen after a load
   (LoadActions marks the old actions finished and registers the new ones before the table is made again): the original does the same.
-- Still missing for the speech: the sound streams (`CreateStream` gives none: no sound plays, every sound logs "Failed to open
-  soundfile"), and a movie player.
+- The sounds: `TSoundFFMPEG::CreateStream` (TSoundSilent.cpp) opens the file (a composed file too), reads its length with the Opus
+  source and gives a stream that plays nothing and goes by the clock (offset, end, loop, pause). The speech of the tutorial intro
+  then runs to its end; a click on the platform makes the character walk. A real device replaces `CreateStream`.
+- Still missing: a movie player.
 
 ## Reformatted to ScummVM's code conventions
 
