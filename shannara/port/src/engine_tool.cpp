@@ -70,7 +70,9 @@ int main(int argc, char **argv) {
 					e.callFunction(0x1B470, (uint32_t)v, (uint32_t)d, (uint32_t)i);
 				} else if (!strcmp(op, "goto")) { // goto ROOM (go_to_room?)
 					r = e.callFunction(0x1EE10, (uint32_t)v);
-				} else if (!strcmp(op, "call")) { // call ADDR EAX EDX: any game-layer function (overlay condition callbacks...)
+				} else if (!strcmp(op, "phase")) { // phase OBJ PHASE: call_object_handler?(obj, phase) - the lifecycle phases the command pipeline never sends
+						r = e.callFunction(0x21AF4, (uint32_t)v, (uint32_t)d);
+					} else if (!strcmp(op, "call")) { // call ADDR EAX EDX: any game-layer function (overlay condition callbacks...)
 						r = e.callFunction((uint32_t)v, (uint32_t)d, (uint32_t)i);
 					} else if (!strcmp(op, "attr")) { // attr OBJ ATTR 0|1
 					e.callFunction(i ? 0x1A1B0 : 0x1A1D8, (uint32_t)v, (uint32_t)d);

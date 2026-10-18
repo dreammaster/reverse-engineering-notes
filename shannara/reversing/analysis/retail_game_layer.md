@@ -938,3 +938,19 @@ The oracle also models the clock like the native engine now (`SHAN_CLOCK_STEP`, 
 Result with the default clock: seeds 6 and 8, 300 scenarios x 40 commands each (117,328 commands, 331,891 operations): text, object/flag hash, the 92 savegame regions, the whole
 data-segment CRC and the boundary-event streams are identical (0 mismatches). With an artificial clock step (`SHAN_CLOCK_STEP=7`, seed 7) state, text and regions still agree, but UI
 wait loops (`goto 105`) differ in how many times they poll (the oracle's real library code also reads the clock) and scratch memory differs afterwards; that setting is not used for parity.
+
+### 34.2 Coverage-guided exploration (`port/build/fuzz_tool.exe`)
+
+Random testing saturates at ~44k covered instructions however long it runs, because most remaining branches need *combinations* of state. `port/src/fuzz_tool.cpp` explores on the
+native engine (no oracle, thousands of operations per second): a scenario is a list of operations (`reset`, `flag`, `goto`, `move`, `cmd`, `attr`, `phase` = `call_object_handler?(obj, phase)`
+for the lifecycle phases the command pipeline never sends); scenarios that execute game-layer instructions no earlier scenario did are kept and extended with more random operations
+(scope-aware command generation: objects in the room and in the party's hands are preferred; flag densities are re-drawn at the start of new lineages). At the end a greedy set
+cover writes the fewest scenarios that reach everything found, and `tests/replay_diff.py OPS` replays those on the unicorn oracle with every comparison `state_diff.py` makes.
+
+Results: 10 minutes reach 51.6k instructions, 30 minutes 54.3k (saturating; the rest is dead code or needs input the headless shims never deliver - cutscene/combat waits). The 100 scenarios
+selected from the 30-minute run (93,651 operations through deep game states) replay with **0 mismatches** in text, object/flag hash, the 92 savegame regions, the whole data-segment CRC
+and the boundary events (polling-loop events - sound/mouse/key/video/event waits - are excluded: their repeat counts depend on the clock and on register leftovers).
+It also exposed two more bugs: the oracle kept `memset_` real but stubbed its helper `__STOSB`/`__STOSD` (so oracle memsets did not fill), and the extra entry `0x6516C` (the shared
+"return 0" tail) had been dumped as a copy of the enclosing function `objh_583` (an address *inside* an IDA function must be walked from, not enumerated with `FuncItems`) - visible only
+through commands on objects whose handler-table entry points at that tail ("Look at" object 642 in a late-game state).
+Union coverage over all runs: 638 of 639 object handlers (the last, `objh_596`, is entered through a lifecycle phase), 49.7 % of handler instructions, 25.6 % of the rest of the game layer.

@@ -26,15 +26,8 @@ POLL = {"update_sound", "get_mouse_button", "key_hit", "video_sync", "get_event"
 
 
 def collapse(lst):
-    """polling loops spin a clock-dependent number of times: keep one entry per run of the same polling call (name and stack arguments)"""
-    out = []
-    for x in lst:
-        t = x.split()
-        key = (t[0], t[5:])
-        if out and t[0] in POLL and out[-1][0] == key:
-            continue
-        out.append((key, x))
-    return [x for _, x in out]
+    """polling loops (sound/mouse/key/video/event waits) spin a clock- and register-junk-dependent number of times and carry no game semantics: leave them out"""
+    return [x for x in lst if x.split()[0] not in POLL]
 
 
 def fnv(data, h=1469598103934665603):
@@ -94,6 +87,8 @@ def main():
             elif kind == "attr":
                 g.call(0x1A1B0 if a[2] else 0x1A1D8, eax=a[0], edx=a[1])
                 r = 0
+            elif kind == "phase":
+                r = g.call(0x21AF4, eax=a[0], edx=a[1]) & 0xFFFFFFFF
             elif kind == "call":
                 r = g.call(a[0], eax=a[1], edx=a[2]) & 0xFFFFFFFF
             else:

@@ -27,15 +27,8 @@ POLL = {"update_sound", "get_mouse_button", "key_hit", "video_sync", "get_event"
 
 
 def collapse(lst):
-    """polling loops spin a clock-dependent number of times: keep one entry per run of the same polling call (name and stack arguments)"""
-    out = []
-    for x in lst:
-        t = x.split()
-        key = (t[0], t[5:])
-        if out and t[0] in POLL and out[-1][0] == key:
-            continue
-        out.append((key, x))
-    return [x for _, x in out]
+    """polling loops (sound/mouse/key/video/event waits) spin a clock- and register-junk-dependent number of times and carry no game semantics: leave them out"""
+    return [x for x in lst if x.split()[0] not in POLL]
 
 
 def fnv(data, h=1469598103934665603):
@@ -144,8 +137,19 @@ def main():
                 continue
             checked("call %d %d 0" % (fn, arg), r)
         for _ in range(per):
-            vid, nobj = rng.choice(verbs)
             pick = lambda: rng.choice(scope) if rng.random() < 0.8 else rng.randrange(1, n + 1)
+            if rng.random() < 0.08:     # a lifecycle phase sent straight to an object's handler (the engine does this on arrival, leave, draw, restore ...)
+                ph_obj, ph = pick(), rng.randrange(1, 37)
+                snap = g.snapshot()
+                try:
+                    r = g.call(0x21AF4, eax=ph_obj, edx=ph) & 0xFFFFFFFF
+                except Exception:
+                    g.restore(snap)
+                    take_events()
+                    continue
+                checked("phase %d %d 0" % (ph_obj, ph), r)
+                continue
+            vid, nobj = rng.choice(verbs)
             d = pick() if nobj >= 1 else 0
             i = pick() if nobj >= 2 else 0
             snap = g.snapshot()

@@ -17,7 +17,7 @@
 using namespace shannara;
 
 struct Op {
-	char kind; // R reset, F flag, G goto, M move, C cmd, A attr
+	char kind; // R reset, F flag, G goto, M move, C cmd, A attr, P phase
 	int a, b, c;
 };
 
@@ -28,6 +28,7 @@ static const char *kindName(char k) {
 	case 'G': return "goto";
 	case 'M': return "move";
 	case 'C': return "cmd";
+	case 'P': return "phase";
 	default: return "attr";
 	}
 }
@@ -97,6 +98,7 @@ public:
 			case 'M': _e.callFunction(0x1B470, (uint32_t)o.a, (uint32_t)o.b, (uint32_t)o.c); break;
 			case 'C': _e.command(o.a, o.b, o.c); break;
 			case 'A': _e.callFunction(o.c ? 0x1A1B0 : 0x1A1D8, (uint32_t)o.a, (uint32_t)o.b); break;
+			case 'P': _e.callFunction(0x21AF4, (uint32_t)o.a, (uint32_t)o.b); break;
 			}
 		} catch (const std::exception &) {
 			return false;
@@ -122,6 +124,10 @@ public:
 	Op randomOp(bool &changesScope) {
 		changesScope = false;
 		double r = uni();
+		if (r < 0.06) {
+			int o = !_scope.empty() && uni() < 0.5 ? _scope[_rng() % _scope.size()] : 1 + (int)(_rng() % _objects);
+			return {'P', o, 1 + (int)(_rng() % 36), 0};
+		}
 		if (r < 0.72) {
 			Verb v = _verbs[_rng() % _verbs.size()];
 			auto pick = [&]() { return !_scope.empty() && uni() < 0.8 ? _scope[_rng() % _scope.size()] : 1 + (int)(_rng() % _objects); };

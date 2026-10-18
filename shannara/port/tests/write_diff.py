@@ -33,6 +33,8 @@ def apply(g, p, base):
         g.command(*a)
     elif kind == "attr":
         g.call(0x1A1B0 if a[2] else 0x1A1D8, eax=a[0], edx=a[1])
+    elif kind == "phase":
+        g.call(0x21AF4, eax=a[0], edx=a[1])
     elif kind == "call":
         g.call(a[0], eax=a[1], edx=a[2])
     g.text()

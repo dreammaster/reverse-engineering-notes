@@ -32,6 +32,8 @@ def main():
             g.call(0x1EE10, eax=a[0])
         elif p[0] == "move":
             g.call(0x1B470, eax=a[0], edx=a[1], ebx=a[2])
+        elif p[0] == "phase":
+            g.call(0x21AF4, eax=a[0], edx=a[1])
         elif p[0] == "call":
             g.call(a[0], eax=a[1], edx=a[2])
         elif p[0] == "cmd":
