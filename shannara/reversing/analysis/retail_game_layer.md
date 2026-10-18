@@ -954,3 +954,9 @@ It also exposed two more bugs: the oracle kept `memset_` real but stubbed its he
 "return 0" tail) had been dumped as a copy of the enclosing function `objh_583` (an address *inside* an IDA function must be walked from, not enumerated with `FuncItems`) - visible only
 through commands on objects whose handler-table entry points at that tail ("Look at" object 642 in a late-game state).
 Union coverage over all runs: 638 of 639 object handlers (the last, `objh_596`, is entered through a lifecycle phase), 49.7 % of handler instructions, 25.6 % of the rest of the game layer.
+
+Exhaustive lifecycle-phase matrix (`replay_diff.py` on a generated file: for every object 1-744 and every phase 1-36, `reset` + `phase OBJ PHASE`): **53,526 operations, 0 mismatches** (text, state, 92 regions, data CRC,
+events). One more oracle fix came out of it: the oracle's `snapshot/restore` did not cover the stack, so uninitialised stack variables read by some handlers (object 704, phases 1-36) saw leftovers from earlier
+operations while the native engine (whole-image restore) saw zeros; the stack window 0x8E0000-0x900000 is now part of the snapshot. Union coverage after all runs: **638/639 handlers, 55.0 % of their instructions**.
+The one handler no run reaches is `objh_596` (object 674): it starts a combat encounter (`enc_hook_06?`), which needs the combat tables that the headless setup does not create (the oracle faults reading them);
+combat is outside the verified headless scope.

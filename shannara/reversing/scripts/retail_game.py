@@ -253,7 +253,7 @@ class Game(RetailEmu):
         return fn(eip), hex(eip), chain
 
     # ---- snapshots (explore alternatives from the same state) --------------------------------------------------------------
-    SNAP_RANGES = ((0x10000, 0x9D000), (0xA0000, 0xF0000))   # code object (it holds tables) and data object + BSS
+    SNAP_RANGES = ((0x10000, 0x9D000), (0xA0000, 0xF0000), (0x8E0000, 0x900000))   # code object (it holds tables) and data object + BSS
 
     def snapshot(self):
         mem = [(a, bytes(self.uc.mem_read(a, b - a))) for a, b in self.SNAP_RANGES]
