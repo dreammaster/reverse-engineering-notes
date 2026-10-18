@@ -176,6 +176,10 @@ public:
 	int GetRevision() const {
 		return _revision;
 	}
+	/** The "Game" object (the main object of the project). */
+	TVisionaireObject *GetMainObject() const {
+		return _mainObject;
+	}
 	void SetRevision(int revision) {
 		_revision = revision;
 	}

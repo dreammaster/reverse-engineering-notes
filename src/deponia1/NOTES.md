@@ -3746,6 +3746,35 @@ the second float of the camera is written over the first. `Save()` reads the pos
 position is not restored; the same for the two rotations of the force (int fields set as floats). `Load()` of an older file
 stops early and sets defaults: 1 has no path, 2 no active stages, 3 no tiles curve, 4 no largest tile, 5 no camera.
 
+## The XML project reader (datastruct/xmlProjectReader.cpp, baselib/xmlDom.cpp)
+
+`TXMLProjectReader` reads the editor's own format (XML) of a project, a savegame or a clipboard; the game's data is binary
+(`binaryProjectReader.cpp`), so this is for projects from the editor. The original parses with rapidxml, which is third-party:
+`baselib/xmlDom.h` is a small parser with the same result (elements, attributes with their character references, no nodes for
+the declaration, comments and doctype, a nameless data node for text that is not only white space).
+
+`parseNodes()` walks the elements with the state of `UserData` (0 root, 1 the `Game` object, 2 tables, 3 objects, 4 fields,
+5 the position of a sprite): an element is opened according to the state, its children are read (the same function), then it is
+closed according to the state it then has. The fields that are attributes (ints, floats, strings, paths, bools) go to
+`TData::SerializeParam()`; the lists, points, rects, sprites and links are elements, collected in lists of the `UserData` that keep
+their elements from field to field (`index` counts the ones in use) and put in the field when its element closes. Found while
+reading it:
+
+- The first table of the file is only read if it is the Loadings, and a second pass (loading type 1) leaves the Loadings alone;
+  a first pass (type 0) reads every table, so type 0 followed by 1 has the objects of the other tables twice (the binary reader
+  reads only the Loadings in the first pass). `UserData::loadingDone` is set when the Loadings end and nothing reads it.
+- The root element gives the version (an error without), the project type and the revision (not for a savegame); a file of
+  another version than 0xBA makes the project upgrade its types first (`InitWithVersion`, then the temporary data).
+- A savegame (`saveGame`) has its own tags that are not in the table of the XML names (`TextsSave`, `ActionsSave`,
+  `AnimationsSave` for the tables 0x18-0x1A, and `TextSave` ... for their objects): the unknown name is recognized by its text.
+  The objects of a savegame table that is not active are found by their id instead of made, and a missing one makes the elements
+  of its fields be read over. When a savegame is loaded over data, the links the field has are taken out of the link table first.
+- An unknown tag ends the whole load (`parseNodes` returns with the error flag); other errors only set the flag.
+- `ReadXMLDoc(TVedFile &...)` reads the file whole or as blocks (`IsContentCompressedChunks`: 8 bytes, big endian, the
+  uncompressed and stored sizes, then the block; a first size of 0xFFEEFFEE ends it), decrypts, uncompresses, and signals the
+  loading progress (0 of 12, the kSignalLoadingProgress) once. The document and its text stay between the passes (type 0 keeps
+  them, 1 and 2 free them). `xmltest` writes a project as XML, reads it again and checks that the text written again is the same.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

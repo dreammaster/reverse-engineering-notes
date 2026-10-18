@@ -6,6 +6,7 @@
 #include <EventHandler.h>
 #include "LoadSaveProgressEvent.h"
 #include "TXMLNames.h"
+#include "datastruct/xmlProjectReader.h"
 #include "baselib/xmlWriter.h"
 #include "datastruct/link.h"
 #include "TComposedFileManager.h"
@@ -949,8 +950,7 @@ wxString TVisionaire::SaveDataGameToString() {
 // savegame (which is only ever loaded in one go, type 2); `type` is described
 // at TLoadingTypeEnum. Game data (but not a savegame) clears the project first;
 // a savegame resets the active objects instead. Binary files go to
-// BinaryLoad(); the XML project reader (TXMLProjectReader) is not
-// reconstructed yet, so an XML file fails to load.
+// BinaryLoad(), XML files to TXMLProjectReader::ReadXMLDoc().
 bool TVisionaire::Load(const wxFileName &file, const wxString &extra, eSaveGame saveGame,
                        TLoadingTypeEnum type, int *outFlag, TSignalSlot *slot, EventHandler *handler) {
 	int gameType = (int)saveGame;
@@ -999,12 +999,13 @@ bool TVisionaire::Load(const wxFileName &file, const wxString &extra, eSaveGame 
 			return false;
 		}
 	} else {
-		// FIXME: TXMLProjectReader::ReadXMLDoc (asm lines 636222-642078) is not reconstructed.
-		(void)extra;
-		(void)xmlRoot;
-		if (wxLog::loglevel >= 0)
-			wxLog::logexpanded(L"Failed to load ved file %ls", file.GetName().c_str());
-		return false;
+		TXMLProjectReader reader(this);
+
+		if (!reader.ReadXMLDoc(ved, extra, xmlRoot, type, outFlag, slot, handler, (int)_tableList.size())) {
+			if (wxLog::loglevel >= 0)
+				wxLog::logexpanded(L"Failed to load ved file %ls", file.GetName().c_str());
+			return false;
+		}
 	}
 
 	if (wxLog::loglevel > 1)
