@@ -1,0 +1,498 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{059dcdbb-4c2c-409f-86f1-c884cd08aba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sprites">
+      <UniqueIdentifier>{b5411499-e682-4ff6-8e98-9108ef04db11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pics">
+      <UniqueIdentifier>{89df9447-af3b-4c62-93fa-cfb30405c175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pic">
+      <UniqueIdentifier>{f617d41d-dca6-4d46-b34c-88288dd45ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{d47560d3-0d8c-4abc-9118-d8bd2e6e4f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cli">
+      <UniqueIdentifier>{7c9028b9-36c1-440f-8200-a4d8a22c22a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{547f0063-dd73-46eb-8b2f-9c340c079795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\msq">
+      <UniqueIdentifier>{a4139859-0189-42fd-a386-4723a43c4655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpa">
+      <UniqueIdentifier>{08826984-289d-465c-9a03-d32cd6ac2c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\masks">
+      <UniqueIdentifier>{8770c5b7-a7f6-439b-ae90-79aa84e9e12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\huffman">
+      <UniqueIdentifier>{8a118b34-fdfb-4d41-880d-ee4d16c4e8b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\htds">
+      <UniqueIdentifier>{d7c734cc-ba55-4580-91b9-027896248f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\image">
+      <UniqueIdentifier>{e08ce0e4-84cd-417f-b62c-ed0b97ba1711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{7484d85c-43b3-4e1e-8fac-ee2da0c4c48a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fnt">
+      <UniqueIdentifier>{f86ee82b-8d14-49b4-9931-0151d18f7c7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\exe">
+      <UniqueIdentifier>{8020077d-8455-4d9c-a3e1-94bcf2109ed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\curs">
+      <UniqueIdentifier>{231c388b-3c05-4ecd-9d86-1f5d7e9e912c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\blocks">
+      <UniqueIdentifier>{7e6f1d7a-fec4-4c55-b58f-257c99e2c406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\chartable">
+      <UniqueIdentifier>{5e4401c0-4227-44af-a9ac-3c29723ff9b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\parts">
+      <UniqueIdentifier>{c42d21df-72b8-4d2a-b6c5-3faa85faf8e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="de\ailis\wlandsuite\DecodeItems.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\DecodeMap.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\DecodePic.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\DecodeSavegame.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\EncodeItems.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\EncodeMap.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\EncodePic.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\EncodeSavegame.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\ExtractMaps.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\FixWlOffsets.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\Launcher.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackCpa.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackCurs.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackFnt.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackGame.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackHtds.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackMasks.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackPic.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackPics.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackSprites.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\PackTileset.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackCpa.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackCurs.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackFnt.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackGame.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackHtds.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackMasks.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackPic.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackPics.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackSprites.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\UnpackTileset.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\WebExtract.java">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\utils\ClasspathEntityResolver.java">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\utils\FileUtils.java">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\utils\ResourceUtils.java">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\utils\StringUtils.java">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\utils\XmlUtils.java">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\sprites\Sprite.java">
+      <Filter>Source Files\sprites</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\sprites\Sprites.java">
+      <Filter>Source Files\sprites</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\Pics.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimation.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimationFrameSet.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimationInstruction.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\RawAnimationFrame.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pics\RawAnimationFramePart.java">
+      <Filter>Source Files\pics</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pic\Pic.java">
+      <Filter>Source Files\pic</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pic\VerticalXorInputStream.java">
+      <Filter>Source Files\pic</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\pic\VerticalXorOutputStream.java">
+      <Filter>Source Files\pic</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\msq\MsqHeader.java">
+      <Filter>Source Files\msq</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\msq\MsqType.java">
+      <Filter>Source Files\msq</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\masks\Mask.java">
+      <Filter>Source Files\masks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\masks\Masks.java">
+      <Filter>Source Files\masks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\BitInputStreamWrapper.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\BitOutputStream.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\BitOutputStreamWrapper.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\SeekableInputStream.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\SeekableOutputStream.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\io\BitInputStream.java">
+      <Filter>Source Files\io</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\image\GifAnimWriter.java">
+      <Filter>Source Files\image</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\image\PaletteImage.java">
+      <Filter>Source Files\image</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\image\TransparentEgaImage.java">
+      <Filter>Source Files\image</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\image\BwImage.java">
+      <Filter>Source Files\image</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\image\EgaImage.java">
+      <Filter>Source Files\image</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanNode.java">
+      <Filter>Source Files\huffman</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanOutputStream.java">
+      <Filter>Source Files\huffman</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanTree.java">
+      <Filter>Source Files\huffman</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\huffman\PayloadCounterComparator.java">
+      <Filter>Source Files\huffman</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanInputStream.java">
+      <Filter>Source Files\huffman</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\htds\Htds.java">
+      <Filter>Source Files\htds</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\htds\HtdsTileset.java">
+      <Filter>Source Files\htds</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\CLIProg.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\ConvertProg.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\ExtractProg.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\LogHandler.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\PackProg.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cli\UnpackProg.java">
+      <Filter>Source Files\cli</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\common\exceptions\GameException.java">
+      <Filter>Source Files\common</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\common\exceptions\WlandsuiteException.java">
+      <Filter>Source Files\common</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\common\exceptions\XmlException.java">
+      <Filter>Source Files\common</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cpa\Cpa.java">
+      <Filter>Source Files\cpa</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\cpa\CpaFrame.java">
+      <Filter>Source Files\cpa</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\curs\Curs.java">
+      <Filter>Source Files\curs</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\curs\Cursor.java">
+      <Filter>Source Files\curs</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\exe\WlExe.java">
+      <Filter>Source Files\exe</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\fnt\Fnt.java">
+      <Filter>Source Files\fnt</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\fnt\FntChar.java">
+      <Filter>Source Files\fnt</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\Game.java">
+      <Filter>Source Files\game</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\GameMsqBlock.java">
+      <Filter>Source Files\game</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\MapSquare.java">
+      <Filter>Source Files\game</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\RotatingXorInputStream.java">
+      <Filter>Source Files\game</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\RotatingXorOutputStream.java">
+      <Filter>Source Files\game</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\blocks\GameBlock.java">
+      <Filter>Source Files\game\blocks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\blocks\GameMap.java">
+      <Filter>Source Files\game\blocks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\blocks\Savegame.java">
+      <Filter>Source Files\game\blocks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\blocks\ShopItemList.java">
+      <Filter>Source Files\game\blocks</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\chartable\CharTable.java">
+      <Filter>Source Files\game\chartable</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\chartable\CharTableEntry.java">
+      <Filter>Source Files\game\chartable</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ActionClassMap.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ActionFactory.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ActionMap.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Actions.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Alter.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\AlterationAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Answer.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\BattleStrings.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\CentralDirectory.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Char.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Check.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\CheckAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\DialogueAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\DoctorAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\EncounterAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ImpassableAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Info.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Item.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Items.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ItemType.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\LibraryAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\LootAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\LootItem.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\MaskAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Monster.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Monsters.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\NPCs.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Parties.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Party.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\PrintAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\RadiationAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\RangerCenterAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\ShopItem.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Skill.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Skills.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialActionFactory.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialActionTable.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\StoreAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Strings.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\TileMap.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\TransitionAction.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Unknown.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+    <None Include="de\ailis\wlandsuite\game\parts\Action.java">
+      <Filter>Source Files\game\parts</Filter>
+    </None>
+  </ItemGroup>
+</Project>

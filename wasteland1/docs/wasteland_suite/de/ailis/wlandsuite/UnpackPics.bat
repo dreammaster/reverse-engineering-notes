@@ -1,0 +1,1 @@
+javac -classpath "C:\libs\java-getopt-1.0.14.jar;c:\libs\commons-logging-1.3.3.jar;c:\libs\commons-lang-2.6.jar" cli\*.java image\*.java io\*.java pic\*.java pics\*.java huffman\*.java msq\*.java utils\ResourceUtils.java UnpackPics.java

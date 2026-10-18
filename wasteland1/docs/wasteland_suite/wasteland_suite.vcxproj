@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{c42dd2ce-bf87-4a3f-93c4-e7bb2ec73829}</ProjectGuid>
+    <RootNamespace>wastelandsuite</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="de\ailis\wlandsuite\cli\CLIProg.java" />
+    <None Include="de\ailis\wlandsuite\cli\ConvertProg.java" />
+    <None Include="de\ailis\wlandsuite\cli\ExtractProg.java" />
+    <None Include="de\ailis\wlandsuite\cli\LogHandler.java" />
+    <None Include="de\ailis\wlandsuite\cli\PackProg.java" />
+    <None Include="de\ailis\wlandsuite\cli\UnpackProg.java" />
+    <None Include="de\ailis\wlandsuite\common\exceptions\GameException.java" />
+    <None Include="de\ailis\wlandsuite\common\exceptions\WlandsuiteException.java" />
+    <None Include="de\ailis\wlandsuite\common\exceptions\XmlException.java" />
+    <None Include="de\ailis\wlandsuite\cpa\Cpa.java" />
+    <None Include="de\ailis\wlandsuite\cpa\CpaFrame.java" />
+    <None Include="de\ailis\wlandsuite\curs\Curs.java" />
+    <None Include="de\ailis\wlandsuite\curs\Cursor.java" />
+    <None Include="de\ailis\wlandsuite\DecodeItems.java" />
+    <None Include="de\ailis\wlandsuite\DecodeMap.java" />
+    <None Include="de\ailis\wlandsuite\DecodePic.java" />
+    <None Include="de\ailis\wlandsuite\DecodeSavegame.java" />
+    <None Include="de\ailis\wlandsuite\EncodeItems.java" />
+    <None Include="de\ailis\wlandsuite\EncodeMap.java" />
+    <None Include="de\ailis\wlandsuite\EncodePic.java" />
+    <None Include="de\ailis\wlandsuite\EncodeSavegame.java" />
+    <None Include="de\ailis\wlandsuite\exe\WlExe.java" />
+    <None Include="de\ailis\wlandsuite\ExtractMaps.java" />
+    <None Include="de\ailis\wlandsuite\FixWlOffsets.java" />
+    <None Include="de\ailis\wlandsuite\fnt\Fnt.java" />
+    <None Include="de\ailis\wlandsuite\fnt\FntChar.java" />
+    <None Include="de\ailis\wlandsuite\game\blocks\GameBlock.java" />
+    <None Include="de\ailis\wlandsuite\game\blocks\GameMap.java" />
+    <None Include="de\ailis\wlandsuite\game\blocks\Savegame.java" />
+    <None Include="de\ailis\wlandsuite\game\blocks\ShopItemList.java" />
+    <None Include="de\ailis\wlandsuite\game\chartable\CharTable.java" />
+    <None Include="de\ailis\wlandsuite\game\chartable\CharTableEntry.java" />
+    <None Include="de\ailis\wlandsuite\game\Game.java" />
+    <None Include="de\ailis\wlandsuite\game\GameMsqBlock.java" />
+    <None Include="de\ailis\wlandsuite\game\MapSquare.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Action.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ActionClassMap.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ActionFactory.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ActionMap.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Actions.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Alter.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\AlterationAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Answer.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\BattleStrings.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\CentralDirectory.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Char.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Check.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\CheckAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\DialogueAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\DoctorAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\EncounterAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ImpassableAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Info.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Item.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Items.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ItemType.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\LibraryAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\LootAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\LootItem.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\MaskAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Monster.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Monsters.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\NPCs.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Parties.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Party.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\PrintAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\RadiationAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\RangerCenterAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\ShopItem.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Skill.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Skills.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialActionFactory.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\SpecialActionTable.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\StoreAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Strings.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\TileMap.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\TransitionAction.java" />
+    <None Include="de\ailis\wlandsuite\game\parts\Unknown.java" />
+    <None Include="de\ailis\wlandsuite\game\RotatingXorInputStream.java" />
+    <None Include="de\ailis\wlandsuite\game\RotatingXorOutputStream.java" />
+    <None Include="de\ailis\wlandsuite\htds\Htds.java" />
+    <None Include="de\ailis\wlandsuite\htds\HtdsTileset.java" />
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanInputStream.java" />
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanNode.java" />
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanOutputStream.java" />
+    <None Include="de\ailis\wlandsuite\huffman\HuffmanTree.java" />
+    <None Include="de\ailis\wlandsuite\huffman\PayloadCounterComparator.java" />
+    <None Include="de\ailis\wlandsuite\image\BwImage.java" />
+    <None Include="de\ailis\wlandsuite\image\EgaImage.java" />
+    <None Include="de\ailis\wlandsuite\image\GifAnimWriter.java" />
+    <None Include="de\ailis\wlandsuite\image\PaletteImage.java" />
+    <None Include="de\ailis\wlandsuite\image\TransparentEgaImage.java" />
+    <None Include="de\ailis\wlandsuite\io\BitInputStream.java" />
+    <None Include="de\ailis\wlandsuite\io\BitInputStreamWrapper.java" />
+    <None Include="de\ailis\wlandsuite\io\BitOutputStream.java" />
+    <None Include="de\ailis\wlandsuite\io\BitOutputStreamWrapper.java" />
+    <None Include="de\ailis\wlandsuite\io\SeekableInputStream.java" />
+    <None Include="de\ailis\wlandsuite\io\SeekableOutputStream.java" />
+    <None Include="de\ailis\wlandsuite\Launcher.java" />
+    <None Include="de\ailis\wlandsuite\masks\Mask.java" />
+    <None Include="de\ailis\wlandsuite\masks\Masks.java" />
+    <None Include="de\ailis\wlandsuite\msq\MsqHeader.java" />
+    <None Include="de\ailis\wlandsuite\msq\MsqType.java" />
+    <None Include="de\ailis\wlandsuite\PackCpa.java" />
+    <None Include="de\ailis\wlandsuite\PackCurs.java" />
+    <None Include="de\ailis\wlandsuite\PackFnt.java" />
+    <None Include="de\ailis\wlandsuite\PackGame.java" />
+    <None Include="de\ailis\wlandsuite\PackHtds.java" />
+    <None Include="de\ailis\wlandsuite\PackMasks.java" />
+    <None Include="de\ailis\wlandsuite\PackPic.java" />
+    <None Include="de\ailis\wlandsuite\PackPics.java" />
+    <None Include="de\ailis\wlandsuite\PackSprites.java" />
+    <None Include="de\ailis\wlandsuite\PackTileset.java" />
+    <None Include="de\ailis\wlandsuite\pics\Pics.java" />
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimation.java" />
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimationFrameSet.java" />
+    <None Include="de\ailis\wlandsuite\pics\PicsAnimationInstruction.java" />
+    <None Include="de\ailis\wlandsuite\pics\RawAnimationFrame.java" />
+    <None Include="de\ailis\wlandsuite\pics\RawAnimationFramePart.java" />
+    <None Include="de\ailis\wlandsuite\pic\Pic.java" />
+    <None Include="de\ailis\wlandsuite\pic\VerticalXorInputStream.java" />
+    <None Include="de\ailis\wlandsuite\pic\VerticalXorOutputStream.java" />
+    <None Include="de\ailis\wlandsuite\sprites\Sprite.java" />
+    <None Include="de\ailis\wlandsuite\sprites\Sprites.java" />
+    <None Include="de\ailis\wlandsuite\UnpackCpa.java" />
+    <None Include="de\ailis\wlandsuite\UnpackCurs.java" />
+    <None Include="de\ailis\wlandsuite\UnpackFnt.java" />
+    <None Include="de\ailis\wlandsuite\UnpackGame.java" />
+    <None Include="de\ailis\wlandsuite\UnpackHtds.java" />
+    <None Include="de\ailis\wlandsuite\UnpackMasks.java" />
+    <None Include="de\ailis\wlandsuite\UnpackPic.java" />
+    <None Include="de\ailis\wlandsuite\UnpackPics.java" />
+    <None Include="de\ailis\wlandsuite\UnpackSprites.java" />
+    <None Include="de\ailis\wlandsuite\UnpackTileset.java" />
+    <None Include="de\ailis\wlandsuite\utils\ClasspathEntityResolver.java" />
+    <None Include="de\ailis\wlandsuite\utils\FileUtils.java" />
+    <None Include="de\ailis\wlandsuite\utils\ResourceUtils.java" />
+    <None Include="de\ailis\wlandsuite\utils\StringUtils.java" />
+    <None Include="de\ailis\wlandsuite\utils\XmlUtils.java" />
+    <None Include="de\ailis\wlandsuite\WebExtract.java" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

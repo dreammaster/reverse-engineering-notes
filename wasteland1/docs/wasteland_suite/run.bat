@@ -1,0 +1,1 @@
+java -classpath "bin;C:\libs\java-getopt-1.0.14.jar;c:\libs\commons-logging-1.3.3.jar;c:\libs\commons-lang-2.6.jar" de.ailis.wlandsuite.UnpackPics c:\temp c:\games\wl\allpics1
