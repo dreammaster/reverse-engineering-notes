@@ -23,6 +23,21 @@ M = (1 << 64) - 1
 PREFIX = {1: 33, 2: 41, 3: 48, 4: 24, 5: 49}
 
 
+POLL = {"update_sound", "get_mouse_button", "key_hit", "video_sync", "get_event", "delay?", "delay_animate?", "wait_ticks?", "_hide_mouse", "gxVirtualDisplay"}
+
+
+def collapse(lst):
+    """polling loops spin a clock-dependent number of times: keep one entry per run of the same polling call (name and stack arguments)"""
+    out = []
+    for x in lst:
+        t = x.split()
+        key = (t[0], t[5:])
+        if out and t[0] in POLL and out[-1][0] == key:
+            continue
+        out.append((key, x))
+    return [x for _, x in out]
+
+
 def fnv(data, h=1469598103934665603):
     for b in data:
         h ^= b
@@ -168,10 +183,10 @@ def main():
     names = {x.split()[0] for v in native_ev.values() for x in v}
     ev_bad, ev_total, oracle_only, reg_junk = [], 0, set(), 0
     for k in range(len(ops)):
-        want = [x for x in evs[k] if x.split()[0] in names]
+        want = collapse([x for x in evs[k] if x.split()[0] in names])
         oracle_only |= {x.split()[0] for x in evs[k]} - names
         ev_total += len(want)
-        got = native_ev.get(k, [])
+        got = collapse(native_ev.get(k, []))
         if want != got:
             # registers the callee does not take hold leftovers that differ legitimately (shims vs real library code); name and stack arguments must agree
             strip = lambda lst: [(x.split()[0], x.split()[5:]) for x in lst]

@@ -27,6 +27,7 @@ public:
 	uint64_t regionHash();
 	uint32_t dataCrc(); // CRC-32 of 0xA0000..0xF0000 (everything the game layer can touch outside the stack and heap)
 	std::vector<std::pair<uint32_t, uint32_t>> regions() const; // (address, bytes) of the savegame regions
+	void setBudget(int64_t instructions) { _budget = instructions; } // per command / call (default 30 M)
 	void snapshot();
 	void restore();
 
@@ -42,6 +43,7 @@ private:
 	std::vector<uint8_t> _snapMem;
 	uint32_t _snapHeap = 0;
 	size_t _snapOut = 0;
+	int64_t _budget = 30000000;
 	uint32_t _clock = 0, _clockStep = 0, _snapClock = 0; // see SHAN_CLOCK_STEP
 };
 

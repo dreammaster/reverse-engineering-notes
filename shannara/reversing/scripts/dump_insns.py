@@ -86,8 +86,9 @@ def main():
             # callback label that IDA left outside any function (`mov edx, offset loc_220E0`): make it a function, skip if it is not code
             if idc.is_code(idc.get_full_flags(fea)) and not ida_funcs.get_func(fea):
                 ida_funcs.add_func(fea)
-            if not ida_funcs.get_func(fea):
-                items = walk_items(fea)     # IDA refuses (the body overlaps other chunks): follow the control flow instead
+            f = ida_funcs.get_func(fea)
+            if f is None or f.start_ea != fea:  # IDA refuses, or the address lies inside another function: follow the control flow from it instead
+                items = walk_items(fea)
                 if not items:
                     continue
         insns = []

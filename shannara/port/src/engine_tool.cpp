@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
 			std::string err;
 			uint32_t r = 0;
 			e.machine().tracing = getenv("ENGINE_TRACE_FILE") && k >= traceFrom;
+			e.machine().wlogOn = getenv("ENGINE_WRITELOG") && k >= traceFrom;
+			if (e.machine().wlogOn && k == traceFrom) e.machine().wlog.clear();
 			try {
 				if (!strcmp(op, "reset")) {
 					e.restore();
@@ -106,6 +108,12 @@ int main(int argc, char **argv) {
 			for (auto &rg : e.regions())
 				fwrite(e.machine().ptr(rg.first), 1, rg.second, df);
 			fclose(df);
+		}
+		if (const char *wl = getenv("ENGINE_WRITELOG")) { // byte writes into the data object (hex "addr value") from op ENGINE_TRACE_FROM on
+			FILE *wf = fopen(wl, "w");
+			for (uint64_t w : e.machine().wlog)
+				fprintf(wf, "%llx %02x\n", (unsigned long long)(w >> 8), (unsigned)(w & 0xFF));
+			fclose(wf);
 		}
 		if (getenv("ENGINE_TRACE_FILE")) {
 			FILE *t = fopen(getenv("ENGINE_TRACE_FILE"), "w");

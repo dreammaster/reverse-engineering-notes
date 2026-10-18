@@ -29,7 +29,7 @@ ANALYSIS = os.path.join(ROOT, "reversing", "analysis")
 
 CRT_KEEP = {"memmove_", "memset_", "memcpy_", "strcmp_", "stricmp_", "sprintf_", "vsprintf_", "strlen_", "strcpy_", "strncpy_", "strncmp_",
             "__STK", "__prtf_", "getprintspecs_", "evalflags_", "fmt4hex_", "FixedPoint_Format_", "far_strlen_", "far_other_strlen_",
-            "strupr_", "strlwr_", "toupper_", "tolower_", "__CHK", "__fmemmove", "_fmemmove", "strstr_", "memicmp_"}
+            "strupr_", "strlwr_", "toupper_", "tolower_", "__CHK", "__STOSB", "__STOSD", "__fmemmove", "_fmemmove", "strstr_", "memicmp_"}
 STUB_GAME = set()      # game-layer addresses (hex ints) forced to no-op stubs, filled in as needed
 # game-layer routines that only drive the UI / audio / timing and have no game-state effect (stubbed by name)
 STUB_NAMES = {"delay?", "delay_animate?", "wait_ticks?", "show_dialog?", "make_voice?", "make_sound", "refresh_room?", "send_event?",

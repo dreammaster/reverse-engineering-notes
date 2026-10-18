@@ -33,11 +33,14 @@ public:
 	uint8_t r8(uint32_t a) const { check(a, 1); return mem[a]; }
 	uint16_t r16(uint32_t a) const { check(a, 2); return mem[a] | (mem[a + 1] << 8); }
 	uint32_t r32(uint32_t a) const { check(a, 4); return mem[a] | (mem[a + 1] << 8) | (mem[a + 2] << 16) | ((uint32_t)mem[a + 3] << 24); }
-	void w8(uint32_t a, uint8_t v) { check(a, 1); mem[a] = v; }
-	void w16(uint32_t a, uint16_t v) { check(a, 2); mem[a] = v & 0xFF; mem[a + 1] = v >> 8; }
-	void w32(uint32_t a, uint32_t v) { check(a, 4); mem[a] = v & 0xFF; mem[a + 1] = (v >> 8) & 0xFF; mem[a + 2] = (v >> 16) & 0xFF; mem[a + 3] = v >> 24; }
+	bool wlogOn = false;                 // debugging: record every byte written to the data object / BSS (address << 8 | value) in wlog
+	std::vector<uint64_t> wlog;
+	void logw(uint32_t a, uint8_t v) { if (a >= 0xA0000 && a < 0xF0000) wlog.push_back(((uint64_t)a << 8) | v); }
+	void w8(uint32_t a, uint8_t v) { check(a, 1); mem[a] = v; if (wlogOn) logw(a, v); }
+	void w16(uint32_t a, uint16_t v) { check(a, 2); mem[a] = v & 0xFF; mem[a + 1] = v >> 8; if (wlogOn) { logw(a, v & 0xFF); logw(a + 1, v >> 8); } }
+	void w32(uint32_t a, uint32_t v) { check(a, 4); mem[a] = v & 0xFF; mem[a + 1] = (v >> 8) & 0xFF; mem[a + 2] = (v >> 16) & 0xFF; mem[a + 3] = v >> 24; if (wlogOn) for (int k = 0; k < 4; k++) logw(a + k, (v >> (8 * k)) & 0xFF); }
 	std::string cstr(uint32_t a, size_t max = 4096) const;
-	void writeBytes(uint32_t a, const void *p, size_t n) { check(a, n); memcpy_(mem.data() + a, p, n); }
+	void writeBytes(uint32_t a, const void *p, size_t n) { check(a, n); memcpy_(mem.data() + a, p, n); if (wlogOn) for (size_t k = 0; k < n; k++) logw(a + (uint32_t)k, ((const uint8_t *)p)[k]); }
 	uint8_t *ptr(uint32_t a) { check(a, 1); return mem.data() + a; }
 
 	// stack
