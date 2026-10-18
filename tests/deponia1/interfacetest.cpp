@@ -243,6 +243,19 @@ int main() {
 			CHECK(!interface->IsInside(wxPoint{300, 300}));
 		}
 
+		// another outline: what is inside changes with it (the first one is put back)
+		for (TGInterface *interface : control->GetActiveInterfaces()) {
+			std::vector<wxPoint> other = {{250, 250}, {350, 250}, {350, 350}, {250, 350}};
+
+			interface->SetPolygon(other);
+			CHECK(!interface->IsInside(wxPoint{30, 30}));
+			CHECK(interface->IsInside(wxPoint{300, 300}));
+			std::vector<wxPoint> bar = {{0, 0}, {200, 0}, {200, 200}, {0, 200}};
+			interface->SetPolygon(bar);
+			CHECK(interface->IsInside(wxPoint{30, 30}));
+			CHECK(!interface->IsInside(wxPoint{300, 300}));
+		}
+
 		{
 			TVList items;
 			control->GetCurrentCharacter()->GetRef().GetLinks(kCharacterItems, TypeOrder::kValue0, items);
