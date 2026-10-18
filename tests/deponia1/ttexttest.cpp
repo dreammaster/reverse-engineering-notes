@@ -2,7 +2,9 @@
 
 #include "AppGlobals.h"
 #include "TStandardPaths.h"
+#include "TTScene.h"
 #include "TTText.h"
+#include "vstables/eCommand.h"
 #include "datastruct/visionaireobject.h"
 #include "TSprite.h"
 #include "vstables/fieldIds.h"
@@ -99,6 +101,56 @@ int main() {
 
 	sprite.SetPosition(wxPoint{12, 34});
 	CHECK((sprite.GetSprite(kSpriteSprite).GetPosition() == wxPoint{12, 34}));
+
+	// the scene: the loading points, the name, the sounds of its actions
+	{
+		TVisObjRef scene = game.CreateObject(4, gameRef, kGameSceneLinks);
+		TTScene tscene(scene);
+		std::vector<TCharHolder> sounds;
+		auto isRect = [](const wxRect &r, int x, int y, int w, int h) {
+			return r.x == x && r.y == y && r.width == w && r.height == h;
+		};
+
+		CHECK(tscene.GetNameLanguage().IsEmpty());
+
+		// (the field of the points (0x87) is not in the scene of this version of the data: always no points)
+		CHECK(isRect(tscene.GetLoadingRect(), -1, -1, -1, -1));
+
+		// the name of the scene is a text
+		TVisObjRef nameText = game.CreateObject(14, noParent, -1);
+		std::vector<TTextLanguage> names(1);
+
+		names[0].text = TCharHolder("The Hall");
+		names[0].languageId = englishId;
+		nameText.SetValue(kTextTextLanguages, names, TSendEventEnum::kNoEvent);
+		scene.SetLink(kSceneName, nameText, true);
+		TTText::SetLanguage(english);
+		CHECK(tscene.GetNameLanguage().ToStdWstring() == L"The Hall");
+
+		// the sounds
+		TVisObjRef action = game.CreateObject(7, scene, kSceneActions);
+		auto part = [&](int command, const wchar_t *file) {
+			TVisObjRef p = game.CreateObject(8, action, kActionActionParts);
+
+			p.SetValue(kActionPartCommand, command, TSendEventEnum::kNoEvent);
+			p.SetValue(kActionPartPath, wxFileName(file), TSendEventEnum::kNoEvent);
+		};
+
+		part(kCommandPlaySound, L"sounds/a.ogg");
+		part(kCommandWait, L"sounds/not.ogg");
+		part(kCommandSceneMusic, L"music/m.ogg");
+		part(kCommandLoopSound, L"sounds/loop.ogg");
+		part(kCommandSetWalkingSound, L"sounds/step.ogg");
+		part(kCommandPlaySound, L"");
+		sounds.push_back(TCharHolder("stale"));
+		tscene.GetSoundsOnScene(sounds);
+		CHECK(sounds.size() == 4);
+		if (sounds.size() == 4) {
+			CHECK(sounds[0] == TCharHolder("sounds/a.ogg"));
+			CHECK(sounds[1] == TCharHolder("music/m.ogg"));
+			CHECK(sounds[3] == TCharHolder("sounds/step.ogg"));
+		}
+	}
 
 	printf("%d failures\n", failures);
 	return failures ? 1 : 0;
