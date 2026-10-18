@@ -68,6 +68,10 @@ class Game(RetailEmu):
         for n in STUB_NAMES:
             if n in self.byname:
                 self.hook(self.byname[n], self._stub)
+        self.clock, self.clock_step = 0, int(os.environ.get("SHAN_CLOCK_STEP", "0"))   # same model as the native engine (Engine::_clock)
+        for n in ("get_clock", "j___clock_", "__clock_", "clock_"):
+            if n in self.byname:
+                self.hook(self.byname[n], self._clock_stub)
         self.hook(self.byname["wprintf"], self._wprintf)
         self.hook(self.byname["wputchar"], self._wputchar)
         self.hook(self.byname["sprintf_"], self._sprintf)   # the C runtime's __prtf_ uses segment-register tricks that unicorn rejects
@@ -93,6 +97,9 @@ class Game(RetailEmu):
             if mm:
                 cur = mm.group(1)
                 continue
+            if re.match(r"^\S+\s+endp", line):
+                cur = None      # code chunks after a function's end are not part of it
+                continue
             if cur and cur not in m:
                 r = re.match(r"\s+retn\s+([0-9A-Fa-f]+)h?\s*(;.*)?$", line)
                 if r:
@@ -110,10 +117,12 @@ class Game(RetailEmu):
         n = self.retn.get(name, 0)
         args = "".join(" %x" % self._stack(k) for k in range(min(n // 4, 8)))
         self.events.append("%s %x %x %x %x%s" % (name, self.reg(UC_X86_REG_EAX), self.reg(UC_X86_REG_EDX), self.reg(UC_X86_REG_EBX), self.reg(UC_X86_REG_ECX), args))
-        if n:       # callee-popped arguments: the hook machinery pops the return address, we pop the arguments below it
-            from unicorn.x86_const import UC_X86_REG_ESP as SP
-            self.uc.reg_write(SP, self.reg(SP) + n)
+        self.pop_extra = n     # callee-popped arguments: the hook machinery pops the return address first, then these bytes
         return 0
+
+    def _clock_stub(self, emu):
+        self.clock = (self.clock + self.clock_step) & 0xFFFFFFFF
+        return self.clock
 
     def _alloc(self, emu):
         size = emu.reg(UC_X86_REG_EAX) & 0xFFFFFFFF
@@ -249,10 +258,10 @@ class Game(RetailEmu):
     def snapshot(self):
         mem = [(a, bytes(self.uc.mem_read(a, b - a))) for a, b in self.SNAP_RANGES]
         heap = (0xC00000, bytes(self.uc.mem_read(0xC00000, max(self.heap - 0xC00000, 1))), self.heap)
-        return (mem, heap, len(self.out), len(self.wlog))
+        return (mem, heap, len(self.out), len(self.wlog), self.clock)
 
     def restore(self, snap):
-        mem, heap, nout, nlog = snap
+        mem, heap, nout, nlog, self.clock = snap
         if self.heap > heap[2]:     # heap grown since the snapshot: clear it so uninitialised allocations read as zero, as after a native restore
             self.uc.mem_write(heap[2], bytes(self.heap - heap[2]))
         for a, data in mem:

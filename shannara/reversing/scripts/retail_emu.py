@@ -160,11 +160,12 @@ class RetailEmu:
         fn = self.hooks.get(address)
         if fn is None:
             return
+        self.pop_extra = 0          # a hook sets this to the callee-cleaned argument bytes (`retn N`) that must go too
         eax = fn(self)
         uc.reg_write(UC_X86_REG_EAX, (eax or 0) & 0xFFFFFFFF)
         sp = uc.reg_read(UC_X86_REG_ESP)
         ret = struct.unpack("<I", uc.mem_read(sp, 4))[0]
-        uc.reg_write(UC_X86_REG_ESP, sp + 4)
+        uc.reg_write(UC_X86_REG_ESP, sp + 4 + self.pop_extra)
         uc.reg_write(UC_X86_REG_EIP, ret)
 
     def call(self, addr, eax=0, edx=0, ebx=0, ecx=0, stack=()):

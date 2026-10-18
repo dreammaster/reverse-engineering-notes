@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 				e.machine().trace.clear();
 			}
 			if (evf) {
-				fprintf(evf, "%d @region %016llx\n", k, (unsigned long long)e.regionHash());
+				fprintf(evf, "%d @region %016llx %08x\n", k, (unsigned long long)e.regionHash(), e.dataCrc());
 				for (auto &ev : e.machine().events)
 					fprintf(evf, "%d %s\n", k, ev.c_str());
 				e.machine().events.clear();
@@ -96,6 +96,17 @@ int main(int argc, char **argv) {
 		fclose(f);
 		if (evf)
 			fclose(evf);
+		if (const char *dp = getenv("SHAN_DUMPALL")) { // the whole data object + BSS (0xA0000..0xF0000)
+			FILE *df = fopen(dp, "wb");
+			fwrite(e.machine().ptr(0xA0000), 1, 0x50000, df);
+			fclose(df);
+		}
+		if (const char *dp = getenv("SHAN_DUMP")) { // all savegame regions, concatenated (debugging aid: diff against the oracle's)
+			FILE *df = fopen(dp, "wb");
+			for (auto &rg : e.regions())
+				fwrite(e.machine().ptr(rg.first), 1, rg.second, df);
+			fclose(df);
+		}
 		if (getenv("ENGINE_TRACE_FILE")) {
 			FILE *t = fopen(getenv("ENGINE_TRACE_FILE"), "w");
 			for (auto &l : e.machine().traceLog)

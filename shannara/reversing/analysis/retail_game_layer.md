@@ -918,3 +918,23 @@ Strictest check so far (`state_diff.py` compares, after EVERY operation, the has
 streams - in addition to the object/flag hash, the text and the boundary events): seeds 4 and 5, 300 scenarios x 40 commands each (97,990 commands, 284,776 operations,
 6,113 boundary events): **0 mismatches** after one more entry point was added (`0x6516C`, the shared "return 0" tail that several objects' handler-table entries point at; the no-op shim
 behaved identically, but now the code runs as the original does). `extra_entries.txt` now lists 7 entry points IDA does not know.
+
+### 34.1 Three oracle/shim bugs found by the strictest comparison (whole data segment CRC per operation)
+
+`state_diff.py` now also compares a CRC-32 of the entire data object + BSS (0xA0000-0xF0000, 320 KB) after every operation, which is far stricter than the 92 savegame regions
+(it also covers print buffers, UI selections and every scratch variable). That exposed problems on the *oracle* side that had been hiding paths, and one gap in the native shims:
+
+1. **Oracle stubs with `retn N` returned to the wrong address.** The hook machinery read the return address after the stub had already added N to ESP, so every stubbed
+   library function that pops stack arguments made the emulation fault (rooms 88, 98, 105, 173, 384 ... could not be entered headlessly - 21 of 68 rooms). Fixed
+   (`pop_extra`): 14 of those rooms now run; the remaining 7 (400, 412, 421, 549, 551, 560, 641) start cutscenes/combat that wait for real events.
+2. **The `retn N` table was wrong for 9 functions.** `make_retn_map.py` (and its twin inside `retail_game.py`) kept attributing a later orphan code chunk's `retn 4` to the previous
+   function (`get_region_xy_` was credited with 4 bytes, `move_region_` with 8, `cgetw_` with 20 ... ; all really end in a plain `retn`). A stack-faithful oracle then corrupted its stack;
+   the native engine did not notice because recompiled functions return through C++. Parser now stops at `endp`; both engines use the corrected map.
+3. **Native engine lacked six C runtime routines the oracle runs for real**: `strupr_`, `strlwr_`, `strncpy_`, `strncmp_`, `memicmp_`, `strstr_` (reached via the INI/path code after
+   entering room 496). Implemented as shims (Watcom register convention).
+
+The oracle also models the clock like the native engine now (`SHAN_CLOCK_STEP`, part of snapshots), and every `retn`-popping stub is consistent between both implementations.
+
+Result with the default clock: seeds 6 and 8, 300 scenarios x 40 commands each (117,328 commands, 331,891 operations): text, object/flag hash, the 92 savegame regions, the whole
+data-segment CRC and the boundary-event streams are identical (0 mismatches). With an artificial clock step (`SHAN_CLOCK_STEP=7`, seed 7) state, text and regions still agree, but UI
+wait loops (`goto 105`) differ in how many times they poll (the oracle's real library code also reads the clock) and scratch memory differs afterwards; that setting is not used for parity.

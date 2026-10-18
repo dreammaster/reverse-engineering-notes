@@ -14,6 +14,9 @@ for line in open(sys.argv[1], encoding="latin-1"):
     if mm:
         cur = mm.group(1)
         continue
+    if re.match(r"^\S+\s+endp", line):
+        cur = None          # code chunks after a function's end (outside any function) are not part of it
+        continue
     if cur and cur not in m:
         r = re.match(r"\s+retn\s+([0-9A-Fa-f]+)h?\s*(;.*)?$", line)
         if r:

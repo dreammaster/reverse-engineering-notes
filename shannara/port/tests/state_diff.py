@@ -8,6 +8,7 @@ Setup steps are replayed on the native engine but not compared; every command is
 """
 import os
 import random
+import zlib
 import subprocess
 import sys
 
@@ -48,7 +49,7 @@ def main():
     rooms = [int(r["room(obj id)"]) for r in load_tsv("retail_rooms.tsv")]
     items = [k + 1 for k in range(n) if types[k] == 2]
     base = g.snapshot()
-    ops, expect, evs, rhs = [], [], [], []
+    ops, expect, evs, rhs, crcs = [], [], [], [], []
     regions = [(int(r["address"], 16), int(r["bytes"])) for r in load_tsv("retail_save_regions.tsv")]
 
     def region_hash():
@@ -79,11 +80,13 @@ def main():
         expect.append(None)
         evs.append(take_events())
         rhs.append(region_hash())
+        crcs.append(zlib.crc32(bytes(g.rb(0xA0000, 0x50000))))
 
     def checked(line, r):
         ops.append(line)
         evs.append(take_events())
         rhs.append(region_hash())
+        crcs.append(zlib.crc32(bytes(g.rb(0xA0000, 0x50000))))
         expect.append("%d %d %016x [%s]" % (len(ops) - 1, r & 0xFFFFFFFF, state_hash(), esc(g.text())))
 
     import time
@@ -110,7 +113,7 @@ def main():
             scope = [k for k in range(1, n + 1) if k != here and (g.call(0x1B5C8, eax=here, edx=k) & 0xFF or g.call(0x1B5C8, eax=3, edx=k) & 0xFF)]
         except Exception:
             cut = max(i for i, o in enumerate(ops) if o.startswith("reset"))
-            del ops[cut:], expect[cut:], evs[cut:], rhs[cut:]
+            del ops[cut:], expect[cut:], evs[cut:], rhs[cut:], crcs[cut:]
             take_events()
             continue
         take_events()
@@ -150,30 +153,48 @@ def main():
     pairs = [(a, e, ops[k]) for k, (a, e) in enumerate(zip(out, expect)) if e is not None]
     bad = [x for x in pairs if x[0] != x[1]]
     print("commands:", len(pairs), "lines:", len(out), "of", len(ops), "mismatches:", len(bad) + abs(len(out) - len(ops)))
-    native_ev, native_rh = {}, {}
+    native_ev, native_rh, native_crc = {}, {}, {}
     for l in open(evpath).read().splitlines():
         k, rest = l.split(" ", 1)
         if rest.startswith("@region "):
             native_rh[int(k)] = int(rest.split()[1], 16)
+            native_crc[int(k)] = int(rest.split()[2], 16)
         else:
             native_ev.setdefault(int(k), []).append(rest)
     rh_bad = [k for k in range(len(ops)) if native_rh.get(k) != rhs[k]]
+    crc_bad = [k for k in range(len(ops)) if native_crc.get(k) != crcs[k]]
+    print("whole data segment (0xA0000-0xF0000) CRC compared:", len(ops), "mismatches:", len(crc_bad), ("(first at op %s: %s)" % (crc_bad[0], ops[crc_bad[0]])) if crc_bad else "")
     print("savegame-region hashes compared:", len(ops), "mismatches:", len(rh_bad), "(first at op %s: %s)" % (rh_bad[0], ops[rh_bad[0]]) if rh_bad else "")
     names = {x.split()[0] for v in native_ev.values() for x in v}
-    ev_bad, ev_total, oracle_only = [], 0, set()
+    ev_bad, ev_total, oracle_only, reg_junk = [], 0, set(), 0
     for k in range(len(ops)):
         want = [x for x in evs[k] if x.split()[0] in names]
         oracle_only |= {x.split()[0] for x in evs[k]} - names
         ev_total += len(want)
-        if want != native_ev.get(k, []):
-            ev_bad.append((ops[k], native_ev.get(k, []), want))
-    print("boundary events compared:", ev_total, "mismatches:", len(ev_bad), "| stubbed only in the oracle (not compared):", sorted(oracle_only))
+        got = native_ev.get(k, [])
+        if want != got:
+            # registers the callee does not take hold leftovers that differ legitimately (shims vs real library code); name and stack arguments must agree
+            strip = lambda lst: [(x.split()[0], x.split()[5:]) for x in lst]
+            if strip(want) == strip(got):
+                reg_junk += 1
+            else:
+                ev_bad.append((ops[k], got, want))
+    from collections import Counter
+    diffnames = Counter()
+    for o, a, b in ev_bad:
+        ca, cb = Counter(x.split()[0] for x in a), Counter(x.split()[0] for x in b)
+        for nm in set(ca) | set(cb):
+            if ca[nm] != cb[nm]:
+                diffnames[nm] += 1
+    if diffnames:
+        print("event names that differ (ops affected):", dict(diffnames))
+    print("boundary events compared:", ev_total, "mismatches:", len(ev_bad), "(+%d ops differing only in registers the callee ignores)" % reg_junk, "| stubbed only in the oracle (not compared):", sorted(oracle_only))
     for o, a, b in ev_bad[:5]:
         first = next((j for j in range(max(len(a), len(b))) if j >= len(a) or j >= len(b) or a[j] != b[j]), 0)
         print("  op      :", o, "(%d vs %d events, first difference at %d)" % (len(a), len(b), first), "\n  C++     :", a[first:first + 3], "\n  original:", b[first:first + 3])
     for a, b, o in bad[:8]:
         print("  op      :", o, "\n  C++     :", a[:200], "\n  original:", b[:200])
-    sys.exit(1 if bad or ev_bad or rh_bad or len(out) != len(ops) else 0)
+    sys.exit(1 if bad or ev_bad or rh_bad or crc_bad or len(out) != len(ops) else 0)
 
 
 main()

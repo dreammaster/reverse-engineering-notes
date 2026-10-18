@@ -55,6 +55,8 @@ def main():
             g.w8(a, (g.r8(a) | b) if int(p[2]) else (g.r8(a) & ~b & 0xFF))
         elif p[0] == "move":
             g.call(0x1B470, eax=int(p[1]), edx=int(p[2]), ebx=int(p[3]))
+        elif p[0] == "call":
+            g.call(int(p[1]), eax=int(p[2]), edx=int(p[3]))
         elif p[0] == "goto":
             g.call(0x1EE10, eax=int(p[1]))
         elif p[0] == "attr":

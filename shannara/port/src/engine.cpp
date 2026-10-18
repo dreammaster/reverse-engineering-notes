@@ -167,6 +167,60 @@ void Engine::installShims() {
 	});
 	m.setShim("toupper_", [](Machine &mm) { mm.eax = (uint32_t)toupper((int)(mm.eax & 0xFF)); mm.finishShim("toupper_"); });
 	m.setShim("tolower_", [](Machine &mm) { mm.eax = (uint32_t)tolower((int)(mm.eax & 0xFF)); mm.finishShim("tolower_"); });
+	// the rest of the C runtime routines the oracle runs for real (Watcom register convention: eax, edx, ebx)
+	m.setShim("strupr_", [](Machine &mm) {
+		for (uint32_t a = mm.eax; mm.r8(a); a++) mm.w8(a, (uint8_t)toupper(mm.r8(a)));
+		mm.finishShim("strupr_"); // returns its argument (eax unchanged)
+	});
+	m.setShim("strlwr_", [](Machine &mm) {
+		for (uint32_t a = mm.eax; mm.r8(a); a++) mm.w8(a, (uint8_t)tolower(mm.r8(a)));
+		mm.finishShim("strlwr_");
+	});
+	m.setShim("strncpy_", [](Machine &mm) {
+		uint32_t d = mm.eax, s = mm.edx, n = mm.ebx;
+		bool end = false;
+		for (uint32_t i = 0; i < n; i++) {
+			uint8_t c = end ? 0 : mm.r8(s + i);
+			if (!c) end = true;
+			mm.w8(d + i, c);
+		}
+		mm.finishShim("strncpy_"); // returns dest (eax unchanged)
+	});
+	m.setShim("strncmp_", [](Machine &mm) {
+		uint32_t a = mm.eax, b = mm.edx, n = mm.ebx;
+		int r = 0;
+		for (uint32_t i = 0; i < n; i++) {
+			int x = mm.r8(a + i), y = mm.r8(b + i);
+			if (x != y) { r = x < y ? -1 : 1; break; }
+			if (!x) break;
+		}
+		mm.eax = (uint32_t)r;
+		mm.finishShim("strncmp_");
+	});
+	m.setShim("memicmp_", [](Machine &mm) {
+		uint32_t a = mm.eax, b = mm.edx, n = mm.ebx;
+		int r = 0;
+		for (uint32_t i = 0; i < n; i++) {
+			int x = tolower(mm.r8(a + i)), y = tolower(mm.r8(b + i));
+			if (x != y) { r = x < y ? -1 : 1; break; }
+		}
+		mm.eax = (uint32_t)r;
+		mm.finishShim("memicmp_");
+	});
+	m.setShim("strstr_", [](Machine &mm) {
+		uint32_t h = mm.eax, nd = mm.edx;
+		uint32_t found = 0;
+		if (!mm.r8(nd)) found = h;
+		else {
+			for (uint32_t i = h; mm.r8(i) && !found; i++) {
+				uint32_t k = 0;
+				while (mm.r8(nd + k) && mm.r8(i + k) == mm.r8(nd + k)) k++;
+				if (!mm.r8(nd + k)) found = i;
+			}
+		}
+		mm.eax = found;
+		mm.finishShim("strstr_");
+	});
 }
 
 uint32_t Engine::command(int verb, int dobj, int iobj, int actor) {
@@ -221,6 +275,30 @@ uint64_t Engine::stateHash() {
 
 #include "save_regions.inc"
 
+std::vector<std::pair<uint32_t, uint32_t>> Engine::regions() const {
+	std::vector<std::pair<uint32_t, uint32_t>> v;
+	for (auto &r : kSaveRegions)
+		v.push_back({r.addr, r.size});
+	return v;
+}
+
+uint32_t Engine::dataCrc() {
+	static uint32_t table[256];
+	if (!table[1]) {
+		for (uint32_t i = 0; i < 256; i++) {
+			uint32_t c = i;
+			for (int k = 0; k < 8; k++)
+				c = c & 1 ? 0xEDB88320u ^ (c >> 1) : c >> 1;
+			table[i] = c;
+		}
+	}
+	uint32_t c = 0xFFFFFFFFu;
+	const uint8_t *p = _m->ptr(0xA0000);
+	for (uint32_t i = 0; i < 0x50000; i++)
+		c = table[(c ^ p[i]) & 0xFF] ^ (c >> 8);
+	return c ^ 0xFFFFFFFFu; // equals zlib.crc32 of the data object + BSS (0xA0000..0xF0000)
+}
+
 uint64_t Engine::regionHash() {
 	uint64_t h = 1469598103934665603ull;
 	for (auto &r : kSaveRegions)
@@ -232,12 +310,14 @@ void Engine::snapshot() {
 	_snapMem = _m->mem;
 	_snapHeap = _m->heapPtr;
 	_snapOut = _out.size();
+	_snapClock = _clock;
 }
 
 void Engine::restore() {
 	_m->mem = _snapMem;
 	_m->heapPtr = _snapHeap;
 	_out.resize(_snapOut);
+	_clock = _snapClock;
 }
 
 } // namespace shannara
