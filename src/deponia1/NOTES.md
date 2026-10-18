@@ -3812,6 +3812,27 @@ brightness to 100: the start action of the game puts the scenes in the dark and 
 lists the scenes, `RENDER_TRACE=1` prints the first draw calls of a frame. Scenes of the chapters 1 to 3 draw with their
 layers, the animated objects and the characters of the scene (`1001`, `1007`, `1013`, `2001`, `3001` looked at).
 
+## Playing the start of the real game headless (what the run through the menus found)
+
+`renderscene` can play the real game from the start: `RENDER_RUN=12914` runs the action 'Bei Beginn der Kulisse' (it opens the
+language select), `RENDER_CLICK=frame:x:y,...` clicks with the left button at a place of the 1920x1080 frame, `RENDER_LUA=<code>`
+(at `RENDER_LUA_FRAME`) runs Lua, `RENDER_LOG=2` also prints the errors of the scripts (the handler `debugerror` logs at level 2
+only; at level 1 a failed hook says just "Failed to execute hook function"). Language select -> intro movie (no player: it ends
+at once, `VideoFrame()` has to be called while `IsVideoPlaying()`, as `ShowFrame` does) -> main menu -> New Game -> "start a new
+game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel and the intro action. The directory of the player
+(`localAppDir`, with `Savegames/`) is made new for each run in `<out>/appdata/`.
+- `dofile` and `loadfile` are replaced (luaStdLibs.cpp): ScummVM's `luaL_loadfile` reads through its own file classes.
+- The library `utf8` (lua-utf8, `luaopen_utf8`) exists before the scripts run in the original, so its name is one of the
+  internal globals that a savegame does not save. The game's UTF8StringFix script puts its own functions in it; without the name
+  a new game saved the table without its functions and gave it back empty. A part of the library is done (len, sub, char, byte,
+  reverse, lower, upper).
+- `loadList` (scriptingutils.cpp) sets `table[value] = key`, as the original does (it pushes the value first). Global variables do
+  not come back by name from a savegame; the scripts rely on that (`charAniExtension` would lose its metatable).
+- "RunningActions.size() == ActionIdToRunningAction.size()" at the first line of `DeleteFinishedActions` is seen after a load
+  (LoadActions marks the old actions finished and registers the new ones before the table is made again): the original does the same.
+- Still missing for the speech: the sound streams (`CreateStream` gives none: no sound plays, every sound logs "Failed to open
+  soundfile"), and a movie player.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

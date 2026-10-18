@@ -145,6 +145,21 @@ int main() {
 		"dofile");
 	CHECK(isTrue("dofile_ok"));
 
+	LuaDoString(
+		"-- utf8 (the characters are counted, not the bytes)\n"
+		"local s = 'a\\195\\164\\226\\130\\172\\240\\159\\152\\128z'\n"
+		"assert(#s == 11 and utf8.len(s) == 5)\n"
+		"assert(utf8.sub(s, 2, 3) == '\\195\\164\\226\\130\\172')\n"
+		"assert(utf8.sub(s, -1) == 'z' and utf8.sub(s, -2, -2) == '\\240\\159\\152\\128' and utf8.sub(s, 4, 2) == '')\n"
+		"assert(utf8.byte(s, 2) == 228 and select('#', utf8.byte(s, 1, -1)) == 5 and utf8.byte(s, 3) == 0x20AC)\n"
+		"assert(utf8.char(97, 228, 0x20AC, 0x1F600, 122) == s)\n"
+		"assert(utf8.reverse('a\\195\\164b') == 'b\\195\\164a')\n"
+		"assert(utf8.upper('a\\195\\164b') == 'A\\195\\132B' and utf8.lower('A\\195\\132B') == 'a\\195\\164b')\n"
+		"assert(#utf8.charpattern == 14)\n"
+		"utf8_ok = true\n",
+		"utf8");
+	CHECK(isTrue("utf8_ok"));
+
 	std::remove("luastd_dofile.lua");
 	std::remove("luastd_module.lua");
 	std::remove("luastd_nothing.lua");

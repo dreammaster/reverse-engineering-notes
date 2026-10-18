@@ -201,10 +201,12 @@ void SaveGlobalScriptVariables(TVisionaireGame &game) {
 
 /**
  * Confirmed (asm lines 432858-433387 and 433397-434031, which has the same loop for the global variables): puts the
- * records of the list into the table at `index`, a value for each key. It pushes the value and then the key in the
- * original, and calls lua_settable, which takes the key as the value just below the top: it would set
- * `table[value] = key`. That cannot be what the game relies on (saved variables are restored by it), so the key is
- * pushed first here. TODO: check this against the behaviour of the game if a saved variable ever comes back wrong.
+ * records of the list into the table at `index`. The original pushes the value (the switch on the type of the value
+ * comes first) and then the key, and calls lua_settable, which takes the key from just below the top: it sets
+ * `table[value] = key`. That is what the game does (a boolean, number, string or table as a key, the name of the variable
+ * as the value), and it is kept: the global variables of the scripts do not come back from a savegame by their names.
+ * (The shipped scripts depend on it: after a load `charAniExtension` is still the object with the metatable that the
+ * script made - restored by name it would be a plain table and its methods would be gone.)
  */
 static void loadList(const TVList &list, int index, TVisionaireGame &game) {
 	(void)game;
@@ -213,22 +215,6 @@ static void loadList(const TVList &list, int index, TVisionaireGame &game) {
 		int keyType = object->GetInt(kScriptVariableKeyType);
 		int valueType = object->GetInt(kScriptVariableValueType);
 		wxString value = object->GetStr(kScriptVariableValue);
-
-		// The key. (What the original does with any other kind is not defined, the record is skipped.)
-		if (keyType == LUA_TNUMBER) {
-			double number = 0.0;
-
-			if (!object->GetName().ToDouble(&number)) {
-				x_assert(false, "false", kSourceFile, 0xFA);
-				continue;
-			}
-
-			lua_pushnumber(L, number);
-		} else if (keyType == LUA_TSTRING) {
-			lua_pushstring(L, object->GetName().mb_str());
-		} else {
-			continue;
-		}
 
 		switch (valueType) {
 		case LUA_TBOOLEAN:
@@ -273,6 +259,23 @@ static void loadList(const TVList &list, int index, TVisionaireGame &game) {
 		}
 		default:
 			// (nil and light userdata are never saved)
+			continue;
+		}
+
+		// The key, after the value. (What the original does with any other kind is not defined, the record is skipped.)
+		if (keyType == LUA_TNUMBER) {
+			double number = 0.0;
+
+			if (!object->GetName().ToDouble(&number)) {
+				x_assert(false, "false", kSourceFile, 0xFA);
+				lua_settop(L, -2);
+				continue;
+			}
+
+			lua_pushnumber(L, number);
+		} else if (keyType == LUA_TSTRING) {
+			lua_pushstring(L, object->GetName().mb_str());
+		} else {
 			lua_settop(L, -2);
 			continue;
 		}

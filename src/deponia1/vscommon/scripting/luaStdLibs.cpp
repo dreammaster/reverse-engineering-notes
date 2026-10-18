@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <cwctype>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -1132,7 +1133,238 @@ static void openPackage(lua_State *state) {
 	lua_setfield(state, LUA_GLOBALSINDEX, "dofile");
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+// utf8
+//
+// The original has the library `utf8` built in (luaopen_utf8, asm 284419: the 25 functions of lua-utf8, from `offset` to
+// `match`, and `charpattern`). That the table is there before the scripts run matters: the globals that exist then are
+// the ones of the engine (StoreNamesOfInternalGlobalVars) that a savegame does not save, and the game's own
+// UTF8StringFix script puts its pure-Lua functions into the very same `utf8`; without the name there a new game would
+// save the table without its functions and give it back empty. Here are the functions that are plain (len, sub,
+// char, byte, reverse, lower, upper: the places are those of the characters, from 1, and negative from the end).
+// TODO: offset, charpos, next, codes, codepoint, remove, insert, escape, title, fold, ncasecmp, width, widthindex and
+// the four that work with patterns (find, match, gmatch, gsub) are not done; the scripts replace them all anyway.
+
+/** The code point at the start of s (up to `end`) and the bytes it takes; a byte that does not start a sequence is itself. */
+static unsigned decodeUtf8(const char *s, const char *end, int &size) {
+	unsigned char c = static_cast<unsigned char>(*s);
+	int more = (c >= 0xF0) ? 3 : (c >= 0xE0) ? 2 : (c >= 0xC0) ? 1 : 0;
+	unsigned code = (more == 0) ? c : (c & (0x3F >> more));
+
+	size = 1;
+	for (int i = 1; i <= more; i++) {
+		if (s + i >= end || (static_cast<unsigned char>(s[i]) & 0xC0) != 0x80) {
+			size = 1;
+			return c;
+		}
+		code = (code << 6) | (static_cast<unsigned char>(s[i]) & 0x3F);
+	}
+	size = more + 1;
+	return code;
+}
+
+static void appendUtf8(std::string &out, unsigned code) {
+	if (code < 0x80) {
+		out += static_cast<char>(code);
+	} else if (code < 0x800) {
+		out += static_cast<char>(0xC0 | (code >> 6));
+		out += static_cast<char>(0x80 | (code & 0x3F));
+	} else if (code < 0x10000) {
+		out += static_cast<char>(0xE0 | (code >> 12));
+		out += static_cast<char>(0x80 | ((code >> 6) & 0x3F));
+		out += static_cast<char>(0x80 | (code & 0x3F));
+	} else {
+		out += static_cast<char>(0xF0 | (code >> 18));
+		out += static_cast<char>(0x80 | ((code >> 12) & 0x3F));
+		out += static_cast<char>(0x80 | ((code >> 6) & 0x3F));
+		out += static_cast<char>(0x80 | (code & 0x3F));
+	}
+}
+
+static std::vector<unsigned> decodeAll(const char *s, size_t length) {
+	std::vector<unsigned> codes;
+	const char *end = s + length;
+
+	while (s < end) {
+		int size;
+
+		codes.push_back(decodeUtf8(s, end, size));
+		s += size;
+	}
+	return codes;
+}
+
+static std::string encodeAll(const std::vector<unsigned> &codes, size_t from, size_t to) {
+	std::string out;
+
+	for (size_t i = from; i < to; i++)
+		appendUtf8(out, codes[i]);
+	return out;
+}
+
+/** A place that counts from the end when negative, kept inside 0..count+1 (as Lua's string.sub does). */
+static long utf8Place(long place, long count) {
+	if (place < 0)
+		place = count + place + 1;
+	if (place < 0)
+		place = 0;
+	return place;
+}
+
+static int utf8_len(lua_State *state) {
+	size_t length;
+	const char *s = luaL_checklstring(state, 1, &length);
+	std::vector<unsigned> codes = decodeAll(s, length);
+	long count = static_cast<long>(codes.size());
+	long from = utf8Place(luaL_optinteger(state, 2, 1), count);
+	long to = utf8Place(luaL_optinteger(state, 3, -1), count);
+
+	if (from < 1)
+		from = 1;
+	if (to > count)
+		to = count;
+	lua_pushinteger(state, to >= from ? to - from + 1 : 0);
+	return 1;
+}
+
+static int utf8_sub(lua_State *state) {
+	size_t length;
+	const char *s = luaL_checklstring(state, 1, &length);
+	std::vector<unsigned> codes = decodeAll(s, length);
+	long count = static_cast<long>(codes.size());
+	long from = utf8Place(luaL_optinteger(state, 2, 1), count);
+	long to = utf8Place(luaL_optinteger(state, 3, -1), count);
+
+	if (from < 1)
+		from = 1;
+	if (to > count)
+		to = count;
+	std::string result = (from <= to) ? encodeAll(codes, from - 1, to) : std::string();
+
+	lua_pushlstring(state, result.data(), result.size());
+	return 1;
+}
+
+static int utf8_char(lua_State *state) {
+	int count = lua_gettop(state);
+	std::string result;
+
+	for (int i = 1; i <= count; i++)
+		appendUtf8(result, static_cast<unsigned>(luaL_checkinteger(state, i)));
+	lua_pushlstring(state, result.data(), result.size());
+	return 1;
+}
+
+static int utf8_byte(lua_State *state) {
+	size_t length;
+	const char *s = luaL_checklstring(state, 1, &length);
+	std::vector<unsigned> codes = decodeAll(s, length);
+	long count = static_cast<long>(codes.size());
+	long from = utf8Place(luaL_optinteger(state, 2, 1), count);
+	long to = utf8Place(luaL_optinteger(state, 3, from), count);
+
+	if (from < 1)
+		from = 1;
+	if (to > count)
+		to = count;
+	for (long i = from; i <= to; i++)
+		lua_pushinteger(state, codes[i - 1]);
+	return (to >= from) ? static_cast<int>(to - from + 1) : 0;
+}
+
+static int utf8_reverse(lua_State *state) {
+	size_t length;
+	const char *s = luaL_checklstring(state, 1, &length);
+	std::vector<unsigned> codes = decodeAll(s, length);
+	std::string result;
+
+	for (size_t i = codes.size(); i > 0; i--)
+		appendUtf8(result, codes[i - 1]);
+	lua_pushlstring(state, result.data(), result.size());
+	return 1;
+}
+
+/** The case of a code point: ASCII, Latin-1, Latin Extended-A, Greek and Cyrillic (the original has the whole table of Unicode). */
+static unsigned toLowerCode(unsigned code) {
+	if (code < 0x80)
+		return (code >= 'A' && code <= 'Z') ? code + 32 : code;
+	if ((code >= 0xC0 && code <= 0xDE && code != 0xD7) || (code >= 0x391 && code <= 0x3A9) || (code >= 0x410 && code <= 0x42F))
+		return code + 32;
+	if (code >= 0x400 && code <= 0x40F)
+		return code + 80;
+	if (code >= 0x100 && code <= 0x17F && code != 0x130 && code != 0x131 && code != 0x138 && code != 0x149 && code != 0x178 &&
+	        code != 0x17F) {
+		bool oddIsUpper = (code >= 0x139 && code <= 0x148) || (code >= 0x179 && code <= 0x17E);
+
+		return ((code & 1) == (oddIsUpper ? 1 : 0)) ? code + 1 : code;
+	}
+	return code;
+}
+
+static unsigned toUpperCode(unsigned code) {
+	if (code < 0x80)
+		return (code >= 'a' && code <= 'z') ? code - 32 : code;
+	if ((code >= 0xE0 && code <= 0xFE && code != 0xF7) || (code >= 0x3B1 && code <= 0x3C9 && code != 0x3C2) ||
+	        (code >= 0x430 && code <= 0x44F))
+		return code - 32;
+	if (code >= 0x450 && code <= 0x45F)
+		return code - 80;
+	if (code == 0xFF)
+		return 0x178;
+	if (code >= 0x100 && code <= 0x17F && code != 0x130 && code != 0x131 && code != 0x138 && code != 0x149 && code != 0x178 &&
+	        code != 0x17F) {
+		bool oddIsUpper = (code >= 0x139 && code <= 0x148) || (code >= 0x179 && code <= 0x17E);
+
+		return ((code & 1) == (oddIsUpper ? 0 : 1)) ? code - 1 : code;
+	}
+	return code;
+}
+
+static int utf8Case(lua_State *state, bool upper) {
+	size_t length;
+	const char *s = luaL_checklstring(state, 1, &length);
+	std::vector<unsigned> codes = decodeAll(s, length);
+
+	for (unsigned &code : codes) {
+		code = upper ? toUpperCode(code) : toLowerCode(code);
+	}
+	std::string result = encodeAll(codes, 0, codes.size());
+
+	lua_pushlstring(state, result.data(), result.size());
+	return 1;
+}
+
+static int utf8_lower(lua_State *state) {
+	return utf8Case(state, false);
+}
+
+static int utf8_upper(lua_State *state) {
+	return utf8Case(state, true);
+}
+
+static int openUtf8(lua_State *state) {
+	static const luaL_Reg functions[] = {
+		{"len", utf8_len},
+		{"sub", utf8_sub},
+		{"char", utf8_char},
+		{"byte", utf8_byte},
+		{"reverse", utf8_reverse},
+		{"lower", utf8_lower},
+		{"upper", utf8_upper},
+		{nullptr, nullptr}
+	};
+
+	luaL_register(state, "utf8", functions);
+	lua_pushlstring(state, "[\0-\x7F\xC2-\xF4][\x80-\xBF]*", 14);
+	lua_setfield(state, -2, "charpattern");
+	return 1;
+}
+
 void OpenLuaStdLibs(lua_State *state) {
+	lua_pushcfunction(state, openUtf8);
+	lua_call(state, 0, 1);
+	lua_pop(state, 1);
+
 	lua_pushcfunction(state, openIo);
 	lua_call(state, 0, 1);
 	lua_pop(state, 1);

@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <string>
 
 #include "AppGlobals.h"
@@ -40,7 +41,13 @@ int main(int argc, char **argv) {
 
 	if (!control->PreLoad(file, warning, true))
 		return 1;
-	InitPlayerCommands(control->GetVisionaire(), wxString(L"."), wxString(L"."), wxString(L"."));
+	// the directory of the settings and savegames of the player (a new one for each run: the game starts as it does for a
+	// player who has not played yet); the scripts add "Savegames/..." to it
+	std::string appDir = outDir + "/appdata/";
+
+	std::filesystem::remove_all(appDir);
+	std::filesystem::create_directories(appDir + "Savegames");
+	InitPlayerCommands(control->GetVisionaire(), wxString(appDir.c_str()), wxString(L"."), wxString(L"."));
 
 	wxString language;
 
@@ -180,6 +187,8 @@ int main(int argc, char **argv) {
 				break;
 			}
 		}
+		if (frame == (getenv("RENDER_LUA_FRAME") ? atoi(getenv("RENDER_LUA_FRAME")) : 3) && getenv("RENDER_LUA"))
+			LuaDoString(getenv("RENDER_LUA"), "render");
 		if (frame == 5 && getenv("RENDER_RUN")) {
 			// starts the action with this id
 			TVisObjRef action(control->GetVisionaire()->GetObjectById(TId(atoi(getenv("RENDER_RUN")), 7)));
