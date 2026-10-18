@@ -80,3 +80,8 @@ runtime routines. Not yet covered: combat (`start_encounter?`), save/load (`load
 `port/build/play_tool.exe game/SHANNARA.EXE game [script]` is a text front end for the same engine: type `look`, `take stick`, `put stick on pole`,
 `talk to shella`, `inv`, `here`, `goto 98`, `verbs` ... (verb names come from the game's own vocabulary; the responses are the original game's). Example
 transcript from the start: `take stick` -> "You pick up the stick."; `put stick on pole` -> "You tie the stick to the end of your fishing pole using some fishing line."
+
+## Seeing a room
+
+`play_tool` can draw the current room natively (needs the extracted `SHANnnn.PIC` files in `game_out/pics`, or `SHAN_PICS=dir`): `goto 173`, `shot room.png`, `reset` for the start state again.
+The renderer (`src/render.cpp`) asks the recompiled game logic what to draw: background `get_room_pic_id`, overlay tables from the draw phase, visibility from `overlay_visible?`.

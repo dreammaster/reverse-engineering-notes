@@ -960,3 +960,16 @@ events). One more oracle fix came out of it: the oracle's `snapshot/restore` did
 operations while the native engine (whole-image restore) saw zeros; the stack window 0x8E0000-0x900000 is now part of the snapshot. Union coverage after all runs: **638/639 handlers, 55.0 % of their instructions**.
 The one handler no run reaches is `objh_596` (object 674): it starts a combat encounter (`enc_hook_06?`), which needs the combat tables that the headless setup does not create (the oracle faults reading them);
 combat is outside the verified headless scope.
+
+## 35. Rendering a room from engine state (thirty-fifth pass)
+
+The room handler's draw phase (0x16) is a request stream to the engine: for room 88 it asks `stop_animation`, `unload_pics`, `select_pic_window(1)`, `load_pic_sequence?(0x140B, 5)` (animation),
+`set_color_cycle`, `make_sound(0xDD0 ...)`, `update_music_volume`, and finally `setup_pic_regions?(table, count)` with the overlay table. The still picture of a room is **`get_room_pic_id(room)`**
+(`0x1D324`, returns `file << 8 | entry`; it honours game flags - room 88 returns 0x1401 and 0x1403 once flag 22 is set); each 12-byte overlay table entry is `{u16 object, u16 container, u16 picId,
+u16 required attribute, u32 condition callback}` and the game's own `overlay_visible?` (`0x1BC20`: callback must return true; container => `object_parent_is(object, container)`; attribute => `object_has_attr`;
+a bare object entry is visible iff `sub_21ED0(object)`) decides what is drawn. `port/src/render.cpp` (`renderRoom`) reproduces the display: it runs the draw phase with a temporary shim
+for `setup_pic_regions?` that evaluates `overlay_visible?` for every entry at that moment, XORs the visible flag-0x40 sprites onto the background (an overlay carrying a palette replaces the active
+palette), converts the 6-bit palette and writes a PNG; the whole machine state is saved and restored around the draw phase (a draw phase may change state), so rendering is side-effect free.
+`play_tool` got `shot FILE.png` and `reset`; all 68 rooms render from a fresh start (`game_out/rooms_montage_native.png`, local only) with the overlays the game says are visible
+(e.g. room 88 shows the fishing pole and the red book once they are lying there; King Menion's bedroom shows Shella at his bedside). Not yet reproduced: plain (non-XOR) overlays,
+`load_pic_sequence?` animations, colour cycling, the interface/verb UI. The same event stream lists the sounds (`make_sound`, `make_voice?`, `set_room_music?`) a front end must play.

@@ -1,8 +1,9 @@
 // play_tool EXE GAMEDIR [script]: a text front end for the transpiled game logic - type commands, read the original's responses.
 //   look | l | look at fishing pole | take stick | put stick on pole | talk to shella | give X to Y ...   (verb names from the game's own vocabulary)
-//   inv | here | room | rooms | goto ROOM | state | quit
+//   inv | here | room | rooms | goto ROOM | shot FILE.png | reset | state | quit
 // With a script file the lines are executed instead of reading the keyboard (and echoed).
 #include "engine.h"
+#include "render.h"
 
 #include <algorithm>
 #include <cctype>
@@ -26,7 +27,7 @@ static std::string lower(std::string s) {
 
 class Player {
 public:
-	Player(const std::string &exe, const std::string &dir) : _e(exe, dir) {
+	Player(const std::string &exe, const std::string &dir) : _e(exe, dir), _picDir(getenv("SHAN_PICS") ? getenv("SHAN_PICS") : dir + "/../game_out/pics") {
 		Machine &m = _e.machine();
 		for (uint32_t a = 0x1DAA0; a + 13 <= 0x1DE98; a += 13) {
 			uint32_t np = m.r32(a), pp = m.r32(a + 4);
@@ -37,6 +38,7 @@ public:
 		int n = m.r16(0x217A0);
 		for (int i = 1; i <= n; i++)
 			_names.push_back(objectName(i));
+		_e.snapshot(); // the start state, for "reset"
 		// longest verb names first so "look at" wins over "look"
 		_order.resize(_verbs.size());
 		for (size_t i = 0; i < _order.size(); i++)
@@ -110,6 +112,18 @@ public:
 			printf("%s\n", _e.takeText().c_str());
 			return;
 		}
+		if (line.rfind("shot ", 0) == 0) { // shot FILE.png: draw the current room (background + the overlays the game says are visible)
+			try {
+				uint64_t h0 = _e.regionHash();
+				RenderInfo ri;
+				Image img = renderRoom(_e, _picDir, &ri);
+				writePng(lineIn.substr(5), img);
+				printf("room %d, picture 0x%04X, %dx%d, %d of %d overlay entries drawn%s\n", ri.room, ri.picId, img.w, img.h, ri.drawn, ri.entries, h0 == _e.regionHash() ? "" : " (WARNING: the draw phase changed the saved state)");
+			} catch (const std::exception &x) { printf("[%s]\n", x.what()); }
+			_e.takeText();
+			return;
+		}
+		if (line == "reset") { _e.restore(); printf("(back at the start state)\n"); return; }
 		if (line == "verbs") {
 			for (auto &v : _verbs)
 				printf("%s%s%s | ", v.name.c_str(), v.prep.empty() ? "" : " ", v.prep.c_str());
@@ -145,6 +159,7 @@ public:
 
 private:
 	Engine _e;
+	std::string _picDir;
 	std::vector<Verb> _verbs;
 	std::vector<std::string> _names;
 	std::vector<size_t> _order;

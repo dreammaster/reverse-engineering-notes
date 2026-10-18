@@ -54,6 +54,7 @@ public:
 	// pops the return slot and the callee-cleaned arguments of the named boundary function (custom shims call this)
 	void finishShim(const std::string &name) { auto r = _retnByName.find(name); esp += 4 + (r != _retnByName.end() ? (uint32_t)r->second : 0); }
 	void setShim(const std::string &name, Shim s) { _shimByName[name] = std::move(s); }
+	void clearShim(const std::string &name) { _shimByName.erase(name); }
 	void call(uint32_t addr);      // transpiled function or shim (the caller already pushed the dummy return address)
 	void callShim(uint32_t addr);  // boundary function
 	bool tracing = false;
