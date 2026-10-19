@@ -1,3 +1,4 @@
+#ifndef USE_REAL_SDL
 #include "graphicslib/graphicsBackend.h"
 
 // Not reconstructed: the OpenGL backend (TGraphicsSubSystemGL, TGraphicsOGL). Without it the player cannot start: this
@@ -8,3 +9,5 @@ bool CreateGraphicsBackend(const TGraphicsStartup &/*startup*/) {
 
 	return false;
 }
+
+#endif // USE_REAL_SDL

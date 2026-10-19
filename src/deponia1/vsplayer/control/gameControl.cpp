@@ -755,12 +755,13 @@ void TGameControl::UpdateAspectRatio() {
 }
 
 void TGameControl::InitAfterLoadingScreen() {
-	// Confirmed (asm lines 457468-457503).
+	// Confirmed (asm lines 457468-457503): the scene that is the current one (the first scene of the game) is shown - its actions of the
+	// beginning run - unless there is none (`test al, al / jz` on IsEmpty(): not empty goes on to ShowScene).
 	if (_soundManager != nullptr)
 		_soundManager->CleanUp();
 
 	TGScene *scene = _ownedSceneControl.GetScene();
-	if (!scene->GetRef().IsEmpty())
+	if (scene->GetRef().IsEmpty())
 		return;
 
 	TVisObjRef sceneRef = scene->GetRef();

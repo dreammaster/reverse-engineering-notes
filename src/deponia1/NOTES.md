@@ -3909,6 +3909,34 @@ the dialogs with Wenzel) run without an assertion or an error of a script; the g
 before, `RunningActions.size() == ActionIdToRunningAction.size()` is the original's (see above) and `CreateActiveObject ... ActiveTexts` came
 from a dialog line without a text object.
 
+## The standalone player (SDL=1 tools/build.sh deponia1 -> src/deponia1/deponia1_sdl.exe)
+
+The reconstructed `main()` (vsplayer/main/mainSDL.cpp) and `Init()`/`ShowFrame()` (AppFunctions.cpp) run as they are; the build with `SDL=1` defines
+`USE_REAL_SDL`, so that `SdlStub.h` is the real `<SDL.h>` (third_party/SDL2, SDL_MAIN_HANDLED) and `SdlStub.cpp`, `graphicsBackend.cpp` are not built.
+What is added for it:
+- `graphicslib/sdlGraphics.{h,cpp}` (`TSdlGraphics`, made by `CreateGraphicsBackend()` in graphicsBackendSdl.cpp): the game's drawing with SDL's renderer
+  (Direct3D on Windows). Sprites are kept as pixels until they are first drawn (the preloader's threads make sprites; the renderer is the game thread's), then
+  textures with the premultiplied-alpha blend of the game (`SDL_ComposeCustomBlendMode`); the software renderer of SDL has no custom blend: there the colours
+  are made straight and SDL's own blend is used. The game's picture is drawn in the part of the window that has its proportions (black round it),
+  `g_displayedArea` is that part (the mouse is mapped back by `ToScreenPos`), resizing and `ToggleWindowMode` work. No shaders, particles or matrices: the data
+  has none. The window is not an OpenGL window (`Vflags`).
+- `soundengine/sdlAudio.{h,cpp}`: the audio device (48000 Hz, 16 bit, stereo) whose callback calls `AudioMixer::Render()`; opened by the sound manager;
+  `AudioMixer::SetDeviceDriven()` stops the clock-driven `Pump()`. The mixer's sources lock it when they change.
+- For tests without a hand: `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` runs without a window (SDL's software renderer); `DEPONIA_SHOTS=<dir>:<every>:<count>` writes
+  the window as .bmp files, `DEPONIA_CLICKS=<frame>:<x>:<y>[:<button>];...` puts mouse clicks (at the places of the game's picture) into SDL's event queue,
+  `DEPONIA_FPS=1` tells the frame rate and the frames the mixer rendered.
+Command line: `deponia1_sdl.exe -w [-r 1280x720] data.vis` from the game directory (`-w` a window, else the full screen of config.ini).
+Checked: the language select, the intro movies (the logo), the main menu, New Game with its questions and the tutorial scene by clicks that came through SDL's
+event queue; the window and the Direct3D renderer (17 to 42 frames a second, the low end while a 1080p movie is decoded on the main thread); the audio device
+(the mixer renders 48000 frames a second); savegames and the profile are written (`userdata/Daedalic Entertainment/Deponia/`).
+Found on the way:
+- `TGameControl::InitAfterLoadingScreen()` had its test the wrong way round (asm `test al, al / jz` on `IsEmpty()`: a scene that is there is shown): the actions of the beginning
+  of the first scene (the language select) never ran by themselves; that is why the harnesses had to start action 12914.
+- The directories of the config (`<data>/Daedalic Entertainment/Deponia/`) are made in full (`wxPATH_MKDIR_FULL`; the original makes the last one, the system's data directory is
+  there already) and so is `Savegames/` (`TMSavegame::InitSaveGamePath()`; not in the asm): the scripts write the profile there at once.
+Not done: a movie decoded on the GPU (the picture is made RGB on the CPU and a texture each frame: 18 to 22 frames a second for a 1080p movie), the game controllers
+and haptics were not tried (no device), the savegame screenshots (`CaptureScreen`), text input (SDL_TEXTINPUT is passed on), full screen was not tried.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

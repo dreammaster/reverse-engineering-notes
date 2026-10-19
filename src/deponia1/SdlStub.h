@@ -3,6 +3,14 @@
 // exactly so this file can later be deleted in favor of <SDL2/SDL.h>.
 #pragma once
 
+// The standalone player (tools/build.sh with SDL=1) is built with the real SDL2 (third_party/SDL2): USE_REAL_SDL.
+// (SDL_MAIN_HANDLED: the reconstructed main() is the entry point, SDL does not rename it.)
+#ifdef USE_REAL_SDL
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#else
+
+
 #include <cstdint>
 
 using Uint8 = std::uint8_t;
@@ -23,6 +31,8 @@ constexpr Uint32 SDL_INIT_VIDEO = 0x00000020u;
 
 // Event type constant used by main(): SDL_TEXTINPUT == 0x303 in real SDL2.
 constexpr Uint32 SDL_TEXTINPUT = 0x303u;
+
+enum SDL_bool { SDL_FALSE = 0, SDL_TRUE = 1 };
 
 constexpr int SDL_ENABLE = 1;
 constexpr int SDL_DISABLE = 0;
@@ -408,7 +418,7 @@ extern "C" {
 	int SDL_GL_SetSwapInterval(int interval);
 	void SDL_DisableScreenSaver(void);
 	int SDL_GetDesktopDisplayMode(int displayIndex, SDL_DisplayMode *mode);
-	int SDL_SetRelativeMouseMode(int enabled);
+	int SDL_SetRelativeMouseMode(SDL_bool enabled);
 	void SDL_SetWindowTitle(SDL_Window *window, const char *title);
 	float SDL_GetWindowBrightness(SDL_Window *window);
 	int SDL_SetWindowBrightness(SDL_Window *window, float brightness);
@@ -424,3 +434,5 @@ extern "C" {
 	void SDL_GetWindowSize(SDL_Window *window, int *w, int *h);
 	Uint32 SDL_GetWindowFlags(SDL_Window *window);
 }
+
+#endif // USE_REAL_SDL

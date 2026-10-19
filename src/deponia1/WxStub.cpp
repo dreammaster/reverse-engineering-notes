@@ -320,11 +320,17 @@ bool wxFileName::Exists() const {
 	return wxFile::Exists(GetFullPath());
 }
 
-bool wxFileName::Mkdir(const wxString &dir, int /*permissions*/, int /*flags*/) {
-	// `flags` (wxPATH_MKDIR_FULL for recursive creation) is ignored here,
-	// matching the one call site we've reversed so far (TStandardPaths
-	// always passes flags=0); revisit if a later class needs recursive
-	// creation.
+bool wxFileName::Mkdir(const wxString &dir, int /*permissions*/, int flags) {
+	// `flags`: wxPATH_MKDIR_FULL (1) makes the directories above too (what the paths of the player's data need: the company and the game).
+	if (flags & 1) {
+		std::wstring path = dir.ToStdWstring();
+
+		for (size_t at = 0; at < path.size(); at++) {
+			if ((path[at] == L'/' || path[at] == L'\\') && at > 0 && path[at - 1] != L':')
+				_wmkdir(path.substr(0, at).c_str());
+		}
+	}
+
 	return _wmkdir(dir.wc_str()) == 0 || errno == EEXIST;
 }
 

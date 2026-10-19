@@ -524,8 +524,11 @@ bool Init(const wxString &/*appName*/, wxSize &surfaceSize, wxSize &renderSize, 
 	if (resizeable)
 		Vflags |= SDL_WINDOW_RESIZABLE;
 
+#ifndef USE_REAL_SDL
+	// (the standalone player draws with SDL's renderer, which chooses its own driver: the window is not an OpenGL one)
 	if (device == eGraphicsInterface::kOpenGL)
 		Vflags |= SDL_WINDOW_OPENGL;
+#endif
 
 	if (!CreateWindowGL(surfaceSize, renderSize, brightness)) {
 		if (wxLog::loglevel >= 0)
@@ -535,7 +538,7 @@ bool Init(const wxString &/*appName*/, wxSize &surfaceSize, wxSize &renderSize, 
 	}
 
 	if (lockCursor)
-		SDL_SetRelativeMouseMode(1);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	SDL_DisableScreenSaver();
 	SDL_ShowCursor(0);

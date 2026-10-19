@@ -1,3 +1,4 @@
+#ifndef USE_REAL_SDL
 #include "SdlStub.h"
 #include "WxStub.h"
 
@@ -289,6 +290,8 @@ int SDL_GetDesktopDisplayMode(int /*displayIndex*/, SDL_DisplayMode *mode) {
 	return 0;
 }
 
-int SDL_SetRelativeMouseMode(int /*enabled*/) {
+int SDL_SetRelativeMouseMode(SDL_bool /*enabled*/) {
 	return 0;
 }
+
+#endif // USE_REAL_SDL

@@ -4,6 +4,7 @@
 
 #include "Diagnostics.h"
 #include "soundengine/audioMixer.h"
+#include "soundengine/sdlAudio.h"
 
 static int s_uniqueId = 0;
 
@@ -94,6 +95,11 @@ TSoundFFMPEG::TSoundFFMPEG() {
 	_globalBase = _globalVolume;
 	_adjustedMovieVolume = static_cast<float>(AdjustToGeneralVolume(_movieVolume, TSoundTypeEnum::kMovie));
 	_adjustedGlobalVolume = static_cast<float>(AdjustToGeneralVolume(_globalVolume, TSoundTypeEnum::kGlobal));
+
+#ifdef USE_REAL_SDL
+	// (the standalone player has a sound device: the mixer is played by it)
+	soundengine::OpenSdlAudio();
+#endif
 }
 
 // Confirmed (asm lines 1057808-1057870)
@@ -117,10 +123,14 @@ float TSoundFFMPEG::ConvertBalance(int balance) const {
 
 // Confirmed (asm lines 1059852-1059860): there is a sound device when the backend says so.
 bool TSoundFFMPEG::IsSoundSystemReady() const {
+#ifdef USE_REAL_SDL
+	return soundengine::IsSdlAudioOpen();
+#else
 	return false;
+#endif
 }
 
-// (CreateStream() is in TSoundSilent.cpp: a stream that goes by the clock and plays nothing.)
+// (CreateStream() is in TSoundStreams.cpp.)
 
 void TSoundFFMPEG::ApplyListenerVolume(float /*volume*/) {
 }

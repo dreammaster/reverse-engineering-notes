@@ -13,6 +13,7 @@ Source of the libraries of the original game that Deponia 1 needs, at the versio
 | `harfbuzz` | https://github.com/harfbuzz/harfbuzz | 1.8.8 (63be5dc) | MIT (Old MIT) |
 | `libvpx` | https://github.com/webmproject/libvpx | v1.7.0 (f80be22) | BSD 3-clause |
 | `vorbis` | https://github.com/xiph/vorbis | v1.3.5 (f409320) | BSD 3-clause |
+| `SDL2` | https://github.com/libsdl-org/SDL | release-2.30.9 (c98c4fb) | zlib |
 | `freetype` | https://github.com/freetype/freetype | VER-2-8 (2.8.0, a12a344) | FreeType License (FTL) |
 
 Not changed: the files are as upstream (see each `COPYING`; FreeType: `FTL.TXT`). FreeType is the `include/` and `src/` of the release without its
@@ -24,3 +25,7 @@ Unicode functions and the FreeType glue, built with HAVE_OT, HAVE_FALLBACK, HAVE
 other CPUs). It is not a library of the original: its FFmpeg decodes VP8 with its own code. It stands in for that decoder (the movies are the same
 VP8 files). The headers in `libvpx/generated/` are what `configure --target=generic-gnu --disable-vp9 --disable-vp8-encoder --disable-multithread`
 and `build/make/rtcd.pl --arch=generic` make (`vpx_version.h` by hand, "v1.7.0"), so that the library is built without `make`.
+
+`SDL2` is `include/`, `src/` and the CMake files of the release, built with cmake and ninja (`tools/build_third_party.py sdl2`) for the standalone player
+(`SDL=1 tools/build.sh deponia1`). The original has SDL2 ~2.0.4 (THIRD_PARTY.md); a newer 2.x is used because the old sources do not build with a current
+compiler - the API the player uses is the same.

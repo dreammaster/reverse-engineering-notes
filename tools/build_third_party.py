@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the third-party libraries of third_party/ (the versions of the original, see THIRD_PARTY.md) as static libraries:
 build/third_party/<bits>/lib<name>.a with the headers they need staying where they are in third_party/.
-Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz vpx vorbis; default all)"""
+Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz vpx vorbis; default all; sdl2 is built only when asked for: it needs cmake and ninja)"""
 import os
 import re
 import subprocess
@@ -149,8 +149,32 @@ def compile_one(item):
     return None
 
 
+def build_sdl2():
+    """SDL2 (third_party/SDL2) as a static library, built with cmake and ninja (the standalone player: tools/build.sh with SDL=1)."""
+    if bits != 64:
+        print("sdl2: only 64 bits")
+        sys.exit(1)
+    work = os.path.join(ROOT, "build", "sdl2-cmake")
+    env = dict(os.environ, PATH=BIN + os.pathsep + os.environ.get("PATH", ""))
+    if not os.path.exists(os.path.join(work, "build.ninja")):
+        os.makedirs(work, exist_ok=True)
+        subprocess.run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DSDL_SHARED=OFF", "-DSDL_STATIC=ON", "-DSDL_TEST=OFF",
+                        "-DSDL_TESTS=OFF", "-DSDL_INSTALL_TESTS=OFF", "-DSDL_OPENGLES=OFF", "-DSDL_VULKAN=OFF", "-DSDL_WERROR=OFF",
+                        "-DCMAKE_C_COMPILER=" + CC.replace("\\", "/"), os.path.join(TP, "SDL2")], cwd=work, env=env, check=True)
+    subprocess.run(["ninja"], cwd=work, env=env, check=True)
+    os.makedirs(OUT, exist_ok=True)
+    import shutil
+    shutil.copy(os.path.join(work, "libSDL2.a"), os.path.join(OUT, "libSDL2.a"))
+    print("built", os.path.join(OUT, "libSDL2.a"))
+
+
 def main():
     names = [a for a in sys.argv[1:] if not a.startswith("-")]
+    if "sdl2" in names:
+        build_sdl2()
+        names.remove("sdl2")
+        if not names:
+            return
     all_libs = libs()
     names = names or list(all_libs)
     failed = False

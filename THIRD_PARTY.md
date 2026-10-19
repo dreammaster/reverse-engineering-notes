@@ -16,7 +16,7 @@ which functions or files are present, not read from a version string.
 | zlib | 1.2.5 | `deflate 1.2.5`, `inflate 1.2.5` | Yes (data containers); the shipped `libz.so.1` is a different one |
 | libpng | 1.6.20 (3 Dec 2015) | the string `libpng version 1.6.20 - December 3, 2015` | A decoder exists; the game data has no PNG |
 | FreeType + HarfBuzz | FreeType 2.8.0 (`FREETYPE_MAJOR/MINOR/PATCH` of the library), HarfBuzz 1.8.8 (`hb_version_string` returns "1.8.8"; it has `hb-ucdn.cc`, `hb-ft.cc`) | the version strings and the file names | Only for the TrueType/OpenType fonts of Chinese, Korean and Arabic (12 fonts); the other languages use bitmap fonts |
-| SDL2 | 2.0.4 (has `SDL_WarpMouseGlobal`, not `SDL_SetWindowResizable`) | symbol set | the window, input, joysticks; ScummVM replaces it |
+| SDL2 | 2.0.4 (has `SDL_WarpMouseGlobal`, not `SDL_SetWindowResizable`) | symbol set | the window, input, joysticks; ScummVM replaces it. The standalone player uses 2.30.9 (third_party/SDL2): 2.0.4 does not build with a current compiler |
 | GLEW | 1.11.0 | the string `1.11.0`, `glew.c` | the OpenGL backend; ScummVM replaces it |
 | Box2D | 2.3.x (chain shapes, rope, motor joints) | `b2*.cpp` names | The engine binds it for Lua (`tolua_b2_*`); **no script of the game uses it** |
 | Assimp | 3.x (Collada, FBX, OBJ, X, IRR, Assbin importers) | `*Loader.cpp` names | **No**: no 3D model animation in the data |

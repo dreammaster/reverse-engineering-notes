@@ -39,6 +39,11 @@ public:
 	 *  gives them to the sink; the first call starts the clock. */
 	void Pump();
 
+	/** A device pulls the frames (its callback calls Render()): Pump() then renders nothing. */
+	void SetDeviceDriven(bool driven) {
+		_deviceDriven = driven;
+	}
+
 	/** Where the rendered frames go (null: nowhere). The sink is called with the mixer locked. */
 	void SetSink(const std::function<void(const int16_t *, int)> &sink);
 
@@ -55,6 +60,7 @@ private:
 	std::vector<AudioSource *> _sources;
 	std::function<void(const int16_t *, int)> _sink;
 	long long _rendered = 0;
+	bool _deviceDriven = false;
 	long long _clockStart = -1;
 	std::vector<float> _mix;
 	std::vector<int16_t> _out;

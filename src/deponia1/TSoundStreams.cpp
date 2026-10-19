@@ -105,10 +105,14 @@ public:
 	}
 
 	void SetGain(float gain) override {
+		auto lock = AudioMixer::Get().Lock();
+
 		_gain = gain;
 	}
 
 	void SetPan(float pan) override {
+		auto lock = AudioMixer::Get().Lock();
+
 		_pan = std::max(-1.0f, std::min(1.0f, pan));
 	}
 
@@ -117,6 +121,8 @@ public:
 	}
 
 	void SetLoop(bool loop) override {
+		auto lock = AudioMixer::Get().Lock();
+
 		_loop = loop;
 	}
 

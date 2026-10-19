@@ -59,6 +59,11 @@ TMSavegame::~TMSavegame() {
 void TMSavegame::InitSaveGamePath() {
 	TStandardPaths paths;
 	s_strSaveGamePath = wxString(paths.GetSavegamePath());
+
+	// (Not in the asm: the directory of the savegames and of the profile that the scripts write is made here. The original finds it made;
+	// the stub's data directory is new on a first run.)
+	if (!wxDir::Exists(s_strSaveGamePath))
+		wxFileName::Mkdir(s_strSaveGamePath, 0777, 1);
 }
 
 // Confirmed (asm lines 159959-159999).

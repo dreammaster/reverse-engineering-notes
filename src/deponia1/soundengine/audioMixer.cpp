@@ -49,6 +49,10 @@ void AudioMixer::Render(int16_t *out, int frames) {
 
 void AudioMixer::Pump() {
 	std::lock_guard<std::recursive_mutex> lock(_mutex);
+
+	if (_deviceDriven)
+		return;
+
 	long long now = wxGetLocalTimeMillis();
 
 	if (_clockStart < 0) {

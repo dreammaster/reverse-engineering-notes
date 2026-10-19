@@ -49,7 +49,9 @@ std::wstring TStandardPaths::BuildDir(const wchar_t *editorSuffix, const wchar_t
 	}
 
 	if (!wxDir::Exists(wxString(dir))) {
-		if (!wxFileName::Mkdir(wxString(dir), 0777, 0) && wxLog::loglevel >= 0) {
+		// (wxPATH_MKDIR_FULL: the original makes the last directory only, and the directory above it is the system's own; the
+		// placeholder base directory of the stub has the company and the game below it)
+		if (!wxFileName::Mkdir(wxString(dir), 0777, 1) && wxLog::loglevel >= 0) {
 			wxLog::logexpanded(cannotCreateMsg, dir.c_str());
 		}
 	}
