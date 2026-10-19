@@ -49,6 +49,16 @@ Host::Host(const std::string &exePath, const std::string &gameDir, const std::st
 	_m->onPortOut = [this](Machine &, uint16_t p, uint32_t v, int b) { portOut(p, v, b); };
 }
 
+void Host::pump() {
+	if (!onPump)
+		return;
+	auto now = (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+	if (now - _lastPump < 8)
+		return;
+	_lastPump = now;
+	onPump();
+}
+
 void Host::log(const std::string &s) {
 	if (verbose)
 		fprintf(stderr, "%s\n", s.c_str());
@@ -207,6 +217,8 @@ uint32_t Host::portIn(uint16_t port, int) {
 	case 0x3DA: { // input status 1: bit 3 = vertical retrace, bit 0 = display enable; toggles so that waits terminate
 		uint32_t v = (((_retrace >> 3) & 1) ? 8u : 0u) | (_retrace & 1);
 		_retrace++;
+		if ((_retrace & 0xFF) == 0)
+			pump();
 		return v;
 	}
 	case 0x3C9: {
@@ -356,6 +368,7 @@ void Host::int10() {
 
 void Host::mouse33() {
 	Machine &m = *_m;
+	pump();
 	uint32_t ax = m.eax & 0xFFFF;
 	switch (ax) {
 	case 0: // reset: installed, 2 buttons
@@ -509,13 +522,21 @@ void Host::dos21() {
 	};
 	switch (ah) {
 	case 0x0B:
-		m.eax = (m.eax & 0xFFFFFF00u) | (_keys.empty() ? 0u : 0xFFu);
+		pump();
+		m.eax = (m.eax & 0xFFFFFF00u) | ((_keys.empty() && _scanPending < 0) ? 0u : 0xFFu);
 		break;
 	case 0x01: case 0x07: case 0x08: {
+		pump();
 		int k = 0;
-		if (!_keys.empty()) {
-			k = _keys.front();
+		if (_scanPending >= 0) { // second half of an extended key
+			k = _scanPending;
+			_scanPending = -1;
+		} else if (!_keys.empty()) {
+			int e = _keys.front();
 			_keys.erase(_keys.begin());
+			k = e & 0xFF;
+			if (k == 0)
+				_scanPending = (e >> 8) & 0xFF;
 		}
 		m.eax = (m.eax & 0xFFFFFF00u) | (uint32_t)(k & 0xFF);
 		break;
@@ -537,6 +558,7 @@ void Host::dos21() {
 		break;
 	}
 	case 0x2C: {
+		pump();
 		auto now = std::chrono::steady_clock::now().time_since_epoch();
 		uint64_t cs = (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(now).count() / 10;
 		m.ecx = (uint32_t)((((cs / 360000) % 24) << 8) | ((cs / 6000) % 60));

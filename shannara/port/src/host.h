@@ -51,6 +51,9 @@ public:
 	void watch(uint32_t lo, uint32_t hi, int maxReports, const std::string &chainFilter = std::string());
 	void traceAddress(uint32_t addr, int count); // print the first `count` calls to one address with registers and the first stack words // report who writes [lo, hi) (call chain and value)
 
+	// a front end hooks in here: onPump is called (at most every ~8 ms) from the places where the game polls the machine (retrace wait, mouse, keyboard, clock)
+	std::function<void()> onPump;
+	void pump();
 	// input
 	void setMouse(int x, int y, int buttons) { _mx = x; _my = y; _mb = buttons; }
 	void pushKey(int ascii, int scan) { _keys.push_back((ascii & 0xFF) | ((scan & 0xFF) << 8)); }
@@ -91,6 +94,8 @@ private:
 	// mouse
 	int _mx = 0, _my = 0, _mb = 0;
 	std::vector<int> _keys;
+	int _scanPending = -1;      // extended keys: INT 21h AH=7 first returns 0, then the scan code
+	uint64_t _lastPump = 0;
 	// setjmp
 	struct JmpBuf { uint32_t esp, ebp, ebx, ecx, esi, edi, resume; };
 	std::map<uint32_t, JmpBuf> _jmp;

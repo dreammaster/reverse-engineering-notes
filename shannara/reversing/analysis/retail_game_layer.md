@@ -1007,3 +1007,11 @@ Reproduce: `bash reversing/scripts/dump_full.sh` (all functions + extra entries 
 game_out/retn_map.txt --full --reloc 0x400000 --exe game/SHANNARA.EXE`, `bash port/build_full.sh` (about 2 minutes), then
 `HOST_EXTRA_DIRS=game_out/flics/FLICS port/build/full_tool.exe game/SHANNARA.EXE game game_out/pics game_out/save 3000 out.png`. At about 230 million recompiled instructions per second the intro runs in real time.
 The generated sources contain the game's code and stay out of git.
+
+### 36.1 Playing it
+
+`port/build/shannara_win.exe EXE GAMEDIR PICDIR SAVEDIR` (`port/src/win_front.cpp`, GDI) shows the emulated frame buffer in a window and feeds mouse and keyboard to the host's INT 33h / INT 21h
+emulation; the host calls a pump hook from the places the game polls (vertical-retrace wait, mouse, keyboard, clock). The CD-rip's splash screen waits for a click or key; after it the game's own first
+screen appears - the forest of the fishing-spot opening with the original interface (undo button, compass, inventory pane with Jak's portrait) and the opening text in the game's font - all produced by the
+original code. `WIN_SNAPSHOT=out.png,SECONDS[,X,Y,CLICK_AT]` makes the front end save the frame after that many seconds (optionally after a click) and exit, for automated checks.
+Not implemented yet: sound (the AIL drivers are 16-bit real-mode code; the plan is to implement the AIL API calls natively), `FLCDATA` videos need the extracted FLICS archive on `HOST_EXTRA_DIRS`.
