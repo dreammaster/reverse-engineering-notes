@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the third-party libraries of third_party/ (the versions of the original, see THIRD_PARTY.md) as static libraries:
 build/third_party/<bits>/lib<name>.a with the headers they need staying where they are in third_party/.
-Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz vpx; default all)"""
+Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz vpx vorbis; default all)"""
 import os
 import re
 import subprocess
@@ -102,6 +102,12 @@ def libs():
                                                  "vpx/src/vpx_image.c", "vpx_mem/vpx_mem.c", "vpx_scale/vpx_scale_rtcd.c",
                                                  "vpx_util/vpx_thread.c")])
 
+    vorbis = os.path.join(TP, "vorbis")
+    # the decoder (and what the codec needs of the encoder's tables); vorbisfile is not built: the movies hold bare packets
+    vorbis_files = [os.path.join(vorbis, "lib", f) for f in (
+        "analysis.c", "bitrate.c", "block.c", "codebook.c", "envelope.c", "floor0.c", "floor1.c", "info.c", "lookup.c", "lpc.c",
+        "lsp.c", "mapping0.c", "mdct.c", "psy.c", "registry.c", "res0.c", "sharedbook.c", "smallft.c", "synthesis.c", "window.c")]
+
     opus_inc = [os.path.join(opus, d) for d in ("include", "celt", "silk", "silk/float", "src")]
     return {
         "ogg": (ogg_files, [os.path.join(ogg, "include"), gen], []),
@@ -113,6 +119,7 @@ def libs():
         "harfbuzz": (harfbuzz_files, [hb, os.path.join(hb, "hb-ucdn"), os.path.join(TP, "freetype", "include")],
                      ["-DHAVE_OT", "-DHAVE_FALLBACK", "-DHAVE_UCDN", "-DHAVE_FREETYPE", "-DHB_NO_MT"]),
         "vpx": (vpx_files, [vpx, os.path.join(vpx, "generated"), os.path.join(vpx, "vp8"), os.path.join(vpx, "vpx_dsp")], []),
+        "vorbis": (vorbis_files, [os.path.join(vorbis, "include"), os.path.join(vorbis, "lib"), os.path.join(ogg, "include"), gen], []),
         "webp": (webp_files, [os.path.join(webp, "src"), webp], []),
     }
 

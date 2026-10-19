@@ -4,13 +4,15 @@
 // black round it, the subtitles of the language the game asks for in the font of the video subtitles (the position the game sets),
 // a click or a key that ends a movie that can be skipped, the pause, the seek, the loop, and a picture that a script draws itself.
 // What the events of the mouse, touch and controller are for is the game's (the event function).
-// Not done: the sound. The Vorbis tracks are not decoded (there is no sound device behind the engine: TSoundSilent.cpp), so the clock
-// is the one of the system and not that of the audio; the subtitles are drawn as plain text (the styles and the positions
-// of the ASS lines are not used).
+// The sound is the Vorbis track of the language the game asks for (libvorbis, third_party/vorbis): its packets are decoded a little
+// ahead of the clock and mixed (resampled to 48000 Hz) by soundengine::AudioMixer with the volume of the movies; the clock is the
+// one of the system, the mixer goes by it too. The subtitles are drawn as plain text (the styles and the positions of the ASS lines
+// are not used).
 #include <algorithm>
 #include <cctype>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 #include "SdlStub.h"
 #include "TMovie.h"
@@ -21,8 +23,12 @@
 #include "vscommon/cfont.h"
 #include "vscommon/fontManager.h"
 
+#include "soundengine/audioMixer.h"
+
 #include "vpx/vp8dx.h"
 #include "vpx/vpx_decoder.h"
+
+#include <vorbis/codec.h>
 
 namespace {
 
@@ -75,6 +81,196 @@ struct SubtitleCue {
 	std::string _text;
 };
 
+/** The audio track of a movie: the packets of Vorbis are decoded and their samples kept until the mixer takes them (resampled, by
+ *  linear interpolation, to the rate of the mixer). */
+class TMovieAudio : public soundengine::AudioSource {
+public:
+	~TMovieAudio() override {
+		Close();
+	}
+
+	/** The three headers are in the codec private data of the track, with the lacing of Xiph: the number of packets less one, the
+	 *  sizes of all but the last, then the packets. */
+	bool Open(const TMatroskaFile::Track &track) {
+		Close();
+
+		const std::vector<uint8_t> &data = track._codecPrivate;
+
+		if (data.empty() || data[0] != 2)
+			return false;
+
+		size_t at = 1;
+		size_t sizes[3] = {0, 0, 0};
+
+		for (int i = 0; i < 2; i++) {
+			uint8_t part;
+
+			do {
+				if (at >= data.size())
+					return false;
+
+				part = data[at++];
+				sizes[i] += part;
+			} while (part == 255);
+		}
+
+		if (at + sizes[0] + sizes[1] > data.size())
+			return false;
+
+		sizes[2] = data.size() - at - sizes[0] - sizes[1];
+		vorbis_info_init(&_info);
+		vorbis_comment_init(&_comment);
+		_started = true;
+
+		for (int i = 0; i < 3; i++) {
+			ogg_packet packet;
+
+			std::memset(&packet, 0, sizeof(packet));
+			packet.packet = const_cast<unsigned char *>(&data[at]);
+			packet.bytes = static_cast<long>(sizes[i]);
+			packet.b_o_s = (i == 0);
+			packet.packetno = i;
+
+			if (vorbis_synthesis_headerin(&_info, &_comment, &packet) != 0) {
+				Close();
+				return false;
+			}
+
+			at += sizes[i];
+		}
+
+		if (vorbis_synthesis_init(&_dsp, &_info) != 0) {
+			Close();
+			return false;
+		}
+
+		vorbis_block_init(&_dsp, &_block);
+		_ready = true;
+		_step = static_cast<double>(_info.rate) / soundengine::AudioMixer::kSampleRate;
+		soundengine::AudioMixer::Get().AddSource(this);
+		return true;
+	}
+
+	void Close() {
+		if (_ready)
+			soundengine::AudioMixer::Get().RemoveSource(this);
+
+		if (_ready) {
+			vorbis_block_clear(&_block);
+			vorbis_dsp_clear(&_dsp);
+		}
+
+		if (_started) {
+			vorbis_comment_clear(&_comment);
+			vorbis_info_clear(&_info);
+		}
+
+		_ready = false;
+		_started = false;
+		_queue.clear();
+		_read = 0;
+		_phase = 0.0;
+	}
+
+	/** Decodes one packet of the track and keeps the samples. */
+	void Decode(const std::vector<uint8_t> &data) {
+		if (!_ready)
+			return;
+
+		auto lock = soundengine::AudioMixer::Get().Lock();
+		ogg_packet packet;
+
+		std::memset(&packet, 0, sizeof(packet));
+		packet.packet = const_cast<unsigned char *>(data.data());
+		packet.bytes = static_cast<long>(data.size());
+		packet.granulepos = -1;
+		packet.packetno = _packet++;
+
+		if (vorbis_synthesis(&_block, &packet) != 0 || vorbis_synthesis_blockin(&_dsp, &_block) != 0)
+			return;
+
+		float **pcm;
+		int samples;
+
+		while ((samples = vorbis_synthesis_pcmout(&_dsp, &pcm)) > 0) {
+			for (int i = 0; i < samples; i++) {
+				_queue.push_back(pcm[0][i]);
+				_queue.push_back(_info.channels > 1 ? pcm[1][i] : pcm[0][i]);
+			}
+
+			vorbis_synthesis_read(&_dsp, samples);
+		}
+	}
+
+	/** What is decoded and not yet played is dropped (a seek). */
+	void Flush() {
+		if (!_ready)
+			return;
+
+		auto lock = soundengine::AudioMixer::Get().Lock();
+
+		vorbis_synthesis_restart(&_dsp);
+		_queue.clear();
+		_read = 0;
+		_phase = 0.0;
+	}
+
+	void SetPaused(bool paused) {
+		_paused = paused;
+	}
+
+	void SetGain(float gain) {
+		_gain = gain;
+	}
+
+	void Mix(float *out, int frames) override {
+		if (_paused || !_ready)
+			return;
+
+		for (int i = 0; i < frames; i++) {
+			size_t index = _read + static_cast<size_t>(_phase);
+
+			// (the sample after this one is needed to go between the two)
+			if ((index + 1) * 2 + 1 >= _queue.size())
+				break;
+
+			float fraction = static_cast<float>(_phase - static_cast<double>(static_cast<size_t>(_phase)));
+			const float *a = &_queue[index * 2];
+			const float *b = a + 2;
+
+			out[i * 2] += (a[0] + (b[0] - a[0]) * fraction) * _gain;
+			out[i * 2 + 1] += (a[1] + (b[1] - a[1]) * fraction) * _gain;
+			_phase += _step;
+		}
+
+		size_t whole = static_cast<size_t>(_phase);
+
+		_read += whole;
+		_phase -= static_cast<double>(whole);
+
+		// (what was played is let go now and then)
+		if (_read > 48000) {
+			_queue.erase(_queue.begin(), _queue.begin() + static_cast<ptrdiff_t>(_read * 2));
+			_read = 0;
+		}
+	}
+
+private:
+	vorbis_info _info;
+	vorbis_comment _comment;
+	vorbis_dsp_state _dsp;
+	vorbis_block _block;
+	bool _started = false;
+	bool _ready = false;
+	bool _paused = false;
+	float _gain = 1.0f;
+	double _step = 1.0;
+	double _phase = 0.0;
+	long long _packet = 3;
+	std::vector<float> _queue;   // frames of two floats at the rate of the track
+	size_t _read = 0;            // the frame of the queue that is played now
+};
+
 class TMatroskaMoviePlayer : public TMoviePlayer {
 public:
 	~TMatroskaMoviePlayer() override {
@@ -91,6 +287,7 @@ public:
 
 		_position = currentTime();
 		_paused = true;
+		_audio.SetPaused(true);
 	}
 
 	void Resume() override {
@@ -99,6 +296,7 @@ public:
 
 		_started = wxGetLocalTimeMillis();
 		_paused = false;
+		_audio.SetPaused(false);
 	}
 
 	void Seek(float seconds) override;
@@ -146,6 +344,8 @@ private:
 
 	bool startDecoder();
 	void stopDecoder();
+	/** Decodes the audio that is due in the next half second. */
+	void decodeAudio();
 	/** Decodes the pictures that are due; false when the movie is over. */
 	bool advance();
 	void convertPicture(const vpx_image_t *image);
@@ -179,6 +379,10 @@ private:
 	long long _position = 0;               // the time of the movie when the clock was set (milliseconds)
 	long long _started = 0;                // the time of the system then
 	std::vector<uint8_t> _data;
+	TMovieAudio _audio;
+	bool _hasAudio = false;
+	std::vector<size_t> _audioBlocks;      // the indexes of the packets of the audio track
+	size_t _nextAudio = 0;
 };
 
 bool TMatroskaMoviePlayer::Open(const wxString &path, const TMovieSettings &settings) {
@@ -225,9 +429,40 @@ bool TMatroskaMoviePlayer::Open(const wxString &path, const TMovieSettings &sett
 		}
 	}
 
+	// the audio: the track of the language of the game (the first one when there is none like it)
+	_hasAudio = false;
+	_audioBlocks.clear();
+
+	const TMatroskaFile::Track *audio = nullptr;
+	std::string audioLanguage(static_cast<const char *>(settings.audioLanguage.mb_str()));
+
+	for (const TMatroskaFile::Track &track : _file.GetTracks()) {
+		if (track._type != TMatroskaFile::kAudio || track._codecId != "A_VORBIS")
+			continue;
+
+		if (!audio)
+			audio = &track;
+
+		if (!audioLanguage.empty() && isLanguage(track._language, audioLanguage)) {
+			audio = &track;
+			break;
+		}
+	}
+
+	if (audio && _audio.Open(*audio)) {
+		_hasAudio = true;
+		_audio.SetGain(static_cast<float>(settings.volume) / 100.0f);
+
+		for (size_t i = 0; i < blocks.size(); i++) {
+			if (blocks[i]._track == audio->_number)
+				_audioBlocks.push_back(i);
+		}
+	}
+
 	if (!startDecoder())
 		return false;
 
+	_nextAudio = 0;
 	_position = 0;
 	_started = wxGetLocalTimeMillis();
 	_paused = false;
@@ -239,6 +474,9 @@ bool TMatroskaMoviePlayer::Open(const wxString &path, const TMovieSettings &sett
 }
 
 void TMatroskaMoviePlayer::Close() {
+	_audio.Close();
+	_hasAudio = false;
+	_audioBlocks.clear();
 	stopDecoder();
 	releasePicture();
 	_file.Close();
@@ -382,9 +620,26 @@ void TMatroskaMoviePlayer::convertPicture(const vpx_image_t *image) {
 	}
 }
 
+void TMatroskaMoviePlayer::decodeAudio() {
+	if (!_hasAudio)
+		return;
+
+	const std::vector<TMatroskaFile::Block> &blocks = _file.GetBlocks();
+	long long until = currentTime() + 500;
+
+	while (_nextAudio < _audioBlocks.size() && blocks[_audioBlocks[_nextAudio]]._timeMs <= until) {
+		if (_file.ReadBlock(blocks[_audioBlocks[_nextAudio]], _data))
+			_audio.Decode(_data);
+
+		_nextAudio++;
+	}
+}
+
 bool TMatroskaMoviePlayer::advance() {
 	const std::vector<TMatroskaFile::Block> &blocks = _file.GetBlocks();
 	long long time = currentTime();
+
+	decodeAudio();
 
 	while (_nextVideo < _videoBlocks.size()) {
 		const TMatroskaFile::Block &block = blocks[_videoBlocks[_nextVideo]];
@@ -444,6 +699,16 @@ void TMatroskaMoviePlayer::Seek(float seconds) {
 		index--;
 
 	startDecoder();
+
+	if (_hasAudio) {
+		// (the packet before the time too: the windows of the blocks overlap)
+		_audio.Flush();
+		_nextAudio = 0;
+
+		while (_nextAudio + 1 < _audioBlocks.size() && blocks[_audioBlocks[_nextAudio + 1]]._timeMs < target)
+			_nextAudio++;
+	}
+
 	_nextVideo = index;
 	_position = target;
 	_started = wxGetLocalTimeMillis();
@@ -467,6 +732,8 @@ bool TMatroskaMoviePlayer::Frame(const std::function<void(void *)> &eventFunctio
 		if (eventFunction)
 			eventFunction(&event);
 	}
+
+	soundengine::AudioMixer::Get().Pump();
 
 	if (!advance()) {
 		_over = true;

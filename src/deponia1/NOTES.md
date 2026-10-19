@@ -3830,9 +3830,7 @@ game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel an
   not come back by name from a savegame; the scripts rely on that (`charAniExtension` would lose its metatable).
 - "RunningActions.size() == ActionIdToRunningAction.size()" at the first line of `DeleteFinishedActions` is seen after a load
   (LoadActions marks the old actions finished and registers the new ones before the table is made again): the original does the same.
-- The sounds: `TSoundFFMPEG::CreateStream` (TSoundSilent.cpp) opens the file (a composed file too), reads its length with the Opus
-  source and gives a stream that plays nothing and goes by the clock (offset, end, loop, pause). The speech of the tutorial intro
-  then runs to its end; a click on the platform makes the character walk. A real device replaces `CreateStream`.
+- The sounds: see the section on the mixer below.
 - The movies: see the next section.
 
 ## TFreetypeFont: the TrueType and OpenType fonts (graphicslib/freetypeFont.cpp, third_party/freetype)
@@ -3868,10 +3866,23 @@ the game sets, a key or a click that ends a movie that can be skipped, pause, se
 a script draws itself (`Draw`). The movie ends when the clock passes its last picture; `TMovie::Finish()` then does what the original does.
 `SDL_PushEvent` of the SDL stub keeps the events now (the first events of the headless SDL, that the window is hidden and closed, come only
 when none was pushed): a run that plays movies takes those two out first (renderscene does).
-Not done: the sound of the movies (the Vorbis tracks are not decoded: there is no sound device, TSoundSilent.cpp), so the clock is not that of the
-audio; the styles and the positions of the ASS lines; the lacing of blocks and the cues of the files (a seek goes by the index of the blocks).
+The sound of a movie is its Vorbis track of the language the game asks for (libvorbis 1.3.5, third_party/vorbis), decoded half a second ahead of the clock
+and mixed by the mixer below. The audio tracks of the files use Matroska lacing (several packets in a block: Xiph lacing; the reader knows all three kinds).
+Not done: the styles and the positions of the ASS lines; the lacing of blocks and the cues of the files (a seek goes by the index of the blocks).
 Checked with `movieplayertest` (`MOVIETEST_ALL=1` opens all 42, from the game directory) and `renderscene` (`RENDER_RUN=4624` plays a cutscene
 with the subtitles on: `RENDER_LUA="getObject('Conditions[sys_show_subtitles]'):setValue(VConditionValue, true) setVideoLanguage()"`).
+
+## The mixer and the sound streams (soundengine/audioMixer.cpp, TSoundStreams.cpp)
+
+`soundengine::AudioMixer` adds up its sources (the sounds, the audio of a movie) into 48000 Hz, two channels, 16 bit. `Pump()` renders what the
+clock of the system says is due since the last call, so a sound has its offset and its end without a sound device; `TSoundFFMPEG::Update()`
+(every frame of the game) and the movie player (every frame of a movie) call it. A platform backend gives the frames of `Render()` to its device (the
+original: OpenAL); `SetSink()` hands them to a WAV file (`WavWriter`: `renderscene` has `RENDER_AUDIO=<file.wav>`) or to nothing. Pump renders at most
+a quarter of a second at once: when the frames take longer than that (the software renderer), the sound has gaps.
+`TSoundFFMPEG::CreateStream()` (TSoundStreams.cpp) decodes the Ogg Opus of a sound as it is mixed (soundengine::AudioDataSource) with the gain and the
+balance of the sound (full on the louder side, the other side less by the balance), loops, pauses, seeks (`SetOffset`) and tells its length and its end.
+Checked: the tutorial intro's speech, music and atmospheres render (a WAV of 165 seconds with sound in 147 of them), the movies' audio (`movieplayertest`
+measures it for the English and German tracks of a movie and a 44100 Hz one).
 
 ## Reformatted to ScummVM's code conventions
 

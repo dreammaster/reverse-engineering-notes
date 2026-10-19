@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -6,6 +7,7 @@
 #include "SdlStub.h"
 #include "TMovie.h"
 #include "graphicslib/softwareGraphics.h"
+#include "soundengine/audioMixer.h"
 
 static int failures = 0;
 #define CHECK(c) do { if (!(c)) { printf("FAIL line %d: %s\n", __LINE__, #c); failures++; } } while (0)
@@ -139,6 +141,58 @@ int main() {
 	CHECK(player->GetTime() < player->GetDuration());
 	player->Close();
 	delete player;
+
+	// the sound: the mixer renders the audio track of the movie (a movie of 48000 Hz and one of 44100 Hz), and a track of another
+	// language is another sound
+	{
+		struct Measure {
+			double energy = 0.0;
+			long long samples = 0;
+		};
+
+		auto measure = [&](const wchar_t *file, const wchar_t *language, float from) {
+			Measure result;
+			TMovieSettings audioSettings = settings;
+
+			audioSettings.audioLanguage = wxString(language);
+			soundengine::AudioMixer::Get().SetSink([&result](const int16_t *samples, int frames) {
+				for (int i = 0; i < frames * 2; i++)
+					result.energy += static_cast<double>(samples[i]) * samples[i];
+
+				result.samples += frames * 2;
+			});
+
+			TMoviePlayer *audioPlayer = CreateMatroskaMoviePlayer();
+
+			CHECK(audioPlayer->Open(wxString(file), audioSettings));
+			audioPlayer->Seek(from);
+
+			long long start = wxGetLocalTimeMillis();
+
+			// (until a second of sound has been heard: a seek far into a movie takes its time)
+			while (result.samples < 2 * 48000 && wxGetLocalTimeMillis() - start < 15000) {
+				CHECK(audioPlayer->Frame(nullptr));
+				wxMilliSleep(20);
+			}
+
+			printf("(rendered %lld frames, %lld samples seen)\n", soundengine::AudioMixer::Get().GetRenderedFrames(), result.samples);
+			audioPlayer->Close();
+			delete audioPlayer;
+			soundengine::AudioMixer::Get().SetSink(nullptr);
+			return result;
+		};
+
+		Measure english = measure(L"videos/video.vv003", L"English", 5.0f);
+		Measure german = measure(L"videos/video.vv003", L"German", 5.0f);
+		Measure old = measure(L"videos/video.vv000", L"German", 5.0f);
+
+		printf("rms: english %.0f, german %.0f, 44100 Hz track %.0f\n", std::sqrt(english.energy / english.samples),
+		       std::sqrt(german.energy / german.samples), std::sqrt(old.energy / old.samples));
+		CHECK(english.samples >= 24000 && std::sqrt(english.energy / english.samples) > 50.0);
+		CHECK(german.samples >= 24000 && std::sqrt(german.energy / german.samples) > 50.0);
+		CHECK(std::sqrt(old.energy / old.samples) > 50.0);
+		CHECK(english.energy != german.energy);
+	}
 
 	// all the movies of the data: each opens, shows a picture and has a length
 	if (getenv("MOVIETEST_ALL")) {

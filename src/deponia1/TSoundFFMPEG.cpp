@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "Diagnostics.h"
+#include "soundengine/audioMixer.h"
 
 static int s_uniqueId = 0;
 
@@ -312,6 +313,9 @@ void TSoundFFMPEG::updateStreamEnded() {
 
 // Confirmed (asm lines 1058521-1058640)
 void TSoundFFMPEG::Update() {
+	// (the mixer renders the time that has gone by: the sounds play on, and their ends are known below)
+	soundengine::AudioMixer::Get().Pump();
+
 	wxCriticalSectionLocker locker(_lock);
 
 	updateFinishedStreams();

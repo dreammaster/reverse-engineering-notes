@@ -123,6 +123,31 @@ int main() {
 		return group;
 	}()));
 
+	// laced blocks: three frames "ab", "cde", "fghi" with the lacing of Xiph, of EBML and two of fixed size ("ab" "cd")
+	{
+		Bytes xiph = block(2, 0, 0x02, "");
+
+		xiph.push_back(2);
+		xiph.push_back(2);
+		xiph.push_back(3);
+		put(xiph, text("abcdefghi"));
+		put(cluster, element(0xA3, xiph));
+
+		Bytes ebml = block(2, 20, 0x06, "");
+
+		ebml.push_back(2);
+		ebml.push_back(0x82);   // the first size, 2
+		ebml.push_back(0xC0);   // the second: 2 + (64 - 63) = 3
+		put(ebml, text("abcdefghi"));
+		put(cluster, element(0xA3, ebml));
+
+		Bytes fixed = block(2, 40, 0x04, "");
+
+		fixed.push_back(1);
+		put(fixed, text("abcd"));
+		put(cluster, element(0xA3, fixed));
+	}
+
 	Bytes segmentBody;
 
 	put(segmentBody, element(0x1549A966, info));
@@ -160,8 +185,9 @@ int main() {
 	CHECK(subtitle && subtitle->_number == 3 && subtitle->_language == "ger");
 	CHECK(mkv.FindTrackByLanguage(TMatroskaFile::kSubtitle, "fre") == subtitle);   // a language that is not there: the first track
 
-	CHECK(mkv.GetBlocks().size() == 3);
-	if (mkv.GetBlocks().size() == 3) {
+	// the blocks: two frames of the video, the line of subtitles, then the frames of the laced blocks (3 + 3 + 2)
+	CHECK(mkv.GetBlocks().size() == 11);
+	if (mkv.GetBlocks().size() == 11) {
 		const TMatroskaFile::Block &first = mkv.GetBlocks()[0];
 		const TMatroskaFile::Block &second = mkv.GetBlocks()[1];
 		const TMatroskaFile::Block &third = mkv.GetBlocks()[2];
@@ -176,6 +202,18 @@ int main() {
 		CHECK(std::string(data.begin(), data.end()) == "delta");
 		CHECK(mkv.ReadBlock(third, data));
 		CHECK(std::string(data.begin(), data.end()) == "text");
+
+		// Xiph, EBML (the frames "ab", "cde", "fghi" in both), fixed ("ab", "cd")
+		const char *expected[8] = {"ab", "cde", "fghi", "ab", "cde", "fghi", "ab", "cd"};
+
+		// (the laced block of Xiph has the sizes 2 and 3 and its rest, 4)
+		for (int i = 0; i < 8; i++) {
+			const TMatroskaFile::Block &frame = mkv.GetBlocks()[3 + i];
+
+			CHECK(frame._track == 2);
+			CHECK(mkv.ReadBlock(frame, data));
+			CHECK(std::string(data.begin(), data.end()) == expected[i]);
+		}
 	}
 
 	CHECK(!mkv.Open("matroska_not_there.mkv"));

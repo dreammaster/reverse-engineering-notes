@@ -531,7 +531,97 @@ void TMatroskaFile::addBlock(long long pos, long long size, long long clusterTim
 	block._timeMs = (clusterTime + relative) * _timecodeScale / 1000000;
 	block._durationMs = durationTicks * _timecodeScale / 1000000;
 	block._keyFrame = group ? !referenced : (flags & 0x80) != 0;
-	block._offset = pos + length + 3;
-	block._size = static_cast<uint32_t>(size - length - 3);
-	_blocks.push_back(block);
+
+	long long dataStart = pos + length + 3;
+	long long dataSize = size - length - 3;
+	int lacing = (flags >> 1) & 3;
+
+	if (lacing == 0) {
+		block._offset = dataStart;
+		block._size = static_cast<uint32_t>(dataSize);
+		_blocks.push_back(block);
+		return;
+	}
+
+	// A laced block holds several frames (the audio tracks of the game do): the number less one, then the sizes of all but the
+	// last (as sums of bytes that end at one below 255 for Xiph, a number and then differences for EBML, none for fixed sizes).
+	uint8_t first;
+
+	_file.clear();
+	_file.seekg(dataStart);
+	_file.read(reinterpret_cast<char *>(&first), 1);
+
+	int frames = first + 1;
+	long long at = dataStart + 1;
+	std::vector<long long> sizes(static_cast<size_t>(frames), 0);
+	long long total = 0;
+
+	if (lacing == 2) {
+		// fixed size
+		for (int i = 0; i < frames; i++)
+			sizes[static_cast<size_t>(i)] = (dataSize - 1) / frames;
+
+		total = (dataSize - 1) / frames * frames;
+		at = dataStart + 1;
+	} else if (lacing == 1) {
+		// Xiph
+		for (int i = 0; i < frames - 1; i++) {
+			uint8_t part;
+
+			do {
+				_file.clear();
+				_file.seekg(at++);
+				_file.read(reinterpret_cast<char *>(&part), 1);
+				sizes[static_cast<size_t>(i)] += part;
+			} while (part == 255);
+
+			total += sizes[static_cast<size_t>(i)];
+		}
+	} else {
+		// EBML: the first size is a number, the others are the differences (signed numbers) to the one before
+		bool unknown;
+
+		sizes[0] = readSize(at, unknown);
+		total = sizes[0];
+
+		for (int i = 1; i < frames - 1; i++) {
+			long long start = at;
+			uint8_t lead;
+
+			_file.clear();
+			_file.seekg(start);
+			_file.read(reinterpret_cast<char *>(&lead), 1);
+
+			int bytes = 1;
+
+			while (bytes <= 8 && !(lead & (0x80 >> (bytes - 1))))
+				bytes++;
+
+			long long raw = readSize(at, unknown);
+			long long bias = (1LL << (7 * bytes - 1)) - 1;
+
+			sizes[static_cast<size_t>(i)] = sizes[static_cast<size_t>(i) - 1] + (raw - bias);
+			total += sizes[static_cast<size_t>(i)];
+		}
+	}
+
+	if (lacing != 2)
+		sizes[static_cast<size_t>(frames) - 1] = dataStart + dataSize - at - total;
+
+	if (sizes[static_cast<size_t>(frames) - 1] < 0)
+		return;
+
+	// (the frames have the time of the block: the file does not say more; their order is what counts)
+	long long frameAt = at;
+
+	for (int i = 0; i < frames; i++) {
+		Block frame = block;
+
+		frame._offset = frameAt;
+		frame._size = static_cast<uint32_t>(sizes[static_cast<size_t>(i)]);
+		frame._durationMs = durationTicks * _timecodeScale / 1000000 / frames;
+		frame._timeMs = block._timeMs + frame._durationMs * i;
+		_blocks.push_back(frame);
+		frameAt += sizes[static_cast<size_t>(i)];
+	}
 }

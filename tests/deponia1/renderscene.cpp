@@ -12,6 +12,7 @@
 #include "TGScene.h"
 #include "TGCharacter.h"
 #include "graphicslib/softwareGraphics.h"
+#include "soundengine/audioMixer.h"
 #include "vscommon/scripting/command.h"
 #include "vscommon/scripting/visLua.h"
 #include "vstables/eCommand.h"
@@ -183,6 +184,15 @@ int main(int argc, char **argv) {
 	while (SDL_PeepEvents(&drained, 1, SDL_GETEVENT, 0, 0xFFFF) > 0) {
 	}
 
+	// RENDER_AUDIO=<file.wav>: what the mixer renders (the sounds, the speech and the movies) is written there
+	soundengine::WavWriter wav;
+
+	if (getenv("RENDER_AUDIO") && wav.Open(getenv("RENDER_AUDIO"), soundengine::AudioMixer::kSampleRate, 2)) {
+		soundengine::AudioMixer::Get().SetSink([&wav](const int16_t *samples, int frames) {
+			wav.Write(samples, frames);
+		});
+	}
+
 	control->RegisterEventHandler();
 	control->InitAfterLoadingScreen();
 	control->ExecuteStartingAction();
@@ -283,5 +293,7 @@ int main(int argc, char **argv) {
 		}
 		wxMilliSleep(16);
 	}
+	soundengine::AudioMixer::Get().SetSink(nullptr);
+	wav.Close();
 	return 0;
 }

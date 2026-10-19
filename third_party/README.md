@@ -12,6 +12,7 @@ Source of the libraries of the original game that Deponia 1 needs, at the versio
 | `ogg` | https://github.com/xiph/ogg | v1.3.2 (36606a0) | BSD 3-clause |
 | `harfbuzz` | https://github.com/harfbuzz/harfbuzz | 1.8.8 (63be5dc) | MIT (Old MIT) |
 | `libvpx` | https://github.com/webmproject/libvpx | v1.7.0 (f80be22) | BSD 3-clause |
+| `vorbis` | https://github.com/xiph/vorbis | v1.3.5 (f409320) | BSD 3-clause |
 | `freetype` | https://github.com/freetype/freetype | VER-2-8 (2.8.0, a12a344) | FreeType License (FTL) |
 
 Not changed: the files are as upstream (see each `COPYING`; FreeType: `FTL.TXT`). FreeType is the `include/` and `src/` of the release without its
