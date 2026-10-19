@@ -251,10 +251,13 @@ int main() {
 		std::string flag = lua_tostring(L, -1) ? lua_tostring(L, -1) : "?";
 		lua_settop(L, 0);
 		printf("loaded variables: number %d, text %s, flag %s\n", count("saved_number_copy"), text.c_str(), flag.c_str());
-		CHECK(count("saved_number") == 42);
-		CHECK(text == "hello");
-		CHECK(flag == "true");
-		LuaDoString("saved_ok = (saved_flag == true) and saved_table ~= nil and saved_table.answer == 7 and #saved_table.list == 3 and saved_table.list[3] == 3");
+		// The loop of the original that puts the variables back pushes the value and then the key and calls lua_settable, which
+		// sets `table[value] = key`: the globals do not come back by their names (they stay as they are now), and the value
+		// is the key of an entry that has the name for its value (asm 432858-433387).
+		CHECK(count("saved_number") == 0);
+		CHECK(text == "changed");
+		CHECK(flag == "false");
+		LuaDoString("saved_ok = (_G[42] == 'saved_number') and (_G['hello'] == 'saved_text') and (_G[true] == 'saved_flag')");
 		lua_getfield(L, LUA_GLOBALSINDEX, "saved_ok");
 		CHECK(lua_toboolean(L, -1));
 		lua_settop(L, 0);
