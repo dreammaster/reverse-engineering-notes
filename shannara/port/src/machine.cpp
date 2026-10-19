@@ -3,8 +3,8 @@
 
 namespace shannara {
 
-Machine::Machine(const LeExe &exe) : mem(kMemSize, 0) {
-	exe.mapInto(mem.data(), mem.size());
+Machine::Machine(const LeExe &exe, size_t memSize, uint32_t delta) : mem(memSize, 0) {
+	exe.mapInto(mem.data(), mem.size(), delta);
 }
 
 void Machine::memcpy_(void *d, const void *s, size_t n) {
@@ -23,6 +23,8 @@ std::string Machine::cstr(uint32_t a, size_t max) const {
 }
 
 void Machine::call(uint32_t addr) {
+	if (callHook)
+		callHook(*this, addr);
 	auto it = _fns.find(addr);
 	if (it != _fns.end()) {
 		trace.push_back(addr);

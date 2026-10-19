@@ -973,3 +973,37 @@ palette), converts the 6-bit palette and writes a PNG; the whole machine state i
 `play_tool` got `shot FILE.png` and `reset`; all 68 rooms render from a fresh start (`game_out/rooms_montage_native.png`, local only) with the overlays the game says are visible
 (e.g. room 88 shows the fishing pole and the red book once they are lying there; King Menion's bedroom shows Shella at his bedside). Plain (non-XOR) overlays - the character/prop sprites, flags 0x25/0x35 - are copied over the picture with colour index 254 transparent (flag 0x20; checked visually: the shopkeeper of room 117, the dwarves of 448,
 the druid of 184). Not yet reproduced: `load_pic_sequence?` animations, colour cycling, the interface/verb UI. The same event stream lists the sounds (`make_sound`, `make_voice?`, `set_room_music?`) a front end must play.
+
+## 36. The whole program, recompiled and running natively (thirty-sixth pass)
+
+Sections 33-35 recompiled only the game layer (functions below 0x75000) and replaced everything beneath it with no-op shims. The *engine/library half* turned out to be small and
+regular - 1,072 functions, 47k instructions, 86 mnemonics - so the same recompiler now translates **the entire executable** (2,395 functions; `transpile_handlers.py --full`) and only the
+hardware boundary is implemented natively (`port/src/host.*`): the result is a native Windows program (`port/build/full_tool.exe`) that runs the original startup, memory manager, INI parsing,
+font and picture loaders, the FLC/Q video players, the gx blitter and the room/object logic, drawing into an emulated VESA frame buffer. Verified so far by its output: the real intro
+splash frame comes out of the original code path (`game_out/full_frame.png`, local).
+
+What had to be added to the recompiler (`reversing/scripts/transpile_handlers.py`):
+- instructions: `xchg stos* lods* rol ror rcl rcr shld shrd leave jecxz mul cmc clc stc cbw cld std pushf popf pusha popa in out int les/lds`, all set* / j* conditions, direction-flag aware string
+  operations (`repe scasb` differs from `repne scasb`), segment registers as constants (flat model, every base is 0), `int N` and port I/O routed to host hooks.
+- jump tables IDA did not record (the C runtime's printf) are recovered by scanning consecutive in-function code pointers (`dump_insns.py`); entry points IDA does not know
+  (`extra_entries.txt`: now also the three gx pixel-writer callbacks `0x855DC/0x85634/0x856C4`) are dumped with a control-flow walk; continuation entries after every `_setjmp_` call (longjmp resumes there).
+- **relocation (`--reloc 0x400000`)**: the original runs under DOS/4GW with the image *above* 1 MB, so the low megabyte is free and VRAM is simply linear `0xA0000`. In a flat model that
+  keeps the link-time addresses the data object and the VGA window collide (`offset dword_A0000` is both the first variable and the video window), and conventional memory (the game wants
+  640 KB of it) does not exist. The generator therefore reads the LE fixup records (21,818 of them, all 32-bit offsets): operands that carry a fixup, direct call/jump targets, the function registry and
+  the C++ loader (`LeExe::mapInto(..., delta)`) shift by the delta; every other constant - the literal `0xA0000`, `0xAFFFF`, `mov word [eax+2], 0Ah` - stays, exactly as under the real loader.
+
+What the host layer provides (`Host`): DOS INT 21h file/memory/time services (files resolve by base name in the game directory, the extracted picture directory and `HOST_EXTRA_DIRS`; writes go to
+a save directory), DPMI (memory blocks, DOS blocks, real-mode interrupt simulation for the **VESA BIOS** 4F00/4F01/4F02/4F05 with a 64 KB bank window copied into a 1 MB frame store), the VGA
+DAC (ports 0x3C7-0x3C9), vertical-retrace status, mouse driver (INT 33h), keyboard, the BIOS data area, `sbrk`, `setjmp/longjmp` (exception unwinding + the continuation entries), and native
+replacements for functions that build `int N` stubs at run time (`int386_`, `int386x_`, `intdos_`, `segread_` - they must preserve `ebx` (and `ecx` for `int386_`) like the library's versions; getting that wrong made the
+CRT initialiser loop forever). The C runtime string/memory functions are native shims (`crt.cpp`, shared with the headless engine). Sound (AIL drivers) is not implemented: the AIL
+interrupt glue is skipped (13 functions are shims in total).
+
+Diagnostics built along the way (all in `full_tool`): `HOST_VERBOSE` (interrupts, file opens with the call chain), `HOST_CALLNAME=fn,N` / `HOST_CALLADDR` (arguments of the first N calls, optional string/dword peeks),
+`HOST_WATCH=lo,hi` (+ `HOST_WATCH_FILTER`, `HOST_WATCH_VALUE`, `HOST_WATCH_STOP`: who writes a memory range), `HOST_INSNTRACE` (last instructions at the stop), plus the call stack at every stop. These located
+the bugs above, e.g. a `repe scasb` implemented as `repne` (INI parsing looped), a clobbered register convention, and a VRAM constant hidden inside `mov word [eax+2], 0Ah`.
+
+Reproduce: `bash reversing/scripts/dump_full.sh` (all functions + extra entries -> `game_out/insns_full.json`), `python reversing/scripts/transpile_handlers.py game_out/insns_full.json game_out/gen_full
+game_out/retn_map.txt --full --reloc 0x400000 --exe game/SHANNARA.EXE`, `bash port/build_full.sh` (about 2 minutes), then
+`HOST_EXTRA_DIRS=game_out/flics/FLICS port/build/full_tool.exe game/SHANNARA.EXE game game_out/pics game_out/save 3000 out.png`. At about 230 million recompiled instructions per second the intro runs in real time.
+The generated sources contain the game's code and stay out of git.

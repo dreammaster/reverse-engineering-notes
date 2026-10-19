@@ -117,6 +117,18 @@ def main():
                 if n:
                     r["jt"] = [idc.get_wide_dword(base + 4 * k) for k in range(n)]
                     r["jt_lo"] = si.lowcase
+                elif r["ops"][0]["sib"][2] == 4:
+                    # IDA did not record the switch (e.g. the C runtime's printf): read consecutive dwords that point at instructions of this function
+                    here = {x["ea"] for x in insns}
+                    tbl = []
+                    while len(tbl) < 256:
+                        v = idc.get_wide_dword(base + 4 * len(tbl))
+                        if v not in here:
+                            break
+                        tbl.append(v)
+                    if len(tbl) >= 2:
+                        r["jt"] = tbl
+                        r["jt_lo"] = 0
         out[name] = {"ea": fea, "insns": insns}
     json.dump(out, open(idc.ARGV[2], "w"))
     idc.qexit(0)

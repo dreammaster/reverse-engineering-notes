@@ -45,12 +45,12 @@ LeExe::LeExe(Bytes file) : _d(std::move(file)) {
 	}
 }
 
-void LeExe::mapInto(uint8_t *mem, size_t memSize) const {
+void LeExe::mapInto(uint8_t *mem, size_t memSize, uint32_t delta) const {
 	for (const Object &o : _objects) {
 		for (uint32_t p = 0; p < o.pages; p++) {
 			uint32_t logical = o.firstPage - 1 + p;
 			size_t off = _dataPages + (size_t)(_pageMap[logical] - 1) * _pageSize;
-			uint32_t dst = o.base + p * _pageSize;
+			uint32_t dst = o.base + delta + p * _pageSize;
 			for (uint32_t k = 0; k < _pageSize; k++) {
 				if (dst + k >= memSize)
 					throw FormatError("image does not fit in memory");
@@ -64,7 +64,7 @@ void LeExe::mapInto(uint8_t *mem, size_t memSize) const {
 			uint32_t logical = o.firstPage - 1 + p;
 			Cursor a(_d, _fixupPageTab + 4 * logical), b(_d, _fixupPageTab + 4 * (logical + 1));
 			size_t pos = _fixupRecTab + a.u32(), end = _fixupRecTab + b.u32();
-			uint32_t pageAddr = o.base + p * _pageSize;
+			uint32_t pageAddr = o.base + delta + p * _pageSize;
 			Cursor c(_d, pos);
 			while (c.pos() < end) {
 				uint8_t src = c.u8(), flags = c.u8();
@@ -93,7 +93,7 @@ void LeExe::mapInto(uint8_t *mem, size_t memSize) const {
 				}
 				if (obj < 1 || obj > (int)_objects.size())
 					throw FormatError("fixup target object out of range");
-				uint32_t value = _objects[obj - 1].base + tgt;
+				uint32_t value = _objects[obj - 1].base + delta + tgt;
 				for (int16_t so : offs) {
 					int64_t at = (int64_t)pageAddr + so;
 					if (at < 0 || at + 4 > (int64_t)memSize)

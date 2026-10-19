@@ -23,7 +23,7 @@ public:
 	static const uint32_t kStackTop = 0x900000;
 	static const uint32_t kHeapBase = 0xC00000;
 
-	explicit Machine(const LeExe &exe);
+	explicit Machine(const LeExe &exe, size_t memSize = kMemSize, uint32_t delta = 0);
 
 	// registers and flags (public: generated code uses them directly)
 	uint32_t eax = 0, ecx = 0, edx = 0, ebx = 0, esp = kStackTop, ebp = 0, esi = 0, edi = 0;
@@ -35,7 +35,13 @@ public:
 	uint32_t r32(uint32_t a) const { check(a, 4); return mem[a] | (mem[a + 1] << 8) | (mem[a + 2] << 16) | ((uint32_t)mem[a + 3] << 24); }
 	bool wlogOn = false;                 // debugging: record every byte written to the data object / BSS (address << 8 | value) in wlog
 	std::vector<uint64_t> wlog;
-	void logw(uint32_t a, uint8_t v) { if (a >= 0xA0000 && a < 0xF0000) wlog.push_back(((uint64_t)a << 8) | v); }
+	uint32_t watchLo = 0, watchHi = 0;   // debugging: onWatch(address, value) is called for every byte written into [watchLo, watchHi)
+	std::function<void(uint32_t, uint8_t)> onWatch;
+	bool wlogStore = true;
+	void logw(uint32_t a, uint8_t v) {
+		if (watchHi && a >= watchLo && a < watchHi && onWatch) onWatch(a, v);
+		if (wlogStore && a >= 0xA0000 && a < 0xF0000) wlog.push_back(((uint64_t)a << 8) | v);
+	}
 	void w8(uint32_t a, uint8_t v) { check(a, 1); mem[a] = v; if (wlogOn) logw(a, v); }
 	void w16(uint32_t a, uint16_t v) { check(a, 2); mem[a] = v & 0xFF; mem[a + 1] = v >> 8; if (wlogOn) { logw(a, v & 0xFF); logw(a + 1, v >> 8); } }
 	void w32(uint32_t a, uint32_t v) { check(a, 4); mem[a] = v & 0xFF; mem[a + 1] = (v >> 8) & 0xFF; mem[a + 2] = (v >> 16) & 0xFF; mem[a + 3] = v >> 24; if (wlogOn) for (int k = 0; k < 4; k++) logw(a + k, (v >> (8 * k)) & 0xFF); }
@@ -56,6 +62,7 @@ public:
 	void setShim(const std::string &name, Shim s) { _shimByName[name] = std::move(s); }
 	void clearShim(const std::string &name) { _shimByName.erase(name); }
 	void call(uint32_t addr);      // transpiled function or shim (the caller already pushed the dummy return address)
+	std::function<void(Machine &, uint32_t)> callHook; // optional: called with the target address of every call (diagnostics)
 	void callShim(uint32_t addr);  // boundary function
 	bool tracing = false;
 	int64_t budget = INT64_MAX; // instructions left before a runaway loop is aborted (reset per command by Engine)
@@ -71,7 +78,10 @@ public:
 		char b[160];
 		snprintf(b, sizeof b, "%x %x %x %x %x %x %x %x %x", ea, eax, ecx, edx, ebx, esi, edi, ebp, esp);
 		traceLog.push_back(b);
+		if (traceRing && traceLog.size() > 8192)
+			traceLog.erase(traceLog.begin(), traceLog.begin() + 4096); // keep only the most recent instructions
 	}
+	bool traceRing = false;
 	std::vector<uint32_t> trace; // addresses of the functions currently executing (kept after an exception for diagnosis)
 	std::map<std::string, uint64_t> unknownShimCalls; // boundary functions that had no specific shim (no-ops) -> call counts
 	bool logEvents = false;                           // record every no-op shim call (dialogs, music, journal, events...) in `events`
@@ -121,18 +131,94 @@ public:
 	template <typename T> void setAdd(T a, T b, T r) { cf = r < a; of = ((~(a ^ b) & (a ^ r)) >> (sizeof(T) * 8 - 1)) & 1; setZS(r); }
 	template <typename T> void setSub(T a, T b, T r) { cf = a < b; of = (((a ^ b) & (a ^ r)) >> (sizeof(T) * 8 - 1)) & 1; setZS(r); }
 
-	// string instructions (direction flag is always clear in this code)
-	void movsd(bool rep) { uint32_t n = rep ? ecx : 1; for (uint32_t i = 0; i < n; i++) { w32(edi, r32(esi)); esi += 4; edi += 4; } if (rep) ecx = 0; }
-	void movsw(bool rep) { uint32_t n = rep ? ecx : 1; for (uint32_t i = 0; i < n; i++) { w16(edi, r16(esi)); esi += 2; edi += 2; } if (rep) ecx = 0; }
-	void movsb(bool rep) { uint32_t n = rep ? ecx : 1; for (uint32_t i = 0; i < n; i++) { w8(edi, r8(esi)); esi++; edi++; } if (rep) ecx = 0; }
-	void scasb(bool repne) {
-		if (!repne) { sub<uint8_t>((uint8_t)eax, r8(edi)); edi++; return; }
-		while (ecx) { uint8_t b = r8(edi); edi++; ecx--; sub<uint8_t>((uint8_t)eax, b); if (zf) break; }
+	// string instructions (rep prefix passed as a flag; the direction flag is honoured)
+	bool df = false;
+	uint32_t vram = 0xA0000;                 // linear address of the 64 KB VGA/VESA window (the transpiled gx code loads it as an immediate)
+	int step(int sz) const { return df ? -sz : sz; }
+	void movsd(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(4); for (uint32_t i = 0; i < n; i++) { w32(edi, r32(esi)); esi += s; edi += s; } if (rep) ecx = 0; }
+	void movsw(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(2); for (uint32_t i = 0; i < n; i++) { w16(edi, r16(esi)); esi += s; edi += s; } if (rep) ecx = 0; }
+	void movsb(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(1); for (uint32_t i = 0; i < n; i++) { w8(edi, r8(esi)); esi += s; edi += s; } if (rep) ecx = 0; }
+	void stosd(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(4); for (uint32_t i = 0; i < n; i++) { w32(edi, eax); edi += s; } if (rep) ecx = 0; }
+	void stosw(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(2); for (uint32_t i = 0; i < n; i++) { w16(edi, (uint16_t)eax); edi += s; } if (rep) ecx = 0; }
+	void stosb(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(1); for (uint32_t i = 0; i < n; i++) { w8(edi, (uint8_t)eax); edi += s; } if (rep) ecx = 0; }
+	void lodsb(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(1); for (uint32_t i = 0; i < n; i++) { eax = (eax & 0xFFFFFF00u) | r8(esi); esi += s; } if (rep) ecx = 0; }
+	void lodsd(bool rep) { uint32_t n = rep ? ecx : 1; int s = step(4); for (uint32_t i = 0; i < n; i++) { eax = r32(esi); esi += s; } if (rep) ecx = 0; }
+	void scasb(bool rep, bool whileEqual = false) { // `repne scasb` stops at the first match, `repe scasb` at the first mismatch
+		int s = step(1);
+		if (!rep) { sub<uint8_t>((uint8_t)eax, r8(edi)); edi += s; return; }
+		while (ecx) { uint8_t b = r8(edi); edi += s; ecx--; sub<uint8_t>((uint8_t)eax, b); if (whileEqual ? !zf : zf) break; }
 	}
 	void cmpsb(bool repe) {
-		if (!repe) { sub<uint8_t>(r8(esi), r8(edi)); esi++; edi++; return; }
-		while (ecx) { uint8_t a = r8(esi), b = r8(edi); esi++; edi++; ecx--; sub<uint8_t>(a, b); if (!zf) break; }
+		int s = step(1);
+		if (!repe) { sub<uint8_t>(r8(esi), r8(edi)); esi += s; edi += s; return; }
+		while (ecx) { uint8_t a = r8(esi), b = r8(edi); esi += s; edi += s; ecx--; sub<uint8_t>(a, b); if (!zf) break; }
 	}
+
+	// rotates and double shifts
+	template <typename T> T rol(T a, unsigned n) {
+		n &= 31;
+		if (!n) return a;
+		unsigned b = sizeof(T) * 8;
+		n %= b;
+		T r = n ? (T)((a << n) | (a >> (b - n))) : a;
+		cf = r & 1;
+		of = ((r >> (b - 1)) & 1) != cf;
+		return r;
+	}
+	template <typename T> T ror(T a, unsigned n) {
+		n &= 31;
+		if (!n) return a;
+		unsigned b = sizeof(T) * 8;
+		n %= b;
+		T r = n ? (T)((a >> n) | (a << (b - n))) : a;
+		cf = (r >> (b - 1)) & 1;
+		of = ((r >> (b - 1)) & 1) != ((r >> (b - 2)) & 1);
+		return r;
+	}
+	template <typename T> T rcl(T a, unsigned n) {
+		n &= 31;
+		unsigned b = sizeof(T) * 8;
+		n %= (b + 1);
+		for (unsigned i = 0; i < n; i++) { bool c = (a >> (b - 1)) & 1; a = (T)((a << 1) | (T)cf); cf = c; }
+		of = n ? (((a >> (b - 1)) & 1) != cf) : of;
+		return a;
+	}
+	template <typename T> T rcr(T a, unsigned n) {
+		n &= 31;
+		unsigned b = sizeof(T) * 8;
+		n %= (b + 1);
+		for (unsigned i = 0; i < n; i++) { bool c = a & 1; a = (T)((a >> 1) | ((T)cf << (b - 1))); cf = c; }
+		of = n ? (((a >> (b - 1)) & 1) != ((a >> (b - 2)) & 1)) : of;
+		return a;
+	}
+	uint32_t shld(uint32_t a, uint32_t b, unsigned n) {
+		n &= 31;
+		if (!n) return a;
+		uint32_t r = (a << n) | (b >> (32 - n));
+		cf = (a >> (32 - n)) & 1;
+		setZS(r);
+		of = ((r >> 31) & 1) != ((a >> 31) & 1);
+		return r;
+	}
+	uint32_t shrd(uint32_t a, uint32_t b, unsigned n) {
+		n &= 31;
+		if (!n) return a;
+		uint32_t r = (a >> n) | (b << (32 - n));
+		cf = (a >> (n - 1)) & 1;
+		setZS(r);
+		of = ((r >> 31) & 1) != ((a >> 31) & 1);
+		return r;
+	}
+	uint32_t flags() const { return 0x202u | (cf ? 1u : 0u) | (zf ? 0x40u : 0u) | (sf ? 0x80u : 0u) | (df ? 0x400u : 0u) | (of ? 0x800u : 0u); }
+	void setFlags(uint32_t f) { cf = f & 1; zf = f & 0x40; sf = f & 0x80; df = f & 0x400; of = f & 0x800; }
+
+	// the hardware boundary: software interrupts (DOS / BIOS / DPMI services) and port I/O are implemented by the host
+	std::function<void(Machine &, int)> onInterrupt;
+	std::function<uint32_t(Machine &, uint16_t, int)> onPortIn;           // port, bytes -> value
+	std::function<void(Machine &, uint16_t, uint32_t, int)> onPortOut;    // port, value, bytes
+	void intr(int n) { if (!onInterrupt) throw FormatError("int without a handler"); onInterrupt(*this, n); }
+	uint32_t portIn(uint16_t p, int bytes) { return onPortIn ? onPortIn(*this, p, bytes) : 0; }
+	void portOut(uint16_t p, uint32_t v, int bytes) { if (onPortOut) onPortOut(*this, p, v, bytes); }
 
 	bool cond_b() const { return cf; }
 	bool cond_be() const { return cf || zf; }

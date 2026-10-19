@@ -65,6 +65,17 @@ class LeImage:
                 self._apply_page_fixups(out, p * self.page, first - 1 + p, base + p * self.page)
         return base, bytes(out)
 
+    def fixup_sites(self):
+        """every relocated 32-bit field of the image as (linear address of the field, kind, resolved target value): operands of the decoded
+        instructions that coincide with one of these were data/code pointers (relocated by the loader); all other constants stay as they are"""
+        self._collect = []
+        for k in range(len(self.objects)):
+            self.object_bytes(k, True)
+        out, self._collect = self._collect, None
+        return out
+
+    _collect = None
+
     def _apply_page_fixups(self, out, page_off, logical_page, page_addr):
         """internal-reference fixups of one page (the only kind this executable uses): value = base(target object) + target offset"""
         d = self.d
@@ -113,6 +124,8 @@ class LeImage:
             value = self.objects[obj - 1][0] + tgt
             for so in srcoffs:
                 o = page_off + so
+                if self._collect is not None:
+                    self._collect.append((page_addr + so, kind, value & 0xFFFFFFFF))
                 if kind == 7:
                     if 0 <= o and o + 4 <= len(out):
                         out[o:o + 4] = struct.pack("<I", value & 0xFFFFFFFF)

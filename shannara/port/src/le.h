@@ -17,7 +17,7 @@ public:
 	uint32_t u32(uint32_t addr) const { return u16(addr) | ((uint32_t)u16(addr + 2) << 16); }
 	// Builds the loaded image: every object's pages copied to its link address in `mem` (zero-filled BSS), then all internal-reference
 	// fixups applied (value = base of the target object + offset), so pointers in tables hold real addresses as after DOS/4GW loading.
-	void mapInto(uint8_t *mem, size_t memSize) const;
+	void mapInto(uint8_t *mem, size_t memSize, uint32_t delta = 0) const; // delta: load the whole image that many bytes above its link-time addresses (fixups follow)
 	uint32_t entryPoint() const { return _eip; }
 	size_t objectCount() const { return _objects.size(); }
 

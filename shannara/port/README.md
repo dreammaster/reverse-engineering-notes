@@ -85,3 +85,16 @@ transcript from the start: `take stick` -> "You pick up the stick."; `put stick 
 
 `play_tool` can draw the current room natively (needs the extracted `SHANnnn.PIC` files in `game_out/pics`, or `SHAN_PICS=dir`): `goto 173`, `shot room.png`, `reset` for the start state again.
 The renderer (`src/render.cpp`) asks the recompiled game logic what to draw: background `get_room_pic_id`, overlay tables from the draw phase, visibility from `overlay_visible?`.
+
+## The whole program (full build)
+
+`port/build/full_tool.exe` runs the *entire* recompiled executable (startup, memory manager, loaders, video players, gx blitter, UI and game logic) on the host layer in `src/host.*` (DOS/DPMI/VESA/mouse/VGA emulation):
+
+```
+bash reversing/scripts/dump_full.sh                                  # game_out/insns_full.json (needs Shannara.idb, IDA closed)
+python reversing/scripts/transpile_handlers.py game_out/insns_full.json game_out/gen_full game_out/retn_map.txt --full --reloc 0x400000 --exe game/SHANNARA.EXE
+bash port/build_full.sh                                              # ~2 min
+HOST_EXTRA_DIRS=game_out/flics/FLICS port/build/full_tool.exe game/SHANNARA.EXE game game_out/pics game_out/save 3000 frame.png
+```
+It stops after the given number of million instructions (or when the program exits), prints the call stack at the stop and writes the 640x480 frame store with the VGA palette. Debug switches:
+`HOST_VERBOSE`, `HOST_CALLNAME=fn,N`, `HOST_WATCH=lo,hi`, `HOST_INSNTRACE` (see analysis section 36).

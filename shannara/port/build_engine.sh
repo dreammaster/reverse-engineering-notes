@@ -3,7 +3,7 @@
 # reversing/scripts/transpile_handlers.py - see port/README.md). Run from the repository's shannara/ directory.
 set -e
 mkdir -p port/build/gen port/build/rt
-for f in le machine engine shanstr objectdat pic render; do
+for f in le machine engine crt shanstr objectdat pic png render; do
   g++ -std=c++17 -O1 -w -Iport/src -c port/src/$f.cpp -o port/build/rt/$f.o &
 done
 ls port/gen/*.cpp | xargs -P 8 -I{} sh -c 'g++ -std=c++17 -O1 -w -Iport/src -c {} -o port/build/gen/$(basename {} .cpp).o'
