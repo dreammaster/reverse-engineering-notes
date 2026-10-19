@@ -4,7 +4,7 @@
  *
  * File: "MM3TAPE1", u32 memsize, the initial memory image, then events:
  *   'T' top-level call of a translated routine   name, regs, delta     'U' its return: ax dx, delta
- *   'H' host call (before the host runs)         name, nargs, ret, regs, 12 stack words, delta
+ *   'H' host call (before the host runs)         name, nargs, ret, regs, stack word count + words, delta
  *   'h' host return                              ax dx es sp, delta
  *   'F' entry of a translated routine            name, regs (no delta)
  * `delta` = the bytes of MEM that changed since the previous event: u32 count, then (u32 offset, u32 length, bytes) runs. */
@@ -75,7 +75,9 @@ void tape_host(Cpu *c, const char *n, int nargs, int ret, void (*fn)(Cpu *)) {
 	tape_open();
 	if (!tf) { fn(c); return; }
 	w8('H'); name(n); w8((unsigned)nargs); w8((unsigned)ret); regs(c);
-	for (int i = 0; i < 12; i++) w16(rd16(STK, (uint16_t)(c->sp + 2 * i)));
+	int nw = nargs < 4 ? 4 : nargs > 80 ? 80 : nargs;
+	w8((unsigned)nw);
+	for (int i = 0; i < nw; i++) w16(rd16(STK, (uint16_t)(c->sp + 2 * i)));
 	delta();
 	host_depth++;
 	fn(c);
@@ -91,7 +93,7 @@ void tape_rnd(int lo, int hi, int value) {
 	Cpu c; memset(&c, 0, sizeof c);
 	c.sp = 0; /* unknown: the call comes from readable C */
 	w8('H'); name("rnd"); w8(2); w8(4); regs(&c);
-	w16((uint16_t)lo); w16((uint16_t)hi); for (int i = 2; i < 12; i++) w16(0);
+	w8(4); w16((uint16_t)lo); w16((uint16_t)hi); w16(0); w16(0);
 	delta();
 	w8('h'); w16((uint16_t)value); w16(0); w16(0); w16(0);
 	delta();

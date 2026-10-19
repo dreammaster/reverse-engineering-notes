@@ -44,6 +44,10 @@ STUB_SEGMENTS = [0x27F2, 0x27FD, 0x2800, 0x2806, 0x280C, 0x2816, 0x2821, 0x282A,
 OVERLAY_SEGMENTS = [0x378C, 0x3993, 0x3BC3, 0x3DD2, 0x3F49, 0x4150, 0x435A, 0x4579, 0x4790, 0x49B6, 0x4BD9, 0x4DE3, 0x4FF6]
 CODE_SEGMENTS = sorted([0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511] + OVERLAY_SEGMENTS)
 
+# Overlay 1 (378C:0) lies inside the 64 KB the recompiled game uses for DGROUP (the stack is at its top): the recompiled game never
+# executes that memory, but the emulator does, so a copy of the overlay's code is placed in low memory and used instead.
+OVL1_SEG, OVL1_LOW_SEG = 0x378C, 0x0100
+
 # routines run in the emulator and compared (everything else on the tape is replayed); value = number of result words
 # C library helpers that are pure computation on memory: run in the emulator like the readable rewrites (value = result words)
 LIBC_HOSTS = {"_memset": 1, "_memcpy_0": 2, "_strcpy": 1, "_strncpy_0": 2, "_stricmp": 1, "_sprintf": 1, "_atol": 2,
@@ -87,12 +91,18 @@ class Lockstep:
         self.uc = Uc(UC_ARCH_X86, UC_MODE_16)
         self.uc.mem_map(0, (self.tape.memsize + 0xFFF) & ~0xFFF)
         self.uc.mem_write(0, bytes(self.tape.mem0))
+        stub = self.tape.mem0[STUB_SEGMENTS[0] * 16:STUB_SEGMENTS[0] * 16 + 16]
+        self.ovl1_size = struct.unpack_from("<H", stub, 8)[0]
+        img = open(a.image, "rb").read()
+        self.uc.mem_write(OVL1_LOW_SEG * 16, img[OVL1_SEG * 16 - 0x10000:OVL1_SEG * 16 - 0x10000 + self.ovl1_size])
         self.limit = a.dg_limit                          # data segment bytes that are compared (the rest is the stack)
         self.ignore = self.parse_ignore(a.ignore)
         self.classes = self.load_classes(a)
         self.frames = []                                 # R routines currently running in the emulator
         self.stats = {}                                  # name -> [class, matched calls]
         self.recent = []
+        self.writes = {}                                 # replayed host routine -> data segment offsets it wrote
+        self.fn_counts = {}
         self.last_heap = 0
         self.stop = None
         self.top_done = False
@@ -151,6 +161,15 @@ class Lockstep:
                 self.uc.mem_write(off, data)
 
     # ---------------------------------------------------------------- hooks
+    def code(self, lin):
+        """where the emulator finds the code that IDA has at linear address `lin` (overlay 1 was moved, see OVL1_SEG)"""
+        base = OVL1_SEG * 16
+        return lin - base + OVL1_LOW_SEG * 16 if base <= lin < base + self.ovl1_size else lin
+
+    def uncode(self, lin):
+        base = OVL1_LOW_SEG * 16
+        return lin - base + OVL1_SEG * 16 if base <= lin < base + self.ovl1_size else lin
+
     def func_extent(self, name):
         lin = self.tr.func_linear(name)
         if lin is None:
@@ -227,6 +246,7 @@ class Lockstep:
             lin = self.tr.func_linear(n)
             if lin is None:
                 continue
+            lin = self.code(lin)
             self.host_at[lin] = n
             uc.hook_add(UC_HOOK_CODE, self.guard(self.on_host), None, lin, lin)
         self.fn_at = {}                                   # linear address -> translated routine (entry-point checks)
@@ -236,6 +256,7 @@ class Lockstep:
                 fn_names |= set(re.findall(r"^static void fn_(\w+)\(Cpu \*c\);", open(path).read(), re.M))
             for n in sorted(fn_names):
                 lin = self.tr.func_linear(n)
+                lin = self.code(lin) if lin is not None else None
                 if lin is not None and lin not in self.host_at:
                     self.fn_at[lin] = n
                     uc.hook_add(UC_HOOK_CODE, self.guard(self.on_func), None, lin, lin)
@@ -244,10 +265,13 @@ class Lockstep:
             if self.klass(n)[0] != "R":
                 continue
             for site in self.ret_sites(n):
-                self.ret_at.setdefault(site, set()).add(n)
+                self.ret_at.setdefault(self.code(site), set()).add(n)
         for site in self.ret_at:
             uc.hook_add(UC_HOOK_CODE, self.guard(self.on_ret), None, site, site)
         uc.hook_add(UC_HOOK_CODE, self.on_sentinel, None, SENT_SEG * 16, SENT_SEG * 16)
+        if self.a.trace_last:
+            self.ring = []
+            uc.hook_add(UC_HOOK_CODE, self.on_trace)
         uc.hook_add(UC_HOOK_INTR, self.guard(self.on_intr))
         uc.hook_add(UC_HOOK_INSN, lambda uc, port, size, user: 0, None, 1, 0, UC_X86_INS_IN)
         uc.hook_add(UC_HOOK_INSN, lambda uc, port, size, value, user: None, None, 1, 0, UC_X86_INS_OUT)
@@ -270,7 +294,8 @@ class Lockstep:
         if intno == 0x3F:
             cs, ip = self.r(UC_X86_REG_CS), self.r(UC_X86_REG_IP)
             off = struct.unpack("<H", bytes(uc.mem_read(cs * 16 + ip, 2)))[0]
-            self.redirect(OVERLAY_SEGMENTS[STUB_SEGMENTS.index(cs)], off)
+            seg = OVERLAY_SEGMENTS[STUB_SEGMENTS.index(cs)]
+            self.redirect(OVL1_LOW_SEG if seg == OVL1_SEG else seg, off)
             return
         self.fail("unexpected INT %02Xh at %04X:%04X (ax=%04X)" % (intno, self.r(UC_X86_REG_CS), self.r(UC_X86_REG_IP), self.r(UC_X86_REG_AX)))
 
@@ -280,6 +305,7 @@ class Lockstep:
 
     def func_at(self, linear):
         """name of the routine containing a linear code address"""
+        linear = self.uncode(linear)
         if not hasattr(self, "_starts"):
             self._starts = sorted((self.tr.func_linear(n), n) for n in self.tr.procs if self.tr.func_linear(n) is not None)
         best = None
@@ -359,7 +385,10 @@ class Lockstep:
 
     def fail(self, msg):
         out = ["", "DIVERGENCE after %d tape events, original code at %s" % (self.n_events, self.where()), msg, "",
-               "original call chain: " + " <- ".join(self.callers()), "", "recent calls:"]
+               "original call chain: " + " <- ".join(self.callers()), "in routine: " + self.func_at(self.r(UC_X86_REG_CS) * 16 + self.r(UC_X86_REG_IP))]
+        if getattr(self, "ring", None):
+            out.append("last instructions: " + " ".join(self.func_at(a) for a in self.ring[-self.a.trace_last:]))
+        out += ["", "recent calls:"]
         out.extend("    " + x for x in self.recent[-12:])
         raise Divergence("\n".join(out))
 
@@ -395,7 +424,8 @@ class Lockstep:
         kind = self.first_ret_size(name)
         if kind and kind != ret_size:
             self.fail("%s: the translated call assumes a %d byte return address, the original routine's first return instruction pops %d" % (name, ret_size, kind))
-        self.compare_memory("the call of %s" % name)
+        if not self.frames:       # (inside a replaced routine the intermediate state may legitimately differ: it is compared at its end)
+            self.compare_memory("the call of %s" % name)
         nargs = STACK_ARGS.get(name, ev["nargs"])
         args_u = self.stack_words(max(nargs, 0), ret_size)
         args_c = ev["stack"][:nargs]
@@ -403,13 +433,13 @@ class Lockstep:
             ureg = {"ax": UC_X86_REG_AX, "bx": UC_X86_REG_BX, "cx": UC_X86_REG_CX, "dx": UC_X86_REG_DX}[reg]
             if self.r(ureg) != ev["regs"][reg]:
                 self.fail("%s: register %s differs at the call: original %04X, recompiled %04X" % (name, reg, self.r(ureg), ev["regs"][reg]))
-        if ev["regs"]["sp"] and ev["regs"]["sp"] != (sp + ret_size) & 0xFFFF:
+        if ev["regs"]["sp"] and not self.frames and ev["regs"]["sp"] != (sp + ret_size) & 0xFFFF:
             self.fail("%s: stack pointer differs: original %04X (+%d return address), recompiled %04X -- the translated callers have a different stack depth\n"
                       "    frame pointer bp: original %04X, recompiled %04X" % (name, sp, ret_size, ev["regs"]["sp"], self.r(UC_X86_REG_BP), ev["regs"]["bp"]))
         if tuple(args_u) != tuple(args_c):
             self.fail("%s: arguments differ: original (%s), recompiled (%s)" % (name, " ".join("%04X" % w for w in args_u), " ".join("%04X" % w for w in args_c)))
         for reg, ureg in (("si", UC_X86_REG_SI), ("di", UC_X86_REG_DI), ("bp", UC_X86_REG_BP)):
-            if self.r(ureg) != ev["regs"][reg]:
+            if ev["regs"]["sp"] and not self.frames and self.r(ureg) != ev["regs"][reg]:     # (a call made by readable C has no registers to compare)
                 self.fail("%s: register %s differs at the call: original %04X, recompiled %04X" % (name, reg, self.r(ureg), ev["regs"][reg]))
         self.note("%s(%s)" % (name, ", ".join("%04X" % w for w in args_u)))
         if self.a.heap_every and self.n_events // self.a.heap_every != self.last_heap:
@@ -418,7 +448,7 @@ class Lockstep:
         st = self.stats.setdefault(name, [cls, 0])
         st[1] += 1
         if cls == "E":
-            self.replay_effect(name, sp, ret_size)
+            self.replay_effect(name, sp, ret_size, ev["regs"]["sp"])
         else:
             self.frames.append({"name": name, "sp": sp, "ret": ret_size, "retw": retw, "args": args_u})
 
@@ -436,13 +466,16 @@ class Lockstep:
         self.take()
         sp, bp = self.r(UC_X86_REG_SP), self.r(UC_X86_REG_BP)
         self.note("> " + name)
+        self.fn_counts[name] = self.fn_counts.get(name, 0) + 1
+        if self.frames:           # called back from a readable rewrite: its stack frame is not the original's, so the depth differs by design
+            return
         if ev["regs"]["sp"] != sp:
             self.fail("%s entered with stack pointer %04X in the original, %04X in the recompiled game (a callee earlier left a different amount on the stack)"
                       % (name, sp, ev["regs"]["sp"]))
         if ev["regs"]["bp"] != bp:
             self.fail("%s entered with bp %04X in the original, %04X in the recompiled game" % (name, bp, ev["regs"]["bp"]))
 
-    def replay_effect(self, name, sp, ret_size):
+    def replay_effect(self, name, sp, ret_size, c_sp_before):
         """skip the original routine: apply what the recorded host changed, return its registers"""
         touched = []
         depth = 0
@@ -458,10 +491,15 @@ class Lockstep:
                 depth -= 1
         for off, ln in touched:
             self.uc.mem_write(off, bytes(self.model[off:off + ln]))
+            if off < DG_LIN + 0x10000 and off + ln > DG_LIN:       # remember which data segment bytes the host wrote (tools/mm3_hostwrites.py)
+                w = self.writes.setdefault(name, set())
+                for o in range(max(off, DG_LIN), min(off + ln, DG_LIN + 0x10000)):
+                    w.add(o - DG_LIN)
         self.w(UC_X86_REG_AX, e["ax"])
         self.w(UC_X86_REG_DX, e["dx"])
         self.w(UC_X86_REG_ES, e["es"])
-        self.do_return(ret_size, e["sp"] if e["sp"] else None)
+        # (a host that pops its own arguments moved the recompiled game's stack pointer; apply the same change in the original's frame)
+        self.do_return(ret_size, (sp + ret_size + ((e["sp"] - c_sp_before) & 0xFFFF)) & 0xFFFF if e["sp"] and c_sp_before else None)
 
     def do_return(self, ret_size, new_sp=None):
         """return from the skipped routine; `new_sp` (the host's stack pointer afterwards) accounts for routines that pop their own arguments"""
@@ -495,6 +533,11 @@ class Lockstep:
                       % (fr["name"], " ".join("%04X" % w for w in fr["args"]), self.r(UC_X86_REG_DX), ev["dx"]))
         self.frames.pop()
 
+    def on_trace(self, uc, address, size, user):
+        self.ring.append(address)
+        if len(self.ring) > self.a.trace_last:
+            del self.ring[:len(self.ring) - self.a.trace_last]
+
     def on_sentinel(self, uc, address, size, user):
         self.stop = "top"
         uc.emu_stop()
@@ -523,6 +566,8 @@ class Lockstep:
         lin = self.tr.func_linear(name)
         seg = segment_of(lin)
         regs = ev["regs"]
+        if seg == OVL1_SEG:
+            seg = OVL1_LOW_SEG
         for reg, ureg in (("ax", UC_X86_REG_AX), ("bx", UC_X86_REG_BX), ("cx", UC_X86_REG_CX), ("dx", UC_X86_REG_DX),
                           ("si", UC_X86_REG_SI), ("di", UC_X86_REG_DI), ("bp", UC_X86_REG_BP), ("es", UC_X86_REG_ES),
                           ("ds", UC_X86_REG_DS)):
@@ -532,7 +577,7 @@ class Lockstep:
         self.w(UC_X86_REG_SP, sp)
         uc.mem_write(DG_LIN + sp, struct.pack("<HH", 0, SENT_SEG))        # far return address of the top-level call
         self.frames = []
-        cs, ip = seg, lin - seg * 16
+        cs, ip = seg, self.code(lin) - seg * 16
         self.note("TOP %s" % name)
         while True:
             self.stop = None
@@ -570,24 +615,32 @@ def main():
     ap.add_argument("--idc", default=os.path.join(HERE, "..", "mm3.idc"))
     ap.add_argument("--gen", action="append", default=[os.path.join(HERE, "..", "src", "gen", "game_gen.c")],
                     help="generated sources whose host calls are intercepted")
-    ap.add_argument("--dg-limit", type=lambda s: int(s, 0), default=0xE000, help="bytes of the data segment compared (the rest is the stack)")
+    ap.add_argument("--dg-limit", type=lambda s: int(s, 0), default=0xF200, help="bytes of the data segment compared (the rest is the stack)")
     ap.add_argument("--ignore", action="append", help="data segment offset range LO-HI (hex) not compared")
     ap.add_argument("--run", action="append", help="treat this host routine as R (run and compare)")
     ap.add_argument("--replay", action="append", help="treat this host routine as E (replay the recorded effect)")
+    ap.add_argument("--stats", help="write the per-routine call counts of this run to this JSON file (see tools/mm3_coverage.py)")
+    ap.add_argument("--trace-last", type=int, default=0, help="on a divergence, show the routine+offset of the last N executed instructions of the original (slow)")
+    ap.add_argument("--image", default=os.path.join(HERE, "..", "data", "IMAGE.BIN"), help="the derived program image (make derive): pristine overlay code")
     ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--heap-every", type=int, default=20000, help="compare the far heap every N tape events (0: only at the end of top-level routines)")
     ap.add_argument("--no-entry-checks", dest="entry_checks", action="store_false", help="do not compare the entry of translated routines")
     a = ap.parse_args()
     ls = Lockstep(a)
+    rc = 0
     try:
         ls.run()
+        print("NO DIVERGENCE")
     except Divergence as d:
         print(d)
-        ls.report()
-        return 1
-    print("NO DIVERGENCE")
+        rc = 1
     ls.report()
-    return 0
+    if a.stats:
+        import json
+        json.dump({"events": ls.n_events, "diverged": bool(rc), "calls": {n: {"class": st[0], "count": st[1]} for n, st in ls.stats.items()}, "functions": ls.fn_counts,
+                   "writes": {n: sorted(v) for n, v in ls.writes.items()}},
+                  open(a.stats, "w"), indent=1)
+    return rc
 
 
 if __name__ == "__main__":

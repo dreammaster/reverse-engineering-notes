@@ -32,7 +32,8 @@ class Tape:
                 r = struct.unpack_from("<10H", d, p); p += 20
                 ev["regs"] = dict(zip(("ax", "bx", "cx", "dx", "si", "di", "bp", "es", "ds", "sp"), r))
                 if t == "H":
-                    ev["stack"] = struct.unpack_from("<12H", d, p); p += 24
+                    nw = d[p]; p += 1
+                    ev["stack"] = struct.unpack_from("<%dH" % nw, d, p); p += 2 * nw
             elif t == "h":
                 ev["ax"], ev["dx"], ev["es"], ev["sp"] = struct.unpack_from("<4H", d, p); p += 8
             elif t == "U":
