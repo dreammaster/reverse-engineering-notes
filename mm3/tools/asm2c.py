@@ -272,7 +272,9 @@ class Translator:
         self.synth = {}
         self.add_table_labels(fname, body)
         out = ["static void fn_%s(Cpu *c) {" % fname, "\tuint32_t t_; (void)t_;", "\tFNTRACE(\"%s\");" % fname]
-        for i, l in body:
+        self.body_ref = body
+        for bi, (i, l) in enumerate(body):
+            self.body_pos = bi
             if i in self.synth:
                 out.append("%s: RTRACE(c, \"%s\");" % (self.synth[i], self.synth[i]))
             m = re.match(r"^(\w+):\s*$", l)
@@ -291,6 +293,20 @@ class Translator:
                 raise RuntimeError("%s: line %d %r: %s" % (fname, i + 1, l.strip(), ex))
         out.append("}")
         return "\n".join(out)
+
+    def args_after_call(self):
+        """Number of argument words the caller removes right after the call being translated (add sp, N / pop cx ...), 0 if none."""
+        n = 0
+        for _, l in self.body_ref[self.body_pos + 1:self.body_pos + 12]:
+            t = l.strip()
+            m = re.match(r"^add\s+sp,\s*([0-9A-Fa-f]+h?)$", t)
+            if m and not n:
+                return self.parse_num(m.group(1)) // 2
+            if re.match(r"^pop\s+(cx|bx|dx|ax)$", t):
+                n += 1
+                continue
+            break
+        return n
 
     def extend_tail(self, fname, end, body):
         """IDA sometimes ends a procedure at its computed `jmp cs:[bx+K]` and lists the handlers after `endp` as loose code
@@ -522,7 +538,7 @@ class Translator:
             if target == "$+2":  # short jump to the next instruction: a no-op
                 return []
             if target in self.procs:
-                return ["fn_%s(c); return;" % target] if target in translated else ["host_%s(c); c->sp += %d; return;" % (target, 4 if kind == "far" else 2)]
+                return ["fn_%s(c); return;" % target] if target in translated else ["RHOST(c, %s, 0, %d); c->sp += %d; return;" % (target, 4 if kind == "far" else 2, 4 if kind == "far" else 2)]
             return ["goto %s;" % target]
         cond = {"jz": "c->zf", "je": "c->zf", "jnz": "!c->zf", "jne": "!c->zf", "jl": "(c->sf != c->of)", "jnge": "(c->sf != c->of)",
                 "jge": "(c->sf == c->of)", "jnl": "(c->sf == c->of)", "jle": "(c->zf || c->sf != c->of)", "jng": "(c->zf || c->sf != c->of)",
@@ -540,13 +556,17 @@ class Translator:
             if target not in self.procs and not re.match(r"^[\w@]+$", target):
                 raise ValueError("indirect call")
             target_c = target.replace("@", "_AT")
-            far_call = thunk or "far ptr" in ops[0] or (("near ptr" not in ops[0]) and self.procs.get(target, [0, 0, "near"])[2] == "far")
+            if target in self.procs:
+                callee_kind = self.procs[target][2]
+            else:  # a collapsed library function: far when it lives in another segment than the caller
+                callee_kind = "far" if self.func_segment(target) not in (None, self.cur_seg) else "near"
+            far_call = thunk or "far ptr" in ops[0] or (("near ptr" not in ops[0]) and callee_kind == "far")
             if target not in translated:
-                if "near ptr" in ops[0] and self.procs.get(target, [0, 0, "near"])[2] == "far":
+                if "near ptr" in ops[0] and callee_kind == "far":
                     # `push cs; call near ptr X` is a far call: the pushed segment word is part of the return address, so take it
                     # off the stack again for the host (the callee's retf would have popped it)
-                    return ["c->sp += 2; host_%s(c); /* far call by push cs / call near: args start at sp */" % target_c]
-                return ["host_%s(c); /* no return address is pushed for host routines: args start at sp */" % target_c]
+                    return ["c->sp += 2; RHOST(c, %s, %d, 4); /* far call by push cs / call near: args start at sp */" % (target_c, self.args_after_call())]
+                return ["RHOST(c, %s, %d, %d); /* no return address is pushed for host routines: args start at sp */" % (target_c, self.args_after_call(), 4 if far_call else 2)]
             pushes = ["PUSH(c, 0); PUSH(c, 0);"] if far_call else ["PUSH(c, 0);"]
             return pushes + ["fn_%s(c);" % target]
         raise ValueError("unsupported instruction " + mn)
@@ -570,7 +590,7 @@ def main():
     hosts = set()
     for f in ordered:
         text = tr.translate(f, set(ordered))
-        hosts.update(re.findall(r"host_(\w+)\(c\)", text))
+        hosts.update(re.findall(r"RHOST\(c, (\w+),", text))
         body.append(text)
         body.append("")
     weak = os.environ.get("ASM2C_WEAK_HOSTS")
@@ -582,7 +602,7 @@ def main():
     code.append("")
     code.extend(body)
     for f in ordered:
-        code.append("%svoid call_%s(Cpu *c) { fn_%s(c); }" % ("static " if os.environ.get("ASM2C_STATIC_CALLS") else "", f, f))
+        code.append("%svoid call_%s(Cpu *c) { RTOP_BEGIN(c, \"%s\"); fn_%s(c); RTOP_END(c); }" % ("static " if os.environ.get("ASM2C_STATIC_CALLS") else "", f, f, f))
     code.append("")
     code.append("/* name -> entry point, for test drivers */")
     code.append("const RecompEntry recomp_entries_%s[] = {" % re.sub(r"\W", "_", out.split("/")[-1].rsplit(".", 1)[0]))

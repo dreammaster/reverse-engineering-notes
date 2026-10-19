@@ -155,6 +155,11 @@ mm3game: game_main.c $(GAME_SRC) game.h recomp.h
 	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) $(SDL_LIBS) -lm
 .PHONY: mm3game
 
+# the same game with the lockstep recorder (MM3_TAPE=file ./mm3game_tape ...; see tools/mm3_lockstep.py)
+mm3game_tape: game_main.c $(GAME_SRC) tape.c game.h recomp.h
+	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG -DMM3_TAPE $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) tape.c $(SDL_LIBS) -lm
+.PHONY: mm3game_tape
+
 # ---- readable rules vs the translated originals
 tests/test_rules_diff: tests/test_rules_diff.c rules.c $(RULES_SRC) rules.h recomp.h
 	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/test_rules_diff.c rules.c $(RULES_SRC)

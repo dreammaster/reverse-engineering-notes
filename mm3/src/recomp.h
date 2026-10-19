@@ -169,7 +169,10 @@ static inline uint32_t alu_ror(Cpu *c, uint32_t a, unsigned n, int bits) {
 	return a;
 }
 
-#ifdef RECOMP_TRACE_CALLS
+#ifdef MM3_TAPE
+void tape_fn(Cpu *c, const char *name);
+#define FNTRACE(name) tape_fn(c, name)
+#elif defined(RECOMP_TRACE_CALLS)
 #define FNTRACE(name) fprintf(stderr, "> %s\n", name)
 #else
 #define FNTRACE(name) ((void)0)
@@ -188,5 +191,21 @@ void recomp_bad_jump(const char *fn, unsigned seg, unsigned off); /* computed ju
 void recomp_unimplemented(const char *name, Cpu *c);
 
 typedef struct { const char *name; void (*fn)(Cpu *); } RecompEntry;
+
+/* A call from translated code to a hand-written host routine.  `nargs` is the number of argument words the caller removes after
+ * the call and `ret` the size in bytes of the return address the original call pushed (2 near, 4 far); both only matter to the
+ * lockstep recorder (MM3_TAPE, tools/mm3_lockstep.py), which compares each host call with the original code. */
+#ifdef MM3_TAPE
+void tape_host(Cpu *c, const char *name, int nargs, int ret, void (*fn)(Cpu *));
+void tape_top_begin(Cpu *c, const char *name);
+void tape_top_end(Cpu *c);
+#define RTOP_BEGIN(c, name) tape_top_begin(c, name)
+#define RTOP_END(c) tape_top_end(c)
+#define RHOST(c, name, nargs, ret) tape_host(c, #name, nargs, ret, host_##name)
+#else
+#define RHOST(c, name, nargs, ret) host_##name(c)
+#define RTOP_BEGIN(c, name) ((void)0)
+#define RTOP_END(c) ((void)0)
+#endif
 
 #endif

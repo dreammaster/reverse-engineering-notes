@@ -87,6 +87,11 @@ int game_init(const char *dir) {
 	return 0;
 }
 
+#ifdef MM3_TAPE
+void tape_rnd(int lo, int hi, int value);
+#else
+#define tape_rnd(lo, hi, value) ((void)0)
+#endif
 void game_call(void (*fn)(Cpu *c), Cpu *c, const uint16_t *args, int nargs) {
 	for (int i = nargs - 1; i >= 0; i--) PUSH(c, args[i]);
 	PUSH(c, 0); PUSH(c, 0); /* far return address */
@@ -208,7 +213,13 @@ void host__strncpy_0(Cpu *c) {
 	c->ax = host_arg(c, 0); c->dx = host_arg(c, 1);
 }
 void host__strcpy(Cpu *c) { if (getenv("MM3_FILELOG")) fprintf(stderr, "strcpy(%04X <- %04X [%s])\n", host_arg(c, 0), host_arg(c, 1), (const char *)dsp(host_arg(c, 1))); strcpy((char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1))); c->ax = host_arg(c, 0); }
-void host__stricmp(Cpu *c) { c->ax = (uint16_t)(int16_t)strcasecmp((const char *)dsp(host_arg(c, 0)), (const char *)dsp(host_arg(c, 1))); }
+/* Borland's stricmp compares the upper-case forms (strcasecmp compares lower case: same sign, different value) */
+void host__stricmp(Cpu *c) {
+	const unsigned char *a = dsp(host_arg(c, 0)), *b = dsp(host_arg(c, 1));
+	int d;
+	for (;; a++, b++) { d = toupper(*a) - toupper(*b); if (d || !*a) break; }
+	c->ax = (uint16_t)(int16_t)d;
+}
 void host__ultoa(Cpu *c) {
 	uint32_t v = host_arg(c, 0) | ((uint32_t)host_arg(c, 1) << 16);
 	unsigned radix = host_arg(c, 3);
@@ -306,6 +317,6 @@ void host_ccRead(Cpu *c) { c->ax = 0; }
 void host_ccSeek(Cpu *c) { c->ax = 0; }
 void host_sub_39900(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }
 
-int mm3_rnd(int lo, int hi) { unsigned l = (uint16_t)lo, h = (uint16_t)hi; return (int)(h >= l ? l + rng_next() % (h - l + 1) : l); } /* same 16-bit unsigned arithmetic as host_rnd */
+int mm3_rnd(int lo, int hi) { unsigned l = (uint16_t)lo, h = (uint16_t)hi; int v = (int)(h >= l ? l + rng_next() % (h - l + 1) : l); tape_rnd(lo, hi, v); return v; } /* same 16-bit unsigned arithmetic as host_rnd */
 uint32_t mm3_rng_get(void) { return rng_state; }
 void mm3_rng_seed(uint32_t seed) { rng_state = seed ? seed : 1; } /* tests: make the random numbers repeatable */

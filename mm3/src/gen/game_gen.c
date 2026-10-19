@@ -508,7 +508,7 @@ static void fn_exploreLoop(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((10062));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -623,7 +623,7 @@ loc_3EA8E: RTRACE(c, "loc_3EA8E");
 	if (!c->zf) goto loc_3EA98;
 	goto def_3F0D5;
 loc_3EA98: RTRACE(c, "loc_3EA98");
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto def_3F0D5;
 cmd_F2_stepForward: RTRACE(c, "cmd_F2_stepForward");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59636)) & 0xFF) << 0));
@@ -638,7 +638,7 @@ cmd_F2_stepForward: RTRACE(c, "cmd_F2_stepForward");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -721,13 +721,13 @@ loc_3EB34: RTRACE(c, "loc_3EB34");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -753,7 +753,7 @@ loc_3EB87: RTRACE(c, "loc_3EB87");
 	if ((c->sf != c->of)) goto loc_3EB34;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_3EC50;
 loc_3EB99: RTRACE(c, "loc_3EB99");
@@ -820,13 +820,13 @@ loc_3EBE8: RTRACE(c, "loc_3EBE8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -851,7 +851,7 @@ loc_3EC3C: RTRACE(c, "loc_3EC3C");
 	if ((c->sf != c->of)) goto loc_3EBE8;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(180, (1));
 loc_3EC50: RTRACE(c, "loc_3EC50");
@@ -910,7 +910,7 @@ def_3F0D5: RTRACE(c, "def_3F0D5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, DG8(389), (1), 8);
@@ -925,7 +925,7 @@ def_3F0D5: RTRACE(c, "def_3F0D5");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -959,7 +959,7 @@ loc_3ED09: RTRACE(c, "loc_3ED09");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8(59636)) & 0xFF) << 0));
@@ -995,7 +995,7 @@ loc_3ED67: RTRACE(c, "loc_3ED67");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -1006,7 +1006,7 @@ loc_3ED67: RTRACE(c, "loc_3ED67");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -1029,14 +1029,14 @@ loc_3EDA5: RTRACE(c, "loc_3EDA5");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getThievery(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getThievery, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((20));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(POP(c));
@@ -1062,7 +1062,7 @@ loc_3EDE3: RTRACE(c, "loc_3EDE3");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -1099,7 +1099,7 @@ loc_3EDE3: RTRACE(c, "loc_3EDE3");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
@@ -1142,7 +1142,7 @@ def_3EE62: RTRACE(c, "def_3EE62");
 	PUSH(c, c->si);
 	PUSH(c, DG16(44236));
 	PUSH(c, DG16(42870));
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((42));
@@ -1182,7 +1182,7 @@ loc_3EEB4: RTRACE(c, "loc_3EEB4");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1218,7 +1218,7 @@ loc_3EF02: RTRACE(c, "loc_3EF02");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1266,7 +1266,7 @@ loc_3EF5D: RTRACE(c, "loc_3EF5D");
 	c->ax = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
@@ -1356,7 +1356,7 @@ cmd_F3: RTRACE(c, "cmd_F3");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1415,7 +1415,7 @@ cmd_F4: RTRACE(c, "cmd_F4");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1481,7 +1481,7 @@ cmd_F5: RTRACE(c, "cmd_F5");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1535,7 +1535,7 @@ ul_3F17A: RTRACE(c, "ul_3F17A");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -1607,7 +1607,7 @@ ul_3F207: RTRACE(c, "ul_3F207");
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(382), (0), 8);
 	if (c->zf) goto loc_3F22A;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_3F22A: RTRACE(c, "loc_3F22A");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_281F3(c);
@@ -1631,7 +1631,7 @@ loc_3F24A: RTRACE(c, "loc_3F24A");
 	if (!c->zf) goto loc_3F25B;
 	goto loc_3EA05;
 loc_3F25B: RTRACE(c, "loc_3F25B");
-	host_vdrv_03_hideMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_03_hideMouse, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	DG8_SET(350, (254));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -1647,12 +1647,12 @@ loc_3F25B: RTRACE(c, "loc_3F25B");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((10));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_3F39D;
 loc_3F293: RTRACE(c, "loc_3F293");
@@ -1663,7 +1663,7 @@ loc_3F29C: RTRACE(c, "loc_3F29C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((10662));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -8), c->dx);
@@ -1680,7 +1680,7 @@ loc_3F29C: RTRACE(c, "loc_3F29C");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3F2CF: RTRACE(c, "loc_3F2CF");
@@ -1692,7 +1692,7 @@ loc_3F2D6: RTRACE(c, "loc_3F2D6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((10324));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, DG16(10340), (8), 16);
@@ -1729,7 +1729,7 @@ loc_3F31B: RTRACE(c, "loc_3F31B");
 	if ((c->sf == c->of)) goto loc_3F337;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -1747,7 +1747,7 @@ loc_3F337: RTRACE(c, "loc_3F337");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((10324));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -1767,13 +1767,13 @@ loc_3F337: RTRACE(c, "loc_3F337");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3F380: RTRACE(c, "loc_3F380");
 	c->ax = (uint16_t)((10));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -1802,7 +1802,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34338));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61572, c->dx);
@@ -1810,7 +1810,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34348));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61568, c->dx);
@@ -1818,7 +1818,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34358));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61488, c->dx);
@@ -1826,7 +1826,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34369));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61548, c->dx);
@@ -1834,7 +1834,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34381));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61560, c->dx);
@@ -1842,7 +1842,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34393));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61528, c->dx);
@@ -1850,7 +1850,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34405));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61552, c->dx);
@@ -1858,7 +1858,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34416));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61536, c->dx);
@@ -1866,7 +1866,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34428));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61508, c->dx);
@@ -1874,7 +1874,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34440));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61504, c->dx);
@@ -1882,7 +1882,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34452));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61500, c->dx);
@@ -1890,7 +1890,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34464));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61556, c->dx);
@@ -1898,7 +1898,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34476));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61544, c->dx);
@@ -1906,7 +1906,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34488));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61492, c->dx);
@@ -1914,7 +1914,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34500));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61496, c->dx);
@@ -1922,7 +1922,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34512));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61532, c->dx);
@@ -1930,7 +1930,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34524));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61512, c->dx);
@@ -1938,7 +1938,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34536));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61516, c->dx);
@@ -1946,7 +1946,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34548));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61520, c->dx);
@@ -1954,7 +1954,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34560));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61524, c->dx);
@@ -1962,7 +1962,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34572));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61540, c->dx);
@@ -1970,7 +1970,7 @@ static void fn_loadMonsterData(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34584));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61564, c->dx);
@@ -1989,7 +1989,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34230));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -2001,7 +2001,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59594));
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
@@ -2012,7 +2012,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34239));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -2023,7 +2023,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, DG16(60586));
 	PUSH(c, DG16(60584));
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
@@ -2034,7 +2034,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34248));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -2046,7 +2046,7 @@ static void fn_loadSavedGame(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59626));
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
@@ -2068,7 +2068,7 @@ static void fn_rosterMenu(Cpu *c) {
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
 	PUSH(c, c->di);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	DG8_SET(42845, (0));
 	c->ax = (uint16_t)((43994));
 	PUSH(c, c->ax);
@@ -2115,11 +2115,11 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, 0); PUSH(c, 0);
 	fn_freeSpriteSlot(c);
 	c->cx = (uint16_t)(POP(c));
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11875));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(43996, c->dx);
@@ -2127,7 +2127,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11886));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50488, c->dx);
@@ -2135,7 +2135,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11899));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(59592, c->dx);
@@ -2143,7 +2143,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11911));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44058, c->dx);
@@ -2151,7 +2151,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11919));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42876, c->dx);
@@ -2159,7 +2159,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11928));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44364, c->dx);
@@ -2167,7 +2167,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11940));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44242, c->dx);
@@ -2175,7 +2175,7 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11951));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50484, c->dx);
@@ -2183,12 +2183,12 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11963));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60638, c->dx);
 	DG16_SET(60636, c->ax);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, 0); PUSH(c, 0);
 	fn_drawHudPieces(c);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -2200,12 +2200,12 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((9090));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60586, c->dx);
 	DG16_SET(60584, c->ax);
@@ -2216,13 +2216,13 @@ static void fn_rosterMenu(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60666));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11975));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(47464, c->dx);
@@ -2234,7 +2234,7 @@ static void fn_rosterMenu(Cpu *c) {
 loc_40C33: RTRACE(c, "loc_40C33");
 	t_ = alu_sub(c, DG8(2598), (255), 8);
 	if (!c->zf) goto loc_40C3F;
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_40C3F: RTRACE(c, "loc_40C3F");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_loadSavedGame(c);
@@ -2259,7 +2259,7 @@ loc_40C4B: RTRACE(c, "loc_40C4B");
 	PUSH(c, DG16(60586));
 	PUSH(c, c->dx);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_inc(c, ST16((uint16_t)(c->bp + -2)), 16);
 	ST16_SET((uint16_t)(c->bp + -2), t_);
 loc_40C7C: RTRACE(c, "loc_40C7C");
@@ -2336,7 +2336,7 @@ loc_40D05: RTRACE(c, "loc_40D05");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -46));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST8_SET((uint16_t)(c->bp + -5), (0));
@@ -2448,7 +2448,7 @@ loc_40DD4: RTRACE(c, "loc_40DD4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -2470,14 +2470,14 @@ loc_40DD4: RTRACE(c, "loc_40DD4");
 	c->ax = (uint16_t)((8));
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_40ED1;
 loc_40E61: RTRACE(c, "loc_40E61");
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -2526,13 +2526,13 @@ loc_40E91: RTRACE(c, "loc_40E91");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_40ED1: RTRACE(c, "loc_40ED1");
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
@@ -2621,7 +2621,7 @@ loc_40F6B: RTRACE(c, "loc_40F6B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -2656,7 +2656,7 @@ loc_40FB3: RTRACE(c, "loc_40FB3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -2681,7 +2681,7 @@ loc_40FD1: RTRACE(c, "loc_40FD1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -2705,7 +2705,7 @@ loc_41011: RTRACE(c, "loc_41011");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
-	host__memset_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset_0, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((30));
@@ -2714,7 +2714,7 @@ loc_41011: RTRACE(c, "loc_41011");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -46));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST8_SET((uint16_t)(c->bp + -5), (0));
@@ -2881,12 +2881,12 @@ ul_41176: RTRACE(c, "ul_41176");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(50332, (0));
 	PUSH(c, 0); PUSH(c, 0);
@@ -3010,7 +3010,7 @@ loc_41254: RTRACE(c, "loc_41254");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, DG16(60586));
 	PUSH(c, c->dx);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -8), (0));
@@ -3035,14 +3035,14 @@ loc_41254: RTRACE(c, "loc_41254");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)(ST16((uint16_t)(c->bp + -8)));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -10)));
 	c->dx = (uint16_t)(ST16((uint16_t)(c->bp + -8)));
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -10)));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	t_ = alu_xor(c, c->dx, c->dx, 16);
@@ -3050,7 +3050,7 @@ loc_41254: RTRACE(c, "loc_41254");
 	c->ax = (uint16_t)((20));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
@@ -3059,7 +3059,7 @@ loc_41254: RTRACE(c, "loc_41254");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -3102,7 +3102,7 @@ loc_412FA: RTRACE(c, "loc_412FA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((100));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -3157,7 +3157,7 @@ loc_4134D: RTRACE(c, "loc_4134D");
 	PUSH(c, DG16(60586));
 	PUSH(c, c->dx);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59626)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->dx = (uint16_t)((303));
@@ -3174,7 +3174,7 @@ loc_413AD: RTRACE(c, "loc_413AD");
 	fn_playSoundEffect(c);
 	goto loc_413DA;
 ul_413B8: RTRACE(c, "ul_413B8");
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 ul_413BD: RTRACE(c, "ul_413BD");
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (201), 16);
 	ST16_SET((uint16_t)(c->bp + -2), t_);
@@ -3218,7 +3218,7 @@ loc_413F9: RTRACE(c, "loc_413F9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((47466));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((47462));
@@ -3245,13 +3245,13 @@ loc_41434: RTRACE(c, "loc_41434");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, DG8(59585), 8);
@@ -3262,7 +3262,7 @@ loc_4145D: RTRACE(c, "loc_4145D");
 loc_41464: RTRACE(c, "loc_41464");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
@@ -3289,7 +3289,7 @@ static void fn_introSequence(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((65535));
@@ -3312,7 +3312,7 @@ loc_388E9: RTRACE(c, "loc_388E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7906));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -3320,7 +3320,7 @@ loc_388E9: RTRACE(c, "loc_388E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7916));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -3328,7 +3328,7 @@ loc_388E9: RTRACE(c, "loc_388E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7926));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -3336,7 +3336,7 @@ loc_388E9: RTRACE(c, "loc_388E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7936));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -3352,14 +3352,14 @@ loc_388E9: RTRACE(c, "loc_388E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((120));
@@ -3410,12 +3410,12 @@ loc_389AF: RTRACE(c, "loc_389AF");
 loc_389C2: RTRACE(c, "loc_389C2");
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -3458,12 +3458,12 @@ loc_38A17: RTRACE(c, "loc_38A17");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -3496,12 +3496,12 @@ loc_38A5F: RTRACE(c, "loc_38A5F");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((2));
@@ -3544,7 +3544,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7946));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -3566,7 +3566,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -3578,14 +3578,14 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((61292));
@@ -3604,7 +3604,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7956));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -3612,7 +3612,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7966));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -3620,7 +3620,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7976));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -3628,7 +3628,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7986));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -3636,7 +3636,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7996));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61298, c->dx);
@@ -3644,7 +3644,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8006));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -3655,7 +3655,7 @@ loc_38A84: RTRACE(c, "loc_38A84");
 	DG16_SET(8222, c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_38BF1;
 loc_38BC5: RTRACE(c, "loc_38BC5");
@@ -3681,13 +3681,13 @@ loc_38BE5: RTRACE(c, "loc_38BE5");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38BF1: RTRACE(c, "loc_38BF1");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (120), 16);
 	if ((c->sf != c->of)) goto loc_38BC5;
@@ -3697,7 +3697,7 @@ loc_38BF1: RTRACE(c, "loc_38BF1");
 	DG16_SET(8222, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((37));
 	PUSH(c, c->ax);
@@ -3715,13 +3715,13 @@ loc_38C24: RTRACE(c, "loc_38C24");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38C39: RTRACE(c, "loc_38C39");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (364), 16);
 	if ((c->sf != c->of)) goto loc_38C24;
@@ -3731,7 +3731,7 @@ loc_38C39: RTRACE(c, "loc_38C39");
 	DG16_SET(8222, c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -3752,13 +3752,13 @@ loc_38C71: RTRACE(c, "loc_38C71");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38C7D: RTRACE(c, "loc_38C7D");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (120), 16);
 	if ((c->sf != c->of)) goto loc_38C65;
@@ -3769,7 +3769,7 @@ loc_38C7D: RTRACE(c, "loc_38C7D");
 	DG16_SET(8232, (1));
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_38CC4;
 loc_38CAC: RTRACE(c, "loc_38CAC");
@@ -3784,13 +3784,13 @@ loc_38CB8: RTRACE(c, "loc_38CB8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38CC4: RTRACE(c, "loc_38CC4");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (364), 16);
 	if ((c->sf != c->of)) goto loc_38CAC;
@@ -3800,7 +3800,7 @@ loc_38CC4: RTRACE(c, "loc_38CC4");
 	DG16_SET(8222, c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_38CFF;
 loc_38CE7: RTRACE(c, "loc_38CE7");
@@ -3815,13 +3815,13 @@ loc_38CF3: RTRACE(c, "loc_38CF3");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38CFF: RTRACE(c, "loc_38CFF");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (120), 16);
 	if ((c->sf != c->of)) goto loc_38CE7;
@@ -3837,7 +3837,7 @@ loc_38CFF: RTRACE(c, "loc_38CFF");
 	DG16_SET(8232, (2));
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_38D50;
 loc_38D38: RTRACE(c, "loc_38D38");
@@ -3852,13 +3852,13 @@ loc_38D44: RTRACE(c, "loc_38D44");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38D50: RTRACE(c, "loc_38D50");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (364), 16);
 	if ((c->sf != c->of)) goto loc_38D38;
@@ -3868,7 +3868,7 @@ loc_38D50: RTRACE(c, "loc_38D50");
 	DG16_SET(8222, c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -3889,13 +3889,13 @@ loc_38D88: RTRACE(c, "loc_38D88");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38D94: RTRACE(c, "loc_38D94");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (218), 16);
 	if ((c->sf != c->of)) goto loc_38D7C;
@@ -3912,13 +3912,13 @@ loc_38DB1: RTRACE(c, "loc_38DB1");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38DBD: RTRACE(c, "loc_38DBD");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (218), 16);
 	if ((c->sf != c->of)) goto loc_38DA5;
@@ -3953,12 +3953,12 @@ loc_38E0A: RTRACE(c, "loc_38E0A");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -3991,12 +3991,12 @@ loc_38E52: RTRACE(c, "loc_38E52");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -4029,12 +4029,12 @@ loc_38E9A: RTRACE(c, "loc_38E9A");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -4072,12 +4072,12 @@ loc_38EEC: RTRACE(c, "loc_38EEC");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -4093,14 +4093,14 @@ loc_38F11: RTRACE(c, "loc_38F11");
 	if ((c->sf != c->of)) goto loc_38EE0;
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_38F3A;
 loc_38F22: RTRACE(c, "loc_38F22");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); /* push cs */
@@ -4113,7 +4113,7 @@ loc_38F22: RTRACE(c, "loc_38F22");
 loc_38F3A: RTRACE(c, "loc_38F3A");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (120), 16);
 	if ((c->sf != c->of)) goto loc_38F22;
@@ -4138,12 +4138,12 @@ loc_38F73: RTRACE(c, "loc_38F73");
 	DG16_SET(8232, c->si);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((5));
@@ -4190,7 +4190,7 @@ loc_38F98: RTRACE(c, "loc_38F98");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8015));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61302, c->dx);
@@ -4206,7 +4206,7 @@ loc_38F98: RTRACE(c, "loc_38F98");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -4216,7 +4216,7 @@ loc_39022: RTRACE(c, "loc_39022");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(c->si);
@@ -4227,13 +4227,13 @@ loc_39022: RTRACE(c, "loc_39022");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -4255,7 +4255,7 @@ loc_39068: RTRACE(c, "loc_39068");
 	if ((c->sf != c->of)) goto loc_39022;
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_390B5;
 loc_39079: RTRACE(c, "loc_39079");
@@ -4296,13 +4296,13 @@ loc_390A9: RTRACE(c, "loc_390A9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_390B5: RTRACE(c, "loc_390B5");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (80), 16);
 	if ((c->sf != c->of)) goto loc_39079;
@@ -4312,7 +4312,7 @@ loc_390B5: RTRACE(c, "loc_390B5");
 loc_390C9: RTRACE(c, "loc_390C9");
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	c->bx = (uint16_t)(c->si);
@@ -4326,7 +4326,7 @@ loc_390C9: RTRACE(c, "loc_390C9");
 	c->bx = (uint16_t)(t_);
 	PUSH(c, DG16((uint16_t)(c->bx + -4314)));
 	PUSH(c, DG16((uint16_t)(c->bx + -4316)));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_390F7: RTRACE(c, "loc_390F7");
@@ -4342,7 +4342,7 @@ loc_390F7: RTRACE(c, "loc_390F7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(c->si);
@@ -4386,7 +4386,7 @@ loc_3915D: RTRACE(c, "loc_3915D");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -4396,7 +4396,7 @@ loc_3915D: RTRACE(c, "loc_3915D");
 loc_39173: RTRACE(c, "loc_39173");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -4414,7 +4414,7 @@ loc_39188: RTRACE(c, "loc_39188");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (17), 16);
@@ -4422,7 +4422,7 @@ loc_39188: RTRACE(c, "loc_39188");
 	goto loc_39082;
 loc_391A8: RTRACE(c, "loc_391A8");
 	PUSH(c, 0); /* push cs */
-	host_sub_39900(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_39900, 0, 2); /* no return address is pushed for host routines: args start at sp */
 loc_391AD: RTRACE(c, "loc_391AD");
 	c->ax = (uint16_t)(DG16(61198));
 	DG16_SET(6069, c->ax);
@@ -4430,7 +4430,7 @@ loc_391AD: RTRACE(c, "loc_391AD");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -4443,7 +4443,7 @@ loc_391CE: RTRACE(c, "loc_391CE");
 	DG16_SET(8232, (0));
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_391F8;
 loc_391E0: RTRACE(c, "loc_391E0");
@@ -4458,13 +4458,13 @@ loc_391EC: RTRACE(c, "loc_391EC");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_391F8: RTRACE(c, "loc_391F8");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (80), 16);
 	if ((c->sf != c->of)) goto loc_391E0;
@@ -4548,13 +4548,13 @@ loc_3928B: RTRACE(c, "loc_3928B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -4567,7 +4567,7 @@ loc_3928B: RTRACE(c, "loc_3928B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -4577,7 +4577,7 @@ loc_392C6: RTRACE(c, "loc_392C6");
 	if ((c->sf != c->of)) goto loc_3928B;
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_392EF;
 loc_392D7: RTRACE(c, "loc_392D7");
@@ -4592,13 +4592,13 @@ loc_392E3: RTRACE(c, "loc_392E3");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_392EF: RTRACE(c, "loc_392EF");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (120), 16);
 	if ((c->sf != c->of)) goto loc_392D7;
@@ -4618,7 +4618,7 @@ loc_39306: RTRACE(c, "loc_39306");
 	DG16_SET(8222, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_39382;
 loc_39327: RTRACE(c, "loc_39327");
@@ -4635,7 +4635,7 @@ loc_39333: RTRACE(c, "loc_39333");
 	if (c->zf) goto loc_39376;
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (180), 16);
 	if ((c->zf || c->sf != c->of)) goto loc_3934B;
@@ -4672,13 +4672,13 @@ loc_39376: RTRACE(c, "loc_39376");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_39382: RTRACE(c, "loc_39382");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (360), 16);
 	if ((c->sf != c->of)) goto loc_39327;
@@ -4690,7 +4690,7 @@ loc_39382: RTRACE(c, "loc_39382");
 	DG16_SET(8222, c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_393C0;
 loc_393AB: RTRACE(c, "loc_393AB");
@@ -4703,13 +4703,13 @@ loc_393AB: RTRACE(c, "loc_393AB");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_393C0: RTRACE(c, "loc_393C0");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (100), 16);
 	if ((c->sf != c->of)) goto loc_393AB;
@@ -4782,7 +4782,7 @@ loc_39426: RTRACE(c, "loc_39426");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(POP(c));
@@ -4819,7 +4819,7 @@ loc_40A75: RTRACE(c, "loc_40A75");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_inc(c, c->si, 16);
 	c->si = (uint16_t)(t_);
 loc_40AA0: RTRACE(c, "loc_40AA0");
@@ -4871,7 +4871,7 @@ loc_37A33: RTRACE(c, "loc_37A33");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(DG16(42818));
@@ -4887,7 +4887,7 @@ loc_37A59: RTRACE(c, "loc_37A59");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42820, c->dx);
@@ -4956,7 +4956,7 @@ loc_37AEB: RTRACE(c, "loc_37AEB");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
 	DG8_SET(172, ((c->ax >> 0) & 0xFF));
 	DG8_SET(171, ((c->ax >> 0) & 0xFF));
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG8(50464), (5), 8);
 	if (!c->zf) goto loc_37B45;
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -4968,7 +4968,7 @@ loc_37B0C: RTRACE(c, "loc_37B0C");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -5024,7 +5024,7 @@ loc_16DDA: RTRACE(c, "loc_16DDA");
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(383), (0), 8);
 	if (c->zf) goto loc_16DEC;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_16DEC: RTRACE(c, "loc_16DEC");
 	DG8_SET(383, (3));
 loc_16DF1: RTRACE(c, "loc_16DF1");
@@ -5118,7 +5118,7 @@ loc_1710D: RTRACE(c, "loc_1710D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -18));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)((54894));
@@ -5147,7 +5147,7 @@ loc_1713C: RTRACE(c, "loc_1713C");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_worstCondition(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, worstCondition, 1, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->bx = (uint16_t)(c->ax);
@@ -5507,7 +5507,7 @@ loc_17375: RTRACE(c, "loc_17375");
 	ST16_SET((uint16_t)(c->bp + -24), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -24)));
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -5581,7 +5581,7 @@ loc_173F6: RTRACE(c, "loc_173F6");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -18));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(POP(c));
@@ -5654,7 +5654,7 @@ static void fn_freeSpriteSlot(Cpu *c) {
 	if (c->zf) goto loc_2669F;
 	PUSH(c, DG16((uint16_t)(c->si + 2)));
 	PUSH(c, DG16((uint16_t)(c->si + 0)));
-	host_vdrv_24_freeSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_24_freeSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_2669F: RTRACE(c, "loc_2669F");
@@ -5681,7 +5681,7 @@ loc_254C2: RTRACE(c, "loc_254C2");
 	c->dx = (uint16_t)((65535));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -5697,7 +5697,7 @@ loc_254E1: RTRACE(c, "loc_254E1");
 	PUSH(c, 0);
 	fn_timeText(c);
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_254F5: RTRACE(c, "loc_254F5");
@@ -5779,7 +5779,7 @@ loc_25598: RTRACE(c, "loc_25598");
 	t_ = alu_sub(c, DG8(171), (0), 8);
 	if (c->zf) goto loc_255B7;
 	DG8_SET(171, (0));
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_255B7: RTRACE(c, "loc_255B7");
 	DG8_SET(382, (0));
 	goto loc_255DD;
@@ -5818,7 +5818,7 @@ loc_255EA: RTRACE(c, "loc_255EA");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -5839,7 +5839,7 @@ def_25621: RTRACE(c, "def_25621");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	DG8_SET(47460, ((c->ax >> 0) & 0xFF));
@@ -6078,7 +6078,7 @@ loc_25861: RTRACE(c, "loc_25861");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6132,7 +6132,7 @@ loc_258B4: RTRACE(c, "loc_258B4");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_258EE: RTRACE(c, "loc_258EE");
@@ -6158,7 +6158,7 @@ loc_25905: RTRACE(c, "loc_25905");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((6));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6167,7 +6167,7 @@ loc_25905: RTRACE(c, "loc_25905");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6192,7 +6192,7 @@ loc_25952: RTRACE(c, "loc_25952");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((5));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6201,7 +6201,7 @@ loc_25952: RTRACE(c, "loc_25952");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6226,7 +6226,7 @@ loc_259A1: RTRACE(c, "loc_259A1");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6235,7 +6235,7 @@ loc_259A1: RTRACE(c, "loc_259A1");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6260,7 +6260,7 @@ loc_259EF: RTRACE(c, "loc_259EF");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6269,7 +6269,7 @@ loc_259EF: RTRACE(c, "loc_259EF");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6294,7 +6294,7 @@ loc_25A3D: RTRACE(c, "loc_25A3D");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6303,7 +6303,7 @@ loc_25A3D: RTRACE(c, "loc_25A3D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6328,7 +6328,7 @@ loc_25A8A: RTRACE(c, "loc_25A8A");
 	PUSH(c, DG16(59586));
 	c->ax = (uint16_t)((3));
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -6337,7 +6337,7 @@ loc_25A8A: RTRACE(c, "loc_25A8A");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6358,7 +6358,7 @@ loc_25AD9: RTRACE(c, "loc_25AD9");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_25AF0: RTRACE(c, "loc_25AF0");
@@ -6384,7 +6384,7 @@ loc_25B15: RTRACE(c, "loc_25B15");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -6393,7 +6393,7 @@ loc_25B15: RTRACE(c, "loc_25B15");
 loc_25B2B: RTRACE(c, "loc_25B2B");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -6558,7 +6558,7 @@ loc_4EFDE: RTRACE(c, "loc_4EFDE");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -6600,7 +6600,7 @@ loc_4F022: RTRACE(c, "loc_4F022");
 	t_ = alu_add(c, c->ax, (47271), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_subtractHitPoints(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, subtractHitPoints, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -6621,7 +6621,7 @@ loc_4F022: RTRACE(c, "loc_4F022");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(60638));
 	PUSH(c, DG16(60636));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -6)), (0), 16);
@@ -6644,7 +6644,7 @@ loc_4F022: RTRACE(c, "loc_4F022");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(60638));
 	PUSH(c, DG16(60636));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((2));
@@ -6655,7 +6655,7 @@ loc_4F022: RTRACE(c, "loc_4F022");
 	t_ = alu_add(c, c->ax, (47271), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_subtractHitPoints(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, subtractHitPoints, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_4F0A4: RTRACE(c, "loc_4F0A4");
@@ -6679,7 +6679,7 @@ loc_4F0A4: RTRACE(c, "loc_4F0A4");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + 6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -6697,7 +6697,7 @@ loc_4F0DE: RTRACE(c, "loc_4F0DE");
 	t_ = alu_add(c, c->ax, (47271), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -6714,7 +6714,7 @@ loc_4F0DE: RTRACE(c, "loc_4F0DE");
 	t_ = alu_add(c, c->ax, (47271), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_4F11B;
@@ -6730,7 +6730,7 @@ loc_4F11B: RTRACE(c, "loc_4F11B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->di, c->ax, 16);
@@ -6747,7 +6747,7 @@ loc_4F11B: RTRACE(c, "loc_4F11B");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8(59636)) & 0xFF) << 0));
@@ -6799,7 +6799,7 @@ loc_4F1A9: RTRACE(c, "loc_4F1A9");
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
@@ -6845,11 +6845,11 @@ def_4F1DB: RTRACE(c, "def_4F1DB");
 	PUSH(c, c->di);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, c->si);
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4F21C: RTRACE(c, "loc_4F21C");
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
 	PUSH(c, 0); PUSH(c, 0);
@@ -6891,10 +6891,10 @@ static void fn_characterInfoDialog(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG16(387), (30), 16);
 	if (!c->cf) goto loc_5032E;
 	c->ax = (uint16_t)(DG16(50346));
@@ -6951,7 +6951,7 @@ loc_5036F: RTRACE(c, "loc_5036F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->di, c->di, 16);
@@ -6977,7 +6977,7 @@ loc_5036F: RTRACE(c, "loc_5036F");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((1));
@@ -6986,7 +6986,7 @@ loc_503C6: RTRACE(c, "loc_503C6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_503D2: RTRACE(c, "loc_503D2");
@@ -7125,7 +7125,7 @@ loc_504CE: RTRACE(c, "loc_504CE");
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_504E8: RTRACE(c, "loc_504E8");
@@ -7137,7 +7137,7 @@ loc_504E8: RTRACE(c, "loc_504E8");
 loc_504F5: RTRACE(c, "loc_504F5");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_504FF: RTRACE(c, "loc_504FF");
 	PUSH(c, 0); PUSH(c, 0);
@@ -7166,7 +7166,7 @@ loc_504FF: RTRACE(c, "loc_504FF");
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_50540: RTRACE(c, "loc_50540");
 	t_ = alu_sub(c, DG8(183), (0), 8);
@@ -7198,7 +7198,7 @@ static void fn_characterStatsDialog(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((800));
@@ -7208,7 +7208,7 @@ static void fn_characterStatsDialog(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -802));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -7223,7 +7223,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	c->ax = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->si = (uint16_t)(c->ax);
@@ -7263,7 +7263,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7271,7 +7271,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7280,7 +7280,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7295,7 +7295,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getMaxSP(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getMaxSP, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7312,7 +7312,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getMaxHP(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getMaxHP, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7326,7 +7326,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7336,7 +7336,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -7396,7 +7396,7 @@ loc_51A28: RTRACE(c, "loc_51A28");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 21, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (42), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, DG16(42870), 16);
@@ -7454,7 +7454,7 @@ loc_51BB5: RTRACE(c, "loc_51BB5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 16, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (32), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -7477,7 +7477,7 @@ loc_51BB5: RTRACE(c, "loc_51BB5");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -7486,7 +7486,7 @@ loc_51BB5: RTRACE(c, "loc_51BB5");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -7513,7 +7513,7 @@ static void fn_controlPanel(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -7536,13 +7536,13 @@ static void fn_controlPanel(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -36));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((13136));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -12), c->dx);
@@ -7570,7 +7570,7 @@ loc_41FF9: RTRACE(c, "loc_41FF9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -7593,13 +7593,13 @@ loc_41FF9: RTRACE(c, "loc_41FF9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((80));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((13315));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_4204A: RTRACE(c, "loc_4204A");
@@ -7633,7 +7633,7 @@ loc_4207E: RTRACE(c, "loc_4207E");
 	c->ax = (uint16_t)(t_);
 loc_42080: RTRACE(c, "loc_42080");
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_42087: RTRACE(c, "loc_42087");
 	PUSH(c, c->ds); /* push ds */
@@ -7641,7 +7641,7 @@ loc_42087: RTRACE(c, "loc_42087");
 	PUSH(c, 0);
 	fn_sub_41EF1(c);
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -7655,7 +7655,7 @@ ul_4209C: RTRACE(c, "ul_4209C");
 	DG8_SET(186, (0));
 	PUSH(c, DG16(44014));
 	PUSH(c, DG16(44012));
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(344), (0), 8);
@@ -7670,7 +7670,7 @@ loc_420C7: RTRACE(c, "loc_420C7");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_42087;
@@ -7692,13 +7692,13 @@ loc_420E7: RTRACE(c, "loc_420E7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -7716,7 +7716,7 @@ loc_4211F: RTRACE(c, "loc_4211F");
 loc_42127: RTRACE(c, "loc_42127");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((13363));
 	PUSH(c, c->ax);
@@ -7779,7 +7779,7 @@ ul_4218D: RTRACE(c, "ul_4218D");
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (c->zf) goto loc_421B3;
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_4224E;
 loc_421B3: RTRACE(c, "loc_421B3");
 	goto loc_4224E;
@@ -7803,7 +7803,7 @@ ul_421B6: RTRACE(c, "ul_421B6");
 	if (c->zf) goto loc_4224E;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((51));
 	PUSH(c, c->ax);
@@ -7824,7 +7824,7 @@ ul_421B6: RTRACE(c, "ul_421B6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((13136));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -12), c->dx);
@@ -7907,7 +7907,7 @@ loc_4229B: RTRACE(c, "loc_4229B");
 loc_422A3: RTRACE(c, "loc_422A3");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_422AC: RTRACE(c, "loc_422AC");
 	c->cx = (uint16_t)(POP(c));
 loc_422AD: RTRACE(c, "loc_422AD");
@@ -8012,7 +8012,7 @@ loc_44B37: RTRACE(c, "loc_44B37");
 loc_44B4F: RTRACE(c, "loc_44B4F");
 	c->ax = (uint16_t)((303));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
@@ -8027,7 +8027,7 @@ loc_44B4F: RTRACE(c, "loc_44B4F");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + -5908))) & 0xFF) << 0));
@@ -8064,7 +8064,7 @@ loc_44B4F: RTRACE(c, "loc_44B4F");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59626)) & 0xFF) << 0));
@@ -8113,7 +8113,7 @@ static void fn_gameInformation(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -8183,7 +8183,7 @@ loc_42527: RTRACE(c, "loc_42527");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -8219,14 +8219,14 @@ loc_42574: RTRACE(c, "loc_42574");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((88));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -8251,7 +8251,7 @@ static void fn_giveCharDamage(Cpu *c) {
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	c->di = (uint16_t)(ST16((uint16_t)(c->bp + 10)));
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -8278,7 +8278,7 @@ loc_43B33: RTRACE(c, "loc_43B33");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (12), 16);
@@ -8398,7 +8398,7 @@ def_43BB7: RTRACE(c, "def_43BB7");
 loc_43C36: RTRACE(c, "loc_43C36");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + -16)));
-	host_charSavingThrow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, charSavingThrow, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8428,7 +8428,7 @@ loc_43C4D: RTRACE(c, "loc_43C4D");
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, DG16(60638));
 	PUSH(c, DG16(60636));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -16)));
@@ -8453,7 +8453,7 @@ loc_43C93: RTRACE(c, "loc_43C93");
 loc_43CA5: RTRACE(c, "loc_43CA5");
 	PUSH(c, c->si);
 	PUSH(c, ST16((uint16_t)(c->bp + -16)));
-	host_subtractHitPoints(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, subtractHitPoints, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -8)), (0), 16);
@@ -8495,7 +8495,7 @@ loc_43CE9: RTRACE(c, "loc_43CE9");
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_drawParty(c);
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
 	c->sp = (uint16_t)(c->bp);
@@ -8524,10 +8524,10 @@ static void fn_questLog(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -28));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG16(387), (30), 16);
 	if (!c->cf) goto loc_457DF;
 	c->ax = (uint16_t)(DG16(50346));
@@ -8570,7 +8570,7 @@ loc_457F8: RTRACE(c, "loc_457F8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -8583,7 +8583,7 @@ loc_457F8: RTRACE(c, "loc_457F8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -8606,7 +8606,7 @@ loc_457F8: RTRACE(c, "loc_457F8");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((60606));
@@ -8637,7 +8637,7 @@ loc_45896: RTRACE(c, "loc_45896");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8649,7 +8649,7 @@ loc_458AE: RTRACE(c, "loc_458AE");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8663,7 +8663,7 @@ loc_458C3: RTRACE(c, "loc_458C3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8675,7 +8675,7 @@ loc_458C3: RTRACE(c, "loc_458C3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8698,7 +8698,7 @@ loc_45905: RTRACE(c, "loc_45905");
 loc_4590E: RTRACE(c, "loc_4590E");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(23056));
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -8747,7 +8747,7 @@ loc_45943: RTRACE(c, "loc_45943");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -8769,13 +8769,13 @@ loc_45943: RTRACE(c, "loc_45943");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->si, (5), 16);
@@ -8790,14 +8790,14 @@ loc_459BF: RTRACE(c, "loc_459BF");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((15647));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(23056));
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -4), c->si);
@@ -8812,13 +8812,13 @@ loc_459F0: RTRACE(c, "loc_459F0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((15647));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((15693));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((60606));
@@ -8841,7 +8841,7 @@ loc_45A25: RTRACE(c, "loc_45A25");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -8873,7 +8873,7 @@ static void fn_rest(Cpu *c) {
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetFlagsRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetFlagsRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -8916,7 +8916,7 @@ loc_4174D: RTRACE(c, "loc_4174D");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -9034,7 +9034,7 @@ loc_4181A: RTRACE(c, "loc_4181A");
 	t_ = alu_sub(c, DG16(60484), (0), 16);
 	if (c->zf) goto loc_41895;
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -9056,14 +9056,14 @@ loc_4184F: RTRACE(c, "loc_4184F");
 	DG8_SET((uint16_t)(c->bx + 287), ((c->ax >> 0) & 0xFF));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -10)));
 	DG16_SET((uint16_t)(c->bx + 293), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -10)));
@@ -9101,7 +9101,7 @@ loc_418CD: RTRACE(c, "loc_418CD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -9109,7 +9109,7 @@ loc_418CD: RTRACE(c, "loc_418CD");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_showMessage(c);
 	c->cx = (uint16_t)(POP(c));
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_418ED: RTRACE(c, "loc_418ED");
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
@@ -9190,13 +9190,13 @@ loc_43533: RTRACE(c, "loc_43533");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, DG8(59585), 8);
@@ -9221,7 +9221,7 @@ loc_43563: RTRACE(c, "loc_43563");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(POP(c));
@@ -9267,12 +9267,12 @@ static void fn_showMessage(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((42));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -9281,7 +9281,7 @@ static void fn_showMessage(Cpu *c) {
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -9318,7 +9318,7 @@ static void fn_showOverheadMap(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -9371,7 +9371,7 @@ loc_426D2: RTRACE(c, "loc_426D2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((4000));
@@ -9381,7 +9381,7 @@ loc_426D2: RTRACE(c, "loc_426D2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(54894, (65535));
@@ -9397,7 +9397,7 @@ loc_426D2: RTRACE(c, "loc_426D2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -270));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(347), (0), 8);
@@ -9432,7 +9432,7 @@ loc_4274F: RTRACE(c, "loc_4274F");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_isCellVisited(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isCellVisited, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -9462,7 +9462,7 @@ loc_42772: RTRACE(c, "loc_42772");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -9611,7 +9611,7 @@ loc_42889: RTRACE(c, "loc_42889");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -9752,7 +9752,7 @@ loc_42971: RTRACE(c, "loc_42971");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
@@ -9902,7 +9902,7 @@ loc_42A9A: RTRACE(c, "loc_42A9A");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_isCellVisited(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isCellVisited, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -9930,7 +9930,7 @@ loc_42A9A: RTRACE(c, "loc_42A9A");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -10023,7 +10023,7 @@ loc_42B6D: RTRACE(c, "loc_42B6D");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -10043,7 +10043,7 @@ loc_42B93: RTRACE(c, "loc_42B93");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((12)) & 0xFF) << 0));
@@ -10135,7 +10135,7 @@ loc_42C45: RTRACE(c, "loc_42C45");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -10266,7 +10266,7 @@ loc_42D1F: RTRACE(c, "loc_42D1F");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -6)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -10416,7 +10416,7 @@ loc_42E1D: RTRACE(c, "loc_42E1D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((72));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -10427,7 +10427,7 @@ loc_42E1D: RTRACE(c, "loc_42E1D");
 	fn_sub_28135(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -10562,7 +10562,7 @@ loc_4F85A: RTRACE(c, "loc_4F85A");
 	PUSH(c, DG16((uint16_t)(c->bx + 7190)));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -10583,7 +10583,7 @@ loc_4F85A: RTRACE(c, "loc_4F85A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 8, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (16), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -10607,7 +10607,7 @@ loc_4F85A: RTRACE(c, "loc_4F85A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4F8CA: RTRACE(c, "loc_4F8CA");
@@ -10653,7 +10653,7 @@ loc_4F913: RTRACE(c, "loc_4F913");
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_Spells_subSpellCost(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, Spells_subSpellCost, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
@@ -11217,7 +11217,7 @@ loc_4FDC3: RTRACE(c, "loc_4FDC3");
 	PUSH(c, DG16((uint16_t)(c->bx + 7190)));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -11238,13 +11238,13 @@ loc_4FDC3: RTRACE(c, "loc_4FDC3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 8, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (16), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_4FE12: RTRACE(c, "loc_4FE12");
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
@@ -11261,7 +11261,7 @@ loc_4FE28: RTRACE(c, "loc_4FE28");
 	if (!c->zf) goto loc_4FE71;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -11555,7 +11555,7 @@ loc_195E5: RTRACE(c, "loc_195E5");
 	DG8_SET(50477, ((c->ax >> 0) & 0xFF));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_19602: RTRACE(c, "loc_19602");
 	c->di = (uint16_t)(POP(c));
@@ -11626,7 +11626,7 @@ loc_1B181: RTRACE(c, "loc_1B181");
 	if (c->zf) goto loc_1B195;
 loc_1B18E: RTRACE(c, "loc_1B18E");
 	PUSH(c, c->si);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_1B195: RTRACE(c, "loc_1B195");
 	c->si = (uint16_t)(POP(c));
@@ -11865,7 +11865,7 @@ loc_197F8: RTRACE(c, "loc_197F8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(DG16(42858));
@@ -11901,7 +11901,7 @@ loc_1985E: RTRACE(c, "loc_1985E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG16(60596), (0), 16);
@@ -11910,7 +11910,7 @@ loc_19881: RTRACE(c, "loc_19881");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto evt_op13;
@@ -11936,7 +11936,7 @@ loc_19890: RTRACE(c, "loc_19890");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, DG16(60596), 16);
@@ -11954,7 +11954,7 @@ loc_198D0: RTRACE(c, "loc_198D0");
 	t_ = alu_sub(c, DG8(44003), (0), 8);
 	if (c->zf) goto loc_198E9;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -11969,7 +11969,7 @@ loc_198E9: RTRACE(c, "loc_198E9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_19881;
@@ -11995,7 +11995,7 @@ loc_19907: RTRACE(c, "loc_19907");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, DG16(60596), 16);
@@ -12014,7 +12014,7 @@ evt_op02: RTRACE(c, "evt_op02");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_1ADB9;
 evt_op03: RTRACE(c, "evt_op03");
 	c->ax = (uint16_t)((58896));
@@ -12024,7 +12024,7 @@ loc_19966: RTRACE(c, "loc_19966");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_1AB45;
 evt_op04: RTRACE(c, "evt_op04");
 	c->ax = (uint16_t)((58896));
@@ -12048,7 +12048,7 @@ loc_1998A: RTRACE(c, "loc_1998A");
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_199AA;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 loc_199AA: RTRACE(c, "loc_199AA");
@@ -12069,7 +12069,7 @@ loc_199AA: RTRACE(c, "loc_199AA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, DG16(60596));
@@ -12216,7 +12216,7 @@ loc_19AF7: RTRACE(c, "loc_19AF7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -12240,7 +12240,7 @@ loc_19AF7: RTRACE(c, "loc_19AF7");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, DG16(60596), 16);
@@ -12297,7 +12297,7 @@ loc_19B8F: RTRACE(c, "loc_19B8F");
 	DG8_SET(50475, (0));
 loc_19B9D: RTRACE(c, "loc_19B9D");
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 	c->ax = (uint16_t)((1));
@@ -12340,7 +12340,7 @@ ul_19BEC: RTRACE(c, "ul_19BEC");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 9))) & 0xFF) << 0));
@@ -12358,7 +12358,7 @@ ul_19BEC: RTRACE(c, "ul_19BEC");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -12390,7 +12390,7 @@ ul_19C52: RTRACE(c, "ul_19C52");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 7))) & 0xFF) << 0));
@@ -12581,7 +12581,7 @@ ul_19DEB: RTRACE(c, "ul_19DEB");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 9))) & 0xFF) << 0));
@@ -12599,7 +12599,7 @@ ul_19DEB: RTRACE(c, "ul_19DEB");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -12636,7 +12636,7 @@ ul_19E5A: RTRACE(c, "ul_19E5A");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 7))) & 0xFF) << 0));
@@ -12696,7 +12696,7 @@ ul_19ED6: RTRACE(c, "ul_19ED6");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -24)));
 	c->es = (uint16_t)(DG16(42860));
 	t_ = alu_add(c, c->bx, DG16(42858), 16);
@@ -12718,7 +12718,7 @@ ul_19ED6: RTRACE(c, "ul_19ED6");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -12760,7 +12760,7 @@ ul_19F5A: RTRACE(c, "ul_19F5A");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	t_ = alu_add(c, c->bx, ST16((uint16_t)(c->bp + -24)), 16);
@@ -12826,7 +12826,7 @@ ul_19FE6: RTRACE(c, "ul_19FE6");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -24)));
 	c->es = (uint16_t)(DG16(42860));
 	t_ = alu_add(c, c->bx, DG16(42858), 16);
@@ -12848,7 +12848,7 @@ ul_19FE6: RTRACE(c, "ul_19FE6");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -12882,7 +12882,7 @@ ul_1A057: RTRACE(c, "ul_1A057");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	t_ = alu_add(c, c->bx, ST16((uint16_t)(c->bp + -24)), 16);
@@ -12911,7 +12911,7 @@ loc_1A09B: RTRACE(c, "loc_1A09B");
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -16)), (67), 16);
 	if (!c->zf) goto loc_1A0B8;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 loc_1A0B8: RTRACE(c, "loc_1A0B8");
@@ -13265,7 +13265,7 @@ loc_1A362: RTRACE(c, "loc_1A362");
 	goto evt_op13;
 loc_1A36B: RTRACE(c, "loc_1A36B");
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 	c->ax = (uint16_t)((1));
@@ -13357,7 +13357,7 @@ loc_1A435: RTRACE(c, "loc_1A435");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -13377,11 +13377,11 @@ loc_1A45D: RTRACE(c, "loc_1A45D");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 	c->ax = (uint16_t)((1));
@@ -13407,7 +13407,7 @@ evt_op15: RTRACE(c, "evt_op15");
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_1A4CA;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 loc_1A4CA: RTRACE(c, "loc_1A4CA");
@@ -13476,7 +13476,7 @@ evt_op16: RTRACE(c, "evt_op16");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(42858));
@@ -13608,7 +13608,7 @@ loc_1A644: RTRACE(c, "loc_1A644");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 6))) & 0xFF) << 0));
 	c->ax = (uint16_t)(int16_t)(int8_t)(c->ax & 0xFF);
 	PUSH(c, c->ax);
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, ST16((uint16_t)(c->bp + -4)), 16);
@@ -13632,7 +13632,7 @@ loc_1A671: RTRACE(c, "loc_1A671");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 6))) & 0xFF) << 0));
 	c->ax = (uint16_t)(int16_t)(int8_t)(c->ax & 0xFF);
 	PUSH(c, c->ax);
-	host_mazeSetBits(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeSetBits, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_1ADB9;
 evt_op20: RTRACE(c, "evt_op20");
 	ST16_SET((uint16_t)(c->bp + -22), (1));
@@ -13663,7 +13663,7 @@ ul_1A6BF: RTRACE(c, "ul_1A6BF");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 9))) & 0xFF) << 0));
@@ -13681,7 +13681,7 @@ ul_1A6BF: RTRACE(c, "ul_1A6BF");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -13718,7 +13718,7 @@ ul_1A72E: RTRACE(c, "ul_1A72E");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 7))) & 0xFF) << 0));
@@ -13778,7 +13778,7 @@ ul_1A7AA: RTRACE(c, "ul_1A7AA");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -24)));
 	c->es = (uint16_t)(DG16(42860));
 	t_ = alu_add(c, c->bx, DG16(42858), 16);
@@ -13800,7 +13800,7 @@ ul_1A7AA: RTRACE(c, "ul_1A7AA");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -13842,7 +13842,7 @@ ul_1A82E: RTRACE(c, "ul_1A82E");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	t_ = alu_add(c, c->bx, ST16((uint16_t)(c->bp + -24)), 16);
@@ -13908,7 +13908,7 @@ ul_1A8BA: RTRACE(c, "ul_1A8BA");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -24)));
 	c->es = (uint16_t)(DG16(42860));
 	t_ = alu_add(c, c->bx, DG16(42858), 16);
@@ -13930,7 +13930,7 @@ ul_1A8BA: RTRACE(c, "ul_1A8BA");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -13964,7 +13964,7 @@ ul_1A92B: RTRACE(c, "ul_1A92B");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	t_ = alu_add(c, c->bx, ST16((uint16_t)(c->bp + -24)), 16);
@@ -13999,7 +13999,7 @@ loc_1A97D: RTRACE(c, "loc_1A97D");
 	t_ = alu_sub(c, DG16(60596), (0), 16);
 	if (c->zf) goto loc_1A994;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 loc_1A994: RTRACE(c, "loc_1A994");
@@ -14095,7 +14095,7 @@ loc_1AA38: RTRACE(c, "loc_1AA38");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_1AA7B;
@@ -14104,7 +14104,7 @@ loc_1AA6C: RTRACE(c, "loc_1AA6C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_1AA7B: RTRACE(c, "loc_1AA7B");
@@ -14127,7 +14127,7 @@ loc_1AA7B: RTRACE(c, "loc_1AA7B");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -202));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_1AAC0;
@@ -14136,7 +14136,7 @@ loc_1AAB0: RTRACE(c, "loc_1AAB0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -202));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_1AAC0: RTRACE(c, "loc_1AAC0");
@@ -14179,7 +14179,7 @@ loc_1AB07: RTRACE(c, "loc_1AB07");
 	t_ = alu_sub(c, DG16(60596), (0), 16);
 	if (c->zf) goto loc_1AB1E;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 loc_1AB1E: RTRACE(c, "loc_1AB1E");
@@ -14216,7 +14216,7 @@ evt_op23: RTRACE(c, "evt_op23");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(42858));
@@ -14404,7 +14404,7 @@ ul_1ACD0: RTRACE(c, "ul_1ACD0");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((24)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 9))) & 0xFF) << 0));
@@ -14422,7 +14422,7 @@ ul_1ACD0: RTRACE(c, "ul_1ACD0");
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
 	c->ax = (uint16_t)(c->bx);
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->cx, c->ax, 16);
@@ -14452,7 +14452,7 @@ ul_1AD2E: RTRACE(c, "ul_1AD2E");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
-	host_LXLSH_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXLSH_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)(DG16(42858));
 	c->es = DG16((uint16_t)(42858 + 2));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + c->si + 7))) & 0xFF) << 0));
@@ -14539,7 +14539,7 @@ loc_1ADCB: RTRACE(c, "loc_1ADCB");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((1)) & 0xFF) << 0));
@@ -14556,7 +14556,7 @@ loc_1AE05: RTRACE(c, "loc_1AE05");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getCurrentExperience(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentExperience, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, ST16((uint16_t)(c->bp + -66)), c->ax, 16);
 	ST16_SET((uint16_t)(c->bp + -66), t_);
@@ -14577,7 +14577,7 @@ loc_1AE20: RTRACE(c, "loc_1AE20");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -64)));
 	PUSH(c, ST16((uint16_t)(c->bp + -66)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -64), c->dx);
 	ST16_SET((uint16_t)(c->bp + -66), c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -14587,13 +14587,13 @@ loc_1AE20: RTRACE(c, "loc_1AE20");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -64)));
 	PUSH(c, ST16((uint16_t)(c->bp + -66)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -64), c->dx);
 	ST16_SET((uint16_t)(c->bp + -66), c->ax);
 	c->cx = (uint16_t)((1));
 	c->bx = (uint16_t)((34464));
 	c->dx = (uint16_t)(ST16((uint16_t)(c->bp + -64)));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -64), c->dx);
 	ST16_SET((uint16_t)(c->bp + -66), c->ax);
 	PUSH(c, 0); PUSH(c, 0);
@@ -14607,7 +14607,7 @@ loc_1AE20: RTRACE(c, "loc_1AE20");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -72)));
 	PUSH(c, ST16((uint16_t)(c->bp + -74)));
-	host_LUMOD_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LUMOD_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -14616,7 +14616,7 @@ loc_1AE20: RTRACE(c, "loc_1AE20");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -72)));
 	PUSH(c, ST16((uint16_t)(c->bp + -74)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
 	c->dx = (uint16_t)((100));
 	{ int32_t r_ = (int32_t)(int16_t)c->ax * (int32_t)(int16_t)c->dx; c->ax = (uint16_t)r_; c->dx = (uint16_t)((uint32_t)r_ >> 16); c->cf = c->of = (r_ != (int16_t)r_); }
@@ -14670,7 +14670,7 @@ evt_op18: RTRACE(c, "evt_op18");
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -22)), (0), 16);
 	if (c->zf) goto loc_1AF28;
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60596, (0));
 	c->ax = (uint16_t)((1));
@@ -14681,7 +14681,7 @@ evt_op18: RTRACE(c, "evt_op18");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_drawParty(c);
 loc_1AF28: RTRACE(c, "loc_1AF28");
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG8(50374), (0), 8);
 	if (c->zf) goto loc_1AF66;
 	t_ = alu_sub(c, DG8(60563), (0), 8);
@@ -14740,7 +14740,7 @@ loc_1AF90: RTRACE(c, "loc_1AF90");
 	fn_freeSpriteSlot(c);
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, DG16(60596));
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -8)), (1), 16);
 	if (!c->zf) goto loc_1AFB3;
@@ -14836,12 +14836,12 @@ loc_25E03: RTRACE(c, "loc_25E03");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_25E0C: RTRACE(c, "loc_25E0C");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -14871,7 +14871,7 @@ loc_25EA7: RTRACE(c, "loc_25EA7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -14891,7 +14891,7 @@ loc_25ED6: RTRACE(c, "loc_25ED6");
 	if (c->zf) goto loc_25EEE;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -15234,7 +15234,7 @@ loc_3E918: RTRACE(c, "loc_3E918");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -15307,7 +15307,7 @@ static void fn_updateAutomap(Cpu *c) {
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_markCellVisited(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, markCellVisited, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_1575E: RTRACE(c, "loc_1575E");
@@ -15346,7 +15346,7 @@ loc_1579D: RTRACE(c, "loc_1579D");
 	if (c->zf) goto loc_157BC;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(42845, (0));
 loc_157BC: RTRACE(c, "loc_157BC");
@@ -15367,7 +15367,7 @@ loc_157D6: RTRACE(c, "loc_157D6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(54894, (65535));
@@ -15407,7 +15407,7 @@ loc_15829: RTRACE(c, "loc_15829");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -15475,7 +15475,7 @@ loc_158AE: RTRACE(c, "loc_158AE");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -15495,7 +15495,7 @@ loc_158D7: RTRACE(c, "loc_158D7");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((12)) & 0xFF) << 0));
@@ -15585,7 +15585,7 @@ loc_15971: RTRACE(c, "loc_15971");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -15697,7 +15697,7 @@ loc_15A3A: RTRACE(c, "loc_15A3A");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -15775,7 +15775,7 @@ loc_15A9C: RTRACE(c, "loc_15A9C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -28));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(42845), (0), 8);
@@ -15783,7 +15783,7 @@ loc_15A9C: RTRACE(c, "loc_15A9C");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -28));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_15B2E;
@@ -15808,7 +15808,7 @@ loc_15AFD: RTRACE(c, "loc_15AFD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	DG8_SET(42845, (1));
@@ -16273,7 +16273,7 @@ static void fn_confirmDialog(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((12847));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -16289,7 +16289,7 @@ static void fn_confirmDialog(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -308));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -16306,7 +16306,7 @@ static void fn_confirmDialog(Cpu *c) {
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -308));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -16374,7 +16374,7 @@ loc_41C07: RTRACE(c, "loc_41C07");
 	c->ax = (uint16_t)((99));
 loc_41C54: RTRACE(c, "loc_41C54");
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50332)) & 0xFF) << 0));
@@ -16416,7 +16416,7 @@ loc_41C9E: RTRACE(c, "loc_41C9E");
 loc_41CA0: RTRACE(c, "loc_41CA0");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -16454,7 +16454,7 @@ static void fn_createCharacter(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((16815));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50336, c->dx);
@@ -16491,7 +16491,7 @@ static void fn_createCharacter(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -62));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((20));
@@ -16501,18 +16501,18 @@ static void fn_createCharacter(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -82));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(50466, (1221));
 	DG16_SET(50468, (1233));
 	DG16_SET(50470, (1238));
 	DG16_SET(50472, (1243));
-	host_vdrv_03_hideMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_03_hideMouse, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((16824));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, DG16(59588));
@@ -16520,13 +16520,13 @@ static void fn_createCharacter(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((16835));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -38), c->dx);
@@ -16565,7 +16565,7 @@ loc_46F9D: RTRACE(c, "loc_46F9D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -112));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -16655,7 +16655,7 @@ loc_4700C: RTRACE(c, "loc_4700C");
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_rollAttributes(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, rollAttributes, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -16))) & 0xFF) << 0));
@@ -16682,13 +16682,13 @@ loc_4700C: RTRACE(c, "loc_4700C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -12)), (255), 16);
@@ -16713,7 +16713,7 @@ loc_470C0: RTRACE(c, "loc_470C0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST8_SET((uint16_t)(c->bp + -19), (1));
@@ -16881,7 +16881,7 @@ loc_471DB: RTRACE(c, "loc_471DB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4724D;
@@ -16903,7 +16903,7 @@ loc_47222: RTRACE(c, "loc_47222");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4724D: RTRACE(c, "loc_4724D");
@@ -16959,7 +16959,7 @@ loc_47287: RTRACE(c, "loc_47287");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_472F9;
@@ -16981,7 +16981,7 @@ loc_472CE: RTRACE(c, "loc_472CE");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_472F9: RTRACE(c, "loc_472F9");
@@ -17014,13 +17014,13 @@ loc_47330: RTRACE(c, "loc_47330");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_47111;
@@ -17030,7 +17030,7 @@ ul_4734C: RTRACE(c, "ul_4734C");
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_rollAttributes(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, rollAttributes, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((255)) & 0xFF) << 0));
@@ -17057,7 +17057,7 @@ ul_4734C: RTRACE(c, "ul_4734C");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -512));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -12)), (255), 16);
@@ -17188,13 +17188,13 @@ loc_47412: RTRACE(c, "loc_47412");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -17266,7 +17266,7 @@ loc_474FD: RTRACE(c, "loc_474FD");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -38)));
 	PUSH(c, ST16((uint16_t)(c->bp + -40)));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -6), c->si);
@@ -17309,7 +17309,7 @@ loc_47550: RTRACE(c, "loc_47550");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -38)));
 	PUSH(c, ST16((uint16_t)(c->bp + -40)));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
@@ -17332,7 +17332,7 @@ loc_47550: RTRACE(c, "loc_47550");
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_checkClasses(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, checkClasses, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((255)) & 0xFF) << 0));
@@ -17376,7 +17376,7 @@ loc_475D2: RTRACE(c, "loc_475D2");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -38)));
 	PUSH(c, ST16((uint16_t)(c->bp + -40)));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_475FC: RTRACE(c, "loc_475FC");
@@ -17389,7 +17389,7 @@ loc_475FC: RTRACE(c, "loc_475FC");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -512));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -12)), (255), 16);
@@ -17431,7 +17431,7 @@ loc_47635: RTRACE(c, "loc_47635");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4769F;
@@ -17453,7 +17453,7 @@ loc_47674: RTRACE(c, "loc_47674");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4769F: RTRACE(c, "loc_4769F");
@@ -17487,13 +17487,13 @@ loc_4769F: RTRACE(c, "loc_4769F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_476EE: RTRACE(c, "loc_476EE");
@@ -17535,7 +17535,7 @@ loc_47711: RTRACE(c, "loc_47711");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4777B;
@@ -17557,7 +17557,7 @@ loc_47750: RTRACE(c, "loc_47750");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4777B: RTRACE(c, "loc_4777B");
@@ -17591,13 +17591,13 @@ loc_4777B: RTRACE(c, "loc_4777B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -17683,7 +17683,7 @@ loc_403FD: RTRACE(c, "loc_403FD");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	DG8_SET((uint16_t)(c->si + -5908), (255));
 	c->ax = (uint16_t)((303));
 	PUSH(c, c->ax);
@@ -17696,7 +17696,7 @@ loc_403FD: RTRACE(c, "loc_403FD");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_40457;
@@ -17738,7 +17738,7 @@ static void fn_sub_25F71(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34230));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, DG16(60586));
@@ -17746,7 +17746,7 @@ static void fn_sub_25F71(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34239));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -17755,7 +17755,7 @@ static void fn_sub_25F71(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34248));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -17851,15 +17851,15 @@ static void fn_sub_40173(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
-	host_vdrv_03_hideMouse(c); /* no return address is pushed for host routines: args start at sp */
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_03_hideMouse, 0, 4); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11612));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((44246));
@@ -17868,13 +17868,13 @@ static void fn_sub_40173(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, DG16(59588));
@@ -17882,7 +17882,7 @@ static void fn_sub_40173(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bp = (uint16_t)(POP(c));
@@ -17905,7 +17905,7 @@ static void fn_sub_4058A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -90));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((60));
@@ -17915,7 +17915,7 @@ static void fn_sub_4058A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -150));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((60));
@@ -17925,7 +17925,7 @@ static void fn_sub_4058A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -210));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((60));
@@ -17935,7 +17935,7 @@ static void fn_sub_4058A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -270));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -10), (11642));
@@ -18026,7 +18026,7 @@ loc_40644: RTRACE(c, "loc_40644");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_406DA;
@@ -18066,7 +18066,7 @@ loc_40697: RTRACE(c, "loc_40697");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
-	host__movedata(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _movedata, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 loc_406DA: RTRACE(c, "loc_406DA");
@@ -18095,7 +18095,7 @@ loc_406DA: RTRACE(c, "loc_406DA");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (19), 16);
@@ -18123,7 +18123,7 @@ loc_406DA: RTRACE(c, "loc_406DA");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
@@ -18135,7 +18135,7 @@ loc_40748: RTRACE(c, "loc_40748");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_407B8;
@@ -18163,7 +18163,7 @@ loc_4075F: RTRACE(c, "loc_4075F");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -18280,7 +18280,7 @@ loc_40819: RTRACE(c, "loc_40819");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 18, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (36), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(POP(c));
@@ -18316,7 +18316,7 @@ loc_408A5: RTRACE(c, "loc_408A5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -30));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((65535));
@@ -18326,7 +18326,7 @@ loc_408A5: RTRACE(c, "loc_408A5");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((11836));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -18345,7 +18345,7 @@ loc_408A5: RTRACE(c, "loc_408A5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -18372,7 +18372,7 @@ loc_408A5: RTRACE(c, "loc_408A5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(1008, (235));
@@ -18455,7 +18455,7 @@ loc_409D3: RTRACE(c, "loc_409D3");
 loc_409D7: RTRACE(c, "loc_409D7");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((37622));
 	PUSH(c, c->ax);
@@ -18497,13 +18497,13 @@ loc_3943C: RTRACE(c, "loc_3943C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_39448: RTRACE(c, "loc_39448");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (c->ax & 0x8000) ? 0xFFFF : 0;
 	DG16_SET(61200, c->dx);
@@ -18538,12 +18538,12 @@ static void fn_sub_253D3(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
 	t_ = alu_and(c, c->ax, (1), 16);
@@ -18655,7 +18655,7 @@ loc_25E6D: RTRACE(c, "loc_25E6D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG16(50466), (548), 16);
@@ -18684,13 +18684,13 @@ static void fn_sub_38821(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54870));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	c->ax = (uint16_t)((60648));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(345), (0), 8);
@@ -18702,7 +18702,7 @@ static void fn_sub_38821(Cpu *c) {
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST8((uint16_t)(c->bp + 8)), (0), 8);
@@ -18726,7 +18726,7 @@ static void fn_sub_3946E(Cpu *c) {
 	PUSH(c, c->si);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -18740,7 +18740,7 @@ loc_39487: RTRACE(c, "loc_39487");
 	t_ = alu_sub(c, c->si, (17), 16);
 	if (!c->zf) goto loc_3949A;
 	PUSH(c, 0); /* push cs */
-	host_sub_39900(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_39900, 0, 2); /* no return address is pushed for host routines: args start at sp */
 	goto loc_394A4;
 loc_3949A: RTRACE(c, "loc_3949A");
 	t_ = alu_sub(c, c->si, (27), 16);
@@ -18865,7 +18865,7 @@ loc_4AC1B: RTRACE(c, "loc_4AC1B");
 	c->ax = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -12), c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (11), 16);
@@ -18955,7 +18955,7 @@ loc_4ACCB: RTRACE(c, "loc_4ACCB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -18971,7 +18971,7 @@ loc_4ACEB: RTRACE(c, "loc_4ACEB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -18987,7 +18987,7 @@ loc_4AD0B: RTRACE(c, "loc_4AD0B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -19002,7 +19002,7 @@ loc_4AD29: RTRACE(c, "loc_4AD29");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
@@ -19018,7 +19018,7 @@ loc_4AD3F: RTRACE(c, "loc_4AD3F");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -19039,7 +19039,7 @@ loc_4AD6E: RTRACE(c, "loc_4AD6E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -28));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -19055,7 +19055,7 @@ loc_4AD8B: RTRACE(c, "loc_4AD8B");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -19104,7 +19104,7 @@ loc_4ADF1: RTRACE(c, "loc_4ADF1");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shl(c, c->ax, 1, 16);
@@ -19163,7 +19163,7 @@ loc_4AE5F: RTRACE(c, "loc_4AE5F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -19191,7 +19191,7 @@ loc_4AE8A: RTRACE(c, "loc_4AE8A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(61554));
@@ -19212,7 +19212,7 @@ loc_4AE8A: RTRACE(c, "loc_4AE8A");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
-	host_j_getArmorClass(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getArmorClass, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -19220,7 +19220,7 @@ loc_4AE8A: RTRACE(c, "loc_4AE8A");
 	if (c->zf) goto loc_4AEDD;
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shr(c, c->ax, 1, 16);
@@ -19301,7 +19301,7 @@ loc_38546: RTRACE(c, "loc_38546");
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_stopAttack(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, stopAttack, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
@@ -19418,7 +19418,7 @@ loc_169CF: RTRACE(c, "loc_169CF");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -19502,7 +19502,7 @@ loc_16A49: RTRACE(c, "loc_16A49");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -19515,7 +19515,7 @@ loc_16A49: RTRACE(c, "loc_16A49");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_charSavingThrow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, charSavingThrow, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -19546,7 +19546,7 @@ loc_16AE4: RTRACE(c, "loc_16AE4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -19559,7 +19559,7 @@ loc_16AE4: RTRACE(c, "loc_16AE4");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_charSavingThrow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, charSavingThrow, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -19784,7 +19784,7 @@ loc_16CEF: RTRACE(c, "loc_16CEF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -19798,7 +19798,7 @@ loc_16CEF: RTRACE(c, "loc_16CEF");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_charSavingThrow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, charSavingThrow, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -19828,7 +19828,7 @@ loc_16D49: RTRACE(c, "loc_16D49");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -19920,7 +19920,7 @@ loc_20427: RTRACE(c, "loc_20427");
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_2044C;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_2044C: RTRACE(c, "loc_2044C");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_scanMonstersAhead(c);
@@ -19951,7 +19951,7 @@ static void fn_doCombat(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60617));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((12));
@@ -19961,7 +19961,7 @@ static void fn_doCombat(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((47561));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((12));
@@ -19971,7 +19971,7 @@ static void fn_doCombat(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50379));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -20003,7 +20003,7 @@ loc_4B834: RTRACE(c, "loc_4B834");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59626)) & 0xFF) << 0));
 	DG8_SET(44225, ((c->ax >> 0) & 0xFF));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((255)) & 0xFF) << 0));
 	DG8_SET(336, ((c->ax >> 0) & 0xFF));
 	DG8_SET(335, ((c->ax >> 0) & 0xFF));
@@ -20017,7 +20017,7 @@ loc_4B834: RTRACE(c, "loc_4B834");
 loc_4B861: RTRACE(c, "loc_4B861");
 	t_ = alu_sub(c, DG8(383), (0), 8);
 	if (c->zf) goto loc_4B872;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, 0); PUSH(c, 0);
 	fn_drawView(c);
 loc_4B872: RTRACE(c, "loc_4B872");
@@ -20050,7 +20050,7 @@ loc_4B872: RTRACE(c, "loc_4B872");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4B8AD: RTRACE(c, "loc_4B8AD");
@@ -20070,14 +20070,14 @@ loc_4B8AD: RTRACE(c, "loc_4B8AD");
 	c->cx = (uint16_t)(POP(c));
 loc_4B8CB: RTRACE(c, "loc_4B8CB");
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 	PUSH(c, 0); /* push cs */
 	PUSH(c, 0);
 	fn_getMonsterDescriptions(c);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -20148,7 +20148,7 @@ loc_4B960: RTRACE(c, "loc_4B960");
 loc_4B965: RTRACE(c, "loc_4B965");
 	t_ = alu_sub(c, DG8(383), (0), 8);
 	if (c->zf) goto loc_4B971;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_4B971: RTRACE(c, "loc_4B971");
 	DG8_SET(382, (1));
 	t_ = alu_xor(c, DG8(389), (1), 8);
@@ -20343,7 +20343,7 @@ loc_4BAD5: RTRACE(c, "loc_4BAD5");
 	fn_sub_27F63(c);
 loc_4BAE5: RTRACE(c, "loc_4BAE5");
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_allHaveGone(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, allHaveGone, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_4BAF0;
@@ -20358,7 +20358,7 @@ loc_4BAF0: RTRACE(c, "loc_4BAF0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((47561));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((12));
@@ -20368,11 +20368,11 @@ loc_4BAF0: RTRACE(c, "loc_4BAF0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50379));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((255)) & 0xFF) << 0));
 	DG8_SET(335, ((c->ax >> 0) & 0xFF));
 	DG8_SET(336, ((c->ax >> 0) & 0xFF));
@@ -20404,7 +20404,7 @@ loc_4BB4E: RTRACE(c, "loc_4BB4E");
 	if ((!c->zf && c->sf == c->of)) goto loc_4BB2E;
 	PUSH(c, 0); PUSH(c, 0);
 	fn_monstersRecover(c);
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, 0); PUSH(c, 0);
 	fn_scanMonstersAhead(c);
 	c->ax = (uint16_t)((1));
@@ -20451,7 +20451,7 @@ loc_4BB71: RTRACE(c, "loc_4BB71");
 	c->ax = (uint16_t)(t_);
 	if (c->zf) goto loc_4BBCC;
 loc_4BBB6: RTRACE(c, "loc_4BBB6");
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG8(337), (0), 8);
 	if (!c->zf) goto loc_4BBCC;
 	t_ = alu_sub(c, DG8(50464), (2), 8);
@@ -20468,7 +20468,7 @@ loc_4BBCC: RTRACE(c, "loc_4BBCC");
 	t_ = alu_sub(c, DG8(50340), (0), 8);
 	if (c->zf) goto loc_4BC48;
 loc_4BBED: RTRACE(c, "loc_4BBED");
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(337)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -20485,7 +20485,7 @@ loc_4BC07: RTRACE(c, "loc_4BC07");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -20513,7 +20513,7 @@ loc_4BC3E: RTRACE(c, "loc_4BC3E");
 loc_4BC48: RTRACE(c, "loc_4BC48");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -20616,7 +20616,7 @@ static void fn_prepareIndoorView(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -20655,7 +20655,7 @@ loc_1C213: RTRACE(c, "loc_1C213");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -20691,7 +20691,7 @@ loc_1C24C: RTRACE(c, "loc_1C24C");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -20780,7 +20780,7 @@ def_1C2AA: RTRACE(c, "def_1C2AA");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -20843,7 +20843,7 @@ def_1C343: RTRACE(c, "def_1C343");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -20932,7 +20932,7 @@ def_1C3B0: RTRACE(c, "def_1C3B0");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -20995,7 +20995,7 @@ def_1C449: RTRACE(c, "def_1C449");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21084,7 +21084,7 @@ def_1C4B6: RTRACE(c, "def_1C4B6");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21173,7 +21173,7 @@ def_1C54F: RTRACE(c, "def_1C54F");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21236,7 +21236,7 @@ def_1C5E8: RTRACE(c, "def_1C5E8");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21325,7 +21325,7 @@ def_1C655: RTRACE(c, "def_1C655");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21388,7 +21388,7 @@ def_1C6EE: RTRACE(c, "def_1C6EE");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21477,7 +21477,7 @@ def_1C75B: RTRACE(c, "def_1C75B");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21566,7 +21566,7 @@ def_1C7F4: RTRACE(c, "def_1C7F4");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21629,7 +21629,7 @@ def_1C88D: RTRACE(c, "def_1C88D");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21718,7 +21718,7 @@ def_1C8FA: RTRACE(c, "def_1C8FA");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21781,7 +21781,7 @@ def_1C993: RTRACE(c, "def_1C993");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21870,7 +21870,7 @@ def_1CA00: RTRACE(c, "def_1CA00");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -21933,7 +21933,7 @@ def_1CA99: RTRACE(c, "def_1CA99");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22022,7 +22022,7 @@ def_1CB06: RTRACE(c, "def_1CB06");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22085,7 +22085,7 @@ def_1CB9F: RTRACE(c, "def_1CB9F");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22174,7 +22174,7 @@ def_1CC0C: RTRACE(c, "def_1CC0C");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22263,7 +22263,7 @@ def_1CCA5: RTRACE(c, "def_1CCA5");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22326,7 +22326,7 @@ def_1CD3E: RTRACE(c, "def_1CD3E");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22415,7 +22415,7 @@ def_1CDAB: RTRACE(c, "def_1CDAB");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22478,7 +22478,7 @@ def_1CE44: RTRACE(c, "def_1CE44");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22567,7 +22567,7 @@ def_1CEB1: RTRACE(c, "def_1CEB1");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22630,7 +22630,7 @@ def_1CF4A: RTRACE(c, "def_1CF4A");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22719,7 +22719,7 @@ def_1CFB7: RTRACE(c, "def_1CFB7");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22782,7 +22782,7 @@ def_1D050: RTRACE(c, "def_1D050");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22871,7 +22871,7 @@ def_1D0BD: RTRACE(c, "def_1D0BD");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -22934,7 +22934,7 @@ def_1D156: RTRACE(c, "def_1D156");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23023,7 +23023,7 @@ def_1D1C3: RTRACE(c, "def_1D1C3");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23086,7 +23086,7 @@ def_1D25C: RTRACE(c, "def_1D25C");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23175,7 +23175,7 @@ def_1D2C9: RTRACE(c, "def_1D2C9");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23238,7 +23238,7 @@ def_1D362: RTRACE(c, "def_1D362");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23327,7 +23327,7 @@ def_1D3CF: RTRACE(c, "def_1D3CF");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23390,7 +23390,7 @@ def_1D468: RTRACE(c, "def_1D468");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23479,7 +23479,7 @@ def_1D4D5: RTRACE(c, "def_1D4D5");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23542,7 +23542,7 @@ def_1D56E: RTRACE(c, "def_1D56E");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23605,7 +23605,7 @@ def_1D5DB: RTRACE(c, "def_1D5DB");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23668,7 +23668,7 @@ def_1D648: RTRACE(c, "def_1D648");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23731,7 +23731,7 @@ def_1D6B5: RTRACE(c, "def_1D6B5");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23794,7 +23794,7 @@ def_1D722: RTRACE(c, "def_1D722");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23857,7 +23857,7 @@ def_1D78F: RTRACE(c, "def_1D78F");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23920,7 +23920,7 @@ def_1D7FC: RTRACE(c, "def_1D7FC");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetWordRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetWordRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -23991,7 +23991,7 @@ loc_1D8A5: RTRACE(c, "loc_1D8A5");
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_1D8CA;
-	host_moveMonsters(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, moveMonsters, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_1D8CA: RTRACE(c, "loc_1D8CA");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_scanMonstersAhead(c);
@@ -29011,7 +29011,7 @@ loc_20343: RTRACE(c, "loc_20343");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_2035D: RTRACE(c, "loc_2035D");
@@ -29034,7 +29034,7 @@ loc_2035D: RTRACE(c, "loc_2035D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
@@ -29044,7 +29044,7 @@ loc_2035D: RTRACE(c, "loc_2035D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -29082,7 +29082,7 @@ loc_203DD: RTRACE(c, "loc_203DD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(50464, (1));
@@ -29219,7 +29219,7 @@ loc_253B2: RTRACE(c, "loc_253B2");
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
 loc_253BA: RTRACE(c, "loc_253BA");
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 def_252EF: RTRACE(c, "def_252EF");
@@ -29452,7 +29452,7 @@ loc_25DE0: RTRACE(c, "loc_25DE0");
 static void fn_sub_27F4F(Cpu *c) {
 	uint32_t t_; (void)t_;
 	FNTRACE("sub_27F4F");
-	host_sub_378C0(c); c->sp += 4; return;
+	RHOST(c, sub_378C0, 0, 4); c->sp += 4; return;
 }
 
 static void fn_sub_27F8B(Cpu *c) {
@@ -29482,7 +29482,7 @@ static void fn_timeText(Cpu *c) {
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
 	PUSH(c, c->ax);
-	host__time(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _time, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
@@ -29509,14 +29509,14 @@ static void fn_timeText(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -104));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -104));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((58896));
@@ -29560,7 +29560,7 @@ loc_50607: RTRACE(c, "loc_50607");
 	ST16_SET((uint16_t)(c->bp + -10), c->ax);
 	ST16_SET((uint16_t)(c->bp + -16), c->ax);
 	ST16_SET((uint16_t)(c->bp + -4), (65535));
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG16(387), (10), 16);
 	if (!c->cf) goto loc_50642;
 	c->ax = (uint16_t)(DG16(50346));
@@ -29576,13 +29576,13 @@ loc_50642: RTRACE(c, "loc_50642");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((32819));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -20), c->dx);
@@ -29594,7 +29594,7 @@ loc_50642: RTRACE(c, "loc_50642");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -448));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -29634,7 +29634,7 @@ loc_506A9: RTRACE(c, "loc_506A9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -48));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -48));
@@ -29681,7 +29681,7 @@ loc_5072F: RTRACE(c, "loc_5072F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_50742: RTRACE(c, "loc_50742");
@@ -29832,7 +29832,7 @@ loc_5085B: RTRACE(c, "loc_5085B");
 	PUSH(c, DG16(42870));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_itemPrice(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, itemPrice, 4, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -24), c->dx);
@@ -29847,7 +29847,7 @@ loc_5085B: RTRACE(c, "loc_5085B");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -24)));
 	PUSH(c, ST16((uint16_t)(c->bp + -26)));
-	host__ultoa(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _ultoa, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_508AA;
@@ -29856,7 +29856,7 @@ loc_5089B: RTRACE(c, "loc_5089B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -48));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_508AA: RTRACE(c, "loc_508AA");
@@ -29908,7 +29908,7 @@ loc_508AA: RTRACE(c, "loc_508AA");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_50935;
@@ -29928,7 +29928,7 @@ loc_5091F: RTRACE(c, "loc_5091F");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_50935: RTRACE(c, "loc_50935");
@@ -30041,7 +30041,7 @@ loc_50955: RTRACE(c, "loc_50955");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 13, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (26), 16);
 	c->sp = (uint16_t)(t_);
 	goto def_50950;
@@ -30146,7 +30146,7 @@ loc_50AA5: RTRACE(c, "loc_50AA5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 15, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (30), 16);
 	c->sp = (uint16_t)(t_);
 	goto def_50950;
@@ -30327,7 +30327,7 @@ loc_50BFA: RTRACE(c, "loc_50BFA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 14, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (28), 16);
 	c->sp = (uint16_t)(t_);
 def_50950: RTRACE(c, "def_50950");
@@ -30357,7 +30357,7 @@ loc_50C10: RTRACE(c, "loc_50C10");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -30381,7 +30381,7 @@ loc_50C10: RTRACE(c, "loc_50C10");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -30404,7 +30404,7 @@ loc_50C10: RTRACE(c, "loc_50C10");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (1));
@@ -30413,14 +30413,14 @@ loc_50CA2: RTRACE(c, "loc_50CA2");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_50CAE: RTRACE(c, "loc_50CAE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((33247));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->si);
@@ -30608,7 +30608,7 @@ loc_50E20: RTRACE(c, "loc_50E20");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -4), (65535));
@@ -30667,7 +30667,7 @@ loc_50E8E: RTRACE(c, "loc_50E8E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
@@ -30784,7 +30784,7 @@ loc_50F73: RTRACE(c, "loc_50F73");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -30882,7 +30882,7 @@ loc_5107A: RTRACE(c, "loc_5107A");
 loc_51082: RTRACE(c, "loc_51082");
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -8)));
 	ST16_SET((uint16_t)(c->bp + 6), c->ax);
@@ -30919,7 +30919,7 @@ loc_510BA: RTRACE(c, "loc_510BA");
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_510DC: RTRACE(c, "loc_510DC");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
@@ -30943,7 +30943,7 @@ static void fn_drawCharacterStats(Cpu *c) {
 	PUSH(c, c->di);
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->di = (uint16_t)(c->ax);
@@ -31018,7 +31018,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31026,7 +31026,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31035,7 +31035,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getArmorClass(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getArmorClass, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31052,7 +31052,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31062,7 +31062,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31073,7 +31073,7 @@ loc_515AB: RTRACE(c, "loc_515AB");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31094,12 +31094,12 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getNumSkills(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getNumSkills, 1, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31108,7 +31108,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31125,7 +31125,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31135,7 +31135,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31146,7 +31146,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31162,7 +31162,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8((uint16_t)(c->si + 263))) & 0xFF) << 0));
@@ -31182,7 +31182,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(POP(c));
@@ -31201,7 +31201,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(POP(c));
@@ -31220,7 +31220,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(POP(c));
@@ -31239,7 +31239,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(POP(c));
@@ -31258,7 +31258,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(POP(c));
@@ -31274,7 +31274,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31282,7 +31282,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31291,7 +31291,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31308,7 +31308,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31318,7 +31318,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31329,7 +31329,7 @@ loc_51639: RTRACE(c, "loc_51639");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31359,7 +31359,7 @@ loc_517FB: RTRACE(c, "loc_517FB");
 	c->ax = (uint16_t)((20));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
@@ -31367,7 +31367,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getMaxSP(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getMaxSP, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31385,7 +31385,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31395,7 +31395,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31406,7 +31406,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31423,7 +31423,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31432,7 +31432,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31443,7 +31443,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31454,7 +31454,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
-	host_getCurrentExperience(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentExperience, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
@@ -31462,7 +31462,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getMaxHP(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getMaxHP, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31480,7 +31480,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31490,7 +31490,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31501,7 +31501,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31517,7 +31517,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31528,7 +31528,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31538,7 +31538,7 @@ loc_51816: RTRACE(c, "loc_51816");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -31589,7 +31589,7 @@ loc_5198B: RTRACE(c, "loc_5198B");
 	c->ax = (uint16_t)((33320));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 49, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (98), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(POP(c));
@@ -31631,7 +31631,7 @@ static void fn_highlightChar(Cpu *c) {
 	PUSH(c, c->ax);
 	PUSH(c, DG16(43996));
 	PUSH(c, DG16(43994));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_1910F: RTRACE(c, "loc_1910F");
@@ -31650,7 +31650,7 @@ loc_1910F: RTRACE(c, "loc_1910F");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(43996));
 	PUSH(c, DG16(43994));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + 6))) & 0xFF) << 0));
@@ -31695,7 +31695,7 @@ loc_3F4D4: RTRACE(c, "loc_3F4D4");
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -14), (0));
@@ -31705,7 +31705,7 @@ loc_3F4D4: RTRACE(c, "loc_3F4D4");
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -18), (0));
@@ -31744,7 +31744,7 @@ loc_3F52A: RTRACE(c, "loc_3F52A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 8, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (16), 16);
 	c->sp = (uint16_t)(t_);
 	goto def_3F4CF;
@@ -31754,7 +31754,7 @@ loc_3F55B: RTRACE(c, "loc_3F55B");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -8), c->ax);
@@ -31762,7 +31762,7 @@ loc_3F55B: RTRACE(c, "loc_3F55B");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
@@ -31781,7 +31781,7 @@ loc_3F55B: RTRACE(c, "loc_3F55B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((53));
@@ -31789,7 +31789,7 @@ loc_3F55B: RTRACE(c, "loc_3F55B");
 loc_3F5AF: RTRACE(c, "loc_3F5AF");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31820,7 +31820,7 @@ loc_3F5DF: RTRACE(c, "loc_3F5DF");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -31832,7 +31832,7 @@ loc_3F5DF: RTRACE(c, "loc_3F5DF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((53));
@@ -31842,7 +31842,7 @@ loc_3F617: RTRACE(c, "loc_3F617");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_j_getArmorClass(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getArmorClass, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -14), (0));
@@ -31850,12 +31850,12 @@ loc_3F617: RTRACE(c, "loc_3F617");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_j_getArmorClass(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getArmorClass, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_3F682;
 loc_3F63A: RTRACE(c, "loc_3F63A");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->dx, c->dx, 16);
@@ -31872,7 +31872,7 @@ loc_3F63A: RTRACE(c, "loc_3F63A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3F6B1;
@@ -31884,7 +31884,7 @@ loc_3F66B: RTRACE(c, "loc_3F66B");
 	ST16_SET((uint16_t)(c->bp + -16), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_3F682: RTRACE(c, "loc_3F682");
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
@@ -31902,7 +31902,7 @@ loc_3F682: RTRACE(c, "loc_3F682");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 loc_3F6B1: RTRACE(c, "loc_3F6B1");
@@ -31913,7 +31913,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31930,7 +31930,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31947,7 +31947,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31964,7 +31964,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31981,7 +31981,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -31998,7 +31998,7 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_itemScan(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemScan, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -32019,14 +32019,14 @@ loc_3F6B7: RTRACE(c, "loc_3F6B7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((80));
 	goto def_3F4CF;
 loc_3F7AE: RTRACE(c, "loc_3F7AE");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getNumSkills(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getNumSkills, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -8), c->ax);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -8)), (0), 16);
@@ -32044,7 +32044,7 @@ loc_3F7C7: RTRACE(c, "loc_3F7C7");
 	c->si = (uint16_t)(t_);
 	if (!c->zf) goto loc_3F802;
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getThievery(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getThievery, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	c->bx = (uint16_t)(c->si);
@@ -32060,7 +32060,7 @@ loc_3F7C7: RTRACE(c, "loc_3F7C7");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3F83F;
@@ -32078,7 +32078,7 @@ loc_3F802: RTRACE(c, "loc_3F802");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3F83F;
@@ -32092,7 +32092,7 @@ loc_3F826: RTRACE(c, "loc_3F826");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3F83F: RTRACE(c, "loc_3F83F");
@@ -32107,7 +32107,7 @@ loc_3F847: RTRACE(c, "loc_3F847");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -624));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)((1));
@@ -32122,7 +32122,7 @@ loc_3F85C: RTRACE(c, "loc_3F85C");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -32176,7 +32176,7 @@ loc_3F880: RTRACE(c, "loc_3F880");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 21, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (42), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -8)));
@@ -32217,7 +32217,7 @@ loc_3F91D: RTRACE(c, "loc_3F91D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -24), (54894));
@@ -32691,7 +32691,7 @@ loc_3FCB1: RTRACE(c, "loc_3FCB1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 29, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (58), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -32714,7 +32714,7 @@ loc_3FCB1: RTRACE(c, "loc_3FCB1");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((60606));
@@ -32725,7 +32725,7 @@ loc_3FCB1: RTRACE(c, "loc_3FCB1");
 	goto loc_4005C;
 loc_3FD13: RTRACE(c, "loc_3FD13");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_experienceToNextLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, experienceToNextLevel, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -18), c->dx);
 	ST16_SET((uint16_t)(c->bp + -20), c->ax);
@@ -32736,7 +32736,7 @@ loc_3FD13: RTRACE(c, "loc_3FD13");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_3FD4D;
@@ -32747,14 +32747,14 @@ loc_3FD37: RTRACE(c, "loc_3FD37");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -18)));
 	PUSH(c, ST16((uint16_t)(c->bp + -20)));
-	host__ultoa(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _ultoa, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_3FD4D: RTRACE(c, "loc_3FD4D");
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_getCurrentExperience(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentExperience, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
@@ -32794,7 +32794,7 @@ loc_3FD95: RTRACE(c, "loc_3FD95");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3FE04;
@@ -32828,7 +32828,7 @@ loc_3FDF7: RTRACE(c, "loc_3FDF7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_3FE04: RTRACE(c, "loc_3FE04");
@@ -32867,7 +32867,7 @@ loc_3FE14: RTRACE(c, "loc_3FE14");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3FE7E;
@@ -32885,7 +32885,7 @@ loc_3FE5A: RTRACE(c, "loc_3FE5A");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3FE7E: RTRACE(c, "loc_3FE7E");
@@ -32902,7 +32902,7 @@ loc_3FE81: RTRACE(c, "loc_3FE81");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3FE9B: RTRACE(c, "loc_3FE9B");
@@ -32914,7 +32914,7 @@ loc_3FE9E: RTRACE(c, "loc_3FE9E");
 	goto loc_3FE14;
 loc_3FEA7: RTRACE(c, "loc_3FEA7");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ((c->ax >> 0) & 0xFF), (16), 8);
 	if (!c->zf) goto loc_3FECA;
@@ -32923,7 +32923,7 @@ loc_3FEA7: RTRACE(c, "loc_3FEA7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -624));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -32933,28 +32933,28 @@ loc_3FECA: RTRACE(c, "loc_3FECA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -144));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((10694));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -114));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((10694));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -84));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((10694));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -54));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -32967,7 +32967,7 @@ loc_3FECA: RTRACE(c, "loc_3FECA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -144));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -32983,7 +32983,7 @@ loc_3FF2A: RTRACE(c, "loc_3FF2A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -114));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -32999,7 +32999,7 @@ loc_3FF4C: RTRACE(c, "loc_3FF4C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -84));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -33015,7 +33015,7 @@ loc_3FF6E: RTRACE(c, "loc_3FF6E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -54));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -33069,7 +33069,7 @@ loc_3FF90: RTRACE(c, "loc_3FF90");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 23, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (46), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(c->si);
@@ -33118,7 +33118,7 @@ def_3F4CF: RTRACE(c, "def_3F4CF");
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4005C: RTRACE(c, "loc_4005C");
@@ -33132,12 +33132,12 @@ loc_4005C: RTRACE(c, "loc_4005C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((10752));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -33156,7 +33156,7 @@ static void fn_loadMapGraphics(Cpu *c) {
 	t_ = alu_sub(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + 6))) & 0xFF) << 0));
 	t_ = alu_inc(c, ((c->ax >> 0) & 0xFF), 8);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((t_) & 0xFF) << 0));
@@ -33179,11 +33179,11 @@ loc_430D4: RTRACE(c, "loc_430D4");
 loc_430E0: RTRACE(c, "loc_430E0");
 	ST16_SET((uint16_t)(c->bp + 6), (15));
 loc_430E5: RTRACE(c, "loc_430E5");
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, 0); /* push cs */
 	PUSH(c, 0);
 	fn_sub_42FF5(c);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 6)), (40), 16);
 	if ((c->sf == c->of)) goto loc_4310D;
@@ -33199,12 +33199,12 @@ loc_4310D: RTRACE(c, "loc_4310D");
 	c->ax = (uint16_t)((13858));
 loc_43110: RTRACE(c, "loc_43110");
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(47500, c->dx);
 	DG16_SET(47498, c->ax);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 6)), (40), 16);
 	if ((c->sf == c->of)) goto loc_43187;
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -33225,14 +33225,14 @@ loc_4312E: RTRACE(c, "loc_4312E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8((uint16_t)(c->si + 12554))) & 0xFF) << 0));
@@ -33243,7 +33243,7 @@ loc_4312E: RTRACE(c, "loc_4312E");
 	c->bx = (uint16_t)(t_);
 	DG16_SET((uint16_t)(c->bx + -15192), c->dx);
 	DG16_SET((uint16_t)(c->bx + -15194), c->ax);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_inc(c, c->si, 16);
 	c->si = (uint16_t)(t_);
 loc_4317F: RTRACE(c, "loc_4317F");
@@ -33277,14 +33277,14 @@ loc_4318B: RTRACE(c, "loc_4318B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -33294,7 +33294,7 @@ loc_4318B: RTRACE(c, "loc_4318B");
 	c->bx = (uint16_t)(t_);
 	DG16_SET((uint16_t)(c->bx + -15188), c->dx);
 	DG16_SET((uint16_t)(c->bx + -15190), c->ax);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_431EA: RTRACE(c, "loc_431EA");
 	t_ = alu_inc(c, c->si, 16);
 	c->si = (uint16_t)(t_);
@@ -33304,12 +33304,12 @@ loc_431EB: RTRACE(c, "loc_431EB");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((13884));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60558, c->dx);
 	DG16_SET(60556, c->ax);
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_43208: RTRACE(c, "loc_43208");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	t_ = alu_inc(c, c->ax, 16);
@@ -33319,12 +33319,12 @@ loc_43208: RTRACE(c, "loc_43208");
 	PUSH(c, 0);
 	fn_sub_43034(c);
 	c->cx = (uint16_t)(POP(c));
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((60648));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 6)), (5), 16);
@@ -33362,14 +33362,14 @@ loc_43268: RTRACE(c, "loc_43268");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60648));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60648));
 	PUSH(c, c->ax);
-	host__stricmp(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _stricmp, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -33387,7 +33387,7 @@ loc_43268: RTRACE(c, "loc_43268");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54870));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_432A4: RTRACE(c, "loc_432A4");
@@ -33455,7 +33455,7 @@ static void fn_sub_511C8(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((33311));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -33529,7 +33529,7 @@ loc_25DE6: RTRACE(c, "loc_25DE6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -33555,7 +33555,7 @@ static void fn_getFiles(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59446));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -33564,7 +33564,7 @@ static void fn_getFiles(Cpu *c) {
 	c->ax = (uint16_t)((uint16_t)(c->bp + -44));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host__findfirst(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _findfirst, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_26704;
@@ -33580,12 +33580,12 @@ loc_266DE: RTRACE(c, "loc_266DE");
 	t_ = alu_add(c, c->ax, (59446), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -44));
 	PUSH(c, c->ax);
-	host__findnext(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _findnext, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_26704: RTRACE(c, "loc_26704");
 	c->si = (uint16_t)(c->ax);
@@ -33641,7 +33641,7 @@ static void fn_pickSaveSlot(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -340));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(DG16(37624));
@@ -33655,7 +33655,7 @@ static void fn_pickSaveSlot(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -18));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((10));
@@ -33665,7 +33665,7 @@ static void fn_pickSaveSlot(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -28));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (65535));
@@ -33702,7 +33702,7 @@ loc_44E64: RTRACE(c, "loc_44E64");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->di, 16);
@@ -34033,7 +34033,7 @@ loc_450F6: RTRACE(c, "loc_450F6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 35, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (70), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -4)), (0), 16);
@@ -34041,7 +34041,7 @@ loc_450F6: RTRACE(c, "loc_450F6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4517E;
@@ -34066,7 +34066,7 @@ loc_45137: RTRACE(c, "loc_45137");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((27));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -4), (1));
@@ -34077,7 +34077,7 @@ loc_45168: RTRACE(c, "loc_45168");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -34093,7 +34093,7 @@ loc_45184: RTRACE(c, "loc_45184");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -34192,7 +34192,7 @@ loc_45225: RTRACE(c, "loc_45225");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -18));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(c->di);
@@ -34235,7 +34235,7 @@ loc_4526F: RTRACE(c, "loc_4526F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -34274,7 +34274,7 @@ loc_452B4: RTRACE(c, "loc_452B4");
 loc_452BC: RTRACE(c, "loc_452BC");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -34303,7 +34303,7 @@ static void fn_loadGame(Cpu *c) {
 	PUSH(c, c->di);
 	t_ = alu_sub(c, DG8(60560), (0), 8);
 	if (c->zf) goto loc_26231;
-	host_sub_2509A(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2509A, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_26231: RTRACE(c, "loc_26231");
 	c->ax = (uint16_t)((34293));
 	PUSH(c, c->ax);
@@ -34314,7 +34314,7 @@ loc_26231: RTRACE(c, "loc_26231");
 	t_ = alu_add(c, c->ax, (59446), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__fopen(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fopen, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -34322,7 +34322,7 @@ loc_26231: RTRACE(c, "loc_26231");
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_26254;
 loc_2624F: RTRACE(c, "loc_2624F");
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_26254: RTRACE(c, "loc_26254");
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
@@ -34333,21 +34333,21 @@ loc_26254: RTRACE(c, "loc_26254");
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	PUSH(c, c->si);
-	host__fseek(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fseek, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
-	host__ftell(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _ftell, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	PUSH(c, c->si);
-	host__rewind(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _rewind, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((34296));
 	PUSH(c, c->ax);
 	PUSH(c, DG16(22738));
-	host__fopen(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fopen, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -14), c->ax);
@@ -34361,7 +34361,7 @@ loc_26254: RTRACE(c, "loc_26254");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -6), c->dx);
 	ST16_SET((uint16_t)(c->bp + -8), c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -34371,7 +34371,7 @@ loc_26254: RTRACE(c, "loc_26254");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
-	host_LUMOD_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LUMOD_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -10), c->dx);
 	ST16_SET((uint16_t)(c->bp + -12), c->ax);
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -34385,7 +34385,7 @@ loc_262C5: RTRACE(c, "loc_262C5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fread(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fread, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
@@ -34395,7 +34395,7 @@ loc_262C5: RTRACE(c, "loc_262C5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fwrite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fwrite, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->di, 16);
@@ -34415,7 +34415,7 @@ loc_26301: RTRACE(c, "loc_26301");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fread(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fread, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
@@ -34424,18 +34424,18 @@ loc_26301: RTRACE(c, "loc_26301");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fwrite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fwrite, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
-	host__fclose(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fclose, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->si);
-	host__fclose(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fclose, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(60560), (0), 8);
 	if (c->zf) goto loc_26347;
-	host_sub_25085(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_25085, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_26347: RTRACE(c, "loc_26347");
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
@@ -34481,7 +34481,7 @@ loc_41D23: RTRACE(c, "loc_41D23");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -34504,11 +34504,11 @@ loc_41D23: RTRACE(c, "loc_41D23");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((99));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_41D63: RTRACE(c, "loc_41D63");
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)(DG16(50346));
 	t_ = alu_or(c, c->ax, DG16(50348), 16);
 	c->ax = (uint16_t)(t_);
@@ -34526,13 +34526,13 @@ loc_41D82: RTRACE(c, "loc_41D82");
 loc_41D8C: RTRACE(c, "loc_41D8C");
 	c->ax = (uint16_t)((9090));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60586, c->dx);
 	DG16_SET(60584, c->ax);
 	c->ax = (uint16_t)((918));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -4), c->dx);
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -34543,7 +34543,7 @@ loc_41D8C: RTRACE(c, "loc_41D8C");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -34555,7 +34555,7 @@ loc_41D8C: RTRACE(c, "loc_41D8C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59626));
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -34590,7 +34590,7 @@ loc_41DE4: RTRACE(c, "loc_41DE4");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	DG8_SET((uint16_t)(c->si + -5908), (255));
 	goto loc_41E5B;
 loc_41E31: RTRACE(c, "loc_41E31");
@@ -34611,7 +34611,7 @@ loc_41E31: RTRACE(c, "loc_41E31");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_41E5B: RTRACE(c, "loc_41E5B");
 	t_ = alu_inc(c, c->si, 16);
 	c->si = (uint16_t)(t_);
@@ -34647,13 +34647,13 @@ loc_41E68: RTRACE(c, "loc_41E68");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
@@ -34671,7 +34671,7 @@ loc_41E68: RTRACE(c, "loc_41E68");
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_41ED2: RTRACE(c, "loc_41ED2");
 	PUSH(c, 0); PUSH(c, 0);
@@ -34680,7 +34680,7 @@ loc_41ED2: RTRACE(c, "loc_41ED2");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -34792,7 +34792,7 @@ loc_41F36: RTRACE(c, "loc_41F36");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -34837,7 +34837,7 @@ static void fn_sub_44843(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((65535));
@@ -34873,7 +34873,7 @@ static void fn_sub_44843(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -34896,7 +34896,7 @@ static void fn_sub_44843(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(POP(c));
@@ -34913,7 +34913,7 @@ static void fn_sub_44921(Cpu *c) {
 	c->bp = (uint16_t)(c->sp);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -34967,7 +34967,7 @@ static void fn_buildActiveEffects(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -30));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_42365: RTRACE(c, "loc_42365");
@@ -34992,7 +34992,7 @@ loc_42381: RTRACE(c, "loc_42381");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -60));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_42392: RTRACE(c, "loc_42392");
@@ -35017,7 +35017,7 @@ loc_423AE: RTRACE(c, "loc_423AE");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -90));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_423BF: RTRACE(c, "loc_423BF");
@@ -35042,7 +35042,7 @@ loc_423DB: RTRACE(c, "loc_423DB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -120));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_423EC: RTRACE(c, "loc_423EC");
@@ -35067,7 +35067,7 @@ loc_42408: RTRACE(c, "loc_42408");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -150));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4241A: RTRACE(c, "loc_4241A");
@@ -35094,7 +35094,7 @@ loc_42438: RTRACE(c, "loc_42438");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -180));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4244A: RTRACE(c, "loc_4244A");
@@ -35118,7 +35118,7 @@ loc_42462: RTRACE(c, "loc_42462");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -210));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_42474: RTRACE(c, "loc_42474");
@@ -35139,7 +35139,7 @@ loc_42474: RTRACE(c, "loc_42474");
 	c->ax = (uint16_t)((13636));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -35206,7 +35206,7 @@ loc_4194E: RTRACE(c, "loc_4194E");
 	if (!c->zf) goto loc_41973;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(42845, (0));
 loc_41973: RTRACE(c, "loc_41973");
@@ -35262,13 +35262,13 @@ static void fn_Map_load(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42860, c->dx);
@@ -35352,7 +35352,7 @@ loc_43775: RTRACE(c, "loc_43775");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -35403,7 +35403,7 @@ loc_437D9: RTRACE(c, "loc_437D9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((170));
@@ -35415,7 +35415,7 @@ loc_437D9: RTRACE(c, "loc_437D9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((53846));
@@ -35423,7 +35423,7 @@ loc_437D9: RTRACE(c, "loc_437D9");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_showMessage(c);
 	c->cx = (uint16_t)(POP(c));
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_43818: RTRACE(c, "loc_43818");
 	t_ = alu_xor(c, c->si, c->si, 16);
 	c->si = (uint16_t)(t_);
@@ -35443,7 +35443,7 @@ loc_4381C: RTRACE(c, "loc_4381C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -35457,7 +35457,7 @@ loc_4384A: RTRACE(c, "loc_4384A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -35471,7 +35471,7 @@ loc_43865: RTRACE(c, "loc_43865");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -35504,7 +35504,7 @@ loc_438A0: RTRACE(c, "loc_438A0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((80));
@@ -35516,7 +35516,7 @@ loc_438A0: RTRACE(c, "loc_438A0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((53846));
@@ -35524,7 +35524,7 @@ loc_438A0: RTRACE(c, "loc_438A0");
 	PUSH(c, 0); PUSH(c, 0);
 	fn_showMessage(c);
 	c->cx = (uint16_t)(POP(c));
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_43985;
 loc_438DB: RTRACE(c, "loc_438DB");
 	c->bx = (uint16_t)(DG16(42858));
@@ -35589,7 +35589,7 @@ loc_438DB: RTRACE(c, "loc_438DB");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -35622,7 +35622,7 @@ loc_4398E: RTRACE(c, "loc_4398E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -35641,13 +35641,13 @@ loc_439BD: RTRACE(c, "loc_439BD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42860, c->dx);
@@ -35659,13 +35659,13 @@ loc_439BD: RTRACE(c, "loc_439BD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42892, c->dx);
@@ -35690,13 +35690,13 @@ loc_43A25: RTRACE(c, "loc_43A25");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -35745,13 +35745,13 @@ loc_43A88: RTRACE(c, "loc_43A88");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -35793,7 +35793,7 @@ static void fn_loadMapData(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((10062));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -35840,13 +35840,13 @@ loc_43325: RTRACE(c, "loc_43325");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -4), c->dx);
@@ -35862,7 +35862,7 @@ loc_43325: RTRACE(c, "loc_43325");
 	t_ = alu_add(c, c->ax, (50516), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -6));
@@ -35904,7 +35904,7 @@ loc_433CA: RTRACE(c, "loc_433CA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -36143,7 +36143,7 @@ loc_1B246: RTRACE(c, "loc_1B246");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -36166,14 +36166,14 @@ loc_1B246: RTRACE(c, "loc_1B246");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_1B297: RTRACE(c, "loc_1B297");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -36365,7 +36365,7 @@ static void fn_Spell_02_FirstAid(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -36562,7 +36562,7 @@ static void fn_Spell_07_CureWounds(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -36602,7 +36602,7 @@ static void fn_Spell_08_Sparks(Cpu *c) {
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shl(c, c->ax, 1, 16);
@@ -36633,13 +36633,13 @@ static void fn_Spell_09_EnergyBlast(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -36812,7 +36812,7 @@ static void fn_Spell_15_ProtFromElements(Cpu *c) {
 	PUSH(c, c->si);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shl(c, c->ax, 1, 16);
@@ -36928,7 +36928,7 @@ static void fn_Spell_17_Jump(Cpu *c) {
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -36942,7 +36942,7 @@ static void fn_Spell_17_Jump(Cpu *c) {
 	PUSH(c, DG16((uint16_t)(c->bx + 357)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -37124,7 +37124,7 @@ static void fn_Spell_21_Blessed(Cpu *c) {
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -37289,7 +37289,7 @@ loc_4C994: RTRACE(c, "loc_4C994");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 loc_4C9F8: RTRACE(c, "loc_4C9F8");
@@ -37315,7 +37315,7 @@ loc_4CA01: RTRACE(c, "loc_4CA01");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -37338,14 +37338,14 @@ loc_4CA01: RTRACE(c, "loc_4CA01");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((20));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -37393,7 +37393,7 @@ static void fn_Spell_25_HolyBonus(Cpu *c) {
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -37435,7 +37435,7 @@ static void fn_Spell_26_PowerCure(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -37457,13 +37457,13 @@ loc_4CB05: RTRACE(c, "loc_4CB05");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -37507,7 +37507,7 @@ static void fn_Spell_27_NatureSCure(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -37549,13 +37549,13 @@ static void fn_Spell_28_LightningBolt(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -37636,7 +37636,7 @@ static void fn_Spell_30_Heroism(Cpu *c) {
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -37727,7 +37727,7 @@ static void fn_Spell_34_PowerShield(Cpu *c) {
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -37801,13 +37801,13 @@ static void fn_Spell_36_Fireball(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((3));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -37847,7 +37847,7 @@ static void fn_Spell_37_DetectMonster(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((19875));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -10), c->dx);
@@ -37859,7 +37859,7 @@ static void fn_Spell_37_DetectMonster(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -62));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((4000));
@@ -37869,7 +37869,7 @@ static void fn_Spell_37_DetectMonster(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(54894, (65535));
@@ -38059,7 +38059,7 @@ loc_4D088: RTRACE(c, "loc_4D088");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -38082,14 +38082,14 @@ loc_4D088: RTRACE(c, "loc_4D088");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -12));
 	PUSH(c, c->ax);
@@ -38136,13 +38136,13 @@ static void fn_Spell_39_ColdRay(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -38401,7 +38401,7 @@ loc_4D31A: RTRACE(c, "loc_4D31A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -38424,7 +38424,7 @@ loc_4D31A: RTRACE(c, "loc_4D31A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((200));
@@ -38438,7 +38438,7 @@ loc_4D31A: RTRACE(c, "loc_4D31A");
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -38475,7 +38475,7 @@ loc_4D3CF: RTRACE(c, "loc_4D3CF");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -38514,7 +38514,7 @@ loc_4D419: RTRACE(c, "loc_4D419");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -38553,7 +38553,7 @@ loc_4D463: RTRACE(c, "loc_4D463");
 	t_ = alu_sub(c, c->ax, ST16((uint16_t)(c->bp + -2)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -38591,7 +38591,7 @@ loc_4D4A9: RTRACE(c, "loc_4D4A9");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -2)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
@@ -38624,7 +38624,7 @@ def_4D3BB: RTRACE(c, "def_4D3BB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((51));
@@ -38736,7 +38736,7 @@ static void fn_Spell_49_DragonBreath(Cpu *c) {
 	c->bp = (uint16_t)(c->sp);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)((5));
@@ -38899,7 +38899,7 @@ loc_4D6B3: RTRACE(c, "loc_4D6B3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
@@ -38922,7 +38922,7 @@ loc_4D6B3: RTRACE(c, "loc_4D6B3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((72));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4D705: RTRACE(c, "loc_4D705");
@@ -38939,7 +38939,7 @@ loc_4D705: RTRACE(c, "loc_4D705");
 	if ((!c->zf && c->sf == c->of)) goto loc_4D705;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -39240,7 +39240,7 @@ static void fn_Spell_60_HalfForMe(Cpu *c) {
 	c->ax = (uint16_t)(t_);
 	c->si = (uint16_t)(c->ax);
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -39258,7 +39258,7 @@ loc_4D945: RTRACE(c, "loc_4D945");
 loc_4D94B: RTRACE(c, "loc_4D94B");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
@@ -39268,7 +39268,7 @@ loc_4D94B: RTRACE(c, "loc_4D94B");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, DG16(42830));
-	host_subtractHitPoints(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, subtractHitPoints, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20));
@@ -39342,7 +39342,7 @@ loc_4D9A4: RTRACE(c, "loc_4D9A4");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -2)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, c->ax, (4369), 16);
@@ -39396,13 +39396,13 @@ static void fn_Spell_62_DancingSword(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((6));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(c->ax);
@@ -39436,7 +39436,7 @@ static void fn_Spell_63_PrismaticLight(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(58894, c->ax);
@@ -39487,7 +39487,7 @@ loc_4DAF1: RTRACE(c, "loc_4DAF1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -39909,7 +39909,7 @@ loc_4DDC7: RTRACE(c, "loc_4DDC7");
 	t_ = alu_add(c, c->ax, (275), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -2))) & 0xFF) << 0));
@@ -39918,7 +39918,7 @@ loc_4DDC7: RTRACE(c, "loc_4DDC7");
 	if (!c->zf) goto loc_4DE0B;
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET((uint16_t)(c->si + 293), c->ax);
@@ -39969,7 +39969,7 @@ static void fn_Spell_sharedHandler(Cpu *c) {
 	if ((c->sf == c->of)) goto loc_4C2E9;
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->di);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -40047,7 +40047,7 @@ loc_45FA3: RTRACE(c, "loc_45FA3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -62));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((65535));
@@ -40059,7 +40059,7 @@ loc_45FBA: RTRACE(c, "loc_45FBA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61333));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((4000));
@@ -40069,7 +40069,7 @@ loc_45FBA: RTRACE(c, "loc_45FBA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -18)));
@@ -40090,7 +40090,7 @@ loc_45FFD: RTRACE(c, "loc_45FFD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 8)), (0), 16);
@@ -40244,7 +40244,7 @@ loc_46030: RTRACE(c, "loc_46030");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 29, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (58), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -14)), (0), 16);
@@ -40252,7 +40252,7 @@ loc_46030: RTRACE(c, "loc_46030");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4618B;
@@ -40277,7 +40277,7 @@ loc_46144: RTRACE(c, "loc_46144");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((27));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -14), (1));
@@ -40288,7 +40288,7 @@ loc_46175: RTRACE(c, "loc_46175");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -40304,7 +40304,7 @@ loc_46191: RTRACE(c, "loc_46191");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -16), c->ax);
@@ -40434,7 +40434,7 @@ loc_46296: RTRACE(c, "loc_46296");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -62));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -40449,7 +40449,7 @@ loc_462BD: RTRACE(c, "loc_462BD");
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_spellGoldPrice(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, spellGoldPrice, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -20), c->ax);
@@ -40474,7 +40474,7 @@ loc_462BD: RTRACE(c, "loc_462BD");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_and(c, ST16((uint16_t)(c->bp + -18)), (128), 16); (void)t_;
@@ -40497,7 +40497,7 @@ loc_462BD: RTRACE(c, "loc_462BD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_4636B;
@@ -40521,7 +40521,7 @@ loc_46339: RTRACE(c, "loc_46339");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 loc_4636B: RTRACE(c, "loc_4636B");
@@ -40615,7 +40615,7 @@ loc_463F3: RTRACE(c, "loc_463F3");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -40645,7 +40645,7 @@ loc_46431: RTRACE(c, "loc_46431");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -62));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)((65535));
@@ -40669,7 +40669,7 @@ loc_46468: RTRACE(c, "loc_46468");
 loc_46471: RTRACE(c, "loc_46471");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -40766,7 +40766,7 @@ loc_4CD11: RTRACE(c, "loc_4CD11");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -40790,7 +40790,7 @@ loc_4CD11: RTRACE(c, "loc_4CD11");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4CD6D: RTRACE(c, "loc_4CD6D");
@@ -40867,7 +40867,7 @@ ul_4CDE8: RTRACE(c, "ul_4CDE8");
 loc_4CE08: RTRACE(c, "loc_4CE08");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -40901,7 +40901,7 @@ static void fn_sub_281D5(Cpu *c) {
 static void fn_sub_282E8(Cpu *c) {
 	uint32_t t_; (void)t_;
 	FNTRACE("sub_282E8");
-	host_sub_45BD1(c); c->sp += 4; return;
+	RHOST(c, sub_45BD1, 0, 4); c->sp += 4; return;
 }
 
 static void fn_sub_284F5(Cpu *c) {
@@ -40935,7 +40935,7 @@ static void fn_monsterSavingThrow(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, c->si, 16);
@@ -40961,7 +40961,7 @@ static void fn_getElapsedTime(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__time(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _time, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
@@ -41028,7 +41028,7 @@ loc_3E13F: RTRACE(c, "loc_3E13F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -41052,7 +41052,7 @@ loc_3E13F: RTRACE(c, "loc_3E13F");
 	DG8_SET(59636, (0));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_3E2D2;
 loc_3E1AB: RTRACE(c, "loc_3E1AB");
@@ -41073,7 +41073,7 @@ loc_3E1AE: RTRACE(c, "loc_3E1AE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -41122,7 +41122,7 @@ loc_3E219: RTRACE(c, "loc_3E219");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1000));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(47652)) & 0xFF) << 0));
@@ -41132,7 +41132,7 @@ loc_3E219: RTRACE(c, "loc_3E219");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -41168,7 +41168,7 @@ loc_3E219: RTRACE(c, "loc_3E219");
 	DG8_SET(50464, ((c->ax >> 0) & 0xFF));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), (0));
 	goto loc_3E2CC;
@@ -41180,13 +41180,13 @@ loc_3E2A6: RTRACE(c, "loc_3E2A6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, ST16((uint16_t)(c->bp + -2)), 16);
@@ -41231,7 +41231,7 @@ loc_3E301: RTRACE(c, "loc_3E301");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((37622));
@@ -41269,7 +41269,7 @@ loc_3E301: RTRACE(c, "loc_3E301");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((17214));
@@ -41280,13 +41280,13 @@ loc_3E301: RTRACE(c, "loc_3E301");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -41318,7 +41318,7 @@ loc_3E3C5: RTRACE(c, "loc_3E3C5");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
 	if (!c->zf) goto loc_3E3F8;
@@ -41354,7 +41354,7 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41367,7 +41367,7 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41387,7 +41387,7 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(42870));
@@ -41425,13 +41425,13 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42834, c->dx);
@@ -41443,7 +41443,7 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44236, c->ax);
@@ -41453,7 +41453,7 @@ loc_3E425: RTRACE(c, "loc_3E425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -41469,13 +41469,13 @@ loc_3E51A: RTRACE(c, "loc_3E51A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42838, c->dx);
@@ -41488,7 +41488,7 @@ loc_3E54A: RTRACE(c, "loc_3E54A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41501,7 +41501,7 @@ loc_3E54A: RTRACE(c, "loc_3E54A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41520,7 +41520,7 @@ loc_3E54A: RTRACE(c, "loc_3E54A");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(42870));
@@ -41563,7 +41563,7 @@ loc_3E5E8: RTRACE(c, "loc_3E5E8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44236, c->ax);
@@ -41573,7 +41573,7 @@ loc_3E5E8: RTRACE(c, "loc_3E5E8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sar(c, c->ax, 1, 16);
@@ -41591,13 +41591,13 @@ loc_3E618: RTRACE(c, "loc_3E618");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42842, c->dx);
@@ -41610,7 +41610,7 @@ loc_3E648: RTRACE(c, "loc_3E648");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41623,7 +41623,7 @@ loc_3E648: RTRACE(c, "loc_3E648");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (6), 16);
@@ -41642,7 +41642,7 @@ loc_3E648: RTRACE(c, "loc_3E648");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(DG16(42870));
@@ -41706,7 +41706,7 @@ static void fn_endingCutscene(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(345), (0), 8);
@@ -41725,21 +41725,21 @@ loc_399C0: RTRACE(c, "loc_399C0");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
-	host_vdrv_03_hideMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_03_hideMouse, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9105));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((4));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -41771,7 +41771,7 @@ loc_39A13: RTRACE(c, "loc_39A13");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9114));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -41779,7 +41779,7 @@ loc_39A13: RTRACE(c, "loc_39A13");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9123));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -41787,7 +41787,7 @@ loc_39A13: RTRACE(c, "loc_39A13");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9132));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -41795,7 +41795,7 @@ loc_39A13: RTRACE(c, "loc_39A13");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9141));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -41845,7 +41845,7 @@ loc_39AB6: RTRACE(c, "loc_39AB6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -41865,7 +41865,7 @@ loc_39ADE: RTRACE(c, "loc_39ADE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -41885,7 +41885,7 @@ loc_39B06: RTRACE(c, "loc_39B06");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -41905,7 +41905,7 @@ loc_39B2E: RTRACE(c, "loc_39B2E");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -41936,13 +41936,13 @@ loc_39B3F: RTRACE(c, "loc_39B3F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9150));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9158));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -41950,7 +41950,7 @@ loc_39B3F: RTRACE(c, "loc_39B3F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9166));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -41958,7 +41958,7 @@ loc_39B3F: RTRACE(c, "loc_39B3F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9174));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -41966,7 +41966,7 @@ loc_39B3F: RTRACE(c, "loc_39B3F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9182));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -41988,7 +41988,7 @@ loc_39BE0: RTRACE(c, "loc_39BE0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42008,7 +42008,7 @@ loc_39C08: RTRACE(c, "loc_39C08");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42028,7 +42028,7 @@ loc_39C30: RTRACE(c, "loc_39C30");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42048,7 +42048,7 @@ loc_39C58: RTRACE(c, "loc_39C58");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42079,7 +42079,7 @@ loc_39C69: RTRACE(c, "loc_39C69");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9190));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -42093,7 +42093,7 @@ loc_39C69: RTRACE(c, "loc_39C69");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9198));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((58));
@@ -42113,7 +42113,7 @@ loc_39CE1: RTRACE(c, "loc_39CE1");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42140,7 +42140,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9206));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61314, c->dx);
@@ -42148,7 +42148,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9215));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -42156,7 +42156,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9225));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -42164,7 +42164,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9235));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61298, c->dx);
@@ -42172,7 +42172,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9243));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61302, c->dx);
@@ -42180,7 +42180,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9251));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61306, c->dx);
@@ -42188,13 +42188,13 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9260));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9273));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -42202,7 +42202,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9283));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -42210,7 +42210,7 @@ loc_39CF8: RTRACE(c, "loc_39CF8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9293));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -42270,14 +42270,14 @@ loc_39E3F: RTRACE(c, "loc_39E3F");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42299,14 +42299,14 @@ loc_39E78: RTRACE(c, "loc_39E78");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42328,14 +42328,14 @@ loc_39EB1: RTRACE(c, "loc_39EB1");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42372,14 +42372,14 @@ loc_39F08: RTRACE(c, "loc_39F08");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42397,14 +42397,14 @@ loc_39F2A: RTRACE(c, "loc_39F2A");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -42416,14 +42416,14 @@ loc_39F64: RTRACE(c, "loc_39F64");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(c->si);
@@ -42434,13 +42434,13 @@ loc_39F64: RTRACE(c, "loc_39F64");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -42483,13 +42483,13 @@ loc_39FC9: RTRACE(c, "loc_39FC9");
 	DG16_SET(8250, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	PUSH(c, DG16(61202));
 	PUSH(c, DG16(61222));
 	PUSH(c, DG16(61220));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3A02D: RTRACE(c, "loc_3A02D");
@@ -42502,7 +42502,7 @@ loc_3A02D: RTRACE(c, "loc_3A02D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -42518,7 +42518,7 @@ loc_3A055: RTRACE(c, "loc_3A055");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -42552,7 +42552,7 @@ loc_3A094: RTRACE(c, "loc_3A094");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -42565,14 +42565,14 @@ loc_3A094: RTRACE(c, "loc_3A094");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -42589,20 +42589,20 @@ loc_3A0E6: RTRACE(c, "loc_3A0E6");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3A103: RTRACE(c, "loc_3A103");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -42647,14 +42647,14 @@ loc_3A15D: RTRACE(c, "loc_3A15D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8256, (220));
@@ -42663,14 +42663,14 @@ loc_3A15D: RTRACE(c, "loc_3A15D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42702,14 +42702,14 @@ loc_3A1CE: RTRACE(c, "loc_3A1CE");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_dec(c, c->si, 16);
@@ -42727,14 +42727,14 @@ loc_3A1FA: RTRACE(c, "loc_3A1FA");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42752,14 +42752,14 @@ loc_3A221: RTRACE(c, "loc_3A221");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -42781,13 +42781,13 @@ loc_3A243: RTRACE(c, "loc_3A243");
 	DG16_SET(8222, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	PUSH(c, DG16(61204));
 	PUSH(c, DG16(61226));
 	PUSH(c, DG16(61224));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3A2A0: RTRACE(c, "loc_3A2A0");
@@ -42800,7 +42800,7 @@ loc_3A2A0: RTRACE(c, "loc_3A2A0");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -42816,7 +42816,7 @@ loc_3A2C8: RTRACE(c, "loc_3A2C8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -42850,7 +42850,7 @@ loc_3A307: RTRACE(c, "loc_3A307");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -42879,13 +42879,13 @@ loc_3A348: RTRACE(c, "loc_3A348");
 	DG16_SET(8250, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	PUSH(c, DG16(61206));
 	PUSH(c, DG16(61230));
 	PUSH(c, DG16(61228));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3A386: RTRACE(c, "loc_3A386");
@@ -42898,7 +42898,7 @@ loc_3A386: RTRACE(c, "loc_3A386");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -42914,7 +42914,7 @@ loc_3A3AE: RTRACE(c, "loc_3A3AE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -42948,7 +42948,7 @@ loc_3A3ED: RTRACE(c, "loc_3A3ED");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -42968,14 +42968,14 @@ loc_3A416: RTRACE(c, "loc_3A416");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -43035,7 +43035,7 @@ loc_3A451: RTRACE(c, "loc_3A451");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -43051,7 +43051,7 @@ loc_3A4B3: RTRACE(c, "loc_3A4B3");
 	DG16_SET(8256, (22));
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	c->bx = (uint16_t)(c->si);
@@ -43065,7 +43065,7 @@ loc_3A4B3: RTRACE(c, "loc_3A4B3");
 	c->bx = (uint16_t)(t_);
 	PUSH(c, DG16((uint16_t)(c->bx + -4314)));
 	PUSH(c, DG16((uint16_t)(c->bx + -4316)));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3A4E7: RTRACE(c, "loc_3A4E7");
@@ -43083,7 +43083,7 @@ loc_3A4E7: RTRACE(c, "loc_3A4E7");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -43099,7 +43099,7 @@ loc_3A518: RTRACE(c, "loc_3A518");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -43145,7 +43145,7 @@ loc_3A56D: RTRACE(c, "loc_3A56D");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -43164,14 +43164,14 @@ loc_3A59D: RTRACE(c, "loc_3A59D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, ST16((uint16_t)(c->bp + -4)), 16);
@@ -43203,14 +43203,14 @@ loc_3A5E5: RTRACE(c, "loc_3A5E5");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_dec(c, c->si, 16);
@@ -43248,14 +43248,14 @@ loc_3A62B: RTRACE(c, "loc_3A62B");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(c->si);
@@ -43266,13 +43266,13 @@ loc_3A62B: RTRACE(c, "loc_3A62B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -43302,14 +43302,14 @@ loc_3A68D: RTRACE(c, "loc_3A68D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -43326,13 +43326,13 @@ loc_3A6AF: RTRACE(c, "loc_3A6AF");
 	DG16_SET(8222, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	PUSH(c, DG16(61202));
 	PUSH(c, DG16(61222));
 	PUSH(c, DG16(61220));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3A6F8: RTRACE(c, "loc_3A6F8");
@@ -43345,7 +43345,7 @@ loc_3A6F8: RTRACE(c, "loc_3A6F8");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -43361,7 +43361,7 @@ loc_3A720: RTRACE(c, "loc_3A720");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -43395,7 +43395,7 @@ loc_3A75F: RTRACE(c, "loc_3A75F");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -43409,20 +43409,20 @@ loc_3A75F: RTRACE(c, "loc_3A75F");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9307));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -43441,14 +43441,14 @@ loc_3A7C7: RTRACE(c, "loc_3A7C7");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -43464,7 +43464,7 @@ loc_3A7E9: RTRACE(c, "loc_3A7E9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9316));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -43496,13 +43496,13 @@ loc_3A832: RTRACE(c, "loc_3A832");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61266));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -43510,7 +43510,7 @@ loc_3A832: RTRACE(c, "loc_3A832");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(DG16(61290));
@@ -43530,7 +43530,7 @@ loc_3A882: RTRACE(c, "loc_3A882");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -43538,7 +43538,7 @@ loc_3A882: RTRACE(c, "loc_3A882");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->di, 16);
@@ -43554,7 +43554,7 @@ loc_3A8AA: RTRACE(c, "loc_3A8AA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -43566,20 +43566,20 @@ loc_3A8D6: RTRACE(c, "loc_3A8D6");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3A8F3: RTRACE(c, "loc_3A8F3");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -43602,7 +43602,7 @@ loc_3A920: RTRACE(c, "loc_3A920");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -43613,7 +43613,7 @@ loc_3A920: RTRACE(c, "loc_3A920");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_dec(c, c->di, 16);
@@ -43629,7 +43629,7 @@ loc_3A948: RTRACE(c, "loc_3A948");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((61288));
@@ -43652,7 +43652,7 @@ loc_3A977: RTRACE(c, "loc_3A977");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9307));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -43673,14 +43673,14 @@ loc_3A9A7: RTRACE(c, "loc_3A9A7");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_dec(c, c->si, 16);
@@ -43703,14 +43703,14 @@ loc_3A9CB: RTRACE(c, "loc_3A9CB");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(DG16(61314));
@@ -43731,13 +43731,13 @@ loc_3A9CB: RTRACE(c, "loc_3A9CB");
 	DG16_SET(8250, c->dx);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61256, (0));
 	PUSH(c, DG16(61204));
 	PUSH(c, DG16(61226));
 	PUSH(c, DG16(61224));
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3AA76: RTRACE(c, "loc_3AA76");
@@ -43750,7 +43750,7 @@ loc_3AA76: RTRACE(c, "loc_3AA76");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -43766,7 +43766,7 @@ loc_3AA9E: RTRACE(c, "loc_3AA9E");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -43800,7 +43800,7 @@ loc_3AADD: RTRACE(c, "loc_3AADD");
 	c->dx = (uint16_t)((1));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_2698B(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2698B, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -43813,14 +43813,14 @@ loc_3AADD: RTRACE(c, "loc_3AADD");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -43875,13 +43875,13 @@ loc_3AB2F: RTRACE(c, "loc_3AB2F");
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, DG16(44014));
 	PUSH(c, DG16(44012));
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9190));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -43921,7 +43921,7 @@ loc_3ABB7: RTRACE(c, "loc_3ABB7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9198));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((58));
@@ -43941,7 +43941,7 @@ loc_3ABF4: RTRACE(c, "loc_3ABF4");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -43962,7 +43962,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9335));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -43970,7 +43970,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9344));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -43978,7 +43978,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9353));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -43986,7 +43986,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9362));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -43994,7 +43994,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9371));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -44002,7 +44002,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9380));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61298, c->dx);
@@ -44010,7 +44010,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9389));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61302, c->dx);
@@ -44018,7 +44018,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9398));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61306, c->dx);
@@ -44026,7 +44026,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9407));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61310, c->dx);
@@ -44034,7 +44034,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9416));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61314, c->dx);
@@ -44094,7 +44094,7 @@ loc_3AC0B: RTRACE(c, "loc_3AC0B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9425));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((50));
@@ -44115,7 +44115,7 @@ loc_3ADA0: RTRACE(c, "loc_3ADA0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44156,7 +44156,7 @@ loc_3AE0D: RTRACE(c, "loc_3AE0D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44243,7 +44243,7 @@ loc_3AEB9: RTRACE(c, "loc_3AEB9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9435));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -44251,7 +44251,7 @@ loc_3AEB9: RTRACE(c, "loc_3AEB9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9445));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -44259,7 +44259,7 @@ loc_3AEB9: RTRACE(c, "loc_3AEB9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9455));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -44285,7 +44285,7 @@ loc_3AEB9: RTRACE(c, "loc_3AEB9");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9465));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(DG16(61278));
@@ -44304,7 +44304,7 @@ loc_3AF53: RTRACE(c, "loc_3AF53");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44320,7 +44320,7 @@ loc_3AF6D: RTRACE(c, "loc_3AF6D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9474));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -44341,7 +44341,7 @@ loc_3AFA1: RTRACE(c, "loc_3AFA1");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44357,7 +44357,7 @@ loc_3AFBB: RTRACE(c, "loc_3AFBB");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9484));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -44377,7 +44377,7 @@ loc_3AFEF: RTRACE(c, "loc_3AFEF");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44403,7 +44403,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9494));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -44411,7 +44411,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9504));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61298, c->dx);
@@ -44419,7 +44419,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9514));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -44427,7 +44427,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9523));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -44435,7 +44435,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9532));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -44443,7 +44443,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9541));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -44471,7 +44471,7 @@ loc_3B005: RTRACE(c, "loc_3B005");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9550));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((59));
@@ -44527,7 +44527,7 @@ loc_3B15B: RTRACE(c, "loc_3B15B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44588,7 +44588,7 @@ loc_3B1E7: RTRACE(c, "loc_3B1E7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44649,7 +44649,7 @@ loc_3B277: RTRACE(c, "loc_3B277");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44715,7 +44715,7 @@ loc_3B311: RTRACE(c, "loc_3B311");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44776,7 +44776,7 @@ loc_3B3A1: RTRACE(c, "loc_3B3A1");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44836,7 +44836,7 @@ loc_3B42B: RTRACE(c, "loc_3B42B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -44877,7 +44877,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9561));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -44885,7 +44885,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9571));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -44893,7 +44893,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9581));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -44901,7 +44901,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9591));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -44909,7 +44909,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9601));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -44917,7 +44917,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9611));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61298, c->dx);
@@ -44925,7 +44925,7 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9621));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61302, c->dx);
@@ -44954,26 +44954,26 @@ loc_3B438: RTRACE(c, "loc_3B438");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9631));
 	PUSH(c, c->ax);
-	host_vdrv_0C_showRaw(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0C_showRaw, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((64));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -44986,7 +44986,7 @@ loc_3B573: RTRACE(c, "loc_3B573");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45012,7 +45012,7 @@ loc_3B5AD: RTRACE(c, "loc_3B5AD");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45040,7 +45040,7 @@ loc_3B5E7: RTRACE(c, "loc_3B5E7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45064,7 +45064,7 @@ loc_3B624: RTRACE(c, "loc_3B624");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45110,7 +45110,7 @@ loc_3B63A: RTRACE(c, "loc_3B63A");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9641));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61306, c->dx);
@@ -45118,7 +45118,7 @@ loc_3B63A: RTRACE(c, "loc_3B63A");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9651));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61310, c->dx);
@@ -45126,7 +45126,7 @@ loc_3B63A: RTRACE(c, "loc_3B63A");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9661));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61314, c->dx);
@@ -45149,7 +45149,7 @@ loc_3B6EA: RTRACE(c, "loc_3B6EA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45169,7 +45169,7 @@ loc_3B712: RTRACE(c, "loc_3B712");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45189,7 +45189,7 @@ loc_3B73A: RTRACE(c, "loc_3B73A");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45215,7 +45215,7 @@ loc_3B74B: RTRACE(c, "loc_3B74B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9671));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61264, c->dx);
@@ -45223,7 +45223,7 @@ loc_3B74B: RTRACE(c, "loc_3B74B");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9681));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61260, c->dx);
@@ -45249,7 +45249,7 @@ loc_3B7BE: RTRACE(c, "loc_3B7BE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45269,7 +45269,7 @@ loc_3B7E6: RTRACE(c, "loc_3B7E6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->si, (37), 16);
@@ -45386,7 +45386,7 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9691));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61278, c->dx);
@@ -45394,7 +45394,7 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9407));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61282, c->dx);
@@ -45402,7 +45402,7 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9700));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61286, c->dx);
@@ -45410,7 +45410,7 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9709));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61290, c->dx);
@@ -45418,7 +45418,7 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((9718));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61294, c->dx);
@@ -45438,20 +45438,20 @@ loc_3B8A0: RTRACE(c, "loc_3B8A0");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((64));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -45470,7 +45470,7 @@ loc_3B987: RTRACE(c, "loc_3B987");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45499,7 +45499,7 @@ loc_3B9C5: RTRACE(c, "loc_3B9C5");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, ST16((uint16_t)(c->bp + -4)), 16);
@@ -45514,7 +45514,7 @@ loc_3B9E7: RTRACE(c, "loc_3B9E7");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->si, 16);
@@ -45575,7 +45575,7 @@ loc_3BA67: RTRACE(c, "loc_3BA67");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -45596,7 +45596,7 @@ loc_3BA8B: RTRACE(c, "loc_3BA8B");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -45625,7 +45625,7 @@ loc_3BAC0: RTRACE(c, "loc_3BAC0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, c->di, 16);
@@ -45645,7 +45645,7 @@ loc_3BAE4: RTRACE(c, "loc_3BAE4");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -45719,7 +45719,7 @@ loc_3BB5F: RTRACE(c, "loc_3BB5F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->di, c->di, 16);
@@ -45756,13 +45756,13 @@ loc_3BBBA: RTRACE(c, "loc_3BBBA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_2A_starfield(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2A_starfield, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3BBCC: RTRACE(c, "loc_3BBCC");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -45797,7 +45797,7 @@ loc_3BBE1: RTRACE(c, "loc_3BBE1");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -45907,7 +45907,7 @@ loc_3D97A: RTRACE(c, "loc_3D97A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (1), 16);
@@ -45918,7 +45918,7 @@ loc_3D97A: RTRACE(c, "loc_3D97A");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -45941,14 +45941,14 @@ loc_3D9BA: RTRACE(c, "loc_3D9BA");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getThievery(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getThievery, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((20));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(POP(c));
@@ -45974,7 +45974,7 @@ loc_3D9F9: RTRACE(c, "loc_3D9F9");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -46011,7 +46011,7 @@ loc_3D9F9: RTRACE(c, "loc_3D9F9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
@@ -46039,7 +46039,7 @@ loc_3D9F9: RTRACE(c, "loc_3D9F9");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -46050,7 +46050,7 @@ loc_3D9F9: RTRACE(c, "loc_3D9F9");
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
 	if (c->zf) goto loc_3DAD8;
@@ -46066,7 +46066,7 @@ loc_3DAAF: RTRACE(c, "loc_3DAAF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -46242,7 +46242,7 @@ loc_3DC08: RTRACE(c, "loc_3DC08");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + 20))) & 0xFF) << 0));
 loc_3DC0B: RTRACE(c, "loc_3DC0B");
 	PUSH(c, c->ax);
-	host_generateItem(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, generateItem, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->di + 144))) & 0xFF) << 0));
@@ -46427,7 +46427,7 @@ loc_3C2E3: RTRACE(c, "loc_3C2E3");
 	PUSH(c, ST16((uint16_t)(c->bp + 14)));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (c->ax & 0x8000) ? 0xFFFF : 0;
@@ -46570,7 +46570,7 @@ loc_3C42B: RTRACE(c, "loc_3C42B");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_setBit(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, setBit, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_3C34B;
 loc_3C43D: RTRACE(c, "loc_3C43D");
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -46890,10 +46890,10 @@ loc_3C6B0: RTRACE(c, "loc_3C6B0");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((1440));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_subPartyTime(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, subPartyTime, 0, 4); /* far call by push cs / call near: args start at sp */
 loc_3C6C5: RTRACE(c, "loc_3C6C5");
 	c->cx = (uint16_t)(POP(c));
 	goto def_3C335;
@@ -47005,7 +47005,7 @@ loc_3C789: RTRACE(c, "loc_3C789");
 	t_ = alu_add(c, c->ax, (275), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3C7C9;
@@ -47098,7 +47098,7 @@ loc_3C860: RTRACE(c, "loc_3C860");
 	PUSH(c, ST16((uint16_t)(c->bp + 14)));
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_setBit(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, setBit, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_3CCD5;
 loc_3C873: RTRACE(c, "loc_3C873");
 	c->di = (uint16_t)(ST16((uint16_t)(c->bp + 18)));
@@ -47132,7 +47132,7 @@ loc_3C89F: RTRACE(c, "loc_3C89F");
 loc_3C8AA: RTRACE(c, "loc_3C8AA");
 	PUSH(c, ST16((uint16_t)(c->bp + 14)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_subPartyTime(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, subPartyTime, 0, 4); /* far call by push cs / call near: args start at sp */
 	goto loc_3CCAF;
 loc_3C8B4: RTRACE(c, "loc_3C8B4");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 16)));
@@ -47571,7 +47571,7 @@ loc_3CBE7: RTRACE(c, "loc_3CBE7");
 	PUSH(c, c->si);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + 14))) & 0xFF) << 0));
 	PUSH(c, c->ax);
-	host_generateItem(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, generateItem, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3C889;
@@ -47658,7 +47658,7 @@ loc_3CC99: RTRACE(c, "loc_3CC99");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((1440));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ax);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_addTime(c);
@@ -47850,7 +47850,7 @@ loc_43F45: RTRACE(c, "loc_43F45");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((47547));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((42818));
@@ -47883,7 +47883,7 @@ loc_43F7E: RTRACE(c, "loc_43F7E");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, DG16(61450));
@@ -47894,7 +47894,7 @@ loc_43F7E: RTRACE(c, "loc_43F7E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -47918,7 +47918,7 @@ loc_43F7E: RTRACE(c, "loc_43F7E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(50464), (2), 8);
@@ -47951,7 +47951,7 @@ loc_4400B: RTRACE(c, "loc_4400B");
 	t_ = alu_add(c, c->ax, (47849), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -48035,7 +48035,7 @@ loc_4409F: RTRACE(c, "loc_4409F");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -48102,13 +48102,13 @@ def_440D3: RTRACE(c, "def_440D3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((2));
@@ -48124,7 +48124,7 @@ def_440D3: RTRACE(c, "def_440D3");
 	PUSH(c, DG16((uint16_t)(c->bx + 21522)));
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((58896));
@@ -48134,13 +48134,13 @@ def_440D3: RTRACE(c, "def_440D3");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->di);
@@ -48166,13 +48166,13 @@ loc_441D8: RTRACE(c, "loc_441D8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
@@ -48184,7 +48184,7 @@ loc_441F8: RTRACE(c, "loc_441F8");
 loc_44204: RTRACE(c, "loc_44204");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(DG16(61436));
 	c->dx = (uint16_t)(DG16(61434));
@@ -48322,7 +48322,7 @@ loc_3D385: RTRACE(c, "loc_3D385");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
-	host_j_getArmorClass(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getArmorClass, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_3D35D;
@@ -48335,7 +48335,7 @@ loc_3D397: RTRACE(c, "loc_3D397");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getAge(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAge, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3D35D;
@@ -48426,7 +48426,7 @@ loc_3D454: RTRACE(c, "loc_3D454");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -48624,7 +48624,7 @@ loc_3D5F2: RTRACE(c, "loc_3D5F2");
 loc_3D5F8: RTRACE(c, "loc_3D5F8");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, DG16((uint16_t)(c->si + 293)), 16);
@@ -48641,7 +48641,7 @@ loc_3D60E: RTRACE(c, "loc_3D60E");
 loc_3D614: RTRACE(c, "loc_3D614");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, DG16((uint16_t)(c->si + 295)), 16);
@@ -48668,7 +48668,7 @@ loc_3D638: RTRACE(c, "loc_3D638");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3D35D;
@@ -48786,7 +48786,7 @@ static void fn_inputString(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG16(60596), (0), 16);
@@ -48815,7 +48815,7 @@ loc_3D804: RTRACE(c, "loc_3D804");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (1));
@@ -48824,7 +48824,7 @@ loc_3D836: RTRACE(c, "loc_3D836");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_3D842: RTRACE(c, "loc_3D842");
@@ -48847,7 +48847,7 @@ loc_3D842: RTRACE(c, "loc_3D842");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -22));
 	PUSH(c, c->ax);
-	host__stricmp(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _stricmp, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -48856,7 +48856,7 @@ loc_3D842: RTRACE(c, "loc_3D842");
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -22));
 	PUSH(c, c->ax);
-	host__stricmp(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _stricmp, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -48872,7 +48872,7 @@ loc_3D88A: RTRACE(c, "loc_3D88A");
 	PUSH(c, DG16((uint16_t)(c->bx + 22706)));
 	c->ax = (uint16_t)((uint16_t)(c->bp + -22));
 	PUSH(c, c->ax);
-	host__stricmp(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _stricmp, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -48894,7 +48894,7 @@ loc_3D8B1: RTRACE(c, "loc_3D8B1");
 	if (c->zf) goto loc_3D8C1;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_3D8C1: RTRACE(c, "loc_3D8C1");
 	c->ax = (uint16_t)(c->di);
@@ -48920,7 +48920,7 @@ static void fn_loadHireFaces(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->si, c->si, 16);
@@ -48966,7 +48966,7 @@ loc_49970: RTRACE(c, "loc_49970");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG16_SET(61390, (1));
@@ -48977,14 +48977,14 @@ loc_499AD: RTRACE(c, "loc_499AD");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_499C0: RTRACE(c, "loc_499C0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61398, c->dx);
@@ -48992,7 +48992,7 @@ loc_499C0: RTRACE(c, "loc_499C0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17382));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61402, c->dx);
@@ -49003,7 +49003,7 @@ loc_499C0: RTRACE(c, "loc_499C0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -49030,7 +49030,7 @@ loc_499C0: RTRACE(c, "loc_499C0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 14)), (0), 16);
@@ -49038,7 +49038,7 @@ loc_499C0: RTRACE(c, "loc_499C0");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_49A84;
@@ -49062,7 +49062,7 @@ loc_49A5B: RTRACE(c, "loc_49A5B");
 	c->ax = (uint16_t)((8));
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_49A84: RTRACE(c, "loc_49A84");
@@ -49088,13 +49088,13 @@ loc_49A84: RTRACE(c, "loc_49A84");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_49ACE: RTRACE(c, "loc_49ACE");
@@ -49249,7 +49249,7 @@ loc_3D03A: RTRACE(c, "loc_3D03A");
 	t_ = alu_add(c, c->ax, (275), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3D07A;
@@ -49509,7 +49509,7 @@ static void fn_showJoke(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shl(c, c->ax, 1, 16);
@@ -49523,7 +49523,7 @@ static void fn_showJoke(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -49543,7 +49543,7 @@ static void fn_showJoke(Cpu *c) {
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((60606));
 	PUSH(c, c->ax);
@@ -49604,7 +49604,7 @@ loc_4819F: RTRACE(c, "loc_4819F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((6));
@@ -49635,7 +49635,7 @@ loc_481F2: RTRACE(c, "loc_481F2");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17676));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -49694,7 +49694,7 @@ loc_481F2: RTRACE(c, "loc_481F2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -49718,7 +49718,7 @@ loc_481F2: RTRACE(c, "loc_481F2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_482D9: RTRACE(c, "loc_482D9");
@@ -49808,13 +49808,13 @@ loc_48302: RTRACE(c, "loc_48302");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_483AE;
@@ -49827,7 +49827,7 @@ loc_483AE: RTRACE(c, "loc_483AE");
 loc_483B6: RTRACE(c, "loc_483B6");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -49908,7 +49908,7 @@ loc_48492: RTRACE(c, "loc_48492");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((5));
@@ -49946,7 +49946,7 @@ loc_484E5: RTRACE(c, "loc_484E5");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(43996));
 	PUSH(c, DG16(43994));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -49992,7 +49992,7 @@ loc_48545: RTRACE(c, "loc_48545");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_48576: RTRACE(c, "loc_48576");
@@ -50042,7 +50042,7 @@ ul_485B2: RTRACE(c, "ul_485B2");
 	if (c->zf) goto loc_48626;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -50089,7 +50089,7 @@ ul_485F4: RTRACE(c, "ul_485F4");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_48626: RTRACE(c, "loc_48626");
@@ -50108,7 +50108,7 @@ loc_4862E: RTRACE(c, "loc_4862E");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28185(c);
@@ -50166,7 +50166,7 @@ static void fn_townInn(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((4));
@@ -50308,7 +50308,7 @@ loc_49789: RTRACE(c, "loc_49789");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -50372,7 +50372,7 @@ loc_497CA: RTRACE(c, "loc_497CA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_49835: RTRACE(c, "loc_49835");
@@ -50438,7 +50438,7 @@ loc_49898: RTRACE(c, "loc_49898");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_498AA: RTRACE(c, "loc_498AA");
@@ -50450,7 +50450,7 @@ loc_498AA: RTRACE(c, "loc_498AA");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((60));
 	PUSH(c, c->ax);
@@ -50524,7 +50524,7 @@ loc_487E8: RTRACE(c, "loc_487E8");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((3));
@@ -50590,7 +50590,7 @@ loc_4889C: RTRACE(c, "loc_4889C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_488E6;
@@ -50616,7 +50616,7 @@ loc_488B6: RTRACE(c, "loc_488B6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -4), (1));
@@ -50687,20 +50687,20 @@ loc_48934: RTRACE(c, "loc_48934");
 	PUSH(c, DG16(23172));
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((100));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, (26), 16);
@@ -50728,12 +50728,12 @@ ul_48996: RTRACE(c, "ul_48996");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -4), (0));
 	PUSH(c, c->ds); /* push ds */
@@ -50757,7 +50757,7 @@ ul_48996: RTRACE(c, "ul_48996");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -50889,7 +50889,7 @@ loc_48ABA: RTRACE(c, "loc_48ABA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50494)) & 0xFF) << 0));
@@ -50939,7 +50939,7 @@ loc_48B53: RTRACE(c, "loc_48B53");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -50963,7 +50963,7 @@ loc_48B53: RTRACE(c, "loc_48B53");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -50974,7 +50974,7 @@ loc_48B53: RTRACE(c, "loc_48B53");
 loc_48B9B: RTRACE(c, "loc_48B9B");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4889C;
 loc_48BA8: RTRACE(c, "loc_48BA8");
@@ -50996,13 +50996,13 @@ loc_48BC0: RTRACE(c, "loc_48BC0");
 	PUSH(c, DG16(23172));
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_48BE2: RTRACE(c, "loc_48BE2");
@@ -51041,7 +51041,7 @@ ul_48BEE: RTRACE(c, "ul_48BEE");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_48B53;
@@ -51071,7 +51071,7 @@ ul_48C2D: RTRACE(c, "ul_48C2D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_48C64: RTRACE(c, "loc_48C64");
@@ -51092,7 +51092,7 @@ loc_48C6C: RTRACE(c, "loc_48C6C");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((60));
 	PUSH(c, c->ax);
@@ -51158,7 +51158,7 @@ static void fn_townTemple(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((2));
@@ -51212,14 +51212,14 @@ loc_48DED: RTRACE(c, "loc_48DED");
 	ST16_SET((uint16_t)(c->bp + -10), c->dx);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -28), (0));
 	ST16_SET((uint16_t)(c->bp + -30), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, DG16((uint16_t)(c->si + 293)), 16);
@@ -51229,7 +51229,7 @@ loc_48DED: RTRACE(c, "loc_48DED");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((10));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8(50477)) & 0xFF) << 0));
 	c->bx = (uint16_t)((c->bx & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_shl(c, c->bx, 1, 16);
@@ -51258,7 +51258,7 @@ loc_48E5F: RTRACE(c, "loc_48E5F");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((10));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, ST16((uint16_t)(c->bp + -10)), c->ax, 16);
 	ST16_SET((uint16_t)(c->bp + -10), t_);
 	t_ = alu_adc(c, ST16((uint16_t)(c->bp + -8)), c->dx, 16);
@@ -51278,7 +51278,7 @@ loc_48E7F: RTRACE(c, "loc_48E7F");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((100));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8((uint16_t)(c->si + 288))) & 0xFF) << 0));
 	c->bx = (uint16_t)((c->bx & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->cx = (uint16_t)((50));
@@ -51320,7 +51320,7 @@ loc_48ED7: RTRACE(c, "loc_48ED7");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((100));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8((uint16_t)(c->si + 289))) & 0xFF) << 0));
 	c->bx = (uint16_t)((c->bx & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->cx = (uint16_t)((50));
@@ -51362,7 +51362,7 @@ loc_48F20: RTRACE(c, "loc_48F20");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((1000));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8((uint16_t)(c->si + 290))) & 0xFF) << 0));
 	c->bx = (uint16_t)((c->bx & 0x00FF) | ((((0)) & 0xFF) << 8));
 	c->cx = (uint16_t)((500));
@@ -51426,7 +51426,7 @@ loc_48F94: RTRACE(c, "loc_48F94");
 	t_ = alu_xor(c, c->dx, c->dx, 16);
 	c->dx = (uint16_t)(t_);
 	c->ax = (uint16_t)((20));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->bx = (uint16_t)((c->bx & 0xFF00) | (((DG8(50477)) & 0xFF) << 0));
 	c->bx = (uint16_t)((c->bx & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_shl(c, c->bx, 1, 16);
@@ -51500,7 +51500,7 @@ loc_48FBF: RTRACE(c, "loc_48FBF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -4), (1));
@@ -51509,7 +51509,7 @@ loc_4903D: RTRACE(c, "loc_4903D");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_49049: RTRACE(c, "loc_49049");
@@ -51575,7 +51575,7 @@ loc_49095: RTRACE(c, "loc_49095");
 	DG8_SET((uint16_t)(c->si + 21), ((c->ax >> 0) & 0xFF));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET((uint16_t)(c->si + 293), c->ax);
@@ -51591,7 +51591,7 @@ loc_49095: RTRACE(c, "loc_49095");
 	t_ = alu_add(c, c->ax, (275), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -2))) & 0xFF) << 0));
@@ -51636,7 +51636,7 @@ loc_49127: RTRACE(c, "loc_49127");
 	t_ = alu_add(c, c->ax, (47836), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_setBit(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, setBit, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(c->di);
@@ -51764,7 +51764,7 @@ loc_49236: RTRACE(c, "loc_49236");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, ST16((uint16_t)(c->bp + -34)), (1440), 16);
 	ST16_SET((uint16_t)(c->bp + -34), t_);
@@ -51826,7 +51826,7 @@ loc_49392: RTRACE(c, "loc_49392");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -12));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -51875,7 +51875,7 @@ loc_49392: RTRACE(c, "loc_49392");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -51897,7 +51897,7 @@ loc_49392: RTRACE(c, "loc_49392");
 	if (!c->zf) goto loc_49429;
 	goto loc_4963C;
 loc_49429: RTRACE(c, "loc_49429");
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28144(c);
 	c->ax = (uint16_t)((37622));
@@ -51908,7 +51908,7 @@ loc_49429: RTRACE(c, "loc_49429");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((18855));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -51954,7 +51954,7 @@ loc_49485: RTRACE(c, "loc_49485");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
@@ -51980,7 +51980,7 @@ loc_49485: RTRACE(c, "loc_49485");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (1));
@@ -51989,7 +51989,7 @@ loc_494F6: RTRACE(c, "loc_494F6");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_49502: RTRACE(c, "loc_49502");
@@ -52044,7 +52044,7 @@ loc_49543: RTRACE(c, "loc_49543");
 	c->ax = (uint16_t)(c->dx);
 	c->dx = (c->ax & 0x8000) ? 0xFFFF : 0;
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	t_ = alu_xor(c, c->dx, c->dx, 16);
@@ -52052,7 +52052,7 @@ loc_49543: RTRACE(c, "loc_49543");
 	c->ax = (uint16_t)((10));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -52068,12 +52068,12 @@ loc_49543: RTRACE(c, "loc_49543");
 	goto loc_4961B;
 loc_4957E: RTRACE(c, "loc_4957E");
 	PUSH(c, c->si);
-	host_nextExperienceLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, nextExperienceLevel, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	PUSH(c, c->si);
-	host_getCurrentExperience(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentExperience, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, DG16((uint16_t)(c->si + 299)), 16);
 	c->ax = (uint16_t)(t_);
@@ -52118,13 +52118,13 @@ loc_495CB: RTRACE(c, "loc_495CB");
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET((uint16_t)(c->si + 293), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET((uint16_t)(c->si + 295), c->ax);
@@ -52155,7 +52155,7 @@ loc_4961B: RTRACE(c, "loc_4961B");
 loc_49623: RTRACE(c, "loc_49623");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((37622));
 	PUSH(c, c->ax);
@@ -52190,7 +52190,7 @@ loc_49651: RTRACE(c, "loc_49651");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((18943));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44242, c->dx);
@@ -52198,7 +52198,7 @@ loc_49651: RTRACE(c, "loc_49651");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((18954));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50484, c->dx);
@@ -52206,7 +52206,7 @@ loc_49651: RTRACE(c, "loc_49651");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((18966));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(44364, c->dx);
@@ -52220,7 +52220,7 @@ loc_49651: RTRACE(c, "loc_49651");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((18978));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60638, c->dx);
@@ -53213,7 +53213,7 @@ static void fn_spellAttackAhead(Cpu *c) {
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59637)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, 0, c->ax, 16);
@@ -53287,7 +53287,7 @@ loc_4F2F7: RTRACE(c, "loc_4F2F7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(DG16(42818));
@@ -53300,7 +53300,7 @@ loc_4F2F7: RTRACE(c, "loc_4F2F7");
 	fn_freeSpriteSlot(c);
 	c->cx = (uint16_t)(POP(c));
 loc_4F322: RTRACE(c, "loc_4F322");
-	host_MemFree(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, MemFree, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG16(387), (7), 16);
 	if ((c->cf || c->zf)) goto loc_4F334;
 	PUSH(c, c->ds); /* push ds */
@@ -53313,7 +53313,7 @@ loc_4F334: RTRACE(c, "loc_4F334");
 	c->ax = (uint16_t)((21046));
 loc_4F33F: RTRACE(c, "loc_4F33F");
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(42820, c->dx);
@@ -53336,7 +53336,7 @@ loc_4F34E: RTRACE(c, "loc_4F34E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(50338), (0), 8);
@@ -53412,7 +53412,7 @@ loc_4F3F5: RTRACE(c, "loc_4F3F5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60598));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -11))) & 0xFF) << 0));
@@ -53466,7 +53466,7 @@ loc_4F474: RTRACE(c, "loc_4F474");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(50341), (0), 8);
@@ -53537,7 +53537,7 @@ loc_4F4E5: RTRACE(c, "loc_4F4E5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60598));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -53583,7 +53583,7 @@ loc_4F564: RTRACE(c, "loc_4F564");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(42823), (0), 8);
@@ -53654,7 +53654,7 @@ loc_4F5D5: RTRACE(c, "loc_4F5D5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60598));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -53700,7 +53700,7 @@ loc_4F654: RTRACE(c, "loc_4F654");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(42824), (0), 8);
@@ -53771,7 +53771,7 @@ loc_4F6C5: RTRACE(c, "loc_4F6C5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60598));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -53871,7 +53871,7 @@ loc_3BE7C: RTRACE(c, "loc_3BE7C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -53894,7 +53894,7 @@ loc_3BE7C: RTRACE(c, "loc_3BE7C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_3BEB9: RTRACE(c, "loc_3BEB9");
@@ -53948,7 +53948,7 @@ loc_3BF05: RTRACE(c, "loc_3BF05");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(c->si);
 loc_3BF22: RTRACE(c, "loc_3BF22");
@@ -53971,13 +53971,13 @@ static void fn_sub_416C7(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -10));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->sp = (uint16_t)(c->bp);
@@ -54069,7 +54069,7 @@ loc_42F10: RTRACE(c, "loc_42F10");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_42F50;
@@ -54090,7 +54090,7 @@ loc_42F3C: RTRACE(c, "loc_42F3C");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_42F50: RTRACE(c, "loc_42F50");
@@ -54100,7 +54100,7 @@ loc_42F50: RTRACE(c, "loc_42F50");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -54115,7 +54115,7 @@ loc_42F70: RTRACE(c, "loc_42F70");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -20));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(c->si);
@@ -54139,7 +54139,7 @@ loc_42F93: RTRACE(c, "loc_42F93");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((13843));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50480, c->dx);
@@ -54198,7 +54198,7 @@ static void fn_sub_4EC06(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((103));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->bp = (uint16_t)(POP(c));
@@ -54245,7 +54245,7 @@ loc_154D8: RTRACE(c, "loc_154D8");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -54350,7 +54350,7 @@ loc_1557F: RTRACE(c, "loc_1557F");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -10), c->ax);
@@ -54448,7 +54448,7 @@ loc_1562D: RTRACE(c, "loc_1562D");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordWrap(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordWrap, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((8)) & 0xFF) << 0));
@@ -54537,7 +54537,7 @@ loc_156A4: RTRACE(c, "loc_156A4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -30));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8(42845), (0), 8);
@@ -54545,7 +54545,7 @@ loc_156A4: RTRACE(c, "loc_156A4");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -30));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_15730;
@@ -54570,7 +54570,7 @@ loc_156FF: RTRACE(c, "loc_156FF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	DG8_SET(42845, (1));
@@ -54601,7 +54601,7 @@ static void fn_updateLight(Cpu *c) {
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_mazeGetFlagsRel(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, mazeGetFlagsRel, 3, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -54670,14 +54670,14 @@ loc_4685E: RTRACE(c, "loc_4685E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DFE(c);
@@ -54708,7 +54708,7 @@ loc_468B2: RTRACE(c, "loc_468B2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((200));
@@ -54724,7 +54724,7 @@ loc_468B2: RTRACE(c, "loc_468B2");
 	c->di = (uint16_t)(c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->di, c->di, 16);
 	c->di = (uint16_t)(t_);
@@ -54738,7 +54738,7 @@ loc_46904: RTRACE(c, "loc_46904");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 18)));
 	PUSH(c, ST16((uint16_t)(c->bp + 16)));
-	host__memset_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset_0, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -54950,7 +54950,7 @@ loc_46AC8: RTRACE(c, "loc_46AC8");
 loc_46AE8: RTRACE(c, "loc_46AE8");
 	PUSH(c, ST16((uint16_t)(c->bp + 18)));
 	PUSH(c, ST16((uint16_t)(c->bp + 16)));
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 16)));
@@ -54958,7 +54958,7 @@ loc_46AE8: RTRACE(c, "loc_46AE8");
 	ES16_SET(c, (uint16_t)(c->bx + 293), c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 18)));
 	PUSH(c, ST16((uint16_t)(c->bp + 16)));
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 16)));
@@ -55122,7 +55122,7 @@ loc_46D37: RTRACE(c, "loc_46D37");
 	c->ax = (uint16_t)((16439));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 24, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (48), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -13))) & 0xFF) << 0));
@@ -55155,13 +55155,13 @@ static void fn_sub_46566(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -24));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((16313));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -55185,7 +55185,7 @@ static void fn_sub_46566(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -55207,7 +55207,7 @@ static void fn_sub_46566(Cpu *c) {
 	c->ax = (uint16_t)((7));
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_46613: RTRACE(c, "loc_46613");
@@ -55287,7 +55287,7 @@ def_46671: RTRACE(c, "def_46671");
 	if (c->zf) goto loc_46613;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(1262, (227));
 	c->ax = (uint16_t)((132));
@@ -55466,13 +55466,13 @@ loc_46819: RTRACE(c, "loc_46819");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((3));
@@ -55499,13 +55499,13 @@ static void fn_sub_46DE4(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -55539,7 +55539,7 @@ loc_46E27: RTRACE(c, "loc_46E27");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(POP(c));
@@ -55615,12 +55615,12 @@ static void fn_saveGame(Cpu *c) {
 	PUSH(c, c->di);
 	t_ = alu_sub(c, DG8(60560), (0), 8);
 	if (c->zf) goto loc_26101;
-	host_sub_2509A(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_2509A, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_26101: RTRACE(c, "loc_26101");
 	c->ax = (uint16_t)((34293));
 	PUSH(c, c->ax);
 	PUSH(c, DG16(22738));
-	host__fopen(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fopen, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
@@ -55628,7 +55628,7 @@ loc_26101: RTRACE(c, "loc_26101");
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_2611B;
 loc_26116: RTRACE(c, "loc_26116");
-	host_sub_27F86(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_27F86, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_2611B: RTRACE(c, "loc_2611B");
 	c->ax = (uint16_t)((2));
 	PUSH(c, c->ax);
@@ -55639,16 +55639,16 @@ loc_2611B: RTRACE(c, "loc_2611B");
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	PUSH(c, c->si);
-	host__fseek(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fseek, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
-	host__ftell(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _ftell, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	PUSH(c, c->si);
-	host__rewind(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _rewind, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((34296));
 	PUSH(c, c->ax);
@@ -55659,7 +55659,7 @@ loc_2611B: RTRACE(c, "loc_2611B");
 	t_ = alu_add(c, c->ax, (59446), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__fopen(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fopen, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -14), c->ax);
@@ -55673,7 +55673,7 @@ loc_2611B: RTRACE(c, "loc_2611B");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -6), c->dx);
 	ST16_SET((uint16_t)(c->bp + -8), c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -55683,7 +55683,7 @@ loc_2611B: RTRACE(c, "loc_2611B");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
-	host_LUMOD_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LUMOD_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -10), c->dx);
 	ST16_SET((uint16_t)(c->bp + -12), c->ax);
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -55697,7 +55697,7 @@ loc_26195: RTRACE(c, "loc_26195");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fread(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fread, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
@@ -55707,7 +55707,7 @@ loc_26195: RTRACE(c, "loc_26195");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fwrite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fwrite, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->di, 16);
@@ -55727,7 +55727,7 @@ loc_261D1: RTRACE(c, "loc_261D1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fread(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fread, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
@@ -55736,18 +55736,18 @@ loc_261D1: RTRACE(c, "loc_261D1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((54894));
 	PUSH(c, c->ax);
-	host__fwrite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fwrite, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -14)));
-	host__fclose(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fclose, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->si);
-	host__fclose(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _fclose, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(60560), (0), 8);
 	if (c->zf) goto loc_26217;
-	host_sub_25085(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_25085, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_26217: RTRACE(c, "loc_26217");
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
@@ -55764,7 +55764,7 @@ static void fn_setStartTime(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__time(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _time, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50444, c->dx);
 	DG16_SET(50442, c->ax);
@@ -55984,7 +55984,7 @@ static void fn_sub_387C6(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((60648));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -55994,7 +55994,7 @@ static void fn_sub_387C6(Cpu *c) {
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, DG16(44014));
 	PUSH(c, DG16(44012));
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
@@ -56006,7 +56006,7 @@ static void fn_sub_387C6(Cpu *c) {
 	if (c->zf) goto loc_38818;
 	PUSH(c, DG16(44014));
 	PUSH(c, DG16(44012));
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_38818: RTRACE(c, "loc_38818");
@@ -56043,7 +56043,7 @@ loc_4A794: RTRACE(c, "loc_4A794");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->di, c->ax, 16);
@@ -56077,7 +56077,7 @@ loc_4A7D9: RTRACE(c, "loc_4A7D9");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_charSavingThrow(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, charSavingThrow, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -56135,7 +56135,7 @@ def_4A7F5: RTRACE(c, "def_4A7F5");
 	PUSH(c, c->si);
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_charSavingThrow(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, charSavingThrow, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -56165,7 +56165,7 @@ loc_4A86A: RTRACE(c, "loc_4A86A");
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, DG16(60638));
 	PUSH(c, DG16(60636));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
@@ -56196,7 +56196,7 @@ loc_4A8C2: RTRACE(c, "loc_4A8C2");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_charSavingThrow(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, charSavingThrow, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -56485,7 +56485,7 @@ loc_4AB15: RTRACE(c, "loc_4AB15");
 def_4A8EE: RTRACE(c, "def_4A8EE");
 	PUSH(c, c->di);
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_subtractHitPoints(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, subtractHitPoints, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((2));
@@ -56543,7 +56543,7 @@ loc_15357: RTRACE(c, "loc_15357");
 	PUSH(c, c->si);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_setBit(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, setBit, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_inc(c, c->si, 16);
@@ -56570,7 +56570,7 @@ loc_1538B: RTRACE(c, "loc_1538B");
 	if (c->zf) goto loc_1539F;
 	PUSH(c, 0); PUSH(c, 0);
 	fn_resetBlacksmithWares(c);
-	host_GiveBankInterest(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, GiveBankInterest, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_1539F: RTRACE(c, "loc_1539F");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(60469)) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
@@ -57053,7 +57053,7 @@ loc_20592: RTRACE(c, "loc_20592");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57133,7 +57133,7 @@ loc_20677: RTRACE(c, "loc_20677");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57213,7 +57213,7 @@ loc_206F6: RTRACE(c, "loc_206F6");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57293,7 +57293,7 @@ loc_20775: RTRACE(c, "loc_20775");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57373,7 +57373,7 @@ loc_207F4: RTRACE(c, "loc_207F4");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57459,7 +57459,7 @@ loc_20878: RTRACE(c, "loc_20878");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57545,7 +57545,7 @@ loc_208FC: RTRACE(c, "loc_208FC");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57631,7 +57631,7 @@ loc_20980: RTRACE(c, "loc_20980");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57717,7 +57717,7 @@ loc_20A04: RTRACE(c, "loc_20A04");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57792,7 +57792,7 @@ loc_20A78: RTRACE(c, "loc_20A78");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57872,7 +57872,7 @@ loc_20AF7: RTRACE(c, "loc_20AF7");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -57952,7 +57952,7 @@ loc_20B76: RTRACE(c, "loc_20B76");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58038,7 +58038,7 @@ loc_20BFA: RTRACE(c, "loc_20BFA");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58124,7 +58124,7 @@ loc_20C7E: RTRACE(c, "loc_20C7E");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58199,7 +58199,7 @@ loc_20CF2: RTRACE(c, "loc_20CF2");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58279,7 +58279,7 @@ loc_20D71: RTRACE(c, "loc_20D71");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58359,7 +58359,7 @@ loc_20DF0: RTRACE(c, "loc_20DF0");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58445,7 +58445,7 @@ loc_20E74: RTRACE(c, "loc_20E74");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58531,7 +58531,7 @@ loc_20EF8: RTRACE(c, "loc_20EF8");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58606,7 +58606,7 @@ loc_20F6C: RTRACE(c, "loc_20F6C");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58686,7 +58686,7 @@ loc_20FEB: RTRACE(c, "loc_20FEB");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58772,7 +58772,7 @@ loc_2106F: RTRACE(c, "loc_2106F");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58847,7 +58847,7 @@ loc_210E3: RTRACE(c, "loc_210E3");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -58927,7 +58927,7 @@ loc_21162: RTRACE(c, "loc_21162");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -59013,7 +59013,7 @@ loc_211E6: RTRACE(c, "loc_211E6");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->cx = (uint16_t)((c->cx & 0xFF00) | ((((4)) & 0xFF) << 0));
@@ -59088,7 +59088,7 @@ loc_2125A: RTRACE(c, "loc_2125A");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59158,7 +59158,7 @@ loc_212C7: RTRACE(c, "loc_212C7");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59228,7 +59228,7 @@ loc_21334: RTRACE(c, "loc_21334");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59298,7 +59298,7 @@ loc_213A1: RTRACE(c, "loc_213A1");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59368,7 +59368,7 @@ loc_2140E: RTRACE(c, "loc_2140E");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59438,7 +59438,7 @@ loc_2147B: RTRACE(c, "loc_2147B");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59508,7 +59508,7 @@ loc_214E8: RTRACE(c, "loc_214E8");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59578,7 +59578,7 @@ loc_21555: RTRACE(c, "loc_21555");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59648,7 +59648,7 @@ loc_215C2: RTRACE(c, "loc_215C2");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -59763,7 +59763,7 @@ loc_2168F: RTRACE(c, "loc_2168F");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -59797,7 +59797,7 @@ def_216CF: RTRACE(c, "def_216CF");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -59834,7 +59834,7 @@ loc_2171A: RTRACE(c, "loc_2171A");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -59862,7 +59862,7 @@ loc_2171A: RTRACE(c, "loc_2171A");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -59976,7 +59976,7 @@ loc_2182B: RTRACE(c, "loc_2182B");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60046,7 +60046,7 @@ loc_21898: RTRACE(c, "loc_21898");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60116,7 +60116,7 @@ loc_21905: RTRACE(c, "loc_21905");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60186,7 +60186,7 @@ loc_21972: RTRACE(c, "loc_21972");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60256,7 +60256,7 @@ loc_219DF: RTRACE(c, "loc_219DF");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60371,7 +60371,7 @@ loc_21AAC: RTRACE(c, "loc_21AAC");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -60405,7 +60405,7 @@ def_21AEC: RTRACE(c, "def_21AEC");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -60442,7 +60442,7 @@ loc_21B37: RTRACE(c, "loc_21B37");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -60470,7 +60470,7 @@ loc_21B37: RTRACE(c, "loc_21B37");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -60584,7 +60584,7 @@ loc_21C48: RTRACE(c, "loc_21C48");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60654,7 +60654,7 @@ loc_21CB5: RTRACE(c, "loc_21CB5");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60724,7 +60724,7 @@ loc_21D22: RTRACE(c, "loc_21D22");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -60839,7 +60839,7 @@ loc_21DEF: RTRACE(c, "loc_21DEF");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -60873,7 +60873,7 @@ def_21E2F: RTRACE(c, "def_21E2F");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -60910,7 +60910,7 @@ loc_21E7A: RTRACE(c, "loc_21E7A");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -60938,7 +60938,7 @@ loc_21E7A: RTRACE(c, "loc_21E7A");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -61052,7 +61052,7 @@ loc_21F8B: RTRACE(c, "loc_21F8B");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61122,7 +61122,7 @@ loc_21FF8: RTRACE(c, "loc_21FF8");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61192,7 +61192,7 @@ loc_22065: RTRACE(c, "loc_22065");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61262,7 +61262,7 @@ loc_220D2: RTRACE(c, "loc_220D2");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61332,7 +61332,7 @@ loc_2213F: RTRACE(c, "loc_2213F");
 	t_ = alu_add(c, c->ax, ST16((uint16_t)(c->bp + -8)), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61386,7 +61386,7 @@ loc_221AC: RTRACE(c, "loc_221AC");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -61523,7 +61523,7 @@ loc_22288: RTRACE(c, "loc_22288");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_dec(c, c->ax, 16);
@@ -61557,7 +61557,7 @@ def_222A4: RTRACE(c, "def_222A4");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -61576,7 +61576,7 @@ loc_222EE: RTRACE(c, "loc_222EE");
 	PUSH(c, DG16((uint16_t)(c->bx + 357)));
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -61604,7 +61604,7 @@ loc_222EE: RTRACE(c, "loc_222EE");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host_mazeGetWordRel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, mazeGetWordRel, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -61719,7 +61719,7 @@ loc_223D6: RTRACE(c, "loc_223D6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_22402: RTRACE(c, "loc_22402");
@@ -61738,7 +61738,7 @@ loc_22402: RTRACE(c, "loc_22402");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
@@ -61748,7 +61748,7 @@ loc_22402: RTRACE(c, "loc_22402");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -61786,7 +61786,7 @@ loc_2247B: RTRACE(c, "loc_2247B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG8_SET(50464, (1));
@@ -62591,7 +62591,7 @@ loc_4A170: RTRACE(c, "loc_4A170");
 def_4A14F: RTRACE(c, "def_4A14F");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->di);
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->dx, c->dx, 16);
@@ -62611,7 +62611,7 @@ loc_4A190: RTRACE(c, "loc_4A190");
 	PUSH(c, c->ax);
 	PUSH(c, c->di);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_hitMonster(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, hitMonster, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -62644,7 +62644,7 @@ loc_4A1C0: RTRACE(c, "loc_4A1C0");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44387));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -62675,7 +62675,7 @@ loc_4A1DC: RTRACE(c, "loc_4A1DC");
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_hitMonster(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, hitMonster, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -62735,7 +62735,7 @@ loc_4A268: RTRACE(c, "loc_4A268");
 	if (c->zf) goto loc_4A2BC;
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_add(c, c->ax, (100), 16);
@@ -62743,7 +62743,7 @@ loc_4A268: RTRACE(c, "loc_4A268");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8(19324)) & 0xFF) << 0));
@@ -63064,7 +63064,7 @@ def_4A2E5: RTRACE(c, "def_4A2E5");
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 loc_4A518: RTRACE(c, "loc_4A518");
 	c->di = (uint16_t)(POP(c));
 	c->si = (uint16_t)(POP(c));
@@ -63125,7 +63125,7 @@ static void fn_getMonsterDescriptions(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -42));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4B4C7: RTRACE(c, "loc_4B4C7");
@@ -63157,7 +63157,7 @@ loc_4B4C7: RTRACE(c, "loc_4B4C7");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -82));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4B505: RTRACE(c, "loc_4B505");
@@ -63189,7 +63189,7 @@ loc_4B505: RTRACE(c, "loc_4B505");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -122));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_4B543: RTRACE(c, "loc_4B543");
@@ -63236,7 +63236,7 @@ loc_4B57B: RTRACE(c, "loc_4B57B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->sp = (uint16_t)(c->bp);
@@ -63285,7 +63285,7 @@ loc_4AFE0: RTRACE(c, "loc_4AFE0");
 	t_ = alu_add(c, c->si, c->ax, 16);
 	c->si = (uint16_t)(t_);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_allHaveGone(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, allHaveGone, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (c->zf) goto loc_4AFED;
@@ -63316,7 +63316,7 @@ loc_4B011: RTRACE(c, "loc_4B011");
 	DG8_SET(50464, (1));
 	goto loc_4B11E;
 loc_4B019: RTRACE(c, "loc_4B019");
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_sub(c, DG8(337), (0), 8);
 	if (c->zf) goto loc_4B027;
 	goto loc_4B011;
@@ -63352,19 +63352,19 @@ loc_4B03E: RTRACE(c, "loc_4B03E");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->bx + -21164))) & 0xFF) << 0));
 	DG8_SET(335, ((c->ax >> 0) & 0xFF));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_allHaveGone(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, allHaveGone, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (c->zf) goto loc_4B099;
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_charsCantAct(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, charsCantAct, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_4B077;
 	goto loc_4B11E;
 loc_4B077: RTRACE(c, "loc_4B077");
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((255)) & 0xFF) << 0));
 	DG8_SET(335, ((c->ax >> 0) & 0xFF));
 	DG8_SET(336, ((c->ax >> 0) & 0xFF));
@@ -63375,7 +63375,7 @@ loc_4B077: RTRACE(c, "loc_4B077");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((47561));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_4B019;
@@ -63392,7 +63392,7 @@ loc_4B099: RTRACE(c, "loc_4B099");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -63431,7 +63431,7 @@ def_4B0CC: RTRACE(c, "def_4B0CC");
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_4B0FF;
-	host_checkPartyDead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, checkPartyDead, 0, 4); /* no return address is pushed for host routines: args start at sp */
 loc_4B0FF: RTRACE(c, "loc_4B0FF");
 	t_ = alu_sub(c, DG8(337), (0), 8);
 	if (!c->zf) goto loc_4B109;
@@ -63440,7 +63440,7 @@ loc_4B109: RTRACE(c, "loc_4B109");
 	goto loc_4B11E;
 loc_4B10B: RTRACE(c, "loc_4B10B");
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_allHaveGone(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, allHaveGone, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (!c->zf) goto loc_4B11E;
@@ -63527,7 +63527,7 @@ static void fn_run(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -63551,7 +63551,7 @@ static void fn_run(Cpu *c) {
 	PUSH(c, 0);
 	fn_sortCombatParty(c);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_setSpeedTable(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, setSpeedTable, 0, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_dec(c, DG8(336), 8);
 	DG8_SET(336, t_);
 	DG8_SET(335, (255));
@@ -63607,7 +63607,7 @@ loc_1B1C6: RTRACE(c, "loc_1B1C6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -63630,14 +63630,14 @@ loc_1B1C6: RTRACE(c, "loc_1B1C6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_1B217: RTRACE(c, "loc_1B217");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -68119,7 +68119,7 @@ static void fn_sub_400DF(Cpu *c) {
 	PUSH(c, c->ax);
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_40129: RTRACE(c, "loc_40129");
@@ -68138,25 +68138,25 @@ static void fn_currentTime(Cpu *c) {
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + 6));
 	PUSH(c, c->ax);
-	host__ctime(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _ctime, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((34171));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	DG8_SET(58909, (0));
 	c->ax = (uint16_t)((58907));
 	PUSH(c, c->ax);
-	host__atol(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _atol, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
 	t_ = alu_sub(c, c->si, (12), 16);
@@ -68165,7 +68165,7 @@ static void fn_currentTime(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58915));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->si, c->si, 16);
@@ -68183,7 +68183,7 @@ loc_2517B: RTRACE(c, "loc_2517B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58907));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_251A2;
@@ -68193,7 +68193,7 @@ loc_25191: RTRACE(c, "loc_25191");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58907));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_251A2: RTRACE(c, "loc_251A2");
@@ -68202,7 +68202,7 @@ loc_251A2: RTRACE(c, "loc_251A2");
 	c->ax = (uint16_t)((58915));
 loc_251A9: RTRACE(c, "loc_251A9");
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_251B1: RTRACE(c, "loc_251B1");
@@ -68232,7 +68232,7 @@ static void fn_timeToString(Cpu *c) {
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->si = (uint16_t)(c->ax);
 	c->dx = (uint16_t)((3600));
 	{ int32_t r_ = (int32_t)(int16_t)c->ax * (int32_t)(int16_t)c->dx; c->ax = (uint16_t)r_; c->dx = (uint16_t)((uint32_t)r_ >> 16); c->cf = c->of = (r_ != (int16_t)r_); }
@@ -68247,7 +68247,7 @@ static void fn_timeToString(Cpu *c) {
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -68256,7 +68256,7 @@ static void fn_timeToString(Cpu *c) {
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_LUMOD_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LUMOD_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
@@ -68265,7 +68265,7 @@ static void fn_timeToString(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -68408,7 +68408,7 @@ loc_5212E: RTRACE(c, "loc_5212E");
 	c->ax = (uint16_t)((34095));
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 12, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (24), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, DG8((uint16_t)(c->si + 0)), (12), 8);
@@ -68489,7 +68489,7 @@ loc_4DE96: RTRACE(c, "loc_4DE96");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -40));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((65535));
@@ -68499,7 +68499,7 @@ loc_4DE96: RTRACE(c, "loc_4DE96");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((20104));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -68524,7 +68524,7 @@ loc_4DE96: RTRACE(c, "loc_4DE96");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -68547,7 +68547,7 @@ loc_4DE96: RTRACE(c, "loc_4DE96");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4DF2C: RTRACE(c, "loc_4DF2C");
@@ -68589,7 +68589,7 @@ loc_4DF4E: RTRACE(c, "loc_4DF4E");
 loc_4DF6E: RTRACE(c, "loc_4DF6E");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((37622));
 	PUSH(c, c->ax);
@@ -68643,7 +68643,7 @@ loc_4DFD8: RTRACE(c, "loc_4DFD8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((58896));
@@ -68680,7 +68680,7 @@ loc_4E02E: RTRACE(c, "loc_4E02E");
 	goto loc_4E002;
 loc_4E03C: RTRACE(c, "loc_4E03C");
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -68696,7 +68696,7 @@ loc_4E056: RTRACE(c, "loc_4E056");
 	PUSH(c, DG16(21202));
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -68792,7 +68792,7 @@ loc_4E13B: RTRACE(c, "loc_4E13B");
 	c->ax = (uint16_t)((3));
 loc_4E13E: RTRACE(c, "loc_4E13E");
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -10)), (0), 16);
 	if (c->zf) goto loc_4E150;
@@ -68868,7 +68868,7 @@ loc_4E1C9: RTRACE(c, "loc_4E1C9");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((53846));
@@ -68912,7 +68912,7 @@ loc_4E1E8: RTRACE(c, "loc_4E1E8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -69015,7 +69015,7 @@ loc_4E2D1: RTRACE(c, "loc_4E2D1");
 	PUSH(c, ST16((uint16_t)(c->bp + 14)));
 	PUSH(c, c->di);
 	PUSH(c, c->si);
-	host_itemPrice(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemPrice, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -16), c->dx);
@@ -69038,7 +69038,7 @@ loc_4E2D1: RTRACE(c, "loc_4E2D1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -69088,7 +69088,7 @@ loc_4E361: RTRACE(c, "loc_4E361");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((53846));
@@ -69215,7 +69215,7 @@ loc_4E420: RTRACE(c, "loc_4E420");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -69239,7 +69239,7 @@ loc_4E420: RTRACE(c, "loc_4E420");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -69252,7 +69252,7 @@ loc_4E420: RTRACE(c, "loc_4E420");
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	goto loc_4E782;
 loc_4E49A: RTRACE(c, "loc_4E49A");
 	c->bx = (uint16_t)(c->di);
@@ -69269,7 +69269,7 @@ loc_4E4B8: RTRACE(c, "loc_4E4B8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_4E722;
@@ -69280,7 +69280,7 @@ loc_4E4C8: RTRACE(c, "loc_4E4C8");
 	PUSH(c, ST16((uint16_t)(c->bp + 14)));
 	PUSH(c, c->di);
 	PUSH(c, c->si);
-	host_itemPrice(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, itemPrice, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -16), c->dx);
@@ -69303,7 +69303,7 @@ loc_4E4C8: RTRACE(c, "loc_4E4C8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -69390,7 +69390,7 @@ loc_4E5B2: RTRACE(c, "loc_4E5B2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -69524,7 +69524,7 @@ loc_4E70B: RTRACE(c, "loc_4E70B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((21));
@@ -69542,7 +69542,7 @@ loc_4E728: RTRACE(c, "loc_4E728");
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, DG16(42830));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)((10));
@@ -69554,7 +69554,7 @@ loc_4E728: RTRACE(c, "loc_4E728");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -14), c->ax);
@@ -69567,7 +69567,7 @@ loc_4E761: RTRACE(c, "loc_4E761");
 	PUSH(c, c->si);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -14))) & 0xFF) << 0));
 	PUSH(c, c->ax);
-	host_generateItem(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, generateItem, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(c->di);
@@ -69660,7 +69660,7 @@ loc_51DE3: RTRACE(c, "loc_51DE3");
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -69673,7 +69673,7 @@ loc_51DE3: RTRACE(c, "loc_51DE3");
 	PUSH(c, ST16((uint16_t)(c->bp + -4)));
 	PUSH(c, DG16(37624));
 	PUSH(c, DG16(37622));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(POP(c));
@@ -69817,14 +69817,14 @@ loc_43074: RTRACE(c, "loc_43074");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
 loc_43097: RTRACE(c, "loc_43097");
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60614, c->dx);
@@ -69860,7 +69860,7 @@ static void fn_sub_3886C(Cpu *c) {
 	PUSH(c, c->ax);
 	PUSH(c, DG16(43996));
 	PUSH(c, DG16(43994));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	DG8_SET(350, (255));
@@ -69887,7 +69887,7 @@ loc_3DFBA: RTRACE(c, "loc_3DFBA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -69910,7 +69910,7 @@ loc_3DFBA: RTRACE(c, "loc_3DFBA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_3E006: RTRACE(c, "loc_3E006");
@@ -69927,7 +69927,7 @@ loc_3E006: RTRACE(c, "loc_3E006");
 	if ((!c->zf && c->sf == c->of)) goto loc_3E006;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -69951,7 +69951,7 @@ loc_3E04E: RTRACE(c, "loc_3E04E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -70046,7 +70046,7 @@ loc_449B6: RTRACE(c, "loc_449B6");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)(c->di);
 	c->dx = (uint16_t)((303));
 	{ int32_t r_ = (int32_t)(int16_t)c->ax * (int32_t)(int16_t)c->dx; c->ax = (uint16_t)r_; c->dx = (uint16_t)((uint32_t)r_ >> 16); c->cf = c->of = (r_ != (int16_t)r_); }
@@ -70062,7 +70062,7 @@ loc_449B6: RTRACE(c, "loc_449B6");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)(DG16((uint16_t)(c->si + 0)));
 	c->dx = (uint16_t)((303));
 	{ int32_t r_ = (int32_t)(int16_t)c->ax * (int32_t)(int16_t)c->dx; c->ax = (uint16_t)r_; c->dx = (uint16_t)((uint32_t)r_ >> 16); c->cf = c->of = (r_ != (int16_t)r_); }
@@ -70074,7 +70074,7 @@ loc_449B6: RTRACE(c, "loc_449B6");
 	PUSH(c, STACK_SEG); /* push ss */
 	PUSH(c, c->ax);
 	c->cx = (uint16_t)((303));
-	host_SCOPY_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, SCOPY_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->di + -5908))) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
@@ -70184,7 +70184,7 @@ static void fn_readSaveHeader(Cpu *c) {
 	t_ = alu_add(c, c->ax, (59446), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__open(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _open, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -70193,11 +70193,11 @@ static void fn_readSaveHeader(Cpu *c) {
 	c->ax = (uint16_t)((uint16_t)(c->bp + -6));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
-	host_j____read(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j____read, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
-	host__close(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _close, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -6)));
 	t_ = alu_shl(c, c->ax, 1, 16);
@@ -70213,7 +70213,7 @@ static void fn_readSaveHeader(Cpu *c) {
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
 	c->ax = (uint16_t)((9090));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60586, c->dx);
 	DG16_SET(60584, c->ax);
@@ -70223,7 +70223,7 @@ static void fn_readSaveHeader(Cpu *c) {
 	t_ = alu_add(c, c->ax, (59446), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_ccOpen(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccOpen, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -70231,22 +70231,22 @@ static void fn_readSaveHeader(Cpu *c) {
 loc_26569: RTRACE(c, "loc_26569");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host__textmode(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _textmode, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((34312));
 	PUSH(c, c->ax);
-	host__cputs(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _cputs, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__exit(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _exit, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_26587: RTRACE(c, "loc_26587");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
-	host_ccSeek(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccSeek, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -70256,7 +70256,7 @@ loc_26587: RTRACE(c, "loc_26587");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
-	host_ccRead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccRead, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -70269,7 +70269,7 @@ loc_26587: RTRACE(c, "loc_26587");
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
-	host_ccSeek(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccSeek, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -70279,7 +70279,7 @@ loc_26587: RTRACE(c, "loc_26587");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(60586));
 	PUSH(c, DG16(60584));
-	host_ccRead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccRead, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -70290,7 +70290,7 @@ loc_26587: RTRACE(c, "loc_26587");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -928));
 	PUSH(c, c->ax);
-	host_ccRead(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccRead, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -70298,7 +70298,7 @@ loc_26587: RTRACE(c, "loc_26587");
 	if (c->zf) goto loc_265F2;
 	goto loc_26569;
 loc_265F2: RTRACE(c, "loc_265F2");
-	host_ccClose(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, ccClose, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	if (c->zf) goto loc_265FE;
@@ -70322,7 +70322,7 @@ loc_26608: RTRACE(c, "loc_26608");
 	ST16_SET((uint16_t)(c->bp + -10), c->bx);
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
@@ -70378,7 +70378,7 @@ loc_435B4: RTRACE(c, "loc_435B4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, DG16(42860));
@@ -70386,7 +70386,7 @@ loc_435B4: RTRACE(c, "loc_435B4");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -70398,13 +70398,13 @@ loc_435B4: RTRACE(c, "loc_435B4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -70480,7 +70480,7 @@ loc_4366C: RTRACE(c, "loc_4366C");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -4));
@@ -70580,7 +70580,7 @@ static void fn_sub_442EB(Cpu *c) {
 	PUSH(c, c->di);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_loadResourceByName(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, loadResourceByName, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(60608, c->dx);
@@ -70638,7 +70638,7 @@ static void fn_indexEvents(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((37628));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_3BD1C: RTRACE(c, "loc_3BD1C");
@@ -70709,7 +70709,7 @@ loc_3BDA8: RTRACE(c, "loc_3BDA8");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((42678));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(DG16(42890));
@@ -70789,7 +70789,7 @@ loc_263CB: RTRACE(c, "loc_263CB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -70802,7 +70802,7 @@ loc_263CB: RTRACE(c, "loc_263CB");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host_writeResource(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, writeResource, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_26402: RTRACE(c, "loc_26402");
@@ -70829,7 +70829,7 @@ static void fn_sub_41689(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((12598));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -70922,7 +70922,7 @@ static void fn_healCharacterEffect(Cpu *c) {
 	PUSH(c, c->di);
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	ST16_SET((uint16_t)(c->bp + -2), c->ax);
@@ -70942,14 +70942,14 @@ loc_4BE54: RTRACE(c, "loc_4BE54");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((19499));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -6), c->dx);
 	ST16_SET((uint16_t)(c->bp + -8), c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, c->si);
-	host_j_getMaxHP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxHP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(c->ax);
@@ -71003,7 +71003,7 @@ loc_4BEC4: RTRACE(c, "loc_4BEC4");
 	PUSH(c, ST16((uint16_t)(c->bp + -2)));
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
 	PUSH(c, ST16((uint16_t)(c->bp + -8)));
-	host_vdrv_15_drawSprite(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_15_drawSprite, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -71088,7 +71088,7 @@ static void fn_sub_4C027(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((228));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4C07E: RTRACE(c, "loc_4C07E");
@@ -71130,7 +71130,7 @@ ul_4C0B3: RTRACE(c, "ul_4C0B3");
 loc_4C0C0: RTRACE(c, "loc_4C0C0");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -71178,7 +71178,7 @@ static void fn_sub_4BF12(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -104));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
@@ -71201,7 +71201,7 @@ static void fn_sub_4BF12(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_4BF9B: RTRACE(c, "loc_4BF9B");
@@ -71247,7 +71247,7 @@ ul_4BFDF: RTRACE(c, "ul_4BFDF");
 loc_4BFE2: RTRACE(c, "loc_4BFE2");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -71283,7 +71283,7 @@ static void fn_trainCharacter(Cpu *c) {
 	c->di = (uint16_t)(c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_getCurrentLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getCurrentLevel, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -10), c->ax);
@@ -71388,7 +71388,7 @@ loc_45CEB: RTRACE(c, "loc_45CEB");
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_spellGoldPrice(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, spellGoldPrice, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -71415,7 +71415,7 @@ loc_45CEB: RTRACE(c, "loc_45CEB");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -8))) & 0xFF) << 0));
@@ -71471,13 +71471,13 @@ loc_45D9E: RTRACE(c, "loc_45D9E");
 loc_45DA1: RTRACE(c, "loc_45DA1");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(61328));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 def_45C8F: RTRACE(c, "def_45C8F");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -71512,7 +71512,7 @@ loc_45DE7: RTRACE(c, "loc_45DE7");
 def_45DD9: RTRACE(c, "def_45DD9");
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_j_getMaxSP(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_getMaxSP, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -71565,7 +71565,7 @@ loc_45E26: RTRACE(c, "loc_45E26");
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_sub_45BD1(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, sub_45BD1, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -71592,7 +71592,7 @@ loc_45E26: RTRACE(c, "loc_45E26");
 	t_ = alu_add(c, c->dx, c->ax, 16);
 	c->dx = (uint16_t)(t_);
 	PUSH(c, c->dx);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -8))) & 0xFF) << 0));
@@ -71645,7 +71645,7 @@ loc_45EEE: RTRACE(c, "loc_45EEE");
 loc_45EF1: RTRACE(c, "loc_45EF1");
 	PUSH(c, c->ax);
 	PUSH(c, DG16(61328));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_45EFD: RTRACE(c, "loc_45EFD");
@@ -71679,7 +71679,7 @@ static void fn_sub_40248(Cpu *c) {
 	DG16_SET((uint16_t)(c->si + -18032), c->bx);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -71724,7 +71724,7 @@ static void fn_sub_41633(Cpu *c) {
 	PUSH(c, c->si);
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->si);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -71740,7 +71740,7 @@ loc_41654: RTRACE(c, "loc_41654");
 	PUSH(c, DG16(21202));
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((59196));
@@ -71791,7 +71791,7 @@ static void fn_sub_4C19A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -102));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
@@ -71814,7 +71814,7 @@ static void fn_sub_4C19A(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((42));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -71823,7 +71823,7 @@ static void fn_sub_4C19A(Cpu *c) {
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -71864,7 +71864,7 @@ static void fn_sub_4C106(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -102));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
@@ -71887,7 +71887,7 @@ static void fn_sub_4C106(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((42));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -71896,7 +71896,7 @@ static void fn_sub_4C106(Cpu *c) {
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -71933,7 +71933,7 @@ static void fn_townBuildingIntro(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61396));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + 8)));
@@ -71955,13 +71955,13 @@ loc_47BDA: RTRACE(c, "loc_47BDA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61398, c->dx);
@@ -71972,7 +71972,7 @@ loc_47BDA: RTRACE(c, "loc_47BDA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17338));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61402, c->dx);
@@ -71980,7 +71980,7 @@ loc_47BDA: RTRACE(c, "loc_47BDA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17349));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61406, c->dx);
@@ -71988,7 +71988,7 @@ loc_47BDA: RTRACE(c, "loc_47BDA");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17360));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61410, c->dx);
@@ -72007,7 +72007,7 @@ loc_47C4F: RTRACE(c, "loc_47C4F");
 	c->ax = (uint16_t)((17382));
 loc_47C58: RTRACE(c, "loc_47C58");
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(61402, c->dx);
@@ -72023,7 +72023,7 @@ loc_47C67: RTRACE(c, "loc_47C67");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((8));
@@ -72038,7 +72038,7 @@ loc_47C92: RTRACE(c, "loc_47C92");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -72078,14 +72078,14 @@ loc_47CF9: RTRACE(c, "loc_47CF9");
 	DG16_SET(17240, (1));
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->si, (7), 16);
 	if ((c->sf == c->of)) goto loc_47D29;
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_47D69;
@@ -72097,7 +72097,7 @@ loc_47D29: RTRACE(c, "loc_47D29");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -72119,7 +72119,7 @@ loc_47D29: RTRACE(c, "loc_47D29");
 	c->ax = (uint16_t)((8));
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_47D69: RTRACE(c, "loc_47D69");
@@ -72136,13 +72136,13 @@ loc_47D7A: RTRACE(c, "loc_47D7A");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((17409));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -72157,13 +72157,13 @@ loc_47D7A: RTRACE(c, "loc_47D7A");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->si, (7), 16);
@@ -72188,7 +72188,7 @@ loc_47D7A: RTRACE(c, "loc_47D7A");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_47DFD: RTRACE(c, "loc_47DFD");
@@ -72203,7 +72203,7 @@ loc_47DFD: RTRACE(c, "loc_47DFD");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50332)) & 0xFF) << 0));
@@ -72243,7 +72243,7 @@ loc_47E68: RTRACE(c, "loc_47E68");
 	if ((c->sf == c->of)) goto loc_47E77;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_47E77: RTRACE(c, "loc_47E77");
 	t_ = alu_or(c, c->di, c->di, 16);
@@ -72301,7 +72301,7 @@ loc_47A3A: RTRACE(c, "loc_47A3A");
 	c->dx = (uint16_t)((65535));
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
-	host_sub_26965(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, sub_26965, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -72319,7 +72319,7 @@ loc_47A59: RTRACE(c, "loc_47A59");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -72411,7 +72411,7 @@ loc_47B01: RTRACE(c, "loc_47B01");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -72453,7 +72453,7 @@ loc_47B41: RTRACE(c, "loc_47B41");
 loc_47B54: RTRACE(c, "loc_47B54");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -72501,7 +72501,7 @@ loc_39939: RTRACE(c, "loc_39939");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(8246, c->ax);
@@ -72517,13 +72517,13 @@ loc_39954: RTRACE(c, "loc_39954");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((8220));
 	PUSH(c, c->ax);
-	host_vdrv_00_transition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_00_transition, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_39964: RTRACE(c, "loc_39964");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (c->ax & 0x8000) ? 0xFFFF : 0;
 	DG16_SET(61200, c->dx);
@@ -72590,13 +72590,13 @@ loc_3CE9F: RTRACE(c, "loc_3CE9F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(50466, (1109));
@@ -72613,7 +72613,7 @@ loc_3CF0B: RTRACE(c, "loc_3CF0B");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_27_setCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_27_setCursor, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50332)) & 0xFF) << 0));
@@ -72705,7 +72705,7 @@ static void fn_learnSpellDialog(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -14));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -72792,7 +72792,7 @@ loc_3BFD7: RTRACE(c, "loc_3BFD7");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -72810,7 +72810,7 @@ loc_3C020: RTRACE(c, "loc_3C020");
 	PUSH(c, DG16(22702));
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -72834,7 +72834,7 @@ loc_3C020: RTRACE(c, "loc_3C020");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -72851,7 +72851,7 @@ loc_3C020: RTRACE(c, "loc_3C020");
 loc_3C074: RTRACE(c, "loc_3C074");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); /* push cs */
 	PUSH(c, 0);
@@ -72934,7 +72934,7 @@ loc_3C101: RTRACE(c, "loc_3C101");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -72958,7 +72958,7 @@ loc_3C101: RTRACE(c, "loc_3C101");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -72978,7 +72978,7 @@ loc_3C15D: RTRACE(c, "loc_3C15D");
 	PUSH(c, DG16(22704));
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -73002,7 +73002,7 @@ loc_3C15D: RTRACE(c, "loc_3C15D");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
@@ -73017,7 +73017,7 @@ loc_3C1B1: RTRACE(c, "loc_3C1B1");
 loc_3C1B6: RTRACE(c, "loc_3C1B6");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_3C1C0: RTRACE(c, "loc_3C1C0");
 	PUSH(c, 0); PUSH(c, 0);
@@ -73075,7 +73075,7 @@ static void fn_sub_3C1F2(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((231));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((70));
@@ -73096,7 +73096,7 @@ static void fn_sub_3C1F2(Cpu *c) {
 	fn_sub_280EA(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)(ST16((uint16_t)(c->bp + -6)));
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -8)));
@@ -73124,7 +73124,7 @@ static void fn_sub_25EF3(Cpu *c) {
 	c->si = (uint16_t)(c->ax);
 	c->ax = (uint16_t)((65534));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	goto loc_25F34;
 loc_25F16: RTRACE(c, "loc_25F16");
@@ -73134,7 +73134,7 @@ loc_25F16: RTRACE(c, "loc_25F16");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
@@ -73144,13 +73144,13 @@ loc_25F16: RTRACE(c, "loc_25F16");
 loc_25F34: RTRACE(c, "loc_25F34");
 	c->ax = (uint16_t)((65535));
 	PUSH(c, c->ax);
-	host_soundDriverPlay(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, soundDriverPlay, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, c->ax, c->si, 16);
 	if ((c->sf == c->of)) goto loc_25F5F;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -73163,12 +73163,12 @@ loc_25F56: RTRACE(c, "loc_25F56");
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_25F5F: RTRACE(c, "loc_25F5F");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -73357,7 +73357,7 @@ loc_47F13: RTRACE(c, "loc_47F13");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -73380,7 +73380,7 @@ loc_47F13: RTRACE(c, "loc_47F13");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 loc_47F87: RTRACE(c, "loc_47F87");
@@ -73468,13 +73468,13 @@ loc_48005: RTRACE(c, "loc_48005");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((77));
@@ -73601,13 +73601,13 @@ loc_480DF: RTRACE(c, "loc_480DF");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_48134;
@@ -73620,7 +73620,7 @@ loc_48134: RTRACE(c, "loc_48134");
 loc_4813C: RTRACE(c, "loc_4813C");
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((100));
 	DG16_SET(656, c->ax);
@@ -73670,7 +73670,7 @@ static void fn_sub_483FB(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_48434;
@@ -73679,7 +73679,7 @@ loc_48425: RTRACE(c, "loc_48425");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_48434: RTRACE(c, "loc_48434");
@@ -73700,7 +73700,7 @@ loc_48434: RTRACE(c, "loc_48434");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->si = (uint16_t)(POP(c));
@@ -73732,7 +73732,7 @@ static void fn_sub_496FA(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->sp = (uint16_t)(c->bp);
@@ -73770,7 +73770,7 @@ static void fn_sub_4877A(Cpu *c) {
 	PUSH(c, DG16(23172));
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->sp = (uint16_t)(c->bp);
@@ -73815,7 +73815,7 @@ static void fn_sub_48CF7(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->sp = (uint16_t)(c->bp);
@@ -73839,7 +73839,7 @@ static void fn_trainingNeedsExperience(Cpu *c) {
 	PUSH(c, c->si);
 	c->si = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
 	PUSH(c, c->si);
-	host_experienceToNextLevel(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, experienceToNextLevel, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
@@ -73874,7 +73874,7 @@ loc_492F1: RTRACE(c, "loc_492F1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (0));
@@ -73891,7 +73891,7 @@ loc_4931F: RTRACE(c, "loc_4931F");
 	c->ax = (uint16_t)(c->dx);
 	c->dx = (c->ax & 0x8000) ? 0xFFFF : 0;
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ax);
 	PUSH(c, c->dx);
 	t_ = alu_xor(c, c->dx, c->dx, 16);
@@ -73899,7 +73899,7 @@ loc_4931F: RTRACE(c, "loc_4931F");
 	c->ax = (uint16_t)((10));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + 35))) & 0xFF) << 0));
@@ -73913,7 +73913,7 @@ loc_49350: RTRACE(c, "loc_49350");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 loc_4935D: RTRACE(c, "loc_4935D");
@@ -74073,7 +74073,7 @@ loc_419D4: RTRACE(c, "loc_419D4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -74096,7 +74096,7 @@ loc_419D4: RTRACE(c, "loc_419D4");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -74105,7 +74105,7 @@ loc_419D4: RTRACE(c, "loc_419D4");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_25DE3(c);
@@ -74141,7 +74141,7 @@ static void fn_resetBlacksmithWares(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59649));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->di, c->di, 16);
@@ -74285,7 +74285,7 @@ loc_386D1: RTRACE(c, "loc_386D1");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->di + 6056))) & 0xFF) << 0));
 	PUSH(c, c->ax);
-	host_generateItem(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, generateItem, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + 6064))) & 0xFF) << 0));
@@ -74294,7 +74294,7 @@ loc_386D1: RTRACE(c, "loc_386D1");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + 6061))) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->ax);
@@ -74431,7 +74431,7 @@ static void fn_resetTemps(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -366));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -74457,7 +74457,7 @@ loc_3DD65: RTRACE(c, "loc_3DD65");
 	c->ax = (uint16_t)(t_);
 	c->di = (uint16_t)(c->ax);
 	PUSH(c, c->di);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (13), 16);
@@ -74486,7 +74486,7 @@ loc_3DD9A: RTRACE(c, "loc_3DD9A");
 	c->ax = (uint16_t)((20));
 	c->cx = (uint16_t)(POP(c));
 	c->bx = (uint16_t)(POP(c));
-	host_LXMUL_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -14), c->dx);
 	ST16_SET((uint16_t)(c->bp + -16), c->ax);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -8)), (0), 16);
@@ -74548,7 +74548,7 @@ loc_3DE0F: RTRACE(c, "loc_3DE0F");
 	t_ = alu_add(c, c->ax, c->dx, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 7, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (14), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
@@ -74567,7 +74567,7 @@ loc_3DE42: RTRACE(c, "loc_3DE42");
 loc_3DE53: RTRACE(c, "loc_3DE53");
 	c->ax = (uint16_t)((303));
 	PUSH(c, c->ax);
-	host_allocFar(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, allocFar, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -10), c->dx);
 	ST16_SET((uint16_t)(c->bp + -12), c->ax);
@@ -74582,7 +74582,7 @@ loc_3DE53: RTRACE(c, "loc_3DE53");
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -10)));
 	PUSH(c, ST16((uint16_t)(c->bp + -12)));
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + -5908))) & 0xFF) << 0));
@@ -74619,7 +74619,7 @@ loc_3DE53: RTRACE(c, "loc_3DE53");
 	t_ = alu_add(c, c->ax, (47574), 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__memcpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memcpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -12));
@@ -74666,7 +74666,7 @@ loc_3DEF5: RTRACE(c, "loc_3DEF5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 9, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (18), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -74688,7 +74688,7 @@ loc_3DEF5: RTRACE(c, "loc_3DEF5");
 	c->ax = (uint16_t)((8));
 	PUSH(c, c->ax);
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -74697,7 +74697,7 @@ loc_3DEF5: RTRACE(c, "loc_3DEF5");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_3DF6E: RTRACE(c, "loc_3DF6E");
 	PUSH(c, 0); PUSH(c, 0);
@@ -76501,7 +76501,7 @@ loc_49C6D: RTRACE(c, "loc_49C6D");
 loc_49C7E: RTRACE(c, "loc_49C7E");
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getMonsterResistance(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getMonsterResistance, 1, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST16_SET((uint16_t)(c->bp + -6), c->ax);
 	t_ = alu_add(c, c->di, c->ax, 16);
@@ -76511,7 +76511,7 @@ loc_49C7E: RTRACE(c, "loc_49C7E");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(43956)) & 0xFF) << 0));
 	c->ax = (uint16_t)(int16_t)(int8_t)(c->ax & 0xFF);
 	PUSH(c, c->ax);
-	host_getElementalCategory(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getElementalCategory, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_inc(c, ((c->ax >> 0) & 0xFF), 8);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((t_) & 0xFF) << 0));
@@ -76521,7 +76521,7 @@ loc_49C7E: RTRACE(c, "loc_49C7E");
 	DG8_SET((uint16_t)(c->bx + -21149), ((c->ax >> 0) & 0xFF));
 	PUSH(c, ST16((uint16_t)(c->bp + -6)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getDamageScale(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getDamageScale, 1, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8(61483)) & 0xFF) << 0));
 	c->dx = (uint16_t)((c->dx & 0x00FF) | ((((0)) & 0xFF) << 8));
@@ -76573,7 +76573,7 @@ loc_49D10: RTRACE(c, "loc_49D10");
 loc_49D12: RTRACE(c, "loc_49D12");
 	PUSH(c, c->di);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_getDamageScale(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, getDamageScale, 1, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((DG8(61483)) & 0xFF) << 0));
 	c->dx = (uint16_t)((c->dx & 0x00FF) | ((((0)) & 0xFF) << 8));
@@ -76646,7 +76646,7 @@ loc_49D72: RTRACE(c, "loc_49D72");
 	PUSH(c, ES16(c, (uint16_t)(c->bx + 2)));
 	PUSH(c, ES16(c, (uint16_t)(c->bx + 0)));
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_giveExperience(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, giveExperience, 2, 4); /* far call by push cs / call near: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG8(59639), (106), 8);
@@ -76711,7 +76711,7 @@ loc_49E1B: RTRACE(c, "loc_49E1B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_rnd(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, rnd, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->dx = (uint16_t)((c->dx & 0xFF00) | (((ST8((uint16_t)(c->bp + -7))) & 0xFF) << 0));
@@ -76749,7 +76749,7 @@ loc_49E4F: RTRACE(c, "loc_49E4F");
 	c->bx = (uint16_t)(c->dx);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ES8(c, (uint16_t)(c->bx + 0))) & 0xFF) << 0));
 	PUSH(c, c->ax);
-	host_generateItem(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, generateItem, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->si + 144))) & 0xFF) << 0));
@@ -76887,11 +76887,11 @@ static void fn_getMonsterDamage(Cpu *c) {
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_getStat(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getStat, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host_statBonus(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, statBonus, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->si = (uint16_t)(c->ax);
 	t_ = alu_add(c, c->si, DG16(43962), 16);
@@ -77018,7 +77018,7 @@ static void fn_sub_37BA7(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((7805));
 	PUSH(c, c->ax);
-	host_vdrv_21_loadSprites(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_21_loadSprites, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	DG16_SET(37624, c->dx);
@@ -77079,7 +77079,7 @@ loc_45AB5: RTRACE(c, "loc_45AB5");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + -2)), (0), 16);
@@ -77087,7 +77087,7 @@ loc_45AB5: RTRACE(c, "loc_45AB5");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_45B1B;
@@ -77113,7 +77113,7 @@ loc_45AEB: RTRACE(c, "loc_45AEB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((226));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), (1));
@@ -77175,7 +77175,7 @@ loc_45B7E: RTRACE(c, "loc_45B7E");
 	if (!c->zf) goto loc_45B1B;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_28117(c);
@@ -77307,13 +77307,13 @@ loc_4EF7D: RTRACE(c, "loc_4EF7D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((58896));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->di = (uint16_t)(POP(c));
@@ -78195,7 +78195,7 @@ static void fn_identifyOrFix(Cpu *c) {
 	PUSH(c, c->di);
 	PUSH(c, c->si);
 	PUSH(c, 0); /* push cs */
-	c->sp += 2; host_itemPrice(c); /* far call by push cs / call near: args start at sp */
+	c->sp += 2; RHOST(c, itemPrice, 4, 4); /* far call by push cs / call near: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
@@ -78233,7 +78233,7 @@ loc_51D8E: RTRACE(c, "loc_51D8E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -78264,7 +78264,7 @@ static void fn_specialsDialog(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | ((((0)) & 0xFF) << 0));
@@ -78358,7 +78358,7 @@ loc_4E90B: RTRACE(c, "loc_4E90B");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -88));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_4E917: RTRACE(c, "loc_4E917");
@@ -78460,42 +78460,42 @@ loc_4E9F6: RTRACE(c, "loc_4E9F6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -128));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20732));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -168));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20732));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -208));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20732));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -12));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20732));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -24));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((20732));
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -34));
 	PUSH(c, c->ax);
-	host__strcpy(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strcpy, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_4EB1F;
@@ -78504,7 +78504,7 @@ loc_4EA52: RTRACE(c, "loc_4EA52");
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->bx + c->di + 201))) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_getAttributeCategory(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getAttributeCategory, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_shl(c, c->ax, 1, 16);
 	c->ax = (uint16_t)(t_);
@@ -78515,14 +78515,14 @@ loc_4EA52: RTRACE(c, "loc_4EA52");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -128));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(c->si);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8((uint16_t)(c->bx + c->di + 163))) & 0xFF) << 0));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	PUSH(c, c->ax);
-	host_getElementalCategory(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, getElementalCategory, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	ST8_SET((uint16_t)(c->bp + -1), ((c->ax >> 0) & 0xFF));
 	c->ax = (uint16_t)(int16_t)(int8_t)(c->ax & 0xFF);
@@ -78535,7 +78535,7 @@ loc_4EA52: RTRACE(c, "loc_4EA52");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -168));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -1))) & 0xFF) << 0));
@@ -78549,7 +78549,7 @@ loc_4EA52: RTRACE(c, "loc_4EA52");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -208));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -38)));
@@ -78566,7 +78566,7 @@ loc_4EADB: RTRACE(c, "loc_4EADB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -12));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(c->si);
@@ -78580,7 +78580,7 @@ loc_4EADB: RTRACE(c, "loc_4EADB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -24));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, ST16((uint16_t)(c->bp + -46)));
@@ -78588,7 +78588,7 @@ loc_4EADB: RTRACE(c, "loc_4EADB");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -34));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_4EB1F: RTRACE(c, "loc_4EB1F");
@@ -78673,7 +78673,7 @@ loc_4EBC9: RTRACE(c, "loc_4EBC9");
 	c->ax = (uint16_t)((20784));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + -36)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	c->di = (uint16_t)(POP(c));
@@ -79094,7 +79094,7 @@ loc_37D5A: RTRACE(c, "loc_37D5A");
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	goto def_37D55;
@@ -79110,7 +79110,7 @@ loc_37D86: RTRACE(c, "loc_37D86");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -79137,7 +79137,7 @@ loc_37DB2: RTRACE(c, "loc_37DB2");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((60512));
 	PUSH(c, c->ax);
-	host_isBitSet(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, isBitSet, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
@@ -79162,7 +79162,7 @@ loc_37DCE: RTRACE(c, "loc_37DCE");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -32));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(c->si);
@@ -79172,7 +79172,7 @@ loc_37DCE: RTRACE(c, "loc_37DCE");
 	c->ax = (uint16_t)((uint16_t)(c->bp + -32));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto def_37D55;
@@ -79190,7 +79190,7 @@ loc_37E08: RTRACE(c, "loc_37E08");
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -32));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
@@ -79200,7 +79200,7 @@ loc_37E08: RTRACE(c, "loc_37E08");
 	c->ax = (uint16_t)((uint16_t)(c->bp + -32));
 	PUSH(c, c->ax);
 	PUSH(c, ST16((uint16_t)(c->bp + 10)));
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 def_37D55: RTRACE(c, "def_37D55");
@@ -79237,7 +79237,7 @@ loc_3BC86: RTRACE(c, "loc_3BC86");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_0F_fade(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_0F_fade, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, c->si);
@@ -79246,7 +79246,7 @@ loc_3BC86: RTRACE(c, "loc_3BC86");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -79269,14 +79269,14 @@ loc_3BC86: RTRACE(c, "loc_3BC86");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_3BCEB: RTRACE(c, "loc_3BCEB");
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -2)));
@@ -79304,7 +79304,7 @@ static void fn_sub_44CC6(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -46));
 	PUSH(c, c->ax);
-	host__memset(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	t_ = alu_xor(c, c->ax, c->ax, 16);
@@ -79318,13 +79318,13 @@ static void fn_sub_44CC6(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_44D0C: RTRACE(c, "loc_44D0C");
@@ -79350,13 +79350,13 @@ loc_44D25: RTRACE(c, "loc_44D25");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -26));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_44D70;
@@ -79399,7 +79399,7 @@ loc_44D88: RTRACE(c, "loc_44D88");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -46));
 	PUSH(c, c->ax);
-	host__sscanf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sscanf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	c->dx = (uint16_t)(ST16((uint16_t)(c->bp + -4)));
@@ -79525,7 +79525,7 @@ loc_479FF: RTRACE(c, "loc_479FF");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((61370));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_sub(c, DG16(61394), (5), 16);
@@ -79599,7 +79599,7 @@ loc_37D02: RTRACE(c, "loc_37D02");
 	if (c->zf) goto loc_37D1C;
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 loc_37D1C: RTRACE(c, "loc_37D1C");
 	t_ = alu_sub(c, ST16((uint16_t)(c->bp + 6)), (0), 16);
@@ -79663,13 +79663,13 @@ static void fn_sub_44C14(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -52));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -52));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 loc_44C40: RTRACE(c, "loc_44C40");
@@ -79695,13 +79695,13 @@ loc_44C59: RTRACE(c, "loc_44C59");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -52));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
 	c->ax = (uint16_t)((uint16_t)(c->bp + -52));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	goto loc_44CA5;
@@ -79813,7 +79813,7 @@ loc_40351: RTRACE(c, "loc_40351");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((11634));
@@ -79825,7 +79825,7 @@ loc_4036B: RTRACE(c, "loc_4036B");
 loc_40374: RTRACE(c, "loc_40374");
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(c->si);
@@ -79858,7 +79858,7 @@ static void fn_sub_37BF1(Cpu *c) {
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	host__strncpy_0(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _strncpy_0, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -79881,7 +79881,7 @@ static void fn_sub_37BF1(Cpu *c) {
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((90));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -79890,7 +79890,7 @@ static void fn_sub_37BF1(Cpu *c) {
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -79918,7 +79918,7 @@ loc_47916: RTRACE(c, "loc_47916");
 	PUSH(c, c->dx);
 	PUSH(c, ST16((uint16_t)(c->bp + 8)));
 	PUSH(c, ST16((uint16_t)(c->bp + 6)));
-	host_F_LUDIV_AT(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, F_LUDIV_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->dx);
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((17324));
@@ -79930,7 +79930,7 @@ loc_4792F: RTRACE(c, "loc_4792F");
 loc_47938: RTRACE(c, "loc_47938");
 	PUSH(c, c->ax);
 	PUSH(c, c->si);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)(c->si);
@@ -79959,7 +79959,7 @@ loc_4BDD0: RTRACE(c, "loc_4BDD0");
 	t_ = alu_sub(c, DG8((uint16_t)(c->bx + c->di + 125)), (0), 8);
 	if (c->zf) goto loc_4BE07;
 	PUSH(c, c->di);
-	host_worstCondition(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, worstCondition, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0x00FF) | ((((0)) & 0xFF) << 8));
 	t_ = alu_sub(c, c->ax, (8), 16);
@@ -80072,7 +80072,7 @@ loc_394DA: RTRACE(c, "loc_394DA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -100));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 	goto loc_3951E;
@@ -80095,7 +80095,7 @@ loc_394ED: RTRACE(c, "loc_394ED");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -100));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 loc_3951E: RTRACE(c, "loc_3951E");
@@ -80119,7 +80119,7 @@ loc_3951E: RTRACE(c, "loc_3951E");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -80128,7 +80128,7 @@ loc_3951E: RTRACE(c, "loc_3951E");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -80206,7 +80206,7 @@ loc_51CAA: RTRACE(c, "loc_51CAA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((uint16_t)(c->bp + -102));
 	PUSH(c, c->ax);
-	host__sprintf(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 5, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (10), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, STACK_SEG); /* push ss */
@@ -80229,7 +80229,7 @@ loc_51CAA: RTRACE(c, "loc_51CAA");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((50));
 	PUSH(c, c->ax);
-	host_vdrv_1E_openWindow(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1E_openWindow, 10, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (20), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, 0); PUSH(c, 0);
@@ -80238,7 +80238,7 @@ loc_51CAA: RTRACE(c, "loc_51CAA");
 	fn_getCommand(c);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host_vdrv_06_closeWindows(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_06_closeWindows, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	PUSH(c, 0); PUSH(c, 0);
 	fn_sub_280EA(c);
@@ -80261,19 +80261,19 @@ static void fn_ipause_5(Cpu *c) {
 	PUSH(c, c->bp);
 	c->bp = (uint16_t)(c->sp);
 loc_25E23: RTRACE(c, "loc_25E23");
-	host_vdrv_1B_animateCursor(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_1B_animateCursor, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((44236));
 	PUSH(c, c->ax);
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((42870));
 	PUSH(c, c->ax);
-	host_vdrv_18_getMouse(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_18_getMouse, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	c->ax = (uint16_t)((1));
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
@@ -80284,13 +80284,13 @@ loc_25E4F: RTRACE(c, "loc_25E4F");
 	PUSH(c, c->ds); /* push ds */
 	c->ax = (uint16_t)((34173));
 	PUSH(c, c->ax);
-	host_vdrv_2D_printText(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, vdrv_2D_printText, 2, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, c->ax, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	host__bioskey(c); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _bioskey, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->bp = (uint16_t)(POP(c));
 	c->sp += 4; return;
@@ -80355,381 +80355,381 @@ static void fn_sub_3E08F(Cpu *c) {
 	c->sp += 4; return;
 }
 
-void call_exploreLoop(Cpu *c) { fn_exploreLoop(c); }
-void call_loadMonsterData(Cpu *c) { fn_loadMonsterData(c); }
-void call_loadSavedGame(Cpu *c) { fn_loadSavedGame(c); }
-void call_rosterMenu(Cpu *c) { fn_rosterMenu(c); }
-void call_introSequence(Cpu *c) { fn_introSequence(c); }
-void call_copyPartyToRoster(Cpu *c) { fn_copyPartyToRoster(c); }
-void call_monstersAttack(Cpu *c) { fn_monstersAttack(c); }
-void call_sub_27F5E(Cpu *c) { fn_sub_27F5E(c); }
-void call_chargeStep(Cpu *c) { fn_chargeStep(c); }
-void call_checkSkill(Cpu *c) { fn_checkSkill(c); }
-void call_drawParty(Cpu *c) { fn_drawParty(c); }
-void call_drawView(Cpu *c) { fn_drawView(c); }
-void call_freeSpriteSlot(Cpu *c) { fn_freeSpriteSlot(c); }
-void call_getCommand(Cpu *c) { fn_getCommand(c); }
-void call_bash(Cpu *c) { fn_bash(c); }
-void call_characterInfoDialog(Cpu *c) { fn_characterInfoDialog(c); }
-void call_characterStatsDialog(Cpu *c) { fn_characterStatsDialog(c); }
-void call_controlPanel(Cpu *c) { fn_controlPanel(c); }
-void call_dismissCharacter(Cpu *c) { fn_dismissCharacter(c); }
-void call_gameInformation(Cpu *c) { fn_gameInformation(c); }
-void call_giveCharDamage(Cpu *c) { fn_giveCharDamage(c); }
-void call_questLog(Cpu *c) { fn_questLog(c); }
-void call_rest(Cpu *c) { fn_rest(c); }
-void call_setButtons_41D(Cpu *c) { fn_setButtons_41D(c); }
-void call_setWrapModeForMap(Cpu *c) { fn_setWrapModeForMap(c); }
-void call_showMessage(Cpu *c) { fn_showMessage(c); }
-void call_showOverheadMap(Cpu *c) { fn_showOverheadMap(c); }
-void call_spellsDialog(Cpu *c) { fn_spellsDialog(c); }
-void call_mazeUpdateSlot(Cpu *c) { fn_mazeUpdateSlot(c); }
-void call_monstersRecover(Cpu *c) { fn_monstersRecover(c); }
-void call_playSoundEffect(Cpu *c) { fn_playSoundEffect(c); }
-void call_runMazeEvent(Cpu *c) { fn_runMazeEvent(c); }
-void call_shootAhead(Cpu *c) { fn_shootAhead(c); }
-void call_sub_25DFE(Cpu *c) { fn_sub_25DFE(c); }
-void call_sub_25E9E(Cpu *c) { fn_sub_25E9E(c); }
-void call_sub_27F45(Cpu *c) { fn_sub_27F45(c); }
-void call_sub_2803E(Cpu *c) { fn_sub_2803E(c); }
-void call_sub_28130(Cpu *c) { fn_sub_28130(c); }
-void call_sub_28185(Cpu *c) { fn_sub_28185(c); }
-void call_sub_281D0(Cpu *c) { fn_sub_281D0(c); }
-void call_sub_281F3(Cpu *c) { fn_sub_281F3(c); }
-void call_sub_2848C(Cpu *c) { fn_sub_2848C(c); }
-void call_sub_28649(Cpu *c) { fn_sub_28649(c); }
-void call_sub_3E6F1(Cpu *c) { fn_sub_3E6F1(c); }
-void call_sub_3E729(Cpu *c) { fn_sub_3E729(c); }
-void call_sub_3E8E2(Cpu *c) { fn_sub_3E8E2(c); }
-void call_updateAutomap(Cpu *c) { fn_updateAutomap(c); }
-void call_drawHudPieces(Cpu *c) { fn_drawHudPieces(c); }
-void call_confirmDialog(Cpu *c) { fn_confirmDialog(c); }
-void call_createCharacter(Cpu *c) { fn_createCharacter(c); }
-void call_sortParty(Cpu *c) { fn_sortParty(c); }
-void call_sub_25F71(Cpu *c) { fn_sub_25F71(c); }
-void call_sub_281CB(Cpu *c) { fn_sub_281CB(c); }
-void call_sub_28653(Cpu *c) { fn_sub_28653(c); }
-void call_sub_4012B(Cpu *c) { fn_sub_4012B(c); }
-void call_sub_4014E(Cpu *c) { fn_sub_4014E(c); }
-void call_sub_40173(Cpu *c) { fn_sub_40173(c); }
-void call_sub_4058A(Cpu *c) { fn_sub_4058A(c); }
-void call_sub_4087E(Cpu *c) { fn_sub_4087E(c); }
-void call_protectionHandler(Cpu *c) { fn_protectionHandler(c); }
-void call_sub_253D3(Cpu *c) { fn_sub_253D3(c); }
-void call_sub_25E66(Cpu *c) { fn_sub_25E66(c); }
-void call_sub_38821(Cpu *c) { fn_sub_38821(c); }
-void call_sub_3946E(Cpu *c) { fn_sub_3946E(c); }
-void call_doMonsterTurn(Cpu *c) { fn_doMonsterTurn(c); }
-void call_sub_3853A(Cpu *c) { fn_sub_3853A(c); }
-void call_changeTime(Cpu *c) { fn_changeTime(c); }
-void call_drawViewOutdoors(Cpu *c) { fn_drawViewOutdoors(c); }
-void call_doCombat(Cpu *c) { fn_doCombat(c); }
-void call_prepareIndoorView(Cpu *c) { fn_prepareIndoorView(c); }
-void call_renderIndoorView(Cpu *c) { fn_renderIndoorView(c); }
-void call_sub_252CF(Cpu *c) { fn_sub_252CF(c); }
-void call_sub_25C52(Cpu *c) { fn_sub_25C52(c); }
-void call_sub_25D8D(Cpu *c) { fn_sub_25D8D(c); }
-void call_sub_27F4F(Cpu *c) { fn_sub_27F4F(c); }
-void call_sub_27F8B(Cpu *c) { fn_sub_27F8B(c); }
-void call_sub_28103(Cpu *c) { fn_sub_28103(c); }
-void call_sub_282ED(Cpu *c) { fn_sub_282ED(c); }
-void call_timeText(Cpu *c) { fn_timeText(c); }
-void call_characterInfoInventory(Cpu *c) { fn_characterInfoInventory(c); }
-void call_drawCharacterStats(Cpu *c) { fn_drawCharacterStats(c); }
-void call_highlightChar(Cpu *c) { fn_highlightChar(c); }
-void call_Awards_show(Cpu *c) { fn_Awards_show(c); }
-void call_loadMapGraphics(Cpu *c) { fn_loadMapGraphics(c); }
-void call_sub_27F7C(Cpu *c) { fn_sub_27F7C(c); }
-void call_sub_28099(Cpu *c) { fn_sub_28099(c); }
-void call_sub_280EA(Cpu *c) { fn_sub_280EA(c); }
-void call_sub_28144(Cpu *c) { fn_sub_28144(c); }
-void call_sub_281E4(Cpu *c) { fn_sub_281E4(c); }
-void call_sub_28267(Cpu *c) { fn_sub_28267(c); }
-void call_sub_511C8(Cpu *c) { fn_sub_511C8(c); }
-void call_statColor(Cpu *c) { fn_statColor(c); }
-void call_sub_25DE3(Cpu *c) { fn_sub_25DE3(c); }
-void call_getFiles(Cpu *c) { fn_getFiles(c); }
-void call_pickSaveSlot(Cpu *c) { fn_pickSaveSlot(c); }
-void call_loadGame(Cpu *c) { fn_loadGame(c); }
-void call_loadSaveDialog(Cpu *c) { fn_loadSaveDialog(c); }
-void call_setPartyStartCell(Cpu *c) { fn_setPartyStartCell(c); }
-void call_sub_41EF1(Cpu *c) { fn_sub_41EF1(c); }
-void call_sub_280E0(Cpu *c) { fn_sub_280E0(c); }
-void call_sub_2811C(Cpu *c) { fn_sub_2811C(c); }
-void call_sub_44843(Cpu *c) { fn_sub_44843(c); }
-void call_sub_44921(Cpu *c) { fn_sub_44921(c); }
-void call_buildActiveEffects(Cpu *c) { fn_buildActiveEffects(c); }
-void call_sub_28249(Cpu *c) { fn_sub_28249(c); }
-void call_sub_418F3(Cpu *c) { fn_sub_418F3(c); }
-void call_Map_load(Cpu *c) { fn_Map_load(c); }
-void call_loadMapData(Cpu *c) { fn_loadMapData(c); }
-void call_sub_416F1(Cpu *c) { fn_sub_416F1(c); }
-void call_sub_434A6(Cpu *c) { fn_sub_434A6(c); }
-void call_sub_402AC(Cpu *c) { fn_sub_402AC(c); }
-void call_sub_402F6(Cpu *c) { fn_sub_402F6(c); }
-void call_sub_1B223(Cpu *c) { fn_sub_1B223(c); }
-void call_sub_28135(Cpu *c) { fn_sub_28135(c); }
-void call_sub_425AB(Cpu *c) { fn_sub_425AB(c); }
-void call_Spell_00_Light(Cpu *c) { fn_Spell_00_Light(c); }
-void call_Spell_01_Awaken(Cpu *c) { fn_Spell_01_Awaken(c); }
-void call_Spell_02_FirstAid(Cpu *c) { fn_Spell_02_FirstAid(c); }
-void call_Spell_03_FlyingFist(Cpu *c) { fn_Spell_03_FlyingFist(c); }
-void call_Spell_04_DetectMagic(Cpu *c) { fn_Spell_04_DetectMagic(c); }
-void call_Spell_05_ElementalArrow(Cpu *c) { fn_Spell_05_ElementalArrow(c); }
-void call_Spell_06_Revitalize(Cpu *c) { fn_Spell_06_Revitalize(c); }
-void call_Spell_07_CureWounds(Cpu *c) { fn_Spell_07_CureWounds(c); }
-void call_Spell_08_Sparks(Cpu *c) { fn_Spell_08_Sparks(c); }
-void call_Spell_09_EnergyBlast(Cpu *c) { fn_Spell_09_EnergyBlast(c); }
-void call_Spell_10_Sleep(Cpu *c) { fn_Spell_10_Sleep(c); }
-void call_Spell_11_Pain(Cpu *c) { fn_Spell_11_Pain(c); }
-void call_Spell_12_CreateRope(Cpu *c) { fn_Spell_12_CreateRope(c); }
-void call_Spell_13_ToxicCloud(Cpu *c) { fn_Spell_13_ToxicCloud(c); }
-void call_Spell_14_SuppressPoison(Cpu *c) { fn_Spell_14_SuppressPoison(c); }
-void call_Spell_15_ProtFromElements(Cpu *c) { fn_Spell_15_ProtFromElements(c); }
-void call_Spell_16_TurnUndead(Cpu *c) { fn_Spell_16_TurnUndead(c); }
-void call_Spell_17_Jump(Cpu *c) { fn_Spell_17_Jump(c); }
-void call_Spell_18_AcidStream(Cpu *c) { fn_Spell_18_AcidStream(c); }
-void call_Spell_19_SuppressDisease(Cpu *c) { fn_Spell_19_SuppressDisease(c); }
-void call_Spell_20_Silence(Cpu *c) { fn_Spell_20_Silence(c); }
-void call_Spell_21_Blessed(Cpu *c) { fn_Spell_21_Blessed(c); }
-void call_Spell_22_Levitate(Cpu *c) { fn_Spell_22_Levitate(c); }
-void call_Spell_23_WizardEye(Cpu *c) { fn_Spell_23_WizardEye(c); }
-void call_Spell_24_IdentifyMonster(Cpu *c) { fn_Spell_24_IdentifyMonster(c); }
-void call_Spell_25_HolyBonus(Cpu *c) { fn_Spell_25_HolyBonus(c); }
-void call_Spell_26_PowerCure(Cpu *c) { fn_Spell_26_PowerCure(c); }
-void call_Spell_27_NatureSCure(Cpu *c) { fn_Spell_27_NatureSCure(c); }
-void call_Spell_28_LightningBolt(Cpu *c) { fn_Spell_28_LightningBolt(c); }
-void call_Spell_29_Immobilize(Cpu *c) { fn_Spell_29_Immobilize(c); }
-void call_Spell_30_Heroism(Cpu *c) { fn_Spell_30_Heroism(c); }
-void call_Spell_31_WalkOnWater(Cpu *c) { fn_Spell_31_WalkOnWater(c); }
-void call_Spell_32_FrostBite(Cpu *c) { fn_Spell_32_FrostBite(c); }
-void call_Spell_34_PowerShield(Cpu *c) { fn_Spell_34_PowerShield(c); }
-void call_Spell_35_CurePoison(Cpu *c) { fn_Spell_35_CurePoison(c); }
-void call_Spell_36_Fireball(Cpu *c) { fn_Spell_36_Fireball(c); }
-void call_Spell_37_DetectMonster(Cpu *c) { fn_Spell_37_DetectMonster(c); }
-void call_Spell_38_AcidSpray(Cpu *c) { fn_Spell_38_AcidSpray(c); }
-void call_Spell_39_ColdRay(Cpu *c) { fn_Spell_39_ColdRay(c); }
-void call_Spell_40_CureDisease(Cpu *c) { fn_Spell_40_CureDisease(c); }
-void call_Spell_41_NaturesGate(Cpu *c) { fn_Spell_41_NaturesGate(c); }
-void call_Spell_42_TimeDistortion(Cpu *c) { fn_Spell_42_TimeDistortion(c); }
-void call_Spell_43_FeebleMind(Cpu *c) { fn_Spell_43_FeebleMind(c); }
-void call_Spell_44_DeadlySwarm(Cpu *c) { fn_Spell_44_DeadlySwarm(c); }
-void call_Spell_45_Teleport(Cpu *c) { fn_Spell_45_Teleport(c); }
-void call_Spell_46_FingerOfDeath(Cpu *c) { fn_Spell_46_FingerOfDeath(c); }
-void call_Spell_47_CureParalysis(Cpu *c) { fn_Spell_47_CureParalysis(c); }
-void call_Spell_48_Paralyze(Cpu *c) { fn_Spell_48_Paralyze(c); }
-void call_Spell_49_DragonBreath(Cpu *c) { fn_Spell_49_DragonBreath(c); }
-void call_Spell_50_SuperShelter(Cpu *c) { fn_Spell_50_SuperShelter(c); }
-void call_Spell_51_FieryFlail(Cpu *c) { fn_Spell_51_FieryFlail(c); }
-void call_Spell_52_CreateFood(Cpu *c) { fn_Spell_52_CreateFood(c); }
-void call_Spell_53_TownPortal(Cpu *c) { fn_Spell_53_TownPortal(c); }
-void call_Spell_54_StoneToFlesh(Cpu *c) { fn_Spell_54_StoneToFlesh(c); }
-void call_Spell_55_RechargeItem(Cpu *c) { fn_Spell_55_RechargeItem(c); }
-void call_Spell_56_FantasticFreeze(Cpu *c) { fn_Spell_56_FantasticFreeze(c); }
-void call_Spell_57_Duplication(Cpu *c) { fn_Spell_57_Duplication(c); }
-void call_Spell_58_Disintegrate(Cpu *c) { fn_Spell_58_Disintegrate(c); }
-void call_Spell_59_RaiseDead(Cpu *c) { fn_Spell_59_RaiseDead(c); }
-void call_Spell_60_HalfForMe(Cpu *c) { fn_Spell_60_HalfForMe(c); }
-void call_Spell_61_Etherealize(Cpu *c) { fn_Spell_61_Etherealize(c); }
-void call_Spell_62_DancingSword(Cpu *c) { fn_Spell_62_DancingSword(c); }
-void call_Spell_63_PrismaticLight(Cpu *c) { fn_Spell_63_PrismaticLight(c); }
-void call_Spell_64_MoonRay(Cpu *c) { fn_Spell_64_MoonRay(c); }
-void call_Spell_65_MassDistortion(Cpu *c) { fn_Spell_65_MassDistortion(c); }
-void call_Spell_66_EnchantItem(Cpu *c) { fn_Spell_66_EnchantItem(c); }
-void call_Spell_67_Incinerate(Cpu *c) { fn_Spell_67_Incinerate(c); }
-void call_Spell_68_ElementalStorm(Cpu *c) { fn_Spell_68_ElementalStorm(c); }
-void call_Spell_69_HolyWord(Cpu *c) { fn_Spell_69_HolyWord(c); }
-void call_Spell_70_Resurrect(Cpu *c) { fn_Spell_70_Resurrect(c); }
-void call_Spell_71_MegaVolts(Cpu *c) { fn_Spell_71_MegaVolts(c); }
-void call_Spell_72_Inferno(Cpu *c) { fn_Spell_72_Inferno(c); }
-void call_Spell_73_SunRay(Cpu *c) { fn_Spell_73_SunRay(c); }
-void call_Spell_74_Implosion(Cpu *c) { fn_Spell_74_Implosion(c); }
-void call_Spell_75_StarBurst(Cpu *c) { fn_Spell_75_StarBurst(c); }
-void call_Spell_76_DivineIntervention(Cpu *c) { fn_Spell_76_DivineIntervention(c); }
-void call_Spell_sharedHandler(Cpu *c) { fn_Spell_sharedHandler(c); }
-void call_guildSpellShop(Cpu *c) { fn_guildSpellShop(c); }
-void call_spellLloydsBeacon(Cpu *c) { fn_spellLloydsBeacon(c); }
-void call_sub_280EF(Cpu *c) { fn_sub_280EF(c); }
-void call_sub_28117(Cpu *c) { fn_sub_28117(c); }
-void call_sub_281D5(Cpu *c) { fn_sub_281D5(c); }
-void call_sub_282E8(Cpu *c) { fn_sub_282E8(c); }
-void call_sub_284F5(Cpu *c) { fn_sub_284F5(c); }
-void call_sub_28540(Cpu *c) { fn_sub_28540(c); }
-void call_sub_2819E(Cpu *c) { fn_sub_2819E(c); }
-void call_monsterSavingThrow(Cpu *c) { fn_monsterSavingThrow(c); }
-void call_getElapsedTime(Cpu *c) { fn_getElapsedTime(c); }
-void call_arenaEvent(Cpu *c) { fn_arenaEvent(c); }
-void call_endingCutscene(Cpu *c) { fn_endingCutscene(c); }
-void call_giveMultiTreasure(Cpu *c) { fn_giveMultiTreasure(c); }
-void call_giveTake(Cpu *c) { fn_giveTake(c); }
-void call_giveTreasure(Cpu *c) { fn_giveTreasure(c); }
-void call_ifProc(Cpu *c) { fn_ifProc(c); }
-void call_inputString(Cpu *c) { fn_inputString(c); }
-void call_loadHireFaces(Cpu *c) { fn_loadHireFaces(c); }
-void call_setValue(Cpu *c) { fn_setValue(c); }
-void call_showJoke(Cpu *c) { fn_showJoke(c); }
-void call_townBank(Cpu *c) { fn_townBank(c); }
-void call_townGuild(Cpu *c) { fn_townGuild(c); }
-void call_townInn(Cpu *c) { fn_townInn(c); }
-void call_townSmithy(Cpu *c) { fn_townSmithy(c); }
-void call_townTavern(Cpu *c) { fn_townTavern(c); }
-void call_townTemple(Cpu *c) { fn_townTemple(c); }
-void call_townTraining(Cpu *c) { fn_townTraining(c); }
-void call_scanMonstersAhead(Cpu *c) { fn_scanMonstersAhead(c); }
-void call_sub_280A3(Cpu *c) { fn_sub_280A3(c); }
-void call_sub_28258(Cpu *c) { fn_sub_28258(c); }
-void call_spellAttackAhead(Cpu *c) { fn_spellAttackAhead(c); }
-void call_sub_3BE18(Cpu *c) { fn_sub_3BE18(c); }
-void call_sub_416C7(Cpu *c) { fn_sub_416C7(c); }
-void call_sub_42EA9(Cpu *c) { fn_sub_42EA9(c); }
-void call_sub_4BDAE(Cpu *c) { fn_sub_4BDAE(c); }
-void call_sub_4EC06(Cpu *c) { fn_sub_4EC06(c); }
-void call_sub_280E5(Cpu *c) { fn_sub_280E5(c); }
-void call_drawAutomapWrapped(Cpu *c) { fn_drawAutomapWrapped(c); }
-void call_updateLight(Cpu *c) { fn_updateLight(c); }
-void call_finishCreation(Cpu *c) { fn_finishCreation(c); }
-void call_showClassAvailability(Cpu *c) { fn_showClassAvailability(c); }
-void call_sub_46566(Cpu *c) { fn_sub_46566(c); }
-void call_sub_466EC(Cpu *c) { fn_sub_466EC(c); }
-void call_sub_46DE4(Cpu *c) { fn_sub_46DE4(c); }
-void call_sub_4789F(Cpu *c) { fn_sub_4789F(c); }
-void call_saveGame(Cpu *c) { fn_saveGame(c); }
-void call_setStartTime(Cpu *c) { fn_setStartTime(c); }
-void call_sub_41A2F(Cpu *c) { fn_sub_41A2F(c); }
-void call_sub_4EBE3(Cpu *c) { fn_sub_4EBE3(c); }
-void call_sub_12436(Cpu *c) { fn_sub_12436(c); }
-void call_sub_387C6(Cpu *c) { fn_sub_387C6(c); }
-void call_doCharDamage(Cpu *c) { fn_doCharDamage(c); }
-void call_addTime(Cpu *c) { fn_addTime(c); }
-void call_mapHasDayNight(Cpu *c) { fn_mapHasDayNight(c); }
-void call_sub_28194(Cpu *c) { fn_sub_28194(c); }
-void call_clearViewFlags(Cpu *c) { fn_clearViewFlags(c); }
-void call_renderOutdoorView(Cpu *c) { fn_renderOutdoorView(c); }
-void call_scanObjectsAhead(Cpu *c) { fn_scanObjectsAhead(c); }
-void call_attack(Cpu *c) { fn_attack(c); }
-void call_block(Cpu *c) { fn_block(c); }
-void call_getMonsterDescriptions(Cpu *c) { fn_getMonsterDescriptions(c); }
-void call_nextChar(Cpu *c) { fn_nextChar(c); }
-void call_quickFight(Cpu *c) { fn_quickFight(c); }
-void call_run(Cpu *c) { fn_run(c); }
-void call_sub_27F63(Cpu *c) { fn_sub_27F63(c); }
-void call_sub_282DE(Cpu *c) { fn_sub_282DE(c); }
-void call_checkDrawListOverflow(Cpu *c) { fn_checkDrawListOverflow(c); }
-void call_drawRow3Sprites(Cpu *c) { fn_drawRow3Sprites(c); }
-void call_drawRow4Sprites(Cpu *c) { fn_drawRow4Sprites(c); }
-void call_drawWallFaces(Cpu *c) { fn_drawWallFaces(c); }
-void call_sub_2864E(Cpu *c) { fn_sub_2864E(c); }
-void call_sub_400DF(Cpu *c) { fn_sub_400DF(c); }
-void call_currentTime(Cpu *c) { fn_currentTime(c); }
-void call_timeToString(Cpu *c) { fn_timeToString(c); }
-void call_itemName(Cpu *c) { fn_itemName(c); }
-void call_itemsDialog(Cpu *c) { fn_itemsDialog(c); }
-void call_sub_280F4(Cpu *c) { fn_sub_280F4(c); }
-void call_sub_28630(Cpu *c) { fn_sub_28630(c); }
-void call_sub_28635(Cpu *c) { fn_sub_28635(c); }
-void call_sub_2863A(Cpu *c) { fn_sub_2863A(c); }
-void call_sub_51DAB(Cpu *c) { fn_sub_51DAB(c); }
-void call_sub_5122D(Cpu *c) { fn_sub_5122D(c); }
-void call_sub_27F40(Cpu *c) { fn_sub_27F40(c); }
-void call_sub_286D6(Cpu *c) { fn_sub_286D6(c); }
-void call_sub_42FF5(Cpu *c) { fn_sub_42FF5(c); }
-void call_sub_43034(Cpu *c) { fn_sub_43034(c); }
-void call_sub_3886C(Cpu *c) { fn_sub_3886C(c); }
-void call_sub_3DFB6(Cpu *c) { fn_sub_3DFB6(c); }
-void call_sub_4495A(Cpu *c) { fn_sub_4495A(c); }
-void call_sub_511AB(Cpu *c) { fn_sub_511AB(c); }
-void call_readSaveHeader(Cpu *c) { fn_readSaveHeader(c); }
-void call_saveMazeState(Cpu *c) { fn_saveMazeState(c); }
-void call_sub_40465(Cpu *c) { fn_sub_40465(c); }
-void call_sub_442EB(Cpu *c) { fn_sub_442EB(c); }
-void call_indexEvents(Cpu *c) { fn_indexEvents(c); }
-void call_loadMazeDats(Cpu *c) { fn_loadMazeDats(c); }
-void call_sub_41689(Cpu *c) { fn_sub_41689(c); }
-void call_sub_4346B(Cpu *c) { fn_sub_4346B(c); }
-void call_sub_403A6(Cpu *c) { fn_sub_403A6(c); }
-void call_healCharacterEffect(Cpu *c) { fn_healCharacterEffect(c); }
-void call_showErrorMessage(Cpu *c) { fn_showErrorMessage(c); }
-void call_sub_4C027(Cpu *c) { fn_sub_4C027(c); }
-void call_sub_4BF12(Cpu *c) { fn_sub_4BF12(c); }
-void call_sub_2824E(Cpu *c) { fn_sub_2824E(c); }
-void call_trainCharacter(Cpu *c) { fn_trainCharacter(c); }
-void call_sub_40248(Cpu *c) { fn_sub_40248(c); }
-void call_sub_40280(Cpu *c) { fn_sub_40280(c); }
-void call_sub_41633(Cpu *c) { fn_sub_41633(c); }
-void call_sub_4C19A(Cpu *c) { fn_sub_4C19A(c); }
-void call_sub_4C106(Cpu *c) { fn_sub_4C106(c); }
-void call_townBuildingIntro(Cpu *c) { fn_townBuildingIntro(c); }
-void call_townMenuInput(Cpu *c) { fn_townMenuInput(c); }
-void call_sub_27FBD(Cpu *c) { fn_sub_27FBD(c); }
-void call_sub_39930(Cpu *c) { fn_sub_39930(c); }
-void call_sub_3CE7A(Cpu *c) { fn_sub_3CE7A(c); }
-void call_learnSpellDialog(Cpu *c) { fn_learnSpellDialog(c); }
-void call_sub_2810D(Cpu *c) { fn_sub_2810D(c); }
-void call_sub_3C1F2(Cpu *c) { fn_sub_3C1F2(c); }
-void call_sub_25EF3(Cpu *c) { fn_sub_25EF3(c); }
-void call_sub_43D72(Cpu *c) { fn_sub_43D72(c); }
-void call_sub_43DC8(Cpu *c) { fn_sub_43DC8(c); }
-void call_sub_28253(Cpu *c) { fn_sub_28253(c); }
-void call_bankDialog(Cpu *c) { fn_bankDialog(c); }
-void call_sub_27F6D(Cpu *c) { fn_sub_27F6D(c); }
-void call_sub_28149(Cpu *c) { fn_sub_28149(c); }
-void call_sub_27F95(Cpu *c) { fn_sub_27F95(c); }
-void call_sub_483FB(Cpu *c) { fn_sub_483FB(c); }
-void call_sub_496FA(Cpu *c) { fn_sub_496FA(c); }
-void call_sub_2802F(Cpu *c) { fn_sub_2802F(c); }
-void call_sub_4877A(Cpu *c) { fn_sub_4877A(c); }
-void call_sub_48CF7(Cpu *c) { fn_sub_48CF7(c); }
-void call_sub_281E9(Cpu *c) { fn_sub_281E9(c); }
-void call_trainingNeedsExperience(Cpu *c) { fn_trainingNeedsExperience(c); }
-void call_sub_43D1B(Cpu *c) { fn_sub_43D1B(c); }
-void call_sub_284C8(Cpu *c) { fn_sub_284C8(c); }
-void call_sub_400B4(Cpu *c) { fn_sub_400B4(c); }
-void call_sub_41991(Cpu *c) { fn_sub_41991(c); }
-void call_sub_27F72(Cpu *c) { fn_sub_27F72(c); }
-void call_resetBlacksmithWares(Cpu *c) { fn_resetBlacksmithWares(c); }
-void call_resetTemps(Cpu *c) { fn_resetTemps(c); }
-void call_drawRow1Sprites(Cpu *c) { fn_drawRow1Sprites(c); }
-void call_drawRow2Sprites(Cpu *c) { fn_drawRow2Sprites(c); }
-void call_attack2(Cpu *c) { fn_attack2(c); }
-void call_getMonsterDamage(Cpu *c) { fn_getMonsterDamage(c); }
-void call_monster_getTextColor(Cpu *c) { fn_monster_getTextColor(c); }
-void call_sortCombatParty(Cpu *c) { fn_sortCombatParty(c); }
-void call_sub_37BA7(Cpu *c) { fn_sub_37BA7(c); }
-void call_sub_45A70(Cpu *c) { fn_sub_45A70(c); }
-void call_sub_4EEF8(Cpu *c) { fn_sub_4EEF8(c); }
-void call_castItemSpell(Cpu *c) { fn_castItemSpell(c); }
-void call_equipItem(Cpu *c) { fn_equipItem(c); }
-void call_identifyOrFix(Cpu *c) { fn_identifyOrFix(c); }
-void call_specialsDialog(Cpu *c) { fn_specialsDialog(c); }
-void call_sub_40506(Cpu *c) { fn_sub_40506(c); }
-void call_sub_4ED7B(Cpu *c) { fn_sub_4ED7B(c); }
-void call_sub_4ECB3(Cpu *c) { fn_sub_4ECB3(c); }
-void call_sub_4EE43(Cpu *c) { fn_sub_4EE43(c); }
-void call_sub_37D3E(Cpu *c) { fn_sub_37D3E(c); }
-void call_sub_3BC65(Cpu *c) { fn_sub_3BC65(c); }
-void call_sub_44CC6(Cpu *c) { fn_sub_44CC6(c); }
-void call_sub_281A3(Cpu *c) { fn_sub_281A3(c); }
-void call_sub_281FD(Cpu *c) { fn_sub_281FD(c); }
-void call_sub_47947(Cpu *c) { fn_sub_47947(c); }
-void call_sub_37CBB(Cpu *c) { fn_sub_37CBB(c); }
-void call_sub_404D5(Cpu *c) { fn_sub_404D5(c); }
-void call_sub_44C14(Cpu *c) { fn_sub_44C14(c); }
-void call_sub_281A8(Cpu *c) { fn_sub_281A8(c); }
-void call_sub_37C6C(Cpu *c) { fn_sub_37C6C(c); }
-void call_sub_4033B(Cpu *c) { fn_sub_4033B(c); }
-void call_sub_37BF1(Cpu *c) { fn_sub_37BF1(c); }
-void call_formatNumber(Cpu *c) { fn_formatNumber(c); }
-void call_sub_4BDC4(Cpu *c) { fn_sub_4BDC4(c); }
-void call_sub_37B59(Cpu *c) { fn_sub_37B59(c); }
-void call_sub_27F9A(Cpu *c) { fn_sub_27F9A(c); }
-void call_sub_28108(Cpu *c) { fn_sub_28108(c); }
-void call_sub_280B2(Cpu *c) { fn_sub_280B2(c); }
-void call_getEquipSlotName(Cpu *c) { fn_getEquipSlotName(c); }
-void call_canEquip(Cpu *c) { fn_canEquip(c); }
-void call_ipause_5(Cpu *c) { fn_ipause_5(c); }
-void call_sub_37B7D(Cpu *c) { fn_sub_37B7D(c); }
-void call_sub_40383(Cpu *c) { fn_sub_40383(c); }
-void call_sub_3E08F(Cpu *c) { fn_sub_3E08F(c); }
+void call_exploreLoop(Cpu *c) { RTOP_BEGIN(c, "exploreLoop"); fn_exploreLoop(c); RTOP_END(c); }
+void call_loadMonsterData(Cpu *c) { RTOP_BEGIN(c, "loadMonsterData"); fn_loadMonsterData(c); RTOP_END(c); }
+void call_loadSavedGame(Cpu *c) { RTOP_BEGIN(c, "loadSavedGame"); fn_loadSavedGame(c); RTOP_END(c); }
+void call_rosterMenu(Cpu *c) { RTOP_BEGIN(c, "rosterMenu"); fn_rosterMenu(c); RTOP_END(c); }
+void call_introSequence(Cpu *c) { RTOP_BEGIN(c, "introSequence"); fn_introSequence(c); RTOP_END(c); }
+void call_copyPartyToRoster(Cpu *c) { RTOP_BEGIN(c, "copyPartyToRoster"); fn_copyPartyToRoster(c); RTOP_END(c); }
+void call_monstersAttack(Cpu *c) { RTOP_BEGIN(c, "monstersAttack"); fn_monstersAttack(c); RTOP_END(c); }
+void call_sub_27F5E(Cpu *c) { RTOP_BEGIN(c, "sub_27F5E"); fn_sub_27F5E(c); RTOP_END(c); }
+void call_chargeStep(Cpu *c) { RTOP_BEGIN(c, "chargeStep"); fn_chargeStep(c); RTOP_END(c); }
+void call_checkSkill(Cpu *c) { RTOP_BEGIN(c, "checkSkill"); fn_checkSkill(c); RTOP_END(c); }
+void call_drawParty(Cpu *c) { RTOP_BEGIN(c, "drawParty"); fn_drawParty(c); RTOP_END(c); }
+void call_drawView(Cpu *c) { RTOP_BEGIN(c, "drawView"); fn_drawView(c); RTOP_END(c); }
+void call_freeSpriteSlot(Cpu *c) { RTOP_BEGIN(c, "freeSpriteSlot"); fn_freeSpriteSlot(c); RTOP_END(c); }
+void call_getCommand(Cpu *c) { RTOP_BEGIN(c, "getCommand"); fn_getCommand(c); RTOP_END(c); }
+void call_bash(Cpu *c) { RTOP_BEGIN(c, "bash"); fn_bash(c); RTOP_END(c); }
+void call_characterInfoDialog(Cpu *c) { RTOP_BEGIN(c, "characterInfoDialog"); fn_characterInfoDialog(c); RTOP_END(c); }
+void call_characterStatsDialog(Cpu *c) { RTOP_BEGIN(c, "characterStatsDialog"); fn_characterStatsDialog(c); RTOP_END(c); }
+void call_controlPanel(Cpu *c) { RTOP_BEGIN(c, "controlPanel"); fn_controlPanel(c); RTOP_END(c); }
+void call_dismissCharacter(Cpu *c) { RTOP_BEGIN(c, "dismissCharacter"); fn_dismissCharacter(c); RTOP_END(c); }
+void call_gameInformation(Cpu *c) { RTOP_BEGIN(c, "gameInformation"); fn_gameInformation(c); RTOP_END(c); }
+void call_giveCharDamage(Cpu *c) { RTOP_BEGIN(c, "giveCharDamage"); fn_giveCharDamage(c); RTOP_END(c); }
+void call_questLog(Cpu *c) { RTOP_BEGIN(c, "questLog"); fn_questLog(c); RTOP_END(c); }
+void call_rest(Cpu *c) { RTOP_BEGIN(c, "rest"); fn_rest(c); RTOP_END(c); }
+void call_setButtons_41D(Cpu *c) { RTOP_BEGIN(c, "setButtons_41D"); fn_setButtons_41D(c); RTOP_END(c); }
+void call_setWrapModeForMap(Cpu *c) { RTOP_BEGIN(c, "setWrapModeForMap"); fn_setWrapModeForMap(c); RTOP_END(c); }
+void call_showMessage(Cpu *c) { RTOP_BEGIN(c, "showMessage"); fn_showMessage(c); RTOP_END(c); }
+void call_showOverheadMap(Cpu *c) { RTOP_BEGIN(c, "showOverheadMap"); fn_showOverheadMap(c); RTOP_END(c); }
+void call_spellsDialog(Cpu *c) { RTOP_BEGIN(c, "spellsDialog"); fn_spellsDialog(c); RTOP_END(c); }
+void call_mazeUpdateSlot(Cpu *c) { RTOP_BEGIN(c, "mazeUpdateSlot"); fn_mazeUpdateSlot(c); RTOP_END(c); }
+void call_monstersRecover(Cpu *c) { RTOP_BEGIN(c, "monstersRecover"); fn_monstersRecover(c); RTOP_END(c); }
+void call_playSoundEffect(Cpu *c) { RTOP_BEGIN(c, "playSoundEffect"); fn_playSoundEffect(c); RTOP_END(c); }
+void call_runMazeEvent(Cpu *c) { RTOP_BEGIN(c, "runMazeEvent"); fn_runMazeEvent(c); RTOP_END(c); }
+void call_shootAhead(Cpu *c) { RTOP_BEGIN(c, "shootAhead"); fn_shootAhead(c); RTOP_END(c); }
+void call_sub_25DFE(Cpu *c) { RTOP_BEGIN(c, "sub_25DFE"); fn_sub_25DFE(c); RTOP_END(c); }
+void call_sub_25E9E(Cpu *c) { RTOP_BEGIN(c, "sub_25E9E"); fn_sub_25E9E(c); RTOP_END(c); }
+void call_sub_27F45(Cpu *c) { RTOP_BEGIN(c, "sub_27F45"); fn_sub_27F45(c); RTOP_END(c); }
+void call_sub_2803E(Cpu *c) { RTOP_BEGIN(c, "sub_2803E"); fn_sub_2803E(c); RTOP_END(c); }
+void call_sub_28130(Cpu *c) { RTOP_BEGIN(c, "sub_28130"); fn_sub_28130(c); RTOP_END(c); }
+void call_sub_28185(Cpu *c) { RTOP_BEGIN(c, "sub_28185"); fn_sub_28185(c); RTOP_END(c); }
+void call_sub_281D0(Cpu *c) { RTOP_BEGIN(c, "sub_281D0"); fn_sub_281D0(c); RTOP_END(c); }
+void call_sub_281F3(Cpu *c) { RTOP_BEGIN(c, "sub_281F3"); fn_sub_281F3(c); RTOP_END(c); }
+void call_sub_2848C(Cpu *c) { RTOP_BEGIN(c, "sub_2848C"); fn_sub_2848C(c); RTOP_END(c); }
+void call_sub_28649(Cpu *c) { RTOP_BEGIN(c, "sub_28649"); fn_sub_28649(c); RTOP_END(c); }
+void call_sub_3E6F1(Cpu *c) { RTOP_BEGIN(c, "sub_3E6F1"); fn_sub_3E6F1(c); RTOP_END(c); }
+void call_sub_3E729(Cpu *c) { RTOP_BEGIN(c, "sub_3E729"); fn_sub_3E729(c); RTOP_END(c); }
+void call_sub_3E8E2(Cpu *c) { RTOP_BEGIN(c, "sub_3E8E2"); fn_sub_3E8E2(c); RTOP_END(c); }
+void call_updateAutomap(Cpu *c) { RTOP_BEGIN(c, "updateAutomap"); fn_updateAutomap(c); RTOP_END(c); }
+void call_drawHudPieces(Cpu *c) { RTOP_BEGIN(c, "drawHudPieces"); fn_drawHudPieces(c); RTOP_END(c); }
+void call_confirmDialog(Cpu *c) { RTOP_BEGIN(c, "confirmDialog"); fn_confirmDialog(c); RTOP_END(c); }
+void call_createCharacter(Cpu *c) { RTOP_BEGIN(c, "createCharacter"); fn_createCharacter(c); RTOP_END(c); }
+void call_sortParty(Cpu *c) { RTOP_BEGIN(c, "sortParty"); fn_sortParty(c); RTOP_END(c); }
+void call_sub_25F71(Cpu *c) { RTOP_BEGIN(c, "sub_25F71"); fn_sub_25F71(c); RTOP_END(c); }
+void call_sub_281CB(Cpu *c) { RTOP_BEGIN(c, "sub_281CB"); fn_sub_281CB(c); RTOP_END(c); }
+void call_sub_28653(Cpu *c) { RTOP_BEGIN(c, "sub_28653"); fn_sub_28653(c); RTOP_END(c); }
+void call_sub_4012B(Cpu *c) { RTOP_BEGIN(c, "sub_4012B"); fn_sub_4012B(c); RTOP_END(c); }
+void call_sub_4014E(Cpu *c) { RTOP_BEGIN(c, "sub_4014E"); fn_sub_4014E(c); RTOP_END(c); }
+void call_sub_40173(Cpu *c) { RTOP_BEGIN(c, "sub_40173"); fn_sub_40173(c); RTOP_END(c); }
+void call_sub_4058A(Cpu *c) { RTOP_BEGIN(c, "sub_4058A"); fn_sub_4058A(c); RTOP_END(c); }
+void call_sub_4087E(Cpu *c) { RTOP_BEGIN(c, "sub_4087E"); fn_sub_4087E(c); RTOP_END(c); }
+void call_protectionHandler(Cpu *c) { RTOP_BEGIN(c, "protectionHandler"); fn_protectionHandler(c); RTOP_END(c); }
+void call_sub_253D3(Cpu *c) { RTOP_BEGIN(c, "sub_253D3"); fn_sub_253D3(c); RTOP_END(c); }
+void call_sub_25E66(Cpu *c) { RTOP_BEGIN(c, "sub_25E66"); fn_sub_25E66(c); RTOP_END(c); }
+void call_sub_38821(Cpu *c) { RTOP_BEGIN(c, "sub_38821"); fn_sub_38821(c); RTOP_END(c); }
+void call_sub_3946E(Cpu *c) { RTOP_BEGIN(c, "sub_3946E"); fn_sub_3946E(c); RTOP_END(c); }
+void call_doMonsterTurn(Cpu *c) { RTOP_BEGIN(c, "doMonsterTurn"); fn_doMonsterTurn(c); RTOP_END(c); }
+void call_sub_3853A(Cpu *c) { RTOP_BEGIN(c, "sub_3853A"); fn_sub_3853A(c); RTOP_END(c); }
+void call_changeTime(Cpu *c) { RTOP_BEGIN(c, "changeTime"); fn_changeTime(c); RTOP_END(c); }
+void call_drawViewOutdoors(Cpu *c) { RTOP_BEGIN(c, "drawViewOutdoors"); fn_drawViewOutdoors(c); RTOP_END(c); }
+void call_doCombat(Cpu *c) { RTOP_BEGIN(c, "doCombat"); fn_doCombat(c); RTOP_END(c); }
+void call_prepareIndoorView(Cpu *c) { RTOP_BEGIN(c, "prepareIndoorView"); fn_prepareIndoorView(c); RTOP_END(c); }
+void call_renderIndoorView(Cpu *c) { RTOP_BEGIN(c, "renderIndoorView"); fn_renderIndoorView(c); RTOP_END(c); }
+void call_sub_252CF(Cpu *c) { RTOP_BEGIN(c, "sub_252CF"); fn_sub_252CF(c); RTOP_END(c); }
+void call_sub_25C52(Cpu *c) { RTOP_BEGIN(c, "sub_25C52"); fn_sub_25C52(c); RTOP_END(c); }
+void call_sub_25D8D(Cpu *c) { RTOP_BEGIN(c, "sub_25D8D"); fn_sub_25D8D(c); RTOP_END(c); }
+void call_sub_27F4F(Cpu *c) { RTOP_BEGIN(c, "sub_27F4F"); fn_sub_27F4F(c); RTOP_END(c); }
+void call_sub_27F8B(Cpu *c) { RTOP_BEGIN(c, "sub_27F8B"); fn_sub_27F8B(c); RTOP_END(c); }
+void call_sub_28103(Cpu *c) { RTOP_BEGIN(c, "sub_28103"); fn_sub_28103(c); RTOP_END(c); }
+void call_sub_282ED(Cpu *c) { RTOP_BEGIN(c, "sub_282ED"); fn_sub_282ED(c); RTOP_END(c); }
+void call_timeText(Cpu *c) { RTOP_BEGIN(c, "timeText"); fn_timeText(c); RTOP_END(c); }
+void call_characterInfoInventory(Cpu *c) { RTOP_BEGIN(c, "characterInfoInventory"); fn_characterInfoInventory(c); RTOP_END(c); }
+void call_drawCharacterStats(Cpu *c) { RTOP_BEGIN(c, "drawCharacterStats"); fn_drawCharacterStats(c); RTOP_END(c); }
+void call_highlightChar(Cpu *c) { RTOP_BEGIN(c, "highlightChar"); fn_highlightChar(c); RTOP_END(c); }
+void call_Awards_show(Cpu *c) { RTOP_BEGIN(c, "Awards_show"); fn_Awards_show(c); RTOP_END(c); }
+void call_loadMapGraphics(Cpu *c) { RTOP_BEGIN(c, "loadMapGraphics"); fn_loadMapGraphics(c); RTOP_END(c); }
+void call_sub_27F7C(Cpu *c) { RTOP_BEGIN(c, "sub_27F7C"); fn_sub_27F7C(c); RTOP_END(c); }
+void call_sub_28099(Cpu *c) { RTOP_BEGIN(c, "sub_28099"); fn_sub_28099(c); RTOP_END(c); }
+void call_sub_280EA(Cpu *c) { RTOP_BEGIN(c, "sub_280EA"); fn_sub_280EA(c); RTOP_END(c); }
+void call_sub_28144(Cpu *c) { RTOP_BEGIN(c, "sub_28144"); fn_sub_28144(c); RTOP_END(c); }
+void call_sub_281E4(Cpu *c) { RTOP_BEGIN(c, "sub_281E4"); fn_sub_281E4(c); RTOP_END(c); }
+void call_sub_28267(Cpu *c) { RTOP_BEGIN(c, "sub_28267"); fn_sub_28267(c); RTOP_END(c); }
+void call_sub_511C8(Cpu *c) { RTOP_BEGIN(c, "sub_511C8"); fn_sub_511C8(c); RTOP_END(c); }
+void call_statColor(Cpu *c) { RTOP_BEGIN(c, "statColor"); fn_statColor(c); RTOP_END(c); }
+void call_sub_25DE3(Cpu *c) { RTOP_BEGIN(c, "sub_25DE3"); fn_sub_25DE3(c); RTOP_END(c); }
+void call_getFiles(Cpu *c) { RTOP_BEGIN(c, "getFiles"); fn_getFiles(c); RTOP_END(c); }
+void call_pickSaveSlot(Cpu *c) { RTOP_BEGIN(c, "pickSaveSlot"); fn_pickSaveSlot(c); RTOP_END(c); }
+void call_loadGame(Cpu *c) { RTOP_BEGIN(c, "loadGame"); fn_loadGame(c); RTOP_END(c); }
+void call_loadSaveDialog(Cpu *c) { RTOP_BEGIN(c, "loadSaveDialog"); fn_loadSaveDialog(c); RTOP_END(c); }
+void call_setPartyStartCell(Cpu *c) { RTOP_BEGIN(c, "setPartyStartCell"); fn_setPartyStartCell(c); RTOP_END(c); }
+void call_sub_41EF1(Cpu *c) { RTOP_BEGIN(c, "sub_41EF1"); fn_sub_41EF1(c); RTOP_END(c); }
+void call_sub_280E0(Cpu *c) { RTOP_BEGIN(c, "sub_280E0"); fn_sub_280E0(c); RTOP_END(c); }
+void call_sub_2811C(Cpu *c) { RTOP_BEGIN(c, "sub_2811C"); fn_sub_2811C(c); RTOP_END(c); }
+void call_sub_44843(Cpu *c) { RTOP_BEGIN(c, "sub_44843"); fn_sub_44843(c); RTOP_END(c); }
+void call_sub_44921(Cpu *c) { RTOP_BEGIN(c, "sub_44921"); fn_sub_44921(c); RTOP_END(c); }
+void call_buildActiveEffects(Cpu *c) { RTOP_BEGIN(c, "buildActiveEffects"); fn_buildActiveEffects(c); RTOP_END(c); }
+void call_sub_28249(Cpu *c) { RTOP_BEGIN(c, "sub_28249"); fn_sub_28249(c); RTOP_END(c); }
+void call_sub_418F3(Cpu *c) { RTOP_BEGIN(c, "sub_418F3"); fn_sub_418F3(c); RTOP_END(c); }
+void call_Map_load(Cpu *c) { RTOP_BEGIN(c, "Map_load"); fn_Map_load(c); RTOP_END(c); }
+void call_loadMapData(Cpu *c) { RTOP_BEGIN(c, "loadMapData"); fn_loadMapData(c); RTOP_END(c); }
+void call_sub_416F1(Cpu *c) { RTOP_BEGIN(c, "sub_416F1"); fn_sub_416F1(c); RTOP_END(c); }
+void call_sub_434A6(Cpu *c) { RTOP_BEGIN(c, "sub_434A6"); fn_sub_434A6(c); RTOP_END(c); }
+void call_sub_402AC(Cpu *c) { RTOP_BEGIN(c, "sub_402AC"); fn_sub_402AC(c); RTOP_END(c); }
+void call_sub_402F6(Cpu *c) { RTOP_BEGIN(c, "sub_402F6"); fn_sub_402F6(c); RTOP_END(c); }
+void call_sub_1B223(Cpu *c) { RTOP_BEGIN(c, "sub_1B223"); fn_sub_1B223(c); RTOP_END(c); }
+void call_sub_28135(Cpu *c) { RTOP_BEGIN(c, "sub_28135"); fn_sub_28135(c); RTOP_END(c); }
+void call_sub_425AB(Cpu *c) { RTOP_BEGIN(c, "sub_425AB"); fn_sub_425AB(c); RTOP_END(c); }
+void call_Spell_00_Light(Cpu *c) { RTOP_BEGIN(c, "Spell_00_Light"); fn_Spell_00_Light(c); RTOP_END(c); }
+void call_Spell_01_Awaken(Cpu *c) { RTOP_BEGIN(c, "Spell_01_Awaken"); fn_Spell_01_Awaken(c); RTOP_END(c); }
+void call_Spell_02_FirstAid(Cpu *c) { RTOP_BEGIN(c, "Spell_02_FirstAid"); fn_Spell_02_FirstAid(c); RTOP_END(c); }
+void call_Spell_03_FlyingFist(Cpu *c) { RTOP_BEGIN(c, "Spell_03_FlyingFist"); fn_Spell_03_FlyingFist(c); RTOP_END(c); }
+void call_Spell_04_DetectMagic(Cpu *c) { RTOP_BEGIN(c, "Spell_04_DetectMagic"); fn_Spell_04_DetectMagic(c); RTOP_END(c); }
+void call_Spell_05_ElementalArrow(Cpu *c) { RTOP_BEGIN(c, "Spell_05_ElementalArrow"); fn_Spell_05_ElementalArrow(c); RTOP_END(c); }
+void call_Spell_06_Revitalize(Cpu *c) { RTOP_BEGIN(c, "Spell_06_Revitalize"); fn_Spell_06_Revitalize(c); RTOP_END(c); }
+void call_Spell_07_CureWounds(Cpu *c) { RTOP_BEGIN(c, "Spell_07_CureWounds"); fn_Spell_07_CureWounds(c); RTOP_END(c); }
+void call_Spell_08_Sparks(Cpu *c) { RTOP_BEGIN(c, "Spell_08_Sparks"); fn_Spell_08_Sparks(c); RTOP_END(c); }
+void call_Spell_09_EnergyBlast(Cpu *c) { RTOP_BEGIN(c, "Spell_09_EnergyBlast"); fn_Spell_09_EnergyBlast(c); RTOP_END(c); }
+void call_Spell_10_Sleep(Cpu *c) { RTOP_BEGIN(c, "Spell_10_Sleep"); fn_Spell_10_Sleep(c); RTOP_END(c); }
+void call_Spell_11_Pain(Cpu *c) { RTOP_BEGIN(c, "Spell_11_Pain"); fn_Spell_11_Pain(c); RTOP_END(c); }
+void call_Spell_12_CreateRope(Cpu *c) { RTOP_BEGIN(c, "Spell_12_CreateRope"); fn_Spell_12_CreateRope(c); RTOP_END(c); }
+void call_Spell_13_ToxicCloud(Cpu *c) { RTOP_BEGIN(c, "Spell_13_ToxicCloud"); fn_Spell_13_ToxicCloud(c); RTOP_END(c); }
+void call_Spell_14_SuppressPoison(Cpu *c) { RTOP_BEGIN(c, "Spell_14_SuppressPoison"); fn_Spell_14_SuppressPoison(c); RTOP_END(c); }
+void call_Spell_15_ProtFromElements(Cpu *c) { RTOP_BEGIN(c, "Spell_15_ProtFromElements"); fn_Spell_15_ProtFromElements(c); RTOP_END(c); }
+void call_Spell_16_TurnUndead(Cpu *c) { RTOP_BEGIN(c, "Spell_16_TurnUndead"); fn_Spell_16_TurnUndead(c); RTOP_END(c); }
+void call_Spell_17_Jump(Cpu *c) { RTOP_BEGIN(c, "Spell_17_Jump"); fn_Spell_17_Jump(c); RTOP_END(c); }
+void call_Spell_18_AcidStream(Cpu *c) { RTOP_BEGIN(c, "Spell_18_AcidStream"); fn_Spell_18_AcidStream(c); RTOP_END(c); }
+void call_Spell_19_SuppressDisease(Cpu *c) { RTOP_BEGIN(c, "Spell_19_SuppressDisease"); fn_Spell_19_SuppressDisease(c); RTOP_END(c); }
+void call_Spell_20_Silence(Cpu *c) { RTOP_BEGIN(c, "Spell_20_Silence"); fn_Spell_20_Silence(c); RTOP_END(c); }
+void call_Spell_21_Blessed(Cpu *c) { RTOP_BEGIN(c, "Spell_21_Blessed"); fn_Spell_21_Blessed(c); RTOP_END(c); }
+void call_Spell_22_Levitate(Cpu *c) { RTOP_BEGIN(c, "Spell_22_Levitate"); fn_Spell_22_Levitate(c); RTOP_END(c); }
+void call_Spell_23_WizardEye(Cpu *c) { RTOP_BEGIN(c, "Spell_23_WizardEye"); fn_Spell_23_WizardEye(c); RTOP_END(c); }
+void call_Spell_24_IdentifyMonster(Cpu *c) { RTOP_BEGIN(c, "Spell_24_IdentifyMonster"); fn_Spell_24_IdentifyMonster(c); RTOP_END(c); }
+void call_Spell_25_HolyBonus(Cpu *c) { RTOP_BEGIN(c, "Spell_25_HolyBonus"); fn_Spell_25_HolyBonus(c); RTOP_END(c); }
+void call_Spell_26_PowerCure(Cpu *c) { RTOP_BEGIN(c, "Spell_26_PowerCure"); fn_Spell_26_PowerCure(c); RTOP_END(c); }
+void call_Spell_27_NatureSCure(Cpu *c) { RTOP_BEGIN(c, "Spell_27_NatureSCure"); fn_Spell_27_NatureSCure(c); RTOP_END(c); }
+void call_Spell_28_LightningBolt(Cpu *c) { RTOP_BEGIN(c, "Spell_28_LightningBolt"); fn_Spell_28_LightningBolt(c); RTOP_END(c); }
+void call_Spell_29_Immobilize(Cpu *c) { RTOP_BEGIN(c, "Spell_29_Immobilize"); fn_Spell_29_Immobilize(c); RTOP_END(c); }
+void call_Spell_30_Heroism(Cpu *c) { RTOP_BEGIN(c, "Spell_30_Heroism"); fn_Spell_30_Heroism(c); RTOP_END(c); }
+void call_Spell_31_WalkOnWater(Cpu *c) { RTOP_BEGIN(c, "Spell_31_WalkOnWater"); fn_Spell_31_WalkOnWater(c); RTOP_END(c); }
+void call_Spell_32_FrostBite(Cpu *c) { RTOP_BEGIN(c, "Spell_32_FrostBite"); fn_Spell_32_FrostBite(c); RTOP_END(c); }
+void call_Spell_34_PowerShield(Cpu *c) { RTOP_BEGIN(c, "Spell_34_PowerShield"); fn_Spell_34_PowerShield(c); RTOP_END(c); }
+void call_Spell_35_CurePoison(Cpu *c) { RTOP_BEGIN(c, "Spell_35_CurePoison"); fn_Spell_35_CurePoison(c); RTOP_END(c); }
+void call_Spell_36_Fireball(Cpu *c) { RTOP_BEGIN(c, "Spell_36_Fireball"); fn_Spell_36_Fireball(c); RTOP_END(c); }
+void call_Spell_37_DetectMonster(Cpu *c) { RTOP_BEGIN(c, "Spell_37_DetectMonster"); fn_Spell_37_DetectMonster(c); RTOP_END(c); }
+void call_Spell_38_AcidSpray(Cpu *c) { RTOP_BEGIN(c, "Spell_38_AcidSpray"); fn_Spell_38_AcidSpray(c); RTOP_END(c); }
+void call_Spell_39_ColdRay(Cpu *c) { RTOP_BEGIN(c, "Spell_39_ColdRay"); fn_Spell_39_ColdRay(c); RTOP_END(c); }
+void call_Spell_40_CureDisease(Cpu *c) { RTOP_BEGIN(c, "Spell_40_CureDisease"); fn_Spell_40_CureDisease(c); RTOP_END(c); }
+void call_Spell_41_NaturesGate(Cpu *c) { RTOP_BEGIN(c, "Spell_41_NaturesGate"); fn_Spell_41_NaturesGate(c); RTOP_END(c); }
+void call_Spell_42_TimeDistortion(Cpu *c) { RTOP_BEGIN(c, "Spell_42_TimeDistortion"); fn_Spell_42_TimeDistortion(c); RTOP_END(c); }
+void call_Spell_43_FeebleMind(Cpu *c) { RTOP_BEGIN(c, "Spell_43_FeebleMind"); fn_Spell_43_FeebleMind(c); RTOP_END(c); }
+void call_Spell_44_DeadlySwarm(Cpu *c) { RTOP_BEGIN(c, "Spell_44_DeadlySwarm"); fn_Spell_44_DeadlySwarm(c); RTOP_END(c); }
+void call_Spell_45_Teleport(Cpu *c) { RTOP_BEGIN(c, "Spell_45_Teleport"); fn_Spell_45_Teleport(c); RTOP_END(c); }
+void call_Spell_46_FingerOfDeath(Cpu *c) { RTOP_BEGIN(c, "Spell_46_FingerOfDeath"); fn_Spell_46_FingerOfDeath(c); RTOP_END(c); }
+void call_Spell_47_CureParalysis(Cpu *c) { RTOP_BEGIN(c, "Spell_47_CureParalysis"); fn_Spell_47_CureParalysis(c); RTOP_END(c); }
+void call_Spell_48_Paralyze(Cpu *c) { RTOP_BEGIN(c, "Spell_48_Paralyze"); fn_Spell_48_Paralyze(c); RTOP_END(c); }
+void call_Spell_49_DragonBreath(Cpu *c) { RTOP_BEGIN(c, "Spell_49_DragonBreath"); fn_Spell_49_DragonBreath(c); RTOP_END(c); }
+void call_Spell_50_SuperShelter(Cpu *c) { RTOP_BEGIN(c, "Spell_50_SuperShelter"); fn_Spell_50_SuperShelter(c); RTOP_END(c); }
+void call_Spell_51_FieryFlail(Cpu *c) { RTOP_BEGIN(c, "Spell_51_FieryFlail"); fn_Spell_51_FieryFlail(c); RTOP_END(c); }
+void call_Spell_52_CreateFood(Cpu *c) { RTOP_BEGIN(c, "Spell_52_CreateFood"); fn_Spell_52_CreateFood(c); RTOP_END(c); }
+void call_Spell_53_TownPortal(Cpu *c) { RTOP_BEGIN(c, "Spell_53_TownPortal"); fn_Spell_53_TownPortal(c); RTOP_END(c); }
+void call_Spell_54_StoneToFlesh(Cpu *c) { RTOP_BEGIN(c, "Spell_54_StoneToFlesh"); fn_Spell_54_StoneToFlesh(c); RTOP_END(c); }
+void call_Spell_55_RechargeItem(Cpu *c) { RTOP_BEGIN(c, "Spell_55_RechargeItem"); fn_Spell_55_RechargeItem(c); RTOP_END(c); }
+void call_Spell_56_FantasticFreeze(Cpu *c) { RTOP_BEGIN(c, "Spell_56_FantasticFreeze"); fn_Spell_56_FantasticFreeze(c); RTOP_END(c); }
+void call_Spell_57_Duplication(Cpu *c) { RTOP_BEGIN(c, "Spell_57_Duplication"); fn_Spell_57_Duplication(c); RTOP_END(c); }
+void call_Spell_58_Disintegrate(Cpu *c) { RTOP_BEGIN(c, "Spell_58_Disintegrate"); fn_Spell_58_Disintegrate(c); RTOP_END(c); }
+void call_Spell_59_RaiseDead(Cpu *c) { RTOP_BEGIN(c, "Spell_59_RaiseDead"); fn_Spell_59_RaiseDead(c); RTOP_END(c); }
+void call_Spell_60_HalfForMe(Cpu *c) { RTOP_BEGIN(c, "Spell_60_HalfForMe"); fn_Spell_60_HalfForMe(c); RTOP_END(c); }
+void call_Spell_61_Etherealize(Cpu *c) { RTOP_BEGIN(c, "Spell_61_Etherealize"); fn_Spell_61_Etherealize(c); RTOP_END(c); }
+void call_Spell_62_DancingSword(Cpu *c) { RTOP_BEGIN(c, "Spell_62_DancingSword"); fn_Spell_62_DancingSword(c); RTOP_END(c); }
+void call_Spell_63_PrismaticLight(Cpu *c) { RTOP_BEGIN(c, "Spell_63_PrismaticLight"); fn_Spell_63_PrismaticLight(c); RTOP_END(c); }
+void call_Spell_64_MoonRay(Cpu *c) { RTOP_BEGIN(c, "Spell_64_MoonRay"); fn_Spell_64_MoonRay(c); RTOP_END(c); }
+void call_Spell_65_MassDistortion(Cpu *c) { RTOP_BEGIN(c, "Spell_65_MassDistortion"); fn_Spell_65_MassDistortion(c); RTOP_END(c); }
+void call_Spell_66_EnchantItem(Cpu *c) { RTOP_BEGIN(c, "Spell_66_EnchantItem"); fn_Spell_66_EnchantItem(c); RTOP_END(c); }
+void call_Spell_67_Incinerate(Cpu *c) { RTOP_BEGIN(c, "Spell_67_Incinerate"); fn_Spell_67_Incinerate(c); RTOP_END(c); }
+void call_Spell_68_ElementalStorm(Cpu *c) { RTOP_BEGIN(c, "Spell_68_ElementalStorm"); fn_Spell_68_ElementalStorm(c); RTOP_END(c); }
+void call_Spell_69_HolyWord(Cpu *c) { RTOP_BEGIN(c, "Spell_69_HolyWord"); fn_Spell_69_HolyWord(c); RTOP_END(c); }
+void call_Spell_70_Resurrect(Cpu *c) { RTOP_BEGIN(c, "Spell_70_Resurrect"); fn_Spell_70_Resurrect(c); RTOP_END(c); }
+void call_Spell_71_MegaVolts(Cpu *c) { RTOP_BEGIN(c, "Spell_71_MegaVolts"); fn_Spell_71_MegaVolts(c); RTOP_END(c); }
+void call_Spell_72_Inferno(Cpu *c) { RTOP_BEGIN(c, "Spell_72_Inferno"); fn_Spell_72_Inferno(c); RTOP_END(c); }
+void call_Spell_73_SunRay(Cpu *c) { RTOP_BEGIN(c, "Spell_73_SunRay"); fn_Spell_73_SunRay(c); RTOP_END(c); }
+void call_Spell_74_Implosion(Cpu *c) { RTOP_BEGIN(c, "Spell_74_Implosion"); fn_Spell_74_Implosion(c); RTOP_END(c); }
+void call_Spell_75_StarBurst(Cpu *c) { RTOP_BEGIN(c, "Spell_75_StarBurst"); fn_Spell_75_StarBurst(c); RTOP_END(c); }
+void call_Spell_76_DivineIntervention(Cpu *c) { RTOP_BEGIN(c, "Spell_76_DivineIntervention"); fn_Spell_76_DivineIntervention(c); RTOP_END(c); }
+void call_Spell_sharedHandler(Cpu *c) { RTOP_BEGIN(c, "Spell_sharedHandler"); fn_Spell_sharedHandler(c); RTOP_END(c); }
+void call_guildSpellShop(Cpu *c) { RTOP_BEGIN(c, "guildSpellShop"); fn_guildSpellShop(c); RTOP_END(c); }
+void call_spellLloydsBeacon(Cpu *c) { RTOP_BEGIN(c, "spellLloydsBeacon"); fn_spellLloydsBeacon(c); RTOP_END(c); }
+void call_sub_280EF(Cpu *c) { RTOP_BEGIN(c, "sub_280EF"); fn_sub_280EF(c); RTOP_END(c); }
+void call_sub_28117(Cpu *c) { RTOP_BEGIN(c, "sub_28117"); fn_sub_28117(c); RTOP_END(c); }
+void call_sub_281D5(Cpu *c) { RTOP_BEGIN(c, "sub_281D5"); fn_sub_281D5(c); RTOP_END(c); }
+void call_sub_282E8(Cpu *c) { RTOP_BEGIN(c, "sub_282E8"); fn_sub_282E8(c); RTOP_END(c); }
+void call_sub_284F5(Cpu *c) { RTOP_BEGIN(c, "sub_284F5"); fn_sub_284F5(c); RTOP_END(c); }
+void call_sub_28540(Cpu *c) { RTOP_BEGIN(c, "sub_28540"); fn_sub_28540(c); RTOP_END(c); }
+void call_sub_2819E(Cpu *c) { RTOP_BEGIN(c, "sub_2819E"); fn_sub_2819E(c); RTOP_END(c); }
+void call_monsterSavingThrow(Cpu *c) { RTOP_BEGIN(c, "monsterSavingThrow"); fn_monsterSavingThrow(c); RTOP_END(c); }
+void call_getElapsedTime(Cpu *c) { RTOP_BEGIN(c, "getElapsedTime"); fn_getElapsedTime(c); RTOP_END(c); }
+void call_arenaEvent(Cpu *c) { RTOP_BEGIN(c, "arenaEvent"); fn_arenaEvent(c); RTOP_END(c); }
+void call_endingCutscene(Cpu *c) { RTOP_BEGIN(c, "endingCutscene"); fn_endingCutscene(c); RTOP_END(c); }
+void call_giveMultiTreasure(Cpu *c) { RTOP_BEGIN(c, "giveMultiTreasure"); fn_giveMultiTreasure(c); RTOP_END(c); }
+void call_giveTake(Cpu *c) { RTOP_BEGIN(c, "giveTake"); fn_giveTake(c); RTOP_END(c); }
+void call_giveTreasure(Cpu *c) { RTOP_BEGIN(c, "giveTreasure"); fn_giveTreasure(c); RTOP_END(c); }
+void call_ifProc(Cpu *c) { RTOP_BEGIN(c, "ifProc"); fn_ifProc(c); RTOP_END(c); }
+void call_inputString(Cpu *c) { RTOP_BEGIN(c, "inputString"); fn_inputString(c); RTOP_END(c); }
+void call_loadHireFaces(Cpu *c) { RTOP_BEGIN(c, "loadHireFaces"); fn_loadHireFaces(c); RTOP_END(c); }
+void call_setValue(Cpu *c) { RTOP_BEGIN(c, "setValue"); fn_setValue(c); RTOP_END(c); }
+void call_showJoke(Cpu *c) { RTOP_BEGIN(c, "showJoke"); fn_showJoke(c); RTOP_END(c); }
+void call_townBank(Cpu *c) { RTOP_BEGIN(c, "townBank"); fn_townBank(c); RTOP_END(c); }
+void call_townGuild(Cpu *c) { RTOP_BEGIN(c, "townGuild"); fn_townGuild(c); RTOP_END(c); }
+void call_townInn(Cpu *c) { RTOP_BEGIN(c, "townInn"); fn_townInn(c); RTOP_END(c); }
+void call_townSmithy(Cpu *c) { RTOP_BEGIN(c, "townSmithy"); fn_townSmithy(c); RTOP_END(c); }
+void call_townTavern(Cpu *c) { RTOP_BEGIN(c, "townTavern"); fn_townTavern(c); RTOP_END(c); }
+void call_townTemple(Cpu *c) { RTOP_BEGIN(c, "townTemple"); fn_townTemple(c); RTOP_END(c); }
+void call_townTraining(Cpu *c) { RTOP_BEGIN(c, "townTraining"); fn_townTraining(c); RTOP_END(c); }
+void call_scanMonstersAhead(Cpu *c) { RTOP_BEGIN(c, "scanMonstersAhead"); fn_scanMonstersAhead(c); RTOP_END(c); }
+void call_sub_280A3(Cpu *c) { RTOP_BEGIN(c, "sub_280A3"); fn_sub_280A3(c); RTOP_END(c); }
+void call_sub_28258(Cpu *c) { RTOP_BEGIN(c, "sub_28258"); fn_sub_28258(c); RTOP_END(c); }
+void call_spellAttackAhead(Cpu *c) { RTOP_BEGIN(c, "spellAttackAhead"); fn_spellAttackAhead(c); RTOP_END(c); }
+void call_sub_3BE18(Cpu *c) { RTOP_BEGIN(c, "sub_3BE18"); fn_sub_3BE18(c); RTOP_END(c); }
+void call_sub_416C7(Cpu *c) { RTOP_BEGIN(c, "sub_416C7"); fn_sub_416C7(c); RTOP_END(c); }
+void call_sub_42EA9(Cpu *c) { RTOP_BEGIN(c, "sub_42EA9"); fn_sub_42EA9(c); RTOP_END(c); }
+void call_sub_4BDAE(Cpu *c) { RTOP_BEGIN(c, "sub_4BDAE"); fn_sub_4BDAE(c); RTOP_END(c); }
+void call_sub_4EC06(Cpu *c) { RTOP_BEGIN(c, "sub_4EC06"); fn_sub_4EC06(c); RTOP_END(c); }
+void call_sub_280E5(Cpu *c) { RTOP_BEGIN(c, "sub_280E5"); fn_sub_280E5(c); RTOP_END(c); }
+void call_drawAutomapWrapped(Cpu *c) { RTOP_BEGIN(c, "drawAutomapWrapped"); fn_drawAutomapWrapped(c); RTOP_END(c); }
+void call_updateLight(Cpu *c) { RTOP_BEGIN(c, "updateLight"); fn_updateLight(c); RTOP_END(c); }
+void call_finishCreation(Cpu *c) { RTOP_BEGIN(c, "finishCreation"); fn_finishCreation(c); RTOP_END(c); }
+void call_showClassAvailability(Cpu *c) { RTOP_BEGIN(c, "showClassAvailability"); fn_showClassAvailability(c); RTOP_END(c); }
+void call_sub_46566(Cpu *c) { RTOP_BEGIN(c, "sub_46566"); fn_sub_46566(c); RTOP_END(c); }
+void call_sub_466EC(Cpu *c) { RTOP_BEGIN(c, "sub_466EC"); fn_sub_466EC(c); RTOP_END(c); }
+void call_sub_46DE4(Cpu *c) { RTOP_BEGIN(c, "sub_46DE4"); fn_sub_46DE4(c); RTOP_END(c); }
+void call_sub_4789F(Cpu *c) { RTOP_BEGIN(c, "sub_4789F"); fn_sub_4789F(c); RTOP_END(c); }
+void call_saveGame(Cpu *c) { RTOP_BEGIN(c, "saveGame"); fn_saveGame(c); RTOP_END(c); }
+void call_setStartTime(Cpu *c) { RTOP_BEGIN(c, "setStartTime"); fn_setStartTime(c); RTOP_END(c); }
+void call_sub_41A2F(Cpu *c) { RTOP_BEGIN(c, "sub_41A2F"); fn_sub_41A2F(c); RTOP_END(c); }
+void call_sub_4EBE3(Cpu *c) { RTOP_BEGIN(c, "sub_4EBE3"); fn_sub_4EBE3(c); RTOP_END(c); }
+void call_sub_12436(Cpu *c) { RTOP_BEGIN(c, "sub_12436"); fn_sub_12436(c); RTOP_END(c); }
+void call_sub_387C6(Cpu *c) { RTOP_BEGIN(c, "sub_387C6"); fn_sub_387C6(c); RTOP_END(c); }
+void call_doCharDamage(Cpu *c) { RTOP_BEGIN(c, "doCharDamage"); fn_doCharDamage(c); RTOP_END(c); }
+void call_addTime(Cpu *c) { RTOP_BEGIN(c, "addTime"); fn_addTime(c); RTOP_END(c); }
+void call_mapHasDayNight(Cpu *c) { RTOP_BEGIN(c, "mapHasDayNight"); fn_mapHasDayNight(c); RTOP_END(c); }
+void call_sub_28194(Cpu *c) { RTOP_BEGIN(c, "sub_28194"); fn_sub_28194(c); RTOP_END(c); }
+void call_clearViewFlags(Cpu *c) { RTOP_BEGIN(c, "clearViewFlags"); fn_clearViewFlags(c); RTOP_END(c); }
+void call_renderOutdoorView(Cpu *c) { RTOP_BEGIN(c, "renderOutdoorView"); fn_renderOutdoorView(c); RTOP_END(c); }
+void call_scanObjectsAhead(Cpu *c) { RTOP_BEGIN(c, "scanObjectsAhead"); fn_scanObjectsAhead(c); RTOP_END(c); }
+void call_attack(Cpu *c) { RTOP_BEGIN(c, "attack"); fn_attack(c); RTOP_END(c); }
+void call_block(Cpu *c) { RTOP_BEGIN(c, "block"); fn_block(c); RTOP_END(c); }
+void call_getMonsterDescriptions(Cpu *c) { RTOP_BEGIN(c, "getMonsterDescriptions"); fn_getMonsterDescriptions(c); RTOP_END(c); }
+void call_nextChar(Cpu *c) { RTOP_BEGIN(c, "nextChar"); fn_nextChar(c); RTOP_END(c); }
+void call_quickFight(Cpu *c) { RTOP_BEGIN(c, "quickFight"); fn_quickFight(c); RTOP_END(c); }
+void call_run(Cpu *c) { RTOP_BEGIN(c, "run"); fn_run(c); RTOP_END(c); }
+void call_sub_27F63(Cpu *c) { RTOP_BEGIN(c, "sub_27F63"); fn_sub_27F63(c); RTOP_END(c); }
+void call_sub_282DE(Cpu *c) { RTOP_BEGIN(c, "sub_282DE"); fn_sub_282DE(c); RTOP_END(c); }
+void call_checkDrawListOverflow(Cpu *c) { RTOP_BEGIN(c, "checkDrawListOverflow"); fn_checkDrawListOverflow(c); RTOP_END(c); }
+void call_drawRow3Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow3Sprites"); fn_drawRow3Sprites(c); RTOP_END(c); }
+void call_drawRow4Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow4Sprites"); fn_drawRow4Sprites(c); RTOP_END(c); }
+void call_drawWallFaces(Cpu *c) { RTOP_BEGIN(c, "drawWallFaces"); fn_drawWallFaces(c); RTOP_END(c); }
+void call_sub_2864E(Cpu *c) { RTOP_BEGIN(c, "sub_2864E"); fn_sub_2864E(c); RTOP_END(c); }
+void call_sub_400DF(Cpu *c) { RTOP_BEGIN(c, "sub_400DF"); fn_sub_400DF(c); RTOP_END(c); }
+void call_currentTime(Cpu *c) { RTOP_BEGIN(c, "currentTime"); fn_currentTime(c); RTOP_END(c); }
+void call_timeToString(Cpu *c) { RTOP_BEGIN(c, "timeToString"); fn_timeToString(c); RTOP_END(c); }
+void call_itemName(Cpu *c) { RTOP_BEGIN(c, "itemName"); fn_itemName(c); RTOP_END(c); }
+void call_itemsDialog(Cpu *c) { RTOP_BEGIN(c, "itemsDialog"); fn_itemsDialog(c); RTOP_END(c); }
+void call_sub_280F4(Cpu *c) { RTOP_BEGIN(c, "sub_280F4"); fn_sub_280F4(c); RTOP_END(c); }
+void call_sub_28630(Cpu *c) { RTOP_BEGIN(c, "sub_28630"); fn_sub_28630(c); RTOP_END(c); }
+void call_sub_28635(Cpu *c) { RTOP_BEGIN(c, "sub_28635"); fn_sub_28635(c); RTOP_END(c); }
+void call_sub_2863A(Cpu *c) { RTOP_BEGIN(c, "sub_2863A"); fn_sub_2863A(c); RTOP_END(c); }
+void call_sub_51DAB(Cpu *c) { RTOP_BEGIN(c, "sub_51DAB"); fn_sub_51DAB(c); RTOP_END(c); }
+void call_sub_5122D(Cpu *c) { RTOP_BEGIN(c, "sub_5122D"); fn_sub_5122D(c); RTOP_END(c); }
+void call_sub_27F40(Cpu *c) { RTOP_BEGIN(c, "sub_27F40"); fn_sub_27F40(c); RTOP_END(c); }
+void call_sub_286D6(Cpu *c) { RTOP_BEGIN(c, "sub_286D6"); fn_sub_286D6(c); RTOP_END(c); }
+void call_sub_42FF5(Cpu *c) { RTOP_BEGIN(c, "sub_42FF5"); fn_sub_42FF5(c); RTOP_END(c); }
+void call_sub_43034(Cpu *c) { RTOP_BEGIN(c, "sub_43034"); fn_sub_43034(c); RTOP_END(c); }
+void call_sub_3886C(Cpu *c) { RTOP_BEGIN(c, "sub_3886C"); fn_sub_3886C(c); RTOP_END(c); }
+void call_sub_3DFB6(Cpu *c) { RTOP_BEGIN(c, "sub_3DFB6"); fn_sub_3DFB6(c); RTOP_END(c); }
+void call_sub_4495A(Cpu *c) { RTOP_BEGIN(c, "sub_4495A"); fn_sub_4495A(c); RTOP_END(c); }
+void call_sub_511AB(Cpu *c) { RTOP_BEGIN(c, "sub_511AB"); fn_sub_511AB(c); RTOP_END(c); }
+void call_readSaveHeader(Cpu *c) { RTOP_BEGIN(c, "readSaveHeader"); fn_readSaveHeader(c); RTOP_END(c); }
+void call_saveMazeState(Cpu *c) { RTOP_BEGIN(c, "saveMazeState"); fn_saveMazeState(c); RTOP_END(c); }
+void call_sub_40465(Cpu *c) { RTOP_BEGIN(c, "sub_40465"); fn_sub_40465(c); RTOP_END(c); }
+void call_sub_442EB(Cpu *c) { RTOP_BEGIN(c, "sub_442EB"); fn_sub_442EB(c); RTOP_END(c); }
+void call_indexEvents(Cpu *c) { RTOP_BEGIN(c, "indexEvents"); fn_indexEvents(c); RTOP_END(c); }
+void call_loadMazeDats(Cpu *c) { RTOP_BEGIN(c, "loadMazeDats"); fn_loadMazeDats(c); RTOP_END(c); }
+void call_sub_41689(Cpu *c) { RTOP_BEGIN(c, "sub_41689"); fn_sub_41689(c); RTOP_END(c); }
+void call_sub_4346B(Cpu *c) { RTOP_BEGIN(c, "sub_4346B"); fn_sub_4346B(c); RTOP_END(c); }
+void call_sub_403A6(Cpu *c) { RTOP_BEGIN(c, "sub_403A6"); fn_sub_403A6(c); RTOP_END(c); }
+void call_healCharacterEffect(Cpu *c) { RTOP_BEGIN(c, "healCharacterEffect"); fn_healCharacterEffect(c); RTOP_END(c); }
+void call_showErrorMessage(Cpu *c) { RTOP_BEGIN(c, "showErrorMessage"); fn_showErrorMessage(c); RTOP_END(c); }
+void call_sub_4C027(Cpu *c) { RTOP_BEGIN(c, "sub_4C027"); fn_sub_4C027(c); RTOP_END(c); }
+void call_sub_4BF12(Cpu *c) { RTOP_BEGIN(c, "sub_4BF12"); fn_sub_4BF12(c); RTOP_END(c); }
+void call_sub_2824E(Cpu *c) { RTOP_BEGIN(c, "sub_2824E"); fn_sub_2824E(c); RTOP_END(c); }
+void call_trainCharacter(Cpu *c) { RTOP_BEGIN(c, "trainCharacter"); fn_trainCharacter(c); RTOP_END(c); }
+void call_sub_40248(Cpu *c) { RTOP_BEGIN(c, "sub_40248"); fn_sub_40248(c); RTOP_END(c); }
+void call_sub_40280(Cpu *c) { RTOP_BEGIN(c, "sub_40280"); fn_sub_40280(c); RTOP_END(c); }
+void call_sub_41633(Cpu *c) { RTOP_BEGIN(c, "sub_41633"); fn_sub_41633(c); RTOP_END(c); }
+void call_sub_4C19A(Cpu *c) { RTOP_BEGIN(c, "sub_4C19A"); fn_sub_4C19A(c); RTOP_END(c); }
+void call_sub_4C106(Cpu *c) { RTOP_BEGIN(c, "sub_4C106"); fn_sub_4C106(c); RTOP_END(c); }
+void call_townBuildingIntro(Cpu *c) { RTOP_BEGIN(c, "townBuildingIntro"); fn_townBuildingIntro(c); RTOP_END(c); }
+void call_townMenuInput(Cpu *c) { RTOP_BEGIN(c, "townMenuInput"); fn_townMenuInput(c); RTOP_END(c); }
+void call_sub_27FBD(Cpu *c) { RTOP_BEGIN(c, "sub_27FBD"); fn_sub_27FBD(c); RTOP_END(c); }
+void call_sub_39930(Cpu *c) { RTOP_BEGIN(c, "sub_39930"); fn_sub_39930(c); RTOP_END(c); }
+void call_sub_3CE7A(Cpu *c) { RTOP_BEGIN(c, "sub_3CE7A"); fn_sub_3CE7A(c); RTOP_END(c); }
+void call_learnSpellDialog(Cpu *c) { RTOP_BEGIN(c, "learnSpellDialog"); fn_learnSpellDialog(c); RTOP_END(c); }
+void call_sub_2810D(Cpu *c) { RTOP_BEGIN(c, "sub_2810D"); fn_sub_2810D(c); RTOP_END(c); }
+void call_sub_3C1F2(Cpu *c) { RTOP_BEGIN(c, "sub_3C1F2"); fn_sub_3C1F2(c); RTOP_END(c); }
+void call_sub_25EF3(Cpu *c) { RTOP_BEGIN(c, "sub_25EF3"); fn_sub_25EF3(c); RTOP_END(c); }
+void call_sub_43D72(Cpu *c) { RTOP_BEGIN(c, "sub_43D72"); fn_sub_43D72(c); RTOP_END(c); }
+void call_sub_43DC8(Cpu *c) { RTOP_BEGIN(c, "sub_43DC8"); fn_sub_43DC8(c); RTOP_END(c); }
+void call_sub_28253(Cpu *c) { RTOP_BEGIN(c, "sub_28253"); fn_sub_28253(c); RTOP_END(c); }
+void call_bankDialog(Cpu *c) { RTOP_BEGIN(c, "bankDialog"); fn_bankDialog(c); RTOP_END(c); }
+void call_sub_27F6D(Cpu *c) { RTOP_BEGIN(c, "sub_27F6D"); fn_sub_27F6D(c); RTOP_END(c); }
+void call_sub_28149(Cpu *c) { RTOP_BEGIN(c, "sub_28149"); fn_sub_28149(c); RTOP_END(c); }
+void call_sub_27F95(Cpu *c) { RTOP_BEGIN(c, "sub_27F95"); fn_sub_27F95(c); RTOP_END(c); }
+void call_sub_483FB(Cpu *c) { RTOP_BEGIN(c, "sub_483FB"); fn_sub_483FB(c); RTOP_END(c); }
+void call_sub_496FA(Cpu *c) { RTOP_BEGIN(c, "sub_496FA"); fn_sub_496FA(c); RTOP_END(c); }
+void call_sub_2802F(Cpu *c) { RTOP_BEGIN(c, "sub_2802F"); fn_sub_2802F(c); RTOP_END(c); }
+void call_sub_4877A(Cpu *c) { RTOP_BEGIN(c, "sub_4877A"); fn_sub_4877A(c); RTOP_END(c); }
+void call_sub_48CF7(Cpu *c) { RTOP_BEGIN(c, "sub_48CF7"); fn_sub_48CF7(c); RTOP_END(c); }
+void call_sub_281E9(Cpu *c) { RTOP_BEGIN(c, "sub_281E9"); fn_sub_281E9(c); RTOP_END(c); }
+void call_trainingNeedsExperience(Cpu *c) { RTOP_BEGIN(c, "trainingNeedsExperience"); fn_trainingNeedsExperience(c); RTOP_END(c); }
+void call_sub_43D1B(Cpu *c) { RTOP_BEGIN(c, "sub_43D1B"); fn_sub_43D1B(c); RTOP_END(c); }
+void call_sub_284C8(Cpu *c) { RTOP_BEGIN(c, "sub_284C8"); fn_sub_284C8(c); RTOP_END(c); }
+void call_sub_400B4(Cpu *c) { RTOP_BEGIN(c, "sub_400B4"); fn_sub_400B4(c); RTOP_END(c); }
+void call_sub_41991(Cpu *c) { RTOP_BEGIN(c, "sub_41991"); fn_sub_41991(c); RTOP_END(c); }
+void call_sub_27F72(Cpu *c) { RTOP_BEGIN(c, "sub_27F72"); fn_sub_27F72(c); RTOP_END(c); }
+void call_resetBlacksmithWares(Cpu *c) { RTOP_BEGIN(c, "resetBlacksmithWares"); fn_resetBlacksmithWares(c); RTOP_END(c); }
+void call_resetTemps(Cpu *c) { RTOP_BEGIN(c, "resetTemps"); fn_resetTemps(c); RTOP_END(c); }
+void call_drawRow1Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow1Sprites"); fn_drawRow1Sprites(c); RTOP_END(c); }
+void call_drawRow2Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow2Sprites"); fn_drawRow2Sprites(c); RTOP_END(c); }
+void call_attack2(Cpu *c) { RTOP_BEGIN(c, "attack2"); fn_attack2(c); RTOP_END(c); }
+void call_getMonsterDamage(Cpu *c) { RTOP_BEGIN(c, "getMonsterDamage"); fn_getMonsterDamage(c); RTOP_END(c); }
+void call_monster_getTextColor(Cpu *c) { RTOP_BEGIN(c, "monster_getTextColor"); fn_monster_getTextColor(c); RTOP_END(c); }
+void call_sortCombatParty(Cpu *c) { RTOP_BEGIN(c, "sortCombatParty"); fn_sortCombatParty(c); RTOP_END(c); }
+void call_sub_37BA7(Cpu *c) { RTOP_BEGIN(c, "sub_37BA7"); fn_sub_37BA7(c); RTOP_END(c); }
+void call_sub_45A70(Cpu *c) { RTOP_BEGIN(c, "sub_45A70"); fn_sub_45A70(c); RTOP_END(c); }
+void call_sub_4EEF8(Cpu *c) { RTOP_BEGIN(c, "sub_4EEF8"); fn_sub_4EEF8(c); RTOP_END(c); }
+void call_castItemSpell(Cpu *c) { RTOP_BEGIN(c, "castItemSpell"); fn_castItemSpell(c); RTOP_END(c); }
+void call_equipItem(Cpu *c) { RTOP_BEGIN(c, "equipItem"); fn_equipItem(c); RTOP_END(c); }
+void call_identifyOrFix(Cpu *c) { RTOP_BEGIN(c, "identifyOrFix"); fn_identifyOrFix(c); RTOP_END(c); }
+void call_specialsDialog(Cpu *c) { RTOP_BEGIN(c, "specialsDialog"); fn_specialsDialog(c); RTOP_END(c); }
+void call_sub_40506(Cpu *c) { RTOP_BEGIN(c, "sub_40506"); fn_sub_40506(c); RTOP_END(c); }
+void call_sub_4ED7B(Cpu *c) { RTOP_BEGIN(c, "sub_4ED7B"); fn_sub_4ED7B(c); RTOP_END(c); }
+void call_sub_4ECB3(Cpu *c) { RTOP_BEGIN(c, "sub_4ECB3"); fn_sub_4ECB3(c); RTOP_END(c); }
+void call_sub_4EE43(Cpu *c) { RTOP_BEGIN(c, "sub_4EE43"); fn_sub_4EE43(c); RTOP_END(c); }
+void call_sub_37D3E(Cpu *c) { RTOP_BEGIN(c, "sub_37D3E"); fn_sub_37D3E(c); RTOP_END(c); }
+void call_sub_3BC65(Cpu *c) { RTOP_BEGIN(c, "sub_3BC65"); fn_sub_3BC65(c); RTOP_END(c); }
+void call_sub_44CC6(Cpu *c) { RTOP_BEGIN(c, "sub_44CC6"); fn_sub_44CC6(c); RTOP_END(c); }
+void call_sub_281A3(Cpu *c) { RTOP_BEGIN(c, "sub_281A3"); fn_sub_281A3(c); RTOP_END(c); }
+void call_sub_281FD(Cpu *c) { RTOP_BEGIN(c, "sub_281FD"); fn_sub_281FD(c); RTOP_END(c); }
+void call_sub_47947(Cpu *c) { RTOP_BEGIN(c, "sub_47947"); fn_sub_47947(c); RTOP_END(c); }
+void call_sub_37CBB(Cpu *c) { RTOP_BEGIN(c, "sub_37CBB"); fn_sub_37CBB(c); RTOP_END(c); }
+void call_sub_404D5(Cpu *c) { RTOP_BEGIN(c, "sub_404D5"); fn_sub_404D5(c); RTOP_END(c); }
+void call_sub_44C14(Cpu *c) { RTOP_BEGIN(c, "sub_44C14"); fn_sub_44C14(c); RTOP_END(c); }
+void call_sub_281A8(Cpu *c) { RTOP_BEGIN(c, "sub_281A8"); fn_sub_281A8(c); RTOP_END(c); }
+void call_sub_37C6C(Cpu *c) { RTOP_BEGIN(c, "sub_37C6C"); fn_sub_37C6C(c); RTOP_END(c); }
+void call_sub_4033B(Cpu *c) { RTOP_BEGIN(c, "sub_4033B"); fn_sub_4033B(c); RTOP_END(c); }
+void call_sub_37BF1(Cpu *c) { RTOP_BEGIN(c, "sub_37BF1"); fn_sub_37BF1(c); RTOP_END(c); }
+void call_formatNumber(Cpu *c) { RTOP_BEGIN(c, "formatNumber"); fn_formatNumber(c); RTOP_END(c); }
+void call_sub_4BDC4(Cpu *c) { RTOP_BEGIN(c, "sub_4BDC4"); fn_sub_4BDC4(c); RTOP_END(c); }
+void call_sub_37B59(Cpu *c) { RTOP_BEGIN(c, "sub_37B59"); fn_sub_37B59(c); RTOP_END(c); }
+void call_sub_27F9A(Cpu *c) { RTOP_BEGIN(c, "sub_27F9A"); fn_sub_27F9A(c); RTOP_END(c); }
+void call_sub_28108(Cpu *c) { RTOP_BEGIN(c, "sub_28108"); fn_sub_28108(c); RTOP_END(c); }
+void call_sub_280B2(Cpu *c) { RTOP_BEGIN(c, "sub_280B2"); fn_sub_280B2(c); RTOP_END(c); }
+void call_getEquipSlotName(Cpu *c) { RTOP_BEGIN(c, "getEquipSlotName"); fn_getEquipSlotName(c); RTOP_END(c); }
+void call_canEquip(Cpu *c) { RTOP_BEGIN(c, "canEquip"); fn_canEquip(c); RTOP_END(c); }
+void call_ipause_5(Cpu *c) { RTOP_BEGIN(c, "ipause_5"); fn_ipause_5(c); RTOP_END(c); }
+void call_sub_37B7D(Cpu *c) { RTOP_BEGIN(c, "sub_37B7D"); fn_sub_37B7D(c); RTOP_END(c); }
+void call_sub_40383(Cpu *c) { RTOP_BEGIN(c, "sub_40383"); fn_sub_40383(c); RTOP_END(c); }
+void call_sub_3E08F(Cpu *c) { RTOP_BEGIN(c, "sub_3E08F"); fn_sub_3E08F(c); RTOP_END(c); }
 
 /* name -> entry point, for test drivers */
 const RecompEntry recomp_entries_game_gen[] = {
