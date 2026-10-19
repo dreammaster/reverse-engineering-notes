@@ -45,8 +45,8 @@ OVERLAY_SEGMENTS = [0x378C, 0x3993, 0x3BC3, 0x3DD2, 0x3F49, 0x4150, 0x435A, 0x45
 CODE_SEGMENTS = sorted([0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511] + OVERLAY_SEGMENTS + STUB_SEGMENTS)
 
 # Overlay 1 (378C:0) lies inside the 64 KB the recompiled game uses for DGROUP (the stack is at its top): the recompiled game never
-# executes that memory, but the emulator does, so a copy of the overlay's code is placed in low memory and used instead.
-OVL1_SEG, OVL1_LOW_SEG = 0x378C, 0x0100
+# executes that memory, but the emulator does, so a copy of the overlay's code is placed at F000:0 (the BIOS ROM area, unused here) and used instead.
+OVL1_SEG, OVL1_LOW_SEG = 0x378C, 0xF000
 
 # routines run in the emulator and compared (everything else on the tape is replayed); value = number of result words
 # C library helpers that are pure computation on memory: run in the emulator like the readable rewrites (value = result words)
@@ -105,6 +105,7 @@ class Lockstep:
         self.frames = []                                 # R routines currently running in the emulator
         self.stats = {}                                  # name -> [class, matched calls]
         self.recent = []
+        self.host_since_label = False
         self.writes = {}                                 # replayed host routine -> data segment offsets it wrote
         self.fn_counts = {}
         self.last_heap = 0
@@ -144,6 +145,12 @@ class Lockstep:
     # ---------------------------------------------------------------- tape access
     def peek(self):
         if not self.peeked:
+            try:
+                self.peeked.append(next(self.evs))
+            except StopIteration:
+                return None
+        while self.peeked[0]["t"] == "L" and self.peeked[0]["name"] not in self.label_names:
+            self.peeked.pop(0)
             try:
                 self.peeked.append(next(self.evs))
             except StopIteration:
@@ -267,6 +274,19 @@ class Lockstep:
                 if lin is not None and lin not in self.host_at:
                     self.fn_at[lin] = n
                     uc.hook_add(UC_HOOK_CODE, self.guard(self.on_func), None, lin, lin)
+        self.label_at = {}                                # linear address -> label name (--labels)
+        self.label_names = set()
+        for fname in self.a.labels or []:
+            if fname not in self.tr.procs:
+                raise SystemExit("--labels: no such routine " + fname)
+            st, en, _ = self.tr.procs[fname]
+            for l in self.tr.lines[st:en]:
+                m = re.match(r"^(loc_([0-9A-F]{5})):", l)
+                if m:
+                    lin = self.code(int(m.group(2), 16))
+                    self.label_at[lin] = m.group(1)
+                    self.label_names.add(m.group(1))
+                    uc.hook_add(UC_HOOK_CODE, self.guard(self.on_label), None, lin, lin)
         self.ret_at = {}
         for n in sorted(names):
             if self.klass(n)[0] != "R":
@@ -378,7 +398,8 @@ class Lockstep:
         """everything above the data segment (far heap: loaded maps, sprites, buffers) except the video memory"""
         lo, hi = DG_LIN + 0x10000, self.tape.memsize
         skip = (0xA0000, 0xB0000)
-        for a, b in ((lo, skip[0]), (skip[1], hi)):
+        ov = (OVL1_LOW_SEG * 16, OVL1_LOW_SEG * 16 + self.ovl1_size)         # the emulator's copy of overlay 1
+        for a, b in ((lo, skip[0]), (skip[1], ov[0]), (ov[1], hi)):
             u = bytes(self.uc.mem_read(a, b - a))
             m = bytes(self.model[a:b])
             if u == m:
@@ -449,6 +470,7 @@ class Lockstep:
             if ev["regs"]["sp"] and not self.frames and self.r(ureg) != ev["regs"][reg]:     # (a call made by readable C has no registers to compare)
                 self.fail("%s: register %s differs at the call: original %04X, recompiled %04X" % (name, reg, self.r(ureg), ev["regs"][reg]))
         self.note("%s(%s)" % (name, ", ".join("%04X" % w for w in args_u)))
+        self.host_since_label = True
         if self.a.heap_every and self.n_events // self.a.heap_every != self.last_heap:
             self.last_heap = self.n_events // self.a.heap_every
             self.compare_heap("the call of %s" % name)
@@ -481,6 +503,31 @@ class Lockstep:
                       % (name, sp, ev["regs"]["sp"]))
         if ev["regs"]["bp"] != bp:
             self.fail("%s entered with bp %04X in the original, %04X in the recompiled game" % (name, bp, ev["regs"]["bp"]))
+
+    def on_label(self, uc, address, size, user):
+        """--labels: the original reaches a label of the routine under test; the recompiled game must have reached the same one with the same registers"""
+        name = self.label_at[address]
+        ev = self.peek()
+        if ev is None:
+            return
+        if ev["t"] != "L" or ev["name"] != name:
+            got = ev["name"] if ev["t"] in "LFH" else ev["t"]
+            self.fail("the original reaches label %s, the recompiled game reaches %s next -- the paths diverge here" % (name, got))
+        self.take()
+        regs = ev["regs"]
+        self.note("label " + name)
+        diffs = []
+        after_host = self.host_since_label
+        self.host_since_label = False
+        for reg, ureg in (("ax", UC_X86_REG_AX), ("bx", UC_X86_REG_BX), ("cx", UC_X86_REG_CX), ("dx", UC_X86_REG_DX), ("si", UC_X86_REG_SI),
+                          ("di", UC_X86_REG_DI), ("bp", UC_X86_REG_BP), ("sp", UC_X86_REG_SP)):
+            if after_host and reg in ("bx", "cx", "dx"):
+                continue                      # a host routine (the original's or its replacement) leaves these as it likes
+            if self.r(ureg) != regs[reg]:
+                diffs.append("%s: original %04X, recompiled %04X" % (reg, self.r(ureg), regs[reg]))
+        if diffs and not self.frames:
+            self.fail("registers differ at label %s (the first label where they do; a register that is dead here may differ harmlessly):\n    %s"
+                      % (name, "\n    ".join(diffs)))
 
     def replay_effect(self, name, sp, ret_size, c_sp_before):
         """skip the original routine: apply what the recorded host changed, return its registers"""
@@ -639,6 +686,7 @@ def main():
     ap.add_argument("--stats", help="write the per-routine call counts of this run to this JSON file (see tools/mm3_coverage.py)")
     ap.add_argument("--trace-last", type=int, default=0, help="on a divergence, show the routine+offset of the last N executed instructions of the original (slow)")
     ap.add_argument("--image", default=os.path.join(HERE, "..", "data", "IMAGE.BIN"), help="the derived program image (make derive): pristine overlay code")
+    ap.add_argument("--labels", action="append", help="routine to compare label by label (needs a tape from mm3game_labels): the first label where the registers differ")
     ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--heap-every", type=int, default=20000, help="compare the far heap every N tape events (0: only at the end of top-level routines)")
     ap.add_argument("--no-entry-checks", dest="entry_checks", action="store_false", help="do not compare the entry of translated routines")

@@ -26,7 +26,7 @@ class Tape:
                 ev["delta"] = []
                 yield ev
                 continue
-            if t == "F":
+            if t == "F" or t == "L":
                 ln = d[p]; p += 1
                 ev["name"] = d[p:p + ln].decode(); p += ln
                 r = struct.unpack_from("<10H", d, p); p += 20

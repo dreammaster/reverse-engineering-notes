@@ -178,7 +178,10 @@ void tape_fn(Cpu *c, const char *name);
 #define FNTRACE(name) ((void)0)
 #endif
 
-#ifdef RECOMP_TRACE
+#ifdef MM3_TAPE_LABELS
+void tape_label(Cpu *c, const char *name);
+#define RTRACE(c, name) tape_label(c, name)
+#elif defined(RECOMP_TRACE)
 #include <stdio.h>
 /* debugging aid: register state at every label, to diff against the emulator (tools/mm3_trace_diff.py) */
 #define RTRACE(c, name) fprintf(stderr, "%s %04X %04X %04X %04X %04X %04X\n", name, (c)->ax, (c)->bx, (c)->cx, (c)->dx, (c)->si, (c)->di)

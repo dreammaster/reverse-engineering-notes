@@ -16,3 +16,4 @@ tests/rules_run
 mm3-saves
 tests/test_rules_diff
 mm3game_tape
+mm3game_labels

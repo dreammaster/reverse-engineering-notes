@@ -41872,7 +41872,7 @@ static void fn_sub_281D5(Cpu *c) {
 static void fn_sub_282E8(Cpu *c) {
 	uint32_t t_; (void)t_;
 	FNTRACE("sub_282E8");
-	RHOST(c, sub_45BD1, 0, 4); c->sp += 4; return;
+	c->sp += 4; RHOST(c, sub_45BD1, 0, 4); return; /* tail jump to a host routine: this routine's return address goes first, the host sees its arguments at sp */
 }
 
 static void fn_sub_284F5(Cpu *c) {

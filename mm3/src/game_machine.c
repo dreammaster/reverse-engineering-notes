@@ -267,7 +267,8 @@ void host__sprintf(Cpu *c) {
 		case 'p': nlen = snprintf(num, sizeof num, "%04X", host_arg(c, (int)ai++)); break;
 		case 'c': num[0] = (char)host_arg(c, (int)ai++); num[1] = 0; nlen = 1; break;
 		case 's': {
-			const char *s = (const char *)dsp(host_arg(c, (int)ai++));
+			unsigned sarg = host_arg(c, (int)ai++);
+			const char *s = sarg ? (const char *)dsp(sarg) : "(null)"; /* Borland prints a null pointer as (null) */
 			nlen = (int)strlen(s);
 			if (getenv("MM3_SPRINTF")) { fprintf(stderr, "  %%s arg at %04X len %d:", host_arg(c, (int)ai - 1), nlen); for (const char *q = s; *q && q < s + 20; q++) fprintf(stderr, " %02X", (unsigned char)*q); fputc(10, stderr); }
 			if (!left) for (int k = nlen; k < width; k++) *o++ = ' ';

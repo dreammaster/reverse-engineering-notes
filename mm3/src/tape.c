@@ -102,6 +102,13 @@ void tape_rnd(int lo, int hi, int value) {
 	delta();
 }
 
+/* every label of a translated routine (build with -DMM3_TAPE_LABELS: `make mm3game_labels`): register state, to find the first instruction
+ * where a routine goes wrong (tools/mm3_lockstep.py --labels NAME) */
+void tape_label(Cpu *c, const char *n) {
+	if (!tf) return;
+	w8('L'); name(n); regs(c);
+}
+
 /* entry of a translated routine: the original has the same stack pointer there (the callers push placeholder return addresses) */
 void tape_fn(Cpu *c, const char *n) {
 	if (!tf) return;

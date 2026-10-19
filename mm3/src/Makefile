@@ -160,6 +160,11 @@ mm3game_tape: game_main.c $(GAME_SRC) tape.c game.h recomp.h
 	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG -DMM3_TAPE $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) tape.c $(SDL_LIBS) -lm
 .PHONY: mm3game_tape
 
+# ... and with a register record at every label (tools/mm3_lockstep.py --labels FUNCTION; big tapes: use with --calltest FUNCTION)
+mm3game_labels: game_main.c $(GAME_SRC) tape.c game.h recomp.h
+	$(CC) -std=c11 -O1 -w -DRECOMP_STACK_IN_DG -DMM3_TAPE -DMM3_TAPE_LABELS $(SDL_CFLAGS) -o $@ game_main.c $(GAME_SRC) tape.c $(SDL_LIBS) -lm
+.PHONY: mm3game_labels
+
 # ---- readable rules vs the translated originals
 tests/test_rules_diff: tests/test_rules_diff.c rules.c $(RULES_SRC) rules.h recomp.h
 	$(CC) $(CFLAGS) -Wno-unused-label -o $@ tests/test_rules_diff.c rules.c $(RULES_SRC)

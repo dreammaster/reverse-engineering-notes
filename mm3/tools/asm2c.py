@@ -542,7 +542,7 @@ class Translator:
             if target == "$+2":  # short jump to the next instruction: a no-op
                 return []
             if target in self.procs:
-                return ["fn_%s(c); return;" % target] if target in translated else ["RHOST(c, %s, 0, %d); c->sp += %d; return;" % (target, 4 if kind == "far" else 2, 4 if kind == "far" else 2)]
+                return ["fn_%s(c); return;" % target] if target in translated else ["c->sp += %d; RHOST(c, %s, 0, %d); return; /* tail jump to a host routine: this routine's return address goes first, the host sees its arguments at sp */" % (4 if kind == "far" else 2, target, 4 if kind == "far" else 2)]
             return ["goto %s;" % target]
         cond = {"jz": "c->zf", "je": "c->zf", "jnz": "!c->zf", "jne": "!c->zf", "jl": "(c->sf != c->of)", "jnge": "(c->sf != c->of)",
                 "jge": "(c->sf == c->of)", "jnl": "(c->sf == c->of)", "jle": "(c->zf || c->sf != c->of)", "jng": "(c->zf || c->sf != c->of)",
