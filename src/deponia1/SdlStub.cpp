@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
 #include <string>
 
 int SDL_Init(Uint32 /*flags*/) {
@@ -106,10 +107,22 @@ int SDL_GetDisplayMode(int /*displayIndex*/, int /*modeIndex*/, SDL_DisplayMode 
 void SDL_PumpEvents(void) {
 }
 
-// Headless: there is no window, so the first events are that it is hidden and then that it is closed (a run of the
-// main loop of this reconstruction ends by itself).
-int SDL_PeepEvents(SDL_Event *events, int /*numevents*/, int /*action*/, Uint32 /*minType*/, Uint32 /*maxType*/) {
+// The events that were pushed (SDL_PushEvent) come first, in the order they were pushed. When there are none: headless, there is no
+// window, so the first events are that it is hidden and then that it is closed (a run of the main loop of this reconstruction
+// ends by itself); after those there is nothing.
+static std::deque<SDL_Event> s_pushedEvents;
+
+int SDL_PeepEvents(SDL_Event *events, int /*numevents*/, int action, Uint32 /*minType*/, Uint32 /*maxType*/) {
 	static int sent = 0;
+
+	if (!s_pushedEvents.empty()) {
+		*events = s_pushedEvents.front();
+
+		if (action == SDL_GETEVENT)
+			s_pushedEvents.pop_front();
+
+		return 1;
+	}
 
 	if (sent == 0) {
 		events->window.type = SDL_WINDOWEVENT;
@@ -215,7 +228,8 @@ void SDL_free(void *memory) {
 	std::free(memory);
 }
 
-int SDL_PushEvent(SDL_Event */*event*/) {
+int SDL_PushEvent(SDL_Event *event) {
+	s_pushedEvents.push_back(*event);
 	return 1;
 }
 

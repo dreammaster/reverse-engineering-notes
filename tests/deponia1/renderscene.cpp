@@ -4,6 +4,7 @@
 #include <string>
 
 #include "AppGlobals.h"
+#include "SdlStub.h"
 #include "TStandardPaths.h"
 #include "THGameControl.h"
 #include "TSceneControl.h"
@@ -13,6 +14,7 @@
 #include "graphicslib/softwareGraphics.h"
 #include "vscommon/scripting/command.h"
 #include "vscommon/scripting/visLua.h"
+#include "vstables/eCommand.h"
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 #include "datastruct/vlist.h"
@@ -80,6 +82,26 @@ int main(int argc, char **argv) {
 			       static_cast<const char *>(wxString(part->GetStr(kActionPartString)).mb_str()),
 			       static_cast<const char *>(wxString(part->GetLink(kActionPartLink) ? part->GetLink(kActionPartLink)->GetName() : TCharHolder()).mb_str()));
 			putchar(10);
+		}
+		return 0;
+	}
+
+	if (getenv("RENDER_VIDEOS")) {
+		// the actions that play a movie, with the file
+		TVList actions;
+
+		control->GetVisionaire()->GetList(7, actions, false);
+		for (TVisionaireObject *action : actions) {
+			TVList parts;
+
+			TVisObjRef(action).GetLinks(kActionActionParts, TypeOrder::kValue1, parts);
+			for (TVisionaireObject *part : parts) {
+				if (part->GetInt(kActionPartCommand) != kCommandPlayVideo)
+					continue;
+
+				printf("action %d '%s' plays %s\n", action->GetId24(), static_cast<const char *>(wxString(action->GetName()).mb_str()),
+				       static_cast<const char *>(part->GetPath(kActionPartPath).GetFullPath().mb_str()));
+			}
 		}
 		return 0;
 	}
@@ -155,6 +177,12 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
+	// (the first events the headless SDL gives are that the window is hidden and closed: not for a run that plays)
+	SDL_Event drained;
+
+	while (SDL_PeepEvents(&drained, 1, SDL_GETEVENT, 0, 0xFFFF) > 0) {
+	}
+
 	control->RegisterEventHandler();
 	control->InitAfterLoadingScreen();
 	control->ExecuteStartingAction();
@@ -223,7 +251,14 @@ int main(int argc, char **argv) {
 		}
 		if (control->IsVideoPlaying()) {
 			// (the main loop only runs the movie while one plays; without a player it ends at once)
-			control->VideoFrame();
+			bool playing = control->VideoFrame();
+
+			if (frame % every == every - 1) {
+				std::string name = outDir + "/frame_" + std::to_string(frame + 1) + ".png";
+
+				printf("frame %d: movie %s -> %s\n", frame + 1, playing ? "plays" : "is over", name.c_str());
+				backend->SavePNG(name.c_str(), reduce);
+			}
 			wxMilliSleep(16);
 			continue;
 		}

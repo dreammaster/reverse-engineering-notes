@@ -3833,7 +3833,7 @@ game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel an
 - The sounds: `TSoundFFMPEG::CreateStream` (TSoundSilent.cpp) opens the file (a composed file too), reads its length with the Opus
   source and gives a stream that plays nothing and goes by the clock (offset, end, loop, pause). The speech of the tutorial intro
   then runs to its end; a click on the platform makes the character walk. A real device replaces `CreateStream`.
-- Still missing: a movie player.
+- The movies: see the next section.
 
 ## TFreetypeFont: the TrueType and OpenType fonts (graphicslib/freetypeFont.cpp, third_party/freetype)
 
@@ -3852,6 +3852,26 @@ HarfBuzz 1.8.8 shapes the text as in the original (itemize: runs of one script; 
 "ar" for Arabic): the joined forms and the ligatures of Arabic, the lines with a right-to-left letter laid out from the right (their
 runs in the opposite order). `StringLength` measures per character, not shaped, as the original does: an Arabic line is a little
 narrower than its measure.
+
+## The movies (TMoviePlayerMkv.cpp, baselib/matroska.cpp, third_party/libvpx)
+
+The 42 movies of the data (`videos/video.vv000` ...; an HD one of 1920x1080 and an SD one of 1024x576 for each) are Matroska files with one
+VP8 track at 25 pictures a second, Vorbis tracks (one for each language of the dub) and ASS subtitle tracks (one for each language).
+The tracks name their language by the ISO 639-2 code (`ger`, `fre`, `lol` ...; none: English) and the game asks for it by the English
+name of the ISO list ("German", "Greek, Modern (1453-)", "Mongo" for the language of the Droggelbecher joke: lang_ISOTable and lang_DBTable of
+the scripts), so the player has a table of both.
+`TMatroskaFile` reads the headers of all the blocks when the file is opened and the data of a block when it is wanted (the files are up to 60 MB).
+`TMatroskaMoviePlayer` is a `TMoviePlayer` (what TMovie asks of the ffplay port of the original): the clock of the system, the pictures
+that are due decoded with libvpx (only the last one of those is turned to RGBA and made a sprite), the picture drawn as big as the
+window lets it with black round it, the lines of the subtitles that are due drawn in the font of the video subtitles at the position
+the game sets, a key or a click that ends a movie that can be skipped, pause, seek (to the key frame before it), loop, and a picture
+a script draws itself (`Draw`). The movie ends when the clock passes its last picture; `TMovie::Finish()` then does what the original does.
+`SDL_PushEvent` of the SDL stub keeps the events now (the first events of the headless SDL, that the window is hidden and closed, come only
+when none was pushed): a run that plays movies takes those two out first (renderscene does).
+Not done: the sound of the movies (the Vorbis tracks are not decoded: there is no sound device, TSoundSilent.cpp), so the clock is not that of the
+audio; the styles and the positions of the ASS lines; the lacing of blocks and the cues of the files (a seek goes by the index of the blocks).
+Checked with `movieplayertest` (`MOVIETEST_ALL=1` opens all 42, from the game directory) and `renderscene` (`RENDER_RUN=4624` plays a cutscene
+with the subtitles on: `RENDER_LUA="getObject('Conditions[sys_show_subtitles]'):setValue(VConditionValue, true) setVideoLanguage()"`).
 
 ## Reformatted to ScummVM's code conventions
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the third-party libraries of third_party/ (the versions of the original, see THIRD_PARTY.md) as static libraries:
 build/third_party/<bits>/lib<name>.a with the headers they need staying where they are in third_party/.
-Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz; default all)"""
+Usage: tools/build_third_party.py [-32] [name ...]     (names: ogg opus opusfile webp freetype harfbuzz vpx; default all)"""
 import os
 import re
 import subprocess
@@ -85,6 +85,23 @@ def libs():
                       h["HB_FT_sources"] + h["HB_UCDN_sources"] if f.endswith(".cc")]
     harfbuzz_files.append(os.path.join(hb, "hb-ucdn", "ucdn.c"))
 
+    vpx = os.path.join(TP, "libvpx")
+
+    # (what `configure` leaves out with postproc, error concealment and multithreading off, as the original's build has it)
+    not_built = ("mfqe.c", "postproc.c", "vp8_skin_detection.c", "error_concealment.c", "threading.c")
+
+    def c_files(*dirs):
+        return [os.path.join(vpx, d, f) for d in dirs for f in sorted(os.listdir(os.path.join(vpx, d)))
+                if f.endswith(".c") and f not in not_built]
+
+    # the VP8 decoder (generic C: the generated vpx_config.h and the rtcd headers of `configure --target=generic-gnu`)
+    vpx_files = (c_files("vp8/common", "vp8/common/generic", "vp8/decoder", "vpx_scale/generic", "generated") +
+                 [os.path.join(vpx, "vpx_dsp", f) for f in ("prob.c", "bitreader.c", "bitreader_buffer.c", "intrapred.c",
+                                                              "vpx_convolve.c", "loopfilter.c", "vpx_dsp_rtcd.c")] +
+                 [os.path.join(vpx, f) for f in ("vp8/vp8_dx_iface.c", "vpx/src/vpx_codec.c", "vpx/src/vpx_decoder.c",
+                                                 "vpx/src/vpx_image.c", "vpx_mem/vpx_mem.c", "vpx_scale/vpx_scale_rtcd.c",
+                                                 "vpx_util/vpx_thread.c")])
+
     opus_inc = [os.path.join(opus, d) for d in ("include", "celt", "silk", "silk/float", "src")]
     return {
         "ogg": (ogg_files, [os.path.join(ogg, "include"), gen], []),
@@ -95,6 +112,7 @@ def libs():
         "freetype": (freetype_files, [os.path.join(TP, "freetype", "include")], ["-DFT2_BUILD_LIBRARY"]),
         "harfbuzz": (harfbuzz_files, [hb, os.path.join(hb, "hb-ucdn"), os.path.join(TP, "freetype", "include")],
                      ["-DHAVE_OT", "-DHAVE_FALLBACK", "-DHAVE_UCDN", "-DHAVE_FREETYPE", "-DHB_NO_MT"]),
+        "vpx": (vpx_files, [vpx, os.path.join(vpx, "generated"), os.path.join(vpx, "vp8"), os.path.join(vpx, "vpx_dsp")], []),
         "webp": (webp_files, [os.path.join(webp, "src"), webp], []),
     }
 

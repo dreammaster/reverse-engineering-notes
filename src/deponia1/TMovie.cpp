@@ -13,9 +13,9 @@ static const wchar_t *const kMovieKey = L"VIS4MOVPWS";
 
 std::vector<TMovie *> TMovie::s_openMovies;
 
-TMoviePlayer *(*g_createMoviePlayer)() = nullptr;
+TMoviePlayer *(*g_createMoviePlayer)() = CreateMatroskaMoviePlayer;
 
-// Without a player the movies cannot be shown; the movie ends at once.
+// Without a player (a platform that sets `g_createMoviePlayer` to null) the movies cannot be shown; the movie ends at once.
 TMoviePlayer *CreateMoviePlayer() {
 	return g_createMoviePlayer ? g_createMoviePlayer() : nullptr;
 }

@@ -83,6 +83,9 @@ public:
 TMoviePlayer *CreateMoviePlayer();
 extern TMoviePlayer *(*g_createMoviePlayer)();
 
+/** The player of the movies of the game (TMoviePlayerMkv.cpp: Matroska files with VP8 video), which is what `g_createMoviePlayer` is at first. */
+TMoviePlayer *CreateMatroskaMoviePlayer();
+
 class TMovie {
 public:
 	TMovie();
