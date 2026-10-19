@@ -23,6 +23,9 @@ int main(int argc, char **argv) {
 	Cpu c;
 	int headless = 0, intro = -1, at_n = 0, roster_menu = 1, difftest = 0, title = -1;
 	const char *difftest_only = NULL;
+	int calltest = 0;                       /* tape build: --calltest [NAME] [N] [SEED] calls translated routines with mutated state (tools/mm3_lockstep.py) */
+	const char *calltest_only = NULL;
+	unsigned calltest_n = 20, calltest_seed = 1;
 	unsigned difftest_n = 500;
 	const char *cur_path = NULL;
 	unsigned at[4];
@@ -40,6 +43,7 @@ int main(int argc, char **argv) {
 		else if (!strcmp(argv[i], "--bare")) roster_menu = 0; /* skip rosterMenu: straight into exploreLoop without the full HUD */
 		else if (!strcmp(argv[i], "--cur") && i + 1 < argc) cur_path = argv[++i]; /* start from this saved game (a .MM3 file) instead of MM3.CUR */
 		else if (!strcmp(argv[i], "--difftest")) { difftest = 1; if (i + 1 < argc && argv[i + 1][0] != '-') difftest_only = argv[++i]; if (i + 1 < argc && argv[i + 1][0] != '-') difftest_n = (unsigned)atoi(argv[++i]); }
+		else if (!strcmp(argv[i], "--calltest")) { calltest = 1; if (i + 1 < argc && argv[i + 1][0] != '-') calltest_only = strcmp(argv[++i], "all") ? argv[i] : NULL; if (i + 1 < argc && argv[i + 1][0] != '-') calltest_n = (unsigned)atoi(argv[++i]); if (i + 1 < argc && argv[i + 1][0] != '-') calltest_seed = (unsigned)atoi(argv[++i]); }
 		else if (!strcmp(argv[i], "--shot") && i + 1 < argc) shot = argv[++i];
 		else if (!strcmp(argv[i], "--keys") && i + 1 < argc) {
 			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'w') ? 0x40000000u | (unsigned)atoi(t + 1) : (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
@@ -107,6 +111,9 @@ int main(int argc, char **argv) {
 	if (roster_menu) game_call(call_rosterMenu, &c, NULL, 0);
 	if (at_n == 4) { DG[0xE8F7] = at[0]; DG[0xE8F5] = at[1]; DG[0xE8F6] = at[2]; DG[0xE8F4] = at[3]; } /* --at MAP,X,Y,FACING */
 	if (difftest) return game_difftest(difftest_only, difftest_n);
+#ifdef MM3_TAPE
+	if (calltest) { int game_calltest(const char *only, unsigned n, unsigned seed); return game_calltest(calltest_only, calltest_n, calltest_seed); }
+#endif
 	game_call(call_exploreLoop, &c, NULL, 0);
 	if (shot) video_save_bmp(shot);
 	return 0;

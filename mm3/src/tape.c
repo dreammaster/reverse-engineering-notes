@@ -18,6 +18,8 @@
 
 #define TAPE_MEM (MEM_SIZE + 0x10000)
 static FILE *tf;
+static volatile int calltest_expired;          /* set by the watchdog; acted on at the next event boundary (tape_check_abort) */
+static void tape_check_abort(void);
 static uint8_t *prev;
 static int host_depth;
 
@@ -74,6 +76,7 @@ void tape_close(void) { if (tf) { fflush(tf); } }
 void tape_host(Cpu *c, const char *n, int nargs, int ret, void (*fn)(Cpu *)) {
 	tape_open();
 	if (!tf) { fn(c); return; }
+	tape_check_abort();
 	w8('H'); name(n); w8((unsigned)nargs); w8((unsigned)ret); regs(c);
 	int nw = nargs < 4 ? 4 : nargs > 80 ? 80 : nargs;
 	w8((unsigned)nw);
@@ -102,6 +105,7 @@ void tape_rnd(int lo, int hi, int value) {
 /* entry of a translated routine: the original has the same stack pointer there (the callers push placeholder return addresses) */
 void tape_fn(Cpu *c, const char *n) {
 	if (!tf) return;
+	tape_check_abort();
 	w8('F'); name(n); regs(c);
 }
 
@@ -116,5 +120,77 @@ void tape_top_end(Cpu *c) {
 	w8('U'); w16(c->ax); w16(c->dx);
 	delta();
 	fflush(tf);
+}
+#endif
+
+/* ---- per-routine fuzzing for the lockstep tool: every translated routine is called with mutated game state and random arguments */
+#ifdef MM3_TAPE
+#include <setjmp.h>
+#include <signal.h>
+#include <unistd.h>
+
+extern const RecompEntry recomp_entries_game_gen[];
+static sigjmp_buf calltest_jmp;
+static int calltest_active;
+static void calltest_alarm(int sig) { (void)sig; calltest_expired = 1; }
+static void tape_check_abort(void) { if (calltest_expired && calltest_active) { calltest_expired = 0; siglongjmp(calltest_jmp, 1); } }
+static uint64_t ct_state;
+static unsigned ct_rand(void) { ct_state ^= ct_state << 13; ct_state ^= ct_state >> 7; ct_state ^= ct_state << 17; return (unsigned)(ct_state >> 11); }
+
+void tape_abort(void) { if (tf) { w8('X'); fflush(tf); } }
+
+/* mutate some words of the data segment: mostly small values, in the areas that hold game state more often than elsewhere */
+static void ct_mutate(void) {
+	static const struct { unsigned lo, hi; } areas[] = {
+		{ 0xB9D6, 0xB9D6 + 6 * 0x12F }, { 0xE8EA, 0xE8F9 }, { 0xEC30, 0xEC60 }, { 0xAD54, 0xAF00 }, { 0xECC0, 0xECE0 },
+		{ 0xC4A2, 0xC4B0 }, { 0xB2C0, 0xB2E0 }, { 0xB6BC, 0xB6F0 }, { 0xC520, 0xC560 }, { 0x100, 0x200 }, { 0x2800, 0x2900 } };
+	unsigned count = 4 + ct_rand() % 28;
+	for (unsigned i = 0; i < count; i++) {
+		unsigned a;
+		if (ct_rand() % 10 < 7) { unsigned k = ct_rand() % (sizeof areas / sizeof *areas); a = areas[k].lo + ct_rand() % (areas[k].hi - areas[k].lo); }
+		else a = ct_rand() % 0xF000;
+		unsigned v = ct_rand() % 4 == 0 ? 0 : ct_rand() % 3 == 0 ? ct_rand() & 0xFFFF : ct_rand() % 40;
+		if (ct_rand() & 1) { DG[a] = (uint8_t)v; } else { DG[a] = (uint8_t)v; DG[a + 1] = (uint8_t)(v >> 8); }
+	}
+	memset(DG + 0xF200, 0, 0xDF0);       /* no stale stack contents: uninitialised locals read as zero in both worlds */
+}
+
+int game_calltest(const char *only, unsigned n, unsigned seed) {
+	tape_open();
+	if (!tf) { fprintf(stderr, "calltest: set MM3_TAPE=file\n"); return 2; }
+	static uint8_t *snap;
+	snap = malloc(TAPE_MEM);
+	memcpy(snap, MEM, TAPE_MEM);
+	signal(SIGALRM, calltest_alarm);
+	for (const RecompEntry *e = recomp_entries_game_gen; e->name; e++) {
+		if (only && strcmp(only, e->name)) continue;
+		unsigned h = 0;
+		for (const char *p = e->name; *p; p++) h = h * 31 + (unsigned char)*p;
+		for (unsigned i = 0; i < n; i++) {
+			memcpy(MEM, snap, TAPE_MEM);
+			ct_state = ((uint64_t)seed << 32) ^ ((uint64_t)h << 8) ^ (i * 0x9E3779B97F4A7C15ull) ^ 0x5DEECE66Dull;
+			if (!ct_state) ct_state = 1;
+			ct_mutate();
+			Cpu c;
+			memset(&c, 0, sizeof c);
+			c.sp = STACK_TOP; c.ds = DSEG;
+			for (int k = 5; k >= 0; k--) {
+				unsigned pick = ct_rand() % 8, v;
+				v = pick < 4 ? ct_rand() % 13 : pick < 6 ? 0xB9D6 + (ct_rand() % 6) * 0x12F : ct_rand() & 0xFFFF;
+				PUSH(&c, v);
+			}
+			PUSH(&c, 0); PUSH(&c, 0);
+			calltest_expired = 0;
+			if (sigsetjmp(calltest_jmp, 1)) { calltest_active = 0; tape_abort(); continue; }
+			calltest_active = 1;
+			alarm(4);
+			tape_top_begin(&c, e->name);
+			e->fn(&c);
+			tape_top_end(&c);
+			alarm(0);
+			calltest_active = 0;
+		}
+	}
+	return 0;
 }
 #endif

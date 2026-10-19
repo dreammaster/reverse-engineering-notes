@@ -51,6 +51,15 @@ Timing is never compared: only order, arguments and state.
   original routine (statically, including everything it calls) ever store there?  A host writing a variable the original never
   touches is the "wrong offset" class of bug (e.g. `MemFree` writing the free-memory figure to the wrong variable).
 
+## Per-routine fuzzing (`tests/calltest.sh`)
+Scenarios only reach what a script can drive (spells, shops, many events need long menu sequences).  `tests/calltest.sh [-n CALLS]
+[-s SEED] [NAME ...]` instead calls **each translated routine directly**: from the loaded game state it mutates a few dozen words of
+the data segment (mostly in the party, maze, combat and monster areas), clears the stack, pushes random arguments and calls the
+routine in the recompiled game (`mm3game_tape --calltest NAME N SEED`, a 4 s watchdog drops routines that loop) and then the same
+call in the original code through the lockstep replay.  Host calls the routine makes are compared as usual, so a wrong address,
+a wrong flag, a missed instruction in the translation shows up as a divergence of the data segment or of the call sequence.  One
+process and one tape per routine; four run in parallel; results in `build/ct/NAME.report`.
+
 ## Details worth knowing
 * Overlay 1 (`378C:0`) lies inside the 64 KB the recompiled game uses for DGROUP (its stack sits on top of that code in the flat
   image).  The recompiled game never executes that memory; the emulator does, so it runs a copy of the overlay placed in low

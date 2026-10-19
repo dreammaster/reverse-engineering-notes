@@ -11,11 +11,21 @@ class Tape:
         self.pos = 12 + self.memsize
 
     def events(self):
+        try:
+            yield from self._events()
+        except (struct.error, IndexError):
+            return                        # damaged tail
+
+    def _events(self):
         d, p = self.data, self.pos
         n = len(d)
         while p < n:
             t = chr(d[p]); p += 1
             ev = {"t": t}
+            if t == "X":                       # the recompiled routine was aborted (timeout): the rest of its call is not on the tape
+                ev["delta"] = []
+                yield ev
+                continue
             if t == "F":
                 ln = d[p]; p += 1
                 ev["name"] = d[p:p + ln].decode(); p += ln
@@ -38,12 +48,18 @@ class Tape:
                 ev["ax"], ev["dx"], ev["es"], ev["sp"] = struct.unpack_from("<4H", d, p); p += 8
             elif t == "U":
                 ev["ax"], ev["dx"] = struct.unpack_from("<2H", d, p); p += 4
-            else:
-                raise ValueError("bad event type %r at %d" % (t, p - 1))
+            else:       # a damaged tail (the recorder was killed in the middle of an event): the tape ends here
+                return
+            if p + 4 > n:
+                return
             (cnt,) = struct.unpack_from("<I", d, p); p += 4
             runs = []
             for _ in range(cnt):
+                if p + 8 > n:
+                    return
                 off, ln = struct.unpack_from("<II", d, p); p += 8
+                if p + ln > n:
+                    return
                 runs.append((off, d[p:p + ln])); p += ln
             ev["delta"] = runs
             yield ev

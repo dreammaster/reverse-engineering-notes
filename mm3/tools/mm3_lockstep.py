@@ -64,6 +64,10 @@ class Divergence(Exception):
     pass
 
 
+class Aborted(Exception):
+    """the recompiled game gave up on this routine call (watchdog): nothing to compare any more"""
+
+
 def segment_of(linear):
     best = None
     for s in CODE_SEGMENTS:
@@ -144,6 +148,9 @@ class Lockstep:
                 self.peeked.append(next(self.evs))
             except StopIteration:
                 return None
+        if self.peeked[0]["t"] == "X":
+            self.peeked.pop(0)
+            raise Aborted()
         return self.peeked[0]
 
     def take(self):
@@ -547,14 +554,17 @@ class Lockstep:
         uc = self.uc
         try:
             while True:
-                ev = self.peek()
-                if ev is None:
-                    break
-                if ev["t"] != "T":
-                    self.fail("tape event %r outside a top-level routine" % ev["t"])
-                self.take()
-                self.apply_delta(ev, to_uc=True)     # the bring-up code between top-level calls changed memory
-                self.run_top(ev)
+                try:
+                    ev = self.peek()
+                    if ev is None:
+                        break
+                    if ev["t"] != "T":
+                        self.fail("tape event %r outside a top-level routine" % ev["t"])
+                    self.take()
+                    self.apply_delta(ev, to_uc=True)     # the bring-up code between top-level calls changed memory
+                    self.run_top(ev)
+                except Aborted:
+                    continue
         except StopIteration:
             pass
         except UcError as e:
@@ -585,6 +595,9 @@ class Lockstep:
             self.w(UC_X86_REG_IP, ip)
             uc.emu_start(cs * 16 + ip, 0, timeout=self.a.timeout * 1000000)
             if self.stop == "exception":
+                if isinstance(self.exc, Aborted):
+                    self.note("(recompiled routine aborted)")
+                    return
                 raise self.exc
             if self.stop == "redirect":
                 cs, ip = self.r(UC_X86_REG_CS), self.r(UC_X86_REG_IP)
