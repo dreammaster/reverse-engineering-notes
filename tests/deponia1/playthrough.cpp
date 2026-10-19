@@ -106,6 +106,12 @@ static bool idle() {
 	if (control->IsVideoPlaying())
 		return false;
 
+	// (a character that walks is on the way to what was clicked)
+	TGCharacter *walker = control->GetCurrentCharacter();
+
+	if (walker && walker->IsWalking())
+		return false;
+
 	if (!control->GetCursorControl()->IsActive())
 		return false;
 
@@ -437,6 +443,31 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	if (getenv("PLAY_JUMP")) {
+		// goes to a scene (the first characters of its name) as the dev tools do: to see what the game does there
+		std::string wanted = getenv("PLAY_JUMP");
+		TVList sceneList;
+
+		control->GetVisionaire()->GetList(4, sceneList, false);
+		for (TVisionaireObject *scene : sceneList) {
+			std::string sceneObjectName = name(TVisObjRef(scene));
+
+			if (sceneObjectName.compare(0, wanted.size(), wanted) != 0)
+				continue;
+
+			TVList objects;
+
+			TVisObjRef(scene).GetLinks(kSceneObjects, TypeOrder::kValue0, objects);
+			if (objects.empty())
+				continue;
+
+			control->GetSceneControl()->ChangeScene(control->GetCurrentCharacter()->GetRef(), TVisObjRef(objects.front()), true, 0);
+			printf("jumped to '%s'\n", sceneObjectName.c_str());
+			settle(600, 30);
+			break;
+		}
+	}
+
 	std::map<std::string, int> tries;
 	std::vector<std::string> scenes;
 	int sinceNew = 0;
@@ -494,7 +525,43 @@ int main(int argc, char **argv) {
 			std::string itemName = usedItem.IsEmpty() ? std::string() : name(usedItem);
 			std::vector<Hotspot> hotspots = scan();
 
-			if (itemName.empty() && randomNumbers() % 4 == 0) {
+			// the button that leaves a close-up (an object of an interface, not of the scene)
+			for (const Hotspot &button : scanInterface("skipButton")) {
+				if (button._name == "hs_leave") {
+					Hotspot leave = button;
+
+					leave._name = "(interface) " + button._name;
+					hotspots.push_back(leave);
+				}
+			}
+
+			if (sinceNew >= 12 && sinceNew % 4 == 0) {
+				// nothing happens: a way out is an empty place (a close-up is left so) or the right button
+				TGScene *current = control->GetScene();
+				wxPoint empty;
+
+				empty.x = 960;
+				empty.y = 100;
+
+				for (int attempt = 0; attempt < 60 && current; attempt++) {
+					wxPoint candidate;
+
+					candidate.x = static_cast<int>(randomNumbers() % 1920);
+					candidate.y = static_cast<int>(randomNumbers() % 1080);
+
+					if (!current->GetObject(candidate)) {
+						empty = candidate;
+						break;
+					}
+				}
+
+				bool right = (sinceNew / 4) % 2 == 0;
+
+				click(empty.x, empty.y, right);
+				what = std::string("stuck: a ") + (right ? "right" : "left") + " click on an empty place";
+			}
+
+			if (what.empty() && itemName.empty() && randomNumbers() % 4 == 0) {
 				// the inventory is opened (a turn of the wheel) and an item put on the cursor, the one tried the least
 				wheel(true);
 				settle(300, 15);
@@ -594,8 +661,8 @@ int main(int argc, char **argv) {
 			for (const std::string &actionName : newActions)
 				printf("    action: %s\n", actionName.c_str());
 			newActions.clear();
-		} else if (++sinceNew >= 60) {
-			printf("nothing new in 60 steps: stopping\n");
+		} else if (++sinceNew >= 150) {
+			printf("nothing new in 150 steps: stopping\n");
 			break;
 		}
 	}

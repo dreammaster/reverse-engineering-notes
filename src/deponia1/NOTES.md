@@ -3891,6 +3891,24 @@ balance of the sound (full on the louder side, the other side less by the balanc
 Checked: the tutorial intro's speech, music and atmospheres render (a WAV of 165 seconds with sound in 147 of them), the movies' audio (`movieplayertest`
 measures it for the English and German tracks of a movie and a 44100 Hz one).
 
+## A player that follows the hotspots (tests/deponia1/playthrough.cpp)
+
+`playthrough <dir> [steps]`, run from the game directory, starts a new game as a player does (language, New Game, the questions) and then goes on by
+itself: it waits until the game waits for the player (the actions that are not the always running checks are over, no text, no movie, the
+character does not walk), finds what can be clicked on a grid of the screen (`TGScene::GetObject(pos)`; the objects of an interface by
+`TGInterface::GetObject`), and clicks the one that was tried the least (left button, then right); it answers a dialog (the line tried the least:
+`TGDialog::GetLineRects()`), skips a movie, opens the inventory with a turn of the wheel (the script of the game makes a wheel turn *down* open it),
+puts an item on the cursor and tries it on every hotspot and every other item, and when nothing happens for a while clicks on empty places. The
+tutorial is skipped with the game's own button (`skipButton`, the question `skipQuestion`: `hs_yes`); the way out of a close-up is `hs_leave` of
+the same interface. Mouse input goes through `TMasterControl::ProcessMessage()` as the main loop sends it (the mouse handlers of the scripts run
+first): `HandleMouseUp()` alone misses them (the wheel). `PLAY_SCALE` makes the time of the engine faster (`SetEngineTimeScale`: waits, walks and
+movies go by sooner), the software backend does not make pixels (`SetRendering(false)`) except for the picture of a new scene.
+What it found: ~700 steps of the tutorial and of chapter 1's first scenes (the hut, the list close-up, picking up and combining items, using them,
+the dialogs with Wenzel) run without an assertion or an error of a script; the game answers every kind of click. It does not solve the puzzles
+(it tries an item on everything once, it does not know what to do): it stays in the first scene of the chapter. Of the assertions seen
+before, `RunningActions.size() == ActionIdToRunningAction.size()` is the original's (see above) and `CreateActiveObject ... ActiveTexts` came
+from a dialog line without a text object.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
