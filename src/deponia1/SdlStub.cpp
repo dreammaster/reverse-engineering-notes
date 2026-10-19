@@ -1,4 +1,5 @@
 #include "SdlStub.h"
+#include "WxStub.h"
 
 #include <chrono>
 #include <cstdio>
@@ -21,8 +22,10 @@ const char *SDL_GetError(void) {
 }
 
 Uint32 SDL_GetTicks(void) {
-	using namespace std::chrono;
-	return static_cast<Uint32>(duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
+	// (the same time as wxGetLocalTimeMillis(): the engine's, made faster or not by SetEngineTimeScale())
+	static long long base = wxGetLocalTimeMillis();
+
+	return static_cast<Uint32>(wxGetLocalTimeMillis() - base);
 }
 
 const char *SDL_GetKeyName(int /*key*/) {

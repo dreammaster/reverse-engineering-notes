@@ -110,13 +110,35 @@ wxString wxConvertMB2WX(const char *s) {
 	return wxString(s);
 }
 
-long long wxGetLocalTimeMillis() {
+static double s_timeScale = 1.0;
+static long long s_wallBase = 0;
+static long long s_engineBase = 0;
+
+static long long systemMillis() {
 	using namespace std::chrono;
 	return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
+long long wxGetLocalTimeMillis() {
+	long long now = systemMillis();
+
+	if (s_timeScale == 1.0)
+		return now;
+
+	return s_engineBase + static_cast<long long>(static_cast<double>(now - s_wallBase) * s_timeScale);
+}
+
+void SetEngineTimeScale(double scale) {
+	// (the time of the engine goes on from where it is)
+	long long engine = wxGetLocalTimeMillis();
+
+	s_wallBase = systemMillis();
+	s_engineBase = engine;
+	s_timeScale = scale > 0.0 ? scale : 1.0;
+}
+
 void wxMilliSleep(long ms) {
-	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+	std::this_thread::sleep_for(std::chrono::microseconds(static_cast<long long>(static_cast<double>(ms) * 1000.0 / s_timeScale)));
 }
 
 void toUTF(wxString *out, const char *utf8) {

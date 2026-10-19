@@ -823,6 +823,9 @@ wxString wxConvertMB2WX(const char *s);
 // milliseconds since the Unix epoch as a wxLongLong; backed by
 // system_clock since only elapsed-time differences are ever taken from it.
 long long wxGetLocalTimeMillis();
+/** Makes the time of the engine (wxGetLocalTimeMillis, wxMilliSleep, SDL_GetTicks) go `scale` times as fast as the clock of the system: a headless
+ *  run that waits for what the game waits for (a pause of two seconds, a cutscene) gets there sooner. 1: as it is. */
+void SetEngineTimeScale(double scale);
 // Confirmed call shape only (TTimer::WaitUntil, Deponia_Linux.asm line
 // 559476) - real wxMilliSleep() blocks the calling thread for `ms`
 // milliseconds.

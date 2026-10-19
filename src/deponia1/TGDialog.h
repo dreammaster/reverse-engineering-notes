@@ -72,6 +72,10 @@ public:
 	bool IsActiveDialogPart() const {
 		return _hovered != -1;
 	}
+	/** Where the lines of the dialog are on the screen (the ones that are shown now). */
+	const std::vector<wxRect> &GetLineRects() const {
+		return _lineRects;
+	}
 	/** The character the dialog is of (the dialog record's own character, or the one above). */
 	TVisObjRef GetDialogCharacter() const;
 

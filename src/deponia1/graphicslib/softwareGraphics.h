@@ -56,6 +56,10 @@ public:
 	int GetDrawnCount() const {
 		return _shownDrawn;
 	}
+	/** Without rendering the sprites are kept and the draw calls are counted but no pixels are made (a run that only plays the game). */
+	void SetRendering(bool rendering) {
+		_rendering = rendering;
+	}
 	/** Called when a frame is shown (the frames of a transition too, which are drawn inside one call of the game). */
 	void SetShownCallback(const std::function<void(const TSoftwareGraphics &)> &callback) {
 		_onShown = callback;
@@ -81,6 +85,7 @@ private:
 	float _offsetY = 0.0f;
 	int _drawn = 0;
 	bool _dirty = false;
+	bool _rendering = true;
 	std::function<void(const TSoftwareGraphics &)> _onShown;
 	int _shownDrawn = 0;
 };

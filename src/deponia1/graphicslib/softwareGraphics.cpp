@@ -71,6 +71,12 @@ void TSoftwareGraphics::blend(int x, int y, float r, float g, float b, float a) 
 void TSoftwareGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha, bool mirrored,
                              const unsigned int &color, int /*shader*/, float rotation, const wxPoint &rotationCenter, float scaleX,
                              float scaleY, int /*matrixId*/) {
+	if (!_rendering) {
+		_drawn++;
+		_dirty = true;
+		return;
+	}
+
 	auto found = _sprites.find(sprite);
 
 	if (std::getenv("RENDER_TRACE") && _drawn < 80)
@@ -194,6 +200,12 @@ void TSoftwareGraphics::DrawWithLightMap(TSpriteHandle *sprite, const wxRect &so
 }
 
 void TSoftwareGraphics::DrawBox(const wxRect &rect, unsigned int color, float alpha) {
+	if (!_rendering) {
+		_drawn++;
+		_dirty = true;
+		return;
+	}
+
 	float a = (float)((color >> 24) & 0xFF) / 255.0f * alpha;
 	float r = (float)(color & 0xFF) / 255.0f * a;
 	float g = (float)((color >> 8) & 0xFF) / 255.0f * a;
@@ -208,6 +220,12 @@ void TSoftwareGraphics::DrawBox(const wxRect &rect, unsigned int color, float al
 }
 
 void TSoftwareGraphics::DrawLine(const wxPoint &from, const wxPoint &to, unsigned int color, float alpha) {
+	if (!_rendering) {
+		_drawn++;
+		_dirty = true;
+		return;
+	}
+
 	float a = (float)((color >> 24) & 0xFF) / 255.0f * alpha;
 	float r = (float)(color & 0xFF) / 255.0f * a;
 	float g = (float)((color >> 8) & 0xFF) / 255.0f * a;
