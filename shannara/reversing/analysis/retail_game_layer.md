@@ -1015,3 +1015,9 @@ emulation; the host calls a pump hook from the places the game polls (vertical-r
 screen appears - the forest of the fishing-spot opening with the original interface (undo button, compass, inventory pane with Jak's portrait) and the opening text in the game's font - all produced by the
 original code. `WIN_SNAPSHOT=out.png,SECONDS[,X,Y,CLICK_AT]` makes the front end save the frame after that many seconds (optionally after a click) and exit, for automated checks.
 Not implemented yet: sound (the AIL drivers are 16-bit real-mode code; the plan is to implement the AIL API calls natively), `FLCDATA` videos need the extracted FLICS archive on `HOST_EXTRA_DIRS`.
+
+Click-through check (scripted with `WIN_SCRIPT`, see the header of `port/src/win_front.cpp`): after the splash the opening text waits for a click (`objh_081` -> `delay_animate?`), the next clicks advance the
+arrival sequence (forest picture -> the fishing glen with its description), and the game reaches its `main_` event loop with the original interface: the verb column (Look / Search / Listen),
+the command line ("Look at the fishing spot"), hover labels from the region table ("reflection"), the compass, the inventory pane and the undo button. `play_cutscene?` is now translated too
+(`jmp [ebx+table]` with a pre-scaled index is recognised via IDA's switch info), so only ten hardware/AIL functions remain native shims.
+`port/play.bat` starts the window front end with the usual directories.

@@ -110,6 +110,15 @@ def main():
             insns.append(rec)
         # jump tables: `jmp cs:table[reg*4]`; list the targets IDA resolved
         for r in insns:
+            if r["mn"] == "jmp" and r["ops"] and r["ops"][0]["t"] in (O_DISPL, O_PHRASE) and "sib" not in r["ops"][0] and "phrase" in r["ops"][0]:
+                # `jmp cs:table[ebx]` with ebx = case * 4 already (IDA knows the switch): the index register holds a byte offset
+                base = r["ops"][0]["addr"]
+                si = ida_nalt.get_switch_info(r["ea"])
+                n = si.get_jtable_size() if si else 0
+                if n:
+                    r["jt"] = [idc.get_wide_dword(base + 4 * k) for k in range(n)]
+                    r["jt_lo"] = si.lowcase
+                    r["jt_scaled"] = True
             if r["mn"] == "jmp" and r["ops"] and r["ops"][0]["t"] in (O_MEM, O_DISPL, O_PHRASE) and "sib" in r["ops"][0]:
                 base = r["ops"][0]["addr"]
                 si = ida_nalt.get_switch_info(r["ea"])

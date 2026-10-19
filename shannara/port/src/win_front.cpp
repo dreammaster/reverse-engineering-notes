@@ -1,6 +1,9 @@
 // shannara_win EXE GAMEDIR PICDIR SAVEDIR: the recompiled game in a Windows window.
 // The frame store of the emulated VESA card (8-bit indices + the VGA DAC palette) is shown with GDI; mouse and keyboard events go to the host's INT 33h / INT 21h emulation.
 // Everything else (timing, menus, dialogs, combat ...) is the original code running natively. Needs the data files of the retail game (not part of the repository).
+//
+// Automated driving (for tests): WIN_SCRIPT=file with lines "SECONDS click X Y | down X Y | up X Y | move X Y | key CHAR | scan CODE | snap FILE.png | quit",
+// or WIN_SNAPSHOT=out.png,SECONDS[,X,Y,CLICK_AT] as a shorthand for one click plus one snapshot. The program exits after the last event.
 #include "host.h"
 #include "png.h"
 
@@ -9,6 +12,8 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <string>
 #include <vector>
 
 using namespace shannara;
@@ -19,6 +24,19 @@ static std::vector<uint32_t> g_pix(640 * 480);
 static int g_mx = 320, g_my = 240, g_mb = 0;
 static bool g_quit = false;
 static DWORD g_lastPresent = 0;
+
+static void frameToRgb(Host &host, Image &img) {
+	host.flushVram();
+	img.w = 640;
+	img.h = 480;
+	img.rgb.resize(640 * 480 * 3);
+	const uint8_t *f = host.frame(), *p = host.palette();
+	for (int i = 0; i < 640 * 480; i++)
+		for (int c = 0; c < 3; c++) {
+			uint8_t v = p[f[i] * 3 + c] & 63;
+			img.rgb[i * 3 + c] = (uint8_t)(v * 4 + (v >> 4));
+		}
+}
 
 static void present() {
 	g_host->flushVram();
@@ -124,6 +142,12 @@ static LRESULT CALLBACK wndProc(HWND h, UINT msg, WPARAM w, LPARAM l) {
 	}
 }
 
+struct Ev {
+	double t = 0;
+	std::string kind, path;
+	int a = 0, b = 0;
+};
+
 int main(int argc, char **argv) {
 	if (argc < 5) {
 		fprintf(stderr, "usage: shannara_win EXE GAMEDIR PICDIR SAVEDIR\n");
@@ -132,6 +156,7 @@ int main(int argc, char **argv) {
 	try {
 		Host host(argv[1], argv[2], argv[3], argv[4]);
 		g_host = &host;
+		host.verbose = getenv("HOST_VERBOSE") != nullptr;
 		host.loadNames("reversing/analysis/retail_function_map.tsv");
 		WNDCLASSA wc = {};
 		wc.lpfnWndProc = wndProc;
@@ -144,53 +169,93 @@ int main(int argc, char **argv) {
 		g_hwnd = CreateWindowA("ShannaraNative", "Shannara (native recompile)", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top,
 		                       nullptr, nullptr, wc.hInstance, nullptr);
 		ShowWindow(g_hwnd, SW_SHOW);
-		// automated check: WIN_SNAPSHOT=out.png,seconds[,clickX,clickY,clickAtSecond] saves the frame after that many seconds (optionally after a left click) and exits
-		const char *snap = getenv("WIN_SNAPSHOT");
-		std::string snapPath;
-		double snapAt = 0, clickAt = -1;
-		int clickX = 0, clickY = 0;
-		bool clicked = false;
-		if (snap) {
+
+		std::vector<Ev> script;
+		auto addEv = [&](double t, const std::string &k, int a, int b, const std::string &path) {
+			Ev e;
+			e.t = t;
+			e.kind = k;
+			e.a = a;
+			e.b = b;
+			e.path = path;
+			script.push_back(e);
+		};
+		if (const char *sf = getenv("WIN_SCRIPT")) {
+			FILE *f = fopen(sf, "r");
+			char line[512];
+			while (f && fgets(line, sizeof line, f)) {
+				double t = 0;
+				char kind[32] = {}, path[400] = {};
+				int a = 0, b = 0;
+				if (sscanf(line, "%lf %31s", &t, kind) < 2)
+					continue;
+				if (!strcmp(kind, "snap"))
+					sscanf(line, "%lf %31s %399s", &t, kind, path);
+				else
+					sscanf(line, "%lf %31s %d %d", &t, kind, &a, &b);
+				addEv(t, kind, a, b, path);
+			}
+			if (f)
+				fclose(f);
+		} else if (const char *snap = getenv("WIN_SNAPSHOT")) {
 			std::string t = snap;
 			size_t c1 = t.find(',');
-			snapPath = t.substr(0, c1);
+			std::string snapPath = t.substr(0, c1);
 			double v[4] = {0, 0, 0, -1};
 			int n = 0;
 			size_t pos = c1 + 1;
 			while (n < 4 && pos < t.size()) {
 				size_t q = t.find(',', pos);
 				v[n++] = atof(t.substr(pos, q == std::string::npos ? std::string::npos : q - pos).c_str());
-				if (q == std::string::npos) break;
+				if (q == std::string::npos)
+					break;
 				pos = q + 1;
 			}
-			snapAt = v[0];
-			clickX = (int)v[1];
-			clickY = (int)v[2];
-			clickAt = v[3];
+			if (v[3] >= 0)
+				addEv(v[3], "click", (int)v[1], (int)v[2], "");
+			addEv(v[0], "snap", 0, 0, snapPath);
+			addEv(v[0] + 0.1, "quit", 0, 0, "");
 		}
+		size_t nextEv = 0;
 		DWORD t0 = GetTickCount();
+		bool pendingUp = false;
+		double upAt = 0;
 		host.onPump = [&]() {
-			if (snap) {
-				double el = (GetTickCount() - t0) / 1000.0;
-				if (clickAt >= 0 && el >= clickAt && !clicked) {
-					host.setMouse(clickX, clickY, 1);
-					clicked = true;
-				} else if (clicked && el >= clickAt + 0.3 && el < snapAt) {
-					host.setMouse(clickX, clickY, 0);
-				}
-				if (el >= snapAt) {
-					host.flushVram();
+			double el = (GetTickCount() - t0) / 1000.0;
+			if (pendingUp && el >= upAt) {
+				host.setMouse(g_mx, g_my, 0);
+				pendingUp = false;
+			}
+			while (nextEv < script.size() && script[nextEv].t <= el) {
+				const Ev e = script[nextEv++];
+				if (e.kind == "click") {
+					g_mx = e.a;
+					g_my = e.b;
+					host.setMouse(g_mx, g_my, 1);
+					pendingUp = true;
+					upAt = el + 0.25;
+				} else if (e.kind == "down") {
+					g_mx = e.a;
+					g_my = e.b;
+					host.setMouse(g_mx, g_my, 1);
+				} else if (e.kind == "up" || e.kind == "move") {
+					g_mx = e.a;
+					g_my = e.b;
+					host.setMouse(g_mx, g_my, 0);
+				} else if (e.kind == "key") {
+					host.pushKey(e.a, 0);
+				} else if (e.kind == "scan") {
+					host.pushKey(0, e.a);
+				} else if (e.kind == "snap") {
 					Image img;
-					img.w = 640;
-					img.h = 480;
-					img.rgb.resize(640 * 480 * 3);
-					const uint8_t *f = host.frame(), *p = host.palette();
-					for (int i = 0; i < 640 * 480; i++)
-						for (int c = 0; c < 3; c++) {
-							uint8_t v6 = p[f[i] * 3 + c] & 63;
-							img.rgb[i * 3 + c] = (uint8_t)(v6 * 4 + (v6 >> 4));
-						}
-					writePng(snapPath, img);
+					frameToRgb(host, img);
+					writePng(e.path, img);
+				} else if (e.kind == "stack") {
+					fprintf(stderr, "call stack:");
+					for (uint32_t a : host.machine().trace)
+						fprintf(stderr, " %s >", host.describe(a).c_str());
+					fprintf(stderr, "\n");
+				} else if (e.kind == "quit") {
 					throw ProgramExit{0};
 				}
 			}

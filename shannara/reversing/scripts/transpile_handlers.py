@@ -265,8 +265,11 @@ class Gen:
         cond = JCC.get(mn)
         op = ops[0]
         if "jt" in r:
-            idx = ops[0]["sib"][1]
-            lines = ["switch (m.%s) {" % REG32[idx]]
+            if r.get("jt_scaled"):      # the register already holds case * 4
+                lines = ["switch (m.%s >> 2) {" % REG32[ops[0]["phrase"]]]
+            else:
+                idx = ops[0]["sib"][1]
+                lines = ["switch (m.%s) {" % REG32[idx]]
             for k, tgt in enumerate(r["jt"]):
                 lines.append("  case %d: %s break;" % (k, self.goto(tgt, labels, fn_eas)))
             lines.append("  default: throw FormatError(\"jump table index out of range\");")

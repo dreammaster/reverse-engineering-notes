@@ -376,6 +376,13 @@ void Host::mouse33() {
 		m.ebx = 2;
 		break;
 	case 3: // position and buttons
+		{
+			static int lastLogged = -1;
+			if (verbose && _mb != lastLogged) {
+				lastLogged = _mb;
+				log("mouse poll: buttons " + std::to_string(_mb) + " at " + std::to_string(_mx) + "," + std::to_string(_my));
+			}
+		}
 		m.ebx = (uint32_t)_mb;
 		m.ecx = (uint32_t)_mx;
 		m.edx = (uint32_t)_my;
