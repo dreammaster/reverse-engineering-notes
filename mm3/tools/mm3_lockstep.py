@@ -42,7 +42,7 @@ SENT_SEG = 0x9F00                 # return address of the top-level call
 # overlay stubs (int 3Fh thunks) and the overlays they lead to, as IDA has them
 STUB_SEGMENTS = [0x27F2, 0x27FD, 0x2800, 0x2806, 0x280C, 0x2816, 0x2821, 0x282A, 0x2831, 0x2839, 0x2843, 0x2861, 0x2867]
 OVERLAY_SEGMENTS = [0x378C, 0x3993, 0x3BC3, 0x3DD2, 0x3F49, 0x4150, 0x435A, 0x4579, 0x4790, 0x49B6, 0x4BD9, 0x4DE3, 0x4FF6]
-CODE_SEGMENTS = sorted([0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511] + OVERLAY_SEGMENTS)
+CODE_SEGMENTS = sorted([0x1000, 0x14BE, 0x1523, 0x1903, 0x1B66, 0x1E40, 0x203F, 0x224F, 0x2511] + OVERLAY_SEGMENTS + STUB_SEGMENTS)
 
 # Overlay 1 (378C:0) lies inside the 64 KB the recompiled game uses for DGROUP (the stack is at its top): the recompiled game never
 # executes that memory, but the emulator does, so a copy of the overlay's code is placed in low memory and used instead.
@@ -523,7 +523,11 @@ class Lockstep:
         fr = self.frames[-1]
         if fr["name"] not in self.ret_at.get(address, ()) or self.r(UC_X86_REG_SP) != fr["sp"]:
             return
-        ev = self.take() if self.peek() and self.peek()["t"] == "h" else None
+        if self.peek() is None:               # the recorded run ended inside this routine (the recompiled game stopped or was aborted)
+            self.stop = "tape end"
+            uc.emu_stop()
+            return
+        ev = self.take() if self.peek()["t"] == "h" else None
         if ev is None:
             self.fail("%s returned in the original but the recompiled routine made further calls (next on tape: %s)"
                       % (fr["name"], self.peek() and self.peek().get("name")))

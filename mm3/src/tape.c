@@ -150,6 +150,11 @@ static void ct_mutate(void) {
 		if (ct_rand() % 10 < 7) { unsigned k = ct_rand() % (sizeof areas / sizeof *areas); a = areas[k].lo + ct_rand() % (areas[k].hi - areas[k].lo); }
 		else a = ct_rand() % 0xF000;
 		unsigned v = ct_rand() % 4 == 0 ? 0 : ct_rand() % 3 == 0 ? ct_rand() & 0xFFFF : ct_rand() % 40;
+		if (a >= 0xB9D6 && a < 0xB9D6 + 6 * 0x12F) {   /* characters: perturb, and keep class and level plausible (level 0 / class 0 are not game states) */
+			unsigned f = (a - 0xB9D6) % 0x12F;
+			if (f == 0x13 || f == 0x23 || f == 0x24) continue;
+			v = (DG[a] + (ct_rand() % 7) - 3) & 0xFF;
+		}
 		if (ct_rand() & 1) { DG[a] = (uint8_t)v; } else { DG[a] = (uint8_t)v; DG[a + 1] = (uint8_t)(v >> 8); }
 	}
 	memset(DG + 0xF200, 0, 0xDF0);       /* no stale stack contents: uninitialised locals read as zero in both worlds */
@@ -183,7 +188,7 @@ int game_calltest(const char *only, unsigned n, unsigned seed) {
 			calltest_expired = 0;
 			if (sigsetjmp(calltest_jmp, 1)) { calltest_active = 0; tape_abort(); continue; }
 			calltest_active = 1;
-			alarm(4);
+			alarm(2);
 			tape_top_begin(&c, e->name);
 			e->fn(&c);
 			tape_top_end(&c);
