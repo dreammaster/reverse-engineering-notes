@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <random>
 #include <filesystem>
 #include <string>
 
@@ -233,6 +234,36 @@ int main(int argc, char **argv) {
 
 			printf("running action '%s'\n", static_cast<const char *>(wxString(action.GetName()).mb_str()));
 			TGAction::AddRunningAction(action);
+		}
+		if (getenv("RENDER_MONKEY")) {
+			// RENDER_MONKEY=startFrame:every:seed - from `startFrame` on, a click at a random place every `every` frames (one in
+			// five with the right button), the scenes the game goes through are listed: a way to find what breaks
+			static int startFrame = 0, every = 1, seed = 1;
+			static std::mt19937 random;
+			static std::string lastScene;
+
+			if (frame == 0) {
+				sscanf(getenv("RENDER_MONKEY"), "%d:%d:%d", &startFrame, &every, &seed);
+				random.seed(seed);
+			}
+
+			TGScene *current = control->GetScene();
+			std::string sceneName = current ? static_cast<const char *>(current->GetRef().GetName().mb_str()) : "(none)";
+
+			if (sceneName != lastScene) {
+				printf("monkey: frame %d in scene '%s'\n", frame, sceneName.c_str());
+				lastScene = sceneName;
+			}
+			if (frame >= startFrame && (frame - startFrame) % every == 0) {
+				wxPoint point;
+				bool right = random() % 5 == 0;
+
+				point.x = static_cast<int>(random() % 1920);
+				point.y = static_cast<int>(random() % 1080);
+				control->HandleMouseMove(point, false);
+				control->HandleMouseUp(point, right ? TMouseMessageEnum::kRightDown : TMouseMessageEnum::kLeftDown);
+				control->HandleMouseUp(point, right ? TMouseMessageEnum::kRightUp : TMouseMessageEnum::kLeftUp);
+			}
 		}
 		if (getenv("RENDER_CLICK")) {
 			// RENDER_CLICK=frame:x:y,frame:x:y... clicks with the left button at the position (of the 1920x1080 frame)
