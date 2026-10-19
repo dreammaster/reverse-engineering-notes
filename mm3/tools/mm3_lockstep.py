@@ -150,7 +150,7 @@ class Lockstep:
             except StopIteration:
                 return None
         while self.peeked[0]["t"] == "L" and self.peeked[0]["name"] not in self.label_names:
-            self.peeked.pop(0)
+            self.apply_delta(self.peeked.pop(0))          # (a label of another routine: only its memory changes matter)
             try:
                 self.peeked.append(next(self.evs))
             except StopIteration:
@@ -514,11 +514,13 @@ class Lockstep:
             got = ev["name"] if ev["t"] in "LFH" else ev["t"]
             self.fail("the original reaches label %s, the recompiled game reaches %s next -- the paths diverge here" % (name, got))
         self.take()
+        self.apply_delta(ev)
         regs = ev["regs"]
         self.note("label " + name)
+        if not self.frames:
+            self.compare_memory("label %s (the block before it stored something different)" % name)
         diffs = []
-        after_host = self.host_since_label
-        self.host_since_label = False
+        after_host = self.host_since_label          # (a call has happened in this top-level routine: bx, cx, dx may be leftovers of the callee)
         for reg, ureg in (("ax", UC_X86_REG_AX), ("bx", UC_X86_REG_BX), ("cx", UC_X86_REG_CX), ("dx", UC_X86_REG_DX), ("si", UC_X86_REG_SI),
                           ("di", UC_X86_REG_DI), ("bp", UC_X86_REG_BP), ("sp", UC_X86_REG_SP)):
             if after_host and reg in ("bx", "cx", "dx"):
@@ -638,6 +640,7 @@ class Lockstep:
         self.w(UC_X86_REG_SP, sp)
         uc.mem_write(DG_LIN + sp, struct.pack("<HH", 0, SENT_SEG))        # far return address of the top-level call
         self.frames = []
+        self.host_since_label = False
         cs, ip = seg, self.code(lin) - seg * 16
         self.note("TOP %s" % name)
         while True:

@@ -107,6 +107,7 @@ void tape_rnd(int lo, int hi, int value) {
 void tape_label(Cpu *c, const char *n) {
 	if (!tf) return;
 	w8('L'); name(n); regs(c);
+	delta();
 }
 
 /* entry of a translated routine: the original has the same stack pointer there (the callers push placeholder return addresses) */

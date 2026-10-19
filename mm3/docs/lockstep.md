@@ -37,6 +37,8 @@ python3 ../tools/mm3_lockstep.py build/run.tape     # replay against the origina
 Timing is never compared: only order, arguments and state.
 
 ## What it found so far
+* A translated thunk that tail-jumps to a host routine (`sub_282E8` -> `sub_45BD1`) popped its return address *after* the host ran,
+  so the host read its arguments four bytes off.  Fixed in `tools/asm2c.py`.
 * `stricmp` returned the lower-case difference where the original returns the upper-case one.
 * The translator classified far calls to "collapsed" library routines (`_memcpy_0`, `SCOPY@` ...) as near calls
   (harmless for the game, but wrong for stack bookkeeping).
@@ -59,6 +61,25 @@ routine in the recompiled game (`mm3game_tape --calltest NAME N SEED`, a 4 s wat
 call in the original code through the lockstep replay.  Host calls the routine makes are compared as usual, so a wrong address,
 a wrong flag, a missed instruction in the translation shows up as a divergence of the data segment or of the call sequence.  One
 process and one tape per routine; four run in parallel; results in `build/ct/NAME.report`.
+
+### Reading per-routine results: what is noise
+Random arguments and mutated state go outside what the game can produce, so some divergences are not translation bugs.  Triage by
+re-running the routine with `--labels` (below) and look at what differs:
+* **invalid domain**: a character pointer that is not a character (`getCurrentExperience(C6DB)`), a saving-throw kind of 9, a party size of 58,
+  level 0 -- the original and the C replacement then do different undefined things (table index outside the table, shift counts above
+  31, division by zero = `INT 00h` in the original);
+* **uninitialised stack**: a routine reads a local it never wrote (the original's stack holds the previous callee's leftovers, the
+  recompiled game's does not): `F_LUDIV@` arguments differing in one byte, for example;
+* **garbage pointers** into low memory or the emulator's own scratch memory;
+* **host results with fake state** (`pickSaveSlot` with a made-up file handle).
+A divergence on a routine called with *valid* arguments is a real finding.  Real ones found this way so far: the tail-jump-to-host
+bug (below), `sprintf("%s", NULL)`, `stricmp`.
+
+### Label-by-label comparison
+`make mm3game_labels` builds the game so that every label of every translated routine records the registers and memory changes;
+`MM3_TAPE=f ./mm3game_labels ../data --headless --calltest NAME 12 1` then `mm3_lockstep.py --labels NAME f` stops at the first
+label where the original takes another path, has other registers (si, di, bp, sp, ax always; bx/cx/dx until a call has happened),
+or other memory.  This is how one pins down which instruction of a routine is mistranslated.
 
 ## Details worth knowing
 * Overlay 1 (`378C:0`) lies inside the 64 KB the recompiled game uses for DGROUP (its stack sits on top of that code in the flat
