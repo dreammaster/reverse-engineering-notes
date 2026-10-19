@@ -13,13 +13,24 @@ make mm3game           # needs SDL2 dev headers and libm
 bash tests/difftest.sh # every readable routine vs the translated original (expect "0 mismatches" on every line)
 bash tests/shadowcheck.sh; bash tests/combatwin.sh; bash tests/gamefuzz2.sh 30   # silent/OK = pass
 ```
+### Windows (MinGW) build used on the author's machine
+```
+python -m pip install unicorn          # needed by tools/mm3_image.py
+python ../tools/mm3_dgroup.py ../data/MM3.EXE ../data/DGROUP.BIN; python ../tools/mm3_image.py ../data/MM3.EXE ../data/IMAGE.BIN
+mingw32-make mm3game CC=gcc SDL_CFLAGS="-IC:/sdk/SDL2-2.32.10/include/SDL2" SDL_LIBS="-LC:/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2"
+copy C:\sdk\SDL2-2.32.10in\SDL2.dll .   &  mkdir build   (for tests/gamefuzz2.sh)
+```
+
 Report any line that says MISMATCH, any `rc=` line from the fuzz scripts, or a build error.
 
 ## 1. Start-up  (`./mm3game ../data`)
-- [ ] Window opens, resizable, **4:3 shape** (320x200 picture stretched like a DOS monitor); `MM3_SQUARE=1` gives square pixels.
-- [ ] Alt+Enter and F11 toggle full screen and back; the picture stays sharp and keeps its aspect.
-- [ ] With `--intro`: intro animation (starfield, title) runs at a believable speed, not too fast/slow; no flicker or garbage.
-- [ ] Roster/save-slot menu appears; with no save a new game from MM3.CUR is created (`./mm3-saves/SAVE00.MM3`).
+In a window the full original flow runs: intro (with the digital speech), title picture, copyright dialog, the "Might and Magic III Options" menu
+(Start a New Game / Load a Saved Game), then the roster menu and the game.  Flags: `--nointro`, `--notitle` (straight into the current save),
+`--title` (play the title menu in headless test runs, which skip it by default).
+- [ ] Window opens, resizable, **4:3 shape**; `MM3_SQUARE=1` gives square pixels.  Alt+Enter and F11 toggle full screen.
+- [ ] Intro: starfield, title, speech scenes and credits at a believable speed; no flicker or garbage.
+- [ ] Title menu: Start a New Game asks for a name and lists it afterwards in Load a Saved Game; Esc / Ctrl-Q leave.
+- [ ] A saved game loads (title menu and the control panel's Load, which returns to the title menu); saves are in `./mm3-saves`.
 - [ ] `data/MM3.CUR` is **not** modified (check `git status` afterwards).
 
 ## 2. Mouse and keyboard
@@ -60,7 +71,7 @@ Report any line that says MISMATCH, any `rc=` line from the fuzz scripts, or a b
 - [ ] Optional: `MM3_WAV=out.wav ./mm3game ../data --intro` dumps the audio so you can send or compare it.
 
 ## 9. Known gaps (do not report as bugs)
-Digital-sample drivers, PC-speaker/Roland music, rhythm-mode drums, the screen-transition effect (`vdrv_00`: screens just appear), the
+PC-speaker/Roland music, rhythm-mode drums (the intro's digital speech *is* played now), the
 original copy-protection/`_main` start-up (replaced by `game_main.c`), cycle-exact OPL.
 
 ## What to send back

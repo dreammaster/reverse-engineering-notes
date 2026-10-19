@@ -36,6 +36,7 @@ uint16_t game_load_resource(const char *name, uint32_t *size); /* segment of a f
 /* video / input (game_video.c) */
 void video_present(void);
 void video_pump_events(void);
+void video_show_title(void);
 void game_sprite_free_cache(uint16_t seg);
 void game_exec_draw_list(unsigned list_addr);
 int game_difftest(const char *only, unsigned n); /* game_diff.c */

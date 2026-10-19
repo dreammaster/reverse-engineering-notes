@@ -16,11 +16,12 @@ void call_loadSavedGame(Cpu *c);
 void call_exploreLoop(Cpu *c);
 void call_introSequence(Cpu *c);
 void call_rosterMenu(Cpu *c);
+void call_titleMenu(Cpu *c);
 void call_getFiles(Cpu *c);
 
 int main(int argc, char **argv) {
 	Cpu c;
-	int headless = 0, intro = 0, at_n = 0, roster_menu = 1, difftest = 0;
+	int headless = 0, intro = -1, at_n = 0, roster_menu = 1, difftest = 0, title = -1;
 	const char *difftest_only = NULL;
 	unsigned difftest_n = 500;
 	const char *cur_path = NULL;
@@ -32,6 +33,9 @@ int main(int argc, char **argv) {
 	for (int i = 2; i < argc; i++) {
 		if (!strcmp(argv[i], "--headless")) headless = 1;
 		else if (!strcmp(argv[i], "--intro")) intro = 1;
+		else if (!strcmp(argv[i], "--nointro")) intro = 0;
+		else if (!strcmp(argv[i], "--title")) title = 1; /* headless runs normally skip the title menu and start the current save; this plays the full start-up flow */
+		else if (!strcmp(argv[i], "--notitle")) title = 0;
 		else if (!strcmp(argv[i], "--at") && i + 1 < argc) { at_n = sscanf(argv[++i], "%u,%u,%u,%u", &at[0], &at[1], &at[2], &at[3]); }
 		else if (!strcmp(argv[i], "--bare")) roster_menu = 0; /* skip rosterMenu: straight into exploreLoop without the full HUD */
 		else if (!strcmp(argv[i], "--cur") && i + 1 < argc) cur_path = argv[++i]; /* start from this saved game (a .MM3 file) instead of MM3.CUR */
@@ -41,6 +45,8 @@ int main(int argc, char **argv) {
 			for (char *t = strtok(argv[++i], ","); t && nkeys < 256; t = strtok(NULL, ",")) { unsigned mx, my; keys[nkeys++] = (t[0] == 'w') ? 0x40000000u | (unsigned)atoi(t + 1) : (t[0] == 'm' && sscanf(t + 1, "%u:%u", &mx, &my) == 2) ? 0x80000000u | (mx << 12) | my : (unsigned)strtoul(t, NULL, 16); } /* mX:Y = click at pixel X,Y */
 		}
 	}
+	if (title < 0) title = !headless;
+	if (intro < 0) intro = !headless;
 	if (game_init(argv[1]) || video_init(headless)) return 1;
 	if (cur_path) { Mm3Cc fresh; if (mm3_cc_open(&fresh, cur_path)) { fprintf(stderr, "cannot open %s\n", cur_path); return 1; } mm3_cc_close(&G.cur); G.cur = fresh; }
 	sound_init(headless);
@@ -58,9 +64,30 @@ int main(int argc, char **argv) {
 		uint16_t seg = dos_alloc(0x1890);
 		wr16(DG, 0xABEC, 0); wr16(DG, 0xABEE, seg);
 	}
+	/* _main's copy-protection prompt (copy.bin) opens a window of text colour 0; closing a window restores the window state but not the glyph
+	 * colours, so for the rest of the game text printed outside a window (the town signs) is white */
+	mm3_ui_select_colour(G.ui, 0);
 	DG[0xE8F8] = DG[0xE8F9] = 1; /* Option_sfx, Option_music (set by _main before the intro) */
 	if (intro) game_call(call_introSequence, &c, NULL, 0);
 	game_call(call_loadMonsterData, &c, NULL, 0);
+	if (title && roster_menu && !difftest) video_show_title();
+	if (title && roster_menu && !difftest) {
+		/* _main: titleMenu(0); then rosterMenu + exploreLoop until the game is left, back to titleMenu(1) when exploreLoop returns something but 2
+		 * (the control panel's Load / Quit) */
+		uint16_t pattern[2] = { 0x3433, DSEG };
+		game_call(call_getFiles, &c, pattern, 2);
+		DG[0xA26] = DG[0xE836] ? 0 : 0xFF;
+		unsigned arg = 0;
+		for (;;) {
+			game_call(call_titleMenu, &c, (uint16_t[]){ (uint16_t)arg }, 1);
+			arg = 1;
+			do {
+				game_call(call_rosterMenu, &c, NULL, 0);
+				if (at_n == 4) { DG[0xE8F7] = at[0]; DG[0xE8F5] = at[1]; DG[0xE8F6] = at[2]; DG[0xE8F4] = at[3]; at_n = 0; }
+				game_call(call_exploreLoop, &c, NULL, 0);
+			} while ((int16_t)c.ax == 2);
+		}
+	}
 	game_call(call_loadSavedGame, &c, NULL, 0);
 	{ /* the party members are copies of roster characters (their indices are in the party block) */
 		uint8_t *roster = SEGP(rd16(DG, 0xECAA));

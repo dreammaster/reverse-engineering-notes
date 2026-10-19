@@ -13,6 +13,12 @@
 #include <unistd.h>
 #include "game.h"
 
+#ifdef _WIN32
+#define MM3_MKDIR(d) mkdir(d)
+#else
+#define MM3_MKDIR(d) mkdir(d, 0755)
+#endif
+
 #define MAXF 16
 static FILE *files[MAXF];
 static char file_path[MAXF][512];
@@ -24,7 +30,7 @@ static const uint8_t *dsp(uint16_t off) { return DG + off; }
  * untouched; reads look there first. */
 static const char *save_dir(void) {
 	static const char *dir;
-	if (!dir) { dir = getenv("MM3_SAVE_DIR"); if (!dir) dir = "mm3-saves"; mkdir(dir, 0755); }
+	if (!dir) { dir = getenv("MM3_SAVE_DIR"); if (!dir) dir = "mm3-saves"; MM3_MKDIR(dir); }
 	return dir;
 }
 
@@ -107,14 +113,18 @@ void host__ftell(Cpu *c) {
 }
 void host__rewind(Cpu *c) { FILE *f = fp_of(host_arg(c, 0)); if (f) rewind(f); }
 
-/* low-level handles: access flags are Borland's (O_WRONLY 1, O_RDWR 2, O_CREAT 100h, O_TRUNC 200h, O_BINARY 8000h) */
+/* low-level handles: access flags are Borland's (O_RDONLY 1, O_WRONLY 2, O_RDWR 4, O_CREAT 100h, O_TRUNC 200h, O_BINARY 8000h) */
 void host__open(Cpu *c) {
+	if (getenv("MM3_FILELOG")) fprintf(stderr, "open(%s, %04X)\n", (const char *)dsp(host_arg(c, 0)), host_arg(c, 1));
 	char path[512];
 	unsigned fl = host_arg(c, 1);
-	int mode = (fl & 3) == 1 ? O_WRONLY : (fl & 3) == 2 ? O_RDWR : O_RDONLY;
+	int mode = (fl & 4) ? O_RDWR : (fl & 2) ? O_WRONLY : O_RDONLY; /* Borland: O_RDONLY 1, O_WRONLY 2, O_RDWR 4 */
+#ifdef O_BINARY
+	mode |= O_BINARY;
+#endif
 	if (fl & 0x100) mode |= O_CREAT;
 	if (fl & 0x200) mode |= O_TRUNC;
-	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path, (fl & 3) != 0 || (fl & 0x100));
+	resolve((const char *)dsp(host_arg(c, 0)), path, sizeof path, (fl & 6) != 0 || (fl & 0x100));
 	int fd = open(path, mode, 0644);
 	c->ax = 0xFFFF;
 	if (fd < 0) return;
@@ -199,4 +209,44 @@ int game_create_first_save(void) {
 	snprintf(path, sizeof path, "%s/SAVE00.MM3", save_dir());
 	dump_cur(path);
 	return 0;
+}
+
+/* The game's own little file layer on DOS handles (ccOpen / ccSeek / ccRead / Resources_openFile = write / ccClose; one file at a time, the
+ * handle is word_22630): save-slot headers are read with it, and starting a new game re-creates mm3.cur with it (openAndLoadCc: _open creates the
+ * empty file, then ccOpen, four writes of out0.spl..out3.spl, ccClose) and then plays on from that file, so the in-memory game archive is
+ * reloaded after a write. */
+static FILE *cc_fp;
+static char cc_path[512];
+static int cc_written;
+void host_ccOpen(Cpu *c) { /* opens an existing file read/write (data files that are only in the data directory are opened read-only) */
+	char p[512], base[64];
+	const char *name = (const char *)dsp(host_arg(c, 0));
+	const char *b = strrchr(name, '\\');
+	snprintf(base, sizeof base, "%s", b ? b + 1 : name);
+	if (cc_fp) fclose(cc_fp);
+	cc_fp = NULL; cc_written = 0;
+	if (find_in(save_dir(), base, p, sizeof p)) cc_fp = fopen(p, "r+b");
+	else if (find_in(G.data_dir, base, p, sizeof p)) cc_fp = fopen(p, "rb");
+	if (cc_fp) snprintf(cc_path, sizeof cc_path, "%s", p);
+	if (getenv("MM3_FILELOG")) fprintf(stderr, "ccOpen(%s) -> %s\n", name, cc_fp ? cc_path : "FAILED");
+	c->ax = cc_fp ? 0 : 0xFFFF;
+}
+void host_ccSeek(Cpu *c) { c->ax = (cc_fp && !fseek(cc_fp, (long)(host_arg(c, 0) | ((uint32_t)host_arg(c, 1) << 16)), SEEK_SET)) ? 0 : 0xFFFF; }
+void host_ccRead(Cpu *c) { /* (buffer offset, segment, length) */
+	unsigned n = host_arg(c, 2);
+	c->ax = (cc_fp && fread(SEGP(host_arg(c, 1)) + host_arg(c, 0), 1, n, cc_fp) == n) ? 0 : 0xFFFF;
+}
+void host_Resources_openFile(Cpu *c) { /* the write counterpart */
+	unsigned n = host_arg(c, 2);
+	c->ax = (cc_fp && fwrite(SEGP(host_arg(c, 1)) + host_arg(c, 0), 1, n, cc_fp) == n) ? 0 : 0xFFFF;
+	if (!c->ax) cc_written = 1;
+}
+void host_ccClose(Cpu *c) {
+	c->ax = 0;
+	if (!cc_fp) return;
+	fclose(cc_fp); cc_fp = NULL;
+	if (cc_written && is_cur(cc_path)) {
+		Mm3Cc fresh;
+		if (!mm3_cc_open(&fresh, cc_path)) { mm3_cc_close(&G.cur); G.cur = fresh; } else c->ax = 0xFFFF;
+	}
 }

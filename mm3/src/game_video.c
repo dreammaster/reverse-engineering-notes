@@ -171,6 +171,11 @@ static const char *shot_path;
 void video_set_shot(const char *path) { shot_path = path; }
 
 static void headless_finish(void) {
+	if (getenv("MM3_DUMPMON")) { /* debugging: the party and the monsters near it */
+		int px = DG[0xE8F5], py = DG[0xE8F6];
+		{ fprintf(stderr, "rows 34B92..34B9A:"); for (int k = 0xC4A2; k < 0xC4AB; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, " | 32E37..:"); for (int k = 0xA747; k < 0xA750; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, " | 32E60..:"); for (int k = 0xA770; k < 0xA77A; k++) fprintf(stderr, " %02X", DG[k]); fprintf(stderr, "\n"); } fprintf(stderr, "countdown 2886F=%u engine mode %u 2884C=%u\n", DG[0x17F], DG[0xC520], DG[0x15C]); fprintf(stderr, "party map %u at %d,%d facing %u\n", DG[0xE8F7], px, py, DG[0xE8F4]);
+		for (unsigned i = 0; i < DG[0xED72]; i++) { int x = rd16(DG, 0xAEC4 + 2 * i), y = rd16(DG, 0xAD70 + 2 * i); if (abs(x - px) < 8 && abs(y - py) < 8) fprintf(stderr, "  monster %u id %u at %d,%d hp %u state %u active %u\n", i, rd16(DG, 0xB6BC + 2 * i), x, y, rd16(DG, 0xB414 + 2 * i), rd16(DG, 0xB810 + 2 * i), rd16(DG, 0xB2C0 + 2 * i)); }
+	}
 	if (shot_path) video_save_bmp(shot_path);
 	fprintf(stderr, "headless run finished (the game is waiting for input)\n");
 	exit(0);
@@ -214,18 +219,33 @@ static const char *far_str(Cpu *c, int n) { return (const char *)(SEGP(host_arg(
 void host_vdrv_06_closeWindows(Cpu *c) { mm3_ui_close_windows(G.ui, (int16_t)host_arg(c, 0)); }
 void host_vdrv_1E_openWindow(Cpu *c) {
 	uint16_t toff = host_arg(c, 8), tseg = host_arg(c, 9);
-	if (getenv("MM3_TEXTLOG") && (toff | tseg)) { const char *t = (const char *)(SEGP(tseg) + toff); fprintf(stderr, "WINDOW %d,%d %dx%d:", host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3)); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
+	if (getenv("MM3_TEXTLOG") && (toff | tseg)) { const char *t = (const char *)(SEGP(tseg) + toff); fprintf(stderr, "WINDOW %d,%d %dx%d col %d:", host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4)); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
 	mm3_ui_open_window(G.ui, host_arg(c, 0), host_arg(c, 1), host_arg(c, 2), host_arg(c, 3), host_arg(c, 4),
 		(toff | tseg) ? (const char *)(SEGP(tseg) + toff) : NULL);
 }
 void host_vdrv_2D_printText(Cpu *c) {
-	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fputc('\n', stderr); }
+	if (getenv("MM3_TEXTLOG")) { const char *t = far_str(c, 0); fputs("TEXT:", stderr); for (; *t; t++) { if ((unsigned char)*t < 32) fprintf(stderr, "<%02X>", (unsigned char)*t); else fputc(*t, stderr); } fprintf(stderr, " [col %u gl %02X %02X %02X]", G.ui->win.colour, G.ui->glyph_colours[1], G.ui->glyph_colours[2], G.ui->glyph_colours[3]); fputc('\n', stderr); }
 	mm3_ui_print(G.ui, far_str(c, 0));
+	/* The original drew straight into video memory, so every redraw of the 3D view (05h + D66Eh) was visible at once and, on a PC of the time, took
+	 * a few tens of milliseconds: the projectile animations of shooting and spells are just a series of such redraws.  Show each view redraw and pace them. */
+	if (!headless && strstr(far_str(c, 0), "\005" "D66E")) {
+		static Uint32 last;
+		Uint32 now = SDL_GetTicks();
+		if (now - last < 40) SDL_Delay(40 - (now - last));
+		video_present(); video_pump_events();
+		last = SDL_GetTicks();
+	}
 }
 
 void host_vdrv_21_loadSprites(Cpu *c) { /* name far -> far pointer of the loaded resource in dx:ax */
-	uint16_t seg = game_load_resource(far_str(c, 0), NULL);
+	const char *name = far_str(c, 0);
+	uint32_t size = 0;
+	uint16_t seg = game_load_resource(name, &size);
 	if (!seg) exit(4);
+	/* the intro title sheets took seconds to read and unpack on a period PC and the picture on screen stays up meanwhile; keep that pacing */
+	if (!headless && ((!strncmp(name, "itit", 4) && name[4] >= '4') || !strncmp(name, "comet", 5) || !strncmp(name, "itxt", 4))) {
+		for (uint32_t ms = size / 70; ms > 0; ms -= ms > 20 ? 20 : ms) { SDL_Delay(ms > 20 ? 20 : ms); video_pump_events(); }
+	}
 	c->dx = seg; c->ax = 0;
 }
 void host_vdrv_24_freeSprites(Cpu *c) { uint16_t seg = host_arg(c, 1); game_sprite_free_cache(seg); dos_free(seg); }
@@ -247,6 +267,17 @@ void host_vdrv_0F_fade(Cpu *c) {
 	}
 	fade_level = in ? 16 : (headless ? 16 : 0);
 	video_present();
+}
+/* _main after the intro: the title picture (control.raw) is put on the black screen and faded in; titleMenu(0) then opens its windows over it */
+void video_show_title(void) {
+	uint32_t size = 0;
+	uint16_t seg = game_load_resource("control.raw", &size);
+	if (!seg) return;
+	fade_level = headless ? 16 : 0;
+	memcpy(SCREEN_MEM, SEGP(seg), size < 64000 ? size : 64000);
+	dos_free(seg);
+	video_present();
+	if (!headless) for (int i = 0; i <= 16; i++) { fade_level = i; video_present(); SDL_Delay(20); video_pump_events(); }
 }
 void host_vdrv_03_hideMouse(Cpu *c) { (void)c; cursor_on = 0; }
 void host_vdrv_27_setCursor(Cpu *c) { cursor_frame = host_arg(c, 0); cursor_seg = host_arg(c, 2); cursor_on = 1; }
@@ -288,7 +319,7 @@ int video_init(int headless_mode) {
 	return 0;
 }
 
-/* vdrv_2A_starfield: one frame of the intro's particle effect.  A 75-particle field bursts out of the screen centre
+/* vdrv_2A_introFrame: one frame of the intro's particle effect.  A 75-particle field bursts out of the screen centre
  * (positions/velocities are 16-bit fixed point, >>6 gives the pixel; velocity grows by 1/16 per frame, a particle is
  * respawned when it leaves 5000h x 3200h or its colour has faded to the target), then the draw list passed in is drawn on top.
  * Arguments: far pointer to the draw list.  The original seeds respawns from the DOS clock; here: a small LCG. */
@@ -297,7 +328,7 @@ static struct { int16_t x, vx, y, vy; uint8_t col, target; } stars[NSTARS];
 static unsigned star_rng = 12345, star_parity;
 static int star_rand(void) { star_rng = star_rng * 1103515245u + 12345u; return (int)(star_rng >> 16); }
 
-void host_vdrv_2A_starfield(Cpu *c) {
+void host_vdrv_2A_introFrame(Cpu *c) {
 	static const uint8_t cols[4] = { 0x1F, 0x1F, 0x9F, 0xDF };
 	unsigned list = host_arg(c, 0);
 	star_parity ^= 1;

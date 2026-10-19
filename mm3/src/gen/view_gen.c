@@ -8527,7 +8527,7 @@ loc_20343: RTRACE(c, "loc_20343");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	RHOST(c, _memset, 3, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_2035D: RTRACE(c, "loc_2035D");
@@ -8550,7 +8550,7 @@ loc_2035D: RTRACE(c, "loc_2035D");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	RHOST(c, _sprintf, 6, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
@@ -17444,7 +17444,7 @@ loc_1B1C6: RTRACE(c, "loc_1B1C6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((59196));
 	PUSH(c, c->ax);
-	RHOST(c, _sprintf, 4, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 4, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (8), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->ds); /* push ds */
@@ -22526,7 +22526,7 @@ loc_223D6: RTRACE(c, "loc_223D6");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((44071));
 	PUSH(c, c->ax);
-	RHOST(c, _memset, 3, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _memset, 3, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (6), 16);
 	c->sp = (uint16_t)(t_);
 loc_22402: RTRACE(c, "loc_22402");
@@ -22545,7 +22545,7 @@ loc_22402: RTRACE(c, "loc_22402");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)((53846));
 	PUSH(c, c->ax);
-	RHOST(c, _sprintf, 6, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, _sprintf, 6, 4); /* no return address is pushed for host routines: args start at sp */
 	t_ = alu_add(c, c->sp, (12), 16);
 	c->sp = (uint16_t)(t_);
 	PUSH(c, c->si);
@@ -22633,7 +22633,7 @@ loc_193EE: RTRACE(c, "loc_193EE");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_loadMapData, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_loadMapData, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_or(c, DG8(50494), (1), 8);
 	DG8_SET(50494, t_);
@@ -22648,7 +22648,7 @@ loc_19421: RTRACE(c, "loc_19421");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_loadMapData, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_loadMapData, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	t_ = alu_xor(c, DG8(50494), (1), 8);
 	DG8_SET(50494, t_);
@@ -22671,7 +22671,7 @@ loc_19451: RTRACE(c, "loc_19451");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_loadMapData, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_loadMapData, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50494)) & 0xFF) << 0));
 	t_ = alu_add(c, ((c->ax >> 0) & 0xFF), (2), 8);
@@ -22687,7 +22687,7 @@ loc_1947A: RTRACE(c, "loc_1947A");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_loadMapData, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_loadMapData, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(50494)) & 0xFF) << 0));
 	t_ = alu_add(c, ((c->ax >> 0) & 0xFF), (254), 8);
@@ -22826,7 +22826,7 @@ loc_1959C: RTRACE(c, "loc_1959C");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_loadMapGraphics, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_loadMapGraphics, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((ST8((uint16_t)(c->bp + -4))) & 0xFF) << 0));
 	DG8_SET(50477, ((c->ax >> 0) & 0xFF));
@@ -22849,7 +22849,7 @@ loc_195E5: RTRACE(c, "loc_195E5");
 	t_ = alu_dec(c, c->ax, 16);
 	c->ax = (uint16_t)(t_);
 	PUSH(c, c->ax);
-	RHOST(c, j_Map_load, 1, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, j_Map_load, 1, 4); /* no return address is pushed for host routines: args start at sp */
 	c->cx = (uint16_t)(POP(c));
 	c->ax = (uint16_t)((c->ax & 0xFF00) | (((DG8(59639)) & 0xFF) << 0));
 	DG8_SET(50477, ((c->ax >> 0) & 0xFF));
@@ -22865,26 +22865,26 @@ loc_19602: RTRACE(c, "loc_19602");
 	c->sp += 4; return;
 }
 
-void call_prepareIndoorView(Cpu *c) { fn_prepareIndoorView(c); }
-void call_renderIndoorView(Cpu *c) { fn_renderIndoorView(c); }
-void call_drawWallFaces(Cpu *c) { fn_drawWallFaces(c); }
-void call_drawRow1Sprites(Cpu *c) { fn_drawRow1Sprites(c); }
-void call_drawRow2Sprites(Cpu *c) { fn_drawRow2Sprites(c); }
-void call_drawRow3Sprites(Cpu *c) { fn_drawRow3Sprites(c); }
-void call_drawRow4Sprites(Cpu *c) { fn_drawRow4Sprites(c); }
-void call_drawHudPieces(Cpu *c) { fn_drawHudPieces(c); }
-void call_scanObjectsAhead(Cpu *c) { fn_scanObjectsAhead(c); }
-void call_scanMonstersAhead(Cpu *c) { fn_scanMonstersAhead(c); }
-void call_clearViewFlags(Cpu *c) { fn_clearViewFlags(c); }
-void call_updateLight(Cpu *c) { fn_updateLight(c); }
-void call_mazeGetWordRel(Cpu *c) { fn_mazeGetWordRel(c); }
-void call_mazeGetFlagsRel(Cpu *c) { fn_mazeGetFlagsRel(c); }
-void call_mazeNeighbourSlot(Cpu *c) { fn_mazeNeighbourSlot(c); }
-void call_checkDrawListOverflow(Cpu *c) { fn_checkDrawListOverflow(c); }
-void call_checkSkill(Cpu *c) { fn_checkSkill(c); }
-void call_drawViewOutdoors(Cpu *c) { fn_drawViewOutdoors(c); }
-void call_renderOutdoorView(Cpu *c) { fn_renderOutdoorView(c); }
-void call_mazeUpdateSlot(Cpu *c) { fn_mazeUpdateSlot(c); }
+void call_prepareIndoorView(Cpu *c) { RTOP_BEGIN(c, "prepareIndoorView"); fn_prepareIndoorView(c); RTOP_END(c); }
+void call_renderIndoorView(Cpu *c) { RTOP_BEGIN(c, "renderIndoorView"); fn_renderIndoorView(c); RTOP_END(c); }
+void call_drawWallFaces(Cpu *c) { RTOP_BEGIN(c, "drawWallFaces"); fn_drawWallFaces(c); RTOP_END(c); }
+void call_drawRow1Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow1Sprites"); fn_drawRow1Sprites(c); RTOP_END(c); }
+void call_drawRow2Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow2Sprites"); fn_drawRow2Sprites(c); RTOP_END(c); }
+void call_drawRow3Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow3Sprites"); fn_drawRow3Sprites(c); RTOP_END(c); }
+void call_drawRow4Sprites(Cpu *c) { RTOP_BEGIN(c, "drawRow4Sprites"); fn_drawRow4Sprites(c); RTOP_END(c); }
+void call_drawHudPieces(Cpu *c) { RTOP_BEGIN(c, "drawHudPieces"); fn_drawHudPieces(c); RTOP_END(c); }
+void call_scanObjectsAhead(Cpu *c) { RTOP_BEGIN(c, "scanObjectsAhead"); fn_scanObjectsAhead(c); RTOP_END(c); }
+void call_scanMonstersAhead(Cpu *c) { RTOP_BEGIN(c, "scanMonstersAhead"); fn_scanMonstersAhead(c); RTOP_END(c); }
+void call_clearViewFlags(Cpu *c) { RTOP_BEGIN(c, "clearViewFlags"); fn_clearViewFlags(c); RTOP_END(c); }
+void call_updateLight(Cpu *c) { RTOP_BEGIN(c, "updateLight"); fn_updateLight(c); RTOP_END(c); }
+void call_mazeGetWordRel(Cpu *c) { RTOP_BEGIN(c, "mazeGetWordRel"); fn_mazeGetWordRel(c); RTOP_END(c); }
+void call_mazeGetFlagsRel(Cpu *c) { RTOP_BEGIN(c, "mazeGetFlagsRel"); fn_mazeGetFlagsRel(c); RTOP_END(c); }
+void call_mazeNeighbourSlot(Cpu *c) { RTOP_BEGIN(c, "mazeNeighbourSlot"); fn_mazeNeighbourSlot(c); RTOP_END(c); }
+void call_checkDrawListOverflow(Cpu *c) { RTOP_BEGIN(c, "checkDrawListOverflow"); fn_checkDrawListOverflow(c); RTOP_END(c); }
+void call_checkSkill(Cpu *c) { RTOP_BEGIN(c, "checkSkill"); fn_checkSkill(c); RTOP_END(c); }
+void call_drawViewOutdoors(Cpu *c) { RTOP_BEGIN(c, "drawViewOutdoors"); fn_drawViewOutdoors(c); RTOP_END(c); }
+void call_renderOutdoorView(Cpu *c) { RTOP_BEGIN(c, "renderOutdoorView"); fn_renderOutdoorView(c); RTOP_END(c); }
+void call_mazeUpdateSlot(Cpu *c) { RTOP_BEGIN(c, "mazeUpdateSlot"); fn_mazeUpdateSlot(c); RTOP_END(c); }
 
 /* name -> entry point, for test drivers */
 const RecompEntry recomp_entries_view_gen[] = {

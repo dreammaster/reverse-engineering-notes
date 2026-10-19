@@ -373,11 +373,15 @@ class Translator:
         if not missing:
             return
         end = base + max(list(self.cur_labels) + list(missing)) + 0x200
-        with tempfile.NamedTemporaryFile(suffix=".bin") as f:
-            f.write(img[start - 0x10000:end - 0x10000])
-            f.flush()
-            dis = subprocess.run(["objdump", "-D", "-b", "binary", "-m", "i8086", "-M", "intel", "--adjust-vma=0x%x" % start, f.name],
+        # (not NamedTemporaryFile's own handle: on Windows another process cannot open a file that is still open here)
+        fd, tmp = tempfile.mkstemp(suffix=".bin")
+        try:
+            with os.fdopen(fd, "wb") as f:
+                f.write(img[start - 0x10000:end - 0x10000])
+            dis = subprocess.run(["objdump", "-D", "-b", "binary", "-m", "i8086", "-M", "intel", "--adjust-vma=0x%x" % start, tmp],
                                  capture_output=True, text=True).stdout
+        finally:
+            os.remove(tmp)
         # objdump wraps long instructions onto continuation lines (no mnemonic); an instruction starts at a line with one
         starts = []
         for m in re.finditer(r"^\s*([0-9a-f]+):\t([0-9a-f ]+?)\s*(\t.*)?$", dis, re.M):

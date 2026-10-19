@@ -155,7 +155,7 @@ uint16_t game_load_resource(const char *name, uint32_t *size) {
 
 static const char *cstr_at(uint16_t seg, uint16_t off) { return (const char *)(SEGP(seg) + off); }
 
-/* sub_22740 / loadResourceByName(name far): the segment of the loaded member in bx (dx for the wrapper), size in DGROUP `n` */
+/* ccLoadMember / loadResourceByName(name far): the segment of the loaded member in bx (dx for the wrapper), size in DGROUP `n` */
 void host_loadResourceByName(Cpu *c) {
 	uint32_t size;
 	uint16_t seg = game_load_resource(cstr_at(host_arg(c, 1), host_arg(c, 0)), &size);
@@ -165,15 +165,15 @@ void host_loadResourceByName(Cpu *c) {
 	c->ax = 0;
 }
 
-/* sub_22534: bx = bytes -> bx = segment (the original ends the program when DOS has no memory) */
-void host_sub_22534(Cpu *c) {
+/* dosAllocOrDie: bx = bytes -> bx = segment (the original ends the program when DOS has no memory) */
+void host_dosAllocOrDie(Cpu *c) {
 	uint16_t seg = dos_alloc(c->bx);
 	if (!seg) { fprintf(stderr, "Might and Magic ]I[ ran out of memory!\n"); exit(5); }
 	c->bx = seg;
 	c->ax = seg;
 }
 void host_allocFar(Cpu *c) { uint16_t seg = dos_alloc(host_arg(c, 0)); c->dx = seg; c->ax = 0; }
-void host_MemFree(Cpu *c) { (void)c; wr16(DG, 0x1B7, 0xFFF); /* word_28873: free paragraphs / 64: plenty */ }
+void host_MemFree(Cpu *c) { (void)c; wr16(DG, 0x183, 0xFFF); /* word_28873: free paragraphs / 64: plenty */ }
 
 /* ---- C runtime (Borland helper routines: register or stack conventions as noted) */
 void host_LXMUL_AT(Cpu *c) { uint32_t r = (((uint32_t)c->dx << 16) | c->ax) * (((uint32_t)c->cx << 16) | c->bx); c->ax = (uint16_t)r; c->dx = (uint16_t)(r >> 16); }
@@ -296,9 +296,9 @@ void host__sscanf(Cpu *c) { /* only "%d" style scanning of a number is used (a t
 void host__cputs(Cpu *c) { fputs((const char *)dsp(host_arg(c, 0)), stderr); }
 void host__exit(Cpu *c) { exit((int)host_arg(c, 0)); }
 void host__textmode(Cpu *c) { (void)c; }
-void host_sub_27F86(Cpu *c) { (void)c; fprintf(stderr, "game exit\n"); exit(0); }
+void host_j_exitGame(Cpu *c) { (void)c; fprintf(stderr, "game exit\n"); exit(0); }
 void host_sub_250F8(Cpu *c) { (void)c; }
-void host_sub_378C0(Cpu *c) { (void)c; /* the DOS "boss key" (F10): ignored */ }
+void host_bossKey(Cpu *c) { (void)c; /* the DOS "boss key" (F10): ignored */ }
 
 /* rnd(lo, hi): uniform in [lo, hi] */
 static uint32_t rng_state = 0x1234567u;
@@ -309,13 +309,10 @@ void host_rnd(Cpu *c) {
 }
 
 /* DOS-level leftovers: reopening MM3.CC around floppy swaps (only when byte_37380 is set: never here) and the program exit */
+void host_sub_22632(Cpu *c) { (void)c; /* opens MM3.CUR (the game data archive) read/write: it is already open here */ }
 void host_sub_25085(Cpu *c) { c->ax = 0; }
 void host_sub_2509A(Cpu *c) { c->ax = 0; }
-void host_ccOpen(Cpu *c) { c->ax = 0; }
-void host_ccClose(Cpu *c) { (void)c; }
-void host_ccRead(Cpu *c) { c->ax = 0; }
-void host_ccSeek(Cpu *c) { c->ax = 0; }
-void host_sub_39900(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }
+void host_exitGame(Cpu *c) { (void)c; fprintf(stderr, "Thank you for playing Might and Magic III.\n"); exit(0); }
 
 int mm3_rnd(int lo, int hi) { unsigned l = (uint16_t)lo, h = (uint16_t)hi; int v = (int)(h >= l ? l + rng_next() % (h - l + 1) : l); tape_rnd(lo, hi, v); return v; } /* same 16-bit unsigned arithmetic as host_rnd */
 uint32_t mm3_rng_get(void) { return rng_state; }

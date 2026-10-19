@@ -634,7 +634,7 @@ loc_5131F: RTRACE(c, "loc_5131F");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -4)));
 	c->bx = (uint16_t)(POP(c));
-	RHOST(c, LXMUL_AT, 0, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	c->bx = (uint16_t)(ST16((uint16_t)(c->bp + 6)));
@@ -795,7 +795,7 @@ loc_51477: RTRACE(c, "loc_51477");
 	PUSH(c, c->ax);
 	c->ax = (uint16_t)(ST16((uint16_t)(c->bp + -4)));
 	c->bx = (uint16_t)(POP(c));
-	RHOST(c, LXMUL_AT, 0, 2); /* no return address is pushed for host routines: args start at sp */
+	RHOST(c, LXMUL_AT, 0, 4); /* no return address is pushed for host routines: args start at sp */
 	ST16_SET((uint16_t)(c->bp + -2), c->dx);
 	ST16_SET((uint16_t)(c->bp + -4), c->ax);
 	c->ax = (uint16_t)((7));
@@ -1693,20 +1693,20 @@ loc_19156: RTRACE(c, "loc_19156");
 	c->sp += 4; return;
 }
 
-void call_ifProc(Cpu *c) { fn_ifProc(c); }
-void call_getMaxSP(Cpu *c) { fn_getMaxSP(c); }
-void call_getMaxHP(Cpu *c) { fn_getMaxHP(c); }
-void call_getArmorClass(Cpu *c) { fn_getArmorClass(c); }
-void call_getStat(Cpu *c) { fn_getStat(c); }
-void call_getAge(Cpu *c) { fn_getAge(c); }
-void call_isBitSet(Cpu *c) { fn_isBitSet(c); }
-void call_checkSkill(Cpu *c) { fn_checkSkill(c); }
-void call_conditionMod(Cpu *c) { fn_conditionMod(c); }
-void call_getCurrentLevel(Cpu *c) { fn_getCurrentLevel(c); }
-void call_itemScan(Cpu *c) { fn_itemScan(c); }
-void call_statBonus(Cpu *c) { fn_statBonus(c); }
-void call_getAttributeCategory(Cpu *c) { fn_getAttributeCategory(c); }
-void call_getElementalCategory(Cpu *c) { fn_getElementalCategory(c); }
+void call_ifProc(Cpu *c) { RTOP_BEGIN(c, "ifProc"); fn_ifProc(c); RTOP_END(c); }
+void call_getMaxSP(Cpu *c) { RTOP_BEGIN(c, "getMaxSP"); fn_getMaxSP(c); RTOP_END(c); }
+void call_getMaxHP(Cpu *c) { RTOP_BEGIN(c, "getMaxHP"); fn_getMaxHP(c); RTOP_END(c); }
+void call_getArmorClass(Cpu *c) { RTOP_BEGIN(c, "getArmorClass"); fn_getArmorClass(c); RTOP_END(c); }
+void call_getStat(Cpu *c) { RTOP_BEGIN(c, "getStat"); fn_getStat(c); RTOP_END(c); }
+void call_getAge(Cpu *c) { RTOP_BEGIN(c, "getAge"); fn_getAge(c); RTOP_END(c); }
+void call_isBitSet(Cpu *c) { RTOP_BEGIN(c, "isBitSet"); fn_isBitSet(c); RTOP_END(c); }
+void call_checkSkill(Cpu *c) { RTOP_BEGIN(c, "checkSkill"); fn_checkSkill(c); RTOP_END(c); }
+void call_conditionMod(Cpu *c) { RTOP_BEGIN(c, "conditionMod"); fn_conditionMod(c); RTOP_END(c); }
+void call_getCurrentLevel(Cpu *c) { RTOP_BEGIN(c, "getCurrentLevel"); fn_getCurrentLevel(c); RTOP_END(c); }
+void call_itemScan(Cpu *c) { RTOP_BEGIN(c, "itemScan"); fn_itemScan(c); RTOP_END(c); }
+void call_statBonus(Cpu *c) { RTOP_BEGIN(c, "statBonus"); fn_statBonus(c); RTOP_END(c); }
+void call_getAttributeCategory(Cpu *c) { RTOP_BEGIN(c, "getAttributeCategory"); fn_getAttributeCategory(c); RTOP_END(c); }
+void call_getElementalCategory(Cpu *c) { RTOP_BEGIN(c, "getElementalCategory"); fn_getElementalCategory(c); RTOP_END(c); }
 
 /* name -> entry point, for test drivers */
 const RecompEntry recomp_entries_rules_gen[] = {
