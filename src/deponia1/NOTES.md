@@ -3804,7 +3804,11 @@ automatic suite. What the real data found that the made-up games could not:
 `TSoftwareGraphics` is a `TGraphicsInterface` that draws into a picture in memory (the sprites are kept as the RGBA pixels they
 were made from; `Draw()` scales, turns, mirrors and blends premultiplied, `DrawBox()`, `DrawLine()`, `Swap()` keeps the frame,
 `SavePNG()` writes it). It stands in for the OpenGL backend (not reconstructed) so that the game runs without a window. Not done:
-shaders, the light map of `DrawWithLightMap`, particles, the matrices of the scripts, the transitions between scenes.
+nothing that the data asks for: `renderscene` with `RENDER_EFFECTS=1` lists what the data uses - no shader, no particle emitter, no container, the
+fade of effect 3 (300 ms) for the changes of scene (made of black boxes with an alpha, which the base class `FadeIn` draws: the frames of it are shown
+by `AfterDrawScene(true, true)`; `RENDER_SWAPS=n` writes them), and the scripts do not use matrices. The light of a scene is `TGScene::GetTint()` (the light map
+sampled at the object), so `DrawWithLightMap` (no caller in the original either) is not needed. Not done: those, and the dissolves and the iris of the other
+transition effects (4, 5, 6, 8, 9, 11), which no value of the data selects.
 
 `renderscene <out directory> [frames [every [reduce]]]`, run from the game directory, loads the real data, runs the start action and
 writes a PNG every `every` frames; `RENDER_SCENE=<the first letters of a scene name>` goes to a scene after 10 frames (and sets its

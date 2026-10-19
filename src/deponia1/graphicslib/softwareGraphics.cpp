@@ -132,6 +132,7 @@ void TSoftwareGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, co
 	bool smooth = !plain || std::fabs(destRect.width - sw) > 0.5f || std::fabs(destRect.height - sh) > 0.5f;
 
 	_drawn++;
+	_dirty = true;
 
 	for (int y = y0; y < y1; y++) {
 		for (int x = x0; x < x1; x++) {
@@ -203,6 +204,7 @@ void TSoftwareGraphics::DrawBox(const wxRect &rect, unsigned int color, float al
 			blend(x, y, r, g, b, a);
 	}
 	_drawn++;
+	_dirty = true;
 }
 
 void TSoftwareGraphics::DrawLine(const wxPoint &from, const wxPoint &to, unsigned int color, float alpha) {
@@ -237,10 +239,24 @@ void TSoftwareGraphics::DrawLine(const wxPoint &from, const wxPoint &to, unsigne
 		}
 	}
 	_drawn++;
+	_dirty = true;
 }
 
 // The frame is shown: it is kept and the next one starts black.
+// The frame that was drawn is shown (once: AfterDrawScene(true, true) of a transition shows it, and the master control's frame calls
+// Swap() after it). Nothing drawn since the last one: nothing to show.
+void TSoftwareGraphics::AfterDrawScene(bool a, bool b) {
+	if (a && b)
+		Swap();
+}
+
 void TSoftwareGraphics::Swap() {
+	if (!_dirty) {
+		SetFadeDrawn(false);
+		return;
+	}
+
+	_dirty = false;
 	_shown = _frame;
 	_shownDrawn = _drawn;
 	_drawn = 0;
@@ -248,6 +264,9 @@ void TSoftwareGraphics::Swap() {
 	_offsetX = 0.0f;
 	_offsetY = 0.0f;
 	SetFadeDrawn(false);
+
+	if (_onShown)
+		_onShown(*this);
 }
 
 static uint32_t crcTable[256];

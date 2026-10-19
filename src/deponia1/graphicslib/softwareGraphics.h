@@ -1,12 +1,19 @@
 // A graphics backend that draws into a picture in memory, for running the game without a window (the tests, the checks of the
 // real data): TGraphicsInterface with a software renderer in place of the OpenGL backend (TGraphicsOGL, not reconstructed).
 // Sprites are kept as the RGBA pixels they were made from. A frame is built by Draw(), DrawBox() and DrawLine() and shown by
-// Swap() (it is then the picture that GetFrame() gives and SavePNG() writes). Not done: the shaders (a picture is drawn
-// with the plain shader), the light map of DrawWithLightMap (the picture is drawn as it is), the particles, the matrices of the
-// scripts, the transitions between scenes (FadeIn() plays its time without drawing).
+// Swap() (it is then the picture that GetFrame() gives and SavePNG() writes); AfterDrawScene(true, true) shows it too, which is what
+// the transitions between scenes do for each of their frames (the fade out and in of the game, effect 3, are boxes of black with an
+// alpha: the base class makes them and they come out as they are). What the data of Deponia 1 asks of a renderer is all here:
+// `renderscene` with RENDER_EFFECTS=1 shows that it has no shader (the plain one is the only one), no particle emitter, no
+// transition but the fade (effect 3) and that the scripts do not use the matrices; the light of a scene is the tint that
+// TGScene::GetTint() gives an object (its light map sampled at the object), not a second texture. Not done, because nothing
+// uses it: the shaders of a game, DrawWithLightMap() (it has no caller either in the original: the picture is drawn as it is),
+// the particles, the matrices of the scripts, the dissolves and the iris of the other transition effects (4, 5, 6, 8, 9 and 11:
+// FadeIn() plays their time without drawing).
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <vector>
 
@@ -28,6 +35,7 @@ public:
 	void DrawBox(const wxRect &rect, unsigned int color, float alpha) override;
 	void DrawLine(const wxPoint &from, const wxPoint &to, unsigned int color, float alpha) override;
 	void SetOffset(float x, float y) override;
+	void AfterDrawScene(bool a, bool b) override;
 	void Swap() override;
 
 	int GetFrameWidth() const {
@@ -47,6 +55,10 @@ public:
 	/** How many pictures were drawn in the last frame that was shown. */
 	int GetDrawnCount() const {
 		return _shownDrawn;
+	}
+	/** Called when a frame is shown (the frames of a transition too, which are drawn inside one call of the game). */
+	void SetShownCallback(const std::function<void(const TSoftwareGraphics &)> &callback) {
+		_onShown = callback;
 	}
 	/** Writes the last frame that was shown as a PNG, made `reduce` times smaller (1: as it is). */
 	bool SavePNG(const char *path, int reduce = 1) const;
@@ -68,5 +80,7 @@ private:
 	float _offsetX = 0.0f;
 	float _offsetY = 0.0f;
 	int _drawn = 0;
+	bool _dirty = false;
+	std::function<void(const TSoftwareGraphics &)> _onShown;
 	int _shownDrawn = 0;
 };

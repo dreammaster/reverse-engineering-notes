@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <map>
 #include <random>
 #include <filesystem>
 #include <string>
@@ -85,6 +86,60 @@ int main(int argc, char **argv) {
 			       static_cast<const char *>(wxString(part->GetLink(kActionPartLink) ? part->GetLink(kActionPartLink)->GetName() : TCharHolder()).mb_str()));
 			putchar(10);
 		}
+		return 0;
+	}
+
+	if (getenv("RENDER_EFFECTS")) {
+		// what the data asks of the renderer: the transition, the shaders, the particles
+		TVisObjRef game = control->GetVisionaire()->GetGame();
+		TVList list;
+
+		printf("fade effect %d, delay %d, shader exclude %d\n", game.GetInt(kGameFadeEffect), game.GetInt(kGameFadeDelay), game.GetInt(kGameShaderExclude));
+		control->GetVisionaire()->GetList(36, list, false);
+		for (TVisionaireObject *shader : list)
+			printf("shader '%s'\n", static_cast<const char *>(wxString(shader->GetName()).mb_str()));
+
+		TVList particles;
+		TVList containers;
+
+		control->GetVisionaire()->GetList(22, particles, false);
+		control->GetVisionaire()->GetList(23, containers, false);
+		printf("%d particle emitters, %d containers\n", (int)particles.size(), (int)containers.size());
+
+		TVList scenes;
+		int withParticles = 0;
+		int withShaders = 0;
+
+		control->GetVisionaire()->GetList(4, scenes, false);
+		for (TVisionaireObject *scene : scenes) {
+			TVisObjRef reference(scene);
+			TVList sceneParticles;
+			TVList sceneShaders;
+
+			reference.GetLinks(kSceneParticleSystem, TypeOrder::kValue0, sceneParticles);
+			reference.GetLinks(kSceneShaderSet, TypeOrder::kValue0, sceneShaders);
+			if (!sceneParticles.empty())
+				withParticles++;
+			if (!sceneShaders.empty())
+				withShaders++;
+		}
+		printf("%d of %d scenes have particles, %d have shaders\n", withParticles, (int)scenes.size(), withShaders);
+		// the transitions the actions ask for (the effect and the time of each Fade command)
+		std::map<std::pair<int, int>, int> fades;
+		TVList actions;
+
+		control->GetVisionaire()->GetList(7, actions, false);
+		for (TVisionaireObject *action : actions) {
+			TVList parts;
+
+			TVisObjRef(action).GetLinks(kActionActionParts, TypeOrder::kValue1, parts);
+			for (TVisionaireObject *part : parts) {
+				if (part->GetInt(kActionPartCommand) == kCommandFade)
+					fades[{part->GetInt(kActionPartInt), part->GetInt(kActionPartAltInt)}]++;
+			}
+		}
+		for (const auto &fade : fades)
+			printf("fade command: effect %d, %d ms: %d times\n", fade.first.first, fade.first.second, fade.second);
 		return 0;
 	}
 
@@ -184,6 +239,18 @@ int main(int argc, char **argv) {
 
 	while (SDL_PeepEvents(&drained, 1, SDL_GETEVENT, 0, 0xFFFF) > 0) {
 	}
+
+	// RENDER_SWAPS=<count>: the frames that are shown (the ones of a transition too) are written as swap_<n>.png, the first `count`
+	int swapsLeft = getenv("RENDER_SWAPS") ? atoi(getenv("RENDER_SWAPS")) : 0;
+	int swapNumber = 0;
+
+	backend->SetShownCallback([&](const TSoftwareGraphics &shown) {
+		if (swapsLeft > 0) {
+			swapsLeft--;
+			shown.SavePNG((outDir + "/swap_" + std::to_string(swapNumber) + ".png").c_str(), reduce);
+		}
+		swapNumber++;
+	});
 
 	// RENDER_AUDIO=<file.wav>: what the mixer renders (the sounds, the speech and the movies) is written there
 	soundengine::WavWriter wav;
