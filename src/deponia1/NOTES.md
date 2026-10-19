@@ -3832,6 +3832,9 @@ game?" -> inventory mode -> the scene `0000 - Tutorial` with Rufus and Wenzel an
   (LoadActions marks the old actions finished and registers the new ones before the table is made again): the original does the same.
 - The sounds: see the section on the mixer below.
 - The movies: see the next section.
+- `RENDER_MONKEY=startFrame:every:seed` clicks at random places (a fifth of them with the right button) and lists the scenes the game goes through. The
+  74 scenes of the game, each entered directly and clicked for 160 frames, ran without a crash or an error of a script; the tutorial ran 3000 frames of
+  clicks the same way. The one thing that was logged is a name lookup that does not find an object of the scene it was run in (`eDown-|24|` in 1001).
 
 ## TFreetypeFont: the TrueType and OpenType fonts (graphicslib/freetypeFont.cpp, third_party/freetype)
 
