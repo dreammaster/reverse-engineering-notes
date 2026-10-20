@@ -296,8 +296,9 @@ void TSdlGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const F
 	source.w = sourceRect.width;
 	source.h = sourceRect.height;
 
-	// the tint and the alpha: the picture is premultiplied, so its colour goes down with the alpha too
-	float tintAlpha = static_cast<float>((color >> 24) & 0xFF) / 255.0f * alpha;
+	// the tint and the alpha: the picture is premultiplied, so its colour goes down with the alpha too (the top byte of the colour
+	// is not used, as in TGraphicsOGL::Draw: the data has colours like 00ABAFB1 for the text)
+	float tintAlpha = alpha;
 
 	tintAlpha = std::max(0.0f, std::min(1.0f, tintAlpha));
 	float colorScale = _premultiplied ? tintAlpha : 1.0f;

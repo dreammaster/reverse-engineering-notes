@@ -133,7 +133,8 @@ void TSoftwareGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, co
 	float tintR = (float)(color & 0xFF) / 255.0f;
 	float tintG = (float)((color >> 8) & 0xFF) / 255.0f;
 	float tintB = (float)((color >> 16) & 0xFF) / 255.0f;
-	float tintA = (float)((color >> 24) & 0xFF) / 255.0f * alpha;
+	// (the top byte of the colour is not used, as in TGraphicsOGL::Draw: the data has colours like 00ABAFB1 for the text)
+	float tintA = alpha;
 
 	bool smooth = !plain || std::fabs(destRect.width - sw) > 0.5f || std::fabs(destRect.height - sh) > 0.5f;
 

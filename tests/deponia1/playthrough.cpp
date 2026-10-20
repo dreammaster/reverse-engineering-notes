@@ -500,6 +500,9 @@ int main(int argc, char **argv) {
 			const std::vector<wxRect> lines = control->GetDialog()->GetLineRects();
 			const std::string dialogName = name(control->GetDialog()->GetTarget());
 
+			if (getenv("PLAY_DIALOGSHOTS"))
+				snapshot("dialog_" + std::to_string(step));
+
 			if (!lines.empty()) {
 				int best = 0;
 				int bestTries = 1 << 30;
