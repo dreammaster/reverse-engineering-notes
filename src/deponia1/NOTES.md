@@ -3937,6 +3937,14 @@ Found on the way:
 Not done: a movie decoded on the GPU (the picture is made RGB on the CPU and a texture each frame: 18 to 22 frames a second for a 1080p movie), the game controllers
 and haptics were not tried (no device), the savegame screenshots (`CaptureScreen`), text input (SDL_TEXTINPUT is passed on), full screen was not tried.
 
+## The colour of a drawn picture has no alpha (found by the first run of the standalone player)
+
+`TGraphicsOGL::Draw` (asm 716179-716230) gives the shader the uniform "color" from the bytes 0, 1 and 2 of the colour, each divided by 255 and
+multiplied by the alpha argument; the top byte is never read. The data keeps the colours of fonts as 00RRGGBB (the inactive dialog font of Rufus
+is 00ABAFB1, the active one FFFFFFFF), so a backend that multiplies the alpha by the top byte draws all of that text invisible: the lines of a
+dialog showed only under the mouse. TSdlGraphics and TSoftwareGraphics use the alpha argument only. (DrawBox and DrawLine do use the top byte:
+their colour is the whole of what they draw, as the fades of the effects use them.)
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
