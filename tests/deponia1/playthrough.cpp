@@ -146,10 +146,10 @@ static int settle(int limit = 1500, int quiet = 20) {
 	return frames;
 }
 
-static void snapshot(const std::string &label) {
+static void snapshot(const std::string &label, int divisor = 4) {
 	backend->SetRendering(true);
 	frame();
-	backend->SavePNG((outDir + "/" + label + ".png").c_str(), 4);
+	backend->SavePNG((outDir + "/" + label + ".png").c_str(), divisor);
 	backend->SetRendering(false);
 }
 
@@ -441,6 +441,35 @@ int main(int argc, char **argv) {
 			}
 			break;
 		}
+	}
+
+	if (getenv("PLAY_HOVER")) {
+		// what the engine does when the mouse is over each hotspot: the object found, the cursor, the action text
+		const int mode = control->GetVisionaire()->GetGame().GetInt(kGameDrawActionText);
+
+		printf("hover: kGameDrawActionText %d, cursor active %d\n", mode, (int)control->GetCursorControl()->IsActive());
+		{
+			TVisObjRef font = control->GetVisionaire()->GetGame().GetLink(kGameActionTextFont);
+
+			printf("hover: action text font '%s' empty %d size %.1f color %08X ttf %d path '%ls' alphabet len %d sprite %d\n", name(font).c_str(), (int)font.IsEmpty(),
+			       font.GetFloat(kFontSize), (unsigned)font.GetInt(kFontColor), (int)font.GetBool(kFontTrueTypeFont), font.GetStr(kFontTrueTypeFontPath).c_str(),
+			       (int)font.GetStr(kFontAlphabet).Length(), (int)!font.GetSprite(kFontSprite).IsEmpty());
+		}
+		for (const Hotspot &hotspot : scan()) {
+			wxPoint point;
+
+			point.x = static_cast<int>(hotspot._x);
+			point.y = static_cast<int>(hotspot._y);
+			control->ProcessMessage(TMouseMessageEnum::kMove, point);
+			for (int i = 0; i < 5; i++)
+				frame();
+			snapshot("hover_" + std::to_string(hotspot._x), 2);
+			printf("hover %s at %lld,%lld: current object %s, detectable %d, empty %d, cursor image active %d, text [%ls]\n", hotspot._name.c_str(),
+			       hotspot._x, hotspot._y, name(control->GetObjectManager()->GetCurrentObject()).c_str(),
+			       (int)control->GetObjectManager()->IsCurrentObjectDetectable(), (int)control->GetObjectManager()->IsCurrentObjectEmpty(),
+			       (int)control->GetCursorControl()->IsCursorActive(), control->GetObjectManager()->GetActionText().c_str());
+		}
+		return 0;
 	}
 
 	if (getenv("PLAY_JUMP")) {

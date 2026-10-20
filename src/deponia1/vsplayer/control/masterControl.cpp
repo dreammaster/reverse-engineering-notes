@@ -204,7 +204,8 @@ void TMasterControl::Draw(bool lock) {
 			_fontManager->SetCurrentFont(font);
 			_cursorControl->Draw();
 
-			wxString text = _objectManager.GetActionText();
+			// (the object manager is the one of TGameControl: g_pGameControl->GetObjectManager() in the asm, 138689)
+			wxString text = static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->GetActionText();
 			wxPoint size;
 			wxPoint position;
 

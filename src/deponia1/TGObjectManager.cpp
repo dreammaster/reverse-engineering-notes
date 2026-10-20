@@ -209,8 +209,10 @@ bool TGObjectManager::IsCurrentObjectEmpty() const {
 bool TGObjectManager::IsCurrentObjectDetectable() const {
 	if (!_currentObject)
 		return false;
+	// Confirmed (asm 189142-189190): an object that is not of the type 2 (the buttons) is always detectable (the cursor is the active
+	// one); a button is when its type is not 0.
 	if (_currentObject->GetRef().GetId()[3] != 2)
-		return false;
+		return true;
 	return _currentObject->GetRef().GetInt(kButtonType) != 0;
 }
 

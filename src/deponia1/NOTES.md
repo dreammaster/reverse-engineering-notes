@@ -3945,6 +3945,14 @@ is 00ABAFB1, the active one FFFFFFFF), so a backend that multiplies the alpha by
 dialog showed only under the mouse. TSdlGraphics and TSoftwareGraphics use the alpha argument only. (DrawBox and DrawLine do use the top byte:
 their colour is the whole of what they draw, as the fades of the effects use them.)
 
+## The cursor and the text of the action line over an object (found by the standalone player)
+
+Two things were wrong. `TGObjectManager::IsCurrentObjectDetectable` (asm 189142) is true for an object whose id is not of the type 2 and
+asks `kButtonType` only for a button; the cursor of the scene objects stayed the inactive one. And `TMasterControl::Draw` took the action
+text from a `TGObjectManager` of its own (a member that does not exist in the original: asm 138689 calls `g_pGameControl->GetObjectManager()`),
+which never had a current object, so the text ("Yin" next to the cursor) was empty. `playthrough` with `PLAY_HOVER=1` lists, for each hotspot of
+the scene, the object, the cursor and the text, and saves a picture of each.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

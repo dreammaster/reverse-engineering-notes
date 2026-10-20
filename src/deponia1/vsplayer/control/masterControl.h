@@ -272,7 +272,6 @@ protected:
 
 private:
 	TMovie _movie;
-	TGObjectManager _objectManager;
 	TSprite _sprite1;
 	TSprite _sprite2;
 
