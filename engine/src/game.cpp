@@ -19,6 +19,7 @@ Disk1 Game::defaultParty(const GameData &data) {
 		std::memcpy(m.b.data(), names[i], std::strlen(names[i]));
 		m.u8(0x48) = uint8_t(i % profs.size());
 		m.u8(0x49) = uint8_t(i + 1);
+		m.u8(0x4A) = 0xFF;   // nothing readied
 		int points = p.attrPoints;
 		for (int a = 0; a < 7; ++a) m.attr(a) = p.attrMin[a];
 		for (int a = 0; points > 0; a = (a + 1) % 7) {
@@ -137,7 +138,7 @@ void Game::showMenu(const std::string &text, bool) {
 
 // ---------------------------------------------------------------- game logic
 void Game::passTime() {
-	_w.advanceMinutes(_w.map ? _w.map->minutesPerStep() : 1);
+	_w.passTime(false);
 }
 
 void Game::runScriptChain(int script, int event, int arg8) {

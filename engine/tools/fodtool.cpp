@@ -138,6 +138,21 @@ int main(int argc, char **argv) {
 				cb.selectTarget(e);
 				cb.resolveAttack(e);
 			}
+		} else if (cmd == "fight" && argc >= 4) {   // fight <mapNo> [seed]: force a random encounter, auto-fight it
+			GameData gd(dir);
+			World w(gd, Game::defaultParty(gd), argc >= 5 ? uint32_t(std::atoi(argv[4])) : 1u);
+			w.loadMap(std::atoi(argv[3]));
+			for (int i = 0; i < w.partyCount(); ++i) { w.party(i).setHp(300); w.party(i).setHpMax(300); w.party(i).passiveSkill(4) = 30; }
+			int tries = 0;
+			while (!w.tryRandomEncounter() && ++tries < 1000) {}
+			std::printf("encounter after %d tries\n", tries);
+			TextHost host;
+			Combat cb(w, host);
+			const int n = cb.buildCombatants(true);
+			std::printf("%d enemy combatants\n", n);
+			const Combat::Outcome o = cb.run(true);
+			std::printf("fled=%d wiped=%d\n", o.fled, o.wiped);
+			for (int i = 0; i < w.partyCount(); ++i) std::printf("%s hp=%d exp=%u\n", w.party(i).name().c_str(), w.party(i).hp(), w.party(i).exp());
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());

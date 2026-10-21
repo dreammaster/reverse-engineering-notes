@@ -1,5 +1,6 @@
 #include "fod/world.h"
 #include <algorithm>
+#include <cstdlib>
 
 namespace fod {
 
@@ -178,6 +179,145 @@ void World::advanceMinutes(int minutes) {
 	const bool dayRolled = hours >= 24;
 	disk.hours = uint8_t(hours % 24);
 	if (dayRolled) disk.weekday = uint8_t((disk.weekday + 1) % 7);
+}
+
+void World::damageMember(Member &m, int damage) {
+	if (damage <= 0) return;
+	const int hp = m.hp();
+	if (hp > 0 && hp - damage < 1) {
+		const int maxHp = m.hpMax() != 0 ? m.hpMax() : 1;
+		m.setU16(0x122, uint16_t(100 * hp / maxHp > 50 ? std::abs(maxHp) / 4 + 1 : hp));
+	}
+	if (!(disk.tail[m.rosterId()] & 2)) m.setHp(m.hp() - damage);
+	if (m.hp() <= -60) disk.tail[m.rosterId()] |= 2;
+}
+
+bool World::partyWiped() const {
+	for (int i = 0; i < partyCount(); ++i)
+		if (party(i).hp() > -15) return false;
+	return true;
+}
+
+bool World::passTime(bool combat) {
+	const int healInterval = combat ? 5 : 10;
+	const int step = combat ? 1 : (map ? map->minutesPerStep() : 1);
+	for (int guard = 0; guard < 100000; ++guard) {
+		++timeTicks;
+		advanceMinutes(step);
+		int alive = 0;
+		for (int i = 0; i < partyCount(); ++i) {
+			Member &m = party(i);
+			if (m.status() & 0x7F) {
+				for (int bit = 0; bit < 7; ++bit) {
+					if (!(m.status() & (1 << bit))) continue;
+					const size_t row = 0x16 * size_t(bit);
+					const int period = data.hdspct.at(0x3EC + row) * step;
+					if (period > 0 && timeTicks % period == 0) damageMember(m, data.hdspct.at(0x3ED + row));
+				}
+			}
+			if (timeTicks % healInterval == 0) {
+				int bound = (m.u8(0x54) != 0 && m.u8(0x21) == 0) ? 0 : -15;
+				int con = m.hp();
+				if (combat) {
+					if (m.attr(3) > 15) con += m.attr(3) - 15;
+					bound = 0;
+				}
+				if (con <= bound) {
+					damageMember(m, 1);
+				} else if (!(m.status() & 0x7F) && (m.u8(0x54) == 0 || m.u8(0x21) != 0)) {
+					int hp = std::min<int>(m.hp() + 1, m.hpMax());
+					m.setHp(hp);
+					if (hp == 1) m.setHp(int16_t(m.u16(0x122)));
+				}
+			}
+			if (m.hp() > 0) ++alive;
+		}
+		if (alive != 0) return true;
+		if (partyWiped()) return false;
+	}
+	return true;
+}
+
+// ---------------------------------------------------------------- wandering enemies
+bool World::isCellPassable(int x, int y) const {
+	if (!map || !map->inBounds(x, y) || !map->cell(x, y).passable()) return false;
+	for (const Monster &m : map->monsters())
+		if (m.x() == x && m.y() == y) return false;
+	for (const EnemyGroup &g : map->groups())
+		if ((g.raw[9] & 0x0F) && g.x() == x && g.y() == y) return false;
+	return true;
+}
+
+void World::markEntityOnMap(int radius, int x, int y, int overlay) {
+	if (std::abs(x - disk.mapX) > radius || std::abs(y - disk.mapY) > radius) return;
+	if (!map || !map->inBounds(x, y)) return;
+	MapCell &c = map->cell(x, y);
+	c.tile = uint16_t((c.tile & 0x7FF) | (overlay << 11));
+}
+
+// KEH spawnEnemyGroup (0x174A0) + rollGroupHp.
+void World::spawnEnemyGroup(EnemyGroup &g) {
+	const auto &enemies = data.archetypes.enemies();
+	g.raw[2] = g.raw[0]; g.raw[3] = g.raw[1];
+	g.raw[5] = 1; g.raw[4] = 1; g.raw[0xA] = 0; g.raw[0xB] = 1;
+	for (int j = 0; j < g.raw[8]; ++j) {
+		uint8_t *slot = &g.raw[0xE + 0x16 * j];
+		g.raw[9] |= uint8_t(1 << j);
+		const EnemyDef &e = enemies.at(slot[0]);
+		g.raw[5] = std::max(g.raw[5], e.raw[0x37]);
+		g.raw[4] = std::max(g.raw[4], e.raw[0x36]);
+		g.raw[0xB] = std::max(g.raw[0xB], e.raw[0x35]);
+		slot[0xF] = slot[0xE];
+		if (slot[0x12] < 100) {
+			if (slot[0x12] < rng.range(1, 100)) slot[0xF] = 1;
+			else slot[0xF] = uint8_t(rng.range(1, slot[0xE]));
+		}
+		const int hpLo = e.raw[0x30] | (e.raw[0x31] << 8), hpHi = e.raw[0x32] | (e.raw[0x33] << 8);
+		for (int i = 0; i < slot[0xF]; ++i) {
+			slot[0xA + i] = 0;
+			int hp;
+			if (g.raw[6] & 0x38) {   // hit points scale with the party's average
+				int avg = 0;
+				for (int k = 0; k < partyCount(); ++k) avg += party(k).hpMax();
+				avg /= std::max(1, partyCount());
+				const int delta = avg * g.raw[7] / 100;
+				hp = rng.range(std::max(1, avg - delta), std::min(9999, avg + delta));
+				slot[1] = uint8_t(std::clamp(hp / std::max(1, hpHi), 1, 99));
+			} else {
+				hp = rng.range(hpLo * slot[1], hpHi * slot[1]);
+			}
+			slot[2 + 2 * i] = uint8_t(hp); slot[3 + 2 * i] = uint8_t(hp >> 8);
+		}
+	}
+	markEntityOnMap(g.raw[5], g.x(), g.y(), g.raw[0xC]);
+}
+
+// KEH tryRandomEncounter (0x1767B).
+bool World::tryRandomEncounter() {
+	if (!map || map->groupTemplates() == 0) return false;
+	if (map->encounterPct() < rng.range(1, 100)) return false;
+	static const int kDir[8][2] = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+	int d = rng.range(0, 7);
+	bool found = false;
+	for (int tries = 0; tries < 8; ++tries, d = (d + 1) % 8)
+		if (isCellPassable(disk.mapX + kDir[d][0], disk.mapY + kDir[d][1])) { found = true; break; }
+	if (!found || map->groups().size() < 8) return false;
+	auto &groups = map->groups();
+	int pick = 0, best = groups[0].raw[0xD];
+	for (int i = 0; i < 8; ++i)
+		if (groups[size_t(i)].raw[0xD] < best) { best = groups[size_t(i)].raw[0xD]; pick = i; }
+	EnemyGroup &inst = groups[size_t(pick)];
+	if (inst.raw[0xD] != 0 && map->inBounds(inst.x(), inst.y())) map->cell(inst.x(), inst.y()).tile &= 0x7FF;
+	const int tmpl = rng.range(8, map->groupTemplates() + 7);
+	if (size_t(tmpl) >= groups.size()) return false;
+	inst.raw = groups[size_t(tmpl)].raw;
+	inst.raw[0] = uint8_t(disk.mapX + kDir[d][0]);
+	inst.raw[1] = uint8_t(disk.mapY + kDir[d][1]);
+	spawnEnemyGroup(inst);
+	for (int i = 0; i < 8; ++i)
+		if (groups[size_t(i)].raw[0xD] > 0) --groups[size_t(i)].raw[0xD];
+	inst.raw[0xD] = 0xFF;
+	return true;
 }
 
 // ---------------------------------------------------------------- maps

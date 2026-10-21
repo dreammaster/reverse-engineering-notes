@@ -77,6 +77,10 @@ public:
 
 	// -- time --
 	void advanceMinutes(int minutes);
+	uint16_t timeTicks = 0;                   // KEH _timeTicks: ticks since the game was loaded
+	void damageMember(Member &m, int damage); // KEH damageMember: subtract hp, track last-hurt, mark the dead below -60
+	bool partyWiped() const;                  // no member above -15 hp (KEH checkPartyWipeAndQuit condition)
+	bool passTime(bool combat);               // KEH passTime; false if the whole party died while waiting
 
 	// -- maps --
 	void loadMap(int mapNumber);              // loads map + scripts, applies persistent changes
@@ -86,6 +90,12 @@ public:
 	void recordCellChange(int op, int mapNumber, int x, int y, int val, int extra);
 	void applyCellChange(int x, int y, int op, int val, int extra);   // op 0x19..0x1E semantics on one cell
 	int mapStackIndex() const { return disk.mapIndex; }
+
+	// -- wandering enemies (KEH isCellPassable / spawnEnemyGroup / tryRandomEncounter) --
+	bool isCellPassable(int x, int y) const;
+	void markEntityOnMap(int radius, int x, int y, int overlay);
+	void spawnEnemyGroup(EnemyGroup &g);
+	bool tryRandomEncounter();                // true if a group appeared next to the party
 
 	// -- persistence list stored in Disk1.tail --
 	void syncChangesToDisk();

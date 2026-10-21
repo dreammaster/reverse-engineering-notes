@@ -1,6 +1,7 @@
 #pragma once
 // Combat engine: ports of KEH.EXE rollAttack / resolveAttack / memberAttack and the combatant bookkeeping.
 #include "fod/vm.h"
+#include <functional>
 
 namespace fod {
 
@@ -42,6 +43,27 @@ public:
 	void monsterAttack(const Combatant &c, int attacks);
 	bool checkWeaponMalfunction(int slot);
 
+	// -- whole fight (KEH runCombat, see combat_fight.cpp) --
+	enum class GroupAction { None, GetCloser, Flee };
+	// Fills the command of one active party member; may return a whole-party action instead.
+	std::function<GroupAction(Combat &, int slot, Combatant &rec)> commands;
+	struct Outcome { bool fled = false, wiped = false; };
+	Outcome run(bool useMaxRange);              // list must already hold the enemies (buildCombatants)
+	void autoCommand(int slot, Combatant &rec); // default policy: shoot the first living enemy
+	void setupAttack(const Combatant &c);       // KEH resetAttackState: fire mode, shots, verb for this attacker
+	void multiShot(const Combatant &c);         // KEH attackMultiShot: an enemy attacks a party member
+	void combatMoveEnemy(Combatant &c);
+
+	// -- enemy side: KEH buildCombatants / chooseEnemyAction / sortCombatants --
+	int attackCounts[5] = {};     // per party member: times targeted this round (word array at dseg 0CDAh)
+	unsigned maxSpeed = 0;        // word_2EC0A: highest initiative among enemies
+	int rangeBand(int weaponItem) const;          // getWeaponRangeBand(item,0,0,0,1)
+	int partyMaxRange() const;                    // getMaxWeaponRange
+	bool withinRadiusOfParty(int radius, int x, int y) const;
+	int buildCombatants(bool useMaxRange);
+	void chooseEnemyAction(size_t idx, int weaponItem, int hp, int hpMax, int behavior, int x, int y);
+	void sortCombatants();
+
 	// helpers also used by the AI
 	bool combatantPos(const Combatant &c, int &x, int &y, int &hp) const;
 	std::string attackerName(const Combatant &c) const;
@@ -57,6 +79,16 @@ private:
 	bool retarget(Combatant &r);
 	bool findNearbyTarget(Combatant &r);
 
+	void executeCombatant(size_t idx, bool &fled);
+	bool tryFlee();
+	void removeDeadMonsters();
+	void postCombatCleanup();
+	void awardExperience();
+	void rechooseEnemyActions();
+
+	std::string _verb;
+	std::string _attackerOverride;
+	int _blast = 0;
 	World &_w;
 	Host &_h;
 	// current target (filled by selectTarget)
