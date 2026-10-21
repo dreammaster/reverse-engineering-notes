@@ -1,0 +1,197 @@
+loadMap                      hint:MapHeader MapHeader    forced 404 406 408 40A 40C
+loadSaveState                var+var_A      PartyMember  unique 126
+drawPartyStatus              var+y          -            ambiguous: 197A
+drawPartyStatus              hint:PartyMember PartyMember  forced 44 46 4A 58 145
+writeParty                   hint:PartyMember PartyMember  forced 58
+getDirectionKey              hint:MapHeader MapHeader    forced 2
+markEntityOnMap              hint:MapCell   MapCell      forced 1
+placeEntitiesOnMap           hint:Monster   Monster      forced 5B 5C 5F 65
+placeEntitiesOnMap           hint:MapHeader MapHeader    forced 9 B
+placeEntitiesOnMap           hint:EnemyGroup EnemyGroup   forced 2 3 5 9 C
+moveMapEntities              hint:Monster   Monster      forced 44 5D 5E 5F 60 64 65
+moveMapEntities              hint:MapHeader MapHeader    forced 9 B
+moveMapEntities              hint:EnemyGroup EnemyGroup   forced 4 5 9 A B C
+setTime                      hint:MapHeader MapHeader    forced 6
+passTime                     hint:MapHeader MapHeader    forced 6
+passTime                     hint:PartyMember PartyMember  forced 1B 21 44 46 54 58 122
+passTime                     var+var_16     -            ambiguous: 3EC 3ED
+startPendingFight            hint:Monster   Monster      forced 1A 5B 5C 60 61 63
+useItemScriptOnCell          hint:PartyMember PartyMember  forced 145 148 14A
+rollWeaponVsObject           var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 3 4 6
+rollWeaponVsObject           var+arg_4      FireMode     forced A C
+useUpAmmo                    hint:PartyMember PartyMember  forced 4A 52
+useWeaponOnCell              hint:PartyMember PartyMember  forced 145 148 14A
+chooseAmmoToLoad             hint:PartyMember PartyMember  forced 52
+chooseAmmoToLoad             var+var_16     FireMode     forced E F
+giveItemToMember             hint:PartyMember PartyMember  forced 44 52
+itemActionMenu               var+var_1A     PartyMember  unique 44 4A 144 146 147
+itemActionMenu               var+var_20     ItemDef      forced 14 15
+itemActionMenu               hint:PartyMember PartyMember  forced 44
+movePartyStep                hint:PartyMember PartyMember  forced 44 57
+movePartyStep                hint:MapHeader MapHeader    forced 2 9 D
+movePartyStep                hint:Monster   Monster      forced 50 5B 5C
+checkPartyWipeAndQuit        hint:PartyMember PartyMember  forced 44
+isCellPassable               hint:MapHeader MapHeader    forced 2 9 B
+isCellPassable               hint:Monster   Monster      forced 5B 5C
+isCellPassable               hint:EnemyGroup EnemyGroup   forced 2 3 9
+pickMapCell                  hint:MapCell   MapCell      forced 2
+rollAttack                   var+arg_2      Combatant    forced 1 2 3 4 5
+rollAttack                   hint:PartyMember PartyMember  forced 14 16 18 19 1A 1C 1E 22 23 38 3A 40 43 48 4A 51 146
+rollAttack                   hint:Monster   Monster      forced 18 1A 1E 38 48 4A 4B 51 60 61
+rollAttack                   var+var_34     GroupSlot    forced 10 11 13
+rollAttack                   var+var_4E     EnemyDef     forced 2C 2E 3A 3B 3C
+rollAttack                   var+var_1E     PartyMember  forced 18 1A 1E
+applyMonsterHitReaction      var+arg_0      Monster      forced 5D
+applyMonsterHitReaction      var+arg_4      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+postCombatCleanup            var+var_32     GroupSlot    forced F 13 15
+postCombatCleanup            hint:EnemyGroup EnemyGroup   forced 2 3 8 9
+postCombatCleanup            hint:MapHeader MapHeader    forced B
+removeDefeatedFromMap        var+arg_0      Combatant    forced 3 4 5
+removeDefeatedFromMap        hint:Monster   Monster      forced 49 5B 5C
+removeDefeatedFromMap        hint:EnemyGroup EnemyGroup   forced 2 3 9
+resolveAttack                var+arg_0      Combatant    forced 1 3 4
+resolveAttack                hint:PartyMember PartyMember  forced 44 50 58
+attackMultiShot              var+arg_2      Combatant    forced 4 A
+attackMultiShot              var+var_8      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1
+pickWeakestInGroup           var+arg_0      Combatant    forced 4 5
+pickWeakestInGroup           var+var_E      GroupSlot    forced 1 F
+selectTargetStats            var+arg_0      Combatant    forced 3 4
+selectTargetStats            hint:Monster   Monster      forced 48 4E 50
+attackNearbyTargets          var+arg_0      Combatant    forced 3 4 5
+attackNearbyTargets          var+var_12     GroupSlot    forced F
+findNearbyTarget             var+arg_0      Combatant    forced 3 4 5
+retargetIfDead               var+arg_0      Combatant    forced 1 3
+retargetIfDead               hint:PartyMember PartyMember  forced 144
+checkWeaponMalfunction       hint:PartyMember PartyMember  forced 18 1A 4A
+memberAttack                 var+arg_2      Combatant    forced 1 3 4 5
+memberAttack                 hint:PartyMember PartyMember  forced 4A 146
+chooseTarget                 hint:Monster   Monster      forced 60 61
+chooseTarget                 var+var_C      GroupSlot    forced 10 11
+combatMoveEnemy              var+arg_0      Combatant    forced 1 2 3 4 5
+combatMoveEnemy              hint:Monster   Monster      forced 44 60 61
+combatMoveEnemy              var+var_E      GroupSlot    forced F 10 11
+chooseEnemyAction            hint:PartyMember PartyMember  forced 44
+buildCombatants              hint:Monster   Monster      forced 1A 44 46 4A 5B 5C 5D 5F 60 61 63
+buildCombatants              hint:MapHeader MapHeader    forced 9 B
+buildCombatants              hint:EnemyGroup EnemyGroup   forced 2 3 5 8 9 B
+buildCombatants              var+var_18     GroupSlot    forced 10 11 13
+buildCombatants              var+var_4      -            ambiguous:PartyMember,EnemyGroup 34 3D 3E
+cmpCombatantsBySpeedDesc     var+arg_0      Combatant    forced 6
+cmpCombatantsBySpeedDesc     var+arg_2      Combatant    forced 6
+cmpCombatantsBySpeedAsc      var+arg_2      Combatant    forced 7
+cmpCombatantsBySpeedAsc      var+arg_0      Combatant    forced 7
+cmpCombatantsByIndex         var+arg_0      Combatant    forced 1
+cmpCombatantsByIndex         var+arg_2      Combatant    forced 1
+clearCombatCommands          var+var_2      -            ambiguous: 197A
+getPartyLevelUnit            hint:PartyMember PartyMember  forced 1A 44
+chooseFiringMode             var+arg_0      PartyMember  unique 4A 144 146
+chooseFiringMode             var+arg_2      WeaponDef    forced 18 3A
+chooseFiringMode             var+var_6      FireMode     forced 10
+runCombat                    hint:PartyMember PartyMember  forced-partial 1A 1E 22 23 31 32 44 4A 50 52 5A 5C 5E 60 144 145 146 197A
+runCombat                    var+var_3A     -            ambiguous: 197A
+runCombat                    hint:Monster   Monster      forced 44 46 4A 50 5D 60 61
+runCombat                    var+var_6E     -            ambiguous:PartyMember,Monster,EnemyGroup,EnemyDef,ItemDef F 10 11 13
+runCombat                    hint:MapHeader MapHeader    forced 9 B
+drawCombatCommandRow         hint:PartyMember PartyMember  forced 4A 145 146
+animationTick                var+var_4      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+animationTick                var+var_8      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1 2
+tryUnjamWeapon               hint:PartyMember PartyMember  forced 50 145
+isMemberActive               var+arg_0      PartyMember  forced 1B 44
+retrieveStoreMember          hint:MapHeader MapHeader    forced 1E
+retrieveStoreMember          hint:PartyMember PartyMember  forced 49
+rollGroupHp                  hint:PartyMember PartyMember  forced 46
+spawnEnemyGroup              var+arg_0      EnemyGroup   forced 1 2 3 4 5 6 7 8 9 A B C
+spawnEnemyGroup              var+var_8      GroupSlot    forced 1 E F 12
+spawnEnemyGroup              var+var_C      EnemyDef     forced 30 32 35 36 37
+tryRandomEncounter           hint:MapHeader MapHeader    forced 7 8
+tryRandomEncounter           hint:EnemyGroup EnemyGroup   forced 1 2 3 D
+checkTimedEffects            hint:PartyMember PartyMember  forced 1D 21 50 53 54 55 56 57
+exposeToMutagens             var+arg_0      PartyMember  forced 53 55 56
+applyItemEffect              var+arg_2      ItemDef      forced 16 17
+applyItemEffect              var+arg_0      PartyMember  forced 58
+checkLevelUps                hint:PartyMember PartyMember  forced 46 4E 5A 5C 5E 60
+checkLevelUps                var+var_8      Profession   forced 74 7C 7D
+getArmorClass                var+member     PartyMember  forced 48
+markMapDirty                 hint:MapHeader MapHeader    forced 5
+findGroundItemsAt            var+var_8      GroundItem   forced 2 3
+findGroundItemsAt            hint:MapHeader MapHeader    forced 40E
+removeGroundItem             hint:MapHeader MapHeader    forced 40E 410
+lootCell                     hint:MapCell   MapCell      forced 2
+lootCell                     var+var_1A     GroundItem   forced 4
+lootCell                     hint:PartyMember PartyMember  forced 52
+addGroundItem                hint:MapHeader MapHeader    forced 40E
+addGroundItem                var+var_8      GroundItem   forced 2 3 4
+dropPacketLoot               hint:MapHeader MapHeader    forced 40E 410 412
+addScratchItemsAtCell        hint:MapHeader MapHeader    forced 410
+compactGroundItems           hint:MapHeader MapHeader    forced 410 412
+removeMapEntity              hint:MapHeader MapHeader    forced 9 408 40A 40C 40E 410
+removeMapEntity              var+var_E      Monster      forced 14 5B 5C
+reloadMapIfResettable        hint:MapHeader MapHeader    forced 4 5
+loadCombatPortraits          var+var_1E     -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1 2
+findMonsterById              hint:MapHeader MapHeader    forced 9
+findMonsterById              hint:Monster   Monster      forced 49
+setCellFields                var+arg_0      MapCell      forced 2 3 4
+applyCellChange              var+arg_0      MapCell      forced 6
+removeItemsByFlag            hint:PartyMember PartyMember  forced 52
+removeMemberAmmo             var+var_6      FireMode     forced E
+removeMemberAmmo             hint:PartyMember PartyMember  forced 52
+damageMember                 var+arg_0      PartyMember  unique 44 46 49 122
+getMemberCon                 var+member     PartyMember  forced 44
+damageParty                  hint:PartyMember PartyMember  forced 50
+healMember                   hint:PartyMember PartyMember  forced 44 46
+applyRepeatingHazard         hint:PartyMember PartyMember  forced 58
+getMemberStat                hint:PartyMember PartyMember  forced 44 46 48 4E 50 5A 5C
+clampLong                    var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+setMemberStat                hint:PartyMember PartyMember  forced 44 46 49 4E 5A 5C
+memberHasItem                hint:PartyMember PartyMember  forced 52
+doScript                     var+var_138    -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+doScript                     hint:PartyMember PartyMember  forced 1C 44 49 52 58 144 145
+doScript                     hint:Monster   Monster      forced 49 50 5B 5C 5F 60 65 66
+doScript                     var+var_13C    -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 3
+doScript                     hint:MapHeader MapHeader    forced 7 8 9 B 40E
+doScript                     hint:EnemyGroup EnemyGroup   forced 1 9
+shopBuy                      hint:Shop      Shop         forced-partial 2A 2D 32 34
+shopBuy                      hint:PartyMember PartyMember  forced 52
+shopSell                     hint:PartyMember PartyMember  forced 52
+shopSell                     hint:Shop      Shop         forced-partial 2A 2C 2D
+shopLoop                     hint:Shop      Shop         forced 28 2A
+serviceLoop                  hint:PartyMember PartyMember  forced 21 44 46 48 4E 53 54 57 58 5A 5C
+serviceLoop                  var+var_24     ServiceRow   forced 40 41 42 44 46 47 48 4A
+serviceLoop                  var+var_16     Profession   forced 74
+doctorTreat                  hint:PartyMember PartyMember  forced 44 54 58 122 144 146 147
+ingestItem                   hint:PartyMember PartyMember  forced 21 53 55 56 57 58
+writeMemberCondition         var+member     PartyMember  forced 58
+characterInfoStats           var+member     PartyMember  forced 44 46 4A 4E 58
+charInfoInventory            var+arg_0      PartyMember  forced 52
+charInfoConditions           var+arg_0      PartyMember  forced 21 54 58
+checkMemberConscious         hint:PartyMember PartyMember  forced 44
+chooseCommandTargetCell      hint:PartyMember PartyMember  forced 144 147 148 14A
+characterInfo                var+member     PartyMember  unique 58 144 145
+drawRosterRow                hint:PartyMember PartyMember  forced 44 46 4A
+initItemSlot                 var+arg_0      ItemSlot     forced 1 2 3
+addNpcToParty                var+arg_0      Monster      forced 49 52 5B 5C
+addNpcToParty                var+var_E      PartyMember  forced 14 16 21 4E 53 54 55 56 57 58 5A 5C 5E 60
+addDirtyRectFromBounds       var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 4 6
+setWindow                    var+win        -            ambiguous:PartyMember,Monster,EnemyGroup,EnemyDef,WeaponDef,Profession 18
+readScriptRecord             var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+invertRect                   var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 4 6
+__flsbuf                     var+arg_2      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 4 6 7
+__flsbuf                     var+var_8      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+__getbuf                     var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 4 6
+__getbuf                     var+var_2      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+_fflush                      var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2 4 6 7
+__output                     var+arg_2      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1
+unknown_libname_3            var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+__aNNalmul                   var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 2
+isItemEquipped               var+arg_0      PartyMember  forced 4A
+tickMonsterStates            hint:Monster   Monster      forced 5D
+tickMonsterStates            hint:MapHeader MapHeader    forced 9
+getCombatantInfo             var+arg_0      Combatant    forced 3 4 5
+getCombatantInfo             hint:Monster   Monster      forced 60 61
+getCombatantInfo             var+var_C      GroupSlot    forced 10 11
+getCombatantPos              var+arg_0      Combatant    forced 1 2
+getCombatantPos              var+var_E      GroupSlot    forced F 10 11
+applyMapChangeList           hint:MapCell   MapCell      forced 2 3 4 6
+applyMapChangeList           hint:MapHeader MapHeader    forced 5
+removeItemSlot               hint:PartyMember PartyMember  forced 4A 52
+blitPic                      var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1

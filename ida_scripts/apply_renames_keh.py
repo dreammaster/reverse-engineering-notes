@@ -212,10 +212,7 @@ RENAMES = [
     (0x15691, "runCombat",
      "main combat loop: per party member choose R)un E)vade A)ttack L)oad/unjam W)eapon U)se; "
      "'Encounter begins...' then executes each combatant's command in initiative order"),
-    (0x16328, "runCombatExecute",
-     "(mis-split tail of runCombat) switch over command codes: 2 evade,3 stun,5 reload,6 run,7 switch weapon,"
-     "10/11 use item,12 trade,13 drop,14 none"),
-
+    
     # -- pass 4: input, items, level-up, encounters (1695C-17E37) --
     (0x1695C, "showMessageBox", "plays sound 1 and shows a message (short form in combat); used by the critical-error handler"),
     (0x169E8, "drawCombatCommandRow", "builds the combat command text for roster row y: name + command string (off_21DD0) + target"),
@@ -362,17 +359,7 @@ RENAMES = [
     (0x1E448, "fileWrite", "DOS write (40h) in 64K-1 chunks across segments; returns 1 on success"),
     (0x1E498, "fileSeek", "DOS lseek (42h): handle, hi, lo, whence"),
     (0x107CB, "lootPartyCell", "if the 'item flag' byte_2EE06 is set, runs lootCell at the party position"),
-    (0x1202D, "itemActionMenu_part2", "mis-split fragment of itemActionMenu (prints 'Do what with your %s:')"),
-    (0x12065, "itemActionMenu_part3", "mis-split fragment of itemActionMenu"),
-    (0x12074, "itemActionMenu_part4", "mis-split fragment of itemActionMenu"),
     (0x13716, "postCombatCleanup", "mis-split head of the loop that finalises groups after combat (calls dropPacketLoot / clears map cells)"),
-    (0x13838, "postCombatCleanup_part2", "mis-split continuation: for each dead group drops loot and clears its map cell"),
-    (0x15220, "buildCombatants_part2", "mis-split tail of buildCombatants: adds enemy groups, then qsort"),
-    (0x1542D, "sortCombatants_part2", "mis-split tail of sortCombatants: qsort of equal-speed runs"),
-    (0x16867, "printInnocentKillPenalty", "'%s loses %ld experience points for killing innocent bystanders.'"),
-    (0x16F43, "attrBonus_part2", "mis-split tail of attrBonus"),
-    (0x17261, "retrieveStoreMember_part2", "mis-split tail of retrieveStoreMember"),
-    (0x17970, "checkTimedEffects_part2", "mis-split tail of checkTimedEffects (mutation flare-up message loop)"),
     (0x1DA8C, "drawBorderSetUnused1", "two vertical border segments (unused)"),
     (0x1DA9B, "drawBorderSetUnused2", "horizontal border segment (unused)"),
     (0x1DAF0, "drawListMenuBorders", "draws the two vertical border segments used by list menus"),

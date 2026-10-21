@@ -158,7 +158,7 @@ shots, per-distance to-hit bytes at `+(dist-1)`.
 | 0Eh | none/acted |
 | 0Fh | flee |
 
-Execution order = combatant table sorted by speed (`runCombatExecute`). Attack
+Execution order = combatant table sorted by speed (second half of `runCombat`). Attack
 resolution: `memberAttack`/enemy AI → `resolveAttack` → `rollAttack` (to-hit
 from armor class × scale vs weapon accuracy + attributes, per-shot loop for
 bursts/auto; damage reduced by armor; kills grant profession xp).
@@ -246,3 +246,17 @@ Opcodes (handler address in IDA; confidence H/M/L):
 
 (The address-keyed jump table is at dseg:`jpt_19A29`; handlers share code, e.g.
 `cases 0,41,71` and `17,70`.)
+
+## IDB structs (second pass)
+
+`ida_scripts/apply_structs_keh.py` defines `MapHeader`, `MapCell`, `Monster`,
+`EnemyGroup`, `GroupSlot`, `GroundItem`, `Combatant` (also the 6-byte attack
+record), `EnemyDef`, `ItemDef`, `WeaponDef`, `FireMode`, `Shop`, `ShopRow`,
+`ServiceRow`, renames `PartyMember`/`ItemSlot` fields, then infers a struct for
+each `[reg+disp]` base pointer (stack var / global / party table) from the
+displacements used and applies `op_stroff` (~900 operands typed). Ambiguous
+pointers are skipped unless listed in `FUNC_HINTS`; the decisions are written to
+`ida_scripts/structs_report_KEH.txt`. Remaining untyped accesses are mostly
+`[reg+reg+disp]` array indexing and stack variables reused for several types.
+Fragment merges are in `ida_scripts/fix_funcs_keh.py` (also recovers the three
+qsort comparators at 15335/1534C/15363).
