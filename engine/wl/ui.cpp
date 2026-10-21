@@ -60,3 +60,142 @@ void clearRect(Machine &m) {
 }
 
 } // namespace wl
+
+// ---------------------------------------------------------------------------------------------------------------------
+// engine painter
+namespace wl {
+
+void Ui::colorChar(uint8_t glyph) {
+	if (glyph >= 24 && glyph <= 51 && buttonLettersAlt) glyph = uint8_t(glyph + 28);
+	if (glyph < _a.colorFont.size()) _v.colorGlyph(cx, cy, _a.colorFont[glyph]);
+	++cx;
+}
+
+void Ui::monoChar(int x, int y, uint8_t ascii, bool inverse) {
+	_v.monoGlyph(x, y, _a.monoGlyph(ascii >= 0x20 ? ascii - 0x20 : 0), inverse);
+}
+
+void Ui::clearRectCells(int leftCol, int rightCol, int topLine, int bottomLine) {
+	for (int line = topLine; line < bottomLine && line < Video::H; ++line)
+		for (int col = leftCol; col <= rightCol; ++col)
+			for (int x = 0; x < 8; ++x) _v.put(col * 8 + x, line, 0);
+}
+
+void Ui::box(int x0, int y0, int x1, int y1) {
+	cx = x0; cy = y0;
+	colorChar(0x0E);
+	while (cx != x1) colorChar(0x12);
+	colorChar(0x0F);
+	++cy;
+	do {
+		cx = x0; colorChar(0x0D);
+		cx = x1; colorChar(0x13);
+		++cy;
+	} while (cy != y1);
+	cx = x0; colorChar(0x10);
+	while (cx != x1) colorChar(0x12);
+	colorChar(0x11);
+}
+
+void Ui::mainFrame() {
+	box(0, 0, 37, 17);
+	cy = 17; cx = 0; colorChar(0x5E);
+	cx = 37; colorChar(0x5F); colorChar(0x12); colorChar(0x0F);
+	for (cy = 18; cy != 24; ++cy) {
+		cx = 0; colorChar(0x0D);
+		cx = 39; colorChar(0x13);
+	}
+}
+
+void Ui::titleLetters() {
+	static const char *letters = "bcdefghijklmdenopq";
+	cx = 38; cy = 0;
+	for (const char *p = letters; *p; p += 2) {
+		colorChar(uint8_t(p[0]));
+		colorChar(uint8_t(p[1]));
+		cx = 38; ++cy;
+	}
+}
+
+void Ui::clockAndGauge(int hours, int minutes, int radLevel, bool hasDetector, bool drawClock) {
+	if (drawClock) {
+		cx = 28; cy = 0;
+		colorChar(0x0A);
+		colorChar(uint8_t(hours / 10)); colorChar(uint8_t(hours % 10));
+		colorChar(0x0C);
+		colorChar(uint8_t(minutes / 10)); colorChar(uint8_t(minutes % 10));
+		colorChar(0x0B);
+	}
+	int g = hasDetector ? 0x7E : 0x7A;
+	if (!hasDetector) radLevel = 0xFF;
+	cx = 38; cy = 16;
+	colorChar(uint8_t(g)); colorChar(uint8_t(g + 1)); g += 2;
+	cx = 38; --cy;
+	colorChar(uint8_t(g)); colorChar(uint8_t(g + 1)); g += 2;
+	cx = 38; --cy;
+	int odd = 0;
+	const int level = radLevel >> 3;
+	bool fill = true;
+	if (level < 9) {
+		const int n = 9 - level;
+		odd = n & 1;
+		int pieces = n >> 1;
+		while (pieces > 0) {
+			if (cy > 12) { colorChar(0x8A); colorChar(0x8B); } else { colorChar(0x86); colorChar(0x87); }
+			cx = 38; --cy;
+			--pieces;
+		}
+		if (cy == 0x0A) fill = false;
+		else if (odd) {
+			if (cy > 12) { colorChar(0x84); colorChar(0x85); } else { colorChar(0x88); colorChar(0x89); }
+			odd = 0;
+			cx = 38; --cy;
+		}
+	}
+	if (fill) {
+		while (cy != 0x0A) {
+			colorChar(0x82); colorChar(0x83);
+			cx = 38; --cy;
+		}
+	}
+	int top = odd ? 0x76 : 0x72;
+	colorChar(uint8_t(top)); colorChar(uint8_t(top + 1));
+	cx = 38; --cy;
+	colorChar(uint8_t(top + 2)); colorChar(uint8_t(top + 3));
+}
+
+void Ui::buttonsRow(const std::string &text, int selected) {
+	const int xStart = 19 - int((text.size() + 1) / 2);
+	cx = 0; cy = 24;
+	if (xStart == 0) colorChar(0x5C);
+	else {
+		colorChar(0x10);
+		while (cx != xStart) colorChar(0x12);
+		colorChar(0x17);
+	}
+	auto letter = [](char c) -> uint8_t { return c == ' ' ? 49 : uint8_t((uint8_t(c) & 0xDF) + 0xD7); };
+	for (char c : text) colorChar(letter(c));
+	colorChar(0x28);
+	while (cx != 39) colorChar(0x12);
+	colorChar(0x11);
+	if (selected >= 0) {   // highlight: the selected word is redrawn with the plain colour set
+		int word = 0;
+		size_t start = 0;
+		for (size_t i = 0; i <= text.size(); ++i)
+			if (i == text.size() || text[i] == ' ') {
+				if (word == selected) {
+					cx = xStart + 1 + int(start); cy = 24;
+					const bool saved = buttonLettersAlt;
+					buttonLettersAlt = false;
+					for (size_t k = start; k < i; ++k) colorChar(letter(text[k]));
+					colorChar(i == text.size() ? 0x28 : 0x31);
+					buttonLettersAlt = saved;
+					break;
+				}
+				++word;
+				start = i + 1;
+			}
+	}
+}
+
+} // namespace wl

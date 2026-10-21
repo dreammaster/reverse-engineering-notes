@@ -23,6 +23,7 @@ struct Machine {
 	int nextHandle = 5;
 	std::deque<uint16_t> keys;
 	bool needKey = false, exited = false;
+	long watchVideo = -1;                         // video memory offset to report writes to (debugging)
 	uint64_t nextTick = 0;
 	std::set<uint32_t> breaks;
 	int videoMode = 3;
@@ -38,7 +39,14 @@ struct Machine {
 			for (auto &c : l) c = char(std::tolower(static_cast<unsigned char>(c)));
 			names[l] = n;
 		}
-		cpu.onWrite = [this](uint32_t a, uint8_t v) { ega.write(a, v); };
+		cpu.onWrite = [this](uint32_t a, uint8_t v) {
+			if (watchVideo >= 0 && uint32_t(a - 0xA0000) == uint32_t(watchVideo)) {
+				std::printf("video write %05X=%02X mask=%X at %04X:%04X stack:", a - 0xA0000, v, ega.mapMask, cpu.cs, cpu.ip);
+				for (int k = 0; k < 8; ++k) std::printf(" %04X", cpu.rw(cpu.ss, uint16_t(cpu.sp + 2 * k)));
+				std::printf("\n");
+			}
+			ega.write(a, v);
+		};
 		cpu.onRead = [this](uint32_t a) { return ega.read(a); };
 		cpu.onIn = [this](x86::Cpu &, uint16_t port, bool wide) -> uint16_t { return portIn(port, wide); };
 		cpu.onOut = [this](x86::Cpu &, uint16_t port, uint16_t v, bool wide) { portOut(port, v, wide); };

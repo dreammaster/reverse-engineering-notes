@@ -2,6 +2,10 @@
 #include "wl/gamefile.h"
 #include "wl/graphics.h"
 #include "wl/exe.h"
+#include "wl/assets.h"
+#include "wl/mapview.h"
+#include "wl/ui.h"
+#include "wl/video.h"
 #include "fod/gfx.h"
 #include <cstdio>
 #include <cstdlib>
@@ -166,6 +170,102 @@ int main(int argc, char **argv) {
 			for (size_t i = 0; i < ref.size() && i < e.image.size(); ++i)
 				if (ref[i] != e.image[i]) { if (!diff) first = i; ++diff; if (i / 4096 != lastBlock) { std::printf("  diffs start in block %zx (offset %zx)\n", i / 4096, i); lastBlock = i / 4096; } }
 			std::printf("unpacked %zu bytes, reference %zu, %zu differing bytes (first at %zx), entry %04x:%04x\n", e.image.size(), ref.size(), diff, first, e.entryCs, e.entryIp);
+		} else if (cmd == "screen" && argc >= 5) {   // screen <title|map> <out.raw> [WL.EXE]: native composition for pixel comparison with wlemu dumps
+			const char *exe = argc > 5 ? argv[5] : "D:/GOG Games/Wasteland/rom/WL.EXE";
+			const Assets assets(dir, exe);
+			Video v;
+			Ui ui(assets, v);
+			const std::string which = argv[3];
+			if (which == "map") {
+				const GameMap &map = assets.game[0].maps.at(0);
+				drawMapView(v, assets, map, 46, 58, true);
+				ui.cx = 0; ui.cy = 0;
+				ui.mainFrame();
+				ui.titleLetters();
+				ui.clockAndGauge(0, 12, 0xFF, false, true);
+				ui.buttonsRow("USE ENC ORDER DISBAND VIEW SAVE RADIO", 0);
+			} else if (which == "title") {
+				ui.mainFrame();
+				ui.titleLetters();
+				ui.buttonsRow("START", 0);
+				ui.clockAndGauge(0, 0, 0xFF, false, false);
+				for (int y = 0; y < 128; ++y)
+					for (int x = 0; x < 288; ++x) v.put(8 + x, 8 + y, assets.titlePic[size_t(y) * 288 + size_t(x)]);
+			}
+			FILE *f = std::fopen(argv[4], "wb");
+			if (f) { std::fwrite(v.pixels().data(), 1, v.pixels().size(), f); std::fclose(f); }
+		} else if (cmd == "diffscreen" && argc >= 5) {   // diffscreen <a.raw> <b.raw>: differing pixels per 8x8 cell ('.' = identical, digit = 1..9, '#' = more)
+			const fod::Bytes a = fod::readFile(argv[3]), b = fod::readFile(argv[4]);
+			size_t total = 0;
+			for (int cy = 0; cy < 25; ++cy) {
+				for (int cx = 0; cx < 40; ++cx) {
+					int n = 0;
+					for (int y = 0; y < 8; ++y)
+						for (int x = 0; x < 8; ++x) {
+							const size_t i = size_t(cy * 8 + y) * 320 + size_t(cx * 8 + x);
+							if (a[i] != b[i]) ++n;
+						}
+					total += size_t(n);
+					std::putchar(n == 0 ? '.' : n < 10 ? char('0' + n) : '#');
+				}
+				std::putchar('\n');
+			}
+			std::printf("%zu differing pixels\n", total);
+		} else if (cmd == "titlepic" && argc >= 4) {   // titlepic <out.png>: TITLE.PIC as 288x128, vertical XOR
+			const fod::Bytes raw = fod::readFile(dir + "/TITLE.PIC");
+			const int w = 288, h = 128;
+			fod::Image img(w, h);
+			std::vector<int> last(size_t(w / 2), 0);
+			for (int y = 0; y < h; ++y)
+				for (int bx = 0; bx < w / 2; ++bx) {
+					int b = raw[size_t(y) * size_t(w / 2) + size_t(bx)];
+					if (y > 0) b ^= last[size_t(bx)];
+					last[size_t(bx)] = b;
+					for (int k = 0; k < 2; ++k) {
+						const uint32_t c = egaPalette()[k == 0 ? b >> 4 : b & 15];
+						img.set(bx * 2 + k, y, {uint8_t(c >> 16), uint8_t(c >> 8), uint8_t(c)});
+					}
+				}
+			img.writePng(argv[3]);
+		} else if (cmd == "cellmap" && argc >= 5) {   // cellmap <screen.raw> <image.bin>: identify every 8x8 cell as a mono or colour glyph
+			const fod::Bytes raw = fod::readFile(argv[3]);
+			const fod::Bytes image = fod::readFile(argv[4]);
+			const auto color = loadFont(fod::readFile(dir + "/COLORF.FNT"));
+			const size_t monoBase = 0x2AE20 + 0xCA60 - 0x10000;
+			for (int cy = 0; cy < 25; ++cy) {
+				for (int cx = 0; cx < 40; ++cx) {
+					std::string tok = "?";
+					bool blank = true;
+					for (int y = 0; y < 8 && blank; ++y)
+						for (int x = 0; x < 8; ++x)
+							if (raw[size_t(cy * 8 + y) * 320 + size_t(cx * 8 + x)]) { blank = false; break; }
+					if (blank) tok = ".";
+					else {
+						for (size_t gi = 0; gi < color.size() && tok == "?"; ++gi) {
+							bool same = true;
+							for (int y = 0; y < 8 && same; ++y)
+								for (int x = 0; x < 8; ++x)
+									if (color[gi].at(x, y) != raw[size_t(cy * 8 + y) * 320 + size_t(cx * 8 + x)]) { same = false; break; }
+							if (same) { char b[16]; std::snprintf(b, sizeof b, "c%02zX", gi); tok = b; }
+						}
+						for (int ch = 0; ch < 128 && tok == "?"; ++ch)
+							for (int inv = 0; inv < 2 && tok == "?"; ++inv) {
+								bool same = true;
+								for (int y = 0; y < 8 && same; ++y) {
+									const uint8_t bits = image[monoBase + size_t(ch) * 8 + size_t(y)];
+									for (int x = 0; x < 8; ++x) {
+										int on = (bits >> (7 - x)) & 1;
+										if (inv) on = !on;
+										if ((on ? 15 : 0) != raw[size_t(cy * 8 + y) * 320 + size_t(cx * 8 + x)]) { same = false; break; }
+									}
+								}
+								if (same) { char b[16]; std::snprintf(b, sizeof b, "%c%02X", inv ? 'I' : 'm', ch); tok = b; }
+							}
+					}
+					std::printf("%-4s", tok.c_str());
+				}
+				std::printf("\n");
+			}
 		} else if (cmd == "tilefind" && argc >= 7) {   // tilefind <screen.raw> <x> <y>: best matching tiles of both ALLHTDS files for the 16x16 block
 			const fod::Bytes raw = fod::readFile(argv[3]);
 			const int bx = std::atoi(argv[4]), by = std::atoi(argv[5]);

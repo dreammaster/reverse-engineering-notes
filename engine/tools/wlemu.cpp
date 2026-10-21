@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
 			for (char ch : std::string(argv[++i])) m.keys.push_back(uint16_t(uint8_t(ch)));
 		} else if (cmd == "shot" && i + 1 < argc) {
 			m.screenshot().writePng(argv[++i]);
+		} else if (cmd == "watchw" && i + 1 < argc) {   // watchw <hex video offset>: report every write to it
+			m.watchVideo = long(std::strtoul(argv[++i], nullptr, 16));
 		} else if (cmd == "dump" && i + 1 < argc) {   // dump <file>: 64000 bytes, one palette index per pixel
 			FILE *f = std::fopen(argv[++i], "wb");
 			if (f) {
@@ -75,13 +77,17 @@ int main(int argc, char **argv) {
 			if (f) std::fclose(f);
 		} else if (cmd == "calls" && i + 1 < argc) {   // calls on|off: log every function entry
 			const bool on = std::string(argv[++i]) == "on";
+			std::vector<uint16_t> watch;   // data segment offsets printed with every call: calls on <hex> ...
+			while (on && i + 1 < argc && std::isxdigit(static_cast<unsigned char>(argv[i + 1][0])) && std::strlen(argv[i + 1]) <= 4) watch.push_back(uint16_t(std::strtoul(argv[++i], nullptr, 16)));
 			if (on) {
-				m.cpu.onStep = [&m](x86::Cpu &cpu) {
+				m.cpu.onStep = [&m, watch](x86::Cpu &cpu) {
 					const uint32_t a = x86::Cpu::lin(cpu.cs, cpu.ip);
 					const auto it = m.syms.find(a);
 					if (it == m.syms.end()) return;
-					std::printf("[%8llu] %s ax=%04X bx=%04X cx=%04X dx=%04X si=%04X di=%04X ret=%04X\n", (unsigned long long)cpu.steps, it->second.c_str(),
+					std::printf("[%8llu] %s ax=%04X bx=%04X cx=%04X dx=%04X si=%04X di=%04X ret=%04X", (unsigned long long)cpu.steps, it->second.c_str(),
 					            cpu.ax, cpu.bx, cpu.cx, cpu.dx, cpu.si, cpu.di, cpu.rw(cpu.ss, cpu.sp));
+					for (uint16_t w : watch) std::printf(" [%04X]=%02X", w, cpu.rb(0x1CE2, w));
+					std::printf("\n");
 				};
 			} else m.cpu.onStep = nullptr;
 		} else if (cmd == "callfn" && i + 1 < argc) {   // callfn <off> [reg=hex ...]: run a near function of the code segment until it returns
