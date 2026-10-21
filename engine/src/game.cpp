@@ -1,4 +1,5 @@
 #include "fod/game.h"
+#include "fod/combat.h"
 #include <algorithm>
 #include <cstring>
 
@@ -151,6 +152,38 @@ void Game::runScriptChain(int script, int event, int arg8) {
 	if (r.request == 6 || r.request == 8) _log.push_back("combat requested (not implemented yet)");
 }
 
+void Game::endOfTurn() {
+	Combat cb(_w, *this);
+	int n = cb.buildCombatants(false);
+	if (n <= 0 && _w.tryRandomEncounter()) {
+		message("\r\rUh oh! Here comes trouble!");
+		n = cb.buildCombatants(false);
+	}
+	if (n <= 0) return;
+	cb.commands = [this](Combat &c, int slot, Combatant &rec) {
+		print("\r" + _w.party(slot).name() + ", choose: A)ttack E)vade R)un\r");
+		const int k = readKey();
+		if (k == 'E') {
+			rec.command = 1;
+			rec.speed = uint8_t(rec.speed * 2);
+			return Combat::GroupAction::None;
+		}
+		if (k == 'R') {
+			print("G)et closer  F)lee\r");
+			const int k2 = readKey();
+			if (k2 == 'G') return Combat::GroupAction::GetCloser;
+			if (k2 == 'F') return Combat::GroupAction::Flee;
+		}
+		c.autoCommand(slot, rec);
+		return Combat::GroupAction::None;
+	};
+	const Combat::Outcome o = cb.run(false);
+	if (o.wiped) {
+		print("\rYour party has been defeated.\r");
+		_quit = true;
+	}
+}
+
 bool Game::movePartyStep(int dir) {
 	World &w = _w;
 	_dialogOpen = false;
@@ -186,6 +219,7 @@ bool Game::movePartyStep(int dir) {
 	if (passable) w.setPartyPosition(nx, ny);
 	passTime();
 	runScriptChain(w.map->cell(nx, ny).script, kEvEnter);      // event 0: stepping onto / bumping into the cell
+	if (!_quit && w.mapNo == curMap) endOfTurn();
 	redraw();
 	return !_quit;
 }

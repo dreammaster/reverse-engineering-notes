@@ -37,6 +37,7 @@ public:
 private:
 	void redraw();
 	void passTime();
+	void endOfTurn();              // KEH moveMonstersAndCheckEncounter: random encounters and combat
 	void openDialog();
 	void flushDialogPage();
 
