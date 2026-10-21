@@ -16,10 +16,10 @@ into a 4096-byte ring buffer, length = `(hi & 0x0F) + 3`. Ring is pre-filled wit
 
 Start with a table of `u16 offset, u16 size` (28 entries for MAP/SCR, 53 for ANI).
 `offset` is in **16-byte paragraphs** from the start of the file; `size` is in
-bytes. Entry index = map number (the original has 29 numbered maps; a map's
-files live on the disk given by the table at KEH dseg+125h:
-`0,2,2,2,2,3,3,3,3,3,3,3,2,3,2,3,3,3,1,1,1,1,1,1,1,1,1,1,2` — 1 = K files, 2 = D, 3 = F… see
-`loadMap`; disk numbers select the file set `K*`, `F*` or `D*`).
+bytes. Chunk index = map number - 1 (maps are numbered 1-28). The table at KEH dseg+125h, indexed by
+map number, gives the file set: `0,2,2,2,2,3,3,3,3,3,3,3,2,3,2,3,3,3,1,1,1,1,1,1,1,1,1,1,2`
+- 1 = `K*` files, 2 = `F*`, 3 = `D*` (verified: FMAP holds chunks 0-3, 11, 13, 27; DMAP 4-10, 12, 14-16;
+KMAP 17-26).
 
 * `*MAP` chunk: raw map (not compressed) — see below.
 * `*SCR` chunk: LZSS-compressed script bank — see below.

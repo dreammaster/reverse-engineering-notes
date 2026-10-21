@@ -11,3 +11,6 @@ dump_*.txt
 summary_*.txt
 ida_scripts/flat_*.txt
 ida_scripts/hexdump_*.txt
+engine/build/
+tools/*.png
+engine/*.png
