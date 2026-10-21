@@ -7,6 +7,7 @@
 #include "wl/machine.h"
 #include "wl/ui.h"
 #include "wl/globals.h"
+#include "wl/rules.h"
 #include <cstdio>
 #include <cstdlib>
 #include <functional>
@@ -20,11 +21,13 @@ struct Args {
 };
 
 struct Regs { uint16_t ax = 0, bx = 0, cx = 0, dx = 0, si = 0, di = 0; };
+struct Out { int al = -1, ax = -1, dx = -1, cf = -1; };   // register results to compare with the original (-1: not checked)
 
 struct TestCase {
 	uint16_t entry;                                                              // near address in the code segment (offset from 10000h)
 	std::function<Regs(wl::Machine &, const Args &)> setup;                     // pokes the shared start state, returns register inputs
-	std::function<void(wl::Machine &, const Args &, const Regs &)> native;      // the port
+	std::function<Out(wl::Machine &, const Args &, const Regs &)> native;       // the port
+	std::vector<uint16_t> scratch;                                               // data segment bytes the original uses as temporaries (not compared)
 };
 
 std::map<std::string, TestCase> &registry() {
@@ -41,14 +44,14 @@ void registerTests() {
 		    if (a.v.size() > 3) m.d8(g::inverseText) = uint8_t(a.hex(3));
 		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
 	    },
-	    [](Machine &m, const Args &, const Regs &r) { writeCharacterAt(m, uint8_t(r.ax)); }};
+	    [](Machine &m, const Args &, const Regs &r) { writeCharacterAt(m, uint8_t(r.ax)); return Out{}; }};
 	// writeColorCharacter <glyph> [x y]
 	registry()["writeColorCharacter"] = {0x0CB6,
 	    [](Machine &m, const Args &a) {
 		    if (a.v.size() > 2) { m.d8(g::stringXPos) = uint8_t(a.hex(1)); m.d8(g::stringYPos) = uint8_t(a.hex(2)); }
 		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
 	    },
-	    [](Machine &m, const Args &, const Regs &r) { writeColorCharacter(m, uint8_t(r.ax)); }};
+	    [](Machine &m, const Args &, const Regs &r) { writeColorCharacter(m, uint8_t(r.ax)); return Out{}; }};
 	// clearRect <leftCol> <rightCol> <topLine> <bottomLine>
 	registry()["clearRect"] = {0x0762,
 	    [](Machine &m, const Args &a) {
@@ -56,7 +59,41 @@ void registerTests() {
 		    m.d8(g::rectTopLine) = uint8_t(a.hex(2)); m.d8(g::rectBottomLine) = uint8_t(a.hex(3));
 		    return Regs{};
 	    },
-	    [](Machine &m, const Args &, const Regs &) { clearRect(m); }};
+	    [](Machine &m, const Args &, const Regs &) { clearRect(m); return Out{}; }};
+
+	// ---- rules: random numbers and dice accumulators. Machine <-> Rules adapters keep the data segment authoritative.
+	auto loadRules = [](Machine &m, Rules &r) {
+		for (int i = 0; i < 5; ++i) r.rngState[i] = m.d8(uint16_t(0x465C + i));
+		r.seed2 = m.d16(0x46BE);
+		r.seed1 = m.d16(0x46C0);
+	};
+	auto storeRules = [](Machine &m, const Rules &r) {
+		for (int i = 0; i < 5; ++i) m.d8(uint16_t(0x465C + i)) = r.rngState[i];
+		m.setD16(0x46BE, r.seed2);
+		m.setD16(0x46C0, r.seed1);
+	};
+	// rngByte <al> [s0 s1 s2 s3 s4]
+	registry()["rngByte"] = {0x8E6B,
+	    [](Machine &m, const Args &a) {
+		    for (int i = 0; i < 5 && size_t(1 + i) < a.v.size(); ++i) m.d8(uint16_t(0x465C + i)) = uint8_t(a.hex(size_t(1 + i)));
+		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
+	    },
+	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.rngByte(uint8_t(r.ax)); storeRules(m, q); return o; }};
+	// random <n>   (sub_18E41, result in al)
+	registry()["random"] = {0x8E41,
+	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
+	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.random(uint8_t(r.ax)); storeRules(m, q); return o; },
+	    {0xC059}};
+	// d6 <al>
+	registry()["d6"] = {0x8E5F,
+	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
+	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.d6(uint8_t(r.ax)); storeRules(m, q); return o; }};
+	// rollDice (sub_19C84, result in al)
+	registry()["rollDice"] = {0x9C84,
+	    [](Machine &, const Args &) { return Regs{}; },
+	    [=](Machine &m, const Args &, const Regs &) { Rules q; loadRules(m, q); Out o; o.al = int(q.rollDice() & 0xFF); storeRules(m, q); return o; },
+	    {0xCD49, 0xCD4A}};
+
 }
 
 } // namespace
@@ -88,9 +125,14 @@ int main(int argc, char **argv) {
 
 	// native port
 	wl::Machine nat = start;
-	t.native(nat, args, regs);
+	const Out out = t.native(nat, args, regs);
+	for (uint16_t off : t.scratch) nat.d8(off) = ref.d8(off);
 
-	const size_t n = nat.diff(ref, 40);
-	std::printf("%s: original %s, %zu differing bytes\n", name.c_str(), why.c_str(), n);
+	size_t n = nat.diff(ref, 40);
+	if (out.al >= 0 && out.al != (em.cpu.ax & 0xFF)) { std::printf("  AL: native %02X original %02X\n", out.al, em.cpu.ax & 0xFF); ++n; }
+	if (out.ax >= 0 && out.ax != em.cpu.ax) { std::printf("  AX: native %04X original %04X\n", out.ax, em.cpu.ax); ++n; }
+	if (out.dx >= 0 && out.dx != em.cpu.dx) { std::printf("  DX: native %04X original %04X\n", out.dx, em.cpu.dx); ++n; }
+	if (out.cf >= 0 && out.cf != int(em.cpu.flag(x86::CF))) { std::printf("  CF: native %d original %d\n", out.cf, int(em.cpu.flag(x86::CF))); ++n; }
+	std::printf("%s: original %s, %zu differences\n", name.c_str(), why.c_str(), n);
 	return n == 0 ? 0 : 2;
 }

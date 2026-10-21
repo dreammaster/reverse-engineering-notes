@@ -20,7 +20,7 @@ if(WIN32)
     target_link_options(fodplay PRIVATE -static -mwindows)
 endif()
 
-add_library(wl STATIC wl/codec.cpp wl/gamefile.cpp wl/graphics.cpp wl/exe.cpp wl/machine.cpp wl/ui.cpp wl/video.cpp wl/assets.cpp wl/mapview.cpp)
+add_library(wl STATIC wl/codec.cpp wl/gamefile.cpp wl/graphics.cpp wl/exe.cpp wl/machine.cpp wl/ui.cpp wl/video.cpp wl/assets.cpp wl/mapview.cpp wl/rules.cpp)
 target_include_directories(wl PUBLIC include)
 target_compile_options(wl PRIVATE $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra>)
 target_link_libraries(wl fod)

@@ -23,6 +23,8 @@ struct Machine {
 	int nextHandle = 5;
 	std::deque<uint16_t> keys;
 	bool needKey = false, exited = false;
+	bool detectIdle = false;                      // stop run() when the game only polls an empty keyboard buffer
+	int idlePolls = 0;                            // consecutive empty keyboard polls: the game is waiting for input
 	long watchVideo = -1;                         // video memory offset to report writes to (debugging)
 	uint64_t nextTick = 0;
 	std::set<uint32_t> breaks;
@@ -141,8 +143,8 @@ struct Machine {
 				return true;
 			}
 			if (ah == 1) {
-				if (keys.empty()) c.setFlag(x86::ZF, true);
-				else { c.setFlag(x86::ZF, false); c.ax = keys.front(); }
+				if (keys.empty()) { c.setFlag(x86::ZF, true); if (detectIdle && ++idlePolls > 30) needKey = true; }
+				else { idlePolls = 0; c.setFlag(x86::ZF, false); c.ax = keys.front(); }
 				return true;
 			}
 			c.ax = 0;
@@ -158,6 +160,7 @@ struct Machine {
 	// runs until `maxSteps` instructions, a breakpoint, a key wait, exit or a fault; returns the reason
 	std::string run(uint64_t maxSteps) {
 		needKey = false;
+		idlePolls = 0;
 		const uint64_t end = cpu.steps + maxSteps;
 		while (cpu.steps < end) {
 			if (!cpu.step()) return cpu.fault.empty() ? (exited ? "exit" : "halt") : cpu.fault;

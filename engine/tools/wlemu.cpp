@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
 			for (char ch : std::string(argv[++i])) m.keys.push_back(uint16_t(uint8_t(ch)));
 		} else if (cmd == "shot" && i + 1 < argc) {
 			m.screenshot().writePng(argv[++i]);
+		} else if (cmd == "idle" && i + 1 < argc) {   // idle on|off
+			m.detectIdle = std::string(argv[++i]) == "on";
 		} else if (cmd == "watchw" && i + 1 < argc) {   // watchw <hex video offset>: report every write to it
 			m.watchVideo = long(std::strtoul(argv[++i], nullptr, 16));
 		} else if (cmd == "dump" && i + 1 < argc) {   // dump <file>: 64000 bytes, one palette index per pixel
