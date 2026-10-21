@@ -54,6 +54,7 @@ public:
 	std::vector<Monster> &monsters() { return _monsters; }
 	std::vector<EnemyGroup> &groups() { return _groups; }
 	std::vector<GroundItem> &groundItems() { return _items; }
+	Bytes serialize() const;                         // back to the on-disk chunk layout
 	std::vector<Bytes> &shops() { return _shops; }   // 0x2C header + 0x10 per item row
 	std::vector<Bytes> &storedMembers() { return _stored; }   // party members left here (0x14C bytes each, max 3)
 	MapCell &cell(int x, int y) { return _cells[size_t(y) * _w + x]; }
@@ -70,6 +71,7 @@ private:
 	std::vector<EnemyGroup> _groups;
 	std::vector<GroundItem> _items;
 	std::vector<Bytes> _stored;
+	Bytes _header;                                   // first 0x414 bytes as loaded (unknown fields are preserved)
 	std::vector<Bytes> _shops;
 };
 

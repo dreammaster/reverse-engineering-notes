@@ -112,6 +112,9 @@ public:
 	int trySkillImprove(int slot, int skill);     // KEH trySkillImprove: 1 if the skill rose
 	std::string skillName(int skill) const;       // 0..15 active, 16..31 passive
 	std::string attributeName(int attr) const;
+	// persistence of visited maps (KEH writes dirty maps back to the save disk)
+	std::vector<std::pair<int, Bytes>> exportMaps();
+	void importMaps(const std::vector<std::pair<int, Bytes>> &maps);
 	// monsters / NPCs / roster
 	Monster *findMonsterById(int id, size_t &index);
 	bool addNpcToParty(size_t monsterIndex);  // KEH addNpcToParty; false if the party is full

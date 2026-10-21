@@ -18,7 +18,8 @@ public:
 
 class Game : public Host {
 public:
-	Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk);
+	Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk,
+	     std::vector<std::pair<int, Bytes>> maps = {}, std::string saveDir = "");
 	static Disk1 defaultParty(const GameData &data);    // 4 starter characters (stand-in for FOD.EXE)
 	void run();
 
@@ -47,6 +48,7 @@ private:
 	void startPendingFight(int monsterIndex);   // KEH startPendingFight: combat against one scripted monster
 	int characterInfo(int partyNum, bool inCombat);   // KEH characterInfo: returns the member with a queued command, or -1
 	void afterRosterScreen(int result);
+	void quitMenu();                                  // KEH _main 'Q' menu: quit / save
 	int rosterScreen();                               // KEH rosterScreen: returns the member with a queued command or -1
 	void reorderRoster();
 	void banishMember();
@@ -79,6 +81,8 @@ private:
 	bool _sheetActive = false;
 	SheetState _sheet;
 	int _sheetMember = 0;
+	std::string _saveDir;
+	int _saveSlot = 1;
 	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 

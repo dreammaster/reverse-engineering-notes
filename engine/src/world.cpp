@@ -430,6 +430,17 @@ void World::dropPacketLoot(int packet, int x, int y, int overrideFirstItem) {
 	if (any && map->inBounds(x, y)) map->cell(x, y).flags |= 0x80;
 }
 
+std::vector<std::pair<int, Bytes>> World::exportMaps() {
+	if (map && mapNo > 0) mapCache.insert_or_assign(mapNo, *map);
+	std::vector<std::pair<int, Bytes>> out;
+	for (const auto &kv : mapCache) out.emplace_back(kv.first, kv.second.serialize());
+	return out;
+}
+
+void World::importMaps(const std::vector<std::pair<int, Bytes>> &maps) {
+	for (const auto &kv : maps) mapCache.insert_or_assign(kv.first, Map(kv.second));
+}
+
 // ---------------------------------------------------------------- skills
 int World::trySkillImprove(int slot, int skill) {
 	Member &m = party(slot);

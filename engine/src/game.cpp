@@ -2,6 +2,7 @@
 #include "fod/combat.h"
 #include "fod/party.h"
 #include "fod/charsheet.h"
+#include "fod/savegame.h"
 #include <algorithm>
 #include <cstring>
 
@@ -40,8 +41,10 @@ Disk1 Game::defaultParty(const GameData &data) {
 	return d;
 }
 
-Game::Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk)
-    : _data(data), _assets(assets), _platform(platform), _w(data, std::move(disk)), _vm(_w, *this) {
+Game::Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk,
+           std::vector<std::pair<int, Bytes>> maps, std::string saveDir)
+    : _data(data), _assets(assets), _platform(platform), _w(data, std::move(disk)), _vm(_w, *this), _saveDir(std::move(saveDir)) {
+	_w.importMaps(maps);
 	_w.loadMap(_w.disk.maps[_w.disk.mapIndex]);
 }
 
@@ -563,6 +566,25 @@ int Game::rosterScreen() {
 	return result;
 }
 
+void Game::quitMenu() {
+	for (;;) {
+		openDialog();
+		_dialog = "Your choice?\r\r\r1. Quit (without saving)\r3. Quit (save game)\r5. Just save!\r\rN)evermind";
+		redraw();
+		int k = readKey();
+		if (k >= 'a' && k <= 'z') k -= 32;
+		if (k == 0xFF || k == 'N') break;
+		if (k != '1' && k != '3' && k != '5') continue;
+		if (k != '1') {
+			if (_saveDir.empty() || !saveGame(_w, _saveDir, _saveSlot)) message("Unable to save the game.");
+		}
+		if (k != '5') _quit = true;
+		break;
+	}
+	_dialogOpen = false;
+	redraw();
+}
+
 void Game::lootCell(int x, int y) {
 	if (!_w.map->inBounds(x, y) || !(_w.map->cell(x, y).flags & 0x80)) return;
 	int member = 0;
@@ -685,7 +707,7 @@ void Game::run() {
 			if (k - 0x3B < _w.partyCount()) afterRosterScreen(characterInfo(k - 0x3B, false));
 			break;
 		case 'A': afterRosterScreen(rosterScreen()); break;
-		case 'Q': _quit = true; break;
+		case 'Q': quitMenu(); break;
 		default: redraw(); break;
 		}
 	}

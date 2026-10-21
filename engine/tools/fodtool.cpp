@@ -14,6 +14,7 @@
 #include "fod/game.h"
 #include "fod/combat.h"
 #include "fod/progress.h"
+#include "fod/savegame.h"
 #include "texthost.h"
 #include <cstdio>
 #include <iostream>
@@ -168,6 +169,17 @@ int main(int argc, char **argv) {
 			Screen scr;
 			drawBorders(scr, assets, std::atoi(argv[3]));
 			scr.toImage().writePng(argv[4]);
+		} else if (cmd == "savetest" && argc >= 5) {   // savetest <map> <dir>: serialise/parse round trip of a map and a save
+			GameData gd(dir);
+			World w(gd, Game::defaultParty(gd));
+			w.loadMap(std::atoi(argv[3]));
+			const Bytes once = w.map->serialize();
+			Map again(once);
+			std::printf("map %d: chunk %zu bytes, round trip %s\n", w.mapNo, once.size(), again.serialize() == once ? "identical" : "DIFFERENT");
+			std::printf("save %s\n", saveGame(w, argv[4], 1) ? "ok" : "failed");
+			Disk1 d;
+			std::vector<std::pair<int, Bytes>> maps;
+			std::printf("load %s, %zu maps, newest slot %d\n", loadGame(argv[4], 1, d, maps) ? "ok" : "failed", maps.size(), newestSave(argv[4]));
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());
