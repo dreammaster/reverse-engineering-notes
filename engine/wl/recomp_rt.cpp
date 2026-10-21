@@ -128,7 +128,7 @@ void intr(Machine &m, Regs &r, int n) {
 			if (slash != std::string::npos) l = l.substr(slash + 1);
 			if (log) std::fprintf(stderr, "  name=\"%s\" first bytes %02X %02X\n", name.c_str(), rb(m, r.ds, r.d.x), rb(m, r.ds, uint16_t(r.d.x + 1)));
 			const auto it = s.names.find(l);
-			FILE *f = it == s.names.end() ? nullptr : std::fopen((s.gameDir + "/" + it->second).c_str(), "rb");
+			FILE *f = it == s.names.end() ? nullptr : std::fopen((s.gameDir + "/" + it->second).c_str(), (al & 3) ? "r+b" : "rb");
 			if (!f) { if (log) std::fprintf(stderr, "open %s failed\n", name.c_str()); r.a.x = 2; r.cf = true; return; }
 			s.files[s.nextHandle] = f;
 			s.openNames[s.nextHandle] = it->second;
@@ -152,7 +152,33 @@ void intr(Machine &m, Regs &r, int n) {
 			r.cf = false;
 			return;
 		}
-		case 0x40: r.a.x = r.c.x; r.cf = false; return;
+		case 0x3C: {   // create / truncate (the file name keeps its case if it is new)
+			std::string name = readName(m, r.ds, r.d.x), l = name;
+			for (auto &ch : l) ch = char(std::tolower(static_cast<unsigned char>(ch)));
+			const size_t slash = l.find_last_of("\\/:");
+			if (slash != std::string::npos) { l = l.substr(slash + 1); name = name.substr(slash + 1); }
+			const auto it = s.names.find(l);
+			const std::string real = it == s.names.end() ? name : it->second;
+			FILE *f = std::fopen((s.gameDir + "/" + real).c_str(), "w+b");
+			if (!f) { r.a.x = 5; r.cf = true; return; }
+			s.names[l] = real;
+			s.files[s.nextHandle] = f;
+			s.openNames[s.nextHandle] = real;
+			r.a.x = uint16_t(s.nextHandle++);
+			r.cf = false;
+			return;
+		}
+		case 0x40: {
+			auto it = s.files.find(r.b.x);
+			if (it == s.files.end()) { r.a.x = r.c.x; r.cf = false; return; }   // stdout and friends: ignored
+			std::vector<uint8_t> buf(r.c.x);
+			for (size_t i = 0; i < buf.size(); ++i) buf[i] = rb(m, r.ds, uint16_t(r.d.x + i));
+			const size_t put = std::fwrite(buf.data(), 1, buf.size(), it->second);
+			std::fflush(it->second);
+			r.a.x = uint16_t(put);
+			r.cf = false;
+			return;
+		}
 		case 0x42: {
 			auto it = s.files.find(r.b.x);
 			if (it == s.files.end()) { r.a.x = 6; r.cf = true; return; }
