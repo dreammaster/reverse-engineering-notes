@@ -55,6 +55,36 @@ std::vector<std::vector<Pic>> loadTilesets(const Bytes &f, int w, int h) {
 	return sets;
 }
 
+std::vector<Pic> loadSprites(const Bytes &f) {
+	std::vector<Pic> out;
+	for (size_t base = 0; base + 128 <= f.size(); base += 128) {
+		Pic p;
+		p.width = 16; p.height = 16; p.px.assign(256, 0);
+		for (int plane = 0; plane < 4; ++plane)
+			for (int y = 0; y < 16; ++y)
+				for (int bx = 0; bx < 2; ++bx) {
+					const uint8_t b = f[base + size_t(plane) * 32 + size_t(y) * 2 + size_t(bx)];
+					for (int i = 0; i < 8; ++i) p.px[size_t(y) * 16 + size_t(bx * 8 + i)] |= uint8_t(((b >> (7 - i)) & 1) << plane);
+				}
+		out.push_back(std::move(p));
+	}
+	return out;
+}
+
+std::vector<Bytes> loadMasks(const Bytes &f) {
+	std::vector<Bytes> out;
+	for (size_t base = 0; base + 32 <= f.size(); base += 32) {
+		Bytes m(256, 0);
+		for (int y = 0; y < 16; ++y)
+			for (int bx = 0; bx < 2; ++bx) {
+				const uint8_t b = f[base + size_t(y) * 2 + size_t(bx)];
+				for (int i = 0; i < 8; ++i) m[size_t(y) * 16 + size_t(bx * 8 + i)] = (b >> (7 - i)) & 1;
+			}
+		out.push_back(std::move(m));
+	}
+	return out;
+}
+
 std::vector<PicAnimation> loadPics(const Bytes &f, int width) {
 	std::vector<PicAnimation> pics;
 	size_t pos = 0;

@@ -18,6 +18,10 @@ const uint32_t *egaPalette();                              // 16 ARGB colours
 
 std::vector<std::vector<Pic>> loadTilesets(const Bytes &allhtds, int w = 16, int h = 16);
 
+// IC0_9.WLF: ten 16x16 planar sprites (4 bit planes of 32 bytes each); MASKS.WLF: ten 16x16 1bpp masks (1 = keep background).
+std::vector<Pic> loadSprites(const Bytes &wlf);
+std::vector<Bytes> loadMasks(const Bytes &wlf);   // each mask: 256 bytes, one 0/1 per pixel
+
 struct PicAnimation { Pic base; Bytes animData; };
 std::vector<PicAnimation> loadPics(const Bytes &allpics, int width = 96);
 
