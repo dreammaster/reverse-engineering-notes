@@ -1,5 +1,6 @@
 // The whole-fight loop of KEH.EXE (runCombat) and the helpers it drives. Names in comments are IDB names.
 #include "fod/combat.h"
+#include "fod/progress.h"
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -393,6 +394,7 @@ Combat::Outcome Combat::run(bool useMaxRange) {
 		if (n == 0) break;
 	}
 	awardExperience();
+	checkLevelUps(_w, _h);
 	for (EnemyGroup &g : _w.map->groups()) g.raw[9] &= 0x0F;
 	for (Monster &m : _w.map->monsters()) {   // KEH tickMonsterStates
 		uint8_t &st = m.raw[0x5D];

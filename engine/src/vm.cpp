@@ -2,6 +2,7 @@
 // disassembly; UI-dependent opcodes call into Host. Opcodes marked "approx" mirror the original closely but
 // skip purely cosmetic redraws.
 #include "fod/vm.h"
+#include "fod/progress.h"
 #include <algorithm>
 #include <cctype>
 #include <cstring>
@@ -109,7 +110,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			break;
 		case 3: acc = p0; break;
 		case 4: acc = stat(p0, p1, p2); reg = int16_t(acc); break;
-		case 5: w.setStat(p0, p1, p2, int32_t(acc), cur); break;
+		case 5: w.setStat(p0, p1, p2, int32_t(acc), cur); checkLevelUps(w, _h); break;
 		case 6: case 7: {
 			int64_t best = w.getStat(1, p0, p1, cur);
 			for (int s = 1; s <= w.partyCount(); ++s) {
