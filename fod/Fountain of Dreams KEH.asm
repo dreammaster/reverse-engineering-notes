@@ -7754,9 +7754,9 @@ loc_13756:                              ; CODE XREF: postCombatCleanup+D8↓j
                 not     al
                 and     es:[bx+EnemyGroup.activeMask], al
                 les     bx, [bp+var_32]
-                cmp     es:[bx+GroupSlot._end], ah
+                cmp     es:[bx+GroupSlot.lootPacket], ah
                 jz      short loc_13799
-                mov     al, es:[bx+GroupSlot._end]
+                mov     al, es:[bx+GroupSlot.lootPacket]
                 dec     al
                 mov     si, [bp+var_26]
                 inc     [bp+var_26]
@@ -11387,7 +11387,7 @@ buildCombatants endp
 
 ; Attributes: bp-based frame
 
-cmpCombatantsBySpeedDesc proc near
+cmpCombatantsByCommandAsc proc near
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -11403,14 +11403,14 @@ arg_2           = word ptr  6
                 sub     ax, cx
                 pop     bp
                 retn
-cmpCombatantsBySpeedDesc endp
+cmpCombatantsByCommandAsc endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-cmpCombatantsBySpeedAsc proc near
+cmpCombatantsBySpeedDesc proc near
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -11426,14 +11426,14 @@ arg_2           = word ptr  6
                 sub     ax, cx
                 pop     bp
                 retn
-cmpCombatantsBySpeedAsc endp
+cmpCombatantsBySpeedDesc endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-cmpCombatantsByIndex proc near
+cmpCombatantsByTypeIndex proc near
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -11459,7 +11459,7 @@ arg_2           = word ptr  6
                 sub     ax, cx
                 pop     bp
                 retn
-cmpCombatantsByIndex endp
+cmpCombatantsByTypeIndex endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13451,10 +13451,7 @@ loc_162BA:                              ; CODE XREF: runCombat+C24↑j
                 add     sp, 8
                 mov     si, [bp+var_68]
                 les     bx, [bp+var_6E+2]
-; ---------------------------------------------------------------------------
-                db 26h, 80h, 60h
-; ---------------------------------------------------------------------------
-                or      bh, dh
+                and     byte ptr es:[bx+si+0Ah], 0FEh
                 jmp     loc_162A6
 ; ---------------------------------------------------------------------------
 
@@ -14235,7 +14232,7 @@ loc_16955:                              ; CODE XREF: runCombat+20↑j
                 retn
 ; ---------------------------------------------------------------------------
                 align 2
-runCombat       endp ; sp-analysis failed
+runCombat       endp
 
 
 ; =============== S U B R O U T I N E =======================================

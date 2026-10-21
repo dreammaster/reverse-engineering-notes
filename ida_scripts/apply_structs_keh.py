@@ -47,7 +47,7 @@ STRUCTS = {
     ]),
     "GroupSlot": (0x16, [
         (0x00, "enemyId", B, 1), (0x02, "hp", W, 6), (0x0E, "initCount", B, 1), (0x0F, "count", B, 1),
-        (0x10, "targetX", B, 1), (0x11, "targetY", B, 1), (0x12, "spreadPct", B, 1), (0x13, "portrait", B, 1),
+        (0x10, "targetX", B, 1), (0x11, "targetY", B, 1), (0x12, "spreadPct", B, 1), (0x13, "portrait", B, 1), (0x15, "lootPacket", B, 1),
     ]),
     "EnemyGroup": (0x66, [
         (0x00, "x0", B, 1), (0x01, "y0", B, 1), (0x02, "x", B, 1), (0x03, "y", B, 1),

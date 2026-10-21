@@ -23,9 +23,9 @@ MERGES = [
 ]
 # (start, end, name) -- functions IDA never created
 NEWFUNCS = [
-    (0x15335, 0x1534C, "cmpCombatantsBySpeedDesc"),
-    (0x1534C, 0x15363, "cmpCombatantsBySpeedAsc"),
-    (0x15363, 0x15390, "cmpCombatantsByIndex"),
+    (0x15335, 0x1534C, "cmpCombatantsByCommandAsc"),
+    (0x1534C, 0x15363, "cmpCombatantsBySpeedDesc"),
+    (0x15363, 0x15390, "cmpCombatantsByTypeIndex"),
 ]
 
 for start, end, name in MERGES:
@@ -43,6 +43,7 @@ for start, end, name in MERGES:
 
 for start, end, name in NEWFUNCS:
     if ida_funcs.get_func(start) and ida_funcs.get_func(start).start_ea == start:
+        ida_name.set_name(start, name, ida_name.SN_NOCHECK | ida_name.SN_NOWARN)
         print("ok already %X %s" % (start, name))
         continue
     ida_auto.plan_and_wait(start, end)
@@ -60,3 +61,12 @@ for ea in (0x1202D, 0x12065, 0x12074, 0x13838, 0x15220, 0x1542D, 0x16F43, 0x1726
         ida_name.set_name(ea, "", ida_name.SN_NOWARN)
         print("cleared label %X (%s)" % (ea, nm))
     idc.set_cmt(ea, "", 1)
+
+
+# mis-decoded `and es:[bx+si+0Ah], 0FEh` (26 80 60 0A FE) inside runCombat
+import ida_bytes
+import ida_ua
+if idc.get_wide_byte(0x16325) == 0x26 and not (ida_bytes.is_code(ida_bytes.get_flags(0x16325)) and idc.get_item_size(0x16325) == 5):
+    ida_bytes.del_items(0x16325, ida_bytes.DELIT_SIMPLE, 8)
+    n = ida_ua.create_insn(0x16325)
+    print("recreated insn at 16325, len", n)

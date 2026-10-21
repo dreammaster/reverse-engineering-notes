@@ -354,7 +354,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"targetY",	0X11,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"spreadPct",	0X12,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"portrait",	0X13,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"_end",	0X15,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"lootPacket",	0X15,	0x00000400,	-1,	1);
 	
 	id = get_struc_id("EnemyGroup");
 	mid = add_struc_member(id,"x0",	0,	0x00000400,	-1,	1);
@@ -6929,7 +6929,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1532C);
 	op_stkvar	(x,	1);
 	create_insn	(0X15335);
-	set_name	(0X15335,	"cmpCombatantsBySpeedDesc");
+	set_name	(0X15335,	"cmpCombatantsByCommandAsc");
 	create_insn	(x=0X15338);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1533B);
@@ -6939,7 +6939,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15343);
 	op_stroff	(x,	1,	GetStrucIdByName("Combatant"),	0);
 	create_insn	(0X1534C);
-	set_name	(0X1534C,	"cmpCombatantsBySpeedAsc");
+	set_name	(0X1534C,	"cmpCombatantsBySpeedDesc");
 	create_insn	(x=0X1534F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15352);
@@ -6949,7 +6949,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1535A);
 	op_stroff	(x,	1,	GetStrucIdByName("Combatant"),	0);
 	create_insn	(0X15363);
-	set_name	(0X15363,	"cmpCombatantsByIndex");
+	set_name	(0X15363,	"cmpCombatantsByTypeIndex");
 	create_insn	(x=0X15366);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1536D);
@@ -8160,9 +8160,8 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X16322);
 	op_stkvar	(x,	1);
-	create_byte	(0X16325);
-	make_array	(0X16325,	0X3);
-	create_insn	(0X16328);
+	create_insn	(x=0X16325);
+	op_hex		(x,	1);
 	set_cmt	(0X1632D,	"jumptable 000167A7 case 6",	1);
 	create_insn	(x=0X1632D);
 	op_stkvar	(x,	0);

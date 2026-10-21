@@ -142,23 +142,23 @@ shots, per-distance to-hit bytes at `+(dist-1)`.
 
 | Code | Meaning |
 |---|---|
-| 0 | get closer (move) |
+| 0 | get closer (everyone advances) |
 | 1 | evade |
-| 2 | evade attempt (agility) |
-| 3 | stun (agility skill) |
+| 2 | shriek (mutation skill, skill[0Dh]*15%: scares later combatants, cmd := 0Eh) |
+| 3 | stun (mutation skill [0Eh]) |
 | 4 | attack |
-| 5 | reload |
+| 5 | reload (swap ammo from item slot `cmdArg`) |
 | 6 | unjam |
 | 7 | switch weapon |
-| 8 | (character-info open) |
-| 9 | (ingest) |
+| 8 | (character-info open, internal) |
+| 9 | (ingest, internal) |
 | 0Ah/0Bh | use item / skill on target |
 | 0Ch | trade item |
 | 0Dh | drop weapon |
 | 0Eh | none/acted |
-| 0Fh | flee |
+| 0Fh | run (chance from party level-unit and speed bonus) |
 
-Execution order = combatant table sorted by speed (second half of `runCombat`). Attack
+Execution order = combatant table sorted by command code ascending (`cmpCombatantsByCommandAsc`), ties by speed descending (second half of `runCombat`). Attack
 resolution: `memberAttack`/enemy AI → `resolveAttack` → `rollAttack` (to-hit
 from armor class × scale vs weapon accuracy + attributes, per-shot loop for
 bursts/auto; damage reduced by armor; kills grant profession xp).

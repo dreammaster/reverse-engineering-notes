@@ -76,12 +76,12 @@ buildCombatants              hint:MapHeader MapHeader    forced 9 B
 buildCombatants              hint:EnemyGroup EnemyGroup   forced 2 3 5 8 9 B
 buildCombatants              var+var_18     GroupSlot    forced 10 11 13
 buildCombatants              var+var_4      -            ambiguous:PartyMember,EnemyGroup 34 3D 3E
-cmpCombatantsBySpeedDesc     var+arg_0      Combatant    forced 6
-cmpCombatantsBySpeedDesc     var+arg_2      Combatant    forced 6
-cmpCombatantsBySpeedAsc      var+arg_2      Combatant    forced 7
-cmpCombatantsBySpeedAsc      var+arg_0      Combatant    forced 7
-cmpCombatantsByIndex         var+arg_0      Combatant    forced 1
-cmpCombatantsByIndex         var+arg_2      Combatant    forced 1
+cmpCombatantsByCommandAsc    var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 6
+cmpCombatantsByCommandAsc    var+arg_2      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 6
+cmpCombatantsBySpeedDesc     var+arg_2      Combatant    forced 7
+cmpCombatantsBySpeedDesc     var+arg_0      Combatant    forced 7
+cmpCombatantsByTypeIndex     var+arg_0      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1
+cmpCombatantsByTypeIndex     var+arg_2      -            ambiguous:PartyMember,Monster,EnemyGroup,MapHeader,EnemyDef,ItemDef,Profession 1
 clearCombatCommands          var+var_2      -            ambiguous: 197A
 getPartyLevelUnit            hint:PartyMember PartyMember  forced 1A 44
 chooseFiringMode             var+arg_0      PartyMember  unique 4A 144 146
