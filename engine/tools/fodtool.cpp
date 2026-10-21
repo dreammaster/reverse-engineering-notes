@@ -10,6 +10,8 @@
 #include "fod/script.h"
 #include "fod/vm.h"
 #include "fod/world.h"
+#include "fod/screen.h"
+#include "fod/game.h"
 #include "texthost.h"
 #include <cstdio>
 #include <iostream>
@@ -71,6 +73,44 @@ int main(int argc, char **argv) {
 			std::printf("cell (%d,%d) tile=%d script=%d\n", x, y, w.map->cell(x, y).tileIndex(), c.cellScript);
 			const ScriptResult r = vm.run(c);
 			std::printf("-> ran=%d changedMap=%d request=%d\n", r.ran, r.changedMap, r.request);
+		} else if (cmd == "screen" && argc >= 7) {   // screen <mapNo> <x> <y> <out.png>
+			GameData gd(dir);
+			Disk1 d = Disk1::newGame();
+			d.partyCount = 2;
+			d.partyIds[0] = 0; d.partyIds[1] = 1;
+			const char *names[2] = {"Lena", "Ross"};
+			for (int i = 0; i < 2; ++i) { std::memcpy(d.roster[i].b.data(), names[i], std::strlen(names[i])); d.roster[i].setHp(20); d.roster[i].setHpMax(20); }
+			World w(gd, d);
+			w.loadMap(std::atoi(argv[3]));
+			w.setPartyPosition(std::atoi(argv[4]), std::atoi(argv[5]));
+			Assets assets(dir);
+			Screen scr;
+			renderMainScreen(scr, assets, w, {"Welcome to the beautiful", "island of Florida!"});
+			scr.toImage().writePng(argv[6]);
+			std::printf("wrote %s\n", argv[6]);
+		} else if (cmd == "fontsheet" && argc >= 4) {
+			Assets assets(dir);
+			Screen scr;
+			for (int i = 0; i < 209; ++i) drawGlyph(scr, assets, (i % 26) * 12, (i / 26) * 12, i);
+			scr.toImage().writePng(argv[3]);
+		} else if (cmd == "sim" && argc >= 5) {   // sim <out.png> <keys>: U D L R = arrows, other chars = key
+			GameData gd(dir);
+			Assets assets(dir);
+			struct SimPlatform : Platform {
+				std::string keys; size_t pos = 0; Screen last;
+				int waitKey() override {
+					if (pos >= keys.size()) return -1;
+					const char c = keys[pos++];
+					switch (c) { case 'U': return 0xFD; case 'D': return 0xFC; case 'L': return 0xFB; case 'R': return 0xFA; case '_': return 0xFE; default: return c; }
+				}
+				void present(const Screen &s) override { last = s; }
+			} plat;
+			plat.keys = argv[4];
+			Disk1 d = Game::defaultParty(gd);
+			Game game(gd, assets, plat, d);
+			game.run();
+			plat.last.toImage().writePng(argv[3]);
+			std::printf("pos=(%d,%d) map=%d wrote %s\n", game.world().disk.mapX, game.world().disk.mapY, game.world().mapNo, argv[3]);
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());

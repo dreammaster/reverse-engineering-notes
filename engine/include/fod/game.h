@@ -1,0 +1,55 @@
+#pragma once
+// Top-level game controller: exploration loop, dialog text, script hosting.
+#include "fod/screen.h"
+#include "fod/vm.h"
+
+namespace fod {
+
+// Platform services (window, keyboard). Implemented by the front-ends in engine/platform.
+class Platform {
+public:
+	virtual ~Platform() = default;
+	virtual int waitKey() = 0;                      // KEH key codes (see vm.h); returns -1 when the window closes
+	virtual void present(const Screen &s) = 0;
+};
+
+class Game : public Host {
+public:
+	Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk);
+	static Disk1 defaultParty(const GameData &data);    // 4 starter characters (stand-in for FOD.EXE)
+	void run();
+
+	World &world() { return _w; }
+
+	// Host interface
+	void print(const std::string &text) override;
+	void message(const std::string &text) override;
+	int readKey() override;
+	bool yesNo(const std::string &prompt) override;
+	std::string readLine() override;
+	void redrawMap() override { redraw(); }
+	void showMenu(const std::string &text, bool npcMode) override;
+	void log(const std::string &msg) override { _log.push_back(msg); }
+
+	bool movePartyStep(int dir);                    // KEH movePartyStep; false if the game should end
+	void runScriptChain(int script, int event, int arg8 = 0);
+
+private:
+	void redraw();
+	void passTime();
+	void openDialog();
+	void flushDialogPage();
+
+	const GameData &_data;
+	const Assets &_assets;
+	Platform &_platform;
+	World _w;
+	ScriptVM _vm;
+	Screen _screen;
+	std::vector<std::string> _log;
+	std::string _dialog;           // pending dialog text ('\r' = newline)
+	bool _dialogOpen = false;
+	bool _quit = false;
+};
+
+} // namespace fod
