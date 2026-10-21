@@ -47,7 +47,8 @@ Game::Game(const GameData &data, const Assets &assets, Platform &platform, Disk1
 
 // ---------------------------------------------------------------- drawing
 void Game::redraw() {
-	if (_sheetActive && _sheetMember < _w.partyCount()) drawCharacterSheet(_screen, _assets, _w, _sheetMember, _sheet);
+	if (_rosterActive) drawRoster(_screen, _assets, _w);
+	else if (_sheetActive && _sheetMember < _w.partyCount()) drawCharacterSheet(_screen, _assets, _w, _sheetMember, _sheet);
 	else renderMainScreen(_screen, _assets, _w, {});
 	if (_dialogOpen) {
 		// dialog frame (KEH _dialogBorder*) and text area (8,6)-(31,17)
@@ -513,6 +514,55 @@ int Game::characterInfo(int partyNum, bool inCombat) {
 	return result;
 }
 
+void Game::reorderRoster() {
+	if (_w.partyCount() < 2) return;
+	std::vector<int> remaining, chosen;
+	for (int i = 0; i < _w.partyCount(); ++i) remaining.push_back(i);
+	while (!remaining.empty()) {
+		std::vector<std::string> names;
+		for (int i : remaining) names.push_back(_w.party(i).name());
+		const int pick = pickFromList("Pick a Player:", names);
+		if (pick < 0) break;
+		chosen.push_back(remaining[size_t(pick)]);
+		remaining.erase(remaining.begin() + pick);
+	}
+	for (int i : remaining) chosen.push_back(i);
+	uint8_t ids[5];
+	for (size_t i = 0; i < chosen.size(); ++i) ids[i] = _w.disk.partyIds[chosen[i]];
+	for (size_t i = 0; i < chosen.size(); ++i) _w.disk.partyIds[i] = ids[i];
+	_dialogOpen = false;
+}
+
+void Game::banishMember() {
+	if (_w.partyCount() == 1) { message("Hey! I'm all you've got!!"); return; }
+	std::vector<std::string> names;
+	for (int i = 0; i < _w.partyCount(); ++i) names.push_back(_w.party(i).name());
+	const int pick = pickFromList("Banish whom:", names);
+	if (pick < 0) return;
+	if (yesNo("Really banish\r" + _w.party(pick).name() + "?")) _w.removeMemberFromParty(pick);
+	_dialogOpen = false;
+}
+
+int Game::rosterScreen() {
+	_rosterActive = true;
+	int result = -1;
+	while (!_quit) {
+		const int k = readKey();
+		if (k == 0xFF || k == 'L') break;
+		if (k >= 0x3B && k <= 0x3F) {
+			const int slot = k - 0x3B;
+			if (slot >= _w.partyCount()) continue;
+			_rosterActive = false;
+			result = characterInfo(slot, false);
+			break;
+		}
+		if (k == 'R') reorderRoster();
+		else if (k == 'B') banishMember();
+	}
+	_rosterActive = false;
+	return result;
+}
+
 void Game::lootCell(int x, int y) {
 	if (!_w.map->inBounds(x, y) || !(_w.map->cell(x, y).flags & 0x80)) return;
 	int member = 0;
@@ -634,6 +684,7 @@ void Game::run() {
 		case 0x3B: case 0x3C: case 0x3D: case 0x3E: case 0x3F:
 			if (k - 0x3B < _w.partyCount()) afterRosterScreen(characterInfo(k - 0x3B, false));
 			break;
+		case 'A': afterRosterScreen(rosterScreen()); break;
 		case 'Q': _quit = true; break;
 		default: redraw(); break;
 		}

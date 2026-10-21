@@ -23,4 +23,7 @@ std::vector<int> learnedSkills(const World &w, const Member &m, bool passive);
 
 void drawCharacterSheet(Screen &s, const Assets &a, const World &w, int member, const SheetState &st);
 
+// The roster screen (KEH rosterScreen / drawRosterRow / drawRosterFooter).
+void drawRoster(Screen &s, const Assets &a, const World &w);
+
 } // namespace fod

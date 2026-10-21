@@ -47,6 +47,9 @@ private:
 	void startPendingFight(int monsterIndex);   // KEH startPendingFight: combat against one scripted monster
 	int characterInfo(int partyNum, bool inCombat);   // KEH characterInfo: returns the member with a queued command, or -1
 	void afterRosterScreen(int result);
+	int rosterScreen();                               // KEH rosterScreen: returns the member with a queued command or -1
+	void reorderRoster();
+	void banishMember();
 	void endOfTurn();
 	std::function<Combat::GroupAction(Combat &, int, Combatant &)> defaultCombatCommands();
 	void useUpAmmoFor(int slot, int itemSlot);
@@ -72,6 +75,7 @@ private:
 	bool _dialogOpen = false;
 	bool _quit = false;
 	int _targetX[5] = {}, _targetY[5] = {};   // per-member command target cell
+	bool _rosterActive = false;
 	bool _sheetActive = false;
 	SheetState _sheet;
 	int _sheetMember = 0;

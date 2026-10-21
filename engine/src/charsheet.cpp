@@ -116,4 +116,30 @@ void drawCharacterSheet(Screen &s, const Assets &a, const World &w, int member, 
 	             [&](int n, int idx) { const int k = passive[size_t(idx)]; return fmt("%1d> %3d ", n, m.b[0x34 + size_t(k)]) + w.skillName(16 + k); }, shown);
 }
 
+void drawRoster(Screen &s, const Assets &a, const World &w) {
+	s.clear();
+	drawBorders(s, a, 2);
+	static const char *kState[6] = {"OK ", "UNC", "SER", "CRT", "COM", "DED"};
+	for (int i = 0; i < 5; ++i) {
+		const Win row{1, 1 + 4 * i, 38, 3 + 4 * i};
+		if (i >= w.partyCount()) continue;
+		const Member &m = w.party(i);
+		winWrite(s, a, row, 0, 0, fmt("F%1d>%-19.19s", i + 1, m.name().c_str()));
+		winWrite(s, a, row, 25, 0, std::string("(") + (m.b[0x58] ? "Afflicted" : "Unafflicted") + ")");
+		const int cond = World::conState(m);
+		if (cond == 0) winWrite(s, a, row, 0, 1, fmt("Con:%3u /%3u", uint16_t(m.hp()), uint16_t(m.hpMax())));
+		else winWrite(s, a, row, 0, 1, fmt("Con:%3s /%3u", kState[cond], uint16_t(m.hpMax())));
+		winWrite(s, a, row, 16, 1, fmt("AC: %2d", w.armorClass(m)));
+		const bool bare = m.b[0x4A] == 0xFF;
+		const std::string weap = bare ? "Hands" : w.item(m.b[0x62 + 6 * m.b[0x4A]]).name;
+		winWrite(s, a, row, 0, 2, fmt("Weapon: %-19.19s   Ammo: %2d", weap.c_str(), bare ? 0 : m.b[0x64 + 6 * m.b[0x4A]]));
+	}
+	const Win foot{1, 21, 38, 23};
+	winWrite(s, a, foot, 22, 0, fmt("Cash: $%u", w.disk.cash));
+	winWrite(s, a, foot, 19, 1, "(R)eorder roster");
+	winWrite(s, a, foot, 19, 2, "(B)anish   (L)eave");
+	for (int k = 0; k < 4; ++k)
+		if (w.disk.uniqueItems & (1u << k)) drawTile(s, a, 8 + 10 + 16 * k, 21 * 8, 981 + k);
+}
+
 } // namespace fod

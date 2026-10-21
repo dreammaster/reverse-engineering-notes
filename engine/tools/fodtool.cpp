@@ -163,6 +163,11 @@ int main(int argc, char **argv) {
 			for (const char *k = argv[5]; *k; ++k) host.keys.push_back(*k);
 			runShop(w, host, std::atoi(argv[4]));
 			std::printf("cash=%u\n", w.disk.cash);
+		} else if (cmd == "borders" && argc >= 5) {   // borders <variant> <out.png>
+			Assets assets(dir);
+			Screen scr;
+			drawBorders(scr, assets, std::atoi(argv[3]));
+			scr.toImage().writePng(argv[4]);
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());
