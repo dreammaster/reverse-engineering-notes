@@ -85,6 +85,21 @@ std::vector<Bytes> loadMasks(const Bytes &f) {
 	return out;
 }
 
+std::vector<Pic> loadFont(const Bytes &f) {
+	std::vector<Pic> out;
+	for (size_t base = 0; base + 32 <= f.size(); base += 32) {
+		Pic p;
+		p.width = 8; p.height = 8; p.px.assign(64, 0);
+		for (int plane = 0; plane < 4; ++plane)
+			for (int y = 0; y < 8; ++y) {
+				const uint8_t b = f[base + size_t(plane) * 8 + size_t(y)];
+				for (int i = 0; i < 8; ++i) p.px[size_t(y) * 8 + size_t(i)] |= uint8_t(((b >> (7 - i)) & 1) << plane);
+			}
+		out.push_back(std::move(p));
+	}
+	return out;
+}
+
 std::vector<PicAnimation> loadPics(const Bytes &f, int width) {
 	std::vector<PicAnimation> pics;
 	size_t pos = 0;

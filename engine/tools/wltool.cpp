@@ -1,6 +1,7 @@
 // wlrun <gamedir> <command> ...: inspection tool for the Wasteland 1 data files.
 #include "wl/gamefile.h"
 #include "wl/graphics.h"
+#include "wl/exe.h"
 #include "fod/gfx.h"
 #include <cstdio>
 #include <cstdlib>
@@ -146,6 +147,25 @@ int main(int argc, char **argv) {
 					}
 				std::printf("sprite %zu: %d/256\n", s, same);
 			}
+		} else if (cmd == "fontsheet" && argc >= 4) {   // fontsheet <out.png>
+			const auto font = loadFont(fod::readFile(dir + "/COLORF.FNT"));
+			const int Z = 3;
+			fod::Image img(16 * 10 * Z, ((int(font.size()) + 15) / 16) * 10 * Z);
+			for (size_t i = 0; i < font.size(); ++i)
+				for (int y = 0; y < 8; ++y)
+					for (int x = 0; x < 8; ++x) {
+						const uint32_t c = egaPalette()[font[i].at(x, y)];
+						for (int zy = 0; zy < Z; ++zy) for (int zx = 0; zx < Z; ++zx) img.set((int(i % 16) * 10 + x + 1) * Z + zx, (int(i / 16) * 10 + y + 1) * Z + zy, {uint8_t(c >> 16), uint8_t(c >> 8), uint8_t(c)});
+					}
+			img.writePng(argv[3]);
+			std::printf("%zu glyphs\n", font.size());
+		} else if (cmd == "exeverify" && argc >= 5) {   // exeverify <WL.EXE> <image.bin>: unpack and compare with the IDB image
+			const ExeImage e = loadExePack(fod::readFile(argv[3]), 0x1000);
+			const fod::Bytes ref = fod::readFile(argv[4]);
+			size_t diff = 0, first = 0, lastBlock = size_t(-1);
+			for (size_t i = 0; i < ref.size() && i < e.image.size(); ++i)
+				if (ref[i] != e.image[i]) { if (!diff) first = i; ++diff; if (i / 4096 != lastBlock) { std::printf("  diffs start in block %zx (offset %zx)\n", i / 4096, i); lastBlock = i / 4096; } }
+			std::printf("unpacked %zu bytes, reference %zu, %zu differing bytes (first at %zx), entry %04x:%04x\n", e.image.size(), ref.size(), diff, first, e.entryCs, e.entryIp);
 		} else if (cmd == "tilefind" && argc >= 7) {   // tilefind <screen.raw> <x> <y>: best matching tiles of both ALLHTDS files for the 16x16 block
 			const fod::Bytes raw = fod::readFile(argv[3]);
 			const int bx = std::atoi(argv[4]), by = std::atoi(argv[5]);

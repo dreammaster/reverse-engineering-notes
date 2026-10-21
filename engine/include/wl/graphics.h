@@ -22,6 +22,9 @@ std::vector<std::vector<Pic>> loadTilesets(const Bytes &allhtds, int w = 16, int
 std::vector<Pic> loadSprites(const Bytes &wlf);
 std::vector<Bytes> loadMasks(const Bytes &wlf);   // each mask: 256 bytes, one 0/1 per pixel
 
+// COLORF.FNT: 172 glyphs of 8x8, four 8-byte bit planes each.
+std::vector<Pic> loadFont(const Bytes &fnt);
+
 struct PicAnimation { Pic base; Bytes animData; };
 std::vector<PicAnimation> loadPics(const Bytes &allpics, int width = 96);
 
