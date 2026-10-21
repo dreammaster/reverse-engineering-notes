@@ -9,6 +9,7 @@
 #include "fod/gfx.h"
 #include <cstdio>
 #include <cstdlib>
+#include <algorithm>
 #include <cstring>
 #include <deque>
 #include <filesystem>
@@ -65,6 +66,8 @@ struct Machine {
 	int videoMode = 3;
 	std::map<std::string, std::string> names;   // lower case -> real file name
 	std::map<uint32_t, std::string> syms;
+	std::map<std::string, std::pair<uint64_t, uint64_t>> callCounts;   // name -> (first-use order, count)
+	uint64_t callOrder = 0;
 	std::map<int, std::string> openNames;       // handle -> real file name (for state files)
 
 	explicit Machine(const std::string &dir) : gameDir(dir) {
@@ -288,6 +291,22 @@ int main(int argc, char **argv) {
 					            cpu.ax, cpu.bx, cpu.cx, cpu.dx, cpu.si, cpu.di, cpu.rw(cpu.ss, cpu.sp));
 				};
 			} else m.cpu.onStep = nullptr;
+		} else if (cmd == "callsum" && i + 1 < argc) {   // callsum on|print|clear: per-function call counts in order of first use
+			const std::string sub = argv[++i];
+			if (sub == "on") {
+				m.cpu.onStep = [&m](x86::Cpu &cpu) {
+					const auto it = m.syms.find(x86::Cpu::lin(cpu.cs, cpu.ip));
+					if (it == m.syms.end()) return;
+					auto &e = m.callCounts[it->second];
+					if (e.first == 0) e.first = ++m.callOrder;
+					++e.second;
+				};
+			} else if (sub == "print") {
+				std::vector<std::pair<uint64_t, std::string>> order;
+				for (auto &kv : m.callCounts) order.push_back({kv.second.first, kv.first + " x" + std::to_string(kv.second.second)});
+				std::sort(order.begin(), order.end());
+				for (auto &o : order) std::printf("%s\n", o.second.c_str());
+			} else if (sub == "clear") { m.callCounts.clear(); m.callOrder = 0; }
 		} else if (cmd == "save" && i + 1 < argc) {
 			FILE *f = std::fopen(argv[++i], "wb");
 			if (f) {
