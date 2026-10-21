@@ -51,10 +51,18 @@ public:
 	const std::vector<Monster> &monsters() const { return _monsters; }
 	const std::vector<EnemyGroup> &groups() const { return _groups; }
 	const std::vector<GroundItem> &groundItems() const { return _items; }
+	std::vector<Monster> &monsters() { return _monsters; }
+	std::vector<EnemyGroup> &groups() { return _groups; }
+	std::vector<GroundItem> &groundItems() { return _items; }
+	MapCell &cell(int x, int y) { return _cells[size_t(y) * _w + x]; }
+	bool inBounds(int x, int y) const { return x >= 0 && y >= 0 && x < _w && y < _h; }
+	uint16_t &flagsRef() { return _flags; }
+	uint8_t offMapMsg() const { return _offMapMsg; }
+	uint8_t groupTemplates() const { return _groupTemplates; }
 private:
 	int _w = 0, _h = 0;
 	uint16_t _flags = 0;
-	uint8_t _minutesPerStep = 0, _encounterPct = 0;
+	uint8_t _minutesPerStep = 0, _encounterPct = 0, _groupTemplates = 0, _offMapMsg = 0;
 	std::vector<MapCell> _cells;
 	std::vector<Monster> _monsters;
 	std::vector<EnemyGroup> _groups;

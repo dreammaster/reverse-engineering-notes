@@ -20,7 +20,8 @@ struct ScriptRecord {
 struct ScriptBlock {
 	uint16_t eventMask = 0;
 	std::vector<ScriptRecord> records;
-	std::vector<std::string> strings;
+	size_t stringBase = 0;               // absolute offset of string 0 in the decoded bank
+	std::vector<std::string> strings;    // first few strings (for disassembly only)
 };
 
 class ScriptBank {
@@ -29,6 +30,8 @@ public:
 	static constexpr size_t kMaxScripts = 1500;
 	bool has(unsigned idx) const;
 	ScriptBlock block(unsigned idx) const;
+	// KEH getScriptString: skip n NUL-terminated strings from the block's string area (no explicit length).
+	std::string string(unsigned idx, unsigned n) const;
 	std::string disassemble(unsigned idx) const;
 private:
 	Bytes _d;

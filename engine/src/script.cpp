@@ -56,21 +56,27 @@ ScriptBlock ScriptBank::block(unsigned idx) const {
 		for (const char *p = sg; *p; ++p) rec.params.push_back(*p == 'B' ? r.u8() : r.u16());
 		b.records.push_back(rec);
 	}
-	// Strings are NUL-terminated and run until the next block starts.
-	size_t limit = _d.size();
-	for (uint16_t o : _offsets)
-		if (o > strOfs && o < limit) limit = o;
-	r.seek(strOfs);
-	while (r.pos() < limit) {
-		std::string s;
-		while (r.pos() < limit) {
-			const char c = char(r.u8());
-			if (c == 0) break;
-			s += c;
-		}
-		b.strings.push_back(s);
+	b.stringBase = strOfs;
+	for (unsigned n = 0; n < 8; ++n) {
+		std::string t = string(idx, n);
+		if (t.empty() && n > 0) break;
+		b.strings.push_back(t);
 	}
 	return b;
+}
+
+std::string ScriptBank::string(unsigned idx, unsigned n) const {
+	if (!has(idx)) return {};
+	Reader r(_d, _offsets[idx]);
+	r.u16();
+	size_t pos = _offsets[idx] + r.u16();
+	for (; n > 0; --n) {
+		while (pos < _d.size() && _d[pos]) ++pos;
+		++pos;
+	}
+	std::string s;
+	while (pos < _d.size() && _d[pos]) s += char(_d[pos++]);
+	return s;
 }
 
 std::string ScriptBank::disassemble(unsigned idx) const {

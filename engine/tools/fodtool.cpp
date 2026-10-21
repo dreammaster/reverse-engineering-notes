@@ -8,6 +8,9 @@
 #include "fod/gfx.h"
 #include "fod/map.h"
 #include "fod/script.h"
+#include "fod/vm.h"
+#include "fod/world.h"
+#include "texthost.h"
 #include <cstdio>
 #include <iostream>
 
@@ -19,6 +22,8 @@ static Archive openSet(const std::string &dir, int mapNo, const char *kind) {
 	const std::string name = std::string(mapFilePrefix(mapNo)) + kind;
 	return Archive(path(dir, name), std::string(kind) == "ani" ? 53 : 28);
 }
+
+
 
 int main(int argc, char **argv) {
 	if (argc < 3) {
@@ -48,6 +53,24 @@ int main(int argc, char **argv) {
 			Archive a = openSet(dir, n, "scr");
 			ScriptBank bank(a.chunkLzss(n - 1));
 			std::cout << bank.disassemble(unsigned(std::atoi(argv[4])));
+		} else if (cmd == "run" && argc >= 6) {   // run <mapNo> <x> <y> [event]: run the script of a cell
+			GameData gd(dir);
+			Disk1 d = Disk1::newGame();
+			d.partyCount = 1;
+			d.partyIds[0] = 0;
+			d.roster[0].setHp(20); d.roster[0].setHpMax(20);
+			World w(gd, d);
+			w.loadMap(std::atoi(argv[3]));
+			const int x = std::atoi(argv[4]), y = std::atoi(argv[5]);
+			const int ev = argc >= 7 ? std::atoi(argv[6]) : 0;
+			TextHost host;
+			ScriptVM vm(w, host);
+			ScriptCall c;
+			c.cellScript = w.map->cell(x, y).script;
+			c.event = ev;
+			std::printf("cell (%d,%d) tile=%d script=%d\n", x, y, w.map->cell(x, y).tileIndex(), c.cellScript);
+			const ScriptResult r = vm.run(c);
+			std::printf("-> ran=%d changedMap=%d request=%d\n", r.ran, r.changedMap, r.request);
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());

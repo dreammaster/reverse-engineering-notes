@@ -14,6 +14,8 @@ Map::Map(const Bytes &chunk) {
 	_flags = r.u16();
 	_minutesPerStep = r.u8();
 	_encounterPct = r.u8();
+	_groupTemplates = chunk[8];
+	_offMapMsg = chunk[0x0D];
 	r.seek(0x09);
 	const unsigned monsterCount = r.u8();
 	r.seek(0x0B);

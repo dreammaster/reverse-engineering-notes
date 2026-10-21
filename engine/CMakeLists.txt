@@ -4,9 +4,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(fod STATIC
-    src/lzss.cpp src/archive.cpp src/map.cpp src/script.cpp src/gfx.cpp src/data.cpp)
+    src/lzss.cpp src/archive.cpp src/map.cpp src/script.cpp src/gfx.cpp src/data.cpp src/state.cpp src/world.cpp src/vm.cpp)
 target_include_directories(fod PUBLIC include)
 target_compile_options(fod PRIVATE $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra>)
 
-add_executable(fodtool tools/fodtool.cpp)
-target_link_libraries(fodtool fod)
+add_executable(fodrun tools/fodtool.cpp)
+target_link_libraries(fodrun fod)
+if(MINGW)
+    # fully static executables (the system antivirus removes dynamically linked builds here)
+    target_link_options(fodrun PRIVATE -static)
+endif()

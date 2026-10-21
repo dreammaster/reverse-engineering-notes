@@ -1,0 +1,1995 @@
+;==== doScript @ 198F4 size=6492 callers=doScript,runScriptChain,useItemScriptOnCell,useWeaponOnCell
+198F5  mov     bp, sp
+198F7  sub     sp, 13Ch
+198FC  push    si; draw
+198FD  mov     ax, [bp+arg_6]
+19900  mov     [bp+var_A2], ax
+19904  sub     ax, ax
+19906  mov     [bp+var_5A], ax
+19909  mov     [bp+var_5C], ax
+1990C  mov     [bp+var_11C], ax
+19910  mov     [bp+var_112], ax
+19914  mov     [bp+var_68], ax
+19917  mov     [bp+var_134], ax
+1991B  mov     [bp+var_11A], ax
+1991F  mov     [bp+var_48], ax
+19922  mov     [bp+var_E8], ax
+19926  mov     [bp+var_74], 0
+1992A  mov     [bp+var_D2], 0
+1992F  mov     [bp+var_44], ax
+19932  mov     [bp+var_6C], ax
+19935  mov     _scriptRequest, 0FFFFh; script engine request code returned to the caller (8 = start combat, 6 = fight scripted monster, -1 = none)
+1993B  les     bx, [bp+arg_0]
+1993E  mov     si, es:[bx]
+19941  cmp     si, 0FFFFh
+19944  jz      short loc_19972
+19946  mov     bx, si
+19948  shl     bx, 1
+1994A  les     di, dword_2EE12
+1994E  mov     ax, es:[bx+di]
+19951  add     ax, word_22C72
+19955  mov     dx, word_22C74
+19959  mov     word ptr [bp+var_138], ax
+1995D  mov     word ptr [bp+var_138+2], dx
+19961  mov     ax, 1
+19964  mov     cl, byte ptr [bp+arg_4]
+19967  shl     ax, cl
+19969  les     bx, [bp+var_138]
+1996D  test    es:[bx], ax
+19970  jnz     short loc_19977
+19972  sub     ax, ax
+19974  jmp     loc_1B24A
+19977  call    flushKeyboard; drains the DOS keyboard buffer
+1997A  mov     byte_22BB9, 1
+1997F  push    [bp+var_A2]
+19983  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+19986  add     sp, 2
+19989  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1998E  jnz     short loc_1999F
+19990  cmp     [bp+arg_4], 6
+19994  jnz     short loc_1999F
+19996  push    [bp+arg_8]
+19999  call    showEncounterPortrait; script op 6 target: shows the monster's picture/name window and marks window state 2ED26=1
+1999C  add     sp, 2
+1999F  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+199A4  jz      short loc_199B4
+199A6  mov     ax, 1
+199AA  call    findFirstMemberBelowState; first party slot whose getMemberCon is below the given state
+199AD  add     sp, 2
+199B0  mov     [bp+var_A2], ax
+199B4  mov     [bp+var_132], 0
+199B9  mov     [bp+var_E6], 0
+199BE  mov     [bp+text], 0
+199C2  cmp     [bp+arg_4], 4
+199C6  jnz     short loc_199CF
+199C8  mov     al, [bp+arg_A]
+199CB  mov     [bp+var_132], al
+199CF  mov     ax, word ptr [bp+var_138]
+199D3  mov     dx, word ptr [bp+var_138+2]
+199D7  add     ax, 4
+199DA  mov     [bp+var_118], ax
+199DE  mov     [bp+var_116], dx
+199E2  cmp     [bp+var_D2], 0; jumptable 00019A29 default case, cases 33,51
+199E7  jz      short loc_199EC
+199E9  jmp     loc_1B242
+199EC  les     bx, [bp+var_138]
+199F0  mov     ax, es:[bx+2]
+199F4  add     ax, bx
+199F6  mov     dx, es
+199F8  cmp     ax, [bp+var_118]
+199FC  ja      short loc_19A01
+199FE  jmp     loc_1B242
+19A01  push    [bp+arg_4]
+19A04  lea     ax, [bp+var_D0]
+19A09  lea     ax, [bp+var_118]
+19A0E  call    readScriptRecord; decodes one script record: low nibble of the first byte = event class; if it equals arg2, reads opcode+parameters via the decoder lists (off_22C2E); else skips opcode+length (table 22BC1)
+19A11  add     sp, 6
+19A14  mov     ax, [bp+var_D0]
+19A18  cmp     [bp+arg_4], ax
+19A1B  jnz     short def_19A29; jumptable 00019A29 default case, cases 33,51
+19A1D  mov     ax, [bp+var_CE]
+19A21  cmp     ax, 4Bh; switch 76 cases
+19A24  ja      short def_19A29; jumptable 00019A29 default case, cases 33,51
+19A26  add     ax, ax
+19A28  xchg    ax, bx
+19A29  jmp     cs:jpt_19A29[bx]; switch jump
+19A2E  jmp     loc_19972
+19A31  mov     ax, [bp+params0]; jumptable 00019A29 case 1
+19A35  cmp     ax, 7; switch 8 cases
+19A38  ja      short def_19A29; jumptable 00019A29 default case, cases 33,51
+19A3A  add     ax, ax
+19A3C  xchg    ax, bx
+19A3D  jmp     cs:jpt_19A3D[bx]; switch jump
+19A42  mov     ax, [bp+var_11C]; jumptable 00019A3D case 0
+19A46  cwd
+19A47  jmp     short loc_19A4F
+19A49  mov     ax, [bp+var_CA]; jumptable 00019A3D case 1
+19A4D  sub     dx, dx
+19A4F  add     [bp+var_5C], ax
+19A52  adc     [bp+var_5A], dx
+19A55  jmp     short def_19A29; jumptable 00019A29 default case, cases 33,51
+19A57  mov     ax, [bp+var_11C]; jumptable 00019A3D case 2
+19A5B  cwd
+19A5C  jmp     short loc_19A64
+19A5E  mov     ax, [bp+var_CA]; jumptable 00019A3D case 3
+19A62  sub     dx, dx
+19A64  sub     [bp+var_5C], ax
+19A67  sbb     [bp+var_5A], dx
+19A6A  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19A6D  cmp     [bp+var_11C], 0; jumptable 00019A3D case 4
+19A72  jnz     short loc_19A77
+19A74  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19A77  mov     ax, [bp+var_11C]
+19A7B  cwd
+19A7E  jmp     short loc_19A91
+19A80  cmp     [bp+var_CA], 0; jumptable 00019A3D case 5
+19A85  jnz     short loc_19A8A
+19A87  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19A8A  sub     ax, ax
+19A8D  push    [bp+var_CA]
+19A91  lea     ax, [bp+var_5C]
+19A95  call    unknown_libname_3; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+19A98  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19A9B  mov     ax, [bp+var_11C]; jumptable 00019A3D case 6
+19A9F  cwd
+19AA2  jmp     short loc_19AAB
+19AA4  sub     ax, ax; jumptable 00019A3D case 7
+19AA7  push    [bp+var_CA]
+19AAB  lea     ax, [bp+var_5C]
+19AAF  call    __aNNalmul
+19AB2  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19AB5  dw offset loc_19A42; jump table for switch statement
+19AC5  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19AC8  mov     ax, [bp+params0]; jumptable 00019A29 case 2
+19ACC  or      ax, ax
+19ACE  jz      short loc_19AE7
+19AD0  cmp     ax, 1
+19AD3  jz      short loc_19AF1
+19AD5  cmp     ax, 2
+19AD8  jz      short loc_19AFF
+19ADA  cmp     ax, 3
+19ADD  jz      short loc_19B08
+19ADF  cmp     ax, 4
+19AE2  jz      short loc_19B12
+19AE4  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19AE7  mov     ax, [bp+var_5C]
+19AEA  mov     [bp+var_11C], ax
+19AEE  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19AF1  mov     ax, [bp+var_11C]
+19AF5  cwd
+19AF6  mov     [bp+var_5C], ax
+19AF9  mov     [bp+var_5A], dx
+19AFC  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19AFF  mov     [bp+var_11C], 0
+19B05  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B08  mov     ax, [bp+var_5C]
+19B0B  add     [bp+var_11C], ax
+19B0F  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B12  mov     ax, [bp+var_5C]
+19B15  sub     [bp+var_11C], ax
+19B19  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B1C  mov     ax, [bp+params0]; jumptable 00019A29 case 3
+19B20  mov     [bp+var_5C], ax
+19B23  mov     [bp+var_5A], 0
+19B28  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B2B  push    [bp+var_A2]; jumptable 00019A29 case 4
+19B2F  push    [bp+var_C8]
+19B33  push    [bp+var_CA]
+19B37  push    [bp+params0]
+19B3B  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+19B3E  add     sp, 8
+19B41  jmp     short loc_19AF6
+19B43  push    [bp+var_A2]; jumptable 00019A29 case 5
+19B47  push    [bp+var_5A]
+19B4A  push    [bp+var_5C]
+19B4D  push    [bp+var_C8]
+19B51  push    [bp+var_CA]
+19B55  push    [bp+params0]
+19B59  call    setMemberStat; script stat write for the same selector set (level, exp (triggers level-up), hp, max hp, attributes, skills, cash)
+19B5C  add     sp, 0Ch
+19B5F  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B62  push    [bp+var_A2]; jumptable 00019A29 case 6
+19B66  push    [bp+var_CA]
+19B6A  push    [bp+params0]
+19B6E  mov     ax, 1
+19B72  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+19B75  add     sp, 8
+19B78  mov     [bp+var_5C], ax
+19B7B  mov     [bp+var_5A], dx
+19B7E  mov     [bp+var_A6], 1
+19B84  jmp     short loc_19B8A
+19B86  inc     [bp+var_A6]
+19B8A  mov     al, _disk1._partyCount
+19B8D  sub     ah, ah
+19B8F  inc     ax
+19B90  cmp     [bp+var_A6], ax
+19B94  jb      short loc_19B99
+19B96  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19B99  push    [bp+var_A2]
+19B9D  push    [bp+var_CA]
+19BA1  push    [bp+params0]
+19BA5  push    [bp+var_A6]
+19BA9  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+19BAC  add     sp, 8
+19BAF  mov     [bp+var_A0], ax
+19BB3  mov     [bp+var_9E], dx
+19BB7  mov     ax, [bp+var_5C]
+19BBA  mov     dx, [bp+var_5A]
+19BBD  cmp     [bp+var_9E], dx
+19BC1  jl      short loc_19B86
+19BC3  jg      short loc_19BCB
+19BC5  cmp     [bp+var_A0], ax
+19BC9  jbe     short loc_19B86
+19BCB  mov     ax, [bp+var_A0]
+19BCF  mov     dx, [bp+var_9E]
+19BD3  mov     [bp+var_5C], ax
+19BD6  mov     [bp+var_5A], dx
+19BD9  jmp     short loc_19B86
+19BDB  push    [bp+var_A2]; jumptable 00019A29 case 7
+19BDF  push    [bp+var_CA]
+19BE3  push    [bp+params0]
+19BE7  mov     ax, 1
+19BEB  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+19BEE  add     sp, 8
+19BF1  mov     [bp+var_5C], ax
+19BF4  mov     [bp+var_5A], dx
+19BF7  mov     [bp+var_A6], 1
+19BFD  jmp     short loc_19C03
+19BFF  inc     [bp+var_A6]
+19C03  mov     al, _disk1._partyCount
+19C06  sub     ah, ah
+19C08  inc     ax
+19C09  cmp     [bp+var_A6], ax
+19C0D  jb      short loc_19C12
+19C0F  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19C12  mov     bx, [bp+var_A6]
+19C16  shl     bx, 1
+19C18  mov     bx, [bx-251Ah]
+19C1C  cmp     word ptr [bx+44h], 0
+19C20  jle     short loc_19BFF
+19C22  push    [bp+var_A2]
+19C26  push    [bp+var_CA]
+19C2A  push    [bp+params0]
+19C2E  push    [bp+var_A6]
+19C32  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+19C35  add     sp, 8
+19C38  mov     [bp+var_A0], ax
+19C3C  mov     [bp+var_9E], dx
+19C40  mov     ax, [bp+var_5C]
+19C43  mov     dx, [bp+var_5A]
+19C46  cmp     [bp+var_9E], dx
+19C4A  jg      short loc_19BFF
+19C4C  jl      short loc_19C54
+19C4E  cmp     [bp+var_A0], ax
+19C52  jnb     short loc_19BFF
+19C54  mov     ax, [bp+var_A0]
+19C58  mov     dx, [bp+var_9E]
+19C5C  mov     [bp+var_5C], ax
+19C5F  mov     [bp+var_5A], dx
+19C62  jmp     short loc_19BFF
+19C64  mov     ax, word ptr _disk1._cash; jumptable 00019A29 case 8
+19C67  mov     dx, word ptr _disk1._cash+2
+19C6B  jmp     loc_19AF6
+19C6E  push    [bp+var_A2]; jumptable 00019A29 case 56
+19C72  push    [bp+params0]
+19C76  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+19C79  add     sp, 4
+19C7C  mov     [bp+var_4A], ax
+19C7F  push    [bp+var_CA]
+19C83  call    isUniqueItem; item.globals[+3Eh] & 1Ch == 1Ch (quest/unique item)
+19C86  add     sp, 2
+19C89  or      al, al
+19C8B  jz      short loc_19C97
+19C8D  push    [bp+var_CA]
+19C91  call    setUniqueItemFlag; sets bit globals[item+41h] in disk1.field_7 (unique items obtained)
+19C94  jmp     loc_19EAE
+19C97  mov     bx, [bp+var_4A]
+19C9A  shl     bx, 1
+19C9C  mov     si, [bx-2518h]
+19CA0  cmp     [si+PartyMember.itemCount], 20h
+19CA4  jb      short loc_19CA9
+19CA6  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19CA9  mov     al, 6
+19CAB  mul     [si+PartyMember.itemCount]
+19CAE  mov     bx, ax
+19CB0  mov     al, byte ptr [bp+var_CA]
+19CB4  mov     [bx+si+62h], al
+19CB7  mov     bx, [bp+var_4A]
+19CBA  shl     bx, 1
+19CBC  mov     si, [bx-2518h]
+19CC0  push    [bp+var_CA]
+19CC4  mov     al, 6
+19CC6  mul     [si+PartyMember.itemCount]
+19CC9  mov     bx, ax
+19CCB  lea     ax, [bx+si+62h]
+19CCF  call    initItemSlot; initialises a 6-byte inventory entry for an item id: ammo = weapon clip size if it is a weapon
+19CD2  add     sp, 4
+19CD5  mov     bx, [bp+var_4A]
+19CD8  shl     bx, 1
+19CDA  mov     bx, [bx-2518h]
+19CDE  inc     [bx+PartyMember.itemCount]
+19CE1  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19CE4  push    [bp+var_A2]; jumptable 00019A29 case 9
+19CE8  push    [bp+params0]
+19CEC  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+19CEF  add     sp, 4
+19CF2  mov     [bp+var_4A], ax
+19CF5  push    [bp+var_CA]
+19CFA  call    memberHasItem; true if party slot arg0 carries item id arg1
+19CFD  add     sp, 4
+19D00  mov     si, [bp+var_112]
+19D04  mov     [bp+si+var_132], al
+19D08  jmp     loc_1AC4E
+19D0B  push    [bp+params0]; jumptable 00019A29 case 10
+19D0F  call    isUniqueItem; item.globals[+3Eh] & 1Ch == 1Ch (quest/unique item)
+19D12  add     sp, 2
+19D15  or      al, al
+19D17  jz      short loc_19D3B
+19D19  mov     ax, 18h
+19D1C  mul     [bp+params0]
+19D20  mov     si, ax
+19D22  mov     bx, _globals
+19D26  mov     cl, [bx+si+41h]
+19D29  mov     al, 1
+19D2B  shl     al, cl
+19D2D  and     al, _disk1.uniqueItems
+19D31  mov     si, [bp+var_112]
+19D35  mov     [bp+si+var_132], al
+19D39  jmp     short loc_19D6C
+19D3B  mov     [bp+var_A6], 0
+19D41  jmp     short loc_19D47
+19D43  inc     [bp+var_A6]
+19D47  mov     al, _disk1._partyCount
+19D4A  sub     ah, ah
+19D4C  cmp     [bp+var_A6], ax
+19D50  jnb     short loc_19D6C
+19D52  push    [bp+params0]
+19D56  push    [bp+var_A6]
+19D5A  call    memberHasItem; true if party slot arg0 carries item id arg1
+19D5D  add     sp, 4
+19D60  mov     si, [bp+var_112]
+19D64  mov     [bp+si+var_132], al
+19D68  cmp     al, 1
+19D6A  jnz     short loc_19D43
+19D6C  push    [bp+var_CA]
+19D70  jmp     loc_1AC52
+19D73  push    [bp+var_A2]; jumptable 00019A29 case 66
+19D77  push    [bp+params0]
+19D7B  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+19D7E  add     sp, 4
+19D81  mov     [bp+var_4A], ax
+19D84  mov     [bp+var_A6], 0
+19D8A  mov     [bp+var_C0], 0
+19D90  jmp     short loc_19DA9
+19D92  mov     ax, 6
+19D95  imul    [bp+var_A6]
+19D99  mov     bx, ax
+19D9B  cmp     byte ptr [bx+si+62h], 0FFh
+19D9F  jz      short loc_19DA5
+19DA1  inc     [bp+var_C0]
+19DA5  inc     [bp+var_A6]
+19DA9  mov     bx, [bp+var_4A]
+19DAC  shl     bx, 1
+19DAE  mov     si, [bx-2518h]
+19DB2  mov     al, [si+PartyMember.itemCount]
+19DB5  sub     ah, ah
+19DB7  cmp     ax, [bp+var_A6]
+19DBB  ja      short loc_19D92
+19DBD  push    [bp+var_CA]
+19DC1  lea     ax, [bp+var_48]
+19DC5  cmp     [bp+var_C0], 20h
+19DCA  jl      short loc_19DD2
+19DCC  mov     ax, 1
+19DCF  jmp     loc_1AC60
+19DD2  sub     ax, ax
+19DD4  jmp     loc_1AC60
+19DD7  push    [bp+var_A2]; jumptable 00019A29 case 11
+19DDB  push    [bp+params0]
+19DDF  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+19DE2  add     sp, 4
+19DE5  mov     [bp+var_4A], ax
+19DE8  cmp     [bp+var_CA], 4
+19DED  jb      short loc_19DF2
+19DEF  jmp     loc_19E91
+19DF2  mov     ax, [bp+var_CA]
+19DF6  or      ax, ax
+19DF8  jz      short loc_19E0C
+19DFA  cmp     ax, 1
+19DFD  jz      short loc_19E1C
+19DFF  cmp     ax, 2
+19E02  jz      short loc_19E31
+19E04  cmp     ax, 3
+19E07  jz      short loc_19E36
+19E09  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19E0C  mov     ax, 80h
+19E10  push    [bp+var_4A]
+19E13  call    removeItemsByFlag; removes from a member every item whose globals[+3Eh] has any bit of the mask
+19E16  add     sp, 4
+19E19  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19E1C  mov     ax, 1
+19E20  push    [bp+var_4A]
+19E23  call    removeItemsByFlag; removes from a member every item whose globals[+3Eh] has any bit of the mask
+19E26  add     sp, 4
+19E29  push    [bp+var_4A]
+19E2C  call    removeMemberAmmo; removes all ammo items matching any carried weapon's ammo type
+19E2F  jmp     short loc_19EAE
+19E31  mov     ax, 2
+19E34  jmp     short loc_19E0F
+19E36  mov     bx, [bp+var_4A]
+19E39  shl     bx, 1
+19E3B  mov     bx, [bx-2518h]
+19E3F  mov     al, [bx+PartyMember.itemCount]
+19E42  sub     ah, ah
+19E44  dec     ax
+19E45  mov     [bp+var_A6], ax
+19E49  jmp     short loc_19E4F
+19E4B  dec     [bp+var_A6]
+19E4F  cmp     [bp+var_A6], 0
+19E54  jge     short loc_19E59
+19E56  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19E59  mov     bx, [bp+var_4A]
+19E5C  shl     bx, 1
+19E5E  mov     si, [bx-2518h]
+19E62  mov     ax, 6
+19E65  imul    [bp+var_A6]
+19E69  mov     bx, ax
+19E6B  mov     al, 18h
+19E6D  mul     byte ptr [bx+si+62h]
+19E70  mov     si, ax
+19E72  mov     bx, _globals
+19E76  test    byte ptr [bx+si+3Eh], 3
+19E7A  jnz     short loc_19E4B
+19E7C  mov     ax, 0FFh
+19E80  push    [bp+var_A6]
+19E84  push    [bp+var_4A]
+19E87  call    removeItemSlot; removes inventory slot (or the ready-weapon reference) from a member and compacts the 6-byte table
+19E8C  add     sp, 6
+19E8F  jmp     short loc_19E4B
+19E91  mov     ax, [bp+var_CA]
+19E95  sub     ax, 4
+19E99  call    isUniqueItem; item.globals[+3Eh] & 1Ch == 1Ch (quest/unique item)
+19E9C  add     sp, 2
+19E9F  or      al, al
+19EA1  jz      short loc_19EB4
+19EA3  mov     ax, [bp+var_CA]
+19EA7  sub     ax, 4
+19EAB  call    clearUniqueItemFlag; clears that bit
+19EAE  add     sp, 2
+19EB1  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19EB4  mov     [bp+var_A6], 0
+19EBA  jmp     short loc_19EC0
+19EBC  inc     [bp+var_A6]
+19EC0  mov     bx, [bp+var_4A]
+19EC3  shl     bx, 1
+19EC5  mov     si, [bx-2518h]
+19EC9  mov     al, [si+PartyMember.itemCount]
+19ECC  sub     ah, ah
+19ECE  cmp     ax, [bp+var_A6]
+19ED2  ja      short loc_19ED7
+19ED4  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19ED7  mov     ax, 6
+19EDA  imul    [bp+var_A6]
+19EDE  mov     bx, ax
+19EE0  mov     al, [bx+si+62h]
+19EE3  sub     ah, ah
+19EE5  mov     cx, [bp+var_CA]
+19EE9  sub     cx, 4
+19EEC  cmp     ax, cx
+19EEE  jnz     short loc_19EBC
+19EF0  mov     ax, 0FFh
+19EF4  push    [bp+var_A6]
+19EF8  push    [bp+var_4A]
+19EFB  call    removeItemSlot; removes inventory slot (or the ready-weapon reference) from a member and compacts the 6-byte table
+19F00  add     sp, 6
+19F03  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19F06  push    [bp+var_A2]; jumptable 00019A29 case 59
+19F0A  push    [bp+params0]
+19F0E  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+19F11  add     sp, 4
+19F14  mov     [bp+var_4A], ax
+19F17  mov     [bp+var_A6], 0
+19F1D  jmp     short loc_19F23
+19F1F  inc     [bp+var_A6]
+19F23  mov     bx, [bp+var_4A]
+19F26  shl     bx, 1
+19F28  mov     si, [bx-2518h]
+19F2C  mov     al, [si+PartyMember.itemCount]
+19F2F  sub     ah, ah
+19F31  cmp     ax, [bp+var_A6]
+19F35  ja      short loc_19F3A
+19F37  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19F3A  mov     ax, 6
+19F3D  imul    [bp+var_A6]
+19F41  mov     bx, ax
+19F43  mov     al, [bx+si+62h]
+19F46  sub     ah, ah
+19F48  cmp     ax, [bp+var_CA]
+19F4C  jnz     short loc_19F1F
+19F4E  push    [bp+var_C8]
+19F52  jmp     short loc_19EF4
+19F54  mov     ax, [bp+var_A2]; jumptable 00019A29 case 13
+19F58  mov     [bp+var_11A], ax
+19F5C  mov     [bp+var_A2], 0
+19F62  sub     ax, ax
+19F65  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+19F68  add     sp, 2
+19F6B  mov     si, [bp+var_68]
+19F6E  shl     si, 1
+19F70  shl     si, 1
+19F72  mov     ax, [bp+var_118]
+19F76  mov     dx, [bp+var_116]
+19F7A  mov     [bp+si+var_110], ax
+19F7E  mov     [bp+si+var_10E], dx
+19F82  mov     si, [bp+var_68]
+19F85  inc     [bp+var_68]
+19F88  shl     si, 1
+19F8A  shl     si, 1
+19F8C  mov     ax, [bp+params0]
+19F90  add     ax, word ptr [bp+var_138]
+19F94  mov     dx, word ptr [bp+var_138+2]
+19F98  mov     [bp+si+var_9C], ax
+19F9C  mov     [bp+si+var_9A], dx
+19FA0  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19FA3  mov     al, _disk1._partyCount; jumptable 00019A29 case 14
+19FA6  sub     ah, ah
+19FA8  dec     ax
+19FA9  cmp     [bp+var_A2], ax
+19FAD  jnb     short loc_19FCF
+19FAF  inc     [bp+var_A2]
+19FB3  push    [bp+var_A2]
+19FB7  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+19FBA  add     sp, 2
+19FBD  mov     si, [bp+var_68]
+19FC0  shl     si, 1
+19FC2  shl     si, 1
+19FC4  mov     ax, [bp+si+var_114]
+19FC8  mov     dx, [bp+si+var_112]
+19FCC  jmp     loc_199DA
+19FCF  mov     ax, [bp+var_11A]
+19FD3  mov     [bp+var_A2], ax
+19FD8  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+19FDB  add     sp, 2
+19FDE  dec     [bp+var_68]
+19FE1  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+19FE4  dec     [bp+var_68]; jumptable 00019A29 case 67
+19FE7  mov     si, [bp+var_68]
+19FEA  shl     si, 1
+19FEC  shl     si, 1
+19FEE  mov     ax, [bp+si+var_9C]
+19FF2  mov     dx, [bp+si+var_9A]
+19FF6  jmp     loc_199DA
+19FF9  mov     ax, _currentWindow; jumptable 00019A29 case 15
+19FFC  mov     word ptr [bp+win], ax
+19FFF  sub     ax, ax
+1A002  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A007  jz      short loc_1A00E
+1A009  mov     ax, offset _window7
+1A00C  jmp     short loc_1A011
+1A00E  mov     ax, offset _windowDialog
+1A011  push    ax; win
+1A012  call    setWindow
+1A015  add     sp, 4
+1A018  les     bx, [bp+var_138]
+1A01C  mov     ax, es:[bx+2]
+1A020  add     ax, bx
+1A022  mov     dx, es
+1A026  push    [bp+params0]
+1A02A  call    printScriptString; writes script string N at the top-left of the current window
+1A02D  add     sp, 6
+1A030  call    newLine; carriage-return inside the current window; on overflow of the last line pages output (pauses for a key when byte_22A74 is set) or scrolls
+1A033  mov     ax, 0FFFFh
+1A036  push    ax; y
+1A037  push    ax; x
+1A038  mov     ax, offset asc_223AB; ">"
+1A03C  push    ax; text
+1A03D  call    writeStringAt
+1A040  add     sp, 8
+1A043  mov     [bp+var_A6], 0
+1A049  mov     [bp+text], 1Bh
+1A04D  mov     [bp+var_55], 0
+1A051  mov     [bp+var_72], 0
+1A055  jmp     short loc_1A083
+1A057  call    getBiosTicks; INT 1Ah AH=0, returns the low word of the tick count
+1A05A  and     al, 7
+1A05C  cmp     al, 4
+1A05E  jnb     short loc_1A064
+1A060  mov     al, 1Bh
+1A062  jmp     short loc_1A066
+1A064  mov     al, 20h
+1A066  mov     si, [bp+var_A6]
+1A06A  mov     [bp+si+text], al
+1A06D  mov     ax, 0FFFFh
+1A070  push    ax; y
+1A071  mov     ax, 1
+1A074  push    ax; x
+1A075  lea     ax, [bp+text]
+1A078  push    ss
+1A079  push    ax; text
+1A07A  call    writeStringAt
+1A07D  add     sp, 8
+1A080  call    refreshCurrentWindow; refreshBounds on the current window's rect (field_1A override if set)
+1A083  call    _kbhit
+1A086  or      ax, ax
+1A088  jz      short loc_1A057
+1A08A  call    _getch
+1A08D  mov     [bp+var_58], al
+1A090  or      al, al
+1A092  jnz     short loc_1A09B
+1A094  call    _getch
+1A097  mov     [bp+var_58], 0
+1A09B  cmp     [bp+var_58], 0Dh
+1A09F  jnz     short loc_1A0AF
+1A0A1  mov     si, [bp+var_A6]
+1A0A5  mov     [bp+si+text], 0
+1A0A9  mov     [bp+var_72], 1
+1A0AD  jmp     short loc_1A12B
+1A0AF  cmp     [bp+var_58], 8
+1A0B3  jnz     short loc_1A0F5
+1A0B5  cmp     [bp+var_A6], 0
+1A0BA  jle     short loc_1A12B
+1A0BC  mov     si, [bp+var_A6]
+1A0C0  mov     [bp+si+text], 20h
+1A0C4  mov     si, [bp+var_A6]
+1A0C8  mov     [bp+si+var_57], 1Bh
+1A0CC  mov     ax, 0FFFFh
+1A0CF  push    ax; y
+1A0D0  mov     ax, 1
+1A0D3  push    ax; x
+1A0D4  lea     ax, [bp+text]
+1A0D7  push    ss
+1A0D8  push    ax; text
+1A0D9  call    writeStringAt
+1A0DC  add     sp, 8
+1A0DF  mov     si, [bp+var_A6]
+1A0E3  mov     [bp+si+text], 0
+1A0E7  dec     [bp+var_A6]
+1A0EB  mov     si, [bp+var_A6]
+1A0EF  mov     [bp+si+text], 1Bh
+1A0F3  jmp     short loc_1A12B
+1A0F5  mov     al, [bp+var_58]
+1A0F8  cbw
+1A0F9  mov     bx, ax
+1A0FB  test    byte ptr [bx-4365h], 7
+1A100  jnz     short loc_1A106
+1A102  cmp     al, 20h
+1A104  jnz     short loc_1A12B
+1A106  cmp     [bp+var_A6], 0Ah
+1A10B  jge     short loc_1A12B
+1A10D  mov     si, [bp+var_A6]
+1A111  mov     al, [bp+var_58]
+1A114  mov     [bp+si+text], al
+1A117  inc     [bp+var_A6]
+1A11B  mov     si, [bp+var_A6]
+1A11F  mov     [bp+si+text], 1Bh
+1A123  mov     si, [bp+var_A6]
+1A127  mov     [bp+si+var_55], 0
+1A12B  cmp     [bp+var_72], 0
+1A12F  jnz     short loc_1A134
+1A131  jmp     loc_1A083
+1A134  sub     ax, ax
+1A137  push    word ptr [bp+win]; win
+1A13A  call    setWindow
+1A13D  jmp     loc_19E16
+1A140  inc     [bp+var_134]; jumptable 00019A29 case 47
+1A144  mov     si, [bp+var_68]
+1A147  shl     si, 1
+1A149  mov     ax, [bp+var_112]
+1A14D  mov     [bp+si+var_BE], ax
+1A151  mov     si, [bp+var_68]
+1A154  shl     si, 1
+1A156  shl     si, 1
+1A158  mov     ax, [bp+var_118]
+1A15C  mov     dx, [bp+var_116]
+1A160  mov     cl, byte_22BF0
+1A164  sub     ch, ch
+1A166  sub     ax, cx
+1A168  sub     ax, 2
+1A16B  mov     [bp+si+var_110], ax
+1A16F  mov     [bp+si+var_10E], dx
+1A173  mov     si, [bp+var_68]
+1A176  inc     [bp+var_68]
+1A179  shl     si, 1
+1A17B  shl     si, 1
+1A17D  mov     ax, [bp+var_CA]
+1A181  add     ax, word ptr [bp+var_138]
+1A185  mov     dx, word ptr [bp+var_138+2]
+1A189  mov     [bp+si+var_9C], ax
+1A18D  mov     [bp+si+var_9A], dx
+1A191  mov     ax, _currentWindow
+1A194  mov     word ptr [bp+win], ax
+1A197  sub     ax, ax
+1A19A  cmp     _npcDialogMode, ch; nonzero while a monster/NPC conversation window (window7) is active
+1A19E  jz      short loc_1A1A5
+1A1A0  mov     ax, offset _window7
+1A1A3  jmp     short loc_1A1A8
+1A1A5  mov     ax, offset _windowDialog
+1A1A8  push    ax; win
+1A1A9  call    setWindow
+1A1AC  add     sp, 4
+1A1AF  les     bx, [bp+var_138]
+1A1B3  mov     ax, es:[bx+2]
+1A1B7  add     ax, bx
+1A1B9  mov     dx, es
+1A1BD  push    [bp+params0]
+1A1C1  call    printScriptString; writes script string N at the top-left of the current window
+1A1C4  add     sp, 6
+1A1C7  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A1CC  jz      short loc_1A1E0
+1A1CE  mov     ax, 11
+1A1D1  push    ax; y
+1A1D2  sub     ax, ax
+1A1D4  push    ax; x
+1A1D5  mov     ax, offset aHIreATtackUSe; "H)ire A)ttack U)se"
+1A1D9  push    ax; text
+1A1DA  call    writeStringAt
+1A1DD  add     sp, 8
+1A1E0  mov     ax, 0Bh
+1A1E3  push    ax; y
+1A1E4  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A1E9  jz      short loc_1A1F0
+1A1EB  mov     ax, 13h
+1A1EE  jmp     short loc_1A1F3
+1A1F0  mov     ax, 1
+1A1F3  push    ax; x
+1A1F4  mov     ax, offset aLEave; "L)eave"
+1A1F8  push    ax; text
+1A1F9  call    writeStringAt
+1A1FC  add     sp, 8
+1A1FF  call    refreshCurrentWindow; refreshBounds on the current window's rect (field_1A override if set)
+1A202  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A207  jz      short loc_1A218
+1A209  mov     ax, 1
+1A20E  push    [bp+var_A2]
+1A212  call    drawPartyStatus; draws window1 party rows: F-key, name, level, AC, hp/status, ready weapon; arg0 = highlighted row
+1A215  add     sp, 6
+1A218  mov     [bp+var_E8], 0
+1A21E  cmp     [bp+var_E8], 0
+1A223  jz      short loc_1A228
+1A225  jmp     loc_1A134
+1A228  call    getKeypress
+1A22B  mov     [bp+var_58], al
+1A22E  cbw
+1A22F  mov     si, ax
+1A231  test    byte ptr [si-4365h], 4
+1A236  jz      short loc_1A245
+1A238  cmp     al, 30h
+1A23A  jz      short loc_1A21E
+1A23C  and     ax, 0Fh
+1A23F  mov     [bp+var_E8], ax
+1A243  jmp     short loc_1A21E
+1A245  mov     al, [bp+var_58]
+1A248  cbw
+1A249  cmp     ax, 41h
+1A24C  jnz     short loc_1A251
+1A24E  jmp     loc_1A36B
+1A251  jle     short loc_1A256
+1A253  jmp     loc_1A414
+1A256  cmp     ax, 0FFFFh
+1A259  jz      short loc_1A267
+1A25B  cmp     ax, 3Bh
+1A25E  jl      short loc_1A21E
+1A260  cmp     ax, 3Fh
+1A263  jle     short loc_1A2A2
+1A265  jmp     short loc_1A21E
+1A267  cmp     [bp+var_134], 1
+1A26C  jle     short loc_1A21E
+1A26E  dec     [bp+var_68]
+1A271  mov     si, [bp+var_68]
+1A274  shl     si, 1
+1A276  shl     si, 1
+1A278  mov     ax, [bp+si+var_9C]
+1A27C  mov     dx, [bp+si+var_9A]
+1A280  mov     [bp+var_118], ax
+1A284  mov     [bp+var_116], dx
+1A288  mov     si, [bp+var_68]
+1A28B  shl     si, 1
+1A28D  mov     ax, [bp+si+var_BE]
+1A291  mov     [bp+var_112], ax
+1A295  mov     [bp+var_E8], 0FFh
+1A29B  dec     [bp+var_134]
+1A29F  jmp     loc_1A21E
+1A2A2  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A2A7  jnz     short loc_1A2AC
+1A2A9  jmp     loc_1A21E
+1A2AC  sub     ax, ax
+1A2B0  mov     ax, 1
+1A2B4  lea     ax, [bp+var_A2]
+1A2B9  mov     al, [bp+var_58]
+1A2BC  cbw
+1A2BE  call    selectMemberByFKey; validates an F1-F5 key for a conscious party member and returns its slot
+1A2C1  add     sp, 0Ah
+1A2C4  or      al, al
+1A2C6  jnz     short loc_1A2CB
+1A2C8  jmp     loc_1A21E
+1A2CB  push    [bp+var_A2]
+1A2CF  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+1A2D2  add     sp, 2
+1A2D5  mov     ax, 1
+1A2DA  push    [bp+var_A2]
+1A2DE  call    drawPartyStatus; draws window1 party rows: F-key, name, level, AC, hp/status, ready weapon; arg0 = highlighted row
+1A2E1  add     sp, 6
+1A2E4  jmp     loc_1A21E
+1A2E7  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A2EC  jnz     short loc_1A2F1
+1A2EE  jmp     loc_1A21E
+1A2F1  sub     ax, ax
+1A2F4  push    [bp+arg_8]
+1A2F7  push    [bp+var_A2]
+1A2FB  mov     ax, 7
+1A2FF  push    word_2EBF6
+1A303  push    _scriptPtr; far ptr to the script word being run
+1A307  call    doScript
+1A30A  add     sp, 0Ch
+1A30D  or      al, al
+1A30F  jz      short loc_1A319
+1A311  mov     [bp+var_D2], 1
+1A316  jmp     loc_1A40B
+1A319  mov     ax, offset aIAmNotInterest; "I am not interested in joining up with "...
+1A31C  jmp     loc_1A3FA
+1A31F  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A324  jz      short loc_1A311
+1A326  mov     ax, 68h
+1A329  imul    [bp+arg_8]
+1A32C  add     ax, word ptr _monsters; far ptr: map's monster records (68h bytes each)
+1A330  mov     dx, word ptr _monsters+2; far ptr: map's monster records (68h bytes each)
+1A334  mov     word ptr [bp+var_60], ax
+1A337  mov     word ptr [bp+var_60+2], dx
+1A33A  les     bx, [bp+var_60]
+1A33D  test    es:[bx+Monster.flags], 80h
+1A342  jz      short loc_1A311
+1A344  sub     ax, ax
+1A347  mov     al, es:[bx+Monster.y]
+1A34B  cbw
+1A34D  mov     al, es:[bx+Monster.x]
+1A351  cbw
+1A353  call    setMapCellHighBits; sets the top 5 bits of the map cell word at (x, y), preserving the low 11 bits
+1A356  add     sp, 6
+1A359  les     bx, [bp+var_60]
+1A35C  mov     es:[bx+Monster.x], 80h
+1A361  les     bx, [bp+var_60]
+1A364  mov     es:[bx+Monster.y], 80h
+1A369  jmp     short loc_1A311
+1A36B  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A370  jnz     short loc_1A375
+1A372  jmp     loc_1A21E
+1A375  mov     _scriptRequest, 8; script engine request code returned to the caller (8 = start combat, 6 = fight scripted monster, -1 = none)
+1A37B  jmp     short loc_1A311
+1A37D  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A382  jnz     short loc_1A387
+1A384  jmp     loc_1A21E
+1A387  mov     _animCount, 0; number of active map animations
+1A38D  sub     ax, ax
+1A390  push    [bp+var_A2]
+1A394  call    characterInfo
+1A397  add     sp, 4
+1A39A  mov     [bp+var_4A], ax
+1A39D  mov     _animCount, 1; number of active map animations
+1A3A3  cmp     ax, 0FFFFh
+1A3A6  jz      short loc_1A3AC
+1A3A8  mov     [bp+var_A2], ax
+1A3AC  push    [bp+var_A2]
+1A3B0  call    restoreAfterShop; re-draws the main windows after a shop/service screen
+1A3B3  add     sp, 2
+1A3B6  cmp     [bp+var_4A], 0FFFFh
+1A3BA  jz      short loc_1A40B
+1A3BC  mov     bx, [bp+var_4A]
+1A3BF  shl     bx, 1
+1A3C1  mov     bx, [bx-2518h]
+1A3C5  mov     [bx+PartyMember.command], 2
+1A3CA  mov     bx, [bp+var_4A]
+1A3CD  shl     bx, 1
+1A3CF  mov     si, [bx-2518h]
+1A3D3  sub     ax, ax
+1A3D6  mov     al, [si+PartyMember.cmdArg]
+1A3DA  sub     ah, ah
+1A3DD  push    [bp+var_4A]
+1A3E0  mov     al, [si+PartyMember.command]
+1A3E5  push    word_2EBF6
+1A3E9  push    _scriptPtr; far ptr to the script word being run
+1A3ED  call    doScript
+1A3F0  add     sp, 0Ch
+1A3F3  or      al, al
+1A3F5  jnz     short loc_1A40B
+1A3F7  mov     ax, offset aThatDoesnTAffe; "That doesn't affect me!"
+1A3FA  mov     word ptr [bp+var_64], ax
+1A3FD  mov     word ptr [bp+var_64+2], ds
+1A401  push    ax; msg
+1A402  sub     ax, ax
+1A404  push    ax; line
+1A405  call    showMessage
+1A408  add     sp, 6
+1A40B  mov     [bp+var_E8], 0FFh
+1A411  jmp     loc_1A21E
+1A414  cmp     ax, 48h
+1A417  jnz     short loc_1A41C
+1A419  jmp     loc_1A2E7
+1A41C  cmp     ax, 4Ch
+1A41F  jnz     short loc_1A424
+1A421  jmp     loc_1A31F
+1A424  cmp     ax, 55h
+1A427  jnz     short loc_1A42C
+1A429  jmp     loc_1A37D
+1A42C  jmp     loc_1A21E
+1A42F  dec     [bp+var_68]; jumptable 00019A29 case 48
+1A432  mov     si, [bp+var_68]
+1A435  shl     si, 1
+1A437  shl     si, 1
+1A439  mov     ax, [bp+si+var_9C]
+1A43D  mov     dx, [bp+si+var_9A]
+1A441  mov     [bp+var_118], ax
+1A445  mov     [bp+var_116], dx
+1A449  mov     si, [bp+var_68]
+1A44C  shl     si, 1
+1A44E  mov     ax, [bp+si+var_BE]
+1A452  mov     [bp+var_112], ax
+1A456  dec     [bp+var_134]
+1A45A  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1A45F  jnz     short loc_1A464
+1A461  call    redrawMapView; buildMapView + refresh the map viewport rect
+1A464  mov     [bp+var_E8], 0
+1A46A  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A46D  dec     [bp+var_68]; jumptable 00019A29 case 49
+1A470  mov     si, [bp+var_68]
+1A473  shl     si, 1
+1A475  shl     si, 1
+1A477  mov     ax, [bp+si+var_110]
+1A47B  mov     dx, [bp+si+var_10E]
+1A47F  mov     [bp+var_118], ax
+1A483  mov     [bp+var_116], dx
+1A487  dec     [bp+var_134]
+1A48B  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A48E  les     bx, [bp+var_138]; jumptable 00019A29 case 16
+1A492  mov     ax, es:[bx+2]
+1A496  add     ax, bx
+1A498  mov     dx, es
+1A49C  push    [bp+params0]
+1A4A0  call    getScriptString; returns far ptr to the Nth NUL-terminated string after the script block header
+1A4A3  add     sp, 6
+1A4A6  mov     word ptr [bp+var_64], ax
+1A4A9  mov     word ptr [bp+var_64+2], dx
+1A4AD  push    ax; char *
+1A4AE  mov     ax, offset aFs_4; "%Fs"
+1A4B2  mov     ax, offset sprintf_buffer
+1A4B5  push    ax; char *
+1A4B6  call    _sprintf
+1A4B9  add     sp, 8
+1A4BC  lea     ax, [bp+text]
+1A4C0  mov     ax, offset sprintf_buffer
+1A4C3  push    ax; char *
+1A4C4  call    _stricmp
+1A4C7  add     sp, 4
+1A4CA  or      ax, ax
+1A4CC  jnz     short loc_1A4DA
+1A4CE  mov     si, [bp+var_112]
+1A4D2  mov     [bp+si+var_132], 1
+1A4D7  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A4DA  mov     si, [bp+var_112]
+1A4DE  mov     [bp+si+var_132], 0
+1A4E3  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A4E6  mov     ax, [bp+params0]; jumptable 00019A29 case 55
+1A4EA  cmp     [bp+var_E8], ax
+1A4EE  jnz     short loc_1A4F5
+1A4F0  mov     al, 1
+1A4F2  jmp     loc_1AC6B
+1A4F5  sub     al, al
+1A4F7  jmp     loc_1AC6B
+1A4FA  cmp     [bp+var_CE], 46h
+1A4FF  jnz     short loc_1A505
+1A501  mov     al, 1
+1A503  jmp     short loc_1A507
+1A505  sub     al, al
+1A507  mov     byte_21329, al
+1A50A  les     bx, [bp+var_138]
+1A50E  mov     ax, es:[bx+2]
+1A512  add     ax, bx
+1A514  mov     dx, es
+1A518  push    [bp+var_C8]
+1A51C  push    [bp+var_CA]
+1A520  push    [bp+params0]
+1A524  call    damageParty; area damage to every living member with armor absorption messages ('takes %u pts of damage', 'rendered unconscious')
+1A527  add     sp, 0Ah
+1A52A  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A52D  cmp     [bp+var_CE], 47h
+1A532  jnz     short loc_1A538
+1A534  mov     al, 1
+1A536  jmp     short loc_1A53A
+1A538  sub     al, al
+1A53A  mov     byte_21329, al
+1A53D  les     bx, [bp+var_138]
+1A541  mov     ax, es:[bx+2]
+1A545  add     ax, bx
+1A547  mov     dx, es
+1A54B  push    [bp+params0]
+1A54F  call    getScriptString; returns far ptr to the Nth NUL-terminated string after the script block header
+1A552  add     sp, 6
+1A555  mov     word ptr dword_2EC04, ax
+1A558  mov     word ptr dword_2EC04+2, dx
+1A55C  les     bx, dword_2EC04
+1A560  cmp     byte ptr es:[bx], 0
+1A564  jnz     short loc_1A56E
+1A566  sub     ax, ax
+1A568  mov     word ptr dword_2EC04+2, ax
+1A56B  mov     word ptr dword_2EC04, ax
+1A56E  mov     ax, [bp+var_CA]
+1A572  mov     word_2E206, ax
+1A575  mov     ax, [bp+var_C8]
+1A579  mov     word_2F018, ax
+1A57C  mov     ax, [bp+param3]
+1A580  mov     word_2D128, ax
+1A583  cmp     [bp+var_CE], 1
+1A588  sbb     ax, ax
+1A58A  inc     ax
+1A58B  mov     word_2E41C, ax
+1A58E  call    applyRepeatingHazard; periodic area damage/heal using the stored hazard parameters (2E206/2F018/2EC04)
+1A591  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A594  mov     [bp+var_A6], 0; jumptable 00019A29 case 18
+1A59A  jmp     short loc_1A5A0
+1A59C  inc     [bp+var_A6]
+1A5A0  mov     al, _disk1._partyCount
+1A5A3  sub     ah, ah
+1A5A5  cmp     [bp+var_A6], ax
+1A5A9  jb      short loc_1A5AE
+1A5AB  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A5AE  push    [bp+params0]
+1A5B2  push    [bp+params0]
+1A5B6  push    [bp+var_A6]
+1A5BA  call    healMember; adds random(min,max) hp to a party slot, clamped at max hp
+1A5BD  add     sp, 6
+1A5C0  jmp     short loc_1A59C
+1A5C2  mov     bx, [bp+var_A2]; jumptable 00019A29 case 35
+1A5C6  shl     bx, 1
+1A5C8  mov     si, [bx-2518h]
+1A5CC  mov     ax, 6
+1A5CF  imul    [bp+arg_8]
+1A5D2  mov     bx, ax
+1A5D4  mov     al, [bx+si+62h]
+1A5D7  sub     ah, ah
+1A5D9  cmp     ax, [bp+params0]
+1A5DD  jnz     short loc_1A5F4
+1A5DF  jmp     loc_1AF68
+1A5E2  mov     ax, [bp+params0]; jumptable 00019A29 case 36
+1A5E6  cmp     [bp+arg_8], ax
+1A5E9  jnz     short loc_1A5F4
+1A5EB  cmp     [bp+arg_4], 3
+1A5EF  jnz     short loc_1A5F4
+1A5F1  jmp     loc_1AF68
+1A5F4  sub     al, al
+1A5F6  mov     [bp+var_66], al
+1A5F9  push    [bp+var_CA]
+1A5FD  lea     ax, [bp+var_48]
+1A601  mov     al, [bp+var_66]
+1A604  jmp     loc_1AC5E
+1A607  cmp     [bp+params0], 12; jumptable 00019A29 case 19
+1A60C  jb      short loc_1A611
+1A60E  jmp     loc_1A6E8
+1A611  cmp     [bp+params0], 6
+1A616  jnb     short loc_1A61E
+1A618  mov     ax, [bp+var_C8]
+1A61C  jmp     short loc_1A622
+1A61E  mov     ax, [bp+var_11C]
+1A622  mov     [bp+var_A0], ax
+1A626  mov     [bp+var_9E], 0
+1A62C  mov     ax, [bp+params0]
+1A630  sub     dx, dx
+1A632  mov     cx, 6
+1A635  div     cx
+1A637  mov     ax, dx
+1A639  or      ax, ax
+1A63B  jz      short loc_1A659
+1A63D  cmp     ax, 1
+1A640  jz      short loc_1A676
+1A642  cmp     ax, 2
+1A645  jz      short loc_1A692
+1A647  cmp     ax, 3
+1A64A  jz      short loc_1A6A8
+1A64C  cmp     ax, 4
+1A64F  jz      short loc_1A6BE
+1A651  cmp     ax, 5
+1A654  jz      short loc_1A6D4
+1A656  jmp     loc_19D6C
+1A659  mov     ax, [bp+var_A0]
+1A65D  mov     dx, [bp+var_9E]
+1A661  cmp     [bp+var_5C], ax
+1A664  jz      short loc_1A669
+1A666  jmp     loc_1A719
+1A669  cmp     [bp+var_5A], dx
+1A66C  jz      short loc_1A671
+1A66E  jmp     loc_1A719
+1A671  mov     al, 1
+1A673  jmp     loc_19D31
+1A676  mov     ax, [bp+var_A0]
+1A67A  mov     dx, [bp+var_9E]
+1A67E  cmp     [bp+var_5A], dx
+1A681  jge     short loc_1A686
+1A683  jmp     loc_1A719
+1A686  jg      short loc_1A671
+1A688  cmp     [bp+var_5C], ax
+1A68B  ja      short loc_1A690
+1A68D  jmp     loc_1A719
+1A690  jmp     short loc_1A671
+1A692  mov     ax, [bp+var_A0]
+1A696  mov     dx, [bp+var_9E]
+1A69A  cmp     [bp+var_5A], dx
+1A69D  jg      short loc_1A719
+1A69F  jl      short loc_1A671
+1A6A1  cmp     [bp+var_5C], ax
+1A6A4  jnb     short loc_1A719
+1A6A6  jmp     short loc_1A671
+1A6A8  mov     ax, [bp+var_A0]
+1A6AC  mov     dx, [bp+var_9E]
+1A6B0  cmp     [bp+var_5A], dx
+1A6B3  jl      short loc_1A719
+1A6B5  jg      short loc_1A671
+1A6B7  cmp     [bp+var_5C], ax
+1A6BA  jb      short loc_1A719
+1A6BC  jmp     short loc_1A671
+1A6BE  mov     ax, [bp+var_A0]
+1A6C2  mov     dx, [bp+var_9E]
+1A6C6  cmp     [bp+var_5A], dx
+1A6C9  jg      short loc_1A719
+1A6CB  jl      short loc_1A671
+1A6CD  cmp     [bp+var_5C], ax
+1A6D0  ja      short loc_1A719
+1A6D2  jmp     short loc_1A671
+1A6D4  mov     ax, [bp+var_A0]
+1A6D8  mov     dx, [bp+var_9E]
+1A6DC  cmp     [bp+var_5C], ax
+1A6DF  jnz     short loc_1A671
+1A6E1  cmp     [bp+var_5A], dx
+1A6E4  jnz     short loc_1A671
+1A6E6  jmp     short loc_1A719
+1A6E8  cmp     [bp+params0], 0Fh
+1A6ED  jnb     short loc_1A703
+1A6EF  mov     ax, [bp+params0]
+1A6F3  sub     ax, 0Ch
+1A6F6  sub     dx, dx
+1A6F8  cmp     ax, [bp+var_5C]
+1A6FB  jnz     short loc_1A719
+1A6FD  cmp     dx, [bp+var_5A]
+1A700  jmp     loc_1A66C
+1A703  mov     ax, [bp+params0]
+1A707  sub     ax, 0Fh
+1A70A  sub     dx, dx
+1A70C  cmp     ax, [bp+var_5C]
+1A70F  jnz     short loc_1A719
+1A711  cmp     dx, [bp+var_5A]
+1A714  jnz     short loc_1A719
+1A716  jmp     loc_1A671
+1A719  sub     al, al
+1A71B  jmp     loc_19D31
+1A71E  mov     ax, [bp+params0]; jumptable 00019A29 case 20
+1A722  or      ax, ax
+1A724  jz      short loc_1A742
+1A726  cmp     ax, 1
+1A729  jz      short loc_1A761
+1A72B  cmp     ax, 2
+1A72E  jz      short loc_1A742
+1A730  cmp     ax, 3
+1A733  jz      short loc_1A761
+1A735  cmp     ax, 4
+1A738  jz      short loc_1A742
+1A73A  cmp     ax, 5
+1A73D  jz      short loc_1A761
+1A73F  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A742  mov     si, [bp+var_112]
+1A746  cmp     [bp+si+var_132], 0
+1A74B  jnz     short loc_1A76C
+1A74D  mov     [bp+si+var_E6], 1
+1A752  mov     ax, [bp+var_CA]
+1A756  add     ax, word ptr [bp+var_138]
+1A75A  mov     dx, word ptr [bp+var_138+2]
+1A75E  jmp     loc_199DA
+1A761  mov     si, [bp+var_112]
+1A765  cmp     [bp+si+var_132], 0
+1A76A  jnz     short loc_1A74D
+1A76C  mov     [bp+si+var_E6], 0
+1A771  inc     [bp+var_112]
+1A775  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A778  mov     si, [bp+var_112]; jumptable 00019A29 case 21
+1A77C  cmp     [bp+si+var_E6], 0
+1A781  jnz     short loc_1A771
+1A783  mov     ax, [bp+params0]
+1A787  jmp     short loc_1A756
+1A789  cmp     [bp+var_112], 0; jumptable 00019A29 case 22
+1A78E  jg      short loc_1A793
+1A790  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A793  dec     [bp+var_112]
+1A797  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A79A  call    newLine; jumptable 00019A29 case 23
+1A79D  call    newLine; carriage-return inside the current window; on overflow of the last line pages output (pauses for a key when byte_22A74 is set) or scrolls
+1A7A0  mov     _pageOnOverflow, 1; nonzero: pause at end of window instead of scrolling
+1A7A5  mov     bx, _currentWindow
+1A7A9  mov     word ptr [bx+18h], 0
+1A7AE  les     bx, [bp+var_138]
+1A7B2  mov     ax, es:[bx+2]
+1A7B6  add     ax, bx
+1A7B8  mov     dx, es
+1A7BC  push    [bp+params0]
+1A7C0  call    getScriptString; returns far ptr to the Nth NUL-terminated string after the script block header
+1A7C3  add     sp, 6
+1A7C6  mov     word ptr [bp+var_64], ax
+1A7C9  mov     word ptr [bp+var_64+2], dx
+1A7CC  mov     ax, 0FFFFh
+1A7CF  push    ax; y
+1A7D0  push    ax; x
+1A7D2  push    word ptr [bp+var_64]; text
+1A7D5  call    writeStringAt
+1A7D8  add     sp, 8
+1A7DB  call    refreshCurrentWindow; refreshBounds on the current window's rect (field_1A override if set)
+1A7DE  mov     _pageOnOverflow, 0; nonzero: pause at end of window instead of scrolling
+1A7E3  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A7E6  les     bx, [bp+var_138]; jumptable 00019A29 case 57
+1A7EA  mov     ax, es:[bx+2]
+1A7EE  add     ax, bx
+1A7F0  mov     dx, es
+1A7F3  push    ax; msg
+1A7F4  push    [bp+params0]; line
+1A7F8  call    showMessage
+1A7FB  jmp     loc_19F00
+1A7FE  sub     ax, ax; jumptable 00019A29 case 25
+1A801  push    [bp+params0]
+1A805  mov     ax, 19h
+1A809  push    word ptr _curCell+2; far ptr to the current/target map cell
+1A80D  push    word ptr _curCell; far ptr to the current/target map cell
+1A811  call    applyCellChange; applies change kind 19h-1Eh to a map cell: 19h/1Ch tile, 1Ah/1Dh fields, 1Bh/1Eh script word
+1A814  jmp     loc_1A527
+1A817  push    [bp+var_CA]; jumptable 00019A29 case 26
+1A81B  push    [bp+params0]
+1A81F  mov     ax, 1Ah
+1A822  jmp     short loc_1A808
+1A824  sub     ax, ax; jumptable 00019A29 case 27
+1A827  push    [bp+params0]
+1A82B  mov     ax, 1Bh
+1A82E  jmp     short loc_1A808
+1A830  push    [bp+var_C8]; jumptable 00019A29 case 24
+1A834  push    [bp+var_CA]
+1A838  mov     ax, [bp+params0]
+1A83C  dec     ax
+1A83E  call    dropPacketLoot; rolls the loot packet table (PACKETS) at idx for items to drop at (x,y)
+1A841  add     sp, 6
+1A844  mov     byte_2EE06, 1
+1A849  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A84C  mov     [bp+var_A6], 0; jumptable 00019A29 case 50
+1A852  mov     [bp+var_C0], 0
+1A858  jmp     short loc_1A89C
+1A85A  mov     ax, 6
+1A85D  imul    [bp+var_A6]
+1A861  add     ax, word ptr _groundItems; far ptr: ground-item records (6 bytes: qty, x, y, item)
+1A865  mov     dx, word ptr _groundItems+2; far ptr: ground-item records (6 bytes: qty, x, y, item)
+1A869  mov     word ptr [bp+var_13C], ax
+1A86D  mov     word ptr [bp+var_13C+2], dx
+1A871  les     bx, [bp+var_13C]
+1A875  mov     al, es:[bx+2]
+1A879  sub     ah, ah
+1A87B  and     ax, 7Fh
+1A87E  cmp     ax, [bp+params0]
+1A882  jnz     short loc_1A898
+1A884  mov     al, es:[bx+3]
+1A888  cbw
+1A889  cmp     ax, [bp+var_CA]
+1A88D  jnz     short loc_1A898
+1A88F  and     byte ptr es:[bx+2], 7Fh
+1A894  inc     [bp+var_C0]
+1A898  inc     [bp+var_A6]
+1A89C  les     bx, _map; far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)
+1A8A0  mov     ax, es:[bx+MapHeader.groundItemCount]
+1A8A5  cmp     [bp+var_A6], ax
+1A8A9  jb      short loc_1A85A
+1A8AB  cmp     [bp+var_C0], 0
+1A8B0  jg      short loc_1A8B5
+1A8B2  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A8B5  mov     byte_2EE06, 1
+1A8BA  call    markMapDirty; sets bit 0x80 of the map header flags (dword_22C6E+5)
+1A8BD  push    [bp+var_CA]
+1A8C1  push    [bp+params0]
+1A8C5  call    setCellFlag80; sets bit 80h in cell byte+2 at (x,y)
+1A8C8  jmp     loc_19E16
+1A8CB  mov     si, [bp+var_112]; jumptable 00019A29 case 61
+1A8CF  mov     [bp+si+var_132], 0
+1A8D4  mov     [bp+var_A6], 0
+1A8DA  jmp     short loc_1A8E0
+1A8DC  inc     [bp+var_A6]
+1A8E0  les     bx, _map; far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)
+1A8E4  mov     al, es:[bx+MapHeader.groupCount]
+1A8E8  sub     ah, ah
+1A8EA  cmp     ax, [bp+var_A6]
+1A8EE  ja      short loc_1A8F3
+1A8F0  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A8F3  mov     ax, 66h
+1A8F6  imul    [bp+var_A6]
+1A8FA  add     ax, word ptr _groups; far ptr: enemy group records (66h bytes each, up to 8 sub-slots of 16h bytes)
+1A8FE  mov     dx, word ptr _groups+2; far ptr: enemy group records (66h bytes each, up to 8 sub-slots of 16h bytes)
+1A902  mov     word ptr [bp+var_AA], ax
+1A906  mov     word ptr [bp+var_AA+2], dx
+1A90A  les     bx, [bp+var_AA]
+1A90E  mov     al, es:[bx]
+1A911  cbw
+1A912  cmp     ax, [bp+params0]
+1A916  jnz     short loc_1A8DC
+1A918  mov     al, es:[bx+EnemyGroup.y0]
+1A91C  cbw
+1A91D  cmp     ax, [bp+var_CA]
+1A921  jnz     short loc_1A8DC
+1A923  mov     al, es:[bx+EnemyGroup.activeMask]
+1A927  and     al, 0Fh
+1A929  jmp     loc_1AC6B
+1A92C  mov     ax, _disk1._mapPosX; jumptable 00019A29 case 53
+1A92F  cmp     [bp+params0], ax
+1A933  jnz     short loc_1A941
+1A935  mov     ax, _disk1._mapPosY
+1A938  cmp     [bp+var_CA], ax
+1A93C  jnz     short loc_1A941
+1A93E  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A941  les     bx, _map; far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)
+1A945  cmp     es:[bx+MapHeader.encounterPct], 0
+1A94A  jz      short loc_1A95E
+1A94C  cmp     es:[bx+MapHeader.encounterGroups], 0
+1A951  jz      short loc_1A95E
+1A953  mov     al, es:[bx+MapHeader.encounterGroups]
+1A957  sub     ah, ah
+1A959  add     ax, 8
+1A95C  jmp     short loc_1A960
+1A95E  sub     ax, ax
+1A960  mov     [bp+var_C0], ax
+1A964  mov     [bp+var_A6], ax
+1A968  jmp     short loc_1A96E
+1A96A  inc     [bp+var_A6]
+1A96E  les     bx, _map; far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)
+1A972  mov     al, es:[bx+MapHeader.groupCount]
+1A976  sub     ah, ah
+1A978  cmp     ax, [bp+var_A6]
+1A97C  ja      short loc_1A981
+1A97E  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1A981  mov     ax, 66h
+1A984  imul    [bp+var_A6]
+1A988  add     ax, word ptr _groups; far ptr: enemy group records (66h bytes each, up to 8 sub-slots of 16h bytes)
+1A98C  mov     dx, word ptr _groups+2; far ptr: enemy group records (66h bytes each, up to 8 sub-slots of 16h bytes)
+1A990  mov     word ptr [bp+var_AA], ax
+1A994  mov     word ptr [bp+var_AA+2], dx
+1A998  les     bx, [bp+var_AA]
+1A99C  test    es:[bx+EnemyGroup.activeMask], 0Fh
+1A9A1  jnz     short loc_1A96A
+1A9A3  mov     al, es:[bx]
+1A9A6  cbw
+1A9A7  cmp     ax, [bp+params0]
+1A9AB  jnz     short loc_1A96A
+1A9AD  mov     al, es:[bx+EnemyGroup.y0]
+1A9B1  cbw
+1A9B2  cmp     ax, [bp+var_CA]
+1A9B6  jnz     short loc_1A96A
+1A9BA  call    spawnEnemyGroup; initialises a group record (position, counts, per-slot hp) from its template and stamps the map
+1A9BD  jmp     loc_19E16
+1A9C0  push    [bp+params0]; jumptable 00019A29 case 31
+1A9C4  call    playSound; far; starts PC-speaker sound effect N (<=6) from the table at dseg:-458C; waits for vertical retrace and steps sound script until finished
+1A9C9  jmp     loc_19EAE
+1A9CC  push    [bp+var_C4]; jumptable 00019A29 case 29
+1A9D0  jmp     short loc_1A9D5
+1A9D2  sub     ax, ax; jumptable 00019A29 cases 28,30
+1A9D5  push    [bp+param3]
+1A9D9  push    [bp+var_CA]
+1A9DD  push    [bp+params0]
+1A9E1  push    [bp+var_C8]
+1A9E5  push    [bp+var_CE]
+1A9E9  call    recordMapChange; script ops 28-30: applies a cell change now if on the current map, else appends a 12-byte persistent change record (list at word_21326, max 150)
+1A9EC  jmp     loc_19B5C
+1A9EF  cmp     [bp+param3], 0; jumptable 00019A29 case 12
+1A9F4  jnz     short loc_1AA06
+1A9F6  mov     ax, offset aEnterNewLocati; "Enter new location?"
+1A9FB  sub     ax, ax
+1A9FE  call    YesNo
+1AA01  add     sp, 6
+1AA04  jmp     short loc_1AA08
+1AA06  mov     al, 1
+1AA08  mov     [bp+var_66], al
+1AA0B  or      al, al
+1AA0D  jz      short loc_1AA8B
+1AA0F  mov     ax, [bp+var_C8]
+1AA13  or      ax, ax
+1AA15  jz      short loc_1AA51
+1AA17  cmp     ax, 1
+1AA1A  jz      short loc_1AA97
+1AA1C  call    writeSaveState; increments the save counter and writes the Disk1 struct (0EC0h bytes) to the save disk
+1AA1F  mov     bl, _disk1._mapIndex
+1AA23  sub     bh, bh
+1AA25  mov     al, byte ptr _disk1._mapPosX
+1AA28  mov     [bx-40FAh], al
+1AA2C  mov     bl, _disk1._mapIndex
+1AA30  mov     al, byte ptr _disk1._mapPosY
+1AA33  mov     [bx-40F0h], al
+1AA37  mov     ax, [bp+var_C8]
+1AA3B  dec     ax
+1AA3C  mov     [bp+var_A0], ax
+1AA40  mov     [bp+var_9E], 0
+1AA46  mov     [bp+var_A6], 0
+1AA4C  mov     [bp+var_66], bh
+1AA4F  jmp     short loc_1AAA5
+1AA51  cmp     _disk1._mapIndex, 0
+1AA56  jz      short loc_1AA8B
+1AA58  call    writeSaveState; increments the save counter and writes the Disk1 struct (0EC0h bytes) to the save disk
+1AA5B  dec     _disk1._mapIndex
+1AA5F  mov     bl, _disk1._mapIndex
+1AA63  sub     bh, bh
+1AA65  mov     al, [bx-4104h]
+1AA69  sub     ah, ah
+1AA6C  call    loadMap; arg=map number; if the map's region (table at dseg+125h) changed, loads the region files, then reads the map (LZSS) and sets the sub-table pointers (map+404h..40Ch -> dword_2EBF8/2E446/2EC14/2E41E/2EC1A) and the party cell pointer
+1AA6F  add     sp, 2
+1AA72  mov     al, _disk1._mapIndex
+1AA75  sub     ah, ah
+1AA77  mov     si, ax
+1AA79  mov     al, [si-40F0h]
+1AA7D  cbw
+1AA7F  mov     al, [si-40FAh]
+1AA83  cbw
+1AA85  call    setPartyPosition; stores the party map position, resets hazard state
+1AA88  add     sp, 4
+1AA8B  cmp     [bp+param3], 2
+1AA90  jnz     short loc_1AB0F
+1AA92  call    setPartyCellScript; points dword_2E4C6 at the party's current cell and word_2EBF4/6 at its script word
+1AA95  jmp     short loc_1AB15
+1AA97  push    [bp+var_CA]
+1AA9B  push    [bp+params0]
+1AA9F  jmp     short loc_1AA85
+1AAA1  inc     [bp+var_A6]
+1AAA5  mov     al, _disk1._mapIndex
+1AAA8  sub     ah, ah
+1AAAA  inc     ax
+1AAAB  cmp     [bp+var_A6], ax
+1AAAF  jnb     short loc_1AACD
+1AAB1  mov     bx, [bp+var_A6]
+1AAB5  mov     al, [bx-4104h]
+1AAB9  sub     ah, ah
+1AABB  sub     dx, dx
+1AABD  cmp     ax, [bp+var_A0]
+1AAC1  jnz     short loc_1AAA1
+1AAC3  cmp     dx, [bp+var_9E]
+1AAC7  jnz     short loc_1AAA1
+1AAC9  mov     [bp+var_66], 1
+1AACD  cmp     [bp+var_66], 0
+1AAD1  jz      short loc_1AADC
+1AAD3  mov     al, byte ptr [bp+var_A6]
+1AAD7  mov     _disk1._mapIndex, al
+1AADA  jmp     short loc_1AAEE
+1AADC  inc     _disk1._mapIndex
+1AAE0  mov     bl, _disk1._mapIndex
+1AAE4  sub     bh, bh
+1AAE6  mov     al, byte ptr [bp+var_A0]
+1AAEA  mov     [bx-4104h], al
+1AAEE  mov     bl, _disk1._mapIndex
+1AAF2  sub     bh, bh
+1AAF4  mov     al, byte ptr [bp+params0]
+1AAF8  mov     [bx-40FAh], al
+1AAFC  mov     bl, _disk1._mapIndex
+1AB00  mov     al, byte ptr [bp+var_CA]
+1AB04  mov     [bx-40F0h], al
+1AB08  push    [bp+var_A0]
+1AB0C  jmp     loc_1AA6C
+1AB0F  mov     _scriptRequest, 0FFFFh; script engine request code returned to the caller (8 = start combat, 6 = fight scripted monster, -1 = none)
+1AB15  mov     byte_22BB9, 0
+1AB1A  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1AB1F  jnz     short loc_1AB24
+1AB21  call    redrawMapView; buildMapView + refresh the map viewport rect
+1AB24  mov     ax, 1
+1AB27  jmp     loc_1B24A
+1AB2A  push    [bp+var_CA]; jumptable 00019A29 case 32
+1AB2E  push    [bp+params0]
+1AB32  call    randomRange; random(min, max) inclusive, by rejection sampling rngByte
+1AB35  add     sp, 4
+1AB38  jmp     loc_19B20
+1AB3B  mov     ax, [bp+params0]; jumptable 00019A29 case 34
+1AB3F  mov     [bp+var_A4], ax
+1AB43  cmp     ax, 0Ch
+1AB46  jnb     short loc_1AB4F
+1AB48  mov     [bp+var_46], 4
+1AB4D  jmp     short loc_1AB6C
+1AB4F  cmp     [bp+params0], 1Ch
+1AB54  jnb     short loc_1AB62
+1AB56  sub     [bp+var_A4], 0Ch
+1AB5B  mov     [bp+var_46], 5
+1AB60  jmp     short loc_1AB6C
+1AB62  sub     [bp+var_A4], 1Ch
+1AB67  mov     [bp+var_46], 6
+1AB6C  cmp     [bp+arg_4], 3
+1AB70  jz      short loc_1AB75
+1AB72  jmp     loc_1AC76
+1AB75  mov     si, [bp+var_112]
+1AB79  mov     [bp+si+var_132], 0
+1AB7E  mov     ax, [bp+params0]
+1AB82  cmp     [bp+arg_8], ax
+1AB85  jz      short loc_1AB8A
+1AB87  jmp     loc_1AC4E
+1AB8A  push    [bp+var_A2]
+1AB8E  push    [bp+var_A4]
+1AB92  push    [bp+var_46]
+1AB95  sub     ax, ax
+1AB98  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+1AB9B  add     sp, 8
+1AB9E  mov     [bp+var_6A], ax
+1ABA1  mov     ax, [bp+var_CA]
+1ABA5  cmp     [bp+var_6A], ax
+1ABA8  jb      short loc_1ABE4
+1ABAA  cmp     [bp+var_46], 4
+1ABAE  jz      short loc_1ABD9
+1ABB0  push    [bp+var_A4]
+1ABB4  push    [bp+var_A2]
+1ABB8  call    trySkillImprove; increments the use counter of skill N (HDSPCT threshold at +13Ah); on overflow raises the skill if the governing attribute exceeds it; returns 1 if raised
+1ABBB  add     sp, 4
+1ABBE  or      al, al
+1ABC0  jz      short loc_1ABD9
+1ABC2  sub     ax, ax
+1ABC4  push    ax; char
+1ABC5  push    [bp+var_A4]
+1ABC9  mov     bx, [bp+var_A2]
+1ABCD  shl     bx, 1
+1ABCF  push    word ptr [bx-2518h]; char *
+1ABD3  call    printSkillLevel; prints '%s now has a %Fs level of %d.'
+1ABD6  add     sp, 6
+1ABD9  mov     si, [bp+var_112]
+1ABDD  mov     [bp+si+var_132], 1
+1ABE2  jmp     short loc_1AC4E
+1ABE4  cmp     [bp+var_46], 5
+1ABE8  jnz     short loc_1AC4E
+1ABEA  mov     bx, [bp+var_A2]
+1ABEE  shl     bx, 1
+1ABF0  mov     bx, [bx-2518h]
+1ABF4  mov     al, [bx+(PartyMember._attributes+4)]
+1ABF7  sub     ah, ah
+1ABFA  call    attrBonus; returns max(0, value-15): bonus from an attribute/skill above 15
+1ABFD  add     sp, 2
+1AC00  shl     ax, 1
+1AC02  mov     [bp+var_6A], ax
+1AC05  or      ax, ax
+1AC07  jle     short loc_1AC4E
+1AC09  mov     ax, 64h
+1AC0D  mov     ax, 1
+1AC11  call    randomRange; random(min, max) inclusive, by rejection sampling rngByte
+1AC14  add     sp, 4
+1AC17  cmp     [bp+var_6A], ax
+1AC1A  jb      short loc_1AC4E
+1AC1C  mov     si, [bp+var_112]
+1AC20  mov     [bp+si+var_132], 1
+1AC25  push    [bp+var_A4]
+1AC29  push    [bp+var_A2]
+1AC2D  call    trySkillImprove; increments the use counter of skill N (HDSPCT threshold at +13Ah); on overflow raises the skill if the governing attribute exceeds it; returns 1 if raised
+1AC30  add     sp, 4
+1AC33  or      al, al
+1AC35  jz      short loc_1AC4E
+1AC37  sub     ax, ax
+1AC39  push    ax; char
+1AC3A  push    [bp+var_A4]
+1AC3E  mov     bx, [bp+var_A2]
+1AC42  shl     bx, 1
+1AC44  push    word ptr [bx-2518h]; char *
+1AC48  call    printSkillLevel; prints '%s now has a %Fs level of %d.'
+1AC4B  add     sp, 6
+1AC4E  push    [bp+var_C8]
+1AC52  lea     ax, [bp+var_48]
+1AC56  mov     si, [bp+var_112]
+1AC5A  mov     al, [bp+si+var_132]
+1AC5E  sub     ah, ah
+1AC61  lea     ax, [bp+var_74]
+1AC65  call    combineCondition; script condition register combine: mode 0 set, 1 AND, 2 OR
+1AC68  add     sp, 8
+1AC6B  mov     si, [bp+var_112]
+1AC6F  mov     [bp+si+var_132], al
+1AC73  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AC76  push    [bp+var_A2]
+1AC7A  push    [bp+var_A4]
+1AC7E  push    [bp+var_46]
+1AC81  mov     ax, 1
+1AC85  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+1AC88  add     sp, 8
+1AC8B  mov     [bp+var_6A], ax
+1AC8E  sub     ax, ax
+1AC91  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+1AC94  add     sp, 2
+1AC97  mov     [bp+var_A6], 1
+1AC9D  jmp     short loc_1ACE5
+1AC9F  push    [bp+var_A2]
+1ACA3  push    [bp+var_A4]
+1ACA7  push    [bp+var_46]
+1ACAA  mov     ax, [bp+var_A6]
+1ACAE  inc     ax
+1ACB0  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+1ACB3  add     sp, 8
+1ACB6  mov     [bp+var_A0], ax
+1ACBA  mov     [bp+var_9E], dx
+1ACBE  mov     ax, [bp+var_6A]
+1ACC1  cwd
+1ACC2  cmp     dx, [bp+var_9E]
+1ACC6  jg      short loc_1ACE1
+1ACC8  jl      short loc_1ACD0
+1ACCA  cmp     ax, [bp+var_A0]
+1ACCE  jnb     short loc_1ACE1
+1ACD0  mov     ax, [bp+var_A0]
+1ACD4  mov     [bp+var_6A], ax
+1ACD7  push    [bp+var_A6]
+1ACDB  call    setCurrentMember; word_22C8A = member pointer (target of '^' substitution in strings)
+1ACDE  add     sp, 2
+1ACE1  inc     [bp+var_A6]
+1ACE5  mov     al, _disk1._partyCount
+1ACE8  sub     ah, ah
+1ACEA  cmp     [bp+var_A6], ax
+1ACEE  jb      short loc_1AC9F
+1ACF0  mov     ax, [bp+var_CA]
+1ACF4  cmp     [bp+var_6A], ax
+1ACF7  jb      short loc_1ACFD
+1ACF9  mov     al, 1
+1ACFB  jmp     short loc_1ACFF
+1ACFD  sub     al, al
+1ACFF  mov     si, [bp+var_112]
+1AD03  mov     [bp+si+var_132], al
+1AD07  mov     si, [bp+var_112]
+1AD0B  cmp     [bp+si+var_132], 0
+1AD10  jnz     short loc_1AD42
+1AD12  cmp     [bp+var_46], 5
+1AD16  jnz     short loc_1AD22
+1AD18  mov     ax, 4
+1AD1C  push    [bp+var_A4]
+1AD20  jmp     short loc_1AD34
+1AD22  cmp     [bp+var_46], 6
+1AD26  jnz     short loc_1AD42
+1AD28  mov     ax, 1
+1AD2C  mov     ax, [bp+var_A4]
+1AD30  add     ax, 10h
+1AD34  call    partySkillCheck; best living member's attribute arg2 among those who know skill arg1: random(1,100) < 2*bonus
+1AD37  add     sp, 4
+1AD3A  mov     si, [bp+var_112]
+1AD3E  mov     [bp+si+var_132], al
+1AD42  push    [bp+var_C8]
+1AD46  lea     ax, [bp+var_48]
+1AD4A  mov     di, [bp+var_112]
+1AD4E  mov     al, [bp+di+var_132]
+1AD52  sub     ah, ah
+1AD55  lea     ax, [bp+var_74]
+1AD59  call    combineCondition; script condition register combine: mode 0 set, 1 AND, 2 OR
+1AD5C  add     sp, 8
+1AD5F  mov     di, [bp+var_112]
+1AD63  mov     [bp+di+var_132], al
+1AD67  mov     di, [bp+var_112]
+1AD6B  cmp     [bp+di+var_132], 0
+1AD70  jnz     short loc_1AD75
+1AD72  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AD75  cmp     [bp+var_46], 4
+1AD79  jz      short loc_1AD95
+1AD7B  mov     si, [bp+var_44]
+1AD7E  shl     si, 1
+1AD80  add     si, bp
+1AD82  mov     al, byte ptr [bp+params0]
+1AD86  sub     al, 0Ch
+1AD88  mov     [si-42h], al
+1AD8B  mov     al, byte ptr [bp+var_CA]
+1AD8F  mov     [si-41h], al
+1AD92  inc     [bp+var_44]
+1AD95  cmp     [bp+var_C8], 0
+1AD9A  jz      short loc_1AD9F
+1AD9C  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AD9F  mov     [bp+var_A6], 0
+1ADA5  jmp     short loc_1AE23
+1ADA7  inc     [bp+var_C0]
+1ADAB  mov     al, _disk1._partyCount
+1ADAE  sub     ah, ah
+1ADB0  cmp     [bp+var_C0], ax
+1ADB4  jnb     short loc_1AE1F
+1ADB6  mov     si, [bp+var_A6]
+1ADBA  shl     si, 1
+1ADBC  add     si, bp
+1ADBE  push    [bp+var_C0]
+1ADC2  mov     al, [si-42h]
+1ADC6  mov     ax, 5
+1ADCA  sub     ax, ax
+1ADCD  call    getMemberStat; script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)
+1ADD0  add     sp, 8
+1ADD3  mov     cl, [si-41h]
+1ADD6  sub     ch, ch
+1ADD8  sub     bx, bx
+1ADDA  cmp     bx, dx
+1ADDC  ja      short loc_1ADA7
+1ADDE  jb      short loc_1ADE4
+1ADE0  cmp     cx, ax
+1ADE2  ja      short loc_1ADA7
+1ADE4  mov     di, [bp+var_A6]
+1ADE8  shl     di, 1
+1ADEA  mov     al, [bp+di+var_42]
+1ADED  sub     ah, ah
+1ADF0  push    [bp+var_C0]
+1ADF4  call    trySkillImprove; increments the use counter of skill N (HDSPCT threshold at +13Ah); on overflow raises the skill if the governing attribute exceeds it; returns 1 if raised
+1ADF7  add     sp, 4
+1ADFA  or      al, al
+1ADFC  jz      short loc_1ADA7
+1ADFE  sub     ax, ax
+1AE00  push    ax; char
+1AE01  mov     di, [bp+var_A6]
+1AE05  shl     di, 1
+1AE07  mov     al, [bp+di+var_42]
+1AE0A  sub     ah, ah
+1AE0D  mov     bx, [bp+var_C0]
+1AE11  shl     bx, 1
+1AE13  push    word ptr [bx-2518h]; char *
+1AE17  call    printSkillLevel; prints '%s now has a %Fs level of %d.'
+1AE1A  add     sp, 6
+1AE1D  jmp     short loc_1ADA7
+1AE1F  inc     [bp+var_A6]
+1AE23  mov     ax, [bp+var_44]
+1AE26  cmp     [bp+var_A6], ax
+1AE2A  jge     short loc_1AE35
+1AE2C  mov     [bp+var_C0], 0
+1AE32  jmp     loc_1ADAB
+1AE35  mov     [bp+var_44], 0
+1AE3A  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AE3D  push    [bp+params0]; jumptable 00019A29 case 37
+1AE41  call    shopLoop; script op 37: shop N loop with B)uy S)ell L)eave and F-key member switching
+1AE44  jmp     loc_19EAE
+1AE47  push    [bp+params0]; jumptable 00019A29 case 45
+1AE4B  call    serviceLoop; script op 45: pay-for services from the SERVICES table (levels, exp, hp, attributes, skills, cure); entries are 32 bytes
+1AE4E  jmp     loc_19EAE
+1AE51  mov     al, byte_2E428; jumptable 00019A29 case 40
+1AE54  cbw
+1AE56  mov     al, byte_2E423
+1AE59  cbw
+1AE5B  call    setPartyPosition; stores the party map position, resets hazard state
+1AE5E  jmp     loc_19E16
+1AE61  mov     byte_2DFEE, 0; jumptable 00019A29 case 38
+1AE66  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AE69  les     bx, [bp+var_138]; jumptable 00019A29 case 39
+1AE6D  mov     ax, es:[bx+2]
+1AE71  add     ax, bx
+1AE73  mov     dx, es
+1AE77  push    [bp+params0]
+1AE7B  call    YesNo
+1AE7E  add     sp, 6
+1AE81  jmp     loc_1AC6B
+1AE84  mov     [bp+var_A6], 0; jumptable 00019A29 case 42
+1AE8A  jmp     short loc_1AE90
+1AE8C  inc     [bp+var_A6]
+1AE90  les     bx, _map; far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)
+1AE94  mov     al, es:[bx+MapHeader.monsterCount]
+1AE98  sub     ah, ah
+1AE9A  cmp     ax, [bp+var_A6]
+1AE9E  ja      short loc_1AEA3
+1AEA0  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AEA3  mov     ax, 68h
+1AEA6  imul    [bp+var_A6]
+1AEAA  add     ax, word ptr _monsters; far ptr: map's monster records (68h bytes each)
+1AEAE  mov     dx, word ptr _monsters+2; far ptr: map's monster records (68h bytes each)
+1AEB2  add     ax, 5Dh
+1AEB5  mov     word ptr [bp+var_13C], ax
+1AEB9  mov     word ptr [bp+var_13C+2], dx
+1AEBD  les     bx, [bp+var_13C]
+1AEC1  mov     al, es:[bx]
+1AEC4  sub     ah, ah
+1AEC6  cmp     ax, [bp+params0]
+1AECA  jnz     short loc_1AE8C
+1AECC  mov     al, byte ptr [bp+var_CA]
+1AED0  mov     es:[bx], al
+1AED3  jmp     short loc_1AE8C
+1AED5  mov     si, [bp+var_112]; jumptable 00019A29 case 54
+1AED9  mov     [bp+si+var_132], 0
+1AEDE  lea     ax, [bp+var_A4]
+1AEE3  push    [bp+params0]
+1AEE7  call    findMonsterById; returns far ptr to the monster record whose +49h id matches (index via arg2)
+1AEEA  add     sp, 4
+1AEED  mov     word ptr [bp+var_60], ax
+1AEF0  mov     word ptr [bp+var_60+2], dx
+1AEF3  or      dx, ax
+1AEF5  jz      short loc_1AF0F; jumptable 00019A29 case 68
+1AEF7  les     bx, [bp+var_60]
+1AEFA  mov     bl, es:[bx+Monster.id]
+1AEFE  sub     bh, bh
+1AF00  test    byte ptr [bx-3A60h], 3
+1AF05  jnz     short loc_1AF0F; jumptable 00019A29 case 68
+1AF09  call    addNpcToParty; recruits a monster/NPC record into a free roster slot, copying stats and inventory
+1AF0C  add     sp, 4
+1AF0F  mov     [bp+var_D2], 1; jumptable 00019A29 case 68
+1AF14  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AF17  mov     bx, [bp+params0]; jumptable 00019A29 case 43
+1AF1B  mov     al, [bx-3A60h]
+1AF1F  and     al, 1
+1AF21  mov     [bp+var_66], al
+1AF24  or      al, al
+1AF26  jnz     short loc_1AF2B
+1AF28  jmp     loc_1A5F9
+1AF2B  mov     [bp+var_A6], 0
+1AF31  jmp     short loc_1AF37
+1AF33  inc     [bp+var_A6]
+1AF37  mov     al, _disk1._partyCount
+1AF3A  sub     ah, ah
+1AF3C  cmp     [bp+var_A6], ax
+1AF40  jnb     short loc_1AF55
+1AF42  mov     bx, [bp+var_A6]
+1AF46  shl     bx, 1
+1AF48  mov     bx, [bx-2518h]
+1AF4C  mov     al, [bx+PartyMember.rosterId]
+1AF4F  cmp     ax, [bp+params0]
+1AF53  jnz     short loc_1AF33
+1AF55  mov     bx, [bp+var_A6]
+1AF59  shl     bx, 1
+1AF5B  mov     bx, [bx-2518h]
+1AF5F  cmp     [bx+PartyMember._con], 0
+1AF63  jg      short loc_1AF68
+1AF65  jmp     loc_1A5F4
+1AF68  mov     al, 1
+1AF6A  jmp     loc_1A5F6
+1AF6D  push    [bp+var_CA]; jumptable 00019A29 case 44
+1AF71  lea     ax, [bp+var_48]
+1AF75  mov     bx, [bp+params0]
+1AF79  mov     al, [bx-3A60h]
+1AF7D  sub     ah, ah
+1AF7F  and     ax, 2
+1AF82  jmp     loc_1AC60
+1AF85  lea     ax, [bp+var_A4]; jumptable 00019A29 cases 52,75
+1AF8A  push    [bp+params0]
+1AF8E  call    findMonsterById; returns far ptr to the monster record whose +49h id matches (index via arg2)
+1AF91  add     sp, 4
+1AF94  mov     word ptr [bp+var_60], ax
+1AF97  mov     word ptr [bp+var_60+2], dx
+1AF9A  or      dx, ax
+1AF9C  jnz     short loc_1AFA1
+1AF9E  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AFA1  les     bx, [bp+var_60]
+1AFA4  mov     bl, es:[bx+Monster.id]
+1AFA8  sub     bh, bh
+1AFAA  test    byte ptr [bx-3A60h], 2
+1AFAF  jz      short loc_1AFB4
+1AFB1  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1AFB4  cmp     [bp+var_CE], 34h
+1AFB9  jnz     short loc_1B00C
+1AFBB  sub     ax, ax
+1AFBE  mov     bx, word ptr [bp+var_60]
+1AFC1  mov     al, es:[bx+Monster.y]
+1AFC5  cbw
+1AFC7  mov     al, es:[bx+Monster.x]
+1AFCB  cbw
+1AFCD  call    setMapCellHighBits; sets the top 5 bits of the map cell word at (x, y), preserving the low 11 bits
+1AFD0  add     sp, 6
+1AFD3  les     bx, [bp+var_60]
+1AFD6  mov     al, byte ptr [bp+var_CA]
+1AFDA  mov     es:[bx+Monster.x], al
+1AFDE  les     bx, [bp+var_60]
+1AFE1  mov     al, byte ptr [bp+var_C8]
+1AFE5  mov     es:[bx+Monster.y], al
+1AFE9  les     bx, [bp+var_60]
+1AFEC  mov     al, es:[bx+Monster.overlayId]
+1AFF0  sub     ah, ah
+1AFF3  mov     al, es:[bx+Monster.y]
+1AFF7  cbw
+1AFF9  mov     al, es:[bx+Monster.x]
+1AFFD  cbw
+1AFFF  mov     al, es:[bx+Monster.radius]
+1B003  sub     ah, ah
+1B006  call    markEntityOnMap; if (x,y) is within radius of the party, stores overlay id (arg3<<11) in the map cell word
+1B009  add     sp, 8
+1B00C  les     bx, [bp+var_60]
+1B00F  mov     es:[bx+Monster.targetX], 0FFh
+1B014  call    markMapDirty; sets bit 0x80 of the map header flags (dword_22C6E+5)
+1B017  cmp     [bp+param3], 1
+1B01C  jz      short loc_1B028
+1B01E  cmp     [bp+var_CE], 4Bh
+1B023  jz      short loc_1B028
+1B025  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B028  cmp     [bp+param3], 1
+1B02D  jnz     short loc_1B037
+1B02F  les     bx, [bp+var_60]
+1B032  or      es:[bx+Monster.flags], 80h
+1B037  mov     ax, word ptr [bp+var_60]
+1B03A  mov     dx, word ptr [bp+var_60+2]
+1B03D  add     ax, 66h
+1B040  mov     _scriptPtr, ax; far ptr to the script word being run
+1B043  mov     word_2EBF6, dx
+1B047  mov     _scriptRequest, 6; script engine request code returned to the caller (8 = start combat, 6 = fight scripted monster, -1 = none)
+1B04D  mov     ax, [bp+var_A2]
+1B051  mov     word_2EC10, ax
+1B054  mov     ax, [bp+var_A4]
+1B058  mov     word_2D100, ax
+1B05B  mov     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1B060  jmp     loc_1AF0F; jumptable 00019A29 case 68
+1B063  lea     ax, [bp+var_A4]; jumptable 00019A29 case 58
+1B068  push    [bp+params0]
+1B06C  call    findMonsterById; returns far ptr to the monster record whose +49h id matches (index via arg2)
+1B06F  add     sp, 4
+1B072  mov     word ptr [bp+var_60], ax
+1B075  mov     word ptr [bp+var_60+2], dx
+1B078  or      dx, ax
+1B07A  jnz     short loc_1B07F
+1B07C  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B07F  les     bx, [bp+var_60]
+1B082  mov     ax, [bp+var_CA]
+1B086  mov     es:[bx+Monster.script], ax
+1B08A  call    markMapDirty; sets bit 0x80 of the map header flags (dword_22C6E+5)
+1B08D  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B090  mov     al, 64h
+1B092  mul     _disk1._timeHours
+1B096  mov     cl, _disk1._timeMinutes
+1B09A  sub     ch, ch
+1B09C  add     ax, cx
+1B09E  jmp     loc_19B20
+1B0A1  mov     al, _disk1._timeWeekday; jumptable 00019A29 case 60
+1B0A4  sub     ah, ah
+1B0A6  jmp     loc_19B20
+1B0A9  mov     ax, [bp+params0]; jumptable 00019A29 case 62
+1B0AD  inc     ax
+1B0AF  call    setPartyFacing; sets party facing 1-4 (5=no change) and the matching sprite index (table at dseg+1A36h)
+1B0B2  add     sp, 2
+1B0B5  mov     si, [bp+params0]
+1B0B9  shl     si, 1
+1B0BB  mov     al, [si+1DFh]
+1B0BF  cbw
+1B0C0  add     ax, _disk1._mapPosY
+1B0C5  mov     al, [si+1DEh]
+1B0C9  cbw
+1B0CA  add     ax, _disk1._mapPosX
+1B0CF  call    setPartyPosition; stores the party map position, resets hazard state
+1B0D2  add     sp, 4
+1B0D5  cmp     _npcDialogMode, 0; nonzero while a monster/NPC conversation window (window7) is active
+1B0DA  jnz     short loc_1B0DF
+1B0DC  call    redrawMapView; buildMapView + refresh the map viewport rect
+1B0DF  call    setPartyCellScript; points dword_2E4C6 at the party's current cell and word_2EBF4/6 at its script word
+1B0E2  jmp     loc_1AF0F; jumptable 00019A29 case 68
+1B0E5  push    [bp+var_A2]; jumptable 00019A29 case 63
+1B0E9  push    [bp+params0]
+1B0ED  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+1B0F0  add     sp, 4
+1B0F3  mov     [bp+var_4A], ax
+1B0F6  push    [bp+var_C8]
+1B0FA  lea     ax, [bp+var_48]
+1B0FE  mov     bx, [bp+var_4A]
+1B101  shl     bx, 1
+1B103  mov     bx, [bx-2518h]
+1B107  mov     al, [bx+PartyMember.status]
+1B10A  sub     ah, ah
+1B10C  mov     dx, 1
+1B10F  mov     cl, byte ptr [bp+var_CA]
+1B113  shl     dx, cl
+1B115  and     ax, dx
+1B117  jmp     loc_1AC60
+1B11A  push    [bp+var_A2]; jumptable 00019A29 case 64
+1B11E  push    [bp+params0]
+1B122  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+1B125  add     sp, 4
+1B128  mov     [bp+var_4A], ax
+1B12B  mov     bx, ax
+1B12D  shl     bx, 1
+1B12F  mov     bx, [bx-2518h]
+1B133  mov     al, 1
+1B135  mov     cl, byte ptr [bp+var_CA]
+1B139  shl     al, cl
+1B13B  or      [bx+PartyMember.status], al
+1B13E  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B141  push    [bp+var_A2]; jumptable 00019A29 case 65
+1B145  push    [bp+params0]
+1B149  call    resolveMemberSel; script member selector: 0 = current member, n = party slot n-1
+1B14C  add     sp, 4
+1B14F  mov     [bp+var_4A], ax
+1B152  mov     bx, ax
+1B154  shl     bx, 1
+1B156  mov     bx, [bx-2518h]
+1B15A  mov     al, 1
+1B15C  mov     cl, byte ptr [bp+var_CA]
+1B160  shl     al, cl
+1B162  and     [bx+PartyMember.status], al
+1B165  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B168  mov     ax, [bp+params0]; jumptable 00019A29 case 69
+1B16C  mov     word_22C86, ax
+1B16F  push    word_22C88
+1B173  call    setPartyFacing; sets party facing 1-4 (5=no change) and the matching sprite index (table at dseg+1A36h)
+1B176  add     sp, 2
+1B179  call    drawPartySprite; draws the party icon tile at the centre of the map view (9,4) and refreshes
+1B17C  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B17F  call    retrieveStoreMember; jumptable 00019A29 case 72
+1B182  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B185  push    [bp+var_C8]; jumptable 00019A29 case 73
+1B189  push    [bp+var_CA]
+1B18D  push    [bp+params0]
+1B191  call    setMapCellHighBits; sets the top 5 bits of the map cell word at (x, y), preserving the low 11 bits
+1B194  add     sp, 6
+1B197  call    redrawMapView; buildMapView + refresh the map viewport rect
+1B19A  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B19D  push    [bp+params0]; jumptable 00019A29 case 74
+1B1A1  call    showEndingScreen; script op 74: loads ending picture set N from the file table at dseg+0EFEh, displays it; N==3 quits
+1B1A4  jmp     loc_19EAE
+1B1A7  dw offset opcode00_41; jump table for switch statement
+1B23F  jmp     def_19A29; jumptable 00019A29 default case, cases 33,51
+1B242  mov     byte_22BB9, 0
+1B247  jmp     loc_1AB24
+1B24C  mov     sp, bp
+1B24F  retn
+
