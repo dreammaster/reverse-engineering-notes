@@ -26,7 +26,7 @@ effort. Keep this current across sessions.
 | IDB | Role | Funcs named | Structs |
 |---|---|---|---|
 | `fod/…FOD.idb` (FOD.EXE) | Party creation / main menu | 49 / 130 | 8 |
-| `fod/…KEH.idb` (KEH.EXE) | Main game engine | 105 / 355 | 10 |
+| `fod/…KEH.idb` (KEH.EXE) | Main game engine | 355 / 355 (first pass) | 10 |
 
 - [x] Headless pipeline (`ida_scripts/run_ida_script.ps1`,
       `batch_run_and_export.py`), `identify.py`, `rank_unnamed_functions.py`.
