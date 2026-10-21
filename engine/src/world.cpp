@@ -553,6 +553,7 @@ void World::loadMap(int number) {
 void World::setPartyPosition(int x, int y) {
 	disk.mapX = int16_t(x);
 	disk.mapY = int16_t(y);
+	hazard = Hazard{};
 }
 
 void World::applyChange(const MapChange &c) {

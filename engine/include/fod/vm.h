@@ -26,6 +26,7 @@ public:
 	virtual void ending(int /*n*/) {}
 	virtual void skillRaised(const std::string & /*member*/, int /*skill*/, int /*level*/) {}
 	virtual void log(const std::string & /*msg*/) {}
+	virtual void gameOver() {}                                  // the whole party is dead (KEH checkPartyWipeAndQuit)
 	// monster conversations (KEH npcDialogMode)
 	virtual void beginEncounter(int /*monsterIndex*/) {}
 	virtual bool npcMode() const { return false; }
@@ -53,6 +54,8 @@ class ScriptVM {
 public:
 	ScriptVM(World &world, Host &host) : _w(world), _h(host) {}
 	ScriptResult run(const ScriptCall &call);
+	void damageParty(const std::string &message, int min, int max, bool ignoreArmor);   // KEH damageParty
+	void applyRepeatingHazard();                                                        // KEH applyRepeatingHazard
 private:
 	struct Frame { size_t loopStart, loopEnd; int condDepth; };
 
@@ -60,7 +63,6 @@ private:
 	Host &_h;
 	int _lastKey = 0;
 	std::string _typed;
-	int _hazardMin = 0, _hazardMax = 0, _hazardInterval = 0;
 };
 
 } // namespace fod

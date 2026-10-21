@@ -34,6 +34,7 @@ public:
 	void redrawMap() override { redraw(); }
 	void showMenu(const std::string &text, bool npcMode) override;
 	void log(const std::string &msg) override { _log.push_back(msg); }
+	void gameOver() override { _quit = true; }
 	void beginEncounter(int monsterIndex) override;
 	bool npcMode() const override { return _npcMode; }
 	int pickFromList(const std::string &title, const std::vector<std::string> &items) override;

@@ -147,6 +147,7 @@ void Game::showMenu(const std::string &text, bool) {
 // ---------------------------------------------------------------- game logic
 void Game::passTime() {
 	_w.passTime(false);
+	if (_w.hazard.interval > 0 && _w.timeTicks % _w.hazard.interval == 0) _vm.applyRepeatingHazard();
 }
 
 void Game::beginEncounter(int monsterIndex) {

@@ -33,6 +33,45 @@ int64_t sx(int v) { return int16_t(v); }
 
 } // namespace
 
+void ScriptVM::damageParty(const std::string &message, int lo, int hi, bool ignoreArmor) {
+	World &w = _w;
+	std::string text = message + "\r\r";
+	static const char *kPoss[4] = {"it's", "his", "her", "it's"};
+	static const char *kCond[6] = {"", "", "serious", "critical", "comatose", ""};
+	for (int s = 0; s < w.partyCount(); ++s) {
+		Member &m = w.party(s);
+		const int before = World::conState(m);
+		if (before == 5) continue;
+		int roll = w.rng.range(lo, hi);
+		int armor = ignoreArmor ? 0 : w.armorClass(m);
+		if (armor) armor = w.rng.range(1 * armor, 2 * armor);
+		int dmg = 0;
+		if (roll > armor) { dmg = roll - armor; w.damageMember(m, dmg); }
+		if (dmg <= 0) { text += m.name() + "'s armor absorbs the damage.\r\r"; continue; }
+		text += m.name() + " takes " + std::to_string(dmg) + " pts of damage";
+		const int after = World::conState(m);
+		if (after == before) text += ".\r\r";
+		else if (after == 1) text += " and has been rendered unconscious.\r\r";
+		else if (after < 5) text += std::string(" and ") + kPoss[m.b[0x50] & 3] + " condition has become " + kCond[after] + ".\r\r";
+		else text += " and is killed.\r\r";
+	}
+	_h.message(text);
+	if (w.partyWiped()) _h.gameOver();
+}
+
+void ScriptVM::applyRepeatingHazard() {
+	World &w = _w;
+	if (w.hazard.damage) {
+		damageParty(w.hazard.message, w.hazard.min, w.hazard.max, false);
+		return;
+	}
+	for (int s = 0; s < w.partyCount(); ++s) {
+		Member &m = w.party(s);
+		if (m.b[0x58] & 0x7F) continue;
+		m.setHp(std::min<int>(m.hp() + w.rng.range(w.hazard.min, w.hazard.max), m.hpMax()));
+	}
+}
+
 ScriptResult ScriptVM::run(const ScriptCall &call) {
 	ScriptResult res;
 	if (call.cellScript < 0 || call.cellScript == 0xFFFF || !_w.scripts || !_w.scripts->has(unsigned(call.cellScript))) return res;
@@ -109,7 +148,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			}
 			break;
 		case 3: acc = p0; break;
-		case 4: acc = stat(p0, p1, p2); reg = int16_t(acc); break;
+		case 4: acc = stat(p0, p1, p2); break;
 		case 5: w.setStat(p0, p1, p2, int32_t(acc), cur); checkLevelUps(w, _h); break;
 		case 6: case 7: {
 			int64_t best = w.getStat(1, p0, p1, cur);
@@ -227,38 +266,25 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			*cv = lower(_typed) == lower(strAt(p0));
 			break;
 		}
-		case 17: case 70: {   // damage party now (70: ignore armor)
-			const int lo = p1, hi = p2;
-			_h.print(strAt(p0));
-			for (int s = 0; s < w.partyCount(); ++s) {
-				Member &m = w.party(s);
-				if (World::conState(m) == 5) continue;
-				int dmg = w.rng.range(std::min(lo, hi), std::max(lo, hi));
-				m.setHp(m.hp() - dmg);
-				_h.print(m.name() + " takes " + std::to_string(dmg) + " pts of damage.\r");
-			}
+		case 17: case 70:   // damage the party now (70: armour does not help)
+			damageParty(strAt(p0), p1, p2, r.opcode == 70);
 			break;
-		}
-		case 0: case 41: case 71: {  // hazard (approx): store parameters and apply once
-			_hazardMin = p1; _hazardMax = p2; _hazardInterval = p3;
-			_h.print(strAt(p0));
-			for (int s = 0; s < w.partyCount(); ++s) {
-				Member &m = w.party(s);
-				if (World::conState(m) == 5) continue;
-				m.setHp(m.hp() - w.rng.range(std::min(p1, p2), std::max(p1, p2)));
-			}
+		case 0: case 41: case 71:   // repeating hazard: 0 damages, 41/71 heal; applied once right away
+			w.hazard.message = strAt(p0);
+			w.hazard.min = p1; w.hazard.max = p2; w.hazard.interval = p3;
+			w.hazard.damage = r.opcode == 0;
+			applyRepeatingHazard();
 			break;
-		}
 		case 18:   // heal each member by p0
-			for (int s = 0; s < w.partyCount(); ++s) {
-				Member &m = w.party(s);
+			for (int s2 = 0; s2 < w.partyCount(); ++s2) {
+				Member &m = w.party(s2);
 				m.setHp(std::min<int>(m.hp() + w.rng.range(p0, p0), m.hpMax()));
 			}
 			break;
 		case 19: {  // compare
 			bool v = false;
 			if (p0 < 12) {
-				const int64_t a = p0 < 6 ? p2 : sx(reg);
+				const int64_t a = p0 < 6 ? int64_t(uint16_t(p2)) : int64_t(uint16_t(reg));
 				switch (p0 % 6) {
 				case 0: v = acc == a; break;
 				case 1: v = acc > a; break;
@@ -305,46 +331,59 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			break;
 		case 31: _h.sound(p0); break;
 		case 32: acc = w.rng.range(p0, p1); break;
-		case 34: {  // skill / attribute check (approx of the party-wide check)
+		case 34: {  // skill / attribute check (KEH doScript op 34)
 			int kind = 4, idx = p0;
 			if (p0 >= 0x1C) { kind = 6; idx = p0 - 0x1C; }
 			else if (p0 >= 0x0C) { kind = 5; idx = p0 - 0x0C; }
 			const int difficulty = p1;
-			bool ok = false;
-			if (call.event == kEvUseItem) {
-				*cv = false;
+			auto improve = [&](int member, int skill) {
+				if (w.trySkillImprove(member, skill)) _h.skillRaised(w.party(member).name(), skill, w.party(member).b[0x24 + size_t(skill)]);
+			};
+			if (call.event == 3) {   // the member used this skill / attribute on the cell
+				bool ok = false;
 				if (call.arg8 == p0) {
-					ok = w.getStat(0, kind, idx, cur) >= difficulty;
-					if (!ok && kind == 5 && cur < w.partyCount()) {
+					const int val = int(stat(0, kind, idx)) & 0xFFFF;
+					if (val >= difficulty) {
+						ok = true;
+						if (kind != 4) improve(cur, idx);
+					} else if (kind == 5) {
 						const int chance = World::attrBonus(w.party(cur).attr(4)) * 2;
-						ok = chance > 0 && w.rng.range(1, 100) <= chance;
+						if (chance > 0 && chance >= w.rng.range(1, 100)) { ok = true; improve(cur, idx); }
 					}
 				}
-			} else {
-				int best = -1;
-				int bestMember = 0;
-				for (int s = 0; s < w.partyCount(); ++s) {
-					const int v = int(w.getStat(s + 1, kind, idx, cur));
-					if (v > best) { best = v; bestMember = s; }
+				*cv = cond.combine(ok, p2);
+				break;
+			}
+			// any other event: the best member of the party is tested
+			int best = int(w.getStat(1, kind, idx, cur)) & 0xFFFF;
+			cur = 0;
+			for (int s2 = 1; s2 < w.partyCount(); ++s2) {
+				const int v = int(w.getStat(s2 + 1, kind, idx, cur)) & 0xFFFF;
+				if (best < v) { best = v; cur = s2; }
+			}
+			bool ok = best >= difficulty;
+			if (!ok && kind != 4) {   // KEH partySkillCheck: luck of the best attribute among the living who know the skill
+				const int skillIdx = kind == 5 ? idx : idx + 0x10, attrIdx = kind == 5 ? 4 : 1;
+				int bestAttr = 0, bestMember = 0;
+				for (int s2 = 0; s2 < w.partyCount(); ++s2) {
+					const Member &m = w.party(s2);
+					if (m.hp() > 0 && m.b[0x24 + size_t(skillIdx)] != 0 && m.attr(attrIdx) > bestAttr) { bestAttr = m.attr(attrIdx); bestMember = s2; }
 				}
-				cur = bestMember;
-				ok = best >= difficulty;
-				if (!ok && kind != 4) {   // luck roll from the best living member's attribute
-					int bestBonus = 0;
-					for (int s = 0; s < w.partyCount(); ++s) {
-						const Member &m = w.party(s);
-						if (w.conState(m) == 0 && (kind == 5 ? m.b[0x24 + idx] : m.b[0x34 + idx]))
-							bestBonus = std::max(bestBonus, int(m.attr(kind == 5 ? 4 : 1)));
-					}
-					const int chance = World::attrBonus(bestBonus) * 2;
-					ok = chance > 0 && w.rng.range(1, 100) < chance;
+				if (bestAttr != 0) {
+					cur = bestMember;
+					const int chance = (World::attrBonus(bestAttr) * 2) & 0xFF;
+					ok = chance != 0 && chance >= w.rng.range(1, 100);
 				}
 			}
 			*cv = cond.combine(ok, p2);
-			if (ok && kind != 4) skillSuccess.emplace_back(idx, difficulty);
-			if (p2 == 0)
-				for (auto &sd : skillSuccess) (void)sd;   // skill improvement pass omitted (cosmetic progression)
-			if (p2 == 0) skillSuccess.clear();
+			if (!*cv) break;
+			if (kind != 4) skillSuccess.emplace_back(idx, difficulty);
+			if (p2 == 0) {
+				for (const auto &sd : skillSuccess)
+					for (int m = 0; m < w.partyCount(); ++m)
+						if (int(w.getStat(0, 5, sd.first, m)) >= sd.second) improve(m, sd.first);
+				skillSuccess.clear();
+			}
 			break;
 		}
 		case 35: {  // readied slot holds item p0

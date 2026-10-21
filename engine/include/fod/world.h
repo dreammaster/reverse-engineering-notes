@@ -81,6 +81,11 @@ public:
 
 	// -- time --
 	void advanceMinutes(int minutes);
+	struct Hazard {                           // KEH word_2E206/2F018/2D128/2E41C/dword_2EC04: repeating area effect while standing still
+		std::string message;
+		int min = 0, max = 0, interval = 0;
+		bool damage = false;
+	} hazard;
 	bool lootFlag = false;                    // KEH byte_2EE06: a script put items on the party's cell
 	uint16_t timeTicks = 0;                   // KEH _timeTicks: ticks since the game was loaded
 	void damageMember(Member &m, int damage); // KEH damageMember: subtract hp, track last-hurt, mark the dead below -60
