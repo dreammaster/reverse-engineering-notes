@@ -64,6 +64,15 @@ int main(int argc, char **argv) {
 						}
 				}
 			img.writePng(argv[7]);
+		} else if (cmd == "save" && argc >= 4) {   // save <GAMEn>: decrypted savegame block as hex
+			const GameFile g = loadGameFile(dir + "/" + argv[3]);
+			const MsqBlock &b = g.blocks.at(g.saveBlocks.at(0));
+			const Bytes d = xorDecrypt(g.data.data() + b.offset + 4, b.size - 4, b.size - 6);
+			for (size_t i = 0; i < d.size(); i += 16) {
+				std::printf("%04zx:", i);
+				for (size_t j = 0; j < 16 && i + j < d.size(); ++j) std::printf(" %02x", d[i + j]);
+				std::printf("\n");
+			}
 		} else if (cmd == "map" && argc >= 5) {
 			const GameFile g = loadGameFile(dir + "/" + argv[3]);
 			const GameMap &m = g.maps.at(size_t(std::atoi(argv[4])));
