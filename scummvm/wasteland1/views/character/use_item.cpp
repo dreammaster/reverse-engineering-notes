@@ -1,0 +1,288 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "wasteland/wasteland1/views/character/use_item.h"
+#include "wasteland/wasteland1/wasteland1.h"
+#include "wasteland/wasteland1/data/text.h"
+
+namespace Wasteland {
+namespace Wasteland1 {
+namespace Views {
+namespace Character {
+
+UseItem::UseItem() : Pane("CharacterUseItem"),
+		_esc(this, "Escape", "ESC", 18, 0, KEYBIND_ESCAPE),
+		_enter(nullptr, "Enter", "ENTER", 22, 13, Common::KEYCODE_RETURN) {
+	_enter.addKeycode(Common::KEYCODE_SPACE);
+}
+
+void UseItem::draw() {
+	Pane::draw();
+
+	Surface s = getSurface();
+	int msgRow = 6;
+
+	if (_mode == TRADE) {
+		s.writeString("Who wants it?");
+	} else {
+		s.writeString("Do you want to:");
+		s.writeString("Drop", 0, 2);
+		s.writeString("Trade", 0, 3);
+		s.writeString("Equip/unequip", 0, 4);
+
+		if (_canReload) {
+			++msgRow;
+			s.writeString("Reload", 0, 5);
+		}
+		if (_canUnjam) {
+			++msgRow;
+			s.writeString("Unjam", 0, msgRow - 2);
+		}
+
+		// All other modes than the initial options display are
+		// just outcome messages of actions, and need to hide
+		// the Esc button and show the Enter button instead
+		if (_mode != INITIAL)
+			showEnter();
+	}
+
+	switch (_mode) {
+	case TRADE_NONE:
+		s.writeString("No one to trade with.", 0, msgRow);
+		break;
+	case TRADE_FULL:
+		s.writeString("Can't carry any more.", 0, msgRow);
+		break;
+	case TRADE_REFUSE:
+		s.writeString("Doesn't want to trade.", 0, msgRow);
+		break;
+	case JAMMED:
+		s.writeString("Your weapon is jammed.", 0, msgRow);
+		break;
+	case UNJAM_FAIL:
+		s.writeString("can't unjam the weapon.", 0, msgRow);
+		break;
+	case UNJAM_SUCCESS:
+		s.writeString("Unjammed the weapon.", 0, msgRow);
+		break;
+	default:
+		break;
+	}
+}
+
+bool UseItem::msgGame(const GameMessage &msg) {
+	if (msg._name == "UseItem") {
+		show(msg._value);
+		return true;
+	}
+
+	return Pane::msgGame(msg);
+}
+
+void UseItem::show(int selectedItem) {
+	_selectedItem = selectedItem;
+	_mode = INITIAL;
+
+	const Data::InventoryItem &item = g_engine->_currentChar->_items[selectedItem];
+	const Data::ItemDetails &weapon = *g_engine->_currentChar->getEquippedWeaponDetails();
+	_canReload = weapon._ammunitionId == item._id;
+	_canUnjam = item.isJammed();
+
+	addView();
+}
+
+void UseItem::showEnter() {
+	_children.remove(&_esc);
+	_children.push_back(&_enter);
+}
+
+bool UseItem::msgKeypress(const KeypressMessage &msg) {
+	switch (_mode) {
+	case INITIAL:
+		switch (msg.keycode) {
+		case Common::KEYCODE_d:
+			drop();
+			break;
+
+		case Common::KEYCODE_t:
+			trade();
+			break;
+
+		case Common::KEYCODE_e:
+			equip();
+			break;
+
+		case Common::KEYCODE_r:
+			if (_canReload)
+				reload();
+			break;
+
+		case Common::KEYCODE_u:
+			if (_canUnjam)
+				unjam();
+			break;
+
+		default:
+			return Pane::msgKeypress(msg);
+		}
+
+		return true;
+
+	case TRADE:
+		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_9) {
+			uint charNum = msg.keycode - Common::KEYCODE_1 + 1;
+
+			if (charNum <= g_engine->_party.size() &&
+					g_engine->_party[charNum] != g_engine->_currentChar) {
+				trade(charNum);
+			}
+			return true;
+		} else {
+			return Pane::msgKeypress(msg);
+		}
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool UseItem::msgUnfocus(const UnfocusMessage &msg) {
+	// Ensure that the Enter key isn't visible, and Esc is
+	_children.remove(&_esc);
+	if (!_children.contains(&_enter))
+		_children.push_back(&_enter);
+
+	return Pane::msgUnfocus(msg);
+}
+
+void UseItem::drop() {
+	g_engine->_currentChar->_items.remove_at(_selectedItem);
+	_selectedItem = 0;
+	close();
+}
+
+void UseItem::trade() {
+	if (g_engine->_party.size() == 1) {
+		_mode = TRADE_NONE;
+	} else if (g_engine->_party.size() == 2) {
+		// There's only one other person to trade with,
+		// so use them automatically
+		trade(g_engine->_currentChar == g_engine->_party[1] ? 2 : 1);
+	} else {
+		_mode = TRADE;
+	}
+
+	redraw();
+}
+
+void UseItem::trade(int destCharNum) {
+	Data::PartyMember *srcChar = g_engine->_currentChar;
+	Data::PartyMember *destChar = g_engine->_party[destCharNum];
+	Data::InventoryItem &item = srcChar->_items[_selectedItem];
+
+	if (destChar->_npc && !destChar->isUnconscious()) {
+		if (g_events->getRandomNumber(srcChar->_charisma) <
+				destChar->_tradeRefuse) {
+			_mode = TRADE_REFUSE;
+			redraw();
+			return;
+		}
+	}
+
+	if (destChar->_items.full()) {
+		_mode = TRADE_FULL;
+		redraw();
+	} else {
+		// Add to dest character
+		destChar->_items.add(item._id, item._quantity);
+
+		// Remove item from source. If weapon or armor,
+		// also take care of properly unequipping them
+		if (_selectedItem == srcChar->_weapon) {
+			srcChar->_weapon = 0;
+		} else if (_selectedItem == srcChar->_armor) {
+			srcChar->_armor = 0;
+			srcChar->_ac = 0;
+		}
+
+		close();
+	}
+}
+
+void UseItem::equip() {
+	Data::PartyMember &c = *g_engine->_currentChar;
+
+	if (_selectedItem == c._weapon) {
+		// Unequipping weapon
+		c._weapon = 0;
+	} else if (_selectedItem == c._armor) {
+		c._armor = 0;
+		c._ac = 0;
+	} else {
+		Data::InventoryItem &item = c._items[_selectedItem];
+		const Data::ItemDetails &details = *item.getItemDetails();
+
+		// It's either an armor, or everything else is a weapon
+		if (details.isArmor()) {
+			c._ac = details._armorClass;
+			c._armor = _selectedItem;
+		} else {
+			c._weapon = _selectedItem;
+		}
+	}
+
+	close();
+}
+
+void UseItem::reload() {
+	auto *weapon = g_engine->_currentChar->getEquippedWeapon();
+	const auto *weaponDetails = weapon->getItemDetails();
+
+	if (weapon->isJammed()) {
+		_mode = JAMMED;
+	} else {
+		// Replace the weapon's quantity with the ammunition's clip size
+		weapon->setQuantity(weaponDetails->_clipSize);
+		g_engine->_currentChar->_items.remove_at(_selectedItem);
+		close();
+	}
+}
+
+void UseItem::unjam() {
+	auto *weapon = g_engine->_currentChar->getEquippedWeapon();
+	int val = weapon->_quantity & 0x3f;
+
+	if (!weapon->isJammed() || val < 6) {
+		_mode = UNJAM_FAIL;
+	} else {
+		_mode = UNJAM_SUCCESS;
+		weapon->_quantity = 0;
+	}
+
+	showEnter();
+}
+
+} // namespace Character
+} // namespace Views
+} // namespace Wasteland1
+} // namespace Wasteland

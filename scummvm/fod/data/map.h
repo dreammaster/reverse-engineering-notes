@@ -1,0 +1,143 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef WASTELAND_FOD_DATA_MAP_H
+#define WASTELAND_FOD_DATA_MAP_H
+
+#include "wasteland/core/serializer.h"
+
+namespace Wasteland {
+namespace FOD {
+namespace Data {
+
+enum MapFlag { MAPFLAG_8000 = 0x8000 };
+
+#define MAP_CENTER_X 9
+#define MAP_CENTER_Y 4
+#define MAP_TILES_X 19
+#define MAP_TILES_Y 9
+
+#define MAP_FG_SHIFT 11
+#define MAP_BG_MASK 0x7ff
+#define MAP_TILE(BG, FG) ((BG & MAP_BG_MASK) | (FG << MAP_FG_SHIFT))
+
+struct Map {
+	struct MapTile {
+		uint16 _id = 0;
+		byte _flags = 0;
+		byte _field3 = 0;
+		uint16 _field4 = 0;
+		uint16 _actionId = 0;
+
+		void synchronize(Serializer &s);
+
+		void clear() {
+			_id = _flags = _field3 = _field4 = _actionId = 0;
+		}
+		void updateForeground(int fg);
+		void proc1(int arg1, int arg2);
+		void proc2(int opcode, int val, int val2);
+	};
+	typedef Common::Array<MapTile> MapTileColumn;
+
+	struct MapPerson {
+		Common::String _name;
+		byte _field1a = 0;
+		byte _field50 = 0;
+		int8 _mapX = 0;
+		int8 _mapY = 0;
+		byte _id = 0;
+		byte _diff = 0;
+		int8 _oldX = 0;
+		int8 _oldY = 0;
+		byte _field63 = 0;
+		byte _charNum = 0;
+		uint16 _talkId = 0;
+
+		void synchronize(Serializer &s);
+	};
+	struct MapEntry4 {
+		byte _field1;
+		int8 _mapX;
+		int8 _mapY;
+		byte _field5;
+		byte _flags;
+		byte _fieldC;
+
+		void synchronize(Serializer &s);
+	};
+
+private:
+	void synchronizeCore(Serializer &s);
+
+	bool isCloseTo(int diff, int mapX, int mapY) const;
+
+public:
+	uint16 _mapNum = 0;
+	uint16 &_mapPosX;
+	uint16 &_mapPosY;
+
+	uint16 _width = 0;
+	uint16 _height = 0;
+	uint16 _flags = 0;
+	uint16 _field6 = 0;
+	byte _field8 = 0;
+	byte _peopleCount = 0;
+	byte _fieldA = 0;
+	byte _count4 = 0;
+	byte _fieldC = 0;
+	byte _edgeMessage = 0;
+	byte _unknown[1014];
+
+	uint16 _offset1 = 0;
+	uint16 _offsetPeople = 0;
+	uint16 _offset3 = 0;
+	uint16 _offset4 = 0;
+	uint16 _offset5 = 0;
+	uint16 _field40e = 0;
+	uint16 _field410 = 0;
+	uint16 _field412 = 0;
+
+	Common::Array<MapTileColumn> _tiles;
+	Common::Array<MapPerson> _people;
+	Common::Array<MapEntry4> _array4;
+
+	const MapTile *_mapTileTopLeft = nullptr;
+
+	Map(uint16 &mapX, uint16 &mapY);
+
+	void load(Common::SeekableReadStream &src);
+	void updateMap();
+
+	void flagMap() {
+		_flags |= MAPFLAG_8000;
+	}
+
+	MapPerson *findPersonById(byte id, int *charNum);
+	void updateTile(int diff, int mapX, int mapY, int charNum);
+	void updateTileForeground(int mapX, int mapY, int fg);
+};
+
+} // namespace Data
+} // namespace FOD
+} // namespace Wasteland
+
+#endif

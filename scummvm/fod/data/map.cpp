@@ -1,0 +1,218 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/file.h"
+#include "wasteland/fod/data/map.h"
+#include "wasteland/fod/logic/scripts.h"
+
+namespace Wasteland {
+namespace FOD {
+namespace Data {
+
+void Map::MapTile::synchronize(Serializer &s) {
+	s.syncAsUint16LE(_id);
+	s.syncAsByte(_flags);
+	s.syncAsByte(_field3);
+	s.syncAsUint16LE(_field4);
+	s.syncAsUint16LE(_actionId);
+}
+
+void Map::MapTile::updateForeground(int fg) {
+	_id = MAP_TILE(_id & MAP_BG_MASK, fg);
+}
+
+void Map::MapTile::proc1(int arg1, int arg2) {
+	_field3 = arg1 & 0x7f;
+	_flags = (_flags & ~1) | (arg1 >> 7);
+	_field4 = arg2 & 0x7f;
+	_flags = (_flags & ~2) | ((arg2 & 0x8000) > 14);
+}
+
+void Map::MapTile::proc2(int opcode, int val, int val2) {
+	int bg;
+
+	switch (opcode) {
+	case Logic::kOpcode26:
+	case Logic::kOpcode29:
+		proc1(val, val2);
+		break;
+
+	case Logic::kOpcode25:
+	case Logic::kOpcode28:
+		bg = _id & MAP_BG_MASK;
+		if (bg != val)
+			_id = (_id & ~MAP_BG_MASK) | val;
+		break;
+
+	case Logic::kOpcode27:
+	case Logic::kOpcode30:
+		_actionId = val;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Map::MapPerson::synchronize(Serializer &s) {
+	byte buf[0x68];
+	s.syncBytes(buf, 0x68);
+
+	if (s.isLoading()) {
+		buf[14] = '\0';
+		_name = Common::String((const char *)buf);
+
+		_field1a = buf[0x1a];
+		_id = buf[0x49];
+		_field50 = buf[0x50];
+		_mapX = (int8)buf[0x5b];
+		_mapY = (int8)buf[0x5c];
+		_diff = buf[0x5f];
+		_oldX = (int8)buf[0x60];
+		_oldY = (int8)buf[0x61];
+		_field63 = buf[0x63];
+		_charNum = buf[0x65];
+		_talkId = READ_LE_UINT16(&buf[0x66]);
+	}
+}
+
+void Map::MapEntry4::synchronize(Serializer &s) {
+	byte buf[0x66];
+	s.syncBytes(buf, 0x66);
+
+	if (s.isLoading()) {
+		_field1 = buf[1];
+		_mapX = (int8)buf[2];
+		_mapY = (int8)buf[3];
+		_field5 = buf[5];
+		_flags = buf[9];
+		_fieldC = buf[12];
+	}
+}
+
+void Map::synchronizeCore(Serializer &s) {
+	s.syncAsUint16LE(_width);
+	s.syncAsUint16LE(_height);
+	s.syncAsUint16LE(_flags);
+	s.syncAsUint16LE(_field6);
+	s.syncAsByte(_field8);
+	s.syncAsByte(_peopleCount);
+	s.syncAsByte(_fieldA);
+	s.syncAsByte(_count4);
+	s.syncAsByte(_fieldC);
+	s.syncAsByte(_edgeMessage);
+	s.syncBytes(_unknown, 1014);
+
+	s.syncAsUint16LE(_offset1);
+	s.syncAsUint16LE(_offsetPeople);
+	s.syncAsUint16LE(_offset3);
+	s.syncAsUint16LE(_offset4);
+	s.syncAsUint16LE(_offset5);
+	s.syncAsUint16LE(_field40e);
+	s.syncAsUint16LE(_field410);
+	s.syncAsUint16LE(_field412);
+
+	if (s.isLoading()) {
+		_tiles.resize(_width);
+		for (uint x = 0; x < _width; ++x)
+			_tiles[x].resize(_height);
+	}
+
+	for (uint y = 0; y < _height; ++y)
+		for (uint x = 0; x < _width; ++x)
+			_tiles[x][y].synchronize(s);
+}
+
+Map::Map(uint16 &mapX, uint16 &mapY) : _mapPosX(mapX), _mapPosY(mapY) {
+}
+
+void Map::load(Common::SeekableReadStream &src) {
+	// Get the core data and tiles
+	Serializer s(&src);
+	synchronizeCore(s);
+
+	// Load the specials
+	_people.clear();
+	_people.resize(_peopleCount);
+	src.seek(_offsetPeople);
+
+	for (uint i = 0; i < _peopleCount; ++i)
+		_people[i].synchronize(s);
+
+	// Load array 4
+	_array4.clear();
+	_array4.resize(_count4);
+	src.seek(_offset4);
+
+	for (uint i = 0; i < _count4; ++i)
+		_array4[i].synchronize(s);
+}
+
+void Map::updateMap() {
+	for (uint i = 0; i < _peopleCount; ++i) {
+		const auto &person = _people[i];
+		updateTile(person._diff, person._mapX, person._mapY, person._charNum);
+	}
+
+	for (uint i = 0; i < _count4; ++i) {
+		const auto &entry = _array4[i];
+		if (entry._flags & 0xf)
+			updateTile(entry._field5, entry._mapX, entry._mapY, entry._fieldC);
+	}
+}
+
+Map::MapPerson *Map::findPersonById(byte id, int *charNum) {
+	for (uint i = 0; i < _people.size(); ++i) {
+		MapPerson &person = _people[i];
+		if (person._id == id) {
+			*charNum = i;
+			return &person;
+		}
+	}
+
+	return nullptr;
+}
+
+void Map::updateTile(int diff, int mapX, int mapY, int charNum) {
+	if (mapX >= 0 && mapY >= 0 && mapX < _width && mapY < _height) {
+		MapTile &tile = _tiles[mapX][mapY];
+		tile._id &= MAP_BG_MASK;
+
+		if (isCloseTo(diff, mapX, mapY))
+			tile._id = MAP_TILE(tile._id, charNum);
+	}
+}
+
+bool Map::isCloseTo(int diff, int mapX, int mapY) const {
+	int x1 = _mapPosX - diff, x2 = _mapPosX + diff;
+	int y1 = _mapPosY - diff, y2 = _mapPosY + diff;
+
+	return mapX >= x1 && mapY <= x2 && mapY >= y1 && mapY <= y2;
+}
+
+void Map::updateTileForeground(int mapX, int mapY, int fg) {
+	if (mapX >= 0 && mapX < _width && mapY >= 0 && mapY < _height)
+		_tiles[mapX][mapY].updateForeground(fg);
+}
+
+} // namespace Data
+} // namespace FOD
+} // namespace Wasteland
