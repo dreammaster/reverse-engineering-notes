@@ -197,6 +197,23 @@ int main(int argc, char **argv) {
 			game.showPortrait(std::atoi(argv[5]));
 			game.message("Hello, stranger. Care to look at my wares?");
 			plat.snap.toImage().writePng(argv[3]);
+		} else if (cmd == "gamefight" && argc >= 6) {   // gamefight <out.png> <mapNo> <nth key>: screenshot of an encounter on the game screen
+			GameData gd(dir);
+			Assets assets(dir);
+			struct FightPlatform : Platform {
+				int n = 0, target = 0; Screen last, snap;
+				int waitKey() override { if (++n >= target) { snap = last; return -1; } return 0xFE; }
+				void present(const Screen &s) override { last = s; }
+			} plat;
+			plat.target = std::atoi(argv[5]);
+			Game game(gd, assets, plat, Game::defaultParty(gd));
+			game.world().loadMap(std::atoi(argv[4]));
+			game.world().setPartyPosition(game.world().disk.mapX, game.world().disk.mapY);
+			Combat cb(game.world(), game);
+			for (int i = 0; i < 200 && cb.buildCombatants(false) <= 0; ++i) game.world().tryRandomEncounter();
+			std::printf("combatants=%zu\n", cb.list.size());
+			game.runFight(cb, false);
+			plat.snap.toImage().writePng(argv[3]);
 		} else if (cmd == "borders" && argc >= 5) {   // borders <variant> <out.png>
 			Assets assets(dir);
 			Screen scr;

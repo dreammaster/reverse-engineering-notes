@@ -41,6 +41,8 @@ public:
 	void ending(int n) override;
 	void showPortrait(int pictureId) override;
 	void hidePortrait() override;
+	Combat::Outcome runFight(Combat &cb, bool useMaxRange);   // portraits up while Combat::run plays
+	void showCombatPortraits(const std::vector<int> &pictureIds);
 	void sound(int n) override;
 	void beginEncounter(int monsterIndex) override;
 	void useCommandInCombat(int slot) override;
@@ -94,10 +96,16 @@ private:
 	int _saveSlot = 1;
 	int nextKey();                 // waitKey that keeps the portrait animation running
 	void stepPortrait();
-	int _portraitId = -1;
-	std::unique_ptr<PictureSet> _portraitSet;
-	size_t _portraitPos = 0;
+	struct Portrait {
+		int id = -1;
+		std::unique_ptr<PictureSet> set;
+		size_t pos = 0;
+		int ox = 8, oy = 8;        // picture window origin in pixels (KEH window table at dseg 1E74)
+	};
+	std::vector<Portrait> _portraits;   // up to 3
+	bool _combatView = false;           // portraits drawn over the map area, messages in the lower half
 	Screen _portraitCanvas;
+	bool loadPortrait(int pictureId, int ox, int oy);
 	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 

@@ -1,4 +1,5 @@
 #include "fod/game.h"
+#include <cstdio>
 #include "fod/combat.h"
 #include "fod/party.h"
 #include "fod/charsheet.h"
@@ -69,15 +70,16 @@ void Game::redraw() {
 				else for (int py = 0; py < 8; ++py) for (int px = 0; px < 8; ++px) _screen.put(x * 8 + px, y * 8 + py, 0);
 			}
 	};
-	if (_portraitId >= 0) {
-		drawFrame(0, 0, 12, 13);
+	for (const Portrait &p : _portraits) {
+		drawFrame(p.ox / 8 - 1, 0, p.ox / 8 + 11, 13);
 		for (int y = 0; y < 96; ++y)
-			for (int x = 0; x < 96; ++x) _screen.put(8 + x, 8 + y, _portraitCanvas.get(8 + x, 8 + y));
+			for (int x = 0; x < 96; ++x) _screen.put(p.ox + x, p.oy + y, _portraitCanvas.get(p.ox + x, p.oy + y));
 	}
 	if (_dialogOpen) {
-		const bool side = _portraitId >= 0;
-		const int fx0 = side ? 13 : 7, fy0 = side ? 0 : 5, fx1 = side ? 39 : 32, fy1 = side ? 13 : 18;
-		const int tx = side ? 14 : 8, ty = side ? 1 : 6, tw = side ? 25 : 24, th = side ? 12 : 12;
+		const bool side = _portraits.size() == 1 && !_combatView;
+		const bool low = _combatView;
+		const int fx0 = side ? 13 : low ? 0 : 7, fy0 = side ? 0 : low ? 14 : 5, fx1 = side ? 39 : low ? 39 : 32, fy1 = side ? 13 : low ? 24 : 18;
+		const int tx = side ? 14 : low ? 1 : 8, ty = side ? 1 : low ? 15 : 6, tw = side ? 25 : low ? 38 : 24, th = side ? 12 : low ? 9 : 12;
 		drawFrame(fx0, fy0, fx1, fy1);
 		int row = 0, col = 0;
 		std::string word;
@@ -217,7 +219,7 @@ void Game::startPendingFight(int monsterIndex) {
 	const unsigned speedAttr = (_data.hdspct.at(0x3E8) | (_data.hdspct.at(0x3E9) << 8)) & 7;
 	cb.maxSpeed = mo.raw[0x18 + speedAttr];
 	cb.commands = defaultCombatCommands();
-	const Combat::Outcome o = cb.run(false);
+	const Combat::Outcome o = runFight(cb, false);
 	if (o.wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
 	redraw();
 }
@@ -292,7 +294,7 @@ void Game::endOfTurn() {
 	}
 	if (n <= 0) return;
 	cb.commands = defaultCombatCommands();
-	const Combat::Outcome o = cb.run(false);
+	const Combat::Outcome o = runFight(cb, false);
 	if (o.wiped) {
 		print("\rYour party has been defeated.\r");
 		_quit = true;
@@ -718,7 +720,7 @@ void Game::run() {
 			Combat cb(_w, *this);
 			if (cb.buildCombatants(true) > 0) {
 				cb.commands = defaultCombatCommands();
-				if (cb.run(true).wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
+				if (runFight(cb, true).wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
 			}
 			redraw();
 			break;
@@ -774,7 +776,7 @@ namespace fod {
 
 int Game::nextKey() {
 	for (;;) {
-		if (_portraitId < 0) return _platform.waitKey();
+		if (_portraits.empty()) return _platform.waitKey();
 		const int k = _platform.waitKeyTimeout(165);   // KEH animationTick: every 3 BIOS ticks
 		if (k != -2) return k;
 		stepPortrait();
@@ -784,36 +786,70 @@ int Game::nextKey() {
 
 // KEH loadCombatPortraits / animationTick for one picture: the set's script (at the offset in header bytes 1-2) is a list of
 // {count, frame...} entries; each tick draws the next entry's frames over the picture window, 0xFF restarts the list.
-void Game::showPortrait(int pictureId) {
-	hidePortrait();
+bool Game::loadPortrait(int pictureId, int ox, int oy) {
 	static const char *names[3] = {"KANI", "FANI", "DANI"};
 	const int disk = mapDisk(_w.mapNo);
 	const std::string file = _data.dir + "/" + names[disk == 2 ? 1 : disk == 3 ? 2 : 0];
+	Portrait p;
 	try {
 		Archive ar(file, 53);
-		if (!ar.has(size_t(pictureId))) return;
-		_portraitSet = std::make_unique<PictureSet>(ar.chunkLzss(size_t(pictureId)));
-	} catch (const std::exception &) { return; }
-	_portraitId = pictureId;
+		if (!ar.has(size_t(pictureId))) return false;
+		p.set = std::make_unique<PictureSet>(ar.chunkLzss(size_t(pictureId)));
+	} catch (const std::exception &) { return false; }
+	p.id = pictureId; p.ox = ox; p.oy = oy;
+	p.pos = p.set->scriptStart();
+	_portraits.push_back(std::move(p));
+	return true;
+}
+
+void Game::showPortrait(int pictureId) {
+	hidePortrait();
 	_portraitCanvas.clear();
-	_portraitPos = _portraitSet->scriptStart();
+	if (loadPortrait(pictureId, 8, 8)) stepPortrait();
+}
+
+// Combat: one to three distinct enemy pictures. KEH window order for the count: 1 -> middle, 2 -> left+right, 3 -> middle, left, right.
+void Game::showCombatPortraits(const std::vector<int> &ids) {
+	hidePortrait();
+	_portraitCanvas.clear();
+	static const int xs[3] = {112, 8, 216};
+	const int n = int(std::min<size_t>(ids.size(), 3));
+	for (int i = 0; i < n; ++i) loadPortrait(ids[size_t(i)], xs[n == 2 ? i + 1 : i], 8);
+	_combatView = !_portraits.empty();
 	stepPortrait();
 }
 
 void Game::hidePortrait() {
-	_portraitId = -1;
-	_portraitSet.reset();
+	_portraits.clear();
+	_combatView = false;
 }
 
 void Game::stepPortrait() {
-	if (!_portraitSet) return;
-	const Bytes &d = _portraitSet->data();
-	if (_portraitPos >= d.size()) return;
-	if (d[_portraitPos] == 0xFF) _portraitPos = _portraitSet->scriptStart();
-	const size_t n = d[_portraitPos];
-	for (size_t i = 0; i < n && _portraitPos + 1 + i < d.size(); ++i)
-		_portraitSet->blit(_portraitCanvas, d[_portraitPos + 1 + i], 8, 8);
-	_portraitPos += n + 1;
+	for (Portrait &p : _portraits) {
+		const Bytes &d = p.set->data();
+		if (p.pos >= d.size()) continue;
+		if (d[p.pos] == 0xFF) p.pos = p.set->scriptStart();
+		const size_t n = d[p.pos];
+		for (size_t i = 0; i < n && p.pos + 1 + i < d.size(); ++i) p.set->blit(_portraitCanvas, d[p.pos + 1 + i], p.ox, p.oy);
+		p.pos += n + 1;
+	}
+}
+
+} // namespace fod
+
+namespace fod {
+
+Combat::Outcome Game::runFight(Combat &cb, bool useMaxRange) {
+	std::vector<int> ids;
+	for (const Combatant &c : cb.list) {
+		const int id = c.type == 0 ? -1 : c.b11;   // KEH addCombatant picture argument
+		if (id >= 0 && std::find(ids.begin(), ids.end(), id) == ids.end()) ids.push_back(id);
+	}
+	if (!cb.commands) cb.commands = defaultCombatCommands();
+	showCombatPortraits(ids);
+	const Combat::Outcome o = cb.run(useMaxRange);
+	hidePortrait();
+	return o;
 }
 
 } // namespace fod
