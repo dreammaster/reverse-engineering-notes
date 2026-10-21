@@ -19,3 +19,7 @@ ida_scripts/wl_image.bin
 ida_scripts/wl_syms.txt
 ida_scripts/wl_names.txt
 tmp_out/
+ida_scripts/ext/
+ida_scripts/disasm_out.txt
+ida_scripts/disasm_args.txt
+ida_scripts/wl_dsnames.txt
