@@ -4,223 +4,16 @@
 //   wlemu <image.bin> <gamedir> <command>...
 //   commands: run <millionSteps> | steps <n> | key <hex scancode+ascii> | type <text> | shot <png> | regs
 //             bp <seg:off> | trace <n> | peek <seg:off> <len> | poke <seg:off> <byte>... | call <seg:off> | ticks <n>
-#include "x86.h"
-#include "fod/bytes.h"
+#include "emu.h"
 #include "fod/gfx.h"
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
-#include <algorithm>
 #include <cstring>
-#include <deque>
-#include <filesystem>
-#include <map>
-#include <set>
+
+using emu::Machine;
 
 namespace {
-
-struct Ega {
-	uint8_t planes[4][65536] = {};
-	uint8_t mapMask = 0xF, seqIdx = 0, gcIdx = 0, gc[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0xFF}, latch[4] = {}, crtcIdx = 0, crtc[32] = {};
-	int status = 0;
-
-	uint8_t read(uint32_t addr) {
-		const size_t off = (addr - 0xA0000) & 0xFFFF;
-		for (int p = 0; p < 4; ++p) latch[p] = planes[p][off];
-		return planes[gc[4] & 3][off];
-	}
-	void write(uint32_t addr, uint8_t v) {
-		const size_t off = (addr - 0xA0000) & 0xFFFF;
-		const int mode = gc[5] & 3, rot = gc[3] & 7, func = (gc[3] >> 3) & 3;
-		const uint8_t bitmask = gc[8], sr = gc[0], esr = gc[1];
-		const uint8_t rotated = uint8_t((v >> rot) | (v << (8 - rot)));
-		for (int p = 0; p < 4; ++p) {
-			if (!(mapMask & (1 << p))) continue;
-			uint8_t val = 0, bm = bitmask;
-			switch (mode) {
-			case 0: val = rotated; if (esr & (1 << p)) val = (sr & (1 << p)) ? 0xFF : 0; break;
-			case 1: planes[p][off] = latch[p]; continue;
-			case 2: val = (v & (1 << p)) ? 0xFF : 0; break;
-			default: val = (sr & (1 << p)) ? 0xFF : 0; bm = uint8_t(bitmask & rotated); break;
-			}
-			switch (func) {
-			case 1: val &= latch[p]; break;
-			case 2: val |= latch[p]; break;
-			case 3: val ^= latch[p]; break;
-			default: break;
-			}
-			planes[p][off] = uint8_t((val & bm) | (latch[p] & ~bm));
-		}
-	}
-};
-
-struct Machine {
-	x86::Cpu cpu;
-	Ega ega;
-	std::string gameDir;
-	std::map<int, FILE *> files;
-	int nextHandle = 5;
-	std::deque<uint16_t> keys;
-	bool needKey = false, exited = false;
-	uint64_t nextTick = 0;
-	std::set<uint32_t> breaks;
-	int videoMode = 3;
-	std::map<std::string, std::string> names;   // lower case -> real file name
-	std::map<uint32_t, std::string> syms;
-	std::map<std::string, std::pair<uint64_t, uint64_t>> callCounts;   // name -> (first-use order, count)
-	uint64_t callOrder = 0;
-	std::map<int, std::string> openNames;       // handle -> real file name (for state files)
-
-	explicit Machine(const std::string &dir) : gameDir(dir) {
-		for (const auto &e : std::filesystem::directory_iterator(dir)) {
-			std::string n = e.path().filename().string(), l = n;
-			for (auto &c : l) c = char(std::tolower(static_cast<unsigned char>(c)));
-			names[l] = n;
-		}
-		cpu.onWrite = [this](uint32_t a, uint8_t v) { ega.write(a, v); };
-		cpu.onRead = [this](uint32_t a) { return ega.read(a); };
-		cpu.onIn = [this](x86::Cpu &, uint16_t port, bool wide) -> uint16_t { return portIn(port, wide); };
-		cpu.onOut = [this](x86::Cpu &, uint16_t port, uint16_t v, bool wide) { portOut(port, v, wide); };
-		cpu.onInt = [this](x86::Cpu &c, int n) { return handleInt(c, n); };
-		// IVT -> a single IRET at F000:0000
-		cpu.mem[0xF0000] = 0xCF;
-		for (int i = 0; i < 256; ++i) { cpu.ww(0, uint16_t(i * 4), 0); cpu.ww(0, uint16_t(i * 4 + 2), 0xF000); }
-	}
-
-	uint16_t portIn(uint16_t port, bool) {
-		if (port == 0x3DA) { ega.status ^= 9; return uint16_t(ega.status); }
-		if (port == 0x3C5) return ega.seqIdx == 2 ? ega.mapMask : 0;
-		if (port == 0x3CF) return ega.gc[ega.gcIdx & 15];
-		return 0;
-	}
-	void portOut(uint16_t port, uint16_t v, bool wide) {
-		switch (port) {
-		case 0x3C4: ega.seqIdx = uint8_t(v & 31); if (wide) { if (ega.seqIdx == 2) ega.mapMask = uint8_t(v >> 8); } break;
-		case 0x3C5: if (ega.seqIdx == 2) ega.mapMask = uint8_t(v); break;
-		case 0x3CE: ega.gcIdx = uint8_t(v & 15); if (wide) ega.gc[ega.gcIdx] = uint8_t(v >> 8); break;
-		case 0x3CF: ega.gc[ega.gcIdx & 15] = uint8_t(v); break;
-		case 0x3D4: ega.crtcIdx = uint8_t(v & 31); if (wide) ega.crtc[ega.crtcIdx] = uint8_t(v >> 8); break;
-		case 0x3D5: ega.crtc[ega.crtcIdx & 31] = uint8_t(v); break;
-		default: break;
-		}
-	}
-
-	std::string readName(uint16_t seg, uint16_t off) {
-		std::string s;
-		for (int i = 0; i < 80; ++i) { const char c = char(cpu.rb(seg, uint16_t(off + i))); if (!c) break; s += c; }
-		return s;
-	}
-
-	void setCarry(bool c) { cpu.setFlag(x86::CF, c); }
-
-	bool handleInt(x86::Cpu &c, int n) {
-		const uint8_t ah = uint8_t(c.ax >> 8), al = uint8_t(c.ax);
-		switch (n) {
-		case 0x21:
-			switch (ah) {
-			case 0x19: c.ax = 0x0002; return true;
-			case 0x1C: c.ax = 0x0001; c.cx = 512; c.dx = 1000; return true;
-			case 0x25: c.ww(0, uint16_t(al * 4), c.dx); c.ww(0, uint16_t(al * 4 + 2), c.ds); return true;
-			case 0x35: c.bx = c.rw(0, uint16_t(al * 4)); c.es = c.rw(0, uint16_t(al * 4 + 2)); return true;
-			case 0x3D: {
-				std::string name = readName(c.ds, c.dx), l = name;
-				for (auto &ch : l) ch = char(std::tolower(static_cast<unsigned char>(ch)));
-				const size_t slash = l.find_last_of("\\/:");
-				if (slash != std::string::npos) l = l.substr(slash + 1);
-				const auto it = names.find(l);
-				if (it == names.end()) { std::fprintf(stderr, "open %s: not found\n", name.c_str()); c.ax = 2; setCarry(true); return true; }
-				FILE *f = std::fopen((gameDir + "/" + it->second).c_str(), "rb");
-				if (!f) { c.ax = 2; setCarry(true); return true; }
-				std::fprintf(stderr, "open %s -> handle %d\n", name.c_str(), nextHandle);
-				files[nextHandle] = f; openNames[nextHandle] = it->second;
-				c.ax = uint16_t(nextHandle++);
-				setCarry(false);
-				return true;
-			}
-			case 0x3E: { auto it = files.find(c.bx); if (it != files.end()) { std::fclose(it->second); files.erase(it); openNames.erase(c.bx); } setCarry(false); return true; }
-			case 0x3F: {
-				auto it = files.find(c.bx);
-				if (it == files.end()) { c.ax = 6; setCarry(true); return true; }
-				std::vector<uint8_t> buf(c.cx);
-				const size_t n2 = std::fread(buf.data(), 1, buf.size(), it->second);
-				for (size_t i = 0; i < n2; ++i) c.wb(c.ds, uint16_t(c.dx + i), buf[i]);
-				c.ax = uint16_t(n2);
-				setCarry(false);
-				return true;
-			}
-			case 0x40: c.ax = c.cx; setCarry(false); return true;
-			case 0x42: {
-				auto it = files.find(c.bx);
-				if (it == files.end()) { c.ax = 6; setCarry(true); return true; }
-				const long off = long((uint32_t(c.cx) << 16) | c.dx);
-				std::fseek(it->second, off, al == 0 ? SEEK_SET : al == 1 ? SEEK_CUR : SEEK_END);
-				const long pos = std::ftell(it->second);
-				c.ax = uint16_t(pos); c.dx = uint16_t(uint32_t(pos) >> 16);
-				setCarry(false);
-				return true;
-			}
-			case 0x4C: exited = true; c.halted = true; std::fprintf(stderr, "exit %d\n", al); return true;
-			default: std::fprintf(stderr, "int 21h AH=%02X unhandled at %04X:%04X\n", ah, c.cs, c.ip); return true;
-			}
-		case 0x10:
-			if (ah == 0) videoMode = al;
-			return true;
-		case 0x16:
-			if (ah == 0) {
-				if (keys.empty()) { c.ip = uint16_t(c.ip - 2); needKey = true; return true; }
-				c.ax = keys.front(); keys.pop_front();
-				return true;
-			}
-			if (ah == 1) {
-				if (keys.empty()) c.setFlag(x86::ZF, true);
-				else { c.setFlag(x86::ZF, false); c.ax = keys.front(); }
-				return true;
-			}
-			c.ax = 0;
-			return true;
-		case 0x17: c.ax = 0x9000; return true;
-		case 0x33: if (c.ax == 0) c.ax = 0; return true;   // no mouse
-		case 0x25: case 0x26: c.ax = 0x0101; setCarry(true); return true;
-		case 3: std::fprintf(stderr, "int3 at %04X:%04X\n", c.cs, c.ip); c.fault = "int3"; return true;
-		default: return false;   // through the IVT (timer etc.)
-		}
-	}
-
-	// runs until `maxSteps` instructions, a breakpoint, a key wait, exit or a fault; returns the reason
-	std::string run(uint64_t maxSteps) {
-		needKey = false;
-		const uint64_t end = cpu.steps + maxSteps;
-		while (cpu.steps < end) {
-			if (!cpu.step()) return cpu.fault.empty() ? (exited ? "exit" : "halt") : cpu.fault;
-			if (needKey) return "key";
-			if (cpu.steps >= nextTick) {   // IRQ0 about 18.2 Hz of emulated time at ~1M instr/s
-				nextTick = cpu.steps + 55000;
-				uint32_t ticks = uint32_t(cpu.rw(0x40, 0x6C)) | (uint32_t(cpu.rw(0x40, 0x6E)) << 16);
-				++ticks;
-				cpu.ww(0x40, 0x6C, uint16_t(ticks)); cpu.ww(0x40, 0x6E, uint16_t(ticks >> 16));
-				if (cpu.flag(x86::IF) && cpu.rw(0, 0x20) != 0) cpu.interrupt(8, false);
-			}
-			if (!breaks.empty() && breaks.count(x86::Cpu::lin(cpu.cs, cpu.ip))) return "bp";
-		}
-		return "steps";
-	}
-
-	fod::Image screenshot() {
-		fod::Image img(320, 200);
-		const size_t start = (size_t(ega.crtc[0xC]) << 8) | ega.crtc[0xD];
-		static const uint32_t pal[16] = {0x000000, 0x0000aa, 0x00aa00, 0x00aaaa, 0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
-		                                 0x555555, 0x5555ff, 0x55ff55, 0x55ffff, 0xff5555, 0xff55ff, 0xffff55, 0xffffff};
-		for (int y = 0; y < 200; ++y)
-			for (int x = 0; x < 320; ++x) {
-				const size_t off = (start + size_t(y) * 40 + size_t(x >> 3)) & 0xFFFF;
-				const int bit = 7 - (x & 7);
-				int col = 0;
-				for (int p = 0; p < 4; ++p) col |= ((ega.planes[p][off] >> bit) & 1) << p;
-				const uint32_t c = pal[col];
-				img.set(x, y, {uint8_t(c >> 16), uint8_t(c >> 8), uint8_t(c)});
-			}
-		return img;
-	}
-};
 
 bool parseAddr(const char *s, uint16_t &seg, uint16_t &off) {
 	unsigned a = 0, b = 0;
@@ -291,6 +84,30 @@ int main(int argc, char **argv) {
 					            cpu.ax, cpu.bx, cpu.cx, cpu.dx, cpu.si, cpu.di, cpu.rw(cpu.ss, cpu.sp));
 				};
 			} else m.cpu.onStep = nullptr;
+		} else if (cmd == "callfn" && i + 1 < argc) {   // callfn <off> [reg=hex ...]: run a near function of the code segment until it returns
+			const uint16_t off = uint16_t(std::strtoul(argv[++i], nullptr, 16));
+			while (i + 1 < argc && std::strchr(argv[i + 1], '=')) {
+				const std::string a = argv[++i];
+				const uint16_t v = uint16_t(std::strtoul(a.c_str() + a.find('=') + 1, nullptr, 16));
+				const std::string r = a.substr(0, a.find('='));
+				if (r == "ax") c.ax = v; else if (r == "bx") c.bx = v; else if (r == "cx") c.cx = v; else if (r == "dx") c.dx = v;
+				else if (r == "si") c.si = v; else if (r == "di") c.di = v; else if (r == "bp") c.bp = v; else if (r == "es") c.es = v; else if (r == "ds") c.ds = v;
+				else if (r == "al") c.ax = uint16_t((c.ax & 0xFF00) | (v & 0xFF)); else if (r == "ah") c.ax = uint16_t((c.ax & 0xFF) | (v << 8));
+				else if (r == "bl") c.bx = uint16_t((c.bx & 0xFF00) | (v & 0xFF)); else if (r == "bh") c.bx = uint16_t((c.bx & 0xFF) | (v << 8));
+				else if (r == "cl") c.cx = uint16_t((c.cx & 0xFF00) | (v & 0xFF)); else if (r == "ch") c.cx = uint16_t((c.cx & 0xFF) | (v << 8));
+				else if (r == "dl") c.dx = uint16_t((c.dx & 0xFF00) | (v & 0xFF)); else if (r == "dh") c.dx = uint16_t((c.dx & 0xFF) | (v << 8));
+			}
+			const uint16_t savedCs = c.cs, savedIp = c.ip, savedSp = c.sp, savedDs = c.ds, savedEs = c.es, savedSs = c.ss;
+			c.cs = 0x1000; c.ds = 0x1CE2; c.ss = 0x3900;
+			c.push(0x0000);                     // return to 1000:0000, a breakpoint
+			c.ip = off;
+			m.breaks.insert(0x10000);
+			const uint64_t before = c.steps;
+			std::string why = m.run(20000000);
+			m.breaks.erase(0x10000);
+			std::printf("callfn %04X: %s after %llu steps  AX=%04X BX=%04X CX=%04X DX=%04X SI=%04X DI=%04X CF=%d ZF=%d SF=%d\n", off, why.c_str(), (unsigned long long)(c.steps - before),
+			            c.ax, c.bx, c.cx, c.dx, c.si, c.di, c.flag(x86::CF), c.flag(x86::ZF), c.flag(x86::SF));
+			(void)savedCs; (void)savedIp; (void)savedSp; (void)savedDs; (void)savedEs; (void)savedSs;
 		} else if (cmd == "callsum" && i + 1 < argc) {   // callsum on|print|clear: per-function call counts in order of first use
 			const std::string sub = argv[++i];
 			if (sub == "on") {
