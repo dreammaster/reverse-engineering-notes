@@ -27,9 +27,11 @@ Test commands (`fodrun <gamedir> ...`): `maps`, `render`, `script`, `run`, `scre
 `shop <map> <idx> <keys>`, `scriptall` (runs every script of every map), `savetest`, `pict <file> <png>`,
 `borders <n> <png>`, `items|weapons|professions|enemies`.
 
-Not done yet: combat screen UI (party status rows, enemy picture panel), shop/NPC portraits and picture sets
-(`*PICT` sub-pictures), map animations (`*ANI`), the animated FOD welcome portrait (`GANI`), blast-weapon
-party attacks and the combat-time use-item command, KEH.EXE credits/ending pictures, the Tandy/CGA/EGA video modes.
+Also done: animated KANI/FANI/DANI portraits (shops, services, NPC talk, combat with up to three enemies), ending
+screens (op 74), the GANI welcome portrait, hourly mutation events, combat-time skill/item use.
+
+Not done yet: a dedicated combat screen layout (party status/name windows as in the original, F-key command entry),
+blast-weapon party attacks, the Tandy/CGA/EGA video modes.
 
 Note: this machine's antivirus deletes freshly linked dynamically linked test
 executables; the CMake files link statically and use neutral target names.
