@@ -245,17 +245,7 @@ int Combat::rollAttack(const Combatant &c, int &totalDamage, int &wound) {
 }
 
 // KEH trySkillImprove (0x1969F): bump the use counter of skill idx; on overflow raise the skill if the attribute allows.
-int Combat::trySkillImprove(int slot, int skill) {
-	Member &m = _w.party(slot);
-	const int attrIdx = skill > 15 ? 1 : 4;
-	++m.b[0x124 + skill];
-	if (m.b[0x124 + skill] < _w.data.hdspct.at(0x13A + 0x16 * size_t(skill))) return 0;
-	int raised = 0;
-	const int attr = m.b[0x18 + attrIdx];
-	if (attr > 15 && attr - 15 > m.b[0x24 + skill]) { ++m.b[0x24 + skill]; raised = 1; }
-	m.b[0x124 + skill] = 0;
-	return raised;
-}
+int Combat::trySkillImprove(int slot, int skill) { return _w.trySkillImprove(slot, skill); }
 
 void Combat::useUpAmmo(int slot, int itemSlot) {
 	Member &m = _w.party(slot);

@@ -1,5 +1,6 @@
 // The whole-fight loop of KEH.EXE (runCombat) and the helpers it drives. Names in comments are IDB names.
 #include "fod/combat.h"
+#include "fod/party.h"
 #include "fod/progress.h"
 #include <algorithm>
 #include <cstdlib>
@@ -291,7 +292,28 @@ void Combat::executeCombatant(size_t idx, bool &fled) {
 	case 15:
 		fled = tryFlee();
 		break;
-	default:   // 8/9 doctor, 10/11 use item, 12 trade: need the party screens (not ported yet)
+	case 8: case 9:
+		if (!active) break;
+		{
+			const int target = m->b[0x146];
+			const bool heal = c.command == 8;
+			const bool ok = doctorTreat(_w, _h, c.index, false, true);
+			const std::string tn = _w.party(target).name();
+			if (ok) _h.print(m->name() + " " + (heal ? "heals" : "cures") + " " + tn + ".\r\r");
+			else _h.print(m->name() + " fails to " + (heal ? "heal" : "cure") + " " + tn + ".\r\r");
+		}
+		break;
+	case 12:
+	{
+		const int slotIdx = m->b[0x145], target = m->b[0x146];
+		const std::string itemName = _w.item(m->itemId(slotIdx)).name;
+		if (giveItemToMember(_w, _h, c.index, target, slotIdx, false))
+			_h.print(m->name() + " trades " + kPoss[m->u8(0x50) & 3] + " " + itemName + " to " + _w.party(target).name() + ".\r\r");
+		else
+			_h.print(m->name() + "'s trade fails.\r\r");
+		break;
+	}
+	default:   // 10/11 use an item on the map: needs the field-command code
 		break;
 	}
 }

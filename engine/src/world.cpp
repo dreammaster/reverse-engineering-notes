@@ -430,6 +430,30 @@ void World::dropPacketLoot(int packet, int x, int y, int overrideFirstItem) {
 	if (any && map->inBounds(x, y)) map->cell(x, y).flags |= 0x80;
 }
 
+// ---------------------------------------------------------------- skills
+int World::trySkillImprove(int slot, int skill) {
+	Member &m = party(slot);
+	const int attrIdx = skill > 15 ? 1 : 4;
+	++m.b[0x124 + skill];
+	if (m.b[0x124 + skill] < data.hdspct.at(0x13A + 0x16 * size_t(skill))) return 0;
+	int raised = 0;
+	const int attr = m.b[0x18 + attrIdx];
+	if (attr > 15 && attr - 15 > m.b[0x24 + skill]) { ++m.b[0x24 + skill]; raised = 1; }
+	m.b[0x124 + skill] = 0;
+	return raised;
+}
+
+std::string World::skillName(int skill) const {
+	const size_t o = skill < 16 ? 0x126 + 0x16 * size_t(skill) : 0x286 + 0x16 * size_t(skill - 16);
+	const char *p = reinterpret_cast<const char *>(data.hdspct.data() + o);
+	return std::string(p, strnlen(p, 20));
+}
+
+std::string World::attributeName(int attr) const {
+	const char *p = reinterpret_cast<const char *>(data.hdspct.data() + 6 + 0x18 * size_t(attr));
+	return std::string(p, strnlen(p, 20));
+}
+
 // ---------------------------------------------------------------- monsters / roster
 Monster *World::findMonsterById(int id, size_t &index) {
 	auto &ms = map->monsters();

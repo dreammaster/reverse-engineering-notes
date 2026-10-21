@@ -107,6 +107,10 @@ public:
 	void moveEntityStep(uint8_t &px, uint8_t &py, int reach, int detect, int toward, int overlay);
 	void moveMapEntities();                   // monsters and groups creep toward the party
 	void placeEntitiesOnMap();
+	// skills
+	int trySkillImprove(int slot, int skill);     // KEH trySkillImprove: 1 if the skill rose
+	std::string skillName(int skill) const;       // 0..15 active, 16..31 passive
+	std::string attributeName(int attr) const;
 	// monsters / NPCs / roster
 	Monster *findMonsterById(int id, size_t &index);
 	bool addNpcToParty(size_t monsterIndex);  // KEH addNpcToParty; false if the party is full
