@@ -45,10 +45,10 @@ static GenInfo(void) {
 	set_inf_attr(INF_STRLIT_BREAK, 0xA);
 	set_flag(INF_CMTFLG, SCF_ALLCMT, 0);
 	set_flag(INF_OUTFLAGS, OFLG_SHOW_VOID, 0);
-	set_inf_attr(INF_XREFNUM, 0);
+	set_inf_attr(INF_XREFNUM, 2);
 	set_flag(INF_OUTFLAGS, OFLG_SHOW_AUTO, 1);
-	set_inf_attr(INF_INDENT, 0);
-	set_inf_attr(INF_CMT_INDENT, 24);
+	set_inf_attr(INF_INDENT, 16);
+	set_inf_attr(INF_CMT_INDENT, 40);
 	set_inf_attr(INF_MAXREF, 0x10);
 	add_default_til("ms16win");
 }
@@ -873,6 +873,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1072A);
 	op_hex		(x,	1);
 	create_insn	(0X1073E);
+	set_name	(0X1073E,	"isWithinRadiusOfParty");
 	create_insn	(x=0X10741);
 	op_hex		(x,	1);
 	create_insn	(x=0X10745);
@@ -1857,6 +1858,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X115C3);
 	op_hex		(x,	1);
 	create_insn	(0X115CB);
+	set_name	(0X115CB,	"drawListMenuPage");
 	create_insn	(x=0X115CE);
 	op_hex		(x,	1);
 	create_insn	(x=0X115D1);
@@ -1919,6 +1921,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1167B);
 	op_stkvar	(x,	1);
 	create_insn	(0X11682);
+	set_name	(0X11682,	"listMenuSelect");
 	create_insn	(x=0X11685);
 	op_hex		(x,	1);
 	create_insn	(x=0X11689);
@@ -3058,6 +3061,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12AA1);
 	op_stkvar	(x,	0);
 	create_insn	(0X12AB2);
+	set_name	(0X12AB2,	"setMapCellHighBits");
 	create_insn	(x=0X12AB5);
 	op_hex		(x,	1);
 	create_insn	(x=0X12AB9);
@@ -3124,6 +3128,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12B8E);
 	op_hex		(x,	1);
 	create_insn	(0X12B93);
+	set_name	(0X12B93,	"checkPartyWipeAndQuit");
 	create_insn	(x=0X12B96);
 	op_hex		(x,	1);
 	create_insn	(x=0X12B99);
@@ -6386,6 +6391,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X16314);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X16318,	"text",	0);
 	create_insn	(x=0X1631C);
 	op_hex		(x,	1);
@@ -6399,15 +6413,6 @@ static Bytes_0(void) {
 	create_insn	(0X1633D);
 	create_insn	(x=0X16347);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1634D,	"jumptable 000167A7 case 5",	1);
 	create_insn	(0X1634D);
 	create_insn	(x=0X16353);
@@ -7131,6 +7136,7 @@ static Bytes_1(void) {
 	create_insn	(0X16F57);
 	create_insn	(0X16F67);
 	create_insn	(0X16F6B);
+	set_name	(0X16F6B,	"isMemberActive");
 	create_insn	(x=0X16F6E);
 	op_hex		(x,	1);
 	create_insn	(x=0X16F71);
@@ -8057,6 +8063,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17E01);
 	op_stkvar	(x,	1);
 	create_insn	(0X17E09);
+	set_name	(0X17E09,	"markMapDirty");
 	create_insn	(x=0X17E0D);
 	op_hex		(x,	1);
 	create_insn	(0X17E13);
@@ -12079,6 +12086,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B273);
 	op_hex		(x,	1);
 	create_insn	(0X1B29B);
+	set_name	(0X1B29B,	"showMessageWaitKey");
 	set_cmt	(0X1B29E,	"draw",	0);
 	create_insn	(x=0X1B2AA);
 	op_plain_offset	(x,	1,	0X21240);
@@ -12180,6 +12188,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B3E6);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1B3E9,	"win",	0);
 	create_insn	(x=0X1B3ED);
 	op_hex		(x,	1);
@@ -12202,15 +12219,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1B431);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B437);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -12220,6 +12228,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1B44D);
 	op_hex		(x,	1);
 	create_insn	(0X1B452);
+	set_name	(0X1B452,	"redrawGameScreen");
 	create_insn	(x=0X1B460);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -15118,9 +15127,11 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X1D9F5);
+	set_name	(0X1D9F5,	"addDirtyRectFromBounds");
 	create_insn	(x=0X1D9FD);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DA17);
+	set_name	(0X1DA17,	"refreshBounds");
 	create_insn	(x=0X1DA1F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DA26);
@@ -15220,6 +15231,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DB51);
 	op_stroff	(x,	1,	GetStrucIdByName("Window"),	0);
 	create_insn	(0X1DB58);
+	set_name	(0X1DB58,	"substituteCaret");
 	create_insn	(x=0X1DB5B);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -15240,8 +15252,11 @@ static Bytes_2(void) {
 	set_cmt	(0X1DBF3,	"str",	0);
 	create_insn	(0X1DBF9);
 	create_insn	(0X1DBFD);
+	set_name	(0X1DBFD,	"writeStringFlushRun");
 	create_insn	(0X1DC0B);
+	set_name	(0X1DC0B,	"writeStringRun");
 	create_insn	(0X1DC28);
+	set_name	(0X1DC28,	"refreshCurrentWindow");
 	create_insn	(x=0X1DC2F);
 	op_stroff	(x,	0,	GetStrucIdByName("Window"),	0);
 	create_insn	(x=0X1DC33);
@@ -15251,6 +15266,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DC3F);
 	op_hex		(x,	1);
 	create_insn	(0X1DC46);
+	set_name	(0X1DC46,	"buildMapView");
 	create_insn	(x=0X1DC51);
 	op_hex		(x,	1);
 	create_insn	(x=0X1DC69);
@@ -15285,10 +15301,12 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DD11);
 	op_hex		(x,	1);
 	create_insn	(0X1DD19);
+	set_name	(0X1DD19,	"drawMapViewTiles");
 	create_insn	(x=0X1DD1D);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X1DD4C);
+	set_name	(0X1DD4C,	"redrawMapView");
 	create_insn	(x=0X1DD51);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -15302,6 +15320,7 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X1DDFD);
+	set_name	(0X1DDFD,	"newLine");
 	create_insn	(0X1DE3F);
 	create_insn	(0X1DE40);
 	set_name	(0X1DE40,	"writeStringAt");
@@ -15322,6 +15341,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DE71);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DE81);
+	set_name	(0X1DE81,	"writeCharAtWindowPos");
 	create_insn	(x=0X1DE92);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DE9B);
@@ -15329,6 +15349,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DEA1);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DEB1);
+	set_name	(0X1DEB1,	"randomRange");
 	create_insn	(x=0X1DEBC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DEBF);
@@ -15338,9 +15359,11 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DECC);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DEDB);
+	set_name	(0X1DEDB,	"rngByteSaveRegs");
 	create_insn	(x=0X1DEE7);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1DEE7,	"rngByte");
 	create_insn	(0X1DF0C);
 	set_cmt	(0X1DF17,	"DOS - 2+ - ALLOCATE MEMORY\nBX = number of 16-byte paragraphs desired",	0);
 	create_insn	(x=0X1DF17);
@@ -15389,6 +15412,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E00F);
 	op_hex		(x,	1);
 	create_insn	(0X1E017);
+	set_name	(0X1E017,	"blitTileRaw");
 	create_insn	(x=0X1E026);
 	op_hex		(x,	1);
 	create_insn	(0X1E045);
@@ -15399,10 +15423,12 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E07F);
 	op_hex		(x,	1);
 	create_insn	(0X1E08C);
+	set_name	(0X1E08C,	"getBiosTicks");
 	set_cmt	(0X1E090,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X1E090);
 	op_hex		(x,	0);
 	create_insn	(0X1E098);
+	set_name	(0X1E098,	"drawTile");
 	create_insn	(x=0X1E09F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E0AE);
@@ -15465,6 +15491,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E170);
 	op_hex		(x,	1);
 	create_insn	(0X1E18D);
+	set_name	(0X1E18D,	"scrollWindowUp");
 	create_insn	(x=0X1E191);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E1AE);
@@ -15497,6 +15524,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E2A7);
 	op_hex		(x,	1);
 	create_insn	(0X1E2B8);
+	set_name	(0X1E2B8,	"invertRect");
 	create_insn	(x=0X1E2C3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1E2CD);
@@ -15545,6 +15573,7 @@ static Bytes_2(void) {
 	create_byte	(0X1E362);
 	create_insn	(0X1E363);
 	create_insn	(0X1E376);
+	set_name	(0X1E376,	"writeIndexedString");
 	create_insn	(x=0X1E387);
 	op_stkvar	(x,	1);
 	create_byte	(0X1E390);
@@ -15656,6 +15685,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E4CA);
 	op_hex		(x,	0);
 	create_insn	(0X1E4D0);
+	set_name	(0X1E4D0,	"lzssDecode");
 	create_insn	(x=0X1E4D1);
 	op_seg		(x,	1);
 	create_insn	(x=0X1E549);
@@ -15681,6 +15711,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1E5BC);
 	create_insn	(0X1E5BD);
+	set_name	(0X1E5BD,	"lzssDecodeSegs");
 	create_insn	(x=0X1E5C8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1E5CE);
@@ -17262,6 +17293,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X20452);
 	op_stkvar	(x,	1);
 	create_insn	(0X2045A);
+	set_name	(0X2045A,	"removeMemberFromParty");
 	create_insn	(x=0X2045D);
 	op_hex		(x,	1);
 	create_insn	(x=0X20462);
@@ -17443,6 +17475,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X20718,	0X8);
 	create_insn	(0X20720);
+	set_name	(0X20720,	"restoreTextMode");
 	set_cmt	(0X2072B,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X2072B);
 	op_hex		(x,	0);
@@ -17452,7 +17485,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X20761);
 	op_hex		(x,	1);
 	create_insn	(0X20772);
+	set_name	(0X20772,	"clearDirtyRects");
 	create_insn	(0X2077F);
+	set_name	(0X2077F,	"addDirtyRect");
 	create_insn	(x=0X2078E);
 	op_hex		(x,	1);
 	create_insn	(x=0X20794);
@@ -17499,7 +17534,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X208D8);
 	op_hex		(x,	1);
 	create_insn	(0X208E2);
+	set_name	(0X208E2,	"flushDirtyRects");
 	create_insn	(0X208FC);
+	set_name	(0X208FC,	"blitDirtyRects");
 	create_insn	(0X2090F);
 	create_insn	(x=0X20920);
 	op_hex		(x,	1);
@@ -17523,6 +17560,7 @@ static Bytes_2(void) {
 	create_byte	(0X209FC);
 	make_array	(0X209FC,	0X694);
 	create_insn	(0X21090);
+	set_name	(0X21090,	"blitPic");
 	create_insn	(x=0X2109F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X210A2);
@@ -17538,6 +17576,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X210C5);
 	op_hex		(x,	1);
 	create_insn	(0X210DD);
+	set_name	(0X210DD,	"blitPicFrame");
 	create_insn	(x=0X210E8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X210EB);
@@ -17554,6 +17593,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	make_array	(0X21121,	0XF);
 	create_insn	(0X21130);
+	set_name	(0X21130,	"playSound");
 	create_insn	(x=0X2113B);
 	op_seg		(x,	1);
 	create_insn	(x=0X21147);
@@ -17568,6 +17608,15 @@ static Bytes_2(void) {
 	set_cmt	(0X21168,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X21168);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2116C,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X2116C);
 	op_hex		(x,	0);
@@ -17584,6 +17633,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X21186);
 	op_hex		(x,	1);
 	create_insn	(0X2119E);
+	set_name	(0X2119E,	"soundTick");
 	create_insn	(0X211A8);
 	create_insn	(0X211B2);
 	create_insn	(0X211BC);
@@ -17595,15 +17645,6 @@ static Bytes_2(void) {
 	set_cmt	(0X211D5,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X211D5);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X211DE);
 	create_insn	(0X211DF);
 	create_insn	(0X211FC);
@@ -18391,7 +18432,11 @@ static Bytes_3(void) {
 	set_name	(0X22A2D,	"aReallyBanishS");
 	create_strlit	(0X22A41,	0X1F);
 	set_name	(0X22A41,	"aThereIsNoRoomI");
+	set_cmt	(0X22A64,	"16-byte PRNG state used by rngByte",	1);
+	set_name	(0X22A64,	"_rngState");
+	set_cmt	(0X22A74,	"nonzero: pause at end of window instead of scrolling",	1);
 	create_byte	(0X22A74);
+	set_name	(0X22A74,	"_pageOnOverflow");
 	create_strlit	(0X22A75,	0X2D);
 	set_name	(0X22A75,	"str");
 	create_strlit	(0X22AA2,	0X39);
@@ -18432,7 +18477,9 @@ static Bytes_3(void) {
 	make_array	(x,	0XB);
 	op_plain_offset	(x,	0,	0X21240);
 	op_plain_offset	(x,	128,	0X21240);
+	set_cmt	(0X22C44,	"scroll delay level 1-8",	1);
 	create_word	(0X22C44);
+	set_name	(0X22C44,	"_textSpeed");
 	create_word	(0X22C46);
 	create_word	(0X22C48);
 	create_dword	(0X22C4A);
@@ -18449,12 +18496,16 @@ static Bytes_3(void) {
 	set_name	(0X22C66,	"_fontData");
 	create_dword	(0X22C6A);
 	set_name	(0X22C6A,	"_borders");
+	set_cmt	(0X22C6E,	"far ptr to the loaded map (w,h @0/2; flags @5; cells at +0x414, 8 bytes each)",	1);
 	create_dword	(0X22C6E);
+	set_name	(0X22C6E,	"_map");
 	create_word	(0X22C72);
 	create_word	(0X22C74);
 	create_word	(0X22C86);
 	create_word	(0X22C88);
+	set_cmt	(0X22C8A,	"ptr to the string that replaces '^' in writeString",	1);
 	create_word	(0X22C8A);
+	set_name	(0X22C8A,	"_caretSubstitution");
 	create_word	(0X22C8C);
 	set_name	(0X22C8C,	"_currentWindow");
 	MakeStruct	(0X22D18,	"Window");
@@ -18539,9 +18590,15 @@ static Bytes_3(void) {
 	set_name	(0X2B301,	"_scanlinePtrs");
 	create_word	(0X2BA09);
 	create_byte	(0X2BA0D);
+	set_cmt	(0X2BA0E,	"number of queued dirty rects",	1);
 	create_word	(0X2BA0E);
+	set_name	(0X2BA0E,	"_dirtyRectCount");
+	set_cmt	(0X2BA10,	"next free entry in the dirty-rect list",	1);
 	create_word	(0X2BA10);
+	set_name	(0X2BA10,	"_dirtyRectNext");
+	set_cmt	(0X2BA12,	"read cursor while blitting",	1);
 	create_word	(0X2BA12);
+	set_name	(0X2BA12,	"_dirtyRectCursor");
 	create_strlit	(0X2BA74,	0X41);
 	set_name	(0X2BA74,	"aYouSeeMilesOfI");
 	create_strlit	(0X2BAB5,	0X29);
@@ -18836,6 +18893,7 @@ static Functions_0(void) {
 	define_local_var(0X10477, 0X1073E, "[bp-0X2]", "numChars");
 	add_func    (0X1073E,0X10795);
 	set_func_flags(0X1073E,0x5410);
+	set_func_cmt(0X1073E,	"(radius, x, y) -> true if the point is within a square radius of the party map position", 1);
 	set_frame_size(0X1073E, 0XA, 2, 0);
 	add_func    (0X10795,0X107CB);
 	set_func_flags(0X10795,0x5410);
@@ -18907,10 +18965,12 @@ static Functions_0(void) {
 	set_frame_size(0X1138D, 0, 2, 0);
 	add_func    (0X115CB,0X11682);
 	set_func_flags(0X115CB,0x5410);
+	set_func_cmt(0X115CB,	"draws one page (max 8 rows) of a scrolling list menu with up/down markers; rows are drawn through a callback", 1);
 	set_frame_size(0X115CB, 0X2E, 2, 0);
 	define_local_var(0X115CB, 0X11682, "[bp+0XA]", "text");
 	add_func    (0X11682,0X11766);
 	set_func_flags(0X11682,0x5410);
+	set_func_cmt(0X11682,	"runs a scrolling list menu: keys 1-8, PgUp/PgDn/cursor keys; returns the chosen index", 1);
 	set_frame_size(0X11682, 0XC, 2, 0);
 	add_func    (0X11766,0X11834);
 	set_func_flags(0X11766,0x5410);
@@ -18987,6 +19047,7 @@ static Functions_0(void) {
 	set_frame_size(0X12A34, 0X4, 2, 0);
 	add_func    (0X12AB2,0X12AFC);
 	set_func_flags(0X12AB2,0x5410);
+	set_func_cmt(0X12AB2,	"sets the top 5 bits of the map cell word at (x, y), preserving the low 11 bits", 1);
 	set_frame_size(0X12AB2, 0X6, 2, 0);
 	add_func    (0X12AFC,0X12B70);
 	set_func_flags(0X12AFC,0x5410);
@@ -19000,6 +19061,7 @@ static Functions_0(void) {
 	set_frame_size(0X12B70, 0, 2, 0);
 	add_func    (0X12B93,0X12C0F);
 	set_func_flags(0X12B93,0x5410);
+	set_func_cmt(0X12B93,	"if no member has con > -15: revive them to -65 (0xFFBF) and run the end handling, then quit(arg)", 1);
 	set_frame_size(0X12B93, 0X4, 2, 0);
 	add_func    (0X12C0F,0X12CF5);
 	set_func_flags(0X12C0F,0x5410);
@@ -19163,6 +19225,7 @@ static Functions_0(void) {
 	set_frame_size(0X16F43, 0, 0, 0);
 	add_func    (0X16F6B,0X16F9D);
 	set_func_flags(0X16F6B,0x5410);
+	set_func_cmt(0X16F6B,	"true if member.con (+44h, minus level overflow >15) is positive", 1);
 	set_frame_size(0X16F6B, 0X4, 2, 0);
 	add_func    (0X16F9D,0X17015);
 	set_func_flags(0X16F9D,0x5410);
@@ -19225,6 +19288,7 @@ static Functions_0(void) {
 	define_local_var(0X17D9B, 0X17E09, "[bp+0X4]", "member");
 	add_func    (0X17E09,0X17E13);
 	set_func_flags(0X17E09,0x5400);
+	set_func_cmt(0X17E09,	"sets bit 0x80 of the map header flags (dword_22C6E+5)", 1);
 	set_frame_size(0X17E09, 0, 0, 0);
 	add_func    (0X17E13,0X17E37);
 	set_func_flags(0X17E13,0x5410);
@@ -19421,6 +19485,7 @@ static Functions_0(void) {
 	set_name(0X1B090, "opcode46", SN_LOCAL);
 	add_func    (0X1B29B,0X1B2F0);
 	set_func_flags(0X1B29B,0x5410);
+	set_func_cmt(0X1B29B,	"prints text in the dialog window (or window7), pages output, waits for key 0xFE", 1);
 	set_frame_size(0X1B29B, 0X2, 2, 0);
 	define_local_var(0X1B29B, 0X1B2F0, "[bp+0X4]", "text");
 	add_func    (0X1B2F0,0X1B360);
@@ -19439,6 +19504,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B3DF, 0, 2, 0);
 	add_func    (0X1B452,0X1B498);
 	set_func_flags(0X1B452,0x5400);
+	set_func_cmt(0X1B452,	"resets windows, redraws party list, map view and clock", 1);
 	set_frame_size(0X1B452, 0, 0, 0);
 	add_func    (0X1B498,0X1B4D4);
 	set_func_flags(0X1B498,0x5410);
@@ -19573,9 +19639,11 @@ static Functions_0(void) {
 	set_frame_size(0X1D9CF, 0X10, 0, 0);
 	add_func    (0X1D9F5,0X1DA17);
 	set_func_flags(0X1D9F5,0x5410);
+	set_func_cmt(0X1D9F5,	"loads x/y/w/h from a Bounds struct and calls addDirtyRect", 1);
 	set_frame_size(0X1D9F5, 0X4, 2, 0);
 	add_func    (0X1DA17,0X1DA35);
 	set_func_flags(0X1DA17,0x5410);
+	set_func_cmt(0X1DA17,	"queue a Bounds rect and flush it to the screen immediately", 1);
 	set_frame_size(0X1DA17, 0X4, 2, 0);
 	add_func    (0X1DA41,0X1DA8C);
 	set_func_flags(0X1DA41,0x5400);
@@ -19622,6 +19690,7 @@ static Functions_0(void) {
 	set_frame_size(0X1DB4D, 0, 0, 0);
 	add_func    (0X1DB58,0X1DB8B);
 	set_func_flags(0X1DB58,0x5400);
+	set_func_cmt(0X1DB58,	"copies a string to unk_2323A, expanding '^' to the string at word_22C8A", 1);
 	set_frame_size(0X1DB58, 0, 0, 0);
 	add_func    (0X1DB8B,0X1DBF9);
 	set_func_flags(0X1DB8B,0x1400);
@@ -19629,21 +19698,27 @@ static Functions_0(void) {
 	set_func_flags(0X1DBF9,0x1400);
 	add_func    (0X1DBFD,0X1DC0B);
 	set_func_flags(0X1DBFD,0x5400);
+	set_func_cmt(0X1DBFD,	"word-wrap helper of writeString: emits chars from ptr1 up to ptr3", 1);
 	set_frame_size(0X1DBFD, 0, 0, 0);
 	add_func    (0X1DC0B,0X1DC28);
 	set_func_flags(0X1DC0B,0x5400);
+	set_func_cmt(0X1DC0B,	"writes CX characters from _writeStringPtr1 via writeChar", 1);
 	set_frame_size(0X1DC0B, 0, 0, 0);
 	add_func    (0X1DC28,0X1DC46);
 	set_func_flags(0X1DC28,0x5400);
+	set_func_cmt(0X1DC28,	"refreshBounds on the current window's rect (field_1A override if set)", 1);
 	set_frame_size(0X1DC28, 0X6, 0, 0);
 	add_func    (0X1DC46,0X1DD19);
 	set_func_flags(0X1DC46,0x5400);
+	set_func_cmt(0X1DC46,	"builds the 19x9 tile-word grid at unk_230E4 around the party position (mapPos - (9,4)) from the loaded map; cell flags 0x40/0x80 add overlay bits", 1);
 	set_frame_size(0X1DC46, 0, 0, 0);
 	add_func    (0X1DD19,0X1DD4C);
 	set_func_flags(0X1DD19,0x5400);
+	set_func_cmt(0X1DD19,	"draws the 19x9 grid built by buildMapView via drawTile", 1);
 	set_frame_size(0X1DD19, 0X8, 0, 0);
 	add_func    (0X1DD4C,0X1DD5F);
 	set_func_flags(0X1DD4C,0x5400);
+	set_func_cmt(0X1DD4C,	"buildMapView + refresh the map viewport rect", 1);
 	set_frame_size(0X1DD4C, 0X4, 0, 0);
 	add_func    (0X1DD5F,0X1DD92);
 	set_func_flags(0X1DD5F,0x5400);
@@ -19658,6 +19733,7 @@ static Functions_0(void) {
 	set_frame_size(0X1DDC5, 0, 0, 0);
 	add_func    (0X1DDFD,0X1DE3F);
 	set_func_flags(0X1DDFD,0x5400);
+	set_func_cmt(0X1DDFD,	"carriage-return inside the current window; on overflow of the last line pages output (pauses for a key when byte_22A74 is set) or scrolls", 1);
 	set_frame_size(0X1DDFD, 0, 0, 0);
 	add_func    (0X1DE40,0X1DE81);
 	set_func_flags(0X1DE40,0x5410);
@@ -19668,15 +19744,19 @@ static Functions_0(void) {
 	define_local_var(0X1DE40, 0X1DE81, "[bp+0XA]", "y");
 	add_func    (0X1DE81,0X1DEB1);
 	set_func_flags(0X1DE81,0x5410);
+	set_func_cmt(0X1DE81,	"writeChar at window-relative (x, y); arg0 = char", 1);
 	set_frame_size(0X1DE81, 0X6, 2, 0);
 	add_func    (0X1DEB1,0X1DEDB);
 	set_func_flags(0X1DEB1,0x5410);
+	set_func_cmt(0X1DEB1,	"random(min, max) inclusive, by rejection sampling rngByte", 1);
 	set_frame_size(0X1DEB1, 0X6, 2, 0);
 	add_func    (0X1DEDB,0X1DEE7);
 	set_func_flags(0X1DEDB,0x5400);
+	set_func_cmt(0X1DEDB,	"rngByte wrapper that preserves SI/BX/CX/DX", 1);
 	set_frame_size(0X1DEDB, 0X4, 0, 0);
 	add_func    (0X1DEE7,0X1DF0C);
 	set_func_flags(0X1DEE7,0x5400);
+	set_func_cmt(0X1DEE7,	"16-byte additive-carry PRNG state at unk_22A64; returns next byte in AL", 1);
 	set_frame_size(0X1DEE7, 0, 0, 0);
 	add_func    (0X1DF22,0X1DF36);
 	set_func_flags(0X1DF22,0x5400);
@@ -19692,33 +19772,39 @@ static Functions_0(void) {
 	set_frame_size(0X1DFEE, 0X8, 0, 0);
 	add_func    (0X1E017,0X1E045);
 	set_func_flags(0X1E017,0x5400);
+	set_func_cmt(0X1E017,	"raw 16x16 blit of the current-window-relative cell", 1);
 	set_frame_size(0X1E017, 0, 0, 0);
 	add_func    (0X1E045,0X1E08C);
 	set_func_flags(0X1E045,0x5410);
 	set_frame_size(0X1E045, 0X2, 2, 0);
 	add_func    (0X1E08C,0X1E097);
 	set_func_flags(0X1E08C,0x5400);
+	set_func_cmt(0X1E08C,	"INT 1Ah AH=0, returns the low word of the tick count", 1);
 	set_frame_size(0X1E08C, 0, 0, 0);
 	add_func    (0X1E098,0X1E141);
 	set_func_flags(0X1E098,0x5400);
+	set_func_cmt(0X1E098,	"blits a 16x16 4bpp tile (128 bytes) with an optional masked overlay tile; AX = tile word (low 11 bits index, high bits overlay)", 1);
 	set_frame_size(0X1E098, 0X4, 0, 0);
 	add_func    (0X1E141,0X1E18D);
 	set_func_flags(0X1E141,0x5400);
 	set_frame_size(0X1E141, 0XA, 0, 0);
 	add_func    (0X1E18D,0X1E28A);
 	set_func_flags(0X1E18D,0x5400);
+	set_func_cmt(0X1E18D,	"scrolls the window contents up one text row then delays according to word_22C44 (text speed 1-8, adjusted live by the < > , . keys)", 1);
 	set_frame_size(0X1E18D, 0X2, 0, 0);
 	add_func    (0X1E28A,0X1E2B8);
 	set_func_flags(0X1E28A,0x5400);
 	set_frame_size(0X1E28A, 0X8, 0, 0);
 	add_func    (0X1E2B8,0X1E308);
 	set_func_flags(0X1E2B8,0x5410);
+	set_func_cmt(0X1E2B8,	"XORs the pixels of a window rect (4bpp) and optionally refreshes it", 1);
 	set_frame_size(0X1E2B8, 0X6, 2, 0);
 	add_func    (0X1E308,0X1E375);
 	set_func_flags(0X1E308,0x5400);
 	set_frame_size(0X1E308, 0XE, 0, 0);
 	add_func    (0X1E376,0X1E3AE);
 	set_func_flags(0X1E376,0x5410);
+	set_func_cmt(0X1E376,	"skips N NUL-terminated strings in the table at dseg:A834 and prints the Nth", 1);
 	set_frame_size(0X1E376, 0X4, 2, 0);
 	add_func    (0X1E3AE,0X1E3C1);
 	set_func_flags(0X1E3AE,0x5410);
@@ -19751,9 +19837,11 @@ static Functions_0(void) {
 	define_local_var(0X1E4B4, 0X1E4D0, "[bp+0X4]", "handle");
 	add_func    (0X1E4D0,0X1E5BD);
 	set_func_flags(0X1E4D0,0x5400);
+	set_func_cmt(0X1E4D0,	"LZSS: 4096-byte ring buffer at dseg-relative 0xA8DD, start 0xFEE, 12-bit offset / 4-bit length+3, flag bytes consumed LSB first", 1);
 	set_frame_size(0X1E4D0, 0, 0, 0);
 	add_func    (0X1E5BD,0X1E5E1);
 	set_func_flags(0X1E5BD,0x5410);
+	set_func_cmt(0X1E5BD,	"args set the source/dest segments (word_2BB18/2BB1A) then lzssDecode", 1);
 	set_frame_size(0X1E5BD, 0X6, 2, 0);
 	add_func    (0X1E5E2,0X1E5EA);
 	set_func_flags(0X1E5E2,0x5400);
@@ -20007,6 +20095,7 @@ static Functions_0(void) {
 	set_frame_size(0X203C9, 0XA, 2, 0);
 	add_func    (0X2045A,0X204C3);
 	set_func_flags(0X2045A,0x5412);
+	set_func_cmt(0X2045A,	"removes a member by party slot: clears its roster flag, shifts the party arrays, decrements partyCount", 1);
 	set_frame_size(0X2045A, 0X8, 2, 0);
 	add_func    (0X204C4,0X2060D);
 	set_func_flags(0X204C4,0x5412);
@@ -20016,33 +20105,42 @@ static Functions_0(void) {
 	set_frame_size(0X2060D, 0XA, 2, 0);
 	add_func    (0X20720,0X20734);
 	set_func_flags(0X20720,0x5402);
+	set_func_cmt(0X20720,	"far; INT 10h mode 3, used on exit and error paths", 1);
 	set_frame_size(0X20720, 0X4, 0, 0);
 	add_func    (0X20734,0X20772);
 	set_func_flags(0X20734,0x5402);
 	set_frame_size(0X20734, 0X4, 0, 0);
 	add_func    (0X20772,0X2077F);
 	set_func_flags(0X20772,0x5402);
+	set_func_cmt(0X20772,	"far; resets list head and count only", 1);
 	set_frame_size(0X20772, 0, 0, 0);
 	add_func    (0X2077F,0X207D7);
 	set_func_flags(0X2077F,0x5402);
+	set_func_cmt(0X2077F,	"far; appends a 14-byte entry (screen dest, src, row count, words/row) to the dirty list at dseg:A251; AX=x, SI=y, DI=w, CX=h", 1);
 	set_frame_size(0X2077F, 0, 0, 0);
 	add_func    (0X208E2,0X208FC);
 	set_func_flags(0X208E2,0x5402);
+	set_func_cmt(0X208E2,	"far; blitDirtyRects then reset the list head/count", 1);
 	set_frame_size(0X208E2, 0XA, 0, 0);
 	add_func    (0X208FC,0X20950);
 	set_func_flags(0X208FC,0x5400);
+	set_func_cmt(0X208FC,	"copies each queued rectangle from the offscreen buffer to video memory B800h", 1);
 	set_frame_size(0X208FC, 0, 0, 0);
 	add_func    (0X21090,0X210DD);
 	set_func_flags(0X21090,0x5412);
+	set_func_cmt(0X21090,	"far; copies a width/height-prefixed picture (4-byte header) to the offscreen buffer at (x, y)", 1);
 	set_frame_size(0X21090, 0X6, 2, 0);
 	add_func    (0X210DD,0X21121);
 	set_func_flags(0X210DD,0x5412);
+	set_func_cmt(0X210DD,	"far; blitPic of frame N from a picture-set with offset table", 1);
 	set_frame_size(0X210DD, 0X6, 2, 0);
 	add_func    (0X21130,0X2119E);
 	set_func_flags(0X21130,0x5412);
+	set_func_cmt(0X21130,	"far; starts PC-speaker sound effect N (<=6) from the table at dseg:-458C; waits for vertical retrace and steps sound script until finished", 1);
 	set_frame_size(0X21130, 0X2, 2, 0);
 	add_func    (0X2119E,0X21234);
 	set_func_flags(0X2119E,0x5400);
+	set_func_cmt(0X2119E,	"interprets the speaker script one tick: 83h=note, 81h=repeat, 84h=stop", 1);
 	set_frame_size(0X2119E, 0, 0, 0);
 	append_func_tail(0X12065,0X1208D,0X120F3);
 	append_func_tail(0X12074,0X1208D,0X120F3);

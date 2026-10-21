@@ -7,3 +7,4 @@
 *.bak
 Shannara.asm
 ida_scripts/batch_run_and_export.log
+dump_*.txt
