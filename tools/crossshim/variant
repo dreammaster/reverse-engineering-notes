@@ -1,0 +1,153 @@
+// A small std::variant for the cross compile against the libstdc++ 4.7 headers (tools/crosscompile.py), which have none. It
+// has what the sources use: a first alternative as the default, copy and move, assignment from an alternative, get<T>().
+// The code that it makes is not the one of a real variant; only argument.cpp and what includes argument.h are affected,
+// and the original has no variant there (a per-type new/delete).
+#pragma once
+
+#include <new>
+#include <type_traits>
+#include <utility>
+
+namespace std {
+
+struct monostate {};
+
+template<typename...>
+struct __variant_list {};
+
+template<typename T, typename... Ts>
+struct __variant_index;
+template<typename T, typename... Ts>
+struct __variant_index<T, T, Ts...> : integral_constant<unsigned, 0> {};
+template<typename T, typename U, typename... Ts>
+struct __variant_index<T, U, Ts...> : integral_constant<unsigned, 1 + __variant_index<T, Ts...>::value> {};
+
+template<typename... Ts>
+struct __variant_ops;
+template<>
+struct __variant_ops<> {
+	static void destroy(unsigned, void *) {
+	}
+	static void copy(unsigned, void *, const void *) {
+	}
+	static void move(unsigned, void *, void *) {
+	}
+};
+template<typename T, typename... Ts>
+struct __variant_ops<T, Ts...> {
+	static void destroy(unsigned index, void *at) {
+		if (index == 0)
+			static_cast<T *>(at)->~T();
+		else
+			__variant_ops<Ts...>::destroy(index - 1, at);
+	}
+	static void copy(unsigned index, void *to, const void *from) {
+		if (index == 0)
+			new (to) T(*static_cast<const T *>(from));
+		else
+			__variant_ops<Ts...>::copy(index - 1, to, from);
+	}
+	static void move(unsigned index, void *to, void *from) {
+		if (index == 0)
+			new (to) T(std::move(*static_cast<T *>(from)));
+		else
+			__variant_ops<Ts...>::move(index - 1, to, from);
+	}
+};
+
+template<typename... Ts>
+class variant {
+	template<typename T, typename... Us>
+	struct __sizes;
+
+public:
+	variant() : _index(0) {
+		using First = typename __first<Ts...>::type;
+		new (&_storage) First();
+	}
+	variant(const variant &other) : _index(other._index) {
+		__variant_ops<Ts...>::copy(_index, &_storage, &other._storage);
+	}
+	variant(variant &&other) : _index(other._index) {
+		__variant_ops<Ts...>::move(_index, &_storage, &other._storage);
+	}
+	template<typename T, typename D = typename decay<T>::type,
+	         typename = typename enable_if<!is_same<D, variant>::value>::type>
+	variant(T &&value) : _index(__variant_index<D, Ts...>::value) {
+		new (&_storage) D(std::forward<T>(value));
+	}
+	~variant() {
+		__variant_ops<Ts...>::destroy(_index, &_storage);
+	}
+
+	variant &operator=(const variant &other) {
+		if (this != &other) {
+			__variant_ops<Ts...>::destroy(_index, &_storage);
+			_index = other._index;
+			__variant_ops<Ts...>::copy(_index, &_storage, &other._storage);
+		}
+		return *this;
+	}
+	variant &operator=(variant &&other) {
+		if (this != &other) {
+			__variant_ops<Ts...>::destroy(_index, &_storage);
+			_index = other._index;
+			__variant_ops<Ts...>::move(_index, &_storage, &other._storage);
+		}
+		return *this;
+	}
+	template<typename T, typename D = typename decay<T>::type,
+	         typename = typename enable_if<!is_same<D, variant>::value>::type>
+	variant &operator=(T &&value) {
+		__variant_ops<Ts...>::destroy(_index, &_storage);
+		_index = __variant_index<D, Ts...>::value;
+		new (&_storage) D(std::forward<T>(value));
+		return *this;
+	}
+
+	unsigned index() const {
+		return _index;
+	}
+	void *__data() {
+		return &_storage;
+	}
+	const void *__data() const {
+		return &_storage;
+	}
+
+private:
+	template<typename T, typename...>
+	struct __first {
+		typedef T type;
+	};
+	template<typename... Us>
+	struct __max_size;
+	template<typename U>
+	struct __max_size<U> {
+		static const size_t size = sizeof(U);
+		static const size_t align = alignof(U);
+	};
+	template<typename U, typename V, typename... Us>
+	struct __max_size<U, V, Us...> {
+		static const size_t size = sizeof(U) > __max_size<V, Us...>::size ? sizeof(U) : __max_size<V, Us...>::size;
+		static const size_t align = alignof(U) > __max_size<V, Us...>::align ? alignof(U) : __max_size<V, Us...>::align;
+	};
+
+	typename aligned_storage<__max_size<Ts...>::size, __max_size<Ts...>::align>::type _storage;
+	unsigned _index;
+};
+
+template<typename T, typename... Ts>
+T &get(variant<Ts...> &v) {
+	return *static_cast<T *>(v.__data());
+}
+template<typename T, typename... Ts>
+const T &get(const variant<Ts...> &v) {
+	return *static_cast<const T *>(v.__data());
+}
+template<typename T, typename... Ts>
+bool holds_alternative(const variant<Ts...> &v) {
+	return v.index() == __variant_index<T, Ts...>::value;
+}
+
+} // namespace std
