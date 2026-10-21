@@ -260,3 +260,31 @@ pointers are skipped unless listed in `FUNC_HINTS`; the decisions are written to
 `[reg+reg+disp]` array indexing and stack variables reused for several types.
 Fragment merges are in `ida_scripts/fix_funcs_keh.py` (also recovers the three
 qsort comparators at 15335/1534C/15363).
+
+## Pictures and animation (`*PICT`, `*ANI`)
+
+* `TPICT`/`FPICT`/`DPICT`/`KPICT`/`EPICT` are single LZSS streams that decode to 32000 bytes: a 320x200 4bpp
+  screen (high nibble = left pixel). `TPICT` is the title; the other four are the ending screens used by script
+  op 74 (`showEndingScreen`, file table at dseg:0EFE; ending 3 prints "See you later...!" and quits).
+* `KANI` (disk 1/2 maps), `FANI`, `DANI` are 53-entry archives (same `{u16 paragraph offset, u16 size}` TOC as
+  the map/script files, LZSS chunks). Chunk index = **picture id**; ids come from `Shop+0x28`, `ServiceHeader+0x28`,
+  `Monster+0x63` and the enemy template (`EnemyDef+0x3E`, carried in `Combatant.b11`); ids 0x2D..0x32 are the six
+  mutation pictures shown by `checkTimedEffects`.
+* A picture chunk is a *picture set*: byte 0 = frame count, bytes 1-2 = offset of the animation script, then a u16
+  offset table at +3 (relative to the chunk start). A frame is `{widthBytes, height, xOffset, yOffset}` followed by
+  4bpp rows (`blitPicFrame` adds the offsets to the window origin). Frame 0 is the whole 96x88 picture, the others
+  are small overlays (eyes, mouths...).
+* The animation script is a list of `{count, frame_0..frame_count-1}`; `animationTick` (every 3 BIOS ticks,
+  ~165 ms) draws the frames of the next entry; `0xFF` restarts at the offset in the header.
+* Picture windows (dseg:1E74 table of Window pointers): left (8,8), middle (112,8), right (216,8), each 96x96.
+  Shops/services/NPC talk use the left window with the text window beside it (`window7`, cols 14-38); combat shows
+  up to three distinct enemy pictures (1 picture -> middle, 2 -> left+right, 3 -> middle,left,right).
+* `loadMapPicSet` is misnamed in the IDB: it reads chunk `mapNo-1` of the region's `*SCR` file (the script bank).
+
+## Hourly effects (`checkTimedEffects`)
+
+Called by `setTime` when the hour changes outside combat. Per living member: `mutagenTimer` (+57h) counts down,
+`remissionHours` (+21h) counts down (reaching 0 triggers an event); otherwise the event fires when the member has
+`mutPending`/`hasMutation` and `mutWeekday`/`mutHour` equal the clock. The event applies a new mutation (status bit
+0x80, attribute `{2,1,3,4,6,0}[m]` -2 if >= 3, luck-slot attribute 5 -1) or just "acting up again" (healing
+impaired), and always bumps one of skills `{0Ch,0Dh,0Eh,1Fh}` by one; afterwards `mutWeekday = (weekday+2) % 7`.
