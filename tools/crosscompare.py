@@ -15,6 +15,8 @@ Usage:
   tools/crosscompare.py [game]                      compare everything, write build/cross/<game>-compare.tsv, print the summary
   tools/crosscompare.py [game] --show SYMBOL        both versions of one function side by side, normalized
   tools/crosscompare.py [game] --worst N [FILTER]   the N least alike functions (whose name contains FILTER)
+  tools/crosscompare.py [game] --callsdiff NAME     the calls of the functions of the engine (not std, wx, libc) that one has more of than the other, for the
+                                                    functions whose name contains NAME
   tools/crosscompare.py [game] --classes            per class: the functions in both, the mean score, how many are under 0.5
   tools/crosscompare.py [game] --missing [FILTER]   the original functions of the classes of the reconstruction that it has no function for
   --tag NAME                                        compare the objects of build/cross/<game>-NAME (tools/crosscompile.py --tag NAME)
@@ -39,6 +41,7 @@ show = None
 worst = None
 missing = False
 by_class = False
+callsdiff = None
 tag = ""
 filters = []
 game = "deponia1"
@@ -58,6 +61,9 @@ while i < len(args):
         missing = True
     elif a == "--classes":
         by_class = True
+    elif a == "--callsdiff":
+        callsdiff = args[i + 1]
+        i += 1
     elif a == "--tag":
         tag = "-" + args[i + 1]
         i += 1
@@ -529,6 +535,22 @@ def main():
             fh.write("%s\t%.3f\t%.2f\t%.2f\t%.2f\t%.2f\t%d\t%d\t%d\t%d\t%d\t%d\n" % (
                 n, score(r), r["calls"], r["consts"], r["strings"], r["shape"], r["ninsn"][0], r["ninsn"][1], r["ncalls"][0],
                 r["ncalls"][1], r["jcc"][0], r["jcc"][1]))
+
+    if callsdiff:
+        library = re.compile(r"_ZNS|_ZSt|_ZNK?St|_ZN9__gnu|_Zn|_Zd|_ZNK?8wx|_ZN8wx|_Z.*wx|virtual|indirect|_Unwind|__cxa|memcpy|memmove|strlen|strcmp|free|malloc")
+        for n in common:
+            if callsdiff not in n:
+                continue
+            a = collections.Counter(c for c in original[n].calls() if not library.match(c))
+            b = collections.Counter(c for c in ours[n].calls() if not library.match(c))
+            if a == b:
+                continue
+            print("== %s   (%d / %d instructions)" % (n, len(original[n].insns), len(ours[n].insns)))
+            for c, k in sorted((a - b).items()):
+                print("   original calls %s %d more time(s)" % (c, k))
+            for c, k in sorted((b - a).items()):
+                print("   ours calls     %s %d more time(s)" % (c, k))
+        return
 
     if by_class:
         rows = collections.defaultdict(list)

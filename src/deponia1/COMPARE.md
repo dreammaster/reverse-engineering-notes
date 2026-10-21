@@ -36,6 +36,7 @@ python tools/crosscompare.py deponia1 --classes  # per class: functions in both,
 python tools/crosscompare.py deponia1 --worst 30 _ZN12TGameControl     # the 30 least alike functions of a class
 python tools/crosscompare.py deponia1 --show _ZN12TGameControl14SavegameExistsEi   # both versions side by side
 python tools/crosscompare.py deponia1 --missing TGScene                # original functions of a class that the reconstruction lacks
+python tools/crosscompare.py deponia1 --callsdiff TGText               # the engine's own calls that the original has more (or fewer) of
 ```
 
 `crosscompile.py` skips `WxStub.cpp` (Windows) and `luaStdLibs.cpp` (`<filesystem>`, which libstdc++ 4.7 does not have), and uses a
@@ -66,6 +67,10 @@ What the first looks found (all are in the reconstruction, none changes what the
 - The members of the classes are at other places: `_visionaire` `+0xc8` against `+0x58`, `_ownedSceneControl` `+0x298` against `+0x308`.
   If the layouts are to follow the original (they would have to for a drop-in replacement of the binary, not for a ScummVM engine), the
   displacements in the comparison give them directly.
+- `TManagedObject::SetText` calls `TGText::SetOwner(TTextOwner *)` in the original, with an `x_assert`; the reconstruction has `SetOwner(TManagedObject *)`: the
+  original has a base class `TTextOwner` that is not reconstructed.
+- `TGText::SetTextIntern` has the same calls as the original but in another order and fewer `IsSpineAnimation` calls (the original has the
+  speaker block twice); `--callsdiff TGText` shows more of the same kind.
 - `TGameControl::SetDelay(double, int)` is 23 instructions in the original and 77 here: the original does something simpler than the
   container of the reconstruction.
 
