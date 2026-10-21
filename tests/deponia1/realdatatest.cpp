@@ -35,6 +35,9 @@ int main(int argc, char **argv) {
 	wxLog::loglevel = 3;
 
 	graphics = new NullGraphics();
+	// (another game of the engine has another password: Deponia 2, see NOTES)
+	if (getenv("GAME_PASSW"))
+		passw = wxString(getenv("GAME_PASSW"));
 	THGameControl *control = new THGameControl();
 	g_pGameControl = control;
 	TVisionaire::SetVisPlayerMode(true);

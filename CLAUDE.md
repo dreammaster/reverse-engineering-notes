@@ -1,3 +1,10 @@
+# Versions of the engine and of the games
+
+The engine was shipped in many builds (per game, per platform, per patch) and `src/deponia1/` reconstructs one of them.
+What is known about the others, and where they differ, is tracked in `VERSIONS.md` (the matrix and how to look at a new
+build) and in `src/<game>/VERSIONS.md` (the details of each game). Add what you find there, with how you know it
+(executable, data, or a run of the reconstruction), whenever another build is looked at.
+
 # Code style: ScummVM conventions
 
 This project's eventual destination is an engine module inside
