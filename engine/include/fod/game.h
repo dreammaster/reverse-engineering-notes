@@ -2,6 +2,8 @@
 // Top-level game controller: exploration loop, dialog text, script hosting.
 #include "fod/screen.h"
 #include "fod/vm.h"
+#include "fod/combat.h"
+#include <functional>
 
 namespace fod {
 
@@ -35,14 +37,24 @@ public:
 	int pickFromList(const std::string &title, const std::vector<std::string> &items) override;
 	int chooseUseItem(int member, int &slot) override;
 
-	bool movePartyStep(int dir);                    // KEH movePartyStep; false if the game should end
+	bool movePartyStep(int dir, bool forced = false);                    // KEH movePartyStep; false if the game should end
 	void runScriptChain(int script, int event, int arg8 = 0);
 
 private:
 	void redraw();
 	void passTime();
 	void startPendingFight(int monsterIndex);   // KEH startPendingFight: combat against one scripted monster
-	void endOfTurn();              // KEH moveMonstersAndCheckEncounter: random encounters and combat
+	void endOfTurn();
+	std::function<Combat::GroupAction(Combat &, int, Combatant &)> defaultCombatCommands();
+	void useUpAmmoFor(int slot, int itemSlot);
+	void lootCell(int x, int y);                // KEH lootCell: pick up the items lying on a cell
+	bool chooseCommandTarget(int slot);         // KEH chooseCommandTargetCell
+	void useCommandOnCell(int slot, bool inCombat);
+	void useWeaponOnCell(int slot, bool inCombat);
+	void useItemScriptOnCell(int slot, int event, bool inCombat);
+	void handleScriptResult(const ScriptResult &r);
+	bool askDirection(int &dx, int &dy);        // KEH askDirectionGetCell / getDirectionKey
+	bool pickMapCell(int &x, int &y);           // KEH pickMapCell              // KEH moveMonstersAndCheckEncounter: random encounters and combat
 	void openDialog();
 	void flushDialogPage();
 
@@ -56,6 +68,7 @@ private:
 	std::string _dialog;           // pending dialog text ('\r' = newline)
 	bool _dialogOpen = false;
 	bool _quit = false;
+	int _targetX[5] = {}, _targetY[5] = {};   // per-member command target cell
 	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 

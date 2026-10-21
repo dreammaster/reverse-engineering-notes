@@ -1,5 +1,6 @@
 #include "fod/game.h"
 #include "fod/combat.h"
+#include "fod/party.h"
 #include <algorithm>
 #include <cstring>
 
@@ -190,22 +191,15 @@ void Game::startPendingFight(int monsterIndex) {
 	cb.list.push_back(c);
 	const unsigned speedAttr = (_data.hdspct.at(0x3E8) | (_data.hdspct.at(0x3E9) << 8)) & 7;
 	cb.maxSpeed = mo.raw[0x18 + speedAttr];
-	cb.commands = [this](Combat &cc, int slot, Combatant &rec) {
-		print("\r" + _w.party(slot).name() + ", choose: A)ttack E)vade R)un\r");
-		const int k = readKey();
-		if (k == 'E') { rec.command = 1; rec.speed = uint8_t(rec.speed * 2); return Combat::GroupAction::None; }
-		if (k == 'R') {
-			print("G)et closer  F)lee\r");
-			const int k2 = readKey();
-			if (k2 == 'G') return Combat::GroupAction::GetCloser;
-			if (k2 == 'F') return Combat::GroupAction::Flee;
-		}
-		cc.autoCommand(slot, rec);
-		return Combat::GroupAction::None;
-	};
+	cb.commands = defaultCombatCommands();
 	const Combat::Outcome o = cb.run(false);
 	if (o.wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
 	redraw();
+}
+
+void Game::handleScriptResult(const ScriptResult &r) {
+	if (r.request == 8) startPendingFight(r.monsterIndex);
+	else if (r.request == 6) runScriptChain(r.chainScript, kEvMonster, r.monsterIndex);
 }
 
 void Game::runScriptChain(int script, int event, int arg8) {
@@ -229,6 +223,38 @@ void Game::runScriptChain(int script, int event, int arg8) {
 	_npcMode = false;
 }
 
+std::function<Combat::GroupAction(Combat &, int, Combatant &)> Game::defaultCombatCommands() {
+	return [this](Combat &c, int slot, Combatant &rec) {
+		print("\r" + _w.party(slot).name() + ", choose: A)ttack E)vade R)un\r");
+		const int k = readKey();
+		if (k == 'E') { rec.command = 1; rec.speed = uint8_t(rec.speed * 2); return Combat::GroupAction::None; }
+		if (k == 'R') {
+			print("G)et closer  F)lee\r");
+			const int k2 = readKey();
+			if (k2 == 'G') return Combat::GroupAction::GetCloser;
+			if (k2 == 'F') return Combat::GroupAction::Flee;
+		}
+		c.autoCommand(slot, rec);
+		return Combat::GroupAction::None;
+	};
+}
+
+// KEH useUpAmmo (0x11A55): fire one round / spend a one-shot item, re-readying a second copy if there is one.
+void Game::useUpAmmoFor(int slot, int itemSlot) {
+	Member &m = _w.party(slot);
+	const WeaponDef &wd = _w.weaponOf(m.itemId(itemSlot));
+	if (!(wd.flags() & 2)) return;
+	if (wd.flags() & 1) {
+		if (m.itemAmmo(itemSlot) > 0) --m.itemAmmo(itemSlot);
+		return;
+	}
+	const int readiedItem = m.readied() == 0xFF ? 0xFF : m.itemId(m.readied());
+	_w.removeItemSlot(m, itemSlot, 0xFF);
+	if (readiedItem == 0xFF) return;
+	for (int i = 0; i < m.itemCount(); ++i)
+		if (m.itemId(i) == readiedItem) { m.readied() = uint8_t(i); break; }
+}
+
 void Game::endOfTurn() {
 	Combat cb(_w, *this);
 	_w.moveMapEntities();
@@ -239,23 +265,7 @@ void Game::endOfTurn() {
 		n = cb.buildCombatants(false);
 	}
 	if (n <= 0) return;
-	cb.commands = [this](Combat &c, int slot, Combatant &rec) {
-		print("\r" + _w.party(slot).name() + ", choose: A)ttack E)vade R)un\r");
-		const int k = readKey();
-		if (k == 'E') {
-			rec.command = 1;
-			rec.speed = uint8_t(rec.speed * 2);
-			return Combat::GroupAction::None;
-		}
-		if (k == 'R') {
-			print("G)et closer  F)lee\r");
-			const int k2 = readKey();
-			if (k2 == 'G') return Combat::GroupAction::GetCloser;
-			if (k2 == 'F') return Combat::GroupAction::Flee;
-		}
-		c.autoCommand(slot, rec);
-		return Combat::GroupAction::None;
-	};
+	cb.commands = defaultCombatCommands();
 	const Combat::Outcome o = cb.run(false);
 	if (o.wiped) {
 		print("\rYour party has been defeated.\r");
@@ -263,21 +273,219 @@ void Game::endOfTurn() {
 	}
 }
 
-bool Game::movePartyStep(int dir) {
+bool Game::askDirection(int &dx, int &dy) {
+	print("\rWhich way?\r");
+	for (;;) {
+		const int k = readKey();
+		if (k == 0xFF) return false;
+		int d = -1;
+		if (k == 0xFD) d = 1; else if (k == 0xFC) d = 2; else if (k == 0xFA) d = 3; else if (k == 0xFB) d = 4; else if (k == 0xFE) d = 5;
+		if (d < 0) continue;
+		dx = kDx[d]; dy = kDy[d];
+		const int x = _w.disk.mapX + dx, y = _w.disk.mapY + dy;
+		if (!_w.map->inBounds(x, y)) continue;
+		return true;
+	}
+}
+
+bool Game::pickMapCell(int &x, int &y) {
+	print("\rWhich way?\r");
+	int cx = _w.disk.mapX, cy = _w.disk.mapY;
+	_w.map->cell(cx, cy).flags |= 0x40;
+	bool ok = false;
+	for (;;) {
+		redraw();
+		const int k = readKey();
+		_w.map->cell(cx, cy).flags &= 0xBF;
+		if (k == 0xFF) break;
+		if (k == 0xFE) { ok = true; break; }
+		int d = -1;
+		if (k == 0xFD) d = 1; else if (k == 0xFC) d = 2; else if (k == 0xFA) d = 3; else if (k == 0xFB) d = 4;
+		if (d > 0 && _w.map->inBounds(cx + kDx[d], cy + kDy[d])) { cx += kDx[d]; cy += kDy[d]; }
+		_w.map->cell(cx, cy).flags |= 0x40;
+	}
+	_w.map->cell(cx, cy).flags &= 0xBF;
+	x = cx; y = cy;
+	return ok;
+}
+
+bool Game::chooseCommandTarget(int slot) {
+	if (_npcMode) return true;
+	Member &m = _w.party(slot);
+	int x, y;
+	if (m.b[0x144] == 0x0B && (_w.item(m.b[0x147]).flags & 1)) {
+		if (!pickMapCell(x, y)) return false;
+	} else {
+		int dx, dy;
+		if (!askDirection(dx, dy)) return false;
+		x = _w.disk.mapX + dx; y = _w.disk.mapY + dy;
+	}
+	_targetX[slot] = x; _targetY[slot] = y;
+	return true;
+}
+
+void Game::useItemScriptOnCell(int slot, int event, bool inCombat) {
+	const int x = _targetX[slot], y = _targetY[slot];
+	if (!_w.map->inBounds(x, y)) return;
+	Member &m = _w.party(slot);
+	ScriptCall c;
+	c.cellScript = _w.map->cell(x, y).script;
+	c.event = event;
+	c.member = slot;
+	c.arg8 = m.b[0x145];
+	const ScriptResult r = _vm.run(c);
+	if (!r.ran) {
+		print("\rThat has no effect.\r");
+		return;
+	}
+	handleScriptResult(r);
+	if (!inCombat) endOfTurn();
+}
+
+void Game::useWeaponOnCell(int slot, bool inCombat) {
+	Member &m = _w.party(slot);
+	const int x = _targetX[slot], y = _targetY[slot];
+	if (!_w.map->inBounds(x, y)) return;
+	MapCell &cell = _w.map->cell(x, y);
+	const int item = m.b[0x147];
+	const WeaponDef &wd = _w.weaponOf(item);
+	const FireMode &fm = wd.modes.at(std::min<size_t>(m.b[0x63 + 6 * m.b[0x145]], wd.modes.size() - 1));
+	// KEH rollWeaponVsObject
+	int result;
+	if (cell.script == 0xFFFF || !_w.scripts || !_w.scripts->has(cell.script) || !(_w.scripts->block(cell.script).eventMask & 0x10)) result = 5;
+	else if (cell.w4 == 0) result = 4;
+	else {
+		const int armor = cell.b3;
+		if (armor * 1 >= fm.dmgMax) result = 4;
+		else if (100 < _w.rng.range(1, 100)) result = 3;
+		else {
+			int absorb = _w.rng.range(armor * 1, armor * 2);
+			int dmg = std::max(0, _w.rng.range(fm.dmgMin, fm.dmgMax) - absorb);
+			cell.w4 = uint16_t(std::max(0, cell.w4 - dmg));
+			result = dmg == 0 ? 0 : (cell.w4 == 0 ? 1 : 2);
+		}
+	}
+	const std::string verb = wd.verb();
+	auto usesLine = [&]() { print("\r" + m.name() + " " + verb + "..."); };
+	switch (result) {
+	case 0: case 3:
+		usesLine();
+		print("\rand misses!\r");
+		useUpAmmoFor(slot, m.b[0x145]);
+		endOfTurn();
+		break;
+	case 1: case 2: {
+		usesLine();
+		ScriptCall c;
+		c.cellScript = cell.script;
+		c.event = 4;
+		c.member = slot;
+		c.arg8 = m.b[0x145];
+		c.argA = result == 1 ? 1 : 0;
+		const ScriptResult r = _vm.run(c);
+		if (r.ran) {
+			handleScriptResult(r);
+			useUpAmmoFor(slot, m.b[0x145]);
+			if (!inCombat) endOfTurn();
+		} else {
+			print("\rYou decide that it wouldn't work.\r");
+		}
+		break;
+	}
+	default:
+		print("\rYou decide that it wouldn't work.\r");
+		break;
+	}
+}
+
+void Game::useCommandOnCell(int slot, bool inCombat) {
+	Member &m = _w.party(slot);
+	switch (m.b[0x144]) {
+	case 0x0A: useItemScriptOnCell(slot, 3, inCombat); break;
+	case 0x0B:
+		if (_w.item(m.b[0x147]).flags & 1) useWeaponOnCell(slot, inCombat);
+		else useItemScriptOnCell(slot, 2, inCombat);
+		break;
+	case 0x0E: endOfTurn(); break;
+	default: break;
+	}
+}
+
+void Game::lootCell(int x, int y) {
+	if (!_w.map->inBounds(x, y) || !(_w.map->cell(x, y).flags & 0x80)) return;
+	int member = 0;
+	for (int i = 0; i < _w.partyCount(); ++i)
+		if (World::conState(_w.party(i)) < 1) { member = i; break; }
+	bool emptied = false;
+	for (;;) {
+		auto &items = _w.map->groundItems();
+		std::vector<size_t> here;
+		for (size_t i = 0; i < items.size(); ++i)
+			if (items[i].x == x && items[i].y == y) here.push_back(i);
+		if (here.empty()) { emptied = true; break; }
+		std::vector<std::string> names;
+		for (size_t i : here) {
+			const GroundItem &g = items[i];
+			names.push_back(std::to_string(g.qty) + (g.item == 1 ? " dollars" : " " + _w.item(g.item).name));
+		}
+		const int pick = pickFromList("You find these items:", names);
+		if (pick < 0) break;
+		GroundItem &g = items[here[size_t(pick)]];
+		Member &m = _w.party(member);
+		bool remove = false;
+		if (g.item == 1) {
+			_w.disk.cash += g.qty;
+			remove = true;
+		} else {
+			applyItemEffect(_w, m, _w.item(g.item), false);
+			if (_w.isUnique(g.item)) {
+				_w.disk.uniqueItems |= uint8_t(1u << _w.item(g.item).uniqueBit);
+				remove = true;
+			} else if (m.itemCount() < 32) {
+				_w.initItemSlot(m, m.itemCount(), g.item);
+				++m.itemCount();
+				if (--g.qty == 0) remove = true;
+			} else {
+				message(m.name() + "\rhas too much to carry\ralready.");
+			}
+		}
+		if (remove) items.erase(items.begin() + long(here[size_t(pick)]));
+	}
+	bool any = false;
+	for (const GroundItem &g : _w.map->groundItems()) if (g.x == x && g.y == y) any = true;
+	if (!any) {
+		_w.map->cell(x, y).flags &= 0x7F;
+		if (emptied) runScriptChain(_w.map->cell(x, y).script, 5);
+	}
+}
+
+bool Game::movePartyStep(int dir, bool forced) {
 	World &w = _w;
 	_dialogOpen = false;
+	bool mutagenic = false;
+	for (int i = 0; i < w.partyCount(); ++i)
+		if (w.party(i).hp() > 0 && w.party(i).b[0x57] != 0) mutagenic = true;
+	if (!forced && mutagenic && w.rng.range(1, 100) <= 10) dir = w.rng.range(1, 4);
 	const int nx = w.disk.mapX + kDx[dir], ny = w.disk.mapY + kDy[dir];
 	if (!w.map->inBounds(nx, ny)) {
+		static const char *kOffMap[4] = {"\rYou see miles of impassable ocean and you decide to turn back.\r", "\rThere are roads around here somewhere!\r",
+		                                 "\rTry using the road, friend.\r", "\r            hic!\r"};
 		openDialog();
-		_dialog += "You see miles of impassable ocean and you decide to turn back.";
+		_dialog += kOffMap[std::min<int>(w.map->offMapMsg(), 3)];
 		redraw();
+		if (!forced) endOfTurn();
 		return !_quit;
 	}
 	const int px = w.disk.mapX, py = w.disk.mapY;
 	const int curMap = w.mapNo;
 	runScriptChain(w.map->cell(px, py).script, 1);        // event 1: leaving the cell
 	if (_quit) return false;
-	if (w.mapNo != curMap || w.disk.mapX != px || w.disk.mapY != py) { redraw(); return true; }  // script moved us
+	if (w.mapNo != curMap || w.disk.mapX != px || w.disk.mapY != py) {   // a script moved us
+		if (!forced) endOfTurn();
+		lootCell(w.disk.mapX, w.disk.mapY);
+		redraw();
+		return !_quit;
+	}
 
 	// monster on the target cell?
 	for (size_t i = 0; i < w.map->monsters().size(); ++i) {
@@ -285,20 +493,17 @@ bool Game::movePartyStep(int dir) {
 		if (m.x() == nx && m.y() == ny) {
 			m.raw[0x50] &= 0x7F;
 			runScriptChain(m.script(), kEvMonster, int(i));
-			passTime();
+			if (!forced) endOfTurn();
 			redraw();
 			return !_quit;
 		}
 	}
-	bool passable = w.map->cell(nx, ny).passable();
-	for (const auto &g : w.map->groups())
-		if ((g.raw[9] & 0xF) && g.x() == nx && g.y() == ny) passable = false;
-	for (const auto &m : w.map->monsters())
-		if (m.x() == nx && m.y() == ny) passable = false;
+	const bool passable = w.isCellPassable(nx, ny);
 	if (passable) w.setPartyPosition(nx, ny);
 	passTime();
 	runScriptChain(w.map->cell(nx, ny).script, kEvEnter);      // event 0: stepping onto / bumping into the cell
-	if (!_quit && w.mapNo == curMap) endOfTurn();
+	if (!_quit && !forced) endOfTurn();
+	lootCell(w.disk.mapX, w.disk.mapY);
 	redraw();
 	return !_quit;
 }
@@ -314,6 +519,16 @@ void Game::run() {
 		case 0xFC: movePartyStep(2); break;
 		case 0xFA: movePartyStep(3); break;
 		case 0xFB: movePartyStep(4); break;
+		case 0xFF: passTime(); endOfTurn(); redraw(); break;   // ESC / idle: let time pass
+		case 'E': {   // engage nearby enemies
+			Combat cb(_w, *this);
+			if (cb.buildCombatants(true) > 0) {
+				cb.commands = defaultCombatCommands();
+				if (cb.run(true).wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
+			}
+			redraw();
+			break;
+		}
 		case 'Q': _quit = true; break;
 		default: redraw(); break;
 		}
