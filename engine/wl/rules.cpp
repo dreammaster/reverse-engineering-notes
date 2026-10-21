@@ -3,15 +3,16 @@
 namespace wl {
 
 uint8_t Rules::rngByte(uint8_t al) {
-	++rngState[0];
-	unsigned sum = unsigned(al) + rngState[0];
+	uint8_t &s0 = _m.d8(0x465C);
+	++s0;
+	unsigned sum = unsigned(al) + s0;
 	unsigned carry = sum > 0xFF;
-	for (int i = 1; i < 5; ++i) {
-		sum = (sum & 0xFF) + rngState[i] + carry;
-		rngState[i] = uint8_t(sum);
+	for (uint16_t i = 1; i < 5; ++i) {
+		sum = (sum & 0xFF) + _m.d8(uint16_t(0x465C + i)) + carry;
+		_m.d8(uint16_t(0x465C + i)) = uint8_t(sum);
 		carry = sum > 0xFF;
 	}
-	return rngState[4];
+	return _m.d8(0x4660);
 }
 
 uint8_t Rules::random(uint8_t n) {
@@ -35,7 +36,7 @@ uint8_t Rules::d6(uint8_t al) {
 	}
 }
 
-uint16_t Rules::rollDice() {
+uint8_t Rules::rollDice() {
 	uint8_t total = 0, al = 0;
 	for (;;) {
 		const uint8_t first = d6(al);
@@ -47,13 +48,13 @@ uint16_t Rules::rollDice() {
 }
 
 void Rules::addTarget(int32_t delta) {
-	const int32_t v = int32_t(seed1) + delta;
-	seed1 = uint16_t(v < 0 ? 0 : v > 0xFFFF ? 0xFFFF : v);
+	const int32_t v = int32_t(seed1()) + delta;
+	setSeed1(uint16_t(v < 0 ? 0 : v > 0xFFFF ? 0xFFFF : v));
 }
 
 void Rules::addRoll(int32_t delta) {
-	const int32_t v = int32_t(seed2) + delta;
-	seed2 = uint16_t(v < 0 ? 0 : v > 0xFFFF ? 0xFFFF : v);
+	const int32_t v = int32_t(seed2()) + delta;
+	setSeed2(uint16_t(v < 0 ? 0 : v > 0xFFFF ? 0xFFFF : v));
 }
 
 } // namespace wl

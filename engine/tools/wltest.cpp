@@ -9,6 +9,7 @@
 #include "wl/globals.h"
 #include "wl/rules.h"
 #include "wl/party.h"
+#include "wl/text.h"
 #include <cstdio>
 #include <cstdlib>
 #include <functional>
@@ -62,37 +63,26 @@ void registerTests() {
 	    },
 	    [](Machine &m, const Args &, const Regs &) { clearRect(m); return Out{}; }};
 
-	// ---- rules: random numbers and dice accumulators. Machine <-> Rules adapters keep the data segment authoritative.
-	auto loadRules = [](Machine &m, Rules &r) {
-		for (int i = 0; i < 5; ++i) r.rngState[i] = m.d8(uint16_t(0x465C + i));
-		r.seed2 = m.d16(0x46BE);
-		r.seed1 = m.d16(0x46C0);
-	};
-	auto storeRules = [](Machine &m, const Rules &r) {
-		for (int i = 0; i < 5; ++i) m.d8(uint16_t(0x465C + i)) = r.rngState[i];
-		m.setD16(0x46BE, r.seed2);
-		m.setD16(0x46C0, r.seed1);
-	};
 	// rngByte <al> [s0 s1 s2 s3 s4]
 	registry()["rngByte"] = {0x8E6B,
 	    [](Machine &m, const Args &a) {
 		    for (int i = 0; i < 5 && size_t(1 + i) < a.v.size(); ++i) m.d8(uint16_t(0x465C + i)) = uint8_t(a.hex(size_t(1 + i)));
 		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
 	    },
-	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.rngByte(uint8_t(r.ax)); storeRules(m, q); return o; }};
+	    [](Machine &m, const Args &, const Regs &r) { Rules q(m); Out o; o.al = q.rngByte(uint8_t(r.ax)); return o; }};
 	// random <n>   (sub_18E41, result in al)
 	registry()["random"] = {0x8E41,
 	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
-	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.random(uint8_t(r.ax)); storeRules(m, q); return o; },
+	    [](Machine &m, const Args &, const Regs &r) { Rules q(m); Out o; o.al = q.random(uint8_t(r.ax)); return o; },
 	    {0xC059}};
 	// d6 <al>
 	registry()["d6"] = {0x8E5F,
 	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
-	    [=](Machine &m, const Args &, const Regs &r) { Rules q; loadRules(m, q); Out o; o.al = q.d6(uint8_t(r.ax)); storeRules(m, q); return o; }};
+	    [](Machine &m, const Args &, const Regs &r) { Rules q(m); Out o; o.al = q.d6(uint8_t(r.ax)); return o; }};
 	// rollDice (sub_19C84, result in al)
 	registry()["rollDice"] = {0x9C84,
 	    [](Machine &, const Args &) { return Regs{}; },
-	    [=](Machine &m, const Args &, const Regs &) { Rules q; loadRules(m, q); Out o; o.al = int(q.rollDice() & 0xFF); storeRules(m, q); return o; },
+	    [](Machine &m, const Args &, const Regs &) { Rules q(m); Out o; o.al = q.rollDice(); return o; },
 	    {0xCD49, 0xCD4A}};
 
 	// ---- party and items
@@ -137,6 +127,63 @@ void registerTests() {
 	    [](Machine &m, const Args &a) { setCurrentCharacter(m, uint8_t(a.hex(0))); Regs r; r.ax = uint16_t(a.hex(1)); return r; },
 	    [](Machine &m, const Args &, const Regs &r) { const int off = findItemById(m, uint8_t(r.ax)); Out o; o.bl = off < 0 ? 0xFF : off; o.cf = off < 0; return o; },
 	    {0xCCE1}};
+
+	// ---- text engine
+	// convertNumberToBcd <hex value>
+	registry()["convertNumberToBcd"] = {0x8DCE,
+	    [](Machine &m, const Args &a) { setNumberValue(m, a.hex(0)); return Regs{}; },
+	    [](Machine &m, const Args &, const Regs &) { convertNumberToBcd(m); return Out{}; }};
+	// writeNumber <hex value> <width> <fn 1|2>   (17696: buffered or immediate writer, no padding)
+	registry()["writeNumber"] = {0x7696,
+	    [](Machine &m, const Args &a) {
+		    setNumberValue(m, a.hex(0));
+		    m.d8(g::tempTextX) = uint8_t(a.hex(1, 8));
+		    m.setD16(g::writeCharacterFn, a.hex(2, 2) == 2 ? 0x9DC3 : 0x9E53);
+		    m.d8(g::textSpeedFlag) = 0;
+		    return Regs{};
+	    },
+	    [](Machine &m, const Args &, const Regs &) { writeNumber(m); return Out{}; }};
+	// writeCharacter <ch> [fn x y]   (19E53 buffered)
+	registry()["writeCharacter"] = {0x9E53,
+	    [](Machine &m, const Args &a) {
+		    m.d8(g::textSpeedFlag) = 0;
+		    if (a.v.size() > 2) { m.d8(g::rectTextX) = uint8_t(a.hex(1)); m.d8(g::rectTextY) = uint8_t(a.hex(2)); }
+		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
+	    },
+	    [](Machine &m, const Args &, const Regs &r) { writeCharacter(m, uint8_t(r.ax)); return Out{}; }};
+	// writeCharacter2 <ch> [x y]   (19DC3 immediate)
+	registry()["writeCharacter2"] = {0x9DC3,
+	    [](Machine &m, const Args &a) {
+		    m.d8(g::textSpeedFlag) = 0;
+		    if (a.v.size() > 2) { m.d8(g::rectTextX) = uint8_t(a.hex(1)); m.d8(g::rectTextY) = uint8_t(a.hex(2)); }
+		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
+	    },
+	    [](Machine &m, const Args &, const Regs &r) { writeCharacter2(m, uint8_t(r.ax)); return Out{}; }};
+	// printMessage <id>   (16CB2)
+	registry()["printMessage"] = {0x6CB2,
+	    [](Machine &m, const Args &a) { m.d8(g::textSpeedFlag) = 0; Regs r; r.ax = uint16_t(a.hex(0)); return r; },
+	    [](Machine &m, const Args &, const Regs &r) { printMessage(m, uint8_t(r.ax)); return Out{}; },
+	    {0xB263}};
+	// hintOverlay <mask1> <mask2>   (189B1)
+	registry()["hintOverlay"] = {0x89B1,
+	    [](Machine &m, const Args &a) { m.setD16(g::buttonMask1, uint16_t(a.hex(0))); m.setD16(g::buttonMask2, uint16_t(a.hex(1))); return Regs{}; },
+	    [](Machine &m, const Args &, const Regs &) { hintOverlay(m); return Out{}; }};
+	// flushLine / newline / scrollLine need a line buffer: fill with a 40 char test pattern
+	auto prepLine = [](Machine &m, const Args &a) {
+		m.d8(g::textSpeedFlag) = 0;
+		const char *text = "THE QUICK BROWN FOX JUMPS OVER A LAZY DOG";
+		for (int i = 0; i < 0x33; ++i) m.d8(uint16_t(g::lineBuffer + i)) = 0;
+		const int n = int(a.hex(0, 36));
+		for (int i = 0; i < n && text[i]; ++i) m.d8(uint16_t(g::lineBuffer + 1 + i)) = uint8_t(text[i] == ' ' ? 0 : text[i] - 0x20);
+		m.d8(g::rectTextX) = uint8_t(1 + n);
+	};
+	registry()["flushLine"] = {0x9F12,
+	    [=](Machine &m, const Args &a) { prepLine(m, a); return Regs{}; },
+	    [](Machine &m, const Args &, const Regs &) { flushLine(m); return Out{}; }};
+	registry()["newline"] = {0x9EFC,
+	    [=](Machine &m, const Args &a) { prepLine(m, a); return Regs{}; },
+	    [](Machine &m, const Args &, const Regs &) { newline(m); return Out{}; }};
+
 }
 
 } // namespace
@@ -171,7 +218,7 @@ int main(int argc, char **argv) {
 	const Out out = t.native(nat, args, regs);
 	for (uint16_t off : t.scratch) nat.d8(off) = ref.d8(off);
 
-	size_t n = nat.diff(ref, 40);
+	size_t n = nat.diff(ref, argc > 99 ? 40 : 200);
 	if (out.al >= 0 && out.al != (em.cpu.ax & 0xFF)) { std::printf("  AL: native %02X original %02X\n", out.al, em.cpu.ax & 0xFF); ++n; }
 	if (out.bl >= 0 && out.bl != (em.cpu.bx & 0xFF)) { std::printf("  BL: native %02X original %02X\n", out.bl, em.cpu.bx & 0xFF); ++n; }
 	if (out.dl >= 0 && out.dl != (em.cpu.dx & 0xFF)) { std::printf("  DL: native %02X original %02X\n", out.dl, em.cpu.dx & 0xFF); ++n; }

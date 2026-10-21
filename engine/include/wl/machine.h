@@ -5,6 +5,8 @@
 // byte for byte with what the original code produced.
 #include "wl/ega.h"
 #include "fod/bytes.h"
+#include <deque>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -21,6 +23,11 @@ struct Machine {
 	Bytes mem = Bytes(1 << 20, 0);
 	Ega ega;
 	uint16_t regs[14] = {};                  // ax cx dx bx sp bp si di es cs ss ds ip flags (as saved by wlemu)
+
+	// BIOS-level inputs the ported routines poll (not part of the state file)
+	std::deque<uint16_t> keys;              // keyboard buffer: scancode << 8 | ascii
+	std::function<void()> onIdle;           // called while a routine waits for input or time (lets the front end run)
+	std::function<void()> onPortraitTick;   // the location portrait animation step (WL.EXE 190F8), called from input/scroll loops
 
 	// data segment accessors (offset relative to DS)
 	uint8_t &d8(uint16_t off) { return mem[kDsLinear + off]; }

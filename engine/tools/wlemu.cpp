@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 using emu::Machine;
 
@@ -51,6 +52,18 @@ int main(int argc, char **argv) {
 			for (char ch : std::string(argv[++i])) m.keys.push_back(uint16_t(uint8_t(ch)));
 		} else if (cmd == "shot" && i + 1 < argc) {
 			m.screenshot().writePng(argv[++i]);
+		} else if (cmd == "watchmem" && i + 1 < argc) {   // watchmem <ds offset hex>: report changes of one byte
+			const uint16_t off = uint16_t(std::strtoul(argv[++i], nullptr, 16));
+			auto last = std::make_shared<uint8_t>(m.cpu.rb(0x1CE2, off));
+			auto prevIp = std::make_shared<std::pair<uint16_t, uint16_t>>(m.cpu.cs, m.cpu.ip);
+			m.cpu.onStep = [&m, off, last, prevIp](x86::Cpu &cpu) {
+				const uint8_t v = cpu.rb(0x1CE2, off);
+				if (v != *last) {
+					std::printf("ds:%04X %02X -> %02X, written by the instruction at %04X:%04X\n", off, *last, v, prevIp->first, prevIp->second);
+					*last = v;
+				}
+				*prevIp = {cpu.cs, cpu.ip};
+			};
 		} else if (cmd == "idle" && i + 1 < argc) {   // idle on|off
 			m.detectIdle = std::string(argv[++i]) == "on";
 		} else if (cmd == "watchw" && i + 1 < argc) {   // watchw <hex video offset>: report every write to it

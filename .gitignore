@@ -18,3 +18,4 @@ engine/*.png
 ida_scripts/wl_image.bin
 ida_scripts/wl_syms.txt
 ida_scripts/wl_names.txt
+tmp_out/
