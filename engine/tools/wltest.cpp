@@ -8,6 +8,7 @@
 #include "wl/ui.h"
 #include "wl/globals.h"
 #include "wl/rules.h"
+#include "wl/party.h"
 #include <cstdio>
 #include <cstdlib>
 #include <functional>
@@ -21,7 +22,7 @@ struct Args {
 };
 
 struct Regs { uint16_t ax = 0, bx = 0, cx = 0, dx = 0, si = 0, di = 0; };
-struct Out { int al = -1, ax = -1, dx = -1, cf = -1; };   // register results to compare with the original (-1: not checked)
+struct Out { int al = -1, bl = -1, dl = -1, ax = -1, dx = -1, cf = -1, zf = -1; };   // register results to compare with the original (-1: not checked)
 
 struct TestCase {
 	uint16_t entry;                                                              // near address in the code segment (offset from 10000h)
@@ -94,6 +95,48 @@ void registerTests() {
 	    [=](Machine &m, const Args &, const Regs &) { Rules q; loadRules(m, q); Out o; o.al = int(q.rollDice() & 0xFF); storeRules(m, q); return o; },
 	    {0xCD49, 0xCD4A}};
 
+	// ---- party and items
+	// setPartyIndexesPtr <group>
+	registry()["setPartyIndexesPtr"] = {0x7208,
+	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
+	    [](Machine &m, const Args &, const Regs &r) { setPartyIndexesPtr(m, uint8_t(r.ax)); return Out{}; }};
+	// setCurrentCharacter <partyNum>
+	registry()["setCurrentCharacter"] = {0x9614,
+	    [](Machine &, const Args &a) { Regs r; r.ax = uint16_t(a.hex(0)); return r; },
+	    [](Machine &m, const Args &, const Regs &r) { setCurrentCharacter(m, uint8_t(r.ax)); return Out{}; }};
+	// isMemberUnconscious <partyNum> [conLo conHi]
+	registry()["isMemberUnconscious"] = {0x72BB,
+	    [](Machine &m, const Args &a) {
+		    setCurrentCharacter(m, uint8_t(a.hex(0)));
+		    if (a.v.size() > 2) { const uint16_t c = m.d16(g::currentCharacter); m.d8(uint16_t(c + pm::con)) = uint8_t(a.hex(1)); m.d8(uint16_t(c + pm::con + 1)) = uint8_t(a.hex(2)); }
+		    Regs r; r.ax = uint16_t(a.hex(0)); return r;
+	    },
+	    [](Machine &m, const Args &, const Regs &r) { Out o; o.cf = isMemberUnconscious(m, uint8_t(r.ax)); return o; }};
+	// conBytesOr <partyNum> [conLo conHi]  (sub_172AE)
+	registry()["conBytesOr"] = {0x72AE,
+	    [](Machine &m, const Args &a) {
+		    setCurrentCharacter(m, uint8_t(a.hex(0)));
+		    if (a.v.size() > 2) { const uint16_t c = m.d16(g::currentCharacter); m.d8(uint16_t(c + pm::con)) = uint8_t(a.hex(1)); m.d8(uint16_t(c + pm::con + 1)) = uint8_t(a.hex(2)); }
+		    return Regs{};
+	    },
+	    [](Machine &m, const Args &, const Regs &) { Out o; o.al = conBytesOr(m); o.zf = o.al == 0; return o; }};
+	// getMemberConditionIndex <partyNum> [conLo conHi]
+	registry()["getMemberConditionIndex"] = {0x9A1D,
+	    [](Machine &m, const Args &a) {
+		    setCurrentCharacter(m, uint8_t(a.hex(0)));
+		    if (a.v.size() > 2) { const uint16_t c = m.d16(g::currentCharacter); m.d8(uint16_t(c + pm::con)) = uint8_t(a.hex(1)); m.d8(uint16_t(c + pm::con + 1)) = uint8_t(a.hex(2)); }
+		    return Regs{};
+	    },
+	    [](Machine &m, const Args &, const Regs &) { Out o; o.dl = getMemberConditionIndex(m); return o; }};
+	// getMemberSkillLevel <partyNum> <skillId>
+	registry()["getMemberSkillLevel"] = {0x98CD,
+	    [](Machine &m, const Args &a) { setCurrentCharacter(m, uint8_t(a.hex(0))); Regs r; r.ax = uint16_t(a.hex(1)); return r; },
+	    [](Machine &m, const Args &, const Regs &r) { Out o; o.al = getMemberSkillLevel(m, uint8_t(r.ax)); o.zf = o.al == 0; return o; }};
+	// findItemById <partyNum> <itemId>
+	registry()["findItemById"] = {0x968C,
+	    [](Machine &m, const Args &a) { setCurrentCharacter(m, uint8_t(a.hex(0))); Regs r; r.ax = uint16_t(a.hex(1)); return r; },
+	    [](Machine &m, const Args &, const Regs &r) { const int off = findItemById(m, uint8_t(r.ax)); Out o; o.bl = off < 0 ? 0xFF : off; o.cf = off < 0; return o; },
+	    {0xCCE1}};
 }
 
 } // namespace
@@ -130,6 +173,9 @@ int main(int argc, char **argv) {
 
 	size_t n = nat.diff(ref, 40);
 	if (out.al >= 0 && out.al != (em.cpu.ax & 0xFF)) { std::printf("  AL: native %02X original %02X\n", out.al, em.cpu.ax & 0xFF); ++n; }
+	if (out.bl >= 0 && out.bl != (em.cpu.bx & 0xFF)) { std::printf("  BL: native %02X original %02X\n", out.bl, em.cpu.bx & 0xFF); ++n; }
+	if (out.dl >= 0 && out.dl != (em.cpu.dx & 0xFF)) { std::printf("  DL: native %02X original %02X\n", out.dl, em.cpu.dx & 0xFF); ++n; }
+	if (out.zf >= 0 && out.zf != int(em.cpu.flag(x86::ZF))) { std::printf("  ZF: native %d original %d\n", out.zf, int(em.cpu.flag(x86::ZF))); ++n; }
 	if (out.ax >= 0 && out.ax != em.cpu.ax) { std::printf("  AX: native %04X original %04X\n", out.ax, em.cpu.ax); ++n; }
 	if (out.dx >= 0 && out.dx != em.cpu.dx) { std::printf("  DX: native %04X original %04X\n", out.dx, em.cpu.dx); ++n; }
 	if (out.cf >= 0 && out.cf != int(em.cpu.flag(x86::CF))) { std::printf("  CF: native %d original %d\n", out.cf, int(em.cpu.flag(x86::CF))); ++n; }
