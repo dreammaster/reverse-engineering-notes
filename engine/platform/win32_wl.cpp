@@ -2,6 +2,9 @@
 #include "wl/recomp_rt.h"
 #include "fod/bytes.h"
 #include <windows.h>
+#include <mmsystem.h>
+#include <atomic>
+#include <thread>
 #include <chrono>
 #include <cstdio>
 #include <string>
@@ -14,6 +17,63 @@ namespace {
 constexpr int kScale = 3;
 const uint32_t kPalette[16] = {0x000000, 0x0000aa, 0x00aa00, 0x00aaaa, 0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
                                0x555555, 0x5555ff, 0x55ff55, 0x55ffff, 0xff5555, 0xff55ff, 0xffff55, 0xffffff};
+
+// PC speaker: a square wave generated on a background thread (waveOut, 22050 Hz, 8 bit mono)
+class Speaker {
+public:
+	Speaker() {
+		WAVEFORMATEX fmt{};
+		fmt.wFormatTag = WAVE_FORMAT_PCM;
+		fmt.nChannels = 1;
+		fmt.nSamplesPerSec = kRate;
+		fmt.wBitsPerSample = 8;
+		fmt.nBlockAlign = 1;
+		fmt.nAvgBytesPerSec = kRate;
+		if (waveOutOpen(&_out, WAVE_MAPPER, &fmt, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR) return;
+		_thread = std::thread([this] { run(); });
+	}
+	~Speaker() {
+		_quit = true;
+		if (_thread.joinable()) _thread.join();
+		if (_out) { waveOutReset(_out); for (auto &b : _bufs) waveOutUnprepareHeader(_out, &b.hdr, sizeof b.hdr); waveOutClose(_out); }
+	}
+	void set(int hz) { _hz = hz; }
+
+private:
+	static constexpr int kRate = 22050, kChunk = 512;
+	struct Buf { WAVEHDR hdr{}; std::vector<uint8_t> data = std::vector<uint8_t>(kChunk); };
+
+	void run() {
+		for (auto &b : _bufs) {
+			b.hdr.lpData = reinterpret_cast<LPSTR>(b.data.data());
+			b.hdr.dwBufferLength = kChunk;
+			waveOutPrepareHeader(_out, &b.hdr, sizeof b.hdr);
+			b.hdr.dwFlags |= WHDR_DONE;
+		}
+		double phase = 0;
+		while (!_quit) {
+			bool any = false;
+			for (auto &b : _bufs) {
+				if (!(b.hdr.dwFlags & WHDR_DONE)) continue;
+				const int hz = _hz;
+				for (int i = 0; i < kChunk; ++i) {
+					if (hz) { phase += double(hz) / kRate; if (phase >= 1.0) phase -= 1.0; }
+					b.data[size_t(i)] = hz ? (phase < 0.5 ? 160 : 96) : 128;
+				}
+				b.hdr.dwFlags &= ~DWORD(WHDR_DONE);
+				waveOutWrite(_out, &b.hdr, sizeof b.hdr);
+				any = true;
+			}
+			if (!any) Sleep(4);
+		}
+	}
+
+	HWAVEOUT _out = nullptr;
+	std::thread _thread;
+	std::atomic<bool> _quit{false};
+	std::atomic<int> _hz{0};
+	Buf _bufs[4];
+};
 
 struct Window {
 	Machine *machine = nullptr;
@@ -102,6 +162,8 @@ int main(int argc, char **argv) {
 		rc::Regs r;
 		rc::boot(m, fod::readFile(image), dir, r);
 		m.sys->realtime = true;
+		Speaker speaker;
+		m.sys->onSpeaker = [&speaker](int hz) { speaker.set(hz); };
 		win.create();
 		auto last = std::chrono::steady_clock::now();
 		auto refresh = [&]() {

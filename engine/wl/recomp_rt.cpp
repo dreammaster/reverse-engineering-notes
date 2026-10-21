@@ -80,6 +80,8 @@ void fatalAt(const char *message, unsigned value) {
 	throw Fault(buf);
 }
 
+void speakerUpdate(Sys &s);
+
 uint16_t portIn(Machine &m, Regs &, uint16_t port, bool) {
 	Ega &e = m.ega;
 	if (port == 0x3DA) { e.status ^= 9; return uint16_t(e.status); }
@@ -96,9 +98,31 @@ uint16_t portIn(Machine &m, Regs &, uint16_t port, bool) {
 	return 0;
 }
 
+void speakerUpdate(Sys &s) {
+	const int hz = s.speakerOn && s.pitDivisor > 1 ? int(1193182u / s.pitDivisor) : 0;
+	if (hz == s.speakerHz) return;
+	s.speakerHz = hz;
+	if (s.onSpeaker) s.onSpeaker(hz);
+}
+
 void portOut(Machine &m, Regs &, uint16_t port, uint16_t v, bool wide) {
 	Ega &e = m.ega;
 	switch (port) {
+	case 0x42: {   // PIT channel 2 divisor (low byte, then high byte): the speaker tone
+		Sys &s = sys(m);
+		if (s.pitLow) s.pitDivisor = uint16_t((s.pitDivisor & 0xFF00) | (v & 0xFF));
+		else s.pitDivisor = uint16_t((s.pitDivisor & 0x00FF) | ((v & 0xFF) << 8));
+		s.pitLow = !s.pitLow;
+		if (s.pitLow) speakerUpdate(s);
+		break;
+	}
+	case 0x43: sys(m).pitLow = true; break;
+	case 0x61: {
+		Sys &s = sys(m);
+		s.speakerOn = (v & 3) == 3;
+		speakerUpdate(s);
+		break;
+	}
 	case 0x3C4: e.seqIdx = uint8_t(v & 31); if (wide && e.seqIdx == 2) e.mapMask = uint8_t(v >> 8); break;
 	case 0x3C5: if (e.seqIdx == 2) e.mapMask = uint8_t(v); break;
 	case 0x3CE: e.gcIdx = uint8_t(v & 15); if (wide) e.gc[e.gcIdx] = uint8_t(v >> 8); break;

@@ -28,6 +28,10 @@ struct Sys {
 	int emptyPolls = 0, stopOnIdle = 0;                      // stopOnIdle > 0: throw WaitForInput after that many empty polls
 	bool realtime = false;                                   // timer IRQ0 from the wall clock (18.2 Hz) instead of counting back edges
 	int64_t nextTickUs = 0;
+	std::function<void(int)> onSpeaker;                      // PC speaker: frequency in Hz, 0 = off
+	uint16_t pitDivisor = 0;
+	bool pitLow = true, speakerOn = false;
+	int speakerHz = 0;
 	std::function<void()> onTick;                            // called at every timer interrupt (host: pump events, repaint)
 	std::set<uint16_t> unknownTargets;
 	uint64_t ticks = 0;
