@@ -54,6 +54,7 @@ public:
 	std::vector<Monster> &monsters() { return _monsters; }
 	std::vector<EnemyGroup> &groups() { return _groups; }
 	std::vector<GroundItem> &groundItems() { return _items; }
+	std::vector<Bytes> &shops() { return _shops; }   // 0x2C header + 0x10 per item row
 	std::vector<Bytes> &storedMembers() { return _stored; }   // party members left here (0x14C bytes each, max 3)
 	MapCell &cell(int x, int y) { return _cells[size_t(y) * _w + x]; }
 	bool inBounds(int x, int y) const { return x >= 0 && y >= 0 && x < _w && y < _h; }
@@ -69,6 +70,7 @@ private:
 	std::vector<EnemyGroup> _groups;
 	std::vector<GroundItem> _items;
 	std::vector<Bytes> _stored;
+	std::vector<Bytes> _shops;
 };
 
 } // namespace fod

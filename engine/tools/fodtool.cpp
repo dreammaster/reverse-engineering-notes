@@ -13,6 +13,7 @@
 #include "fod/screen.h"
 #include "fod/game.h"
 #include "fod/combat.h"
+#include "fod/progress.h"
 #include "texthost.h"
 #include <cstdio>
 #include <iostream>
@@ -153,6 +154,15 @@ int main(int argc, char **argv) {
 			const Combat::Outcome o = cb.run(true);
 			std::printf("fled=%d wiped=%d groundItems=%zu\n", o.fled, o.wiped, w.map->groundItems().size());
 			for (int i = 0; i < w.partyCount(); ++i) std::printf("%s hp=%d exp=%u\n", w.party(i).name().c_str(), w.party(i).hp(), w.party(i).exp());
+		} else if (cmd == "shop" && argc >= 6) {   // shop <map> <shopIdx> <keys>: browse a shop with scripted key presses
+			GameData gd(dir);
+			World w(gd, Game::defaultParty(gd));
+			w.loadMap(std::atoi(argv[3]));
+			w.disk.cash = 500;
+			TextHost host;
+			for (const char *k = argv[5]; *k; ++k) host.keys.push_back(*k);
+			runShop(w, host, std::atoi(argv[4]));
+			std::printf("cash=%u\n", w.disk.cash);
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());

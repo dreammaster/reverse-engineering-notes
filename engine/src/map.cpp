@@ -22,12 +22,20 @@ Map::Map(const Bytes &chunk) {
 	r.seek(0x0B);
 	const unsigned groupCount = r.u8();
 	r.seek(0x404);
-	r.u16(); // shops offset
+	const unsigned shopsOfs = r.u16();
 	const unsigned monstersOfs = r.u16();
 	r.u16(); // monsters end
 	const unsigned groupsOfs = r.u16();
 	const unsigned itemsOfs = r.u16();
 	const unsigned itemCount = r.u16();
+
+	for (size_t pos = shopsOfs; pos + 0x2C <= monstersOfs && pos + 0x2C <= chunk.size();) {
+		const size_t count = chunk[pos + 0x2A] | (chunk[pos + 0x2B] << 8);
+		const size_t size = 0x2C + 0x10 * count;
+		if (pos + size > chunk.size()) break;
+		_shops.emplace_back(chunk.begin() + long(pos), chunk.begin() + long(pos + size));
+		pos += size;
+	}
 
 	r.seek(kHeaderSize);
 	_cells.resize(size_t(_w) * _h);

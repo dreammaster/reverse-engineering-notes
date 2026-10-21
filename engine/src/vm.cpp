@@ -353,7 +353,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			break;
 		}
 		case 36: *cv = cond.combine(call.arg8 == p0 && call.event == kEvUseItem, p1); break;
-		case 37: _h.shop(p0, cur); break;
+		case 37: runShop(w, _h, p0); _h.redrawMap(); break;
 		case 38: break;     // hide party sprite (cosmetic)
 		case 39: *cv = _h.yesNo(strAt(p0)); break;
 		case 40: w.setPartyPosition(disk.mapX, disk.mapY); break;
@@ -371,7 +371,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			break;
 		}
 		case 44: *cv = cond.combine((disk.tail[size_t(p0)] & 2) != 0, p1); break;
-		case 45: _h.service(p0, cur); break;
+		case 45: runService(w, _h, p0); _h.redrawMap(); break;
 		case 46: acc = disk.hours * 100 + disk.minutes; break;
 		case 47: {  // menu begin: show text, read a key
 			++menuDepth;

@@ -28,6 +28,14 @@ public:
 	std::string readLine() override { return ""; }
 	void sound(int n) override { std::printf("[sound %d]\n", n); }
 	void log(const std::string &m) override { std::printf("[log] %s\n", m.c_str()); }
+	int pickFromList(const std::string &title, const std::vector<std::string> &items) override {
+		std::printf("[list] ");
+		print(title);
+		std::putchar('\n');
+		for (size_t i = 0; i < items.size(); ++i) std::printf("  %zu. %s\n", i + 1, items[i].c_str());
+		const int k = readKey();
+		return (k >= '1' && k < '1' + int(items.size())) ? k - '1' : -1;
+	}
 	void showMenu(const std::string &t, bool) override {
 		std::printf("[menu] ");
 		print(t);

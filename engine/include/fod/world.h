@@ -18,6 +18,7 @@ struct GameData {
 	Weapons weapons;
 	Archetypes archetypes;
 	Bytes packets;               // PACKETS loot tables
+	Bytes services;              // SERVICES: blocks of 0x2C header + 0x20 per row
 	Bytes hdspct;                // skill use thresholds at +0x13A + 0x16*skill
 	GameData(const std::string &gameDir);
 };
