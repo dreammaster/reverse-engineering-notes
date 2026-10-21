@@ -292,6 +292,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1001E);
 	op_hex		(x,	1);
 	create_insn	(0X10022);
+	set_name	(0X10022,	"loadMapPicSet");
 	create_insn	(x=0X1002F);
 	op_hex		(x,	1);
 	create_insn	(x=0X10049);
@@ -301,6 +302,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10079);
 	op_hex		(x,	1);
 	create_insn	(0X1008C);
+	set_name	(0X1008C,	"loadMap");
 	create_insn	(x=0X10093);
 	op_stkvar	(x,	0);
 	create_insn	(0X1009B);
@@ -327,6 +329,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X101B8);
 	op_hex		(x,	1);
 	create_insn	(0X101BE);
+	set_name	(0X101BE,	"loadSaveState");
 	create_insn	(x=0X101C1);
 	op_hex		(x,	1);
 	create_insn	(x=0X101C6);
@@ -490,6 +493,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X103B0);
 	op_stkvar	(x,	0);
 	create_insn	(0X103BF);
+	set_name	(0X103BF,	"readFileChunk");
 	create_insn	(x=0X103C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X103C6);
@@ -551,6 +555,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1043C);
 	op_hex		(x,	1);
 	create_insn	(0X10444);
+	set_name	(0X10444,	"readFileBlock");
 	create_insn	(x=0X10447);
 	op_hex		(x,	1);
 	create_insn	(x=0X1044A);
@@ -900,6 +905,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X1078E);
 	create_insn	(0X10795);
+	set_name	(0X10795,	"distanceToParty");
 	create_insn	(x=0X10798);
 	op_hex		(x,	1);
 	create_insn	(x=0X1079B);
@@ -922,6 +928,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X107DD);
 	op_hex		(x,	1);
 	create_insn	(0X107E1);
+	set_name	(0X107E1,	"drawPartyStatus");
 	create_insn	(x=0X107E4);
 	op_hex		(x,	1);
 	set_cmt	(0X107E7,	"draw",	0);
@@ -1191,6 +1198,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10A7F);
 	op_hex		(x,	1);
 	create_insn	(0X10A87);
+	set_name	(0X10A87,	"getDirectionKey");
 	create_insn	(x=0X10A8A);
 	op_hex		(x,	1);
 	create_insn	(x=0X10A8E);
@@ -1234,6 +1242,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10B3D);
 	op_stkvar	(x,	1);
 	create_insn	(0X10B45);
+	set_name	(0X10B45,	"drawWhichWayPrompt");
 	create_insn	(x=0X10B48);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -1270,6 +1279,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10B8E);
 	op_hex		(x,	1);
 	create_insn	(0X10B95);
+	set_name	(0X10B95,	"askDirectionGetCell");
 	create_insn	(x=0X10B98);
 	op_hex		(x,	1);
 	create_insn	(x=0X10BA1);
@@ -1284,6 +1294,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X10BE0);
 	create_insn	(0X10BE7);
+	set_name	(0X10BE7,	"getPartyFKey");
 	create_insn	(x=0X10BEA);
 	op_hex		(x,	1);
 	create_insn	(x=0X10BED);
@@ -1310,12 +1321,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X10C3B);
 	op_stkvar	(x,	1);
 	create_insn	(0X10C42);
+	set_name	(0X10C42,	"isPartyPosition");
 	create_insn	(x=0X10C45);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X10C4F);
 	op_stkvar	(x,	1);
 	create_insn	(0X10C5E);
 	create_insn	(0X10C62);
+	set_name	(0X10C62,	"findFreeCellNear");
 	create_insn	(x=0X10C65);
 	op_hex		(x,	1);
 	create_insn	(x=0X10C69);
@@ -1377,6 +1390,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10D0B);
 	op_stkvar	(x,	1);
 	create_insn	(0X10D19);
+	set_name	(0X10D19,	"markEntityOnMap");
 	create_insn	(x=0X10D1C);
 	op_hex		(x,	1);
 	create_insn	(x=0X10D1F);
@@ -1404,6 +1418,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10D6A);
 	op_stkvar	(x,	1);
 	create_insn	(0X10D78);
+	set_name	(0X10D78,	"placeEntitiesOnMap");
 	create_insn	(x=0X10D7B);
 	op_hex		(x,	1);
 	create_insn	(x=0X10D7E);
@@ -1443,6 +1458,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10E20);
 	op_stkvar	(x,	1);
 	create_insn	(0X10E29);
+	set_name	(0X10E29,	"moveEntityStep");
 	create_insn	(x=0X10E2C);
 	op_hex		(x,	1);
 	create_insn	(x=0X10E30);
@@ -1506,6 +1522,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10EEC);
 	op_hex		(x,	1);
 	create_insn	(0X10EF7);
+	set_name	(0X10EF7,	"moveMapEntities");
 	create_insn	(x=0X10EFA);
 	op_hex		(x,	1);
 	create_insn	(x=0X10F01);
@@ -1638,6 +1655,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11131);
 	op_stkvar	(x,	0);
 	create_insn	(0X1113F);
+	set_name	(0X1113F,	"passTime");
 	create_insn	(x=0X11142);
 	op_hex		(x,	1);
 	create_insn	(x=0X11146);
@@ -1745,6 +1763,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X112E4);
 	create_insn	(0X112E9);
+	set_name	(0X112E9,	"passTimeStep");
 	create_insn	(x=0X112EC);
 	op_hex		(x,	1);
 	create_insn	(x=0X112F2);
@@ -1759,6 +1778,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1132F);
 	op_stkvar	(x,	0);
 	create_insn	(0X11339);
+	set_name	(0X11339,	"moveMonstersAndCheckEncounter");
 	create_insn	(x=0X11345);
 	op_hex		(x,	1);
 	create_insn	(x=0X11362);
@@ -1773,7 +1793,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11389);
 	op_hex		(x,	1);
 	create_insn	(0X1138D);
-	set_name	(0X1138D,	"nothing");
+	set_name	(0X1138D,	"endOfTurn");
 	create_insn	(x=0X11393);
 	op_stkvar	(x,	0);
 	create_insn	(0X113A1);
@@ -1987,6 +2007,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1175D);
 	op_stkvar	(x,	1);
 	create_insn	(0X11766);
+	set_name	(0X11766,	"startPendingFight");
 	create_insn	(x=0X11769);
 	op_hex		(x,	1);
 	create_insn	(0X11777);
@@ -2018,6 +2039,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X11825);
 	create_insn	(0X11834);
+	set_name	(0X11834,	"runScriptChain");
 	create_insn	(x=0X11837);
 	op_hex		(x,	1);
 	create_insn	(x=0X1183A);
@@ -2032,6 +2054,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1187C);
 	op_hex		(x,	1);
 	create_insn	(0X1189E);
+	set_name	(0X1189E,	"useItemScriptOnCell");
 	create_insn	(x=0X118A2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X118A5);
@@ -2060,6 +2083,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11917);
 	op_hex		(x,	1);
 	create_insn	(0X11920);
+	set_name	(0X11920,	"rollWeaponVsObject");
 	create_insn	(x=0X11923);
 	op_hex		(x,	1);
 	create_insn	(x=0X11927);
@@ -2137,6 +2161,7 @@ static Bytes_0(void) {
 	create_insn	(0X11A29);
 	create_insn	(0X11A2E);
 	create_insn	(0X11A36);
+	set_name	(0X11A36,	"printMemberUsesWeapon");
 	create_insn	(x=0X11A39);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X11A3C);
@@ -2162,6 +2187,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11A5D);
 	op_hex		(x,	1);
 	create_insn	(0X11A62);
+	set_name	(0X11A62,	"useUpAmmo");
 	create_insn	(x=0X11A65);
 	op_hex		(x,	1);
 	create_insn	(x=0X11A6A);
@@ -2208,6 +2234,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11B0E);
 	op_stkvar	(x,	1);
 	create_insn	(0X11B1A);
+	set_name	(0X11B1A,	"printWouldntWork");
 	set_cmt	(0X11B1D,	"y",	0);
 	set_cmt	(0X11B1E,	"x",	0);
 	create_insn	(x=0X11B1F);
@@ -2217,6 +2244,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11B27);
 	op_hex		(x,	1);
 	create_insn	(0X11B2E);
+	set_name	(0X11B2E,	"useWeaponOnCell");
 	create_insn	(x=0X11B31);
 	op_hex		(x,	1);
 	create_insn	(x=0X11B35);
@@ -2331,6 +2359,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X11CD9);
 	create_insn	(0X11CEA);
+	set_name	(0X11CEA,	"useCommandOnCell");
 	create_insn	(x=0X11CED);
 	op_hex		(x,	1);
 	create_insn	(x=0X11CF1);
@@ -2360,6 +2389,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11D62);
 	op_hex		(x,	1);
 	create_insn	(0X11D6A);
+	set_name	(0X11D6A,	"chooseAmmoToLoad");
 	create_insn	(x=0X11D6D);
 	op_hex		(x,	1);
 	create_insn	(x=0X11D72);
@@ -2473,6 +2503,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11ECF);
 	op_stkvar	(x,	1);
 	create_insn	(0X11ED8);
+	set_name	(0X11ED8,	"giveItemToMember");
 	create_insn	(x=0X11EDB);
 	op_hex		(x,	1);
 	create_insn	(x=0X11EE0);
@@ -2534,9 +2565,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X11F9B);
 	op_hex		(x,	1);
 	create_insn	(0X11FA6);
+	set_name	(0X11FA6,	"askFixJammedWeapon");
 	create_insn	(x=0X11FB1);
 	op_hex		(x,	1);
 	create_insn	(0X11FB7);
+	set_name	(0X11FB7,	"itemActionMenu");
 	create_insn	(x=0X11FBA);
 	op_hex		(x,	1);
 	create_insn	(x=0X11FBE);
@@ -2770,11 +2803,13 @@ static Bytes_0(void) {
 	create_insn	(0X12508);
 	create_insn	(0X12519);
 	create_insn	(0X1251E);
+	set_name	(0X1251E,	"setPartyPosition");
 	create_insn	(x=0X12521);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12528);
 	op_stkvar	(x,	1);
 	create_insn	(0X1253F);
+	set_name	(0X1253F,	"movePartyStep");
 	create_insn	(x=0X12542);
 	op_hex		(x,	1);
 	set_cmt	(0X12546,	"draw",	0);
@@ -2902,6 +2937,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X127C3);
 	op_hex		(x,	1);
 	create_insn	(0X127CC);
+	set_name	(0X127CC,	"afterRosterScreen");
 	create_insn	(x=0X127D2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X127E0);
@@ -2909,6 +2945,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X127E6);
 	op_hex		(x,	1);
 	create_insn	(0X127EE);
+	set_name	(0X127EE,	"seedRngUntilKey");
 	create_insn	(x=0X127F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X127F4);
@@ -3037,6 +3074,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12A2C);
 	op_hex		(x,	1);
 	create_insn	(0X12A34);
+	set_name	(0X12A34,	"setListMenuMode");
 	create_insn	(x=0X12A37);
 	op_hex		(x,	1);
 	create_insn	(x=0X12A3B);
@@ -3166,6 +3204,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C08);
 	op_hex		(x,	1);
 	create_insn	(0X12C0F);
+	set_name	(0X12C0F,	"isCellPassable");
 	create_insn	(x=0X12C12);
 	op_hex		(x,	1);
 	create_insn	(x=0X12C16);
@@ -3222,7 +3261,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X12CED);
 	create_insn	(0X12CF5);
+	set_name	(0X12CF5,	"setBlastMessageStrings");
 	create_insn	(0X12D0A);
+	set_name	(0X12D0A,	"pickMapCell");
 	create_insn	(x=0X12D0D);
 	op_hex		(x,	1);
 	create_insn	(x=0X12D12);
@@ -3356,6 +3397,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X12E6F);
 	create_insn	(0X12E76);
+	set_name	(0X12E76,	"playFireSound");
 	create_insn	(x=0X12E79);
 	op_hex		(x,	1);
 	create_insn	(x=0X12E8A);
@@ -3396,9 +3438,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X12F37);
 	op_hex		(x,	1);
 	create_insn	(0X12F44);
+	set_name	(0X12F44,	"getItemWeaponDef");
 	create_insn	(x=0X12F4B);
 	op_stkvar	(x,	1);
 	create_insn	(0X12F62);
+	set_name	(0X12F62,	"rollAttack");
 	create_insn	(x=0X12F65);
 	op_hex		(x,	1);
 	create_insn	(x=0X12F6A);
@@ -3911,6 +3955,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X136AF);
 	op_stkvar	(x,	1);
 	create_insn	(0X136B8);
+	set_name	(0X136B8,	"applyMonsterHitReaction");
 	create_insn	(x=0X136BB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X136D2);
@@ -3953,6 +3998,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X138C4);
 	create_insn	(0X138CA);
+	set_name	(0X138CA,	"printAttackLine");
 	set_cmt	(0X138DE,	"char *",	0);
 	create_insn	(x=0X138E2);
 	op_plain_offset	(x,	1,	0X21240);
@@ -3972,6 +4018,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X138FD);
 	op_hex		(x,	1);
 	create_insn	(0X13901);
+	set_name	(0X13901,	"resetAttackState");
 	create_insn	(x=0X13904);
 	op_hex		(x,	1);
 	create_insn	(x=0X13908);
@@ -4005,6 +4052,7 @@ static Bytes_0(void) {
 	create_insn	(0X13B66);
 	create_insn	(0X13B6B);
 	create_insn	(0X13B70);
+	set_name	(0X13B70,	"removeDefeatedFromMap");
 	create_insn	(x=0X13B73);
 	op_hex		(x,	1);
 	create_insn	(x=0X13B76);
@@ -4031,6 +4079,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13BFC);
 	op_hex		(x,	1);
 	create_insn	(0X13C03);
+	set_name	(0X13C03,	"printDamage");
 	set_cmt	(0X13C06,	"char *",	0);
 	create_insn	(x=0X13C06);
 	op_stkvar	(x,	0);
@@ -4052,6 +4101,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13C24);
 	op_hex		(x,	1);
 	create_insn	(0X13C29);
+	set_name	(0X13C29,	"resolveAttack");
 	create_insn	(x=0X13C2C);
 	op_hex		(x,	1);
 	create_insn	(x=0X13C30);
@@ -4244,6 +4294,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X13E74);
 	create_insn	(0X13E79);
+	set_name	(0X13E79,	"attackMultiShot");
 	create_insn	(x=0X13E7C);
 	op_hex		(x,	1);
 	create_insn	(x=0X13E80);
@@ -4328,6 +4379,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X13FA5);
 	create_insn	(0X13FAA);
+	set_name	(0X13FAA,	"pickWeakestInGroup");
 	create_insn	(x=0X13FAD);
 	op_hex		(x,	1);
 	create_insn	(x=0X13FB2);
@@ -4393,6 +4445,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X140A9);
 	op_stkvar	(x,	1);
 	create_insn	(0X140B4);
+	set_name	(0X140B4,	"selectTargetStats");
 	create_insn	(x=0X140B7);
 	op_hex		(x,	1);
 	create_insn	(x=0X140C9);
@@ -4415,6 +4468,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1414B);
 	op_hex		(x,	1);
 	create_insn	(0X14161);
+	set_name	(0X14161,	"isWithinWeaponRange");
 	create_insn	(x=0X14164);
 	op_hex		(x,	1);
 	create_insn	(x=0X1416F);
@@ -4447,6 +4501,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X141B0);
 	create_insn	(0X141B8);
+	set_name	(0X141B8,	"attackNearbyTargets");
 	create_insn	(x=0X141BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X141BF);
@@ -4584,6 +4639,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X14370);
 	create_insn	(0X14375);
+	set_name	(0X14375,	"findNearbyTarget");
 	create_insn	(x=0X14378);
 	op_hex		(x,	1);
 	create_insn	(x=0X1437C);
@@ -4643,6 +4699,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1442E);
 	op_stkvar	(x,	1);
 	create_insn	(0X14438);
+	set_name	(0X14438,	"retargetIfDead");
 	create_insn	(x=0X1443B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1443E);
@@ -4667,6 +4724,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X14491);
 	create_insn	(0X14498);
+	set_name	(0X14498,	"checkWeaponMalfunction");
 	create_insn	(x=0X1449B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1449F);
@@ -4760,6 +4818,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14595);
 	op_stkvar	(x,	1);
 	create_insn	(0X1459F);
+	set_name	(0X1459F,	"memberAttack");
 	create_insn	(x=0X145A2);
 	op_hex		(x,	1);
 	create_insn	(x=0X145A6);
@@ -4896,6 +4955,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14780);
 	op_hex		(x,	1);
 	create_insn	(0X14788);
+	set_name	(0X14788,	"drawCombatNames");
 	create_insn	(x=0X1478B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1478E);
@@ -4934,6 +4994,7 @@ static Bytes_0(void) {
 	set_cmt	(0X147D0,	"win",	0);
 	set_cmt	(0X147D8,	"draw",	0);
 	create_insn	(0X147D8);
+	set_name	(0X147D8,	"refreshCombatScreen");
 	create_insn	(x=0X147DB);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X147E8);
@@ -4982,6 +5043,7 @@ static Bytes_0(void) {
 	create_insn	(0X148E1);
 	create_insn	(0X14929);
 	create_insn	(0X1492E);
+	set_name	(0X1492E,	"chooseTarget");
 	create_insn	(x=0X14931);
 	op_hex		(x,	1);
 	set_cmt	(0X14934,	"draw",	0);
@@ -5069,6 +5131,7 @@ static Bytes_0(void) {
 	create_insn	(0X14A82);
 	create_insn	(0X14A87);
 	create_insn	(0X14A9E);
+	set_name	(0X14A9E,	"combatMoveEnemy");
 	create_insn	(x=0X14AA1);
 	op_hex		(x,	1);
 	create_insn	(x=0X14AA5);
@@ -5190,6 +5253,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X14C35);
 	create_insn	(0X14C43);
+	set_name	(0X14C43,	"chooseEnemyAction");
 	create_insn	(x=0X14C46);
 	op_hex		(x,	1);
 	create_insn	(x=0X14C4D);
@@ -5332,6 +5396,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14E43);
 	op_stkvar	(x,	1);
 	create_insn	(0X14E61);
+	set_name	(0X14E61,	"addCombatant");
 	create_insn	(x=0X14E64);
 	op_hex		(x,	1);
 	create_insn	(x=0X14E68);
@@ -5388,6 +5453,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X14F15);
 	create_insn	(0X14F1A);
+	set_name	(0X14F1A,	"buildCombatants");
 	create_insn	(x=0X14F1D);
 	op_hex		(x,	1);
 	create_insn	(x=0X14F22);
@@ -5519,6 +5585,7 @@ static Bytes_0(void) {
 	create_insn	(0X1534C);
 	create_insn	(0X15363);
 	create_insn	(0X15390);
+	set_name	(0X15390,	"sortCombatants");
 	create_insn	(x=0X15393);
 	op_hex		(x,	1);
 	set_cmt	(0X15396,	"int (__cdecl *)(const void *, const void *)",	0);
@@ -5570,6 +5637,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X154AB);
 	create_insn	(0X154B0);
+	set_name	(0X154B0,	"clearCombatCommands");
 	create_insn	(x=0X154B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X154B6);
@@ -5581,6 +5649,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X154CD);
 	op_stkvar	(x,	0);
 	create_insn	(0X154D6);
+	set_name	(0X154D6,	"getPartyLevelUnit");
 	create_insn	(x=0X154D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X154DD);
@@ -5606,6 +5675,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15520);
 	op_stkvar	(x,	1);
 	create_insn	(0X15528);
+	set_name	(0X15528,	"chooseFiringMode");
 	create_insn	(x=0X1552B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1552F);
@@ -5682,6 +5752,7 @@ static Bytes_0(void) {
 	create_insn	(0X15642);
 	set_cmt	(0X1564A,	"draw",	0);
 	create_insn	(0X1564A);
+	set_name	(0X1564A,	"redrawCombatScreen");
 	create_insn	(x=0X15651);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -5701,6 +5772,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15687);
 	op_hex		(x,	1);
 	create_insn	(0X15691);
+	set_name	(0X15691,	"runCombat");
 	create_insn	(x=0X15694);
 	op_hex		(x,	1);
 	create_insn	(x=0X15699);
@@ -6198,6 +6270,15 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15E41);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X15E46);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15E52);
@@ -6391,21 +6472,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X16314);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X16318,	"text",	0);
 	create_insn	(x=0X1631C);
 	op_hex		(x,	1);
 	create_byte	(0X16325);
 	make_array	(0X16325,	0X3);
 	create_insn	(0X16328);
+	set_name	(0X16328,	"runCombatExecute");
 	set_cmt	(0X1632D,	"jumptable 000167A7 case 6",	1);
 	create_insn	(0X1632D);
 	create_insn	(x=0X16333);
@@ -6683,6 +6756,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16952);
 	op_hex		(x,	1);
 	create_insn	(0X1695C);
+	set_name	(0X1695C,	"showMessageBox");
 	create_insn	(x=0X1695F);
 	op_hex		(x,	1);
 	create_insn	(x=0X16965);
@@ -6703,6 +6777,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16999);
 	op_stkvar	(x,	0);
 	create_insn	(0X169A3);
+	set_name	(0X169A3,	"openGameFile");
 	create_insn	(x=0X169A6);
 	op_hex		(x,	1);
 	create_insn	(0X169AB);
@@ -6730,6 +6805,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X169DD);
 	op_stkvar	(x,	0);
 	create_insn	(0X169E8);
+	set_name	(0X169E8,	"drawCombatCommandRow");
 	create_insn	(x=0X169EB);
 	op_hex		(x,	1);
 	set_cmt	(0X169EE,	"char *",	0);
@@ -6837,6 +6913,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16B3C);
 	op_hex		(x,	1);
 	create_insn	(0X16B44);
+	set_name	(0X16B44,	"animationTick");
 	create_insn	(x=0X16B47);
 	op_hex		(x,	1);
 	create_insn	(x=0X16B4E);
@@ -6992,8 +7069,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X16D56);
 	op_stkvar	(x,	1);
 	create_insn	(0X16D5E);
+	set_name	(0X16D5E,	"flushKeyboard");
 	create_insn	(0X16D60);
 	create_insn	(0X16D6B);
+	set_name	(0X16D6B,	"isUniqueItem");
 	create_insn	(x=0X16D6E);
 	op_hex		(x,	1);
 	create_insn	(x=0X16D75);
@@ -7004,12 +7083,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X16D8F);
 	create_insn	(0X16D96);
+	set_name	(0X16D96,	"setUniqueItemFlag");
 	create_insn	(x=0X16D9D);
 	op_stkvar	(x,	1);
 	create_insn	(0X16DB4);
+	set_name	(0X16DB4,	"clearUniqueItemFlag");
 	create_insn	(x=0X16DBB);
 	op_stkvar	(x,	1);
 	create_insn	(0X16DD4);
+	set_name	(0X16DD4,	"tryUnjamWeapon");
 	create_insn	(x=0X16DD7);
 	op_hex		(x,	1);
 	create_insn	(x=0X16DDB);
@@ -7130,6 +7212,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16F2C);
 	op_hex		(x,	1);
 	create_insn	(0X16F3A);
+	set_name	(0X16F3A,	"attrBonus");
 	create_insn	(x=0X16F3D);
 	op_stkvar	(x,	0);
 	create_insn	(0X16F43);
@@ -7151,6 +7234,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X16F97);
 	create_insn	(0X16F9D);
+	set_name	(0X16F9D,	"printSkillLevel");
 	set_cmt	(0X16FA0,	"draw",	0);
 	create_insn	(x=0X16FA1);
 	op_stkvar	(x,	1);
@@ -7192,6 +7276,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1700C);
 	op_hex		(x,	1);
 	create_insn	(0X17015);
+	set_name	(0X17015,	"partySkillCheck");
 	create_insn	(x=0X17018);
 	op_hex		(x,	1);
 	create_insn	(x=0X1701C);
@@ -7254,6 +7339,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X170DB);
 	op_hex		(x,	1);
 	create_insn	(0X170F2);
+	set_name	(0X170F2,	"findFreeRosterSlot");
 	create_insn	(x=0X170F5);
 	op_hex		(x,	1);
 	create_insn	(x=0X170F8);
@@ -7267,12 +7353,14 @@ static Bytes_1(void) {
 	create_insn	(x=0X17117);
 	op_stkvar	(x,	1);
 	create_insn	(0X1711E);
+	set_name	(0X1711E,	"refreshPartyDisplay");
 	create_insn	(x=0X17130);
 	op_hex		(x,	1);
 	create_insn	(0X17135);
 	create_insn	(x=0X1713C);
 	op_hex		(x,	1);
 	create_insn	(0X17140);
+	set_name	(0X17140,	"retrieveStoreMember");
 	create_insn	(x=0X17143);
 	op_hex		(x,	1);
 	set_cmt	(0X17147,	"draw",	0);
@@ -7382,6 +7470,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17381);
 	op_hex		(x,	1);
 	create_insn	(0X1738A);
+	set_name	(0X1738A,	"showMessageAt");
 	create_insn	(x=0X17390);
 	op_stkvar	(x,	1);
 	set_cmt	(0X17394,	"y",	0);
@@ -7394,6 +7483,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X173A1);
 	op_hex		(x,	1);
 	create_insn	(0X173AC);
+	set_name	(0X173AC,	"showShortMessage");
 	create_insn	(x=0X173B2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X173B6,	"int",	0);
@@ -7403,6 +7493,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X173BE);
 	op_hex		(x,	1);
 	create_insn	(0X173C9);
+	set_name	(0X173C9,	"rollGroupHp");
 	create_insn	(x=0X173CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X173CF);
@@ -7456,6 +7547,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1745F);
 	op_stkvar	(x,	1);
 	create_insn	(0X17470);
+	set_name	(0X17470,	"spawnEnemyGroup");
 	create_insn	(x=0X17473);
 	op_hex		(x,	1);
 	create_insn	(x=0X17478);
@@ -7586,6 +7678,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17677);
 	op_hex		(x,	1);
 	create_insn	(0X17685);
+	set_name	(0X17685,	"tryRandomEncounter");
 	create_insn	(x=0X17688);
 	op_hex		(x,	1);
 	create_insn	(x=0X1768D);
@@ -7703,6 +7796,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17848);
 	op_stkvar	(x,	1);
 	create_insn	(0X17854);
+	set_name	(0X17854,	"checkTimedEffects");
 	create_insn	(x=0X17857);
 	op_hex		(x,	1);
 	create_insn	(x=0X1785E);
@@ -7816,6 +7910,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X17AA3);
 	create_insn	(0X17AAB);
+	set_name	(0X17AAB,	"exposeToMutagens");
 	create_insn	(x=0X17AB9);
 	op_hex		(x,	1);
 	create_insn	(x=0X17ABC);
@@ -7831,6 +7926,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17AFA);
 	op_stkvar	(x,	1);
 	create_insn	(0X17B02);
+	set_name	(0X17B02,	"applyItemEffect");
 	create_insn	(x=0X17B06);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17B1B);
@@ -7844,6 +7940,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17B31);
 	op_stkvar	(x,	1);
 	create_insn	(0X17B3F);
+	set_name	(0X17B3F,	"checkLevelUps");
 	create_insn	(x=0X17B42);
 	op_hex		(x,	1);
 	create_insn	(x=0X17B47);
@@ -8067,6 +8164,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17E0D);
 	op_hex		(x,	1);
 	create_insn	(0X17E13);
+	set_name	(0X17E13,	"setCellFlag80");
 	create_insn	(x=0X17E17);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17E24);
@@ -8074,6 +8172,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17E2E);
 	op_hex		(x,	1);
 	create_insn	(0X17E37);
+	set_name	(0X17E37,	"clearCellFlag80");
 	create_insn	(x=0X17E3B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X17E48);
@@ -8094,6 +8193,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17EB9);
 	op_hex		(x,	1);
 	create_insn	(0X17ED0);
+	set_name	(0X17ED0,	"findGroundItemsAt");
 	create_insn	(x=0X17ED3);
 	op_hex		(x,	1);
 	create_insn	(x=0X17ED6);
@@ -8130,6 +8230,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17F2D);
 	op_stkvar	(x,	1);
 	create_insn	(0X17F34);
+	set_name	(0X17F34,	"removeGroundItem");
 	create_insn	(x=0X17F37);
 	op_hex		(x,	1);
 	create_insn	(x=0X17F4C);
@@ -8159,6 +8260,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17FA1);
 	op_stkvar	(x,	1);
 	create_insn	(0X17FA8);
+	set_name	(0X17FA8,	"lootCell");
 	create_insn	(x=0X17FAB);
 	op_hex		(x,	1);
 	set_cmt	(0X17FAE,	"draw",	0);
@@ -8339,6 +8441,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18226);
 	op_hex		(x,	1);
 	create_insn	(0X1822E);
+	set_name	(0X1822E,	"addGroundItem");
 	create_insn	(x=0X18231);
 	op_hex		(x,	1);
 	create_insn	(x=0X18235);
@@ -8381,6 +8484,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X182C0);
 	op_stkvar	(x,	1);
 	create_insn	(0X182CA);
+	set_name	(0X182CA,	"dropPacketLoot");
 	create_insn	(x=0X182CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X182D2);
@@ -8483,6 +8587,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1849F);
 	op_hex		(x,	1);
 	create_insn	(0X184A8);
+	set_name	(0X184A8,	"addScratchItemsAtCell");
 	create_insn	(x=0X184AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X184AF);
@@ -8550,6 +8655,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18582);
 	op_stkvar	(x,	1);
 	create_insn	(0X1858A);
+	set_name	(0X1858A,	"compactGroundItems");
 	create_insn	(x=0X1858D);
 	op_hex		(x,	1);
 	create_insn	(x=0X18596);
@@ -8598,6 +8704,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X185F3);
 	op_stkvar	(x,	1);
 	create_insn	(0X18607);
+	set_name	(0X18607,	"removeMapEntity");
 	create_insn	(x=0X1860A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1860D);
@@ -8747,6 +8854,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X187DB);
 	op_stkvar	(x,	0);
 	create_insn	(0X187E5);
+	set_name	(0X187E5,	"reloadMapIfResettable");
 	create_insn	(x=0X187E8);
 	op_hex		(x,	1);
 	create_insn	(x=0X187EB);
@@ -8760,6 +8868,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18820);
 	op_hex		(x,	1);
 	create_insn	(0X18827);
+	set_name	(0X18827,	"writeSaveState");
 	create_insn	(x=0X1882A);
 	op_hex		(x,	1);
 	create_insn	(x=0X18830);
@@ -8782,6 +8891,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18876);
 	op_stkvar	(x,	0);
 	create_insn	(0X18880);
+	set_name	(0X18880,	"loadCombatPortraits");
 	create_insn	(x=0X18883);
 	op_hex		(x,	1);
 	create_insn	(x=0X18888);
@@ -8922,6 +9032,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X18A44);
 	create_insn	(0X18A56);
+	set_name	(0X18A56,	"showEndingScreen");
 	create_insn	(x=0X18A59);
 	op_hex		(x,	1);
 	create_insn	(x=0X18A5C);
@@ -8969,6 +9080,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X18B00);
 	create_insn	(0X18B08);
+	set_name	(0X18B08,	"findMonsterById");
 	create_insn	(x=0X18B0B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B10);
@@ -9004,6 +9116,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18B62);
 	op_stkvar	(x,	1);
 	create_insn	(0X18B69);
+	set_name	(0X18B69,	"setCellFields");
 	create_insn	(x=0X18B6C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X18B6F);
@@ -9033,6 +9146,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18BAB);
 	op_hex		(x,	1);
 	create_insn	(0X18BBB);
+	set_name	(0X18BBB,	"applyCellChange");
 	create_insn	(x=0X18BBF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X18BE4);
@@ -9060,6 +9174,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18C25);
 	op_stkvar	(x,	1);
 	create_insn	(0X18C32);
+	set_name	(0X18C32,	"recordMapChange");
 	create_insn	(x=0X18C35);
 	op_hex		(x,	1);
 	create_insn	(x=0X18C3F);
@@ -9181,6 +9296,7 @@ static Bytes_1(void) {
 	create_insn	(0X18E0C);
 	create_insn	(0X18E14);
 	create_insn	(0X18E23);
+	set_name	(0X18E23,	"resolveMemberSel");
 	create_insn	(x=0X18E26);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18E2C);
@@ -9188,6 +9304,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18E31);
 	op_stkvar	(x,	1);
 	create_insn	(0X18E37);
+	set_name	(0X18E37,	"removeItemsByFlag");
 	create_insn	(x=0X18E3A);
 	op_hex		(x,	1);
 	create_insn	(x=0X18E3E);
@@ -9215,6 +9332,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18E91);
 	op_stkvar	(x,	0);
 	create_insn	(0X18E9C);
+	set_name	(0X18E9C,	"removeMemberAmmo");
 	create_insn	(x=0X18E9F);
 	op_hex		(x,	1);
 	create_insn	(x=0X18EA3);
@@ -9265,6 +9383,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X18F39);
 	create_insn	(0X18F3E);
+	set_name	(0X18F3E,	"getScriptString");
 	create_insn	(x=0X18F43);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18F46);
@@ -9280,6 +9399,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18F5E);
 	op_stkvar	(x,	1);
 	create_insn	(0X18F63);
+	set_name	(0X18F63,	"printScriptString");
 	create_insn	(x=0X18F66);
 	op_hex		(x,	1);
 	create_insn	(x=0X18F69);
@@ -9338,6 +9458,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18FF2);
 	op_hex		(x,	1);
 	create_insn	(0X18FFA);
+	set_name	(0X18FFA,	"damageMember");
 	create_insn	(x=0X18FFE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X19004);
@@ -9358,6 +9479,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1906B);
 	op_hex		(x,	1);
 	create_insn	(0X19073);
+	set_name	(0X19073,	"applyDamageWithArmor");
 	create_insn	(x=0X19076);
 	op_hex		(x,	1);
 	create_insn	(x=0X19079);
@@ -9437,6 +9559,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19128);
 	op_stkvar	(x,	1);
 	create_insn	(0X1912F);
+	set_name	(0X1912F,	"damageParty");
 	create_insn	(x=0X19132);
 	op_hex		(x,	1);
 	create_insn	(x=0X19138);
@@ -9586,6 +9709,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19286);
 	op_hex		(x,	1);
 	create_insn	(0X19298);
+	set_name	(0X19298,	"healMember");
 	create_insn	(x=0X1929B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1929F);
@@ -9607,6 +9731,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X192C2);
 	op_stkvar	(x,	1);
 	create_insn	(0X192D5);
+	set_name	(0X192D5,	"applyRepeatingHazard");
 	create_insn	(x=0X192D8);
 	op_hex		(x,	1);
 	create_insn	(x=0X192F8);
@@ -9628,6 +9753,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1932C);
 	op_stkvar	(x,	0);
 	create_insn	(0X19335);
+	set_name	(0X19335,	"getMemberStat");
 	create_insn	(x=0X19338);
 	op_hex		(x,	1);
 	create_insn	(x=0X1933E);
@@ -9747,6 +9873,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19477);
 	op_stkvar	(x,	1);
 	create_insn	(0X1947F);
+	set_name	(0X1947F,	"clampLong");
 	create_insn	(x=0X19482);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19485);
@@ -9768,6 +9895,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X194B8);
 	op_stkvar	(x,	1);
 	create_insn	(0X194C2);
+	set_name	(0X194C2,	"setMemberStat");
 	create_insn	(x=0X194C5);
 	op_hex		(x,	1);
 	create_insn	(x=0X194C9);
@@ -9920,6 +10048,7 @@ static Bytes_1(void) {
 	create_insn	(0X1969A);
 	set_name	(0X1969A,	"def_194F7");
 	create_insn	(0X1969F);
+	set_name	(0X1969F,	"trySkillImprove");
 	create_insn	(x=0X196A2);
 	op_hex		(x,	1);
 	create_insn	(x=0X196A7);
@@ -9960,6 +10089,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1971F);
 	op_stkvar	(x,	1);
 	create_insn	(0X1972A);
+	set_name	(0X1972A,	"combineCondition");
 	create_insn	(x=0X1972D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19742);
@@ -9983,6 +10113,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X1977E);
 	create_insn	(0X19780);
+	set_name	(0X19780,	"promptYesNo");
 	create_insn	(x=0X19783);
 	op_hex		(x,	1);
 	create_insn	(x=0X19786);
@@ -10045,6 +10176,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19825);
 	op_stkvar	(x,	1);
 	create_insn	(0X1982E);
+	set_name	(0X1982E,	"memberHasItem");
 	create_insn	(x=0X19831);
 	op_hex		(x,	1);
 	create_insn	(x=0X1983A);
@@ -10081,7 +10213,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X198A2);
 	op_stkvar	(x,	0);
 	create_insn	(0X198B1);
+	set_name	(0X198B1,	"setPartyCellScript");
 	create_insn	(0X198E3);
+	set_name	(0X198E3,	"setCurrentMember");
 	create_insn	(x=0X198E6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X198E9);
@@ -11855,6 +11989,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AE9A);
 	op_stkvar	(x,	1);
 	create_insn	(0X1AEA3);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1AEA6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1AEB5);
@@ -12105,6 +12248,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B2DB);
 	op_hex		(x,	1);
 	create_insn	(0X1B2F0);
+	set_name	(0X1B2F0,	"showMessageTimed");
 	create_insn	(x=0X1B2F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B2F9);
@@ -12144,6 +12288,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X1B360,	"draw",	0);
 	create_insn	(0X1B360);
+	set_name	(0X1B360,	"showShopHeader");
 	create_insn	(x=0X1B36F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B375);
@@ -12185,18 +12330,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1B3DF,	"draw",	0);
 	create_insn	(0X1B3DF);
+	set_name	(0X1B3DF,	"restoreAfterShop");
 	create_insn	(x=0X1B3E6);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1B3E9,	"win",	0);
 	create_insn	(x=0X1B3ED);
 	op_hex		(x,	1);
@@ -12247,6 +12384,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1B498,	"draw",	0);
 	create_insn	(0X1B498);
+	set_name	(0X1B498,	"showCashLine");
 	create_insn	(x=0X1B49E);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -12330,6 +12468,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1B5FF,	"draw",	0);
 	create_insn	(0X1B5FF);
+	set_name	(0X1B5FF,	"showCashAndRefresh");
 	set_cmt	(0X1B606,	"char *",	0);
 	create_insn	(x=0X1B606);
 	op_stkvar	(x,	0);
@@ -12342,6 +12481,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1B61C);
 	op_hex		(x,	1);
 	create_insn	(0X1B621);
+	set_name	(0X1B621,	"shopBuy");
 	create_insn	(x=0X1B624);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B628);
@@ -12475,6 +12615,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1B827);
 	op_stkvar	(x,	1);
 	create_insn	(0X1B82F);
+	set_name	(0X1B82F,	"shopSell");
 	create_insn	(x=0X1B832);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B836);
@@ -12625,6 +12766,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1BA1E);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BA26);
+	set_name	(0X1BA26,	"shopLoop");
 	create_insn	(x=0X1BA29);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BA2C);
@@ -12706,6 +12848,7 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X1BB93);
+	set_name	(0X1BB93,	"findFirstMemberBelowState");
 	create_insn	(x=0X1BB96);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BB99);
@@ -12726,6 +12869,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1BBC1);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BBC8);
+	set_name	(0X1BBC8,	"serviceLoop");
 	create_insn	(x=0X1BBCB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BBD0);
@@ -12988,6 +13132,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1BFB7);
 	op_hex		(x,	1);
 	create_insn	(0X1BFCE);
+	set_name	(0X1BFCE,	"printBeyondHelp");
 	set_cmt	(0X1BFD1,	"char *",	0);
 	create_insn	(x=0X1BFD1);
 	op_stkvar	(x,	0);
@@ -13008,9 +13153,11 @@ static Bytes_2(void) {
 	create_insn	(x=0X1BFEE);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1BFEE,	"printEffortsUnsuccessful");
 	create_insn	(x=0X1BFF5);
 	op_hex		(x,	1);
 	create_insn	(0X1BFF9);
+	set_name	(0X1BFF9,	"printSkillGained");
 	create_insn	(x=0X1BFFC);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C000);
@@ -13051,6 +13198,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1C04A);
 	op_hex		(x,	1);
 	create_insn	(0X1C052);
+	set_name	(0X1C052,	"doctorTreat");
 	create_insn	(x=0X1C055);
 	op_hex		(x,	1);
 	set_cmt	(0X1C058,	"draw",	0);
@@ -13374,6 +13522,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1C426);
 	create_insn	(0X1C42B);
+	set_name	(0X1C42B,	"ingestItem");
 	create_insn	(x=0X1C42E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C431);
@@ -13770,6 +13919,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1C83E);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C84A);
+	set_name	(0X1C84A,	"charInfoActiveSkills");
 	create_insn	(x=0X1C84D);
 	op_hex		(x,	1);
 	set_cmt	(0X1C850,	"draw",	0);
@@ -13825,6 +13975,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1C8E2);
 	op_hex		(x,	1);
 	create_insn	(0X1C8ED);
+	set_name	(0X1C8ED,	"charInfoPassiveSkills");
 	create_insn	(x=0X1C8F0);
 	op_hex		(x,	1);
 	set_cmt	(0X1C8F3,	"draw",	0);
@@ -13880,6 +14031,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1C985);
 	op_hex		(x,	1);
 	create_insn	(0X1C990);
+	set_name	(0X1C990,	"charInfoInventory");
 	create_insn	(x=0X1C993);
 	op_hex		(x,	1);
 	set_cmt	(0X1C997,	"draw",	0);
@@ -13920,6 +14072,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1CA02);
 	op_hex		(x,	1);
 	create_insn	(0X1CA0B);
+	set_name	(0X1CA0B,	"charInfoConditions");
 	create_insn	(x=0X1CA0E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA15);
@@ -13995,6 +14148,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1CAD9);
 	op_hex		(x,	1);
 	create_insn	(0X1CAE6);
+	set_name	(0X1CAE6,	"charInfoPageKeys");
 	create_insn	(x=0X1CAE9);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CAEC);
@@ -14016,6 +14170,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1CB10);
 	op_stkvar	(x,	1);
 	create_insn	(0X1CB19);
+	set_name	(0X1CB19,	"printIncapacitated");
 	create_insn	(x=0X1CB1C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1CB1F);
@@ -14046,6 +14201,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1CB53);
 	op_hex		(x,	1);
 	create_insn	(0X1CB58);
+	set_name	(0X1CB58,	"checkMemberConscious");
 	create_insn	(x=0X1CB5B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1CB5E);
@@ -14056,6 +14212,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1CB7B);
 	create_insn	(0X1CB80);
+	set_name	(0X1CB80,	"selectMemberByFKey");
 	create_insn	(x=0X1CB83);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB86);
@@ -14087,6 +14244,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X1CBD9);
 	create_insn	(0X1CBDF);
+	set_name	(0X1CBDF,	"chooseCommandTargetCell");
 	create_insn	(x=0X1CBE2);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CBE6);
@@ -14427,6 +14585,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D0E3);
 	op_hex		(x,	1);
 	create_insn	(0X1D0EE);
+	set_name	(0X1D0EE,	"drawRosterRow");
 	create_insn	(x=0X1D0F1);
 	op_hex		(x,	1);
 	set_cmt	(0X1D0F4,	"draw",	0);
@@ -14579,6 +14738,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1D283,	"draw",	0);
 	create_insn	(0X1D283);
+	set_name	(0X1D283,	"drawRosterFooter");
 	create_insn	(x=0X1D28A);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -14624,6 +14784,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D2EE);
 	op_stkvar	(x,	0);
 	create_insn	(0X1D2F9);
+	set_name	(0X1D2F9,	"reorderRoster");
 	create_insn	(x=0X1D2FC);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D301);
@@ -14745,6 +14906,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1D4B9);
 	create_insn	(0X1D4BF);
+	set_name	(0X1D4BF,	"banishMember");
 	create_insn	(x=0X1D4C2);
 	op_hex		(x,	1);
 	set_cmt	(0X1D4C5,	"draw",	0);
@@ -14829,6 +14991,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D5B2);
 	op_hex		(x,	1);
 	create_insn	(0X1D5BA);
+	set_name	(0X1D5BA,	"rosterScreen");
 	create_insn	(x=0X1D5BD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D5C0);
@@ -14900,6 +15063,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D6A0);
 	op_hex		(x,	1);
 	create_insn	(0X1D6AA);
+	set_name	(0X1D6AA,	"initItemSlot");
 	create_insn	(x=0X1D6AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D6B2);
@@ -14925,6 +15089,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D701);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D712);
+	set_name	(0X1D712,	"addNpcToParty");
 	create_insn	(x=0X1D715);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D72E);
@@ -15054,6 +15219,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D8C2);
 	op_hex		(x,	1);
 	create_insn	(0X1D8CD);
+	set_name	(0X1D8CD,	"showEncounterPortrait");
 	create_insn	(x=0X1D8D0);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D8DA);
@@ -15117,6 +15283,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D994);
 	op_hex		(x,	1);
 	create_insn	(0X1D9A9);
+	set_name	(0X1D9A9,	"initVideoAndCriticalHandler");
 	create_insn	(0X1D9CF);
 	set_name	(0X1D9CF,	"drawBordersAndWelcome");
 	create_insn	(x=0X1D9D7);
@@ -15416,6 +15583,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E026);
 	op_hex		(x,	1);
 	create_insn	(0X1E045);
+	set_name	(0X1E045,	"drawUniqueItemIcons");
 	create_insn	(x=0X1E066);
 	op_stkvar	(x,	0);
 	create_byte	(0X1E078);
@@ -17061,6 +17229,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X200CF);
 	op_stkvar	(x,	1);
 	create_insn	(0X200D8);
+	set_name	(0X200D8,	"directionTowards");
 	create_insn	(x=0X200DB);
 	op_hex		(x,	1);
 	create_insn	(x=0X200DE);
@@ -17133,6 +17302,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X2017B);
 	op_stkvar	(x,	1);
 	create_insn	(0X20182);
+	set_name	(0X20182,	"isItemEquipped");
 	create_insn	(x=0X20185);
 	op_hex		(x,	1);
 	create_insn	(x=0X20189);
@@ -17158,6 +17328,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X201BE);
 	op_stkvar	(x,	1);
 	create_insn	(0X201C8);
+	set_name	(0X201C8,	"tickMonsterStates");
 	create_insn	(x=0X201CB);
 	op_hex		(x,	1);
 	create_insn	(x=0X201CE);
@@ -17170,6 +17341,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X20209);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20211);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2021C);
@@ -17180,6 +17360,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X2023A);
 	create_insn	(0X2023E);
+	set_name	(0X2023E,	"getCombatantInfo");
 	create_insn	(x=0X20241);
 	op_hex		(x,	1);
 	create_insn	(x=0X20244);
@@ -17207,6 +17388,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X202EE);
 	create_insn	(0X202F2);
+	set_name	(0X202F2,	"getCombatantPos");
 	create_insn	(x=0X202F5);
 	op_hex		(x,	1);
 	create_insn	(x=0X202FA);
@@ -17254,6 +17436,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X203B7);
 	op_hex		(x,	1);
 	create_insn	(0X203C9);
+	set_name	(0X203C9,	"getMaxWeaponRange");
 	create_insn	(x=0X203CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X203D0);
@@ -17323,6 +17506,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X204B8);
 	op_stkvar	(x,	0);
 	create_insn	(0X204C4);
+	set_name	(0X204C4,	"applyMapChangeList");
 	create_insn	(x=0X204C7);
 	op_hex		(x,	1);
 	create_insn	(x=0X204CC);
@@ -17399,6 +17583,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X20602);
 	op_hex		(x,	1);
 	create_insn	(0X2060D);
+	set_name	(0X2060D,	"removeItemSlot");
 	create_insn	(x=0X20610);
 	op_hex		(x,	1);
 	create_insn	(x=0X20615);
@@ -17608,15 +17793,6 @@ static Bytes_2(void) {
 	set_cmt	(0X21168,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X21168);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2116C,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X2116C);
 	op_hex		(x,	0);
@@ -18866,22 +19042,27 @@ static Functions_0(void) {
 	set_frame_size(0X10010, 0, 0, 0);
 	add_func    (0X10022,0X1008C);
 	set_func_flags(0X10022,0x5410);
+	set_func_cmt(0X10022,	"reads+LZSS-decodes the current region's picture/animation block into dword_2EE12", 1);
 	set_frame_size(0X10022, 0, 2, 0);
 	add_func    (0X1008C,0X101BE);
 	set_func_flags(0X1008C,0x5410);
+	set_func_cmt(0X1008C,	"arg=map number; if the map's region (table at dseg+125h) changed, loads the region files, then reads the map (LZSS) and sets the sub-table pointers (map+404h..40Ch -> dword_2EBF8/2E446/2EC14/2E41E/2EC1A) and the party cell pointer", 1);
 	set_frame_size(0X1008C, 0X2, 2, 0);
 	add_func    (0X101BE,0X103BF);
 	set_func_flags(0X101BE,0x5410);
+	set_func_cmt(0X101BE,	"reads DISK1 (Disk1 struct), validates against the DISK1..3 save disks, picks the newest, rebuilds the party member pointer table (0x14C bytes per roster slot at 0BF24h)", 1);
 	set_frame_size(0X101BE, 0XA, 2, 0);
 	define_local_var(0X101BE, 0X103BF, "[bp-0X6]", "dst");
 	define_local_var(0X101BE, 0X103BF, "[bp-0X2]", "handle");
 	add_func    (0X103BF,0X10444);
 	set_func_flags(0X103BF,0x5410);
+	set_func_cmt(0X103BF,	"args(file, idx, table, mode, dst): opens file (prompting for disk), seeks to table[idx].offset<<4, reads table[idx].size bytes (mode 1: segmented read via sub_1E448)", 1);
 	set_frame_size(0X103BF, 0X4, 2, 0);
 	define_local_var(0X103BF, 0X10444, "[bp-0X2]", "handle");
 	define_local_var(0X103BF, 0X10444, "[bp+0X6]", "dst");
 	add_func    (0X10444,0X10477);
 	set_func_flags(0X10444,0x5410);
+	set_func_cmt(0X10444,	"args(file, dst, nwords): opens file, reads nwords*4 bytes", 1);
 	set_frame_size(0X10444, 0X2, 2, 0);
 	define_local_var(0X10444, 0X10477, "[bp-0X2]", "handle");
 	define_local_var(0X10444, 0X10477, "[bp+0X6]", "dst");
@@ -18897,12 +19078,14 @@ static Functions_0(void) {
 	set_frame_size(0X1073E, 0XA, 2, 0);
 	add_func    (0X10795,0X107CB);
 	set_func_flags(0X10795,0x5410);
+	set_func_cmt(0X10795,	"Chebyshev distance (1..63) from the party map position to (x, y)", 1);
 	set_frame_size(0X10795, 0X2, 2, 0);
 	add_func    (0X107CB,0X107E1);
 	set_func_flags(0X107CB,0x5400);
 	set_frame_size(0X107CB, 0, 0, 0);
 	add_func    (0X107E1,0X10A04);
 	set_func_flags(0X107E1,0x5410);
+	set_func_cmt(0X107E1,	"draws window1 party rows: F-key, name, level, AC, hp/status, ready weapon; arg0 = highlighted row", 1);
 	set_frame_size(0X107E1, 0X12, 2, 0);
 	define_local_var(0X107E1, 0X10A04, "[bp-0XE]", "member");
 	define_local_var(0X107E1, 0X10A04, "[bp-0XA]", "y");
@@ -18915,33 +19098,43 @@ static Functions_0(void) {
 	define_local_var(0X10A04, 0X10A87, "[bp-0X2]", "win");
 	add_func    (0X10A87,0X10B45);
 	set_func_flags(0X10A87,0x5410);
+	set_func_cmt(0X10A87,	"reads a cursor key; returns direction 1..5 (up,down?,right,left,space); sets byte_2E441 dir and target x/y (byte_2E423/2E428) from the delta table at dseg+1DCh, bounds-checked against the map size", 1);
 	set_frame_size(0X10A87, 0XA, 2, 0);
 	add_func    (0X10B45,0X10B95);
 	set_func_flags(0X10B45,0x5400);
+	set_func_cmt(0X10B45,	"'Which way?' prompt with ^ < space > v key hints", 1);
 	set_frame_size(0X10B45, 0, 0, 0);
 	add_func    (0X10B95,0X10BE7);
 	set_func_flags(0X10B95,0x5410);
+	set_func_cmt(0X10B95,	"prompts for a direction and returns a far pointer to the target map cell (0:0 if cancelled)", 1);
 	set_frame_size(0X10B95, 0X2, 2, 0);
 	add_func    (0X10BE7,0X10C42);
 	set_func_flags(0X10BE7,0x5410);
+	set_func_cmt(0X10BE7,	"waits for F1..F5 (3Bh..3Fh) naming a valid party slot; returns slot or -1 on ESC", 1);
 	set_frame_size(0X10BE7, 0X6, 2, 0);
 	add_func    (0X10C42,0X10C62);
 	set_func_flags(0X10C42,0x5410);
+	set_func_cmt(0X10C42,	"true if (x,y) equals the party's map position", 1);
 	set_frame_size(0X10C42, 0, 2, 0);
 	add_func    (0X10C62,0X10D19);
 	set_func_flags(0X10C62,0x5410);
+	set_func_cmt(0X10C62,	"finds a free adjacent cell using the direction table, used when an entity is pushed aside", 1);
 	set_frame_size(0X10C62, 0XA, 2, 0);
 	add_func    (0X10D19,0X10D78);
 	set_func_flags(0X10D19,0x5410);
+	set_func_cmt(0X10D19,	"if (x,y) is within radius of the party, stores overlay id (arg3<<11) in the map cell word", 1);
 	set_frame_size(0X10D19, 0X4, 2, 0);
 	add_func    (0X10D78,0X10E29);
 	set_func_flags(0X10D78,0x5410);
+	set_func_cmt(0X10D78,	"stamps every live monster (0x68-byte records at dword_2E446) and group (0x66-byte records at dword_2E41E) onto the map", 1);
 	set_frame_size(0X10D78, 0XE, 2, 0);
 	add_func    (0X10E29,0X10EF7);
 	set_func_flags(0X10E29,0x5410);
+	set_func_cmt(0X10E29,	"moves one entity one step toward/away from the party, updating map cell overlay bits", 1);
 	set_frame_size(0X10E29, 0X6, 2, 0);
 	add_func    (0X10EF7,0X11033);
 	set_func_flags(0X10EF7,0x5410);
+	set_func_cmt(0X10EF7,	"advances each monster/group movement by its speed accumulator (+64h/+0Ah), calling moveEntityStep", 1);
 	set_frame_size(0X10EF7, 0X16, 2, 0);
 	add_func    (0X11033,0X1109D);
 	set_func_flags(0X11033,0x5410);
@@ -18952,16 +19145,20 @@ static Functions_0(void) {
 	set_frame_size(0X1109D, 0XC, 2, 0);
 	add_func    (0X1113F,0X112E9);
 	set_func_flags(0X1113F,0x5410);
+	set_func_cmt(0X1113F,	"per-tick party upkeep: heal 1 hp every 10 ticks (5 in combat), apply status-effect damage (HDSPCT table), kill via sub_18FFA, wipe check", 1);
 	set_frame_size(0X1113F, 0X18, 2, 0);
 	add_func    (0X112E9,0X11339);
 	set_func_flags(0X112E9,0x5410);
+	set_func_cmt(0X112E9,	"randomRange(1,100) then passTime(0); periodic sub_192D5; wipe check", 1);
 	set_frame_size(0X112E9, 0X2, 2, 0);
 	define_local_var(0X112E9, 0X11339, "[bp-0X2]", "win");
 	add_func    (0X11339,0X1138D);
 	set_func_flags(0X11339,0x5400);
+	set_func_cmt(0X11339,	"moveMapEntities + placeEntitiesOnMap, then if enemies are adjacent starts combat ('Uh oh! Here comes trouble!') via sub_15691", 1);
 	set_frame_size(0X11339, 0, 0, 0);
 	add_func    (0X1138D,0X113A1);
 	set_func_flags(0X1138D,0x5410);
+	set_func_cmt(0X1138D,	"passTimeStep; if arg==0 also moveMonstersAndCheckEncounter; then redrawMapView", 1);
 	set_frame_size(0X1138D, 0, 2, 0);
 	add_func    (0X115CB,0X11682);
 	set_func_flags(0X115CB,0x5410);
@@ -18974,44 +19171,57 @@ static Functions_0(void) {
 	set_frame_size(0X11682, 0XC, 2, 0);
 	add_func    (0X11766,0X11834);
 	set_func_flags(0X11766,0x5410);
+	set_func_cmt(0X11766,	"after a script requested combat (word_2E418==8): sets up the monster as the target and calls runCombat", 1);
 	set_frame_size(0X11766, 0X6, 2, 0);
 	add_func    (0X11834,0X1189E);
 	set_func_flags(0X11834,0x5410);
+	set_func_cmt(0X11834,	"script driver: runs doScript repeatedly while word_2E418 requests continuation; handles combat requests", 1);
 	set_frame_size(0X11834, 0X4, 2, 0);
 	add_func    (0X1189E,0X11920);
 	set_func_flags(0X1189E,0x5410);
+	set_func_cmt(0X1189E,	"runs the item's event script against the target cell; 'That has no effect.' otherwise", 1);
 	set_frame_size(0X1189E, 0X2, 2, 0);
 	add_func    (0X11920,0X11A36);
 	set_func_flags(0X11920,0x5410);
+	set_func_cmt(0X11920,	"chance-to-hit roll for using a weapon on a map object; returns 0..6 (miss .. destroyed)", 1);
 	set_frame_size(0X11920, 0XE, 2, 0);
 	add_func    (0X11A36,0X11A62);
 	set_func_flags(0X11A36,0x5410);
-	SetType(0X11A36, "int __cdecl sub_11A36(char *, int);");
+	SetType(0X11A36, "int __cdecl printMemberUsesWeapon(char *, int);");
+	set_func_cmt(0X11A36,	"'%s %Fs...' line when a member uses a weapon on a cell", 1);
 	set_frame_size(0X11A36, 0, 2, 0);
 	add_func    (0X11A62,0X11B1A);
 	set_func_flags(0X11A62,0x5410);
+	set_func_cmt(0X11A62,	"decrements the ammo (or removes the one-shot item) of a member's item slot and re-selects the readied weapon", 1);
 	set_frame_size(0X11A62, 0XC, 2, 0);
 	add_func    (0X11B1A,0X11B2E);
 	set_func_flags(0X11B1A,0x5400);
+	set_func_cmt(0X11B1A,	"'You decide that it wouldn't work.'", 1);
 	set_frame_size(0X11B1A, 0, 0, 0);
 	add_func    (0X11B2E,0X11C6E);
 	set_func_flags(0X11B2E,0x5410);
+	set_func_cmt(0X11B2E,	"uses the readied weapon on a map cell (door/obstacle): resolves rollWeaponVsObject and runs the cell script", 1);
 	set_frame_size(0X11B2E, 0X1A, 2, 0);
 	add_func    (0X11CEA,0X11D6A);
 	set_func_flags(0X11CEA,0x5410);
+	set_func_cmt(0X11CEA,	"dispatch for field commands 0Ah/0Bh/0Eh against a target cell", 1);
 	set_frame_size(0X11CEA, 0X6, 2, 0);
 	add_func    (0X11D6A,0X11ED8);
 	set_func_flags(0X11D6A,0x5410);
+	set_func_cmt(0X11D6A,	"builds the list of compatible ammo in inventory and asks 'Load Which Ammo?'; returns slot, -1 cancel, -2 none", 1);
 	set_frame_size(0X11D6A, 0X1E, 2, 0);
 	define_local_var(0X11D6A, 0X11ED8, "[bp+0X8]", "win");
 	add_func    (0X11ED8,0X11FA6);
 	set_func_flags(0X11ED8,0x5410);
+	set_func_cmt(0X11ED8,	"moves an item between members ('has too much to carry already.')", 1);
 	set_frame_size(0X11ED8, 0XA, 2, 0);
 	add_func    (0X11FA6,0X11FB7);
 	set_func_flags(0X11FA6,0x5400);
+	set_func_cmt(0X11FA6,	"'This weapon is jammed. Do you wish to fix it?'", 1);
 	set_frame_size(0X11FA6, 0, 0, 0);
 	add_func    (0X11FB7,0X1202B);
 	set_func_flags(0X11FB7,0x1410);
+	set_func_cmt(0X11FB7,	"'Do what with your %s: U)se I)ngest D)rop T)rade E)quip' menu (mis-split into sub_1202D/12065/12074)", 1);
 	set_frame_size(0X11FB7, 0X24, 2, 0);
 	add_func    (0X1202D,0X12065);
 	set_func_flags(0X1202D,0x1400);
@@ -19023,15 +19233,19 @@ static Functions_0(void) {
 	set_frame_size(0X12074, 0, 0, 0);
 	add_func    (0X1251E,0X1253F);
 	set_func_flags(0X1251E,0x5410);
+	set_func_cmt(0X1251E,	"stores the party map position, resets hazard state", 1);
 	set_frame_size(0X1251E, 0, 2, 0);
 	add_func    (0X1253F,0X127CC);
 	set_func_flags(0X1253F,0x5410);
+	set_func_cmt(0X1253F,	"moves/turns the party one step in a direction (arrow key): bounds, passability, scripts, random encounters", 1);
 	set_frame_size(0X1253F, 0X1A, 2, 0);
 	add_func    (0X127CC,0X127EE);
 	set_func_flags(0X127CC,0x5410);
+	set_func_cmt(0X127CC,	"redraws the game screen, applies readied weapon use and updates the map", 1);
 	set_frame_size(0X127CC, 0, 2, 0);
 	add_func    (0X127EE,0X12813);
 	set_func_flags(0X127EE,0x5410);
+	set_func_cmt(0X127EE,	"calls rngByte while no key is pending (entropy for the PRNG)", 1);
 	set_frame_size(0X127EE, 0X2, 2, 0);
 	add_func    (0X12813,0X12A2C);
 	set_func_flags(0X12813,0x5411);
@@ -19044,6 +19258,7 @@ static Functions_0(void) {
 	define_local_var(0X12813, 0X12A2C, "[bp+0XA]", "envp");
 	add_func    (0X12A34,0X12AB2);
 	set_func_flags(0X12A34,0x5410);
+	set_func_cmt(0X12A34,	"switches list-menu windows between narrow and wide layouts", 1);
 	set_frame_size(0X12A34, 0X4, 2, 0);
 	add_func    (0X12AB2,0X12AFC);
 	set_func_flags(0X12AB2,0x5410);
@@ -19065,25 +19280,32 @@ static Functions_0(void) {
 	set_frame_size(0X12B93, 0X4, 2, 0);
 	add_func    (0X12C0F,0X12CF5);
 	set_func_flags(0X12C0F,0x5410);
+	set_func_cmt(0X12C0F,	"false if out of bounds, cell byte+2 bit0 clear, or a monster/group stands on it", 1);
 	set_frame_size(0X12C0F, 0XC, 2, 0);
 	add_func    (0X12CF5,0X12D0A);
 	set_func_flags(0X12CF5,0x5400);
+	set_func_cmt(0X12CF5,	"sets the 'The blast'/'also pounds' string pointers", 1);
 	set_frame_size(0X12CF5, 0, 0, 0);
 	add_func    (0X12D0A,0X12E76);
 	set_func_flags(0X12D0A,0x5410);
+	set_func_cmt(0X12D0A,	"cursor selection on the map: arrow keys move a highlighted cell (flag 40h) until space/ESC; returns the cell pointer", 1);
 	set_frame_size(0X12D0A, 0X18, 2, 0);
 	add_func    (0X12E76,0X12EAE);
 	set_func_flags(0X12E76,0x5410);
+	set_func_cmt(0X12E76,	"plays sound 3 once per shot when byte_2E442 (fire mode) is 1 or 2", 1);
 	set_frame_size(0X12E76, 0X2, 2, 0);
 	add_func    (0X12F44,0X12F62);
 	set_func_flags(0X12F44,0x5410);
+	set_func_cmt(0X12F44,	"item id -> weapons table entry (weapons + 2 + 3Ch*globals[item*18h+3Fh])", 1);
 	set_frame_size(0X12F44, 0X2, 2, 0);
 	add_func    (0X12F62,0X136B8);
 	set_func_flags(0X12F62,0x5410);
+	set_func_cmt(0X12F62,	"attack resolution: attacker/defender (type 0 member,1 monster,2 group) in the 6-byte attack record; returns 0 miss,1 ?,2 hit,3 useless,4 kill and accumulates damage through arg0", 1);
 	set_frame_size(0X12F62, 0X52, 2, 0);
 	define_local_var(0X12F62, 0X136B8, "[bp-0X44]", "member");
 	add_func    (0X136B8,0X13716);
 	set_func_flags(0X136B8,0x5410);
+	set_func_cmt(0X136B8,	"monster state byte +5Dh handling after being shot (stun/flee counters)", 1);
 	set_frame_size(0X136B8, 0, 2, 0);
 	add_func    (0X13716,0X13726);
 	set_func_flags(0X13716,0x5410);
@@ -19093,111 +19315,143 @@ static Functions_0(void) {
 	set_frame_size(0X13838, 0, 0, 0);
 	add_func    (0X138CA,0X13901);
 	set_func_flags(0X138CA,0x5400);
+	set_func_cmt(0X138CA,	"prints '%Fs %Fs %Fs' attacker/verb/target line", 1);
 	set_frame_size(0X138CA, 0, 0, 0);
 	add_func    (0X13901,0X13932);
 	set_func_flags(0X13901,0x1410);
+	set_func_cmt(0X13901,	"resets burst/fire-mode globals (2E43A..2E444)", 1);
 	set_frame_size(0X13901, 0X22, 2, 0);
 	add_func    (0X13B70,0X13C03);
 	set_func_flags(0X13B70,0x5410);
+	set_func_cmt(0X13B70,	"after a kill: marks member/monster dead or clears the group bit and map cell", 1);
 	set_frame_size(0X13B70, 0X10, 2, 0);
 	add_func    (0X13C03,0X13C29);
 	set_func_flags(0X13C03,0x5410);
-	SetType(0X13C03, "int __cdecl sub_13C03(char *);");
+	SetType(0X13C03, "int __cdecl printDamage(char *);");
+	set_func_cmt(0X13C03,	"prints ' for %d pts damage.'", 1);
 	set_frame_size(0X13C03, 0, 2, 0);
 	add_func    (0X13C29,0X13E79);
 	set_func_flags(0X13C29,0x5410);
+	set_func_cmt(0X13C29,	"runs rollAttack and prints/applies the outcome (miss, kill, damage, mutagen exposure, 'useless against')", 1);
 	set_frame_size(0X13C29, 0XA, 2, 0);
 	add_func    (0X13E79,0X13FAA);
 	set_func_flags(0X13E79,0x5410);
+	set_func_cmt(0X13E79,	"repeats resolveAttack for burst/auto fire, rolling to double damage", 1);
 	set_frame_size(0X13E79, 0XE, 2, 0);
 	add_func    (0X13FAA,0X140B4);
 	set_func_flags(0X13FAA,0x5410);
+	set_func_cmt(0X13FAA,	"chooses the lowest positive hp slot of an enemy group; sets word_2E436/dword_2E42A", 1);
 	set_frame_size(0X13FAA, 0X12, 2, 0);
 	add_func    (0X140B4,0X14161);
 	set_func_flags(0X140B4,0x5410);
+	set_func_cmt(0X140B4,	"points dword_2E42A at the target's hp and loads xp reward (professions table) and kill-name type", 1);
 	set_frame_size(0X140B4, 0XC, 2, 0);
 	add_func    (0X14161,0X141B8);
 	set_func_flags(0X14161,0x5410);
+	set_func_cmt(0X14161,	"square range test around the attacker's position (2E43F/2E440)", 1);
 	set_frame_size(0X14161, 0XC, 2, 0);
 	add_func    (0X141B8,0X14375);
 	set_func_flags(0X141B8,0x5410);
+	set_func_cmt(0X141B8,	"applies the attack to other targets in the blast radius", 1);
 	set_frame_size(0X141B8, 0X18, 2, 0);
 	add_func    (0X14375,0X14438);
 	set_func_flags(0X14375,0x5410);
+	set_func_cmt(0X14375,	"finds another combatant within range 1..3 of the attacker", 1);
 	set_frame_size(0X14375, 0XC, 2, 0);
 	add_func    (0X14438,0X14498);
 	set_func_flags(0X14438,0x5410);
+	set_func_cmt(0X14438,	"after a kill, retargets the attack at a living neighbour", 1);
 	set_frame_size(0X14438, 0X2, 2, 0);
 	add_func    (0X14498,0X1459F);
 	set_func_flags(0X14498,0x5410);
+	set_func_cmt(0X14498,	"roll vs weapon jam%; prints 'weapon has jammed/broken'/'fails to detonate'", 1);
 	set_frame_size(0X14498, 0X8, 2, 0);
 	add_func    (0X1459F,0X14788);
 	set_func_flags(0X1459F,0x5410);
+	set_func_cmt(0X1459F,	"complete attack action for one party member including ammo use", 1);
 	set_frame_size(0X1459F, 0XC, 2, 0);
 	add_func    (0X14788,0X147D8);
 	set_func_flags(0X14788,0x5410);
+	set_func_cmt(0X14788,	"writes the three combat name windows", 1);
 	set_frame_size(0X14788, 0X2, 2, 0);
 	add_func    (0X147D8,0X14823);
 	set_func_flags(0X147D8,0x5410);
+	set_func_cmt(0X147D8,	"redraws combat panel windows", 1);
 	set_frame_size(0X147D8, 0, 2, 0);
 	add_func    (0X1492E,0X14A87);
 	set_func_flags(0X1492E,0x5410);
+	set_func_cmt(0X1492E,	"menu of targetable enemies in range; returns combatant index or -1", 1);
 	set_frame_size(0X1492E, 0X14, 2, 0);
 	add_func    (0X14A9E,0X14C43);
 	set_func_flags(0X14A9E,0x5410);
+	set_func_cmt(0X14A9E,	"moves an enemy monster/group one step toward the party; prints 'closer.' / 'to a better postion.'", 1);
 	set_frame_size(0X14A9E, 0X10, 2, 0);
 	add_func    (0X14C43,0X14E61);
 	set_func_flags(0X14C43,0x5410);
+	set_func_cmt(0X14C43,	"AI for one enemy combatant: sets its command (4 attack, 1 evade, 0Eh none) and picks a living party target", 1);
 	set_frame_size(0X14C43, 0X16, 2, 0);
 	add_func    (0X14E61,0X14F1A);
 	set_func_flags(0X14E61,0x5410);
+	set_func_cmt(0X14E61,	"stores a combatant record (12 bytes at 2E6D4+idx*12) and its initiative", 1);
 	set_frame_size(0X14E61, 0X8, 2, 0);
 	add_func    (0X14F1A,0X150EC);
 	set_func_flags(0X14F1A,0x5410);
+	set_func_cmt(0X14F1A,	"collects live monsters/groups near the party into the combatant table, sorts by speed with qsort; returns count", 1);
 	set_frame_size(0X14F1A, 0X2C, 2, 0);
 	add_func    (0X15220,0X15335);
 	set_func_flags(0X15220,0x5400);
 	set_frame_size(0X15220, 0, 0, 0);
 	add_func    (0X15390,0X153F9);
 	set_func_flags(0X15390,0x5410);
+	set_func_cmt(0X15390,	"qsort of the combatant table by speed groups", 1);
 	set_frame_size(0X15390, 0X1A, 2, 0);
 	add_func    (0X1542D,0X154B0);
 	set_func_flags(0X1542D,0x5400);
 	set_frame_size(0X1542D, 0, 0, 0);
 	add_func    (0X154B0,0X154D6);
 	set_func_flags(0X154B0,0x5410);
+	set_func_cmt(0X154B0,	"sets the 5 party command bytes (197Ah) to 0FFh", 1);
 	set_frame_size(0X154B0, 0X2, 2, 0);
 	add_func    (0X154D6,0X15528);
 	set_func_flags(0X154D6,0x5410);
+	set_func_cmt(0X154D6,	"sum of live members' levels / 5, min 1", 1);
 	set_frame_size(0X154D6, 0X6, 2, 0);
 	add_func    (0X15528,0X1564A);
 	set_func_flags(0X15528,0x5410);
+	set_func_cmt(0X15528,	"S)ingle / B)urst / F)ull auto prompt; sets member +144h/+146h", 1);
 	set_frame_size(0X15528, 0XA, 2, 0);
 	add_func    (0X1564A,0X15691);
 	set_func_flags(0X1564A,0x5410);
+	set_func_cmt(0X1564A,	"redraws the combat windows and refreshes the screen", 1);
 	set_frame_size(0X1564A, 0, 2, 0);
 	add_func    (0X15691,0X15EEF);
 	set_func_flags(0X15691,0x5410);
+	set_func_cmt(0X15691,	"main combat loop: per party member choose R)un E)vade A)ttack L)oad/unjam W)eapon U)se; 'Encounter begins...' then executes each combatant's command in initiative order", 1);
 	set_frame_size(0X15691, 0X82, 2, 0);
 	add_func    (0X16328,0X166C9);
 	set_func_flags(0X16328,0x5400);
+	set_func_cmt(0X16328,	"(mis-split tail of runCombat) switch over command codes: 2 evade,3 stun,5 reload,6 run,7 switch weapon,10/11 use item,12 trade,13 drop,14 none", 1);
 	set_frame_size(0X16328, 0, 0, 0);
 	add_func    (0X16867,0X168D9);
 	set_func_flags(0X16867,0x1400);
 	add_func    (0X1695C,0X169A3);
 	set_func_flags(0X1695C,0x5410);
+	set_func_cmt(0X1695C,	"plays sound 1 and shows a message (short form in combat); used by the critical-error handler", 1);
 	set_frame_size(0X1695C, 0X2, 2, 0);
 	define_local_var(0X1695C, 0X169A3, "[bp-0X2]", "win");
 	add_func    (0X169A3,0X169E8);
 	set_func_flags(0X169A3,0x5410);
+	set_func_cmt(0X169A3,	"opens a file read-only, looping on 'Please insert %s.' prompts until it succeeds", 1);
 	set_frame_size(0X169A3, 0X2, 2, 0);
 	define_local_var(0X169A3, 0X169E8, "[bp+0X4]", "filename");
 	add_func    (0X169E8,0X16B44);
 	set_func_flags(0X169E8,0x5410);
+	set_func_cmt(0X169E8,	"builds the combat command text for roster row y: name + command string (off_21DD0) + target", 1);
 	set_frame_size(0X169E8, 0X4, 2, 0);
 	define_local_var(0X169E8, 0X16B44, "[bp+0X4]", "y");
 	add_func    (0X16B44,0X16C5F);
 	set_func_flags(0X16B44,0x5410);
+	set_func_cmt(0X16B44,	"runs map/sprite animation scripts on a ~3 tick cadence (force!=0 ignores the timer); frames drawn via blitPicFrame", 1);
 	set_frame_size(0X16B44, 0X14, 2, 0);
 	add_func    (0X16C5F,0X16D5E);
 	set_func_flags(0X16C5F,0x5410);
@@ -19205,20 +19459,26 @@ static Functions_0(void) {
 	set_frame_size(0X16C5F, 0X6, 2, 0);
 	add_func    (0X16D5E,0X16D6A);
 	set_func_flags(0X16D5E,0x1400);
+	set_func_cmt(0X16D5E,	"drains the DOS keyboard buffer", 1);
 	add_func    (0X16D6B,0X16D96);
 	set_func_flags(0X16D6B,0x5410);
+	set_func_cmt(0X16D6B,	"item.globals[+3Eh] & 1Ch == 1Ch (quest/unique item)", 1);
 	set_frame_size(0X16D6B, 0X4, 2, 0);
 	add_func    (0X16D96,0X16DB4);
 	set_func_flags(0X16D96,0x5410);
+	set_func_cmt(0X16D96,	"sets bit globals[item+41h] in disk1.field_7 (unique items obtained)", 1);
 	set_frame_size(0X16D96, 0X2, 2, 0);
 	add_func    (0X16DB4,0X16DD4);
 	set_func_flags(0X16DB4,0x5410);
+	set_func_cmt(0X16DB4,	"clears that bit", 1);
 	set_frame_size(0X16DB4, 0X2, 2, 0);
 	add_func    (0X16DD4,0X16E77);
 	set_func_flags(0X16DD4,0x5410);
+	set_func_cmt(0X16DD4,	"skill roll (profession-dependent) to clear the jam flag on the readied weapon; prints success/failure", 1);
 	set_frame_size(0X16DD4, 0XC, 2, 0);
 	add_func    (0X16F3A,0X16F43);
 	set_func_flags(0X16F3A,0x5410);
+	set_func_cmt(0X16F3A,	"returns max(0, value-15): bonus from an attribute/skill above 15", 1);
 	set_frame_size(0X16F3A, 0, 2, 0);
 	add_func    (0X16F43,0X16F6B);
 	set_func_flags(0X16F43,0x5400);
@@ -19229,55 +19489,69 @@ static Functions_0(void) {
 	set_frame_size(0X16F6B, 0X4, 2, 0);
 	add_func    (0X16F9D,0X17015);
 	set_func_flags(0X16F9D,0x5410);
-	SetType(0X16F9D, "int __cdecl sub_16F9D(char *, char);");
+	SetType(0X16F9D, "int __cdecl printSkillLevel(char *, char);");
+	set_func_cmt(0X16F9D,	"prints '%s now has a %Fs level of %d.'", 1);
 	set_frame_size(0X16F9D, 0X2, 2, 0);
 	add_func    (0X17015,0X170B4);
 	set_func_flags(0X17015,0x5410);
+	set_func_cmt(0X17015,	"best living member's attribute arg2 among those who know skill arg1: random(1,100) < 2*bonus", 1);
 	set_frame_size(0X17015, 0XE, 2, 0);
 	add_func    (0X170F2,0X1711E);
 	set_func_flags(0X170F2,0x5410);
+	set_func_cmt(0X170F2,	"first of 5 roster slots (0x14C bytes each) with empty name", 1);
 	set_frame_size(0X170F2, 0X2, 2, 0);
 	add_func    (0X1711E,0X17140);
 	set_func_flags(0X1711E,0x5400);
+	set_func_cmt(0X1711E,	"redraws party status (in-dialog) or the party name windows", 1);
 	set_frame_size(0X1711E, 0, 0, 0);
 	add_func    (0X17140,0X17260);
 	set_func_flags(0X17140,0x5410);
+	set_func_cmt(0X17140,	"script op 72: 'What do you wish? 1. Retrieve a member 2. Store a member L)eave'", 1);
 	set_frame_size(0X17140, 0X14, 2, 0);
 	define_local_var(0X17140, 0X17260, "[bp-0X6]", "win");
 	add_func    (0X17261,0X17264);
 	set_func_flags(0X17261,0x1400);
 	add_func    (0X1738A,0X173AC);
 	set_func_flags(0X1738A,0x5410);
+	set_func_cmt(0X1738A,	"clears window, writes text at (x,y), waits for a key", 1);
 	set_frame_size(0X1738A, 0, 2, 0);
 	define_local_var(0X1738A, 0X173AC, "[bp+0X4]", "text");
 	add_func    (0X173AC,0X173C9);
 	set_func_flags(0X173AC,0x5410);
-	SetType(0X173AC, "int __cdecl sub_173AC(char *);");
+	SetType(0X173AC, "int __cdecl showShortMessage(char *);");
+	set_func_cmt(0X173AC,	"clears window, writes a short string and waits for a key", 1);
 	set_frame_size(0X173AC, 0, 2, 0);
 	define_local_var(0X173AC, 0X173C9, "[bp+0X4]", "member");
 	add_func    (0X173C9,0X17470);
 	set_func_flags(0X173C9,0x5410);
+	set_func_cmt(0X173C9,	"rolls an enemy slot's hit points around the party average, +-arg0 percent, and derives count", 1);
 	set_frame_size(0X173C9, 0XA, 2, 0);
 	add_func    (0X17470,0X17685);
 	set_func_flags(0X17470,0x5410);
+	set_func_cmt(0X17470,	"initialises a group record (position, counts, per-slot hp) from its template and stamps the map", 1);
 	set_frame_size(0X17470, 0X10, 2, 0);
 	add_func    (0X17685,0X17853);
 	set_func_flags(0X17685,0x5410);
+	set_func_cmt(0X17685,	"if map header +8 (encounter rate) passes a d100 roll, picks an adjacent free cell and spawns a group from the template list", 1);
 	set_frame_size(0X17685, 0X1E, 2, 0);
 	add_func    (0X17854,0X17924);
 	set_func_flags(0X17854,0x5410);
+	set_func_cmt(0X17854,	"hourly: counts down member timers (+57h, +21h) and triggers scheduled mutation flare-ups ('mutations acting up again')", 1);
 	set_frame_size(0X17854, 0X1A, 2, 0);
 	add_func    (0X17970,0X17AAB);
 	set_func_flags(0X17970,0x5400);
 	set_frame_size(0X17970, 0, 0, 0);
 	add_func    (0X17AAB,0X17B02);
 	set_func_flags(0X17AAB,0x5410);
+	set_func_cmt(0X17AAB,	"chance roll: schedules a mutation onset (member +53h..56h) on a future weekday/hour", 1);
 	set_frame_size(0X17AAB, 0, 2, 0);
 	add_func    (0X17B02,0X17B3F);
 	set_func_flags(0X17B02,0x5410);
+	set_func_cmt(0X17B02,	"item side effect on a member (timed buff or status bit from the item definition)", 1);
 	set_frame_size(0X17B02, 0X2, 2, 0);
 	add_func    (0X17B3F,0X17D9B);
 	set_func_flags(0X17B3F,0x5410);
+	set_func_cmt(0X17B3F,	"promotes members whose experience reached the next rank: hp gain, skill points, 'Distribute %d points'", 1);
 	set_frame_size(0X17B3F, 0X1A, 2, 0);
 	define_local_var(0X17B3F, 0X17D9B, "[bp-0X4]", "win");
 	add_func    (0X17D9B,0X17E09);
@@ -19292,74 +19566,97 @@ static Functions_0(void) {
 	set_frame_size(0X17E09, 0, 0, 0);
 	add_func    (0X17E13,0X17E37);
 	set_func_flags(0X17E13,0x5410);
+	set_func_cmt(0X17E13,	"sets bit 80h in cell byte+2 at (x,y)", 1);
 	set_frame_size(0X17E13, 0X2, 2, 0);
 	add_func    (0X17E37,0X17E5B);
 	set_func_flags(0X17E37,0x5410);
+	set_func_cmt(0X17E37,	"clears bit 80h in cell byte+2 at (x,y)", 1);
 	set_frame_size(0X17E37, 0X2, 2, 0);
 	add_func    (0X17ED0,0X17F34);
 	set_func_flags(0X17ED0,0x5410);
+	set_func_cmt(0X17ED0,	"collects indices of ground-item records (6 bytes at dword_2EC1A) at (x,y) into the scratch list; returns count", 1);
 	set_frame_size(0X17ED0, 0X8, 2, 0);
 	add_func    (0X17F34,0X17FA8);
 	set_func_flags(0X17F34,0x5410);
+	set_func_cmt(0X17F34,	"deletes one ground-item record, shifts the table; clears the cell's item flag if none remain", 1);
 	set_frame_size(0X17F34, 0X8, 2, 0);
 	add_func    (0X17FA8,0X1822E);
 	set_func_flags(0X17FA8,0x5410);
+	set_func_cmt(0X17FA8,	"'You find these items:' pickup menu for the ground items at (x,y), giving them to party members", 1);
 	set_frame_size(0X17FA8, 0X1C, 2, 0);
 	add_func    (0X1822E,0X182CA);
 	set_func_flags(0X1822E,0x5410);
+	set_func_cmt(0X1822E,	"adds qty of an item to an existing stack at (x,y) or fails (arg2==0 clears the stack)", 1);
 	set_frame_size(0X1822E, 0XA, 2, 0);
 	add_func    (0X182CA,0X184A8);
 	set_func_flags(0X182CA,0x5410);
+	set_func_cmt(0X182CA,	"rolls the loot packet table (PACKETS) at idx for items to drop at (x,y)", 1);
 	set_frame_size(0X182CA, 0X10, 2, 0);
 	add_func    (0X184A8,0X1858A);
 	set_func_flags(0X184A8,0x5410);
+	set_func_cmt(0X184A8,	"appends the scratch item list to the ground-item table at (x,y)", 1);
 	set_frame_size(0X184A8, 0X8, 2, 0);
 	add_func    (0X1858A,0X18607);
 	set_func_flags(0X1858A,0x5410);
+	set_func_cmt(0X1858A,	"movedata compaction of the ground-item table after an insert/remove", 1);
 	set_frame_size(0X1858A, 0XC, 2, 0);
 	add_func    (0X18607,0X187E5);
 	set_func_flags(0X18607,0x5410);
+	set_func_cmt(0X18607,	"removes a monster (arg4==1) or group record from the map arrays and drops its loot as ground items", 1);
 	set_frame_size(0X18607, 0X2A, 2, 0);
 	add_func    (0X187E5,0X18827);
 	set_func_flags(0X187E5,0x5410);
+	set_func_cmt(0X187E5,	"if the map header flags bit 8000h is set, clears 80h and reloads the map pristine", 1);
 	set_frame_size(0X187E5, 0X2, 2, 0);
 	add_func    (0X18827,0X18880);
 	set_func_flags(0X18827,0x5410);
+	set_func_cmt(0X18827,	"increments the save counter and writes the Disk1 struct (0EC0h bytes) to the save disk", 1);
 	set_frame_size(0X18827, 0X6, 2, 0);
 	define_local_var(0X18827, 0X18880, "[bp-0X2]", "handle");
 	add_func    (0X18880,0X18A56);
 	set_func_flags(0X18880,0x5410);
+	set_func_cmt(0X18880,	"loads/decodes up to 3 enemy picture sets for the combat window (HDS/KPICT) and queues their animations", 1);
 	set_frame_size(0X18880, 0X22, 2, 0);
 	add_func    (0X18A56,0X18B07);
 	set_func_flags(0X18A56,0x5410);
+	set_func_cmt(0X18A56,	"script op 74: loads ending picture set N from the file table at dseg+0EFEh, displays it; N==3 quits", 1);
 	set_frame_size(0X18A56, 0X6, 2, 0);
 	define_local_var(0X18A56, 0X18B07, "[bp-0X6]", "handle");
 	add_func    (0X18B08,0X18B69);
 	set_func_flags(0X18B08,0x5410);
+	set_func_cmt(0X18B08,	"returns far ptr to the monster record whose +49h id matches (index via arg2)", 1);
 	set_frame_size(0X18B08, 0XA, 2, 0);
 	add_func    (0X18B69,0X18BBB);
 	set_func_flags(0X18B69,0x5410);
+	set_func_cmt(0X18B69,	"packs value/flag bits into a map cell's bytes +2,+3,+4 (script-driven cell edit)", 1);
 	set_frame_size(0X18B69, 0, 2, 0);
 	add_func    (0X18BBB,0X18C32);
 	set_func_flags(0X18BBB,0x5410);
+	set_func_cmt(0X18BBB,	"applies change kind 19h-1Eh to a map cell: 19h/1Ch tile, 1Ah/1Dh fields, 1Bh/1Eh script word", 1);
 	set_frame_size(0X18BBB, 0X2, 2, 0);
 	add_func    (0X18C32,0X18E23);
 	set_func_flags(0X18C32,0x5410);
+	set_func_cmt(0X18C32,	"script ops 28-30: applies a cell change now if on the current map, else appends a 12-byte persistent change record (list at word_21326, max 150)", 1);
 	set_frame_size(0X18C32, 0XC, 2, 0);
 	add_func    (0X18E23,0X18E37);
 	set_func_flags(0X18E23,0x5410);
+	set_func_cmt(0X18E23,	"script member selector: 0 = current member, n = party slot n-1", 1);
 	set_frame_size(0X18E23, 0, 2, 0);
 	add_func    (0X18E37,0X18E9C);
 	set_func_flags(0X18E37,0x5410);
+	set_func_cmt(0X18E37,	"removes from a member every item whose globals[+3Eh] has any bit of the mask", 1);
 	set_frame_size(0X18E37, 0X4, 2, 0);
 	add_func    (0X18E9C,0X18F3E);
 	set_func_flags(0X18E9C,0x5410);
+	set_func_cmt(0X18E9C,	"removes all ammo items matching any carried weapon's ammo type", 1);
 	set_frame_size(0X18E9C, 0XC, 2, 0);
 	add_func    (0X18F3E,0X18F63);
 	set_func_flags(0X18F3E,0x5410);
+	set_func_cmt(0X18F3E,	"returns far ptr to the Nth NUL-terminated string after the script block header", 1);
 	set_frame_size(0X18F3E, 0, 2, 0);
 	add_func    (0X18F63,0X18F9D);
 	set_func_flags(0X18F63,0x5410);
+	set_func_cmt(0X18F63,	"writes script string N at the top-left of the current window", 1);
 	set_frame_size(0X18F63, 0X4, 2, 0);
 	define_local_var(0X18F63, 0X18F9D, "[bp-0X4]", "text");
 	add_func    (0X18F9D,0X18FFA);
@@ -19368,9 +19665,11 @@ static Functions_0(void) {
 	define_local_var(0X18F9D, 0X18FFA, "[bp-0X4]", "text");
 	add_func    (0X18FFA,0X19073);
 	set_func_flags(0X18FFA,0x5410);
+	set_func_cmt(0X18FFA,	"subtracts hp; records the 'last hurt' value; marks the member dead below -60", 1);
 	set_frame_size(0X18FFA, 0X2, 2, 0);
 	add_func    (0X19073,0X190F6);
 	set_func_flags(0X19073,0x5410);
+	set_func_cmt(0X19073,	"random damage in [min,max] reduced by armor class; returns remaining damage", 1);
 	set_frame_size(0X19073, 0X6, 2, 0);
 	define_local_var(0X19073, 0X190F6, "[bp-0X4]", "member");
 	add_func    (0X190F6,0X1912F);
@@ -19381,32 +19680,41 @@ static Functions_0(void) {
 	define_local_var(0X190F6, 0X1912F, "[bp+0X4]", "member");
 	add_func    (0X1912F,0X19298);
 	set_func_flags(0X1912F,0x5410);
+	set_func_cmt(0X1912F,	"area damage to every living member with armor absorption messages ('takes %u pts of damage', 'rendered unconscious')", 1);
 	set_frame_size(0X1912F, 0XC, 2, 0);
 	define_local_var(0X1912F, 0X19298, "[bp-0XA]", "member");
 	define_local_var(0X1912F, 0X19298, "[bp-0X4]", "win");
 	add_func    (0X19298,0X192D5);
 	set_func_flags(0X19298,0x5410);
+	set_func_cmt(0X19298,	"adds random(min,max) hp to a party slot, clamped at max hp", 1);
 	set_frame_size(0X19298, 0X6, 2, 0);
 	add_func    (0X192D5,0X19335);
 	set_func_flags(0X192D5,0x5410);
+	set_func_cmt(0X192D5,	"periodic area damage/heal using the stored hazard parameters (2E206/2F018/2EC04)", 1);
 	set_frame_size(0X192D5, 0X2, 2, 0);
 	add_func    (0X19335,0X1947F);
 	set_func_flags(0X19335,0x5410);
+	set_func_cmt(0X19335,	"script stat read: 0 level(+4Eh),1 exp(+5Ah),2 hp(+44h),3 max hp(+46h),4 attribute,5 active skill,6 passive skill,7 cash,8 sex(+50h&3),9 profession(+48h)", 1);
 	set_frame_size(0X19335, 0XA, 2, 0);
 	add_func    (0X1947F,0X194C2);
 	set_func_flags(0X1947F,0x5410);
+	set_func_cmt(0X1947F,	"clamps a 32-bit value to [min,max] in place", 1);
 	set_frame_size(0X1947F, 0, 2, 0);
 	add_func    (0X194C2,0X1969F);
 	set_func_flags(0X194C2,0x5410);
+	set_func_cmt(0X194C2,	"script stat write for the same selector set (level, exp (triggers level-up), hp, max hp, attributes, skills, cash)", 1);
 	set_frame_size(0X194C2, 0X6, 2, 0);
 	add_func    (0X1969F,0X1972A);
 	set_func_flags(0X1969F,0x5410);
+	set_func_cmt(0X1969F,	"increments the use counter of skill N (HDSPCT threshold at +13Ah); on overflow raises the skill if the governing attribute exceeds it; returns 1 if raised", 1);
 	set_frame_size(0X1969F, 0XC, 2, 0);
 	add_func    (0X1972A,0X19780);
 	set_func_flags(0X1972A,0x5410);
+	set_func_cmt(0X1972A,	"script condition register combine: mode 0 set, 1 AND, 2 OR", 1);
 	set_frame_size(0X1972A, 0, 2, 0);
 	add_func    (0X19780,0X197D2);
 	set_func_flags(0X19780,0x5410);
+	set_func_cmt(0X19780,	"writes 'Y)es  N)o' at (x,y) and waits for Y/N", 1);
 	set_frame_size(0X19780, 0X6, 2, 0);
 	add_func    (0X197D2,0X1982E);
 	set_func_flags(0X197D2,0x5410);
@@ -19414,6 +19722,7 @@ static Functions_0(void) {
 	define_local_var(0X197D2, 0X1982E, "[bp-0X2]", "win");
 	add_func    (0X1982E,0X1987A);
 	set_func_flags(0X1982E,0x5410);
+	set_func_cmt(0X1982E,	"true if party slot arg0 carries item id arg1", 1);
 	set_frame_size(0X1982E, 0X4, 2, 0);
 	add_func    (0X1987A,0X198B1);
 	set_func_flags(0X1987A,0x5410);
@@ -19424,9 +19733,11 @@ static Functions_0(void) {
 	define_local_var(0X1987A, 0X198B1, "[bp+0X6]", "msg");
 	add_func    (0X198B1,0X198E3);
 	set_func_flags(0X198B1,0x5400);
+	set_func_cmt(0X198B1,	"points dword_2E4C6 at the party's current cell and word_2EBF4/6 at its script word", 1);
 	set_frame_size(0X198B1, 0, 0, 0);
 	add_func    (0X198E3,0X198F4);
 	set_func_flags(0X198E3,0x5410);
+	set_func_cmt(0X198E3,	"word_22C8A = member pointer (target of '^' substitution in strings)", 1);
 	set_frame_size(0X198E3, 0, 2, 0);
 	add_func    (0X198F4,0X1B250);
 	set_func_flags(0X198F4,0x5410);
@@ -19490,17 +19801,20 @@ static Functions_0(void) {
 	define_local_var(0X1B29B, 0X1B2F0, "[bp+0X4]", "text");
 	add_func    (0X1B2F0,0X1B360);
 	set_func_flags(0X1B2F0,0x5410);
-	SetType(0X1B2F0, "int __cdecl sub_1B2F0(char *, char);");
+	SetType(0X1B2F0, "int __cdecl showMessageTimed(char *, char);");
+	set_func_cmt(0X1B2F0,	"short popup in window10 with a name/text, waits for a key then clears", 1);
 	set_frame_size(0X1B2F0, 0X2, 2, 0);
 	define_local_var(0X1B2F0, 0X1B360, "[bp-0X2]", "win");
 	define_local_var(0X1B2F0, 0X1B360, "[bp+0X4]", "text");
 	add_func    (0X1B360,0X1B3DF);
 	set_func_flags(0X1B360,0x5410);
-	SetType(0X1B360, "int __cdecl sub_1B360(int, char *);");
+	SetType(0X1B360, "int __cdecl showShopHeader(int, char *);");
+	set_func_cmt(0X1B360,	"opens a shop/service screen: loads portrait set, draws title in window10", 1);
 	set_frame_size(0X1B360, 0, 2, 0);
 	define_local_var(0X1B360, 0X1B3DF, "[bp+0X6]", "member");
 	add_func    (0X1B3DF,0X1B452);
 	set_func_flags(0X1B3DF,0x5410);
+	set_func_cmt(0X1B3DF,	"re-draws the main windows after a shop/service screen", 1);
 	set_frame_size(0X1B3DF, 0, 2, 0);
 	add_func    (0X1B452,0X1B498);
 	set_func_flags(0X1B452,0x5400);
@@ -19508,43 +19822,55 @@ static Functions_0(void) {
 	set_frame_size(0X1B452, 0, 0, 0);
 	add_func    (0X1B498,0X1B4D4);
 	set_func_flags(0X1B498,0x5410);
-	SetType(0X1B498, "int __cdecl sub_1B498(char *);");
+	SetType(0X1B498, "int __cdecl showCashLine(char *);");
+	set_func_cmt(0X1B498,	"window10: '%s, you have $%lu'", 1);
 	set_frame_size(0X1B498, 0, 2, 0);
 	add_func    (0X1B5FF,0X1B621);
 	set_func_flags(0X1B5FF,0x5410);
-	SetType(0X1B5FF, "int __cdecl sub_1B5FF(char *);");
+	SetType(0X1B5FF, "int __cdecl showCashAndRefresh(char *);");
+	set_func_cmt(0X1B5FF,	"showCashLine, refresh and switch to window7", 1);
 	set_frame_size(0X1B5FF, 0, 2, 0);
 	add_func    (0X1B621,0X1B82F);
 	set_func_flags(0X1B621,0x5410);
+	set_func_cmt(0X1B621,	"buy menu: lists in-stock shop items, checks cash/inventory space, 'buys 1 %s.'", 1);
 	set_frame_size(0X1B621, 0X14, 2, 0);
 	add_func    (0X1B82F,0X1BA26);
 	set_func_flags(0X1B82F,0x5410);
+	set_func_cmt(0X1B82F,	"sell menu: lists member items the shop accepts, 'sells 1 %s.'", 1);
 	set_frame_size(0X1B82F, 0X18, 2, 0);
 	add_func    (0X1BA26,0X1BB43);
 	set_func_flags(0X1BA26,0x5410);
+	set_func_cmt(0X1BA26,	"script op 37: shop N loop with B)uy S)ell L)eave and F-key member switching", 1);
 	set_frame_size(0X1BA26, 0XC, 2, 0);
 	add_func    (0X1BB93,0X1BBC8);
 	set_func_flags(0X1BB93,0x5410);
+	set_func_cmt(0X1BB93,	"first party slot whose getMemberCon is below the given state", 1);
 	set_frame_size(0X1BB93, 0X2, 2, 0);
 	add_func    (0X1BBC8,0X1BF55);
 	set_func_flags(0X1BBC8,0x5410);
+	set_func_cmt(0X1BBC8,	"script op 45: pay-for services from the SERVICES table (levels, exp, hp, attributes, skills, cure); entries are 32 bytes", 1);
 	set_frame_size(0X1BBC8, 0X28, 2, 0);
 	add_func    (0X1BFCE,0X1BFEE);
 	set_func_flags(0X1BFCE,0x5410);
-	SetType(0X1BFCE, "int __cdecl sub_1BFCE(char *);");
+	SetType(0X1BFCE, "int __cdecl printBeyondHelp(char *);");
+	set_func_cmt(0X1BFCE,	"'%s is beyond your help.'", 1);
 	set_frame_size(0X1BFCE, 0, 2, 0);
 	add_func    (0X1BFEE,0X1BFF9);
 	set_func_flags(0X1BFEE,0x5400);
+	set_func_cmt(0X1BFEE,	"'Your efforts were commendable, but unsuccessful.'", 1);
 	set_frame_size(0X1BFEE, 0, 0, 0);
 	add_func    (0X1BFF9,0X1C052);
 	set_func_flags(0X1BFF9,0x5410);
+	set_func_cmt(0X1BFF9,	"after trySkillImprove: '%s is now a level %d %Fs.'", 1);
 	set_frame_size(0X1BFF9, 0X4, 2, 0);
 	add_func    (0X1C052,0X1C42B);
 	set_func_flags(0X1C052,0x5410);
+	set_func_cmt(0X1C052,	"doctor skill: heals a downed member or cures an affliction with a skill roll; messages for success/failure", 1);
 	set_frame_size(0X1C052, 0X1C, 2, 0);
 	define_local_var(0X1C052, 0X1C42B, "[bp-0X4]", "member");
 	add_func    (0X1C42B,0X1C53E);
 	set_func_flags(0X1C42B,0x5410);
+	set_func_cmt(0X1C42B,	"'Who will ingest this?' consumable use (mutagens/anti-mutation effects, timers +53h..57h)", 1);
 	set_frame_size(0X1C42B, 0XA, 2, 0);
 	add_func    (0X1C5F4,0X1C64A);
 	set_func_flags(0X1C5F4,0x5410);
@@ -19568,31 +19894,40 @@ static Functions_0(void) {
 	define_local_var(0X1C68D, 0X1C84A, "[bp+0X6]", "highlight");
 	add_func    (0X1C84A,0X1C8ED);
 	set_func_flags(0X1C84A,0x5410);
+	set_func_cmt(0X1C84A,	"paged list of the member's learned active skills (window13)", 1);
 	set_frame_size(0X1C84A, 0X8, 2, 0);
 	add_func    (0X1C8ED,0X1C990);
 	set_func_flags(0X1C8ED,0x5410);
+	set_func_cmt(0X1C8ED,	"paged list of passive skills (window14)", 1);
 	set_frame_size(0X1C8ED, 0X8, 2, 0);
 	add_func    (0X1C990,0X1CA0B);
 	set_func_flags(0X1C990,0x5410);
+	set_func_cmt(0X1C990,	"paged list of carried items (window15)", 1);
 	set_frame_size(0X1C990, 0X6, 2, 0);
 	add_func    (0X1CA0B,0X1CAE6);
 	set_func_flags(0X1CA0B,0x5410);
+	set_func_cmt(0X1CA0B,	"lists the member's afflictions with remission hours (window16)", 1);
 	set_frame_size(0X1CA0B, 0X4, 2, 0);
 	define_local_var(0X1CA0B, 0X1CAE6, "[bp-0X2]", "y");
 	add_func    (0X1CAE6,0X1CB19);
 	set_func_flags(0X1CAE6,0x5410);
+	set_func_cmt(0X1CAE6,	"left/right cursor keys switch pages of the character screen", 1);
 	set_frame_size(0X1CAE6, 0X2, 2, 0);
 	add_func    (0X1CB19,0X1CB58);
 	set_func_flags(0X1CB19,0x5410);
+	set_func_cmt(0X1CB19,	"'%s is incapacitated.'", 1);
 	set_frame_size(0X1CB19, 0, 2, 0);
 	add_func    (0X1CB58,0X1CB80);
 	set_func_flags(0X1CB58,0x5410);
+	set_func_cmt(0X1CB58,	"true if member hp >= 1, else prints incapacitated", 1);
 	set_frame_size(0X1CB58, 0, 2, 0);
 	add_func    (0X1CB80,0X1CBDF);
 	set_func_flags(0X1CB80,0x5410);
+	set_func_cmt(0X1CB80,	"validates an F1-F5 key for a conscious party member and returns its slot", 1);
 	set_frame_size(0X1CB80, 0X2, 2, 0);
 	add_func    (0X1CBDF,0X1CC58);
 	set_func_flags(0X1CBDF,0x5410);
+	set_func_cmt(0X1CBDF,	"after a combat/field command needing a map target: askDirectionGetCell or pickMapCell", 1);
 	set_frame_size(0X1CBDF, 0X4, 2, 0);
 	add_func    (0X1CC58,0X1D0EE);
 	set_func_flags(0X1CC58,0x5410);
@@ -19604,35 +19939,44 @@ static Functions_0(void) {
 	set_name(0X1D0D1, "main_loop", SN_LOCAL);
 	add_func    (0X1D0EE,0X1D23B);
 	set_func_flags(0X1D0EE,0x5410);
+	set_func_cmt(0X1D0EE,	"draws one roster row: F-key, name, condition, Con/AC, weapon and ammo", 1);
 	set_frame_size(0X1D0EE, 0X8, 2, 0);
 	define_local_var(0X1D0EE, 0X1D23B, "[bp-0X6]", "member");
 	add_func    (0X1D283,0X1D2F9);
 	set_func_flags(0X1D283,0x5410);
+	set_func_cmt(0X1D283,	"roster screen footer: unique-item icons, cash, '(R)eorder roster (B)anish (L)eave'", 1);
 	set_frame_size(0X1D283, 0, 2, 0);
 	add_func    (0X1D2F9,0X1D4BF);
 	set_func_flags(0X1D2F9,0x5410);
+	set_func_cmt(0X1D2F9,	"interactive reordering of the party order", 1);
 	set_frame_size(0X1D2F9, 0X14, 2, 0);
 	add_func    (0X1D4BF,0X1D5BA);
 	set_func_flags(0X1D4BF,0x5410);
+	set_func_cmt(0X1D4BF,	"'Really banish %s?' then removeMemberFromParty", 1);
 	set_frame_size(0X1D4BF, 0X8, 2, 0);
 	add_func    (0X1D5BA,0X1D6AA);
 	set_func_flags(0X1D5BA,0x5410);
+	set_func_cmt(0X1D5BA,	"main-loop 'A'/roster screen: F1-F5 character info, R reorder, B banish, L leave", 1);
 	set_frame_size(0X1D5BA, 0XE, 2, 0);
 	define_local_var(0X1D5BA, 0X1D6AA, "[bp-0X4]", "win");
 	add_func    (0X1D6AA,0X1D712);
 	set_func_flags(0X1D6AA,0x5410);
+	set_func_cmt(0X1D6AA,	"initialises a 6-byte inventory entry for an item id: ammo = weapon clip size if it is a weapon", 1);
 	set_frame_size(0X1D6AA, 0X8, 2, 0);
 	add_func    (0X1D712,0X1D8CD);
 	set_func_flags(0X1D712,0x5410);
+	set_func_cmt(0X1D712,	"recruits a monster/NPC record into a free roster slot, copying stats and inventory", 1);
 	set_frame_size(0X1D712, 0X14, 2, 0);
 	add_func    (0X1D8CD,0X1D91C);
 	set_func_flags(0X1D8CD,0x5410);
+	set_func_cmt(0X1D8CD,	"script op 6 target: shows the monster's picture/name window and marks window state 2ED26=1", 1);
 	set_frame_size(0X1D8CD, 0X2, 2, 0);
 	add_func    (0X1D931,0X1D9A9);
 	set_func_flags(0X1D931,0x5400);
 	set_frame_size(0X1D931, 0X10, 0, 0);
 	add_func    (0X1D9A9,0X1D9CF);
 	set_func_flags(0X1D9A9,0x5400);
+	set_func_cmt(0X1D9A9,	"clears dirty list, calls the video-mode init and installs the critical-error handler; clears the screen buffer", 1);
 	set_frame_size(0X1D9A9, 0X10, 0, 0);
 	add_func    (0X1D9CF,0X1D9F5);
 	set_func_flags(0X1D9CF,0x5400);
@@ -19776,6 +20120,7 @@ static Functions_0(void) {
 	set_frame_size(0X1E017, 0, 0, 0);
 	add_func    (0X1E045,0X1E08C);
 	set_func_flags(0X1E045,0x5410);
+	set_func_cmt(0X1E045,	"draws a 16x16 icon for each bit set in disk1.field_7 (up to 4)", 1);
 	set_frame_size(0X1E045, 0X2, 2, 0);
 	add_func    (0X1E08C,0X1E097);
 	set_func_flags(0X1E08C,0x5400);
@@ -20077,21 +20422,27 @@ static Functions_0(void) {
 	set_frame_size(0X20000, 0XC, 2, 0);
 	add_func    (0X200D8,0X20182);
 	set_func_flags(0X200D8,0x5412);
+	set_func_cmt(0X200D8,	"returns a direction table offset (0..21 step 3) from (x,y) towards/away from the party", 1);
 	set_frame_size(0X200D8, 0XA, 2, 0);
 	add_func    (0X20182,0X201C8);
 	set_func_flags(0X20182,0x5412);
+	set_func_cmt(0X20182,	"true if item id arg1 is any of the member's equipped slots (+4Ah, +4Bh..4Dh)", 1);
 	set_frame_size(0X20182, 0X6, 2, 0);
 	add_func    (0X201C8,0X2023E);
 	set_func_flags(0X201C8,0x5412);
+	set_func_cmt(0X201C8,	"decays the monster state byte (+5Dh) each tick", 1);
 	set_frame_size(0X201C8, 0X6, 2, 0);
 	add_func    (0X2023E,0X202F2);
 	set_func_flags(0X2023E,0x5412);
+	set_func_cmt(0X2023E,	"sets word_2DFFC/E to the name string and 2E43F/2E440 to range/speed for a combatant record", 1);
 	set_frame_size(0X2023E, 0X12, 2, 0);
 	add_func    (0X202F2,0X203C9);
 	set_func_flags(0X202F2,0x5412);
+	set_func_cmt(0X202F2,	"returns hp and x,y (via pointers) of a combatant record", 1);
 	set_frame_size(0X202F2, 0X16, 2, 0);
 	add_func    (0X203C9,0X2045A);
 	set_func_flags(0X203C9,0x5412);
+	set_func_cmt(0X203C9,	"max over living party members' ready weapon range", 1);
 	set_frame_size(0X203C9, 0XA, 2, 0);
 	add_func    (0X2045A,0X204C3);
 	set_func_flags(0X2045A,0x5412);
@@ -20099,9 +20450,11 @@ static Functions_0(void) {
 	set_frame_size(0X2045A, 0X8, 2, 0);
 	add_func    (0X204C4,0X2060D);
 	set_func_flags(0X204C4,0x5412);
+	set_func_cmt(0X204C4,	"applies the persistent map change records (word_21326) for the map being loaded", 1);
 	set_frame_size(0X204C4, 0X10, 2, 0);
 	add_func    (0X2060D,0X20718);
 	set_func_flags(0X2060D,0x5412);
+	set_func_cmt(0X2060D,	"removes inventory slot (or the ready-weapon reference) from a member and compacts the 6-byte table", 1);
 	set_frame_size(0X2060D, 0XA, 2, 0);
 	add_func    (0X20720,0X20734);
 	set_func_flags(0X20720,0x5402);
